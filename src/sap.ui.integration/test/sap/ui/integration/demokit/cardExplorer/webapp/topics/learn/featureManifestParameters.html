@@ -69,7 +69,7 @@
 				</tr>
 				<tr>
 					<td>value</td>
-					<td>string</td>
+					<td>any</td>
 					<td>Yes</td>
 					<td>The value of the parameter.</td>
 					<td>1.15.0</td>
@@ -113,20 +113,25 @@
 			Examples
 		</h2>
 
-		<p>A card having a user defined "city" manifest parameter with a default "value" of "Walldorf" which is used inside
-			the request:</p>
+		<p>A card having a user defined "city" and "weatherServices" manifest parameters with default values.
+			The "city" value is used inside the request. The "weatherServices" value is used inside the title.</p>
 		<pre class="prettyprint">{
 	"sap.card": {
 		"configuration": {
 			"parameters": {
 				"city": {
 					"value": "Walldorf"
+				},
+				"weatherServices": {
+					"value": {
+						"weatherAPI": "WeatherAPI"
+					}
 				}
 			}
 		},
 		"type": "List",
 		"header": {
-			"title": "Weather"
+			"title": "Weather forecast provided by {{parameters.weatherServices.weatherAPI}}"
 		},
 		"content": {
 			"data": {

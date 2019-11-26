@@ -271,11 +271,16 @@ sap.ui.define([
 	 * @returns {string} The string with replaced placeholders.
 	 */
 	Manifest._processPlaceholder = function (sPlaceholder, oParam, oDataSources) {
-		var sProcessed = ParameterMap.processPredefinedParameter(sPlaceholder);
+		var sProcessed = ParameterMap.processPredefinedParameter(sPlaceholder),
+			oValue,
+			sPath;
 
 		if (oParam) {
 			for (var oProperty in oParam) {
-				sProcessed = sProcessed.replace(new RegExp("{{parameters." + oProperty + "}}", 'g'), oParam[oProperty].value);
+				oValue = oParam[oProperty].value;
+				sPath = "{{parameters." + oProperty;
+
+				sProcessed = replacePlaceholders(sProcessed, oValue, sPath);
 			}
 		}
 
