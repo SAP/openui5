@@ -233,12 +233,8 @@ sap.ui.define([
 			return; // This is handled in the SubApiDetail controller
 		}
 
-		if ($Element.hasClass("sapDemokitTreeItemTitle")) {
-			sTarget = $Element.control(0).getHref();
-		}
-
 		if (!sTarget) {
-			sTarget = getHref(oElement) || getHref(oElement.parentElement);
+			sTarget = getClosestHref(oElement);
 		}
 
 		// If we have no target by here we give up
@@ -576,6 +572,18 @@ sap.ui.define([
 	}
 
 	// util
+	function getClosestHref(oAnchorElement, iMaxDrillUp) {
+		var sHref = getHref(oAnchorElement), iDrillUp = 0;
+		iMaxDrillUp || (iMaxDrillUp = 3);
+
+		while (!sHref && iDrillUp++ < iMaxDrillUp) {
+			oAnchorElement = oAnchorElement.parentElement;
+			sHref = getHref(oAnchorElement);
+		}
+
+		return sHref;
+	}
+
 	function getHref(oAnchorElement) {
 		if (oAnchorElement && oAnchorElement.nodeName === "A" && oAnchorElement.getAttribute("target") !== "_blank") {
 			return oAnchorElement.getAttribute("href");
