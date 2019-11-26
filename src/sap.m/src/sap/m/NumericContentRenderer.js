@@ -209,7 +209,7 @@ sap.ui.define([ './library' ],
 
 		this._prepareAndRenderIcon(oRm, oControl, oControl._oIcon, oMaxDigitsData.fontClass);
 
-		var iChar = oMaxDigitsData.maxLength || oControl.getTruncateValueTo();
+		var iChar = oControl.getTruncateValueTo() || oMaxDigitsData.maxLength;
 		oRm.write("<span id=\"" + oControl.getId() + "-value-inner\">");
 		//Control shows only iChar characters. If the last shown character is decimal separator - show only first N-1 characters. So "144.5" is shown like "144" and not like "144.".
 		if (value.length >= iChar && (value[iChar - 1] === "." || value[iChar - 1] === ",")) {
