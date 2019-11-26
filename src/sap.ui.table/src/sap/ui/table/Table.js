@@ -1331,10 +1331,15 @@ sap.ui.define([
 		this._cleanUpTimers();
 		this._detachEvents();
 
+		// #getBindnig("rows") also initializes the experimental grouping functionality (just in case it is required).
+		var oBinding = this.getBinding("rows");
+		var iBindingLength = oBinding ? oBinding.getLength() : 0;
+		if (iBindingLength === 0 && iBindingLength !== this._iBindingLength) {
+			this._iBindingLength = iBindingLength;
+		}
+
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
 		var aRows = this.getRows();
-
-		this.getBinding("rows"); // Initializes the experimental grouping functionality (just in case it is required).
 
 		if (sVisibleRowCountMode == VisibleRowCountMode.Interactive ||
 			sVisibleRowCountMode == VisibleRowCountMode.Fixed ||
