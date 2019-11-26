@@ -122,6 +122,26 @@ sap.ui.define([
 		assert.equal(oDRS3.getSecondDateValue().getTime(), dateTo2.getTime(), "DRS3: SecondDateValue set");
 	});
 
+	QUnit.test("interval selection is correctly set to the YearPicker", function(assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection({
+				displayFormat: "yyyy"
+			}).placeAt("qunit-fixture"),
+			oYearPicker;
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDRS.toggleOpen();
+		oYearPicker = oDRS._getCalendar()._getYearPicker();
+
+		// Assert
+		assert.ok(oYearPicker.getIntervalSelection(), "interval selection is set to 'true'");
+
+		// Clean
+		oDRS.destroy();
+	});
+
 	QUnit.module("Rendering");
 
 	QUnit.test("Styling", function(assert) {

@@ -15,6 +15,7 @@ module.exports = [
 	"ComboBoxShowItems.spec.js",
 	"ContextMenuSupportIntegration.spec.js",
 	"DatePicker.spec.js",
+	"DateRangeSelection.spec.js",
 	"DateTimePicker.spec.js",
 	"Dialog.spec.js",
 	"FacetFilter.spec.js",

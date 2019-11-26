@@ -436,9 +436,12 @@ sap.ui.define([
 
 	Calendar.prototype._initilizeYearPicker = function() {
 		var oYearPicker = new YearPicker(this.getId() + "--YP");
+
 		oYearPicker.attachEvent("select", this._selectYear, this);
 		oYearPicker.attachEvent("pageChange", _handleYearPickerPageChange, this);
-		this.setAggregation("yearPicker",oYearPicker);
+		this.setAggregation("yearPicker", oYearPicker);
+
+		oYearPicker._setSelectedDatesControlOrigin(this);
 	};
 
 	Calendar.prototype._initilizeYearRangePicker = function() {
@@ -846,7 +849,7 @@ sap.ui.define([
 			oMonthPicker = this._getMonthPicker();
 			oMonthPicker.setPrimaryCalendarType(sCalendarType);
 
-			oYearPicker = this.getAggregation("yearPicker");
+			oYearPicker = this._getYearPicker();
 			oYearPicker.setPrimaryCalendarType(sCalendarType);
 
 			oYearRangePicker = this.getAggregation("yearRangePicker");
@@ -932,7 +935,7 @@ sap.ui.define([
 		if (!this._getSucessorsPickerPopup()) {
 			iMinYear = this._oMinDate.getYear();
 
-			this.getAggregation("yearPicker")._oMinDate.setYear(iMinYear);
+			this._getYearPicker()._oMinDate.setYear(iMinYear);
 			this.getAggregation("yearRangePicker")._oMinDate.setYear(iMinYear);
 		}
 
@@ -980,7 +983,7 @@ sap.ui.define([
 		if (!this._getSucessorsPickerPopup()) {
 			iMaxYear = this._oMaxDate.getYear();
 
-			this.getAggregation("yearPicker")._oMaxDate.setYear(iMaxYear);
+			this._getYearPicker()._oMaxDate.setYear(iMaxYear);
 			this.getAggregation("yearRangePicker")._oMaxDate.setYear(iMaxYear);
 		}
 
@@ -1039,11 +1042,20 @@ sap.ui.define([
 
 	/**
 	 * Getter for monthPicker aggregation.
-	 * @return {object} The monthPicker control instance
+	 * @return {sap.ui.unified.calendar.MonthPicker} The monthPicker control instance
 	 * @private
 	 */
 	Calendar.prototype._getMonthPicker = function () {
 		return this.getAggregation("monthPicker");
+	};
+
+	/**
+	 * Getter for yearPicker aggregation.
+	 * @return {sap.ui.unified.calendar.YearPicker} The yearPicker control instance
+	 * @private
+	 */
+	Calendar.prototype._getYearPicker = function () {
+		return this.getAggregation("yearPicker");
 	};
 
 	Calendar.prototype.onclick = function(oEvent){
@@ -1137,7 +1149,7 @@ sap.ui.define([
 
 				if (!this._getSucessorsPickerPopup()) {
 					var oMonthPicker = this._getMonthPicker();
-					var oYearPicker = this.getAggregation("yearPicker");
+					var oYearPicker = this._getYearPicker();
 
 					if (oMonthPicker.getDomRef()) {
 						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
@@ -1214,7 +1226,7 @@ sap.ui.define([
 
 			case 2: // year picker
 				if (!this._getSucessorsPickerPopup()) {
-					var oYearPicker = this.getAggregation("yearPicker");
+					var oYearPicker = this._getYearPicker();
 					oYearPicker._oItemNavigation.focusItem(oYearPicker._oItemNavigation.getFocusedIndex());
 				}
 				break;
@@ -1248,7 +1260,7 @@ sap.ui.define([
 				}
 				if (!this._getSucessorsPickerPopup()) {
 					var oMonthPicker = this._getMonthPicker();
-					var oYearPicker = this.getAggregation("yearPicker");
+					var oYearPicker = this._getYearPicker();
 					if (oMonthPicker.getDomRef()) {
 						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
 					}
@@ -1304,7 +1316,7 @@ sap.ui.define([
 
 				case 2: // year picker
 					if (!this._getSucessorsPickerPopup()) {
-						oYearPicker = this.getAggregation("yearPicker");
+						oYearPicker = this._getYearPicker();
 						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
 					}
 					break;
@@ -1439,7 +1451,7 @@ sap.ui.define([
 	 */
 	Calendar.prototype._togglePrevNexYearPicker = function(){
 		var oYearRangePicker = this.getAggregation("yearRangePicker"),
-			oYearPicker = this.getAggregation("yearPicker"),
+			oYearPicker = this._getYearPicker(),
 			sPrimaryType = this.getPrimaryCalendarType(),
 			oMinDate = new CalendarDate(this._oMinDate, sPrimaryType),
 			oMaxDate = new CalendarDate(this._oMaxDate, sPrimaryType),
@@ -1515,7 +1527,7 @@ sap.ui.define([
 			break;
 
 		case 2: // year picker
-			this.getAggregation("yearPicker").previousPage();
+			this._getYearPicker().previousPage();
 			this._togglePrevNexYearPicker();
 			this._updateHeadersYearPrimaryText(this._getYearString());
 			break;
@@ -1574,7 +1586,7 @@ sap.ui.define([
 			break;
 
 		case 2: // year picker
-			this.getAggregation("yearPicker").nextPage();
+			this._getYearPicker().nextPage();
 			this._togglePrevNexYearPicker();
 			this._updateHeadersYearPrimaryText(this._getYearString());
 			break;
@@ -1590,7 +1602,7 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._getYearString = function () {
-		var oYearPicker = this.getAggregation("yearPicker"),
+		var oYearPicker = this._getYearPicker(),
 			oYearPickerDomRef = oYearPicker.getDomRef(),
 			oFocusedDate = this._getFocusedDate(),
 			iMiddleIndex,
@@ -1804,16 +1816,15 @@ sap.ui.define([
 		var oHeader = this.getAggregation("header"),
 			oDate = this._getFocusedDate(),
 			oMonthPicker = this._getMonthPicker(),
-			iFocusedYear = this._getFocusedDate().getYear(),
 			aMonths, oMonth, i;
 
 		this._iMode === 2 && this._hideYearPicker(true);
 
 		// hide month button
 		oHeader.setVisibleButton1(false);
-		oMonthPicker._setYear(iFocusedYear);
-		oMonthPicker.getDomRef() ? oMonthPicker.$().css("display", "") : this._renderPicker(oMonthPicker);
 
+		oMonthPicker._setYear(oDate.getYear());
+		this._renderPicker(oMonthPicker);
 		this._showOverlay();
 
 		if (!bSkipFocus) {
@@ -1900,7 +1911,7 @@ sap.ui.define([
 	Calendar.prototype._showYearPicker = function () {
 
 		var oDate = this._getFocusedDate(),
-			oYearPicker = this.getAggregation("yearPicker"),
+			oYearPicker = this._getYearPicker(),
 			oMonth, aMonths, aDomRefs;
 
 		this._iMode === 1 && this._hideMonthPicker(true);
@@ -1951,7 +1962,7 @@ sap.ui.define([
 
 		this._iMode = 0;
 
-		var oYearPicker = this.getAggregation("yearPicker");
+		var oYearPicker = this._getYearPicker();
 		oYearPicker.$().css("display", "none");
 
 		this._hideOverlay();
@@ -2202,7 +2213,7 @@ sap.ui.define([
 	 */
 	Calendar.prototype._selectYear = function () {
 		var oFocusedDate = new CalendarDate(this._getFocusedDate(), this.getPrimaryCalendarType());
-		var oYearPicker = this.getAggregation("yearPicker");
+		var oYearPicker = this._getYearPicker();
 		var oDate = CalendarDate.fromLocalJSDate(oYearPicker.getDate(), this.getPrimaryCalendarType());
 
 		// to keep day and month stable also for islamic date
@@ -2217,7 +2228,7 @@ sap.ui.define([
 
 	Calendar.prototype._selectYearRange = function() {
 		var oYearRangePicker = this.getAggregation("yearRangePicker"),
-			oYearPicker = this.getAggregation("yearPicker"),
+			oYearPicker = this._getYearPicker(),
 			sPrimaryCalendarType = this.getPrimaryCalendarType(),
 			oHeader = this.getAggregation("header"),
 			oFirstDate = CalendarDate.fromLocalJSDate(oYearRangePicker.getDate(), sPrimaryCalendarType),
@@ -2254,7 +2265,7 @@ sap.ui.define([
 
 	Calendar.prototype._showYearRangePicker = function () {
 		var oYearRangePicker = this.getAggregation("yearRangePicker"),
-			oYearPicker = this.getAggregation("yearPicker"),
+			oYearPicker = this._getYearPicker(),
 			oDateInMiddleRange = CalendarDate.fromLocalJSDate(oYearPicker.getFirstRenderedDate(), this.getPrimaryCalendarType());
 
 		oYearRangePicker.getDomRef() ? oYearRangePicker.$().css("display", "") : this._renderPicker(oYearRangePicker);
@@ -2429,7 +2440,7 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._updateHeadersYearPrimaryText = function (sFirstHeaderYear, sSecondHeaderYear) {
-		var oYearPicker = this.getAggregation("yearPicker"),
+		var oYearPicker = this._getYearPicker(),
 			oHeader = this.getAggregation("header"),
 			oSecondMonthHeader = this.getAggregation("secondMonthHeader"),
 			sFirstHeaderAriaLabel = sFirstHeaderYear,

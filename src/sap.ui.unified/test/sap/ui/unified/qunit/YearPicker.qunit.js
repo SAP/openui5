@@ -1,8 +1,10 @@
 /*global QUnit, window */
 
 sap.ui.define([
-	"sap/ui/unified/calendar/YearPicker"
-], function(YearPicker) {
+	"sap/ui/unified/calendar/YearPicker",
+	"sap/ui/unified/DateRange",
+	"sap/ui/unified/calendar/CalendarDate"
+], function(YearPicker, DateRange, CalendarDate) {
 	"use strict";
 
 	(function () {
@@ -29,6 +31,208 @@ sap.ui.define([
 			assert.equal(oFirstRenderedDate.getMonth(), 0, "month is correct");
 			assert.equal(oFirstRenderedDate.getDate(), 1, "date is correct");
 			assert.equal(oFirstRenderedDate.getHours(), 0, "hours are correct");
+		});
+
+		QUnit.module("interval selection", {
+			beforeEach: function() {
+				this.YP = new YearPicker({
+					intervalSelection: true
+				});
+			},
+			afterEach: function() {
+				this.YP.destroy();
+				this.YP = null;
+			}
+		});
+
+		QUnit.test("_setSelectedDatesControlOrigin", function(assert) {
+			// arrange
+			var oDates,
+				oSelectedDatesProvider = {
+					getSelectedDates: function() {
+						return "mocked_dates";
+					}
+				};
+
+			// act
+			this.YP._setSelectedDatesControlOrigin(oSelectedDatesProvider);
+			oDates = this.YP.getSelectedDates();
+
+			// assert
+			assert.equal(oDates, "mocked_dates", "selected dates are taken from the provider");
+			assert.equal(this.YP._getSelectedDates(), "mocked_dates", "_getSelectedDates returns the selected date from the provider");
+		});
+
+		QUnit.test("_getSelectedDates", function(assert) {
+			// act
+			var aSelectedDates = this.YP._getSelectedDates();
+
+			// assert
+			assert.ok(aSelectedDates[0], "sap.m.DateRange intance is created");
+			assert.strictEqual(aSelectedDates[0].getStartDate().getFullYear(), this.YP.getYear(),
+				"sap.m.DateRange isntace start date has the same yaer as the 'year' property value");
+			assert.notOk(aSelectedDates[0].getEndDate(), "sap.m.DateRange has no endDate set");
+		});
+
+		QUnit.test("_selectYear", function(assert) {
+			// arrange
+			var oSelectedDates = this.YP._getSelectedDates(),
+				aRefs;
+
+			this.YP.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			aRefs = this.YP.$().find(".sapUiCalItem");
+
+			// act
+			this.YP._selectYear(12);
+
+			// assert
+			assert.strictEqual(oSelectedDates[0].getStartDate().getFullYear(), 2000, "2000 is selected start year");
+
+			// assert
+			assert.strictEqual(oSelectedDates[0].getEndDate().getFullYear(), 2002, "2000 is selected end year");
+			assert.ok(aRefs.eq(10).hasClass("sapUiCalItemSel"), "is marked correctly with selected class");
+			assert.strictEqual(aRefs.eq(10).attr("aria-selected"), "true", "aria selected is set to true");
+			assert.ok(aRefs.eq(11).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
+			assert.strictEqual(aRefs.eq(11).attr("aria-selected"), "true", "aria selected is set to true");
+			assert.ok(aRefs.eq(12).hasClass("sapUiCalItemSel"), "is marked correctly with selected class");
+			assert.strictEqual(aRefs.eq(12).attr("aria-selected"), "true", "aria selected is set to true");
+		});
+
+		QUnit.test("onmouseover", function(assert) {
+			// arrange
+			var oFakeEvent = {
+					target: jQuery("<div></div>").attr({
+						"data-sap-year-start": "19970101",
+						"class": "sapUiCalItem"
+					}).get(0),
+					classList: {
+						contains: function() {
+							return true;
+						}
+					}
+				},
+				fnMarkIntervalSpy = this.spy(this.YP, "_markInterval");
+
+			this.YP._oItemNavigation = {
+				getItemDomRefs: function() {
+					return [];
+				}
+			};
+
+			// act
+			this.YP.onmouseover(oFakeEvent);
+
+			// assert
+			assert.ok(fnMarkIntervalSpy.calledOnce, "_markInterval was called once");
+
+			// clean
+			fnMarkIntervalSpy.restore();
+		});
+
+		QUnit.test("_isSelectionInProgress", function(assert) {
+			// arrange
+			var oJan_01_2019 = new Date(2019, 0, 1),
+				oJan_01_2020 = new Date(2020, 0, 1);
+
+			this.YP.addSelectedDate(new DateRange({
+				startDate: oJan_01_2019
+			}));
+
+			// assert
+			assert.ok(this.YP._isSelectionInProgress(), "Selection is not finished");
+
+			// act
+			this.YP.getSelectedDates()[0].setEndDate(oJan_01_2020);
+
+			// assert
+			assert.notOk(this.YP._isSelectionInProgress(), "Selection is finished");
+		});
+
+		QUnit.test("_fnShouldApplySelection", function(assert) {
+			// arrange
+			var oJan_01_2019 = new Date(2019, 0, 1),
+				oJan_01_2020 = new Date(2020, 0, 1),
+				oJan_01_2021 = new Date(2021, 0, 1);
+
+			this.YP.addSelectedDate(new DateRange({
+				startDate: oJan_01_2019,
+				endDate: oJan_01_2021
+			}));
+
+			// act & assert
+			assert.equal(
+				this.YP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oJan_01_2019)),
+				true,
+				"is correct with the start date"
+			);
+			assert.equal(
+				this.YP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oJan_01_2020)),
+				false,
+				"is correct with a date between"
+			);
+			assert.equal(
+				this.YP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oJan_01_2021)),
+				true,
+				"is correct with the end date"
+			);
+		});
+
+		QUnit.test("_fnShouldApplySelectionBetween", function(assert) {
+			// arrange
+			var oJan_01_2019 = new Date(2019, 0, 1),
+				oJan_01_2020 = new Date(2020, 0, 1),
+				oJan_01_2021 = new Date(2021, 0, 1),
+				oJan_01_2022 = new Date(2022, 0, 1);
+
+			this.YP.addSelectedDate(new DateRange({
+				startDate: oJan_01_2019,
+				endDate: oJan_01_2022
+			}));
+
+			// act & assert
+			assert.equal(
+				this.YP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oJan_01_2019)),
+				false,
+				"is correct with the start date"
+			);
+			assert.equal(
+				this.YP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oJan_01_2020)),
+				true,
+				"is correct with a date between"
+			);
+			assert.equal(
+				this.YP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oJan_01_2021)),
+				true,
+				"is correct with another date between"
+			);
+			assert.equal(
+				this.YP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oJan_01_2022)),
+				false,
+				"is correct with the end date"
+			);
+		});
+
+		QUnit.test("_markInterval", function(assert) {
+			// arrange
+			var oJan_01_2000 = new Date(2000, 0, 1),
+				oJan_01_2003 = new Date(2003, 0, 1),
+				aRefs;
+
+			this.YP.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			aRefs = this.YP.$().find(".sapUiCalItem");
+
+
+			// act
+			this.YP._markInterval(
+				CalendarDate.fromLocalJSDate(oJan_01_2000),
+				CalendarDate.fromLocalJSDate(oJan_01_2003)
+			);
+
+			// assert
+			assert.ok(aRefs.eq(11).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
+			assert.ok(aRefs.eq(12).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
 		});
 
 		QUnit.module("Accessibility", {
