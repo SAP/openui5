@@ -57,7 +57,8 @@ sap.ui.define([
 			"parameters" : "sap/ui/integration/designtime/baseEditor/propertyEditor/parametersEditor/ParametersEditor",
 			"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
 			"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
-			"json": "sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor"
+			"json": "sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor",
+			"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
 		},
 		"i18n" : "sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
 	};

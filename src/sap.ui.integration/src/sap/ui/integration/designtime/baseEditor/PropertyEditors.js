@@ -39,6 +39,13 @@ sap.ui.define([
 				},
 
 				/**
+				 * Indicates whether the embedded <code>BasePropertyEditor</code> instances should render their labels.
+				 */
+				renderLabels: {
+					type: "boolean"
+				},
+
+				/**
 				 * An array of custom configuration objects. If set, it has priority over <code>tags</code>.
 				 * Example:
 				 * <pre>
@@ -325,6 +332,13 @@ sap.ui.define([
 
 				oPromise
 					.then(function (aPropertyEditors) {
+						var bRenderLabels = this.getProperty("renderLabels");
+						if (bRenderLabels !== undefined) {
+							aPropertyEditors.forEach(function (propertyEditor) {
+								propertyEditor.setProperty("renderLabel", bRenderLabels);
+							});
+						}
+						this._sCreatedBy = sCreatedBy;
 						this._sCreatedBy = sCreatedBy;
 						delete this._fnCancelInit;
 						fnResolve(aPropertyEditors);
