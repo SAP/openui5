@@ -14,8 +14,16 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/test/Opa5",
 		"sap/ui/test/opaQunit"
 	], function (Any, Main, Log, Opa5, opaTest) {
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
-		QUnit.module("sap.ui.core.sample.odata.v4.SalesOrderTP100_V2");
+		QUnit.module("sap.ui.core.sample.odata.v4.SalesOrderTP100_V2", {
+			before : function () {
+				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			},
+			after : function () {
+				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			}
+		});
 
 		//*****************************************************************************
 		opaTest("Start sales orders TP100 app and check log", function (Given, When, Then) {

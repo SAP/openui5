@@ -8,7 +8,16 @@ sap.ui.define([
 	/*global QUnit */
 	"use strict";
 
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Adapt UI SalesOrdersTable");
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+
+	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Adapt UI SalesOrdersTable", {
+		before : function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		},
+		after : function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
 
 	//*****************************************************************************
 	opaTest("Adapt UI SalesOrdersTable", function (Given, When, Then) {
