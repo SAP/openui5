@@ -1662,8 +1662,8 @@ sap.ui.define([
 			oSelectedRange;
 
 		oSelectedRange = new DateRange({
-			startDate: new Date(oRangeDates.oStartDate),
-			endDate: new Date(oRangeDates.oEndDate)
+			startDate: CalendarUtils._createLocalDate(oRangeDates.oStartDate, true),
+			endDate: CalendarUtils._createLocalDate(oRangeDates.oEndDate, true)
 		});
 
 		oPicker.destroySelectedDates();
