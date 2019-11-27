@@ -21,8 +21,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge",
 	"sap/base/util/isEmptyObject",
-	"sap/base/Log",
-	"sap/ui/fl/apply/_internal/flexState/FlexState"
+	"sap/base/Log"
 ], function(
 	Change,
 	Variant,
@@ -42,8 +41,7 @@ sap.ui.define([
 	jQuery,
 	merge,
 	isEmptyObject,
-	Log,
-	FlexState
+	Log
 ) {
 	"use strict";
 
@@ -243,7 +241,6 @@ sap.ui.define([
 
 			//Binds a json model of message bundle to the component the first time a change within the vendor layer was detected
 			//It enables the translation of changes
-
 			if (!this._oMessagebundle && oChangeFileContent.messagebundle && oAppComponent) {
 				if (!oAppComponent.getModel("i18nFlexVendor")) {
 					if (aChanges.some(function(oChange) {
@@ -274,14 +271,6 @@ sap.ui.define([
 				this._bHasChangesOverMaxLayer = false;
 				return this.HIGHER_LAYER_CHANGES_EXIST;
 			}
-
-			// correct place to initialize maps yet to be defined
-			FlexState.initMaps(
-				Object.assign({
-					reference: this.getComponentName(),
-					flexResponse: oChangeFileContent
-				}, oComponentData && {technicalParameters: oComponentData.technicalParameters})
-			);
 
 			if (bVariantSectionContainsContent) {
 				// if variant changes should be included in response OR if filtering is required for variant changes

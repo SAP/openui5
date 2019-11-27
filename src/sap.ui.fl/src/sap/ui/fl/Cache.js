@@ -4,24 +4,24 @@
 
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Utils",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/LoaderExtensions",
 	"sap/base/util/ObjectPath"
 ],
 function(
 	LrepConnector,
-	CompatibilityConnector,
 	StaticFileConnector,
+	FlexState,
+	CompatibilityConnector,
 	Utils,
 	formatMessage,
 	Log,
 	jQuery,
-	LoaderExtensions,
 	ObjectPath
 ) {
 	"use strict";
@@ -233,6 +233,16 @@ function(
 
 		oCacheEntry.promise = oChangesLoadingPromise.then(function (mChanges) {
 			oCacheEntry.file = mChanges;
+
+			// correct place to initialize maps yet to be defined
+			FlexState.clearState(sComponentName);
+			FlexState.initForReference(
+				Object.assign({
+					reference: sComponentName,
+					storageResponse: mChanges
+				})
+			);
+
 			return oCacheEntry.file;
 		}, function (err) {
 			Cache._deleteEntry(sComponentName, sAppVersion);
