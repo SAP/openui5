@@ -45,7 +45,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 		oRm.accessibilityState(oYP, {
 			role: "grid",
 			readonly: "true",
-			multiselectable: "false"
+			multiselectable: "false",
+			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("YEAR_PICKER")
 		});
 
 		oRm.openEnd(); // div element
