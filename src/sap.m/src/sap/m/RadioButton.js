@@ -11,7 +11,8 @@ sap.ui.define([
 	'./Label',
 	'sap/ui/core/library',
 	'sap/base/strings/capitalize',
-	'./RadioButtonRenderer'
+	'./RadioButtonRenderer',
+	'sap/ui/core/message/MessageMixin'
 ],
 function(
 	library,
@@ -21,7 +22,8 @@ function(
 	Label,
 	coreLibrary,
 	capitalize,
-	RadioButtonRenderer
+	RadioButtonRenderer,
+	MessageMixin
 	) {
 	"use strict";
 
@@ -178,7 +180,13 @@ function(
 			 * @since 1.61
 			 * @private
 			 */
-			setsize: {type: "string", group: "Data", defaultValue: "", visibility: "hidden"}
+			setsize: {type: "string", group: "Data", defaultValue: "", visibility: "hidden"},
+
+			/**
+			 * Defines the text that appears in the tooltip of the <code>RadioButton</code>. If this is not specified, a default text is shown from the resource bundle.
+			 * @private
+			 */
+			valueStateText: { type: "string", group: "Misc", defaultValue: null, visibility: "hidden" }
 		},
 		events : {
 
@@ -228,6 +236,10 @@ function(
 	 */
 
 	EnabledPropagator.call(RadioButton.prototype);
+
+	// Apply the message mixin so all Messages on the RadioButton will have additionalText property set to ariaLabelledBy's text of the RadioButton
+	// and have valueState property of the RadioButton set to the message type.
+	MessageMixin.call(RadioButton.prototype);
 
 	RadioButton.prototype._groupNames = {};
 
@@ -663,6 +675,17 @@ function(
 			this._createLabel("textAlign", this.getTextAlign());
 		}
 		return this;
+	};
+
+	/**
+	 * Sets the private valueStateText property. Required, in order to make the MessageMixin work.
+	 *
+	 * @private
+	 * @param {string} sText The new value of the property.
+	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining.
+	 */
+	RadioButton.prototype.setValueStateText = function(sText) {
+		return this.setProperty("valueStateText", sText, true);
 	};
 
 	/**
