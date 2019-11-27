@@ -266,5 +266,25 @@ sap.ui.define([
 			assert.ok(aRefs.eq(9).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
 			assert.ok(aRefs.eq(10).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
 		});
+
+		QUnit.module("Accessibility", {
+			beforeEach: function () {
+				this.oMP = new MonthPicker();
+				this.oMP.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oMP.destroy();
+				this.oMP = null;
+			}
+		});
+
+		QUnit.test("Control description", function (assert) {
+			// Arrange
+			var sControlDescription = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER");
+
+			// Assert
+			assert.strictEqual(this.oMP.$().attr("aria-label"), sControlDescription , "Control description is added");
+		});
 	})();
 });

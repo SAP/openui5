@@ -56,7 +56,8 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate"],
 		oRm.writeAccessibilityState(oMP, {
 			role: "grid",
 			readonly: "true",
-			multiselectable: oMP.getIntervalSelection()
+			multiselectable: oMP.getIntervalSelection(),
+			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER")
 		});
 
 		oRm.write(">"); // div element
