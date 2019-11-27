@@ -2417,7 +2417,7 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(this.oInput.getValue(), "Model Value",
 			"The input value should be set from the model update");
-		assert.strictEqual(document.getSelection().toString(), "Model Value",
+		assert.strictEqual(document.activeElement.selectionEnd, this.oInput.getValue().length,
 			"The value should be selected, since the user has focused the input and the new value is from the model");
 	});
 
