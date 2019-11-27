@@ -105,9 +105,13 @@
 
 	.sapFCardHeaderText {
 		flex: 1 1 auto;
+		min-width: 0;
 
+		.sapFCardHeaderTitle {
+		  min-width: 0;
+		}
 		.sapFCardTitle {
-			margin: 0px;
+			min-width: 0;
 			display: block;
 			font-family: @sapUiFontHeaderFamily;
 			font-size: @sapMFontHeader5Size;
@@ -132,12 +136,10 @@
 		color: @sapUiTileTextColor;
 		text-align: left;
 		line-height: normal;
-		padding-left: 1rem;
-		margin-left: auto;
+		margin-left: 1rem;
 		text-wrap: avoid;
 		display: inline-block;
 		white-space: nowrap;
-		margin-top: 0.188rem;
 	}
 
 	.sapFCardHeaderTextFirstLine {
