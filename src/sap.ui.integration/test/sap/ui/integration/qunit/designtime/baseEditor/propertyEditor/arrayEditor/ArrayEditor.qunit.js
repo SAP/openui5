@@ -13,8 +13,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function _getArrayEditorElement(oEditor, iIndex) {
-		return oEditor.getContent().getItems()[0].getItems()[iIndex];
+	function _getArrayEditorElements(oEditor) {
+		return oEditor.getContent().getItems()[0].getItems();
 	}
 
 	QUnit.module("Array Editor: Given an editor config", {
@@ -91,7 +91,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When a model is set", function (assert) {
-			var oPropertyEditors = _getArrayEditorElement(this.oEditor, 0).getItems()[1];
+			var oPropertyEditors = _getArrayEditorElements(this.oEditor)[0].getItems()[1];
 			assert.strictEqual(oPropertyEditors.getConfig().length, 3, "Then the property editors get three configurations");
 			assert.strictEqual(oPropertyEditors.getConfig()[0].type, "string", "and the first property editor is for string");
 			assert.strictEqual(oPropertyEditors.getConfig()[1].type, "number", "and the second property editor is for number");
@@ -102,7 +102,7 @@ sap.ui.define([
 			this.oPropertyConfig.template.title.type = "enum";
 			this.oPropertyConfig.template.title.enum = ["Title1", "Title2"];
 			this.oEditor.setConfig(this.oPropertyConfig);
-			var oPropertyEditors = _getArrayEditorElement(this.oEditor, 0).getItems()[1];
+			var oPropertyEditors = _getArrayEditorElements(this.oEditor)[0].getItems()[1];
 			assert.strictEqual(oPropertyEditors.getConfig().length, 3, "Then the property editors get three configurations");
 			assert.strictEqual(oPropertyEditors.getConfig()[0].type, "enum", "and the first property editor is changed to enum");
 			assert.strictEqual(oPropertyEditors.getConfig()[1].type, "number", "and the second property editor is still for number");
@@ -117,7 +117,7 @@ sap.ui.define([
 				assert.equal(oEvent.getParameter("value")[0].title, "Deviation", "Then it is updated correctly");
 				done();
 			});
-			var oDelButton0 = _getArrayEditorElement(this.oEditor, 0).getItems()[0].getContentRight()[0];
+			var oDelButton0 = _getArrayEditorElements(this.oEditor)[0].getItems()[0].getContentRight()[2];
 			QUnitUtils.triggerEvent("tap", oDelButton0.getDomRef());
 		});
 
@@ -129,7 +129,7 @@ sap.ui.define([
 				assert.strictEqual(oEvent.getParameter("value")[0].title, "Target", "Then it is updated correctly");
 				done();
 			});
-			var oButton1 = _getArrayEditorElement(this.oEditor, 1).getItems()[0].getContentRight()[0];
+			var oButton1 = _getArrayEditorElements(this.oEditor)[1].getItems()[0].getContentRight()[2];
 			QUnitUtils.triggerEvent("tap", oButton1.getDomRef());
 		});
 
@@ -243,7 +243,7 @@ sap.ui.define([
 				});
 
 				// The old item is deleted
-				QUnitUtils.triggerEvent("tap", _getArrayEditorElement(this.oEditor, 1).getItems()[0].getContentRight()[0].getDomRef());
+				QUnitUtils.triggerEvent("tap", _getArrayEditorElements(this.oEditor)[1].getItems()[0].getContentRight()[2].getDomRef());
 			}.bind(this));
 
 			// A new item is added
@@ -307,6 +307,64 @@ sap.ui.define([
 				);
 				done();
 			}, this);
+		});
+
+		QUnit.test("moveUp should be disabled for the first item in the array", function (assert) {
+			var oMoveUpButton = _getArrayEditorElements(this.oEditor)[0].getItems()[0].getContentRight()[0];
+			assert.strictEqual(oMoveUpButton.getEnabled(), false);
+		});
+
+		QUnit.test("moveUp should be enabled for all items except first", function (assert) {
+			var aArrayElements = _getArrayEditorElements(this.oEditor);
+			var bEnabled = aArrayElements.slice(1).every(function (oArrayElement) {
+				return oArrayElement.getItems()[0].getContentRight()[0].getEnabled();
+			});
+			assert.strictEqual(bEnabled, true);
+		});
+
+		QUnit.test("moveDown should be disabled for the last item in the array", function (assert) {
+			var oMoveDownButton = _getArrayEditorElements(this.oEditor).slice(-1)[0].getItems()[0].getContentRight()[1];
+			assert.strictEqual(oMoveDownButton.getEnabled(), false);
+		});
+
+		QUnit.test("moveDown should be enabled for all items except last", function (assert) {
+			var aArrayElements = _getArrayEditorElements(this.oEditor);
+			var bEnabled = aArrayElements.slice(0, -1).every(function (oArrayElement) {
+				return oArrayElement.getItems()[0].getContentRight()[1].getEnabled();
+			});
+			assert.strictEqual(bEnabled, true);
+		});
+
+		QUnit.test("when pressing moveUp", function (assert) {
+			var done = assert.async();
+
+			this.oEditor.attachPropertyChange(function (oEvent) {
+				var aValue = oEvent.getParameter("value");
+				assert.strictEqual(aValue[0].title, "Deviation", "then Deviation is on the first place in array editor");
+				assert.strictEqual(aValue[1].title, "Target", "then Target is on the second place in array editor");
+				done();
+			});
+
+			var oMoveUpButton = _getArrayEditorElements(this.oEditor)[1].getItems()[0].getContentRight()[0];
+			assert.strictEqual(this.oEditor.getValue()[0].title, "Target", "then Target is on the first place in array editor");
+			assert.strictEqual(this.oEditor.getValue()[1].title, "Deviation", "then Deviation is on the second place in array editor");
+			QUnitUtils.triggerEvent("tap", oMoveUpButton.getDomRef());
+		});
+
+		QUnit.test("when pressing moveDown", function (assert) {
+			var done = assert.async();
+
+			this.oEditor.attachPropertyChange(function (oEvent) {
+				var aValue = oEvent.getParameter("value");
+				assert.strictEqual(aValue[0].title, "Deviation", "then Deviation is on the first place in array editor");
+				assert.strictEqual(aValue[1].title, "Target", "then Target is on the second place in array editor");
+				done();
+			});
+
+			var oMoveUpButton = _getArrayEditorElements(this.oEditor)[0].getItems()[0].getContentRight()[1];
+			assert.strictEqual(this.oEditor.getValue()[0].title, "Target", "then Target is on the first place in array editor");
+			assert.strictEqual(this.oEditor.getValue()[1].title, "Deviation", "then Deviation is on the second place in array editor");
+			QUnitUtils.triggerEvent("tap", oMoveUpButton.getDomRef());
 		});
 	});
 });
