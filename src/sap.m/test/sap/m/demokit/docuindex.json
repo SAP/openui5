@@ -576,6 +576,14 @@
 		  "since": "1.38",
 		  "samples": ["sap.m.sample.ImageContent"]
 		},
+        {
+          "id": "sap.m.InitialPagePattern",
+          "name": "InitialPage Pattern",
+          "category": "Display",
+          "since": "1.75",
+          "formFactors": "-",
+          "samples": ["sap.m.sample.InitialPagePattern"]
+        },
 		{
 		  "id": "sap.m.Input",
 		  "name": "Input",
@@ -1943,6 +1951,11 @@
 		  "name": "Image with ImageMode.Background",
 		  "description": "Visualizes the state of the control when the mode property is set to ImageMode.Background."
 		},
+        {
+          "id": "sap.m.sample.InitialPagePattern",
+          "name": "InitialPage Pattern",
+          "description": "The initial page floorplan allows the user to navigate to a single\nobject to view or edit it. The interaction point on the screen is a\nsingle input field that relies on assisted input to direct the user to\nthe object in as few steps as possible (using features such as value\nhelp and live search).\n\nThe floorplan is achieved with a single sap.uxap.ObjectPageLayout with\nsap.uxap.ObjectPageDynamicHeaderTitle.\n\nsap.m.Input is used as an Input within the Title.\nsap.m.MessagePage is used as a section, which informs the user\nif input is needed or if the searched value is not found.\nsap.m.SelectDialog is used as a value help dialog for the input."
+        },
 		{
 			"id": "sap.m.sample.FeedContent",
 			"name": "Feed Content",

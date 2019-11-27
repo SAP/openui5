@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<FlexBox wrap="Wrap" fitContainer="true">
+		<VBox class="sapUiLargeMarginEnd">
+			<HBox>
+				<Title text="{i18n>ReceiptInformation}"/>
+			</HBox>
+			<HBox>
+				<Label class="sapUiTinyMarginEnd" text="{i18n>Category}:" />
+				<Text text="{/selectedPurchase/Category}" />
+			</HBox>
+			<HBox>
+				<Label class="sapUiTinyMarginEnd" text="{i18n>SubCategory}:" />
+				<Text text="{/selectedPurchase/Sub-Category}" />
+			</HBox>
+			<HBox>
+				<Label class="sapUiTinyMarginEnd" text="{i18n>Supplier}:" />
+				<Text text="{/selectedPurchase/SupplierName}" />
+			</HBox>
+			<HBox>
+				<Label class="sapUiTinyMarginEnd" text="{i18n>PaymentType}:" />
+				<Text text="{/selectedPurchase/PaymentType}" />
+			</HBox>
+		</VBox>
+		<VBox>
+			<HBox>
+				<Title text="{i18n>DeliveryStatus}"/>
+			</HBox>
+			<HBox>
+				<Text text="{/selectedPurchase/DeliveryStatus}" />
+			</HBox>
+		</VBox>
+	</FlexBox>
+</core:FragmentDefinition>
