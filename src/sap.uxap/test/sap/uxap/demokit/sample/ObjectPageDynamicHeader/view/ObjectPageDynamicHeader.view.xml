@@ -105,7 +105,7 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection id="goalsSection" title="2014 Goals Plan">
+			<ObjectPageSection id="goalsSection" title="2014 Goals Plan ({path: 'ObjectPageModel>/counts/goals'})">
 				<subSections>
 					<ObjectPageSubSection id="goalsSectionSS1" title=" ">
 						<blocks>
@@ -115,7 +115,7 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection id="personalSection" title="Personal" importance="Medium">
+			<ObjectPageSection id="personalSection" title="Personal ({path: 'ObjectPageModel>/counts/personal'})" importance="Medium">
 				<subSections>
 					<ObjectPageSubSection id="personalSectionSS1" title="Connect">
 						<blocks>
@@ -137,7 +137,7 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection id="employmentSection" title="Employment">
+			<ObjectPageSection id="employmentSection" title="Employment ({path: 'ObjectPageModel>/counts/employment'})">
 				<subSections>
 					<ObjectPageSubSection id="employmentSectionSS1" title="Job information">
 						<blocks>
