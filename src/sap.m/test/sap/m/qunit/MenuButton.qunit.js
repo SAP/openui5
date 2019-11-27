@@ -142,6 +142,50 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("MenuButton (Regular) aria attributes", function (assert) {
+		assert.strictEqual(this.sut._getButtonControl().$().attr("aria-haspopup"), "menu",
+			"aria-haspopup is set on the internal button");
+	});
+
+	QUnit.test("MenuButton (Regular) aria-controls placement", function (assert) {
+		var $buttonReference = this.sut._getButtonControl().$(),
+			oGetMenuSub = this.stub(this.sut, "getMenu", function () {
+				return {
+					getDomRefId: function () { return "fake-menu-id"; }
+				};
+			});
+
+		this.sut._writeAriaAttributes();
+		assert.strictEqual($buttonReference.attr("aria-controls"), "fake-menu-id",
+			"aria-controls is placed on the internal button and it holds the menu's id");
+
+		this.sut._menuClosed();
+		assert.notOk($buttonReference.attr("aria-controls"), "aria-controls is removed from the internal button");
+
+		oGetMenuSub.restore();
+	});
+
+	QUnit.test("MenuButton in Split aria-controls placement", function (assert) {
+		this.sut.setButtonMode(MenuButtonMode.Split);
+		sap.ui.getCore().applyChanges();
+
+		var $arrowButton = this.sut._getButtonControl()._getArrowButton().$(),
+			oGetMenuSub = this.stub(this.sut, "getMenu", function () {
+				return {
+					getDomRefId: function () { return "fake-menu-id"; }
+				};
+			});
+
+		this.sut._writeAriaAttributes();
+		assert.strictEqual($arrowButton.attr("aria-controls"), "fake-menu-id",
+			"aria-controls is placed on the internal arrow button and it holds the menu's id");
+
+		this.sut._menuClosed();
+		assert.notOk($arrowButton.attr("aria-controls"), "aria-controls is removed from the internal arrow button");
+
+		oGetMenuSub.restore();
+	});
+
 	QUnit.test("MenuButton in Split root aria attributes", function(assert) {
 		//arrange
 		this.sut.setButtonMode(MenuButtonMode.Split);
@@ -152,7 +196,7 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(oInnerButton.getMetadata().getName(), "sap.m.SplitButton", "The inner aggregation '_buttonControl' has correct type");
-		assert.strictEqual(sAriaHasPopup, "true", '"aria-haspopup" is present and has a correct value');
+		assert.strictEqual(sAriaHasPopup, "menu", '"aria-haspopup" is present and has a correct value');
 	});
 
 	QUnit.test("MenuButton in Split mode", function (assert) {
@@ -371,25 +415,6 @@ sap.ui.define([
 				"Internal button has reference to the newly created label");
 
 		oLabel.destroy();
-	});
-
-	QUnit.test("aria-controls is removed when menu is closed", function (assert) {
-		// Prepare
-		var oGetMenuSub = this.stub(this.oMenuButton, "getMenu", function () {
-			return {
-				getDomRefId: function () { return "Some ID to fake the method"; }
-			};
-		});
-
-		// Act
-		this.oMenuButton._writeAriaAttributes();
-		this.oMenuButton._menuClosed();
-
-		// Assert
-		assert.notOk(this.oMenuButton.getDomRef().hasAttribute("aria-controls"), "aria-controls attribute is removed when menu is closed");
-
-		// Cleanup
-		oGetMenuSub.restore();
 	});
 
 	QUnit.module("Pressing", {
