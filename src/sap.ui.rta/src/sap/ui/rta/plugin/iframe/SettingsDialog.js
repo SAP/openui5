@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
-	"sap/ui/rta/plugin/iframe/SettingsDialogController"
+	"sap/ui/rta/plugin/iframe/SettingsDialogController",
+	"sap/ui/fl/util/getContainerUserInfo"
 ], function (
 	Log,
 	ManagedObject,
@@ -16,7 +17,8 @@ sap.ui.define([
 	coreLibrary,
 	JSONModel,
 	RtaUtils,
-	SettingsDialogController
+	SettingsDialogController,
+	getContainerUserInfo
 ) {
 	"use strict";
 
@@ -32,7 +34,6 @@ sap.ui.define([
 		sizeTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_TITLE"),
 		widthLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_WIDTH_LABEL"),
 		heightLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_HEIGHT_LABEL"),
-		sizeWarning: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_WARNING"),
 		urlTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_URL_TITLE"),
 		saveText: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_BUTTON_SAVE"),
 		cancelText: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_BUTTON_CANCEL"),
@@ -53,18 +54,18 @@ sap.ui.define([
 				valueState: ValueState.None
 			},
 			frameWidth: {
-				value: "",
+				value: undefined,
 				valueState: ValueState.None
 			},
 			frameWidthUnit: {
-				value: "px"
+				value: "%"
 			},
 			frameHeight: {
-				value: "",
+				value: undefined,
 				valueState: ValueState.None
 			},
 			frameHeightUnit: {
-				value: "px"
+				value: "%"
 			},
 			frameUrl: {
 				value: "",
@@ -74,9 +75,9 @@ sap.ui.define([
 				value: []
 			},
 			unitsOfMeasure: [{
-				name: "px"
-			}, {
 				name: "%"
+			}, {
+				name: "px"
 			}, {
 				name: "rem"
 			}]
@@ -158,6 +159,43 @@ sap.ui.define([
 		}.bind(this));
 
 		this._oDialog.open();
+	};
+
+	/**
+	 * Helper to extract current context URL parameters for the URL builder
+	 *
+	 * @param {sap.ui.base.ManagedObject} oObject - Managed object to extract the context from
+	 * @return {array} Parameters array for URL builder exposed by the settings dialog
+	 */
+	SettingsDialog.buildUrlBuilderParametersFor = function (oObject) {
+		var oUserInfo = getContainerUserInfo();
+		var oUserParameters = Object.keys(oUserInfo)
+			.map(function (sUserSetting) {
+				return {
+					label: sUserSetting,
+					key: "{$user>/" + sUserSetting + "}",
+					value: oUserInfo[sUserSetting]
+				};
+			});
+		var oBindingContext = oObject.getBindingContext();
+		var oDefaultBoundObjectParameters;
+		if (oBindingContext) {
+			var oDefaultBoundObject = oBindingContext.getObject();
+			oDefaultBoundObjectParameters = Object.keys(oDefaultBoundObject)
+				.filter(function (sProperty) {
+					return typeof oDefaultBoundObject[sProperty] !== "object";
+				})
+				.map(function (sProperty) {
+					return {
+						label: sProperty,
+						key: "{" + sProperty + "}",
+						value: oDefaultBoundObject[sProperty]
+					};
+				});
+		} else {
+			oDefaultBoundObjectParameters = [];
+		}
+		return oUserParameters.concat(oDefaultBoundObjectParameters);
 	};
 
 	return SettingsDialog;

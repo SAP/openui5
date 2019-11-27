@@ -66,6 +66,7 @@ sap.ui.define([
 			}).then(function (sUrl) {
 				if (sUrl) {
 					this._oJSONModel.setProperty("/frameUrl/value", sUrl);
+					this._areAllTextFieldsValid(); // re-validate URL
 				}
 			}.bind(this)).catch(function (oError) {
 				Log.error("Error closing URLBuilderDialog: ", oError);
@@ -129,15 +130,18 @@ sap.ui.define([
 		 * @private
 		 */
 		_areAllTextFieldsValid: function () {
-			var bValid = true;
-			var oData = this._oJSONModel.getData();
-			_aTextInputFields.forEach(function (sFieldName) {
-				if (oData[sFieldName]["value"].trim() === "") {
-					bValid = false;
-					this._oJSONModel.setProperty("/" + sFieldName + "/valueState", ValueState.Error);
+			var oJSONModel = this._oJSONModel;
+			return _aTextInputFields.reduce(function (bAllValid, sFieldName) {
+				var sValuePath = "/" + sFieldName + "/value";
+				var sValueState;
+				if (oJSONModel.getProperty(sValuePath).trim() === "") {
+					sValueState = ValueState.Error;
+				} else {
+					sValueState = ValueState.None;
 				}
-			}, this);
-			return bValid;
+				oJSONModel.setProperty(sValuePath + "State", sValueState);
+				return bAllValid && sValueState === ValueState.None;
+			}, true);
 		},
 
 		/**

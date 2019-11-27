@@ -335,6 +335,9 @@ function(
 		appDescriptor : {
 			clazz : 'sap.ui.rta.command.AppDescriptorCommand',
 			noSelector: true
+		},
+		addIFrame : {
+			clazz : 'sap.ui.rta.command.AddIFrame'
 		}
 	};
 

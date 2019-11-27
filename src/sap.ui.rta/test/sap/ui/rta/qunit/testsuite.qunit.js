@@ -127,6 +127,15 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/iframe/URLBuilderDialog"]
 				}
 			},
+			"plugin/iframe/AddIFrame": {
+				group: "Plugin",
+				coverage: {
+					only: [
+						"sap/ui/rta/plugin/iframe/AddIFrame",
+						"sap/ui/rta/plugin/BaseCreate"
+					]
+				}
+			},
 			"plugin/Combine": {
 				group: "Plugin",
 				coverage: {
@@ -142,7 +151,10 @@ sap.ui.define([
 			"plugin/CreateContainer": {
 				group: "Plugin",
 				coverage: {
-					only: ["sap/ui/rta/plugin/CreateContainer"]
+					only: [
+						"sap/ui/rta/plugin/CreateContainer",
+						"sap/ui/rta/plugin/BaseCreate"
+					]
 				}
 			},
 			"plugin/CutPaste": {

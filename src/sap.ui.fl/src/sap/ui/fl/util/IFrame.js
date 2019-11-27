@@ -6,40 +6,17 @@
 sap.ui.define([
 	"../library",
 	"sap/ui/core/Control",
-	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
+	"./getContainerUserInfo",
 	"sap/ui/core/library",
 	"./IFrameRenderer"
 ], function(
 	library,
 	Control,
-	Utils,
-	JSONModel
+	JSONModel,
+	getContainerUserInfo
 ) {
 	"use strict";
-
-	function getContainerUserInfo () {
-		var oShellContainer = Utils.getUshellContainer();
-		if (oShellContainer) {
-			var oUserInfoService = oShellContainer.getService("UserInfo");
-			if (!oUserInfoService) {
-				return;
-			}
-			var oUserInfo = oUserInfoService.getUser();
-			if (!oUserInfo) {
-				return;
-			}
-			var sEmail = oUserInfo.getEmail();
-			var sDomain = /@(.*)/.exec(sEmail)[1];
-			return {
-				fullName: oUserInfo.getFullName(),
-				firstName: oUserInfo.getFirstName(),
-				lastName: oUserInfo.getLastName(),
-				email: sEmail,
-				domain: sDomain
-			};
-		}
-	}
 
 	/**
 	 * Constructor for a new <code>IFrame</code>.
@@ -78,7 +55,14 @@ sap.ui.define([
 				/**
 				 * Defines the <code>IFrame</code> height.
 				 */
-				height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "100%"}
+				height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "100%"},
+
+				/**
+				 * Backup of the initial settings for the dialogs
+				 *
+				 * @ui5-restricted sap.ui.fl
+				 */
+				_settings : {type : "object", group : "Data", defaultValue : null}
 			},
 
 			designtime: "sap/ui/fl/designtime/util/IFrame.designtime"
@@ -88,9 +72,23 @@ sap.ui.define([
 			if (Control.prototype.init) {
 				Control.prototype.init.apply(this, arguments);
 			}
-			var oUserData = getContainerUserInfo() || {};
-			this._oUserModel = new JSONModel(oUserData);
+			this._oUserModel = new JSONModel(getContainerUserInfo());
 			this.setModel(this._oUserModel, "$user");
+		},
+
+		applySettings: function (mSettings) {
+			Control.prototype.applySettings.apply(this, arguments);
+			if (mSettings && !mSettings._settings) {
+				var mMergedSettings = this.getProperty("_settings") || {};
+				Object.keys(mSettings)
+					.filter(function (sPropertyName) {
+						return !!mSettings[sPropertyName];
+					})
+					.forEach(function (sPropertyName) {
+						mMergedSettings[sPropertyName] = mSettings[sPropertyName];
+					});
+				this.setProperty("_settings", mMergedSettings);
+			}
 		},
 
 		exit: function () {

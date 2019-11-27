@@ -33,18 +33,16 @@
 				<form:content>
 					<Label text="{/text/widthLabel}"/>
 					<Input value="{path: '/frameWidth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
-						valueState="{/frameWidth/valueState}"/>
+						placeholder="100" valueState="{/frameWidth/valueState}"/>
 					<Select selectedKey="{/frameWidthUnit/value}" items="{/unitsOfMeasure}">
 						<core:Item key="{name}" text="{name}" />
 					</Select>
 					<Label text="{/text/heightLabel}"/>
 					<Input value="{path: '/frameHeight/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
-						valueState="{/frameHeight/valueState}"/>
+						placeholder="100" valueState="{/frameHeight/valueState}"/>
 					<Select selectedKey="{/frameHeightUnit/value}" items="{/unitsOfMeasure}">
 						<core:Item key="{name}" text="{name}" />
 					</Select>
-					<Label/>
-					<Text text="{/text/sizeWarning}"/>
 				</form:content>
 			</form:SimpleForm>
 			<form:SimpleForm editable="true" title="{/text/urlTitle}" layout="ResponsiveGridLayout"
@@ -54,7 +52,7 @@
 				columnsXL="2" columnsL="2" columnsM="2"
 				>
 				<form:content>
-					<TextArea value="{path: '/frameUrl/value', type: 'sap.ui.model.type.String', constraints: { minLength: 1}}"
+					<TextArea value="{path: '/frameUrl/value', type: 'sap.ui.model.type.String'}"
 						valueState="{/frameUrl/valueState}"/>
 				</form:content>
 			</form:SimpleForm>

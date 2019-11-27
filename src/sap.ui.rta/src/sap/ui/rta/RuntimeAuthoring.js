@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/plugin/Stretch",
 	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/rta/plugin/iframe/AddIFrame",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/plugin/TabHandling",
@@ -83,6 +84,7 @@ function(
 	SettingsPlugin,
 	StretchPlugin,
 	ControlVariantPlugin,
+	AddIFramePlugin,
 	ToolHooksPlugin,
 	ContextMenuPlugin,
 	TabHandlingPlugin,
@@ -387,6 +389,15 @@ function(
 			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
 				commandFactory : oCommandFactory
 			});
+
+			// Add IFrame
+			var oUriParams = UriParameters.fromQuery(window.location.search);
+			var sAddEnableIFrame = oUriParams.get("sap-ui-xx-rta-addiframe");
+			if (sAddEnableIFrame === "true") {
+				this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
+					commandFactory : oCommandFactory
+				});
+			}
 
 			//ToolHooks
 			this._mDefaultPlugins["toolHooks"] = new ToolHooksPlugin();
@@ -1254,53 +1265,79 @@ function(
 	};
 
 	/**
+	 * Triggers a callback when a control gets created with its associated overlay.
+	 * @param {string} sNewControlID - ID of the newly created control
+	 * @param {Function} fnCallback - Callback to execute when the conditions are met, the overlay is the only parameter
+	 */
+	RuntimeAuthoring.prototype._scheduleOnCreated = function (sNewControlID, fnCallback) {
+		function onElementOverlayCreated (oEvent) {
+			var oNewOverlay = oEvent.getParameter("elementOverlay");
+			if (oNewOverlay.getElement().getId() === sNewControlID) {
+				this._oDesignTime.detachEvent("elementOverlayCreated", onElementOverlayCreated, this);
+				fnCallback(oNewOverlay);
+			}
+		}
+
+		this._oDesignTime.attachEvent("elementOverlayCreated", onElementOverlayCreated, this);
+	};
+
+	/**
+	 * Triggers a callback when a control gets created and its associated overlay is visible.
+	 * @param {string} sNewControlID - ID of the newly created control
+	 * @param {Function} fnCallback - Callback to execute when the conditions are met, the overlay is the only parameter
+	 */
+	RuntimeAuthoring.prototype._scheduleOnCreatedAndVisible = function (sNewControlID, fnCallback) {
+		function onGeometryChanged (oEvent) {
+			var oElementOverlay = oEvent.getSource();
+			if (oElementOverlay.getGeometry() && oElementOverlay.getGeometry().visible) {
+				oElementOverlay.detachEvent("geometryChanged", onGeometryChanged);
+				fnCallback(oElementOverlay);
+			}
+		}
+
+		function onGeometryCheck (oElementOverlay) {
+			// the control can be set to visible, but still have no size when we do the check
+			// that's why we also attach to 'geometryChanged' and check if the overlay has a size
+			if (!oElementOverlay.getGeometry() || !oElementOverlay.getGeometry().visible) {
+				oElementOverlay.attachEvent('geometryChanged', onGeometryChanged);
+			} else {
+				fnCallback(oElementOverlay);
+			}
+		}
+
+		this._scheduleOnCreated(sNewControlID, function (oNewOverlay) {
+			// the overlay needs to be rendered
+			if (oNewOverlay.isRendered()) {
+				onGeometryCheck(oNewOverlay);
+			} else {
+				oNewOverlay.attachEventOnce('afterRendering', function (oEvent) {
+					onGeometryCheck(oEvent.getSource());
+				});
+			}
+		});
+	};
+
+	/**
 	 * Function to automatically start the rename plugin on a container when it gets created
 	 * @param {object} vAction       The create action from designtime metadata
 	 * @param {string} sNewControlID The id of the newly created container
 	 */
 	RuntimeAuthoring.prototype._scheduleRenameOnCreatedContainer = function(vAction, sNewControlID) {
 		var fnStartEdit = function (oElementOverlay) {
+			oElementOverlay.setSelected(true);
+			this.getPlugins()["rename"].startEdit(oElementOverlay);
+		}.bind(this);
+
+		this._scheduleOnCreatedAndVisible(sNewControlID, function (oElementOverlay) {
 			// get container of the new control for rename
 			var sNewContainerID = this.getPlugins()["createContainer"].getCreatedContainerId(vAction, oElementOverlay.getElement().getId());
 			var oContainerElementOverlay = OverlayRegistry.getOverlay(sNewContainerID);
-			oContainerElementOverlay.setSelected(true);
-			this.getPlugins()["rename"].startEdit(oContainerElementOverlay);
-		};
-
-		var fnGeometryChangedCallback = function (oEvent) {
-			var oElementOverlay = oEvent.getSource();
-			if (oElementOverlay.getGeometry() && oElementOverlay.getGeometry().visible) {
-				fnStartEdit.call(this, oElementOverlay);
-				oElementOverlay.detachEvent('geometryChanged', fnGeometryChangedCallback, this);
-			}
-		};
-
-		var fnGeometryCheck = function (oElementOverlay) {
-			// the control can be set to visible, but still have no size when we do the check
-			// that's why we also attach to 'geometryChanged' and check if the overlay has a size
-			if (!oElementOverlay.getGeometry() || !oElementOverlay.getGeometry().visible) {
-				oElementOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
+			if (oContainerElementOverlay) {
+				fnStartEdit(oContainerElementOverlay);
 			} else {
-				fnStartEdit.call(this, oElementOverlay);
+				this._scheduleOnCreatedAndVisible(sNewContainerID, fnStartEdit);
 			}
-		};
-
-		var fnElementOverlayCreatedCallback = function(oEvent) {
-			var oNewOverlay = oEvent.getParameter("elementOverlay");
-			if (oNewOverlay.getElement().getId() === sNewControlID) {
-				this._oDesignTime.detachEvent("elementOverlayCreated", fnElementOverlayCreatedCallback, this);
-				// the overlay needs to be rendered before we can trigger the rename on it
-				if (oNewOverlay.isRendered()) {
-					fnGeometryCheck.call(this, oNewOverlay);
-				} else {
-					oNewOverlay.attachEventOnce('afterRendering', function (oEvent) {
-						fnGeometryCheck.call(this, oEvent.getSource());
-					}, this);
-				}
-			}
-		};
-
-		this._oDesignTime.attachEvent("elementOverlayCreated", fnElementOverlayCreatedCallback, this);
+		}.bind(this));
 	};
 
 	/**
@@ -1318,8 +1355,17 @@ function(
 
 		var oCommand = oEvent.getParameter("command");
 		if (oCommand instanceof sap.ui.rta.command.BaseCommand) {
-			if (vAction && sNewControlID) {
-				this._scheduleRenameOnCreatedContainer(vAction, sNewControlID);
+			if (sNewControlID) {
+				this._scheduleOnCreated(sNewControlID, function (oElementOverlay) {
+					var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
+					var fnSelect = oDesignTimeMetadata.getData().select;
+					if (typeof fnSelect === "function") {
+						fnSelect(oElementOverlay.getElement());
+					}
+				});
+				if (vAction) {
+					this._scheduleRenameOnCreatedContainer(vAction, sNewControlID);
+				}
 			}
 			return this.getCommandStack().pushAndExecute(oCommand)
 			// Error handling when a command fails is done in the Stack
