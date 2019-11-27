@@ -285,8 +285,6 @@ sap.ui.define([
 	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 	 * @param {string} [oEntityData={}]
 	 *   The initial entity data
-	 * @param {function} fnCancelCallback
-	 *   A function which is called after a transient entity has been canceled from the cache
 	 * @param {function} fnErrorCallback
 	 *   A function which is called with an error object each time a POST request for the create
 	 *   fails
@@ -299,7 +297,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
-			oEntityData, fnCancelCallback, fnErrorCallback, fnSubmitCallback) {
+			oEntityData, fnErrorCallback, fnSubmitCallback) {
 		var aCollection,
 			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
 			that = this;
@@ -315,7 +313,7 @@ sap.ui.define([
 				// Note: sPath is empty only in a CollectionCache, so we may call adjustReadRequests
 				that.adjustReadRequests(0, -1);
 			}
-			fnCancelCallback();
+			oGroupLock.cancel();
 		}
 
 		// Sets a marker that the create request is pending, so that update and delete fail.

@@ -3960,7 +3960,7 @@ sap.ui.define([
 		// code under test
 		oReadPromise = this.mockRequestAndRead(oCache, 0, "Employees", 0, 3);
 		oCreatePromise = oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "",
-			"($uid=id-1-23)", {}, null, null, function fnSubmitCallback() {});
+			"($uid=id-1-23)", {}, null, function fnSubmitCallback() {});
 
 		return Promise.all([oReadPromise, oCreatePromise]).then(function () {
 			assert.deepEqual(oCache.aElements, [
@@ -3980,14 +3980,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#read: cancel create & pending read", function (assert) {
 		var oCache = this.createCache("Employees"),
-			fnCancelCallback = function () {},
 			oError = new Error(),
 			oExpectation,
 			aPromises,
-			oUpdateGroupLock = {getGroupId : function () {}};
+			oUpdateGroupLock = {
+				cancel : function () {},
+				getGroupId : function () {}
+			};
 
 		oError.canceled = true;
 		this.mock(oUpdateGroupLock).expects("getGroupId").withExactArgs().returns("update");
+		this.mock(oUpdateGroupLock).expects("cancel").withExactArgs();
 		oExpectation = this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees", sinon.match.same(oUpdateGroupLock), null,
 				sinon.match.object, sinon.match.func, sinon.match.func, undefined,
@@ -3999,7 +4002,7 @@ sap.ui.define([
 		// code under test
 		aPromises = [
 			oCache.create(oUpdateGroupLock, SyncPromise.resolve("Employees"), "", "($uid=id-1-23)",
-				{}, fnCancelCallback).catch(function () {}),
+				{}).catch(function () {}),
 			this.mockRequestAndRead(oCache, 1, "Employees", 0, 3)
 		];
 		oExpectation.args[0][6](); // simulate the requestor's callback on cancel
@@ -4633,14 +4636,14 @@ sap.ui.define([
 				.callsArg(5) // fnSubmit
 				.resolves({});
 			oCache.create(oCreateGroupLock0, SyncPromise.resolve("Employees"), "", "($uid=id-1-23)",
-				{}, null, null, function fnSubmitCallback() {});
+				{}, null, function fnSubmitCallback() {});
 			this.mock(oCreateGroupLock1).expects("getGroupId").withExactArgs().returns("create");
 			this.oRequestorMock.expects("request").withArgs("POST", "Employees",
 				sinon.match.same(oCreateGroupLock1))
 				.callsArg(5) // fnSubmit
 				.resolves({});
 			oCache.create(oCreateGroupLock1, SyncPromise.resolve("Employees"), "", "($uid=id-1-24)",
-				{}, null, null, function fnSubmitCallback() {});
+				{}, null, function fnSubmitCallback() {});
 
 			// code under test
 			assert.strictEqual(oCache.getResourcePath(oFixture.iStart, oFixture.iEnd),
@@ -4660,14 +4663,14 @@ sap.ui.define([
 			.callsArg(5) // fnSubmit
 			.resolves({});
 		oCache.create(oCreateGroupLock0, SyncPromise.resolve("Employees"), "", "($uid=id-1-23)", {},
-			null, null, function fnSubmitCallback() {});
+			null, function fnSubmitCallback() {});
 		this.mock(oCreateGroupLock1).expects("getGroupId").withExactArgs().returns("create");
 		this.oRequestorMock.expects("request").withArgs("POST", "Employees",
 				sinon.match.same(oCreateGroupLock1))
 			.callsArg(5) // fnSubmit
 			.resolves({});
 		oCache.create(oCreateGroupLock1, SyncPromise.resolve("Employees"), "", "($uid=id-1-24)", {},
-			null, null, function fnSubmitCallback() {});
+			null, function fnSubmitCallback() {});
 
 		// Note: we forbid ranges which contain created entities
 		assert.throws(function () {
@@ -5478,7 +5481,7 @@ sap.ui.define([
 					.callsArg(5) // fnSubmit
 					.resolves({});
 				return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
-						sTransientPredicate, {}, null, null, function fnSubmitCallback() {})
+						sTransientPredicate, {}, null, function fnSubmitCallback() {})
 					.then(function () {
 						var oReadGroupLock = {unlock : function () {}};
 
@@ -5695,7 +5698,7 @@ sap.ui.define([
 
 			// code under test
 			oCreatePromise = oCache.create(oGroupLock, SyncPromise.resolve(sPostPath), sPathInCache,
-				sTransientPredicate, oInitialData, null, null, function fnSubmitCallback() {});
+				sTransientPredicate, oInitialData, null, function fnSubmitCallback() {});
 
 			// initial data is synchronously available
 			assert.strictEqual(aCollection[0], oEntityDataCleaned);
@@ -5749,7 +5752,6 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/~/", {getGroupProperty : defaultGetGroupProperty}),
 			oCache = new _Cache(oRequestor, "TEAMS"),
 			oCacheMock = this.mock(oCache),
-			fnCancelCallback = this.spy(),
 			aCollection = [],
 			oCreatePromise,
 			fnDeleteCallback = this.spy(),
@@ -5757,8 +5759,10 @@ sap.ui.define([
 			oEntity0 = {},
 			oEntity1 = {},
 			oGroupLock = {
+				cancel: function () {},
 				getGroupId : function () {},
 				getSerialNumber : function () {},
+				isCanceled : function () { return false; },
 				unlock : function () {}
 			},
 			sPathInCache = "('0')/TEAM_2_EMPLOYEES",
@@ -5782,7 +5786,7 @@ sap.ui.define([
 
 		// code under test
 		oCreatePromise = oCache.create(oGroupLock, oPostPathPromise, sPathInCache,
-			sTransientPredicate, oEntity0, fnCancelCallback);
+			sTransientPredicate, oEntity0);
 
 		assert.strictEqual(aCollection.$created, 1);
 		sinon.assert.calledWithExactly(oRequestor.request, "POST", "TEAMS('0')/TEAM_2_EMPLOYEES",
@@ -5802,6 +5806,7 @@ sap.ui.define([
 		oCacheMock.expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPathInCache)
 			.returns(SyncPromise.resolve(aCollection));
+		this.mock(oGroupLock).expects("cancel").withExactArgs();
 		this.mock(oDeleteGroupLock).expects("unlock").withExactArgs();
 		aCollection.$count = 42;
 
@@ -5994,7 +5999,7 @@ sap.ui.define([
 
 		// code under test
 		oPostPromise = oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
-			sTransientPredicate, oEntityData, null, null, function fnSubmitCallback() {});
+			sTransientPredicate, oEntityData, null, function fnSubmitCallback() {});
 
 		assert.strictEqual(oCache.hasPendingChangesForPath(""), true, "pending changes for root");
 		assert.strictEqual(oCache.hasPendingChangesForPath("foo"), false,
@@ -6139,7 +6144,7 @@ sap.ui.define([
 			.returns(oFetchTypesPromise);
 
 		oCreatePromise = oCache.create(oCreateGroupLock0, SyncPromise.resolve("Employees"), "",
-			sTransientPredicate, {}, undefined, oCallbacks.fnError, oCallbacks.fnSubmit);
+			sTransientPredicate, {}, oCallbacks.fnError, oCallbacks.fnSubmit);
 
 		checkUpdateSuccess("before submitBatch").then(function () {
 			var oCreateGroupLock1 = {getGroupId : function () {}};
@@ -6257,10 +6262,7 @@ sap.ui.define([
 
 			// code under test
 			oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "", sTransientPredicate,
-				{Name : null},
-				function () {
-					throw new Error("unexpected call to fnCancelCallback");
-				}, function fnErrorCallback() {}, function fnSubmitCallback() {});
+				{Name : null}, function fnErrorCallback() {}, function fnSubmitCallback() {});
 
 			return oFailedPostPromise.then(undefined, function () {
 				var oGroupLock0 = {getGroupId : function () {}},
@@ -6337,7 +6339,7 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "",
-			sTransientPredicate, undefined, null, null, function fnSubmitCallback() {});
+			sTransientPredicate, undefined, null, function fnSubmitCallback() {});
 
 		assert.deepEqual(oCache.aElements[0], {
 			"@$ui5._" : {"transient" : "updateGroup", "transientPredicate" : sTransientPredicate},
@@ -6359,13 +6361,16 @@ sap.ui.define([
 	QUnit.test("CollectionCache: create entity, canceled", function (assert) {
 		var oCache = this.createCache("Employees"),
 			oCanceledError = new Error(),
-			bFnCancelCallbackCalled = false,
-			oGroupLock = {getGroupId : function () {}},
+			oGroupLock = {
+				cancel : function () {},
+				getGroupId : function () {}
+			},
 			sTransientPredicate = "($uid=id-1-23)";
 
 		oCanceledError.canceled = true;
 
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("updateGroup");
+		this.mock(oGroupLock).expects("cancel").withExactArgs();
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
 				sinon.match.object, sinon.match.func, sinon.match.func, undefined,
@@ -6375,15 +6380,11 @@ sap.ui.define([
 
 		// code under test
 		return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", sTransientPredicate,
-			undefined,
-			function () {
-				bFnCancelCallbackCalled = true;
-			}).then(function () {
+			undefined).then(function () {
 				assert.ok(false, "Unexpected success");
 			}, function (oError) {
 				assert.strictEqual(oError, oCanceledError);
 				assert.strictEqual(oCache.aElements.length, 0);
-				assert.ok(bFnCancelCallbackCalled);
 			});
 	});
 
@@ -6478,8 +6479,7 @@ sap.ui.define([
 
 		// code under test
 		return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", sTransientPredicate,
-				undefined, /*fnCancelCallback*/null, oCallbacks.errorCallback,
-				oCallbacks.submitCallback)
+				undefined, oCallbacks.errorCallback, oCallbacks.submitCallback)
 			.then(function () {
 				assert.ok(false, "Unexpected success");
 			}, function (oError) {
@@ -6550,13 +6550,14 @@ sap.ui.define([
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
 		var oRequestor = _Requestor.create("/~/", {getGroupProperty : defaultGetGroupProperty}),
 			oCache = _Cache.create(oRequestor, "Employees"),
-			fnCancelCallback = this.spy(),
 			oCreatePromise,
 			oDeleteGroupLock = {unlock : function () {}},
 			oDeletePromise,
 			oGroupLock = {
+				cancel : function () {},
 				getGroupId : function () {},
 				getSerialNumber : function () {},
+				isCanceled : function () { return false; },
 				unlock : function () {}
 			},
 			oTransientElement,
@@ -6572,7 +6573,7 @@ sap.ui.define([
 
 		// code under test
 		oCreatePromise = oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
-			sTransientPredicate, {}, fnCancelCallback)
+			sTransientPredicate, {})
 			.catch(function (oError) {
 				assert.ok(oError.canceled);
 			});
@@ -6585,6 +6586,7 @@ sap.ui.define([
 			sinon.match.func, undefined, "Employees" + sTransientPredicate);
 		this.spy(oRequestor, "removePost");
 		this.spy(_Helper, "updateExisting");
+		this.mock(oGroupLock).expects("cancel").withExactArgs();
 		this.mock(oDeleteGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
@@ -6597,7 +6599,6 @@ sap.ui.define([
 			sinon.match(function (oParameter) {
 				return oParameter === oTransientElement;
 			}));
-		sinon.assert.calledOnce(fnCancelCallback);
 		assert.strictEqual(oCache.aElements.length, 0);
 		assert.notOk(sTransientPredicate in oCache.aElements.$byPredicate);
 
@@ -6620,6 +6621,7 @@ sap.ui.define([
 			oGroupLock = {
 				getGroupId : function () {},
 				getSerialNumber : function () {},
+				isCanceled : function () { return false; },
 				unlock : function () {}
 			},
 			sTransientPredicate = "($uid=id-1-23)",
@@ -6642,10 +6644,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 
 		oCreatedPromise = oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
-			sTransientPredicate, {},
-			function () {
-				throw new Error();
-			}, null, function fnSubmitCallback() {});
+			sTransientPredicate, {}, null, function fnSubmitCallback() {});
 
 		assert.strictEqual(oCache.aElements.$created, 1);
 

@@ -2430,6 +2430,44 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity without using a UI and reset it immediately via ODataModel.
+	// No request is added to the queue and ODataModel#hasPendingChanges and
+	// ODataListBinding#hasPendingChanges work as expected.
+	// JIRA: CPOUI5ODATAV4-36
+	QUnit.test("create an entity and immediately reset changes (no UI)", function (assert) {
+		var // use autoExpandSelect so that the cache is created asynchronously
+			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "$auto"}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oListBindingWithoutUI = oModel.bindList("/SalesOrderList"),
+				oCreatedPromise = oListBindingWithoutUI.create({}, true).created();
+
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(oListBindingWithoutUI.hasPendingChanges());
+			assert.strictEqual(oListBindingWithoutUI.getLength(), 1 + 10/*length is not final*/);
+
+			oModel.resetChanges();
+
+			// the changes must disappear synchronously
+			assert.notOk(oModel.hasPendingChanges());
+			assert.notOk(oListBindingWithoutUI.hasPendingChanges());
+			assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
+
+			return oCreatedPromise.catch(function (oError) {
+				// create (which ran asynchronously) must not have changed anything
+				assert.ok(oError.canceled);
+
+				assert.notOk(oModel.hasPendingChanges());
+				assert.notOk(oListBindingWithoutUI.hasPendingChanges());
+				assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
+
+				return that.checkCanceled(assert, oCreatedPromise);
+			});
+		});
+	});
 });
 
 	//*********************************************************************************************
@@ -2440,7 +2478,7 @@ sap.ui.define([
 		var oModel = createModel(sSalesOrderService, {autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'1\')/Address}">\
-      <Text id="city" text="{City}"/>\
+	<Text id="city" text="{City}"/>\
 </FlexBox>\
 <Text id="postalCode" text="{PostalCode}"/>',
 			that = this;
