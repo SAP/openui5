@@ -613,16 +613,17 @@ sap.ui.define([
 
 		this.checkSuspended();
 
-		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true); // only for createInCache
+		// only for createInCache
+		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true, function () {
+			that.destroyCreated(oContext, true);
+			return Promise.resolve().then(function () {
+				// Fire the change asynchronously so that Cache#delete is finished and #getContexts
+				// can read the data synchronously. This is important for extended change detection.
+				that._fireChange({reason : ChangeReason.Remove});
+			});
+		});
 		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, "", sTransientPredicate,
 			oInitialData,
-			function () { // cancel callback
-				that.destroyCreated(oContext, true);
-				return Promise.resolve().then(function () {
-					// fire asynchronously so that _delete is finished before
-					that._fireChange({reason : ChangeReason.Remove});
-				});
-			},
 			function (oError) { // error callback
 				that.oModel.reportError("POST on '" + oCreatePathPromise
 					+ "' failed; will be repeated automatically", sClassName, oError);

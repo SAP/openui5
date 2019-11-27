@@ -143,11 +143,13 @@ sap.ui.define([
 			var oGroupLock = {
 					getGroupId : function () {},
 					getSerialNumber : function () {},
+					isCanceled : function () {},
 					unlock : function () {}
 				};
 
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs()
 				.returns(sGroupId || "groupId");
+			this.mock(oGroupLock).expects("isCanceled").withExactArgs().returns(false);
 			this.mock(oGroupLock).expects("getSerialNumber").withExactArgs().returns(Infinity);
 			this.mock(oGroupLock).expects("unlock").withExactArgs();
 
@@ -1926,6 +1928,8 @@ sap.ui.define([
 		}, new Error("Cannot cancel the changes for group 'groupId', "
 			+ "the batch request is running"));
 
+		this.mock(oRequestor).expects("cancelGroupLocks").withExactArgs("anotherGroupId");
+
 		// code under test - the other groups are not affected
 		oRequestor.cancelChanges("anotherGroupId");
 
@@ -2070,7 +2074,9 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 
-		this.spy(oRequestor, "cancelChangesByFilter");
+		this.mock(oRequestor).expects("cancelChangesByFilter")
+			.withExactArgs(sinon.match.func, "groupId")
+			.callThrough();
 
 		// code under test
 		oRequestor.cancelChanges("groupId");
@@ -2080,8 +2086,6 @@ sap.ui.define([
 		sinon.assert.calledOnce(fnCancel2);
 		sinon.assert.calledOnce(fnCancel3);
 		sinon.assert.calledOnce(fnCancelPost);
-		sinon.assert.calledWithExactly(oRequestor.cancelChangesByFilter, sinon.match.func,
-			"groupId");
 
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
@@ -2135,6 +2139,41 @@ sap.ui.define([
 	//*****************************************************************************************
 	QUnit.test("cancelChanges: unused group", function (assert) {
 		_Requestor.create("/Service/", oModelInterface).cancelChanges("unusedGroupId");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("cancelGroupLocks", function (assert) {
+		var oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oGroupLock0 = oRequestor.lockGroup("group0", {/*oOwner*/}, true), // not modifying
+			oGroupLock1 = oRequestor.lockGroup("group1", {/*oOwner*/}, true, true),
+			oGroupLock2 = oRequestor.lockGroup("group2", {/*oOwner*/}, true, true);
+
+		oGroupLock2.unlock(); // oGroupLock2 is unlocked but in our locked group locks list
+
+		this.mock(oGroupLock0).expects("cancel").never();
+		this.mock(oGroupLock1).expects("cancel").withExactArgs();
+		this.mock(oGroupLock2).expects("cancel").never();
+
+		// code under test
+		oRequestor.cancelGroupLocks();
+	});
+
+	//*****************************************************************************************
+	QUnit.test("cancelGroupLocks with group ID", function (assert) {
+		var oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oGroupLock0 = oRequestor.lockGroup("group0", {/*oOwner*/}, true, true),
+			oGroupLock1 = oRequestor.lockGroup("group1", {/*oOwner*/}, true, true),
+			oGroupLock2 = oRequestor.lockGroup("group1", {/*oOwner*/}, true), // not modifying
+			oGroupLock3 = oRequestor.lockGroup("group1", {/*oOwner*/}, true, true);
+
+		oGroupLock3.unlock(); // oGroupLock3 is unlocked but in our locked group locks list
+		this.mock(oGroupLock0).expects("cancel").never();
+		this.mock(oGroupLock1).expects("cancel").withExactArgs();
+		this.mock(oGroupLock2).expects("cancel").never();
+		this.mock(oGroupLock3).expects("cancel").never();
+
+		// code under test
+		oRequestor.cancelGroupLocks("group1");
 	});
 
 	//*****************************************************************************************
@@ -2622,6 +2661,33 @@ sap.ui.define([
 			return oError instanceof Error;
 		});
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bHasCancelFunction) {
+	QUnit.test("request: GroupLock is canceled, " + bHasCancelFunction, function (assert) {
+		var fnCancel = sinon.spy(),
+			oGroupLock = {
+				getGroupId : function () {},
+				isCanceled : function () {}
+			},
+			oRequestor = _Requestor.create("/");
+
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("$auto");
+		this.mock(oGroupLock).expects("isCanceled").withExactArgs().returns(true);
+
+		//code under test
+		return oRequestor.request("GET", "/FOO", oGroupLock, undefined, undefined, undefined,
+			bHasCancelFunction ? fnCancel : undefined
+		).then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(fnCancel.callCount, bHasCancelFunction ? 1 : 0);
+			assert.strictEqual(oError.message, "Request already canceled");
+			assert.strictEqual(oError.canceled, true);
+			assert.ok(oError instanceof Error);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("doConvertResponse (V4)", function (assert) {
@@ -3708,7 +3774,8 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bModifying) {
 	QUnit.test("lockGroup: blocking, modifying: " + bModifying, function (assert) {
-		var oGroupLock,
+		var fnCancel = {},
+			oGroupLock,
 			aLockedGroupLocks = [{}, {}],
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
 			oOwner = {};
@@ -3716,12 +3783,15 @@ sap.ui.define([
 		oRequestor.aLockedGroupLocks = aLockedGroupLocks;
 		this.mock(oRequestor).expects("getSerialNumber").returns(42);
 
-		oGroupLock = oRequestor.lockGroup("foo", oOwner, true, bModifying);
+		// code under test
+		oGroupLock = oRequestor.lockGroup("foo", oOwner, true, bModifying, fnCancel);
 
 		assert.ok(oGroupLock instanceof _GroupLock);
 		assert.strictEqual(oGroupLock.getGroupId(), "foo");
+		assert.strictEqual(oGroupLock.isCanceled(), false);
 		assert.strictEqual(oGroupLock.isLocked(), true);
 		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		assert.strictEqual(oGroupLock.fnCancel, fnCancel);
 		assert.strictEqual(oGroupLock.getSerialNumber(), 42);
 		assert.strictEqual(oGroupLock.isModifying(), bModifying);
 		assert.strictEqual(oRequestor.aLockedGroupLocks, aLockedGroupLocks);

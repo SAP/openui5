@@ -432,8 +432,6 @@ sap.ui.define([
 	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 	 * @param {object} oInitialData
 	 *   The initial data for the created entity
-	 * @param {function} fnCancelCallback
-	 *   A function which is called after a transient entity has been canceled from the cache
 	 * @param {function} fnErrorCallback
 	 *   A function which is called with an error object each time a POST request for the create
 	 *   fails
@@ -446,15 +444,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.createInCache = function (oUpdateGroupLock, vCreatePath,
-			sPathInCache, sTransientPredicate, oInitialData, fnCancelCallback, fnErrorCallback,
-			fnSubmitCallback) {
+			sPathInCache, sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
 			if (oCache) {
 				return oCache.create(oUpdateGroupLock, vCreatePath, sPathInCache,
-					sTransientPredicate, oInitialData, fnCancelCallback, fnErrorCallback,
-					fnSubmitCallback
+					sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback
 				).then(function (oCreatedEntity) {
 					if (oCache.$resourcePath) {
 						// Ensure that cache containing non-transient created entity is recreated
@@ -466,8 +462,7 @@ sap.ui.define([
 			}
 			return that.oContext.getBinding().createInCache(oUpdateGroupLock, vCreatePath,
 				_Helper.buildPath(that.oContext.iIndex, that.sPath, sPathInCache),
-				sTransientPredicate, oInitialData, fnCancelCallback, fnErrorCallback,
-				fnSubmitCallback);
+				sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback);
 		});
 	};
 

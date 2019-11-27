@@ -280,6 +280,8 @@ sap.ui.define([
 	 * <code>canceled = true</code>. They are canceled in reverse order to properly undo stacked
 	 * changes (like multiple PATCHes for the same property).
 	 *
+	 * Additionally cancels all modifying group locks so that they won't create a request.
+	 *
 	 * @param {string} sGroupId
 	 *   The group ID to be canceled
 	 * @throws {Error}
@@ -295,6 +297,7 @@ sap.ui.define([
 		this.cancelChangesByFilter(function () {
 			return true;
 		}, sGroupId);
+		this.cancelGroupLocks(sGroupId);
 	};
 
 	/**
@@ -356,6 +359,23 @@ sap.ui.define([
 			}
 		}
 		return bCanceled;
+	};
+
+	/**
+	 * Cancels all modifying and locked group locks for the given group ID or for all groups.
+	 * Requests that are later created using such a canceled group lock will be rejected.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The ID of the group from which the locks shall be canceled; if not given all groups are
+	 *   processed
+	 */
+	Requestor.prototype.cancelGroupLocks = function (sGroupId) {
+		this.aLockedGroupLocks.forEach(function (oGroupLock) {
+			if ((!sGroupId || sGroupId === oGroupLock.getGroupId())
+					&& oGroupLock.isModifying() && oGroupLock.isLocked()) {
+				oGroupLock.cancel();
+			}
+		});
 	};
 
 	/**
@@ -1104,6 +1124,8 @@ sap.ui.define([
 	 *   Whether the created lock is locked
 	 * @param {boolean} [bModifying]
 	 *   Whether the reason for the group lock is a modifying request
+	 * @param {function} [fnCancel]
+	 *   Function that is called when the group lock is canceled
 	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
 	 *   The group lock
 	 * @throws {Error}
@@ -1111,10 +1133,11 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Requestor.prototype.lockGroup = function (sGroupId, oOwner, bLocked, bModifying) {
+	Requestor.prototype.lockGroup = function (sGroupId, oOwner, bLocked, bModifying, fnCancel) {
 		var oGroupLock;
 
-		oGroupLock = new _GroupLock(sGroupId, oOwner, bLocked, bModifying, this.getSerialNumber());
+		oGroupLock = new _GroupLock(sGroupId, oOwner, bLocked, bModifying, this.getSerialNumber(),
+			fnCancel);
 		if (bLocked) {
 			this.aLockedGroupLocks.push(oGroupLock);
 		}
@@ -1305,7 +1328,8 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.SubmitMode.Direct}, the request is sent immediately; for all
 	 *   other group ID values, the request is added to the given group and you can use
 	 *   {@link #submitBatch} to send all requests in that group. This group lock will be unlocked
-	 *   immediately, even if the request itself is queued.
+	 *   immediately, even if the request itself is queued. The request is rejected if the lock is
+	 *   already canceled.
 	 * @param {object} [mHeaders]
 	 *   Map of request-specific headers, overriding both the mandatory OData V4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain
@@ -1332,7 +1356,9 @@ sap.ui.define([
 	 *   Whether the request is added at the front of the first change set (ignored for method
 	 *   "GET")
 	 * @returns {Promise}
-	 *   A promise on the outcome of the HTTP request
+	 *   A promise on the outcome of the HTTP request; it will be rejected with an error having the
+	 *   property <code>canceled = true</code> instead of sending a request if
+	 *   <code>oGroupLock</code> is already canceled.
 	 * @throws {Error}
 	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
@@ -1352,6 +1378,15 @@ sap.ui.define([
 			oError = new Error("Unexpected request: " + sMethod + " " + sResourcePath);
 			oError.$cached = true;
 			throw oError; // fail synchronously!
+		}
+
+		if (oGroupLock && oGroupLock.isCanceled()) {
+			if (fnCancel) {
+				fnCancel();
+			}
+			oError = new Error("Request already canceled");
+			oError.canceled = true;
+			return Promise.reject(oError);
 		}
 
 		if (oGroupLock) {
