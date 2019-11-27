@@ -523,6 +523,14 @@ function(
 			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oText), 1, "The function returned the correct index.");
 		});
 
+		QUnit.test("the modifier finds the index of the control in its parent aggregation correctly, case 7 - when stashed controls exist", function (assert) {
+			var oDynamicPageTitle = XmlTreeModifier._children(this.oXmlView)[6];
+			var oFirstButton = oDynamicPageTitle.childNodes[0].firstElementChild;
+			var oLastButton = oDynamicPageTitle.childNodes[0].lastElementChild;
+			XmlTreeModifier.setProperty(oFirstButton, "stashed", true);
+			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oLastButton), 1, "The function returned the correct index.");
+		});
+
 		QUnit.test("getParentAggregationName returns the correct name: ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0],
 				oLabel = XmlTreeModifier._children(oVBox)[1];
