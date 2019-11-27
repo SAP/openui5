@@ -195,7 +195,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 			}
 
 			mAccessibilityStates = {
-				role: "checkbox",
+				role: "switch",
 				checked: oSwitch.getState(),
 				labelledby: mAriaLabelledby
 			};
