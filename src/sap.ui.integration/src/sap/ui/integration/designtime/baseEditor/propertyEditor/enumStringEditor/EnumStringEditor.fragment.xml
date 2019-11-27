@@ -1,0 +1,15 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<ComboBox
+		selectedKey="{value}"
+		width="100%"
+		change="_onChange"
+		items="{enum}"
+	>
+		<items>
+			<core:Item key="{}" text="{}"/>
+		</items>
+	</ComboBox>
+</core:FragmentDefinition>

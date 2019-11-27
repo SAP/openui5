@@ -4,14 +4,12 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/base/util/deepClone",
-	"sap/ui/core/Fragment",
 	"sap/base/util/ObjectPath",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/restricted/_merge"
 ], function (
 	BasePropertyEditor,
 	deepClone,
-	Fragment,
 	ObjectPath,
 	JSONModel,
 	_merge
@@ -37,30 +35,13 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var ArrayEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor", {
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor",
 		metadata: {
 			properties: {
 				value: {
 					type: "any"
 				}
-			},
-			events: {
-				"ready" : {}
 			}
-		},
-		constructor: function() {
-			BasePropertyEditor.prototype.constructor.apply(this, arguments);
-
-			this._itemsModel = new JSONModel();
-			this.setModel(this._itemsModel, "itemsModel");
-
-			Fragment.load({
-				name: "sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor",
-				controller: this
-			}).then(function(oContainer) {
-
-				this.addContent(oContainer);
-				this.fireReady();
-			}.bind(this));
 		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
@@ -86,6 +67,10 @@ sap.ui.define([
 				};
 				aItems.push(mItem);
 			}, this);
+			if (!this._itemsModel) {
+				this._itemsModel = new JSONModel();
+				this.setModel(this._itemsModel, "itemsModel");
+			}
 			this._itemsModel.setData(aItems);
 		}
 		return vReturn;

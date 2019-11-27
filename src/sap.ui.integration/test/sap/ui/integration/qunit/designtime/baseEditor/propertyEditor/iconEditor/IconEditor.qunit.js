@@ -28,7 +28,7 @@ sap.ui.define([
 				path: "content"
 			};
 		},
-		beforeEach: function () {
+		beforeEach: function (assert) {
 			this.oContextModel = new JSONModel({
 				content: "sap-icon://target-group"
 			});
@@ -40,6 +40,12 @@ sap.ui.define([
 			this.oEditor.setConfig(this.oPropertyConfig);
 			this.oEditor.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			var fnReady = assert.async();
+			this.oEditor.attachReady(function () {
+				this.oEditorElement = this.oEditor.getContent();
+				fnReady();
+			}, this);
 		},
 		afterEach: function () {
 			this.oContextModel.destroy();
@@ -56,7 +62,7 @@ sap.ui.define([
 		QUnit.test("When the icon value help is opened", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor._oInput.attachValueHelpRequest(function () {
+			this.oEditorElement.attachValueHelpRequest(function () {
 				this.oEditor._handleValueHelp.returnValues[0].then(function (oDialog) {
 					assert.ok(oDialog && oDialog.getDomRef() instanceof HTMLElement, "Then the value help is rendered correctly (1/3)");
 					assert.ok(oDialog && oDialog.getDomRef() && oDialog.getDomRef().offsetHeight > 0, "Then the value help is rendered correctly (2/3)");
@@ -65,18 +71,18 @@ sap.ui.define([
 				});
 			}.bind(this));
 
-			QUnitUtils.triggerEvent("click", this.oEditor._oInput.$("vhi"));
+			QUnitUtils.triggerEvent("click", this.oEditorElement.$("vhi"));
 		});
 
 		QUnit.test("When a model is set", function (assert) {
-			assert.strictEqual(this.oEditor.getContent()[0].getValue(), "sap-icon://target-group", "Then the editor has the correct value");
+			assert.strictEqual(this.oEditorElement.getValue(), "sap-icon://target-group", "Then the editor has the correct value");
 		});
 
 		QUnit.test("When a value is changed in the model", function (assert) {
 			this.oContextModel.setData({
 				content: "sap-icon://complete"
 			});
-			assert.strictEqual(this.oEditor.getContent()[0].getValue(), "sap-icon://complete", "Then the editor value is updated");
+			assert.strictEqual(this.oEditorElement.getValue(), "sap-icon://complete", "Then the editor value is updated");
 		});
 
 		QUnit.test("When a value is changed in the editor", function (assert) {
@@ -87,8 +93,8 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oEditor.getContent()[0].setValue("sap-icon://complete");
-			QUnitUtils.triggerEvent("input", this.oEditor.getContent()[0].getDomRef());
+			this.oEditorElement.setValue("sap-icon://complete");
+			QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
 		});
 
 		QUnit.test("When a binding path is provided", function (assert) {
@@ -99,8 +105,8 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oEditor.getContent()[0].setValue("{someBindingPath}");
-			QUnitUtils.triggerEvent("input", this.oEditor.getContent()[0].getDomRef());
+			this.oEditorElement.setValue("{someBindingPath}");
+			QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
@@ -118,10 +124,10 @@ sap.ui.define([
 				this.oEditor.setModel(oI18nModel, "i18n");
 
 				// Test
-				this.oEditor.getContent()[0].setValue("sap-icon://not-a-valid-icon");
-				QUnitUtils.triggerEvent("input", this.oEditor.getContent()[0].getDomRef());
+				this.oEditorElement.setValue("sap-icon://not-a-valid-icon");
+				QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
 
-				assert.strictEqual(this.oEditor._oInput.getValueState(), "Error", "Then the error is displayed");
+				assert.strictEqual(this.oEditorElement.getValueState(), "Error", "Then the error is displayed");
 				assert.strictEqual(this.oEditor.getBindingContext().getObject().value, "sap-icon://target-group", "Then the model is not updated");
 
 				fnDone();
@@ -131,7 +137,7 @@ sap.ui.define([
 		QUnit.test("When the value help is filtered", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor._oInput.attachValueHelpRequest(function () {
+			this.oEditorElement.attachValueHelpRequest(function () {
 				this.oEditor._handleValueHelp.returnValues[0].then(function (oDialog) {
 					oDialog.attachEventOnce("liveChange", function () {
 						assert.ok(oDialog.getItems().length > 1, "Icons are shown");
@@ -143,13 +149,13 @@ sap.ui.define([
 				});
 			}.bind(this));
 
-			QUnitUtils.triggerEvent("click", this.oEditor._oInput.$("vhi"));
+			QUnitUtils.triggerEvent("click", this.oEditorElement.$("vhi"));
 		});
 
 		QUnit.test("When an icon is selected in the value help", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor._oInput.attachValueHelpRequest(function () {
+			this.oEditorElement.attachValueHelpRequest(function () {
 				this.oEditor.attachPropertyChange(function (oEvent) {
 					assert.ok(oEvent.getParameter("value").indexOf("approval") >= 0, "Then a new icon is set");
 					fnDone();
@@ -165,13 +171,13 @@ sap.ui.define([
 				});
 			}.bind(this));
 
-			QUnitUtils.triggerEvent("click", this.oEditor._oInput.$("vhi"));
+			QUnitUtils.triggerEvent("click", this.oEditorElement.$("vhi"));
 		});
 
 		QUnit.test("When the value help icon selection is canceled", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor._oInput.attachValueHelpRequest(function () {
+			this.oEditorElement.attachValueHelpRequest(function () {
 				this.oEditor._handleValueHelp.returnValues[0].then(function (oDialog) {
 					QUnitUtils.triggerEvent("tap", oDialog._getCancelButton().getDomRef());
 					assert.strictEqual(this.oEditor.getBindingContext().getObject().value, "sap-icon://target-group", "Then the model is not updated");
@@ -179,7 +185,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 
-			QUnitUtils.triggerEvent("click", this.oEditor._oInput.$("vhi"));
+			QUnitUtils.triggerEvent("click", this.oEditorElement.$("vhi"));
 		});
 	});
 });

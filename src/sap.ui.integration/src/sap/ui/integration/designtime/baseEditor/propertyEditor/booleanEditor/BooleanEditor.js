@@ -3,13 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/m/ComboBox",
-	"sap/ui/core/Item",
 	"sap/ui/base/BindingParser"
 ], function (
 	BasePropertyEditor,
-	ComboBox,
-	Item,
 	BindingParser
 ) {
 	"use strict";
@@ -33,46 +29,33 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var BooleanEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.booleanEditor.BooleanEditor", {
-		constructor: function() {
-			BasePropertyEditor.prototype.constructor.apply(this, arguments);
-			this._oCombo = new ComboBox({
-				selectedKey: "{value}",
-				value: "{value}",
-				width: "100%",
-				items: [true, false].map(
-					function (bOption) {
-						return new Item({
-							key: bOption,
-							text: String(bOption)
-						});
-					}
-				)
-			});
-			this._oCombo.attachChange(function() {
-				var bInput = this._validate();
-				if (bInput !== null) {
-					this.firePropertyChange(bInput);
-				}
-			}, this);
-			this.addContent(this._oCombo);
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.booleanEditor.BooleanEditor",
+
+		_onChange: function() {
+			var bInput = this._validate();
+			if (bInput !== null) {
+				this.firePropertyChange(bInput);
+			}
 		},
+
 		_validate: function() {
-			var sSelectedKey = this._oCombo.getSelectedKey();
-			var sValue = this._oCombo.getValue();
+			var oCombo = this.getContent();
+			var sSelectedKey = oCombo.getSelectedKey();
+			var sValue = oCombo.getValue();
 
 			try {
 				var oParsed = BindingParser.complexParser(sValue);
 				if (!oParsed && !sSelectedKey && sValue) {
 					throw "Not a boolean";
 				}
-				this._oCombo.setValueState("None");
+				oCombo.setValueState("None");
 				if (sSelectedKey) {
-					return sValue === 'true';
+					return sSelectedKey === "true";
 				}
 				return sValue;
 			} catch (vError) {
-				this._oCombo.setValueState("Error");
-				this._oCombo.setValueStateText(this.getI18nProperty("BASE_EDITOR.BOOLEAN.INVALID_BINDING_OR_BOOLEAN"));
+				oCombo.setValueState("Error");
+				oCombo.setValueStateText(this.getI18nProperty("BASE_EDITOR.BOOLEAN.INVALID_BINDING_OR_BOOLEAN"));
 				return null;
 			}
 		},

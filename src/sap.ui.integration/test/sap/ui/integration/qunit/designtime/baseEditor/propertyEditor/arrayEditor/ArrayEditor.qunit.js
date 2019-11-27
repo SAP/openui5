@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	function _getArrayEditorElement(oEditor, iIndex) {
-		return oEditor.getContent()[0].getItems()[0].getItems()[iIndex];
+		return oEditor.getContent().getItems()[0].getItems()[iIndex];
 	}
 
 	QUnit.module("Array Editor: Given an editor config", {
@@ -73,11 +73,11 @@ sap.ui.define([
 			this.oEditor.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var done = assert.async();
-			this.oEditor.attachReady(function() {
-				assert.ok(true, "the Array Editor is ready");
-				done();
-			});
+			var fnReady = assert.async();
+			this.oEditor.attachReady(function () {
+				this.oEditorElement = this.oEditor.getContent();
+				fnReady();
+			}, this);
 		},
 		afterEach: function () {
 			this.oContextModel.destroy();
@@ -182,7 +182,7 @@ sap.ui.define([
 				assert.ok(oEvent.getParameter("value")[2].number !== oConfig.template.number.defaultValue, "Then the default value is cloned");
 				done();
 			});
-			var oAddButton = this.oEditor.getContent()[0].getItems()[1];
+			var oAddButton = this.oEditorElement.getItems()[1];
 			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
 		});
 
@@ -194,7 +194,7 @@ sap.ui.define([
 				assert.deepEqual(oEvent.getParameter("value")[2], {title: "Side Indicator"}, "Then the new item is created with proper default values");
 				done();
 			});
-			var oAddButton = this.oEditor.getContent()[0].getItems()[1];
+			var oAddButton = this.oEditorElement.getItems()[1];
 			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
 		});
 
@@ -247,7 +247,7 @@ sap.ui.define([
 			}.bind(this));
 
 			// A new item is added
-			QUnitUtils.triggerEvent("tap", this.oEditor.getContent()[0].getItems()[1].getDomRef());
+			QUnitUtils.triggerEvent("tap", this.oEditorElement.getItems()[1].getDomRef());
 		});
 
 		QUnit.test("When a nested array editor is created", function (assert) {
