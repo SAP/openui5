@@ -70,6 +70,21 @@ sap.ui.require([
 			errorMessage: "The binding path for an element with property binding was not matched"
 		});
 
+		// BindingPath - declarative syntax
+		Then.waitFor({
+			controlType: "sap.m.CheckBox",
+			matchers:{
+				bindingPath: {
+					path: "/ProductCollection/0",
+					propertyPath: "Status"
+				}
+			},
+			success: function (aCheckBoxes) {
+				Opa5.assert.ok(aCheckBoxes[0].getSelected(), "The binding context path and property path of the CheckBox were matched");
+			},
+			errorMessage: "Could not match the binding context and property path of the first collection item"
+		});
+
 		// Tear down should always be done in real use case
 		// In this sample we commented it out so you can see the result.
 		// If no globals is activated,

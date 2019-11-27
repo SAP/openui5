@@ -49,6 +49,22 @@ sap.ui.require([
 			errorMessage: "The list header does not indicate 123 products"
 		});
 
+		// I18NText - declarative syntax
+		Then.waitFor({
+			viewName: "Main",
+			controlType: "sap.m.Button",
+			matchers: {
+				i18NText: {
+					propertyName : "text",
+					key: "loadButtonText"
+				}
+			},
+			success: function () {
+				Opa5.assert.ok(true, "Found the load button with a declarative matcher");
+			},
+			errorMessage: "Failed to find the load button"
+		});
+
 		// Tear down should always be done in real use case
 		// In this sample we commented it out so you can see the result.
 		// If no globals is activated,
