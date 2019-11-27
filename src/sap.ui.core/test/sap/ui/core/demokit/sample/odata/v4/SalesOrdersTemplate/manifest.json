@@ -42,7 +42,9 @@
 					"Helper.js",
 					"Main.view.xml",
 					"../../../common/Controller.js",
-					"../../../common/ValueHelp.js"
+					"../../../common/ValueHelp.js",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},
@@ -63,13 +65,10 @@
 				"preload" : true,
 				"settings" : {
 					"synchronizationMode" : "None"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
-		},
-		"rootView" : {
-			"async" : true,
-			"type" : "XML",
-			"viewName" : "Main.view.xml"
 		}
 	}
 }
