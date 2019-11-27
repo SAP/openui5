@@ -97,6 +97,7 @@ sap.ui.define([
 		},
 
 		onValueChange: function(vValue) {
+			// FIXME: do not mutate existing JS object! Prefer this.getModel().getData() / this.getModel().setData()
 			var oConfig = this.getConfig();
 			if (typeof oConfig.value === "undefined" && oConfig.defaultValue) {
 				oConfig.value = oConfig.defaultValue;
@@ -116,22 +117,25 @@ sap.ui.define([
 					oConfig.value = "{context>" + oConfig.path + "}";
 				}
 				// resolve binding strings
-				this._oConfigBinding = new ObjectBinding();
-				this._oConfigBinding.setModel(oJsonModel, "context");
-				this._oConfigBinding.setModel(this.getModel("i18n"), "i18n");
-				this._oConfigBinding.setBindingContext(oJsonModel.getContext("/"), "context");
+				if (!this._oConfigBinding) {
+					this._oConfigBinding = new ObjectBinding();
+					this._oConfigBinding.setModel(this.getModel("i18n"), "i18n");
+					this._oConfigBinding.setModel(oJsonModel, "context");
+					this._oConfigBinding.setBindingContext(oJsonModel.getContext("/"), "context");
+					this.bindProperty("visible", "visible");
+					this._oConfigBinding.attachChange(function(oEvent) {
+						this._oConfigModel.checkUpdate();
+						if (oEvent.getParameter("path") === "value") {
+							this.onValueChange(oEvent.getParameter("value"));
+						}
+					}.bind(this));
+				}
+
 				this._oConfigBinding.setObject(oConfig);
 				//
 				this._oConfigModel.setData(oConfig);
-				this._oConfigModel.checkUpdate();
+				// this._oConfigModel.checkUpdate();
 				this.onValueChange(oConfig.value);
-				this.bindProperty("visible", "visible");
-				this._oConfigBinding.attachChange(function(oEvent) {
-					this._oConfigModel.checkUpdate();
-					if (oEvent.getParameter("path") === "value") {
-						this.onValueChange(oEvent.getParameter("value"));
-					}
-				}.bind(this));
 			}
 		},
 

@@ -29,18 +29,18 @@ sap.ui.define([
 					title : {
 						label: "SIDE_INDICATOR.TITLE",
 						type: "string",
-						path: "header/sideIndicators/:index/title",
+						path: "title",
 						defaultValue: "Side Indicator"
 					},
 					number : {
 						label: "SIDE_INDICATOR.NUMBER",
 						type: "number",
-						path: "header/sideIndicators/:index/number"
+						path: "number"
 					},
 					unit : {
 						label: "SIDE_INDICATOR.UNIT",
 						type: "string",
-						path: "header/sideIndicators/:index/unit"
+						path: "unit"
 					}
 				},
 				maxItems: 3,
@@ -145,7 +145,7 @@ sap.ui.define([
 					title : {
 						label: "SIDE_INDICATOR.TITLE",
 						type: "string",
-						path: "header/sideIndicators/:index/title",
+						path: "title",
 						defaultValue: undefined
 					},
 					number : {
@@ -155,7 +155,7 @@ sap.ui.define([
 							val: 1,
 							unit: undefined
 						},
-						path: "header/sideIndicators/:index/number",
+						path: "number",
 						"enum": [{
 							val: 1,
 							unit: undefined
@@ -198,7 +198,7 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
 		});
 
-		QUnit.test("When a new item is added to and an exisiting item is removed from an array", function (assert) {
+		QUnit.test("When a new item is added to and an existing item is removed from an array", function (assert) {
 			var done = assert.async();
 
 			this.oEditor.attachEventOnce("propertyChange", function (oEvent) {

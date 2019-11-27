@@ -292,7 +292,7 @@ function (
 			}]);
 		});
 
-		QUnit.test("when config is changed", function (assert) {
+		QUnit.test("when number of config items is changed", function (assert) {
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
@@ -309,11 +309,50 @@ function (
 						}.bind(this))
 				);
 
-				this.oPropertyEditors.setConfig([{
-					"label": "Baz property",
-					"path": "baz",
-					"type": "string"
-				}]);
+				this.oPropertyEditors.setConfig([
+					{
+						"label": "Baz property",
+						"path": "baz",
+						"type": "string"
+					},
+					{
+						"label": "Foo1 property",
+						"path": "foo1",
+						"type": "string"
+					}
+				]);
+			}, this);
+
+			this.oPropertyEditors.setConfig([{
+				"label": "Foo1 property",
+				"path": "foo1",
+				"type": "string"
+			}]);
+		});
+
+		QUnit.test("when config is changed", function (assert) {
+			var fnDone = assert.async();
+
+			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
+				sap.ui.getCore().applyChanges();
+				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1 value", "then internal property editor has a correct value");
+
+				var oSpy = sandbox.spy();
+				this.oPropertyEditors.attachEvent("propertyEditorsChange", oSpy);
+
+				this.oPropertyEditors.setConfig([
+					{
+						"label": "Baz property",
+						"path": "baz",
+						"type": "string"
+					}
+				]);
+
+				setTimeout(function () {
+					assert.ok(oSpy.notCalled);
+					assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
+					fnDone();
+				}.bind(this));
 			}, this);
 
 			this.oPropertyEditors.setConfig([{

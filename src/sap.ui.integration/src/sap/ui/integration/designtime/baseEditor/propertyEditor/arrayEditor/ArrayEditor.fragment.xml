@@ -4,7 +4,7 @@
 	xmlns:baseEditor="sap.ui.integration.designtime.baseEditor"
 >
 	<VBox>
-		<VBox items="{items}">
+		<VBox items="{itemsModel>/}">
 			<VBox>
 				<Bar>
 					<contentLeft>
@@ -19,13 +19,13 @@
 							<customData>
 								<core:CustomData
 									key="index"
-									value="{index}"
+									value="{itemsModel>index}"
 								/>
 							</customData>
 						</Button>
 					</contentRight>
 				</Bar>
-				<baseEditor:PropertyEditors config="{properties}"/>
+				<baseEditor:PropertyEditors propertyEditorsChange="_propertyEditorsChange" config="{itemsModel>properties}"/>
 			</VBox>
 		</VBox>
 		<Button
