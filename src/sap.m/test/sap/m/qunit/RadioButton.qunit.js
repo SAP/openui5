@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/util/Mobile",
-	"sap/m/Label"
+	"sap/m/Label",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/message/Message"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -17,13 +19,19 @@ sap.ui.define([
 	KeyCodes,
 	EventExtension,
 	Mobile,
-	Label
+	Label,
+	JSONModel,
+	Message
 ) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.message.MessageType
+	var MessageType = coreLibrary.MessageType;
+
 
 	createAndAppendDiv("content");
 
@@ -909,5 +917,74 @@ sap.ui.define([
 		assert.strictEqual(oSvg.getAttribute('role'), "presentation", "The SVG icon should have a role=presentation");
 
 		oRadioButton.destroy();
+	});
+
+	QUnit.module("Message support", {
+		beforeEach: function () {
+			this.oRadioButton = new RadioButton({
+				selected:"{/selected}"
+			});
+			this.oRadioButton.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function () {
+			this.oRadioButton.destroy();
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("'valueState' property change when there is a Message", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oModel = new JSONModel({
+				selected:true
+			}),
+			oMessageManager = sap.ui.getCore().getMessageManager(),
+			oMessage = new Message({
+				type: MessageType.Error,
+				target: "/selected",
+				processor: oModel
+			}),
+			sExpectedTooltipText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
+
+		// act
+		this.oRadioButton.setModel(oModel);
+		oMessageManager.registerObject(this.oRadioButton, true);
+		oMessageManager.addMessages([oMessage]);
+
+		setTimeout(function() {
+			// assert
+			assert.strictEqual(this.oRadioButton.getValueState(), "Error");
+			assert.strictEqual(this.oRadioButton.$("Descr").text(), sExpectedTooltipText, "Default error message should be shown in the tooltip.");
+			done();
+		}.bind(this), 100);
+	});
+
+	QUnit.test("Description value when there is a Message containing error text", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oModel = new JSONModel({
+				selected:true
+			}),
+			oMessageManager = sap.ui.getCore().getMessageManager(),
+			sMessage = "This error message should be shown in the tooltip instead of the default message from the Resource Bundle",
+			oMessage = new Message({
+				type: MessageType.Error,
+				target: "/selected",
+				processor: oModel,
+				message: sMessage
+			});
+
+		// act
+		this.oRadioButton.setModel(oModel);
+		oMessageManager.registerObject(this.oRadioButton, true);
+		oMessageManager.addMessages([oMessage]);
+
+		setTimeout(function() {
+			// assert
+			assert.strictEqual(this.oRadioButton.$("Descr").text(), sMessage, "The error message should be shown in the tooltip");
+			done();
+		}.bind(this), 100);
 	});
 });
