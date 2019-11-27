@@ -23,6 +23,9 @@ sap.ui.require([
 		// base
 		"sap/ui/core/qunit/BindingParser.qunit",
 		"sap/ui/core/qunit/ExpressionParser.qunit",
+		// Support rules
+		// sap.ui.core.rules.Model.support
+		"sap/ui/core/qunit/rule/model/bindingPathSyntaxValidation.qunit",
 		// DataState
 		"sap/ui/core/qunit/DataState.qunit",
 		"sap/ui/core/qunit/odata/v2/V2ODataModelDataState.qunit",

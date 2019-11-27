@@ -28,7 +28,8 @@
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-resourceroots='{
 				"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit",
-				"sap/ui/test/qunit" : "test-resources/sap/ui/test/qunit"
+				"sap/ui/test/qunit" : "test-resources/sap/ui/test/qunit",
+				"test-resources/sap/ui/support" : "test-resources/sap/ui/support"
 			}'>
 		</script>
 		<!-- end of minimal bootstrap code -->
@@ -38,8 +39,8 @@
 		<script src="resources/sap/ui/qunit/qunit-coverage.js"
 			data-cover-flags="branchTracking"
 			data-sap-ui-cover-never="[.qunit.js]"
-			data-sap-ui-cover-only="[/odata/type/,AnnotationHelper,BindingParser,ExpressionParser,ODataMetaModel]"
-			></script>
+			data-sap-ui-cover-only="[/odata/type/,AnnotationHelper,BindingParser,ExpressionParser,ODataMetaModel]">
+		</script>
 		<script src="resources/sap/ui/test/BranchTracking.js"
 			data-threshold="100"></script>
 
