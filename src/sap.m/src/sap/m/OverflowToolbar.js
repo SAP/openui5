@@ -200,6 +200,12 @@ sap.ui.define([
 
 		this._iFrameRequest = null;
 
+		// Overflow Button size
+		this._iOverflowToolbarButtonSize = 0;
+
+		// Overflow Button clone, it helps to calculate correct size of the button
+		this._oOverflowToolbarButtonClone = null;
+
 		this._aMovableControls = []; // Controls that can be in the toolbar or Popover
 		this._aToolbarOnlyControls = []; // Controls that can't go to the Popover (inputs, labels, buttons with special layout, etc...)
 		this._aPopoverOnlyControls = []; // Controls that are forced to stay in the Popover (buttons with layout)
@@ -210,6 +216,10 @@ sap.ui.define([
 		var oPopover = this.getAggregation("_popover");
 		if (oPopover) {
 			oPopover.destroy();
+		}
+
+		if (this._oOverflowToolbarButtonClone) {
+			this._oOverflowToolbarButtonClone.destroy();
 		}
 
 		if (this._iFrameRequest) {
@@ -245,7 +255,7 @@ sap.ui.define([
 			this._bContentVisibilityChanged = false;
 		}
 
-		this._markFirstLastVisibleItems();
+		this._markFirstLastVisibleItems(".sapMBarChild:not(.sapMTBHiddenElement):visible");
 
 		// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
 
@@ -278,6 +288,8 @@ sap.ui.define([
 			Log.debug("OverflowToolbar: theme not applied yet, skipping calculations", this);
 			return;
 		}
+
+		this._recalculateOverflowButtonSize();
 
 		iWidth = this.$().width();
 
@@ -882,6 +894,16 @@ sap.ui.define([
 		});
 	};
 
+	OverflowToolbar.prototype._getToggleButton = function (sIdPrefix) {
+		return new ToggleButton({
+				id: this.getId() + sIdPrefix,
+				icon: IconPool.getIconURI("overflow"),
+				press: this._overflowButtonPressed.bind(this),
+				ariaLabelledBy: InvisibleText.getStaticId("sap.ui.core", "Icon.overflow"),
+				type: ButtonType.Transparent
+		});
+	};
+
 	/**
 	 * Lazy loader for the overflow button
 	 * @returns {sap.m.Button}
@@ -895,19 +917,23 @@ sap.ui.define([
 			// Create the overflow button
 			// A tooltip will be used automatically by the button
 			// using to the icon-name provided
-			oOverflowButton = new ToggleButton({
-				id: this.getId() + "-overflowButton",
-				icon: IconPool.getIconURI("overflow"),
-				press: this._overflowButtonPressed.bind(this),
-				ariaLabelledBy: InvisibleText.getStaticId("sap.ui.core", "Icon.overflow"),
-				type: ButtonType.Transparent
-			});
+			oOverflowButton = this._getToggleButton("-overflowButton");
 
 			this.setAggregation("_overflowButton", oOverflowButton, true);
 
 		}
 
 		return this.getAggregation("_overflowButton");
+	};
+
+	OverflowToolbar.prototype._getOverflowButtonClone = function () {
+		if (!this._oOverflowToolbarButtonClone) {
+			this._oOverflowToolbarButtonClone = this._getToggleButton("-overflowButtonClone")
+				.addStyleClass("sapMTBHiddenElement")
+				.addStyleClass("sapMBarLastVisibleChild");
+		}
+
+		return this._oOverflowToolbarButtonClone;
 	};
 
 	/**
@@ -1309,12 +1335,7 @@ sap.ui.define([
 	 * @private
 	 */
 	OverflowToolbar.prototype._getOverflowButtonSize = function () {
-		var iBaseFontSize = parseInt(library.BaseFontSize),
-			fCoefficient = this.$().parents().hasClass('sapUiSizeCompact') ? 2.5 : 3,
-			iMargin = DomUnitsRem.toPx(Parameters.get("_sap_m_Toolbar_MarginRight")),
-			iDeduction = iMargin === 0 ? 0.25 * iBaseFontSize : 0;
-
-		return parseInt(iBaseFontSize * fCoefficient) - iDeduction;
+		return this._iOverflowToolbarButtonSize;
 	};
 
 
@@ -1503,8 +1524,18 @@ sap.ui.define([
 		return this.$().parents().hasClass('sapUiSizeCompact') ? 2 : 3;
 	};
 
+	OverflowToolbar.prototype._recalculateOverflowButtonSize = function () {
+		if (!this._iOverflowToolbarButtonSize) {
+			var iOTBtnSize = this._getOverflowButtonClone().$().outerWidth(true);
+
+			this._iOverflowToolbarButtonSize = iOTBtnSize ? iOTBtnSize : 0;
+		}
+	};
+
 	OverflowToolbar.prototype.onThemeChanged = function () {
 		this._resetAndInvalidateToolbar();
+		this._iOverflowToolbarButtonSize = 0;
+		this._recalculateOverflowButtonSize();
 
 		for (var iControlSize in this._aControlSizes) {
 			if (this._aControlSizes.hasOwnProperty(iControlSize)) {

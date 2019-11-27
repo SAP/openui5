@@ -144,6 +144,7 @@ sap.ui.define([
 		var oOverflowTB = createOverflowToolbar();
 
 		assert.strictEqual(oOverflowTB.$().length, 1, "Overflow Toolbar is in DOM");
+		assert.strictEqual(oOverflowTB._getOverflowButtonClone().$().length, 1, "Overflow Button clone is in DOM");
 
 		oOverflowTB.destroy();
 	});
@@ -2664,20 +2665,50 @@ sap.ui.define([
 
 	QUnit.module("Content size measurement");
 
-	QUnit.test("Size of Overflow Button in Fiori 3 theme is reported correctly", function (assert) {
+	QUnit.test("Recalculation of Overflow Button", function (assert) {
 		// Arrange
 		var oOverflowTB = new OverflowToolbar(),
-			oMarginStub = this.stub(DomUnitsRem, "toPx", function () { return 0; }),
-			oBaseFontSizeStub = this.stub(mobileLibrary, "BaseFontSize", "16px");
+			oOverflowBtnClonedSpy = this.spy(OverflowToolbar.prototype, "_recalculateOverflowButtonSize");
+
+		oOverflowTB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oOverflowTB._getOverflowButtonSize(), 44, "When there is no right margin, 0.25rem is deducted");
+		assert.ok(oOverflowBtnClonedSpy.called, "Recalculation called from doLayout");
 
-		// Clean-up
-		oMarginStub.restore();
-		oBaseFontSizeStub.restore();
+		// Act
+		oOverflowBtnClonedSpy.reset();
+		oOverflowTB.onThemeChanged();
+
+		// Assert
+		assert.ok(oOverflowBtnClonedSpy.called, "Recalculation is done when the theme is changed");
+
+		// Clean
+		oOverflowTB.destroy();
 	});
 
+	QUnit.test("Recalculation is not triggered after caching overflow button size", function (assert) {
+		// Arrange
+		var oOverflowTB = new OverflowToolbar(),
+			oOverflowBtnClonedSpy = this.spy(oOverflowTB._getOverflowButtonClone(), "$");
+
+		oOverflowTB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oOverflowBtnClonedSpy.called, "Recalculation is done");
+
+		// Act
+		oOverflowBtnClonedSpy.reset();
+		oOverflowTB.setWidth("500px");
+
+		// Assert
+		assert.notEqual(oOverflowTB._iOverflowToolbarButtonSize, 0, "Size of the overflow button is cached");
+		assert.ok(oOverflowBtnClonedSpy.notCalled, "Recalculation is not triggered when the button size is cached");
+
+		// Clean
+		oOverflowTB.destroy();
+	});
 
 	QUnit.test("Size of content is reported correctly", function (assert) {
 		var oButton1 = new Button({
