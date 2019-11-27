@@ -74,7 +74,9 @@ sap.ui.define([
 		},
 		// system query options allowed in mParameters
 		aSystemQueryOptions = ["$apply", "$count", "$expand", "$filter", "$orderby", "$search",
-			"$select"];
+			"$select"],
+		// valid header values: non-empty, only US-ASCII, no control chars
+		rValidHeader = /^[ -~]+$/;
 
 	/**
 	 * Constructor for a new ODataModel.
@@ -785,11 +787,18 @@ sap.ui.define([
 	 * </ul>
 	 * Note: The "X-CSRF-Token" header will not be used for metadata requests.
 	 *
+	 * If not <code>undefined</code>, a header value must conform to the following rules:
+	 * <ul>
+	 *   <li> It must be a non-empty string.
+	 *   <li> It must be completely in the US-ASCII character set.
+	 *   <li> It must not contain control characters.
+	 * </ul>
+	 *
 	 * @param {object} [mHeaders]
 	 *   Map of HTTP header names to their values
 	 * @throws {Error}
 	 *   If <code>mHeaders</code> contains unsupported headers, the same header occurs more than
-	 *   once, the header values are not strings or undefined, or there are open requests.
+	 *   once, a header value is invalid, or there are open requests.
 	 *
 	 * @public
 	 * @since 1.71.0
@@ -807,7 +816,8 @@ sap.ui.define([
 			sHeaderValue = mHeaders[sKey];
 			if (mHeadersCopy[sHeaderName]) {
 				throw new Error("Duplicate header " + sKey);
-			} else if (!(typeof sHeaderValue === "string" || sHeaderValue === undefined)) {
+			} else if (!(typeof sHeaderValue === "string" && rValidHeader.test(sHeaderValue)
+					|| sHeaderValue === undefined)) {
 				throw new Error("Unsupported value for header '" + sKey + "': " + sHeaderValue);
 			} else {
 				if (sHeaderName === "x-csrf-token") {
