@@ -1350,7 +1350,8 @@
 			"sap.m.sample.StandardMarginsEnforceWidthAuto",
 			"sap.m.sample.StandardMarginsResponsive",
 			"sap.m.sample.StandardMarginsCollapse",
-			"sap.m.sample.StandardNoMargins"
+			"sap.m.sample.StandardNoMargins",
+			"sap.m.sample.StandardNegativeMarginsTwoSided"
 		  ]
 		},
 		{
@@ -2969,6 +2970,11 @@
 		  "id": "sap.m.sample.StandardNoMargins",
 		  "name": "Remove Margins",
 		  "description": "Use our standard 'No-Margins' classes to remove existing margins from your control. You can either remove all margins at once or remove the margin on one or more sides."
+		},
+		{
+		  "id": "sap.m.sample.StandardNegativeMarginsTwoSided",
+		  "name": "Negative Margins",
+		  "description": "Use standard negative margin classes 'sapUiTinyNegativeMarginBeginEnd', 'sapUiSmallNegativeMarginBeginEnd', 'sapUiMediumNegativeMarginBeginEnd' or 'sapUiLargeNegativeMarginBeginEnd' to remove  0.5rem, 1rem, 2rem, or 3rem margin to the left and right edges of your control."
 		},
 		{
 		  "id": "sap.m.sample.StepInput",

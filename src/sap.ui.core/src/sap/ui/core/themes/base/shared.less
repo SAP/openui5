@@ -226,6 +226,24 @@ link[id^="sap-ui-theme-"]::after,
 .sapUiLargeMarginBegin  { margin-left: @sapUiMarginLarge !important; }
 .sapUiLargeMarginEnd    { margin-right: @sapUiMarginLarge !important; }
 
+/* Negative two-sided margins */
+.sapUiTinyNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginTiny !important;
+	margin-right: -@sapUiMarginTiny !important;
+}
+.sapUiSmallNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginSmall !important;
+	margin-right: -@sapUiMarginSmall !important;
+}
+.sapUiMediumNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginMedium !important;
+	margin-right: -@sapUiMarginMedium !important;
+}
+.sapUiLargeNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginLarge !important;
+	margin-right: -@sapUiMarginLarge !important;
+}
+
 
 /*
  * Class for responsive margins which adapts to the screen size of the currently used device
