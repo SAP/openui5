@@ -270,6 +270,13 @@ sap.ui.define([
 		assert.strictEqual(this.sideNavigation.getItem()._selectedItem.getKey(), 'child2', 'selection is set');
 	});
 
+	QUnit.test('no flexible items', function (assert) {
+		var selectedItem = this.sideNavigation.getFixedItem().getItems()[0];
+		this.sideNavigation.setItem(null);
+		this.sideNavigation.setSelectedItem(selectedItem);
+		assert.strictEqual(this.sideNavigation.getSelectedItem(), selectedItem.sId, 'selection is correct');
+	});
+
 
 	QUnit.module('Changing properties', {
 		beforeEach: function () {
