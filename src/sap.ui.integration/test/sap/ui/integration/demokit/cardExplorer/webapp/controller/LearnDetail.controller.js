@@ -31,17 +31,17 @@ sap.ui.define([
 		 * @private
 		 */
 		_onTopicMatched: function (event) {
-			var topicId = event.getParameter("arguments").key || 'overview',
-				navEntry = this._findNavEntry(topicId),
-				topicURL = "./topics/learn/" + topicId + '.html',
-				pageTitle = navEntry.topicTitle ||  navEntry.title;
-
+			var oArgs = event.getParameter("arguments"),
+				sGroup = oArgs.group || "overview", // group is mandatory (described in the manifest)
+				sTopicId = oArgs.key ? "/" + oArgs.key : "",
+				oNavEntry = this._findNavEntry(sGroup),
+				sTopicURL = "./topics/learn/" + sGroup + sTopicId + '.html',
+				sPageTitle = oNavEntry.topicTitle || oNavEntry.title;
 			var jsonObj = {
-				pageTitle: pageTitle,
-				topicURL : topicURL,
+				pageTitle: sPageTitle,
+				topicURL : sTopicURL,
 				bIsPhone : Device.system.phone
 			};
-
 			this.jsonDefModel.setData(jsonObj);
 		},
 

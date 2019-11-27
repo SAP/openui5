@@ -3,6 +3,7 @@
 		displayBlock="true"
 		height="100%"
 		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
 		xmlns:tnt="sap.tnt"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:html="http://www.w3.org/1999/xhtml">
@@ -49,7 +50,13 @@
 						<tnt:NavigationListItem text="{title}"
 												key="{key}"
 												enabled="{enabled}">
+							<tnt:customData>
+								<core:CustomData key="subItem"/>
+							</tnt:customData>
 						</tnt:NavigationListItem>
+						<tnt:customData>
+							<core:CustomData key="groupItem"/>
+						</tnt:customData>
 					</tnt:NavigationListItem>
 				</tnt:NavigationList>
 				<tnt:fixedItem>

@@ -2,19 +2,19 @@
 <html lang="en">
 
 <head>
-	<title>Manifest Parameters</title>
+	<title>Date and Time Formatters</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../../css/style.css">
 	<script id="sap-ui-bootstrap"
-			src="../../../../../../../../../resources/sap-ui-core.js"
+			src="../../../../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_fiori_3">
 	</script>
 
-	<link href="../google-code-prettify/prettify.css" rel="stylesheet">
-	<script src="../google-code-prettify/run_prettify.js"></script>
+	<link href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<script src="../../google-code-prettify/run_prettify.js"></script>
 
 </head>
 
@@ -30,8 +30,14 @@
 		<p>
 			The <code>date</code> formatter takes as a first parameter a valid JavaScript Date object, ISO 8601 date string or a valid date and time strings,
 			and as a second parameter an object, which defines the format options.
+			The third optional parameter is a string representing a custom locale code. If no locale is given the current user locale is used.
 			Underneath for the date formatter we use <a id="linkToDateFormatApiRef" target="_blank">sap.ui.core.format.DateFormat</a> and the second parameter
 			<code>options</code> is passed unchanged to the <a id="linkToDateFormatOptions" target="_blank">getDateTimeInstance</a>.
+			<p>
+				The <code>options</code> and <code>locale</code> parameters are optional and can be omitted. If only <code>options</code> is omitted
+				the <code>locale</code> will be shifted in its place.
+			</p>
+			<p><code>format.dateTime(date, options?, locale?)</code></p>
 		</p>
 
 		<div class="tableWrapper">
@@ -40,17 +46,26 @@
 					<tr>
 						<th>Param</th>
 						<th>Type</th>
+						<th>Required</th>
 						<th>Description</th>
 					</tr>
 					<tr>
 						<td>date</td>
 						<td>JS Date</td>
+						<td>Yes</td>
 						<td>Any valid value, that can construct JavaScript Date object.</td>
 					</tr>
 					<tr>
 						<td>options</td>
 						<td>object</td>
+						<td>No</td>
 						<td><a id="linkToDateOptions" target="_blank">Formatting options.</a></td>
+					</tr>
+					<tr>
+						<td>locale</td>
+						<td>string</td>
+						<td>No</td>
+						<td>A string representing the locale code</td>
 					</tr>
 				</tbody>
 
@@ -59,10 +74,12 @@
 						<th>Returns</th>
 						<th></th>
 						<th></th>
+						<th></th>
 					</tr>
 					<tr>
 						<td></td>
 						<td>string</td>
+						<td></td>
 						<td>The formatted date.</td>
 					</tr>
 				</tbody>
@@ -78,28 +95,29 @@
 			Examples
 		</h2>
 
-		<p>A card with a date formatter using expression binding for today with <code>{pattern: 'MMMM d, y'}</code> as format options</p>
+		<p>A card with a <code>dateTime</code> formatter using expression binding for today with <code>{pattern: 'MMMM d, y'}</code> as format options</p>
 
 <pre class="prettyprint">
 "sap.card": {
 	"type": "List",
 	"header": {
-		"title": "Order status {= format.date(Date.now(), {pattern: 'MMMM d, y'}) }"
+		"title": "Order status {= format.dateTime(Date.now(), {pattern: 'MMMM d, y'}) }"
 	}
 }
 </pre>
 
-	<a class="try-button" href="../../index.html#/explore/dateAndTime" target="_parent">Try it Out</a>
+	<a class="try-button" href="../../../index.html#/explore/dateAndTime" target="_parent">Try it Out</a>
 	</div>
 	<div class="navigation">
 		<h4>Table of Contents</h4>
 		<div><a href="#dateFormatters">Date and Time Formatters</a></div>
+		<div><a href="#examples">Examples</a></div>
 	</div>
 </div>
 
 <script>
-		var sPathToDemoKitLocal = "../../../../../../../../../documentation.html#";
-		var sPathToDemoKit = "../../../../../../../../../#";
+		var sPathToDemoKitLocal = "../../../../../../../../../../documentation.html#";
+		var sPathToDemoKit = "../../../../../../../../../../#";
 
 		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
 			document.getElementById("linkToDateFormatApiRef").href = sPathToDemoKitLocal + "/api/sap.ui.core.format.DateFormat";

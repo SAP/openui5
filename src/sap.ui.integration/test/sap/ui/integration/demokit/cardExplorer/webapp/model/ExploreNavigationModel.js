@@ -247,7 +247,37 @@ sap.ui.define([
 						key: 'dateAndTime',
 						target: 'exploreSamples',
 						title: 'Date and Time',
-						manifestUrl: '/samples/formatters/dateAndTime/manifest.json'
+						manifestUrl: "/samples/formatters/dateAndTime/manifest.json"
+					},
+					{
+						key: 'currency',
+						target: 'exploreSamples',
+						title: 'Currency',
+						manifestUrl: "/samples/formatters/currency/manifest.json"
+					},
+					{
+						key: 'float',
+						target: 'exploreSamples',
+						title: 'Float',
+						manifestUrl: "/samples/formatters/float/manifest.json"
+					},
+					{
+						key: 'integer',
+						target: 'exploreSamples',
+						title: 'Integer',
+						manifestUrl: "/samples/formatters/integer/manifest.json"
+					},
+					{
+						key: 'percent',
+						target: 'exploreSamples',
+						title: 'Percent',
+						manifestUrl: "/samples/formatters/percent/manifest.json"
+					},
+					{
+						key: 'unit',
+						target: 'exploreSamples',
+						title: 'Unit of Measurement',
+						manifestUrl: "/samples/formatters/unit/manifest.json"
 					}
 				]
 			}

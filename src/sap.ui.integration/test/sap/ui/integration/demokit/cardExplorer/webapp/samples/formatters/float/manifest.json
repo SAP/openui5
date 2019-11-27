@@ -1,14 +1,14 @@
 {
 	"_version": "1.17.0",
 	"sap.app": {
-		"id": "card.explorer.format.date",
+		"id": "card.explorer.format.float",
 		"type": "card"
 	},
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "Order status {= format.dateTime(Date.now(), {pattern: 'H:mm, MMMM d, y'}) }",
-			"subTitle": "Orders exceeding 50$ are highlighted as important",
+			"title": "Order status",
+			"subTitle": "Orders exceeding {= format.float(50.00, {decimals:2, style:'short'}, 'de' )} are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -22,44 +22,44 @@
 					{
 						"Name": "Keyboard and Mouse",
 						"image": "sap-icon://keyboard-and-mouse",
-						"Price": 155,
+						"Price": 155.5,
 						"arrivalDate": "Sun Dec 1 2019 03:24:00 GMT+0200 (Eastern European Standard Time)"
 					},
 					{
 						"Name": "ITelO Vault",
 						"image": "sap-icon://shield",
-						"Price": 30,
+						"Price": 30.123,
 						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
 					},
 					{
 						"Name": "Notebook Professional 15",
 						"image": "sap-icon://laptop",
-						"Price": 30,
+						"Price": 1234567890,
 						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
 					},
 					{
 						"Name": "Ergo Screen E-I",
 						"image": "sap-icon://desktop-mobile",
 						"arrivalDate": "Sun Nov 2 2019 03:24:00 GMT+0200 (Eastern European Standard Time)",
-						"Price": 69
+						"Price": 69.697
 					},
 					{
 						"Name": "Laser Professional Eco",
 						"image": "sap-icon://keyboard-and-mouse",
 						"arrivalDate": "Sun Jan 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)",
-						"Price": 40
+						"Price": 40.001
 					}
 				]
 			},
 			"item": {
 				"title": "{Name}",
-				"description": "Should arrive {= format.dateTime(${arrivalDate}, {relative:true}) }",
+				"description": "Price:",
 				"highlight": "{= ${Price} < 50 ? 'Success' : 'Error'}",
 				"icon": {
 					"src": "{image}"
 				},
 				"info": {
-					"value": "{Price}$"
+					"value": "{= format.float(${Price}, {decimals:2, style:'short'})}"
 				}
 			}
 		}

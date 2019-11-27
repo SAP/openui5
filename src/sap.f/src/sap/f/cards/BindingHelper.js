@@ -5,11 +5,13 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/util/extend",
 	"./formatters/DateTimeFormatter",
+	"./formatters/NumberFormatter",
 	"./bindingFeatures/DateRange"
 	], function (
 		ManagedObject,
 		extend,
 		DateTimeFormatter,
+		NumberFormatter,
 		DateRange
 	) {
 		"use strict";
@@ -29,7 +31,13 @@ sap.ui.define([
 		 * Map of cards formatters.
 		 */
 		var mFormatters = {
-			date: DateTimeFormatter.date
+			date: DateTimeFormatter.date,
+			dateTime: DateTimeFormatter.dateTime,
+			currency: NumberFormatter.currency,
+			"float": NumberFormatter.float,
+			integer: NumberFormatter.integer,
+			percent: NumberFormatter.percent,
+			unit: NumberFormatter.unit
 		};
 
 		BindingHelper.mLocals = {

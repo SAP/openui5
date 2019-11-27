@@ -1,14 +1,21 @@
 {
 	"_version": "1.17.0",
 	"sap.app": {
-		"id": "card.explorer.format.date",
+		"id": "card.explorer.format.currency",
 		"type": "card"
 	},
 	"sap.card": {
 		"type": "List",
+		"configuration": {
+			"parameters": {
+				"cardCurrency": {
+					"value": "EUR"
+				}
+			}
+		},
 		"header": {
-			"title": "Order status {= format.dateTime(Date.now(), {pattern: 'H:mm, MMMM d, y'}) }",
-			"subTitle": "Orders exceeding 50$ are highlighted as important",
+			"title": "Order status",
+			"subTitle": "Orders exceeding {= format.currency(50.00, '{{parameters.cardCurrency}}', {currencyCode:true}, 'de')} are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -53,13 +60,13 @@
 			},
 			"item": {
 				"title": "{Name}",
-				"description": "Should arrive {= format.dateTime(${arrivalDate}, {relative:true}) }",
+				"description": "Total price:",
 				"highlight": "{= ${Price} < 50 ? 'Success' : 'Error'}",
 				"icon": {
 					"src": "{image}"
 				},
 				"info": {
-					"value": "{Price}$"
+					"value": "{= format.currency(${Price}, '{{parameters.cardCurrency}}', {currencyCode:false})}"
 				}
 			}
 		}
