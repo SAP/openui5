@@ -30,7 +30,7 @@
 						</Bar>
 					</customHeader>
 					<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }">
-						<w:Card id="cardSample"></w:Card>
+						<w:Card id="cardSample" action="._onCardAction"/>
 					</f:GridContainer>
 					<core:HTML
 						id="iframeWrapper"

@@ -1,0 +1,71 @@
+{
+	"sap.app": {
+		"id": "card.explorer.dataSources.topProducts",
+		"type": "card",
+		"title": "Sample of a Card with Data Source",
+		"dataSources": {
+			"products": {
+				"uri": "./SEPMRA_PROD_MAN",
+				"type": "OData"
+			}
+		}
+	},
+	"sap.card": {
+		"data": {
+			"request": {
+				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product?$filter=AverageRatingValue gt 3&$orderby=AverageRatingValue desc&$inlinecount=allpages"
+			}
+		},
+		"configuration": {
+			"parameters": {
+				"numberOfProducts": {
+					"value": 8
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Top {{parameters.numberOfProducts}} products",
+			"subTitle": "Ordered by rating",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/d/__count"
+						]
+					}
+				}
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "https://sapes5.sapdevcenter.com/sap/bc/ui5_ui5/ui2/ushell/shells/abap/FioriLaunchpad.html#EPMProduct-manage"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"path": "/d/results"
+			},
+			"item": {
+				"icon": {
+					"src": "{ProductPictureURL}"
+				},
+				"title": "{Name}",
+				"description": "{ProductCategory}",
+				"info": {
+					"value": "{AverageRatingValue}",
+					"state": "{= ${AverageRatingValue} > 4 ? 'Success' : 'Warning' }"
+				}
+			},
+			"maxItems": "{{parameters.numberOfProducts}}"
+		}
+	}
+}
