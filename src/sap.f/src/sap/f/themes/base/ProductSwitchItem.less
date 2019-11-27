@@ -60,7 +60,7 @@
 	&.sapFPSItemSelected.sapFPSItemActive,
 	&:active,
 	&.sapFPSItemSelected:active,
-	&.sapFPSItemSelected:hover:active  {
+	&.sapFPSItemSelected:hover:active {
 		background: @sapUiListActiveBackground;
 		color: @sapUiListActiveTextColor;
 		border: none;
@@ -109,11 +109,24 @@
 		cursor: pointer;
 		font-size: 1.25rem;
 		width: 3rem;
+		color: @sapUiContentNonInteractiveIconColor;
+	}
+
+	&.sapFPSItemActive,
+	&:active {
+		.sapUiIcon {
+			color: @sapUiListActiveTextColor;
+		}
 	}
 
 	.sapFPSItemTitle {
 		width: 100%;
 		max-width: 100%;
+		line-height: normal;
+	}
+
+	.sapFPSItemSubTitle {
+		padding-top: 0.75rem;
 	}
 
 	&.sapFPSItemSelected {
