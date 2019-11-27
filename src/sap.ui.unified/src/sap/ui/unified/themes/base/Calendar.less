@@ -44,7 +44,6 @@
 .sapUiCalTwoMonthsTwoColumnsJaZh:not(.sapUiCalInt) > .sapUiCalHead,
 .sapUiCalTwoMonthsTwoColumns:not(.sapUiCalInt) > .sapUiCalHead {
 	max-width: 100%;
-	box-sizing: border-box;
 	text-align: left;
 }
 
@@ -416,6 +415,7 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 .sapUiCalIntLarge .sapUiCalHeadB3,
 .sapUiCalMonthInt .sapUiCalHeadB4 {
 	width: 12.5rem;
+	margin-right: 0.5rem
 }
 
 .sapUiCalIntLarge .sapUiCalHeadB1 {
@@ -438,7 +438,7 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	.sapUiCalHead {
 		.sapUiCalHeadB2.sapUiCalSingleYearButton,
 		.sapUiCalHeadB4.sapUiCalSingleYearButton {
-			width: 11.5rem;
+			width: 12rem;
 		}
 
 		.sapUiCalHeadB3 + .sapUiCalHeadB4.sapUiCalSingleYearButton {
@@ -460,7 +460,7 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 
 .sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB2,
 .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1 {
-	margin-left: calc(~"25% - 5.75rem");
+	margin-left: calc(~"25% - 6rem");
 }
 
 .sapUiSizeCompact .sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB4,
@@ -839,3 +839,37 @@ html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalMonth
 html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalYearPicker{
 	left: 0;
 }
+
+.sapUiCal.sapUiCalMulti.sapUiCalTwoMonthsTwoColumns {
+	& .sapUiCalHeadB.sapUiCalHeadB1 {
+		margin-right: 0.25rem;
+	}
+	& .sapUiCalHeadB.sapUiCalHeadB4 {
+		margin-left: 0.25rem;
+	}
+	& .sapUiCalHeadB.sapUiCalHeadB2.sapUiCalHeadBFirst {
+		margin-left: 0.25rem;
+		margin-right: calc(~"25% - 6rem");
+	}
+	& .sapUiCalHeadB.sapUiCalHeadB3.sapUiCalHeadBLast {
+		margin-right: 0.25rem;
+		margin-left: calc(~"25% - 6rem");
+	}
+	.sapUiCalHeadB.sapUiCalHeadB2.sapUiCalSingleYearButton,
+	.sapUiCalHeadB.sapUiCalHeadB4.sapUiCalSingleYearButton {
+		width: 12rem;
+		margin-left: calc(~"25% - 6rem");
+	}
+}
+
+.sapUiSizeCompact {
+	.sapUiCal {
+		.sapUiCalHead {
+			.sapUiCalHeadB2.sapUiCalSingleYearButton,
+			.sapUiCalHeadB4.sapUiCalSingleYearButton {
+				width: 11rem;
+			}
+		}
+	}
+}
+
