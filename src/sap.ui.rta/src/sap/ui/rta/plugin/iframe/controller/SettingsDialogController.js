@@ -15,8 +15,9 @@ sap.ui.define([
 	var _aSelectInputFields = ["asNewSection", "frameWidthUnit", "frameHeigthUnit"];
 
 	return Controller.extend("sap.ui.rta.plugin.iframe.controller.SettingsDialogController", {
-		constructor: function (oJSONModel) {
+		constructor: function (oJSONModel, mSettings) {
 			this._oJSONModel = oJSONModel;
+			this._importSettings(mSettings);
 		},
 
 		/**
@@ -119,6 +120,20 @@ sap.ui.define([
 				mSettings[sFieldName] = oData[sFieldName].value;
 			});
 			return mSettings;
+		},
+
+		/**
+		 * Import settings
+		 *
+		 * @param {object|undefined} mSettings - existing iframe settings
+		 * @private
+		 */
+		_importSettings: function (mSettings) {
+			if (mSettings) {
+				Object.keys(mSettings).forEach(function (sFieldName) {
+					this._oJSONModel.setProperty("/" + sFieldName + "/value", mSettings[sFieldName]);
+				}, this);
+			}
 		}
 	});
 });

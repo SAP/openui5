@@ -213,5 +213,25 @@ sap.ui.define([
 				done();
 			});
 		});
+
+		QUnit.test("When existing settings are passed to the dialog then they should be imported correctly", function (assert) {
+			var mSettings = {
+				asNewSection: true,
+				frameWidth: 16,
+				frameHeigth: 9
+			};
+			var done = assert.async();
+			this.oSettingsDialog = createDialog();
+			this.oSettingsDialog.attachOpened(function () {
+				var oData = this.oSettingsDialog._oJSONModel.getData();
+				Object.keys(mSettings).forEach(function (sFieldName) {
+					assert.strictEqual(oData[sFieldName].value, mSettings[sFieldName], sFieldName + " is imported correctly");
+				});
+				clickOnCancel();
+			}, this);
+			this.oSettingsDialog.open(mSettings).then(function () {
+				done();
+			});
+		});
 	});
 });
