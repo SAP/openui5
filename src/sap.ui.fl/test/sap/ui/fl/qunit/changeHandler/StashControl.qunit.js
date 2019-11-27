@@ -67,6 +67,8 @@ sap.ui.define([
 				'<mvc:View  xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout"><layout:VerticalLayout id="' + this.oVerticalLayout.getId() + '" flexEnabled="true">' +
 					'<content>' +
 						'<core:Control id="' + this.oControl1.getId() + '"></core:Control>' +
+						'<core:Control id="' + this.oControl2.getId() + '"></core:Control>' +
+						'<core:Control stashed="true" id="' + this.oControlInvisible.getId() + '"></core:Control>' +
 						'<core:Control id="ToBeStashed"></core:Control>' +
 					'</content>' +
 				'</layout:VerticalLayout></mvc:View>';
@@ -76,7 +78,7 @@ sap.ui.define([
 			this.oXmlView = oXmlDocument.documentElement;
 			this.oXmlLayout = this.oXmlView.childNodes[0];
 			this.oXmlNodeControl0 = this.oXmlLayout.childNodes[0].childNodes[0];
-			this.oXmlNodeToBeStashed = this.oXmlLayout.childNodes[0].childNodes[1];
+			this.oXmlNodeToBeStashed = this.oXmlLayout.childNodes[0].childNodes[3];
 
 			this.oChange = new Change(oChangeJson);
 		},
@@ -118,8 +120,8 @@ sap.ui.define([
 
 			var aContentAfterRevert = this.oVerticalLayout.getContent();
 			assert.strictEqual(aContentAfterRevert.length, 4, "then the VerticalLayout has 4 controls after revert");
-			assert.strictEqual(aContentAfterRevert[1].getVisible(), true, 'then the unstashed control has visible property set to true');
-			assert.strictEqual(aContentAfterRevert[1].getId(), this.oXmlNodeToBeStashed.getAttribute("id"), "then the unstashed control was placed at the correct index");
+			assert.strictEqual(aContentAfterRevert[2].getVisible(), true, 'then the unstashed control has visible property set to true');
+			assert.strictEqual(aContentAfterRevert[2].getId(), this.oXmlNodeToBeStashed.getAttribute("id"), "then the unstashed control was placed at the correct index");
 		});
 
 		QUnit.test('applyChange on an XMLTreeModifier', function(assert) {
