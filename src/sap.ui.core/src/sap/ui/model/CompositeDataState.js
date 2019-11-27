@@ -72,7 +72,9 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	});
 
 	/**
-	 * Returns true if there invalid values set on at least one of the inner datastates
+	 * Returns true if there are invalid values set on at least one of the inner datastates.
+	 *
+	 * @returns {boolean} Whether one of the inner datastates has an invalid value
 	 *
 	 * @private
 	 */
@@ -87,7 +89,10 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	};
 
 	/**
-	 * Returns an array of the properties set on the inner datastates
+	 * Returns an array of values for the given property in the inner datastates.
+	 *
+	 * @param {string} sProperty The property name
+	 * @returns {any[]} The array of property values in the inner datastates
 	 *
 	 * @protected
 	 */
@@ -108,10 +113,10 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	};
 
 	/**
-	 * Returns the current value of the property
+	 * Returns the current value of the given property.
 	 *
-	 * @param {string} the name of the property
-	 * @returns {any} the vaue of the property
+	 * @param {string} sProperty The name of the property
+	 * @returns {any} The value of the property
 	 * @private
 	 */
 	CompositeDataState.prototype.getProperty = function(sProperty) {
@@ -136,9 +141,9 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	};
 
 	/**
-	 * Returns the array of state messages of the model or undefined
+	 * Returns the array of state messages of the model or undefined.
 	 *
-	 * @returns {sap.ui.core.Message[]} the array of messages of the model or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @returns {sap.ui.core.Message[]} The array of messages of the model
 	 * @public
 	 */
 	CompositeDataState.prototype.getModelMessages = function() {
@@ -146,20 +151,19 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	};
 
 	/**
-	 * Sets an array of control state messages.
+	 * Returns the array of state messages of the control.
 	 *
-	 * @return {sap.ui.model.DataState} <code>this</code> to allow method chaining
-	 * @protected
+	 * @return {sap.ui.core.Message[]} The array of control messages
+	 * @public
 	 */
 	CompositeDataState.prototype.getControlMessages = function() {
 		return this.getProperty("controlMessages");
 	};
 
 	/**
-	 * Returns the array of all state messages or null.
-	 * This combines the model and control messages.
+	 * Returns the array of all state messages combining the model and control messages.
 	 *
-	 * @returns {sap.ui.core.Message[]} the array of all messages or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @returns {sap.ui.core.Message[]} The array of all messages
 	 * @public
 	 */
 	CompositeDataState.prototype.getMessages = function() {
@@ -193,7 +197,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	 * A data state is dirty if the value was changed
 	 * but is not yet confirmed by a server or the entered value did not yet pass the type validation.
 	 *
-	 * @returns {boolean} true if the data state is dirty
+	 * @returns {boolean} Whether the data state is dirty
 	 * @public
 	 */
 	CompositeDataState.prototype.isDirty = function() {
@@ -210,7 +214,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	 * Returns whether the data state is dirty in the UI control.
 	 * A data state is dirty in the UI control if the entered value did not yet pass the type validation.
 	 *
-	 * @returns {boolean} true if the data state is dirty
+	 * @returns {boolean} Whether the control data state is dirty
 	 * @public
 	 */
 	CompositeDataState.prototype.isControlDirty = function() {
@@ -228,7 +232,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	 * If data is send to the server the data state becomes laundering until the
 	 * data was accepted or rejected.
 	 *
-	 * @returns {boolean} true if the data is laundering
+	 * @returns {boolean} Whether the data state is laundering
 	 * @public
 	 */
 	CompositeDataState.prototype.isLaundering = function() {
@@ -247,7 +251,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	 * value was not rejected it will return null. In this case the current
 	 * model value can be accessed using the <code>getValue</code> method.
 	 *
-	 * @returns {any} the value that was rejected or null
+	 * @returns {any} The value that was rejected
 	 * @public
 	 */
 	CompositeDataState.prototype.getInvalidValue = function() {
@@ -265,7 +269,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	 * and the corresponding binding will fire data state change events.
 	 *
 	 * @param {boolean} [bNewState] the optional new state
-	 * @returns {boolean} whether the data state was changed.
+	 * @returns {boolean} Whether the data state was changed.
 	 * @protected
 	 */
 	CompositeDataState.prototype.changed = function(bNewState) {
