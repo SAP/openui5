@@ -2338,10 +2338,10 @@ sap.ui.define([
 			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
-			that.registerChange(sPath, oListener);
 			if (oResult["$ui5.deleted"]) {
 				throw new Error("Cannot read a deleted entity");
 			}
+			that.registerChange(sPath, oListener);
 			return that.drillDown(oResult, sPath, oGroupLock);
 		});
 	};
