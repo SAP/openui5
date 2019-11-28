@@ -5,7 +5,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
 	"sap/m/SplitApp",
+	"sap/m/ScrollContainer",
 	"sap/m/Page",
+	"sap/m/Bar",
 	"sap/m/Button",
 	"jquery.sap.global",
 	"sap/m/NavContainer",
@@ -17,7 +19,9 @@ sap.ui.define([
 	createAndAppendDiv,
 	Device,
 	SplitApp,
+	ScrollContainer,
 	Page,
+	Bar,
 	Button,
 	jQuery,
 	NavContainer,
@@ -817,7 +821,7 @@ sap.ui.define([
 
 	QUnit.module("backgroundColor", {
 		beforeEach: function () {
-			this.oSplitApp = new sap.m.SplitApp();
+			this.oSplitApp = new SplitApp();
 			this.oSplitApp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -842,7 +846,7 @@ sap.ui.define([
 
 	QUnit.module("backgroundImage", {
 		beforeEach: function () {
-			this.oSplitApp = new sap.m.SplitApp();
+			this.oSplitApp = new SplitApp();
 			this.oSplitApp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -927,10 +931,10 @@ sap.ui.define([
 
 	QUnit.module("Show Hide module", {
 		beforeEach: function () {
-			var oMasterPage = new sap.m.Page("master11", {
+			var oMasterPage = new Page("master11", {
 				title: "Master"
 			});
-			var oDetailPage = new sap.m.Page("detail11", {
+			var oDetailPage = new Page("detail11", {
 				title: "Detail 1",
 				content: [],
 				showNavButton: jQuery.device.is.phone,
@@ -938,15 +942,15 @@ sap.ui.define([
 				navButtonPress: function() {
 					this.oSplitApp.backDetail();
 				},
-				subHeader: new sap.m.Bar({
+				subHeader: new Bar({
 					contentMiddle: [
-						this.oStrechButton = new sap.m.Button({
+						this.oStrechButton = new Button({
 							text: "stretch/compress",
 							press: function() {
 								this.oSplitApp.setMode(sap.m.SplitAppMode.StretchCompressMode);
 							}.bind(this)
 						}),
-						this.oHideButton =  new sap.m.Button("saHideMasterMode", {
+						this.oHideButton =  new Button("saHideMasterMode", {
 							text: "hide",
 							press: function() {
 								this.oSplitApp.setMode(sap.m.SplitAppMode.HideMode);
@@ -955,7 +959,7 @@ sap.ui.define([
 					]
 				})
 			}).addStyleClass("sapUiStdPage");
-			this.oSplitApp = new sap.m.SplitApp({
+			this.oSplitApp = new SplitApp({
 				detailPages: [oDetailPage],
 				masterPages: [oMasterPage],
 				initialDetail: "detail11",
@@ -993,5 +997,32 @@ sap.ui.define([
 
 		// Check
 		assert.strictEqual(this.oSplitApp._oShowMasterBtn.getTooltip(), "Show Master", 'Tooltip is should be "Show Master"');
+	});
+
+	QUnit.module("SplitApp in container with semantic rendering", {
+		beforeEach: function () {
+
+			this.oScrollContainer = new ScrollContainer({
+				content: [
+					new SplitApp()
+				]
+			});
+
+			this.oScrollContainer.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oScrollContainer.destroy();
+			this.oScrollContainer = null;
+		}
+	});
+
+	QUnit.test("parents elements height", function(assert) {
+		assert.strictEqual(this.oScrollContainer.getDomRef().firstChild.style.height, '100%', "height is set correctly");
+
+		this.oScrollContainer.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oScrollContainer.getDomRef().firstChild.style.height, '100%', "height is set correctly");
 	});
 });
