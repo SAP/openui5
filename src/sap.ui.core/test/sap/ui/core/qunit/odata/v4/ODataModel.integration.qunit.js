@@ -22219,4 +22219,88 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A list binding refreshes itself completely due to a side effect, but that GET fails
+	// and thus the old cache is restored. Check that transient contexts are properly preserved.
+	// JIRA: CPOUI5ODATAV4-34
+	QUnit.test("CPOUI5ODATAV4-34: bKeepCacheOnError & transient rows", function (assert) {
+		var oListBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oNewContext,
+			sView = '\
+<Table id="table" items="{/TEAMS}">\
+	<ColumnListItem>\
+		<Input id="name" value="{Name}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+				value : [
+					{Name : "Team 01", Team_Id : "Team_01"},
+					{Name : "Team 02", Team_Id : "Team_02"}
+				]
+			})
+			.expectChange("name", ["Team 01", "Team 02"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// create a transient row
+			that.expectChange("name", ["Team 00", "Team 01", "Team 02"]);
+
+			oListBinding = that.oView.byId("table").getBinding("items");
+			oNewContext = oListBinding.create({Name : "Team 00", Team_Id : "Team_00"}, true);
+
+			assert.strictEqual(oNewContext.getIndex(), 0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oError = new Error("418 I'm a teapot"),
+				oSideEffectsPromise;
+
+			// refresh via side effect fails
+			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", oError)
+				.expectMessages([{
+					code : undefined,
+					message : oError.message,
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to get contexts for "
+						+ "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS"
+						+ " with start index 0 and length 100",
+					sinon.match.string, "sap.ui.model.odata.v4.ODataListBinding");
+
+			oSideEffectsPromise = oListBinding.getHeaderContext()
+				.requestSideEffects([{$NavigationPropertyPath : ""}], "$direct");
+
+			//TODO fix Context#getIndex to not return -1; [...]
+//			assert.strictEqual(oNewContext.getIndex(), 0);
+
+			return Promise.all([
+				oSideEffectsPromise.catch(function (oError0) {
+					assert.strictEqual(oError0, oError);
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oNewContext.getIndex(), 0);
+
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "Team 00", Team_Id : "Team_00"}
+				}, {Name : "Team 00", Team_Id : "Team_00"});
+
+			oModel.submitBatch("update");
+
+			return Promise.all([
+				oNewContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
