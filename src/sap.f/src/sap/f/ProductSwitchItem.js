@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Icon",
+	"sap/ui/core/TextAlign",
 	"sap/m/Text",
 	"sap/ui/events/KeyCodes",
 	"sap/f/ProductSwitchItemRenderer"
@@ -13,6 +14,7 @@ sap.ui.define([
 	function (
 		Control,
 		Icon,
+		TextAlign,
 		Text,
 		KeyCodes,
 		ProductSwitchItemRenderer
@@ -140,7 +142,7 @@ sap.ui.define([
 			var oText = this.getAggregation("_title");
 
 			if (!oText) {
-				oText = new Text({ text: this.getTitle(), maxLines: 2, textAlign: null })
+				oText = new Text({ text: this.getTitle(), maxLines: 2, textAlign: TextAlign.Initial })
 					.addStyleClass("sapFPSItemMainTitle")
 					.addStyleClass("sapFPSItemTitle");
 
