@@ -9,6 +9,11 @@
 	  "lastName": "Miller"
 	}
   ],
+  "counts": {
+    "goals": 9,
+    "personal": 11,
+    "employment": 12
+  },
   "Employee": [
       {
           "name": "Michael Adams",
