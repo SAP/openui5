@@ -100,6 +100,27 @@ sap.ui.define([
 		this.firePropertyChange(aValue);
 	};
 
+	ArrayEditor.prototype._moveUp = function (oEvent) {
+		var iIndex = oEvent.getSource().data("index");
+		if (iIndex > 0) {
+			var aValue = this.getValue().slice();
+			var mRemovedItem = aValue.splice(iIndex, 1)[0];
+			aValue.splice(iIndex - 1, 0, mRemovedItem);
+			this.firePropertyChange(aValue);
+		}
+	};
+
+	ArrayEditor.prototype._moveDown = function (oEvent) {
+		var iIndex = oEvent.getSource().data("index");
+		var aValue = this.getValue().slice();
+
+		if (iIndex < aValue.length - 1) {
+			var mRemovedItem = aValue.splice(iIndex, 1)[0];
+			aValue.splice(iIndex + 1, 0, mRemovedItem);
+			this.firePropertyChange(aValue);
+		}
+	};
+
 	ArrayEditor.prototype._propertyEditorsChange = function (oEvent) {
 		oEvent.getParameter("previousPropertyEditors").forEach(function (oPropertyEditor) {
 			oPropertyEditor.detachPropertyChange(this._onPropertyValueChange, this);

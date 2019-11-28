@@ -12,6 +12,32 @@
 					</contentLeft>
 					<contentRight>
 						<Button
+							icon="sap-icon://navigation-up-arrow"
+							tooltip="{i18n>BASE_EDITOR.ARRAY.MOVEUP}"
+							press="_moveUp"
+							enabled="{= ${itemsModel>index} !== 0}"
+						>
+							<customData>
+								<core:CustomData
+									key="index"
+									value="{itemsModel>index}"
+								/>
+							</customData>
+						</Button>
+						<Button
+							icon="sap-icon://navigation-down-arrow"
+							tooltip="{i18n>BASE_EDITOR.ARRAY.MOVEDOWN}"
+							press="_moveDown"
+							enabled="{= ${itemsModel>total} - 1 !== ${itemsModel>index}}"
+						>
+							<customData>
+								<core:CustomData
+									key="index"
+									value="{itemsModel>index}"
+								/>
+							</customData>
+						</Button>
+						<Button
 							icon="sap-icon://less"
 							tooltip="{i18n>BASE_EDITOR.ARRAY.REMOVE}"
 							press="_removeItem"
