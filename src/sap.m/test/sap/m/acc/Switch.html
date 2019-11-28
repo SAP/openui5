@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>sap.m.Switch - Accessibility</title>
+
+		<script src="../shared-config.js"></script>
+		<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+		</script>
+
+		<script>
+			// ----------------
+			// Utility
+			// ----------------
+
+			var SwitchType = sap.m.SwitchType;
+
+			function getText(sText) {
+				return new sap.m.Text({ text: sText }).addStyleClass("sapUiSmallMarginTop");
+			}
+
+			function getTitle(sText) {
+				return new sap.m.Title({
+					text: sText,
+					titleStyle: "H3"
+				}).addStyleClass("sapUiMediumMarginTop")
+			}
+
+
+			// ----------------
+			// Layout sections
+			// ----------------
+
+			var oDefaultType = new sap.ui.layout.VerticalLayout({
+				content: [
+					getTitle("Default type"),
+
+					getText("Regular:"),
+					new sap.m.Switch(),
+
+					getText("Disabled:"),
+					new sap.m.Switch({ enabled: false }),
+
+					getText("Connected to a Label:"),
+					new sap.m.Label({ text: "Label", labelFor: "defaultSwitchWithLabel" }),
+					new sap.m.Switch("defaultSwitchWithLabel"),
+
+					getText("Using ariaLabelledBy association:"),
+					new sap.m.Text("defaultSwitchLabelledBy", { text: "Label" }),
+					new sap.m.Switch({ ariaLabelledBy: "defaultSwitchLabelledBy" })
+				]
+			}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+			var oDefaultCustomTextLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					getTitle("Default type with custom text"),
+
+					getText("Regular:"),
+					new sap.m.Switch({ customTextOn: "Yes", customTextOff: "No" }),
+
+					getText("Disabled:"),
+					new sap.m.Switch({ customTextOn: "Yes", customTextOff: "No", enabled: false }),
+
+					getText("Connected to a Label:"),
+					new sap.m.Label({ text: "Label", labelFor: "defaultCustomTextSwitchWithLabel" }),
+					new sap.m.Switch("defaultCustomTextSwitchWithLabel", { customTextOn: "Yes", customTextOff: "No" }),
+
+					getText("Using ariaLabelledBy association:"),
+					new sap.m.Text("defaultCustomTextSwitchLabelledBy", { text: "Label" }),
+					new sap.m.Switch({ customTextOn: "Yes", customTextOff: "No", ariaLabelledBy: "defaultCustomTextSwitchLabelledBy" })
+				]
+			}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+			var oDefaultNoTextLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					getTitle("Default type without text (via custom text)"),
+
+					getText("Regular:"),
+					new sap.m.Switch({ customTextOn: " ", customTextOff: " " }),
+
+					getText("Disabled:"),
+					new sap.m.Switch({ customTextOn: " ", customTextOff: " ", enabled: false }),
+
+					getText("Connected to a Label:"),
+					new sap.m.Label({ text: "Label", labelFor: "defaultNoTextSwitchWithLabel" }),
+					new sap.m.Switch("defaultNoTextSwitchWithLabel", { customTextOn: " ", customTextOff: " " }),
+
+					getText("Using ariaLabelledBy association:"),
+					new sap.m.Text("defaultNoTextSwitchLabelledBy", { text: "Label" }),
+					new sap.m.Switch({ customTextOn: " ", customTextOff: " ", ariaLabelledBy: "defaultNoTextSwitchLabelledBy" })
+				]
+			}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+			var oAcceptRejectLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					getTitle("AcceptReject type"),
+
+					getText("Regular:"),
+					new sap.m.Switch({ type: SwitchType.AcceptReject }),
+
+					getText("Disabled:"),
+					new sap.m.Switch({ type: SwitchType.AcceptReject, enabled: false }),
+
+					getText("Connected to a Label:"),
+					new sap.m.Label({ text: "Label", labelFor: "acceptRejectSwitchWithLabel" }),
+					new sap.m.Switch("acceptRejectSwitchWithLabel", { type: SwitchType.AcceptReject }),
+
+					getText("Using ariaLabelledBy association:"),
+					new sap.m.Text("acceptRejectSwitchLabelledBy", { text: "Label" }),
+					new sap.m.Switch({ type: SwitchType.AcceptReject, ariaLabelledBy: "acceptRejectSwitchLabelledBy" })
+				]
+			}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+			var oTableLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					getTitle("Switches in Table").addStyleClass("sapUiLargeMarginBegin sapUiSmallMarginBottom"),
+
+					new sap.m.Table({
+						columns: [
+							new sap.m.Column({
+								header: new sap.m.Text({text: "Switch's type"})
+							}),
+							new sap.m.Column({
+								header: new sap.m.Text({text: "Regular control"})
+							}),
+							new sap.m.Column({
+								header: new sap.m.Text({text: "Disabled control"})
+							})
+						],
+						items: [
+							new sap.m.ColumnListItem({
+								cells: [
+									new sap.m.Text({text: "Default"}),
+									new sap.m.Switch(),
+									new sap.m.Switch({ enabled: false })
+								]
+							}),
+							new sap.m.ColumnListItem({
+								cells: [
+									new sap.m.Text({ text: "Default with custom text" }),
+									new sap.m.Switch({ customTextOn: "Yes", customTextOff: "No" }),
+									new sap.m.Switch({ customTextOn: "Yes", customTextOff: "No", enabled: false })
+								]
+							}),
+							new sap.m.ColumnListItem({
+								cells: [
+									new sap.m.Text({text: "Default without text"}),
+									new sap.m.Switch({ customTextOn: " ", customTextOff: " " }),
+									new sap.m.Switch({ customTextOn: " ", customTextOff: " ", enabled: false })
+								]
+							}),
+							new sap.m.ColumnListItem({
+								cells: [
+									new sap.m.Text({text: "Accept Reject"}),
+									new sap.m.Switch({ type: SwitchType.AcceptReject }),
+									new sap.m.Switch({ type: SwitchType.AcceptReject, enabled: false })
+								]
+							})
+						]
+					})
+				]
+			});
+
+
+			// ----------------
+			// Final page
+			// ----------------
+
+			var oApp = new sap.m.App(),
+				oPage = new sap.m.Page({
+					title: "Switch ACC Test Page",
+					content: [
+						oDefaultType,
+						oDefaultCustomTextLayout,
+						oDefaultNoTextLayout,
+						oAcceptRejectLayout,
+						oTableLayout
+					]
+				});
+
+			oApp.addPage(oPage);
+			oApp.placeAt("content");
+
+		</script>
+	</head>
+	<body id="content" class="sapUiBody" role="application">
+	</body>
+</html>
