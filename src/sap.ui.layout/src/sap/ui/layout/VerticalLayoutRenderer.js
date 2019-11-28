@@ -13,6 +13,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var VerticalLayoutRenderer = {
+		apiVersion: 2
 	};
 
 	/**
