@@ -22146,4 +22146,77 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A PATCH (not shown here) triggers a side effect for the whole list, while a
+	// paginator switches to another item. The side effect's GET is thus ignored because the cache
+	// for the old item is already inactive. Then we switch back to the old item and the cache is
+	// reused. Show that the side effect was not ignored.
+	// JIRA: CPOUI5ODATAV4-34
+	QUnit.test("CPOUI5ODATAV4-34: Response discarded: cache is inactive", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+	<ColumnListItem>\
+		<Input id="name" value="{Name}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectChange("name", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100", {
+					value : [{ID : "1", Name : "Jonathan Smith"}]
+				})
+				.expectChange("name", ["Jonathan Smith"]);
+			oTable = that.oView.byId("table");
+			oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oPromise, fnRespond;
+
+			// 1st, request side effects
+			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100",
+					new Promise(function (resolve, reject) {
+						fnRespond = resolve.bind(null, {
+							value : [{ID : "1", Name : "Darth Vader"}]
+						});
+					}));
+
+			oPromise = oTable.getBinding("items").getHeaderContext()
+				.requestSideEffects([{$NavigationPropertyPath : ""}]);
+
+			// 2nd, switch to different context
+			that.expectRequest("TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100", {
+					value : [{ID : "2", Name : "Frederic Fall"}]
+				})
+				.expectChange("name", ["Frederic Fall"]);
+
+			setTimeout(function () {
+				// pagination triggered by separate event --> new task
+				oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext());
+				fnRespond();
+			}, 0);
+
+			return Promise.all([
+				oPromise.catch(function (oError) {
+					assert.strictEqual(oError.message, "Response discarded: cache is inactive");
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// 3rd, switch back again
+			that.expectChange("name", ["Darth Vader"]);
+
+			oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
