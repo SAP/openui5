@@ -46,6 +46,12 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	ArrayEditor.prototype.init = function () {
+		this._itemsModel = new JSONModel();
+		this._itemsModel.setDefaultBindingMode("OneWay");
+		this.setModel(this._itemsModel, "itemsModel");
+	};
+
 	ArrayEditor.prototype.onValueChange = function () {
 		var vReturn = BasePropertyEditor.prototype.onValueChange.apply(this, arguments);
 		var oConfig = this.getConfig();
@@ -67,10 +73,6 @@ sap.ui.define([
 				};
 				aItems.push(mItem);
 			}, this);
-			if (!this._itemsModel) {
-				this._itemsModel = new JSONModel();
-				this.setModel(this._itemsModel, "itemsModel");
-			}
 			this._itemsModel.setData(aItems);
 		}
 		return vReturn;
