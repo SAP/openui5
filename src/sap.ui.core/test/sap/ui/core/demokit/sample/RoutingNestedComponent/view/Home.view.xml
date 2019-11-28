@@ -1,0 +1,11 @@
+<mvc:View controllerName="sap.ui.demo.routing.nested.controller.Home"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true">
+	<MessagePage title="{i18n>homePageTitle}"
+		text="This is the {i18n>homePageTitle} view"
+		enableFormattedText="true"
+		description="Welcome Home"
+		icon="sap-icon://home">
+	</MessagePage>
+</mvc:View>

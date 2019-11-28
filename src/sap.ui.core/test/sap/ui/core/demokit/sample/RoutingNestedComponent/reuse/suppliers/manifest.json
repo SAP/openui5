@@ -1,0 +1,133 @@
+{
+	"_version": "2.3.0",
+	"sap.app": {
+		"id": "sap.ui.demo.routing.nested.reuse.suppliers",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "2.03.8"
+		},
+		"dataSources": {
+			"northwind": {
+				"uri": "https://cors-anywhere.herokuapp.com/https://services.odata.org/V2/Northwind/Northwind.svc",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.routing.nested.reuse.suppliers.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"componentUsages": {
+			"productsComponent": {
+				"name": "sap.ui.demo.routing.nested.reuse.products",
+				"settings": {},
+				"componentData": {},
+				"lazy": true
+			}
+		},
+		"dependencies": {
+			"minUI5Version": "1.72",
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.routing.nested.reuse.suppliers.i18n.i18n"
+				}
+			},
+			"": {
+				"dataSource": "northwind",
+				"defaultBindingMode": "TwoWay",
+				"preload": true,
+				"settings": {
+					"useBatch": false,
+					"defaultCountMode": "Inline"
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.routing.nested.reuse.suppliers.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": "notFound"
+				},
+				"async": true
+			},
+			"routes": [
+				{
+					"name": "list",
+					"pattern": "",
+					"target": "list"
+				},
+				{
+					"name": "detail",
+					"pattern": "detail/{id}",
+					"target": {
+						"name": "products",
+						"prefix": "p"
+					}
+				},
+				{
+					"name": "notfound",
+					"pattern": "notFound",
+					"target": "notFound"
+				}
+			],
+			"targets": {
+				"list": {
+					"viewId": "list",
+					"viewName": "List"
+				},
+				"detail": {
+					"viewId": "detail",
+					"viewName": "Detail"
+				},
+				"products": {
+					"type": "Component",
+					"usage": "productsComponent",
+					"parent": "detail",
+					"controlId": "box",
+					"controlAggregation": "items",
+					"id": "productInSupplier"
+				},
+				"notFound": {
+					"viewId": "notFound",
+					"viewName": "NotFound",
+					"transition": "show"
+				}
+			}
+		}
+	}
+}
