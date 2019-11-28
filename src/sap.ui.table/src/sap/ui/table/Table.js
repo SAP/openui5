@@ -2947,15 +2947,22 @@ sap.ui.define([
 
 
 	/**
-	 * Filter the given column by the given value.
+	 * Filters a column by a value.
+	 * If no filter value is passed, the filter value equals an empty string, and the filter for this column is removed.
 	 *
 	 * @param {sap.ui.table.Column} oColumn Column to be filtered
-	 * @param {string} sValue Filter value as string (will be converted)
+	 * @param {string} [sValue] Filter value as string (will be converted)
+	 * @throws {Error} If the filter value is not a string
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.filter = function(oColumn, sValue) {
 		if (this.getColumns().indexOf(oColumn) >= 0) {
+			if (sValue == null) {
+				sValue = "";
+			} else if (typeof sValue !== "string") {
+				throw new Error("The filter value is not a string");
+			}
 			oColumn.filter(sValue);
 		}
 	};

@@ -319,7 +319,7 @@ sap.ui.define([
 		assert.equal(oTable.getBinding("rows").iLength, 10, "RowCount after filtering FirstName 'Mo*''");
 		assert.equal(oColFirstName.getFiltered(), true, "Column FirstName is filtered");
 		oTable.filter(oColFirstName, "");
-		assert.equal(oColFirstName.getFiltered(), false, "Column FirstName is not filtered anymore filtered");
+		assert.equal(oColFirstName.getFiltered(), false, "Column FirstName is not filtered anymore");
 		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
 
 		oTable.filter(oColMoney, ">10");
@@ -340,10 +340,17 @@ sap.ui.define([
 		assert.equal(oColFirstName.getFiltered() && oColMoney.getFiltered(), true, "Column FirstName and Money are filtered");
 		oTable.filter(oColFirstName, "Mo*");
 		assert.equal(oTable.getBinding("rows").iLength, 0, "RowCount after filtering FirstName 'Mo*' and money 32,76");
-		oTable.filter(oColFirstName, "");
-		oTable.filter(oColMoney, "");
+		oTable.filter(oColFirstName);
+		oTable.filter(oColMoney, null);
 		assert.equal(oColFirstName.getFiltered() && oColMoney.getFiltered(), false, "Column FirstName and Money are not filtered anymore");
 		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
+
+		assert.throws(
+			function() {
+				oTable.filter(oColFirstName, true);
+			},
+			"Throws error if the filter value is not a string"
+		);
 	});
 
 	QUnit.test("SelectionMode", function(assert) {
