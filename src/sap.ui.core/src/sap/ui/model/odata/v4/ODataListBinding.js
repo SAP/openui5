@@ -1867,11 +1867,16 @@ sap.ui.define([
 				that.fetchCache(that.oContext);
 				oPromise = that.createRefreshPromise();
 				if (bKeepCacheOnError) {
-					oPromise.catch(function (oError) {
-						that.oCache = oCache;
-						that.oCachePromise = SyncPromise.resolve(oCache);
-						oCache.setActive(true);
-						that._fireChange({reason : ChangeReason.Change});
+					oPromise = oPromise.catch(function (oError) {
+						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
+							if (!that.bRelative || oCache.$resourcePath === sResourcePath) {
+								that.oCache = oCache;
+								that.oCachePromise = SyncPromise.resolve(oCache);
+								oCache.setActive(true);
+								that._fireChange({reason : ChangeReason.Change});
+							}
+							throw oError;
+						});
 					});
 				}
 			}
