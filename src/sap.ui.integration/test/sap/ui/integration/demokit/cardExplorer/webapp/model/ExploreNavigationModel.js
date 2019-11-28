@@ -1,7 +1,7 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel"
+	'sap/ui/model/json/JSONModel'
 ], function (JSONModel) {
-	"use strict";
+	'use strict';
 
 	return new JSONModel({
 		selectedKey: 'learnGettingStarted',
@@ -166,7 +166,20 @@ sap.ui.define([
 						key: 'translation',
 						target: 'exploreSamples',
 						title: 'Translation',
-						manifestUrl: '/samples/translation/manifest.json'
+						files: [
+							{
+								url: '/samples/translation/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								content: ''
+							},
+							{
+								url: '/samples/translation/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n/i18n.properties',
+								content: ''
+							}
+						]
 					},
 					{
 						key: 'parameters',
@@ -187,7 +200,7 @@ sap.ui.define([
 						settings: {
 							columns: 6
 						},
-						manifestUrl: "/samples/dateRange.json"
+						manifestUrl: '/samples/dateRange.json'
 					},
 					{
 						key: 'htmlConsumption',
@@ -195,28 +208,28 @@ sap.ui.define([
 						title: 'Consumption in HTML',
 						files: [
 							{
-								url: "/samples/htmlConsumption/indexTemplate.html",
-								name: "index.html",
-								key: "index.html",
-								content: ""
+								url: '/samples/htmlConsumption/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html',
+								content: ''
 							},
 							{
-								url: "/samples/htmlConsumption/manifest.json",
-								name: "manifest.json",
-								key: "manifest.json",
-								content: ""
+								url: '/samples/htmlConsumption/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								content: ''
 							},
 							{
-								url: "/samples/htmlConsumption/i18n/i18n.properties",
-								name: "i18n.properties",
-								key: "i18n.properties",
-								content: ""
+								url: '/samples/htmlConsumption/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n/i18n.properties',
+								content: ''
 							},
 							{
-								url: "/samples/htmlConsumption/items.json",
-								name: "items.json",
-								key: "items.json",
-								content: ""
+								url: '/samples/htmlConsumption/items.json',
+								name: 'items.json',
+								key: 'items.json',
+								content: ''
 							}
 						]
 					}
@@ -234,7 +247,7 @@ sap.ui.define([
 						key: 'dateAndTime',
 						target: 'exploreSamples',
 						title: 'Date and Time',
-						manifestUrl: "/samples/formatters/dateAndTime/manifest.json"
+						manifestUrl: '/samples/formatters/dateAndTime/manifest.json'
 					}
 				]
 			}

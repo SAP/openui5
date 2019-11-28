@@ -1,5 +1,5 @@
 sap.ui.define([
-	"./util/FileUtils.qunit"
+	"./model/formatter.qunit"
 ], function() {
 	"use strict";
 });
