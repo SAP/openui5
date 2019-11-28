@@ -22,7 +22,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 	var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	var aTextInputFields = ["sectionName", "frameUrl"];
-	var aNumericInputFields = ["frameWidth", "frameHeigth"];
+	var aNumericInputFields = ["frameWidth", "frameHeight"];
 
 	function createDialog() {
 		var oSettingsDialog = new SettingsDialog();
@@ -39,7 +39,7 @@ sap.ui.define([
 				value: "",
 				valueState: ValueState.None
 			},
-			frameHeigth: {
+			frameHeight: {
 				value: "",
 				valueState: ValueState.None
 			},
@@ -196,7 +196,7 @@ sap.ui.define([
 				});
 				oData.asNewSection.value = true;
 				oData.frameWidthUnit.value = "rem";
-				oData.frameHeigthUnit.value = "%";
+				oData.frameHeightUnit.value = "%";
 				var oOKButton = sap.ui.getCore().byId("sapUiRtaSettingsDialogOKButton");
 				QUnitUtils.triggerEvent("tap", oOKButton.getDomRef());
 			}, this);
@@ -209,7 +209,7 @@ sap.ui.define([
 				});
 				assert.strictEqual(mSettings.asNewSection, true, "Setting for asNewSection is correct");
 				assert.strictEqual(mSettings.frameWidthUnit, "rem", "Setting for frameWidthUnit is correct");
-				assert.strictEqual(mSettings.frameHeigthUnit, "%", "Setting for frameHeigthUnit is correct");
+				assert.strictEqual(mSettings.frameHeightUnit, "%", "Setting for frameHeightUnit is correct");
 				done();
 			});
 		});
@@ -218,7 +218,7 @@ sap.ui.define([
 			var mSettings = {
 				asNewSection: true,
 				frameWidth: 16,
-				frameHeigth: 9
+				frameHeight: 9
 			};
 			var done = assert.async();
 			this.oSettingsDialog = createDialog();
