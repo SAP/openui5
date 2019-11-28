@@ -465,42 +465,23 @@ sap.ui.define(
 
         QUnit.test("Should execute functions conditionally when using 'doConditional'", function(assert) {
             var oOpaBuilder = new OpaBuilder(),
-                oSuccessAction = this.spy(function(oObject) {
+                fnMatcher = function (oObject) {
                     return oObject;
-                }),
-                oFailureAction = this.spy(function(oObject) {
+                },
+                fnSuccessAction = function (oObject) {
                     return oObject;
-                });
-            assert.strictEqual(oOpaBuilder.doConditional(null, oSuccessAction, oFailureAction), oOpaBuilder, "builder instance returned");
-            oOpaBuilder.build().actions[0]({});
-            assert.strictEqual(oSuccessAction.callCount, 1);
-            assert.strictEqual(oFailureAction.callCount, 0);
-            oSuccessAction.reset();
-            oFailureAction.reset();
-
-            oOpaBuilder = new OpaBuilder();
-            assert.strictEqual(
-                oOpaBuilder.doConditional(OpaBuilder.Matchers.TRUE, oSuccessAction, oFailureAction),
-                oOpaBuilder,
-                "builder instance returned"
-            );
-            oOpaBuilder.build().actions[0]({});
-            assert.strictEqual(oSuccessAction.callCount, 1);
-            assert.strictEqual(oFailureAction.callCount, 0);
-            oSuccessAction.reset();
-            oFailureAction.reset();
-
-            oOpaBuilder = new OpaBuilder();
-            assert.strictEqual(
-                oOpaBuilder.doConditional(OpaBuilder.Matchers.FALSE, oSuccessAction, oFailureAction),
-                oOpaBuilder,
-                "builder instance returned"
-            );
-            oOpaBuilder.build().actions[0]({});
-            assert.strictEqual(oSuccessAction.callCount, 0);
-            assert.strictEqual(oFailureAction.callCount, 1);
-            oSuccessAction.reset();
-            oFailureAction.reset();
+                },
+                fnElseAction = function (oObject) {
+                    return oObject;
+                },
+                oActionSpy = this.spy(OpaBuilder.Actions, "conditional"),
+                oDoSpy = this.spy(OpaBuilder.prototype, "do");
+            assert.strictEqual(oOpaBuilder.doConditional(fnMatcher, fnSuccessAction, fnElseAction), oOpaBuilder, "builder instance returned");
+            assert.strictEqual(oActionSpy.callCount, 1);
+            assert.ok(oActionSpy.calledWith(fnMatcher, fnSuccessAction, fnElseAction));
+            assert.ok(oDoSpy.calledWith(oActionSpy.returnValues[0]));
+            oActionSpy.restore();
+            oDoSpy.restore();
         });
 
         QUnit.test("Should execute functions on aggregation elements when using 'doOnAggregation'", function(assert) {
@@ -542,6 +523,48 @@ sap.ui.define(
             oOpaBuilder.execute();
             assert.ok(oWaitForSpy.calledWith(oOptions));
             oWaitForStub.restore();
+        });
+
+        QUnit.test("Should create OpaBuilder.Matchers.conditional matcher when using 'hasConditional'", function(assert) {
+            var oOpaBuilder = new OpaBuilder(),
+                fnCondition = function (oObject) {
+                    return oObject;
+                },
+                fnSuccessMatcher = function (oObject) {
+                    return oObject;
+                },
+                fnElseMatcher = function (oObject) {
+                    return oObject;
+                },
+                oMatcherSpy = this.spy(OpaBuilder.Matchers, "conditional"),
+                oHasSpy = this.spy(OpaBuilder.prototype, "has");
+            assert.strictEqual(oOpaBuilder.hasConditional(fnCondition, fnSuccessMatcher, fnElseMatcher), oOpaBuilder, "builder instance returned");
+            assert.strictEqual(oMatcherSpy.callCount, 1);
+            assert.ok(oMatcherSpy.calledWith(fnCondition, fnSuccessMatcher, fnElseMatcher));
+            assert.ok(oHasSpy.calledWith(oMatcherSpy.returnValues[0]));
+            oMatcherSpy.restore();
+            oHasSpy.restore();
+        });
+
+        QUnit.test("Should create OpaBuilder.Matchers.some matcher when using 'hasSome'", function(assert) {
+            var oOpaBuilder = new OpaBuilder(),
+                fnMatcher1 = function (oObject) {
+                    return oObject;
+                },
+                fnMatcher2 = function (oObject) {
+                    return oObject;
+                },
+                fnMatcher3 = function (oObject) {
+                    return oObject;
+                },
+                oMatcherSpy = this.spy(OpaBuilder.Matchers, "some"),
+                oHasSpy = this.spy(OpaBuilder.prototype, "has");
+            assert.strictEqual(oOpaBuilder.hasSome(fnMatcher1, fnMatcher2, fnMatcher3), oOpaBuilder, "builder instance returned");
+            assert.strictEqual(oMatcherSpy.callCount, 1);
+            assert.ok(oMatcherSpy.calledWith(fnMatcher1, fnMatcher2, fnMatcher3));
+            assert.ok(oHasSpy.calledWith(oMatcherSpy.returnValues[0]));
+            oMatcherSpy.restore();
+            oHasSpy.restore();
         });
 
         QUnit.module("Matchers");
@@ -775,6 +798,7 @@ sap.ui.define(
                 }
             ]);
             assert.deepEqual(fnFilterMatcher([1, 2, 3, 6, "Test", 42]), [6, 42]);
+            assert.deepEqual(fnFilterMatcher([1, 3, "Test"]), []);
         });
 
         QUnit.test("'match' should return a matcher that applies all given matchers in given order to one item", function(assert) {
@@ -792,6 +816,67 @@ sap.ui.define(
             assert.deepEqual(fnMatcher(42), 42);
         });
 
+        QUnit.test("'conditional' should return a conditional matcher that executes follow up matcher under a certain condition", function(assert) {
+            var oSuccessMatcher = this.spy(function(oControl) {
+                    return oControl % 4 === 0;
+                }),
+                oElseMatcher = this.spy(function(oControl) {
+                    return oControl % 5 === 0;
+                }),
+                aConditions = [
+                    function(vItem) {
+                        return vItem % 2 === 0;
+                    },
+                    function(vItem) {
+                        return vItem % 3 === 0;
+                    }
+                ],
+                fnMatcher = OpaBuilder.Matchers.conditional(aConditions, oSuccessMatcher, oElseMatcher);
+
+            assert.strictEqual(fnMatcher(6), false);
+            assert.strictEqual(oSuccessMatcher.callCount, 1);
+            assert.strictEqual(oElseMatcher.callCount, 0);
+            oSuccessMatcher.reset();
+            oElseMatcher.reset();
+
+            assert.strictEqual(fnMatcher(12), 12);
+            assert.strictEqual(oSuccessMatcher.callCount, 1);
+            assert.strictEqual(oElseMatcher.callCount, 0);
+            oSuccessMatcher.reset();
+            oElseMatcher.reset();
+
+            assert.strictEqual(fnMatcher(4), false);
+            assert.strictEqual(oSuccessMatcher.callCount, 0);
+            assert.strictEqual(oElseMatcher.callCount, 1);
+            oSuccessMatcher.reset();
+            oElseMatcher.reset();
+
+            assert.strictEqual(fnMatcher(5), 5);
+            assert.strictEqual(oSuccessMatcher.callCount, 0);
+            assert.strictEqual(oElseMatcher.callCount, 1);
+            oSuccessMatcher.reset();
+            oElseMatcher.reset();
+        });
+
+        QUnit.test("'some' should return a matcher function that checks for at least one successful match from a group of matchers", function(assert) {
+            var fnMatcherMod3 = this.spy(function(vItem) {
+                    return vItem % 3 === 0;
+                }),
+                fnMatcherMod4 = this.spy(function(oControl) {
+                    return oControl % 4 === 0;
+                }),
+                fnMatcherMod5 = this.spy(function(oControl) {
+                    return oControl % 5 === 0;
+                }),
+                fnMatcher = OpaBuilder.Matchers.some(fnMatcherMod3, fnMatcherMod4, fnMatcherMod5);
+
+            assert.strictEqual(fnMatcher(1), false);
+            assert.strictEqual(fnMatcher(2), false);
+            assert.strictEqual(fnMatcher(3), 3);
+            assert.strictEqual(fnMatcher(12), 12);
+            assert.strictEqual(fnMatcher(null), false);
+        });
+
         QUnit.module("Actions");
 
         QUnit.test("'press' should return an instance of sap.ui.test.actions.Press", function(assert) {
@@ -807,6 +892,42 @@ sap.ui.define(
             assert.strictEqual(oEnterText.getClearTextFirst(), true);
             assert.strictEqual(oEnterText.getKeepFocus(), true);
             assert.strictEqual(oEnterText.getIdSuffix(), "my.suffix");
+        });
+
+        QUnit.test("'conditional' should return a conditional action function", function(assert) {
+            var aConditions = [
+                    function(vItem) {
+                        return vItem % 2 === 0;
+                    },
+                    function(vItem) {
+                        return vItem % 3 === 0;
+                    }
+                ],
+                oSuccessAction = this.spy(function(oObject) {
+                    return oObject;
+                }),
+                oFailureAction = this.spy(function(oObject) {
+                    return oObject;
+                }),
+                fnAction = OpaBuilder.Actions.conditional(aConditions, oSuccessAction, oFailureAction);
+
+            fnAction(6);
+            assert.strictEqual(oSuccessAction.callCount, 1);
+            assert.strictEqual(oFailureAction.callCount, 0);
+            oSuccessAction.reset();
+            oFailureAction.reset();
+
+            fnAction(2);
+            assert.strictEqual(oSuccessAction.callCount, 0);
+            assert.strictEqual(oFailureAction.callCount, 1);
+            oSuccessAction.reset();
+            oFailureAction.reset();
+
+            fnAction(5);
+            assert.strictEqual(oSuccessAction.callCount, 0);
+            assert.strictEqual(oFailureAction.callCount, 1);
+            oSuccessAction.reset();
+            oFailureAction.reset();
         });
     }
 );

@@ -160,7 +160,7 @@ sap.ui.define(
 
         function _executeMatchers(vMatchers, oTarget) {
             return oMatcherPipeline.process({
-                matchers: oMatcherFactory.getFilteringMatchers({ matchers: vMatchers }),
+                matchers: oMatcherFactory.getFilteringMatchers({matchers: vMatchers}),
                 control: oTarget
             });
         }
@@ -468,6 +468,30 @@ sap.ui.define(
         };
 
         /**
+         * Adds a matcher that checks states for given conditions. It is internally using {@link OpaBuilder.Matchers.conditional}.
+         *
+         * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vConditions conditions to pre-check
+         * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vSuccessMatcher actual matcher that is executed if conditions are met
+         * @param {sap.ui.test.matchers.Matcher | function | Array | Object} [vElseMatcher] actual matcher that is executed if conditions are not met
+         * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
+         * @public
+         */
+        OpaBuilder.prototype.hasConditional = function (vConditions, vSuccessMatcher, vElseMatcher) {
+            return this.has(OpaBuilder.Matchers.conditional(vConditions, vSuccessMatcher, vElseMatcher));
+        };
+
+        /**
+         * Adds a group of matchers that requires only one of them to actually match. It is internally using {@link OpaBuilder.Matchers.some}.
+         *
+         * @param [aMatchers=[{sap.ui.test.matchers.Matcher | function | Array | Object}]] aMatchers list of matchers were one must be met
+         * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
+         * @public
+         */
+        OpaBuilder.prototype.hasSome = function (aMatchers) {
+            return this.has(OpaBuilder.Matchers.some.apply(OpaBuilder.Matchers, arguments));
+        };
+
+        /**
          * Sets the <code>enabled</code> parameter.
          *
          * @param {boolean} [bEnabled] can be set to false to prevent <code>enabled</code> check, set to true if omitted
@@ -546,7 +570,7 @@ sap.ui.define(
          * Add an action to be performed on all matched controls. When providing an OpaBuilder, the action will execute it.
          *
          * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
-         * 			vActionsOrBuilder the action(s) to be performed on matched controls
+         *            vActionsOrBuilder the action(s) to be performed on matched controls
          * @param {boolean} [bReplace] true to replace all previous defined actions, false to add it (default)
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
@@ -561,43 +585,23 @@ sap.ui.define(
         };
 
         /**
-         * Add an action that is only performed if target control fulfills the conditions.
+         * Add an action that is only performed if target control fulfills the conditions. It is internally using {@link sap.ui.test.OpaBuilder.Actions.conditional}.
          *
          * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
-         * 			vConditions target control is checked against these given conditions
+         *            vConditions target control is checked against these given conditions
          * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
-         * 			vSuccessBuilderOrOptions the actions to be performed when conditions are fulfilled
+         *            vSuccessBuilderOrOptions the actions to be performed when conditions are fulfilled
          * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
-         * 			[vElseBuilderOptions] the action(s) to be performed when conditions are not fulfilled
+         *            [vElseBuilderOptions] the action(s) to be performed when conditions are not fulfilled
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
          */
         OpaBuilder.prototype.doConditional = function (vConditions, vSuccessBuilderOrOptions, vElseBuilderOptions) {
-            var fnMatcher = OpaBuilder.Matchers.match(vConditions),
-                fnSuccess = vSuccessBuilderOrOptions,
-                fnElse = vElseBuilderOptions;
-            if (_isOfType(vSuccessBuilderOrOptions, OpaBuilder)) {
-                fnSuccess = function () {
-                    return vSuccessBuilderOrOptions.execute();
-                };
-            }
-            if (vElseBuilderOptions && _isOfType(vElseBuilderOptions, OpaBuilder)) {
-                fnElse = function () {
-                    return vElseBuilderOptions.execute();
-                };
-            }
-
-            return this.do(function (oControl) {
-                if (fnMatcher(oControl)) {
-                    return _executeActions(fnSuccess, oControl);
-                } else if (fnElse) {
-                    return _executeActions(fnElse, oControl);
-                }
-            });
+            return this.do(OpaBuilder.Actions.conditional(vConditions, vSuccessBuilderOrOptions, vElseBuilderOptions));
         };
 
         /**
-         * Executes a sap.ui.test.actions.Press action on target control(s).
+         * Executes a {@link sap.ui.test.actions.Press} action on target control(s).
          *
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
@@ -607,7 +611,7 @@ sap.ui.define(
         };
 
         /**
-         * Performs a sap.ui.test.actions.EnterText on target control(s).
+         * Performs a {@link sap.ui.test.actions.EnterText} on target control(s).
          *
          * @param {string} sText the text to be entered
          * @param {boolean} [bClearFirst] true to clear already existing text, false to keep it (default)
@@ -624,9 +628,9 @@ sap.ui.define(
          *
          * @param {string} sAggregationName the aggregation name
          * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
-         * 				[vMatchers] the matchers to filter aggregation items
+         *                [vMatchers] the matchers to filter aggregation items
          * @param {sap.ui.test.actions.Action | function | Array}
-         * 				vActions the actions to be performed on matching aggregation items
+         *                vActions the actions to be performed on matching aggregation items
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
          */
@@ -928,7 +932,7 @@ sap.ui.define(
              *
              * @param {string} sAggregationName the aggregation name
              * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
-             * 				[vMatchers] the matchers to filter aggregation items
+             *                [vMatchers] the matchers to filter aggregation items
              * @returns {function} matcher function
              * @public
              * @static
@@ -1035,12 +1039,56 @@ sap.ui.define(
                 };
             },
 
+
+            /**
+             * Creates a matcher that checks states for given conditions.
+             *
+             * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vConditions conditions to pre-check
+             * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vSuccessMatcher actual matcher that is executed if conditions are met
+             * @param {sap.ui.test.matchers.Matcher | function | Array | Object} [vElseMatcher] actual matcher that is executed if conditions are not met
+             * @returns {function} a matcher function
+             * @public
+             * @static
+             */
+            conditional: function (vConditions, vSuccessMatcher, vElseMatcher) {
+                return function (oControl) {
+                    if (_executeMatchers(vConditions, oControl)) {
+                        return _executeMatchers(vSuccessMatcher, oControl);
+                    }
+                    return vElseMatcher ? _executeMatchers(vElseMatcher, oControl) : true;
+                };
+            },
+
+            /**
+             * Creates a matcher that checks for at least one successful match from a group of matchers.
+             *
+             * @param [aMatchers=[{sap.ui.test.matchers.Matcher | function | Array | Object}]] aMatchers list of matchers were one must be met
+             * @returns {function} a matcher function
+             * @public
+             * @static
+             */
+            some: function (aMatchers) {
+                if (aMatchers.length > 1 || (aMatchers && !Array.isArray(aMatchers))) {
+                    aMatchers = Array.prototype.slice.call(arguments, 0);
+                }
+                return function (oControl) {
+                    var vMatcherResult = false;
+                    if (aMatchers.some(function (oMatcher) {
+                        vMatcherResult = _executeMatchers(oMatcher, oControl);
+                        return vMatcherResult;
+                    })) {
+                        return vMatcherResult;
+                    }
+                    return false;
+                };
+            },
+
             /**
              * Creates a matcher that checks all inputs against given matchers. The input can be an array or a single
              * element. The result will always be an array. If the input is a single element, the result will be
              * an array containing the given element (or empty if not matching the matchers).
              * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
-             * 				[vMatchers] the matchers to check all items against
+             *                [vMatchers] the matchers to check all items against
              * @returns {function} the matcher function returns an array with all matching items
              * @public
              * @static
@@ -1051,14 +1099,14 @@ sap.ui.define(
                     if (!_isOfType(aItems, Array)) {
                         aItems = [aItems];
                     }
-                    return _executeMatchers(vMatchers, aItems);
+                    return _executeMatchers(vMatchers, aItems) || [];
                 };
             },
 
             /**
              * Creates a matcher that checks a single input against all defined matchers.
              * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
-             * 				[vMatchers] the matchers to check all items against
+             *                [vMatchers] the matchers to check all items against
              * @returns {function} the matcher function returns the result of the matcher chain
              * @public
              * @static
@@ -1086,7 +1134,7 @@ sap.ui.define(
              * @static
              */
             press: function (sIdSuffix) {
-                return new Press({ idSuffix: sIdSuffix });
+                return new Press({idSuffix: sIdSuffix});
             },
 
             /**
@@ -1100,7 +1148,49 @@ sap.ui.define(
              * @static
              */
             enterText: function (sText, bClearTextFirst, bKeepFocus, sIdSuffix) {
-                return new EnterText({text: sText, clearTextFirst: bClearTextFirst, keepFocus: bKeepFocus, idSuffix: sIdSuffix });
+                return new EnterText({
+                    text: sText,
+                    clearTextFirst: bClearTextFirst,
+                    keepFocus: bKeepFocus,
+                    idSuffix: sIdSuffix
+                });
+            },
+
+            /**
+             * Creates an action that is only performed if target control fulfills the conditions.
+             *
+             * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+             *            vConditions target control is checked against these given conditions
+             * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
+             *            vSuccessBuilderOrOptions the actions to be performed when conditions are fulfilled
+             * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
+             *            [vElseBuilderOptions] the action(s) to be performed when conditions are not fulfilled
+             * @returns {function} an action function
+             * @public
+             * @static
+             */
+            conditional: function (vConditions, vSuccessBuilderOrOptions, vElseBuilderOptions) {
+                var fnMatcher = OpaBuilder.Matchers.match(vConditions),
+                    fnSuccess = vSuccessBuilderOrOptions,
+                    fnElse = vElseBuilderOptions;
+                if (_isOfType(vSuccessBuilderOrOptions, OpaBuilder)) {
+                    fnSuccess = function () {
+                        return vSuccessBuilderOrOptions.execute();
+                    };
+                }
+                if (vElseBuilderOptions && _isOfType(vElseBuilderOptions, OpaBuilder)) {
+                    fnElse = function () {
+                        return vElseBuilderOptions.execute();
+                    };
+                }
+
+                return function (oControl) {
+                    if (fnMatcher(oControl)) {
+                        return _executeActions(fnSuccess, oControl);
+                    } else if (fnElse) {
+                        return _executeActions(fnElse, oControl);
+                    }
+                };
             }
         };
 
