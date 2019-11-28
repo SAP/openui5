@@ -233,13 +233,15 @@ sap.ui.define([
 					if (xhr.status >= 200 && xhr.status < 400) {
 						var oResult = {};
 
-						// mockservers using sinon servers have the response in responseText, not in response
-						if (!xhr.response && xhr.responseText) {
-							xhr.response = this.responseText;
-						}
+						if (xhr.status !== 204) {
+							// mockservers using sinon servers have the response in responseText, not in response
+							if (!xhr.response && xhr.responseText) {
+								xhr.response = xhr.responseText;
+							}
 
-						if (xhr.response) {
-							oResult.response = typeof xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
+							if (xhr.response) {
+								oResult.response = typeof xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
+							}
 						}
 						oResult.status = xhr.status;
 						if (xhr.getResponseHeader("X-CSRF-Token")) {
