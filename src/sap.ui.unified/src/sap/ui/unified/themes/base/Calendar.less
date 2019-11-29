@@ -435,6 +435,12 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 .sapUiCal {
+	//for cases when B2 shows an year range
+	&:not(.sapUiCalTwoMonthsTwoColumnsJaZh) {
+		.sapUiCalHead .sapUiCalHeadPrev + .sapUiCalHeadB2 {
+			width: 12.5rem;
+		}
+	}
 	.sapUiCalHead {
 		.sapUiCalHeadB2.sapUiCalSingleYearButton,
 		.sapUiCalHeadB4.sapUiCalSingleYearButton {
