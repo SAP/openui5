@@ -5250,6 +5250,25 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
+	QUnit.test("_calcCreateNewAppHours: Calculate proper position of the new appointment in 'Hours' view", function (assert) {
+		//arrange
+		var oPCRow = new PlanningCalendar(),
+			oRowStartDate = new Date(2017, 10, 13, 0, 38, 11),
+			iStartIndex = 3,
+			iEndIndex = 6,
+			newAppPos;
+
+		//act
+		newAppPos = oPCRow._calcCreateNewAppHours(oRowStartDate, iStartIndex, iEndIndex);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 1, 30, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 3, 30, 0), "Correct new end position");
+
+		//clean
+		oPCRow.destroy();
+	});
+
 	function _getAppointmentsCount(oPC) {
 		var aRows = oPC.getRows(),
 			iAppointments = 0;
