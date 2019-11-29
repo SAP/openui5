@@ -1564,7 +1564,7 @@ sap.ui.define([
 			Log.info("ObjectPageLayout :: firstSectionTitleHidden UX rule matched", "section " + oFirstVisibleSection.getTitle() + " title forced to hidden");
 		}
 
-		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, iVisibleSection <= 1);
+		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, bVisibleAnchorBar);
 
 		Object.keys(oTitleVisibilityInfo).forEach(function(sId) {
 			this.oCore.byId(sId)._setInternalTitleVisible(oTitleVisibilityInfo[sId], bInvalidate);
@@ -3202,7 +3202,6 @@ sap.ui.define([
 		this._bStickyAnchorBar = bStuck;
 		this._$headerContent.css("overflow", sValue);
 		this._$headerContent.toggleClass("sapContrastPlus", !bStuck); // contrast only in expanded mode
-		this._$headerContent.toggleClass("sapUxAPObjectPageHeaderDetailsHidden", bStuck); // hide header content
 		this._$anchorBar.css("visibility", sValue);
 		if (exists(this._$stickyAnchorBar)) {
 			this._$stickyAnchorBar.attr("aria-hidden", !bStuck);
