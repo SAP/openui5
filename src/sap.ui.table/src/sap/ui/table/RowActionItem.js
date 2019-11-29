@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.ui.table.RowActionItem.
-sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem', "sap/ui/table/utils/TableUtils", "sap/ui/core/IconPool"],
+sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem', "./utils/TableUtils", "sap/ui/core/IconPool"],
 	function(Element, library, MenuItem, TableUtils, IconPool) {
 	"use strict";
 
