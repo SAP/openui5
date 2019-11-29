@@ -1516,6 +1516,389 @@
 			}
 		}
 	},
+	"adaptiveManifests": {
+	  "adaptive1": {
+		"_version": "1.17.0",
+		"sap.app": {
+		  "id": "adativecard.embedded",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "type": "AdaptiveCard",
+		  "content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+			  {
+				"type": "TextBlock",
+				"text": "Publish Adaptive Card schema",
+				"weight": "Bolder",
+				"size": "Medium"
+			  },
+			  {
+				"type": "ColumnSet",
+				"columns": [
+				  {
+					"type": "Column",
+					"width": "auto",
+					"items": [
+					  {
+						"type": "Image",
+						"url": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
+						"size": "Small",
+						"style": "Person"
+					  }
+					]
+				  },
+				  {
+					"type": "Column",
+					"width": "stretch",
+					"items": [
+					  {
+						"type": "TextBlock",
+						"text": "Matt Hidinger",
+						"weight": "Bolder",
+						"wrap": true
+					  },
+					  {
+						"type": "TextBlock",
+						"spacing": "None",
+						"text": "Created {{DATE(2017-02-14T06:08:39Z, SHORT)}}",
+						"isSubtle": true,
+						"wrap": true
+					  }
+					]
+				  }
+				]
+			  },
+			  {
+				"type": "TextBlock",
+				"text": "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
+				"wrap": true
+			  },
+			  {
+				"type": "FactSet",
+				"facts": [
+				  {
+					"title": "Board:",
+					"value": "Adaptive Card"
+				  },
+				  {
+					"title": "List:",
+					"value": "Backlog"
+				  },
+				  {
+					"title": "Assigned to:",
+					"value": "Matt Hidinger"
+				  },
+				  {
+					"title": "Due date:",
+					"value": "Not set"
+				  }
+				]
+			  }
+			],
+			"actions": [
+			  {
+				"type": "Action.ShowCard",
+				"title": "Set due date",
+				"card": {
+				  "type": "AdaptiveCard",
+				  "body": [
+					{
+					  "type": "Input.Date",
+					  "id": "dueDate"
+					}
+				  ],
+				  "actions": [
+					{
+					  "type": "Action.Submit",
+					  "title": "OK"
+					}
+				  ]
+				}
+			  },
+			  {
+				"type": "Action.ShowCard",
+				"title": "Comment",
+				"card": {
+				  "type": "AdaptiveCard",
+				  "body": [
+					{
+					  "type": "Input.Text",
+					  "id": "comment",
+					  "isMultiline": true,
+					  "placeholder": "Enter your comment"
+					}
+				  ],
+				  "actions": [
+					{
+					  "type": "Action.Submit",
+					  "title": "OK"
+					}
+				  ]
+				}
+			  }
+			]
+		  }
+		}
+	  },
+	  "adaptive2": {
+		"_version": "1.17.0",
+		"sap.app": {
+		  "id": "adativecard.embedded",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "type": "AdaptiveCard",
+		  "content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"speak": "Your  meeting about \"Adaptive Card design session\" is starting at 12:30pmDo you want to snooze  or do you want to send a late notification to the attendees?",
+			"body": [
+			  {
+				"type": "TextBlock",
+				"text": "Meeting",
+				"size": "Large",
+				"weight": "Bolder"
+			  },
+			  {
+				"type": "TextBlock",
+				"text": "Conf Room 112/3377 (10)",
+				"isSubtle": true
+			  },
+			  {
+				"type": "TextBlock",
+				"text": "22:30 - 23:30",
+				"isSubtle": true,
+				"spacing": "None"
+			  },
+			  {
+				"type": "TextBlock",
+				"text": "Snooze for"
+			  },
+			  {
+				"type": "Input.ChoiceSet",
+				"id": "snooze",
+				"value": "{reminders.overrides[0].minutes}",
+				"choices": [
+				  {
+					"title": "5 minutes",
+					"value": "5"
+				  },
+				  {
+					"title": "15 minutes",
+					"value": "15"
+				  },
+				  {
+					"title": "30 minutes",
+					"value": "30"
+				  }
+				]
+			  }
+			],
+			"actions": [
+			  {
+				"type": "Action.Submit",
+				"title": "Snooze",
+				"data": {
+				  "x": "snooze"
+				}
+			  },
+			  {
+				"type": "Action.Submit",
+				"title": "I'll be late",
+				"data": {
+				  "x": "late"
+				}
+			  }
+			]
+		  }
+		}
+	  },
+	  "adaptive3": {
+		"_version": "1.17.0",
+		"sap.app": {
+		  "id": "adativecard.embedded",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "type": "AdaptiveCard",
+		  "content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+			  {
+				"type": "TextBlock",
+				"size": "medium",
+				"weight": "bolder",
+				"text": "Input.Text elements",
+				"horizontalAlignment": "center"
+			  },
+			  {
+				"type": "Input.Text",
+				"placeholder": "Name",
+				"style": "text",
+				"maxLength": 0,
+				"id": "SimpleVal"
+			  },
+			  {
+				"type": "Input.Text",
+				"placeholder": "Homepage",
+				"style": "url",
+				"maxLength": 0,
+				"id": "UrlVal"
+			  },
+			  {
+				"type": "Input.Text",
+				"placeholder": "Email",
+				"style": "email",
+				"maxLength": 0,
+				"id": "EmailVal"
+			  },
+			  {
+				"type": "Input.Text",
+				"placeholder": "Phone",
+				"style": "tel",
+				"maxLength": 0,
+				"id": "TelVal"
+			  },
+			  {
+				"type": "Input.Text",
+				"placeholder": "Comments",
+				"style": "text",
+				"isMultiline": true,
+				"maxLength": 0,
+				"id": "MultiLineVal"
+			  },
+			  {
+				"type": "Input.Number",
+				"placeholder": "Quantity",
+				"min": -5,
+				"max": 5,
+				"value": 1,
+				"id": "NumVal"
+			  },
+			  {
+				"type": "Input.Date",
+				"placeholder": "Due Date",
+				"id": "DateVal",
+				"value": "2017-09-20"
+			  },
+			  {
+				"type": "Input.Time",
+				"placeholder": "Start time",
+				"id": "TimeVal",
+				"value": "16:59"
+			  },
+			  {
+				"type": "TextBlock",
+				"size": "medium",
+				"weight": "bolder",
+				"text": "Input.ChoiceSet",
+				"horizontalAlignment": "center"
+			  },
+			  {
+				"type": "TextBlock",
+				"text": "What color do you want? (compact)"
+			  },
+			  {
+				"type": "Input.ChoiceSet",
+				"id": "CompactSelectVal",
+				"style": "compact",
+				"value": "1",
+				"choices": [
+				  {
+					"title": "Red",
+					"value": "1"
+				  },
+				  {
+					"title": "Green",
+					"value": "2"
+				  },
+				  {
+					"title": "Blue",
+					"value": "3"
+				  }
+				]
+			  },
+			  {
+				"type": "TextBlock",
+				"text": "What color do you want? (expanded)"
+			  },
+			  {
+				"type": "Input.ChoiceSet",
+				"id": "SingleSelectVal",
+				"style": "expanded",
+				"value": "1",
+				"choices": [
+				  {
+					"title": "Red",
+					"value": "1"
+				  },
+				  {
+					"title": "Green",
+					"value": "2"
+				  },
+				  {
+					"title": "Blue",
+					"value": "3"
+				  }
+				]
+			  },
+			  {
+				"type": "TextBlock",
+				"text": "What colors do you want? (multiselect)"
+			  },
+			  {
+				"type": "Input.ChoiceSet",
+				"id": "MultiSelectVal",
+				"isMultiSelect": true,
+				"value": "1,3",
+				"choices": [
+				  {
+					"title": "Red",
+					"value": "1"
+				  },
+				  {
+					"title": "Green",
+					"value": "2"
+				  },
+				  {
+					"title": "Blue",
+					"value": "3"
+				  }
+				]
+			  },
+			  {
+				"type": "TextBlock",
+				"size": "medium",
+				"weight": "bolder",
+				"text": "Input.Toggle",
+				"horizontalAlignment": "center"
+			  },
+			  {
+				"type": "Input.Toggle",
+				"title": "I accept the terms and conditions (True/False)",
+				"valueOn": "true",
+				"valueOff": "false",
+				"id": "AcceptsTerms"
+			  },
+			  {
+				"type": "Input.Toggle",
+				"title": "Red cars are better than other cars",
+				"valueOn": "RedCars",
+				"valueOff": "NotRedCars",
+				"id": "ColorPreference"
+			  }
+			]
+		  }
+		}
+	  }
+	},
 	"kpiManifests": {
 		"kpicard1": {
 			"sap.card": {
