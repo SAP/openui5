@@ -122,7 +122,7 @@ sap.ui.define([
 	QUnit.test("properties and default values", function (assert) {
 		assert.strictEqual(oSwitch0.getState(), false, "The default state is false");
 		assert.strictEqual(oSwitch0.getEnabled(), true, "By default the switch is disabled");
-		assert.strictEqual(oSwitch0.getFocusDomRef().getAttribute("role"), "checkbox", "The role checkbox is set");
+		assert.strictEqual(oSwitch0.getFocusDomRef().getAttribute("role"), "switch", "The role switch is set");
 		assert.strictEqual(jQuery(oSwitch0.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
 	});
 
@@ -312,7 +312,7 @@ sap.ui.define([
 		assert.ok(!!oSwitch.getAccessibilityInfo, "Switch has a getAccessibilityInfo function");
 		var oInfo = oSwitch.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		assert.strictEqual(oInfo.role, "checkbox", "AriaRole");
+		assert.strictEqual(oInfo.role, "switch", "AriaRole");
 		assert.strictEqual(oInfo.type, oBundle.getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
 		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_NOT_CHECKED") + " " + oSwitch.getCustomTextOff(), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
