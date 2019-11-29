@@ -24,7 +24,7 @@ sap.ui.define([
 		nameLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_NAME_LABEL"),
 		sizeTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_TITLE"),
 		widthLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_WIDTH_LABEL"),
-		heigthLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_HEIGTH_LABEL"),
+		heightLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_HEIGHT_LABEL"),
 		sizeWarning: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_WARNING"),
 		urlTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_URL_TITLE"),
 		OKText: _oTextResources.getText("BTN_FREP_OK"),
@@ -48,11 +48,11 @@ sap.ui.define([
 			frameWidthUnit: {
 				value: "px"
 			},
-			frameHeigth: {
+			frameHeight: {
 				value: "",
 				valueState: ValueState.None
 			},
-			frameHeigthUnit: {
+			frameHeightUnit: {
 				value: "px"
 			},
 			frameUrl: {

@@ -36,10 +36,10 @@
 					<Select selectedKey="{/frameWidthUnit/value}" items="{/unitsOfMeasure}">
 						<core:Item key="{name}" text="{name}" />
 					</Select>
-					<Label text="{/text/heigthLabel}"/>
-					<Input value="{path: '/frameHeigth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
-						valueState="{/frameHeigth/valueState}"/>
-					<Select selectedKey="{/frameHeigthUnit/value}" items="{/unitsOfMeasure}">
+					<Label text="{/text/heightLabel}"/>
+					<Input value="{path: '/frameHeight/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
+						valueState="{/frameHeight/valueState}"/>
+					<Select selectedKey="{/frameHeightUnit/value}" items="{/unitsOfMeasure}">
 						<core:Item key="{name}" text="{name}" />
 					</Select>
 					<Label/>

@@ -11,8 +11,8 @@ sap.ui.define([
 	"use strict";
 
 	var _aTextInputFields = ["sectionName", "frameUrl"];
-	var _aNumericInputFields = ["frameWidth", "frameHeigth"];
-	var _aSelectInputFields = ["asNewSection", "frameWidthUnit", "frameHeigthUnit"];
+	var _aNumericInputFields = ["frameWidth", "frameHeight"];
+	var _aSelectInputFields = ["asNewSection", "frameWidthUnit", "frameHeightUnit"];
 
 	return Controller.extend("sap.ui.rta.plugin.iframe.controller.SettingsDialogController", {
 		constructor: function (oJSONModel, mSettings) {
