@@ -290,6 +290,10 @@ sap.ui.define([
 			oRm.addClass("sapUiFlVarMngmt");
 			oRm.writeClasses();
 
+
+			var sTooltip = oControl._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT");
+			oRm.write(" title='" + sTooltip + "'");
+
 			oRm.write(">");
 
 			oRm.renderControl(oControl.oVariantLayout);
@@ -314,37 +318,19 @@ sap.ui.define([
 
 		this._createInnerModel();
 
-		this.oVariantInvisibleText = new InvisibleText({
-			text: {
-				parts: [
-					{
-						path: 'currentVariant',
-						model: this._sModelName
-					}, {
-						path: "modified",
-						model: this._sModelName
-					}
-				],
-				formatter: function(sText, bValue) {
-					if (bValue) {
-						sText = this._oRb.getText("VARIANT_MANAGEMENT_SEL_VARIANT_MOD", [
-							sText
-						]);
-					} else {
-						sText = this._oRb.getText("VARIANT_MANAGEMENT_SEL_VARIANT", [
-							sText
-						]);
-					}
-				}.bind(this)
-			}
-		});
+		this.oVariantInvisibleText = new InvisibleText();
 
 		this.oVariantText = new Title(this.getId() + "-text", {
 			text: {
 				path: 'currentVariant',
 				model: this._sModelName,
 				formatter: function(sKey) {
-					var sText = this.getSelectedVariantText(sKey);
+					var sText = "";
+					if (sKey) {
+						sText = this.getSelectedVariantText(sKey);
+						this._setInvisibleText(sText, this.getModified());
+					}
+
 					return sText;
 				}.bind(this)
 			}
@@ -364,8 +350,14 @@ sap.ui.define([
 				path: "modified",
 				model: this._sModelName,
 				formatter: function(bValue) {
-					return (bValue === null || bValue === undefined) ? false : bValue;
-				}
+					var sKey = this.getCurrentVariantKey();
+
+					if (sKey) {
+						this._setInvisibleText(this.getSelectedVariantText(sKey), bValue);
+					}
+
+					return ((bValue === null) || (bValue === undefined)) ? false : bValue;
+				}.bind(this)
 			}
 		});
 		oVariantModifiedText.setVisible(false);
@@ -384,13 +376,18 @@ sap.ui.define([
 
 		this.oVariantLayout = new HorizontalLayout({
 			content: [
-				this.oVariantText, oVariantModifiedText, this.oVariantPopoverTrigger, this.oVariantInvisibleText
+				this.oVariantText, oVariantModifiedText, this.oVariantPopoverTrigger
 			]
 		});
 		this.oVariantLayout.addStyleClass("sapUiFlVarMngmtLayout");
 
+		oVariantModifiedText.setVisible(false);
+
+		this.oVariantInvisibleText.toStatic();
+
 		this.addDependent(this.oVariantLayout);
 	};
+
 
 	/**
 	 * Returns the title control of the <code>VariantManagement</code>. This is used in the key user scenario.
@@ -399,6 +396,19 @@ sap.ui.define([
 	 */
 	VariantManagement.prototype.getTitle = function() {
 		return this.oVariantText;
+	};
+
+	VariantManagement.prototype._setInvisibleText = function(sText, bFlag) {
+		var sInvisibleTextKey;
+		if (sText) {
+			if (bFlag) {
+				sInvisibleTextKey = "VARIANT_MANAGEMENT_SEL_VARIANT_MOD";
+			} else {
+				sInvisibleTextKey = "VARIANT_MANAGEMENT_SEL_VARIANT";
+			}
+
+			this.oVariantInvisibleText.setText(this._oRb.getText(sInvisibleTextKey, [sText]));
+		}
 	};
 
 	VariantManagement.prototype._createInnerModel = function() {
@@ -592,30 +602,6 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._rebindControl = function() {
-		this.oVariantInvisibleText.unbindProperty("text");
-		this.oVariantInvisibleText.bindProperty("text", {
-			parts: [
-				{
-					path: 'currentVariant',
-					model: this._sModelName
-				}, {
-					path: "modified",
-					model: this._sModelName
-				}
-			],
-			formatter: function(sText, bValue) {
-				if (bValue) {
-					sText = this._oRb.getText("VARIANT_MANAGEMENT_SEL_VARIANT_MOD", [
-						sText
-					]);
-				} else {
-					sText = this._oRb.getText("VARIANT_MANAGEMENT_SEL_VARIANT", [
-						sText
-					]);
-				}
-			}.bind(this)
-		});
-
 		this.oVariantText.unbindProperty("text");
 		this.oVariantText.bindProperty("text", {
 			path: 'currentVariant',
@@ -626,7 +612,8 @@ sap.ui.define([
 			}.bind(this)
 		});
 
-		this.oVariantText.unbindProperty("visible", {
+		this.oVariantText.unbindProperty("visible");
+		this.oVariantText.bindProperty("visible", {
 			path: "modified",
 			model: this._sModelName,
 			formatter: function(bValue) {
@@ -1849,6 +1836,11 @@ sap.ui.define([
 	VariantManagement.prototype.exit = function() {
 		var oModel;
 
+		if (this.oVariantInvisibleText) {
+			this.oVariantInvisibleText.destroy(true);
+			this.oVariantInvisibleText = undefined;
+		}
+
 		if (this.oDefault && !this.oDefault._bIsBeingDestroyed) {
 			this.oDefault.destroy();
 		}
@@ -1867,7 +1859,6 @@ sap.ui.define([
 		this.oVariantLayout = undefined;
 		this.oVariantText = undefined;
 		this.oVariantPopoverTrigger = undefined;
-		this.oVariantInvisibleText = undefined;
 		this._oSearchField = undefined;
 		this._oSearchFieldOnMgmtDialog = undefined;
 
