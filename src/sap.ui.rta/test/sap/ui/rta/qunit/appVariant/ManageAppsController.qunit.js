@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/Utils",
 	"sap/ui/core/Control",
+	"sap/base/i18n/ResourceBundle",
 	"sap/ui/base/Event",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
@@ -18,6 +19,7 @@ sap.ui.define([
 	RtaAppVariantFeature,
 	RtaUtils,
 	Control,
+	ResourceBundle,
 	Event,
 	Log,
 	jQuery,
@@ -326,6 +328,27 @@ sap.ui.define([
 
 			oManageAppsController.onMenuAction(oEmptyEvent);
 			assert.ok(fnDeleteAppVariant.calledOnce, "then deleteAppVariant is called once");
+		});
+
+		QUnit.test("when formatAdaptUIButtonTooltip is called with different app var statuses", function(assert) {
+			var oManageAppsController = new ManageAppsController();
+
+			var oGetTextStub = sandbox.stub(ResourceBundle.prototype, "getText");
+
+			oManageAppsController.formatAdaptUIButtonTooltip(false, undefined);
+			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_ON_PREMISE"), "then tooltip text key is correct");
+
+			oManageAppsController.formatAdaptUIButtonTooltip(false, 'R');
+			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_RUNNING"), "then tooltip text key is correct");
+
+			oManageAppsController.formatAdaptUIButtonTooltip(false, 'U');
+			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD"), "then tooltip text key is correct");
+
+			oManageAppsController.formatAdaptUIButtonTooltip(false, 'E');
+			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_ERROR"), "then tooltip text key is correct");
+
+			assert.equal(oManageAppsController.formatAdaptUIButtonTooltip(false, 'bla'), undefined, "then no tooltip will be set");
+			assert.equal(oManageAppsController.formatAdaptUIButtonTooltip(true), undefined, "then no tooltip will be set");
 		});
 	});
 
