@@ -14,6 +14,7 @@
 				labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4"
 				emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
 				columnsXL="2" columnsL="2" columnsM="2"
+				visible="{/section/visible}"
 				>
 				<form:content>
 					<Label text="{/text/newSectionLabel}"/>

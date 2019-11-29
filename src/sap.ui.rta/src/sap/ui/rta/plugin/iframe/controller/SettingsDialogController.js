@@ -10,7 +10,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var _aTextInputFields = ["sectionName", "frameUrl"];
+	var _aTextInputFields = ["frameUrl"];
 	var _aNumericInputFields = ["frameWidth", "frameHeight"];
 	var _aSelectInputFields = ["asNewSection", "frameWidthUnit", "frameHeightUnit"];
 
@@ -131,8 +131,26 @@ sap.ui.define([
 		_importSettings: function (mSettings) {
 			if (mSettings) {
 				Object.keys(mSettings).forEach(function (sFieldName) {
-					this._oJSONModel.setProperty("/" + sFieldName + "/value", mSettings[sFieldName]);
+					if (sFieldName === "frameWidth" || sFieldName === "frameHeight") {
+						this._importIframeSize(sFieldName, mSettings[sFieldName]);
+					} else {
+						this._oJSONModel.setProperty("/" + sFieldName + "/value", mSettings[sFieldName]);
+					}
 				}, this);
+			}
+		},
+
+		/**
+		 * Import iframe size
+		 *
+		 * @param  {string} sFieldName - field name
+		 * @param  {string} sSize - size to import
+		 */
+		_importIframeSize: function (sFieldName, sSize) {
+			var aResults = sSize.split(/(px|rem|%)/);
+			if (aResults.length >= 2) {
+				this._oJSONModel.setProperty("/" + sFieldName + "/value", parseInt(aResults[0]));
+				this._oJSONModel.setProperty("/" + sFieldName + "Unit/value", aResults[1]);
 			}
 		}
 	});

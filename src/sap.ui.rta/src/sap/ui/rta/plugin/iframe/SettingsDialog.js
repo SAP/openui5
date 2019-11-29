@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/ValueState",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/rta/Utils",
 	"sap/ui/rta/plugin/iframe/controller/SettingsDialogController"
 ], function (
 	ManagedObject,
 	Fragment,
 	ValueState,
 	JSONModel,
+	RtaUtils,
 	SettingsDialogController
 ) {
 	"use strict";
@@ -34,6 +36,9 @@ sap.ui.define([
 	function _createJSONModel() {
 		return new JSONModel({
 			text: _mText,
+			section: {
+				visible: false
+			},
 			asNewSection: {
 				value: false
 			},
@@ -78,7 +83,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @since 1.72
+	 * @since 1.74
 	 * @alias sap.ui.rta.plugin.iframe.SettingsDialog
 	 */
 	var SettingsDialog = ManagedObject.extend("sap.ui.rta.plugin.iframe.SettingsDialog", {
@@ -94,7 +99,7 @@ sap.ui.define([
 	 * Open the Settings Dialog
 	 *
 	 * @param {object|undefined} mSettings - existing iframe settings
-	 * @returns {Promise} empty promise
+	 * @returns {Promise} promise resolving to iframe settings
 	 * @public
 	 */
 	SettingsDialog.prototype.open = function (mSettings) {
@@ -118,6 +123,7 @@ sap.ui.define([
 			controller: this._oController
 		}).then(function (oSettingsDialog) {
 			this._oDialog = oSettingsDialog;
+			this._oDialog.addStyleClass(RtaUtils.getRtaStyleClassName());
 			this._oDialog.setModel(this._oJSONModel);
 			this._openDialog();
 		}.bind(this));
@@ -135,8 +141,9 @@ sap.ui.define([
 
 		this._oDialog.attachAfterClose(function () {
 			this._oDialog.destroy();
-			this._oDialog = undefined;
+			this._oDialog = null;
 			this._fnResolve(this._oController.getSettings());
+			this._oController = null;
 		}.bind(this));
 
 		this._oDialog.open();
