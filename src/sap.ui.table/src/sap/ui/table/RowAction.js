@@ -5,7 +5,7 @@
 // Provides control sap.ui.table.RowAction
 sap.ui.define([
 	'sap/ui/core/Control',
-	"sap/ui/table/utils/TableUtils",
+	"./utils/TableUtils",
 	'./library',
 	'sap/ui/core/Icon',
 	'sap/ui/unified/Menu',
