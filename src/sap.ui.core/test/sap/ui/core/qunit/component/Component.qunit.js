@@ -1181,12 +1181,12 @@ sap.ui.define([
 		});
 	});
 
-	sap.ui.define("my/command/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-		return UIComponent.extend("my.command.Component", {
+	sap.ui.define("my/command/base/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.command.base.Component", {
 			metadata: {
 				manifest: {
 					"sap.app" : {
-						"id" : "my.command.constructor"
+						"id" : "my.command.base.constructor"
 					},
 					"sap.ui5" : {
 						"commands": {
@@ -1197,6 +1197,20 @@ sap.ui.define([
 								"shortcut": "Ctrl+C"
 							}
 						}
+					}
+				}
+			}
+		});
+	});
+
+	sap.ui.define("my/command/Component", ["my/command/base/Component"], function(oBaseComponent) {
+		return oBaseComponent.extend("my.command.Component", {
+			metadata: {
+				manifest: {
+					"sap.app" : {
+						"id" : "my.command.constructor"
+					},
+					"sap.ui5" : {
 					}
 				}
 			}
