@@ -269,6 +269,7 @@ function(
 		});
 		oCalendarPicker.attachEvent("select", this._handlePickerDateSelect, this);
 		oCalendarPicker.attachEvent("cancel", this._handlePickerCancelEvent, this);
+		oCalendarPicker.setPopupMode(true);
 		this.setAggregation("_calendarPicker", oCalendarPicker);
 
 		this.setAssociation("currentPicker", oCalendarPicker);
@@ -278,6 +279,7 @@ function(
 		});
 		oMonthPicker.attachEvent("select", this._handlePickerDateSelect, this);
 		oMonthPicker.attachEvent("cancel", this._handlePickerCancelEvent, this);
+		oMonthPicker.setPopupMode(true);
 		this.setAggregation("_monthPicker", oMonthPicker);
 
 		oYearPicker = new CustomYearPicker(sOPHId + "-YearCal", {
@@ -285,6 +287,7 @@ function(
 		});
 		oYearPicker.attachEvent("select", this._handlePickerDateSelect, this);
 		oYearPicker.attachEvent("cancel", this._handlePickerCancelEvent, this);
+		oYearPicker.setPopupMode(true);
 		this.setAggregation("_yearPicker", oYearPicker);
 
 		this._oPickerBtn = new AccButton(sNavToolbarId + "-PickerBtn", {
