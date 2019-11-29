@@ -2621,11 +2621,6 @@
 			"description": "This example demonstrates the navigated property of the item."
 		},
 		{
-		  "id": "sap.m.sample.TableDataState",
-		  "name": "Table - Data State Messages",
-		  "description": "This example demonstrates how the DataStateIndicator plugin can be used to show binding-related errors for the table."
-		},
-		{
 		  "id": "sap.m.sample.ActionListItem",
 		  "name": "Action List Item",
 		  "description": "Use the Action List Item to trigger an action directly from a list"
