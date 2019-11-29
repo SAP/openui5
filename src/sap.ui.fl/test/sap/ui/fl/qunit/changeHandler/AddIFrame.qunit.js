@@ -30,25 +30,32 @@ sap.ui.define([
 				]
 			});
 
+			var mExpectedSelector = {
+				id: this.oHBox.getId(),
+				type: "sap.m.HBox"
+			};
+
 			var oChangeJson = {
 				reference: "sap.ui.fl.qunit.changeHander.AddIFrame",
 				validAppVersions: {
 					creation: "1.0.0"
 				},
-				selector: {
-					id: this.oHBox.getId(),
-					type: "sap.m.HBox"
-				},
-				changeType: "AddIFrame",
+				selector: mExpectedSelector,
+				changeType: "addIFrame",
 				fileName: "AddIFrameChange",
 				projectId: "projectId"
 			};
 
-			this.oChangeSpecificContent = {
+			this.mChangeSpecificContent = {
 				targetAggregation: "items",
 				baseId: "test",
-				title: "UI Extension",
 				url: sUrl
+			};
+
+			this.mSpecificChangeData = {
+				selector : mExpectedSelector,
+				changeType : "addIFrame",
+				content : this.mChangeSpecificContent
 			};
 
 			this.oChange = new Change(oChangeJson);
@@ -59,10 +66,10 @@ sap.ui.define([
 	}, function() {
 		["targetAggregation", "baseId", "url"].forEach(function (sRequiredProperty) {
 			QUnit.test("When calling 'completeChangeContent' without '" + sRequiredProperty + "'", function(assert) {
-				delete this.oChangeSpecificContent[sRequiredProperty];
+				delete this.mChangeSpecificContent[sRequiredProperty];
 				assert.throws(
 					function() {
-						this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+						this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData);
 					},
 					Error("Attribute missing from the change specific content '" + sRequiredProperty + "'"),
 					"without " + sRequiredProperty + " 'completeChangeContent' throws an error"
@@ -73,34 +80,41 @@ sap.ui.define([
 
 	QUnit.module("Given a AddIFrame Change Handler with JSTreeModifier", {
 		beforeEach : function () {
-			// general modifier beforeEach (can be extracted as soon as nested modules are supported)
 			this.oChangeHandler = AddIFrame;
 
 			this.sHBoxId = "hbx";
 
+			var mExpectedSelector = {
+				id: this.sHBoxId,
+				type: "sap.m.HBox"
+			};
+
 			var oChangeJson = {
-				selector: {
-					id: this.sHBoxId,
-					type: "sap.m.HBox"
-				},
+				selector: mExpectedSelector,
 				reference: "sap.ui.fl.qunit.changeHander.AddIFrame",
 				validAppVersions: {
 					creation: "1.0.0"
 				},
-				changeType: "AddIFrame",
+				changeType: "addIFrame",
 				fileName: "AddIFrameChange",
 				projectId: "projectId"
 			};
 
-			this.oChangeSpecificContent = {
+			this.mChangeSpecificContent = {
 				targetAggregation: "items",
 				baseId: "test",
 				url: sUrl
 			};
 
+			this.mSpecificChangeData = {
+				selector : mExpectedSelector,
+				changeType : "addIFrame",
+				content : this.mChangeSpecificContent
+			};
+
 			this.oChange = new Change(oChangeJson);
 
-			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData);
 
 			// JSTreeModifier specific beforeEach
 			this.oButton = new Button();
@@ -134,8 +148,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a js control tree (index = 0)", function(assert) {
-			this.oChangeSpecificContent.index = 0;
-			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			this.mChangeSpecificContent.index = 0;
+			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData);
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
 			assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
 			var oCreatedControl = this.oHBox.getItems()[0];
@@ -144,8 +158,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
-			this.oChangeSpecificContent.targetAggregation = "invalidAggregation";
-			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			this.mChangeSpecificContent.targetAggregation = "invalidAggregation";
+			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData);
 			assert.throws(
 				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
 				Error,
@@ -163,16 +177,17 @@ sap.ui.define([
 
 	QUnit.module("Given a AddIFrame Change Handler with XMLTreeModifier", {
 		beforeEach : function() {
-			// general modifier beforeEach (can be extracted as soon as nested modules are supported)
 			this.oChangeHandler = AddIFrame;
 
 			this.sHBoxId = "hbx";
 
+			var mExpectedSelector = {
+				id: this.sHBoxId,
+				type: "sap.uxap.ObjectPageLayout"
+			};
+
 			var oChangeJson = {
-				selector: {
-					id: this.sHBoxId,
-					type: "sap.uxap.ObjectPageLayout"
-				},
+				selector: mExpectedSelector,
 				reference: "sap.ui.fl.qunit.changeHander.AddIFrame",
 				validAppVersions: {
 					creation: "1.0.0"
@@ -182,15 +197,21 @@ sap.ui.define([
 				projectId: "projectId"
 			};
 
-			this.oChangeSpecificContent = {
+			this.mChangeSpecificContent = {
 				targetAggregation: "items",
 				baseId: "test",
 				url: sUrl
 			};
 
+			this.mSpecificChangeData = {
+				selector : mExpectedSelector,
+				changeType : "addIFrame",
+				content : this.mChangeSpecificContent
+			};
+
 			this.oChange = new Change(oChangeJson);
 
-			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData);
 
 			// XMLTreeModifier specific beforeEach
 			this.oComponent = sap.ui.getCore().createComponent({
@@ -232,8 +253,8 @@ sap.ui.define([
 
 		QUnit.test("When applying the change on a xml control tree (index = 0)", function(assert) {
 			var oHBoxItemsAggregation = this.oHBox.childNodes[0];
-			this.oChangeSpecificContent.index = 0;
-			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			this.mChangeSpecificContent.index = 0;
+			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData);
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
 			assert.strictEqual(oHBoxItemsAggregation.childNodes.length, 2, "after the addXML there are two children in the horizontal box");
 			var oCreatedControl = oHBoxItemsAggregation.childNodes[0];
@@ -242,8 +263,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {
-			this.oChangeSpecificContent.targetAggregation = "invalidAggregation";
-			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			this.mChangeSpecificContent.targetAggregation = "invalidAggregation";
+			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData);
 			assert.throws(
 				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
 				Error,
