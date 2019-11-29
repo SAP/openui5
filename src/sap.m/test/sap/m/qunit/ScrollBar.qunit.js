@@ -83,6 +83,30 @@ sap.ui.define([
 		}, 100);
 	});
 
+	QUnit.test("Change scroll position after contentSize change", function(assert) {
+		assert.expect(1);
+		// Arrange
+		var oSB = this.oSB,
+			done = assert.async(),
+			iHeight = oSB.getDomRef().offsetHeight,
+			iInitContentSize = iHeight + 5,
+			iNewContentSize = iHeight + 100,
+			iNewScrollPosition = iHeight + 100;
+
+		// Act
+		oSB.setContentSize(iInitContentSize + "px");
+		setTimeout(function() {
+			oSB.setContentSize(iNewContentSize + "px");
+			oSB.setScrollPosition(iNewScrollPosition);
+			oSB.attachEventOnce("scroll", function(oEvent) {
+				// Assert
+				assert.strictEqual(oEvent.getParameter("pos"), iNewScrollPosition - iHeight,
+					"scroll position is correctly set to the lowest possible");
+				done();
+			});
+		}, 100);
+
+	});
 
 	QUnit.module("Event handler", {
 		beforeEach: function () {
