@@ -90,13 +90,18 @@ sap.ui.define([
 	RowMode.prototype.exit = function() {
 		this.detachEvents();
 		this.cancelAsyncOperations();
+		this.deregisterHooks();
 	};
 
 	RowMode.prototype.setParent = function() {
 		this.detachEvents();
 		this.cancelAsyncOperations();
+		this.deregisterHooks();
+
 		Element.prototype.setParent.apply(this, arguments);
+
 		this.attachEvents();
+		this.registerHooks();
 	};
 
 	/**
@@ -130,6 +135,32 @@ sap.ui.define([
 		}
 
 		this.updateTableAsync.cancel();
+	};
+
+	/**
+	 * Register to table hooks.
+	 *
+	 * @private
+	 */
+	RowMode.prototype.registerHooks = function() {
+		var oTable = this.getTable();
+		var Hook = TableUtils.Hook.Keys;
+
+		TableUtils.Hook.register(oTable, Hook.Table.UnbindRows, this._onTableUnbindRows, this);
+		TableUtils.Hook.register(oTable, Hook.Table.UpdateRows, this._onTableUpdateRows, this);
+	};
+
+	/**
+	 * Deregister from table hooks.
+	 *
+	 * @private
+	 */
+	RowMode.prototype.deregisterHooks = function() {
+		var oTable = this.getTable();
+		var Hook = TableUtils.Hook.Keys;
+
+		TableUtils.Hook.deregister(oTable, Hook.Table.UnbindRows, this._onTableUnbindRows, this);
+		TableUtils.Hook.deregister(oTable, Hook.Table.UpdateRows, this._onTableUpdateRows, this);
 	};
 
 	/**
@@ -291,30 +322,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * This hook is called when the table layout is updated, for example when resizing.
-	 *
-	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason The reason for updating the table sizes.
-	 * @private
-	 */
-	RowMode.prototype.updateTableSizes = function(sReason) {};
-
-	/**
 	 * This hook is called when the rows aggregation of the table is unbound.
 	 *
 	 * @private
 	 */
-	RowMode.prototype.unbindRows = function() {
+	RowMode.prototype._onTableUnbindRows = function() {
 		clearTimeout(this.getTable()._mTimeouts.refreshRowsCreateRows);
 		this.updateTable(TableUtils.RowsUpdateReason.Unbind);
 	};
-
-	/**
-	 * This hook is called when the rows aggregation of the table is refreshed.
-	 *
-	 * @param {string} sReason The reason for the refresh.
-	 * @private
-	 */
-	RowMode.prototype.refreshRows = function(sReason) {};
 
 	/**
 	 * This hook is called when the rows aggregation of the table is updated.
@@ -322,7 +337,7 @@ sap.ui.define([
 	 * @param {string} sReason The reason for the refresh.
 	 * @private
 	 */
-	RowMode.prototype.updateRows = function(sReason) {
+	RowMode.prototype._onTableUpdateRows = function(sReason) {
 		var oTable = this.getTable();
 
 		clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
@@ -722,7 +737,7 @@ sap.ui.define([
 	 * @param {Array<sap.ui.table.Row>} [aRows] The rows for which the contexts are to be updated.
 	 */
 	function updateBindingContextsOfRows(oMode, aRows) {
-		var oTable = oMode.getParent();
+		var oTable = oMode.getTable();
 		var aContexts = oMode.getRowContexts(aRows.length);
 
 		if (!oTable || aRows.length === 0) {
