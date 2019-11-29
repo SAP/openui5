@@ -22,7 +22,6 @@ sap.ui.define(function () {
 			autostart: true
 		},
 		tests: {
-			// new tests
 			"apply/api/FlexRuntimeInfoAPI": {
 				group: "Apply API",
 				coverage: {
@@ -69,30 +68,6 @@ sap.ui.define(function () {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/Reverter"]
-				}
-			},
-			"apply/_internal/ChangesController": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/ChangesController"]
-				}
-			},
-			"apply/_internal/Storage": {
-				group: "Apply Internal",
-				ui5: {
-					resourceroots: {
-						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
-					},
-					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]},{"connector": "LrepConnector", "layers": ["ALL"], "url": "someURL"}]'
-				},
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/Storage"]
-				}
-			},
-			"apply/_internal/storageResultDisassemble": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
 				}
 			},
 			"apply/_internal/connectors/ObjectStorageConnector": {
@@ -164,6 +139,54 @@ sap.ui.define(function () {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/controlVariants/URLHandler"]
+				}
+			},
+			"apply/_internal/flexState/FlexState": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/FlexState"]
+				}
+			},
+			"apply/_internal/flexState/prepareAppDescriptorMap": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap"]
+				}
+			},
+			"apply/_internal/flexState/prepareChangesMap": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/prepareChangesMap"]
+				}
+			},
+			"apply/_internal/flexState/prepareVariantsMap": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/prepareVariantsMap"]
+				}
+			},
+			"apply/_internal/ChangesController": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/ChangesController"]
+				}
+			},
+			"apply/_internal/Storage": {
+				group: "Apply Internal",
+				ui5: {
+					resourceroots: {
+						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
+					},
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]},{"connector": "LrepConnector", "layers": ["ALL"], "url": "someURL"}]'
+				},
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/Storage"]
+				}
+			},
+			"apply/_internal/storageResultDisassemble": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
 				}
 			},
 			"write/api/ChangesWriteAPI": {
