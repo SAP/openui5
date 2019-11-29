@@ -1,13 +1,16 @@
-/*global QUnit, oTable */
+/*global QUnit, sinon, oTable */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
+	"sap/ui/unified/Menu",
+	"sap/ui/unified/MenuItem",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/Device"
-], function(TableQUnitUtils, qutils, TableUtils, Menu, MenuItem, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Popup"
+], function(TableQUnitUtils, qutils, TableUtils, MenuUnified, MenuItemUnified, MenuM, MenuItemM, Device, Popup) {
 	"use strict";
 
 	// mapping of global function calls
@@ -16,8 +19,12 @@ sap.ui.define([
 	var getCell = window.getCell;
 	var getColumnHeader = window.getColumnHeader;
 	var getRowHeader = window.getRowHeader;
+	var getRowAction = window.getRowAction;
 	var getSelectAll = window.getSelectAll;
+	var initRowActions = window.initRowActions;
 	var iNumberOfRows = window.iNumberOfRows;
+	var fakeGroupRow = window.fakeGroupRow;
+	var fakeSumRow = window.fakeSumRow;
 
 	//************************************************************************
 	// Test Code
@@ -38,26 +45,138 @@ sap.ui.define([
 	});
 
 	QUnit.module("Context Menus", {
+		before: function() {
+			this.oUtilsOpenColumnContextMenu = sinon.spy(TableUtils.Menu, "_openColumnContextMenu");
+			this.oUtilsCloseColumnContextMenu = sinon.spy(TableUtils.Menu, "_closeColumnContextMenu");
+			this.oUtilsApplyColumnHeaderCellMenu = sinon.spy(TableUtils.Menu, "_applyColumnHeaderCellMenu");
+			this.oUtilsRemoveColumnHeaderCellMenu = sinon.spy(TableUtils.Menu, "_removeColumnHeaderCellMenu");
+			this.oUtilsOpenContentCellContextMenu = sinon.spy(TableUtils.Menu, "_openContentCellContextMenu");
+
+			var oColumnSelectEventInfo = {
+				name: "ColumnSelect",
+				lastCallParameters: null,
+				handler: sinon.spy(function(oEvent) {
+					oColumnSelectEventInfo.lastCallParameters = oEvent.mParameters;
+				})
+			};
+			this.oColumnSelectEventInfo = oColumnSelectEventInfo;
+
+			var oCellContextMenuEventInfo = {
+				name: "CellContextMenu",
+				lastCallParameters: null,
+				handler: sinon.spy(function(oEvent) {
+					oCellContextMenuEventInfo.lastCallParameters = oEvent.mParameters;
+				})
+			};
+			this.oCellContextMenuEventInfo = oCellContextMenuEventInfo;
+
+			var oBeforeOpenContextMenuEventInfo = {
+				name: "BeforeOpenContextMenu",
+				lastCallParameters: null,
+				handler: sinon.spy(function(oEvent) {
+					oBeforeOpenContextMenuEventInfo.lastCallParameters = oEvent.mParameters;
+				})
+			};
+			this.oBeforeOpenContextMenuEventInfo = oBeforeOpenContextMenuEventInfo;
+		},
 		beforeEach: function() {
 			createTables();
+			initRowActions(oTable, 1, 1);
+			oTable.attachColumnSelect(this.oColumnSelectEventInfo.handler);
+			oTable.attachCellContextmenu(this.oCellContextMenuEventInfo.handler);
+			oTable.attachBeforeOpenContextMenu(this.oBeforeOpenContextMenuEventInfo.handler);
 		},
 		afterEach: function() {
 			destroyTables();
+			this.resetSpies();
+		},
+		after: function() {
+			this.oUtilsOpenColumnContextMenu.restore();
+			this.oUtilsCloseColumnContextMenu.restore();
+			this.oUtilsApplyColumnHeaderCellMenu.restore();
+			this.oUtilsRemoveColumnHeaderCellMenu.restore();
+			this.oUtilsOpenContentCellContextMenu.restore();
+		},
+		resetSpies: function() {
+			[
+				this.oColumnSelectEventInfo.handler,
+				this.oCellContextMenuEventInfo.handler,
+				this.oBeforeOpenContextMenuEventInfo.handler,
+				this.oUtilsOpenColumnContextMenu,
+				this.oUtilsCloseColumnContextMenu,
+				this.oUtilsApplyColumnHeaderCellMenu,
+				this.oUtilsRemoveColumnHeaderCellMenu,
+				this.oUtilsOpenContentCellContextMenu
+			]
+				.forEach(function(oSpy) {
+					oSpy.reset();
+				});
+		},
+		assertEventCalled: function(assert, oEventInfo, bCalled, mExpectedParameters) {
+			if (bCalled) {
+				assert.ok(oEventInfo.handler.calledOnce, oEventInfo.name + ": The event handler has been called");
+				assert.deepEqual(oEventInfo.lastCallParameters, Object.assign({id: oTable.getId()}, mExpectedParameters),
+					oEventInfo.name + ": The event object contains the correct parameters");
+			} else {
+				assert.ok(oEventInfo.handler.notCalled, oEventInfo.name + ": The event handler has not been called");
+			}
+
+			oEventInfo.handler.reset();
+			oEventInfo.lastCallParameters = null;
+		},
+		assertNoEventsCalled: function(assert) {
+			this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
+			this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+			this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
 		},
 		assertAllColumnContextMenusClosed: function(assert) {
-			var oColumns = oTable.getColumns();
-			for (var i = 0; i < oColumns.length; i++) {
-				var oColumn = oColumns[i];
-				this.assertColumnContextMenuOpen(assert, oColumn.getIndex(), false);
-			}
+			oTable.getColumns().forEach(function(oColumn) {
+				this.assertColumnContextMenuOpen(assert, oColumn, false);
+			}.bind(this));
 		},
-		assertColumnContextMenuOpen: function(assert, iColumnIndex, bOpen) {
-			var oMenu = oTable.getColumns()[iColumnIndex].getMenu();
+		assertColumnContextMenuOpen: function(assert, oColumn, bOpen) {
+			var oMenu = oColumn.getAggregation("menu");
 			var bMenuOpen = oMenu.bOpen;
 			assert.strictEqual(bMenuOpen, bOpen,
-				"The column context menu is" + (bOpen ? " " : " not ") + "open (Column: " + (iColumnIndex + 1) + ")");
+				"The column context menu is" + (bOpen ? " " : " not ") + "open (Column: " + (oColumn.getIndex() + 1) + ")");
 		},
-		assertDataCellContextMenuOpen: function(assert, iRowIndex, iColumnIndex, bOpen) {
+		assertNoColumnContextMenusExist: function(assert) {
+			oTable.getColumns().forEach(function(oColumn) {
+				this.assertColumnContextMenuExists(assert, oColumn, false);
+			}.bind(this));
+		},
+		assertColumnContextMenuExists: function(assert, oColumn, bExists) {
+			assert.strictEqual(oColumn.getAggregation("menu"), null,
+				"The column menu does" + (bExists ? " " : " not ") + "exist (Column: " + (oColumn.getIndex() + 1) + ")");
+		},
+		assertNoColumnHeaderCellMenusExist: function(assert) {
+			oTable.getColumns().forEach(function(oColumn) {
+				this.assertColumnHeaderCellMenuExists(assert, oColumn, false);
+			}.bind(this));
+		},
+		assertColumnHeaderCellMenuExists: function(assert, oColumn, bExists) {
+			var $Column = oColumn.$();
+			var bCellExists = $Column.find(".sapUiTableCellInner").is(":hidden");
+			assert.strictEqual(bExists, bCellExists,
+				"The cell is" + (bExists ? " not " : " ") + "visible (Column: " + (oColumn.getIndex() + 1) + ")");
+
+			var bCellMenuExists = $Column.find(".sapUiTableCellTouchMenu").length > 0;
+			assert.strictEqual(bExists, bCellMenuExists,
+				"The cell menu does" + (bExists ? " " : " not ") + "exist (Column: " + (oColumn.getIndex() + 1) + ")");
+		},
+		assertColumnHeaderCellMenuButtonExists: function(assert, oColumn, bExists) {
+			var $Column = oColumn.$();
+			var bContextMenuButtonExists = $Column.find(".sapUiTableCellTouchMenu > .sapUiTableColDropDown").length > 0;
+			assert.strictEqual(bExists, bContextMenuButtonExists,
+				"The context menu button does" + (bExists ? " " : " not ") + "exist (Column: " + (oColumn.getIndex() + 1) + ")");
+		},
+		assertColumnHeaderCellResizeButtonExists: function(assert, oColumn, bExists) {
+			var $Column = oColumn.$();
+			var bResizeButtonExists = $Column.find(".sapUiTableCellTouchMenu > .sapUiTableColResizer").length > 0;
+			assert.strictEqual(bExists, bResizeButtonExists,
+				"The resize button does" + (bExists ? " " : " not ") + "exist (Column: " + oColumn.getIndex() + ")");
+		},
+		assertContentCellContextMenuOpen: function(assert, iRowIndex, iColumnIndex, bOpen) {
 			var bMenuOpen = oTable._oCellContextMenu && oTable._oCellContextMenu.bOpen;
 			var oCellElement = TableUtils.getCell(oTable, oTable.getRows()[iRowIndex].getCells()[iColumnIndex].getDomRef())[0];
 			var bMenuOpenAtSpecifiedCell = bMenuOpen && oTable._oCellContextMenu.oOpenerRef === oCellElement;
@@ -65,423 +184,716 @@ sap.ui.define([
 				"The data cell context menu is" + (bOpen ? " " : " not ") + "open (Column: " + (iColumnIndex + 1)
 				+ ", Row: " + (iRowIndex + 1) + ")");
 		},
-		assertFirstMenuItemHovered: function(assert, oMenu, bHovered) {
-			var bFirstItemHovered = oMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-			assert.strictEqual(bFirstItemHovered, bHovered,
-				"The first item in the menu is" + (bHovered ? " " : " not ") + "hovered");
-		},
-		assertNoColumnHeaderCellMenusExists: function(assert) {
-			var oColumns = oTable.getColumns();
-			for (var i = 0; i < oColumns.length; i++) {
-				var oColumn = oColumns[i];
-				this.assertColumnHeaderCellMenuExists(assert, oColumn.$(), false);
+		assertDefaultContentCellContextMenuExists: function(assert, bExists) {
+			if (bExists) {
+				assert.notEqual(oTable._oCellContextMenu, undefined, "The content cell context menu does exist");
+			} else {
+				assert.equal(oTable._oCellContextMenu, undefined, "The content cell context menu does not exist");
 			}
 		},
-		assertColumnHeaderCellMenuExists: function(assert, $Column, bExists) {
-			var iColumnIndex = +$Column.attr("data-sap-ui-colindex");
-
-			var bCellExists = $Column.find(".sapUiTableCellInner").is(":hidden");
-			assert.strictEqual(bExists, bCellExists,
-				"The cell is" + (bExists ? " not " : " ") + "visible (Column: " + (iColumnIndex + 1) + ")");
-
-			var bCellMenuExists = $Column.find(".sapUiTableCellTouchMenu").length > 0;
-			assert.strictEqual(bExists, bCellMenuExists,
-				"The cell menu does" + (bExists ? " " : " not ") + "exist (Column: " + (iColumnIndex + 1) + ")");
+		assertCustomContextMenuOpen: function(assert, bOpen) {
+			var oMenu = oTable.getContextMenu();
+			var bMenuOpen = oMenu.bOpen === true;
+			assert.strictEqual(bMenuOpen, bOpen, "The custom context menu is" + (bOpen ? " " : " not ") + "open");
 		},
-		assertColumnHeaderCellMenuButtonExists: function(assert, $Column, bExists) {
-			var iColumnIndex = +$Column.attr("data-sap-ui-colindex");
-
-			var bContextMenuButtonExists = $Column.find(".sapUiTableCellTouchMenu > .sapUiTableColDropDown").length > 0;
-			assert.strictEqual(bExists, bContextMenuButtonExists,
-				"The context menu button does" + (bExists ? " " : " not ") + "exist (Column: " + (iColumnIndex + 1) + ")");
-		},
-		assertColumnHeaderCellResizeButtonExists: function(assert, $Column, bExists) {
-			var iColumnIndex = +$Column.attr("data-sap-ui-colindex");
-
-			var bResizeButtonExists = $Column.find(".sapUiTableCellTouchMenu > .sapUiTableColResizer").length > 0;
-			assert.strictEqual(bExists, bResizeButtonExists,
-				"The resize button does" + (bExists ? " " : " not ") + "exist (Column: " + iColumnIndex + ")");
+		assertFirstMenuItemHovered: function(assert, oMenu) {
+			assert.strictEqual(oMenu.oHoveredItem, oMenu.getItems()[0], "The first item in the menu is hovered");
 		}
 	});
 
-	QUnit.test("openContextMenu", function(assert) {
-		var mActualParameters;
-		var mExpectedParameters;
+	QUnit.test("openContextMenu - Elements that do not support context menus", function(assert) {
+		var test = function() {
+			assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+			assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+			assert.ok(this.oUtilsRemoveColumnHeaderCellMenu.notCalled, "_removeColumnHeaderCellMenu was not called");
+			assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+			this.assertNoEventsCalled(assert);
+			this.resetSpies();
+		}.bind(this);
 
-		// Invalid parameters: No context menu will be opened.
-		TableUtils.Menu.openContextMenu();
-		this.assertAllColumnContextMenusClosed(assert);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertNoColumnHeaderCellMenusExists(assert);
+		assert.strictEqual(TableUtils.Menu.openContextMenu(), false, "Returned false");
+		test();
 
-		TableUtils.Menu.openContextMenu(oTable);
-		this.assertAllColumnContextMenusClosed(assert);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertNoColumnHeaderCellMenusExists(assert);
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable), false, "Returned false");
+		test();
 
-		TableUtils.Menu.openContextMenu(oTable, getSelectAll());
-		this.assertAllColumnContextMenusClosed(assert);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertNoColumnHeaderCellMenusExists(assert);
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, getSelectAll()), false, "Returned false");
+		test();
 
-		TableUtils.Menu.openContextMenu(oTable, getRowHeader(0));
-		this.assertAllColumnContextMenusClosed(assert);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertNoColumnHeaderCellMenusExists(assert);
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, document.getElementsByTagName("body").item(0)), false,
+			"Returned false");
+		test();
+	});
 
-		TableUtils.Menu.openContextMenu(oTable, document.getElementsByTagName("body").item(0));
-		this.assertAllColumnContextMenusClosed(assert);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertNoColumnHeaderCellMenusExists(assert);
-
-		/* Column Context Menu */
-
+	QUnit.test("openContextMenu - Header cells", function(assert) {
+		var oDomRef;
 		var oColumnA = oTable.getColumns()[0];
-		var $ColumnA = oColumnA.$();
-		oColumnA.setSortProperty("dummy");
-
 		var oColumnB = oTable.getColumns()[1];
-		var $ColumnB = oColumnB.$();
-		oColumnB.setSortProperty("dummy");
+		var bOriginalDeviceSystemDesktop = Device.system.desktop;
 
-		var oColumnSelectEventHandler = this.spy(function(oEvent) {
-			mActualParameters = oEvent.mParameters;
+		Device.system.desktop = true;
+		oColumnA.setFilterProperty("A");
+		oColumnB.setFilterProperty("A");
+
+		oDomRef = oColumnA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0]),
+			"_openColumnContextMenu was called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
+			column: oColumnA
 		});
-		oTable.attachColumnSelect(oColumnSelectEventHandler);
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
+		this.resetSpies();
 
-		// Open the context menu of column 1. Do not fire the column select event.
-		TableUtils.Menu.openContextMenu(oTable, $ColumnA[0], false, false);
-		this.assertColumnContextMenuOpen(assert, 0, true);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertColumnHeaderCellMenuExists(assert, $ColumnA, false);
-		assert.ok(oColumnSelectEventHandler.notCalled, "The ColumnSelect event handler has not been called");
-		oColumnSelectEventHandler.reset();
-		mActualParameters = null;
+		oDomRef = oColumnB.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0]),
+			"_openColumnContextMenu was called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
+			column: oColumnB
+		});
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
+		this.resetSpies();
 
-		// Open the context menu of column 2. Fire the column select event.
-		mExpectedParameters = {
-			column: oColumnB,
-			id: oTable.getId()
-		};
-
-		TableUtils.Menu.openContextMenu(oTable, $ColumnB, false, true);
-		this.assertColumnContextMenuOpen(assert, 0, false);
-		this.assertColumnContextMenuOpen(assert, 1, true);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertColumnHeaderCellMenuExists(assert, $ColumnB, false);
-		assert.ok(oColumnSelectEventHandler.calledOnce, "The ColumnSelect event handler has been called once");
-		assert.deepEqual(mActualParameters, mExpectedParameters,
-			"The ColumnSelect event object contains the correct parameters");
-		oColumnSelectEventHandler.reset();
-		mActualParameters = null;
-
-		// Open the context menu of column 1. Fire the column select event and and prevent the default action.
-		// The context menu should not be opened.
-		mExpectedParameters = {
-			column: oColumnA,
-			id: oTable.getId()
-		};
-
+		// Prevent the default action. The context menu should not be opened.
 		oTable.attachEventOnce("columnSelect", function(oEvent) {
 			oEvent.preventDefault();
 		});
 
-		TableUtils.Menu.openContextMenu(oTable, $ColumnA, false, true);
-		this.assertColumnContextMenuOpen(assert, 0, false);
-		this.assertColumnContextMenuOpen(assert, 1, true);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertColumnHeaderCellMenuExists(assert, $ColumnA, false);
-		assert.ok(oColumnSelectEventHandler.calledOnce, "The ColumnSelect event handler has been called once");
-		assert.deepEqual(mActualParameters, mExpectedParameters,
-			"The ColumnSelect event object contains the correct parameters");
-		oColumnSelectEventHandler.reset();
-		mActualParameters = null;
+		oDomRef = oColumnA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
+			column: oColumnA
+		});
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
+		this.resetSpies();
 
 		// Make the first column invisible and open the menu of column 2 (which is not the first visible column).
 		oColumnA.setVisible(false);
 		sap.ui.getCore().applyChanges();
-		$ColumnB = oColumnB.$();
-		mExpectedParameters = {
-			column: oColumnB,
-			id: oTable.getId()
-		};
 
-		TableUtils.Menu.openContextMenu(oTable, $ColumnB, false, true);
-		this.assertColumnContextMenuOpen(assert, 0, false);
-		this.assertColumnContextMenuOpen(assert, 1, true);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertColumnHeaderCellMenuExists(assert, $ColumnB, false);
-		assert.ok(oColumnSelectEventHandler.calledOnce, "The ColumnSelect event handler has been called once");
-		assert.deepEqual(mActualParameters, mExpectedParameters,
-			"The ColumnSelect event object contains the correct parameters");
-		oColumnSelectEventHandler.reset();
-		mActualParameters = null;
+		oDomRef = oColumnB.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0]),
+			"_openColumnContextMenu was called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
+			column: oColumnB
+		});
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
+		this.resetSpies();
 
 		oColumnA.setVisible(true);
 		sap.ui.getCore().applyChanges();
-		$ColumnA = oColumnA.$();
 
-		// Open the context menu of column 1 on mobile.
 		Device.system.desktop = false;
 
-		// 1. The column header cell menu should be applied.
-		TableUtils.Menu.openContextMenu(oTable, $ColumnA);
-		this.assertColumnContextMenuOpen(assert, 0, false);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertColumnHeaderCellMenuExists(assert, $ColumnA, true);
-		assert.ok(oColumnSelectEventHandler.notCalled, "The ColumnSelect event handler has not been called");
-		oColumnSelectEventHandler.reset();
-		mActualParameters = null;
+		oDomRef = oColumnB.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0]),
+			"_applyColumnHeaderCellMenu was called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+		this.assertNoEventsCalled(assert);
+		this.resetSpies();
 
-		// 2. The column header cell menu should be closed and the context menu should be opened.
-		TableUtils.Menu.openContextMenu(oTable, $ColumnA);
-		this.assertColumnContextMenuOpen(assert, 0, true);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
-		this.assertColumnHeaderCellMenuExists(assert, $ColumnA, false);
-		assert.ok(oColumnSelectEventHandler.calledOnce, "The ColumnSelect event handler has not been called");
+		oDomRef = oColumnA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0]),
+			"_applyColumnHeaderCellMenu was called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+		this.assertNoEventsCalled(assert);
+		this.resetSpies();
 
-		/* Cell Context Menu */
-
-		oTable.setEnableCellFilter(true);
-
-		oColumnA.setFilterProperty("dummy");
-		var oCellA = oTable.getRows()[0].getCells()[0];
-		var $CellA = oCellA.$();
-
-		oColumnB.setFilterProperty("dummy");
-		var oCellB = oTable.getRows()[0].getCells()[1];
-		var $CellB = oCellB.$();
-
-		var oCellContextMenuEventHandler = this.spy(function(oEvent) {
-			mActualParameters = oEvent.mParameters;
+		oDomRef = oColumnA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0]),
+			"_openColumnContextMenu was called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsRemoveColumnHeaderCellMenu.calledOnceWithExactly(oTable),
+			"_removeColumnHeaderCellMenu was called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
+			column: oColumnA
 		});
-		oTable.attachCellContextmenu(oCellContextMenuEventHandler);
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
+		this.resetSpies();
 
-		// Open the cell menu on the cell in column 1 row 1. Do not fire the CellContextMenu event.
-		TableUtils.Menu.openContextMenu(oTable, $CellA[0], false, false);
-		this.assertColumnContextMenuOpen(assert, 0, false);
-		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
-		assert.ok(oCellContextMenuEventHandler.notCalled, "The CellContextMenu event handler has not been called");
-		oCellContextMenuEventHandler.reset();
-		mActualParameters = null;
+		oDomRef = oColumnA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		this.resetSpies();
+		oTable.attachEventOnce("columnSelect", function(oEvent) {
+			oEvent.preventDefault();
+		});
+		oDomRef = oColumnA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsRemoveColumnHeaderCellMenu.calledOnceWithExactly(oTable),
+			"_removeColumnHeaderCellMenu was called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
+			column: oColumnA
+		});
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
 
-		// Open the cell menu on the cell in column 2 row 1. Fire the CellContextMenu event.
-		mExpectedParameters = {
-			rowIndex: 0,
-			columnIndex: 1,
-			columnId: oColumnB.getId(),
-			cellControl: oCellB,
-			rowBindingContext: oTable.getRows()[0].getBindingContext(oTable.getBindingInfo("rows").model),
-			cellDomRef: getCell(0, 1)[0],
-			id: oTable.getId()
-		};
+		Device.system.desktop = bOriginalDeviceSystemDesktop;
+	});
 
-		TableUtils.Menu.openContextMenu(oTable, $CellB, false, true);
-		this.assertColumnContextMenuOpen(assert, 1, false);
-		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
-		this.assertDataCellContextMenuOpen(assert, 0, 1, true);
-		assert.ok(oCellContextMenuEventHandler.calledOnce, "The CellContextMenu event handler has been called once");
-		assert.deepEqual(mActualParameters, mExpectedParameters,
-			"The CellContextMenu event object contains the correct parameters");
-		oCellContextMenuEventHandler.reset();
-		mActualParameters = null;
+	QUnit.test("openContextMenu - Content cells", function(assert) {
+		var oDomRef;
+		var aColumns = oTable.getColumns();
+		var aRows = oTable.getRows();
+		var oColumnA = aColumns[0];
+		var oCellA = aRows[0].getCells()[0];
+		var oColumnB = aColumns[1];
+		var oCellB = aRows[0].getCells()[1];
+		var oCustomContextMenu = new MenuM({
+			items: [
+				new MenuItemM({text: "ContextMenuItem"})
+			]
+		});
+		var oFakeEventObject = {};
 
-		// Open the cell menu on the cell in column 1 row 1. Fire the CellContextMenu event and prevent execution of the default action.
-		// The cell menu on column 1 row 1 should not open, and the cell menu on column 2 row 1 should stay open.
-		mExpectedParameters = {
+		oDomRef = oCellA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), false, "Returned false");
+		assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0], undefined),
+			"_openContentCellContextMenu was called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: 0,
 			columnId: oColumnA.getId(),
 			cellControl: oCellA,
-			rowBindingContext: oTable.getRows()[0].getBindingContext(oTable.getBindingInfo("rows").model),
-			cellDomRef: getCell(0, 0)[0],
-			id: oTable.getId()
-		};
+			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
+			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
+		});
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: 0,
+			contextMenu: null
+		});
+		this.resetSpies();
+
+		oTable.setContextMenu(oCustomContextMenu);
+		oDomRef = oCellB.getDomRef();
+		oFakeEventObject.target = oDomRef;
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oCellB.$(), oFakeEventObject), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0], oFakeEventObject),
+			"_openContentCellContextMenu was called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: 1,
+			columnId: oColumnB.getId(),
+			cellControl: oCellB,
+			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
+			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
+		});
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: 1,
+			contextMenu: oCustomContextMenu
+		});
+		this.resetSpies();
 
 		oTable.attachEventOnce("cellContextmenu", function(oEvent) {
 			oEvent.preventDefault();
 		});
 
-		TableUtils.Menu.openContextMenu(oTable, $CellA, false, true);
-		this.assertColumnContextMenuOpen(assert, 0, false);
-		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
-		this.assertDataCellContextMenuOpen(assert, 0, 1, true);
-		assert.ok(oCellContextMenuEventHandler.calledOnce, "The CellContextMenu event handler has been called once");
-		assert.deepEqual(mActualParameters, mExpectedParameters,
-			"The CellContextMenu event object contains the correct parameters");
+		oDomRef = oCellA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: 0,
+			columnId: oColumnA.getId(),
+			cellControl: oCellA,
+			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
+			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
+		});
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
+		this.resetSpies();
+
+		oTable.attachEventOnce("beforeOpenContextMenu", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		oDomRef = oCellA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: 0,
+			columnId: oColumnA.getId(),
+			cellControl: oCellA,
+			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
+			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
+		});
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: 0,
+			contextMenu: oCustomContextMenu
+		});
+		this.resetSpies();
+
+		oDomRef = getRowHeader(0)[0];
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, oDomRef, undefined),
+			"_openContentCellContextMenu was called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: null,
+			contextMenu: oCustomContextMenu
+		});
+		this.resetSpies();
+
+		oTable.setContextMenu(null);
+		oDomRef = getRowAction(0)[0];
+		oFakeEventObject.target = oDomRef;
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef, oFakeEventObject), false, "Returned false");
+		assert.ok(this.oUtilsOpenColumnContextMenu.notCalled, "_openColumnContextMenu was not called");
+		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, oDomRef, oFakeEventObject),
+			"_openContentCellContextMenu was called");
+		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: null,
+			contextMenu: null
+		});
 	});
 
-	QUnit.test("openColumnContextMenu", function(assert) {
-		var oColumnA = oTable.getColumns()[0];
-		var oColumnB = oTable.getColumns()[1];
+	QUnit.test("_openColumnContextMenu", function(assert) {
+		var aColumns = oTable.getColumns();
+		var aColumnOpenMenuSpies = aColumns.map(function(oColumn) {
+			return this.spy(oColumn, "_openMenu");
+		}.bind(this));
+		var that = this;
+		var oCloseContentCellContextMenu = this.spy(TableUtils.Menu, "_closeContentCellContextMenu");
 
-		// Invalid parameters: The column context menu will not be opened.
-		this.assertAllColumnContextMenusClosed(assert);
-		TableUtils.Menu.openColumnContextMenu();
-		this.assertAllColumnContextMenusClosed(assert);
-		TableUtils.Menu.openColumnContextMenu(oTable, -1);
-		this.assertAllColumnContextMenusClosed(assert);
-		TableUtils.Menu.openColumnContextMenu(oTable, oTable.columnCount);
-		this.assertAllColumnContextMenusClosed(assert);
+		function assertColumnOpenMenuSpiesCalled(iIndexOfCalledSpy, oCellArgument) {
+			aColumns.forEach(function(oColumn, iIndex) {
+				var oSpy = aColumnOpenMenuSpies[iIndex];
 
-		// Column menu has no items: The context menu will not be opened.
-		TableUtils.Menu.openColumnContextMenu(oTable, 0);
-		this.assertColumnContextMenuOpen(assert, 0, false);
+				if (iIndex === iIndexOfCalledSpy) {
+					assert.ok(oSpy.calledOnceWithExactly(oCellArgument),
+						"Column._openMenu was called for column " + (iIndex + 1));
+				} else {
+					assert.ok(oSpy.notCalled, "Column._openMenu was not called for column " + (iIndex + 1));
+				}
+			});
+		}
 
-		oColumnA.setSortProperty("dummy");
-		oColumnB.setSortProperty("dummy");
+		function assertCloseColumnContextMenuSpiesCalled(iIndexOfUncalledSpy) {
+			aColumns.forEach(function(oColumn, iIndex) {
+				if (iIndex === iIndexOfUncalledSpy) {
+					assert.ok(that.oUtilsCloseColumnContextMenu.withArgs(oTable, iIndex).notCalled,
+						"_closeColumnContextMenu was not called for column " + (iIndex + 1));
+				} else {
+					assert.ok(that.oUtilsCloseColumnContextMenu.withArgs(oTable, iIndex).calledOnce,
+						"_closeColumnContextMenu was called for column " + (iIndex + 1));
+				}
+			});
+		}
 
-		// Column is not visible: The context menu will not be opened.
-		oColumnA.setVisible(false);
-		TableUtils.Menu.openColumnContextMenu(oTable, 0);
-		this.assertColumnContextMenuOpen(assert, 0, false);
-		oColumnA.setVisible(true);
+		function resetSpies() {
+			that.resetSpies();
+			aColumnOpenMenuSpies.forEach(function(oSpy) {
+				oSpy.reset();
+			});
+			oCloseContentCellContextMenu.reset();
+		}
 
-		// Open the context menu of column 1.
-		TableUtils.Menu.openColumnContextMenu(oTable, 0);
-		this.assertColumnContextMenuOpen(assert, 0, true);
-		this.assertFirstMenuItemHovered(assert, oColumnA.getMenu(), true);
+		aColumns[1].setHeaderSpan(2);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(TableUtils.Menu._openColumnContextMenu(oTable, aColumns[1].getDomRef()), false, "Returned false");
+		assertCloseColumnContextMenuSpiesCalled(1);
+		assert.ok(oCloseContentCellContextMenu.calledOnceWithExactly(oTable), "_closeContentCellContextMenu was called");
+		assertColumnOpenMenuSpiesCalled();
+		aColumns[1].setHeaderSpan();
+		sap.ui.getCore().applyChanges();
+		resetSpies();
 
-		// Trying to open the context menu of column 1 again will leave it open.
-		TableUtils.Menu.openColumnContextMenu(oTable, 0, true);
-		this.assertColumnContextMenuOpen(assert, 0, true);
-		this.assertFirstMenuItemHovered(assert, oColumnA.getMenu(), true);
+		assert.strictEqual(TableUtils.Menu._openColumnContextMenu(oTable, getColumnHeader(0)[0]), false, "Returned false");
+		assertCloseColumnContextMenuSpiesCalled(0);
+		assert.ok(oCloseContentCellContextMenu.calledOnceWithExactly(oTable), "_closeContentCellContextMenu was called");
+		assertColumnOpenMenuSpiesCalled(0, getColumnHeader(0)[0]);
 
-		// Open the context menu of column 2. The context menu of column 1 will be closed.
-		TableUtils.Menu.openColumnContextMenu(oTable, 1, true);
-		this.assertColumnContextMenuOpen(assert, 0, false);
-		this.assertColumnContextMenuOpen(assert, 1, true);
-		this.assertFirstMenuItemHovered(assert, oColumnB.getMenu(), true);
+		oCloseContentCellContextMenu.restore();
 	});
 
-	QUnit.test("closeColumnContextMenu", function(assert) {
-		// Open the column context menu.
-		oTable.getColumns()[0].setSortProperty("dummy");
-		TableUtils.Menu.openColumnContextMenu(oTable, 0);
-		this.assertColumnContextMenuOpen(assert, 0, true);
+	QUnit.test("_closeColumnContextMenu", function(assert) {
+		var aColumns = oTable.getColumns();
+		var aColumnCloseMenuSpies = aColumns.map(function(oColumn) {
+			return this.spy(oColumn, "_closeMenu");
+		}.bind(this));
 
-		// Invalid parameters: Leave the context menu open.
-		TableUtils.Menu.closeColumnContextMenu();
-		this.assertColumnContextMenuOpen(assert, 0, true);
+		function assertColumnCloseMenuSpiesCalled(iIndexOfCalledSpy) {
+			aColumns.forEach(function(oColumn, iIndex) {
+				var oSpy = aColumnCloseMenuSpies[iIndex];
 
-		TableUtils.Menu.closeColumnContextMenu(oTable);
-		this.assertColumnContextMenuOpen(assert, 0, true);
+				if (iIndex === iIndexOfCalledSpy) {
+					assert.ok(oSpy.calledOnceWithExactly(),
+						"Column._closeMenu was called for column " + (iIndex + 1));
+				} else {
+					assert.ok(oSpy.notCalled, "Column._closeMenu was not called for column " + (iIndex + 1));
+				}
+			});
+		}
 
-		TableUtils.Menu.closeColumnContextMenu(oTable, -1);
-		this.assertColumnContextMenuOpen(assert, 0, true);
-
-		TableUtils.Menu.closeColumnContextMenu(oTable, oTable.columnCount);
-		this.assertColumnContextMenuOpen(assert, 0, true);
-
-		TableUtils.Menu.closeColumnContextMenu(oTable, 1);
-		this.assertColumnContextMenuOpen(assert, 0, true);
-
-		// Close the context menu.
-		TableUtils.Menu.closeColumnContextMenu(oTable, 0);
-		this.assertColumnContextMenuOpen(assert, 0, false);
+		TableUtils.Menu._closeColumnContextMenu(oTable, 1);
+		assertColumnCloseMenuSpiesCalled(1);
 	});
 
-	QUnit.test("openDataCellContextMenu", function(assert) {
+	QUnit.test("_openContentCellContextMenu", function(assert) {
+		var oCell;
+		var oFakeEventObject = {};
+		var oOpenCustomContentCellContextMenu = this.spy(TableUtils.Menu, "_openCustomContentCellContextMenu");
+		var oOpenDefaultContentCellContextMenu = this.spy(TableUtils.Menu, "_openDefaultContentCellContextMenu");
+		var that = this;
+
+		function resetSpies() {
+			that.resetSpies();
+			oOpenCustomContentCellContextMenu.reset();
+			oOpenDefaultContentCellContextMenu.reset();
+		}
+
 		oTable.setVisibleRowCount(iNumberOfRows + 1);
 		sap.ui.getCore().applyChanges();
+		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, getCell(iNumberOfRows, 0)[0]), false, "Returned false");
+		assert.ok(oOpenCustomContentCellContextMenu.notCalled, "_openCustomContentCellContextMenu was not called");
+		assert.ok(oOpenDefaultContentCellContextMenu.notCalled, "_openDefaultContentCellContextMenu was not called");
+		resetSpies();
 
-		// Invalid parameters: The cell context menu will not be created.
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "The menu is not yet created");
-		TableUtils.Menu.openDataCellContextMenu();
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No parameters passed: The menu was not created");
-		TableUtils.Menu.openDataCellContextMenu(oTable);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No column and row index parameters passed: The menu was not created");
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(null));
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Empty CellInfo: The menu was not created");
+		oCell = getCell(0, 0)[0];
+		oFakeEventObject.target = oCell;
+		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), false, "Returned false");
+		assert.ok(oOpenCustomContentCellContextMenu.notCalled, "_openCustomContentCellContextMenu was not called");
+		assert.ok(oOpenDefaultContentCellContextMenu.calledOnceWithExactly(oTable, oCell, oFakeEventObject),
+			"_openDefaultContentCellContextMenu was called");
+		resetSpies();
 
-		var oColumnA = oTable.getColumns()[0];
-		var oIsColumnAFilterableByMenu = this.stub(oColumnA, "isFilterableByMenu");
+		oCell = getRowHeader(0)[0];
+		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell), false, "Returned false");
+		assert.ok(oOpenCustomContentCellContextMenu.notCalled, "_openCustomContentCellContextMenu was not called");
+		assert.ok(oOpenDefaultContentCellContextMenu.calledOnceWithExactly(oTable, oCell, undefined),
+			"_openDefaultContentCellContextMenu was called");
+		resetSpies();
 
-		// Column is not visible: The cell context menu will not be created.
-		oColumnA.setVisible(false);
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Column index pointing to an invisible column: The menu was not created");
-		oColumnA.setVisible(true);
+		oCell = getRowAction(0)[0];
+		oFakeEventObject.target = oCell;
+		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), false, "Returned false");
+		assert.ok(oOpenCustomContentCellContextMenu.notCalled, "_openCustomContentCellContextMenu was not called");
+		assert.ok(oOpenDefaultContentCellContextMenu.calledOnceWithExactly(oTable, oCell, oFakeEventObject),
+			"_openDefaultContentCellContextMenu was called");
+		resetSpies();
 
-		// Cell filters are not enabled: The cell context menu will not be created.
-		oTable.setEnableCellFilter(false);
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Cell filters are not enabled: The menu was not created");
-		oTable.setEnableCellFilter(true);
+		oTable.setContextMenu(new MenuM({
+			items: [
+				new MenuItemM({text: "ContextMenuItem"})
+			]
+		}));
 
-		// Column is not filterable by menu: The cell context menu will not be created.
-		oIsColumnAFilterableByMenu.returns(false);
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Column not filterable by menu: The menu was not created");
-		oIsColumnAFilterableByMenu.returns(true);
+		oCell = getCell(0, 0)[0];
+		oFakeEventObject.target = oCell;
+		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), true, "Returned true");
+		assert.ok(oOpenCustomContentCellContextMenu.calledOnceWithExactly(oTable, oCell, oFakeEventObject),
+			"_openCustomContentCellContextMenu was called");
+		assert.ok(oOpenDefaultContentCellContextMenu.notCalled, "_openDefaultContentCellContextMenu was not called");
+		resetSpies();
 
-		// Cell [0, 0]: The menu will be created and opened.
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
-		assert.ok(oTable._oCellContextMenu != undefined, "The menu has been created");
-		assert.strictEqual(oTable._oCellContextMenu.getItems().length, 1, "One menu item has been created");
-		assert.strictEqual(oTable._oCellContextMenu.getItems()[0].mEventRegistry.select.length, 1,
-			"One menu item select event handler has been attached");
-		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
-		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, true);
-		oTable._oCellContextMenu.__isOriginal = true;
-		oTable._oCellContextMenu.getItems()[0].__isOriginal = true;
-		oTable._oCellContextMenu.getItems()[0].mEventRegistry.select[0].fFunction.__isOriginal = true;
+		oCell = getRowHeader(0)[0];
+		oFakeEventObject.target = oCell;
+		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), true, "Returned true");
+		assert.ok(oOpenCustomContentCellContextMenu.calledOnceWithExactly(oTable, oCell, oFakeEventObject),
+			"_openCustomContentCellContextMenu was called");
+		assert.ok(oOpenDefaultContentCellContextMenu.notCalled, "_openDefaultContentCellContextMenu was not called");
+		resetSpies();
 
-		// Cell [0, 0]: The menu will be closed.
-		// Cell [1, 0]: The menu will be opened.
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(1, 0)), true);
-		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
-		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
-		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, true);
-		assert.ok(oTable._oCellContextMenu.__isOriginal, "The menu has been reused");
-		assert.ok(oTable._oCellContextMenu.getItems()[0].__isOriginal, "The menu item has been reused");
-		assert.strictEqual(oTable._oCellContextMenu.getItems().length, 1, "There is still only one menu item");
-		assert.ok(!oTable._oCellContextMenu.getItems()[0].mEventRegistry.select[0].fFunction.__isOriginal,
-			"The menu item select event handler has been updated");
-		assert.strictEqual(oTable._oCellContextMenu.getItems()[0].mEventRegistry.select.length, 1,
-			"There is still only one menu item select event handler attached");
+		oCell = getRowAction(0)[0];
+		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell), true, "Returned true");
+		assert.ok(oOpenCustomContentCellContextMenu.calledOnceWithExactly(oTable, oCell, undefined),
+			"_openCustomContentCellContextMenu was called");
+		assert.ok(oOpenDefaultContentCellContextMenu.notCalled, "_openDefaultContentCellContextMenu was not called");
 
-		// Cell [1, 0]: The menu will stay open.
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(1, 0)), false);
-		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
-		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, true);
-		assert.ok(oTable._oCellContextMenu.__isOriginal, "The menu has been reused");
-		assert.ok(oTable._oCellContextMenu.getItems()[0].__isOriginal, "The menu item has been reused");
-		assert.strictEqual(oTable._oCellContextMenu.getItems().length, 1, "There is still only one menu item");
-		assert.ok(!oTable._oCellContextMenu.getItems()[0].mEventRegistry.select[0].fFunction.__isOriginal,
-			"The menu item select event handler has been updated");
-		assert.strictEqual(oTable._oCellContextMenu.getItems()[0].mEventRegistry.select.length, 1,
-			"There is still only one menu item select event handler attached");
-
-		oColumnA.setVisible(false);
-		sap.ui.getCore().applyChanges();
-
-		var oColumnB = oTable.getColumns()[1];
-		this.stub(oColumnB, "isFilterableByMenu").returns(true);
-
-		// Cell [1, 0]: The menu will be closed.
-		// Cell [2, 0]: The menu will be opened.
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)), true);
-		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
-		this.assertDataCellContextMenuOpen(assert, 1, 0, false);
-		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, true);
-		assert.ok(oTable._oCellContextMenu.__isOriginal, "The menu has been reused");
-		assert.ok(oTable._oCellContextMenu.getItems()[0].__isOriginal, "The menu item has been reused");
-		assert.strictEqual(oTable._oCellContextMenu.getItems().length, 1, "There is still only one menu item");
-		assert.ok(!oTable._oCellContextMenu.getItems()[0].mEventRegistry.select[0].fFunction.__isOriginal,
-			"The menu item select event handler has been updated");
-		assert.strictEqual(oTable._oCellContextMenu.getItems()[0].mEventRegistry.select.length, 1,
-			"There is still only one menu item select event handler attached");
+		oOpenCustomContentCellContextMenu.restore();
+		oOpenDefaultContentCellContextMenu.restore();
 	});
 
-	QUnit.test("openDataCellContextMenu - Filter & Fire CustomFilter event", function(assert) {
-		var oColumn = oTable.getColumns()[0];
-		oColumn.setFilterProperty("A");
+	QUnit.test("_openCustomContentCellContextMenu", function(assert) {
+		var oCell = getCell(0, 0)[0];
+		var oCloseDefaultContentCellContextMenu = this.spy(TableUtils.Menu, "_closeDefaultContentCellContextMenu");
+		var that = this;
+
+		function createMenuM() {
+			return new MenuM({
+				items: [
+					new MenuItemM({text: "ContextMenuItem"})
+				]
+			});
+		}
+
+		function createMenuUnified() {
+			return new MenuUnified({
+				items: [
+					new MenuItemUnified({text: "ContextMenuItem"})
+				]
+			});
+		}
+
+		function assertCloseMenuSpiesCalled() {
+			oTable.getColumns().forEach(function(oColumn, iIndex) {
+				assert.ok(that.oUtilsCloseColumnContextMenu.withArgs(oTable, iIndex).calledOnce,
+					"_closeColumnContextMenu was called for column " + (iIndex + 1));
+			});
+			assert.ok(oCloseDefaultContentCellContextMenu.calledOnceWithExactly(oTable), "_closeDefaultContentCellContextMenu was called");
+		}
+
+		function assertCloseMenuSpiesNotCalled() {
+			oTable.getColumns().forEach(function(oColumn, iIndex) {
+				assert.ok(that.oUtilsCloseColumnContextMenu.notCalled,
+					"_closeColumnContextMenu was not called for column " + (iIndex + 1));
+			});
+			assert.ok(oCloseDefaultContentCellContextMenu.notCalled, "_closeDefaultContentCellContextMenu was not called");
+		}
+
+		function resetSpies() {
+			that.resetSpies();
+			oCloseDefaultContentCellContextMenu.reset();
+		}
+
+		function test(fnCreateMenu, sModelName, oEvent) {
+			var oMenu = fnCreateMenu();
+			var oRowBindingContext = oTable.getRows()[0].getBindingContext(sModelName);
+			var fnOpenAsContextMenu = that.spy(oMenu, "openAsContextMenu");
+			var fnOpen = that.spy(oMenu, oMenu.openBy ? "openBy" : "open");
+
+			oTable.setContextMenu(oMenu);
+			oTable.attachEventOnce("beforeOpenContextMenu", function() {
+				assert.ok(oTable.getContextMenu().getBindingContext(sModelName) === oRowBindingContext,
+					"The binding context is correct in the beforeOpenContextMenu event (Model: " + sModelName + ")");
+			});
+
+			// "openContextMenu" is called instead of "_openCustomContentCellContextMenu", because we need to check the event parameters.
+			assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oCell, oEvent), true, "Returned true");
+
+			assertCloseMenuSpiesCalled();
+
+			if (oEvent) {
+				assert.ok(fnOpenAsContextMenu.calledOnceWithExactly(oEvent, oCell), "#openAsContextMenu called with correct args");
+			} else if (oMenu.openBy) {
+				assert.ok(fnOpen.calledOnceWithExactly(oCell), "#openBy called with correct args");
+			} else {
+				assert.ok(fnOpen.calledOnceWithExactly(null, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell),
+					"#open called with correct args");
+			}
+
+			assert.ok(oTable.getContextMenu().getBindingContext(sModelName) === oRowBindingContext,
+				"The binding context is correct after opening the context menu (Model: " + sModelName + ")");
+
+			resetSpies();
+			oMenu.destroy();
+		}
 
 		oTable.setEnableCellFilter(true);
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
+		oTable.getColumns()[0].setFilterProperty("A");
 
-		// Filter
+		test(createMenuM);
+		test(createMenuUnified);
+
+		var oBindingInfo = oTable.getBindingInfo("rows");
+		var sModelName = "myModel";
+
+		oBindingInfo.path = sModelName + ">" + oBindingInfo.path;
+		oTable.setModel(oTable.getModel(), sModelName);
+		oTable.bindRows(oBindingInfo);
+
+		return new Promise(function(resolve) {
+			oTable.attachEventOnce("_rowsUpdated", resolve);
+		}).then(function() {
+			test(createMenuM, sModelName, {
+				target: oCell
+			});
+			test(createMenuUnified, sModelName, {
+				target: oCell
+			});
+
+			assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(), false, "Returned false");
+			assertCloseMenuSpiesNotCalled();
+			resetSpies();
+
+			var oContextMenu = createMenuM();
+			oTable.setContextMenu(oContextMenu);
+			var fnOpenAsContextMenu = that.spy(oContextMenu, "openAsContextMenu");
+			var fnOpen = that.spy(oContextMenu, "openBy");
+
+			assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(), false, "Returned false");
+			assertCloseMenuSpiesNotCalled();
+			assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
+			assert.ok(fnOpen.notCalled, "#open was not called");
+			resetSpies();
+			fnOpenAsContextMenu.reset();
+			fnOpen.reset();
+
+			fakeGroupRow(0);
+			assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");
+			assertCloseMenuSpiesNotCalled();
+			assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
+			assert.ok(fnOpen.notCalled, "#open was not called");
+			resetSpies();
+			fnOpenAsContextMenu.reset();
+			fnOpen.reset();
+
+			oCell = getCell(1, 0)[0];
+			fakeSumRow(1);
+			assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");
+			assertCloseMenuSpiesNotCalled();
+			assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
+			assert.ok(fnOpen.notCalled, "#open was not called");
+
+			oCloseDefaultContentCellContextMenu.restore();
+		});
+	});
+
+	QUnit.test("_openDefaultContentCellContextMenu", function(assert) {
+		var aColumns = oTable.getColumns();
+		var oColumn = aColumns[0];
+		var oCell;
+		var oFakeEventObject = {};
+		var that = this;
+		var oCloseCustomContentCellContextMenu = this.spy(TableUtils.Menu, "_closeCustomContentCellContextMenu");
+
+		function assertCloseMenuSpiesCalled() {
+			oTable.getColumns().forEach(function(oColumn, iIndex) {
+				assert.ok(that.oUtilsCloseColumnContextMenu.withArgs(oTable, iIndex).calledOnce,
+					"_closeColumnContextMenu was called for column " + (iIndex + 1));
+			});
+			assert.ok(oCloseCustomContentCellContextMenu.calledOnceWithExactly(oTable), "_closeCustomContentCellContextMenu was called");
+		}
+
+		function assertCloseMenuSpiesNotCalled() {
+			oTable.getColumns().forEach(function(oColumn, iIndex) {
+				assert.ok(that.oUtilsCloseColumnContextMenu.notCalled,
+					"_closeColumnContextMenu was not called for column " + (iIndex + 1));
+			});
+			assert.ok(oCloseCustomContentCellContextMenu.notCalled, "_closeCustomContentCellContextMenu was not called");
+		}
+
+		function resetSpies() {
+			that.resetSpies();
+			oCloseCustomContentCellContextMenu.reset();
+		}
+
+		oCell = getCell(0, 0)[0];
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
+		this.assertDefaultContentCellContextMenuExists(assert, false);
+		assertCloseMenuSpiesNotCalled();
+		resetSpies();
+
+		oTable.setEnableCellFilter(true);
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
+		this.assertDefaultContentCellContextMenuExists(assert, false);
+		assertCloseMenuSpiesNotCalled();
+		resetSpies();
+
+		oColumn.setFilterProperty("A");
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), true, "Returned true");
+		this.assertDefaultContentCellContextMenuExists(assert, true);
+		assertCloseMenuSpiesCalled();
+		resetSpies();
+
+		var oContentCellContextMenu = oTable._oCellContextMenu;
+		var fnOpenAsContextMenu = this.spy(oContentCellContextMenu, "openAsContextMenu");
+		var fnOpen = this.spy(oContentCellContextMenu, "open");
+
+		oCell = getCell(1, 0)[0];
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), true, "Returned true");
+		assert.strictEqual(oContentCellContextMenu, oTable._oCellContextMenu, "The cell content context menu was reused");
+		assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
+		assert.ok(fnOpen.calledOnceWithExactly(null, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell),
+			"#open was called");
+		assertCloseMenuSpiesCalled();
+		resetSpies();
+		fnOpenAsContextMenu.reset();
+		fnOpen.reset();
+
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getRowHeader(0)[0]), false, "Returned false");
+		this.assertDefaultContentCellContextMenuExists(assert, true);
+		assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
+		assert.ok(fnOpen.notCalled, "#open was not called");
+		assertCloseMenuSpiesNotCalled();
+		resetSpies();
+		fnOpenAsContextMenu.reset();
+		fnOpen.reset();
+
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getRowAction(0)[0]), false, "Returned false");
+		this.assertDefaultContentCellContextMenuExists(assert, true);
+		assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
+		assert.ok(fnOpen.notCalled, "#open was not called");
+		assertCloseMenuSpiesNotCalled();
+		resetSpies();
+		fnOpenAsContextMenu.reset();
+		fnOpen.reset();
+
+		oCell = getCell(0, 0)[0];
+		oFakeEventObject.target = oCell;
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, oFakeEventObject), true, "Returned true");
+		assert.ok(oContentCellContextMenu, oTable._oCellContextMenu, "The cell content context menu was reused");
+		assert.ok(fnOpenAsContextMenu.calledOnceWithExactly(oFakeEventObject, oCell), "#openAsContextMenu was called");
+		assertCloseMenuSpiesCalled();
+		resetSpies();
+		fnOpenAsContextMenu.reset();
+		fnOpen.reset();
+
+		fakeGroupRow(0);
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
+		assert.ok(oContentCellContextMenu, oTable._oCellContextMenu, "The cell content context menu still exists");
+		assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
+		assert.ok(fnOpen.notCalled, "#open was not called");
+		assertCloseMenuSpiesNotCalled();
+
+		oCloseCustomContentCellContextMenu.restore();
+	});
+
+	QUnit.test("Cell filter menu item", function(assert) {
+		var oColumn = oTable.getColumns()[0];
+
+		oTable.setEnableCellFilter(true);
+		oColumn.setFilterProperty("A");
+
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getCell(0, 0)[0]), true, "Returned true");
+
 		var oFilter = this.spy(oTable, "filter");
 		oTable._oCellContextMenu.getItems()[0].fireSelect();
 
@@ -515,154 +927,159 @@ sap.ui.define([
 			"The CustomFilter event handler has been called with the correct arguments");
 	});
 
-	QUnit.test("closeDataCellContextMenu", function(assert) {
-		var oColumn = oTable.getColumns()[0];
-		this.stub(oColumn, "isFilterableByMenu").returns(true);
+	QUnit.test("_closeContentCellContextMenu", function(assert) {
+		var oCloseCustomContentCellContextMenu = this.spy(TableUtils.Menu, "_closeCustomContentCellContextMenu");
+		var oCloseDefaultContentCellContextMenu = this.spy(TableUtils.Menu, "_closeDefaultContentCellContextMenu");
 
-		oTable.setEnableCellFilter(true);
+		TableUtils.Menu._closeContentCellContextMenu(oTable);
+		assert.ok(oCloseCustomContentCellContextMenu.calledOnceWithExactly(oTable), "_closeCustomContentCellContextMenu was called");
+		assert.ok(oCloseDefaultContentCellContextMenu.calledOnceWithExactly(oTable), "_closeDefaultContentCellContextMenu was called");
 
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
-		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
-
-		TableUtils.Menu.closeDataCellContextMenu();
-		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
-
-		TableUtils.Menu.closeDataCellContextMenu(oTable);
-		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
+		oCloseCustomContentCellContextMenu.restore();
+		oCloseDefaultContentCellContextMenu.restore();
 	});
 
-	QUnit.test("cleanupDataCellContextMenu", function(assert) {
-		var oColumn = oTable.getColumns()[0];
-		this.stub(oColumn, "isFilterableByMenu").returns(true);
+	QUnit.test("_closeCustomContentCellContextMenu", function(assert) {
+		var oContextMenu = new MenuUnified({
+			items: [
+				new MenuItemUnified({text: "ContextMenuItem"})
+			]
+		});
+		var oCloseMenu = this.spy(oContextMenu, "close");
 
-		oTable.setEnableCellFilter(true);
+		oTable.setContextMenu(oContextMenu);
 
-		assert.ok(!oTable._oCellContextMenu, "Context menu does not exist");
+		TableUtils.Menu._closeCustomContentCellContextMenu(oTable);
+		assert.ok(oCloseMenu.notCalled, "#close was not called");
 
-		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
-		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
+		oContextMenu.open();
 
-		TableUtils.Menu.closeDataCellContextMenu(oTable);
-		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
-
-		assert.ok(!!oTable._oCellContextMenu, "Context menu exists");
-		TableUtils.Menu.cleanupDataCellContextMenu();
-		assert.ok(!!oTable._oCellContextMenu, "Context menu exists");
-		TableUtils.Menu.cleanupDataCellContextMenu(oTable);
-		assert.ok(!oTable._oCellContextMenu, "Context menu does not exist");
+		TableUtils.Menu._closeCustomContentCellContextMenu(oTable);
+		assert.ok(oCloseMenu.calledOnce, "#close was called");
 	});
 
-	QUnit.test("applyColumnHeaderCellMenu", function(assert) {
-		// Invalid parameters: No cell menu will be applied.
-		TableUtils.Menu.applyColumnHeaderCellMenu();
-		this.assertNoColumnHeaderCellMenusExists(assert);
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable);
-		this.assertNoColumnHeaderCellMenusExists(assert);
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, -1);
-		this.assertNoColumnHeaderCellMenusExists(assert);
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, oTable.columnCount);
-		this.assertNoColumnHeaderCellMenusExists(assert);
+	QUnit.test("_closeDefaultContentCellContextMenu", function(assert) {
+		oTable.setEnableCellFilter(true);
+		oTable.getColumns()[0].setFilterProperty("A");
 
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getCell(0, 0)[0]), true, "Returned true");
+
+		var oCloseMenu = this.spy(oTable._oCellContextMenu, "close");
+
+		TableUtils.Menu._closeDefaultContentCellContextMenu(oTable);
+		assert.ok(oCloseMenu.calledOnce, "#close was called");
+		oCloseMenu.reset();
+
+		TableUtils.Menu._closeDefaultContentCellContextMenu(oTable);
+		assert.ok(oCloseMenu.notCalled, "#close was not called");
+	});
+
+	QUnit.test("cleanupDefaultContentCellContextMenu", function(assert) {
+		oTable.setEnableCellFilter(true);
+		oTable.getColumns()[0].setFilterProperty("A");
+
+		TableUtils.Menu.cleanupDefaultContentCellContextMenu(oTable);
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getCell(0, 0)[0]), true, "Returned true");
+
+		var oDestroyMenu = this.spy(oTable._oCellContextMenu, "destroy");
+
+		TableUtils.Menu.cleanupDefaultContentCellContextMenu();
+		this.assertDefaultContentCellContextMenuExists(assert, true);
+		TableUtils.Menu.cleanupDefaultContentCellContextMenu(oTable);
+		this.assertDefaultContentCellContextMenuExists(assert, false);
+		assert.ok(oDestroyMenu.calledOnce, "#destroy was called");
+	});
+
+	QUnit.test("_applyColumnHeaderCellMenu", function(assert) {
 		var oColumn = oTable.getColumns()[0];
-		var $Column = oColumn.$();
-
-		// Column is not visible: The cell menu will not be applied.
-		oColumn.setVisible(false);
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 0);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
-		oColumn.setVisible(true);
 
 		// Column is not resizable and has no menu items: The cell menu will not be applied.
 		oColumn.setResizable(false);
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 0);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
+		assert.strictEqual(TableUtils.Menu._applyColumnHeaderCellMenu(oTable, oColumn.getDomRef()), false, "Returned false");
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, false);
 		oColumn.setResizable(true);
 
 		// Column is resizable and has no menu items: A cell menu with a resize button will be applied.
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 0);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
-		this.assertColumnHeaderCellMenuButtonExists(assert, $Column, false);
-		this.assertColumnHeaderCellResizeButtonExists(assert, $Column, true);
+		assert.strictEqual(TableUtils.Menu._applyColumnHeaderCellMenu(oTable, oColumn.getDomRef()), true, "Returned true");
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, true);
+		this.assertColumnHeaderCellMenuButtonExists(assert, oColumn, false);
+		this.assertColumnHeaderCellResizeButtonExists(assert, oColumn, true);
 
 		oColumn = oTable.getColumns()[1];
-		$Column = oColumn.$();
 
 		// Column is not resizable and has menu items: A cell menu with a context menu button will be applied.
 		oColumn.setResizable(false);
 		this.stub(oColumn, "_menuHasItems").returns(true);
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 1);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
-		this.assertColumnHeaderCellMenuButtonExists(assert, $Column, true);
-		this.assertColumnHeaderCellResizeButtonExists(assert, $Column, false);
+		assert.strictEqual(TableUtils.Menu._applyColumnHeaderCellMenu(oTable, oColumn.getDomRef()), true, "Returned true");
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, true);
+		this.assertColumnHeaderCellMenuButtonExists(assert, oColumn, true);
+		this.assertColumnHeaderCellResizeButtonExists(assert, oColumn, false);
 
 		oColumn = oTable.getColumns()[2];
-		$Column = oColumn.$();
 
 		// Column is resizable and has menu items: A cell menu with a context menu and a resize button will be applied.
 		this.stub(oColumn, "_menuHasItems").returns(true);
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 2);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
-		this.assertColumnHeaderCellMenuButtonExists(assert, $Column, true);
-		this.assertColumnHeaderCellResizeButtonExists(assert, $Column, true);
+		assert.strictEqual(TableUtils.Menu._applyColumnHeaderCellMenu(oTable, oColumn.getDomRef()), true, "Returned true");
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, true);
+		this.assertColumnHeaderCellMenuButtonExists(assert, oColumn, true);
+		this.assertColumnHeaderCellResizeButtonExists(assert, oColumn, true);
 
 		// Applying the cell menu to the same column header cell again.
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 2);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
-		this.assertColumnHeaderCellMenuButtonExists(assert, $Column, true);
-		this.assertColumnHeaderCellResizeButtonExists(assert, $Column, true);
+		assert.strictEqual(TableUtils.Menu._applyColumnHeaderCellMenu(oTable, oColumn.getDomRef()), false, "Returned false");
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, true);
+		this.assertColumnHeaderCellMenuButtonExists(assert, oColumn, true);
+		this.assertColumnHeaderCellResizeButtonExists(assert, oColumn, true);
 
 		// Applying the cell menu to another column header cell.
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 3);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
-		this.assertColumnHeaderCellMenuExists(assert, oTable.getColumns()[3].$(), true);
+		assert.strictEqual(TableUtils.Menu._applyColumnHeaderCellMenu(oTable, oTable.getColumns()[3].getDomRef()), true, "Returned true");
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, false);
+		this.assertColumnHeaderCellMenuExists(assert, oTable.getColumns()[3], true);
 	});
 
-	QUnit.test("removeColumnHeaderCellMenu", function(assert) {
-		var $Column = getColumnHeader(0);
+	QUnit.test("_removeColumnHeaderCellMenu", function(assert) {
+		var oColumn = oTable.getColumns()[0];
 
 		// Apply the cell menu.
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 0);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
+		assert.strictEqual(TableUtils.Menu._applyColumnHeaderCellMenu(oTable, oColumn.getDomRef()), true, "Returned true");
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, true);
 
 		// Remove the cell menu.
-		TableUtils.Menu.removeColumnHeaderCellMenu(oTable);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
+		TableUtils.Menu._removeColumnHeaderCellMenu(oTable);
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, false);
 
 		// When a column header cell has no cell menu, removing the cell menu has no effect.
-		TableUtils.Menu.removeColumnHeaderCellMenu(oTable);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
+		TableUtils.Menu._removeColumnHeaderCellMenu(oTable);
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, false);
 	});
 
-	QUnit.test("removeColumnHeaderCellMenu - On Focus Out", function(assert) {
-		var spy = this.spy(TableUtils.Menu, "removeColumnHeaderCellMenu");
-		var $Column = getColumnHeader(0, true, assert);
+	QUnit.test("_removeColumnHeaderCellMenu - On focus out", function(assert) {
+		var oColumn = oTable.getColumns()[0];
 
-		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
+		function createFocusOutEvent() {
+			if (typeof FocusEvent === "function") {
+				return new FocusEvent("focusout", {
+					bubbles: true,
+					cancelable: true
+				});
+			} else {
+				var oFocusEvent = document.createEvent("Event");
+				oFocusEvent.initEvent("focusout", true, true);
+				return oFocusEvent;
+			}
+		}
+
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, false);
 
 		// Apply the cell menu.
-		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 0);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
+		assert.strictEqual(TableUtils.Menu._applyColumnHeaderCellMenu(oTable, oColumn.getDomRef()), true, "Returned true");
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, true);
+
+		this.resetSpies();
 
 		// When the column header cell looses the focus the cell menu should be removed.
-		qutils.triggerEvent("focusout", $Column);
-		assert.ok(spy.called, "removeColumnHeaderCellMenu was called when the column header cell has lost the focus");
-		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
-	});
-
-	QUnit.test("openDataCellContextMenu with contextMenu aggregation of the table", function(assert) {
-		oTable.setContextMenu(new Menu({
-			items: [
-				new MenuItem({text: "ContextMenuItem"})
-			]
-		}));
-		var fnOpenAsContextMenu = this.spy(oTable.getContextMenu(), "openAsContextMenu");
-
-		var oCellInfo = TableUtils.getCellInfo(getCell(0, 0));
-		var oEvent = {
-			target: oCellInfo.cell
-		};
-
-		TableUtils.Menu.openDataCellContextMenu(oTable, oCellInfo, true, oEvent);
-		assert.ok(fnOpenAsContextMenu.calledWith(oEvent, oCellInfo.cell), "sap.m.Menu.openAsContextMenu called with correct args");
+		oColumn.getDomRef().dispatchEvent(createFocusOutEvent());
+		assert.ok(this.oUtilsRemoveColumnHeaderCellMenu.calledOnceWithExactly(oTable),
+			"_removeColumnHeaderCellMenu was called when the column header cell has lost the focus");
+		this.assertColumnHeaderCellMenuExists(assert, oColumn, false);
 	});
 });

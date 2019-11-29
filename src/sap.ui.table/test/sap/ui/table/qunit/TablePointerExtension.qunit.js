@@ -299,7 +299,7 @@ sap.ui.define([
 		var $Resizer = oTable.$("rsz");
 		var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
 		Device.system.desktop = false;
-		TableUtils.Menu.openContextMenu(oTable, oColumn.getDomRef(), false);
+		TableUtils.Menu.openContextMenu(oTable, oColumn.getDomRef());
 		var $ResizeButton = oColumn.$().find(".sapUiTableColResizer");
 		var iResizeButtonLeft = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 100);
 		qutils.triggerMouseEvent($ResizeButton, "mousedown", 1, 1, iResizeButtonLeft, iResizeHandlerTop, 0);
@@ -366,7 +366,7 @@ sap.ui.define([
 		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 		oContextMenuEvent.reset();
-		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
 		checkFocus(oElem, assert);
 
 		oColumn.setSortProperty("dummy");
@@ -440,7 +440,7 @@ sap.ui.define([
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "Menu is not yet created");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 		oContextMenuEvent.reset();
-		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
 		checkFocus(oElem, assert);
 
 		oTable.setEnableCellFilter(true);
@@ -462,11 +462,10 @@ sap.ui.define([
 		oContextMenuEvent.reset();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
-		// Close the menu with the right mouse button.
+		// Open the menu with the right mouse button on the same element.
 		this.triggerMouseDownEvent(oElem, 2);
 		jQuery(oElem).trigger("contextmenu");
-		assert.ok(!oTable._oCellContextMenu.bOpen, "Menu is closed");
-		checkFocus(oElem, assert);
+		assert.ok(oTable._oCellContextMenu.bOpen, "Menu is opened");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 		oContextMenuEvent.reset();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");

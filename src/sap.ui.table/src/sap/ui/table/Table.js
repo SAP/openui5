@@ -1001,6 +1001,8 @@ sap.ui.define([
 		this._cleanUpTimers();
 		this._detachEvents();
 
+		TableUtils.Menu.cleanupDefaultContentCellContextMenu(this);
+
 		delete this._aTableHeaders;
 	};
 
@@ -1087,7 +1089,7 @@ sap.ui.define([
 		return pUpdateLocalizationInfo.then(function() {
 			if (bLangChanged) {
 				// Clear the cell context menu.
-				TableUtils.Menu.cleanupDataCellContextMenu(this);
+				TableUtils.Menu.cleanupDefaultContentCellContextMenu(this);
 
 				// Update the column menus.
 				this._invalidateColumnMenus();

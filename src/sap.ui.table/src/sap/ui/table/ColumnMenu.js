@@ -478,7 +478,7 @@ sap.ui.define([
 		var oTable = (oColumn ? oColumn.getParent() : undefined);
 
 		var oFilterField = sap.ui.getCore().byId(this.getId() + "-filter");
-		if (oFilterField && (oTable && !oTable.getEnableCustomFilter())) {
+		if (oFilterField && oFilterField.setValue && (oTable && !oTable.getEnableCustomFilter())) {
 			oFilterField.setValue(sValue);
 		}
 		return this;
@@ -495,13 +495,13 @@ sap.ui.define([
 		var oTable = (oColumn ? oColumn.getParent() : undefined);
 
 		var oFilterField = sap.ui.getCore().byId(this.getId() + "-filter");
-		if (oFilterField && (oTable && !oTable.getEnableCustomFilter())) {
+		if (oFilterField && oFilterField.setValueState && (oTable && !oTable.getEnableCustomFilter())) {
 			oFilterField.setValueState(sFilterState);
 		}
 		return this;
 	};
 
-	ColumnMenu._updateVisibilityIcon = function(oTable, iIndex, bVisible){
+	ColumnMenu._updateVisibilityIcon = function(oTable, iIndex, bVisible) {
 		if (!oTable || !oTable._oColumnVisibilityMenuItem) {
 			return;
 		}
