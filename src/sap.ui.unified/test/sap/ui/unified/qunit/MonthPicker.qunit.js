@@ -179,6 +179,133 @@ sap.ui.define([
 
 			// assert
 			assert.equal(oDates, "mocked_dates", "selected dates are taken from the provider");
+			assert.equal(this.MP._getSelectedDates(), "mocked_dates", "_getSelectedDates returns the selected date from the provider");
+		});
+
+		QUnit.test("_getSelectedDates", function(assert) {
+			// act
+			var aSelectedDates = this.MP._getSelectedDates();
+
+			// assert
+			assert.ok(aSelectedDates[0], "sap.m.DateRange intance is created");
+			assert.strictEqual(aSelectedDates[0].getStartDate().getMonth(), this.MP.getMonth(),
+				"sap.m.DateRange isntace start date has the same month as the 'month' property value");
+			assert.notOk(aSelectedDates[0].getEndDate(), "sap.m.DateRange has no endDate set");
+		});
+
+		QUnit.test("_setYear", function(assert) {
+			// act
+			this.MP._setYear(2019);
+
+			// assert
+			assert.equal(this.MP._iYear, 2019, "Year is correctly set to the MonthPicker instance");
+		});
+
+		QUnit.test("_selectMonth", function(assert) {
+			// arrange
+			var oFakeMousedownEvent = {
+					button: false,
+					preventDefault: function() {},
+					setMark: function() {}
+				},
+				oFakeMouseupEvent = {
+					target: jQuery("<div></div>").attr({
+						"id": this.MP.getId() + "-m8",
+						"class": "sapUiCalItem"
+					}).get(0),
+					classList: {
+						contains: function() {
+							return true;
+						}
+					}
+				},
+				oSelectedDates = this.MP._getSelectedDates(),
+				aRefs;
+
+			this.MP.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			aRefs = this.MP.$().find(".sapUiCalItem");
+
+			// act
+			this.MP._selectMonth(0);
+			this.MP._handleMousedown(oFakeMousedownEvent, 6);
+
+			// assert
+			assert.strictEqual(oSelectedDates[0].getStartDate().getMonth(), 6, "July is selected start month");
+
+			// act
+			this.MP.onmouseup(oFakeMouseupEvent);
+
+			// assert
+			assert.strictEqual(oSelectedDates[0].getEndDate().getMonth(), 8, "September is selected end month");
+			assert.ok(aRefs.eq(6).hasClass("sapUiCalItemSel"), "is marked correctly with selected class");
+			assert.strictEqual(aRefs.eq(6).attr("aria-selected"), "true", "aria selected is set to true");
+			assert.ok(aRefs.eq(7).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
+			assert.strictEqual(aRefs.eq(7).attr("aria-selected"), "true", "aria selected is set to true");
+			assert.ok(aRefs.eq(8).hasClass("sapUiCalItemSel"), "is marked correctly with selected class");
+			assert.strictEqual(aRefs.eq(8).attr("aria-selected"), "true", "aria selected is set to true");
+		});
+
+		QUnit.test("onmouseover", function(assert) {
+			// arrange
+			var oFakeEvent = {
+					target: jQuery("<div></div>").attr({
+						"id": this.MP.getId() + "-m5",
+						"class": "sapUiCalItem"
+					}).get(0),
+					classList: {
+						contains: function() {
+							return true;
+						}
+					}
+				},
+				fnMarkIntervalSpy = this.spy(this.MP, "_markInterval");
+
+			this.MP._oItemNavigation = {
+				getItemDomRefs: function() {
+					return [];
+				}
+			};
+
+			// act
+			this.MP.onmouseover(oFakeEvent);
+
+			// assert
+			assert.ok(fnMarkIntervalSpy.calledOnce, "_markInterval was called once");
+
+			// clean
+			fnMarkIntervalSpy.restore();
+		});
+
+		QUnit.test("_isSelectionInProgress", function(assert) {
+			// arrange
+			var oSep_01_2019 = new Date(2019, 8, 1),
+				oNov_01_2019 = new Date(2019, 10, 1);
+
+			this.MP.addSelectedDate(new DateRange({
+				startDate: oSep_01_2019
+			}));
+
+			// assert
+			assert.ok(this.MP._isSelectionInProgress(), "Selection is not finished");
+
+			// act
+			this.MP.getSelectedDates()[0].setEndDate(oNov_01_2019);
+
+			// assert
+			assert.notOk(this.MP._isSelectionInProgress(), "Selection is finished");
+		});
+
+		QUnit.test("_extractMonth", function(assert) {
+			// arrange
+			var oCalItem = jQuery("<div></div>").attr({
+				"id": this.MP.getId() + "-m11",
+				"class": "sapUiCalItem"
+			}).get(0);
+
+			// act
+			// assert
+			assert.strictEqual(this.MP._extractMonth(oCalItem), 11, "December is the extracted month");
 		});
 
 		QUnit.test("_fnShouldApplySelection", function(assert) {

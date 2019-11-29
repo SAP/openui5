@@ -277,6 +277,26 @@ sap.ui.define([
 		oDRS.destroy();
 	});
 
+	QUnit.test("interval selection is correctly set to the MonthPicker", function(assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection({
+				displayFormat: "yyyy-MM"
+			}).placeAt("qunit-fixture"),
+			oMonthPicker;
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDRS.toggleOpen();
+		oMonthPicker = oDRS._getCalendar()._getMonthPicker();
+
+		// Assert
+		assert.ok(oMonthPicker.getIntervalSelection(), "interval selection is set to 'true'");
+
+		// Clean
+		oDRS.destroy();
+	});
+
 	QUnit.test("opening picker when current values are outside min/max range", function(assert) {
 		//Prepare
 		var oMinDate = new Date(2014,0,1),
