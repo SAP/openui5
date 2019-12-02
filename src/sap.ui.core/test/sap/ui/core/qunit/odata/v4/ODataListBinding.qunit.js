@@ -5708,6 +5708,147 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(this.bindList("/EMPLOYEES").doSetProperty(), undefined);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchDownloadUrl: empty meta path", function (assert) {
+		var oBinding = this.bindList("/resource/path"),
+			oCache = {
+				sMetaPath : "meta/path",
+				mQueryOptions : {},
+				sResourcePath : "resource/path"
+			},
+			oExpectation,
+			oPromise = {};
+
+		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
+
+		// code under test
+		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("").returns("");
+		this.mock(this.oModel.oRequestor).expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions))
+			.returns("?query");
+
+		// code under test - callback function
+		assert.strictEqual(oExpectation.args[0][0](oCache, ""),
+			"/service/resource/path?query");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchDownloadUrl: non-empty meta path", function (assert) {
+		var oBinding = this.bindList("relative/path",
+				Context.create({/*oModel*/}, {/*oBinding*/}, "/resource/path")),
+			mReducedQueryOptions = {},
+			oCache = {
+				sMetaPath : "meta/path",
+				mQueryOptions : {
+					$expand : {
+						relative : {
+							$expand : {
+								metapath : mReducedQueryOptions
+							}
+						}
+					}
+				},
+				sResourcePath : "resource/path"
+			},
+			oExpectation,
+			oHelperMock = this.mock(_Helper),
+			oPromise = {},
+			mQueryOptions = {};
+
+		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
+
+		// code under test
+		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
+
+		oHelperMock.expects("getMetaPath")
+			.withExactArgs("relative/path").returns("relative/metapath");
+		oHelperMock.expects("merge")
+			.withExactArgs({}, sinon.match.same(this.oModel.mUriParameters), mReducedQueryOptions)
+			.returns(mQueryOptions);
+		oHelperMock.expects("buildPath").withExactArgs(oCache.sResourcePath, "relative/path")
+			.returns("resource/path/relative/path");
+		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "relative/metapath")
+			.returns("meta/path/relative/metapath");
+		this.mock(this.oModel.oRequestor).expects("buildQueryString")
+			.withExactArgs("meta/path/relative/metapath", sinon.match.same(mQueryOptions))
+			.returns("?query");
+
+		// code under test - callback function
+		assert.strictEqual(oExpectation.args[0][0](oCache, "relative/path"),
+			"/service/resource/path/relative/path?query");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchDownloadUrl: unresolved", function (assert) {
+		assert.throws(function () {
+			this.bindList("TEAM_2_EMPLOYEES").fetchDownloadUrl();
+		}, new Error("Binding is unresolved"));
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bSuccess) {
+	QUnit.test("requestDownloadUrl: success=" + bSuccess, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oError = new Error(),
+			oPromise;
+
+		this.mock(oBinding).expects("fetchDownloadUrl").withExactArgs()
+			.returns(SyncPromise.resolve(
+				bSuccess ? Promise.resolve("/service/resource?query") : Promise.reject(oError)
+			));
+
+		oPromise = oBinding.requestDownloadUrl();
+
+		assert.ok(oPromise instanceof Promise);
+
+		return oPromise.then(function (sResult) {
+			assert.ok(bSuccess);
+			assert.strictEqual(sResult, "/service/resource?query");
+		}, function (oResult) {
+			assert.notOk(bSuccess);
+			assert.strictEqual(oResult, oError);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadUrl: success", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		this.mock(oBinding).expects("fetchDownloadUrl").withExactArgs()
+			.returns(SyncPromise.resolve("/service/resource?query"));
+
+		assert.strictEqual(oBinding.getDownloadUrl(), "/service/resource?query");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadUrl: result pending", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		this.mock(oBinding).expects("fetchDownloadUrl").withExactArgs()
+			.returns(SyncPromise.resolve(Promise.resolve("/service/resource?query")));
+
+		assert.throws(function () {
+			return oBinding.getDownloadUrl();
+		}, new Error("Result pending"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadUrl: error", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oError = new Error("Failure");
+
+		this.mock(oBinding).expects("fetchDownloadUrl").withExactArgs()
+			.returns(SyncPromise.reject(oError));
+
+		assert.throws(function () {
+			return oBinding.getDownloadUrl();
+		}, oError);
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select

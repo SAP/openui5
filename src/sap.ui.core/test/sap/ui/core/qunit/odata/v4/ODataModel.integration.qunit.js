@@ -266,6 +266,8 @@ sap.ui.define([
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
+				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?c1=a&c2=b"
+					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/$metadata"
 					: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
@@ -2278,11 +2280,15 @@ sap.ui.define([
 	// * Sort by any other column (e.g. "Employee Name" or "Age") and check that the "City" is taken
 	//   as a secondary sort criterion
 	// In this test dynamic filters are used instead of dynamic sorters
+	// Additionally ODLB#getDownloadUrl is tested
+	// JIRA: CPOUI5ODATAV4-12
 	QUnit.test("Relative ODLB inherits parent OBCB's query options on filter", function (assert) {
-		var sView = '\
-<FlexBox binding="{path : \'/TEAMS(\\\'42\\\')\',\
-	parameters : {$expand : {TEAM_2_EMPLOYEES : {$orderby : \'AGE\', $select : \'Name\'}}}}">\
-	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		var oBinding,
+			oModel = createModel(sTeaBusi + "?c1=a&c2=b"),
+			sView = '\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'42\\\')\',\
+	parameters : {$expand : {EMPLOYEE_2_EQUIPMENTS : {$orderby : \'ID\', $select : \'Name\'}}}}">\
+	<Table id="table" items="{EMPLOYEE_2_EQUIPMENTS}">\
 		<ColumnListItem>\
 			<Text id="text" text="{Name}" />\
 		</ColumnListItem>\
@@ -2290,30 +2296,51 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($orderby=AGE;$select=Name)", {
-				TEAM_2_EMPLOYEES : [
-					{Name : "Frederic Fall"},
-					{Name : "Jonathan Smith"},
-					{Name : "Peter Burke"}
+		this.expectRequest("EMPLOYEES('42')?c1=a&c2=b&$expand=EMPLOYEE_2_EQUIPMENTS($orderby=ID"
+				+ ";$select=Name)", {
+				EMPLOYEE_2_EQUIPMENTS : [
+					{Name : "Notebook Basic 15"},
+					{Name : "Monitor Basic 24"},
+					{Name : "Monitor Basic 28"}
 				]
 			})
-			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+			.expectChange("text", ["Notebook Basic 15", "Monitor Basic 24", "Monitor Basic 28"]);
 
-		return this.createView(assert, sView).then(function () {
-			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name"
-					+ "&$filter=AGE gt 42&$skip=0&$top=100", {
+		return this.createView(assert, sView, oModel).then(function () {
+			var sExpectedDownloadUrl = sTeaBusi
+					+ "EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS?c1=a&c2=b&$orderby=ID&$select=Name";
+
+			oBinding = that.oView.byId("table").getBinding("items");
+			assert.strictEqual(oBinding.getDownloadUrl(), sExpectedDownloadUrl);
+			return oBinding.requestDownloadUrl().then(function (sDownloadUrl) {
+				assert.strictEqual(sDownloadUrl, sExpectedDownloadUrl);
+			});
+		}).then(function () {
+			var sResourceUrl = "EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS?$orderby=ID&$select=Name&c1=a"
+					+ "&c2=b&$filter=EQUIPMENT_2_PRODUCT/SupplierIdentifier%20eq%202";
+
+			that.expectRequest(sResourceUrl + "&$skip=0&$top=100", {
 					value : [
-						{Name : "Frederic Fall"},
-						{Name : "Peter Burke"}
+						{Name : "Monitor Basic 24"},
+						{Name : "Monitor Basic 28"}
 					]
 				})
-				.expectChange("text", [, "Peter Burke"]);
+				.expectChange("text", ["Monitor Basic 24", "Monitor Basic 28"]);
 
-			// code under test
-			that.oView.byId("table").getBinding("items")
-				.filter(new Filter("AGE", FilterOperator.GT, 42));
+			// code under test - filter becomes async because product metadata has to be loaded
+			oBinding.filter(
+				new Filter("EQUIPMENT_2_PRODUCT/SupplierIdentifier", FilterOperator.EQ, 2));
 
-			return that.waitForChanges(assert);
+			assert.throws(function () {
+				oBinding.getDownloadUrl();
+			}, new Error("Result pending"));
+			return Promise.all([
+				oBinding.requestDownloadUrl().then(function (sDownloadUrl) {
+					assert.strictEqual(sDownloadUrl, sTeaBusi + sResourceUrl);
+					assert.strictEqual(oBinding.getDownloadUrl(), sTeaBusi + sResourceUrl);
+				}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
