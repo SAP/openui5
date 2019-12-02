@@ -180,6 +180,11 @@ sap.ui.define([
 		var aNoDataRow = sut.$().find("#" + sut.getId() + "-nodata");
 
 		assert.ok(aNoDataRow.length === 1, "Table displays 'No Data'");
+		assert.equal(aNoDataRow.text(), sut.getNoDataText());
+
+		sut.removeAllColumns();
+		sap.ui.getCore().applyChanges();
+		assert.notEqual(aNoDataRow.text(), sut.getNoDataText()); // no columns message will be shown
 
 		//clean up
 		sut.destroy();
