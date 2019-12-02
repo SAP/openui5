@@ -3000,18 +3000,18 @@ sap.ui.define([
 			oRow._updateSelection(this, mTooltipTexts);
 		}
 
-		if (mRenderConfig.headerSelector.visible) {
+		if (!mRenderConfig.headerSelector.visible) {
+			return;
+		}
+
+		if (mRenderConfig.headerSelector.type === "toggle") {
 			var bAllRowsSelected = TableUtils.areAllRowsSelected(this);
 
 			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
 			this._getAccExtension().setSelectAllState(bAllRowsSelected);
 
-			if (mRenderConfig.headerSelector.type === "toggle") {
-				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-			}
-		}
-
-		if (mRenderConfig.headerSelector.type === "clear" && mRenderConfig.headerSelector.visible) {
+			sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+		} else if (mRenderConfig.headerSelector.type === "clear") {
 			$SelectAll.toggleClass("sapUiTableSelAllDisabled", !mRenderConfig.headerSelector.enabled);
 			sSelectAllResourceTextID = "TBL_DESELECT_ALL";
 
@@ -3024,7 +3024,7 @@ sap.ui.define([
 
 		if (sSelectAllResourceTextID) {
 			sSelectAllText = TableUtils.getResourceText(sSelectAllResourceTextID);
-			if (this._getShowStandardTooltips() && mRenderConfig.headerSelector.visible) {
+			if (this._getShowStandardTooltips()) {
 				$SelectAll.attr('title', sSelectAllText);
 			} else if (mRenderConfig.headerSelector.type === "toggle") {
 				this.getDomRef("ariaselectall").innerText = sSelectAllText;
