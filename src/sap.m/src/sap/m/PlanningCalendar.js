@@ -2630,7 +2630,10 @@ sap.ui.define([
 			icon : oRow.getIcon(),
 			description : oRow.getText(),
 			title : oRow.getTitle(),
-			tooltip : oRow.getTooltip()
+			tooltip : oRow.getTooltip(),
+			// set iconDensityAware to false (the default is true for the StandardListItem)
+			// in order to avoid multiple 404 responses for the applications which do not provide density aware images
+			iconDensityAware: false
 		});
 
 		oRowTimeline = new PlanningCalendarRowTimeline(oRow.getId() + "-CalRow", {
