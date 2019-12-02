@@ -5,12 +5,14 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Component",
+	// "sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Utils"
 ],
 function(
 	jQuery,
 	Component,
+	// FlexState,
 	ChangePersistence,
 	Utils
 ) {
@@ -153,6 +155,10 @@ function(
 		var oChangePersistenceWrapper = this._doLoadComponent(oConfig, oManifest);
 		oChangePersistenceWrapper.oRequestOptions.componentData = {};
 		Object.assign(oChangePersistenceWrapper.oRequestOptions.componentData, oConfig.componentData);
+
+		// disabled to not send multiple requests to the backend
+		// non-blocking call
+		// FlexState.initForReference({...});
 
 		oChangePersistenceWrapper.oChangePersistence.getChangesForComponent(oChangePersistenceWrapper.oRequestOptions);
 	};

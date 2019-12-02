@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/changes/Applier",
+	// "sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/base/Log"
 ], function(
@@ -14,6 +15,7 @@ sap.ui.define([
 	Utils,
 	ChangePersistenceFactory,
 	Applier,
+	// FlexState,
 	VariantModel,
 	Log
 ) {
@@ -90,6 +92,10 @@ sap.ui.define([
 		// if component's manifest is of type 'application' then only a flex controller and change persistence instances are created.
 		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created. The variant model is fetched from the outer app component and applied on this component type.
 		if (Utils.isApplicationComponent(oComponent)) {
+			// disabled to not send multiple requests to the backend
+			// blocking call
+			// return FlexState.initForReference({...});
+
 			return _propagateChangesForAppComponent(oComponent, vConfig);
 		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);

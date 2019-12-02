@@ -159,6 +159,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/flexState/FlexState"]
 				}
 			},
+			"apply/_internal/flexState/Loader": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/Loader"]
+				}
+			},
 			"apply/_internal/flexState/prepareAppDescriptorMap": {
 				group: "Apply Internal",
 				coverage: {

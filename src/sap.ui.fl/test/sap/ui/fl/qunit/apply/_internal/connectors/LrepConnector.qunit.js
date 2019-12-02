@@ -2,12 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/apply/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/LrepConnector"
+	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
+	"sap/ui/fl/apply/_internal/connectors/Utils"
 ], function(
 	sinon,
-	BaseConnector,
-	LrepConnector
+	LrepConnector,
+	ApplyUtils
 ) {
 	"use strict";
 
@@ -17,7 +17,7 @@ sap.ui.define([
 		sandbox.server.respondWith([200, { "Content-Type": "application/json" }, sData]);
 	}
 
-	QUnit.module("Connector", {
+	QUnit.module("LrepConnector with a sinon fake server", {
 		beforeEach : function () {
 			this.xhr = sinon.fakeServer.create();
 			sandbox.useFakeServer();
@@ -87,6 +87,23 @@ sap.ui.define([
 				assert.equal(oServer.requestCount, 1, "then there is one request to load data");
 				assert.deepEqual(LrepConnector.settings, {isKeyUser: true}, "and the settings value is stored");
 			}.bind(undefined, sandbox.server));
+		});
+	});
+
+	QUnit.module("LrepConnector without fake server", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when loadFlexData is called with '<NO CHANGES>' as cache key", function(assert) {
+			var sResponse = "myEmptyFlexDataResponse";
+			var oGetEmptyResponseStub = sandbox.stub(ApplyUtils, "getEmptyFlexDataResponse").returns(sResponse);
+			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest");
+			return LrepConnector.loadFlexData({cacheKey: "<NO CHANGES>"}).then(function(oResponse) {
+				assert.equal(oGetEmptyResponseStub.callCount, 1, "the Utility for getting the empty data repsonse was called");
+				assert.equal(oSendRequestStub.callCount, 0, "no request was sent");
+				assert.equal(oResponse, sResponse, "the function returns the value of the default empty data response");
+			});
 		});
 	});
 

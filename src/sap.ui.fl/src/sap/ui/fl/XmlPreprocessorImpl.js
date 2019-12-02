@@ -65,6 +65,11 @@ sap.ui.define([
 				//we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
 				return Promise.resolve(oView);
 			}
+
+			// disabled to not send multiple requests to the backend
+			// blocking call
+			// return FlexState.initForReference({...});
+
 			var sFlexReference = Utils.getComponentClassName(oAppComponent);
 			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 			var oFlexController = FlexControllerFactory.create(sFlexReference, sAppVersion);
