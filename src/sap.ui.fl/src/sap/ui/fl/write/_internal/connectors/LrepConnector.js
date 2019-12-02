@@ -180,7 +180,9 @@ sap.ui.define([
 			ApplyConnector._addClientAndLanguageInfo(mParameters);
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.FLEX_INFO, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl);
+			return ApplyUtils.sendRequest(sDataUrl).then(function (oResult) {
+				return oResult.response;
+			});
 		},
 
 		/**
