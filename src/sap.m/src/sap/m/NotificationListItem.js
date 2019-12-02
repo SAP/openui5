@@ -96,7 +96,15 @@ function(
 				/**
 				 * Determines if the "Show More" button should be hidden.
 				 */
-				hideShowMoreButton: {type: 'boolean', group: 'Appearance', defaultValue: false}
+				hideShowMoreButton: {type: 'boolean', group: 'Appearance', defaultValue: false},
+
+				/**
+				 * Determines the background color of the avatar of the author.
+				 *
+				 * <b>Note:</b> By using background colors from the predefined sets,
+				 * your colors can later be customized from the Theme Designer.
+				 */
+				authorAvatarColor: {type: "sap.m.AvatarColor", group: "Appearance", defaultValue: AvatarColor.Accent6}
 			},
 			aggregations: {
 				/**
@@ -125,14 +133,17 @@ function(
 	};
 
 	NotificationListItem.prototype._getAuthorAvatar = function() {
-		var avatar = new Avatar({
-			initials: this.getAuthorInitials(),
-			src: this.getAuthorPicture(),
-			backgroundColor: AvatarColor.Random,
-			displaySize: AvatarSize.XS
-		});
+		if (!this._avatar) {
+			this._avatar = new Avatar({
+				displaySize: AvatarSize.XS
+			});
+		}
 
-		return avatar;
+		this._avatar.setInitials(this.getAuthorInitials());
+		this._avatar.setSrc(this.getAuthorPicture());
+		this._avatar.setBackgroundColor(this.getAuthorAvatarColor());
+
+		return this._avatar;
 	};
 
 	/**
@@ -233,6 +244,11 @@ function(
 		if (this._footerIvisibleText) {
 			this._footerIvisibleText.destroy();
 			this._footerIvisibleText = null;
+		}
+
+		if (this._avatar) {
+			this._avatar.destroy();
+			this._avatar = null;
 		}
 	};
 
