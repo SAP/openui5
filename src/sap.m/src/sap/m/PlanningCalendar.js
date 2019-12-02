@@ -628,7 +628,7 @@ sap.ui.define([
 		if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 			this._iSize = 0;
 			this._iSizeScreen = 0;
-		}else if (Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) {
+		}else if ((Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) && !(Device.system.desktop || jQuery('html').hasClass("sapUiMedia-Std-Desktop"))){
 			this._iSize = 1;
 			this._iSizeScreen = 1;
 		}else {
@@ -3876,15 +3876,20 @@ sap.ui.define([
 
 	PlanningCalendar.prototype._calcCreateNewAppHours = function(oRowStartDate, iStartIndex, iEndIndex) {
 		var iMinutesStep = 30 * 60 * 1000,  // 30 min
-			oAppStartDate,
-			oAppEndDate;
+		oRowStartDateTime = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate(), oRowStartDate.getHours()),
+		oStartDateTime,
+		oAppStartDate,
+		oAppEndDate;
+
+		// first clear minutes and seconds of the row starting date/time and then get
+		oStartDateTime = oRowStartDateTime.getTime();
 
 		if (iStartIndex <= iEndIndex) {
-			oAppStartDate = new Date(oRowStartDate.getTime() + (iStartIndex *  iMinutesStep));
-			oAppEndDate = new Date(oRowStartDate.getTime() + ((iEndIndex + 1) *  iMinutesStep));
+			oAppStartDate = new Date(oStartDateTime + (iStartIndex *  iMinutesStep));
+			oAppEndDate = new Date(oStartDateTime + ((iEndIndex + 1) *  iMinutesStep));
 		} else {
-			oAppStartDate = new Date(oRowStartDate.getTime() + (iEndIndex *  iMinutesStep));
-			oAppEndDate = new Date(oRowStartDate.getTime() + (iStartIndex *  iMinutesStep));
+			oAppStartDate = new Date(oStartDateTime + (iEndIndex *  iMinutesStep));
+			oAppEndDate = new Date(oStartDateTime + (iStartIndex *  iMinutesStep));
 		}
 
 		return {
