@@ -21,13 +21,44 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 	var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-	var aTextInputFields = ["sectionName", "frameUrl"];
+	var aTextInputFields = ["frameUrl"];
 	var aNumericInputFields = ["frameWidth", "frameHeight"];
-
-	function createDialog() {
-		var oSettingsDialog = new SettingsDialog();
-		return oSettingsDialog;
-	}
+	var aUnitsOfMeasure = [{
+		name: "px"
+	}, {
+		name: "%"
+	}, {
+		name: "rem"
+	}];
+	var aImportTestData = [{
+		input: {
+			asNewSection: true,
+			frameWidth: "16px",
+			frameHeight: "9rem",
+			frameUrl: "https_url",
+			unitsOfMeasure: aUnitsOfMeasure
+		},
+		expectedResults: {
+			asNewSection: true,
+			frameWidth: 16,
+			frameHeight: 9,
+			frameWidthUnit: "px",
+			frameHeightUnit: "rem",
+			frameUrl: "https_url",
+			unitsOfMeasure: aUnitsOfMeasure
+		}
+	}, {
+		input: {
+			frameWidth: "50%",
+			frameHeight: "75%"
+		},
+		expectedResults: {
+			frameWidth: 50,
+			frameHeight: 75,
+			frameWidthUnit: "%",
+			frameHeightUnit: "%"
+		}
+	}];
 
 	function createJSONModel() {
 		return new sap.ui.model.json.JSONModel({
@@ -57,7 +88,7 @@ sap.ui.define([
 
 	QUnit.module("Given that a SettingsDialog is available...", {
 		beforeEach: function () {
-			this.oSettingsDialog = createDialog();
+			this.oSettingsDialog = new SettingsDialog();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -138,7 +169,6 @@ sap.ui.define([
 
 		QUnit.test("When Cancel button is clicked then the promise should return no setting", function (assert) {
 			var done = assert.async();
-			this.oSettingsDialog = createDialog();
 			this.oSettingsDialog.attachOpened(function () {
 				clickOnCancel();
 			}, this);
@@ -150,7 +180,6 @@ sap.ui.define([
 
 		QUnit.test("When OK button is clicked then validation is triggered", function (assert) {
 			var done = assert.async();
-			this.oSettingsDialog = createDialog();
 			this.oSettingsDialog.attachOpened(function () {
 				aTextInputFields.forEach(function (sFieldName) {
 					assert.strictEqual(this.oSettingsDialog._oJSONModel.getData()[sFieldName]["valueState"], ValueState.None, "Initial value state is none");
@@ -169,7 +198,6 @@ sap.ui.define([
 
 		QUnit.test("When OK button is clicked then the promise should return settings", function (assert) {
 			var done = assert.async();
-			this.oSettingsDialog = createDialog();
 			this.oSettingsDialog.attachOpened(function () {
 				aTextInputFields.forEach(function (sFieldName) {
 					this.oSettingsDialog._oJSONModel.getData()[sFieldName]["value"] = "Text entered";
@@ -185,7 +213,6 @@ sap.ui.define([
 
 		QUnit.test("When OK button is clicked then the returned settings should be correct", function (assert) {
 			var done = assert.async();
-			this.oSettingsDialog = createDialog();
 			this.oSettingsDialog.attachOpened(function () {
 				var oData = this.oSettingsDialog._oJSONModel.getData();
 				aTextInputFields.forEach(function (sFieldName) {
@@ -214,24 +241,20 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When existing settings are passed to the dialog then they should be imported correctly", function (assert) {
-			var mSettings = {
-				asNewSection: true,
-				frameWidth: 16,
-				frameHeight: 9
-			};
-			var done = assert.async();
-			this.oSettingsDialog = createDialog();
-			this.oSettingsDialog.attachOpened(function () {
-				var oData = this.oSettingsDialog._oJSONModel.getData();
-				Object.keys(mSettings).forEach(function (sFieldName) {
-					assert.strictEqual(oData[sFieldName].value, mSettings[sFieldName], sFieldName + " is imported correctly");
+		aImportTestData.forEach(function (mData, iIndex) {
+			QUnit.test("When existing settings are passed to the dialog then they should be imported correctly, part " + (iIndex + 1), function (assert) {
+				var done = assert.async();
+				this.oSettingsDialog.attachOpened(function () {
+					var oData = this.oSettingsDialog._oJSONModel.getData();
+					Object.keys(mData.expectedResults).forEach(function (sFieldName) {
+						assert.strictEqual(oData[sFieldName].value, mData.expectedResults[sFieldName], sFieldName + " is imported correctly");
+					});
+					clickOnCancel();
+				}, this);
+				this.oSettingsDialog.open(mData.input).then(function () {
+					done();
 				});
-				clickOnCancel();
 			}, this);
-			this.oSettingsDialog.open(mSettings).then(function () {
-				done();
-			});
 		});
 	});
 });
