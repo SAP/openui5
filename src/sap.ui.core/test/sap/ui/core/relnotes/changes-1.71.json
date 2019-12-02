@@ -440,5 +440,21 @@
         ]
       }
     ]
+  },
+  "1.71.5": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "484d3614d525d8adfe3ad09ffc7245f24eca7e38",
+        "type": "FIX",
+        "text": " core/Shortcut: Restore focus on DOM element instead",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970531258"
+          }
+        ]
+      }
+    ]
   }
 }

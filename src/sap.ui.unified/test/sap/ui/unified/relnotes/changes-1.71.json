@@ -107,5 +107,44 @@
         ]
       }
     ]
+  },
+  "1.71.5": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "8e104bda4bffb569f690613ae8f8833c87de1f5e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Belize plus colors adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006570372019"
+          }
+        ]
+      },
+      {
+        "id": "bdfb6ba75ae222dfab218e94bbc17f64a342650c",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Menu is now handling the new iOS13 tablet views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970508436"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006496372019"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005577152019"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006664912019"
+          }
+        ]
+      }
+    ]
   }
 }

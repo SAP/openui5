@@ -97,5 +97,21 @@
         ]
       }
     ]
+  },
+  "1.71.5": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "07e911c0ca199798819ee006b741285bf71de51b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed visibility of collapse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005671102019"
+          }
+        ]
+      }
+    ]
   }
 }
