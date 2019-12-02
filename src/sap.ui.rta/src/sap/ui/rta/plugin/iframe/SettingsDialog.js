@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/ValueState",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
-	"sap/ui/rta/plugin/iframe/controller/SettingsDialogController"
+	"sap/ui/rta/plugin/iframe/SettingsDialogController"
 ], function (
 	ManagedObject,
 	Fragment,
@@ -29,8 +29,9 @@ sap.ui.define([
 		heightLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_HEIGHT_LABEL"),
 		sizeWarning: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_WARNING"),
 		urlTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_URL_TITLE"),
-		OKText: _oTextResources.getText("BTN_FREP_OK"),
-		cancelText: _oTextResources.getText("BTN_FREP_CANCEL")
+		saveText: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_BUTTON_SAVE"),
+		cancelText: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_BUTTON_CANCEL"),
+		urlBuilderText: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_BUTTON_URL_BUILDER")
 	};
 
 	function _createJSONModel() {
@@ -63,6 +64,9 @@ sap.ui.define([
 			frameUrl: {
 				value: "",
 				valueState: ValueState.None
+			},
+			urlBuilderParameters: {
+				value: []
 			},
 			unitsOfMeasure: [{
 				name: "px"
@@ -119,7 +123,7 @@ sap.ui.define([
 		this._oJSONModel = _createJSONModel();
 		this._oController = new SettingsDialogController(this._oJSONModel, mSettings);
 		Fragment.load({
-			name: "sap.ui.rta.view.SettingsDialog",
+			name: "sap.ui.rta.plugin.iframe.SettingsDialog",
 			controller: this._oController
 		}).then(function (oSettingsDialog) {
 			this._oDialog = oSettingsDialog;
