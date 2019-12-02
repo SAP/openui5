@@ -268,6 +268,40 @@
 		assert.equal(this.oNumericContent.getAltText(), "Icon description\n10$\nAscending\nGood", "Alternative text is correct with a value and scale set up");
 	});
 
+	QUnit.test("Test _getMaxDigitsData language casing", function (assert) {
+        // Arrange 1
+        var sOrigLang = sap.ui.getCore().getConfiguration().getLanguage();
+        var oExpected = {fontClass: "sapMNCLargeFontSize", maxLength: 4};
+        sap.ui.getCore().getConfiguration().setLanguage("en_US");
+
+        // Act 1
+        var oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
+
+        // Assert 1
+        assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct with normal language casing.");
+
+        // Arrange 2
+        sap.ui.getCore().getConfiguration().setLanguage("EN_US");
+
+        // Act 2
+        oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
+
+        // Assert 2
+        assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct with uppercase language casing.");
+
+        // Arrange 3
+        sap.ui.getCore().getConfiguration().setLanguage("en_us");
+
+        // Act 3
+        oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
+
+        // Assert 3
+        assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct with lowercase language casing.");
+
+        // Restore
+        sap.ui.getCore().getConfiguration().setLanguage(sOrigLang);
+    });
+
 	QUnit.module("Property withoutMargin", {
 		beforeEach : function() {
 			this.oNumericContent = new sap.m.NumericContent({
@@ -365,7 +399,35 @@
 			assert.equal(hasAttribute("tabindex", this.oNumericContent), false, "Attribute has been removed successfully");
 			assert.equal(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
 		});
+        QUnit.module("Truncate value to", {
+            beforeEach: function () {
+                this.oNumericContent = new sap.m.NumericContent("numeric-cnt", {
+                    value: "12345678123456781234567812345678",
+                    animateTextChange: false
+                }).placeAt("qunit-fixture");
+                sap.ui.getCore().applyChanges();
+            },
+            afterEach: function () {
+                this.oNumericContent.destroy();
+                this.oNumericContent = null;
+            }
+        });
 
+        QUnit.test("Test custom truncateValueTo property", function(assert) {
+            // Arrange
+            this.oNumericContent.setTruncateValueTo(1);
+            sap.ui.getCore().applyChanges();
+
+            // Assert
+            assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 1, "Value is truncated to 1 char");
+
+            // Arrange
+            this.oNumericContent.setTruncateValueTo(20);
+            sap.ui.getCore().applyChanges();
+
+            // Assert
+            assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 20, "Value is truncated to 20 chars");
+        });
 		/* --- Helpers --- */
 
 		fnHoverHandler = function() {
