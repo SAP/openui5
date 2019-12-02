@@ -11,7 +11,9 @@ sap.ui.define(["sap/m/library"],
 	 * Page renderer.
 	 * @namespace
 	 */
-	var PageRenderer = {};
+	var PageRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -21,7 +23,7 @@ sap.ui.define(["sap/m/library"],
 	 */
 	PageRenderer.render = function(oRm, oPage) {
 		var oHeader = null,
-			oFooter = null,
+			oFooter = oPage.getFooter(),
 			bShowFooter = oPage.getShowFooter(),
 			oSubHeader = null,
 			bLightHeader  = this._isLightHeader(oPage),
@@ -35,132 +37,53 @@ sap.ui.define(["sap/m/library"],
 			oSubHeader = oPage.getSubHeader();
 		}
 
-		oFooter = oPage.getFooter();
-
-		oRm.write("<div");
-		oRm.writeControlData(oPage);
-		oRm.addClass("sapMPage");
-
-		oRm.addClass("sapMPageBg" + oPage.getBackgroundDesign());
+		oRm.openStart("div", oPage)
+			.class("sapMPage")
+			.class("sapMPageBg" + oPage.getBackgroundDesign());
 
 		if (oHeader) {
-			oRm.addClass("sapMPageWithHeader");
+			oRm.class("sapMPageWithHeader");
 		}
 
 		if (oSubHeader) {
-			oRm.addClass("sapMPageWithSubHeader");
+			oRm.class("sapMPageWithSubHeader");
 		}
 
 		if (oFooter && bShowFooter) {
 			// it is used in the PopOver to remove additional margin bottom for page with footer
-			oRm.addClass("sapMPageWithFooter");
+			oRm.class("sapMPageWithFooter");
 		}
 
 		if (!oPage.getContentOnlyBusy()) {
-			oRm.addClass("sapMPageBusyCoversAll");
+			oRm.class("sapMPageBusyCoversAll");
 		}
 
 		if (oPage.getFloatingFooter()) {
-			oRm.addClass("sapMPageWithFloatingFooter");
+			oRm.class("sapMPageWithFloatingFooter");
 		}
 
-		oRm.writeClasses();
+		oRm.accessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Root"));
 
-		var sTooltip = oPage.getTooltip_AsString();
-
-		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
-		}
-
-		oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Root"));
-
-		oRm.write(">");
+		oRm.openEnd();
 
 		if (oHeader) {
-			var sHeaderTag = oPage._getHeaderTag(oLandmarkInfo);
-			// Header
-			oRm.write("<" + sHeaderTag);
-			oRm.addClass("sapMPageHeader");
-			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Header"));
-			oRm.writeClasses();
-			oRm.write(">");
-			//render headers
-			this.renderBarControl(oRm, oPage, oHeader, {
-				context: "header",
-				styleClass: bLightHeader ? "" : "sapContrastPlus"
-			});
-			oRm.write("</" + sHeaderTag + ">");
+			this.renderHeader(oRm, oPage, oHeader, oLandmarkInfo, bLightHeader);
 		}
 
 		if (oSubHeader) {
-			var sSubHeaderTag = oPage._getSubHeaderTag(oLandmarkInfo);
-			// SubHeader
-			oRm.write("<" + sSubHeaderTag);
-			oRm.addClass("sapMPageSubHeader");
-			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "SubHeader"));
-
-			if (oSubHeader.getDesign() == library.ToolbarDesign.Info) {
-				oRm.addClass("sapMPageSubHeaderInfoBar");
-			}
-
-			oRm.writeClasses();
-			oRm.write(">");
-			this.renderBarControl(oRm, oPage, oSubHeader, {
-				context: "subHeader",
-				styleClass: bLightHeader ? "" : "sapContrastPlus"
-			});
-			oRm.write("</" + sSubHeaderTag + ">");
+			this.renderSubHeader(oRm, oPage, oSubHeader, oLandmarkInfo, bLightHeader);
 		}
 
-		// render child controls
-		oRm.write('<section id="' + oPage.getId() + '-cont"');
-
-		oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Content"));
-
-		// The vertical scroll bar should be immediately available to avoid flickering
-		// and reduce size recalculations of embedded responsive controls that rely on
-		// the page content width. See ScrollEnablement.js: _setOverflow
-		if (oPage.getEnableScrolling()) {
-			oRm.addClass("sapMPageEnableScrolling");
-			oRm.writeClasses();
-		}
-
-		oRm.write('>');
-
-		var aContent = oPage.getContent();
-		var l = aContent.length;
-
-		for (var i = 0; i < l; i++) {
-			oRm.renderControl(aContent[i]);
-		}
-
-		oRm.write("</section>");
+		this.renderChildControls(oRm, oPage, oLandmarkInfo);
 
 		// render footer Element
 		// if a footer is defined, it should always be rendered
 		// otherwise animation on show/hide won't work always
-
 		if (oFooter) {
-			var sFooterTag = oPage._getFooterTag(oLandmarkInfo);
-
-			oRm.write("<" + sFooterTag);
-			oRm.addClass("sapMPageFooter");
-			if (!oPage.getShowFooter()) {
-				oRm.addClass("sapUiHidden");
-			}
-			if (oPage.getFloatingFooter()) {
-				oRm.addClass("sapMPageFloatingFooter");
-			}
-			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Footer"));
-			oRm.writeClasses();
-			oRm.write(">");
-			this.renderBarControl(oRm, oPage, oFooter, {
-				context : "footer"
-			});
-			oRm.write("</" + sFooterTag + ">");
+			this.renderFooter(oRm, oPage, oFooter, oLandmarkInfo);
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	/**
@@ -181,6 +104,89 @@ sap.ui.define(["sap/m/library"],
 		oBarControl.addStyleClass(oOptions.styleClass || "");
 
 		oRm.renderControl(oBarControl);
+	};
+
+	PageRenderer.renderHeader = function (oRm, oPage, oHeader, oLandmarkInfo, bLightHeader) {
+		var sHeaderTag = oPage._getHeaderTag(oLandmarkInfo);
+
+		oRm.openStart(sHeaderTag)
+			.class("sapMPageHeader")
+			.accessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Header"))
+			.openEnd();
+
+		this.renderBarControl(oRm, oPage, oHeader, {
+			context: "header",
+			styleClass: bLightHeader ? "" : "sapContrastPlus"
+		});
+
+		oRm.close(sHeaderTag);
+	};
+
+	PageRenderer.renderSubHeader = function (oRm, oPage, oSubHeader, oLandmarkInfo, bLightHeader) {
+		var sSubHeaderTag = oPage._getSubHeaderTag(oLandmarkInfo);
+
+		oRm.openStart(sSubHeaderTag)
+			.class("sapMPageSubHeader")
+			.accessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "SubHeader"));
+
+		if (oSubHeader.getDesign() == library.ToolbarDesign.Info) {
+			oRm.class("sapMPageSubHeaderInfoBar");
+		}
+
+		oRm.openEnd();
+
+		this.renderBarControl(oRm, oPage, oSubHeader, {
+			context: "subHeader",
+			styleClass: bLightHeader ? "" : "sapContrastPlus"
+		});
+
+		oRm.close(sSubHeaderTag);
+	};
+
+	PageRenderer.renderChildControls = function (oRm, oPage, oLandmarkInfo) {
+		oRm.openStart("section", oPage.getId() + "-cont")
+			.accessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Content"));
+
+		// The vertical scroll bar should be immediately available to avoid flickering
+		// and reduce size recalculations of embedded responsive controls that rely on
+		// the page content width. See ScrollEnablement.js: _setOverflow
+		if (oPage.getEnableScrolling()) {
+			oRm.class("sapMPageEnableScrolling");
+		}
+
+		oRm.openEnd();
+
+		var aContent = oPage.getContent();
+		var l = aContent.length;
+
+		for (var i = 0; i < l; i++) {
+			oRm.renderControl(aContent[i]);
+		}
+
+		oRm.close("section");
+	};
+
+	PageRenderer.renderFooter = function (oRm, oPage, oFooter, oLandmarkInfo) {
+		var sFooterTag = oPage._getFooterTag(oLandmarkInfo);
+
+		oRm.openStart(sFooterTag)
+			.class("sapMPageFooter");
+
+		if (!oPage.getShowFooter()) {
+			oRm.class("sapUiHidden");
+		}
+		if (oPage.getFloatingFooter()) {
+			oRm.class("sapMPageFloatingFooter");
+		}
+
+		oRm.accessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Footer"))
+			.openEnd();
+
+		this.renderBarControl(oRm, oPage, oFooter, {
+			context : "footer"
+		});
+
+		oRm.close(sFooterTag);
 	};
 
 	/**
