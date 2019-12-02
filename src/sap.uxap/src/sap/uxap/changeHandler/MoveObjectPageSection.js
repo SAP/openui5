@@ -2,7 +2,7 @@
 	* ${copyright}
 	*/
 
-sap.ui.define(["sap/ui/fl/changeHandler/MoveControls", "sap/ui/thirdparty/jquery"], function(MoveControls, jQuery) {
+sap.ui.define(["sap/ui/fl/changeHandler/MoveControls", "sap/ui/core/Core", "sap/base/util/merge", "sap/ui/thirdparty/jquery"], function(MoveControls, Core, merge, jQuery) {
 	"use strict";
 
 	/**
@@ -47,6 +47,55 @@ sap.ui.define(["sap/ui/fl/changeHandler/MoveControls", "sap/ui/thirdparty/jquery
 			});
 		}
 		return vReturn;
+	};
+
+	/**
+	 * Completes the change by adding change handler specific content.
+	 *
+	 * @override
+	 */
+	MoveObjectPageSection.completeChangeContent = function (oChange, mSpecificChangeInfo, mPropertyBag) {
+		var oSourceControl = Core.byId(mSpecificChangeInfo.source.id),
+			oTargetControl = Core.byId(mSpecificChangeInfo.target.id);
+
+		if (oSourceControl.isA("sap.uxap.AnchorBar")
+			&& oTargetControl.isA("sap.uxap.AnchorBar")) {
+			this._mapAnchorsToSections(mSpecificChangeInfo);
+		}
+
+		return MoveControls.completeChangeContent.apply(this, arguments);
+	};
+
+	/**
+	 * Maps the moved anchor to its corresponding section
+	 *
+	 * @param {object} mSpecificChangeInfo
+	 * @private
+	 */
+	MoveObjectPageSection._mapAnchorsToSections = function (mSpecificChangeInfo) {
+		var oSection,
+			oSectionParentInfo;
+
+		function getSectionForAnchor(sAnchorId) {
+			var oAnchor = Core.byId(sAnchorId),
+				sSectionId = oAnchor.data("sectionId");
+			return Core.byId(sSectionId);
+		}
+
+		mSpecificChangeInfo.movedElements.forEach(function (oElement) {
+			oSection = getSectionForAnchor(oElement.id);
+			if (!oSection || !oSection.getParent()) {
+				throw new Error("Cannot map anchor to section");
+			}
+			oSectionParentInfo = {
+				id: oSection.getParent().getId(),
+				aggregation: oSection.sParentAggregationName
+			};
+			oElement.id = oSection.getId();
+		});
+
+		merge(mSpecificChangeInfo.source, oSectionParentInfo);
+		merge(mSpecificChangeInfo.target, oSectionParentInfo);
 	};
 
 	return MoveObjectPageSection;
