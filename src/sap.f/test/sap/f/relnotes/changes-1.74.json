@@ -23,6 +23,17 @@
             "reference": "1970591185"
           }
         ]
+      },
+      {
+        "id": "965595bf92be41f1933c580746dfa0d98885dd90",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Header styles are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980441320"
+          }
+        ]
       }
     ]
   }

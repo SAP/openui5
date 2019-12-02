@@ -12,6 +12,12 @@
             "reference": "1970623662"
           }
         ]
+      },
+      {
+        "id": "9f2dff5cc286e4880c3e0c55aa1d045590f23563",
+        "type": "FIX",
+        "text": " Move error messages to correct messagebundle",
+        "references": []
       }
     ]
   }

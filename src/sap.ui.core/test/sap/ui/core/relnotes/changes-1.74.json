@@ -12,6 +12,17 @@
             "reference": "1970551549"
           }
         ]
+      },
+      {
+        "id": "4cf7f6646572b832a5a6db35ca40a207e205f6f5",
+        "type": "FIX",
+        "text": " JSView: Fix documentation of JSView.create",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970154879"
+          }
+        ]
       }
     ]
   }

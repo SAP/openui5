@@ -33,6 +33,29 @@
             "reference": "1970611339"
           }
         ]
+      },
+      {
+        "id": "1bc938e7d9a102d977756a9dd7f2821ac77ac81e",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select Month ranges added",
+        "references": []
+      },
+      {
+        "id": "4eb47cd388305573a26f102d22ac061a2f0faed1",
+        "type": "FIX",
+        "text": " sap.m.Popover: Header shadow fixed",
+        "references": []
+      },
+      {
+        "id": "ddd067291bf80999dd36475577a4c61427cd9486",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed visibility of the header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361124"
+          }
+        ]
       }
     ]
   }

@@ -12,6 +12,17 @@
             "reference": "1970591185"
           }
         ]
+      },
+      {
+        "id": "ddd067291bf80999dd36475577a4c61427cd9486",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed visibility of the header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361124"
+          }
+        ]
       }
     ]
   }
