@@ -711,7 +711,8 @@
 		  "since": "1.28",
 		  "samples": [
 			"sap.m.sample.MessagePopover",
-			"sap.m.sample.MessagePopoverMessageHandling"
+			"sap.m.sample.MessagePopoverMessageHandling",
+			"sap.m.sample.MessagePopoverAsyncMessageHandling"
 		  ]
 		},
 		{
@@ -2749,6 +2750,11 @@
 		  "id": "sap.m.sample.MessagePopoverMessageHandling",
 		  "name": "Message Popover - Message Handling",
 		  "description": "The message handling concept sample shows how you can connect an error inside the page (such as input validation error) with an error, visualized as an item in a message popover."
+		},
+		{
+		  "id": "sap.m.sample.MessagePopoverAsyncMessageHandling",
+		  "name": "Message Popover - Async Message Handling",
+		  "description": "The message handling concept sample shows how you can use callback functions for resolving a promise after a link or descriptions have been asynchronously validated."
 		},
 		{
 		  "id": "sap.m.sample.MessageViewInsideDialog",
