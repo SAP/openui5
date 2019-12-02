@@ -2773,6 +2773,30 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("PlanningCalendarRowHeader overides getIconDensityAware to return always false", function(assert) {
+		// Prepare
+		var oPC = new PlanningCalendar(),
+			oRow = new PlanningCalendarRow(oPC.getId() + "-Row", {
+				icon: "sap-icon://employee",
+				title: "Angela Merker",
+				text: "Angela",
+				tooltip: "Header tooltip"
+			}),
+			oRowHead;
+
+		// Act
+		oPC.addRow(oRow);
+
+		oRowHead = sap.ui.getCore().byId(oRow.getId() + "-Head");
+
+		// Assert
+		assert.equal(oRowHead.getIconDensityAware(), false, "icon density aware should be false");
+
+		// Destroy
+		oPC.destroy();
+	});
+
+
 	QUnit.module("Interaction", {
 		beforeEach: function() {
 			var oSearchField = new SearchField(),
