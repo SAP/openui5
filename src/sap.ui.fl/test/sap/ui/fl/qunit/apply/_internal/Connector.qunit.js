@@ -319,6 +319,7 @@ sap.ui.define([
 			 *
 			 * ----------------------------------------
 			 * BASE (changes-bundle.json)
+			 * - variantChange0 on StandardVariant
 			 * - variant1 in 'variantManagementReference'
 			 * - variantChange1_1 on variant1
 			 *
@@ -332,6 +333,19 @@ sap.ui.define([
 
 			var oStaticFileConnectorResponse = merge({}, EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_DATA);
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
+
+			var oVariantChange0 = Change.createInitialFileContent({
+				fileName: "variantChange0",
+				fileType: "ctrl_variant_change",
+				layer: "BASE",
+				changeType: "setTitle",
+				reference: "app.id",
+				content: {},
+				selector: {
+					id: sVariantManagementKey
+				}
+			});
+			oStandardVariant.variantChanges.setTitle = [oVariantChange0];
 
 			var oVariant1 = Variant.createInitialFileContent({
 				content : {
@@ -358,7 +372,7 @@ sap.ui.define([
 					id: oVariant1.content.fileName
 				}
 			});
-			oStaticFileConnectorResponse.variantChanges = [oVariantChange1_1];
+			oStaticFileConnectorResponse.variantChanges = [oVariantChange0, oVariantChange1_1];
 
 			// Lrep Connector
 
@@ -519,7 +533,10 @@ sap.ui.define([
 
 				assert.equal(aVariants[0].controlChanges.length, 0, "no control changes are present for the standard variant");
 				mVariantChanges = aVariants[0].variantChanges;
-				assert.equal(Object.keys(mVariantChanges).length, 0, "no variant changes are present for the standard variant");
+				assert.equal(Object.keys(mVariantChanges).length, 1, "one type of changes are present for the standard variant");
+				var aSetTitleChanges = mVariantChanges.setTitle;
+				assert.equal(aSetTitleChanges.length, 1, "one set title variant changes are present for the standard variant");
+				assert.deepEqual(aSetTitleChanges[0], oVariantChange0, "the variant change 0 was added");
 
 				assert.deepEqual(aVariants[1].content, oVariant1.content, "the variant 1 is added");
 				assert.equal(aVariants[1].controlChanges.length, 3, "three control changes are present for the variant 1");
@@ -528,7 +545,7 @@ sap.ui.define([
 				assert.deepEqual(aVariants[1].controlChanges[2], oVariantDependentChange3, "the control change 3 was added");
 				mVariantChanges = aVariants[1].variantChanges;
 				assert.equal(Object.keys(mVariantChanges).length, 1, "one type of changes are present for variant 1");
-				var aSetTitleChanges = mVariantChanges.setTitle;
+				aSetTitleChanges = mVariantChanges.setTitle;
 				assert.equal(aSetTitleChanges.length, 2, "two set title variant changes are present for the variant 1");
 				assert.deepEqual(aSetTitleChanges[0], oVariantChange1_1, "the variant change 1_1 was added");
 				assert.deepEqual(aSetTitleChanges[1], oVariantChange1_2, "the variant change 1_2 was added");

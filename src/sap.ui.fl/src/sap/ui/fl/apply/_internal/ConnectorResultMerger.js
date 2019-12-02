@@ -147,7 +147,7 @@ sap.ui.define([
 		Object.keys(oResultCopy.variantSection).forEach(function (sVariantManagementId) {
 			var oVariantManagementSection = oResultCopy.variantSection[sVariantManagementId];
 			var iStandardVariantIndex = oVariantManagementSection.variants.findIndex(function (oVariant) {
-				return oVariant.content.variantReference === sVariantManagementId;
+				return oVariant.content.fileName === sVariantManagementId;
 			});
 
 			var oStandardVariant;
