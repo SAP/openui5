@@ -127,5 +127,21 @@
         ]
       }
     ]
+  },
+  "1.71.5": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "30179250c9f024379a16cda79fc6afa5a43e21b7",
+        "type": "FIX",
+        "text": " sap.ui.rta: Update of toolbar buttons and reload handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980322650"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1146,5 +1146,87 @@
         ]
       }
     ]
+  },
+  "1.71.5": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "b9b0e853411a4e1747b407d276daea975f071e70",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: setDisplayFormat does not trigger focus in",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005957622019"
+          }
+        ]
+      },
+      {
+        "id": "601367a17a74e2b8be0280a779aed72d8044f7e8",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Default filters no longer removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970540869"
+          }
+        ]
+      },
+      {
+        "id": "4cb8988ba96760f9c27f8c46e164cc1cc4827169",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: gets correctly the active state of the FacetList",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980441633"
+          }
+        ]
+      },
+      {
+        "id": "1babe862419cc256ec21f491441fc31e0a679490",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: valueState is now updated if there is a Message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500005744122019"
+          }
+        ]
+      },
+      {
+        "id": "4a32736e4956660ada44765471048326ccd9dc23",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Validation is working and exception is thrown if necessary",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007071152019"
+          }
+        ]
+      },
+      {
+        "id": "955250d868e6f9a993d5d350d41dc092e1dca59b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Deletion of email when drag and dropped from MS outlook to chrome.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005214142019"
+          }
+        ]
+      },
+      {
+        "id": "f140f525cf4a84264c00cb86de2ceb4926fdaa08",
+        "type": "FIX",
+        "text": " sap.m.Wizard: destroySteps causing browsers to crash fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980440936"
+          }
+        ]
+      }
+    ]
   }
 }
