@@ -34,7 +34,9 @@
 				"files" : [
 					"Component.js",
 					"Main.view.xml",
-					"manifest.json"
+					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},
@@ -55,16 +57,18 @@
 				"preload" : true,
 				"settings" : {
 					"autoExpandSelect" : true,
+					"odataVersion" : "2.0",
 					"operationMode" : "Server",
 					"synchronizationMode" : "None"
 				},
-				"type" : "sap.ui.model.odata.v4.ODataModel"
+				"type" : "sap.ui.core.sample.odata.v4.ConsumeV2Service.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
 		},
 		"rootView" : {
 			"async" : true,
 			"type" : "XML",
-			"viewName" : "Main.view.xml"
+			"viewName" : "sap.ui.core.sample.odata.v4.ConsumeV2Service.Main"
 		}
 	}
 }
