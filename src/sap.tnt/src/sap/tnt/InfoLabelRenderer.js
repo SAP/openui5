@@ -30,7 +30,8 @@ sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library"],
 				sText = oControl.getText(),
 				sTextDir = oControl.getTextDirection(),
 				sWidth = oControl.getWidth(),
-				bDisplayOnly = oControl.getDisplayOnly();
+				bDisplayOnly = oControl.getDisplayOnly(),
+				oIcon = oControl.getIcon();
 
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
@@ -51,6 +52,10 @@ sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library"],
 			if (sWidth) {
 				oRm.addStyle("width", sWidth);
 			}
+
+			if (oIcon) {
+				oRm.addClass("sapTntInfoLabelWithIcon");
+			}
 			oRm.addClass("backgroundColor" + iColorVariant );
 			oRm.writeClasses();
 			oRm.writeStyles();
@@ -66,7 +71,21 @@ sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library"],
 			}
 
 			oRm.write(">");
+
+			// write the icon
+			if (oIcon) {
+				oRm.writeIcon(oIcon);
+			}
+
+			// write the text
+			oRm.write("<span");
+			oRm.addClass("sapTntInfoLabelText");
+			oRm.writeClasses();
+			oRm.write(">");
 			oRm.writeEscaped(sText);
+			oRm.write("</span>");
+
+			//close sapTntInfoLabelInner
 			oRm.write("</span>");
 
 			if (InfoLabelRenderer._sAriaText) {

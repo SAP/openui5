@@ -6,8 +6,9 @@
 @_sap_tnt_InfoLabel_Margin: 0.9375rem;
 @_sap_tnt_InfoLabel_NoTextPadding: 0.5625rem;
 @_sap_tnt_InfoLabel_NoTextDisplayOnlyPadding: 0.5rem;
-@_sap_tnt_InfoLabel_LineHeight: 1.125rem;
+@_sap_tnt_InfoLabel_LineHeight: 1rem;
 @_sap_tnt_InfoLabel_LineHeightDisplayOnly: 1rem;
+@_sap_tnt_InfoLabel_NarrowPadding: 0 0.3125rem;
 
 /* ==========================================================================
    Root element
@@ -36,7 +37,7 @@
 }
 
 .sapTntInfoLabelRenderModeNarrow{
-	padding: 0 0.3125rem;
+	padding: @_sap_tnt_InfoLabel_NarrowPadding
 }
 
 /* ==========================================================================
@@ -61,12 +62,41 @@
 		}
    }
 
+   /* ==========================================================================
+   InfoLabel With Icon
+   ========================================================================== */
+
+.sapTntInfoLabel.sapTntInfoLabelWithIcon {
+	padding: @_sap_tnt_InfoLabel_NarrowPadding;
+
+	.sapTntInfoLabelInner .sapTntInfoLabelText {
+		vertical-align: top;
+	}
+
+	.sapUiIcon {
+		padding-right: 0.1875rem;
+		line-height: @_sap_tnt_InfoLabel_LineHeight;
+	}
+
+	&.sapTntInfoLabelNoText {
+		padding: @_sap_tnt_InfoLabel_NarrowPadding;
+
+		.sapUiIcon {
+				padding-right: 0;
+		}
+	}
+}
+
 /* ==========================================================================
    InfoLabel in Form
    ========================================================================== */
 
 .sapUiFormM:not(.sapUiFormEdit) .sapUiFormResGridCont > div .sapTntInfoLabel {
 	font-size: 1rem;
+}
+
+.sapUiFormM:not(.sapUiFormEdit) .sapUiFormResGridCont > div .sapTntInfoLabel.sapTntInfoLabelWithIcon .sapUiIcon {
+	font-size: @sapMFontSmallSize;
 }
 
 .sapUiFormEdit .sapTntInfoLabel:not(.sapTntInfoLabelDisplayOnly) {
@@ -76,4 +106,16 @@
 /* Compact size */
 .sapUiSizeCompact .sapUiFormEdit .sapTntInfoLabel:not(.sapTntInfoLabelDisplayOnly) {
 	margin: 0.4375rem 0;
+}
+
+.sapUiFormResGridCont .sapTntInfoLabel.sapTntInfoLabelWithIcon.sapTntInfoLabelDisplayOnly .sapUiIcon {
+	line-height: 0.875rem;
+}
+
+/* ==========================================================================
+   InfoLabel in Table
+   ========================================================================== */
+
+.sapMListTbl .sapTntInfoLabel.sapTntInfoLabelWithIcon .sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
+	font-size: @sapMFontSmallSize;
 }
