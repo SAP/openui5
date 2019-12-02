@@ -3151,7 +3151,10 @@ sap.ui.define([
 				icon : oRow.getIcon(),
 				description : oRow.getText(),
 				title : oRow.getTitle(),
-				tooltip : oRow.getTooltip()
+				tooltip : oRow.getTooltip(),
+				// set iconDensityAware to false (the default is true for the StandardListItem)
+				// in order to avoid multiple 404 requests for the applications that do not have these images
+				iconDensityAware: false
 			});
 		}
 
@@ -3218,6 +3221,7 @@ sap.ui.define([
 		TagName: "div"
 
 	});
+
 
 	PlanningCalendarRowHeader.prototype.isSelectable = function () {
 		// The header itself isn't selectable - the row is.
