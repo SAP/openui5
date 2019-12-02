@@ -482,6 +482,13 @@ sap.ui.define([
 							|| _Helper.buildPath(sServiceUrl + that.sResourcePath, sPropertyPath);
 					}
 					if (!bTransient) {
+						// If there is no entity with a key predicate, try it with the cache root
+						// object (in case of SimpleCache, the root object of CollectionCache is an
+						// array)
+						if (!oEntity && !Array.isArray(oData)) {
+							oEntity = oData;
+							iEntityPathLength = 0;
+						}
 						return oEntity
 							&& that.fetchLateProperty(oGroupLock, oEntity,
 								aSegments.slice(0, iEntityPathLength).join("/"),
@@ -557,28 +564,34 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID (on which unlock has already been called)
-	 * @param {object} oEntity
-	 *   The entity instance in the cache
-	 * @param {string} sEntityPath
-	 *   The path of the entity relative to the cache
+	 * @param {object} oResource
+	 *   The resource in the cache on which the missing property is requested. Usually this is the
+	 *   last entity in the property path for which the key predicate is known. This keeps $expand
+	 *   as short as possible and it allows checking that the navigation property leading to this
+	 *   entity is unchanged (by comparing the key predicate). If there is no entity with a key
+	 *   predicate at all, SingleCache uses the cache root as oResource.
+	 * @param {string} sResourcePath
+	 *   The path of oResource relative to the cache
 	 * @param {string} sRequestedPropertyPath
-	 *   The path of the requested property relative to the entity
+	 *   The path of the requested property relative to oResource; this property is requested from
+	 *   the server
 	 * @param {string} sMissingPropertyPath
-	 *   The path of the missing property relative to the entity
+	 *   The path of the missing property relative to oResource; this property is returned so that
+	 *   drillDown can proceed
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with the missing property value or <code>undefined</code> if the
 	 *   requested property is not an expected late property; it rejects with an error if the GET
-	 *   request failed, if the key predicate or if the ETag has changed
+	 *   request failed, or if the key predicate or the ETag has changed
 	 *
 	 * @private
 	 */
-	Cache.prototype.fetchLateProperty = function (oGroupLock, oEntity, sEntityPath,
+	Cache.prototype.fetchLateProperty = function (oGroupLock, oResource, sResourcePath,
 			sRequestedPropertyPath, sMissingPropertyPath) {
-		var sEntityMetaPath,
-			sFullEntityMetaPath,
+		var sFullResourceMetaPath,
 			oPromise,
 			mQueryOptions,
-			sResourcePath,
+			sRequestPath,
+			sResourceMetaPath,
 			mTypeForMetaPath = this.fetchTypes().getResult(),
 			aUpdateProperties = [sRequestedPropertyPath],
 			that = this;
@@ -639,7 +652,7 @@ sap.ui.define([
 		if (!this.mLateQueryOptions) {
 			return undefined;
 		}
-		sEntityMetaPath = _Helper.getMetaPath(sEntityPath);
+		sResourceMetaPath = _Helper.getMetaPath(sResourcePath);
 		mQueryOptions = {
 			$select : this.mLateQueryOptions.$select,
 			$expand : this.mLateQueryOptions.$expand
@@ -647,14 +660,14 @@ sap.ui.define([
 		mQueryOptions = _Helper.intersectQueryOptions(mQueryOptions,
 			// no need to convert sRequestedPropertyPath to a metapath, intersectQueryOptions will
 			// reject the resulting invalid path
-			[_Helper.buildPath(sEntityMetaPath, sRequestedPropertyPath)],
+			[_Helper.buildPath(sResourceMetaPath, sRequestedPropertyPath)],
 			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, {});
 		if (!mQueryOptions) {
 			return undefined;
 		}
-		if (sEntityMetaPath) {
+		if (sResourceMetaPath) {
 			// Note: intersectQueryOptions guarantees that the meta path can be followed
-			sEntityMetaPath.split("/").forEach(function (sSegment) {
+			sResourceMetaPath.split("/").forEach(function (sSegment) {
 				mQueryOptions = mQueryOptions.$expand[sSegment];
 			});
 		}
@@ -666,44 +679,45 @@ sap.ui.define([
 			}
 		});
 
-		sFullEntityMetaPath = _Helper.buildPath(this.sMetaPath, sEntityMetaPath);
-		addKeyProperties(sFullEntityMetaPath, mQueryOptions);
+		sFullResourceMetaPath = _Helper.buildPath(this.sMetaPath, sResourceMetaPath);
+		addKeyProperties(sFullResourceMetaPath, mQueryOptions);
 		if (mQueryOptions.$expand) {
-			visitExpand(mQueryOptions, "", sFullEntityMetaPath);
+			visitExpand(mQueryOptions, "", sFullResourceMetaPath);
 		}
-		sResourcePath = _Helper.buildPath(this.sResourcePath, sEntityPath)
+		sRequestPath = _Helper.buildPath(this.sResourcePath, sResourcePath)
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
-		oPromise = this.mPropertyRequestByPath[sResourcePath];
+		oPromise = this.mPropertyRequestByPath[sRequestPath];
 		if (!oPromise) {
-			oPromise = this.oRequestor.request("GET", sResourcePath, oGroupLock.getUnlockedCopy())
+			oPromise = this.oRequestor.request("GET", sRequestPath, oGroupLock.getUnlockedCopy())
 				.then(function (oData) {
-					that.visitResponse(oData, mTypeForMetaPath, sFullEntityMetaPath, sEntityPath);
+					that.visitResponse(oData, mTypeForMetaPath, sFullResourceMetaPath,
+							sResourcePath);
 					return oData;
 				})
 				.finally(function () {
-					delete that.mPropertyRequestByPath[sResourcePath];
+					delete that.mPropertyRequestByPath[sRequestPath];
 				});
-			this.mPropertyRequestByPath[sResourcePath] = oPromise;
+			this.mPropertyRequestByPath[sRequestPath] = oPromise;
 		}
 		// With the V2 adapter the surrounding complex type is requested for nested properties. So
 		// even when two late properties lead to the same request, each of them must be copied to
 		// the cache.
 		return oPromise.then(function (oData) {
-			if (_Helper.getPrivateAnnotation(oEntity, "predicate")
+			if (_Helper.getPrivateAnnotation(oResource, "predicate")
 					!== _Helper.getPrivateAnnotation(oData, "predicate")) {
-				throw new Error("GET " + sResourcePath + ": Key predicate changed from "
-					+ _Helper.getPrivateAnnotation(oEntity, "predicate")
+				throw new Error("GET " + sRequestPath + ": Key predicate changed from "
+					+ _Helper.getPrivateAnnotation(oResource, "predicate")
 					+ " to " + _Helper.getPrivateAnnotation(oData, "predicate"));
 			}
-			if (oData["@odata.etag"] !== oEntity["@odata.etag"]) {
-				throw new Error("GET " + sResourcePath + ": ETag changed");
+			if (oData["@odata.etag"] !== oResource["@odata.etag"]) {
+				throw new Error("GET " + sRequestPath + ": ETag changed");
 			}
 
-			_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity, oData,
+			_Helper.updateSelected(that.mChangeListeners, sResourcePath, oResource, oData,
 				aUpdateProperties);
 
 			// return the missing property, so that drillDown properly proceeds
-			return _Helper.drillDown(oEntity, sMissingPropertyPath.split("/"));
+			return _Helper.drillDown(oResource, sMissingPropertyPath.split("/"));
 		});
 	};
 

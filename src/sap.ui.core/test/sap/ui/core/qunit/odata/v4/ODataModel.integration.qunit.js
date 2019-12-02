@@ -2376,7 +2376,7 @@ sap.ui.define([
 		var oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_SOITEM(\'0010\')}">\
-      <Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
+	<Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
 </FlexBox>\
 <Text id="businessPartner" text="{SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName}"/>',
 			that = this;
@@ -2434,6 +2434,42 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: ODCB, late property at a binding for a complex type, so that no entity can be found
+	// in the cache.
+	// JIRA: CPOUI5ODATAV4-23
+	QUnit.test("ODCB: late property at complex type", function (assert) {
+		var oModel = createModel(sSalesOrderService, {autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/BusinessPartnerList(\'1\')/Address}">\
+      <Text id="city" text="{City}"/>\
+</FlexBox>\
+<Text id="postalCode" text="{PostalCode}"/>',
+			that = this;
+
+		// Note: ETag is contained in the response header, but _Requestor copies it to the payload
+		this.expectRequest("BusinessPartnerList('1')/Address?$select=City", {
+				"@odata.etag" : "etag",
+				City : "Heidelberg"
+			})
+			.expectChange("city", "Heidelberg")
+			.expectChange("postalCode");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("BusinessPartnerList('1')/Address?$select=PostalCode", {
+					"@odata.etag" : "etag",
+					PostalCode : "69190"
+				})
+				.expectChange("postalCode", "69190");
+
+			// code under test
+			that.oView.byId("postalCode").setBindingContext(
+				that.oView.byId("form").getBindingContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataContextBinding returning a bound message
