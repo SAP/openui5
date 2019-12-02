@@ -553,82 +553,82 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handle the key down event for F5 on all browsers.
+	 * Handle the key down event.
 	 *
-	 * @param {jQuery.Event}
-	 *            event - the keyboard event.
+	 * @param {jQuery.Event} event The keyboard event.
 	 * @private
 	 */
 	SearchField.prototype.onkeydown = function(event) {
+		var selectedIndex;
+		var suggestionItem;
 		var value;
 
-		if (event.which === KeyCodes.F5 || event.which === KeyCodes.ENTER) {
+		switch (event.which) {
+			case KeyCodes.F5:
+			case KeyCodes.ENTER:
+				// show search button active state
+				this.$("search").toggleClass("sapMSFBA", true);
 
-			// show search button active state
-			this.$("search").toggleClass("sapMSFBA", true);
+				// do not refresh browser window
+				event.stopPropagation();
+				event.preventDefault();
 
-			// do not refresh browser window
-			event.stopPropagation();
-			event.preventDefault();
-		}
-		if (event.which === KeyCodes.ESCAPE) {
-			// Escape button:
-			//   - close suggestions ||
-			//   - restore the original value ||
-			//   - clear the value ||
-			//   - close the parent dialog
-			if (suggestionsOn(this)) {
-				closeSuggestions(this);
-				event.setMarked(); // do not close the parent dialog
-			} else {
-				value = this.getValue();
-				if (value === this._sOriginalValue) {
-					this._sOriginalValue = ""; // clear the field if the value was original
+				if (suggestionsOn(this)) {
+					// always close suggestions by Enter and F5:
+					closeSuggestions(this);
+
+					// take over the value from the selected suggestion list item, if any is selected:
+					if ((selectedIndex = this._oSuggest.getSelected()) >= 0) {
+						suggestionItem = this.getSuggestionItems()[selectedIndex];
+						this.setValue(suggestionItem.getSuggestionText());
+					}
 				}
-				this.clear({ value: this._sOriginalValue });
-				if (value !== this.getValue()) {
-					event.setMarked(); // if changed, do not close the parent dialog because the user has not finished yet
+
+				this.fireSearch({
+					query: this.getValue(),
+					suggestionItem: suggestionItem,
+					refreshButtonPressed: this.getShowRefreshButton() && event.which === KeyCodes.F5,
+					clearButtonPressed: false
+				});
+				break;
+			case KeyCodes.ESCAPE:
+				// Escape button:
+				//   - close suggestions ||
+				//   - restore the original value ||
+				//   - clear the value ||
+				//   - close the parent dialog
+				if (suggestionsOn(this)) {
+					closeSuggestions(this);
+					event.setMarked(); // do not close the parent dialog
+				} else {
+					value = this.getValue();
+					if (value === this._sOriginalValue) {
+						this._sOriginalValue = ""; // clear the field if the value was original
+					}
+					this.clear({ value: this._sOriginalValue });
+					if (value !== this.getValue()) {
+						event.setMarked(); // if changed, do not close the parent dialog because the user has not finished yet
+					}
 				}
-			}
-			// Chrome fires input event on escape,
-			// prevent it to avoid doubled change/liveChange:
-			event.preventDefault();
+				// Chrome fires input event on escape,
+				// prevent it to avoid doubled change/liveChange:
+				event.preventDefault();
+				break;
 		}
 	};
 
 	/**
-	 * Handle the key up event for F5 on all browsers.
+	 * Handle the key up event.
 	 *
-	 * @param {jQuery.Event}
-	 *            event - the keyboard event.
+	 * @param {jQuery.Event} event The keyboard event.
 	 * @private
 	 */
 	SearchField.prototype.onkeyup = function(event) {
-		var selectedIndex;
-		var suggestionItem;
 
-		if (event.which === KeyCodes.F5 || event.which === KeyCodes.ENTER) {
-
+		if (event.which === KeyCodes.F5 ||
+			event.which === KeyCodes.ENTER) {
 			// hide search button active state
 			this.$("search").toggleClass("sapMSFBA", false);
-
-			if (suggestionsOn(this)) {
-				// always close suggestions by Enter and F5:
-				closeSuggestions(this);
-
-				// take over the value from the selected suggestion list item, if any is selected:
-				if ((selectedIndex = this._oSuggest.getSelected()) >= 0) {
-					suggestionItem = this.getSuggestionItems()[selectedIndex];
-					this.setValue(suggestionItem.getSuggestionText());
-				}
-			}
-
-			this.fireSearch({
-				query: this.getValue(),
-				suggestionItem: suggestionItem,
-				refreshButtonPressed: this.getShowRefreshButton() && event.which === KeyCodes.F5,
-				clearButtonPressed: false
-			});
 		}
 	};
 
