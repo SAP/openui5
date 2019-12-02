@@ -76,6 +76,8 @@ sap.ui.define([
 
 			 * </pre>
 			 *
+			 * When using the <code>sap.m.MessageBox</code> in SAP Quartz themes, the breakpoints and layout paddings could be determined by the MessageBox' width. To enable this concept and add responsive paddings to an element of the MessageBox control, you have to add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>.
+			 *
 			 * @namespace
 			 * @alias sap.m.MessageBox
 			 * @public
