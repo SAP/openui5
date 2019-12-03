@@ -4,296 +4,223 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>sap.m.MenuButton Test</title>
-	<style type="text/css">
-		#subheader-toolbar {
-			display: block;
-			text-align: end;
-		}
-		.side-aligned {
-			margin: 0 10px;
-		}
-	</style>
+	<title>sap.m.MenuButton - Accessibility</title>
 	<script src="../shared-config.js"></script>
 	<script src="../../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m, sap.ui.layout">
 	</script>
 
 	<script>
-		var oMenuEnumeration = {
-			Nested: "Nested",
-			Simple: "Simple",
-			ExampleHelpers: "ExampleHelpers"
-		};
-		var aExampleButtons = [];
-		var fnDisplayMenuItemPathHandler = function(oEvent) {
-			var oItem = oEvent.getParameter("item"),
-				sItemPath = "";
-			while (oItem instanceof sap.m.MenuItem) {
-				sItemPath = oItem.getText() + " > " + sItemPath;
-				oItem = oItem.getParent();
-			}
+		// -----------------
+		// Utility
+		// -----------------
 
-			sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+		var ButtonType = sap.m.ButtonType,
+			MenuButtonMode = sap.m.MenuButtonMode;
 
-			sap.m.MessageToast.show("itemSelected: " + sItemPath);
-		};
-		var fnUseOnlyDefaultActionHandler = function(oEvent) {
-			sap.m.MessageToast.show("Default action is always the same");
-		};
-		var fnExampleHelpersHandler = function (oEvent) {
-			var oItem = oEvent.getParameter("item");
-			if (oItem && oItem.getText().indexOf("truncation") > -1) {
-				fnShrinkExampleButtons();
-			} else {
-				fnToggleExampleButtonsMode();
-			}
-		};
-		var fnGenerateMenu = function (sType) {
-			var oMenu;
-			switch (sType) {
-				case oMenuEnumeration.Simple:
-					oMenu = new sap.m.Menu({
-						title: "Meeting reply menu",
-						itemSelected: fnUseOnlyDefaultActionHandler,
-						items: [
-							new sap.m.MenuItem({
-								text: "Send the response now",
-								icon: "sap-icon://accept"
-							}),
-							new sap.m.MenuItem({
-								text: "Edit the response before sending",
-								icon: "sap-icon://accept"
-							}),
-							new sap.m.MenuItem({
-								text: "Do not send a response",
-								icon: "sap-icon://accept"
-							})
-						]
-					});
-					break;
-				case oMenuEnumeration.Nested:
-					oMenu = new sap.m.Menu({
-						title: "random 2",
-						itemSelected: fnDisplayMenuItemPathHandler,
-						items: [
-							new sap.m.MenuItem({
-								text: "fridge",
-								icon: "sap-icon://fridge",
-								items: [
-									new sap.m.MenuItem({
-										text: "accidental leave",
-										icon: "sap-icon://accidental-leave",
-										items: [
-											new sap.m.MenuItem({
-												icon: "sap-icon://factory",
-												text: "factory"
-											}),
-											new sap.m.MenuItem({
-												icon: "sap-icon://flag",
-												text: "flag"
-											}),
-											new sap.m.MenuItem({
-												icon: "sap-icon://flight",
-												text: "flight"
-											})
-										]
-									}),
-									new sap.m.MenuItem({
-										text: "iphone",
-										icon: "sap-icon://iphone",
-										items: [
-											new sap.m.MenuItem({
-												icon: "sap-icon://video",
-												text: "video"
-											}),
-											new sap.m.MenuItem({
-												icon: "sap-icon://loan",
-												text: "loan"
-											}),
-											new sap.m.MenuItem({
-												icon: "sap-icon://commission-check",
-												text: "commission check"
-											}),
-											new sap.m.MenuItem({
-												icon: "sap-icon://doctor",
-												text: "doctor"
-											})
-										]
-									})
-								]
-							}),
-							new sap.m.MenuItem({
-								text: "globe",
-								icon: "sap-icon://globe",
-								items: [
-									new sap.m.MenuItem({
-										text: "e-care",
-										icon: "sap-icon://e-care"
-									})
-								]
-							})
-						]
-					});
-					break;
-				case oMenuEnumeration.ExampleHelpers:
-					oMenu = new sap.m.Menu({
-						title: "Example actions menu",
-						itemSelected: fnExampleHelpersHandler,
-						items: [
-							new sap.m.MenuItem({
-								text: "Demonstrate text truncation",
-								icon: "sap-icon://resize"
-							}),
-							new sap.m.MenuItem({
-								text: "Toggle modes (split vs regular)",
-								icon: "sap-icon://accept"
-							})
-						]
-					});
-					break;
-				default:
-					jQuery.sap.log.error("Requested Menu is of wrong type");
-				break;
-			}
-			return oMenu;
-		};
-		var fnGenerateLabelledMenuButton = function (sLabelDescription, oButtonMode, oButtonType, sTooltip, sButtonText, sIconURI, bButtonUseDefault, fnDefaultHandler, oMenuType) {
-			var ID = "exampleMenuButton" + aExampleButtons.length;
-			var oMenuButtonLabel;
-			var oMenuButton = new sap.m.MenuButton(ID, {
-				buttonMode: oButtonMode,
-				icon: sIconURI && sIconURI.length ? sIconURI : "",
-				type: oButtonType ? oButtonType : "",
-				tooltip: sTooltip.length ? sTooltip : "",
-				text: sButtonText,
-				useDefaultActionOnly: bButtonUseDefault ? true : false,
-				menu: fnGenerateMenu(oMenuType)
-			});
+		function generateMenu() {
+			return new sap.m.Menu({
+				items: [
+					new sap.m.MenuItem({text: "First dummy item"}),
+					new sap.m.MenuItem({text: "Second dummy item"})
+				]
+			})
+		}
 
-			if (sLabelDescription.length) {
-				oMenuButtonLabel = new sap.m.Label({
-					text: sLabelDescription,
-					labelFor: ID
+		function getTitle(sText) {
+			return new sap.m.Title({
+				text: sText,
+				titleStyle: sap.ui.core.TitleLevel.H3
+			}).addStyleClass("sapUiMediumMarginTop")
+		}
+
+		function getText(sText) {
+			return new sap.m.Text({text: sText}).addStyleClass("sapUiSmallMarginTop");
+		}
+
+
+		// -----------------
+		// Layout sections
+		// -----------------
+
+		var oStandardRegularModeLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				getTitle("Standard - Regular mode "),
+
+				getText("Default:"),
+				new sap.m.MenuButton({ text: "Something", menu: generateMenu() }),
+
+				getText("Connected to a label:"),
+				new sap.m.Label({ text: "Label", labelFor: "standardRegularModeWithLabel" }),
+				new sap.m.MenuButton("standardRegularModeWithLabel", { text: "Something", menu: generateMenu() }),
+
+				getText("Using ariaLabelledBy:"),
+				new sap.m.Text("standardRegularLabelledBy", { text: "Label" }),
+				new sap.m.MenuButton({ text: "Something", ariaLabelledBy: "standardRegularLabelledBy", menu: generateMenu() }),
+
+				getText("Using ariaDescribedBy:"),
+				new sap.m.Text("standardRegularDescribedBy", { text: "Description" }),
+				new sap.m.MenuButton({ text: "Something", ariaLabelledBy: "standardRegularDescribedBy", menu: generateMenu() })
+			]
+		}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+		var oIconOnlyRegularMenuButtonsLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				getTitle("Icon only - Regular mode "),
+
+				getText("Default:"),
+				new sap.m.MenuButton({ icon: "sap-icon://add", menu: generateMenu() }),
+
+				getText("Connected to a label:"),
+				new sap.m.Label({ text: "Label", labelFor: "iconOnlyRegularModeWithLabel" }),
+				new sap.m.MenuButton("iconOnlyRegularModeWithLabel", { icon: "sap-icon://add", menu: generateMenu() }),
+
+				getText("Using ariaLabelledBy:"),
+				new sap.m.Text("iconOnlyRegularLabelledBy", { text: "Label" }),
+				new sap.m.MenuButton({ icon: "sap-icon://add", ariaLabelledBy: "iconOnlyRegularLabelledBy", menu: generateMenu() }),
+
+				getText("Using ariaDescribedBy:"),
+				new sap.m.Text("iconOnlyRegularDescribedBy", { text: "Description" }),
+				new sap.m.MenuButton({ icon: "sap-icon://add", ariaLabelledBy: "iconOnlyRegularDescribedBy", menu: generateMenu() })
+			]
+		}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+		var oStandardSplitModeLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				getTitle("Standard - Split mode "),
+
+				getText("Default:"),
+				new sap.m.MenuButton({ text: "Something", buttonMode: MenuButtonMode.Split, menu: generateMenu() }),
+
+				getText("Connected to a label:"),
+				new sap.m.Label({ text: "Label", labelFor: "standardSplitModeWithLabel" }),
+				new sap.m.MenuButton("standardSplitModeWithLabel", { text: "Something", buttonMode: MenuButtonMode.Split, menu: generateMenu() }),
+
+				getText("Using ariaLabelledBy:"),
+				new sap.m.Text("standardSplitLabelledBy", { text: "Label" }),
+				new sap.m.MenuButton({ text: "Something", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "standardSplitLabelledBy", menu: generateMenu() }),
+
+				getText("Using ariaDescribedBy:"),
+				new sap.m.Text("standardSplitDescribedBy", { text: "Description" }),
+				new sap.m.MenuButton({ text: "Something", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "standardSplitDescribedBy", menu: generateMenu() })
+			]
+		}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+		var oIconOnlySplitModeLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				getTitle("Icon only - Split mode "),
+
+				getText("Default:"),
+				new sap.m.MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, menu: generateMenu() }),
+
+				getText("Connected to a label:"),
+				new sap.m.Label({ text: "Label", labelFor: "standardSplitModeWithLabel" }),
+				new sap.m.MenuButton("iconOnlySplitModeWithLabel", { icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, menu: generateMenu() }),
+
+				getText("Using ariaLabelledBy:"),
+				new sap.m.Text("iconOnlySplitLabelledBy", { text: "Label" }),
+				new sap.m.MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "iconOnlySplitLabelledBy", menu: generateMenu() }),
+
+				getText("Using ariaDescribedBy:"),
+				new sap.m.Text("iconOnlySplitDescribedBy", { text: "Description" }),
+				new sap.m.MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "iconOnlySplitDescribedBy", menu: generateMenu() })
+			]
+		}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+		var oStandardRegularModeTypesLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				getTitle("Types: Standard - Regular mode "),
+
+				new sap.ui.layout.HorizontalLayout({
+					content: [
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Accept, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Reject, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Emphasized, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Critical, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Negative, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Success, menu: generateMenu() })
+					]
+				}).addStyleClass("sapUiSmallMarginTop")
+			]
+
+		}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+		var oIconOnlyRegularModeTypesLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				getTitle("Types: Icon only - Regular mode "),
+
+				new sap.ui.layout.HorizontalLayout({
+					content: [
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Accept, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Reject, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Emphasized, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Critical, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Negative, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Success, menu: generateMenu() })
+					]
+				}).addStyleClass("sapUiSmallMarginTop")
+			]
+
+		}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+		var oStandardSplitModeTypesLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				getTitle("Types: Standard - Split mode "),
+
+				new sap.ui.layout.HorizontalLayout({
+					content: [
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Accept, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Reject, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Emphasized, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Critical, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Negative, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ text: "Something", type: ButtonType.Success, buttonMode: MenuButtonMode.Split, menu: generateMenu() })
+					]
+				}).addStyleClass("sapUiSmallMarginTop")
+			]
+
+		}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+		var oIconOnlySplitModeTypesLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				getTitle("Types: Icon only - Regular mode "),
+
+				new sap.ui.layout.HorizontalLayout({
+					content: [
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Accept, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Reject, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Emphasized, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Critical, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Negative, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Success, buttonMode: MenuButtonMode.Split, menu: generateMenu() })
+					]
+				}).addStyleClass("sapUiSmallMarginTop")
+			]
+
+		}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+
+		// -----------------
+		// Final page
+		// -----------------
+
+		var oApp = new sap.m.App(),
+				oPage = new sap.m.Page({
+					title: "MenuButton ACC Test Page",
+					content: [
+						oStandardRegularModeLayout,
+						oIconOnlyRegularMenuButtonsLayout,
+						oStandardSplitModeLayout,
+						oIconOnlySplitModeLayout,
+						oStandardRegularModeTypesLayout,
+						oIconOnlyRegularModeTypesLayout,
+						oStandardSplitModeTypesLayout,
+						oIconOnlySplitModeTypesLayout
+					]
 				});
 
-			}
-			if (!sButtonText.length && !sIconURI.length) {
-				//enforce icon only mode when no text or icon is provided
-				oMenuButton.setIcon("sap-icon://notification");
-			}
-			if (fnDefaultHandler && typeof(fnDefaultHandler) === 'function') {
-				oMenuButton.attachDefaultAction(fnDefaultHandler);
-			}
-			aExampleButtons.push(oMenuButton);
-			return [oMenuButtonLabel, oMenuButton];
-		};
-		var fnShrinkExampleButtons = function () {
-			aExampleButtons.forEach(function (oMenuButton) {
-				var oButtonWidth = parseInt(oMenuButton.getWidth(), 10);
-				if (oButtonWidth < 250) {
-					oMenuButton.setWidth("250px");
-				} else {
-					oMenuButton.setWidth("100px");
-				}
-			});
-		};
-		var fnToggleExampleButtonsMode = function () {
-			aExampleButtons.forEach(function (oMenuButton) {
-				var oCurrentMode = oMenuButton.getButtonMode();
-				if (oCurrentMode == sap.m.MenuButtonMode.Regular) {
-					oMenuButton.setButtonMode(sap.m.MenuButtonMode.Split);
-				} else {
-					oMenuButton.setButtonMode(sap.m.MenuButtonMode.Regular);
-				}
-			});
-		};
-		var createExampleHelpers = function () {
-			return [
-				new sap.m.FlexBox({
-					fitContainer: true,
-					displayInline: true,
-					justifyContent: sap.m.FlexJustifyContent.End,
-					alignItems: sap.m.FlexAlignItems.Center,
-					items: [
-						new sap.m.Label({
-							labelFor: "settings-menubutton",
-							text: "Use this menu button to play around with the buttons in the example area"
-						}).addStyleClass("side-aligned"),
-						new sap.m.MenuButton("settings-menubutton", {
-							icon: "sap-icon://action-settings",
-							useDefaultActionOnly: false,
-							menu: fnGenerateMenu(oMenuEnumeration.ExampleHelpers)
-						})
-					]
-				})
-			];
-		};
-		var createSubHeaderContent = function () {
-			return new sap.m.Toolbar("subheader-toolbar", {
-				content: createExampleHelpers()
-			});
-		};
-		var createExampleContent = function () {
-			return [
-				new sap.m.VBox({
-					items: fnGenerateLabelledMenuButton("type: Default, tooltip, text, no icon, useDefaultActionOnly: true, no defaultAction", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Default, "additional tooltip", "No default action", null, true, null, oMenuEnumeration.Nested)
-				}),
-				new sap.m.VBox({
-					items: fnGenerateLabelledMenuButton("type: Default, no tooltip, text, icon, useDefaultActionOnly: false, no defaultAction", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Default, "", "No default action", "sap-icon://message-error", false, null, oMenuEnumeration.Nested)
-				}),
-				new sap.m.VBox({
-					items: fnGenerateLabelledMenuButton("type: Default, no tooltip, text, icon, useDefaultActionOnly: true, defaultAction", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Default, "", "Default action", "sap-icon://message-information", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Nested)
-				}),
-				new sap.m.VBox({
-					items: fnGenerateLabelledMenuButton("type: Default, no tooltip, text, no icon, useDefaultActionOnly: false, defaultAction", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Default, "", "Default action", null, false, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Nested)
-				}),
-				new sap.m.VBox({
-					items: fnGenerateLabelledMenuButton("type: Accept, tooltip, text, icon, useDefaultActionOnly: true, defaultAction", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Accept, "additional tooltip", "YES", "sap-icon://accept", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
-				}),
-				new sap.m.VBox({
-					items: fnGenerateLabelledMenuButton("type: Reject, tooltip, text, icon, useDefaultActionOnly: true, defaultAction", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Reject, "additional tooltip", "NO", "sap-icon://alert", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
-				}),
-				new sap.m.VBox({
-					items: fnGenerateLabelledMenuButton("type: Emphasized, tooltip, text, icon, useDefaultActionOnly: true, defaultAction", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Emphasized, "additional tooltip", "MAYBE", "sap-icon://question-mark", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
-				}),
-				new sap.m.VBox({
-					items: fnGenerateLabelledMenuButton("type: Transparent, tooltip, text, icon, useDefaultActionOnly: true, defaultAction", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Transparent, "additional tooltip", "NOT SURE", "sap-icon://question-mark", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
-				})
-			];
-		};
-		var createFooterContent = function () {
-			return new sap.m.Toolbar({
-				content: [
-					new sap.m.FlexBox({
-						items: fnGenerateLabelledMenuButton("", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Accept, "positive actions", "", "sap-icon://accept", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
-					}),
-					new sap.m.FlexBox({
-						items: fnGenerateLabelledMenuButton("", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Reject, "", "", "sap-icon://message-error", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
-					}),
-					new sap.m.FlexBox({
-						items: fnGenerateLabelledMenuButton("", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Emphasized, "additional actions", "", "sap-icon://alert", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
-					}),
-					new sap.m.FlexBox({
-						items: fnGenerateLabelledMenuButton("", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Transparent, "", "", "sap-icon://display", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
-					})
-				]
-			});
-		};
-
-		var oApp = new sap.m.App({
-			initialPage: "page0",
-			pages: [
-				new sap.m.Page("page0", {
-					title: "Accessibility demo page of sap.m.MenuButton",
-					subHeader: createSubHeaderContent(),
-					content: createExampleContent(),
-					footer: createFooterContent()
-				})
-			]
-		});
-
+		oApp.addPage(oPage);
 		oApp.placeAt("body");
 	</script>
 </head>

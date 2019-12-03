@@ -2112,6 +2112,120 @@ QUnit.module("Misc");
 	});
 
 	//================================================================================
+	// Month Button Label
+	//================================================================================
+
+	QUnit.module("Month Button Label");
+
+	QUnit.test("When months are 1 or 2, the label of first month button must contain only one month name", function (assert) {
+		// arrange
+		var oMP,
+			oLocaleData,
+			aMonthNames,
+			iSelectedMonth,
+			sSelectedMonth,
+			oStartDate,
+			oCal1 = new Calendar("Cal_1").placeAt("content"),
+			oCal2 = new Calendar("Cal_2",{ months: 2 }).placeAt("content");
+
+		// setup #1
+		iSelectedMonth = 7; // August
+		oMP = oCal1.getAggregation("monthPicker");
+		oLocaleData = oCal1._getLocaleData();
+		aMonthNames = oLocaleData.getMonthsStandAlone("wide", oCal1.getPrimaryCalendarType());
+		aMonthNames = aMonthNames.concat(aMonthNames); // just in case that some of the last monht is selected for start month
+		sSelectedMonth = aMonthNames[iSelectedMonth];
+
+		// act: click on month select button
+		qutils.triggerEvent("click", "Cal_1--Head-B1");
+		sap.ui.getCore().applyChanges();
+
+		// act: select a month (February)
+		oMP.setMonth(iSelectedMonth);
+		oCal1._selectMonth(oMP.getMonth());
+		sap.ui.getCore().applyChanges();
+
+		// assert setup #1
+		assert.equal(jQuery("#Cal_1--Head-B1").text(), sSelectedMonth, "One month calendar, " + sSelectedMonth + " selected, '" + sSelectedMonth + "' shown as label");
+
+		// setup #2 (This case will fail without the Gerrit change #4435753)
+		iSelectedMonth = 10; // November
+		oStartDate = new Date();
+		oStartDate.setMonth(iSelectedMonth);
+		oCal1.addAggregation("selectedDates", new DateRange({ startDate: oStartDate }));
+		oMP = oCal2.getAggregation("monthPicker");
+		oLocaleData = oCal2._getLocaleData();
+		aMonthNames = oLocaleData.getMonthsStandAlone("wide", oCal2.getPrimaryCalendarType());
+		aMonthNames = aMonthNames.concat(aMonthNames); // just in case that some of the last monht is selected for start month
+		sSelectedMonth = aMonthNames[iSelectedMonth];
+
+		// act: click on month select button
+		qutils.triggerEvent("click", "Cal_2--Head-B1");
+		sap.ui.getCore().applyChanges();
+
+		// act: select a month (February)
+		oMP.setMonth(iSelectedMonth);
+		oCal2._selectMonth(oMP.getMonth());
+		sap.ui.getCore().applyChanges();
+
+		// assert setup #2
+		assert.equal(jQuery("#Cal_2--Head-B1").text(), sSelectedMonth, "Two months calendar, " + sSelectedMonth + " selected, '" + sSelectedMonth + "' shown as label");
+
+		// cleanup
+		oMP.destroy();
+		oCal1.destroy();
+		oCal2.destroy();
+		oCal1 = null;
+		oCal2 = null;
+		oMP = null;
+	});
+
+	QUnit.test("When months are > 2, the label of first month button must contain 'start_month - end_month' names", function (assert) {
+		// arrange
+		var oCal,
+			oMP,
+			oLocaleData,
+			sPattern,
+			aMonthNames,
+			iMonthCount,
+			iStartMonth,
+			sStartMonth,
+			sText;
+
+		// setup
+		iMonthCount = 4;
+		iStartMonth = 11; // December
+		oCal = new Calendar("Cal",{ months: iMonthCount }).placeAt("content");
+		oMP = oCal.getAggregation("monthPicker");
+		oLocaleData = oCal._getLocaleData();
+		sPattern = oLocaleData.getIntervalPattern();
+		aMonthNames = oLocaleData.getMonthsStandAlone("wide", oCal.getPrimaryCalendarType());
+		aMonthNames = aMonthNames.concat(aMonthNames); // just in case that some of the last monht is selected for start month
+		sStartMonth = aMonthNames[iStartMonth];
+		sap.ui.getCore().applyChanges();
+		sText = sPattern.replace(/\{0\}/, aMonthNames[iStartMonth]).replace(/\{1\}/, aMonthNames[iStartMonth + iMonthCount - 1]);
+
+		// act: click on month select button
+		qutils.triggerEvent("click", "Cal--Head-B1");
+		sap.ui.getCore().applyChanges();
+
+		// act: select a month (February)
+		oMP.setMonth(iStartMonth);
+		oCal._selectMonth(oMP.getMonth());
+		sap.ui.getCore().applyChanges();
+
+		// assert setup
+		assert.equal(jQuery("#Cal--Head-B1").text(), sText, iMonthCount + " months calendar, " + sStartMonth + " selected, '" + sText + "' shown as label");
+
+		// cleanup
+		oMP.destroy();
+		oCal.destroy();
+		oMP = null;
+		oCal = null;
+		oLocaleData = null;
+	});
+
+	//================================================================================
 	// CalendarMonthInterval Accessibility
 	//================================================================================
 

@@ -723,11 +723,16 @@ function(
 	/**
 	 * Open the column menu.
 	 * @param {Object} [oDomRef] DOM reference of the element to which the menu should be visually attached. Fallback is the focused DOM reference.
-	 * @param {boolean} [bWithKeyboard=false] Indicates whether or not the first item shall be highlighted when the menu is opened.
+	 * @returns {boolean} Whether the menu was opened.
 	 * @private
 	 */
-	Column.prototype._openMenu = function(oDomRef, bWithKeyboard) {
+	Column.prototype._openMenu = function(oDomRef) {
 		var oMenu = this.getMenu();
+
+		if (!this._menuHasItems()) {
+			return false;
+		}
+
 		var bExecuteDefault = this.fireColumnMenuOpen({
 			menu: oMenu
 		});
@@ -739,7 +744,10 @@ function(
 				oDomRef = this.getDomRef();
 				oFocusDomRef = this.getFocusDomRef();
 			}
-			oMenu.open(!!bWithKeyboard, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef);
+			oMenu.open(null, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef);
+			return true;
+		} else {
+			return true; // We do not know whether the event handler opens a context menu or not, so we just assume it is done.
 		}
 	};
 

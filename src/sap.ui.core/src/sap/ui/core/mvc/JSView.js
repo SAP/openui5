@@ -69,7 +69,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oOptions An object containing the view configuration options.
 	 * @param {string} [oOptions.id] Specifies an ID for the view instance. If no ID is given, an ID will be generated.
-	 * @param {string} [oOptions.viewName] Name of the view. The view must be defined using <code>sap.ui.core.mvc.JSView.extend</code>.
+	 * @param {string} [oOptions.viewName] Name of the view. The view must still be defined using {@link sap.ui.jsview}.
 	 * @param {sap.ui.core.mvc.Controller} [oOptions.controller] Controller instance to be used for this view.
 	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
 	 * between multiple views is not supported.

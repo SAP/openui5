@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.TableDataState.Component", {
+	var Component = UIComponent.extend("sap.m.sample.StandardListItemInfoSateInverted.Component", {
 
 		metadata : {
 			manifest: "json"

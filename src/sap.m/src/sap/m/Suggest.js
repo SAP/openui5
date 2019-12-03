@@ -152,9 +152,11 @@ sap.ui.define(['jquery.sap.global', './Toolbar', './Button', './SuggestionsList'
 				bounce: false,
 				afterOpen: function () {
 					oInput.$("I").attr("aria-autocomplete","list").attr("aria-haspopup","true");
+					oInput._applySuggestionAcc();
 				},
 				beforeClose: function() {
-					oInput.$("I").attr("aria-haspopup","false").removeAttr("aria-activedecendant");
+					oInput.$("I").attr("aria-haspopup","false").removeAttr("aria-activedescendant");
+					oInput.$("SuggDescr").text("");
 				},
 				content: getList()
 			})
@@ -249,6 +251,7 @@ sap.ui.define(['jquery.sap.global', './Toolbar', './Button', './SuggestionsList'
 			window.clearTimeout(listUpdateTimeout);
 			if (this.isOpen()) { // redraw the list only if it is visible
 				listUpdateTimeout = window.setTimeout(list.update.bind(list), 50);
+				oInput._applySuggestionAcc();
 			}
 		};
 

@@ -2,7 +2,8 @@
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m"
 	xmlns:form="sap.ui.layout.form">
-	<Dialog title="{/text/dialogTitle}"
+	<Dialog id="sapUiRtaSettingsDialog"
+		title="{/text/dialogTitle}"
 		validationSuccess="onValidationSuccess"
 		validationError="onValidationError"
 		parseError="onValidationError"
@@ -13,10 +14,11 @@
 				labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4"
 				emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
 				columnsXL="2" columnsL="2" columnsM="2"
+				visible="{/section/visible}"
 				>
 				<form:content>
 					<Label text="{/text/newSectionLabel}"/>
-					<CheckBox selected="{path: '/asNewSection/selected', type: 'sap.ui.model.type.Boolean'}"/>
+					<CheckBox selected="{path: '/asNewSection/value', type: 'sap.ui.model.type.Boolean'}"/>
 					<Label text="{/text/nameLabel}"/>
 					<Input value="{path: '/sectionName/value', type: 'sap.ui.model.type.String', constraints: {minLength: 1}}"
 						valueState="{/sectionName/valueState}"/>
@@ -32,11 +34,15 @@
 					<Label text="{/text/widthLabel}"/>
 					<Input value="{path: '/frameWidth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
 						valueState="{/frameWidth/valueState}"/>
-					<Select selectedKey="{frameWidthUnit/selectedKey}"/>
-					<Label text="{/text/heigthLabel}"/>
-					<Input value="{path: '/frameHeigth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
-						valueState="{/frameHeigth/valueState}"/>
-					<Select selectedKey="{frameHeigthUnit/selectedKey}"/>
+					<Select selectedKey="{/frameWidthUnit/value}" items="{/unitsOfMeasure}">
+						<core:Item key="{name}" text="{name}" />
+					</Select>
+					<Label text="{/text/heightLabel}"/>
+					<Input value="{path: '/frameHeight/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
+						valueState="{/frameHeight/valueState}"/>
+					<Select selectedKey="{/frameHeightUnit/value}" items="{/unitsOfMeasure}">
+						<core:Item key="{name}" text="{name}" />
+					</Select>
 					<Label/>
 					<Text text="{/text/sizeWarning}"/>
 				</form:content>
@@ -55,6 +61,7 @@
 		</content>
 		<beginButton>
 			<Button
+				id="sapUiRtaSettingsDialogOKButton"
 				type="Emphasized"
 				text="{/text/OKText}"
 				press="onOKPress"
@@ -62,6 +69,7 @@
 		</beginButton>
 		<endButton>
 			<Button
+				id="sapUiRtaSettingsDialogCancelButton"
 				type="Transparent"
 				text="{/text/cancelText}"
 				press="onCancelPress"

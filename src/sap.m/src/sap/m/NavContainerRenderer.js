@@ -60,10 +60,14 @@ sap.ui.define([],
 			this.renderBeforeContent(oRm, oControl); // may be used by inheriting renderers
 		}
 
-		if (oContent) {
-			oContent.removeStyleClass("sapMNavItemHidden"); // In case the current page was hidden (the previous current page got removed)
-			oRm.renderControl(oContent);
-		}
+		oControl.getPages().forEach(function(oPage) {
+			if (oPage === oContent) {
+				oContent.removeStyleClass("sapMNavItemHidden"); // In case the current page was hidden (the previous current page got removed)
+				oRm.renderControl(oContent);
+			} else {
+				oRm.cleanupControlWithoutRendering(oPage);
+			}
+		});
 
 		oRm.close("div");
 

@@ -1336,7 +1336,7 @@ sap.ui.define([
 
 		//trigger loading of the node if it is deeper than our initial level expansion
 		if (oToggledNode.initiallyCollapsed && oToggledNode.childCount == undefined) {
-			this._loadChildren(oToggledNode, 0, this._iPageSize);
+			this._loadChildren(oToggledNode, 0, this._iPageSize + this._iThreshold);
 		} else {
 			this._propagateMagnitudeChange(oToggledNode.parent, oToggledNode.magnitude);
 		}

@@ -1,0 +1,24 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "dde36fe7ef0c6d1bb4381039f52fa4ded557cd03",
+        "type": "FIX",
+        "text": " sap.ui.rta: remove false styling from Add Fields Dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970623662"
+          }
+        ]
+      },
+      {
+        "id": "9f2dff5cc286e4880c3e0c55aa1d045590f23563",
+        "type": "FIX",
+        "text": " Move error messages to correct messagebundle",
+        "references": []
+      }
+    ]
+  }
+}

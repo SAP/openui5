@@ -288,6 +288,20 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Prevents highlighting call from the Suggestion Popover.
+		 * TODO: Delete that once the Suggestion Popover's filtering is adopted
+		 *
+		 * @private
+		 */
+		ComboBox.prototype._createSuggestionsPopover = function () {
+			var result = ComboBoxBase.prototype._createSuggestionsPopover.call(this, arguments);
+
+			result._bEnableHighlighting = false;
+
+			return result;
+		};
+
 		function fnSelectTextIfFocused(iStart, iEnd) {
 			if (document.activeElement === this.getFocusDomRef()) {
 				this.selectText(iStart, iEnd);
@@ -1147,7 +1161,8 @@ sap.ui.define([
 			var oDomRef = this.getFocusDomRef(),
 				oItem = this.getSelectedItem(),
 				oListItem = this.getListItem(oItem),
-				oSelectionRange = this._getSelectionRange();
+				oSelectionRange = this._getSelectionRange(),
+				isAndroidTablet = (this.isPlatformTablet() && Device.os.android);
 
 			this.closeValueStateMessage();
 
@@ -1162,7 +1177,10 @@ sap.ui.define([
 			// if there is a selected item, scroll and show the list
 			fnSelectedItemOnViewPort.call(this, true);
 
-			if (oItem && oSelectionRange.start === oSelectionRange.end && oSelectionRange.start > 1) {
+			/**
+			 * Some android devices such as Galaxy Tab 3 are not returning the correct selection of text fields
+			 */
+			if (!isAndroidTablet && oItem && oSelectionRange.start === oSelectionRange.end && oSelectionRange.start > 1) {
 				setTimeout(function() {
 					this.selectText(0, oSelectionRange.end);
 				}.bind(this), 0);

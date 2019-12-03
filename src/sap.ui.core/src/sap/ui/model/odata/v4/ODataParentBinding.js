@@ -401,7 +401,6 @@ sap.ui.define([
 		var that = this;
 
 		function updateDependents() {
-			// Do not fire a change event in ListBinding, there is no change in the list of contexts
 			return SyncPromise.all(that.getDependentBindings().map(function (oDependentBinding) {
 				return oDependentBinding.checkUpdateInternal();
 			}));

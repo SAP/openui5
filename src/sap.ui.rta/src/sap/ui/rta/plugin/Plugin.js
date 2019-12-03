@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
-	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/rta/util/hasStableId"
 ],
@@ -17,7 +16,6 @@ function(
 	ChangeRegistry,
 	OverlayRegistry,
 	OverlayUtil,
-	ElementOverlay,
 	JsControlTreeModifier,
 	hasStableId
 ) {
@@ -72,13 +70,20 @@ function(
 	BasePlugin.prototype.executeWhenVisible = function (oElementOverlay, fnCallback) {
 		var fnGeometryChangedCallback = function (oEvent) {
 			if (oEvent.getSource().getGeometry() && oEvent.getSource().getGeometry().visible) {
-				oElementOverlay.detachEvent('geometryChanged', fnGeometryChangedCallback, this);
+				oElementOverlay.detachEvent("geometryChanged", fnGeometryChangedCallback, this);
 				fnCallback();
 			}
 		};
 
-		if (!oElementOverlay.getGeometry() || !oElementOverlay.getGeometry().visible) {
-			oElementOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
+		var mOverlayGeometry = oElementOverlay.getGeometry();
+		if (
+			oElementOverlay.getElementVisibility()
+			&& (
+				!mOverlayGeometry
+				|| !mOverlayGeometry.visible
+			)
+		) {
+			oElementOverlay.attachEvent("geometryChanged", fnGeometryChangedCallback, this);
 		} else {
 			fnCallback();
 		}
@@ -98,7 +103,7 @@ function(
 				this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 			}
 		} else if (oParams.type === "afterRendering") {
-			if (this.getDesignTime().getStatus() === 'synced') {
+			if (this.getDesignTime().getStatus() === "synced") {
 				this.evaluateEditable([oOverlay], {onRegistration: false});
 			} else {
 				this.getDesignTime().attachEventOnce("synced", function () {
@@ -112,7 +117,7 @@ function(
 			aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 		} else if (oParams.type === "addOrSetAggregation") {
-			if (this.getDesignTime().getStatus() === 'synced') {
+			if (this.getDesignTime().getStatus() === "synced") {
 				aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 				this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 			} else {

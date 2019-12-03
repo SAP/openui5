@@ -317,10 +317,17 @@ function(
 			if (this._headerTitle) {
 				this._headerTitle.setLevel(this.getTitleLevel());
 			}
+
+			this._ensureNavButton(); // creates this._navBtn, if required
 		};
 
 		Page.prototype.onAfterRendering = function () {
 			setTimeout(this._adjustFooterWidth.bind(this), 10);
+			this.$().toggleClass("sapMPageBusyCoversAll", !this.getContentOnlyBusy());
+
+			// If contentOnlyBusy property is set, then the busy indicator should cover only the content area
+			// Otherwise all clicks in the footer, header and subheader might be suppressed
+			this._sBusySection = this.getContentOnlyBusy() ? 'cont' : null;
 		};
 
 		/**
@@ -375,8 +382,6 @@ function(
 			var sBackText = this.getNavButtonTooltip() || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PAGE_NAVBUTTON_TEXT"); // any other types than "Back" do not make sense anymore in Blue Crystal
 
 			if (!this._navBtn) {
-				var sNavButtonType = this.getNavButtonType();
-
 				this._navBtn = new Button(this.getId() + "-navButton", {
 					press: jQuery.proxy(function () {
 						this.fireNavButtonPress();
@@ -384,10 +389,11 @@ function(
 					}, this)
 				});
 
-				if (Device.os.android && sNavButtonType == ButtonType.Back) {
+				if (!Device.os.ios && this.getNavButtonType() == ButtonType.Back) {
+					// internal conversion from Back to Up for non-iOS platform
 					this._navBtn.setType(ButtonType.Up);
 				} else {
-					this._navBtn.setType(sNavButtonType);
+					this._navBtn.setType(this.getNavButtonType());
 				}
 			}
 
@@ -447,40 +453,6 @@ function(
 				$footer.toggleClass("sapUiHidden", !bShowFooter);
 			}
 
-			return this;
-		};
-
-		Page.prototype.setNavButtonType = function (sNavButtonType) {
-			this._ensureNavButton(); // creates this._navBtn, if required
-			if (!Device.os.ios && sNavButtonType == ButtonType.Back) {
-				// internal conversion from Back to Up for non-iOS platform
-				this._navBtn.setType(ButtonType.Up);
-			} else {
-				this._navBtn.setType(sNavButtonType);
-			}
-			this.setProperty("navButtonType", sNavButtonType, true);
-			return this;
-		};
-
-		Page.prototype.setNavButtonText = function (sText) {
-			this._ensureNavButton(); // creates this._navBtn, if required
-			this.setProperty("navButtonText", sText, true);
-			return this;
-		};
-
-		Page.prototype.setNavButtonTooltip = function (sText) {
-			this.setProperty("navButtonTooltip", sText, true);
-			this._ensureNavButton(); // creates this._navBtn, if required
-			return this;
-		};
-
-		Page.prototype.setIcon = function (sIconSrc) {
-			var sOldValue = this.getIcon();
-			if (sOldValue === sIconSrc) {
-				return this;
-			}
-
-			this.setProperty("icon", sIconSrc, true);
 			return this;
 		};
 
@@ -722,20 +694,6 @@ function(
 				this._oScroller.scrollToElement(oElement, iTime, aOffset);
 			}
 			return this;
-		};
-
-		Page.prototype.setContentOnlyBusy = function (bContentOnly) {
-			this.setProperty("contentOnlyBusy", bContentOnly, true); // no re-rendering
-			this.$().toggleClass("sapMPageBusyCoversAll", !bContentOnly);
-			return this;
-		};
-
-		Page.prototype.setBusy = function () {
-			// If contentOnlyBusy property is set, then the busy indicator should cover only the content area
-			// Otherwise all clicks in the footer, header and subheader might be suppressed
-			this._sBusySection = this.getContentOnlyBusy() ? 'cont' : null;
-
-			return Control.prototype.setBusy.apply(this, arguments);
 		};
 
 		Page.prototype.setCustomHeader = function(oHeader) {

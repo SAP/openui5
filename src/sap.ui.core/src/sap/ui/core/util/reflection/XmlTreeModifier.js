@@ -26,7 +26,7 @@ sap.ui.define([
 
 	"use strict";
 	/**
-	 * Static utility class to access XMLNodes like ManageObjects,
+	 * Static utility class to access XMLNodes like ManagedObjects,
 	 * inside this classes oControl usually means XML node.
 	 *
 	 * @namespace sap.ui.core.util.reflection.XmlTreeModifier

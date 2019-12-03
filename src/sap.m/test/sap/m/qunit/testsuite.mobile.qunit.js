@@ -853,6 +853,13 @@ sap.ui.define([
 					language: "en_GB"
 				}
 			},
+			PlanningCalendarHeader: {
+				title: "PlanningCalendarHeader - sap.m",
+				_alternativeTitle: "QUnit tests: sap.m.PlanningCalendarHeader",
+				ui5: {
+					libs: "sap.m, sap.ui.unified"
+				}
+			},
 			PlanningCalendarLegend: {
 				title: "PlanningCalendarLegend - sap.m",
 				_alternativeTitle: "QUnit tests: sap.m.PlanningCalendarLegend",

@@ -85,20 +85,20 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChange Change object to be completed
 	 * @param {object} oSpecificChangeInfo Must contain settings with IFrame properties to update
-	 * @param {object} oSpecificChangeInfo.settings IFrame settings
-	 * @param {string} oSpecificChangeInfo.settings.width Width
-	 * @param {string} oSpecificChangeInfo.settings.height Height
-	 * @param {string} oSpecificChangeInfo.settings.url Url
+	 * @param {object} oSpecificChangeInfo.content IFrame settings
+	 * @param {string} oSpecificChangeInfo.content.width Width
+	 * @param {string} oSpecificChangeInfo.content.height Height
+	 * @param {string} oSpecificChangeInfo.content.url Url
 	 * @ui5-restricted sap.ui.fl
 	 */
 	UpdateIFrame.completeChangeContent = function (oChange, oSpecificChangeInfo) {
 		var oChangeJson = oChange.getDefinition();
-		if (!oSpecificChangeInfo.settings || !Object.keys(oSpecificChangeInfo.settings).some(function (sProperty) {
+		if (!oSpecificChangeInfo.content || !Object.keys(oSpecificChangeInfo.content).some(function (sProperty) {
 			return aUpdatableProperties.indexOf(sProperty) !== -1;
 		})) {
 			throw new Error("oSpecificChangeInfo attribute required");
 		}
-		oChangeJson.settings = oSpecificChangeInfo.settings;
+		oChangeJson.settings = oSpecificChangeInfo.content;
 	};
 
 	return UpdateIFrame;

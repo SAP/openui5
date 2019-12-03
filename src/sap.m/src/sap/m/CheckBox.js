@@ -14,7 +14,8 @@ sap.ui.define([
 	'./CheckBoxRenderer',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	'sap/ui/core/LabelEnablement'
+	'sap/ui/core/LabelEnablement',
+	'sap/ui/core/message/MessageMixin'
 ],
 	function(
 		Label,
@@ -27,7 +28,8 @@ sap.ui.define([
 		CheckBoxRenderer,
 		jQuery,
 		KeyCodes,
-		LabelEnablement
+		LabelEnablement,
+		MessageMixin
 	) {
 	"use strict";
 
@@ -185,6 +187,13 @@ sap.ui.define([
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
 
 			/**
+			 * Defines the text that appears in the tooltip of the <code>CheckBox</code>. If this is not specified, a default text is shown from the resource bundle.
+			 * @since 1.74
+			 * @private
+			 */
+			valueStateText: { type: "string", group: "Misc", defaultValue: null, visibility: "hidden" },
+
+			/**
 			 * Determines whether the <code>CheckBox</code> is in display only state.
 			 *
 			 * When set to <code>true</code>, the <code>CheckBox</code> is not interactive, not editable, not focusable
@@ -244,6 +253,10 @@ sap.ui.define([
 
 	EnabledPropagator.call(CheckBox.prototype);
 
+	// Apply the message mixin so all Messages on the CheckBox will have additionalText property set to ariaLabelledBy's text of the CheckBox
+	// and have valueState property of the CheckBox set to the message type.
+	MessageMixin.call(CheckBox.prototype);
+
 	/**
 	 * Lifecycle Methods
 	 */
@@ -299,6 +312,10 @@ sap.ui.define([
 		oLabel.setTextAlign(sAlign);
 
 		return this;
+	};
+
+	CheckBox.prototype.setValueStateText = function(sText) {
+		return this.setProperty("valueStateText", sText);
 	};
 
 	CheckBox.prototype.setWrapping = function(bWrap) {

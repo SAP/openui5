@@ -357,6 +357,7 @@ sap.ui.define([
 				var oPropertyEditor = mPropertyEditor[1];
 
 				if (oPropertyEditor) {
+					oPropertyEditor.attachPropertyChange(this._onPropertyChange.bind(this));
 					this._mPropertyEditors[sPropertyName] = oPropertyEditor;
 					this.addAggregation("_propertyEditors", oPropertyEditor);
 				}
@@ -407,7 +408,6 @@ sap.ui.define([
 				});
 				oPropertyEditor.setModel(this._oContextModel, "_context");
 				oPropertyEditor.setModel(this._oI18nModel, "i18n");
-				oPropertyEditor.attachPropertyChange(this._onPropertyChanged.bind(this));
 				oPropertyEditor.setConfig(_merge({}, oPropertyConfig)); // deep clone to avoid editor modifications to influence the outer config
 
 				// TODO: control styling via editor properties?
@@ -469,7 +469,7 @@ sap.ui.define([
 		}
 	};
 
-	BaseEditor.prototype._onPropertyChanged = function (oEvent) {
+	BaseEditor.prototype._onPropertyChange = function (oEvent) {
 		var sPath = oEvent.getParameter("path");
 		var aParts = sPath.split("/");
 

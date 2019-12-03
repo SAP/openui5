@@ -8,6 +8,15 @@
 
   <documentation>Common basic controls, mainly intended for desktop scenarios</documentation>
 
+  <deprecation since="1.38">
+Instead of using this desktop-only library, applications should be built as responsive apps, using sap.m 
+(and other libraries). Some of the controls in sap.ui.commons.layout have been replaced by the new dedicated 
+layout library called sap.ui.layout, which runs on the same platforms as sap.m. Some of the old controls 
+have been made available again through the non-deprecated sap.ui.unified library (e.g. FileUploader, Menu), 
+which also runs on the same platforms as sap.m. Some concepts such as Accordion and Row Repeater have been 
+abandoned completely.
+  </deprecation>
+  
   <dependencies>
     <dependency>
       <libraryName>sap.ui.core</libraryName>

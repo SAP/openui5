@@ -28,6 +28,11 @@ sap.ui.define([
 	// shortcut for sap.m.AvatarShape
 	var AvatarShape = library.AvatarShape;
 
+	// shortcut for Accent colors keys only (from AvatarColor enum)
+	var AccentColors = Object.keys(AvatarColor).filter(function (sCurrColor) {
+		return sCurrColor.indexOf("Accent") !== -1;
+	});
+
 	/**
 	 * Constructor for a new <code>Avatar</code>.
 	 *
@@ -186,6 +191,9 @@ sap.ui.define([
 		// Property that determines if the created icon is going to be the default one
 		this._bIsDefaultIcon = true;
 		this._sImageFallbackType = null;
+
+		// Property holding the currently picked random background color of the avatar, if any
+		this._sPickedRandomColor = null;
 	};
 
 	Avatar.prototype.exit = function () {
@@ -195,6 +203,8 @@ sap.ui.define([
 		if (this._fnLightBoxOpen) {
 			this._fnLightBoxOpen = null;
 		}
+
+		this._sPickedRandomColor = null;
 	};
 
 	/**
@@ -461,6 +471,37 @@ sap.ui.define([
 				.addClass("sapFAvatar" + sFallBackType);
 
 		delete this.preloadedImage;
+	};
+
+	/**
+	 * Returns the actual background color.
+	 *
+	 * @returns {sap.m.AvatarColor} The actual background color
+	 * @private
+	 */
+	Avatar.prototype._getActualBackgroundColor = function() {
+		var sBackground = this.getBackgroundColor();
+
+		if (sBackground === AvatarColor.Random) {
+
+			// If the last time the "backgroundColor" property was "Random", we return the last rolled color.
+			// This is needed in order to prevent picking different colors on re-rendering
+			// of the control if the property keeps being "Random".
+			if (this._sPickedRandomColor) {
+				return this._sPickedRandomColor;
+			}
+
+			// Picking a random Accent property from the AvatarColor enum
+			// << 0 truncates the digits after the decimal (it's the same as Math.trunc())
+			sBackground = this._sPickedRandomColor = AvatarColor[AccentColors[AccentColors.length * Math.random() << 0]];
+		} else {
+			// In case the "backgroundColor" is different from "Random", we set the
+			// this._sPickedRandomColor to "null". This is needed in order to generate
+			// a new random color the next time "backgroundColor" is "Random".
+			this._sPickedRandomColor = null;
+		}
+
+		return sBackground;
 	};
 
 	return Avatar;

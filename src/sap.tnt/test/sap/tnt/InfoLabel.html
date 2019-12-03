@@ -44,7 +44,18 @@
 					{ text: "3.141592653589793238462643383279502884197169399375105820974944592307816406286", colorScheme: 5, renderMode: sap.tnt.RenderMode.Narrow },
 					{ text: "3.1415926535", colorScheme: 6, renderMode: sap.tnt.RenderMode.Narrow, width: "170px" },
 					{ colorScheme: 7 }
-				]
+				],
+				infoLabelsWithIcons: [
+					{ text: "color scheme 1", colorScheme: 1, icon: "sap-icon://cause"},
+					{ text: "color scheme 2", colorScheme: 2, icon: "sap-icon://add"},
+					{ text: "color scheme 3", colorScheme: 3, icon: ""},
+					{ text: "color scheme 4", colorScheme: 4, icon: "sap-icon://bubble-chart" },
+					{ text: "color scheme 5", colorScheme: 5, icon: "sap-icon://future" },
+					{ text: "color scheme 6", colorScheme: 6, icon: "sap-icon://upload-to-cloud" },
+					{ text: "color scheme 7", colorScheme: 7, icon: "sap-icon://hide" },
+					{ text: "color scheme 8", colorScheme: 8, icon: "sap-icon://key" },
+					{ colorScheme: 9, icon: "sap-icon://primary-key" }
+				],
 			};
 
 			var oModel = new sap.ui.model.json.JSONModel();
@@ -54,6 +65,7 @@
 
 			var oInfoLabelTemplate = new sap.tnt.InfoLabel({
 				text: "{text}",
+				icon: "{icon}",
 				colorScheme: "{colorScheme}",
 				renderMode: "{renderMode}",
 				width: "{width}",
@@ -114,6 +126,39 @@
 								colorScheme: 2
 							})
 						]
+					}),
+					new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Text({
+								text: "Doe",
+								width: "100%"
+							}),
+							new sap.m.Label({
+								text: "John",
+								width: "100%"
+							}),
+							new sap.tnt.InfoLabel({
+								colorScheme: 5,
+								icon: "sap-icon://upload-to-cloud"
+							})
+						]
+					}),
+					new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Text({
+								text: "Doe",
+								width: "100%"
+							}),
+							new sap.m.Label({
+								text: "John",
+								width: "100%"
+							}),
+							new sap.tnt.InfoLabel({
+								text: "home office",
+								colorScheme: 2,
+								icon: "sap-icon://upload-to-cloud"
+							})
+						]
 					})
 				]
 
@@ -136,7 +181,10 @@
 							new sap.m.Label({ text: "Availability" }),
 							new sap.tnt.InfoLabel({ text: "On vacation" }),
 							new sap.m.Label({ text: "Status" }),
-							new sap.tnt.InfoLabel()
+							new sap.tnt.InfoLabel(),
+							new sap.m.Label({ text: "Icon" }),
+							new sap.tnt.InfoLabel({text: "some text", icon: "sap-icon://add"}),
+							new sap.tnt.InfoLabel({icon: "sap-icon://add"})
 						]
 					}),
 					new sap.ui.layout.form.SimpleForm("form2", {
@@ -151,12 +199,22 @@
 							new sap.m.Label({ text: "Availability" }),
 							new sap.tnt.InfoLabel({ text: "at the office", displayOnly: true }),
 							new sap.m.Label({ text: "Status" }),
-							new sap.tnt.InfoLabel({ displayOnly: true })
+							new sap.tnt.InfoLabel({ displayOnly: true }),
+							new sap.m.Label({ text: "Icon" }),
+							new sap.tnt.InfoLabel({text: "some text", icon: "sap-icon://hide",  displayOnly: true}),
+							new sap.tnt.InfoLabel({icon: "sap-icon://hide",  displayOnly: true})
 						]
 					}),
 					new sap.m.VBox("vb1", {
 						items: {
 							path: "/infoLabels",
+							template: oInfoLabelTemplate
+						},
+						width: "200px"
+					}).addStyleClass("vBoxBorder"),
+					new sap.m.VBox("vb2", {
+						items: {
+							path: "/infoLabelsWithIcons",
 							template: oInfoLabelTemplate
 						},
 						width: "200px"

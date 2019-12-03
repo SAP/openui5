@@ -4,7 +4,7 @@
 
 // Provides helper sap.ui.table.TableDragAndDropExtension.
 sap.ui.define([
-	"./TableExtension", "sap/ui/table/utils/TableUtils", "sap/ui/core/library"
+	"./TableExtension", "./utils/TableUtils", "sap/ui/core/library"
 ], function(TableExtension, TableUtils, CoreLibrary) {
 	"use strict";
 

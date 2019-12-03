@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/base/BindingParser",
-	"sap/m/Input"
+	"sap/ui/base/BindingParser"
 ], function (
 	BasePropertyEditor,
-	BindingParser,
-	Input
+	BindingParser
 ) {
 	"use strict";
 
@@ -31,18 +29,16 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var StringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.stringEditor.StringEditor", {
-		constructor: function() {
-			BasePropertyEditor.prototype.constructor.apply(this, arguments);
-			this._oInput = new Input({value: "{value}"});
-			this._oInput.attachLiveChange(function(oEvent) {
-				if (this._validate()) {
-					this.firePropertyChange(this._oInput.getValue());
-				}
-			}.bind(this));
-			this.addContent(this._oInput);
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.stringEditor.StringEditor",
+		_onLiveChange: function() {
+			var oInput = this.getContent();
+			if (this._validate()) {
+				this.firePropertyChange(oInput.getValue());
+			}
 		},
 		_validate: function() {
-			var oValue = this._oInput.getValue();
+			var oInput = this.getContent();
+			var oValue = oInput.getValue();
 			var bInvalidBindingString = false;
 			try {
 				BindingParser.complexParser(oValue);
@@ -50,11 +46,11 @@ sap.ui.define([
 				bInvalidBindingString = true;
 			} finally {
 				if (bInvalidBindingString) {
-					this._oInput.setValueState("Error");
-					this._oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
+					oInput.setValueState("Error");
+					oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
 					return false;
 				} else {
-					this._oInput.setValueState("None");
+					oInput.setValueState("None");
 					return true;
 				}
 			}

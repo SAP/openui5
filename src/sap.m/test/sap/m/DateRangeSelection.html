@@ -27,10 +27,10 @@
 		var iEvent = 0;
 
 		function handleChange(oEvent) {
-			var oDRS = oEvent.oSource;
-			var sFrom = oEvent.getParameter("from");
-			var sTo = oEvent.getParameter("to");
-			var bValid = oEvent.getParameter("valid");
+			var oDRS = oEvent.oSource,
+				sFrom = oEvent.getParameter("from"),
+				sTo = oEvent.getParameter("to"),
+				bValid = oEvent.getParameter("valid");
 
 			iEvent++;
 
@@ -46,8 +46,9 @@
 		var oLegend;
 
 		function toggleSpecialDates(oEvent) {
-			var bPressed = oEvent.getParameter("pressed");
-			var oDRS = sap.ui.getCore().byId("DRS2");
+			var bPressed = oEvent.getParameter("pressed"),
+				oDRS = sap.ui.getCore().byId("DRS2");
+
 			if (!sap.ui.unified.DateTypeRange) {
 				sap.ui.getCore().loadLibrary("sap.ui.unified");
 				jQuery.sap.require("sap.ui.unified.library");
@@ -115,6 +116,15 @@
 
 				new sap.m.Label({text: "DateRangeSelection with minDate=2016-01-01 and maxDate=2016-12-31", labelFor: "DRS7"}),
 				new sap.m.DateRangeSelection("DRS7", { minDate: new Date("2016", "0", "01"), maxDate: new Date("2016", "11", "31"), change: handleChange }),
+
+				new sap.m.Label({text: "DateRangeSelection with displayFormat=\"yyyy-MM\"", labelFor: "DRS8"}),
+				new sap.m.DateRangeSelection("DRS8", { displayFormat: "yyyy-MM", change: handleChange}),
+
+				new sap.m.Label({text: "DateRangeSelection with displayFormat=\"yyyy-MM\"", labelFor: "DRS8"}),
+				new sap.m.DateRangeSelection("DRS9", { displayFormat: "yyyy-MM", change: handleChange, dateValue: new Date("2019", "5", "1"), secondDateValue: new Date("2019", "10", "1")}),
+
+				new sap.m.Label({text: "DateRangeSelection with displayFormat=\"yyyy\"", labelFor: "DRS9"}),
+				new sap.m.DateRangeSelection("DRS10", { displayFormat: "yyyy", change: handleChange }),
 
 				new sap.m.Text({width: "100%"}), new sap.m.Text({width: "100%"}),
 				new sap.m.Text({width: "100%"}), new sap.m.Text({width: "100%"}), // 6 empty lines

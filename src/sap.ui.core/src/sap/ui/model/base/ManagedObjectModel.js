@@ -61,16 +61,16 @@ sap.ui.define([
 	}
 
 	/**
-	 * Traverse in the recorded node stack of an object retrievel to tha last used
-	 * managed object in oder to be able to get the value/binding to use this
-	 * for further retrietment
-	 * @param aNodeStack
-	 * @returns {array} an array containing:
+	 * Traverses the recorded node stack of an object retrieval to the last used
+	 * managed object to get the value/binding to use this for further treatment.
+	 *
+	 * @param {Object[]} aNodeStack
+	 * @returns {array} An array containing:
 	 * <ul>
 	 *     <li>the last managed object</li>
 	 *     <li>a map with the value of the last direct child and its path</li>
 	 *     <li>an array of the remaining parts in the traversal</li>
-	 *     <li>a string that represents the reimaining path from the last managed object to the value</li>
+	 *     <li>a string that represents the remaining path from the last managed object to the value</li>
 	 *  </ul>
 	 *
 	 */
@@ -91,8 +91,8 @@ sap.ui.define([
 	/**
 	 * Serialize the object to a string to support change detection
 	 *
-	 * @param vObject
-	 * @returns {string} a serialization of the object to a string
+	 * @param {Object} vObject
+	 * @returns {string} A serialization of the object to a string
 	 * @private
 	 */
 	function _stringify(vObject) {
@@ -495,11 +495,11 @@ sap.ui.define([
 	/**
 	 * Returns the object for a given path and/or context, if exists.
 	 *
-	 * @type sap.ui.base.ManagedObject
+	 * Private for now, might become public later.
 	 * @param {string} sPath the path
 	 * @param {string} [oContext] the context
-	 * @returns The object for a given path and/or context, if exists, <code>null</code> otherwise.
-	 * @private Might become public later
+	 * @returns {sap.ui.base.ManagedObject} The object for a given path and/or context, if exists, <code>null</code> otherwise.
+	 * @private
 	 */
 	ManagedObjectModel.prototype.getManagedObject = function (sPath, oContext) {
 		if (sPath instanceof Context) {
@@ -516,8 +516,7 @@ sap.ui.define([
 	/**
 	 * Returns the managed object that is the basis for this model.
 	 *
-	 * @type sap.ui.base.ManagedObject
-	 * @returns The managed object that is basis for the model
+	 * @returns {sap.ui.base.ManagedObject} The managed object that is basis for the model
 	 * @private
 	 */
 	ManagedObjectModel.prototype.getRootObject = function () {

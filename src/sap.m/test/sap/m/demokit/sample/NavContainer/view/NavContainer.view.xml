@@ -95,6 +95,7 @@
 			</Button>
 			<Select id="animationSelect">
 				<core:Item text="Slide animation" key="slide" />
+				<core:Item text="Base slide animation" key="baseSlide" />
 				<core:Item text="Fade animation" key="fade" />
 				<core:Item text="Flip animation" key="flip" />
 				<core:Item text="Show animation" key="show" />

@@ -40,7 +40,9 @@
 					"Component.js",
 					"FormattedText.fragment.xml",
 					"Helper.js",
-					"Main.view.xml"
+					"Main.view.xml",
+					"SandboxModel.js",
+ 					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},
@@ -62,13 +64,10 @@
 				"settings" : {
 					"autoExpandSelect" : true,
 					"synchronizationMode" : "None"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.ListBindingTemplate.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
-		},
-		"rootView" : {
-			"async" : true,
-			"type" : "XML",
-			"viewName" : "Main.view.xml"
 		}
 	}
 }

@@ -272,8 +272,10 @@ html[data-sap-ui-browser='ie11'] .sapMListTblNavigatedCell > .sapMLIBNavigated {
 	vertical-align: middle;
 }
 
-/* background-clip is required for Edge browser as the focus outline of the item below the sticky column headers was not visible on all sides */
-html[data-sap-ui-browser^='ed'] .sapMTableTH {
+/* background-clip is required for Edge browser, so the focus outline of the first item is visible on all sides */
+/* backgound-clip is required in other browsers, so that focus outline is visible on all sides of the header row */
+html[data-sap-ui-browser^='ed'] .sapMTableTH,
+.sapMSticky .sapMListTblHeader:focus > .sapMTableTH {
 	background-clip: padding-box;
 }
 

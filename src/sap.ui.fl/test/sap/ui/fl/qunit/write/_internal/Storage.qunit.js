@@ -262,8 +262,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with a failing connector", function (assert) {
-			var oLrepConnectorLoadFeaturesStub = sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({response: {isKeyUser : true}});
-			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(WritePersonalizationConnector, "loadFeatures").resolves({response: {isVariantSharingEnabled : false}});
+			var oLrepConnectorLoadFeaturesStub = sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({isKeyUser : true});
+			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(WritePersonalizationConnector, "loadFeatures").resolves({isVariantSharingEnabled : false});
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
@@ -319,8 +319,12 @@ sap.ui.define([
 				{connector: "JsObjectConnector"}
 			]);
 
-			sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({response: {isKeyUser: true}});
-			sandbox.stub(JsObjectConnector, "loadFeatures").resolves({response: {system: "foo"}});
+			sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({
+				isKeyUser: true
+			});
+			sandbox.stub(JsObjectConnector, "loadFeatures").resolves({
+				system: "foo"
+			});
 
 			return Storage.loadFeatures().then(function (mFeatures) {
 				assert.equal(mFeatures.isKeyUser, true, "the property of the LrepConnector was added");

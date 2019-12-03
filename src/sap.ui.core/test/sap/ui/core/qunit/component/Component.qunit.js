@@ -177,6 +177,29 @@ sap.ui.define([
 		assert.equal(oComponent.getComponentData().foo, "bar", "Component data is correct");
 	});
 
+	QUnit.test("Create instance without factory", function(assert) {
+
+		var oComponent = new TestComp1();
+
+		assert.equal(oComponent.getMetadata(), TestComp1.getMetadata(), "getMetadata returns static Metadata");
+		assert.equal(oComponent.getManifest(), TestComp1.getMetadata().getManifest(), "getManifest returns static Metadata manifest");
+
+		oComponent.destroy();
+	});
+
+	QUnit.test("getEventBus", function(assert) {
+
+		var oComponent = new TestComp1();
+
+		assert.equal(oComponent._oEventBus, undefined, "No EventBus available by default");
+
+		var oEventBus = oComponent.getEventBus();
+		assert.ok(oEventBus.isA("sap.ui.core.EventBus"), "getEventBus returns an EventBus instance");
+		assert.equal(oComponent._oEventBus, oComponent.getEventBus(), "EventBus instance is stored as private property");
+
+		oComponent.destroy();
+	});
+
 	QUnit.module("Factory Error Handling");
 
 	QUnit.test("Component.js error handling (manifestFirst)", function(assert) {
@@ -1475,6 +1498,44 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Component.create - Async creation of component usage via usageId", function(assert) {
+
+		var done = (function() {
+			var asyncDone = assert.async();
+			return function cleanup(oComponent, oSpy) {
+				oSpy.restore();
+				oComponent.destroy();
+				asyncDone();
+			};
+		})();
+
+		Component.create({
+			name : "my.usage",
+			manifest: false
+		}).then(function (oComponent) {
+			var oSpy = sinon.spy(Component, "create");
+
+			sap.ui.require([
+				"my/used/Component"
+			], function(UsedComponent) {
+
+				oComponent.createComponent("myUsage").then(function(oComponentUsage) {
+					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
+					assert.equal(Component.getOwnerIdFor(oComponentUsage), oComponent.getId(), "ComponentUsage must be created with the creator Component as owner");
+					assert.equal(oSpy.callCount, 1, "Nested component created with instance factory function");
+					assert.equal(oSpy.args[0][0].async, true, "Nested component created with config 'async: true'");
+					done(oComponent, oSpy);
+				}).catch(function(oError) {
+					assert.ok(false, "createComponent must not be failing!");
+					done(oComponent, oSpy);
+				});
+
+			});
+		});
+
+	});
+
 	QUnit.test("Sync creation of component usage", function(assert) {
 
 		var oComponent = sap.ui.component({
@@ -1804,6 +1865,98 @@ sap.ui.define([
 				"Passing asyncHints with final URL should register final resourceRoot");
 
 		});
+	});
+
+
+	QUnit.module("Window Event Handler", {
+		beforeEach: function() {
+			this.jQueryBindSpy = this.spy(jQuery.prototype, "bind");
+			this.jQueryUnbindSpy = this.spy(jQuery.prototype, "unbind");
+		}
+	});
+
+	QUnit.test("onWindowError", function(assert) {
+		var MyOnWindowErrorComponent = Component.extend("test.onWindowError.Component");
+
+		MyOnWindowErrorComponent.prototype.onWindowError = sinon.stub();
+
+		this.oComponent = new MyOnWindowErrorComponent();
+
+		assert.equal(typeof this.oComponent._fnWindowErrorHandler, "function", "Handler has been created");
+		sinon.assert.calledWithExactly(this.jQueryBindSpy, "error", this.oComponent._fnWindowErrorHandler);
+		assert.equal(this.jQueryBindSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
+
+		this.oComponent._fnWindowErrorHandler({
+			originalEvent: {
+				message: "Some error",
+				filename: "foo.js",
+				lineno: 123
+			}
+		});
+		sinon.assert.calledOnce(this.oComponent.onWindowError);
+		sinon.assert.calledWithExactly(this.oComponent.onWindowError,
+			"Some error", "foo.js", 123);
+
+
+		var handler = this.oComponent._fnWindowErrorHandler;
+
+		this.oComponent.destroy();
+
+		assert.equal(this.oComponent._fnWindowErrorHandler, undefined, "Handler has been removed");
+		sinon.assert.calledWithExactly(this.jQueryUnbindSpy, "error", handler);
+		assert.equal(this.jQueryUnbindSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
+	});
+
+	QUnit.test("onWindowBeforeUnload", function(assert) {
+		var MyOnWindowBeforeUnloadComponent = Component.extend("test.onWindowBeforeUnload.Component");
+
+		MyOnWindowBeforeUnloadComponent.prototype.onWindowBeforeUnload = sinon.stub();
+
+		this.oComponent = new MyOnWindowBeforeUnloadComponent();
+
+		assert.equal(typeof this.oComponent._fnWindowBeforeUnloadHandler, "function", "Handler has been created");
+		sinon.assert.calledWithExactly(this.jQueryBindSpy, "beforeunload", this.oComponent._fnWindowBeforeUnloadHandler);
+		assert.equal(this.jQueryBindSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
+
+		var oFakeEvent = {};
+		this.oComponent._fnWindowBeforeUnloadHandler(oFakeEvent);
+		sinon.assert.calledOnce(this.oComponent.onWindowBeforeUnload);
+		sinon.assert.calledWithExactly(this.oComponent.onWindowBeforeUnload, oFakeEvent);
+
+
+		var handler = this.oComponent._fnWindowBeforeUnloadHandler;
+
+		this.oComponent.destroy();
+
+		assert.equal(this.oComponent._fnWindowBeforeUnloadHandler, undefined, "Handler has been removed");
+		sinon.assert.calledWithExactly(this.jQueryUnbindSpy, "beforeunload", handler);
+		assert.equal(this.jQueryUnbindSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
+	});
+
+	QUnit.test("onWindowUnload", function(assert) {
+		var MyOnWindowUnloadComponent = Component.extend("test.onWindowUnload.Component");
+
+		MyOnWindowUnloadComponent.prototype.onWindowUnload = sinon.stub();
+
+		this.oComponent = new MyOnWindowUnloadComponent();
+
+		assert.equal(typeof this.oComponent._fnWindowUnloadHandler, "function", "Handler has been created");
+		sinon.assert.calledWithExactly(this.jQueryBindSpy, "unload", this.oComponent._fnWindowUnloadHandler);
+		assert.equal(this.jQueryBindSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
+
+		var oFakeEvent = {};
+		this.oComponent._fnWindowUnloadHandler(oFakeEvent);
+		sinon.assert.calledOnce(this.oComponent.onWindowUnload);
+		sinon.assert.calledWithExactly(this.oComponent.onWindowUnload, oFakeEvent);
+
+
+		var handler = this.oComponent._fnWindowUnloadHandler;
+
+		this.oComponent.destroy();
+
+		assert.equal(this.oComponent._fnWindowUnloadHandler, undefined, "Handler has been removed");
+		sinon.assert.calledWithExactly(this.jQueryUnbindSpy, "unload", handler);
+		assert.equal(this.jQueryUnbindSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
 	});
 
 	QUnit.module("Component Registry", {

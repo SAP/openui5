@@ -1,77 +1,50 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([],
+sap.ui.define(
+	[],
 	function() {
-	"use strict";
+		"use strict";
 
+		/**
+		 * BusyIndicator renderer.
+		 * @namespace
+		 */
+		var BusyIndicatorRenderer = {
+			apiVersion: 2
+		};
 
-	/**
-	 * BusyIndicator renderer.
-	 * @namespace
-	 */
-	var BusyIndicatorRenderer = {
-	};
+		/**
+		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
+		 * @param {sap.ui.core.Control} oBusyInd an object representation of the control that should be rendered
+		 */
+		BusyIndicatorRenderer.render = function(oRm, oBusyInd) {
+			var sTooltip = oBusyInd.getTooltip_AsString();
 
+			oRm.openStart("div", oBusyInd).class("sapMBusyIndicator");
+			oRm.style("font-size", oBusyInd.getSize());
+			oRm.accessibilityState(oBusyInd);
 
-	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oBusyInd an object representation of the control that should be rendered
-	 */
-	BusyIndicatorRenderer.render = function (oRm, oBusyInd) {
-		this.startBusyIndicator(oRm, oBusyInd);
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
+			}
 
-		this.renderBusyIndication(oRm, oBusyInd);
+			oRm.openEnd();
 
-		this.renderLabel(oRm, oBusyInd);
+			if (oBusyInd.getCustomIcon()) {
+				oRm.renderControl(oBusyInd._iconImage);
+			} else {
+				oRm.openStart("div", oBusyInd.getId() + "-busy-area");
+				oRm.class("sapMBusyIndicatorBusyArea").openEnd().close("div");
+			}
 
-		this.endBusyIndicator(oRm);
-	};
+			if (oBusyInd._busyLabel) {
+				oRm.renderControl(oBusyInd._busyLabel);
+			}
+			oRm.close("div");
+		};
 
-	BusyIndicatorRenderer.startBusyIndicator = function (oRm, oBusyInd) {
-		oRm.write("<div ");
-		oRm.writeControlData(oBusyInd);
-
-		oRm.addClass("sapMBusyIndicator");
-		oRm.writeClasses();
-
-		oRm.addStyle("font-size", oBusyInd.getSize());
-		oRm.writeStyles();
-
-		oRm.writeAccessibilityState(oBusyInd);
-		this.renderTooltip(oRm, oBusyInd.getTooltip_AsString());
-
-		oRm.write(">");
-	};
-
-	BusyIndicatorRenderer.renderTooltip = function (oRm, sTooltip) {
-		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
-		}
-	};
-
-	BusyIndicatorRenderer.renderBusyIndication = function (oRm, oBusyInd) {
-		if (oBusyInd.getCustomIcon()) {
-			oRm.renderControl(oBusyInd._iconImage);
-		} else {
-			oRm.write("<div class='sapMBusyIndicatorBusyArea'");
-			oRm.writeAttribute("id", oBusyInd.getId() + "-busy-area");
-			oRm.write("></div>");
-		}
-	};
-
-	BusyIndicatorRenderer.renderLabel = function (oRm, oBusyInd) {
-		if (oBusyInd.getText()) {
-			oRm.renderControl(oBusyInd._busyLabel);
-		}
-	};
-
-	BusyIndicatorRenderer.endBusyIndicator = function (oRm) {
-		oRm.write("</div>");
-	};
-
-	return BusyIndicatorRenderer;
-
-}, /* bExport= */ true);
+		return BusyIndicatorRenderer;
+	},	/* bExport= */ true );

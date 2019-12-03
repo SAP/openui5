@@ -783,10 +783,13 @@
 @sapUiShadowLevel1: 0 0 0 0.0625rem fade(@sapUiContentShadowColor, 15), 0 0.125rem 0.5rem 0 fade(@sapUiContentShadowColor, 30);
 @sapUiShadowLevel2: 0 0 0 0.0625rem fade(@sapUiContentShadowColor, 15), 0 0.625rem 1.875rem 0 fade(@sapUiContentShadowColor, 30);
 @sapUiShadowLevel3: 0 0 0 0.0625rem fade(@sapUiContentShadowColor, 15), 0 1.25rem 5rem 0 fade(@sapUiContentShadowColor, 30);
-@sapUiShadowText: 0 0 0.125rem @sapUiContentContrastShadowColor;
+@sapUiShadowText: none;
 @sapUiShadowHeader: 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiObjectHeaderBorderColor;
 
 //images for shell
 @sapUiUx3ShellHeaderImageURL: ~"";
 
 @sapUiUx3ShellApplicationImageURL: @sapUiGlobalLogo;			// "Quick"
+
+// Title Alignment to start (left or right) or center (default) for Dialogs, Message Boxes, Popover, Page, etc.; possible values: 'start' or 'center'
+@sapMTitleAlignment: Start;

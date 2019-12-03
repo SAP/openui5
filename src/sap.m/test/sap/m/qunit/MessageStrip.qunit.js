@@ -411,13 +411,8 @@ sap.ui.define([
 			linkDom = link.getDomRef(),
 			labelledBy = linkDom.getAttribute("aria-labelledby");
 
-			if (Device.browser.msie) {
-				assert.strictEqual(labelledBy, this.oMessageStrip.getId(),
-					"link aria-labelledby should point to the MessageStrip id");
-			} else {
-				assert.strictEqual(labelledBy, this.oMessageStrip.getId() + " " + link.getId(),
-					"link aria-labelledby should point to the MessageStrip and Link id");
-			}
+			assert.strictEqual(labelledBy, this.oMessageStrip.getId() + " " + link.getId(),
+				"link aria-labelledby should point to the MessageStrip and Link id");
 	});
 
 	QUnit.test("When we have a close button it should have an aria-labelledby attribute", function (assert) {

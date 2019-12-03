@@ -45,6 +45,9 @@ sap.ui.define([
 	 * On narrow screens for phones (or tablet devices in portrait mode), the master list and the details are split into two separate pages.
 	 *
 	 * The user can navigate between the list and details, and see all the available information for each area.
+	 *
+	 * <b>Note:</b> The SplitApp should be used only as a root element of an application. It cannot be used as a child
+	 * control of some container.
 	 * @extends sap.m.SplitContainer
 	 *
 	 * @author SAP SE
@@ -155,18 +158,15 @@ sap.ui.define([
 
 		var ref = this.getDomRef().parentNode;
 		// set all parent elements to 100% height this *should* be done by the application in CSS, but people tend to forget it...
-		if (ref && !ref._sapui5_heightFixed) {
-			ref._sapui5_heightFixed = true;
-			while (ref && ref !== document.documentElement) {
-				var $ref = jQuery(ref);
-				if ($ref.attr("data-sap-ui-root-content")) { // Shell as parent does this already
-					break;
-				}
-				if (!ref.style.height) {
-					ref.style.height = "100%";
-				}
-				ref = ref.parentNode;
+		while (ref && ref !== document.documentElement) {
+			var $ref = jQuery(ref);
+			if ($ref.attr("data-sap-ui-root-content")) { // Shell as parent does this already
+				break;
 			}
+			if (!ref.style.height) {
+				ref.style.height = "100%";
+			}
+			ref = ref.parentNode;
 		}
 	};
 

@@ -1,9 +1,10 @@
 /*global QUnit*/
 sap.ui.define([
-    "sap/ui/test/selectors/_LabelFor",
+    "sap/ui/test/selectors/_ControlSelectorGenerator",
     "sap/m/Label",
-    "sap/m/Input"
-], function (_LabelFor, Label, Input) {
+    "sap/m/Input",
+    "sap/ui/thirdparty/jquery"
+], function (_ControlSelectorGenerator, Label, Input, $) {
     "use strict";
 
     QUnit.module("_LabelFor", {
@@ -25,14 +26,18 @@ sap.ui.define([
     });
 
     QUnit.test("Should generate selector for control with associated label", function (assert) {
-        var oLabelFor = new _LabelFor();
-        var mSelector = oLabelFor.generate(this.oInputWithLabel);
-        assert.strictEqual(mSelector.labelFor.text, "myLabel", "Should generate selector with the label text");
+        var fnDone = assert.async();
+        _ControlSelectorGenerator._generate({control: this.oInputWithLabel})
+            .then(function (mSelector) {
+                assert.strictEqual(mSelector.labelFor.text, "myLabel", "Should generate selector with the label text");
+            }).finally(fnDone);
     });
 
     QUnit.test("Should not generate selector for control with no labels", function (assert) {
-        var oLabelFor = new _LabelFor();
-        var mSelector = oLabelFor.generate(this.oInput);
-        assert.ok(!mSelector, "Should not generate selector");
+        var fnDone = assert.async();
+        _ControlSelectorGenerator._generate({control: this.oInput, shallow: true})
+            .catch(function (oError) {
+                assert.ok(oError.message.match(/Could not generate a selector for control/), "Should not generate selector");
+            }).finally(fnDone);
     });
 });

@@ -1192,6 +1192,8 @@ function(
 	 * <code>undefined</code> is returned.
 	 *
 	 * @return {string} Name of the default aggregation
+	 * @public
+	 * @since 1.73
 	 */
 	ManagedObjectMetadata.prototype.getDefaultAggregationName = function() {
 		return this._sDefaultAggregation;
@@ -1204,6 +1206,8 @@ function(
 	 * info object for the default aggregation of the parent class is returned.
 	 *
 	 * @return {Object} An info object for the default aggregation
+	 * @public
+	 * @since 1.73
 	 */
 	ManagedObjectMetadata.prototype.getDefaultAggregation = function() {
 		return this.getAggregation();

@@ -307,7 +307,14 @@ function(
 						type: "boolean",
 						group: "Behavior",
 						defaultValue: false
-					}
+					},
+					/**
+					 * Indicates that user input is required. This property is only needed for accessibility purposes when a single relationship between
+					 * the field and a label (see aggregation <code>labelFor</code> of <code>sap.m.Label</code>) cannot be established
+					 * (e.g. one label should label multiple fields).
+					 * @since 1.74
+					 */
+					required : {type : "boolean", group : "Misc", defaultValue : false}
 				},
 				defaultAggregation : "items",
 				aggregations: {

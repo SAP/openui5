@@ -505,25 +505,43 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	//TODO $AnnotationPath, $NavigationPropertyPath
-	["$Path", "$PropertyPath"].forEach(function (sProperty) {
-		var oRawValue = {};
+["$Name", "$Path", "$PropertyPath"].forEach(function (sProperty) {
+	var oRawValue = {};
 
-		oRawValue[sProperty] = "foo";
+	oRawValue[sProperty] = "foo";
 
-		QUnit.test("expression: " + JSON.stringify(oRawValue), function (assert) {
-			var oPathValue = {value : oRawValue},
-				oSubPathValue = {},
-				oResult = {/*SyncPromise*/};
+	QUnit.test("expression: " + JSON.stringify(oRawValue), function (assert) {
+		var oPathValue = {value : oRawValue},
+			oSubPathValue = {},
+			oResult = {/*SyncPromise*/};
 
-			this.mock(Basics).expects("descend")
-				.withExactArgs(sinon.match.same(oPathValue), sProperty)
-				.returns(oSubPathValue);
-			this.mock(Expression).expects("path")
-				.withExactArgs(sinon.match.same(oSubPathValue))
-				.returns(oResult);
+		this.mock(Basics).expects("descend")
+			.withExactArgs(sinon.match.same(oPathValue), sProperty)
+			.returns(oSubPathValue);
+		this.mock(Expression).expects("path")
+			.withExactArgs(sinon.match.same(oSubPathValue))
+			.returns(oResult);
 
-			assert.strictEqual(Expression.expression(oPathValue), oResult);
-		});
+		assert.strictEqual(Expression.expression(oPathValue), oResult);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("expression: error for $LabeledElement", function (assert) {
+		var oError = new SyntaxError(),
+			oPathValue = {
+				value : {
+					$LabeledElement: {/**/},
+					$Name: "Team"
+				}
+			};
+
+		this.mock(Basics).expects("error")
+			.withExactArgs(sinon.match.same(oPathValue), "Unsupported OData expression",
+				sAnnotationHelper)
+			.throws(oError);
+
+		assertRejected(assert, Expression.expression(oPathValue), oError);
 	});
 
 	//*********************************************************************************************

@@ -1,8 +1,8 @@
 /*global QUnit*/
 sap.ui.define([
-    "sap/ui/test/selectors/_Properties",
+    "sap/ui/test/selectors/_ControlSelectorGenerator",
     "sap/m/Input"
-], function (_Properties, Input) {
+], function (_ControlSelectorGenerator, Input) {
     "use strict";
 
     QUnit.module("_Properties", {
@@ -17,12 +17,13 @@ sap.ui.define([
     });
 
     QUnit.test("Should generate selector for property", function (assert) {
-        var oProperties = new _Properties();
-        var aSelectors = oProperties.generate(this.oInput);
-        aSelectors.forEach(function (mSelector) {
-            if (mSelector.properties.placeholder) {
-                assert.strictEqual(mSelector.properties.placeholder, "myText", "Should generate selector with property");
-            }
-        });
+        var fnDone = assert.async();
+       _ControlSelectorGenerator._generate({control: this.oInput, includeAll: true})
+            .then(function (aSelectors) {
+                assert.strictEqual(aSelectors[0][0].properties.valueState, "None", "Should generate selector with property valueState");
+                assert.strictEqual(aSelectors[0][1].properties.placeholder, "myText", "Should generate selector with property placeholder");
+                assert.strictEqual(aSelectors[0][2].properties.editable, true, "Should generate selector with property type");
+                assert.strictEqual(aSelectors[0][3].properties.type, "Text", "Should generate selector with property type");
+            }).finally(fnDone);
     });
 });

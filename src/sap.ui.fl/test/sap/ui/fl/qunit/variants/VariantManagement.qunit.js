@@ -193,6 +193,24 @@ sap.ui.define([
 			assert.equal(aItems[2].key, "2");
 		});
 
+		QUnit.test("Check acc text", function(assert) {
+			var oConfiguration = sap.ui.getCore().getConfiguration();
+			var sLanguage = oConfiguration.getLanguage();
+
+			oConfiguration.setLanguage("en_EN");
+
+			this.oVariantManagement._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			assert.equal(this.oVariantManagement.oVariantInvisibleText.getText(), "View Standard. To open, press spacebar.");
+
+			this.oVariantManagement.setCurrentVariantKey("2");
+			assert.equal(this.oVariantManagement.oVariantInvisibleText.getText(), "View Two. To open, press spacebar.");
+
+			oConfiguration.setLanguage(sLanguage);
+		});
+
 		QUnit.test("Check 'initialized' event", function(assert) {
 			var bInitialized = false;
 
@@ -584,13 +602,18 @@ sap.ui.define([
 			sinon.stub(this.oVariantManagement.oManagementDialog, "open");
 
 			this.oVariantManagement._openManagementDialog();
+
+			assert.ok(oItemDel.visible);
 			this.oVariantManagement._handleManageDeletePressed(oItemDel);
+			assert.ok(!oItemDel.visible);
 
 			var aRows = this.oVariantManagement.oManagementTable.getItems();
 			assert.ok(aRows);
-			assert.equal(aRows.length, 4);
+			assert.equal(aRows.length, 5);
 
 			this.oVariantManagement._handleManageCancelPressed();
+			assert.ok(oItemDel.visible);
+
 
 			this.oVariantManagement._openManagementDialog();
 			aRows = this.oVariantManagement.oManagementTable.getItems();

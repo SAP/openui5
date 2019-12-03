@@ -56,6 +56,8 @@ sap.ui.define(["sap/ui/base/DataType",
 		 * @enum {string}
 		 * @experimental since 1.64
 		 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 * @public
 		 */
 		thisLib.CardActionType = {
 
@@ -73,6 +75,7 @@ sap.ui.define(["sap/ui/base/DataType",
 		 * @experimental since 1.65
 		 * @public
 		 * @since 1.65
+		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.CardDataMode = {
 

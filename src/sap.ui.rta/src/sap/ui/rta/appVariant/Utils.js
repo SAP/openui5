@@ -58,8 +58,8 @@ function(
 
 		if (oPreparedObject.isKeyUser) {
 			if (oPreparedObject.isOriginal) {
-				oAppVarObject.delAppVarButtonEnabled = false;
 				oAppVarObject.delAppVarButtonVisibility = false;
+				oAppVarObject.adaptUIButtonVisibility = false;
 				return oAppVarObject;
 			}
 			// If the catalogs bound to the app variants are hanging in one of the following states, then the Save As button is disabled => Should be applicable only for S4/Cloud
@@ -69,6 +69,7 @@ function(
 			if (oPreparedObject.appVarStatus === 'U' || oPreparedObject.appVarStatus === 'E' || oPreparedObject.appVarStatus === 'R') {
 				oAppVarObject.saveAsButtonEnabled = false;
 			}
+			oAppVarObject.adaptUIButtonVisibility = true;
 
 			if (bAdaptUIButtonEnabled) {
 				if (oPreparedObject.isS4HanaCloud) {
@@ -92,8 +93,8 @@ function(
 			}
 		} else {
 			// Not a key user => not deleteable
-			oAppVarObject.delAppVarButtonEnabled = false;
 			oAppVarObject.delAppVarButtonVisibility = false;
+			oAppVarObject.adaptUIButtonVisibility = false;
 		}
 
 		return oAppVarObject;
@@ -120,6 +121,7 @@ function(
 
 				if (oPreparedObject.appVarStatus === 'R' || oPreparedObject.appVarStatus === 'U' || oPreparedObject.appVarStatus === 'E') {
 					oNavigationObject.adaptUIButtonEnabled = false;
+					oNavigationObject.appVarStatus = oPreparedObject.appVarStatus;
 				}
 			} else {
 				oNavigationObject.adaptUIButtonEnabled = false;

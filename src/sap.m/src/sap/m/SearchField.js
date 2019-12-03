@@ -861,6 +861,28 @@ sap.ui.define([
 	/* =========================================================== */
 
 	/**
+	 * Applies Suggestion Acc
+	 *
+	 * @private
+	 */
+	SearchField.prototype._applySuggestionAcc = function () {
+		var sAriaText = "",
+			iNumItems = this.getSuggestionItems().length;
+
+		// add items to list
+		if (iNumItems === 1) {
+			sAriaText = oResourceBundle.getText("INPUT_SUGGESTIONS_ONE_HIT");
+		} else if (iNumItems > 1) {
+			sAriaText = oResourceBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", iNumItems);
+		} else {
+			sAriaText = oResourceBundle.getText("INPUT_SUGGESTIONS_NO_HIT");
+		}
+
+		// update Accessibility text for suggestion
+		this.$("SuggDescr").text(sAriaText);
+	};
+
+	/**
 	 * Function returns DOM element which acts as reference point for the opening suggestion menu
 	 *
 	 * @protected

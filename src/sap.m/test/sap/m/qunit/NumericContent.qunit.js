@@ -224,6 +224,58 @@ sap.ui.define([
 		assert.equal(this.oNumericContent.getAltText(), "Icon description\n10$\nAscending\nGood", "Alternative text is correct with a value and scale set up");
 	});
 
+	QUnit.test("Test _getMaxDigitsData language", function (assert) {
+		// Arrange 1
+		var sOrigLang = sap.ui.getCore().getConfiguration().getLanguage();
+		var oExpected = {fontClass: "sapMNCLargeFontSize", maxLength: 4};
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+
+		// Act 1
+		var oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
+
+		// Assert 1
+		assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct with normal language casing.");
+
+		// Arrange 2
+		sap.ui.getCore().getConfiguration().setLanguage("EN_US");
+
+		// Act 2
+		oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
+
+		// Assert 2
+		assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct with uppercase language casing.");
+
+		// Arrange 3
+		sap.ui.getCore().getConfiguration().setLanguage("en_us");
+
+		// Act 3
+		oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
+
+		// Assert 3
+		assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct with lowercase language casing.");
+
+		// Arrange 4
+		sap.ui.getCore().getConfiguration().setLanguage("en-US-x-sappsd");
+
+		// Act 4
+		oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
+
+		// Assert 4
+		assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct for a language which is not defined in the language map.");
+
+		// Arrange 5
+		sap.ui.getCore().getConfiguration().setLanguage("de");
+
+		// Act 5
+		oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
+
+		// Assert 5
+		assert.deepEqual(oMaxDigitsData, {fontClass: "sapMNCSmallFontSize", maxLength: 8}, "Max digits data should be correct for de language.");
+
+		// Restore
+		sap.ui.getCore().getConfiguration().setLanguage(sOrigLang);
+	});
+
 	QUnit.module("Property withoutMargin", {
 		beforeEach: function () {
 			this.oNumericContent = new NumericContent({

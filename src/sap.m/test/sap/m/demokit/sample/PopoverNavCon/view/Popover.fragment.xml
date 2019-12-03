@@ -5,7 +5,8 @@
 		showHeader="false"
 		contentWidth="320px"
 		contentHeight="500px"
-		placement="Bottom" >
+		placement="Bottom"
+		ariaLabelledBy="master-title">
 		<NavContainer
 			id="navCon">
 			<Page

@@ -628,7 +628,7 @@ sap.ui.define([
 		if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 			this._iSize = 0;
 			this._iSizeScreen = 0;
-		}else if (Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) {
+		}else if ((Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) && !(Device.system.desktop || jQuery('html').hasClass("sapUiMedia-Std-Desktop"))){
 			this._iSize = 1;
 			this._iSizeScreen = 1;
 		}else {
@@ -1612,8 +1612,9 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype._handleFocus = function (oEvent) {
-		var oDate = oEvent.getParameter("date");
-		var bRestoreOldDate = oEvent.getParameter("restoreOldDate");
+		var oDate = oEvent.getParameter("date"),
+			bRestoreOldDate = oEvent.getParameter("restoreOldDate");
+
 		if (bRestoreOldDate) {
 			return;
 		}
@@ -1637,6 +1638,15 @@ sap.ui.define([
 		oStart = this._dateNav.getStart();
 		oCurrent = this._dateNav.getCurrent();
 
+		if (this._dateNav.getCurrent() > this._dateNav.getEnd()){
+			oStart = new Date(this._dateNav.getStart());
+			oStart.setDate(oStart.getDate() + 1);
+		}
+
+		if ((this.getMaxDate() && this.getMaxDate() < oDate) || (this.getMinDate() && this.getMinDate() > oDate)){
+			return;
+		}
+
 		if (oRowInstance &&
 			!(oRowInstance.getMode && oRowInstance.getMode() < 2 && !bOtherMonth)) {
 			this.setStartDate(oStart);
@@ -1656,8 +1666,8 @@ sap.ui.define([
 			oSelectedRange;
 
 		oSelectedRange = new DateRange({
-			startDate: new Date(oRangeDates.oStartDate),
-			endDate: new Date(oRangeDates.oEndDate)
+			startDate: CalendarUtils._createLocalDate(oRangeDates.oStartDate, true),
+			endDate: CalendarUtils._createLocalDate(oRangeDates.oEndDate, true)
 		});
 
 		oPicker.destroySelectedDates();
@@ -3141,7 +3151,10 @@ sap.ui.define([
 				icon : oRow.getIcon(),
 				description : oRow.getText(),
 				title : oRow.getTitle(),
-				tooltip : oRow.getTooltip()
+				tooltip : oRow.getTooltip(),
+				// set iconDensityAware to false (the default is true for the StandardListItem)
+				// in order to avoid multiple 404 requests for the applications that do not have these images
+				iconDensityAware: false
 			});
 		}
 
@@ -3208,6 +3221,7 @@ sap.ui.define([
 		TagName: "div"
 
 	});
+
 
 	PlanningCalendarRowHeader.prototype.isSelectable = function () {
 		// The header itself isn't selectable - the row is.
@@ -3862,15 +3876,20 @@ sap.ui.define([
 
 	PlanningCalendar.prototype._calcCreateNewAppHours = function(oRowStartDate, iStartIndex, iEndIndex) {
 		var iMinutesStep = 30 * 60 * 1000,  // 30 min
-			oAppStartDate,
-			oAppEndDate;
+		oRowStartDateTime = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate(), oRowStartDate.getHours()),
+		oStartDateTime,
+		oAppStartDate,
+		oAppEndDate;
+
+		// first clear minutes and seconds of the row starting date/time and then get
+		oStartDateTime = oRowStartDateTime.getTime();
 
 		if (iStartIndex <= iEndIndex) {
-			oAppStartDate = new Date(oRowStartDate.getTime() + (iStartIndex *  iMinutesStep));
-			oAppEndDate = new Date(oRowStartDate.getTime() + ((iEndIndex + 1) *  iMinutesStep));
+			oAppStartDate = new Date(oStartDateTime + (iStartIndex *  iMinutesStep));
+			oAppEndDate = new Date(oStartDateTime + ((iEndIndex + 1) *  iMinutesStep));
 		} else {
-			oAppStartDate = new Date(oRowStartDate.getTime() + (iEndIndex *  iMinutesStep));
-			oAppEndDate = new Date(oRowStartDate.getTime() + (iStartIndex *  iMinutesStep));
+			oAppStartDate = new Date(oStartDateTime + (iEndIndex *  iMinutesStep));
+			oAppEndDate = new Date(oStartDateTime + (iStartIndex *  iMinutesStep));
 		}
 
 		return {

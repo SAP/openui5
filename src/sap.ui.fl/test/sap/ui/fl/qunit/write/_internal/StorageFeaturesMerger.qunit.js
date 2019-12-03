@@ -37,9 +37,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("mergeResults with different responses", function (assert) {
-			var oResponse_1 = {response: {isProductiveSystem: false, isKeyUser: false}};
-			var oResponse_2 = {response: {isAtoAvailable: true, isKeyUser: true}};
-			var oResponse_3 = {response: {newKey: true}};
+			var oResponse_1 = {isProductiveSystem: false, isKeyUser: false};
+			var oResponse_2 = {isAtoAvailable: true, isKeyUser: true};
+			var oResponse_3 = {newKey: true};
 			var aResponse = [oResponse_1, oResponse_2, oResponse_3];
 
 			var oResult = StorageFeaturesMerger.mergeResults(aResponse);

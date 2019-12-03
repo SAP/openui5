@@ -156,8 +156,6 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 
 		assert.expect(2);
 
-		oHeader.setObjectTitle(sLongTitle);
-
 		oHeader.addEventDelegate({
 			onAfterRendering: function() {
 				$titleWrapper = oHeader.$().find(".sapUxAPObjectPageHeaderIdentifierTitle");
@@ -170,6 +168,9 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 				done();
 			}
 		}, this);
+
+		oHeader.setObjectTitle(sLongTitle);
+		Core.applyChanges();
 	});
 
 	QUnit.module("image rendering", {
@@ -511,6 +512,39 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		oHeader._adaptActions(1000);
 
 		assert.strictEqual($overflowButton.css("display"), "none", "OverflowButton is hidden when not needed");
+	});
+
+	QUnit.test("_resizeIdentifierLineContainer is called when the action visibility is change", function (assert) {
+		assert.expect(1);
+
+		// setup
+		var oHeader = this.myView.byId("applicationHeader"),
+			done = assert.async(),
+			oSecondBtn,
+			spyIdentifierResize,
+			oDelegate = {
+				onAfterRendering: function() {
+					oSecondBtn.removeEventDelegate(oDelegate); // cleanup
+
+					// asert
+					assert.ok(spyIdentifierResize.called, "identifier line container is recalculated.");
+					done();
+				}
+			};
+
+		oHeader.removeAllActions();
+		oHeader.addAction(new sap.m.Button({text: "Button One"}))
+			.addAction(new sap.m.Button("secondBtn" ,{text: "Button Two"}));
+		oSecondBtn = Core.byId("secondBtn");
+
+		// act
+		oSecondBtn.setVisible(false);
+		oHeader.setObjectTitle("VeryLongText".repeat(20));
+
+		// act
+		oSecondBtn.addEventDelegate(oDelegate);
+		oSecondBtn.setVisible(true);
+		spyIdentifierResize = sinon.spy(ObjectPageHeader.prototype, "_resizeIdentifierLineContainer");
 	});
 
 	QUnit.test("Action button press event parameter", function (assert) {

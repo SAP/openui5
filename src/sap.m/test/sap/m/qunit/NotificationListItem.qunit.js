@@ -47,7 +47,7 @@ sap.ui.define([
 		return new NotificationListItem({
 			unread : true,
 
-			title: 'Notification List Item Title',
+			title: 'Notification List Item Title Title Title',
 			priority: Priority.High,
 			showCloseButton : true,
 			showButtons: true,
@@ -122,7 +122,7 @@ sap.ui.define([
 		assert.ok(this.notificationListItem.getDomRef(), 'Item is rendered');
 
 		assert.ok($item.hasClass('sapMNLIUnread'), 'unread class is set');
-		assert.strictEqual($item.find('.sapMNLITitle .sapMNLITitleText').text(), 'Notification List Item Title', 'title is rendered');
+		assert.strictEqual($item.find('.sapMNLITitle .sapMNLITitleText').text(), 'Notification List Item Title Title Title' , 'title is rendered');
 
 		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority is rendered');
 

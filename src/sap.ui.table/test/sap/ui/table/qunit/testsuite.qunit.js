@@ -149,7 +149,13 @@ sap.ui.define([
 			},
 			"MenuUtils": {
 				group: "Utils",
-				module: "./utils/_{name}.qunit"
+				module: "./utils/_{name}.qunit",
+				qunit: {
+					version: "edge"
+				},
+				sinon: {
+					version: "edge"
+				}
 			},
 			"GroupingUtils": {
 				group: "Utils",
@@ -172,13 +178,25 @@ sap.ui.define([
 				group: "Extensions"
 			},
 			"TableKeyboardDelegate": {
-				group: "Extensions"
+				group: "Extensions",
+				qunit: {
+					version: "edge"
+				},
+				sinon: {
+					version: "edge"
+				}
 			},
 			"TableKeyboardDelegate-RTL": {
 				group: "Extensions",
 				module: "./TableKeyboardDelegate.qunit",
 				ui5: {
 					rtl: true
+				},
+				qunit: {
+					version: "edge"
+				},
+				sinon: {
+					version: "edge"
 				}
 			},
 			"TablePointerExtension": {

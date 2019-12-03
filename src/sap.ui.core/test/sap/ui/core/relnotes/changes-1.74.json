@@ -1,0 +1,29 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "7116075c11047014122932992af36fa238c117e4",
+        "type": "FIX",
+        "text": " Opa: use correct context in matchers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970551549"
+          }
+        ]
+      },
+      {
+        "id": "4cf7f6646572b832a5a6db35ca40a207e205f6f5",
+        "type": "FIX",
+        "text": " JSView: Fix documentation of JSView.create",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970154879"
+          }
+        ]
+      }
+    ]
+  }
+}

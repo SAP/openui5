@@ -5,7 +5,7 @@
 // Provides control sap.ui.table.RowAction
 sap.ui.define([
 	'sap/ui/core/Control',
-	"sap/ui/table/utils/TableUtils",
+	"./utils/TableUtils",
 	'./library',
 	'sap/ui/core/Icon',
 	'sap/ui/unified/Menu',
@@ -84,21 +84,14 @@ function(
 			return this;
 		};
 
-		var fnOnKeyUp = function(oEvent) {
-			this._bKeyboard = oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER;
-			Icon.prototype.onkeyup.apply(this, arguments);
-		};
-
 		var that = this;
 		var oIcon = new Icon(this.getId() + "-icon0", {decorative: false, press: function(oEvent){that._handlePress(oEvent, true);}});
 		oIcon.addStyleClass("sapUiTableActionIcon");
 		oIcon.setTooltip = fnSetTooltip;
-		oIcon.onkeyup = fnOnKeyUp;
 		this.addAggregation("_icons", oIcon);
 		oIcon = new Icon(this.getId() + "-icon1", {decorative: false, press: function(oEvent){that._handlePress(oEvent, false);}});
 		oIcon.addStyleClass("sapUiTableActionIcon");
 		oIcon.setTooltip = fnSetTooltip;
-		oIcon.onkeyup = fnOnKeyUp;
 		this.addAggregation("_icons", oIcon);
 
 		this._iLen = 0;
@@ -291,8 +284,6 @@ function(
 		var iIdx = bFirst ? 0 : 1;
 		var oIcon = this.getAggregation("_icons")[iIdx];
 		var sAction = this._aActions[iIdx];
-		var bKeyboard = oIcon._bKeyboard;
-		oIcon._bKeyboard = false;
 
 		if (sAction == "action") {
 			this._getVisibleItems()[iIdx]._doFirePress();
@@ -319,7 +310,7 @@ function(
 				oMenu.addItem(aItems[i]._getMenuItem());
 			}
 
-			oMenu.open(!!bKeyboard, oIcon, Popup.Dock.EndTop, Popup.Dock.EndBottom, oIcon);
+			oMenu.open(null, oIcon, Popup.Dock.EndTop, Popup.Dock.EndBottom, oIcon);
 		}
 	};
 

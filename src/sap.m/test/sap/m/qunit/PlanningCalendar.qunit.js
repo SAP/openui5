@@ -3166,6 +3166,54 @@ sap.ui.define([
 		}, 0);
 	});
 
+	QUnit.test("Navigation forward via keyboard right (outside the current visible area) when in days view", function(assert) {
+		//Arrange
+		this.oPC2.setViewKey(CalendarIntervalType.Day);
+
+		var oStartDate = this.oPC2.getStartDate(),
+			oLastDay,
+			oComparisonDate = new Date(oStartDate);
+
+		//Act
+		oComparisonDate.setDate(oComparisonDate.getDate() + 1);
+		sap.ui.getCore().applyChanges();
+		oLastDay = new Date("2016/09/12");
+		this.oPC2.shiftToDate(oLastDay, false);
+
+		//Assert
+		assert.deepEqual(this.oPC2.getStartDate(), oComparisonDate, "Navigation via keyboard when in days view works");
+	});
+
+	QUnit.test("Navigation forward via keyboard right (outside the current visible area) and reaching the limit", function(assert) {
+		//Arrange
+		this.oPC2.setViewKey(CalendarIntervalType.Day);
+		var oStartDate = this.oPC2.getStartDate(),
+			oComparisonDate = new Date(oStartDate),
+			oGoToDate = new Date(oStartDate),
+			oMaxDate = new Date("2016/09/14"),
+			oGoToDate2 = new Date("2016/09/15"),
+			oComparisonDate2 = new Date("2016/09/01");
+
+		this.oPC2.setMinDate(new Date(oStartDate));
+
+		//Act
+		oGoToDate.setDate(oGoToDate.getDate() - 1);
+		this.oPC2.shiftToDate(oGoToDate, false);
+
+		//Assert
+		assert.deepEqual(this.oPC2.getStartDate(), oComparisonDate, "Navigation via keyboard stops on min date");
+
+		//Arrange
+		this.oPC2.setStartDate(oComparisonDate2);
+		this.oPC2.setMaxDate(oMaxDate);
+
+		//Act
+		this.oPC2.shiftToDate(oGoToDate2, false);
+
+		//Assert
+		assert.deepEqual(this.oPC2.getStartDate(), oComparisonDate2, "Navigation via keyboard stops on max date");
+	});
+
 	QUnit.test("Navigation forward in week view where next week starts at 1st January (locale en_US)", function(assert) {
 		var $Days,
 			aDays,
@@ -5202,6 +5250,25 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
+	QUnit.test("_calcCreateNewAppHours: Calculate proper position of the new appointment in 'Hours' view", function (assert) {
+		//arrange
+		var oPCRow = new PlanningCalendar(),
+			oRowStartDate = new Date(2017, 10, 13, 0, 38, 11),
+			iStartIndex = 3,
+			iEndIndex = 6,
+			newAppPos;
+
+		//act
+		newAppPos = oPCRow._calcCreateNewAppHours(oRowStartDate, iStartIndex, iEndIndex);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 1, 30, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 3, 30, 0), "Correct new end position");
+
+		//clean
+		oPCRow.destroy();
+	});
+
 	function _getAppointmentsCount(oPC) {
 		var aRows = oPC.getRows(),
 			iAppointments = 0;
@@ -5685,6 +5752,29 @@ sap.ui.define([
 
 		//Destroy
 		oView.destroy();
+	});
+
+	QUnit.test("PlanningCalendarRowHeader overides getIconDensityAware to return always false", function(assert) {
+		// Prepare
+		var oPC = new PlanningCalendar(),
+			oRow = new PlanningCalendarRow(oPC.getId() + "-Row", {
+				icon: "sap-icon://employee",
+				title: "Angela Merker",
+				text: "Angela",
+				tooltip: "Header tooltip"
+			}),
+			oRowHead;
+
+		// Act
+		oPC.addRow(oRow);
+
+		oRowHead = sap.ui.getCore().byId(oRow.getId() + "-Head");
+
+		// Assert
+		assert.equal(oRowHead.getIconDensityAware(), false, "icon density aware should be false");
+
+		// Destroy
+		oPC.destroy();
 	});
 
 	return waitForThemeApplied();

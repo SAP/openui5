@@ -61,7 +61,7 @@ html[data-sap-ui-browser='ie11'] .sapMSLIWithDescription > .sapMLIBContent > .sa
 
 .sapMSLIThumbnail:not(.sapMSLIWrapping) > .sapMLIBContent > .sapMSLIDiv,
 .sapMSLIDescriptionText {
-	padding: 0.125rem 0;
+	padding-bottom: 0.125rem;
 }
 
 /* flex does not work in IE11 as expected, hence adding width 100% when only title is displayed */
@@ -82,7 +82,7 @@ html[data-sap-ui-browser='ie11'] .sapMSLIWithDescription > .sapMLIBContent > .sa
 }
 
 .sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv > .sapMSLIDescription {
-	padding-top: 0.75rem;
+	padding-top: 0.875rem;
 }
 
 .sapMSLIImgIcon,
@@ -126,7 +126,6 @@ html[data-sap-ui-browser='ie11'] .sapMSLIWithDescription > .sapMLIBContent > .sa
 	text-overflow: ellipsis;
 	text-align: right;
 	margin: 0 0 0 1rem;
-	padding: 0.125rem 0;
 	font-size: @sapMFontMediumSize;
 }
 
@@ -168,6 +167,39 @@ html[dir=rtl] .sapMSLIInfo {
 
 .sapMSLIInfoInformation {
 	color: @sapUiInformativeText;
+}
+
+/* inverted info text */
+.sapMSLIInfoStateInverted {
+	font-size: @sapMFontSmallSize;
+	font-weight: bold;
+	color: @sapUiContentContrastTextColor;
+	border-radius: 0.25rem;
+	box-sizing: border-box;
+}
+
+.sapMSLIInfo.sapMSLIInfoStateInverted {
+	padding: 0.0625rem 0.25rem;
+}
+
+.sapMSLIInfoStateInverted.sapMSLIInfoNone {
+	background: @sapUiNeutralElement;
+}
+
+.sapMSLIInfoStateInverted.sapMSLIInfoError {
+	background: @sapUiNegativeElement;
+}
+
+.sapMSLIInfoStateInverted.sapMSLIInfoWarning {
+	background: @sapUiCriticalElement;
+}
+
+.sapMSLIInfoStateInverted.sapMSLIInfoSuccess {
+	background: @sapUiPositiveElement;
+}
+
+.sapMSLIInfoStateInverted.sapMSLIInfoInformation {
+	background: @sapUiInformativeElement;
 }
 
 /* Wrapping */

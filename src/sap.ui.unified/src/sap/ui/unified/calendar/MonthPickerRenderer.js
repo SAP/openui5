@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/unified/calendar/CalendarDate"],
+	function(CalendarDate) {
 	"use strict";
 
 
@@ -22,18 +22,21 @@ sap.ui.define([],
 	 */
 	MonthPickerRenderer.render = function(oRm, oMP){
 
-		var iMonth = oMP.getMonth();
-		var iMonths = oMP.getMonths();
-		var iStartMonth = 0;
-		var iColumns = oMP.getColumns();
-		var sTooltip = oMP.getTooltip_AsString();
-		var oLocaleData = oMP._getLocaleData();
-		var sId = oMP.getId();
-		var sWidth = "";
+		var iMonth = oMP.getMonth(),
+			iMonths = oMP.getMonths(),
+			iStartMonth = 0,
+			iColumns = oMP.getColumns(),
+			sTooltip = oMP.getTooltip_AsString(),
+			oLocaleData = oMP._getLocaleData(),
+			sId = oMP.getId(),
+			sWidth = "",
+			aMonthNames = [],
+			aMonthNamesWide = [],
+			sCalendarType = oMP.getPrimaryCalendarType(),
+			i,
+			bApplySelection,
+			bApplySelectionBetween;
 
-		var aMonthNames = [];
-		var aMonthNamesWide = [];
-		var sCalendarType = oMP.getPrimaryCalendarType();
 		if (oMP._bLongMonth || !oMP._bNamesLengthChecked) {
 			aMonthNames = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 		} else {
@@ -53,7 +56,8 @@ sap.ui.define([],
 		oRm.writeAccessibilityState(oMP, {
 			role: "grid",
 			readonly: "true",
-			multiselectable: "false"
+			multiselectable: oMP.getIntervalSelection(),
+			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER")
 		});
 
 		oRm.write(">"); // div element
@@ -62,7 +66,7 @@ sap.ui.define([],
 
 		if (iMonths > 12) {
 			iMonths = 12;
-		}else	if (iMonths < 12) {
+		} else if (iMonths < 12) {
 			// Month blocks should start with multiple of number of displayed months
 			iStartMonth = Math.floor( iMonth / iMonths) * iMonths;
 			if (iStartMonth + iMonths > 12) {
@@ -76,8 +80,12 @@ sap.ui.define([],
 			sWidth = ( 100 / iMonths ) + "%";
 		}
 
-		for ( var i = 0; i < iMonths; i++) {
-			var iCurrentMonth = i + iStartMonth;
+		for (i = 0; i < iMonths; i++) {
+			var iCurrentMonth = i + iStartMonth,
+				oCurrentDate = CalendarDate.fromLocalJSDate(new Date(), oMP.getPrimaryCalendarType());
+
+			oCurrentDate.setMonth(iCurrentMonth, 1);
+			oMP._iYear && oCurrentDate.setYear(oMP._iYear);
 
 			mAccProps = {
 					role: "gridcell"
@@ -96,10 +104,21 @@ sap.ui.define([],
 			oRm.write("<div");
 			oRm.writeAttribute("id", sId + "-m" + (iCurrentMonth));
 			oRm.addClass("sapUiCalItem");
-			if (iCurrentMonth == iMonth) {
+
+			bApplySelection = oMP._fnShouldApplySelection(oCurrentDate);
+			bApplySelectionBetween = oMP._fnShouldApplySelectionBetween(oCurrentDate);
+
+			if (bApplySelection) {
 				oRm.addClass("sapUiCalItemSel");
 				mAccProps["selected"] = true;
-			} else {
+			}
+
+			if (bApplySelectionBetween) {
+				oRm.addClass("sapUiCalItemSelBetween");
+				mAccProps["selected"] = true;
+			}
+
+			if (!bApplySelection && !bApplySelectionBetween) {
 				mAccProps["selected"] = false;
 			}
 

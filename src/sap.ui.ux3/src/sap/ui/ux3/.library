@@ -8,6 +8,13 @@
 
   <documentation>Controls that implement the SAP User Experience (UX) Guidelines 3.0</documentation>
 
+  <deprecation since="1.38">
+This library contains more complex UI controls that were based on sap.ui.commons along the UX3 design approach.
+The sap.m library - successor to sap.ui.commons - implements SAP’s new SAP Fiori design 
+[http://experience.sap.com/fiori-design/], which supersedes UX3. As such, the sap.ui.ux3 library is also deprecated. 
+Some of the UX3 concepts are reflected in SAP Fiori, some have been abandoned.
+  </deprecation>
+
   <dependencies>
     <dependency>
       <libraryName>sap.ui.core</libraryName>

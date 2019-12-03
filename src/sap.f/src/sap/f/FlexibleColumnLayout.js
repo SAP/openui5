@@ -989,23 +989,9 @@ sap.ui.define([
 				ResizeHandler.suspend(oColumnDomRef);
 
 				// Schedule resume of ResizeHandler
-				oColumn._iResumeResizeHandlerTimeout = setTimeout(function() {
-					// If the column is concealed we must apply the width after the animations are over.
-					if (bShouldConcealColumn) {
-						oColumn.width(sNewWidth);
-						// The column does not show anything anymore, so we can remove the active class
-						oColumn.toggleClass("sapFFCLColumnActive", false);
-					}
-
-					ResizeHandler.resume(oColumnDomRef);
-					oColumn._iResumeResizeHandlerTimeout = null;
-
-					// Clear pinning after transitions are finished
-					oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
-
-					this._adjustColumnDisplay(oColumn, iNewWidth);
-
-				}.bind(this), FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION);
+				oColumn._iResumeResizeHandlerTimeout = setTimeout(this._adjustColumnAfterAnimation.bind(this,
+					bShouldConcealColumn, sNewWidth, iNewWidth, oColumn, oColumnDomRef),
+					FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION);
 			} else {
 				this._adjustColumnDisplay(oColumn, iNewWidth);
 			}
@@ -1043,6 +1029,44 @@ sap.ui.define([
 		}
 
 		this._storePreviousResizingInfo(iDefaultVisibleColumnsCount, sLastVisibleColumn);
+	};
+
+	/**
+	 * Adjusts styles of Columns after the animation
+	 *
+	 * 	@param bShouldConcealColumn
+	 * 	@param sNewWidth
+	 *	@param iNewWidth
+	 *	@param oColumn
+	 *	@param oColumnDomRef
+	 *	@private
+	*/
+	FlexibleColumnLayout.prototype._adjustColumnAfterAnimation = function (bShouldConcealColumn, sNewWidth, iNewWidth, oColumn, oColumnDomRef) {
+		// If the column is concealed we must apply the width after the animations are over.
+		if (bShouldConcealColumn) {
+			oColumn.width(sNewWidth);
+			// The column does not show anything anymore, so we can remove the active class
+			oColumn.toggleClass("sapFFCLColumnActive", false);
+		}
+
+		// Clear pinning after transitions are finished
+		oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
+		this._adjustColumnDisplay(oColumn, iNewWidth);
+
+		this._resumeResizeHandler(oColumn, oColumnDomRef);
+	};
+
+
+	/**
+	 * Resumes the resize handler of a Column's DOM reference.
+	 *
+	 *	@param oColumn
+	 *	@param oColumnDomRef
+	 *	@private
+	*/
+	FlexibleColumnLayout.prototype._resumeResizeHandler = function (oColumn, oColumnDomRef) {
+		ResizeHandler.resume(oColumnDomRef);
+		oColumn._iResumeResizeHandlerTimeout = null;
 	};
 
 	/**

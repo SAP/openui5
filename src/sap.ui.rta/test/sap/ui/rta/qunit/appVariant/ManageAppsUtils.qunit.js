@@ -108,13 +108,15 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
+				assert.equal(oAppVariantAttributes.adaptUIButtonVisibility, true, "then the button Adapt UI is available");
+				assert.equal(oAppVariantAttributes.appVarStatus, 'U', "then the right app var status is set");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
 				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
 				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, true, "then the button Delete App Variant is enabled on an app variant");
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with adaptUi button disabled", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app var status 'R'", function (assert) {
 			var oAppVariantInfo = {
 				appId : "id1",
 				title : "title1",
@@ -139,7 +141,9 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
+				assert.equal(oAppVariantAttributes.adaptUIButtonVisibility, true, "then the button Adapt UI is available");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
+				assert.equal(oAppVariantAttributes.appVarStatus, 'R', "then the right app var status is set");
 				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
 				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, false, "then the button Delete App Variant is not enabled on an app variant");
 			});
@@ -170,6 +174,7 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, false, "then it is a S4/Hana on premise system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
+				assert.equal(oAppVariantAttributes.appVarStatus, undefined, "then the right app var status is set");
 				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
 				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, true, "then the button Delete App Variant is not enabled on an app variant");
 			});
@@ -204,12 +209,13 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, false, "then it is a S4/Hana on premise system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, true, "then the button Adapt UI is enabled");
+				assert.equal(oAppVariantAttributes.appVarStatus, undefined, "then the right app var status is set");
 				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
 				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, false, "then the button Delete App Variant is not enabled on an app variant");
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with status 'Operation in Progress'", function (assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with status 'Error'", function (assert) {
 			var oAppVariantInfo = {
 				appId : "id1",
 				title : "title1",
@@ -221,7 +227,7 @@ sap.ui.define([
 					semanticObject: "SemObj",
 					action: "Action"
 				},
-				appVarStatus: 'R'
+				appVarStatus: 'E'
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
@@ -239,8 +245,9 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is not enabled");
+				assert.equal(oAppVariantAttributes.appVarStatus, 'E', "then the right app var status is set");
 				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
-				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, false, "then the button Delete App Variant is not enabled on an app variant");
+				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, true, "then the button Delete App Variant is enabled on an app variant");
 			});
 		});
 

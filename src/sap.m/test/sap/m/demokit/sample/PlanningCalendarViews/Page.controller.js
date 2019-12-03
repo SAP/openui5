@@ -403,6 +403,8 @@ sap.ui.define([
 				} else {
 					this.byId("PC1").destroyViews();
 				}
+				this.byId("select").setVisible(false);
+				this.byId("label").setVisible(false);
 			}
 
 		});

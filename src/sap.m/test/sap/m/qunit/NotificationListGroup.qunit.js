@@ -83,7 +83,7 @@ sap.ui.define([
 		assert.ok($item.hasClass('sapMNLGroupUnread'), 'unread class is set');
 		assert.strictEqual($item.find('.sapMNLGroupTitle').text(), 'Notification List Group Title', 'title is rendered');
 		assert.strictEqual($item.find('.sapMNLGroupCollapseButton button').attr('title'), oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_COLLAPSE"), 'collapse button is rendered');
-		assert.strictEqual($item.find('.sapMNLIItem.sapMNLICloseBtn button').attr('title'), 'Close all', 'close button is rendered');
+		assert.strictEqual($item.find('.sapMNLIItem.sapMNLICloseBtn button').attr('title'), oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_CLOSE"), 'close button is rendered');
 		assert.ok(this.notificationListGroup.$('overflowToolbar'), 'overflow toolbar is rendered');
 
 		assert.strictEqual($item.find('.sapMNLGroupChildren li').length, 2, 'group has 2 items');

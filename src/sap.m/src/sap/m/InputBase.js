@@ -824,6 +824,8 @@ function(
 	 * @protected
 	 */
 	InputBase.prototype.updateDomValue = function(sValue) {
+		var oInnerDomRef = this.getFocusDomRef();
+
 
 		if (!this.isActive()) {
 			return this;
@@ -834,14 +836,65 @@ function(
 
 		// update the DOM value when necessary
 		// otherwise cursor can goto end of text unnecessarily
-		if (this._getInputValue() !== sValue) {
-			this.$("inner").val(sValue);
+		if (this._getInputValue() === sValue) {
+			return this;
+		}
 
-			// dom value updated other than value property
-			this._bCheckDomValue = true;
+		this._bCheckDomValue = true;
+
+		// if set to true, handle the user input and data
+		// model updates concurrency in order to not overwrite
+		// values coming from the user
+		if (this._bPreferUserInteraction) {
+			this.handleInputValueConcurrency(sValue);
+		} else {
+			oInnerDomRef.value = sValue;
 		}
 
 		return this;
+	};
+
+	/**
+	 * Handles value updates coming from the model and those updated by the user,
+	 * when the user interaction is the preferred one.
+	 *
+	 * @param {string} sValue The value to be updated
+	 * @private
+	 */
+	InputBase.prototype.handleInputValueConcurrency = function(sValue) {
+		var oInnerDomRef = this.getFocusDomRef(),
+			sInputDOMValue = oInnerDomRef && this._getInputValue(),
+			sInputPropertyValue = this.getProperty("value"),
+			bInputFocused = document.activeElement === oInnerDomRef,
+			bBindingUpdate = this.isBound("value") && this.getBindingInfo("value").skipModelUpdate;
+
+		// if the user is currently in the field and he has typed a value,
+		// the changes from the model should not overwrite the user input
+		if (bInputFocused && bBindingUpdate && sInputDOMValue && (sInputPropertyValue !== sInputDOMValue)) {
+			return this;
+		}
+
+		oInnerDomRef.value = sValue;
+
+		// when the user has focused on an empty input and a value update is
+		// triggered via binding, after updating, the value should be
+		// selected in order to be easily overwritten by the user
+		if (bInputFocused && bBindingUpdate && !sInputDOMValue) {
+			oInnerDomRef.select();
+		}
+	};
+
+	/**
+	 * Sets the preferred user interaction. If set to true, overwriting the
+	 * user input with model updates will be prevented.
+	 *
+	 * @param {boolean} bPrefer True, if the user interaction is prefered
+	 *
+	 * @private
+	 * @restricted sap.ui.mdc
+	 */
+	InputBase.prototype._setPreferUserInteraction = function(bPrefer) {
+		this._bPreferUserInteraction = bPrefer;
 	};
 
 	/**

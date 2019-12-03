@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/message/Message"
 ], function(
 	QUtils,
 	createAndAppendDiv,
@@ -17,7 +19,9 @@ sap.ui.define([
 	Label,
 	Device,
 	KeyCodes,
-	Core
+	Core,
+	JSONModel,
+	Message
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -27,6 +31,9 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.message.MessageType
+	var MessageType = coreLibrary.MessageType;
 
 	createAndAppendDiv("content");
 
@@ -1109,6 +1116,73 @@ sap.ui.define([
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
 		oControl.destroy();
+	});
+
+	QUnit.module("Message support", {
+		beforeEach: function () {
+			this.oCheckBox = new CheckBox({
+				selected:"{/selected}"
+			});
+			this.oCheckBox.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oCheckBox.destroy();
+		}
+	});
+
+	QUnit.test("'valueState' property change when there is a Message", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oModel = new JSONModel({
+				selected:true
+			}),
+			oMessageManager = sap.ui.getCore().getMessageManager(),
+			oMessage = new Message({
+				type: MessageType.Error,
+				target: "/selected",
+				processor: oModel
+			}),
+			sExpectedTooltipText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
+
+		// act
+		this.oCheckBox.setModel(oModel);
+		oMessageManager.registerObject(this.oCheckBox, true);
+		oMessageManager.addMessages([oMessage]);
+
+		setTimeout(function() {
+			// assert
+			assert.strictEqual(this.oCheckBox.getValueState(), "Error");
+			assert.strictEqual(this.oCheckBox.$("Descr").text(), sExpectedTooltipText, "Default error message should be shown in the tooltip.");
+			done();
+		}.bind(this), 100);
+	});
+
+	QUnit.test("Description value when there is a Message containing error text", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oModel = new JSONModel({
+				selected:true
+			}),
+			oMessageManager = sap.ui.getCore().getMessageManager(),
+			sMessage = "This error message should be shown in the tooltip instead of the default message from the Resource Bundle",
+			oMessage = new Message({
+				type: MessageType.Error,
+				target: "/selected",
+				processor: oModel,
+				message: sMessage
+			});
+
+		// act
+		this.oCheckBox.setModel(oModel);
+		oMessageManager.registerObject(this.oCheckBox, true);
+		oMessageManager.addMessages([oMessage]);
+
+		setTimeout(function() {
+			// assert
+			assert.strictEqual(this.oCheckBox.$("Descr").text(), sMessage, "The error message should be shown in the tooltip");
+			done();
+		}.bind(this), 100);
 	});
 
 	/* ---------------------------------------------------------------------------------------- */

@@ -1022,7 +1022,7 @@ sap.ui.define([
 
 		if (oCellInfo.isOfType(CellType.ANY)) {
 			oEvent.preventDefault(); // Prevent opening the default browser context menu.
-			TableUtils.Menu.openContextMenu(this, oEvent.target, true, null, oEvent);
+			TableUtils.Menu.openContextMenu(this, oEvent.target, oEvent);
 		}
 	};
 
@@ -1040,7 +1040,7 @@ sap.ui.define([
 
 		if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
 			if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE) || TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER)) {
-				TableUtils.Menu.openContextMenu(this, oEvent.target, true);
+				TableUtils.Menu.openContextMenu(this, oEvent.target);
 			}
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
 			TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);

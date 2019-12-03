@@ -18,4 +18,12 @@ describe("sap.m.DatePicker", function() {
 		element(by.id("DP1_v0-cal--Month0-20170620")).click();
 		expect(takeScreenshot(oCalendar)).toLookAs("picker_still_opened");
 	});
+
+	it("should open a DatePicker (month & year) in compact mode to check the year range", function() {
+		var oCalendar;
+		element(by.id("DP14-icon")).click();
+		element(by.id("DP14-cal--Head-B2")).click();
+		oCalendar = element(by.css("#DP14-RP-popover"));
+		expect(takeScreenshot(oCalendar)).toLookAs("year_range_correctly_rendered");
+	});
 });

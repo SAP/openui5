@@ -182,6 +182,67 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
+	QUnit.test("Mark first/last visible child", function (assert) {
+		// Arrange
+		var oToolbar = createToolbar({
+				Toolbar: {
+					content: [
+						new sap.m.Button()
+					]
+				}
+			}),
+			aContent = oToolbar.getContent();
+
+
+		// Assert
+		assert.ok(aContent[0].hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
+		assert.ok(aContent[aContent.length - 1].hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
+	});
+
+	QUnit.test("Mark first/last visible child when there are not visible children", function (assert) {
+		assert.expect(4);
+		// Arrange
+		var oToolbar = createToolbar({
+				Toolbar: {
+					content: [
+						new sap.m.Button({visible: false}),
+						new sap.m.Button(),
+						new sap.m.Button(),
+						new sap.m.Button({visible: false})
+					]
+				}
+			}),
+			aContent = oToolbar.getContent(),
+			iControlsWithFirstChildClass,
+			iControlsWithLastChildClass,
+			done = assert.async(),
+			oDelegate = {
+				onAfterRendering: function () {
+					oToolbar.removeEventDelegate(oDelegate);
+
+					iControlsWithFirstChildClass = aContent.filter(function (oElement) {
+						return oElement.hasStyleClass("sapMBarFirstVisibleChild");
+					}).length;
+					iControlsWithLastChildClass = aContent.filter(function (oElement) {
+						return oElement.hasStyleClass("sapMBarLastVisibleChild");
+					}).length;
+
+					// assert
+					assert.strictEqual(iControlsWithFirstChildClass, 1, "Only 1 child with sapMBarFirstVisibleChild class.");
+					assert.strictEqual(iControlsWithLastChildClass, 1, "Only 1 child with sapMBarLastVisibleChild class.");
+					assert.ok(aContent[1].hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
+					assert.ok(aContent[aContent.length - 2].hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
+					done();
+
+					// Clean-up
+					oToolbar.destroy();
+				}
+			};
+
+			oToolbar.addEventDelegate(oDelegate);
+			oToolbar.rerender();
+	});
+
 	QUnit.test("test that Toolbar Separator is rendered", function(assert) {
 		var oToolbarSeparator = new ToolbarSeparator();
 		var oTB = createToolbar({

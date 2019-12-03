@@ -146,10 +146,39 @@ sap.ui.define([
 		},
 
 		formatDelButtonTooltip: function(bDelAppVarButtonEnabled, bIsS4HanaCloud) {
+			if (!oI18n) {
+				this._createResourceBundle();
+			}
 			if (!bDelAppVarButtonEnabled && !bIsS4HanaCloud) {
 				return oI18n.getText("TOOLTIP_DELETE_APP_VAR");
 			}
 			return undefined;
+		},
+
+		formatAdaptUIButtonTooltip: function(bAdaptUIButtonEnabled, sAppVarStatus) {
+			if (!oI18n) {
+				this._createResourceBundle();
+			}
+			if (!bAdaptUIButtonEnabled) {
+				switch (sAppVarStatus) {
+					case 'R':
+						// For S4/Hana Cloud systems
+						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_RUNNING");
+					case 'U':
+						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD");
+					case 'E':
+						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_ERROR");
+					case undefined:
+						// For S4/Hana onPrem systems
+						return oI18n.getText("TOOLTIP_ADAPTUI_ON_PREMISE");
+					default:
+						// Do nothing
+				}
+			}
+		},
+
+		formatAdaptUIButtonVisibility: function(bVisible, bKeyUser) {
+			return bVisible && bKeyUser;
 		},
 
 		getModelProperty : function(sModelPropName, sBindingContext) {

@@ -68,41 +68,49 @@ sap.ui.define([
 		/**
 		 * Rounding mode to round towards negative infinity
 		 * @public
+		 * @type {string}
 		 */
 		FLOOR: "floor",
 		/**
 		 * Rounding mode to round towards positive infinity
 		 * @public
+		 * @type {string}
 		 */
 		CEILING: "ceiling",
 		/**
 		 * Rounding mode to round towards zero
 		 * @public
+		 * @type {string}
 		 */
 		TOWARDS_ZERO: "towards_zero",
 		/**
 		 * Rounding mode to round away from zero
 		 * @public
+		 * @type {string}
 		 */
 		AWAY_FROM_ZERO: "away_from_zero",
 		/**
 		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards negative infinity.
 		 * @public
+		 * @type {string}
 		 */
 		HALF_FLOOR: "half_floor",
 		/**
 		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards positive infinity.
 		 * @public
+		 * @type {string}
 		 */
 		HALF_CEILING: "half_ceiling",
 		/**
 		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards zero.
 		 * @public
+		 * @type {string}
 		 */
 		HALF_TOWARDS_ZERO: "half_towards_zero",
 		/**
 		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round away from zero.
 		 * @public
+		 * @type {string}
 		 */
 		HALF_AWAY_FROM_ZERO: "half_away_from_zero"
 	};

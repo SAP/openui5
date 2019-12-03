@@ -206,6 +206,8 @@ function ($, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, 
 			fnOrig.apply(this, arguments);
 		};
 
+		Core.applyChanges();
+
 		// wait for the point where the listener is internally attached
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
 			// act

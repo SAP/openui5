@@ -3,38 +3,45 @@
 /* Belize theme                      */
 /* ================================= */
 
+
+
 /* ==========================================================================
    Variables and mixins
    ========================================================================== */
 
+@_sap_tnt_InfoLabel_LineHeight: 1.125rem;
 
-   @_sap_tnt_InfoLabel_ColorsArray:
-   @_sap_tnt_InfoLabel_BackgroundColor1,
-   @_sap_tnt_InfoLabel_BackgroundColor2,
-   @_sap_tnt_InfoLabel_BackgroundColor3,
-   @_sap_tnt_InfoLabel_BackgroundColor4,
-   @_sap_tnt_InfoLabel_BackgroundColor5,
-   @_sap_tnt_InfoLabel_BackgroundColor6,
-   @_sap_tnt_InfoLabel_BackgroundColor7,
-   @_sap_tnt_InfoLabel_BackgroundColor8,
-   @_sap_tnt_InfoLabel_BackgroundColor9;
+@_sap_tnt_InfoLabel_ColorsArray:
+	@_sap_tnt_InfoLabel_BackgroundColor1,
+	@_sap_tnt_InfoLabel_BackgroundColor2,
+	@_sap_tnt_InfoLabel_BackgroundColor3,
+	@_sap_tnt_InfoLabel_BackgroundColor4,
+	@_sap_tnt_InfoLabel_BackgroundColor5,
+	@_sap_tnt_InfoLabel_BackgroundColor6,
+	@_sap_tnt_InfoLabel_BackgroundColor7,
+	@_sap_tnt_InfoLabel_BackgroundColor8,
+	@_sap_tnt_InfoLabel_BackgroundColor9;
 
-   .create-classes-for-background-color(backgroundColor, @_sap_tnt_InfoLabel_ColorsArray);
+.create-classes-for-background-color(backgroundColor, @_sap_tnt_InfoLabel_ColorsArray);
 
-   /*Iterate over the InfoLabel ColorsArray and create separate class for each
-   color named with the passed prefix and the number of the color*/
+/*Iterate over the InfoLabel ColorsArray and create separate class for each
+color named with the passed prefix and the number of the color*/
 
-   .create-classes-for-background-color(@prefix, @list) {
-	   .iter(length(@list));
-	   .iter(@i) when (@i > 0) {
-		   .iter(@i - 1);
-		   @value:  extract(@list, @i);
-		   .@{prefix}@{i} {
-			   background-color: @value;
-			   .sapTntInfoLabelInner {
-				   color: contrast(@value, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-			   }
-		   }
+.create-classes-for-background-color(@prefix, @list) {
+	.iter(length(@list));
+	.iter(@i) when (@i > 0) {
+		.iter(@i - 1);
+		@value:  extract(@list, @i);
+		.@{prefix}@{i} {
+			background-color: @value;
+			.sapTntInfoLabelInner {
+				color: contrast(@value, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+			}
+		}
 
-	   }
-   }
+	}
+}
+
+.sapUiFormResGridCont .sapTntInfoLabel.sapTntInfoLabelWithIcon.sapTntInfoLabelDisplayOnly .sapUiIcon {
+	line-height: 1rem;
+}

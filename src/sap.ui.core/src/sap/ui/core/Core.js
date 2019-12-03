@@ -3381,6 +3381,12 @@ sap.ui.define([
 	 *
 	 * @param {object} oPlugin reference to a Plugin object
 	 * @public
+	 * @deprecated As of 1.73. Plugins never have been meant as a public offering, but were intended for internal
+	 *   usage only. They unfortunately allow access to all internals of the Core and therefore break encapsulation
+	 *   and hinder evolution of the Core. The most common use case of accessing the set of all controls/elements
+	 *   or all components can now be addressed by using the APIs {@link sap.ui.core.Element.registry} or
+	 *   {@link sap.ui.core.Component.registry}, respectively. Future refactorings of the Core will only take
+	 *   existing plugins in the OpenUI5 repository into account.
 	 */
 	Core.prototype.registerPlugin = function(oPlugin) {
 		assert(typeof oPlugin === "object", "oPlugin must be an object");
@@ -3413,6 +3419,12 @@ sap.ui.define([
 	 *
 	 * @param {object} oPlugin reference to a Plugin object
 	 * @public
+	 * @deprecated As of 1.73. Plugins never have been meant as a public offering, but were intended for internal
+	 *   usage only. They unfortunately allow access to all internals of the Core and therefore break encapsulation
+	 *   and hinder evolution of the Core. The most common use case of accessing the set of all controls/elements
+	 *   or all components can now be addressed by using the APIs {@link sap.ui.core.Element.registry} or
+	 *   {@link sap.ui.core.Component.registry}, respectively. Future refactorings of the Core will only take
+	 *   existing plugins in the OpenUI5 repository into account.
 	 */
 	Core.prototype.unregisterPlugin = function(oPlugin) {
 		assert(typeof oPlugin === "object", "oPlugin must be an object");

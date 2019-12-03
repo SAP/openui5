@@ -112,11 +112,14 @@ function(Device, UIArea, jQuery) {
 		 * The drag session can be used to transfer data between applications or between dragged and dropped controls.
 		 * Please see provided APIs for more details.
 		 *
-		 * <b>Note:</b> This object only exists during a drag-and-drop operation.
+		 * <b>Note:</b> An implementation of this interface is provided by the framework during drag-and-drop operations
+		 * and is exposed as <code>dragSession</code> parameter of the different drag and drop events.
 		 *
-		 * @namespace
+		 * <b>Note:</b> This interface is not intended to be implemented by controls, applications or test code.
+		 * Extending it with additional methods in future versions will be regarded as a compatible change.
+		 *
+		 * @interface
 		 * @name sap.ui.core.dnd.DragSession
-		 * @static
 		 * @public
 		 */
 		return /** @lends sap.ui.core.dnd.DragSession */ {
@@ -179,6 +182,7 @@ function(Device, UIArea, jQuery) {
 			 *
 			 * @param {string} sKey The key of the data
 			 * @param {any} vData Data
+			 * @public
 			 */
 			setComplexData: function(sKey, vData) {
 				mData[sKey] = vData;

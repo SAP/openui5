@@ -125,7 +125,7 @@ sap.ui.define([
     isMatching : function (oControl) {
       var bIsMatching;
       // depend on globally defined Opa5, to avoid circular dependency: opa5 > plugin > matcherfactory > labelfor > opa5
-      var oPlugin = sap.ui.test.Opa5.getPlugin();
+      var oPlugin = this._getOpaPlugin();
       var sModelName = this.getModelName();
       var sLabelText = this.getText();
       var aParameters = this.getParameters();

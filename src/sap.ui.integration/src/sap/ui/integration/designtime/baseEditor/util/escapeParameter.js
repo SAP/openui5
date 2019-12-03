@@ -19,7 +19,7 @@ sap.ui.define([
 	*/
 	return function (oArguments, sParameterName) {
 		var aArguments = Array.from(oArguments);
-		var iSettingsPosition = typeof aArguments[0] !== 'string' && aArguments[0] !== undefined ? 0 : 1;
+		var iSettingsPosition = typeof aArguments[0] !== "string" && aArguments[0] !== undefined ? 0 : 1;
 
 		if (isPlainObject(aArguments[iSettingsPosition])) {
 			var mSettings = Object.assign({}, aArguments[iSettingsPosition]);

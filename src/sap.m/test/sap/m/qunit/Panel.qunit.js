@@ -268,26 +268,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Changing the width after the control is rendered", function(assert) {
-		var fnRenderingSpy = sinon.spy();
-
-		this.oPanel.addDelegate({ onAfterRendering: fnRenderingSpy });
-		this.oPanel.setWidth("200px");
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(fnRenderingSpy.callCount, 0, "should not rerender the control");
-	});
-
-	QUnit.test("Changing the height after the control is rendered", function(assert) {
-		var fnRenderingSpy = sinon.spy();
-
-		this.oPanel.addDelegate({ onAfterRendering: fnRenderingSpy });
-		this.oPanel.setHeight("200px");
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(fnRenderingSpy.callCount, 0, "should not rerender the control");
-	});
-
 	QUnit.test("Header toolbar should override header text", function(assert) {
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
 		sap.ui.getCore().applyChanges();

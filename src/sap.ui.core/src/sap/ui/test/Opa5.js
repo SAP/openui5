@@ -1093,18 +1093,22 @@ sap.ui.define([
 
 		/**
 		 * A map of QUnit-style assertions to be used in an opaTest.
-		 * Contains all methods available on QUnit.assert for the running QUnit version.
-		 * Available assertions are: ok, equal, propEqual, deepEqual, strictEqual and their negative counterparts.
-		 * You can define custom OPA5 assertions in the extensions section of {@link sap.ui.test.Opa5.extendConfig}
+		 *
+		 * Contains all methods available on <code>QUnit.assert</code> for the running QUnit version.
+		 * Available assertions are: <code>ok</code>, <code>equal</code>, <code>propEqual</code>,
+		 * <code>deepEqual</code>, <code>strictEqual</code> and their negative counterparts.
+		 * You can define custom OPA5 assertions in the extensions section of {@link sap.ui.test.Opa5.extendConfig}.
 		 *
 		 * Example usage:
-		 * oOpa5.waitFor({
-		 *   success: function () {
-		 *     Opa5.assert.ok(true, "Should be true");
-		 *   }
-		 * });
+		 * <pre>
+		 *   oOpa5.waitFor({
+		 *     success: function () {
+		 *       Opa5.assert.ok(true, "Should be true");
+		 *     }
+		 *   });
+		 * </pre>
 		 *
-		 * For more information, see  {@link sap.ui.test.opaQunit}.
+		 * For more information, see {@link sap.ui.test.opaQunit}.
 		 *
 		 * @name sap.ui.test.Opa5.assert
 		 * @public
@@ -1113,65 +1117,86 @@ sap.ui.define([
 		 */
 
 		/**
-		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
-		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help to structure your tests.
-		 * @param {map} mPageObjects
-		 * @param {map} mPageObjects.<your-page-object-name> Multiple page objects are possible, provide at least actions or assertions
-		 * @param {function} [mPageObjects.<your-page-object-name>.viewName] When a viewName is given, all waitFors inside of the page object will get a viewName parameter.
-		 * Here is an example:
-		 * <pre>
-		 * 		<code>
-		 * 			Opa5.createPageObjects({
-		 * 				viewName: "myView",
-		 * 				onMyPageWithViewName: {
-		 * 					assertions: {
-		 * 						iWaitForAButtonInMyView: function () {
-		 * 							this.waitFor({
-		 * 								id: "myButton",
-		 * 								success: function (oButton) {
-		 * 									// the button is defined in the view myView
-		 * 								}
-		 * 							});
-		 * 						}
-		 * 					}
-		 * 				}
-		 *     </code>
-		 * </pre>
-		 * This saves you repeating the viewName in every waitFor statement of the page object.
-		 * It is possible to overwrite the viewName of the page object in a specific waitFor.
-		 * So if you have specified a <code>viewName: "myView"</code> in your page object
-		 * and you want to look for a control with a global id you may use <code>viewName: ""</code> in a waitFor
-		 * to overwrite the viewName of the page Object. Example:
-		 * <pre>
-		 * 		<code>
-		 * 			this.waitFor({
-		 * 				id: "myButton",
-		 * 				viewName: "",
-		 * 				success: function (oButton) {
-		 * 					// now a button with the global id "myButton" will be searched
-		 * 				}
-		 * 			});
-		 * 		</code>
-		 * </pre>
-		 * @param {function} [mPageObjects.<your-page-object-name>.viewId] When a viewId is given, all waitFors inside of the page object will get a viewId parameter.
-		 * Use when there are multiple views with the same viewName.
-		 * @param {function} [mPageObjects.<your-page-object-name>.baseClass] Base class for the page object's actions and assertions, default: Opa5
-		 * @param {function} [mPageObjects.<your-page-object-name>.namespace] Namespace prefix for the page object's actions and assertions, default: sap.ui.test.opa.pageObject. Use it if you use page objects from multiple projects in the same test build.
-		 * @param {map} [mPageObjects.<your-page-object-name>.actions] Can be used as an arrangement and action in Opa tests. Only the test knows if an action is used as arrangement or action
-		 * @param {function} mPageObjects.<your-page-object-name>.actions.<your-action-1> This is your custom implementation containing one or multiple waitFor statements
-		 * @param {function} mPageObjects.<your-page-object-name>.actions.<your-action-2> This is your custom implementation containing one or multiple waitFor statements
-		 * @param {map} [mPageObjects.<your-page-object-name>.assertions] Can be used as assertions in Opa tests
-		 * @param {function} mPageObjects.<your-page-object-name>.assertions.<your-assertions-1> This is your custom implementation containing one or multiple waitFor statements
-		 * @param {function} mPageObjects.<your-page-object-name>.assertions.<your-assertions-2> This is your custom implementation containing one or multiple waitFor statements
-		 * @returns {map} mPageObject The created page object. It will look like this:
-		 * <pre><code>
-		 *  {
-		 *   &lt;your-page-object-name&gt; : {
-		 *       actions: // an instance of baseClass or Opa5 with all the actions defined above
-		 *       assertions: // an instance of baseClass or Opa5 with all the assertions defined above
-		 *   }
-		 *  }
-		 * </code></pre>
+		 * Settings for a new page object, consisting of actions and assertions.
+		 *
+		 * @typedef {Object} sap.ui.test.PageObjectDefinition
+		 *
+		 * @property {string} [viewName]
+		 *   When a <code>viewName</code> is given, all <code>waitFor</code> calls inside of the page object
+		 *   will get a <code>viewName</code> parameter.
+		 *
+		 *   Example:
+		 *   <pre>
+		 *     Opa5.createPageObjects({
+		 *       viewName: "myView",
+		 *       onMyPageWithViewName: {
+		 *         assertions: {
+		 *           iWaitForAButtonInMyView: function () {
+		 *             this.waitFor({
+		 *               id: "myButton",
+		 *               success: function (oButton) {
+		 *                 // the button is defined in the view myView
+		 *               }
+		 *             });
+		 *           }
+		 *         }
+		 *       }
+		 *     });
+		 *   </pre>
+		 *   This saves you repeating the <code>viewName</code> in every <code>waitFor</code> statement of the page
+		 *   object. It is possible to overwrite the <code>viewName</code> of the page object in a specific
+		 *   <code>waitFor</code> call. So if you have specified a <code>viewName: "myView"</code> in your page
+		 *   object and you want to look for a control with a global ID, you may use <code>viewName: ""</code>
+		 *   in a <code>waitFor</code> to overwrite the <code>viewName</code> of the page object.
+		 *
+		 *   Example:
+		 *   <pre>
+		 *     // waits for a button with the global id "myButton"
+		 *     this.waitFor({
+		 *       id: "myButton",
+		 *       viewName: "",
+		 *       success: function (oButton) {
+		 *         // act when button is found
+		 *       }
+		 *     });
+		 *   </pre>
+		 * @property {string} [viewId]
+		 *   When a <code>viewId</code> is given, all <code>waitFor</code> calls inside of the page object will
+		 *   get a <code>viewId</code> parameter. Use when there are multiple views with the same viewName.
+		 * @property {function} [baseClass=sap.ui.test.Opa5]
+		 *   Base class for the page object's actions and assertions
+		 * @property {string} [namespace="sap.ui.test.opa.pageObject"]
+		 *   Namespace prefix for the page object's actions and assertions.
+		 *   Use it if you use page objects from multiple projects in the same test build.
+		 * @property {Object<string,function>} [actions]
+		 *   A map of functions that can be used as arrangement or action in Opa tests.
+		 *   Only the test decides whether a function is used as arrangement or action. Each function typically
+		 *   contains one or multiple <code>waitFor</code> statements.
+		 * @property {Object<string,function>} [assertions]
+		 *   A map of functions that can be used as assertions in Opa tests.
+		 * @public
+		 * @since 1.25
+		 */
+
+		/**
+		 * Creates a set of page objects, each consisting of actions and assertions and adds them to
+		 * the Opa configuration.
+		 *
+		 * Use page objects to structure your actions and assertions based on parts of the screen.
+		 * This helps to avoid name clashes and to structure your tests.
+		 *
+		 * @param {Object<string,sap.ui.test.PageObjectDefinition>} mPageObjects
+		 *   Multiple page objects are possible, provide at least actions or assertions
+		 * @returns {Object<string,Object>}
+		 *   The created page object. It will look like this:
+		 *   <pre>
+		 *     {
+		 *       &lt;your-page-object-name&gt; : {
+		 *         actions: // an instance of baseClass or Opa5 with all the actions defined above
+		 *         assertions: // an instance of baseClass or Opa5 with all the assertions defined above
+		 *       }
+		 *     }
+		 *   </pre>
 		 * @public
 		 * @since 1.25
 		 */
