@@ -947,6 +947,34 @@ sap.ui.define([
 				assert.deepEqual(result, expectedResult);
 			});
 		});
+
+		QUnit.test("getFileAttributes - all params", function(assert) {
+			//Arrange
+			var expectedResult = {abc: 123};
+			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?metadata=true&layer=myLayer";
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
+
+			//Act
+			return this.oLrepConnector.getFileAttributes("myNamespace/mySubNamespace", "myName", "myType", "myLayer").then(function(result) {
+				//Assert
+				assert.ok(sendStub.calledWith(expectedUrl, "GET", null, null));
+				assert.deepEqual(result, expectedResult);
+			});
+		});
+
+		QUnit.test("getFileAttributes - required only", function(assert) {
+			//Arrange
+			var expectedResult = {abc: 123};
+			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?metadata=true";
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
+
+			//Act
+			return this.oLrepConnector.getFileAttributes("myNamespace/mySubNamespace", "myName", "myType").then(function(result) {
+				//Assert
+				assert.ok(sendStub.calledWith(expectedUrl, "GET", null, null));
+				assert.deepEqual(result, expectedResult);
+			});
+		});
 	});
 
 
