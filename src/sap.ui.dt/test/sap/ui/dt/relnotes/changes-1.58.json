@@ -89,5 +89,75 @@
         "references": []
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "37639163bb9d26a11b82683b5549d4bc71de11dd",
+        "type": "FIX",
+        "text": "Smartlink not selectable after combine",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880522902"
+          }
+        ]
+      },
+      {
+        "id": "18dc686dc35fd1f14ca36c13630fb0173f2f6b7e",
+        "type": "FIX",
+        "text": "sap.ui.dt: ElementOverlay QUnit test failures on IE11 browser",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499852"
+          }
+        ]
+      },
+      {
+        "id": "c0661f5cccbfea38121586cfeca24ad4cc59fe33",
+        "type": "FIX",
+        "text": "sap.ui.dt - ScrollContainer Z-Index calculation fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499912"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "11183e0a18176dceabb1b98d56de97ac5bf13e0c",
+        "type": "FIX",
+        "text": "sap.ui.dt - MiniMenu is now always placed correctly on touch screen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499338"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "fb0704ddaa8b825278c2f2048b136da2291b6305",
+        "type": "FIX",
+        "text": "sap.ui.dt - Context menu closes when selection changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870378069"
+          }
+        ]
+      }
+    ]
   }
 }

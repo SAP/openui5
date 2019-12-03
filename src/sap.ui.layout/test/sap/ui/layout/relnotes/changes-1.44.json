@@ -151,5 +151,312 @@
         ]
       }
     ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "4a92cd53a76e593caa84308d3dc4f8b0aa8ab8f2",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Control no longer flickers",
+        "references": []
+      },
+      {
+        "id": "b8ccbbd8d751913101011ed5b7ef36ebf2adf6ec",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Unwanted scrollbar is now removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680355748"
+          }
+        ]
+      },
+      {
+        "id": "23fff59d552a3722687b4e42a7a0a9ee62b225e4",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout: Destroy render manager only if it exists",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680326286"
+          }
+        ]
+      },
+      {
+        "id": "41dc917ab52976b83d2a6bd0b6cf33a80603a238",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter: Unsubscribing to __preserveContent fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680290787"
+          }
+        ]
+      },
+      {
+        "id": "f213b3af5b800e8ac314a6011268718cc6ee8713",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm adding content twice",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680270359"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "710ca0259d141d9dfbb014a0d7bcd35968c1c6ce",
+        "type": "FIX",
+        "text": "sap.m.ResponsiveSplitter: Overlapping text and navigation CSS issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780027116"
+          }
+        ]
+      },
+      {
+        "id": "361f3ca6eb6acb76e83dea989f061f9935ad3683",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Scrollbar is now correctly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780032001"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.8": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "6f7cffd2e523bd5c8163c9ca84cc4019f6862a65",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: Docu fix",
+        "references": []
+      }
+    ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "5079f3bd13883c3f0aa3d284708f73e6947ae7d3",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Calcuation after resizing is wrong",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780072291"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780027116"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.12": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "386e73e461619212c7b1453b8ef1ac137a5222ba",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayoutCell: Prevents longer elements from breaking the layout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770070505"
+          }
+        ]
+      },
+      {
+        "id": "51ec4f5e3a556767b4ef0995cef1952e01734ffc",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex When minFlexSize is not set, the flexible part doesn't have scrolling any more",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001427302017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "adf858bd1d04a27889a7431d1ceb964cea4091ca",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: PaneContainer's content is now properly resized and rendered.",
+        "references": []
+      }
+    ]
+  },
+  "1.44.15": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "b4b67b314f47b91154290853526de090d9c11042",
+        "type": "FIX",
+        "text": "sap.ui.BlockLayout: Endless switching between breakpoints is now fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002505452017"
+          }
+        ]
+      },
+      {
+        "id": "dc4010b7bcc8af5de514d586c381a4487c6e479f",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: IE fialing tests fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770097869"
+          }
+        ]
+      },
+      {
+        "id": "e771305017ff7ac36a45cdb1cb1a3b330d25b915",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: IE fialing tests fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770097869"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.18": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "bf117db610b65ba949fd3bf6ab19241d03bf17a3",
+        "type": "FIX",
+        "text": "SimpleForm removing Label creates empty container",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780254195"
+          }
+        ]
+      },
+      {
+        "id": "344151c6943eaf1d94e7666ac6e584177267fe5f",
+        "type": "FIX",
+        "text": "sap.ui.fl changeHandler needs to store dependencies",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002419772017"
+          }
+        ]
+      },
+      {
+        "id": "7e3320b31b491b3c5d49fb4aa80ec0289c87bc19",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Inserting PaneConainers in a selected index is now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780257842"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.19": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "dcae79e2a1e31c41d56964b1556708aa78f2b8bf",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Layout is now correct on MS Edge browser",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003587862017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.22": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "48cce714f35140c78b126b766413f81c32088fd4",
+        "type": "FIX",
+        "text": "Form: don't close FormContainer if focus on Input field",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376600002620642017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.23": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "9ea6159fe1ec4b4558a614bd802ac37affb1df19",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770468315"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.26": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "ea2c822ea86ec0f3cafd7c638a7e4eff2b5f27b8",
+        "type": "FIX",
+        "text": "FormContainer: render role=\"form\" only if title exist",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780467353"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.34": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "a3d3e35de9975afbb6114483589b05248a649d2f",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Resize tooltips are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880313384"
+          }
+        ]
+      }
+    ]
   }
 }

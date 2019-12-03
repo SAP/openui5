@@ -113,6 +113,128 @@
             "reference": "1970512440"
           }
         ]
+      },
+      {
+        "id": "5bed03375f0d9a843bd3d9a27833d19d186c40ff",
+        "type": "FEATURE",
+        "text": " sap.f.AvatarGroup: Control for grouped Avatars is implemented",
+        "references": []
+      },
+      {
+        "id": "ad02953be02cce72fe37e0ff3f713b0c2922ef8b",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Introducing four new types",
+        "references": []
+      },
+      {
+        "id": "cb3c95aea5ca7fe687cac07877b9fe9111d53689",
+        "type": "FEATURE",
+        "text": " sap.m.TabContainer: SAP Quartz style alignment",
+        "references": []
+      },
+      {
+        "id": "e8cfd1bc41f5c9d8de91af1a21d8dc9c6906af8f",
+        "type": "FEATURE",
+        "text": " sap.m.WheelSlider: Implemented new control",
+        "references": []
+      },
+      {
+        "id": "b4ad27db2c0627a592ba66821f48b9e3a4adfb8f",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageHeader: New background color property introduced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970466184"
+          }
+        ]
+      },
+      {
+        "id": "be4bcd19130161255d7b8a6fe155811bfab00435",
+        "type": "FIX",
+        "text": " core.Icon: move the focus outline out of the icon area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970423523"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980355440"
+          }
+        ]
+      },
+      {
+        "id": "122353840693bb68d5082f00f91df319ae7eae5e",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Visual bugs fixed",
+        "references": []
+      },
+      {
+        "id": "e509dd2889834537fa6631679cd1c1bd9b5c5a2d",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Current location focus style restored",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970601251"
+          }
+        ]
+      },
+      {
+        "id": "7775253973a5ba15004ac6bc8595abe0fa11a554",
+        "type": "FIX",
+        "text": " sap.m.Button: Now there is no text-shadow in Quartz Dark",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970564749"
+          }
+        ]
+      },
+      {
+        "id": "a41edf2dbfcfb28454b1627175ef0dda97e5f9f5",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Accessibility improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970521416"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970564900"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970625121"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970512440"
+          }
+        ]
+      },
+      {
+        "id": "cc78d435a71906d15276ccb2b942f677145f4e6f",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Focus fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970578622"
+          }
+        ]
+      },
+      {
+        "id": "c473222d4d78e55a5f795e77a5725347c3b751b2",
+        "type": "FIX",
+        "text": " sap.m.SlideTile Quartz Light and Dark theme adjustments",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
       }
     ]
   }

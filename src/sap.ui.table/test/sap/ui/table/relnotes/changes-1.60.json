@@ -131,5 +131,221 @@
         "references": []
       }
     ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "ef0a3ac4b8b09e281666f82c7104ea1b5d00fc18",
+        "type": "FIX",
+        "text": "Table: Apply input values when scrolling by edit mode navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005540862018"
+          }
+        ]
+      },
+      {
+        "id": "e54270c71f2395286fc457891375bc530d669f65",
+        "type": "FIX",
+        "text": "Table: Horizontal scroll position on focus in RTL with Unit Tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880609454"
+          }
+        ]
+      },
+      {
+        "id": "1d3b0357a660a7c831238e1ac71332512bae8733",
+        "type": "FIX",
+        "text": "TreeTable: ACC - Avoid duplicate announcement on expand/collapse",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870333721"
+          }
+        ]
+      },
+      {
+        "id": "71af8cc83d1e5eb7c8ab00578d737f80a9d24ba3",
+        "type": "FIX",
+        "text": "Table: Correctly create new rows after resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880678505"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "14e05df55edf2442fbc9bfb8e33f434253cbb939",
+        "type": "FIX",
+        "text": "Table: Accessibility announcement in tree table and grouping rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880566707"
+          }
+        ]
+      },
+      {
+        "id": "42ee76276bd358519dd6478288dccf2722a3facc",
+        "type": "FIX",
+        "text": "Table: SelectAll button won\u0027t deselect in \"Single\" selection mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880731924"
+          }
+        ]
+      },
+      {
+        "id": "8b9adac6772e794eecaae83f7f2719619e939147",
+        "type": "FIX",
+        "text": "Table: Show vertical scrollbar when adding entries in the model",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870485579"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.4": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "abdd9dd16289d5a79cac73296fc84e03068c1285",
+        "type": "FIX",
+        "text": "Table: Avoid infinite rendering loop with fixed columns in Edge 44",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2334"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006440602018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "b8895f00b36ec81efb1615ba176c4c64b381a8c6",
+        "type": "FIX",
+        "text": "Table: Avoid duplicate id issues for rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000245292019"
+          }
+        ]
+      },
+      {
+        "id": "f4321753f0e6561af0081d99ff6dc6e7d7ede5a8",
+        "type": "FIX",
+        "text": "Table: Fixed column layout corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970042745"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.11": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "51a48a870f79786a7dbb5eb88a240df381009a32",
+        "type": "FIX",
+        "text": " AnalyticalTable: Correctly open group row context menu",
+        "references": []
+      },
+      {
+        "id": "9653d7c84272a96cc6c295e126d64fe71d604606",
+        "type": "FIX",
+        "text": " Table: Mouse wheel scrolling for delta modes \"Line\" and \"Page\"",
+        "references": []
+      }
+    ]
+  },
+  "1.60.12": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "9aedf3734569ef89095203b0f01d36aa0d18b4eb",
+        "type": "FIX",
+        "text": " Table: Open cell filter menus on correct cell",
+        "references": []
+      }
+    ]
+  },
+  "1.60.13": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "57ff256eb702abea09a3ee7495074e15b389c203",
+        "type": "FIX",
+        "text": " Table: Update column menu visibility to match actual state",
+        "references": []
+      }
+    ]
+  },
+  "1.60.14": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "6a8e0dca40cea2d68b3fa499bb22eb409bb3dc7f",
+        "type": "FIX",
+        "text": " Table: Set correct firstVisibleRow also if parent is invisible",
+        "references": []
+      }
+    ]
+  },
+  "1.60.16": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "517ac8a281b4ea376aff6faea33f93df83c6503d",
+        "type": "FIX",
+        "text": " GridTable: Replaced IE incompatible function(s)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880365356"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.19": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "540e5adab255011e08cf1eb04d472d05cd442b4b",
+        "type": "FIX",
+        "text": " Table: Apply input values when scrolling with mouse or touch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970149245"
+          }
+        ]
+      }
+    ]
   }
 }

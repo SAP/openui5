@@ -5,56 +5,60 @@
       {
         "id": "3839cc2d07d1e5d26df58658cdd361afc4d7b0f9",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: Now the week number in 1 Month view is not missing in IE when 1st week day is selected",
+        "text": " sap.m.PlanningCalendar: Now the week number in 1 Month view is not missing in IE when 1st week day is selected",
         "references": []
       },
       {
         "id": "2482a259b10c6136bc6d59df65bdea0b7e7c3d5d",
         "type": "FEATURE",
-        "text": "sap.m.TimePickerSliders: New control implemented",
+        "text": " sap.m.TimePickerSliders: New control implemented",
         "references": []
       },
       {
         "id": "ea796c83a9b921f2d33c201a1195aa55082d1ea1",
         "type": "FIX",
-        "text": "sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "1804"
-          },
-          {
-            "type": "BCP",
-            "reference": "1780488929"
-          }
-        ]
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
       },
       {
         "id": "7b81ef78c54b5bee9ef2d49fe512bf8a1c53e6f8",
         "type": "FEATURE",
-        "text": "sap.m.MessagePage: Added new property and aggregation",
+        "text": " sap.m.MessagePage: Added new property and aggregation",
         "references": []
       },
       {
         "id": "3112ac952611a0fbcf91609ee41d8a327ab67322",
         "type": "FIX",
-        "text": "sap.m.Popover: correct header, subheader and footer DOM structure",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
         "references": []
       },
       {
         "id": "eaf3bce54050da573d6427e2aa75a3e995ddccc8",
         "type": "FIX",
-        "text": "sap.m.Dialog: correct header, subheader and footer DOM structure",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770617033"
-          },
-          {
-            "type": "BCP",
-            "reference": "002075129400000248662018"
-          }
-        ]
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      }
+    ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "93fcd7e925871d312a24cfb953bd7557b6bf4099",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": []
+      }
+    ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b0d94e33f3b7da317f201a31a97211188d9217fa",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
       }
     ]
   }

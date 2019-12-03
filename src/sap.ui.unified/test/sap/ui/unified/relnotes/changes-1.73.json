@@ -78,6 +78,83 @@
             "reference": "002075129400006570372019"
           }
         ]
+      },
+      {
+        "id": "42e5ae61e5c2cd3a88764e0592bd3b546c89ee84",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Belize plus colors adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006570372019"
+          }
+        ]
+      },
+      {
+        "id": "1638907fc60503b33f3e5f41ce7bb73e91e03655",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Month picker navigation is now compliant to KH spec",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980337344"
+          }
+        ]
+      },
+      {
+        "id": "c10a3d0c2c9eb35c099eb8bfaf4129c10a79c696",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: styles are now adjusted for phone devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970587313"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970578181"
+          }
+        ]
+      },
+      {
+        "id": "ad1ba7f6d536f650cf4f65aded2f40c9c7ab8489",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: visual issues are now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970400974"
+          }
+        ]
+      },
+      {
+        "id": "2b3338655408a115cc8f7a5041b8e18c4e6b4865",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: ID of the internal button is now stable",
+        "references": []
+      },
+      {
+        "id": "87acdab9a872d36f8a7204c45d65f24c55e5caa7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Menu is now handling the new iOS13 tablet views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970508436"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006496372019"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005577152019"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006664912019"
+          }
+        ]
       }
     ]
   }

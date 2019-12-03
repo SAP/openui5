@@ -14,5 +14,57 @@
         ]
       }
     ]
+  },
+  "1.52.8": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "b61384077ca5bc6e335ea5ceb63acb524e4a07ed",
+        "type": "FIX",
+        "text": "sap.ui.commons.MatrixLayout: Render calculations corrected for Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000745792018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.25": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "112d3d66d9d99a324638cce4f8e7848042c956ef",
+        "type": "FIX",
+        "text": "sap.ui.commons.DatePicker: fix failing unit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870142578"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.31": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "3ab97bea237c8863e85abc1df0a2e190d505e9ec",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: XHR Upload on Safari restored",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980283288"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770523801"
+          }
+        ]
+      }
+    ]
   }
 }

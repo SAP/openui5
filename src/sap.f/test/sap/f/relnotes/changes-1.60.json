@@ -5,7 +5,7 @@
       {
         "id": "bed3d6d5d26b256c85bd3e476173616092f866e5",
         "type": "FIX",
-        "text": "FlexibleColumnLayout: LocalBusyIndicator's z-index is fixed",
+        "text": "FlexibleColumnLayout: LocalBusyIndicator\u0027s z-index is fixed",
         "references": [
           {
             "type": "BCP",
@@ -133,6 +133,104 @@
           {
             "type": "BCP",
             "reference": "1880546926"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "6af0af8d0b8525f8a0b6eb76ebd08d5d9c2631de",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Fixed CSS styles in snapped/expanded content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880687150"
+          }
+        ]
+      },
+      {
+        "id": "3d19d89b37c6f13ff523a0effb81b6809af57bd8",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Fixed Fiori 2.0 tutorial",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880673013"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "38ae9bf3bfcc04e1bae1e8a5e7e37d4dfbd114f6",
+        "type": "FIX",
+        "text": "tutorial.fiori2: Product parameter is now transmitted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880673013"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.10": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "39bcdf0d08c98f8f36321be8c79c487cde90011a",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected expand visibility on resize",
+        "references": []
+      },
+      {
+        "id": "7051ae5ea77d9ad046380ddf205b1afb458189e8",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fixed focus in hidden columns",
+        "references": []
+      }
+    ]
+  },
+  "1.60.15": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "a7b4cc87244401c56c3cc66d964afb3a082300bf",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Ensured header snapped on resize",
+        "references": []
+      }
+    ]
+  },
+  "1.60.21": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "a26e5c388cca3cd5fd03aab58f580a756a977008",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed visibility of collapse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005671102019"
+          }
+        ]
+      },
+      {
+        "id": "3c618371930443dc7331fcbbfa06c8a9ee4ae571",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fixed design time metadata",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376600003928952019"
           }
         ]
       }

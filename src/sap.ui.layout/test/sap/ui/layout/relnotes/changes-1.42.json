@@ -1,135 +1,222 @@
 {
-	"1.42.0": {
-		"date": "August 2016",
-		"notes": [
-			{
-				"id": "4f3b63cc03a4c2a60baaf5bb3712fa381a2a0dce",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.ResponsiveSplitter ACC enhancements",
-				"references": []
-			},
-			{
-				"id": "56d663bdcacc943429ccfa35a73135a502b64539",
-				"type": "FIX",
-				"text": "AssociativeSplitter: Overriding calculation functions to make the Splitter responsive",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670226583"
-					},
-					{
-						"type": "BCP",
-						"reference": "1680043748"
-					}
-				]
-			},
-			{
-				"id": "38995e29466862a98970fcb7fd3c8dae1b7d5cf1",
-				"type": "FIX",
-				"text": "Enable SimpleForm Move with stable id",
-				"references": []
-			},
-			{
-				"id": "8c9425e4663886aadd3818a56df73193199c43fb",
-				"type": "FIX",
-				"text": "fixes LREP change not applied when simpleform loaded; fixes missplacement when field moved to empty group; removes redundant info from serialized command (LREP change),",
-				"references": []
-			},
-			{
-				"id": "15e580348d58426757481357b3afa118250464ec",
-				"type": "FIX",
-				"text": "fixes changeType variants of SimpleFormMove",
-				"references": []
-			},
-			{
-				"id": "25bab0d89903c9b9b3c6748a26aa5b138bc59c80",
-				"type": "FIX",
-				"text": "fixes unhide/move problems",
-				"references": []
-			},
-			{
-				"id": "8bf7dba56bcb4625d94cf8aa871642500b19680c",
-				"type": "FIX",
-				"text": "sap.ui.layout.FixFlex: Fix content size issue in IE9",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670162233"
-					}
-				]
-			},
-			{
-				"id": "d219efcc76c97187552d76463177ad7a17c1c8f2",
-				"type": "FIX",
-				"text": "sap.ui.layout.FixFlex: The fixed and the flexible part are no longer overlapping in Chrome",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680105979"
-					}
-				]
-			},
-			{
-				"id": "e84103d869842bb042017308e907e7f7b98dcc80",
-				"type": "FIX",
-				"text": "sap.ui.layout.ResponsiveSplitter: Adding class to root element improved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680133684"
-					}
-				]
-			},
-			{
-				"id": "291086153bd3050678c989a6081e980ef9ed855b",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.SimpleForm - insert Label before toolbar",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680219959"
-					}
-				]
-			},
-			{
-				"id": "df8a8e18b860d81a03133bb1496eb598c32363ce",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.SimpleForm - insert field before toolbar",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680212679"
-					}
-				]
-			},
-			{
-				"id": "8ef3e21611cd6adcd6880c0006d855da18da55d1",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.SimpleForm getContent returns interanal array",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680120991"
-					}
-				]
-			},
-			{
-				"id": "e1368f4bda3626e7cb6a16f3717014ccd1fce21c",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.SimpleForm: Toolbar disappears by invalidating",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680191430"
-					}
-				]
-			},
-			{
-				"id": "3f75d628f6f81623f9b41be54a686d2bf063953c",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.SimpleForm: fix bug in the invalidate() method",
-				"references": []
-			}
-		]
-	}
+  "1.42.0": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "4f3b63cc03a4c2a60baaf5bb3712fa381a2a0dce",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.ResponsiveSplitter ACC enhancements",
+        "references": []
+      },
+      {
+        "id": "56d663bdcacc943429ccfa35a73135a502b64539",
+        "type": "FIX",
+        "text": "AssociativeSplitter: Overriding calculation functions to make the Splitter responsive",
+        "references": []
+      },
+      {
+        "id": "38995e29466862a98970fcb7fd3c8dae1b7d5cf1",
+        "type": "FIX",
+        "text": "Enable SimpleForm Move with stable id",
+        "references": []
+      },
+      {
+        "id": "8c9425e4663886aadd3818a56df73193199c43fb",
+        "type": "FIX",
+        "text": "fixes LREP change not applied when simpleform loaded; fixes missplacement when field moved to empty group; removes redundant info from serialized command (LREP change),",
+        "references": []
+      },
+      {
+        "id": "15e580348d58426757481357b3afa118250464ec",
+        "type": "FIX",
+        "text": "fixes changeType variants of SimpleFormMove",
+        "references": []
+      },
+      {
+        "id": "25bab0d89903c9b9b3c6748a26aa5b138bc59c80",
+        "type": "FIX",
+        "text": "fixes unhide/move problems",
+        "references": []
+      },
+      {
+        "id": "8bf7dba56bcb4625d94cf8aa871642500b19680c",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Fix content size issue in IE9",
+        "references": []
+      },
+      {
+        "id": "d219efcc76c97187552d76463177ad7a17c1c8f2",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: The fixed and the flexible part are no longer overlapping in Chrome",
+        "references": []
+      },
+      {
+        "id": "e84103d869842bb042017308e907e7f7b98dcc80",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Adding class to root element improved",
+        "references": []
+      },
+      {
+        "id": "291086153bd3050678c989a6081e980ef9ed855b",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert Label before toolbar",
+        "references": []
+      },
+      {
+        "id": "df8a8e18b860d81a03133bb1496eb598c32363ce",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert field before toolbar",
+        "references": []
+      },
+      {
+        "id": "8ef3e21611cd6adcd6880c0006d855da18da55d1",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm getContent returns interanal array",
+        "references": []
+      },
+      {
+        "id": "e1368f4bda3626e7cb6a16f3717014ccd1fce21c",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: Toolbar disappears by invalidating",
+        "references": []
+      },
+      {
+        "id": "3f75d628f6f81623f9b41be54a686d2bf063953c",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: fix bug in the invalidate() method",
+        "references": []
+      }
+    ]
+  },
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "9b7968d4411750eee1fa9b242157558d0bfff5e7",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout: Belize enhancements",
+        "references": []
+      },
+      {
+        "id": "2c80f87560b289c1608f8108a99eb67e8681f7b6",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Issues with translations in qunit are now resolved",
+        "references": []
+      },
+      {
+        "id": "7b1d4bf7d4fba7004da9333839e60b39122024a2",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout - Vertical layout no longer cuts the outline and box-shadow of it\u0027s content controls",
+        "references": []
+      }
+    ]
+  },
+  "1.42.2": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "def196e7efb09dc5045137a9a7872f3355a2a7c0",
+        "type": "FIX",
+        "text": "changes-1.42.json: remove duplicates",
+        "references": []
+      }
+    ]
+  },
+  "1.42.3": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "1cefafc4662997371ad56d2c0f11c18b1ca76efa",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": []
+      },
+      {
+        "id": "eda4762ebc01c504b98deb882ff332573bb72e0e",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayout: AMD load of library.js",
+        "references": []
+      },
+      {
+        "id": "8118d569a8364c88dfddbe0ca238f7f531e62e65",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: ScrollEnablement is now used for scrolling",
+        "references": []
+      },
+      {
+        "id": "ddb9ba25160f8eb5a716689e29792a8614018bfd",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Scrollbars are now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "223a580bfcc2c0f859329e80cc33a00398a5509e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter: Splitter containers\u0027 sizes are now properly calculated",
+        "references": []
+      },
+      {
+        "id": "4661cb6837b749b241adce1d7df97d4e2333673a",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout: Vertical-align for all browsers adjusted to topD",
+        "references": []
+      }
+    ]
+  },
+  "1.42.4": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "703e191db02ad0ce8dc517c28abdcc1020974c15",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: moving content - wrong result",
+        "references": []
+      }
+    ]
+  },
+  "1.42.7": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "3ed84839c8cdcc7255f12ed0c6d9e67b0d8ce419",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm adding content twice",
+        "references": []
+      }
+    ]
+  },
+  "1.42.8": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "d2fa939e6b3ba96e6f039d02fbd7684876c787b6",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Control no longer flickers",
+        "references": []
+      },
+      {
+        "id": "1da90f54c034dc5139c6b5bf68181342941950da",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Unwanted scrollbar is now removed",
+        "references": []
+      },
+      {
+        "id": "014f33ed022ed1da950107a884d51d5fd3ec23cf",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: Destroy render manager only if it exists",
+        "references": []
+      }
+    ]
+  },
+  "1.42.9": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "259d37edb92e1121ef7361b8acb01e05c12de279",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Scrollbar is now correctly displayed",
+        "references": []
+      }
+    ]
+  }
 }

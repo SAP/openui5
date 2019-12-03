@@ -97,5 +97,97 @@
         "references": []
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "602f025599963f10b3ae19bd91df985955de9d9e",
+        "type": "FIX",
+        "text": "Combine on the wrong element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770492991"
+          }
+        ]
+      },
+      {
+        "id": "2542461e997ba1cebb080c5565eac3838b5dd4e2",
+        "type": "FIX",
+        "text": "sap.ui.dt: added missing parentheses for ElementUtil.isVisible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770506683"
+          }
+        ]
+      },
+      {
+        "id": "69db4774e0223c589661ba06e8942355bb813aa3",
+        "type": "FIX",
+        "text": "sap.ui.rta - Settings dialog don’t open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770516043"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "a5fd5f7b699dc49ecdf3d2a2e91b32c490a73152",
+        "type": "FIX",
+        "text": "sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770492781"
+          }
+        ]
+      },
+      {
+        "id": "dfd2844f8069985c30d6226a95f86082cec9026b",
+        "type": "FIX",
+        "text": "sap.ui.dt: QUnit test fix - CSS filter not supported by IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770584012"
+          }
+        ]
+      },
+      {
+        "id": "7b09286cf02d7708c41de2bb1d1842a3ebfe8709",
+        "type": "FIX",
+        "text": "sap.ui.rta: DT Metadata ignore() called for destroyed element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770557200"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "90d1baea9e7212055bf0357c9d406c0161c48717",
+        "type": "FIX",
+        "text": "Stabilize test case by rounding numbers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880043833"
+          }
+        ]
+      }
+    ]
   }
 }

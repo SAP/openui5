@@ -27,7 +27,7 @@
       {
         "id": "9b23babc9e99562d8edb6cc6c411a153a6189f47",
         "type": "FIX",
-        "text": "AnchorBar: Overlapping MenuButton's text is fixed",
+        "text": "AnchorBar: Overlapping MenuButton\u0027s text is fixed",
         "references": [
           {
             "type": "BCP",
@@ -232,6 +232,146 @@
           {
             "type": "BCP",
             "reference": "1880602140"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "3d01887a0bb1e6abbb4045542f307731d756458b",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Fixed RTA behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880589921"
+          }
+        ]
+      },
+      {
+        "id": "0167d995aa2a63b68e6a70c63c49985881bd9408",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Revert header rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880661489"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "db0c4b351856fbd73da0959d0b3c8a50ed8fe2f4",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Adaptation of actions improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870456862"
+          }
+        ]
+      },
+      {
+        "id": "57873d20c9c8fb6712d33bab7322ccd66fdebe71",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Ensure scroll position preserved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870474978"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.8": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "348f6a74fa4b16185e5c648cebc19721e12b2bc2",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Filtering of lazy loaded sections fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970115549"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.9": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "715cad1342d793d08ff62ff117ed85dcb49ae281",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: wraps in Table correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005041000000126732019"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.13": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "cf595d9997d736a81351c96e1203fa1aa97c1aaf",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent unwanted content resize",
+        "references": []
+      }
+    ]
+  },
+  "1.60.19": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "1a2dabfb15c2bc1b55545242893d08d50cd7f21a",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLazyLoading: Corrected qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980351962"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.20": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "6d4eba05d77a4e25f0b801ff585baa8bed0e8eb2",
+        "type": "FIX",
+        "text": " REG: Adapt UI ObjectPageLayout exception is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980328772"
+          }
+        ]
+      },
+      {
+        "id": "d2f07ff3a4c5c213790330400311d4c09cbab675",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevented iOS scroll issue on overflow change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "587571"
           }
         ]
       }

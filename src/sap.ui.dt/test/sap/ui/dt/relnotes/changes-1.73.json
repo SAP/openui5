@@ -12,6 +12,17 @@
             "reference": "1970554908"
           }
         ]
+      },
+      {
+        "id": "d05cd53a8f726f53abf3a9f8ddef879457986a7b",
+        "type": "FIX",
+        "text": " sap.ui.dt: skip overlay creation when unresolved bindings detected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970554908"
+          }
+        ]
       }
     ]
   }

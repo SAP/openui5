@@ -66,6 +66,71 @@
         "type": "FEATURE",
         "text": " sap.ui.integration.widgets.Card: Introduced date range parameters",
         "references": []
+      },
+      {
+        "id": "319623ecc320e60d13852311d6b77f99b0b28e95",
+        "type": "FEATURE",
+        "text": " Demo Kit: Search highlighting is implemented",
+        "references": []
+      },
+      {
+        "id": "5bed03375f0d9a843bd3d9a27833d19d186c40ff",
+        "type": "FEATURE",
+        "text": " sap.f.AvatarGroup: Control for grouped Avatars is implemented",
+        "references": []
+      },
+      {
+        "id": "4364c347e1ff547534e8a40d7282851f353158a2",
+        "type": "FEATURE",
+        "text": " sap.f.ProductSwitch: Accessibility enablement",
+        "references": []
+      },
+      {
+        "id": "13c5b11c6a3e0211c284bc47357c4273bec39d50",
+        "type": "FEATURE",
+        "text": " sap.f.semantic.SemanticPage: fitContent property exposed",
+        "references": []
+      },
+      {
+        "id": "f4a6558052e37bd53ad088e5d0035d7e62d10763",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Added predefined DateTime formatter",
+        "references": []
+      },
+      {
+        "id": "1e90e6bb3fd0270bc763b6b155bb4b44ac1c6790",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Introduced date range parameters",
+        "references": []
+      },
+      {
+        "id": "f6d05979394e71844c229d568619779fabe77702",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.cssgrid.ResponsiveColumnLayout: IE polyfill",
+        "references": []
+      },
+      {
+        "id": "e0f915c4a81cda17bf660e7e2a59cc5dea040948",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Prevent errors when grid is destroyed on IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970503296"
+          }
+        ]
+      },
+      {
+        "id": "122353840693bb68d5082f00f91df319ae7eae5e",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Visual bugs fixed",
+        "references": []
+      },
+      {
+        "id": "bbb52fb711a8127384ac5ceb4ae3de271200ca9e",
+        "type": "FIX",
+        "text": " sap.ui.core: address SDK feedback (2019/10 and older)",
+        "references": []
       }
     ]
   }

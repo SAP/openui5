@@ -107,5 +107,43 @@
         "references": []
       }
     ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "3f6b5be82d0544ef9cfa3643dc30bba1dd3e38e5",
+        "type": "FIX",
+        "text": "Performance Violation: Stopping fetching XSRF tokens roundtrips",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880731777"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.10": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "e7f58ed996f09b29199700cabad0742ec754d8dd",
+        "type": "FIX",
+        "text": " Fixing the trimming of application variant ID",
+        "references": []
+      }
+    ]
+  },
+  "1.60.15": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "78206b8892248e465a4cd26fb57e2b30d9d9a1e1",
+        "type": "FIX",
+        "text": " sap.ui.rta - onElementModified handle addOrSetAggregation events",
+        "references": []
+      }
+    ]
   }
 }

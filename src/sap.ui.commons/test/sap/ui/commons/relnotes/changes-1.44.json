@@ -138,5 +138,118 @@
         ]
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "da12fddc8a6da4b29e10bba52929e4e9bad00f12",
+        "type": "FIX",
+        "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670517437"
+          }
+        ]
+      },
+      {
+        "id": "1a3f719e840acfff5e56dcfc4aa322a8f650dc93",
+        "type": "FIX",
+        "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670517437"
+          }
+        ]
+      },
+      {
+        "id": "32fec09dbe194475263514c2d1e72d3914ceb671",
+        "type": "FIX",
+        "text": "sap.ui.commons.Link: Focus visualization in sap.ui.table.Table Cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680175114"
+          }
+        ]
+      },
+      {
+        "id": "f4a5f3d18dbd08f5e68de8ffb01020ff5b76bb52",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: keep blocklayer when there's still modal popup open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670449871"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "f99dedc303bce26985c6896315fba308096fd570",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Setting of limit values work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780124586"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.21": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "299b85f34bfe864dc012c3f132d8d57c24cecead",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField - paste of text with line endings on IE works.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1730434255"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.28": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "533af265dcc5bfac73c15c62a9a11cf376c4014c",
+        "type": "FIX",
+        "text": "sap.ui.commons.MatrixLayout: Render calculations corrected for Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000745792018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.39": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "e811b4d3805b6136a4507078c9144904220bb858",
+        "type": "FIX",
+        "text": "sap.ui.commons.DatePicker: fix failing unit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870142578"
+          }
+        ]
+      }
+    ]
   }
 }
