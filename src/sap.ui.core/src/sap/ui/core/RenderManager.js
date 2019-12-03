@@ -771,7 +771,7 @@ sap.ui.define([
 		 * must be cleaned up correctly, e.g. by de-registering resize handlers or native event handlers.
 		 * <code>cleanupControlWithoutRendering</code> helps with that task by triggering the same
 		 * activities that the normal rendering triggers before the rendering of a control
-		 * (e.g. it fire the <code>BeforeRendering</code> event). It just doesn't call the renderer
+		 * (e.g. it fires the <code>BeforeRendering</code> event). It just doesn't call the renderer
 		 * and the control will not receive an <code>AfterRendering</code> event.
 		 *
 		 * The following example shows how <code>renderControl</code> and <code>cleanupControlWithoutRendering</code>
@@ -782,13 +782,13 @@ sap.ui.define([
 		 *
 		 *     ...
 		 *
-		 *     oCarousel.getPages().forEach( oPage ) {
+		 *     oCarousel.getPages().forEach( function( oPage ) {
 		 *        if ( oCarousel.isPageToBeRendered( oPage ) ) {
 		 *           rm.renderControl( oPage ); // onBeforeRendering, render, later onAfterRendering
 		 *        } else {
 		 *           rm.cleanupControlWithoutRendering( oPage ); // onBeforeRendering
 		 *        }
-		 *     }
+		 *     });
 		 *
 		 *     ...
 		 *
@@ -820,14 +820,21 @@ sap.ui.define([
 		 */
 		this.cleanupControlWithoutRendering = function(oControl) {
 			assert(!oControl || BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
-			if (!oControl || !oControl.getDomRef()) {
+			if (!oControl) {
 				return;
 			}
 
-			//Call beforeRendering to allow cleanup
-			triggerBeforeRendering(oControl);
+			var oDomRef = oControl.getDomRef();
+			if (oDomRef) {
 
-			oControl.bOutput = false;
+				// Call beforeRendering to allow cleanup
+				triggerBeforeRendering(oControl);
+
+				// Preserved controls still need to be alive
+				if (!oDomRef.hasAttribute(ATTR_PRESERVE_MARKER)) {
+					oControl.bOutput = false;
+				}
+			}
 		};
 
 		/**

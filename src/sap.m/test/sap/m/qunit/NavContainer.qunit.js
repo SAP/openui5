@@ -1075,6 +1075,131 @@ sap.ui.define([
 	});
 
 
+	QUnit.test("Navigation interrupted by rerendering of NavContainer - BASE SLIDE", function(assert) {
+		var done = assert.async();
+		//Arrange
+		var calls = [],
+			afterNavigate = function(evt) {
+				calls.push(evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+			};
+
+		//Act
+		nc.attachAfterNavigate(afterNavigate);
+		nc.to("page2", "baseSlide");
+
+		window.setTimeout(function(){
+			nc.invalidate(); // force invalidation during navigation()
+
+			window.setTimeout(function(){
+				nc.to("page3", "baseSlide");
+
+				window.setTimeout(function(){
+					nc.rerender(); // force rerendering during navigation()
+
+					window.setTimeout(function(){
+						nc.back(); // to page2
+						nc.back(); // to initial page 1
+
+						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
+							nc.rerender();
+							window.setTimeout(function(){
+								nc.rerender();
+								window.setTimeout(function(){
+									nc.invalidate();
+									window.setTimeout(function(){
+										nc.rerender();
+
+										window.setTimeout(function(){
+											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+
+											//ensure right order
+											assert.strictEqual(calls[0], "page2");
+											assert.strictEqual(calls[1], "page3");
+											assert.strictEqual(calls[2], "page2");
+											assert.strictEqual(calls[3], "page1");
+
+											//cleanup
+											nc.detachAfterNavigate(afterNavigate);
+
+											done();
+										}, 1000);
+									}, 100);
+								}, 100);
+							}, 100);
+						}, 100);
+					}, 400); // 400 more before next navigation
+				}, 200); // 200 into navigation for forced rerendering
+			}, 400); // 400 more before next navigation
+		}, 200); // 200 before first invalidation
+
+	});
+
+
+	QUnit.test("Navigation interrupted by rerendering of child controls - BASE SLIDE", function(assert) {
+		var done = assert.async();
+		Log.warning("## START - Navigation interrupted by rerendering of child controls");
+		//Arrange
+		var calls = [],
+			afterNavigate = function(evt) {
+				calls.push(evt.getParameter("toId"));
+				Log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+			};
+
+		//Act
+		nc.attachAfterNavigate(afterNavigate);
+		nc.to("page2", "baseSlide");
+
+		window.setTimeout(function(){
+			page1.invalidate(); // force invalidation during navigation()
+			page2.invalidate(); // force invalidation during navigation()
+
+			window.setTimeout(function(){
+				nc.to("page3", "baseSlide");
+
+				window.setTimeout(function(){
+					page1.rerender(); // force rerendering during navigation()
+					page2.rerender(); // force rerendering during navigation()
+
+					window.setTimeout(function(){
+						nc.back(); // to page2
+						nc.back(); // to initial page 1
+
+						window.setTimeout(function(){ // now be really nasty while the back navigations should happen
+							nc.rerender();
+							window.setTimeout(function(){
+								page1.rerender();
+								window.setTimeout(function(){
+									page2.invalidate();
+									window.setTimeout(function(){
+										page2.rerender();
+
+										window.setTimeout(function(){
+											assert.strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+
+											//ensure right order
+											assert.strictEqual(calls[0], "page2");
+											assert.strictEqual(calls[1], "page3");
+											assert.strictEqual(calls[2], "page2");
+											assert.strictEqual(calls[3], "page1");
+
+											//cleanup
+											nc.detachAfterNavigate(afterNavigate);
+
+											done();
+										}, 1000);
+									}, 100);
+								}, 100);
+							}, 100);
+						}, 100);
+					}, 400); // 400 more before next navigation
+				}, 200); // 200 into navigation for forced rerendering
+			}, 400); // 400 more before next navigation
+		}, 200); // 200 before first invalidation
+
+	});
+
+
 	QUnit.test("Navigation interrupted by rerendering of NavContainer - SLIDE", function(assert) {
 		var done = assert.async();
 		//Arrange
@@ -1198,7 +1323,6 @@ sap.ui.define([
 		}, 200); // 200 before first invalidation
 
 	});
-
 
 	QUnit.test("Navigation interrupted by rerendering of NavContainer - FADE", function(assert) {
 		var done = assert.async();
@@ -1659,6 +1783,101 @@ sap.ui.define([
 			done();
 			localNc.destroy();
 		}, 2000);
+	});
+
+	QUnit.test("Base Slide transition", function(assert) {
+		// Assert
+		assert.expect(24);
+		// Arrange
+		var done = assert.async(),
+			hiddenClass = "sapMNavItemHidden",
+			directionProperty = "normal",
+			// animation is played in reverse when "back" function is called
+			// so we can call the same assertions with exchanged classes and direction
+			// so we later use this property to arrange from and to pages
+			isBack = false,
+			page1 = new Page({ title: "Other Page 1" }),
+			page2 = new Page({ title: "Other Page 2" }),
+			localNc = new NavContainer({
+				initialPage: page1.getId(),
+				pages: [ page1, page2 ]
+			}),
+			toPage = null,
+			fromPage = null,
+			toPageExpectedClass = null,
+			fromPageExpectedClass = null,
+			getFromPage = function () {
+				return isBack ? page2.$() : page1.$();
+			},
+			getToPage = function () {
+				return isBack ? page1.$() : page2.$();
+			},
+			getFromPageExpectedClass = function () {
+				return isBack ? "sapMNavItemSlideRightToCenter" : "sapMNavItemSlideCenterToLeft";
+			},
+			getToPageExpectedClass = function () {
+				return isBack ?  "sapMNavItemSlideCenterToLeft" : "sapMNavItemSlideRightToCenter";
+			};
+
+		localNc.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Act
+		localNc.attachAfterNavigate(function (e) {
+			isBack =  e.getParameter('isBack');
+			toPage = getToPage();
+			fromPage = getFromPage();
+			toPageExpectedClass = getToPageExpectedClass();
+			fromPageExpectedClass = getFromPageExpectedClass();
+
+			// Assert
+			assert.equal(fromPage.hasClass(hiddenClass), true, "From page should have the  class: " + hiddenClass);
+			assert.equal(fromPage.hasClass(fromPageExpectedClass), false, "From page should not have the class: " + fromPageExpectedClass);
+			assert.equal(toPage.hasClass(toPageExpectedClass), false, "To page should not have the class: " + toPageExpectedClass);
+			// here animation direction should always be "normal", because we restore default animation direction after navigate
+			assert.equal(fromPage.css("animation-direction"), "normal", "From page Animation direction should be removed");
+			assert.equal(toPage.css("animation-direction"), "normal", "To page Animation direction should be removed");
+			assert.equal(toPage.length, 1, "Page should be rendered now");
+
+			if (isBack) {
+				// Clean up
+				localNc.destroy();
+				done();
+			}
+		});
+
+		// Act
+		localNc.attachNavigate(function (e) {
+			isBack = e.getParameter('isBack');
+			toPage = getToPage();
+
+			if (isBack) {
+				// Assert
+				assert.equal(toPage.css("display"), "none", "Page should not be rendered yet");
+			} else {
+				// Assert
+				assert.equal(toPage.length, 0, "Page should not be rendered yet");
+			}
+
+			requestAnimationFrame(function() {
+				toPage = getToPage();
+				fromPage = getFromPage();
+				toPageExpectedClass = getToPageExpectedClass();
+				fromPageExpectedClass = getFromPageExpectedClass();
+				directionProperty = isBack ? "reverse" : "normal";
+
+				// Assert
+				assert.equal(toPage.hasClass(hiddenClass), false, "To page should not have the class: " + hiddenClass);
+				assert.equal(toPage.hasClass(toPageExpectedClass), true, "To page should have the class: " + toPageExpectedClass);
+				assert.equal(fromPage.hasClass(fromPageExpectedClass), true, "From page should have the class: " + fromPageExpectedClass);
+				assert.equal(fromPage.css("animation-direction"), directionProperty, "From page Animation direction should be: " + directionProperty);
+				assert.equal(toPage.css("animation-direction"), directionProperty, "To page Animation direction should be: " + directionProperty);
+			});
+		});
+
+		// Act
+		localNc.to(page2.getId(), "baseSlide");
+		localNc.back();
 	});
 
 	QUnit.module("Navigation stack cleanup");

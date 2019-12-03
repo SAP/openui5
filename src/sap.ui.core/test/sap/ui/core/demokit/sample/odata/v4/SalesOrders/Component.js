@@ -14,11 +14,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/OperationMode",
-	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (Log, HBox, library, UIComponent, View, JSONModel, OperationMode, ODataModel,
-		TestUtils) {
+], function (Log, HBox, library, UIComponent, View, JSONModel, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType

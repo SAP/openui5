@@ -38,11 +38,9 @@ sap.ui.define([
 		mergeResults: function(aResponses) {
 			var oResult = DEFAULT_FEATURES;
 			aResponses.forEach(function (oResponse) {
-				if (oResponse.response) {
-					Object.keys(oResponse.response).forEach(function (sKey) {
-						oResult[sKey] = oResponse.response[sKey];
-					});
-				}
+				Object.keys(oResponse).forEach(function (sKey) {
+					oResult[sKey] = oResponse[sKey];
+				});
 			});
 			return oResult;
 		}

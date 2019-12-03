@@ -1428,6 +1428,8 @@ function(
 				if (this._oSuggPopover) {
 					this._oSuggPopover._destroySuggestionPopup();
 					this._oSuggPopover._iPopupListSelectedIndex = -1;
+					this._oButtonToolbar = null;
+					this._oShowMoreButton = null;
 				}
 			}
 

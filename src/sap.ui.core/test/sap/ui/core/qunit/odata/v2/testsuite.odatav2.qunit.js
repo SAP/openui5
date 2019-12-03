@@ -36,6 +36,12 @@ sap.ui.define(function() {
 			ODataAnnotationsV2: {
 				title: "sap.ui.model.odata.v2.ODataAnnotations - QUnit tests"
 			},
+			ODataListBindingNoFakeService: {
+				title: "sap.ui.model.odata.v2.ODataListBinding (ODataListBindingNoFakeService.qunit)"
+			},
+			ODataModelNoFakeService: {
+				title: "sap.ui.model.odata.v2.ODataModel (ODataModelNoFakeService.qunit)"
+			},
 			ODataV2ListBinding: {
 				title: "sap.ui.model.odata.v2.ODataListBinding - QUnit tests"
 			},

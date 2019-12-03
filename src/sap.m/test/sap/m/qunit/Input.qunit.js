@@ -2968,6 +2968,36 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Toggling true / false for showSuggestions should not throw an error", function (assert) {
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({})
+			],
+			suggestionRows: [
+				new ColumnListItem({
+					cells: [new Label({text: "bla"})]
+				})
+			]
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Trigger false
+		oInput.setShowSuggestion(!oInput.getShowSuggestion());
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(this._oButtonToolbar, "Toolbar ref should be cleaned up");
+		assert.notOk(this._oShowMoreButton, "Button ref should be cleaned up");
+
+		// Trigger true
+		oInput.setShowSuggestion(!oInput.getShowSuggestion());
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(true, "No exception should be thrown");
+	});
+
 	QUnit.module("Key and Value");
 
 	function createInputWithSuggestions () {

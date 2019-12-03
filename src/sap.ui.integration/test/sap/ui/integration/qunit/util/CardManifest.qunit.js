@@ -70,6 +70,35 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 				]
 			}
 		}
+	},
+	oManifestWithDataSources = {
+		"sap.app": {
+			"id": "someid",
+			"type": "card",
+			"dataSources": {
+				"purchaseOrders": {
+					"uri": "someUri",
+					"type": "OData",
+					"settings": {
+						"odataVersion": "2.0"
+					}
+				}
+			}
+		},
+		"sap.card": {
+			"type": "List",
+			"content": {
+				"data": {
+					"request": {
+						"url": "{{dataSources.purchaseOrders.uri}}"
+					},
+					"path": "/value"
+				},
+				"item": {
+					"title": "{ShipName}"
+				}
+			}
+		}
 	};
 
 	QUnit.module("CardManifest - constructor");
@@ -197,6 +226,35 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 		});
 	});
 
+	QUnit.module("CardManifest - static methods");
+
+	QUnit.test("#_processPlaceholder", function (assert) {
+		// Arrange
+		var mParameters = {
+			"someKey": {
+				"value": "someValue"
+			}
+		};
+		var mDataSources = {
+			"invoiceRemote": {
+				"uri": "someUri"
+			}
+		};
+
+		// Assert
+		assert.strictEqual(CardManifest._processPlaceholder("no placeholder", mParameters, mDataSources), "no placeholder", "Should not replace anything if there are no placeholders.");
+		assert.strictEqual(CardManifest._processPlaceholder("{{}}", mParameters, mDataSources), "{{}}", "Should not replace anything if there is nothing in the placeholders.");
+		assert.strictEqual(CardManifest._processPlaceholder("{{parameters.someKey}} and {{dataSources.invoiceRemote.uri}}", mParameters, mDataSources), "someValue and someUri",
+							"Should replace parameters and dataSources properly");
+		assert.strictEqual(CardManifest._processPlaceholder("{{parameters.someKey}} and {{dataSources.invoiceRemote.uri}}", {}, {}), "{{parameters.someKey}} and {{dataSources.invoiceRemote.uri}}",
+							"Should NOT replace anything if parameters and and dataSources are not given");
+		assert.strictEqual(CardManifest._processPlaceholder("{parameters.someKey} and dataSources.invoiceRemote", mParameters, mDataSources), "{parameters.someKey} and dataSources.invoiceRemote",
+							"Should NOT replace anything out of placeholders");
+		assert.strictEqual(CardManifest._processPlaceholder("{{parameters.someKey}} {{parameters.someKey}} {{dataSources.invoiceRemote.uri}} {{dataSources.invoiceRemote.uri}}", mParameters, mDataSources),
+							"someValue someValue someUri someUri", "All matches should be replaced.");
+		assert.strictEqual(CardManifest._processPlaceholder("{{dataSources}} text", mParameters, mDataSources), "{{dataSources}} text", "Nothing should be replaced.");
+	});
+
 	QUnit.module("Manifest parameters", {
 		beforeEach: function () {
 
@@ -277,5 +335,23 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 		// Cleanup
 		oSyncParametersSpy.restore();
 		oProcessManifestSpy.restore();
+	});
+
+	QUnit.module("Manifest dataSources", {
+		beforeEach: function () {
+			this.oManifest = new CardManifest("sap.card", oManifestWithDataSources);
+		},
+		afterEach: function () {
+			this.oManifest.destroy();
+			this.oManifest = null;
+		}
+	});
+
+	QUnit.test("Process 'dataSources' placeholder", function (assert) {
+		// Act
+		this.oManifest.processManifest();
+
+		// Assert
+		assert.strictEqual(this.oManifest.oJson["sap.card"].content.data.request.url, "someUri", "Placeholder with 'dataSources' should have been replaced correctly.");
 	});
 });

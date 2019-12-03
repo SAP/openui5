@@ -29,13 +29,22 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * A wrapper around the IMG tag. The image can be loaded from a remote or local server.
+	 * A wrapper around the &lt;img&gt; tag; the image can be loaded from a remote or local server.
 	 *
-	 * Density related image will be loaded if image with density awareness name in format [imageName]@[densityValue].[extension] is provided. The valid desity values are 1, 1.5, 2. If the original devicePixelRatio isn't one of the three valid numbers, it's rounded up to the nearest one.
+	 * If property <code>densityAware</code> is true, a density-specific image will be loaded by constructing
+	 * a density-specific image name in format <code>[imageName]@[densityValue].[extension]</code> from the
+	 * given <code>src</code> and the <code>devicePixelRatio</code> of the current device. The only supported
+	 * density values are 1, 1.5 and 2. If the original <code>devicePixelRatio</code> ratio isn't one of the
+	 * three valid numbers, it will be rounded to the nearest one.
 	 *
 	 * There are various size setting options available, and the images can be combined with actions.
 	 *
-	 * From version 1.30, new image mode sap.m.ImageMode.Background is added. When this mode is set, the src property is set using the css style 'background-image'. The properties 'backgroundSize', 'backgroundPosition', 'backgroundRepeat' have effect only when image is in sap.m.ImageMode.Background mode. In order to make the high density image correctly displayed, the 'backgroundSize' should be set to the dimension of the normal density version.
+	 * From version 1.30, a new image mode {@link sap.m.ImageMode.Background} is added. When this mode
+	 * is set, the <code>src</code> property is set using the CSS style <code>background-image</code>.
+	 * The properties <code>backgroundSize</code>, <code>backgroundPosition</code>, and <code>backgroundRepeat</code>
+	 * take effect only when the image is in <code>sap.m.ImageMode.Background</code> mode. In order to display
+	 * the high density image correctly, the <code>backgroundSize</code> should be set to the dimension of the
+	 * normal density version.
 	 *
 	 * @see {@link topic:f86dbe9d7f7d48dea5286003b1322165 Image}
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/image/ Image}
@@ -46,7 +55,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.m.Image
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -59,36 +67,51 @@ sap.ui.define([
 		properties : {
 
 			/**
-			 * Relative or absolute path to URL where the image file is stored. The path will be adapted to the density aware format according to the density of the device following the convention that [imageName]@[densityValue].[extension]
+			 * Relative or absolute path to URL where the image file is stored.
+			 *
+			 * The path will be adapted to the density-aware format according to the density of the device
+			 * following the naming convention [imageName]@[densityValue].[extension].
 			 */
 			src : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
 			/**
-			 * When the empty value is kept, the original size is not changed. It is also possible to make settings for width or height only, the original ratio between width/height is maintained. When 'mode' property is set to sap.m.ImageMode.Background, this property always needs to be set. Otherwise the output DOM element has a 0 size.
+			 * When the empty value is kept, the original size is not changed.
+			 *
+			 * It is also possible to make settings for width or height only, in which case the original
+			 * ratio between width/height is maintained. When the <code>mode</code> property is set to
+			 * <code>sap.m.ImageMode.Background</code>, this property always needs to be set.
+			 * Otherwise the output DOM element has a 0 size.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
 			/**
-			 * When the empty value is kept, the original size is not changed. It is also possible to make settings for width or height only, the original ratio between width/height is maintained. When 'mode' property is set to sap.m.ImageMode.Background, this property always needs to be set. Otherwise the output DOM element has a 0 size.
+			 * When the empty value is kept, the original size is not changed.
+			 *
+			 * It is also possible to make settings for width or height only, in which case the original
+			 * ratio between width/height is maintained. When the <code>mode</code> property is set to
+			 * <code>sap.m.ImageMode.Background</code>, this property always needs to be set.
+			 * Otherwise the output DOM element has a 0 size.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
 			/**
-			 * A decorative image is included for design reasons. Accessibility tools will ignore decorative images.
+			 * A decorative image is included for design reasons; accessibility tools will ignore decorative images.
 			 *
-			 * Note: If the Image has an image map (useMap is set), this property will be overridden (the image will not be rendered as decorative).
-			 * A decorative image has no ALT attribute, so the Alt property is ignored if the image is decorative.
+			 * Note: If the image has an image map (<code>useMap</code> is set), this property will be overridden
+			 * (the image will not be rendered as decorative). A decorative image has no <code>ALT</code> attribute,
+			 * so the <code>alt</code> property is ignored if the image is decorative.
 			 */
 			decorative : {type : "boolean", group : "Accessibility", defaultValue : true},
 
 			/**
-			 * The alternative text that is displayed in case the Image is not available, or cannot be displayed.
-			 * If the image is set to decorative this property is ignored.
+			 * The alternative text that is displayed in case the image is not available, or cannot be displayed.
+			 *
+			 * If the image is set to decorative, this property is ignored.
 			 */
 			alt : {type : "string", group : "Accessibility", defaultValue : null},
 
 			/**
-			 * The name of the image map that defines the clickable areas
+			 * The name of the image map that defines the clickable areas.
 			 */
 			useMap : {type : "string", group : "Misc", defaultValue : null},
 
@@ -96,8 +119,8 @@ sap.ui.define([
 			 * If this is set to <code>true</code>, one or more network requests will be made
 			 * that try to obtain the density perfect version of the image.
 			 *
-			 * By default, this is set to <code>false</code>, so the src image is loaded directly
-			 * without attempting to fetch the density perfect image for high-density devices.
+			 * By default, this is set to <code>false</code>, so the <code>src</code> image is loaded
+			 * directly without attempting to fetch the density perfect image for high-density devices.
 			 *
 			 * <b>Note:</b> Before 1.60, the default value was set to <code>true</code>, which
 			 * brought redundant network requests for apps that used the default but did not
@@ -113,35 +136,50 @@ sap.ui.define([
 			activeSrc : {type : "sap.ui.core.URI", group : "Data", defaultValue : ""},
 
 			/**
-			 * Defines how the src and the activeSrc is output to the Dom Element. When set to sap.m.ImageMode.Image which is the default value, the src (activeSrc) is set to the 'src' attribute of the 'img' tag. When set to sap.m.ImageMode.Background, the src (activeSrc) is set to the CSS style 'background-image' and the root DOM element is rendered as a 'span' tag instead of an 'img' tag.
+			 * Defines how the <code>src</code> and the <code>activeSrc</code> is output to the DOM Element.
+			 *
+			 * When set to <code>sap.m.ImageMode.Image</code>, which is the default value, the <code>src</code>
+			 * (<code>activeSrc</code>) is set to the <code>src</code> attribute of the &lt;img&gt; tag. When
+			 * set to <code>sap.m.ImageMode.Background</code>, the <code>src</code> (<code>activeSrc</code>)
+			 * is set to the CSS style <code>background-image</code> and the root DOM element is rendered as a
+			 * &lt;span&gt; tag instead of an &lt;img&gt; tag.
 			 * @since 1.30.0
 			 */
 			mode : {type : "sap.m.ImageMode", group : "Misc", defaultValue : "Image"},
 
 			/**
-			 * Defines the size of the image in sap.m.ImageMode.Background mode. This property is set on the output DOM element using CSS style 'background-size'. This property takes effect only when the 'mode' property is set to sap.m.ImageMode.Background.
+			 * Defines the size of the image in <code>sap.m.ImageMode.Background</code> mode.
+			 *
+			 * This property is set on the output DOM element using the CSS style <code>background-size</code>.
+			 * It takes effect only when the <code>mode</code> property is set to <code>sap.m.ImageMode.Background</code>.
 			 * @since 1.30.0
 			 */
 			backgroundSize : {type : "string", group : "Appearance", defaultValue : "cover"},
 
 			/**
-			* Defines the position of the image in sap.m.ImageMode.Background mode. This property is set on the output DOM element using CSS style 'background-position'. This property takes effect only when the 'mode' property is set to sap.m.ImageMode.Background.
+			* Defines the position of the image in <code>sap.m.ImageMode.Background</code> mode.
+			*
+			* This property is set on the output DOM element using the CSS style <code>background-position</code>.
+			* It takes effect only when the <code>mode</code> property is set to <code>sap.m.ImageMode.Background</code>.
 			* @since 1.30.0
 			*/
 			backgroundPosition : {type : "string", group : "Appearance", defaultValue : "initial"},
 
 			/**
-			* Defines whether the source image is repeated when the output DOM element is bigger than the source. This property is set on the output DOM element using CSS style 'background-repeat'. This property takes effect only when the 'mode' property is set to sap.m.ImageMode.Background.
+			* Defines whether the source image is repeated when the output DOM element is bigger than the source.
+			*
+			* This property is set on the output DOM element using the CSS style <code>background-repeat</code>.
+			* It takes effect only when the <code>mode</code> property is set to <code>sap.m.ImageMode.Background</code>.
 			* @since 1.30.0
 			*/
 			backgroundRepeat : {type : "string", group : "Appearance", defaultValue : "no-repeat"}
 		},
 		aggregations : {
 			/**
-			 * A <code>sap.m.LightBox</code> instance, that will be opened automatically when the user interacts with the <code>Image</code> control.
+			 * A <code>sap.m.LightBox</code> instance that will be opened automatically when the user interacts
+			 * with the <code>Image</code> control.
 			 *
 			 * The <code>tap</code> event will still be fired.
-			 * @public
 			 */
 			detailBox: {type: 'sap.m.LightBox', multiple: false, bindable: "bindable"}
 		},

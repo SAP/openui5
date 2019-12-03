@@ -66,6 +66,9 @@ sap.ui.define([
 		],
 		designtime: "sap/ui/fl/designtime/library.designtime",
 		extensions: {
+			flChangeHandlers: {
+				"sap.ui.fl.util.IFrame": "sap/ui/fl/util/IFrame"
+			},
 			"sap.ui.support": {
 				diagnosticPlugins: [
 					"sap/ui/fl/support/Flexibility"

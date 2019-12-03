@@ -246,6 +246,22 @@ sap.ui.define([
 		// because the intital tabindex setting is only done once inside the item navigation but we need it here
 		// every time after the control is rerendered
 		this._clearItemNavigation();
+
+		var sTitle = this.getTitle();
+		if (this._parent) {
+			if (Device.system.phone) {
+				this._parent.setTitle(sTitle);
+				this._parent.toggleStyleClass("sapMDialog-NoHeader", !sTitle);
+			} else {
+				this._parent.setPlacement(this.getPlacement());
+			}
+
+			if (sTitle) {
+				this._parent.addStyleClass("sapMActionSheetDialogWithTitle");
+			} else {
+				this._parent.removeStyleClass("sapMActionSheetDialogWithTitle");
+			}
+		}
 	};
 
 	ActionSheet.prototype.onAfterRendering = function() {
@@ -472,7 +488,7 @@ sap.ui.define([
 		return this;
 	};
 
-	ActionSheet.prototype._preProcessActionButton = function(oButton){
+	ActionSheet.prototype._preProcessActionButton = function(oButton) {
 		var sType = oButton.getType();
 
 		if (sType !== ButtonType.Accept && sType !== ButtonType.Reject) {
@@ -480,48 +496,13 @@ sap.ui.define([
 		}
 		oButton.addStyleClass("sapMBtnInverted"); // dark background
 
+		if (!oButton.getIcon()) {
+			oButton.addStyleClass("sapMActionSheetButtonNoIcon");
+		}
+		oButton.addStyleClass("sapMActionSheetButton");
+
 		this._parent && this._parent.invalidate();
 
-		return this;
-	};
-
-	ActionSheet.prototype.setShowCancelButton = function(bValue){
-		if (this._parent) {
-			if (Device.system.phone) {
-				//if iPhone, we need to rerender to show or hide the cancel button
-				this.setProperty("showCancelButton", bValue, false);
-			}
-		} else {
-			this.setProperty("showCancelButton", bValue, true);
-		}
-		return this;
-	};
-
-	ActionSheet.prototype.setTitle = function(sTitle){
-		this.setProperty("title", sTitle, true);
-		if (this._parent && Device.system.phone) {
-			this._parent.setTitle(sTitle);
-			this._parent.toggleStyleClass("sapMDialog-NoHeader", !sTitle);
-		}
-
-		if (this._parent) {
-			if (sTitle) {
-				this._parent.addStyleClass("sapMActionSheetDialogWithTitle");
-			} else {
-				this._parent.removeStyleClass("sapMActionSheetDialogWithTitle");
-			}
-		}
-		return this;
-	};
-
-	ActionSheet.prototype.setPlacement = function(sPlacement){
-		this.setProperty("placement", sPlacement, true);
-
-		if (!Device.system.phone) {
-			if (this._parent) {
-				this._parent.setPlacement(sPlacement);
-			}
-		}
 		return this;
 	};
 

@@ -3,27 +3,64 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/prepareMap",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap",
+	"sap/ui/fl/apply/_internal/flexState/prepareChangesMap",
+	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap"
 ], function(
-	prepareMap,
-	merge
+	merge,
+	prepareAppDescriptorMap,
+	prepareChangesMap,
+	prepareVariantsMap
 ) {
 	"use strict";
 	var _instances = {};
+
+	var oPrepareFunctions = {
+		appDescriptorMap: prepareAppDescriptorMap,
+		changesMap: prepareChangesMap,
+		variantsMap: prepareVariantsMap
+	};
+
+	function getInstanceEntryOrThrowError(sReference, sMapName) {
+		if (!_instances[sReference]) {
+			throw Error("State is not yet initialized");
+		}
+
+		if (!_instances[sReference][sMapName]) {
+			var mPropertyBag = {
+				storageResponse: _instances[sReference].storageResponse
+			};
+			_instances[sReference][sMapName] = oPrepareFunctions[sMapName](mPropertyBag);
+		}
+
+		return _instances[sReference][sMapName];
+	}
+
+	function getAppDescriptorMap(sReference) {
+		return getInstanceEntryOrThrowError(sReference, "appDescriptorMap");
+	}
+
+	function getChangesMap(sReference) {
+		return getInstanceEntryOrThrowError(sReference, "changesMap");
+	}
+
+	function getVariantsMap(sReference) {
+		return getInstanceEntryOrThrowError(sReference, "variantsMap");
+	}
 
 	/**
 	 * Flex state class to persist maps and raw state (cache) for a given component reference.
 	 * The persistence happens inside an object mapped to the component reference, with the following properties:
 	 *
 	 *  {
-	 *      variantsMap: {}
-	 *      changesMap: {},
 	 *      appDescriptorMap: {},
-	 *      state: {}
+	 *      changesMap: {},
+	 *      variantsMap: {},
+	 *      storageResponse: {}
 	 *  }
 	 *
-	 * @namespace sap.ui.fl.apply._internal.connectors.Utils
+	 * @namespace sap.ui.fl.apply._internal.flexState.FlexState
 	 * @experimental
 	 * @since 1.73
 	 * @version ${version}
@@ -31,51 +68,46 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.apply._internal
 	 */
 	return {
-		initMaps: function (mPropertyBag) {
-			if (!_instances[mPropertyBag.reference]) {
-				_instances[mPropertyBag.reference] = {};
+		initForReference: function (mPropertyBag) {
+			if (!mPropertyBag.reference) {
+				throw Error("Please pass a reference to initialize a FlexState");
 			}
-			if (!_instances[mPropertyBag.reference].state) {
-				merge(
-					_instances[mPropertyBag.reference],
-					prepareMap(mPropertyBag),
-					{state: mPropertyBag.flexResponse}
-				);
+
+			if (_instances[mPropertyBag.reference]) {
+				throw Error("the state for the given reference is already initialized");
 			}
+
+			_instances[mPropertyBag.reference] = merge({}, {storageResponse: mPropertyBag.storageResponse});
+			return _instances[mPropertyBag.reference];
 		},
 
-		getState: function (sReference) {
-			if (_instances[sReference]) {
-				return _instances[sReference].state;
-			}
-		},
-
-		clearStates: function () {
-			_instances = {};
-		},
+		// is this actually needed?
+		// getStorageResponse: function (sReference) {
+		// 	return getInstanceEntryOrThrowError(sReference, "storageResponse");
+		// },
 
 		clearState: function (sReference) {
-			if (_instances[sReference]) {
-				_instances[sReference] = {};
+			if (sReference) {
+				if (_instances[sReference]) {
+					delete _instances[sReference];
+				}
+			} else {
+				_instances = {};
 			}
 		},
 
-		getVariantsMap: function (sReference) {
-			if (_instances[sReference]) {
-				return _instances[sReference].variantsMap;
-			}
+		getUiChanges: function(sReference) {
+			return getChangesMap(sReference).changes;
 		},
 
-		getChangesMap: function (sReference) {
-			if (_instances[sReference]) {
-				return _instances[sReference].changesMap;
-			}
+		// just a proposal
+		getAppDescriptorChanges: function(sReference) {
+			return getAppDescriptorMap(sReference).appDescriptorChanges;
 		},
 
-		getAppDescriptorMap: function (sReference) {
-			if (_instances[sReference]) {
-				return _instances[sReference].appDescriptorMap;
-			}
+		// just a proposal
+		getVariantsForVariantManagement: function(sReference, sVariantManagementId) {
+			return getVariantsMap(sReference)[sVariantManagementId];
 		}
 	};
 }, true);

@@ -6,20 +6,31 @@ sap.ui.define([
 	"./../util/ObjectBinding",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Label",
+	"sap/ui/core/Fragment",
 	"sap/base/util/restricted/_merge"
 ], function (
 	Control,
 	ObjectBinding,
 	JSONModel,
 	Label,
+	Fragment,
 	_merge
 ) {
 	"use strict";
 
 	/**
-	 * @constructor
+	 * @class
+	 * Base class for property editor implementations.
+	 *
+	 * @extends sap.ui.core.Control
+	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
+	 * @author SAP SE
+	 * @since 1.70
+	 * @version ${version}
+	 *
 	 * @private
-	 * @experimental
+	 * @experimental 1.70
+	 * @ui5-restricted
 	 */
 	var BasePropertyEditor = Control.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor", {
 		metadata: {
@@ -39,7 +50,8 @@ sap.ui.define([
 					multiple: false
 				},
 				"content": {
-					type: "sap.ui.core.Control"
+					type: "sap.ui.core.Control",
+					multiple: false
 				}
 			},
 			associations: {
@@ -49,6 +61,9 @@ sap.ui.define([
 				}
 			},
 			events: {
+				/**
+				 * Fired when the property of the editor has changed
+				 */
 				propertyChange: {
 					parameters: {
 						/**
@@ -57,9 +72,17 @@ sap.ui.define([
 						path: {type: "string"},
 						value: {type: "any"}
 					}
-				}
+				},
+				/**
+				 * Fired when the editor fragment was loaded and the <code>asyncInit</code> method was executed
+				 */
+				ready: {}
 			}
 		},
+		/**
+		 * Path to the fragment xml that should be loaded for an editor
+		*/
+		xmlFragment: null,
 
 		constructor: function() {
 			Control.prototype.constructor.apply(this, arguments);
@@ -67,6 +90,29 @@ sap.ui.define([
 			this._oConfigModel.setDefaultBindingMode("OneWay");
 			this.setModel(this._oConfigModel);
 			this.setBindingContext(this._oConfigModel.getContext("/"));
+
+			this._loadFragment()
+				.then(this.asyncInit.bind(this))
+				.then(this.fireReady.bind(this));
+		},
+
+		_loadFragment: function () {
+			if (!this.xmlFragment) {
+				return Promise.resolve();
+			}
+			return Fragment.load({
+				name: this.xmlFragment,
+				controller: this
+			}).then(function(oEditorControl) {
+				this.setContent(oEditorControl);
+			}.bind(this));
+		},
+
+		/**
+		 * Override to execute logic after the editor fragment was loaded
+		 */
+		asyncInit: function () {
+			return Promise.resolve();
 		},
 
 		clone: function() {
@@ -97,6 +143,7 @@ sap.ui.define([
 		},
 
 		onValueChange: function(vValue) {
+			// FIXME: do not mutate existing JS object! Prefer this.getModel().getData() / this.getModel().setData()
 			var oConfig = this.getConfig();
 			if (typeof oConfig.value === "undefined" && oConfig.defaultValue) {
 				oConfig.value = oConfig.defaultValue;
@@ -116,22 +163,25 @@ sap.ui.define([
 					oConfig.value = "{context>" + oConfig.path + "}";
 				}
 				// resolve binding strings
-				this._oConfigBinding = new ObjectBinding();
-				this._oConfigBinding.setModel(oJsonModel, "context");
-				this._oConfigBinding.setModel(this.getModel("i18n"), "i18n");
-				this._oConfigBinding.setBindingContext(oJsonModel.getContext("/"), "context");
+				if (!this._oConfigBinding) {
+					this._oConfigBinding = new ObjectBinding();
+					this._oConfigBinding.setModel(this.getModel("i18n"), "i18n");
+					this._oConfigBinding.setModel(oJsonModel, "context");
+					this._oConfigBinding.setBindingContext(oJsonModel.getContext("/"), "context");
+					this.bindProperty("visible", "visible");
+					this._oConfigBinding.attachChange(function(oEvent) {
+						this._oConfigModel.checkUpdate();
+						if (oEvent.getParameter("path") === "value") {
+							this.onValueChange(oEvent.getParameter("value"));
+						}
+					}.bind(this));
+				}
+
 				this._oConfigBinding.setObject(oConfig);
 				//
 				this._oConfigModel.setData(oConfig);
-				this._oConfigModel.checkUpdate();
+				// this._oConfigModel.checkUpdate();
 				this.onValueChange(oConfig.value);
-				this.bindProperty("visible", "visible");
-				this._oConfigBinding.attachChange(function(oEvent) {
-					this._oConfigModel.checkUpdate();
-					if (oEvent.getParameter("path") === "value") {
-						this.onValueChange(oEvent.getParameter("value"));
-					}
-				}.bind(this));
 			}
 		},
 
@@ -166,10 +216,7 @@ sap.ui.define([
 				oRm.renderControl(oPropertyEditor.getLabel());
 				oRm.close("div");
 			}
-			oPropertyEditor.getContent().forEach(function(oControl) {
-				oRm.renderControl(oControl);
-			});
-
+			oRm.renderControl(oPropertyEditor.getContent());
 			oRm.close("div");
 		},
 

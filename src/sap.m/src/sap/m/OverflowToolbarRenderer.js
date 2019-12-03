@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', './ToolbarRenderer', "sap/m/BarInPageEnabler"],
-	function(Renderer, ToolbarRenderer, BarInPageEnabler) {
+sap.ui.define(["./library", 'sap/ui/core/Renderer', './ToolbarRenderer', "sap/m/BarInPageEnabler"],
+	function(library, Renderer, ToolbarRenderer, BarInPageEnabler) {
 		"use strict";
+
+		// shortcut for sap.m.OverflowToolbarPriority
+		var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 
 		/**
@@ -15,12 +18,24 @@ sap.ui.define(['sap/ui/core/Renderer', './ToolbarRenderer', "sap/m/BarInPageEnab
 
 		OverflowToolbarRenderer.renderBarContent = function(rm, oToolbar) {
 
+			var bHasAlwaysOverflowContent  = false,
+				oLayoutData;
+
 			oToolbar._getVisibleContent().forEach(function(oControl) {
 				BarInPageEnabler.addChildClassTo(oControl,oToolbar);
-				rm.renderControl(oControl);
+
+				oLayoutData = oControl.getLayoutData();
+
+				if (!oLayoutData ||
+					!oLayoutData.isA('sap.m.OverflowToolbarLayoutData') ||
+					oLayoutData.getPriority() !== OverflowToolbarPriority.AlwaysOverflow ) {
+						rm.renderControl(oControl);
+				} else {
+					bHasAlwaysOverflowContent  = true;
+				}
 			});
 
-			if (oToolbar._getOverflowButtonNeeded()) {
+			if (bHasAlwaysOverflowContent  || oToolbar._getOverflowButtonNeeded()) {
 				OverflowToolbarRenderer.renderOverflowButton(rm,oToolbar);
 			}
 		};

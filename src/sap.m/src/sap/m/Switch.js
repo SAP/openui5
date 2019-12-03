@@ -447,7 +447,7 @@ function(
 						+ this.getInvisibleElementText(bState) : oBundle.getText("ACC_CTR_STATE_NOT_CHECKED") + " " + this.getInvisibleElementText(bState);
 
 			return {
-				role: "checkbox",
+				role: "switch",
 				type: oBundle.getText("ACC_CTR_TYPE_CHECKBOX"),
 				description: sDesc.trim(),
 				focusable: this.getEnabled(),

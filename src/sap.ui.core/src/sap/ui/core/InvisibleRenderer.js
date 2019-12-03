@@ -14,7 +14,7 @@ sap.ui.define([], function() {
 	 * @alias module:sap/ui/core/InvisibleRenderer
 	 * @since 1.66.0
 	 * @protected
-	 * @static
+	 * @namespace
 	 */
 	var InvisibleRenderer = {
 		apiVersion: 2

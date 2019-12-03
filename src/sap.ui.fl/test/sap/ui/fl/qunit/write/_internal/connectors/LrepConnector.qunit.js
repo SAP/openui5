@@ -82,7 +82,7 @@ sap.ui.define([
 			return LrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "Url is correct");
-				assert.deepEqual(oResponse.response, oExpectedResponse, "loadFeatures response flow is correct");
+				assert.deepEqual(oResponse, oExpectedResponse, "loadFeatures response flow is correct");
 			});
 		});
 
@@ -94,7 +94,7 @@ sap.ui.define([
 			var mPropertyBag = {url: "/sap/bc/lrep"};
 			ApplyConnector.settings = {isKeyUser: false};
 			return LrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
-				assert.deepEqual(oResponse.response, {isKeyUser: false}, "the settings object is obtain from apply connector correctly");
+				assert.deepEqual(oResponse, {isKeyUser: false}, "the settings object is obtain from apply connector correctly");
 				assert.equal(sandbox.server.requestCount, 0, "no request is sent to back end");
 			});
 		});

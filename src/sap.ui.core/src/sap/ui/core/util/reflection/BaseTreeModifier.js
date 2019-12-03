@@ -19,7 +19,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Abstract static utility class to access <code>ManageObjects</code> and <code>XMLNodes</code> that represent
+	 * Abstract static utility class to access <code>ManagedObjects</code> and <code>XMLNodes</code> that represent
 	 * <code>ManagedObjects</code> in a harmonized way.
 	 *
 	 * The class mirrors the <code>ManagedObject</code> API so that code that needs to work with <code>ManagedObjects</code>

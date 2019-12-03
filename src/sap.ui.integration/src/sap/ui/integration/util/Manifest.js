@@ -6,21 +6,22 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/core/Manifest",
 	"sap/base/util/deepClone",
-	"sap/base/util/merge",
+	"sap/base/util/isPlainObject",
 	"sap/base/Log",
 	"./ParameterMap"
 	], function (
 	BaseObject,
 	CoreManifest,
 	deepClone,
-	merge,
+	isPlainObject,
 	Log,
 	ParameterMap
 ) {
 	"use strict";
 
 	var MANIFEST_PARAMETERS = "/{SECTION}/configuration/parameters",
-		MANIFEST_CONFIGURATION = "/{SECTION}";
+		MANIFEST_CONFIGURATION = "/{SECTION}",
+		APP_DATA_SOURCES = "/sap.app/dataSources";
 
 	/**
 	 * Creates a new Manifest object.
@@ -208,9 +209,10 @@ sap.ui.define([
 		var iCurrentLevel = 0,
 			iMaxLevel = 15,
 			//Always need the unprocessed manifest
-			oUnprocessedJson = jQuery.extend(true, {}, this._oManifest.getRawJson());
+			oUnprocessedJson = jQuery.extend(true, {}, this._oManifest.getRawJson()),
+			oDataSources = this.get(APP_DATA_SOURCES);
 
-		process(oUnprocessedJson, this.oResourceBundle, iCurrentLevel, iMaxLevel, oParams);
+		process(oUnprocessedJson, this.oResourceBundle, iCurrentLevel, iMaxLevel, oParams, oDataSources);
 		deepFreeze(oUnprocessedJson);
 
 		this.oJson = oUnprocessedJson;
@@ -256,7 +258,7 @@ sap.ui.define([
 	 */
 	function isProcessable (vValue) {
 		return (typeof vValue === "string")
-			&& (vValue.indexOf("{{parameters.") > -1);
+			&& (vValue.indexOf("{{parameters.") > -1 || vValue.indexOf("{{dataSources") > -1);
 	}
 
 	/**
@@ -265,10 +267,11 @@ sap.ui.define([
 	 * @private
 	 * @param {string} sPlaceholder The value to process.
 	 * @param {Object} oParam The parameter from the configuration.
+	 * @param {Object} oDataSources The dataSources from the configuration.
 	 * @returns {string} The string with replaced placeholders.
 	 */
-	function processPlaceholder (sPlaceholder, oParam) {
-	   var sProcessed = ParameterMap.processPredefinedParameter(sPlaceholder);
+	Manifest._processPlaceholder = function (sPlaceholder, oParam, oDataSources) {
+		var sProcessed = ParameterMap.processPredefinedParameter(sPlaceholder);
 
 		if (oParam) {
 			for (var oProperty in oParam) {
@@ -276,7 +279,32 @@ sap.ui.define([
 			}
 		}
 
+		if (oDataSources) {
+			sProcessed = replacePlaceholders(sProcessed, oDataSources, "{{dataSources");
+		}
+
 		return sProcessed;
+	};
+
+	/**
+	 * Replaces all placeholders inside a string.
+	 *
+	 * @private
+	 * @param {string} sPlaceholder The string with placeholders to process.
+	 * @param {string|Object} vValue The current value. It will be processed recursively, if is object.
+	 * @param {string} sPath The current path.
+	 * @returns {string} The string with replaced placeholders.
+	 */
+	function replacePlaceholders(sPlaceholder, vValue, sPath) {
+		if (isPlainObject(vValue)) {
+			for (var sProperty in vValue) {
+				sPlaceholder = replacePlaceholders(sPlaceholder, vValue[sProperty], sPath + "." + sProperty);
+			}
+		} else if (sPlaceholder.includes(sPath + "}}")) {
+			sPlaceholder = sPlaceholder.replace(new RegExp(sPath + "}}", 'g'), vValue);
+		}
+
+		return sPlaceholder;
 	}
 
 	/**
@@ -288,8 +316,9 @@ sap.ui.define([
 	 * @param {number} iCurrentLevel The current level of recursion.
 	 * @param {number} iMaxLevel The maximum level of recursion.
 	 * @param {Object} oParams The parameters to be replaced in the manifest.
+	 * @param {Object} oDataSources The dataSources to be replaced in the manifest.
 	 */
-	function process (oObject, oResourceBundle, iCurrentLevel, iMaxLevel, oParams) {
+	function process (oObject, oResourceBundle, iCurrentLevel, iMaxLevel, oParams, oDataSources) {
 		if (iCurrentLevel === iMaxLevel) {
 			return;
 		}
@@ -297,9 +326,9 @@ sap.ui.define([
 		if (Array.isArray(oObject)) {
 			oObject.forEach(function (vItem, iIndex, aArray) {
 				if (typeof vItem === "object") {
-					process(vItem, oResourceBundle, iCurrentLevel + 1, iMaxLevel, oParams);
+					process(vItem, oResourceBundle, iCurrentLevel + 1, iMaxLevel, oParams, oDataSources);
 				} else if (isProcessable(vItem, oObject, oParams)) {
-					aArray[iIndex] = processPlaceholder(vItem, oParams);
+					aArray[iIndex] = Manifest._processPlaceholder(vItem, oParams, oDataSources);
 				} else if (isTranslatable(vItem) && oResourceBundle) {
 					aArray[iIndex] = oResourceBundle.getText(vItem.substring(2, vItem.length - 2));
 				}
@@ -307,9 +336,9 @@ sap.ui.define([
 		} else {
 			for (var sProp in oObject) {
 				if (typeof oObject[sProp] === "object") {
-					process(oObject[sProp], oResourceBundle, iCurrentLevel + 1, iMaxLevel, oParams);
-				}  else if (isProcessable(oObject[sProp], oObject, oParams)) {
-					oObject[sProp] = processPlaceholder(oObject[sProp], oParams);
+					process(oObject[sProp], oResourceBundle, iCurrentLevel + 1, iMaxLevel, oParams, oDataSources);
+				} else if (isProcessable(oObject[sProp], oObject, oParams)) {
+					oObject[sProp] = Manifest._processPlaceholder(oObject[sProp], oParams, oDataSources);
 				} else if (isTranslatable(oObject[sProp]) && oResourceBundle) {
 					oObject[sProp] = oResourceBundle.getText(oObject[sProp].substring(2, oObject[sProp].length - 2));
 				}

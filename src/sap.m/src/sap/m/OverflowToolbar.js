@@ -245,6 +245,8 @@ sap.ui.define([
 			this._bContentVisibilityChanged = false;
 		}
 
+		this._markFirstLastVisibleItems();
+
 		// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
 
 		if (this.getAsyncMode()) {

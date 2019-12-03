@@ -4,9 +4,10 @@
 
 // Provides control sap.f.Avatar.
 sap.ui.define([
-    "sap/m/Avatar",
-	"sap/m/AvatarRenderer"
-], function(MAvatar, AvatarRenderer) {
+  "sap/m/Avatar",
+	"sap/m/AvatarRenderer",
+	"./library"
+], function(MAvatar, AvatarRenderer/*, library */) {
 	"use strict";
 
 	/**

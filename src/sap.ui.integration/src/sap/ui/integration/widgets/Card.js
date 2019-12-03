@@ -959,7 +959,7 @@ sap.ui.define([
 					//successfully loaded
 					resolve({
 						designtime: oDesigntime,
-						manifest: deepClone(this._oCardManifest.oJson, 30)
+						manifest: deepClone(this._oCardManifest._oManifest.getRawJson(), 30)
 					});
 				}.bind(this), function () {
 					//error

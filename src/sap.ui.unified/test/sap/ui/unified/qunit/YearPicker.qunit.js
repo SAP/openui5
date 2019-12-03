@@ -31,6 +31,26 @@ sap.ui.define([
 			assert.equal(oFirstRenderedDate.getHours(), 0, "hours are correct");
 		});
 
+		QUnit.module("Accessibility", {
+			beforeEach: function () {
+				this.oYP = new YearPicker();
+				this.oYP.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oYP.destroy();
+				this.oYP = null;
+			}
+		});
+
+		QUnit.test("Control description", function (assert) {
+			// Arrange
+			var sControlDescription = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("YEAR_PICKER");
+
+			// Assert
+			assert.strictEqual(this.oYP.$().attr("aria-label"), sControlDescription , "Control description is added");
+		});
+
 		QUnit.module("Corner cases", {
 			beforeEach: function () {
 				this.oYP = new YearPicker();

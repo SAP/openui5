@@ -150,7 +150,6 @@ function(
 	};
 
 	NotificationListItem.prototype.onAfterRendering = function() {
-
 		if (this.getHideShowMoreButton()) {
 			return;
 		}

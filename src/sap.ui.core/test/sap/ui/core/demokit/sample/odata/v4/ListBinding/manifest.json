@@ -34,7 +34,9 @@
 				"files" : [
 					"Component.js",
 					"Main.controller.js",
-					"Main.view.xml"
+					"Main.view.xml",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},
@@ -57,13 +59,15 @@
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",
 					"updateGroupId" : "update"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.ListBinding.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
 		},
 		"rootView" : {
 			"async" : true,
 			"type" : "XML",
-			"viewName" : "Main.view.xml"
+			"viewName" : "sap.ui.core.sample.odata.v4.ListBinding.Main"
 		}
 	}
 }

@@ -93,7 +93,7 @@ sap.ui.define([
 		];
 	}
 
-	function createOverflowToolbar(oConfig, aContent) {
+	function createOverflowToolbar(oConfig, aContent, bSkipAplyChanges) {
 		var oOverflowTB;
 
 		oConfig = oConfig || {};
@@ -103,7 +103,10 @@ sap.ui.define([
 		oOverflowTB = new OverflowToolbar(oConfig);
 
 		oOverflowTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+
+		if (!bSkipAplyChanges) {
+			sap.ui.getCore().applyChanges();
+		}
 
 		return oOverflowTB;
 	}
@@ -468,29 +471,43 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
-	QUnit.test("Buttons with priority AlwaysOverflow should always overflow", function (assert) {
+	QUnit.test("Buttons with priority AlwaysOverflow should always overflow and should never be rendered in the toolbar", function (assert) {
 
 		// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
-		// but two of the button has special priority whith force the buttons to overflow always
+		// but two of the button has special priority which force the buttons to overflow always
 		var aDefaultContent = [
-					getButton('1'),
-					getButton('2'),
-					getButton('3', OverflowToolbarPriority.AlwaysOverflow),
-					getButton('4', OverflowToolbarPriority.AlwaysOverflow),
-					getButton('5')
-				],
-				oOverflowTB = createOverflowToolbar({
-					width: "600px"
-				}, aDefaultContent);
+				getButton('1'),
+				getButton('2'),
+				getButton('3', OverflowToolbarPriority.AlwaysOverflow),
+				getButton('4', OverflowToolbarPriority.AlwaysOverflow),
+				getButton('5')
+			],
+			oOverflowTB = createOverflowToolbar({
+				width: "600px"
+			}, aDefaultContent, true),
+			iVisibleButtons,
+			iOverflowedButtons,
+			fnDoLayout = oOverflowTB._doLayout,
+			oStubDoLayout = this.stub(OverflowToolbar.prototype, "_doLayout", function () {
+				// There should be three buttons visible in the toolbar
+				iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+				assert.strictEqual(iVisibleButtons, 3, "Only three buttons are visible in the toolbar");
+
+				// call the real _doLayout method
+				fnDoLayout.call(oOverflowTB);
+			});
+
+		sap.ui.getCore().applyChanges();
 
 		// Even though there is enough space on the toolbar, two of the buttons always oferflows
-		var iOverflowedButtons = oOverflowTB._getPopover().getAssociatedContent().length;
-		assert.strictEqual(iOverflowedButtons, 2, "Two of the buttons always oferflows");
+		iOverflowedButtons = oOverflowTB._getPopover().getAssociatedContent().length;
+		assert.strictEqual(iOverflowedButtons, 2, "Two of the buttons always overflow");
 
 		// There should be three buttons visible in the toolbar
-		var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
 		assert.strictEqual(iVisibleButtons, 3, "Only three buttons are visible in the toolbar");
 
+		oStubDoLayout.restore();
 		oOverflowTB.destroy();
 	});
 
@@ -2028,6 +2045,74 @@ sap.ui.define([
 
 	// Clean
 		spyOTInvalidate.restore();
+	});
+
+	QUnit.test("Mark first/last visible child", function (assert) {
+		// Arrange
+		var aContent = getDefaultContent();
+
+			createOverflowToolbar({}, aContent);
+
+		// Assert
+		assert.ok(aContent[0].hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
+		assert.ok(aContent[aContent.length - 1].hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
+	});
+
+	QUnit.test("Mark first/last visible child when no invalidation props that triggers rerender of the item is changed", function (assert) {
+		// Arrange
+		var oCheckBox = new sap.m.CheckBox({text: "Test checkbox"});
+
+			createOverflowToolbar({}, oCheckBox);
+
+		// Assert
+		assert.ok(oCheckBox.hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
+		assert.ok(oCheckBox.hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
+
+		// Act
+		oCheckBox.setSelected(true);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oCheckBox.hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
+		assert.ok(oCheckBox.hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
+	});
+
+	QUnit.test("Mark first/last visible child when there are not visible children", function (assert) {
+		assert.expect(4);
+		// Arrange
+		var aContent = getDefaultContent(),
+			oOverflowTB = createOverflowToolbar({}, aContent),
+			done = assert.async(),
+			iControlsWithFirstChildClass,
+			iControlsWithLastChildClass,
+			oDelegate = {
+				onAfterRendering: function () {
+					oOverflowTB.removeEventDelegate(oDelegate);
+
+					iControlsWithFirstChildClass = aContent.filter(function (oElement) {
+						return oElement.hasStyleClass("sapMBarFirstVisibleChild");
+					}).length;
+					iControlsWithLastChildClass = aContent.filter(function (oElement) {
+						return oElement.hasStyleClass("sapMBarLastVisibleChild");
+					}).length;
+
+					// assert
+					assert.strictEqual(iControlsWithFirstChildClass, 1, "Only 1 child with sapMBarFirstVisibleChild class.");
+					assert.strictEqual(iControlsWithLastChildClass, 1, "Only 1 child with sapMBarLastVisibleChild class.");
+					assert.ok(aContent[1].hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
+					assert.ok(aContent[aContent.length - 2].hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
+					done();
+
+					// Clean-up
+					oOverflowTB.destroy();
+				}
+			};
+
+		aContent[0].setVisible(false);
+		aContent[aContent.length - 1].setVisible(false);
+		oOverflowTB.addEventDelegate(oDelegate);
+
+		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.module("Resize handling");

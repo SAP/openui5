@@ -52,6 +52,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			oRm.class(CSS_CLASS);
 			oRm.class(CSS_CLASS + oSelect.getType());
 
+			if (oSelect.getRequired()) {
+				oRm.attr("required", "required");
+			}
+
 			if (!bEnabled) {
 				oRm.class(CSS_CLASS + "Disabled");
 			} else if (!bEditable) {

@@ -16,13 +16,24 @@
 				"1.3.0",
 				"1.4.0",
 				"1.5.0",
-				"1.6.0"
+				"1.6.0",
+				"1.7.0",
+				"1.8.0"
 			]
 		},
 		"configuration": {
 			"description": "Represents configuration with parameters, which can be used inside the Card",
 			"type": "object",
-			"additionalProperties": true
+			"additionalProperties": false,
+			"properties": {
+				"parameters": {
+					"description": "Map of parameters.",
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/configurationParameter"
+					}
+				}
+			}
 		},
 		"type": {
 			"description": "Represents the type of the card's content",
@@ -33,8 +44,7 @@
 				"Table",
 				"Object",
 				"Timeline",
-				"Component",
-				"AnalyticsCloud"
+				"Component"
 			]
 		},
 		"data": {
@@ -99,12 +109,6 @@
 			"allOf": [
 				{ "properties": { "type": { "enum": [ "Component" ] } }},
 				{ "properties": { "content": { "enum": ["null"] } }}
-			]
-		},
-		{
-			"allOf": [
-				{ "properties": { "type": { "enum": [ "AnalyticsCloud" ] } }},
-				{ "properties": { "content": { "$ref": "#/definitions/ContentType.AnalyticsCloud" }}}
 			]
 		}
 	],
@@ -964,27 +968,6 @@
 				}
 			}
 		},
-		"ContentType.AnalyticsCloud": {
-			"description": "Represents AnalyticsCloud content attributes",
-			"type": "object",
-			"additionalProperties": false,
-			"properties": {
-				"data": {
-					"$ref": "#/definitions/data"
-				},
-				"options": {
-					"description": "Chart options. This object will be passed directly to the third party library.",
-					"type": "object"
-				},
-				"actions": {
-					"description": "Defines actions that can be applied on the content.",
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/action"
-					}
-				}
-			}
-		},
 		"progressIndicator": {
 			"description": "Represents progress indicator attributes",
 			"type": "object",
@@ -1324,6 +1307,16 @@
 					}
 				}
 			]
+		},
+		"configurationParameter": {
+			"description": "Represents configuration parameter.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"value": {
+					"description": "The value of the parameter."
+				}
+			}
 		}
 	}
 }

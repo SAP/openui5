@@ -963,10 +963,10 @@ sap.ui.define([
 
 		if (sSwitchToMode === ObjectPageSubSectionMode.Collapsed) {
 			this.setProperty("mode", ObjectPageSubSectionMode.Collapsed, true);
-			this._getSeeMoreButton().setText(ObjectPageSubSection._getLibraryResourceBundle().getText("SEE_MORE"));
+			this._getSeeMoreButton().setText(ObjectPageSubSection._getLibraryResourceBundle().getText("SHOW_MORE"));
 		} else {
 			this.setProperty("mode", ObjectPageSubSectionMode.Expanded, true);
-			this._getSeeMoreButton().setText(ObjectPageSubSection._getLibraryResourceBundle().getText("SEE_LESS"));
+			this._getSeeMoreButton().setText(ObjectPageSubSection._getLibraryResourceBundle().getText("SHOW_LESS"));
 		}
 	};
 

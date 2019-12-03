@@ -4,13 +4,39 @@
 	xmlns:baseEditor="sap.ui.integration.designtime.baseEditor"
 >
 	<VBox>
-		<VBox items="{items}">
+		<VBox items="{itemsModel>/}">
 			<VBox>
 				<Bar>
 					<contentLeft>
 						<Label text="{itemLabel}" />
 					</contentLeft>
 					<contentRight>
+						<Button
+							icon="sap-icon://navigation-up-arrow"
+							tooltip="{i18n>BASE_EDITOR.ARRAY.MOVEUP}"
+							press="_moveUp"
+							enabled="{= ${itemsModel>index} !== 0}"
+						>
+							<customData>
+								<core:CustomData
+									key="index"
+									value="{itemsModel>index}"
+								/>
+							</customData>
+						</Button>
+						<Button
+							icon="sap-icon://navigation-down-arrow"
+							tooltip="{i18n>BASE_EDITOR.ARRAY.MOVEDOWN}"
+							press="_moveDown"
+							enabled="{= ${itemsModel>total} - 1 !== ${itemsModel>index}}"
+						>
+							<customData>
+								<core:CustomData
+									key="index"
+									value="{itemsModel>index}"
+								/>
+							</customData>
+						</Button>
 						<Button
 							icon="sap-icon://less"
 							tooltip="{i18n>BASE_EDITOR.ARRAY.REMOVE}"
@@ -19,13 +45,13 @@
 							<customData>
 								<core:CustomData
 									key="index"
-									value="{index}"
+									value="{itemsModel>index}"
 								/>
 							</customData>
 						</Button>
 					</contentRight>
 				</Bar>
-				<baseEditor:PropertyEditors config="{properties}"/>
+				<baseEditor:PropertyEditors propertyEditorsChange="_propertyEditorsChange" config="{itemsModel>properties}"/>
 			</VBox>
 		</VBox>
 		<Button

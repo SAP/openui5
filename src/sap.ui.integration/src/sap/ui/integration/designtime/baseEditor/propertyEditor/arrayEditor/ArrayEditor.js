@@ -4,12 +4,14 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/base/util/deepClone",
-	"sap/ui/core/Fragment",
+	"sap/base/util/ObjectPath",
+	"sap/ui/model/json/JSONModel",
 	"sap/base/util/restricted/_merge"
 ], function (
 	BasePropertyEditor,
 	deepClone,
-	Fragment,
+	ObjectPath,
+	JSONModel,
 	_merge
 ) {
 	"use strict";
@@ -33,71 +35,113 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var ArrayEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor", {
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor",
 		metadata: {
-			events: {
-				"ready" : {}
-			}
-		},
-		constructor: function() {
-			BasePropertyEditor.prototype.constructor.apply(this, arguments);
-
-			Fragment.load({
-				name: "sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor",
-				controller: this
-			}).then(function(oContainer) {
-
-				this.addContent(oContainer);
-
-				this.fireReady();
-			}.bind(this));
-		},
-		onValueChange: function() {
-			var vReturn = BasePropertyEditor.prototype.onValueChange.apply(this, arguments);
-			var oConfig = this.getConfig();
-			if (oConfig.value && oConfig.template) {
-				oConfig.items = [];
-				oConfig.value.forEach(function(oValue, iIndex) {
-					var mItem = {
-						itemLabel: oConfig.itemLabel || "{i18n>BASE_EDITOR.ARRAY.ITEM_LABEL}",
-						index: iIndex,
-						properties: Object.keys(oConfig.template).map(function (sKey) {
-							var mTemplate = oConfig.template[sKey];
-							return _merge({}, mTemplate, {
-								path: oConfig.path + "/" + iIndex + "/" + mTemplate.path
-							});
-						})
-					};
-					oConfig.items.push(mItem);
-				});
-				this.getModel().checkUpdate();
-			}
-			return vReturn;
-		},
-		_removeItem: function(oEvent) {
-			var iIndex = oEvent.getSource().data("index");
-			var aValue = this.getModel("_context").getProperty("/" + this.getConfig().path).slice();
-			aValue.splice(iIndex, 1);
-			this.firePropertyChange(aValue);
-		},
-		_addItem: function() {
-			var oConfig = this.getConfig();
-			var aValue = (this.getModel("_context").getProperty("/" + oConfig.path) || []).slice();
-			// Workaround:
-			// Create a default array item
-			// This solution does not support nested arrays
-			var oDefaultItem = {};
-			Object.keys(oConfig.template).forEach(function (sKey) {
-				var defaultValue = oConfig.template[sKey].defaultValue;
-				if (oConfig.template[sKey].hasOwnProperty("defaultValue")) {
-					oDefaultItem[sKey] = deepClone(defaultValue);
+			properties: {
+				value: {
+					type: "any"
 				}
-			});
-			aValue.push(oDefaultItem);
-			this.firePropertyChange(aValue);
+			}
 		},
-
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
+
+	ArrayEditor.prototype.init = function () {
+		this._itemsModel = new JSONModel();
+		this._itemsModel.setDefaultBindingMode("OneWay");
+		this.setModel(this._itemsModel, "itemsModel");
+	};
+
+	ArrayEditor.prototype.onValueChange = function () {
+		var vReturn = BasePropertyEditor.prototype.onValueChange.apply(this, arguments);
+		var oConfig = this.getConfig();
+		if (oConfig.value && oConfig.template) {
+			var aItems = [];
+			oConfig.value.forEach(function(oValue, iIndex) {
+				var mItem = {
+					itemLabel: oConfig.itemLabel || "{i18n>BASE_EDITOR.ARRAY.ITEM_LABEL}",
+					index: iIndex,
+					total: oConfig.value.length,
+					properties: Object.keys(oConfig.template).map(function (sKey) {
+						var mTemplate = oConfig.template[sKey];
+						var sPath = iIndex + "/" + mTemplate.path;
+						return _merge({}, mTemplate, {
+							path: sPath,
+							value: ObjectPath.get(sPath.split("/"), this.getValue())
+						});
+					}, this)
+				};
+				aItems.push(mItem);
+			}, this);
+			this._itemsModel.setData(aItems);
+		}
+		return vReturn;
+	};
+
+	ArrayEditor.prototype._removeItem = function (oEvent) {
+		var iIndex = oEvent.getSource().data("index");
+		var aValue = this.getModel("_context").getProperty("/" + this.getConfig().path).slice();
+		aValue.splice(iIndex, 1);
+		this.firePropertyChange(aValue);
+	};
+
+	ArrayEditor.prototype._addItem = function () {
+		var oConfig = this.getConfig();
+		var aValue = (this.getModel("_context").getProperty("/" + oConfig.path) || []).slice();
+		// Workaround:
+		// Create a default array item
+		// This solution does not support nested arrays
+		var oDefaultItem = {};
+		Object.keys(oConfig.template).forEach(function (sKey) {
+			var defaultValue = oConfig.template[sKey].defaultValue;
+			if (oConfig.template[sKey].hasOwnProperty("defaultValue")) {
+				oDefaultItem[sKey] = deepClone(defaultValue);
+			}
+		});
+		aValue.push(oDefaultItem);
+		this.firePropertyChange(aValue);
+	};
+
+	ArrayEditor.prototype._moveUp = function (oEvent) {
+		var iIndex = oEvent.getSource().data("index");
+		if (iIndex > 0) {
+			var aValue = this.getValue().slice();
+			var mRemovedItem = aValue.splice(iIndex, 1)[0];
+			aValue.splice(iIndex - 1, 0, mRemovedItem);
+			this.firePropertyChange(aValue);
+		}
+	};
+
+	ArrayEditor.prototype._moveDown = function (oEvent) {
+		var iIndex = oEvent.getSource().data("index");
+		var aValue = this.getValue().slice();
+
+		if (iIndex < aValue.length - 1) {
+			var mRemovedItem = aValue.splice(iIndex, 1)[0];
+			aValue.splice(iIndex + 1, 0, mRemovedItem);
+			this.firePropertyChange(aValue);
+		}
+	};
+
+	ArrayEditor.prototype._propertyEditorsChange = function (oEvent) {
+		oEvent.getParameter("previousPropertyEditors").forEach(function (oPropertyEditor) {
+			oPropertyEditor.detachPropertyChange(this._onPropertyValueChange, this);
+		}, this);
+		oEvent.getParameter("propertyEditors").forEach(function (oPropertyEditor) {
+			oPropertyEditor.attachPropertyChange(this._onPropertyValueChange, this);
+		}, this);
+	};
+
+	ArrayEditor.prototype._onPropertyValueChange = function (oEvent) {
+		var aEditorValue = (this.getValue() || []).slice();
+		var sPath = oEvent.getParameter("path");
+		var aParts = sPath.split("/");
+		var vValue = oEvent.getParameter("value");
+
+		ObjectPath.set(aParts, vValue, aEditorValue);
+
+		this.firePropertyChange(aEditorValue);
+	};
 
 	return ArrayEditor;
 });

@@ -2205,6 +2205,14 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	color: #fff;
 }
 
+.sapUiTheme-sap_fiori_3_hcw .sapDemokitTreeItemTitle {
+	color: #000000;
+}
+
+.sapUiTheme-sap_belize_hcw .sapDemokitTreeItemTitle {
+	color: #000000;
+}
+
 /*
 * End of DemokitTreeItem CSS
 */

@@ -3,24 +3,26 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/m/Input",
 	"sap/ui/core/ListItem",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool",
+	"sap/ui/base/BindingParser"
 ], function (
 	BasePropertyEditor,
-	Input,
 	ListItem,
 	Fragment,
 	JSONModel,
 	Filter,
 	FilterOperator,
-	IconPool
+	IconPool,
+	BindingParser
 ) {
 	"use strict";
+
+	var oIconModel = null;
 
 	/**
 	 * @class
@@ -41,53 +43,89 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var IconEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.iconEditor.IconEditor", {
-		constructor: function() {
-			BasePropertyEditor.prototype.constructor.apply(this, arguments);
-			this._oIconModel = new JSONModel(IconPool.getIconNames().map(function(sName) {
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.iconEditor.IconEditor",
+		renderer: BasePropertyEditor.getMetadata().getRenderer().render
+	});
+
+	IconEditor.prototype.asyncInit = function () {
+		var oInput = this.getContent();
+		this._oIconModel = this._getIconModel();
+		oInput.setModel(this._oIconModel, "icons");
+		oInput.bindAggregation("suggestionItems", "icons>/", new ListItem({
+			text: "{icons>path}",
+			additionalText: "{icons>name}"
+		}));
+	};
+
+	IconEditor.prototype._getIconModel = function () {
+		if (!oIconModel) {
+			oIconModel = new JSONModel(IconPool.getIconNames().map(function(sName) {
 				return {
 					name: sName,
 					path: "sap-icon://" + sName
 				};
 			}));
-			this._oInput = new Input({
-				value: "{value}",
-				showSuggestion: true,
-				showValueHelp: true,
-				valueHelpRequest: this._handleValueHelp.bind(this)
-			});
-			this._oInput.setModel(this._oIconModel, "icons");
-			this._oInput.bindAggregation("suggestionItems", "icons>/", new ListItem({
-				text: "{icons>path}",
-				additionalText: "{icons>name}"
-			}));
-			this._oInput.attachLiveChange(function(oEvent) {
-				this.firePropertyChange(oEvent.getParameter("value"));
-			}.bind(this));
-			this._oInput.attachSuggestionItemSelected(function(oEvent) {
-				this.firePropertyChange(oEvent.getParameter("selectedItem").getText());
-			}.bind(this));
-			this.addContent(this._oInput);
-		},
-		renderer: BasePropertyEditor.getMetadata().getRenderer().render
-	});
+		}
+		return oIconModel;
+	};
+
+	IconEditor.prototype._onLiveChange = function(oEvent) {
+		var sIconInput = oEvent.getParameter("value");
+		if (this._isValid(sIconInput)) {
+			this.firePropertyChange(sIconInput);
+		}
+	};
+
+	IconEditor.prototype._onSuggestionItemSelected = function(oEvent) {
+		this.firePropertyChange(oEvent.getParameter("selectedItem").getText());
+	};
+
+	IconEditor.prototype._isValid = function (sSelectedIcon) {
+		var oInput = this.getContent();
+		try {
+			var oParsed = BindingParser.complexParser(sSelectedIcon);
+			var bIsValidIcon = IconPool.isIconURI(sSelectedIcon) && !!IconPool.getIconInfo(sSelectedIcon);
+			if (!oParsed && sSelectedIcon && !bIsValidIcon) {
+				throw "Not an icon";
+			}
+			oInput.setValueState("None");
+			return true;
+		} catch (vError) {
+			oInput.setValueState("Error");
+			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.ICON.INVALID_BINDING_OR_ICON"));
+			return false;
+		}
+	};
+
+	IconEditor.prototype._getDefaultSearchValue = function (sSelectedIcon) {
+		// Avoid binding strings in the search field of the value help
+		try {
+			var oParsed = BindingParser.complexParser(sSelectedIcon);
+			return oParsed ? "" : sSelectedIcon;
+		} catch (vError) {
+			return sSelectedIcon;
+		}
+	};
 
 	IconEditor.prototype._handleValueHelp = function (oEvent) {
 		var sValue = oEvent.getSource().getValue();
 
 		if (!this._oDialog) {
-			Fragment.load({
-				name: "sap.ui.integration.designtime.baseEditor.propertyEditor.iconEditor.IconSelection",
+			return Fragment.load({
+				name: "sap.ui.integration.designtime.baseEditor.propertyEditor.iconEditor.IconEditorDialog",
 				controller: this
 			}).then(function(oDialog){
 				this._oDialog = oDialog;
 				this.addDependent(this._oDialog);
 				this._oDialog.setModel(this._oIconModel);
 				this._filter(sValue);
-				this._oDialog.open(sValue);
+				this._oDialog.open(this._getDefaultSearchValue(sValue));
+				return this._oDialog;
 			}.bind(this));
 		} else {
 			this._filter(sValue);
-			this._oDialog.open(sValue);
+			this._oDialog.open(this._getDefaultSearchValue(sValue));
+			return Promise.resolve(this._oDialog);
 		}
 	};
 

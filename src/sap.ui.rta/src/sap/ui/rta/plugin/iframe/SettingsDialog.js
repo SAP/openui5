@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/ValueState",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/rta/Utils",
 	"sap/ui/rta/plugin/iframe/controller/SettingsDialogController"
 ], function (
 	ManagedObject,
 	Fragment,
 	ValueState,
 	JSONModel,
+	RtaUtils,
 	SettingsDialogController
 ) {
 	"use strict";
@@ -24,7 +26,7 @@ sap.ui.define([
 		nameLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_NAME_LABEL"),
 		sizeTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_TITLE"),
 		widthLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_WIDTH_LABEL"),
-		heigthLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_HEIGTH_LABEL"),
+		heightLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_HEIGHT_LABEL"),
 		sizeWarning: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_WARNING"),
 		urlTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_URL_TITLE"),
 		OKText: _oTextResources.getText("BTN_FREP_OK"),
@@ -34,8 +36,11 @@ sap.ui.define([
 	function _createJSONModel() {
 		return new JSONModel({
 			text: _mText,
+			section: {
+				visible: false
+			},
 			asNewSection: {
-				selected: false
+				value: false
 			},
 			sectionName: {
 				value: "",
@@ -46,39 +51,27 @@ sap.ui.define([
 				valueState: ValueState.None
 			},
 			frameWidthUnit: {
-				selectedKey: ""
+				value: "px"
 			},
-			frameHeigth: {
+			frameHeight: {
 				value: "",
 				valueState: ValueState.None
 			},
-			frameHeigthUnit: {
-				selectedKey: ""
+			frameHeightUnit: {
+				value: "px"
 			},
 			frameUrl: {
 				value: "",
 				valueState: ValueState.None
-			}
+			},
+			unitsOfMeasure: [{
+				name: "px"
+			}, {
+				name: "%"
+			}, {
+				name: "rem"
+			}]
 		});
-	}
-
-	function _createDialog() {
-		this._oJSONModel = _createJSONModel();
-		Fragment.load({
-			name: "sap.ui.rta.view.SettingsDialog",
-			controller: new SettingsDialogController(this._oJSONModel)
-		}).then(function (oSettingsDialog) {
-			this._oDialog = oSettingsDialog;
-			this._oDialog.setModel(this._oJSONModel);
-			_openDialog.call(this);
-		}.bind(this));
-	}
-
-	function _openDialog() {
-		this._oDialog.attachAfterOpen(function () {
-			this.fireOpened();
-		}.bind(this));
-		this._oDialog.open();
 	}
 
 	/**
@@ -90,7 +83,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @since 1.72
+	 * @since 1.74
 	 * @alias sap.ui.rta.plugin.iframe.SettingsDialog
 	 */
 	var SettingsDialog = ManagedObject.extend("sap.ui.rta.plugin.iframe.SettingsDialog", {
@@ -102,26 +95,58 @@ sap.ui.define([
 		}
 	});
 
-	SettingsDialog.prototype.exit = function () {
-		this._oDialog.destroy();
-	};
-
 	/**
 	 * Open the Settings Dialog
 	 *
-	 * @returns {Promise} empty promise
+	 * @param {object|undefined} mSettings - existing iframe settings
+	 * @returns {Promise} promise resolving to iframe settings
 	 * @public
 	 */
-	SettingsDialog.prototype.open = function () {
-		return new Promise(function (resolve, reject) {
+	SettingsDialog.prototype.open = function (mSettings) {
+		return new Promise(function (resolve) {
 			this._fnResolve = resolve;
-			this._fnReject = reject;
-			if (!this._oDialog) {
-				_createDialog.call(this);
-			} else {
-				_openDialog.call(this);
-			}
+			this._createDialog(mSettings);
 		}.bind(this));
+	};
+
+	/**
+	 * Create the Settings Dialog
+	 *
+	 * @param {object|undefined} mSettings - existing iframe settings
+	 * @private
+	 */
+	SettingsDialog.prototype._createDialog = function (mSettings) {
+		this._oJSONModel = _createJSONModel();
+		this._oController = new SettingsDialogController(this._oJSONModel, mSettings);
+		Fragment.load({
+			name: "sap.ui.rta.view.SettingsDialog",
+			controller: this._oController
+		}).then(function (oSettingsDialog) {
+			this._oDialog = oSettingsDialog;
+			this._oDialog.addStyleClass(RtaUtils.getRtaStyleClassName());
+			this._oDialog.setModel(this._oJSONModel);
+			this._openDialog();
+		}.bind(this));
+	};
+
+	/**
+	 * Open and set up Settings Dialog
+	 *
+	 * @private
+	 */
+	SettingsDialog.prototype._openDialog = function () {
+		this._oDialog.attachAfterOpen(function () {
+			this.fireOpened();
+		}.bind(this));
+
+		this._oDialog.attachAfterClose(function () {
+			this._oDialog.destroy();
+			this._oDialog = null;
+			this._fnResolve(this._oController.getSettings());
+			this._oController = null;
+		}.bind(this));
+
+		this._oDialog.open();
 	};
 
 	return SettingsDialog;

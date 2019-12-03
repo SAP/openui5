@@ -62,20 +62,6 @@ sap.ui.define([
 	}});
 
 	/**
-	 * Sets the width of the Vertical Layout without rerendering of the whole control, and everything inside it.
-	 * @param {sap.ui.core.CSSSize} width The new width
-	 * @returns {sap.ui.layout.VerticalLayout} This pointer for chaining
-	 * @public
-	 */
-	VerticalLayout.prototype.setWidth = function (width) {
-		this.setProperty("width", width, true);
-		if (this.getDomRef()) {
-			this.getDomRef().style.width = this.getWidth();
-		}
-		return this;
-	};
-
-	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 * @returns {object} An object with the accessibilty infos for this control

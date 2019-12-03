@@ -267,11 +267,10 @@ sap.ui.define([
 		};
 
 		MenuButton.prototype._setAriaHasPopup = function() {
-			if (this._isSplitButton()) {
-				this._getButtonControl()._getArrowButton().$().attr("aria-haspopup", "true");
-			} else {
-				this._getButtonControl().$().attr("aria-haspopup", "true");
-			}
+			var oButtonControl = this._getButtonControl(),
+				oOpeningMenuButton = this._isSplitButton() ? oButtonControl._getArrowButton() : oButtonControl;
+
+			oOpeningMenuButton.$().attr("aria-haspopup", "menu");
 		};
 
 		/**
@@ -468,11 +467,15 @@ sap.ui.define([
 		};
 
 		MenuButton.prototype._menuClosed = function() {
+			var oButtonControl = this._getButtonControl(),
+				bOpeningMenuButton = oButtonControl;
+
 			if (this._isSplitButton()) {
-				this._getButtonControl().setArrowState(false);
+				oButtonControl.setArrowState(false);
+				bOpeningMenuButton = oButtonControl._getArrowButton();
 			}
 
-			this.$().removeAttr("aria-controls");
+			bOpeningMenuButton.$().removeAttr("aria-controls");
 		};
 
 		MenuButton.prototype._menuItemSelected = function(oEvent) {
@@ -636,8 +639,12 @@ sap.ui.define([
 		};
 
 		MenuButton.prototype._writeAriaAttributes = function() {
-			if (this.getMenu()) {
-				this.$().attr("aria-controls", this.getMenu().getDomRefId());
+			var oButtonControl = this._getButtonControl(),
+				oOpeningMenuButton = this._isSplitButton() ? oButtonControl._getArrowButton() : oButtonControl,
+				oMenu = this.getMenu();
+
+			if (oMenu) {
+				oOpeningMenuButton.$().attr("aria-controls", oMenu.getDomRefId());
 			}
 		};
 

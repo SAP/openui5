@@ -15,10 +15,20 @@ sap.ui.require([
 
 	// Note: cannot require these above as data-sap-ui-resourceroots is ignored until boot
 	sap.ui.require([
+		// Load sinon before sinon-4 so that the global sinon object is sinon-4 and tests using
+		// sinon-4 APIs do not break
+		"sap/ui/thirdparty/sinon",
+		"sap/ui/thirdparty/sinon-4",
 		// alphabetic sort order according to module names
 		// base
 		"sap/ui/core/qunit/BindingParser.qunit",
 		"sap/ui/core/qunit/ExpressionParser.qunit",
+		// Support rules
+		// sap.ui.core.rules.Model.support
+		"sap/ui/core/qunit/rule/model/bindingPathSyntaxValidation.qunit",
+		// DataState
+		"sap/ui/core/qunit/DataState.qunit",
+		"sap/ui/core/qunit/odata/v2/V2ODataModelDataState.qunit",
 		// OData types
 		"sap/ui/core/qunit/odata/type/Boolean.qunit",
 		"sap/ui/core/qunit/odata/type/Currency.qunit",
@@ -39,12 +49,15 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/type/Unit.qunit",
 		"sap/ui/core/qunit/odata/type/UnitMixin.qunit",
 		// OData V2
-		// Note: some types use lazy loading and are used by AnnotationHelper tests!
-		"sap/ui/core/qunit/odata/AnnotationHelper.qunit",
-		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
 		"sap/ui/core/qunit/odata/_AnnotationHelperBasics.qunit",
 		"sap/ui/core/qunit/odata/_AnnotationHelperExpression.qunit",
 		"sap/ui/core/qunit/odata/_ODataMetaModelUtils.qunit",
+		// Note: some types use lazy loading and are used by AnnotationHelper tests!
+		"sap/ui/core/qunit/odata/AnnotationHelper.qunit",
+		"sap/ui/core/qunit/odata/ODataMessageParserNoFakeService.qunit",
+		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
+		"sap/ui/core/qunit/odata/v2/ODataListBindingNoFakeService.qunit",
+		"sap/ui/core/qunit/odata/v2/ODataModelNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit"
 	], function () {
 		function start() {

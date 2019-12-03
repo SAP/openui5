@@ -76,6 +76,22 @@ sap.ui.require([
 				Opa5.assert.ok(oInput.getValue() === sMail, "The input is fulfilled with the proper text");
 			},
 			errorMessage: "Input have wrong value"
+		}).waitFor({
+			viewName: sViewName,
+			controlType: "sap.m.Input",
+			matchers: {
+				// LabelFor - declarative syntax
+				labelFor: {
+					key: "NAME_LABEL"
+				},
+				properties: {
+					value: sName
+				}
+			},
+			success: function () {
+				Opa5.assert.ok(true, "The input is found with declarative LabelFor");
+			},
+			errorMessage: "Input has wrong value"
 		});
 
 		// Tear down should always be done in real use case

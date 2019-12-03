@@ -1,0 +1,62 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "fdb1083cb70d0a81fd1a5038db0af341defbb381",
+        "type": "FIX",
+        "text": " sap.m.SlideTile Quartz Light and Dark theme adjustments",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "4ec5e49b906db04e142734d83cc59613257a84f3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar/OverflowToolbar: Fixed items adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970591185"
+          }
+        ]
+      },
+      {
+        "id": "206852b02b632acd48530a7932b45f7afba9de5d",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Unnecessary focus is now removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970611339"
+          }
+        ]
+      },
+      {
+        "id": "1bc938e7d9a102d977756a9dd7f2821ac77ac81e",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select Month ranges added",
+        "references": []
+      },
+      {
+        "id": "4eb47cd388305573a26f102d22ac061a2f0faed1",
+        "type": "FIX",
+        "text": " sap.m.Popover: Header shadow fixed",
+        "references": []
+      },
+      {
+        "id": "ddd067291bf80999dd36475577a4c61427cd9486",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed visibility of the header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361124"
+          }
+        ]
+      }
+    ]
+  }
+}

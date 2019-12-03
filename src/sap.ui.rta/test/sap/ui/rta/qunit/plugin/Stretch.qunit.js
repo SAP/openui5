@@ -182,7 +182,7 @@ function (
 			var oConfig = { attributes: true, childList: false, characterData: false, subtree : true};
 			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
 
-			this.oLayout.rerender();
+			this.oLayout.getParent().invalidate();
 			sap.ui.getCore().applyChanges();
 		});
 

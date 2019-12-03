@@ -1,0 +1,237 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "70dc8088939ec27619cb8535483b32c437e6cf04",
+        "type": "FEATURE",
+        "text": " sap.m.NavContainer: New transition added",
+        "references": []
+      },
+      {
+        "id": "6b57e462d5dfa622161bf02e5db0bda3a0f22623",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Required property implemented",
+        "references": []
+      },
+      {
+        "id": "ee525257bd5a579652bfbbd39b6ea2f29869414c",
+        "type": "FIX",
+        "text": " Case insensitive NumericContent lang map + add en_US lang",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "4bef77d4a68ada207915f511bdd09443d0ff6226",
+        "type": "FIX",
+        "text": " NumericContent max length fallback",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "24c235673c3a2ff38a879b65490e38c0da827987",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Required attribute is set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980434150"
+          }
+        ]
+      },
+      {
+        "id": "42ba13c4ec1d0118b04dee1b57161362c563c6f2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Keyboard handling navigation on days view is now working correctly",
+        "references": []
+      },
+      {
+        "id": "368500eedeeeb43cada62cf7cd7959cb33f8ffd2",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Control layout is now correct in rtl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970610144"
+          }
+        ]
+      },
+      {
+        "id": "4ec5e49b906db04e142734d83cc59613257a84f3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar/OverflowToolbar: Fixed items adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970591185"
+          }
+        ]
+      },
+      {
+        "id": "00d37eaeeed7307603be8bbc440578a93769b9ad",
+        "type": "FIX",
+        "text": " sap.m.Wizard: destroySteps causing browsers to crash fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980440936"
+          }
+        ]
+      },
+      {
+        "id": "48a97541525c8f773a5d1f8f295186f1ea792cee",
+        "type": "FEATURE",
+        "text": " StandardListItem: inverted info text",
+        "references": []
+      },
+      {
+        "id": "1bc938e7d9a102d977756a9dd7f2821ac77ac81e",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select Month ranges added",
+        "references": []
+      },
+      {
+        "id": "5eee0f9865db4fb289b4ea6b00de17a75d21fcaa",
+        "type": "FIX",
+        "text": " m.SinglePlanningCalendar: tab navigation cycles inside the unified.Calendar popover now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980464696"
+          }
+        ]
+      },
+      {
+        "id": "53826cf8ab2c30a878ebbde755843b25e842735d",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: gets correctly the active state of the FacetList",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980441633"
+          }
+        ]
+      },
+      {
+        "id": "e03ac5b0b014894e32ab7a7926c3f7bc76ee6c91",
+        "type": "FIX",
+        "text": " sap.m.InputBase: QUnit is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980461720"
+          }
+        ]
+      },
+      {
+        "id": "bec3c98557edfc17fc568971cf683024338a7fe2",
+        "type": "FIX",
+        "text": " sap.m.Link: Self-reference placement adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970610033"
+          }
+        ]
+      },
+      {
+        "id": "e2d54e4d74d3943da8397b522359171e1b829f5f",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Demo Kit sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980434150"
+          }
+        ]
+      },
+      {
+        "id": "17bcfdba00a9f580236db012a36efdbd6bfcd320",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: getAccessibilityInfo method enhanced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980434141"
+          }
+        ]
+      },
+      {
+        "id": "6a347bf5db832cbf0b9af2e6adee3c28ef74e0d8",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Custom Views sample improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980459865"
+          }
+        ]
+      },
+      {
+        "id": "72f169595d6d2e82475279c05b7ee78976a4197d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Keyboard handling navigation of daterow now is restricted by min or max date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970573616"
+          }
+        ]
+      },
+      {
+        "id": "df8a281f2f349806bd48eb22d79da5bc19437d90",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestion items ARIA is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970631682"
+          }
+        ]
+      },
+      {
+        "id": "708af42ce1ebbfedac086b43633725732849e2f7",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Focusing styles alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970578490"
+          }
+        ]
+      },
+      {
+        "id": "31f23d999fb137ae22dedea9be9e5098e5a9579e",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: Parent elements heights are now correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980460690"
+          }
+        ]
+      },
+      {
+        "id": "9f7fcad2339b86106c4a9205f0aea719beff3bce",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Now the year range button is not cut",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980454204"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970573833"
+          }
+        ]
+      }
+    ]
+  }
+}

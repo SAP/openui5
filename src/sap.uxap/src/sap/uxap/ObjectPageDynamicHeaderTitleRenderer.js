@@ -8,6 +8,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/f/DynamicPageTitleRenderer'],
 
 		var ObjectPageDynamicHeaderTitleRenderer = Renderer.extend(DynamicPageTitleRenderer);
 
+		ObjectPageDynamicHeaderTitleRenderer.apiVersion = 2;
+
 		return ObjectPageDynamicHeaderTitleRenderer;
 
 	}, /* bExport= */ true);

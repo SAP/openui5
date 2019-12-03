@@ -255,8 +255,44 @@ function(
 		};
 	};
 
+	Toolbar.prototype._markFirstLastVisibleItems = function () {
+		var $domRef = this.$(),
+			$firstVisible = $domRef.find(".sapMBarChild:visible:first")[0],
+			$lastVisible = $domRef.find(".sapMBarChild:visible:last")[0],
+			sIdFirstVisible = $firstVisible ? $firstVisible.id : "",
+			sIdLastVisible = $lastVisible ? $lastVisible.id : "",
+			oFirstVisibleItem = sap.ui.getCore().byId(sIdFirstVisible),
+			oLastVisibleItem = sap.ui.getCore().byId(sIdLastVisible);
+
+			this._markControlAsVisibleItem(oFirstVisibleItem, "sapMBarFirstVisibleChild");
+			this._markControlAsVisibleItem(oLastVisibleItem, "sapMBarLastVisibleChild");
+
+			this._oFirstVisibleItem = oFirstVisibleItem;
+			this._oLastVisibleItem = oLastVisibleItem;
+	};
+
+	Toolbar.prototype._markControlAsVisibleItem = function (oControl, sClassPrefix) {
+		if (oControl) {
+			oControl.addStyleClass(sClassPrefix);
+		}
+	};
+
+	Toolbar.prototype.onBeforeRendering = function () {
+		//unmark as first item to make the calculations correctly
+		if (this._oFirstVisibleItem) {
+			this._oFirstVisibleItem.removeStyleClass("sapMBarFirstVisibleChild");
+		}
+
+		//unmark as last item to make the calculations correctly
+		if (this._oLastVisibleItem) {
+			this._oLastVisibleItem.removeStyleClass("sapMBarLastVisibleChild");
+		}
+	};
+
 	Toolbar.prototype.onAfterRendering = function() {
 		this._checkContents();
+
+		this._markFirstLastVisibleItems();
 	};
 
 	Toolbar.prototype.onLayoutDataChange = function() {

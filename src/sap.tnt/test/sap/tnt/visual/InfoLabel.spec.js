@@ -118,4 +118,22 @@ describe("sap.tnt.InfoLabel", function () {
 		var infoLabel24 = element(by.css("#vb1 .sapMFlexItem:nth-of-type(24) .sapTntInfoLabel"));
 		expect(takeScreenshot(infoLabel24)).toLookAs("21_no_text");
 	});
+
+	// Info abel with Icon
+	it("should vizualize InfoLabel with icon", function () {
+		var infoLabel25 = element(by.css("#vb2 .sapMFlexItem:nth-of-type(1) .sapTntInfoLabel"));
+		browser.executeScript('document.getElementById("vb2").scrollIntoView()').then(function () {
+			expect(takeScreenshot(infoLabel25)).toLookAs("22_icon_1");
+		});
+	});
+
+	it("should vizualize InfoLabel with icon - another color scheme", function () {
+		var infoLabel26 = element(by.css("#vb2 .sapMFlexItem:nth-of-type(5) .sapTntInfoLabel"));
+		expect(takeScreenshot(infoLabel26)).toLookAs("23_icon_2");
+	});
+
+	it("should vizualize InfoLabel with only icon and no text", function () {
+		var infoLabel27 = element(by.css("#vb2 .sapMFlexItem:nth-of-type(9) .sapTntInfoLabel"));
+		expect(takeScreenshot(infoLabel27)).toLookAs("24_icon_only");
+	});
 });

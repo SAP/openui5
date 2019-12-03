@@ -1283,6 +1283,50 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("create_app_addCdsViews", function(assert) {
+			return DescriptorInlineChangeFactory.create_app_addCdsViews({
+				cdsViews: ["VIEW1", "VIEW2"]
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_addCdsViews");
+			});
+		});
+
+		QUnit.test("create_app_addCdsViews failure", function (assert) {
+			assert.throws(function() {
+				DescriptorInlineChangeFactory.create_app_addCdsViews({
+					cdsViews : {}
+				});
+			});
+			assert.throws(function() {
+				DescriptorInlineChangeFactory.create_app_addCdsViews({
+					cdsViews : "VIEW1"
+				});
+			});
+		});
+
+		QUnit.test("create_app_removeCdsViews", function(assert) {
+			return DescriptorInlineChangeFactory.create_app_removeCdsViews({
+				cdsViews: ["VIEW1"]
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeCdsViews");
+			});
+		});
+
+		QUnit.test("create_app_removeCdsViews failure", function (assert) {
+			assert.throws(function() {
+				DescriptorInlineChangeFactory.create_app_removeCdsViews({
+					cdsViews : {}
+				});
+			});
+			assert.throws(function() {
+				DescriptorInlineChangeFactory.create_app_removeCdsViews({
+					cdsViews : "VIEW1"
+				});
+			});
+		});
+
 		QUnit.test("create_flp_setConfig", function(assert) {
 			return DescriptorInlineChangeFactory.create_flp_setConfig({
 				config : { property1 : "value1",

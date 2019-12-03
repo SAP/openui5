@@ -1,0 +1,29 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "4ec5e49b906db04e142734d83cc59613257a84f3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar/OverflowToolbar: Fixed items adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970591185"
+          }
+        ]
+      },
+      {
+        "id": "ddd067291bf80999dd36475577a4c61427cd9486",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed visibility of the header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361124"
+          }
+        ]
+      }
+    ]
+  }
+}

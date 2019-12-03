@@ -119,7 +119,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			this._oMessageStrip = new MessageStrip({
 				showCloseButton: true,
 				showIcon: true
-			}).addStyleClass("sapUiTinyMarginTopBottom");
+			}).addStyleClass("sapUiTinyMargin");
 
 			oControl.setAggregation("_messageStrip", this._oMessageStrip);
 			oControl.addAriaLabelledBy(this._oMessageStrip);

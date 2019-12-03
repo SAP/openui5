@@ -332,7 +332,9 @@ sap.ui.define([
 
 			if (selectedInFixedList) {
 				fixedNavigationList.setSelectedItem(listItemToSelect);
-				navigationList.setSelectedItem(null);
+				if (navigationList) {
+					navigationList.setSelectedItem(null);
+				}
 			}
 
 			return Control.prototype.setAssociation.call(this, 'selectedItem', listItemToSelect, true);

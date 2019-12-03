@@ -9477,6 +9477,28 @@ sap.ui.define([
 			oDisabledSelect.destroy();
 		});
 
+		QUnit.test("Required state", function (assert) {
+			var oSelect = new Select({ required: true });
+
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// Assertion
+			assert.strictEqual(oSelect.$().attr("required"), "required", "Required Select required attribute is set");
+			assert.strictEqual(oSelect.$().attr("aria-required"), "true", "Required Select aria-required attribute is set");
+
+			// Act
+			oSelect.setRequired(false);
+			Core.applyChanges();
+
+			// Assertion
+			assert.strictEqual(oSelect.$().attr("required"), undefined, "Required Select required attribute is not set");
+			assert.strictEqual(oSelect.$().attr("aria-required"), undefined, "Required Select aria-required attribute is not set");
+
+			// Cleanup
+			oSelect.destroy();
+		});
+
 		QUnit.test("Hidden label's aria-live", function (assert) {
 			var $oLabel,
 				oSelect = new Select({

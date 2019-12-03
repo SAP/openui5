@@ -2297,10 +2297,10 @@ sap.ui.define([
 		oRequestorMock.expects("checkHeaderNames").withExactArgs(sinon.match.object);
 
 		// code under test
-		oModel.changeHttpHeaders({AbC : "123"});
+		oModel.changeHttpHeaders({AbC : "12 [3] $4: ~"});
 
-		assert.deepEqual(mMetadataHeaders, {AbC : "123", "Accept-Language" : "ab-CD"});
-		assert.deepEqual(mHeaders, {AbC : "123", "Accept-Language" : "ab-CD"});
+		assert.deepEqual(mMetadataHeaders, {AbC : "12 [3] $4: ~", "Accept-Language" : "ab-CD"});
+		assert.deepEqual(mHeaders, {AbC : "12 [3] $4: ~", "Accept-Language" : "ab-CD"});
 
 		oRequestorMock.expects("checkHeaderNames").withExactArgs(sinon.match.same(mMyHeaders));
 
@@ -2329,7 +2329,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, 42, NaN, {}, null, function () {}].forEach(function (vValue) {
+[true, 42, NaN, {}, null, function () {}, "", "Motörhead", "a\r\nb: c"].forEach(function (vValue) {
 	QUnit.test("changeHttpHeaders: unsupported header value: " + vValue, function (assert) {
 		var oModel = createModel();
 

@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Column",
 	"sap/m/Label",
-	"sap/m/Text",
-	"sap/ui/test/TestUtils"
-], function (jQuery, Button, Column, Label, Text, TestUtils) {
+	"sap/m/Text"
+], function (jQuery, Button, Column, Label, Text) {
 	"use strict";
 
 	return sap.ui.controller("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {

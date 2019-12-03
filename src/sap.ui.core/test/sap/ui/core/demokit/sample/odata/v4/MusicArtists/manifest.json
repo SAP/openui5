@@ -1,7 +1,7 @@
 {
 	"_version" : "1.8.0",
 	"sap.app" : {
-		"ach" : "CA-UI5-COR-STI",
+		"ach" : "CA-UI5-COR",
 		"applicationVersion" : {
 			"version" : "${version}"
 		},

@@ -1,0 +1,40 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "881285e1be0bea9b005e3d1c0950d8008aa3836f",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: ObjectPage\u0027s header flickering is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980354228"
+          }
+        ]
+      },
+      {
+        "id": "4ec5e49b906db04e142734d83cc59613257a84f3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar/OverflowToolbar: Fixed items adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970591185"
+          }
+        ]
+      },
+      {
+        "id": "965595bf92be41f1933c580746dfa0d98885dd90",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Header styles are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980441320"
+          }
+        ]
+      }
+    ]
+  }
+}

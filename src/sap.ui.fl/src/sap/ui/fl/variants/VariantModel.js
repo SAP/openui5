@@ -163,7 +163,7 @@ sap.ui.define([
 	 * Executes the passed callback function when the variant model instance is not busy anymore.
 	 * During the execution of the function, the variant model is again set to busy state.
 	 *
-	 * @param {function<Promise>} fnCallback - Callback function returning a promise
+	 * @param {function():Promise} fnCallback - Callback function returning a promise
 	 * @param {sap.ui.fl.variants.VariantModel} oModel - Variant model
 	 * @returns {Promise} Resolves when the variant model is not busy anymore
 	 * @private

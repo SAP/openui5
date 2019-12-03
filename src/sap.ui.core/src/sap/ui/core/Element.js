@@ -177,8 +177,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sClassName name of the class to build the metadata for
 	 * @param {object} oStaticInfo static information used to build the metadata
-	 * @param {function} [fnMetaImpl] constructor to be used for the metadata
-	 * @return {object} the created metadata
+	 * @param {function} [fnMetaImpl=sap.ui.core.ElementMetadata] constructor to be used for the metadata
+	 * @return {sap.ui.core.ElementMetadata} the created metadata
 	 * @static
 	 * @public
 	 * @deprecated Since 1.3.1. Use the static <code>extend</code> method of the desired base class (e.g. {@link sap.ui.core.Element.extend})
@@ -242,6 +242,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sClassName fully qualified name of the class that is described by this metadata object
 	 * @param {object} oStaticInfo static info to construct the metadata from
+	 * @returns {function} Created class / constructor function
 	 *
 	 * @public
 	 * @static
@@ -903,7 +904,7 @@ sap.ui.define([
 
 	// Note: the real class documentation can be found in sap/ui/core/CustomData so that the right module is
 	// shown in the API reference. A reduced copy of the class documentation and the documentation of the
-	// settings has to provided here, close to the runtime metadata to allow deriving the CustomData.control file.
+	// settings has to be provided here, close to the runtime metadata to allow extracting the metadata.
 	/**
 	 * @class
 	 * Contains a single key/value pair of custom data attached to an <code>Element</code>.
@@ -940,7 +941,9 @@ sap.ui.define([
 			 * this custom data is written to the HTML root element of the control as a "data-*" attribute.
 			 * If the key is "abc" and the value is "cde", the HTML will look as follows:
 			 *
-			 * &lt;SomeTag ... data-abc="cde" ... &gt;
+			 * <pre>
+			 *   &lt;SomeTag ... data-abc="cde" ... &gt;
+			 * </pre>
 			 *
 			 * Thus the application can provide stable attributes by data binding which can be used for styling or
 			 * identification purposes.

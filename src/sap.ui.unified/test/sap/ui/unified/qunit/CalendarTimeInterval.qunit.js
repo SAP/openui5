@@ -472,7 +472,7 @@ sap.ui.define([
 		assert.equal(aMonths.length, 6, "Calendar1: 4 months rendered");
 		assert.equal(jQuery(aMonths[0]).text(), "Jan", "Calendar1: first displayed month");
 		assert.equal(jQuery(aMonths[2]).attr("tabindex"), "0", "Calendar1: 3. displayed month is focused");
-		assert.ok(jQuery(aMonths[2]).hasClass("sapUiCalItemSel"), "Calendar1: 3. displayed month is selected");
+		assert.notOk(jQuery(aMonths[2]).hasClass("sapUiCalItemSel"), "Calendar1: 3. displayed month is selected");
 
 		assert.ok(!jQuery("#Cal2--MP").get(0), "Calendar2: Month picker not initial rendered");
 		qutils.triggerEvent("click", "Cal2--Head-B1");
@@ -484,7 +484,7 @@ sap.ui.define([
 		assert.equal(aMonths.length, 12, "Calendar2: 12 months rendered");
 		assert.equal(jQuery(aMonths[0]).text(), "January", "Calendar2: first displayed month");
 		assert.equal(jQuery(aMonths[3]).attr("tabindex"), "0", "Calendar2: 4. displayed month is focused");
-		assert.ok(jQuery(aMonths[3]).hasClass("sapUiCalItemSel"), "Calendar2: 4. displayed month is selected");
+		assert.notOk(jQuery(aMonths[3]).hasClass("sapUiCalItemSel"), "Calendar2: 4. displayed month is selected");
 	});
 
 	QUnit.test("change block", function(assert) {

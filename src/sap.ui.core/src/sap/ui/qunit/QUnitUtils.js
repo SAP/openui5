@@ -253,7 +253,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * they are given before an eventual <code>originalEvent</code> property in <code>oParams</code>.
 	 *
 	 * @param {string} sEventName mandatory name (type) of the newly created event
-	 * @param {DOMElement} [oTarget] optional target of the event
+	 * @param {Element} [oTarget] optional target of the event
 	 * @param {object} [oParams] optional map of properties to be added to the event
 	 */
 	function fakeEvent(sEventName, oTarget, oParams) {
@@ -287,7 +287,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * @see http://api.jquery.com/trigger/
 	 *
 	 * @param {string} sEventName The name of the browser event (like "click")
-	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
+	 * @param {string | Element} oTarget The ID of a DOM element or a DOM element which serves as target of the event
 	 * @param {object} [oParams] The parameters which should be attached to the event in JSON notation (depending on the event type).
 	 * @public
 	 */
@@ -309,7 +309,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * The onEVENTNAME functions are called directly on the "nearest" control / element of the given target.
 	 *
 	 * @param {string} sEventName The name of the touch event (touchstart, touchmove, touchend)
-	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
+	 * @param {string | Element} oTarget The ID of a DOM element or a DOM element which serves as target of the event
 	 * @param {object} [oParams] The parameters which should be attached to the event in JSON notation (depending on the event type).
 	 * @param {string} [sEventHandlerPrefix='on'] prefix to use for the event handler name, defaults to 'on'
 	 * @public
@@ -424,7 +424,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * @see sap.ui.test.qunit.triggerEvent
 	 *
 	 * @param {string} sEventType The name of the browser keyboard event (like "keydown")
-	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
+	 * @param {string | Element} oTarget The ID of a DOM element or a DOM element which serves as target of the event
 	 * @param {string | int} sKey The keys name as defined in {@link sap.ui.events.KeyCodes} or its key code
 	 * @param {boolean} bShiftKey Indicates whether the shift key is down in addition
 	 * @param {boolean} bAltKey Indicates whether the alt key is down in addition
@@ -458,7 +458,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * Programmatically triggers a 'keydown' event on a specified target.
 	 * @see sap.ui.test.qunit.triggerKeyEvent
 	 *
-	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
+	 * @param {string | Element} oTarget The ID of a DOM element or a DOM element which serves as target of the event
 	 * @param {string | int} sKey The keys name as defined in {@link sap.ui.events.KeyCodes} or its key code
 	 * @param {boolean} bShiftKey Indicates whether the shift key is down in addition
 	 * @param {boolean} bAltKey Indicates whether the alt key is down in addition
@@ -474,7 +474,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * Programmatically triggers a 'keyup' event on a specified target.
 	 * @see sap.ui.test.qunit.triggerKeyEvent
 	 *
-	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
+	 * @param {string | Element} oTarget The ID of a DOM element or a DOM element which serves as target of the event
 	 * @param {string | int} sKey The keys name as defined in {@link sap.ui.events.KeyCodes} or its key code
 	 * @param {boolean} bShiftKey Indicates whether the shift key is down in addition
 	 * @param {boolean} bAltKey Indicates whether the alt key is down in addition
@@ -505,7 +505,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * Programmatically triggers a 'keypress' event on a specified target.
 	 * @see sap.ui.test.qunit.triggerEvent
 	 *
-	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
+	 * @param {string | Element} oTarget The ID of a DOM element or a DOM element which serves as target of the event
 	 * @param {string} sChar Only the first char of the string will be passed via keypress event
 	 * @param {boolean} bShiftKey Indicates whether the shift key is down in addition
 	 * @param {boolean} bAltKey Indicates whether the alt key is down in addition
@@ -537,7 +537,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * of this input field.
 	 * @see sap.ui.test.qunit.triggerKeypress
 	 *
-	 * @param {string | DOMElement} oInput The ID of a DOM input field or a DOM input field which serves as target
+	 * @param {string | Element} oInput The ID of a DOM input field or a DOM input field which serves as target
 	 * @param {string} sChar Only the first char of the string will be passed via keypress event
 	 * @param {string} [sValue] If passed, this will be set as the new value of the input and the method will not rely on the old value of the input
 	 * @public
@@ -562,7 +562,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * Programmatically triggers a mouse event specified by its name on a specified target.
 	 * @see sap.ui.test.qunit.triggerEvent
 	 *
-	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
+	 * @param {string | Element} oTarget The ID of a DOM element or a DOM element which serves as target of the event
 	 * @param {string} sEventType The name of the browser mouse event (like "click")
 	 * @param {int} iOffsetX The offset X position of the mouse pointer during the event
 	 * @param {int} iOffsetY The offset Y position of the mouse pointer during the event

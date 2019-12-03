@@ -429,7 +429,7 @@
 		},
 		{
 			"control": "sap.m.Switch",
-			"url": "../Switch.html",
+			"url": "Switch.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{

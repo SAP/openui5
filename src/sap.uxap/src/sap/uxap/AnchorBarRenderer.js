@@ -12,6 +12,8 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 		 */
 		var AnchorBarRenderer = Renderer.extend(ToolbarRenderer);
 
+		AnchorBarRenderer.apiVersion = 2;
+
 		var _AnchorBarHierarchicalSelectMode = AnchorBarRenderer._AnchorBarHierarchicalSelectMode = {
 			Icon: "icon",
 			Text: "text"
@@ -22,25 +24,21 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 
 				rm.renderControl(oToolbar._getScrollArrowLeft());
 
-				rm.write("<div");
-				rm.writeAttributeEscaped("id", oToolbar.getId() + "-scrollContainer");
+				rm.openStart("div", oToolbar.getId() + "-scrollContainer");
 				// ARIA attributes
-				rm.writeAttributeEscaped("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_LABEL"));
-				//
-				rm.addClass("sapUxAPAnchorBarScrollContainer");
-				rm.writeClasses();
-				rm.write(">");
+				rm.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_LABEL"))
+					.class("sapUxAPAnchorBarScrollContainer")
+					.openEnd();
 
-				rm.write("<div");
-				rm.writeAttributeEscaped("id", oToolbar.getId() + "-scroll");
-				rm.writeAttributeEscaped("role", "menubar");
-				rm.write(">");
+				rm.openStart("div", oToolbar.getId() + "-scroll")
+					.attr("role", "menubar")
+					.openEnd();
 
 				AnchorBarRenderer.renderBarItems(rm, oToolbar);
 
-				rm.write("</div>");
+				rm.close("div");
 
-				rm.write("</div>");
+				rm.close("div");
 
 				rm.renderControl(oToolbar._getScrollArrowRight());
 			}
@@ -64,7 +62,11 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 		AnchorBarRenderer.decorateRootElement = function (rm, oToolbar) {
 			ToolbarRenderer.decorateRootElement.apply(this, arguments);
 			if (oToolbar._sHierarchicalSelectMode === _AnchorBarHierarchicalSelectMode.Icon) {
-				rm.addClass("sapUxAPAnchorBarOverflow");
+				rm.class("sapUxAPAnchorBarOverflow");
+			}
+
+			if (oToolbar.getBackgroundDesign()) {
+				rm.class("sapUxAPAnchorBar" + oToolbar.getBackgroundDesign());
 			}
 		};
 

@@ -512,11 +512,18 @@ sap.ui.define([
 				version: 1,
 				qunitBridge: true
 			},
+			qunit: {
+				noglobals: false
+			},
 			module: "./selectors/selectors.qunit"
 		},
 		"_BrowserLogCollector": {
 			title: "QUnit Page for sap.ui.test._BrowserLogCollector",
 			module: "./_BrowserLogCollector.qunit"
+		},
+		"OpaBuilder": {
+			title: "QUnit Page for sap.ui.test.OpaBuilder",
+			module: "./OpaBuilder.qunit"
 		}
 	};
 

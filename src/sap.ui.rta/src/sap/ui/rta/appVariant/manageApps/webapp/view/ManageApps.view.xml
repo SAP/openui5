@@ -64,7 +64,11 @@
 						<menu>
 							<Menu itemSelected="onMenuAction">
 								<items>
-									<MenuItem text="{i18n>MAA_DIALOG_ADAPT_UI}" enabled="{adaptUIButtonEnabled}" icon="sap-icon://wrench" visible="{isKeyUser}" />
+									<MenuItem text="{i18n>MAA_DIALOG_ADAPT_UI}"
+										visible="{parts: [{path: 'adaptUIButtonVisibility'}, {path: 'isKeyUser'}], formatter:'.formatAdaptUIButtonVisibility'}"
+										enabled="{adaptUIButtonEnabled}"
+										tooltip="{parts: [{path: 'adaptUIButtonEnabled'}, {path: 'appVarStatus'}], formatter:'.formatAdaptUIButtonTooltip'}"
+										icon="sap-icon://wrench"/>
 									<MenuItem text="{i18n>MAA_DIALOG_COPY_ID}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_COPY_ID}" icon="sap-icon://copy" />
 									<MenuItem text="{i18n>MAA_DIALOG_DELETE_APPVAR}"
 										enabled="{delAppVarButtonEnabled}"

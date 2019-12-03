@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/m/Input",
 	"sap/ui/base/BindingParser",
 	"sap/ui/core/format/NumberFormat"
 ], function (
 	BasePropertyEditor,
-	Input,
 	BindingParser,
 	NumberFormat
 ) {
@@ -33,29 +31,28 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var NumberEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.numberEditor.NumberEditor", {
-		constructor: function() {
-			BasePropertyEditor.prototype.constructor.apply(this, arguments);
-			this._oInput = new Input({value: "{value}"});
-			this._oInput.attachLiveChange(function(oEvent) {
-				var sInput = this._validate(this._oInput.getValue());
-				if (sInput !== null) {
-					this.firePropertyChange(sInput);
-				}
-			}, this);
-			this.addContent(this._oInput);
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.numberEditor.NumberEditor",
+
+		_onLiveChange: function() {
+			var oInput = this.getContent();
+			var sInput = this._validate(oInput.getValue());
+			if (sInput !== null) {
+				this.firePropertyChange(sInput);
+			}
 		},
 		_validate: function(sValue) {
+			var oInput = this.getContent();
 			try {
 				var oParsed = BindingParser.complexParser(sValue);
 				var nValue = NumberFormat.getFloatInstance().parse(sValue);
 				if (!oParsed && sValue && isNaN(nValue)) {
 					throw "NaN";
 				}
-				this._oInput.setValueState("None");
+				oInput.setValueState("None");
 				return oParsed || !sValue ? sValue : nValue;
 			} catch (vError) {
-				this._oInput.setValueState("Error");
-				this._oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.NUMBER.INVALID_BINDING_OR_NUMBER"));
+				oInput.setValueState("Error");
+				oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.NUMBER.INVALID_BINDING_OR_NUMBER"));
 				return null;
 			}
 		},

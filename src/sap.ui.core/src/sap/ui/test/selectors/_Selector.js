@@ -60,8 +60,19 @@ sap.ui.define([
             }
         },
 
-        // override for inheriting selectors that need an ancestor control selector
-        _getAncestors: function () {
+        // override for selectors that need an ancestor control selector
+        _isAncestorRequired: function () {
+            return false;
+        },
+        _getAncestor: function () {
+            return null;
+        },
+
+        // override for selectors that need to be unique only within a certain sub-tree (starting with the validation root)
+        _isValidationRootRequired: function () {
+            return false;
+        },
+        _getValidationRoot: function () {
             return null;
         },
 
@@ -70,10 +81,14 @@ sap.ui.define([
                 delete mSelector.skipBasic;
                 return mSelector;
             } else {
-                return {
-                    controlType: oControl.getMetadata()._sClassName,
-                    viewName: this._getControlViewName(oControl)
+                var mBasic = {
+                    controlType: oControl.getMetadata()._sClassName
                 };
+                var sViewname = this._getControlViewName(oControl);
+                if (sViewname) {
+                    mBasic.viewName = sViewname;
+                }
+                return mBasic;
             }
         },
 

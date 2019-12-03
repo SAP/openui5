@@ -1790,98 +1790,153 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bKeepCacheOnError) {
-	QUnit.test("refreshInternal: async, bKeepCacheOnError=" + bKeepCacheOnError, function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
+[false, true].forEach(function (bAsync) {
+	[false, true].forEach(function (bKeepCacheOnError) {
+		[false, true].forEach(function (bRelative) {
+			var sTitle = "refreshInternal: bAsync=" + bAsync
+				+ ", bKeepCacheOnError=" + bKeepCacheOnError
+				+ ", bRelative=" + bRelative;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext = bRelative ? Context.create(this.oModel, {}, "/TEAMS('42')") : undefined,
+			oBinding = this.bindList(bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES", oContext,
+				null, null, {$$ownRequest : true}),
 			oCache = oBinding.oCachePromise.getResult(),
+			iNoOfCalls = bAsync ? 2 : 1,
 			oDependentBinding = {
 				refreshInternal : function () {}
 			},
 			oError = new Error(),
-			oRefreshPromise1,
-			oRefreshPromise2;
+			aPromises = [],
+			oReadPromise = Promise.reject(oError),
+			that = this;
 
-		this.mock(this.oModel).expects("getDependentBindings").twice()
+		this.mock(oBinding).expects("isRootBindingSuspended").exactly(iNoOfCalls).returns(false);
+		this.mock(oBinding).expects("refreshSuspended").never();
+		oReadPromise.catch(function () {
+			var iCallCount = bKeepCacheOnError ? 1 : 0,
+				oResourcePathPromise = Promise.resolve(bRelative ? oCache.$resourcePath : "n/a");
+
+			if (bRelative) {
+				assert.ok(oCache.$resourcePath);
+			} else {
+				assert.notOk("$resourcePath" in oCache);
+			}
+			that.mock(oBinding).expects("fetchResourcePath").exactly(iCallCount)
+				.withExactArgs(sinon.match.same(oContext))
+				.returns(SyncPromise.resolve(oResourcePathPromise));
+			oResourcePathPromise.then(function () {
+				that.mock(oCache).expects("setActive").exactly(iCallCount).withExactArgs(true);
+				that.mock(oBinding).expects("_fireChange").exactly(iCallCount)
+					.withExactArgs({reason : ChangeReason.Change})
+					.callsFake(function () {
+						if (bKeepCacheOnError) {
+							assert.strictEqual(oBinding.oCache, oCache);
+							assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+						} else {
+							assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
+						}
+					});
+			});
+		});
+		this.mock(oBinding).expects("reset").exactly(iNoOfCalls).callsFake(function () {
+			if (!bAsync) {
+				// simulate #getContexts call sync to "Refresh" event
+				oBinding.resolveRefreshPromise(oReadPromise);
+			}
+		});
+		this.mock(this.oModel).expects("getDependentBindings").exactly(iNoOfCalls)
 			.withExactArgs(sinon.match.same(oBinding))
 			.returns([oDependentBinding]);
-		this.mock(oDependentBinding).expects("refreshInternal").twice()
+		this.mock(oDependentBinding).expects("refreshInternal").exactly(iNoOfCalls)
 			.withExactArgs("", "myGroup", false, bKeepCacheOnError)
 			.resolves();
-		this.mock(oBinding).expects("reset").twice(); // avoid that reset calls getDependentBindings
 
-		// code under test
-		oRefreshPromise1 = oBinding.refreshInternal("", "myGroup", false, bKeepCacheOnError);
-		oRefreshPromise2 = oBinding.refreshInternal("", "myGroup", false, bKeepCacheOnError);
-		oBinding.resolveRefreshPromise(Promise.reject(oError)); // simulate getContexts
-
-		this.mock(oCache).expects("setActive").exactly(bKeepCacheOnError ? 1 : 0)
-			.withExactArgs(true);
-		this.mock(oBinding).expects("_fireChange").exactly(bKeepCacheOnError ? 1 : 0)
-			.withExactArgs({reason : ChangeReason.Change})
-			.callsFake(function () {
-				if (bKeepCacheOnError) {
-					assert.strictEqual(oBinding.oCache, oCache);
-					assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
-				} else {
-					assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
-				}
-			});
-		return Promise.all([
-			oRefreshPromise1.then(function () {
+		aPromises.push(
+			// code under test
+			oBinding.refreshInternal("", "myGroup", false, bKeepCacheOnError)
+			.then(function () {
 				assert.ok(false);
 			}, function (oReturnedError) {
 				assert.strictEqual(oReturnedError, oError);
-			}),
-			oRefreshPromise2.then(function () {
-				assert.ok(false);
-			}, function (oReturnedError) {
-				assert.strictEqual(oReturnedError, oError);
-			})
-		]);
+			}));
+		if (bAsync) { //TODO in the sync case, the wrong cache would be restored :-(
+			aPromises.push(
+				// code under test
+				oBinding.refreshInternal("", "myGroup", false, bKeepCacheOnError)
+				.then(function () {
+					assert.ok(false);
+				}, function (oReturnedError) {
+					assert.strictEqual(oReturnedError, oError);
+				}));
+			// simulate #getContexts call async to "Refresh" event
+			oBinding.resolveRefreshPromise(oReadPromise);
+		}
+
+		return Promise.all(aPromises);
+	});
+
+		});
 	});
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bKeepCacheOnError) {
-	QUnit.test("refreshInternal: sync, bKeepCacheOnError=" + bKeepCacheOnError, function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			oCache = oBinding.oCachePromise.getResult(),
-			oDependentBinding = {
-				refreshInternal : function () {}
-			},
-			oError = new Error(),
-			oRefreshPromise;
+[false, true].forEach(function (bFetchResourcePathFails) {
+	var sTitle = "refreshInternal: bAsync=false, bKeepCacheOnError=true, GET fails"
+		+ ", parent context has changed in the meantime, fetchResourcePath fails="
+		+ bFetchResourcePathFails;
 
+	QUnit.test(sTitle, function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, null, null,
+				{$$ownRequest : true}),
+			oError = new Error(),
+			bIsRoot = "false,true",
+			oNewCache = {},
+			oOldCache = oBinding.oCachePromise.getResult(),
+			oRefreshPromise = Promise.reject(oError),
+			oYetAnotherError = new Error(),
+			that = this;
+
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+		this.mock(oBinding).expects("refreshSuspended").never();
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(bIsRoot);
+		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", bIsRoot);
+		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("path");
+		this.mock(oBinding).expects("fetchCache").withExactArgs(sinon.match.same(oContext))
+			.callsFake(function () {
+				oBinding.oCache = oNewCache;
+				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
+			});
+		this.mock(oBinding).expects("createRefreshPromise").withExactArgs()
+			.returns(oRefreshPromise);
+		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 		this.mock(this.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding))
-			.returns([oDependentBinding]);
-		this.mock(oDependentBinding).expects("refreshInternal")
-			.withExactArgs("", "myGroup", false, bKeepCacheOnError)
-			.resolves();
-		this.mock(oBinding).expects("reset").callsFake(function () {
-			oBinding.resolveRefreshPromise(Promise.reject(oError)); // simulate getContexts
+			.withExactArgs(sinon.match.same(oBinding)).returns([]);
+		oRefreshPromise.catch(function () {
+			var oResourcePathPromise = Promise.resolve("n/a");
+
+			that.mock(oBinding).expects("fetchResourcePath")
+				.withExactArgs(sinon.match.same(oContext))
+				.returns(bFetchResourcePathFails
+					? SyncPromise.reject(oYetAnotherError)
+					: SyncPromise.resolve(oResourcePathPromise));
+			oResourcePathPromise.then(function () {
+				that.mock(oOldCache).expects("setActive").never();
+				that.mock(oBinding).expects("_fireChange").never();
+			});
 		});
 
 		// code under test
-		oRefreshPromise = oBinding.refreshInternal("", "myGroup", false, bKeepCacheOnError);
-
-		this.mock(oCache).expects("setActive").exactly(bKeepCacheOnError ? 1 : 0)
-			.withExactArgs(true);
-		this.mock(oBinding).expects("_fireChange").exactly(bKeepCacheOnError ? 1 : 0)
-			.withExactArgs({reason : ChangeReason.Change})
-			.callsFake(function () {
-				if (bKeepCacheOnError) {
-					assert.strictEqual(oBinding.oCache, oCache);
-					assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
-				} else {
-					assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
-				}
+		return oBinding.refreshInternal("path", "myGroup", /*bCheckUpdate (ignored)*/false, true)
+			.then(function () {
+				assert.ok(false);
+			}, function (oReturnedError) {
+				assert.strictEqual(oReturnedError,
+					bFetchResourcePathFails ? oYetAnotherError : oError);
+				assert.strictEqual(oBinding.oCache, oNewCache);
+				assert.strictEqual(oBinding.oCachePromise.getResult(), oNewCache);
 			});
-		return oRefreshPromise.then(function () {
-			assert.ok(false);
-		}, function (oReturnedError) {
-			assert.strictEqual(oReturnedError, oError);
-		});
 	});
 });
 
@@ -5652,6 +5707,147 @@ sap.ui.define([
 	QUnit.test("doSetProperty: returns undefined", function (assert) {
 		// code under test
 		assert.strictEqual(this.bindList("/EMPLOYEES").doSetProperty(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchDownloadUrl: empty meta path", function (assert) {
+		var oBinding = this.bindList("/resource/path"),
+			oCache = {
+				sMetaPath : "meta/path",
+				mQueryOptions : {},
+				sResourcePath : "resource/path"
+			},
+			oExpectation,
+			oPromise = {};
+
+		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
+
+		// code under test
+		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("").returns("");
+		this.mock(this.oModel.oRequestor).expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions))
+			.returns("?query");
+
+		// code under test - callback function
+		assert.strictEqual(oExpectation.args[0][0](oCache, ""),
+			"/service/resource/path?query");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchDownloadUrl: non-empty meta path", function (assert) {
+		var oBinding = this.bindList("relative/path",
+				Context.create({/*oModel*/}, {/*oBinding*/}, "/resource/path")),
+			mReducedQueryOptions = {},
+			oCache = {
+				sMetaPath : "meta/path",
+				mQueryOptions : {
+					$expand : {
+						relative : {
+							$expand : {
+								metapath : mReducedQueryOptions
+							}
+						}
+					}
+				},
+				sResourcePath : "resource/path"
+			},
+			oExpectation,
+			oHelperMock = this.mock(_Helper),
+			oPromise = {},
+			mQueryOptions = {};
+
+		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
+
+		// code under test
+		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
+
+		oHelperMock.expects("getMetaPath")
+			.withExactArgs("relative/path").returns("relative/metapath");
+		oHelperMock.expects("merge")
+			.withExactArgs({}, sinon.match.same(this.oModel.mUriParameters), mReducedQueryOptions)
+			.returns(mQueryOptions);
+		oHelperMock.expects("buildPath").withExactArgs(oCache.sResourcePath, "relative/path")
+			.returns("resource/path/relative/path");
+		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "relative/metapath")
+			.returns("meta/path/relative/metapath");
+		this.mock(this.oModel.oRequestor).expects("buildQueryString")
+			.withExactArgs("meta/path/relative/metapath", sinon.match.same(mQueryOptions))
+			.returns("?query");
+
+		// code under test - callback function
+		assert.strictEqual(oExpectation.args[0][0](oCache, "relative/path"),
+			"/service/resource/path/relative/path?query");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchDownloadUrl: unresolved", function (assert) {
+		assert.throws(function () {
+			this.bindList("TEAM_2_EMPLOYEES").fetchDownloadUrl();
+		}, new Error("Binding is unresolved"));
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bSuccess) {
+	QUnit.test("requestDownloadUrl: success=" + bSuccess, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oError = new Error(),
+			oPromise;
+
+		this.mock(oBinding).expects("fetchDownloadUrl").withExactArgs()
+			.returns(SyncPromise.resolve(
+				bSuccess ? Promise.resolve("/service/resource?query") : Promise.reject(oError)
+			));
+
+		oPromise = oBinding.requestDownloadUrl();
+
+		assert.ok(oPromise instanceof Promise);
+
+		return oPromise.then(function (sResult) {
+			assert.ok(bSuccess);
+			assert.strictEqual(sResult, "/service/resource?query");
+		}, function (oResult) {
+			assert.notOk(bSuccess);
+			assert.strictEqual(oResult, oError);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadUrl: success", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		this.mock(oBinding).expects("fetchDownloadUrl").withExactArgs()
+			.returns(SyncPromise.resolve("/service/resource?query"));
+
+		assert.strictEqual(oBinding.getDownloadUrl(), "/service/resource?query");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadUrl: result pending", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		this.mock(oBinding).expects("fetchDownloadUrl").withExactArgs()
+			.returns(SyncPromise.resolve(Promise.resolve("/service/resource?query")));
+
+		assert.throws(function () {
+			return oBinding.getDownloadUrl();
+		}, new Error("Result pending"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadUrl: error", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oError = new Error("Failure");
+
+		this.mock(oBinding).expects("fetchDownloadUrl").withExactArgs()
+			.returns(SyncPromise.reject(oError));
+
+		assert.throws(function () {
+			return oBinding.getDownloadUrl();
+		}, oError);
 	});
 });
 

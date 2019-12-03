@@ -196,7 +196,8 @@ sap.ui.define([
 			oElement, bHasColumns, i, j, k, aTableElements;
 
 		oDocument = XMLHelper.parse(
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
+			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table"'
+			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">'
 			+ sViewXML
 			+ '</mvc:View>',
 			"application/xml"
@@ -264,6 +265,8 @@ sap.ui.define([
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
+					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
+				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?c1=a&c2=b"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/$metadata"
 					: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"},
@@ -804,10 +807,12 @@ sap.ui.define([
 		 *   If no model is given, <code>createTeaBusiModel</code> is used.
 		 * @param {object} [oController]
 		 *   An object defining the methods and properties of the controller
+		 * @param {object} [mPreprocessors] A map from the specified preprocessor type (e.g. "xml")
+		 *    to a preprocessor configuration, see {@link @sap.ui.core.mvc.View.create}
 		 * @returns {Promise} A promise that is resolved when the view is created and all expected
 		 *   values for controls have been set
 		 */
-		createView : function (assert, sViewXML, oModel, oController) {
+		createView : function (assert, sViewXML, oModel, oController, mPreprocessors) {
 			var fnLockGroup,
 				that = this;
 
@@ -1021,7 +1026,8 @@ sap.ui.define([
 			return View.create({
 				type : "XML",
 				controller : oController && new (Controller.extend(uid(), oController))(),
-				definition : xml(sViewXML)
+				definition : xml(sViewXML),
+				preprocessors : mPreprocessors
 			}).then(function (oView) {
 				Object.keys(that.mChanges).forEach(function (sControlId) {
 					var oControl = oView.byId(sControlId);
@@ -1403,6 +1409,65 @@ sap.ui.define([
 			}
 
 			return this.createView(assert, sView, vModel);
+		});
+	}
+
+	/**
+	 * Test that the template output is as expected.
+	 *
+	 * @param {sString} sTitle The title of the test case
+	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
+	 *    see {@link @sap.ui.core.mvc.View.create}
+	 * @param {string} sTemplate The template used to generate the expected view as XML
+	 * @param {string} sView The expected resulting view from templating
+	 *
+	 * @private
+	 */
+	function testXMLTemplating(sTitle, oXMLPreprocessorConfig, sTemplate, sView) {
+		/*
+		 * Remove all namespaces and all spaces before tag ends (..."/>) and all tabs from the
+		 * given XML string.
+		 *
+		 * @param {string} sXml
+		 *   XML string
+		 * @returns {string}
+		 *   Normalized XML string
+		 */
+		function _normalizeXml(sXml) {
+			/*jslint regexp: true*/
+			sXml = sXml
+			// Note: IE > 8 does not add all namespaces at root level, but deeper inside the tree!
+			// Note: Chrome adds all namespaces at root level, but before other attributes!
+				.replace(/ xmlns.*?=\".*?\"/g, "")
+				// Note: browsers differ in whitespace for empty HTML(!) tags
+				.replace(/ \/>/g, '/>')
+				// Replace all tabulators
+				.replace(/\t/g, "");
+			if (Device.browser.msie || Device.browser.edge) {
+				// Microsoft shuffles attribute order; sort multiple attributes alphabetically:
+				// - no escaped quotes in attribute values!
+				// - e.g. <In a="..." b="..."/> or <template:repeat a="..." t:b="...">
+				sXml = sXml.replace(/<[\w:]+( [\w:]+="[^"]*"){2,}(?=\/?>)/g, function (sMatch) {
+					var aParts = sMatch.split(" ");
+					// aParts[0] e.g. "<In" or "<template:repeat"
+					// sMatch does not contain "/>" or ">" at end!
+					return aParts[0] + " " + aParts.slice(1).sort().join(" ");
+				});
+			}
+			return sXml;
+		}
+
+
+		QUnit.test(sTitle, function (assert) {
+			var that = this;
+
+			return this.createView(assert, sTemplate, undefined, undefined,
+				{xml : oXMLPreprocessorConfig}).then(function () {
+					assert.strictEqual(
+						_normalizeXml(XMLHelper.serialize(that.oView._xContent)),
+						_normalizeXml(XMLHelper.serialize(xml(sView)))
+					);
+			});
 		});
 	}
 
@@ -2451,11 +2516,15 @@ sap.ui.define([
 	// * Sort by any other column (e.g. "Employee Name" or "Age") and check that the "City" is taken
 	//   as a secondary sort criterion
 	// In this test dynamic filters are used instead of dynamic sorters
+	// Additionally ODLB#getDownloadUrl is tested
+	// JIRA: CPOUI5ODATAV4-12
 	QUnit.test("Relative ODLB inherits parent OBCB's query options on filter", function (assert) {
-		var sView = '\
-<FlexBox binding="{path : \'/TEAMS(\\\'42\\\')\',\
-	parameters : {$expand : {TEAM_2_EMPLOYEES : {$orderby : \'AGE\', $select : \'Name\'}}}}">\
-	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		var oBinding,
+			oModel = createModel(sTeaBusi + "?c1=a&c2=b"),
+			sView = '\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'42\\\')\',\
+	parameters : {$expand : {EMPLOYEE_2_EQUIPMENTS : {$orderby : \'ID\', $select : \'Name\'}}}}">\
+	<Table id="table" items="{EMPLOYEE_2_EQUIPMENTS}">\
 		<ColumnListItem>\
 			<Text id="text" text="{Name}" />\
 		</ColumnListItem>\
@@ -2463,30 +2532,51 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($orderby=AGE;$select=Name)", {
-				TEAM_2_EMPLOYEES : [
-					{Name : "Frederic Fall"},
-					{Name : "Jonathan Smith"},
-					{Name : "Peter Burke"}
+		this.expectRequest("EMPLOYEES('42')?c1=a&c2=b&$expand=EMPLOYEE_2_EQUIPMENTS($orderby=ID"
+				+ ";$select=Name)", {
+				EMPLOYEE_2_EQUIPMENTS : [
+					{Name : "Notebook Basic 15"},
+					{Name : "Monitor Basic 24"},
+					{Name : "Monitor Basic 28"}
 				]
 			})
-			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+			.expectChange("text", ["Notebook Basic 15", "Monitor Basic 24", "Monitor Basic 28"]);
 
-		return this.createView(assert, sView).then(function () {
-			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name"
-					+ "&$filter=AGE gt 42&$skip=0&$top=100", {
+		return this.createView(assert, sView, oModel).then(function () {
+			var sExpectedDownloadUrl = sTeaBusi
+					+ "EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS?c1=a&c2=b&$orderby=ID&$select=Name";
+
+			oBinding = that.oView.byId("table").getBinding("items");
+			assert.strictEqual(oBinding.getDownloadUrl(), sExpectedDownloadUrl);
+			return oBinding.requestDownloadUrl().then(function (sDownloadUrl) {
+				assert.strictEqual(sDownloadUrl, sExpectedDownloadUrl);
+			});
+		}).then(function () {
+			var sResourceUrl = "EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS?$orderby=ID&$select=Name&c1=a"
+					+ "&c2=b&$filter=EQUIPMENT_2_PRODUCT/SupplierIdentifier%20eq%202";
+
+			that.expectRequest(sResourceUrl + "&$skip=0&$top=100", {
 					value : [
-						{Name : "Frederic Fall"},
-						{Name : "Peter Burke"}
+						{Name : "Monitor Basic 24"},
+						{Name : "Monitor Basic 28"}
 					]
 				})
-				.expectChange("text", [, "Peter Burke"]);
+				.expectChange("text", ["Monitor Basic 24", "Monitor Basic 28"]);
 
-			// code under test
-			that.oView.byId("table").getBinding("items")
-				.filter(new Filter("AGE", FilterOperator.GT, 42));
+			// code under test - filter becomes async because product metadata has to be loaded
+			oBinding.filter(
+				new Filter("EQUIPMENT_2_PRODUCT/SupplierIdentifier", FilterOperator.EQ, 2));
 
-			return that.waitForChanges(assert);
+			assert.throws(function () {
+				oBinding.getDownloadUrl();
+			}, new Error("Result pending"));
+			return Promise.all([
+				oBinding.requestDownloadUrl().then(function (sDownloadUrl) {
+					assert.strictEqual(sDownloadUrl, sTeaBusi + sResourceUrl);
+					assert.strictEqual(oBinding.getDownloadUrl(), sTeaBusi + sResourceUrl);
+				}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -3420,6 +3510,36 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: As a Fiori Elements developer you template the operation dialog and want to use
+	// the AnnotationHelper.format to bind the parameters so that you have the type information
+	// already available before the controls are created.
+	// JIRA: CPOUI5ODATAV4-28
+	testXMLTemplating("Operation parameters with sap.ui.model.odata.v4.AnnotationHelper.format",
+		{models : {meta : createTeaBusiModel().getMetaModel()}},
+'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+	<template:with\
+		path="meta>/com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamBudgetByID/0"\
+		var="action">\
+		<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+			<FlexBox binding="{$Parameter}">\
+				<template:repeat list="{action>$Parameter}" var="parameter">\
+					<Input id="{parameter>$Name}" value="{parameter>@@format}"/>\
+				</template:repeat>\
+			</FlexBox>\
+		</FlexBox>\
+	</template:with>\
+</template:alias>',
+'<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+	<FlexBox binding="{$Parameter}">\
+		<Input id="TeamID" value="{path:\'TeamID\',type:\'sap.ui.model.odata.type.String\',\
+constraints:{\'maxLength\':10,\'nullable\':false},\
+formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+		<Input id="Budget" value="{path:\'Budget\',type:\'sap.ui.model.odata.type.Decimal\',\
+constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
+	</FlexBox>\
+</FlexBox>');
 
 	//*********************************************************************************************
 	// Scenario: Changing the binding parameters causes a refresh of the table
@@ -22153,14 +22273,17 @@ sap.ui.define([
 		}).then(function () {
 			var oPromise, fnRespond;
 
+			// 1st, PATCH some value
 			that.expectChange("name", "Darth Vader")
 				.expectRequest({
 					method : "PATCH",
 					payload : {Name : "Darth Vader"},
 					url : "TEAMS('TEAM_01')"
 				}, {/* response does not matter here */});
+
 			oInput.getBinding("value").setValue("Darth Vader");
 
+			// 2nd, request side effects
 			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id",
 					new Promise(function (resolve, reject) {
 						fnRespond = resolve.bind(null, {
@@ -22168,16 +22291,19 @@ sap.ui.define([
 							Team_Id : "TEAM_01"
 						});
 					}));
+
 			oPromise
 				= oInput.getBindingContext().requestSideEffects([{$NavigationPropertyPath : ""}]);
 
-			// pagination triggered by separate event --> new task
+			// 3rd, switch to different context
+			that.expectRequest("TEAMS('TEAM_02')?$select=Name,Team_Id", {
+					Name : "Team #2",
+					Team_Id : "TEAM_02"
+				})
+				.expectChange("name", "Team #2");
+
 			setTimeout(function () {
-				that.expectRequest("TEAMS('TEAM_02')?$select=Name,Team_Id", {
-						Name : "Team #2",
-						Team_Id : "TEAM_02"
-					})
-					.expectChange("name", "Team #2");
+				// pagination triggered by separate event --> new task
 				that.oView.byId("detail").setBindingContext(
 					oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext());
 				setTimeout(fnRespond, 0);
@@ -22199,6 +22325,254 @@ sap.ui.define([
 			oInput.getBinding("value").setValue("Palpatine");
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A PATCH triggers a side effect for the whole list, while a paginator switches to
+	// another item. The side effect's GET is thus ignored because the cache for the old item is
+	// already inactive; thus the promise fails. Due to this failure, the old cache was restored,
+	// which was wrong. Timing is essential!
+	// Follow-up to BCP: 1970600374 with an ODCB instead of an ODLB.
+	// JIRA: CPOUI5ODATAV4-34
+	QUnit.test("CPOUI5ODATAV4-34", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+	<ColumnListItem>\
+		<Input id="name" value="{Name}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectChange("name", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100", {
+					value : [{ID : "1", Name : "Jonathan Smith"}]
+				})
+				.expectChange("name", ["Jonathan Smith"]);
+			oTable = that.oView.byId("table");
+			oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oInput, oPromise, fnRespond;
+
+			// 1st, PATCH some value
+			that.expectChange("name", ["Darth Vader"])
+				.expectRequest({
+					method : "PATCH",
+					payload : {Name : "Darth Vader"},
+					url : "EMPLOYEES('1')"
+				}, {/* response does not matter here */});
+
+			oInput = oTable.getItems()[0].getCells()[0];
+			oInput.getBinding("value").setValue("Darth Vader");
+
+			// 2nd, request side effects
+			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100",
+					new Promise(function (resolve, reject) {
+						fnRespond = resolve.bind(null, {
+							value : [{ID : "1", Name : "Darth Vader"}]
+						});
+					}));
+
+			oPromise = oTable.getBinding("items").getHeaderContext()
+				.requestSideEffects([{$NavigationPropertyPath : ""}]);
+
+			// 3rd, switch to different context
+			that.expectRequest("TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100", {
+					value : [{ID : "2", Name : "Frederic Fall"}]
+				})
+				.expectChange("name", ["Frederic Fall"]);
+
+			setTimeout(function () {
+				// pagination triggered by separate event --> new task
+				oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext());
+				setTimeout(fnRespond, 0);
+			}, 0);
+
+			return Promise.all([
+				oPromise.catch(function (oError) {
+					assert.strictEqual(oError.message, "Response discarded: cache is inactive");
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oInput;
+
+			that.expectChange("name", ["Palpatine"])
+				.expectRequest({
+					method : "PATCH",
+					payload : {Name : "Palpatine"},
+					url : "EMPLOYEES('2')"
+				}, {/* response does not matter here */});
+			oInput = oTable.getItems()[0].getCells()[0]; // Note: this is a different instance now!
+			oInput.getBinding("value").setValue("Palpatine");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A PATCH (not shown here) triggers a side effect for the whole list, while a
+	// paginator switches to another item. The side effect's GET is thus ignored because the cache
+	// for the old item is already inactive. Then we switch back to the old item and the cache is
+	// reused. Show that the side effect was not ignored.
+	// JIRA: CPOUI5ODATAV4-34
+	QUnit.test("CPOUI5ODATAV4-34: Response discarded: cache is inactive", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+	<ColumnListItem>\
+		<Input id="name" value="{Name}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectChange("name", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100", {
+					value : [{ID : "1", Name : "Jonathan Smith"}]
+				})
+				.expectChange("name", ["Jonathan Smith"]);
+			oTable = that.oView.byId("table");
+			oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oPromise, fnRespond;
+
+			// 1st, request side effects
+			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100",
+					new Promise(function (resolve, reject) {
+						fnRespond = resolve.bind(null, {
+							value : [{ID : "1", Name : "Darth Vader"}]
+						});
+					}));
+
+			oPromise = oTable.getBinding("items").getHeaderContext()
+				.requestSideEffects([{$NavigationPropertyPath : ""}]);
+
+			// 2nd, switch to different context
+			that.expectRequest("TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100", {
+					value : [{ID : "2", Name : "Frederic Fall"}]
+				})
+				.expectChange("name", ["Frederic Fall"]);
+
+			setTimeout(function () {
+				// pagination triggered by separate event --> new task
+				oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext());
+				fnRespond();
+			}, 0);
+
+			return Promise.all([
+				oPromise.catch(function (oError) {
+					assert.strictEqual(oError.message, "Response discarded: cache is inactive");
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// 3rd, switch back again
+			that.expectChange("name", ["Darth Vader"]);
+
+			oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A list binding refreshes itself completely due to a side effect, but that GET fails
+	// and thus the old cache is restored. Check that transient contexts are properly preserved.
+	// JIRA: CPOUI5ODATAV4-34
+	QUnit.test("CPOUI5ODATAV4-34: bKeepCacheOnError & transient rows", function (assert) {
+		var oListBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oNewContext,
+			sView = '\
+<Table id="table" items="{/TEAMS}">\
+	<ColumnListItem>\
+		<Input id="name" value="{Name}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+				value : [
+					{Name : "Team 01", Team_Id : "Team_01"},
+					{Name : "Team 02", Team_Id : "Team_02"}
+				]
+			})
+			.expectChange("name", ["Team 01", "Team 02"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// create a transient row
+			that.expectChange("name", ["Team 00", "Team 01", "Team 02"]);
+
+			oListBinding = that.oView.byId("table").getBinding("items");
+			oNewContext = oListBinding.create({Name : "Team 00", Team_Id : "Team_00"}, true);
+
+			assert.strictEqual(oNewContext.getIndex(), 0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oError = new Error("418 I'm a teapot"),
+				oSideEffectsPromise;
+
+			// refresh via side effect fails
+			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", oError)
+				.expectMessages([{
+					code : undefined,
+					message : oError.message,
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to get contexts for "
+						+ "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS"
+						+ " with start index 0 and length 100",
+					sinon.match.string, "sap.ui.model.odata.v4.ODataListBinding");
+
+			oSideEffectsPromise = oListBinding.getHeaderContext()
+				.requestSideEffects([{$NavigationPropertyPath : ""}], "$direct");
+
+			//TODO fix Context#getIndex to not return -1; [...]
+//			assert.strictEqual(oNewContext.getIndex(), 0);
+
+			return Promise.all([
+				oSideEffectsPromise.catch(function (oError0) {
+					assert.strictEqual(oError0, oError);
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oNewContext.getIndex(), 0);
+
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "Team 00", Team_Id : "Team_00"}
+				}, {Name : "Team 00", Team_Id : "Team_00"});
+
+			oModel.submitBatch("update");
+
+			return Promise.all([
+				oNewContext.created(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });

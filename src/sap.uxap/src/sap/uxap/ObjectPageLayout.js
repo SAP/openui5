@@ -636,11 +636,6 @@ sap.ui.define([
 		this._storeScrollLocation(); // store location *before* applying the UXRules (=> while the old sectionInfo with positionTop of sections is still available)
 		this._applyUxRules();
 
-		// set the <code>scrollPosition</code> of custom scrollBar back to initial value,
-		// otherwise in the scrollBar's <code>onAfterRendering</code> it will scroll to its last valid <code>scrollPosition</code> => will propagate the scroll to the <code>ObjectPageLayout</code> content container =>
-		// and get in conflict with the scroll of the <code>ObjectPageLayout</code> content container to its own *newly chosen* scroll position
-		this._getCustomScrollBar().setScrollPosition(0);
-
 		// If we are on the first true rendering : first time we render the page with section and blocks
 		if (!jQuery.isEmptyObject(this._oSectionInfo) && this._bFirstRendering) {
 			this._preloadSectionsOnBeforeFirstRendering();
@@ -680,25 +675,14 @@ sap.ui.define([
 	 * @since 1.58
 	 */
 	ObjectPageLayout.prototype.setBackgroundDesignAnchorBar = function (sBackgroundDesignAnchorBar) {
-		var sCurrentBackgroundDesignAnchorBar = this.getBackgroundDesignAnchorBar(),
-			sCssClassPrefix = "sapUxAPObjectPageNavigation";
+		var sCurrentBackgroundDesignAnchorBar = this.getBackgroundDesignAnchorBar();
 
 		if (sCurrentBackgroundDesignAnchorBar === sBackgroundDesignAnchorBar) {
 			return this;
 		}
 
-		this.setProperty("backgroundDesignAnchorBar", sBackgroundDesignAnchorBar, true);
+		this.setProperty("backgroundDesignAnchorBar", sBackgroundDesignAnchorBar);
 		this._oABHelper._getAnchorBar().setBackgroundDesign(sBackgroundDesignAnchorBar);
-
-		if (exists(this._$anchorBar)) {
-			this._$anchorBar.removeClass(sCssClassPrefix + sCurrentBackgroundDesignAnchorBar);
-			this._$anchorBar.addClass(sCssClassPrefix + sBackgroundDesignAnchorBar);
-		}
-
-		if (exists(this._$stickyAnchorBar)) {
-			this._$stickyAnchorBar.removeClass(sCssClassPrefix + sCurrentBackgroundDesignAnchorBar);
-			this._$stickyAnchorBar.addClass(sCssClassPrefix + sBackgroundDesignAnchorBar);
-		}
 
 		return this;
 	};
@@ -1580,7 +1564,7 @@ sap.ui.define([
 			Log.info("ObjectPageLayout :: firstSectionTitleHidden UX rule matched", "section " + oFirstVisibleSection.getTitle() + " title forced to hidden");
 		}
 
-		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, iVisibleSection <= 1);
+		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, bVisibleAnchorBar);
 
 		Object.keys(oTitleVisibilityInfo).forEach(function(sId) {
 			this.oCore.byId(sId)._setInternalTitleVisible(oTitleVisibilityInfo[sId], bInvalidate);
@@ -3218,7 +3202,6 @@ sap.ui.define([
 		this._bStickyAnchorBar = bStuck;
 		this._$headerContent.css("overflow", sValue);
 		this._$headerContent.toggleClass("sapContrastPlus", !bStuck); // contrast only in expanded mode
-		this._$headerContent.toggleClass("sapUxAPObjectPageHeaderDetailsHidden", bStuck); // hide header content
 		this._$anchorBar.css("visibility", sValue);
 		if (exists(this._$stickyAnchorBar)) {
 			this._$stickyAnchorBar.attr("aria-hidden", !bStuck);

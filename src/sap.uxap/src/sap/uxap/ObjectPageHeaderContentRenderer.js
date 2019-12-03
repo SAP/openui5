@@ -11,7 +11,9 @@ sap.ui.define([
 	 * @class HeaderContent renderer.
 	 * @static
 	 */
-	var ObjectPageHeaderContentRenderer = {};
+	var ObjectPageHeaderContentRenderer = {
+		apiVersion: 2
+	};
 
 	ObjectPageHeaderContentRenderer.render = function (oRm, oControl) {
 		var oParent = oControl.getParent(),
@@ -22,50 +24,52 @@ sap.ui.define([
 			bRenderEditBtn = bParentLayout && oParent.getShowEditHeaderButton() && oControl.getContent() && oControl.getContent().length > 0;
 
 		if (bRenderEditBtn) {
-			oRm.write("<div ");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapUxAPObjectPageHeaderContentFlexBox");
-			oRm.addClass("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
+			oRm.openStart("div", oControl)
+				.class("sapUxAPObjectPageHeaderContentFlexBox")
+				.class("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
+
 			if (oHeader) {
-				oRm.addClass('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
+				oRm.class('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
 			}
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 		}
-		oRm.write("<div ");
+
+		oRm.openStart("div", bRenderEditBtn ? undefined : oControl);
+
 		if (bRenderEditBtn) {
-			oRm.addClass("sapUxAPObjectPageHeaderContentCellLeft");
+			oRm.class("sapUxAPObjectPageHeaderContentCellLeft");
 		} else {
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
+			oRm.class("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
 			if (oHeader) {
-				oRm.addClass('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
+				oRm.class('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
 			}
 		}
-		oRm.addClass("sapContrastPlus");
-		oRm.addClass("ui-helper-clearfix");
-		oRm.addClass("sapUxAPObjectPageHeaderContent");
+
+		oRm.class("sapContrastPlus")
+			.class("ui-helper-clearfix")
+			.class("sapUxAPObjectPageHeaderContent");
 
 		if (!oControl.getVisible()) {
-			oRm.addClass("sapUxAPObjectPageHeaderContentHidden");
+			oRm.class("sapUxAPObjectPageHeaderContentHidden");
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		if (bParentLayout && oParent.getIsChildPage()) {
-			oRm.write("<div");
-			oRm.addClass('sapUxAPObjectChildPage');
-			oRm.writeClasses();
-			oRm.write("></div>");
+			oRm.openStart("div")
+				.class("sapUxAPObjectChildPage")
+				.openEnd()
+				.close("div");
 		}
 
 		if (bRenderTitle) {
 			this._renderTitleImage(oRm, oControl, oHeader);
 
 			if (oControl.getContent().length == 0) {
-				oRm.write("<span class=\"sapUxAPObjectPageHeaderContentItem\">");
+				oRm.openStart("span")
+					.class("sapUxAPObjectPageHeaderContentItem")
+					.openEnd();
 				this._renderTitle(oRm, oHeader);
-				oRm.write("</span>");
+				oRm.close("span");
 			}
 		}
 
@@ -73,12 +77,12 @@ sap.ui.define([
 			this._renderHeaderContentItem(oItem, iIndex, oRm, bRenderTitle, oHeader, oControl);
 		}, this);
 
-		oRm.write("</div>");
+		oRm.close("div");
 
 		if (bRenderEditBtn) {
 			this._renderEditButton(oRm, oControl);
 
-			oRm.write("</div>"); // end of "sapUxAPObjectPageHeaderContentFlexBox" div
+			oRm.close("div"); // end of "sapUxAPObjectPageHeaderContentFlexBox" div
 		}
 	};
 
@@ -101,31 +105,32 @@ sap.ui.define([
 			bHasSeparatorBefore = oLayoutData.getShowSeparatorBefore();
 			bHasSeparatorAfter = oLayoutData.getShowSeparatorAfter();
 
-			oRm.write("<span ");
-			oRm.addClass("sapUxAPObjectPageHeaderWidthContainer");
-			oRm.addClass("sapUxAPObjectPageHeaderContentItem");
-			oRm.addStyle("width", oLayoutData.getWidth());
-			oRm.writeStyles();
+			oRm.openStart("span")
+				.class("sapUxAPObjectPageHeaderWidthContainer")
+				.class("sapUxAPObjectPageHeaderContentItem")
+				.style("width", oLayoutData.getWidth());
 
 			if (bHasSeparatorAfter || bHasSeparatorBefore) {
-				oRm.addClass("sapUxAPObjectPageHeaderSeparatorContainer");
+				oRm.class("sapUxAPObjectPageHeaderSeparatorContainer");
 			}
 
 			if (!oLayoutData.getVisibleL()) {
-				oRm.addClass("sapUxAPObjectPageHeaderLayoutHiddenL");
+				oRm.class("sapUxAPObjectPageHeaderLayoutHiddenL");
 			}
 			if (!oLayoutData.getVisibleM()) {
-				oRm.addClass("sapUxAPObjectPageHeaderLayoutHiddenM");
+				oRm.class("sapUxAPObjectPageHeaderLayoutHiddenM");
 			}
 			if (!oLayoutData.getVisibleS()) {
-				oRm.addClass("sapUxAPObjectPageHeaderLayoutHiddenS");
+				oRm.class("sapUxAPObjectPageHeaderLayoutHiddenS");
 			}
 
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 
 			if (bHasSeparatorBefore) {
-				oRm.write("<span class=\"sapUxAPObjectPageHeaderSeparatorBefore\"></span>");
+				oRm.openStart("span")
+					.class("sapUxAPObjectPageHeaderSeparatorBefore")
+					.openEnd()
+					.close("span");
 			}
 
 			if (bIsFirstControl && bRenderTitle) { // render title inside the first contentItem
@@ -133,7 +138,9 @@ sap.ui.define([
 			}
 		} else {
 			if (bIsFirstControl && bRenderTitle) { // render title inside the first contentItem
-				oRm.write("<span class=\"sapUxAPObjectPageHeaderContentItem\">");
+				oRm.openStart("span")
+					.class("sapUxAPObjectPageHeaderContentItem")
+					.openEnd();
 				this._renderTitle(oRm, oTitle);
 			} else {
 				oHeaderContentItem.addStyleClass("sapUxAPObjectPageHeaderContentItem");
@@ -143,11 +150,14 @@ sap.ui.define([
 		oRm.renderControl(oHeaderContentItem);
 
 		if (bHasSeparatorAfter) {
-			oRm.write("<span class=\"sapUxAPObjectPageHeaderSeparatorAfter\"></span>");
+			oRm.openStart("span")
+				.class("sapUxAPObjectPageHeaderSeparatorAfter")
+				.openEnd()
+				.close("span");
 		}
 
 		if (oLayoutData || (bIsFirstControl && bRenderTitle)) {
-			oRm.write("</span>");
+			oRm.close("span");
 		}
 	};
 
@@ -187,9 +197,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oHeader an object representation of the control that should be rendered
 	 */
 	ObjectPageHeaderContentRenderer._renderEditButton = function (oRm, oHeader) {
-		oRm.write("<div class=\"sapUxAPObjectPageHeaderContentCellRight\">");
+		oRm.openStart("div")
+			.class("sapUxAPObjectPageHeaderContentCellRight")
+			.openEnd();
+
 		oRm.renderControl(oHeader.getAggregation("_editHeaderButton"));
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return ObjectPageHeaderContentRenderer;

@@ -302,8 +302,10 @@ function (
 			var done = assert.async();
 
 			this.oButton = new Button("button");
+			this.oInvisibleButton = new Button("invisibleButton", { visible: false });
 			this.oLayout = new VerticalLayout({
 				content : [
+					this.oInvisibleButton,
 					this.oButton
 				]
 			}).placeAt("qunit-fixture");
@@ -329,6 +331,7 @@ function (
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				this.oInvisibleButtonOverlay = OverlayRegistry.getOverlay(this.oInvisibleButton);
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
 				done();
 			}.bind(this));
@@ -381,6 +384,9 @@ function (
 			this.oButtonOverlay.getGeometry().visible = true;
 			this.oButtonOverlay.fireGeometryChanged();
 			assert.equal(oEvaluateSpy.callCount, 1, "the evaluate function was not called again");
+
+			this.oInvisibleButtonOverlay.fireGeometryChanged();
+			assert.equal(oEvaluateSpy.callCount, 1, "the evaluate function was not called again");
 		});
 
 		QUnit.test("when the event elementModified is thrown with aggregation change", function(assert) {
@@ -394,7 +400,7 @@ function (
 			assert.equal(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
 			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
 			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
-			assert.equal(this.oLayoutOverlay.getRelevantOverlays().length, 2, "then two overlays are relevant");
+			assert.equal(this.oLayoutOverlay.getRelevantOverlays().length, 3, "then three overlays are relevant");
 		});
 
 		QUnit.test("when the event elementModified is thrown with afterRendering", function(assert) {

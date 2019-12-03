@@ -5672,7 +5672,7 @@ sap.ui.define([
 	QUnit.test("Call onpaste on TD tag", function(assert) {
 		var oElem = getCell(0, 0, true);
 		var onPasteSpy = this.spy(oTable, "onpaste");
-		var oStub = this.stub(Device, "browser", { msie: true });
+		var oStub = this.stub(Device, "browser").value({ msie: true });
 		qutils.triggerKeydown(oElem, KeyCodes.V, false, false, true);
 		assert.ok(onPasteSpy.calledOnce, "OnPaste is called from CTRL-V one time");
 		oStub.restore();
@@ -5681,7 +5681,7 @@ sap.ui.define([
 	QUnit.test("Call onpaste on Text Control", function(assert) {
 		var oElem = oTable.getRows()[0].getCells()[0].getDomRef();
 		var onPasteSpy = this.spy(oTable, "onpaste");
-		var oStub = this.stub(Device, "browser", { msie: true });
+		var oStub = this.stub(Device, "browser").value({ msie: true });
 		oElem.focus();
 		qutils.triggerKeydown(oElem, KeyCodes.V, false, false, true);
 		assert.ok(onPasteSpy.calledOnce, "OnPaste is called from CTRL-V one time");
@@ -5691,7 +5691,7 @@ sap.ui.define([
 	QUnit.test("Call onpaste on Input Control", function(assert) {
 		var oElem = oTable.getRows()[0].getCells()[1].getDomRef();
 		var onPasteSpy = this.spy(oTable, "onpaste");
-		var oStub = this.stub(Device, "browser", { msie: true });
+		var oStub = this.stub(Device, "browser").value({ msie: true });
 		oElem.focus();
 		qutils.triggerKeydown(oElem, KeyCodes.V, false, false, true);
 		assert.ok(onPasteSpy.calledOnce, "OnPaste is called from CTRL-V one time");
@@ -5923,8 +5923,7 @@ sap.ui.define([
 		aTestElements.forEach(function(oElem) {
 			oElem.focus();
 			jQuery(oElem).trigger("contextmenu");
-			assert.ok(oOpenContextMenuSpy.calledOnce, "TableUtils.Menu.openContextMenu was called once");
-			assert.ok(oOpenContextMenuSpy.calledWith(oTable, oElem[0], true, null),
+			assert.ok(oOpenContextMenuSpy.calledOnceWith(oTable, oElem[0]),
 				"TableUtils.Menu.openContextMenu was called with the correct arguments");
 			checkFocus(oElem, assert);
 

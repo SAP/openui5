@@ -192,14 +192,16 @@ sap.ui.define([
 		 */
 		loadFeatures: function (mPropertyBag) {
 			if (ApplyConnector.settings) {
-				return Promise.resolve({response: ApplyConnector.settings});
+				return Promise.resolve(ApplyConnector.settings);
 			}
 			var mParameters = {};
 
 			ApplyConnector._addClientAndLanguageInfo(mParameters);
 
 			var sFeaturesUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sFeaturesUrl);
+			return ApplyUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
+				return oResult.response;
+			});
 		},
 
 		/**

@@ -1,12 +1,12 @@
 /*global QUnit */
 sap.ui.define([
-    "sap/ui/test/selectors/_ViewID",
+    "sap/ui/test/selectors/_ControlSelectorGenerator",
     "sap/ui/thirdparty/jquery",
     "sap/m/Button",
     'sap/m/App',
     'sap/ui/core/mvc/View',
     'sap/ui/core/library'
-], function (_ViewID, $, Button, App, View, library) {
+], function (_ControlSelectorGenerator, $, Button, App, View, library) {
     "use strict";
 
     // shortcut for sap.ui.core.mvc.ViewType
@@ -40,22 +40,37 @@ sap.ui.define([
     });
 
     QUnit.test("Should generate selector for control with stable ID", function (assert) {
-        var oViewID = new _ViewID();
-        var mSelector = oViewID.generate($("form input").control()[0]);
-        assert.strictEqual(mSelector.viewName, "myView", "Should generate selector with viewName");
-        assert.strictEqual(mSelector.id, "mySearch", "Should generate selector with ID");
-        assert.ok(!mSelector.controlType, "Should not include controlType matcher");
+        var fnDone = assert.async();
+        _ControlSelectorGenerator._generate({control: $("form input").control()[0], includeAll: true})
+            .then(function (aSelector) {
+                var mViewIdSelector = aSelector[1][0];
+                assert.strictEqual(mViewIdSelector.viewName, "myView", "Should generate selector with viewName");
+                assert.strictEqual(mViewIdSelector.id, "mySearch", "Should generate selector with ID");
+                assert.ok(!mViewIdSelector.controlType, "Should not include controlType matcher");
+            }).finally(fnDone);
     });
 
     QUnit.test("Should not generate selector for control with generated ID", function (assert) {
-        var oViewID = new _ViewID();
-        var mSelector = oViewID.generate($("form input").control()[1]);
-        assert.ok(!mSelector, "Should not generate selector");
+        var fnDone = assert.async();
+        _ControlSelectorGenerator._generate({control: $("form input").control()[1], includeAll: true, shallow: true})
+            .then(function (aSelector) {
+                assert.ok(!hasViewIdSelector(aSelector), "Should not generate selector");
+            }).finally(fnDone);
     });
 
     QUnit.test("Should not generate selector for control with no view", function (assert) {
-        var oViewID = new _ViewID();
-        var mSelector = oViewID.generate(this.oButton);
-        assert.ok(!mSelector, "Should not generate selector");
+        var fnDone = assert.async();
+        _ControlSelectorGenerator._generate({control: this.oButton, includeAll: true, shallow: true})
+            .then(function (aSelector) {
+                assert.ok(!hasViewIdSelector(aSelector), "Should not generate selector");
+            }).finally(fnDone);
     });
+
+    function hasViewIdSelector(aSelectors) {
+        return aSelectors.filter(function (aSelectorsOfType) {
+            return aSelectorsOfType.filter(function (mSelector) {
+                return mSelector.viewName && mSelector.id && Object.keys(mSelector).length === 2;
+            }).length;
+        }).length;
+    }
 });

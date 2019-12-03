@@ -7,6 +7,7 @@
 @_sap_f_Card_HeaderBorderBottom: 1px solid darken(@sapUiTileBackground, 20);
 @_sap_f_Card_HeaderHoverColor: @sapUiTileHoverBackground;
 @_sap_f_Card_HeaderActiveColor: @sapUiTileActiveBackground;
+@_sap_f_Card_FocusBorderWidth: 1px;
 
 .sapFCard {
   position: relative;
@@ -104,9 +105,13 @@
 
 	.sapFCardHeaderText {
 		flex: 1 1 auto;
+		min-width: 0;
 
+		.sapFCardHeaderTitle {
+		  min-width: 0;
+		}
 		.sapFCardTitle {
-			margin: 0px;
+			min-width: 0;
 			display: block;
 			font-family: @sapUiFontHeaderFamily;
 			font-size: @sapMFontHeader5Size;
@@ -131,12 +136,10 @@
 		color: @sapUiTileTextColor;
 		text-align: left;
 		line-height: normal;
-		padding-left: 1rem;
-		margin-left: auto;
+		margin-left: 1rem;
 		text-wrap: avoid;
 		display: inline-block;
 		white-space: nowrap;
-		margin-top: 0.188rem;
 	}
 
 	.sapFCardHeaderTextFirstLine {
@@ -349,13 +352,13 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	bottom: 1px;
 	right: 1px;
 	top: 1px;
-	border: 1px dotted @sapUiContentFocusColor;
+	border: @_sap_f_Card_FocusBorderWidth dotted @sapUiContentFocusColor;
 	pointer-events: none;
 }
 
 html[data-sap-ui-browser^="ie"] .sapFCardHeader:focus::before,
 html[data-sap-ui-browser^="ie"] .sapFCard .sapFCardHeader.sapFCardNumericHeader:focus::before {
-	border: 1px dashed @sapUiContentFocusColor;
+	border: @_sap_f_Card_FocusBorderWidth dashed @sapUiContentFocusColor;
 }
 
 .sapUiSizeCompact {

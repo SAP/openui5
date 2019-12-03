@@ -32,22 +32,18 @@ html.sap-desktop .sapMTBActive:focus {
 	border-bottom: none;
 }
 
-.sapMIBar.sapMTB {
+.sapMIBar.sapMTB .sapMBarChild {
+	margin: 0 0.25rem;
 
-	.sapMBarChild {
-		margin: 0 0.25rem;
-	}
-
-	.sapMBarChild:first-child {
+	&.sapMBarFirstVisibleChild {
 		margin: 0 0.25rem 0 0;
 	}
 
-	.sapMBarChild:last-child,
-	.sapMBarChild:last-of-type {
+	&.sapMBarLastVisibleChild {
 		margin: 0 @_sap_m_Toolbar_MarginRight 0 0.25rem;
 	}
 
-	.sapMBarChild:only-child {
+	&.sapMBarLastVisibleChild.sapMBarFirstVisibleChild {
 		margin: 0;
 	}
 }

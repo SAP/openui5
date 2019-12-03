@@ -1,0 +1,29 @@
+{
+  "1.74.0": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "eede09fd672ca3ec4d1d500dba93610ecb6cff7a",
+        "type": "FIX",
+        "text": " fl.VariantManagement: acc specific handling enhancement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970627252"
+          }
+        ]
+      },
+      {
+        "id": "3e93ee3be932fdd4d787dff96350fe7a24d7b567",
+        "type": "FIX",
+        "text": " fl.VariantManagement: correction for handling in the manage dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970623617"
+          }
+        ]
+      }
+    ]
+  }
+}

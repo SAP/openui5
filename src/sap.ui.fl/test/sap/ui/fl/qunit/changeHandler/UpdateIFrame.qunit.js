@@ -64,7 +64,7 @@ function (
 			};
 
 			this.mSapUI5UrlChange = {
-				settings: {
+				content: {
 					url: sSapUI5Url
 				}
 			};
@@ -93,7 +93,7 @@ function (
 		});
 
 		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier and binding value are called", function (assert) {
-			this.mSapUI5UrlChange.settings.url = sBoundUrl;
+			this.mSapUI5UrlChange.content.url = sBoundUrl;
 
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
 			UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag);
@@ -111,7 +111,7 @@ function (
 			});
 			assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "the initial bound value is correct");
 
-			this.mSapUI5UrlChange.settings.url = sOpenUI5Url;
+			this.mSapUI5UrlChange.content.url = sOpenUI5Url;
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
 			UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag);
 			UpdateIFrame.revertChange(this.oChange, this.oIFrame, mPropertyBag);
@@ -204,7 +204,7 @@ function (
 		});
 
 		QUnit.test("when completeChangeContent is called without a value", function (assert) {
-			delete this.mSapUI5UrlChange.settings.url;
+			delete this.mSapUI5UrlChange.content.url;
 
 			assert.throws(
 				UpdateIFrame.completeChangeContent.bind(this, this.oChange, this.mSapUI5UrlChange, mPropertyBag),

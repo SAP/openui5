@@ -1,28 +1,26 @@
 {
 	"sap.app": {
-		"id": "sap.m.sample.TableDataState",
+		"id": "sap.m.sample.StandardListItemInfoSateInverted",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.TableDataState.Table",
+			"viewName": "sap.m.sample.StandardListItemInfoSateInverted.List",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
-				"stretch": true,
 				"files": [
-					"Table.view.xml",
-					"Table.controller.js",
-					"Formatter.js",
+					"List.view.xml",
+					"List.controller.js",
 					"manifest.json"
 				]
 			}

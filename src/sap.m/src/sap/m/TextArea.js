@@ -218,6 +218,7 @@ function(
 		InputBase.prototype.exit.call(this);
 		jQuery(window).off("resize.sapMTextAreaGrowing");
 		this._detachResizeHandler();
+		this._deregisterEvents();
 	};
 
 	TextArea.prototype.onBeforeRendering = function() {
@@ -227,6 +228,12 @@ function(
 			oCounter.setVisible(false);
 		}
 		this._detachResizeHandler();
+
+		if (this.getGrowing()) {
+			jQuery(window).on("resize.sapMTextAreaGrowing", this._updateOverflow.bind(this));
+		} else {
+			jQuery(window).off("resize.sapMTextAreaGrowing");
+		}
 	};
 
 	// Attach listeners on after rendering and find iscroll
@@ -267,6 +274,22 @@ function(
 				}
 			});
 		}
+	};
+
+	/**
+	 * Removes the <code>touchstart</code> and <code>touchmove</code> custom events
+	 * binded to the textarea in <code>.onAfterRendering</code>.
+	 *
+	 * The semantic renderer does NOT remove DOM structure from the DOM tree;
+	 * therefore all custom events, including the ones that are registered
+	 * with jQuery, must be deregistered correctly at the <code>.onBeforeRendering</code>
+	 * and exit hooks.
+	 *
+	 * @private
+	 *
+	 */
+	TextArea.prototype._deregisterEvents = function() {
+		this.$("inner").off("touchstart").off("touchmove");
 	};
 
 	/**
@@ -459,16 +482,6 @@ function(
 		if (this.getShowExceededText()) {
 			this._bPasteIsTriggered = true;
 		}
-	};
-
-	TextArea.prototype.setGrowing = function(bGrowing) {
-		this.setProperty("growing", bGrowing);
-		if (this.getGrowing()) {
-			jQuery(window).on("resize.sapMTextAreaGrowing", this._updateOverflow.bind(this));
-		} else {
-			jQuery(window).off("resize.sapMTextAreaGrowing");
-		}
-		return this;
 	};
 
 	TextArea.prototype._adjustContainerDimensions = function() {
