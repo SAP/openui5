@@ -4761,6 +4761,65 @@ sap.ui.define([
 		}});
 	});*/
 
+	QUnit.test("ODataModel.resolve: Don't resolve canonical with FunctionImports", function (assert) {
+		var done = assert.async();
+		var that = this;
+		this.oModel.bCanonicalRequests = true;
+		this.oModel = initModel(sURI, {
+			json:true,
+			canonicalRequest: true
+		});
+
+		return that.oModel.metadataLoaded()
+			.then(function() {
+				that.oModel.read("/AuthorizationCheck", {
+					urlParameters: {
+						"name": "'ReportDefinitionPropertiesSet'"
+					},
+					success: function() {
+						assert.ok(that.oModel.oMetadata._getEntityTypeByPath("/AuthorizationCheck").isFunction, "EntiyType is FunctionImport");
+						assert.deepEqual(that.oModel.mPathCache, {
+							"/AuthorizationCheck": {
+								"canonicalPath": "/Products(1)",
+								"updateKey": "k"
+							}
+						}, "mPathCache should be filled correctly");
+
+						that.oModel.read("/AuthorizationCheck", {
+							urlParameters: {
+								"name": "'SchemaEntryPointInfoSet'"
+							},
+							success: function() {
+								assert.deepEqual(that.oModel.mPathCache, {
+									"/AuthorizationCheck": {
+										"canonicalPath": "/Products(2)",
+										"updateKey": "k"
+									}
+								}, "mPathCache should be filled correctly");
+
+								that.oModel.read("/AuthorizationCheck", {
+									urlParameters: {
+										"name": "'ReportDefinitionPropertiesSet'"
+									},
+									success: function() {
+										assert.deepEqual(that.oModel.mPathCache, {
+											"/AuthorizationCheck": {
+												"canonicalPath": "/Products(1)",
+												"updateKey": "k"
+											}
+										}, "mPathCache should be filled correctly");
+
+										that.oModel.resolve("/AuthorizationCheck", undefined, true);
+										done();
+									}
+								});
+							}
+						});
+					}
+				});
+			});
+	});
+
 	QUnit.test("syntax with url parameters as map", function(assert) {
 		var done = assert.async();
 		var that = this;

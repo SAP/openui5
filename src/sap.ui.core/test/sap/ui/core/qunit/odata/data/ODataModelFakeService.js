@@ -68,6 +68,10 @@ sap.ui.define([], function() {
   xhr.onCreate = function(request) {
     var	responses = {
       "GET": {
+    "AuthorizationCheck?name='ReportDefinitionPropertiesSet'":
+      [200, oJSONHeaders, JSON.stringify(oAuthorizationCheckA)],
+    "AuthorizationCheck?name='SchemaEntryPointInfoSet'":
+      [200, oJSONHeaders, JSON.stringify(oAuthorizationCheckB)],
 		"Customers/$count":
 			[200, oCountHeaders, "91"],
 		"Customers?$skip=0&$top=60":
@@ -1403,6 +1407,9 @@ sap.ui.define([], function() {
           </AssociationSet>\
       <FunctionImport Name="GetProductsByRating" EntitySet="Products" ReturnType="Collection(NorthwindModel.Product)" m:HttpMethod="GET">\
         <Parameter Name="rating" Type="Edm.Int32" Mode="In"/>\
+      </FunctionImport>\
+      <FunctionImport Name="AuthorizationCheck" EntitySet="Products" ReturnType="NorthwindModel.Product" m:HttpMethod="GET">\
+        <Parameter Name="name" Type="Edm.String" Mode="In"/>\
       </FunctionImport>\
       <FunctionImport Name="UpdateProducts" EntitySet="Products" ReturnType="Collection(NorthwindModel.Product)" m:HttpMethod="PUT">\
         <Parameter Name="price" Type="Edm.Decimal" Mode="In"/>\
@@ -11042,4 +11049,56 @@ var oCustomers6 = {
 			}
 		]
 	}
+};
+
+var oAuthorizationCheckA = {
+  "d": {
+    "__metadata": {
+      "uri": "http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1)",
+      "type": "NorthwindModel.Product"
+    },
+    "ID": 1,
+    "Name": "ReportDefinitionPropertiesSet",
+    "Description": null,
+    "ReleaseDate": null,
+    "DiscontinuedDate": null,
+    "Rating": null,
+    "Price": null,
+    "Category": {
+      "__deferred": {
+        "uri": "http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1)/Category"
+      }
+    },
+    "Supplier": {
+      "__deferred": {
+        "uri": "http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1)/Supplier"
+      }
+    }
+  }
+};
+
+var oAuthorizationCheckB = {
+  "d": {
+    "__metadata": {
+      "uri": "http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(2)",
+      "type": "NorthwindModel.Product"
+    },
+    "ID": 2,
+    "Name": "SchemaEntryPointInfoSet",
+    "Description": null,
+    "ReleaseDate": null,
+    "DiscontinuedDate": null,
+    "Rating": null,
+    "Price": null,
+    "Category": {
+      "__deferred": {
+        "uri": "http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(2)/Category"
+      }
+    },
+    "Supplier": {
+      "__deferred": {
+        "uri": "http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(2)/Supplier"
+      }
+    }
+  }
 };
