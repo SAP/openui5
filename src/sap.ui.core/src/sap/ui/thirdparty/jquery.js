@@ -9430,6 +9430,12 @@ jQuery.parseHTML = function( data, context, keepScripts ) {
 		if ( support.createHTMLDocument ) {
 			context = document.implementation.createHTMLDocument( "" );
 
+			// Explicitely set domain to allow elements created with this document
+			// to be inserted into the parent document in IE11
+			if (context.domain !== document.domain) {
+				context.domain = document.domain;
+			}
+
 			// Set the base href for the created document
 			// so any parsed elements with URLs
 			// are based on the document's URL (gh-2965)
