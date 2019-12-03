@@ -27,12 +27,12 @@ sap.ui.define([
 		"use strict";
 
 		var spyChannel = function (channelName) {
-			sinon.spy(CommunicationBus, "publish");
+			sinon.spy(CommunicationBus.prototype, "publish");
 
 			return {
 				assertCalled: function (assert) {
-					assert.ok(CommunicationBus.publish.calledWith(channelName), "channel name: " + channelName + " should be called");
-					CommunicationBus.publish.restore();
+					assert.ok(CommunicationBus.prototype.publish.calledWith(channelName), "channel name: " + channelName + " should be called");
+					CommunicationBus.prototype.publish.restore();
 				}
 			};
 		};

@@ -2,31 +2,33 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	'sap/ui/test/actions/Press',
 	'sap/ui/test/actions/EnterText',
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function (Opa5, Press, EnterText, PropertyStrictEquals) {
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/LabelFor"
+], function (Opa5, Press, EnterText, PropertyStrictEquals, LabelFor) {
 	"use strict";
 
-	var sFormForCreatinNewRuleId = "__form3",
-		sFormForUpdatingRuleId = "__form2";
+	function createWaitForInput(sText, sLabel, bIsMultiline) {
+		return {
+			controlType: bIsMultiline ? "sap.m.TextArea" : "sap.m.Input",
+			matchers: new LabelFor({text: sLabel}),
+			actions: new EnterText({text: sText}),
+			success: function () {
+				Opa5.assert.ok(true, "The " + sLabel + " field of the rule was filled with " + sText);
+			},
+			errorMessage: "The " + sLabel + " field of the rule was not filled with " + sText
+		};
+	}
 
 	Opa5.createPageObjects({
 		onTheUpdateTemporaryRulePage:{
 			actions:{
 				iFillTitleWith: function (sText) {
-					return this.waitFor({
-						id:"__input1",
-						actions: new EnterText({text: sText}),
-						success: function () {
-							Opa5.assert.ok(true, "The Title field of the rule was filled with " + sText);
-						},
-						errorMessage: "The Title field of the rule was not filled with " + sText
-					});
+					return this.waitFor(createWaitForInput(sText, "Title"));
 				}
 			},
 			assertions:{
 				iShouldSeeTheForm: function () {
 					return this.waitFor({
-						id:sFormForUpdatingRuleId,
 						controlType: "sap.ui.layout.form.SimpleForm",
 						success: function () {
 							Opa5.assert.ok(true, "Form was found");
@@ -39,54 +41,19 @@ sap.ui.define([
 		onTheCreateTemporaryRulePage: {
 			actions : {
 				iFillIdWith: function (sText) {
-					return this.waitFor({
-						id:"__input4",
-						actions: new EnterText({text: sText}),
-						success: function () {
-							Opa5.assert.ok(true, "The Id field of the rule was filled with " + sText);
-						},
-						errorMessage: "The Id field of the rule was not filled with " + sText
-					});
+					return this.waitFor(createWaitForInput(sText, "ID"));
 				},
 				iFillTitleWith: function (sText) {
-					return this.waitFor({
-						id:"__input5",
-						actions: new EnterText({text: sText}),
-						success: function () {
-							Opa5.assert.ok(true, "The Title field of the rule was filled with " + sText);
-						},
-						errorMessage: "The Title field of the rule was not filled with " + sText
-					});
+					return this.waitFor(createWaitForInput(sText, "Title"));
 				},
 				iFillDescriptionWith: function (sText) {
-					return this.waitFor({
-						id:"__area3",
-						actions: new EnterText({text: sText}),
-						success: function () {
-							Opa5.assert.ok(true, "The Description field of the rule was filled with " + sText);
-						},
-						errorMessage: "The Description field of the rule was not filled with " + sText
-					});
+					return this.waitFor(createWaitForInput(sText, "Description", true));
 				},
 				iFillResolutionWith: function (sText) {
-					return this.waitFor({
-						id:"__area4",
-						actions: new EnterText({text: sText}),
-						success: function () {
-							Opa5.assert.ok(true, "The Resolution field of the rule was filled with " + sText);
-						},
-						errorMessage: "The Resolution field of the rule was not filled with " + sText
-					});
+					return this.waitFor(createWaitForInput(sText, "Resolution", true));
 				},
 				iFillVersionWith: function (sText) {
-					return this.waitFor({
-						id:"__area5",
-						actions: new EnterText({text: sText}),
-						success: function () {
-							Opa5.assert.ok(true, "The Version field of the rule was filled with " + sText);
-						},
-						errorMessage: "The Version field of the rule was not filled with " + sText
-					});
+					return this.waitFor(createWaitForInput(sText, "Min version", true));
 				},
 				iGoToCheckFunctionPanel: function () {
 					return this.waitFor({
@@ -114,7 +81,6 @@ sap.ui.define([
 			assertions: {
 				iShouldSeeTheForm: function () {
 					return this.waitFor({
-						id:sFormForCreatinNewRuleId,
 						controlType: "sap.ui.layout.form.SimpleForm",
 						success: function () {
 							Opa5.assert.ok(true, "Form was found");

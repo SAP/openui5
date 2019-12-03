@@ -253,6 +253,10 @@ module.exports = function(grunt) {
 					path: 'src/sap.ui.integration'
 			},
 			{
+				name: 'sap.ui.testrecorder',
+				path: 'src/sap.ui.testrecorder'
+		}	,
+			{
 					name: 'themelib_sap_bluecrystal',
 					path: 'src/themelib_sap_bluecrystal',
 					type: 'theme'

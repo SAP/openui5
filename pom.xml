@@ -52,6 +52,7 @@
 		<module>src/sap.ui.codeeditor</module>
 		<module>src/sap.ui.support</module>
 		<module>src/sap.ui.integration</module>
+		<module>src/sap.ui.testrecorder</module>
 
 		<!-- theme libraries -->
 		<module>src/themelib_sap_bluecrystal</module>

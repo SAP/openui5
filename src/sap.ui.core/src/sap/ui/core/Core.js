@@ -617,6 +617,32 @@ sap.ui.define([
 				}
 			}
 
+			// Initialize test tools
+			if (this.oConfiguration.getTestRecorderMode() !== null) {
+				var iTestRecorderTask = oSyncPoint2.startTask("test recorder script");
+
+				var fnCallbackTestRecorder = function (Bootstrap) {
+					Bootstrap.init(that.oConfiguration.getTestRecorderMode());
+					oSyncPoint2.finishTask(iTestRecorderTask);
+				};
+
+				if (bAsync) {
+					sap.ui.require([
+						"sap/ui/testrecorder/Bootstrap"
+					], fnCallbackTestRecorder);
+				} else {
+					Log.warning("Synchronous loading of Test recorder mode. Set preload configuration to 'async' or switch to asynchronous bootstrap to prevent these synchronous request.", "SyncXHR", null, function() {
+						return {
+							type: "SyncXHR",
+							name: "test-recorder-mode"
+						};
+					});
+					fnCallbackTestRecorder(
+						sap.ui.requireSync("sap/ui/testrecorder/Bootstrap")
+					);
+				}
+			}
+
 			oSyncPoint2.finishTask(iCreateTasksTask);
 		},
 

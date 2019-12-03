@@ -12,7 +12,8 @@ sap.ui.define(function() {
 					// Internally, the fixtures use "sap.ui.test", some tests use or rely on that name.
 					// Other tests only need successful loading, so the name doesn't matter
 					"samples/components": "test-resources/sap/ui/core/samples/components/",
-					"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"
+					"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/",
+					"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
 				}
 			},
 			qunit: {

@@ -299,6 +299,18 @@ sap.ui.define([
 		},
 
 		/**
+		 * Opens the test recorder iframe
+		 */
+		onOpenTestRecorderInIFrame: function () {
+			this.close();
+			sap.ui.require(["sap/ui/testrecorder/Bootstrap"], function (oBootstrap) {
+				oBootstrap.init(["true"]);
+			}, function (oError) {
+				Log.error("Could not load library 'sap/ui/testrecorder/Bootstrap'! Details: " + oError);
+			});
+		},
+
+		/**
 		 * Opens the support assistant with the given configuration
 		 */
 		onOpenAssistant: function () {
