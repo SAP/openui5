@@ -379,24 +379,24 @@ function(
 		};
 
 		Page.prototype._ensureNavButton = function () {
+
+			if (!this.getShowNavButton()) {
+				return;
+			}
+
 			var sBackText = this.getNavButtonTooltip() || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PAGE_NAVBUTTON_TEXT"); // any other types than "Back" do not make sense anymore in Blue Crystal
 
 			if (!this._navBtn) {
 				this._navBtn = new Button(this.getId() + "-navButton", {
-					press: jQuery.proxy(function () {
+					press: function () {
 						this.fireNavButtonPress();
 						this.fireNavButtonTap();
-					}, this)
+					}.bind(this)
 				});
-
-				if (!Device.os.ios && this.getNavButtonType() == ButtonType.Back) {
-					// internal conversion from Back to Up for non-iOS platform
-					this._navBtn.setType(ButtonType.Up);
-				} else {
-					this._navBtn.setType(this.getNavButtonType());
-				}
 			}
 
+			this._navBtn.setType(this.getNavButtonType());
+			this._navBtn.setText(this.getNavButtonText());
 			this._navBtn.setTooltip(sBackText);
 		};
 
