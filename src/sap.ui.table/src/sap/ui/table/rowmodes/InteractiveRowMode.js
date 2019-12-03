@@ -358,7 +358,7 @@ sap.ui.define([
 		}
 	};
 
-	// TODO: Copied from TablePointerExtension. Maybe move this to utils.
+	// TODO: Copied from pointer extension. Maybe move this to utils.
 	/**
 	 * Gets the position of an event.
 	 *

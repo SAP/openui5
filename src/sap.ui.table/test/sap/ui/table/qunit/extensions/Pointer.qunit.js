@@ -4,10 +4,10 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
-	"sap/ui/table/TablePointerExtension",
+	"sap/ui/table/extensions/Pointer",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library"
-], function(TableQUnitUtils, qutils, Device, TablePointerExtension, TableUtils, tableLibrary) {
+], function(TableQUnitUtils, qutils, Device, PointerExtension, TableUtils, tableLibrary) {
 	"use strict";
 
 	// mapping of global function calls
@@ -122,7 +122,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			// Extend auto resize logic to know about the test control
-			TablePointerExtension._fnCheckTextBasedControl = function(oControl) {
+			PointerExtension._fnCheckTextBasedControl = function(oControl) {
 				return oControl.getMetadata().getName() === "TestControl";
 			};
 		},
@@ -130,7 +130,7 @@ sap.ui.define([
 			Device.system.desktop = this.bOriginalSystemDesktop;
 
 			destroyTables();
-			TablePointerExtension._fnCheckTextBasedControl = null;
+			PointerExtension._fnCheckTextBasedControl = null;
 		}
 	});
 

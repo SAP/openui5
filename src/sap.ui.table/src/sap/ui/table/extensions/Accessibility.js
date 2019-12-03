@@ -2,16 +2,16 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableAccExtension.
+// Provides helper sap.ui.table.extensions.Accessibility.
 sap.ui.define([
+	"./ExtensionBase",
+	"./AccessibilityRender",
+	"../utils/TableUtils",
+	"../library",
 	"sap/ui/core/Control",
-	"./library",
-	"./TableExtension",
-	"./TableAccRenderExtension",
-	"./utils/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
-], function(Control, library, TableExtension, TableAccRenderExtension, TableUtils, Device, jQuery) {
+], function(ExtensionBase, AccRenderExtension, TableUtils, library, Control, Device, jQuery) {
 	"use strict";
 
 	// shortcuts
@@ -137,7 +137,7 @@ sap.ui.define([
 		 * If the current focus is on a cell of the table, this function returns
 		 * the cell type and the jQuery wrapper object of the corresponding cell:
 		 *
-		 * @param {sap.ui.table.TableAccExtension} oExtension The accessibility extension.
+		 * @param {sap.ui.table.AccExtension} oExtension The accessibility extension.
 		 * @returns {sap.ui.table.utils.TableUtils.CellInfo} An object containing information about the cell.
 		 */
 		getInfoOfFocusedCell: function(oExtension) {
@@ -367,7 +367,7 @@ sap.ui.define([
 				bIsTreeColumnCell = ExtensionHelper.isTreeColumnCell(this, $Cell),
 				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
 				bIsInSumRow = TableUtils.Grouping.isInSumRow($Cell),
-				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.DATACELL, {
+				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.DATACELL, {
 						index: iCol,
 						column: oTableInstances.column,
 						fixed: TableUtils.isFixedColumn(oTable, iCol)
@@ -416,7 +416,7 @@ sap.ui.define([
 
 			var sText = oInfo ? oInfo.description : " ";
 			if (bIsTreeColumnCell && !bHidden) {
-				var oAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.TREEICON, {row: oTableInstances.row});
+				var oAttributes = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.TREEICON, {row: oTableInstances.row});
 				if (oAttributes && oAttributes["aria-label"]) {
 					sText = oAttributes["aria-label"] + " " + sText;
 				}
@@ -446,7 +446,7 @@ sap.ui.define([
 			var bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell);
 			var bIsInSumRow = TableUtils.Grouping.isInSumRow($Cell);
 			var oRow = oTable.getRows()[oCellInfo.rowIndex];
-			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [];
+			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [];
 			var aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows"]);
 
 			if (!bIsInSumRow && !bIsInGroupingRow) {
@@ -486,7 +486,7 @@ sap.ui.define([
 			var oTable = this.getTable();
 			var $Cell = oCellInfo.cell;
 			var oColumn = sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid"));
-			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.COLUMNHEADER, {
+			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.COLUMNHEADER, {
 					headerId: $Cell.attr("id"),
 					column: oColumn,
 					index: $Cell.attr("data-sap-ui-colindex")
@@ -537,7 +537,7 @@ sap.ui.define([
 			oTable.$("sapUiTableGridCnt").removeAttr("role");
 
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(
-				this, TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER,
+				this, AccExtension.ELEMENTTYPES.COLUMNROWHEADER,
 				{enabled: bEnabled, checked: bEnabled && !oTable.$().hasClass("sapUiTableSelAll")}
 			);
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
@@ -558,7 +558,7 @@ sap.ui.define([
 			var iRowIndex = oCellInfo.rowIndex;
 			var oRow = oTable.getRows()[oCellInfo.rowIndex];
 			var bHidden = ExtensionHelper.isHiddenCell($Cell);
-			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWACTION)["aria-labelledby"] || [];
+			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.ROWACTION)["aria-labelledby"] || [];
 			var aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"].concat(aDefaultLabels);
 			var aDescriptions = [];
 
@@ -604,9 +604,9 @@ sap.ui.define([
 			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, [], aLabels, aDescriptions, sText);
 		},
 
-		/*
+		/**
 		 * Returns the default aria attibutes for the given element type with the given settings.
-		 * @see TableAccExtension.ELEMENTTYPES
+		 * @see sap.ui.table.extensions.Accessibility.ELEMENTTYPES
 		 */
 		getAriaAttributesFor: function(oExtension, sType, mParams) {
 			var mAttributes = {},
@@ -637,7 +637,7 @@ sap.ui.define([
 			}
 
 			switch (sType) {
-				case TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER:
+				case AccExtension.ELEMENTTYPES.COLUMNROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
 					var mRenderConfig = oTable._getSelectionPlugin().getRenderConfig();
 
@@ -659,7 +659,7 @@ sap.ui.define([
 					}
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.ROWHEADER:
+				case AccExtension.ELEMENTTYPES.ROWHEADER:
 					mAttributes["role"] = "rowheader";
 					if (Device.browser.msie) {
 						mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
@@ -674,7 +674,7 @@ sap.ui.define([
 					}
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.ROWACTION:
+				case AccExtension.ELEMENTTYPES.ROWACTION:
 					mAttributes["role"] = "gridcell";
 					mAttributes["aria-labelledby"] = [sTableId + "-rowacthdr"];
 					if (oTable.getSelectionMode() !== SelectionMode.None && mParams && mParams.rowSelected) {
@@ -682,7 +682,7 @@ sap.ui.define([
 					}
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER:
+				case AccExtension.ELEMENTTYPES.COLUMNHEADER:
 					var oColumn = mParams && mParams.column;
 					var bHasColSpan = mParams && mParams.colspan;
 
@@ -712,7 +712,7 @@ sap.ui.define([
 					}
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.DATACELL:
+				case AccExtension.ELEMENTTYPES.DATACELL:
 					mAttributes["role"] = "gridcell";
 
 					var aLabels = [],
@@ -741,15 +741,15 @@ sap.ui.define([
 
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.ROOT: //The tables root dom element
+				case AccExtension.ELEMENTTYPES.ROOT: //The tables root dom element
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.TABLE: //The "real" table element(s)
+				case AccExtension.ELEMENTTYPES.TABLE: //The "real" table element(s)
 					mAttributes["role"] = "presentation";
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, true);
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
+				case AccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 					mAttributes["role"] = TableUtils.Grouping.isGroupMode(oTable) || TableUtils.Grouping.isTreeMode(oTable) ? "treegrid" : "grid";
 
 					if (oTable.getSelectionMode() === SelectionMode.MultiToggle) {
@@ -788,35 +788,35 @@ sap.ui.define([
 
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.TABLEHEADER: //The table header area
+				case AccExtension.ELEMENTTYPES.TABLEHEADER: //The table header area
 					mAttributes["role"] = "heading";
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_TBL: //Table of column headers
+				case AccExtension.ELEMENTTYPES.COLUMNHEADER_TBL: //Table of column headers
 					mAttributes["role"] = "presentation";
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_ROW: //The area which contains the column headers
+				case AccExtension.ELEMENTTYPES.COLUMNHEADER_ROW: //The area which contains the column headers
 					mAttributes["role"] = "row";
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.CREATIONROW_TBL: // Table of the creation row
+				case AccExtension.ELEMENTTYPES.CREATIONROW_TBL: // Table of the creation row
 					mAttributes["role"] = "presentation";
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.CREATIONROW: // Root of the creation row
+				case AccExtension.ELEMENTTYPES.CREATIONROW: // Root of the creation row
 					mAttributes["role"] = "form";
 					mAttributes["aria-labelledby"] = mParams.creationRow.getId() + "-label";
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.ROWHEADER_COL: //The area which contains the row headers
+				case AccExtension.ELEMENTTYPES.ROWHEADER_COL: //The area which contains the row headers
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, true);
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.TH: //The "technical" column headers
+				case AccExtension.ELEMENTTYPES.TH: //The "technical" column headers
 					var bHasFixedColumns = oTable.getComputedFixedColumnCount() > 0;
 					if (!bHasFixedColumns) {
 						mAttributes["role"] = "presentation";
@@ -832,7 +832,7 @@ sap.ui.define([
 					}
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.TR: //The rows
+				case AccExtension.ELEMENTTYPES.TR: //The rows
 					mAttributes["role"] = "row";
 					var bSelected = false;
 					if (mParams && typeof mParams.index === "number" && oTable.getSelectionMode() !== SelectionMode.None
@@ -848,7 +848,7 @@ sap.ui.define([
 					}
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.TREEICON: //The expand/collapse icon in the TreeTable
+				case AccExtension.ELEMENTTYPES.TREEICON: //The expand/collapse icon in the TreeTable
 					if (TableUtils.Grouping.isTreeMode(oTable)) {
 						mAttributes = {
 							"aria-label": "",
@@ -876,14 +876,14 @@ sap.ui.define([
 					}
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.NODATA: //The no data container
+				case AccExtension.ELEMENTTYPES.NODATA: //The no data container
 					mAttributes["role"] = "gridcell";
 					var oNoData = oTable.getNoData();
 					mAttributes["aria-labelledby"] = [oNoData instanceof Control ? oNoData.getId() : (sTableId + "-noDataMsg")];
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.OVERLAY: //The overlay container
+				case AccExtension.ELEMENTTYPES.OVERLAY: //The overlay container
 					mAttributes["role"] = "region";
 					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
 					if (oTable.getTitle()) {
@@ -892,12 +892,12 @@ sap.ui.define([
 					mAttributes["aria-labelledby"].push(sTableId + "-ariainvalid");
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.TABLEFOOTER: //The table footer area
-				case TableAccExtension.ELEMENTTYPES.TABLESUBHEADER: //The table toolbar and extension areas
+				case AccExtension.ELEMENTTYPES.TABLEFOOTER: //The table footer area
+				case AccExtension.ELEMENTTYPES.TABLESUBHEADER: //The table toolbar and extension areas
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.ROWACTIONHEADER: // The header of the row action column
+				case AccExtension.ELEMENTTYPES.ROWACTIONHEADER: // The header of the row action column
 					mAttributes["aria-hidden"] = "true";
 					break;
 
@@ -917,14 +917,14 @@ sap.ui.define([
 	 * strictly prohibited!</b>
 	 *
 	 * @class Extension for sap.ui.table.Table which handles ACC related things.
-	 * @extends sap.ui.table.TableExtension
+	 * @extends sap.ui.table.extensions.ExtensionBase
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.TableAccExtension
+	 * @alias sap.ui.table.extensions.Accessibility
 	 */
-	var TableAccExtension = TableExtension.extend("sap.ui.table.TableAccExtension", /** @lends sap.ui.table.TableAccExtension.prototype */ {
+	var AccExtension = ExtensionBase.extend("sap.ui.table.extensions.Accessibility", /** @lends sap.ui.table.extensions.Accessibility.prototype */ {
 		/**
 		 * @override
 		 * @inheritDoc
@@ -937,7 +937,7 @@ sap.ui.define([
 			TableUtils.addDelegate(oTable, this);
 
 			// Initialize Render extension
-			TableExtension.enrich(oTable, TableAccRenderExtension);
+			ExtensionBase.enrich(oTable, AccRenderExtension);
 
 			return "AccExtension";
 		},
@@ -960,13 +960,13 @@ sap.ui.define([
 			this.getTable().removeEventDelegate(this);
 			this._busyCells = [];
 
-			TableExtension.prototype.destroy.apply(this, arguments);
+			ExtensionBase.prototype.destroy.apply(this, arguments);
 		},
 
 		/**
-		 * Provide protected access for TableACCRenderExtension.
+		 * Provide protected access for the accessibility render extension.
 		 *
-		 * @param {sap.ui.table.TableAccExtension.ELEMENTTYPES} sType The type of the table area to get the aria attributes for.
+		 * @param {sap.ui.table.extensions.Accessibility.ELEMENTTYPES} sType The type of the table area to get the aria attributes for.
 		 * @param {Object} mParams Accessibility parameters.
 		 * @returns {Object} The aria attributes.
 		 * @see ExtensionHelper.getAriaAttributesFor
@@ -1026,10 +1026,10 @@ sap.ui.define([
 	 *     TABLE: string, TABLEHEADER: string, TABLEFOOTER: string, TABLESUBHEADER: string, COLUMNHEADER_TBL: string, COLUMNHEADER_ROW: string,
 	 *     CREATIONROW_TBL: string, ROWHEADER_COL: string, TH: string, TR: string, TREEICON: string, ROWACTIONHEADER: string,
 	 *     NODATA: string, OVERLAY: string}|*}
-	 * @see TableAccRenderExtension.writeAriaAttributesFor
+	 * @see sap.ui.table.extensions.AccessibilityRender.writeAriaAttributesFor
 	 * @public
 	 */
-	TableAccExtension.ELEMENTTYPES = {
+	AccExtension.ELEMENTTYPES = {
 		DATACELL: "DATACELL",					// Standard data cell (standard, group or sum)
 		COLUMNHEADER: "COLUMNHEADER", 			// Column header
 		ROWHEADER: "ROWHEADER", 				// Row header (standard, group or sum)
@@ -1060,7 +1060,7 @@ sap.ui.define([
 	 * @public
 	 * @returns {boolean} Returns <code>true</code>, if the accessibility mode is turned on.
 	 */
-	TableAccExtension.prototype.getAccMode = function() {
+	AccExtension.prototype.getAccMode = function() {
 		return this._accMode;
 	};
 
@@ -1071,7 +1071,7 @@ sap.ui.define([
 	 * to the reasons in {@link sap.ui.table.utils.TableUtils.RowsUpdateReason RowsUpdateReason}, also \"Focus\" is possible.
 	 * @public
 	 */
-	TableAccExtension.prototype.updateAccForCurrentCell = function(sReason) {
+	AccExtension.prototype.updateAccForCurrentCell = function(sReason) {
 		if (!this._accMode || !this.getTable()._getItemNavigation()) {
 			return;
 		}
@@ -1089,15 +1089,15 @@ sap.ui.define([
 		}
 
 		if (oInfo.isOfType(CellType.DATACELL)) {
-			sCellType = TableAccExtension.ELEMENTTYPES.DATACELL;
+			sCellType = AccExtension.ELEMENTTYPES.DATACELL;
 		} else if (oInfo.isOfType(CellType.COLUMNHEADER)) {
-			sCellType = TableAccExtension.ELEMENTTYPES.COLUMNHEADER;
+			sCellType = AccExtension.ELEMENTTYPES.COLUMNHEADER;
 		} else if (oInfo.isOfType(CellType.ROWHEADER)) {
-			sCellType = TableAccExtension.ELEMENTTYPES.ROWHEADER;
+			sCellType = AccExtension.ELEMENTTYPES.ROWHEADER;
 		} else if (oInfo.isOfType(CellType.ROWACTION)) {
-			sCellType = TableAccExtension.ELEMENTTYPES.ROWACTION;
+			sCellType = AccExtension.ELEMENTTYPES.ROWACTION;
 		} else if (oInfo.isOfType(CellType.COLUMNROWHEADER)) {
-			sCellType = TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER;
+			sCellType = AccExtension.ELEMENTTYPES.COLUMNROWHEADER;
 		}
 
 		if (!ExtensionHelper["modifyAccOf" + sCellType]) {
@@ -1141,12 +1141,12 @@ sap.ui.define([
 	 * @param {sap.ui.table.Column} oColumn Instance of the column.
 	 * @public
 	 */
-	TableAccExtension.prototype.updateAriaStateOfColumn = function(oColumn) {
+	AccExtension.prototype.updateAriaStateOfColumn = function(oColumn) {
 		if (!this._accMode) {
 			return;
 		}
 
-		var mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.COLUMNHEADER, {
+		var mAttributes = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.COLUMNHEADER, {
 			headerId: oColumn.getId(),
 			column: oColumn,
 			index: this.getTable().indexOfColumn(oColumn)
@@ -1171,7 +1171,7 @@ sap.ui.define([
 	 * @param {boolean} bIsSelected Whether the row is selected.
 	 * @public
 	 */
-	TableAccExtension.prototype.updateAriaStateOfRow = function(oRow, $Ref, bIsSelected) {
+	AccExtension.prototype.updateAriaStateOfRow = function(oRow, $Ref, bIsSelected) {
 		if (!this._accMode) {
 			return;
 		}
@@ -1206,7 +1206,7 @@ sap.ui.define([
 	 * @param {jQuery} $TreeIcon The jQuery reference to the tree icon of a row (for tree node rows).
 	 * @public
 	 */
-	TableAccExtension.prototype.updateAriaExpandAndLevelState = function(oRow, $ScrollRow, $RowHdr, $FixedRow, $RowAct, bGroup, bExpanded, iLevel,
+	AccExtension.prototype.updateAriaExpandAndLevelState = function(oRow, $ScrollRow, $RowHdr, $FixedRow, $RowAct, bGroup, bExpanded, iLevel,
 																		 $TreeIcon) {
 		if (!this._accMode) {
 			return;
@@ -1221,7 +1221,7 @@ sap.ui.define([
 		if (!bGroup && $RowHdr && !bTreeMode) {
 			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(
-				this, TableAccExtension.ELEMENTTYPES.ROWHEADER, {rowSelected: !oRow._bHidden && oTable._getSelectionPlugin().isIndexSelected(iIndex)});
+				this, AccExtension.ELEMENTTYPES.ROWHEADER, {rowSelected: !oRow._bHidden && oTable._getSelectionPlugin().isIndexSelected(iIndex)});
 			sTitle = mAttributes["title"] || null;
 		}
 
@@ -1247,7 +1247,7 @@ sap.ui.define([
 		}
 
 		if (bTreeMode) {
-			$TreeIcon.attr(ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.TREEICON, {row: oRow}));
+			$TreeIcon.attr(ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.TREEICON, {row: oRow}));
 		}
 	};
 
@@ -1257,7 +1257,7 @@ sap.ui.define([
 	 * @param {sap.ui.table.RowSettings} oRowSettings The row settings.
 	 * @public
 	 */
-	TableAccExtension.prototype.updateAriaStateOfRowHighlight = function(oRowSettings) {
+	AccExtension.prototype.updateAriaStateOfRowHighlight = function(oRowSettings) {
 		if (!this._accMode || !oRowSettings) {
 			return;
 		}
@@ -1275,7 +1275,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	TableAccExtension.prototype.updateAriaStateForOverlayAndNoData = function() {
+	AccExtension.prototype.updateAriaStateForOverlayAndNoData = function() {
 		var oTable = this.getTable();
 
 		if (!oTable || !oTable.getDomRef() || !this._accMode) {
@@ -1302,7 +1302,7 @@ sap.ui.define([
 	 * @returns {{mouse: {rowSelect: string, rowDeselect: string}, keyboard: {rowSelect: string, rowDeselect: string}}} Tooltip texts.
 	 * @public
 	 */
-	TableAccExtension.prototype.getAriaTextsForSelectionMode = function(bConsiderSelectionState, sSelectionMode) {
+	AccExtension.prototype.getAriaTextsForSelectionMode = function(bConsiderSelectionState, sSelectionMode) {
 		var oTable = this.getTable();
 
 		if (!sSelectionMode) {
@@ -1351,7 +1351,7 @@ sap.ui.define([
 	 * @param {boolean} bSelectAll The select all state to be applied to the select all button.
 	 * @public
 	 */
-	TableAccExtension.prototype.setSelectAllState = function(bSelectAll) {
+	AccExtension.prototype.setSelectAllState = function(bSelectAll) {
 		var oTable = this.getTable();
 
 		if (this._accMode && oTable) {
@@ -1365,7 +1365,7 @@ sap.ui.define([
 	 * @param {sap.ui.table.Column} oColumn Instance of the column.
 	 * @param {sap.ui.core.Control} oControl Instance of the control.
 	 */
-	TableAccExtension.prototype.addColumnHeaderLabel = function(oColumn, oControl) {
+	AccExtension.prototype.addColumnHeaderLabel = function(oColumn, oControl) {
 		var oTable = this.getTable();
 		if (!this._accMode || !oControl.getAriaLabelledBy || !oTable) {
 			return;
@@ -1384,7 +1384,7 @@ sap.ui.define([
 		}
 	};
 
-	return TableAccExtension;
+	return AccExtension;
 });
 
 /**
@@ -1392,6 +1392,6 @@ sap.ui.define([
  *
  * @name sap.ui.table.Table#_getAccExtension
  * @function
- * @returns {sap.ui.table.TableAccExtension} The accessibility extension.
+ * @returns {sap.ui.table.extensions.Accessibility} The accessibility extension.
  * @private
  */

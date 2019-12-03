@@ -3,9 +3,9 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', "./Column", './utils/TableUtils', "./TableExtension",
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', "./Column", './utils/TableUtils', "./extensions/ExtensionBase",
 			   'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/base/Log"],
-	function(Control, Parameters, Device, library, Column, TableUtils, TableExtension, Renderer, IconPool, Log) {
+	function(Control, Parameters, Device, library, Column, TableUtils, ExtensionBase, Renderer, IconPool, Log) {
 	"use strict";
 
 
@@ -1210,7 +1210,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderVSbExternal = function(rm, oTable) {
-		if (TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension")) {
+		if (ExtensionBase.isEnrichedWith(oTable, "sap.ui.table.extensions.Synchronization")) {
 			this.renderVSb(rm, oTable, {
 				cssClass: "sapUiTableVSbExternal",
 				tabIndex: false
@@ -1257,7 +1257,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderHSbExternal = function(rm, oTable, sId, iScrollWidth) {
-		if (TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension")) {
+		if (ExtensionBase.isEnrichedWith(oTable, "sap.ui.table.extensions.Synchronization")) {
 			this.renderHSb(rm, oTable, {
 				id: sId,
 				cssClass: "sapUiTableHSbExternal",

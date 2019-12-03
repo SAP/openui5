@@ -2,8 +2,10 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableAccRenderExtension.
-sap.ui.define(["./TableExtension", "./utils/TableUtils", "./library"], function(TableExtension, TableUtils, library) {
+// Provides helper sap.ui.table.extensions.AccessibilityRender.
+sap.ui.define([
+	"./ExtensionBase", "../utils/TableUtils", "../library"
+], function(ExtensionBase, TableUtils, library) {
 	"use strict";
 
 	// Shortcuts
@@ -36,15 +38,15 @@ sap.ui.define(["./TableExtension", "./utils/TableUtils", "./library"], function(
 	 * strictly prohibited!</b>
 	 *
 	 * @class Extension for sap.ui.table.TableRenderer which handles ACC related things.
-	 * @extends sap.ui.table.TableExtension
+	 * @extends sap.ui.table.extensions.ExtensionBase
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.TableAccRenderExtension
+	 * @alias sap.ui.table.extensions.AccessibilityRender
 	 */
-	var AccRenderExtension = TableExtension.extend("sap.ui.table.TableAccRenderExtension",
-		/** @lends sap.ui.table.TableAccRenderExtension.prototype */ {
+	var AccRenderExtension = ExtensionBase.extend("sap.ui.table.extensions.AccessibilityRender",
+		/** @lends sap.ui.table.extensions.AccessibilityRender.prototype */ {
 		/**
 		 * @override
 		 * @inheritDoc
@@ -154,9 +156,9 @@ sap.ui.define(["./TableExtension", "./utils/TableUtils", "./library"], function(
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer.
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {sap.ui.table.TableAccExtension.ELEMENTTYPES} sType The type of the table area to write the aria attributes for.
+		 * @param {sap.ui.table.extensions.Accessibility.ELEMENTTYPES} sType The type of the table area to write the aria attributes for.
 		 * @param {Object} mParams Accessibility parameters.
-		 * @see sap.ui.table.TableAccExtension#getAriaAttributesFor
+		 * @see sap.ui.table.extensions.Accessibility#getAriaAttributesFor
 		 * @public
 		 */
 		writeAriaAttributesFor: function(oRm, oTable, sType, mParams) {
@@ -249,6 +251,6 @@ sap.ui.define(["./TableExtension", "./utils/TableUtils", "./library"], function(
  *
  * @name sap.ui.table.Table#_getAccRenderExtension
  * @function
- * @returns {sap.ui.table.TableScrollExtension} The accesibility render extension.
+ * @returns {sap.ui.table.extensions.AccessibilityRender} The accessibility render extension.
  * @private
  */

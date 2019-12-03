@@ -17,12 +17,12 @@ sap.ui.define([
 	'./Row',
 	'./library',
 	'./utils/TableUtils',
-	'./TableExtension',
-	'./TableAccExtension',
-	'./TableKeyboardExtension',
-	'./TablePointerExtension',
-	'./TableScrollExtension',
-	'./TableDragAndDropExtension',
+	'./extensions/ExtensionBase',
+	'./extensions/Accessibility',
+	'./extensions/Keyboard',
+	'./extensions/Pointer',
+	'./extensions/Scrolling',
+	'./extensions/DragAndDrop',
 	"./TableRenderer",
 	"./rowmodes/FixedRowMode",
 	"./rowmodes/InteractiveRowMode",
@@ -45,12 +45,12 @@ sap.ui.define([
 		Row,
 		library,
 		TableUtils,
-		TableExtension,
-		TableAccExtension,
-		TableKeyboardExtension,
-		TablePointerExtension,
-		TableScrollExtension,
-		TableDragAndDropExtension,
+		ExtensionBase,
+		AccExtension,
+		KeyboardExtension,
+		PointerExtension,
+		ScrollExtension,
+		DragAndDropExtension,
 		TableRenderer,
 		FixedRowMode,
 		InteractiveRowMode,
@@ -975,11 +975,11 @@ sap.ui.define([
 		if (this._bExtensionsInitialized) {
 			return;
 		}
-		TableExtension.enrich(this, TablePointerExtension);
-		TableExtension.enrich(this, TableScrollExtension);
-		TableExtension.enrich(this, TableKeyboardExtension);
-		TableExtension.enrich(this, TableAccExtension); // Must be registered after keyboard to reach correct delegate order
-		TableExtension.enrich(this, TableDragAndDropExtension);
+		ExtensionBase.enrich(this, PointerExtension);
+		ExtensionBase.enrich(this, ScrollExtension);
+		ExtensionBase.enrich(this, KeyboardExtension);
+		ExtensionBase.enrich(this, AccExtension); // Must be registered after keyboard to reach correct delegate order
+		ExtensionBase.enrich(this, DragAndDropExtension);
 		this._bExtensionsInitialized = true;
 	};
 
@@ -1012,7 +1012,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._detachExtensions = function(){
-		TableExtension.cleanup(this);
+		ExtensionBase.cleanup(this);
 	};
 
 	/**
@@ -2466,7 +2466,7 @@ sap.ui.define([
 		}
 
 		Device.resize.attachHandler(this._onWindowResize, this);
-		TableExtension.attachEvents(this);
+		ExtensionBase.attachEvents(this);
 	};
 
 	/**
@@ -2477,7 +2477,7 @@ sap.ui.define([
 		jQuery(document.body).off('webkitTransitionEnd transitionend');
 		TableUtils.deregisterResizeHandler(this, "Table");
 		Device.resize.detachHandler(this._onWindowResize, this);
-		TableExtension.detachEvents(this);
+		ExtensionBase.detachEvents(this);
 	};
 
 	/**
@@ -4137,7 +4137,7 @@ sap.ui.define([
 	 * Enriches the table with synchronization capabilities exposed through an interface of the SyncExtension applied to the table.
 	 * <b>Do not call this method more than once on the same table!</b>
 	 *
-	 * @see sap.ui.table.TableSyncExtension#getInterface
+	 * @see sap.ui.table.extensions.Synchronization#getInterface
 	 * @returns {Promise} Returns a promise that resolves with the synchronization interface, and rejects with an error object.
 	 * @private
 	 * @ui5-restricted sap.gantt
@@ -4145,8 +4145,8 @@ sap.ui.define([
 	Table.prototype._enableSynchronization = function() {
 		var that = this;
 		return new Promise(function(resolve, reject) {
-			sap.ui.require(["sap/ui/table/TableSyncExtension"], function(TableSyncExtension) {
-				resolve(TableExtension.enrich(that, TableSyncExtension).getInterface());
+			sap.ui.require(["sap/ui/table/extensions/Synchronization"], function(SyncExtension) {
+				resolve(ExtensionBase.enrich(that, SyncExtension).getInterface());
 			}, function(oError) {
 				reject(oError);
 			});
