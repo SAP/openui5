@@ -9,11 +9,10 @@
 	busy="true">
 	<Page id="page"
 		showHeader="false"
-		showNavButton="true"
+		showNavButton="false"
 		enableScrolling="true"
-		class="suppliersPage"
-		navButtonPress="onNavButtonPress">
-		<VBox id="box" class="sapUiSmallMargin">
+		class="sapUiContentPadding suppliersPage">
+		<VBox id="box">
 			<f:Form id="FormDisplay354"
 				editable="false">
 				<f:title>
