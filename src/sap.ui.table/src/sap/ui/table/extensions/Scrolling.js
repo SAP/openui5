@@ -2,16 +2,16 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableScrollExtension.
+// Provides helper sap.ui.table.extensions.Scrolling.
 sap.ui.define([
-	"./TableExtension",
-	"./utils/TableUtils",
+	"./ExtensionBase",
+	"../utils/TableUtils",
+	"../library",
 	"sap/ui/Device",
-	"./library",
 	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
-], function(TableExtension, TableUtils, Device, library, Interaction, Log, jQuery) {
+], function(ExtensionBase, TableUtils, library, Device, Interaction, Log, jQuery) {
 	"use strict";
 
 	// Shortcuts
@@ -50,7 +50,7 @@ sap.ui.define([
 	 * Scroll directions.
 	 *
 	 * @enum {string}
-	 * @memberOf sap.ui.table.TableScrollExtension
+	 * @memberOf sap.ui.table.extensions.Scrolling
 	 */
 	var ScrollDirection = {
 		HORIZONAL: "HORIZONTAL",
@@ -62,8 +62,8 @@ sap.ui.define([
 	/**
 	 * The configuration options for event listeners.
 	 *
-	 * @typedef {Object} TableScrollExtension.EventListenerOptions
-	 * @property {sap.ui.table.TableScrollExtension.ScrollDirection} scrollDirection The scroll direction.
+	 * @typedef {Object} sap.ui.table.extensions.Scrolling.EventListenerOptions
+	 * @property {sap.ui.table.extensions.Scrolling.ScrollDirection} scrollDirection The scroll direction.
 	 * @private
 	 */
 
@@ -74,7 +74,7 @@ sap.ui.define([
 	 * @param {sap.ui.table.Table} oTable Instance of the table producing the log entry.
 	 */
 	function log(sMessage, oTable) {
-		Log.debug("sap.ui.table.TableScrollExtension", sMessage, oTable);
+		Log.debug("sap.ui.table.extensions.Scrolling", sMessage, oTable);
 	}
 
 	/**
@@ -1738,7 +1738,7 @@ sap.ui.define([
 		/**
 		 * Handles mouse wheel events.
 		 *
-		 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+		 * @param {sap.ui.table.extensions.Scrolling.EventListenerOptions} mOptions The options.
 		 * @param {WheelEvent} oEvent The wheel event object.
 		 */
 		onMouseWheelScrolling: function(mOptions, oEvent) {
@@ -1827,7 +1827,7 @@ sap.ui.define([
 		/**
 		 * Handles touch start events.
 		 *
-		 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+		 * @param {sap.ui.table.extensions.Scrolling.EventListenerOptions} mOptions The options.
 		 * @param {jQuery.Event} oEvent The touch or pointer event object.
 		 */
 		onTouchStart: function(mOptions, oEvent) {
@@ -1851,7 +1851,7 @@ sap.ui.define([
 		/**
 		 * Handles touch move events.
 		 *
-		 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+		 * @param {sap.ui.table.extensions.Scrolling.EventListenerOptions} mOptions The options.
 		 * @param {jQuery.Event} oEvent The touch or pointer event object.
 		 */
 		onTouchMoveScrolling: function(mOptions, oEvent) {
@@ -1952,7 +1952,7 @@ sap.ui.define([
 		 *
 		 * @param {HTMLElement[]} aEventListenerTargets The elements to add listeners to.
 		 * @param {sap.ui.table.Table} oTable The table instance to be set as the context of the listeners.
-		 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+		 * @param {sap.ui.table.extensions.Scrolling.EventListenerOptions} mOptions The options.
 		 * @returns {{wheel: Function}} A key value map containing the event names as keys and listener functions as values.
 		 */
 		addMouseWheelEventListener: function(aEventListenerTargets, oTable, mOptions) {
@@ -1970,7 +1970,7 @@ sap.ui.define([
 		 *
 		 * @param {HTMLElement[]} aEventListenerTargets The elements to add listeners to.
 		 * @param {sap.ui.table.Table} oTable The table instance to be set as the context of the listeners.
-		 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+		 * @param {sap.ui.table.extensions.Scrolling.EventListenerOptions} mOptions The options.
 		 * @returns {{pointerdown: Function,
 		 *            pointermove: Function,
 		 *            touchstart: Function,
@@ -2157,8 +2157,8 @@ sap.ui.define([
 	 *   arithmetic. The maximum amount of scrollable rows is therefore limited by the precision of the floating-point arithmetic in JavaScript.
 	 *   The floating-point based algorithm seems to allow to scroll about 10.000.000.000.000.000 rows.
 	 *   At higher numbers, an important base value loses too much of its precision
-	 *   (see <code>TableScrollExtension#getVerticalScrollRangeRowFraction</code>). This number is by no means suitable for external communication as
-	 *   it is merely the result of minor manual tests.
+	 *   (see <code>sap.ui.table.extensions.Scrolling#getVerticalScrollRangeRowFraction</code>). This number is by no means suitable for external
+	 *   communication as it is merely the result of minor manual tests.
 	 *
 	 * - Support for variable row heights.
 	 *   Rows are allowed to be scrolled partially. To do this, one more row than the <code>visibleRowCount</code> is rendered, so there is an
@@ -2202,14 +2202,14 @@ sap.ui.define([
 	 * <b>Enables touch scrolling.</b>
 	 *
 	 * @class Extension for sap.ui.table.Table which handles scrolling.
-	 * @extends sap.ui.table.TableExtension
+	 * @extends sap.ui.table.extensions.ExtensionBase
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.TableScrollExtension
+	 * @alias sap.ui.table.extensions.Scrolling
 	 */
-	var TableScrollExtension = TableExtension.extend("sap.ui.table.TableScrollExtension", /** @lends sap.ui.table.TableScrollExtension.prototype */ {
+	var ScrollExtension = ExtensionBase.extend("sap.ui.table.extensions.Scrolling", /** @lends sap.ui.table.extensions.Scrolling.prototype */ {
 		/**
 		 * @override
 		 * @inheritDoc
@@ -2258,7 +2258,7 @@ sap.ui.define([
 			this._clearCache();
 			internal.destroy(oTable);
 
-			TableExtension.prototype.destroy.apply(this, arguments);
+			ExtensionBase.prototype.destroy.apply(this, arguments);
 		}
 	});
 
@@ -2273,7 +2273,7 @@ sap.ui.define([
 	 * @param {function} [fnBeforeScroll] Callback that is called synchronously before the property <code>firstVisibleRow</code> is set.
 	 * @returns {boolean} Returns <code>true</code>, if scrolling was actually performed.
 	 */
-	TableScrollExtension.prototype.scrollVertically = function(bDown, bPage, bIsKeyboardScroll, bAsync, fnBeforeScroll) {
+	ScrollExtension.prototype.scrollVertically = function(bDown, bPage, bIsKeyboardScroll, bAsync, fnBeforeScroll) {
 		var oTable = this.getTable();
 
 		if (!oTable) {
@@ -2333,7 +2333,7 @@ sap.ui.define([
 	 * @param {boolean} [bIsKeyboardScroll=false] Indicates whether scrolling is initiated by a keyboard action.
 	 * @returns {boolean} Returns <code>true</code>, if scrolling was actually performed.
 	 */
-	TableScrollExtension.prototype.scrollVerticallyMax = function(bDown, bIsKeyboardScroll) {
+	ScrollExtension.prototype.scrollVerticallyMax = function(bDown, bIsKeyboardScroll) {
 		var oTable = this.getTable();
 
 		if (!oTable) {
@@ -2373,7 +2373,7 @@ sap.ui.define([
 	 *
 	 * @returns {HTMLElement|null} Returns <code>null</code>, if the horizontal scrollbar does not exist.
 	 */
-	TableScrollExtension.prototype.getHorizontalScrollbar = function() {
+	ScrollExtension.prototype.getHorizontalScrollbar = function() {
 		var oTable = this.getTable();
 
 		if (oTable && !oTable._bInvalid && !internal(oTable).oHorizontalScrollbar) {
@@ -2394,7 +2394,7 @@ sap.ui.define([
 	 *                                               of the table is made invisible.
 	 * @returns {HTMLElement|null} Returns <code>null</code>, if the vertical scrollbar does not exist.
 	 */
-	TableScrollExtension.prototype.getVerticalScrollbar = function(bIgnoreDOMConnection) {
+	ScrollExtension.prototype.getVerticalScrollbar = function(bIgnoreDOMConnection) {
 		var oTable = this.getTable();
 		var bIsExternal = this.isVerticalScrollbarExternal();
 
@@ -2425,7 +2425,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} Returns <code>true</code>, if the horizontal scrollbar is visible.
 	 */
-	TableScrollExtension.prototype.isHorizontalScrollbarVisible = function() {
+	ScrollExtension.prototype.isHorizontalScrollbarVisible = function() {
 		var oHSb = this.getHorizontalScrollbar();
 		return oHSb != null && !oHSb.classList.contains("sapUiTableHidden");
 	};
@@ -2435,7 +2435,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} Returns <code>true</code>, if the vertical scrollbar is visible.
 	 */
-	TableScrollExtension.prototype.isVerticalScrollbarVisible = function() {
+	ScrollExtension.prototype.isVerticalScrollbarVisible = function() {
 		var oVSb = this.getVerticalScrollbar();
 		return oVSb != null && !oVSb.classList.contains("sapUiTableHidden");
 	};
@@ -2445,17 +2445,17 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} Whether the vertical scrollbar is external.
 	 */
-	TableScrollExtension.prototype.isVerticalScrollbarExternal = function() {
+	ScrollExtension.prototype.isVerticalScrollbarExternal = function() {
 		return internal(this.getTable()).bIsVerticalScrollbarExternal;
 	};
 
 	/**
 	 * Marks the vertical scrollbar as external. The reference to the external scrollbar is stored in the extension to be returned by
-	 * <code>TableScrollExtension#getVerticalScrollbar</code>
+	 * <code>sap.ui.table.extensions.Scrolling#getVerticalScrollbar</code>
 	 *
 	 * @param {HTMLElement} oScrollbarElement The reference to the external scrollbar element.
 	 */
-	TableScrollExtension.prototype.markVerticalScrollbarAsExternal = function(oScrollbarElement) {
+	ScrollExtension.prototype.markVerticalScrollbarAsExternal = function(oScrollbarElement) {
 		if (oScrollbarElement) {
 			internal(this.getTable()).bIsVerticalScrollbarExternal = true;
 			internal(this.getTable()).oExternalVerticalScrollbar = oScrollbarElement;
@@ -2467,7 +2467,7 @@ sap.ui.define([
 	 *
 	 * @param {Object} oTableSizes The object containing the table sizes.
 	 */
-	TableScrollExtension.prototype.updateHorizontalScrollbar = function(oTableSizes) {
+	ScrollExtension.prototype.updateHorizontalScrollbar = function(oTableSizes) {
 		var oTable = this.getTable();
 		var oHSb = this.getHorizontalScrollbar();
 
@@ -2530,7 +2530,7 @@ sap.ui.define([
 	/**
 	 * Updates the height of the vertical scrollbar.
 	 */
-	TableScrollExtension.prototype.updateVerticalScrollbarHeight = function() {
+	ScrollExtension.prototype.updateVerticalScrollbarHeight = function() {
 		var oTable = this.getTable();
 		var oVSb = this.getVerticalScrollbar();
 
@@ -2547,7 +2547,7 @@ sap.ui.define([
 	 *
 	 * @returns {int} The height of the scrollbar.
 	 */
-	TableScrollExtension.prototype.getVerticalScrollbarHeight = function() {
+	ScrollExtension.prototype.getVerticalScrollbarHeight = function() {
 		var oTable = this.getTable();
 
 		if (!oTable) {
@@ -2560,7 +2560,7 @@ sap.ui.define([
 	/**
 	 * Updates the position of the vertical scrollbar.
 	 */
-	TableScrollExtension.prototype.updateVerticalScrollbarPosition = function() {
+	ScrollExtension.prototype.updateVerticalScrollbarPosition = function() {
 		var oTable = this.getTable();
 		var oVSb = this.getVerticalScrollbar();
 
@@ -2591,7 +2591,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bExpectRowsUpdatedEvent Whether an update of the rows will happen.
 	 */
-	TableScrollExtension.prototype.updateVerticalScrollPosition = function(bExpectRowsUpdatedEvent) {
+	ScrollExtension.prototype.updateVerticalScrollPosition = function(bExpectRowsUpdatedEvent) {
 		var oTable = this.getTable();
 
 		if (!oTable) {
@@ -2604,21 +2604,21 @@ sap.ui.define([
 	/**
 	 * Adjusts the scrollbar and the scroll position to the total row count. Expects that rows will be updated.
 	 */
-	TableScrollExtension.prototype.adjustToTotalRowCount = function() {
+	ScrollExtension.prototype.adjustToTotalRowCount = function() {
 		VerticalScrollingHelper.adjustToTotalRowCount(this.getTable());
 	};
 
 	/**
 	 * Restores the vertical scroll position.
 	 */
-	TableScrollExtension.prototype.restoreVerticalScrollPosition = function() {
+	ScrollExtension.prototype.restoreVerticalScrollPosition = function() {
 		VerticalScrollingHelper.restoreScrollPosition(this.getTable());
 	};
 
 	/**
 	 * Updates the vertical scroll height. This is the content height of the vertical scrollbar.
 	 */
-	TableScrollExtension.prototype.updateVerticalScrollHeight = function() {
+	ScrollExtension.prototype.updateVerticalScrollHeight = function() {
 		var oVSb = this.getVerticalScrollbar();
 		var oVSbContent = oVSb ? oVSb.firstChild : null;
 
@@ -2636,7 +2636,7 @@ sap.ui.define([
 	 * @param {boolean} [bBoundless=false] If set to <code>true</code>, the exact scroll height is returned, ignoring any UI related boundaries.
 	 * @returns {int} The vertical scroll height.
 	 */
-	TableScrollExtension.prototype.getVerticalScrollHeight = function(bBoundless) {
+	ScrollExtension.prototype.getVerticalScrollHeight = function(bBoundless) {
 		var oTable = this.getTable();
 
 		if (!oTable) {
@@ -2668,7 +2668,7 @@ sap.ui.define([
 	/**
 	 * Updates the visibility of the vertical scrollbar.
 	 */
-	TableScrollExtension.prototype.updateVerticalScrollbarVisibility = function() {
+	ScrollExtension.prototype.updateVerticalScrollbarVisibility = function() {
 		var oTable = this.getTable();
 		var oTableElement = oTable ? oTable.getDomRef() : null;
 		var oVSb = this.getVerticalScrollbar();
@@ -2699,7 +2699,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} Returns <code>true</code>, if the vertical scrollbar is required.
 	 */
-	TableScrollExtension.prototype.isVerticalScrollbarRequired = function() {
+	ScrollExtension.prototype.isVerticalScrollbarRequired = function() {
 		var oTable = this.getTable();
 
 		if (!oTable) {
@@ -2714,16 +2714,16 @@ sap.ui.define([
 	 * Adds mouse wheel event listeners to HTMLElements. Can only be used if synchronization is enabled.
 	 *
 	 * @param {HTMLElement[]} aEventListenerTargets The elements to add listeners to.
-	 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+	 * @param {sap.ui.table.extensions.Scrolling.EventListenerOptions} mOptions The options.
 	 * @returns {{wheel: Function}|null} A key value map containing the event names as keys and listener functions as values.
 	 */
-	TableScrollExtension.prototype.registerForMouseWheel = function(aEventListenerTargets, mOptions) {
+	ScrollExtension.prototype.registerForMouseWheel = function(aEventListenerTargets, mOptions) {
 		var oTable = this.getTable();
 
-		if (TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension")) {
+		if (ExtensionBase.isEnrichedWith(oTable, "sap.ui.table.extensions.Synchronization")) {
 			return ScrollingHelper.addMouseWheelEventListener(aEventListenerTargets, oTable, mOptions);
 		} else {
-			Log.error("This method can only be used with synchronization enabled.", oTable, "TableScrollExtension#registerForMouseWheel");
+			Log.error("This method can only be used with synchronization enabled.", oTable, "sap.ui.table.extensions.Scrolling#registerForMouseWheel");
 			return null;
 		}
 	};
@@ -2732,19 +2732,19 @@ sap.ui.define([
 	 * Adds touch event listeners to HTMLElements. Can only be used if synchronization is enabled.
 	 *
 	 * @param {HTMLElement[]} aEventListenerTargets The elements to add listeners to.
-	 * @param {TableScrollExtension.EventListenerOptions} mOptions The options.
+	 * @param {sap.ui.table.extensions.Scrolling.EventListenerOptions} mOptions The options.
 	 * @returns {{pointerdown: Function,
 	 *            pointermove: Function,
 	 *            touchstart: Function,
 	 *            touchmove: Function}|null} A key value map containing the event names as keys and listener functions as values.
 	 */
-	TableScrollExtension.prototype.registerForTouch = function(aEventListenerTargets, mOptions) {
+	ScrollExtension.prototype.registerForTouch = function(aEventListenerTargets, mOptions) {
 		var oTable = this.getTable();
 
-		if (TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension")) {
+		if (ExtensionBase.isEnrichedWith(oTable, "sap.ui.table.extensions.Synchronization")) {
 			return ScrollingHelper.addTouchEventListener(aEventListenerTargets, oTable, mOptions);
 		} else {
-			Log.error("This method can only be used with synchronization enabled.", oTable, "TableScrollExtension#registerForTouch");
+			Log.error("This method can only be used with synchronization enabled.", oTable, "sap.ui.table.extensions.Scrolling#registerForTouch");
 			return null;
 		}
 	};
@@ -2754,15 +2754,15 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	TableScrollExtension.prototype._clearCache = function() {
+	ScrollExtension.prototype._clearCache = function() {
 		// Clear cached DOM references.
 		internal(this.getTable()).oVerticalScrollbar = null;
 		internal(this.getTable()).oHorizontalScrollbar = null;
 	};
 
-	TableScrollExtension.ScrollDirection = ScrollDirection;
+	ScrollExtension.ScrollDirection = ScrollDirection;
 
-	return TableScrollExtension;
+	return ScrollExtension;
 });
 
 /**
@@ -2770,6 +2770,6 @@ sap.ui.define([
  *
  * @name sap.ui.table.Table#_getScrollExtension
  * @function
- * @returns {sap.ui.table.TableScrollExtension} The scroll extension.
+ * @returns {sap.ui.table.extensions.Scrolling} The scroll extension.
  * @private
  */

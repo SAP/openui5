@@ -4972,12 +4972,12 @@ sap.ui.define([
 	QUnit.test("Applied extensions", function(assert) {
 		var aActualExtensions = [];
 		var aExpectedExtensions = [
-			"sap.ui.table.TablePointerExtension",
-			"sap.ui.table.TableScrollExtension",
-			"sap.ui.table.TableKeyboardExtension",
-			"sap.ui.table.TableAccRenderExtension",
-			"sap.ui.table.TableAccExtension",
-			"sap.ui.table.TableDragAndDropExtension"
+			"sap.ui.table.extensions.Pointer",
+			"sap.ui.table.extensions.Scrolling",
+			"sap.ui.table.extensions.Keyboard",
+			"sap.ui.table.extensions.AccessibilityRender",
+			"sap.ui.table.extensions.Accessibility",
+			"sap.ui.table.extensions.DragAndDrop"
 		];
 
 		oTable._aExtensions.forEach(function(oExtension) {
@@ -5009,26 +5009,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("Getter functions", function(assert) {
-		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for the PointerExtension exists");
-		assert.ok(typeof oTable._getScrollExtension === "function", "Getter for the ScrollExtension exists");
+		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for the pointer extension exists");
+		assert.ok(typeof oTable._getScrollExtension === "function", "Getter for the scroll extension exists");
 		assert.ok(typeof oTable._getKeyboardExtension === "function", "Getter for the KeyboardExtension exists");
-		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for the AccRenderExtension exists");
-		assert.ok(typeof oTable._getAccExtension === "function", "Getter for the AccExtension exists");
+		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for the accessibility render extension exists");
+		assert.ok(typeof oTable._getAccExtension === "function", "Getter for the accessibility extension exists");
 	});
 
-	QUnit.test("Add SyncExtension", function(assert) {
+	QUnit.test("Add Synchronization extension", function(assert) {
 		var done = assert.async();
 
 		oTable._enableSynchronization().then(function(oSyncInterface) {
 			var bSyncExtensionIsAdded = false;
 			oTable._aExtensions.forEach(function(oExtension) {
-				if (oExtension.getMetadata().getName() === "sap.ui.table.TableSyncExtension") {
+				if (oExtension.getMetadata().getName() === "sap.ui.table.extensions.Synchronization") {
 					bSyncExtensionIsAdded = true;
 				}
 			});
 
-			assert.ok(bSyncExtensionIsAdded, "The SyncExtension is added");
-			assert.ok(typeof oTable._getSyncExtension === "function", "Getter for the SyncExtension exists");
+			assert.ok(bSyncExtensionIsAdded, "The synchronization extension is added");
+			assert.ok(typeof oTable._getSyncExtension === "function", "Getter for the synchronization extension exists");
 			if (oTable._getSyncExtension) {
 				assert.equal(oSyncInterface, oTable._getSyncExtension().getInterface(), "The Promise resolved with the synchronization interface");
 			}

@@ -2,12 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/table/TableExtension",
+	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel"
-], function(TableQUnitUtils, TableExtension, TableUtils, library, Device, JSONModel) {
+], function(TableQUnitUtils, ExtensionBase, TableUtils, library, Device, JSONModel) {
 	"use strict";
 
 	QUnit.module("Initialization", {
@@ -28,8 +28,9 @@ sap.ui.define([
 		oTable._enableSynchronization().then(function(oSyncInterface) {
 			var oExtension = oTable._getSyncExtension();
 
-			assert.ok(oExtension != null, "SyncExtension available");
-			assert.ok(oSyncInterface != null && oExtension.getInterface() === oSyncInterface, "Promise resolved with the SyncExtension interface");
+			assert.ok(oExtension != null, "Synchronization extension available");
+			assert.ok(oSyncInterface != null && oExtension.getInterface() === oSyncInterface,
+				"Promise resolved with the synchronization extension interface");
 			assert.notStrictEqual(oSyncInterface, oExtension, "The interface is not the extension itself");
 
 			var iCount = 0;
@@ -43,10 +44,10 @@ sap.ui.define([
 			done();
 		});
 
-		// The SyncExtension should be loaded asynchronously on demand.
+		// The synchronization extension should be loaded asynchronously on demand.
 		assert.strictEqual(undefined, oTable._getSyncExtension, "Before initialization, the extension getter does not exist");
-		assert.ok(!TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension"),
-			"Before initialization, the table is not enriched with the SyncExtension");
+		assert.ok(!ExtensionBase.isEnrichedWith(oTable, "sap.ui.table.extensions.Synchronization"),
+			"Before initialization, the table is not enriched with the synchronization extension");
 	});
 
 	QUnit.test("_debug", function(assert) {
@@ -54,7 +55,7 @@ sap.ui.define([
 
 		return oTable._enableSynchronization().then(function() {
 			var oSyncExtension = oTable._getSyncExtension();
-			assert.strictEqual(oSyncExtension._debug, undefined, "The SyncExtension has no _debug method");
+			assert.strictEqual(oSyncExtension._debug, undefined, "The synchronization extension has no _debug method");
 		});
 	});
 

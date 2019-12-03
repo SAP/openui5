@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"./Table", "./TableExtension", "./utils/TableUtils", "./library", "sap/base/Log"
-], function(Table, TableExtension, TableUtils, library, Log) {
+	"./ExtensionBase", "../Table", "../utils/TableUtils", "../library", "sap/base/Log"
+], function(ExtensionBase, Table, TableUtils, library, Log) {
 	"use strict";
 
 	/**
@@ -123,15 +123,15 @@ sap.ui.define([
 	 * are insufficient.
 	 *
 	 * @class Extension for sap.ui.table.Table that allows synchronization with a table.
-	 * @extends sap.ui.table.TableExtension
+	 * @extends sap.ui.table.extensions.ExtensionBase
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.TableSyncExtension
+	 * @alias sap.ui.table.extensions.Synchronization
 	 */
-	var TableSyncExtension = TableExtension.extend("sap.ui.table.TableSyncExtension",
-		/** @lends sap.ui.table.TableSyncExtension.prototype */ {
+	var SyncExtension = ExtensionBase.extend("sap.ui.table.extensions.Synchronization",
+		/** @lends sap.ui.table.extensions.Synchronization.prototype */ {
 		/**
 		 * @override
 		 * @inheritDoc
@@ -166,7 +166,7 @@ sap.ui.define([
 			this._delegate = null;
 			this._oPublicInterface = null;
 
-			TableExtension.prototype.destroy.apply(this, arguments);
+			ExtensionBase.prototype.destroy.apply(this, arguments);
 		}
 	});
 
@@ -175,7 +175,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iCount The number of rendered rows.
 	 */
-	TableSyncExtension.prototype.syncRowCount = function(iCount) {
+	SyncExtension.prototype.syncRowCount = function(iCount) {
 		this.callInterfaceHook("rowCount", arguments);
 	};
 
@@ -185,7 +185,7 @@ sap.ui.define([
 	 * @param {int} iIndex The index of the row.
 	 * @param {boolean} bSelected Whether the row is selected.
 	 */
-	TableSyncExtension.prototype.syncRowSelection = function(iIndex, bSelected) {
+	SyncExtension.prototype.syncRowSelection = function(iIndex, bSelected) {
 		this.callInterfaceHook("rowSelection", arguments);
 	};
 
@@ -195,7 +195,7 @@ sap.ui.define([
 	 * @param {int} iIndex The index of the row.
 	 * @param {boolean} bHovered Whether the row is hovered.
 	 */
-	TableSyncExtension.prototype.syncRowHover = function(iIndex, bHovered) {
+	SyncExtension.prototype.syncRowHover = function(iIndex, bHovered) {
 		this.callInterfaceHook("rowHover", arguments);
 	};
 
@@ -205,7 +205,7 @@ sap.ui.define([
 	 * @param {number[]} aHeights The row heights.
 	 * @returns {any} Returns the return value of the hook method.
 	 */
-	TableSyncExtension.prototype.syncRowHeights = function(aHeights) {
+	SyncExtension.prototype.syncRowHeights = function(aHeights) {
 		return this.callInterfaceHook("rowHeights", arguments);
 	};
 
@@ -214,7 +214,7 @@ sap.ui.define([
 	 *
 	 * @param {int[]} iScrollPosition The inner vertical scroll position.
 	 */
-	TableSyncExtension.prototype.syncInnerVerticalScrollPosition = function(iScrollPosition) {
+	SyncExtension.prototype.syncInnerVerticalScrollPosition = function(iScrollPosition) {
 		this.callInterfaceHook("innerVerticalScrollPosition", arguments);
 	};
 
@@ -223,7 +223,7 @@ sap.ui.define([
 	 *
 	 * @param {{top:number, headerHeight:number, contentHeight:number}} mLayoutData The layout information.
 	 */
-	TableSyncExtension.prototype.syncLayout = function(mLayoutData) {
+	SyncExtension.prototype.syncLayout = function(mLayoutData) {
 		this.callInterfaceHook("layout", arguments);
 	};
 
@@ -235,10 +235,10 @@ sap.ui.define([
 	 * @returns {any} Returns the return value of the hook method.
 	 * @private
 	 */
-	TableSyncExtension.prototype.callInterfaceHook = function(sHook, oArguments) {
+	SyncExtension.prototype.callInterfaceHook = function(sHook, oArguments) {
 		var oCall = {};
 		oCall[sHook] = Array.prototype.slice.call(oArguments);
-		Log.debug("sap.ui.table.TableSyncExtension", "Sync " + sHook + "(" + oCall[sHook] + ")", this.getTable());
+		Log.debug("sap.ui.table.extensions.Synchronization", "Sync " + sHook + "(" + oCall[sHook] + ")", this.getTable());
 		return TableUtils.dynamicCall(this._oPublicInterface, oCall);
 	};
 
@@ -269,9 +269,9 @@ sap.ui.define([
 	 * Synchronization is only fully working if the table is rendered.
 	 * Row selection, row hover and row heights synchronization is only fully working if the rows aggregation of the table is bound.
 	 * There is no initial synchronization. Make sure to setup synchronization before rendering, or invalidate the table afterwards.
-	 * The <code>SyncExtension</code> has no mechanisms to avoid infinite synchronization loops. This means that the <code>SyncExtension</code> can
-	 * also call the corresponding hook if a synchronization method of this interface is used. It is the responsibility of the user of the
-	 * synchronization interface to avoid endless loops.
+	 * The <code>Synchronization</code> extension has no mechanisms to avoid infinite synchronization loops. This means that the
+	 * <code>Synchronization</code> extension can also call the corresponding hook if a synchronization method of this interface is used. It is the
+	 * responsibility of the user of the synchronization interface to avoid endless loops.
 	 * Registering HTMLElements for event handling by the table (e.g. via <code>registerVerticalScrolling</code>) can cause memory leaks. To avoid
 	 * this, make sure to avoid registering the same elements multiple times.
 	 *
@@ -290,11 +290,11 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	TableSyncExtension.prototype.getInterface = function() {
+	SyncExtension.prototype.getInterface = function() {
 		return this._oPublicInterface;
 	};
 
-	return TableSyncExtension;
+	return SyncExtension;
 });
 
 /**
@@ -302,6 +302,6 @@ sap.ui.define([
  *
  * @name sap.ui.table.Table#_getSyncExtension
  * @function
- * @returns {sap.ui.table.TableSyncExtension} The synchronization extension.
+ * @returns {sap.ui.table.extensions.Synchronization} The synchronization extension.
  * @private
  */

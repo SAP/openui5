@@ -2,20 +2,20 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableKeyboardExtension.
+// Provides helper sap.ui.table.extensions.Keyboard.
 sap.ui.define([
-	"./TableExtension",
+	"./ExtensionBase",
+	"./KeyboardDelegate",
+	"../utils/TableUtils",
 	"sap/ui/core/delegate/ItemNavigation",
-	"./utils/TableUtils",
-	"./TableKeyboardDelegate2",
 	"sap/ui/Device",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	TableExtension,
-	ItemNavigation,
+	ExtensionBase,
+	KeyboardDelegate,
 	TableUtils,
-	TableKeyboardDelegate,
+	ItemNavigation,
 	Device,
 	containsOrEquals,
 	jQuery
@@ -282,15 +282,15 @@ sap.ui.define([
 	 * strictly prohibited!</b>
 	 *
 	 * @class Extension for sap.ui.table.Table which handles keyboard related things.
-	 * @extends sap.ui.table.TableExtension
+	 * @extends sap.ui.table.extensions.ExtensionBase
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.TableKeyboardExtension
+	 * @alias sap.ui.table.extensions.Keyboard
 	 */
-	var TableKeyboardExtension = TableExtension.extend("sap.ui.table.TableKeyboardExtension",
-		/** @lends sap.ui.table.TableKeyboardExtension.prototype */ {
+	var KeyboardExtension = ExtensionBase.extend("sap.ui.table.extensions.Keyboard",
+		/** @lends sap.ui.table.extensions.Keyboard.prototype */ {
 		/**
 		 * @override
 		 * @inheritDoc
@@ -300,7 +300,7 @@ sap.ui.define([
 			this._itemNavigation = null;
 			this._itemNavigationInvalidated = false; // determines whether item navigation should be reapplied from scratch
 			this._itemNavigationSuspended = false; // switch off event forwarding to item navigation
-			this._delegate = new TableKeyboardDelegate(sTableType);
+			this._delegate = new KeyboardDelegate(sTableType);
 			this._actionMode = false;
 
 			// Register the delegates in correct order
@@ -356,7 +356,7 @@ sap.ui.define([
 				this._delegate = null;
 			}
 
-			TableExtension.prototype.destroy.apply(this, arguments);
+			ExtensionBase.prototype.destroy.apply(this, arguments);
 		}
 	});
 
@@ -365,7 +365,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	TableKeyboardExtension.prototype.initItemNavigation = function() {
+	KeyboardExtension.prototype.initItemNavigation = function() {
 		if (ExtensionHelper.isItemNavigationInvalid(this)) {
 			ExtensionHelper._initItemNavigation(this);
 		}
@@ -376,7 +376,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	TableKeyboardExtension.prototype.invalidateItemNavigation = function() {
+	KeyboardExtension.prototype.invalidateItemNavigation = function() {
 		this._itemNavigationInvalidated = true;
 	};
 
@@ -395,7 +395,7 @@ sap.ui.define([
 	 *     mode.
 	 * @public (Part of the API for Table control only!)
 	 */
-	TableKeyboardExtension.prototype.setActionMode = function(bEnter) {
+	KeyboardExtension.prototype.setActionMode = function(bEnter) {
 		if (!this._delegate) {
 			return;
 		}
@@ -413,7 +413,7 @@ sap.ui.define([
 	 * @returns {boolean} Returns <code>true</code>, if the table is in action mode.
 	 * @public
 	 */
-	TableKeyboardExtension.prototype.isInActionMode = function() {
+	KeyboardExtension.prototype.isInActionMode = function() {
 		return this._actionMode;
 	};
 
@@ -425,7 +425,7 @@ sap.ui.define([
 	 * @param {HTMLElement} oPreviousFocusRef The previously focused element.
 	 * @public
 	 */
-	TableKeyboardExtension.prototype.updateNoDataAndOverlayFocus = function(oPreviousFocusRef) {
+	KeyboardExtension.prototype.updateNoDataAndOverlayFocus = function(oPreviousFocusRef) {
 		var oTable = this.getTable();
 		if (!oTable || !oTable.getDomRef()) {
 			return;
@@ -453,7 +453,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	TableKeyboardExtension.prototype._suspendItemNavigation = function() {
+	KeyboardExtension.prototype._suspendItemNavigation = function() {
 		this._itemNavigationSuspended = true;
 	};
 
@@ -462,7 +462,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	TableKeyboardExtension.prototype._resumeItemNavigation = function() {
+	KeyboardExtension.prototype._resumeItemNavigation = function() {
 		this._itemNavigationSuspended = false;
 	};
 
@@ -472,7 +472,7 @@ sap.ui.define([
 	 * @returns {boolean} Returns <code>true</code>, if the item navigation is suspended.
 	 * @protected
 	 */
-	TableKeyboardExtension.prototype._isItemNavigationSuspended = function() {
+	KeyboardExtension.prototype._isItemNavigationSuspended = function() {
 		return this._itemNavigationSuspended;
 	};
 
@@ -482,7 +482,7 @@ sap.ui.define([
 	 * @returns {sap.ui.table.utils.TableUtils.FocusedItemInfo} The cell info of the last focused cell.
 	 * @protected
 	 */
-	TableKeyboardExtension.prototype._getLastFocusedCellInfo = function() {
+	KeyboardExtension.prototype._getLastFocusedCellInfo = function() {
 		var iHeader = TableUtils.getHeaderRowCount(this.getTable());
 		if (!this._oLastFocusedCellInfo || this._oLastFocusedCellInfo.header != iHeader) {
 			var oInfo = TableUtils.getFocusedItemInfo(this.getTable());
@@ -506,7 +506,7 @@ sap.ui.define([
 	 * @param {jQuery|HTMLElement} oElement The element to be focused.
 	 * @protected
 	 */
-	TableKeyboardExtension.prototype._setSilentFocus = function(oElement) {
+	KeyboardExtension.prototype._setSilentFocus = function(oElement) {
 		this._bIgnoreFocusIn = true;
 		this._setFocus(oElement);
 		this._bIgnoreFocusIn = false;
@@ -518,7 +518,7 @@ sap.ui.define([
 	 * @param {jQuery|HTMLElement} oElement The element to be focused.
 	 * @protected
 	 */
-	TableKeyboardExtension.prototype._setFocus = function(oElement) {
+	KeyboardExtension.prototype._setFocus = function(oElement) {
 		if (!oElement) {
 			return;
 		}
@@ -549,14 +549,14 @@ sap.ui.define([
 	/*
 	 * Returns the type of the related table.
 	 *
-	 * @returns {sap.ui.table.TableExtension.TABLETYPES} The type of the table.
+	 * @returns {sap.ui.table.extensions.ExtensionBase.TABLETYPES} The type of the table.
 	 * @protected
 	 */
-	TableKeyboardExtension.prototype._getTableType = function() {
+	KeyboardExtension.prototype._getTableType = function() {
 		return this._type;
 	};
 
-	return TableKeyboardExtension;
+	return KeyboardExtension;
 });
 
 /**
@@ -564,6 +564,6 @@ sap.ui.define([
  *
  * @name sap.ui.table.Table#_getKeyboardExtension
  * @function
- * @returns {sap.ui.table.TableKeyboardExtension} The keyboard extension.
+ * @returns {sap.ui.table.extensions.Keyboard} The keyboard extension.
  * @private
  */

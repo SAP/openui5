@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableDragAndDropExtension.
+// Provides helper sap.ui.table.extensions.DragAndDrop.
 sap.ui.define([
-	"./TableExtension", "./utils/TableUtils", "sap/ui/core/library"
-], function(TableExtension, TableUtils, CoreLibrary) {
+	"./ExtensionBase", "../utils/TableUtils", "sap/ui/core/library"
+], function(ExtensionBase, TableUtils, CoreLibrary) {
 	"use strict";
 
 	var SESSION_DATA_KEY_NAMESPACE = "sap.ui.table";
@@ -253,15 +253,15 @@ sap.ui.define([
 	 *
 	 * @class Extension for sap.ui.table.Table which handles drag and drop.
 	 *
-	 * @extends sap.ui.table.TableExtension
+	 * @extends sap.ui.table.extensions.ExtensionBase
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.TableDragAndDropExtension
+	 * @alias sap.ui.table.extensions.DragAndDrop
 	 */
-	var TableDragAndDropExtension = TableExtension.extend("sap.ui.table.TableDragAndDropExtension",
-		/** @lends sap.ui.table.TableDragAndDropExtension.prototype */ {
+	var DragAndDropExtension = ExtensionBase.extend("sap.ui.table.extensions.DragAndDrop",
+		/** @lends sap.ui.table.extensions.DragAndDrop.prototype */ {
 		/**
 		 * @override
 		 * @inheritDoc
@@ -295,11 +295,11 @@ sap.ui.define([
 			}
 
 			this._oDelegate = null;
-			TableExtension.prototype.destroy.apply(this, arguments);
+			ExtensionBase.prototype.destroy.apply(this, arguments);
 		}
 	});
 
-	return TableDragAndDropExtension;
+	return DragAndDropExtension;
 
 	});
 
@@ -308,6 +308,6 @@ sap.ui.define([
  *
  * @name sap.ui.table.Table#_getDragAndDropExtension
  * @function
- * @returns {sap.ui.table.TableDragAndDropExtension} The drag & drop extension.
+ * @returns {sap.ui.table.extensions.DragAndDrop} The drag & drop extension.
  * @private
  */

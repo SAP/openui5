@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/table/TableKeyboardDelegate2",
+	"sap/ui/table/extensions/KeyboardDelegate",
 	"sap/ui/Device",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel"
-], function(TableQUnitUtils, qutils, TableUtils, TableKeyboardDelegate2, Device, MenuM, MenuItemM, F6Navigation, tableLibrary, Table, Column,
+], function(TableQUnitUtils, qutils, TableUtils, KeyboardDelegate, Device, MenuM, MenuItemM, F6Navigation, tableLibrary, Table, Column,
 			KeyCodes, JSONModel) {
 	"use strict";
 
@@ -211,11 +211,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Delegate Type", function(assert) {
-		assert.ok(checkDelegateType("sap.ui.table.TableKeyboardDelegate2"), "Correct delegate");
+		assert.ok(checkDelegateType("sap.ui.table.extensions.KeyboardDelegate"), "Correct delegate");
 	});
 
 	//***************************************************************************
-	// Tests for sap.ui.table.TableKeyboardDelegate2 (Helpers)
+	// Tests for helpers
 	//***************************************************************************
 
 	QUnit.module("Helper functions", {
@@ -247,74 +247,74 @@ sap.ui.define([
 
 		Device.os.macintosh = false;
 
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A), Key.A),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(Key.A), Key.A),
 			"Pressed: A");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, true), Key.A, CTRL),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(Key.A, true), Key.A, CTRL),
 			"Pressed: Ctrl+A");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, true, false, true), Key.A, CTRL + SHIFT),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(Key.A, true, false, true), Key.A, CTRL + SHIFT),
 			"Pressed: Ctrl+Shift+A");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(null, true), null, CTRL),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(null, true), null, CTRL),
 			"Pressed: Ctrl");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, true), null, CTRL),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(Key.A, true), null, CTRL),
 			"Pressed: Ctrl+A (Checked only for Ctrl)");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(null, false, false, true, true), null, SHIFT + ALT),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(null, false, false, true, true), null, SHIFT + ALT),
 			"Pressed: Shift+Alt");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(43), Key.PLUS),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(43), Key.PLUS),
 			"Pressed: Plus");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(43, true), Key.PLUS, CTRL),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(43, true), Key.PLUS, CTRL),
 			"Pressed: Ctrl+Plus");
 
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(Key.Arrow.DOWN), Key.A),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(Key.Arrow.DOWN), Key.A),
 			"Not Pressed: A (pressed ArrowDown)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, true, false, true), Key.A, CTRL),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(Key.A, true, false, true), Key.A, CTRL),
 			"Not Pressed: Ctrl+A (pressed Ctrl+Shift+A)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, false, true), Key.A, CTRL),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(Key.A, false, true), Key.A, CTRL),
 			"Not Pressed: Ctrl+A (pressed Meta+A)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, true), Key.A, CTRL + SHIFT),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(Key.A, true), Key.A, CTRL + SHIFT),
 			"Not Pressed: Ctrl+Shift+A (pressed Ctrl+A)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(null, false, false, true), null, CTRL),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(null, false, false, true), null, CTRL),
 			"Not Pressed: Ctrl (pressed Shift)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(Key.Arrow.DOWN), null, SHIFT + ALT),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(Key.Arrow.DOWN), null, SHIFT + ALT),
 			"Not Pressed: Shift+Alt (pressed ArrowDown)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(45), Key.PLUS),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(45), Key.PLUS),
 			"Not Pressed: Plus (pressed Minus)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(43, false, true), Key.PLUS, CTRL),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(43, false, true), Key.PLUS, CTRL),
 			"Not Pressed: Ctrl+Plus (pressed Meta+Plus)");
 
 		Device.os.macintosh = true;
 
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A), Key.A),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(Key.A), Key.A),
 			"Pressed: A");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, false, true), Key.A, CTRL),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(Key.A, false, true), Key.A, CTRL),
 			"Pressed: Meta+A");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, false, true, true), Key.A, CTRL + SHIFT),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(Key.A, false, true, true), Key.A, CTRL + SHIFT),
 			"Pressed: Meta+Shift+A");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(null, false, true), null, CTRL),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(null, false, true), null, CTRL),
 			"Pressed: Meta");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, false, true), null, CTRL),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(Key.A, false, true), null, CTRL),
 			"Pressed: Meta+A (Checked only for Meta)");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(null, false, false, true, true), null, SHIFT + ALT),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(null, false, false, true, true), null, SHIFT + ALT),
 			"Pressed: Shift+Alt");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(43), Key.PLUS),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(43), Key.PLUS),
 			"Pressed: Plus");
-		assert.ok(TableKeyboardDelegate2._isKeyCombination(getEvent(43, false, true), Key.PLUS, CTRL),
+		assert.ok(KeyboardDelegate._isKeyCombination(getEvent(43, false, true), Key.PLUS, CTRL),
 			"Pressed: Meta+Plus");
 
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(Key.Arrow.DOWN), Key.A),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(Key.Arrow.DOWN), Key.A),
 			"Not Pressed: A (pressed ArrowDown)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, false, true, true), Key.A, CTRL),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(Key.A, false, true, true), Key.A, CTRL),
 			"Not Pressed: Meta+A (pressed Meta+Shift+A)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, true), Key.A, CTRL),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(Key.A, true), Key.A, CTRL),
 			"Not Pressed: Meta+A (pressed Ctrl+A)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(Key.A, false, true), Key.A, CTRL + SHIFT),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(Key.A, false, true), Key.A, CTRL + SHIFT),
 			"Not Pressed: Meta+Shift+A (pressed Meta+A)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(null, false, false, true), null, CTRL),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(null, false, false, true), null, CTRL),
 			"Not Pressed: Meta (pressed Shift)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(Key.Arrow.DOWN), null, SHIFT + ALT),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(Key.Arrow.DOWN), null, SHIFT + ALT),
 			"Not Pressed: Shift+Alt (pressed ArrowDown)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(45), Key.PLUS),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(45), Key.PLUS),
 			"Not Pressed: Plus (pressed Minus)");
-		assert.ok(!TableKeyboardDelegate2._isKeyCombination(getEvent(43, true), Key.PLUS, CTRL),
+		assert.ok(!KeyboardDelegate._isKeyCombination(getEvent(43, true), Key.PLUS, CTRL),
 			"Not Pressed: Meta+Plus (pressed Ctrl+Plus)");
 
 		Device.os.macintosh = bIsMacintosh;
@@ -323,28 +323,28 @@ sap.ui.define([
 	QUnit.test("_isElementGroupToggler", function(assert) {
 		initRowActions(oTable, 2, 2);
 
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getCell(0, 0)[0]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, getCell(0, 0)[0]),
 			"Returned False: Pressing a key on a normal data cell can not toggle a group");
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, TableUtils.getInteractiveElements(getCell(0, 0))[0]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, TableUtils.getInteractiveElements(getCell(0, 0))[0]),
 			"Returned False: Pressing a key on an interactive element inside a normal data cell can not toggle a group");
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowHeader(0)[0]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, getRowHeader(0)[0]),
 			"Returned False: Pressing a key on a normal row header cell can not toggle a group");
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowAction(0)[0]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, getRowAction(0)[0]),
 			"Returned False: Pressing a key on a normal row action cell can not toggle a group");
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getColumnHeader(0)[0]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, getColumnHeader(0)[0]),
 			"Returned False: Pressing a key on a column header cell can not toggle a group");
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTable, getSelectAll()[0]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, getSelectAll()[0]),
 			"Returned False: Pressing a key on the SelectAll cell can not toggle a group");
 
 		oTable.setEnableGrouping(true);
 		oTable.setGroupBy(oTable.getColumns()[0]);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTable, getCell(0, 1)[0]),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTable, getCell(0, 1)[0]),
 			"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowHeader(0)[0]),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTable, getRowHeader(0)[0]),
 			"Returned True: Pressing a key on a row header cell in a grouping row can toggle a group");
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTable, getRowAction(0)[0]),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTable, getRowAction(0)[0]),
 			"Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
 	});
 
@@ -357,51 +357,51 @@ sap.ui.define([
 		var sTreeIconLeafClass = "sapUiTableTreeIconLeaf";
 
 		// Closed node
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, oTreeIconCell),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, oTreeIconCell),
 			"Returned True: Pressing a key on a tree icon cell of a closed node can toggle a group");
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
 			"Returned True: Pressing a key on a close node element can toggle a group");
 
 		// Open node
 		oTreeIconCell.classList.remove(sTreeIconClosedClass);
 		oTreeIconCell.classList.add(sTreeIconOpenClass);
 
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, oTreeIconCell),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, oTreeIconCell),
 			"Returned True: Pressing a key on a tree icon cell of a open node can toggle a group");
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
 			"Returned True: Pressing a key on a open node element can toggle a group");
 
 		// Leaf node
 		oTreeIconCell.classList.remove(sTreeIconOpenClass);
 		oTreeIconCell.classList.add(sTreeIconLeafClass);
 
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, oTreeIconCell),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, oTreeIconCell),
 			"Returned True: Pressing a key on a tree icon cell of a leaf node can toggle a group");
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
 			"Returned True: Pressing a key on a leaf node element can toggle a group");
 
 		// Other elements
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[1]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[1]),
 			"Returned False: Pressing a key on an interactive element inside a cell can not toggle a group");
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]),
 			"Returned False: Pressing a key on a normal row header cell can not toggle a group");
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]),
 			"Returned False: Pressing a key on a normal row action cell can not toggle a group");
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getColumnHeader(0, null, null, oTreeTable)[0]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTreeTable, getColumnHeader(0, null, null, oTreeTable)[0]),
 			"Returned False: Pressing a key on a column header cell can not toggle a group");
-		assert.ok(!TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getSelectAll(null, null, oTreeTable)[0]),
+		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTreeTable, getSelectAll(null, null, oTreeTable)[0]),
 			"Returned False: Pressing a key on the SelectAll cell can not toggle a group");
 
 		oTreeTable.setUseGroupMode(true);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getCell(0, 0, null, null, oTreeTable)[0]),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, getCell(0, 0, null, null, oTreeTable)[0]),
 			"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getCell(0, 1, null, null, oTreeTable)[0]),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, getCell(0, 1, null, null, oTreeTable)[0]),
 			"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]),
 			"Returned True: Pressing a key on a row header cell in a grouping row can toggle a group");
-		assert.ok(TableKeyboardDelegate2._isElementGroupToggler(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]),
+		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]),
 			"Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
 	});
 
@@ -426,7 +426,7 @@ sap.ui.define([
 		function testInputElement(mInputType, bSilentFocus) {
 			oElement = getInputElement(mInputType.columnIndex);
 
-			TableKeyboardDelegate2._focusElement(oTable, oElement, bSilentFocus);
+			KeyboardDelegate._focusElement(oTable, oElement, bSilentFocus);
 
 			checkFocus(oElement, assert);
 
@@ -464,19 +464,19 @@ sap.ui.define([
 
 		oElement = getInputElement(mInputTypes.text.columnIndex);
 		oPreviousElement = oElement;
-		TableKeyboardDelegate2._focusElement(oTable, oElement);
+		KeyboardDelegate._focusElement(oTable, oElement);
 		checkFocus(oElement, assert);
 		assert.ok(oSetSilentFocusSpy.notCalled, "The element was not focused silently");
 		assertTextSelection(assert, oElement, true, "The text is selected");
 
 		oElement = oTable.getRows()[0].getCells()[0].getDomRef();
-		TableKeyboardDelegate2._focusElement(oTable, oElement);
+		KeyboardDelegate._focusElement(oTable, oElement);
 		checkFocus(oElement, assert);
 		assert.ok(oSetSilentFocusSpy.notCalled, "The element was not focused silently");
 		assertTextSelection(assert, oPreviousElement, false, "The text of the previously focused element is not selected");
 
 		oElement = oTable.getRows()[0].getCells()[0].getDomRef();
-		TableKeyboardDelegate2._focusElement(oTable, oElement, true);
+		KeyboardDelegate._focusElement(oTable, oElement, true);
 		checkFocus(oElement, assert);
 		assert.ok(oSetSilentFocusSpy.calledOnce, "The element was focused silently");
 
@@ -484,7 +484,7 @@ sap.ui.define([
 	});
 
 	//***************************************************************************
-	// Tests for sap.ui.table.TableKeyboardDelegate2 (Interactive Element Helpers)
+	// Tests for interactive element helpers
 	//***************************************************************************
 
 	QUnit.module("Interactive elements", {
@@ -513,45 +513,45 @@ sap.ui.define([
 		var $TreeIconLeaf = jQuery("<div class=\"sapUiTableTreeIcon sapUiTableTreeIconLeaf\"></div>");
 		var $RowActionIcon = getRowAction(0).find(".sapUiTableActionIcon");
 
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusAndNoTabSpan),
+		assert.ok(!KeyboardDelegate._isElementInteractive($NoFocusAndNoTabSpan),
 			"(jQuery) Not focusable and not tabbable span element is not interactive");
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive($FocusAndNoTabSpan),
+		assert.ok(!KeyboardDelegate._isElementInteractive($FocusAndNoTabSpan),
 			"(jQuery) Focusable and not tabbable span element is not interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($FocusAndNoTabInput),
+		assert.ok(KeyboardDelegate._isElementInteractive($FocusAndNoTabInput),
 			"(jQuery) Focusable and not tabbable input element is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($FocusAndTabInput),
+		assert.ok(KeyboardDelegate._isElementInteractive($FocusAndTabInput),
 			"(jQuery) Focusable and tabbable input element is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconOpen),
+		assert.ok(KeyboardDelegate._isElementInteractive($TreeIconOpen),
 			"(jQuery) TreeIcon of open node is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconClosed),
+		assert.ok(KeyboardDelegate._isElementInteractive($TreeIconClosed),
 			"(jQuery) TreeIcon of closed node is interactive");
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive($TreeIconLeaf),
+		assert.ok(!KeyboardDelegate._isElementInteractive($TreeIconLeaf),
 			"(jQuery) TreeIcon of leaf node is not interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($RowActionIcon),
+		assert.ok(KeyboardDelegate._isElementInteractive($RowActionIcon),
 			"(jQuery) ActionItem is interactive");
 
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusAndNoTabSpan[0]),
+		assert.ok(!KeyboardDelegate._isElementInteractive($NoFocusAndNoTabSpan[0]),
 			"(HTMLElement) Not focusable and not tabbable span element is not interactive");
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive($FocusAndNoTabSpan)[0],
+		assert.ok(!KeyboardDelegate._isElementInteractive($FocusAndNoTabSpan)[0],
 			"(HTMLElement) Focusable and not tabbable span element is not interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($FocusAndNoTabInput[0]),
+		assert.ok(KeyboardDelegate._isElementInteractive($FocusAndNoTabInput[0]),
 			"(HTMLElement) Focusable and not tabbable input element is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($FocusAndTabInput[0]),
+		assert.ok(KeyboardDelegate._isElementInteractive($FocusAndTabInput[0]),
 			"(HTMLElement) Focusable and tabbable input element is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconOpen[0]),
+		assert.ok(KeyboardDelegate._isElementInteractive($TreeIconOpen[0]),
 			"(HTMLElement) TreeIcon of open node is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconClosed[0]),
+		assert.ok(KeyboardDelegate._isElementInteractive($TreeIconClosed[0]),
 			"(HTMLElement) TreeIcon of closed node is interactive");
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive($TreeIconLeaf[0]),
+		assert.ok(!KeyboardDelegate._isElementInteractive($TreeIconLeaf[0]),
 			"(HTMLElement) TreeIcon of leaf node is not interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($RowActionIcon[0]),
+		assert.ok(KeyboardDelegate._isElementInteractive($RowActionIcon[0]),
 			"(HTMLElement) ActionItem is interactive");
 
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive(), "No parameter passed: False was returned");
+		assert.ok(!KeyboardDelegate._isElementInteractive(), "No parameter passed: False was returned");
 	});
 
 	QUnit.test("_getFirstInteractiveElement", function(assert) {
-		var $FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
+		var $FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($FirstInteractiveElement.length, 1, "First row: One element was returned");
 		assert.strictEqual($FirstInteractiveElement[0].value, "Focus&TabInput1", "First row: The correct element was returned");
 
@@ -560,160 +560,160 @@ sap.ui.define([
 		});
 		sap.ui.getCore().applyChanges();
 
-		$FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
+		$FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($FirstInteractiveElement.length, 1, "First row: One element was returned");
 		assert.strictEqual($FirstInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0],
 			"First row: The correct element was returned");
 
 		initRowActions(oTable, 1, 0);
-		$FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
+		$FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($FirstInteractiveElement, null, "Row has no interactive elements: Null was returned");
 
-		$FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement();
+		$FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement();
 		assert.strictEqual($FirstInteractiveElement, null, "No parameter passed: Null was returned");
 	});
 
 	QUnit.test("_getLastInteractiveElement", function(assert) {
-		var $LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
+		var $LastInteractiveElement = KeyboardDelegate._getLastInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($LastInteractiveElement.length, 1, "First row with row actions: One element was returned");
 		assert.strictEqual($LastInteractiveElement.get(-1), getRowAction(0).find(".sapUiTableActionIcon:visible").get(-1),
 			"First row with row actions: The correct element was returned");
 
 		initRowActions(oTable, 2, 0);
-		$LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
+		$LastInteractiveElement = KeyboardDelegate._getLastInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($LastInteractiveElement.length, 1, "First row without row actions: One element was returned");
 		assert.strictEqual($LastInteractiveElement[0].value, "Focus&NoTabInput1", "First row without row actions: The correct element was returned");
 
-		$LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement();
+		$LastInteractiveElement = KeyboardDelegate._getLastInteractiveElement();
 		assert.strictEqual($LastInteractiveElement, null, "No parameter passed: Null was returned");
 	});
 
 	QUnit.test("_getPreviousInteractiveElement", function(assert) {
-		var $LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
+		var $LastInteractiveElement = KeyboardDelegate._getLastInteractiveElement(oTable.getRows()[0]);
 
-		var $PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $LastInteractiveElement);
+		var $PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, $LastInteractiveElement);
 		assert.strictEqual($PreviousInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($PreviousInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0],
 			"The correct previous element was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement);
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement);
 		assert.strictEqual($PreviousInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($PreviousInteractiveElement[0].value, "Focus&NoTabInput1", "The correct previous element was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement);
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement);
 		assert.strictEqual($PreviousInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($PreviousInteractiveElement[0].value, "Focus&TabInput1", "The correct previous element was returned");
 
-		var $FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $FirstInteractiveElement);
+		var $FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[0]);
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, $FirstInteractiveElement);
 		assert.strictEqual($PreviousInteractiveElement, null,
 			"(jQuery) Getting the previous interactive element of the first interactive element: Null was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $LastInteractiveElement[0]);
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, $LastInteractiveElement[0]);
 		assert.strictEqual($PreviousInteractiveElement.length, 1,
 			"(HTMLElement) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($PreviousInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0],
 			"The correct previous element was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement[0]);
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement[0]);
 		assert.strictEqual($PreviousInteractiveElement.length, 1,
 			"(HTMLElement) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($PreviousInteractiveElement[0].value, "Focus&NoTabInput1", "The correct previous element was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement[0]);
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement[0]);
 		assert.strictEqual($PreviousInteractiveElement.length, 1,
 			"(HTMLElement) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($PreviousInteractiveElement[0].value, "Focus&TabInput1", "The correct previous element was returned");
 
-		$FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $FirstInteractiveElement[0]);
+		$FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[0]);
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, $FirstInteractiveElement[0]);
 		assert.strictEqual($PreviousInteractiveElement, null,
 			"(HTMLElement) Getting the previous interactive element of the first interactive element: Null was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getCell(0, 0));
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, getCell(0, 0));
 		assert.strictEqual($PreviousInteractiveElement, null, "Data cell was passed: Null was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getColumnHeader(0));
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, getColumnHeader(0));
 		assert.strictEqual($PreviousInteractiveElement, null, "Column header cell was passed: Null was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getRowHeader(0));
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, getRowHeader(0));
 		assert.strictEqual($PreviousInteractiveElement, null, "Row header cell was passed: Null was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getSelectAll(0));
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable, getSelectAll(0));
 		assert.strictEqual($PreviousInteractiveElement, null, "SelectAll cell was passed: Null was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable);
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement(oTable);
 		assert.strictEqual($PreviousInteractiveElement, null, "No interactive element was passed: Null was returned");
 
-		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement();
+		$PreviousInteractiveElement = KeyboardDelegate._getPreviousInteractiveElement();
 		assert.strictEqual($PreviousInteractiveElement, null, "No parameter was passed: Null was returned");
 	});
 
 	QUnit.test("_getNextInteractiveElement", function(assert) {
-		var $FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
+		var $FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[0]);
 
-		var $NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $FirstInteractiveElement);
+		var $NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, $FirstInteractiveElement);
 		assert.strictEqual($NextInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($NextInteractiveElement[0].value, "Focus&NoTabInput1", "The correct next element was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement);
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, $NextInteractiveElement);
 		assert.strictEqual($NextInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($NextInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0],
 			"The correct next element was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement);
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, $NextInteractiveElement);
 		assert.strictEqual($NextInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($NextInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[1],
 			"The correct next element was returned");
 
-		var $LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $LastInteractiveElement);
+		var $LastInteractiveElement = KeyboardDelegate._getLastInteractiveElement(oTable.getRows()[0]);
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, $LastInteractiveElement);
 		assert.strictEqual($NextInteractiveElement, null,
 			"(jQuery) Getting the next interactive element of the last interactive element: Null was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $FirstInteractiveElement[0]);
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, $FirstInteractiveElement[0]);
 		assert.strictEqual($NextInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($NextInteractiveElement[0].value, "Focus&NoTabInput1", "The correct next element was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement[0]);
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, $NextInteractiveElement[0]);
 		assert.strictEqual($NextInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($NextInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0],
 			"The correct next element was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement[0]);
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, $NextInteractiveElement[0]);
 		assert.strictEqual($NextInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
 		assert.strictEqual($NextInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[1],
 			"The correct next element was returned");
 
-		$LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $LastInteractiveElement[0]);
+		$LastInteractiveElement = KeyboardDelegate._getLastInteractiveElement(oTable.getRows()[0]);
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, $LastInteractiveElement[0]);
 		assert.strictEqual($NextInteractiveElement, null,
 			"(HTMLElement) Getting the next interactive element of the last interactive element: Null was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, getCell(0, 0));
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, getCell(0, 0));
 		assert.strictEqual($NextInteractiveElement, null, "Data cell was passed: Null was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, getColumnHeader(0));
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, getColumnHeader(0));
 		assert.strictEqual($NextInteractiveElement, null, "Column header cell was passed: Null was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, getRowHeader(0));
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, getRowHeader(0));
 		assert.strictEqual($NextInteractiveElement, null, "Row header cell was passed: Null was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, getSelectAll(0));
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable, getSelectAll(0));
 		assert.strictEqual($NextInteractiveElement, null, "SelectAll cell was passed: Null was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable);
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement(oTable);
 		assert.strictEqual($NextInteractiveElement, null, "No interactive element was passed: Null was returned");
 
-		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement();
+		$NextInteractiveElement = KeyboardDelegate._getNextInteractiveElement();
 		assert.strictEqual($NextInteractiveElement, null, "No parameter was passed: Null was returned");
 	});
 
 	//************************************************************************
-	// Tests for sap.ui.table.TableKeyboardDelegate2 (new Keyboard Behavior)
+	// Tests for the keyboard behavior
 	//************************************************************************
 
-	QUnit.module("TableKeyboardDelegate2 - Basics", {
+	QUnit.module("Basics", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -723,11 +723,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("getInterface", function(assert) {
-		var oDelegate = new TableKeyboardDelegate2();
+		var oDelegate = new KeyboardDelegate();
 		assert.ok(oDelegate === oDelegate.getInterface(), "getInterface returns the object itself");
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > Tab & Shift+Tab", {
+	QUnit.module("Navigation > Tab & Shift+Tab", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -832,7 +832,7 @@ sap.ui.define([
 		checkFocus(getCell(0, 1), assert);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > Arrow Keys", {
+	QUnit.module("Navigation > Arrow Keys", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -1178,7 +1178,7 @@ sap.ui.define([
 		checkFocus(getCell(1, 1), assert);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > Shift+Arrow Keys", {
+	QUnit.module("Navigation > Shift+Arrow Keys", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -1532,7 +1532,7 @@ sap.ui.define([
 		checkFocus(getRowAction(0), assert);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > Home & End", {
+	QUnit.module("Navigation > Home & End", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -2166,7 +2166,7 @@ sap.ui.define([
 		checkFocus(oElem, assert);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > Ctrl+Home & Ctrl+End ", {
+	QUnit.module("Navigation > Ctrl+Home & Ctrl+End ", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -2774,7 +2774,7 @@ sap.ui.define([
 		checkFocus(getRowAction(0), assert);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > Page Up & Page Down", {
+	QUnit.module("Navigation > Page Up & Page Down", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -3110,7 +3110,7 @@ sap.ui.define([
 		this.testPageKeys(assert);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > Alt+Page Up & Alt+Page Down", {
+	QUnit.module("Navigation > Alt+Page Up & Alt+Page Down", {
 		iAdditionalColumns: 22,
 		beforeEach: function() {
 			setupTest();
@@ -3389,7 +3389,7 @@ sap.ui.define([
 		checkFocus(getRowHeader(0), assert);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > F6 & Shift+F6", {
+	QUnit.module("Navigation > F6 & Shift+F6", {
 		beforeEach: function() {
 			setupTest();
 
@@ -3468,7 +3468,7 @@ sap.ui.define([
 		checkFocus(jQuery.sap.domById("Focus1"), assert);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > Overlay", {
+	QUnit.module("Navigation > Overlay", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -3523,7 +3523,7 @@ sap.ui.define([
 		checkFocus(jQuery.sap.domById("Focus1"), assert);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > NoData", {
+	QUnit.module("Navigation > NoData", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -3678,7 +3678,7 @@ sap.ui.define([
 		oTable.setModel(new JSONModel());
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > NoData & Overlay", {
+	QUnit.module("Navigation > NoData & Overlay", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -3774,7 +3774,7 @@ sap.ui.define([
 		oTable.setModel(new JSONModel());
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > BusyIndicator", {
+	QUnit.module("Navigation > BusyIndicator", {
 		beforeEach: function() {
 			setupTest();
 
@@ -3807,7 +3807,7 @@ sap.ui.define([
 		checkFocus(jQuery.sap.domById("Focus1"), assert);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > Special Cases", {
+	QUnit.module("Navigation > Special Cases", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -3963,7 +3963,7 @@ sap.ui.define([
 		}, "Row action cell: ArrowRight");
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Navigation > After changing the DOM structure", {
+	QUnit.module("Navigation > After changing the DOM structure", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCountMode: VisibleRowCountMode.Fixed,
@@ -4127,7 +4127,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > Shift+Up & Shift+Down (Range Selection)", {
+	QUnit.module("Interaction > Shift+Up & Shift+Down (Range Selection)", {
 		beforeEach: function() {
 			setupTest();
 			oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
@@ -4399,7 +4399,7 @@ sap.ui.define([
 		this.assertSelection(assert, 1, false);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > Shift+Left & Shift+Right (Column Resizing)", {
+	QUnit.module("Interaction > Shift+Left & Shift+Right (Column Resizing)", {
 		beforeEach: function() {
 			setupTest();
 			oTable._getVisibleColumns()[2].setResizable(false);
@@ -4594,7 +4594,7 @@ sap.ui.define([
 			"Column width did not change (" + iOriginalColumnWidth + "px)");
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > Ctrl+Left & Ctrl+Right (Column Reordering)", {
+	QUnit.module("Interaction > Ctrl+Left & Ctrl+Right (Column Reordering)", {
 		beforeEach: function() {
 			setupTest();
 			oTable.setFixedColumnCount(0);
@@ -4848,7 +4848,7 @@ sap.ui.define([
 		checkFocus(oElem, assert);
 	}
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > Space & Enter", {
+	QUnit.module("Interaction > Space & Enter", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -5314,7 +5314,7 @@ sap.ui.define([
 		testNoCollapseExpand(assert, getRowHeader(0, null, null, oTreeTable));
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > Ctrl+A (Select/Deselect All)", {
+	QUnit.module("Interaction > Ctrl+A (Select/Deselect All)", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -5466,7 +5466,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > Ctrl+Shift+A (Deselect All)", {
+	QUnit.module("Interaction > Ctrl+Shift+A (Deselect All)", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -5551,7 +5551,7 @@ sap.ui.define([
 		test(tableLibrary.SelectionMode.MultiToggle, [0, 1, 4]);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > Alt+ArrowUp & Alt+ArrowDown (Expand/Collapse Group)", {
+	QUnit.module("Interaction > Alt+ArrowUp & Alt+ArrowDown (Expand/Collapse Group)", {
 		beforeEach: function() {
 			setupTest();
 			oTable.setEnableGrouping(true);
@@ -5660,7 +5660,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > Ctrl+V (Workaround for Paste event in IE browser)", {
+	QUnit.module("Interaction > Ctrl+V (Workaround for Paste event in IE browser)", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -5699,7 +5699,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > F4 (Expand/Collapse Group)", {
+	QUnit.module("Interaction > F4 (Expand/Collapse Group)", {
 		beforeEach: function() {
 			setupTest();
 			oTable.setEnableGrouping(true);
@@ -5789,7 +5789,7 @@ sap.ui.define([
 		this.testNoCollapseExpand(assert, oTreeTable, getRowHeader(0, null, null, oTreeTable));
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > Plus & Minus (Expand/Collapse Group)", {
+	QUnit.module("Interaction > Plus & Minus (Expand/Collapse Group)", {
 		beforeEach: function() {
 			setupTest();
 			oTable.setEnableGrouping(true);
@@ -5897,7 +5897,7 @@ sap.ui.define([
 		this.testNoCollapseExpand(assert, oTreeTable, getRowHeader(0, null, null, oTreeTable));
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > ContextMenu", {
+	QUnit.module("Interaction > ContextMenu", {
 		beforeEach: function() {
 			setupTest();
 		},
@@ -5991,7 +5991,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
+	QUnit.module("Action Mode > Enter and Leave", {
 		beforeEach: function() {
 			setupTest();
 
@@ -6469,7 +6469,7 @@ sap.ui.define([
 		assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Action Mode > Navigation when some inputs are disabled", {
+	QUnit.module("Action Mode > Navigation when some inputs are disabled", {
 		beforeEach: function() {
 			setupTest();
 
@@ -6632,7 +6632,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Action Mode > Navigation", {
+	QUnit.module("Action Mode > Navigation", {
 		beforeEach: function() {
 			setupTest();
 
@@ -6921,7 +6921,7 @@ sap.ui.define([
 					var aRows = oTable.getRows();
 					var oLastRow = aRows[aRows.length - 1];
 
-					oElem = TableKeyboardDelegate2._getLastInteractiveElement(oLastRow)[0];
+					oElem = KeyboardDelegate._getLastInteractiveElement(oLastRow)[0];
 					oElem.focus();
 
 					assert.strictEqual(document.activeElement, oElem, "The very last interactive element in the table is focused");
@@ -7014,7 +7014,7 @@ sap.ui.define([
 									_assertTextSelection(document.activeElement);
 
 									var bIsFirstInteractiveElementInRow =
-										TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[iRowIndex])[0] === oElem;
+										KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[iRowIndex])[0] === oElem;
 									var bRowHasInteractiveRowHeader =
 										bTableHasRowSelectors || TableUtils.Grouping.isInGroupingRow(TableUtils.getCell(oTable, oElem));
 

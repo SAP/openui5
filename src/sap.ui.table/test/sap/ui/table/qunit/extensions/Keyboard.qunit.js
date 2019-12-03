@@ -7,11 +7,11 @@ sap.ui.define([
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/table/TableExtension",
-	"sap/ui/table/TableKeyboardExtension",
+	"sap/ui/table/extensions/ExtensionBase",
+	"sap/ui/table/extensions/Keyboard",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
-], function(TableQUnitUtils, qutils, Table, TreeTable, AnalyticalTable, containsOrEquals, TableExtension, TableKeyboardExtension, JSONModel, Device) {
+], function(TableQUnitUtils, qutils, Table, TreeTable, AnalyticalTable, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, Device) {
 	"use strict";
 
 	// mapping of global function calls
@@ -72,7 +72,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("init() / destroy()", function(assert) {
-		var oExtension = TableExtension.enrich(new Table(), TableKeyboardExtension);
+		var oExtension = ExtensionBase.enrich(new Table(), KeyboardExtension);
 		assert.ok(!oExtension._itemNavigation, "Item Navigation not yet initialized");
 		oExtension.initItemNavigation();
 		assert.ok(oExtension._itemNavigation, "Item Navigation initialized on focus");
@@ -96,7 +96,7 @@ sap.ui.define([
 
 	function setupItemNavigationFakeTest(assert) {
 		var oControl = new TestControl();
-		var oExtension = TableExtension.enrich(oControl, TableKeyboardExtension);
+		var oExtension = ExtensionBase.enrich(oControl, KeyboardExtension);
 		oExtension._itemNavigation = {
 			destroy: function() {
 			}
@@ -250,7 +250,7 @@ sap.ui.define([
 		}
 
 		var oControl = new TestControl();
-		var oExtension = TableExtension.enrich(oControl, TableKeyboardExtension);
+		var oExtension = ExtensionBase.enrich(oControl, KeyboardExtension);
 		oExtension._delegate = {
 			enterActionMode: function(oArgs) {
 				testHandler(oArgs);
@@ -293,11 +293,11 @@ sap.ui.define([
 
 	QUnit.test("Table Type", function(assert) {
 		assert.strictEqual((new TreeTable())._getKeyboardExtension()._getTableType(),
-			TableExtension.TABLETYPES.TREE, "TREE");
+			ExtensionBase.TABLETYPES.TREE, "TREE");
 		assert.strictEqual((new Table())._getKeyboardExtension()._getTableType(),
-			TableExtension.TABLETYPES.STANDARD, "STANDARD");
+			ExtensionBase.TABLETYPES.STANDARD, "STANDARD");
 		assert.strictEqual((new AnalyticalTable())._getKeyboardExtension()._getTableType(),
-			TableExtension.TABLETYPES.ANALYTICAL, "ANALYTICAL");
+			ExtensionBase.TABLETYPES.ANALYTICAL, "ANALYTICAL");
 	});
 
 	QUnit.test("Overly / NoData focus handling", function(assert) {

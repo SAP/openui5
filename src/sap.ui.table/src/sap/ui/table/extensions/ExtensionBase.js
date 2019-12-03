@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableExtension.
+// Provides helper sap.ui.table.extensions.ExtensionBase.
 sap.ui.define([
-"sap/ui/base/Object", "./utils/TableUtils"
-], function(BaseObject, TableUtils) {
+	"sap/ui/base/Object"
+], function(BaseObject) {
 	"use strict";
 
 	/**
@@ -20,9 +20,9 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.TableExtension
+	 * @alias sap.ui.table.extensions.ExtensionBase
 	 */
-	var TableExtension = BaseObject.extend("sap.ui.table.TableExtension", /** @lends sap.ui.table.TableExtension.prototype */ {
+	var ExtensionBase = BaseObject.extend("sap.ui.table.extensions.ExtensionBase", /** @lends sap.ui.table.extensions.ExtensionBase.prototype */ {
 		/**
 		 * Instance of the table this extension is applied to.
 		 *
@@ -34,7 +34,7 @@ sap.ui.define([
 		/**
 		 * The type of the table this extension is applied to.
 		 *
-		 * @type {sap.ui.table.TableExtension.TABLETYPES}
+		 * @type {sap.ui.table.extensions.ExtensionBase.TABLETYPES}
 		 * @protected
 		 */
 		_type: null,
@@ -53,11 +53,11 @@ sap.ui.define([
 			this._table = oTable;
 			this._settings = mSettings || {};
 
-			this._type = TableExtension.TABLETYPES.STANDARD;
+			this._type = ExtensionBase.TABLETYPES.STANDARD;
 			if (oTable.isA("sap.ui.table.TreeTable")) {
-				this._type = TableExtension.TABLETYPES.TREE;
+				this._type = ExtensionBase.TABLETYPES.TREE;
 			} else if (oTable.isA("sap.ui.table.AnalyticalTable")) {
-				this._type = TableExtension.TABLETYPES.ANALYTICAL;
+				this._type = ExtensionBase.TABLETYPES.ANALYTICAL;
 			}
 
 			var sExtensionName = this._init(this._table, this._type, this._settings);
@@ -94,7 +94,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 */
-	TableExtension.TABLETYPES = {
+	ExtensionBase.TABLETYPES = {
 		TREE: "TREE",
 		ANALYTICAL: "ANALYTICAL",
 		STANDARD: "STANDARD"
@@ -104,10 +104,10 @@ sap.ui.define([
 	 * Returns the related table control.
 	 *
 	 * @returns {sap.ui.table.Table|null} The table control or <code>null</code>, if this extension is not yet initialized.
-	 * @see sap.ui.table.TableExtension#_init
+	 * @see sap.ui.table.extensions.ExtensionBase#_init
 	 * @public
 	 */
-	TableExtension.prototype.getTable = function() {
+	ExtensionBase.prototype.getTable = function() {
 		return this._table;
 	};
 
@@ -115,13 +115,13 @@ sap.ui.define([
 	 * Initialize the extension.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {sap.ui.table.TableExtension.TABLETYPES} sTableType The type of the table.
+	 * @param {sap.ui.table.extensions.ExtensionBase.TABLETYPES} sTableType The type of the table.
 	 * @param {Object} [mSettings] Additional settings.
 	 * @returns {string|null} Derived classes should return the name of the extension.
 	 * @abstract
 	 * @protected
 	 */
-	TableExtension.prototype._init = function(oTable, sTableType, mSettings) { return null; };
+	ExtensionBase.prototype._init = function(oTable, sTableType, mSettings) { return null; };
 
 	/**
 	 * Hook which allows the extension to attach for additional native event listeners after the rendering of the table control.
@@ -130,7 +130,7 @@ sap.ui.define([
 	 * @see sap.ui.table.Table#_attachEvents
 	 * @protected
 	 */
-	TableExtension.prototype._attachEvents = function() {};
+	ExtensionBase.prototype._attachEvents = function() {};
 
 	/**
 	 * Hook which allows the extension to detach previously attached native event listeners.
@@ -139,17 +139,17 @@ sap.ui.define([
 	 * @see sap.ui.table.Table#_detachEvents
 	 * @protected
 	 */
-	TableExtension.prototype._detachEvents = function() {};
+	ExtensionBase.prototype._detachEvents = function() {};
 
 	/**
 	 * Informs all registered extensions of the table to attach their native event listeners.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @see sap.ui.table.TableExtension#_attachEvents
+	 * @see sap.ui.table.extensions.ExtensionBase#_attachEvents
 	 * @public
 	 * @static
 	 */
-	TableExtension.attachEvents = function(oTable) {
+	ExtensionBase.attachEvents = function(oTable) {
 		if (!oTable._aExtensions) {
 			return;
 		}
@@ -163,11 +163,11 @@ sap.ui.define([
 	 * Informs all registered extensions of the given table to detach their previously attached native event listeners.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @see sap.ui.table.TableExtension#_detachEvents
+	 * @see sap.ui.table.extensions.ExtensionBase#_detachEvents
 	 * @public
 	 * @static
 	 */
-	TableExtension.detachEvents = function(oTable) {
+	ExtensionBase.detachEvents = function(oTable) {
 		if (!oTable._aExtensions) {
 			return;
 		}
@@ -180,14 +180,14 @@ sap.ui.define([
 	 * Initializes an extension and attaches it to the given Table control.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {sap.ui.table.TableExtension} ExtensionClass The class of the extension to instantiate.
+	 * @param {sap.ui.table.extensions.ExtensionBase} ExtensionClass The class of the extension to instantiate.
 	 * @param {Object} mSettings Additional settings used during initialization of the extension.
-	 * @returns {sap.ui.table.TableExtension} Returns the created extension instance.
+	 * @returns {sap.ui.table.extensions.ExtensionBase} Returns the created extension instance.
 	 * @public
 	 * @static
 	 */
-	TableExtension.enrich = function(oTable, ExtensionClass, mSettings) {
-		if (!ExtensionClass || !(ExtensionClass.prototype instanceof TableExtension)) {
+	ExtensionBase.enrich = function(oTable, ExtensionClass, mSettings) {
+		if (!ExtensionClass || !(ExtensionClass.prototype instanceof ExtensionBase)) {
 			return null;
 		}
 
@@ -206,7 +206,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 */
-	TableExtension.cleanup = function(oTable) {
+	ExtensionBase.cleanup = function(oTable) {
 		if (!oTable._bExtensionsInitialized || !oTable._aExtensions) {
 			return;
 		}
@@ -225,7 +225,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether the table is enriched with the specified extension.
 	 * @static
 	 */
-	TableExtension.isEnrichedWith = function(oTable, sExtensionFullName) {
+	ExtensionBase.isEnrichedWith = function(oTable, sExtensionFullName) {
 		if (!oTable || !oTable._aExtensions) {
 			return false;
 		}
@@ -239,5 +239,5 @@ sap.ui.define([
 		return false;
 	};
 
-	return TableExtension;
+	return ExtensionBase;
 });

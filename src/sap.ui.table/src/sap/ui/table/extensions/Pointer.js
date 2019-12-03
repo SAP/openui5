@@ -2,20 +2,18 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TablePointerExtension.
+// Provides helper sap.ui.table.extensions.Pointer.
 sap.ui.define([
-	"./library",
-	"./TableExtension",
-	"./utils/TableUtils",
+	"./ExtensionBase",
+	"../utils/TableUtils",
+	"../library",
 	"sap/ui/Device",
 	"sap/ui/core/Popup",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	// jQuery Plugin "scrollLeftRTL"
 	"sap/ui/dom/jquery/scrollLeftRTL",
-	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control"
-], function(library, TableExtension, TableUtils, Device, Popup, Log, jQuery) {
+], function(ExtensionBase, TableUtils, library, Device, Popup, Log, jQuery) {
 	"use strict";
 
 	// shortcuts
@@ -814,15 +812,15 @@ sap.ui.define([
 	 * strictly prohibited!</b>
 	 *
 	 * @class Extension for sap.ui.table.Table which handles mouse and touch related things.
-	 * @extends sap.ui.table.TableExtension
+	 * @extends sap.ui.table.extensions.ExtensionBase
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.TablePointerExtension
+	 * @alias sap.ui.table.extensions.Pointer
 	 */
-	var TablePointerExtension = TableExtension.extend("sap.ui.table.TablePointerExtension",
-		/** @lends sap.ui.table.TablePointerExtension.prototype */ {
+	var PointerExtension = ExtensionBase.extend("sap.ui.table.extensions.Pointer",
+		/** @lends sap.ui.table.extensions.Pointer.prototype */ {
 		/**
 		 * @override
 		 * @inheritDoc
@@ -836,7 +834,7 @@ sap.ui.define([
 
 			oTable._iLastHoveredColumnIndex = 0;
 			oTable._bIsColumnResizerMoving = false;
-			oTable._iFirstReorderableIndex = sTableType == TableExtension.TABLETYPES.TREE ? 1 : 0;
+			oTable._iFirstReorderableIndex = sTableType == ExtensionBase.TABLETYPES.TREE ? 1 : 0;
 
 			return "PointerExtension";
 		},
@@ -926,12 +924,12 @@ sap.ui.define([
 			}
 			this._delegate = null;
 
-			TableExtension.prototype.destroy.apply(this, arguments);
+			ExtensionBase.prototype.destroy.apply(this, arguments);
 		}
 
 	});
 
-	return TablePointerExtension;
+	return PointerExtension;
 	});
 
 /**
@@ -939,6 +937,6 @@ sap.ui.define([
  *
  * @name sap.ui.table.Table#_getPointerExtension
  * @function
- * @returns {sap.ui.table.TablePointerExtension} The pointer extension.
+ * @returns {sap.ui.table.extensions.Pointer} The pointer extension.
  * @private
  */
