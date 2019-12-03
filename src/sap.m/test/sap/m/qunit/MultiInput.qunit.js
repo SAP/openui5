@@ -1257,6 +1257,28 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
+	QUnit.test("arrow left / top should not throw an error when there are no suggestions", function (assert) {
+		var oMI = new MultiInput({
+			showSuggestion: false
+		});
+
+		oMI.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oMI.getFocusDomRef().focus();
+		qutils.triggerKeydown(oMI.getFocusDomRef(), KeyCodes.ARROW_LEFT);
+		this.clock.tick(300);
+
+		assert.ok(true, "No error has been thrown");
+
+		oMI.getFocusDomRef().focus();
+		qutils.triggerKeydown(oMI.getFocusDomRef(), KeyCodes.HOME);
+
+		assert.ok(true, "No error has been thrown");
+
+		oMI.destroy();
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.multiInput1 = new MultiInput();
