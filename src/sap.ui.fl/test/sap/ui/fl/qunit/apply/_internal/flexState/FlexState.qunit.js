@@ -23,10 +23,12 @@ sap.ui.define([
 		QUnit.test("when initialize is called with complete information", function (assert) {
 			var oFlexState = FlexState.initForReference({
 				reference: sReference,
-				storageResponse: "FlexResponse"
+				storageResponse: "FlexResponse",
+				componentId: "componentId"
 			});
 			var oExpectedFlexState = {
-				storageResponse: "FlexResponse"
+				storageResponse: "FlexResponse",
+				componentId: "componentId"
 			};
 			assert.deepEqual(oFlexState, oExpectedFlexState, "the FlexState was initialized correctly");
 		});
@@ -48,13 +50,24 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when getUiChanges is called without initialization", function(assert) {
+		QUnit.test("when getUIChanges is called without initialization", function(assert) {
 			FlexState.initForReference({
 				reference: "sap.ui.fl.other.reference"
 			});
 
 			assert.throws(
-				function() {FlexState.getUiChanges({reference: sReference});},
+				function() {FlexState.getUIChanges(sReference);},
+				"the getState function throws an error"
+			);
+		});
+
+		QUnit.test("when getVariantsState is called without initialization", function(assert) {
+			FlexState.initForReference({
+				reference: "sap.ui.fl.other.reference"
+			});
+
+			assert.throws(
+				function() {FlexState.getVariantsState(sReference);},
 				"the getState function throws an error"
 			);
 		});

@@ -153,12 +153,6 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap"]
 				}
 			},
-			"apply/_internal/flexState/prepareChangesMap": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/prepareChangesMap"]
-				}
-			},
 			"apply/_internal/flexState/prepareVariantsMap": {
 				group: "Apply Internal",
 				coverage: {
@@ -187,6 +181,18 @@ sap.ui.define(function () {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
+				}
+			},
+			"apply/_internal/flexState/controlVariants/VariantManagementState": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"]
+				}
+			},
+			"apply/_internal/flexState/controlVariants/Switcher": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher"]
 				}
 			},
 			"write/api/ChangesWriteAPI": {

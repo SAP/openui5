@@ -29,7 +29,8 @@ sap.ui.define([
 
 		if (!_instances[sReference][sMapName]) {
 			var mPropertyBag = {
-				storageResponse: _instances[sReference].storageResponse
+				storageResponse: _instances[sReference].storageResponse,
+				componentId: _instances[sReference].componentId
 			};
 			_instances[sReference][sMapName] = oPrepareFunctions[sMapName](mPropertyBag);
 		}
@@ -57,7 +58,8 @@ sap.ui.define([
 	 *      appDescriptorMap: {},
 	 *      changesMap: {},
 	 *      variantsMap: {},
-	 *      storageResponse: {}
+	 *      storageResponse: {},
+	 *      componentId: "<componentId>"
 	 *  }
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.FlexState
@@ -77,7 +79,13 @@ sap.ui.define([
 				throw Error("the state for the given reference is already initialized");
 			}
 
-			_instances[mPropertyBag.reference] = merge({}, {storageResponse: mPropertyBag.storageResponse});
+			_instances[mPropertyBag.reference] = merge({}, {
+				storageResponse: mPropertyBag.storageResponse,
+				componentId: mPropertyBag.componentId
+			});
+
+			// no further changes to storageResponse properties allowed
+			Object.freeze(_instances[mPropertyBag.reference].storageResponse);
 			return _instances[mPropertyBag.reference];
 		},
 
@@ -96,7 +104,7 @@ sap.ui.define([
 			}
 		},
 
-		getUiChanges: function(sReference) {
+		getUIChanges: function(sReference) {
 			return getChangesMap(sReference).changes;
 		},
 
@@ -105,9 +113,8 @@ sap.ui.define([
 			return getAppDescriptorMap(sReference).appDescriptorChanges;
 		},
 
-		// just a proposal
-		getVariantsForVariantManagement: function(sReference, sVariantManagementId) {
-			return getVariantsMap(sReference)[sVariantManagementId];
+		getVariantsState: function(sReference) {
+			return getVariantsMap(sReference);
 		}
 	};
 }, true);
