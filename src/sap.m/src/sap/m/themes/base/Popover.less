@@ -6,6 +6,9 @@
 /* Forces the usage of compact arrow offset, because belize uses a compact arrow for all content densities. */
 @_sap_m_Popover_ForceCompactArrowOffset: true;
 
+ /* Buffer width for the scroll bar */
+@_sap_m_Popover_Scroll_Width_Buffer: 20px;
+
 /* shared mixin for arrow shadow*/
 .sapMPopoverArrAfterShadow(@horizontalShadow, @verticalShadow) {
 	box-shadow: @horizontalShadow @verticalShadow 0.750rem 0 fade(@sapUiContentShadowColor, 30), 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 30);
@@ -364,4 +367,8 @@ html[data-sap-ui-browser^="ie"] {
 		padding-right: 0.25rem;
 		padding-left: 0;
 	}
+}
+
+&.sapMPopoverVerticalScrollIncluded .sapMPopoverCont {
+	padding-right: @_sap_m_Popover_Scroll_Width_Buffer;
 }
