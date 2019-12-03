@@ -23,6 +23,7 @@ sap.ui.define([
 	 *		will be fetched from back end.
 	 * @constructor
 	 * @alias sap.ui.fl.LrepConnector
+	 * @deprecated
 	 * @private
 	 * @ui5-restricted
 	 * @author SAP SE
@@ -168,6 +169,7 @@ sap.ui.define([
 	 * @param {Object} [oData] Payload of the request
 	 * @param {Object} [mOptions] Additional options which should be used in the request
 	 * @returns {Promise} Returns a promise to the result of the request
+	 * @deprecated
 	 * @public
 	 */
 	LrepConnector.prototype.send = function(sUri, sMethod, oData, mOptions) {
@@ -485,6 +487,7 @@ sap.ui.define([
 	 * Loads flexibility settings.
 	 *
 	 * @returns {Promise} Returns a Promise with the flexibility settings content
+	 * @deprecated
 	 * @public
 	 */
 	LrepConnector.prototype.loadSettings = function() {
@@ -531,6 +534,40 @@ sap.ui.define([
 			aParams.push({
 				name: "dt",
 				value: "true"
+			});
+		}
+
+		sRequestPath += this._buildParams(aParams);
+
+		return this.send(sRequestPath, "GET", null, null);
+	};
+
+	/**
+	 * Retrieves the file attributes for a given resource in the LREP.
+	 *
+	 * @param {String} sNamespace The abap package goes here. It is needed to identify the change. Default LREP namespace is "localchange".
+	 * @param {String} sName Name of the change
+	 * @param {String} sType File type extension
+	 * @param {String} sLayer File layer
+	 * @returns {Object} Returns the result from the request
+	 * @deprecated
+	 * @ui5-restricted sap.apf
+	 * @public
+	 */
+	LrepConnector.prototype.getFileAttributes = function(sNamespace, sName, sType, sLayer) {
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.CONTENT;
+		sRequestPath += sNamespace + "/" + sName + "." + sType;
+
+		var aParams = [];
+		aParams.push({
+			name: "metadata",
+			value: "true"
+		});
+
+		if (sLayer) {
+			aParams.push({
+				name: "layer",
+				value: sLayer
 			});
 		}
 
