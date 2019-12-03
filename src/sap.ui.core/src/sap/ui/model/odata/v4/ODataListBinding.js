@@ -1595,6 +1595,14 @@ sap.ui.define([
 	 * request delivers all entities considering the binding's query options (such as filters or
 	 * sorters).
 	 *
+	 * The returned URL does not specify <code>$skip</code> and <code>$top</code> and leaves it up
+	 * to the server how many rows it delivers. Many servers tend to choose a small limit without
+	 * <code>$skip</code> and <code>$top</code>, so it might be wise to add an appropriate value for
+	 * <code>$top</code> at least.
+	 *
+	 * Additionally, you must be aware of server-driven paging and be ready to send a follow-up
+	 * request if the response contains <code>@odata.nextlink</code>.
+	 *
 	 * @returns {string}
 	 *   The download URL
      * @throws {Error}
@@ -2108,6 +2116,14 @@ sap.ui.define([
 	 * Returns a URL by which the complete content of the list can be downloaded in JSON format. The
 	 * request delivers all entities considering the binding's query options (such as filters or
 	 * sorters).
+	 *
+	 * The returned URL does not specify <code>$skip</code> and <code>$top</code> and leaves it up
+	 * to the server how many rows it delivers. Many servers tend to choose a small limit without
+	 * <code>$skip</code> and <code>$top</code>, so it might be wise to add an appropriate value for
+	 * <code>$top</code> at least.
+	 *
+	 * Additionally, you must be aware of server-driven paging and be ready to send a follow-up
+	 * request if the response contains <code>@odata.nextlink</code>.
 	 *
 	 * @returns {Promise<string>}
 	 *   A promise that is resolved with the download URL
