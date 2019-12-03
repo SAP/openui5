@@ -34,18 +34,6 @@
 		]
 	  },
 	  {
-		"id": "sap.uxap.ObjectPageDynamicHeaderTitle",
-		"name": "Object Page Dynamic Header Title",
-		"category": "Display",
-		"since": "1.52",
-		"formFactors": "-",
-			"samples": [
-			  "sap.uxap.sample.ObjectPageWithDynamicHeader",
-			  "sap.uxap.sample.ObjectPageHeaderActionButtons",
-			  "sap.uxap.sample.ObjectPageHeaderBackgroundDesign"
-			]
-	  },
-	  {
 		"id": "sap.uxap.ObjectPageLayout",
 		"name": "Object Page Layout",
 		"category": "Layout",
@@ -124,11 +112,6 @@
 		"id": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign",
 		"name": "Object Page with Translucent backgroundDesign",
 		"description": "This example demonstrates ObjectPage with ObjectPageDynamicHeaderTitle with Solid backgroundDesign and Translucent backgroundDesignAnchorBar."
-	  },
-	  {
-		"id": "sap.uxap.sample.ObjectPageDynamicHeader",
-		"name": "Object Page with Dynamic Header",
-		"description": "This example demonstrates the classic ObjectPageLayout achieved by using ObjectPageDynamicHeaderTitle for the headerContent aggregation."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageSubSection",

@@ -12,58 +12,71 @@
 		showEditHeaderButton="true"
 		editHeaderButtonPress="handleEditBtnPress">
 		<headerTitle>
-			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
-							  objectTitle="Denise Smith"
-							  objectImageShape="Circle"
-							  objectImageAlt="Denise Smith"
-							  objectSubtitle="Senior UI Developer"
-
-							  isObjectTitleAlwaysVisible="false"
-							  isObjectSubtitleAlwaysVisible="false">
-				<actions>
-					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" tooltip="show"/>
-					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" press="toggleFooter"/>
-				</actions>
+			<ObjectPageDynamicHeaderTitle>
 				<breadcrumbs>
 					<m:Breadcrumbs id="breadcrumbsId" currentLocationText="Object Page Example" >
 						<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
 						<m:Link text="Page 2 long link" press="handleLink2Press"/>
 					</m:Breadcrumbs>
 				</breadcrumbs>
-				<breadCrumbsLinks>
-					<m:Link id="breadCrumbLink1" text="Links in old aggregation" press="handleLink1Press"/>
-					<m:Link id="breadCrumbLink2" text="Don't appear in ObjectPageHeader" press="handleLink2Press"/>
-				</breadCrumbsLinks>
-			</ObjectPageHeader>
+
+				<expandedHeading>
+						<m:Title text="Denise Smith" wrapping="true"/>
+				</expandedHeading>
+
+				<snappedHeading>
+					<m:FlexBox  fitContainer="true" alignItems="Center">
+						<m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiTinyMarginEnd"/>
+						<m:Title text="Denise Smith" wrapping="true"/>
+					</m:FlexBox>
+				</snappedHeading>
+
+				<expandedContent>
+					<m:Text text="Senior UI Developer"/>
+				</expandedContent>
+
+				<snappedContent>
+					<m:Text text="Senior UI Developer"/>
+				</snappedContent>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Header Title On Phone"/>
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:OverflowToolbarButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
+					<m:OverflowToolbarButton icon="sap-icon://show" text="show state" tooltip="show"/>
+					<m:Button text="Toggle Footer" press="toggleFooter"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
 
 		<headerContent>
-			<layout:VerticalLayout>
-				<m:Link text="+33 6 4512 5158"/>
-				<m:Link text="DeniseSmith@sap.com"/>
-			</layout:VerticalLayout>
+			<m:FlexBox wrap="Wrap">
+				<m:Avatar class="sapUiSmallMarginEnd" src="./test-resources/sap/uxap/images/imageID_275314.png"  displaySize="L" />
 
-			<layout:HorizontalLayout>
-				<m:Image src="./test-resources/sap/uxap/images/linkedin.png"/>
-				<m:Image src="./test-resources/sap/uxap/images/Twitter.png"/>
-			</layout:HorizontalLayout>
+					<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+						<m:Link text="+33 6 4512 5158"/>
+						<m:Link text="DeniseSmith@sap.com"/>
+					</layout:VerticalLayout>
 
-			<layout:VerticalLayout>
-				<m:Label text="Hello! I am Tim and I use UxAP"/>
-				<m:VBox height="63px">
-					<m:Label text="Achieved goals"/>
-					<m:ProgressIndicator
-							percentValue="30"
-							displayValue="30%"
-							showValue="true"
-							state="None"/>
-				</m:VBox>
-			</layout:VerticalLayout>
+					<layout:HorizontalLayout class="sapUiSmallMarginBeginEnd">
+						<m:Image src="./test-resources/sap/uxap/images/linkedin.png"/>
+						<m:Image src="./test-resources/sap/uxap/images/Twitter.png" class="sapUiSmallMarginBegin"/>
+					</layout:HorizontalLayout>
 
-			<layout:VerticalLayout>
-				<m:Label text="San Jose, USA"/>
-			</layout:VerticalLayout>
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:Label text="Hello! I am Denise and I use UxAP"/>
+					<m:VBox>
+						<m:Label text="Achieved goals"/>
+						<m:ProgressIndicator percentValue="30" displayValue="30%"/>
+					</m:VBox>
+				</layout:VerticalLayout>
+
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:Label text="San Jose, USA"/>
+				</layout:VerticalLayout>
+			</m:FlexBox>
 		</headerContent>
 
 		<sections>

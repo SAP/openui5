@@ -6,44 +6,63 @@
 	height="100%">
 	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true">
 		<headerTitle>
-			<ObjectPageHeader objectImageShape="Circle"
-							  objectTitle="Denise Smith"
-							  objectImageAlt="Senior UI Developer"
-							  id="ObjectPageLayoutHeaderTitle"
-							  isObjectTitleAlwaysVisible="false"
-							  showPlaceholder="true"
-							  objectImageBackgroundColor="Random">
+				<ObjectPageDynamicHeaderTitle>
+					<expandedHeading>
+						<m:Title text="Denise Smith" wrapping="true"/>
+					</expandedHeading>
+
+					<snappedHeading>
+						<m:FlexBox fitContainer="true" alignItems="Center">
+							<m:Avatar src="sap-icon://picture" backgroundColor="Random" class="sapUiTinyMarginEnd"/>
+							<m:Title text="Denise Smith" wrapping="true" />
+						</m:FlexBox>
+					</snappedHeading>
+
+					<expandedContent>
+						<m:Text text="Senior Developer"/>
+					</expandedContent>
+
+					<snappedContent>
+						<m:Text text="Senior Developer"/>
+					</snappedContent>
+
+					<snappedTitleOnMobile>
+						<m:Title text="Header Title On Phone"/>
+					</snappedTitleOnMobile>
+
 				<actions>
-					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
+					<m:OverflowToolbarButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
+					<m:OverflowToolbarButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
 				</actions>
-			</ObjectPageHeader>
-		</headerTitle>
+
+				</ObjectPageDynamicHeaderTitle>
+			</headerTitle>
 
 		<headerContent>
-			<layout:VerticalLayout>
-				<m:ObjectStatus title="User ID" text="12345678"/>
-				<m:ObjectStatus title="Language" text="English"/>
-				<m:ObjectStatus title="Country" text="USA"/>
-				<m:ObjectStatus title="Phone Number" text="1-844-726-7733"/>
-			</layout:VerticalLayout>
+			<m:FlexBox wrap="Wrap">
+				<m:Avatar src="sap-icon://picture" backgroundColor="Random" displaySize="L" class="sapUiTinyMarginEnd"/>
 
-			<layout:VerticalLayout>
-				<layout:layoutData>
-					<ObjectPageHeaderLayoutData visibleS="false"/>
-				</layout:layoutData>
-				<m:ObjectStatus title="Functional Area" text="Developement"/>
-				<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
-				<m:ObjectStatus title="Email" text="email@address.com"/>
-			</layout:VerticalLayout>
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:ObjectStatus title="User ID" text="12345678"/>
+					<m:ObjectStatus title="Language" text="English"/>
+					<m:ObjectStatus title="Country" text="USA"/>
+					<m:ObjectStatus title="Phone Number" text="1-844-726-7733"/>
+				</layout:VerticalLayout>
 
-			<layout:VerticalLayout>
-				<layout:layoutData>
-					<ObjectPageHeaderLayoutData visibleS="false" visibleM="false"/>
-				</layout:layoutData>
-				<m:ObjectStatus text="Senior UI Developer" state="Success"/>
-				<m:RatingIndicator maxValue="6" class="sapUiSmallMarginBottom" value="5" tooltip="Rating Tooltip"/>
-			</layout:VerticalLayout>
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:ObjectStatus title="Functional Area" text="Developement"/>
+					<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
+					<m:ObjectStatus title="Email" text="email@address.com"/>
+				</layout:VerticalLayout>
+
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+						<layout:layoutData>
+							<ObjectPageHeaderLayoutData visibleS="false" visibleM="false"/>
+						</layout:layoutData>
+						<m:ObjectStatus text="Senior UI Developer" state="Success"/>
+						<m:RatingIndicator maxValue="6" value="5" tooltip="Rating Tooltip"/>
+				</layout:VerticalLayout>
+			</m:FlexBox>
 		</headerContent>
 
 		<sections>
