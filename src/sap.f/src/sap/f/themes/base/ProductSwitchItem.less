@@ -17,10 +17,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-
-		.sapMText {
-			text-align: center !important;
-		}
 	}
 
 	.sapFPSItemMainTitle {
@@ -36,6 +32,7 @@
 		line-height: 1.25rem;
 		max-width: 10.25rem;
 		cursor: pointer;
+		text-align: center;
 	}
 
 	.sapUiIcon {
@@ -94,10 +91,6 @@
 		box-sizing: border-box;
 		padding-right: 1rem;
 		width: 100%;
-
-		.sapMText {
-			text-align: left !important;
-		}
 	}
 
 	.sapFPSItemIconPlaceholder {
@@ -123,6 +116,7 @@
 		width: 100%;
 		max-width: 100%;
 		line-height: normal;
+		text-align: left;
 	}
 
 	.sapFPSItemSubTitle {
@@ -157,7 +151,10 @@
 	outline-offset: -2px;
 }
 
-
 html[data-sap-ui-browser^="ed"].sap-desktop .sapFPSItemContainer:focus {
 	outline-style: dashed;
+}
+
+html[dir="rtl"].sapUiMedia-Std-Phone .sapFPSItemContainer .sapFPSItemTitle {
+	text-align: right;
 }
