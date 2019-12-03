@@ -21997,10 +21997,10 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 	});
 
 	//*********************************************************************************************
-	// Scenario: A PATCH triggers a side effect for the whole object page, while the paginator
-	// switches to another item. The side effect's GET is thus ignored because the cache for the
-	// old item is already inactive; thus the promise fails. Due to this failure, the old cache was
-	// restored, which was wrong. Timing is essential!
+	// Scenario: A PATCH (not shown here) triggers a side effect for the whole object page, while
+	// a paginator switches to another item. The side effect's GET is thus ignored because the
+	// cache for the old item is already inactive; thus the promise fails. Due to this failure, the
+	// old cache was restored, which was wrong. Timing is essential!
 	// BCP: 1970600374
 	QUnit.test("BCP: 1970600374", function (assert) {
 		var oInput,
@@ -22028,21 +22028,11 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 		}).then(function () {
 			var oPromise, fnRespond;
 
-			// 1st, PATCH some value
-			that.expectChange("name", "Darth Vader")
-				.expectRequest({
-					method : "PATCH",
-					payload : {Name : "Darth Vader"},
-					url : "TEAMS('TEAM_01')"
-				}, {/* response does not matter here */});
-
-			oInput.getBinding("value").setValue("Darth Vader");
-
-			// 2nd, request side effects
+			// 1st, request side effects
 			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id",
 					new Promise(function (resolve, reject) {
 						fnRespond = resolve.bind(null, {
-							Name : "Darth Vader",
+							Name : "Team #1",
 							Team_Id : "TEAM_01"
 						});
 					}));
@@ -22050,7 +22040,7 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 			oPromise
 				= oInput.getBindingContext().requestSideEffects([{$NavigationPropertyPath : ""}]);
 
-			// 3rd, switch to different context
+			// 2nd, switch to different context
 			that.expectRequest("TEAMS('TEAM_02')?$select=Name,Team_Id", {
 					Name : "Team #2",
 					Team_Id : "TEAM_02"
@@ -22084,10 +22074,10 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 	});
 
 	//*********************************************************************************************
-	// Scenario: A PATCH triggers a side effect for the whole list, while a paginator switches to
-	// another item. The side effect's GET is thus ignored because the cache for the old item is
-	// already inactive; thus the promise fails. Due to this failure, the old cache was restored,
-	// which was wrong. Timing is essential!
+	// Scenario: A PATCH (not shown here) triggers a side effect for the whole list, while a
+	// paginator switches to another item. The side effect's GET is thus ignored because the cache
+	// for the old item is already inactive; thus the promise fails. Due to this failure, the old
+	// cache was restored, which was wrong. Timing is essential!
 	// Follow-up to BCP: 1970600374 with an ODCB instead of an ODLB.
 	// JIRA: CPOUI5ODATAV4-34
 	QUnit.test("CPOUI5ODATAV4-34", function (assert) {
@@ -22114,32 +22104,21 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oInput, oPromise, fnRespond;
+			var oPromise, fnRespond;
 
-			// 1st, PATCH some value
-			that.expectChange("name", ["Darth Vader"])
-				.expectRequest({
-					method : "PATCH",
-					payload : {Name : "Darth Vader"},
-					url : "EMPLOYEES('1')"
-				}, {/* response does not matter here */});
-
-			oInput = oTable.getItems()[0].getCells()[0];
-			oInput.getBinding("value").setValue("Darth Vader");
-
-			// 2nd, request side effects
+			// 1st, request side effects
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
 					+ "&$skip=0&$top=100",
 					new Promise(function (resolve, reject) {
 						fnRespond = resolve.bind(null, {
-							value : [{ID : "1", Name : "Darth Vader"}]
+							value : [{ID : "1", Name : "Jonathan Smith"}]
 						});
 					}));
 
 			oPromise = oTable.getBinding("items").getHeaderContext()
 				.requestSideEffects([{$NavigationPropertyPath : ""}]);
 
-			// 3rd, switch to different context
+			// 2nd, switch to different context
 			that.expectRequest("TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$select=ID,Name"
 					+ "&$skip=0&$top=100", {
 					value : [{ID : "2", Name : "Frederic Fall"}]
@@ -22159,7 +22138,7 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			var oInput;
+			var oInput = oTable.getItems()[0].getCells()[0]; // Note: different instance now!
 
 			that.expectChange("name", ["Palpatine"])
 				.expectRequest({
@@ -22167,7 +22146,6 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 					payload : {Name : "Palpatine"},
 					url : "EMPLOYEES('2')"
 				}, {/* response does not matter here */});
-			oInput = oTable.getItems()[0].getCells()[0]; // Note: this is a different instance now!
 			oInput.getBinding("value").setValue("Palpatine");
 
 			return that.waitForChanges(assert);
