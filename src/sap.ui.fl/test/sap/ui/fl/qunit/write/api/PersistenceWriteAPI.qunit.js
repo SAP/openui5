@@ -534,6 +534,22 @@ sap.ui.define([
 			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
 		});
 
+		QUnit.test("get flex/info route is not available - client information will be used to determine reset + publish booleans", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.reject({status: 404, text: ""}));
+
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{packageName: "transported"}]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
+			});
+		});
+
 		QUnit.test("get flex/info isResetEnabled, check hasChanges: persistence has NO changes, backend has changes", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
