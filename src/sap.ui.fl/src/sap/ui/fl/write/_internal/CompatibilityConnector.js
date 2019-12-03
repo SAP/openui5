@@ -184,29 +184,20 @@ sap.ui.define([
 	 * @see sap.ui.fl.write._internal.Storage.reset
 	 *
 	 * @param {string} mParameters property bag
-	 * @param {string} mParameters.sReference Flex reference
-	 * @param {string} mParameters.sAppVersion Version of the application for which the reset takes place
-	 * @param {string} [mParameters.sLayer="USER"] Other possible layers: VENDOR,PARTNER,CUSTOMER_BASE,CUSTOMER
-	 * @param {string} mParameters.sChangelist The transport ID
-	 * @param {string} mParameters.sGenerator Generator with which the changes were created
-	 * @param {string} mParameters.aSelectorIds Selector IDs of controls for which the reset should filter
-	 * @param {string} mParameters.aChangeTypes Change types of the changes which should be reset
+	 * @param {string} mParameters.reference Flex reference
+	 * @param {string} mParameters.appVersion Version of the application for which the reset takes place
+	 * @param {string} [mParameters.layer="USER"] Other possible layers: VENDOR,PARTNER,CUSTOMER_BASE,CUSTOMER
+	 * @param {string} mParameters.generator Generator with which the changes were created
+	 * @param {string} mParameters.selectorIds Selector IDs of controls for which the reset should filter
+	 * @param {string} mParameters.changeTypes Change types of the changes which should be reset
+	 * @param {sap.ui.fl.Change[]} mParameters.changes Changes of the selected layer and flex reference
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
 	CompatibilityConnector.resetChanges = function(mParameters) {
 		if (_isMethodOverwritten("resetChanges")) {
 			return FakeLrepConnector.prototype.resetChanges(mParameters);
 		}
-
-		return WriteStorage.reset({
-			reference: mParameters.sReference,
-			layer: mParameters.sLayer,
-			appVersion: mParameters.sAppVersion,
-			generator: mParameters.sGenerator,
-			changelist: mParameters.sChangelist,
-			selectorIds: mParameters.aSelectorIds,
-			changeTypes: mParameters.aChangeTypes
-		});
+		return WriteStorage.reset(mParameters);
 	};
 
 	return CompatibilityConnector;

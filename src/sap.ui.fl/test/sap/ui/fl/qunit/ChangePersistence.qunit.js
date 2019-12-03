@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
-	"sap/m/MessageBox",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/core/Component",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
@@ -28,7 +28,7 @@ function (
 	CompatibilityConnector,
 	Cache,
 	Settings,
-	MessageBox,
+	Storage,
 	Component,
 	Log,
 	jQuery,
@@ -2588,33 +2588,9 @@ function (
 		});
 
 		QUnit.test("when calling transportAllUIChanges successfully", function(assert) {
-			var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "transportId"
-			};
 			var oMockNewChange = {
-				packageName : "$TMP",
 				fileType : "change",
-				id : "changeId2",
-				namespace : "namespace",
-				getDefinition : function() {
-					return {
-						packageName : this.packageName,
-						fileType : this.fileType
-					};
-				},
-				getId : function() {
-					return this.id;
-				},
-				getNamespace : function() {
-					return this.namespace;
-				},
-				setResponse : function(oDefinition) {
-					this.packageName = oDefinition.packageName;
-				},
-				getPackage : function() {
-					return this.packageName;
-				}
+				id : "changeId2"
 			};
 
 			var oAppVariantDescriptor = {
@@ -2622,58 +2598,34 @@ function (
 				fileType : "appdescr_variant",
 				fileName : "manifest",
 				id : "customer.app.var.id",
-				namespace : "namespace",
-				getDefinition : function() {
-					return {
-						fileType : this.fileType,
-						fileName : this.fileName
-					};
-				},
-				getNamespace : function() {
-					return this.namespace;
-				},
-				getPackage : function() {
-					return this.packageName;
-				}
+				namespace : "namespace"
 			};
-
+			var oRootControl = {
+				id: "sampleControl"
+			};
+			var sStyleClass = "sampleStyle";
 			var sLayer = "CUSTOMER";
-
 			var aMockLocalChanges = [oMockNewChange];
 			var aAppVariantDescriptors = [oAppVariantDescriptor];
 
-			sandbox.stub(Utils, "getClient").returns('');
-			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
-			var fnCheckTransportInfoStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "checkTransportInfo").returns(true);
+			var fnPublishStub = sandbox.stub(Storage, "publish").resolves();
 			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aMockLocalChanges));
-			var fnPrepareChangesForTransportStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "_prepareChangesForTransport").returns(Promise.resolve());
 
-			return this.oChangePersistence.transportAllUIChanges(null, null, sLayer, aAppVariantDescriptors).then(function() {
-				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
-				assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
+			return this.oChangePersistence.transportAllUIChanges(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors).then(function() {
 				assert.ok(fnGetChangesForComponentStub.calledOnce, "then getChangesForComponent called once");
-				assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
-				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, {
+				assert.ok(fnPublishStub.calledOnce, "then publish called once");
+				assert.ok(fnPublishStub.calledWith({
+					transportDialogSettings: {
+						rootControl: oRootControl,
+						styleClass: sStyleClass
+					},
+					layer: sLayer,
 					reference: this._mComponentProperties.name,
 					appVersion: this._mComponentProperties.appVersion,
-					layer: sLayer
-				}), "then _prepareChangesForTransport called with the transport info and changes array");
+					localChanges: aMockLocalChanges,
+					appVariantDescriptors: aAppVariantDescriptors
+				}), "then publish called with the transport info and changes array");
 			}.bind(this));
-		});
-
-		QUnit.test("when calling transportAllUIChanges unsuccessfully", function(assert) {
-			sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.reject());
-			sandbox.stub(MessageBox, "show");
-			return this.oChangePersistence.transportAllUIChanges().then(function(sResponse) {
-				assert.equal(sResponse, "Error", "then Promise.resolve() with error message is returned");
-			});
-		});
-
-		QUnit.test("when calling transportAllUIChanges successfully, but with cancelled transport selection", function(assert) {
-			sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve());
-			return this.oChangePersistence.transportAllUIChanges().then(function(sResponse) {
-				assert.equal(sResponse, "Cancel", "then Promise.resolve() with cancel message is returned");
-			});
 		});
 
 		QUnit.test("when calling resetChanges without generator, selector IDs and change types specified", function (assert) {
@@ -2682,12 +2634,8 @@ function (
 			assert.ok(Log.error.calledWith("Of the generator, selector IDs and change types parameters at least one has to filled"), "then Log.error() is called with an error");
 		});
 
-		QUnit.test("when calling resetChanges in VENDOR layer with mix content of $TMP and transported changes", function (assert) {
+		QUnit.test("when calling resetChanges without aSelectorIds and aChangeTypes (application reset)", function (assert) {
 			var done = assert.async();
-			var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "transportId"
-			};
 			// changes for the component
 			var oVENDORChange1 = new Change({
 				fileType: "change",
@@ -2727,29 +2675,17 @@ function (
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
 			var aDeletedChangeContentIds = {response : [{name: "1"}, {name: "2"}]};
 
-			// Settings in registry
-			var oSetting = {
-				isKeyUser: true,
-				isAtoAvailable: false,
-				isProductiveSystem: function() {return false;},
-				isAtoEnabled: function() {return false;}
-			};
-			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-
 			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
-			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 
 			this.oChangePersistence.resetChanges("VENDOR", "Change.createInitialFileContent").then(function(aChanges) {
-				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
 				var oResetArgs = oResetChangesStub.getCall(0).args[0];
-				assert.equal(oResetArgs.sReference, "MyComponent");
-				assert.equal(oResetArgs.sAppVersion, "1.2.3");
-				assert.equal(oResetArgs.sLayer, "VENDOR");
-				assert.equal(oResetArgs.sChangelist, "transportId");
-				assert.equal(oResetArgs.sGenerator, "Change.createInitialFileContent");
+				assert.equal(oResetArgs.reference, "MyComponent");
+				assert.equal(oResetArgs.appVersion, "1.2.3");
+				assert.equal(oResetArgs.layer, "VENDOR");
+				assert.equal(oResetArgs.generator, "Change.createInitialFileContent");
 				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
 				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0, "the getChangesFromMapByNames is not called");
 				assert.deepEqual(aChanges, [], "empty array is returned");
@@ -2757,11 +2693,7 @@ function (
 			});
 		});
 
-		QUnit.test("when calling resetChanges in VENDOR layer for transported changes with selector and change type", function (assert) {
-			var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "transportId"
-			};
+		QUnit.test("when calling resetChanges with selector and change type (control reset)", function (assert) {
 			// changes for the component
 			var oVENDORChange1 = new Change({
 				fileType: "change",
@@ -2801,185 +2733,18 @@ function (
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
 			var aDeletedChangeContentIds = {response: [{name: "1"}, {name: "2"}]};
 
-			// Settings in registry
-			var oSetting = {
-				isKeyUser: true,
-				isAtoAvailable: false,
-				isProductiveSystem: function() {return false;},
-				isAtoEnabled: function() {return false;}
-			};
-			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-
 			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
-			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 
 			return this.oChangePersistence.resetChanges("VENDOR", "", ["abc123"], ["labelChange"]).then(function() {
-				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
 				var oResetArgs = oResetChangesStub.getCall(0).args[0];
-				assert.equal(oResetArgs.sReference, "MyComponent");
-				assert.equal(oResetArgs.sAppVersion, "1.2.3");
-				assert.equal(oResetArgs.sLayer, "VENDOR");
-				assert.equal(oResetArgs.sChangelist, "transportId");
-				assert.deepEqual(oResetArgs.aChangeTypes, ["labelChange"]);
-				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
-				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
-				assert.ok(oGetChangesFromMapByNamesStub.calledOnce, "the getChangesFromMapByNames is called once");
-				assert.deepEqual(oGetChangesFromMapByNamesStub.args[0][0], ["1", "2"], "and with the correct names");
-			});
-		});
-
-		QUnit.test("when calling resetChanges in CUSTOMER layer with ATO_NOTIFICATION", function (assert) {
-			// changes for the component
-			var oUserChange = new Change({
-				fileType: "change",
-				layer: "USER",
-				fileName: "1",
-				namespace: "b",
-				packageName: "c",
-				changeType: "labelChange",
-				creation: "",
-				reference: "",
-				selector: {
-					id: "abc123"
-				},
-				content: {
-					something: "createNewVariant"
-				}
-			});
-
-			var oCUSTOMERChange1 = new Change({
-				fileType: "change",
-				layer: "CUSTOMER",
-				fileName: "2",
-				namespace: "b",
-				packageName: "c",
-				changeType: "labelChange",
-				creation: "",
-				reference: "",
-				selector: {
-					id: "abc123"
-				},
-				content: {
-					something: "createNewVariant"
-				}
-			});
-
-			var oCUSTOMERChange2 = new Change({
-				fileType: "change",
-				layer: "CUSTOMER",
-				fileName: "3",
-				namespace: "b",
-				packageName: "c",
-				changeType: "labelChange",
-				creation: "",
-				reference: "",
-				selector: {
-					id: "abc123"
-				},
-				content: {
-					something: "createNewVariant"
-				}
-			});
-
-			var aChanges = [oCUSTOMERChange1, oUserChange, oCUSTOMERChange2];
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
-			var aDeletedChangeContentIds = {response : [{name: "2"}, {name: "3"}]};
-
-			// Settings in registry
-			var oSetting = {
-				isKeyUser: true,
-				isAtoAvailable: true,
-				isProductiveSystem: function() {return false;},
-				isAtoEnabled: function() {return true;}
-			};
-			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-
-			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
-			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
-			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
-
-			return this.oChangePersistence.resetChanges("CUSTOMER", "Change.createInitialFileContent").then(function(aChanges) {
-				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
-				var oResetArgs = oResetChangesStub.getCall(0).args[0];
-				assert.equal(oResetArgs.sReference, "MyComponent");
-				assert.equal(oResetArgs.sAppVersion, "1.2.3");
-				assert.equal(oResetArgs.sLayer, "CUSTOMER");
-				assert.equal(oResetArgs.sChangelist, "ATO_NOTIFICATION");
-				assert.equal(oResetArgs.sGenerator, "Change.createInitialFileContent");
-				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
-				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0, "the getChangesFromMapByNames is not called");
-				assert.deepEqual(aChanges, [], "empty array is returned");
-			});
-		});
-
-		QUnit.test("when calling resetChanges in CUSTOMER layer with selector IDs", function (assert) {
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
-			var aDeletedChangeContentIds = {response : [{name: "1"}, {name: "2"}]};
-
-			// Settings in registry
-			var oSetting = {
-				isKeyUser: true,
-				isAtoAvailable: true,
-				isProductiveSystem: function() {return false;},
-				isAtoEnabled: function() {return true;}
-			};
-			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
-			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
-			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
-			var aControlIds = [
-				"view--control1",
-				"view--controlWithNoChanges",
-				"feview--control2",
-				"feview--controlWithNoChanges"
-			];
-			return this.oChangePersistence.resetChanges("CUSTOMER", "Change.createInitialFileContent", aControlIds).then(function() {
-				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
-				var oResetArgs = oResetChangesStub.getCall(0).args[0];
-				assert.equal(oResetArgs.sReference, "MyComponent");
-				assert.equal(oResetArgs.sAppVersion, "1.2.3");
-				assert.equal(oResetArgs.sLayer, "CUSTOMER");
-				assert.equal(oResetArgs.aSelectorIds, aControlIds);
-				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
-				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
-				assert.ok(oGetChangesFromMapByNamesStub.calledOnce, "the getChangesFromMapByNames is called once");
-				assert.deepEqual(oGetChangesFromMapByNamesStub.args[0][0], ["1", "2"], "and with the correct names");
-			});
-		});
-
-		QUnit.test("when calling resetChanges in USER layer with selector IDs", function (assert) {
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
-			var oTransportStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "setTransports");
-			var aDeletedChangeContentIds = {response: [{name: "1"}, {name: "2"}]};
-			// Settings in registry
-			var oSetting = {
-				isKeyUser: true,
-				isAtoAvailable: true,
-				isProductiveSystem: function() {return false;},
-				isAtoEnabled: function() {return true;}
-			};
-			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
-			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
-			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
-
-			var aControlIds = [
-				"view--control1",
-				"view--controlWithNoChanges",
-				"feview--control2",
-				"feview--controlWithNoChanges"
-			];
-			return this.oChangePersistence.resetChanges("USER", "Change.createInitialFileContent", aControlIds).then(function() {
-				assert.equal(oTransportStub.callCount, 0, "no transport data was requested");
-				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
-				var oResetArgs = oResetChangesStub.getCall(0).args[0];
-				assert.equal(oResetArgs.sReference, "MyComponent");
-				assert.equal(oResetArgs.sAppVersion, "1.2.3");
-				assert.equal(oResetArgs.sChangelist, "");
-				assert.equal(oResetArgs.aSelectorIds, aControlIds);
+				assert.equal(oResetArgs.reference, "MyComponent");
+				assert.equal(oResetArgs.appVersion, "1.2.3");
+				assert.equal(oResetArgs.layer, "VENDOR");
+				assert.deepEqual(oResetArgs.selectorIds, ["abc123"]);
+				assert.deepEqual(oResetArgs.changeTypes, ["labelChange"]);
 				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
 				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
 				assert.ok(oGetChangesFromMapByNamesStub.calledOnce, "the getChangesFromMapByNames is called once");

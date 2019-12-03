@@ -127,6 +127,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Contains additional information for all the Connectors
 	 * @param {string} mPropertyBag.reference Flexibility reference
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the reset should take place
+	 * @param {sap.ui.fl.Change[]} mPropertyBag.changes Changes of the selected layer and flex reference
 	 * @param {string} [mPropertyBag.appVersion] Version of the application
 	 * @param {string} [mPropertyBag.generator] Generator with which the changes were created
 	 * @param {string[]} [mPropertyBag.selectorIds] Selector IDs of controls for which the reset should filter
@@ -162,6 +163,25 @@ sap.ui.define([
 		return WriteUtils.getWriteConnectors()
 			.then(sendLoadFeaturesToConnector)
 			.then(StorageFeaturesMerger.mergeResults);
+	};
+
+	/**
+	 * Transports all the UI changes and app variant descriptor (if exists) to the target system.
+	 *
+	 * @param {object} mPropertyBag Property bag
+	 * @param {string} mPropertyBag.url Configured url for the connector
+	 * @param {object} mPropertyBag.transportDialogSettings Settings for Transport dialog
+	 * @param {object} mPropertyBag.transportDialogSettings.rootControl The root control of the running application
+	 * @param {string} mPropertyBag.transportDialogSettings.styleClass Style class name to be added in the TransportDialog
+	 * @param {string} mPropertyBag.layer Working layer
+	 * @param {string} mPropertyBag.reference Flex reference of the application
+	 * @param {string} mPropertyBag.appVersion Version of the application for which the reset takes place
+	 * @param {sap.ui.fl.Change[]} mPropertyBag.localChanges Local changes to be published
+	 * @param {object[]} [mPropertyBag.appVariantDescriptors] An array of app variant descriptors which needs to be transported
+	 * @returns {Promise} Promise that resolves when all the artifacts are successfully transported
+	 */
+	Storage.publish = function(mPropertyBag) {
+		return executeActionByName("publish", mPropertyBag);
 	};
 
 	Storage.appVariant = {

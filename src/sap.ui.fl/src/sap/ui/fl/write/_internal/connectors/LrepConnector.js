@@ -8,6 +8,13 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Layer",
+	"sap/ui/core/Component",
+	"sap/ui/core/BusyIndicator",
+	"sap/base/Log",
+	"sap/m/MessageBox",
 	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
@@ -15,6 +22,13 @@ sap.ui.define([
 	ApplyConnector,
 	ApplyUtils,
 	WriteUtils,
+	TransportSelection,
+	Settings,
+	Layer,
+	Component,
+	BusyIndicator,
+	Log,
+	MessageBox,
 	_pick
 ) {
 	"use strict";
@@ -102,6 +116,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.reference Flex reference of the application
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} mPropertyBag.changelist Transport Id
+		 * @param {sap.ui.fl.Change[]} mPropertyBag.changes Changes of the selected layer and flex reference
 		 * @param {string} [mPropertyBag.appVersion] Version of the application for which the reset takes place
 		 * @param {string} [mPropertyBag.generator] Generator with which the changes were created
 		 * @param {string} [mPropertyBag.selectorIds] Selector IDs of controls for which the reset should filter (comma-separated list)
@@ -109,26 +124,49 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolves as soon as the reset has completed
 		 */
 		reset: function (mPropertyBag) {
-			var aParameters = ["reference", "layer", "appVersion", "changelist", "generator"];
-			var mParameters = _pick(mPropertyBag, aParameters);
+			var aChanges = [];
+			var oTransportSelectionPromise = Promise.resolve(); //By default, no transport needed for USER layer
 
-			ApplyConnector._addClientAndLanguageInfo(mParameters);
-
-			if (mPropertyBag.selectorIds) {
-				mParameters.selector = mPropertyBag.selectorIds;
+			if (mPropertyBag.layer !== Layer.USER) {
+				aChanges = mPropertyBag.changes;
+				oTransportSelectionPromise = Settings.getInstance().then(function (oSettings) {
+					if (!oSettings.isProductiveSystem()) {
+						return new TransportSelection().setTransports(aChanges, Component.get(mPropertyBag.reference)).then(function() {
+							//Make sure we include one request in case of mixed changes (local and transported)
+							aChanges.some(function(oChange) {
+								if (oChange.getRequest()) {
+									mPropertyBag.changelist = oChange.getRequest();
+									return true;
+								}
+								return false;
+							});
+						});
+					}
+				});
 			}
-			if (mPropertyBag.changeTypes) {
-				mParameters.changeType = mPropertyBag.changeTypes;
-			}
 
-			delete mPropertyBag.reference;
-			var sResetUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
-			var oRequestOption = WriteUtils.getRequestOptions(
-				this.applyConnector,
-				sTokenUrl
-			);
-			return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption);
+			return oTransportSelectionPromise.then(function() {
+				var aParameters = ["reference", "layer", "appVersion", "changelist", "generator"];
+				var mParameters = _pick(mPropertyBag, aParameters);
+
+				ApplyConnector._addClientAndLanguageInfo(mParameters);
+
+				if (mPropertyBag.selectorIds) {
+					mParameters.selector = mPropertyBag.selectorIds;
+				}
+				if (mPropertyBag.changeTypes) {
+					mParameters.changeType = mPropertyBag.changeTypes;
+				}
+
+				delete mPropertyBag.reference;
+				var sResetUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
+				var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+				var oRequestOption = WriteUtils.getRequestOptions(
+					ApplyConnector,
+					sTokenUrl
+				);
+				return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption);
+			});
 		},
 
 
@@ -136,29 +174,54 @@ sap.ui.define([
 		 * Publish flexibility files for a given application and layer.
 		 *
 		 * @param {object} mPropertyBag Property bag
-		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
-		 * @param {string} mPropertyBag.reference Flex reference of the application
 		 * @param {string} mPropertyBag.url Configured url for the connector
-		 * @param {string} mPropertyBag.changelist Transport Id
-		 * @param {string} [mPropertyBag.package] ABAP package (mandatory when layer is 'VENDOR')
-		 * @param {string} [mPropertyBag.appVersion] Version of the application
-		 * @returns {Promise} Promise resolves as soon as the publish has completed
+		 * @param {object} mPropertyBag.transportDialogSettings Settings for Transport dialog
+		 * @param {object} mPropertyBag.transportDialogSettings.rootControl The root control of the running application
+		 * @param {string} mPropertyBag.transportDialogSettings.styleClass Style class name to be added in the TransportDialog
+		 * @param {string} mPropertyBag.layer Working layer
+		 * @param {string} mPropertyBag.reference Flex reference of the application
+		 * @param {string} mPropertyBag.appVersion Version of the application for which the reset takes place
+		 * @param {sap.ui.fl.Change[]} mPropertyBag.localChanges Local changes to  be published
+		 * @param {object[]} [mPropertyBag.appVariantDescriptors] An array of app variant descriptors which needs to be transported
+		 * @returns {Promise} Promise that resolves when all the artifacts are successfully transported
 		 */
-		//TODO Need to be removed/aligned. This function is not used but a direct request triggered from sap/ui/fl/Transport
 		publish: function (mPropertyBag) {
-			var aParameters = ["reference", "layer", "appVersion", "changelist", "package"];
-			var mParameters = _pick(mPropertyBag, aParameters);
+			var fnHandleAllErrors = function (oError) {
+				BusyIndicator.hide();
+				var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+				var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
+				var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
+				Log.error("transport error" + oError);
+				MessageBox.show(sMessage, {
+					icon: MessageBox.Icon.ERROR,
+					title: sTitle,
+					styleClass: mPropertyBag.transportDialogSettings.styleClass
+				});
+				return "Error";
+			};
 
-			ApplyConnector._addClientAndLanguageInfo(mParameters);
-
-			delete mPropertyBag.reference;
-			var sPublishUrl = ApplyUtils.getUrl(ROUTES.PUBLISH, mPropertyBag, mParameters);
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
-			var oRequestOption = WriteUtils.getRequestOptions(
-				this.applyConnector,
-				sTokenUrl
-			);
-			return WriteUtils.sendRequest(sPublishUrl, "POST", oRequestOption);
+			var oTransportSelection = new TransportSelection();
+			return oTransportSelection.openTransportSelection(null, mPropertyBag.transportDialogSettings.rootControl, mPropertyBag.transportDialogSettings.styleClass)
+				.then(function(oTransportInfo) {
+					if (oTransportSelection.checkTransportInfo(oTransportInfo)) {
+						BusyIndicator.show(0);
+						var oContentParameters = {
+							reference: mPropertyBag.reference,
+							appVersion: mPropertyBag.appVersion,
+							layer: mPropertyBag.layer
+						};
+						return oTransportSelection._prepareChangesForTransport(
+							oTransportInfo,
+							mPropertyBag.localChanges,
+							mPropertyBag.appVariantDescriptors,
+							oContentParameters
+						).then(function() {
+							BusyIndicator.hide();
+						});
+					}
+					return "Cancel";
+				})
+				['catch'](fnHandleAllErrors);
 		},
 
 		/**
