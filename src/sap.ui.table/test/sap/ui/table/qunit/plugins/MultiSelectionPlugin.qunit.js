@@ -91,11 +91,12 @@ sap.ui.define([
 
 	QUnit.test("Enable/Disable", function(assert) {
 		var oTable = this.oTable;
+		var $SelectAll = oTable.$("selall");
 		var oSelectionPlugin = oTable._getSelectionPlugin();
 
 		return oTable.qunit.whenInitialRenderingFinished().then(function() {
-			assert.ok(oTable.$("selall").attr("aria-disabled"), "Before bindRows: aria-disabled is set to true");
-			assert.ok(oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "Before bindRows: Deselect All is disabled");
+			assert.ok($SelectAll.attr("aria-disabled"), "Before bindRows: aria-disabled is set to true");
+			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Before bindRows: Deselect All is disabled");
 
 			oTable.bindRows({path: "/Products"});
 			oTable.setModel(new ODataModel(sServiceURI, {
@@ -103,21 +104,22 @@ sap.ui.define([
 			}));
 		}).then(oTable.qunit.whenBindingChange).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.ok(oTable.getBinding("rows").getLength() > 0, "After bindRows: Table has data");
-			assert.ok(oTable.$("selall").attr("aria-disabled"), "After bindRows: aria-disabled is set to true");
-			assert.ok(oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "After bindRows: Deselect All is disabled");
+			assert.strictEqual($SelectAll.attr("role"), "button", "role attribute is set to button");
+			assert.ok($SelectAll.attr("aria-disabled"), "After bindRows: aria-disabled is set to true");
+			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After bindRows: Deselect All is disabled");
 		}).then(function() {
 			return new Promise(function(resolve) {
 				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-					assert.notOk(oTable.$("selall").attr("aria-disabled"), "After rows are selected: aria-disabled is removed");
-					assert.notOk(oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "After rows are selected: Deselect All is enabled");
+					assert.notOk($SelectAll.attr("aria-disabled"), "After rows are selected: aria-disabled is removed");
+					assert.notOk($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After rows are selected: Deselect All is enabled");
 					oTable.unbindRows();
 					resolve();
 				});
 				oSelectionPlugin.setSelectedIndex(0);
 			});
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oTable.$("selall").attr("aria-disabled"), "After unbindRows: aria-disabled is set to true");
-			assert.ok(oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "After unbindRows: Deselect All is disabled");
+			assert.ok($SelectAll.attr("aria-disabled"), "After unbindRows: aria-disabled is set to true");
+			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After unbindRows: Deselect All is disabled");
 		});
 	});
 
@@ -147,23 +149,25 @@ sap.ui.define([
 	QUnit.test("Display and accessibility", function(assert) {
 		var done = assert.async();
 		var that = this;
+		var $SelectAll = this.oTable.$("selall");
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		assert.ok(oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "MultiSelectionPlugin is initialised");
-		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectAllCheckBox").length, 0, "no Select All checkbox");
-		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectClear").length, 1, "Deselect All button exists");
-		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
-		assert.ok(this.oTable.$("selall").attr("aria-disabled"), "aria-disabled is set to true");
+		assert.strictEqual($SelectAll.find(".sapUiTableSelectAllCheckBox").length, 0, "no Select All checkbox");
+		assert.strictEqual($SelectAll.find(".sapUiTableSelectClear").length, 1, "Deselect All button exists");
+		assert.strictEqual($SelectAll.attr("title"), "Deselect All", "Tooltip exists");
+		assert.strictEqual($SelectAll.attr("role"), "button", "role attribute is set to button");
+		assert.ok($SelectAll.attr("aria-disabled"), "aria-disabled is set to true");
 		this.oTable.setEnableSelectAll(false);
-		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
-		assert.ok(this.oTable.$("selall").attr("aria-disabled"), "aria-disabled is set to true");
-		assert.ok(this.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "Deselect All is disabled");
+		assert.strictEqual($SelectAll.attr("title"), "Deselect All", "Tooltip exists");
+		assert.ok($SelectAll.attr("aria-disabled"), "aria-disabled is set to true");
+		assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Deselect All is disabled");
 
 		oSelectionPlugin.attachSelectionChange(function(){
-			assert.strictEqual(that.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
-			assert.notOk(that.oTable.$("selall").attr("aria-disabled"), "aria-disabled is removed");
-			assert.notOk(that.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "Deselect All is enabled");
-			assert.strictEqual((that.oTable.$("selall").attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
+			assert.strictEqual($SelectAll.attr("title"), "Deselect All", "Tooltip exists");
+			assert.notOk($SelectAll.attr("aria-disabled"), "aria-disabled is removed");
+			assert.notOk($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Deselect All is enabled");
+			assert.strictEqual(($SelectAll.attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
 			that.oTable.setEnableSelectAll(true);
 
 			var oSetPropertySpy = sinon.spy(oSelectionPlugin, "setProperty");
@@ -178,12 +182,12 @@ sap.ui.define([
 			assert.ok(oSetPropertySpy.calledOnce, "setProperty is called once");
 			assert.ok(oSetPropertySpy.calledWithExactly("limit", 0, false), "setProperty called with the correct parameters");
 
-			assert.strictEqual(that.oTable.$("selall").find(".sapUiTableSelectAllCheckBox").length, 1,
+			assert.strictEqual($SelectAll.find(".sapUiTableSelectAllCheckBox").length, 1,
 				"When the limit is set to -1 the Select All checkbox is rendered");
-			assert.strictEqual(that.oTable.$("selall").find(".sapUiTableSelectClear").length, 0,
+			assert.strictEqual($SelectAll.find(".sapUiTableSelectClear").length, 0,
 				"When the limit is set to -1 the Deselect All button is not rendered");
-			assert.strictEqual(that.oTable.$("selall").attr("title"), "Select All", "Tooltip exists");
-			assert.strictEqual((that.oTable.$("selall").attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel",
+			assert.strictEqual($SelectAll.attr("title"), "Select All", "Tooltip exists");
+			assert.strictEqual(($SelectAll.attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel",
 				"accessibility info exists");
 			done();
 		});

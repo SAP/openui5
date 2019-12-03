@@ -1187,15 +1187,15 @@ sap.ui.define([
 
 	QUnit.test("Other ARIA Attributes SelectAll", function(assert) {
 		var $Elem = getSelectAll(false);
-		assert.strictEqual($Elem.attr("role"), "button", "role");
-		assert.strictEqual($Elem.attr("aria-pressed"), "false", "aria-pressed");
+		assert.strictEqual($Elem.attr("role"), "checkbox", "role");
+		assert.strictEqual($Elem.attr("aria-checked"), "false", "aria-checked");
 		oTable.selectAll();
 		$Elem = getSelectAll(false);
-		assert.strictEqual($Elem.attr("aria-pressed"), "true", "aria-pressed");
+		assert.strictEqual($Elem.attr("aria-checked"), "true", "aria-checked");
 		oTable.setSelectionMode(SelectionMode.Single);
 		sap.ui.getCore().applyChanges();
-		$Elem = getSelectAll(false);
-		assert.strictEqual($Elem.attr("aria-disabled"), "true", "aria-disabled");
+		assert.strictEqual($Elem.attr("role"), undefined, "role");
+		assert.strictEqual($Elem.attr("aria-checked"), undefined, "aria-checked");
 	});
 
 	QUnit.module("Misc", {

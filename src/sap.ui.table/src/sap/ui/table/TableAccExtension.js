@@ -642,13 +642,17 @@ sap.ui.define([
 					var mRenderConfig = oTable._getSelectionPlugin().getRenderConfig();
 
 					if (mRenderConfig.headerSelector.visible) {
-						mAttributes["role"] = ["button"];
-					}
-					if (mParams && mParams.enabled) {
-						mAttributes["aria-pressed"] = mParams.checked ? "true" : "false";
-					} else {
-						mAttributes["aria-disabled"] = "true";
-						mAttributes["aria-pressed"] = "false";
+						if (mRenderConfig.headerSelector.type === "toggle") {
+							mAttributes["role"] = ["checkbox"];
+							if (mParams && mParams.enabled) {
+								mAttributes["aria-checked"] = mParams.checked ? "true" : "false";
+							}
+						} else if (mRenderConfig.headerSelector.type === "clear") {
+							mAttributes["role"] = ["button"];
+							if (!mParams || !mParams.enabled) {
+								mAttributes["aria-disabled"] = "true";
+							}
+						}
 					}
 					if (!oTable._getShowStandardTooltips() && mRenderConfig.headerSelector.type === "toggle") {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
@@ -1351,7 +1355,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 
 		if (this._accMode && oTable) {
-			oTable.$("selall").attr("aria-pressed", bSelectAll ? "true" : "false");
+			oTable.$("selall").attr("aria-checked", bSelectAll ? "true" : "false");
 		}
 	};
 
