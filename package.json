@@ -1,6 +1,6 @@
 {
   "name": "openui5",
-  "version": "1.72.2-SNAPSHOT",
+  "version": "1.72.2",
   "description": "OpenUI5 Core & Runtime",
   "private": true,
   "scripts": {
