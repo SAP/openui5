@@ -712,7 +712,9 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.doSetProperty = function(sPath, vValue, oGroupLock) {
 		if (this.oOperation && (sPath === "$Parameter" || sPath.startsWith("$Parameter/"))) {
-			this.setParameter(sPath.slice(/*"$Parameter/".length*/11), vValue);
+			_Helper.updateAll(this.oOperation.mChangeListeners, "", this.oOperation.mParameters,
+				_Cache.makeUpdateData(sPath.split("/").slice(1), vValue));
+			this.oOperation.bAction = undefined; // "not yet executed"
 			oGroupLock.unlock();
 			return SyncPromise.resolve();
 		}
@@ -1288,7 +1290,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.setParameter = function (sParameterName, vValue) {
-		var oSource = {};
+		var vOldValue;
 
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
@@ -1299,9 +1301,11 @@ sap.ui.define([
 		if (vValue === undefined) {
 			throw new Error("Missing value for parameter: " + sParameterName);
 		}
-		oSource[sParameterName] = vValue;
-		_Helper.updateAll(this.oOperation.mChangeListeners, "", this.oOperation.mParameters,
-			oSource);
+
+		vOldValue = this.oOperation.mParameters[sParameterName];
+		this.oOperation.mParameters[sParameterName] = vValue;
+		_Helper.informAll(this.oOperation.mChangeListeners, sParameterName, vOldValue, vValue);
+
 		this.oOperation.bAction = undefined; // "not yet executed"
 
 		return this;

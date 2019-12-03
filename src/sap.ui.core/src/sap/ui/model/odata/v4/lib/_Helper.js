@@ -770,6 +770,46 @@ sap.ui.define([
 		},
 
 		/**
+		 * Fires change events for all properties that differ between the old and the new value.
+		 * The function recursively handles modified, added or removed structural properties
+		 * and fires change events for all modified/added/removed primitive properties therein.
+		 *
+		 * @param {object} mChangeListeners A map of change listeners by path
+		 * @param {string} sPath The path of both values in mChangeListeners
+		 * @param {any} vOld The old value
+		 * @param {any} vNew The new value
+		 *
+		 * @private
+		 */
+		informAll : function (mChangeListeners, sPath, vOld, vNew) {
+			if (vNew === vOld) {
+				return;
+			}
+
+			if (vNew && typeof vNew === "object") {
+				Object.keys(vNew).forEach(function (sProperty) {
+					_Helper.informAll(mChangeListeners, _Helper.buildPath(sPath, sProperty),
+						vOld && vOld[sProperty], vNew[sProperty]);
+				});
+			} else {
+				// must fire null to guarantee that a property binding has not
+				// this.vValue === undefined, see ODataPropertyBinding.setValue
+				_Helper.fireChange(mChangeListeners, sPath, vNew || null);
+				vNew = {};
+			}
+
+			if (vOld && typeof  vOld === "object") {
+				Object.keys(vOld).forEach(function (sProperty) {
+					// not covered in the new value
+					if (!vNew.hasOwnProperty(sProperty)) {
+						_Helper.informAll(mChangeListeners, _Helper.buildPath(sPath, sProperty),
+							vOld[sProperty], undefined);
+					}
+				});
+			}
+		},
+
+		/**
 		 * Returns a copy of given query options where "$expand" and "$select" are replaced by the
 		 * intersection with the given (navigation) property paths.
 		 *

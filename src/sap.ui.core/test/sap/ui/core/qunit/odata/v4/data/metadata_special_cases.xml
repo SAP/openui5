@@ -84,6 +84,7 @@
 			</EntityType>
 			<ComplexType Name="Address">
 				<Property Name="City" Type="Edm.String"/>
+				<Property Name="ZIP" Type="Edm.String" MaxLength="5" />
 			</ComplexType>
 			<ComplexType Name="ComplexKey">
 				<Property Name="P1" Type="Edm.String"/>
@@ -97,6 +98,12 @@
 				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
 				<Property Name="longtextUrl" Type="Edm.String" Nullable="true" />
 			</ComplexType>
+			<ComplexType Name="Person">
+				<Property Name="Address" Type="special.cases.Address" />
+				<Property Name="Name" Type="Edm.String" Nullable="false" />
+				<Property Name="Salary" Type="Edm.Decimal" Nullable="false" Precision="16"
+						  Scale="variable"/>
+			</ComplexType>
 			<Action Name="ActivationAction" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
@@ -104,6 +111,9 @@
 			<Action Name="EditAction" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Action>
+			<Action Name="AcHirePerson">
+				<Parameter Name="Person" Type="special.cases.Person" Nullable="false"/>
 			</Action>
 			<Action Name="PreparationAction" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.PublicationsType" Nullable="false"/>
@@ -134,6 +144,7 @@
 				<EntitySet Name="Artists" EntityType="special.cases.ArtistsType"/>
 				<EntitySet Name="As" EntityType="special.cases.A"/>
 				<EntitySet Name="Bs" EntityType="special.cases.B"/>
+				<ActionImport Name="HirePerson" Action="special.cases.AcHirePerson"/>
 			</EntityContainer>
 			<Annotations Target="special.cases.ArtistsType/Name">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist Name" />

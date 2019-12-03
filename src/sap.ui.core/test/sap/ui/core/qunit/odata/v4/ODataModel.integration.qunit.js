@@ -3306,6 +3306,163 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 </FlexBox>');
 
 	//*********************************************************************************************
+	// Scenario: Allow setting complex type parameters of operations via property binding
+	// - parameters change because of change in the binding.
+	// Follow-up on JIRA: CPOUI5ODATAV4-15 (read/write primitive type parameters)
+	// JIRA: CPOUI5ODATAV4-52
+	QUnit.test("Allow binding of complex operation parameters", function (assert) {
+		var oOperation,
+			oModel = createSpecialCasesModel(),
+			sView = '\
+<FlexBox id="operation" binding="{/HirePerson(...)}">\
+	<FlexBox id="parameter" binding="{$Parameter}">\
+		<FlexBox binding="{Person}" >\
+			<Input id="name" value="{Name}"/>\
+			<Input id="salary" value="{Salary}"/>\
+			<FlexBox binding="{Address}">\
+				<Input id="city" value="{City}"/>\
+				<Input id="zip" value="{ZIP}"/>\
+			</FlexBox>\
+		</FlexBox>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("city", "")
+			.expectChange("name", "")
+			.expectChange("salary", null)
+			.expectChange("zip", "");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oOperation = that.oView.byId("operation").getObjectBinding();
+
+			that.expectChange("city", "Tatooine")
+				.expectChange("name", "R2D2")
+				.expectChange("salary", "12,345,678")
+				.expectChange("zip", "12345");
+
+			// code under test - reading parameter values
+			oOperation.setParameter("Person", {
+				Address : {
+					City : "Tatooine",
+					ZIP : "12345"
+				},
+				Name : "R2D2",
+				Salary : 12345678
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("city", "")
+				.expectChange("name", "")
+				.expectChange("salary", "12,345")
+				.expectChange("zip", "67890");
+
+			// code under test - set parameter complex value
+			oOperation.setParameter("Person", {
+				Address : {
+					ZIP : "67890"
+				},
+				Salary : 12345
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("salary", "54,321")
+				.expectChange("zip", "");
+
+			// code under test - set parameter complex value
+			oOperation.setParameter("Person", {
+				Salary : 54321
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("name", "C3PO");
+
+			// code under test - Person/Name
+			that.oView.byId("name").getBinding("value").setValue("C3PO");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("city", "Kashyyk");
+
+			// code under test - Person/Address/City
+			that.oView.byId("city").getBinding("value").setValue("Kashyyk");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("zip", "12345");
+
+			// code under test - Person/Address/ZIP
+			that.oView.byId("zip").getBinding("value").setValue("12345");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+				method : "POST",
+				url : "HirePerson",
+				payload : {
+					Person : {
+						Address : {
+							City : "Kashyyk",
+							ZIP : "12345"
+						},
+						Name : "C3PO",
+						Salary : 54321
+					}
+				}
+			}, {/* response does not matter here */});
+
+			// code under test
+			return Promise.all([oOperation.execute(), that.waitForChanges(assert)]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODCB#setParameter with complex type holds the reference", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			that = this;
+
+		return this.createView(assert, '', oModel).then(function () {
+			var oOperation = oModel.bindContext("/HirePerson(...)"),
+				oPerson = {
+					Address : {
+						City : "Tatooine",
+						ZIP : "12345"
+					},
+					Name : "R2D2",
+					Salary : 12345678
+				};
+
+			oOperation.setParameter("Person", oPerson);
+			oPerson.Salary = 54321;
+			oPerson.Address.City = "Kashyyk";
+
+			that.expectRequest({
+				method : "POST",
+				url : "HirePerson",
+				payload : {
+					Person : {
+						Address : {
+							City : "Kashyyk",
+							ZIP : "12345"
+						},
+						Name : "R2D2",
+						Salary : 54321
+					}
+				}
+			}, {/* response does not matter here */});
+
+			return Promise.all([
+				// code under test
+				oOperation.execute(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Changing the binding parameters causes a refresh of the table
 	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Absolute ODLB changing parameters", function (assert) {
