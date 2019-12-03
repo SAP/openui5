@@ -527,6 +527,14 @@ sap.ui.define([
 		childQueryOptions : {$count : true},
 		expectedQueryOptions : {$count : true}
 	}, {
+		aggregatedQueryOptions : {$count : true},
+		childQueryOptions : {$count : false},
+		expectedQueryOptions : {$count : true}
+	}, {
+		aggregatedQueryOptions : {},
+		childQueryOptions : {$count : false},
+		expectedQueryOptions : {}
+	}, {
 		aggregatedQueryOptions : {$orderby : "Category"},
 		childQueryOptions : {$orderby : "Category"},
 		expectedQueryOptions : {$orderby : "Category"}
@@ -546,6 +554,28 @@ sap.ui.define([
 		aggregatedQueryOptions : {$search : "Foo NOT Bar"},
 		childQueryOptions : {},
 		expectedQueryOptions : {$search : "Foo NOT Bar"}
+	}, {
+		aggregatedQueryOptions : {},
+		childQueryOptions : {
+			$expand : {
+				foo : {
+					$filter : "bar gt 3",
+					$select : ["bar"]
+				}
+			}
+		},
+		expectedQueryOptions : {
+			$expand : {
+				foo : {
+					$filter : "bar gt 3",
+					$select : ["bar"]
+				}
+			}
+		}
+	}, {
+		aggregatedQueryOptions : {$expand : {foo : {$select : ["bar"]}}},
+		childQueryOptions : {},
+		expectedQueryOptions : {$expand : {foo : {$select : ["bar"]}}}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("aggregateQueryOptions returns true: " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
@@ -556,7 +586,8 @@ sap.ui.define([
 				bMergeSuccess;
 
 			// code under test
-			bMergeSuccess = oBinding.aggregateQueryOptions(oFixture.childQueryOptions, false);
+			bMergeSuccess = oBinding.aggregateQueryOptions(oFixture.childQueryOptions,
+				"/base/metapath", false);
 
 			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.expectedQueryOptions);
 			assert.strictEqual(bMergeSuccess, true);
@@ -568,13 +599,15 @@ sap.ui.define([
 		var oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {}
 			}),
-			mChildQueryOptions = {$select : ["bar"], $count : true};
+			mChildQueryOptions = {$select : ["bar"], $count : true, $filter : "baz eq 42"};
 
 		// code under test
 		assert.ok(oBinding.aggregateQueryOptions({$expand : {foo : mChildQueryOptions}}, false));
 
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {$expand : {foo : mChildQueryOptions}});
 		assert.notStrictEqual(oBinding.mAggregatedQueryOptions.$expand.foo, mChildQueryOptions);
+		assert.notStrictEqual(oBinding.mAggregatedQueryOptions.$expand.foo.$select,
+			mChildQueryOptions.$select);
 	});
 
 	//*********************************************************************************************
@@ -793,7 +826,7 @@ sap.ui.define([
 						.returns(mChildQueryOptions);
 					oBindingMock.expects("aggregateQueryOptions")
 						.exactly(oFixture.hasChildQueryOptions ? 1 : 0)
-						.withExactArgs(sinon.match.same(mChildQueryOptions),
+						.withExactArgs(sinon.match.same(mChildQueryOptions), "/Set",
 							bCacheCreationPending ? sinon.match.falsy : true)
 						.returns(oFixture.canMergeQueryOptions);
 
@@ -889,7 +922,7 @@ sap.ui.define([
 				.returns("reducedChildMetaPath");
 			oHelperMock.expects("wrapChildQueryOptions").returns({});
 			oBindingMock.expects("aggregateQueryOptions")
-				.withExactArgs({}, /*bIsCacheImmutable*/true)
+				.withExactArgs({}, "/Set", /*bIsCacheImmutable*/true)
 				.returns(false);
 			if (bRejected) {
 				this.mock(oBinding.oModel).expects("reportError")
@@ -994,7 +1027,7 @@ sap.ui.define([
 				sinon.match.same(mChildLocalQueryOptions), sinon.match.same(fnFetchMetadata))
 			.returns({});
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs({}, /*bIsCacheImmutable*/false)
+			.withExactArgs({}, "/Set", /*bIsCacheImmutable*/false)
 			.returns(false);
 		this.mock(_Helper).expects("merge")
 			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
@@ -1088,7 +1121,7 @@ sap.ui.define([
 				sinon.match.same(oModelInterface.fetchMetadata))
 			.returns(mWrappedChildQueryOptions);
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs(sinon.match.same(mWrappedChildQueryOptions), undefined)
+			.withExactArgs(sinon.match.same(mWrappedChildQueryOptions), "/Set", undefined)
 			.returns(true);
 
 		// code under test
@@ -1245,7 +1278,7 @@ sap.ui.define([
 			.withExactArgs("/reduced/child/metapath/" + sPath, "/Set")
 			.returns(sPath);
 		this.mock(oBinding).expects("aggregateQueryOptions")
-			.withExactArgs({$select : ["foo.bar.AcFoo"]}, bImmutable)
+			.withExactArgs({$select : ["foo.bar.AcFoo"]}, "/Set", bImmutable)
 			.returns(!bImmutable);
 		oMetaModelMock.expects("fetchObject")
 			.withExactArgs("/resolved/child/metaPath/")
@@ -1395,7 +1428,7 @@ sap.ui.define([
 			.withExactArgs("/reduced/child/path", "/Function")
 			.returns("value");
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs(sinon.match.same(mChildQueryOptions), bImmutable)
+			.withExactArgs(sinon.match.same(mChildQueryOptions), "/Function", bImmutable)
 			.returns(!bImmutable);
 
 		// code under test
@@ -1539,45 +1572,104 @@ sap.ui.define([
 	success : true,
 	title : "new property accepted and added to late properties"
 }, {
-	aggregatedQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}}},
-	childQueryOptions :  {$expand : {"EMPLOYEE_2_TEAM" : {}}},
+	aggregatedQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id"]}}},
+	childQueryOptions :  {$expand : {EMPLOYEE_2_TEAM : {}}},
 	success : true,
 	title : "same $expand as before"
 }, {
-	aggregatedQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}}},
-	childQueryOptions :  {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Name"]}}},
-	success : false,
+	aggregatedQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id"]}}},
+	childQueryOptions :  {$expand : {EMPLOYEE_2_TEAM : {$select : ["Name"]}}},
+	lateQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id", "Name"]}}},
+	success : true,
 	title : "new $select in existing $expand"
 }, {
-	aggregatedQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}}},
-	childQueryOptions :  {$expand : {"EMPLOYEE_2_EQUIPMENTS" : {}}},
+	aggregatedQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {}}},
+	childQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$expand : {TEAM_2_MANAGER : {}}}}},
+	lateQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$expand : {TEAM_2_MANAGER : {}}}}},
+	metadata : {
+		"/base/metaPath/EMPLOYEE_2_TEAM/TEAM_2_MANAGER" : {}
+	},
+	success : true,
+	title : "new $expand in existing $expand"
+}, {
+	aggregatedQueryOptions : {$select : ["AGE"]},
+	childQueryOptions : {
+		$expand : {
+			EMPLOYEE_OF_THE_WEEK : {
+				$expand : {EMPLOYEE_2_MANAGER : {$select : ["Name"]}}
+			}
+		}
+	},
+	lateQueryOptions : {
+		$select : ["AGE"],
+		$expand : {
+			EMPLOYEE_OF_THE_WEEK : {
+				$expand : {EMPLOYEE_2_MANAGER : {$select : ["Name"]}}
+			}
+		}
+	},
+	metadata : {
+		"/base/metaPath/EMPLOYEE_OF_THE_WEEK" : {},
+		"/base/metaPath/EMPLOYEE_OF_THE_WEEK/EMPLOYEE_2_MANAGER" : {}
+	},
+	success : true,
+	title : "new $expand, single"
+}, {
+	aggregatedQueryOptions : {$select : ["AGE"]},
+	childQueryOptions : {
+		$expand : {
+			EMPLOYEE_OF_THE_WEEK : {
+				$expand : {EMPLOYEE_2_EQUIPMENTS : {$select : ["Name"]}}
+			}
+		}
+	},
+	metadata : {
+		"/base/metaPath/EMPLOYEE_OF_THE_WEEK" : {},
+		"/base/metaPath/EMPLOYEE_OF_THE_WEEK/EMPLOYEE_2_EQUIPMENTS" : {$isCollection : true}
+	},
 	success : false,
-	title : "new $expand not allowed"
+	title : "new $expand, collection"
 }].forEach(function (oFixture, i) {
-	QUnit.test("aggregateQueryOptions: cache is immutable," + oFixture.title, function (assert) {
+	QUnit.test("aggregateQueryOptions: cache is immutable, " + oFixture.title, function (assert) {
 		var mAggregatedQueryOptions = {},
+			oMetaModel = {
+				fetchObject : function () {}
+			},
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : mAggregatedQueryOptions,
 				oCache : {
 					getLateQueryOptions : function () {},
 					setLateQueryOptions : function () {}
+				},
+				oModel : {
+					getMetaModel : function () { return oMetaModel; }
 				}
 			}),
-			mLateQueryOptions = {};
+			oHelperMock = this.mock(_Helper),
+			mLateQueryOptions = {},
+			oMetaModelMock = this.mock(oMetaModel);
 
 		this.mock(oBinding.oCache).expects("getLateQueryOptions").withExactArgs()
 			.returns(mLateQueryOptions);
-		this.mock(_Helper).expects("merge")
+		oHelperMock.expects("merge")
 			.withExactArgs({}, sinon.match.same(oBinding.mAggregatedQueryOptions),
 				sinon.match.same(mLateQueryOptions))
 			.returns(oFixture.aggregatedQueryOptions);
+		if (oFixture.metadata) {
+			Object.keys(oFixture.metadata).forEach(function (sMetaPath) {
+				oMetaModelMock.expects("fetchObject").withExactArgs(sMetaPath)
+					.returns(SyncPromise.resolve(oFixture.metadata[sMetaPath]));
+			});
+		}
 		this.mock(oBinding.oCache).expects("setLateQueryOptions")
 			.exactly(oFixture.lateQueryOptions ? 1 : 0)
 			.withExactArgs(oFixture.lateQueryOptions);
 
 		assert.strictEqual(
 			// code under test
-			oBinding.aggregateQueryOptions(oFixture.childQueryOptions, true), oFixture.success);
+			oBinding.aggregateQueryOptions(oFixture.childQueryOptions, "/base/metaPath", true),
+			oFixture.success
+		);
 		assert.strictEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {}, "mAggregatedQueryOptions unchanged");
 	});
@@ -1592,7 +1684,7 @@ sap.ui.define([
 			mChildQueryOptions = {$select : ["bar"]};
 
 		// code under test
-		assert.strictEqual(oBinding.aggregateQueryOptions(mChildQueryOptions, true), false);
+		assert.strictEqual(oBinding.aggregateQueryOptions(mChildQueryOptions, "", true), false);
 	});
 	// TODO instead of rejecting late properties if there is no cache, the binding should instead
 	//   aggregate the late query options (but not in mAggregatedQueryOptions) and bubble up to the

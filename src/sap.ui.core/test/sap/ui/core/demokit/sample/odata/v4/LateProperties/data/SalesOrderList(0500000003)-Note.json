@@ -1,0 +1,7 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(Note,SalesOrderID)/$entity",
+	"@odata.metadataEtag" : "W/\"20191129135853\"",
+	"@odata.etag" : "W/\"20191202100433.1903450 \"",
+	"SalesOrderID" : "0500000003",
+	"Note" : "EPM DG: SO ID 0500000003 Deliver as fast as possible"
+}
