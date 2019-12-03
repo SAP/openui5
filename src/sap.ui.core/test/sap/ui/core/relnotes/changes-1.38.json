@@ -3585,5 +3585,21 @@
         ]
       }
     ]
+  },
+  "1.38.43": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "247af2dbba5715b3dbf81c86b058839bdf46b804",
+        "type": "FIX",
+        "text": " NumberFormat: Percent formatting did not work for string values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003037702019"
+          }
+        ]
+      }
+    ]
   }
 }
