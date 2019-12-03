@@ -77,7 +77,7 @@ sap.ui.define([
 
 			/**
 			 * If set, interval selection is allowed
-			 * @since 1.73
+			 * @since 1.74
 			 */
 			intervalSelection : {type : "boolean", group : "Behavior", defaultValue : false},
 
@@ -762,8 +762,13 @@ sap.ui.define([
 			bApplySelectionBetween,
 			oCurrentDate;
 
+		if (bDontSetMonth) {
+			return;
+		}
+
+		this.setProperty("month", iMonth, true);
+
 		if (!oSelectedDates) {
-			this.setProperty("month", iMonth, true);
 			return;
 		}
 
@@ -775,10 +780,10 @@ sap.ui.define([
 			if (!oMonthPickerSelectedDates || !oMonthPickerSelectedDates.length) {
 				this.addAggregation("selectedDates", oSelectedDates, true);
 			}
+			!this.getIntervalSelection() && oSelectedDates.setStartDate(oFocusedDate.toLocalJSDate());
 		}
 
-		if (this.getIntervalSelection() && !bDontSetMonth) {
-			this.setProperty("month", iMonth, true);
+		if (this.getIntervalSelection()) {
 			if (!oSelectedDates.getStartDate()) {
 				oSelectedDates.setStartDate(oFocusedDate.toLocalJSDate());
 			} else if (!oSelectedDates.getEndDate()) {
@@ -793,8 +798,6 @@ sap.ui.define([
 				oSelectedDates.setStartDate(oFocusedDate.toLocalJSDate());
 				oSelectedDates.setEndDate(undefined);
 			}
-		} else if (!bDontSetMonth) {
-			this.setProperty("month", iMonth, true);
 		}
 
 		for (i = 0; i < aDomRefs.length; i++) {
