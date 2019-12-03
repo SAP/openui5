@@ -105,6 +105,19 @@ sap.ui.define([
 	});
 	app.placeAt("content");
 
+	// helper function
+	function fnWaitToRender (oControl) {
+		return new Promise(function(resolve) {
+			oControl.addEventDelegate({
+				onAfterRendering: function() {
+					window.requestAnimationFrame(function() {
+						resolve();
+					});
+				}
+			});
+		});
+	}
+
 
 	jQuery(document).ready(function() {
 
@@ -292,6 +305,116 @@ sap.ui.define([
 
 		});
 
+		QUnit.module("Overflow/Underflow", {
+			beforeEach: function () {
+				this.oScrollContainer = new ScrollContainer();
+				this.fnOverflowChangeSpy = sinon.spy();
+				this.clock = sinon.useFakeTimers();
+
+				this.oScrollContainer.getScrollDelegate().onOverflowChange(this.fnOverflowChangeSpy);
+			},
+			afterEach: function () {
+				this.clock.restore();
+				this.oScrollContainer.destroy();
+				this.fnOverflowChangeSpy = null;
+			}
+		});
+
+		QUnit.test("Initial rendering with overflow", function(assert) {
+			var sContainerHeight = "200px",
+				sContainerContentHeight = "300px", // content overflows container
+				bExpectedOverflowFlag = true,
+				done = assert.async();
+
+			// Setup
+			this.oScrollContainer.setHeight(sContainerHeight);
+			this.oScrollContainer.addContent(new HTML({
+				content: '<div style="height: ' + sContainerContentHeight + ';"></div>'
+			}));
+
+			fnWaitToRender(this.oScrollContainer).then(function() {
+				assert.strictEqual(this.fnOverflowChangeSpy.callCount, 1, "overflowChange fired");
+				assert.ok(this.fnOverflowChangeSpy.calledWith(bExpectedOverflowFlag), "overflow detected");
+				done();
+			}.bind(this));
+
+			this.oScrollContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("Initial rendering without overflow", function(assert) {
+			var sContainerHeight = "200px",
+				sContainerContentHeight = "100px", // does not overflow the container
+				done = assert.async();
+
+			// Setup
+			this.oScrollContainer.setHeight(sContainerHeight);
+			this.oScrollContainer.addContent(new HTML({
+				content: '<div style="height: ' + sContainerContentHeight + ';"></div>'
+			}));
+
+			fnWaitToRender(this.oScrollContainer).then(function() {
+				assert.strictEqual(this.fnOverflowChangeSpy.callCount, 0, "overflowChange not fired");
+				done();
+			}.bind(this));
+
+			this.oScrollContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("Resize to overflow", function(assert) {
+			var sContainerHeight = "200px",
+				sContentHeightBeforeResize = "100px", // does not overflow the container
+				sContentHeightAfterResize = "300px", // overflows the container
+				bExpectedOverflowAfterResize = true,
+				done = assert.async();
+
+			// Setup
+			this.oScrollContainer.setHeight(sContainerHeight);
+			this.oScrollContainer.addContent(new HTML({
+				content: '<div id="innerdiv" style="height: ' + sContentHeightBeforeResize + ';"></div>'
+			}));
+
+			fnWaitToRender(this.oScrollContainer).then(function() {
+				document.getElementById("innerdiv").style.height = sContentHeightAfterResize;
+				this.clock.tick(200);
+				assert.strictEqual(this.fnOverflowChangeSpy.callCount, 1, "overflowChange fired");
+				assert.ok(this.fnOverflowChangeSpy.calledWith(bExpectedOverflowAfterResize), "overflow detected");
+				done();
+			}.bind(this));
+
+			this.oScrollContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("Resize to underflow", function(assert) {
+			var sContainerHeight = "200px",
+				sContentHeightBeforeResize = "300px", // overflows the container
+				sContentHeightAfterResize = "100px", // does not overflow the container
+				bExpectedOverflowAfterResize = false,
+				done = assert.async();
+
+			// Setup
+			this.oScrollContainer.setHeight(sContainerHeight);
+			this.oScrollContainer.addContent(new HTML({
+				content: '<div id="innerdiv" style="height: ' + sContentHeightBeforeResize + ';"></div>'
+			}));
+
+			fnWaitToRender(this.oScrollContainer).then(function() {
+				this.fnOverflowChangeSpy.reset();
+				document.getElementById("innerdiv").style.height = sContentHeightAfterResize;
+				this.clock.tick(200);
+				assert.strictEqual(this.fnOverflowChangeSpy.callCount, 1, "overflowChange fired");
+				assert.ok(this.fnOverflowChangeSpy.calledWith(bExpectedOverflowAfterResize), "underflow detected");
+				done();
+			}.bind(this));
+
+			this.oScrollContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.module("Keyboard Handling");
+
 		QUnit.test("Press [CTRL] + [DOWN]", function(assert) {
 			intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled to position 0");
 
@@ -358,6 +481,8 @@ sap.ui.define([
 
 			intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to position 0");
 		});
+
+		QUnit.module("Styling");
 
 		QUnit.test("Container Padding Classes", function (assert) {
 			// System under Test + Act
