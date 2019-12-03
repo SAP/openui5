@@ -2,10 +2,11 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	displayBlock="true">
-	<MessagePage title="{i18n>homePageTitle}"
-		text="This is the {i18n>homePageTitle} view"
-		enableFormattedText="true"
-		description="Welcome Home"
-		icon="sap-icon://home">
-	</MessagePage>
+	<Page
+		class="sapUiContentPadding">
+		<content>
+			<FormattedText htmlText="{/HTML}" />
+			<Image src="img/diagram.jpg" class="sapUiMediumMarginTopBottom maxWidth100" />
+		</content>
+	</Page>
 </mvc:View>

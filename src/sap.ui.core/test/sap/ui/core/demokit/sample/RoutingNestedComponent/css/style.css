@@ -9,3 +9,7 @@ li.sapTntNavLIItemSelected[id$="categoriesItem"] > div.sapTntNavLIItem {
 li.sapTntNavLIItemSelected[id$="productsItem"] > div.sapTntNavLIItem {
 	background-color: lightblue;
 }
+
+.maxWidth100 {
+	max-width: 100%;
+}

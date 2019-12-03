@@ -5,7 +5,7 @@
 	<Page id="page"
 		showHeader="false"
 		enableScrolling="true"
-		class="productsPage">
+		class="sapUiContentPadding productsPage">
 		<Table id="table" inset="false" busyIndicatorDelay="0">
 			<headerToolbar>
 				<OverflowToolbar>

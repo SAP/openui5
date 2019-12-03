@@ -9,11 +9,10 @@
 	busy="true">
 	<Page id="page"
 		showHeader="false"
-		showNavButton="true"
+		showNavButton="false"
 		enableScrolling="true"
-		class="productsPage"
-		navButtonPress="onNavButtonPress">
-		<VBox class="sapUiSmallMargin">
+		class="sapUiContentPadding productsPage">
+		<VBox >
 			<f:Form id="FormDisplay354"
 			editable="false" core:require="{Currency:'sap/ui/model/type/Currency'}">
 				<f:title>

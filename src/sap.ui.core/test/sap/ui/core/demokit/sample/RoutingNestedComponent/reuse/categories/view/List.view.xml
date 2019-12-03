@@ -5,7 +5,7 @@
 	<Page id="page"
 		showHeader="false"
 		enableScrolling="true"
-		class="categoriesPage">
+		class="sapUiContentPadding categoriesPage">
 		<Table inset="false"
 			busyIndicatorDelay="0"
 			items="{/Categories}">

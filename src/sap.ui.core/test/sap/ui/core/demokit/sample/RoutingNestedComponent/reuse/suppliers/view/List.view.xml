@@ -5,7 +5,7 @@
 	<Page id="page"
 		showHeader="false"
 		enableScrolling="true"
-		class="suppliersPage">
+		class="sapUiContentPadding suppliersPage">
 		<Table inset="false"
 			busyIndicatorDelay="0"
 			items="{/Suppliers}">
