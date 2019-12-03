@@ -42,7 +42,7 @@ sap.ui.define([
 			return LrepConnector.getFlexInfo(mPropertyBag).then(function (oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a flex info request is send containing the reference in the url and the app version and the layer as query parameters");
-				assert.deepEqual(oResponse.response, oExpectedResponse, "getFlexInfo response flow is correct");
+				assert.deepEqual(oResponse, oExpectedResponse, "getFlexInfo response flow is correct");
 			});
 		});
 		QUnit.test("given a mock server, when publish is triggered", function (assert) {
