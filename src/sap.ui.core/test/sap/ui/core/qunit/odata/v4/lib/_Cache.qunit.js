@@ -820,10 +820,37 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#drillDown: missing property, no entity w/ key predicate", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Products('42')"),
-			oData = {};
+	QUnit.test("_SingleCache#drillDown: missing property, no key predicate", function (assert) {
+		var oCache = _Cache.createSingle(this.oRequestor, "Products('42')"),
+			oData = {},
+			oGroupLock = {};
 
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Products/foo")
+			.returns(SyncPromise.resolve({
+				$kind : "Property",
+				$Type : "Edm.String"
+			}));
+		this.mock(oCache).expects("fetchLateProperty")
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData), "", "foo/bar",
+				"foo")
+			.callsFake(function () {
+				oData.foo = {bar : "baz"};
+				return SyncPromise.resolve(Promise.resolve(oData.foo));
+			});
+
+		return oCache.drillDown(oData, "foo/bar", oGroupLock).then(function (vValue) {
+			assert.strictEqual(vValue, "baz");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_CollectionCache#drillDown: missing property, no key predicate", function (assert) {
+		var oCache = _Cache.create(this.oRequestor, "Products"),
+			aData = [{}],
+			oGroupLock = {};
+
+		aData.$created = 0;
 		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/foo")
 			.returns(SyncPromise.resolve({
@@ -832,33 +859,10 @@ sap.ui.define([
 			}));
 		this.mock(oCache).expects("fetchLateProperty").never();
 		this.oLogMock.expects("error").withExactArgs(
-			"Failed to drill-down into foo, invalid segment: foo",
+			"Failed to drill-down into 0/foo/bar, invalid segment: foo",
 			oCache.toString(), sClassName);
 
-		return oCache.drillDown(oData, "foo").then(function (vValue) {
-			assert.strictEqual(vValue, undefined);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_Cache#drillDown: missing non-property", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Products"),
-			oData = [{}];
-
-		oData.$byPredicate = {"('42')" : oData[0]};
-
-		this.mock(_Helper).expects("getMetaPath").withExactArgs("('42')/foo").returns("foo");
-		this.oModelInterfaceMock.expects("fetchMetadata")
-			.withExactArgs("/Products/foo")
-			.returns(SyncPromise.resolve({
-				$kind : "NavigationProperty"
-			}));
-		this.mock(oCache).expects("fetchLateProperty").never();
-		this.oLogMock.expects("error").withExactArgs(
-			"Failed to drill-down into ('42')/foo, invalid segment: foo",
-			oCache.toString(), sClassName);
-
-		return oCache.drillDown(oData, "('42')/foo", {}).then(function (vValue) {
+		return oCache.drillDown(aData, "0/foo/bar", oGroupLock).then(function (vValue) {
 			assert.strictEqual(vValue, undefined);
 		});
 	});
@@ -3205,7 +3209,7 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "Employees"),
 			oData = {
 				foo : {
-					bar: "baz"
+					bar : "baz"
 				}
 			},
 			oEntity = {foo : {}},
