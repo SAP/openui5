@@ -4,32 +4,15 @@
 /**
  * Helper functionality for table, list and tree controls for the Support Tool infrastructure.
  */
-sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
-	function(SupportLib, Log) {
+sap.ui.define([
+	"sap/ui/support/library", "sap/base/Log"
+], function(SupportLib, Log) {
 	"use strict";
 
-	// shortcuts
-	var Audiences = SupportLib.Audiences, // Control, Internal, Application
-		Categories = SupportLib.Categories, // Accessibility, Performance, Memory, ...
-		Severity = SupportLib.Severity;	// Hint, Warning, Error
-
+	var Severity = SupportLib.Severity;
 
 	var TableSupportHelper = {
-
-		DOCU_REF : "https://ui5.sap.com/",
-
-		DEFAULT_RULE_DEF : {
-			audiences: [Audiences.Application],
-			categories: [Categories.Other],
-			enabled: true,
-			minversion: "1.38",
-			maxversion: "-",
-			title: "",
-			description: "",
-			resolution: "",
-			resolutionurls: [],
-			check: function(oIssueManager, oCoreFacade, oScope) {}
-		},
+		DOCU_REF: "https://ui5.sap.com/",
 
 		/**
 		 * Normalizes the given rule definition.
@@ -50,24 +33,12 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 		 * @param {object} oRuleDef The rule definition
 		 * @returns {object} The normalized rule definition
 		 */
-		normalizeRule : function(oRuleDef) {
-			return jQuery.extend({}, TableSupportHelper.DEFAULT_RULE_DEF, oRuleDef);
-		},
-
-		/**
-		 * Normalizes the given rule definition and adds it to the given Ruleset.
-		 *
-		 * @see #normalizeRule
-		 *
-		 * @param {object} oRuleDef The rule definition
-		 * @param {sap.ui.support.supportRules.RuleSet} oRuleset The ruleset
-		 */
-		addRuleToRuleset : function(oRuleDef, oRuleset) {
-			oRuleDef = TableSupportHelper.normalizeRule(oRuleDef);
-			var sResult = oRuleset.addRule(oRuleDef);
-			if (sResult != "success") {
-				Log.warning("Support Rule '" + oRuleDef.id + "' for library sap.ui.table not applied: " + sResult);
+		normalizeRule: function(oRuleDef) {
+			if (oRuleDef.id && oRuleDef.id !== "") {
+				oRuleDef.id = "gridTable" + oRuleDef.id;
 			}
+
+			return oRuleDef;
 		},
 
 		/**
@@ -76,10 +47,21 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 		 * @param {string} sRefSuffix 	The url suffix. It gets automatically prefixed by TableSupportHelper.DOCU_REF.
 		 * @returns {object} Documentation link description
 		 */
-		createDocuRef : function(sText, sRefSuffix) {
+		createDocuRef: function(sText, sRefSuffix) {
 			return {
 				text: sText,
 				href: TableSupportHelper.DOCU_REF + sRefSuffix
+			};
+		},
+
+		/**
+		 * Creates a resolution entry for the Fiori Design Guidelines for the GridTable.
+		 * @returns {{text: string, href: string}} The resolution entry object.
+		 */
+		createFioriGuidelineResolutionEntry: function() {
+			return {
+				text: "SAP Fiori Design Guidelines: Grid Table",
+				href: "https://experience.sap.com/fiori-design-web/grid-table"
 			};
 		},
 
@@ -88,9 +70,10 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 		 * @param {sap.ui.support.IssueManager} oIssueManager The issue manager
 		 * @param {string} sText 						The text of the issue.
 		 * @param {sap.ui.support.Severity} [sSeverity] The severity of the issue, if nothing is given Warning is used.
-		 * @param {string} [sControlId] 				The id of the control the issue is related to. If nothing is given the "global" context is used.
+		 * @param {string} [sControlId] 				The id of the control the issue is related to. If nothing is given the "global" context is
+		 *     used.
 		 */
-		reportIssue : function(oIssueManager, sText, sSeverity, sControlId) {
+		reportIssue: function(oIssueManager, sText, sSeverity, sControlId) {
 			oIssueManager.addIssue({
 				severity: sSeverity || Severity.Medium,
 				details: sText,
@@ -138,7 +121,7 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 		 *                         If the function returns <code>true</code> the checking procedure is stopped,
 		 *                         otherwise the next entry is passed for checking.
 		 */
-		checkLogEntries : function(fnFilter, fnCheck) {
+		checkLogEntries: function(fnFilter, fnCheck) {
 			var aLog = Log.getLogEntries(); //oScope.getLoggedObjects(); /*getLoggedObjects returns only log entries with supportinfo*/
 			var oLogEntry;
 			for (var i = 0; i < aLog.length; i++) {
@@ -150,10 +133,7 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 				}
 			}
 		}
-
 	};
-
-
 
 	return TableSupportHelper;
 
