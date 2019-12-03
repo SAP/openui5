@@ -3903,6 +3903,29 @@ function (
 			sandbox.restore();
 		}
 	}, function() {
+		QUnit.test("get flex/info route is not available - client information will be used to determine reset + publish booleans", function(assert) {
+			var fnPersistenceStub = sinon.stub();
+			var oBaseLogStub = sandbox.stub(Log, "error");
+
+			fnPersistenceStub.returns(Promise.reject({status: 404, text: ""}));
+			var oLrepConnectorMock = {
+				getFlexInfo: fnPersistenceStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "hasChangesToPublish").withArgs(this.mPropertyBag).resolves(false);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(true);
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.ok(oBaseLogStub.calledOnce, "a error was logged");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
+			});
+		});
+
+
 		QUnit.test("get flex/info isResetEnabled, check hasChanges: persistence has NO changes, backend has changes", function(assert) {
 			var oCreateStub = sinon.stub();
 			oCreateStub.returns(Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));

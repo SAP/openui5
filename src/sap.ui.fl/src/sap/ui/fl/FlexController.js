@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/ui/core/Element"
+	"sap/ui/core/Element",
+	"sap/base/Log"
 ], function(
 	ChangeRegistry,
 	ChangeHandlerRegistration,
@@ -29,7 +30,8 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Component,
-	Element
+	Element,
+	Log
 ) {
 	"use strict";
 
@@ -1406,6 +1408,10 @@ sap.ui.define([
 				.then(function(oResponse) {
 					oFlexInfo.isResetEnabled = oFlexInfo.isResetEnabled || oResponse.isResetEnabled;
 					oFlexInfo.isPublishEnabled = oFlexInfo.isPublishEnabled || oResponse.isPublishEnabled;
+					return oFlexInfo;
+				})
+				.catch(function(oError) {
+					Log.error("Sending request to flex/info route failed: " + oError.message);
 					return oFlexInfo;
 				});
 			}
