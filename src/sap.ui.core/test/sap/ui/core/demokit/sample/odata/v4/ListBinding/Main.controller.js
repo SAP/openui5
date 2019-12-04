@@ -188,26 +188,26 @@ sap.ui.define([
 		},
 
 		onTeamsReceived : function (oEvent) {
-			var oView = this.getView(),
-				oEmployees = oView.byId("Employees"),
-				oTeamBinding = oView.byId("TeamSelect").getBinding("items"),
-				oTeamContext = oTeamBinding.getCurrentContexts()[0];
+			var oView = this.getView();
 
-			function setEmployeeContext() {
-				var oEmployeesControl = oView.byId("Employees"),
-					oEmployeeContext = oEmployeesControl.getBinding("items")
-						.getCurrentContexts()[0];
+			oView.loaded().then(function () {
+				var oEmployeesTable = oView.byId("Employees"),
+					oFirstTeam
+						= oView.byId("TeamSelect").getBinding("items").getCurrentContexts()[0];
 
-				oView.byId("EmployeeEquipments").setBindingContext(oEmployeeContext);
-				if (oEmployeesControl.getItems()[0]) {
-					oEmployeesControl.setSelectedItem(oEmployeesControl.getItems()[0]);
-				}
-			}
+				oView.setBusy(false);
+				oView.byId("TeamDetails").setBindingContext(oFirstTeam);
+				oEmployeesTable.getBinding("items").attachEventOnce("change", function () {
+					var oFirstEmployee = oEmployeesTable.getItems()[0];
 
-			oView.setBusy(false);
-			oView.byId("TeamDetails").setBindingContext(oTeamContext);
-			oEmployees.getBinding("items").attachEventOnce("change", setEmployeeContext);
-			oEmployees.setBindingContext(oTeamContext);
+					if (oFirstEmployee) {
+						oView.byId("EmployeeEquipments").setBindingContext(
+							oFirstEmployee.getBindingContext());
+						oEmployeesTable.setSelectedItem(oFirstEmployee);
+					}
+				});
+				oEmployeesTable.setBindingContext(oFirstTeam);
+			});
 		},
 
 		openChangeTeamBudgetDialog : function (oEvent) {
