@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.ui.layout.BlockLayout</title>
+	<script src="shared-config.js"></script>
+	<script id='sap-ui-bootstrap'
+			src='../../../../resources/sap-ui-core.js'
+			data-sap-ui-libs='sap.ui.layout, sap.m'>
+	</script>
+	<script id="myXml" type="text/xmldata">
+		<mvc:View xmlns:mvc="sap.ui.core.mvc"
+				xmlns="sap.m"
+				xmlns:m="sap.m"
+				xmlns:l="sap.ui.layout"
+				controllerName="myController"
+				displayBlock="true"
+				viewName="sap.ui.layout.BlockLayoutLightColors">
+			<VBox>
+				<Text class="sapUiSmallMarginBottom" text="When background='Light' 2 colors are chosen for each row." />
+				<Text class="sapUiSmallMarginBottom" text="1 row - color 1 and color 3" />
+				<Text class="sapUiSmallMarginBottom" text="2 row - color 4 and color 2" />
+				<Text text="3 row - color 1 and color 3 and so on." />
+			</VBox>
+			<l:BlockLayout id="BlockLayout" background="Light">
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell title="Row 1 Cell 1">
+						<Text text="Palette Color 1 is chosen" />
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell title="Row 1 Cell 2">
+						<Text text="Palette Color 3 is chosen" />
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell title="Row 2 Cell 1">
+						<Text text="Palette Color 4 is chosen" />
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell title="Row 2 Cell 2">
+						<Text text="Palette Color 2 is chosen" />
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell title="Row 3 Cell 1">
+						<Text text="Palette Color 1 is chosen" />
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell title="Row 3 Cell 2">
+						<Text text="Palette Color 3 is chosen" />
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell title="Row 4 Cell 1">
+						<Text text="Palette Color 4 is chosen" />
+					</l:BlockLayoutCell>
+					<l:BlockLayoutCell title="Row 4 Cell 2">
+						<Text text="Palette Color 2 is chosen" />
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+			</l:BlockLayout>
+		</mvc:View>
+	</script>
+
+	<script>
+		sap.ui.controller("myController", {
+			onInit: function() {
+
+			}
+		});
+		sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+<div id="content"></div>
+</body>
+</html>

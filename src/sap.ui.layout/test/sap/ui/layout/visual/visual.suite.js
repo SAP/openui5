@@ -2,6 +2,8 @@
 
 module.exports = [
 	"BlockLayout.spec.js",
+	"BlockLayoutAccentColors.spec.js",
+	"BlockLayoutLightColors.spec.js",
 	"CSSGridVisualTests.spec.js",
 	"ResponsiveGridLayoutVisual.spec.js",
 	"ResponsiveLayoutVisual.spec.js",
