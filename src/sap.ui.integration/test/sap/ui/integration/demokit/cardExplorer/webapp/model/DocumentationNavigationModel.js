@@ -81,6 +81,12 @@ sap.ui.define([
 						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'component'
+					},
+					{
+						title: 'Adaptive',
+						topicTitle: 'AdaptiveCard',
+						target: 'learnDetail',
+						key: 'adaptive'
 					}
 				]
 			},

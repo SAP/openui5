@@ -22,10 +22,10 @@ sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
 			"default": {
 				"fontFamily": Parameters.get("sapUiFontFamily"), // @sapUiFontFamily
 				"fontSizes": {
-					"small": Parameters.get("sapMFontSmallSize"),
-					"default": Parameters.get("sapMFontMediumSize"), // @sapMFontMediumSize
-					"medium": Parameters.get("sapMFontMediumSize"), // @sapMFontMediumSize
-					"large": Parameters.get("sapMFontLargeSize"), // @sapMFontLargeSize
+					"small": 12, //@sapMFontSmallSize
+					"default": 14, // @sapMFontMediumSize
+					"medium": 14, // @sapMFontMediumSize
+					"large": 16, // @sapMFontLargeSize
 					"extraLarge": 20
 				}
 			},
@@ -39,7 +39,8 @@ sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
 				"backgroundColor": "transparent",
 				"foregroundColors": {
 					"default": {
-						"default": Parameters.get("sapUiBaseText")
+						"default": Parameters.get("sapUiBaseText"),
+						"subtle": Parameters.get("sapUiContentLabelColor")
 					},
 					"accent": {
 						"default": Parameters.get("sapUiInformativeText")
