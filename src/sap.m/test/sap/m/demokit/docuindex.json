@@ -1165,7 +1165,7 @@
 			"sap.m.sample.StandardListItemDescription",
 			"sap.m.sample.StandardListItemIcon",
 			"sap.m.sample.StandardListItemInfo",
-			"sap.m.sample.StandardListItemInfoSateInverted",
+			"sap.m.sample.StandardListItemInfoStateInverted",
 			"sap.m.sample.StandardListItemWrapping",
 			"sap.m.sample.StandardListItemNavigated"
 		  ]
@@ -2697,7 +2697,7 @@
 		  "description": "This list item offers a standardized user interface for list content with title and info."
 		},
 		{
-			"id": "sap.m.sample.StandardListItemInfoSateInverted",
+			"id": "sap.m.sample.StandardListItemInfoStateInverted",
 			"name": "Standard List Item - Info State Inverted",
 			"description": "This sample demonstrates the inverted rendering behavior of the info text and the info state of the StandardListItem control."
 		},

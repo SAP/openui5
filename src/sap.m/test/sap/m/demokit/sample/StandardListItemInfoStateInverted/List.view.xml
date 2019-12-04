@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.StandardListItemInfoSateInverted.List"
+	controllerName="sap.m.sample.StandardListItemInfoStateInverted.List"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<List
