@@ -59,7 +59,7 @@ sap.ui.define(function () {
 			// and start QUnit on their own
 			"OPA.LateProperties" : {
 				autostart : false,
-				module : ["sap/ui/core/sample/odata/v4/Lateproperties/Opa.qunit"]
+				module : ["sap/ui/core/sample/odata/v4/LateProperties/Opa.qunit"]
 			},
 			"OPA.ListBinding" : {
 				autostart : false,
