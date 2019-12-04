@@ -3202,6 +3202,7 @@ sap.ui.define([
 		this._bStickyAnchorBar = bStuck;
 		this._$headerContent.css("overflow", sValue);
 		this._$headerContent.toggleClass("sapContrastPlus", !bStuck); // contrast only in expanded mode
+		this._$headerContent.toggleClass("sapUxAPObjectPageHeaderDetailsHidden", bStuck); // hide header content
 		this._$anchorBar.css("visibility", sValue);
 		if (exists(this._$stickyAnchorBar)) {
 			this._$stickyAnchorBar.attr("aria-hidden", !bStuck);
