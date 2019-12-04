@@ -11,6 +11,7 @@ sap.ui.define(["./StandardListItemRenderer", "sap/ui/core/Renderer"],
 		 * @namespace
 		 */
 		var MessageListItemRenderer = Renderer.extend(StandardListItemRenderer);
+		MessageListItemRenderer.apiVersion = 2;
 
 		MessageListItemRenderer.renderTitle = function (oRm, oControl) {
 			if (oControl.getActiveTitle()) {
