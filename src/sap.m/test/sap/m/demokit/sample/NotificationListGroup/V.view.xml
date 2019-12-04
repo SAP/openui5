@@ -23,17 +23,19 @@
 								priority="None"
 								close="onItemClose"
 								press="onListItemPress"
-								authorPicture="sap-icon://car-rental"/>
+								authorPicture="sap-icon://car-rental"
+								authorAvatarColor="Accent8"/>
 						<NotificationListItem
 								title="New order (#2524)"
-								description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
+								description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc."
 								showCloseButton="true"
 								datetime="3 days"
 								unread="true"
 								priority="High"
 								close="onItemClose"
 								press="onListItemPress"
-								authorInitials="SF">
+								authorInitials="SF"
+								authorAvatarColor="Random">
 							<buttons>
 								<Button text="Accept" press="onAcceptPress"/>
 								<Button text="Reject" press="onRejectPress"/>
@@ -48,7 +50,8 @@
 								priority="High"
 								close="onItemClose"
 								press="onListItemPress"
-								authorInitials="YR">
+								authorInitials="YR"
+								authorAvatarColor="Accent7">
 							<buttons>
 								<Button text="Accept" press="onAcceptPress"/>
 								<Button text="Reject" press="onRejectPress"/>
@@ -123,7 +126,8 @@
 								priority="None"
 								close="onItemClose"
 								press="onListItemPress"
-								authorPicture="sap-icon://car-rental"/>
+								authorPicture="sap-icon://car-rental"
+								authorAvatarColor="Accent8"/>
 						<NotificationListItem
 								title="New order (#2524)"
 								description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
@@ -171,7 +175,8 @@
 								priority="None"
 								close="onItemClose"
 								press="onListItemPress"
-								authorPicture="sap-icon://car-rental"/>
+								authorPicture="sap-icon://car-rental"
+								authorAvatarColor="Accent8"/>
 						<NotificationListItem
 								title="New order (#2524)"
 								description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."

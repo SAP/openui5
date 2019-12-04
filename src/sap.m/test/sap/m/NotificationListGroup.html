@@ -1,361 +1,376 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Notification List Group - sap.m</title>
 
 	<script src="shared-config.js"></script>
-	<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
 	</script>
 
 	<script>
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/m/MessageToast",
+				"sap/m/AvatarColor"
+			], function (
+				MessageToast,
+				AvatarColor
+			) {
 
-		jQuery.sap.require('sap.m.MessageToast');
+				var listItem = new sap.m.NotificationListItem('firstNotification', {
+					title: 'Notification List Title1',
+					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+					showCloseButton: false,
+					authorPicture: 'sap-icon://car-rental',
+					authorAvatarColor: AvatarColor.Accent3,
+					authorName: 'Bai Marin',
+					datetime: '5 minutes',
+					priority: sap.ui.core.Priority.None
+				});
 
-		var listItem = new sap.m.NotificationListItem('firstNotification', {
-			title: 'Notification List Title1',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
-			showCloseButton: false,
-			authorPicture: 'sap-icon://car-rental',
-			authorName: 'Bai Marin',
-			datetime: '5 minutes',
-			priority: sap.ui.core.Priority.None
-		});
-
-		var listItem2 = new sap.m.NotificationListItem({
-			title: 'Notification List Title2',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
-			datetime: '2 hours',
-			unread: true,
-			priority: sap.ui.core.Priority.Medium,
-			buttons: [
-				new sap.m.Button({
-					text: 'OK',
-					type: sap.m.ButtonType.Accept,
-					press: function () {
-						sap.m.MessageToast.show('OK button pressed');
-					}
-				})
-			]
-		});
-
-		var listItem3 = new sap.m.NotificationListItem({
-			title: 'Notification List Title3',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
-			datetime: '2 hours',
-			unread: true,
-			priority: sap.ui.core.Priority.Low
-		});
-
-
-		var listGroup = new sap.m.NotificationListGroup({
-			id: 'notificationGroup',
-			title: 'Notification List Item Group 2 rows - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel',
-			// datetime: 'More than 5 minutes', // deprecated
-			// authorPicture: 'images/SAPLogo.jpg', // deprecated
-			// authorName: 'Lorem Ipsum', // deprecated
-			showCloseButton: false,
-			buttons: [
-				new sap.m.Button({
-					text: 'Accept All',
-					type: sap.m.ButtonType.Accept,
-					press: function () {
-						sap.m.MessageToast.show('Accept all button pressed');
-					}
-				}),
-				new sap.m.Button({
-					text: 'Cancel All',
-					type: sap.m.ButtonType.Reject
-				})
-			],
-			items: [
-				listItem,
-				listItem2,
-				listItem3
-			],
-			onCollapse: function (event) {
-				var collapseExpandText = (event.oSource.getCollapsed() ? 'Collapse' : 'Expand') + ' event fired';
-				sap.m.MessageToast.show(collapseExpandText);
-			}
-		});
-
-		// for testing the showing of the buttons for short time before to be hidden in the overflow toolbar after reload of the page
-				var overflowToolBarTest = new sap.m.OverflowToolbar({
-				width: "400px",
-				content: [
-					new sap.m.Text ({text:"some long long long long text", wrapping: false}),
-					new sap.m.Button({
-						text: 'Accept All',
-						type: sap.m.ButtonType.Accept,
-						press: function () {
-							sap.m.MessageToast.show('Accept all button pressed');
-						}
-					}).setLayoutData(new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
-					})),
-					new sap.m.Button({
-						text: 'Cancel All',
-						type: sap.m.ButtonType.Reject
-					}).setLayoutData(new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
-					}))
-				]
-			});
-
-		var singleItemGroup = new sap.m.NotificationListGroup({
-			id: 'notificationGroup2',
-			showItemsCounter: false,
-			title: 'Single Notification List Item Group',
-			// datetime: 'More than 15 minutes', // deprecated
-			// authorPicture: 'images/SAPLogo.jpg', // deprecated
-			// authorName: 'Lorem Ipsum', // deprecated
-			visible: true,
-			collapsed: true,
-			items: [
-				new sap.m.NotificationListItem({
-					title: 'Single Item Notification',
+				var listItem2 = new sap.m.NotificationListItem({
+					title: 'Notification List Title2',
 					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 					datetime: '2 hours',
 					unread: true,
-					visible: true,
-					showCloseButton: false,
-					priority: sap.ui.core.Priority.High,
-					buttons: [
-						new sap.m.Button({
-							text: 'Accept',
-							type: sap.m.ButtonType.Accept,
-							press: function () {
-								sap.m.MessageToast.show('Accept button pressed');
-							}
-						}),
-						new sap.m.Button({
-							text: 'Cancel',
-							type: sap.m.ButtonType.Reject,
-							press: function () {
-								sap.m.MessageToast.show('Cancel button pressed');
-							}
-						})
-					]
-				}),
-				new sap.m.NotificationListItem({
-					title: 'Hidden Item Notification',
-					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
-					datetime: '3 hours',
-					unread: true,
-					visible: false,
-					showCloseButton: true,
 					priority: sap.ui.core.Priority.Medium,
 					buttons: [
 						new sap.m.Button({
 							text: 'OK',
 							type: sap.m.ButtonType.Accept,
 							press: function () {
-								sap.m.MessageToast.show('OK button pressed');
+								MessageToast.show('OK button pressed');
 							}
 						})
 					]
-				})
-			]
-		});
+				});
 
-		var noItemsGroup = new sap.m.NotificationListGroup({
-			id: 'notificationGroup3',
-			unread: true,
-			priority: sap.ui.core.Priority.Low,
-			autoPriority: false,
-			title: 'Notification List With 0 Items',
-			// datetime: 'More than 25 minutes', // deprecated
-			// authorPicture: 'images/SAPLogo.jpg', // deprecated
-			// authorName: 'Lorem Ipsum', // deprecated
-			showEmptyGroup: true,
-			buttons: [
-				new sap.m.Button({
-					text: 'Accept All',
-					type: sap.m.ButtonType.Accept,
-					press: function () {
-						sap.m.MessageToast.show('Accept all button pressed');
-					}
-				})
-			],
-			items: [
-			]
-		});
-
-		var noItemsNoDetailsGroup = new sap.m.NotificationListGroup({
-			id: 'notificationGroup4',
-			unread: true,
-			showItemsCounter: false,
-			enableCollapseButtonWhenEmpty: true,
-			title: 'Notification List With 0 Items and collapsable',
-			showEmptyGroup: true,
-			buttons: [
-				new sap.m.Button({
-					text: 'Accept All',
-					press: function () {
-						sap.m.MessageToast.show('Accept all button pressed');
-					}
-				})
-			],
-			items: [
-			]
-		});
-
-		var hiddenActionButtonsGroup = new sap.m.NotificationListGroup({
-			id: 'notificationGroup5',
-			showItemsCounter: false,
-			title: 'Notification List Group with hidden action buttons',
-			showEmptyGroup: true,
-			showButtons: false,
-			buttons: [
-				new sap.m.Button({
-					text: 'Accept All',
-					type: sap.m.ButtonType.Accept,
-					press: function () {
-						sap.m.MessageToast.show('Accept all button pressed');
-					}
-				}),
-				new sap.m.Button({
-					text: 'Cancel All',
-					type: sap.m.ButtonType.Reject
-				})
-			],
-			items: [
-			new sap.m.NotificationListItem({
-					title: 'Single Item Notification',
+				var listItem3 = new sap.m.NotificationListItem({
+					title: 'Notification List Title3',
+					authorInitials: 'AB',
+					authorAvatarColor: AvatarColor.Accent9,
 					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 					datetime: '2 hours',
 					unread: true,
-					visible: true,
+					priority: sap.ui.core.Priority.Low
+				});
+
+
+				var listGroup = new sap.m.NotificationListGroup({
+					id: 'notificationGroup',
+					title: 'Notification List Item Group 2 rows - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel',
+					// datetime: 'More than 5 minutes', // deprecated
+					// authorPicture: 'images/SAPLogo.jpg', // deprecated
+					// authorName: 'Lorem Ipsum', // deprecated
 					showCloseButton: false,
-					priority: sap.ui.core.Priority.High,
 					buttons: [
 						new sap.m.Button({
-							text: 'Accept',
+							text: 'Accept All',
 							type: sap.m.ButtonType.Accept,
 							press: function () {
-								sap.m.MessageToast.show('Accept button pressed');
+								MessageToast.show('Accept all button pressed');
 							}
 						}),
 						new sap.m.Button({
-							text: 'Cancel',
-							type: sap.m.ButtonType.Reject,
-							press: function () {
-								sap.m.MessageToast.show('Cancel button pressed');
-							}
+							text: 'Cancel All',
+							type: sap.m.ButtonType.Reject
 						})
-					]
-				})
-			]
-		});
-
-		var busyGroup = new sap.m.NotificationListGroup({
-			id: 'notificationGroup6',
-			showItemsCounter: false,
-			autoPriority: false,
-			priority: sap.ui.core.Priority.High,
-			// busy: true,
-			title: 'Busy Notification List Group + no auto priority',
-			showEmptyGroup: true,
-			buttons: [
-				new sap.m.Button({
-					text: 'Accept All',
-					type: sap.m.ButtonType.Accept,
-					press: function () {
-						sap.m.MessageToast.show('Accept all button pressed');
+					],
+					items: [
+						listItem,
+						listItem2,
+						listItem3
+					],
+					onCollapse: function (event) {
+						var collapseExpandText = (event.oSource.getCollapsed() ? 'Collapse' : 'Expand') + ' event fired';
+						MessageToast.show(collapseExpandText);
 					}
-				}),
-				new sap.m.Button({
-					text: 'Cancel All',
-					type: sap.m.ButtonType.Reject
-				})
-			],
-			items: [
-			new sap.m.NotificationListItem({
-					title: 'Single Item Notification',
-					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
-					datetime: '2 hours',
-					unread: true,
-					visible: true,
-					showCloseButton: false,
-					priority: sap.ui.core.Priority.Medium,
-					buttons: [
-						new sap.m.Button({
-							text: 'Accept',
-							type: sap.m.ButtonType.Accept,
-							press: function () {
-								sap.m.MessageToast.show('Accept button pressed');
-							}
+				});
+
+				// for testing the showing of the buttons for short time before to be hidden in the overflow toolbar after reload of the page
+				var overflowToolBarTest = new sap.m.OverflowToolbar({
+					width: "400px",
+					content: [
+						new sap.m.Text({
+							text: "some long long long long text",
+							wrapping: false
 						}),
 						new sap.m.Button({
-							text: 'Cancel',
-							type: sap.m.ButtonType.Reject,
+							text: 'Accept All',
+							type: sap.m.ButtonType.Accept,
 							press: function () {
-								sap.m.MessageToast.show('Cancel button pressed');
+								MessageToast.show('Accept all button pressed');
 							}
+						}).setLayoutData(new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
+						})),
+						new sap.m.Button({
+							text: 'Cancel All',
+							type: sap.m.ButtonType.Reject
+						}).setLayoutData(new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
+						}))
+					]
+				});
+
+				var singleItemGroup = new sap.m.NotificationListGroup({
+					id: 'notificationGroup2',
+					showItemsCounter: false,
+					title: 'Single Notification List Item Group',
+					// datetime: 'More than 15 minutes', // deprecated
+					// authorPicture: 'images/SAPLogo.jpg', // deprecated
+					// authorName: 'Lorem Ipsum', // deprecated
+					visible: true,
+					collapsed: true,
+					items: [
+						new sap.m.NotificationListItem({
+							title: 'Single Item Notification',
+							description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+							datetime: '2 hours',
+							unread: true,
+							visible: true,
+							showCloseButton: false,
+							priority: sap.ui.core.Priority.High,
+							buttons: [
+								new sap.m.Button({
+									text: 'Accept',
+									type: sap.m.ButtonType.Accept,
+									press: function () {
+										MessageToast.show('Accept button pressed');
+									}
+								}),
+								new sap.m.Button({
+									text: 'Cancel',
+									type: sap.m.ButtonType.Reject,
+									press: function () {
+										MessageToast.show('Cancel button pressed');
+									}
+								})
+							]
+						}),
+						new sap.m.NotificationListItem({
+							title: 'Hidden Item Notification',
+							description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+							datetime: '3 hours',
+							unread: true,
+							visible: false,
+							showCloseButton: true,
+							priority: sap.ui.core.Priority.Medium,
+							buttons: [
+								new sap.m.Button({
+									text: 'OK',
+									type: sap.m.ButtonType.Accept,
+									press: function () {
+										MessageToast.show('OK button pressed');
+									}
+								})
+							]
 						})
 					]
-				}),
-				new sap.m.NotificationListItem({
-					title: 'Single Item Notification',
-					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
-					datetime: '2 hours',
+				});
+
+				var noItemsGroup = new sap.m.NotificationListGroup({
+					id: 'notificationGroup3',
 					unread: true,
-					visible: true,
-					showCloseButton: false,
 					priority: sap.ui.core.Priority.Low,
+					autoPriority: false,
+					title: 'Notification List With 0 Items',
+					// datetime: 'More than 25 minutes', // deprecated
+					// authorPicture: 'images/SAPLogo.jpg', // deprecated
+					// authorName: 'Lorem Ipsum', // deprecated
+					showEmptyGroup: true,
 					buttons: [
 						new sap.m.Button({
-							text: 'Accept',
+							text: 'Accept All',
 							type: sap.m.ButtonType.Accept,
 							press: function () {
-								sap.m.MessageToast.show('Accept button pressed');
+								MessageToast.show('Accept all button pressed');
+							}
+						})
+					],
+					items: []
+				});
+
+				var noItemsNoDetailsGroup = new sap.m.NotificationListGroup({
+					id: 'notificationGroup4',
+					unread: true,
+					showItemsCounter: false,
+					enableCollapseButtonWhenEmpty: true,
+					title: 'Notification List With 0 Items and collapsable',
+					showEmptyGroup: true,
+					buttons: [
+						new sap.m.Button({
+							text: 'Accept All',
+							press: function () {
+								MessageToast.show('Accept all button pressed');
+							}
+						})
+					],
+					items: []
+				});
+
+				var hiddenActionButtonsGroup = new sap.m.NotificationListGroup({
+					id: 'notificationGroup5',
+					showItemsCounter: false,
+					title: 'Notification List Group with hidden action buttons',
+					showEmptyGroup: true,
+					showButtons: false,
+					buttons: [
+						new sap.m.Button({
+							text: 'Accept All',
+							type: sap.m.ButtonType.Accept,
+							press: function () {
+								MessageToast.show('Accept all button pressed');
 							}
 						}),
 						new sap.m.Button({
-							text: 'Cancel',
-							type: sap.m.ButtonType.Reject,
-							press: function () {
-								sap.m.MessageToast.show('Cancel button pressed');
-							}
+							text: 'Cancel All',
+							type: sap.m.ButtonType.Reject
+						})
+					],
+					items: [
+						new sap.m.NotificationListItem({
+							title: 'Single Item Notification',
+							description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+							datetime: '2 hours',
+							unread: true,
+							visible: true,
+							showCloseButton: false,
+							priority: sap.ui.core.Priority.High,
+							buttons: [
+								new sap.m.Button({
+									text: 'Accept',
+									type: sap.m.ButtonType.Accept,
+									press: function () {
+										MessageToast.show('Accept button pressed');
+									}
+								}),
+								new sap.m.Button({
+									text: 'Cancel',
+									type: sap.m.ButtonType.Reject,
+									press: function () {
+										MessageToast.show('Cancel button pressed');
+									}
+								})
+							]
 						})
 					]
-				})
-			]
-		});
+				});
 
-		var list = new sap.m.List({
-			showUnread: true,
-			items: [
-				listGroup,
-				singleItemGroup,
-				noItemsGroup,
-				noItemsNoDetailsGroup,
-				hiddenActionButtonsGroup,
-				busyGroup
-			]
-		});
+				var busyGroup = new sap.m.NotificationListGroup({
+					id: 'notificationGroup6',
+					showItemsCounter: false,
+					autoPriority: false,
+					priority: sap.ui.core.Priority.High,
+					// busy: true,
+					title: 'Busy Notification List Group + no auto priority',
+					showEmptyGroup: true,
+					buttons: [
+						new sap.m.Button({
+							text: 'Accept All',
+							type: sap.m.ButtonType.Accept,
+							press: function () {
+								MessageToast.show('Accept all button pressed');
+							}
+						}),
+						new sap.m.Button({
+							text: 'Cancel All',
+							type: sap.m.ButtonType.Reject
+						})
+					],
+					items: [
+						new sap.m.NotificationListItem({
+							title: 'Single Item Notification',
+							description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+							datetime: '2 hours',
+							unread: true,
+							visible: true,
+							authorAvatarColor: AvatarColor.Accent8,
+							authorInitials: "CD",
+							showCloseButton: false,
+							priority: sap.ui.core.Priority.Medium,
+							buttons: [
+								new sap.m.Button({
+									text: 'Accept',
+									type: sap.m.ButtonType.Accept,
+									press: function () {
+										MessageToast.show('Accept button pressed');
+									}
+								}),
+								new sap.m.Button({
+									text: 'Cancel',
+									type: sap.m.ButtonType.Reject,
+									press: function () {
+										MessageToast.show('Cancel button pressed');
+									}
+								})
+							]
+						}),
+						new sap.m.NotificationListItem({
+							title: 'Single Item Notification',
+							description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+							datetime: '2 hours',
+							unread: true,
+							visible: true,
+							showCloseButton: false,
+							priority: sap.ui.core.Priority.Low,
+							buttons: [
+								new sap.m.Button({
+									text: 'Accept',
+									type: sap.m.ButtonType.Accept,
+									press: function () {
+										MessageToast.show('Accept button pressed');
+									}
+								}),
+								new sap.m.Button({
+									text: 'Cancel',
+									type: sap.m.ButtonType.Reject,
+									press: function () {
+										MessageToast.show('Cancel button pressed');
+									}
+								})
+							]
+						})
+					]
+				});
 
-		var compactSizeButton = new sap.m.Button('toggleCompactModeButton', {
-			text : 'Toggle Compact mode',
-			press : function() {
-				jQuery('body').toggleClass('sapUiSizeCompact');
-			}
-		});
+				var list = new sap.m.List({
+					showUnread: true,
+					items: [
+						listGroup,
+						singleItemGroup,
+						noItemsGroup,
+						noItemsNoDetailsGroup,
+						hiddenActionButtonsGroup,
+						busyGroup
+					]
+				});
 
-		var page = new sap.m.Page("page", {
-			title: "NotificationGroup Test Page",
-        		content: [overflowToolBarTest, compactSizeButton, list]
-		});
+				var compactSizeButton = new sap.m.Button('toggleCompactModeButton', {
+					text: 'Toggle Compact mode',
+					press: function () {
+						jQuery('body').toggleClass('sapUiSizeCompact');
+					}
+				});
 
-		var oApp = new sap.m.App("myApp", { initialPage: "page" });
-		oApp.addPage(page).placeAt("content");
+				var page = new sap.m.Page("page", {
+					title: "NotificationGroup Test Page",
+					content: [overflowToolBarTest, compactSizeButton, list]
+				});
+
+				var oApp = new sap.m.App("myApp", {
+					initialPage: "page"
+				});
+				oApp.addPage(page).placeAt("content");
+			});
+		});
 	</script>
 </head>
 
 <body id="body" class="sapUiBody">
-<div id="content"></div>
+	<div id="content"></div>
 </body>
 
 </html>

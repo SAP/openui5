@@ -94,10 +94,22 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var $item = this.notificationListGroup.$();
-		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority is rendered');
+		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority High is rendered');
+
+		this.notificationListGroup.setPriority(Priority.Medium);
+		sap.ui.getCore().applyChanges();
+
+		var $item = this.notificationListGroup.$();
+		assert.strictEqual($item.find('.sapMNLIBPriorityMedium span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority Medium is rendered');
+
+		this.notificationListGroup.setPriority(Priority.Low);
+		sap.ui.getCore().applyChanges();
+
+		var $item = this.notificationListGroup.$();
+		assert.strictEqual($item.find('.sapMNLIBPriorityLow span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority Low is rendered');
 	});
 
-	QUnit.test('priority', function(assert) {
+	QUnit.test('auto priority', function(assert) {
 		this.notificationListGroup.setAutoPriority(true);
 		sap.ui.getCore().applyChanges();
 

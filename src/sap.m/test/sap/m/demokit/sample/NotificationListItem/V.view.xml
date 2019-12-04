@@ -47,7 +47,8 @@
 						close="onItemClose"
 						press="onListItemPress"
 						authorName="Patricia Clark"
-						authorInitials="PC">
+						authorInitials="PC"
+						authorAvatarColor="Accent8">
 					<buttons>
 						<Button text="Accept" press="onAcceptPress" icon="sap-icon://accept"/>
 						<Button text="Reject" press="onRejectPress" icon="sap-icon://sys-cancel"/>
@@ -63,7 +64,8 @@
 						close="onItemClose"
 						press="onListItemPress"
 						authorName="John Smith"
-						authorInitials="JS">
+						authorInitials="JS"
+						authorAvatarColor="Accent4">
 				</NotificationListItem>
 				<NotificationListItem
 						title="New order (#2521)"
