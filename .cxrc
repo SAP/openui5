@@ -34,6 +34,9 @@
             "src/sap.ui.dt/**/*",
             "src/sap.ui.fl/**/*",
             "src/sap.ui.rta/**/*"
+        ],
+         "testrecorder: [
+            "src/sap.ui.testrecorder/**/*"
         ]
     },
     "excludes": [
