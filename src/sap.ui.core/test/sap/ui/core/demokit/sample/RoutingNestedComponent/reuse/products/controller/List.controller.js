@@ -4,24 +4,16 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/base/Log",
 	"sap/ui/model/type/Currency"
-], function(
-	BaseController,
-	ColumnListItem,
-	Text,
-	Log,
-	Currency
-) {
+], function(BaseController,	ColumnListItem, Text, Log, Currency) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.core.sample.RoutingNestedComponent.reuse.products.controller.List", {
+
 		onInit: function() {
 			BaseController.prototype.onInit.apply(this, arguments);
-
-			this.getOwnerComponent()
-				.getRouter()
-				.getRoute("list")
-				.attachMatched(this._onMatched, this);
+			this.getOwnerComponent().getRouter().getRoute("list").attachMatched(this._onMatched, this);
 		},
+
 		_onMatched: function(oEvent) {
 			var oArgs = oEvent.getParameter("arguments");
 			var sPath = decodeURIComponent(oArgs.basepath || "") + "/Products";
@@ -54,6 +46,7 @@ sap.ui.define([
 				})
 			});
 		},
+
 		onPressListItem: function(oEvent) {
 			Log.info(this.getView().getControllerName(), "onPressListItem");
 

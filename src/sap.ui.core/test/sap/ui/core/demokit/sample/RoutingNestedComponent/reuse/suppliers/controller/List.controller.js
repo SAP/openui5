@@ -1,9 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/sample/RoutingNestedComponent/base/BaseController",
 	"sap/base/Log"
-], function(BaseController, Log) {
+], function(Controller, Log) {
 	"use strict";
-	return BaseController.extend("sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers.controller.List", {
+	return Controller.extend("sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers.controller.List", {
 		onPressListItem: function(oEvent) {
 			Log.info(this.getView().getControllerName(), "onPressListItem");
 

@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/ui/core/sample/RoutingNestedComponent/base/BaseComponent",
-	"sap/ui/model/json/JSONModel"
-], function(BaseComponent, JSONModel) {
+	"sap/ui/core/sample/RoutingNestedComponent/base/BaseComponent"
+], function(BaseComponent) {
 		"use strict";
 
 		return BaseComponent.extend("sap.ui.core.sample.RoutingNestedComponent.Component", {
@@ -94,21 +93,6 @@ sap.ui.define([
 			init: function() {
 				// call the init function of the parent
 				BaseComponent.prototype.init.apply(this, arguments);
-
-				this.getRouter().attachRouteMatched(this._onRouteMatched, this);
-			},
-			_onRouteMatched: function(oEvent) {
-				var oConfig = oEvent.getParameter("config");
-
-				// select the corresponding item in the left menu
-				this.setSelectedMenuItem(oConfig.name);
-			},
-			setSelectedMenuItem: function(sKey) {
-				var oRootView = this.getRootControl();
-
-				if (oRootView) {
-					oRootView.byId("navigationList").setSelectedKey(sKey);
-				}
 			}
 		});
 	}

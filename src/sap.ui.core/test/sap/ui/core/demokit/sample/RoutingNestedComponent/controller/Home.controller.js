@@ -8,15 +8,6 @@ sap.ui.define([
 		onInit: function() {
 			Log.info(this.getView().getControllerName(), "onInit");
 
-			this.getOwnerComponent()
-				.getRouter()
-				.getRoute("home")
-				.attachMatched(this._onMatched, this);
-
-			this.getOwnerComponent()
-				.getRouter()
-				.attachBypassed(this._onBypassed, this);
-
 			// HTML string bound to the formatted text control
 			var oModel = new JSONModel({
 				HTML: "<p>We are now in the Home View of the Root component. By clicking on the other three items (Suppliers, Categories and Products) in the left menu, further components will be loaded and nested into the Root component.</p>" +
@@ -26,18 +17,6 @@ sap.ui.define([
 			});
 
 			this.getView().setModel(oModel);
-		},
-		_onMatched: function() {
-			Log.info(this.getView().getControllerName(), "_onPatternMatched");
-
-			this.getOwnerComponent().setSelectedMenuItem("home");
-		},
-		_onBypassed: function(oEvent) {
-			var sHash = oEvent.getParameter("hash");
-			Log.info(
-				this.getView().getControllerName(),
-				"_onBypassed Hash=" + sHash
-			);
 		}
 	});
 });

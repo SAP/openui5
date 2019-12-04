@@ -115,19 +115,24 @@
 				"home": {
 					"type": "View",
 					"id": "home",
-					"name": "Home"
+					"name": "Home",
+					"title": "Home"
 				},
 				"suppliers": {
 					"type": "Component",
-					"usage": "suppliersComponent"
+					"usage": "suppliersComponent",
+					"title": "Supplier"
 				},
 				"categories": {
 					"type": "Component",
-					"usage": "categoriesComponent"
+					"usage": "categoriesComponent",
+					"title": "Category"
 				},
 				"products": {
 					"type": "Component",
-					"usage": "productsComponent"
+					"usage": "productsComponent",
+					"title": "Product"
+
 				},
 				"notFound": {
 					"type": "View",

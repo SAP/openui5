@@ -87,23 +87,20 @@
 					"name": "detail",
 					"pattern": "detail/{id}",
 					"target": "detail"
-				},
-				{
-					"name": "notfound",
-					"pattern": "notFound",
-					"target": "notFound"
 				}
 			],
 			"targets": {
 				"list": {
 					"type": "View",
 					"id": "list",
-					"name": "List"
+					"name": "List",
+					"title": "Products List"
 				},
 				"detail": {
 					"type": "View",
 					"id": "detail",
-					"name": "Detail"
+					"name": "Detail",
+					"title": "{ProductName}"
 				},
 				"notFound": {
 					"type": "View",
