@@ -2077,7 +2077,7 @@ function(
 	MultiComboBox.prototype.onAfterRenderingList = function() {
 		var oList = this._getList();
 
-		if (this._iFocusedIndex != null && oList.getItems().length > this._iFocusedIndex) {
+		if (this.getEditable() && (this._iFocusedIndex != null) && (oList.getItems().length > this._iFocusedIndex)) {
 			oList.getItems()[this._iFocusedIndex].focus();
 			this._iFocusedIndex = null;
 		}
