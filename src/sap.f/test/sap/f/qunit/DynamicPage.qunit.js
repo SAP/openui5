@@ -1096,6 +1096,30 @@ function (
 		}
 	});
 
+	QUnit.test("DynamicPage _shouldOverridePreserveHeaderStateOnScroll() should return 'true' for Desktop when needed", function (assert) {
+		// Arrange
+		var oPreserveHeaderStateStub = this.stub(this.oDynamicPage, "_preserveHeaderStateOnScroll", function () {
+				return true;
+			}),
+			oBiggerHeaderStub = this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeFixed", function () {
+				return true;
+			}),
+			oDeviceStub = this.stub(Device, "system", {
+					desktop: true,
+					tablet: false,
+					phone: false
+			});
+
+			// Assert
+			assert.strictEqual(this.oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), true,
+				"Preserving header state on scroll is overriden for desktop too, when it is too big");
+
+			// Clean up
+			oPreserveHeaderStateStub.restore();
+			oBiggerHeaderStub.restore();
+			oDeviceStub.restore();
+	});
+
 	QUnit.test("DynamicPage _expandHeader() should hide Snapped Content and show Expand Content", function (assert) {
 		var $titleSnap = this.oDynamicPage.getTitle().$("snapped-wrapper"),
 			$titleExpand = this.oDynamicPage.getTitle().$("expand-wrapper");
