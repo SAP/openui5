@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.m.sample.StandardListItemInfoSateInverted",
+		"id": "sap.m.sample.StandardListItemInfoStateInverted",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.StandardListItemInfoSateInverted.List",
+			"viewName": "sap.m.sample.StandardListItemInfoStateInverted.List",
 			"type": "XML",
 			"async": true
 		},

@@ -2,7 +2,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 	function(jQuery, Controller, JSONModel) {
 	"use strict";
 
-	var ListController = Controller.extend("sap.m.sample.StandardListItemInfoSateInverted.List", {
+	var ListController = Controller.extend("sap.m.sample.StandardListItemInfoStateInverted.List", {
 
 		onInit : function (evt) {
 
