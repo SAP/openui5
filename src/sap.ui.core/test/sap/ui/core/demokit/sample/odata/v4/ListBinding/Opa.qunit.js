@@ -13,8 +13,16 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
 	], function (Any, Main, opaTest, TestUtils) {
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
-		QUnit.module("sap.ui.core.sample.odata.v4.ListBinding");
+		QUnit.module("sap.ui.core.sample.odata.v4.ListBinding", {
+			before : function () {
+				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			},
+			after : function () {
+				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			}
+		});
 
 		//*****************************************************************************
 		opaTest("Start list binding app and check log", function (Given, When, Then) {

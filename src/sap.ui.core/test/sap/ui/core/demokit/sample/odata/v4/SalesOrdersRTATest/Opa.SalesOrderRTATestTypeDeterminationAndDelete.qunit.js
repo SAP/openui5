@@ -8,7 +8,16 @@ sap.ui.define([
 	/*global QUnit */
 	"use strict";
 
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Type Determination and Delete");
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+
+	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Type Determination and Delete", {
+		before : function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		},
+		after : function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
 
 	//*****************************************************************************
 	opaTest("Type Determination, Delete Sales Orders", function (Given, When, Then) {

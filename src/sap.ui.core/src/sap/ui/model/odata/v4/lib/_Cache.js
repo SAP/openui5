@@ -482,7 +482,14 @@ sap.ui.define([
 							|| _Helper.buildPath(sServiceUrl + that.sResourcePath, sPropertyPath);
 					}
 					if (!bTransient) {
-						return oEntity && oProperty.$kind === "Property"
+						// If there is no entity with a key predicate, try it with the cache root
+						// object (in case of SimpleCache, the root object of CollectionCache is an
+						// array)
+						if (!oEntity && !Array.isArray(oData)) {
+							oEntity = oData;
+							iEntityPathLength = 0;
+						}
+						return oEntity
 							&& that.fetchLateProperty(oGroupLock, oEntity,
 								aSegments.slice(0, iEntityPathLength).join("/"),
 								aSegments.slice(iEntityPathLength).join("/"),
@@ -557,68 +564,160 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID (on which unlock has already been called)
-	 * @param {object} oEntity
-	 *   The entity instance in the cache
-	 * @param {string} sEntityPath
-	 *   The path of the entity relative to the cache
+	 * @param {object} oResource
+	 *   The resource in the cache on which the missing property is requested. Usually this is the
+	 *   last entity in the property path for which the key predicate is known. This keeps $expand
+	 *   as short as possible and it allows checking that the navigation property leading to this
+	 *   entity is unchanged (by comparing the key predicate). If there is no entity with a key
+	 *   predicate at all, SingleCache uses the cache root as oResource.
+	 * @param {string} sResourcePath
+	 *   The path of oResource relative to the cache
 	 * @param {string} sRequestedPropertyPath
-	 *   The path of the requested property relative to the entity
+	 *   The path of the requested property relative to oResource; this property is requested from
+	 *   the server
 	 * @param {string} sMissingPropertyPath
-	 *   The path of the missing property relative to the entity
+	 *   The path of the missing property relative to oResource; this property is returned so that
+	 *   drillDown can proceed
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with the missing property value or <code>undefined</code> if the
 	 *   requested property is not an expected late property; it rejects with an error if the GET
-	 *   request failed or if the ETag has changed
+	 *   request failed, or if the key predicate or the ETag has changed
 	 *
 	 * @private
 	 */
-	Cache.prototype.fetchLateProperty = function (oGroupLock, oEntity, sEntityPath,
+	Cache.prototype.fetchLateProperty = function (oGroupLock, oResource, sResourcePath,
 			sRequestedPropertyPath, sMissingPropertyPath) {
-		var oPromise,
+		var sFullResourceMetaPath,
+			oPromise,
 			mQueryOptions,
-			sResourcePath,
+			sRequestPath,
+			sResourceMetaPath,
+			mTypeForMetaPath = this.fetchTypes().getResult(),
+			aUpdateProperties = [sRequestedPropertyPath],
 			that = this;
 
-		if (!this.mLateQueryOptions || _Helper.getMetaPath(sEntityPath)) {
-			return undefined; // not supported yet - CPOUI5UISERVICESV3-1990
+		/*
+		 * Adds the key properties for the given meta path to $select of the given query options and
+		 * to aUpdateProperties.
+		 *
+		 * @param {string} sMetaPath The meta path
+		 * @param {object} mQueryOptions0 The query options
+		 * @param {string} [sBasePath=""] The base path for the key properties in aUpdateProperties
+		 */
+		function addKeyProperties(sMetaPath, mQueryOptions0, sBasePath) {
+			// the type is available synchronously because the binding read it when checking for
+			// late properties
+			var oEntityType = that.oRequestor.fetchTypeForPath(sMetaPath).getResult();
+
+			mTypeForMetaPath[sMetaPath] = oEntityType;
+			(oEntityType.$Key || []).forEach(function (vKey) {
+				if (typeof vKey === "object") {
+					vKey = vKey[Object.keys(vKey)[0]]; // the path for the alias
+				}
+				mQueryOptions0.$select.push(vKey);
+				aUpdateProperties.push(_Helper.buildPath(sBasePath, vKey));
+			});
+			if (mQueryOptions0.$expand && mQueryOptions0.$select.length > 1) {
+				// the first entry in $select is the one in $expand (from intersectQueryOptions)
+				// and is unnecessary now
+				mQueryOptions0.$select = mQueryOptions0.$select.slice(1);
+			}
 		}
 
-		mQueryOptions = _Helper.intersectQueryOptions(this.mLateQueryOptions,
-			[sRequestedPropertyPath], this.oRequestor.getModelInterface().fetchMetadata,
-			this.sMetaPath, {});
+		/**
+		 * Recursively visits the $expand of the query options. Determines the target type and adds
+		 * the key properties to the contained $select. Adds all relevant properties to
+		 * aUpdateProperties.
+		 *
+		 * @param {object} mQueryOptions0 The query options containing $expand
+		 * @param {string} sBasePath The base meta path of the query options relative to the entity
+		 * @param {string} sMetaPath The entity's meta path
+		 */
+		function visitExpand(mQueryOptions0, sBasePath, sMetaPath) {
+			// intersecting the query options with sRequestedPropertyPath delivers exactly one entry
+			// in $expand at each level (one for each navigation property binding)
+			var sExpand = Object.keys(mQueryOptions0.$expand)[0],
+				sExpandPath = _Helper.buildPath(sBasePath, sExpand);
+
+			sMetaPath = sMetaPath + "/" + sExpand;
+			mQueryOptions0 = mQueryOptions0.$expand[sExpand];
+			addKeyProperties(sMetaPath, mQueryOptions0, sExpandPath);
+			aUpdateProperties.push(sExpandPath + "/@odata.etag");
+			aUpdateProperties.push(sExpandPath + "/@$ui5._/predicate");
+			if (mQueryOptions0.$expand) {
+				visitExpand(mQueryOptions0, sExpandPath, sMetaPath);
+			}
+		}
+
+		if (!this.mLateQueryOptions) {
+			return undefined;
+		}
+		sResourceMetaPath = _Helper.getMetaPath(sResourcePath);
+		mQueryOptions = {
+			$select : this.mLateQueryOptions.$select,
+			$expand : this.mLateQueryOptions.$expand
+		};
+		mQueryOptions = _Helper.intersectQueryOptions(mQueryOptions,
+			// no need to convert sRequestedPropertyPath to a metapath, intersectQueryOptions will
+			// reject the resulting invalid path
+			[_Helper.buildPath(sResourceMetaPath, sRequestedPropertyPath)],
+			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, {});
 		if (!mQueryOptions) {
 			return undefined;
 		}
+		if (sResourceMetaPath) {
+			// Note: intersectQueryOptions guarantees that the meta path can be followed
+			sResourceMetaPath.split("/").forEach(function (sSegment) {
+				mQueryOptions = mQueryOptions.$expand[sSegment];
+			});
+		}
 
-		delete mQueryOptions.$apply;
-		delete mQueryOptions.$count;
-		delete mQueryOptions.$expand;
-		delete mQueryOptions.$filter;
-		delete mQueryOptions.$orderby;
-		delete mQueryOptions.$search;
-		sResourcePath = _Helper.buildPath(this.sResourcePath, sEntityPath)
+		// custom query options must be sent with each request
+		Object.keys(this.mLateQueryOptions).forEach(function (sName) {
+			if (sName[0] !== "$") {
+				mQueryOptions[sName] = that.mLateQueryOptions[sName];
+			}
+		});
+
+		sFullResourceMetaPath = _Helper.buildPath(this.sMetaPath, sResourceMetaPath);
+		addKeyProperties(sFullResourceMetaPath, mQueryOptions);
+		if (mQueryOptions.$expand) {
+			visitExpand(mQueryOptions, "", sFullResourceMetaPath);
+		}
+		sRequestPath = _Helper.buildPath(this.sResourcePath, sResourcePath)
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
-		oPromise = this.mPropertyRequestByPath[sResourcePath];
+		oPromise = this.mPropertyRequestByPath[sRequestPath];
 		if (!oPromise) {
-			oPromise = this.oRequestor.request("GET", sResourcePath, oGroupLock.getUnlockedCopy())
+			oPromise = this.oRequestor.request("GET", sRequestPath, oGroupLock.getUnlockedCopy())
+				.then(function (oData) {
+					that.visitResponse(oData, mTypeForMetaPath, sFullResourceMetaPath,
+							sResourcePath);
+					return oData;
+				})
 				.finally(function () {
-					delete that.mPropertyRequestByPath[sResourcePath];
+					delete that.mPropertyRequestByPath[sRequestPath];
 				});
-			this.mPropertyRequestByPath[sResourcePath] = oPromise;
+			this.mPropertyRequestByPath[sRequestPath] = oPromise;
 		}
 		// With the V2 adapter the surrounding complex type is requested for nested properties. So
 		// even when two late properties lead to the same request, each of them must be copied to
 		// the cache.
 		return oPromise.then(function (oData) {
-			if (oData["@odata.etag"] !== oEntity["@odata.etag"]) {
-				throw new Error("GET " + sResourcePath + ": ETag changed");
+			if (_Helper.getPrivateAnnotation(oResource, "predicate")
+					!== _Helper.getPrivateAnnotation(oData, "predicate")) {
+				throw new Error("GET " + sRequestPath + ": Key predicate changed from "
+					+ _Helper.getPrivateAnnotation(oResource, "predicate")
+					+ " to " + _Helper.getPrivateAnnotation(oData, "predicate"));
+			}
+			if (oData["@odata.etag"] !== oResource["@odata.etag"]) {
+				throw new Error("GET " + sRequestPath + ": ETag changed");
 			}
 
-			_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity, oData,
-				[sRequestedPropertyPath]);
+			_Helper.updateSelected(that.mChangeListeners, sResourcePath, oResource, oData,
+				aUpdateProperties);
 
 			// return the missing property, so that drillDown properly proceeds
-			return _Helper.drillDown(oEntity, sMissingPropertyPath.split("/"));
+			return _Helper.drillDown(oResource, sMissingPropertyPath.split("/"));
 		});
 	};
 

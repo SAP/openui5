@@ -179,29 +179,33 @@ sap.ui.define([
 	 * "OData Version 4.0 Part 2: URL Conventions".
 	 *
 	 * @param {object} mQueryOptions The query options to be merged
+	 * @param {string} sBaseMetaPath This binding's meta path
 	 * @param {boolean} bCacheImmutable Whether the cache of this binding is immutable
 	 * @returns {boolean} Whether the query options can be fulfilled by this binding
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions, bCacheImmutable) {
+	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions, sBaseMetaPath,
+			bCacheImmutable) {
 		var mAggregatedQueryOptionsClone = _Helper.merge({}, this.mAggregatedQueryOptions,
 				this.oCache && this.oCache.getLateQueryOptions()),
-			bChanged = false;
+			bChanged = false,
+			that = this;
 
 		/*
 		 * Recursively merges the given query options into the given aggregated query options.
 		 *
 		 * @param {object} mAggregatedQueryOptions The aggregated query options
-		 * @param {object} mQueryOptions The query options to merge into the aggregated query
+		 * @param {object} mQueryOptions0 The query options to merge into the aggregated query
 		 *   options
-		 * @param {boolean} bInsideExpand Whether the given query options are inside a $expand
+		 * @param {string} sMetaPath The meta path for the current $expand
+		 * @param {boolean} [bInsideExpand=false] Whether the given query options are inside a
+		 *   $expand
+		 * @param {boolean} [bAdd=false] Whether to add the given query options because they are in
+		 *   a $expand that has not been aggregated yet
 		 * @returns {boolean} Whether the query options can be fulfilled by this binding
 		 */
-		function merge(mAggregatedQueryOptions, mQueryOptions, bInsideExpand) {
-			var mExpandValue,
-				aSelectValue;
-
+		function merge(mAggregatedQueryOptions, mQueryOptions0, sMetaPath, bInsideExpand, bAdd) {
 			/*
 			 * Recursively merges the expand path into the aggregated query options.
 			 *
@@ -209,16 +213,19 @@ sap.ui.define([
 			 * @returns {boolean} Whether the query options can be fulfilled by this binding
 			 */
 			function mergeExpandPath(sExpandPath) {
-				if (mAggregatedQueryOptions.$expand[sExpandPath]) {
-					return merge(mAggregatedQueryOptions.$expand[sExpandPath],
-						mQueryOptions.$expand[sExpandPath], true);
+				var bAddExpand = !mAggregatedQueryOptions.$expand[sExpandPath],
+					sExpandMetaPath = sMetaPath + "/" + sExpandPath;
+
+				if (bAddExpand) {
+					mAggregatedQueryOptions.$expand[sExpandPath] = {};
+					if (bCacheImmutable && that.oModel.getMetaModel()
+							.fetchObject(sExpandMetaPath).getResult().$isCollection) {
+						return false;
+					}
+					bChanged = true;
 				}
-				if (bCacheImmutable) {
-					return false;
-				}
-				mAggregatedQueryOptions.$expand[sExpandPath]
-					= _Helper.merge({}, mExpandValue[sExpandPath]);
-				return true;
+				return merge(mAggregatedQueryOptions.$expand[sExpandPath],
+					mQueryOptions0.$expand[sExpandPath], sExpandMetaPath, true, bAddExpand);
 			}
 
 			/*
@@ -229,43 +236,44 @@ sap.ui.define([
 			 */
 			function mergeSelectPath(sSelectPath) {
 				if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
-					if (bCacheImmutable && bInsideExpand) {
-						return false;
-					}
 					bChanged = true;
 					mAggregatedQueryOptions.$select.push(sSelectPath);
 				}
 				return true;
 			}
 
-			mExpandValue = mQueryOptions.$expand;
-			if (mExpandValue) {
-				mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
-				if (!Object.keys(mExpandValue).every(mergeExpandPath)) {
-					return false;
-				}
-			}
-			aSelectValue = mQueryOptions.$select;
-			if (aSelectValue) {
-				mAggregatedQueryOptions.$select = mAggregatedQueryOptions.$select || [];
-				if (!aSelectValue.every(mergeSelectPath)) {
-					return false;
-				}
-			}
-			if (mQueryOptions.$count) {
-				mAggregatedQueryOptions.$count = true;
-			}
-			return Object.keys(mQueryOptions).concat(Object.keys(mAggregatedQueryOptions))
-				.every(function (sName) {
-					if (sName === "$count" || sName === "$expand" || sName === "$select"
-						|| !bInsideExpand && !(sName in mQueryOptions)) {
+			// Top-level all query options in the aggregate are OK, even if not repeated in the
+			// child. In a $expand the child must also have them (and the second loop checks that
+			// they're equal).
+			return (!bInsideExpand || Object.keys(mAggregatedQueryOptions).every(function (sName) {
+					return sName in mQueryOptions0 || sName === "$count" || sName === "$expand"
+						|| sName === "$select";
+				}))
+				// merge $count, $expand and $select; check that all others equal the aggregate
+				&& Object.keys(mQueryOptions0).every(function (sName) {
+					switch (sName) {
+					case "$count":
+						if (mQueryOptions0.$count) {
+							mAggregatedQueryOptions.$count = true;
+						}
 						return true;
+					case "$expand":
+						mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
+						return Object.keys(mQueryOptions0.$expand).every(mergeExpandPath);
+					case "$select":
+						mAggregatedQueryOptions.$select = mAggregatedQueryOptions.$select || [];
+						return mQueryOptions0.$select.every(mergeSelectPath);
+					default:
+						if (bAdd) {
+							mAggregatedQueryOptions[sName] = mQueryOptions0[sName];
+							return true;
+						}
+						return mQueryOptions0[sName] === mAggregatedQueryOptions[sName];
 					}
-					return mQueryOptions[sName] === mAggregatedQueryOptions[sName];
 				});
 		}
 
-		if (merge(mAggregatedQueryOptionsClone, mQueryOptions)) {
+		if (merge(mAggregatedQueryOptionsClone, mQueryOptions, sBaseMetaPath)) {
 			if (!bCacheImmutable) {
 				this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
 			} else if (bChanged) {
@@ -707,7 +715,8 @@ sap.ui.define([
 			}
 			if (bIsAdvertisement) {
 				mWrappedChildQueryOptions = {"$select" : [sChildMetaPath.slice(1)]};
-				return that.aggregateQueryOptions(mWrappedChildQueryOptions, bCacheImmutable)
+				return that.aggregateQueryOptions(mWrappedChildQueryOptions, sBaseMetaPath,
+						bCacheImmutable)
 					? sReducedPath
 					: undefined;
 			}
@@ -718,14 +727,16 @@ sap.ui.define([
 					sChildMetaPath, mChildQueryOptions,
 					that.oModel.oRequestor.getModelInterface().fetchMetadata);
 				if (mWrappedChildQueryOptions) {
-					return that.aggregateQueryOptions(mWrappedChildQueryOptions, bCacheImmutable)
+					return that.aggregateQueryOptions(mWrappedChildQueryOptions, sBaseMetaPath,
+							bCacheImmutable)
 						? sReducedPath
 						: undefined;
 				}
 				return undefined;
 			}
 			if (sChildMetaPath === "value") { // symbolic name for operation result
-				return that.aggregateQueryOptions(mChildQueryOptions, bCacheImmutable)
+				return that.aggregateQueryOptions(mChildQueryOptions, sBaseMetaPath,
+						bCacheImmutable)
 					? sReducedPath
 					: undefined;
 			}

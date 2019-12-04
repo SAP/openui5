@@ -14,8 +14,16 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/test/TestUtils",
 		"sap/ui/test/matchers/Properties"
 	], function (Any, Opa5, opaTest, TestUtils, Properties) {
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
-		QUnit.module("sap.ui.core.sample.ViewTemplate.scenario");
+		QUnit.module("sap.ui.core.sample.ViewTemplate.scenario", {
+			before : function () {
+				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			},
+			after : function () {
+				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			}
+		});
 
 		opaTest("Find view elements", function (Given, When, Then) {
 			function onLoad() {
