@@ -58,7 +58,9 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataListBindingNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModelNoFakeService.qunit",
-		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit"
+		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit",
+		// Base types
+		"sap/ui/core/qunit/types/Types.qunit"
 	], function () {
 		function start() {
 			Core.detachThemeChanged(start);
