@@ -70,6 +70,15 @@ body > .sapUxAPObjectPageLayout,
 	transform: translate3d(0, 0, 0);
 }
 
+/*Transform translate3d causes problems on IE11 with Windows 10.
+The issue can be observed while scrolling some nested controls.
+BCP: 0020751294 0000432437 2019
+BCP: 1980095977
+*/
+html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageWrapperTransform {
+	transform: none;
+}
+
 .sapUxAPObjectPageScroll {
 	position: relative;
 }
@@ -273,11 +282,7 @@ html[data-sap-ui-animation='on'] .sapUxAPObjectPageLayout {
  Also the z-index causes the scroll bars of the table to show in the headerTitle.
  For more information see internal incident 1670194272. */
  /* TODO remove after 1.62 version */
-html[data-sap-ui-browser^="ie"][data-sap-ui-os^="win8"] .sapMShell {
-
-  .sapUxAPObjectPageWrapperTransform {
-    transform: none;
-  }
+html[data-sap-ui-browser^="ie"] .sapMShell {
 
   .sapUxAPObjectPageHeaderTitle {
     z-index: 3;
