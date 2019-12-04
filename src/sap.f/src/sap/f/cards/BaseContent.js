@@ -382,6 +382,9 @@ sap.ui.define([
 					case "component":
 						sap.ui.require(["sap/f/cards/ComponentContent"], fnCreateContentInstance);
 						break;
+					case "adaptivecard":
+						sap.ui.require(["sap/f/cards/AdaptiveContent"], fnCreateContentInstance);
+						break;
 					default:
 						reject(sType.toUpperCase() + " content type is not supported.");
 				}

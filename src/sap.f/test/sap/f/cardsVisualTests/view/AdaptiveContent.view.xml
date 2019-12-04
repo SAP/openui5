@@ -1,0 +1,26 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:w="sap.ui.integration.widgets"
+		displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Adaptive Content Card "/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<Panel>
+				<w:Card id="adaptivecard1" manifest="{manifests>/adaptiveManifests/adaptive1}" width="700px" height="auto"/>
+				<w:Card id="adaptivecard2" manifest="{manifests>/adaptiveManifests/adaptive2}" width="700px" height="auto"/>
+				<w:Card id="adaptivecard3" manifest="{manifests>/adaptiveManifests/adaptive3}" width="700px" height="auto"/>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>
