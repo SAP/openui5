@@ -138,7 +138,7 @@
 												 columnCount="2"
 												 class="sapUiSmallMarginTop">
 												<custom:Row>
-													<m:Link href="{href}" text="{name}"/>
+													<custom:ParamText text="{name}" href="{href}" deprecated="{deprecated}"/>
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
 												</custom:Row>
 											</custom:LightTable>

@@ -276,7 +276,7 @@ sap.ui.define([
 					this._oEntityData = oEntityData;
 
 					// If target symbol is deprecated - all deprecated records should be shown in the tree
-					if (oEntityData.deprecated) {
+					if (oEntityData.deprecated || oEntityData.bAllContentDeprecated) {
 						oMasterController = this.getOwnerComponent().getConfigUtil().getMasterView("apiId").getController();
 						oMasterController.selectDeprecatedSymbol(this._sTopicid);
 					}

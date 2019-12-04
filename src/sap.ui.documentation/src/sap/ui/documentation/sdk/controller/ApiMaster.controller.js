@@ -95,19 +95,19 @@ sap.ui.define([
 						isSelected: false,
 						name : "experimental",
 						displayName : "Experimental APIs",
-						bIsDeprecated: false,
+						bAllContentDeprecated: false,
 						visibility: "public"
 					}, {
 						isSelected: false,
 						name : "deprecated",
 						displayName : "Deprecated APIs",
-						bIsDeprecated: false,
+						bAllContentDeprecated: false,
 						visibility: "public"
 					}, {
 						isSelected: false,
 						name : "since",
 						displayName : "Index by Version",
-						bIsDeprecated: false,
+						bAllContentDeprecated: false,
 						visibility: "public"
 					});
 				}
@@ -214,7 +214,7 @@ sap.ui.define([
 
 				if (!this._bIncludeDeprecated) {
 					aFilters.push(new Filter({
-						path: "bIsDeprecated",
+						path: "bAllContentDeprecated",
 						operator: FilterOperator.EQ,
 						value1: false
 					}));
