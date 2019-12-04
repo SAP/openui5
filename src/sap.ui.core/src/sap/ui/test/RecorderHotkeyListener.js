@@ -27,7 +27,7 @@ sap.ui.define([
 						Bootstrap.init(["true", "window"]);
 					}, function (oError) {
 						/*eslint-disable no-console */
-						console.warn("Could not load library 'sap/ui/testrecorder/Bootstrap'! Details: " + oError);
+						console.warn("Could not load module 'sap/ui/testrecorder/Bootstrap'! Details: " + oError);
 					});
 				}
 			});

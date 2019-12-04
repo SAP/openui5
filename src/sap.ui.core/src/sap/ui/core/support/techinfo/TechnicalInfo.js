@@ -306,7 +306,7 @@ sap.ui.define([
 			sap.ui.require(["sap/ui/testrecorder/Bootstrap"], function (oBootstrap) {
 				oBootstrap.init(["true"]);
 			}, function (oError) {
-				Log.error("Could not load library 'sap/ui/testrecorder/Bootstrap'! Details: " + oError);
+				Log.error("Could not load module 'sap/ui/testrecorder/Bootstrap'! Details: " + oError);
 			});
 		},
 

@@ -11,7 +11,7 @@ sap.ui.define([
 
 	var DOMMutation = ManagedObject.extend("sap.ui.testrecorder.inspector.DOMMutation", {
 		constructor: function (fnOnMutation) {
-			this._observer = new MutationObserver(function (aMutations) {
+			this._observer = new window.MutationObserver(function (aMutations) {
 				var isMutationValid = true;
 				aMutations.forEach(function (oMutation) {
 					if (_isRecorderElement(oMutation, constants.HIGHLIGHTER_ID) || _isRecorderElement(oMutation, constants.CONTEXTMENU_ID)) {
