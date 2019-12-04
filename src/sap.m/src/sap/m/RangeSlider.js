@@ -2,23 +2,23 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/InvisibleText",
-	"sap/base/Log",
-	"./Slider",
-	"./SliderTooltip",
-	"./SliderUtilities",
-	"./RangeSliderRenderer",
-	"sap/ui/thirdparty/jquery"
+    "sap/ui/core/InvisibleText",
+    "sap/base/Log",
+    "./Slider",
+    "./SliderTooltip",
+    "./SliderUtilities",
+    "./RangeSliderRenderer",
+    "sap/ui/thirdparty/jquery"
 ],
     function(
-		InvisibleText,
-		log,
-		Slider,
-		SliderTooltip,
-		SliderUtilities,
-		RangeSliderRenderer,
-		jQuery
-	) {
+        InvisibleText,
+        log,
+        Slider,
+        SliderTooltip,
+        SliderUtilities,
+        RangeSliderRenderer,
+        jQuery
+    ) {
         "use strict";
 
         /**
@@ -53,7 +53,7 @@ sap.ui.define([
          * @public
          * @since 1.38
          * @alias sap.m.RangeSlider
-		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/range-slider/ Range Slider}
+         * @see {@link fiori:https://experience.sap.com/fiori-design-web/range-slider/ Range Slider}
          * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
         var RangeSlider = Slider.extend("sap.m.RangeSlider", /** @lends sap.m.RangeSlider.prototype */ {
@@ -439,13 +439,13 @@ sap.ui.define([
         };
 
         /**
-		 * Gets the tooltips that should be shown.
-		 * Returns custom tooltips if provided and more than 1 else default tooltips
-		 *
-		 * @protected
+         * Gets the tooltips that should be shown.
+         * Returns custom tooltips if provided and more than 1 else default tooltips
+         *
+         * @protected
          * @override
-		 * @returns {sap.m.SliderTooltipBase[]} SliderTooltipBase instances.
-		 */
+         * @returns {sap.m.SliderTooltipBase[]} SliderTooltipBase instances.
+         */
         RangeSlider.prototype.getUsedTooltips = function () {
             var aCustomTooltips = this.getCustomTooltips(),
                 aDefaultTooltips = this.getAggregation("_defaultTooltips") || [];
@@ -902,7 +902,7 @@ sap.ui.define([
             }
 
             // remember the initial focus range so when esc key is pressed we can return to it
-            if (!(document.activeElement === this.getFocusDomRef())) {
+            if (document.activeElement !== this.getFocusDomRef()) {
                 this._aInitialFocusRange = this.getRange();
             }
         };
