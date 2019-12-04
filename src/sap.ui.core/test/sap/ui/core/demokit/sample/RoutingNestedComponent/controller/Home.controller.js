@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/base/Log",
-	"sap/ui/model/JSON/JSONModel"
+	"sap/ui/model/json/JSONModel"
 ], function(Controller, Log, JSONModel) {
 	"use strict";
 	return Controller.extend("sap.ui.core.sample.RoutingNestedComponent.controller.Home", {
