@@ -168,8 +168,7 @@ sap.ui.define([
 		}
 
 		if (bSum) {
-			aLabels.push(oTable.getId() + "-ariagrouptotallabel");
-			aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
+			aLabels.push(oTable.getId() + "-ariagrandtotallabel");
 		}
 
 		if (!bGroup && !bSum) {
@@ -457,11 +456,11 @@ sap.ui.define([
 		var oRefs = fakeGroupRow(1);
 
 		assert.strictEqual(oRefs.row.attr("aria-expanded"), "true", "aria-expanded set on group row");
-		assert.strictEqual(oRefs.row.attr("aria-level"), "2", "aria-level set on group row");
+		assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on group row");
 		assert.strictEqual(oRefs.fixed.attr("aria-expanded"), "true", "aria-expanded set on group row (fixed)");
-		assert.strictEqual(oRefs.fixed.attr("aria-level"), "2", "aria-level set on group row (fixed)");
+		assert.strictEqual(oRefs.fixed.attr("aria-level"), "1", "aria-level set on group row (fixed)");
 		assert.strictEqual(oRefs.act.attr("aria-expanded"), "true", "aria-expanded set on row action");
-		assert.strictEqual(oRefs.act.attr("aria-level"), "2", "aria-level set on row action");
+		assert.strictEqual(oRefs.act.attr("aria-level"), "1", "aria-level set on row action");
 
 		var $Cell;
 		var i;
@@ -474,13 +473,12 @@ sap.ui.define([
 		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(1, i, true, assert);
 			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {firstTime: i == 0, colChange: true, group: true});
-			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true, group: true}, false);
+			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true, group: true}, true);
 		}
 
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
-			oTable.rerender();
 			done();
 		}, 100);
 	});
@@ -491,9 +489,9 @@ sap.ui.define([
 
 		var oRefs = fakeSumRow(1);
 
-		assert.strictEqual(oRefs.row.attr("aria-level"), "2", "aria-level set on group row");
-		assert.strictEqual(oRefs.fixed.attr("aria-level"), "2", "aria-level set on group row (fixed)");
-		assert.strictEqual(oRefs.act.attr("aria-level"), "2", "aria-level set on row action");
+		assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on sum row");
+		assert.strictEqual(oRefs.fixed.attr("aria-level"), "1", "aria-level set on sum row (fixed part)");
+		assert.strictEqual(oRefs.act.attr("aria-level"), "1", "aria-level set on sum row (action part)");
 
 		var $Cell;
 		var i;
@@ -516,7 +514,6 @@ sap.ui.define([
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
-			oTable.rerender();
 			done();
 		}, 100);
 	});
@@ -710,7 +707,7 @@ sap.ui.define([
 					aLabels.push(oTable.getId() + "-ariarowgrouplabel");
 					aLabels.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 				} else if (bSum) {
-					aLabels.push(oTable.getId() + "-ariagrouptotallabel");
+					aLabels.push(oTable.getId() + "-ariagrandtotallabel");
 				} else {
 					aLabels.push(oTable.getId() + "-rows-row" + iRow + "-rowselecttext");
 					aLabels.push(oTable.getId() + "-rows-row" + iRow + "-highlighttext");
@@ -794,7 +791,7 @@ sap.ui.define([
 		var $Cell;
 
 		assert.strictEqual(oRefs.hdr.attr("aria-expanded"), "true", "aria-expanded set on group row header");
-		assert.strictEqual(oRefs.hdr.attr("aria-level"), "2", "aria-level set on group row header");
+		assert.strictEqual(oRefs.hdr.attr("aria-level"), "1", "aria-level set on group row header");
 		assert.strictEqual(oRefs.hdr.attr("aria-haspopup"), "true", "aria-haspopup set on group row header");
 
 		$Cell = getRowHeader(1, false, assert);
@@ -802,7 +799,7 @@ sap.ui.define([
 		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
 
 		$Cell = getRowHeader(1, true, assert);
-		this.testAriaLabels($Cell, 1, assert, {group: true, focus: true, firstTime: true});
+		this.testAriaLabels($Cell, 1, assert, {group: true, focus: true, firstTime: true, expanded: true});
 		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
 
 		setFocusOutsideOfTable(assert);
@@ -838,7 +835,7 @@ sap.ui.define([
 		var oRefs = fakeSumRow(1);
 		var $Cell;
 
-		assert.strictEqual(oRefs.hdr.attr("aria-level"), "2", "aria-level set on sum row header");
+		assert.strictEqual(oRefs.hdr.attr("aria-level"), "1", "aria-level set on sum row header");
 
 		$Cell = getRowHeader(1, false, assert);
 		this.testAriaLabels($Cell, 1, assert, {sum: true});
@@ -851,7 +848,6 @@ sap.ui.define([
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			that.testAriaLabels($Cell, 1, assert);
-			oTable.rerender();
 			done();
 		}, 100);
 	});
@@ -961,8 +957,7 @@ sap.ui.define([
 					aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
 					aLabels.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 				} else if (bSum) {
-					aLabels.push(oTable.getId() + "-ariagrouptotallabel");
-					aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
+					aLabels.push(oTable.getId() + "-ariagrandtotallabel");
 				}
 				if (!bGroup) {
 					aLabels.push(oTable.getId() + "-cellacc");
@@ -1028,7 +1023,7 @@ sap.ui.define([
 				colChange: i < 2,
 				focus: true,
 				group: i == 1,
-				expanded: false
+				expanded: true
 			});
 		}
 

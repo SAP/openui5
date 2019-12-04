@@ -4,9 +4,10 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
+	"sap/ui/table/Row",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/Device"
-], function(qutils, RowAction, RowActionItem, TableUtils, Device) {
+], function(qutils, RowAction, RowActionItem, Row, TableUtils, Device) {
 	"use strict";
 
 	var MENUICON = "sap-icon://overflow";
@@ -283,8 +284,9 @@ sap.ui.define([
 		oAction.getParent = function() {
 			return oParent;
 		};
-		assert.equal(oAction._getRow(), oParent, "_getRow returns the parent");
-		oAction.getParent = sap.ui.core.Control.prototype.getParent;
+		assert.equal(oAction._getRow(), null, "_getRow returns null if the parent is not a row");
+		oParent = new Row();
+		assert.equal(oAction._getRow(), oParent, "_getRow returns the parent row");
 		oAction.destroy();
 	});
 
@@ -433,6 +435,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
+		TableUtils.getResourceBundle(); // Make sure the resource bundle is available and ready for use.
+
 		assert.equal(this.rowAction.getAccessibilityInfo().focusable, true, "ACCInfo.focusable: 2 Items");
 		assert.equal(this.rowAction.getAccessibilityInfo().enabled, true, "ACCInfo.enabled: 2 Items");
 		assert.equal(this.rowAction.getAccessibilityInfo().description, TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_MULTIPLE_ACTION", [2]),

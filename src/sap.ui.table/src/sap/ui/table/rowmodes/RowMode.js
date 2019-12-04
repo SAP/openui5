@@ -515,13 +515,11 @@ sap.ui.define([
 				}
 
 				var aRows = createRows(oTable, iRowCount), oRow;
-				var oBindingInfo = oTable.getBindingInfo("rows");
-				var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
 
 				for (var i = 0; i < aRows.length; i++) {
 					oRow = aRows[i];
 					// prevent propagation of parent binding context; else incorrect data might be requested by the model.
-					oRow.setBindingContext(null, sModelName);
+					oRow.setRowBindingContext(null, oTable);
 					oTable.addAggregation("rows", oRow, true);
 				}
 
@@ -581,10 +579,6 @@ sap.ui.define([
 
 			for (i = 0; i < aNewRows.length; i++) {
 				oTable.addAggregation("rows", aNewRows[i], true);
-
-				// As long the clone is not yet in the aggregation, setRowBindingContext will not process the following.
-				// Therefore, call it manually here.
-				aNewRows[i]._updateTableCells(aNewRows[i].getBindingContext());
 			}
 		} else {
 			// Remove rows that are not required.
@@ -744,12 +738,8 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = oTable.getBinding("rows");
-		var oBindingInfo = oTable.getBindingInfo("rows");
-		var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
-
 		for (var i = 0; i < aRows.length; i++) {
-			aRows[i].setRowBindingContext(aContexts[i], sModelName, oBinding);
+			aRows[i].setRowBindingContext(aContexts[i], oTable);
 		}
 	}
 

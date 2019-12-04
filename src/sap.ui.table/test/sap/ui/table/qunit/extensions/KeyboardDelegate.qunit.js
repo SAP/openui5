@@ -5641,6 +5641,8 @@ sap.ui.define([
 			checkFocus(oCellElement, assert);
 		}
 
+		oTable.invalidate();
+		sap.ui.getCore().applyChanges();
 		this.testCollapseExpandAndFocus(assert, oTable, getCell(0, 1));
 		this.testCollapseExpandAndFocus(assert, oTable, getRowHeader(0));
 		this.testNoCollapseExpand(assert, oTable, getColumnHeader(0));
@@ -6080,7 +6082,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			oElem = checkFocus(getRowHeader(0, true), assert);
-			assert.ok(TableUtils.Grouping.isInGroupingRow(oElem), "Cell to be tested is in a group header row");
+			assert.ok(TableUtils.Grouping.isInGroupHeaderRow(oElem), "Cell to be tested is in a group header row");
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus group header icon cell: Table is in Navigation Mode");
 			fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
 			checkFocus(getRowHeader(0), assert);
@@ -6225,7 +6227,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oElement = checkFocus(getRowHeader(0, true), assert)[0];
-		assert.ok(TableUtils.Grouping.isInGroupingRow(oElement), "Cell to be tested is in a group header row");
+		assert.ok(TableUtils.Grouping.isInGroupHeaderRow(oElement), "Cell to be tested is in a group header row");
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Focus group header icon cell: Table is in Action Mode");
 
 		// Enter Navigation Mode: Focus the SelectAll cell.
@@ -6763,7 +6765,7 @@ sap.ui.define([
 									if (bTableHasRowHeader) {
 										oElem = getRowHeader(iRowIndex);
 
-										if (TableUtils.Grouping.isInGroupingRow(oElem)) {
+										if (TableUtils.Grouping.isInGroupHeaderRow(oElem)) {
 											assert.strictEqual(document.activeElement, oElem[0],
 												"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1)
 												+ "): Header Cell: Group Header Icon focused");
@@ -7016,7 +7018,7 @@ sap.ui.define([
 									var bIsFirstInteractiveElementInRow =
 										KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[iRowIndex])[0] === oElem;
 									var bRowHasInteractiveRowHeader =
-										bTableHasRowSelectors || TableUtils.Grouping.isInGroupingRow(TableUtils.getCell(oTable, oElem));
+										bTableHasRowSelectors || TableUtils.Grouping.isInGroupHeaderRow(TableUtils.getCell(oTable, oElem));
 
 									if (bIsFirstInteractiveElementInRow && iColumnIndex > 0 && !bRowHasInteractiveRowHeader) {
 										resolve();
@@ -7026,7 +7028,7 @@ sap.ui.define([
 								} else if (bTableHasRowHeader) { // Row Header Cell
 									oElem = getRowHeader(iRowIndex);
 
-									if (TableUtils.Grouping.isInGroupingRow(oElem)) {
+									if (TableUtils.Grouping.isInGroupHeaderRow(oElem)) {
 										assert.strictEqual(document.activeElement, oElem[0],
 											"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1)
 											+ "): Header Cell: Group Header Icon focused"

@@ -332,17 +332,14 @@ sap.ui.define([
 		}
 
 		function testEmptyRow() {
-			sinon.stub(oTable, "getContextByIndex", function(iIndex) {
-				if (iIndex === 0) {
-					return null;
-				}
-				return oTable.constructor.prototype.getContextByIndex.apply(oTable, arguments);
+			sinon.stub(oTable.getRows()[0], "isEmpty", function() {
+				return true;
 			});
 
 			test(getCell(0, 0).parent(), {sRowType: "Empty", sRowAreaType: "Fixed", iRowIndex: 0});
 			test(getCell(0, 1).parent(), {sRowType: "Empty", sRowAreaType: "Scrollable", iRowIndex: 0});
 
-			oTable.getContextByIndex.restore();
+			oTable.getRows()[0].isEmpty.restore();
 		}
 
 		function testGroupHeaderRow() {

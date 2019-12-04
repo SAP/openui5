@@ -531,7 +531,7 @@ sap.ui.define([
 				var oCellInfo = TableUtils.getCellInfo($Cell[0]);
 				var bIsRowSelectionAllowed = TableUtils.isRowSelectionAllowed(oTable);
 
-				if (!TableUtils.Grouping.isInGroupingRow($Cell[0])
+				if (!TableUtils.Grouping.isInGroupHeaderRow($Cell[0])
 					&& ((oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL | TableUtils.CELLTYPE.ROWACTION) && bIsRowSelectionAllowed)
 						|| (oCellInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER) && TableUtils.isRowSelectorSelectionAllowed(oTable)))) {
 

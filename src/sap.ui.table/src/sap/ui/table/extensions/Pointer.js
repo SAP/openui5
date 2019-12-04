@@ -739,9 +739,12 @@ sap.ui.define([
 			}
 
 			var $Target = jQuery(oEvent.target);
+			var $Cell = TableUtils.getCell(this, oEvent.target);
+			var oCellInfo = TableUtils.getCellInfo($Cell);
+			var oRow = this.getRows()[oCellInfo.rowIndex];
 
-			if ($Target.hasClass("sapUiAnalyticalTableSum")) {
-				// Analytical Table: Sum Row cannot be selected
+			if (oRow && oRow.isSummary()) {
+				// Sum row cannot be selected
 				oEvent.preventDefault();
 				return;
 			} else if ($Target.hasClass("sapUiTableGroupMenuButton")) {
@@ -749,14 +752,11 @@ sap.ui.define([
 				this.oncontextmenu(oEvent);
 				return;
 			} else if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
-				// Grouping Row: Toggle grouping
+				// Expand/Collapse icon
 				if (TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target)) {
 					return;
 				}
 			}
-
-			var $Cell = TableUtils.getCell(this, oEvent.target);
-			var oCellInfo = TableUtils.getCellInfo($Cell);
 
 			if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
 				var oPointerExtension = this._getPointerExtension();
