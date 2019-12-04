@@ -152,7 +152,7 @@ sap.ui.define([
 	 * @borrows sap.ui.core.RenderManager#writeAccessibilityState as #accessibilityState
 	 * @borrows sap.ui.core.RenderManager#writeIcon as #icon
 	 *
-	 * @extends sap.ui.core.Object
+	 * @extends sap.ui.base.Object
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.core.RenderManager
