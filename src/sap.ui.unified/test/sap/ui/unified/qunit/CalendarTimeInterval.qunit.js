@@ -527,6 +527,26 @@ sap.ui.define([
 		assert.ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 	});
 
+	QUnit.test("getSelectedDates returns the right values", function (assert) {
+		// Prepare
+		var oCalTimeInterval = new CalendarTimeInterval({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+			}),
+			oMonthPicker = oCalTimeInterval.getAggregation("monthPicker"),
+			aSelectedDays;
+
+		// Act
+		oCalTimeInterval.addSelectedDate(new DateRange(new Date("1/1/2019"), new Date("1/1/2021")));
+		aSelectedDays  = oMonthPicker.getSelectedDates();
+
+		// Assert
+		assert.deepEqual(aSelectedDays, oCalTimeInterval.getSelectedDates(),
+			"MonthPicker has selected dates control origin set");
+
+		// Clean
+		oCalTimeInterval.destroy();
+	});
+
 	QUnit.module("YearPicker");
 	QUnit.test("displayed years", function(assert) {
 		assert.ok(!jQuery("#Cal1--YP").get(0), "Calendar1: Year picker not initial rendered");

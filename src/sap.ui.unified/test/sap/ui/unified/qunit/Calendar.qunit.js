@@ -576,18 +576,34 @@ sap.ui.define([
 	QUnit.test("getSelectedDates returns the right values", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Islamic
+			}),
+			oYearRangePicker = oCal.getAggregation("yearRangePicker");
+
+		// Act
+		// Assert
+		assert.strictEqual(oYearRangePicker.getPrimaryCalendarType(), oCal.getPrimaryCalendarType(),
+			"YearRangePicker instance has the same primary calendar type as the calendar instance");
+
+		// Clean
+		oCal.destroy();
+	});
+
+	QUnit.test("getSelectedDates returns the right values", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
 				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
 			}),
-			oYearPicker = oCal.getAggregation("yearPicker"),
+			oMonthPicker = oCal.getAggregation("monthPicker"),
 			aSelectedDays;
 
 		// Act
 		oCal.addSelectedDate(new DateRange(new Date(2019,1,1), new Date(2021,1,1)));
-		aSelectedDays  = oYearPicker.getSelectedDates();
+		aSelectedDays  = oMonthPicker.getSelectedDates();
 
 		// Assert
 		assert.deepEqual(aSelectedDays, oCal.getSelectedDates(),
-			"YearPicker has selected dates control origin set");
+			"MonthPicker has selected dates control origin set");
 		// Clean
 		oCal.destroy();
 	});
