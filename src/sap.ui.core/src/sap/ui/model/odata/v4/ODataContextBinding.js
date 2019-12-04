@@ -715,7 +715,9 @@ sap.ui.define([
 			_Helper.updateAll(this.oOperation.mChangeListeners, "", this.oOperation.mParameters,
 				_Cache.makeUpdateData(sPath.split("/").slice(1), vValue));
 			this.oOperation.bAction = undefined; // "not yet executed"
-			oGroupLock.unlock();
+			if (oGroupLock) {
+				oGroupLock.unlock();
+			}
 			return SyncPromise.resolve();
 		}
 	};

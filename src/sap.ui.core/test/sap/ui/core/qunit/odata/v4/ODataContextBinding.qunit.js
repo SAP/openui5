@@ -3748,16 +3748,17 @@ sap.ui.define([
 			oGroupLock = {
 				unlock : function () { }
 			},
-			vUpdateValue = {};
+			oUpdateValue = {};
 
 		if (oFixture.name) {
+			oBinding.oOperation.bAction = true;
 			this.mock(_Cache).expects("makeUpdateData")
 				.withExactArgs(oFixture.update, "bar")
-				.returns(vUpdateValue);
-
+				.returns(oUpdateValue);
 			this.mock(_Helper).expects("updateAll")
 				.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "",
-					sinon.match.same(oBinding.oOperation.mParameters), vUpdateValue);
+					sinon.match.same(oBinding.oOperation.mParameters),
+					sinon.match.same(oUpdateValue));
 		}
 
 		// code under test
@@ -3768,6 +3769,27 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oOperation.bAction, undefined);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("doSetProperty: no group lock", function (assert) {
+		var oBinding = this.bindContext("/Operation(...)"),
+			oUpdateValue = {};
+
+		oBinding.oOperation.bAction = true;
+		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["foo"], "bar")
+			.returns(oUpdateValue);
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "",
+				sinon.match.same(oBinding.oOperation.mParameters), sinon.match.same(oUpdateValue));
+
+		assert.strictEqual(
+			// code under test
+			oBinding.doSetProperty("$Parameter/foo", "bar", null),
+			SyncPromise.resolve()
+		);
+
+		assert.strictEqual(oBinding.oOperation.bAction, undefined);
+	});
 
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {

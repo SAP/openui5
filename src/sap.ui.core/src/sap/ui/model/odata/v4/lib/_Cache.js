@@ -1113,6 +1113,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Updates the property of the given name with the given new value without sending a PATCH
+	 * request.
+	 *
+	 * @param {string} sPropertyPath
+	 *   Path of the property to update, relative to the entity
+	 * @param {any} vValue
+	 *   The new value
+	 * @param {string} [sEntityPath]
+	 *   Path of the entity, relative to the cache (as used by change listeners)
+	 * @returns {Promise}
+	 *   A promise which resolves with <code>undefined</code> once the value has been set, or is
+	 *   rejected with an error if setting fails somehow, for example because the affected entity
+	 *   is transient
+	 *
+	 * @public
+	 */
+	Cache.prototype.setProperty = function (sPropertyPath, vValue, sEntityPath) {
+		var that = this;
+
+		return this.fetchValue(_GroupLock.$cached, sEntityPath).then(function (oEntity) {
+			if (_Helper.getPrivateAnnotation(oEntity, "transient")) {
+				// Note: includes "No 'update' allowed while waiting for server response"
+				throw new Error("Cannot update a transient entity w/o PATCH");
+			}
+			_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity,
+				Cache.makeUpdateData(sPropertyPath.split("/"), vValue));
+		});
+	};
+
+	/**
 	 * Updates query options of the cache which has not yet sent a read request with the given
 	 * options.
 	 *
