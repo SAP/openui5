@@ -560,6 +560,23 @@ sap.ui.define([
 			},
 
 			/**
+			 * Returns the first route which matches the given hash
+			 * @param {string} sHash
+			 * @return {sap.ui.core.routing.Route} The matched Route
+			 * @public
+			 * @since 1.74
+			 */
+			getRouteByHash : function(sHash) {
+				for (var sRouteName in this._oRoutes) {
+					if (this._oRoutes.hasOwnProperty(sRouteName)) {
+						if (this._oRoutes[sRouteName].match(sHash)) {
+							return this.getRoute(sRouteName);
+						}
+					}
+				}
+			},
+
+			/**
 			 * Returns the route with the given name or <code>undefined</code> if no route is found.
 			 *
 			 * @param {string} sName Name of the route
