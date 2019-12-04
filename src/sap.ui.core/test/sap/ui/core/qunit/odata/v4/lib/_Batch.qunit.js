@@ -16,7 +16,6 @@ sap.ui.define([
 		oEmployeesBody = {
 			"@odata.context": "$metadata#EMPLOYEES",
 			"value" : [{
-				"@odata.etag" : "W/\"19770724000000.0000000\"",
 				"ID" : "1",
 				"Name" : "Walter\"s Win's",
 				"AGE" : 52,
@@ -41,7 +40,6 @@ sap.ui.define([
 				},
 				"STATUS": "Available"
 			}, {
-				"@odata.etag" : "W/\"20030701000000.0000000\"",
 				"ID" : "2",
 				"Name" : "Frederic Fall",
 				"AGE" : 32,
@@ -66,7 +64,6 @@ sap.ui.define([
 				},
 				"STATUS": "Occupied"
 			}, {
-				"@odata.etag" : "W/\"19770724000000.0000000\"",
 				"ID" : "3",
 				"Name" : "Jonathan Smith",
 				"AGE" : 56,
@@ -91,7 +88,6 @@ sap.ui.define([
 				},
 				"STATUS": "Occupied"
 			}, {
-				"@odata.etag" : "W/\"20040912000000.0000000\"",
 				"ID" : "4",
 				"Name" : "Peter Burke",
 				"AGE" : 39,
@@ -116,7 +112,6 @@ sap.ui.define([
 				},
 				"STATUS": "Available"
 			}, {
-				"@odata.etag" : "W/\"20010201000000.0000000\"",
 				"ID" : "5",
 				"Name" : "John Field",
 				"AGE" : 42,
@@ -141,7 +136,6 @@ sap.ui.define([
 				},
 				"STATUS": "Available"
 			}, {
-				"@odata.etag" : "W/\"20101201000000.0000000\"",
 				"ID" : "6",
 				"Name" : "Susan Bay",
 				"AGE" : 29,
@@ -1332,7 +1326,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					"Content-Type" : /^application\/json;odata\.metadata=minimal/,
 					"odata-version" : "4.0"
 				},
-				responseText :  oDepartmentsBody
+				responseText : oDepartmentsBody
 			}]
 		},
 		// --------------------------------------------
