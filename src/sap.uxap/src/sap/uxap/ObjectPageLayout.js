@@ -1564,7 +1564,7 @@ sap.ui.define([
 			Log.info("ObjectPageLayout :: firstSectionTitleHidden UX rule matched", "section " + oFirstVisibleSection.getTitle() + " title forced to hidden");
 		}
 
-		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, bVisibleAnchorBar);
+		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, iVisibleSection <= 1);
 
 		Object.keys(oTitleVisibilityInfo).forEach(function(sId) {
 			this.oCore.byId(sId)._setInternalTitleVisible(oTitleVisibilityInfo[sId], bInvalidate);
