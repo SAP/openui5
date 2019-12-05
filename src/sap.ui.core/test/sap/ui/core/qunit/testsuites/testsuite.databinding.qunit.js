@@ -138,7 +138,7 @@ sap.ui.define(function() {
 				]
 			},
 			ResourceBinding: {
-				title: "sap.ui.model.resource.ResourcePropertyBinding - QUnit Tests",
+				title: "sap.ui.model.resource.ResourcePropertyBinding (ResourceBinding.qunit)",
 				module: [
 					"test-resources/sap/ui/core/qunit/resource/ResourceBinding.qunit"
 				],
@@ -146,13 +146,10 @@ sap.ui.define(function() {
 					paths: {
 						testdata: 'test-resources/sap/ui/core/qunit/testdata'
 					}
-				},
-				ui5: {
-					language: "en"
 				}
 			},
 			ResourceModel: {
-				title: "sap.ui.model.resource.ResourceModel - QUnit Tests",
+				title: "sap.ui.model.resource.ResourceModel",
 				module: [
 					"test-resources/sap/ui/core/qunit/resource/ResourceModel.qunit"
 				],
