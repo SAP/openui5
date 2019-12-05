@@ -267,7 +267,17 @@ sap.ui.define([
 
 			// get controls whose roots are in the subtree of oJQueryElement
 			_getControlsInContainer: function (oJQueryElement) {
-				return oJQueryElement.find("*").control();
+				var aAllControls = oJQueryElement.find("*").control();
+				var aResult = [];
+				aAllControls.forEach(function (oControl) {
+					var bUnique = !aResult.filter(function (oUniqueControl) {
+						return oUniqueControl.getId() === oControl.getId();
+					}).length;
+					if (bUnique) {
+						aResult.push(oControl);
+					}
+				});
+				return aResult;
 			},
 
 			_isControlInView: function (oControl, sViewName) {
