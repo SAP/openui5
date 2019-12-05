@@ -75,6 +75,15 @@ sap.ui.define([
 			var bResizable = oButton.data("resizable");
 			this._oDialog.setResizable(bResizable == "true");
 
+			// Set style classes
+			var sResponsiveStyleClasses = "sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer";
+			var sResponsivePadding = oButton.data("responsivePadding");
+			if (sResponsivePadding) {
+				this._oDialog.addStyleClass(sResponsiveStyleClasses);
+			} else {
+				this._oDialog.removeStyleClass(sResponsiveStyleClasses);
+			}
+
 			// clear the old search filter
 			this._oDialog.getBinding("items").filter([]);
 

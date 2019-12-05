@@ -77,4 +77,10 @@ describe("sap.m.SelectDialog", function () {
 		expect(takeScreenshot(element(by.id("SelectDialog13-dialog")))).toLookAs("select-dialog-12");
 		element(by.id("SelectDialog13-cancel")).click();
 	});
+
+	it("Should support Responsive Paddings", function () {
+		element(by.id("Button16")).click();
+		expect(takeScreenshot(element(by.id("SelectDialog16-dialog")))).toLookAs("select-dialog-responsive-padding");
+		element(by.id("SelectDialog16-cancel")).click();
+	});
 });

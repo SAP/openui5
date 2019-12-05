@@ -888,6 +888,33 @@
 				}
 			});
 
+			var oSelectDialog16 = new sap.m.SelectDialog("SelectDialog16", {
+				title: "Resize this window to observe the responsive paddings",
+				noDataText: "Sorry, no world domination companions available",
+				contentWidth: "100%",
+				draggable: true,
+				resizable: true
+			});
+
+			// set model & bind Aggregation
+			oSelectDialog16.setModel(oModelList);
+			oSelectDialog16.bindAggregation("items", "/superheros", oItemTemplate);
+			oSelectDialog16.addStyleClass("sapUiResponsivePadding--content sapUiResponsivePadding--header sapUiResponsivePadding--footer sapUiResponsivePadding--subHeader");
+
+			var oButton16 = new sap.m.Button("Button16", {
+				text: "SelectDialog with Responsive Paddings (Quartz Themes only)",
+				press: function () {
+					oSelectDialog16.setModel(oModelList);
+					oSelectDialog16.bindAggregation("items", {
+						path: "/superheros",
+						filters: [],
+						template: oItemTemplateSelection
+					});
+
+					oSelectDialog16.open();
+				}
+			});
+
 
 			var oPage = new sap.m.Page("page", {
 				title:"Mobile SelectDialog Control",
@@ -908,7 +935,8 @@
 							oButton12,
 							oButton13,
 							oButton14,
-							oButton15
+							oButton15,
+							oButton16
 						]
 					})
 				],
