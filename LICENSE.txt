@@ -650,6 +650,11 @@ License: BSD 3-clause "New" or "Revised" License
 <ORGANIZATION>: Polymer Project
 <YEAR> = 2015
 
+Component: Adaptive Cards
+Licensor: Microsoft
+Website: https://github.com/microsoft/AdaptiveCards
+License: MIT License
+
 --------------------------------------------------------------------------------------------------------------------------
 
 CC0 1.0 Universal (CCO 1.0) Public Domain Dedication

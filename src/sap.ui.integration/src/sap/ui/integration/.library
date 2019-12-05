@@ -44,6 +44,9 @@
         <lib name="custom-event-polyfill" displayName="CustomEvent Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill">
             <license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="./thirdparty/licenses/CustomEvent-polyfill-LICENSE.txt"></license>
         </lib>
+        <lib name="adaptive-cards" displayName="Adaptive Cards" homepage="https://adaptivecards.io/">
+            <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT License" file="./thirdparty/licenses/adaptive-cards.txt"></license>
+        </lib>
     </thirdparty>
 
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"

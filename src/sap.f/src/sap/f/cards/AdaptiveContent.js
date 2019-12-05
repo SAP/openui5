@@ -4,9 +4,17 @@
 sap.ui.define([
 		"sap/ui/integration/library",
 		"sap/f/library",
-		"sap/f/cards/BaseContent"
+		"sap/f/cards/BaseContent",
+		"sap/ui/integration/thirdparty/adaptivecards",
+		"sap/f/cards/adaptivecards/elements/UI5InputText",
+		"sap/f/cards/adaptivecards/elements/UI5InputNumber",
+		"sap/f/cards/adaptivecards/elements/UI5InputChoiceSet",
+		"sap/f/cards/adaptivecards/elements/UI5InputTime",
+		"sap/f/cards/adaptivecards/elements/UI5InputDate",
+		"sap/f/cards/adaptivecards/overwrites/ActionRender",
+		"sap/f/cards/adaptivecards/elements/config"
 	],
-	function (integrationLibrary, fLibrary, BaseContent) {
+	function (integrationLibrary, fLibrary, BaseContent, AdaptiveCards, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, ActionRender, HostConfig) {
 		"use strict";
 
 		/**
@@ -39,6 +47,10 @@ sap.ui.define([
 			}
 		});
 
+		AdaptiveContent.prototype.init = function () {
+			this._setupAdaptiveCardDependency();
+		};
+
 		/**
 		 * Setter for configuring a <code>sap.f.cards.AdaptiveContent</code>.
 		 *
@@ -48,6 +60,114 @@ sap.ui.define([
 		 */
 		AdaptiveContent.prototype.setConfiguration = function (oConfiguration) {
 			this._oCardConfig = oConfiguration;
+			this._renderMSCardContent();
+		};
+
+		AdaptiveContent.prototype.onAfterRendering = function () {
+			this._renderMSCardContent();
+		};
+
+		/**
+		 * Init MS AdaptiveCard and patch its default renders with UI5 WebComponents
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._setupAdaptiveCardDependency = function () {
+			this.adaptiveCardInstance = new AdaptiveCards.AdaptiveCard();
+
+			// this._doMSCardsOverwrites();
+			this._adjustHostConfig();
+			this._handleActions();
+			// this._replaceElements();
+		};
+
+		/**
+		 * Replace Buttons with UI5-Buttons in MS Cards actions
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._doMSCardsOverwrites = function () {
+			AdaptiveCards.Action.prototype.render = ActionRender;
+		};
+
+		/**
+		 * Adjust elements' styling with custom values
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._adjustHostConfig = function () {
+			this.adaptiveCardInstance.hostConfig = new AdaptiveCards.HostConfig(HostConfig);
+		};
+
+		/**
+		 * Propagate MS Cards Actions out of the Card
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._handleActions = function () {
+			this.adaptiveCardInstance.onExecuteAction = function (oAction) {
+				var sType, oPayload;
+
+				if (oAction instanceof AdaptiveCards.OpenUrlAction) {
+					oPayload = oAction.url;
+					sType = integrationLibrary.CardActionType.Navigation;
+				} else if (oAction instanceof AdaptiveCards.SubmitAction) {
+					oPayload = oAction.data;
+					sType = integrationLibrary.CardActionType.Submit;
+				} else {
+					// The other types of actions are entirely internal
+					// and would not make sense to be bubbled outside the Card.
+					return;
+				}
+
+				this.fireEvent("action", {
+					actionSource: this,
+					manifestParameters: oPayload,
+					type: sType
+				});
+			}.bind(this);
+		};
+
+		/**
+		 * Replaces MS Cards Elements with UI5WebComponents
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._replaceElements = function () {
+			// Input.Text
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Text");
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Text", function () {
+				return new UI5InputText();
+			});
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Number");
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Number", function () {
+				return new UI5InputNumber();
+			});
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.ChoiceSet");
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.ChoiceSet", function () {
+				return new UI5InputChoiceSet();
+			});
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Time");
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Time", function () {
+				return new UI5InputTime();
+			});
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Date");
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Date", function () {
+				return new UI5InputDate();
+			});
+		};
+
+		/**
+		 * Renders a Card
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._renderMSCardContent = function () {
+			var oDom = this.$();
+			if (this.adaptiveCardInstance && this._oCardConfig && oDom && oDom.size()) {
+				this.adaptiveCardInstance.parse(this._oCardConfig);
+				oDom.html(this.adaptiveCardInstance.render());
+			}
 		};
 
 		return AdaptiveContent;
