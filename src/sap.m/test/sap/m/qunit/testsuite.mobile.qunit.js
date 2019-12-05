@@ -1531,6 +1531,16 @@ sap.ui.define([
 				qunit: 2,
 				group: "Designtime"
 			},
+			"designtime/Avatar": {
+				title: "QUnit Page for sap.m.Avatar design time and rta enabling",
+				_alternativeTitle: "QUnit Page for sap.m.Avatar rta enabling",
+				ui5: {
+					libs: "sap.m,sap.ui.rta"
+				},
+				qunit: 2,
+				sinon: false,
+				group: "Designtime"
+			},
 			"designtime/Bar": {
 				title: "QUnit Page for sap.m.Bar design time and rta enabling",
 				_alternativeTitle: "QUnit Page for sap.m.Bar",
