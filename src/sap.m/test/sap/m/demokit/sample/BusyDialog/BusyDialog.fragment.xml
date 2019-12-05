@@ -5,5 +5,5 @@
 		title="Loading Data"
 		text="... now loading the data from a far away server"
 		showCancelButton="true"
-		close="onDialogClosed"/>
+		close="onDialogClosed" />
 </core:FragmentDefinition>
