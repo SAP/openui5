@@ -1,5 +1,4 @@
-<mvc:View controllerName="sap.m.sample.GenericTileAsKPITile.Page"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.suite.ui.microchart">
+<mvc:View controllerName="sap.m.sample.GenericTileAsKPITile.Page" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin" subheader="Expenses" press="press">
 		<TileContent unit="EUR" footer="Current Quarter">
 			<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" />
@@ -38,40 +37,9 @@
 		</TileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Jessica D. Prince Senior Consultant"
-				 subheader="Department" press="press">
-		<TileContent>
-			<m:ColumnMicroChart size="Responsive" press="press" class="sapUiSmallMargin">
-				<m:columns>
-					<m:ColumnMicroChartData	value="60" color="Error"/>
-					<m:ColumnMicroChartData	value="80" color="Error"/>
-					<m:ColumnMicroChartData	value="100" color="Error"/>
-					<m:ColumnMicroChartData	value="60" color="Neutral"/>
-					<m:ColumnMicroChartData	value="55" color="Neutral"/>
-					<m:ColumnMicroChartData	value="15" color="Neutral"/>
-				</m:columns>
-			</m:ColumnMicroChart>
-		</TileContent>
-	</GenericTile>
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Jessica D. Prince Senior Consultant"
-				 subheader="Department" press="press">
-		<TileContent>
-			<m:BulletMicroChart size="Responsive" scale="M" targetValue="100" forecastValue="110" class="sapUiSmallMargin" press="press">
-				<m:actual>
-					<m:BulletMicroChartData value="120" color="Good"/>
-				</m:actual>
-				<m:thresholds>
-					<m:BulletMicroChartData value="0" color="Error"/>
-					<m:BulletMicroChartData value="50" color="Critical"/>
-					<m:BulletMicroChartData value="150" color="Critical"/>
-					<m:BulletMicroChartData value="200" color="Error"/>
-				</m:thresholds>
-			</m:BulletMicroChart>
-		</TileContent>
-	</GenericTile>
 	<GenericTile class="sapUiTinyMarginTop"
-				 backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
-				 frameType="TwoByOne" press="pressOnTileOne">
+			backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
+			frameType="TwoByOne" press="pressOnTileOne">
 		<TileContent footer="August 21, 2016">
 			<NewsContent
 					contentText="Wind Map: Monitoring Real-Time and Forecasted Wind Conditions across the Globe"
@@ -99,6 +67,7 @@
 			</TileContent>
 		</GenericTile>
 	</SlideTile>
+
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Feed Tile that shows updates of the last feeds given to a specific topic:"
 				 frameType="TwoByOne" press="press">
 		<TileContent footer="New Notifications">
@@ -107,4 +76,3 @@
 		</TileContent>
 	</GenericTile>
 </mvc:View>
-
