@@ -102,6 +102,7 @@ function(
 				properties: {
 					/**
 					 * Callback function for resolving a promise after description has been asynchronously loaded inside this function.
+					 * You can use this function in order to validate the description before displaying it.
 					 * @callback sap.m.MessagePopover~asyncDescriptionHandler
 					 * @param {object} config A single parameter object
 					 * @param {MessagePopoverItem} config.item Reference to respective MessagePopoverItem instance
@@ -113,6 +114,7 @@ function(
 
 					/**
 					 * Callback function for resolving a promise after a link has been asynchronously validated inside this function.
+					 * You can use this function in order to validate URLs before displaying them inside the description.
 					 * @callback sap.m.MessagePopover~asyncURLHandler
 					 * @param {object} config A single parameter object
 					 * @param {string} config.url URL to validate
