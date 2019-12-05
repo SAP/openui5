@@ -91,8 +91,10 @@ function (
 					fnDone();
 				}
 			});
+			this.oElementOverlay.attachEvent('applyStylesRequired', this.oElementOverlay.applyStyles.bind(this.oElementOverlay));
 		},
 		afterEach: function() {
+			this.oElementOverlay.detachEvent('applyStylesRequired', this.oElementOverlay.applyStyles.bind(this.oElementOverlay));
 			this.oElementOverlay.destroy();
 			this.oButton.destroy();
 			sandbox.restore();
@@ -703,19 +705,19 @@ function (
 			this.oButton.placeAt("scroll-content");
 			sap.ui.getCore().applyChanges();
 
-			this.oOverlay = new ElementOverlay({
-				isRoot: true,
-				element: this.oButton,
-				init: function () {
-					this.placeInOverlayContainer();
-					fnDone();
-				}
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oButton]
 			});
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oOverlay = OverlayRegistry.getOverlay(this.oButton);
+				fnDone();
+			}.bind(this));
 		},
 		afterEach: function() {
-			this.oOverlay.destroy();
+			this.oDesignTime.destroy();
 			this.$container.remove();
 			this.oButton.destroy();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when the container is scrolled", function(assert) {
@@ -1134,18 +1136,16 @@ function (
 					this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
 					&& this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
 				);
-				this.oScrollControlOverlay.getAggregationOverlay("content2").attachEventOnce("geometryChanged", function (oEvent) {
+				this.oScrollControlOverlay.getAggregationOverlay("content2").getChildren()[0].attachEventOnce("geometryChanged", function (oEvent) {
 					var oAggregationOverlay = oEvent.getSource();
 					assert.strictEqual(oAggregationOverlay.$().find(">.sapUiDtDummyScrollContainer").length, 0, "make sure dummy container has been removed");
 					assert.notOk(
 						this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
 						&& this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
 					);
-					this.oScrollControlOverlay.attachEventOnce("geometryChanged", function () {
-						this.oDesignTime.destroy();
-						this.oScrollControl.destroy();
-						fnDone();
-					}, this);
+					this.oDesignTime.destroy();
+					this.oScrollControl.destroy();
+					fnDone();
 				}, this);
 				this.oScrollControl.getContent2()[0].$().height(250);
 			}.bind(this));
@@ -1198,18 +1198,16 @@ function (
 					&& this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
 				);
 
-				this.oScrollControlOverlay.getAggregationOverlay("content1").attachEventOnce("geometryChanged", function (oEvent) {
-					var oAggregationOverlay = oEvent.getSource();
+				this.oScrollControlOverlay.getAggregationOverlay("content1").getChildren()[0].attachEventOnce("geometryChanged", function (oEvent) {
+					var oAggregationOverlay = oEvent.getSource().getParentAggregationOverlay();
 					assert.strictEqual(oAggregationOverlay.$().find(">.sapUiDtDummyScrollContainer").length, 1, "make sure dummy container has been created");
 					assert.ok(
 						this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
 						&& this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
 					);
-					this.oScrollControlOverlay.attachEventOnce("geometryChanged", function () {
-						this.oDesignTime.destroy();
-						this.oScrollControl.destroy();
-						fnDone();
-					}, this);
+					this.oDesignTime.destroy();
+					this.oScrollControl.destroy();
+					fnDone();
 				}, this);
 				this.oScrollControl.getContent1()[0].$().height(700);
 			}.bind(this));
@@ -1251,11 +1249,12 @@ function (
 				// setTimeout is needed, because synced event doesn"t wait until all async processes are done
 				setTimeout(function () {
 					this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
+					this.oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
 					assert.ok(
 						this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
 						&& this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
 					);
-					this.oScrollControlOverlay.attachEventOnce("geometryChanged", function () {
+					this.oTextAreaOverlay.attachEventOnce("geometryChanged", function () {
 						assert.ok(
 							!this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
 							&& !this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")

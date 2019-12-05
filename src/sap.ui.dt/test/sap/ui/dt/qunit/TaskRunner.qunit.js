@@ -53,20 +53,21 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("must start the task execution process", function (assert) {
-			var done = assert.async();
+			var done = assert.async(2);
 			var mTask = {
 				type: this.observableTaskType,
 				callbackFn: this.oCallbackSpy
 			};
-			var iTaskId = this.oTaskManager.add(mTask);
-
+			var iCounter = 1;
+			var aTaskId = [this.oTaskManager.add(mTask)];
 			this.oTaskManager.attachComplete(function (oEvent) {
-				assert.strictEqual(this.oCallbackSpy.callCount, 1, "then the added task with existing callback function is executed sucessfully");
-				assert.strictEqual(oEvent.getParameters().taskId[0], iTaskId, "then the added task is marked as completed by task manager");
+				assert.strictEqual(this.oCallbackSpy.callCount, iCounter++, "then the added task with existing callback function is executed sucessfully");
+				assert.strictEqual(oEvent.getParameters().taskId[0], aTaskId.shift(), "then the added task is marked as completed by task manager");
 				done();
 			}.bind(this));
 
 			this.oTaskRunner.run();
+			aTaskId.push(this.oTaskManager.add(mTask));
 			assert.strictEqual(this.oTaskRunner.bIsStopped, false, "then the taskRunner is started");
 		});
 
@@ -76,9 +77,11 @@ sap.ui.define([
 				type: this.observableTaskType,
 				callbackFn: this.oCallbackSpy
 			};
+			var sAlternativeTaskType = "alternative task type";
+			this.oTaskRunner.run(sAlternativeTaskType);
+
 			this.oTaskManager.add(mTask);
 
-			var sAlternativeTaskType = "alternative task type";
 			var oCallback1Spy = sandbox.spy();
 			var mSecondTask = {
 				type: sAlternativeTaskType,
@@ -92,8 +95,6 @@ sap.ui.define([
 				assert.strictEqual(oEvent.getParameters().taskId[0], iTaskId, "then the task with alternative type is marked as completed by task manager");
 				done();
 			}.bind(this));
-
-			this.oTaskRunner.run(sAlternativeTaskType);
 		});
 	});
 
@@ -134,30 +135,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("TaskRunner API - lifetime", {
-		beforeEach: function () {
-			this.oTaskManager = new TaskManager();
-			this.oTaskRunner = new TaskRunner({
-				taskManager: this.oTaskManager
-			});
-			this.oTaskRunner.run();
-		},
-		afterEach: function () {
-			this.oTaskManager.destroy();
-			sandbox.restore();
-		}
-	}, function () {
-		QUnit.test("when dependent TaskManager is destroyed", function (assert) {
-			var done = assert.async();
-			this.oTaskManager.destroy();
-			window.requestAnimationFrame(function () {
-				assert.ok(this.oTaskRunner.bIsStopped, "then TaskRunner is stoped");
-				done();
-			}.bind(this));
-		});
-	});
-
-	// TODO: Test with tasks without functions? (maybe logging needed!), sometimes the tests need to much time 700ms. Check with logging, if something special happens in the taskrunner
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});

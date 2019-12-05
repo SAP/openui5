@@ -286,20 +286,19 @@ function (
 
 		QUnit.test("when the size of the layout changes", function(assert) {
 			var done = assert.async();
-			var oEvent = {
-				getParameters: function() {
-					return {
-						id: this.oLayoutOverlay.getId()
-					};
-				}.bind(this)
-			};
-			this.oLayout.setWidth("300px");
+			var oObserver = new MutationObserver(function(aMutations) {
+				aMutations.forEach(function(oMutation) {
+					if (oMutation.target === this.oLayout.getDomRef() && oMutation.attributeName === "class") {
+						assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
+						oObserver.disconnect();
+						done();
+					}
+				}.bind(this));
+			}.bind(this));
+			var oConfig = { attributes: true, childList: false, characterData: false, subtree : true};
+			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
 
-			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
-				this.oStretchPlugin._onElementOverlayChanged(oEvent);
-				assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
-				done();
-			}, this);
+			this.oLayout.setWidth("300px");
 		});
 
 		QUnit.test("when the size of the layout changes with a busy plugin", function(assert) {
@@ -623,12 +622,17 @@ function (
 		QUnit.test("When the invisible hbox becomes visible", function(assert) {
 			var done = assert.async();
 			// wait for the dom to update
-			var fnDebounced = _debounce(function() {
-				assert.ok(isStretched(this.oLayoutOverlay), "the style class was added");
-				this.oLayoutOverlay.detachEvent("geometryChanged", fnDebounced);
-				done();
+			var oObserver = new MutationObserver(function(aMutations) {
+				aMutations.forEach(function(oMutation) {
+					if (oMutation.target === this.oLayout.getDomRef() && oMutation.attributeName === "class") {
+						assert.ok(isStretched(this.oLayoutOverlay), "the style class was added");
+						oObserver.disconnect();
+						done();
+					}
+				}.bind(this));
 			}.bind(this));
-			this.oLayoutOverlay.attachEvent("geometryChanged", fnDebounced);
+			var oConfig = { attributes: true, childList: false, characterData: false, subtree : true};
+			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
 
 			this.oHBox2.setVisible(true);
 			sap.ui.getCore().applyChanges();

@@ -135,27 +135,54 @@ function(
 	};
 
 	/**
+	 * @private
+	 */
+	DOMUtil._getElementDimensions = function (oDomRef, sMeasure, aDirection) {
+		var oRelevantDomRef = oDomRef[0] || oDomRef;
+		var iOffsetWidth = oRelevantDomRef["offset" + sMeasure];
+		var iValue = 0;
+		for (var i = 0; i < 2; i++) {
+			// remove border
+			var sBorderMeasure = window.getComputedStyle(oRelevantDomRef, null)["border" + aDirection[ i ] + sMeasure];
+			iValue -= sBorderMeasure ? parseInt(sBorderMeasure.slice(0, -2)) : 0;
+		}
+		return iOffsetWidth + iValue;
+	};
+
+	/**
+	 * @private
+	 */
+	DOMUtil._getElementWidth = function (oDomRef) {
+		return DOMUtil._getElementDimensions(oDomRef, "Width", ["Right", "Left"]);
+	};
+
+	/**
+	 * @private
+	 */
+	DOMUtil._getElementHeight = function (oDomRef) {
+		return DOMUtil._getElementDimensions(oDomRef, "Height", ["Top", "Bottom"]);
+	};
+
+	/**
 	 * Checks whether DOM Element has vertical scrollbar
-	 * @param oDomRef {HTMLElement} - DOM Element
-	 * @return {boolean}
+	 * @param {HTMLElement} oDomRef - DOM Element
+	 * @return {boolean} <code>true</code> if vertical scrollbar is available on DOM Element.
 	 */
 	DOMUtil.hasVerticalScrollBar = function(oDomRef) {
 		var $DomRef = jQuery(oDomRef);
 		var bOverflowYScroll = $DomRef.css("overflow-y") === "auto" || $DomRef.css("overflow-y") === "scroll";
-
-		return bOverflowYScroll && $DomRef.get(0).scrollHeight > $DomRef.height();
+		return bOverflowYScroll && $DomRef.get(0).scrollHeight > DOMUtil._getElementHeight(oDomRef);
 	};
 
 	/**
 	 * Checks whether DOM Element has horizontal scrollbar
-	 * @param oDomRef {HTMLElement} - DOM Element
-	 * @return {boolean}
+	 * @param {HTMLElement} oDomRef - DOM Element
+	 * @return {boolean} <code>true</code> if horizontal scrollbar is available on DOM Element.
 	 */
 	DOMUtil.hasHorizontalScrollBar = function (oDomRef) {
 		var $DomRef = jQuery(oDomRef);
 		var bOverflowXScroll = $DomRef.css("overflow-x") === "auto" || $DomRef.css("overflow-x") === "scroll";
-
-		return bOverflowXScroll && $DomRef.get(0).scrollWidth > $DomRef.width();
+		return bOverflowXScroll && $DomRef.get(0).scrollWidth > DOMUtil._getElementWidth(oDomRef);
 	};
 
 	/**

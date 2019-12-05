@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/dt/MetadataPropagationUtil",
 	"sap/ui/dt/Util",
 	"sap/ui/dt/TaskManager",
+	"sap/ui/dt/TaskRunner",
 	"sap/base/Log",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
@@ -38,6 +39,7 @@ function (
 	MetadataPropagationUtil,
 	Util,
 	TaskManager,
+	TaskRunner,
 	Log,
 	isPlainObject,
 	merge,
@@ -277,10 +279,12 @@ function (
 					}
 				}.bind(this)
 			});
+			this._oTaskRunner = new TaskRunner({
+				taskManager: this._oTaskManager,
+				taskType: "applyStyles"
+			}).run();
 
 			this._oSelectionManager = new SelectionManager();
-
-			this._onElementOverlayDestroyed = this._onElementOverlayDestroyed.bind(this);
 
 			// Syncing batch of overlays
 			this._aOverlaysCreatedInLastBatch = [];
@@ -319,9 +323,13 @@ function (
 
 					// TODO: move to overlay
 					if (bValue) {
-						oRootElementOverlay.applyStyles(/*bForceScrollbarSync = */true);
+						this._oTaskManager.add({
+							type: "applyStyles",
+							callbackFn: oRootElementOverlay.applyStyles.bind(oRootElementOverlay, /*bForceScrollbarSync = */true),
+							overlayId: oRootElementOverlay.getId()
+						});
 					}
-				});
+				}.bind(this));
 			}, this);
 		}
 	});
@@ -338,6 +346,16 @@ function (
 				plugin: oEvent.getSource().getMetadata().getName()
 			});
 		}
+	};
+
+	DesignTime.prototype._onApplyStylesRequired = function (oEvent) {
+		var mParameters = oEvent.getParameters();
+		var oElementOverlay = oEvent.getSource();
+		this._oTaskManager.add({
+			type: "applyStyles",
+			callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay, mParameters.bForceScrollbarSync),
+			overlayId: oElementOverlay.getId()
+		}, "overlayId");
 	};
 
 	DesignTime.prototype._removeOverlayFromSyncingBatch = function (oElementOverlay) {
@@ -732,7 +750,7 @@ function (
 							// When DesignTime instance was destroyed during overlay creation process
 							if (this.bIsDestroyed) {
 								// TODO: refactor destroy() logic. See @676 & @788
-								oElementOverlay.detachEvent('destroyed', this._onElementOverlayDestroyed);
+								oElementOverlay.detachEvent('destroyed', this._onElementOverlayDestroyed, this);
 								oElementOverlay.destroy();
 								this._oTaskManager.cancel(iTaskId);
 								return Promise.reject(Util.createError(
@@ -806,6 +824,7 @@ function (
 
 	/**
 	 * Creates ElementOverlay
+	 * @param {object} mParams - Parameter map
 	 * @param {sap.ui.core.Element} mParams.element - Element for which ElementOverlay should be created
 	 * @param {boolean} [mParams.root] - Proxy for "isRoot" property of sap.ui.dt.ElementOverlay constructor
 	 * @param {boolean} [mParams.visible] - Proxy for "visible" property of sap.ui.dt.ElementOverlay constructor
@@ -845,8 +864,15 @@ function (
 					})(this.getDesignTimeMetadataFor(oElement), mParams.parentMetadata, oElement)
 				),
 				init: function (oEvent) {
+					var oElementOverlay = oEvent.getSource();
 					fnResolve(oEvent.getSource());
-				},
+					oElementOverlay.attachEvent('destroyed', this._onElementOverlayDestroyed, this);
+					oElementOverlay.attachEvent('elementDestroyed', this._onElementDestroyed, this);
+					oElementOverlay.attachEvent('selectionChange', this._onElementOverlaySelectionChange, this);
+					oElementOverlay.attachEvent('elementModified', this._onElementModified, this);
+					oElementOverlay.attachEvent('editableChange', this._onEditableChanged, this);
+					oElementOverlay.attachEvent('applyStylesRequired', this._onApplyStylesRequired, this);
+				}.bind(this),
 				initFailed: function (sElementId, oEvent) {
 					var oElementOverlay = oEvent.getSource();
 					var oError = Util.propagateError(
@@ -855,17 +881,13 @@ function (
 						Util.printf("Can't create overlay properly (id='{0}') for '{1}'", oElementOverlay.getId(), sElementId)
 					);
 
-					oElementOverlay.detachEvent('destroyed', this._onElementOverlayDestroyed);
-					oElementOverlay.detachEvent('elementDestroyed', this._onElementDestroyed);
+					oElementOverlay.detachEvent('destroyed', this._onElementOverlayDestroyed, this);
+					oElementOverlay.detachEvent('elementDestroyed', this._onElementDestroyed, this);
+					oElementOverlay.detachEvent('applyStylesRequired', this._onApplyStylesRequired, this);
 					oElementOverlay.destroy();
 
 					fnReject(oError);
-				}.bind(this, oElement.getId()),
-				destroyed: this._onElementOverlayDestroyed,
-				elementDestroyed: this._onElementDestroyed.bind(this),
-				selectionChange: this._onElementOverlaySelectionChange.bind(this),
-				elementModified: this._onElementModified.bind(this),
-				editableChange: this._onEditableChanged.bind(this)
+				}.bind(this, oElement.getId())
 			});
 		}.bind(this));
 	};
@@ -895,10 +917,16 @@ function (
 					designTimeMetadata: new AggregationDesignTimeMetadata({
 						data: mAggregationMetadata
 					}),
+					init: function (oEvent) {
+						var oAggregationOverlay = oEvent.getSource();
+						oAggregationOverlay.attachEvent('destroyed', this._onAggregationOverlayDestroyed, this);
+						oAggregationOverlay.attachEvent('applyStylesRequired', this._onApplyStylesRequired, this);
+					}.bind(this),
 					beforeDestroy: function (oEvent) {
-						OverlayRegistry.deregister(oEvent.getSource());
-					},
-					destroyed: this._onAggregationOverlayDestroyed
+						var oAggregationOverlay = oEvent.getSource();
+						OverlayRegistry.deregister(oAggregationOverlay);
+						oAggregationOverlay.detachEvent('applyStylesRequired', this._onApplyStylesRequired, this);
+					}.bind(this)
 				});
 
 				OverlayRegistry.register(oAggregationOverlay);
@@ -951,7 +979,7 @@ function (
 	 * @param {sap.ui.base.ManagedObject} oElement - Element for which the overlay cannot be created
 	 * @param {string} sParentElementClassName - Class name of the parent element relatively to oElement
 	 * @param {string} sAggregationName - Aggregation name in parent element where oElement is located
-	 * @returns {{severity: string, errorObject: Error, message: string}}
+	 * @returns {{severity: string, errorObject: Error, message: string}} Error map.
 	 * @private
 	 */
 	DesignTime.prototype._enrichChildCreationError = function (oError, oElement, sParentElementClassName, sAggregationName) {
@@ -1334,6 +1362,7 @@ function (
 
 	/**
 	 * Returns the current status of the designTime instance
+	 * @returns {string} DesignTime status.
 	 * @public
 	 */
 	DesignTime.prototype.getStatus = function () {

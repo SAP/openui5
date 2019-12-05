@@ -10,7 +10,6 @@ function(
 	isPlainObject
 ) {
 	"use strict";
-
 	/**
 	 * Constructor for a new TaskManager.
 	 *
@@ -69,19 +68,38 @@ function(
 			|| !mTask.type
 			|| typeof mTask.type !== "string"
 		) {
-			throw new Error('Invalid task specified');
+			throw new Error("Invalid task specified");
 		}
 	};
 
-	/**
-	 * Adds new task into the list
-	 * @param {object} mTask - Task definition map
-	 * @param {string} mTask.type - Task type
-	 * @return {number} Task ID
-	 */
-	TaskManager.prototype.add = function (mTask) {
-		this._validateTask(mTask);
+	TaskManager.prototype._removeOutdatedTasks = function(mTask, vDoubleIdentifier) {
+		if (vDoubleIdentifier) {
+			if (
+				typeof vDoubleIdentifier !== "string"
+				&& typeof vDoubleIdentifier !== "function"
+			) {
+				throw new Error("Validator needs to be a function or a string");
+			}
+			var aTaskList = this._mList[mTask.type];
+			var fnDoubleIdentifier = typeof vDoubleIdentifier === "function" ? vDoubleIdentifier : function (mTask) { return mTask[vDoubleIdentifier]; };
+			var sNewTaskIdentifier = fnDoubleIdentifier(mTask);
+			if (
+				aTaskList
+				&& aTaskList.length
+				&& sNewTaskIdentifier
+			) {
+				this._mList[mTask.type] = aTaskList.filter(function (oTask) {
+					if (fnDoubleIdentifier(oTask) === sNewTaskIdentifier) {
+						this._iTaskCounter--;
+						return false;
+					}
+					return true;
+				}.bind(this));
+			}
+		}
+	};
 
+	TaskManager.prototype._addTask = function(mTask) {
 		var iTaskId = this._iNextId++;
 		this._mList[mTask.type] = this._mList[mTask.type] || [];
 		this._mList[mTask.type].push(Object.assign({}, mTask, {
@@ -94,6 +112,21 @@ function(
 			});
 		}
 		return iTaskId;
+	};
+
+	/**
+	 * Adds new task into the list
+	 * @param {object} mTask - Task definition map
+	 * @param {string} mTask.type - Task type
+	 * @param {function|string} [vDoubleIdentifier] - Identifier for outdated tasks in TaskManager. The identifier is invoked for each element in Tasklist to generate
+	 * 												  the criterion by which the existing tasks are compared with the new one. The existing tasks that are identified
+	 * 												  by vDoubleIdentifier are removed before adding the new task.
+	 * @return {number} Task ID
+	 */
+	TaskManager.prototype.add = function (mTask, vDoubleIdentifier) {
+		this._validateTask(mTask);
+		this._removeOutdatedTasks(mTask, vDoubleIdentifier);
+		return this._addTask(mTask);
 	};
 
 	/**
