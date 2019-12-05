@@ -1,15 +1,12 @@
 <mvc:View
 	controllerName="sap.m.sample.BusyDialog.C"
+	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Button text="Show Busy Dialog"
-				press="onOpenDialog"
-			    class="sapUiSmallMarginBottom" />
-		</l:content>
+	xmlns:mvc="sap.ui.core.mvc">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Button
+			text="Show Busy Dialog"
+			press="onOpenDialog"
+			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>
