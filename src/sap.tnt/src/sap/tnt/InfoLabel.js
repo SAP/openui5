@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
 	"./InfoLabelRenderer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/IconPool"
 ],
-	function(library, Control, CoreLibrary, InfoLabelRenderer, Log) {
+	function(library, Control, CoreLibrary, InfoLabelRenderer, Log, IconPool) {
 		"use strict";
 
 		// shortcut for library.RenderMode
@@ -31,7 +32,7 @@ sap.ui.define([
 		 * <h3>Overview</h3>
 		 *
 		 * The control visualizes text information without user interaction. The text inside the control is always in upper case. It can have smaller or larger side paddings which can be specified by the <code>renderMode</code> property.
-		 * The  text-background color pair can be changed by setting a digit between 1 and 9 that corresponds to the 9 predefined color combinations of the <code>colorScheme</code> property.
+		 * The  text-background color pair can be changed by setting a number between 1 and 10 that corresponds to the 10 predefined color combinations of the <code>colorScheme</code> property.
 		 * The control is designed to be vertically aligned with UI5 Input and Button control families.
 		 * When using <code>InfoLabel</code> in non-editable <code>Forms</code>, <code>Tables</code>, etc., set <code>displayOnly=true</code> for best visual results.
 		 *
@@ -71,10 +72,10 @@ sap.ui.define([
 					 */
 					renderMode: { type: "sap.tnt.RenderMode", defaultValue: RenderMode.Loose, group: "Appearance" },
 					/**
-					 * Specifies the fill and text color of the control. Accepts a digit as a value.
+					 * Specifies the fill and text color of the control. Accepts a number between 1 and 10 as a value.
 					 * You can choose from 10 predefined background and text color combinations.
 					 * The color schemes are non-semantic, you can select them according to your own preferences.
-					 * ColorScheme 10 is available only in Fiori 3 theme.
+					 * <b>Note:</b> ColorScheme 10 is available only in Fiori 3 theme.
 					 * The default <code>colorScheme</code> is 7.
 					 */
 					colorScheme: { type: "int", group: "Misc", defaultValue: 7 },
@@ -112,54 +113,6 @@ sap.ui.define([
 				InfoLabelRenderer._sAriaText = sap.ui.getCore().getLibraryResourceBundle('sap.tnt').getText("INFOLABEL_DEFAULT");
 				InfoLabelRenderer._sAriaTextEmpty = sap.ui.getCore().getLibraryResourceBundle('sap.tnt').getText("INFOLABEL_EMPTY");
 			}
-		};
-
-		InfoLabel.prototype.setText = function (sText) {
-			sText = this.validateProperty("text", sText);
-
-			var sValue = this.getText();
-			var $Control = this.$();
-
-			if (sValue !== sText) {
-				this.setProperty("text", sText, true);
-
-				if ($Control.length) {
-					$Control.find(".sapTntInfoLabelInner").text(sText);
-
-					if (sText !== "") {
-						$Control.find(".sapUiPseudoInvisibleText").text(InfoLabelRenderer._sAriaText);
-					} else {
-						$Control.find(".sapUiPseudoInvisibleText").text(InfoLabelRenderer._sAriaTextEmpty);
-					}
-				}
-
-				$Control.toggleClass("sapTntInfoLabelNoText", !sText);
-			}
-
-			return this;
-		};
-
-		InfoLabel.prototype.setColorScheme = function (iColorScheme) {
-			iColorScheme = this.validateProperty("colorScheme", iColorScheme);
-
-			var iColorSchemeCurrent = this.getColorScheme();
-			var $Control = this.$();
-
-			if (iColorSchemeCurrent !== iColorScheme) {
-
-				if (iColorScheme > 0 && iColorScheme < 11) {
-					this.setProperty("colorScheme", iColorScheme, true);
-
-					if ($Control.length) {
-						$Control.removeClass("backgroundColor" + iColorSchemeCurrent);
-						$Control.addClass("backgroundColor" + iColorScheme);
-					}
-				} else {
-					Log.warning("colorScheme value was not set. It should be between 1 and 10");
-				}
-			}
-
-			return this;
 		};
 
 		/**
