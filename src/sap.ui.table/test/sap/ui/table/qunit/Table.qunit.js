@@ -251,12 +251,6 @@ sap.ui.define([
 				title: "TABLEHEADER",
 				footer: "Footer",
 				selectionMode: SelectionMode.Single,
-				contextMenu: new MenuM({
-					items: [
-						new MenuItemM({text: "{lastName}"}),
-						new MenuItemM({text: "{name}"})
-					]
-				}),
 				toolbar: new Toolbar({
 					content: [
 						new Button({
@@ -291,7 +285,6 @@ sap.ui.define([
 		assert.equal(oTable.$().find(".sapUiTableCtrl tr.sapUiTableTr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(oTable.$().find(".sapUiTableRowSelectionCell").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(oTable.getFirstVisibleRow(), 5, "First Visible Row correct!");
-		assert.ok(oTable.getContextMenu() instanceof MenuM, "Context menu created as specified by the application");
 	});
 
 	QUnit.test("Filter", function(assert) {
@@ -1106,7 +1099,7 @@ sap.ui.define([
 			var mChanges = {changes: {}};
 
 			oTable._bRtlMode = null;
-			oTable._oCellContextMenu = new Control();
+			TableUtils.Menu.openContextMenu(oTable, getCell(0, 0, null, null, oTable));
 			oTable.getColumns()[0].getMenu()._bInvalidated = false;
 			oInvalidateSpy.reset();
 
@@ -1712,7 +1705,7 @@ sap.ui.define([
 			assert.equal(oVSb.scrollTop, oTable._getBaseRowHeight(), "ScrollTop can be set and read.");
 			assert.equal(oHSb.scrollLeft, 5, "ScrollLeft can be set and read.");
 			done();
-		}, 100);
+		}, 500);
 	});
 
 	QUnit.module("Fixed rows and columns", {

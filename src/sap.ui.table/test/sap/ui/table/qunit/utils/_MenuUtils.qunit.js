@@ -805,13 +805,13 @@ sap.ui.define([
 
 		oCell = getCell(0, 0)[0];
 		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
-		this.assertDefaultContentCellContextMenuExists(assert, false);
+		this.assertDefaultContentCellContextMenuExists(assert, true);
 		assertCloseMenuSpiesNotCalled();
 		resetSpies();
 
 		oTable.setEnableCellFilter(true);
 		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
-		this.assertDefaultContentCellContextMenuExists(assert, false);
+		this.assertDefaultContentCellContextMenuExists(assert, true);
 		assertCloseMenuSpiesNotCalled();
 		resetSpies();
 

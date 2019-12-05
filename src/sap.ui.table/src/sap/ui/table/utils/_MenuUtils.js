@@ -14,6 +14,26 @@ sap.ui.define([
 	// Table uses z-indices, ensure that popups starts their z-indices at least with 20.
 	Popup.setInitialZIndex(10);
 
+	function onCellFilterSelect(oColumn, oRow) {
+		// "this" is the table instance.
+		var oRowContext = oRow.getRowBindingContext();
+		var sFilterProperty = oColumn.getFilterProperty();
+		var sFilterValue = oRowContext.getProperty(sFilterProperty);
+
+		if (sFilterValue != null && typeof sFilterValue !== "string") {
+			sFilterValue = sFilterValue.toString();
+		}
+
+		if (this.getEnableCustomFilter()) {
+			this.fireCustomFilter({
+				column: oColumn,
+				value: sFilterValue
+			});
+		} else {
+			this.filter(oColumn, sFilterValue);
+		}
+	}
+
 	/**
 	 * Static collection of utility functions related to menus of sap.ui.table.Table, ...
 	 *
@@ -263,44 +283,38 @@ sap.ui.define([
 			var aColumns = oTable.getColumns();
 			var oColumn = aColumns[iColumnIndex];
 
-			if (!oTable.getEnableCellFilter() || !oColumn || !oColumn.isFilterableByMenu() || oRow.isGroupHeader()) {
-				return false;
+			if (!oTable._oCellContextMenu) {
+				oTable._oCellContextMenu = new Menu(oTable.getId() + "-cellcontextmenu");
 			}
 
-			if (!oTable._oCellContextMenu) {
-				// Create the menu instance the first time it is needed.
-				oTable._oCellContextMenu = new Menu(oTable.getId() + "-cellcontextmenu");
+			var sCellFilterMenuItemId = oTable._oCellContextMenu.getId() + "-cellfilter";
+			var oCellFilterMenuItem = sap.ui.getCore().byId(sCellFilterMenuItemId);
 
-				var oCellContextMenuItem = new MenuItem({
-					text: MenuUtils.TableUtils.getResourceText("TBL_FILTER")
-				});
+			if (oTable.getEnableCellFilter() && oColumn && oColumn.isFilterableByMenu() && !oRow.isGroupHeader()) {
+				if (!oCellFilterMenuItem) {
+					oCellFilterMenuItem = new MenuItem({
+						id: sCellFilterMenuItemId,
+						text: MenuUtils.TableUtils.getResourceText("TBL_FILTER")
+					});
 
-				oCellContextMenuItem._onSelect = function(oColumn, iRowIndex) {
-					// "this" is the table instance.
-					var oRowContext = this.getContextByIndex(iRowIndex);
-					var sFilterProperty = oColumn.getFilterProperty();
-					var sFilterValue = oRowContext.getProperty(sFilterProperty);
+					oCellFilterMenuItem._onSelect = onCellFilterSelect.bind(oTable, oColumn, oRow);
+					oCellFilterMenuItem.attachSelect(oCellFilterMenuItem._onSelect);
+				} else {
+					oCellFilterMenuItem.detachSelect(oCellFilterMenuItem._onSelect);
+					oCellFilterMenuItem._onSelect = onCellFilterSelect.bind(oTable, oColumn, oRow);
+					oCellFilterMenuItem.attachSelect(oCellFilterMenuItem._onSelect);
+				}
 
-					if (sFilterValue != null && typeof sFilterValue !== "string") {
-						sFilterValue = sFilterValue.toString();
-					}
-
-					if (this.getEnableCustomFilter()) {
-						this.fireCustomFilter({
-							column: oColumn,
-							value: sFilterValue
-						});
-					} else {
-						this.filter(oColumn, sFilterValue);
-					}
-				};
-				oCellContextMenuItem.attachSelect(oCellContextMenuItem._onSelect.bind(oTable, oColumn, oRow.getIndex()));
-
-				oTable._oCellContextMenu.addItem(oCellContextMenuItem);
+				// Menu items from the table should be on top.
+				oTable._oCellContextMenu.insertItem(oCellFilterMenuItem, 0);
 			} else {
-				// If the menu already was created, only update the menu item.
-				var oMenuItem = oTable._oCellContextMenu.getItems()[0];
-				oMenuItem.mEventRegistry.select[0].fFunction = oMenuItem._onSelect.bind(oTable, oColumn, oRow.getIndex());
+				oTable._oCellContextMenu.removeItem(oCellFilterMenuItem);
+			}
+
+			MenuUtils.TableUtils.Hook.call(oTable, MenuUtils.TableUtils.Hook.Keys.Table.OpenMenu, oCellInfo, oTable._oCellContextMenu);
+
+			if (oTable._oCellContextMenu.getItems().length === 0) {
+				return false;
 			}
 
 			for (var i = 0; i < aColumns.length; i++) {
@@ -370,8 +384,18 @@ sap.ui.define([
 				return;
 			}
 
+			var sCellFilterMenuItemId = oTable._oCellContextMenu.getId() + "-cellfilter";
+			var oCellFilterMenuItem = sap.ui.getCore().byId(sCellFilterMenuItemId);
+
+			// We don't want to destroy items which were added, for example, by hooks. The owners of the items are responsible for them.
+			oTable._oCellContextMenu.removeAllItems();
 			oTable._oCellContextMenu.destroy();
 			oTable._oCellContextMenu = null;
+
+			// Destroy the items of the table.
+			if (oCellFilterMenuItem) {
+				oCellFilterMenuItem.destroy();
+			}
 		},
 
 		/**

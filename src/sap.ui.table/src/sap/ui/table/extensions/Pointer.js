@@ -748,8 +748,8 @@ sap.ui.define([
 				oEvent.preventDefault();
 				return;
 			} else if ($Target.hasClass("sapUiTableGroupMenuButton")) {
-				// Analytical Table: Mobile Group Menu Button in Grouping rows
-				this.oncontextmenu(oEvent);
+				// Analytical Table: Mobile group menu button in group header rows.
+				TableUtils.Menu.openContextMenu(this, oEvent.target, oEvent);
 				return;
 			} else if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
 				// Expand/Collapse icon
