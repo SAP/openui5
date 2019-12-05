@@ -10,19 +10,9 @@ sap.ui.getCore().attachInit(function () {
 	sap.ui.require([
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/LateProperties/pages/Main",
-		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils"
-	], function (Any, Main, opaTest, TestUtils) {
+		"sap/ui/test/opaQunit"
+	], function (Any, Main, opaTest) {
 		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-
-		function checkThatControlsInEditDeliveryDialogAreNotEmpty(Then) {
-			Then.onTheEditDeliveryDialog.checkNonEmptyContent("SalesOrderID");
-			Then.onTheEditDeliveryDialog.checkNonEmptyContent("Note");
-			Then.onTheEditDeliveryDialog.checkNonEmptyContent("CompanyName");
-			Then.onTheEditDeliveryDialog.checkNonEmptyContent("WebAddress");
-			Then.onTheEditDeliveryDialog.checkNonEmptyContent("ItemKey");
-			Then.onTheEditDeliveryDialog.checkNonEmptyContent("DeliveryDate", true);
-		}
 
 		QUnit.module("sap.ui.core.sample.odata.v4.LateProperties", {
 			before : function () {
@@ -43,19 +33,21 @@ sap.ui.getCore().attachInit(function () {
 				}
 			});
 
-			When.onTheMainPage.selectSalesOrder(2);
-			When.onTheMainPage.pressEditDelivery(1);
-			checkThatControlsInEditDeliveryDialogAreNotEmpty(Then);
+			When.onTheMainPage.selectSalesOrderRow(2);
+			When.onTheMainPage.pressEditDeliveryInRow(1);
+			Then.onTheEditDeliveryDialog.checkThatControlsHaveContent();
 			When.onTheEditDeliveryDialog.pressCancel();
-			When.onTheMainPage.pressEditDelivery(3);
+			When.onTheMainPage.pressEditDeliveryInRow(3);
+			Then.onTheEditDeliveryDialog.checkThatControlsHaveContent();
 			When.onTheEditDeliveryDialog.pressCancel();
 
-			When.onTheMainPage.selectSalesOrder(3);
-			When.onTheMainPage.pressEditDelivery(1);
+			When.onTheMainPage.selectSalesOrderRow(3);
+			When.onTheMainPage.pressEditDeliveryInRow(1);
+			Then.onTheEditDeliveryDialog.checkThatControlsHaveContent();
 			When.onTheEditDeliveryDialog.pressCancel();
-			When.onTheMainPage.pressEditDelivery(3);
-			checkThatControlsInEditDeliveryDialogAreNotEmpty(Then);
-			When.onTheEditDeliveryDialog.changeDeliveryDate();
+			When.onTheMainPage.pressEditDeliveryInRow(3);
+			Then.onTheEditDeliveryDialog.checkThatControlsHaveContent();
+			When.onTheEditDeliveryDialog.postponeDeliveryDateByOneDay();
 			When.onTheEditDeliveryDialog.pressConfirm();
 
 			Then.onAnyPage.checkLog();
