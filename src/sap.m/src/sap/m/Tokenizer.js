@@ -1620,7 +1620,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onsaphome = function(oEvent) {
-		this._getVisibleTokens()[0].focus();
+		var aVisibleTokens = this._getVisibleTokens();
+
+		(aVisibleTokens.length > 0) && aVisibleTokens[0].focus();
+
 		this.scrollToStart();
 
 		oEvent.preventDefault();
