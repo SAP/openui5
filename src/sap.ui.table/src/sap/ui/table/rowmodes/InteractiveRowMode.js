@@ -52,11 +52,12 @@ sap.ui.define([
 			if (this.bLegacy) {
 				var oTable = arguments[1];
 
-				this.getParent = function() {
+				this.getTable = function() {
 					return oTable;
 				};
 				RowMode.call(this);
 				this.attachEvents();
+				this.registerHooks();
 			} else {
 				RowMode.apply(this, arguments);
 			}
@@ -84,6 +85,22 @@ sap.ui.define([
 	InteractiveRowMode.prototype.detachEvents = function() {
 		RowMode.prototype.detachEvents.apply(this, arguments);
 		TableUtils.removeDelegate(this.getTable(), TableDelegate);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	InteractiveRowMode.prototype.registerHooks = function() {
+		RowMode.prototype.registerHooks.apply(this, arguments);
+		TableUtils.Hook.register(this.getTable(), TableUtils.Hook.Keys.Table.RefreshRows, this._onTableRefreshRows, this);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	InteractiveRowMode.prototype.deregisterHooks = function() {
+		RowMode.prototype.deregisterHooks.apply(this, arguments);
+		TableUtils.Hook.deregister(this.getTable(), TableUtils.Hook.Keys.Table.RefreshRows, this._onTableRefreshRows, this);
 	};
 
 	/*
@@ -202,9 +219,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * @inheritDoc
+	 * This hook is called when the rows aggregation of the table is refreshed.
+	 *
+	 * @private
 	 */
-	InteractiveRowMode.prototype.refreshRows = function() {
+	InteractiveRowMode.prototype._onTableRefreshRows = function() {
 		var iRowCount = this.getConfiguredRowCount();
 
 		if (iRowCount > 0) {

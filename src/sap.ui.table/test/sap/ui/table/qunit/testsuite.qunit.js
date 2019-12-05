@@ -166,6 +166,16 @@ sap.ui.define([
 				module: "./utils/_{name}.qunit",
 				sinon: false /*uses Mockserver*/
 			},
+			"HookUtils": {
+				group: "Utils",
+				module: "./utils/_{name}.qunit",
+				qunit: {
+					version: "edge"
+				},
+				sinon: {
+					version: "edge"
+				}
+			},
 
 			// Extensions
 			"ExtensionBase": {
