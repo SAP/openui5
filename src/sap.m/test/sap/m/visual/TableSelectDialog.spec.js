@@ -56,9 +56,16 @@ describe('sap.m.TableSelectDialog', function() {
 		expect(takeScreenshot(tableSelectDialog)).toLookAs('6-TSD-resetButton-disabled');
 		element(by.id('TableSelectDialog3-cancel')).click();
 	});
+
 	it("Should open resizable TableSelectDialog", function () {
 		element(by.id("Button13")).click();
 		expect(takeScreenshot(element(by.id("TableSelectDialog13-dialog")))).toLookAs("7-TSD-resizable");
 		element(by.id("TableSelectDialog13-cancel")).click();
+	});
+
+	it("Should open TableSelectDialog with Responsive Padding", function () {
+		element(by.id("Button14")).click();
+		expect(takeScreenshot(element(by.id("TableSelectDialog14-dialog")))).toLookAs("8-TSD-responsive-padding");
+		element(by.id("TableSelectDialog14-cancel")).click();
 	});
 });

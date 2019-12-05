@@ -102,6 +102,7 @@ sap.ui.define([
 	 * <ul>
 	 * <li>On smaller screens, the columns of the table wrap and build a list that shows all the information.</li>
 	 * </ul>
+	 * When using the <code>sap.m.TableSelectDialog</code> in SAP Quartz themes, the breakpoints and layout paddings could be determined by the dialog's width. To enable this concept and add responsive paddings to an element of the control, you have to add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--subHeader</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>.
 	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
@@ -187,12 +188,12 @@ sap.ui.define([
 			 */
 			confirmButtonText: {type : "string", group : "Appearance"},
 						/**
-			 * When set to <code>true</code>, the TableSelectDialog is draggable by its header. The default value is <code>false</code>. <b>Note</b>: The SelectDialog can be draggable only in desktop mode.
+			 * When set to <code>true</code>, the TableSelectDialog is draggable by its header. The default value is <code>false</code>. <b>Note</b>: The TableSelectDialog can be draggable only in desktop mode.
 			 * @since 1.71
 			 */
 			draggable: {type: "boolean", group: "Behavior", defaultValue: false},
 			/**
-			 * When set to <code>true</code>, the TableSelectDialog will have a resize handler in its bottom right corner. The default value is <code>false</code>. <b>Note</b>: The SelectDialog can be resizable only in desktop mode.
+			 * When set to <code>true</code>, the TableSelectDialog will have a resize handler in its bottom right corner. The default value is <code>false</code>. <b>Note</b>: The TableSelectDialog can be resizable only in desktop mode.
 			 * @since 1.71
 			 */
 			resizable: {type: "boolean", group: "Behavior", defaultValue: false},

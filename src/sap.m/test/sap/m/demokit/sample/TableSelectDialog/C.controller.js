@@ -59,6 +59,15 @@ sap.ui.define([
 			var bRemember = !!oButton.data("remember");
 			this._oDialog.setRememberSelections(bRemember);
 
+			var sResponsivePadding = oButton.data("responsivePadding");
+			var sResponsiveStyleClasses = "sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer";
+
+			if (sResponsivePadding) {
+				this._oDialog.addStyleClass(sResponsiveStyleClasses);
+			} else {
+				this._oDialog.removeStyleClass(sResponsiveStyleClasses);
+			}
+
 			// Set custom text for the confirmation button
 			var sCustomConfirmButtonText = oButton.data("confirmButtonText");
 			this._oDialog.setConfirmButtonText(sCustomConfirmButtonText);
@@ -85,6 +94,7 @@ sap.ui.define([
 			if (aContexts && aContexts.length) {
 				MessageToast.show("You have chosen " + aContexts.map(function (oContext) { return oContext.getObject().Name; }).join(", "));
 			}
+
 		},
 
 		handleValueHelp: function () {

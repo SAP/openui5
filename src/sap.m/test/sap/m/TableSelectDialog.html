@@ -1076,6 +1076,38 @@
 			}
 		});
 
+		var oTableSelectDialog14 = new sap.m.TableSelectDialog("TableSelectDialog14", {
+			title: "Table Select Dialog with Responsive Paddings (SAP Quartz themes only",
+			noDataText: "No data",
+			contentWidth: "100%",
+			resizable: true,
+			draggable: true,
+			columns : [
+				fnCreateSimpleDialogColumns()
+			]
+		});
+
+		// set model & bind Aggregation
+		oTableSelectDialog14.setModel(new sap.ui.model.json.JSONModel(aData));
+		oTableSelectDialog14.bindItems("/", new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({text : "{text}"})
+			],
+			selected : "{selected}"
+		}));
+		oTableSelectDialog14.addStyleClass("sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer");
+
+		var oButton14 = new sap.m.Button("Button14", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
+			text: "Open SelectDialog with Responsive Padding",
+			press: function () {
+				// open dialog
+				oTableSelectDialog14.open();
+			}
+		});
+
 		// create the application page
 		var oPage = new sap.m.Page("page", {
 			title:"Mobile TableSelectDialog Control",
@@ -1096,7 +1128,8 @@
 						oButton10,
 						oButton11,
 						oButton12,
-						oButton13
+						oButton13,
+						oButton14
 					]
 				})
 			]
