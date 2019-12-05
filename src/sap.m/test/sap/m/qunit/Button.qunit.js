@@ -510,6 +510,30 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	// BCP: 0020751294 0000677825 2019
+	QUnit.test("Press event fires once", function(assert) {
+		// arrange
+		var pressSpy = this.spy(),
+			oTouchEndEvent = { setMarked: function() { }, originalEvent: { buttons: 0, type: "mouseup" }, target: { id: "btn1-BDI-content" } },
+			oTapEvent = { setMarked: function() { } },
+			oButton = new Button("btn1", {
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oButton._bRenderActive = true; //simulate pressed state
+
+		// act
+		oButton.ontouchend(oTouchEndEvent);
+		oButton.ontap(oTapEvent);
+
+		// assert
+		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
+
+		// clean
+		oButton.destroy();
+	});
+
 	// check if we have reference added to the text content of the button
 	// so it can be read otherwise it causes the issue reported in BCP: 1680223321
 	QUnit.test("AriaLabeledBy when the Button is associated with Label and the button has text", function(assert) {

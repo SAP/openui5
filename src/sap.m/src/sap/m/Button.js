@@ -207,7 +207,6 @@ sap.ui.define([
 
 	/*
 	 * Restore active state if the button was depressed before re-rendering.
-	 * Save _bRenderActive to treate the next mouseup as a tap event.
 	 */
 	Button.prototype.onAfterRendering = function() {
 		if (this._bRenderActive) {
@@ -271,12 +270,8 @@ sap.ui.define([
 		// set inactive button state
 		this._inactiveButton();
 
-		// if the button was re-rendered being in depressed state, the tap event won't come. Simulate it:
 		if (this._bRenderActive) {
 			delete this._bRenderActive;
-			if (oEvent.originalEvent && oEvent.originalEvent.type in {mouseup:1, touchend:1}) {
-				this.ontap(oEvent);
-			}
 		}
 
 		if (!sap.ui.Device.browser.msie) {
