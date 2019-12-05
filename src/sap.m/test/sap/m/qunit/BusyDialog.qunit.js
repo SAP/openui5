@@ -133,7 +133,7 @@ sap.ui.define([
 
 		//check the footer
 		assert.equal(jQuery(this.sId + '-Dialog-footer').length, 1, 'BusyDialog should have Toolbar/footer rendered.');
-		assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 1, 'BusyDialog should have CancelButton button rendered.');
+		assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn:not(.sapMTBHiddenElement)').length, 1, 'BusyDialog should have CancelButton button rendered.');
 
 		//test the close button text
 		//IE and Edge do not support BDI tag so it is not rendered
@@ -240,7 +240,7 @@ sap.ui.define([
 
 		//check if footer exists & has cancel button
 		assert.equal(jQuery(this.sId + '-Dialog-footer').length, 1, 'BusyDialog should have footer after being set.');
-		assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 1, 'BusyDialog should have CancelButton after setShowCancelButton being set.');
+		assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn:not(.sapMTBHiddenElement)').length, 1, 'BusyDialog should have CancelButton after setShowCancelButton being set.');
 
 		//IE and Edge do not support BDI tag so it is not rendered
 		if (!this.bIE_Edge) {
@@ -261,7 +261,7 @@ sap.ui.define([
 
 		//check if footer exists & has cancel button
 		assert.equal(jQuery(this.sId + '-Dialog-footer').length, 1, 'BusyDialog should render the footer if the CancelButtonText is changed from an empty string.');
-		assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 1, 'BusyDialog should have rendered CancelButton.');
+		assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn:not(.sapMTBHiddenElement)').length, 1, 'BusyDialog should have rendered CancelButton.');
 
 		//IE and Edge do not support BDI tag so it is not rendered
 		if (!this.bIE_Edge) {
