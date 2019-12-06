@@ -1038,11 +1038,9 @@ sap.ui.define([
 			var mQueryOptions = oCache.mQueryOptions,
 				sMetaPath = _Helper.getMetaPath(sPath); // the binding's meta path rel. to the cache
 
-			if (sMetaPath) {
-				// reduce the query options to the child meta path
-				mQueryOptions = sMetaPath.split("/").reduce(function (mOptions, sSegment) {
-					return mOptions.$expand[sSegment];
-				}, mQueryOptions);
+			if (sPath) {
+				// reduce the query options to the child path
+				mQueryOptions = _Helper.getQueryOptionsForPath(mQueryOptions, sPath);
 				// add the custom query options again
 				mQueryOptions = _Helper.merge({}, oModel.mUriParameters, mQueryOptions);
 			}
