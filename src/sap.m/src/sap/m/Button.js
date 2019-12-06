@@ -249,12 +249,12 @@ sap.ui.define([
 			}
 			if (!sap.ui.Device.browser.msie) {
 				// set the tag ID where the touch event started
-				this._sStartingTagId = oEvent.target.id.replace(this.getId(), '');
+				this._sTouchStartTargetId = oEvent.target.id.replace(this.getId(), '');
 			}
 		} else {
 			if (!sap.ui.Device.browser.msie) {
 				// clear the starting tag ID in case the button is not enabled and visible
-				this._sStartingTagId = '';
+				this._sTouchStartTargetId = '';
 			}
 		}
 	};
@@ -278,11 +278,13 @@ sap.ui.define([
 			// get the tag ID where the touch event ended
 			this._sEndingTagId = oEvent.target.id.replace(this.getId(), '');
 			// there are some cases when tap event won't come. Simulate it:
-			if (this._buttonPressed === 0 && ((this._sStartingTagId === "-BDI-content" && (this._sEndingTagId === '-content' || this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sStartingTagId === "-content" && (this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sStartingTagId === '-img' && this._sEndingTagId !== '-img'))) {
+			if (this._buttonPressed === 0 && ((this._sTouchStartTargetId === "-BDI-content" && (this._sEndingTagId === '-content' || this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sTouchStartTargetId === "-content" && (this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sTouchStartTargetId === '-img' && this._sEndingTagId !== '-img'))) {
 				this.ontap(oEvent);
 			}
 		}
 
+		// clear the starting target
+		this._sTouchStartTargetId = '';
 	};
 
 	/**
@@ -291,6 +293,7 @@ sap.ui.define([
 	 */
 	Button.prototype.ontouchcancel = function() {
 		this._buttonPressed = false;
+		this._sTouchStartTargetId = '';
 		// set inactive button state
 		this._inactiveButton();
 	};
@@ -407,7 +410,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.onfocusout = function() {
-
+		this._buttonPressed = false;
+		this._sTouchStartTargetId = '';
 		// set inactive button state
 		this._inactiveButton();
 	};
