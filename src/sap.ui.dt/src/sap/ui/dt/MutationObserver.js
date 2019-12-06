@@ -6,7 +6,6 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/OverlayUtil",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/DOMUtil",
 	"sap/base/util/restricted/_intersection",
@@ -14,7 +13,6 @@ sap.ui.define([
 ], function(
 	jQuery,
 	OverlayUtil,
-	ElementUtil,
 	ManagedObject,
 	DOMUtil,
 	_intersection,
@@ -70,7 +68,7 @@ sap.ui.define([
 		jQuery(window).on("resize", this._mutationOnResize);
 
 		this._aIgnoredMutations = [];
-		this._aWhitelistedDomNodeIDs = [];
+		this._bHandlerRegistred = false;
 		this._mMutationHandlers = {};
 
 		this._startMutationObserver();
@@ -90,7 +88,7 @@ sap.ui.define([
 		jQuery(window).off("resize", this._mutationOnResize);
 
 		this._aIgnoredMutations = [];
-		this._aWhitelistedDomNodeIDs = [];
+		this._bHandlerRegistred = false;
 		this._mMutationHandlers = {};
 	};
 
@@ -105,25 +103,32 @@ sap.ui.define([
 		this._aIgnoredMutations.push(mParams);
 	};
 
-	MutationObserver.prototype.addToWhiteList = function (sId, fnDomChangedCallback, bIsRoot) {
-		if (this._aWhitelistedDomNodeIDs.indexOf(sId) === -1) {
-			this._aWhitelistedDomNodeIDs.push(sId);
+	/**
+	 * Register mutation handler for an overlay.
+	 * @param {string} sId - Overlay id as registration key
+	 * @param {function} fnDomChangedHandler - Callbackfunction is called on a mutation for the overlay
+	 * @param {boolean} [bIsRoot] - <code>true</code> if overlay is a root overlay
+	 */
+	MutationObserver.prototype.registerHandler = function (sId, fnDomChangedHandler, bIsRoot) {
+		if (!this._mMutationHandlers[sId]) {
 			this._mMutationHandlers[sId] = [];
+			this._bHandlerRegistred = true;
 		}
-		this._mMutationHandlers[sId].push(fnDomChangedCallback);
+		this._mMutationHandlers[sId].push(fnDomChangedHandler);
 		if (bIsRoot) {
 			this._sRootId = sId;
 		}
 	};
 
-	MutationObserver.prototype.removeFromWhiteList = function (sId) {
-		this._aWhitelistedDomNodeIDs = this._aWhitelistedDomNodeIDs.filter(function (sCurrentId) {
-			if (sCurrentId === sId) {
-				delete this._mMutationHandlers[sId];
-				return false;
-			}
-			return true;
-		}.bind(this));
+	/**
+	 * Deregister mutation handler for an overlay.
+	 * @param {string} sId - Overlay id as registration key
+	 */
+	MutationObserver.prototype.deregisterHandler = function (sId) {
+		delete this._mMutationHandlers[sId];
+		if (Object.keys(this._mMutationHandlers).length === 0) {
+			this._bHandlerRegistred = false;
+		}
 		if (sId === this._sRootId) {
 			this._sRootId = undefined;
 		}
@@ -133,40 +138,39 @@ sap.ui.define([
 		return bScrollbarOnElement || DOMUtil.hasScrollBar($Element);
 	};
 
-	MutationObserver.prototype._getIdsWhenWhitelisted = function (bScrollbarOnElement, sElementId, mElementIds) {
-		// check if element id is whitelisted
-		var sWhitelistedParentId;
-		if (sElementId && this._aWhitelistedDomNodeIDs.indexOf(sElementId) > -1) {
-			sWhitelistedParentId = sElementId;
-			// remember the closest whitelisted element id on mutated dom node
+	MutationObserver.prototype._getIdsWhenRegistered = function (bScrollbarOnElement, sElementId, mElementIds) {
+		var sRegisteredParentId;
+		if (sElementId && this._mMutationHandlers[sElementId]) {
+			sRegisteredParentId = sElementId;
+			// remember the closest registered element id on mutated dom node
 			if (!mElementIds.closestElementInWhitlist) {
 				mElementIds.closestElementInWhitlist = sElementId;
 			}
 		}
-		mElementIds.result = bScrollbarOnElement ? sWhitelistedParentId : mElementIds.closestElementInWhitlist;
+		mElementIds.result = bScrollbarOnElement ? sRegisteredParentId : mElementIds.closestElementInWhitlist;
 		return mElementIds;
 	};
 
 	/*
-	 * Searching for closest element that is whitelisted but we also need to consider the scrollbar usecase.
+	 * Searching for closest element that is registered but we also need to consider the scrollbar usecase.
 	 * Unfortunately we are not notified from MutationObserver when scrollbars appears on parent controls. Let's asume
 	 * we got a mutation from a node inside a container that is also mutated with a new scrollbar (but without own mutations).
 	 * Then we need to handle the mutation not only for the triggering element but for the container element that mutated with
 	 * the scrollbar. In this regard we need to consider the following possible cases:
 	 *
 	 *  Return values:
-	 *		1. whitelisted element with scrollbar (on the same element or in children) found
-	 *			=> returns the last whitelisted element id
-	 *		2. whitelisted element found but no scrollbar element available on parents
-	 *			=> returns the closest element id whitelisted on mutated node
-	 *		3. whitelisted element with scrollbar element available on parents but not whitelisted itself and without own whitelisted parents found
-	 *			=> returns the closest element id whitelisted on mutated node
-	 *		4. whitelisted element with scrollbar element available on parents and is whitelisted itself of with own whitelisted parents found
-	 *			=> returns the closest element id whitelisted on scrollbar element
-	 *		5. no whitelisted element available
+	 *		1. registered element with scrollbar (on the same element or in children) found
+	 *			=> returns the last registered element id
+	 *		2. registered element found but no scrollbar element available on parents
+	 *			=> returns the closest element id registered on mutated node
+	 *		3. registered element with scrollbar element available on parents but not registered itself and without own registered parents found
+	 *			=> returns the closest element id registered on mutated node
+	 *		4. registered element with scrollbar element available on parents and is registered itself of with own registered parents found
+	 *			=> returns the closest element id registered on scrollbar element
+	 *		5. no registered element available
 	 *			=> undefined
 	 */
-	MutationObserver.prototype._getClosestParentIdForNodeInWhitelistWithScrollbar = function (sNodeId, oNode) {
+	MutationObserver.prototype._getClosestParentIdForNodeRegisteredWithScrollbar = function (sNodeId, oNode) {
 		var mElementIds = {
 			closestElementInWhitlist: undefined,
 			result: undefined
@@ -177,8 +181,9 @@ sap.ui.define([
 
 		do {
 			bScrollbarOnElement = this._hasScrollbar(bScrollbarOnElement, $ClosestParentElement);
-			mElementIds = this._getIdsWhenWhitelisted(bScrollbarOnElement, sClosestParentElementId, mElementIds);
+			mElementIds = this._getIdsWhenRegistered(bScrollbarOnElement, sClosestParentElementId, mElementIds);
 			$ClosestParentElement = $ClosestParentElement.parent();
+			// $Element could also be a dome node without data-sap-ui attribute
 			sClosestParentElementId = $ClosestParentElement.attr("data-sap-ui");
 		} while (
 			!(mElementIds.result && bScrollbarOnElement)
@@ -186,7 +191,7 @@ sap.ui.define([
 			&& $ClosestParentElement[0] !== document
 		);
 
-		return mElementIds.result || mElementIds.closestElementInWhitlist/* when element with scrollbar and his parents are not whitelisted */;
+		return mElementIds.result || mElementIds.closestElementInWhitlist/* when element with scrollbar and his parents are not registered */;
 	};
 
 	MutationObserver.prototype._getRelevantElementId = function (oNode) {
@@ -194,8 +199,6 @@ sap.ui.define([
 		if (
 			// 1. Filter out overlay mutations
 			!DOMUtil.contains("overlay-container", oNode)
-
-			&& this._aWhitelistedDomNodeIDs.length
 
 			// 2. Mutation happened in Node which is still in actual DOM Tree
 			// Must be always on the first place since sometimes mutations for detached nodes may come
@@ -209,7 +212,7 @@ sap.ui.define([
 
 		) {
 			// 4.1, OR the closest element need to be white listed
-			var sRelevantElementId = this._getClosestParentIdForNodeInWhitelistWithScrollbar(sNodeId, oNode);
+			var sRelevantElementId = this._getClosestParentIdForNodeRegisteredWithScrollbar(sNodeId, oNode);
 			if (sRelevantElementId) {
 				return sRelevantElementId;
 			}
@@ -230,7 +233,7 @@ sap.ui.define([
 					.map(function (oNode) {
 						return oNode.id;
 					}),
-				this._aWhitelistedDomNodeIDs
+				Object.keys(this._mMutationHandlers)
 		);
 	};
 
@@ -266,28 +269,30 @@ sap.ui.define([
 
 	MutationObserver.prototype._startMutationObserver = function () {
 		this._oMutationObserver = new window.MutationObserver(function(aMutations) {
-			var aOverallTargetElementIds = aMutations.reduce(function (aOverallTargetElementIds, oMutation) {
-				var aTargetElementIds = [];
-				var oTargetNode = this._getTargetNode(oMutation);
-				var oTargetElementId = this._getRelevantElementId(oTargetNode);
-				if (oTargetElementId) {
-					aTargetElementIds.push(oTargetElementId);
-				} else {
-					aTargetElementIds = this._getRelevantElementIdsFromStaticArea(oMutation);
-				}
-				if (
-					aTargetElementIds.length
-					&& !this._ignoreMutation(oMutation)
-				) {
-					return aOverallTargetElementIds.concat(aTargetElementIds);
-				}
-				return aOverallTargetElementIds;
-			}.bind(this), []);
+			if (this._bHandlerRegistred) {
+				var aOverallTargetElementIds = aMutations.reduce(function (aOverallTargetElementIds, oMutation) {
+					var aTargetElementIds = [];
+					var oTargetNode = this._getTargetNode(oMutation);
+					var oTargetElementId = this._getRelevantElementId(oTargetNode);
+					if (oTargetElementId) {
+						aTargetElementIds.push(oTargetElementId);
+					} else {
+						aTargetElementIds = this._getRelevantElementIdsFromStaticArea(oMutation);
+					}
+					if (
+						aTargetElementIds.length
+						&& !this._ignoreMutation(oMutation)
+					) {
+						return aOverallTargetElementIds.concat(aTargetElementIds);
+					}
+					return aOverallTargetElementIds;
+				}.bind(this), []);
 
-			if (aOverallTargetElementIds.length) {
-				window.requestAnimationFrame(function () {
-					this._callRelevantCallbackFunctions(aOverallTargetElementIds, "MutationObserver");
-				}.bind(this));
+				if (aOverallTargetElementIds.length) {
+					window.requestAnimationFrame(function () {
+						this._callRelevantCallbackFunctions(aOverallTargetElementIds, "MutationObserver");
+					}.bind(this));
+				}
 			}
 		}.bind(this));
 
@@ -311,7 +316,7 @@ sap.ui.define([
 
 	MutationObserver.prototype._callDomChangedCallback = function (sMutationType, oEvent) {
 		var oTarget = oEvent.target;
-		if (oTarget !== window) {
+		if (this._bHandlerRegistred && oTarget !== window) {
 			var sTargetElementId = this._getRelevantElementId(oTarget);
 			if (sTargetElementId) {
 				this._callRelevantCallbackFunctions([sTargetElementId], sMutationType);
@@ -329,7 +334,7 @@ sap.ui.define([
 		var oTarget = oEvent.target;
 		// The line below is required to avoid double scrollbars on the browser
 		// when the document is scrolled to negative values (relevant for Mac)
-		if (oTarget !== document) {
+		if (this._bHandlerRegistred && oTarget !== document) {
 			// Target Node is inside one of the white listed element
 			var sTargetElementId = this._getRelevantElementId(oTarget);
 			// Target Node is an ancestor of one of the root element, but not a static area

@@ -74,18 +74,18 @@ function(
 
 	TaskManager.prototype._removeOutdatedTasks = function(mTask, vDoubleIdentifier) {
 		if (vDoubleIdentifier) {
-			if (
-				typeof vDoubleIdentifier !== "string"
-				&& typeof vDoubleIdentifier !== "function"
-			) {
+			var fnDoubleIdentifier;
+			if (typeof vDoubleIdentifier === "string") {
+				fnDoubleIdentifier = function (mTask) { return mTask[vDoubleIdentifier]; };
+			} else if (typeof vDoubleIdentifier === "function") {
+				fnDoubleIdentifier = vDoubleIdentifier;
+			} else {
 				throw new Error("Validator needs to be a function or a string");
 			}
 			var aTaskList = this._mList[mTask.type];
-			var fnDoubleIdentifier = typeof vDoubleIdentifier === "function" ? vDoubleIdentifier : function (mTask) { return mTask[vDoubleIdentifier]; };
 			var sNewTaskIdentifier = fnDoubleIdentifier(mTask);
 			if (
 				aTaskList
-				&& aTaskList.length
 				&& sNewTaskIdentifier
 			) {
 				this._mList[mTask.type] = aTaskList.filter(function (oTask) {

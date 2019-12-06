@@ -19,7 +19,6 @@ function(
 	 * @param {object} mParam - initial settings for the new object
 	 * @param {object} mParam.taskManager - TaskManager to be observed
 	 *
-	 * @class
 	 * TaskRunner run tasks defined in sap.ui.dt.TaskManager.
 	 *
 	 * @author SAP SE
@@ -60,11 +59,11 @@ function(
 			if (this._shouldObserveBreak()) {
 				return this.stop();
 			}
-			this._checkTasks(oEvent);
+			this._runTasksFromManager(oEvent);
 		}.bind(this));
 	};
 
-	TaskRunner.prototype._checkTasks = function () {
+	TaskRunner.prototype._runTasksFromManager = function () {
 		var aTasks = this._oTaskManager.getList(this._sObservedTaskType);
 		if (aTasks.length) {
 			this._runTasks(aTasks);
