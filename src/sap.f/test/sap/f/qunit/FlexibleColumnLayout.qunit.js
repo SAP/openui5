@@ -1200,6 +1200,35 @@ function (
 		this.oFCL.destroy();
 	});
 
+	QUnit.test("Measuring width when FCL is visible", function (assert) {
+		// setup
+		var oSpy,
+			oStub;
+
+		this.oFCL = new FlexibleColumnLayout();
+		oSpy = this.spy(this.oFCL, "_measureControlWidth");
+		oStub = this.stub(this.oFCL, "$", function() {
+			return {
+				is: function() { return true; },
+				width: function() {
+					// assert
+					assert.ok(true, "width() is only called, when control is visible");
+				}
+			};
+		});
+
+		// act
+		this.oFCL._getControlWidth();
+
+		// assert
+		assert.ok(oSpy.called, "When _iWidth is 0, width is measured from the DOM until the control gets visible");
+
+		// clean-up
+		oSpy.restore();
+		oStub.restore();
+		this.oFCL.destroy();
+	});
+
 	QUnit.test("_onNavContainerRendered", function (assert) {
 		// setup
 		this.oFCL = new FlexibleColumnLayout();

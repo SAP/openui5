@@ -738,7 +738,7 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype.onAfterRendering = function () {
-		this._iWidth = this.$().width();
+		this._measureControlWidth();
 
 		this._registerResizeHandler();
 
@@ -755,7 +755,22 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._getControlWidth = function () {
+		// There is a case when we are still in app initialization phase and some containers
+		// are changing their visibility, at this point we need to obtain the width directly
+		// from the DOM and do not wait for the ResizeHandler update as it comes later.
+		if (this._iWidth === 0) {
+			this._measureControlWidth();
+		}
+
 		return this._iWidth;
+	};
+
+	FlexibleColumnLayout.prototype._measureControlWidth = function () {
+		if (this.$().is(":visible")) {
+			this._iWidth = this.$().width();
+		} else {
+			this._iWidth = 0;
+		}
 	};
 
 	FlexibleColumnLayout.prototype.exit = function () {
