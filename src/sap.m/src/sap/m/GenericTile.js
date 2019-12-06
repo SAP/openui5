@@ -68,7 +68,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				/**
 				 * Description of a header image that is used in the tooltip.
 				 */
-				"imageDescription" : {type : "string", group : "Misc", defaultValue : null}
+				"imageDescription" : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Width of the control.
+				 * @since 1.44.50
+				 */
+				"width": {type: "sap.ui.core.CSSSize", group: "Appearance"}
 			},
 			aggregations : {
 				/**

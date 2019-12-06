@@ -84,6 +84,79 @@
 		// Assert
 		assert.equal(oSpy.callCount, 1, "setPointerOnIcon was called.");
 	});
+	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.GenericTile");
+
+	QUnit.test("Numeric Content inside sap.m.GenericTile rendered.", function (assert) {
+		// Arrange
+		this.oNumericContent = new sap.m.NumericContent("numeric-cnt", {
+			size: sap.m.Size.L,
+			state: sap.m.LoadState.Loaded,
+			scale: "M",
+			indicator: sap.m.DeviationIndicator.Up,
+			nullifyValue: true,
+			formatterValue: false,
+			valueColor: sap.m.ValueColor.Good,
+			icon: "sap-icon://customer-financial-fact-sheet"
+		});
+		this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+			tileContent: [new sap.m.TileContent({
+				content: this.oNumericContent
+			})]
+		});
+		this.oGenericTile.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		this.oNumericContent.setValue("12");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(jQuery.sap.domById("generic-tile"), "GenericTile (wrapper of NumericContent) was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt"), "NumericContent was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-indicator"), "Indicator was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-value"), "Value was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-scale"), "Scale was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+
+		// Cleanup
+		this.oGenericTile.destroy();
+		this.oGenericTile = null;
+		this.oNumericContent = null;
+	});
+
+	QUnit.test("Resize handler is registered in init phase.", function (assert) {
+		// Arrange
+		var oSpyRegister = sinon.spy(sap.ui.core.ResizeHandler, "register");
+		var oSpyDeregister = sinon.spy(sap.ui.core.ResizeHandler, "deregister");
+		this.oNumericContent = new sap.m.NumericContent("numeric-cnt", {
+			size: sap.m.Size.L,
+			state: sap.m.LoadState.Loaded,
+			scale: "M",
+			indicator: sap.m.DeviationIndicator.Up,
+			nullifyValue: true,
+			formatterValue: false,
+			valueColor: sap.m.ValueColor.Good,
+			icon: "sap-icon://customer-financial-fact-sheet"
+		});
+		this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+			tileContent: [new sap.m.TileContent({
+				content: this.oNumericContent
+			})]
+		});
+
+		// Act
+		this.oGenericTile.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oSpyRegister.callCount, 1, "ResizeHandler.register was called.");
+		this.oGenericTile.destroy();
+		assert.equal(oSpyDeregister.callCount, 1, "ResizeHandler.deregister was called.");
+
+		// Cleanup
+		this.oGenericTile = null;
+		this.oNumericContent = null;
+	});
 
 	QUnit.module("Functional tests - sap.m.NumericContent", {
 		beforeEach : function() {

@@ -2,10 +2,86 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, Text, HTML, Icon) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool'],
+	function(jQuery, library, Control, Text, HTML, Icon, ResizeHandler, IconPool) {
 	"use strict";
 
+	var LANG_MAP = { // keys are compared in lowercase
+		"ar": 4,
+		"ar_eg": 4,
+		"ar_sa": 4,
+		"bg": 4,
+		"ca": 6,
+		"cs": 4,
+		"da": 4,
+		"de": 8,
+		"de_at": 8,
+		"de_ch": 8,
+		"el": 4,
+		"el_cy": 4,
+		"en": 4,
+		"en_au": 4,
+		"en_gb": 4,
+		"en_hk": 4,
+		"en_ie": 4,
+		"en_in": 4,
+		"en_nz": 4,
+		"en_pg": 4,
+		"en_sg": 4,
+		"en_us": 4,
+		"en_za": 4,
+		"es": 6,
+		"es_ar": 4,
+		"es_bo": 4,
+		"es_cl": 4,
+		"es_co": 4,
+		"es_mx": 6,
+		"es_pe": 4,
+		"es_uy": 4,
+		"es_ve": 4,
+		"et": 4,
+		"fa": 4,
+		"fi": 4,
+		"fr": 4,
+		"fr_be": 4,
+		"fr_ca": 4,
+		"fr_ch": 4,
+		"fr_lu": 4,
+		"he": 4,
+		"hi": 4,
+		"hr": 4,
+		"hu": 4,
+		"id": 4,
+		"it": 8,
+		"it_ch": 8,
+		"ja": 6,
+		"kk": 4,
+		"ko": 6,
+		"lt": 4,
+		"lv": 4,
+		"ms": 4,
+		"nb": 4,
+		"nl": 4,
+		"nl_be": 4,
+		"pl": 4,
+		"pt": 4,
+		"pt_pt": 4,
+		"ro": 4,
+		"ru": 4,
+		"ru_ua": 4,
+		"sk": 4,
+		"sl": 4,
+		"sr": 4,
+		"sv": 4,
+		"th": 4,
+		"tr": 4,
+		"uk": 4,
+		"vi": 4,
+		"zh_cn": 6,
+		"zh_hk": 6,
+		"zh_sg": 6,
+		"zh_tw": 6
+	};
 	/**
 	 * Constructor for a new sap.m.GenericTile control.
 	 *
@@ -71,9 +147,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 				"size" : {type : "sap.m.Size", group : "Appearance", defaultValue : sap.m.Size.Auto},
 
 				/**
-				 * The number of characters to display for the value property.
-				 */
-				"truncateValueTo" : {type : "int", group : "Appearance", defaultValue : 4},
+				* The number of characters of the <code>value</code> property to display.
+				*
+				* <b>Note</b> The default value of this property will vary between languages.
+				*/
+				"truncateValueTo": {type: "int", group: "Appearance"},
 
 				/**
 				 * The actual value.
@@ -114,11 +192,56 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 	NumericContent.prototype.init = function() {
 		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this.setTooltip("{AltText}");
+		sap.ui.getCore().attachInit(this._registerResizeHandler.bind(this));
+	};
+
+	NumericContent.prototype._getParentTile = function () {
+		var oParent = this.getParent();
+		while (oParent) {
+			if (oParent instanceof sap.m.GenericTile) {
+				return oParent;
+			}
+			oParent = oParent.getParent();
+		}
+		return null;
+	};
+
+	NumericContent.prototype._getMaxDigitsData = function () {
+		var iMaxLength = null,
+				sFontClass = null,
+				sLang = sap.ui.getCore().getConfiguration().getLanguage().toLowerCase();
+
+		iMaxLength = LANG_MAP[sLang] || 4;
+
+		switch (iMaxLength) {
+			case 6:
+				sFontClass = "sapMNCMediumFontSize";
+				break;
+			case 8:
+				sFontClass = "sapMNCSmallFontSize";
+				break;
+			default:
+				sFontClass = "sapMNCLargeFontSize";
+				break;
+		}
+		return {
+			fontClass: sFontClass,
+			maxLength: iMaxLength
+		};
+	};
+
+	/**
+	 * Registers resize handler.
+	 * @private
+	 */
+	NumericContent.prototype._registerResizeHandler = function () {
+		ResizeHandler.register(this, this.invalidate.bind(this));
 	};
 
 	NumericContent.prototype.onBeforeRendering = function() {
 		this.$().unbind("mouseenter", this._addTooltip);
 		this.$().unbind("mouseleave", this._removeTooltip);
+		this._iMaxLength = null;
 	};
 
 	NumericContent.prototype.onAfterRendering = function() {
@@ -130,6 +253,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 				opacity : "1"
 			}, 1000);
 		}
+		if (!sap.ui.getCore().isThemeApplied()) {
+			sap.ui.getCore().attachThemeChanged(this._checkIfIconFits, this);
+		} else {
+			this._checkIfIconFits();
+		}
 	};
 
 	/**
@@ -138,6 +266,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 	 */
 	NumericContent.prototype._addTooltip = function() {
 		this.$().attr("title", this.getTooltip_AsString());
+	};
+
+	/**
+	 * Shows/hides icon depending if it fits or not.
+	 * @private
+	 */
+	NumericContent.prototype._checkIfIconFits = function () {
+		var $icon = this.$("icon-image"),
+				$value = this.$("value-inner"),
+				$wrapper = this.$("value-scr");
+		var iSize = $icon.outerWidth() + $value.width(),
+				iWrapperSize = $wrapper.width();
+		iSize > iWrapperSize ? $icon.hide() : $icon.show();
 	};
 
 	/**
@@ -213,7 +354,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 				this._oIcon = undefined;
 			}
 			if (uri) {
-				this._oIcon = sap.ui.core.IconPool.createControlByURI({
+				this._oIcon = IconPool.createControlByURI({
 					id : this.getId() + "-icon-image",
 					src : uri
 				}, sap.m.Image);
