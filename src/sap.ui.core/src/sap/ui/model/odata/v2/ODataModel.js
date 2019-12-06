@@ -3752,7 +3752,15 @@ sap.ui.define([
 			if (!sPath.startsWith('/')) {
 				sPath = '/' + sPath;
 			}
-			sPath = this._normalizePath(sPath, undefined, true);
+
+			// In order to retrieve the EntityType, the path should be normalized (URL parameters should be removed)
+			var sNormalizedPath = this._normalizePath(sPath);
+			var oEntityType = this.oMetadata._getEntityTypeByPath(sNormalizedPath);
+
+			// FunctionImports shouldn't be resolved canonical
+			var bCanonical = oEntityType ? !oEntityType.isFunction : true;
+			sPath = this._normalizePath(sPath, undefined, bCanonical);
+
 			// decrease laundering
 			this.decreaseLaundering(sPath, oRequest.data);
 			this._decreaseDeferredRequestCount(oRequest);
@@ -5960,6 +5968,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath The binding path
 	 * @param {sap.ui.model.Context} [oContext] The binding context
+	 * @param {boolean} Whether the binding path should be resolved canonical or not
 	 * @returns {string} The resolved path
 	 * @private
 	 */
