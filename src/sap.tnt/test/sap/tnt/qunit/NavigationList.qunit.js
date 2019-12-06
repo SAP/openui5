@@ -3,6 +3,9 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/base/Log',
+	"sap/ui/core/Core",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
 	'sap/ui/model/json/JSONModel',
 	'sap/m/Text',
 	'sap/m/App',
@@ -12,6 +15,9 @@ sap.ui.define([
 ], function(
 	jQuery,
 	Log,
+	Core,
+	QUnitUtils,
+	KeyCodes,
 	JSONModel,
 	Text,
 	App,
@@ -68,7 +74,7 @@ sap.ui.define([
 						})
 					]
 				}),
-				new NavigationListItem({
+				new NavigationListItem("groupItem3", {
 					text: 'Root 2',
 					icon: 'sap-icon://employee',
 					items: [
@@ -456,6 +462,32 @@ sap.ui.define([
 		// this.clock.tick(500);
 		//
 		// assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is set");
+	});
+
+	QUnit.test("Expand/collapse with keyboard", function (assert) {
+		// Arrange
+		var oItem = Core.byId("groupItem3"),
+			$item = oItem.$(),
+			$focusableElement = $item.find(".sapTntNavLIGroup");
+
+		$focusableElement.focus();
+
+		// Act collapse
+		QUnitUtils.triggerKeydown($item, KeyCodes.ARROW_LEFT);
+		this.clock.tick(500);
+
+		// Assert collapsed
+		assert.strictEqual(oItem.getExpanded(), false, "The item collapses when left arrow is pressed");
+		assert.ok($focusableElement.is(":focus"), "The item is still focused");
+
+
+		// Act expand
+		QUnitUtils.triggerKeydown($item, KeyCodes.ARROW_RIGHT);
+		this.clock.tick(500);
+
+		// Assert expanded
+		assert.strictEqual(oItem.getExpanded(), true, "The item expands when right arrow is pressed");
+		assert.ok($focusableElement.is(":focus"), "The item is still focused");
 	});
 
 	QUnit.test("select group", function (assert) {
