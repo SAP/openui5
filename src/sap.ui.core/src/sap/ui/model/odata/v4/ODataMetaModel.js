@@ -1308,6 +1308,7 @@ sap.ui.define([
 									}
 								} else {
 									if (sSegment !== aSegments[i]
+										&& aSegments[i][sSegment.length + 1] !== "@"
 										&& maybeParameter(sSegment, vResult)) { // not looking for
 										// parameter itself, but for annotation at parameter
 										// (incl. the special name "$ReturnType")

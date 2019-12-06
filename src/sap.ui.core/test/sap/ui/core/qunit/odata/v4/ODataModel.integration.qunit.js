@@ -1461,6 +1461,9 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var that = this;
 
+			// allow indents in expectation
+			sView = sView.replace(/\t/g, "");
+
 			return this.createView(assert, sTemplate, undefined, undefined,
 				{xml : oXMLPreprocessorConfig}).then(function () {
 					assert.strictEqual(
@@ -3562,25 +3565,25 @@ sap.ui.define([
 	testXMLTemplating("Operation parameters with sap.ui.model.odata.v4.AnnotationHelper.format",
 		{models : {meta : createTeaBusiModel().getMetaModel()}},
 '<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
-	<template:with\
-		path="meta>/com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamBudgetByID/0"\
-		var="action">\
-		<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
-			<FlexBox binding="{$Parameter}">\
-				<template:repeat list="{action>$Parameter}" var="parameter">\
-					<Input id="{parameter>$Name}" value="{parameter>@@format}"/>\
-				</template:repeat>\
-			</FlexBox>\
+	<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+		<FlexBox binding="{$Parameter}">\
+			<template:repeat list="{meta>/ChangeTeamBudgetByID/$Action/0/$Parameter}" var="param">\
+				<Input id="{param>$Name}" value="{param>@@format}"/>\
+			</template:repeat>\
+			<Input value="{meta>/ChangeTeamBudgetByID/TeamID@@format}"/>\
 		</FlexBox>\
-	</template:with>\
+	</FlexBox>\
 </template:alias>',
 '<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
 	<FlexBox binding="{$Parameter}">\
 		<Input id="TeamID" value="{path:\'TeamID\',type:\'sap.ui.model.odata.type.String\',\
-constraints:{\'maxLength\':10,\'nullable\':false},\
-formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+			constraints:{\'maxLength\':10,\'nullable\':false},\
+			formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
 		<Input id="Budget" value="{path:\'Budget\',type:\'sap.ui.model.odata.type.Decimal\',\
-constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
+			constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
+		<Input value="{path:\'TeamID\',type:\'sap.ui.model.odata.type.String\',\
+			constraints:{\'maxLength\':10,\'nullable\':false},\
+			formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
 	</FlexBox>\
 </FlexBox>');
 

@@ -138,6 +138,28 @@ sap.ui.define([
 			 * </pre>
 			 * <code>format</code> returns a binding with path "EQUIPMENT_2_PRODUCT/Name".
 			 *
+			 * Since 1.73 in addition to supporting annotations, this function also can be used to
+			 * interpret action or function parameters as a binding string.
+			 *
+			 * See an example of the metadata for an unbound action "AcChangeTeamBudgetByID":
+			 * <pre>
+			 *    &lt;Action Name="AcChangeTeamBudgetByID">
+			 *        &lt;Parameter Name="TeamID" Type="Edm.String" Nullable="false" MaxLength="10"/>
+			 *        &lt;Parameter Name="Budget" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable"/>
+			 *    &lt;/Action>
+			 * </pre>
+			 *
+			 * Let <code>ChangeTeamBudgetByID</code> be the action import of this action. Using
+			 * <code>AnnotationHelper.format</code> for the <code>TeamID</code> like
+			 * <pre>
+			 * &lt;Text text="{meta>/ChangeTeamBudgetByID/TeamID@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
+			 * </pre>
+			 * returns the following binding string which contains information about path, type and
+			 * constraints:
+			 * <pre>
+			 * &lt;Text text="{path:'TeamID',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':10,'nullable':false}" />
+			 * </pre>
+			 *
 			 * @param {any} vRawValue
 			 *   The raw value from the meta model
 			 * @param {object} oDetails
