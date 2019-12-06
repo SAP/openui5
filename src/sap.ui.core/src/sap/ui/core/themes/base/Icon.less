@@ -55,3 +55,27 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
 .sapUiIconColorContrast {
 	color: @sapUiContentContrastIconColor;
 }
+
+/* Necessary to align vertically to labels */
+.sapUiForm .sapUiIcon {
+	overflow: hidden;
+}
+
+.sapUiFormEdit .sapUiIcon {
+	display: block;
+	min-height: 3rem;
+	line-height: 1.375rem;
+	padding-top: 0.8125rem;
+	padding-bottom: 0.8125rem;
+}
+
+.sapUiForm:not(.sapUiFormEdit) .sapUiIcon {
+	min-height: 1rem;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapUiFormEdit .sapUiIcon {
+	min-height: 2rem;
+	padding-top: 0.3125rem;
+	padding-bottom: 0.3125rem;
+}
