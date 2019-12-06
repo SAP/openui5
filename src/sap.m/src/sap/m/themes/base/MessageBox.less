@@ -6,6 +6,14 @@
 // Forces the usage of "sap-icon://message-information" if set to true else "sap-icon://hint" is used
 @_sap_m_Message_Box_Information_Icon: true;
 
+// header shadow - different states
+@_sap_m_MessageBox_HeaderShadow: inset 0 -0.125rem;
+@_sap_m_MessageBox_InformationShadow: @_sap_m_MessageBox_HeaderShadow @sapUiNeutralElement;
+@_sap_m_MessageBox_WarningShadow: @_sap_m_MessageBox_HeaderShadow @sapUiCriticalElement;
+@_sap_m_MessageBox_ErrorShadow: @_sap_m_MessageBox_HeaderShadow @sapUiNegativeElement;
+@_sap_m_MessageBox_SuccessShadow: @_sap_m_MessageBox_HeaderShadow @sapUiPositiveElement;
+@_sap_m_MessageBox_QuestionShadow: @_sap_m_MessageBox_HeaderShadow @_sap_m_MessageBox_HeaderShadow @sapUiNeutralElement;
+
 .sapMMessageBoxLinkText {
 	margin-top: 1rem;
 	float: left;
@@ -13,10 +21,6 @@
 
 .sapMMessageBoxDetails {
 	padding-top: 1rem;
-}
-
-.sapMMessageBoxBarShadow(@color) {
-	box-shadow: inset 0 -0.125rem @color;
 }
 
 .sapMDialog.sapMMessageBoxInfo .sapMDialogIcon.sapUiIcon {
@@ -39,22 +43,20 @@
 	color: @sapUiNeutralElement;
 }
 
-.sapMDialog.sapMMessageDialog.sapMMessageBoxInfo .sapMDialogTitle > .sapMBar {
-	.sapMMessageBoxBarShadow(@sapUiNeutralElement);
-}
-
-.sapMDialog.sapMMessageDialog.sapMMessageBoxWarning .sapMDialogTitle > .sapMBar {
-	.sapMMessageBoxBarShadow(@sapUiCriticalElement);
-}
-
-.sapMDialog.sapMMessageDialog.sapMMessageBoxError .sapMDialogTitle > .sapMBar {
-	.sapMMessageBoxBarShadow(@sapUiNegativeElement);
-}
-
-.sapMDialog.sapMMessageDialog.sapMMessageBoxSuccess .sapMDialogTitle > .sapMBar {
-	.sapMMessageBoxBarShadow(@sapUiPositiveElement);
-}
-
-.sapMDialog.sapMMessageDialog.sapMMessageBoxQuestion .sapMDialogTitle > .sapMBar {
-	.sapMMessageBoxBarShadow(@sapUiNeutralElement);
+.sapMDialog.sapMMessageDialog {
+	&.sapMMessageBoxInfo .sapMDialogTitle > .sapMBar {
+		box-shadow: @_sap_m_MessageBox_InformationShadow;
+	}
+	&.sapMMessageBoxWarning .sapMDialogTitle > .sapMBar {
+		box-shadow: @_sap_m_MessageBox_WarningShadow;
+	}
+	&.sapMMessageBoxError .sapMDialogTitle > .sapMBar {
+		box-shadow: @_sap_m_MessageBox_ErrorShadow;
+	}
+	&.sapMMessageBoxSuccess .sapMDialogTitle > .sapMBar {
+		box-shadow: @_sap_m_MessageBox_SuccessShadow;
+	}
+	&.sapMMessageBoxQuestion .sapMDialogTitle > .sapMBar {
+		box-shadow: @_sap_m_MessageBox_QuestionShadow;
+	}
 }
