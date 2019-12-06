@@ -13,6 +13,7 @@ sap.ui.define([
 
 	function getEmptyFlexDataWithIndex (iIndex) {
 		return {
+			appDescriptorChanges: [],
 			index: iIndex,
 			changes: [],
 			variants: [],

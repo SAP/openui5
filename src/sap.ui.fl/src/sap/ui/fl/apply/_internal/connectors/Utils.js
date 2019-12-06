@@ -266,6 +266,7 @@ sap.ui.define([
 		 */
 		getEmptyFlexDataResponse: function () {
 			return Object.assign({}, {
+				appDescriptorChanges: [],
 				changes: [],
 				variants: [],
 				variantChanges: [],
