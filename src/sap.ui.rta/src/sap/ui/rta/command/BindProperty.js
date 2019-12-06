@@ -53,7 +53,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @override to suppress the binding strings to be used as
+	 * @override to suppress the binding strings to be used as binding
 	 */
 	BindProperty.prototype.bindProperty = function(sName, oBindingInfo) {
 		if (sName === "newBinding") {
