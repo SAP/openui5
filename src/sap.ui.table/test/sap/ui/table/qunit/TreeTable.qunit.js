@@ -403,7 +403,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind rows", function(assert) {
-		var spy = this.spy(TreeTable.prototype, "bindRows");
+		var oInnerBindRows = this.spy(TreeTable.prototype, "_bindRows");
 
 		/*eslint-disable no-new */
 		new TreeTable({
@@ -412,7 +412,9 @@ sap.ui.define([
 		});
 		/*eslint-enable no-new */
 
-		assert.ok(spy.calledOnce, "bindRows was called");
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
+
+		oInnerBindRows.restore();
 	});
 
 	QUnit.test("Binding events", function(assert) {

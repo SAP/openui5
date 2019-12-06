@@ -2378,7 +2378,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind rows using bindRows method", function(assert) {
-		var spy = this.spy(oTable, "destroyRows");
+		var oDestroyRows = this.spy(oTable, "destroyRows");
 
 		// bind rows again, binding could be resolved because model is set
 		oTable.bindRows(oTable.getBindingInfo("rows"));
@@ -2411,10 +2411,11 @@ sap.ui.define([
 		this.assertBindingInfo(assert, "BindingInfo", oTable.getBindingInfo("rows"), oBindingInfo);
 
 		// destroy rows must not be called
-		assert.ok(spy.notCalled, "destroyRows was not called");
+		assert.ok(oDestroyRows.notCalled, "destroyRows was not called");
 	});
 
 	QUnit.test("Bind rows using bindRows method - legacy API", function(assert) {
+		var oInnerBindRows = this.spy(oTable, "_bindRows");
 		var oSorter = new Sorter({
 			path: "modelData>money",
 			descending: true
@@ -2430,27 +2431,34 @@ sap.ui.define([
 
 		// (sPath)
 		oTable.bindRows("/modelData");
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
 		this.assertBindingInfo(assert, "(sPath)", oTable.getBindingInfo("rows"), {
 			path: "/modelData"
 		});
+		oInnerBindRows.reset();
 
 		// (sPath, oSorter)
 		oTable.bindRows("/modelData", oSorter);
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
 		this.assertBindingInfo(assert, "(sPath, oSorter)", oTable.getBindingInfo("rows"), {
 			path: "/modelData",
 			sorter: oSorter
 		});
+		oInnerBindRows.reset();
 
 		// (sPath, oSorter, aFilters)
 		oTable.bindRows("/modelData", oSorter, [oFilter]);
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
 		this.assertBindingInfo(assert, "(sPath, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
 			path: "/modelData",
 			sorter: oSorter,
 			filters: [oFilter]
 		});
+		oInnerBindRows.reset();
 
 		// (sPath, vTemplate, oSorter, aFilters)
 		oTable.bindRows("/modelData", oTemplate, oSorter, [oFilter]);
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
 		this.assertBindingInfo(assert, "(sPath, vTemplate, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
 			path: "/modelData",
 			sorter: oSorter,
@@ -2460,7 +2468,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind rows using the constructor", function(assert) {
-		var spy = this.spy(Table.prototype, "bindRows");
+		var oInnerBindRows = this.spy(Table.prototype, "_bindRows");
+
 		/*eslint-disable no-new */
 		new Table({
 			rows: {path: "/modelData"},
@@ -2468,7 +2477,9 @@ sap.ui.define([
 		});
 		/*eslint-enable no-new */
 
-		assert.ok(spy.calledOnce, "bindRows was called");
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
+
+		oInnerBindRows.restore();
 	});
 
 	QUnit.test("Binding events", function(assert) {

@@ -144,25 +144,21 @@ sap.ui.define([
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
 	};
 
-	TreeTable.prototype.bindRows = function(oBindingInfo) {
-		oBindingInfo = Table._getSanitizedBindingInfo(arguments);
-
-		if (oBindingInfo) {
-			if (!oBindingInfo.parameters) {
-				oBindingInfo.parameters = {};
-			}
-
-			oBindingInfo.parameters.rootLevel = this.getRootLevel();
-			oBindingInfo.parameters.collapseRecursive = this.getCollapseRecursive();
-
-			// If the number of expanded levels is not specified in the binding parameters, we use the corresponding table property
-			// to determine the value.
-			if (!("numberOfExpandedLevels" in oBindingInfo.parameters)) {
-				oBindingInfo.parameters.numberOfExpandedLevels = this.getExpandFirstLevel() ? 1 : 0;
-			}
+	TreeTable.prototype._bindRows = function(oBindingInfo) {
+		if (!oBindingInfo.parameters) {
+			oBindingInfo.parameters = {};
 		}
 
-		return Table.prototype.bindRows.call(this, oBindingInfo);
+		oBindingInfo.parameters.rootLevel = this.getRootLevel();
+		oBindingInfo.parameters.collapseRecursive = this.getCollapseRecursive();
+
+		// If the number of expanded levels is not specified in the binding parameters, we use the corresponding table property
+		// to determine the value.
+		if (!("numberOfExpandedLevels" in oBindingInfo.parameters)) {
+			oBindingInfo.parameters.numberOfExpandedLevels = this.getExpandFirstLevel() ? 1 : 0;
+		}
+
+		return Table.prototype._bindRows.call(this, oBindingInfo);
 	};
 
 	TreeTable.prototype._updateRowState = function(oState) {
