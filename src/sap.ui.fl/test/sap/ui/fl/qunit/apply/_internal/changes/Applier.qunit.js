@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/FlexController",
@@ -28,6 +29,7 @@ function(
 	Applier,
 	FlexCustomData,
 	ChangeUtils,
+	DependencyHandler,
 	ChangeHandlerBase,
 	Change,
 	FlexController,
@@ -616,11 +618,11 @@ function(
 
 				var mChangesMap = fnGetChangesMap();
 				var oMissingControl1 = new Control("missingControl1");
-				this.oFlexController._iterateDependentQueue(mChangesMap);
+				DependencyHandler.processDependentQueue(mChangesMap);
 				assert.equal(this.oApplyChangeOnControlStub.callCount, 2, "now two changes were processed");
 
 				var oMissingControl2 = new Control("missingControl2");
-				this.oFlexController._iterateDependentQueue(mChangesMap);
+				DependencyHandler.processDependentQueue(mChangesMap);
 				assert.equal(this.oApplyChangeOnControlStub.callCount, 3, "now all changes are processed");
 
 				oMissingControl1.destroy();
@@ -686,7 +688,7 @@ function(
 		});
 
 		QUnit.test("applyAllChangesForControl dependency test - with dependent controls without changes that get rendered later", function(assert) {
-			var oProcessDependentQueueSpy = sandbox.spy(this.oFlexController, "_processDependentQueue");
+			var oProcessDependentQueueSpy = sandbox.spy(DependencyHandler, "processDependentQueue");
 			this.oRandomControl = new Control("randomId");
 			var oChange0 = new Change(getLabelChangeContent("fileNameChange0"));
 

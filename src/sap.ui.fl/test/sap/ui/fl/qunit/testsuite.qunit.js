@@ -141,6 +141,24 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/controlVariants/URLHandler"]
 				}
 			},
+			"apply/_internal/flexState/changes/DependencyHandler": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler"]
+				}
+			},
+			"apply/_internal/flexState/controlVariants/VariantManagementState": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"]
+				}
+			},
+			"apply/_internal/flexState/controlVariants/Switcher": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher"]
+				}
+			},
 			"apply/_internal/flexState/FlexState": {
 				group: "Apply Internal",
 				coverage: {
@@ -181,18 +199,6 @@ sap.ui.define(function () {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
-				}
-			},
-			"apply/_internal/flexState/controlVariants/VariantManagementState": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"]
-				}
-			},
-			"apply/_internal/flexState/controlVariants/Switcher": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher"]
 				}
 			},
 			"write/api/ChangesWriteAPI": {

@@ -13,8 +13,7 @@ sap.ui.define([
 	 * Prepares the ChangesMap from the flex response
 	 *
 	 * @param {object} mPropertyBag
-	 * @param {object} mPropertyBag.flexResponse - Flex response
-	 * @param {object} [mPropertyBag.technicalParameters] - Technical parameters
+	 * @param {object} mPropertyBag.storageResponse - Storage response
 	 *
 	 * @returns {object} The prepared map of changes
 	 *
@@ -30,6 +29,7 @@ sap.ui.define([
 		var aChanges = aChangeDefinitions.map(function(oChangeDefinition) {
 			return new Change(oChangeDefinition);
 		});
+		// TODO create dependency map and return it
 		return {
 			changes: aChanges
 		};

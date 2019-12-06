@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/Utils",
@@ -23,6 +24,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/Log"
 ], function(
+	DependencyHandler,
 	Change,
 	Variant,
 	Utils,
@@ -657,93 +659,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * @param {sap.ui.core.Component} oAppComponent - Application component containing the control for which the change should be added
-	 * @param {sap.ui.fl.Change} oChange change which should be added into the mapping
-	 * @see sap.ui.fl.Change
-	 * @returns {map} mChanges map with added change
-	 * @private
-	 */
-	ChangePersistence.prototype._addChangeIntoMap = function (oAppComponent, oChange) {
-		var oSelector = oChange.getSelector();
-		if (oSelector && oSelector.id) {
-			var sSelectorId = _getCompleteIdFromSelector(oSelector, oAppComponent);
-
-			this._addMapEntry(sSelectorId, oChange);
-
-			// if the localId flag is missing and the selector has a component prefix that is not matching the
-			// application component, adds the change for a second time replacing the component ID prefix with
-			// the application component ID prefix
-			if (oSelector.idIsLocal === undefined && sSelectorId.indexOf("---") !== -1) {
-				var sComponentPrefix = sSelectorId.split("---")[0];
-
-				if (sComponentPrefix !== oAppComponent.getId()) {
-					sSelectorId = sSelectorId.split("---")[1];
-					sSelectorId = oAppComponent.createId(sSelectorId);
-					this._addMapEntry(sSelectorId, oChange);
-				}
-			}
-		}
-
-		return this._mChanges;
-	};
-
-	/**
-	 *
-	 * @param {string} sSelectorId Key in the mapping for which the entry is written
-	 * @param {sap.ui.fl.Change} oChange Change object to be added to the mapping
-	 * @private
-	 */
-	ChangePersistence.prototype._addMapEntry = function (sSelectorId, oChange) {
-		if (!this._mChanges.mChanges[sSelectorId]) {
-			this._mChanges.mChanges[sSelectorId] = [];
-		}
-		// don't add the same change twice
-		if (this._mChanges.mChanges[sSelectorId].indexOf(oChange) === -1) {
-			this._mChanges.mChanges[sSelectorId].push(oChange);
-		}
-
-		if (this._mChanges.aChanges.indexOf(oChange) === -1) {
-			this._mChanges.aChanges.push(oChange);
-		}
-	};
-
-	ChangePersistence.prototype._addDependency = function (oDependentChange, oChange, bRunTimeCreatedChange) {
-		var mChanges = bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges;
-		if (!mChanges.mDependencies[oDependentChange.getId()]) {
-			mChanges.mDependencies[oDependentChange.getId()] = {
-				changeObject: oDependentChange,
-				dependencies: []
-			};
-		}
-		mChanges.mDependencies[oDependentChange.getId()].dependencies.push(oChange.getId());
-
-		if (!mChanges.mDependentChangesOnMe[oChange.getId()]) {
-			mChanges.mDependentChangesOnMe[oChange.getId()] = [];
-		}
-		mChanges.mDependentChangesOnMe[oChange.getId()].push(oDependentChange.getId());
-	};
-
-	ChangePersistence.prototype._addControlsDependencies = function (oDependentChange, oAppComponent, aControlSelectorList, bRunTimeCreatedChange) {
-		var mChanges = bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges;
-		if (aControlSelectorList.length > 0) {
-			if (!mChanges.mDependencies[oDependentChange.getId()]) {
-				mChanges.mDependencies[oDependentChange.getId()] = {
-					changeObject: oDependentChange,
-					dependencies: [],
-					controlsDependencies: []
-				};
-			}
-			mChanges.mDependencies[oDependentChange.getId()].controlsDependencies = aControlSelectorList;
-
-			var sSelectorId;
-			aControlSelectorList.forEach(function(oSelector) {
-				sSelectorId = _getCompleteIdFromSelector(oSelector, oAppComponent);
-				mChanges.mControlsWithDependencies[sSelectorId] = true;
-			});
-		}
-	};
-
-	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
 	 * @param {object} oAppComponent - Component instance used to prepare the IDs (e.g. local)
@@ -824,33 +739,11 @@ sap.ui.define([
 		// the change status should always be initial when it gets added to the map / dependencies
 		// if the component gets recreated the status of the change might not be initial
 		oChange.setInitialApplyState();
-		this._addChangeIntoMap(oAppComponent, oChange);
-		this._updateDependencies(oChange, oAppComponent, false);
+		DependencyHandler.addChangeAndUpdateDependencies(oChange, oAppComponent, this._mChanges);
 	};
 
 	ChangePersistence.prototype._addRunTimeCreatedChangeAndUpdateDependencies = function(oAppComponent, oChange) {
-		this._addChangeIntoMap(oAppComponent, oChange);
-		this._updateDependencies(oChange, oAppComponent, true);
-	};
-
-	ChangePersistence.prototype._updateDependencies = function (oChange, oAppComponent, bRunTimeCreatedChange) {
-		//create dependencies map
-		var aChanges = this.getChangesMapForComponent().aChanges;
-		var aDependentSelectorList = oChange.getDependentSelectorList();
-		var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
-		this._addControlsDependencies(oChange, oAppComponent, aDependentControlSelectorList, bRunTimeCreatedChange);
-
-		// start from last change in map, excluding the recently added change
-		aChanges.slice(0, aChanges.length - 1).reverse().forEach(function(oExistingChange) {
-			var aExistingDependentSelectorList = oExistingChange.getDependentSelectorList();
-			aDependentSelectorList.some(function(oDependentSelectorList) {
-				var iDependentIndex = Utils.indexOfObject(aExistingDependentSelectorList, oDependentSelectorList);
-				if (iDependentIndex > -1) {
-					this._addDependency(oChange, oExistingChange, bRunTimeCreatedChange);
-					return true;
-				}
-			}.bind(this));
-		}.bind(this));
+		DependencyHandler.addRuntimeChangeAndUpdateDependencies(oChange, oAppComponent, this._mChanges, this._mChangesInitial);
 	};
 
 	/**

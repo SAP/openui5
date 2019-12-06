@@ -2155,7 +2155,7 @@ function (
 				});
 		});
 
-		QUnit.test("_addChangeIntoMap adds legacy change only once in case the component prefix matches the app component ID", function(assert) {
+		QUnit.skip("_addChangeIntoMap adds legacy change only once in case the component prefix matches the app component ID", function(assert) {
 			var sAppComponentId = "appComponentId";
 
 			var oComponent = {
@@ -2182,7 +2182,7 @@ function (
 				"the change was written for the selector ID");
 		});
 
-		QUnit.test("_addChangeIntoMap adds legacy change twice in case the component prefix does not match the app component ID", function(assert) {
+		QUnit.skip("_addChangeIntoMap adds legacy change twice in case the component prefix does not match the app component ID", function(assert) {
 			var sAppComponentId = "appComponentId";
 
 			var oComponent = {
@@ -2215,7 +2215,7 @@ function (
 				"the change was written for the app selector ID");
 		});
 
-		QUnit.test("_addChangeIntoMap adds non legacy change only once in case the component prefix does not match the app component ID", function(assert) {
+		QUnit.skip("_addChangeIntoMap adds non legacy change only once in case the component prefix does not match the app component ID", function(assert) {
 			var sAppComponentId = "appComponentId";
 
 			var oComponent = {
