@@ -217,9 +217,10 @@ sap.ui.define([
 		 * @private
 		 */
 		_openCustomContentCellContextMenu: function(oTable, oCell, oEvent) {
-			if (!MenuUtils.hasCustomContextMenu(oTable)
-				|| MenuUtils.TableUtils.Grouping.isInSumRow(oCell)
-				|| MenuUtils.TableUtils.Grouping.isInGroupingRow(oCell)) {
+			var oCellInfo = MenuUtils.TableUtils.getCellInfo(oCell);
+			var oRow = oTable.getRows()[oCellInfo.rowIndex];
+
+			if (oRow.isGroupHeader() || oRow.isSummary()) {
 				return false;
 			}
 
@@ -262,7 +263,7 @@ sap.ui.define([
 			var aColumns = oTable.getColumns();
 			var oColumn = aColumns[iColumnIndex];
 
-			if (!oTable.getEnableCellFilter() || !oColumn || !oColumn.isFilterableByMenu() || MenuUtils.TableUtils.Grouping.isInGroupingRow(oCell)) {
+			if (!oTable.getEnableCellFilter() || !oColumn || !oColumn.isFilterableByMenu() || oRow.isGroupHeader()) {
 				return false;
 			}
 

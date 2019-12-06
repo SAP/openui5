@@ -749,22 +749,10 @@ sap.ui.define([
 				target: oCell
 			});
 
-			assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(), false, "Returned false");
-			assertCloseMenuSpiesNotCalled();
-			resetSpies();
-
 			var oContextMenu = createMenuM();
 			oTable.setContextMenu(oContextMenu);
 			var fnOpenAsContextMenu = that.spy(oContextMenu, "openAsContextMenu");
 			var fnOpen = that.spy(oContextMenu, "openBy");
-
-			assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(), false, "Returned false");
-			assertCloseMenuSpiesNotCalled();
-			assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
-			assert.ok(fnOpen.notCalled, "#open was not called");
-			resetSpies();
-			fnOpenAsContextMenu.reset();
-			fnOpen.reset();
 
 			fakeGroupRow(0);
 			assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");

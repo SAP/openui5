@@ -16,6 +16,9 @@ sap.ui.define([], function() {
 			RefreshRows: "Table.RefreshRows",
 			UpdateRows: "Table.UpdateRows",
 			UpdateSizes: "Table.UpdateSizes"
+		}),
+		Row: Object.freeze({
+			UpdateState: "Row.UpdateState"
 		})
 	});
 

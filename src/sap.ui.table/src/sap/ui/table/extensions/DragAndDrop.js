@@ -69,25 +69,13 @@ sap.ui.define([
 			var oSessionData = {};
 
 			if (oDraggedControl.isA("sap.ui.table.Row")) {
-				/*
-				 * Rows which must not be draggable:
-				 * - Empty rows (rows without context)
-				 * - Group header rows
-				 * - Sum rows
-				 */
-				var oDraggedRowContext = this.getContextByIndex(oDraggedControl.getIndex());
-				var oDraggedRowDomRef = oDraggedControl.getDomRef();
-
-				if (!oDraggedRowContext // Empty row
-					|| oDraggedRowDomRef.classList.contains("sapUiTableGroupHeader") // Group header row
-					|| oDraggedRowDomRef.classList.contains("sapUiAnalyticalTableSum")) { // Sum row
-
+				if (oDraggedControl.isEmpty() || oDraggedControl.isGroupHeader() || oDraggedControl.isSummary()) {
 					oEvent.preventDefault();
 					return;
 				} else {
 					// To be able to identify whether a row is dropped on itself we need to compare the contexts. The row index is not reliable. The
 					// indexing of the table can change, for example by expanding a node.
-					oSessionData.draggedRowContext = oDraggedRowContext;
+					oSessionData.draggedRowContext = oDraggedControl.getRowBindingContext();
 				}
 			}
 
@@ -118,14 +106,13 @@ sap.ui.define([
 				 * - Sum rows
 				 */
 				var oDraggedRowContext = oSessionData.draggedRowContext;
-				var oDropRowContext = this.getContextByIndex(oDropControl.getIndex());
-				var oDropRowDomRef = oDropControl.getDomRef();
+				var oDropRowContext = oDropControl.getRowBindingContext();
 				var sDropPosition = oDragSession.getDropInfo().getDropPosition();
 
-				if ((!oDropRowContext && sDropPosition === DropPosition.On && TableUtils.hasData(this)) // On empty row, table has data
+				if ((oDropControl.isEmpty() && sDropPosition === DropPosition.On && TableUtils.hasData(this)) // On empty row, table has data
 					|| (oDraggedRowContext && oDraggedRowContext === oDropRowContext) // The dragged row itself
-					|| oDropRowDomRef.classList.contains("sapUiTableGroupHeader") // Group header row
-					|| oDropRowDomRef.classList.contains("sapUiAnalyticalTableSum")) { // Sum row
+					|| oDropControl.isGroupHeader()
+					|| oDropControl.isSummary()) {
 					oEvent.setMarked("NonDroppable");
 				} else {
 					// If dragging over an empty row with a drop position other than "On", the drop control should be the first non-empty row. If

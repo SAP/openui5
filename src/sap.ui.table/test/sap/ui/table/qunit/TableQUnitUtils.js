@@ -958,18 +958,28 @@ sap.ui.define([
 		return $ActiveElement;
 	};
 
-	window.fakeGroupRow = function(iRow) {
-		var oRow = oTable.getRows()[iRow];
-		var $Row = oTable.$("rows-row" + iRow);
-		var $RowFixed = oTable.$("rows-row" + iRow + "-fixed");
-		var $RowHdr = oTable.$("rowsel" + iRow).parent();
-		var $RowAct = oTable.$("rowact" + iRow).parent();
+	window.fakeGroupRow = function(iRow, oTableInstance) {
+		if (!oTableInstance) {
+			oTableInstance = oTable;
+		}
 
-		$Row.toggleClass("sapUiTableGroupHeader sapUiTableRowHidden", true).data("sap-ui-level", 1);
-		$RowFixed.toggleClass("sapUiTableGroupHeader sapUiTableRowHidden", true).data("sap-ui-level", 1);
-		$RowHdr.toggleClass("sapUiTableGroupHeader sapUiTableRowHidden", true).data("sap-ui-level", 1);
-		$RowAct.toggleClass("sapUiTableGroupHeader sapUiTableRowHidden", true).data("sap-ui-level", 1);
-		oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, $RowAct, true, true, 1, null);
+		var oRow = oTableInstance.getRows()[iRow];
+		var $Row = oTableInstance.$("rows-row" + iRow);
+		var $RowFixed = oTableInstance.$("rows-row" + iRow + "-fixed");
+		var $RowHdr = oTableInstance.$("rowsel" + iRow).parent();
+		var $RowAct = oTableInstance.$("rowact" + iRow).parent();
+		var iLevel = 1;
+
+		oRow.getType = function() {return oRow.Type.GroupHeader;};
+		oRow.getLevel = function() {return iLevel;};
+		oRow.isExpandable = function() {return true;};
+		oRow.isExpanded = function() {return true;};
+		oRow.isContentHidden = function() {return true;};
+		$Row.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
+		$RowFixed.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
+		$RowHdr.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
+		$RowAct.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
+		oTableInstance._getAccExtension().updateAriaExpandAndLevelState(oRow);
 		return {
 			row: $Row,
 			fixed: $RowFixed,
@@ -978,18 +988,25 @@ sap.ui.define([
 		};
 	};
 
-	window.fakeSumRow = function(iRow) {
-		var oRow = oTable.getRows()[iRow];
-		var $Row = oTable.$("rows-row" + iRow);
-		var $RowFixed = oTable.$("rows-row" + iRow + "-fixed");
-		var $RowHdr = oTable.$("rowsel" + iRow).parent();
-		var $RowAct = oTable.$("rowact" + iRow).parent();
+	window.fakeSumRow = function(iRow, oTableInstance) {
+		if (!oTableInstance) {
+			oTableInstance = oTable;
+		}
 
-		$Row.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
-		$RowFixed.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
-		$RowHdr.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
-		$RowAct.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
-		oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, $RowAct, false, false, 1, null);
+		var oRow = oTableInstance.getRows()[iRow];
+		var $Row = oTableInstance.$("rows-row" + iRow);
+		var $RowFixed = oTableInstance.$("rows-row" + iRow + "-fixed");
+		var $RowHdr = oTableInstance.$("rowsel" + iRow).parent();
+		var $RowAct = oTableInstance.$("rowact" + iRow).parent();
+		var iLevel = 1;
+
+		oRow.getType = function() {return oRow.Type.Summary;};
+		oRow.getLevel = function() {return iLevel;};
+		$Row.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
+		$RowFixed.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
+		$RowHdr.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
+		$RowAct.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
+		oTableInstance._getAccExtension().updateAriaExpandAndLevelState(oRow);
 		return {
 			row: $Row,
 			fixed: $RowFixed,

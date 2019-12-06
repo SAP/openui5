@@ -22,6 +22,7 @@ sap.ui.define([
 	var iNumberOfRows = window.iNumberOfRows;
 	var initRowActions = window.initRowActions;
 	var checkFocus = window.checkFocus;
+	var fakeSumRow = window.fakeSumRow;
 
 	QUnit.module("Initialization", {
 		beforeEach: function() {
@@ -613,8 +614,8 @@ sap.ui.define([
 			bSelected = true;
 		};
 
+		fakeSumRow(0, oTreeTable);
 		var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel0");
-		$RowHdr.addClass("sapUiAnalyticalTableSum");
 		qutils.triggerMouseEvent($RowHdr, "click");
 		assert.ok(!bSelected, "Selection was not performed");
 

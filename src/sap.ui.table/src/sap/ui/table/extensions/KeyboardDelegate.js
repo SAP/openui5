@@ -517,7 +517,7 @@ sap.ui.define([
 	 * @static
 	 */
 	KeyboardDelegate._isElementGroupToggler = function(oTable, oElement) {
-		return TableUtils.Grouping.isInGroupingRow(oElement)
+		return TableUtils.Grouping.isInGroupHeaderRow(oElement)
 			   || (TableUtils.Grouping.isTreeMode(oTable)
 				   && oElement.classList.contains("sapUiTableCellFirst")
 				   && (oElement.querySelector(".sapUiTableTreeIconNodeOpen")
@@ -862,7 +862,7 @@ sap.ui.define([
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 		var bIsRowHeaderCellInGroupHeaderRow = oCellInfo.isOfType(CellType.ROWHEADER)
-											   && TableUtils.Grouping.isInGroupingRow(oEvent.target);
+											   && TableUtils.Grouping.isInGroupHeaderRow(oEvent.target);
 		var bIsRowSelectorCell = oCellInfo.isOfType(CellType.ROWHEADER)
 								 && !bIsRowHeaderCellInGroupHeaderRow
 								 && TableUtils.isRowSelectorSelectionAllowed(this);
@@ -1098,7 +1098,7 @@ sap.ui.define([
 							iRowIndex = i;
 							oRow = this.getRows()[iRowIndex];
 							$InteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oRow);
-							bRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
+							bRowIsGroupHeaderRow = oRow.isGroupHeader();
 							if ($InteractiveElement || bRowIsGroupHeaderRow) {
 								break;
 							}
@@ -1164,16 +1164,14 @@ sap.ui.define([
 
 		if (bScrolled) {
 			oTable.attachEventOnce("_rowsUpdated", function() {
-				var bIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
-				setFocusNext(oTable, oRow, iRowIndex, bTableHasRowSelectors, bIsGroupHeaderRow);
+				setFocusNext(oTable, oRow, iRowIndex, bTableHasRowSelectors, oRow.isGroupHeader());
 			});
 		} else if (oRow.getIndex() !== oTable._getTotalRowCount() - 1) {
 			// in case there are fixed bottom rows and the table cannot be scrolled anymore set the focus on the first fixed bottom row
 			var iNextRowIndex = oCellInfo.rowIndex + 1;
 			var oNextRow = oTable.getRows()[iNextRowIndex];
-			var bNextRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oNextRow.getDomRef());
 
-			setFocusNext(oTable, oNextRow, iNextRowIndex, bTableHasRowSelectors, bNextRowIsGroupHeaderRow);
+			setFocusNext(oTable, oNextRow, iNextRowIndex, bTableHasRowSelectors, oNextRow.isGroupHeader());
 		} else {
 			// if the absolute last index is reached and no interactive elements are found -> leave action mode
 			oKeyboardExtension.setActionMode(false);
@@ -1219,8 +1217,7 @@ sap.ui.define([
 			var $FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oRow);
 			var bIsFirstInteractiveElementInRow = $FirstInteractiveElement !== null && $FirstInteractiveElement[0] === oEvent.target;
 			var bTableHasRowSelectors = TableUtils.isRowSelectorSelectionAllowed(this);
-			var bRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow);
-			var bRowHasInteractiveRowHeader = bTableHasRowSelectors || bRowIsGroupHeaderRow;
+			var bRowHasInteractiveRowHeader = bTableHasRowSelectors || oRow.isGroupHeader();
 
 			if (bIsFirstInteractiveElementInRow && bRowHasInteractiveRowHeader) {
 				oEvent.preventDefault();
@@ -1246,7 +1243,7 @@ sap.ui.define([
 						iRowIndex = i;
 						oRow = this.getRows()[iRowIndex];
 						$InteractiveElement = KeyboardDelegate._getLastInteractiveElement(oRow);
-						bRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
+						bRowIsGroupHeaderRow = oRow.isGroupHeader();
 						if ($InteractiveElement || bRowHasInteractiveRowHeader || bRowIsGroupHeaderRow) {
 							break;
 						}
@@ -1303,16 +1300,14 @@ sap.ui.define([
 
 		if (bScrolled) {
 			oTable.attachEventOnce("_rowsUpdated", function() {
-				var bIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
-				setFocusPrevious(oTable, oRow, iRowIndex, bRowHasInteractiveRowHeader, bIsGroupHeaderRow);
+				setFocusPrevious(oTable, oRow, iRowIndex, bRowHasInteractiveRowHeader, oRow.isGroupHeader());
 			});
 		} else if (oRow.getIndex() !== 0) {
 			// in case there are fixed top rows and the table cannot be scrolled anymore set the focus on the last fixed top row
 			var iPreviousRowIndex = oCellInfo.rowIndex - 1;
 			var oPreviousRow = oTable.getRows()[iPreviousRowIndex];
-			var bPreviousRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oPreviousRow.getDomRef());
 
-			setFocusPrevious(oTable, oPreviousRow, iPreviousRowIndex, bRowHasInteractiveRowHeader, bPreviousRowIsGroupHeaderRow);
+			setFocusPrevious(oTable, oPreviousRow, iPreviousRowIndex, bRowHasInteractiveRowHeader, oPreviousRow.isGroupHeader());
 		} else {
 			// if the absolute first index is reached and no interactive elements are found -> leave action mode
 			oKeyboardExtension.setActionMode(false);
@@ -1649,7 +1644,7 @@ sap.ui.define([
 		}
 
 		// If focus is on a group header, do nothing.
-		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
+		if (TableUtils.Grouping.isInGroupHeaderRow(oEvent.target)) {
 			preventItemNavigation(oEvent);
 			oEvent.preventDefault(); // Prevent scrolling the page.
 			return;
@@ -1690,7 +1685,7 @@ sap.ui.define([
 		}
 
 		// If focus is on a group header, do nothing.
-		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
+		if (TableUtils.Grouping.isInGroupHeaderRow(oEvent.target)) {
 			oEvent.preventDefault(); // Prevent scrolling the page.
 			preventItemNavigation(oEvent);
 			return;
@@ -2038,7 +2033,7 @@ sap.ui.define([
 
 				preventItemNavigation(oEvent);
 
-				if (bHasRowHeader && (TableUtils.Grouping.isInGroupingRow(oEvent.target) || iFocusedCellInRow === 1)) {
+				if (bHasRowHeader && (TableUtils.Grouping.isInGroupHeaderRow(oEvent.target) || iFocusedCellInRow === 1)) {
 					// If a row header exists and the focus is on a group header or the first cell,
 					// then set the focus to the row header cell.
 					TableUtils.focusItem(this, iFocusedIndex - iFocusedCellInRow, null);
@@ -2099,7 +2094,7 @@ sap.ui.define([
 						// then scroll only the remaining cells (set the focus to the last cell).
 						TableUtils.focusItem(this, iFocusedIndex + iVisibleColumnCount - iFocusedCellInRow - 1 + iRowHeaderOffset, null);
 
-					} else if (!TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
+					} else if (!TableUtils.Grouping.isInGroupHeaderRow(oEvent.target)) {
 						// Scroll one page.
 						TableUtils.focusItem(this, iFocusedIndex + iPageSize, null);
 

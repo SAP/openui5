@@ -4133,22 +4133,6 @@ sap.ui.define([
 		assert.ok(fnInvalidate.called, "invalidate() called from onThemeChanged()");
 	});
 
-	QUnit.test("test _updateTableContent and cleanupTableRowForGrouping after _rowsUpdated", function(assert) {
-		var fnCleanupTableRowForGrouping = sinon.spy(TableUtils.Grouping, "cleanupTableRowForGrouping");
-		var fnUpdateTableContent = sinon.spy(oTable, "_updateTableContent");
-
-		oTable._mode = "Group"; // return true for TableUtils.Grouping.isGroupMode(oTable)
-		oTable.setEnableGrouping(true); // for testing _updateTableContent()
-		oTable.setGroupBy(oTable.getColumns()[5]); // Enabling grouping on "gender" for enhancing row binding
-		oTable._fireRowsUpdated();
-		assert.ok(fnUpdateTableContent.called);
-
-		oTable.unbindRows();
-		oTable._fireRowsUpdated();
-		assert.ok(fnCleanupTableRowForGrouping.notCalled,
-			"Row binding was destroyed, hence no rows exist for which cleanupTableRowForGrouping needs to be called");
-	});
-
 	QUnit.test("test _enableTextSelection function", function(assert) {
 		oTable._enableTextSelection(oTable.getDomRef());
 		assert.ok(oTable.getDomRef().hasAttribute("unselectable", "off"), "_enableTextSelection is on");

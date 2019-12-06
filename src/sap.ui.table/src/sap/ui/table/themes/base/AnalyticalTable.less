@@ -3,7 +3,25 @@
 /* Base theme                                    */
 /* ============================================= */
 
-.sapUiAnalyticalTable .sapUiAnalyticalTableSum > .sapUiTableCell {
-	border-left-color: transparent;
-	border-right-color: transparent;
+// sapUiAnalyticalTableGroupCellHidden and sapUiAnalyticalTableSumCellHidden provides the possibility for applications to hide
+// the cell content of a column on group headers and / or sums by using addStyleClass of the column template
+.sapUiAnalyticalTable .sapUiTableGroupHeaderRow .sapUiTableCellInner > .sapUiAnalyticalTableGroupCellHidden,
+.sapUiAnalyticalTable .sapUiTableSummaryRow .sapUiTableCellInner > .sapUiAnalyticalTableSumCellHidden {
+	visibility: hidden; /* hidden cell content*/
+}
+
+.sapUiAnalyticalTable .sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell .sapUiTableGroupMenuButton {
+	position: absolute;
+	width: 2.5rem;
+	text-align: center;
+	z-index: 5;
+	right: 0;
+	top: 50%;
+	-webkit-transform: translatey(-50%);
+	transform: translatey(-50%);
+	background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
+	font-family: 'SAP-icons';
+	font-size: 1.375rem;
+	color: @sapUiContentIconColor;
+	display: block;
 }

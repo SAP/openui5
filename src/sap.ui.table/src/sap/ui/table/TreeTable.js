@@ -136,6 +136,12 @@ sap.ui.define([
 	TreeTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
 		TableUtils.Grouping.setTreeMode(this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
+	};
+
+	TreeTable.exit = function() {
+		Table.prototype.exit.apply(this, arguments);
+		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
 	};
 
 	TreeTable.prototype.bindRows = function(oBindingInfo) {
@@ -157,6 +163,48 @@ sap.ui.define([
 		}
 
 		return Table.prototype.bindRows.call(this, oBindingInfo);
+	};
+
+	TreeTable.prototype._updateRowState = function(oState) {
+		var oBinding = this.getBinding("rows");
+		var oNode = oState.context;
+
+		if (!oBinding || !oNode) {
+			return;
+		}
+
+		oState.context = oNode.context ? oNode.context : null; // The TreeTable requests nodes from the binding.
+		oState.level = oNode.level + 1;
+
+		if (oBinding.nodeHasChildren) {
+			if (oNode.nodeState) {
+				oState.expandable = oBinding.nodeHasChildren(oNode);
+			}
+		} else if (oBinding.hasChildren) {
+			oState.expandable = oBinding.hasChildren(oNode.context);
+		}
+
+		if (oState.expandable) {
+			if (oBinding.getLevel) {
+				//used by the "mini-adapter" in the ClientTreeBindings
+				oState.expanded = oBinding.isExpanded(this.getIndex());
+			} else if (oBinding.findNode) { // the ODataTreeBinding(Adapter) provides the hasChildren method for Tree
+				oState.expanded = this && oNode.nodeState ? oNode.nodeState.expanded : false;
+			}
+		}
+
+		if (TableUtils.Grouping.isGroupMode(this)) {
+			var sHeaderProp = this.getGroupHeaderProperty();
+
+			if (sHeaderProp) {
+				oState.title = oState.context.getProperty(sHeaderProp);
+			}
+
+			if (oState.expandable) {
+				oState.type = oState.Type.GroupHeader;
+				oState.contentHidden = true;
+			}
+		}
 	};
 
 	/**

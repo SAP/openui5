@@ -201,7 +201,7 @@ sap.ui.define([
 			var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
 			var sText = mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
 
-			_writeAccText(oRm, oRow.getId(), "rowselecttext", oRow._bHidden ? "" : sText, ["sapUiTableAriaRowSel"]);
+			_writeAccText(oRm, oRow.getId(), "rowselecttext", oRow.isEmpty() ? "" : sText, ["sapUiTableAriaRowSel"]);
 		},
 
 		/**

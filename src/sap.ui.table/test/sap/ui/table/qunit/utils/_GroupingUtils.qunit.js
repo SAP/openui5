@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
-	"sap/ui/table/AnalyticalTable"
-], function(TableQUnitUtils, TableUtils, Device, Table, TreeTable, AnalyticalTable) {
+	"sap/ui/table/AnalyticalTable",
+	"sap/ui/table/Row"
+], function(TableQUnitUtils, TableUtils, Device, Table, TreeTable, AnalyticalTable, Row) {
 	"use strict";
 
 	// mapping of global function calls
@@ -389,64 +390,44 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("isInSumRow", function(assert) {
+	QUnit.test("isInSummaryRow", function(assert) {
 		initRowActions(oTable, 1, 1);
 
 		fakeSumRow(0);
 
-		assert.ok(TableUtils.Grouping.isInSumRow(getCell(0, 0)), "DATACELL in sum row");
-		assert.ok(!TableUtils.Grouping.isInSumRow(getCell(1, 0)), "DATACELL in normal row");
+		assert.ok(TableUtils.Grouping.isInSummaryRow(getCell(0, 0)), "DATACELL in sum row");
+		assert.ok(!TableUtils.Grouping.isInSummaryRow(getCell(1, 0)), "DATACELL in normal row");
 
-		assert.ok(TableUtils.Grouping.isInSumRow(getRowHeader(0)), "ROWHEADER in sum row");
-		assert.ok(!TableUtils.Grouping.isInSumRow(getRowHeader(1)), "ROWHEADER in normal row");
+		assert.ok(TableUtils.Grouping.isInSummaryRow(getRowHeader(0)), "ROWHEADER in sum row");
+		assert.ok(!TableUtils.Grouping.isInSummaryRow(getRowHeader(1)), "ROWHEADER in normal row");
 
-		assert.ok(TableUtils.Grouping.isInSumRow(getRowAction(0)), "ROWACTION in sum row");
-		assert.ok(!TableUtils.Grouping.isInSumRow(getRowAction(1)), "ROWACTION in normal row");
+		assert.ok(TableUtils.Grouping.isInSummaryRow(getRowAction(0)), "ROWACTION in sum row");
+		assert.ok(!TableUtils.Grouping.isInSummaryRow(getRowAction(1)), "ROWACTION in normal row");
 
-		assert.ok(!TableUtils.Grouping.isInSumRow(getColumnHeader(0)), "COLUMNHEADER");
-		assert.ok(!TableUtils.Grouping.isInSumRow(getSelectAll()), "COLUMNROWHEADER");
-		assert.ok(!TableUtils.Grouping.isInSumRow(null), "null");
-		assert.ok(!TableUtils.Grouping.isInSumRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
+		assert.ok(!TableUtils.Grouping.isInSummaryRow(getColumnHeader(0)), "COLUMNHEADER");
+		assert.ok(!TableUtils.Grouping.isInSummaryRow(getSelectAll()), "COLUMNROWHEADER");
+		assert.ok(!TableUtils.Grouping.isInSummaryRow(null), "null");
+		assert.ok(!TableUtils.Grouping.isInSummaryRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
 	});
 
-	QUnit.test("isInGroupingRow", function(assert) {
+	QUnit.test("isInGroupHeaderRow", function(assert) {
 		initRowActions(oTable, 1, 1);
 
 		fakeGroupRow(0);
 
-		assert.ok(TableUtils.Grouping.isInGroupingRow(getCell(0, 0)), "DATACELL in group row");
-		assert.ok(!TableUtils.Grouping.isInGroupingRow(getCell(1, 0)), "DATACELL in normal row");
+		assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getCell(0, 0)), "DATACELL in group row");
+		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getCell(1, 0)), "DATACELL in normal row");
 
-		assert.ok(TableUtils.Grouping.isInGroupingRow(getRowHeader(0)), "ROWHEADER in group row");
-		assert.ok(!TableUtils.Grouping.isInGroupingRow(getRowHeader(1)), "ROWHEADER in normal row");
+		assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getRowHeader(0)), "ROWHEADER in group row");
+		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getRowHeader(1)), "ROWHEADER in normal row");
 
-		assert.ok(TableUtils.Grouping.isInGroupingRow(getRowAction(0)), "ROWACTION in group row");
-		assert.ok(!TableUtils.Grouping.isInGroupingRow(getRowAction(1)), "ROWACTION in normal row");
+		assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getRowAction(0)), "ROWACTION in group row");
+		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getRowAction(1)), "ROWACTION in normal row");
 
-		assert.ok(!TableUtils.Grouping.isInGroupingRow(getColumnHeader(0)), "COLUMNHEADER");
-		assert.ok(!TableUtils.Grouping.isInGroupingRow(getSelectAll()), "COLUMNROWHEADER");
-		assert.ok(!TableUtils.Grouping.isInGroupingRow(null), "null");
-		assert.ok(!TableUtils.Grouping.isInGroupingRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
-	});
-
-	QUnit.test("isGroupingRow", function(assert) {
-		initRowActions(oTable, 1, 1);
-		fakeGroupRow(0);
-
-		assert.ok(!TableUtils.Grouping.isGroupingRow(), "Returned false: Invalid parameter passed");
-		assert.ok(!TableUtils.Grouping.isGroupingRow(null), "Returned false: Invalid parameter passed");
-
-		assert.ok(TableUtils.Grouping.isGroupingRow(oTable.getRows()[0].getDomRef()), "Returned true: Row 1 is a group header row");
-		assert.ok(TableUtils.Grouping.isGroupingRow(getRowHeader(0).parent()),
-			"Returned true: The header is part of the group header row");
-		assert.ok(TableUtils.Grouping.isGroupingRow(getRowAction(0).parent()),
-			"Returned true: The action part of Row 1 is part of the group header row");
-
-		assert.ok(!TableUtils.Grouping.isGroupingRow(oTable.getRows()[1].getDomRef()), "Returned false: Row 2 is a normal row");
-		assert.ok(!TableUtils.Grouping.isGroupingRow(getRowHeader(0)), "Returned false: The row header cell is not a group header row");
-		assert.ok(!TableUtils.Grouping.isGroupingRow(getCell(0, 0)), "Returned false: A cell is not a group header row");
-		assert.ok(!TableUtils.Grouping.isGroupingRow(getRowAction(0)), "Returned false: The row action cell is not a group header row");
-		assert.ok(!TableUtils.Grouping.isGroupingRow(getColumnHeader(0)), "Returned false: A column header cell is not a group header row");
+		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getColumnHeader(0)), "COLUMNHEADER");
+		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getSelectAll()), "COLUMNROWHEADER");
+		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(null), "null");
+		assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
 	});
 
 	QUnit.module("Grouping Modes", {
@@ -540,46 +521,40 @@ sap.ui.define([
 	});
 
 	QUnit.test("calcGroupIndent", function(assert) {
-		var oTable = new Table();
-		assert.equal(Grouping.calcGroupIndent(oTable, 0, true), 0, "sap.ui.table.Table, Level 0, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 0, false), 0, "sap.ui.table.Table, Level 0, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 1, true), 12, "sap.ui.table.Table, Level 1, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 1, false), 0, "sap.ui.table.Table, Level 1, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 2, true), 24, "sap.ui.table.Table, Level 2, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 2, false), 12, "sap.ui.table.Table, Level 2, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 3, true), 32, "sap.ui.table.Table, Level 3, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 3, false), 24, "sap.ui.table.Table, Level 3, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 4, true), 40, "sap.ui.table.Table, Level 4, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 4, false), 32, "sap.ui.table.Table, Level 4, !Group Header");
+		var oRow = new Row();
+		var oRowGetLevel = sinon.stub(oRow, "getLevel");
 
-		oTable = new TreeTable();
-		assert.equal(Grouping.calcGroupIndent(oTable, 0, true), 0, "sap.ui.table.TreeTable, Level 0, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 0, false), 0, "sap.ui.table.TreeTable, Level 0, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 1, true), 12, "sap.ui.table.TreeTable, Level 1, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 1, false), 12, "sap.ui.table.TreeTable, Level 1, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 2, true), 24, "sap.ui.table.TreeTable, Level 2, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 2, false), 24, "sap.ui.table.TreeTable, Level 2, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 3, true), 32, "sap.ui.table.TreeTable, Level 3, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 3, false), 32, "sap.ui.table.TreeTable, Level 3, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 4, true), 40, "sap.ui.table.TreeTable, Level 4, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 4, false), 40, "sap.ui.table.TreeTable, Level 4, !Group Header");
+		oRowGetLevel.returns(1);
+		assert.strictEqual(Grouping.calcGroupIndent(oRow), 0, "Level 1");
 
-		oTable = new AnalyticalTable();
-		assert.equal(Grouping.calcGroupIndent(oTable, 0, true), 0, "sap.ui.table.AnalyticalTable, Level 0, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 0, false), 0, "sap.ui.table.AnalyticalTable, Level 0, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 0, false, true), 0, "sap.ui.table.AnalyticalTable, Level 0, Sum");
-		assert.equal(Grouping.calcGroupIndent(oTable, 1, true), 0, "sap.ui.table.AnalyticalTable, Level 1, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 1, false), 0, "sap.ui.table.AnalyticalTable, Level 1, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 1, false, true), 0, "sap.ui.table.AnalyticalTable, Level 1, Sum");
-		assert.equal(Grouping.calcGroupIndent(oTable, 2, true), 24, "sap.ui.table.AnalyticalTable, Level 2, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 2, false), 0, "sap.ui.table.AnalyticalTable, Level 2, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 2, false, true), 24, "sap.ui.table.AnalyticalTable, Level 2, Sum");
-		assert.equal(Grouping.calcGroupIndent(oTable, 3, true), 36, "sap.ui.table.AnalyticalTable, Level 3, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 3, false), 24, "sap.ui.table.AnalyticalTable, Level 3, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 3, false, true), 36, "sap.ui.table.AnalyticalTable, Level 3, Sum");
-		assert.equal(Grouping.calcGroupIndent(oTable, 4, true), 44, "sap.ui.table.AnalyticalTable, Level 4, Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 4, false), 36, "sap.ui.table.AnalyticalTable, Level 4, !Group Header");
-		assert.equal(Grouping.calcGroupIndent(oTable, 4, false, true), 44, "sap.ui.table.AnalyticalTable, Level 4, Sum");
+		oRowGetLevel.returns(2);
+		assert.strictEqual(Grouping.calcGroupIndent(oRow), 12, "Level 2");
+
+		oRowGetLevel.returns(3);
+		assert.strictEqual(Grouping.calcGroupIndent(oRow), 24, "Level 3");
+
+		oRowGetLevel.returns(4);
+		assert.strictEqual(Grouping.calcGroupIndent(oRow), 32, "Level 4");
+
+		oRowGetLevel.returns(5);
+		assert.strictEqual(Grouping.calcGroupIndent(oRow), 40, "Level 4");
+	});
+
+	QUnit.test("calcTreeIndent", function(assert) {
+		var oRow = new Row();
+		var oRowGetLevel = sinon.stub(oRow, "getLevel");
+
+		oRowGetLevel.returns(1);
+		assert.strictEqual(Grouping.calcTreeIndent(oRow), 0, "Level 1");
+
+		oRowGetLevel.returns(2);
+		assert.strictEqual(Grouping.calcTreeIndent(oRow), 17, "Level 2");
+
+		oRowGetLevel.returns(3);
+		assert.strictEqual(Grouping.calcTreeIndent(oRow), 34, "Level 3");
+
+		oRowGetLevel.returns(4);
+		assert.strictEqual(Grouping.calcTreeIndent(oRow), 51, "Level 4");
 	});
 
 	QUnit.test("Tree Mode", function(assert) {
@@ -601,26 +576,26 @@ sap.ui.define([
 			for (var i = 0; i < iCount; i++) {
 				var $Icon = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i + "-col0").find(".sapUiTableTreeIcon");
 				var $Row = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i);
-				assert.equal($Icon.length, 1, "Tree Icon Available in first column - row " + i);
+				assert.equal($Icon.length, 1, "Tree Icon Available in first column - row " + (i + 1));
 				var sClass = "sapUiTableTreeIconNodeClosed";
-				var iLevel = 0;
+				var iLevel = 1;
 				if (bSecondPass) {
-					if (i == 0) {
+					if (i === 0) {
 						sClass = "sapUiTableTreeIconNodeOpen";
-					} else if (i == 1) {
+					} else if (i === 1) {
 						sClass = "sapUiTableTreeIconLeaf";
-						iLevel = 1;
-					} else if (i == iCount - 1) {
+						iLevel = 2;
+					} else if (i === iCount - 1) {
 						sClass = "sapUiTableTreeIconLeaf";
+						iLevel = 0; // empty row
 					}
-				} else {
-					if (i == iCount - 1) {
-						sClass = "sapUiTableTreeIconLeaf";
-					}
+				} else if (i === iCount - 1) {
+					sClass = "sapUiTableTreeIconLeaf";
+					iLevel = 0; // empty row
 				}
 				assert.ok($Icon.hasClass(sClass), "Icon has correct expand state: " + sClass);
-				assert.equal($Row.data("sap-ui-level"), iLevel, "Row " + i + " has correct level in data.");
-				assert.equal($Row.attr("data-sap-ui-level"), iLevel, "Row " + i + " has correct level in dom.");
+				assert.equal($Row.data("sap-ui-level"), iLevel, "Row " + (i + 1) + " has correct level in data.");
+				assert.equal($Row.attr("data-sap-ui-level"), iLevel, "Row " + (i + 1) + " has correct level in dom.");
 			}
 
 			if (bSecondPass) {
@@ -632,8 +607,8 @@ sap.ui.define([
 						assert.ok(!$Icon.hasClass("sapUiTableTreeIconLeaf"), "No state class on icon after unbind: sapUiTableTreeIconLeaf");
 						assert.ok(!$Icon.hasClass("sapUiTableTreeIconNodeClosed"),
 							"No state class on icon after unbind: sapUiTableTreeIconNodeClosed");
-						assert.ok(!$Row.data("sap-ui-level"), "Row " + i + " has no level in data.");
-						assert.ok(!$Row.attr("data-sap-ui-level"), "Row " + i + " has no level in dom.");
+						assert.ok(!$Row.data("sap-ui-level"), "Row " + (i + 1) + " has no level in data.");
+						assert.ok(!$Row.attr("data-sap-ui-level"), "Row " + (i + 1) + " has no level in dom.");
 					}
 					done();
 				};
@@ -670,21 +645,22 @@ sap.ui.define([
 				var $Row = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i);
 				var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel" + i).parent();
 				var $GroupHdr = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i + "-groupHeader");
-				var iLevel = 0;
+				var iLevel = 1;
 				var bExpectGroupHeaderClass = true;
 				var bExpectExpanded = false;
-				if (bSecondPass && i == 1) {
-					iLevel = 1;
+				if (bSecondPass && i === 1) {
 					bExpectGroupHeaderClass = false;
-				} else if (bSecondPass && i == 0) {
+					iLevel = 2;
+				} else if (bSecondPass && i === 0) {
 					bExpectExpanded = true;
-				} else if (i == iCount - 1) {
+				} else if (i === iCount - 1) {
 					bExpectGroupHeaderClass = false;
+					iLevel = 0; // empty row
 				}
-				assert.ok($Row.hasClass("sapUiTableGroupHeader") && bExpectGroupHeaderClass || !$Row.hasClass("sapUiTableGroupHeader")
-						  && !bExpectGroupHeaderClass, "Row " + i + " is Group Header");
-				assert.ok($RowHdr.hasClass("sapUiTableGroupHeader") && bExpectGroupHeaderClass || !$RowHdr.hasClass("sapUiTableGroupHeader")
-						  && !bExpectGroupHeaderClass, "Row Header " + i + " is Group Header");
+				assert.ok($Row.hasClass("sapUiTableGroupHeaderRow") && bExpectGroupHeaderClass || !$Row.hasClass("sapUiTableGroupHeaderRow")
+						  && !bExpectGroupHeaderClass, "Row " + (i + 1) + " is Group Header");
+				assert.ok($RowHdr.hasClass("sapUiTableGroupHeaderRow") && bExpectGroupHeaderClass || !$RowHdr.hasClass("sapUiTableGroupHeaderRow")
+						  && !bExpectGroupHeaderClass, "Row Header " + (i + 1) + " is Group Header");
 				if (bExpectExpanded) {
 					assert.ok($GroupHdr.hasClass("sapUiTableGroupIconOpen"), "Header has correct expand state");
 				} else if (bExpectGroupHeaderClass) {
@@ -694,15 +670,15 @@ sap.ui.define([
 						"Header has correct expand state");
 				}
 
-				assert.equal($Row.data("sap-ui-level"), iLevel, "Row " + i + " has correct level in data.");
-				assert.equal($Row.attr("data-sap-ui-level"), iLevel, "Row " + i + " has correct level in dom.");
+				assert.equal($Row.data("sap-ui-level"), iLevel, "Row " + (i + 1) + " has correct level in data.");
+				assert.equal($Row.attr("data-sap-ui-level"), iLevel, "Row " + (i + 1) + " has correct level in dom.");
 			}
 
 			if (bSecondPass) {
 				var fnUnbindHandler = function() {
 					for (var i = 0; i < 12; i++) {
 						var $Row = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i);
-						assert.ok(!$Row.hasClass("sapUiTableGroupHeader"), "No group headers any more after unbind");
+						assert.ok(!$Row.hasClass("sapUiTableGroupHeaderRow"), "No group headers any more after unbind");
 						assert.ok(!$Row.data("sap-ui-level"), "Row " + i + " has no level in data.");
 						assert.ok(!$Row.attr("data-sap-ui-level"), "Row " + i + " has no level in dom.");
 					}
@@ -811,9 +787,9 @@ sap.ui.define([
 		var fnHandler = function() {
 			for (var i = 0; i < iNumberOfRows + 2; i++) {
 				if (i == 0 || i == 5) {
-					assert.ok(getRowHeader(i).parent().hasClass("sapUiTableGroupHeader"), "Row " + i + " is group header");
+					assert.ok(getRowHeader(i).parent().hasClass("sapUiTableGroupHeaderRow"), "Row " + i + " is group header");
 				} else {
-					assert.ok(!getRowHeader(i).parent().hasClass("sapUiTableGroupHeader"), "Row " + i + " is no group header");
+					assert.ok(!getRowHeader(i).parent().hasClass("sapUiTableGroupHeaderRow"), "Row " + i + " is no group header");
 				}
 			}
 

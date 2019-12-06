@@ -186,11 +186,13 @@ sap.ui.define([
 		this._aGroupedColumns = [];
 		this._bSuspendUpdateAnalyticalInfo = false;
 		TableUtils.Grouping.setGroupMode(this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
 	};
 
 	AnalyticalTable.prototype.exit = function() {
 		this._cleanupGroupHeaderMenu();
 		Table.prototype.exit.apply(this, arguments);
+		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
 	};
 
 	AnalyticalTable.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
@@ -403,51 +405,54 @@ sap.ui.define([
 		return aColumns;
 	};
 
-	AnalyticalTable.prototype._updateTableContent = function() {
+	AnalyticalTable.prototype._updateRowState = function(oState) {
 		var oBinding = this.getBinding("rows");
-		var mRowCounts = this._getRowCounts();
-		var aRows = this.getRows();
-		var i;
+		var oBindingInfo = this.getBindingInfo("rows");
+		var oNode = oState.context;
 
-		//check if the table has rows (data to display)
-		if (!oBinding) {
-			// restore initial table state, remove group headers and total row formatting
-			for (i = 0; i < aRows.length; i++) {
-				TableUtils.Grouping.cleanupTableRowForGrouping(this, aRows[i]);
-			}
+		if (!oBinding || !oNode) {
 			return;
 		}
 
-		var oBindingInfo = this.getBindingInfo("rows");
-		var bTableIsScrollable = this._getTotalRowCount() > mRowCounts.count;
+		oState.context = oNode.context ? oNode.context : null; // The AnalyticalTable requests nodes from the binding.
+		if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oNode)) {
+			oState.type = oState.Type.GroupHeader;
+		} else if (oNode.nodeState.sum) {
+			oState.type = oState.Type.Summary;
+		}
+		oState.level = oNode.level + (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0);
+		oState.expandable = oState.type === oState.Type.GroupHeader;
+		oState.expanded = oState.expandable ? oNode.nodeState.expanded : false;
+		oState.contentHidden = oState.expanded && !oBindingInfo.parameters.sumOnTop;
+		oState.title = oState.type === oState.Type.GroupHeader ? oBinding.getGroupName(oNode.context, oNode.level) : "";
+	};
 
-		for (i = 0; i < aRows.length; i++) {
-			var bIsFixedRow = i > (mRowCounts.count - mRowCounts.fixedBottom - 1) && bTableIsScrollable;
-			var oRow = aRows[i];
-			var iRowIndex = oRow.getIndex();
+	AnalyticalTable.prototype.onRowsUpdated = function(mParameters) {
+		Table.prototype.onRowsUpdated.apply(this, arguments);
 
-			var oContextInfo;
-			if (bIsFixedRow && oBinding.bProvideGrandTotals) {
-				oContextInfo = oBinding.getGrandTotalContextInfo();
-			} else {
-				oContextInfo = this.getContextInfoByIndex(iRowIndex);
+		var aRows = this.getRows();
+		var oBinding = this.getBinding("rows");
+		var oFirstVisibleColumn = this._getVisibleColumns()[0];
+
+		for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
+			var oRow = aRows[iRowIndex];
+			var iLevel = oRow.getLevel();
+			var iIndent = 0;
+
+			iLevel -= oBinding && oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0;
+			iLevel = !oRow.isGroupHeader() && !oRow.isSummary() ? iLevel - 1 : iLevel;
+
+			for (var j = 1; j < iLevel; j++) {
+				if (j === 1) {
+					iIndent = 24;
+				} else if (j === 2) {
+					iIndent += 12;
+				} else {
+					iIndent += 8;
+				}
 			}
 
-			var iLevel = oContextInfo ? oContextInfo.level : 0;
-
-			if (!oContextInfo || !oContextInfo.context) {
-				TableUtils.Grouping.cleanupTableRowForGrouping(this, oRow);
-				continue;
-			}
-
-			if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oContextInfo)) {
-				TableUtils.Grouping.updateTableRowForGrouping(this, oRow, true, oContextInfo.nodeState.expanded,
-					oContextInfo.nodeState.expanded && !oBindingInfo.parameters.sumOnTop, false, iLevel,
-					oBinding.getGroupName(oContextInfo.context, oContextInfo.level));
-			} else {
-				TableUtils.Grouping.updateTableRowForGrouping(this, oRow, false, false, false, oContextInfo.nodeState.sum, iLevel,
-					oContextInfo.nodeState.sum && oContextInfo.level > 0 ? oBinding.getGroupName(oContextInfo.context, oContextInfo.level) : null);
-			}
+			TableUtils.Grouping.setGroupIndent(oRow, iIndent);
 
 			// show or hide the totals if not enabled - needs to be done by Table
 			// control since the model could be reused and thus the values cannot
@@ -456,23 +461,31 @@ sap.ui.define([
 			var aCells = oRow.getCells();
 			var iCellCount = aCells.length;
 
-			for (var j = 0; j < iCellCount; j++) {
-				var oAnalyticalColumn = AnalyticalColumn.ofCell(aCells[j]);
-				var $td = jQuery(aCells[j].$().closest("td"));
-				if (oBinding.isMeasure(oAnalyticalColumn.getLeadingProperty())) {
-					$td.addClass("sapUiTableMeasureCell");
-					$td.toggleClass("sapUiTableCellHidden", oContextInfo.nodeState.sum && !oAnalyticalColumn.getSummed());
-				} else {
-					$td.removeClass("sapUiTableMeasureCell");
+			for (var iCellIndex = 0; iCellIndex < iCellCount; iCellIndex++) {
+				var oAnalyticalColumn = AnalyticalColumn.ofCell(aCells[iCellIndex]);
+				var bIsMeasureCell = oBinding ? oBinding.isMeasure(oAnalyticalColumn.getLeadingProperty()) : false;
+				var $td = jQuery(aCells[iCellIndex].$().closest("td"));
+				var bHideCellContent = false;
+
+				if (oRow.isSummary() && bIsMeasureCell) {
+					bHideCellContent = !oAnalyticalColumn.getSummed();
+				} else if (oRow.isGroupHeader() && oAnalyticalColumn === oFirstVisibleColumn) {
+					bHideCellContent = !bIsMeasureCell;
 				}
+
+				$td.toggleClass("sapUiTableCellHidden", bHideCellContent);
 			}
 		}
 	};
 
 	AnalyticalTable.prototype.oncontextmenu = function(oEvent) {
-		if (jQuery(oEvent.target).closest('tr').hasClass('sapUiTableGroupHeader') ||
-				jQuery(oEvent.target).closest('.sapUiTableGroupHeader > .sapUiTableRowSelectionCell').length > 0) {
-			this._iGroupedLevel = jQuery(oEvent.target).closest('[data-sap-ui-level]').data('sap-ui-level');
+		var oCell = TableUtils.getCell(this, oEvent.target);
+		var oCellInfo = TableUtils.getCellInfo(oCell);
+		var oRow = this.getRows()[oCellInfo.rowIndex];
+
+		if (oRow && oRow.isGroupHeader()) {
+			var oBinding = this.getBinding("rows");
+			this._iGroupedLevel = oRow.getLevel() - (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0);
 			var oMenu = this._getGroupHeaderMenu();
 
 			oMenu.openAsContextMenu(oEvent, TableUtils.getCell(this, oEvent.target) || oEvent.target);
@@ -1207,18 +1220,10 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.comp
 	 */
 	AnalyticalTable.prototype.getAnalyticalInfoOfRow = function(oRow) {
-		if (!TableUtils.isA(oRow, "sap.ui.table.Row") || oRow.getParent() !== this) {
-			return null;
-		}
-
-		var oBindingInfo = this.getBindingInfo("rows");
 		var oBinding = this.getBinding("rows");
-		if (!oBindingInfo || !oBinding) {
-			return null;
-		}
+		var oContext = oRow ? oRow.getRowBindingContext() : null;
 
-		var oContext = oRow.getBindingContext(oBindingInfo.model);
-		if (!oContext) {
+		if (!TableUtils.isA(oRow, "sap.ui.table.Row") || oRow.getParent() !== this || !oBinding || !oContext) {
 			return null;
 		}
 
