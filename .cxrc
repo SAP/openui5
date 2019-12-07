@@ -22,8 +22,6 @@
             "src/testsuite-utils/**/*",
             "src/testsuite/**/*"
         ],
-        "demokit": [
-        ],
         "suite-controls": [
             "src/sap.ui.suite/**/*"
         ],
@@ -35,7 +33,7 @@
             "src/sap.ui.fl/**/*",
             "src/sap.ui.rta/**/*"
         ],
-         "testrecorder: [
+         "test-automation-tools": [
             "src/sap.ui.testrecorder/**/*"
         ]
     },
