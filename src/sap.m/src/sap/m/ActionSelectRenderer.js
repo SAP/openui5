@@ -21,7 +21,7 @@ sap.ui.define(['sap/ui/core/Renderer', './SelectRenderer'],
 		 * @param {sap.ui.core.Control} oActionSelect An object representation of the control that should be rendered.
 		 */
 		ActionSelectRenderer.addClass = function(oRm, oActionSelect) {
-			oRm.addClass(ActionSelectRenderer.ACTION_SELECT_CSS_CLASS);
+			oRm.class(ActionSelectRenderer.ACTION_SELECT_CSS_CLASS);
 		};
 
 		return ActionSelectRenderer;
