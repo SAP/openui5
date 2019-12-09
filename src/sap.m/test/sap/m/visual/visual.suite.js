@@ -46,6 +46,7 @@ module.exports = [
 	"ObjectHeaderVisualTest.spec.js",
 	"ObjectNumberVisualTest.spec.js",
 	"ObjectListItem.spec.js",
+	"ObjectMarker.spec.js",
 	"ObjectStatus.spec.js",
 	"OverflowToolbar.spec.js",
 	"OverflowToolbarInRTE.spec.js",
