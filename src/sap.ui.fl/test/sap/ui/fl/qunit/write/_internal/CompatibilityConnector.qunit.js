@@ -105,8 +105,8 @@ sap.ui.define([
 			return writeTestDataToStorage()
 				.then(function () {
 					return CompatibilityConnector.resetChanges({
-						sReference : oTestData.reference,
-						sLayer : "CUSTOMER"
+						reference : oTestData.reference,
+						layer : "CUSTOMER"
 					});
 				})
 				.then(
@@ -121,9 +121,9 @@ sap.ui.define([
 			return writeTestDataToStorage()
 				.then(function () {
 					return CompatibilityConnector.resetChanges({
-						sReference : oTestData.reference,
-						sLayer : "CUSTOMER",
-						aChangeTypes : ["moveFields"]
+						reference : oTestData.reference,
+						layer : "CUSTOMER",
+						changeTypes : ["moveFields"]
 					});
 				})
 				.then(

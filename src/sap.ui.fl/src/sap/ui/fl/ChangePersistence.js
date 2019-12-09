@@ -12,11 +12,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/variants/VariantController",
-	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Component",
-	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge",
@@ -32,11 +30,9 @@ sap.ui.define([
 	Applier,
 	ContextManager,
 	Settings,
-	TransportSelection,
+	Storage,
 	VariantController,
-	BusyIndicator,
 	Component,
-	MessageBox,
 	JSONModel,
 	jQuery,
 	merge,
@@ -104,7 +100,6 @@ sap.ui.define([
 		}
 
 		this._oVariantController = new VariantController(this._mComponent.name, this._mComponent.appVersion, {});
-		this._oTransportSelection = new TransportSelection();
 		this._aDirtyChanges = [];
 		this._oMessagebundle = undefined;
 		this._mChangesEntries = {};
@@ -1239,45 +1234,20 @@ sap.ui.define([
 	 * @returns {Promise} promise that resolves when all the artifacts are successfully transported
 	 */
 	ChangePersistence.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors) {
-		var fnHandleAllErrors = function (oError) {
-			BusyIndicator.hide();
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
-			var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
-			var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
-			Log.error("transport error" + oError);
-			MessageBox.show(sMessage, {
-				icon: MessageBox.Icon.ERROR,
-				title: sTitle,
-				styleClass: sStyleClass
-			});
-			return "Error";
-		};
-
-		return this._oTransportSelection.openTransportSelection(null, oRootControl, sStyleClass)
-			.then(function(oTransportInfo) {
-				if (this._oTransportSelection.checkTransportInfo(oTransportInfo)) {
-					BusyIndicator.show(0);
-					return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true})
-						.then(function(aAllLocalChanges) {
-							var oContentParameters = {
-								reference: this.getComponentName(),
-								appVersion: this._mComponent.appVersion,
-								layer: sLayer
-							};
-
-							return this._oTransportSelection._prepareChangesForTransport(
-								oTransportInfo,
-								aAllLocalChanges,
-								aAppVariantDescriptors,
-								oContentParameters
-							).then(function() {
-								BusyIndicator.hide();
-							});
-						}.bind(this));
-				}
-				return "Cancel";
-			}.bind(this))
-			['catch'](fnHandleAllErrors);
+		return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true})
+			.then(function (aAllLocalChanges) {
+				return Storage.publish({
+					transportDialogSettings: {
+						rootControl: oRootControl, //TODO not used value, should be removed.
+						styleClass: sStyleClass
+					},
+					layer: sLayer,
+					reference: this.getComponentName(),
+					appVersion: this._mComponent.appVersion,
+					localChanges: aAllLocalChanges,
+					appVariantDescriptors: aAppVariantDescriptors
+				});
+			}.bind(this));
 	};
 
 	/**
@@ -1307,60 +1277,31 @@ sap.ui.define([
 	 * @returns {Promise} Promise that resolves with an array of changes which need to be reverted from UI
 	 */
 	ChangePersistence.prototype.resetChanges = function (sLayer, sGenerator, aSelectorIds, aChangeTypes) {
-		var aChanges = [];
-		var oTransportSelectionPromise;
 		var bSelectorIdsProvided = aSelectorIds && aSelectorIds.length > 0;
 		var bChangeTypesProvided = aChangeTypes && aChangeTypes.length > 0;
-
 		if (!sGenerator && !bSelectorIdsProvided && !bChangeTypesProvided) {
 			Log.error("Of the generator, selector IDs and change types parameters at least one has to filled");
 			return Promise.reject("Of the generator, selector IDs and change types parameters at least one has to filled");
 		}
 
-		if (sLayer === "USER") {
-			// personalization is target of transport selections thus the determination of transports can be skipped
-			oTransportSelectionPromise = Promise.resolve();
-		} else {
-			oTransportSelectionPromise = this.getChangesForComponent({
-				currentLayer : sLayer,
-				includeCtrlVariants : true
-			})
-				.then(function (aChangesForComponent) {
-					aChanges = aChangesForComponent;
-					return Settings.getInstance(this.getComponentName());
-				}.bind(this))
-				.then(function (oSettings) {
-					if (!oSettings.isProductiveSystem()) {
-						return this._oTransportSelection.setTransports(aChanges, Component.get(this.getComponentName()));
-					}
-				}.bind(this));
-		}
-
-		return oTransportSelectionPromise.then(function() {
-			//Make sure we include one request in case of mixed changes (local and transported)
-			var sChangeList = "";
-			aChanges.some(function(oChange) {
-				if (oChange.getRequest()) {
-					sChangeList = oChange.getRequest();
-					return true;
-				}
-				return false;
-			});
-
+		return this.getChangesForComponent({
+			currentLayer : sLayer,
+			includeCtrlVariants : true
+		}).then(function (aChanges) {
 			var mParams = {
-				sReference : this.getComponentName(),
-				sAppVersion : this._mComponent.appVersion,
-				sLayer : sLayer,
-				sChangelist : sChangeList
+				reference : this.getComponentName(),
+				appVersion : this._mComponent.appVersion,
+				layer : sLayer,
+				changes : aChanges
 			};
 			if (sGenerator) {
-				mParams.sGenerator = sGenerator;
+				mParams.generator = sGenerator;
 			}
 			if (bSelectorIdsProvided) {
-				mParams.aSelectorIds = aSelectorIds;
+				mParams.selectorIds = aSelectorIds;
 			}
 			if (bChangeTypesProvided) {
-				mParams.aChangeTypes = aChangeTypes;
+				mParams.changeTypes = aChangeTypes;
 			}
 
 			return CompatibilityConnector.resetChanges(mParams);
