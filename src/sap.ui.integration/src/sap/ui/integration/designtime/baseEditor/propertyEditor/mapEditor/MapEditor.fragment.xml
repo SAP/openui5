@@ -28,7 +28,11 @@
 			<ColumnListItem>
 				<cells>
 					<Input value="{itemsModel>key}" liveChange="_onKeyChange" />
-					<baseEditor:PropertyEditors propertyEditorsChange="_propertyEditorsChange" renderLabels="false" config="{itemsModel>value}" />
+					<baseEditor:PropertyEditors
+						init="wrapperInit"
+						propertyEditorsChange="_propertyEditorsChange"
+						renderLabels="false"
+						config="{itemsModel>value}" />
 					<Button
 						tooltip="{i18n>BASE_EDITOR.MAP.REMOVE_PARAMETER}"
 						icon="sap-icon://less"

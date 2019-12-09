@@ -51,7 +51,11 @@
 						</Button>
 					</contentRight>
 				</Bar>
-				<baseEditor:PropertyEditors propertyEditorsChange="_propertyEditorsChange" config="{itemsModel>properties}"/>
+				<baseEditor:PropertyEditors
+					init="wrapperInit"
+					propertyEditorsChange="_propertyEditorsChange"
+					config="{itemsModel>properties}"
+				/>
 			</VBox>
 		</VBox>
 		<Button

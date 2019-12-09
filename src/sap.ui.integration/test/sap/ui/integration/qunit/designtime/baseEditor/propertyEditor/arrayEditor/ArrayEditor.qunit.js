@@ -23,25 +23,26 @@ sap.ui.define([
 
 	QUnit.module("Array Editor: Given an editor config", {
 		beforeEach: function (assert) {
-			this.oPropertyConfig = {
+			var fnReady = assert.async();
+			var mPropertyConfig = {
 				tags: ["header", "numericHeader"],
 				label: "SIDE_INDICATORS",
 				path: "header/sideIndicators",
 				type: "array",
 				itemLabel: "SIDE_INDICATOR",
 				template: {
-					title : {
+					title: {
 						label: "SIDE_INDICATOR.TITLE",
 						type: "string",
 						path: "title",
 						defaultValue: "Side Indicator"
 					},
-					number : {
+					number: {
 						label: "SIDE_INDICATOR.NUMBER",
 						type: "number",
 						path: "number"
 					},
-					unit : {
+					unit: {
 						label: "SIDE_INDICATOR.UNIT",
 						type: "string",
 						path: "unit"
@@ -50,8 +51,17 @@ sap.ui.define([
 				maxItems: 3,
 				visible: "{= ${context>header/type} === 'Numeric' }"
 			};
-
-			this.oContextModel = new JSONModel({
+			var mConfig = {
+				properties: {
+					sideIndicator: mPropertyConfig
+				},
+				propertyEditors: {
+					array: "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
+					string: "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					number: "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			};
+			var mJson = {
 					header: {
 						type: "Numeric",
 						sideIndicators:
@@ -68,24 +78,23 @@ sap.ui.define([
 								}
 							]
 					}
+			};
+
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
 			});
-			this.oContextModel.setDefaultBindingMode("OneWay");
+			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oEditor = new ArrayEditor();
-			this.oEditor.setModel(this.oContextModel, "_context");
-			this.oEditor.setConfig(this.oPropertyConfig);
-			this.oEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			var fnReady = assert.async();
-			this.oEditor.attachReady(function () {
+			this.oBaseEditor.getPropertyEditor("sideIndicator").then(function (oPropertyEditor) {
+				this.oEditor = oPropertyEditor;
+				sap.ui.getCore().applyChanges();
 				this.oEditorElement = this.oEditor.getContent();
 				fnReady();
-			}, this);
+			}.bind(this));
 		},
 		afterEach: function () {
-			this.oContextModel.destroy();
-			this.oEditor.destroy();
+			this.oBaseEditor.destroy();
 		}
 	}, function () {
 		QUnit.test("When an ArrayEditor is created", function (assert) {
@@ -102,27 +111,21 @@ sap.ui.define([
 			assert.strictEqual(oPropertyEditors.getConfig()[2].type, "string", "and the third property editor is for string");
 		});
 
-		QUnit.test("When a property is changed in the model", function (assert) {
-			this.oPropertyConfig.template.title.type = "enum";
-			this.oPropertyConfig.template.title.enum = ["Title1", "Title2"];
-			this.oEditor.setConfig(this.oPropertyConfig);
-			var oPropertyEditors = _getArrayEditorElements(this.oEditor)[0].getItems()[1];
-			assert.strictEqual(oPropertyEditors.getConfig().length, 3, "Then the property editors get three configurations");
-			assert.strictEqual(oPropertyEditors.getConfig()[0].type, "enum", "and the first property editor is changed to enum");
-			assert.strictEqual(oPropertyEditors.getConfig()[1].type, "number", "and the second property editor is still for number");
-			assert.strictEqual(oPropertyEditors.getConfig()[2].type, "string", "and the third property editor is still for string");
-		});
-
 		QUnit.test("When the first delete button is pressed in the editor", function (assert) {
-			var done = assert.async();
+			var done = assert.async(2);
 
-			this.oEditor.attachValueChange(function (oEvent) {
+			this.oEditor.attachEventOnce("valueChange", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is only one side indicator");
 				assert.equal(oEvent.getParameter("value")[0].title, "Deviation", "Then it is updated correctly");
 				done();
 			});
 			var oDelButton0 = _getArrayEditorElements(this.oEditor)[0].getItems()[0].getContentRight()[2];
 			QUnitUtils.triggerEvent("tap", oDelButton0.getDomRef());
+			assert.strictEqual(this.oEditor.isReady(), false, "Then the ready state of the ArrayEditor is reset");
+			this.oEditor.attachEventOnce("ready", function () {
+				assert.strictEqual(this.oEditor.isReady(), true, "Then the ready event of the ArrayEditor is triggered again after the update");
+				done();
+			}, this);
 		});
 
 		QUnit.test("When the second delete button is pressed in the editor", function (assert) {
@@ -222,13 +225,6 @@ sap.ui.define([
 					}],
 					"Then the new item is added to the array"
 				);
-
-				var sPath = oEvent.getParameter("path");
-				var aParts = sPath.split("/");
-
-				var oContext = this.oContextModel.getData();
-				ObjectPath.set(aParts, oEvent.getParameter("value"), oContext);
-				this.oContextModel.checkUpdate();
 
 				this.oEditor.attachValueChange(function (oEvent) {
 					assert.deepEqual(
@@ -341,7 +337,8 @@ sap.ui.define([
 
 	QUnit.module("Nested arrays", {
 		beforeEach: function (assert) {
-			var mConfig = {
+			var fnReady = assert.async();
+			var mPropertyConfig = {
 				label: "Nested Array Level 1",
 				path: "parent/parentItems",
 				type: "array",
@@ -361,8 +358,17 @@ sap.ui.define([
 					}
 				}
 			};
-
-			this.oContextModel = new JSONModel({
+			var mConfig = {
+				properties: {
+					sideIndicator: mPropertyConfig
+				},
+				propertyEditors: {
+					array: "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
+					string: "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					number: "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+				}
+			};
+			var mJson = {
 				parent: {
 					parentItems: [
 						{
@@ -381,25 +387,22 @@ sap.ui.define([
 						}
 					]
 				}
+			};
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
 			});
-			this.oContextModel.setDefaultBindingMode("OneWay");
+			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oEditor = new ArrayEditor();
-			this.oEditor.setModel(this.oContextModel, "_context");
-			this.oEditor.setConfig(mConfig);
-			this.oEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			var fnDone = assert.async();
-
-			this.oEditor.attachReady(function () {
+			this.oBaseEditor.getPropertyEditor("sideIndicator").then(function (oPropertyEditor) {
+				this.oEditor = oPropertyEditor;
+				sap.ui.getCore().applyChanges();
 				this.oEditorElement = this.oEditor.getContent();
-				fnDone();
-			}, this);
+				fnReady();
+			}.bind(this));
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oContextModel.destroy();
+			this.oBaseEditor.destroy();
 		}
 	}, function () {
 		QUnit.test("when add button is pressed for parent array", function (assert) {
@@ -510,6 +513,7 @@ sap.ui.define([
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function (oEvent) {
 				this.oArrayEditor = oEvent.getSource().getPropertyEditorSync("cars");
+				assert.strictEqual(this.oArrayEditor.isReady(), true, "Ready is triggered for empty arrays and nested arrays");
 				fnDone();
 			}, this);
 		},
@@ -575,6 +579,43 @@ sap.ui.define([
 
 					fnDone();
 				}, this);
+			}, this);
+		});
+
+		QUnit.test("When BaseEditor fires ready", function (assert) {
+			var fnDone = assert.async();
+			this.oBaseEditor.setJson({
+				cars: [
+					{
+						"vendor": "VW",
+						"year": 2019,
+						"owners": []
+					},
+					{
+						"vendor": "Audi",
+						"year": 1999,
+						"owners": []
+					}
+				]
+			});
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+				var oArrayEditor = this.oBaseEditor.getPropertyEditorSync("cars");
+				var aWrappers = oArrayEditor._aEditorWrappers;
+
+				assert.strictEqual(aWrappers.length, 2, "Then both wrappers are registered on the array editor");
+				// Validate the ready state
+				aWrappers.forEach(function (oWrapper, idx) {
+					assert.strictEqual(oWrapper._fnCancelInit, undefined, "Then each wrapper has finished initialization - Wrapper" + idx);
+					assert.strictEqual(
+						oWrapper.getAggregation("propertyEditors").filter(function (oNestedEditor) {
+							return oNestedEditor.isReady();
+						}).length,
+						3,
+						"Then all nested editors are ready - Wrapper" + idx
+					);
+				});
+				fnDone();
 			}, this);
 		});
 

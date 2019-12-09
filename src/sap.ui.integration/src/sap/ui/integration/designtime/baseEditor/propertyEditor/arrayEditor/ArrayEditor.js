@@ -52,8 +52,7 @@ sap.ui.define([
 		this.setModel(this._itemsModel, "itemsModel");
 	};
 
-	ArrayEditor.prototype.onValueChange = function () {
-		var vReturn = BasePropertyEditor.prototype.onValueChange.apply(this, arguments);
+	ArrayEditor.prototype.setValue = function () {
 		var oConfig = this.getConfig();
 		if (oConfig.value && oConfig.template) {
 			var aItems = [];
@@ -74,8 +73,12 @@ sap.ui.define([
 				aItems.push(mItem);
 			}, this);
 			this._itemsModel.setData(aItems);
+			BasePropertyEditor.prototype.setValue.call(this, aItems);
 		}
-		return vReturn;
+	};
+
+	ArrayEditor.prototype.getExpectedWrapperCount = function (vValue) {
+		return vValue.length;
 	};
 
 	ArrayEditor.prototype._removeItem = function (oEvent) {

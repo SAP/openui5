@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var ParametersEditor = MapEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.parametersEditor.ParametersEditor", {
-		onValueChange: function() {
+		setValue: function() {
 			var oConfig = this.getConfig();
 			if (oConfig.value) {
 				var aItems = Object.keys(oConfig.value).map(function (sKey) {
@@ -35,6 +35,7 @@ sap.ui.define([
 					};
 				});
 				this._itemsModel.setData(aItems);
+				BasePropertyEditor.prototype.setValue.call(this, aItems);
 			}
 		},
 

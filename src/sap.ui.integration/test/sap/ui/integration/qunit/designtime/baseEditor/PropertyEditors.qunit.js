@@ -927,6 +927,68 @@ function (
 		});
 	});
 
+	QUnit.module("Ready handling", {
+		beforeEach: function () {
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+			if (this.oPropertyEditors) {
+				this.oPropertyEditors.destroy();
+			}
+		}
+	}, function () {
+		QUnit.test("When a PropertyEditors wrapper is created", function (assert) {
+			var fnDone = assert.async();
+
+			var fnRegisterWrapper = function (oEvent) {
+				assert.strictEqual(
+					oEvent.getSource(),
+					this.oPropertyEditors,
+					"Then the wrapper registers via the provided callback"
+				);
+				fnDone();
+			};
+
+			this.oPropertyEditors = new PropertyEditors({
+				init: fnRegisterWrapper.bind(this)
+			});
+			this.oBaseEditor.addContent(this.oPropertyEditors);
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("When a PropertyEditors wrapper has nested editors", function (assert) {
+			var fnDone = assert.async();
+
+			this.oPropertyEditors = new PropertyEditors({
+				config: [
+					{
+						label: "foo",
+						type: "string",
+						value: "bar"
+					}
+				]
+			});
+
+			this.oBaseEditor.addContent(this.oPropertyEditors);
+			sap.ui.getCore().applyChanges();
+
+			this.oPropertyEditors.ready().then(function () {
+				assert.strictEqual(
+					this.oPropertyEditors.getAggregation("propertyEditors")[0].isReady(),
+					true,
+					"Then it is ready when its nested editors are"
+				);
+				fnDone();
+			}.bind(this));
+		});
+	});
+
 	QUnit.done(function () {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

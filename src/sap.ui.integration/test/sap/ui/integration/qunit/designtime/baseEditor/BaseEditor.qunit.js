@@ -41,7 +41,7 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			});
-			this.oBaseEditor.attachPropertyEditorsReady(function () {
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[0].getBindingContext().getObject().value, "value1", "Then value of the property is correctly retrieved from the context object");
 				done();
@@ -66,7 +66,7 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			});
-			this.oBaseEditor.attachPropertyEditorsReady(function () {
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
 				this.oBaseEditor.attachJsonChange(function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("json").context.prop1, "test", "Then the value is updated in JSON");
 					assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getConfig().value, "test", "Then the value is updated in another editor interested in the same path");
@@ -99,7 +99,7 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			});
-			this.oBaseEditor.attachPropertyEditorsReady(function () {
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().val, "value1", "Then binding against property model works properly");
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().i18n, "prop", "Then binding against other models is untouched");
 				done();
@@ -136,7 +136,7 @@ sap.ui.define([
 					"anotherString": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			});
-			this.oBaseEditor.attachPropertyEditorsReady(function () {
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop2").getConfig().path, "prop2", "Then property editor getter works with property name");
 
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync("commonTag").length, 2, "Then property editor getter works with one tag (1/3)");
