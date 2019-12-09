@@ -2,6 +2,7 @@ sap.ui.define([
 		"sap/ui/demo/cardExplorer/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/Device",
+		"sap/base/Log",
 		"sap/ui/core/routing/History",
 		"../model/DocumentationNavigationModel",
 		"../model/ExploreNavigationModel",
@@ -9,6 +10,7 @@ sap.ui.define([
 	], function (BaseController,
 				 JSONModel,
 				 Device,
+				 Log,
 				 History,
 				 documentationNavigationModel,
 				 exploreNavigationModel,
@@ -38,9 +40,9 @@ sap.ui.define([
 
 			/**
 			 * @param {Array|string} vKey The key or keys to check in the history.
-			 * @returns {string} The first subkey found in the history.
+			 * @returns {string} The first url hash found in the history.
 			 */
-			_findPreviousSubkey: function (vKey) {
+			_findPreviousRouteHash: function (vKey) {
 				var aKeys = [];
 				var oHistory = History.getInstance();
 
@@ -61,7 +63,7 @@ sap.ui.define([
 						var sKey = aKeys[k];
 
 						if (sHistory.startsWith(sKey + "/")) {
-							return sHistory.substring((sKey + "/").length, sHistory.length);
+							return sHistory;
 						}
 					}
 				}
@@ -70,29 +72,60 @@ sap.ui.define([
 			},
 
 			onTabSelect: function (oEvent) {
-				var item = oEvent.getParameter('item'),
-					key = item.getKey();
+				var oItem = oEvent.getParameter('item'),
+					sTabKey = oItem.getKey(),
+					sRouteHash;
 
-				// TODO implement in generic way
-				switch (key) {
+				switch (sTabKey) {
 					case "exploreSamples":
-						// there is no home page for exploreSamples, so navigate to first example
-						this.getRouter().navTo("exploreSamples", {
-							key: this._findPreviousSubkey(["explore", "exploreOverview"]) || "list"
-						});
-						return;
+						sRouteHash = this._findPreviousRouteHash(["explore", "exploreOverview"]) || "explore/list";
+						break;
 					case "learnDetail":
-						this.getRouter().navTo("learnDetail", {
-							key: this._findPreviousSubkey("learn") || "overview"
-						});
+						sRouteHash = this._findPreviousRouteHash("learn") || "learn/overview";
+						break;
+					case "integrate":
+						sRouteHash = this._findPreviousRouteHash("integrate") || "integrate/overview";
+						break;
+					default:
+						sRouteHash = null;
+						Log.error("Tab was not recognized.");
 						return;
+				}
+
+				this.navToRoute(sRouteHash);
+			},
+
+			/**
+			 * Finds the target by the route's hash and navigates to it.
+			 * @param {string} sRouteHash For example 'explore/list/numeric'.
+			 */
+			navToRoute: function (sRouteHash) {
+				var aParts = sRouteHash.split("/");
+
+				switch (aParts[0]) {
+					case "explore":
+						this.getRouter().navTo("exploreSamples", {
+							key: aParts[1],
+							subSampleKey: aParts[2]
+						});
+						break;
+					case "exploreOverview":
+						this.getRouter().navTo("exploreOverview", {
+							key: aParts[1]
+						});
+						break;
+					case "learn":
+						this.getRouter().navTo("learnDetail", {
+							key: aParts[1]
+						});
+						break;
 					case "integrate":
 						this.getRouter().navTo("integrate", {
-							key: this._findPreviousSubkey("integrate") || "overview"
+							key: aParts[1]
 						});
-						return;
+						break;
 					default:
-						this.getRouter().navTo(key);
+						this.getRouter().navTo(aParts[0]);
 				}
 			},
 
