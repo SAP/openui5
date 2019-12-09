@@ -77,10 +77,11 @@ sap.ui.define([
 		AdaptiveContent.prototype._setupAdaptiveCardDependency = function () {
 			this.adaptiveCardInstance = new AdaptiveCards.AdaptiveCard();
 
-			// this._doMSCardsOverwrites();
+			this._doMSCardsOverwrites();
 			this._adjustHostConfig();
 			this._handleActions();
-			// this._replaceElements();
+			this._replaceElements();
+			this._isRtl();
 		};
 
 		/**
@@ -99,6 +100,17 @@ sap.ui.define([
 		 */
 		AdaptiveContent.prototype._adjustHostConfig = function () {
 			this.adaptiveCardInstance.hostConfig = new AdaptiveCards.HostConfig(HostConfig);
+		};
+
+		/**
+		 * Adjust elements' styling with custom values
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._isRtl = function () {
+			this.adaptiveCardInstance.isRtl = function () {
+				return sap.ui.getCore().getConfiguration().getRTL();
+			};
 		};
 
 		/**
