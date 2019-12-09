@@ -2701,9 +2701,7 @@ sap.ui.define([
 		// problem if this happened BEFORE _requestAdjustLayout executed => wrong section may have been selected
 
 		// solution [implemented bellow] is to ensure that scroll handler is called with the latest scrollTop => we ensure the correct section is selected
-		if (this._hasDynamicTitle()) {
-			this._adjustHeaderHeights();
-		}
+		this._adjustHeaderHeights();
 		this._requestAdjustLayout() // call adjust layout to calculate the new section sizes
 			.then(function () {
 				iScrollTop = this._$opWrapper.scrollTop();
