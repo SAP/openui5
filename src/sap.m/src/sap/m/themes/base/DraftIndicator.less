@@ -3,8 +3,16 @@
 /* Base theme                            */
 /* ===================================== */
 
-.sapMDraftIndicator .sapMLabel {
-	font-style: italic;
-	padding-left: 1rem;
-	padding-right: 1rem;
+.sapMDraftIndicator {
+
+	>.sapMLabel {
+		font-style: italic;
+		padding-left: 1rem;
+		padding-right: 1rem;
+
+		>.sapMLabelTextWrapper {
+			overflow: visible;
+		}
+	}
+
 }
