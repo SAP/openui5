@@ -27,7 +27,6 @@ function(
 		// shortcut for sap.m.LinkConversion
 		var LinkConversion = library.LinkConversion;
 
-
 		/**
 		 * Constructor for a new FormattedText.
 		 *
@@ -91,7 +90,7 @@ function(
 					/**
 					 * Optional width of the control in CSS units.
 					 */
-					width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
+					width: {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
 					/**
 					 * Determines whether strings that appear to be links will be converted to HTML anchor tags,
@@ -113,7 +112,16 @@ function(
 					/**
 					 *  Optional height of the control in CSS units.
 					 */
-					height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null}
+					height: {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null}
+				},
+				aggregations: {
+
+					/**
+					* List of <code>sap.m.Link</code> controls that will be used to replace the placeholders in the text.
+					* Placeholders are replaced according to their indexes. The placeholder with index %%0 will be replaced
+					* by the first link in the aggregation, etc.
+					*/
+					controls: {type: "sap.m.Link", multiple: true, singularName: "control"}
 				}
 			}
 		});

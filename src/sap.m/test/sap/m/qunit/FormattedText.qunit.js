@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/util/MockServer",
-	"sap/m/FormattedText"
-], function(QUnitUtils, createAndAppendDiv, MockServer, FormattedText) {
+	"sap/m/FormattedText",
+	"sap/m/Link",
+	"sap/base/Log"
+], function(QUnitUtils, createAndAppendDiv, MockServer, FormattedText, Link, Log) {
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
 
@@ -148,6 +150,133 @@ sap.ui.define([
 		oFT.destroy();
 		this.clock.tick(1000);
 		assert.ok(!oFT.getDomRef(), "The control is removed");
+	});
+
+
+	QUnit.module("Placeholders", {
+		beforeEach: function () {
+			this.aLinks = [
+				new Link({ text: "Dir.bg", href: "https://dir.bg", target: "_blank" }),
+				new Link({ text: "Dnes.bg", href: "https://dnes.bg", target: "_blank" }),
+				new Link({ text: "News.bg", href: "https://news.bg", target: "_blank" })
+			];
+
+			this.oFT = new FormattedText({
+				htmlText: '',
+				controls: this.aLinks
+			});
+		},
+		afterEach: function () {
+			this.oFT.destroy();
+			this.oFT = null;
+			jQuery("BODY").remove('#link-output');
+		},
+		getLinkOutput: function(iIndex) {
+			var aLinks = this.oFT.getControls(),
+				sResult = '';
+
+			if (aLinks && aLinks[iIndex]) {
+				jQuery("BODY").append('<div id="link-output"></div>');
+				aLinks[iIndex].placeAt("link-output");
+				sap.ui.getCore().applyChanges();
+				sResult = jQuery("#link-output").html();
+				jQuery("#link-output").html("");
+				this.oFT.insertAggregation("controls", this.aLinks[iIndex], iIndex);
+			}
+			return sResult;
+		},
+		getControlOutput: function() {
+			var sOutput = '';
+			this.oFT.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			sOutput = jQuery("#qunit-fixture > div").html();
+			return sOutput;
+		}
+	});
+
+	QUnit.test("Successful placeholder replacement with one existing link", function (assert) {
+		var sText = "My favorite site is %%1. I like it!",
+			sLink = this.getLinkOutput(1),
+			sExpected = sText.replace("%%1", sLink),
+			sControl;
+
+		this.oFT.setHtmlText(sText);
+		sControl = this.getControlOutput();
+
+		// assert outputs (real ans expected)
+		assert.equal(sControl, sExpected, "The resulting output is as expected!");
+
+	});
+
+	QUnit.test("Successful placeholder replacement with all existing link", function (assert) {
+		var sText = "My favorite site is %%1. I like it! But %%2 and %%0 are nice too!",
+			sLink0 = this.getLinkOutput(0),
+			sLink1 = this.getLinkOutput(1),
+			sLink2 = this.getLinkOutput(2),
+			sControl;
+
+		this.oFT.setHtmlText(sText);
+		sControl = this.getControlOutput();
+
+		sText = sText.replace("%%0", sLink0);
+		sText = sText.replace("%%1", sLink1);
+		sText = sText.replace("%%2", sLink2);
+
+		// assert outputs (real ans expected)
+		assert.equal(sControl, sText, "The resulting output is as expected!");
+
+	});
+
+	QUnit.test("Placeholder replacement with 2 existing link and one missing", function (assert) {
+		var sText = "My favorite site is %%1. I like it! But %%2 and %%3 are nice too!",
+			sLink0 = this.getLinkOutput(0),
+			sLink1 = this.getLinkOutput(1),
+			sLink2 = this.getLinkOutput(2),
+			sLink3 = this.getLinkOutput(3),
+			oSpyOriginal = this.spy(Log, "error"),
+			oSpyArgs,
+			sControl;
+
+		this.oFT.setHtmlText(sText);
+		sControl = this.getControlOutput();
+
+		sText = sText.replace("%%0", sLink0);
+		sText = sText.replace("%%1", sLink1);
+		sText = sText.replace("%%2", sLink2);
+		sText = sText.replace("%%3", sLink3);
+
+		// assert outputs (real ans expected)
+		assert.notEqual(sControl, sText, "The resulting outputs is as expected!");
+
+		oSpyArgs = oSpyOriginal.args;
+		// assert error logging
+		assert.ok((oSpyOriginal.callCount === 1 && oSpyArgs[0] && oSpyArgs[0][0].substr(0, 37) === "Missing control for placeholder '%%3'"), "There is a proper error logged!");
+
+	});
+
+	QUnit.test("Placeholder replacement with 3 existing links and one of them tried to replace twice", function (assert) {
+		var sText = "My favorite site is %%1. I like it! But %%2 and %%0 are nice too! Maybe I should select %%0?",
+			sLink0 = this.getLinkOutput(0),
+			sLink1 = this.getLinkOutput(1),
+			sLink2 = this.getLinkOutput(2),
+			oSpyOriginal = this.spy(Log, "error"),
+			oSpyArgs,
+			sControl;
+
+		this.oFT.setHtmlText(sText);
+		sControl = this.getControlOutput();
+
+		sText = sText.replace(new RegExp("%%0", "g"), sLink0);
+		sText = sText.replace("%%1", sLink1);
+		sText = sText.replace("%%2", sLink2);
+
+		// assert outputs (real ans expected)
+		assert.notEqual(sControl, sText, "The resulting outputs is as expected!");
+
+		oSpyArgs = oSpyOriginal.args;
+		// assert error logging
+		assert.ok((oSpyOriginal.callCount === 1 && oSpyArgs[0] && oSpyArgs[0][0].substr(0, 22) === "Control with index '0'"), "There is a proper error logged!");
+
 	});
 
 
