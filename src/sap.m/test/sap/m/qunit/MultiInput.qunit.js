@@ -1978,6 +1978,7 @@ sap.ui.define([
 		var aListItems,
 			oToken = new Token({text: "XXXX"});
 		this.multiInput.addToken(oToken);
+		this.multiInput._oSuggestionPopup.open();
 
 		// act
 		this.multiInput._fillList();
@@ -2454,6 +2455,28 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(bVisible, true, "Tokens list is visible");
+
+		//Clean up
+		oMultiInput.destroy();
+	});
+
+	QUnit.module("Performance");
+
+	QUnit.test("Check execution time when 1000 tokens are being added", function (assert) {
+		//Arrange
+		var i = 1000,
+			oMultiInput = new MultiInput({
+				width: "150px"
+			}),
+			iTimeStamp = window.performance.now();
+
+		// Act
+		while (i--) {
+			oMultiInput.addToken(new Token({text: ("0000" + i).slice(-4)}));
+		}
+
+		// Assert
+		assert.ok((iTimeStamp + 1000) > window.performance.now(), "A thousand Tokens get populated under a second");
 
 		//Clean up
 		oMultiInput.destroy();

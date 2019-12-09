@@ -379,7 +379,10 @@ function(
 			this._tokenizer._useCollapsedMode(false);
 		}
 
-		this._fillList();
+		if ((this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) || this._bUseDialog) {
+			this._fillList();
+		}
+
 		// on mobile the list with the tokens should be updated and shown
 		if (this._bUseDialog) {
 			this._manageListsVisibility(true/*show list with tokens*/);
@@ -1708,14 +1711,14 @@ function(
 	 */
 	MultiInput.prototype._handleNMoreItemDelete = function(oEvent) {
 		var oListItem = oEvent.getParameter("listItem"),
-			sSelectedId = oListItem.data("tokenId"),
+			sSelectedId = oListItem && oListItem.data("tokenId"),
 			oTokenToDelete;
 
 		oTokenToDelete = this.getTokens().filter(function(oToken){
 			return oToken.getId() === sSelectedId;
 		})[0];
 
-		if (oTokenToDelete.getEditable()) {
+		if (oTokenToDelete && oTokenToDelete.getEditable()) {
 			this._tokenizer._onTokenDelete(oTokenToDelete);
 			this._getTokensList().removeItem(oListItem);
 		}
