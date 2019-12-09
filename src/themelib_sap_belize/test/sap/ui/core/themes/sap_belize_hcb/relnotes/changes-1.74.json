@@ -29,6 +29,24 @@
             "reference": "1980361124"
           }
         ]
+      },
+      {
+        "id": "00f1cd98c20ee84b84e58e1a296fe0a66ecf262c",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select year ranges is now added",
+        "references": []
+      },
+      {
+        "id": "deb763a9db43e483b03712d34dbb26b714d115f4",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: New \"icon\" property implemented",
+        "references": []
+      },
+      {
+        "id": "72df0b8fdaee287e54ee0447b38817fc16e8f8e6",
+        "type": "FEATURE",
+        "text": " sap.ui.suite: sap_belize_hcb and sap_belize_hcw themes",
+        "references": []
       }
     ]
   }

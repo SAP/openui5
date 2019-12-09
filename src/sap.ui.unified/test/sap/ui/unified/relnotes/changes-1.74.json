@@ -33,6 +33,12 @@
             "reference": "1940682249"
           }
         ]
+      },
+      {
+        "id": "00f1cd98c20ee84b84e58e1a296fe0a66ecf262c",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select year ranges is now added",
+        "references": []
       }
     ]
   }

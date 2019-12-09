@@ -34,6 +34,17 @@
             "reference": "1980441320"
           }
         ]
+      },
+      {
+        "id": "2da703563af35d0b7c3e53efb6157317969ed1f0",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Scrolling with large header on Desktop is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970554221"
+          }
+        ]
       }
     ]
   }
