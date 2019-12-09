@@ -44,7 +44,9 @@ sap.ui.define([
 			var aEvents;
 
 			function processComponentTargetInfo(oComponentTargetInfo, oEvent) {
-				Object.values(oComponentTargetInfo).forEach(function(oInfo) {
+				Object.keys(oComponentTargetInfo).forEach(function(sTargetName) {
+					var oInfo = oComponentTargetInfo[sTargetName];
+
 					if (oInfo.parameters) {
 						Object.keys(oInfo.parameters).forEach(function(sName) {
 							var sParamName = oInfo.parameters[sName];

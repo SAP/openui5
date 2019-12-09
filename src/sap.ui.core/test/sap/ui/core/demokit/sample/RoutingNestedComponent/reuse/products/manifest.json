@@ -68,7 +68,7 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "sap.ui.core.sample.RoutingNestedComponent.reuse.products.view",
+				"path": "sap.ui.core.sample.RoutingNestedComponent.reuse.products.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"transition": "slide",
@@ -96,16 +96,19 @@
 			],
 			"targets": {
 				"list": {
-					"viewId": "list",
-					"viewName": "List"
+					"type": "View",
+					"id": "list",
+					"name": "List"
 				},
 				"detail": {
-					"viewId": "detail",
-					"viewName": "Detail"
+					"type": "View",
+					"id": "detail",
+					"name": "Detail"
 				},
 				"notFound": {
-					"viewId": "notFound",
-					"viewName": "NotFound",
+					"type": "View",
+					"id": "notFound",
+					"name": "NotFound",
 					"transition": "show"
 				}
 			}
