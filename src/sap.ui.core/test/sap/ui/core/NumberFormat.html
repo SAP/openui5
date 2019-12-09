@@ -110,8 +110,8 @@
 			},
 			pattern: {
 				type: "string",
-				regex: /^[#0]*(,[#0]+)*(\.[0#]+)?$/,
-				help: "Number pattern consisting of '#' for optional digit, '0' for mandatory digit, ',' as grouping separator, '.' as decimal separator"
+				regex: /^(¤(\s)*)?[#0]*(,[#0]+)*(\.[0#]+)?((\s)*¤)?$/,
+				help: "Number pattern consisting of '#' for optional digit, '0' for mandatory digit, ',' as grouping separator, '.' as decimal separator, '¤' for the currency symbol"
 			},
 			groupingEnabled: {
 				type: "boolean",
