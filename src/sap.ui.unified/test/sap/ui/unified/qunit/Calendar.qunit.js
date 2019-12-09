@@ -573,7 +573,15 @@ sap.ui.define([
 
 	QUnit.module("initialize");
 
-	QUnit.test("getSelectedDates returns the right values", function (assert) {
+	QUnit.test("SecondMonthHeader is invisible", function(assert) {
+		var oCal = new Calendar();
+
+		// Act
+		// Assert
+		assert.notOk(oCal.getAggregation("secondMonthHeader").getVisible(), "secondMonthHeader aggregation is not visible");
+	});
+
+	QUnit.test("YearRangePicker aggregation is instantiated correctly", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
 				primaryCalendarType: sap.ui.core.CalendarType.Islamic
@@ -1953,10 +1961,19 @@ QUnit.module("Misc");
 		// arrange
 		var sYear = "2018",
 			sExpectedValue = sYear + ". " + sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_YEAR_PICKER_OPEN_HINT"),
-			oHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy(), _setTextButton4: this.spy(), _setAriaLabelButton4: this.spy() },
-			oSecondMonthHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy() },
+			oHeader = {
+				setTextButton2: this.spy(),
+				setAriaLabelButton2: this.spy(),
+				_setTextButton4: this.spy(),
+				_setAriaLabelButton4: this.spy()
+			},
+			oSecondMonthHeader = {
+				setTextButton2: this.spy(),
+				setAriaLabelButton2: this.spy()
+			},
 			oCalendar = new Calendar(),
 			oGetAggregationStub = this.stub(oCalendar, "getAggregation");
+
 		oGetAggregationStub.withArgs("header").returns(oHeader);
 		oGetAggregationStub.withArgs("secondMonthHeader").returns(oSecondMonthHeader);
 

@@ -398,7 +398,7 @@ sap.ui.define([
 	Calendar.prototype._initializeSecondMonthHeader = function() {
 		// TODO: move the for initializing the second month header in the setMonths
 		// and init it only if it is needed (2 months in calendar) not its ancestors.
-		var oSecondMonthHeader = new Header(this.getId() + "--SecondMonthHead");
+		var oSecondMonthHeader = new Header(this.getId() + "--SecondMonthHead", {visible: false});
 
 		oSecondMonthHeader.addStyleClass("sapUiCalHeadSecondMonth");
 		oSecondMonthHeader.attachEvent("pressPrevious", this._handlePrevious, this);
