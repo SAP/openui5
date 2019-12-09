@@ -87,6 +87,10 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function(mPropertyBag) {
+			if (mPropertyBag.cacheKey === "<NO CHANGES>") {
+				return Promise.resolve(ApplyUtils.getEmptyFlexDataResponse());
+			}
+
 			var mParameters = _pick(mPropertyBag, ["appVersion"]);
 			this._addClientAndLanguageInfo(mParameters);
 			var sAppDescriptorId;

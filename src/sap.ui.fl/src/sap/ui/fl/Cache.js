@@ -236,10 +236,13 @@ function(
 
 			// correct place to initialize maps yet to be defined
 			FlexState.clearState(sComponentName);
-			FlexState.initForReference(
+			FlexState._initForReferenceWithData(
 				Object.assign({
 					reference: sComponentName,
-					storageResponse: mChanges
+					storageResponse: mChanges,
+					component: {
+						id: mPropertyBag.componentId || mPropertyBag.component && mPropertyBag.component.getId && mPropertyBag.component.getId()
+					}
 				})
 			);
 
