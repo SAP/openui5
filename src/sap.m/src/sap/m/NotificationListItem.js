@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Icon',
 	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/library',
 	'sap/m/Link',
 	'sap/m/Avatar',
 	"sap/ui/events/KeyCodes",
@@ -25,6 +26,7 @@ function(
 	IconPool,
 	Icon,
 	ResizeHandler,
+	coreLibrary,
 	Link,
 	Avatar,
 	KeyCodes,
@@ -38,7 +40,6 @@ function(
 		READ_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_READ'),
 		UNREAD_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_UNREAD');
 
-	// anything better?
 	var maxTruncationHeight = 44;
 
 	// shortcut for sap.m.AvatarSize
@@ -46,6 +47,9 @@ function(
 
 	// shortcut for sap.m.AvatarColor
 	var AvatarColor = library.AvatarColor;
+
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
 
 	/**
 	 * Constructor for a new <code>NotificationListItem<code>.
@@ -296,8 +300,9 @@ function(
 	NotificationListItem.prototype._getFooterInvisibleText = function() {
 
 		var readUnreadText = this.getUnread() ? UNREAD_TEXT : READ_TEXT,
-			dueAndPriorityString = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', [this.getDatetime(), this.getPriority()]),
 			authorName = this.getAuthorName(),
+			dateTime = this.getDatetime(),
+			priority = this.getPriority(),
 			ariaTexts = [readUnreadText];
 
 		if (authorName) {
@@ -305,7 +310,14 @@ function(
 			ariaTexts.push(authorName);
 			ariaTexts.push(this.getAuthorName());
 		}
-		ariaTexts.push(dueAndPriorityString);
+
+		if (dateTime) {
+			ariaTexts.push( RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_DATETIME', [dateTime]));
+		}
+
+		if (priority !== Priority.None) {
+			ariaTexts.push(RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_PRIORITY', [priority]));
+		}
 
 		return this._footerIvisibleText.setText(ariaTexts.join(' '));
 	};

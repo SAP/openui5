@@ -126,7 +126,7 @@ sap.ui.define([
 
 		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority is rendered');
 
-		assert.strictEqual($item.find('.sapMNLIItem:last-child button').attr('title'), 'Close', 'close button is rendered');
+		assert.strictEqual($item.find('.sapMNLIItem:last-child button').attr('title'), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_CLOSE"), 'close button is rendered');
 		assert.ok(this.notificationListItem.$('overflowToolbar'), 'overflow toolbar is rendered');
 
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIFooterBullet').text(), '·', 'footer separator is rendered');
@@ -135,7 +135,7 @@ sap.ui.define([
 
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_SHOW_MORE"), 'Show More link is rendered');
 
-		assert.strictEqual($item.find('.sapFAvatar').attr('aria-label'), 'Avatar', 'author avatar is rendered');
+		assert.strictEqual($item.find('.sapFAvatar').attr('aria-label'), oResourceBundleM.getText("AVATAR_TOOLTIP"), 'author avatar is rendered');
 
 		assert.strictEqual($item.find('.sapMNLIDescription').text(), 'Notification List Item Description', 'description is rendered');
 	});
@@ -240,6 +240,33 @@ sap.ui.define([
 		assert.ok(ariallabledBy.indexOf('-title') > 0, "title is labeled to notification item");
 		assert.ok(ariallabledBy.indexOf('-descr') > 0, "description is labeled to notification item");
 		assert.ok(ariallabledBy.indexOf('-invisibleFooterText') > 0, "invisible text is labeled to notification ite,");
+
+		var sInvisibleACCTextRendered = this.notificationListItem.getDomRef().getElementsByClassName("sapUiInvisibleText")[3].innerText;
+		var sInvisibleACCText = oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_UNREAD") + " " +  oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_CREATED_BY") + " " + this.notificationListItem.getAuthorName() + " " + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_DATETIME", [this.notificationListItem.getDatetime()]) + " " + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_PRIORITY", [this.notificationListItem.getPriority()]);
+		assert.strictEqual(sInvisibleACCTextRendered, sInvisibleACCText, "ACC text is the correct one");
+		// ACC  text result: "Notification unread. Created By John Smith Due in 3 days. High Priority."
+
+		this.notificationListItem.setPriority("None");
+		Core.applyChanges();
+		sInvisibleACCTextRendered = this.notificationListItem.getDomRef().getElementsByClassName("sapUiInvisibleText")[3].innerText;
+		sInvisibleACCText = oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_UNREAD") + " " +  oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_CREATED_BY") + " " + this.notificationListItem.getAuthorName() + " " + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_DATETIME", [this.notificationListItem.getDatetime()]);
+		assert.strictEqual(sInvisibleACCTextRendered, sInvisibleACCText, "ACC text is OK the correct one when the priority is \"None\"");
+		// ACC  text result: "Notification unread. Created By John Smith Due in 3 days."
+
+		this.notificationListItem.setDatetime("");
+		Core.applyChanges();
+		sInvisibleACCTextRendered = this.notificationListItem.getDomRef().getElementsByClassName("sapUiInvisibleText")[3].innerText;
+		sInvisibleACCText = oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_UNREAD") + " " +  oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_CREATED_BY") + " " + this.notificationListItem.getAuthorName();
+		assert.strictEqual(sInvisibleACCTextRendered, sInvisibleACCText, "ACC text is OK the correct one when the priority is \"None\" and there is no Datetime");
+		// ACC  text result: "Notification unread. Created By John Smith"
+
+		this.notificationListItem.setAuthorName("");
+		Core.applyChanges();
+		sInvisibleACCTextRendered = this.notificationListItem.getDomRef().getElementsByClassName("sapUiInvisibleText")[3].innerText;
+		sInvisibleACCText = oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_UNREAD");
+		assert.strictEqual(sInvisibleACCTextRendered, sInvisibleACCText, "ACC text is OK the correct one when the priority is \"None\", there is no Datetime and there is no authorName");
+		// ACC  text result: "Notification unread."
+
 	});
 
 	QUnit.module('Keyboard navigation', {
