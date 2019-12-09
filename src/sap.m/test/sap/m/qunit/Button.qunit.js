@@ -936,6 +936,100 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("Types Negative, Critical, Success, Neutral implied icon is applied", function() {
+		// arrange
+		var oButton = new sap.m.Button({
+			text: "button"
+		});
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oButton.getIcon(), "still no icon");
+
+		// act
+		oButton.setType(ButtonType.Negative);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-error").content,
+			"icon is right"
+		);
+
+		// act
+		oButton.setType(ButtonType.Critical);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-warning").content,
+			"icon is right"
+		);
+
+		// act
+		oButton.setType(ButtonType.Success);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-success").content,
+			"icon is right"
+		);
+
+		// act
+		oButton.setType(ButtonType.Neutral);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-information").content,
+			"icon is right"
+		);
+
+		// clean
+		oButton.destroy();
+	});
+
+	QUnit.test("Icon is preferred over the type's implied icon", function() {
+		// arrange
+		var oButton = new sap.m.Button({
+			text: "button",
+			icon: "sap-icon://message-information"
+		});
+		oButton.placeAt("qunit-fixture");
+
+		// act
+		oButton.setType(ButtonType.Negative);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oButton.getIcon(), "sap-icon://message-information", "the icon property is not touched");
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-information").content,
+			"icon is preferred over the type's implied icon"
+		);
+
+		// act
+		oButton.setIcon(null);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-error").content,
+			"when icon is removed, type's implied icon is applied"
+		);
+
+		// clean
+		oButton.destroy();
+	});
+
 	QUnit.module("Tap Event Checking", {
 		beforeEach : function() {
 			b15 = sap.ui.getCore().byId("b15");

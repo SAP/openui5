@@ -60,7 +60,7 @@ sap.ui.define([
 			oRm.class("sapMBtn");
 
 			// extend  minimum button size if icon is set without text for button types back and up
-			if ((sType === ButtonType.Back || sType === ButtonType.Up) && oButton.getIcon() && !sText) {
+			if ((sType === ButtonType.Back || sType === ButtonType.Up) && oButton._getAppliedIcon() && !sText) {
 				oRm.class("sapMBtnBack");
 			}
 		}
@@ -156,7 +156,7 @@ sap.ui.define([
 			if (sType === ButtonType.Back || sType === ButtonType.Up) {
 				oRm.class("sapMBtnBack");
 			}
-			if (oButton.getIcon()) {
+			if (oButton._getAppliedIcon()) {
 				if (oButton.getIconFirst()) {
 					oRm.class("sapMBtnIconFirst");
 				} else {
@@ -188,7 +188,7 @@ sap.ui.define([
 		}
 
 		// write icon
-		if (oButton.getIcon()) {
+		if (oButton._getAppliedIcon()) {
 			this.writeImgHtml(oRm, oButton);
 		}
 
@@ -248,7 +248,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ButtonRenderer.writeImgHtml = function(oRm, oButton) {
-		oRm.renderControl(oButton._getImage((oButton.getId() + "-img"), oButton.getIcon(), oButton.getActiveIcon(), oButton.getIconDensityAware()));
+		oRm.renderControl(oButton._getImage(
+			oButton.getId() + "-img",
+			oButton._getAppliedIcon(),
+			oButton.getActiveIcon(),
+			oButton.getIconDensityAware()));
 	};
 
 	/**
