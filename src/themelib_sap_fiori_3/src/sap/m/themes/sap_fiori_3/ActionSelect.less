@@ -7,11 +7,18 @@
 /* button                        */
 /* ----------------------------- */
 
-.sapMActionSelectPicker .sapMBtnInner {
- 	border-top: 1px solid @sapUiButtonActionSelectBorderColor;
- 	border-bottom: 0;
- 	border-left: 0;
- 	border-right: 0;
+.sapMActionSelectPicker .sapMBtn {
+	 .sapMBtnInner {
+		border-top: 1px solid @sapUiButtonActionSelectBorderColor;
+		border-bottom: 0;
+		border-left: 0;
+		border-right: 0;
+		height: 2.5rem;
+	 }
+
+	 .sapMBtnContent {
+		line-height: 2.4375rem;
+	 }
 }
 
 .sapMActionSelectPicker .sapMBtnDisabled {
@@ -60,12 +67,12 @@ html.sap-desktop .sapMActionSelectPicker .sapMBtnDefault:not(.sapMBtnActive):hov
 }
 
 .sapUiSizeCompact.sapMActionSelectPicker .sapMBtnInner {
- 	height: 2rem;
- 	border-radius: 0;
- 	border: 0;
- 	border-top: 1px solid @sapUiButtonActionSelectBorderColor;
-}
+	height: 2rem;
+	border-radius: 0;
+	border: 0;
+	border-top: 1px solid @sapUiButtonActionSelectBorderColor;
 
-.sapUiSizeCompact.sapMActionSelectPicker .sapMBtnContent {
-	line-height: 2rem;
+	.sapMBtnContent {
+		line-height: 2rem;
+	}
 }
