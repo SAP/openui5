@@ -176,6 +176,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adds the given query options to the resource path, which itself may already have query
+	 * options.
+	 *
+	 * @param {string} sResourcePath The resource path with poss. query options
+	 * @param {string} sMetaPath The absolute meta path matching the resource path
+	 * @param {object} mQueryOptions Query options to add to the resource path
+	 * @returns {string} The resource path with the query options
+	 *
+	 * @private
+	 */
+	Requestor.prototype.addQueryString = function (sResourcePath, sMetaPath, mQueryOptions) {
+		var sQueryString = this.buildQueryString(sMetaPath, mQueryOptions, false, true);
+
+		return sResourcePath +
+			(sResourcePath.includes("?") ? "&" + sQueryString.slice(1) : sQueryString);
+	};
+
+	/**
 	 * Called when a batch request for the given group ID has been sent.
 	 *
 	 * @param {string} sGroupId
@@ -950,6 +968,48 @@ sap.ui.define([
 	};
 
 	/**
+	 * Merges all GET requests that are marked as mergeable, have the same resource path and the
+	 * same query options besides $expand and $select. One request with the merged $expand and
+	 * $select is left in the queue and all merged requests get the response of this one remaining
+	 * request.
+	 *
+	 * @param {object[]} aRequests The batch queue
+	 * @returns {object[]} The adjusted batch queue
+	 */
+	Requestor.prototype.mergeGetRequests = function (aRequests) {
+		var aResultingRequests = [],
+			that = this;
+
+		function merge(oRequest) {
+			return oRequest.$queryOptions && aResultingRequests.some(function (oCandidate) {
+				if (oCandidate.$queryOptions && oRequest.url === oCandidate.url) {
+					_Helper.aggregateQueryOptions(oCandidate.$queryOptions, oRequest.$queryOptions);
+					oRequest.$resolve(oCandidate.$promise);
+
+					return true;
+				}
+
+				return false;
+			});
+		}
+
+		aRequests.forEach(function (oRequest) {
+			if (!merge(oRequest)) {
+				aResultingRequests.push(oRequest);
+			}
+		});
+		aResultingRequests.forEach(function (oRequest) {
+			if (oRequest.$queryOptions) {
+				oRequest.url
+					= that.addQueryString(oRequest.url, oRequest.$metaPath, oRequest.$queryOptions);
+			}
+		});
+		aResultingRequests.iChangeSet = aRequests.iChangeSet;
+
+		return aResultingRequests;
+	};
+
+	/**
 	 * Sends an OData batch request containing all requests referenced by the given group ID and
 	 * processes the responses by dispatching them to the appropriate handlers.
 	 *
@@ -1057,6 +1117,7 @@ sap.ui.define([
 		}
 
 		this.batchRequestSent(sGroupId, bHasChanges);
+		aRequests = this.mergeGetRequests(aRequests);
 		return this.sendBatch(_Requestor.cleanBatch(aRequests))
 			.then(function (aResponses) {
 				visit(aRequests, aResponses);
@@ -1298,8 +1359,7 @@ sap.ui.define([
 	 * @param {string} sMethod
 	 *   HTTP method, e.g. "GET"
 	 * @param {string} sResourcePath
-	 *   A resource path relative to the service URL for which this requestor has been created;
-	 *   use "$batch" to send a batch request
+	 *   A resource path relative to the service URL for which this requestor has been created
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
 	 *   A lock for the group to associate the request with; if no lock is given or its group ID has
 	 *   {@link sap.ui.model.odata.v4.SubmitMode.Direct}, the request is sent immediately; for all
@@ -1331,6 +1391,10 @@ sap.ui.define([
 	 * @param {boolean} [bAtFront=false]
 	 *   Whether the request is added at the front of the first change set (ignored for method
 	 *   "GET")
+	 * @param {object} [mQueryOptions]
+	 *   Query options if it is allowed to merge this request with another request having the same
+	 *   sResourcePath (only allowed for GET requests); the resulting resource path is the path from
+	 *   sResourcePath plus the merged query options
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request
 	 * @throws {Error}
@@ -1339,7 +1403,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, oGroupLock, mHeaders, oPayload,
-			fnSubmit, fnCancel, sMetaPath, sOriginalResourcePath, bAtFront) {
+			fnSubmit, fnCancel, sMetaPath, sOriginalResourcePath, bAtFront, mQueryOptions) {
 		var iChangeSetNo,
 			oError,
 			sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
@@ -1375,6 +1439,7 @@ sap.ui.define([
 					body : oPayload,
 					$cancel : fnCancel,
 					$metaPath : sMetaPath,
+					$queryOptions : mQueryOptions,
 					$reject : fnReject,
 					$resolve : fnResolve,
 					$resourcePath : sOriginalResourcePath,
@@ -1396,6 +1461,9 @@ sap.ui.define([
 			return oPromise;
 		}
 
+		if (mQueryOptions) {
+			sResourcePath = that.addQueryString(sResourcePath, sMetaPath, mQueryOptions);
+		}
 		if (fnSubmit) {
 			fnSubmit();
 		}

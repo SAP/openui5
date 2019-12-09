@@ -3163,7 +3163,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: $select", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Employees('31')"),
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {}),
 			oData = {
 				foo : {
 					bar: "baz"
@@ -3220,18 +3220,19 @@ sap.ui.define([
 		oHelperMock.expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(mQueryOptions), "").returns(mQueryOptionsForPath);
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(oCache.sMetaPath, {
-				$select : [sRequestedPropertyPath, "key"],
-				"sap-client" : "123",
-				"sap-language" : "en"
-			}, false, true)
+			.withExactArgs("~1~", sinon.match.same(mQueryOptionsForPath), false, true)
 			.returns("?$select=~1");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("~1~", sinon.match.same(oCache.mQueryOptions), true)
+			.returns("?~");
 		oHelperMock.expects("buildPath")
 			.withExactArgs(oCache.sResourcePath, "")
-			.returns("/~/");
+			.returns("~/");
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "/~/?$select=~1", sinon.match.same(oRequestGroupLock))
+			.withExactArgs("GET", "~/?~", sinon.match.same(oRequestGroupLock), undefined,
+				undefined, undefined, undefined, "~1~", undefined, false,
+				sinon.match.same(mQueryOptionsForPath))
 			.resolves(oData);
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath), "~1~", "");
@@ -3254,7 +3255,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: $select, nested entity", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Employees"),
+		var oCache = new _Cache(this.oRequestor, "Employees", {}),
 			oData = {
 				foo : {
 					bar : "baz"
@@ -3310,18 +3311,20 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mQueryOptions), "('31')/entity/path")
 			.returns(mQueryOptionsForPath);
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(oCache.sMetaPath, {
-				$select : [sRequestedPropertyPath, "key"],
-				"sap-client" : "123",
-				"sap-language" : "en"
-			}, false, true)
+			.withExactArgs("/Employees/entity/path", sinon.match.same(mQueryOptionsForPath), false,
+				true)
 			.returns("?$select=~1");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("/Employees/entity/path", sinon.match.same(oCache.mQueryOptions), true)
+			.returns("?~");
 		oHelperMock.expects("buildPath")
 			.withExactArgs(oCache.sResourcePath, "('31')/entity/path")
-			.returns("/~/");
+			.returns("~/");
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "/~/?$select=~1", sinon.match.same(oRequestGroupLock))
+			.withExactArgs("GET", "~/?~", sinon.match.same(oRequestGroupLock), undefined,
+				undefined, undefined, undefined, "/Employees/entity/path", undefined, false,
+				sinon.match.same(mQueryOptionsForPath))
 			.resolves(oData);
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath),
@@ -3345,7 +3348,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: $expand", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Employees"),
+		var oCache = new _Cache(this.oRequestor, "Employees", {}),
 			oData = {
 				foo : {
 					bar : "baz"
@@ -3378,6 +3381,24 @@ sap.ui.define([
 				$select : ["foo"]
 			},
 			oRequestGroupLock = {},
+			mRequestQueryOptions = {
+				$expand : {
+					foo : {
+						$expand : {
+							bar : {
+								$expand : {
+									baz : {
+										$select : ["qux", "baz1"]
+									}
+								},
+								$select : ["baz"]
+							}
+						},
+						$select : ["foo1", "t/foo2"]
+					}
+				},
+				$select : ["key"]
+			},
 			oTypeBar = {},
 			oTypeBaz = {
 				$Key : ["baz1"]
@@ -3442,14 +3463,20 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mQueryOptions), "('1')/entity/path")
 			.returns(mQueryOptionsForPath);
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptionsForPath), false, true)
+			.withExactArgs(oCache.sMetaPath + "/entity/path", mRequestQueryOptions, false, true)
 			.returns("?$expand=~1");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath + "/entity/path",
+				sinon.match.same(oCache.mQueryOptions), true)
+			.returns("?~");
 		oHelperMock.expects("buildPath")
 			.withExactArgs(oCache.sResourcePath, "('1')/entity/path")
-			.returns("/~/");
+			.returns("~/");
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "/~/?$expand=~1", sinon.match.same(oRequestGroupLock))
+			.withExactArgs("GET", "~/?~", sinon.match.same(oRequestGroupLock),  undefined,
+				undefined, undefined, undefined, oCache.sMetaPath + "/entity/path", undefined,
+				false, mRequestQueryOptions)
 			.resolves(oData);
 		oVisitResponseCall = this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath),
@@ -3481,7 +3508,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: parallel calls", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Employees('31')"),
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {}),
 			oData = {property : {foo : "foo", bar : "bar"}},
 			oEntity = {},
 			oEntityType = {
@@ -3525,10 +3552,15 @@ sap.ui.define([
 		this.oRequestorMock.expects("buildQueryString").twice()
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptions), false, true)
 			.returns("?$select=property");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions), true)
+			.returns("?~");
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees('31')?$select=property",
-				sinon.match.same(oRequestGroupLock))
+			.withExactArgs("GET", "Employees('31')?~",
+				sinon.match.same(oRequestGroupLock), undefined,
+				undefined, undefined, undefined, oCache.sMetaPath, undefined, false,
+				sinon.match.same(mQueryOptions))
 			.resolves(oData);
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath),
@@ -3551,7 +3583,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: request failed", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Employees('31')"),
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {}),
 			oEntity = {},
 			oEntityType = {
 				$Key : ["key"]
@@ -3583,10 +3615,15 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(oEntityType));
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptions), false, true)
-			.returns("?~");
+			.returns("?~1");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions), true)
+			.returns("?~2");
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees('31')?~", sinon.match.same(oRequestGroupLock))
+			.withExactArgs("GET", "Employees('31')?~2", sinon.match.same(oRequestGroupLock),
+				undefined, undefined, undefined, undefined, oCache.sMetaPath, undefined, false,
+				sinon.match.same(mQueryOptions))
 			.rejects(oError);
 		this.mock(_Helper).expects("updateSelected").never();
 
@@ -3611,7 +3648,7 @@ sap.ui.define([
 	predicate : "('TEAM_02')"
 }].forEach(function (oFixture) {
 	QUnit.test("Cache#fetchLateProperty: " + oFixture.error, function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Employees('31')/EMPLOYEE_2_TEAM"),
+		var oCache = new _Cache(this.oRequestor, "Employees('31')/EMPLOYEE_2_TEAM", {}),
 			oCacheData = {
 				"@$ui5._" : {predicate : "('TEAM_01')"},
 				"@odata.etag" : "old"
@@ -3647,11 +3684,15 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(oEntityType));
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptions), false, true)
-			.returns("?~");
+			.returns("?~1");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions), true)
+			.returns("?~2");
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees('31')/EMPLOYEE_2_TEAM?~",
-				sinon.match.same(oRequestGroupLock))
+			.withExactArgs("GET", "Employees('31')/EMPLOYEE_2_TEAM?~2",
+				sinon.match.same(oRequestGroupLock), undefined, undefined, undefined, undefined,
+				oCache.sMetaPath, undefined, false, sinon.match.same(mQueryOptions))
 			.resolves(oData);
 		this.mock(_Helper).expects("updateSelected").never();
 
@@ -3661,7 +3702,7 @@ sap.ui.define([
 				assert.ok(false);
 			}, function (oError) {
 				assert.strictEqual(oError.message,
-					"GET " + "Employees('31')/EMPLOYEE_2_TEAM?~: " + oFixture.error);
+					"GET " + "Employees('31')/EMPLOYEE_2_TEAM?~1: " + oFixture.error);
 				assert.deepEqual(oCache.mPropertyRequestByPath, {});
 			});
 	});

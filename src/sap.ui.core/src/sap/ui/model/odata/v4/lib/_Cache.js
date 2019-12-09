@@ -588,6 +588,8 @@ sap.ui.define([
 	Cache.prototype.fetchLateProperty = function (oGroupLock, oResource, sResourcePath,
 			sRequestedPropertyPath, sMissingPropertyPath) {
 		var sFullResourceMetaPath,
+			sFullResourcePath,
+			sMergeBasePath, // full resource path plus custom query options
 			oPromise,
 			mQueryOptions,
 			sRequestPath,
@@ -655,28 +657,25 @@ sap.ui.define([
 		}
 		mQueryOptions = _Helper.getQueryOptionsForPath(mQueryOptions, sResourcePath);
 
-		// custom query options must be sent with each request
-		Object.keys(this.mLateQueryOptions).forEach(function (sName) {
-			if (sName[0] !== "$") {
-				mQueryOptions[sName] = that.mLateQueryOptions[sName];
-			}
-		});
-
 		sFullResourceMetaPath = _Helper.buildPath(this.sMetaPath, sResourceMetaPath);
 		visitQueryOptions(mQueryOptions);
-		sRequestPath = _Helper.buildPath(this.sResourcePath, sResourcePath)
-			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
+		sFullResourcePath = _Helper.buildPath(this.sResourcePath, sResourcePath);
+		sRequestPath = sFullResourcePath
+			+ this.oRequestor.buildQueryString(sFullResourceMetaPath, mQueryOptions, false, true);
 		oPromise = this.mPropertyRequestByPath[sRequestPath];
 		if (!oPromise) {
-			oPromise = this.oRequestor.request("GET", sRequestPath, oGroupLock.getUnlockedCopy())
-				.then(function (oData) {
-					that.visitResponse(oData, mTypeForMetaPath, sFullResourceMetaPath,
-							sResourcePath);
-					return oData;
-				})
-				.finally(function () {
-					delete that.mPropertyRequestByPath[sRequestPath];
-				});
+			sMergeBasePath = sFullResourcePath
+				+ this.oRequestor.buildQueryString(sFullResourceMetaPath, this.mQueryOptions, true);
+			oPromise = this.oRequestor.request("GET", sMergeBasePath, oGroupLock.getUnlockedCopy(),
+				undefined, undefined, undefined, undefined, sFullResourceMetaPath, undefined,
+				false, mQueryOptions
+			).then(function (oData) {
+				that.visitResponse(oData, mTypeForMetaPath, sFullResourceMetaPath, sResourcePath);
+
+				return oData;
+			}).finally(function () {
+				delete that.mPropertyRequestByPath[sRequestPath];
+			});
 			this.mPropertyRequestByPath[sRequestPath] = oPromise;
 		}
 		// With the V2 adapter the surrounding complex type is requested for nested properties. So
