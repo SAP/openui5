@@ -35,27 +35,27 @@
       "changes": {
         "default": {
           "pom.xml": "2",
-          "src/sap.ui.suite/package.json": "2",
           "src/sap.ui.fl/package.json": "3",
+          "src/sap.ui.suite/package.json": "2",
           "package.json": "1",
           "src/sap.ui.ux3/pom.xml": "1",
           "src/testsuite/package.json": "21",
           "src/sap.ui.table/package.json": "3",
           "src/testsuite/pom.xml": "1",
-          "src/sap.ui.table/pom.xml": "1",
           "src/sap.ui.rta/package.json": "6",
+          "src/sap.ui.table/pom.xml": "1",
           "src/testsuite-utils/pom.xml": "1",
           "src/sap.uxap/pom.xml": "1",
           "src/sap.ui.core/package.json": "1",
-          "src/sap.ui.layout/pom.xml": "1",
           "src/sap.f/package.json": "3",
+          "src/sap.ui.layout/pom.xml": "1",
           "src/sap.ui.unified/pom.xml": "1",
           "src/sap.m/package.json": "3",
           "src/sap.ui.demokit/package.json": "5",
           "src/themelib_sap_bluecrystal/package.json": "15",
           "src/sap.ui.support/package.json": "7",
-          "src/sap.ui.core/pom.xml": "1",
           "src/sap.tnt/pom.xml": "1",
+          "src/sap.ui.core/pom.xml": "1",
           "src/sap.ui.codeeditor/package.json": "2",
           "src/sap.ui.commons/pom.xml": "1",
           "src/sap.m/pom.xml": "1",
@@ -65,13 +65,13 @@
           "src/sap.ui.demokit/pom.xml": "1",
           "src/sap.ui.dt/package.json": "2",
           "src/sap.ui.support/pom.xml": "1",
-          "src/sap.uxap/package.json": "4",
           "src/sap.ui.documentation/package.json": "4",
+          "src/sap.uxap/package.json": "4",
           "src/sap.tnt/package.json": "3",
-          "src/themelib_sap_belize/package.json": "15",
           "src/sap.ui.layout/package.json": "2",
-          "src/themelib_sap_bluecrystal/pom.xml": "1",
+          "src/themelib_sap_belize/package.json": "15",
           "src/sap.ui.fl/pom.xml": "1",
+          "src/themelib_sap_bluecrystal/pom.xml": "1",
           "src/sap.ui.dt/pom.xml": "1",
           "src/sap.ui.unified/package.json": "2",
           "src/sap.ui.suite/pom.xml": "1",
@@ -81,7 +81,7 @@
           "src/themelib_sap_belize/pom.xml": "1"
         }
       },
-      "lastCommitId": "e2b1550f8c2381717f3c7675e67341ede4c404a2"
+      "lastCommitId": "bdd9e8a4ee6d9b67179a84758216c11f5d733468"
     },
     "rel-1.52.1": {
       "changes": {
