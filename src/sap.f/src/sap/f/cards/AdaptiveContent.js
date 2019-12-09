@@ -4,6 +4,7 @@
 sap.ui.define([
 		"sap/ui/integration/library",
 		"sap/f/library",
+		"sap/ui/dom/includeScript",
 		"sap/f/cards/BaseContent",
 		"sap/ui/integration/thirdparty/adaptivecards",
 		"sap/f/cards/adaptivecards/elements/UI5InputText",
@@ -14,7 +15,7 @@ sap.ui.define([
 		"sap/f/cards/adaptivecards/overwrites/ActionRender",
 		"sap/f/cards/adaptivecards/elements/config"
 	],
-	function (integrationLibrary, fLibrary, BaseContent, AdaptiveCards, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, ActionRender, HostConfig) {
+	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, ActionRender, HostConfig) {
 		"use strict";
 
 		/**
@@ -49,6 +50,7 @@ sap.ui.define([
 
 		AdaptiveContent.prototype.init = function () {
 			this._setupAdaptiveCardDependency();
+			this._loadDependencies();
 		};
 
 		/**
@@ -168,6 +170,37 @@ sap.ui.define([
 				this.adaptiveCardInstance.parse(this._oCardConfig);
 				oDom.html(this.adaptiveCardInstance.render());
 			}
+		};
+
+		/**
+		 * Load UI5 WebComponents
+		 *
+		 * We don't need to think about when the WebComponents dependency would be loaded.
+		 * If preloaded, then all elements would be rendered properly. If loaded at a later time,
+		 * then "the placeholders" would be patched and the WebComponents would be build later.
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._loadDependencies = function () {
+			// Check weather the WebComponents are already loaded. We don't need to fetch the scripts again
+			if (document.querySelector("#webcomponents-loader")) {
+				return;
+			}
+
+			includeScript({
+				id: "webcomponents-loader",
+				url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/webcomponents-loader.js")
+			});
+			includeScript({
+				id: "webcomponents-bundle",
+				attributes: {type: "module"},
+				url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.esm.js")
+			});
+			includeScript({
+				id: "webcomponents-bundle-es5",
+				attributes: {nomodule: "nomodule"},
+				url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/bundle.es5.js")
+			});
 		};
 
 		return AdaptiveContent;
