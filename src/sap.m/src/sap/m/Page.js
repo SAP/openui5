@@ -322,7 +322,6 @@ function(
 		};
 
 		Page.prototype.onAfterRendering = function () {
-			setTimeout(this._adjustFooterWidth.bind(this), 10);
 			this.$().toggleClass("sapMPageBusyCoversAll", !this.getContentOnlyBusy());
 
 			// If contentOnlyBusy property is set, then the busy indicator should cover only the content area
@@ -454,28 +453,6 @@ function(
 			}
 
 			return this;
-		};
-
-		Page.prototype._adjustFooterWidth = function () {
-			var bDirection  = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right";
-			if (!this.getShowFooter() || !this.getFloatingFooter() || !this.getFooter()) {
-				return;
-			}
-
-			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last();
-
-			if (this._contentHasScroll()) {
-				$footer.css(bDirection, jQuery.position.scrollbarWidth() + "px");
-				$footer.css("width", "initial");
-			} else {
-				$footer.css(bDirection, 0);
-				$footer.css("width", "");
-			}
-		};
-
-		Page.prototype._contentHasScroll = function () {
-			var $section = jQuery(document.getElementById(this.getId() + "-cont"));
-			return $section[0].scrollHeight > $section.innerHeight();
 		};
 
 		/**

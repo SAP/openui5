@@ -230,9 +230,12 @@ sap.ui.define([
 		}).placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		var oPageContentRef = oPage.getDomRef("cont");
+		var hasScroll = oPageContentRef.getBoundingClientRect().height < oPageContentRef.scrollHeight;
+
 		assert.ok(document.getElementById("my.Page"), "Page should be rendered");
 		assert.ok(document.getElementById("p4content"), "Page content should be rendered");
-		assert.equal(oPage._contentHasScroll(), false, "Content should be correctly checked for scroll");
+		assert.equal(hasScroll, false, "Content should be correctly checked for scroll");
 
 		oPage.destroy();
 		oPage = null;
