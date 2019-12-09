@@ -17,6 +17,11 @@ sap.ui.define([
 		browserName: Device.browser.BROWSER.INTERNET_EXPLORER,
 		browserVersion: 11
 	});
+	aSupportedEnv.push({
+		system: Device.system.SYSTEMTYPE.DESKTOP,
+		browserName: Device.browser.BROWSER.SAFARI,
+		browserVersion: 13
+	});
 	var bSupportedEnv = aSupportedEnv.some(function(oSuppportedEnv) {
 		var bSupportedSystem = Device.system[oSuppportedEnv.system],
 			bSupportedBrowserName = oSuppportedEnv.browserName === Device.browser.name,
