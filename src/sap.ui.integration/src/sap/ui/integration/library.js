@@ -65,7 +65,13 @@ sap.ui.define(["sap/ui/base/DataType",
 			 * Used for navigation actions
 			 * @public
 			 */
-			Navigation : "Navigation"
+			Navigation : "Navigation",
+
+			/**
+			 * Used for navigation actions
+			 * @public
+			 */
+			Submit: "Submit"
 		};
 
 		/**

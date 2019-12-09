@@ -53,7 +53,9 @@ sap.ui.define([], function () {
 		},
 		"containerStyles": {
 			"default": {
-				"backgroundColor": "#FFFFFF", // @sapUiTileBackground
+				// in order to get out of the box the card content background or use
+				// @sapUiTileBackground
+				"backgroundColor": "transparent",
 				"foregroundColors": {
 					"default": {
 						"default": "#32363A", // @sapUiBaseText
