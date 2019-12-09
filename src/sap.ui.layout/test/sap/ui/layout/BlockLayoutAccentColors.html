@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.ui.layout.BlockLayout</title>
+	<script src="shared-config.js"></script>
+	<script id='sap-ui-bootstrap'
+			src='../../../../resources/sap-ui-core.js'
+			data-sap-ui-libs='sap.ui.layout, sap.m'>
+	</script>
+	<script id="myXml" type="text/xmldata">
+		<mvc:View xmlns:mvc="sap.ui.core.mvc"
+				xmlns="sap.m"
+				xmlns:m="sap.m"
+				xmlns:l="sap.ui.layout"
+				controllerName="myController"
+				displayBlock="true"
+				viewName="sap.ui.layout.BlockLayoutAccentColors">
+			<l:BlockLayout id="BlockLayout">
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+						id="cell-1"
+						title="A"
+						backgroundColorSet="{/colorSet}"
+						backgroundColorShade="{/shades/0}">
+						<Text text="Shade A" />
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+						id="cell-2"
+						title="B"
+						backgroundColorSet="{/colorSet}"
+						backgroundColorShade="{/shades/1}">
+						<Text text="Shade B" />
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+						id="cell-3"
+						title="C"
+						backgroundColorSet="{/colorSet}"
+						backgroundColorShade="{/shades/2}">
+						<Text text="Shade C" />
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+						id="cell-4"
+						title="D"
+						backgroundColorSet="{/colorSet}"
+						backgroundColorShade="{/shades/3}">
+						<Text text="Shade D" />
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+						id="cell-5"
+						title="E"
+						backgroundColorSet="{/colorSet}"
+						backgroundColorShade="{/shades/4}">
+						<Text text="Shade E" />
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+						id="cell-6"
+						title="F"
+						backgroundColorSet="{/colorSet}"
+						backgroundColorShade="{/shades/5}">
+						<Text text="Shade F" />
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+			</l:BlockLayout>
+		</mvc:View>
+	</script>
+
+	<script>
+		sap.ui.controller("myController", {
+			onInit: function() {
+				var oView = this.getView(),
+						oModel = new sap.ui.model.json.JSONModel();
+
+				oView.setModel(oModel);
+				this._fillModel(this._modelData);
+			},
+
+			_fillModel: function (oData) {
+				var oModel = this.getView().getModel();
+				oModel.setData(oData);
+			},
+
+			_modelData: {
+				selectEnabled: true,
+				colorSet: "ColorSet5",
+				shades: [
+					sap.ui.layout.BlockLayoutCellColorShade.ShadeA,
+					sap.ui.layout.BlockLayoutCellColorShade.ShadeB,
+					sap.ui.layout.BlockLayoutCellColorShade.ShadeC,
+					sap.ui.layout.BlockLayoutCellColorShade.ShadeD,
+					sap.ui.layout.BlockLayoutCellColorShade.ShadeE,
+					sap.ui.layout.BlockLayoutCellColorShade.ShadeF
+				],
+				contrastCells: []
+			}
+		});
+		sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+<div id="content"></div>
+</body>
+</html>
