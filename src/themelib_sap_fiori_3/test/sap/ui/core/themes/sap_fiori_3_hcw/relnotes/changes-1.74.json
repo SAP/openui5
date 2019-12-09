@@ -56,6 +56,36 @@
             "reference": "1980361124"
           }
         ]
+      },
+      {
+        "id": "00f1cd98c20ee84b84e58e1a296fe0a66ecf262c",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select year ranges is now added",
+        "references": []
+      },
+      {
+        "id": "deb763a9db43e483b03712d34dbb26b714d115f4",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: New \"icon\" property implemented",
+        "references": []
+      },
+      {
+        "id": "5d3788ac1eabed46ddc2c42f99e63d4bacdbf199",
+        "type": "FEATURE",
+        "text": " sap.ui.fl: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "12bb68de6854e84406841bb76637872a10fadb4f",
+        "type": "FEATURE",
+        "text": " sap.ui.suite: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "8527e0b1a84695e54472ea92cd273d9a2d479177",
+        "type": "FEATURE",
+        "text": " sap_fiori_3 themes: add \"72-Light\" font",
+        "references": []
       }
     ]
   }

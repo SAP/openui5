@@ -231,6 +231,156 @@
             "reference": "1970573833"
           }
         ]
+      },
+      {
+        "id": "a1eee5aec97d6ee7065a302e9cc48147ac8e64dd",
+        "type": "FEATURE",
+        "text": " Introduced new predifined negative margin classes",
+        "references": []
+      },
+      {
+        "id": "00f1cd98c20ee84b84e58e1a296fe0a66ecf262c",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select year ranges is now added",
+        "references": []
+      },
+      {
+        "id": "fc5036498d2e70e5365b0c25921e0a72214ff02c",
+        "type": "FEATURE",
+        "text": " sap.m.NotificationListItem: New property \"authorAvatarColor\" is introduced",
+        "references": []
+      },
+      {
+        "id": "686bcb7e19ea73241bfae361c2f8f4c4062051a6",
+        "type": "FIX",
+        "text": " sap.m.Button: Does not fire press event on mouse out",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970554912"
+          }
+        ]
+      },
+      {
+        "id": "1a6f1a96b6f58467312a70f77e8eab2fb109ac88",
+        "type": "FIX",
+        "text": " sap.m.Button: Press event fires once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006778252019"
+          }
+        ]
+      },
+      {
+        "id": "6b2f2063fb736c03d5ffcfaa672c1e516c845d90",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Disable text selection for selected option on Android tablets",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980372825"
+          }
+        ]
+      },
+      {
+        "id": "2b398563d9fcab36b7120a5a9a7961adee0a166f",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Prevent Suggestions Popover\u0027s highlighting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970579874"
+          }
+        ]
+      },
+      {
+        "id": "1b3fcc9ca904bd7f9856001e821f03f05b0b0067",
+        "type": "FIX",
+        "text": " sap.m.Input: Clear references after destroying Sugg Popover content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980458244"
+          }
+        ]
+      },
+      {
+        "id": "4b76f3d2e807521a6d9a93bb315eb94de794df76",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: QUnit fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980470898"
+          }
+        ]
+      },
+      {
+        "id": "1b5c2d0c0feb6c7abdbf8ab75b4c145922126fef",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent closing of Popover when non editable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970586745"
+          }
+        ]
+      },
+      {
+        "id": "6b5589ac79121809fa29188ac5bd8d113bc6a1af",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent exception when pressing arrows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980454206"
+          }
+        ]
+      },
+      {
+        "id": "9887a25ba7efc3a103fe2e80f783cc846c5bd487",
+        "type": "FIX",
+        "text": " sap.m.Page: Prevent setting Up type to nav button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980483066"
+          }
+        ]
+      },
+      {
+        "id": "37395361f23adb85440913652211b3c5ae858e7b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: New appointment in Hours view gets proper start/end times",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1930741556"
+          }
+        ]
+      },
+      {
+        "id": "e6c75ee5df05014ffc014bc3ddbfa67f70fa6a5e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: load not density aware image by default",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007126932019"
+          }
+        ]
+      },
+      {
+        "id": "44d15f08953d98c6c3a800956b088abf97c81e41",
+        "type": "FIX",
+        "text": " sap.m.SearchField: search event is now fired correctly in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970045315"
+          }
+        ]
       }
     ]
   }

@@ -1,0 +1,13 @@
+{
+  "1.74.0": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "16c26dbf72322734ec9b3ead306b25883356b707",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.CardExplorer: Bundle samples made downloadable",
+        "references": []
+      }
+    ]
+  }
+}

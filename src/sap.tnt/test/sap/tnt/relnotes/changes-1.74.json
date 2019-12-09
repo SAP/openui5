@@ -1,0 +1,13 @@
+{
+  "1.74.0": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "deb763a9db43e483b03712d34dbb26b714d115f4",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: New \"icon\" property implemented",
+        "references": []
+      }
+    ]
+  }
+}

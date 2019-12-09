@@ -23,6 +23,106 @@
             "reference": "1970154879"
           }
         ]
+      },
+      {
+        "id": "a1eee5aec97d6ee7065a302e9cc48147ac8e64dd",
+        "type": "FEATURE",
+        "text": " Introduced new predifined negative margin classes",
+        "references": []
+      },
+      {
+        "id": "23fae0ac1ec4e6c65f5dcafeb4d46f1aad80c2cf",
+        "type": "FEATURE",
+        "text": " Opa: introduce test recorder",
+        "references": []
+      },
+      {
+        "id": "2cf7fa3bd436eca52af3009c5357f375db8214ba",
+        "type": "FEATURE",
+        "text": " demokit: sample app for routing nested component",
+        "references": []
+      },
+      {
+        "id": "849c47e218b88079adeb384e88522760975888fd",
+        "type": "FEATURE",
+        "text": " sample.RoutingNestedComponent: add explanation text and diagram to home page",
+        "references": []
+      },
+      {
+        "id": "ae08460a7c703d9a29a1a9dbea9a2edc1bd1efc2",
+        "type": "FIX",
+        "text": " ShortcutHelper: Fix mapping to browser keys between \u0027Space\u0027 and \u0027Plus\u0027",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980490083"
+          }
+        ]
+      },
+      {
+        "id": "75d500192520ea0246ee6b6df4790fb2881f8ded",
+        "type": "FIX",
+        "text": " core/Component: Propagate commands to nested Components",
+        "references": []
+      },
+      {
+        "id": "0fb9357578424d539945760198732e9f6f481f8f",
+        "type": "FIX",
+        "text": " jQuery: Make parseHTML work with domain relaxation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007453322019"
+          }
+        ]
+      },
+      {
+        "id": "d8b04a77e07038cc8a72ac88768fe6fda4352dd9",
+        "type": "FIX",
+        "text": " sap.ui.core.Icon: Alignment in form",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880397883"
+          }
+        ]
+      },
+      {
+        "id": "cf56c6e4c871d087b6f7eb56c40330050870f236",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMessageParser: cleanup messages after refresh",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970590829"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970544211"
+          }
+        ]
+      },
+      {
+        "id": "ae6970076df8014e6682d2fdac995ddca6aa21dc",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataModel: revert introduction of #_read",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980483785"
+          }
+        ]
+      },
+      {
+        "id": "ebd1585bd61366c467fb44fb3b17fc09a7c4b236",
+        "type": "FIX",
+        "text": " v2/ODataModel: Don\u0027t resolve canonical with function imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980434820"
+          }
+        ]
       }
     ]
   }
