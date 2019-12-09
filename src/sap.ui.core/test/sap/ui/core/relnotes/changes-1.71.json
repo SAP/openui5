@@ -456,5 +456,58 @@
         ]
       }
     ]
+  },
+  "1.71.6": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "0c896c692c066b1914b9fa64c0bbffc2b4374dd4",
+        "type": "FIX",
+        "text": " ShortcutHelper: Fix mapping to browser keys between \u0027Space\u0027 and \u0027Plus\u0027",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980490083"
+          }
+        ]
+      },
+      {
+        "id": "d277b4064ea6bd750752d155412d79f0962013f2",
+        "type": "FIX",
+        "text": " jQuery: Make parseHTML work with domain relaxation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007453322019"
+          }
+        ]
+      },
+      {
+        "id": "5a4300d2f0ad37f076f7afc4b4404f6854fc9b55",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMessageParser: cleanup messages after refresh",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970590829"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970544211"
+          }
+        ]
+      },
+      {
+        "id": "00a326b70ceec94a3a310be021917805319bf46c",
+        "type": "FIX",
+        "text": " v2/ODataModel: Don\u0027t resolve canonical with function imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980434820"
+          }
+        ]
+      }
+    ]
   }
 }

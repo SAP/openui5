@@ -1228,5 +1228,21 @@
         ]
       }
     ]
+  },
+  "1.71.6": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "fe3b67b5f9896bced8c286d21566094bcd59e131",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Improved performance on addToken",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970531093"
+          }
+        ]
+      }
+    ]
   }
 }
