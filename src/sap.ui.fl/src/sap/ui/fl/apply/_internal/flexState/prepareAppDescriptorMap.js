@@ -2,15 +2,18 @@
  * ! ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/fl/Change"
+], function(
+	Change
+) {
 	"use strict";
 
 	/**
 	 * Prepares the AppDescriptorMap from the flex response
 	 *
 	 * @param {object} mPropertyBag
-	 * @param {object} mPropertyBag.flexResponse - Flex response
-	 * @param {object} [mPropertyBag.technicalParameters] - Technical parameters
+	 * @param {object} [mPropertyBag.storageResponse.changes.appDescriptorChanges] - All app descriptor changes
 	 *
 	 * @returns {object} The prepared map of App Descriptors
 	 *
@@ -21,7 +24,15 @@ sap.ui.define([], function() {
 	 * @ui5-restricted
 	 * @alias module:sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap
 	 */
-	return function(/*mPropertyBag*/) {
-		return {};
+	return function(mPropertyBag) {
+		var aChangeDefinitions = mPropertyBag.storageResponse.changes.appDescriptorChanges || [];
+		//TODO: add filtering for condensable changeTypes once necessary
+
+		var aChanges = aChangeDefinitions.map(function(oChangeDefinition) {
+			return new Change(oChangeDefinition);
+		});
+		return {
+			appDescriptorChanges: aChanges
+		};
 	};
 });

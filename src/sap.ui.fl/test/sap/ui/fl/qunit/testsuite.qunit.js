@@ -70,6 +70,18 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/changes/Reverter"]
 				}
 			},
+			"apply/_internal/changes/descriptor/ui5/AddLibrary": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary"]
+				}
+			},
+			"apply/_internal/changes/descriptor/Applier": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/Applier"]
+				}
+			},
 			"apply/_internal/connectors/ObjectStorageConnector": {
 				group: "Apply Internal",
 				coverage: {
