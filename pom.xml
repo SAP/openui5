@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>reactor</artifactId>
-	<version>1.52.37-SNAPSHOT</version>
+	<version>1.52.37</version>
 	<packaging>pom</packaging>
 
 
@@ -198,7 +198,7 @@
 						<plugin>
 							<groupId>com.sap.ui5.tools.build</groupId>
 							<artifactId>ui5builder-maven-plugin</artifactId>
-							<version>1.52.37-SNAPSHOT</version>
+							<version>1.52.37</version>
 						</plugin>
 
 						<!-- translation support (for internal use) -->
