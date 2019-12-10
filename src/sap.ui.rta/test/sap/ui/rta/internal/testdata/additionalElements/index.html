@@ -11,6 +11,7 @@
 				'sap.ui.rta.test.additionalElements': './'
 			};
 			window['sap-ui-config'].bindingSyntax = 'complex';
+			window['sap-ui-config'].flexibilityServices = '[{"connector": "LocalStorageConnector"}]';
 			window['sap-ui-config'].noConflict = 'true';
 			window['sap-ui-config'].async = 'true';
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
