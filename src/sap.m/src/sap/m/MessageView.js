@@ -674,8 +674,8 @@ sap.ui.define([
 				var target = oEvent.target;
 
 				if (target.nodeName.toUpperCase() === "A" &&
-					(target.className.indexOf("sapMMsgPopoverItemDisabledLink") !== -1 ||
-					target.className.indexOf("sapMMsgPopoverItemPendingLink") !== -1)) {
+					(target.className.indexOf("sapMMsgViewItemDisabledLink") !== -1 ||
+					target.className.indexOf("sapMMsgViewItemPendingLink") !== -1)) {
 
 					oEvent.preventDefault();
 				}
