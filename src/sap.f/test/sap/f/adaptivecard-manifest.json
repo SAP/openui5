@@ -37,7 +37,6 @@
 				"type": "Input.Text",
 				"placeholder": "Name",
 				"style": "text",
-				"maxLength": 0,
 				"id": "SimpleVal",
 				"value": "Some text"
 				},
@@ -49,7 +48,6 @@
 				"type": "Input.Text",
 				"placeholder": "Homepage",
 				"style": "url",
-				"maxLength": 0,
 				"id": "UrlVal",
 				"value": "https://www.google.com"
 				},
@@ -73,7 +71,7 @@
 				"type": "Input.Text",
 				"placeholder": "Phone",
 				"style": "tel",
-				"maxLength": 0,
+				"maxLength": 10,
 				"id": "TelVal",
 				"value": "123456789"
 				},
