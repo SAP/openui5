@@ -99,6 +99,7 @@ sap.ui.define(["sap/ui/base/DataType",
 		],
 		extensions: {
 			flChangeHandlers: {
+				"sap.f.Avatar" : "sap/f/flexibility/Avatar",
 				"sap.f.DynamicPageHeader" : {
 					"hideControl": "default",
 					"unhideControl": "default",
