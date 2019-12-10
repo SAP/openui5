@@ -40,10 +40,6 @@ sap.ui.define([
 		this.setAggregation("header",oHeader);
 	};
 
-	CustomMonthPicker.prototype._shouldFocusB2OnTabNext = function(oEvent) {
-		return containsOrEquals(this.getDomRef("content"), oEvent.target);
-	};
-
 	CustomMonthPicker.prototype.onBeforeRendering = function () {
 		var oHeader = this.getAggregation("header");
 		Calendar.prototype.onBeforeRendering.call(this, arguments);

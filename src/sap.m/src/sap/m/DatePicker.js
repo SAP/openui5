@@ -1175,7 +1175,6 @@ sap.ui.define([
 
 				this._oPopup._getButtonFooter().setVisible(this.getShowFooter());
 				this._getCalendar()._bSkipCancelButtonRendering = true;
-
 				this._oPopup.addContent(this._getCalendar());
 
 				if (!this.getDateValue()) {
@@ -1413,6 +1412,7 @@ sap.ui.define([
 		this.$("inner").attr("aria-expanded", true);
 
 		InstanceManager.addPopoverInstance(this._oPopup);
+		this._getCalendar().focus();
 	}
 
 	function _handleClose() {

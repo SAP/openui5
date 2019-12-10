@@ -161,6 +161,10 @@ sap.ui.define([
 		}
 	};
 
+	YearPicker.prototype.getFocusDomRef = function(){
+		return this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
+	};
+
 	YearPicker.prototype.setYear = function(iYear){
 
 		// no rerendering needed, just select new year or update years
