@@ -1,0 +1,159 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:blockcolor="sap.uxap.sample.ObjectPageFormLayout.controller.blocks"
+	xmlns:m="sap.m"
+	controllerName="sap.uxap.sample.ObjectPageFormFocusableInput.controller.ObjectPageFormFocusableInput"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<breadcrumbs>
+					<m:Breadcrumbs>
+						<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+						<m:Link text="Page 2 long link" press="handleLink2Press"/>
+					</m:Breadcrumbs>
+				</breadcrumbs>
+
+				<expandedHeading>
+					<m:Title text="Denise Smith" wrapping="true"/>
+				</expandedHeading>
+
+				<snappedHeading>
+					<m:FlexBox fitContainer="true" alignItems="Center">
+						<m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiTinyMarginEnd"/>
+						<m:Title text="Denise Smith" wrapping="true"/>
+					</m:FlexBox>
+				</snappedHeading>
+
+				<snappedContent>
+					<m:Text text="Senior UI Developer"/>
+				</snappedContent>
+
+				<expandedContent>
+					<m:Text text="Senior UI Developer"/>
+				</expandedContent>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Header Title On Phone"/>
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:Button type="Emphasized" text="Focus" press="handleFocusBtnPress"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<m:FlexBox wrap="Wrap" fitContainer="true">
+				<m:Avatar class="sapUiSmallMarginEnd" src="./test-resources/sap/uxap/images/imageID_275314.png" displaySize="L"/>
+
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:Link text="+33 6 4512 5158"/>
+					<m:Link text="DeniseSmith@sap.com"/>
+					<layout:HorizontalLayout>
+						<m:Image src="./test-resources/sap/uxap/images/linkedin.png"/>
+						<m:Image src="./test-resources/sap/uxap/images/Twitter.png" class="sapUiSmallMarginBegin"/>
+					</layout:HorizontalLayout>
+				</layout:VerticalLayout>
+
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:Label text="Hello! I am Denise and I use UxAP"/>
+					<m:VBox>
+						<m:Label text="Achieved goals"/>
+						<m:ProgressIndicator percentValue="30" displayValue="30%"/>
+					</m:VBox>
+				</layout:VerticalLayout>
+
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:Label text="San Jose, USA"/>
+				</layout:VerticalLayout>
+			</m:FlexBox>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection title="Personal 1">
+				<ObjectPageSubSection>
+					<blockcolor:BlockBlue/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection title="Personal 2">
+				<ObjectPageSubSection>
+					<blockcolor:BlockBlue/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection title="Personal 3">
+				<ObjectPageSubSection>
+					<blockcolor:BlockBlue/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection title="Personal 4">
+				<ObjectPageSubSection>
+					<blockcolor:BlockBlue/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection title="Personal 5">
+				<ObjectPageSubSection>
+					<blockcolor:BlockBlue/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection title="Personal 6">
+				<ObjectPageSubSection>
+					<blockcolor:BlockBlue/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection id="Employment" title="Employment">
+				<subSections>
+					<ObjectPageSubSection>
+						<f:SimpleForm editable="true" layout="ColumnLayout" columnsM="2" columnsL="3" columnsXL="4">
+							<f:content>
+								<m:Label text="Name"/>
+								<m:Input/>
+								<m:Label text="Street/No."/>
+								<m:Input/>
+								<m:Input>
+									<m:layoutData>
+										<f:ColumnElementData cellsSmall="2" cellsLarge="1"/>
+									</m:layoutData>
+								</m:Input>
+								<m:Label text="ZIP Code/City"/>
+								<m:Input>
+									<m:layoutData>
+										<f:ColumnElementData cellsSmall="3" cellsLarge="2"/>
+									</m:layoutData>
+								</m:Input>
+								<m:Input/>
+								<m:Label text="Country"/>
+								<m:Select id="country">
+									<m:items>
+										<core:Item text="England" key="England"/>
+										<core:Item text="Germany" key="Germany"/>
+										<core:Item text="USA" key="USA"/>
+									</m:items>
+								</m:Select>
+								<m:Label text="Web"/>
+								<m:Input type="orl"/>
+								<m:Label text="Twitter"/>
+								<m:Input/>
+								<m:Label text="Email"/>
+								<m:Input type="Email"/>
+								<m:Label text="Tel."/>
+								<m:Input type="Tel"/>
+								<m:Label text="SMS"/>
+								<m:Input type="Tel"/>
+								<m:Label text="Mobile"/>
+								<m:Input type="Tel"/>
+								<m:Label text="Pager"/>
+								<m:Input type="Tel"/>
+								<m:Label text="Fax"/>
+								<m:Input type="Tel"/>
+							</f:content>
+						</f:SimpleForm>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>
