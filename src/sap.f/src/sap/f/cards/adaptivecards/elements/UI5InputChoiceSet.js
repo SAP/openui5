@@ -51,7 +51,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 			// render container with ui5-radiobuttons
 			// wrap?
 			var oRbContainer = document.createElement("div");
-			oRbContainer.style = "display: flex;flex-direction: column;flex-wrap: nowrap;justify-content: center;align-items: flex-start;height: fit-content;";
+			oRbContainer.classList.add("sapFCardAdaptiveContentChoiceSetWrapper");
 			oRbContainer.id = this.id;
 			oRbContainer.addEventListener("select", function () {
 				this.valueChanged();
@@ -77,7 +77,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 		// render container with ui5-checkbox
 		var defaultValues = this.defaultValue ? this.defaultValue.split(",") : null;
 		var oCbContainer = document.createElement("div");
-		oCbContainer.style = "display: flex;flex-direction: column;flex-wrap: nowrap;justify-content: center;align-items: flex-start;height: fit-content;";
+		oCbContainer.classList.add("sapFCardAdaptiveContentChoiceSetWrapper");
 		oCbContainer.id = this.id;
 		oCbContainer.addEventListener("change", function () { this.valueChanged(); }.bind(this));
 		this._toggleInputs = [];

@@ -103,7 +103,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Adjust elements' styling with custom values
+		 * Synchronize UI5 and AdaptiveCards RTL mode.
 		 *
 		 * @private
 		 */
@@ -211,7 +211,7 @@ sap.ui.define([
 			includeScript({
 				id: "webcomponents-bundle-es5",
 				attributes: {nomodule: "nomodule"},
-				url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/bundle.es5.js")
+				url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.es5.js")
 			});
 		};
 
