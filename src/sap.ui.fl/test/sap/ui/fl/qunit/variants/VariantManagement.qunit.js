@@ -21,6 +21,20 @@ sap.ui.define([
 		return oGrid;
 	}
 
+	function openDialogAndCheckContent(oVariantManagementControl, assert) {
+		sinon.stub(oVariantManagementControl.oManagementDialog, "open");
+		oVariantManagementControl._openManagementDialog();
+		// content check
+		assert.ok(oVariantManagementControl.oManagementTable);
+		var aRows = oVariantManagementControl.oManagementTable.getItems();
+		assert.ok(aRows);
+		assert.equal(aRows.length, 5);
+		// dialog check
+		assert.ok(oVariantManagementControl.getManageDialog().isA("sap.m.Dialog"));
+		assert.notOk(oVariantManagementControl.getManageDialog().bIsDestroyed, "then the dialog is not destroyed");
+		assert.deepEqual(oVariantManagementControl.getManageDialog(), oVariantManagementControl.oManagementDialog, "then getManageDialog returns the manage dialog");
+	}
+
 	QUnit.module("sap.ui.fl.variants.VariantManagement", {
 		beforeEach: function() {
 			this.oVariantManagement = new VariantManagement("One", {});
@@ -514,14 +528,30 @@ sap.ui.define([
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
 			this.oVariantManagement._createManagementDialog();
-			assert.ok(this.oVariantManagement.oManagementDialog);
-			sinon.stub(this.oVariantManagement.oManagementDialog, "open");
 
-			this.oVariantManagement._openManagementDialog();
-			assert.ok(this.oVariantManagement.oManagementTable);
-			var aRows = this.oVariantManagement.oManagementTable.getItems();
-			assert.ok(aRows);
-			assert.equal(aRows.length, 5);
+			openDialogAndCheckContent(this.oVariantManagement, assert);
+		});
+
+		QUnit.test("Checking create management dialog, when dialog already exists", function(assert) {
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			this.oVariantManagement._createManagementDialog();
+
+			this.oVariantManagement._createManagementDialog();
+
+			openDialogAndCheckContent(this.oVariantManagement, assert);
+		});
+
+		QUnit.test("Checking create management dialog, when dialog is already destroyed", function(assert) {
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			this.oVariantManagement._createManagementDialog();
+
+			this.oVariantManagement.getManageDialog().destroy();
+
+			this.oVariantManagement._createManagementDialog();
+
+			openDialogAndCheckContent(this.oVariantManagement, assert);
 		});
 
 		QUnit.test("Checking _handleManageDefaultVariantChange", function(assert) {
