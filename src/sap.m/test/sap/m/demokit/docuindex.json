@@ -172,6 +172,13 @@
 		  "samples": ["sap.m.sample.ActionSheet"]
 		},
 		{
+		"id": "sap.m.Avatar",
+		"name": "Avatar (sap.m)",
+		"category": "Display",
+		"since": "1.73",
+		"samples": ["sap.m.sample.Avatar"]
+		},
+		{
 		  "id": "sap.m.ActionListItem",
 		  "name": "Action List Item",
 		  "category": "List",
@@ -1525,6 +1532,11 @@
 		}
 	  ],
 	  "samples": [
+		{
+		  "id": "sap.m.sample.Avatar",
+		  "name": "Avatar",
+		  "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
+		},
 		{
 		  "id": "sap.m.sample.NewsContent",
 		  "name": "News Content",
