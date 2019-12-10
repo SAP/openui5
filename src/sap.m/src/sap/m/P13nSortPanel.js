@@ -98,35 +98,25 @@ sap.ui.define([
 				updateSortItem: {}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			// Return immediately if control is invisible
-			if (!oControl.getVisible()) {
-				return;
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl){
+				oRm.openStart("section", oControl);
+				oRm.class("sapMSortPanel");
+				oRm.openEnd();
+
+				oRm.openStart("div");
+				oRm.class("sapMSortPanelContent");
+				oRm.class("sapMSortPanelBG");
+				oRm.openEnd();
+
+				oControl.getAggregation("content").forEach(function(oChildren){
+					oRm.renderControl(oChildren);
+				});
+
+				oRm.close("div");
+				oRm.close("section");
 			}
-
-			// start SortPanel
-			oRm.write("<section");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapMSortPanel");
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
-
-			// render content
-			oRm.write("<div");
-			oRm.addClass("sapMSortPanelContent");
-			oRm.addClass("sapMSortPanelBG");
-
-			oRm.writeClasses();
-			oRm.write(">");
-			var aChildren = oControl.getAggregation("content");
-			var iLength = aChildren.length;
-			for (var i = 0; i < iLength; i++) {
-				oRm.renderControl(aChildren[i]);
-			}
-			oRm.write("</div>");
-
-			oRm.write("</section>");
 		}
 	});
 
