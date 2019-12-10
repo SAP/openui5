@@ -7,12 +7,14 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/DescriptorChangeHandlerRegistration",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/performance/Measurement"
+	"sap/ui/performance/Measurement",
+	"sap/base/util/UriParameters"
 ], function(
 	DescriptorChangeHandlerRegistration,
 	FlexState,
 	ManifestUtils,
-	Measurement
+	Measurement,
+	UriParameters
 ) {
 	"use strict";
 
@@ -45,6 +47,14 @@ sap.ui.define([
 				manifest: oManifest,
 				componentData: oConfig.componentData || {}
 			});
+
+			// toggle client side appdescriptor change merger with url parameter sap-ui-xx-appdescriptor-merger=true
+			// TODO: remove after performance testing is done
+			var oUriParameters = new UriParameters(window.location.href);
+			var sClientSideMergerEnabled = oUriParameters.get("sap-ui-xx-appdescriptor-merger");
+			if (!sClientSideMergerEnabled) {
+				return Promise.resolve(oManifest);
+			}
 
 			return FlexState.initialize({
 				componentData: oConfig.componentData,

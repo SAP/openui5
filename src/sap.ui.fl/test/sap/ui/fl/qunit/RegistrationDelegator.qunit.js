@@ -46,8 +46,7 @@ sap.ui.define([
 				assert.equal(oRegisterExtensionProviderStub.callCount, 1, "Extension provider called.");
 				assert.equal(oRegisterXMLPreprocessorStub.callCount, 1, "XML preprocessor called.");
 				assert.equal(oRegisterEventListenerStub.callCount, 1, "Event Listener called.");
-				//TODO: enable Applier.preprocessManifest after FlexState is updated
-				// assert.ok(Component._fnPreprocessManifest); //"descriptor change handler is registered.");
+				assert.ok(Component._fnPreprocessManifest);
 				fnDone();
 			});
 		});
