@@ -1158,7 +1158,9 @@ sap.ui.define([
 			}
 		]);
 		this.obj.bUseExtendedChangeDetection = true;
-		this.obj.bindAggregation("subObjects", "/changingList", this.template);
+		this.obj.bindAggregation("subObjects", "/changingList", function(sIdSuffix, oContext) {
+			return this.template.clone(sIdSuffix);
+		}.bind(this));
 		assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
 		assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
 		aOldObjects = this.obj.getAggregation("subObjects");
@@ -1184,6 +1186,100 @@ sap.ui.define([
 		assert.ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
 		assert.ok(aOldObjects[2] === aNewObjects[4], "Third SubObject is reused after update");
 		this.obj.bUseExtendedChangeDetection = false;
+	});
+
+	QUnit.test("Bind aggregation template update contexts with extended change detection and named model", function(assert) {
+		var obj = new TestManagedObject({
+			models: {
+				name: oModel
+			}
+		});
+		var aNewObjects;
+		oModel.setProperty("/changingList", [{
+				value: 1
+			},
+			{
+				value: 2
+			},
+			{
+				value: 3
+			},
+			{
+				value: 4
+			},
+			{
+				value: 5
+			}
+		]);
+		obj.bUseExtendedChangeDetection = true;
+		obj.bindAggregation("subObjects", "name>/changingList", this.template);
+		assert.equal(obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+		assert.equal(obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+		oModel.setProperty("/changingList", [{
+				value: 1
+			},
+			{
+				value: 4
+			},
+			{
+				value: 5
+			}
+		]);
+		assert.equal(obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+		aNewObjects = obj.getAggregation("subObjects");
+		assert.equal(aNewObjects[0].getBindingContext("name").getPath(), "/changingList/0", "Binding context is set correctly");
+		assert.equal(aNewObjects[1].getBindingContext("name").getPath(), "/changingList/1", "Binding context is set correctly");
+		assert.equal(aNewObjects[2].getBindingContext("name").getPath(), "/changingList/2", "Binding context is set correctly");
+		obj.bUseExtendedChangeDetection = false;
+		obj.destroy();
+	});
+
+	QUnit.test("Bind aggregation factory update contexts with extended change detection and named model", function(assert) {
+		var obj = new TestManagedObject({
+			models: {
+				name: oModel
+			}
+		});
+		var aNewObjects;
+		oModel.setProperty("/changingList", [{
+				value: 1
+			},
+			{
+				value: 2
+			},
+			{
+				value: 3
+			},
+			{
+				value: 4
+			},
+			{
+				value: 5
+			}
+		]);
+		obj.bUseExtendedChangeDetection = true;
+		obj.bindAggregation("subObjects", "name>/changingList", function(sIdSuffix, oContext) {
+			return this.template.clone(sIdSuffix);
+		}.bind(this));
+		assert.equal(obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+		assert.equal(obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+		oModel.setProperty("/changingList", [{
+				value: 1
+			},
+			{
+				value: 4
+			},
+			{
+				value: 5
+			}
+		]);
+		assert.equal(obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+		aNewObjects = obj.getAggregation("subObjects");
+		assert.equal(aNewObjects[0].getBindingContext("name").getPath(), "/changingList/0", "Binding context is set correctly");
+		assert.equal(aNewObjects[1].getBindingContext("name").getPath(), "/changingList/1", "Binding context is set correctly");
+		assert.equal(aNewObjects[2].getBindingContext("name").getPath(), "/changingList/2", "Binding context is set correctly");
+		obj.bUseExtendedChangeDetection = false;
+		obj.destroy();
 	});
 
 	QUnit.test("Bind / Unbind functions", function(assert) {
