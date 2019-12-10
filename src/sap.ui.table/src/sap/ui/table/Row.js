@@ -321,57 +321,14 @@ sap.ui.define([
 	/**
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table
-	 * @param {Object} mTooltipTexts texts for aria descriptions and tooltips
-	 * @param {Object} mTooltipTexts.mouse texts for tooltips
-	 * @param {String} mTooltipTexts.mouse.rowSelect text for row select tooltip (if row is unselected)
-	 * @param {String} mTooltipTexts.mouse.rowDeselect text for row de-select tooltip (if row is selected)
-	 * @param {Object} mTooltipTexts.keyboard texts for aria descriptions
-	 * @param {String} mTooltipTexts.keyboard.rowSelect text for row select aria description (if row is unselected)
-	 * @param {String} mTooltipTexts.keyboard.rowDeselect text for row de-select aria description (if row is selected)
 	 * @private
 	 */
-	Row.prototype._updateSelection = function(oTable, mTooltipTexts) {
+	Row.prototype._updateSelection = function() {
+		var oTable = this.getTable();
 		var bIsSelected = oTable._getSelectionPlugin().isIndexSelected(this.getIndex());
-		var $DomRefs = this.getDomRefs(true);
-
-		if (!$DomRefs.rowScrollPart) {
-			return;
-		}
-
-		var sSelectReference = "rowSelect";
-		if (bIsSelected) {
-			// when the row is selected it must show texts how to deselect
-			sSelectReference = "rowDeselect";
-		}
-
-		// update tooltips
-		if ($DomRefs.rowSelector) {
-			if (!this.isEmpty() && oTable._getShowStandardTooltips() && TableUtils.isRowSelectorSelectionAllowed(oTable)) {
-				$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
-			} else {
-				$DomRefs.rowSelector.removeAttr("title");
-			}
-		}
-
-		if ($DomRefs.rowSelectorText) {
-			var sText = "";
-			if (!this.isEmpty() && !this.isSummary() && !this.isGroupHeader()) {
-				sText = mTooltipTexts.keyboard[sSelectReference];
-			}
-			$DomRefs.rowSelectorText.text(sText);
-		}
-
-		var $Row = $DomRefs.rowScrollPart.add($DomRefs.rowFixedPart);
-
-		if (!this.isEmpty() && oTable._getShowStandardTooltips() && TableUtils.isRowSelectionAllowed(oTable)) {
-			// the row requires a tooltip for selection if the cell selection is allowed
-			$Row.attr("title", mTooltipTexts.mouse[sSelectReference]);
-		} else {
-			$Row.removeAttr("title");
-		}
 
 		this._setSelected(bIsSelected);
-		oTable._getAccExtension().updateAriaStateOfRow(this, $DomRefs, bIsSelected);
+		oTable._getAccExtension().updateSelectionStateOfRow(this);
 	};
 
 	Row.prototype.setRowBindingContext = function(oContext, oTable) {

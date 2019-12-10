@@ -87,11 +87,6 @@ sap.ui.define([
 				}
 			}
 
-			if (window.getSelection().toString().length > 0) {
-				Log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
-				return true;
-			}
-
 			return false;
 		},
 
@@ -766,6 +761,11 @@ sap.ui.define([
 				}
 			} else {
 				if (ExtensionHelper._skipClick(oEvent, $Target, oCellInfo)) {
+					return;
+				}
+
+				if (!oEvent.shiftKey && window.getSelection().toString().length > 0) {
+					Log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
 					return;
 				}
 

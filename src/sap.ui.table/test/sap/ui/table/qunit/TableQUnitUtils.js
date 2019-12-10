@@ -968,6 +968,9 @@ sap.ui.define([
 		var $RowFixed = oTableInstance.$("rows-row" + iRow + "-fixed");
 		var $RowHdr = oTableInstance.$("rowsel" + iRow).parent();
 		var $RowAct = oTableInstance.$("rowact" + iRow).parent();
+		var $Ref = oRow.getDomRefs(true);
+		var oAccExtension = oTable._getAccExtension();
+		var mTooltipTexts = oAccExtension.getAriaTextsForSelectionMode(true);
 		var iLevel = 1;
 
 		oRow.getType = function() {return oRow.Type.GroupHeader;};
@@ -979,7 +982,8 @@ sap.ui.define([
 		$RowFixed.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
 		$RowHdr.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
 		$RowAct.toggleClass("sapUiTableGroupHeaderRow sapUiTableRowHidden", true).data("sap-ui-level", iLevel);
-		oTableInstance._getAccExtension().updateAriaExpandAndLevelState(oRow);
+		oAccExtension.updateAriaExpandAndLevelState(oRow);
+		oAccExtension.updateRowTooltips(oRow, $Ref, mTooltipTexts, false);
 		return {
 			row: $Row,
 			fixed: $RowFixed,
@@ -998,6 +1002,9 @@ sap.ui.define([
 		var $RowFixed = oTableInstance.$("rows-row" + iRow + "-fixed");
 		var $RowHdr = oTableInstance.$("rowsel" + iRow).parent();
 		var $RowAct = oTableInstance.$("rowact" + iRow).parent();
+		var $Ref = oRow.getDomRefs(true);
+		var oAccExtension = oTable._getAccExtension();
+		var mTooltipTexts = oAccExtension.getAriaTextsForSelectionMode(true);
 		var iLevel = 1;
 
 		oRow.getType = function() {return oRow.Type.Summary;};
@@ -1006,7 +1013,8 @@ sap.ui.define([
 		$RowFixed.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
 		$RowHdr.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
 		$RowAct.toggleClass("sapUiTableSummaryRow", true).data("sap-ui-level", iLevel);
-		oTableInstance._getAccExtension().updateAriaExpandAndLevelState(oRow);
+		oAccExtension.updateAriaExpandAndLevelState(oRow);
+		oAccExtension.updateRowTooltips(oRow, $Ref, mTooltipTexts, false);
 		return {
 			row: $Row,
 			fixed: $RowFixed,

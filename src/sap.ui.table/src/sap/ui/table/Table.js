@@ -3021,14 +3021,13 @@ sap.ui.define([
 		var sSelectAllResourceTextID;
 		var sSelectAllText;
 		var $SelectAll = this.$("selall");
-		// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
-		var mTooltipTexts = this._getAccExtension().getAriaTextsForSelectionMode(true);
+
 		// trigger the rows to update their selection
 		var aRows = this.getRows();
 
 		for (var i = 0; i < aRows.length; i++) {
 			var oRow = aRows[i];
-			oRow._updateSelection(this, mTooltipTexts);
+			oRow._updateSelection();
 		}
 
 		if (!mRenderConfig.headerSelector.visible) {
