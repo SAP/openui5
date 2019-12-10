@@ -291,24 +291,25 @@ sap.ui.define(
 
         QUnit.test("Should create 'press' action when using 'doPress'", function(assert) {
             var oSpy = this.spy(OpaBuilder.prototype, "do"),
-                oMatcherSpy = this.spy(OpaBuilder.Actions, "press"),
+                oActionSpy = this.spy(OpaBuilder.Actions, "press"),
                 oOpaBuilder = new OpaBuilder();
-            assert.strictEqual(oOpaBuilder.doPress(), oOpaBuilder, "builder instance returned");
-            assert.ok(oMatcherSpy.calledOnce);
-            assert.ok(oSpy.calledWith(oMatcherSpy.returnValues[0]));
+            assert.strictEqual(oOpaBuilder.doPress("myIdSuffix"), oOpaBuilder, "builder instance returned");
+            assert.ok(oActionSpy.calledOnce);
+            assert.ok(oActionSpy.calledWith("myIdSuffix"));
+            assert.ok(oSpy.calledWith(oActionSpy.returnValues[0]));
             oSpy.restore();
-            oMatcherSpy.restore();
+            oActionSpy.restore();
         });
 
         QUnit.test("Should create 'enterText' action when using 'doEnterText'", function(assert) {
             var oSpy = this.spy(OpaBuilder.prototype, "do"),
-                oMatcherSpy = this.spy(OpaBuilder.Actions, "enterText"),
+                oActionSpy = this.spy(OpaBuilder.Actions, "enterText"),
                 oOpaBuilder = new OpaBuilder();
-            assert.strictEqual(oOpaBuilder.doEnterText("Test", true, true), oOpaBuilder, "builder instance returned");
-            assert.ok(oMatcherSpy.calledWith("Test", true, true));
-            assert.ok(oSpy.calledWith(oMatcherSpy.returnValues[0]));
+            assert.strictEqual(oOpaBuilder.doEnterText("Test", true, true, "myIdSuffix"), oOpaBuilder, "builder instance returned");
+            assert.ok(oActionSpy.calledWith("Test", true, true, "myIdSuffix"));
+            assert.ok(oSpy.calledWith(oActionSpy.returnValues[0]));
             oSpy.restore();
-            oMatcherSpy.restore();
+            oActionSpy.restore();
         });
 
         QUnit.test("Should set 'success' function when using 'success'", function(assert) {
