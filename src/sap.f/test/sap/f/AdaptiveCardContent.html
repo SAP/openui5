@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>Custom Elements for sap.ui.integration</title>
+
+	<script src="../../../resources/sap-ui-integration.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-theme="sap_fiori_3">
+	</script>
+	<script data-ui5-config type="application/json">
+		{
+			"compactSize": true
+		}
+	</script>
+	<script>
+		delete Document.prototype.adoptedStyleSheets;
+	</script>
+</head>
+	<body class="sapUiBody sapUiCozy">
+		<ui-integration-card style="width: 40%" id="my-card" manifest="./adaptivecard-manifest.json"></ui-integration-card>
+	</body>
+
+	<script>
+			document.getElementById("my-card").addEventListener("action", function (event) {
+				event.detail.getParameter("type") === "Submit" && console.log(event.detail.getParameter("manifestParameters"));
+			});
+	</script>
+</html>

@@ -13,7 +13,7 @@ sap.ui.define([
 		"sap/f/cards/adaptivecards/elements/UI5InputTime",
 		"sap/f/cards/adaptivecards/elements/UI5InputDate",
 		"sap/f/cards/adaptivecards/overwrites/ActionRender",
-		"sap/f/cards/adaptivecards/elements/config"
+		"sap/f/cards/adaptivecards/elements/hostConfig"
 	],
 	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, ActionRender, HostConfig) {
 		"use strict";
