@@ -12,7 +12,6 @@ sap.ui.define([
 	QUnit.module("history.state enhancement", {
 		beforeEach: function(assert) {
 			var that = this;
-			// Extended a hashchange to deliver the additional fullHash parameter HashChanger
 			this.oExtendedHashChanger = HashChanger.getInstance();
 			// The fireEvent method needs to be stubbed instead of the fireHashChanged because the original
 			// fireHashChanged is already registered as an event handler to hasher at HashChanger.init and
@@ -22,9 +21,6 @@ sap.ui.define([
 					if (that.fnBeforeFireHashChange) {
 						that.fnBeforeFireHashChange();
 					}
-
-					// extend the parameter with fullHash for pushState
-					oParameter.fullHash = oParameter.newHash;
 				}
 				HashChanger.prototype.fireEvent.apply(this, arguments);
 			});
