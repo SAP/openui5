@@ -15,14 +15,27 @@ sap.ui.define([
 
 	QUnit.module("When loading flex settings", {}, function() {
 		QUnit.test("then settings are returned", function(assert) {
-			var oReturnedSettings = {};
+			var oReturnedSettings = {
+				isVariantSharingEnabled: true
+			};
 			var oReturnedJson = {
 				settings: oReturnedSettings
 			};
 			sandbox.stub(jQuery, "get").returns(jQuery.Deferred().resolve(oReturnedJson));
 
 			return ObjectPathConnector.loadFeatures({path: "somePath"}).then(function (oSettings) {
-				assert.equal(oSettings, oReturnedSettings, "the settings are correct");
+				assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
+				jQuery.get.restore();
+			});
+		});
+
+		QUnit.test("then settings are not returned", function(assert) {
+			var oReturnedSettings = {};
+			var oReturnedJson = {};
+			sandbox.stub(jQuery, "get").returns(jQuery.Deferred().resolve(oReturnedJson));
+
+			return ObjectPathConnector.loadFeatures({path: "somePath"}).then(function (oSettings) {
+				assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
 			});
 		});
 	});
