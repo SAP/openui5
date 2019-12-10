@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.ui.ux3",
-  "version": "1.60.22",
+  "version": "1.60.23-SNAPSHOT",
   "description": "OpenUI5 UI Library sap.ui.ux3",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -14,7 +14,7 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "dependencies": {
-    "@openui5/sap.ui.commons": "1.60.22",
-    "@openui5/sap.ui.core": "1.60.22"
+    "@openui5/sap.ui.commons": "1.60.23-SNAPSHOT",
+    "@openui5/sap.ui.core": "1.60.23-SNAPSHOT"
   }
 }
