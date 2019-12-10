@@ -65,6 +65,46 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
+		QUnit.test("Header icon with binding", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				sBaseUrl = "test-resources/sap/ui/integration/qunit/cardbundle/bundle/",
+				oManifest = {
+					"sap.app": {
+						"id": "my.test.card.icon.with.binding",
+						"type": "card"
+					},
+					"sap.card": {
+						"type": "List",
+						"header": {
+							"data": {
+								"json": {
+									"iconSrc": "./test-src"
+								}
+							},
+							"icon": {
+								"src": "{/iconSrc}"
+							}
+						}
+					}
+				};
+
+			// Act
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				var oHeader = this.oCard.getAggregation("_header");
+				assert.strictEqual(oHeader.getAggregation("_avatar").getSrc(), sBaseUrl + "test-src", "Card header avatar src is correct.");
+				done();
+			}.bind(this));
+
+			// Arrange
+			this.oCard.setManifest(oManifest);
+			this.oCard.setBaseUrl(sBaseUrl);
+			Core.applyChanges();
+		});
+
 		QUnit.test("ListContent item icon", function (assert) {
 
 			// Arrange

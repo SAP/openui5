@@ -295,11 +295,7 @@ sap.ui.define([
 		};
 
 		if (mConfiguration.icon) {
-			if (mConfiguration.icon.src) {
-				mSettings.iconSrc = BindingHelper.formattedProperty(mConfiguration.icon.src, function (sValue) {
-					return IconFormatter.formatSrc(sValue, sAppId);
-				});
-			}
+			mSettings.iconSrc = mConfiguration.icon.src;
 			mSettings.iconDisplayShape = mConfiguration.icon.shape;
 			mSettings.iconInitials = mConfiguration.icon.text;
 		}
@@ -309,6 +305,12 @@ sap.ui.define([
 		}
 
 		mSettings = BindingHelper.createBindingInfos(mSettings);
+
+		if (mSettings.iconSrc) {
+			mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
+				return IconFormatter.formatSrc(sValue, sAppId);
+			});
+		}
 
 		var oHeader = new Header(mSettings);
 
