@@ -76,10 +76,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("The router is stopped after calling stop", function(assert) {
+		var oTargetsDetachTitleChangedSpy = sinon.spy(this.oRouter.getTargets(), "detachTitleChanged");
 		this.oRouter.stop();
 
 		assert.equal(this.oRouter.isInitialized(), false, "The router isn't initialized");
 		assert.equal(this.oRouter.isStopped(), true, "The router is stopped");
+		assert.equal(oTargetsDetachTitleChangedSpy.callCount, 1, "detachTitleChanged should be called");
+
+		oTargetsDetachTitleChangedSpy.restore();
 	});
 
 	QUnit.test("The router is neither initialized nor stopped after destroyed", function(assert) {
