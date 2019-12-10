@@ -179,7 +179,7 @@ sap.ui.define([
 				this._oSelect.setSelectedKey(oSelectedSectionId);
 			}
 
-			if (this._bHasButtonsBar) {
+			if (this._bHasButtonsBar && oButton.data("secondLevel") !== true) {
 
 				oPreviouslySelectedButton = sap.ui.getCore().byId(sPreviouslySelectedButtonId);
 				this._toggleSelectionStyleClass(oPreviouslySelectedButton, false);
@@ -302,7 +302,7 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype._toggleSelectionStyleClass = function(oButton, bAdd) {
-		if (oButton) {
+		if (oButton && oButton.toggleStyleClass) {
 			oButton.toggleStyleClass("sapUxAPAnchorBarButtonSelected", bAdd);
 			if (oButton instanceof MenuButton) {
 				oButton._getButtonControl().$().attr("aria-checked", bAdd);

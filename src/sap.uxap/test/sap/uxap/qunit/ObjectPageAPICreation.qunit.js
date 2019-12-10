@@ -1440,6 +1440,54 @@ function (
 		assert.notOk(oSectionButton.$().hasClass("sapMMenuBtnSplit"), "Drop-down icon in AnchorBar button is not shown");
 	});
 
+	QUnit.test("test AnchorBar menu items IDs build correctly", function (assert) {
+		assert.expect(1);
+		var done = assert.async(),
+			sIds = [],
+			oPage = helpers.generateObjectPageWithSubSectionContent(oFactory, 5, 2),
+			aSections,
+			oAnchorBar,
+			oMenuItems,
+			aSubSections,
+			bAllIdsMatched = true,
+			fnOnDomReady = function () {
+				aSections = oPage.getSections() || [];
+				oAnchorBar = oPage._oABHelper._getAnchorBar();
+
+				// we store the expected subsection MenuItems IDs
+				aSections.forEach(function (oSection, index) {
+					aSubSections = oSection.getSubSections() || [];
+
+					// second Level (subsections)
+					aSubSections.forEach(function (oSubSection) {
+						sIds.push(oAnchorBar.getId() + "-" + oSubSection.getId() + "-anchor");
+					});
+				});
+
+				// Check MenuItems IDs if match stored IDs
+				oAnchorBar.getContent().forEach(function (oAggregation) {
+					if (oAggregation.getMenu) {
+						oMenuItems = oAggregation.getMenu().getItems();
+						oMenuItems.forEach(function (item) {
+							if (sIds.indexOf(item.getId()) < 0) {
+								bAllIdsMatched = false;
+								return;
+							}
+						});
+					}
+				});
+
+				// Assert
+				assert.equal(bAllIdsMatched, true, "All AnchorBar MenuItems are with correct IDs");
+				oPage.destroy();
+				done();
+			};
+
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		oPage.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
 	QUnit.module("ObjectPage API: ObjectPageHeader", {
 		beforeEach: function (assert) {
 			var done = assert.async();
