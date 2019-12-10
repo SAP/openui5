@@ -21221,8 +21221,9 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 	// Scenario: Create a row. See that the city (a nested property inside the address) is removed,
 	// when the POST response nulls the address (the complex property containing it).
 	// JIRA: CPOUI5UISERVICESV3-1878
-	// Also check on-the-fly that setting a property w/o PATCH is refused for the transient row.
-	// JIRA: CPOUI5ODATAV4-14
+	// Also checks that setting properties with group ID null on a transient context is not
+	// reflected in the POST payload.
+	// JIRA: CPOUI5ODATAV4-114
 	QUnit.test("create removes a nested property", function (assert) {
 		var oCreatedContext,
 			oModel = createSalesOrdersModel({
@@ -21233,23 +21234,31 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 <Table id="table" items="{/BusinessPartnerList}">\
 	<ColumnListItem>\
 		<Text id="city" text="{Address/City}"/>\
+		<Text id="type" text="{Address/AddressType}"/>\
+		<Text id="created" text="{CreatedAt}"/>\
 	</ColumnListItem>\
 </Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartnerList?$select=Address/City,BusinessPartnerID"
-			+ "&$skip=0&$top=100",
+		this.expectRequest("BusinessPartnerList?$select=Address/AddressType,Address/City"
+			+ ",BusinessPartnerID,CreatedAt&$skip=0&$top=100",
 				{value : []})
-			.expectChange("city", []);
+			.expectChange("city", [])
+			.expectChange("type", [])
+			.expectChange("created", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("city", ["Heidelberg"]);
+			that.expectChange("city", ["Heidelberg"])
+				// CPOUI5ODATAV4-114
+				.expectChange("type", ["42"])
+				.expectChange("created", ["Jan 1, 1971, 12:59:58 AM"]);
 
 			oCreatedContext = that.oView.byId("table").getBinding("items").create({
 				Address : {City : "Heidelberg"}
 			}, true);
 
 			return Promise.all([
+				// code under test (CPOUI5ODATAV4-14)
 				oCreatedContext.setProperty("Address/City", "St. Ingbert", "$direct")
 					.then(function () {
 						assert.ok(false);
@@ -21257,14 +21266,9 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 						assert.strictEqual(oError.message, "The entity will be created via group"
 							+ " 'update'. Cannot patch via group '$direct'");
 					}),
-				// code under test (CPOUI5ODATAV4-14)
-				oCreatedContext.setProperty("Address/City", "St. Ingbert", null)
-					.then(function () {
-						assert.ok(false);
-					}, function (oError) {
-						assert.strictEqual(oError.message,
-							"Cannot update a transient entity w/o PATCH");
-					}),
+				// code under test (CPOUI5ODATAV4-114)
+				oCreatedContext.setProperty("Address/AddressType", "42", null),
+				oCreatedContext.setProperty("CreatedAt", "1970-12-31T23:59:58Z", null),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -21273,10 +21277,13 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 					url : "BusinessPartnerList",
 					payload : {Address : {City : "Heidelberg"}}
 				}, {
+					Address : null,
 					BusinessPartnerId : "1",
-					Address : null
+					CreatedAt : "1970-12-31T23:59:59Z"
 				})
-				.expectChange("city", [null]);
+				.expectChange("city", [null])
+				.expectChange("type", [null])
+				.expectChange("created", ["Jan 1, 1971, 12:59:59 AM"]);
 
 			return Promise.all([
 				oModel.submitBatch("update"),
