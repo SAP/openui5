@@ -41,7 +41,10 @@
 				"sap.ui.core": {},
 				"sap.m": {},
 				"sap.ui.dt": {},
-				"sap.ui.rta": {}
+				"sap.ui.rta": {},
+				"sap.ui.layout": {},
+				"sap.ui.comp": {},
+				"sap.uxap": {}
 			}
 		},
 		"models": {
