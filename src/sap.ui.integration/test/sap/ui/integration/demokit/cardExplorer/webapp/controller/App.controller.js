@@ -45,7 +45,6 @@ sap.ui.define([
 			_findPreviousRouteHash: function (vKey) {
 				var aKeys = [];
 				var oHistory = History.getInstance();
-
 				if (typeof vKey === "string") {
 					aKeys[0] = vKey;
 				} else {
@@ -55,7 +54,6 @@ sap.ui.define([
 				if (!oHistory.aHistory) {
 					return "";
 				}
-
 				for (var i = oHistory.aHistory.length - 1; i >= 0; i--) {
 					var sHistory = oHistory.aHistory[i];
 
@@ -116,7 +114,8 @@ sap.ui.define([
 						break;
 					case "learn":
 						this.getRouter().navTo("learnDetail", {
-							key: aParts[1]
+							group: aParts[1] || "overview",
+							key:  aParts[2]
 						});
 						break;
 					case "integrate":
@@ -128,20 +127,30 @@ sap.ui.define([
 						this.getRouter().navTo(aParts[0]);
 				}
 			},
-
 			onSideNavigationItemSelect: function (oEvent) {
-				var item = oEvent.getParameter('item'),
-					itemConfig = this.getView().getModel().getProperty(item.getBindingContext().getPath());
-
-				if (itemConfig.target) {
+				var oItem = oEvent.getParameter("item"),
+					oItemConfig = this.getView().getModel().getProperty(oItem.getBindingContext().getPath()),
+					sGroupKey,
+					sTopicKey;
+				if (oItem.getCustomData()[0].getKey() === "groupItem") {
+					sGroupKey = oItemConfig.key;
+					if (oItemConfig.target === "exploreOverview" || oItemConfig.target === "integrate"){
+							sTopicKey = oItemConfig.key;
+					}
+				} else {
+					sGroupKey = oItem.getParent().getKey();
+					sTopicKey = oItemConfig.key;
+				}
+				if (oItemConfig.target) {
 					this.getRouter().navTo(
-						itemConfig.target,
+						oItemConfig.target,
 						{
-							key: itemConfig.key
+							group: sGroupKey,
+							key: sTopicKey
 						}
 					);
 				} else {
-					this.getRouter().navTo(itemConfig.key);
+					this.getRouter().navTo(oItemConfig.key);
 				}
 			},
 
@@ -159,11 +168,9 @@ sap.ui.define([
 				var routeArgs = oEvent.getParameter("arguments");
 				var routeName = routeConfig.name;
 				var sideNavigation = this.getView().byId('sideNavigation');
-
 				this.switchCurrentModelAndTab(routeName);
-
-				if (routeArgs["key"]) {
-					sideNavigation.setSelectedKey(routeArgs["key"]);
+				if (routeArgs["key"] || routeArgs["group"]) {
+					sideNavigation.setSelectedKey(routeArgs["key"] || routeArgs["group"]);
 				} else if (routeConfig.name !== "default") {
 					sideNavigation.setSelectedKey(routeConfig.name);
 				} else {

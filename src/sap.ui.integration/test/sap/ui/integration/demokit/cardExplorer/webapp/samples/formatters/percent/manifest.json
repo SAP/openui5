@@ -1,14 +1,21 @@
 {
 	"_version": "1.17.0",
 	"sap.app": {
-		"id": "card.explorer.format.date",
+		"id": "card.explorer.format.percent",
 		"type": "card"
 	},
 	"sap.card": {
 		"type": "List",
+		"configuration": {
+			"parameters": {
+				"cardCurrency": {
+					"value": "EUR"
+				}
+			}
+		},
 		"header": {
-			"title": "Order status {= format.dateTime(Date.now(), {pattern: 'H:mm, MMMM d, y'}) }",
-			"subTitle": "Orders exceeding 50$ are highlighted as important",
+			"title": "Order status",
+			"subTitle": "Orders exceeding {= format.percent(0.50)} are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -22,44 +29,44 @@
 					{
 						"Name": "Keyboard and Mouse",
 						"image": "sap-icon://keyboard-and-mouse",
-						"Price": 155,
+						"Discount": 0.55,
 						"arrivalDate": "Sun Dec 1 2019 03:24:00 GMT+0200 (Eastern European Standard Time)"
 					},
 					{
 						"Name": "ITelO Vault",
 						"image": "sap-icon://shield",
-						"Price": 30,
+						"Discount": 0.03,
 						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
 					},
 					{
 						"Name": "Notebook Professional 15",
 						"image": "sap-icon://laptop",
-						"Price": 30,
+						"Discount": 0.001,
 						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
 					},
 					{
 						"Name": "Ergo Screen E-I",
 						"image": "sap-icon://desktop-mobile",
 						"arrivalDate": "Sun Nov 2 2019 03:24:00 GMT+0200 (Eastern European Standard Time)",
-						"Price": 69
+						"Discount": 0.69
 					},
 					{
 						"Name": "Laser Professional Eco",
 						"image": "sap-icon://keyboard-and-mouse",
 						"arrivalDate": "Sun Jan 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)",
-						"Price": 40
+						"Discount": 0.40
 					}
 				]
 			},
 			"item": {
 				"title": "{Name}",
-				"description": "Should arrive {= format.dateTime(${arrivalDate}, {relative:true}) }",
-				"highlight": "{= ${Price} < 50 ? 'Success' : 'Error'}",
+				"description": "Discount:",
+				"highlight": "{= ${Discount} < 0.50 ? 'Success' : 'Error'}",
 				"icon": {
 					"src": "{image}"
 				},
 				"info": {
-					"value": "{Price}$"
+					"value": "{= format.percent(${Discount})}"
 				}
 			}
 		}

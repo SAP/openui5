@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/date/UniversalDate"
+	"sap/ui/core/date/UniversalDate",
+	"sap/f/cards/Utils"
 ], function (
 	DateFormat,
-	UniversalDate
+	UniversalDate,
+	Utils
 ) {
 	"use strict";
 
@@ -21,18 +23,33 @@ sap.ui.define([
 		/**
 		 * Formats date and time.
 		 * @param {string|number|object} vDate Any string and number from which Date object can be created, or a Date object.
-		 * @param {object} oFormatOptions All format options which sap.ui.core.format.DateFormat.getDateTimeInstance accepts.
-		 * @returns {string} The formatted date.
+		 * @param {object} [oFormatOptions] All format options which sap.ui.core.format.DateFormat.getDateTimeInstance accepts.
+		 * @param {string} [sLocale] A string representing the desired locale. If skipped the current locale of the user is taken
+		 * @returns {string} The formatted date time.
 		 */
-		date: function (vDate, oFormatOptions) {
+		dateTime: function (vDate, oFormatOptions, sLocale) {
 
-			var oDateFormat = DateFormat.getDateTimeInstance(oFormatOptions);
+			var oArguments = Utils.processFormatArguments(oFormatOptions, sLocale),
+				oDateFormat = DateFormat.getDateTimeInstance(oArguments.formatOptions, oArguments.locale);
 
 			// Calendar is determined base on sap.ui.getCore().getConfiguration().getCalendarType()
 			var oUniversalDate = new UniversalDate(vDate);
 			var sFormattedDate = oDateFormat.format(oUniversalDate);
 
 			return sFormattedDate;
+		},
+
+		/**
+		 * Formats date and time.
+		 * @param {string|number|object} vDate Any string and number from which Date object can be created, or a Date object.
+		 * @param {object} [oFormatOptions] All format options which sap.ui.core.format.DateFormat.getDateTimeInstance accepts.
+		 * @param {string} [sLocale] A string representing the desired locale. If skipped the current locale of the user is taken
+		 * @returns {string} The formatted date time.
+		 * @deprecated Since version 1.74
+		 * Use dateTime instead
+		 */
+		date: function(vDate, oFormatOptions, sLocale){
+			return oDateTimeFormatters.dateTime.apply(this, arguments);
 		}
 	};
 

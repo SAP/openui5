@@ -86,7 +86,7 @@
 					"target": "learnDetail"
 				},
 				{
-					"pattern": "learn/:key:",
+					"pattern": "learn/{group}/:key:",
 					"name": "learnDetail",
 					"target": "learnDetail"
 				},
