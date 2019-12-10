@@ -3281,7 +3281,7 @@ sap.ui.define([
 		}
 
 		var oRequestHandle = {
-			abort: function() {
+			abort: function(bSuppressErrorHandlerCall) {
 				each(aRequests, function(i, oRequest) {
 					if (Array.isArray(oRequest)) {
 						oRequest.forEach(function(oRequest) {
@@ -3291,6 +3291,9 @@ sap.ui.define([
 						callAbortHandler(oRequest);
 					}
 				});
+				if (fnError && !bSuppressErrorHandlerCall) {
+					fnError(oAbortedError);
+				}
 				oBatchRequestHandle.abort();
 			}
 		};
@@ -3604,7 +3607,10 @@ sap.ui.define([
 				abort: function() {
 					this.iRelevantRequests--;
 					if (this.iRelevantRequests === 0 && this.oRequestHandle) {
-						this.oRequestHandle.abort();
+						this.oRequestHandle.abort(true);
+						if (fnSuccess) {
+							fnSuccess({}, undefined);
+						}
 					}
 				}
 			};
@@ -5112,7 +5118,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Submits the collected changes which were collected by the {@link #setProperty} method.
+	 * Submits the collected changes which were collected by the {@link #setProperty} method and other deferred requests.
 	 *
 	 * The update method is defined by the global <code>defaultUpdateMethod</code> parameter which is
 	 * <code>sap.ui.model.odata.UpdateMethod.Merge</code> by default. In case of a <code>sap.ui.model.odata.UpdateMethod.Merge</code>
@@ -5121,6 +5127,8 @@ sap.ui.define([
 	 * Changes to this entries should be done on the entry itself. So no deep updates are supported.
 	 *
 	 * <b>Important</b>: The success/error handler will only be called if batch support is enabled. If multiple batch groups are submitted the handlers will be called for every batch group.
+	 * If there are no changes/requests or all contained requests are aborted before a batch request returns, the success handler will be called with an empty response object.
+	 * If the abort method on the return object is called, all contained batch requests will be aborted and the error handler will be called for each of them.
 	 *
 	 * @param {object} [mParameters] A map which contains the following parameter properties:
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
@@ -5216,9 +5224,6 @@ sap.ui.define([
 						vRequestHandleInternal.abort();
 					}
 				} else {
-					if (!bAborted && fnError) {
-						fnError(oAbortedError);
-					}
 					bAborted = true;
 				}
 			}
