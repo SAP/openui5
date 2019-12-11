@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/MessageType",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -17,12 +18,13 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper'
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Device, SyncPromise, MessageType, Controller, View, CountMode, MessageScope,
-		ODataModel, TestUtils, datajs, XMLHelper) {
+], function (Log, uid, Device, SyncPromise, MessageType, Controller, View, BindingMode, CountMode,
+		MessageScope, ODataModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit*/
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		NO_CONTENT = {/*204 no content*/};
 
 	/**
 	 * Creates a V2 OData model.
@@ -503,20 +505,26 @@ sap.ui.define([
 				delete oActualRequest["requestID"];
 				delete oActualRequest["user"];
 				if (oExpectedRequest) {
-					oResponse = {
-						data : oExpectedRequest.response,
-						statusCode : 200
-					};
-
-					// oResponse needs __metadata for ODataModel.prototype._getKey
-					if (oResponse.data && Array.isArray(oResponse.data.results)) {
-						oResponse.data.results.forEach(function (oResponseItem, i) {
-							oResponseItem.__metadata = _getResponseMetadata(
-								oExpectedRequest.requestUri, i);
-						});
+					if (oExpectedRequest.response === NO_CONTENT) {
+						oResponse = {
+							statusCode : 204
+						};
 					} else {
-						oResponse.data.__metadata = _getResponseMetadata(
-							oExpectedRequest.requestUri);
+						oResponse = {
+							data : oExpectedRequest.response,
+							statusCode : 200
+						};
+
+						// oResponse needs __metadata for ODataModel.prototype._getKey
+						if (oResponse.data && Array.isArray(oResponse.data.results)) {
+							oResponse.data.results.forEach(function (oResponseItem, i) {
+								oResponseItem.__metadata = _getResponseMetadata(
+									oExpectedRequest.requestUri, i);
+							});
+						} else if (oExpectedRequest.method !== "HEAD") {
+							oResponse.data.__metadata = _getResponseMetadata(
+								oExpectedRequest.requestUri);
+						}
 					}
 
 					if (sUrl.startsWith(that.oModel.sServiceUrl)) {
@@ -679,13 +687,15 @@ sap.ui.define([
 		 * The following code (either {@link #createView} or anything before
 		 * {@link #waitForChanges}) is expected to perform a <code>HEAD<code> request.
 		 *
-		 * @returns {object} The test instance for chaining
+		 * @param {object} [mAddionalHeaders]
+		 *   Request headers additional to the "x-csrf-token" header
+		 * @returns {object}
+		 *   The test instance for chaining
 		 */
-		expectHeadRequest : function () {
+		expectHeadRequest : function (mAddionalHeaders) {
 			this.aRequests.push({
-				headers : {
-					"x-csrf-token" : "Fetch"
-				},
+				deepPath : "",
+				headers : Object.assign({"x-csrf-token" : "Fetch"}, mAddionalHeaders),
 				method : "HEAD",
 				requestUri : ""
 			});
@@ -1367,4 +1377,163 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Cleanup messages of the entity and its child entities after updating the root
+	// entity if message scope is "BusinessObject.
+	// BCP: 1980510782
+[true, false].forEach(function (bCleanupChildMessages) {
+	[true, false].forEach(function (bRefreshAfterChange) {
+	var sMessageScope
+			= bCleanupChildMessages ? MessageScope.BusinessObject : MessageScope.RequestedObjects,
+		sTitle = "Messages: Changing a value removes obsolete child messages only if message scope"
+		+ " is BusinessObject; message scope is '" + sMessageScope + "'; refresh after change: "
+		+ bRefreshAfterChange;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({refreshAfterChange : bRefreshAfterChange}),
+			oMsgSalesOrder = {
+				code : "0", message : "MsgSalesOrder", severity : "error", target : ""
+			},
+			oMsgSalesOrderCustomerID = {
+				code : "1",
+				message : "MsgSalesOrderCustomerID",
+				severity : "warning",
+				target : "CustomerID"
+			},
+			oMsgSalesOrderItem = {
+				code : "2",
+				message : "MsgSalesOrderItem",
+				severity : "warning",
+				target : "ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition"
+			},
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="customerID" value="{CustomerID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				method : "GET",
+				requestUri : "SalesOrderSet('1')",
+				headers : bCleanupChildMessages ? {"sap-message-scope" : "BusinessObject"} : {}
+			}, {
+				CustomerID : "42"
+			}, {
+				"sap-message" : getMessageHeader([
+					oMsgSalesOrder,
+					oMsgSalesOrderCustomerID,
+					oMsgSalesOrderItem
+				])
+			})
+			.expectChange("customerID", null)
+			.expectChange("customerID", "42")
+			.expectMessages([{
+				code : "0",
+				fullTarget : "/SalesOrderSet('1')",
+				message : "MsgSalesOrder",
+				persistent : false,
+				target : "/SalesOrderSet('1')",
+				type : MessageType.Error
+			}, {
+				code : "1",
+				fullTarget : "/SalesOrderSet('1')/CustomerID",
+				message : "MsgSalesOrderCustomerID",
+				persistent : false,
+				target : "/SalesOrderSet('1')/CustomerID",
+				type : MessageType.Warning
+			}, {
+				code : "2",
+				fullTarget : "/SalesOrderSet('1')"
+					+ "/ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition",
+				message : "MsgSalesOrderItem",
+				persistent : false,
+				target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
+					+ "/ItemPosition",
+				type : MessageType.Warning
+			}]);
+
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oNewMsgForCustomerID = {
+					code : "3",
+					message : "MsgSalesOrderCustomerID3",
+					severity : "warning",
+					target : "CustomerID"
+				};
+
+			that.expectChange("customerID", "13")
+				.expectHeadRequest(bCleanupChildMessages
+					? {"sap-message-scope" : "BusinessObject"} : {})
+				.expectRequest({
+					data : {
+						CustomerID : "13",
+						"__metadata" : {"uri": "SalesOrderSet('1')"}
+					},
+					deepPath : "/SalesOrderSet('1')",
+					headers : bCleanupChildMessages
+						? {
+							"sap-message-scope" : "BusinessObject",
+							"x-http-method" : "MERGE"
+						} : {"x-http-method" : "MERGE"},
+					key : "SalesOrderSet('1')",
+					method : "POST",
+					requestUri : "SalesOrderSet('1')"
+				}, NO_CONTENT, {
+					"sap-message" : getMessageHeader([oNewMsgForCustomerID])
+				});
+			if (bRefreshAfterChange) {
+				that.expectRequest({
+						deepPath : "/SalesOrderSet('1')",
+						method : "GET",
+						requestUri : "SalesOrderSet('1')",
+						headers : bCleanupChildMessages
+						? {"sap-message-scope" : "BusinessObject"} : {}
+					}, {
+						CustomerID : "13"
+					}, {
+						"sap-message" : getMessageHeader([oNewMsgForCustomerID])
+					});
+			}
+			if (bCleanupChildMessages) {
+				that.expectMessages([{
+					code : "3",
+					fullTarget : "/SalesOrderSet('1')/CustomerID",
+					message : "MsgSalesOrderCustomerID3",
+					persistent : false,
+					target : "/SalesOrderSet('1')/CustomerID",
+					type : MessageType.Warning
+				}]);
+			} else {
+				that.expectMessages([{ // child message is not removed
+					code : "2",
+					fullTarget : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition",
+					message : "MsgSalesOrderItem",
+					persistent : false,
+					target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
+						+ "/ItemPosition",
+					type : MessageType.Warning
+				}, {
+					code : "3",
+					fullTarget : "/SalesOrderSet('1')/CustomerID",
+					message : "MsgSalesOrderCustomerID3",
+					persistent : false,
+					target : "/SalesOrderSet('1')/CustomerID",
+					type : MessageType.Warning
+				}]);
+			}
+
+			// code under test
+			// Scenario: updating customer id replaces messages for the sales order and its children
+			oModel.setProperty("/SalesOrderSet('1')/CustomerID", "13");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+	});
+});
 });
