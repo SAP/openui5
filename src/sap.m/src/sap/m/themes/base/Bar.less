@@ -144,10 +144,34 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 }
 
-/*don't use margins on the childs to keep the calculation of the bar correct*/
 .sapMBarRight,
-.sapMBarRight > .sapMBarChild:last-child {
+.sapMBarRight > .sapMBarChild {
+	margin-top: 0;
+	margin-bottom: 0;
 	margin-right: 0;
+	vertical-align: middle;
+	display: inline-block;
+	line-height: 2.9rem;
+}
+
+.sapMBarRight > .sapMBarChild {
+	line-height: initial;
+}
+
+.sapUiSizeCompact{
+	.sapMBarRight,
+	.sapMBarRight > .sapMBarChild {
+		margin-top: -0.5px;
+		margin-bottom: 0;
+		margin-right: 0;
+		vertical-align: middle;
+		display: inline-block;
+	}
+
+	.sapMBarRight > .sapMBarChild {
+		line-height: initial;
+		margin-top: -0.3px;
+	}
 }
 
 .sapMBarLeft,
