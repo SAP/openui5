@@ -541,6 +541,7 @@ function(
 		oPopup.onsapescape = function(oEvent) {
 			this.onsapescape(oEvent);
 		}.bind(this);
+		oPopup.attachEvent("closed", this._handlePopupClosedEvent, this);
 
 		return oPopup;
 	};
@@ -578,6 +579,14 @@ function(
 		this.fireCancel();
 		this._closeCalendarPickerPopup();
 		oPickerBtnDomRef && oPickerBtnDomRef.focus();
+	};
+
+	/**
+	 * Ensures that the picker mode is correct after a popup close.
+	 * @private
+	 */
+	PlanningCalendarHeader.prototype._handlePopupClosedEvent = function() {
+		this.getAggregation("_calendarPicker")._closedPickers();
 	};
 
 	/**
