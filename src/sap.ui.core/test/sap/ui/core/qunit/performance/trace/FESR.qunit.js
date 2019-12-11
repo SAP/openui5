@@ -4,7 +4,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 	"use strict";
 
 	QUnit.module("FESR", {
-		before: function(assert) {
+		beforeEach: function(assert) {
 			assert.notOk(FESR.getActive(), "FESR is deactivated");
 		},
 		afterEach: function(assert) {
@@ -26,19 +26,26 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 	});
 
 	QUnit.test("onBeforeCreated hook", function(assert) {
+		assert.expect(8);
+
 		var oHandle = {
-			stepName:"undetermined_undefined",
+			stepName:"undetermined_startup",
 			appNameLong:"undetermined",
-			appNameShort:"undetermined",
-			timeToInteractive: 0
+			appNameShort:"undetermined"
 		};
 
 		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
 		var fnOnBeforeCreated = FESR.onBeforeCreated;
 
+		FESR.setActive(true);
+		Interaction.notifyStepStart("startup", true);
+
 		// implement hook
 		var fnOnBeforeCreated = FESR.onBeforeCreated;
 		FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
+			assert.ok(oFESRHandle.timeToInteractive > 0, "startup time should be > 0");
+			//delete startup time as we cannot compare it
+			delete oFESRHandle.timeToInteractive;
 			assert.deepEqual(oFESRHandle, oHandle, "Passed FESRHandle should be correct.");
 			assert.throws(function() { oInteraction.component = "badComponent"; }, "Should throw an error after trying to overwrite the interaction object.");
 			assert.ok(Object.isFrozen(oInteraction), "Interaction is not editable.");
@@ -50,15 +57,16 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			};
 		};
 
-		assert.expect(6);
-
-		FESR.setActive(true);
-		Interaction.start();
-		// first interaction ends with notifyStepStart - second interaction starts
-		Interaction.notifyStepStart(null, true);
-		// trigger header creation
+		// trigger at least one request for header creation
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		xhr.send();
+		// first interaction ends with end
+		Interaction.end(true);
+
+		//trigger request to send FESR
+		xhr = new XMLHttpRequest();
+		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
 		xhr.send();
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
@@ -86,26 +94,26 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 	});
 
 	QUnit.test("Passport Integration - Passport Action in Client ID field", function(assert) {
+		assert.expect(6);
 
 		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
 		var oPassportHeaderSpy = sinon.spy(Passport, "header");
-		assert.expect(5);
 
 		FESR.setActive(true);
-
-		// trigger Passport header creation (which gets called with the actual "action")
+		Interaction.notifyStepStart("startup", true);
+		// trigger at least one request to enable header creation
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
 		xhr.send();
 		var sPassportAction = oPassportHeaderSpy.args[0][4];
 
 		oHeaderSpy.reset();
-		Interaction.start();
+		oPassportHeaderSpy.reset();
 		// first interaction ends with notifyStepStart - second interaction starts
-		Interaction.notifyStepStart("click", true);
+		Interaction.end(true);
 		// trigger initial FESR header creation (which should include the actual "action")
 		xhr = new XMLHttpRequest();
-		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
 		xhr.send();
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
@@ -134,7 +142,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 	if (!Device.browser.msie) {
 
 		QUnit.test("Beacon URL", function(assert) {
-			assert.expect(3);
+			assert.expect(4);
 
 			FESR.setActive(true, "example.url");
 			assert.equal(FESR.getBeaconURL(), "example.url", "Returns beacon url");
@@ -144,7 +152,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		});
 
 		QUnit.test("Beacon strategy", function(assert) {
-			assert.expect(8);
+			assert.expect(9);
 			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
 			var fileReader = new FileReader();
 			var done = assert.async();
@@ -152,7 +160,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			FESR.setActive(true, "example.url");
 			for (var index = 0; index < 10; index++) {
 				Interaction.start();
-				Interaction.notifyStepStart(null, true);
+				Interaction.end(true);
 			}
 
 			assert.equal(sendBeaconStub.callCount, 1, "Beacon send triggered");
@@ -181,21 +189,21 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		});
 
 		QUnit.test("Beacon timeout", function(assert) {
-			assert.expect(6);
+			assert.expect(7);
 			this.clock = sinon.useFakeTimers();
 			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
 			window.performance.getEntriesByType = function() { return []; };
 
 			FESR.setActive(true, "example.url");
 			Interaction.start();
-			Interaction.notifyStepStart(null, true);
+			Interaction.end(true);
 			this.clock.tick(60000);
 			assert.ok(sendBeaconStub.calledOnce, "Beacon called once after 60s");
 			sendBeaconStub.reset();
 
 			this.clock.tick(30000);
 			Interaction.start();
-			Interaction.notifyStepStart(null, true);
+			Interaction.end(true);
 			this.clock.tick(30000);
 			assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
 			this.clock.tick(30000);
@@ -203,7 +211,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			sendBeaconStub.reset();
 
 			Interaction.start();
-			Interaction.notifyStepStart(null, true);
+			Interaction.end(true);
 			FESR.setActive(false);
 			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called after deactivation");
 			sendBeaconStub.reset();

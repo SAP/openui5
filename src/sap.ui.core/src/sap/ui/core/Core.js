@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/ui/base/Interface',
 	'sap/ui/base/Object',
 	'sap/ui/base/ManagedObject',
+	'sap/ui/performance/trace/Interaction',
 	'./Component',
 	'./Configuration',
 	'./Control',
@@ -53,6 +54,7 @@ sap.ui.define([
 		Interface,
 		BaseObject,
 		ManagedObject,
+		Interaction,
 		Component,
 		Configuration,
 		Control,
@@ -683,6 +685,9 @@ sap.ui.define([
 	// Id of the static UIArea
 	var STATIC_UIAREA_ID = "sap-ui-static";
 
+	// to protect against nested rendering we use an array of Steps instead of a single one
+	Core.aFnDone = [];
+
 	/**
 	 * The core allows some friend components to register/deregister themselves
 	 * @private
@@ -1209,18 +1214,18 @@ sap.ui.define([
 
 		var sWaitForTheme = this.oConfiguration['xx-waitForTheme'];
 		if ( this.isThemeApplied() || !sWaitForTheme ) {
-
+			Core.aFnDone.push(Interaction.notifyAsyncStep());
 			this._executeInitialization();
 			this.renderPendingUIUpdates("during Core init"); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
 			Measurement.end("coreComplete");
 
 		} else if (sWaitForTheme === "rendering") {
-
+			Core.aFnDone.push(Interaction.notifyAsyncStep());
 			this._executeInitialization();
 
 			oRenderLog.debug("delay initial rendering until theme has been loaded");
 			_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
-				setTimeout(
+					setTimeout(
 					this.renderPendingUIUpdates.bind(this, "after theme has been loaded"),
 					Device.browser.safari ? 50 : 0
 				);
@@ -1229,12 +1234,10 @@ sap.ui.define([
 			Measurement.end("coreComplete");
 
 		} else if (sWaitForTheme === "init") {
-
 			oRenderLog.debug("delay init event and initial rendering until theme has been loaded");
+			Core.aFnDone.push(Interaction.notifyAsyncStep());
 			_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
-
 				this._executeInitialization();
-
 				setTimeout(
 					this.renderPendingUIUpdates.bind(this, "after theme has been loaded"),
 					Device.browser.safari ? 50 : 0
@@ -2671,6 +2674,8 @@ sap.ui.define([
 	Core.prototype.addInvalidatedUIArea = function(oUIArea) {
 		if ( !this._sRerenderTimer ) {
 			oRenderLog.debug("Registering timer for delayed re-rendering");
+			// start async interaction step
+			Core.aFnDone.push(Interaction.notifyAsyncStep());
 			this._sRerenderTimer = setTimeout(this["renderPendingUIUpdates"].bind(this), 0); // decoupled for collecting several invalidations into one redraw
 		}
 	};
@@ -2690,7 +2695,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Core.prototype.renderPendingUIUpdates = function(sCaller) {
-
 		// start performance measurement
 		oRenderLog.debug("Render pending UI updates: start (" + (sCaller || "by timer" ) + ")");
 
@@ -2724,6 +2728,9 @@ sap.ui.define([
 					clearTimeout(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
 				}
 				this._sRerenderTimer = undefined;
+				if (Core.aFnDone.length > 0) {
+					Core.aFnDone.pop()();
+				}
 			}
 
 			this.runPrerenderingTasks();

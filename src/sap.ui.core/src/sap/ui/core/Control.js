@@ -11,6 +11,7 @@ sap.ui.define([
 	'./BusyIndicatorUtils',
 	'./BlockLayerUtils',
 	"sap/base/Log",
+	"sap/ui/performance/trace/Interaction",
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -21,6 +22,7 @@ sap.ui.define([
 		BusyIndicatorUtils,
 		BlockLayerUtils,
 		Log,
+		Interaction,
 		jQuery
 	) {
 	"use strict";
@@ -1000,6 +1002,7 @@ sap.ui.define([
 		this.setProperty("busy", bBusy, /*bSuppressInvalidate*/ true);
 
 		if (bBusy) {
+			Interaction.notifyShowBusyIndicator(this);
 			this.addDelegate(oRenderingDelegate, false, this);
 		} else {
 			this.removeDelegate(oRenderingDelegate);
@@ -1023,6 +1026,7 @@ sap.ui.define([
 			}
 		} else {
 			fnRemoveBusyIndicator.call(this);
+			Interaction.notifyHideBusyIndicator(this);
 		}
 		return this;
 	};

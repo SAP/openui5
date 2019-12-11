@@ -79,24 +79,28 @@ sap.ui.define([
 	QUnit.module("InteractionMeasurement", {
 		beforeEach: function() {
 			this.requests = [{
+				initiatorType: "xmlhttprequest",
 				startTime: 1,
 				requestStart: 2,
 				responseEnd: 3,
 				transferSize: 10, // okay
 				encodedBodySize: 10
 			}, {
+				initiatorType: "xmlhttprequest",
 				startTime: 4,
 				requestStart: 5,
 				responseEnd: 6,
 				transferSize: 0, // xhr from cache
 				encodedBodySize: 10
 			}, {
+				initiatorType: "xmlhttprequest",
 				startTime: 7,
 				requestStart: 8,
 				responseEnd: 9,
 				transferSize: 10, // script from cache
 				encodedBodySize: 0
 			}, {
+				initiatorType: "xmlhttprequest",
 				startTime: 10,
 				requestStart: 11,
 				responseEnd: 12 // undefined properties (Edge, IE, Safari...)// TODO remove after 1.62 version
@@ -123,8 +127,8 @@ sap.ui.define([
 	});
 
 	QUnit[sMethod]("retrieved requests", function(assert) {
-		assert.strictEqual(this.interaction.requests, this.requests, "requests are added to interaction");
-		assert.strictEqual(this.interaction.completeRoundtrips, 2, "only complete requests are counted");
+		assert.deepEqual(this.interaction.requests, this.requests, "requests are added to interaction");
+		assert.strictEqual(this.interaction.completeRoundtrips, 4, "only complete requests are counted");
 	});
 
 	QUnit[sMethod]("setRequestHeader parameters", function(assert) {

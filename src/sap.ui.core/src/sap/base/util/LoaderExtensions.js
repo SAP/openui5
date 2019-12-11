@@ -202,7 +202,12 @@ sap.ui.define([
 			sUrl,
 			oError,
 			oDeferred,
+			fnDone,
 			iSyncCallBehavior;
+
+		if (LoaderExtensions.notifyResourceLoading) {
+			fnDone = LoaderExtensions.notifyResourceLoading();
+		}
 
 		if (typeof sResourceName === "string") {
 			mOptions = mOptions || {};
@@ -229,13 +234,18 @@ sap.ui.define([
 					oDeferred.reject(oError);
 					Log.error(oError);
 				}
+				if (fnDone) {
+					fnDone();
+				}
 				return null;
 			}
 
 			if (mOptions.async) {
 				oDeferred.resolve(d);
 			}
-
+			if (fnDone) {
+				fnDone();
+			}
 			return d;
 		}
 
@@ -300,6 +310,16 @@ sap.ui.define([
 
 		return oData;
 	};
+
+	/**
+	 * Hook to notify Interaction on loadResource
+	 *
+	 * @ui5-restricted sap.ui.performance.trace.Interaction
+	 *
+	 * @private
+	 * @returns {function} callback function
+	 */
+	LoaderExtensions.notifyResourceLoading = null;
 
 	return LoaderExtensions;
 

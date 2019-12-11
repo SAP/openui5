@@ -141,7 +141,8 @@ sap.ui.define([
 		oShell.destroy();
 
 		// Assert
-		assert.equal(oClearTimeoutSpy.callCount, 1, "Cleared delayedCall count is correct.");
+		// due to Interaction handling a new Timeout was introduced. The cleartimeout gets catched by the spy as well
+		assert.equal(oClearTimeoutSpy.callCount, 2, "Cleared delayedCall count is correct.");
 		assert.equal(oClearTimeoutSpy.firstCall.args[0], iDelayCallId, "ClearTimeout is called with correct ID.");
 		assert.ok(!oShell._checkPaneBarOverflowDelayId, "Timeout for _checkPaneBarOverflow was cleared after destroy");
 
