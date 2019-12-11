@@ -76,7 +76,7 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers.view",
+				"path": "sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"transition": "slide",
@@ -107,12 +107,14 @@
 			],
 			"targets": {
 				"list": {
-					"viewId": "list",
-					"viewName": "List"
+					"type": "View",
+					"id": "list",
+					"name": "List"
 				},
 				"detail": {
-					"viewId": "detail",
-					"viewName": "Detail"
+					"type": "View",
+					"id": "detail",
+					"name": "Detail"
 				},
 				"products": {
 					"type": "Component",
@@ -123,8 +125,9 @@
 					"id": "productInSupplier"
 				},
 				"notFound": {
-					"viewId": "notFound",
-					"viewName": "NotFound",
+					"type": "View",
+					"id": "notFound",
+					"name": "NotFound",
 					"transition": "show"
 				}
 			}

@@ -71,7 +71,7 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "sap.ui.core.sample.RoutingNestedComponent.view",
+				"path": "sap.ui.core.sample.RoutingNestedComponent.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"transition": "slide",
@@ -113,8 +113,9 @@
 			],
 			"targets": {
 				"home": {
-					"viewId": "home",
-					"viewName": "Home"
+					"type": "View",
+					"id": "home",
+					"name": "Home"
 				},
 				"suppliers": {
 					"type": "Component",
@@ -129,8 +130,9 @@
 					"usage": "productsComponent"
 				},
 				"notFound": {
-					"viewId": "notFound",
-					"viewName": "NotFound",
+					"type": "View",
+					"id": "notFound",
+					"name": "NotFound",
 					"transition": "show"
 				}
 			}
@@ -140,22 +142,52 @@
 				"iframe": "RoutingNestedComponent.html",
 				"stretch": true,
 				"files": [
-					"reuse/categories/Component.js",
-					"reuse/categories/manifest.json",
-					"reuse/suppliers/Component.js",
-					"reuse/suppliers/manifest.json",
-					"reuse/products/Component.js",
-					"reuse/products/manifest.json",
-					"base/BaseController.js",
-					"base/BaseComponent.js",
-					"i18n/i18n.properties",
-					"controller/Home.controller.js",
+					"RoutingNestedComponent.html",
+					"Component.js",
+					"manifest.json",
+					"css/style.css",
 					"controller/App.controller.js",
+					"controller/Home.controller.js",
+					"img/diagram.jpg",
 					"view/Home.view.xml",
 					"view/App.view.xml",
-					"Component.js",
-					"RoutingNestedComponent.html",
-					"manifest.json"
+					"view/NotFound.view.xml",
+					"i18n/i18n.properties",
+					"base/BaseComponent.js",
+					"base/BaseController.js",
+					"reuse/products/css/style.css",
+					"reuse/products/controller/List.controller.js",
+					"reuse/products/controller/App.controller.js",
+					"reuse/products/controller/Detail.controller.js",
+					"reuse/products/Component.js",
+					"reuse/products/manifest.json",
+					"reuse/products/view/Detail.view.xml",
+					"reuse/products/view/App.view.xml",
+					"reuse/products/view/NotFound.view.xml",
+					"reuse/products/view/List.view.xml",
+					"reuse/products/i18n/i18n.properties",
+					"reuse/suppliers/css/style.css",
+					"reuse/suppliers/controller/List.controller.js",
+					"reuse/suppliers/controller/App.controller.js",
+					"reuse/suppliers/controller/Detail.controller.js",
+					"reuse/suppliers/Component.js",
+					"reuse/suppliers/manifest.json",
+					"reuse/suppliers/view/Detail.view.xml",
+					"reuse/suppliers/view/App.view.xml",
+					"reuse/suppliers/view/NotFound.view.xml",
+					"reuse/suppliers/view/List.view.xml",
+					"reuse/suppliers/i18n/i18n.properties",
+					"reuse/categories/css/style.css",
+					"reuse/categories/controller/List.controller.js",
+					"reuse/categories/controller/App.controller.js",
+					"reuse/categories/controller/Detail.controller.js",
+					"reuse/categories/Component.js",
+					"reuse/categories/manifest.json",
+					"reuse/categories/view/Detail.view.xml",
+					"reuse/categories/view/App.view.xml",
+					"reuse/categories/view/NotFound.view.xml",
+					"reuse/categories/view/List.view.xml",
+					"reuse/categories/i18n/i18n.properties"
 				]
 			}
 		}
