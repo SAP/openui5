@@ -840,7 +840,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
-	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the the backend
+	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the backend
 	 *
 	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset and/or published
 	 */

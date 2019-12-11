@@ -165,7 +165,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Contains additional data needed for flex/info request
 	 * @param {string} mPropertyBag.reference Name of Component
-	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the the backend
+	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the backend
 	 * @param {string} [mPropertyBag.appVersion] Version of the application that is currently running
 	 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 	 */

@@ -57,7 +57,7 @@ sap.ui.define([
 		 * As the control is expected to occupy the whole parent, it should be the only child of its parent.
 		 *
 		 * When using the <code>sap.m.TabContainer</code> in SAP Quartz theme, the breakpoints and layout paddings could be determined by the container's width.
-		 * To enable this concept and add responsive padding to the the <code>TabContainer</code> control, you may add the following class:
+		 * To enable this concept and add responsive padding to the <code>TabContainer</code> control, you may add the following class:
 		 * <code>sapUiResponsivePadding--header</code>.
 		 *
 		 * @extends sap.ui.core.Control

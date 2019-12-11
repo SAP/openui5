@@ -73,7 +73,7 @@ sap.ui.define([
 				text: { type : "string", defaultValue: ""},
 				/**
 				 * Determines the control status that is represented in different colors,
-				 * including the the color bar and the color and type of the displayed icon.
+				 * including the color bar and the color and type of the displayed icon.
 				 */
 				status: { type : "sap.ui.core.ValueState", defaultValue : ValueState.None },
 				/**
