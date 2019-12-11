@@ -16,7 +16,7 @@ sap.ui.define([
 		 * @namespace
 		 */
 		var ComboBoxTextFieldRenderer = Renderer.extend(InputBaseRenderer);
-
+		ComboBoxTextFieldRenderer.apiVersion = 2;
 		/**
 		 * CSS class to be applied to the root element of the control.
 		 *
@@ -32,10 +32,10 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxTextFieldRenderer.writeInnerAttributes = function(oRm, oControl) {
-			oRm.writeAttribute("autocomplete", "off");
-			oRm.writeAttribute("autocorrect", "off");
-			oRm.writeAttribute("autocapitalize", "off");
-			oRm.writeAttribute("type", "text");
+			oRm.attr("autocomplete", "off");
+			oRm.attr("autocorrect", "off");
+			oRm.attr("autocapitalize", "off");
+			oRm.attr("type", "text");
 		};
 
 		/**
@@ -46,9 +46,9 @@ sap.ui.define([
 		 */
 		ComboBoxTextFieldRenderer.writeAccAttributes = function(oRm, oControl) {
 			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-				oRm.writeAttribute("aria-haspopup", "listbox");
-				oRm.writeAttribute("aria-autocomplete", "inline");
-				oRm.writeAttribute("role", "combobox");
+				oRm.attr("aria-haspopup", "listbox");
+				oRm.attr("aria-autocomplete", "inline");
+				oRm.attr("role", "combobox");
 			}
 		};
 
@@ -81,7 +81,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxTextFieldRenderer.addOuterStyles = function(oRm, oControl) {
-			oRm.addStyle("max-width", oControl.getMaxWidth());
+			oRm.style("max-width", oControl.getMaxWidth());
 		};
 
 		return ComboBoxTextFieldRenderer;

@@ -11,7 +11,7 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer'],
 		 * @namespace
 		 */
 		var ComboBoxRenderer = Renderer.extend(ComboBoxBaseRenderer);
-
+		    ComboBoxRenderer.apiVersion = 2;
 		/**
 		 * CSS class to be applied to the root element of the ComboBox.
 		 *
@@ -28,7 +28,7 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer'],
 		 */
 		ComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
-			oRm.addClass(ComboBoxRenderer.CSS_CLASS_COMBOBOX);
+			oRm.class(ComboBoxRenderer.CSS_CLASS_COMBOBOX);
 		};
 
 		/**
@@ -39,7 +39,7 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer'],
 		 */
 		ComboBoxRenderer.addInnerClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
-			oRm.addClass(ComboBoxRenderer.CSS_CLASS_COMBOBOX + "Inner");
+			oRm.class(ComboBoxRenderer.CSS_CLASS_COMBOBOX + "Inner");
 		};
 
 		/**
@@ -51,12 +51,12 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer'],
 		 */
 		ComboBoxRenderer.addButtonClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addButtonClasses.apply(this, arguments);
-			oRm.addClass(ComboBoxRenderer.CSS_CLASS_COMBOBOX + "Arrow");
+			oRm.class(ComboBoxRenderer.CSS_CLASS_COMBOBOX + "Arrow");
 		};
 
 		ComboBoxRenderer.addPlaceholderClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addPlaceholderClasses.apply(this, arguments);
-			oRm.addClass(ComboBoxRenderer.CSS_CLASS_COMBOBOX + "Placeholder");
+			oRm.class(ComboBoxRenderer.CSS_CLASS_COMBOBOX + "Placeholder");
 		};
 
 		return ComboBoxRenderer;
