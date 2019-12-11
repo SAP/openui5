@@ -66,7 +66,6 @@
 		width: 4rem;
 		top: 50%; // enforcement needed for IE11
 		height: 0.0625rem;
-		z-index: -1; // when we have both pin and toggle header indicator, pseudo-elements overlap siblings on EDGE
 	}
 
 	&:before {
@@ -78,6 +77,11 @@
 		background-image: linear-gradient(to right, @sapUiHighlight, fade(@sapUiHighlight, 0));
 		left: 100%;
 	}
+}
+
+// when we have both pin and toggle header indicator, pseudo-elements overlap siblings on EDGE
+html[data-sap-ui-browser^="ed"] .sapFDynamicPageToggleHeaderIndicator ~ .sapFDynamicPageHeaderPinButton:before {
+  	display: none;
 }
 
 html[data-sap-ui-browser^="cr"] .sapFDynamicPageToggleHeaderIndicator,
