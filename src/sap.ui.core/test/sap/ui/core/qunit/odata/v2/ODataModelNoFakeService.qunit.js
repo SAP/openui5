@@ -247,4 +247,57 @@ sap.ui.define([
 		assert.deepEqual(oRequest, oExpectedResult);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_processChange: ", function (assert) {
+		var oData = {},
+			sDeepPath = "~deepPath",
+			oEntityType/* = undefined*/, //not realistic but simplifies the test
+			sETag = "~etag",
+			mHeaders = "~headers",
+			sKey = "~key",
+			oModel = {
+				_createRequest : function () {},
+				_createRequestUrl : function () {},
+				_getEntity : function () {},
+				_getHeaders : function () {},
+				_getObject : function () {},
+				_removeReferences : function () {},
+				getETag : function () {},
+				mChangedEntities : {},
+				oMetadata : {
+					_getEntityTypeByPath : function () {}
+				},
+				sServiceUrl : "~serviceUrl",
+				bUseBatch : "~useBatch"
+			},
+			oPayload = "~payload",
+			oRequest = {requestUri : "~requestUri"},
+			sUpdateMethod,
+			sUrl = "~url";
+
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs(sKey)
+			.returns(oEntityType);
+		this.mock(oModel).expects("_getObject").withExactArgs("/~key", true)
+			.returns({/* content not relevant for this test */});
+		this.mock(oModel).expects("_getEntity").withExactArgs(sKey)
+			.returns({/* content not relevant for this test */});
+		// withExactArgs() for _removeReferences is not relevant for this test
+		this.mock(oModel).expects("_removeReferences").returns(oPayload);
+		this.mock(oModel).expects("_getHeaders").withExactArgs().returns(mHeaders);
+		this.mock(oModel).expects("getETag").withExactArgs(oPayload).returns(sETag);
+
+		this.mock(oModel).expects("_createRequestUrl")
+			.withExactArgs("/~key", null, undefined, "~useBatch")
+			.returns(sUrl);
+		this.mock(oModel).expects("_createRequest")
+			.withExactArgs(sUrl, sDeepPath, "MERGE", mHeaders, oPayload, sETag, undefined, true)
+			.returns(oRequest);
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype._processChange.call(oModel, sKey, oData, sUpdateMethod, sDeepPath),
+			oRequest);
+	});
 });
