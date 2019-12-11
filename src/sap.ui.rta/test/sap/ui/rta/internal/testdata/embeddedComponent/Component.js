@@ -1,8 +1,5 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/base/util/UriParameters",
-	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
@@ -10,9 +7,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils"
 ], function(
 	UIComponent,
-	FakeLrepConnectorLocalStorage,
-	UriParameters,
-	FakeLrepConnector,
 	MockServer,
 	ODataModel,
 	JSONModel,
@@ -25,12 +19,6 @@ sap.ui.define([
 
 		metadata: {
 			manifest: "json"
-		},
-
-		constructor: function () {
-			UIComponent.prototype.constructor.apply(this, arguments);
-			this.oUriParametersUtil = UriParameters.fromQuery(window.location.search);
-			this._createFakeLrep();
 		},
 
 		init : function() {
@@ -49,7 +37,6 @@ sap.ui.define([
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/variantManagement");
 
 			oMockServer.simulate(this._sResourcePath + "/mockserver/metadata.xml", this._sResourcePath + "/mockserver");
-
 			oMockServer.start();
 
 			return sURL;
@@ -90,30 +77,6 @@ sap.ui.define([
 						oAppModel.setProperty("/showOuterAdaptButton", bIsKeyUser);
 					});
 			}
-		},
-
-		_createFakeLrep: function () {
-			if (this.oUriParametersUtil.get('sap-rta-mock-lrep') !== false) {
-				var mAppManifest = this.getManifestEntry("sap.app");
-				var mSettings = {};
-				FakeLrepConnectorLocalStorage.enableFakeConnector(
-					mSettings,
-					mAppManifest.id + '.Component',
-					mAppManifest.applicationVersion.version);
-			}
-		},
-
-		destroy: function() {
-			if (this.oUriParametersUtil.get('sap-rta-mock-lrep') !== false) {
-				var mAppManifest = this.getManifestEntry("sap.app");
-				FakeLrepConnector.disableFakeConnector(
-					mAppManifest.id + '.Component',
-					mAppManifest.applicationVersion.version
-				);
-			}
-			// call the base component's destroy function
-			UIComponent.prototype.destroy.apply(this, arguments);
 		}
-
 	});
 });
