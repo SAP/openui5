@@ -260,12 +260,18 @@ function(
 	NotificationListGroup.prototype._getGroupTitleInvisibleText = function() {
 
 		var readUnreadText = this.getUnread() ? UNREAD_TEXT : READ_TEXT,
-			priorityText = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_PRIORITY', this.getPriority()),
+			priorityText,
+			priority = this.getPriority(),
 			counterText,
-			ariaTexts = [readUnreadText, priorityText];
+			ariaTexts = [readUnreadText];
+
+			if (priority !== Priority.None) {
+				priorityText = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_PRIORITY', priority);
+				ariaTexts.push(priorityText);
+			}
 
 		if (this.getShowItemsCounter()) {
-			counterText = RESOURCE_BUNDLE.getText("LIST_ITEM_COUNTER", this._getVisibleItemsCount());
+			counterText = RESOURCE_BUNDLE.getText("LIST_ITEM_COUNTER", [this._getVisibleItemsCount()]);
 			ariaTexts.push(counterText);
 		}
 
