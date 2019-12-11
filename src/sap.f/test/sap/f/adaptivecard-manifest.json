@@ -1,0 +1,282 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adativecard.embedded",
+		"type": "card"
+	},
+	"sap.card": {
+		"header": {
+			"title": "Adaptive Card - Inputs",
+				"subTitle": "sap.ui.integration",
+				"icon": {
+					"src": "sap-icon://sap-ui5"
+				},
+				"status": {
+					"text": "11.12.2019"
+				}
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				{
+				"type": "TextBlock",
+				"size": "medium",
+				"weight": "bolder",
+				"isSubtle": "true",
+				"text": "Input.Text elements",
+				"horizontalAlignment": "center"
+				},
+				{
+					"type": "TextBlock",
+					"text": "style: text"
+				},
+				{
+				"type": "Input.Text",
+				"placeholder": "Name",
+				"style": "text",
+				"maxLength": 0,
+				"id": "SimpleVal",
+				"value": "Some text"
+				},
+				{
+					"type": "TextBlock",
+					"text": "style: url"
+				},
+				{
+				"type": "Input.Text",
+				"placeholder": "Homepage",
+				"style": "url",
+				"maxLength": 0,
+				"id": "UrlVal",
+				"value": "https://www.google.com"
+				},
+				{
+				"type": "TextBlock",
+				"text": "style: email"
+				},
+				{
+				"type": "Input.Text",
+				"placeholder": "Email",
+				"style": "email",
+				"maxLength": 0,
+				"id": "EmailVal",
+				"value": "123@gmail.com"
+				},
+				{
+				"type": "TextBlock",
+				"text": "style: tel"
+				},
+				{
+				"type": "Input.Text",
+				"placeholder": "Phone",
+				"style": "tel",
+				"maxLength": 0,
+				"id": "TelVal",
+				"value": "123456789"
+				},
+				{
+				"type": "TextBlock",
+				"text": "style: text, isMultiLine: true"
+				},
+				{
+				"type": "Input.Text",
+				"placeholder": "Comments",
+				"style": "text",
+				"isMultiline": true,
+				"maxLength": 30,
+				"id": "MultiLineVal",
+				"value": "The maximum length is reached."
+				},
+				{
+				"type": "TextBlock",
+				"text": "Input.Number element",
+				"size": "medium",
+				"weight": "bolder",
+				"horizontalAlignment": "center"
+				},
+				{
+				"type": "Input.Number",
+				"placeholder": "Quantity",
+				"min": -5,
+				"max": 5,
+				"value": "1",
+				"id": "NumVal"
+				},
+				{
+				"type": "TextBlock",
+				"text": "Input.Date element",
+				"size": "medium",
+				"weight": "bolder",
+				"horizontalAlignment": "center"
+				},
+				{
+				"type": "Input.Date",
+				"placeholder": "Due Date",
+				"id": "DateVal",
+				"value": "2017-09-20"
+				},
+				{
+				"type": "TextBlock",
+				"text": "Input.Time element",
+				"size": "medium",
+				"weight": "bolder",
+				"horizontalAlignment": "center"
+				},
+				{
+				"type": "Input.Time",
+				"placeholder": "Start time",
+				"id": "TimeVal",
+				"value": "16:59"
+				},
+				{
+				"type": "TextBlock",
+				"size": "medium",
+				"weight": "bolder",
+				"text": "Input.ChoiceSet elements",
+				"horizontalAlignment": "center"
+				},
+				{
+				"type": "TextBlock",
+				"text": "style: compact, isMultiSelect: false"
+				},
+				{
+				"type": "Input.ChoiceSet",
+				"id": "CompactSelectVal",
+				"style": "compact",
+				"placeholder": "Enter a value",
+				"choices": [
+					{
+					"title": "Red",
+					"value": "1"
+					},
+					{
+					"title": "Green",
+					"value": "2"
+					},
+					{
+					"title": "Blue",
+					"value": "3"
+					}
+				]
+				},
+				{
+				"type": "TextBlock",
+				"text": "style: expanded, isMultiSelect: false"
+				},
+				{
+				"type": "Input.ChoiceSet",
+				"id": "SingleSelectVal",
+				"style": "expanded",
+				"value": "2",
+				"choices": [
+					{
+					"title": "Red",
+					"value": "1"
+					},
+					{
+					"title": "Green",
+					"value": "2"
+					},
+					{
+					"title": "Blue",
+					"value": "3"
+					}
+				]
+				},
+				{
+				"type": "TextBlock",
+				"text": "isMultiSelect: true"
+				},
+				{
+				"type": "Input.ChoiceSet",
+				"id": "MultiSelectVal",
+				"isMultiSelect": true,
+				"value": "1,3",
+				"wrap": true,
+				"choices": [
+					{
+					"title": "Red",
+					"value": "1"
+					},
+					{
+					"title": "Green",
+					"value": "2"
+					},
+					{
+					"title": "Blue",
+					"value": "3"
+					}
+				]
+				},
+				{
+				"type": "TextBlock",
+				"size": "medium",
+				"weight": "bolder",
+				"text": "Input.Toggle",
+				"horizontalAlignment": "center"
+				},
+				{
+					"type": "Input.Toggle",
+					"title": "Unchecked toggle input with value 'Truethy value' when checked and 'Falsy value' when not",
+					"id": "ValueOffValueOn",
+					"value": "true",
+					"wrap": true,
+					"valueOff": "Falsy value",
+					"valueOn": "Truthy value"
+				},
+				{
+					"type": "Input.Toggle",
+					"title": "Value is 'true' when checked and 'false' when not",
+					"id": "Unchecked",
+					"wrap": true,
+					"value": "false"
+				},
+				{
+					"type": "Input.Toggle",
+					"title": "The toggle input is checked",
+					"id": "Checked",
+					"wrap": true,
+					"value": "true",
+					"valueOn": "true"
+				},
+				{
+					"type": "Input.Toggle",
+					"title": "Checked with 'false' as value and when unchecked - the value is 'Falsy value'",
+					"id": "FalseValueOn",
+					"wrap": true,
+					"value": "false",
+					"valueOn": "false",
+					"valueOff": "Falsy value"
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.Submit",
+					"title": "Action.Submit"
+				},
+				{
+					"type": "Action.ShowCard",
+					"title": "Action.ShowCard",
+					"card": {
+						"type": "AdaptiveCard",
+						"body": [
+							{
+								"type": "Input.Date",
+								"id": "dueDate"
+							}
+						],
+						"actions": [
+							{
+							"type": "Action.Submit",
+							"title": "OK"
+							}
+						]
+					}
+				}
+			]
+		}
+	}
+}
