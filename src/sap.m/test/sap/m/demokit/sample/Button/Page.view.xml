@@ -79,10 +79,6 @@
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<Button type="Critical" text="Critical" press="onPress" />
-				<Button type="Negative" text="Negative" press="onPress" />
-				<Button type="Success" text="Success" press="onPress" />
-				<Button type="Neutral" text="Neutral" press="onPress" />
 				<Button type="Emphasized" text="Emphasized" press="onPress" />
 				<Button text="Default" press="onPress" />
 				<Button icon="sap-icon://action" type="Transparent" press="onPress" />
