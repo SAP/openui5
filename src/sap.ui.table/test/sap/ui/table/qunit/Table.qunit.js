@@ -271,6 +271,50 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("bindRows, unbindRows", function(assert) {
+		var oBindingInfo = oTable.getBindingInfo("rows");
+		var oBindSpy = sinon.spy(oTable, "_bindRows");
+		var oUnbindSpy = sinon.spy(oTable, "_unbindRows");
+		var oChangeSpy = this.spy();
+		var oDataRequestedSpy = this.spy();
+		var oDataReceivedSpy = this.spy();
+
+		oTable.unbindAggregation("rows");
+		assert.ok(oUnbindSpy.calledOnce, "_unbindRows is called once");
+		oTable.bindAggregation("rows", oBindingInfo);
+		assert.ok(oBindSpy.calledOnce, "_bindRows is called once");
+		assert.ok(oBindSpy.calledWithExactly(oBindingInfo), "_bindRows is called with the correct parameter");
+
+		oBindSpy.reset();
+		oUnbindSpy.reset();
+
+		oTable.unbindRows();
+		assert.ok(oUnbindSpy.calledOnce, "_unbindRows is called once");
+		oBindingInfo.events = {
+			change: oChangeSpy,
+			dataRequested: oDataRequestedSpy,
+			dataReceived: oDataReceivedSpy
+		};
+		oTable.bindRows(oBindingInfo);
+		assert.ok(oBindSpy.calledOnce, "_bindRows is called once");
+		assert.ok(oBindSpy.calledWithExactly(oBindingInfo), "_bindRows is called with the correct parameter");
+
+		oChangeSpy.reset();
+		var oBinding = oTable.getBinding("rows");
+		oBinding.fireEvent("change");
+		oBinding.fireEvent("dataRequested");
+		oBinding.fireEvent("dataReceived");
+
+		assert.ok(oChangeSpy.calledOnce, "The change event listener was called once");
+		assert.ok(oDataRequestedSpy.calledOnce, "The dataRequested event listener was called once");
+		assert.ok(oDataReceivedSpy.calledOnce, "The dataReceived event listener was called once");
+
+		oTable._bRowsBeingBound = true;
+		oUnbindSpy.reset();
+		oTable.unbindAggregation("rows");
+		assert.ok(!oUnbindSpy.called, "_unbindRows is not called");
+	});
+
 	QUnit.test("Initialize skip propagation", function(assert) {
 		var oTable = new Table();
 
