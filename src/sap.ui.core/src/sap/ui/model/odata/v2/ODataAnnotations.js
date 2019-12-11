@@ -19,19 +19,22 @@ sap.ui.define([
 	/**
 	 * Creates a new instance of the ODataAnnotations annotation loader.
 	 *
-	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata Metadata object with the metadata information needed to parse the annotations
+	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
+	 *   Metadata object with the metadata information needed to parse the annotations
 	 * @param {map} mOptions Obligatory options
-	 * @param {string|map|string[]|map[]} mOptions.source One or several annotation sources. See {@link sap.ui.model.odata.v2.ODataAnnotations#addSource} for more details
-	 * @param {map} mOptions.headers A map of headers to be sent with every request. See {@link sap.ui.model.odata.v2.ODataAnnotations#setHeaders} for more details
-	 * @param {boolean} mOptions.skipMetadata If set to <code>true</code>, the metadata document will not be parsed for annotations;
-	 * @param {string} [mOptions.cacheKey] (optional) A valid cache key
+	 * @param {string|map|string[]|map[]} mOptions.source
+	 *   One or several annotation sources; see {@link #addSource} for more details
+	 * @param {map} mOptions.headers A map of headers to be sent with every request; see
+	 *   {@link #setHeaders} for more details
+	 * @param {boolean} mOptions.skipMetadata Whether the metadata document will not be parsed for
+	 *   annotations
+	 * @param {string} [mOptions.cacheKey] A valid cache key
 	 * @public
 	 *
 	 * @class Annotation loader for OData V2 services
 	 *
 	 * @author SAP SE
-	 * @version
-	 * ${version}
+	 * @version ${version}
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -42,18 +45,19 @@ sap.ui.define([
 
 		constructor : function(oMetadata, mOptions) {
 			var that = this;
-			// Allow event substription in constructor options
+			// Allow event subscription in constructor options
 			EventProvider.apply(this, [ mOptions ]);
 			this._oMetadata = oMetadata;
-			// The promise to have (loaded,) parsed and merged the previously added source. This promise should never
-			// reject to assign another promise "pPromise" use alwaysResolve(pPromise)
+			// The promise to have (loaded,) parsed and merged the previously added source.
+			// This promise should never reject; to assign another promise "pPromise" use
+			// alwaysResolve(pPromise)
 			this._pLoaded = oMetadata.loaded();
 			this._mCustomHeaders = {};
 			this._mAnnotations = {};
 			this._hasErrors = false;
 
 			function writeCache(aResults) {
-				// write annotations to cache if no errors occured
+				// write annotations to cache if no errors occurred
 				if (!that._hasErrors) {
 					CacheManager.set(that.sCacheKey, JSON.stringify(aResults));
 				}
@@ -133,10 +137,10 @@ sap.ui.define([
 	////////////////////////////////////////////////// Public Methods //////////////////////////////////////////////////
 
 	/**
-	 * Returns the parsed and merged annotation data object
+	 * Returns the parsed and merged annotation data object.
 	 *
 	 * @public
-	 * @returns {object} returns annotations data
+	 * @returns {object} The annotation data
 	 */
 	ODataAnnotations.prototype.getData = function() {
 		return this._mAnnotations;
@@ -146,7 +150,7 @@ sap.ui.define([
 	 * Returns the parsed and merged annotation data object.
 	 *
 	 * @public
-	 * @returns {object} returns annotations data
+	 * @returns {object} The annotation data
 	 * @deprecated As of version 1.37.0, only kept for compatibility with V1 API, use {@link #getData} instead.
 	 */
 	ODataAnnotations.prototype.getAnnotationsData = function() {
@@ -166,8 +170,8 @@ sap.ui.define([
 	 * Set custom headers which are provided in a key/value map. These headers are used for all requests.
 	 * The "Accept-Language" header cannot be modified and is set using the core's language setting.
 	 *
-	 * To remove these headers, simply set the <code>mHeaders</code> parameter to <code>{}</code>. Please also note that when calling this method
-	 * again all previous custom headers are removed unless they are specified again in the <code>mCustomHeaders</code> parameter.
+	 * To remove these headers, simply set the <code>mHeaders</code> parameter to <code>{}</code>. Note that when calling this method
+	 * again, all previous custom headers are removed, unless they are specified again in the <code>mCustomHeaders</code> parameter.
 	 *
 	 * @param {map} mHeaders the header name/value map.
 	 * @public
@@ -178,10 +182,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise that resolves when the annotation sources that were added up to this point were successfully
-	 * (loaded,) parsed and merged
+	 * Returns a promise that resolves when the added annotation sources were successfully
+	 * processed.
 	 *
-	 * @returns {Promise} The Promise that resolves/rejects after the last added sources have been processed
+	 * @returns {Promise} A promise that resolves after the last added sources have been processed
 	 * @public
 	 */
 	ODataAnnotations.prototype.loaded = function() {
@@ -193,7 +197,7 @@ sap.ui.define([
 	 *
 	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.Source
 	 * @property {string} type The source type. Either "url" or "xml".
-	 * @property {string|Promise} data Either the data or a Promise that resolves with the data string as argument.
+	 * @property {string|Promise} data The data or a Promise that resolves with the data.
 	 *           In case the type is set to "url" the data must be a URL, in case it is set to "xml" the data must be
 	 *           an XML string.
 	 * @property {string} [xml] (Set internally, available in event-callback) The XML string of the annotation source
@@ -207,12 +211,14 @@ sap.ui.define([
 	 * the previously added source has either been successfully merged or failed.
 	 *
 	 * @param {string|string[]|sap.ui.model.odata.v2.ODataAnnotations.Source|sap.ui.model.odata.v2.ODataAnnotations.Source[]} vSource One or several
-	 *        annotation source(s). Can be either a string or a map of the type <code>sap.ui.model.odata.v2.ODataAnnotations.Source</code> or an array
-	 *        containing several (either strings or source objects).
-	 * @returns {Promise} The promise to (load,) parse and merge the given source(s). The Promise resolves on success
-	 *          with an array of maps containing properties <code>source</code> and <code>data</code>. See the parameters of the <code>success</code>
-	 *          event for more details. The promise fails in case at least one source could not be (loaded,) parsed or
-	 *          merged with an array of objects containing Errors and/or Success objects.
+	 *   Annotation source or array of annotation sources; an annotation source is either a string
+	 *   containing a URL or an object of type
+	 *   {@link sap.ui.model.odata.v2.ODataAnnotations.Source}.
+	 * @returns {Promise} The promise to (load,) parse and merge the given source(s). The Promise
+	 *   resolves with an array of maps containing the properties <code>source</code> and
+	 *   <code>data</code>; see the parameters of the <code>success</code> event for more
+	 *   details. In case at least one source could not be (loaded,) parsed or merged, the promise
+	 *   fails with an array of objects containing Errors and/or Success objects.
 	 * @public
 	 */
 	ODataAnnotations.prototype.addSource = function(vSource) {
@@ -305,7 +311,7 @@ sap.ui.define([
 	 * Attaches the given callback to the {@link #event:success success} event, which is fired whenever a source has been successfully
 	 * (loaded,) parsed and merged into the annotation data.
 	 *
-	 * The following parameters will be set on the event object that is given to the callback function:
+	 * The following parameters are set on the event object that is given to the callback function:
 	 *   <code>source</code> - A map containing the properties <code>type</code> - containing either "url" or "xml" - and <code>data</code> containing
 	 *              the data given as source, either a URL or an XML string depending on how the source was added.
 	 *
@@ -632,7 +638,7 @@ sap.ui.define([
 
 
 	/**
-	 * Fires the <code>loaded</code> event with an array of results in the result-parameter of the event
+	 * Fires the <code>loaded</code> event with an array of results in the result-parameter of the event.
 	 *
 	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]} aResults An array of results
 	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
@@ -643,7 +649,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the <code>failed</code> event with an array of results and errors in the result-parameter of the event
+	 * Fires the <code>failed</code> event with an array of results and errors in the result-parameter of the event.
 	 *
 	 * @param {Error[]} aErrors An array of Errors
 	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
@@ -654,7 +660,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the <code>someLoaded</code> event with an array of results and errors in the result-parameter of the event
+	 * Fires the <code>someLoaded</code> event with an array of results and errors in the result-parameter of the event.
 	 *
 	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]|Error[]|any} aResults An array of results and Errors
 	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
@@ -665,7 +671,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the <code>failed</code> event with an array of errors in the result-parameter of the event
+	 * Fires the <code>failed</code> event with an array of errors in the result-parameter of the event.
 	 *
 	 * @param {Error[]} aErrors An array of Errors
 	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
@@ -770,7 +776,7 @@ sap.ui.define([
 			var oXMLDocument;
 			if (Device.browser.msie) {
 				// IE is a special case: Even though it supports DOMParser with the latest versions, the resulting
-				// document does not support the evaluate method, which leads to a differnt kind of XPath implementation
+				// document does not support the 'evaluate' method, which leads to a different kind of XPath implementation
 				// being used in the AnnotationParser. Thus IE (the MSXML implementation) must always be handled separately.
 				oXMLDocument = new window.ActiveXObject("Microsoft.XMLDOM");
 				oXMLDocument.preserveWhiteSpace = true;
