@@ -12,7 +12,8 @@
             "src/sap.ui.support/**/*",
             "src/sap.ui.unified/**/*",
             "src/sap.ui.ux3/**/*",
-            "src/sap.uxap/**/*"
+            "src/sap.uxap/**/*",
+            "src/sap.ui.testrecorder/**/*"
         ],
         "core": [
             "/*",
@@ -32,9 +33,6 @@
             "src/sap.ui.dt/**/*",
             "src/sap.ui.fl/**/*",
             "src/sap.ui.rta/**/*"
-        ],
-         "test-automation-tools": [
-            "src/sap.ui.testrecorder/**/*"
         ]
     },
     "excludes": [
