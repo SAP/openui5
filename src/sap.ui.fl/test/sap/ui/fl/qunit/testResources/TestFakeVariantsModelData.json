@@ -55,5 +55,29 @@
 				"author": ""
 			}
 		]
+	},
+	"nonExistingVariant1": {
+		"defaultVariant": "nonExistingVariant1",
+		"variants": [
+			{
+				"author": "SAP",
+				"favorite": false,
+				"key": "nonExistingVariant1",
+				"title": "Standard",
+				"visible": false
+			}
+		]
+	},
+	"nonExistingVariant2": {
+		"defaultVariant": "nonExistingVariant2",
+		"variants": [
+			{
+				"author": "SAP",
+				"favorite": true,
+				"key": "nonExistingVariant2",
+				"title": "Standard",
+				"visible": true
+			}
+		]
 	}
 }

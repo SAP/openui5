@@ -94,7 +94,8 @@ sap.ui.define([
 				componentId: vConfig.id || oComponent.getId(),
 				asyncHints: vConfig.asyncHints
 			})
-			.then(_propagateChangesForAppComponent.bind(this, oComponent));
+				.then(FlexState.getVariantsState.bind(null, Utils.getComponentClassName(oComponent)))
+				.then(_propagateChangesForAppComponent.bind(this, oComponent));
 		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize

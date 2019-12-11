@@ -120,20 +120,20 @@ sap.ui.define([
 		}
 
 		_mInitPromises[mPropertyBag.reference] = Loader.loadFlexData(mPropertyBag)
-		.then(function(mResponse) {
-			_mInstances[mPropertyBag.reference] = merge({}, {
-				storageResponse: mResponse,
-				componentId: mPropertyBag.componentId
+			.then(function (mResponse) {
+				_mInstances[mPropertyBag.reference] = merge({}, {
+					storageResponse: mResponse,
+					componentId: mPropertyBag.componentId
+				});
+
+				// temporarily create an instance without '.Component'
+				// TODO remove as soon as both with and without '.Component' are harmonized
+				createSecondInstanceIfNecessary(mPropertyBag);
+
+				// no further changes to storageResponse properties allowed
+				// TODO enable the Object.freeze as soon as its possible
+				// Object.freeze(_mInstances[mPropertyBag.reference].storageResponse);
 			});
-
-			// temporarily create an instance without '.Component'
-			// TODO remove as soon as both with and without '.Component' are harmonized
-			createSecondInstanceIfNecessary(mPropertyBag);
-
-			// no further changes to storageResponse properties allowed
-			// TODO enable the Object.freeze as soon as its possible
-			// Object.freeze(_mInstances[mPropertyBag.reference].storageResponse);
-		});
 
 		return _mInitPromises[mPropertyBag.reference];
 	};

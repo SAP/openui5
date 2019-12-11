@@ -52,43 +52,13 @@ sap.ui.define([
 		return mResponseObject;
 	}
 
-	function containsVariantData(aResponses) {
-		return aResponses.some(function(oResponse) {
-			return oResponse.variants && oResponse.variants.length > 0
-				|| oResponse.variantChanges && oResponse.variantChanges.length > 0
-				|| oResponse.variantDependentControlChanges && oResponse.variantDependentControlChanges.length > 0
-				|| oResponse.variantManagementChanges && oResponse.variantManagementChanges.length > 0;
-		});
-	}
-
-	function countVariantProvidingResponses(aResponses) {
-		var iVariantProvidingResponses = 0;
-		aResponses.forEach(function(oResponse) {
-			if (oResponse.variantSection && Object.keys(oResponse.variantSection).length > 0) {
-				iVariantProvidingResponses++;
-			}
-		});
-
-		return iVariantProvidingResponses;
-	}
-
 	function disassembleVariantSectionsIfNecessary(aResponses) {
-		var aDisassembledResponses = [];
-		var bResponseContainingFilledVariantPropertyExists = containsVariantData(aResponses);
-		var nNumberOfVariantProvidingResponses = countVariantProvidingResponses(aResponses);
-		var bVariantSectionSufficient = !bResponseContainingFilledVariantPropertyExists && nNumberOfVariantProvidingResponses <= 1;
-
-		if (bVariantSectionSufficient) {
-			aDisassembledResponses = aResponses;
-		} else {
-			aDisassembledResponses = aResponses.map(function (oResponse) {
-				return oResponse.variantSection ? storageResultDisassemble(oResponse) : oResponse;
-			});
-		}
+		var aDisassembledResponses = aResponses.map(function (oResponse) {
+			return oResponse.variantSection ? storageResultDisassemble(oResponse) : oResponse;
+		});
 
 		return {
-			responses: aDisassembledResponses,
-			variantSectionSufficient: bVariantSectionSufficient
+			responses: aDisassembledResponses
 		};
 	}
 

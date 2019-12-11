@@ -76,7 +76,6 @@ sap.ui.define([
 				});
 			}
 
-
 			return Promise.resolve(Utils.getEmptyFlexDataResponse());
 		}
 	});
