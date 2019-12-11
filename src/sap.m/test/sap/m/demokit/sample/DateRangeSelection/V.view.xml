@@ -15,16 +15,24 @@
 		<Label text="DateRangeSelection with minDate=2016-01-01 and maxDate=2016-12-31:" labelFor="DRS2"/>
 		<DateRangeSelection
 			id="DRS2"
-			dateValue="{path:'/dateValueDRS2'}"
-			secondDateValue="{path:'/secondDateValueDRS2'}"
-			minDate="{path:'/dateMinDRS2'}"
-			maxDate="{path:'/dateMaxDRS2'}"
 			change="handleChange"/>
 
-		<Label text="DateRangeSelection with OK button in the footer:" labelFor="DRS2"/>
+		<Label text="DateRangeSelection with OK button in the footer:" labelFor="DRS3"/>
 		<DateRangeSelection
 			id="DRS3"
 			showFooter="true"
+			change="handleChange"/>
+
+		<Label text="DateRangeSelection with displayFormat 'MM/yyyy':" labelFor="DRS4"/>
+		<DateRangeSelection
+			id="DRS4"
+			displayFormat="MM/yyyy"
+			change="handleChange"/>
+
+		<Label text="DateRangeSelection with displayFormat 'yyyy':" labelFor="DRS5"/>
+		<DateRangeSelection
+			id="DRS5"
+			displayFormat="yyyy"
 			change="handleChange"/>
 
 		<Label text="Change event" labelFor="TextEvent" />
