@@ -289,9 +289,9 @@ sap.ui.define([
 				}.bind(this), []);
 
 				if (aOverallTargetElementIds.length) {
-					window.requestAnimationFrame(function () {
-						this._callRelevantCallbackFunctions(aOverallTargetElementIds, "MutationObserver");
-					}.bind(this));
+					window.requestAnimationFrame(function (_aOverallTargetElementIds) {
+						this._callRelevantCallbackFunctions(_aOverallTargetElementIds, "MutationObserver");
+					}.bind(this, aOverallTargetElementIds));
 				}
 			}
 		}.bind(this));
