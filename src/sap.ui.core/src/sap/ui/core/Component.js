@@ -2474,7 +2474,9 @@ sap.ui.define([
 			// call flex-hook if given
 			if (typeof Component._fnPreprocessManifest === "function") {
 				try {
-					return Component._fnPreprocessManifest(rawJson);
+					// secure configuration from manipulation
+					var oConfigCopy = jQuery.extend(true, {}, oConfig);
+					return Component._fnPreprocessManifest(rawJson, oConfigCopy);
 				} catch (oError) {
 					// in case the hook itself crashes without 'safely' rejecting, we log the error and reject directly
 					Log.error("Failed to execute flexibility hook for manifest preprocessing.", oError);
