@@ -119,7 +119,7 @@ sap.ui.define([
 						* <li>If set to <code>Auto</code>, the appearance of the PDF viewer depends on the
 						* device being used:
 						* <ul>
-						* <li>On mobile devices (phones, tablets), the the PDF viewer appears as a toolbar with
+						* <li>On mobile devices (phones, tablets), the PDF viewer appears as a toolbar with
 						* a download button.</li>
 						* <li>On desktop devices, the PDF viewer is embedded in its parent container.</li>
 						* </ul>

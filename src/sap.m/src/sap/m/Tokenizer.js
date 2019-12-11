@@ -409,20 +409,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function sets whether the tokens visibility should be adjusted.
+	 * Function sets whether the visibility of the tokens should be adjusted.
 	 *
 	 * @protected
-	 * @param {boolean} If true the the tokenizer should adjust the tokens visibility
+	 * @param {boolean} If true, the tokenizer should adjust the visibility of the tokens
 	 */
 	Tokenizer.prototype._setAdjustable = function(bAdjust) {
 		this._bAdjustable = bAdjust;
 	};
 
 	/**
-	 * Function gets whether the tokens visibility should be adjusted.
+	 * Function returns whether the visibility of the tokens should be adjusted.
 	 *
 	 * @protected
-	 * @returns {boolean} If true the the tokenizer should adjust the tokens visibility
+	 * @returns {boolean} If true, the tokenizer should adjust the visibility of the tokens
 	 */
 	Tokenizer.prototype._getAdjustable = function() {
 		return this._bAdjustable;

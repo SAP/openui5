@@ -121,7 +121,7 @@ sap.ui.define([
 	 * Sets the focus to the corresponding column header of the last known cell position.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {string} sTabDummyCSSClass The the css class of the tab dummy element to be used in a selector.
+	 * @param {string} sTabDummyCSSClass The css class of the tab dummy element to be used in a selector.
 	 * @private
 	 * @static
 	 */

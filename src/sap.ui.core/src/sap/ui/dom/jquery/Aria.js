@@ -79,7 +79,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	}
 
 	/**
-	 * Adds the given ID reference to the the aria-labelledby attribute.
+	 * Adds the given ID reference to the aria-labelledby attribute.
 	 *
 	 * @param {string} sId The ID reference of an element
 	 * @param {boolean} [bPrepend=false] Whether prepend or not

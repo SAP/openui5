@@ -1138,7 +1138,7 @@ function(
 	 * Needs to be re-implemented.
 	 *
 	 * @param {string} sClassName - The class of the control to be created
-	 * @param {object} oNode - The the settings
+	 * @param {object} oNode - The settings
 	 * @param {object} oContext - The current context of the control
 	 * @private
 	 */
