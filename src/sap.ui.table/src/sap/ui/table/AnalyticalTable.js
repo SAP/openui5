@@ -288,25 +288,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * @inheritDoc
+	 */
+	AnalyticalTable.prototype._bindRows = function(oBindingInfo) {
+		this._applyAnalyticalBindingInfo(oBindingInfo);
+		Table.prototype._bindRows.call(this, oBindingInfo);
+	};
+
+	/**
 	 * This function will be called by either by {@link sap.ui.base.ManagedObject#bindAggregation} or {@link sap.ui.base.ManagedObject#setModel}.
 	 *
 	 * @override {@link sap.ui.table.Table#_bindAggregation}
 	 */
 	AnalyticalTable.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
+			// If only the model has been changed, the ManagedObject only calls _bindAggregation while bindAggregation / bindRows is not called.
+			this._invalidateColumnMenus(); // Metadata might change.
+			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
+
 			// make sure to reset the first visible row (currently needed for the analytical binding)
 			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
 			this.setProperty("firstVisibleRow", 0, true);
-
-			this._applyAnalyticalBindingInfo(oBindingInfo);
-			this._updateTotalRow(true);
-			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
 		}
 
 		// Create the binding.
 		Table.prototype._bindAggregation.call(this, sName, oBindingInfo);
 
 		if (sName === "rows") {
+			this._updateTotalRow(true);
 			TableUtils.Binding.metadataLoaded(this).then(function() {
 				this._updateColumns(true);
 			}.bind(this));

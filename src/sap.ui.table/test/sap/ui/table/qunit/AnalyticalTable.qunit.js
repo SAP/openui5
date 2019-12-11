@@ -275,14 +275,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("BindRows", function(assert) {
-		var spy = this.spy(AnalyticalTable.prototype, "bindRows");
+		var oInnerBindRows = this.spy(AnalyticalTable.prototype, "_bindRows");
 		var oTable = new AnalyticalTable({
 			rows: {path: "/modelData"},
 			columns: [new AnalyticalColumn()]
 		});
 
-		assert.ok(spy.calledOnce, "bindRows was called");
+		assert.ok(oInnerBindRows.calledOnce, "bindRows was called");
 		assert.ok(!!oTable.getBindingInfo("rows"), "BindingInfo available");
+
+		oInnerBindRows.restore();
 	});
 
 	QUnit.test("BindRows - Update columns", function(assert) {
