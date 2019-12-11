@@ -504,10 +504,11 @@ sap.ui.define([
 		this.$().toggleClass("sapUxAPAnchorBarOverflow", this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon);
 	};
 
-	AnchorBar.prototype._adjustSize = function () {
+	AnchorBar.prototype._adjustSize = function (oEvent) {
 
 		//size changed => check if switch in display-mode (phone-view vs. desktop-view) needed
 		var oMediaRange = Device.media.getCurrentRange(Device.media.RANGESETS.SAP_STANDARD, this._getWidth(this)),
+			bWidthChange = oEvent && oEvent.size && (oEvent.size.width !== oEvent.oldSize.width),
 			sNewMode = library.Utilities.isPhoneScenario(oMediaRange) ?
 			AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Text :
 			AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon;
@@ -531,6 +532,10 @@ sap.ui.define([
 				bNeedScrollingEnd,
 				iContainerWidth;
 
+			// if width has changed we need to scroll AnchorBar to selected section
+			if (bWidthChange) {
+				this.scrollToSection(this._sSelectedKey);
+			}
 
 			iContainerWidth = $scrollContainer.width();
 
