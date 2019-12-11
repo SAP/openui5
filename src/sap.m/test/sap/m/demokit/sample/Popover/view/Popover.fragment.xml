@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core">
 	<Popover
 		title="{Name}"
-		class="sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"
+		class="sapUiResponsivePadding--header sapUiResponsivePadding--footer"
 		placement="Bottom"
 		initialFocus="email">
 		<footer>
