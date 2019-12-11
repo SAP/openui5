@@ -49,7 +49,22 @@
 						"applicationType": "URL",
 						"url": "../",
 						"description": "Variant Management Test App",
-						"title": "UI Flexibility"
+						"title": "UI Flexibility",
+						"applicationDependencies": {
+							"self": { name: "sap.ui.rta.test.variantManagement" },
+							"manifest": true,
+							"asyncHints": {
+								"libs": [
+									{ "name": "sap.ui.core" },
+									{ "name": "sap.m" },
+									{ "name": "sap.ui.dt" },
+									{ "name": "sap.ui.rta" },
+									{ "name": "sap.ui.layout" },
+									{ "name": "sap.ui.comp" },
+									{ "name": "sap.uxap" }
+								]
+							}
+						}
 					}
 				},
 				services: {
