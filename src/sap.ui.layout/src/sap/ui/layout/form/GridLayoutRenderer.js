@@ -369,7 +369,7 @@ sap.ui.define([
 
 		var oLabel = oElement.getLabelControl(); // do not use getLabel() because it returns just text if only text is maintained
 		var iLabelFromRowspan = 0;
-		var aFields = oElement.getFields();
+		var aFields = oElement.getFieldsForRendering();
 		var iCellsUsed = 0;
 		var iAutoCellsUsed = 0;
 		var bMiddleSet = false;
@@ -552,7 +552,7 @@ sap.ui.define([
 
 	GridLayoutRenderer.checkFullSizeElement = function(oLayout, oElement){
 
-		var aFields = oElement.getFields();
+		var aFields = oElement.getFieldsForRendering();
 
 		if (aFields.length == 1 && this.getElementData(oLayout, aFields[0]) && this.getElementData(oLayout, aFields[0]).getHCells() == "full") {
 			return true;

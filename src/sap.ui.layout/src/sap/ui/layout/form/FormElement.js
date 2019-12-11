@@ -40,7 +40,17 @@ sap.ui.define([
 			/**
 			 * If set to <code>false</code>, the <code>FormElement</code> is not rendered.
 			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true}
+			visible : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * Internal property for the <code>editable</code> state of the internal <code>FormElement</code>.
+			 */
+			_editable: {
+				type: "boolean",
+				group: "Misc",
+				defaultValue: false,
+				visibility: "hidden"
+			}
 		},
 		defaultAggregation : "fields",
 		aggregations : {
@@ -289,10 +299,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Labels inside of a Form must be invalidated if "editable" changed on Form
-	 * @private
+	 * Sets the editable state of the <code>FormElement</code>.
+	 *
+	 * This must only be called from the <code>Form</code> and it's <code>FormContainers</code>.
+	 *
+	 * Labels inside of a <code>Form</code> must be invalidated if <code>editable</code> changed on <code>Form</code>.
+	 *
+	 * @param {boolean} bEditable Editable state of the <code>Form</code>
+	 * @protected
+	 * @restricted sap.ui.layout.form.FormContainer
+	 * @since 1.74.0
 	 */
-	FormElement.prototype.invalidateLabel = function(){
+	FormElement.prototype._setEditable = function(bEditable) {
+
+		this.setProperty("_editable", bEditable, true); // do not invalidate whole FormElement
+
+		this.invalidateLabel();
+
+	};
+
+	/**
+	 * Labels inside of a Form must be invalidated if "editable" changed on Form
+	 * @protected
+	 */
+	FormElement.prototype.invalidateLabel = function(){ // is overwritten in sap.ui.comp.smartform.GroupElement
 
 		var oLabel = this.getLabelControl();
 
@@ -316,6 +346,20 @@ sap.ui.define([
 	FormElement.prototype.isVisible = function(){
 
 		return this.getVisible();
+
+	};
+
+	/**
+	 * Determines what fields must be rendered.
+	 *
+	 * @returns {sap.ui.core.Control[]} Array of fields to be rendered
+	 * @public
+	 * @restricted sap.ui.layout.form.Form
+	 * @since 1.74.0
+	 */
+	FormElement.prototype.getFieldsForRendering = function(){
+
+		return this.getFields();
 
 	};
 

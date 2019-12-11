@@ -5,9 +5,10 @@
 // Provides control sap.ui.layout.form.Form.
 sap.ui.define([
 	'sap/ui/core/Control',
+	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/layout/library',
 	'./FormRenderer'
-	], function(Control, library, FormRenderer) {
+	], function(Control, ManagedObjectObserver, library, FormRenderer) {
 	"use strict";
 
 	/**
@@ -120,6 +121,24 @@ sap.ui.define([
 		designtime: "sap/ui/layout/designtime/form/Form.designtime"
 	}});
 
+	Form.prototype.init = function(){
+
+		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
+
+		this._oObserver.observe(this, {
+			properties: ["editable"],
+			aggregations: ["formContainers"]
+		});
+
+	};
+
+	Form.prototype.exit = function(){
+
+		this._oObserver.disconnect();
+		this._oObserver = undefined;
+
+	};
+
 	Form.prototype.toggleContainerExpanded = function(oContainer){
 
 		var oLayout = this.getLayout();
@@ -164,8 +183,13 @@ sap.ui.define([
 
 	Form.prototype.setEditable = function(bEditable) {
 
-		var bOldEditable = this.getEditable();
 		this.setProperty("editable", bEditable, true);
+
+		return this;
+
+	};
+
+	function _setEditable(bEditable, bOldEditable) {
 
 		if (bEditable != bOldEditable && this.getDomRef()) {
 			if (bEditable) {
@@ -180,16 +204,14 @@ sap.ui.define([
 			var aFormContainers = this.getFormContainers();
 			for (var i = 0; i < aFormContainers.length; i++) {
 				var oFormContainer = aFormContainers[i];
-				oFormContainer.invalidateLabels();
+				oFormContainer._setEditable(bEditable);
 			}
 
 		}
 
-		return this;
+	}
 
-	};
-
-	Form.prototype.setToolbar = function(oToolbar) {
+	Form.prototype.setToolbar = function(oToolbar) { // don't use observer as library function needs to be called before aggregation update
 
 		// for sap.m.Toolbar Auto-design must be set to transparent
 		oToolbar = library.form.FormHelper.setToolbar.call(this, oToolbar);
@@ -290,6 +312,24 @@ sap.ui.define([
 		return this;
 
 	};
+
+	function _observeChanges(oChanges){
+
+		if (oChanges.name === "editable") {
+			_setEditable.call(this, oChanges.current, oChanges.old);
+		} else if (oChanges.name === "formContainers") {
+			_formContainerChanged.call(this, oChanges.mutation, oChanges.child);
+		}
+
+	}
+
+	function _formContainerChanged(sMutation, oFormContainer) {
+
+		if (sMutation === "insert") {
+			oFormContainer._setEditable(this.getEditable());
+		}
+
+	}
 
 	return Form;
 
