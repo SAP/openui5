@@ -22519,6 +22519,56 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 	});
 
 	//*********************************************************************************************
+	// Scenario: Use v4.Context#setProperty to update a property value in a way which becomes async,
+	// change the binding's parent context in the meantime. Check that setting the property value
+	// fails instead of changing the wrong data or so.
+	// JIRA: CPOUI5ODATAV4-14
+	QUnit.test("CPOUI5ODATAV4-108 what if context has changed in the meantime", function (assert) {
+		var that = this;
+
+		return this.createView(assert).then(function () {
+			var oModel = that.oModel,
+				oContextBinding = oModel.bindContext("Manager_to_Team"),
+				fnRespond;
+
+			oContextBinding.setContext(
+				oModel.bindContext("/MANAGERS('1')", null, {$expand : "Manager_to_Team"})
+					.getBoundContext());
+
+			that.expectRequest("MANAGERS('1')?$expand=Manager_to_Team",
+					new Promise(function (resolve, reject) {
+						fnRespond = resolve.bind(null, {
+							ID : "1",
+							Manager_to_Team : {
+								Name : "Team #1",
+								Team_Id : "Team_01"
+							}
+						});
+					})
+				);
+
+			return Promise.all([
+				oContextBinding.getBoundContext().setProperty("Name", "Darth Vader")
+					.then(function () {
+						assert.ok(false);
+					}, function () {
+						// TypeError: Cannot read property 'resolve' of undefined
+						// --> setProperty fails somehow because the old bound context has already
+						// been destroyed; this is OK and better than changing the wrong data or so
+						assert.ok(true);
+					}),
+				resolveLater(function () {
+					oContextBinding.setContext(
+						oModel.bindContext("/MANAGERS('2')", null, {$expand : "Manager_to_Team"})
+							.getBoundContext());
+					fnRespond();
+				}, 100),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: A PATCH (not shown here) triggers a side effect for the whole object page, while
 	// a paginator switches to another item. The side effect's GET is thus ignored because the
 	// cache for the old item is already inactive; thus the promise fails. Due to this failure, the
