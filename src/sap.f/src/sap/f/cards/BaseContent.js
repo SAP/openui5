@@ -251,7 +251,7 @@ sap.ui.define([
 			oAggregation = oControl.getAggregation(sAggregation);
 
 		if (oBindingContext) {
-			oBindingInfo.path = oBindingContext.getPath();
+			oBindingInfo.path = oBindingInfo.path || oBindingContext.getPath();
 			oControl.bindAggregation(sAggregation, oBindingInfo);
 
 			if (this.getModel("parameters") && oAggregation) {
@@ -347,6 +347,9 @@ sap.ui.define([
 				switch (sType.toLowerCase()) {
 					case "list":
 						sap.ui.require(["sap/f/cards/ListContent"], fnCreateContentInstance);
+						break;
+					case "calendar":
+						sap.ui.require(["sap/f/cards/CalendarContent"], fnCreateContentInstance);
 						break;
 					case "table":
 						sap.ui.require(["sap/f/cards/TableContent"], fnCreateContentInstance);

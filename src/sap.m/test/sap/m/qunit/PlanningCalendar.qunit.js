@@ -4982,22 +4982,41 @@ sap.ui.define([
 				new CalendarAppointment({
 					startDate: new Date(2015, 0, 2, 7, 0),
 					endDate: new Date(2015, 0, 2, 15, 0)
+				}),
+				new CalendarAppointment({
+					startDate: new Date(2015, 0, 2, 7, 0),
+					endDate: new Date(2015, 0, 2, 15, 34)
+				}),
+				new CalendarAppointment({
+					startDate: new Date(2015, 0, 2, 7, 0),
+					endDate: new Date(2015, 0, 2, 7, 34)
 				})
 			],
 			oCurrentlyDisplayedDate = new Date(2015, 0, 2),
 			oTimeFormat = DateFormat.getTimeInstance({pattern: 'HH:mm'}),
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oLocaleData = LocaleData.getInstance(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
+			oOriginalFormatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			sOriginalFormatLocale = oOriginalFormatLocale.getLanguage() + "_" +  oOriginalFormatLocale.getRegion();
 
-		assert.equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate), '');
-		assert.equal(aAppInfos[1]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
-			oResourceBundle.getText('PLANNINGCALENDAR_ALLDAY'));
-		assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
-			oResourceBundle.getText('PLANNINGCALENDAR_UNTIL', [oTimeFormat.format(aAppInfos[2].getEndDate())]));
-		assert.equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
-			oTimeFormat.format(aAppInfos[3].getStartDate()));
-		assert.equal(aAppInfos[4]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
-			oTimeFormat.format(aAppInfos[4].getStartDate()) + ' - ' + oTimeFormat.format(aAppInfos[4].getEndDate()));
+		sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
 
+		assert.equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, '');
+		assert.equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, undefined);
+		assert.equal(aAppInfos[1]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "All Day");
+		assert.equal(aAppInfos[1]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, undefined);
+		// assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "until"); // TODO: will be uncommented after chnage in the translation
+		assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "11:00");
+		assert.equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "from");
+		assert.equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "09:00");
+		assert.equal(aAppInfos[4]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "07:00");
+		assert.equal(aAppInfos[4]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "8 hrs");
+		assert.equal(aAppInfos[5]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "07:00");
+		assert.equal(aAppInfos[5]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "8 hrs, 34 mins");
+		assert.equal(aAppInfos[6]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "07:00");
+		assert.equal(aAppInfos[6]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "34 mins");
+
+		sap.ui.getCore().getConfiguration().setFormatLocale(sOriginalFormatLocale);
 	});
 
 	QUnit.module('showDayNamesLine', {

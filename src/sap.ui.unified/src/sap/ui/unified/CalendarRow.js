@@ -1714,7 +1714,7 @@ sap.ui.define([
 		var oParent = this;
 
 		while (oParent.getParent() !== null) {
-			if (oParent.getMetadata().getName() === "sap.m.PlanningCalendar") {
+			if (oParent.isA("sap.m.PlanningCalendar")) {
 				return oParent;
 			}
 			oParent = oParent.getParent();

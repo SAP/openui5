@@ -122,6 +122,15 @@ sap.ui.define([
 						]
 					},
 					{
+						title: 'Calendar (Еxperimental)',
+						target: 'exploreSamples',
+						key: 'calendar',
+						manifestUrl: '/samples/calendar/calendar.json',
+						settings: {
+							columns: 7
+						}
+					},
+					{
 						title: 'Table',
 						target: 'exploreSamples',
 						key: 'table',

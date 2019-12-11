@@ -109,6 +109,11 @@
 		  "target": "listContent"
 		},
 		{
+		  "pattern": "calendarContent",
+		  "name": "calendarContent",
+		  "target": "calendarContent"
+		},
+		{
 		  "pattern": "tableContent",
 		  "name": "tableContent",
 		  "target": "tableContent"
@@ -273,6 +278,11 @@
 				"viewId": "listContent",
 				"viewName": "ListContent",
 				"viewLevel": 1
+			},
+			"calendarContent": {
+			  "viewId": "calendarContent",
+			  "viewName": "calendarContent",
+			  "viewLevel": 1
 			},
 			"tableContent": {
 				"viewId": "tableContent",

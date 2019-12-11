@@ -24,21 +24,6 @@ sap.ui.define([
 		var oSimpleControl = new SimpleControl();
 
 		/**
-		 * Checks if object is a binding info.
-		 *
-		 * @param {object} oObj The object to check.
-		 * @returns {boolean} Whether the object represents a binding info.
-		 */
-		function isBindingInfo (oObj) {
-
-			if (!oObj) {
-				return false;
-			}
-
-			return oObj.hasOwnProperty("path") || (oObj.hasOwnProperty("parts") && oObj.hasOwnProperty("formatter"));
-		}
-
-		/**
 		 * Resolves a binding syntax based on a provided model and path.
 		 *
 		 * @author SAP SE
@@ -76,7 +61,7 @@ sap.ui.define([
 			}
 
 			// iterates objects
-			if (vValue && typeof vValue === "object" && !isBindingInfo(vValue)) {
+			if (vValue && typeof vValue === "object" && !BindingResolver.isBindingInfo(vValue)) {
 				var oNewObj = {};
 				for (var sProp in vValue) {
 					oNewObj[sProp] = process(vValue[sProp], oModel, sPath, iCurrentLevel + 1, iMaxLevel);
@@ -85,7 +70,7 @@ sap.ui.define([
 			}
 
 			// resolves strings that might contain binding syntax or objects that are binding infos
-			if (typeof vValue === "string" || (typeof vValue === "object" && isBindingInfo(vValue))) {
+			if (typeof vValue === "string" || (typeof vValue === "object" && BindingResolver.isBindingInfo(vValue))) {
 				return resolveBinding(vValue, oModel, sPath);
 			}
 
@@ -149,6 +134,21 @@ sap.ui.define([
 			} else {
 				return vValue;
 			}
+		};
+
+		/**
+		 * Checks if object is a binding info.
+		 *
+		 * @param {object} oObj The object to check.
+		 * @returns {boolean} Whether the object represents a binding info.
+		 */
+		BindingResolver.isBindingInfo = function (oObj) {
+
+			if (!oObj) {
+				return false;
+			}
+
+			return oObj.hasOwnProperty("path") || (oObj.hasOwnProperty("parts") && oObj.hasOwnProperty("formatter"));
 		};
 
 		return BindingResolver;

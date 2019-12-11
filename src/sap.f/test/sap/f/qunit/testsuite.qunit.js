@@ -166,6 +166,7 @@ sap.ui.define(function () {
 					only: ["sap/f/GridListItem"]
 				}
 			},
+			"PlanningCalendarInCard": {},
 			"ProductSwitchItem": {
 				coverage: {
 					only: ["sap/f/ProductSwitchItem"]

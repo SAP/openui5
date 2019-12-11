@@ -295,12 +295,13 @@ function(
 			ariaHaspopup: "dialog",
 			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_SELECT_RANGE"),
 			press: function () {
-				var oDate = this.getStartDate() || new Date(),
-					sCurrentPickerId = this.getAssociation("currentPicker");
-				oPicker = sap.ui.getCore().byId(sCurrentPickerId);
-				oPicker.displayDate(oDate);
-
-				this._openCalendarPickerPopup(oPicker);
+				if (this.fireEvent("_pickerButtonPress", {}, true)) {
+					var oDate = this.getStartDate() || new Date(),
+						sCurrentPickerId = this.getAssociation("currentPicker");
+					oPicker = sap.ui.getCore().byId(sCurrentPickerId);
+					oPicker.displayDate(oDate);
+					this._openCalendarPickerPopup(oPicker);
+				}
 			}.bind(this)
 		});
 

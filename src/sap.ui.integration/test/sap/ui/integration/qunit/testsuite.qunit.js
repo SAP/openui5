@@ -37,6 +37,7 @@ sap.ui.define(function () {
 					'./CardFormatters.qunit'
 				]
 			},
+			"CalendarCard": {},
 			"cardbundle/CardStaticResources": {},
 			"util/CardManifest": {
 				coverage: {
@@ -72,6 +73,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/CardManifest",
 						"sap/ui/integration/util/ServiceManager",
 						"sap/ui/integration/customElements/",
+						"sap/f/cards/CalendarCard",
 						"sap/f/cards/CardActions",
 						"sap/f/cards/AnalyticalContent",
 						"sap/f/cards/BindingHelper",

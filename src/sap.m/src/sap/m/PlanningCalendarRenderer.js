@@ -33,6 +33,7 @@ sap.ui.define([
 			role: "region",
 			labelledby: InvisibleText.getStaticId("sap.m", "PLANNINGCALENDAR")
 		});
+		this.addAdditionalClasses(oRm, oPC);
 		if (oPC._iSize !== undefined && oPC._iSize !== null) {
 			oRm.class("sapMSize" + oPC._iSize);
 		}
@@ -90,6 +91,13 @@ sap.ui.define([
 		oRm.close("span");
 		oRm.close("div");
 	};
+
+	/**
+	 * A hook for extended classes to include additional classes.
+	 *
+	 * @private
+	 */
+	PlanningCalendarRenderer.addAdditionalClasses = function () {};
 
 	return PlanningCalendarRenderer;
 

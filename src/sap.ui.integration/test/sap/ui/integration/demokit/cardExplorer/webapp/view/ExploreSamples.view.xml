@@ -29,6 +29,7 @@
 							</contentRight>
 						</Bar>
 					</customHeader>
+					<MessageStrip visible="{= ${/sample/key} === 'calendar'}" showIcon="true" type="Warning" text="This type of card is in a beta state - incompatible API changes in the manifest may be done before its official public release." />
 					<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }">
 						<w:Card id="cardSample" action="._onCardAction"/>
 					</f:GridContainer>

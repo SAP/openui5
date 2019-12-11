@@ -39,6 +39,7 @@ sap.ui.define([
 		"sap.m.internal.NumericInput",
 		"sap.m.DateTimeInput", // has a DatePicker leak
 		"sap.m.PlanningCalendar", // can be rendered but fails when properties generically filled ("viewKey")
+		"sap.f.PlanningCalendarInCard", // can be rendered but fails when properties generically filled ("viewKey")
 		"sap.ui.comp.odata.FieldSelector", // has a known leak
 		"sap.ui.comp.valuehelpdialog.ValueHelpDialog",  // has a known leak
 		"sap.ui.core.util.Export", // cannot render
