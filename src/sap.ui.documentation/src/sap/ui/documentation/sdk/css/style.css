@@ -1168,8 +1168,8 @@ code {
 }
 
 /* remove white shadow for header bars */
-.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX,
-.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMHeader-CTX {
+.sapUiDemokit .sapMSplitContainerMaster .sapUiDocumentationMasterPage .sapMIBar.sapMSubHeader-CTX,
+.sapUiDemokit .sapMSplitContainerMaster .sapUiDocumentationMasterPage .sapMIBar.sapMHeader-CTX {
 	box-shadow: none;
 }
 
