@@ -58,8 +58,7 @@
 				<l:flexContent>
 					<ce:CodeEditor
 						id="codeEditor"
-						editable="false"
-						colorTheme="crimson_editor"/>
+						editable="false" />
 				</l:flexContent>
 			</l:FixFlex>
 		</content>
