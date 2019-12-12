@@ -559,6 +559,21 @@ function (
 		}
 	});
 
+	QUnit.test("ControlSpacer's width change", function (assert) {
+
+		// Arrange
+		var oControl = this.oSB;
+
+		oControl.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		oControl._oControlSpacer.setWidth("200px");
+
+		// Assert
+		assert.strictEqual(oControl._oControlSpacer.$().width(), 200, "Width is set on the DomRef without rerendering");
+	});
+
 	QUnit.test("ResponsiveHandler _handleResize on size changed", function (assert) {
 
 		// Arrange
