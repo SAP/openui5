@@ -20,7 +20,7 @@ sap.ui.define([
 
 	var oModel, oLabel, oLabel2, oDolly;
 
-	QUnit.module("Resource Model: Resources bundle loaded via name", {
+	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle loaded via name", {
 		beforeEach: function() {
 			oModel = new ResourceModel({bundleName: "testdata.messages"});
 			sap.ui.getCore().setModel(oModel);
@@ -66,7 +66,8 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.module("Resource Model: Resources bundle loaded via name / set Model with alias", {
+	QUnit.module("sap.ui.model.resource.ResourceModel: "
+			+ "Resources bundle loaded via name / set Model with alias", {
 		beforeEach: function() {
 			oModel = new ResourceModel({bundleName: "testdata.messages"});
 			sap.ui.getCore().setModel(oModel, "i18n");
@@ -112,7 +113,7 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.module("Resource Model: Resources bundle loaded via url", {
+	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle loaded via url", {
 		beforeEach: function() {
 			oModel = new ResourceModel({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages.properties"});
 			sap.ui.getCore().setModel(oModel, "i18n");
@@ -216,7 +217,7 @@ sap.ui.define([
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 	});
 
-	QUnit.module("Resource Model: Resources bundle passed as parameter", {
+	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle passed as parameter", {
 		prepare: function(opts) {
 			sap.ui.getCore().getConfiguration().setLanguage("en");
 
@@ -312,7 +313,8 @@ sap.ui.define([
 		assert.equal(oButton.getText(), "A text en", "Texts available immediately");
 	});
 
-	QUnit.module("Resource Model: Resources bundle passed as parameter - Language change on enhanced model", {
+	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle passed as parameter -"
+			+ "Language change on enhanced model", {
 		prepare: function(opts) {
 			sap.ui.getCore().getConfiguration().setLanguage("en");
 
@@ -570,7 +572,8 @@ sap.ui.define([
 		this.testEnhanceAndLanguageChangeWithFixedLocale(assert);
 	});
 
-	QUnit.module("Resource Model: Async - Resources bundle passed as parameter", {
+	QUnit.module("sap.ui.model.resource.ResourceModel: Async -"
+			+ "Resources bundle passed as parameter", {
 		prepare: function(opts) {
 			sap.ui.getCore().getConfiguration().setLanguage("en");
 
@@ -688,7 +691,8 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("Resource Model Async: Resources bundle passed as parameter - Language change on enhanced model", {
+	QUnit.module("sap.ui.model.resource.ResourceModel Async: Resources bundle passed as parameter -"
+			+ " Language change on enhanced model", {
 		prepare: function(opts) {
 			sap.ui.getCore().getConfiguration().setLanguage("en");
 
@@ -1013,7 +1017,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("Resource Model: Async", {
+	QUnit.module("sap.ui.model.resource.ResourceModel: Async", {
 		beforeEach: function() {
 			oLabel = new TestButton("myLabel", {text: "{async>TEST_TEXT}"});
 			oLabel.placeAt("target1");
@@ -1199,7 +1203,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("Resource Model: Exotic scenarios");
+	QUnit.module("sap.ui.model.resource.ResourceModel: Exotic scenarios");
 
 	QUnit.test("Invalid resource bundle name", function(assert){
 		var fnToUrlSpy = this.spy(sap.ui.require, "toUrl");
@@ -1222,4 +1226,23 @@ sap.ui.define([
 
 		fnToUrlSpy.restore();
 	});
+
+	QUnit.test("Unsupported bind* functions", function(assert){
+		var oModel = new ResourceModel({
+				bundleName: ".testdata.messages"
+			});
+
+		assert.throws(function () {
+			oModel.bindContext();
+		}, new Error("Unsupported operation: sap.ui.model.resource.ResourceModel#bindContext"));
+
+		assert.throws(function () {
+			oModel.bindList();
+		}, new Error("Unsupported operation: sap.ui.model.resource.ResourceModel#bindList"));
+
+		assert.throws(function () {
+			oModel.bindTree();
+		}, new Error("Unsupported operation: sap.ui.model.resource.ResourceModel#bindTree"));
+	});
+
 });
