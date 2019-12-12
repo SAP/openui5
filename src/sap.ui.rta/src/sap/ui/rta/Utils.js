@@ -628,5 +628,20 @@ function(
 		}
 	};
 
+	/**
+	 * Build hashmap from array of objects
+	 *
+	 * @param {object} aArray - Array
+	 * @param {string} sKeyFieldName - Field name to use as key
+	 * @param {string} sValueFieldName - Field name to use as value
+	 * @returns {object} Hashmap
+	 */
+	Utils.buildHashMapFromArray = function (aArray, sKeyFieldName, sValueFieldName) {
+		return aArray.reduce(function (mMap, oItem) {
+			mMap[oItem[sKeyFieldName]] = oItem[sValueFieldName];
+			return mMap;
+		}, {});
+	};
+
 	return Utils;
 }, /* bExport= */true);

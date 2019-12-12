@@ -59,21 +59,25 @@
 				</form:content>
 			</form:SimpleForm>
 		</content>
-		<beginButton>
+		<buttons>
 			<Button
-				id="sapUiRtaSettingsDialogOKButton"
+				id="sapUiRtaSettingsDialogSaveButton"
 				type="Emphasized"
-				text="{/text/OKText}"
-				press="onOKPress"
+				text="{/text/saveText}"
+				press="onSavePress"
 			/>
-		</beginButton>
-		<endButton>
+			<Button
+				id="sapUiRtaSettingsDialogURLBuilderButton"
+				type="Transparent"
+				text="{/text/urlBuilderText}"
+				press="onURLBuilderPress"
+			/>
 			<Button
 				id="sapUiRtaSettingsDialogCancelButton"
 				type="Transparent"
 				text="{/text/cancelText}"
 				press="onCancelPress"
 			/>
-		</endButton>
+		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

@@ -3,23 +3,20 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/iframe/SettingsDialog",
 	"sap/base/Log",
-	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/ValueState",
-	"sap/ui/rta/plugin/iframe/controller/SettingsDialogController",
+	"sap/ui/rta/plugin/iframe/SettingsDialogController",
+	"sap/ui/rta/plugin/iframe/URLBuilderDialog",
 	"sap/ui/qunit/QUnitUtils"
 ], function (
 	SettingsDialog,
 	Log,
-	sinon,
 	ValueState,
 	SettingsDialogController,
+	URLBuilderDialog,
 	QUnitUtils
 ) {
 	"use strict";
 
-	jQuery("#qunit-fixture").hide();
-
-	var sandbox = sinon.sandbox.create();
 	var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	var aTextInputFields = ["frameUrl"];
 	var aNumericInputFields = ["frameWidth", "frameHeight"];
@@ -59,6 +56,42 @@ sap.ui.define([
 			frameHeightUnit: "%"
 		}
 	}];
+	var mTestURLBuilderData = {
+		asNewSection: true,
+		frameWidth: "16px",
+		frameHeight: "9rem",
+		frameUrl: "https_url",
+		unitsOfMeasure: aUnitsOfMeasure,
+		urlBuilderParameters: [{
+			label: "Guid",
+			key: "{Guid}",
+			value: "guid13423412342314"
+		}, {
+			label: "Region",
+			key: "{Region}",
+			value: "Germany"
+		}, {
+			label: "Year",
+			key: "{Year}",
+			value: "2020"
+		}, {
+			label: "Month",
+			key: "{Month}",
+			value: "July"
+		}, {
+			label: "Product_Category",
+			key: "{Product_Category}",
+			value: "Ice Cream"
+		}, {
+			label: "Campaign_Name",
+			key: "{Campaign_Name}",
+			value: "Langnese Brand"
+		}, {
+			label: "Brand_Name",
+			key: "{Brand_Name}",
+			value: "Langnese"
+		}]
+	};
 
 	function createJSONModel() {
 		return new sap.ui.model.json.JSONModel({
@@ -81,47 +114,45 @@ sap.ui.define([
 		});
 	}
 
-	function clickOnCancel() {
-		var oCancelButton = sap.ui.getCore().byId("sapUiRtaSettingsDialogCancelButton");
+	function clickOnButton(sId) {
+		var oCancelButton = sap.ui.getCore().byId(sId);
 		QUnitUtils.triggerEvent("tap", oCancelButton.getDomRef());
+	}
+
+	function clickOnCancel() {
+		clickOnButton("sapUiRtaSettingsDialogCancelButton");
+	}
+
+	function clickOnSave() {
+		clickOnButton("sapUiRtaSettingsDialogSaveButton");
 	}
 
 	QUnit.module("Given that a SettingsDialog is available...", {
 		beforeEach: function () {
 			this.oSettingsDialog = new SettingsDialog();
-		},
-		afterEach: function () {
-			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("When SettingsDialog gets initialized and open is called,", function (assert) {
-			var done = assert.async();
 			this.oSettingsDialog.attachOpened(function () {
 				assert.ok(true, "then dialog pops up,");
 				assert.equal(this.oSettingsDialog._oDialog.getTitle(), oTextResources.getText("IFRAME_SETTINGS_DIALOG_TITLE"), "then the title is set");
 				assert.equal(this.oSettingsDialog._oDialog.getContent().length, 3, "then 3 SimpleForms are added ");
-				assert.equal(this.oSettingsDialog._oDialog.getButtons().length, 2, "then 2 buttons are added");
+				assert.equal(this.oSettingsDialog._oDialog.getButtons().length, 3, "then 3 buttons are added");
 				clickOnCancel();
 			}, this);
-			this.oSettingsDialog.open().then(function () {
-				done();
-			});
+			return this.oSettingsDialog.open();
 		});
 
 		QUnit.test("When SettingsDialog is opened then there should be no error value state", function (assert) {
-			var done = assert.async();
 			this.oSettingsDialog.attachOpened(function () {
+				this.oController = new SettingsDialogController(this.oSettingsDialog._oJSONModel);
 				assert.strictEqual(this.oController._areAllValueStateNones(), true, "Value states are correct");
 				clickOnCancel();
 			}, this);
-			this.oSettingsDialog.open().then(function () {
-				done();
-			});
-			this.oController = new SettingsDialogController(this.oSettingsDialog._oJSONModel);
+			return this.oSettingsDialog.open();
 		});
 
 		QUnit.test("When there is an error value state in SettingsDialog then it can be detected", function (assert) {
-			var done = assert.async();
 			this.oSettingsDialog.attachOpened(function () {
 				aTextInputFields.concat(aNumericInputFields).forEach(function (sFieldName) {
 					this.oSettingsDialog._oJSONModel = createJSONModel();
@@ -131,28 +162,23 @@ sap.ui.define([
 				}, this);
 				clickOnCancel();
 			}, this);
-			this.oSettingsDialog.open().then(function () {
-				done();
-			});
+			return this.oSettingsDialog.open();
 		});
 
 		QUnit.test("When SettingsDialog is opened then text input fields should be empty", function (assert) {
-			var done = assert.async();
 			this.oSettingsDialog.attachOpened(function () {
 				this.oController = new SettingsDialogController(this.oSettingsDialog._oJSONModel);
 				assert.strictEqual(this.oController._areAllTextFieldsValid(), false, "Text input fields are empty");
 				clickOnCancel();
 			}, this);
-			this.oSettingsDialog.open().then(function () {
-				done();
-			});
+			return this.oSettingsDialog.open();
 		});
 
 		QUnit.test("When there is no empty text input field then it can be detected", function (assert) {
-			var done = assert.async();
 			var aTextInputFieldsCopy = aTextInputFields.slice();
 			var sLastTextInputField = aTextInputFieldsCopy.pop();
 			this.oSettingsDialog.attachOpened(function () {
+				this.oController = new SettingsDialogController(this.oSettingsDialog._oJSONModel);
 				aTextInputFieldsCopy.forEach(function (sFieldName) {
 					this.oSettingsDialog._oJSONModel.getData()[sFieldName]["value"] = "Text entered";
 					assert.strictEqual(this.oController._areAllTextFieldsValid(), false, "Some text input fields are still empty");
@@ -161,58 +187,45 @@ sap.ui.define([
 				assert.strictEqual(this.oController._areAllTextFieldsValid(), true, "No more empty text input field");
 				clickOnCancel();
 			}, this);
-			this.oSettingsDialog.open().then(function () {
-				done();
-			});
-			this.oController = new SettingsDialogController(this.oSettingsDialog._oJSONModel);
+			return this.oSettingsDialog.open();
 		});
 
 		QUnit.test("When Cancel button is clicked then the promise should return no setting", function (assert) {
-			var done = assert.async();
 			this.oSettingsDialog.attachOpened(function () {
 				clickOnCancel();
 			}, this);
-			this.oSettingsDialog.open().then(function (mSettings) {
+			return this.oSettingsDialog.open().then(function (mSettings) {
 				assert.strictEqual(mSettings, undefined, "The promise returns no setting");
-				done();
 			});
 		});
 
 		QUnit.test("When OK button is clicked then validation is triggered", function (assert) {
-			var done = assert.async();
 			this.oSettingsDialog.attachOpened(function () {
 				aTextInputFields.forEach(function (sFieldName) {
 					assert.strictEqual(this.oSettingsDialog._oJSONModel.getData()[sFieldName]["valueState"], ValueState.None, "Initial value state is none");
 				}, this);
-				var oOKButton = sap.ui.getCore().byId("sapUiRtaSettingsDialogOKButton");
-				QUnitUtils.triggerEvent("tap", oOKButton.getDomRef());
+				clickOnSave();
 				aTextInputFields.forEach(function (sFieldName) {
 					assert.strictEqual(this.oSettingsDialog._oJSONModel.getData()[sFieldName]["valueState"], ValueState.Error, "Value state changed to error");
 				}, this);
 				clickOnCancel();
 			}, this);
-			this.oSettingsDialog.open().then(function () {
-				done();
-			});
+			return this.oSettingsDialog.open();
 		});
 
 		QUnit.test("When OK button is clicked then the promise should return settings", function (assert) {
-			var done = assert.async();
 			this.oSettingsDialog.attachOpened(function () {
 				aTextInputFields.forEach(function (sFieldName) {
 					this.oSettingsDialog._oJSONModel.getData()[sFieldName]["value"] = "Text entered";
 				}, this);
-				var oOKButton = sap.ui.getCore().byId("sapUiRtaSettingsDialogOKButton");
-				QUnitUtils.triggerEvent("tap", oOKButton.getDomRef());
+				clickOnSave();
 			}, this);
-			this.oSettingsDialog.open().then(function (mSettings) {
+			return this.oSettingsDialog.open(mTestURLBuilderData).then(function (mSettings) {
 				assert.strictEqual(jQuery.isEmptyObject(mSettings), false, "Non empty settings returned");
-				done();
 			});
 		});
 
 		QUnit.test("When OK button is clicked then the returned settings should be correct", function (assert) {
-			var done = assert.async();
 			this.oSettingsDialog.attachOpened(function () {
 				var oData = this.oSettingsDialog._oJSONModel.getData();
 				aTextInputFields.forEach(function (sFieldName) {
@@ -224,10 +237,9 @@ sap.ui.define([
 				oData.asNewSection.value = true;
 				oData.frameWidthUnit.value = "rem";
 				oData.frameHeightUnit.value = "%";
-				var oOKButton = sap.ui.getCore().byId("sapUiRtaSettingsDialogOKButton");
-				QUnitUtils.triggerEvent("tap", oOKButton.getDomRef());
+				clickOnSave();
 			}, this);
-			this.oSettingsDialog.open().then(function (mSettings) {
+			return this.oSettingsDialog.open().then(function (mSettings) {
 				aTextInputFields.forEach(function (sFieldName) {
 					assert.strictEqual(mSettings[sFieldName], "Text entered", "Setting for " + sFieldName + " is correct");
 				});
@@ -237,13 +249,11 @@ sap.ui.define([
 				assert.strictEqual(mSettings.asNewSection, true, "Setting for asNewSection is correct");
 				assert.strictEqual(mSettings.frameWidthUnit, "rem", "Setting for frameWidthUnit is correct");
 				assert.strictEqual(mSettings.frameHeightUnit, "%", "Setting for frameHeightUnit is correct");
-				done();
 			});
 		});
 
 		aImportTestData.forEach(function (mData, iIndex) {
 			QUnit.test("When existing settings are passed to the dialog then they should be imported correctly, part " + (iIndex + 1), function (assert) {
-				var done = assert.async();
 				this.oSettingsDialog.attachOpened(function () {
 					var oData = this.oSettingsDialog._oJSONModel.getData();
 					Object.keys(mData.expectedResults).forEach(function (sFieldName) {
@@ -251,10 +261,34 @@ sap.ui.define([
 					});
 					clickOnCancel();
 				}, this);
-				this.oSettingsDialog.open(mData.input).then(function () {
-					done();
-				});
+				return this.oSettingsDialog.open(mData.input);
 			}, this);
 		});
+
+
+		QUnit.test("When URL Builder button is clicked then URL Builder Dialog is opened", function (assert) {
+			this.oSettingsDialog.attachOpened(function () {
+				var oURLBuilderDialog = new URLBuilderDialog();
+				this.oSettingsDialog._oController._createURLBuilderDialog = function () {
+					return oURLBuilderDialog;
+				};
+				clickOnButton("sapUiRtaSettingsDialogURLBuilderButton");
+				oURLBuilderDialog.attachOpened(function () {
+					var oDialog = sap.ui.getCore().byId("sapUiRtaURLBuilderDialog");
+					assert.ok(oDialog.isOpen(), "URL Builder Dialog is opened");
+					assert.ok(oDialog.getVisible(), "URL Builder Dialog is visible");
+					clickOnButton("sapUiRtaURLBuilderDialogSaveButton");
+				});
+				oURLBuilderDialog.attachClosed(function (oEvent) {
+					assert.strictEqual(oEvent.getParameter("url"), "https_url", "Built URL is returned");
+					clickOnCancel();
+				});
+			}, this);
+			return this.oSettingsDialog.open(mTestURLBuilderData);
+		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

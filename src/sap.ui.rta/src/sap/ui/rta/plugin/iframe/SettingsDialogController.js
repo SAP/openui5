@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/ValueState"
+	"sap/ui/core/ValueState",
+	"sap/ui/rta/plugin/iframe/URLBuilderDialog"
 ], function (
 	Controller,
-	ValueState
+	ValueState,
+	URLBuilderDialog
 ) {
 	"use strict";
 
@@ -14,7 +16,7 @@ sap.ui.define([
 	var _aNumericInputFields = ["frameWidth", "frameHeight"];
 	var _aSelectInputFields = ["asNewSection", "frameWidthUnit", "frameHeightUnit"];
 
-	return Controller.extend("sap.ui.rta.plugin.iframe.controller.SettingsDialogController", {
+	return Controller.extend("sap.ui.rta.plugin.iframe.SettingsDialogController", {
 		constructor: function (oJSONModel, mSettings) {
 			this._oJSONModel = oJSONModel;
 			this._importSettings(mSettings);
@@ -22,7 +24,7 @@ sap.ui.define([
 
 		/**
 		 * Event handler for validation success
-		 * @param {sap.ui.base.Event} oEvent the event
+		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
 		onValidationSuccess: function (oEvent) {
 			oEvent.getSource().setValueState(ValueState.None);
@@ -32,7 +34,7 @@ sap.ui.define([
 
 		/**
 		 * Event handler for validation error
-		 * @param {sap.ui.base.Event} oEvent the event
+		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
 		onValidationError: function (oEvent) {
 			oEvent.getSource().setValueState(ValueState.Error);
@@ -40,18 +42,41 @@ sap.ui.define([
 		},
 
 		/**
-		 * Event handler for OK button
-		 * @param {sap.ui.base.Event} oEvent the event
+		 * Event handler for save button
 		 */
-		onOKPress: function () {
+		onSavePress: function () {
 			if (this._areAllTextFieldsValid() && this._areAllValueStateNones()) {
 				this._close(this._buildReturnedSettings());
 			}
 		},
 
 		/**
-		 * Event handler for cancel button
-		 * @param {sap.ui.base.Event} oEvent the event
+		 * Event handler for URL Builder button
+		 */
+		onURLBuilderPress: function () {
+			var oURLBuilderDialog = this._createURLBuilderDialog();
+			oURLBuilderDialog.open({
+				editURL: this._oJSONModel.getProperty("/frameUrl/value"),
+				parameters: this._oJSONModel.getProperty("/urlBuilderParameters/value")
+			}).then(function (sUrl) {
+				if (sUrl) {
+					this._oJSONModel.setProperty("/frameUrl/value", sUrl);
+				}
+			}.bind(this));
+		},
+
+		/**
+		 * Create URL Builder Dialog
+		 *
+		 * @returns {object} URL Builder Dialog
+		 * @private
+		 */
+		_createURLBuilderDialog: function () {
+			return new URLBuilderDialog();
+		},
+
+		/**
+		 * Event handler for Cancel button
 		 */
 		onCancelPress: function () {
 			this._close();
@@ -72,7 +97,7 @@ sap.ui.define([
 		/**
 		 * Get iframe settings
 		 *
-		 * @returns {object|undefined} mSettings - iframe settings
+		 * @returns {object|undefined} Iframe settings
 		 * @public
 		 */
 		getSettings: function () {
@@ -125,7 +150,7 @@ sap.ui.define([
 		/**
 		 * Import settings
 		 *
-		 * @param {object|undefined} mSettings - existing iframe settings
+		 * @param {object|undefined} mSettings - Existing iframe settings
 		 * @private
 		 */
 		_importSettings: function (mSettings) {
@@ -143,8 +168,8 @@ sap.ui.define([
 		/**
 		 * Import iframe size
 		 *
-		 * @param  {string} sFieldName - field name
-		 * @param  {string} sSize - size to import
+		 * @param  {string} sFieldName - Field name
+		 * @param  {string} sSize - Size to import
 		 */
 		_importIframeSize: function (sFieldName, sSize) {
 			var aResults = sSize.split(/(px|rem|%)/);
