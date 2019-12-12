@@ -24,6 +24,7 @@ sap.ui.loader.config({
 
 
 sap.ui.define([
+	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
@@ -33,7 +34,7 @@ sap.ui.define([
 	'sap/ui/codeeditor/js/ace/ext-beautify',
 	'sap/ui/codeeditor/js/ace/mode-javascript',
 	'sap/ui/codeeditor/js/ace/mode-json'
-], function(Control, Device, ResizeHandler, jQuery, ace) {
+], function(Core, Control, Device, ResizeHandler, jQuery, ace) {
 	"use strict";
 
 	// TODO remove after 1.62 version
@@ -251,7 +252,21 @@ sap.ui.define([
 		oSession.setValue("");
 		oSession.setUseWrapMode(true);
 		oSession.setMode("ace/mode/javascript");
-		this._oEditor.setTheme("ace/theme/tomorrow");
+
+		var sEditorTheme = "tomorrow";
+		var sUiTheme = Core.getConfiguration().getTheme().toLowerCase();
+
+		if (sUiTheme.indexOf("hcb") > -1) {
+			sEditorTheme = "chaos";
+		} else if (sUiTheme.indexOf("hcw") > -1) {
+			sEditorTheme = "github";
+		} else if (sUiTheme === "sap_fiori_3") {
+			sEditorTheme = "crimson_editor";
+		} else if (sUiTheme === "sap_fiori_3_dark") {
+			sEditorTheme = "clouds_midnight";
+		}
+
+		this._oEditor.setTheme("ace/theme/" + sEditorTheme);
 
 		this._oEditor.setOptions({
 			enableBasicAutocompletion: true,
