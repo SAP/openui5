@@ -55,7 +55,17 @@ sap.ui.define([
 			/**
 			 * If set to <code>false</code>, the <code>FormContainer</code> is not rendered.
 			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true}
+			visible : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * Internal property for the <code>editable</code> state of the internal <code>FormContainer</code>.
+			 */
+			_editable: {
+				type: "boolean",
+				group: "Misc",
+				defaultValue: false,
+				visibility: "hidden"
+			}
 		},
 		defaultAggregation : "formElements",
 		aggregations : {
@@ -279,16 +289,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Labels inside of a Form must be invalidated if "editable" changed on Form
-	 * @private
+	 * Sets the editable state of the <code>FormContainer</code>.
+	 *
+	 * This must only be called from the <code>Form</code>.
+	 *
+	 * Labels inside of a <code>Form</code> must be invalidated if <code>editable</code> changed on <code>Form</code>.
+	 *
+	 * @param {boolean} bEditable Editable state of the <code>Form</code>
+	 * @protected
+	 * @restricted sap.ui.layout.form.Form
+	 * @since 1.74.0
 	 */
-	FormContainer.prototype.invalidateLabels = function(){
+	FormContainer.prototype._setEditable = function(bEditable) {
+
+		this.setProperty("_editable", bEditable, true); // do not invalidate whole FormContainer
 
 		var aFormElements = this.getFormElements();
 
 		for (var i = 0; i < aFormElements.length; i++) {
 			var oFormElement = aFormElements[i];
-			oFormElement.invalidateLabel();
+			oFormElement._setEditable(bEditable);
 		}
 
 	};

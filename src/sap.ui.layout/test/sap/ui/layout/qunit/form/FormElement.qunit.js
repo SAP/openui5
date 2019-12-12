@@ -147,12 +147,15 @@ sap.ui.define([
 		assert.notOk(sap.ui.getCore().byId(oLabelId), "internal Label is destroyed");
 	});
 
-	QUnit.test("invalidateLabel function", function(assert) {
+	QUnit.test("_setEditable function", function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		sinon.spy(oLabel, "invalidate");
-		oFormElement.invalidateLabel();
 
+		assert.notOk(oFormElement.getProperty("_editable"), "Default: not editable");
+		oFormElement._setEditable(true);
+
+		assert.ok(oFormElement.getProperty("_editable"), "Default: editable set");
 		assert.ok(oLabel.invalidate.called, "Label invalidated");
 	});
 
@@ -244,16 +247,17 @@ sap.ui.define([
 		var aFields = oFormElement.getFields();
 
 		assert.equal(aFields.length, 2, "2 Fields added");
+		assert.deepEqual(aFields, oFormElement.getFieldsForRendering(), "getFieldsForRendering returns same Fields");
 		assert.equal(aFields[0].getId(), "I1", "first Field");
 		assert.equal(aFields[1].getId(), "I2", "second Field");
 		assert.equal(oFormElement.indexOfField(oField2), 1, "Index of Field");
 		assert.equal(oLabel.getLabelForRendering(), "I1", "Label points to first field");
 		assert.notOk(oLabel.isRequired(), "Label not required");
 
-		sinon.spy(oFormElement, "invalidateLabel");
+		sinon.spy(oLabel, "invalidate");
 		oField2.setRequired(true);
 		assert.ok(oLabel.isRequired(), "Label is required");
-		assert.ok(oFormElement.invalidateLabel.called, "Label invalidated");
+		assert.ok(oLabel.invalidate.called, "Label invalidated");
 
 		oFormElement.setLabel();
 		assert.notOk(oLabel.isRequired(), "Label not required");
@@ -270,16 +274,17 @@ sap.ui.define([
 		var aFields = oFormElement.getFields();
 
 		assert.equal(aFields.length, 2, "2 Fields inserted");
+		assert.deepEqual(aFields, oFormElement.getFieldsForRendering(), "getFieldsForRendering returns same Fields");
 		assert.equal(aFields[0].getId(), "I2", "first Field");
 		assert.equal(aFields[1].getId(), "I1", "second Field");
 		assert.equal(oFormElement.indexOfField(oField2), 0, "Index of Field");
 		assert.equal(oLabel.getLabelForRendering(), "I2", "Label points to first field");
 		assert.notOk(oLabel.isRequired(), "Label not required");
 
-		sinon.spy(oFormElement, "invalidateLabel");
+		sinon.spy(oLabel, "invalidate");
 		oField2.setRequired(true);
 		assert.ok(oLabel.isRequired(), "Label is required");
-		assert.ok(oFormElement.invalidateLabel.called, "Label invalidated");
+		assert.ok(oLabel.invalidate.called, "Label invalidated");
 	});
 
 	QUnit.test("removeField", function(assert) {
@@ -294,6 +299,7 @@ sap.ui.define([
 
 		assert.equal(oRemoved, oField1, "Field removed");
 		assert.equal(aFields.length, 1, "1 Fields assigned");
+		assert.deepEqual(aFields, oFormElement.getFieldsForRendering(), "getFieldsForRendering returns same Fields");
 		assert.equal(aFields[0].getId(), "I2", "first Field");
 		assert.equal(oLabel.getLabelForRendering(), "I2", "Label points to first field");
 
@@ -301,9 +307,9 @@ sap.ui.define([
 		assert.notOk(oLabel.isRequired(), "Label not required");
 		oField1.destroy();
 
-		sinon.spy(oFormElement, "invalidateLabel");
+		sinon.spy(oLabel, "invalidate");
 		oField2.setRequired(true); // to test Field2 is still observed
-		assert.ok(oFormElement.invalidateLabel.called, "Label invalidated");
+		assert.ok(oLabel.invalidate.called, "Label invalidated");
 	});
 
 	QUnit.test("removeAllFields", function(assert) {
@@ -318,6 +324,7 @@ sap.ui.define([
 
 		assert.equal(aRemoved.length, 2, "2 Fields removed");
 		assert.equal(aFields.length, 0, "no Fields assigned");
+		assert.deepEqual(aFields, oFormElement.getFieldsForRendering(), "getFieldsForRendering returns same Fields");
 		assert.notOk(oLabel.getLabelForRendering(), "Label points to no field");
 
 		oField1.setRequired(true);
@@ -340,6 +347,7 @@ sap.ui.define([
 		var aFields = oFormElement.getFields();
 
 		assert.equal(aFields.length, 0, "no Fields assigned");
+		assert.deepEqual(aFields, oFormElement.getFieldsForRendering(), "getFieldsForRendering returns same Fields");
 		assert.notOk(oLabel.getLabelForRendering(), "Label points to no field");
 		assert.notOk(sap.ui.getCore().byId("I1"), "Field1 destroyed");
 		assert.notOk(sap.ui.getCore().byId("I2"), "Field2 destroyed");

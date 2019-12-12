@@ -399,7 +399,7 @@ sap.ui.define([
 				oOptions.L.Size = iLabelSizeL;
 			}
 		} else {
-			var aFields = oElement.getFields();
+			var aFields = oElement.getFieldsForRendering();
 			var iFields = aFields.length;
 			var iColumnsS = iColumns;
 			var iColumnsL = iColumns - this.getEmptyCellsLarge();
