@@ -58,7 +58,7 @@
 				<l:flexContent>
 					<ce:CodeEditor
 						id="codeEditor"
-						editable="false"/>
+						editable="false" />
 				</l:flexContent>
 			</l:FixFlex>
 		</content>
