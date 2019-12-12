@@ -34,23 +34,23 @@ sap.ui.define([
 			key: "{Month}",
 			value: "July"
 		}, {
-			label: "Product_Category",
+			label: "Product Category",
 			key: "{Product_Category}",
 			value: "Ice Cream"
 		}, {
-			label: "Campaign_Name",
+			label: "Campaign Name",
 			key: "{Campaign_Name}",
 			value: "Langnese Brand"
 		}, {
-			label: "Brand_Name",
+			label: "Brand Name",
 			key: "{Brand_Name}",
 			value: "Langnese"
 		}]
 	};
 
 	function clickOnButton(sId) {
-		var oCancelButton = sap.ui.getCore().byId(sId);
-		QUnitUtils.triggerEvent("tap", oCancelButton.getDomRef());
+		var oButton = sap.ui.getCore().byId(sId);
+		QUnitUtils.triggerEvent("tap", oButton.getDomRef());
 	}
 
 	function clickOnCancel() {
@@ -65,9 +65,9 @@ sap.ui.define([
 		QUnit.test("When URLBuilderDialog gets initialized and open is called,", function (assert) {
 			this.oURLBuilderDialog.attachOpened(function () {
 				assert.ok(true, "then dialog pops up,");
-				assert.equal(this._oDialog.getTitle(), oTextResources.getText("IFRAME_URLBUILDER_DIALOG_TITLE"), "then the title is set");
-				assert.equal(this._oDialog.getContent().length, 4, "then 4 controls are added ");
-				assert.equal(this._oDialog.getButtons().length, 2, "then 2 buttons are added");
+				assert.strictEqual(this._oDialog.getTitle(), oTextResources.getText("IFRAME_URLBUILDER_DIALOG_TITLE"), "then the title is set");
+				assert.strictEqual(this._oDialog.getContent().length, 1, "then 1 controls are added ");
+				assert.strictEqual(this._oDialog.getButtons().length, 2, "then 2 buttons are added");
 				clickOnCancel();
 			});
 			return this.oURLBuilderDialog.open();
@@ -99,7 +99,7 @@ sap.ui.define([
 				clickOnButton("sapUiRtaURLBuilderDialogSaveButton");
 			}, this);
 			return this.oURLBuilderDialog.open(mParameters).then(function (sUrl) {
-				assert.strictEqual(sUrl, "BASE_URL?Germany&Ice Cream", "URL is returned");
+				assert.strictEqual(sUrl, "BASE_URL?{Region}&{Product_Category}", "URL is returned");
 			});
 		});
 
@@ -118,15 +118,15 @@ sap.ui.define([
 			this.oURLBuilderDialog.attachOpened(function () {
 				var sUrl = this.oURLBuilderDialog._oController._addURLParameter("firstParameter");
 				this.oURLBuilderDialog._oJSONModel.setProperty("/editURL/value", sUrl);
-				assert.ok(sUrl.indexOf("firstParameter") >= 0, "Found firstParameter");
+				assert.strictEqual(sUrl.endsWith("firstParameter"), true, "Found firstParameter");
 
 				sUrl = this.oURLBuilderDialog._oController._addURLParameter("secondParameter");
 				this.oURLBuilderDialog._oJSONModel.setProperty("/editURL/value", sUrl);
-				assert.ok(sUrl.indexOf("secondParameter") >= 0, "Found secondParameter");
+				assert.strictEqual(sUrl.endsWith("secondParameter"), true, "Found secondParameter");
 
-				sUrl = this.oURLBuilderDialog._oController._addURLParameter("thirdParameter");
+				sUrl = this.oURLBuilderDialog._oController._addURLParameter("secondParameter");
 				this.oURLBuilderDialog._oJSONModel.setProperty("/editURL/value", sUrl);
-				assert.ok(sUrl.indexOf("thirdParameter") >= 0, "Found thirdParameter");
+				assert.strictEqual(sUrl.endsWith("secondParametersecondParameter"), true, "Found duplicate parameters");
 
 				clickOnCancel();
 			}, this);
@@ -140,11 +140,8 @@ sap.ui.define([
 					sUrl = this.oURLBuilderDialog._oController._addURLParameter(oParam.key);
 					this.oURLBuilderDialog._oJSONModel.setProperty("/editURL/value", sUrl);
 				}, this);
-
 				sUrl = this.oURLBuilderDialog._oController._buildPreviewURL(this.oURLBuilderDialog._oJSONModel.getProperty("/editURL/value"));
-				mParameters.parameters.forEach(function (oParam) {
-					assert.ok(sUrl.indexOf(oParam.value) >= 0, "Found " + oParam.key);
-				}, this);
+				assert.strictEqual(sUrl, "http://blabla.company.comguid13423412342314Germany2020JulyIce CreamLangnese BrandLangnese", "Preview URL is correct");
 				clickOnCancel();
 			}, this);
 			return this.oURLBuilderDialog.open(mParameters);

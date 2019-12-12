@@ -115,8 +115,8 @@ sap.ui.define([
 	}
 
 	function clickOnButton(sId) {
-		var oCancelButton = sap.ui.getCore().byId(sId);
-		QUnitUtils.triggerEvent("tap", oCancelButton.getDomRef());
+		var oButton = sap.ui.getCore().byId(sId);
+		QUnitUtils.triggerEvent("tap", oButton.getDomRef());
 	}
 
 	function clickOnCancel() {
@@ -135,9 +135,9 @@ sap.ui.define([
 		QUnit.test("When SettingsDialog gets initialized and open is called,", function (assert) {
 			this.oSettingsDialog.attachOpened(function () {
 				assert.ok(true, "then dialog pops up,");
-				assert.equal(this.oSettingsDialog._oDialog.getTitle(), oTextResources.getText("IFRAME_SETTINGS_DIALOG_TITLE"), "then the title is set");
-				assert.equal(this.oSettingsDialog._oDialog.getContent().length, 3, "then 3 SimpleForms are added ");
-				assert.equal(this.oSettingsDialog._oDialog.getButtons().length, 3, "then 3 buttons are added");
+				assert.strictEqual(this.oSettingsDialog._oDialog.getTitle(), oTextResources.getText("IFRAME_SETTINGS_DIALOG_TITLE"), "then the title is set");
+				assert.strictEqual(this.oSettingsDialog._oDialog.getContent().length, 3, "then 3 SimpleForms are added ");
+				assert.strictEqual(this.oSettingsDialog._oDialog.getButtons().length, 3, "then 3 buttons are added");
 				clickOnCancel();
 			}, this);
 			return this.oSettingsDialog.open();
@@ -264,7 +264,6 @@ sap.ui.define([
 				return this.oSettingsDialog.open(mData.input);
 			}, this);
 		});
-
 
 		QUnit.test("When URL Builder button is clicked then URL Builder Dialog is opened", function (assert) {
 			this.oSettingsDialog.attachOpened(function () {

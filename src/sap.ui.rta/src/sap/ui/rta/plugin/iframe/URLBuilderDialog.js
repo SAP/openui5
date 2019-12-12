@@ -2,12 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/plugin/iframe/URLBuilderDialogController"
 ], function (
+	Log,
 	ManagedObject,
 	Fragment,
 	JSONModel,
@@ -92,7 +94,9 @@ sap.ui.define([
 			this._oDialog.addStyleClass(RtaUtils.getRtaStyleClassName());
 			this._oDialog.setModel(this._oJSONModel);
 			this._openDialog();
-		}.bind(this));
+		}.bind(this)).catch(function (oError) {
+			Log.error("Error loading fragment sap.ui.rta.plugin.iframe.URLBuilderDialog: ", oError);
+		});
 	};
 
 	/**
