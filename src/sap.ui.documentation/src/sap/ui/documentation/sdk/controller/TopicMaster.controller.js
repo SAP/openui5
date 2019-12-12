@@ -32,6 +32,7 @@ sap.ui.define([
 
 				this.getRouter().getRoute("topic").attachPatternMatched(this._onMatched, this);
 				this.getRouter().getRoute("topicId").attachPatternMatched(this._onTopicMatched, this);
+				this.getRouter().getRoute("subTopicId").attachPatternMatched(this._onTopicMatched, this);
 
 				// Async data load
 				this._oIndexPromise = this._getDocuIndexPromise()
@@ -57,7 +58,7 @@ sap.ui.define([
 					Log.error(e);
 				}
 
-				this._topicId = event.getParameter("arguments").id;
+				this._topicId = event.getParameter("arguments").id.split("/")[0];
 				this._oIndexPromise.then(function () {
 					this._expandTreeToNode(this._preProcessTopicID(this._topicId), this.getModel());
 				}.bind(this));
