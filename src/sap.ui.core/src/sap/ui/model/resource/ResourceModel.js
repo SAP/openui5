@@ -242,30 +242,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Method not supported.
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Model#bindContext
-	 */
-	ResourceModel.prototype.bindContext = function () {
-		throw new Error("Unsupported operation: sap.ui.model.resource.ResourceModel#bindContext");
-	};
-
-	/**
-	 * Method not supported.
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Model#bindList
-	 */
-	ResourceModel.prototype.bindList = function () {
-		throw new Error("Unsupported operation: sap.ui.model.resource.ResourceModel#bindList");
-	};
-
-	/**
 	 * Gets a property binding for the given path in the resource model. Only <code>sPath</code>
 	 * from {@link sap.ui.model.Model#bindProperty} is supported; other parameters are ignored.
 	 *
@@ -281,18 +257,6 @@ sap.ui.define([
 	 */
 	ResourceModel.prototype.bindProperty = function (sPath) {
 		return new ResourcePropertyBinding(this, sPath);
-	};
-
-	/**
-	 * Method not supported.
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Model#bindTree
-	 */
-	ResourceModel.prototype.bindTree = function () {
-		throw new Error("Unsupported operation: sap.ui.model.resource.ResourceModel#bindTree");
 	};
 
 	/**
