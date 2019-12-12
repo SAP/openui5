@@ -13,6 +13,7 @@ sap.ui.define(['sap/ui/core/Renderer', './SelectRenderer'],
 		 * @type {string}
 		 */
 		ActionSelectRenderer.ACTION_SELECT_CSS_CLASS = "sapMActionSelect";
+		ActionSelectRenderer.apiVersion = 2;
 
 		/**
 		 * Apply a CSS class to the HTML root element of the ActionSelect control.
