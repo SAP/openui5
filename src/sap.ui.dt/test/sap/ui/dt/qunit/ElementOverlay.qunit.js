@@ -448,10 +448,15 @@ function (
 		QUnit.test("when the layout's domRef is changed to visible...", function(assert) {
 			var fnDone = assert.async();
 			assert.strictEqual(this.oLayoutOverlay.isVisible(), false, "the layout's overlay should not be in the DOM when the layout is invisible");
-			this.oLayoutOverlay.attachEventOnce("geometryChanged", function () {
-				assert.strictEqual(this.oLayoutOverlay.isVisible(), true, "the layout's overlay is also in DOM");
-				assert.strictEqual(this.oLabelOverlay.isVisible(), true, "layout children's overlay is also in DOM");
-				fnDone();
+			this.oLabelOverlay.attachEventOnce("geometryChanged", function () {
+				assert.ok(true, "the geometry changed event called first on the label (child) overlay");
+				assert.strictEqual(this.oLabelOverlay.isVisible(), true, "the label's overlay is also in DOM");
+				this.oLayoutOverlay.attachEventOnce("geometryChanged", function () {
+					assert.ok(true, "the geometry changed event called finaly on the layout (parent) overlay");
+					assert.strictEqual(this.oLayoutOverlay.isVisible(), true, "the layout's overlay is also in DOM");
+					assert.strictEqual(this.oLabelOverlay.isVisible(), true, "layout children's overlay is also in DOM");
+					fnDone();
+				}, this);
 			}, this);
 			this.oVerticalLayout.$().css("display", "block");
 			sap.ui.getCore().applyChanges();
