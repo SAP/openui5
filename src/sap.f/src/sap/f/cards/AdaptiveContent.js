@@ -12,10 +12,11 @@ sap.ui.define([
 		"sap/f/cards/adaptivecards/elements/UI5InputChoiceSet",
 		"sap/f/cards/adaptivecards/elements/UI5InputTime",
 		"sap/f/cards/adaptivecards/elements/UI5InputDate",
+		"sap/f/cards/adaptivecards/elements/UI5InputToggle",
 		"sap/f/cards/adaptivecards/overwrites/ActionRender",
 		"sap/f/cards/adaptivecards/elements/hostConfig"
 	],
-	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, ActionRender, HostConfig) {
+	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig) {
 		"use strict";
 
 		/**
@@ -168,6 +169,10 @@ sap.ui.define([
 			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Date");
 			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Date", function () {
 				return new UI5InputDate();
+			});
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Toggle");
+			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Toggle", function () {
+				return new UI5InputToggle();
 			});
 		};
 
