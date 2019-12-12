@@ -14,6 +14,8 @@
 	</script>
 
 	<link href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
 	<script src="../../google-code-prettify/run_prettify.js"></script>
 
 </head>
@@ -33,7 +35,7 @@
 
 		<p>
 			In this section you can find information on how to handle the construction of complex date expressions. More specifically how to construct the start or end date of a period and use it for displaying or for querying data service.
-			Together with the <a href="../../../index.html#/learn/featureManifestParameters" target="_parent">Static Manifest Parameters</a> <code>TODAY_ISO</code> and <code>NOW_ISO</code> cards provide a helper for handling date ranges.
+			Together with the <a href="../../../index.html#/learn/features/manifestParameters" target="_parent">Static Manifest Parameters</a> <code>TODAY_ISO</code> and <code>NOW_ISO</code> cards provide a helper for handling date ranges.
 		</p>
 
 		<h2 id="dateRange">
@@ -277,7 +279,7 @@
 		</div>
 
 		<p>Date range in title:</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"header": {
 		"title": "Expectations for next 6 months",
 		"subTitle": "Until {= format.date(dateRange.end('nextMonths', 6), {pattern: 'MMMM, y'})}"
@@ -285,7 +287,7 @@
 }</pre>
 
 		<p>Date range used in odata request:</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"data": {
 		"request": {
 			"url": "https/services.odata.org/V3/Northwind/Northwind.svc/Orders",

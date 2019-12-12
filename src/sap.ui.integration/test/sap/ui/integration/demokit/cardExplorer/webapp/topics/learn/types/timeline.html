@@ -13,6 +13,8 @@
 	</script>
 
 	<link  href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
 	<script src="../../google-code-prettify/run_prettify.js"></script>
 
 </head>
@@ -87,7 +89,7 @@
 		<h2 id="example">Example</h2>
 		<p>Define the type and data for the card:
 		</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"sap.card": {
 		"type": "Timeline",
 		"content" :{
@@ -102,7 +104,7 @@
 		<p>
 			The content of the employees.json which we are requesting:
 		</p>
-		<pre class="prettyprint">[
+		<pre class="prettyprint  lang-js">[
 	{
 	  "Name": "Laurent Dubois",
 	  "JobTitle": "Accounts Payable Manager",
@@ -137,14 +139,14 @@
 	}
 ]</pre>
 		<p>Define the header:</p>
-		<pre class="prettyprint">"header": {
+		<pre class="prettyprint  lang-js">"header": {
 	"title": "New Team Members",
 	"icon": {
 	  "src": "sap-icon://group"
 	}
 }</pre>
 		<p>Define the time content:</p>
-		<pre class="prettyprint">"content": {
+		<pre class="prettyprint  lang-js">"content": {
 	"item": {
 	  "dateTime" : {
 		"label": "{{hireDate_label}}",
@@ -172,7 +174,7 @@
 	}
 }</pre>
 		<p>Here is the final manifest definition:</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 "sap.card": {
 	  "type": "Timeline",
 	  "header": {
@@ -216,7 +218,7 @@
 	}
 }</pre>
 		<p>Create the widget card that can actually use the manifest.json which we created:</p>
-		<pre class="prettyprint">
+		<pre class="prettyprint  lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;</pre>

@@ -13,6 +13,8 @@
 	</script>
 
 	<link  href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
 	<script src="../../google-code-prettify/run_prettify.js"></script>
 
 </head>
@@ -87,7 +89,7 @@
 		<h2 id="example">Example</h2>
 		<p>Define the type and data for the card:
 		</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"sap.app": {
 		"type": "card"
 	},
@@ -127,7 +129,7 @@
 		<p>
 			The content of the sometimes.json that we are requesting:
 		</p>
-		<pre class="prettyprint">[{
+		<pre class="prettyprint  lang-js">[{
 	"Name": "Notebook Basic 15",
 	"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 	"Id": "HT-1000",
@@ -209,7 +211,7 @@
 	"infoState": "Success"
 }]</pre>
 		<p>Create the widget card that can actually use the manifest.json which we created:</p>
-		<pre class="prettyprint">
+		<pre class="prettyprint  lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;</pre>

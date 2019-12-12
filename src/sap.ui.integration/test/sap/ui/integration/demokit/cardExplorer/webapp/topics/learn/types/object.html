@@ -13,6 +13,8 @@
 	</script>
 
 	<link  href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
 	<script src="../../google-code-prettify/run_prettify.js"></script>
 
 </head>
@@ -124,7 +126,7 @@
 		<h2 id="example">Example</h2>
 		<p>Define the type and data for the card:
 		</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"sap.card": {
 		"type": "Object",
 		"data": {
@@ -137,7 +139,7 @@
 		<p>
 			The content of the employee.json which we are requesting:
 		</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"firstName": "Donna",
 	"lastName": "Moore",
 	"position": "Sales Executive",
@@ -155,7 +157,7 @@
 	}
 }</pre>
 		<p>Define the header:</p>
-		<pre class="prettyprint">"header": {
+		<pre class="prettyprint  lang-js">"header": {
 	"icon": {
 		"src": "{photo}"
 	},
@@ -163,7 +165,7 @@
 	"subTitle": "{position}"
 },</pre>
 		<p>Define the content in groups:</p>
-		<pre class="prettyprint">"content": {
+		<pre class="prettyprint  lang-js">"content": {
 	"groups": [
 		{
 			"title": "Contact Details",
@@ -228,7 +230,7 @@
 	]
 }</pre>
 		<p>Here is the final manifest definition:</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"sap.app": {
 		"id": "card.explorer.object.card",
 		"type": "card",
@@ -315,7 +317,7 @@
 	}
  }</pre>
 		<p>Create the widget card that can actually use the manifest.json which we created:</p>
-		<pre class="prettyprint">
+		<pre class="prettyprint  lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;</pre>

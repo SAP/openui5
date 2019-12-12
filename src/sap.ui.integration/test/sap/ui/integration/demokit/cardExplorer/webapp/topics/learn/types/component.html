@@ -13,6 +13,8 @@
 	</script>
 
 	<link href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
 	<script src="../../google-code-prettify/run_prettify.js"></script>
 
 </head>
@@ -35,7 +37,7 @@
 		<h2 id="example">Example</h2>
 		<p>Create a Card manifest and include the manifest for the component in the same file:
 		</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"sap.card": {
 		"type": "Component",
 		"header": {
@@ -59,7 +61,7 @@
 	}
 }</pre>
 		<p>Create the widget card that can actually use the manifest.json which we created:</p>
-		<pre class="prettyprint">
+		<pre class="prettyprint  lang-js">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;</pre>

@@ -14,6 +14,8 @@
 	</script>
 
 	<link href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
 	<script src="../../google-code-prettify/run_prettify.js"></script>
 
 </head>
@@ -115,7 +117,7 @@
 
 		<p>A card having a user defined "city" and "weatherServices" manifest parameters with default values.
 			The "city" value is used inside the request. The "weatherServices" value is used inside the title.</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"sap.card": {
 		"configuration": {
 			"parameters": {
@@ -158,7 +160,7 @@
 			Changing the city parameter can be done by using the API of the card. This will cause manifest
 			re-processing:
 		</p>
-		<pre class="prettyprint">
+		<pre class="prettyprint  lang-js">
 var oParameters = {
 	"city": {
 		"value": "Sofia"
@@ -169,7 +171,7 @@ oCard.setParameters(oParameters);</pre>
 		<p>
 			Using the static manifest parameter "TODAY_ISO" inside the subtitle of the card:
 		</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"sap.card": {
 		"type": "List",
 		"header": {
