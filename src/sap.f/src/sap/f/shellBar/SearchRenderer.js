@@ -19,8 +19,7 @@ sap.ui.define([],
 				oCancelButton = oSearch._getCancelButton(),
 				oSearchButton = oSearch._getSearchButton(),
 				bIsOpen = oSearch.getIsOpen(),
-				bPhoneMode = oSearch.getPhoneMode(),
-				iSearchWidth = oSearch.getWidth();
+				bPhoneMode = oSearch.getPhoneMode();
 
 			oRm.openStart("div", oSearch);
 			if (bIsOpen) {
@@ -29,19 +28,20 @@ sap.ui.define([],
 			if (bPhoneMode) {
 				oRm.class("sapFShellBarSearchFullWidth");
 			}
-			if (iSearchWidth && bIsOpen && !bPhoneMode) {
-				oRm.style("width", iSearchWidth);
-			}
 			oRm.openEnd();
 
-			if (bIsOpen) {
-				oRm.renderControl(oSearchField);
-			}
-			oRm.renderControl(oSearchButton);
-			if (bIsOpen && bPhoneMode) {
-				oRm.renderControl(oCancelButton);
-			}
+			oRm.openStart("div");
+			oRm.class("sapFShellBarSearchWrap");
+			oRm.openEnd();
 
+				if (bIsOpen) {
+					oRm.renderControl(oSearchField);
+				}
+				oRm.renderControl(oSearchButton);
+				if (bIsOpen) {
+					oRm.renderControl(oCancelButton);
+				}
+			oRm.close("div");
 			oRm.close("div");
 		};
 

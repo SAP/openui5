@@ -10,6 +10,7 @@ sap.ui.define([
 	"./shellBar/ResponsiveHandler",
 	"./shellBar/Accessibility",
 	"sap/m/BarInPageEnabler",
+	"sap/m/OverflowToolbarLayoutData",
 	"./ShellBarRenderer"
 ],
 function(
@@ -18,7 +19,8 @@ function(
 	AdditionalContentSupport,
 	ResponsiveHandler,
 	Accessibility,
-	BarInPageEnabler
+	BarInPageEnabler,
+	OverflowToolbarLayoutData
 	/*, ShellBarRenderer */
 ) {
 	"use strict";
@@ -142,7 +144,11 @@ function(
 				/**
 				 * Holds the internally created OverflowToolbar.
 				 */
-				_overflowToolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"}
+				_overflowToolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"},
+				/**
+				 * Holds the internally created HBox with text content.
+				 */
+				_additionalBox: {type: "sap.m.HBox", multiple: false, visibility: "hidden"}
 			},
 			events: {
 				/**
@@ -245,18 +251,19 @@ function(
 		this._oFactory = new Factory(this);
 
 		this._bOTBUpdateNeeded = true;
+		this._bLeftBoxUpdateNeeded = true;
+		this._bRightBoxUpdateNeeded = true;
 
 		this._oOverflowToolbar = this._oFactory.getOverflowToolbar();
+		this._оAdditionalBox = this._oFactory.getAdditionalBox();
+		this._aControls = [];
 		this.setAggregation("_overflowToolbar", this._oOverflowToolbar);
+		this.setAggregation("_additionalBox", this._оAdditionalBox);
 
 		this._oToolbarSpacer = this._oFactory.getToolbarSpacer();
-		this._oControlSpacer = this._oFactory.getControlSpacer();
 
 		// Init responsive handler
 		this._oResponsiveHandler = new ResponsiveHandler(this);
-
-		// List of controls that can go forcibly in the overflow
-		this._aOverflowControls = [];
 
 		this._oAcc = new Accessibility(this);
 	};
@@ -264,13 +271,15 @@ function(
 	ShellBar.prototype.onBeforeRendering = function () {
 		var sNotificationsNumber = this.getNotificationsNumber();
 
-		this._assignControlsToOverflowToolbar();
 		if (this.getShowNotifications() && sNotificationsNumber !== undefined) {
 			this._updateNotificationsIndicators(sNotificationsNumber);
 		}
+		this._assignControls();
 	};
 
 	ShellBar.prototype.exit = function () {
+		this._aLeftControls = [];
+		this._aRightControls = [];
 		this._oResponsiveHandler.exit();
 		this._oFactory.destroy();
 		this._oAcc.exit();
@@ -278,6 +287,7 @@ function(
 
 	// Setters
 	ShellBar.prototype.setHomeIcon = function (sSrc) {
+
 		if (sSrc) {
 			if (!this._oHomeIcon) {
 				this._oHomeIcon = this._oFactory.getHomeIcon();
@@ -287,7 +297,7 @@ function(
 			this._oHomeIcon = null;
 		}
 
-		this._bOTBUpdateNeeded = true;
+		this._bLeftBoxUpdateNeeded = true;
 
 		return this.setProperty("homeIcon", sSrc);
 	};
@@ -305,7 +315,6 @@ function(
 			this._oHomeIcon.setTooltip(sDefaultTooltip);
 		}
 
-		this._bOTBUpdateNeeded = false;
 		return this.setProperty("homeIconTooltip", sTooltip, true);
 	};
 
@@ -325,7 +334,7 @@ function(
 			this._oPrimaryTitle.setText(sTitle);
 
 		}
-		this._bOTBUpdateNeeded = true;
+		this._bLeftBoxUpdateNeeded = true;
 
 		return this.setProperty("title", sTitle);
 	};
@@ -340,7 +349,7 @@ function(
 			this._oSecondTitle = null;
 		}
 
-		this._bOTBUpdateNeeded = true;
+		this._bLeftBoxUpdateNeeded = true;
 
 		return this.setProperty("secondTitle", sTitle);
 	};
@@ -355,6 +364,8 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+		this._bLeftBoxUpdateNeeded = true;
+		this._bRightBoxUpdateNeeded = true;
 
 		return this.setProperty("showCopilot", bShow);
 	};
@@ -412,7 +423,7 @@ function(
 			this._oProductSwitcher = null;
 		}
 
-		this._bOTBUpdateNeeded = true;
+		this._bRightBoxUpdateNeeded = true;
 
 		return this.setProperty("showProductSwitcher", bShow);
 	};
@@ -426,7 +437,7 @@ function(
 			this._oNavButton = null;
 		}
 
-		this._bOTBUpdateNeeded = true;
+		this._bLeftBoxUpdateNeeded = true;
 
 		return this.setProperty("showNavButton", bShow);
 	};
@@ -440,7 +451,7 @@ function(
 			this._oMenuButton = null;
 		}
 
-		this._bOTBUpdateNeeded = true;
+		this._bLeftBoxUpdateNeeded = true;
 
 		return this.setProperty("showMenuButton", bShow);
 	};
@@ -460,13 +471,93 @@ function(
 	};
 
 	/**
-	 * Helper method for unification of all Content items.
+	 * Helper method for tracking information of controls and their order.
 	 *
 	 * @private
 	 */
-	ShellBar.prototype._addOTContent = function(oControl){
+	ShellBar.prototype._addDataToControl = function(oControl){
 		oControl.addStyleClass("sapFShellBarItem");
-		this._oOverflowToolbar.addContent(oControl);
+		if (this._aControls.indexOf(oControl) === -1) {
+			this._aControls.push(oControl);
+		}
+		return oControl;
+	};
+
+	ShellBar.prototype._assignControls = function() {
+
+		if (!this._bOTBUpdateNeeded && !this._bLeftBoxUpdateNeeded && !this._bRightBoxUpdateNeeded) {return;}
+
+
+		//First assign controls on the left
+		if (this._bLeftBoxUpdateNeeded) {
+			this._aLeftControls = [];
+			if (this._oNavButton) {
+				this.addControlToCollection(this._oNavButton, this._aLeftControls);
+			}
+			if (this._oMenuButton) {
+				this.addControlToCollection(this._oMenuButton, this._aLeftControls);
+			}
+			if (this._oHomeIcon) {
+				this.addControlToCollection(this._oHomeIcon, this._aLeftControls);
+			}
+			this._assignControlsToAdditionalBox();
+			this._aLeftControls.push(this._оAdditionalBox);
+		}
+
+		// Assign the CoPilot independently
+		if (this._oCopilot) {
+			this._addDataToControl(this._oCopilot);
+		}
+
+		//Then assign controls on the right
+		if (this._bRightBoxUpdateNeeded || this._bOTBUpdateNeeded) {
+
+			this._aRightControls = [];
+
+			if (this._bOTBUpdateNeeded) {
+				this._assignControlsToOverflowToolbar();
+			}
+
+			this._aRightControls.push(this._oOverflowToolbar);
+
+			if (this._oAvatarButton) {
+				this.addControlToCollection(this._oAvatarButton, this._aRightControls);
+			}
+
+			if (this._oProductSwitcher) {
+				this.addControlToCollection(this._oProductSwitcher, this._aRightControls);
+			}
+		}
+
+		this._bLeftBoxUpdateNeeded = false;
+		this._bRightBoxUpdateNeeded = false;
+		this._bOTBUpdateNeeded = false;
+	};
+
+	// Utility
+	ShellBar.prototype._assignControlsToAdditionalBox = function () {
+		this._оAdditionalBox.removeAllItems();
+
+		// we need to create and assign null to the title control reference,
+		// which we will later read in ResponsiveHandler
+		this._oTitleControl = null;
+		//depends on the given configuration we either show MenuButton with MegaMenu, or Title
+		if (this.getShowMenuButton() && this._oPrimaryTitle){
+
+			this.addControlToCollection(this._oPrimaryTitle, this._оAdditionalBox);
+			this._oTitleControl = this._oPrimaryTitle;
+
+		} else if (this._oMegaMenu) {
+
+			this.addControlToCollection(this._oMegaMenu, this._оAdditionalBox);
+			this._oTitleControl = this._oMegaMenu;
+		}
+
+		if (this._oSecondTitle) {
+			this.addControlToCollection(this._oSecondTitle, this._оAdditionalBox);
+		}
+
+		return this._оAdditionalBox;
 	};
 
 	// Utility
@@ -474,86 +565,58 @@ function(
 		var aAdditionalContent;
 
 		if (!this._oOverflowToolbar) {return;}
-		if (!this._bOTBUpdateNeeded) {return;}
-
-		this._aOverflowControls = [];
 
 		this._oOverflowToolbar.removeAllContent();
 
-		if (this._oNavButton) {
-			this._addOTContent(this._oNavButton);
-		}
-
-		if (this._oMenuButton) {
-			this._addOTContent(this._oMenuButton);
-		}
-
-		if (this._oHomeIcon) {
-			this._addOTContent(this._oHomeIcon);
-		}
-
-
-		// we need to create and assign null to the title control reference,
-		// which we will later read in ResponsiveHandler
-		this._oTitleControl = null;
-		//depends on the given configuration we either show MenuButton with MegaMenu, or Title
-		if (this.getShowMenuButton() && this._oPrimaryTitle){
-			this._addOTContent(this._oPrimaryTitle);
-			this._oTitleControl = this._oPrimaryTitle;
-		} else if (this._oMegaMenu) {
-			this._addOTContent(this._oMegaMenu);
-			this._oTitleControl = this._oMegaMenu;
-		}
-
-		if (this._oSecondTitle) {
-			this._addOTContent(this._oSecondTitle);
-		}
-		if (this._oControlSpacer) {
-			this._addOTContent(this._oControlSpacer);
-		}
-		if (this._oCopilot) {
-			this._addOTContent(this._oCopilot);
-		}
-
-		this._addOTContent(this._oToolbarSpacer);
+		this.addControlToCollection(this._oToolbarSpacer, this._oOverflowToolbar);
 
 		if (this._oManagedSearch) {
-			this._addOTContent(this._oManagedSearch);
-			this._aOverflowControls.push(this._oManagedSearch);
+			this.addControlToCollection(this._oManagedSearch, this._oOverflowToolbar);
 		}
 
 		if (this._oSearch) {
-			this._addOTContent(this._oSearch);
-			this._aOverflowControls.push(this._oSearch);
+			this.addControlToCollection(this._oSearch, this._oOverflowToolbar);
 		}
 
 		if (this._oNotifications) {
-			this._addOTContent(this._oNotifications);
-			this._aOverflowControls.push(this._oNotifications);
+			this.addControlToCollection(this._oNotifications, this._oOverflowToolbar);
 		}
 
 		// Handle additional content
 		aAdditionalContent = this.getAdditionalContent();
 		if (aAdditionalContent) {
 			aAdditionalContent.forEach(function (oControl) {
-				this._addOTContent(oControl);
-				this._aOverflowControls.push(oControl);
-			}.bind(this));
-		}
-
-		if (this._oAvatarButton) {
-			this._addOTContent(this._oAvatarButton);
-		}
-		if (this._oProductSwitcher) {
-			this._addOTContent(this._oProductSwitcher);
+				this.addControlToCollection(oControl, this._oOverflowToolbar);
+				oControl.setLayoutData(new OverflowToolbarLayoutData({
+					priority: "Low"
+				}));
+			}, this);
 		}
 
 		this._bOTBUpdateNeeded = false;
+
+		return this._oOverflowToolbar;
+	};
+
+	//Utility method for preparing and adding control to proper collection
+	ShellBar.prototype.addControlToCollection = function(oControl, aEntity) {
+		var fnAction;
+		if (Array.isArray(aEntity)) {
+			fnAction = "push";
+		} else {
+			fnAction = aEntity === this._оAdditionalBox ? "addItem" : "addContent";
+		}
+		this._addDataToControl(oControl);
+		aEntity[fnAction](oControl);
 	};
 
 	ShellBar.prototype._updateNotificationsIndicators = function(sNotificationsNumber) {
-		this._oOverflowToolbar._getOverflowButton().data("notifications", sNotificationsNumber, true);
-		this._oNotifications.data("notifications", sNotificationsNumber, true);
+		if (this._oOverflowToolbar._getOverflowButton()) {
+			this._oOverflowToolbar._getOverflowButton().data("notifications", sNotificationsNumber, true);
+		}
+		if (this._oNotifications) {
+			this._oNotifications.data("notifications", sNotificationsNumber, true);
+		}
 	};
 
 	ShellBar.prototype._getProfile = function () {
@@ -570,7 +633,6 @@ function(
 	};
 
 	ShellBar.prototype.onThemeChanged = function () {
-		this._oResponsiveHandler._initResize();
 		this._oResponsiveHandler._handleResize();
 	};
 

@@ -198,6 +198,8 @@ sap.ui.define(['sap/ui/core/Control',
 				return;
 			}
 
+			this.toggleStyleClass("sapFShellBarSearchOpenTick", this.getIsOpen());
+
 			this.setLayoutData(oLayoutData);
 		};
 
