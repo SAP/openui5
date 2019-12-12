@@ -496,7 +496,8 @@ sap.ui.define([
 
 				// call the real _doLayout method
 				fnDoLayout.call(oOverflowTB);
-			});
+			}),
+			aContent;
 
 		sap.ui.getCore().applyChanges();
 
@@ -508,7 +509,21 @@ sap.ui.define([
 		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
 		assert.strictEqual(iVisibleButtons, 3, "Only three buttons are visible in the toolbar");
 
+		assert.ok(oOverflowTB._getOverflowButton().$().is(":visible"), "Overflow button is visible");
+
+		// Cleanup
 		oStubDoLayout.restore();
+
+		// Act
+		aContent = oOverflowTB.getContent();
+		aContent[2].setVisible(false);
+		aContent[3].setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oOverflowTB._getOverflowButton().$().is(":visible"),
+			"Overflow button is not visible when controls with AlwaysOverflow are not visible and there is enough space for the others");
+
+		// Cleanup
 		oOverflowTB.destroy();
 	});
 

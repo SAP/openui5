@@ -18,24 +18,19 @@ sap.ui.define(["./library", 'sap/ui/core/Renderer', './ToolbarRenderer', "sap/m/
 
 		OverflowToolbarRenderer.renderBarContent = function(rm, oToolbar) {
 
-			var bHasAlwaysOverflowContent  = false,
-				oLayoutData;
+			var bHasAlwaysOverflowVisibleContent  = false;
 
 			oToolbar._getVisibleContent().forEach(function(oControl) {
 				BarInPageEnabler.addChildClassTo(oControl, oToolbar);
 
-				oLayoutData = oControl.getLayoutData();
-
-				if (!oLayoutData ||
-					!oLayoutData.isA('sap.m.OverflowToolbarLayoutData') ||
-					oLayoutData.getPriority() !== OverflowToolbarPriority.AlwaysOverflow ) {
+				if (oToolbar._getControlPriority(oControl) !== OverflowToolbarPriority.AlwaysOverflow ) {
 						rm.renderControl(oControl);
 				} else {
-					bHasAlwaysOverflowContent  = true;
+					bHasAlwaysOverflowVisibleContent = bHasAlwaysOverflowVisibleContent || oControl.getVisible();
 				}
 			});
 
-			if (bHasAlwaysOverflowContent  || oToolbar._getOverflowButtonNeeded()) {
+			if (bHasAlwaysOverflowVisibleContent || oToolbar._getOverflowButtonNeeded()) {
 				OverflowToolbarRenderer.renderOverflowButton(rm, oToolbar);
 			}
 
