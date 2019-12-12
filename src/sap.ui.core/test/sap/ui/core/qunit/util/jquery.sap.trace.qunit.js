@@ -330,7 +330,6 @@ sap.ui.define([
 			// second request with FESR header belonging to first interaction
 			this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
 			this.oReq.send();
-			jQuery.sap.interaction.notifyStepEnd();
 		}, afterEach: function() {
 			jQuery.sap.interaction.notifyStepEnd();
 			jQuery.sap.measure.endInteraction(true);
@@ -341,7 +340,6 @@ sap.ui.define([
 
 	// Check if global busy indicator measurement works without delay
 	QUnit.test("Busy indicator without delay", function(assert) {
-		jQuery.sap.interaction.notifyStepStart(null, true);
 		BusyIndicator.show(0);
 		BusyIndicator.hide();
 		jQuery.sap.interaction.notifyStepEnd();
@@ -361,7 +359,6 @@ sap.ui.define([
 
 	// Check if global busy indicator measurement works with delay
 	QUnit.test("Busy indicator with delay", function(assert) {
-		jQuery.sap.interaction.notifyStepStart(null, true);
 		BusyIndicator.show(1);
 		var done = assert.async();
 		assert.expect(2);
