@@ -364,6 +364,24 @@ sap.ui.define([
 			this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay]);
 		});
 
+		QUnit.test("when manage dialog is already open, followed by registration of variant management overlay", function(assert) {
+			var done = assert.async();
+			this.oVariantManagementControl.openManagementDialog();
+			this.oVariantManagementControl.getManageDialog().attachEventOnce("afterOpen", function() {
+				this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+				assert.ok(this.oVariantManagementControl.getManageDialog().bIsDestroyed, "then on overlay registration, manage dialog is destroyed");
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("when configure variants context menu item opens the manage dialog, followed by de-registration of variant management overlay", function(assert) {
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay]);
+			assert.ok(this.oVariantManagementControl.getManageDialog().isA("sap.m.Dialog"), "then initially a dialog is created");
+			this.oControlVariantPlugin.deregisterElementOverlay(this.oVariantManagementOverlay);
+			assert.ok(this.oVariantManagementControl.getManageDialog().bIsDestroyed, "then on overlay de-registration, manage dialog is destroyed");
+		});
+
 		QUnit.test("when _propagateVariantManagement is called with a root overlay and VariantManagement reference", function(assert) {
 			var aOverlays = this.oControlVariantPlugin._propagateVariantManagement(this.oObjectPageLayoutOverlay, "varMgtKey");
 			assert.equal(this.oButtonOverlay.getVariantManagement(), "varMgtKey", "then VariantManagement reference successfully propagated from the root overlay to last child overlay)");

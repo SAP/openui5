@@ -1261,8 +1261,12 @@ sap.ui.define([
 		this._bDeleteOccured = true;
 	};
 
+	VariantManagement.prototype.getManageDialog = function() {
+		return this.oManagementDialog;
+	};
+
 	VariantManagement.prototype._createManagementDialog = function() {
-		if (!this.oManagementDialog) {
+		if (!this.oManagementDialog || this.oManagementDialog.bIsDestroyed) {
 			this.oManagementTable = new Table(this.getId() + "-managementTable", {
 				growing: true,
 				columns: [
