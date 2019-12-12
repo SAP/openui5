@@ -1226,23 +1226,4 @@ sap.ui.define([
 
 		fnToUrlSpy.restore();
 	});
-
-	QUnit.test("Unsupported bind* functions", function(assert){
-		var oModel = new ResourceModel({
-				bundleName: ".testdata.messages"
-			});
-
-		assert.throws(function () {
-			oModel.bindContext();
-		}, new Error("Unsupported operation: sap.ui.model.resource.ResourceModel#bindContext"));
-
-		assert.throws(function () {
-			oModel.bindList();
-		}, new Error("Unsupported operation: sap.ui.model.resource.ResourceModel#bindList"));
-
-		assert.throws(function () {
-			oModel.bindTree();
-		}, new Error("Unsupported operation: sap.ui.model.resource.ResourceModel#bindTree"));
-	});
-
 });
