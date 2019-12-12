@@ -31,7 +31,7 @@ sap.ui.define([
 				if (sPath) {
 					jQuery.getJSON(sPath).done(function (oResponse) {
 						oResponse.componentClassName = mPropertyBag.flexReference;
-						resolve(oResponse.settings);
+						resolve(oResponse.settings || {});
 					}).fail(reject);
 				} else {
 					resolve({});
