@@ -632,7 +632,6 @@ sap.ui.define([
 			this.NUMBER_OF_SECTIONS = 15;
 			this.NUMBER_OF_SUB_SECTIONS = 2;
 			this.oObjectPage = utils.helpers.generateObjectPageWithSubSectionContent(utils.oFactory, this.NUMBER_OF_SECTIONS, this.NUMBER_OF_SUB_SECTIONS, true);
-			this.oObjectPage.placeAt("qunit-fixture");
 		},
 		afterEach: function () {
 			this.oObjectPage.destroy();
@@ -640,30 +639,32 @@ sap.ui.define([
 	});
 
 	QUnit.test("AnchorBar scrolled to section on width change", function (assert) {
-
 		var oPage = this.oObjectPage,
 			done = assert.async(),
 			oSection = oPage.getSections()[14],
 			oAnchorBar,
 			sectionId = oSection.getId(),
-			anchorBarSpy,
+			anchorBarStub,
 			fnScrollToStub = function(sectionId) {
 				// Assert
-				assert.equal(anchorBarSpy.callCount, 1, "AnchorBar is scrolled");
-				assert.equal(anchorBarSpy.args[0][0], sectionId, "AnchorBar scrolled to correct section");
+				assert.equal(anchorBarStub.callCount, 1, "AnchorBar is scrolled");
+				assert.equal(anchorBarStub.args[0][0], sectionId, "AnchorBar scrolled to correct section");
 
 				// Clean up
+				anchorBarStub.restore();
 				done();
 			},
 			fnOnDomReady = function() {
 				oAnchorBar = oPage.getAggregation("_anchorBar");
-				anchorBarSpy = sinon.stub(oAnchorBar, "scrollToSection", fnScrollToStub);
+				anchorBarStub = sinon.stub(oAnchorBar, "scrollToSection", fnScrollToStub);
 
 				//act
 				oPage.scrollToSection(sectionId, 0, null, true);
 				oPage.getDomRef().style.width = 772	 + "px";
 			};
 
-		oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
-	});
+		assert.expect(2);
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		this.oObjectPage.placeAt("qunit-fixture");
+    });
 });
