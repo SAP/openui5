@@ -487,6 +487,44 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		Core.applyChanges();
 	});
 
+	QUnit.test("auto-scroll on resize after layout calculation", function (assert) {
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 2 /* two sections */),
+			oLastSection = oObjectPageLayout.getSections()[1],
+			oLastSubSection = oLastSection.getSubSections()[0],
+			oResizableControl = new HTML({ content: "<div style='height: 100px'></div>"}),
+			iScrollTopBeforeResize,
+			oSpy = sinon.spy(oObjectPageLayout, "_scrollTo"),
+			done = assert.async();
+
+		oLastSubSection.addBlock(oResizableControl);
+		oObjectPageLayout.setSelectedSection(oLastSection);
+
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout(function() {
+				// make the height of the last section bigger
+				oResizableControl.getDomRef().style.height = "1000px";
+				oObjectPageLayout._requestAdjustLayout(true);
+
+
+				iScrollTopBeforeResize = oObjectPageLayout._$opWrapper.scrollTop();
+				// make the height of the last section smaller
+				oResizableControl.getDomRef().style.height = "10px";
+
+				oSpy.reset();
+				oObjectPageLayout._onScroll({ target: { scrollTop: 0 }}); // call synchronously to avoid another timeout
+				assert.strictEqual(oObjectPageLayout.getSelectedSection(), oLastSection.getId(), "Selection is preserved");
+				assert.ok(oSpy.calledWith(iScrollTopBeforeResize), "scrollTop is preserved");
+				oObjectPageLayout.destroy();
+				done();
+			}, 500);
+		});
+
+		// arrange
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
 	QUnit.test("content size correctly calculated", function (assert) {
 		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 2 /* two sections */),
 			oFirstSection = oObjectPageLayout.getSections()[0],
