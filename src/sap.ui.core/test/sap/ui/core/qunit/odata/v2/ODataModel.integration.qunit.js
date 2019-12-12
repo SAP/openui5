@@ -111,6 +111,25 @@ sap.ui.define([
 	}
 
 	/**
+	 * Delays the execution of a given callback function and returns its result within a Promise.
+	 *
+	 * @param {function} [fnCallback]
+	 *   A callback function
+	 * @param {number} [iDelay=5]
+	 *   A delay in milliseconds
+	 * @returns {Promise}
+	 *   A promise which resolves with the result of the given callback or undefined after the given
+	 *   delay
+	 */
+	function resolveLater(fnCallback, iDelay) {
+		return new Promise(function (resolve) {
+			setTimeout(function () {
+				resolve(fnCallback && fnCallback());
+			}, iDelay || 5);
+		});
+	}
+
+	/**
 	 * Wraps the given XML string into a <View> and creates an XML document for it. Verifies that
 	 * the sap.m.Table does not use <items>, because this is the default aggregation and may be
 	 * omitted. (This ensures that <ColumnListItem> is a direct child.)
@@ -343,6 +362,27 @@ sap.ui.define([
 				}
 			}
 			this.checkFinish(assert);
+		},
+
+		/**
+		 * Checks the control's value state after waiting some time for the control to set it.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {string|sap.m.InputBase} vControl The control ID or an instance of InputBase
+		 * @param {sap.ui.core.ValueState} sState The expected value state
+		 * @param {string} sText The expected text
+		 *
+		 * @returns {Promise} A promise resolving when the check is done
+		 */
+		checkValueState : function (assert, vControl, sState, sText) {
+			var oControl = typeof vControl === "string" ? this.oView.byId(vControl) : vControl;
+
+			return resolveLater(function () {
+				assert.strictEqual(oControl.getValueState(), sState,
+					oControl.getId() + ": value state: " + oControl.getValueState());
+				assert.strictEqual(oControl.getValueStateText(), sText,
+					oControl.getId() + ": value state text: " + oControl.getValueStateText());
+			});
 		},
 
 		/**
@@ -997,13 +1037,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Message with empty target
-	QUnit.test("Messages: empty target", function (assert) {
-		var oModel = createSalesOrdersModel(),
+	// Scenario: Message with empty target (tested as single request and as batch request)
+[false, true].forEach(function (bUseBatch) {
+	QUnit.test("Messages: empty target (useBatch=" + bUseBatch + ")", function (assert) {
+		var oModel = createSalesOrdersModel({useBatch : bUseBatch}),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
 </FlexBox>';
+
+		if (bUseBatch) {
+			this.expectHeadRequest();
+		}
 
 		this.expectRequest("SalesOrderSet('1')", {
 				SalesOrderID : "1"
@@ -1025,6 +1070,65 @@ sap.ui.define([
 
 		// code under test
 		return this.createView(assert, sView, oModel);
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Messages are visualized at controls that are bound against the messages' target.
+	QUnit.test("Messages: check value state", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			oMsgGrossAmount = {
+				code : "B",
+				message : "Msg2",
+				severity : "Warning",
+				target : "GrossAmount"
+			},
+			oMsgNote = {code : "A", message : "Msg1", severity : "Error", target : "Note"},
+			that = this,
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="Note" value="{Note}" />\
+	<Input id="GrossAmount" value="{GrossAmount}" />\
+	<Input id="LifecycleStatusDescription" value="{LifecycleStatusDescription}" />\
+</FlexBox>';
+
+		this.expectRequest("SalesOrderSet('1')", {
+				GrossAmount : "GrossAmount A",
+				LifecycleStatusDescription : "LifecycleStatusDescription A",
+				Note : "Note A"
+			}, {
+				"sap-message" : getMessageHeader([oMsgNote, oMsgGrossAmount])
+			})
+			.expectChange("Note", null)
+			.expectChange("Note", "Note A")
+			.expectChange("GrossAmount", null)
+			.expectChange("GrossAmount", "GrossAmount A")
+			.expectChange("LifecycleStatusDescription", null)
+			.expectChange("LifecycleStatusDescription", "LifecycleStatusDescription A")
+			.expectMessages([{
+				code : "A",
+				fullTarget : "/SalesOrderSet('1')/Note",
+				message : "Msg1",
+				persistent : false,
+				target : "/SalesOrderSet('1')/Note",
+				type : MessageType.Error
+			}, {
+				code : "B",
+				fullTarget : "/SalesOrderSet('1')/GrossAmount",
+				message : "Msg2",
+				persistent : false,
+				target : "/SalesOrderSet('1')/GrossAmount",
+				type : MessageType.Warning
+			}]);
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			return Promise.all([
+				that.checkValueState(assert, "Note", "Error", "Msg1"),
+				that.checkValueState(assert, "GrossAmount", "Warning", "Msg2"),
+				that.checkValueState(assert, "LifecycleStatusDescription", "None", "")
+			]);
+		});
 	});
 
 	//*********************************************************************************************
