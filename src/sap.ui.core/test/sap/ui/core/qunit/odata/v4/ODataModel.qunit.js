@@ -1092,6 +1092,59 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("reportError: invoked by an action", function (assert) {
+		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+			aBoundMessages = [{
+				code :  "param",
+				message : "TeamID is wrong",
+				numericSeverity : 3,
+				target : "/Employees('1')/service.ChangeEmployee(...)/$Parameter/TeamID",
+				technical : undefined,
+				transition : true
+			}, {
+				code :  "bindingParam",
+				message : "Status is not there",
+				numericSeverity : 3,
+				target : "/Employees('1')/STATUS",
+				technical : undefined,
+				transition : true
+			}],
+			oError = {
+				code : "top",
+				error : {
+					details : [{
+						"@.numericSeverity" : 3,
+						code :  "param",
+						message : "TeamID is wrong",
+						target : "/Employees('1')/service.ChangeEmployee(...)/$Parameter/TeamID"
+					}, {
+						"@.numericSeverity" : 3,
+						code :  "bindingParam",
+						message : "Status is not there",
+						target : "/Employees('1')/STATUS"
+					}]
+				},
+				message : "Failure",
+				requestUrl : "/Employees('1')/service.ChangeTeamOfEmployee(...)",
+				resourcePath : "Employees('1')"
+			},
+			sLogMessage = "Action could not be executed",
+			oModel = createModel();
+
+		aBoundMessages[0]["@$ui5.originalMessage"] = Object.assign({}, oError.error.details[0]);
+		aBoundMessages[1]["@$ui5.originalMessage"] = Object.assign({}, oError.error.details[1]);
+
+		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		this.mock(_Helper).expects("makeAbsolute").never();
+		this.mock(oModel).expects("reportBoundMessages")
+			.withExactArgs("Employees('1')", {"" : aBoundMessages}, []);
+		this.mock(oModel).expects("reportUnboundMessages").once(/* don't care*/);
+
+		// code under test
+		oModel.reportError(sLogMessage, sClassName, oError);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("reportError: JSON response, top-level bound, no details", function (assert) {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			oError = {
@@ -1993,6 +2046,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("reportBoundMessages: absolute target, sResourcePath ignored", function (assert) {
+		var oModel = createModel();
+
+		this.mock(oModel).expects("fireMessageChange").withExactArgs(sinon.match.object)
+			.callsFake(function (mArguments) {
+				assert.strictEqual(mArguments.newMessages[0].getTarget(), "/Team('42')/Name");
+			});
+
+		// code under test
+		oModel.reportBoundMessages(undefined, {
+			"~any~" : [{
+				target : "/Team('42')/Name"
+			}]
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("reportBoundMessages: special targets", function (assert) {
 		var oModel = createModel();
 
@@ -2015,7 +2085,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("reportBoundMessages: longtextUrl special cases", function (assert) {
-		var aMessages = [{"longtextUrl" : ""}, {}],
+		var aMessages = [{longtextUrl : "", target : ""}, {target : ""}],
 			oModel = createModel();
 
 		this.mock(oModel).expects("fireMessageChange")

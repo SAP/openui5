@@ -3526,6 +3526,7 @@ sap.ui.define([
 	// Scenario: Allow setting parameters of operations via control property binding
 	// - parameters change because of change in property binding
 	// JIRA: CPOUI5UISERVICESV3-2010
+	// JIRA: CPOUI5ODATAV4-29, check message target for unbound action
 	QUnit.test("Allow binding of operation parameters: Changing with controls", function (assert) {
 		var oOperation,
 			oParameterContext,
@@ -3586,6 +3587,45 @@ sap.ui.define([
 			oOperation.execute();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			// JIRA: CPOUI5ODATAV4-29
+			var oError = createError({
+					message : "Invalid Budget",
+					target : "Budget"
+				});
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
+				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
+			that.expectRequest({
+					method : "POST",
+					url : "ChangeTeamBudgetByID",
+					payload : {
+						Budget : "-42",
+						TeamID : "TEAM_01"
+					}
+				}, oError) // simulates failure
+				.expectMessages([{
+					code : undefined,
+					message : "Invalid Budget",
+					persistent : true,
+					target : "/ChangeTeamBudgetByID(...)/$Parameter/Budget",
+					technical : true,
+					type : "Error"
+				}])
+				.expectChange("budget", "-42");
+
+			return Promise.all([
+				oOperation.setParameter("Budget", "-42").execute()
+					.then(function () {
+						assert.ok(false, "Unexpected success");
+					}, function (oError0) {
+						assert.strictEqual(oError0, oError);
+					}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			return that.checkValueState(assert, "budget", "Error", "Invalid Budget");
 		});
 	});
 
@@ -8831,6 +8871,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: bound action (success and failure)
+	// JIRA: CPOUI5ODATAV4-29 (bound action parameter and error with message target)
 	QUnit.test("Bound action", function (assert) {
 		var sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
@@ -8839,6 +8880,7 @@ sap.ui.define([
 	<FlexBox id="action" \
 			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
+		<Input id="parameterTeamId" value="{$Parameter/TeamID}" />\
 		<Text id="teamId" text="{TEAM_ID}" />\
 	</FlexBox>\
 </FlexBox>',
@@ -8853,9 +8895,16 @@ sap.ui.define([
 			})
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("status", "")
+			.expectChange("parameterTeamId", "")
 			.expectChange("teamId", null);
 
 		return this.createView(assert, sView).then(function () {
+			that.expectChange("parameterTeamId", "42");
+
+			that.oView.byId("parameterTeamId").getBinding("value").setValue("42");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			that.expectRequest({
 					method : "POST",
 					headers : {"If-Match" : "ETag"},
@@ -8865,27 +8914,31 @@ sap.ui.define([
 				.expectChange("teamId", "42");
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().setParameter("TeamID", "42").execute(),
+				that.oView.byId("action").getObjectBinding().execute(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
 			var oError = createError({
 					message : "Missing team ID",
-					target : "TeamID",
+					target : "TeamID", // error targeting a parameter
 					details : [{
 						message : "Illegal Status",
 						"@Common.numericSeverity" : 4,
-						target : "EMPLOYEE/STATUS"
+						target : "EMPLOYEE/STATUS" // error targeting part of binding parameter
 					}, {
 						message : "Target resolved to ''",
 						"@Common.numericSeverity" : 4,
-						target : "EMPLOYEE"
-					}]
+						target : "EMPLOYEE" // error targeting the complete binding parameter
+					}, {
+						message : "Unexpected Error w/o target",
+						"@Common.numericSeverity" : 4,
+						target : ""
+					} ]
 				});
 
 			that.oLogMock.expects("error").withExactArgs("Failed to execute /" + sUrl + "(...)",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
-			that.oLogMock.expects("error").withExactArgs(
+			that.oLogMock.expects("error").withExactArgs(//TODO: prevent log -> CPOUI5ODATAV4-127
 				"Failed to read path /" + sUrl + "(...)/TEAM_ID", sinon.match(oError.message),
 				"sap.ui.model.odata.v4.ODataPropertyBinding");
 			that.expectRequest({
@@ -8898,7 +8951,8 @@ sap.ui.define([
 					code : undefined,
 					message : "Missing team ID",
 					persistent : true,
-					target : "",
+					target : "/EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
+						+ ".AcChangeTeamOfEmployee(...)/$Parameter/TeamID",
 					technical : true,
 					type : "Error"
 				}, {
@@ -8915,7 +8969,14 @@ sap.ui.define([
 					// how this target : "EMPLOYEE" is meant to be handled
 					target : "/EMPLOYEES('1')",
 					type : "Error"
+				}, {
+					code : undefined,
+					message : "Unexpected Error w/o target",
+					persistent : true,
+					target : "",
+					type : "Error"
 				}])
+				.expectChange("parameterTeamId", "")
 				.expectChange("teamId", null); // reset to initial state
 
 			return Promise.all([
@@ -8928,7 +8989,10 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			return that.checkValueState(assert, "status", "Error", "Illegal Status");
+			return Promise.all([
+				that.checkValueState(assert, "status", "Error", "Illegal Status"),
+				that.checkValueState(assert, "parameterTeamId", "Error", "Missing team ID")
+			]);
 		});
 	});
 

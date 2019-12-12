@@ -1524,6 +1524,7 @@ sap.ui.define([
 					changed : "changed",
 					unchanged : "same"
 				},
+				falsy : "",
 				getDeep : {
 					inside : "value"
 				},
@@ -1538,6 +1539,7 @@ sap.ui.define([
 					old : "old",
 					unchanged : "same"
 				},
+				falsy : null,
 				getDeep : "value",
 				getFlat : {
 					inside : "any"
@@ -1564,6 +1566,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/old", null);
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/getDeep/inside", "value");
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/falsy", "");
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/getFlat", "now");
 		oHelperMock.expects("fireChange")

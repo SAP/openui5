@@ -1409,8 +1409,8 @@ sap.ui.define([
 	 *     The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
 	 *     "error")
 	 *   {string} target
-	 *     The relative target for the message; the reported target path is a concatenation of the
-	 *     resource path, the cache-relative path and this property
+	 *     The target for the message; if relative the reported target path is a concatenation of
+	 *     the resource path, the cache-relative path and this property
 	 *   {boolean} [technical]
 	 *     Whether the message is reported as <code>technical</code> (supplied by #reportError)
 	 *   {boolean} [transition]
@@ -1434,7 +1434,9 @@ sap.ui.define([
 
 		Object.keys(mPathToODataMessages).forEach(function (sCachePath) {
 			mPathToODataMessages[sCachePath].forEach(function (oRawMessage) {
-				var sTarget = _Helper.buildPath(sDataBindingPath, sCachePath, oRawMessage.target);
+				var sTarget = oRawMessage.target[0] === "/"
+						? oRawMessage.target
+						: _Helper.buildPath(sDataBindingPath, sCachePath, oRawMessage.target);
 
 				aNewMessages.push(new Message({
 					code : oRawMessage.code,
@@ -1538,7 +1540,8 @@ sap.ui.define([
 			if (typeof oMessage.target !== "string") {
 				aUnboundMessages.push(oReportMessage);
 			} else if (oMessage.target[0] === "$" || !sResourcePath) {
-				// target for the bound message cannot be resolved -> report as unbound message
+				// target for the bound message is a system query option or cannot be resolved
+				// -> report as unbound message
 				oReportMessage.message = oMessage.target + ": " + oReportMessage.message;
 				aUnboundMessages.push(oReportMessage);
 			} else {

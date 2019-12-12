@@ -819,7 +819,7 @@ sap.ui.define([
 			} else {
 				// must fire null to guarantee that a property binding has not
 				// this.vValue === undefined, see ODataPropertyBinding.setValue
-				_Helper.fireChange(mChangeListeners, sPath, vNew || null);
+				_Helper.fireChange(mChangeListeners, sPath,  vNew === undefined ? null : vNew);
 				vNew = {};
 			}
 

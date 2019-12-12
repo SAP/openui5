@@ -50,22 +50,8 @@ sap.ui.define([
 						viewName : sViewName0 || sViewName
 					});
 				},
-				enterStepInputValue : function (sId, fValue) {
-					this.waitFor({
-						actions : new EnterText({clearTextFirst : true, text : fValue}),
-						controlType : "sap.m.StepInput",
-						id : sId,
-						viewName : sViewName
-					});
-					return this.waitFor({
-						controlType : "sap.m.StepInput",
-						id : sId,
-						success : function (oControl) {
-							Opa5.assert.strictEqual(oControl.getValue(), fValue,
-								"Control: " + sId + " Value is: " + oControl.getValue());
-						},
-						viewName : sViewName
-					});
+				enterStepInputValue : function (sId, sValue) {
+					return Helper.changeStepInputValue(this, sViewName, sId, sValue);
 				},
 				pressButton : function (sId) {
 					return Helper.pressButton(this, sViewName, sId);
