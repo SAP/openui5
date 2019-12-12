@@ -55,6 +55,14 @@ sap.ui.define(["sap/ui/Device"],
 				oRm.class("sapUxAPObjectPageLayoutTitleClickEnabled");
 			}
 
+			if (!bRenderHeaderContent) {
+				oRm.class("sapUxAPObjectPageLayoutNoHeaderContent");
+			}
+
+			if (!oAnchorBar || !oAnchorBar.getVisible()) {
+				oRm.class("sapUxAPObjectPageLayoutNoAnchorBar");
+			}
+
 			oRm.style("height", oControl.getHeight());
 			oRm.accessibilityState(oControl, oControl._formatLandmarkInfo(oLandmarkInfo, "Root"));
 			oRm.openEnd();

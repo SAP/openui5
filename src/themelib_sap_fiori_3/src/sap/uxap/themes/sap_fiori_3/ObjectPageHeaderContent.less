@@ -5,6 +5,7 @@
 
 @sapUiFiori3AnchorBarBottomShadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor;
 @sapUiFiori3AnchorBarTopShadow: inset 0 0.0625rem @sapUiObjectHeaderBorderColor;
+@sapUiFiori3AnchorBarShadow: @sapUiFiori3AnchorBarBottomShadow, 0 0.125rem 0.25rem 0 fade(@sapUiContentShadowColor, 7.5);
 
 .sapUxAPObjectPageHeaderContent .sapMObjStatus, .sapUxAPObjectPageContainer .sapMObjStatus {
 	font-size: @sapMFontMediumSize;
@@ -81,19 +82,26 @@ html .sapUxAPObjectPageLayout-Std-Desktop, html .sapUxAPObjectPageLayout-Std-Tab
 	}
 }
 
-.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageNoNavigation) .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
-	box-shadow: none;
-}
-
-html[dir=rtl] .sapUxAPObjectPageLayout,
-.sapUxAPObjectPageLayout {
-
-	&:not(.sapUxAPObjectPageHasDynamicTitle) .sapUxAPAnchorBar {
-
-		&.sapMTB,
-		&.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
-		&.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
-			box-shadow: @sapUiFiori3AnchorBarBottomShadow, none;
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutNoAnchorBar) {
+	.sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+		box-shadow: none;
+	}
+	.sapUxAPObjectPageNavigation:not(:empty):after {
+		content: "";
+		box-shadow: @sapUiFiori3AnchorBarShadow;
+		pointer-events: none;
+		position: absolute;
+		height: 0.25rem;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		z-index: 10;
+		&.sapUxAPObjectPageHeaderStickied {
+			box-shadow: none;
 		}
 	}
+}
+
+.sapUxAPObjectPageLayoutNoAnchorBar .sapUxAPObjectPageHeaderContent {
+	box-shadow: @sapUiShadowHeader;
 }

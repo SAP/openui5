@@ -1027,5 +1027,10 @@ sap.ui.define([
 		return !(oControl instanceof Control) ? 0 : (oDomReference && oDomReference.offsetWidth) || 0;
 	};
 
+	AnchorBar.prototype.setVisible = function (bVisible) {
+		this.getParent() && this.getParent().toggleStyleClass("sapUxAPObjectPageLayoutNoAnchorBar", !bVisible);
+		return this.setProperty("visible", bVisible);
+	};
+
 	return AnchorBar;
 });
