@@ -10,7 +10,7 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/c
 	 * @namespace
 	 */
 	var MultiComboBoxRenderer = Renderer.extend(ComboBoxBaseRenderer);
-
+	MultiComboBoxRenderer.apiVersion = 2;
 	/**
 	 * CSS class to be applied to the HTML root element of the MultiComboBox control.
 	 *
@@ -26,10 +26,10 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/c
 	 */
 	MultiComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
 		ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
-		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX);
+		oRm.class(MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX);
 
 		if (oControl._hasTokens()) {
-			oRm.addClass("sapMMultiComboBoxHasToken");
+			oRm.class("sapMMultiComboBoxHasToken");
 		}
 	};
 	/**
