@@ -3,22 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/LrepConnector"
 ], function(
-	LrepConnector
 ) {
 	"use strict";
 
 	//Descriptor Variant
 	var Utils = function() {};
-
-	Utils.prototype.sendRequest = function(sRoute, sMethod, mMap) {
-		if (!this._oLREPConnector) {
-			this._oLREPConnector = LrepConnector.createConnector();
-		}
-
-		return this._oLREPConnector.send(sRoute, sMethod, mMap);
-	};
 
 	Utils.prototype.getNameAndNameSpace = function(sId, sReference) {
 		//namespace and file name according to namespace concept: apps/<Descriptor ID>/appVariants/<Descriptor Variant ID>/manifest.appdescr_variant

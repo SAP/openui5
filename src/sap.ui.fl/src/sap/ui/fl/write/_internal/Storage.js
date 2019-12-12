@@ -184,32 +184,5 @@ sap.ui.define([
 		return executeActionByName("publish", mPropertyBag);
 	};
 
-	Storage.appVariant = {
-		getManifest : function(mPropertyBag) {
-			return executeActionByName("appVariant.getManifest", mPropertyBag);
-		},
-		create : function(mPropertyBag) {
-			return executeActionByName("appVariant.create", mPropertyBag);
-		},
-		load : function(mPropertyBag) {
-			return executeActionByName("appVariant.load", mPropertyBag);
-		},
-		update : function(mPropertyBag) {
-			return executeActionByName("appVariant.update", mPropertyBag);
-		},
-		remove : function(mPropertyBag) {
-			return executeActionByName("appVariant.remove", mPropertyBag);
-		},
-		list : function(mPropertyBag) {
-			return executeActionByName("appVariant.list", mPropertyBag);
-		},
-		assignCatalogs : function(mPropertyBag) {
-			return executeActionByName("appVariant.assignCatalogs", mPropertyBag);
-		},
-		unassignCatalogs : function(mPropertyBag) {
-			return executeActionByName("appVariant.unassignCatalogs", mPropertyBag);
-		}
-	};
-
 	return Storage;
 }, true);

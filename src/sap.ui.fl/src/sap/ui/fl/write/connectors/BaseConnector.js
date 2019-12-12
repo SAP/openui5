@@ -121,33 +121,6 @@ sap.ui.define([
 		 */
 		loadFeatures: function () {
 			return Promise.reject("loadFeatures is not implemented");
-		},
-
-		appVariant: {
-			getManifest: function() {
-				return Promise.reject("appVariant.getManifest is not implemented");
-			},
-			create: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.create is not implemented");
-			},
-			load: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.load is not implemented");
-			},
-			update:  function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.update is not implemented");
-			},
-			remove: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.remove is not implemented");
-			},
-			list: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.list is not implemented");
-			},
-			assignCatalogs: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.assignCatalogs is not implemented");
-			},
-			unassignCatalogs: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.unassignCatalogs is not implemented");
-			}
 		}
 	};
 

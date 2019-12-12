@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -24,7 +23,6 @@ sap.ui.define([
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	FlexCustomData,
-	LrepConnector,
 	jQuery,
 	sinon
 ) {
@@ -211,14 +209,14 @@ sap.ui.define([
 				}
 			};
 
-			var fnOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves();
-			fnOldConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnOldConnectorCall.onSecondCall().resolves(); // Delete call to backend
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
 
 			return PersistenceWriteAPI.save(mPropertyBag)
 				.then(function() {
-					assert.ok(fnOldConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnOldConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "PUT"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "PUT"), "then the parameters are correct");
 				});
 		});
 
