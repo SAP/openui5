@@ -79,26 +79,30 @@
 	position: absolute;
 }
 
-.sapUiLayoutCSSResponsiveColumnLayout.sapUiLayoutCSSResponsiveColumnLayoutS {
-	grid-template-columns: repeat(4, minmax(0px, 1fr));
-	grid-gap: 0.5rem 0.5rem;
+/* ResponsiveColumnLayout */
+.sapUiLayoutCSSResponsiveColumnLayoutGrid {
+	.sapUiLayoutCSSResponsiveColumnLayoutS &,
+	.sapUiLayoutCSSResponsiveColumnLayoutS& {
+		grid-template-columns: repeat(4, minmax(0px, 1fr));
+		grid-gap: 0.5rem 0.5rem;
+	}
+	.sapUiLayoutCSSResponsiveColumnLayoutM &,
+	.sapUiLayoutCSSResponsiveColumnLayoutM& {
+		grid-template-columns: repeat(8, minmax(0px, 1fr));
+		grid-gap: 1rem 1rem;
+	}
+	.sapUiLayoutCSSResponsiveColumnLayoutL &,
+	.sapUiLayoutCSSResponsiveColumnLayoutL& {
+		grid-template-columns: repeat(12, minmax(0px, 1fr));
+		grid-gap: 1rem 1rem;
+	}
+	.sapUiLayoutCSSResponsiveColumnLayoutXL &,
+	.sapUiLayoutCSSResponsiveColumnLayoutXL& {
+		grid-template-columns: repeat(16, minmax(0px, 1fr));
+		grid-gap: 1rem 1rem;
+	}
 }
 
-.sapUiLayoutCSSResponsiveColumnLayout.sapUiLayoutCSSResponsiveColumnLayoutM {
-	grid-template-columns: repeat(8, minmax(0px, 1fr));
-	grid-gap: 1rem 1rem;
-}
-
-.sapUiLayoutCSSResponsiveColumnLayout.sapUiLayoutCSSResponsiveColumnLayoutL {
-	grid-template-columns: repeat(12, minmax(0px, 1fr));
-	grid-gap: 1rem 1rem;
-}
-
-.sapUiLayoutCSSResponsiveColumnLayout.sapUiLayoutCSSResponsiveColumnLayoutXL {
-	grid-template-columns: repeat(16, minmax(0px, 1fr));
-	grid-gap: 1rem 1rem;
-}
-
-.sapUiLayoutCSSResponsiveColumnLayoutPolyfill {
+.sapUiLayoutCSSResponsiveColumnLayoutGridPolyfill {
 	position: relative;
 }

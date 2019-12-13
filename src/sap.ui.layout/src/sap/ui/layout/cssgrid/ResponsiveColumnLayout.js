@@ -106,6 +106,13 @@ sap.ui.define([
 	});
 
 	/**
+	 * CSS class for the current layout.
+	 * @string
+	 * @private
+	 */
+	ResponsiveColumnLayout.prototype._sCurrentLayoutClassName = "";
+
+	/**
 	 * Returns if the Grid Layout is responsive.
 	 * @public
 	 * @returns {boolean} If the Grid Layout is responsive.
@@ -157,9 +164,9 @@ sap.ui.define([
 	ResponsiveColumnLayout.prototype.renderSingleGridLayout = function (rm) {
 
 		if (this.isGridSupportedByBrowser()) {
-			rm.addClass("sapUiLayoutCSSResponsiveColumnLayout");
+			rm.addClass("sapUiLayoutCSSResponsiveColumnLayoutGrid");
 		} else {
-			rm.addClass("sapUiLayoutCSSResponsiveColumnLayoutPolyfill");
+			rm.addClass("sapUiLayoutCSSResponsiveColumnLayoutGridPolyfill");
 		}
 	};
 
@@ -171,29 +178,26 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveColumnLayout.prototype._applyLayout = function (oGrid, bTriggerLayoutChange) {
-		var sGridSuffix = oGrid.isA("sap.f.GridList") ? "listUl" : "",
-			sCurrentLayoutClassName = this._sCurrentLayoutClassName,
-			$parent = oGrid.$().parent(),
-			$grid = oGrid.$(sGridSuffix),
+		var $parent = oGrid.$().parent(),
 			iWidth = $parent.outerWidth(),
 			oRange = Device.media.getCurrentRange("StdExt", iWidth),
 			sClassName = mSizeClasses[oRange.name],
 			bGridSupportedByBrowser = this.isGridSupportedByBrowser();
 
 		if (!bGridSupportedByBrowser) {
-			this._scheduleIEPolyfill(oGrid, $grid, oRange);
+			this._scheduleIEPolyfill(oGrid, oRange);
 		}
 
-		if (sCurrentLayoutClassName === sClassName) {
+		if (this._sCurrentLayoutClassName === sClassName) {
 			return;
 		}
 
-		this._sCurrentLayoutClassName = sClassName;
-
 		if (bGridSupportedByBrowser) {
-			$grid.removeClass(sCurrentLayoutClassName);
-			$grid.addClass(sClassName);
+			oGrid.removeStyleClass(this._sCurrentLayoutClassName);
+			oGrid.addStyleClass(sClassName);
 		}
+
+		this._sCurrentLayoutClassName = sClassName;
 
 		if (bTriggerLayoutChange) {
 			this.fireLayoutChange({
@@ -206,16 +210,18 @@ sap.ui.define([
 	 * Schedules the application of the IE polyfill for the next tick.
 	 *
 	 * @param {sap.ui.layout.cssgrid.IGridConfigurable} oGrid The grid
-	 * @param {jQuery} $grid The grid on which to add the polyfill
 	 * @param {object} oRange The information about the current active range set
 	 * @private
 	 */
-	ResponsiveColumnLayout.prototype._scheduleIEPolyfill = function (oGrid, $grid, oRange) {
+	ResponsiveColumnLayout.prototype._scheduleIEPolyfill = function (oGrid, oRange) {
 		if (this._iPolyfillCallId) {
 			clearTimeout(this._iPolyfillCallId);
 		}
 
 		this._iPolyfillCallId = setTimeout(function () {
+			var sGridSuffix = oGrid.isA("sap.f.GridList") ? "listUl" : "",
+				$grid = oGrid.$(sGridSuffix);
+
 			this._applyIEPolyfillLayout(oGrid, $grid, oRange);
 		}.bind(this), 0);
 	};
