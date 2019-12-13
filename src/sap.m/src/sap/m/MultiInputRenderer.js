@@ -11,6 +11,7 @@ sap.ui.define(['./InputRenderer', 'sap/ui/core/Renderer'],
 	 * @namespace
 	 */
 	var MultiInputRenderer = Renderer.extend(InputRenderer);
+	MultiInputRenderer.apiVersion = 2;
 
 	MultiInputRenderer.prependInnerContent = function (oRm, oControl) {
 		oRm.renderControl(oControl._tokenizer);
@@ -19,10 +20,10 @@ sap.ui.define(['./InputRenderer', 'sap/ui/core/Renderer'],
 	MultiInputRenderer.addOuterClasses = function(oRm, oControl) {
 		InputRenderer.addOuterClasses.apply(this, arguments);
 
-		oRm.addClass("sapMMultiInput");
+		oRm.class("sapMMultiInput");
 
 		if (oControl.getTokens().length > 0) {
-			oRm.addClass("sapMMultiInputHasTokens");
+			oRm.class("sapMMultiInputHasTokens");
 		}
 	};
 
