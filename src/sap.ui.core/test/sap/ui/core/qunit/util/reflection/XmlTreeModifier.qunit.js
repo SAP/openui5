@@ -26,6 +26,7 @@ function(
 			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT = "controlWithPropertyTypeObject";
 			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2 = "controlWithPropertyTypeObject2";
 			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 = "controlWithPropertyTypeObject3";
+			this.ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY = "controlWithPropertyTypeArray";
 			this.ID_OF_CONTROL_WITH_PROP_BINDING = "controlWithPropertyBinding";
 			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
 
@@ -93,6 +94,7 @@ function(
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2 + '" crossAppNavCallback="\{&quot;key&quot;:&quot;value&quot;\}" />' +
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 + '" crossAppNavCallback="{\'key\': \'value\'}" />' +
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_BINDING + '" crossAppNavCallback="{/foo}" />' +
+					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY + '" crossAppNavCallback="[\\{&quot;key&quot;:&quot;value&quot;\\}]" />' +
 				'</mvc:View>';
 			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 		},
@@ -371,6 +373,12 @@ function(
 			assert.deepEqual(mData, { key : "value"}, "returns json value");
 		});
 
+		QUnit.test("getProperty for properties of type object with an array (curly braces escaped case)", function (assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY, this.oXmlView);
+			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
+			assert.deepEqual(mData, [{ "key" : "value"}], "returns array value");
+		});
+
 		QUnit.test("getProperty for properties controlled by a binding", function(assert) {
 			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
 			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
@@ -383,6 +391,14 @@ function(
 
 			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
 			assert.strictEqual(sStringifiedData, '{"key2":2}', "returns json value stringified and escaped");
+		});
+
+		QUnit.test("setProperty for properties of type array", function (assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			XmlTreeModifier.setProperty(oControl, "crossAppNavCallback", [{ key2 : 2}]);
+
+			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
+			assert.strictEqual(sStringifiedData, '[{"key2":2}]', "returns json value stringified and escaped");
 		});
 
 		QUnit.test("getPropertyBinding for bound properties", function(assert) {

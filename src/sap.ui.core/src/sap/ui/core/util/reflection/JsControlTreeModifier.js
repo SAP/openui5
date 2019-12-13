@@ -121,17 +121,18 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		setProperty: function (oControl, sPropertyName, oPropertyValue) {
+		setProperty: function (oControl, sPropertyName, vPropertyValue) {
 			var oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
 			this.unbindProperty(oControl, sPropertyName);
 
+			//For compatibility with XMLTreeModifier the value should be serializable
 			if (oMetadata) {
-				if (oMetadata.type === "object"){
-					//For compatibility with XMLTreeModifier only pass serializable data to properties of type object
-					JSON.stringify(oPropertyValue);
+				if (this._isSerializable(vPropertyValue)) {
+					var sPropertySetter = oMetadata._sMutator;
+					oControl[sPropertySetter](vPropertyValue);
+				} else {
+					throw new TypeError("Value cannot be stringified", "sap.ui.core.util.reflection.JsControlTreeModifier");
 				}
-				var sPropertySetter = oMetadata._sMutator;
-				oControl[sPropertySetter](oPropertyValue);
 			}
 		},
 
