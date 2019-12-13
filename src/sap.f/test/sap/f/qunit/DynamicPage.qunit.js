@@ -14,6 +14,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
 	"sap/ui/core/mvc/XMLView",
+	'sap/ui/core/Control',
+	'sap/ui/core/IntervalTrigger',
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
 ],
@@ -32,6 +34,8 @@ function (
 	mLibrary,
 	DynamicPageAccessibleLandmarkInfo,
 	XMLView,
+	Control,
+	IntervalTrigger,
 	QUnitUtils,
 	KeyCodes
 ) {
@@ -415,6 +419,60 @@ function (
 
 		// assert
 		assert.ok($pinButton.hasClass("sapUiHidden"), "The DynamicPage Header Pin Button is hidden");
+	});
+
+	QUnit.module("DynamicPage - Rendering lifecycle", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageWithPreserveHeaderOnScroll();
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("resizeListener is not called before the control is rerendered", function (assert) {
+
+		var oDynamicPage = this.oDynamicPage,
+			oSpy = sinon.spy(this.oDynamicPage, "_onChildControlsHeightChange"),
+			iHeightBeforeResize,
+			oDummyControl,
+			done = assert.async(),
+			DummyControl = Control.extend("sap.m.DummyControl", {
+				renderer: function(oRm) {
+					oRm.write("<div></div>");
+				}
+			});
+
+		DummyControl.prototype.onAfterRendering = function() {
+			// will cause the <code>ResizeHandler.prototype.checkSizes<code>
+			// to be executed *synchronously*
+			IntervalTrigger.addListener(function() {
+				// content non important
+			});
+		};
+
+		this.oDynamicPage.addEventDelegate({
+			"onAfterRendering": function() {
+				iHeightBeforeResize = oDynamicPage.getDomRef().offsetHeight;
+				oDummyControl = new DummyControl();
+				oDummyControl.addEventDelegate({
+					"onAfterRendering": function() {
+						// assert
+						assert.strictEqual(oSpy.callCount, 0, "dynamicPage resize listener not called");
+						done();
+					}
+				});
+
+				oDynamicPage.getHeader().addContent(oDummyControl);
+				oDynamicPage.getDomRef().style.height = (iHeightBeforeResize / 2) + "px";
+				oSpy.reset();
+				oDynamicPage.invalidate();
+				oDynamicPage.rerender();
+				oDynamicPage.removeEventDelegate(this);
+			}
+		});
+		this.oDynamicPage.placeAt("qunit-fixture");
 	});
 
 	QUnit.module("DynamicPage - Rendering - No Header", {
