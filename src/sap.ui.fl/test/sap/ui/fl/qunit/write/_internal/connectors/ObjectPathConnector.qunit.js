@@ -2,18 +2,22 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
-	"sap/ui/thirdparty/jquery",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ObjectPathConnector,
-	jQuery,
+	LoaderExtensions,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("When loading flex settings", {}, function() {
+	QUnit.module("When loading flex settings", {
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
 		QUnit.test("then settings are returned", function(assert) {
 			var oReturnedSettings = {
 				isVariantSharingEnabled: true
@@ -21,22 +25,41 @@ sap.ui.define([
 			var oReturnedJson = {
 				settings: oReturnedSettings
 			};
-			sandbox.stub(jQuery, "get").returns(jQuery.Deferred().resolve(oReturnedJson));
+			var sPath = "somePath";
 
-			return ObjectPathConnector.loadFeatures({path: "somePath"}).then(function (oSettings) {
-				assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
-				jQuery.get.restore();
-			});
+			sandbox.stub(LoaderExtensions, "loadResource")
+				.callThrough()
+				.withArgs({
+					dataType: "json",
+					url: sPath,
+					async: true
+				})
+				.resolves(oReturnedJson);
+
+			return ObjectPathConnector.loadFeatures({path: sPath})
+				.then(function (oSettings) {
+					assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
+				});
 		});
 
-		QUnit.test("then settings are not returned", function(assert) {
+		QUnit.test("then settings are not returned", function (assert) {
 			var oReturnedSettings = {};
 			var oReturnedJson = {};
-			sandbox.stub(jQuery, "get").returns(jQuery.Deferred().resolve(oReturnedJson));
+			var sPath = "somePath";
 
-			return ObjectPathConnector.loadFeatures({path: "somePath"}).then(function (oSettings) {
-				assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
-			});
+			sandbox.stub(LoaderExtensions, "loadResource")
+				.callThrough()
+				.withArgs({
+					dataType: "json",
+					url: sPath,
+					async: true
+				})
+				.resolves(oReturnedJson);
+
+			return ObjectPathConnector.loadFeatures({path: sPath})
+				.then(function (oSettings) {
+					assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
+				});
 		});
 	});
 
