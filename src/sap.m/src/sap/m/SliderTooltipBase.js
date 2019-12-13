@@ -52,6 +52,7 @@ function(Control, Library, SliderTooltipBaseRenderer) {
 		/**
 		 * Gets the value of the tooltip.
 		 *
+		 * @returns {float} The current value of the tooltip.
 		 * @protected
 		 */
 		SliderTooltipBase.prototype.getValue = function () {
