@@ -22,6 +22,16 @@ sap.ui.define([
 		browserName: Device.browser.BROWSER.SAFARI,
 		browserVersion: 13
 	});
+	aSupportedEnv.push({
+		system: Device.system.SYSTEMTYPE.TABLET,
+		browserName: Device.browser.BROWSER.SAFARI,
+		browserVersion: 13
+	});
+	aSupportedEnv.push({
+		system: Device.system.SYSTEMTYPE.PHONE,
+		browserName: Device.browser.BROWSER.SAFARI,
+		browserVersion: 13
+	});
 	var bSupportedEnv = aSupportedEnv.some(function(oSuppportedEnv) {
 		var bSupportedSystem = Device.system[oSuppportedEnv.system],
 			bSupportedBrowserName = oSuppportedEnv.browserName === Device.browser.name,
