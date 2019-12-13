@@ -63,5 +63,15 @@
 				<core:CustomData key="confirmButtonText" value="Save" />
 			</customData>
 		</Button>
+		<Button
+			text="Show Table Select Dialog with Responsive Padding"
+			class="sapUiSmallMarginBottom"
+			press=".handleTableSelectDialogPress">
+			<customData>
+				<core:CustomData key="resizable" value="true" />
+				<core:CustomData key="draggable" value="true" />
+				<core:CustomData key="responsivePadding" value="true" />
+			</customData>
+		</Button>
 	</l:VerticalLayout>
 </mvc:View>
