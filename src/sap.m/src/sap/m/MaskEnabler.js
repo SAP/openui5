@@ -122,7 +122,7 @@ sap.ui.define([
 				//For the sake of MaskInput, change event is decided inside _inputCompletedHandler, the reset of the InputBase.onfocusout
 				//follows
 				this.bFocusoutDueRendering = this.bRenderingPhase;
-				this.$().toggleClass("sapMFocus", false);
+				this.removeStyleClass("sapMFocus");
 				// remove touch handler from document for mobile devices
 				jQuery(document).off('.sapMIBtouchstart');
 
