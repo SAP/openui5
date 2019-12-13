@@ -21,6 +21,9 @@
 					<f:snappedContent>
 						<Label text="This is a subheading"/>
 					</f:snappedContent>
+					<f:snappedTitleOnMobile>
+						<Title text="Header Title On Phone"/>
+					</f:snappedTitleOnMobile>
 					<f:content>
 						<OverflowToolbar>
 							<GenericTag text="SR"
