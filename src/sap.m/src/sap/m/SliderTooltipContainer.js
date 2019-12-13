@@ -271,7 +271,7 @@ function(
 		/**
 		 * Gets Slider's tooltip position.
 		 *
-		 * @param {float} fValue
+		 * @param {float} fTooltipValue
 		 * @param {float} fMin Min property of the Slider/RangeSlider.
 		 * @param {float} fMax Max property of the Slider/RangeSlider.
 		 * @private
