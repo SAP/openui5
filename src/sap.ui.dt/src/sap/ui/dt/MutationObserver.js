@@ -60,7 +60,7 @@ sap.ui.define([
 		this._mutationOnTransitionend = this._callDomChangedCallback.bind(this, "MutationOnTransitionend");
 		this._mutationOnAnimationEnd = this._callDomChangedCallback.bind(this, "MutationOnAnimationEnd");
 		this._fireDomChangeOnScroll = this._fireDomChangeOnScroll.bind(this);
-		this._mutationOnResize = this._callDomChangedCallbackWithRoot.bind(this, "MutationOnResize");
+		this._mutationOnResize = this._callDomChangedOnResizeWithRoot.bind(this, "MutationOnResize");
 
 		window.addEventListener("transitionend", this._mutationOnTransitionend, true);
 		window.addEventListener("animationend", this._mutationOnAnimationEnd, true);
@@ -324,9 +324,15 @@ sap.ui.define([
 		}
 	};
 
-	MutationObserver.prototype._callDomChangedCallbackWithRoot = function (sMutationType) {
+	MutationObserver.prototype._callDomChangedOnResizeWithRoot = function (sMutationType) {
 		if (this._sRootId) {
-			this._callRelevantCallbackFunctions([this._sRootId], sMutationType);
+			if (this._iApplyStylesRequest) {
+				window.cancelAnimationFrame(this._iApplyStylesRequest);
+			}
+			this._iApplyStylesRequest = window.requestAnimationFrame(function () {
+				this._callRelevantCallbackFunctions([this._sRootId], sMutationType);
+				delete this._iApplyStylesRequest;
+			}.bind(this));
 		}
 	};
 

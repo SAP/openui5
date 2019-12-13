@@ -392,6 +392,20 @@ function (
 			this.oElementOverlay.applyStyles();
 			assert.equal(oIsVisibleSpy.callCount, 0, "the applyStyles function directly returned");
 		});
+
+		QUnit.test("when the overlay is being renamed several times in a row", function(assert) {
+			var fnDone = assert.async();
+			var fnHandlerSpy = sinon.spy(function () {
+				window.requestAnimationFrame(function () {
+					assert.strictEqual(fnHandlerSpy.callCount, 1, "then geometryChanged event is called just once");
+					fnDone();
+				});
+			});
+			this.oElementOverlay.attachEventOnce("geometryChanged", fnHandlerSpy);
+			['text1', 'text2', 'text3'].forEach(function (sText) {
+				this.oButton.setText(sText);
+			}, this);
+		});
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
