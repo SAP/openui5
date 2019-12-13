@@ -1,15 +1,16 @@
 <mvc:View
 	controllerName="sap.m.sample.ActionSheet.controller.ActionSheet"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Button text="Open Action Sheet"
-				press="handleOpen"
-				class="sapUiSmallMarginBottom" />
-		</l:content>
-	</l:VerticalLayout>
+	<Button
+		text="Open Action Sheet"
+		class="sapUiSmallMargin"
+		press=".onButtonPress">
+		<dependents>
+			<core:Fragment
+				fragmentName="sap.m.sample.ActionSheet.view.ActionSheet"
+				type="XML" />
+		</dependents>
+	</Button>
 </mvc:View>
