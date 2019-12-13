@@ -112,6 +112,22 @@
 						value="true" />
 				</customData>
 			</Button>
+			<Button
+				class="sapUiSmallMarginBottom"
+				text="Show Select Dialog with Responsive Padding"
+				press="handleSelectDialogPress">
+				<customData>
+					<core:CustomData
+						key="responsivePadding"
+						value="true" />
+					<core:CustomData
+						key="resizable"
+						value="true" />
+					<core:CustomData
+						key="draggable"
+						value="true" />
+				</customData>
+			</Button>
 			<Input
 				id="productInput"
 				type="Text"

@@ -112,6 +112,7 @@ function(
 	 * <li> On phones, the select dialog takes up the whole screen. </li>
 	 * <li> On desktop and tablet devices, the select dialog appears as a popover. </li>
 	 * </ul>
+	 * When using the <code>sap.m.SelectDialog</code> in SAP Quartz themes, the breakpoints and layout paddings could be determined by the dialog's width. To enable this concept and add responsive paddings to an element of the control, you have to add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--subHeader</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
