@@ -37,7 +37,8 @@
 			numberUnit="{CurrencyCode}"
 			markFavorite="{ff>/isFavorite}"
 			markFlagged="{ff>/isFlagged}"
-			showMarkers="true">
+			showMarkers="true"
+			class="sapUiResponsivePadding--header" >
 				<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
 				<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
 		</ObjectHeader>

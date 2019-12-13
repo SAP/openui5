@@ -683,8 +683,11 @@ sap.ui.define([
 
 		var bCondensed = oOH.getCondensed();
 
-		oRM.write("<div"); // Start Main container
+		oRM.write("<div");
 		oRM.writeControlData(oOH);
+		oRM.write(">");
+
+		oRM.write("<div"); // Start Main container
 		oRM.addClass("sapMOH");
 
 		// set contrast container, only when the background is not transparent
@@ -721,7 +724,7 @@ sap.ui.define([
 		}
 
 		oRM.write("<div class=\"sapMOHLastDivider\"></div>");
-
+		oRM.write("</div>");
 		oRM.write("</div>"); // End Main container\
 
 		this._cleanupNotRenderedChildControls(oRM, oOH);

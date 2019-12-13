@@ -225,8 +225,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("TooltipRendered", function(assert) {
-
-		assert.equal(jQuery("#" + ohBasicId).attr("title"), "Test tooltip for the header", "Tooltip should be rendered.");
+		assert.equal(jQuery("#" + ohBasicId).children()[0].title, "Test tooltip for the header", "Tooltip should be rendered.");
 	});
 
 	QUnit.test("IntroRendered", function(assert) {
@@ -399,8 +398,7 @@ sap.ui.define([
 		oH.placeAt('objectHeaders');
 
 		setTimeout(function() {
-
-			assert.ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible attribute should not cause new row.");
+			assert.ok(jQuery('#' + oH.getId() + ' > .sapMOH .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible attribute should not cause new row.");
 			oH.destroy();
 			done();
 		});
@@ -433,8 +431,7 @@ sap.ui.define([
 		oH.placeAt('objectHeaders');
 
 		setTimeout(function() {
-
-			assert.ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible status should not cause new row.");
+			assert.ok(jQuery('#' + oH.getId() + ' > .sapMOH .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible status should not cause new row.");
 			oH.destroy();
 			done();
 		});
@@ -471,12 +468,12 @@ sap.ui.define([
 
 	QUnit.test("Object Header has condensed style", function(assert) {
 
-		assert.equal(jQuery("#ohc1.sapMOHC").length, 1, "Object Header with condensed style is rendered");
+		assert.equal(jQuery("#ohc1 > .sapMOHC").length, 1, "Object Header with condensed style is rendered");
 	});
 
 	QUnit.test("Object Header attribute is displayed under title", function(assert) {
 
-		assert.equal(jQuery("#ohc1.sapMOHC > .sapMOHAttr").length, 1, "Object Header attribute is displayed under title");
+		assert.equal(jQuery("#ohc1 > .sapMOHC > .sapMOHAttr").length, 1, "Object Header attribute is displayed under title");
 	});
 
 	QUnit.test("NumberRendered", function(assert) {
@@ -487,7 +484,7 @@ sap.ui.define([
 
 	QUnit.test("Background is transparent", function(assert) {
 
-		assert.equal(jQuery("#ohc1.sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
+		assert.equal(jQuery("#ohc1 > .sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
 
 		// in some browsers css("background-color") instead of "transparent" returns "rgba(0, 0, 0, 0)"
 		var bBackgroundTransparent = (jQuery.sap.byId("ohc1").css("background-color") == "transparent") || (jQuery.sap.byId("ohc1").css("background-color") == "rgba(0, 0, 0, 0)");
@@ -496,8 +493,8 @@ sap.ui.define([
 
 	QUnit.test("Background is solid", function(assert) {
 
-		assert.equal(jQuery("#ohc2.sapMOHBgSolid").length, 1, "Solid background style should be set.");
-		assert.equal(jQuery.sap.byId("ohc2").css("background-color"), "rgb(255, 255, 255)", "Background color is solid");
+		assert.equal(jQuery("#ohc2 > .sapMOHBgSolid").length, 1, "Solid background style should be set.");
+		assert.equal(jQuery("#ohc2 > .sapMOHBgSolid").css("background-color"), "rgb(255, 255, 255)", "Background color is solid");
 	});
 
 	/******************************************************************/
@@ -958,21 +955,21 @@ sap.ui.define([
 	QUnit.module("OH Screen Reader support");
 
 	QUnit.test("OH has aria-labelledby", function(assert){
-		assert.ok(jQuery("#" + ohBasicId).attr("aria-labelledby"), "OH has attribute aria-labelledby");
+		assert.ok(jQuery("#" + ohBasicId + ">.sapMOH").attr("aria-labelledby"), "OH has attribute aria-labelledby");
 	});
 
 	QUnit.test("OH has attribute role=region", function(assert){
-		assert.ok(jQuery("#" + ohBasicId).attr("role"), "OH has attribute role");
-		assert.equal(jQuery("#" + ohBasicId).attr("role"), "region", "role is region");
+		assert.ok(jQuery("#" + ohBasicId + ">.sapMOH").attr("role"), "OH has attribute role");
+		assert.equal(jQuery("#" + ohBasicId + ">.sapMOH").attr("role"), "region", "role is region");
 	});
 
 	QUnit.test("OH Condensed has aria-labelledby", function(assert){
-		assert.ok(jQuery("#" + ohCondensedId).attr("aria-labelledby"), "OH condensed has attribute aria-labelledby");
+		assert.ok(jQuery("#" + ohCondensedId + ">.sapMOH").attr("aria-labelledby"), "OH condensed has attribute aria-labelledby");
 	});
 
 	QUnit.test("OH Condensed has attribute role=region", function(assert){
-		assert.ok(jQuery("#" + ohCondensedId).attr("role"), "OH condensed has attribute role");
-		assert.equal(jQuery("#" + ohCondensedId).attr("role"), "region", "role is region");
+		assert.ok(jQuery("#" + ohCondensedId + ">.sapMOH").attr("role"), "OH condensed has attribute role");
+		assert.equal(jQuery("#" + ohCondensedId + ">.sapMOH").attr("role"), "region", "role is region");
 	});
 
 	QUnit.test("Active title has aria attributes", function(assert){
@@ -1424,7 +1421,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.ok(jQuery("#" + "contrastId").hasClass("sapContrastPlus"), "Contrast container class is rendered");
+		assert.ok(jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is rendered");
 
 		// cleanup
 		oObjectHeader.destroy();
@@ -1443,7 +1440,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.ok(!jQuery("#" + "contrastId").hasClass("sapContrastPlus"), "Contrast container class is not rendered since the background is Transparent");
+		assert.ok(!jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is not rendered since the background is Transparent");
 
 		// cleanup
 		oObjectHeader.destroy();
@@ -1462,13 +1459,13 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.ok(!jQuery("#" + "contrastId").hasClass("sapContrastPlus"), "Contrast container class is not rendered since the background is Transparent");
+		assert.ok(!jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is not rendered since the background is Transparent");
 
 		oObjectHeader.setBackgroundDesign(BackgroundDesign.Solid);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.ok(jQuery("#" + "contrastId").hasClass("sapContrastPlus"), "Contrast container class is rendered when the background is Solid");
+		assert.ok(jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is rendered when the background is Solid");
 
 		// cleanup
 		oObjectHeader.destroy();
@@ -1527,5 +1524,20 @@ sap.ui.define([
 		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return false for - ObjectHeader with no markers aggregation and showMarkers property set to false and markFavourite set to false");
 
 		oObjectHeader.destroy();
+	});
+	QUnit.module("Responsive Padding Enablement");
+
+	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(ObjectHeader.prototype, "_initResponsivePaddingsEnablement"),
+			oTestPage = new ObjectHeader({}).placeAt("qunit-fixture");
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Method _initResponsivePaddingsEnablement called on init of control");
+		assert.ok(oSpy.calledOn(oTestPage), "The spy is called on the tested control instance");
+
+		//clean
+		oSpy.restore();
+		oTestPage.destroy();
 	});
 });

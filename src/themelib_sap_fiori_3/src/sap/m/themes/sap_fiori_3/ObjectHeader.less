@@ -39,6 +39,21 @@ a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 	outline-offset: -1px;
 }
 
+html.sap-tablet.sapUiMedia-Std-Tablet .sapUiResponsivePadding--header .sapMOHRTabs .sapMITH,
+html.sap-desktop.sapUiMedia-Std-Tablet .sapUiResponsivePadding--header .sapMOHRTabs .sapMITH,
+html .sapUiContainer-Medium .sapUiResponsivePadding--header .sapMOHRTabs .sapMITH,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapUiResponsivePadding--header .sapMOHRTabs .sapMITH {
+	margin-left: -3rem;
+	margin-right: -3rem;
+}
+
+html.sap-tablet.sapUiMedia-Std-Tablet .sapUiResponsivePadding--header .sapMOHRTabs .sapMITBScrollContainer,
+html.sap-desktop.sapUiMedia-Std-Tablet .sapUiResponsivePadding--header .sapMOHRTabs .sapMITBScrollContainer,
+html .sapUiContainer-Medium .sapUiResponsivePadding--header .sapMOHRTabs .sapMITBScrollContainer,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapUiResponsivePadding--header .sapMOHRTabs .sapMITBScrollContainer {
+	margin: 0 2.75rem;
+}
+
 html[data-sap-ui-browser ^= "ie"] {
 	.sapMOH {
 		.sapMOHTitleActive, .sapMOHTitle {
