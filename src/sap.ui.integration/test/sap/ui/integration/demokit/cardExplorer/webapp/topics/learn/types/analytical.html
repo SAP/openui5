@@ -13,6 +13,8 @@
 	</script>
 
 	<link  href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
 	<script src="../../google-code-prettify/run_prettify.js"></script>
 
 </head>
@@ -135,7 +137,7 @@
 		<h2 id="example">Example</h2>
 		<p>Define the type and data for the card:
 		</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"sap.card": {
 		"type": "Analytical",
 		"header": {},
@@ -145,7 +147,7 @@
 		<p>
 			Define the header of the card:
 		</p>
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"header": {
 	   "type": "Numeric",
 		"data": {
@@ -182,7 +184,7 @@
 }</pre>
 		<p>Define the content of the card:
 		</p>
-		<pre class="prettyprint">"content": {
+		<pre class="prettyprint  lang-js">"content": {
 	"chartType": "StackedColumn",
 	"legend": {
 		"visible": false
@@ -225,7 +227,7 @@
 }</pre>
 		<p>The content of the revenue.json which we are requesting:
 		</p>
-		<pre class="prettyprint">"list": [
+		<pre class="prettyprint  lang-js">"list": [
 	{
 	  "Week": "CW14",
 	  "Revenue": 431000.22,
@@ -299,7 +301,7 @@
 ]</pre>
 
 		<p>Create the widget card that can actually use the manifest.json which we created:</p>
-		<pre class="prettyprint">
+		<pre class="prettyprint  lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;</pre>

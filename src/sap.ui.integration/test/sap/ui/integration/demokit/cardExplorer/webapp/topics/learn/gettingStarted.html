@@ -14,6 +14,8 @@
 	</script>
 
 	<link href="../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../css/prettify-light.css" rel="stylesheet">
+
 	<script src="../google-code-prettify/run_prettify.js"></script>
 
 </head>
@@ -41,7 +43,7 @@
 			Set the type of the card to "List".
 		</p>
 
-		<pre class="prettyprint">{
+		<pre class="prettyprint lang-js">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card"
@@ -59,7 +61,7 @@
 			Add a header property with title, subTitle, and icon.
 		</p>
 
-		<pre class="prettyprint">{
+		<pre class="prettyprint lang-js">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card"
@@ -84,7 +86,7 @@
 			Add an actions property with an action of type "Navigation". Set a URL to navigate to, when the header is clicked.
 		</p>
 
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card"
@@ -117,7 +119,7 @@
 			To bind the item title and description you can use UI5's binding syntax.
 		</p>
 
-		<pre class="prettyprint">{
+		<pre class="prettyprint  lang-js">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card"
@@ -167,15 +169,37 @@
 }</pre>
 
 		<h2 id="step5">
-			Step 5: Use the card in an XML View
+			Step 5: Integrate the card in a host environment
 		</h2>
+		<h3>
+			Use the card in an HTML Page
+		</h3>
+		<p>Create a UI Integration Card inside an HTML Page that points to the created manifest:</p>
 
-		<p>Finally create a widget card inside an XML View that points to the created manifest:</p>
+		<pre class="prettyprint lang-html">
+	&lt;html&gt;
+		&lt;head&gt;
+			&lt;script
+				id="sap-ui-bootstrap"
+				src="https://ui5.sap.com/resources/sap-ui-integration.js"&gt;
+			&lt;/script&gt;
+		&lt;/head&gt;
+		&lt;body&gt;
+			&lt;ui-integration-card manifest="./manifest.json"&gt;&lt;/ui-integration-card&gt;
+		&lt;/body&gt;
+	&lt;/html&gt;
+		</pre>
+		<h3>
+			Use the card in an XML View
+		</h3>
+		<p>Create a UI Integration Card inside an XML View that points to the created manifest:</p>
 
-		<pre class="prettyprint">
-&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
-	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
-&lt;/mvc:View&gt;</pre>
+		<pre class="prettyprint  lang-xml">
+	&lt;mvc:View xmlns:ui-integration="sap.ui.integration.widgets"&gt;
+		&lt;ui-integration:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+	&lt;/mvc:View&gt;
+
+</pre>
 
 	</div>
 	<div class="navigation">
