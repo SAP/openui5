@@ -474,7 +474,7 @@ sap.ui.define([
 		var sPriority,
 			iControlSize;
 
-		sPriority = OverflowToolbar._getControlPriority(oControl);
+		sPriority = this._getControlPriority(oControl);
 		iControlSize = this._calculateControlSize(oControl);
 		this._aControlSizes[oControl.getId()] = iControlSize;
 
@@ -558,7 +558,7 @@ sap.ui.define([
 				oPriorityOrder = OverflowToolbar._oPriorityOrder;
 
 			if (iControlGroup) {
-				sControlPriority = OverflowToolbar._getControlPriority(oControl);
+				sControlPriority = this._getControlPriority(oControl);
 				iControlIndex = this._getControlIndex(oControl);
 
 				oGroups[iControlGroup] = oGroups[iControlGroup] || [];
@@ -631,8 +631,8 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._sortByPriorityAndIndex = function (vControlA, vControlB) {
 		var oPriorityOrder = OverflowToolbar._oPriorityOrder,
-			sControlAPriority = OverflowToolbar._getControlPriority(vControlA),
-			sControlBPriority = OverflowToolbar._getControlPriority(vControlB),
+			sControlAPriority = this._getControlPriority(vControlA),
+			sControlBPriority = this._getControlPriority(vControlB),
 			iPriorityCompare = oPriorityOrder[sControlAPriority] - oPriorityOrder[sControlBPriority];
 
 		if (iPriorityCompare !== 0) {
@@ -759,8 +759,8 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._hasControlsToBeShownInPopover = function () {
 		return this._aMovableControls.some(function (oControl) {
-			return OverflowToolbar._getControlPriority(oControl) !== OverflowToolbarPriority.Disappear;
-		});
+			return this._getControlPriority(oControl) !== OverflowToolbarPriority.Disappear;
+		}, this);
 	};
 
 	/*
@@ -1103,9 +1103,9 @@ sap.ui.define([
 		this.getContent().forEach(function (oControl) {
 			if (oControl) {
 				this._removeContentFromControlsCollections(oControl);
-				this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+				this._moveControlInSuitableCollection(oControl, this._getControlPriority(oControl));
 			}
-		}.bind(this));
+		}, this);
 	};
 
 	/**
@@ -1166,7 +1166,7 @@ sap.ui.define([
 		this._resetAndInvalidateToolbar(false);
 
 		if (oControl) {
-			this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+			this._moveControlInSuitableCollection(oControl, this._getControlPriority(oControl));
 		}
 
 		return this._callToolbarMethod("addContent", arguments);
@@ -1177,7 +1177,7 @@ sap.ui.define([
 		this._resetAndInvalidateToolbar(false);
 
 		if (oControl) {
-			this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+			this._moveControlInSuitableCollection(oControl, this._getControlPriority(oControl));
 		}
 
 		return this._callToolbarMethod("insertContent", arguments);
@@ -1437,11 +1437,10 @@ sap.ui.define([
 
 	/**
 	 * Returns the control priority based on the layout data (old values are converted) or the priority of the group, which is defined by the max priority of its items.
-	 * @static
 	 * @param vControl array of controls or single control
 	 * @private
 	 */
-	OverflowToolbar._getControlPriority = function (vControl) {
+	OverflowToolbar.prototype._getControlPriority = function (vControl) {
 		var bImplementsIOTBContent,
 			oLayoutData,
 			sPriority,
