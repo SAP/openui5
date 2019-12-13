@@ -112,6 +112,16 @@ function (
 		});
 	});
 
+	QUnit.test("Avatar theme changing logic", function (assert) {
+		var oSpy = sinon.spy(this.oAvatarGroup, "_onResize");
+
+		this.oAvatarGroup.onThemeChanged({ theme: "mock" });
+
+		assert.strictEqual(oSpy.callCount, 1, "_onResize method was called");
+
+		oSpy.restore();
+	});
+
 	QUnit.module("AvatarGroupItems Creation", {
 		beforeEach: setupFunction,
 		afterEach: teardownFunction
