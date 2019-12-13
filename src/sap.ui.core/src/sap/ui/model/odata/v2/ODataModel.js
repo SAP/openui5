@@ -4074,8 +4074,8 @@ sap.ui.define([
 
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
 
-		oRequest = this._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oPayload, sETag);
-
+		oRequest = this._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oPayload, sETag,
+			undefined, true);
 
 		//for createEntry requests we need to flag request again
 		if (bCreated) {
