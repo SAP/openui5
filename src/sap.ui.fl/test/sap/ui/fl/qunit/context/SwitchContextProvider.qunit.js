@@ -25,21 +25,14 @@ function(
 		}
 	}, function() {
 		QUnit.test("when calling loadData", function(assert) {
-			var mSwitches = {bFunction1: true, bFunction2: true};
-
-			sandbox.stub(Cache, "getSwitches").returns(mSwitches);
 			return this.oSwitchContextProvider.loadData().then(function(mValue) {
-				var mValueExp = {};
-				mValueExp["bFunction1"] = true;
-				mValueExp["bFunction2"] = true;
-				assert.deepEqual(mValue, mValueExp, " then a map with the switched-on business functions as keys is returned");
+				assert.deepEqual(mValue, {}, " then an empty object is returned");
 			});
 		});
 
 		QUnit.test("when calling getValueHelp", function(assert) {
 			return this.oSwitchContextProvider.getValueHelp().then(function(mValue) {
-				var mValueExp = {};
-				assert.deepEqual(mValue, mValueExp, " then an empty object is returned");
+				assert.deepEqual(mValue, {}, " then an empty object is returned");
 			});
 		});
 

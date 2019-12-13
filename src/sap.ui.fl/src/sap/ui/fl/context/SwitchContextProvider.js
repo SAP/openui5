@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/context/BaseContextProvider",
-	"sap/ui/fl/Cache"
+	"sap/ui/fl/context/BaseContextProvider"
 ], function(
-	BaseContextProvider,
-	Cache
+	BaseContextProvider
 ) {
 	"use strict";
 
@@ -43,7 +41,7 @@ sap.ui.define([
 	});
 
 	SwitchContextProvider.prototype.loadData = function() {
-		return Promise.resolve(Cache.getSwitches());
+		return Promise.resolve({});
 	};
 
 	SwitchContextProvider.prototype.getValueHelp = function() {

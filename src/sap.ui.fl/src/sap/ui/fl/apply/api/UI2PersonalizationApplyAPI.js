@@ -49,7 +49,7 @@ sap.ui.define([
 				return Promise.reject(new Error("not all mandatory properties were provided for the loading of the personalization"));
 			}
 
-			return Cache.getPersonalization(mPropertyBag.reference, mPropertyBag.appVersion, mPropertyBag.containerKey, mPropertyBag.itemName);
+			return Cache.getPersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
 		}
 	};
 

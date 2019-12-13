@@ -66,13 +66,10 @@ sap.ui.define([
 				return Promise.resolve(oView);
 			}
 
-			// disabled to not send multiple requests to the backend
-			// blocking call
-			// return FlexState.initForReference({...});
-
 			var sFlexReference = Utils.getComponentClassName(oAppComponent);
 			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 			var oFlexController = FlexControllerFactory.create(sFlexReference, sAppVersion);
+
 			return oFlexController.processXmlView(oView, mProperties)
 			.then(function() {
 				Log.debug("flex processing view " + mProperties.id + " finished");

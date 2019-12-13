@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/context/ContextManager",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/core/Component",
@@ -31,7 +30,6 @@ sap.ui.define([
 	Cache,
 	Applier,
 	ContextManager,
-	Settings,
 	Storage,
 	VariantController,
 	Component,
@@ -612,19 +610,15 @@ sap.ui.define([
 			switch (oChange.getPendingAction()) {
 				case "NEW":
 					aPromises.push(CompatibilityConnector.create(oChange.getDefinition(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
-						if (Cache.isActive()) {
-							oChange.setState(Change.states.PERSISTED);
-							Cache.addChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
-						}
+						oChange.setState(Change.states.PERSISTED);
+						Cache.addChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
 					}.bind(this)));
 					break;
 				case "UPDATE":
 					aPromises.push(CompatibilityConnector.update(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
-						if (Cache.isActive()) {
-							oChange.setState(Change.states.PERSISTED);
-							Cache.updateChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
-						}
+						oChange.setState(Change.states.PERSISTED);
+						Cache.updateChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
 					}.bind(this)));
 					break;
@@ -634,9 +628,7 @@ sap.ui.define([
 						if (oChange.getPendingAction() === "DELETE") {
 							delete this._mVariantsChanges[sStableId][sChangeId];
 						}
-						if (Cache.isActive()) {
-							Cache.deleteChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
-						}
+						Cache.deleteChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
 					}.bind(this)));
 					break;
@@ -657,16 +649,12 @@ sap.ui.define([
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
 	 * @param {object} oAppComponent - Component instance used to prepare the IDs (e.g. local)
-	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
-	 * @param {object} mPropertyBag.appDescriptor - Manifest belonging to actual component
-	 * @param {string} mPropertyBag.siteId - ID of the site belonging to actual component
 	 * @see sap.ui.fl.Change
 	 * @returns {Promise} Promise resolving with a getter for the changes map
 	 * @public
 	 */
-	ChangePersistence.prototype.loadChangesMapForComponent = function (oAppComponent, mPropertyBag) {
-		mPropertyBag.component = !isEmptyObject(oAppComponent) && oAppComponent;
-		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
+	ChangePersistence.prototype.loadChangesMapForComponent = function (oAppComponent) {
+		return this.getChangesForComponent({component: oAppComponent}).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {
 			//Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
@@ -766,11 +754,9 @@ sap.ui.define([
 	 *
 	 * @param {string} sViewId the id of the view, changes should be retrieved for
 	 * @param {map} mPropertyBag contains additional data that are needed for reading of changes
-	 * @param {object} mPropertyBag.appDescriptor - Manifest that belongs to actual component
-	 * @param {string} [mPropertyBag.siteId] - id of the site that belongs to actual component
 	 * @param {string} mPropertyBag.viewId - id of the view
 	 * @param {string} mPropertyBag.name - name of the view
-	 * @param {sap.ui.core.Component} mPropertyBag.component - Application component for the view
+	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component for the view
 	 * @param {string} mPropertyBag.componentId - responsible component's id for the view
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - responsible modifier
 	 * @returns {Promise} resolving with an array of changes

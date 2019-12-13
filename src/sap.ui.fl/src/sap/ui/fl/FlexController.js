@@ -471,11 +471,8 @@ sap.ui.define([
 	FlexController.prototype.processXmlView = function (oView, mPropertyBag) {
 		var oViewComponent = Component.get(mPropertyBag.componentId);
 		var oAppComponent = Utils.getAppComponentForControl(oViewComponent);
-		var oManifest = oAppComponent.getManifest();
 
-		mPropertyBag.siteId = Utils.getSiteId(oAppComponent);
 		mPropertyBag.appComponent = oAppComponent;
-		mPropertyBag.appDescriptor = oManifest;
 		mPropertyBag.modifier = XmlTreeModifier;
 		mPropertyBag.view = oView;
 

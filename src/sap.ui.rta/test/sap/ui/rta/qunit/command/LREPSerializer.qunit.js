@@ -1,6 +1,8 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Component",
+	"sap/ui/core/Manifest",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/rta/command/LREPSerializer",
@@ -15,6 +17,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Component,
+	Manifest,
 	CommandFactory,
 	DesignTimeMetadata,
 	CommandSerializer,
@@ -33,39 +37,63 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 	var COMPONENT_NAME = "someName";
+	var oRawManifest = {
+		"sap.app" : {
+			applicationVersion : {
+				version : "1.2.3"
+			},
+			id: COMPONENT_NAME
+		}
+	};
+	var oManifest = new Manifest(oRawManifest);
 	var oMockedAppComponent = {
-		getLocalId: function () {
+		getLocalId: function() {
 			return undefined;
 		},
-		addPropagationListener: function () {
-
-		},
-		getPropagationListeners: function () {
+		addPropagationListener: function() {},
+		getPropagationListeners: function() {
 			return [];
 		},
-		getManifestEntry: function () {
+		getManifestEntry: function() {
 			return {};
 		},
-		getMetadata: function () {
+		getMetadata: function() {
 			return {
-				getName: function () {
+				getName: function() {
 					return COMPONENT_NAME;
 				}
 			};
 		},
-		getManifest: function () {
-			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
-					},
-					id: COMPONENT_NAME
-				}
-			};
+		getManifest: function() {
+			return oRawManifest;
 		},
-		getModel: function () {return oModel;} // eslint-disable-line no-use-before-define
+		getComponentData: function() {},
+		getId: function() {
+			return "componentId";
+		},
+		getManifestObject: function() {
+			return oManifest;
+		},
+		getModel: function() {return oModel;} // eslint-disable-line no-use-before-define
 	};
+	// var oAppComponent = new UIComponent(COMPONENT_NAME, {
+	// 	manifest: {
+	// 		"sap.app" : {
+	// 			applicationVersion : {
+	// 				version : "1.2.3"
+	// 			},
+	// 			id: COMPONENT_NAME
+	// 		}
+	// 	},
+	// 	model: oModel,
+	// 	name: COMPONENT_NAME
+	// });
 	var oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+	sinon.stub(Component, "get")
+		.callThrough()
+		.withArgs("componentId")
+		.returns(oMockedAppComponent);
+
 
 	var oData = {
 		variantMgmtId1: {
@@ -111,16 +139,16 @@ sap.ui.define([
 		beforeEach : function() {
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return RtaQunitUtils.clear(oMockedAppComponent)
-			.then(function () {
+			.then(function() {
 				oChangeRegistry.registerControlsForChanges({
 					"sap.m.Input" : {
 						hideControl : {
-							completeChangeContent : function () {
+							completeChangeContent : function() {
 							},
-							applyChange : function () {
+							applyChange : function() {
 								return Promise.resolve();
 							},
-							revertChange : function () {
+							revertChange : function() {
 							}
 						}
 					}
@@ -941,7 +969,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 		oGetAppComponentForControlStub.restore();
 	});

@@ -63,7 +63,7 @@ sap.ui.define([
 				elementId: "selector",
 				elementType: "sap.ui.core.Control",
 				appComponent: {
-					id: "appComponent"
+					getId: function() {return "appComponent";}
 				}
 			};
 
@@ -126,7 +126,7 @@ sap.ui.define([
 			mockDescriptorController(mPropertyBag.selector, { saveAll : fnDescriptorStub });
 
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges")
-				.withArgs(Object.assign({selector: mPropertyBag.selector, invalidateCache: true}))
+				.withArgs(Object.assign({selector: mPropertyBag.selector, invalidateCache: true, componentId: "appComponent"}))
 				.resolves(sReturnValue);
 
 			return PersistenceWriteAPI.save(mPropertyBag)
