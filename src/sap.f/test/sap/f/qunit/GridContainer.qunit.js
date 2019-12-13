@@ -599,11 +599,11 @@ function (
 
 			// prepare settings for each layout
 			this.mTestSettings = {
-				"layoutXL": new GridContainerSettings({rowSize: "90px", columnSize: "90px", gap: "20px"}),
-				"layoutL": new GridContainerSettings({rowSize: "80px", columnSize: "80px", gap: "16px"}),
-				"layoutM": new GridContainerSettings({rowSize: "60px", columnSize: "60px", gap: "8px"}),
-				"layoutS": new GridContainerSettings({rowSize: "40px", columnSize: "40px", gap: "4px"}),
-				"layoutXS": new GridContainerSettings({rowSize: "20px", columnSize: "20px", gap: "2px"})
+				"layoutXL": new GridContainerSettings({rowSize: "90px", columnSize: "90px", gap: "20px", columns: 14 }),
+				"layoutL": new GridContainerSettings({rowSize: "80px", columnSize: "80px", gap: "16px", columns: 10 }),
+				"layoutM": new GridContainerSettings({rowSize: "60px", columnSize: "60px", gap: "8px", columns: 6}),
+				"layoutS": new GridContainerSettings({rowSize: "40px", columnSize: "40px", gap: "4px", columns: 4}),
+				"layoutXS": new GridContainerSettings({rowSize: "20px", columnSize: "20px", gap: "2px", columns: 4})
 			};
 			for (var sLayout in this.mTestSettings) {
 				this.oGrid.setAggregation(sLayout, this.mTestSettings[sLayout]);
@@ -655,6 +655,14 @@ function (
 	QUnit.test("Breakpoints when containerQuery is true", function (assert) {
 		// Arrange
 		this.oGrid.setContainerQuery(true);
+
+		// Using an actual control here as the IE polyfill
+		// does its calculations based on actual existing elements
+		var oTile = new GenericTile({
+			header: "tile"
+		});
+		this.oGrid.addItem(oTile);
+
 		var oContainer = new Panel({content: this.oGrid});
 		oContainer.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
