@@ -1,27 +1,23 @@
 <mvc:View
 	controllerName="sap.m.sample.MessageBoxInfo.controller.MessageBoxInfo"
-	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Button
-				text="Show Details - Text"
-				class="sapUiSmallMarginBottom"
-				press="showTextInfo"
-				width="250px"/>
-			<Button
-				text="Show Details - FormattedText"
-				class="sapUiSmallMarginBottom"
-				press="showFormattedTextInfo"
-				width="250px"/>
-			<Button
-				text="Show Details - JSON"
-				class="sapUiSmallMarginBottom"
-				press="showJSONInfo"
-				width="250px"/>
-		</l:content>
+	xmlns:l="sap.ui.layout">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Button
+			text="Show Details - Text"
+			class="sapUiSmallMarginBottom"
+			press="showTextInfo"
+			width="250px"/>
+		<Button
+			text="Show Details - FormattedText"
+			class="sapUiSmallMarginBottom"
+			press="showFormattedTextInfo"
+			width="250px"/>
+		<Button
+			text="Show Details - JSON"
+			class="sapUiSmallMarginBottom"
+			press="showJSONInfo"
+			width="250px"/>
 	</l:VerticalLayout>
 </mvc:View>

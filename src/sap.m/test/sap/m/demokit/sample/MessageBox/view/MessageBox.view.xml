@@ -1,56 +1,55 @@
 <mvc:View
 	controllerName="sap.m.sample.MessageBox.controller.MessageBox"
-	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Text
-				text="Default Behavior"/>
-			<Button
-				text="Confirm"
-				class="sapUiSmallMarginBottom"
-				press="handleConfirmationMessageBoxPress"
-				width="250px"/>
-			<Button
-				text="Alert"
-				class="sapUiSmallMarginBottom"
-				press="handleAlertMessageBoxPress"
-				width="250px"/>
-			<Button
-				text="Error"
-				class="sapUiSmallMarginBottom"
-				press="handleErrorMessageBoxPress"
-				width="250px"/>
-			<Button
-				text="Info"
-				class="sapUiSmallMarginBottom"
-				press="handleInfoMessageBoxPress"
-				width="250px"/>
-			<Button
-				text="Warning"
-				class="sapUiSmallMarginBottom"
-				press="handleWarningMessageBoxPress"
-				width="250px"/>
-			<Button
-				text="Success"
-				class="sapUiSmallMarginBottom"
-				press="handleSuccessMessageBoxPress"
-				width="250px"/>
-			<Text
-				text="More Actions"/>
-			<Button
-				text="Error with custom action"
-				class="sapUiSmallMarginBottom"
-				press="handleError2MessageBoxPress"
-				width="250px"/>
-			<Button
-				text="Warning with two actions"
-				class="sapUiSmallMarginBottom"
-				press="handleWarning2MessageBoxPress"
-				width="250px"/>
-			</l:content>
+	xmlns:l="sap.ui.layout">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Text text="Default Behavior" />
+		<Button
+			text="Confirm"
+			class="sapUiSmallMarginBottom"
+			press="handleConfirmationMessageBoxPress"
+			width="280px" />
+		<Button
+			text="Alert"
+			class="sapUiSmallMarginBottom"
+			press="handleAlertMessageBoxPress"
+			width="280px" />
+		<Button
+			text="Error"
+			class="sapUiSmallMarginBottom"
+			press="handleErrorMessageBoxPress"
+			width="280px" />
+		<Button
+			text="Info"
+			class="sapUiSmallMarginBottom"
+			press="handleInfoMessageBoxPress"
+			width="280px" />
+		<Button
+			text="Warning"
+			class="sapUiSmallMarginBottom"
+			press="handleWarningMessageBoxPress"
+			width="280px" />
+		<Button
+			text="Success"
+			class="sapUiSmallMarginBottom"
+			press="handleSuccessMessageBoxPress"
+			width="280px" />
+		<Text text="More Actions"/>
+		<Button
+			text="Error with custom action"
+			class="sapUiSmallMarginBottom"
+			press="handleError2MessageBoxPress"
+			width="280px" />
+		<Button
+			text="Warning with two actions"
+			class="sapUiSmallMarginBottom"
+			press="handleWarning2MessageBoxPress"
+			width="280px" />
+		<Button
+			text="Message Box with Responsive Padding"
+			class="sapUiSmallMarginBottom"
+			press="handleResponsivePaddingMessageBox"
+			width="280px" />
 	</l:VerticalLayout>
 </mvc:View>
