@@ -115,12 +115,12 @@ function(
 	};
 
 	/**
-	 * Adds new task into the list
+	 * Adds new task into the list.
 	 * @param {object} mTask - Task definition map
 	 * @param {string} mTask.type - Task type
-	 * @param {function|string} [vDoubleIdentifier] - Identifier for outdated tasks in TaskManager. The identifier is invoked for each element in Tasklist to generate
-	 * 												  the criterion by which the existing tasks are compared with the new one. The existing tasks that are identified
-	 * 												  by vDoubleIdentifier are removed before adding the new task.
+	 * @param {function|string} [vDoubleIdentifier] - Identifier for outdated tasks in <code>TaskManager</code>. The identifier is invoked for each element in task list to generate
+	 * the criterion by which the existing tasks are compared with the new one. The existing tasks that are identified
+	 * by <code>vDoubleIdentifier</code> are removed before adding the new task.
 	 * @return {number} Task ID
 	 */
 	TaskManager.prototype.add = function (mTask, vDoubleIdentifier) {

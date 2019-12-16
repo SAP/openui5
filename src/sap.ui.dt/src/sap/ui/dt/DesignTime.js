@@ -979,7 +979,7 @@ function (
 	 * @param {sap.ui.base.ManagedObject} oElement - Element for which the overlay cannot be created
 	 * @param {string} sParentElementClassName - Class name of the parent element relatively to oElement
 	 * @param {string} sAggregationName - Aggregation name in parent element where oElement is located
-	 * @returns {{severity: string, errorObject: Error, message: string}} Error map.
+	 * @returns {{severity: string, errorObject: Error, message: string}} Error map
 	 * @private
 	 */
 	DesignTime.prototype._enrichChildCreationError = function (oError, oElement, sParentElementClassName, sAggregationName) {
@@ -1362,7 +1362,7 @@ function (
 
 	/**
 	 * Returns the current status of the designTime instance
-	 * @returns {string} DesignTime status.
+	 * @returns {string} DesignTime status
 	 * @public
 	 */
 	DesignTime.prototype.getStatus = function () {

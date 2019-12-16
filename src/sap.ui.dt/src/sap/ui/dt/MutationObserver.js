@@ -152,22 +152,22 @@ sap.ui.define([
 	};
 
 	/*
-	 * Searching for closest element that is registered but we also need to consider the scrollbar usecase.
-	 * Unfortunately we are not notified from MutationObserver when scrollbars appears on parent controls. Let's asume
-	 * we got a mutation from a node inside a container that is also mutated with a new scrollbar (but without own mutations).
-	 * Then we need to handle the mutation not only for the triggering element but for the container element that mutated with
-	 * the scrollbar. In this regard we need to consider the following possible cases:
+	 * Searches for the closest element that is registered. However, we also need to consider the scrollbar use case.
+	 * There is no notification from <code>MutationObserver</code> when scrollbars appear on parent controls.
+	 * Example: A mutation from a node inside a container is detected that is also mutated with a new scrollbar (but without own mutations).
+	 * This means that the mutation has to be handled not only for the triggering element but also for the container element that mutated with the scrollbar.
+	 * The following cases are possible and must be considered:
 	 *
 	 *  Return values:
-	 *		1. registered element with scrollbar (on the same element or in children) found
-	 *			=> returns the last registered element id
-	 *		2. registered element found but no scrollbar element available on parents
-	 *			=> returns the closest element id registered on mutated node
-	 *		3. registered element with scrollbar element available on parents but not registered itself and without own registered parents found
-	 *			=> returns the closest element id registered on mutated node
-	 *		4. registered element with scrollbar element available on parents and is registered itself of with own registered parents found
-	 *			=> returns the closest element id registered on scrollbar element
-	 *		5. no registered element available
+	 *		1. Registered element with scrollbar (on the same element or in children) found
+	 *			=> returns the last registered element ID
+	 *		2. Registered element found but no scrollbar element available on parents
+	 *			=> returns the closest element ID registered on mutated node
+	 *		3. Registered element with scrollbar element available on parents but not registered itself and without own registered parents found
+	 *			=> returns the closest element ID registered on mutated node
+	 *		4. Registered element with scrollbar element available on parents and is registered itself of with own registered parents found
+	 *			=> returns the closest element ID registered on scrollbar element
+	 *		5. No registered element available
 	 *			=> undefined
 	 */
 	MutationObserver.prototype._getClosestParentIdForNodeRegisteredWithScrollbar = function (sNodeId, oNode) {
@@ -211,7 +211,7 @@ sap.ui.define([
 			&& !DOMUtil.contains("sap-ui-preserve", oNode)
 
 		) {
-			// 4.1, OR the closest element need to be white listed
+			// 4.1, OR the closest element need to be registered
 			var sRelevantElementId = this._getClosestParentIdForNodeRegisteredWithScrollbar(sNodeId, oNode);
 			if (sRelevantElementId) {
 				return sRelevantElementId;
@@ -335,7 +335,7 @@ sap.ui.define([
 		// The line below is required to avoid double scrollbars on the browser
 		// when the document is scrolled to negative values (relevant for Mac)
 		if (this._bHandlerRegistred && oTarget !== document) {
-			// Target Node is inside one of the white listed element
+			// Target Node is inside one of the registered element
 			var sTargetElementId = this._getRelevantElementId(oTarget);
 			// Target Node is an ancestor of one of the root element, but not a static area
 			if (
