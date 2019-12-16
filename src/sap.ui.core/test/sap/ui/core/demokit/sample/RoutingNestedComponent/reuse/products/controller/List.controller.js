@@ -61,7 +61,7 @@ sap.ui.define([
 
 			// inform the parent component about the navigation to the detail page
 			//
-			// the navigation isn't done within this component because when this component is embeded
+			// the navigation isn't done within this component because when this component is embedded
 			// in suppliers/categories component, it should trigger the navigation within the root
 			// component.
 			//

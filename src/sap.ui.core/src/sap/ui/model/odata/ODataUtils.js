@@ -725,7 +725,7 @@ sap.ui.define([
 	 * @returns {string} Normalized key of the entry
 	 * @protected
 	 */
-	// Define regular expression and function outside function to avoid instatiation on every call
+	// Define regular expression and function outside function to avoid instantiation on every call
 	var rNormalizeString = /([(=,])('.*?')([,)])/g,
 		rNormalizeCase = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g,
 		rNormalizeBinary = /([(=,])(X')/g,
