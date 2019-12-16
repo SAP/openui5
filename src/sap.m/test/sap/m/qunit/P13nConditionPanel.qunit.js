@@ -287,6 +287,40 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
+		QUnit.test("_changeField does not remove condition if there is no event provided", function (assert) {
+
+			// arrange
+			var oConditionGrid, oConditionsMap,
+				oP13nConditionPanel = new P13nConditionPanel({
+				displayFormat: "Date"
+				}),
+				oCondition = {
+					"key": "i1",
+					"text": "",
+					"operation": P13nConditionOperation.GT,
+					"keyField": "Date",
+					"value1": new Date(0),
+					"value2": ""
+				};
+
+			fillConditionPanel(oP13nConditionPanel);
+			oP13nConditionPanel.setConditions([oCondition]);
+			oP13nConditionPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
+			oP13nConditionPanel._changeField(oConditionGrid);
+			oConditionsMap = oP13nConditionPanel._oConditionsMap;
+
+			// assert
+			assert.ok(oConditionsMap.i1, "Condition is not removed");
+			assert.equal(oConditionsMap.i1.value, "Date: >Jan 1, 1970", "Condition value is correct");
+
+			// cleanup
+			oP13nConditionPanel.destroy();
+		});
+
 		QUnit.test("change KeyField, Operation and Value test", function(assert) {
 
 			// system under test
