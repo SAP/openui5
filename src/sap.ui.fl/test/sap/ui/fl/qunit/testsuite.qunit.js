@@ -141,6 +141,14 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/connectors/KeyUserConnector"]
 				}
 			},
+			"apply/_internal/connectors/ObjectPathConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector"
+					]
+				}
+			},
 			"apply/_internal/connectors/Utils": {
 				group: "Apply Internal",
 				coverage: {

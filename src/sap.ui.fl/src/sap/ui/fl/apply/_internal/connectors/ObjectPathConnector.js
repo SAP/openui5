@@ -38,7 +38,7 @@ sap.ui.define([
 					url: sPath,
 					async: true
 				}).then(function (oResponse) {
-					Object.assign(ApplyUtils.getEmptyFlexDataResponse(), oResponse);
+					return Object.assign(ApplyUtils.getEmptyFlexDataResponse(), oResponse);
 				});
 			}
 			return Promise.resolve(ApplyUtils.getEmptyFlexDataResponse());
