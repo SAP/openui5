@@ -136,6 +136,28 @@ sap.ui.define([
 								manifestUrl: '/samples/component/cardContentControls/manifest.json'
 							}
 						]
+					},
+					{
+						title: 'Adaptive',
+						target: 'exploreSamples',
+						key: 'adaptive',
+						subSamples: [
+							{
+								title: 'Card',
+								key: 'adaptive',
+								manifestUrl: '/samples/adaptive/adaptive.json'
+							},
+							{
+								title: 'RichTextBlock',
+								key: 'richtext',
+								manifestUrl: '/samples/adaptive/richtext.json'
+							},
+							{
+								title: 'Form',
+								key: 'form',
+								manifestUrl: '/samples/adaptive/form.json'
+							}
+						]
 					}
 				]
 			},

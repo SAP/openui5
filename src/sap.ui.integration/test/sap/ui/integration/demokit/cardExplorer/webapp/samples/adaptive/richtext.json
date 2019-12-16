@@ -1,0 +1,113 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adativecard.embedded",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.2",
+			"body": [
+				{
+					"type": "RichTextBlock",
+					"inlines": [
+						"This is the first inline. ",
+						{
+							"type": "TextRun",
+							"text": "We support colors, ",
+							"color": "good"
+						},
+						{
+							"type": "TextRun",
+							"text": "both regular and subtle. ",
+							"isSubtle": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Text ",
+							"size": "small"
+						},
+						{
+							"type": "TextRun",
+							"text": "of ",
+							"size": "medium"
+						},
+						{
+							"type": "TextRun",
+							"text": "all ",
+							"size": "large"
+						},
+						{
+							"type": "TextRun",
+							"text": "sizes! ",
+							"size": "extraLarge"
+						},
+						{
+							"type": "TextRun",
+							"text": "Light weight text. ",
+							"weight": "lighter"
+						},
+						{
+							"type": "TextRun",
+							"text": "Bold weight text. ",
+							"weight": "bolder"
+						},
+						{
+							"type": "TextRun",
+							"text": "Highlights. ",
+							"highlight": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Italics. ",
+							"italic": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Strikethrough. ",
+							"strikethrough": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Monospace too!",
+							"fontType": "monospace"
+						}
+					]
+				},
+				{
+					"type": "RichTextBlock",
+					"horizontalAlignment": "center",
+					"inlines": [
+						{
+							"type": "TextRun",
+							"text": "RichTextBlocks also support center alignment."
+						}
+					]
+				},
+				{
+					"type": "RichTextBlock",
+					"horizontalAlignment": "right",
+					"inlines": [
+						{
+							"type": "TextRun",
+							"text": "RichTextBlocks also support right alignment."
+						}
+					]
+				},
+				{
+					"type": "RichTextBlock",
+					"horizontalAlignment": "left",
+					"inlines": [
+						{
+							"type": "TextRun",
+							"text": "RichTextBlocks also support right alignment."
+						}
+					]
+				}
+			]
+		}
+	}
+}

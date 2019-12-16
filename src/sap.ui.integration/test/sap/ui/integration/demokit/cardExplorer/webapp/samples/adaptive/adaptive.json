@@ -1,0 +1,121 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adativecard.embedded",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				{
+					"type": "ColumnSet",
+					"columns": [
+						{
+							"type": "Column",
+							"width": "auto",
+							"items": [
+								{
+									"type": "Image",
+									"url": "https://sapui5.hana.ondemand.com/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/topics/images/Woman_avatar_01.png",
+									"size": "Small",
+									"style": "Person"
+								}
+							]
+						},
+						{
+							"type": "Column",
+							"width": "stretch",
+							"items": [
+								{
+									"type": "TextBlock",
+									"text": "Donna Moore",
+									"weight": "Bolder",
+									"wrap": true
+								},
+								{
+									"type": "TextBlock",
+									"spacing": "None",
+									"text": "Sales Executive",
+									"isSubtle": true,
+									"wrap": true
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "TextBlock",
+					"text": "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+					"wrap": true
+				},
+				{
+					"type": "FactSet",
+					"facts": [
+						{
+							"title": "First Name:",
+							"value": "Donna"
+						},
+						{
+							"title": "Last Name:",
+							"value": "Moore"
+						},
+						{
+							"title": "Company:",
+							"value": "Robert Brown Entertainment"
+						},
+						{
+							"title": "Address:",
+							"value": "481 West Street, Anytown OH 45066, USA"
+						}
+					]
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.ShowCard",
+					"title": "Schedule a meeting",
+					"card": {
+						"type": "AdaptiveCard",
+						"body": [
+							{
+								"type": "Input.Date",
+								"id": "meetDate"
+							}
+						],
+						"actions": [
+							{
+								"type": "Action.Submit",
+								"title": "OK"
+							}
+						]
+					}
+				},
+				{
+					"type": "Action.ShowCard",
+					"title": "Comment",
+					"card": {
+						"type": "AdaptiveCard",
+						"body": [
+							{
+								"type": "Input.Text",
+								"id": "comment",
+								"isMultiline": true,
+								"placeholder": "Enter your comment"
+							}
+						],
+						"actions": [
+							{
+								"type": "Action.Submit",
+								"title": "OK"
+							}
+						]
+					}
+				}
+			]
+		}
+	}
+}
