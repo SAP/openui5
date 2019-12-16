@@ -7,6 +7,45 @@
         "type": "FEATURE",
         "text": " sap.ui.integration.CardExplorer: Bundle samples made downloadable",
         "references": []
+      },
+      {
+        "id": "22a9a849ca0a86c0569d2cc633221d4e8911a0ee",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Added number formatters",
+        "references": []
+      },
+      {
+        "id": "e75b36a6c3a9fc3342d93c422a3b3d5f0f1a3ff5",
+        "type": "FIX",
+        "text": " Cards Explorer: Improve navigation to last sub item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980487941"
+          }
+        ]
+      },
+      {
+        "id": "306033ebdd566addcb35c9ffa675fa4424cc47da",
+        "type": "FIX",
+        "text": " Cards: Side Indicators in Numeric header are with proper spaces now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980479320"
+          }
+        ]
+      },
+      {
+        "id": "1aa6d0d44c31b6ea50adeb9ef4f6b0415a1be7ac",
+        "type": "FIX",
+        "text": " sap.ui.integration.widget.Card: Base url now works for header icon with binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980494167"
+          }
+        ]
       }
     ]
   }

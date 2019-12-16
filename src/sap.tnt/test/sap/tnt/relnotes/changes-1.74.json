@@ -7,6 +7,17 @@
         "type": "FEATURE",
         "text": " sap.tnt.InfoLabel: New \"icon\" property implemented",
         "references": []
+      },
+      {
+        "id": "cc603456394f10074dca44f2ecbe3fefc73497cb",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Improve collapse/expand with keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980484878"
+          }
+        ]
       }
     ]
   }
