@@ -45,17 +45,15 @@ sap.ui.define([
 			assertions : {
 				checkThatControlsHaveContent : function () {
 					return this.waitFor({
-						matchers : function (oControl) {
-							return [
-								"SalesOrderID",
-								"Note",
-								"CompanyName",
-								"WebAddress",
-								"ScheduleKey",
-								"ItemKey",
-								"DeliveryDate"
-							].includes(oControl.getId());
-						},
+						id :[
+							"SalesOrderID",
+							"Note",
+							"CompanyName",
+							"WebAddress",
+							"ScheduleKey",
+							"ItemKey",
+							"DeliveryDate"
+						],
 						searchOpenDialogs : true,
 						success : function (aControls) {
 							aControls.forEach(function (oControl, i) {
