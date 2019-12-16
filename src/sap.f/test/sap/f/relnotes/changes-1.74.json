@@ -45,6 +45,45 @@
             "reference": "1970554221"
           }
         ]
+      },
+      {
+        "id": "22a9a849ca0a86c0569d2cc633221d4e8911a0ee",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Added number formatters",
+        "references": []
+      },
+      {
+        "id": "306033ebdd566addcb35c9ffa675fa4424cc47da",
+        "type": "FIX",
+        "text": " Cards: Side Indicators in Numeric header are with proper spaces now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980479320"
+          }
+        ]
+      },
+      {
+        "id": "e1d8bbaf839398f945cbc72463bd908cced422d1",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Measuring width when FCL is visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980497298"
+          }
+        ]
+      },
+      {
+        "id": "1aa6d0d44c31b6ea50adeb9ef4f6b0415a1be7ac",
+        "type": "FIX",
+        "text": " sap.ui.integration.widget.Card: Base url now works for header icon with binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980494167"
+          }
+        ]
       }
     ]
   }

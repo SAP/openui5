@@ -23,6 +23,12 @@
             "reference": "1980361124"
           }
         ]
+      },
+      {
+        "id": "642d4df016b5a5afb9cbfc62187ca83899797155",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Update cache on content-resize",
+        "references": []
       }
     ]
   }

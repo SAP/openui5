@@ -39,6 +39,17 @@
         "type": "FEATURE",
         "text": " sap.m.DateRangeSelection: ability to select year ranges is now added",
         "references": []
+      },
+      {
+        "id": "72b850062d54916bc26d459a18506748fdd80b94",
+        "type": "FIX",
+        "text": " unified.Calendar: Header aggregation instaces invalidation doesn\u0027t trigger Calendar invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980456120"
+          }
+        ]
       }
     ]
   }

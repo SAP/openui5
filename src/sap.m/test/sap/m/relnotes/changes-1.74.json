@@ -381,6 +381,116 @@
             "reference": "1970045315"
           }
         ]
+      },
+      {
+        "id": "80491713eabb3ece45aa90af7fa8f34ac91a3a6b",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: Added new actions in design-time metadata",
+        "references": []
+      },
+      {
+        "id": "bd86ceed067d32532482b5cadc2072ef7d3d0069",
+        "type": "FEATURE",
+        "text": " sap.m.FormattedText: Functionality to replace placeholders with Links",
+        "references": []
+      },
+      {
+        "id": "0b4aab861cbe50fa3a03a39dcd844f5e29675106",
+        "type": "FIX",
+        "text": " sap.m.ActionSelect: Added explicit apiVersion 2 flag",
+        "references": []
+      },
+      {
+        "id": "b2990a153f1dd8035dc3ad070ee01b2280a996f8",
+        "type": "FIX",
+        "text": " sap.m.Bar: fixed vertical alignment in the right aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980454207"
+          }
+        ]
+      },
+      {
+        "id": "6f00d59355e41a29e63a823d1ee9ee24366debb2",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Some accessibility texts are fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980398867"
+          }
+        ]
+      },
+      {
+        "id": "da502da5f54f08a981b0881776731136d84d7945",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: wraps letter by letter in Table now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980485706"
+          }
+        ]
+      },
+      {
+        "id": "8a572bd2b0a65adbc1a0376661f56b09ab621119",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: inverted status shown correctly inside ObjectListItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980454205"
+          }
+        ]
+      },
+      {
+        "id": "9ee24e5d2e06e9c16f6940aa404c7d0878d0e2e0",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Overflow Button appearance is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980507985"
+          }
+        ]
+      },
+      {
+        "id": "64edadcb558d01b40592f750aa604b8b21fd44ba",
+        "type": "FIX",
+        "text": " sap.m.Page: Position floating footer using css only",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980450656"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980492228"
+          }
+        ]
+      },
+      {
+        "id": "69c48a102af2044798768ffad6c213a3743c08c1",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now the button\u0027s year text is correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980459813"
+          }
+        ]
+      },
+      {
+        "id": "efbf3d851536cb91c5f6e8cf641b03451f6f6d13",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Does not lose focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980455339"
+          }
+        ]
       }
     ]
   }
