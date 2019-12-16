@@ -347,5 +347,21 @@
         ]
       }
     ]
+  },
+  "1.60.22": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "f30c6c641bdbd83fddcf6a326f8243ea230ee4a2",
+        "type": "FIX",
+        "text": " Table: Correctly update vertical scroll range",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980430262"
+          }
+        ]
+      }
+    ]
   }
 }

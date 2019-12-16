@@ -1244,5 +1244,32 @@
         ]
       }
     ]
+  },
+  "1.60.22": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "f04dd558a7d5c74c644b56477cd06e3dfc272904",
+        "type": "FIX",
+        "text": " jQuery: Make parseHTML work with domain relaxation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007453322019"
+          }
+        ]
+      },
+      {
+        "id": "01152baa8bfd2914bca5638693fea9fef2bc5187",
+        "type": "FIX",
+        "text": " sap.ui.core.Hyphenation: Update Hyphenopoly bundle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980429483"
+          }
+        ]
+      }
+    ]
   }
 }
