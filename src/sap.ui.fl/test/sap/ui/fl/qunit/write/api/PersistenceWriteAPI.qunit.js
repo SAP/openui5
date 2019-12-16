@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/base/Log"
 ], function(
 	_omit,
 	JsControlTreeModifier,
@@ -26,7 +27,8 @@ sap.ui.define([
 	FlexCustomData,
 	LrepConnector,
 	jQuery,
-	sinon
+	sinon,
+	Log
 ) {
 	"use strict";
 
@@ -539,12 +541,14 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.reject({status: 404, text: ""}));
+			var oBaseLogStub = sandbox.stub(Log, "error");
 
 			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{packageName: "transported"}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.ok(oBaseLogStub.calledOnce, "an error was logged");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
 			});
