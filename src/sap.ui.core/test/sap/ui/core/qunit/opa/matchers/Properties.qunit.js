@@ -2,8 +2,9 @@
 sap.ui.define([
 	"../utils/loggerInterceptor",
 	"sap/m/Button",
-	"sap/ui/test/pipelines/MatcherPipeline"
-], function (loggerInterceptor, Button, MatcherPipeline) {
+	"sap/ui/test/pipelines/MatcherPipeline",
+	"sap/m/Image"
+], function (loggerInterceptor, Button, MatcherPipeline, Image) {
 	"use strict";
 
 	// loadAndIntercept also loads the module.
@@ -17,11 +18,13 @@ sap.ui.define([
 				text : "text to test",
 				enabled : true
 			});
+			this.oImage = new Image({src: "./../../test-resources/sap/ui/HT[-10$40].jpg"});
 			this.fnErrorStub = sinon.stub(oLogger, "error", function() {});
 			this.fnDebugStub = sinon.stub(oLogger, "debug", function() {});
 		},
 		afterEach : function(){
 			this.oButton.destroy();
+			this.oImage.destroy();
 			this.fnErrorStub.restore();
 			this.fnDebugStub.restore();
 		}
@@ -85,6 +88,17 @@ sap.ui.define([
 		});
 
 		assert.ok(bPipleineResult, "Should match equal properties");
+	});
+
+	QUnit.test("Should match with regexp - declarative", function(assert) {
+		var bResult = new Properties({
+			src: {
+				regex: {
+					source: "HT\\[\\-10\\$40\\]\\.jpg"
+				}
+			}
+		})(this.oImage);
+		assert.ok(bResult, "Should match regexp");
 	});
 
 });

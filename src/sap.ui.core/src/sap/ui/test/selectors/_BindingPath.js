@@ -56,7 +56,7 @@ sap.ui.define([
                                 key: mBinding.path
                             }
                         };
-                        if (mBinding.model.name) {
+                        if (mBinding.model.name && mBinding.model.name !== "i18n") {
                             mResult.i18NText.modelName = mBinding.model.name;
                         }
                     } else {
