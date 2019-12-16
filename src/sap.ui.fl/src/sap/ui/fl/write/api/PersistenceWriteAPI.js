@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/base/util/restricted/_omit"
+	"sap/base/util/restricted/_omit",
+	"sap/base/Log"
 ], function(
 	includes,
 	JsControlTreeModifier,
@@ -17,7 +18,8 @@ sap.ui.define([
 	DescriptorInlineChangeFactory,
 	SaveAs,
 	FeaturesAPI,
-	_omit
+	_omit,
+	Log
 ) {
 	"use strict";
 
@@ -191,6 +193,10 @@ sap.ui.define([
 							.then(function(oResponse) {
 								oFlexInfo.isResetEnabled = oFlexInfo.isResetEnabled || oResponse.isResetEnabled;
 								oFlexInfo.isPublishEnabled = oFlexInfo.isPublishEnabled || oResponse.isPublishEnabled;
+								return oFlexInfo;
+							})
+							.catch(function(oError) {
+								Log.error("Sending request to flex/info route failed: " + oError.message);
 								return oFlexInfo;
 							});
 					}
