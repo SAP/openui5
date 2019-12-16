@@ -110,6 +110,8 @@ sap.ui.define([
 
 			var aReferencingLabels = LabelEnablement.getReferencingLabels(this) || [];
 
+			this.getIcon().setVisible(this.getShowButton());
+
 			aReferencingLabels.forEach(function (sLabelId) {
 				if (this.getIcon().getAriaLabelledBy().indexOf(sLabelId) === -1) {
 					this.getIcon().addAssociation("ariaLabelledBy", sLabelId, true);
@@ -122,12 +124,6 @@ sap.ui.define([
 					text: oRb.getText("ACC_CTR_TYPE_COMBO")
 				}).toStatic();
 			}
-		};
-
-		ComboBoxTextField.prototype.setShowButton = function(bShowButton) {
-			this.getIcon().setVisible(bShowButton);
-
-			return this.setProperty("showButton", bShowButton, true);
 		};
 
 		/**
