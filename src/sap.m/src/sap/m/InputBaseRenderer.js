@@ -251,12 +251,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/Label
 	InputBaseRenderer.renderAriaLabelledBy = function(oRm, oControl) {
 		var sAnnouncement = this.getLabelledByAnnouncement(oControl);
 		if (sAnnouncement) {
-			oRm.openStart("span", oControl.getId() + "-labelledby");
-			oRm.attr("aria-hidden", "true");
-			oRm.class("sapUiInvisibleText");
-			oRm.openEnd();
-			oRm.text(sAnnouncement.trim());
-			oRm.close("span");
+			oRm.openStart("span", oControl.getId() + "-labelledby")
+				.attr("aria-hidden", "true")
+				.class("sapUiInvisibleText")
+				.openEnd()
+				.text(sAnnouncement.trim())
+				.close("span");
 		}
 	};
 
@@ -294,12 +294,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/Label
 	InputBaseRenderer.renderAriaDescribedBy = function(oRm, oControl) {
 		var sAnnouncement = this.getDescribedByAnnouncement(oControl);
 		if (sAnnouncement) {
-			oRm.openStart("span", oControl.getId() + "-describedby");
-			oRm.attr("aria-hidden", "true");
-			oRm.class("sapUiInvisibleText");
-			oRm.openEnd();
-			oRm.text(sAnnouncement.trim());
-			oRm.close("span");
+			oRm.openStart("span", oControl.getId() + "-describedby")
+				.attr("aria-hidden", "true")
+				.class("sapUiInvisibleText")
+				.openEnd()
+				.text(sAnnouncement.trim())
+				.close("span");
 		}
 	};
 
@@ -508,10 +508,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/Label
 	 * @param {string} sPosition An aggregation from which the icon should be rendered - begin or end.
 	 */
 	InputBaseRenderer.writeIcons = function (oRm, aIcons) {
-		oRm.openStart("div");
-		oRm.attr("tabindex", "-1");
-		oRm.class("sapMInputBaseIconContainer");
-		oRm.openEnd();
+		oRm.openStart("div")
+			.attr("tabindex", "-1")
+			.class("sapMInputBaseIconContainer")
+			.openEnd();
 		aIcons.forEach(oRm.renderControl, oRm);
 		oRm.close("div");
 	};
