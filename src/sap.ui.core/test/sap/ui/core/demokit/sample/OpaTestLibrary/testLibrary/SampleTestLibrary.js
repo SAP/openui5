@@ -1,14 +1,13 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties",
 	"testLibrary/pageObjects/Common1",
 	"testLibrary/pageObjects/Common2",
 	// create page object when module is loaded
 	"testLibrary/pageObjects/List"
-], function (Opa5, Press, EnterText, Ancestor, Properties, Common1, Common2) {
+], function (Opa5, Press, Ancestor, Properties, Common1, Common2) {
 	"use strict";
 
 	// all configuration modifications here will also become available in the test journey
