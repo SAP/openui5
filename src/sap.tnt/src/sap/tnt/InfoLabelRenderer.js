@@ -3,8 +3,8 @@
  */
 
 // Provides the default renderer for control sap.tnt.InfoLabel
-sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library"],
-	function(library, Renderer, coreLibrary) {
+sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library", "sap/base/Log", "sap/ui/core/IconPool"],
+	function(library, Renderer, coreLibrary, Log, IconPool) {
 		"use strict";
 
 		var RenderMode = library.RenderMode;
@@ -32,6 +32,11 @@ sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library"],
 				sWidth = oControl.getWidth(),
 				bDisplayOnly = oControl.getDisplayOnly(),
 				oIcon = oControl.getIcon();
+
+			if (iColorVariant < 1 || iColorVariant > 10) {
+				iColorVariant = 7;
+				Log.warning("sap.tnt.InfoLabel: colorScheme value is set to the default value of 7. Provided value should be between 1 and 10");
+			}
 
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
@@ -92,10 +97,15 @@ sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library"],
 
 				oRm.write("<span class='sapUiPseudoInvisibleText'>");
 
-				if (sText === "") {
+				if (sText !== "") {
+					// there is text content
+					oRm.writeEscaped(InfoLabelRenderer._sAriaText);
+				} else if (!oIcon) {
+					// no text and no icon
 					oRm.writeEscaped(InfoLabelRenderer._sAriaTextEmpty);
 				} else {
-					oRm.writeEscaped(InfoLabelRenderer._sAriaText);
+					// icon only
+					oRm.writeEscaped(IconPool.getIconInfo(oControl.getIcon()).text + " " + InfoLabelRenderer._sAriaText);
 				}
 
 				oRm.write("</span>");
