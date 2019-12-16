@@ -1244,5 +1244,21 @@
         ]
       }
     ]
+  },
+  "1.71.7": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "1acc69019f8156be431d0a8155cab9ea98c12652",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: Property truncateValueTo is not ignored anymore \u0026 Case insensitive NumericContent lang map + add en_US lang.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006220662019"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -509,5 +509,21 @@
         ]
       }
     ]
+  },
+  "1.71.7": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "ed517b4a548a1f9940d84454c0b4163b9d9f138a",
+        "type": "FIX",
+        "text": " v2.ODataModel: Fixed issues with success/error handler in submitChanges",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006882642019"
+          }
+        ]
+      }
+    ]
   }
 }

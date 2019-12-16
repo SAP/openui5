@@ -4661,5 +4661,43 @@
         ]
       }
     ]
+  },
+  "1.52.37": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "d3dea89e67121250a2acd67bc17bcf2606bdbb05",
+        "type": "FIX",
+        "text": " Translation delivery: translations fixed for sap.m.TimePicker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005041000000799792019"
+          }
+        ]
+      },
+      {
+        "id": "d54ae8094b73ca3761f8a5e846cf4403f5c958c5",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: Property truncateValueTo is not ignored anymore \u0026 Case insensitive NumericContent lang map + add en_US lang.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006220662019"
+          }
+        ]
+      },
+      {
+        "id": "68d239b79dc565ca0591aca4d50e0d53fdae474d",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: valueState is now updated if there is a Message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500005744122019"
+          }
+        ]
+      }
+    ]
   }
 }
