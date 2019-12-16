@@ -213,17 +213,23 @@ sap.ui.define([
 			/**
 			 * The items of the table.
 			 */
-			items : {type : "sap.m.ColumnListItem", multiple : true, singularName : "item", bindable : "bindable"},
+			items: {
+				type: "sap.m.ColumnListItem", multiple : true, singularName: "item", bindable: "bindable",
+				forwarding: { idSuffix: "-table", aggregation: "items", forwardBinding: true }
+			},
 
 			/**
 			 * The internal dialog that is displayed when method open is called.
 			 */
-			_dialog : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+			_dialog: {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
 
 			/**
 			 * The columns bindings.
 			 */
-			columns : {type : "sap.m.Column", multiple : true, singularName : "column", bindable : "bindable"}
+			columns: {
+				type : "sap.m.Column", multiple : true, singularName : "column", bindable : "bindable",
+				forwarding: { idSuffix: "-table", aggregation: "columns", forwardBinding: true }
+			}
 		},
 		events : {
 
@@ -929,27 +935,24 @@ sap.ui.define([
 		return this;
 	};
 
-	TableSelectDialog.getMetadata().forwardAggregation(
-		"items",
-		{
-			getter: function() {
-				return this._oTable;
-			},
-			aggregation: "items",
-			forwardBinding: true
-		}
-	);
+	/**
+	 * Set the binding context for the internal table AND the current control so that both controls can be used with the context.
+	 * @override
+	 * @public
+	 * @param {sap.ui.model.Context} oContext The new context
+	 * @param {string} [sModelName] The optional model name
+	 * @returns {sap.m.TableSelectDialog} <code>this</code> pointer for chaining
+	 */
+	TableSelectDialog.prototype._setBindingContext = TableSelectDialog.prototype.setBindingContext;
+	TableSelectDialog.prototype.setBindingContext = function (oContext, sModelName) {
+		var args = Array.prototype.slice.call(arguments);
 
-	TableSelectDialog.getMetadata().forwardAggregation(
-		"columns",
-		{
-			getter: function() {
-				return this._oTable;
-			},
-			aggregation: "columns",
-			forwardBinding: true
-		}
-	);
+		// pass the model to the table and also to the local control to allow binding of own properties
+		this._oTable.setBindingContext(oContext, sModelName);
+		TableSelectDialog.prototype._setBindingContext.apply(this, args);
+
+		return this;
+	};
 
 	/* =========================================================== */
 	/*           end: forward aggregation  methods to table       */

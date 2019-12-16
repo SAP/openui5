@@ -491,6 +491,22 @@ sap.ui.define([
 		assert.strictEqual(oTableSelectDialog1.getBinding("items").iLength, 5 , 'TableSelectDialog1 should have 5 items bound');
 	});
 
+	QUnit.test("setBindingContext - update the internal table", function(assert) {
+		// arrange
+		var oTableSelectDialog = new TableSelectDialog(),
+			oSetBindingContextSpy = sinon.spy(oTableSelectDialog._oTable, "setBindingContext");
+
+		// act
+		oTableSelectDialog.setBindingContext({});
+
+		// assert
+		assert.ok(oSetBindingContextSpy.calledOnce, "Changing binding context of TableSelectDialog should be reflected on the internal table");
+
+		// clean up
+		oSetBindingContextSpy.restore();
+		oTableSelectDialog.destroy();
+	});
+
 	QUnit.module("Growing property check");
 
 	QUnit.test("true (default)", function(assert) {
