@@ -727,15 +727,15 @@ sap.ui.define([
 		 * The following code (either {@link #createView} or anything before
 		 * {@link #waitForChanges}) is expected to perform a <code>HEAD<code> request.
 		 *
-		 * @param {object} [mAddionalHeaders]
+		 * @param {object} [mAdditionalHeaders]
 		 *   Request headers additional to the "x-csrf-token" header
 		 * @returns {object}
 		 *   The test instance for chaining
 		 */
-		expectHeadRequest : function (mAddionalHeaders) {
+		expectHeadRequest : function (mAdditionalHeaders) {
 			this.aRequests.push({
 				deepPath : "",
-				headers : Object.assign({"x-csrf-token" : "Fetch"}, mAddionalHeaders),
+				headers : Object.assign({"x-csrf-token" : "Fetch"}, mAdditionalHeaders),
 				method : "HEAD",
 				requestUri : ""
 			});
@@ -1484,15 +1484,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Cleanup messages of the entity and its child entities after updating the root
-	// entity if message scope is "BusinessObject.
+	// entity if message scope is "BusinessObject".
 	// BCP: 1980510782
-[true, false].forEach(function (bCleanupChildMessages) {
+[
+	MessageScope.BusinessObject,
+	MessageScope.RequestedObjects
+].forEach(function (sMessageScope) {
 	[true, false].forEach(function (bRefreshAfterChange) {
-	var sMessageScope
-			= bCleanupChildMessages ? MessageScope.BusinessObject : MessageScope.RequestedObjects,
+	var bCleanupChildMessages = sMessageScope === MessageScope.BusinessObject,
 		sTitle = "Messages: Changing a value removes obsolete child messages only if message scope"
-		+ " is BusinessObject; message scope is '" + sMessageScope + "'; refresh after change: "
-		+ bRefreshAfterChange;
+			+ " is BusinessObject; message scope is '" + sMessageScope + "'; refresh after change: "
+			+ bRefreshAfterChange;
 
 	QUnit.test(sTitle, function (assert) {
 		var oModel = createSalesOrdersModelMessageScope({refreshAfterChange : bRefreshAfterChange}),
