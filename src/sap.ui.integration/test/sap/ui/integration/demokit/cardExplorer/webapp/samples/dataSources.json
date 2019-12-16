@@ -16,7 +16,7 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "Order status {= format.date(Date.now(), {pattern: 'H:mm, MMMM d, y'}) }",
+			"title": "Order status {= format.dateTime(Date.now(), {pattern: 'H:mm, MMMM d, y'}) }",
 			"subTitle": "Orders exceeding 50$ are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
@@ -37,7 +37,7 @@
 			},
 			"item": {
 				"title": "{ShipName}",
-				"description": "Should arrive {= format.date(${OrderDate}, {relative:true}) }",
+				"description": "Should arrive {= format.dateTime(${OrderDate}, {relative:true}) }",
 				"highlight": "{= ${Price} < 50 ? 'Success' : 'Error'}",
 				"info": {
 					"value": "{OrderDate}$"

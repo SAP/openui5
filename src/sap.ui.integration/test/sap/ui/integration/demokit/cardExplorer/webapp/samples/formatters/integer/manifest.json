@@ -7,8 +7,8 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "Order status {= format.date(Date.now(), {pattern: 'H:mm, MMMM d, y'}) }",
-			"subTitle": "Orders exceeding {= format.integer(50)} are highlighted as important",
+			"title": "Number of devices",
+			"subTitle": "Devices exceeding {= format.integer(50)} items are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -22,31 +22,26 @@
 					{
 						"Name": "Keyboard and Mouse",
 						"image": "sap-icon://keyboard-and-mouse",
-						"Amount": 155.55,
-						"arrivalDate": "Sun Dec 1 2019 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"Amount": 155.55
 					},
 					{
 						"Name": "ITelO Vault",
 						"image": "sap-icon://shield",
-						"Amount": 30,
-						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"Amount": 30
 					},
 					{
 						"Name": "Notebook Professional 15",
 						"image": "sap-icon://laptop",
-						"Amount": 30,
-						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"Amount": 30
 					},
 					{
 						"Name": "Ergo Screen E-I",
 						"image": "sap-icon://desktop-mobile",
-						"arrivalDate": "Sun Nov 2 2019 03:24:00 GMT+0200 (Eastern European Standard Time)",
 						"Amount": 69
 					},
 					{
 						"Name": "Laser Professional Eco",
 						"image": "sap-icon://keyboard-and-mouse",
-						"arrivalDate": "Sun Jan 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)",
 						"Amount": 40
 					}
 				]
