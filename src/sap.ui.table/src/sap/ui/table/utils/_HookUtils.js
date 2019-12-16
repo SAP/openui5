@@ -15,10 +15,14 @@ sap.ui.define([], function() {
 			UnbindRows: "Table.UnbindRows",
 			RefreshRows: "Table.RefreshRows",
 			UpdateRows: "Table.UpdateRows",
-			UpdateSizes: "Table.UpdateSizes"
+			UpdateSizes: "Table.UpdateSizes",
+			OpenMenu: "Table.OpenMenu"
 		}),
 		Row: Object.freeze({
 			UpdateState: "Row.UpdateState"
+		}),
+		Column: Object.freeze({
+			MenuItemNotification: "Column.MenuItemNotification"
 		})
 	});
 

@@ -185,20 +185,23 @@ sap.ui.define([
 		this.setEnableCellFilter(true);
 		this._aGroupedColumns = [];
 		this._bSuspendUpdateAnalyticalInfo = false;
+		this._mGroupHeaderMenuItems = null;
 		TableUtils.Grouping.setGroupMode(this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Table.OpenMenu, this._onOpenTableContextMenu, this);
 	};
 
 	AnalyticalTable.prototype.exit = function() {
-		this._cleanupGroupHeaderMenu();
 		Table.prototype.exit.apply(this, arguments);
+		this._cleanupGroupHeaderMenuItems();
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
+		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Table.OpenMenu, this._onOpenTableContextMenu, this);
 	};
 
 	AnalyticalTable.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
 		return Table.prototype._adaptLocalization.apply(this, arguments).then(function() {
 			if (bLangChanged) {
-				this._cleanupGroupHeaderMenu();
+				this._cleanupGroupHeaderMenuItems();
 			}
 		}.bind(this));
 	};
@@ -487,24 +490,21 @@ sap.ui.define([
 		}
 	};
 
-	AnalyticalTable.prototype.oncontextmenu = function(oEvent) {
-		var oCell = TableUtils.getCell(this, oEvent.target);
-		var oCellInfo = TableUtils.getCellInfo(oCell);
-		var oRow = this.getRows()[oCellInfo.rowIndex];
+	AnalyticalTable.prototype._onOpenTableContextMenu = function(oCellInfo, oMenu) {
+		var oRow = oCellInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL) ? this.getRows()[oCellInfo.rowIndex] : null;
 
-		if (oRow && oRow.isGroupHeader()) {
-			var oBinding = this.getBinding("rows");
-			this._iGroupedLevel = oRow.getLevel() - (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0);
-			var oMenu = this._getGroupHeaderMenu();
-
-			oMenu.openAsContextMenu(oEvent, TableUtils.getCell(this, oEvent.target) || oEvent.target);
-
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
+		if (!oRow || !oRow.isGroupHeader()) {
+			this._removeGroupHeaderMenuItems(oMenu);
+			return;
 		}
+
+		var oBinding = this.getBinding("rows");
+
+		this._iGroupedLevel = oRow.getLevel() - (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0);
+		this._addGroupHeaderMenuItems(oMenu);
 	};
 
-	AnalyticalTable.prototype._getGroupHeaderMenu = function() {
+	AnalyticalTable.prototype._addGroupHeaderMenuItems = function(oMenu) {
 		var that = this;
 
 		function getGroupColumnInfo() {
@@ -524,9 +524,12 @@ sap.ui.define([
 			}
 		}
 
-		if (!this._oGroupHeaderMenu) {
-			this._oGroupHeaderMenu = new Menu();
-			this._oGroupHeaderMenuVisibilityItem = new MenuItem({
+		if (!this._mGroupHeaderMenuItems) {
+			this._mGroupHeaderMenuItems = {};
+		}
+
+		if (!this._mGroupHeaderMenuItems["visibility"]) {
+			this._mGroupHeaderMenuItems["visibility"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_SHOW_COLUMN"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -540,8 +543,11 @@ sap.ui.define([
 					}
 				}
 			});
-			this._oGroupHeaderMenu.addItem(this._oGroupHeaderMenuVisibilityItem);
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["visibility"]);
+
+		if (!this._mGroupHeaderMenuItems["ungroup"]) {
+			this._mGroupHeaderMenuItems["ungroup"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_UNGROUP"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -553,8 +559,12 @@ sap.ui.define([
 						that.fireGroup({column: oUngroupedColumn, groupedColumns: that._aGroupedColumns, type: GroupEventType.ungroup});
 					}
 				}
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["ungroup"]);
+
+		if (!this._mGroupHeaderMenuItems["ungroupall"]) {
+			this._mGroupHeaderMenuItems["ungroupall"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_UNGROUP_ALL"),
 				select: function() {
 					var aColumns = that.getColumns();
@@ -568,8 +578,12 @@ sap.ui.define([
 					that.resumeUpdateAnalyticalInfo();
 					that.fireGroup({column: undefined, groupedColumns: [], type: GroupEventType.ungroupAll});
 				}
-			}));
-			this._oGroupHeaderMoveUpItem = new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["ungroupall"]);
+
+		if (!this._mGroupHeaderMenuItems["moveup"]) {
+			this._mGroupHeaderMenuItems["moveup"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_MOVE_UP"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -586,8 +600,11 @@ sap.ui.define([
 				},
 				icon: "sap-icon://arrow-top"
 			});
-			this._oGroupHeaderMenu.addItem(this._oGroupHeaderMoveUpItem);
-			this._oGroupHeaderMoveDownItem = new MenuItem({
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["moveup"]);
+
+		if (!this._mGroupHeaderMenuItems["movedown"]) {
+			this._mGroupHeaderMenuItems["movedown"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_MOVE_DOWN"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -604,8 +621,11 @@ sap.ui.define([
 				},
 				icon: "sap-icon://arrow-bottom"
 			});
-			this._oGroupHeaderMenu.addItem(this._oGroupHeaderMoveDownItem);
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["movedown"]);
+
+		if (!this._mGroupHeaderMenuItems["sortasc"]) {
+			this._mGroupHeaderMenuItems["sortasc"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_SORT_ASC"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -616,8 +636,12 @@ sap.ui.define([
 					}
 				},
 				icon: "sap-icon://up"
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["sortasc"]);
+
+		if (!this._mGroupHeaderMenuItems["sortdesc"]) {
+			this._mGroupHeaderMenuItems["sortdesc"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_SORT_DESC"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -628,8 +652,12 @@ sap.ui.define([
 					}
 				},
 				icon: "sap-icon://down"
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["sortdesc"]);
+
+		if (!this._mGroupHeaderMenuItems["collapse"]) {
+			this._mGroupHeaderMenuItems["collapse"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_COLLAPSE_LEVEL"),
 				select: function() {
 					// Why -1? Because the "Collapse Level" Menu Entry should collapse TO the given level - 1
@@ -639,58 +667,75 @@ sap.ui.define([
 					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
 					that._getSelectionPlugin().clearSelection();
 				}
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["collapse"]);
+
+		if (!this._mGroupHeaderMenuItems["collapseall"]) {
+			this._mGroupHeaderMenuItems["collapseall"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_COLLAPSE_ALL"),
 				select: function() {
 					that.getBinding("rows").collapseToLevel(0);
 					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
 					that._getSelectionPlugin().clearSelection();
 				}
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["collapseall"]);
+
+		if (!this._mGroupHeaderMenuItems["expand"]) {
+			this._mGroupHeaderMenuItems["expand"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_EXPAND_LEVEL"),
 				select: function() {
 					that.getBinding("rows").expandToLevel(that._iGroupedLevel);
 					that.setFirstVisibleRow(0);
 					that._getSelectionPlugin().clearSelection();
 				}
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["expand"]);
+
+		if (!this._mGroupHeaderMenuItems["expandall"]) {
+			this._mGroupHeaderMenuItems["expandall"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_EXPAND_ALL"),
 				select: function() {
 					that.expandAll();
 				}
-			}));
+			});
 		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["expandall"]);
 
 		var oGroupColumnInfo = getGroupColumnInfo();
 		if (oGroupColumnInfo) {
 			var oColumn = oGroupColumnInfo.column;
 			if (oColumn.getShowIfGrouped()) {
-				this._oGroupHeaderMenuVisibilityItem.setText(TableUtils.getResourceText("TBL_HIDE_COLUMN"));
+				this._mGroupHeaderMenuItems["visibility"].setText(TableUtils.getResourceText("TBL_HIDE_COLUMN"));
 			} else {
-				this._oGroupHeaderMenuVisibilityItem.setText(TableUtils.getResourceText("TBL_SHOW_COLUMN"));
+				this._mGroupHeaderMenuItems["visibility"].setText(TableUtils.getResourceText("TBL_SHOW_COLUMN"));
 			}
-			this._oGroupHeaderMoveUpItem.setEnabled(oGroupColumnInfo.index > 0);
-			this._oGroupHeaderMoveDownItem.setEnabled(oGroupColumnInfo.index < this._aGroupedColumns.length - 1);
+			this._mGroupHeaderMenuItems["moveup"].setEnabled(oGroupColumnInfo.index > 0);
+			this._mGroupHeaderMenuItems["movedown"].setEnabled(oGroupColumnInfo.index < this._aGroupedColumns.length - 1);
 		} else {
-			this._oGroupHeaderMoveUpItem.setEnabled(true);
-			this._oGroupHeaderMoveDownItem.setEnabled(true);
+			this._mGroupHeaderMenuItems["moveup"].setEnabled(true);
+			this._mGroupHeaderMenuItems["movedown"].setEnabled(true);
 		}
-
-		return this._oGroupHeaderMenu;
-
 	};
 
-	AnalyticalTable.prototype._cleanupGroupHeaderMenu = function() {
-		if (this._oGroupHeaderMenu) {
-			this._oGroupHeaderMenu.destroy();
-			this._oGroupHeaderMenu = null;
-			this._oGroupHeaderMenuVisibilityItem = null;
-			this._oGroupHeaderMoveUpItem = null;
-			this._oGroupHeaderMoveDownItem = null;
+	AnalyticalTable.prototype._removeGroupHeaderMenuItems = function(oMenu) {
+		if (!this._mGroupHeaderMenuItems) {
+			return;
 		}
+
+		for (var sItemKey in this._mGroupHeaderMenuItems) {
+			oMenu.removeItem(this._mGroupHeaderMenuItems[sItemKey]);
+		}
+	};
+
+	AnalyticalTable.prototype._cleanupGroupHeaderMenuItems = function() {
+		for (var sItemKey in this._mGroupHeaderMenuItems) {
+			this._mGroupHeaderMenuItems[sItemKey].destroy();
+		}
+		this._mGroupHeaderMenuItems = null;
 	};
 
 	/**

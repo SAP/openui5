@@ -432,25 +432,26 @@ sap.ui.define([
 		// Try to open the menu with the left mouse button.
 		this.triggerMouseDownEvent(oElem, 0);
 		qutils.triggerMouseEvent(oElem, "click");
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Menu is not yet created");
+		assert.equal(oTable._oCellContextMenu, null, "Menu is not yet created");
 		checkFocus(oElem, assert);
 
 		// Try to open the menu with the right mouse button.
 		this.triggerMouseDownEvent(oElem, 2);
 		jQuery(oElem).trigger("contextmenu");
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Menu is not yet created");
+		assert.notEqual(oTable._oCellContextMenu, null, "Menu is created");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 		oContextMenuEvent.reset();
 		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
 		checkFocus(oElem, assert);
 
+		TableUtils.Menu.cleanupDefaultContentCellContextMenu(oTable);
 		oTable.setEnableCellFilter(true);
 		this.stub(oColumn, "isFilterableByMenu").returns(true);
 
 		// Try to open the menu with the left mouse button.
 		this.triggerMouseDownEvent(oElem, 0);
 		qutils.triggerMouseEvent(oElem, "click");
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Menu is not yet created");
+		assert.equal(oTable._oCellContextMenu, null, "Menu is not yet created");
 		checkFocus(oElem, assert);
 
 		// Open the menu with the right mouse button.
@@ -633,16 +634,18 @@ sap.ui.define([
 			bSelected = true;
 		};
 
-		oTreeTable.oncontextmenu = this.spy();
-
+		var oOpenContextMenu = this.spy(TableUtils.Menu, "openContextMenu");
 		var $FakeButton = TableUtils.getRowColCell(oTreeTable, 0, 0).cell.$();
+
 		$FakeButton.addClass("sapUiTableGroupMenuButton");
 		qutils.triggerMouseEvent($FakeButton, "click");
 		assert.ok(!bSelected, "Selection was not performed");
-		assert.ok(oTreeTable.oncontextmenu.calledOnce, "Context Menu was opened");
+		assert.ok(oOpenContextMenu.calledOnce, "Context Menu was opened");
 
 		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 		oExtension._ExtensionHelper.__handleClickSelection = null;
+
+		oOpenContextMenu.restore();
 	});
 
 	QUnit.test("Cell + Cell Click Event", function(assert) {
