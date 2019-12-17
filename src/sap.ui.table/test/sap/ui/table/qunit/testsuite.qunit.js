@@ -86,6 +86,7 @@ sap.ui.define([
 				qunit: {
 					testTimeout: Device.browser.msie ? 90000 : undefined /*default*/ // BCP: 1880602291
 				},
+				sinon: false, /*uses Mockserver*/
 				ui5: {
 					libs: ["sap.ui.table", "sap.m"]
 				}
