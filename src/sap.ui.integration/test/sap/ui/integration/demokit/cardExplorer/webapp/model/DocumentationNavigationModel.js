@@ -83,7 +83,7 @@ sap.ui.define([
 						key: 'component'
 					},
 					{
-						title: 'Adaptive',
+						title: 'Adaptive (Experimental)',
 						topicTitle: 'AdaptiveCard',
 						target: 'learnDetail',
 						key: 'adaptive'

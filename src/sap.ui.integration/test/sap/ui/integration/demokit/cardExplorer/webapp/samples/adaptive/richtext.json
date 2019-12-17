@@ -5,6 +5,13 @@
 		"type": "card"
 	},
 	"sap.card": {
+		"header": {
+			"title": "Rich Text Card",
+			"subTitle": "Adaptive Card with sap.f.cards.Header",
+			"icon": {
+				"src": "sap-icon://text-formatting"
+			}
+		},
 		"type": "AdaptiveCard",
 		"content": {
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

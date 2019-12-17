@@ -15,6 +15,15 @@
 	<link href="../../google-code-prettify/prettify.css" rel="stylesheet">
 	<script src="../../google-code-prettify/run_prettify.js"></script>
 
+	<style>
+		code {
+			font-size: 16px;
+		}
+		.sapUiSizeCompact code {
+			font-size: 14px;
+		}
+	</style>
+
 </head>
 <body class="sapUiBody topicBody">
 <div class="topic">
@@ -22,11 +31,42 @@
 		<h1 id="overview">
 			Adaptive Card
 		</h1>
-
+		<p>With this type of card, application developers can visualize and reuse cards that are created using the Microsoft Adaptive Cards specification and manifest.
+			Default and Numeric card headers can be used in order to provide a title and general information about the Adaptive Card. The content of the card
+			consist of a JSON object, which defines the card structure, content and actions. For more information of all properties of Adaptive Card, see <a href="https://adaptivecards.io/explorer/" target="_blank">https://adaptivecards.io</a>.
+		</p>
 		<h2 id="properties">Usage</h2>
-		<p>With this type of card, application developers can visualize cards that are created using the Microsoft Adaptive Cards specification and manifest.
-		For more information of all properties of Adaptive Card, see <a href="https://adaptivecards.io/explorer/" target="_blank">https://adaptivecards.io</a></p>
-
+		Microsoft Adaptive Card's <code>Action.OpenUrl</code> & <code>Action.Submit</code> event parameters could be accessed by attaching to the <code>action</code> event of the Integration Card. The following parameters will be received:
+		<h4>Action.OpenUrl</h4>
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Value</th>
+				</tr>
+				<tr>
+					<td>type</td>
+					<td>"Navigation"</td>
+				</tr>
+				<tr>
+					<td>manifestParameters</td>
+					<td>url (property of the Action.OpenUrl)</td>
+				</tr>
+			</table>
+		<h4>Action.Submit</h4>
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Value</th>
+				</tr>
+				<tr>
+					<td>type</td>
+					<td>"Submit"</td>
+				</tr>
+				<tr>
+					<td>manifestParameters</td>
+					<td>data (property of the Action.Submit)</td>
+				</tr>
+			</table>
 
 		<h2 id="example">Example</h2>
 		<p>Define the type and data for the card:
