@@ -198,7 +198,7 @@ sap.ui.define([
 	var oStorageResultMerger = {};
 
 	/**
-	 * Concatenates all changes from a list of flex data request responses into a passed result object and removed duplicates.
+	 * Concatenates all changes from a list of flex data request responses into a passed result object and removes duplicates.
 	 *
 	 * @param {object[]} aResponses List of responses containing a changes property to be concatenated
 	 * @param {object[]} aResponses.changes List of the change definitions
@@ -206,12 +206,8 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.Cache
 	 */
-	function _concatChanges(aResponses) {
-		var aChanges = [];
-
-		aResponses.forEach(function (oResponse) {
-			aChanges = aChanges.concat(oResponse.changes);
-		});
+	function _concatChangesAndFilterDuplicates(aResponses) {
+		var aChanges = _concatFlexObjects(aResponses, "changes");
 
 		var aChangeIds = [];
 		aChanges = aChanges.filter(function (oChange) {
@@ -226,6 +222,24 @@ sap.ui.define([
 		});
 
 		return aChanges;
+	}
+
+	/**
+	 * Concatenates all flex objects from a list of flex data request responses into a passed result object.
+	 *
+	 * @param {object[]} aResponses List of responses to be concatenated
+	 * @param {string} sType Type of flex object signified by object property
+	 * @returns {object[]} Merged array of flex objects
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply._internal.flexState.FlexState
+	 */
+	function _concatFlexObjects(aResponses, sType) {
+		return aResponses.reduce(function (aFlexObjects, oResponse) {
+			if (oResponse[sType]) {
+				return aFlexObjects.concat(oResponse[sType]);
+			}
+			return aFlexObjects;
+		}, []);
 	}
 
 	/**
@@ -256,11 +270,17 @@ sap.ui.define([
 	 */
 	oStorageResultMerger.merge = function(mPropertyBag) {
 		var oResult = {
-			changes: _concatChanges(mPropertyBag.responses),
-			ui2personalization: _concatUi2personalization(mPropertyBag.responses),
-			variantSection: {}
+			appDescriptorChanges: _concatFlexObjects(mPropertyBag.responses, "appDescriptorChanges"),
+			changes: _concatChangesAndFilterDuplicates(mPropertyBag.responses),
+			variants: _concatFlexObjects(mPropertyBag.responses, "variants"),
+			variantChanges: _concatFlexObjects(mPropertyBag.responses, "variantChanges"),
+			variantDependentControlChanges: _concatFlexObjects(mPropertyBag.responses, "variantDependentControlChanges"),
+			variantManagementChanges: _concatFlexObjects(mPropertyBag.responses, "variantManagementChanges"),
+			variantSection: {}, // TODO: variantSection should be prepared in sap.ui.fl.apply_internal.flexState.prepareVariantsMap
+			ui2personalization: _concatUi2personalization(mPropertyBag.responses)
 		};
 
+		// TODO: should be removed and moved to sap/ui/fl/apply/_internal/flexState/prepareVariantsMap
 		if (mPropertyBag.variantSectionSufficient) {
 			oResult.variantSection = findVariantSection(mPropertyBag.responses);
 		} else {

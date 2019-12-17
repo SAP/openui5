@@ -122,6 +122,26 @@ sap.ui.define([
 		assert.equal(oDRS3.getSecondDateValue().getTime(), dateTo2.getTime(), "DRS3: SecondDateValue set");
 	});
 
+	QUnit.test("interval selection is correctly set to the YearPicker", function(assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection({
+				displayFormat: "yyyy"
+			}).placeAt("qunit-fixture"),
+			oYearPicker;
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDRS.toggleOpen();
+		oYearPicker = oDRS._getCalendar()._getYearPicker();
+
+		// Assert
+		assert.ok(oYearPicker.getIntervalSelection(), "interval selection is set to 'true'");
+
+		// Clean
+		oDRS.destroy();
+	});
+
 	QUnit.module("Rendering");
 
 	QUnit.test("Styling", function(assert) {
@@ -252,6 +272,26 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(true, "Test does not throw");
+
+		// Clean
+		oDRS.destroy();
+	});
+
+	QUnit.test("interval selection is correctly set to the MonthPicker", function(assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection({
+				displayFormat: "yyyy-MM"
+			}).placeAt("qunit-fixture"),
+			oMonthPicker;
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDRS.toggleOpen();
+		oMonthPicker = oDRS._getCalendar()._getMonthPicker();
+
+		// Assert
+		assert.ok(oMonthPicker.getIntervalSelection(), "interval selection is set to 'true'");
 
 		// Clean
 		oDRS.destroy();

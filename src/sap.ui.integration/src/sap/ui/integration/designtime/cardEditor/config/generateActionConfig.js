@@ -46,11 +46,11 @@ sap.ui.define([
 					"path": "service",
 					"visible": false // Currently undocumented
 				},
-				// "parameters": {
-				// 	"label": "{i18n>CARD_EDITOR.ACTION.PARAMETERS}",
-				// 	"type": "parameters",
-				// 	"path": "parameters"
-				// },
+				"parameters": {
+					"label": "{i18n>CARD_EDITOR.ACTION.PARAMETERS}",
+					"type": "map",
+					"path": "parameters"
+				},
 				"target": {
 					"label": "{i18n>CARD_EDITOR.ACTION.TARGET}",
 					"type": "enum",

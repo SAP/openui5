@@ -18,11 +18,11 @@
 		var oApp = new sap.m.App({  initialPage: "page" });
 
 		var aData = [
-			{ lastName: "Dente", name: "Al", type: "Locked" },
-			{ lastName: "Friese", name: "Andy", type: "Draft" },
-			{ lastName: "Mann", name: "Anita", type: "Unsaved" },
-			{ lastName: "Schutt", name: "Doris", type: "Favorite" },
-			{ lastName: "Open", name: "Doris", type: "Flagged" }
+			{ lastName: "Dente", name: "Al", type: "Locked", addInfo: "someVeryLongTextToSeeIfItWillWrap" },
+			{ lastName: "Friese", name: "Andy", type: "Draft", addInfo: "someVeryLongTextToSeeIfItWillWrap" },
+			{ lastName: "Mann", name: "Anita", type: "Unsaved", addInfo: "someVeryLongTextToSeeIfItWillWrap" },
+			{ lastName: "Schutt", name: "Doris", type: "Favorite", addInfo: "someVeryLongTextToSeeIfItWillWrap" },
+			{ lastName: "Open", name: "Doris", type: "Flagged", addInfo: "someVeryLongTextToSeeIfItWillWrap" }
 		];
 
 		var oModel = new sap.ui.model.json.JSONModel();
@@ -49,6 +49,16 @@
 					header : new sap.m.Label({
 						text : "Object Marker (active)"
 					})
+				}),
+				new sap.m.Column({
+					header : new sap.m.Label({
+						text : "Object Marker with long text"
+					})
+				}),
+				new sap.m.Column({
+					header : new sap.m.Label({
+						text : "Object Marker (active) with long text"
+					})
 				})
 			]
 		});
@@ -70,6 +80,17 @@
 				}),
 				new sap.m.ObjectMarker({
 					type: "{type}",
+					press: function(oEvent) {
+						sap.m.MessageToast.show(oEvent.getParameter("type") + " marker pressed!");
+					}
+				}),
+				new sap.m.ObjectMarker({
+					type: "{type}",
+					additionalInfo: "{addInfo}",
+				}),
+				new sap.m.ObjectMarker({
+					type: "{type}",
+					additionalInfo: "{addInfo}",
 					press: function(oEvent) {
 						sap.m.MessageToast.show(oEvent.getParameter("type") + " marker pressed!");
 					}

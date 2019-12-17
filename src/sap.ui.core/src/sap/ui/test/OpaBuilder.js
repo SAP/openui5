@@ -72,7 +72,7 @@ sap.ui.define(
         function _parseArguments(aExpectedTypes) {
             var aArguments = Array.prototype.slice.call(arguments, 1);
 
-            return aExpectedTypes.reduce(function (aActualArguments, vExpectedType, iIndex) {
+            return aExpectedTypes.reduce(function (aActualArguments, vExpectedType) {
                 if (_isOfType(aArguments[0], vExpectedType, true)) {
                     aActualArguments.push(aArguments.shift());
                 } else {
@@ -152,10 +152,12 @@ sap.ui.define(
         }
 
         function _executeActions(vActions, oTarget) {
-            return oActionPipeline.process({
-                actions: vActions,
-                control: oTarget
-            });
+            if (vActions && oTarget) {
+                oActionPipeline.process({
+                    actions: vActions,
+                    control: oTarget
+                });
+            }
         }
 
         function _executeMatchers(vMatchers, oTarget) {
@@ -603,11 +605,12 @@ sap.ui.define(
         /**
          * Executes a {@link sap.ui.test.actions.Press} action on target control(s).
          *
+         * @param {string} [sIdSuffix] the id suffix of the DOM Element the press action will be executed on
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
          */
-        OpaBuilder.prototype.doPress = function () {
-            return this.do(OpaBuilder.Actions.press());
+        OpaBuilder.prototype.doPress = function (sIdSuffix) {
+            return this.do(OpaBuilder.Actions.press(sIdSuffix));
         };
 
         /**
@@ -616,11 +619,13 @@ sap.ui.define(
          * @param {string} sText the text to be entered
          * @param {boolean} [bClearFirst] true to clear already existing text, false to keep it (default)
          * @param {boolean} [bKeepFocus] true to keep focus on target control, false to focus out (default)
+         * @param {string} [sIdSuffix] the id suffix of the DOM Element the action will be executed on
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
          */
-        OpaBuilder.prototype.doEnterText = function (sText, bClearFirst, bKeepFocus) {
-            return this.do(OpaBuilder.Actions.enterText(sText, bClearFirst, bKeepFocus));
+        OpaBuilder.prototype.doEnterText = function (sText, bClearFirst, bKeepFocus, sIdSuffix) {
+            var aArguments = _parseArguments([String, Boolean, Boolean, String], sText, bClearFirst, bKeepFocus, sIdSuffix);
+            return this.do(OpaBuilder.Actions.enterText(aArguments[0], aArguments[1], aArguments[2], aArguments[3]));
         };
 
         /**
@@ -1142,7 +1147,7 @@ sap.ui.define(
              * @param {string} sText defines the {@link sap.ui.test.actions.EnterText#text} setting
              * @param {boolean} [bClearTextFirst] defines the {@link sap.ui.test.actions.EnterText#clearTextFirst} setting
              * @param {boolean} [bKeepFocus] defines the {@link sap.ui.test.actions.EnterText#keepFocus} setting
-             * @param {string} [sIdSuffix] the id suffix of the DOM Element the press action will be executed on
+             * @param {string} [sIdSuffix] the id suffix of the DOM Element the action will be executed on
              * @returns {sap.ui.test.actions.EnterText} an instance of the {@link sap.ui.test.actions.EnterText} action
              * @public
              * @static

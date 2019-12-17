@@ -3,28 +3,6 @@
 /* Quartz Dark theme                   */
 /* =================================== */
 
-.sapMPage {
-	overflow: hidden;
-}
-
-.sapMPage > .sapMPageHeader {
-	position: relative;
-	box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor, 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
-	border-bottom: none;
-}
-
-.sapMPage.sapMPageWithSubHeader {
-	> .sapMPageHeader,
-	> .sapMPageHeader .sapMIBar-CTX {
-		box-shadow: none;
-	}
-
-	> .sapMPageSubHeader {
-		box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor, 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
-		border-bottom: none;
-	}
-}
-
 .sapMPageBgStandard {
 	background-color: @sapUiBaseBG;
 }
@@ -154,8 +132,8 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 }
 
 .sapMPageHeader, .sapMPageSubHeader, .sapMPageFooter {
-	.sapM-Std-PaddingS, .sapM-Std-PaddingM,
-	.sapM-Std-PaddingL, .sapM-Std-PaddingXL {
+	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
 		&.sapMBar {
 			box-sizing: border-box;
 			.sapMBarLeft {
@@ -167,13 +145,13 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 		}
 	}
 }
-.sapM-Std-PaddingS,
-.sapM-Std-PaddingM,
-.sapM-Std-PaddingL,
-.sapM-Std-PaddingXL {
-	&.sapMFloatingFooter.sapMPageFooter {
+.sapUi-Std-PaddingS,
+.sapUi-Std-PaddingM,
+.sapUi-Std-PaddingL,
+.sapUi-Std-PaddingXL {
+	&.sapMPageFloatingFooter.sapMPageFooter {
 		margin: 0.5rem 0;
-		width: initial;
+		width: auto;
 	}
 }
 

@@ -1,15 +1,19 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/base/util/restricted/_merge"
 ], function (
+	BaseEditor,
 	ArrayEditor,
 	JSONModel,
 	QUnitUtils,
-	ObjectPath
+	ObjectPath,
+	_merge
 ) {
 	"use strict";
 
@@ -250,63 +254,30 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("tap", this.oEditorElement.getItems()[1].getDomRef());
 		});
 
-		QUnit.test("When a nested array editor is created", function (assert) {
-			this.oEditor.destroy();
+		QUnit.test("When an element is added to a non-declared array", function (assert) {
 			var done = assert.async();
-
 			this.oPropertyConfig = {
-				label: "Nested Array Level 1",
-				path: "parent/parentitems",
+				label: "EMPTY ARRAY TEST",
+				path: "emptyArray",
 				type: "array",
-				itemLabel: "Item",
 				template: {
-					parentitems: {
-						label: "Nested Array Level 2",
-						type: "array",
-						path: "childitems",
-						template: {
-							childproperty: {
-								label: "Number",
-								type: "number",
-								path: "childproperty"
-							}
-						}
+					title : {
+						label: "TITLE",
+						type: "string",
+						path: "title",
+						defaultValue: "Default Title"
 					}
 				}
 			};
-			this.oContextModel = new JSONModel({
-				parent: {
-					parentitems: [
-						{
-							childitems: [
-								{childproperty: 1},
-								{childproperty: 2},
-								{childproperty: 3}
-							]
-						},
-						{
-							childitems: [
-								{childproperty: 4},
-								{childproperty: 5},
-								{childproperty: 6}
-							]
-						}
-					]
-				}
-			});
-			this.oContextModel.setDefaultBindingMode("OneWay");
-			this.oEditor = new ArrayEditor();
-			this.oEditor.setModel(this.oContextModel, "_context");
 			this.oEditor.setConfig(this.oPropertyConfig);
-
-			this.oEditor.attachReady(function () {
-				assert.strictEqual(
-					this.oEditor.getModel("_context").getProperty("/parent/parentitems/0/childitems/0/childproperty"),
-					1,
-					"Then the item binding paths are correct"
-				);
+			this.oEditor.attachPropertyChange(function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is one item");
+				assert.deepEqual(oEvent.getParameter("value")[0], {title: "Default Title"}, "Then the new item is created with proper default values");
 				done();
-			}, this);
+			});
+			var oAddButton = this.oEditorElement.getItems()[1];
+			assert.strictEqual(oAddButton.getEnabled(), true, "Then the button to add an item is enabled");
+			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
 		});
 
 		QUnit.test("moveUp should be disabled for the first item in the array", function (assert) {
@@ -365,6 +336,266 @@ sap.ui.define([
 			assert.strictEqual(this.oEditor.getValue()[0].title, "Target", "then Target is on the first place in array editor");
 			assert.strictEqual(this.oEditor.getValue()[1].title, "Deviation", "then Deviation is on the second place in array editor");
 			QUnitUtils.triggerEvent("tap", oMoveUpButton.getDomRef());
+		});
+	});
+
+	QUnit.module("Nested arrays", {
+		beforeEach: function (assert) {
+			var mConfig = {
+				label: "Nested Array Level 1",
+				path: "parent/parentItems",
+				type: "array",
+				itemLabel: "Item",
+				template: {
+					parentItems: {
+						label: "Nested Array Level 2",
+						type: "array",
+						path: "childItems",
+						template: {
+							childProperty: {
+								label: "Number",
+								type: "number",
+								path: "childProperty"
+							}
+						}
+					}
+				}
+			};
+
+			this.oContextModel = new JSONModel({
+				parent: {
+					parentItems: [
+						{
+							childItems: [
+								{ childProperty: 1 },
+								{ childProperty: 2 },
+								{ childProperty: 3 }
+							]
+						},
+						{
+							childItems: [
+								{ childProperty: 4 },
+								{ childProperty: 5 },
+								{ childProperty: 6 }
+							]
+						}
+					]
+				}
+			});
+			this.oContextModel.setDefaultBindingMode("OneWay");
+
+			this.oEditor = new ArrayEditor();
+			this.oEditor.setModel(this.oContextModel, "_context");
+			this.oEditor.setConfig(mConfig);
+			this.oEditor.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var fnDone = assert.async();
+
+			this.oEditor.attachReady(function () {
+				this.oEditorElement = this.oEditor.getContent();
+				fnDone();
+			}, this);
+		},
+		afterEach: function () {
+			this.oEditor.destroy();
+			this.oContextModel.destroy();
+		}
+	}, function () {
+		QUnit.test("when add button is pressed for parent array", function (assert) {
+			var fnDone = assert.async();
+
+			this.oEditor.attachPropertyChange(function (oEvent) {
+				var aValue = oEvent.getParameter("value");
+				var mLastChild = aValue.slice().pop();
+
+				assert.ok(Array.isArray(mLastChild.parentItems), "then nested array is initialized with an empty array value by default");
+				assert.strictEqual(mLastChild.parentItems.length, 0, "then nested array doesn't contain any items by default");
+
+				fnDone();
+			});
+			var oAddButton = this.oEditorElement.getItems()[1];
+			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+		});
+	});
+
+
+	QUnit.module("Integration with BaseEditor", {
+		beforeEach: function (assert) {
+			var fnDone = assert.async();
+
+			var mConfig = {
+				"properties": {
+					"cars": {
+						label: "Cars",
+						path: "cars",
+						type: "array",
+						itemLabel: "Item",
+						template: {
+							vendor: {
+								label: "Vendor",
+								type: "string",
+								path: "vendor"
+							},
+							year: {
+								label: "Year produced",
+								type: "number",
+								path: "year"
+							},
+							owners: {
+								label: "Owners",
+								type: "array",
+								path: "owners",
+								itemLabel: "Owner",
+								template: {
+									name: {
+										label: "Name",
+										type: "string",
+										path: "name"
+									},
+									phone: {
+										label: "Phone",
+										type: "number",
+										path: "phone"
+									}
+								}
+							}
+						},
+						maxItems: 2
+					}
+				},
+				"propertyEditors": {
+					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+				}
+			};
+
+			var mJson = {
+				cars: [
+					{
+						"vendor": "VW",
+						"year": 2019,
+						"owners": [
+							{
+								"name": "Peter",
+								"phone": "7570000001"
+							},
+							{
+								"name": "Sylvia",
+								"phone": "7570000002"
+							}
+						]
+					},
+					{
+						"vendor": "Audi",
+						"year": 1999,
+						"owners": [
+							{
+								"name": "Sebastian",
+								"phone": "7570000003"
+							}
+						]
+					}
+				]
+			};
+
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+
+			this.oBaseEditor.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function (oEvent) {
+				this.oArrayEditor = oEvent.getSource().getPropertyEditorSync("cars");
+				fnDone();
+			}, this);
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("when amount of elements reaches maxItems, then the `add` button should be disabled", function (assert) {
+			var oAddButton = this.oArrayEditor.getContent().getItems()[1];
+			assert.strictEqual(this.oArrayEditor.getValue().length, this.oArrayEditor.getConfig().maxItems);
+			assert.notOk(oAddButton.getEnabled(), "then add button is disabled");
+		});
+
+		QUnit.test("when removing one item, then the add button should be enabled", function (assert) {
+			var oAddButton = this.oArrayEditor.getContent().getItems()[1];
+			assert.strictEqual(this.oArrayEditor.getValue().length, this.oArrayEditor.getConfig().maxItems);
+
+			QUnitUtils.triggerEvent("tap", _getArrayEditorElements(this.oArrayEditor)[0].getItems()[0].getContentRight()[2].getDomRef());
+
+			assert.ok(this.oArrayEditor.getValue().length < this.oArrayEditor.getConfig().maxItems);
+			assert.ok(oAddButton.getEnabled(), "then add button is enabled");
+		});
+
+		QUnit.test("when data is set via setJson api on BaseEditor", function (assert) {
+			var fnDone = assert.async();
+			this.oBaseEditor.setJson({
+				cars: [
+					{
+						"vendor": "VW",
+						"year": 2019,
+						"owners": []
+					}
+				]
+			});
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+				var oArrayEditor = this.oBaseEditor.getPropertyEditorSync("cars");
+				var oAddButton = oArrayEditor.getContent().getItems()[1];
+				assert.ok(oArrayEditor.getValue().length < oArrayEditor.getConfig().maxItems);
+				assert.ok(oAddButton.getEnabled(), "then add button is enabled");
+
+				this.oBaseEditor.setJson({
+					cars: [
+						{
+							"vendor": "VW",
+							"year": 2019,
+							"owners": []
+						},
+						{
+							"vendor": "Audi",
+							"year": 1999,
+							"owners": []
+						}
+					]
+				});
+
+				this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+					var oArrayEditor = this.oBaseEditor.getPropertyEditorSync("cars");
+					var oAddButton = oArrayEditor.getContent().getItems()[1];
+
+					assert.strictEqual(this.oArrayEditor.getValue().length, this.oArrayEditor.getConfig().maxItems);
+					assert.notOk(oAddButton.getEnabled(), "then add button is disabled");
+
+					fnDone();
+				}, this);
+			}, this);
+		});
+
+		QUnit.test("when editing item in the nested array, then no re-rendering should take place", function (assert) {
+			var oVWCarEditor = _getArrayEditorElements(this.oArrayEditor)[0];
+			var oOwnersEditor = oVWCarEditor.getItems()[1].getAggregation("propertyEditors")[2];
+			var aOwnersItems = _getArrayEditorElements(oOwnersEditor);
+			var oOwnerNameEditor = aOwnersItems[0].getItems()[1].getAggregation("propertyEditors")[0];
+			var oOwnerInput = oOwnerNameEditor.getContent();
+
+			oOwnerInput.focus();
+			assert.strictEqual(document.activeElement, oOwnerInput.$("inner").get(0));
+			oOwnerInput.setValue("Kevin");
+			QUnitUtils.triggerEvent("input", oOwnerInput.getDomRef());
+
+			assert.strictEqual(
+				ObjectPath.get(["cars", "0", "owners", "0", "name"], this.oBaseEditor.getJson()),
+				"Kevin"
+			);
+
+			assert.strictEqual(document.activeElement, oOwnerInput.$("inner").get(0));
 		});
 	});
 });

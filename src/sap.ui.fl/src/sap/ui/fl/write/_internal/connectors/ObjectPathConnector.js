@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector"
+	"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector",
+	"sap/base/util/LoaderExtensions"
 ], function(
 	merge,
 	BaseConnector,
-	ApplyObjectPathConnector
+	ApplyObjectPathConnector,
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -26,17 +28,18 @@ sap.ui.define([
 		layers: [],
 
 		loadFeatures: function (mPropertyBag) {
-			return new Promise(function(resolve, reject) {
-				var sPath = ApplyObjectPathConnector.jsonPath || mPropertyBag.path;
-				if (sPath) {
-					jQuery.getJSON(sPath).done(function (oResponse) {
-						oResponse.componentClassName = mPropertyBag.flexReference;
-						resolve(oResponse.settings);
-					}).fail(reject);
-				} else {
-					resolve({});
-				}
-			});
+			var sPath = ApplyObjectPathConnector.jsonPath || mPropertyBag.path;
+			if (sPath) {
+				return LoaderExtensions.loadResource({
+					dataType: "json",
+					url: sPath,
+					async: true
+				}).then(function (sFlexReference, oResponse) {
+					oResponse.componentClassName = sFlexReference;
+					return oResponse.settings || {};
+				}.bind(null, mPropertyBag.flexReference));
+			}
+			return Promise.resolve({});
 		}
 	});
 }, true);

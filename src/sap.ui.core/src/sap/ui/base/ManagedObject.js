@@ -4056,7 +4056,7 @@ sap.ui.define([
 			// indexed contexts, where inserting/deleting entries shifts the index of all following items
 			aChildren = oControl[oAggregationInfo._sGetter]() || [];
 			for (i = 0; i < aChildren.length; i++) {
-				aChildren[i].setBindingContext(aContexts[i]);
+				aChildren[i].setBindingContext(aContexts[i], oBindingInfo.model);
 			}
 		}
 

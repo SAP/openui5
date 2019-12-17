@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Table Card</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../css/style.css">
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+
+	<link  href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
+	<script src="../../google-code-prettify/run_prettify.js"></script>
+
+</head>
+<body class="sapUiBody topicBody">
+<div class="topic">
+	<div class="content">
+		<h1 id="overview">
+			Table Card
+		</h1>
+		<p>
+			The table card is used to display multiple items in table view.
+		</p>
+		<h2 id="properties">Properties</h2>
+		<p>The table card contains an array of rows.</p>
+
+		<h4>Table row properties</h4>
+
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+				</tr>
+				<tr>
+					<td>columns</td>
+					<td>array</td>
+					<td>No</td>
+					<td>Defines the columns attributes.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>actions</td>
+					<td>object</td>
+					<td>No</td>
+					<td>Defines actions that can be applied on the item.</td>
+					<td>1.15.0</td>
+				</tr>
+			</table>
+		</div>
+
+		<h4>Table column properties</h4>
+
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+				</tr>
+				<tr>
+					<td>title</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Defines language-dependent title of the column.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>width</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Defines the width of the column.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Represents the text value of the column.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>icon</td>
+					<td>icon</td>
+					<td>No</td>
+					<td>Represents column with icon.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>state</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Defines the state of the column.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>url</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Defines the URL string.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>target</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Specifies where to open the 'url', if it is provided.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>identifier</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Defines whether the column is an identifier.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>progressIndicator</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Defines the progress indicator attributes.</td>
+					<td>1.15.0</td>
+				</tr>
+			</table>
+		</div>
+
+		<h2 id="example">Example</h2>
+		<p>Define the type and data for the card:
+		</p>
+		<pre class="prettyprint  lang-js">{
+	"sap.app": {
+		"id": "card.explorer.table.card",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Sales Orders for Key Accounts",
+			"subTitle": "Today",
+			"status": {
+				"text": "5 of 27"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/tableitems.json"
+				}
+			},
+			"row": {
+				"columns": [
+					{
+						"label": "Sales Order",
+						"value": "{salesOrder}",
+						"identifier": true
+					},
+					{
+						"label": "Customer",
+						"value": "{name}"
+					},
+					{
+						"label": "Net Amount",
+						"value": "{netAmount}"
+					},
+					{
+						"label": "Status",
+						"value": "{status}",
+						"state": "{statusState}"
+					},
+					{
+						"label": "Avatar",
+						"width": "12%",
+						"icon": {
+							"src": "{icon}"
+						}
+					},
+					{
+						"label": "Progress",
+						"progressIndicator": {
+							"percent": "{percent}",
+							"text": "{percentValue}",
+							"state": "{progressState}"
+						}
+					}
+				]
+			}
+		}
+	}
+}</pre>
+		<p>
+			The content of the tableitems.json that we are requesting:
+		</p>
+		<pre class="prettyprint  lang-js">[
+	{
+		"salesOrder": "5000010050",
+		"isActive": true,
+		"name": "Robert Brown Entertainment",
+		"netAmount": "2K USD",
+		"status": "Delivered",
+		"statusState": "Success",
+		"icon": "../images/Woman_avatar_01.png",
+		"percent": 30,
+		"percentValue": "30%",
+		"progressState": "Error"
+	},
+	{
+		"salesOrder": "5000010051",
+		"isActive": true,
+		"name": "Entertainment Argentinia",
+		"netAmount": "127k USD",
+		"status": "Canceled",
+		"statusState": "Error",
+		"icon": "../images/Woman_avatar_01.png",
+		"percent": 70,
+		"percentValue": "70 of 100",
+		"progressState": "Success"
+	},
+	{
+		"salesOrder": "5000010052",
+		"isActive": false,
+		"name": "Brazil Technologies",
+		"netAmount": "8K USD",
+		"status": "In Progress",
+		"statusState": "Warning",
+		"icon": "../images/Woman_avatar_01.png",
+		"percent": 40,
+		"percentValue": "40 of 100",
+		"progressState": "Warning"
+	},
+	{
+		"salesOrder": "5000010053",
+		"isActive": true,
+		"name": "Quimica Madrilenos",
+		"netAmount": "25K USD",
+		"status": "Delivered",
+		"statusState": "Success",
+		"icon": "../images/Woman_avatar_01.png",
+		"percent": 20,
+		"percentValue": "20 of 100",
+		"progressState": "Error"
+	},
+	{
+		"salesOrder": "5000010054",
+		"name": "Development Para O Governo",
+		"netAmount": "7K USD",
+		"status": "Delivered",
+		"statusState": "Success",
+		"icon": "../images/Woman_avatar_01.png",
+		"percent": 40,
+		"percentValue": "40 of 100",
+		"progressState": "Warning"
+	}
+]</pre>
+		<p>Create the widget card that can actually use the manifest.json which we created:</p>
+		<pre class="prettyprint  lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+&lt;/mvc:View&gt;</pre>
+		<a class="try-button" href="../../../index.html#/explore/table" target="_parent">Try it Out</a>
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#overview">Table Card</a></div>
+		<div><a href="#properties">Properties</a></div>
+		<div><a href="#example">Example</a></div>
+	</div>
+</div>
+</body>
+</html>

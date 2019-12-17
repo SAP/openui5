@@ -1330,7 +1330,7 @@ function(
 		};
 
 		/**
-		 * Calculates next/previous value that is fold by the the provided step
+		 * Calculates next/previous value that is fold by the provided step
 		 * @param {number} fValue the base value
 		 * @param {number} step the step to increase the value to
 		 * @param {number} iSign direction, where if 1 -> increase, -1-> decrease.

@@ -202,11 +202,16 @@ sap.ui.define([
 	QUnit.test("addFormContainer", function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormContainer2 = new FormContainer("FC2");
+		sinon.spy(oFormContainer1, "_setEditable");
+		sinon.spy(oFormContainer2, "_setEditable");
+
 		oForm.addFormContainer(oFormContainer1);
 		oForm.addFormContainer(oFormContainer2);
 		sap.ui.getCore().applyChanges();
 		var aFormContainers = oForm.getFormContainers();
 
+		assert.ok(oFormContainer1._setEditable.calledWith(false), "_setEditable on FormContainer1");
+		assert.ok(oFormContainer2._setEditable.calledWith(false), "_setEditable on FormContainer2");
 		assert.equal(aFormContainers.length, 2, "2 FormContainers added");
 		assert.equal(aFormContainers[0].getId(), "FC1", "first FormContainer");
 		assert.equal(aFormContainers[1].getId(), "FC2", "second FormContainer");
@@ -218,11 +223,16 @@ sap.ui.define([
 	QUnit.test("insertFormContainer", function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormContainer2 = new FormContainer("FC2");
+		sinon.spy(oFormContainer1, "_setEditable");
+		sinon.spy(oFormContainer2, "_setEditable");
+
 		oForm.insertFormContainer(oFormContainer1, 0);
 		oForm.insertFormContainer(oFormContainer2, 0);
 		sap.ui.getCore().applyChanges();
 		var aFormContainers = oForm.getFormContainers();
 
+		assert.ok(oFormContainer1._setEditable.calledWith(false), "_setEditable on FormContainer1");
+		assert.ok(oFormContainer2._setEditable.calledWith(false), "_setEditable on FormContainer2");
 		assert.equal(aFormContainers.length, 2, "2 FormContainers added");
 		assert.equal(aFormContainers[0].getId(), "FC2", "first FormContainer");
 		assert.equal(aFormContainers[1].getId(), "FC1", "second FormContainer");
@@ -544,15 +554,15 @@ sap.ui.define([
 		assert.notOk(jQuery("#F1").hasClass("sapUiFormEdit"), "Form not editable rendered");
 		assert.notOk(jQuery("#F1").attr("aria-readonly"), "aria-readonly not set");
 
-		sinon.spy(oFormContainer1, "invalidateLabels");
-		sinon.spy(oFormContainer2, "invalidateLabels");
+		sinon.spy(oFormContainer1, "_setEditable");
+		sinon.spy(oFormContainer2, "_setEditable");
 
 		oForm.setEditable(true);
 		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery("#F1").hasClass("sapUiFormEdit"), "Form editable rendered");
 		assert.notOk(jQuery("#F1").attr("aria-readonly"), "aria-readonly not set");
-		assert.ok(oFormContainer1.invalidateLabels.called, "invalidateLabel on FormContainer1");
-		assert.ok(oFormContainer2.invalidateLabels.called, "invalidateLabel on FormContainer2");
+		assert.ok(oFormContainer1._setEditable.calledWith(true), "_setEditable on FormContainer1");
+		assert.ok(oFormContainer2._setEditable.calledWith(true), "_setEditable on FormContainer2");
 
 		// test if editable rendered by renderer
 		oForm.invalidate();

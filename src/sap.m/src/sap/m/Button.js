@@ -199,15 +199,16 @@ sap.ui.define([
 	Button.prototype.setType = function(sButtonType) {
 		this.setProperty("type", sButtonType, false);
 
-
-		if (sButtonType === ButtonType.Critical && !this.getIcon()) {
-			this.setIcon("sap-icon://message-error");
-		} else if (sButtonType === ButtonType.Negative && !this.getIcon()) {
-			this.setIcon("sap-icon://message-warning");
-		} else if (sButtonType === ButtonType.Success && !this.getIcon()) {
-			this.setIcon("sap-icon://message-success");
-		} else if (sButtonType === ButtonType.Neutral && !this.getIcon()) {
-			this.setIcon("sap-icon://message-information");
+		if (sButtonType === ButtonType.Critical) {
+			this._sTypeIconURI = "sap-icon://message-warning";
+		} else if (sButtonType === ButtonType.Negative) {
+			this._sTypeIconURI = "sap-icon://message-error";
+		} else if (sButtonType === ButtonType.Success) {
+			this._sTypeIconURI = "sap-icon://message-success";
+		} else if (sButtonType === ButtonType.Neutral) {
+			this._sTypeIconURI = "sap-icon://message-information";
+		} else {
+			this._sTypeIconURI = null;
 		}
 
 		return this;
@@ -224,7 +225,6 @@ sap.ui.define([
 
 	/*
 	 * Restore active state if the button was depressed before re-rendering.
-	 * Save _bRenderActive to treate the next mouseup as a tap event.
 	 */
 	Button.prototype.onAfterRendering = function() {
 		if (this._bRenderActive) {
@@ -267,12 +267,12 @@ sap.ui.define([
 			}
 			if (!sap.ui.Device.browser.msie) {
 				// set the tag ID where the touch event started
-				this._sStartingTagId = oEvent.target.id.replace(this.getId(), '');
+				this._sTouchStartTargetId = oEvent.target.id.replace(this.getId(), '');
 			}
 		} else {
 			if (!sap.ui.Device.browser.msie) {
 				// clear the starting tag ID in case the button is not enabled and visible
-				this._sStartingTagId = '';
+				this._sTouchStartTargetId = '';
 			}
 		}
 	};
@@ -288,23 +288,21 @@ sap.ui.define([
 		// set inactive button state
 		this._inactiveButton();
 
-		// if the button was re-rendered being in depressed state, the tap event won't come. Simulate it:
 		if (this._bRenderActive) {
 			delete this._bRenderActive;
-			if (oEvent.originalEvent && oEvent.originalEvent.type in {mouseup:1, touchend:1}) {
-				this.ontap(oEvent);
-			}
 		}
 
 		if (!sap.ui.Device.browser.msie) {
 			// get the tag ID where the touch event ended
 			this._sEndingTagId = oEvent.target.id.replace(this.getId(), '');
 			// there are some cases when tap event won't come. Simulate it:
-			if (this._buttonPressed === 0 && ((this._sStartingTagId === "-BDI-content" && (this._sEndingTagId === '-content' || this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sStartingTagId === "-content" && (this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sStartingTagId === '-img' && this._sEndingTagId !== '-img'))) {
+			if (this._buttonPressed === 0 && ((this._sTouchStartTargetId === "-BDI-content" && (this._sEndingTagId === '-content' || this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sTouchStartTargetId === "-content" && (this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sTouchStartTargetId === '-img' && this._sEndingTagId !== '-img'))) {
 				this.ontap(oEvent);
 			}
 		}
 
+		// clear the starting target
+		this._sTouchStartTargetId = '';
 	};
 
 	/**
@@ -313,6 +311,7 @@ sap.ui.define([
 	 */
 	Button.prototype.ontouchcancel = function() {
 		this._buttonPressed = false;
+		this._sTouchStartTargetId = '';
 		// set inactive button state
 		this._inactiveButton();
 	};
@@ -429,7 +428,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.onfocusout = function() {
-
+		this._buttonPressed = false;
+		this._sTouchStartTargetId = '';
 		// set inactive button state
 		this._inactiveButton();
 	};
@@ -447,7 +447,7 @@ sap.ui.define([
 		// handling active icon
 		this._bActive = this.getEnabled();
 		if (this._bActive) {
-			if (this.getIcon() && this.getActiveIcon() && this._image) {
+			if (this._getAppliedIcon() && this.getActiveIcon() && this._image) {
 				this._image.setSrc(this.getActiveIcon());
 			}
 		}
@@ -466,8 +466,8 @@ sap.ui.define([
 		// handling active icon
 		this._bActive = false;
 		if (this.getEnabled()) {
-			if (this.getIcon() && this.getActiveIcon() && this._image) {
-				this._image.setSrc(this.getIcon());
+			if (this._getAppliedIcon() && this.getActiveIcon() && this._image) {
+				this._image.setSrc(this._getAppliedIcon());
 			}
 		}
 	};
@@ -606,7 +606,7 @@ sap.ui.define([
 
 		if (!sTooltip && !this.getText()) {
 			// get icon-font info. will return null if the icon is an image
-			var oIconInfo = IconPool.getIconInfo(this.getIcon());
+			var oIconInfo = IconPool.getIconInfo(this._getAppliedIcon());
 
 			// add tooltip if available
 			if (oIconInfo && oIconInfo.text) {
@@ -618,14 +618,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the icon, if none - gets the icon implied from the type.
+	 *
+	 * @private
+	 */
+	Button.prototype._getAppliedIcon = function() {
+		return this.getIcon() || this._sTypeIconURI;
+	};
+
+	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @returns {Object} Current accessibility state of the control
 	 * @protected
 	 */
 	Button.prototype.getAccessibilityInfo = function() {
 		var sDesc = this.getText() || this.getTooltip_AsString();
-		if (!sDesc && this.getIcon()) {
-			var oIconInfo = IconPool.getIconInfo(this.getIcon());
+		if (!sDesc && this._getAppliedIcon()) {
+			var oIconInfo = IconPool.getIconInfo(this._getAppliedIcon());
 			if (oIconInfo) {
 				sDesc = oIconInfo.text || oIconInfo.name;
 			}

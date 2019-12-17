@@ -33,7 +33,7 @@ sap.ui.define([
                 var oRow = this._getValidationRoot(oControl);
                 var oTable = this._getAncestor(oControl);
 
-                var oTableBindingInfo = oTable.getBinding("items");
+                var oTableBindingInfo = oTable.getBindingInfo("items");
                 var sRowBindingContextPath = oRow.getBindingContextPath && oRow.getBindingContextPath();
                 var mRowSelector = {};
                 // tables may not have an items binding eg: forms as tables

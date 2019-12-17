@@ -185,18 +185,23 @@ sap.ui.define([
 		this.setEnableCellFilter(true);
 		this._aGroupedColumns = [];
 		this._bSuspendUpdateAnalyticalInfo = false;
+		this._mGroupHeaderMenuItems = null;
 		TableUtils.Grouping.setGroupMode(this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Table.OpenMenu, this._onOpenTableContextMenu, this);
 	};
 
 	AnalyticalTable.prototype.exit = function() {
-		this._cleanupGroupHeaderMenu();
 		Table.prototype.exit.apply(this, arguments);
+		this._cleanupGroupHeaderMenuItems();
+		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
+		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Table.OpenMenu, this._onOpenTableContextMenu, this);
 	};
 
 	AnalyticalTable.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
 		return Table.prototype._adaptLocalization.apply(this, arguments).then(function() {
 			if (bLangChanged) {
-				this._cleanupGroupHeaderMenu();
+				this._cleanupGroupHeaderMenuItems();
 			}
 		}.bind(this));
 	};
@@ -286,25 +291,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * @inheritDoc
+	 */
+	AnalyticalTable.prototype._bindRows = function(oBindingInfo) {
+		this._applyAnalyticalBindingInfo(oBindingInfo);
+		Table.prototype._bindRows.call(this, oBindingInfo);
+	};
+
+	/**
 	 * This function will be called by either by {@link sap.ui.base.ManagedObject#bindAggregation} or {@link sap.ui.base.ManagedObject#setModel}.
 	 *
 	 * @override {@link sap.ui.table.Table#_bindAggregation}
 	 */
 	AnalyticalTable.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
+			// If only the model has been changed, the ManagedObject only calls _bindAggregation while bindAggregation / bindRows is not called.
+			this._invalidateColumnMenus(); // Metadata might change.
+			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
+
 			// make sure to reset the first visible row (currently needed for the analytical binding)
 			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
 			this.setProperty("firstVisibleRow", 0, true);
-
-			this._applyAnalyticalBindingInfo(oBindingInfo);
-			this._updateTotalRow(true);
-			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
 		}
 
 		// Create the binding.
 		Table.prototype._bindAggregation.call(this, sName, oBindingInfo);
 
 		if (sName === "rows") {
+			this._updateTotalRow(true);
 			TableUtils.Binding.metadataLoaded(this).then(function() {
 				this._updateColumns(true);
 			}.bind(this));
@@ -403,51 +417,54 @@ sap.ui.define([
 		return aColumns;
 	};
 
-	AnalyticalTable.prototype._updateTableContent = function() {
+	AnalyticalTable.prototype._updateRowState = function(oState) {
 		var oBinding = this.getBinding("rows");
-		var mRowCounts = this._getRowCounts();
-		var aRows = this.getRows();
-		var i;
+		var oBindingInfo = this.getBindingInfo("rows");
+		var oNode = oState.context;
 
-		//check if the table has rows (data to display)
-		if (!oBinding) {
-			// restore initial table state, remove group headers and total row formatting
-			for (i = 0; i < aRows.length; i++) {
-				TableUtils.Grouping.cleanupTableRowForGrouping(this, aRows[i]);
-			}
+		if (!oBinding || !oNode) {
 			return;
 		}
 
-		var oBindingInfo = this.getBindingInfo("rows");
-		var bTableIsScrollable = this._getTotalRowCount() > mRowCounts.count;
+		oState.context = oNode.context ? oNode.context : null; // The AnalyticalTable requests nodes from the binding.
+		if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oNode)) {
+			oState.type = oState.Type.GroupHeader;
+		} else if (oNode.nodeState.sum) {
+			oState.type = oState.Type.Summary;
+		}
+		oState.level = oNode.level + (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0);
+		oState.expandable = oState.type === oState.Type.GroupHeader;
+		oState.expanded = oState.expandable ? oNode.nodeState.expanded : false;
+		oState.contentHidden = oState.expanded && !oBindingInfo.parameters.sumOnTop;
+		oState.title = oState.type === oState.Type.GroupHeader ? oBinding.getGroupName(oNode.context, oNode.level) : "";
+	};
 
-		for (i = 0; i < aRows.length; i++) {
-			var bIsFixedRow = i > (mRowCounts.count - mRowCounts.fixedBottom - 1) && bTableIsScrollable;
-			var oRow = aRows[i];
-			var iRowIndex = oRow.getIndex();
+	AnalyticalTable.prototype.onRowsUpdated = function(mParameters) {
+		Table.prototype.onRowsUpdated.apply(this, arguments);
 
-			var oContextInfo;
-			if (bIsFixedRow && oBinding.bProvideGrandTotals) {
-				oContextInfo = oBinding.getGrandTotalContextInfo();
-			} else {
-				oContextInfo = this.getContextInfoByIndex(iRowIndex);
+		var aRows = this.getRows();
+		var oBinding = this.getBinding("rows");
+		var oFirstVisibleColumn = this._getVisibleColumns()[0];
+
+		for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
+			var oRow = aRows[iRowIndex];
+			var iLevel = oRow.getLevel();
+			var iIndent = 0;
+
+			iLevel -= oBinding && oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0;
+			iLevel = !oRow.isGroupHeader() && !oRow.isSummary() ? iLevel - 1 : iLevel;
+
+			for (var j = 1; j < iLevel; j++) {
+				if (j === 1) {
+					iIndent = 24;
+				} else if (j === 2) {
+					iIndent += 12;
+				} else {
+					iIndent += 8;
+				}
 			}
 
-			var iLevel = oContextInfo ? oContextInfo.level : 0;
-
-			if (!oContextInfo || !oContextInfo.context) {
-				TableUtils.Grouping.cleanupTableRowForGrouping(this, oRow);
-				continue;
-			}
-
-			if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oContextInfo)) {
-				TableUtils.Grouping.updateTableRowForGrouping(this, oRow, true, oContextInfo.nodeState.expanded,
-					oContextInfo.nodeState.expanded && !oBindingInfo.parameters.sumOnTop, false, iLevel,
-					oBinding.getGroupName(oContextInfo.context, oContextInfo.level));
-			} else {
-				TableUtils.Grouping.updateTableRowForGrouping(this, oRow, false, false, false, oContextInfo.nodeState.sum, iLevel,
-					oContextInfo.nodeState.sum && oContextInfo.level > 0 ? oBinding.getGroupName(oContextInfo.context, oContextInfo.level) : null);
-			}
+			TableUtils.Grouping.setGroupIndent(oRow, iIndent);
 
 			// show or hide the totals if not enabled - needs to be done by Table
 			// control since the model could be reused and thus the values cannot
@@ -456,33 +473,38 @@ sap.ui.define([
 			var aCells = oRow.getCells();
 			var iCellCount = aCells.length;
 
-			for (var j = 0; j < iCellCount; j++) {
-				var oAnalyticalColumn = AnalyticalColumn.ofCell(aCells[j]);
-				var $td = jQuery(aCells[j].$().closest("td"));
-				if (oBinding.isMeasure(oAnalyticalColumn.getLeadingProperty())) {
-					$td.addClass("sapUiTableMeasureCell");
-					$td.toggleClass("sapUiTableCellHidden", oContextInfo.nodeState.sum && !oAnalyticalColumn.getSummed());
-				} else {
-					$td.removeClass("sapUiTableMeasureCell");
+			for (var iCellIndex = 0; iCellIndex < iCellCount; iCellIndex++) {
+				var oAnalyticalColumn = AnalyticalColumn.ofCell(aCells[iCellIndex]);
+				var bIsMeasureCell = oBinding ? oBinding.isMeasure(oAnalyticalColumn.getLeadingProperty()) : false;
+				var $td = jQuery(aCells[iCellIndex].$().closest("td"));
+				var bHideCellContent = false;
+
+				if (oRow.isSummary() && bIsMeasureCell) {
+					bHideCellContent = !oAnalyticalColumn.getSummed();
+				} else if (oRow.isGroupHeader() && oAnalyticalColumn === oFirstVisibleColumn) {
+					bHideCellContent = !bIsMeasureCell;
 				}
+
+				$td.toggleClass("sapUiTableCellHidden", bHideCellContent);
 			}
 		}
 	};
 
-	AnalyticalTable.prototype.oncontextmenu = function(oEvent) {
-		if (jQuery(oEvent.target).closest('tr').hasClass('sapUiTableGroupHeader') ||
-				jQuery(oEvent.target).closest('.sapUiTableGroupHeader > .sapUiTableRowSelectionCell').length > 0) {
-			this._iGroupedLevel = jQuery(oEvent.target).closest('[data-sap-ui-level]').data('sap-ui-level');
-			var oMenu = this._getGroupHeaderMenu();
+	AnalyticalTable.prototype._onOpenTableContextMenu = function(oCellInfo, oMenu) {
+		var oRow = oCellInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL) ? this.getRows()[oCellInfo.rowIndex] : null;
 
-			oMenu.openAsContextMenu(oEvent, TableUtils.getCell(this, oEvent.target) || oEvent.target);
-
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
+		if (!oRow || !oRow.isGroupHeader()) {
+			this._removeGroupHeaderMenuItems(oMenu);
+			return;
 		}
+
+		var oBinding = this.getBinding("rows");
+
+		this._iGroupedLevel = oRow.getLevel() - (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0);
+		this._addGroupHeaderMenuItems(oMenu);
 	};
 
-	AnalyticalTable.prototype._getGroupHeaderMenu = function() {
+	AnalyticalTable.prototype._addGroupHeaderMenuItems = function(oMenu) {
 		var that = this;
 
 		function getGroupColumnInfo() {
@@ -502,9 +524,12 @@ sap.ui.define([
 			}
 		}
 
-		if (!this._oGroupHeaderMenu) {
-			this._oGroupHeaderMenu = new Menu();
-			this._oGroupHeaderMenuVisibilityItem = new MenuItem({
+		if (!this._mGroupHeaderMenuItems) {
+			this._mGroupHeaderMenuItems = {};
+		}
+
+		if (!this._mGroupHeaderMenuItems["visibility"]) {
+			this._mGroupHeaderMenuItems["visibility"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_SHOW_COLUMN"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -518,8 +543,11 @@ sap.ui.define([
 					}
 				}
 			});
-			this._oGroupHeaderMenu.addItem(this._oGroupHeaderMenuVisibilityItem);
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["visibility"]);
+
+		if (!this._mGroupHeaderMenuItems["ungroup"]) {
+			this._mGroupHeaderMenuItems["ungroup"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_UNGROUP"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -531,8 +559,12 @@ sap.ui.define([
 						that.fireGroup({column: oUngroupedColumn, groupedColumns: that._aGroupedColumns, type: GroupEventType.ungroup});
 					}
 				}
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["ungroup"]);
+
+		if (!this._mGroupHeaderMenuItems["ungroupall"]) {
+			this._mGroupHeaderMenuItems["ungroupall"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_UNGROUP_ALL"),
 				select: function() {
 					var aColumns = that.getColumns();
@@ -546,8 +578,12 @@ sap.ui.define([
 					that.resumeUpdateAnalyticalInfo();
 					that.fireGroup({column: undefined, groupedColumns: [], type: GroupEventType.ungroupAll});
 				}
-			}));
-			this._oGroupHeaderMoveUpItem = new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["ungroupall"]);
+
+		if (!this._mGroupHeaderMenuItems["moveup"]) {
+			this._mGroupHeaderMenuItems["moveup"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_MOVE_UP"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -564,8 +600,11 @@ sap.ui.define([
 				},
 				icon: "sap-icon://arrow-top"
 			});
-			this._oGroupHeaderMenu.addItem(this._oGroupHeaderMoveUpItem);
-			this._oGroupHeaderMoveDownItem = new MenuItem({
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["moveup"]);
+
+		if (!this._mGroupHeaderMenuItems["movedown"]) {
+			this._mGroupHeaderMenuItems["movedown"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_MOVE_DOWN"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -582,8 +621,11 @@ sap.ui.define([
 				},
 				icon: "sap-icon://arrow-bottom"
 			});
-			this._oGroupHeaderMenu.addItem(this._oGroupHeaderMoveDownItem);
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["movedown"]);
+
+		if (!this._mGroupHeaderMenuItems["sortasc"]) {
+			this._mGroupHeaderMenuItems["sortasc"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_SORT_ASC"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -594,8 +636,12 @@ sap.ui.define([
 					}
 				},
 				icon: "sap-icon://up"
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["sortasc"]);
+
+		if (!this._mGroupHeaderMenuItems["sortdesc"]) {
+			this._mGroupHeaderMenuItems["sortdesc"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_SORT_DESC"),
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
@@ -606,8 +652,12 @@ sap.ui.define([
 					}
 				},
 				icon: "sap-icon://down"
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["sortdesc"]);
+
+		if (!this._mGroupHeaderMenuItems["collapse"]) {
+			this._mGroupHeaderMenuItems["collapse"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_COLLAPSE_LEVEL"),
 				select: function() {
 					// Why -1? Because the "Collapse Level" Menu Entry should collapse TO the given level - 1
@@ -617,58 +667,75 @@ sap.ui.define([
 					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
 					that._getSelectionPlugin().clearSelection();
 				}
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["collapse"]);
+
+		if (!this._mGroupHeaderMenuItems["collapseall"]) {
+			this._mGroupHeaderMenuItems["collapseall"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_COLLAPSE_ALL"),
 				select: function() {
 					that.getBinding("rows").collapseToLevel(0);
 					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
 					that._getSelectionPlugin().clearSelection();
 				}
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["collapseall"]);
+
+		if (!this._mGroupHeaderMenuItems["expand"]) {
+			this._mGroupHeaderMenuItems["expand"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_EXPAND_LEVEL"),
 				select: function() {
 					that.getBinding("rows").expandToLevel(that._iGroupedLevel);
 					that.setFirstVisibleRow(0);
 					that._getSelectionPlugin().clearSelection();
 				}
-			}));
-			this._oGroupHeaderMenu.addItem(new MenuItem({
+			});
+		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["expand"]);
+
+		if (!this._mGroupHeaderMenuItems["expandall"]) {
+			this._mGroupHeaderMenuItems["expandall"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_EXPAND_ALL"),
 				select: function() {
 					that.expandAll();
 				}
-			}));
+			});
 		}
+		oMenu.addItem(this._mGroupHeaderMenuItems["expandall"]);
 
 		var oGroupColumnInfo = getGroupColumnInfo();
 		if (oGroupColumnInfo) {
 			var oColumn = oGroupColumnInfo.column;
 			if (oColumn.getShowIfGrouped()) {
-				this._oGroupHeaderMenuVisibilityItem.setText(TableUtils.getResourceText("TBL_HIDE_COLUMN"));
+				this._mGroupHeaderMenuItems["visibility"].setText(TableUtils.getResourceText("TBL_HIDE_COLUMN"));
 			} else {
-				this._oGroupHeaderMenuVisibilityItem.setText(TableUtils.getResourceText("TBL_SHOW_COLUMN"));
+				this._mGroupHeaderMenuItems["visibility"].setText(TableUtils.getResourceText("TBL_SHOW_COLUMN"));
 			}
-			this._oGroupHeaderMoveUpItem.setEnabled(oGroupColumnInfo.index > 0);
-			this._oGroupHeaderMoveDownItem.setEnabled(oGroupColumnInfo.index < this._aGroupedColumns.length - 1);
+			this._mGroupHeaderMenuItems["moveup"].setEnabled(oGroupColumnInfo.index > 0);
+			this._mGroupHeaderMenuItems["movedown"].setEnabled(oGroupColumnInfo.index < this._aGroupedColumns.length - 1);
 		} else {
-			this._oGroupHeaderMoveUpItem.setEnabled(true);
-			this._oGroupHeaderMoveDownItem.setEnabled(true);
+			this._mGroupHeaderMenuItems["moveup"].setEnabled(true);
+			this._mGroupHeaderMenuItems["movedown"].setEnabled(true);
 		}
-
-		return this._oGroupHeaderMenu;
-
 	};
 
-	AnalyticalTable.prototype._cleanupGroupHeaderMenu = function() {
-		if (this._oGroupHeaderMenu) {
-			this._oGroupHeaderMenu.destroy();
-			this._oGroupHeaderMenu = null;
-			this._oGroupHeaderMenuVisibilityItem = null;
-			this._oGroupHeaderMoveUpItem = null;
-			this._oGroupHeaderMoveDownItem = null;
+	AnalyticalTable.prototype._removeGroupHeaderMenuItems = function(oMenu) {
+		if (!this._mGroupHeaderMenuItems) {
+			return;
 		}
+
+		for (var sItemKey in this._mGroupHeaderMenuItems) {
+			oMenu.removeItem(this._mGroupHeaderMenuItems[sItemKey]);
+		}
+	};
+
+	AnalyticalTable.prototype._cleanupGroupHeaderMenuItems = function() {
+		for (var sItemKey in this._mGroupHeaderMenuItems) {
+			this._mGroupHeaderMenuItems[sItemKey].destroy();
+		}
+		this._mGroupHeaderMenuItems = null;
 	};
 
 	/**
@@ -1207,18 +1274,10 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.comp
 	 */
 	AnalyticalTable.prototype.getAnalyticalInfoOfRow = function(oRow) {
-		if (!TableUtils.isA(oRow, "sap.ui.table.Row") || oRow.getParent() !== this) {
-			return null;
-		}
-
-		var oBindingInfo = this.getBindingInfo("rows");
 		var oBinding = this.getBinding("rows");
-		if (!oBindingInfo || !oBinding) {
-			return null;
-		}
+		var oContext = oRow ? oRow.getRowBindingContext() : null;
 
-		var oContext = oRow.getBindingContext(oBindingInfo.model);
-		if (!oContext) {
+		if (!TableUtils.isA(oRow, "sap.ui.table.Row") || oRow.getParent() !== this || !oBinding || !oContext) {
 			return null;
 		}
 

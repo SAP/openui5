@@ -47,6 +47,7 @@
 			// create first detail page
 			var oDetailPage = new sap.m.Page("detail", {
 				title: "Detail 1",
+				backgroundDesign: sap.m.PageBackgroundDesign.Solid,
 				content: [
 					new sap.m.Button("saNavigationToDetail", {
 						text: "Navigate to detail 2",
@@ -110,6 +111,7 @@
 
 			var oDetailDetailPage = new sap.m.Page("detailDetail", {
 				title: "Detail Detail",
+				backgroundDesign: sap.m.PageBackgroundDesign.Solid,
 				content: [
 					new sap.m.Label({
 						text: "this is Detail Detail"
@@ -153,6 +155,7 @@
 			//create second detail page
 			var oDetailPage2 = new sap.m.Page("detail2", {
 				title: "Detail 2",
+				backgroundDesign: sap.m.PageBackgroundDesign.Solid,
 				showNavButton: true,
 				navButtonText: "Back",
 				navButtonPress: function() {
@@ -176,6 +179,7 @@
 
 			var oMasterPage = new sap.m.Page("master", {
 				title: "Master",
+				backgroundDesign: sap.m.PageBackgroundDesign.List,
 				icon: "images/SAPUI5.jpg",
 				content: [
 					new sap.m.List({
@@ -231,6 +235,7 @@
 			//create second master page
 			var oMasterPage2 = new sap.m.Page("master2", {
 				title: "Master 2",
+				backgroundDesign: sap.m.PageBackgroundDesign.List,
 				showNavButton: true,
 				navButtonPress: function() {
 					oSplitApp.backMaster();

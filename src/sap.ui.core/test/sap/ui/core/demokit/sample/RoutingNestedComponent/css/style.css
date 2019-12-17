@@ -1,0 +1,15 @@
+li.sapTntNavLIItemSelected[id$="suppliersItem"] > div.sapTntNavLIItem {
+	background-color: antiquewhite;
+}
+
+li.sapTntNavLIItemSelected[id$="categoriesItem"] > div.sapTntNavLIItem {
+	background-color: aquamarine;
+}
+
+li.sapTntNavLIItemSelected[id$="productsItem"] > div.sapTntNavLIItem {
+	background-color: lightblue;
+}
+
+.maxWidth100 {
+	max-width: 100%;
+}

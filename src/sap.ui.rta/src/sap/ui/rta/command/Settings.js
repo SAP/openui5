@@ -23,24 +23,14 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 			library : "sap.ui.rta",
 			properties : {
 				content : {
-					type : "any"
+					type : "any",
+					group: "content"
 				}
 			},
 			associations : {},
 			events : {}
 		}
 	});
-
-
-	Settings.prototype._getChangeSpecificData = function() {
-		var mSpecificInfo = {
-			changeType : this.getChangeType(),
-			content : this.getContent()
-		};
-
-		return mSpecificInfo;
-	};
-
 
 	/**
 	 * @override

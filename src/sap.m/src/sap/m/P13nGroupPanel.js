@@ -110,30 +110,25 @@ sap.ui.define([
 				updateGroupItem: {}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			// start GroupPanel
-			oRm.write("<section");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapMGroupPanel");
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl){
+				oRm.openStart("section", oControl);
+				oRm.class("sapMGroupPanel");
+				oRm.openEnd();
 
-			// render content
-			oRm.write("<div");
-			oRm.addClass("sapMGroupPanelContent");
-			oRm.addClass("sapMGroupPanelBG");
+				oRm.openStart("div");
+				oRm.class("sapMGroupPanelContent");
+				oRm.class("sapMGroupPanelBG");
+				oRm.openEnd();
 
-			oRm.writeClasses();
-			oRm.write(">");
-			var aChildren = oControl.getAggregation("content");
-			var iLength = aChildren.length;
-			for (var i = 0; i < iLength; i++) {
-				oRm.renderControl(aChildren[i]);
+				oControl.getAggregation("content").forEach(function(oChildren){
+					oRm.renderControl(oChildren);
+				});
+
+				oRm.close("div");
+				oRm.close("section");
 			}
-			oRm.write("</div>");
-
-			oRm.write("</section>");
 		}
 	});
 

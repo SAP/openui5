@@ -25,7 +25,7 @@ sap.ui.define([
 
 	// new sap/ui/* modules
 	"sap/ui/dom/getComputedStyleFix", "sap/ui/dom/activeElementFix", "sap/ui/dom/includeScript",
-	"sap/ui/dom/includeStylesheet", "sap/ui/core/support/Hotkeys",
+	"sap/ui/dom/includeStylesheet", "sap/ui/core/support/Hotkeys", "sap/ui/test/RecorderHotkeyListener",
 	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/trace/Interaction",
 	"sap/ui/base/syncXHRFix", "sap/base/util/LoaderExtensions",
 	'sap/ui/events/PasteEventFix',
@@ -40,7 +40,7 @@ sap.ui.define([
 ], function(now, Version, assert, Log,
 
 	getComputedStyleFix, activeElementFix, includeScript,
-	includeStylesheet, SupportHotkeys,
+	includeStylesheet, SupportHotkeys, TestRecorderHotkeyListener,
 	FrameOptions, Measurement, Interaction,
 	syncXHRFix, LoaderExtensions,
 	PasteEventFix,
@@ -2180,6 +2180,7 @@ sap.ui.define([
 	// TODO should be in core, but then the 'callback' could not be implemented
 	if ( !(oCfgData.productive === true || oCfgData.productive === "true"  || oCfgData.productive === "x") ) {
 		SupportHotkeys.init(getModuleSystemInfo, oCfgData);
+		TestRecorderHotkeyListener.init(getModuleSystemInfo, oCfgData);
 	}
 
 	// -----------------------------------------------------------------------

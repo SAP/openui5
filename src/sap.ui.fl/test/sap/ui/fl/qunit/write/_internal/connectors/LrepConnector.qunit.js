@@ -4,12 +4,18 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/fl/write/_internal/connectors/Utils"
+	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/Change",
+	"sap/m/MessageBox"
 ], function(
 	sinon,
 	ApplyConnector,
 	LrepConnector,
-	WriteUtils
+	WriteUtils,
+	TransportSelection,
+	Change,
+	MessageBox
 ) {
 	"use strict";
 
@@ -42,27 +48,179 @@ sap.ui.define([
 			return LrepConnector.getFlexInfo(mPropertyBag).then(function (oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a flex info request is send containing the reference in the url and the app version and the layer as query parameters");
-				assert.deepEqual(oResponse.response, oExpectedResponse, "getFlexInfo response flow is correct");
+				assert.deepEqual(oResponse, oExpectedResponse, "getFlexInfo response flow is correct");
 			});
 		});
-		QUnit.test("given a mock server, when publish is triggered", function (assert) {
-			var mPropertyBag = {url: "/sap/bc/lrep", reference: "flexReference", appVersion: "1.0.0", layer: "VENDOR", changelist: "transportId", "package": "somePackage"};
-			var sUrl = "/sap/bc/lrep/actions/make_changes_transportable/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&package=somePackage";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
-			return LrepConnector.publish(mPropertyBag).then(function () {
-				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : ApplyConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector
-				}), "a send request with correct parameters and options is sent");
-				WriteUtils.sendRequest.restore();
+
+		QUnit.test("when calling publish successfully", function(assert) {
+			var oMockTransportInfo = {
+				packageName : "PackageName",
+				transport : "transportId"
+			};
+			var oMockNewChange = {
+				packageName : "$TMP",
+				fileType : "change",
+				id : "changeId2",
+				namespace : "namespace",
+				getDefinition : function() {
+					return {
+						packageName : this.packageName,
+						fileType : this.fileType
+					};
+				},
+				getId : function() {
+					return this.id;
+				},
+				getNamespace : function() {
+					return this.namespace;
+				},
+				setResponse : function(oDefinition) {
+					this.packageName = oDefinition.packageName;
+				},
+				getPackage : function() {
+					return this.packageName;
+				}
+			};
+
+			var oAppVariantDescriptor = {
+				packageName : "$TMP",
+				fileType : "appdescr_variant",
+				fileName : "manifest",
+				id : "customer.app.var.id",
+				namespace : "namespace",
+				getDefinition : function() {
+					return {
+						fileType : this.fileType,
+						fileName : this.fileName
+					};
+				},
+				getNamespace : function() {
+					return this.namespace;
+				},
+				getPackage : function() {
+					return this.packageName;
+				}
+			};
+
+			var sLayer = "CUSTOMER";
+			var sReference = "sampleComponent";
+			var sAppVersion = "1.0.0";
+			var aMockLocalChanges = [oMockNewChange];
+			var aAppVariantDescriptors = [oAppVariantDescriptor];
+
+			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
+			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
+			var fnPrepareChangesForTransportStub = sandbox.stub(TransportSelection.prototype, "_prepareChangesForTransport").returns(Promise.resolve());
+
+			return LrepConnector.publish({
+				transportDialogSettings: {
+					rootControl: null,
+					styleClass: null
+				},
+				layer: sLayer,
+				reference: sReference,
+				appVersion: sAppVersion,
+				localChanges: aMockLocalChanges,
+				appVariantDescriptors: aAppVariantDescriptors
+			}).then(function() {
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
+				assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
+				assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
+				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, {
+					reference: sReference,
+					appVersion: sAppVersion,
+					layer: sLayer
+				}), "then _prepareChangesForTransport called with the transport info and changes array");
 			});
 		});
-		QUnit.test("given a mock server, when reset is triggered", function (assert) {
-			var mPropertyBag = {url: "/sap/bc/lrep", reference: "flexReference", appVersion: "1.0.0", layer: "VENDOR", changelist: "transportId", generator: "someGenerator", selectorIds:"someSelectors", changeTypes:"someChangeTypes"};
-			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&generator=someGenerator&selector=someSelectors&changeType=someChangeTypes";
+
+		QUnit.test("when calling publish unsuccessfully", function(assert) {
+			sandbox.stub(TransportSelection.prototype, "openTransportSelection").rejects();
+			sandbox.stub(MessageBox, "show");
+			return LrepConnector.publish({
+				transportDialogSettings: {
+					rootControl: null,
+					styleClass: null
+				}
+			}).then(function(sResponse) {
+				assert.equal(sResponse, "Error", "then Promise.resolve() with error message is returned");
+			});
+		});
+
+		QUnit.test("when calling publish successfully, but with cancelled transport selection", function(assert) {
+			sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves();
+			return LrepConnector.publish({
+				transportDialogSettings: {
+					rootControl: null,
+					styleClass: null
+				}
+			}).then(function(sResponse) {
+				assert.equal(sResponse, "Cancel", "then Promise.resolve() with cancel message is returned");
+			});
+		});
+
+		QUnit.test("when calling reset in VENDOR layer with mix content of $TMP and transported changes", function (assert) {
+			var oMockTransportInfo = {
+				packageName : "PackageName",
+				transport : "transportId"
+			};
+			// changes for the component
+			var oVENDORChange1 = new Change({
+				fileType: "change",
+				layer: "VENDOR",
+				fileName: "1",
+				namespace: "b",
+				packageName: "$TMP",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				}
+			});
+
+			var oVENDORChange2 = new Change({
+				fileType: "change",
+				layer: "VENDOR",
+				fileName: "2",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				}
+			});
+
+			// Settings in registry
+			var oSetting = {
+				isKeyUser: true,
+				isAtoAvailable: false,
+				isProductiveSystem: function() {return false;},
+				isAtoEnabled: function() {return false;}
+			};
+			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+
+			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
+			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&generator=Change.createInitialFileContent";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
-			return LrepConnector.reset(mPropertyBag).then(function () {
+			return LrepConnector.reset({
+				url: "/sap/bc/lrep",
+				appVersion: "1.0.0",
+				layer: "VENDOR",
+				generator: "Change.createInitialFileContent",
+				changes: [oVENDORChange1, oVENDORChange2],
+				reference: "flexReference"
+			}).then(function(aChanges) {
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
+				assert.deepEqual(aChanges, [], "empty array is returned");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
@@ -71,6 +229,232 @@ sap.ui.define([
 				WriteUtils.sendRequest.restore();
 			});
 		});
+
+		QUnit.test("when calling resetChanges in VENDOR layer for transported changes with selector and change type", function (assert) {
+			var oMockTransportInfo = {
+				packageName : "PackageName",
+				transport : "transportId"
+			};
+			// changes for the component
+			var oVENDORChange1 = new Change({
+				fileType: "change",
+				layer: "VENDOR",
+				fileName: "1",
+				namespace: "b",
+				packageName: "$TMP",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				}
+			});
+
+			var oVENDORChange2 = new Change({
+				fileType: "change",
+				layer: "VENDOR",
+				fileName: "2",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				}
+			});
+
+			var aChanges = [oVENDORChange1, oVENDORChange2];
+
+
+			// Settings in registry
+			var oSetting = {
+				isKeyUser: true,
+				isAtoAvailable: false,
+				isProductiveSystem: function() {return false;},
+				isAtoEnabled: function() {return false;}
+			};
+			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
+			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&selector=abc123&changeType=labelChange";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+
+			return LrepConnector.reset({
+				url: "/sap/bc/lrep",
+				appVersion: "1.0.0",
+				layer: "VENDOR",
+				changeTypes: ["labelChange"],
+				selectorIds: ["abc123"],
+				changes: aChanges,
+				reference: "flexReference"
+			}).then(function() {
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
+				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
+		QUnit.test("when calling resetChanges in CUSTOMER layer with ATO_NOTIFICATION", function (assert) {
+			// changes for the component
+			var oUserChange = new Change({
+				fileType: "change",
+				layer: "USER",
+				fileName: "1",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				}
+			});
+
+			var oCUSTOMERChange1 = new Change({
+				fileType: "change",
+				layer: "CUSTOMER",
+				fileName: "2",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				}
+			});
+
+			var oCUSTOMERChange2 = new Change({
+				fileType: "change",
+				layer: "CUSTOMER",
+				fileName: "3",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
+				},
+				content: {
+					something: "createNewVariant"
+				}
+			});
+
+			var aChanges = [oCUSTOMERChange1, oUserChange, oCUSTOMERChange2];
+
+			// Settings in registry
+			var oSetting = {
+				isKeyUser: true,
+				isAtoAvailable: true,
+				isProductiveSystem: function() {return false;},
+				isAtoEnabled: function() {return true;}
+			};
+			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&appVersion=1.0.0&changelist=ATO_NOTIFICATION&generator=Change.createInitialFileContent";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+
+			return LrepConnector.reset({
+				url: "/sap/bc/lrep",
+				appVersion: "1.0.0",
+				layer: "CUSTOMER",
+				generator: "Change.createInitialFileContent",
+				changes: aChanges,
+				reference: "flexReference"
+			}).then(function() {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
+		QUnit.test("when calling resetChanges in CUSTOMER layer with selector IDs", function (assert) {
+			// Settings in registry
+			var oSetting = {
+				isKeyUser: true,
+				isAtoAvailable: true,
+				isProductiveSystem: function() {return false;},
+				isAtoEnabled: function() {return true;}
+			};
+			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&appVersion=1.0.0&selector=view--control1,feview--control2";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+
+			var aControlIds = [
+				"view--control1",
+				"feview--control2"
+			];
+			return LrepConnector.reset({
+				url: "/sap/bc/lrep",
+				appVersion: "1.0.0",
+				layer: "CUSTOMER",
+				changes: [],
+				reference: "flexReference",
+				selectorIds: aControlIds
+			}).then(function() {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
+		QUnit.test("when calling resetChanges in USER layer with selector IDs", function (assert) {
+			var oTransportStub = sandbox.stub(TransportSelection.prototype, "setTransports");
+			// Settings in registry
+			var oSetting = {
+				isKeyUser: true,
+				isAtoAvailable: true,
+				isProductiveSystem: function() {return false;},
+				isAtoEnabled: function() {return true;}
+			};
+			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=USER&appVersion=1.0.0&generator=Change.createInitialFileContent&selector=view--control1,feview--control2";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+			var aControlIds = [
+				"view--control1",
+				"feview--control2"
+			];
+			return LrepConnector.reset({
+				url: "/sap/bc/lrep",
+				appVersion: "1.0.0",
+				layer: "USER",
+				changes: [],
+				reference: "flexReference",
+				selectorIds: aControlIds,
+				generator: "Change.createInitialFileContent"
+			}).then(function() {
+				assert.equal(oTransportStub.callCount, 0, "no transport data was requested");
+				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
 		QUnit.test("given a mock server, when loadFeatures is triggered", function (assert) {
 			var oExpectedResponse = {
 				isKeyUser: true

@@ -146,6 +146,17 @@ sap.ui.define([
         return $(vSelector).closest("[data-sap-ui]");
     };
 
+    /**
+     * Retrieves the UI5 ID of the nearest parent DOM element that has such an ID
+     * @param {object|string} vSelector DOM element or jQuery string selector
+     * @returns {string} ID
+     * @private
+     */
+    _ControlFinder._getIdentifiedDOMElementId = function (vSelector) {
+        var oElement = _ControlFinder._getIdentifiedDOMElement(vSelector);
+        return oElement.attr("data-sap-ui");
+    };
+
      /**
      * Get latest log collected during control/element search
      * @returns {string} string of concatenated logs

@@ -5,7 +5,9 @@ sap.ui.define([
 
 	return Opa5.extend("sap.ui.demo.cardExplorer.test.integration.arrangements.Startup", {
 
-		iStartMyApp: function (oOptions) {
+		iStartMyApp: function (options) {
+
+			var oOptions = options || {};
 
 			this.iStartMyUIComponent({
 				componentConfig: {

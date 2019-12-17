@@ -414,6 +414,7 @@ sap.ui.define([
 				"sap.m.ActionSheet": {
 					"moveControls": "default"
 				},
+				"sap.m.Avatar": "sap/m/flexibility/Avatar",
 				"sap.m.Bar": "sap/m/flexibility/Bar",
 				"sap.m.Button": "sap/m/flexibility/Button",
 				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",

@@ -1,0 +1,19 @@
+<mvc:View
+		controllerName="sap.m.sample.MessagePopoverAsyncMessageHandling.controller.MessagePopoverAsyncMessageHandling"
+		height="100%"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<Page
+		showHeader="false">
+		<content>
+
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<Button icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized"
+				        press="handleMessagePopoverPress"/>
+				<ToolbarSpacer/>
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

@@ -1,7 +1,7 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel"
+	'sap/ui/model/json/JSONModel'
 ], function (JSONModel) {
-	"use strict";
+	'use strict';
 
 	return new JSONModel({
 		selectedKey: 'learnGettingStarted',
@@ -136,6 +136,28 @@ sap.ui.define([
 								manifestUrl: '/samples/component/cardContentControls/manifest.json'
 							}
 						]
+					},
+					{
+						title: 'Adaptive',
+						target: 'exploreSamples',
+						key: 'adaptive',
+						subSamples: [
+							{
+								title: 'Card',
+								key: 'adaptive',
+								manifestUrl: '/samples/adaptive/adaptive.json'
+							},
+							{
+								title: 'RichTextBlock',
+								key: 'richtext',
+								manifestUrl: '/samples/adaptive/richtext.json'
+							},
+							{
+								title: 'Form',
+								key: 'form',
+								manifestUrl: '/samples/adaptive/form.json'
+							}
+						]
 					}
 				]
 			},
@@ -166,7 +188,20 @@ sap.ui.define([
 						key: 'translation',
 						target: 'exploreSamples',
 						title: 'Translation',
-						manifestUrl: '/samples/translation/manifest.json'
+						files: [
+							{
+								url: '/samples/translation/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								content: ''
+							},
+							{
+								url: '/samples/translation/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n/i18n.properties',
+								content: ''
+							}
+						]
 					},
 					{
 						key: 'parameters',
@@ -187,7 +222,7 @@ sap.ui.define([
 						settings: {
 							columns: 6
 						},
-						manifestUrl: "/samples/dateRange.json"
+						manifestUrl: '/samples/dateRange.json'
 					},
 					{
 						key: 'htmlConsumption',
@@ -195,28 +230,28 @@ sap.ui.define([
 						title: 'Consumption in HTML',
 						files: [
 							{
-								url: "/samples/htmlConsumption/indexTemplate.html",
-								name: "index.html",
-								key: "index.html",
-								content: ""
+								url: '/samples/htmlConsumption/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html',
+								content: ''
 							},
 							{
-								url: "/samples/htmlConsumption/manifest.json",
-								name: "manifest.json",
-								key: "manifest.json",
-								content: ""
+								url: '/samples/htmlConsumption/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								content: ''
 							},
 							{
-								url: "/samples/htmlConsumption/i18n/i18n.properties",
-								name: "i18n.properties",
-								key: "i18n.properties",
-								content: ""
+								url: '/samples/htmlConsumption/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n/i18n.properties',
+								content: ''
 							},
 							{
-								url: "/samples/htmlConsumption/items.json",
-								name: "items.json",
-								key: "items.json",
-								content: ""
+								url: '/samples/htmlConsumption/items.json',
+								name: 'items.json',
+								key: 'items.json',
+								content: ''
 							}
 						]
 					}
@@ -235,6 +270,36 @@ sap.ui.define([
 						target: 'exploreSamples',
 						title: 'Date and Time',
 						manifestUrl: "/samples/formatters/dateAndTime/manifest.json"
+					},
+					{
+						key: 'currency',
+						target: 'exploreSamples',
+						title: 'Currency',
+						manifestUrl: "/samples/formatters/currency/manifest.json"
+					},
+					{
+						key: 'float',
+						target: 'exploreSamples',
+						title: 'Float',
+						manifestUrl: "/samples/formatters/float/manifest.json"
+					},
+					{
+						key: 'integer',
+						target: 'exploreSamples',
+						title: 'Integer',
+						manifestUrl: "/samples/formatters/integer/manifest.json"
+					},
+					{
+						key: 'percent',
+						target: 'exploreSamples',
+						title: 'Percent',
+						manifestUrl: "/samples/formatters/percent/manifest.json"
+					},
+					{
+						key: 'unit',
+						target: 'exploreSamples',
+						title: 'Unit of Measurement',
+						manifestUrl: "/samples/formatters/unit/manifest.json"
 					}
 				]
 			}

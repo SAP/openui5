@@ -18,7 +18,6 @@
 		},
 		"config": {
 			"sample": {
-				"stretch": true,
 				"files": [
 					"Card.view.xml",
 					"Card.controller.js",

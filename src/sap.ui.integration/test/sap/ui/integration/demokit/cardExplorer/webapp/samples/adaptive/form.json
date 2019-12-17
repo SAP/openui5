@@ -1,0 +1,157 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adativecard.embedded",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				{
+					"type": "TextBlock",
+					"text": "Your Name",
+					"isSubtle": true,
+					"size": "Medium"
+				},
+				{
+					"type": "Input.Text",
+					"placeholder": "Last, First",
+					"style": "text",
+					"id": "SimpleVal"
+				},
+				{
+					"type": "TextBlock",
+					"text": "Website",
+					"isSubtle": true,
+					"size": "Medium"
+				},
+				{
+					"type": "Input.Text",
+					"placeholder": "Website Url",
+					"style": "url",
+					"id": "UrlVal"
+				},
+				{
+					"type": "TextBlock",
+					"text": "Email address",
+					"isSubtle": true,
+					"size": "Medium"
+				},
+				{
+					"type": "Input.Text",
+					"placeholder": "youremail@example.com",
+					"style": "email",
+					"id": "EmailVal"
+				},
+				{
+					"type": "TextBlock",
+					"text": "Phone Number",
+					"isSubtle": true,
+					"size": "Medium"
+				},
+				{
+					"type": "Input.Text",
+					"placeholder": "xxx.xxx.xxxx",
+					"style": "tel",
+					"id": "TelVal",
+					"maxLength": 10
+				},
+				{
+					"type": "TextBlock",
+					"text": "Description",
+					"isSubtle": true,
+					"size": "Medium"
+				},
+				{
+					"type": "Input.Text",
+					"style": "text",
+					"isMultiline": true,
+					"id": "MultiLineVal"
+				},
+				{
+					"type": "TextBlock",
+					"text": "Age",
+					"isSubtle": true,
+					"size": "Medium"
+				},
+				{
+					"type": "Input.Number",
+					"id": "NumVal",
+					"min": 0,
+					"max": 110,
+					"placeholder": "Age"
+				},
+				{
+					"type": "TextBlock",
+					"text": "Starting Date",
+					"isSubtle": true,
+					"size": "Medium"
+				},
+				{
+					"type": "Input.Date",
+					"placeholder": "Start Date",
+					"id": "DateVal",
+					"value": "2017-09-20"
+				},
+				{
+					"type": "TextBlock",
+					"text": "What is your favourite color? (expanded)",
+					"isSubtle": true
+				},
+				{
+					"type": "Input.ChoiceSet",
+					"id": "SingleSelectVal",
+					"style": "expanded",
+					"choices": [
+						{
+							"title": "Red",
+							"value": "1"
+						},
+						{
+							"title": "Green",
+							"value": "2"
+						},
+						{
+							"title": "Blue",
+							"value": "3"
+						}
+					]
+				},
+				{
+					"type": "TextBlock",
+					"text": "What is your favourite color? (multiselect)",
+					"isSubtle": true
+				},
+				{
+					"type": "Input.ChoiceSet",
+					"id": "MultiSelectVal",
+					"isMultiSelect": true,
+					"choices": [
+						{
+							"title": "Pizza",
+							"value": "1"
+						},
+						{
+							"title": "Pasta",
+							"value": "2"
+						},
+						{
+							"title": "Salad",
+							"value": "3"
+						}
+					]
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.Submit",
+					"title": "Submit"
+				}
+			]
+		}
+	}
+}

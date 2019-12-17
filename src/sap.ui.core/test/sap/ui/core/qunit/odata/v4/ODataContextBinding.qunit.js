@@ -826,25 +826,32 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchValue: operation binding returns $Parameter", function (assert) {
+[
+	{path : "name", value : "value"},
+	{path : "name/complex", value : {complex : "value"}}
+].forEach( function (oFixture) {
+	var sTitle = "fetchValue: operation binding returns $Parameter path: " + oFixture.path;
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindContext("/OperationImport(...)"),
 			oListener = {};
 
 		oBinding.oCachePromise = SyncPromise.resolve({/* cache must be ignored! */});
-		oBinding.setParameter("name", "value");
+		oBinding.setParameter("name", oFixture.value);
 		this.mock(oBinding).expects("getRelativePath")
-			.withExactArgs("/OperationImport(...)/$Parameter/name")
-			.returns("$Parameter/name");
+			.withExactArgs("/OperationImport(...)/$Parameter/" + oFixture.path)
+			.returns("$Parameter/" + oFixture.path);
 		this.mock(_Helper).expects("addByPath")
-			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "name",
+			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), oFixture.path,
 				sinon.match.same(oListener));
 
 		assert.strictEqual(
 			// code under test
-			oBinding.fetchValue("/OperationImport(...)/$Parameter/name", oListener).getResult(),
+			oBinding.fetchValue("/OperationImport(...)/$Parameter/" + oFixture.path,
+				oListener).getResult(),
 			"value"
 		);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue: operation binding, not clear which $Parameter", function (assert) {
@@ -2207,18 +2214,27 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[{}, undefined].forEach( function(vParam) {
 	QUnit.test("setParameter: change listeners", function (assert) {
-		var oBinding = this.bindContext("/OperationImport(...)");
+		var oBinding = this.bindContext("/OperationImport(...)"),
+			vValue = {};
 
-		this.mock(_Helper).expects("updateAll")
-			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "",
-				sinon.match.same(oBinding.oOperation.mParameters), {"foo" : "bar"});
+		if (vParam) {
+			oBinding.oOperation.mParameters["foo"] = vParam;
+		}
+
+		this.mock(_Helper).expects("informAll")
+			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "foo",
+				sinon.match.same(oBinding.oOperation.mParameters["foo"]),
+				sinon.match.same(vValue));
 
 		// code under test
-		oBinding.setParameter("foo", "bar");
+		oBinding.setParameter("foo", vValue);
 
 		assert.strictEqual(oBinding.oOperation.bAction, undefined);
+		assert.strictEqual(oBinding.oOperation.mParameters["foo"], vValue);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
@@ -3675,6 +3691,13 @@ sap.ui.define([
 		oBinding.doDeregisterChangeListener("$Parameter/bar", oListener);
 
 		oHelperMock.expects("removeByPath")
+			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "bar/foo",
+				sinon.match.same(oListener));
+
+		// code under test
+		oBinding.doDeregisterChangeListener("$Parameter/bar/foo", oListener);
+
+		oHelperMock.expects("removeByPath")
 			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "",
 				sinon.match.same(oListener));
 
@@ -3697,35 +3720,76 @@ sap.ui.define([
 [{
 	expected : undefined,
 	name : undefined,
-	path : "$ParameterFoo"
+	path : "$ParameterFoo",
+	update : []
 }, {
 	expected : SyncPromise.resolve(),
 	name : "",
-	path : "$Parameter"
+	path : "$Parameter",
+	update : []
 }, {
 	expected : SyncPromise.resolve(),
 	name : "foo",
-	path : "$Parameter/foo"
+	path : "$Parameter/foo",
+	update : ["foo"]
+}, {
+	expected : SyncPromise.resolve(),
+	name : "foo",
+	path : "$Parameter/foo/bar",
+	update : ["foo", "bar"]
+}, {
+	expected : SyncPromise.resolve(),
+	name : "foo",
+	path : "$Parameter/foo/bar/any",
+	update : ["foo", "bar", "any"]
 }].forEach(function(oFixture) {
-	QUnit.test("doSetProperty: operation binding", function (assert) {
+	QUnit.test("doSetProperty: operation binding path: " + oFixture.path, function (assert) {
 		var oBinding = this.bindContext("/Operation(...)"),
 			oGroupLock = {
 				unlock : function () { }
 			},
-			vValue = "bar";
+			oUpdateValue = {};
 
-		this.mock(oBinding).expects("setParameter")
-			.withExactArgs(oFixture.name, vValue)
-			.exactly(oFixture.name === undefined ? 0 : 1);
-		this.mock(oGroupLock).expects("unlock").withExactArgs()
-			.exactly(oFixture.name === undefined ? 0 : 1);
+		if (oFixture.name) {
+			oBinding.oOperation.bAction = true;
+			this.mock(_Cache).expects("makeUpdateData")
+				.withExactArgs(oFixture.update, "bar")
+				.returns(oUpdateValue);
+			this.mock(_Helper).expects("updateAll")
+				.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "",
+					sinon.match.same(oBinding.oOperation.mParameters),
+					sinon.match.same(oUpdateValue));
+		}
 
 		// code under test
 		assert.strictEqual(
-			oBinding.doSetProperty(oFixture.path, vValue, oGroupLock),
+			oBinding.doSetProperty(oFixture.path, "bar", oGroupLock),
 			oFixture.expected);
+
+		assert.strictEqual(oBinding.oOperation.bAction, undefined);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("doSetProperty: no group lock", function (assert) {
+		var oBinding = this.bindContext("/Operation(...)"),
+			oUpdateValue = {};
+
+		oBinding.oOperation.bAction = true;
+		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["foo"], "bar")
+			.returns(oUpdateValue);
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oBinding.oOperation.mChangeListeners), "",
+				sinon.match.same(oBinding.oOperation.mParameters), sinon.match.same(oUpdateValue));
+
+		assert.strictEqual(
+			// code under test
+			oBinding.doSetProperty("$Parameter/foo", "bar", null),
+			SyncPromise.resolve()
+		);
+
+		assert.strictEqual(oBinding.oOperation.bAction, undefined);
+	});
 
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {

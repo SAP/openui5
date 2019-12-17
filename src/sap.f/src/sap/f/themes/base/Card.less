@@ -212,8 +212,11 @@
 			display: flex;
 			align-items: flex-end;
 			padding: 0.5rem 0;
-			.sapFCardHeaderSideIndicator:nth-child(2) {
-				margin-left: 1rem;
+			.sapFCardHeaderSideIndicator {
+				margin-right: 1rem;
+			}
+			.sapFCardHeaderSideIndicator:last-child {
+				margin-right: 0;
 			}
 		}
 	}
@@ -380,3 +383,11 @@ html[data-sap-ui-browser^="ie"] .sapFCard .sapFCardHeader.sapFCardNumericHeader:
 	}
 }
 
+.sapFCardAdaptiveContent .sapFCardAdaptiveContentChoiceSetWrapper {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: flex-start;
+	height: fit-content;
+}

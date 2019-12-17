@@ -150,7 +150,7 @@ html[dir=rtl] {
 	.sapUiTableGroupHeaderFading(@_sap_ui_table_Grouping_GroupHeaderBackground);
 }
 
-.sapUiTableGroupHeader > .sapUiTableRowSelectionCell:focus .sapUiTableGroupIcon {
+.sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell:focus .sapUiTableGroupIcon {
 	outline-width: @_sap_ui_table_Grouping_GroupOutlineWidth;
 	outline-style: dotted;
 	outline-offset: 0;
@@ -158,7 +158,7 @@ html[dir=rtl] {
 }
 
 // Override row background and cell borders in group header rows.
-.sapUiTableGroupHeader {
+.sapUiTableGroupHeaderRow {
 	&.sapUiTableRow {
 		background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
 	}
@@ -175,7 +175,7 @@ html[dir=rtl] {
 	}
 }
 
-.sapUiTableGroupMode .sapUiTableGroupHeader > .sapUiTableRowSelectionCell {
+.sapUiTableGroupMode .sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell {
 	> .sapUiTableGroupIcon {
 		display: flex;
 		align-items: center;
@@ -195,7 +195,7 @@ html[dir=rtl] {
 	}
 }
 
-.sapUiTableGroupMode .sapUiTableGroupHeader.sapUiTableRowHvr,
+.sapUiTableGroupMode .sapUiTableGroupHeaderRow.sapUiTableRowHvr,
 .sapUiTableGroupMode .sapUiTableRowHvr .sapUiTableGroupIcon {
 	background-color: @sapUiListHoverBackground;
 }
@@ -204,21 +204,9 @@ html[dir=rtl] {
 	.sapUiTableGroupHeaderFading(@sapUiListHoverBackground);
 }
 
-// The cell under the first column cell of a group header is only allowed to show a measure label. Any other content should be hidden.
-.sapUiTableGroupMode.sapUiAnalyticalTable .sapUiTableGroupHeader .sapUiTableCellFirst:not(.sapUiTableMeasureCell) .sapUiTableCellInner {
-	display: none;
-}
-
-// sapUiAnalyticalTableGroupCellHidden and sapUiAnalyticalTableSumCellHidden provides the possibility for applications to hide
-// the cell content of a column on group headers and / or sums by using addStyleClass of the column template
-.sapUiTableGroupMode.sapUiAnalyticalTable .sapUiTableGroupHeader .sapUiTableCellInner > .sapUiAnalyticalTableGroupCellHidden,
-.sapUiTableGroupMode.sapUiAnalyticalTable .sapUiAnalyticalTableSum .sapUiTableCellInner > .sapUiAnalyticalTableSumCellHidden {
-	visibility: hidden; /* hidden cell content*/
-}
-
 // Shift last cell content to left, on the right edge the AnalyticalTable's touch group menu button is placed.
 html.sap-tablet:not(.sap-desktop), html.sap-phone {
-	.sapUiTableGroupMode:not(.sapUiTableRAct):not(.sapUiTableRActS) .sapUiTableCtrlScroll .sapUiTableGroupHeader .sapUiTableCellLast {
+	.sapUiTableGroupMode:not(.sapUiTableRAct):not(.sapUiTableRActS) .sapUiTableCtrlScroll .sapUiTableGroupHeaderRow .sapUiTableCellLast {
 		padding-right: 3rem; // The group menu button has a width of 2.5rem. Let the padding be slightly bigger.
 	}
 }
@@ -239,41 +227,25 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 	pointer-events: none;
 }
 
-.sapUiTableGroupHeader > .sapUiTableRowSelectionCell:focus:not(*:root) {
+.sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell:focus:not(*:root) {
 	outline: 0;
 }
 
 /*Separation needed from declaration above because of IE*/
-.sapUiTableGroupHeader > .sapUiTableRowSelectionCell:focus {
+.sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell:focus {
 	outline: 0;
 }
 
-.sapUiTableGroupMode .sapUiTableTr.sapUiTableGroupHeader > .sapUiTableCellDummy {
+.sapUiTableGroupMode .sapUiTableTr.sapUiTableGroupHeaderRow > .sapUiTableCellDummy {
 	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
 	background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
 }
 
-.sapUiTableGroupHeader.sapUiTableRowLastScrollable > .sapUiTableRowSelectionCell,
-.sapUiTableGroupMode .sapUiTableTr.sapUiTableGroupHeader.sapUiTableRowLastScrollable > .sapUiTableCellDummy {
+.sapUiTableGroupHeaderRow.sapUiTableRowLastScrollable > .sapUiTableRowSelectionCell,
+.sapUiTableGroupMode .sapUiTableTr.sapUiTableGroupHeaderRow.sapUiTableRowLastScrollable > .sapUiTableCellDummy {
 	border-bottom-color: @sapUiListTableFixedBorder;
 }
 
 .sapUiTableGroupMenuButton {
 	display: none;
-}
-
-.sapUiTableGroupMode.sapUiAnalyticalTable .sapUiTableGroupHeader > .sapUiTableRowSelectionCell .sapUiTableGroupMenuButton {
-	position: absolute;
-	width: 2.5rem;
-	text-align: center;
-	z-index: 5;
-	right: 0;
-	top: 50%;
-	-webkit-transform: translatey(-50%);
-	transform: translatey(-50%);
-	background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
-	font-family: 'SAP-icons';
-	font-size: 1.375rem;
-	color: @sapUiContentIconColor;
-	display: block;
 }

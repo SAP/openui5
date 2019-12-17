@@ -52,11 +52,12 @@ sap.ui.define([
 			if (this.bLegacy) {
 				var oTable = arguments[1];
 
-				this.getParent = function() {
+				this.getTable = function() {
 					return oTable;
 				};
 				RowMode.call(this);
 				this.attachEvents();
+				this.registerHooks();
 			} else {
 				RowMode.apply(this, arguments);
 			}
@@ -105,6 +106,24 @@ sap.ui.define([
 	AutoRowMode.prototype.cancelAsyncOperations = function() {
 		RowMode.prototype.cancelAsyncOperations.apply(this, arguments);
 		this.stopAutoRowMode();
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	AutoRowMode.prototype.registerHooks = function() {
+		RowMode.prototype.registerHooks.apply(this, arguments);
+		TableUtils.Hook.register(this.getTable(), TableUtils.Hook.Keys.Table.RefreshRows, this._onTableRefreshRows, this);
+		TableUtils.Hook.register(this.getTable(), TableUtils.Hook.Keys.Table.UpdateSizes, this._onUpdateTableSizes, this);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	AutoRowMode.prototype.deregisterHooks = function() {
+		RowMode.prototype.deregisterHooks.apply(this, arguments);
+		TableUtils.Hook.deregister(this.getTable(), TableUtils.Hook.Keys.Table.RefreshRows, this._onTableRefreshRows, this);
+		TableUtils.Hook.deregister(this.getTable(), TableUtils.Hook.Keys.Table.UpdateSizes, this._onUpdateTableSizes, this);
 	};
 
 	/**
@@ -297,9 +316,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * @inheritDoc
+	 * This hook is called when the rows aggregation of the table is refreshed.
+	 *
+	 * @private
 	 */
-	AutoRowMode.prototype.refreshRows = function() {
+	AutoRowMode.prototype._onTableRefreshRows = function() {
 		// The computed row count cannot be used here, because the table's total row count (binding length) is not known yet.
 		var iConfiguredRowCount = this.getConfiguredRowCount();
 		var bRowCountIsKnown = !this.isPropertyInitial("rowCount");
@@ -393,9 +414,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * @inheritDoc
+	 * This hook is called when the table layout is updated, for example when resizing.
+	 *
+	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason The reason for updating the table sizes.
+	 * @private
 	 */
-	AutoRowMode.prototype.updateTableSizes = function(sReason) {
+	AutoRowMode.prototype._onUpdateTableSizes = function(sReason) {
 		// Resize and render are handled elsewhere.
 		if (sReason === TableUtils.RowsUpdateReason.Resize || sReason === TableUtils.RowsUpdateReason.Render) {
 			return;

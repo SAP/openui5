@@ -23,16 +23,19 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 			library : "sap.ui.rta",
 			properties : {
 				index : {
-					type : "int"
+					type : "int",
+					group: "content"
 				},
 				newControlId : {
-					type : "string"
+					type : "string",
+					group: "content"
 				},
-				label : {
+				label : { //legacy property => exposed in tests
 					type : "string"
 				},
 				parentId : {
-					type : "string"
+					type : "string",
+					group: "content"
 				}
 			},
 			associations : {},
@@ -41,16 +44,11 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	});
 
 	CreateContainer.prototype._getChangeSpecificData = function() {
-		var mSpecificInfo = {
-			changeType : this.getChangeType(),
-			index : this.getIndex(),
-			newControlId : this.getNewControlId(),
-			newLabel : this.getLabel(),
-			parentId : this.getParentId()
-		};
+		var mSpecificInfo = FlexCommand.prototype._getChangeSpecificData.apply(this);
+
+		mSpecificInfo.newLabel = this.getLabel();
 
 		return mSpecificInfo;
 	};
-
 	return CreateContainer;
 }, /* bExport= */true);

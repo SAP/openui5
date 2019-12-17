@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Manifest Parameters</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../css/style.css">
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+
+	<link href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
+	<script src="../../google-code-prettify/run_prettify.js"></script>
+
+</head>
+
+<body class="sapUiBody topicBody">
+
+<div class="topic">
+	<div class="content">
+
+		<h1>
+			Manifest Parameters
+		</h1>
+
+		<p>
+			Parameters are means to provide dynamic values for certain card attributes.
+			The manifest parameters are replaced during manifest processing and
+			can be used with a double bracket syntax like: "{{parameters.city}}".
+			Parameters can be used inside "sap.card" scope.
+		</p>
+		<p>
+			There are two types of parameters:
+		</p>
+		<ol>
+			<li>User defined manifest parameters</li>
+			<li>Static manifest parameters</li>
+		</ol>
+
+		<h2 id="userParameters">
+			User Defined Manifest Parameters
+		</h2>
+
+		<p>
+			Cards can define input parameters in their manifests. The input parameters can be everything including user
+			IDs, authentication tokens, locations, language etc...
+			It is possible to assign default values to the input parameters in the manifest.
+			When creating or integrating a card, it is possible to assign values to parameters otherwise they are
+			replaced with their default values.
+			Parameters are described in the "configuration" section of the manifest.
+			All parameters are replaced during manifest processing and changing them will cause re-processing of the
+			manifest.
+		</p>
+
+		<p>Parameter properties:</p>
+
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>any</td>
+					<td>Yes</td>
+					<td>The value of the parameter.</td>
+					<td>1.15.0</td>
+				</tr>
+			</table>
+		</div>
+
+		<h2 id="staticParameters">
+			Static Manifest Parameters
+		</h2>
+
+		<p>
+			There is also a set of predefined parameters that can be used inside the manifest without having to describe
+			them in the "configuration" section.
+		</p>
+
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>Type</th>
+				<th>Description</th>
+			</tr>
+			<tr>
+				<td>TODAY_ISO</td>
+				<td>string</td>
+				<td>Replaced with the today's date in ISO format</td>
+			</tr>
+			<tr>
+				<td>NOW_ISO</td>
+				<td>string</td>
+				<td>Replaced with the "now" timestamp in ISO format</td>
+			</tr>
+			<tr>
+				<td>LOCALE</td>
+				<td>string</td>
+				<td>Replaced with the locale for the current language in BCP47-compliant language tag.</td>
+			</tr>
+		</table>
+
+		<h2 id="examples">
+			Examples
+		</h2>
+
+		<p>A card having a user defined "city" and "weatherServices" manifest parameters with default values.
+			The "city" value is used inside the request. The "weatherServices" value is used inside the title.</p>
+		<pre class="prettyprint  lang-js">{
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"city": {
+					"value": "Walldorf"
+				},
+				"weatherServices": {
+					"value": {
+						"weatherAPI": "WeatherAPI"
+					}
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Weather forecast provided by {{parameters.weatherServices.weatherAPI}}"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "weather/api?q={{parameters.city}}"
+				}
+			},
+			"item": {
+				"icon": {
+					"src": "{/current/condition/icon}"
+				},
+				"title": {
+					"value": "{/location/name}"
+				},
+				"description": {
+					"value": "{/current/condition/text}"
+				}
+			}
+		}
+	}
+}</pre>
+
+		<p>
+			Changing the city parameter can be done by using the API of the card. This will cause manifest
+			re-processing:
+		</p>
+		<pre class="prettyprint  lang-js">
+var oParameters = {
+	"city": {
+		"value": "Sofia"
+	}
+}
+oCard.setParameters(oParameters);</pre>
+
+		<p>
+			Using the static manifest parameter "TODAY_ISO" inside the subtitle of the card:
+		</p>
+		<pre class="prettyprint  lang-js">{
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Some title",
+			"subTitle": "Date: {{parameters.TODAY_ISO}}"
+		},
+		...
+	}
+}</pre>
+
+		<a class="try-button" href="../../../index.html#/explore/parameters" target="_parent">Try it Out</a>
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#userParameters">User Defined Manifest Parameters</a></div>
+		<div><a href="#staticParameters">Static Manifest Parameters</a></div>
+		<div><a href="#examples">Examples</a></div>
+	</div>
+</div>
+</body>
+</html>

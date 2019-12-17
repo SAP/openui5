@@ -80,22 +80,23 @@ sap.ui.define([
 
 	ArrayEditor.prototype._removeItem = function (oEvent) {
 		var iIndex = oEvent.getSource().data("index");
-		var aValue = this.getModel("_context").getProperty("/" + this.getConfig().path).slice();
+		var aValue = (this.getValue() || []).slice();
 		aValue.splice(iIndex, 1);
 		this.firePropertyChange(aValue);
 	};
 
 	ArrayEditor.prototype._addItem = function () {
 		var oConfig = this.getConfig();
-		var aValue = (this.getModel("_context").getProperty("/" + oConfig.path) || []).slice();
-		// Workaround:
-		// Create a default array item
-		// This solution does not support nested arrays
+		var aValue = (this.getValue() || []).slice();
+
 		var oDefaultItem = {};
 		Object.keys(oConfig.template).forEach(function (sKey) {
-			var defaultValue = oConfig.template[sKey].defaultValue;
-			if (oConfig.template[sKey].hasOwnProperty("defaultValue")) {
+			var mPropertyConfig = oConfig.template[sKey];
+			if (mPropertyConfig.hasOwnProperty("defaultValue")) {
+				var defaultValue = mPropertyConfig.defaultValue;
 				oDefaultItem[sKey] = deepClone(defaultValue);
+			} else if (mPropertyConfig.type === "array") {
+				oDefaultItem[sKey] = [];
 			}
 		});
 		aValue.push(oDefaultItem);

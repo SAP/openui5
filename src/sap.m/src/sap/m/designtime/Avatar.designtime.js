@@ -10,6 +10,14 @@ sap.ui.define([],
 		return {
 			templates: {
 				create: "sap/m/designtime/Avatar.create.fragment.xml"
+			},
+			actions: {
+				remove: {
+					changeType: "hideControl"
+				},
+				reveal: {
+					changeType: "unhideControl"
+				}
 			}
 		};
 	}, /* bExport= */ false);

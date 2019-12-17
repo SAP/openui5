@@ -35,63 +35,38 @@ sap.ui.define([
 	var RegistrationDelegator = {
 	};
 
-	/**
-	 * Registers the changes in the component
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerChangesInComponent = function() {
+
+	function _registerChangesInComponent() {
 		Component._fnOnInstanceCreated = FlexControllerFactory.getChangesAndPropagate;
-	};
+	}
 
-	/**
-	 * Registers change handlers
-	 *
-	 * @public
-	 * @returns {Promise} Returns promise after all changeHandlers are registered.
-	 */
-	RegistrationDelegator.registerChangeHandlers = function() {
-		// method returns promise but is not considered in this module (return for maintainablity reasons)
-		return ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
-	};
 
-	/**
-	 * Register the event handler
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerLoadComponentEventHandler = function() {
+	function _registerChangeHandlers() {
+		ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
+	}
+
+	function _registerLoadComponentEventHandler() {
 		Component._fnLoadComponentCallback = ChangePersistenceFactory._onLoadComponent.bind(ChangePersistenceFactory);
-	};
+	}
 
-	/**
-	 * Registers the extension provider
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerExtensionProvider = function() {
+	function _registerExtensionProvider() {
 		MvcController.registerExtensionProvider("sap.ui.fl.PreprocessorImpl");
-	};
+	}
 
-	/**
-	 * Registers the xml preprocessor
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerXMLPreprocessor = function() {
+	function _registerXMLPreprocessor() {
 		if (XMLView.registerPreprocessor) {
 			XMLView.registerPreprocessor("viewxml", "sap.ui.fl.XmlPreprocessorImpl", true);
 		}
-	};
+	}
 
-	/**
-	 * Registers the event listener
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerEventListener = function() {
+	function _registerEventListener() {
 		EventHistory.start();
-	};
+	}
+
+	function _registerDescriptorChangeHandler() {
+		//TODO: enable Applier.preprocessManifest after FlexState is updated
+		Component._fnPreprocessManifest = null;
+	}
 
 	/**
 	 * Registers everything in one call
@@ -99,12 +74,13 @@ sap.ui.define([
 	 * @public
 	 */
 	RegistrationDelegator.registerAll = function() {
-		RegistrationDelegator.registerEventListener();
-		RegistrationDelegator.registerChangeHandlers();
-		RegistrationDelegator.registerLoadComponentEventHandler();
-		RegistrationDelegator.registerExtensionProvider();
-		RegistrationDelegator.registerChangesInComponent();
-		RegistrationDelegator.registerXMLPreprocessor();
+		_registerEventListener();
+		_registerChangeHandlers();
+		_registerLoadComponentEventHandler();
+		_registerExtensionProvider();
+		_registerChangesInComponent();
+		_registerXMLPreprocessor();
+		_registerDescriptorChangeHandler();
 	};
 
 	return RegistrationDelegator;

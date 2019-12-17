@@ -575,19 +575,26 @@ function(
 	 */
 	Column.prototype._menuHasItems = function() {
 		var oMenu = this.getAggregation("menu");
-		var oTable = this.getParent();
-		var fnMenuHasItems = function() {
-			return (
-				this.isSortableByMenu() || // Sorter
-				this.isFilterableByMenu() || // Filter
-				this.isGroupable() || // Grouping
-				(oTable && oTable.getEnableColumnFreeze()) || // Column Freeze
-				(oTable && oTable.getShowColumnVisibilityMenu()) // Column Visibility Menu
-			);
+		var oTable = this._getTable();
+		var bHasOwnItems = this.isSortableByMenu()
+						   || this.isFilterableByMenu()
+						   || this.isGroupable()
+						   || (oTable && oTable.getEnableColumnFreeze())
+						   || (oTable && oTable.getShowColumnVisibilityMenu());
 
-		}.bind(this);
+		var bNotificationExpired = false;
+		var bHooksProvideMenuItems = false;
+		var fnNotifyAboutMenuItems = function() {
+			if (bNotificationExpired) {
+				throw new Error(TableUtils.Hook.Keys.Column.MenuItemNotification + " hook:"
+								+ " The notification function cannot be called asynchronously.");
+			}
+			bHooksProvideMenuItems = true;
+		};
+		TableUtils.Hook.call(oTable, TableUtils.Hook.Keys.Column.MenuItemNotification, this, fnNotifyAboutMenuItems);
+		bNotificationExpired = true;
 
-		return !!((oMenu && oMenu.getItems().length > 0) || fnMenuHasItems());
+		return !!((oMenu && oMenu.getItems().length > 0) || bHasOwnItems || bHooksProvideMenuItems);
 	};
 
 	/**
@@ -744,6 +751,7 @@ function(
 				oDomRef = this.getDomRef();
 				oFocusDomRef = this.getFocusDomRef();
 			}
+			TableUtils.Hook.call(this._getTable(), TableUtils.Hook.Keys.Table.OpenMenu, TableUtils.getCellInfo(oDomRef), oMenu);
 			oMenu.open(null, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef);
 			return true;
 		} else {

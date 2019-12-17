@@ -274,6 +274,10 @@ sap.ui.define([
 
 	};
 
+	Month.prototype.getFocusDomRef = function(){
+		return this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
+	};
+
 	Month.prototype.onAfterRendering = function(){
 
 		_initItemNavigation.call(this);

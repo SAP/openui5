@@ -1,0 +1,24 @@
+{
+  "1.74.0": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "deb763a9db43e483b03712d34dbb26b714d115f4",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: New \"icon\" property implemented",
+        "references": []
+      },
+      {
+        "id": "cc603456394f10074dca44f2ecbe3fefc73497cb",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Improve collapse/expand with keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980484878"
+          }
+        ]
+      }
+    ]
+  }
+}

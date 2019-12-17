@@ -24,11 +24,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("loadData: calls ODataModel._read with refresh parameter", function (assert) {
+	QUnit.test("loadData: calls ODataModel.read with refresh parameter", function (assert) {
 		var oBinding,
 			oContext = {},
 			oModel = {
-				_read : function () {},
+				read : function () {},
 				checkFilterOperation : function () {},
 				createCustomParams : function () {},
 				resolve : function () {},
@@ -49,12 +49,12 @@ sap.ui.define([
 		oBinding.bSkipDataEvents = true;
 		oBinding.bRefresh = bRefresh;
 
-		this.mock(oModel).expects("_read").withExactArgs("path", {
+		this.mock(oModel).expects("read").withExactArgs("path", {
+				_refresh : bRefresh,
 				canonicalRequest : undefined,
 				context : sinon.match.same(oContext),
 				error : sinon.match.func,
 				groupId : undefined,
-				refresh : bRefresh,
 				success : sinon.match.func,
 				urlParameters : ["~custom"]
 			})

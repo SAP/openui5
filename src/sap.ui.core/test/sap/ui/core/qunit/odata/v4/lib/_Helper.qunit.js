@@ -1510,6 +1510,76 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("informAll: comparison of old and new value fires all events", function (assert) {
+		var mChangeListeners = {},
+			oHelperMock = this.mock(_Helper),
+			oNew = {
+				add : "new",
+				changed : "changed",
+				deep : {
+					add : "new",
+					blank : {
+						add : "new"
+					},
+					changed : "changed",
+					unchanged : "same"
+				},
+				getDeep : {
+					inside : "value"
+				},
+				getFlat : "now",
+				unchanged : "same"
+			},
+			oOld = {
+				changed : "init",
+				deep : {
+					changed : "init",
+					deepOld : {},
+					old : "old",
+					unchanged : "same"
+				},
+				getDeep : "value",
+				getFlat : {
+					inside : "any"
+				},
+				old : "old",
+				unchanged : "same"
+			},
+			sUnchangedNew = JSON.stringify(oNew),
+			sUnchangedOld = JSON.stringify(oOld);
+
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/add", "new");
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/changed", "changed");
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/add", "new");
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/blank/add", "new");
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/changed", "changed");
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/deepOld", null);
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/old", null);
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/getDeep/inside", "value");
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/getFlat", "now");
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/getFlat/inside", null);
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/old", null);
+
+		// code under test
+		_Helper.informAll(mChangeListeners, "path", oOld, oNew);
+
+		// assertion - no change on the old and the new value
+		assert.strictEqual(JSON.stringify(oOld), sUnchangedOld);
+		assert.strictEqual(JSON.stringify(oNew), sUnchangedNew);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("makeAbsolute", function (assert) {
 		assert.strictEqual(_Helper.makeAbsolute("/foo/bar", "/baz"), "/foo/bar");
 		assert.strictEqual(_Helper.makeAbsolute("baz", "/foo/bar"), "/foo/baz");

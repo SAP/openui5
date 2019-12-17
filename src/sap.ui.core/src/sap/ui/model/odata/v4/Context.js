@@ -306,8 +306,8 @@ sap.ui.define([
 	 *   A relative path within the JSON structure
 	 * @param {any} vValue
 	 *   The new value which must be primitive
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID to be used for the PATCH request
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group ID to be used for the PATCH request; without a lock, no PATCH is sent
 	 * @param {boolean} [bSkipRetry=false]
 	 *   Whether to skip retries of failed PATCH requests and instead fail accordingly, but still
 	 *   fire "patchSent" and "patchCompleted" events
@@ -329,9 +329,11 @@ sap.ui.define([
 		return this.withCache(function (oCache, sCachePath, oBinding) {
 			return oBinding.doSetProperty(sCachePath, vValue, oGroupLock)
 				|| oMetaModel.fetchUpdateData(sPath, that).then(function (oResult) {
-					// If a PATCH is merged into a POST request, firePatchSent is not called, thus
-					// don't call firePatchCompleted
-					var bFirePatchCompleted = false;
+					var sEntityPath = _Helper.getRelativePath(oResult.entityPath,
+							that.oModel.resolve(oBinding.sPath, oBinding.oContext)),
+						// If a PATCH is merged into a POST request, firePatchSent is not called,
+						// thus don't call firePatchCompleted
+						bFirePatchCompleted = false;
 
 					/*
 					 * Error callback to report the given error and fire "patchCompleted"
@@ -366,12 +368,14 @@ sap.ui.define([
 						oBinding.firePatchSent();
 					}
 
+					if (!oGroupLock) {
+						return oCache.setProperty(oResult.propertyPath, vValue, sEntityPath);
+					}
+
 					// if request is canceled fnPatchSent and fnErrorCallback are not called and
 					// returned Promise is rejected -> no patch events
 					return oCache.update(oGroupLock, oResult.propertyPath, vValue,
-						bSkipRetry ? undefined : errorCallback, oResult.editUrl,
-						_Helper.getRelativePath(oResult.entityPath,
-							that.oModel.resolve(oBinding.sPath, oBinding.oContext)),
+						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sEntityPath,
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
 						oBinding.isPatchWithoutSideEffects(), patchSent
 					).then(function () {
@@ -1010,7 +1014,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the PATCH request; if not specified, the update group ID for
 	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}.
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}. Since 1.74, you can use
+	 *   <code>null</code> to prevent the PATCH request.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
@@ -1023,18 +1028,23 @@ sap.ui.define([
 	 * @since 1.67.0
 	 */
 	Context.prototype.setProperty = function (sPath, vValue, sGroupId) {
-		var oGroupLock;
+		var oGroupLock = null;
 
 		this.oBinding.checkSuspended();
-		this.oModel.checkGroupId(sGroupId);
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw new Error("Not a primitive value");
 		}
-		oGroupLock = this.oModel.lockGroup(sGroupId || this.getUpdateGroupId(), this, true, true);
+		if (sGroupId !== null) {
+			this.oModel.checkGroupId(sGroupId);
+			oGroupLock
+				= this.oModel.lockGroup(sGroupId || this.getUpdateGroupId(), this, true, true);
+		}
 
 		return Promise.resolve(this.doSetProperty(sPath, vValue, oGroupLock, true))
 			.catch(function (oError) {
-				oGroupLock.unlock(true);
+				if (oGroupLock) {
+					oGroupLock.unlock(true);
+				}
 				throw oError;
 			});
 	};

@@ -7,9 +7,10 @@ sap.ui.define([
 	'./CacheManagerNOP',
 	'sap/ui/Device',
 	"sap/base/Log",
-	"sap/ui/performance/Measurement"
+	"sap/ui/performance/Measurement",
+	'sap/ui/performance/trace/Interaction'
 ],
-	function(LRUPersistentCache, CacheManagerNOP, Device, Log, Measurement) {
+	function(LRUPersistentCache, CacheManagerNOP, Device, Log, Measurement, Interaction) {
 		"use strict";
 
 		/**
@@ -151,10 +152,10 @@ sap.ui.define([
 			 */
 			get: function (key) {
 				var pGet,
+					fnDone = Interaction.notifyAsyncStep(),
 					oMsr = startMeasurements("get", key);
 
 				Log.debug("Cache Manager: Getting key [" + key + "]");
-
 				pGet = this._callInstanceMethod("get", arguments).then(function callInstanceHandler(v) {
 					Log.debug("Cache Manager: Getting key [" + key + "] done");
 					oMsr.endAsync();
@@ -163,7 +164,7 @@ sap.ui.define([
 					Log.debug("Cache Manager: Getting key [" + key + "] failed. Error: " + e);
 					oMsr.endAsync();
 					throw e;
-				});
+				}).finally(fnDone);
 				oMsr.endSync();
 				return pGet;
 			},
@@ -311,6 +312,21 @@ sap.ui.define([
 						system: Device.system.SYSTEMTYPE.DESKTOP,
 						browserName: Device.browser.BROWSER.INTERNET_EXPLORER,
 						browserVersion: 11
+					});
+					aSupportedEnv.push({
+						system: Device.system.SYSTEMTYPE.DESKTOP,
+						browserName: Device.browser.BROWSER.SAFARI,
+						browserVersion: 13
+					});
+					aSupportedEnv.push({
+						system: Device.system.SYSTEMTYPE.TABLET,
+						browserName: Device.browser.BROWSER.SAFARI,
+						browserVersion: 13
+					});
+					aSupportedEnv.push({
+						system: Device.system.SYSTEMTYPE.PHONE,
+						browserName: Device.browser.BROWSER.SAFARI,
+						browserVersion: 13
 					});
 					this._bSupportedEnvironment = aSupportedEnv.some(function (oSuppportedEnv) {
 						var bSupportedSystem = Device.system[oSuppportedEnv.system],

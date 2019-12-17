@@ -3172,12 +3172,12 @@ sap.ui.define([
 
 		var oStartDate = this.oPC2.getStartDate(),
 			oLastDay,
-			oComparisonDate = new Date(oStartDate);
+			oComparisonDate = new Date(oStartDate.getTime());
 
 		//Act
 		oComparisonDate.setDate(oComparisonDate.getDate() + 1);
 		sap.ui.getCore().applyChanges();
-		oLastDay = new Date("2016/09/12");
+		oLastDay = new Date(2016, 8, 12);
 		this.oPC2.shiftToDate(oLastDay, false);
 
 		//Assert
@@ -3188,13 +3188,13 @@ sap.ui.define([
 		//Arrange
 		this.oPC2.setViewKey(CalendarIntervalType.Day);
 		var oStartDate = this.oPC2.getStartDate(),
-			oComparisonDate = new Date(oStartDate),
-			oGoToDate = new Date(oStartDate),
-			oMaxDate = new Date("2016/09/14"),
-			oGoToDate2 = new Date("2016/09/15"),
-			oComparisonDate2 = new Date("2016/09/01");
+			oComparisonDate = new Date(oStartDate.getTime()),
+			oGoToDate = new Date(oStartDate.getTime()),
+			oMaxDate = new Date(2016, 8, 14),
+			oGoToDate2 = new Date(2016, 8, 15),
+			oComparisonDate2 = new Date(2016, 8, 1);
 
-		this.oPC2.setMinDate(new Date(oStartDate));
+		this.oPC2.setMinDate(new Date(oStartDate.getTime()));
 
 		//Act
 		oGoToDate.setDate(oGoToDate.getDate() - 1);
@@ -3743,7 +3743,7 @@ sap.ui.define([
 		},
 
 		_getNextDay: function(oDate) {
-			var oNext = new Date(oDate);
+			var oNext = new Date(oDate.getTime());
 			oNext.setDate(oNext.getDate() + 1);
 
 			return oNext;

@@ -18,7 +18,8 @@
 					path: 'SupplierName',
 					descending: false,
 					group: true
-				}
+				},
+				groupHeaderFactory: '.getGroupHeader'
 			}">
 			<core:Item key="{ProductId}" text="{Name}" />
 		</MultiComboBox>

@@ -4,7 +4,7 @@
 /* =================================== */
 
 .sapMMsgStrip {
-	border-radius: 0.25rem;
+	border-radius: @sapUiElementBorderCornerRadius;
 }
 
 .sapMMsgStripCloseButton {
@@ -13,7 +13,7 @@
 	// does not work in IE if directly set on ::after
 	// 1.75rem - 4px (1px border and 1px offset per side)
 	line-height: 1.35rem;
-	border-radius: .25rem;
+	border-radius: @sapUiElementBorderCornerRadius;
 	background-color: @sapUiButtonLiteBackground;
 	border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
 	color: @sapUiButtonLiteTextColor;
@@ -49,11 +49,11 @@
 }
 
 .sapMMsgStripInformation {
-	background-color: @sapInformationBackground;
-	border-color: @sapInformationBorderColor;
+	background-color:  @sapUiInformationBG;
+	border-color: @sapUiInformationBorder;
 	color: @sapUiBaseText;
 
 	& .sapMMsgStripIcon {
-		color: @sapInformativeElementColor;
+		color: @sapUiInformativeElement;
 	}
 }

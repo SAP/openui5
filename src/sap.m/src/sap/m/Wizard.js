@@ -464,18 +464,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the text for the finish button. By default it is "Review".
-		 * @param {string} sValue The text of the finish button.
-		 * @returns {sap.m.Wizard} Reference to the control instance for chaining.
-		 * @public
-		 */
-		Wizard.prototype.setFinishButtonText = function (sValue) {
-			this.setProperty("finishButtonText", sValue, true);
-
-			return this;
-		};
-
-		/**
 		 * Returns the finish button text which will be rendered.
 		 * @returns {string} The text which will be rendered in the finish button.
 		 * @public

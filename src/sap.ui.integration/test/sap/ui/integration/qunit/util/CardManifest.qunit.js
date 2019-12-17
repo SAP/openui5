@@ -233,6 +233,11 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 		var mParameters = {
 			"someKey": {
 				"value": "someValue"
+			},
+			"someOtherKey": {
+				"value": {
+					"subvalue": "Other value"
+				}
 			}
 		};
 		var mDataSources = {
@@ -250,8 +255,8 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 							"Should NOT replace anything if parameters and and dataSources are not given");
 		assert.strictEqual(CardManifest._processPlaceholder("{parameters.someKey} and dataSources.invoiceRemote", mParameters, mDataSources), "{parameters.someKey} and dataSources.invoiceRemote",
 							"Should NOT replace anything out of placeholders");
-		assert.strictEqual(CardManifest._processPlaceholder("{{parameters.someKey}} {{parameters.someKey}} {{dataSources.invoiceRemote.uri}} {{dataSources.invoiceRemote.uri}}", mParameters, mDataSources),
-							"someValue someValue someUri someUri", "All matches should be replaced.");
+		assert.strictEqual(CardManifest._processPlaceholder("{{parameters.someKey}} {{parameters.someOtherKey.subvalue}} {{dataSources.invoiceRemote.uri}} {{dataSources.invoiceRemote.uri}}", mParameters, mDataSources),
+							"someValue Other value someUri someUri", "All matches should be replaced.");
 		assert.strictEqual(CardManifest._processPlaceholder("{{dataSources}} text", mParameters, mDataSources), "{{dataSources}} text", "Nothing should be replaced.");
 	});
 

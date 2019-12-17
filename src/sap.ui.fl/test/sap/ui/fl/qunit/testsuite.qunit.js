@@ -70,6 +70,18 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/changes/Reverter"]
 				}
 			},
+			"apply/_internal/changes/descriptor/ui5/AddLibrary": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary"]
+				}
+			},
+			"apply/_internal/changes/descriptor/Applier": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/Applier"]
+				}
+			},
 			"apply/_internal/connectors/ObjectStorageConnector": {
 				group: "Apply Internal",
 				coverage: {
@@ -129,6 +141,14 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/connectors/KeyUserConnector"]
 				}
 			},
+			"apply/_internal/connectors/ObjectPathConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector"
+					]
+				}
+			},
 			"apply/_internal/connectors/Utils": {
 				group: "Apply Internal",
 				coverage: {
@@ -147,16 +167,16 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/flexState/FlexState"]
 				}
 			},
+			"apply/_internal/flexState/Loader": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/Loader"]
+				}
+			},
 			"apply/_internal/flexState/prepareAppDescriptorMap": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap"]
-				}
-			},
-			"apply/_internal/flexState/prepareChangesMap": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/prepareChangesMap"]
 				}
 			},
 			"apply/_internal/flexState/prepareVariantsMap": {
@@ -187,6 +207,18 @@ sap.ui.define(function () {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
+				}
+			},
+			"apply/_internal/flexState/controlVariants/VariantManagementState": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"]
+				}
+			},
+			"apply/_internal/flexState/controlVariants/Switcher": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher"]
 				}
 			},
 			"write/api/ChangesWriteAPI": {

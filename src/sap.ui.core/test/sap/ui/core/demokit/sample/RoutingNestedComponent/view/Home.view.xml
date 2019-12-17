@@ -1,0 +1,12 @@
+<mvc:View controllerName="sap.ui.core.sample.RoutingNestedComponent.controller.Home"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true">
+	<Page
+		class="sapUiContentPadding">
+		<content>
+			<FormattedText htmlText="{/HTML}" />
+			<Image src="img/diagram.jpg" class="sapUiMediumMarginTopBottom maxWidth100" />
+		</content>
+	</Page>
+</mvc:View>

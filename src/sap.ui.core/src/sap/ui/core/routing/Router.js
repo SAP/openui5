@@ -361,17 +361,7 @@ sap.ui.define([
 				if (this._oTargets) {
 					var oHomeRoute = this._oRoutes[this._oConfig.homeRoute];
 
-					this._oTargets.attachTitleChanged(function(oEvent) {
-
-						var oEventParameters = oEvent.getParameters();
-
-						if (oHomeRoute && isHomeRouteTarget(oEventParameters.name, oHomeRoute._oConfig.name)) {
-							oEventParameters.isHome = true;
-						}
-
-						this.fireTitleChanged(oEventParameters);
-
-					}, this);
+					this._oTargets.attachTitleChanged(this._forwardTitleChanged, this);
 
 					this._aHistory = [];
 
@@ -401,6 +391,16 @@ sap.ui.define([
 				return this;
 			},
 
+			_forwardTitleChanged: function(oEvent) {
+				var oEventParameters = oEvent.getParameters();
+				var oHomeRoute = this._oRoutes[this._oConfig.homeRoute];
+
+				if (oHomeRoute && isHomeRouteTarget(oEventParameters.name, oHomeRoute._oConfig.name)) {
+					oEventParameters.isHome = true;
+				}
+
+				this.fireTitleChanged(oEventParameters);
+			},
 
 			/**
 			 * Stops to listen to the <code>hashChange</code> of the browser.
@@ -420,6 +420,10 @@ sap.ui.define([
 
 				if (this.fnHashReplaced) {
 					this.oHashChanger.detachEvent("hashReplaced", this.fnHashReplaced);
+				}
+
+				if (this._oTargets) {
+					this._oTargets.detachTitleChanged(this._forwardTitleChanged, this);
 				}
 
 				if (this._matchedRoute) {
@@ -553,6 +557,23 @@ sap.ui.define([
 				return Object.keys(this._oRoutes).some(function(sRouteName) {
 					return this._oRoutes[sRouteName].match(sHash);
 				}.bind(this));
+			},
+
+			/**
+			 * Returns the first route which matches the given hash
+			 * @param {string} sHash
+			 * @return {sap.ui.core.routing.Route} The matched Route
+			 * @public
+			 * @since 1.74
+			 */
+			getRouteByHash : function(sHash) {
+				for (var sRouteName in this._oRoutes) {
+					if (this._oRoutes.hasOwnProperty(sRouteName)) {
+						if (this._oRoutes[sRouteName].match(sHash)) {
+							return this.getRoute(sRouteName);
+						}
+					}
+				}
 			},
 
 			/**

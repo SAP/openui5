@@ -25,6 +25,12 @@
 	  "group": "Card Type Examples"
 	},
 	{
+	  "title": "Adaptive Card",
+	  "description": "Example page for Card of type AdaptiveCard",
+	  "route": "adaptiveContent",
+	  "group": "Card Type Examples"
+	},
+	{
 		"title": "Numeric Header",
 		"description": "Example page for Card with Numeric Header",
 		"route": "numericHeader",

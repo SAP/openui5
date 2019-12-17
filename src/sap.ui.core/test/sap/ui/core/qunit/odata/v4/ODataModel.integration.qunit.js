@@ -1461,6 +1461,9 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var that = this;
 
+			// allow indents in expectation
+			sView = sView.replace(/\t/g, "");
+
 			return this.createView(assert, sTemplate, undefined, undefined,
 				{xml : oXMLPreprocessorConfig}).then(function () {
 					assert.strictEqual(
@@ -3457,9 +3460,10 @@ sap.ui.define([
 		}).then(function () {
 			that.expectChange("budget", "98,765");
 
-			oOperationBinding.getParameterContext().setProperty("Budget", "98765");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oOperationBinding.getParameterContext().setProperty("Budget", "98765"),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectChange("budget", "12,345");
 
@@ -3469,9 +3473,11 @@ sap.ui.define([
 		}).then(function () {
 			that.expectChange("budget", "54,321");
 
-			that.oView.byId("form").getBindingContext().setProperty("$Parameter/Budget", "54321");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oView.byId("form").getBindingContext()
+					.setProperty("$Parameter/Budget", "54321"),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectChange("teamId", null);
 
@@ -3515,21 +3521,25 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			var oPromise;
+
 			that.expectChange("budget", "4,321.1234");
 
 			// code under test - setting the parameter via operation
-			oOperation.getBoundContext().setProperty("$Parameter/Budget", "4321.1234");
+			oPromise = oOperation.getBoundContext().setProperty("$Parameter/Budget", "4321.1234");
 
 			assert.strictEqual(oParameterContext.getProperty("Budget"), "4321.1234");
 
-			return that.waitForChanges(assert);
+			return Promise.all([oPromise, that.waitForChanges(assert)]);
 		}).then(function () {
 			that.expectChange("teamId", "TEAM_01");
 
-			// also test the API for property setting
-			that.oView.byId("parameter").getBindingContext().setProperty("TeamID", "TEAM_01");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// also test the API for property setting w/o PATCH (CPOUI5ODATAV4-14)
+				that.oView.byId("parameter").getBindingContext()
+					.setProperty("TeamID", "TEAM_01", /*no PATCH*/null),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectRequest({
 				method : "POST",
@@ -3555,27 +3565,184 @@ sap.ui.define([
 	testXMLTemplating("Operation parameters with sap.ui.model.odata.v4.AnnotationHelper.format",
 		{models : {meta : createTeaBusiModel().getMetaModel()}},
 '<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
-	<template:with\
-		path="meta>/com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamBudgetByID/0"\
-		var="action">\
-		<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
-			<FlexBox binding="{$Parameter}">\
-				<template:repeat list="{action>$Parameter}" var="parameter">\
-					<Input id="{parameter>$Name}" value="{parameter>@@format}"/>\
-				</template:repeat>\
-			</FlexBox>\
+	<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+		<FlexBox binding="{$Parameter}">\
+			<template:repeat list="{meta>/ChangeTeamBudgetByID/$Action/0/$Parameter}" var="param">\
+				<Input id="{param>$Name}" value="{param>@@format}"/>\
+			</template:repeat>\
+			<Input value="{meta>/ChangeTeamBudgetByID/TeamID@@format}"/>\
 		</FlexBox>\
-	</template:with>\
+	</FlexBox>\
 </template:alias>',
 '<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
 	<FlexBox binding="{$Parameter}">\
 		<Input id="TeamID" value="{path:\'TeamID\',type:\'sap.ui.model.odata.type.String\',\
-constraints:{\'maxLength\':10,\'nullable\':false},\
-formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+			constraints:{\'maxLength\':10,\'nullable\':false},\
+			formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
 		<Input id="Budget" value="{path:\'Budget\',type:\'sap.ui.model.odata.type.Decimal\',\
-constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
+			constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
+		<Input value="{path:\'TeamID\',type:\'sap.ui.model.odata.type.String\',\
+			constraints:{\'maxLength\':10,\'nullable\':false},\
+			formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
 	</FlexBox>\
 </FlexBox>');
+
+	//*********************************************************************************************
+	// Scenario: Allow setting complex type parameters of operations via property binding
+	// - parameters change because of change in the binding.
+	// Follow-up on JIRA: CPOUI5ODATAV4-15 (read/write primitive type parameters)
+	// JIRA: CPOUI5ODATAV4-52
+	QUnit.test("Allow binding of complex operation parameters", function (assert) {
+		var oOperation,
+			oModel = createSpecialCasesModel(),
+			sView = '\
+<FlexBox id="operation" binding="{/HirePerson(...)}">\
+	<FlexBox id="parameter" binding="{$Parameter}">\
+		<FlexBox binding="{Person}" >\
+			<Input id="name" value="{Name}"/>\
+			<Input id="salary" value="{Salary}"/>\
+			<FlexBox binding="{Address}">\
+				<Input id="city" value="{City}"/>\
+				<Input id="zip" value="{ZIP}"/>\
+			</FlexBox>\
+		</FlexBox>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("city", "")
+			.expectChange("name", "")
+			.expectChange("salary", null)
+			.expectChange("zip", "");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oOperation = that.oView.byId("operation").getObjectBinding();
+
+			that.expectChange("city", "Tatooine")
+				.expectChange("name", "R2D2")
+				.expectChange("salary", "12,345,678")
+				.expectChange("zip", "12345");
+
+			// code under test - reading parameter values
+			oOperation.setParameter("Person", {
+				Address : {
+					City : "Tatooine",
+					ZIP : "12345"
+				},
+				Name : "R2D2",
+				Salary : 12345678
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("city", "")
+				.expectChange("name", "")
+				.expectChange("salary", "12,345")
+				.expectChange("zip", "67890");
+
+			// code under test - set parameter complex value
+			oOperation.setParameter("Person", {
+				Address : {
+					ZIP : "67890"
+				},
+				Salary : 12345
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("salary", "54,321")
+				.expectChange("zip", "");
+
+			// code under test - set parameter complex value
+			oOperation.setParameter("Person", {
+				Salary : 54321
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("name", "C3PO");
+
+			// code under test - Person/Name
+			that.oView.byId("name").getBinding("value").setValue("C3PO");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("city", "Kashyyk");
+
+			// code under test - Person/Address/City
+			that.oView.byId("city").getBinding("value").setValue("Kashyyk");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("zip", "12345");
+
+			// code under test - Person/Address/ZIP
+			that.oView.byId("zip").getBinding("value").setValue("12345");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+				method : "POST",
+				url : "HirePerson",
+				payload : {
+					Person : {
+						Address : {
+							City : "Kashyyk",
+							ZIP : "12345"
+						},
+						Name : "C3PO",
+						Salary : 54321
+					}
+				}
+			}, {/* response does not matter here */});
+
+			// code under test
+			return Promise.all([oOperation.execute(), that.waitForChanges(assert)]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODCB#setParameter with complex type holds the reference", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			that = this;
+
+		return this.createView(assert, '', oModel).then(function () {
+			var oOperation = oModel.bindContext("/HirePerson(...)"),
+				oPerson = {
+					Address : {
+						City : "Tatooine",
+						ZIP : "12345"
+					},
+					Name : "R2D2",
+					Salary : 12345678
+				};
+
+			oOperation.setParameter("Person", oPerson);
+			oPerson.Salary = 54321;
+			oPerson.Address.City = "Kashyyk";
+
+			that.expectRequest({
+				method : "POST",
+				url : "HirePerson",
+				payload : {
+					Person : {
+						Address : {
+							City : "Kashyyk",
+							ZIP : "12345"
+						},
+						Name : "R2D2",
+						Salary : 54321
+					}
+				}
+			}, {/* response does not matter here */});
+
+			return Promise.all([
+				// code under test
+				oOperation.execute(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Changing the binding parameters causes a refresh of the table
@@ -21057,6 +21224,8 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 	// Scenario: Create a row. See that the city (a nested property inside the address) is removed,
 	// when the POST response nulls the address (the complex property containing it).
 	// JIRA: CPOUI5UISERVICESV3-1878
+	// Also check on-the-fly that setting a property w/o PATCH is refused for the transient row.
+	// JIRA: CPOUI5ODATAV4-14
 	QUnit.test("create removes a nested property", function (assert) {
 		var oCreatedContext,
 			oModel = createSalesOrdersModel({
@@ -21083,7 +21252,24 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 				Address : {City : "Heidelberg"}
 			}, true);
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oCreatedContext.setProperty("Address/City", "St. Ingbert", "$direct")
+					.then(function () {
+						assert.ok(false);
+					}, function (oError) {
+						assert.strictEqual(oError.message, "The entity will be created via group"
+							+ " 'update'. Cannot patch via group '$direct'");
+					}),
+				// code under test (CPOUI5ODATAV4-14)
+				oCreatedContext.setProperty("Address/City", "St. Ingbert", null)
+					.then(function () {
+						assert.ok(false);
+					}, function (oError) {
+						assert.strictEqual(oError.message,
+							"Cannot update a transient entity w/o PATCH");
+					}),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectRequest({
 					method : "POST",
@@ -22168,7 +22354,7 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 	QUnit.test("BCP 1970517588: invalid property path", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox binding="{/TEAMS(\'TEAM01\')}">\
+<FlexBox binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="teamId" text="{Team_Id}"/>\
 	<Text id="name" text="{TEAM_2_EMPLOYEES/Name}"/>\
 </FlexBox>';
@@ -22177,7 +22363,7 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 		this.oLogMock.expects("error").twice()
 			.withArgs("Failed to drill-down into TEAM_2_EMPLOYEES/Name, invalid segment: Name");
 
-		this.expectRequest("TEAMS('TEAM01')?$select=Team_Id"
+		this.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
 				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
 				Team_Id : "TEAM_01",
 				TEAM_2_EMPLOYEES : []
@@ -22278,10 +22464,118 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 	});
 
 	//*********************************************************************************************
-	// Scenario: A PATCH triggers a side effect for the whole object page, while the paginator
-	// switches to another item. The side effect's GET is thus ignored because the cache for the
-	// old item is already inactive; thus the promise fails. Due to this failure, the old cache was
-	// restored, which was wrong. Timing is essential!
+	// Scenario: Controller code sets a field control property, but needs to avoid a PATCH request.
+	// Later on, that property is overwritten again by some server response.
+	// A (context) binding that did not yet read its data does not allow setting a property w/o a
+	// PATCH request.
+	// JIRA: CPOUI5ODATAV4-14
+	QUnit.test("CPOUI5ODATAV4-14", function (assert) {
+		var oBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/TEAMS(\'42\')}" id="form">\
+	<Input id="name" value="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('42')?$select=Name,Team_Id", {
+				Name : "Team #1",
+				Team_Id : "42"
+			})
+			.expectChange("name", "Team #1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("form").getObjectBinding();
+
+			that.expectChange("name", "changed");
+			// expect no PATCH request!
+
+			return Promise.all([
+				// code under test
+				oBinding.getBoundContext().setProperty("Name", "changed", null),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("TEAMS('42')?$select=Name,Team_Id", {
+					Name : "Team #1",
+					Team_Id : "42"
+				})
+				.expectChange("name", "Team #1");
+
+			oBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oContextBinding = oModel.bindContext("/TEAMS('42')");
+
+			return Promise.all([
+				oContextBinding.getBoundContext().setProperty("Name", "changed", null)
+					.then(function () {
+						assert.ok(false);
+					}, function (oError) {
+						assert.strictEqual(oError.message,
+							"Unexpected request: GET TEAMS('42')");
+					}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Use v4.Context#setProperty to update a property value in a way which becomes async,
+	// change the binding's parent context in the meantime. Check that setting the property value
+	// fails instead of changing the wrong data or so.
+	// JIRA: CPOUI5ODATAV4-14
+	QUnit.test("CPOUI5ODATAV4-108 what if context has changed in the meantime", function (assert) {
+		var that = this;
+
+		return this.createView(assert).then(function () {
+			var oModel = that.oModel,
+				oContextBinding = oModel.bindContext("Manager_to_Team"),
+				fnRespond;
+
+			oContextBinding.setContext(
+				oModel.bindContext("/MANAGERS('1')", null, {$expand : "Manager_to_Team"})
+					.getBoundContext());
+
+			that.expectRequest("MANAGERS('1')?$expand=Manager_to_Team",
+					new Promise(function (resolve, reject) {
+						fnRespond = resolve.bind(null, {
+							ID : "1",
+							Manager_to_Team : {
+								Name : "Team #1",
+								Team_Id : "Team_01"
+							}
+						});
+					})
+				);
+
+			return Promise.all([
+				oContextBinding.getBoundContext().setProperty("Name", "Darth Vader")
+					.then(function () {
+						assert.ok(false);
+					}, function () {
+						// TypeError: Cannot read property 'resolve' of undefined
+						// --> setProperty fails somehow because the old bound context has already
+						// been destroyed; this is OK and better than changing the wrong data or so
+						assert.ok(true);
+					}),
+				resolveLater(function () {
+					oContextBinding.setContext(
+						oModel.bindContext("/MANAGERS('2')", null, {$expand : "Manager_to_Team"})
+							.getBoundContext());
+					fnRespond();
+				}, 100),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A PATCH (not shown here) triggers a side effect for the whole object page, while
+	// a paginator switches to another item. The side effect's GET is thus ignored because the
+	// cache for the old item is already inactive; thus the promise fails. Due to this failure, the
+	// old cache was restored, which was wrong. Timing is essential!
 	// BCP: 1970600374
 	QUnit.test("BCP: 1970600374", function (assert) {
 		var oInput,
@@ -22309,21 +22603,11 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 		}).then(function () {
 			var oPromise, fnRespond;
 
-			// 1st, PATCH some value
-			that.expectChange("name", "Darth Vader")
-				.expectRequest({
-					method : "PATCH",
-					payload : {Name : "Darth Vader"},
-					url : "TEAMS('TEAM_01')"
-				}, {/* response does not matter here */});
-
-			oInput.getBinding("value").setValue("Darth Vader");
-
-			// 2nd, request side effects
+			// 1st, request side effects
 			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id",
 					new Promise(function (resolve, reject) {
 						fnRespond = resolve.bind(null, {
-							Name : "Darth Vader",
+							Name : "Team #1",
 							Team_Id : "TEAM_01"
 						});
 					}));
@@ -22331,7 +22615,7 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 			oPromise
 				= oInput.getBindingContext().requestSideEffects([{$NavigationPropertyPath : ""}]);
 
-			// 3rd, switch to different context
+			// 2nd, switch to different context
 			that.expectRequest("TEAMS('TEAM_02')?$select=Name,Team_Id", {
 					Name : "Team #2",
 					Team_Id : "TEAM_02"
@@ -22365,10 +22649,10 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 	});
 
 	//*********************************************************************************************
-	// Scenario: A PATCH triggers a side effect for the whole list, while a paginator switches to
-	// another item. The side effect's GET is thus ignored because the cache for the old item is
-	// already inactive; thus the promise fails. Due to this failure, the old cache was restored,
-	// which was wrong. Timing is essential!
+	// Scenario: A PATCH (not shown here) triggers a side effect for the whole list, while a
+	// paginator switches to another item. The side effect's GET is thus ignored because the cache
+	// for the old item is already inactive; thus the promise fails. Due to this failure, the old
+	// cache was restored, which was wrong. Timing is essential!
 	// Follow-up to BCP: 1970600374 with an ODCB instead of an ODLB.
 	// JIRA: CPOUI5ODATAV4-34
 	QUnit.test("CPOUI5ODATAV4-34", function (assert) {
@@ -22395,32 +22679,21 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oInput, oPromise, fnRespond;
+			var oPromise, fnRespond;
 
-			// 1st, PATCH some value
-			that.expectChange("name", ["Darth Vader"])
-				.expectRequest({
-					method : "PATCH",
-					payload : {Name : "Darth Vader"},
-					url : "EMPLOYEES('1')"
-				}, {/* response does not matter here */});
-
-			oInput = oTable.getItems()[0].getCells()[0];
-			oInput.getBinding("value").setValue("Darth Vader");
-
-			// 2nd, request side effects
+			// 1st, request side effects
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
 					+ "&$skip=0&$top=100",
 					new Promise(function (resolve, reject) {
 						fnRespond = resolve.bind(null, {
-							value : [{ID : "1", Name : "Darth Vader"}]
+							value : [{ID : "1", Name : "Jonathan Smith"}]
 						});
 					}));
 
 			oPromise = oTable.getBinding("items").getHeaderContext()
 				.requestSideEffects([{$NavigationPropertyPath : ""}]);
 
-			// 3rd, switch to different context
+			// 2nd, switch to different context
 			that.expectRequest("TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$select=ID,Name"
 					+ "&$skip=0&$top=100", {
 					value : [{ID : "2", Name : "Frederic Fall"}]
@@ -22440,7 +22713,7 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			var oInput;
+			var oInput = oTable.getItems()[0].getCells()[0]; // Note: different instance now!
 
 			that.expectChange("name", ["Palpatine"])
 				.expectRequest({
@@ -22448,7 +22721,6 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 					payload : {Name : "Palpatine"},
 					url : "EMPLOYEES('2')"
 				}, {/* response does not matter here */});
-			oInput = oTable.getItems()[0].getCells()[0]; // Note: this is a different instance now!
 			oInput.getBinding("value").setValue("Palpatine");
 
 			return that.waitForChanges(assert);

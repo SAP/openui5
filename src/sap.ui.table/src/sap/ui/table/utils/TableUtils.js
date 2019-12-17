@@ -8,6 +8,7 @@ sap.ui.define([
 	"./_ColumnUtils",
 	"./_MenuUtils",
 	"./_BindingUtils",
+	"./_HookUtils",
 	"../library",
 	"sap/ui/base/Object",
 	"sap/ui/core/Control",
@@ -21,6 +22,7 @@ sap.ui.define([
 	ColumnUtils,
 	MenuUtils,
 	BindingUtils,
+	HookUtils,
 	library,
 	BaseObject,
 	Control,
@@ -216,6 +218,7 @@ sap.ui.define([
 		Column: ColumnUtils,
 		Menu: MenuUtils,
 		Binding: BindingUtils,
+		Hook: HookUtils,
 
 		CELLTYPE: CELLTYPE,
 		BaseSize: mBaseSize,
@@ -528,7 +531,7 @@ sap.ui.define([
 				var oCellInfo = TableUtils.getCellInfo($Cell[0]);
 				var bIsRowSelectionAllowed = TableUtils.isRowSelectionAllowed(oTable);
 
-				if (!TableUtils.Grouping.isInGroupingRow($Cell[0])
+				if (!TableUtils.Grouping.isInGroupHeaderRow($Cell[0])
 					&& ((oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL | TableUtils.CELLTYPE.ROWACTION) && bIsRowSelectionAllowed)
 						|| (oCellInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER) && TableUtils.isRowSelectorSelectionAllowed(oTable)))) {
 
@@ -1591,6 +1594,7 @@ sap.ui.define([
 	ColumnUtils.TableUtils = TableUtils;
 	MenuUtils.TableUtils = TableUtils;
 	BindingUtils.TableUtils = TableUtils;
+	HookUtils.TableUtils = TableUtils;
 
 	return TableUtils;
 

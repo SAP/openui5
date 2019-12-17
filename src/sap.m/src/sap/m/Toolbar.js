@@ -255,10 +255,10 @@ function(
 		};
 	};
 
-	Toolbar.prototype._markFirstLastVisibleItems = function () {
+	Toolbar.prototype._markFirstLastVisibleItems = function (sSelector) {
 		var $domRef = this.$(),
-			$firstVisible = $domRef.find(".sapMBarChild:visible:first")[0],
-			$lastVisible = $domRef.find(".sapMBarChild:visible:last")[0],
+			$firstVisible = $domRef.find(sSelector + ":first")[0],
+			$lastVisible = $domRef.find(sSelector + ":last")[0],
 			sIdFirstVisible = $firstVisible ? $firstVisible.id : "",
 			sIdLastVisible = $lastVisible ? $lastVisible.id : "",
 			oFirstVisibleItem = sap.ui.getCore().byId(sIdFirstVisible),
@@ -292,7 +292,7 @@ function(
 	Toolbar.prototype.onAfterRendering = function() {
 		this._checkContents();
 
-		this._markFirstLastVisibleItems();
+		this._markFirstLastVisibleItems(".sapMBarChild:visible");
 	};
 
 	Toolbar.prototype.onLayoutDataChange = function() {

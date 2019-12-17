@@ -79,6 +79,11 @@
 	}
 }
 
+// when we have both pin and toggle header indicator, pseudo-elements overlap siblings on EDGE
+html[data-sap-ui-browser^="ed"] .sapFDynamicPageToggleHeaderIndicator ~ .sapFDynamicPageHeaderPinButton:before {
+  	display: none;
+}
+
 html[data-sap-ui-browser^="cr"] .sapFDynamicPageToggleHeaderIndicator,
 html[data-sap-ui-browser^="cr"] .sapFDynamicPageHeaderPinButton {
 	.sapMBtnInner .sapMBtnIcon {

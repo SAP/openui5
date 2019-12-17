@@ -5740,24 +5740,16 @@ sap.ui.define([
 	QUnit.test("fetchDownloadUrl: non-empty meta path", function (assert) {
 		var oBinding = this.bindList("relative/path",
 				Context.create({/*oModel*/}, {/*oBinding*/}, "/resource/path")),
-			mReducedQueryOptions = {},
 			oCache = {
 				sMetaPath : "meta/path",
-				mQueryOptions : {
-					$expand : {
-						relative : {
-							$expand : {
-								metapath : mReducedQueryOptions
-							}
-						}
-					}
-				},
+				mQueryOptions : {},
 				sResourcePath : "resource/path"
 			},
 			oExpectation,
 			oHelperMock = this.mock(_Helper),
 			oPromise = {},
-			mQueryOptions = {};
+			mQueryOptions = {},
+			mQueryOptionsForPath = {};
 
 		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
 
@@ -5766,8 +5758,12 @@ sap.ui.define([
 
 		oHelperMock.expects("getMetaPath")
 			.withExactArgs("relative/path").returns("relative/metapath");
+		oHelperMock.expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "relative/path")
+			.returns(mQueryOptionsForPath);
 		oHelperMock.expects("merge")
-			.withExactArgs({}, sinon.match.same(this.oModel.mUriParameters), mReducedQueryOptions)
+			.withExactArgs({}, sinon.match.same(this.oModel.mUriParameters),
+				sinon.match.same(mQueryOptionsForPath))
 			.returns(mQueryOptions);
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sResourcePath, "relative/path")
 			.returns("resource/path/relative/path");

@@ -569,7 +569,7 @@ sap.ui.define([
 					if (oLabel) {
 						aContent.push(oLabel);
 					}
-					aFields = oElement.getFields();
+					aFields = oElement.getFieldsForRendering();
 					for ( var j = 0; j < aFields.length; j++) {
 						aContent.push(aFields[j]);
 					}
@@ -749,7 +749,7 @@ sap.ui.define([
 					if (oLabel) {
 						oLabelLD = oLayout.getLayoutDataForElement(oLabel, "sap.ui.layout.GridData");
 					}
-					var aFields = oElement.getFields();
+					var aFields = oElement.getFieldsForRendering();
 					var iLength = aFields.length;
 					var oField;
 					var oFieldLD;

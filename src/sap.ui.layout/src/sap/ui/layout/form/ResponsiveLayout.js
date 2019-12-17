@@ -282,7 +282,7 @@ sap.ui.define([
 					this.mContainers[sContainerId][2][sElementId]) {
 					if (this.mContainers[sContainerId][2][sElementId][1]) {
 						// update fields RF-Layout
-						var aFields = oParent.getFields();
+						var aFields = oParent.getFieldsForRendering();
 						_updateLayoutDataOfContentResponsiveFlowLayout.call(this, this.mContainers[sContainerId][2][sElementId][1], aFields);
 					}
 					this.mContainers[sContainerId][2][sElementId][0].onLayoutDataChange(oEvent);
@@ -493,7 +493,7 @@ sap.ui.define([
 			}
 
 			// if more fields after a label put the fields in an additional ResponsiveFlowLayout
-			var aFields = oElement.getFields();
+			var aFields = oElement.getFieldsForRendering();
 			if (oElement.getLabel() && aFields.length > 1) {
 				if (mRFLayouts[sElementId][1]) {
 					oFieldsRFLayout = mRFLayouts[sElementId][1];
@@ -570,7 +570,7 @@ sap.ui.define([
 					if (oElement) {
 						var aContent = [];
 						var oLabel = oElement.getLabelControl();
-						var aFields = oElement.getFields();
+						var aFields = oElement.getFieldsForRendering();
 						if (!oLabel || aFields.length <= 1) {
 							aContent = aFields;
 							if (oLabel) {
@@ -617,7 +617,7 @@ sap.ui.define([
 				oRFLayout.getContent = function(){
 					var oElement = sap.ui.getCore().byId(this.__myParentElementId);
 					if (oElement) {
-						return oElement.getFields();
+						return oElement.getFieldsForRendering();
 					} else {
 						return false;
 					}

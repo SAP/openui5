@@ -125,8 +125,7 @@ sap.ui.define([
 				 * For example, if the user expands the header by clicking on the title and then scrolls down the page, the header will remain expanded.
 				 *
 				 * <b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example,
-				 * when the control is rendered on tablet or mobile and the control`s title and header
-				 * are with height larger than the given threshold.
+				 * when the control`s title and header are with height larger than the given threshold.
 				 */
 				preserveHeaderStateOnScroll: {type: "boolean", group: "Behavior", defaultValue: false},
 
@@ -569,7 +568,7 @@ sap.ui.define([
 	 * @returns {boolean}
 	 */
 	DynamicPage.prototype._shouldOverridePreserveHeaderStateOnScroll = function () {
-		return !Device.system.desktop && this._headerBiggerThanAllowedToBeFixed() && this._preserveHeaderStateOnScroll();
+		return this._headerBiggerThanAllowedToBeFixed() && this._preserveHeaderStateOnScroll();
 	};
 
 	/**

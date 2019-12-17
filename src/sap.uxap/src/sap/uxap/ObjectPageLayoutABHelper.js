@@ -85,12 +85,38 @@ sap.ui.define([
 		return oAnchorBar;
 	};
 
+	ABHelper.prototype._setCustomData = function (oButtonForSectionBase, oSectionBase, oObjectPageLayout, bIsSection) {
+			//update the section info
+		oObjectPageLayout._oSectionInfo[oSectionBase.getId()].buttonId = oButtonForSectionBase.getId();
+
+		//the AnchorBar needs to know the sectionId for automatic horizontal scrolling
+		oButtonForSectionBase.addCustomData(new CustomData({
+			key: "sectionId",
+			value: oSectionBase.getId()
+		}));
+
+		//the AnchorBar needs to know whether the title is actually displayed or not (so the AnchorBar is really reflecting the ObjectPage layout state)
+		oButtonForSectionBase.addCustomData(new CustomData({
+			key: "bTitleVisible",
+			value: oSectionBase._getInternalTitleVisible()
+		}));
+
+		if (!bIsSection) {
+			//the AnchorBar needs to know that this is a second section because it will handle responsive scenarios
+			oButtonForSectionBase.addCustomData(new CustomData({
+				key: "secondLevel",
+				value: true
+			}));
+		}
+	};
+
 	/**
 	 * build the anchorBar and all the anchorBar buttons
 	 * @private
 	 */
 	ABHelper.prototype._buildAnchorBar = function () {
-		var aSections = this.getObjectPageLayout().getSections() || [],
+		var oObjectPageLayout = this.getObjectPageLayout(),
+			aSections = oObjectPageLayout.getSections() || [],
 			oAnchorBar = this._getAnchorBar(),
 			fnPressHandler = jQuery.proxy(oAnchorBar._handleDirectScroll, oAnchorBar),
 			sButtonTitle,
@@ -150,7 +176,8 @@ sap.ui.define([
 							return;
 						}
 
-						var oSecondLevelButtonClone = this._buildAnchorBarButton(oSubSection, false);
+						var oSecondLevelButtonClone = this._buildAnchorBarButton(oSubSection, false),
+							sId = oAnchorBar.getId() + "-" + oSubSection.getId() + "-anchor";
 
 						if (oSecondLevelButtonClone) {
 							oAnchorBar.addContent(oSecondLevelButtonClone);
@@ -167,7 +194,7 @@ sap.ui.define([
 								sButtonIcon = '';
 							}
 
-							oMenuItem = new MenuItem({"text": sButtonTitle , "icon": sButtonIcon});
+							oMenuItem = new MenuItem(sId, {"text": sButtonTitle , "icon": sButtonIcon});
 
 							oMenuItem.addCustomData(new CustomData({
 								key: "sectionId",
@@ -175,6 +202,7 @@ sap.ui.define([
 							}));
 
 							oMenuItem.attachPress(fnPressHandler);
+							this._setCustomData(oMenuItem, oSubSection, oObjectPageLayout, false);
 
 							oButtonClone.getMenu().addItem(oMenuItem);
 						}
@@ -215,18 +243,28 @@ sap.ui.define([
 	};
 
 	ABHelper.prototype._instantiateAnchorBarButton = function (bIsMenuButton, sAriaDescribedBy, sId) {
-		var oButton = bIsMenuButton ? new MenuButton({
+		var fnClass, oSettings;
+
+		if (bIsMenuButton) {
+			fnClass = MenuButton;
+			oSettings = {
 				type: "Transparent",
 				buttonMode: "Split",
 				useDefaultActionOnly: true,
-				ariaDescribedBy: sAriaDescribedBy,
-				id: sId
-			}) : new Button({
-				ariaDescribedBy: sAriaDescribedBy,
-				id: sId
-			});
+				ariaDescribedBy: sAriaDescribedBy
+			};
+		} else {
+			fnClass = Button;
+			oSettings = {
+				ariaDescribedBy: sAriaDescribedBy
+			};
+		}
 
-		return oButton;
+		if (sId) {
+			oSettings.id = sId;
+		}
+
+		return new fnClass(oSettings);
 	};
 
 	/**
@@ -291,12 +329,14 @@ sap.ui.define([
 						key: "bHasSubMenu",
 						value: true
 					}));
-				} else {
+				} else if (bIsSection){
 					oButtonClone = this._instantiateAnchorBarButton(false, oSectionBase, sId);
 					oButtonClone.attachPress(fnPressHandler);
 					oButtonClone.attachPress(function (oEvent) {
 						this._moveFocusOnSection(oEvent.getSource());
 					}, this);
+				} else {
+					oButtonClone = this._instantiateAnchorBarButton(false, oSectionBase);
 				}
 
 				//has a ux rule been applied that we need to reflect here?
@@ -312,29 +352,7 @@ sap.ui.define([
 					properties: true
 				});
 			}
-
-			//update the section info
-			oObjectPageLayout._oSectionInfo[oSectionBase.getId()].buttonId = oButtonClone.getId();
-
-			//the anchorBar needs to know the sectionId for automatic horizontal scrolling
-			oButtonClone.addCustomData(new CustomData({
-				key: "sectionId",
-				value: oSectionBase.getId()
-			}));
-
-			//the anchorBar needs to know whether the title is actually displayed or not (so the anchorBar is really reflecting the objactPage layout state)
-			oButtonClone.addCustomData(new CustomData({
-				key: "bTitleVisible",
-				value: oSectionBase._getInternalTitleVisible()
-			}));
-
-			if (!bIsSection) {
-				//the anchorBar needs to know that this is a second section because it will handle responsive scenarios
-				oButtonClone.addCustomData(new CustomData({
-					key: "secondLevel",
-					value: true
-				}));
-			}
+			this._setCustomData(oButtonClone, oSectionBase, oObjectPageLayout, bIsSection);
 		}
 
 		return oButtonClone;

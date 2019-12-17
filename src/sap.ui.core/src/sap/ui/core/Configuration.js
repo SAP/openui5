@@ -136,6 +136,7 @@ sap.ui.define([
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 					"support"               : { type : "string[]",  defaultValue : null },
+					"testRecorder"            : { type : "string[]",  defaultValue : null },
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
@@ -1407,6 +1408,16 @@ sap.ui.define([
 		 */
 		getSupportMode : function() {
 			return this.support;
+		},
+
+		/**
+		 * Whether test tools are enabled.
+		 *
+		 * @return {boolean} test tools are enabled
+		 * @experimental
+		 */
+		getTestRecorderMode : function() {
+			return this["testRecorder"];
 		},
 
 		_collect : function() {

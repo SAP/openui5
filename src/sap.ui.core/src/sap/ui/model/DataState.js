@@ -236,7 +236,7 @@ sap.ui.define(["sap/base/util/each", '../base/Object', "sap/base/util/deepEqual"
 	 * Returns whether the data state is dirty in the UI control.
 	 * A data state is dirty in the UI control if the entered value did not yet pass the type validation.
 	 *
-	 * @returns {boolean} Whether the the data state is dirty
+	 * @returns {boolean} Whether the data state is dirty
 	 * @public
 	 */
 	DataState.prototype.isControlDirty = function() {

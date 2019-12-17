@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Object Card</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../css/style.css">
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+
+	<link  href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
+	<script src="../../google-code-prettify/run_prettify.js"></script>
+
+</head>
+<body class="sapUiBody topicBody">
+<div class="topic">
+	<div class="content">
+		<h1 id="overview">
+			Object Card
+		</h1>
+		<p>
+			This type of card can display information about any object in groups. Each group can contain as much items as needed.
+			The object card header is coupled with the content, which means that the header cannot make separated requests.
+		</p>
+		<h2 id="properties">Properties</h2>
+		<p>The object card contains an array of groups.</p>
+
+		<h4>Object Group properties</h4>
+
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+				</tr>
+				<tr>
+					<td>title</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>Defines language-dependent title of the object group.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>items</td>
+					<td>array</td>
+					<td>Yes</td>
+					<td>Represents items of information.</td>
+					<td>1.15.0</td>
+				</tr>
+			</table>
+		</div>
+
+		<h4>Object Group Item properties</h4>
+
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+				</tr>
+				<tr>
+					<td>icon</td>
+					<td>icon</td>
+					<td>No</td>
+					<td>Defines the icon of the item.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>label</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>Defines the label of the item.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>Represents the text, which is associated with the label.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>type</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Defines the type of the displayed information. It can be - 'text', 'link', 'email' or 'phone'.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>url</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Defines the URL string. Works only with items of type 'link'.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>target</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Specifies the target of the link - it works like the target property of the HTML 'a' tag. Works only with items of type 'link'.
+					</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>emailSubject</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Represents the subject of the email. Works only with item of type 'email'.</td>
+					<td>1.15.0</td>
+				</tr>
+			</table>
+		</div>
+
+		<h2 id="example">Example</h2>
+		<p>Define the type and data for the card:
+		</p>
+		<pre class="prettyprint  lang-js">{
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./employee.json"
+			}
+		}
+	}
+}</pre>
+		<p>
+			The content of the employee.json which we are requesting:
+		</p>
+		<pre class="prettyprint  lang-js">{
+	"firstName": "Donna",
+	"lastName": "Moore",
+	"position": "Sales Executive",
+	"phone": "+1 202 555 5555",
+	"photo": "../images/Woman_avatar_01.png",
+	"manager": {
+		"firstName": "John",
+		"lastName": "Miller",
+		"photo": "../images/Woman_avatar_02.png"
+	},
+	"company": {
+		"name": "Company A",
+		"address": "481 West Street, Anytown OH 45066, USA",
+		"website": "www.company_a.example.com"
+	}
+}</pre>
+		<p>Define the header:</p>
+		<pre class="prettyprint  lang-js">"header": {
+	"icon": {
+		"src": "{photo}"
+	},
+	"title": "{firstName} {lastName}",
+	"subTitle": "{position}"
+},</pre>
+		<p>Define the content in groups:</p>
+		<pre class="prettyprint  lang-js">"content": {
+	"groups": [
+		{
+			"title": "Contact Details",
+			"items": [
+				{
+					"label": "First Name",
+					"value": "{firstName}"
+				},
+				{
+					"label": "Last Name",
+					"value": "{lastName}"
+				},
+				{
+					"label": "Phone",
+					"value": "{phone}",
+					"type": "phone"
+				},
+				{
+					"label": "Email",
+					"value": "{email}",
+					"type": "email"
+				}
+			]
+		},
+		{
+			"title": "Company Details",
+			"items": [
+				{
+					"label": "Company Name",
+					"value": "{company/name}"
+				},
+				{
+					"label": "Address",
+					"value": "{company/address}"
+				},
+				{
+					"label": "Email",
+					"value": "{company/email}",
+					"emailSubject": "{company/emailSubject}",
+					"type": "email"
+				},
+				{
+					"label": "Website",
+					"value": "{company/website}",
+					"url": "{company/url}",
+					"type": "link"
+				}
+			]
+		},
+		{
+			"title": "Organizational Details",
+			"items": [
+				{
+					"label": "Direct Manager",
+					"value": "{manager/firstName} {manager/lastName}",
+					"icon": {
+						"src": "{manager/photo}"
+					}
+				}
+			]
+		}
+	]
+}</pre>
+		<p>Here is the final manifest definition:</p>
+		<pre class="prettyprint  lang-js">{
+	"sap.app": {
+		"id": "card.explorer.object.card",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./cardcontent/objectcontent/employee.json"
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "{{contactDetails}}",
+					"items": [
+						{
+							"label": "{{firstName}}",
+							"value": "{firstName}"
+						},
+						{
+							"label": "{{lastName}}",
+							"value": "{lastName}"
+						},
+						{
+							"label": "{{phone}}",
+							"value": "{phone}",
+							"type": "phone"
+						},
+						{
+							"label": "{{email}}",
+							"value": "{email}",
+							"type": "email"
+						}
+					]
+				},
+				{
+					"title": "{{organizationalDetails}}",
+					"items": [
+						{
+							"label": "{{directManager}}",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}"
+							}
+						}
+					]
+				},
+				{
+					"title": "{{companyDetails}}",
+					"items": [
+						{
+							"label": "{{companyName}}",
+							"value": "{company/name}"
+						},
+						{
+							"label": "{{address}}",
+							"value": "{company/address}"
+						},
+						{
+							"label": "{{email}}",
+							"value": "{company/email}",
+							"emailSubject": "{company/emailSubject}",
+							"type": "email"
+						},
+						{
+							"label": "{{website}}",
+							"value": "{company/website}",
+							"url": "{company/url}",
+							"type": "link"
+						}
+					]
+				}
+			]
+		}
+	}
+ }</pre>
+		<p>Create the widget card that can actually use the manifest.json which we created:</p>
+		<pre class="prettyprint  lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+&lt;/mvc:View&gt;</pre>
+		<a class="try-button" href="../../../index.html#/explore/object" target="_parent">Try it Out</a>
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#overview">Object Card</a></div>
+		<div><a href="#properties">Properties</a></div>
+		<div><a href="#example">Example</a></div>
+	</div>
+</div>
+</body>
+</html>

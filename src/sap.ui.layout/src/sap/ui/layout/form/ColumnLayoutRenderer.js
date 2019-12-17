@@ -161,7 +161,7 @@ sap.ui.define([
 			oRm.write("</div>");
 		}
 
-		var aFields = oElement.getFields();
+		var aFields = oElement.getFieldsForRendering();
 		if (aFields && aFields.length > 0) {
 			for (var k = 0, kl = aFields.length; k < kl; k++) {
 				var oField = aFields[k];

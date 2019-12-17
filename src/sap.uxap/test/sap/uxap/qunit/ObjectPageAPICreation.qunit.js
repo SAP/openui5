@@ -766,6 +766,33 @@ function (
 		helpers.renderObject(oObjectPage);
 	});
 
+	QUnit.test("height metrics are updated on content-resize", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oHtmlBlock,
+			oFirstSection = oObjectPage.getSections()[0],
+			oSpy = sinon.spy(oObjectPage, "_adjustHeaderHeights"),
+			done = assert.async();
+
+		assert.expect(1);
+
+		// setup step1: add content with defined height
+		oHtmlBlock = new HTML("b1", { content: '<div class="innerDiv" style="height:300px"></div>'});
+		oFirstSection.getSubSections()[0].addBlock(oHtmlBlock);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+
+			// Act: change height without invalidating any control
+			Core.byId("b1").getDomRef().style.height = "250px";
+			oSpy.reset();
+			oObjectPage._onUpdateContentSize();
+
+			assert.equal(oSpy.callCount, 1, "recalculation of heights is called");
+			done();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("test setSelectedSection functionality");
 
 	QUnit.test("test setSelectedSection with initially empty ObjectPage", function (assert) {
@@ -1411,6 +1438,54 @@ function (
 		oSectionButton = oAnchorBar.getContent()[0];
 
 		assert.notOk(oSectionButton.$().hasClass("sapMMenuBtnSplit"), "Drop-down icon in AnchorBar button is not shown");
+	});
+
+	QUnit.test("test AnchorBar menu items IDs build correctly", function (assert) {
+		assert.expect(1);
+		var done = assert.async(),
+			sIds = [],
+			oPage = helpers.generateObjectPageWithSubSectionContent(oFactory, 5, 2),
+			aSections,
+			oAnchorBar,
+			oMenuItems,
+			aSubSections,
+			bAllIdsMatched = true,
+			fnOnDomReady = function () {
+				aSections = oPage.getSections() || [];
+				oAnchorBar = oPage._oABHelper._getAnchorBar();
+
+				// we store the expected subsection MenuItems IDs
+				aSections.forEach(function (oSection, index) {
+					aSubSections = oSection.getSubSections() || [];
+
+					// second Level (subsections)
+					aSubSections.forEach(function (oSubSection) {
+						sIds.push(oAnchorBar.getId() + "-" + oSubSection.getId() + "-anchor");
+					});
+				});
+
+				// Check MenuItems IDs if match stored IDs
+				oAnchorBar.getContent().forEach(function (oAggregation) {
+					if (oAggregation.getMenu) {
+						oMenuItems = oAggregation.getMenu().getItems();
+						oMenuItems.forEach(function (item) {
+							if (sIds.indexOf(item.getId()) < 0) {
+								bAllIdsMatched = false;
+								return;
+							}
+						});
+					}
+				});
+
+				// Assert
+				assert.equal(bAllIdsMatched, true, "All AnchorBar MenuItems are with correct IDs");
+				oPage.destroy();
+				done();
+			};
+
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		oPage.placeAt('qunit-fixture');
+		Core.applyChanges();
 	});
 
 	QUnit.module("ObjectPage API: ObjectPageHeader", {

@@ -47,11 +47,12 @@ sap.ui.define([
 			if (this.bLegacy) {
 				var oTable = arguments[1];
 
-				this.getParent = function() {
+				this.getTable = function() {
 					return oTable;
 				};
 				RowMode.call(this);
 				this.attachEvents();
+				this.registerHooks();
 			} else {
 				RowMode.apply(this, arguments);
 			}
@@ -74,6 +75,22 @@ sap.ui.define([
 	FixedRowMode.prototype.detachEvents = function() {
 		RowMode.prototype.detachEvents.apply(this, arguments);
 		TableUtils.removeDelegate(this.getTable(), TableDelegate);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	FixedRowMode.prototype.registerHooks = function() {
+		RowMode.prototype.registerHooks.apply(this, arguments);
+		TableUtils.Hook.register(this.getTable(), TableUtils.Hook.Keys.Table.RefreshRows, this._onTableRefreshRows, this);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	FixedRowMode.prototype.deregisterHooks = function() {
+		RowMode.prototype.deregisterHooks.apply(this, arguments);
+		TableUtils.Hook.deregister(this.getTable(), TableUtils.Hook.Keys.Table.RefreshRows, this._onTableRefreshRows, this);
 	};
 
 	/*
@@ -201,9 +218,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * @inheritDoc
+	 * This hook is called when the rows aggregation of the table is refreshed.
+	 *
+	 * @private
 	 */
-	FixedRowMode.prototype.refreshRows = function() {
+	FixedRowMode.prototype._onTableRefreshRows = function() {
 		// The computed row count cannot be used here, because the table's total row count (binding length) is not known yet.
 		var iRowCount = this.getRowCount();
 

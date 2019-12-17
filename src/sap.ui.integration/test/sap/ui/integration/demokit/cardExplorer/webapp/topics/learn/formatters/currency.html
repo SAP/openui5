@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Currency Formatter</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../css/style.css">
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+
+	<link href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="../../css/prettify-light.css" rel="stylesheet">
+
+	<script src="../../google-code-prettify/run_prettify.js"></script>
+
+</head>
+
+<body class="sapUiBody topicBody">
+
+<div class="topic">
+	<div class="content">
+
+		<h2 id="currencyFormatters">
+			Currency Formatter
+		</h2>
+
+		<p>
+			The <code>currency</code> formatter takes as a first parameter the currency value as a string or number.
+			The second parameter is a string that represents the currency ISO code, and the third parameter is an object which defines the format options.
+			The fourth optional parameter is a string representing a custom locale code. If no locale is given the current user locale is used.
+			<p>
+				The <code>options</code> and <code>locale</code> parameters are optional and can be omitted. If only <code>options</code> is omitted
+				the <code>locale</code> will be shifted in its place.
+			</p>
+			<p><code>format.currency(amount, currency, options?, locale?)</code></p>
+		</p>
+
+		<div class="tableWrapper">
+			<table>
+				<tbody>
+					<tr>
+						<th>Param</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>amount</td>
+						<td>string|number</td>
+						<td>Yes</td>
+						<td>Any valid string or number representing the amount of currency to be formatted.</td>
+					</tr>
+					<tr>
+						<td>currency</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td> A string that represents the currency ISO code.</td>
+					</tr>
+					<tr>
+						<td>options</td>
+						<td>object</td>
+						<td>No</td>
+						<td><a id="linkToNumberFormatOptions" target="_blank">Formatting options.</a></td>
+					</tr>
+					<tr>
+						<td>locale</td>
+						<td>string</td>
+						<td>No</td>
+						<td>A string representing the locale code</td>
+					</tr>
+				</tbody>
+
+				<tbody>
+					<tr>
+						<th>Returns</th>
+						<th></th>
+						<th></th>
+						<th></th>
+					</tr>
+					<tr>
+						<td></td>
+						<td>string</td>
+						<td></td>
+						<td>The formatted currency.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<h2 id="examples">
+			Examples
+		</h2>
+
+		<p>A card with a currency formatter using expression binding for Euro with <code>{currencyCode:false}</code> as format options</p>
+
+<pre class="prettyprint  lang-js">
+"sap.card": {
+	"type": "List",
+	"header": {
+		"title": "Order status",
+		"subTitle": "Orders exceeding {= format.currency(12345.678, 'EUR', {currencyCode:false}, 'de')} are highlighted as important"
+	}
+}
+</pre>
+
+	<a class="try-button" href="../../../index.html#/explore/currency" target="_parent">Try it Out</a>
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#currencyFormatters">Currency Formatter</a></div>
+		<div><a href="#examples">Examples</a></div>
+	</div>
+</div>
+
+<script>
+		var sPathToDemoKitLocal = "../../../../../../../../../../documentation.html#";
+		var sPathToDemoKit = "../../../../../../../../../../#";
+
+		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+			document.getElementById("linkToNumberFormatOptions").href = sPathToDemoKitLocal + "/api/sap.ui.core.format.NumberFormat/methods/sap.ui.core.format.NumberFormat.getCurrencyInstance";
+		} else {
+			document.getElementById("linkToNumberFormatOptions").href = sPathToDemoKit + "/api/sap.ui.core.format.NumberFormat/methods/sap.ui.core.format.NumberFormat.getCurrencyInstance";
+		}
+	</script>
+</body>
+</html>

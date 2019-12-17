@@ -29,12 +29,12 @@
 							</contentRight>
 						</Bar>
 					</customHeader>
-					<f:GridContainer id="cardContainer" visible="{= ${settings>/useExtendedFileEditor} }">
+					<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }">
 						<w:Card id="cardSample"></w:Card>
 					</f:GridContainer>
 					<core:HTML
 						id="iframeWrapper"
-						visible="{= !${settings>/useExtendedFileEditor} }"
+						visible="{= ${settings>/useIFrame} }"
 						preferDOM="false"
 						content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;
 								 &lt;/div&gt;'></core:HTML>
@@ -61,6 +61,7 @@
 							</contentLeft>
 							<contentRight>
 								<MenuButton
+									id="downloadSampleButton"
 									icon="sap-icon://download"
 									enabled="true"
 									tooltip="Download"
@@ -70,7 +71,7 @@
 								>
 									<menu>
 										<Menu>
-											<MenuItem text="Manifest File" icon="sap-icon://document-text" press="onDownloadFile" />
+											<MenuItem text="Manifest File" icon="sap-icon://document-text" press="onDownloadManifestFile" />
 											<MenuItem text="Bundle as .zip" icon="sap-icon://attachment-zip-file" press="onDownloadZip" />
 											<MenuItem text="Bundle as .card" icon="sap-icon://ppt-attachment" press="onDownloadBundle" />
 										</Menu>
@@ -97,7 +98,7 @@
 					<IconTabHeader
 							selectedKey="{extendedFileEditor>/selectedFileKey}"
 							select="onFileSwitch"
-							visible="{= !${settings>/useExtendedFileEditor} }"
+							visible="{= ${settings>/useExtendedFileEditor} }"
 							items="{extendedFileEditor>/files}">
 						<items>
 							<IconTabFilter text="{extendedFileEditor>name}" key="{extendedFileEditor>key}"/>

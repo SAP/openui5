@@ -4,6 +4,7 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
+	"sap/base/Log",
 	'sap/ui/core/format/NumberFormat',
 	'sap/ui/model/CompositeType',
 	'sap/ui/model/FormatException',
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject"
 ],
 	function(
+		Log,
 		NumberFormat,
 		CompositeType,
 		FormatException,
@@ -25,10 +27,15 @@ sap.ui.define([
 
 
 	/**
-	 * Constructor for a Currency type.
+	 * Constructor for a <code>Currency</code> type.
 	 *
 	 * @class
-	 * This class represents the currency composite type.
+	 * This class represents the composite type <code>Currency</code>, which consists of the parts
+	 * "amount" (of type <code>number</code> or <code>string</code>) and "currency" (of type
+	 * <code>string</code>). In case the amount is a <code>string</code>, it must be the JavaScript
+	 * representation of the corresponding number.
+	 * If the <code>source</code> format option is given, the composite type has only one part of
+	 * type <code>string</code>, holding both amount and currency in the source format.
 	 *
 	 * @extends sap.ui.model.CompositeType
 	 *
@@ -36,12 +43,21 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @param {object} [oFormatOptions] Formatting options. For a list of all available options, see {@link sap.ui.core.format.NumberFormat#constructor NumberFormat}.
-	 * @param {object} [oFormatOptions.source] Additional set of format options to be used if the property in the model is not of type <code>string</code> and needs formatting as well.
-	 * 										   If an empty object is given, the grouping is disabled and a dot is used as decimal separator.
-	 * @param {object} [oConstraints] Value constraints
-	 * @param {float} [oConstraints.minimum] Smallest value allowed for this type
-	 * @param {float} [oConstraints.maximum] Largest value allowed for this type
+	 * @param {object} [oFormatOptions]
+	 *   Format options; for a list of all available options, see
+	 *   {@link sap.ui.core.format.NumberFormat.getCurrencyInstance}.
+	 * @param {object} [oFormatOptions.source]
+	 *   A set of format options as defined for
+	 *   {@link sap.ui.core.format.NumberFormat.getCurrencyInstance} which describes the format of
+	 *   amount and currency in the model in case the model holds this in one property of type
+	 *   <code>string</code>, e.g. as &quot;EUR 22&quot;. If an empty object is given,
+	 *   grouping is disabled, the decimal separator is a dot and the grouping separator is a comma.
+	 * @param {object} [oConstraints]
+	 *   Constraints for the value part
+	 * @param {number} [oConstraints.minimum]
+	 *   Smallest amount allowed excluding the minimum value itself
+	 * @param {number} [oConstraints.maximum]
+	 *   Largest amount allowed excluding the maximum value itself
 	 * @alias sap.ui.model.type.Currency
 	 */
 	var Currency = CompositeType.extend("sap.ui.model.type.Currency", /** @lends sap.ui.model.type.Currency.prototype  */ {
@@ -55,21 +71,24 @@ sap.ui.define([
 	});
 
 	/**
-	 * Format the given array containing amount and currency code to an output value of type string.
-	 * Other internal types than 'string' are not supported by the Currency type.
-	 * If a source format has been defined for this type, the formatValue does also accept
-	 * a string value as input, which will be parsed into an array using the source format.
-	 * If aValues is not defined or null, null will be returned.
+	 * Formats the given value to the given target type.
 	 *
-	 * @function
-	 * @name sap.ui.model.type.Currency.prototype.formatValue
-	 * @param {array|string} vValue the array of values or string value to be formatted
-	 * @param {string} sInternalType the target type
-	 * @return {any} the formatted output value
+	 * @param {any[]|string} vValue
+	 *   The array containing amount and currency code in case the <code>source</code> format option
+	 *   is not given; otherwise, a string representation of the value which is parsed using the
+	 *   source format
+	 * @param {string} sTargetType
+	 *   The target type; must be "string", or a type with "string" as its
+	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}
+	 * @returns {string}
+	 *   The formatted output value; the values <code>undefined</code> or <code>null</code> or
+	 *   an amount <code>undefined</code> or <code>null</code> are formatted to <code>null</code>
+	 * @throws {sap.ui.model.FormatException}
+	 *   If <code>sTargetType</code> is unsupported
 	 *
 	 * @public
 	 */
-	Currency.prototype.formatValue = function(vValue, sInternalType) {
+	Currency.prototype.formatValue = function(vValue, sTargetType) {
 		var aValues = vValue;
 		if (vValue == undefined || vValue == null) {
 			return null;
@@ -83,49 +102,47 @@ sap.ui.define([
 		if (aValues[0] == undefined || aValues[0] == null) {
 			return null;
 		}
-		switch (this.getPrimitiveType(sInternalType)) {
+		switch (this.getPrimitiveType(sTargetType)) {
 			case "string":
 				return this.oOutputFormat.format(aValues);
-			case "int":
-			case "float":
-			case "any":
 			default:
-				throw new FormatException("Don't know how to format currency to " + sInternalType);
+				throw new FormatException("Don't know how to format currency to " + sTargetType);
 		}
 	};
 
 	/**
-	 * Parse a string value to an array containing amount and currency. Parsing of other
-	 * internal types than 'string' is not supported by the Currency type.
-	 * In case a source format has been defined, after parsing the currency is formatted
-	 * using the source format and a string value is returned instead.
+	 * Parses a string value.
 	 *
-	 * @function
-	 * @name sap.ui.model.type.Currency.prototype.parseValue
-	 * @param {any} vValue the value to be parsed
-	 * @param {string} sInternalType the source type
-	 * @param {array} aCurrentValues the current values of all binding parts
-	 * @return {array|string} the parse result array
-	 *
+	 * @param {string} sValue
+	 *   The value to be parsed
+	 * @param {string} sSourceType
+	 *   The source type (the expected type of <code>sValue</code>); must be "string", or a type
+	 *   with "string" as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
+	 * @param {array} aCurrentValues
+	 *   The current values of all binding parts
+	 * @returns {any[]|string}
+	 *   If the <code>source</code> format option is not set, the method returns an array
+	 *   containing amount and currency: the amount is a <code>string</code> if the format
+	 *   option <code>parseAsString</code> is set and a <code>number</code> otherwise, the currency
+	 *   is always a <code>string</code>.
+	 *   If the <code>source</code> format option is set, the method returns a string representation
+	 *   of amount and currency in the given source format.
+	 * @throws {sap.ui.model.ParseException}
+	 *   If <code>sSourceType</code> is unsupported or if the given string cannot be parsed
 	 * @public
 	 */
-	Currency.prototype.parseValue = function(vValue, sInternalType) {
+	Currency.prototype.parseValue = function(sValue, sSourceType) {
 		var vResult, oBundle;
-		switch (this.getPrimitiveType(sInternalType)) {
+		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
-				vResult = this.oOutputFormat.parse(vValue);
-				// current default error
-				// more specific errors describing the actual issue during parse()
-				// will be introduced with later work on the NumberFormat
+				vResult = this.oOutputFormat.parse(sValue);
 				if (!Array.isArray(vResult) || isNaN(vResult[0])) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
-					throw new ParseException(oBundle.getText("Currency.Invalid", [vValue]));
+					throw new ParseException(oBundle.getText("Currency.Invalid", [sValue]));
 				}
 				break;
-			case "int":
-			case "float":
 			default:
-				throw new ParseException("Don't know how to parse Currency from " + sInternalType);
+				throw new ParseException("Don't know how to parse Currency from " + sSourceType);
 		}
 		if (this.oInputFormat) {
 			vResult = this.oInputFormat.format(vResult);
@@ -157,6 +174,10 @@ sap.ui.define([
 							aViolatedConstraints.push("maximum");
 							aMessages.push(oBundle.getText("Currency.Maximum", [oContent]));
 						}
+						break;
+					default:
+						Log.warning("Unknown constraint '" + sName + "': Value is not validated.",
+							null, "sap.ui.model.type.Currency");
 				}
 			});
 			if (aViolatedConstraints.length > 0) {

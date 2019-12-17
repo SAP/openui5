@@ -12,6 +12,7 @@
 			<Page
 				id="detail"
 				title="Detail 1"
+				backgroundDesign= "Solid"
 				class="sapUiStdPage">
 				<Label text="Detail page 1" />
 				<Button text="Go to Detail page2" press=".onPressNavToDetail" />
@@ -20,6 +21,7 @@
 				id="detailDetail"
 				title="Detail Detail"
 				class="sapUiStdPage"
+				backgroundDesign= "Solid"
 				showNavButton="true"
 				navButtonText="Back"
 				navButtonPress=".onPressDetailBack">
@@ -37,6 +39,7 @@
 			<Page
 				id="detail2"
 				title="Detail 3 Page"
+				backgroundDesign= "Solid"
 				class="sapUiStdPage"
 				showNavButton="true"
 				navButtonText="Back"
@@ -57,6 +60,7 @@
 			<Page
 				id="master"
 				title="Master 1"
+				backgroundDesign= "List"
 				icon="sap-icon://action"
 				class="sapUiStdPage">
 				<List>
@@ -66,6 +70,7 @@
 			<Page
 				id="master2"
 				title="Master 2"
+				backgroundDesign= "List"
 				icon="sap-icon://action"
 				class="sapUiStdPage"
 				showNavButton="true"

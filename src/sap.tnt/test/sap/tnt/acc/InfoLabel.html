@@ -24,7 +24,11 @@
                 infoLabels: [
                     {text: "default color scheme"},
                     {text: "color scheme 1", colorScheme: 1},
-                    {text: "color scheme 2", colorScheme: 2}
+                    {text: "color scheme 2", colorScheme: 2},
+                    {},
+                    {text: "color scheme 2", colorScheme: 3, icon: "sap-icon://add"},
+                    {colorScheme: 4, icon: "sap-icon://add"}
+
                 ]
             };
 
@@ -35,7 +39,8 @@
 
             var oInfoLabelTemplate = new sap.tnt.InfoLabel({
                 text: "{text}",
-                colorScheme: "{colorScheme}"
+                colorScheme: "{colorScheme}",
+                icon: "{icon}"
             });
 
             var initialPage = new sap.m.Page("infoLabelPage", {

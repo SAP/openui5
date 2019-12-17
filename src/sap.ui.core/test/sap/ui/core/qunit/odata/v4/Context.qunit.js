@@ -317,7 +317,6 @@ sap.ui.define([
 					getDependentBindings : function () {},
 					withUnresolvedBindings : function () {}
 				},
-				oModelMock = this.mock(oModel),
 				oBinding0 = {
 					hasPendingChanges : function () {}
 				},
@@ -328,7 +327,7 @@ sap.ui.define([
 				sPath = "/EMPLOYEES('42')",
 				oContext = Context.create(oModel, oParentBinding, sPath, 13);
 
-			oModelMock.expects("getDependentBindings")
+			this.mock(oModel).expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns([oBinding0, oBinding1]);
 			this.mock(oBinding0).expects("hasPendingChanges")
@@ -1153,10 +1152,9 @@ sap.ui.define([
 				checkGroupId : function () {},
 				withUnresolvedBindings : function () {}
 			},
-			oModelMock = this.mock(oModel),
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
-		oModelMock.expects("checkGroupId");
+		this.mock(oModel).expects("checkGroupId");
 		oBindingMock.expects("lockGroup").withExactArgs("myGroup", true).returns(oGroupLock);
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
@@ -1164,7 +1162,7 @@ sap.ui.define([
 		oBindingMock.expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
 				sinon.match.same(bAllowRemoval));
-		oModelMock.expects("withUnresolvedBindings")
+		this.mock(oModel).expects("withUnresolvedBindings")
 			.withExactArgs("removeCachesAndMessages", "EMPLOYEES/42");
 
 		// code under test
@@ -1988,8 +1986,8 @@ sap.ui.define([
 				oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
 					.withExactArgs("some/relative/path", sinon.match.same(oContext))
 					.returns("/resolved/data/path");
-				that.mock(_Helper).expects("getRelativePath").withExactArgs("/entity/path",
-					"/resolved/binding/path")
+				that.mock(_Helper).expects("getRelativePath")
+					.withExactArgs("/entity/path", "/resolved/binding/path")
 					.returns("helper/path");
 				that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
 					.withExactArgs("/resolved/data/path")
@@ -2051,6 +2049,7 @@ sap.ui.define([
 				isPatchWithoutSideEffects : function () {},
 				sPath : "binding/path"
 			},
+			oGroupLock = {},
 			oMetaModel = {
 				fetchUpdateData : function () {},
 				getReducedPath : function () {},
@@ -2063,8 +2062,6 @@ sap.ui.define([
 				},
 				resolve : function () {}
 			},
-			oModelMock = this.mock(oModel),
-			bPatchWithoutSideEffects = {},
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
 			oFetchUpdateDataResult = {
 				editUrl : "/edit/url",
@@ -2087,21 +2084,23 @@ sap.ui.define([
 			.callsFake(function (fnProcessor) {
 				var oCache = {
 						update : function () {}
-					};
+					},
+					oModelMock = that.mock(oModel),
+					bPatchWithoutSideEffects = {/*false,true*/};
 
 				that.mock(oBinding).expects("doSetProperty")
-					.withExactArgs("/reduced/path", "new value", undefined);
+					.withExactArgs("/reduced/path", "new value", sinon.match.same(oGroupLock));
 				that.mock(oMetaModel).expects("fetchUpdateData")
 					.withExactArgs("/reduced/path", sinon.match.same(oContext))
 					.returns(SyncPromise.resolve(oFetchUpdateDataResult));
-				oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
+				oModelMock.expects("resolve")
 					.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
 					.returns("/resolved/binding/path");
-				oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
+				oModelMock.expects("resolve")
 					.withExactArgs("/reduced/path", sinon.match.same(oContext))
 					.returns("/resolved/data/path");
-				that.mock(_Helper).expects("getRelativePath").withExactArgs("/entity/path",
-					"/resolved/binding/path")
+				that.mock(_Helper).expects("getRelativePath")
+					.withExactArgs("/entity/path", "/resolved/binding/path")
 					.returns("helper/path");
 				that.mock(oBinding).expects("isPatchWithoutSideEffects").withExactArgs()
 					.returns(bPatchWithoutSideEffects);
@@ -2110,7 +2109,7 @@ sap.ui.define([
 					.returns("unit/or/currency/path");
 
 				that.mock(oCache).expects("update")
-					.withExactArgs(undefined, "property/path", "new value",
+					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
 						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
 						/*fnPatchSent*/sinon.match.func)
@@ -2120,7 +2119,68 @@ sap.ui.define([
 			});
 
 		// code under test
-		return oContext.doSetProperty("some/relative/path", "new value");
+		return oContext.doSetProperty("some/relative/path", "new value", oGroupLock);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doSetProperty: oGroupLock = null", function (assert) {
+		var oBinding = {
+				oContext : {},
+				doSetProperty : function () {},
+				//isPatchWithoutSideEffects: must not be called
+				sPath : "binding/path"
+			},
+			oFetchUpdateDataResult = {
+				editUrl : "/edit/url",
+				entityPath : "/entity/path",
+				propertyPath : "property/path"
+			},
+			oFetchUpdateDataResultPromise = Promise.resolve(oFetchUpdateDataResult),
+			oMetaModel = {
+				fetchUpdateData : function () {}
+				//getUnitOrCurrencyPath: must not be called
+			},
+			oModel = {
+				bAutoExpandSelect : false, // avoid path reduction
+				getMetaModel : function () {
+					return oMetaModel;
+				},
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
+			that = this;
+
+		this.mock(oContext).expects("withCache")
+			.withExactArgs(sinon.match.func, "/some/absolute/path", /*bSync*/false,
+				/*bWithOrWithoutCache*/true)
+			.callsFake(function (fnProcessor) {
+				var oCache = {
+						setProperty : function () {}
+						//update: must not be called
+					};
+
+				that.mock(oBinding).expects("doSetProperty")
+					.withExactArgs("/cache/path", "new value", undefined);
+				that.mock(oMetaModel).expects("fetchUpdateData")
+					.withExactArgs("/some/absolute/path", sinon.match.same(oContext))
+					.returns(SyncPromise.resolve(oFetchUpdateDataResultPromise));
+				oFetchUpdateDataResultPromise.then(function () {
+					that.mock(oModel).expects("resolve")
+						.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+						.returns("/resolved/binding/path");
+					that.mock(_Helper).expects("getRelativePath")
+						.withExactArgs("/entity/path", "/resolved/binding/path")
+						.returns("helper/path");
+					that.mock(oCache).expects("setProperty")
+						.withExactArgs("property/path", "new value", "helper/path")
+						.resolves();
+				});
+
+				return fnProcessor(oCache, "/cache/path", oBinding);
+			});
+
+		// code under test
+		return oContext.doSetProperty("/some/absolute/path", "new value");
 	});
 
 	//*********************************************************************************************
@@ -2138,7 +2198,6 @@ sap.ui.define([
 				propertyPath : "property/path"
 			},
 			oGroupLock = {},
-			bPatchWithoutSideEffects = {},
 			oMetaModel = {
 				fetchUpdateData : function () {},
 				getUnitOrCurrencyPath : function () {}
@@ -2150,7 +2209,6 @@ sap.ui.define([
 				},
 				resolve : function () {}
 			},
-			oModelMock = this.mock(oModel),
 			bSkipRetry = {/*true, false*/},
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
 			that = this;
@@ -2161,7 +2219,9 @@ sap.ui.define([
 			.callsFake(function (fnProcessor) {
 				var oCache = {
 						update : function () {}
-					};
+					},
+					oModelMock = that.mock(oModel),
+					bPatchWithoutSideEffects = {/*false,true*/};
 
 				that.mock(oBinding).expects("doSetProperty")
 					.withExactArgs("/cache/path", "new value", sinon.match.same(oGroupLock))
@@ -2172,14 +2232,14 @@ sap.ui.define([
 					.returns(SyncPromise.resolve(oFetchUpdateDataResult));
 
 				if (vValue == undefined) {
-					oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
+					oModelMock.expects("resolve")
 						.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
 						.returns("/resolved/binding/path");
-					oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
+					oModelMock.expects("resolve")
 						.withExactArgs("/some/absolute/path", sinon.match.same(oContext))
 						.returns("/resolved/data/path");
-					that.mock(_Helper).expects("getRelativePath").withExactArgs("/entity/path",
-						"/resolved/binding/path")
+					that.mock(_Helper).expects("getRelativePath")
+						.withExactArgs("/entity/path", "/resolved/binding/path")
 						.returns("helper/path");
 					that.mock(oBinding).expects("isPatchWithoutSideEffects").withExactArgs()
 						.returns(bPatchWithoutSideEffects);
@@ -2241,25 +2301,15 @@ sap.ui.define([
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oModel = {
-				checkGroupId : function () {},
-				lockGroup : function () {},
-				reportError : function () {},
-				resolve : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
-			oExpectedError = new Error("Not a primitive value");
+			oContext = Context.create({/*oModel*/}, oBinding, "/ProductList('HT-1000')");
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
-		this.mock(oModel).expects("lockGroup").never();
-		this.mock(oModel).expects("reportError").never();
 		this.mock(oContext).expects("doSetProperty").never();
 
 		assert.throws(function () {
 			// code under test
-			oContext.setProperty("some/relative/path", vForbiddenValue, "group");
-		}, oExpectedError);
+			oContext.setProperty("some/relative/path", vForbiddenValue);
+		}, new Error("Not a primitive value"));
 	});
 });
 
@@ -2332,6 +2382,29 @@ sap.ui.define([
 		return oContext.setProperty("some/relative/path", "new value").then(function (vResult) {
 			assert.strictEqual(vResult, vWithCacheResult);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setProperty: null as group ID", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/ProductList('HT-1000')"),
+			oError = {};
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("getUpdateGroupId").never();
+		this.mock(oContext).expects("doSetProperty")
+			.withExactArgs("some/relative/path", "new value", null, true)
+			.returns(SyncPromise.reject(oError));
+
+		// code under test
+		return oContext.setProperty("some/relative/path", "new value", null)
+			.then(function () {
+				assert.ok(false);
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
 	});
 
 	//*********************************************************************************************

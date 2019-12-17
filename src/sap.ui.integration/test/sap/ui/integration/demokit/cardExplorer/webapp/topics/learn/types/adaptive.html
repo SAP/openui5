@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Adaptive Card</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../css/style.css">
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+
+	<link href="../../google-code-prettify/prettify.css" rel="stylesheet">
+	<script src="../../google-code-prettify/run_prettify.js"></script>
+
+</head>
+<body class="sapUiBody topicBody">
+<div class="topic">
+	<div class="content">
+		<h1 id="overview">
+			Adaptive Card
+		</h1>
+
+		<h2 id="properties">Usage</h2>
+		<p>With this type of card, application developers can visualize cards that are created using the Microsoft Adaptive Cards specification and manifest.
+		For more information of all properties of Adaptive Card, see <a href="https://adaptivecards.io/explorer/" target="_blank">https://adaptivecards.io</a></p>
+
+
+		<h2 id="example">Example</h2>
+		<p>Define the type and data for the card:
+		</p>
+		<pre class="prettyprint">{
+	"sap.card": {
+		"type": "AdaptiveCard",
+		"content": {}
+	}
+}</pre>
+
+		<p>Define the content of the card:
+		</p>
+		<pre class="prettyprint">"content": {
+	  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+	  "type": "AdaptiveCard",
+	  "version": "1.0",
+	  "body": [
+		{
+		  "type": "TextBlock",
+		  "text": "Publish Adaptive Card schema",
+		  "weight": "Bolder",
+		  "size": "Medium"
+		},
+		{
+		  "type": "ColumnSet",
+		  "columns": [
+			{
+			  "type": "Column",
+			  "width": "auto",
+			  "items": [
+				{
+				  "type": "Image",
+				  "url": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
+				  "size": "Small",
+				  "style": "Person"
+				}
+			  ]
+			},
+			{
+			  "type": "Column",
+			  "width": "stretch",
+			  "items": [
+				{
+				  "type": "TextBlock",
+				  "text": "Matt Hidinger",
+				  "weight": "Bolder",
+				  "wrap": true
+				},
+				{
+				  "type": "TextBlock",
+				  "spacing": "None",
+				  "text": "Created {{DATE(2017-02-14T06:08:39Z, SHORT)}}",
+				  "isSubtle": true,
+				  "wrap": true
+				}
+			  ]
+			}
+		  ]
+		},
+		{
+		  "type": "TextBlock",
+		  "text": "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
+		  "wrap": true
+		},
+		{
+		  "type": "FactSet",
+		  "facts": [
+			{
+			  "title": "Board:",
+			  "value": "Adaptive Card"
+			},
+			{
+			  "title": "List:",
+			  "value": "Backlog"
+			},
+			{
+			  "title": "Assigned to:",
+			  "value": "Matt Hidinger"
+			},
+			{
+			  "title": "Due date:",
+			  "value": "Not set"
+			}
+		  ]
+		}
+	  ],
+	  "actions": [
+		{
+		  "type": "Action.ShowCard",
+		  "title": "Set due date",
+		  "card": {
+			"type": "AdaptiveCard",
+			"body": [
+			  {
+				"type": "Input.Date",
+				"id": "dueDate"
+			  }
+			],
+			"actions": [
+			  {
+				"type": "Action.Submit",
+				"title": "OK"
+			  }
+			]
+		  }
+		},
+		{
+		  "type": "Action.ShowCard",
+		  "title": "Comment",
+		  "card": {
+			"type": "AdaptiveCard",
+			"body": [
+			  {
+				"type": "Input.Text",
+				"id": "comment",
+				"isMultiline": true,
+				"placeholder": "Enter your comment"
+			  }
+			],
+			"actions": [
+			  {
+				"type": "Action.Submit",
+				"title": "OK"
+			  }
+			]
+		  }
+		}
+	  ]
+	}</pre>
+
+		<p>Create the widget card that can actually use the manifest.json which we created:</p>
+		<pre class="prettyprint">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+&lt;/mvc:View&gt;</pre>
+		<a class="try-button" href="../../../index.html#/explore/adaptive" target="_parent">Try it Out</a>
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#overview">Adaptive Card</a></div>
+		<div><a href="#example">Example</a></div>
+	</div>
+</div>
+</body>
+</html>

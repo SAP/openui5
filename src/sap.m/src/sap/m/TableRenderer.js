@@ -306,9 +306,14 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		rm.attr("colspan", oControl.getColCount());
 		rm.class("sapMListTblCell").class("sapMListTblCellNoData");
 		rm.openEnd();
-		rm.text(oControl.getNoDataText(true));
-		rm.close("td");
 
+		if (!oControl.shouldRenderItems()) {
+			rm.text(Core.getLibraryResourceBundle("sap.m").getText("TABLE_NO_COLUMNS"));
+		} else {
+			rm.text(oControl.getNoDataText(true));
+		}
+
+		rm.close("td");
 		rm.close("tr");
 	};
 

@@ -224,6 +224,22 @@ sap.ui.define([
 		oCal.destroy();
 	});
 
+	QUnit.test("MonthPicker aggregation is instantiated correctly", function (assert) {
+		// Prepare
+		var oCalDateInterval = new CalendarDateInterval({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+			}),
+			oMonthPicker = oCalDateInterval.getAggregation("monthPicker");
+
+		// Act
+		// Assert
+		assert.deepEqual(oMonthPicker._oSelectedDatesControlOrigin, oCalDateInterval,
+			"MonthPicker has selected dates control origin set");
+
+		// Clean
+		oCalDateInterval.destroy();
+	});
+
 	QUnit.module("change date via API");
 
 	QUnit.test("setStartDate", function(assert) {

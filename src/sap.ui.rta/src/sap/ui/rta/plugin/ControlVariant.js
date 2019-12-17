@@ -55,6 +55,13 @@ sap.ui.define([
 	ElementOverlay.prototype.setVariantManagement = function(sKey) { this._variantManagement = sKey; };
 	ElementOverlay.prototype.hasVariantManagement = function() { return !!this._variantManagement; };
 
+	function destroyManageDialog(oOverlay) {
+		var oManageDialog = oOverlay.getElement().getManageDialog();
+		if (oManageDialog && !oManageDialog.bIsDestroyed) {
+			oManageDialog.destroy();
+		}
+	}
+
 	var ControlVariant = Plugin.extend("sap.ui.rta.plugin.ControlVariant", /** @lends sap.ui.rta.plugin.ControlVariant.prototype */ {
 		metadata: {
 			library: "sap.ui.rta",
@@ -106,6 +113,7 @@ sap.ui.define([
 				this._propagateVariantManagement(oVariantManagementTargetOverlay, sVariantManagementReference);
 			}.bind(this));
 			oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
+			destroyManageDialog(oOverlay);
 		} else if (!oOverlay.getVariantManagement()) {
 			// Case where overlay is dynamically created - variant management reference should be identified from parent
 			sVariantManagementReference = this._getVariantManagementFromParent(oOverlay);
@@ -162,6 +170,9 @@ sap.ui.define([
 	 * @override
 	 */
 	ControlVariant.prototype.deregisterElementOverlay = function(oOverlay) {
+		if (this._isVariantManagementControl(oOverlay)) {
+			destroyManageDialog(oOverlay);
+		}
 		oOverlay.detachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
 		this.removeFromPluginsList(oOverlay);
@@ -634,7 +645,6 @@ sap.ui.define([
 			sVariantManagementReference,
 			this.getCommandFactory().getFlexSettings().layer,
 			Utils.getRtaStyleClassName())
-
 		.then(function(aConfiguredChanges) {
 			return this.getCommandFactory().getCommandFor(
 				oVariantManagementControl,

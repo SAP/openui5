@@ -1,0 +1,74 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "card.explorer.format.currency",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"cardCurrency": {
+					"value": "EUR"
+				}
+			}
+		},
+		"header": {
+			"title": "Order status",
+			"subTitle": "Orders exceeding {= format.currency(50.00, '{{parameters.cardCurrency}}', {currencyCode:true}, 'de')} are highlighted as important",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			},
+			"status": {
+				"text": "5 of 20"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Keyboard and Mouse",
+						"image": "sap-icon://keyboard-and-mouse",
+						"Price": 155,
+						"arrivalDate": "Sun Dec 1 2019 03:24:00 GMT+0200 (Eastern European Standard Time)"
+					},
+					{
+						"Name": "ITelO Vault",
+						"image": "sap-icon://shield",
+						"Price": 30,
+						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"image": "sap-icon://laptop",
+						"Price": 30,
+						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"image": "sap-icon://desktop-mobile",
+						"arrivalDate": "Sun Nov 2 2019 03:24:00 GMT+0200 (Eastern European Standard Time)",
+						"Price": 69
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"image": "sap-icon://keyboard-and-mouse",
+						"arrivalDate": "Sun Jan 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)",
+						"Price": 40
+					}
+				]
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "Total price:",
+				"highlight": "{= ${Price} < 50 ? 'Success' : 'Error'}",
+				"icon": {
+					"src": "{image}"
+				},
+				"info": {
+					"value": "{= format.currency(${Price}, '{{parameters.cardCurrency}}', {currencyCode:false})}"
+				}
+			}
+		}
+	}
+}

@@ -4,37 +4,64 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
+	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap",
 	"sap/ui/fl/apply/_internal/flexState/prepareChangesMap",
-	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap"
+	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap",
+	"sap/ui/fl/Utils"
 ], function(
 	merge,
+	Loader,
 	prepareAppDescriptorMap,
 	prepareChangesMap,
-	prepareVariantsMap
+	prepareVariantsMap,
+	Utils
 ) {
 	"use strict";
-	var _instances = {};
 
-	var oPrepareFunctions = {
+	/**
+	 * Flex state class to persist maps and raw state (cache) for a given component reference.
+	 * The persistence happens inside an object mapped to the component reference, with the following properties:
+	 *
+	 *  {
+	 *      appDescriptorMap: {},
+	 *      changesMap: {},
+	 *      variantsMap: {},
+	 *      storageResponse: {},
+	 *      componentId: "<componentId>"
+	 *  }
+	 *
+	 * @namespace sap.ui.fl.apply._internal.flexState.FlexState
+	 * @experimental
+	 * @since 1.73
+	 * @version ${version}
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply._internal
+	 */
+	var FlexState = {};
+
+	var _mInstances = {};
+	var _mInitPromises = {};
+	var _mPrepareFunctions = {
 		appDescriptorMap: prepareAppDescriptorMap,
 		changesMap: prepareChangesMap,
 		variantsMap: prepareVariantsMap
 	};
 
 	function getInstanceEntryOrThrowError(sReference, sMapName) {
-		if (!_instances[sReference]) {
+		if (!_mInstances[sReference]) {
 			throw Error("State is not yet initialized");
 		}
 
-		if (!_instances[sReference][sMapName]) {
+		if (!_mInstances[sReference][sMapName]) {
 			var mPropertyBag = {
-				storageResponse: _instances[sReference].storageResponse
+				storageResponse: _mInstances[sReference].storageResponse,
+				componentId: _mInstances[sReference].componentId
 			};
-			_instances[sReference][sMapName] = oPrepareFunctions[sMapName](mPropertyBag);
+			_mInstances[sReference][sMapName] = FlexState._callPrepareFunction(sMapName, mPropertyBag);
 		}
 
-		return _instances[sReference][sMapName];
+		return _mInstances[sReference][sMapName];
 	}
 
 	function getAppDescriptorMap(sReference) {
@@ -50,64 +77,85 @@ sap.ui.define([
 	}
 
 	/**
-	 * Flex state class to persist maps and raw state (cache) for a given component reference.
-	 * The persistence happens inside an object mapped to the component reference, with the following properties:
+	 * Initializes the FlexState for a given reference. A request for the flex data is sent to the Loader and the response is saved.
+	 * The FlexState can only be initialized once, every subsequent init call will just resolve as soon as it is initialized.
 	 *
-	 *  {
-	 *      appDescriptorMap: {},
-	 *      changesMap: {},
-	 *      variantsMap: {},
-	 *      storageResponse: {}
-	 *  }
-	 *
-	 * @namespace sap.ui.fl.apply._internal.flexState.FlexState
-	 * @experimental
-	 * @since 1.73
-	 * @version ${version}
-	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal
+	 * @param {object} mPropertyBag - Contains additional data needed for reading and storing changes
+	 * @param {string} mPropertyBag.reference - Reference of the app
+	 * @param {object} mPropertyBag.component - Information about the component
+	 * @param {string} mPropertyBag.component.name - Name of the component
+	 * @param {string} mPropertyBag.component.id - ID of the component
+	 * @param {string} [mPropertyBag.component.appName] - Name where bundled changes from the application development are stored
+	 * @param {string} [mPropertyBag.component.appVersion] - Current running version of application
+	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to actual component
+	 * @param {string} [mPropertyBag.siteId] - <code>siteId</code> that belongs to actual component
+	 * @param {string} [mPropertyBag.cacheKey] - Key to validate the client side stored cache entry
+	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
-	return {
-		initForReference: function (mPropertyBag) {
-			if (!mPropertyBag.reference) {
-				throw Error("Please pass a reference to initialize a FlexState");
-			}
+	FlexState.initForReference = function (mPropertyBag) {
+		if (!mPropertyBag.reference) {
+			throw Error("Please pass a reference to initialize a FlexState");
+		}
 
-			if (_instances[mPropertyBag.reference]) {
-				throw Error("the state for the given reference is already initialized");
-			}
+		if (_mInitPromises[mPropertyBag.reference]) {
+			return _mInitPromises[mPropertyBag.reference];
+		}
 
-			_instances[mPropertyBag.reference] = merge({}, {storageResponse: mPropertyBag.storageResponse});
-			return _instances[mPropertyBag.reference];
-		},
+		mPropertyBag.component.appVersion = mPropertyBag.component.appVersion || Utils.DEFAULT_APP_VERSION;
+		_mInitPromises[mPropertyBag.reference] = Loader.loadFlexData(mPropertyBag)
+		.then(function(mResponse) {
+			_mInstances[mPropertyBag.reference] = merge({}, {
+				storageResponse: mResponse,
+				componentId: mPropertyBag.component.id
+			});
+			// no further changes to storageResponse properties allowed
+			Object.freeze(_mInstances[mPropertyBag.reference].storageResponse);
+		});
 
-		// is this actually needed?
-		// getStorageResponse: function (sReference) {
-		// 	return getInstanceEntryOrThrowError(sReference, "storageResponse");
-		// },
+		return _mInitPromises[mPropertyBag.reference];
+	};
 
-		clearState: function (sReference) {
-			if (sReference) {
-				if (_instances[sReference]) {
-					delete _instances[sReference];
-				}
-			} else {
-				_instances = {};
-			}
-		},
+	// only temporary
+	FlexState._initForReferenceWithData = function(mPropertyBag) {
+		if (!mPropertyBag.reference) {
+			throw Error("Please pass a reference to initialize a FlexState");
+		}
 
-		getUiChanges: function(sReference) {
-			return getChangesMap(sReference).changes;
-		},
+		if (_mInstances[mPropertyBag.reference]) {
+			throw Error("the state for the given reference is already initialized");
+		}
+		_mInstances[mPropertyBag.reference] = merge({}, {
+			storageResponse: mPropertyBag.storageResponse,
+			componentId: mPropertyBag.component.id
+		});
+	};
 
-		// just a proposal
-		getAppDescriptorChanges: function(sReference) {
-			return getAppDescriptorMap(sReference).appDescriptorChanges;
-		},
-
-		// just a proposal
-		getVariantsForVariantManagement: function(sReference, sVariantManagementId) {
-			return getVariantsMap(sReference)[sVariantManagementId];
+	FlexState.clearState = function (sReference) {
+		if (sReference) {
+			delete _mInstances[sReference];
+			delete _mInitPromises[sReference];
+		} else {
+			_mInstances = {};
+			_mInitPromises = {};
 		}
 	};
+
+	FlexState.getUIChanges = function(sReference) {
+		return getChangesMap(sReference).changes;
+	};
+
+	// just a proposal
+	FlexState.getAppDescriptorChanges = function(sReference) {
+		return getAppDescriptorMap(sReference).appDescriptorChanges;
+	};
+
+	FlexState.getVariantsState = function(sReference) {
+		return getVariantsMap(sReference);
+	};
+
+	FlexState._callPrepareFunction = function(sMapName, mPropertyBag) {
+		return _mPrepareFunctions[sMapName](mPropertyBag);
+	};
+
+	return FlexState;
 }, true);

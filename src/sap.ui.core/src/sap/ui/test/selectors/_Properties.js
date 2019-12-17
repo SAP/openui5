@@ -41,6 +41,14 @@ sap.ui.define([
             } else {
                 this._oLogger.debug("Control " + oControl + " has property " + sProperty + " with value " + vValue);
                 var mResult = {properties: {}};
+                // the src property can contain a relative file path -> use a regex to match only the file name
+                if (sProperty === "src" && vValue.lastIndexOf && vValue.lastIndexOf("/") > -1) {
+                    vValue = {
+                        regex: {
+                            source: vValue.substring(vValue.lastIndexOf("/") + 1).replace(/[-[\]{}()*+?.,^$|#\s]/g, '\\$&')
+                        }
+                    };
+                }
                 mResult.properties[sProperty] = vValue;
                 return mResult;
             }

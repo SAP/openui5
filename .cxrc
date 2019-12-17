@@ -12,7 +12,8 @@
             "src/sap.ui.support/**/*",
             "src/sap.ui.unified/**/*",
             "src/sap.ui.ux3/**/*",
-            "src/sap.uxap/**/*"
+            "src/sap.uxap/**/*",
+            "src/sap.ui.testrecorder/**/*"
         ],
         "core": [
             "/*",
@@ -21,8 +22,6 @@
             "src/sap.ui.core/**/*",
             "src/testsuite-utils/**/*",
             "src/testsuite/**/*"
-        ],
-        "demokit": [
         ],
         "suite-controls": [
             "src/sap.ui.suite/**/*"

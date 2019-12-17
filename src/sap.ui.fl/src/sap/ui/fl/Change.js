@@ -579,7 +579,7 @@ sap.ui.define([
 	/**
 	 * Returns <code>true</code> if the label is read only. The label might be read only because of the current layer or because the logon language differs from the original language of the change file.
 	 *
-	 * @returns {boolean} <code>true</code> if the the label is read only
+	 * @returns {boolean} <code>true</code> if the label is read only
 	 *
 	 * @public
 	 */

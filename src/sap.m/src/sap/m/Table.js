@@ -390,15 +390,9 @@ sap.ui.define([
 	 * @overwrite
 	 */
 	Table.prototype.shouldRenderItems = function() {
-		var bHasVisibleColumns = this.getColumns().some(function(oColumn) {
+		return this.getColumns().some(function(oColumn) {
 			return oColumn.getVisible();
 		});
-
-		if (!bHasVisibleColumns) {
-			Log.warning("No visible columns found in " + this);
-		}
-
-		return bHasVisibleColumns;
 	};
 
 	// this gets called when item type column requirement is changed
@@ -531,6 +525,10 @@ sap.ui.define([
 	Table.prototype.setTableHeaderVisibility = function(bColVisible) {
 		if (!this.getDomRef()) {
 			return;
+		}
+
+		if (!this.shouldRenderItems()) {
+			return this.invalidate();
 		}
 
 		// find first visible column

@@ -166,19 +166,9 @@ sap.ui.define([
 				module: "./utils/_{name}.qunit",
 				sinon: false /*uses Mockserver*/
 			},
-
-			// Extensions
-			"TableExtension": {
-				group: "Extensions"
-			},
-			"TableAccExtension": {
-				group: "Extensions"
-			},
-			"TableKeyboardExtension": {
-				group: "Extensions"
-			},
-			"TableKeyboardDelegate": {
-				group: "Extensions",
+			"HookUtils": {
+				group: "Utils",
+				module: "./utils/_{name}.qunit",
 				qunit: {
 					version: "edge"
 				},
@@ -186,9 +176,33 @@ sap.ui.define([
 					version: "edge"
 				}
 			},
-			"TableKeyboardDelegate-RTL": {
+
+			// Extensions
+			"ExtensionBase": {
 				group: "Extensions",
-				module: "./TableKeyboardDelegate.qunit",
+				module: "./extensions/{name}.qunit"
+			},
+			"Accessibility": {
+				group: "Extensions",
+				module: "./extensions/{name}.qunit"
+			},
+			"Keyboard": {
+				group: "Extensions",
+				module: "./extensions/{name}.qunit"
+			},
+			"KeyboardDelegate": {
+				group: "Extensions",
+				module: "./extensions/{name}.qunit",
+				qunit: {
+					version: "edge"
+				},
+				sinon: {
+					version: "edge"
+				}
+			},
+			"KeyboardDelegate-RTL": {
+				group: "Extensions",
+				module: "./extensions/KeyboardDelegate.qunit",
 				ui5: {
 					rtl: true
 				},
@@ -199,17 +213,21 @@ sap.ui.define([
 					version: "edge"
 				}
 			},
-			"TablePointerExtension": {
-				group: "Extensions"
+			"Pointer": {
+				group: "Extensions",
+				module: "./extensions/{name}.qunit"
 			},
-			"TableScrollExtension": {
-				group: "Extensions"
+			"Scrolling": {
+				group: "Extensions",
+				module: "./extensions/{name}.qunit"
 			},
-			"TableDragAndDropExtension": {
-				group: "Extensions"
+			"DragAndDrop": {
+				group: "Extensions",
+				module: "./extensions/{name}.qunit"
 			},
-			"TableSyncExtension": {
-				group: "Extensions"
+			"Synchronization": {
+				group: "Extensions",
+				module: "./extensions/{name}.qunit"
 			},
 
 			// Design Time & RTA Enabling

@@ -1,24 +1,19 @@
 <mvc:View
 	controllerName="sap.m.sample.MessageBoxInitialFocus.controller.MessageBoxInitialFocus"
+	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Text
-				text="Different Ways of Setting Initial Focus"/>
-			<Button
-				text="Action"
-				class="sapUiSmallMarginBottom"
-				press="handleConfirmMessageBoxPressInitialFocus"
-				width="250px"/>
-			<Button
-				text="Custom button"
-				class="sapUiSmallMarginBottom"
-				press="handleShowMessageBoxPressInitialFocus"
-				width="250px"/>
-			</l:content>
+	xmlns:mvc="sap.ui.core.mvc">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Text text="Different approaches to set Initial focus" />
+		<Button
+			text="Action"
+			class="sapUiSmallMarginBottom"
+			press="handleConfirmMessageBoxPressInitialFocus"
+			width="250px" />
+		<Button
+			text="Custom button"
+			class="sapUiSmallMarginBottom"
+			press="handleShowMessageBoxPressInitialFocus"
+			width="250px" />
 	</l:VerticalLayout>
 </mvc:View>

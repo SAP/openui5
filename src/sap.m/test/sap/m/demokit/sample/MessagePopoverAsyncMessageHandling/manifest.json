@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.MessagePopoverAsyncMessageHandling",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.MessagePopoverAsyncMessageHandling.view.MessagePopoverAsyncMessageHandling",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/MessagePopoverAsyncMessageHandling.view.xml",
+					"controller/MessagePopoverAsyncMessageHandling.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -358,18 +358,20 @@ sap.ui.define([
 		assert.equal(oFormContainer.getElementRenderedDomRef(), "X", "Value returned from Form");
 	});
 
-	QUnit.test("invalidateLabels", function(assert) {
+	QUnit.test("_setEditable", function(assert) {
 		var oFormElement1 = new FormElement("FE1");
 		var oFormElement2 = new FormElement("FE2");
 		oFormContainer.addFormElement(oFormElement1);
 		oFormContainer.addFormElement(oFormElement2);
 
-		sinon.spy(oFormElement1, "invalidateLabel");
-		sinon.spy(oFormElement2, "invalidateLabel");
+		sinon.spy(oFormElement1, "_setEditable");
+		sinon.spy(oFormElement2, "_setEditable");
 
-		oFormContainer.invalidateLabels();
-		assert.ok(oFormElement1.invalidateLabel.called, "invalidateLabel on FormElement1");
-		assert.ok(oFormElement2.invalidateLabel.called, "invalidateLabel on FormElement2");
+		assert.notOk(oFormContainer.getProperty("_editable"), "Default: not editable");
+		oFormContainer._setEditable(true);
+		assert.ok(oFormContainer.getProperty("_editable"), "Default: editable set");
+		assert.ok(oFormElement1._setEditable.calledWith(true), "_setEditable on FormElement1");
+		assert.ok(oFormElement2._setEditable.calledWith(true), "_setEditable on FormElement2");
 	});
 
 });

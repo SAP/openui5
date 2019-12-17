@@ -3281,7 +3281,7 @@ sap.ui.define([
 		}
 
 		var oRequestHandle = {
-			abort: function() {
+			abort: function(bSuppressErrorHandlerCall) {
 				each(aRequests, function(i, oRequest) {
 					if (Array.isArray(oRequest)) {
 						oRequest.forEach(function(oRequest) {
@@ -3291,6 +3291,9 @@ sap.ui.define([
 						callAbortHandler(oRequest);
 					}
 				});
+				if (fnError && !bSuppressErrorHandlerCall) {
+					fnError(oAbortedError);
+				}
 				oBatchRequestHandle.abort();
 			}
 		};
@@ -3604,7 +3607,10 @@ sap.ui.define([
 				abort: function() {
 					this.iRelevantRequests--;
 					if (this.iRelevantRequests === 0 && this.oRequestHandle) {
-						this.oRequestHandle.abort();
+						this.oRequestHandle.abort(true);
+						if (fnSuccess) {
+							fnSuccess({}, undefined);
+						}
 					}
 				}
 			};
@@ -3752,7 +3758,15 @@ sap.ui.define([
 			if (!sPath.startsWith('/')) {
 				sPath = '/' + sPath;
 			}
-			sPath = this._normalizePath(sPath, undefined, true);
+
+			// In order to retrieve the EntityType, the path should be normalized (URL parameters should be removed)
+			var sNormalizedPath = this._normalizePath(sPath);
+			var oEntityType = this.oMetadata._getEntityTypeByPath(sNormalizedPath);
+
+			// FunctionImports shouldn't be resolved canonical
+			var bCanonical = oEntityType ? !oEntityType.isFunction : true;
+			sPath = this._normalizePath(sPath, undefined, bCanonical);
+
 			// decrease laundering
 			this.decreaseLaundering(sPath, oRequest.data);
 			this._decreaseDeferredRequestCount(oRequest);
@@ -4060,8 +4074,8 @@ sap.ui.define([
 
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
 
-		oRequest = this._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oPayload, sETag);
-
+		oRequest = this._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oPayload, sETag,
+			undefined, true);
 
 		//for createEntry requests we need to flag request again
 		if (bCreated) {
@@ -4831,64 +4845,38 @@ sap.ui.define([
 	 * 		failed. The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
+	 * @param {boolean} [mParameters._refresh] Private parameter for internal usage
 	 *
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
 	 */
 	ODataModel.prototype.read = function(sPath, mParameters) {
-		mParameters = mParameters || {};
-
-		// check private parameters
-		if ("refresh" in mParameters) {
-			Log.warning("sap.ui.model.odata.v2.ODataModel#read: Unsupported parameter 'refresh'",
-				this, "sap.ui.model.odata.v2.ODataModel");
-		}
-
-		return this._read(sPath, {
-			batchGroupId : mParameters.batchGroupId,
-			// not part of the public API, but supported for compatibility reasons
-			canonicalRequest : mParameters.canonicalRequest,
-			context : mParameters.context,
-			error : mParameters.error,
-			filters : mParameters.filters,
-			groupId : mParameters.groupId,
-			headers: mParameters.headers,
-			sorters : mParameters.sorters,
-			success : mParameters.success,
-			urlParameters : mParameters.urlParameters
-		});
-	};
-
-	/*
-	 * See {@link #read}.
-	 *
-	 * Additionally supported parameters that are only used internally:
-	 * @param {map} mParameters
-	 *   Parameter map as defined in {@link #read} with following additional properties:
-	 * @param {boolean} [mParameters.refresh]
-	 *   Whether the read request is triggered while refreshing a binding. If message scope is
-	 *   <code>sap.ui.model.odata.MessageScope.BusinessObject</code>, then all non-persistent
-	 *   messages for the requested resources and its child resources are removed. See
-	 *   {@link sap.ui.model.odata.ODataMessageParser#_propagateMessages}
-	 *
-	 * @private
-	 */
-	ODataModel.prototype._read = function(sPath, mParameters) {
 		var sDeepPath, oEntityType, sETag, oFilter, sFilterParams, sMethod, sNormalizedPath,
 			sNormalizedTempPath, oRequest, mRequests, sSorterParams, sUrl, aUrlParams,
-			bCanonical = this._isCanonicalRequestNeeded(mParameters.canonicalRequest),
-			oContext = mParameters.context,
-			fnError = mParameters.error,
-			aFilters = mParameters.filters,
-			sGroupId = mParameters.groupId || mParameters.batchGroupId,
-			mHeaders = mParameters.headers,
-			bRefresh = mParameters.refresh,
-			aSorters = mParameters.sorters,
-			fnSuccess = mParameters.success,
-			mUrlParams = mParameters.urlParameters,
+			bCanonical, oContext, fnError, aFilters, sGroupId, mHeaders, bRefresh, aSorters,
+			fnSuccess, mUrlParams,
 			that = this;
 
+
+		if (mParameters) {
+			/* Whether the read request is triggered while refreshing a binding. If message scope is
+			 * <code>sap.ui.model.odata.MessageScope.BusinessObject</code>, then all non-persistent
+			 * messages for the requested resources and its child resources are removed. See
+			 * {@link sap.ui.model.odata.ODataMessageParser#_propagateMessages}
+			 */
+			bRefresh = mParameters._refresh;
+			bCanonical = mParameters.canonicalRequest;
+			oContext = mParameters.context;
+			fnError = mParameters.error;
+			aFilters = mParameters.filters;
+			sGroupId = mParameters.groupId || mParameters.batchGroupId;
+			mHeaders = mParameters.headers;
+			aSorters = mParameters.sorters;
+			fnSuccess = mParameters.success;
+			mUrlParams = mParameters.urlParameters;
+		}
+		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
 
 		//if the read is triggered via a refresh we should use the refreshGroupId instead
 		if (this.sRefreshGroupId) {
@@ -5130,7 +5118,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Submits the collected changes which were collected by the {@link #setProperty} method.
+	 * Submits the collected changes which were collected by the {@link #setProperty} method and other deferred requests.
 	 *
 	 * The update method is defined by the global <code>defaultUpdateMethod</code> parameter which is
 	 * <code>sap.ui.model.odata.UpdateMethod.Merge</code> by default. In case of a <code>sap.ui.model.odata.UpdateMethod.Merge</code>
@@ -5139,6 +5127,8 @@ sap.ui.define([
 	 * Changes to this entries should be done on the entry itself. So no deep updates are supported.
 	 *
 	 * <b>Important</b>: The success/error handler will only be called if batch support is enabled. If multiple batch groups are submitted the handlers will be called for every batch group.
+	 * If there are no changes/requests or all contained requests are aborted before a batch request returns, the success handler will be called with an empty response object.
+	 * If the abort method on the return object is called, all contained batch requests will be aborted and the error handler will be called for each of them.
 	 *
 	 * @param {object} [mParameters] A map which contains the following parameter properties:
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
@@ -5234,9 +5224,6 @@ sap.ui.define([
 						vRequestHandleInternal.abort();
 					}
 				} else {
-					if (!bAborted && fnError) {
-						fnError(oAbortedError);
-					}
 					bAborted = true;
 				}
 			}
@@ -5986,6 +5973,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath The binding path
 	 * @param {sap.ui.model.Context} [oContext] The binding context
+	 * @param {boolean} Whether the binding path should be resolved canonical or not
 	 * @returns {string} The resolved path
 	 * @private
 	 */

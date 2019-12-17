@@ -52,6 +52,7 @@
 		<module>src/sap.ui.codeeditor</module>
 		<module>src/sap.ui.support</module>
 		<module>src/sap.ui.integration</module>
+		<module>src/sap.ui.testrecorder</module>
 
 		<!-- theme libraries -->
 		<module>src/themelib_sap_bluecrystal</module>
@@ -200,14 +201,6 @@
 
 			<id>internal.build</id>
 
-			<properties>
-				<sap.ui5.translationArea>073003</sap.ui5.translationArea>
-				<sap.ui5.translationDomain>BC</sap.ui5.translationDomain>
-				<sap.ui5.translationDeveloper></sap.ui5.translationDeveloper>
-				<sap.ui5.translationCollection>SAPUI5 UI library</sap.ui5.translationCollection>
-				<sap.ui5.translationLanguages></sap.ui5.translationLanguages>
-			</properties>
-
 			<build>
 
 				<pluginManagement>
@@ -220,45 +213,8 @@
 							<version>1.74.0-SNAPSHOT</version>
 						</plugin>
 
-						<!-- translation support (for internal use) -->
-						<plugin>
-							<groupId>com.sap.ldi</groupId>
-							<artifactId>translation-plugin</artifactId>
-							<version>0.21.0</version>
-							<configuration>
-								<translationArea>${sap.ui5.translationArea}</translationArea>
-								<translationDomain>${sap.ui5.translationDomain}</translationDomain>
-								<translationDeveloper>${sap.ui5.translationDeveloper}</translationDeveloper>
-								<translationCollection>${sap.ui5.translationCollection}</translationCollection>
-								<languages>${sap.ui5.translationLanguages}</languages>
-								<!-- only consider the sources -->
-								<useDefaultTranslationResourceDirs>false</useDefaultTranslationResourceDirs>
-								<translationResources>
-									<translationResource>src</translationResource>
-								</translationResources>
-								<!-- do not change developer English -->
-								<!-- skipUpdateDeveloperEnglish>true</skipUpdateDeveloperEnglish -->
-							</configuration>
-						</plugin>
-
 					</plugins>
 				</pluginManagement>
-
-				<plugins>
-
-					<!-- translation support (specify non-existent path to ignore it) -->
-					<plugin>
-						<groupId>com.sap.ldi</groupId>
-						<artifactId>translation-plugin</artifactId>
-						<inherited>false</inherited>
-						<configuration>
-							<translationResources>
-								<translationResource>nonexistentpath</translationResource>
-							</translationResources>
-						</configuration>
-					</plugin>
-
-				</plugins>
 
 			</build>
 

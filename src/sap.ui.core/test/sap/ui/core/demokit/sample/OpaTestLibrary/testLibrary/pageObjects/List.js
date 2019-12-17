@@ -1,10 +1,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press"
-], function (Opa5, PropertyStrictEquals, AggregationLengthEquals, EnterText, Press) {
+], function (Opa5, AggregationLengthEquals, EnterText, Press) {
 	"use strict";
 
 	// access properties set by the consumer test

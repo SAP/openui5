@@ -120,6 +120,21 @@ describe("sap.f.CardsVisualTests", function () {
 		expect(takeScreenshot(oCard2)).toLookAs("6_Table_Card_2");
 	});
 
+	it("Adaptive Card", function () {
+		browser.executeScript("window.history.back()");
+		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-3").scrollIntoView()');
+		element(by.id("__item0-container-cardsVisualTests---main--useCases-3")).click();
+
+		var oCard = element(by.css("#container-cardsVisualTests---adaptiveContent--adaptivecard1"));
+		expect(takeScreenshot(oCard)).toLookAs("8_Adaptive_Card_1");
+
+		var oCard2 = element(by.css("#container-cardsVisualTests---adaptiveContent--adaptivecard2"));
+		expect(takeScreenshot(oCard2)).toLookAs("8_Adaptive_Card_2");
+
+		var oCard3 = element(by.css("#container-cardsVisualTests---adaptiveContent--adaptivecard3"));
+		expect(takeScreenshot(oCard3)).toLookAs("8_Adaptive_Card_3");
+	});
+
 	it("Min Height", function () {
 		browser.executeScript("window.history.back()");
 		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-6").scrollIntoView()');

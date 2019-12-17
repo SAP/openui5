@@ -5,6 +5,15 @@
 
 @_sap_ui_layout_BlockLayout_FontSizeLandXL: @sapMFontHeader1Size;
 
+@_sap_ui_layout_BlockLayout_BackgroundDashboardMargin: 0.25rem;
+@_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin: 0.5rem;
+@_sap_ui_layout_BlockLayout_BackgroundDashboardAfterScrollbarMargin: 0.375rem;
+
+@_sap_ui_layout_BlockLayout_LinkTextShadow: @sapUiShadowText;
+
+@_sap_ui_layout_BlockLayout_BackgroundDashboardColor: @sapUiContentForegroundTextColor;
+@_sap_ui_layout_BlockLayout_BackgroundDashboardBorderRadius: 0;
+
 .setCellsColorDoubles (@evenCell, @oddCell) {
 	// Match every even cell
 	.sapUiBlockLayoutEvenCell {
@@ -38,7 +47,7 @@
 		font-size: @sapMFontHeader3Size;
 
 		.sapMLnk {
-			text-shadow: @sapUiShadowText;
+			text-shadow: @_sap_ui_layout_BlockLayout_LinkTextShadow;
 		}
 	}
 }
@@ -119,39 +128,37 @@
 .sapUiBlockLayoutBackgroundDashboard {
 	.sapUiBlockLayoutCell {
 		font-weight: normal;
-		color: @sapUiContentForegroundTextColor;
+		color: @_sap_ui_layout_BlockLayout_BackgroundDashboardColor;
 	}
 
 	.sapUiBlockCellContent {
 		background-color: @sapUiGroupContentBackground;
 		box-shadow: @sapUiShadowLevel0;
-		margin: 0.25rem;
+		margin: @_sap_ui_layout_BlockLayout_BackgroundDashboardMargin;
+		border-radius: @_sap_ui_layout_BlockLayout_BackgroundDashboardBorderRadius;
 	}
 
 	.sapUiBlockScrollingNarrowCells {
-		.sapUiBlockScrollableCell .sapUiBlockCellContent {
-			margin-bottom: 0;
-		}
 
 		& + .sapUiBlockHorizontalCellsRow .sapUiBlockCellContent {
-			margin-top: 0.375rem;
+			margin-top: @_sap_ui_layout_BlockLayout_BackgroundDashboardAfterScrollbarMargin;
 		}
 	}
 
 	&:not(.sapUiBlockLayoutSizeS) {
 		.sapUiBlockLayoutCell:first-child .sapUiBlockCellContent {
-			margin-left: 0.5rem; // Adjust first cell in a row with 0.5rem on the left
+			margin-left: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust first cell in a row with 0.5rem on the left
 		}
 		.sapUiBlockLayoutCell:last-child .sapUiBlockCellContent {
-			margin-right: 0.5rem; // Adjust last cell in a row with 0.5rem on the right
+			margin-right: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust last cell in a row with 0.5rem on the right
 		}
 
 		.sapUiBlockLayoutRow:first-child .sapUiBlockCellContent {
-			margin-top: 0.5rem; // Adjust spacing at the top for all cells in the first row
+			margin-top: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust spacing at the top for all cells in the first row
 		}
 
 		.sapUiBlockLayoutRow:last-child .sapUiBlockCellContent {
-			margin-bottom: 0.5rem; // Adjust spacing at the bottom for all cells in the last row
+			margin-bottom: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust spacing at the bottom for all cells in the last row
 		}
 	}
 

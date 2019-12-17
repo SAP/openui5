@@ -5432,6 +5432,17 @@ sap.ui.define([
 
 		this.oMultiComboBox.setValue("text");
 
+		/**
+		 * Invalidate the UIArea to trigger
+		 * the rerendering required by the test
+		 * in order for the focusin event to be fired.
+		 *
+		 * Otherwise the control is not rerendered,
+		 * focus is never lost and the focusin is never
+		 * fired after migration to semantic rendering.
+		 */
+		this.oMultiComboBox.getParent().invalidate();
+
 		sap.ui.getCore().applyChanges();
 
 		// act

@@ -14,7 +14,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		/**
 		 * Creates a view and puts it in an aggregation of the specified control.
 		 *
-		 * @param {string|string[]} vTargets the key of the target as specified in the {@link #constructor}. To display multiple targets you may also pass an array of keys.
+		 * @param {string|string[]|object|object[]} vTargets the key of the target as specified in the {@link #constructor}. To display multiple targets you may also pass an array of keys. If the target(s) represents a sap.ui.core.UIComponent, a prefix for its Router is needed. You can set this parameter with an object which has the 'name' property set with the key of the target and the 'prefix' property set with the prefix for the UIComponent's router. To display multiple component targets, you man also pass an array of objects.
 		 * @param {object} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
 		 * @param {string} [sTitleTarget] the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged titleChanged} event
 		 * @private

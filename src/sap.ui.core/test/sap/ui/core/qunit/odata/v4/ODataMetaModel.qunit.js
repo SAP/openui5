@@ -2033,6 +2033,8 @@ sap.ui.define([
 		var mPathPrefix2Overload = {
 				"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable" : aOverloadedAction[1],
 				"/T€AMS/name.space.OverloadedAction/_it@Common.Label" : aOverloadedAction[1]
+//TODO check if "/T€AMS/name.space.OverloadedAction/parameter1" : aOverloadedAction[1] should also
+// be expected for parameters and not only for annotations
 			},
 			mPathPrefix2SchemaChildName = {
 				"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath" : "tea_busi.Worker",
@@ -2044,7 +2046,8 @@ sap.ui.define([
 				"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
 					: "name.space.OverloadedAction",
 				"/T€AMS/name.space.OverloadedAction/_it@Common.Label"
-					: "name.space.OverloadedAction"
+					: "name.space.OverloadedAction",
+				"/T€AMS/name.space.OverloadedAction/parameter1" : "name.space.OverloadedAction"
 			};
 
 		Object.keys(mPathPrefix2SchemaChildName).forEach(function (sPathPrefix) {

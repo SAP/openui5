@@ -564,7 +564,7 @@ sap.ui.define([
 	 */
 	ResponsiveSplitter.prototype._clearContent = function () {
 		this._aPaneContainers.forEach(function(oPaneContainer) {
-			oPaneContainer._oSplitter.removeAllAssociatedContentArea();
+			oPaneContainer._oSplitter.removeAllAssociatedContentAreas();
 		});
 
 		this._aPaneContainers = [];

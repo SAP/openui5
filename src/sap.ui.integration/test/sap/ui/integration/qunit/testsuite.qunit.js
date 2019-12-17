@@ -188,11 +188,29 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/propertyEditor/mapEditor/MapEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/propertyEditor/iconEditor/IconEditor": {
 				group: "DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/parametersEditor/ParametersEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/parametersEditor/ParametersEditor"
 					]
 				},
 				sinon: false

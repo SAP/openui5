@@ -448,13 +448,13 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 }
 
 /* disable default touch move behavior on scrollable table rows,
-   vertical and horizontal scrolling is done in TableScrollExtensions.js */
+   vertical and horizontal scrolling is done by the scroll extension */
 .sapUiTableCtrlRowScroll {
 	touch-action: none;
 }
 
 /* disable horizontal touch move behavior on fixed table rows
-   horizontal scrolling is done in in TableScrollExtensions.js */
+   horizontal scrolling is done by the scroll extension */
 .sapUiTableCtrlRowFixed, .sapUiTableCtrlRowFixedBottom {
 	touch-action: pan-y;
 }

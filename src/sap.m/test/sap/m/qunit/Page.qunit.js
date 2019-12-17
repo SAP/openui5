@@ -230,9 +230,12 @@ sap.ui.define([
 		}).placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		var oPageContentRef = oPage.getDomRef("cont");
+		var hasScroll = oPageContentRef.getBoundingClientRect().height < oPageContentRef.scrollHeight;
+
 		assert.ok(document.getElementById("my.Page"), "Page should be rendered");
 		assert.ok(document.getElementById("p4content"), "Page content should be rendered");
-		assert.equal(oPage._contentHasScroll(), false, "Content should be correctly checked for scroll");
+		assert.equal(hasScroll, false, "Content should be correctly checked for scroll");
 
 		oPage.destroy();
 		oPage = null;
@@ -419,64 +422,36 @@ sap.ui.define([
 		clock.restore();
 	});
 
-	if (Device.browser.chrome) {
-		if (Device.os.ios) {
+	QUnit.test("setNavButtonType should propagate to internal button", function (assert) {
+		var oPage = new Page();
 
-			QUnit.test("NavButton", function(assert) {
-				var done = assert.async();
-				assert.ok(sap.ui.getcore().byId("myFirstPage-navButton").$().hasClass("sapMBtnBack"), "back button should be rendered");
-				assert.equal(document.getElementById("mySecondPage-navButton"), undefined, "up button should not be rendered");
-				oPage.setShowNavButton(false);
-				oPage2.setShowNavButton(true);
-				setTimeout(function() {
-					assert.equal(document.getElementById("myFirstPage-navButton"), undefined, "back button should not be rendered");
-					assert.ok(document.getElementById("mySecondPage-navButton"), "up button should be rendered");
-					done();
-				}, 10);
-			});
+		oPage.placeAt("content");
+		sap.ui.getCore().applyChanges();
 
-			QUnit.test("Title", function(assert) {
-				assert.ok(sap.ui.getcore().byId("myFirstPage-title").$().parent().hasClass("sapMBarPH"), "title should be located in the middle");
-			});
+		assert.notOk(oPage._navBtn, "Button should not be initialized");
 
-		} else if (Device.os.android) {
+		oPage.setShowNavButton(true);
+		sap.ui.getCore().applyChanges();
 
-			QUnit.test("NavButton", function(assert) {
-				var done = assert.async();
-				assert.ok(sap.ui.getCore().byId("myFirstPage-navButton").$().hasClass("sapMBtnUp"), "up button should be rendered");
-				assert.equal(document.getElementById("mySecondPage-navButton"), undefined, "up button should not be rendered");
-				oPage2.setShowNavButton(true);
-				setTimeout(function() {
-					assert.ok(document.getElementById("mySecondPage-navButton"), "up button should be rendered");
-					done();
-				}, 10);
-			});
+		assert.ok(oPage._navBtn, "Button should be initialized");
+		assert.strictEqual(oPage.getNavButtonType(), oPage._navBtn.getType(), "Default button type 'Back' should be propagated");
 
-			QUnit.test("Title", function(assert) {
-				if (Parameters.get("sapMPlatformDependent") == "true") {
-					assert.ok(sap.ui.getCore().byId("myFirstPage-title").$().parent().hasClass("sapMBarLeft"), "title should be located in the left");
-				} else {
-					assert.ok(sap.ui.getCore().byId("myFirstPage-title").$().parent().hasClass("sapMBarPH"), "title should be located in the middle");
-				}
-			});
+		oPage.setShowNavButton(false);
+		sap.ui.getCore().applyChanges();
 
-			QUnit.test("Icon", function(assert) {
-				var done = assert.async();
-				assert.ok(sap.ui.getCore().byId("myFirstPage-navButton").$().children("myFirstPage-navButton-img"), "up button should be rendered with the icon");
-				assert.equal(document.getElementById("myFirstPage-icon"), undefined, "app Icon should not be rendered");
-				oPage.setShowNavButton(false);
-				setTimeout(function() {
-					if (Parameters.get("sapMPlatformDependent") == "true") {
-						assert.ok(document.getElementById("myFirstPage-icon"), "app Icon should be rendered");
-					} else {
-						assert.equal(document.getElementById("myFirstPage-icon"), undefined, "app Icon should not be rendered");
-					}
-					done();
-				}, 10);
-			});
+		assert.notOk(oPage._navBtn.getDomRef(), "Button should not be rendered");
 
-		}
-	}
+		oPage.setShowNavButton(true);
+		oPage.setNavButtonType("Up");
+		oPage.setNavButtonText("Up");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oPage.getNavButtonType(), oPage._navBtn.getType(), "Type 'Up' should be set to the nav button");
+		assert.strictEqual(oPage._navBtn.getType(), "Up", "Up should be propagated to nav button of the page");
+		assert.strictEqual(oPage._navBtn.getText(), "Up", "Up text should be propagated to nav button of the page");
+
+		oPage.destroy();
+	});
 
 	// scrolling tests only for non-IE8 browsers
 	if (Device.browser.mozilla || Device.browser.safari || Device.browser.chrome

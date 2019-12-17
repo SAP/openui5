@@ -119,6 +119,11 @@
 		  "target": "objectContent"
 		},
 		{
+		  "pattern": "adaptiveContent",
+		  "name": "adaptiveContent",
+		  "target": "adaptiveContent"
+		},
+		{
 		  "pattern": "flp",
 		  "name": "flp",
 		  "target": "flp"
@@ -207,6 +212,11 @@
 		"objectContent": {
 		  "viewId": "objectContent",
 		  "viewName": "ObjectContent",
+		  "viewLevel": 1
+		},
+		"adaptiveContent": {
+		  "viewId": "adaptiveContent",
+		  "viewName": "AdaptiveContent",
 		  "viewLevel": 1
 		},
 		"analyticalContent": {

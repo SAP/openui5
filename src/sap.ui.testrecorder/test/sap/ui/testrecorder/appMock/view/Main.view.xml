@@ -1,0 +1,14 @@
+<mvc:View controllerName="appMock.view.Main"
+		  xmlns="sap.m"
+		  xmlns:f="sap.ui.layout.form"
+		  xmlns:mvc="sap.ui.core.mvc">
+	<App id="myApp">
+		<Page id="mainPage">
+			<headerContent>
+				<Button id="firstButton" text="Button One" />
+			</headerContent>
+			<Input id="testInput" placeholder="Test"></Input>
+			<Button id="clear" text="Clear Selection" />
+		</Page>
+	</App>
+</mvc:View>

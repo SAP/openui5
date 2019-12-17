@@ -493,6 +493,11 @@ sap.ui.define([
 
 			// if the result from the above is array:
 			if (Array.isArray(aControlsInAggregation)) {
+				// to harmonize behavior with JSControlTree, where stashed controls are not added to the parent aggregation
+				aControlsInAggregation = aControlsInAggregation.filter(function(oControl) {
+					return !this.getProperty(oControl, "stashed");
+				}.bind(this));
+
 				// find and return the correct index
 				return aControlsInAggregation.indexOf(oControl);
 			} else {

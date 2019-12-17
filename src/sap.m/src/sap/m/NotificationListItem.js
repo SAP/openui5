@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Icon',
 	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/library',
 	'sap/m/Link',
 	'sap/m/Avatar',
 	"sap/ui/events/KeyCodes",
@@ -25,6 +26,7 @@ function(
 	IconPool,
 	Icon,
 	ResizeHandler,
+	coreLibrary,
 	Link,
 	Avatar,
 	KeyCodes,
@@ -38,7 +40,6 @@ function(
 		READ_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_READ'),
 		UNREAD_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_UNREAD');
 
-	// anything better?
 	var maxTruncationHeight = 44;
 
 	// shortcut for sap.m.AvatarSize
@@ -46,6 +47,9 @@ function(
 
 	// shortcut for sap.m.AvatarColor
 	var AvatarColor = library.AvatarColor;
+
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
 
 	/**
 	 * Constructor for a new <code>NotificationListItem<code>.
@@ -96,7 +100,15 @@ function(
 				/**
 				 * Determines if the "Show More" button should be hidden.
 				 */
-				hideShowMoreButton: {type: 'boolean', group: 'Appearance', defaultValue: false}
+				hideShowMoreButton: {type: 'boolean', group: 'Appearance', defaultValue: false},
+
+				/**
+				 * Determines the background color of the avatar of the author.
+				 *
+				 * <b>Note:</b> By using background colors from the predefined sets,
+				 * your colors can later be customized from the Theme Designer.
+				 */
+				authorAvatarColor: {type: "sap.m.AvatarColor", group: "Appearance", defaultValue: AvatarColor.Accent6}
 			},
 			aggregations: {
 				/**
@@ -125,14 +137,17 @@ function(
 	};
 
 	NotificationListItem.prototype._getAuthorAvatar = function() {
-		var avatar = new Avatar({
-			initials: this.getAuthorInitials(),
-			src: this.getAuthorPicture(),
-			backgroundColor: AvatarColor.Random,
-			displaySize: AvatarSize.XS
-		});
+		if (!this._avatar) {
+			this._avatar = new Avatar({
+				displaySize: AvatarSize.XS
+			});
+		}
 
-		return avatar;
+		this._avatar.setInitials(this.getAuthorInitials());
+		this._avatar.setSrc(this.getAuthorPicture());
+		this._avatar.setBackgroundColor(this.getAuthorAvatarColor());
+
+		return this._avatar;
 	};
 
 	/**
@@ -234,6 +249,11 @@ function(
 			this._footerIvisibleText.destroy();
 			this._footerIvisibleText = null;
 		}
+
+		if (this._avatar) {
+			this._avatar.destroy();
+			this._avatar = null;
+		}
 	};
 
 	NotificationListItem.prototype._onResize = function () {
@@ -280,8 +300,9 @@ function(
 	NotificationListItem.prototype._getFooterInvisibleText = function() {
 
 		var readUnreadText = this.getUnread() ? UNREAD_TEXT : READ_TEXT,
-			dueAndPriorityString = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', [this.getDatetime(), this.getPriority()]),
 			authorName = this.getAuthorName(),
+			dateTime = this.getDatetime(),
+			priority = this.getPriority(),
 			ariaTexts = [readUnreadText];
 
 		if (authorName) {
@@ -289,7 +310,14 @@ function(
 			ariaTexts.push(authorName);
 			ariaTexts.push(this.getAuthorName());
 		}
-		ariaTexts.push(dueAndPriorityString);
+
+		if (dateTime) {
+			ariaTexts.push( RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_DATETIME', [dateTime]));
+		}
+
+		if (priority !== Priority.None) {
+			ariaTexts.push(RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_PRIORITY', [priority]));
+		}
 
 		return this._footerIvisibleText.setText(ariaTexts.join(' '));
 	};

@@ -1,6 +1,9 @@
 /*!
  * ${copyright}
  */
+
+ /*global WeakMap */
+
 sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'sap/ui/Device',
@@ -29,7 +32,8 @@ sap.ui.define([
 		sPassportComponentInfo = "undetermined",
 		sPassportAction = "undetermined_startup_0",
 		sFESR, // current header string
-		sFESRopt; // current header string
+		sFESRopt,  // current header string
+		wmPassportHeader = new WeakMap(); //a WeakMap to access passport header with a given XHR as key.
 
 	function setClientDevice() {
 		var iClientId = 0;
@@ -66,14 +70,17 @@ sap.ui.define([
 				sFESRTransactionId = Passport.getTransactionId();
 			}
 
-			// set passport with Root Context ID, Transaction ID, Component Info, Action
-			this.setRequestHeader("SAP-PASSPORT", Passport.header(
+			var sPassportHeader = Passport.header(
 				Passport.traceFlags(),
 				ROOT_ID,
 				Passport.getTransactionId(),
 				sPassportComponentInfo,
 				sPassportAction
-			));
+			);
+
+			// set passport with Root Context ID, Transaction ID, Component Info, Action
+			this.setRequestHeader("SAP-PASSPORT", sPassportHeader);
+			wmPassportHeader.set(this, sPassportHeader);
 		}
 	}
 
@@ -168,7 +175,16 @@ sap.ui.define([
 		sFESRopt = createFESRopt(oFinishedInteraction, oFESRHandle);
 	}
 
-	function onInteractionFinished(oFinishedInteraction, bForced) {
+	function onInteractionStarted(oInteraction) {
+		// increase the step count for Passport and FESR (initial loading starts with 0)
+		iStepCounter++;
+
+		// update Passport relevant fields
+		sPassportComponentInfo = oInteraction ? oInteraction.component + sAppVersion : undefined;
+		sPassportAction = oInteraction ? oInteraction.trigger + "_" + oInteraction.event + "_" + iStepCounter : undefined;
+	}
+
+	function onInteractionFinished(oFinishedInteraction) {
 		var oFESRHandle = FESR.onBeforeCreated({
 			stepName: oFinishedInteraction.trigger + "_" + oFinishedInteraction.event,
 			appNameLong: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
@@ -177,7 +193,7 @@ sap.ui.define([
 		}, oFinishedInteraction);
 
 		// do not send UI-only FESR with piggyback approach
-		if (oBeaconRequest || oFinishedInteraction.requests.length > 0 || bForced) {
+		if (oBeaconRequest || oFinishedInteraction.requests.length > 0) {
 			createHeader(oFinishedInteraction, oFESRHandle);
 			if (oBeaconRequest) {
 				// reset the transactionId for Beacon approach
@@ -193,22 +209,12 @@ sap.ui.define([
 			iBeaconTimeoutID = setTimeout(sendBeaconRequest, 60000);
 		}
 
-		var oPendingInteraction = Interaction.getPending();
-
-		if (oPendingInteraction) {
-			// check for updated version and update formatted versions
-			if (sAppVersionFull != oPendingInteraction.appVersion) {
-				sAppVersionFull = oPendingInteraction.appVersion;
-				sAppVersion = sAppVersionFull ? formatVersion(sAppVersionFull) : "";
-			}
+		if (sAppVersionFull != oFinishedInteraction.appVersion) {
+			sAppVersionFull = oFinishedInteraction.appVersion;
+			sAppVersion = sAppVersionFull ? formatVersion(sAppVersionFull) : "";
 		}
 
-		// update Passport relevant fields
-		sPassportComponentInfo = oPendingInteraction ? oPendingInteraction.component + sAppVersion : undefined;
-		sPassportAction = oPendingInteraction ? oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter : undefined;
-
-		// increase the step count for Passport and FESR
-		iStepCounter++;
+		sPassportAction = "undefined";
 	}
 
 	function sendBeaconRequest() {
@@ -264,7 +270,9 @@ sap.ui.define([
 			if (!oBeaconRequest) {
 				XHRInterceptor.register("FESR", "open" , fesrHeaderOverride);
 			}
+			Interaction.onInteractionStarted = onInteractionStarted;
 			Interaction.onInteractionFinished = onInteractionFinished;
+			Interaction.passportHeader = wmPassportHeader;
 		} else if (!bActive && bFesrActive) {
 			bFesrActive = false;
 			Interaction.setActive(false);
@@ -284,6 +292,7 @@ sap.ui.define([
 				sBeaconURL = null;
 			}
 			Interaction.onInteractionFinished = null;
+			Interaction.onInteractionStarted = null;
 		}
 	};
 

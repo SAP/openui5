@@ -594,6 +594,7 @@ sap.ui.define([
 	FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION = 560; // ms
 	FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME = "sapFFCLPinnedColumn";
 	FlexibleColumnLayout.prototype.init = function () {
+		this._iWidth = 0;
 
 		// Create the 3 nav containers
 		this._initNavContainers();
@@ -729,7 +730,6 @@ sap.ui.define([
 		this._hideShowArrows();
 		this._resizeColumns();
 
-
 		return vResult;
 	};
 
@@ -738,6 +738,8 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype.onAfterRendering = function () {
+		this._measureControlWidth();
+
 		this._registerResizeHandler();
 
 		this._cacheDOMElements();
@@ -753,7 +755,22 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._getControlWidth = function () {
-		return this.$().width();
+		// There is a case when we are still in app initialization phase and some containers
+		// are changing their visibility, at this point we need to obtain the width directly
+		// from the DOM and do not wait for the ResizeHandler update as it comes later.
+		if (this._iWidth === 0) {
+			this._measureControlWidth();
+		}
+
+		return this._iWidth;
+	};
+
+	FlexibleColumnLayout.prototype._measureControlWidth = function () {
+		if (this.$().is(":visible")) {
+			this._iWidth = this.$().width();
+		} else {
+			this._iWidth = 0;
+		}
 	};
 
 	FlexibleColumnLayout.prototype.exit = function () {
@@ -1256,6 +1273,8 @@ sap.ui.define([
 			iNewWidth = oEvent.size.width,
 			iOldMaxColumnsCount,
 			iMaxColumnsCount;
+
+		this._iWidth = iNewWidth;
 
 		// If the control is resized to 0, don't do anything
 		if (iNewWidth === 0) {

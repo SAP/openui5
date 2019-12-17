@@ -54,24 +54,23 @@ sap.ui.define([
 	};
 
 	CustomYearPicker.prototype._selectYear = function () {
-		var oDateRange = this.getSelectedDates()[0];
+		var oDateRange = this.getSelectedDates()[0],
+			oYearPicker = this._getYearPicker();
 
 		if (!oDateRange) {
 			oDateRange = new DateRange();
 		}
 
-		oDateRange.setStartDate(this.getAggregation("yearPicker").getDate());
-		this.addSelectedDate(oDateRange);
+		if (!oYearPicker.getIntervalSelection()) {
+			oDateRange.setStartDate(this._getYearPicker().getDate());
+			this.addSelectedDate(oDateRange);
+		}
 
 		this.fireSelect();
 	};
 
 	CustomYearPicker.prototype.onsapescape = function(oEvent) {
 		this.fireCancel();
-	};
-
-	CustomYearPicker.prototype._shouldFocusB2OnTabPrevious = function(oEvent) {
-		return false; //in Months view, the year picker button is not focusable
 	};
 
 	return CustomYearPicker;

@@ -94,10 +94,22 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var $item = this.notificationListGroup.$();
-		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority is rendered');
+		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority High is rendered');
+
+		this.notificationListGroup.setPriority(Priority.Medium);
+		sap.ui.getCore().applyChanges();
+
+		$item = this.notificationListGroup.$();
+		assert.strictEqual($item.find('.sapMNLIBPriorityMedium span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority Medium is rendered');
+
+		this.notificationListGroup.setPriority(Priority.Low);
+		sap.ui.getCore().applyChanges();
+
+		$item = this.notificationListGroup.$();
+		assert.strictEqual($item.find('.sapMNLIBPriorityLow span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority Low is rendered');
 	});
 
-	QUnit.test('priority', function(assert) {
+	QUnit.test('auto priority', function(assert) {
 		this.notificationListGroup.setAutoPriority(true);
 		sap.ui.getCore().applyChanges();
 
@@ -168,6 +180,17 @@ sap.ui.define([
 		assert.ok(ariallabledBy.indexOf('-groupTitle') > 0, "title is labeled to notification group");
 		assert.ok(ariallabledBy.indexOf('-invisibleGroupTitleText') > 0, "invisibleText is labeled to notification group");
 
+		var sInvisibleACCTextRendered = this.notificationListGroup.getDomRef().getElementsByClassName("sapUiInvisibleText")[4].innerText;
+		var sInvisibleACCText = oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_UNREAD") + " "  + oResourceBundleM.getText("LIST_ITEM_COUNTER", [this.notificationListGroup._getVisibleItemsCount()]);
+		assert.strictEqual(sInvisibleACCTextRendered, sInvisibleACCText, "ACC text is the correct one");
+		// ACC  text result: "Notification group unread. Counter 2"
+
+		this.notificationListGroup.setPriority("High");
+		Core.applyChanges();
+		sInvisibleACCTextRendered = this.notificationListGroup.getDomRef().getElementsByClassName("sapUiInvisibleText")[4].innerText;
+		sInvisibleACCText = oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_UNREAD") + " "  + oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_PRIORITY", [this.notificationListGroup.getPriority()]) + " " + oResourceBundleM.getText("LIST_ITEM_COUNTER", [this.notificationListGroup._getVisibleItemsCount()]);
+		assert.strictEqual(sInvisibleACCTextRendered, sInvisibleACCText, "ACC text is the correct one when we set priority");
+		// ACC  text result: "Notification group unread. High Priority. Counter 2"
 	});
 
 	QUnit.module('Action and close buttons - non mobile', {

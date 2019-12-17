@@ -40,7 +40,10 @@ sap.ui.define([
 	"use strict";
 	var sandbox = sinon.sandbox.create();
 
-	function openContextMenu(oOverlay, bMiniMenu, bTouch) {
+	function openContextMenu(oOverlay, bMiniMenu, bTouch, bRestoreClock) {
+		if (bRestoreClock) {
+			this.clock.restore();
+		}
 		return new Promise(function(resolve) {
 			this.oContextMenuPlugin.attachEventOnce("openedContextMenu", resolve);
 
@@ -56,8 +59,10 @@ sap.ui.define([
 			}
 			oOverlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(oOverlay.getDomRef(), sEvent);
-			// context menu has a debouncing of 50 ms
-			this.clock.tick(50);
+			if (!bRestoreClock) {
+				// context menu has a debouncing of 50 ms
+				this.clock.tick(50);
+			}
 		}.bind(this));
 	}
 
@@ -179,7 +184,7 @@ sap.ui.define([
 				var oLastPosition = oContextMenuControl._oLastPosition;
 				assert.strictEqual(fnSpy.callCount, 1, "The Position of the ContextMenu is stored before closing");
 				assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should be closed");
-				return openContextMenu.call(this, this.oButton2Overlay).then(function() {
+				return openContextMenu.call(this, this.oButton2Overlay, false/*bMiniMenu*/, false/*bTouch*/, true/*bRestoreClock*/).then(function() {
 					assert.strictEqual(oContextMenuControl._oLastPosition, oLastPosition, "The Last Position of the ContextMenu is used because it is opened on same Overlay");
 					assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
 				});

@@ -46,7 +46,7 @@
 			<p>
 				Adding handler for <code>action</code> event in the XML View
 			</p>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" action="onActionLog"/&gt;
 &lt;/mvc:View&gt;
@@ -54,7 +54,7 @@
 			<p>
 				on <code>action</code> handler code in the controller.
 			</p>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-js">
 ...
 onActionLog: function (oEvent) {
 	console.log(oEvent.getParameter("type")); // The type of the action
@@ -65,7 +65,7 @@ onActionLog: function (oEvent) {
 </pre>
 
 			<h2>When using &lt;ui-integration-card&gt; custom element</h2>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-xml">
 &lt;body&gt;
 	&lt;ui-integration-card id="cardWithActions"
 		manifest="./some/location/my/card/manifest.json"&gt;
@@ -86,7 +86,7 @@ onActionLog: function (oEvent) {
 			</p>
 
 			<h2>When using UI5</h2>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-js">
 var oCard = new Card();
 // This manifest expects a city parameter to render a card with information for that city.
 oCard.setManifest("./manifest.json");
@@ -97,7 +97,7 @@ oCard.setParameters(oParameters);
 </pre>
 
 			<h2>When using &lt;ui-integration-card&gt; custom element</h2>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-js">
 var parameters = {
 	"city": "Waldorf,de"
 };
@@ -122,7 +122,7 @@ document.body.appendChild(card);
 			</p>
 
 			<h3>When using UI5</h3>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-js">
 // Make card inactive for 10 seconds
 var oCard = sap.ui.getCore().byId("myCard");
 oCard.setDataMode("Inactive");
@@ -132,7 +132,7 @@ setTimeout(function () {
 </pre>
 
 			<h3>When using &lt;ui-integration-card&gt; custom element</h3>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-js">
 // Make card inactive for 10 seconds
 var card = document.getElementById("myCard");
 card.setAttribute("data-mode", "Inactive");
@@ -152,12 +152,12 @@ setTimeout(function () {
 			</p>
 
 			<h3>When using UI5</h3>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-js">
 oCard.refresh();
 </pre>
 
 			<h3>When using &lt;ui-integration-card&gt; custom element</h3>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-js">
 customElements.whenDefined("ui-integration-card").then(function () {
 	var oCard = document.getElementById("myCard");
 	oCard.refresh();
@@ -172,7 +172,7 @@ customElements.whenDefined("ui-integration-card").then(function () {
 			<p>
 				To modify the height and width of the Card, set its respective attributes <code>height</code> and <code>width</code>.
 			</p>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="360px" height="auto"/&gt;
 &lt;/mvc:View&gt;
@@ -185,7 +185,7 @@ customElements.whenDefined("ui-integration-card").then(function () {
 			<p>
 				<em>The attributes <code>height</code> and <code>width</code> are not available on the custom element.</em>
 			</p>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-xml">
 .myCard {
 	width: 380px;
 	height: 16rem;

@@ -1,0 +1,24 @@
+<mvc:View
+	controllerName="sap.m.sample.StandardListItemInfoStateInverted.List"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		id="myList"
+		mode="MultiSelect"
+		headerText="Inverted Info State"
+		items="{
+			path: '/names'
+		}">
+		<items>
+			<StandardListItem
+				title="{title}"
+				description="{desc}"
+				icon="{icon}"
+				iconInset="false"
+				highlight="{highlight}"
+				info="{info}"
+				infoState="{highlight}"
+				infoStateInverted="true" />
+		</items>
+	</List>
+</mvc:View>

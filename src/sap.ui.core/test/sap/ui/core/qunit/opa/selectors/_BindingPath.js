@@ -82,7 +82,7 @@ sap.ui.define([
             .then(function (mSelector) {
                 assert.strictEqual(mSelector.i18NText.propertyName, "text", "Should generate selector with correct binding path");
                 assert.strictEqual(mSelector.i18NText.key, "propertyText", "Should generate selector with correct binding path");
-                assert.strictEqual(mSelector.i18NText.modelName, "i18n", "Should generate selector with correct binding path");
+                assert.ok(!mSelector.i18NText.modelName, "Should generate selector with correct binding path");
             }).finally(fnDone);
     });
 

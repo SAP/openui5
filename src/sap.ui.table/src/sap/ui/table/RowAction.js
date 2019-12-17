@@ -176,9 +176,9 @@ function(
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 */
 	RowAction.prototype.getAccessibilityInfo = function() {
-		var $Parent = this.$().parent();
+		var oRow = this._getRow();
 		var bActive = this.getVisible() && this._iLen > 0 && this._iCount > 0
-						&& !$Parent.hasClass("sapUiTableRowHidden") && !$Parent.hasClass("sapUiTableGroupHeader") && !$Parent.hasClass("sapUiAnalyticalTableSum");
+					  && (!oRow || (!oRow.isContentHidden() && !oRow.isGroupHeader() && !oRow.isSummary()));
 
 		var sText;
 		if (bActive) {
@@ -217,12 +217,19 @@ function(
 	};
 
 	/**
-	 * Returns the table row this control belongs to.
-	 * @returns {sap.ui.table.Row} Returns the table row this control belongs to
+	 * Gets the instance of the row this control belongs to.
+	 *
+	 * @returns {sap.ui.table.Row|null} Row instance this control belongs to, or <code>null</code> if not a child of a row.
 	 * @private
 	 */
 	RowAction.prototype._getRow = function() {
-		return this.getParent();
+		var oRow = this.getParent();
+
+		if (TableUtils.isA(oRow, "sap.ui.table.Row")) {
+			return oRow;
+		} else {
+			return null;
+		}
 	};
 
 	/**

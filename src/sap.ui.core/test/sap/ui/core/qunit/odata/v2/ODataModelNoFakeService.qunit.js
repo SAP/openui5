@@ -27,77 +27,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: delegates to _read, no parameters", function (assert) {
-		var oModel = {
-				_read : function () {}
-			},
-			sPath = "~path",
-			oResult = "{object} oRequestHandle";
-
-		this.mock(oModel).expects("_read")
-			.withExactArgs(sPath, {
-				batchGroupId : undefined,
-				canonicalRequest : undefined,
-				context : undefined,
-				error : undefined,
-				filters : undefined,
-				groupId : undefined,
-				headers : undefined,
-				sorters : undefined,
-				success : undefined,
-				urlParameters : undefined
-			})
-			.returns(oResult);
-
-		// code under test
-		assert.strictEqual(ODataModel.prototype.read.call(oModel, sPath), oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("read: delegates to _read, log private parameters", function (assert) {
-		var oModel = {
-				_read : function () {}
-			},
-			mParameters = {
-				batchGroupId : "batchGroupId",
-				canonicalRequest : "canonicalRequest",
-				context : "context",
-				error : "error",
-				filters : "filters",
-				groupId : "groupId",
-				headers : "headers",
-				refresh : "refresh",
-				sorters : "sorters",
-				success : "success",
-				urlParameters : "urlParameters"
-			},
-			sPath = "~path",
-			oResult = "{object} oRequestHandle";
-
-		this.oLogMock.expects("warning")
-			.withExactArgs("sap.ui.model.odata.v2.ODataModel#read: Unsupported parameter 'refresh'",
-				sinon.match.same(oModel), "sap.ui.model.odata.v2.ODataModel");
-		this.mock(oModel).expects("_read")
-			.withExactArgs(sPath, {
-				batchGroupId : "batchGroupId",
-				canonicalRequest : "canonicalRequest",
-				context : "context",
-				error : "error",
-				filters : "filters",
-				groupId : "groupId",
-				headers : "headers",
-				sorters : "sorters",
-				success : "success",
-				urlParameters : "urlParameters"
-			})
-			.returns(oResult);
-
-		// code under test
-		assert.strictEqual(ODataModel.prototype.read.call(oModel, sPath, mParameters), oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_read: refresh passed to _createRequest", function (assert) {
+	QUnit.test("read: _refresh passed to _createRequest", function (assert) {
 		var bCanonicalRequest = "{boolean} bCanonicalRequest",
 			oContext = "{sap.ui.model.Context} oContext",
 			sDeepPath = "~deepPath",
@@ -138,13 +68,13 @@ sap.ui.define([
 			fnSuccess = "{function} fnSuccess",
 			mUrlParams = "{object} mUrlParams",
 			mParameters = {
+				_refresh : bRefresh,
 				canonicalRequest : bCanonicalRequest,
 				context : oContext,
 				error : fnError,
 				filters : aFilters,
 				groupId : sGroupId,
 				headers : mHeaders,
-				refresh : bRefresh,
 				sorters : aSorters,
 				success : fnSuccess,
 				urlParameters : mUrlParams
@@ -192,7 +122,7 @@ sap.ui.define([
 			.returns(oRequest);
 
 		// code under test
-		ODataModel.prototype._read.call(oModel, sPath, mParameters);
+		ODataModel.prototype.read.call(oModel, sPath, mParameters);
 	});
 	//TODO create fixtures to test all paths of ODataModel#read
 
@@ -317,4 +247,57 @@ sap.ui.define([
 		assert.deepEqual(oRequest, oExpectedResult);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_processChange: ", function (assert) {
+		var oData = {},
+			sDeepPath = "~deepPath",
+			oEntityType/* = undefined*/, //not realistic but simplifies the test
+			sETag = "~etag",
+			mHeaders = "~headers",
+			sKey = "~key",
+			oModel = {
+				_createRequest : function () {},
+				_createRequestUrl : function () {},
+				_getEntity : function () {},
+				_getHeaders : function () {},
+				_getObject : function () {},
+				_removeReferences : function () {},
+				getETag : function () {},
+				mChangedEntities : {},
+				oMetadata : {
+					_getEntityTypeByPath : function () {}
+				},
+				sServiceUrl : "~serviceUrl",
+				bUseBatch : "~useBatch"
+			},
+			oPayload = "~payload",
+			oRequest = {requestUri : "~requestUri"},
+			sUpdateMethod,
+			sUrl = "~url";
+
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs(sKey)
+			.returns(oEntityType);
+		this.mock(oModel).expects("_getObject").withExactArgs("/~key", true)
+			.returns({/* content not relevant for this test */});
+		this.mock(oModel).expects("_getEntity").withExactArgs(sKey)
+			.returns({/* content not relevant for this test */});
+		// withExactArgs() for _removeReferences is not relevant for this test
+		this.mock(oModel).expects("_removeReferences").returns(oPayload);
+		this.mock(oModel).expects("_getHeaders").withExactArgs().returns(mHeaders);
+		this.mock(oModel).expects("getETag").withExactArgs(oPayload).returns(sETag);
+
+		this.mock(oModel).expects("_createRequestUrl")
+			.withExactArgs("/~key", null, undefined, "~useBatch")
+			.returns(sUrl);
+		this.mock(oModel).expects("_createRequest")
+			.withExactArgs(sUrl, sDeepPath, "MERGE", mHeaders, oPayload, sETag, undefined, true)
+			.returns(oRequest);
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype._processChange.call(oModel, sKey, oData, sUpdateMethod, sDeepPath),
+			oRequest);
+	});
 });

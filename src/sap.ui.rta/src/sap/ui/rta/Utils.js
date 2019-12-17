@@ -591,7 +591,7 @@ function(
 	 *
 	 * @param {sap.ui.core.Element|sap.ui.core.Component} oSource - Source control to be checked for binding compatibility with target control
 	 * @param {sap.ui.core.Element|sap.ui.core.Component} oTarget - Target control to be checked for binding compatibility with source control
-	 * @param {sap.ui.model.Model} [oModel] - Model for filtering irrelevant binding paths. If empty the the default model from first element is used
+	 * @param {sap.ui.model.Model} [oModel] - Model for filtering irrelevant binding paths. If empty, the default model from first element is used
 	 * @return {boolean} <code>true</code> when the controls have compatible bindings.
 	 */
 	Utils.checkSourceTargetBindingCompatibility = function(oSource, oTarget, oModel) {
@@ -626,6 +626,21 @@ function(
 		})) {
 			return fnCallback();
 		}
+	};
+
+	/**
+	 * Build hashmap from array of objects
+	 *
+	 * @param {object} aArray - Array
+	 * @param {string} sKeyFieldName - Field name to use as key
+	 * @param {string} sValueFieldName - Field name to use as value
+	 * @returns {object} Hashmap
+	 */
+	Utils.buildHashMapFromArray = function (aArray, sKeyFieldName, sValueFieldName) {
+		return aArray.reduce(function (mMap, oItem) {
+			mMap[oItem[sKeyFieldName]] = oItem[sValueFieldName];
+			return mMap;
+		}, {});
 	};
 
 	return Utils;

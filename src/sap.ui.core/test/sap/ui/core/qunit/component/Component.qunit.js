@@ -1181,12 +1181,12 @@ sap.ui.define([
 		});
 	});
 
-	sap.ui.define("my/command/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-		return UIComponent.extend("my.command.Component", {
+	sap.ui.define("my/command/base/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.command.base.Component", {
 			metadata: {
 				manifest: {
 					"sap.app" : {
-						"id" : "my.command.constructor"
+						"id" : "my.command.base.constructor"
 					},
 					"sap.ui5" : {
 						"commands": {
@@ -1197,6 +1197,20 @@ sap.ui.define([
 								"shortcut": "Ctrl+C"
 							}
 						}
+					}
+				}
+			}
+		});
+	});
+
+	sap.ui.define("my/command/Component", ["my/command/base/Component"], function(oBaseComponent) {
+		return oBaseComponent.extend("my.command.Component", {
+			metadata: {
+				manifest: {
+					"sap.app" : {
+						"id" : "my.command.constructor"
+					},
+					"sap.ui5" : {
 					}
 				}
 			}
@@ -2044,6 +2058,65 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Hook is called when manifest is given in config object and there is one new library dependency (Hook modifies the manifest)", function(assert) {
+		var oManifestJSON = {
+			"sap.app": {
+				"id": "sap.ui.test.other",
+				"type": "application",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {
+				"dependencies": {
+					"minUI5Version": "1.71.0",
+					"libs": {
+						"sap.m": {
+							"minVersion": "1.72"
+						}
+					}
+				}
+			}
+		};
+
+		var oConfig = {
+			manifest: oManifestJSON,
+			async: true,
+			name: "sap.ui.test.other"
+		};
+
+		var oManifestJSONCopy;
+		Component._fnPreprocessManifest = function(oManifestJSON, oConfig) {
+			// Copy is required to check if this method is called with the correct raw manifest but not the modified one
+			oManifestJSONCopy = jQuery.extend(true, {}, oManifestJSON);
+
+			// To test if the new app desc change is correctly passed back to the
+			// Component's manifest processing, we just add a new library as a new application dependency
+			oManifestJSONCopy["sap.ui5"].dependencies.libs["sap.uxap"] = {
+				minVersion: "1.72",
+				lazy: true
+			};
+
+			return Promise.resolve(oManifestJSONCopy);
+		};
+
+		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+
+		return Component.create({
+			name: "sap.ui.test.other",
+			manifest: oManifestJSON
+		}).then(function(oComponent) {
+			// check if the new dependency is correctly taken over
+			var oSapUi5Property = oComponent.getManifestEntry("sap.ui5");
+			var oSapUxapLib = oSapUi5Property["dependencies"]["libs"]["sap.uxap"];
+			var oExpectedSapUxapLib = {minVersion: "1.72", lazy: true};
+			assert.equal(oSapUxapLib.minVersion, oExpectedSapUxapLib.minVersion, "minVersion is correct");
+			assert.equal(oSapUxapLib.lazy, oExpectedSapUxapLib.lazy, "lazy is correct");
+			assert.ok(oPreprocessManifestSpy.calledOnceWithExactly(oManifestJSON, oConfig), "then the hook is called once with correct parameters");
+			assert.notDeepEqual(oManifestJSON, oManifestJSONCopy, "then the objects containing manifest info are not equal");
+		});
+	});
+
 	QUnit.test("Hook is called when manifest is loaded from the default location (Hook modifies the manifest)", function(assert) {
 		// register hook and modify the manifest
 		Component._fnPreprocessManifest = function(oManifestJSON) {
@@ -2061,6 +2134,43 @@ sap.ui.define([
 			// check if the modification was correctly taken over
 			var oModel = oComponent.getModel("sfapi");
 			assert.ok(oModel.isA("sap.ui.model.odata.v2.ODataModel"), "Manifest was modified to use v2 instead of v1 ODataModel.");
+		});
+	});
+
+	QUnit.test("Hook is called when manifest is loaded from the default location and there is one new library dependency (Hook modifies the manifest)", function(assert) {
+		var oManifestJSONCopy;
+		var oManifestJSONClosure;
+		// register hook and modify the manifest
+		Component._fnPreprocessManifest = function(oManifestJSON) {
+			// Copy is required to check if it is called with the correct manifest but not the modified one
+			oManifestJSONCopy = jQuery.extend(true, {}, oManifestJSON);
+
+			oManifestJSONClosure = oManifestJSON;
+
+			// To test if the new app desc change is correctly passed back to the
+			// Component's manifest processing, we just add a new library as a new application dependency
+			oManifestJSONCopy["sap.ui5"].dependencies.libs["sap.uxap"] = {
+				minVersion: "1.72",
+				lazy: true
+			};
+
+			return Promise.resolve(oManifestJSONCopy);
+		};
+
+		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+
+		// loading manifest from default location
+		return Component.create({
+			name: "sap.ui.test.v2"
+		}).then(function(oComponent) {
+			// check if the new dependency is correctly taken over
+			var oSapUi5Property = oComponent.getManifestEntry("sap.ui5");
+			var oSapUxapLib = oSapUi5Property["dependencies"]["libs"]["sap.uxap"];
+			var oExpectedSapUxapLib = {minVersion: "1.72", lazy: true};
+			assert.equal(oSapUxapLib.minVersion, oExpectedSapUxapLib.minVersion, "minVersion is correct");
+			assert.equal(oSapUxapLib.lazy, oExpectedSapUxapLib.lazy, "lazy is correct");
+			assert.ok(oPreprocessManifestSpy.calledOnce, "then the hook is called once");
+			assert.notDeepEqual(oManifestJSONClosure, oManifestJSONCopy, "then the objects containing manifest info are not equal");
 		});
 	});
 
@@ -2083,6 +2193,45 @@ sap.ui.define([
 			// check if the modification was correctly taken over
 			var oModel = oComponent.getModel("sfapi");
 			assert.ok(oModel.isA("sap.ui.model.odata.v2.ODataModel"), "Manifest was modified to use v2 instead of v1 ODataModel.");
+		});
+	});
+
+	QUnit.test("Hook is called when manifest is loaded from the given manifest URL and and there is one new library dependency (Hook modifies the manifest)", function(assert) {
+		var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/v2/manifest.json");
+		var oManifestJSONCopy;
+		var oManifestJSONClosure;
+
+		// register hook and modify the manifest
+		Component._fnPreprocessManifest = function(oManifestJSON) {
+			// Copy is required to check if it is called with the correct manifest but not the modified one
+			var oManifestJSONCopy = jQuery.extend(true, {}, oManifestJSON);
+
+			oManifestJSONClosure = oManifestJSON;
+
+			// To test if the new app desc change is correctly passed back to the
+			// Component's manifest processing, we just add a new library as a new application dependency
+			oManifestJSONCopy["sap.ui5"].dependencies.libs["sap.uxap"] = {
+				minVersion: "1.72",
+				lazy: true
+			};
+
+			return Promise.resolve(oManifestJSONCopy);
+		};
+
+		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+
+		return Component.create({
+			name: "sap.ui.test.v2",
+			manifest: sManifestUrl
+		}).then(function(oComponent) {
+			// check if the new dependency is correctly taken over
+			var oSapUi5Property = oComponent.getManifestEntry("sap.ui5");
+			var oSapUxapLib = oSapUi5Property["dependencies"]["libs"]["sap.uxap"];
+			var oExpectedSapUxapLib = {minVersion: "1.72", lazy: true};
+			assert.equal(oSapUxapLib.minVersion, oExpectedSapUxapLib.minVersion, "minVersion is correct");
+			assert.equal(oSapUxapLib.lazy, oExpectedSapUxapLib.lazy, "lazy is correct");
+			assert.ok(oPreprocessManifestSpy.calledOnce, "then the hook is called once");
+			assert.notDeepEqual(oManifestJSONClosure, oManifestJSONCopy, "then the objects containing manifest info are not equal");
 		});
 	});
 

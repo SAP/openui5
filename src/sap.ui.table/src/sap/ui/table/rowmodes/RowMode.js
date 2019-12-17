@@ -90,13 +90,18 @@ sap.ui.define([
 	RowMode.prototype.exit = function() {
 		this.detachEvents();
 		this.cancelAsyncOperations();
+		this.deregisterHooks();
 	};
 
 	RowMode.prototype.setParent = function() {
 		this.detachEvents();
 		this.cancelAsyncOperations();
+		this.deregisterHooks();
+
 		Element.prototype.setParent.apply(this, arguments);
+
 		this.attachEvents();
+		this.registerHooks();
 	};
 
 	/**
@@ -130,6 +135,32 @@ sap.ui.define([
 		}
 
 		this.updateTableAsync.cancel();
+	};
+
+	/**
+	 * Register to table hooks.
+	 *
+	 * @private
+	 */
+	RowMode.prototype.registerHooks = function() {
+		var oTable = this.getTable();
+		var Hook = TableUtils.Hook.Keys;
+
+		TableUtils.Hook.register(oTable, Hook.Table.UnbindRows, this._onTableUnbindRows, this);
+		TableUtils.Hook.register(oTable, Hook.Table.UpdateRows, this._onTableUpdateRows, this);
+	};
+
+	/**
+	 * Deregister from table hooks.
+	 *
+	 * @private
+	 */
+	RowMode.prototype.deregisterHooks = function() {
+		var oTable = this.getTable();
+		var Hook = TableUtils.Hook.Keys;
+
+		TableUtils.Hook.deregister(oTable, Hook.Table.UnbindRows, this._onTableUnbindRows, this);
+		TableUtils.Hook.deregister(oTable, Hook.Table.UpdateRows, this._onTableUpdateRows, this);
 	};
 
 	/**
@@ -291,30 +322,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * This hook is called when the table layout is updated, for example when resizing.
-	 *
-	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason The reason for updating the table sizes.
-	 * @private
-	 */
-	RowMode.prototype.updateTableSizes = function(sReason) {};
-
-	/**
 	 * This hook is called when the rows aggregation of the table is unbound.
 	 *
 	 * @private
 	 */
-	RowMode.prototype.unbindRows = function() {
+	RowMode.prototype._onTableUnbindRows = function() {
 		clearTimeout(this.getTable()._mTimeouts.refreshRowsCreateRows);
 		this.updateTable(TableUtils.RowsUpdateReason.Unbind);
 	};
-
-	/**
-	 * This hook is called when the rows aggregation of the table is refreshed.
-	 *
-	 * @param {string} sReason The reason for the refresh.
-	 * @private
-	 */
-	RowMode.prototype.refreshRows = function(sReason) {};
 
 	/**
 	 * This hook is called when the rows aggregation of the table is updated.
@@ -322,7 +337,7 @@ sap.ui.define([
 	 * @param {string} sReason The reason for the refresh.
 	 * @private
 	 */
-	RowMode.prototype.updateRows = function(sReason) {
+	RowMode.prototype._onTableUpdateRows = function(sReason) {
 		var oTable = this.getTable();
 
 		clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
@@ -500,13 +515,11 @@ sap.ui.define([
 				}
 
 				var aRows = createRows(oTable, iRowCount), oRow;
-				var oBindingInfo = oTable.getBindingInfo("rows");
-				var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
 
 				for (var i = 0; i < aRows.length; i++) {
 					oRow = aRows[i];
 					// prevent propagation of parent binding context; else incorrect data might be requested by the model.
-					oRow.setBindingContext(null, sModelName);
+					oRow.setRowBindingContext(null, oTable);
 					oTable.addAggregation("rows", oRow, true);
 				}
 
@@ -566,10 +579,6 @@ sap.ui.define([
 
 			for (i = 0; i < aNewRows.length; i++) {
 				oTable.addAggregation("rows", aNewRows[i], true);
-
-				// As long the clone is not yet in the aggregation, setRowBindingContext will not process the following.
-				// Therefore, call it manually here.
-				aNewRows[i]._updateTableCells(aNewRows[i].getBindingContext());
 			}
 		} else {
 			// Remove rows that are not required.
@@ -722,19 +731,15 @@ sap.ui.define([
 	 * @param {Array<sap.ui.table.Row>} [aRows] The rows for which the contexts are to be updated.
 	 */
 	function updateBindingContextsOfRows(oMode, aRows) {
-		var oTable = oMode.getParent();
+		var oTable = oMode.getTable();
 		var aContexts = oMode.getRowContexts(aRows.length);
 
 		if (!oTable || aRows.length === 0) {
 			return;
 		}
 
-		var oBinding = oTable.getBinding("rows");
-		var oBindingInfo = oTable.getBindingInfo("rows");
-		var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
-
 		for (var i = 0; i < aRows.length; i++) {
-			aRows[i].setRowBindingContext(aContexts[i], sModelName, oBinding);
+			aRows[i].setRowBindingContext(aContexts[i], oTable);
 		}
 	}
 

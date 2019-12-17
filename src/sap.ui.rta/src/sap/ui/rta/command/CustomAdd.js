@@ -22,31 +22,24 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 			library : "sap.ui.rta",
 			properties : {
 				index : {
-					type: "int"
+					type: "int",
+					group: "content"
 				},
 				addElementInfo: {
-					type: "object"
+					type: "object",
+					group: "content"
 				},
 				aggregationName: {
-					type: "string"
+					type: "string",
+					group: "content"
 				},
 				customItemId: {
-					type: "string"
+					type: "string",
+					group: "content"
 				}
 			}
 		}
 	});
-
-	CustomAdd.prototype._getChangeSpecificData = function() {
-		var mSpecificChangeInfo = {
-			customItemId: this.getCustomItemId(),
-			changeType : this.getChangeType(),
-			index: this.getIndex(),
-			addElementInfo: this.getAddElementInfo(),
-			aggregationName: this.getAggregationName()
-		};
-		return mSpecificChangeInfo;
-	};
 
 	return CustomAdd;
 }, /* bExport= */true);

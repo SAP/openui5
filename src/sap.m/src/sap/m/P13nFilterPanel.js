@@ -148,32 +148,25 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			// start ConditionPanel
-			oRm.write("<section");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapMFilterPanel");
-			// oRm.addStyle("width", oControl.getWidth());
-			// oRm.addStyle("height", oControl.getHeight());
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl){
+				oRm.openStart("section", oControl);
+				oRm.class("sapMFilterPanel");
+				oRm.openEnd();
 
-			// render content
-			oRm.write("<div");
-			oRm.addClass("sapMFilterPanelContent");
-			oRm.addClass("sapMFilterPanelBG");
+				oRm.openStart("div");
+				oRm.class("sapMFilterPanelContent");
+				oRm.class("sapMFilterPanelBG");
+				oRm.openEnd();
 
-			oRm.writeClasses();
-			oRm.write(">");
-			var aChildren = oControl.getAggregation("content");
-			var iLength = aChildren.length;
-			for (var i = 0; i < iLength; i++) {
-				oRm.renderControl(aChildren[i]);
+				oControl.getAggregation("content").forEach(function(oChildren){
+					oRm.renderControl(oChildren);
+				});
+
+				oRm.close("div");
+				oRm.close("section");
 			}
-			oRm.write("</div>");
-
-			oRm.write("</section>");
 		}
 	});
 

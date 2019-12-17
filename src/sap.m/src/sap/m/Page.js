@@ -322,7 +322,6 @@ function(
 		};
 
 		Page.prototype.onAfterRendering = function () {
-			setTimeout(this._adjustFooterWidth.bind(this), 10);
 			this.$().toggleClass("sapMPageBusyCoversAll", !this.getContentOnlyBusy());
 
 			// If contentOnlyBusy property is set, then the busy indicator should cover only the content area
@@ -379,24 +378,24 @@ function(
 		};
 
 		Page.prototype._ensureNavButton = function () {
+
+			if (!this.getShowNavButton()) {
+				return;
+			}
+
 			var sBackText = this.getNavButtonTooltip() || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PAGE_NAVBUTTON_TEXT"); // any other types than "Back" do not make sense anymore in Blue Crystal
 
 			if (!this._navBtn) {
 				this._navBtn = new Button(this.getId() + "-navButton", {
-					press: jQuery.proxy(function () {
+					press: function () {
 						this.fireNavButtonPress();
 						this.fireNavButtonTap();
-					}, this)
+					}.bind(this)
 				});
-
-				if (!Device.os.ios && this.getNavButtonType() == ButtonType.Back) {
-					// internal conversion from Back to Up for non-iOS platform
-					this._navBtn.setType(ButtonType.Up);
-				} else {
-					this._navBtn.setType(this.getNavButtonType());
-				}
 			}
 
+			this._navBtn.setType(this.getNavButtonType());
+			this._navBtn.setText(this.getNavButtonText());
 			this._navBtn.setTooltip(sBackText);
 		};
 
@@ -454,28 +453,6 @@ function(
 			}
 
 			return this;
-		};
-
-		Page.prototype._adjustFooterWidth = function () {
-			var bDirection  = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right";
-			if (!this.getShowFooter() || !this.getFloatingFooter() || !this.getFooter()) {
-				return;
-			}
-
-			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last();
-
-			if (this._contentHasScroll()) {
-				$footer.css(bDirection, jQuery.position.scrollbarWidth() + "px");
-				$footer.css("width", "initial");
-			} else {
-				$footer.css(bDirection, 0);
-				$footer.css("width", "");
-			}
-		};
-
-		Page.prototype._contentHasScroll = function () {
-			var $section = jQuery(document.getElementById(this.getId() + "-cont"));
-			return $section[0].scrollHeight > $section.innerHeight();
 		};
 
 		/**

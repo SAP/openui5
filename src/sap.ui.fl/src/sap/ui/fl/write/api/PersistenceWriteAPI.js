@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/write/_internal/SaveAs"
+	"sap/ui/fl/write/_internal/SaveAs",
+	"sap/base/Log"
 ], function(
 	includes,
 	_omit,
@@ -19,7 +20,8 @@ sap.ui.define([
 	ChangesController,
 	DescriptorInlineChangeFactory,
 	FeaturesAPI,
-	SaveAs
+	SaveAs,
+	Log
 ) {
 	"use strict";
 
@@ -141,7 +143,7 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
-		 * @param {string} mPropertyBag.layer Layer on which the request is sent to the the backend
+		 * @param {string} mPropertyBag.layer Layer on which the request is sent to the backend
 		 *
 		 * @returns {Promise<object>} Resolves the information if the application to which the selector belongs has content that can be published/reset
 		 *
@@ -167,6 +169,10 @@ sap.ui.define([
 							.then(function(oResponse) {
 								oFlexInfo.isResetEnabled = oFlexInfo.isResetEnabled || oResponse.isResetEnabled;
 								oFlexInfo.isPublishEnabled = oFlexInfo.isPublishEnabled || oResponse.isPublishEnabled;
+								return oFlexInfo;
+							})
+							.catch(function(oError) {
+								Log.error("Sending request to flex/info route failed: " + oError.message);
 								return oFlexInfo;
 							});
 					}

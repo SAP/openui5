@@ -1519,6 +1519,189 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("test submitChanges success", function(assert) {
+		var done = assert.async();
+		cleanSharedData();
+		var oModel = initModel(sURI, {json: false});
+		oModel.setUseBatch(true);
+
+		oModel.read("/Products(3)", {
+			groupId: "changes"
+		});
+		oModel.submitChanges({
+			groupId: "changes",
+			success: function(oData) {
+				assert.ok(true, "Success handler has been called");
+				assert.ok(typeof oData === "object", "Response data is passed to success handler");
+				done();
+			},
+			error: function(oError) {
+				assert.ok(false, "Error handler must not be called");
+			}
+		});
+	});
+
+	QUnit.test("test submitChanges error", function(assert) {
+		var done = assert.async();
+		cleanSharedData();
+		var oModel = initModel(sURI, {json: false});
+		oModel.setUseBatch(true);
+
+		oModel.read("/Batch500", {
+			groupId: "changes"
+		});
+		oModel.submitChanges({
+			groupId: "changes",
+			success: function(oData) {
+				assert.ok(false, "Success handler must not be called");
+			},
+			error: function(oError) {
+				assert.ok(true, "Error handler has been called");
+				assert.ok(typeof oError === "object", "Response data is passed to error handler");
+				done();
+			}
+		});
+	});
+
+	QUnit.test("test submitChanges abort", function(assert) {
+		var done = assert.async();
+		cleanSharedData();
+		var oModel = initModel(sURI, {json: false});
+		oModel.setUseBatch(true);
+
+		oModel.read("/Products(3)", {
+			groupId: "changes"
+		});
+		var oHandle = oModel.submitChanges({
+			groupId: "changes",
+			success: function(oData) {
+				assert.ok(false, "Success handler must not be called");
+			},
+			error: function(oError) {
+				assert.ok(true, "Error handler has been called");
+				assert.ok(typeof oError === "object", "Response data is passed to error handler");
+				assert.equal(oError.statusCode, 0, "Status code of aborted request is 0");
+				done();
+			}
+		});
+		oHandle.abort();
+	});
+
+	QUnit.test("test submitChanges abort after sent", function(assert) {
+		var done = assert.async();
+		cleanSharedData();
+		var oModel = initModel(sURI, {json: false});
+		oModel.setUseBatch(true);
+
+		oModel.read("/Products(3)", {
+			groupId: "changes"
+		});
+		var oHandle = oModel.submitChanges({
+			groupId: "changes",
+			success: function(oData) {
+				assert.ok(false, "Success handler must not be called");
+			},
+			error: function(oError) {
+				assert.ok(true, "Error handler has been called");
+				assert.ok(typeof oError === "object", "Response data is passed to error handler");
+				assert.equal(oError.statusCode, 0, "Status code of aborted request is 0");
+				done();
+			}
+		});
+		oModel.attachBatchRequestSent(function() {
+			oHandle.abort();
+		});
+	});
+
+	QUnit.test("test submitChanges without changes or requests", function(assert) {
+		var done = assert.async();
+		cleanSharedData();
+		var oModel = initModel(sURI, {json: false});
+		oModel.setUseBatch(true);
+
+		oModel.submitChanges({
+			groupId: "changes",
+			success: function(oData) {
+				assert.ok(true, "Success handler has been called");
+				assert.ok(typeof oData === "object", "Response data is passed to success handler");
+				done();
+			},
+			error: function(oError) {
+				assert.ok(false, "Error handler must not be called");
+			}
+		});
+	});
+
+	QUnit.test("test submitChanges with error on inner request", function(assert) {
+		var done = assert.async();
+		cleanSharedData();
+		var oModel = initModel(sURI, {json: false});
+		oModel.setUseBatch(true);
+
+		oModel.read("/Fail500", {
+			groupId: "changes"
+		});
+		oModel.submitChanges({
+			groupId: "changes",
+			success: function(oData) {
+				assert.ok(true, "Success handler has been called");
+				assert.ok(typeof oData === "object", "Response data is passed to success handler");
+				done();
+			},
+			error: function(oError) {
+				assert.ok(false, "Error handler must not be called");
+			}
+		});
+	});
+
+	QUnit.test("test submitChanges with abort on inner request", function(assert) {
+		var done = assert.async();
+		cleanSharedData();
+		var oModel = initModel(sURI, {json: false});
+		oModel.setUseBatch(true);
+
+		var oHandle = oModel.read("/Products(3)", {
+			groupId: "changes"
+		});
+		oModel.submitChanges({
+			groupId: "changes",
+			success: function(oData) {
+				assert.ok(true, "Success handler has been called");
+				assert.ok(typeof oData === "object", "Response data is passed to success handler");
+				done();
+			},
+			error: function(oError) {
+				assert.ok(false, "Error handler must not be called");
+			}
+		});
+		oHandle.abort();
+	});
+
+	QUnit.test("test submitChanges with abort on inner request after sent", function(assert) {
+		var done = assert.async();
+		cleanSharedData();
+		var oModel = initModel(sURI, {json: false});
+		oModel.setUseBatch(true);
+
+		var oHandle = oModel.read("/Products(3)", {
+			groupId: "changes"
+		});
+		oModel.submitChanges({
+			groupId: "changes",
+			success: function(oData) {
+				assert.ok(true, "Success handler has been called");
+				assert.ok(typeof oData === "object", "Response data is passed to success handler");
+				done();
+			},
+			error: function(oError) {
+				assert.ok(false, "Error handler must not be called");
+			}
+		});
+		oModel.attachBatchRequestSent(function() {
+			oHandle.abort();
+		});
+	});
+
 	QUnit.test("test double load update", function(assert) {
 		var done = assert.async();
 		oLabel.setText("testText");
@@ -4760,6 +4943,65 @@ sap.ui.define([
 			done();
 		}});
 	});*/
+
+	QUnit.test("ODataModel.resolve: Don't resolve canonical with FunctionImports", function (assert) {
+		var done = assert.async();
+		var that = this;
+		this.oModel.bCanonicalRequests = true;
+		this.oModel = initModel(sURI, {
+			json:true,
+			canonicalRequest: true
+		});
+
+		return that.oModel.metadataLoaded()
+			.then(function() {
+				that.oModel.read("/AuthorizationCheck", {
+					urlParameters: {
+						"name": "'ReportDefinitionPropertiesSet'"
+					},
+					success: function() {
+						assert.ok(that.oModel.oMetadata._getEntityTypeByPath("/AuthorizationCheck").isFunction, "EntiyType is FunctionImport");
+						assert.deepEqual(that.oModel.mPathCache, {
+							"/AuthorizationCheck": {
+								"canonicalPath": "/Products(1)",
+								"updateKey": "k"
+							}
+						}, "mPathCache should be filled correctly");
+
+						that.oModel.read("/AuthorizationCheck", {
+							urlParameters: {
+								"name": "'SchemaEntryPointInfoSet'"
+							},
+							success: function() {
+								assert.deepEqual(that.oModel.mPathCache, {
+									"/AuthorizationCheck": {
+										"canonicalPath": "/Products(2)",
+										"updateKey": "k"
+									}
+								}, "mPathCache should be filled correctly");
+
+								that.oModel.read("/AuthorizationCheck", {
+									urlParameters: {
+										"name": "'ReportDefinitionPropertiesSet'"
+									},
+									success: function() {
+										assert.deepEqual(that.oModel.mPathCache, {
+											"/AuthorizationCheck": {
+												"canonicalPath": "/Products(1)",
+												"updateKey": "k"
+											}
+										}, "mPathCache should be filled correctly");
+
+										that.oModel.resolve("/AuthorizationCheck", undefined, true);
+										done();
+									}
+								});
+							}
+						});
+					}
+				});
+			});
+	});
 
 	QUnit.test("syntax with url parameters as map", function(assert) {
 		var done = assert.async();

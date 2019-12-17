@@ -308,7 +308,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				(event.which == KeyCodes.ARROW_LEFT && !isRtl)) {
 				if (this.collapse()) {
 					event.preventDefault();
-					event.target = null;
+					// prevent ItemNavigation to move the focus to the next/previous item
+					event.stopPropagation();
 				}
 			} else if (event.which == KeyCodes.NUMPAD_PLUS ||
 				(event.shiftKey && event.which == KeyCodes.PLUS) ||
@@ -316,7 +317,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				event.which == KeyCodes.ARROW_RIGHT && !isRtl) {
 				if (this.expand()) {
 					event.preventDefault();
-					event.target = null;
+					// prevent ItemNavigation to move the focus to the next/previous item
+					event.stopPropagation();
 				}
 			}
 		};

@@ -17,13 +17,19 @@
 			"parameters": {
 				"city": {
 					"value": "Berlin"
+				},
+				"agencies": {
+					"value": {
+						"agencyAPI": "NewsAPI",
+						"agencyNews": "AgencyNews"
+					}
 				}
 			}
 		},
 		"type": "List",
 		"header": {
 			"title": "Recent news in  {{parameters.city}}",
-			"subTitle": "Provided by NewsAPI",
+			"subTitle": "Provided by {{parameters.agencies.agencyAPI}}",
 			"icon": {
 			  "src": "sap-icon://newspaper"
 			},

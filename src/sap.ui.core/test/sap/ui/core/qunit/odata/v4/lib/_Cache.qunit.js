@@ -248,6 +248,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#setProperty", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
+			oEntity = {},
+			oEntityPromise = Promise.resolve(oEntity),
+			oUpdateData = {},
+			that = this;
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity")
+			.returns(SyncPromise.resolve(oEntityPromise));
+		oEntityPromise.then(function () {
+			that.mock(_Cache).expects("makeUpdateData")
+				.withExactArgs(["Address", "City"], "Walldorf")
+				.returns(oUpdateData);
+			that.mock(_Helper).expects("updateSelected")
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+					sinon.match.same(oEntity), sinon.match.same(oUpdateData));
+		});
+
+		// code under test
+		return oCache.setProperty("Address/City", "Walldorf", "path/to/entity");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#setProperty: fails on transient entity", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
+			oEntity = {"@$ui5._" : {"transient" : "true or some update group ID"}},
+			oEntityPromise = Promise.resolve(oEntity);
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity")
+			.returns(SyncPromise.resolve(oEntityPromise));
+		this.mock(_Cache).expects("makeUpdateData").never();
+		this.mock(_Helper).expects("updateSelected").never();
+
+		// code under test
+		return oCache.setProperty("Address/City", "Walldorf", "path/to/entity")
+			.then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, "Cannot update a transient entity w/o PATCH");
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_Cache#setQueryOptions", function (assert) {
 		var sMetaPath = "/TEAMS",
 			mNewQueryOptions = {},
@@ -3134,7 +3181,8 @@ sap.ui.define([
 			oPromise,
 			sRequestedPropertyPath = "foo/bar/baz",
 			oRequestGroupLock = {},
-			mQueryOptions = {
+			mQueryOptions = {},
+			mQueryOptionsForPath = {
 				$select : [sRequestedPropertyPath]
 			},
 			mTypeForMetaPath = {};
@@ -3164,12 +3212,13 @@ sap.ui.define([
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(mQueryOptions);
-		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "")
-			.returns(oCache.sMetaPath);
-		this.oRequestorMock.expects("fetchTypeForPath")
-			.withExactArgs(oCache.sMetaPath)
+		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "").returns("~1~");
+		oHelperMock.expects("buildPath").withExactArgs("~1~", undefined).returns("~2~");
+		this.oRequestorMock.expects("fetchTypeForPath").withExactArgs("~2~")
 			.returns(SyncPromise.resolve(oEntityType));
 		oHelperMock.expects("buildPath").withExactArgs(undefined, "key").returns("key");
+		oHelperMock.expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(mQueryOptions), "").returns(mQueryOptionsForPath);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, {
 				$select : [sRequestedPropertyPath, "key"],
@@ -3185,8 +3234,7 @@ sap.ui.define([
 			.withExactArgs("GET", "/~/?$select=~1", sinon.match.same(oRequestGroupLock))
 			.resolves(oData);
 		this.mock(oCache).expects("visitResponse")
-			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath),
-				oCache.sMetaPath, "");
+			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath), "~1~", "");
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 				sinon.match.same(oEntity), sinon.match.same(oData),
@@ -3224,16 +3272,9 @@ sap.ui.define([
 			oPromise,
 			sRequestedPropertyPath = "foo/bar/baz",
 			oRequestGroupLock = {},
-			mQueryOptions = {
-				$expand : {
-					entity : {
-						$expand : {
-							path : {
-								$select : [sRequestedPropertyPath]
-							}
-						}
-					}
-				}
+			mQueryOptions = {},
+			mQueryOptionsForPath = {
+				$select : [sRequestedPropertyPath]
 			},
 			mTypeForMetaPath = {};
 
@@ -3260,10 +3301,14 @@ sap.ui.define([
 			.returns(mQueryOptions);
 		oHelperMock.expects("buildPath").withExactArgs("/Employees", "entity/path")
 			.returns("/Employees/entity/path");
-		this.oRequestorMock.expects("fetchTypeForPath")
-			.withExactArgs(oCache.sMetaPath + "/entity/path")
+		oHelperMock.expects("buildPath").withExactArgs("/Employees/entity/path", undefined)
+			.returns("/entity/meta/path");
+		this.oRequestorMock.expects("fetchTypeForPath").withExactArgs("/entity/meta/path")
 			.returns(SyncPromise.resolve(oEntityType));
 		oHelperMock.expects("buildPath").withExactArgs(undefined, "key").returns("key");
+		oHelperMock.expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(mQueryOptions), "('31')/entity/path")
+			.returns(mQueryOptionsForPath);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, {
 				$select : [sRequestedPropertyPath, "key"],
@@ -3315,31 +3360,22 @@ sap.ui.define([
 			},
 			oHelperMock = this.mock(_Helper),
 			oPromise,
-			mQueryOptions = {
+			mQueryOptions = {},
+			mQueryOptionsForPath = {
 				$expand : {
-					entity : {
+					foo : {
 						$expand : {
-							path : {
+							bar : {
 								$expand : {
-									foo : {
-										$expand : {
-											bar : {
-												$expand : {
-													baz : {$select : ["qux"]}
-												},
-												$select : ["baz"]
-											}
-										},
-										$select : ["bar"]
-									}
+									baz : {$select : ["qux"]}
 								},
-								$select : ["foo"]
+								$select : ["baz"]
 							}
 						},
-						$select : ["path"]
+						$select : ["bar"]
 					}
 				},
-				$select : ["entity"]
+				$select : ["foo"]
 			},
 			oRequestGroupLock = {},
 			oTypeBar = {},
@@ -3374,45 +3410,39 @@ sap.ui.define([
 			.returns(mQueryOptions);
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "entity/path")
 			.returns(oCache.sMetaPath + "/entity/path");
-		this.oRequestorMock.expects("fetchTypeForPath")
-			.withExactArgs(oCache.sMetaPath + "/entity/path")
+		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", undefined)
+			.returns("~");
+		this.oRequestorMock.expects("fetchTypeForPath").withExactArgs("~")
 			.returns(SyncPromise.resolve(oEntityType));
-		oHelperMock.expects("buildPath").withExactArgs("", "foo").returns("foo");
+		oHelperMock.expects("buildPath").withExactArgs(undefined, "foo").returns("foo");
 		oHelperMock.expects("buildPath").withExactArgs(undefined, "key").returns("key");
+		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", "foo")
+			.returns(oCache.sMetaPath + "/entity/path/foo");
 		this.oRequestorMock.expects("fetchTypeForPath")
 			.withExactArgs(oCache.sMetaPath + "/entity/path/foo")
 			.returns(SyncPromise.resolve(oTypeFoo));
 		oHelperMock.expects("buildPath").withExactArgs("foo", "foo1").returns("foo/foo1");
 		oHelperMock.expects("buildPath").withExactArgs("foo", "t/foo2").returns("foo/t/foo2");
 		oHelperMock.expects("buildPath").withExactArgs("foo", "bar").returns("foo/bar");
+		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", "foo/bar")
+			.returns(oCache.sMetaPath + "/entity/path/foo/bar");
 		this.oRequestorMock.expects("fetchTypeForPath")
 			.withExactArgs(oCache.sMetaPath + "/entity/path/foo/bar")
 			.returns(SyncPromise.resolve(oTypeBar));
 		oHelperMock.expects("buildPath").withExactArgs("foo/bar", "baz").returns("foo/bar/baz");
+		oHelperMock.expects("buildPath")
+			.withExactArgs(oCache.sMetaPath + "/entity/path", "foo/bar/baz")
+			.returns(oCache.sMetaPath + "/entity/path/foo/bar/baz");
 		this.oRequestorMock.expects("fetchTypeForPath")
 			.withExactArgs(oCache.sMetaPath + "/entity/path/foo/bar/baz")
 			.returns(SyncPromise.resolve(oTypeBaz));
 		oHelperMock.expects("buildPath").withExactArgs("foo/bar/baz", "baz1")
 			.returns("foo/bar/baz/baz1");
+		oHelperMock.expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(mQueryOptions), "('1')/entity/path")
+			.returns(mQueryOptionsForPath);
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(oCache.sMetaPath, {
-				$expand : {
-					foo : {
-						$expand : {
-							bar : {
-								$expand : {
-									baz : {
-										$select : ["qux", "baz1"]
-									}
-								},
-								$select : ["baz"]
-							}
-						},
-						$select : ["foo1", "t/foo2"]
-					}
-				},
-				$select : ["key"]
-			}, false, true)
+			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptionsForPath), false, true)
 			.returns("?$expand=~1");
 		oHelperMock.expects("buildPath")
 			.withExactArgs(oCache.sResourcePath, "('1')/entity/path")

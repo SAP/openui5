@@ -484,46 +484,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("with valid mPropertyBag and Connector: LrepConnector aiming for CUSTOMER layer", function (assert) {
-			var mPropertyBag = {
-				layer: "CUSTOMER",
-				reference: "reference",
-				appVersion: "1.0.0"
-			};
-
-			var mParameter = {
-				layer: "CUSTOMER",
-				reference: "reference",
-				appVersion: "1.0.0"
-			};
-
-			var sUrl = "/LrepConnector/url";
-
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", url: sUrl}
-			]);
-
-			var sExpectedUrl = sUrl + "/changes/";
-			var sExpectedMethod = "DELETE";
-
-			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
-			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
-
-			return Storage.reset(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
-				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
-
-				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
-				assert.deepEqual(oGetUrlCallArgs[1].reference, undefined, "reference was deleted from mPropertyBag");
-				assert.deepEqual(oGetUrlCallArgs[2], mParameter, "with correct parameters input");
-				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
-			});
-		});
-
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector aiming for USER layer", function (assert) {
 			var mPropertyBag = {
 				layer: "USER",

@@ -102,6 +102,7 @@ function(
 				properties: {
 					/**
 					 * Callback function for resolving a promise after description has been asynchronously loaded inside this function.
+					 * You can use this function in order to validate the description before displaying it.
 					 * @callback sap.m.MessagePopover~asyncDescriptionHandler
 					 * @param {object} config A single parameter object
 					 * @param {MessagePopoverItem} config.item Reference to respective MessagePopoverItem instance
@@ -113,6 +114,7 @@ function(
 
 					/**
 					 * Callback function for resolving a promise after a link has been asynchronously validated inside this function.
+					 * You can use this function in order to validate URLs before displaying them inside the description.
 					 * @callback sap.m.MessagePopover~asyncURLHandler
 					 * @param {object} config A single parameter object
 					 * @param {string} config.url URL to validate
@@ -405,6 +407,7 @@ function(
 			if (this.getDependents().indexOf(this._oPopover) === -1) {
 				this.addDependent(this._oPopover);
 			}
+			this._oPopover.setPlacement(this.getPlacement());
 		};
 
 		/**
@@ -452,6 +455,8 @@ function(
 			if (this._oOpenByControl && !this._oOpenByControl.getVisible()) {
 				this._oPopover.close();
 			}
+
+			this._syncMessageView();
 		};
 
 		/**
@@ -569,21 +574,6 @@ function(
 			} else {
 				this.openBy(oControl);
 			}
-
-			return this;
-		};
-
-		/**
-		 * The method sets the placement position of the MessagePopover. Only accepted Values are:
-		 * sap.m.PlacementType.Top, sap.m.PlacementType.Bottom and sap.m.PlacementType.Vertical
-		 *
-		 * @param {sap.m.PlacementType} sPlacement Placement type
-		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
-		 * @public
-		 */
-		MessagePopover.prototype.setPlacement = function (sPlacement) {
-			this.setProperty("placement", sPlacement, true);
-			this._oPopover.setPlacement(sPlacement);
 
 			return this;
 		};
@@ -727,28 +717,18 @@ function(
 			}
 		};
 
+		MessagePopover.prototype._syncMessageView = function () {
+			this._oMessageView.setProperty('asyncDescriptionHandler', this.getAsyncDescriptionHandler(), true);
+			this._oMessageView.setProperty('asyncURLHandler', this.getAsyncURLHandler(), true);
+			this._oMessageView.setProperty("groupItems", this.getGroupItems(), false);
+		};
+
 		/*
 		 * =========================================
 		 * MessagePopover async handlers
 		 * proxy methods
 		 * =========================================
 		 */
-
-		MessagePopover.prototype.setAsyncDescriptionHandler = function (asyncDescriptionHandler) {
-			// MessagePopover is just a proxy to the MessageView
-			this.setProperty('asyncDescriptionHandler', asyncDescriptionHandler, true);
-			this._oMessageView.setProperty('asyncDescriptionHandler', asyncDescriptionHandler, true);
-
-			return this;
-		};
-
-		MessagePopover.prototype.setAsyncURLHandler = function (asyncURLHandler) {
-			// MessagePopover is just a proxy to the MessageView
-			this.setProperty('asyncURLHandler', asyncURLHandler, true);
-			this._oMessageView.setProperty('asyncURLHandler', asyncURLHandler, true);
-
-			return this;
-		};
 
 		MessagePopover.prototype.setModel = function(oModel, sName) {
 			/* When a model is set to the MessagePopover it is propagated to all its aggregation
@@ -758,20 +738,6 @@ function(
 			this._oMessageView.setModel(oModel, sName);
 
 			return Control.prototype.setModel.apply(this, arguments);
-		};
-
-		/**
-		 * Sets the value of the <code>groupItems</code> property.
-		 * @param {boolean} bValue A boolean indicating whether items should be grouped or not.
-		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
-		 * @public
-		 */
-		MessagePopover.prototype.setGroupItems = function (bValue) {
-			// MessagePopover is just a proxy to the MessageView
-			this.setProperty('groupItems', bValue, false);
-			this._oMessageView.setProperty("groupItems", bValue, false);
-
-			return this;
 		};
 
 		/**

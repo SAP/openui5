@@ -29,13 +29,13 @@ sap.ui.define([
 					{
 						title: 'Default',
 						target: 'learnDetail',
-						key: 'headerDefault',
+						key: 'default',
 						topicTitle: 'Integration Card Headers'
 					},
 					{
 						title: 'Numeric',
 						target: 'learnDetail',
-						key: 'headerNumeric',
+						key: 'numeric',
 						topicTitle: 'Integration Card Headers'
 					}
 				]
@@ -81,6 +81,12 @@ sap.ui.define([
 						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'component'
+					},
+					{
+						title: 'Adaptive',
+						topicTitle: 'AdaptiveCard',
+						target: 'learnDetail',
+						key: 'adaptive'
 					}
 				]
 			},
@@ -93,43 +99,43 @@ sap.ui.define([
 					{
 						title: 'Actions',
 						target: 'learnDetail',
-						key: 'featureActions',
+						key: 'actions',
 						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Data',
 						target: 'learnDetail',
-						key: 'featureData',
+						key: 'data',
 						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Translation',
 						target: 'learnDetail',
-						key: 'featureTranslation',
+						key: 'translation',
 						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Manifest Parameters',
 						target: 'learnDetail',
-						key: 'featureManifestParameters',
+						key: 'manifestParameters',
 						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Dynamic Parameters',
 						target: 'learnDetail',
-						key: 'featureDynamicParameters',
+						key: 'dynamicParameters',
 						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Dynamic Counter',
 						target: 'learnDetail',
-						key: 'featureDynamicCounter',
+						key: 'dynamicCounter',
 						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Date Range Handling',
 						target: 'learnDetail',
-						key: 'featureDateRangeHandling',
+						key: 'dateRangeHandling',
 						topicTitle: 'Integration Card Date Range Handling'
 					}
 				]
@@ -151,6 +157,36 @@ sap.ui.define([
 						title: 'Date and Time',
 						target: 'learnDetail',
 						key: 'dateAndTime',
+						topicTitle: 'Formatters'
+					},
+					{
+						title: 'Currency',
+						target: 'learnDetail',
+						key: 'currency',
+						topicTitle: 'Formatters'
+					},
+					{
+						title: 'Float',
+						target: 'learnDetail',
+						key: 'float',
+						topicTitle: 'Formatters'
+					},
+					{
+						title: 'Integer',
+						target: 'learnDetail',
+						key: 'integer',
+						topicTitle: 'Formatters'
+					},
+					{
+						title: 'Percent',
+						target: 'learnDetail',
+						key: 'percent',
+						topicTitle: 'Formatters'
+					},
+					{
+						title: 'Unit of Measurement',
+						target: 'learnDetail',
+						key: 'unit',
 						topicTitle: 'Formatters'
 					}
 				]

@@ -315,7 +315,9 @@ sap.ui.define([
 				if (oOldParent) {
 					oOldParent.removeDependent(this._oTitleProvider);
 				}
-				oView.addDependent(this._oTitleProvider);
+				if (oView instanceof View) {
+					oView.addDependent(this._oTitleProvider);
+				}
 			},
 
 			/**

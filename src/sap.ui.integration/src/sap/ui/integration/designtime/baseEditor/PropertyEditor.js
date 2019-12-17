@@ -43,6 +43,13 @@ sap.ui.define([
 				},
 
 				/**
+				 * Indicates whether the embedded <code>BasePropertyEditor</code> should render its label.
+				 */
+				renderLabel: {
+					type: "boolean"
+				},
+
+				/**
 				 * Custom configuration object. If set, it has priority over <code>propertyName</code>.
 				 * Example:
 				 * <pre>
@@ -157,7 +164,7 @@ sap.ui.define([
 				this._initPropertyEditor();
 			});
 
-			this.attachConfigChange(function () {
+			this.attachConfigChange(function (oEvent) {
 				if (this._sCreatedBy) {
 					this._removePropertyEditor();
 				}
@@ -292,6 +299,10 @@ sap.ui.define([
 
 				oPromise
 					.then(function (oPropertyEditor) {
+						var bRenderLabel = this.getRenderLabel();
+						if (bRenderLabel !== undefined) {
+							oPropertyEditor.setRenderLabel(bRenderLabel);
+						}
 						this._sCreatedBy = sCreatedBy;
 						delete this._fnCancelInit;
 						fnResolve(oPropertyEditor);

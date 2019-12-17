@@ -173,7 +173,20 @@ function (
 				/**
 				 * Event fired before geometryChanged event is fired
 				 */
-				beforeGeometryChanged : {}
+				beforeGeometryChanged : {},
+				/**
+				 * Event fired when the styles applying is required
+				 */
+				applyStylesRequired: {
+					parameters: {
+						type: {
+							type : "string"
+						},
+						targetOverlay: {
+							type : "sap.ui.dt.ElementOverlay"
+						}
+					}
+				}
 			}
 		},
 		constructor: function () {
@@ -617,7 +630,9 @@ function (
 		}
 
 		this.getChildren().forEach(function(oChild) {
-			oChild.applyStyles(bForceScrollbarSync);
+			var mParameters = {};
+			mParameters.bForceScrollbarSync = bForceScrollbarSync;
+			oChild.fireApplyStylesRequired(mParameters);
 		});
 	};
 

@@ -591,23 +591,26 @@ sap.ui.define([
 			oPromise,
 			mQueryOptions,
 			sRequestPath,
-			sResourceMetaPath,
+			sResourceMetaPath = _Helper.getMetaPath(sResourcePath),
 			mTypeForMetaPath = this.fetchTypes().getResult(),
 			aUpdateProperties = [sRequestedPropertyPath],
 			that = this;
 
 		/*
-		 * Adds the key properties for the given meta path to $select of the given query options and
+		 * Visits the query options recursively descending $expand. Determines the target type and
+		 * adds key properties to the contained $select. Adds key properties, ETag and key predicate
 		 * to aUpdateProperties.
 		 *
-		 * @param {string} sMetaPath The meta path
 		 * @param {object} mQueryOptions0 The query options
-		 * @param {string} [sBasePath=""] The base path for the key properties in aUpdateProperties
+		 * @param {string} [sBasePath=""] The base (meta) path relative to oResource
+		 *   Note: path === metapath here because there are only single (navigation) properties
 		 */
-		function addKeyProperties(sMetaPath, mQueryOptions0, sBasePath) {
+		function visitQueryOptions(mQueryOptions0, sBasePath) {
 			// the type is available synchronously because the binding read it when checking for
 			// late properties
-			var oEntityType = that.oRequestor.fetchTypeForPath(sMetaPath).getResult();
+			var sMetaPath = _Helper.buildPath(sFullResourceMetaPath, sBasePath),
+				oEntityType = that.oRequestor.fetchTypeForPath(sMetaPath).getResult(),
+				sExpand;
 
 			mTypeForMetaPath[sMetaPath] = oEntityType;
 			(oEntityType.$Key || []).forEach(function (vKey) {
@@ -617,47 +620,32 @@ sap.ui.define([
 				mQueryOptions0.$select.push(vKey);
 				aUpdateProperties.push(_Helper.buildPath(sBasePath, vKey));
 			});
-			if (mQueryOptions0.$expand && mQueryOptions0.$select.length > 1) {
-				// the first entry in $select is the one in $expand (from intersectQueryOptions)
-				// and is unnecessary now
-				mQueryOptions0.$select = mQueryOptions0.$select.slice(1);
+			if (sBasePath) {
+				aUpdateProperties.push(sBasePath + "/@odata.etag");
+				aUpdateProperties.push(sBasePath + "/@$ui5._/predicate");
 			}
-		}
-
-		/**
-		 * Recursively visits the $expand of the query options. Determines the target type and adds
-		 * the key properties to the contained $select. Adds all relevant properties to
-		 * aUpdateProperties.
-		 *
-		 * @param {object} mQueryOptions0 The query options containing $expand
-		 * @param {string} sBasePath The base meta path of the query options relative to the entity
-		 * @param {string} sMetaPath The entity's meta path
-		 */
-		function visitExpand(mQueryOptions0, sBasePath, sMetaPath) {
-			// intersecting the query options with sRequestedPropertyPath delivers exactly one entry
-			// in $expand at each level (one for each navigation property binding)
-			var sExpand = Object.keys(mQueryOptions0.$expand)[0],
-				sExpandPath = _Helper.buildPath(sBasePath, sExpand);
-
-			sMetaPath = sMetaPath + "/" + sExpand;
-			mQueryOptions0 = mQueryOptions0.$expand[sExpand];
-			addKeyProperties(sMetaPath, mQueryOptions0, sExpandPath);
-			aUpdateProperties.push(sExpandPath + "/@odata.etag");
-			aUpdateProperties.push(sExpandPath + "/@$ui5._/predicate");
 			if (mQueryOptions0.$expand) {
-				visitExpand(mQueryOptions0, sExpandPath, sMetaPath);
+				if (mQueryOptions0.$select.length > 1) {
+					// the first entry in $select is the one in $expand (from intersectQueryOptions)
+					// and is unnecessary now
+					mQueryOptions0.$select = mQueryOptions0.$select.slice(1);
+				}
+				// intersecting the query options with sRequestedPropertyPath delivers exactly one
+				// entry in $expand at each level (one for each navigation property binding)
+				sExpand = Object.keys(mQueryOptions0.$expand)[0];
+				visitQueryOptions(mQueryOptions0.$expand[sExpand],
+					_Helper.buildPath(sBasePath, sExpand));
 			}
 		}
 
 		if (!this.mLateQueryOptions) {
 			return undefined;
 		}
-		sResourceMetaPath = _Helper.getMetaPath(sResourcePath);
-		mQueryOptions = {
-			$select : this.mLateQueryOptions.$select,
-			$expand : this.mLateQueryOptions.$expand
-		};
-		mQueryOptions = _Helper.intersectQueryOptions(mQueryOptions,
+		mQueryOptions = _Helper.intersectQueryOptions({
+				// ensure that $select precedes $expand in the resulting query
+				$select : this.mLateQueryOptions.$select,
+				$expand : this.mLateQueryOptions.$expand
+			},
 			// no need to convert sRequestedPropertyPath to a metapath, intersectQueryOptions will
 			// reject the resulting invalid path
 			[_Helper.buildPath(sResourceMetaPath, sRequestedPropertyPath)],
@@ -665,12 +653,7 @@ sap.ui.define([
 		if (!mQueryOptions) {
 			return undefined;
 		}
-		if (sResourceMetaPath) {
-			// Note: intersectQueryOptions guarantees that the meta path can be followed
-			sResourceMetaPath.split("/").forEach(function (sSegment) {
-				mQueryOptions = mQueryOptions.$expand[sSegment];
-			});
-		}
+		mQueryOptions = _Helper.getQueryOptionsForPath(mQueryOptions, sResourcePath);
 
 		// custom query options must be sent with each request
 		Object.keys(this.mLateQueryOptions).forEach(function (sName) {
@@ -680,10 +663,7 @@ sap.ui.define([
 		});
 
 		sFullResourceMetaPath = _Helper.buildPath(this.sMetaPath, sResourceMetaPath);
-		addKeyProperties(sFullResourceMetaPath, mQueryOptions);
-		if (mQueryOptions.$expand) {
-			visitExpand(mQueryOptions, "", sFullResourceMetaPath);
-		}
+		visitQueryOptions(mQueryOptions);
 		sRequestPath = _Helper.buildPath(this.sResourcePath, sResourcePath)
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
 		oPromise = this.mPropertyRequestByPath[sRequestPath];
@@ -1208,6 +1188,36 @@ sap.ui.define([
 		this.mLateQueryOptions = Object.assign({}, this.mQueryOptions, {
 			$expand : mQueryOptions.$expand,
 			$select : mQueryOptions.$select
+		});
+	};
+
+	/**
+	 * Updates the property of the given name with the given new value without sending a PATCH
+	 * request.
+	 *
+	 * @param {string} sPropertyPath
+	 *   Path of the property to update, relative to the entity
+	 * @param {any} vValue
+	 *   The new value
+	 * @param {string} [sEntityPath]
+	 *   Path of the entity, relative to the cache (as used by change listeners)
+	 * @returns {Promise}
+	 *   A promise which resolves with <code>undefined</code> once the value has been set, or is
+	 *   rejected with an error if setting fails somehow, for example because the affected entity
+	 *   is transient
+	 *
+	 * @public
+	 */
+	Cache.prototype.setProperty = function (sPropertyPath, vValue, sEntityPath) {
+		var that = this;
+
+		return this.fetchValue(_GroupLock.$cached, sEntityPath).then(function (oEntity) {
+			if (_Helper.getPrivateAnnotation(oEntity, "transient")) {
+				// Note: includes "No 'update' allowed while waiting for server response"
+				throw new Error("Cannot update a transient entity w/o PATCH");
+			}
+			_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity,
+				Cache.makeUpdateData(sPropertyPath.split("/"), vValue));
 		});
 	};
 

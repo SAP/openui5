@@ -377,7 +377,7 @@ sap.ui.define([
 	/**
 	 * Called from sap.ui.base.ManagedObject if a binding changed for a property or aggregation.
 	 *
-	 * @param {string} sName the name of the the name property or aggregation of which the binding is changed
+	 * @param {string} sName The name of the property or aggregation of which the binding is changed
 	 * @param {string} sMutation "prepared", "ready", "removed"
 	 * @param {object} oBindingInfo the binding info
 	 * @param {string} sMemberType 'aggregation' or 'property'

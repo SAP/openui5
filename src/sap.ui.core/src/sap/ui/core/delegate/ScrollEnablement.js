@@ -12,6 +12,7 @@
 sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/Object',
+	'sap/ui/core/IntervalTrigger',
 	'sap/ui/core/ResizeHandler',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes"
@@ -19,6 +20,7 @@ sap.ui.define([
 	function(
 		Device,
 		BaseObject,
+		IntervalTrigger,
 		ResizeHandler,
 		jQuery,
 		KeyCodes
@@ -70,6 +72,7 @@ sap.ui.define([
 				this._scrollX = 0;
 				this._scrollY = 0;
 				this._scrollCoef = 0.9; // Approximation coefficient used to mimic page down and page up behaviour when [CTRL] + [RIGHT] and [CTRL] + [LEFT] is used
+				this._iLastMaxScrollTop = 0;
 
 				initDelegateMembers(this);
 
@@ -158,6 +161,23 @@ sap.ui.define([
 				this._fnScrollLoadCallback = fnScrollLoadCallback;
 				this._sScrollLoadDirection = sScrollLoadDirection;
 				return this;
+			},
+
+			/**
+			 * Sets the listener for the custom <code>overflowChange</code> event
+			 *
+			 * Only a single listener can be registered
+			 *
+			 * @param {function} fnCallback
+			 * @ui5-restricted sap.m.GrowingEnablement
+			 * @private
+			 * @since 1.74
+			 */
+			onOverflowChange : function(fnCallback){
+				this._fnOverflowChangeCallback = fnCallback;
+				if (!this._fnOverflowChangeCallback) {
+					this._deregisterOverflowMonitor();
+				}
 			},
 
 			/**
@@ -392,6 +412,7 @@ sap.ui.define([
 					ResizeHandler.deregister(this._sResizeListenerId);
 					this._sResizeListenerId = null;
 				}
+				this._deregisterOverflowMonitor();
 			},
 
 			_setOverflow : function(){
@@ -601,6 +622,7 @@ sap.ui.define([
 					ResizeHandler.deregister(this._sResizeListenerId);
 					this._sResizeListenerId = null;
 				}
+				this._deregisterOverflowMonitor();
 
 				var $Container = this._$Container;
 				if ($Container) {
@@ -610,6 +632,27 @@ sap.ui.define([
 					}
 					$Container.off(); // delete all event handlers
 				}
+			},
+
+			_checkOverflowChange: function(oEvent) {
+				var iMaxScrollTop = this.getMaxScrollTop(),
+				bOverflow = iMaxScrollTop > 0 && this._iLastMaxScrollTop === 0,
+				bUnderflow = iMaxScrollTop === 0 && this._iLastMaxScrollTop > 0,
+				bOverflowChange = bOverflow || bUnderflow;
+
+				if (bOverflowChange) {
+					this._fnOverflowChangeCallback(bOverflow, iMaxScrollTop);
+				}
+
+				this._iLastMaxScrollTop = iMaxScrollTop;
+			},
+
+			_registerOverflowMonitor: function() {
+				IntervalTrigger.addListener(this._checkOverflowChange, this);
+			},
+
+			_deregisterOverflowMonitor: function() {
+				IntervalTrigger.removeListener(this._checkOverflowChange, this);
 			},
 
 			onAfterRendering: function() {
@@ -633,6 +676,10 @@ sap.ui.define([
 
 					// element may be hidden and have height 0
 					this._sResizeListenerId = ResizeHandler.register($Container[0], _fnRefresh);
+				}
+
+				if (this._fnOverflowChangeCallback) {
+					window.requestAnimationFrame(this._registerOverflowMonitor.bind(this));
 				}
 
 				//

@@ -23,7 +23,6 @@ sap.ui.define([
 
 		init : function() {
 			this._bShowAdaptButton = this.getComponentData().showAdaptButton ? this.getComponentData().showAdaptButton : false;
-			this.FakeLrepConnectorStorage = this.getComponentData().useSessionStorage ? FakeLrepConnectorSessionStorage : FakeLrepConnectorLocalStorage;
 			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
 		},
 
@@ -36,8 +35,6 @@ sap.ui.define([
 			SmartLinkUtil.mockUShellServices();
 
 			// app specific setup
-			this._createFakeLrep();
-
 			var oApp = new sap.m.App({
 				id : this.createId("app"),
 				customData : [new CustomData({
@@ -64,17 +61,6 @@ sap.ui.define([
 			oApp.addPage(oPage);
 
 			return oApp;
-		},
-
-		/**
-		 * Create the FakeLrep with localStorage
-		 * @private
-		 */
-		_createFakeLrep: function () {
-			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
-				this.FakeLrepConnectorStorage.enableFakeConnector();
-			}
 		}
-
 	});
 });

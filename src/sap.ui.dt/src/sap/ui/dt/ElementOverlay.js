@@ -197,29 +197,24 @@ function (
 		}.bind(this));
 	};
 
-	ElementOverlay.prototype._initMutationObserver = function () {
-		if (this.isRoot()) {
-			this._subscribeToMutationObserver();
-		}
-
-		this.attachEvent('isRootChanged', function (oEvent) {
-			if (oEvent.getParameter('value')) {
-				this._subscribeToMutationObserver();
-			} else {
-				this._unsubscribeFromMutationObserver();
-			}
-		}, this);
+	ElementOverlay.prototype._onRootChanged = function (oEvent) {
+		var bRootChangedValue = oEvent.getParameter('value');
+		this._subscribeToMutationObserver(bRootChangedValue);
 	};
 
-	ElementOverlay.prototype._subscribeToMutationObserver = function () {
+	ElementOverlay.prototype._initMutationObserver = function () {
+		this._subscribeToMutationObserver(this.isRoot());
+		this.attachEvent('isRootChanged', this._onRootChanged, this);
+	};
+
+	ElementOverlay.prototype._subscribeToMutationObserver = function (bIsRoot) {
 		var oMutationObserver = Overlay.getMutationObserver();
 		var $DomRef = this.getAssociatedDomRef();
-		this._sObservableNodeId = $DomRef && $DomRef.get(0).id;
+		this._sObservableNodeId = $DomRef && $DomRef.get(0) && $DomRef.get(0).id;
 
 		if (this._sObservableNodeId) {
-			oMutationObserver.addToWhiteList(this._sObservableNodeId);
-			oMutationObserver.attachDomChanged(this._onDomChanged, this);
-		} else {
+			oMutationObserver.registerHandler(this._sObservableNodeId, this._domChangedCallback.bind(this), bIsRoot);
+		} else if (bIsRoot) {
 			throw Util.createError(
 				'ElementOverlay#_subscribeToMutationObserver',
 				'Please provide a root control with proper domRef and id to ensure that DesignTime is working properly'
@@ -230,8 +225,7 @@ function (
 	ElementOverlay.prototype._unsubscribeFromMutationObserver = function () {
 		if (this._sObservableNodeId) {
 			var oMutationObserver = Overlay.getMutationObserver();
-			oMutationObserver.removeFromWhiteList(this._sObservableNodeId);
-			oMutationObserver.detachDomChanged(this._onDomChanged, this);
+			oMutationObserver.deregisterHandler(this._sObservableNodeId);
 			delete this._sObservableNodeId;
 		}
 	};
@@ -286,9 +280,7 @@ function (
 	 * @protected
 	 */
 	ElementOverlay.prototype.exit = function () {
-		if (this.isRoot()) {
-			this._unsubscribeFromMutationObserver();
-		}
+		this._unsubscribeFromMutationObserver();
 		this._destroyControlObserver();
 
 		if (this._iApplyStylesRequest) {
@@ -738,23 +730,19 @@ function (
 	 * @private
 	 */
 	ElementOverlay.prototype._onElementModified = function (oEvent) {
+		if (oEvent.getParameters().type === "afterRendering") {
+			this._subscribeToMutationObserver(this.isRoot());
+		}
 		this.fireElementModified(oEvent.getParameters());
 	};
 
 	/**
-	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
-	ElementOverlay.prototype._onDomChanged = function () {
-		// FIXME: instead of checking isReady subscribe on DOM changes when overlay is ready
-		if (this.isReady() && this.isRoot()) {
-			if (this._iApplyStylesRequest) {
-				window.cancelAnimationFrame(this._iApplyStylesRequest);
-			}
-			this._iApplyStylesRequest = window.requestAnimationFrame(function () {
-				this.applyStyles();
-				delete this._iApplyStylesRequest;
-			}.bind(this));
+	ElementOverlay.prototype._domChangedCallback = function (mParameters) {
+		mParameters.targetOverlay = this;
+		if (this.isReady()) {
+			this.fireApplyStylesRequired(mParameters);
 		}
 	};
 

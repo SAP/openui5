@@ -22,7 +22,18 @@ sap.ui.define([
 	 *     }
 	 * }
 	 * </code></pre>
-	 *
+	 * @sine 1.74, you can use regular expressions in declarative syntax:
+	 * <code><pre>{
+	 *     properties: {
+	 *         propertyName: {
+	 *             regex: {
+	 *                 source: "propertyValue$",
+	 *                 flags: "ig"
+	 *             }
+	 *         }
+	 *     }
+	 * }
+	 * </code></pre>
 	 * @param {object} oProperties the object with the properties to be checked. Example:
 	 * <pre>
 	 * // Would filter for an enabled control with the text "Accept".
@@ -56,6 +67,10 @@ sap.ui.define([
 				// propertyValue is set in parent frame (on matcher instantiation), so match it against the parent's RegExp constructor
 				if (oPropertyValue instanceof RegExp) {
 					bIsMatching = oPropertyValue.test(vCurrentPropertyValue);
+				} else if (jQueryDOM.isPlainObject(oPropertyValue) && oPropertyValue.regex && oPropertyValue.regex.source) {
+					// declarative syntax
+					var oRegExp = new RegExp(oPropertyValue.regex.source, oPropertyValue.regex.flags);
+					bIsMatching = oRegExp.test(vCurrentPropertyValue);
 				} else {
 					bIsMatching = vCurrentPropertyValue === oPropertyValue;
 				}

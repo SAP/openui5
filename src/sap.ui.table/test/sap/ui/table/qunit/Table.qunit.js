@@ -251,12 +251,6 @@ sap.ui.define([
 				title: "TABLEHEADER",
 				footer: "Footer",
 				selectionMode: SelectionMode.Single,
-				contextMenu: new MenuM({
-					items: [
-						new MenuItemM({text: "{lastName}"}),
-						new MenuItemM({text: "{name}"})
-					]
-				}),
 				toolbar: new Toolbar({
 					content: [
 						new Button({
@@ -269,6 +263,50 @@ sap.ui.define([
 		afterEach: function() {
 			destroyTable();
 		}
+	});
+
+	QUnit.test("bindRows, unbindRows", function(assert) {
+		var oBindingInfo = oTable.getBindingInfo("rows");
+		var oBindSpy = sinon.spy(oTable, "_bindRows");
+		var oUnbindSpy = sinon.spy(oTable, "_unbindRows");
+		var oChangeSpy = this.spy();
+		var oDataRequestedSpy = this.spy();
+		var oDataReceivedSpy = this.spy();
+
+		oTable.unbindAggregation("rows");
+		assert.ok(oUnbindSpy.calledOnce, "_unbindRows is called once");
+		oTable.bindAggregation("rows", oBindingInfo);
+		assert.ok(oBindSpy.calledOnce, "_bindRows is called once");
+		assert.ok(oBindSpy.calledWithExactly(oBindingInfo), "_bindRows is called with the correct parameter");
+
+		oBindSpy.reset();
+		oUnbindSpy.reset();
+
+		oTable.unbindRows();
+		assert.ok(oUnbindSpy.calledOnce, "_unbindRows is called once");
+		oBindingInfo.events = {
+			change: oChangeSpy,
+			dataRequested: oDataRequestedSpy,
+			dataReceived: oDataReceivedSpy
+		};
+		oTable.bindRows(oBindingInfo);
+		assert.ok(oBindSpy.calledOnce, "_bindRows is called once");
+		assert.ok(oBindSpy.calledWithExactly(oBindingInfo), "_bindRows is called with the correct parameter");
+
+		oChangeSpy.reset();
+		var oBinding = oTable.getBinding("rows");
+		oBinding.fireEvent("change");
+		oBinding.fireEvent("dataRequested");
+		oBinding.fireEvent("dataReceived");
+
+		assert.ok(oChangeSpy.calledOnce, "The change event listener was called once");
+		assert.ok(oDataRequestedSpy.calledOnce, "The dataRequested event listener was called once");
+		assert.ok(oDataReceivedSpy.calledOnce, "The dataReceived event listener was called once");
+
+		oTable._bRowsBeingBound = true;
+		oUnbindSpy.reset();
+		oTable.unbindAggregation("rows");
+		assert.ok(!oUnbindSpy.called, "_unbindRows is not called");
 	});
 
 	QUnit.test("Initialize skip propagation", function(assert) {
@@ -291,7 +329,6 @@ sap.ui.define([
 		assert.equal(oTable.$().find(".sapUiTableCtrl tr.sapUiTableTr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(oTable.$().find(".sapUiTableRowSelectionCell").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(oTable.getFirstVisibleRow(), 5, "First Visible Row correct!");
-		assert.ok(oTable.getContextMenu() instanceof MenuM, "Context menu created as specified by the application");
 	});
 
 	QUnit.test("Filter", function(assert) {
@@ -1106,7 +1143,7 @@ sap.ui.define([
 			var mChanges = {changes: {}};
 
 			oTable._bRtlMode = null;
-			oTable._oCellContextMenu = new Control();
+			TableUtils.Menu.openContextMenu(oTable, getCell(0, 0, null, null, oTable));
 			oTable.getColumns()[0].getMenu()._bInvalidated = false;
 			oInvalidateSpy.reset();
 
@@ -1712,7 +1749,7 @@ sap.ui.define([
 			assert.equal(oVSb.scrollTop, oTable._getBaseRowHeight(), "ScrollTop can be set and read.");
 			assert.equal(oHSb.scrollLeft, 5, "ScrollLeft can be set and read.");
 			done();
-		}, 100);
+		}, 500);
 	});
 
 	QUnit.module("Fixed rows and columns", {
@@ -2378,7 +2415,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind rows using bindRows method", function(assert) {
-		var spy = this.spy(oTable, "destroyRows");
+		var oDestroyRows = this.spy(oTable, "destroyRows");
 
 		// bind rows again, binding could be resolved because model is set
 		oTable.bindRows(oTable.getBindingInfo("rows"));
@@ -2411,10 +2448,11 @@ sap.ui.define([
 		this.assertBindingInfo(assert, "BindingInfo", oTable.getBindingInfo("rows"), oBindingInfo);
 
 		// destroy rows must not be called
-		assert.ok(spy.notCalled, "destroyRows was not called");
+		assert.ok(oDestroyRows.notCalled, "destroyRows was not called");
 	});
 
 	QUnit.test("Bind rows using bindRows method - legacy API", function(assert) {
+		var oInnerBindRows = this.spy(oTable, "_bindRows");
 		var oSorter = new Sorter({
 			path: "modelData>money",
 			descending: true
@@ -2430,27 +2468,34 @@ sap.ui.define([
 
 		// (sPath)
 		oTable.bindRows("/modelData");
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
 		this.assertBindingInfo(assert, "(sPath)", oTable.getBindingInfo("rows"), {
 			path: "/modelData"
 		});
+		oInnerBindRows.reset();
 
 		// (sPath, oSorter)
 		oTable.bindRows("/modelData", oSorter);
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
 		this.assertBindingInfo(assert, "(sPath, oSorter)", oTable.getBindingInfo("rows"), {
 			path: "/modelData",
 			sorter: oSorter
 		});
+		oInnerBindRows.reset();
 
 		// (sPath, oSorter, aFilters)
 		oTable.bindRows("/modelData", oSorter, [oFilter]);
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
 		this.assertBindingInfo(assert, "(sPath, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
 			path: "/modelData",
 			sorter: oSorter,
 			filters: [oFilter]
 		});
+		oInnerBindRows.reset();
 
 		// (sPath, vTemplate, oSorter, aFilters)
 		oTable.bindRows("/modelData", oTemplate, oSorter, [oFilter]);
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
 		this.assertBindingInfo(assert, "(sPath, vTemplate, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
 			path: "/modelData",
 			sorter: oSorter,
@@ -2460,7 +2505,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind rows using the constructor", function(assert) {
-		var spy = this.spy(Table.prototype, "bindRows");
+		var oInnerBindRows = this.spy(Table.prototype, "_bindRows");
+
 		/*eslint-disable no-new */
 		new Table({
 			rows: {path: "/modelData"},
@@ -2468,7 +2514,9 @@ sap.ui.define([
 		});
 		/*eslint-enable no-new */
 
-		assert.ok(spy.calledOnce, "bindRows was called");
+		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
+
+		oInnerBindRows.restore();
 	});
 
 	QUnit.test("Binding events", function(assert) {
@@ -4133,22 +4181,6 @@ sap.ui.define([
 		assert.ok(fnInvalidate.called, "invalidate() called from onThemeChanged()");
 	});
 
-	QUnit.test("test _updateTableContent and cleanupTableRowForGrouping after _rowsUpdated", function(assert) {
-		var fnCleanupTableRowForGrouping = sinon.spy(TableUtils.Grouping, "cleanupTableRowForGrouping");
-		var fnUpdateTableContent = sinon.spy(oTable, "_updateTableContent");
-
-		oTable._mode = "Group"; // return true for TableUtils.Grouping.isGroupMode(oTable)
-		oTable.setEnableGrouping(true); // for testing _updateTableContent()
-		oTable.setGroupBy(oTable.getColumns()[5]); // Enabling grouping on "gender" for enhancing row binding
-		oTable._fireRowsUpdated();
-		assert.ok(fnUpdateTableContent.called);
-
-		oTable.unbindRows();
-		oTable._fireRowsUpdated();
-		assert.ok(fnCleanupTableRowForGrouping.notCalled,
-			"Row binding was destroyed, hence no rows exist for which cleanupTableRowForGrouping needs to be called");
-	});
-
 	QUnit.test("test _enableTextSelection function", function(assert) {
 		oTable._enableTextSelection(oTable.getDomRef());
 		assert.ok(oTable.getDomRef().hasAttribute("unselectable", "off"), "_enableTextSelection is on");
@@ -4972,12 +5004,12 @@ sap.ui.define([
 	QUnit.test("Applied extensions", function(assert) {
 		var aActualExtensions = [];
 		var aExpectedExtensions = [
-			"sap.ui.table.TablePointerExtension",
-			"sap.ui.table.TableScrollExtension",
-			"sap.ui.table.TableKeyboardExtension",
-			"sap.ui.table.TableAccRenderExtension",
-			"sap.ui.table.TableAccExtension",
-			"sap.ui.table.TableDragAndDropExtension"
+			"sap.ui.table.extensions.Pointer",
+			"sap.ui.table.extensions.Scrolling",
+			"sap.ui.table.extensions.Keyboard",
+			"sap.ui.table.extensions.AccessibilityRender",
+			"sap.ui.table.extensions.Accessibility",
+			"sap.ui.table.extensions.DragAndDrop"
 		];
 
 		oTable._aExtensions.forEach(function(oExtension) {
@@ -5009,26 +5041,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("Getter functions", function(assert) {
-		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for the PointerExtension exists");
-		assert.ok(typeof oTable._getScrollExtension === "function", "Getter for the ScrollExtension exists");
+		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for the pointer extension exists");
+		assert.ok(typeof oTable._getScrollExtension === "function", "Getter for the scroll extension exists");
 		assert.ok(typeof oTable._getKeyboardExtension === "function", "Getter for the KeyboardExtension exists");
-		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for the AccRenderExtension exists");
-		assert.ok(typeof oTable._getAccExtension === "function", "Getter for the AccExtension exists");
+		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for the accessibility render extension exists");
+		assert.ok(typeof oTable._getAccExtension === "function", "Getter for the accessibility extension exists");
 	});
 
-	QUnit.test("Add SyncExtension", function(assert) {
+	QUnit.test("Add Synchronization extension", function(assert) {
 		var done = assert.async();
 
 		oTable._enableSynchronization().then(function(oSyncInterface) {
 			var bSyncExtensionIsAdded = false;
 			oTable._aExtensions.forEach(function(oExtension) {
-				if (oExtension.getMetadata().getName() === "sap.ui.table.TableSyncExtension") {
+				if (oExtension.getMetadata().getName() === "sap.ui.table.extensions.Synchronization") {
 					bSyncExtensionIsAdded = true;
 				}
 			});
 
-			assert.ok(bSyncExtensionIsAdded, "The SyncExtension is added");
-			assert.ok(typeof oTable._getSyncExtension === "function", "Getter for the SyncExtension exists");
+			assert.ok(bSyncExtensionIsAdded, "The synchronization extension is added");
+			assert.ok(typeof oTable._getSyncExtension === "function", "Getter for the synchronization extension exists");
 			if (oTable._getSyncExtension) {
 				assert.equal(oSyncInterface, oTable._getSyncExtension().getInterface(), "The Promise resolved with the synchronization interface");
 			}

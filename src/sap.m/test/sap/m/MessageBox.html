@@ -50,11 +50,11 @@
 			aItems.push(item);
 		});
 
-		var oSelect = sap.m.Select("selectType", {
+		var oSelect = new sap.m.Select("selectType", {
 			items: aItems
 		});
 
-		var oSwitch = sap.m.Switch({
+		var oSwitch = new sap.m.Switch({
 			customTextOn: "CPT",
 			customTextOff: "CZY",
 			change: function (ev) {
@@ -217,6 +217,24 @@
 		}));
 
 		oVL.addContent(new sap.m.Text("text4", {
+			text: "\n Responsive Padding support (Fiori 3 themes only)"
+		}));
+
+		oVL.addContent(new sap.m.Button("buttonResponsivePadding", {
+			text: "Responsive Padding",
+			width: "270px",
+			press: function () {
+				sap.m.MessageBox.show(sLongText, {
+					id: "messageBoxId",
+					icon: sap.m.MessageBox.Icon.SUCCESS,
+					title: "MessageBox title",
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					styleClass: "sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Text("text5", {
 					text: "\n Deprecated syntax"
 				})
 		);
@@ -327,7 +345,7 @@
 			}
 		}));
 
-		oVL.addContent(new sap.m.Text("text5", {
+		oVL.addContent(new sap.m.Text("text6", {
 			text: "\n Simply usage"
 			})
 		);

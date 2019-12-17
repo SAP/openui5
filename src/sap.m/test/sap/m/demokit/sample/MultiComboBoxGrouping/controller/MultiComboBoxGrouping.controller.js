@@ -1,8 +1,8 @@
 sap.ui.define([
-		'sap/m/GroupHeaderListItem',
+		'sap/ui/core/SeparatorItem',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(GroupHeaderListItem, Controller, JSONModel) {
+	], function(SeparatorItem, Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.MultiComboBoxGrouping.controller.MultiComboBoxGrouping", {
@@ -13,9 +13,8 @@ sap.ui.define([
 		},
 
 		getGroupHeader: function (oGroup) {
-			return new GroupHeaderListItem( {
-				title: oGroup.key,
-				upperCase: false
+			return new SeparatorItem( {
+				text: oGroup.key
 			});
 		}
 	});

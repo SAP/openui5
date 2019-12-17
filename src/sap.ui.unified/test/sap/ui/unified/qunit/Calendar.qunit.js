@@ -573,18 +573,45 @@ sap.ui.define([
 
 	QUnit.module("initialize");
 
+	QUnit.test("SecondMonthHeader is invisible", function(assert) {
+		var oCal = new Calendar();
+
+		// Act
+		// Assert
+		assert.notOk(oCal.getAggregation("secondMonthHeader").getVisible(), "secondMonthHeader aggregation is not visible");
+	});
+
 	QUnit.test("YearRangePicker aggregation is instantiated correctly", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
-			}).placeAt("qunit-fixture");
+				primaryCalendarType: sap.ui.core.CalendarType.Islamic
+			}),
+			oYearRangePicker = oCal.getAggregation("yearRangePicker");
 
-		sap.ui.getCore().applyChanges();
 		// Act
 		// Assert
-		assert.strictEqual(oCal.getAggregation("yearRangePicker").getPrimaryCalendarType(), oCal.getPrimaryCalendarType(),
+		assert.strictEqual(oYearRangePicker.getPrimaryCalendarType(), oCal.getPrimaryCalendarType(),
 			"YearRangePicker instance has the same primary calendar type as the calendar instance");
 
+		// Clean
+		oCal.destroy();
+	});
+
+	QUnit.test("getSelectedDates returns the right values", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+			}),
+			oMonthPicker = oCal.getAggregation("monthPicker"),
+			aSelectedDays;
+
+		// Act
+		oCal.addSelectedDate(new DateRange(new Date(2019,1,1), new Date(2021,1,1)));
+		aSelectedDays  = oMonthPicker.getSelectedDates();
+
+		// Assert
+		assert.deepEqual(aSelectedDays, oCal.getSelectedDates(),
+			"MonthPicker has selected dates control origin set");
 		// Clean
 		oCal.destroy();
 	});
@@ -1934,10 +1961,19 @@ QUnit.module("Misc");
 		// arrange
 		var sYear = "2018",
 			sExpectedValue = sYear + ". " + sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_YEAR_PICKER_OPEN_HINT"),
-			oHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy(), _setTextButton4: this.spy(), _setAriaLabelButton4: this.spy() },
-			oSecondMonthHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy() },
+			oHeader = {
+				setTextButton2: this.spy(),
+				setAriaLabelButton2: this.spy(),
+				_setTextButton4: this.spy(),
+				_setAriaLabelButton4: this.spy()
+			},
+			oSecondMonthHeader = {
+				setTextButton2: this.spy(),
+				setAriaLabelButton2: this.spy()
+			},
 			oCalendar = new Calendar(),
 			oGetAggregationStub = this.stub(oCalendar, "getAggregation");
+
 		oGetAggregationStub.withArgs("header").returns(oHeader);
 		oGetAggregationStub.withArgs("secondMonthHeader").returns(oSecondMonthHeader);
 

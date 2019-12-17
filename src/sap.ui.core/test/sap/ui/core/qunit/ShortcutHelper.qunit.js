@@ -84,7 +84,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("parseShortcut", function(assert) {
-		assert.expect(1);
+		assert.expect(3);
 		var oExpectedSpec = {
 			key: 's',
 			ctrlKey: false,
@@ -95,15 +95,39 @@ sap.ui.define([
 		};
 
 		var oParsedSpec = ShortcutHelper.parseShortcut("Shift+Alt+S");
-		assert.deepEqual(oParsedSpec, oExpectedSpec, "Shortcut partsed sucessfully");
+		assert.deepEqual(oParsedSpec, oExpectedSpec, "Shortcut parsed sucessfully");
+
+		var oExpectedSpecSpace = {
+			key: ' ',
+			ctrlKey: false,
+			ctrlRequested: false,
+			altKey: false,
+			shiftKey: true,
+			metaKey: false
+		};
+
+		oParsedSpec = ShortcutHelper.parseShortcut("Shift+Space");
+		assert.deepEqual(oParsedSpec, oExpectedSpecSpace, "Shortcut with 'Space' parsed sucessfully");
+
+		var oExpectedSpecPlus = {
+			key: '+',
+			ctrlKey: false,
+			ctrlRequested: false,
+			altKey: false,
+			shiftKey: true,
+			metaKey: false
+		};
+
+		oParsedSpec = ShortcutHelper.parseShortcut("Shift+Plus");
+		assert.deepEqual(oParsedSpec, oExpectedSpecPlus, "Shortcut with 'Plus' parsed sucessfully");
 	});
 
 	QUnit.test("translateRegisteredKeyToStandard", function(assert) {
 		assert.expect(2);
 
-		var sKey = ShortcutHelper.translateRegisteredKeyToStandard("Space");
+		var sKey = ShortcutHelper.translateRegisteredKeyToStandard("space");
 		assert.strictEqual(sKey, " ", "key translated correctly");
-		sKey = ShortcutHelper.translateRegisteredKeyToStandard("Plus");
+		sKey = ShortcutHelper.translateRegisteredKeyToStandard("plus");
 		assert.strictEqual(sKey, "+", "key translated correctly");
 	});
 
@@ -135,8 +159,9 @@ sap.ui.define([
 		assert.equal(undefined, ShortcutHelper.validateShortcutString("CTRL+ALT+SHIFT+s"), "Shortcut valid");
 	});
 
+	// forbidden shift and symbols combinations
 	[".", ",", "-", "tab", "plus", "=", "*", "/"].forEach(function(sKey) {
-		QUnit.test("validateKeyCombination for key: '" + sKey + "'", function(assert) {
+		QUnit.test("validateKeyCombination for shift + '" + sKey + "'", function(assert) {
 			assert.expect(1);
 			var oSpec = ShortcutHelper.getNormalizedShortcutSpec("shift+" + sKey);
 			assert.throws(
@@ -148,11 +173,40 @@ sap.ui.define([
 		});
 	});
 
+	// other forbidden shift combinations
 	["s", "space", "h", "e", "7", "q", "M"].forEach(function(sKey) {
-		QUnit.test("validateKeyCombination for key: '" + sKey + "'", function(assert) {
+		QUnit.test("validateKeyCombination for shift + '" + sKey + "'", function(assert) {
 			assert.expect(1);
 			var oSpec = ShortcutHelper.getNormalizedShortcutSpec("shift+" + sKey);
 			assert.equal(undefined, ShortcutHelper.validateKeyCombination(oSpec),"Shortcut validation ok");
+		});
+	});
+
+	// forbidden 'ctrl' and 'a-z' combinations, e.g. ctrl+w (close tab in Chrome)
+	["l", "n", "q", "t", "w"].forEach(function(sKey) {
+		QUnit.test("validateKeyCombination for ctrl + '" + sKey + "'", function(assert) {
+			assert.expect(1);
+			var oSpec = ShortcutHelper.getNormalizedShortcutSpec("ctrl+" + sKey);
+			assert.throws(
+				function() {
+					ShortcutHelper.validateKeyCombination(oSpec);
+				},
+				"validation failed"
+			);
+		});
+	});
+
+	// forbidden 'ctrl' and symbol combinations, e.g. ctrl+- (zoom out)
+	["-", "plus", "tab", "0"].forEach(function(sKey) {
+		QUnit.test("validateKeyCombination for ctrl + '" + sKey + "'", function(assert) {
+			assert.expect(1);
+			var oSpec = ShortcutHelper.getNormalizedShortcutSpec("ctrl+" + sKey);
+			assert.throws(
+				function() {
+					ShortcutHelper.validateKeyCombination(oSpec);
+				},
+				"validation failed"
+			);
 		});
 	});
 

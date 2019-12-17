@@ -35,7 +35,7 @@
 			<p>
 				<b>Consumption in a XML View</b>
 			</p>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./mycardbundle/manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;
@@ -43,7 +43,7 @@
 			<p>
 				<b>Consumption in JS</b>
 			</p>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-js">
 var oCard = new sap.ui.integration.widgets.Card();
 oCard.setManifest("./mycardbundle/manifest.json");
 someContainer.addContent(oCard);
@@ -56,7 +56,7 @@ someContainer.addContent(oCard);
 			<p>
 				NOTE: For the example below the manifest object is saved inside an unnamed model which is then used with the standard UI5 binding syntax.
 			</p>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="{/manifestObject}" baseUrl="./mycardbundle/" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;
@@ -64,7 +64,7 @@ someContainer.addContent(oCard);
 			<p>
 				<b>Consumption in JS</b>
 			</p>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-js">
 var oManifest = {
 	"sap.app": {
 		"i18n": "i18n/i18n.properties",
@@ -107,7 +107,7 @@ someContainer.addContent(oCard);
 				<li>Set a theme. The recommended one is "sap_fiori_3"</li>
 			</ul>
 		</p>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-xml">
 &lt;script src="https://ui5.sap.com/resources/sap-ui-integration.js"
 	id="sap-ui-bootstrap"
 	data-sap-ui-theme="sap_fiori_3"&gt;
@@ -115,14 +115,14 @@ someContainer.addContent(oCard);
 </pre>
 
 		<h2>Using manifest URL</h2>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-xml">
 &lt;body&gt;
 	&lt;ui-integration-card manifest="./some/location/my/card/manifest.json"&gt;&lt;/ui-integration-card&gt;
 &lt;/body&gt;
 </pre>
 
 		<h2>Using manifest object and base URL</h2>
-<pre class="prettyprint">
+<pre class="prettyprint  lang-js">
 &lt;body&gt;
 	&lt;ui-integration-card
 		base-url='./some/location/my/card/'

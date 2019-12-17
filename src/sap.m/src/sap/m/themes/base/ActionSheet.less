@@ -3,7 +3,8 @@
 /* Base theme                         */
 /* ================================== */
 
-@_sap_m_Popover_Scroll_Width_Buffer: 20px; /* Buffer width for the scroll bar */
+/* Buffer width for the scroll bar */
+@_sap_m_Popover_Scroll_Width_Buffer: 20px;
 
 .sapMActionSheetDialog.sapMDialog {
 	-webkit-transform: translate(-50%, 0);
@@ -113,17 +114,6 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog .sapMBar.sapMHeade
 	width: 100%;
 }
 
-.sapMActionSheetPopover.sapMPopover {
-	.sapMPopoverCont {
-		padding: 0.25rem 0.5rem;
-		max-height: calc(~"100% - 0.5rem");
-	}
-
-	&.sapMPopoverVerticalScrollIncluded .sapMPopoverCont {
-		padding: 0.25rem calc(~'0.5rem + ' @_sap_m_Popover_Scroll_Width_Buffer) 0.25rem 0.5rem;
-	}
-}
-
 .sapUiSizeCompact {
 	.sapMActionSheetPopover.sapMPopover  .sapMPopoverCont {
 		padding: 0.1875rem 0.375rem;
@@ -133,6 +123,16 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog .sapMBar.sapMHeade
 	// margin is applied insted of icon, when icon is not used
 	.sapMActionSheetMixedButtons .sapMActionSheetButtonNoIcon .sapMBtnContent {
 		margin-left: 1.4375rem;
+	}
+}
+
+.sapMActionSheetPopover.sapMPopover {
+	.sapMPopoverCont {
+		padding: 0.25rem 0.5rem;
+		max-height: calc(~"100% - 0.5rem");
+	}
+	&.sapMPopoverVerticalScrollIncluded .sapMPopoverCont {
+		padding: 0.25rem calc(~'0.5rem + ' @_sap_m_Popover_Scroll_Width_Buffer) 0.25rem 0.5rem;
 	}
 }
 

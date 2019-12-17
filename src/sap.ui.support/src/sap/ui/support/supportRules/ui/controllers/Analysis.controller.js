@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/Label",
 	"sap/m/MessageToast",
-	"sap/ui/support/supportRules/WindowCommunicationBus",
+	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
 	"sap/ui/support/supportRules/RuleSerializer",

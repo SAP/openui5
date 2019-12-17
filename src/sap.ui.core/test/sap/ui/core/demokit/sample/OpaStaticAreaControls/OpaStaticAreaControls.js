@@ -5,11 +5,10 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/BindingPath"
-], function (Opa5, opaTest, $, Press, Properties, BindingPath) {
+], function (Opa5, opaTest, Press, Properties, BindingPath) {
 	"use strict";
 
 	QUnit.module("Message Toast");
@@ -35,7 +34,7 @@ sap.ui.require([
 		Then.waitFor({
 			// Locate the message toast using its class name in a jQuery function
 			check: function () {
-				return $(".sapMMessageToast");
+				return Opa5.getJQuery()(".sapMMessageToast").length > 0;
 			},
 			success: function () {
 				Opa5.assert.ok(true, "The message toast was found");

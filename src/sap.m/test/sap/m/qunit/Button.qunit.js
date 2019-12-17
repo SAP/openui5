@@ -510,6 +510,30 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	// BCP: 0020751294 0000677825 2019
+	QUnit.test("Press event fires once", function(assert) {
+		// arrange
+		var pressSpy = this.spy(),
+			oTouchEndEvent = { setMarked: function() { }, originalEvent: { buttons: 0, type: "mouseup" }, target: { id: "btn1-BDI-content" } },
+			oTapEvent = { setMarked: function() { } },
+			oButton = new Button("btn1", {
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oButton._bRenderActive = true; //simulate pressed state
+
+		// act
+		oButton.ontouchend(oTouchEndEvent);
+		oButton.ontap(oTapEvent);
+
+		// assert
+		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
+
+		// clean
+		oButton.destroy();
+	});
+
 	// check if we have reference added to the text content of the button
 	// so it can be read otherwise it causes the issue reported in BCP: 1680223321
 	QUnit.test("AriaLabeledBy when the Button is associated with Label and the button has text", function(assert) {
@@ -909,6 +933,100 @@ sap.ui.define([
 		assert.ok(!spyActivate.called, "_activeButton wasn't called");
 
 		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("Types Negative, Critical, Success, Neutral implied icon is applied", function() {
+		// arrange
+		var oButton = new sap.m.Button({
+			text: "button"
+		});
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oButton.getIcon(), "still no icon");
+
+		// act
+		oButton.setType(ButtonType.Negative);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-error").content,
+			"icon is right"
+		);
+
+		// act
+		oButton.setType(ButtonType.Critical);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-warning").content,
+			"icon is right"
+		);
+
+		// act
+		oButton.setType(ButtonType.Success);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-success").content,
+			"icon is right"
+		);
+
+		// act
+		oButton.setType(ButtonType.Neutral);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-information").content,
+			"icon is right"
+		);
+
+		// clean
+		oButton.destroy();
+	});
+
+	QUnit.test("Icon is preferred over the type's implied icon", function() {
+		// arrange
+		var oButton = new sap.m.Button({
+			text: "button",
+			icon: "sap-icon://message-information"
+		});
+		oButton.placeAt("qunit-fixture");
+
+		// act
+		oButton.setType(ButtonType.Negative);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oButton.getIcon(), "sap-icon://message-information", "the icon property is not touched");
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-information").content,
+			"icon is preferred over the type's implied icon"
+		);
+
+		// act
+		oButton.setIcon(null);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(
+			oButton.$("img").attr("data-sap-ui-icon-content"),
+			IconPool.getIconInfo("sap-icon://message-error").content,
+			"when icon is removed, type's implied icon is applied"
+		);
+
+		// clean
 		oButton.destroy();
 	});
 

@@ -15,7 +15,7 @@
 			<grid:GridBoxLayout/>
 		</f:customLayout>
 
-		<f:GridListItem 
+		<f:GridListItem
 			counter="{counter}"
 			highlight="{highlight}">
 			<VBox height="100%">
@@ -44,10 +44,10 @@
 			</grid:GridBasicLayout>
 		</f:customLayout>
 
-		<f:GridListItem 
-			counter="{counter}" 
-			highlight="{highlight}" 
-			unread="{unread}" 
+		<f:GridListItem
+			counter="{counter}"
+			highlight="{highlight}"
+			unread="{unread}"
 			type="{type}"
 			selected="false">
 
@@ -77,10 +77,10 @@
 			</grid:GridBasicLayout>
 		</f:customLayout>
 
-		<f:GridListItem 
-			counter="{counter}" 
-			highlight="{highlight}" 
-			unread="{unread}" 
+		<f:GridListItem
+			counter="{counter}"
+			highlight="{highlight}"
+			unread="{unread}"
 			type="{type}"
 			selected="false">
 
@@ -109,9 +109,9 @@
 			</grid:GridBasicLayout>
 		</f:customLayout>
 
-		<f:GridListItem 
-			counter="{counter}" 
-			highlight="{highlight}" 
+		<f:GridListItem
+			counter="{counter}"
+			highlight="{highlight}"
 			type="{type}"
 			selected="false">
 

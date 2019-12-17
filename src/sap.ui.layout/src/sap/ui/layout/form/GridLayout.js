@@ -110,7 +110,7 @@ sap.ui.define(['sap/ui/layout/library', './FormLayout', './GridLayoutRenderer'],
 			return null;
 		}
 
-		var aFields = oElement.getFields();
+		var aFields = oElement.getFieldsForRendering();
 		var oNewDomRef;
 
 		var iIndex = aFields.length;

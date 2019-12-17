@@ -76,10 +76,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("The router is stopped after calling stop", function(assert) {
+		var oTargetsDetachTitleChangedSpy = sinon.spy(this.oRouter.getTargets(), "detachTitleChanged");
 		this.oRouter.stop();
 
 		assert.equal(this.oRouter.isInitialized(), false, "The router isn't initialized");
 		assert.equal(this.oRouter.isStopped(), true, "The router is stopped");
+		assert.equal(oTargetsDetachTitleChangedSpy.callCount, 1, "detachTitleChanged should be called");
+
+		oTargetsDetachTitleChangedSpy.restore();
 	});
 
 	QUnit.test("The router is neither initialized nor stopped after destroyed", function(assert) {
@@ -926,32 +930,44 @@ sap.ui.define([
 
 		var aHashAndResults = [{
 			hash: "foo/bar",
-			match: true
+			match: true,
+			name: "fixedPattern"
 		}, {
 			hash: "foo/bar1",
-			match: false
+			match: false,
+			name: undefined
 		}, {
 			hash: "foo",
-			match: false
+			match: false,
+			name: undefined
 		}, {
 			hash: "bar/foo",
-			match: true
+			match: true,
+			name: "withParameter"
 		}, {
 			hash: "bar",
-			match: false
+			match: false,
+			name: undefined
 		}, {
 			hash: "bar/a",
-			match: true
+			match: true,
+			name: "withParameter"
 		}, {
 			hash: "bar/a/b",
-			match: false
+			match: false,
+			name: undefined
 		},{
 			hash: "",
-			match: true
+			match: true,
+			name: "emptyPattern"
 		}];
 
+		var oRouteByHash;
 		aHashAndResults.forEach(function (oHashAndResult) {
-			assert.strictEqual(oRouter.match(oHashAndResult.hash), oHashAndResult.match, oHashAndResult + " can" + (oHashAndResult.match ? "" : "'t") + " be matched by the router");
+			assert.strictEqual(oRouter.match(oHashAndResult.hash), oHashAndResult.match, JSON.stringify(oHashAndResult, true) + " can" + (oHashAndResult.match ? "" : "'t") + " be matched by the router");
+
+			oRouteByHash = oRouter.getRouteByHash(oHashAndResult.hash);
+			assert.strictEqual(oRouteByHash ? oRouteByHash._oConfig.name : oRouteByHash, oHashAndResult.name, oHashAndResult.name + " can" + (oHashAndResult.hash ? "" : "'t") + " be matched by the hash");
 		});
 	});
 
@@ -3745,6 +3761,242 @@ sap.ui.define([
 			});
 
 		}.bind(this));
+	});
+
+	QUnit.module("Routing Nested Components", {
+		beforeEach: function() {
+			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
+			this.oTitleChangedSpy = sinon.spy();
+			hasher.setHash("");
+			// ===== parentComponent =====
+			sap.ui.jsview("parentRootView", {
+				createContent : function() {
+					return new Panel(this.createId("shell"));
+				}
+			});
+			sap.ui.jsview("parentView1", {
+				createContent : function() {
+					return new Button(this.createId("button"));
+				}
+			});
+			// ===== nestedComponent1 =====
+			sap.ui.jsview("nestedRootView1", {
+				createContent : function() {
+					return new Panel(this.createId("nestedShell1"));
+				}
+			});
+			sap.ui.jsview("nestedView1", {
+				createContent : function() {
+					return new Button(this.createId("button1"));
+				}
+			});
+			sap.ui.jsview("nestedView2", {
+				createContent : function() {
+					return new Button(this.createId("button2"));
+				}
+			});
+			// ===== nestedComponent2 =====
+			sap.ui.jsview("nestedRootView2", {
+				createContent : function() {
+					return new Panel(this.createId("nestedShell2"));
+				}
+			});
+			sap.ui.jsview("nestedView3", {
+				createContent : function() {
+					return new Button(this.createId("button3"));
+				}
+			});
+			sap.ui.jsview("nestedView4", {
+				createContent : function() {
+					return new Button(this.createId("button4"));
+				}
+			});
+
+			var ParentComponent;
+			ParentComponent = UIComponent.extend("namespace1.ParentComponent", {
+				metadata : {
+					rootView: {
+						viewName: "parentRootView",
+						type: "JS",
+						async: true
+					},
+					routing:  {
+						config: {
+							async: true,
+							controlId: "shell",
+							controlAggregation: "content"
+						},
+						routes: [
+							{
+								pattern: "",
+								name: "home",
+								target: {
+									name: "home",
+									prefix: "child"
+								}
+							},
+							{
+								pattern: "second",
+								name: "second",
+								target: {
+									name: "second",
+									prefix: "child"
+								}
+							},
+							{
+								pattern: "view1",
+								name: "parentView1",
+								target: "parentView1"
+
+							}
+						],
+						targets: {
+							home: {
+								name: "namespace1.ChildComponent",
+								type: "Component",
+								id: "component1",
+								title: "TitleComponent1",
+								options: {
+									manifest: false
+								}
+							},
+							second: {
+								name: "namespace2.ChildComponent",
+								type: "Component",
+								id: "component2",
+								title: "TitleComponent2",
+								options: {
+									manifest: false
+								}
+							},
+							parentView1: {
+								name: "parentView1",
+								title: "TitleParentView1",
+								type: "View",
+								viewType: "JS"
+							}
+						}
+					}
+				}
+			});
+
+			sap.ui.predefine("namespace1/ChildComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+				return UIComponent.extend("namespace1.ChildComponent", {
+					metadata : {
+						rootView: {
+							viewName: "nestedRootView1",
+							type: "JS",
+							async: true
+						},
+						routing:  {
+							config: {
+								async: true,
+								controlAggregation: "content",
+								controlId: "nestedShell1",
+								viewType : "JS",
+								type: "View"
+							},
+							routes: [
+								{
+									pattern: "",
+									name: "nestedView1",
+									target: "nestedView1"
+								},
+								{
+									pattern: "view2",
+									name: "nestedView2",
+									target: "nestedView2"
+								}
+							],
+							targets: {
+								nestedView1: {
+									name: "nestedView1",
+									title: "TitleNestedView1"
+								},
+								nestedView2: {
+									name: "nestedView2",
+									title: "TitleNestedView2"
+								}
+							}
+						}
+					},
+					init : function() {
+						UIComponent.prototype.init.apply(this, arguments);
+						var oRouter = this.getRouter();
+						oRouter.initialize();
+					}
+				});
+			});
+			sap.ui.predefine("namespace2/ChildComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+				return UIComponent.extend("namespace2.ChildComponent", {
+					metadata : {
+						rootView: {
+							viewName: "nestedRootView2",
+							type: "JS",
+							async: true
+						},
+						routing:  {
+							config: {
+								async: true,
+								controlAggregation: "content",
+								controlId: "nestedShell2",
+								viewType : "JS",
+								type: "View"
+							},
+							routes: [
+								{
+									pattern: "",
+									name: "nestedView3",
+									target: "nestedView3"
+								},
+								{
+									pattern: "view2",
+									name: "nestedView4",
+									target: "nestedView4"
+								}
+							],
+							targets: {
+								nestedView3: {
+									name: "nestedView3",
+									title: "TitleNestedView3"
+								},
+								nestedView4: {
+									name: "nestedView4",
+									title: "TitleNestedView4"
+								}
+							}
+						}
+					},
+					init : function() {
+						UIComponent.prototype.init.apply(this, arguments);
+						var oRouter = this.getRouter();
+						oRouter.initialize();
+					}
+				});
+			});
+			this.oParentComponent = new ParentComponent("parent");
+		},
+		afterEach: function() {
+			this.oParentComponent.destroy();
+			this.oEventProviderStub.restore();
+		}
+	});
+
+	QUnit.test("Order of routeMatched events in nested components", function(assert) {
+		var done = assert.async(),
+			oParentRouter = this.oParentComponent.getRouter();
+
+		var oHomeRoute = oParentRouter.getRoute("home");
+		var oHomeRouteMatchedSpy = sinon.spy(oHomeRoute, "_routeMatched");
+		oParentRouter.initialize();
+
+		var oRouterRouteMatchedSpy = sinon.spy(sap.ui.core.routing.Router.prototype, "fireRouteMatched");
+
+		oHomeRouteMatchedSpy.getCall(0).returnValue.then(function() {
+			assert.equal(oRouterRouteMatchedSpy.callCount, 2, "fireRouteMatched should be called twice");
+			assert.strictEqual(oRouterRouteMatchedSpy.getCall(1).thisValue, oParentRouter, "Should be the correct ");
+			done();
+		});
 	});
 
 });

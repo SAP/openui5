@@ -2,6 +2,7 @@ sap.ui.define([
 		"sap/ui/demo/cardExplorer/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/Device",
+		"sap/base/Log",
 		"sap/ui/core/routing/History",
 		"../model/DocumentationNavigationModel",
 		"../model/ExploreNavigationModel",
@@ -9,6 +10,7 @@ sap.ui.define([
 	], function (BaseController,
 				 JSONModel,
 				 Device,
+				 Log,
 				 History,
 				 documentationNavigationModel,
 				 exploreNavigationModel,
@@ -38,12 +40,11 @@ sap.ui.define([
 
 			/**
 			 * @param {Array|string} vKey The key or keys to check in the history.
-			 * @returns {string} The first subkey found in the history.
+			 * @returns {string} The first url hash found in the history.
 			 */
-			_findPreviousSubkey: function (vKey) {
+			_findPreviousRouteHash: function (vKey) {
 				var aKeys = [];
 				var oHistory = History.getInstance();
-
 				if (typeof vKey === "string") {
 					aKeys[0] = vKey;
 				} else {
@@ -53,7 +54,6 @@ sap.ui.define([
 				if (!oHistory.aHistory) {
 					return "";
 				}
-
 				for (var i = oHistory.aHistory.length - 1; i >= 0; i--) {
 					var sHistory = oHistory.aHistory[i];
 
@@ -61,7 +61,7 @@ sap.ui.define([
 						var sKey = aKeys[k];
 
 						if (sHistory.startsWith(sKey + "/")) {
-							return sHistory.substring((sKey + "/").length, sHistory.length);
+							return sHistory;
 						}
 					}
 				}
@@ -70,45 +70,87 @@ sap.ui.define([
 			},
 
 			onTabSelect: function (oEvent) {
-				var item = oEvent.getParameter('item'),
-					key = item.getKey();
+				var oItem = oEvent.getParameter('item'),
+					sTabKey = oItem.getKey(),
+					sRouteHash;
 
-				// TODO implement in generic way
-				switch (key) {
+				switch (sTabKey) {
 					case "exploreSamples":
-						// there is no home page for exploreSamples, so navigate to first example
-						this.getRouter().navTo("exploreSamples", {
-							key: this._findPreviousSubkey(["explore", "exploreOverview"]) || "list"
-						});
-						return;
+						sRouteHash = this._findPreviousRouteHash(["explore", "exploreOverview"]) || "explore/list";
+						break;
 					case "learnDetail":
-						this.getRouter().navTo("learnDetail", {
-							key: this._findPreviousSubkey("learn") || "overview"
-						});
-						return;
+						sRouteHash = this._findPreviousRouteHash("learn") || "learn/overview";
+						break;
 					case "integrate":
-						this.getRouter().navTo("integrate", {
-							key: this._findPreviousSubkey("integrate") || "overview"
-						});
-						return;
+						sRouteHash = this._findPreviousRouteHash("integrate") || "integrate/overview";
+						break;
 					default:
-						this.getRouter().navTo(key);
+						sRouteHash = null;
+						Log.error("Tab was not recognized.");
+						return;
 				}
+
+				this.navToRoute(sRouteHash);
 			},
 
-			onSideNavigationItemSelect: function (oEvent) {
-				var item = oEvent.getParameter('item'),
-					itemConfig = this.getView().getModel().getProperty(item.getBindingContext().getPath());
+			/**
+			 * Finds the target by the route's hash and navigates to it.
+			 * @param {string} sRouteHash For example 'explore/list/numeric'.
+			 */
+			navToRoute: function (sRouteHash) {
+				var aParts = sRouteHash.split("/");
 
-				if (itemConfig.target) {
+				switch (aParts[0]) {
+					case "explore":
+						this.getRouter().navTo("exploreSamples", {
+							key: aParts[1],
+							subSampleKey: aParts[2]
+						});
+						break;
+					case "exploreOverview":
+						this.getRouter().navTo("exploreOverview", {
+							key: aParts[1]
+						});
+						break;
+					case "learn":
+						this.getRouter().navTo("learnDetail", {
+							group: aParts[1] || "overview",
+							key:  aParts[2]
+						});
+						break;
+					case "integrate":
+						this.getRouter().navTo("integrate", {
+							key: aParts[1]
+						});
+						break;
+					default:
+						this.getRouter().navTo(aParts[0]);
+				}
+			},
+			onSideNavigationItemSelect: function (oEvent) {
+				var oItem = oEvent.getParameter("item"),
+					oItemConfig = this.getView().getModel().getProperty(oItem.getBindingContext().getPath()),
+					sGroupKey,
+					sTopicKey;
+				if (oItem.getCustomData()[0].getKey() === "groupItem") {
+					sGroupKey = oItemConfig.key;
+					if (oItemConfig.target === "exploreOverview" || oItemConfig.target === "integrate"){
+							sTopicKey = oItemConfig.key;
+					}
+				} else {
+					sGroupKey = oItem.getParent().getKey();
+					sTopicKey = oItemConfig.key;
+				}
+				if (oItemConfig.target) {
 					this.getRouter().navTo(
-						itemConfig.target,
+						oItemConfig.target,
 						{
-							key: itemConfig.key
+							group: sGroupKey,
+							key: sTopicKey
 						}
 					);
 				} else {
-					this.getRouter().navTo(itemConfig.key);
+					this.getRouter().navTo(oItemConfig.key);
 				}
 			},
 
@@ -126,11 +168,9 @@ sap.ui.define([
 				var routeArgs = oEvent.getParameter("arguments");
 				var routeName = routeConfig.name;
 				var sideNavigation = this.getView().byId('sideNavigation');
-
 				this.switchCurrentModelAndTab(routeName);
-
-				if (routeArgs["key"]) {
-					sideNavigation.setSelectedKey(routeArgs["key"]);
+				if (routeArgs["key"] || routeArgs["group"]) {
+					sideNavigation.setSelectedKey(routeArgs["key"] || routeArgs["group"]);
 				} else if (routeConfig.name !== "default") {
 					sideNavigation.setSelectedKey(routeConfig.name);
 				} else {

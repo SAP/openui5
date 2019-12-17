@@ -1694,13 +1694,14 @@ sap.ui.define([
 			mModelConfigurations[sModelName] = oModelConfig;
 
 		}
-		// add $cmd model
-		if (oManifest.getEntry("/sap.ui5/commands")) {
-			// Model for CommandExecution
+
+		if (oManifest.getEntry("/sap.ui5/commands") || (oComponent && oComponent._getManifestEntry("/sap.ui5/commands", true))) {
+			// add $cmd model for CommandExecution
 			mModelConfigurations["$cmd"] = {
 				type: 'sap.ui.model.json.JSONModel'
 			};
 		}
+
 		return mModelConfigurations;
 	};
 
@@ -2473,7 +2474,9 @@ sap.ui.define([
 			// call flex-hook if given
 			if (typeof Component._fnPreprocessManifest === "function") {
 				try {
-					return Component._fnPreprocessManifest(rawJson);
+					// secure configuration from manipulation
+					var oConfigCopy = jQuery.extend(true, {}, oConfig);
+					return Component._fnPreprocessManifest(rawJson, oConfigCopy);
 				} catch (oError) {
 					// in case the hook itself crashes without 'safely' rejecting, we log the error and reject directly
 					Log.error("Failed to execute flexibility hook for manifest preprocessing.", oError);
@@ -3271,7 +3274,7 @@ sap.ui.define([
 	 */
 	Component.prototype.getCommand = function(sCommandName) {
 		var oCommand,
-			oCommands = this.getManifestEntry("/sap.ui5/commands");
+			oCommands = this._getManifestEntry("/sap.ui5/commands", true);
 
 		if (oCommands && sCommandName) {
 			oCommand = oCommands[sCommandName];

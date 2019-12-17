@@ -33,7 +33,30 @@ sap.ui.define([
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class Container that embeds a UIComponent in a control tree.
+	 * @class Container that embeds a <code>sap/ui/core/UIComponent</code> in a control tree.
+	 *
+	 * <b>Concerning asynchronous component loading:</b>
+	 *
+	 * To activate a fully asynchronous loading behavior of components and their dependencies,
+	 * the property <code>async</code> needs to be set to <code>true</code> and
+	 * the <code>manifest</code> property needs to be set to a 'truthy' value, e.g. <code>true</code> or a URL to the manifest location.
+	 * If both options are correctly set, the component factory will load and evaluate the component manifest first.
+	 * In this way, the additional dependencies of the Component are already known before the Component preload/controller is loaded.
+	 * Both the component preload/controller and the additional dependencies can thus be loaded asynchronously and in parallel.
+	 *
+	 * Sample usage of the ComponentContainer:
+	 *
+	 * <pre>
+	 *     &lt;!-- inside XML view -->
+	 *     ...
+	 *     &lt;core:ComponentContainer
+	 *         usage="someComponent"
+	 *         manifest="true"
+	 *         async="true"
+	 *     />
+	 * </pre>
+	 *
+	 * See also {@link sap.ui.core.ComponentSupport}.
 	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}

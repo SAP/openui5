@@ -217,6 +217,8 @@ function(
 			var sMessageText = "";
 			if (oError.messages && oError.messages.length !== 0 && oError.messages[0].text) {
 				sMessageText = oError.messages[0].text;
+			} else if (oError.message) {
+				sMessageText = oError.message;
 			}
 			var sErrorMessage = formatMessage("Loading changes for {0} failed!\nError code: {1}\nMessage: {2}", mComponent.name, oError.code || "", sMessageText);
 			// if the back end is not reachable we still cache the results in a valid way because the url request is
@@ -236,10 +238,13 @@ function(
 
 			// correct place to initialize maps yet to be defined
 			FlexState.clearState(sComponentName);
-			FlexState.initForReference(
+			FlexState._initForReferenceWithData(
 				Object.assign({
 					reference: sComponentName,
-					storageResponse: mChanges
+					storageResponse: mChanges,
+					component: {
+						id: mPropertyBag.componentId || mPropertyBag.component && mPropertyBag.component.getId && mPropertyBag.component.getId()
+					}
 				})
 			);
 

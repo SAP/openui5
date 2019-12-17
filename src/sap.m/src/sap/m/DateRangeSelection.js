@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/date/UniversalDate',
 	'./DateRangeSelectionRenderer',
 	"sap/ui/unified/calendar/CustomMonthPicker",
+	"sap/ui/unified/calendar/CustomYearPicker",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/base/assert",
@@ -26,6 +27,7 @@ sap.ui.define([
 		UniversalDate,
 		DateRangeSelectionRenderer,
 		CustomMonthPicker,
+		CustomYearPicker,
 		deepEqual,
 		Log,
 		assert
@@ -189,6 +191,10 @@ sap.ui.define([
 
 		if (oCalendar instanceof CustomMonthPicker) {
 			oCalendar._getMonthPicker().setIntervalSelection(true);
+		}
+
+		if (oCalendar instanceof CustomYearPicker) {
+			oCalendar._getYearPicker().setIntervalSelection(true);
 		}
 	};
 

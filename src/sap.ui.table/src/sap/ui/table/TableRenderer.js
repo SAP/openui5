@@ -3,9 +3,9 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', "./Column", './utils/TableUtils', "./TableExtension",
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', "./Column", './utils/TableUtils', "./extensions/ExtensionBase",
 			   'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/base/Log"],
-	function(Control, Parameters, Device, library, Column, TableUtils, TableExtension, Renderer, IconPool, Log) {
+	function(Control, Parameters, Device, library, Column, TableUtils, ExtensionBase, Renderer, IconPool, Log) {
 	"use strict";
 
 
@@ -643,14 +643,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		var bRowSelected = oTable._getSelectionPlugin().isIndexSelected(oRow.getIndex());
 
 		rm.openStart("div");
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow._bHidden});
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow.isEmpty()});
 		rm.attr("data-sap-ui-related", oRow.getId());
 		rm.attr("data-sap-ui-rowindex", iRowIndex);
 
 		rm.class("sapUiTableRow");
 		rm.class("sapUiTableContentRow");
 
-		if (oRow._bHidden) {
+		if (oRow.isContentHidden()) {
 			rm.class("sapUiTableRowHidden");
 		} else if (bRowSelected) {
 			rm.class("sapUiTableRowSel");
@@ -673,7 +673,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.attr("tabindex", "-1");
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, bHeader ? "ROWHEADER" : "ROWACTION", {rowSelected: bRowSelected, rowHidden: oRow._bHidden});
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, bHeader ? "ROWHEADER" : "ROWACTION", {rowSelected: bRowSelected, rowHidden: oRow.isEmpty()});
 
 		rm.openEnd();
 		if (bHeader) {
@@ -1054,7 +1054,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.class("sapUiTableRow");
 		rm.class("sapUiTableContentRow");
 		rm.class("sapUiTableTr");
-		if (oRow._bHidden) {
+		if (oRow.isContentHidden()) {
 			rm.class("sapUiTableRowHidden");
 		} else {
 			if (bDraggable && bFixedTable) {
@@ -1074,11 +1074,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.attr("data-sap-ui-rowindex", iRowIndex);
 		oTable._getRowMode().renderRowStyles(rm);
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow._bHidden});
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow.isEmpty()});
 
 		rm.openEnd();
 
-		var bSelected = !oRow._bHidden && oSelectionPlugin.isIndexSelected(oRow.getIndex()); //see TableRenderer.renderRowAddon
+		var bSelected = !oRow.isEmpty() && oSelectionPlugin.isIndexSelected(oRow.getIndex()); //see TableRenderer.renderRowAddon
 		var aCells = oRow.getCells();
 
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {
@@ -1133,12 +1133,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			}
 			if (bIsLastColumn) {
 				rm.class("sapUiTableCellLast");
-			}
-
-			var oBinding = oTable.getBinding("rows");
-			if (oBinding && oColumn.getLeadingProperty && oBinding.isMeasure(oColumn.getLeadingProperty())) {
-				// for AnalyticalTable
-				rm.class("sapUiTableMeasureCell");
 			}
 
 			rm.openEnd();
@@ -1210,7 +1204,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderVSbExternal = function(rm, oTable) {
-		if (TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension")) {
+		if (ExtensionBase.isEnrichedWith(oTable, "sap.ui.table.extensions.Synchronization")) {
 			this.renderVSb(rm, oTable, {
 				cssClass: "sapUiTableVSbExternal",
 				tabIndex: false
@@ -1257,7 +1251,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderHSbExternal = function(rm, oTable, sId, iScrollWidth) {
-		if (TableExtension.isEnrichedWith(oTable, "sap.ui.table.TableSyncExtension")) {
+		if (ExtensionBase.isEnrichedWith(oTable, "sap.ui.table.extensions.Synchronization")) {
 			this.renderHSb(rm, oTable, {
 				id: sId,
 				cssClass: "sapUiTableHSbExternal",

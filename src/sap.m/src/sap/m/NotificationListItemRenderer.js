@@ -144,6 +144,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		// content- description
 		rm.write('<div id=' + sControlId + '-descr');
 		rm.addClass('sapMNLIDescription');
+		if (!control.getDescription()) {
+			rm.addClass('sapMNLIDescriptionNoText');
+		}
 		if (truncate) {
 			rm.addClass('sapMNLIItemTextLineClamp');
 		}

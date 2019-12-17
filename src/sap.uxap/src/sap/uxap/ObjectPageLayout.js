@@ -1564,7 +1564,7 @@ sap.ui.define([
 			Log.info("ObjectPageLayout :: firstSectionTitleHidden UX rule matched", "section " + oFirstVisibleSection.getTitle() + " title forced to hidden");
 		}
 
-		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, bVisibleAnchorBar);
+		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, iVisibleSection <= 1);
 
 		Object.keys(oTitleVisibilityInfo).forEach(function(sId) {
 			this.oCore.byId(sId)._setInternalTitleVisible(oTitleVisibilityInfo[sId], bInvalidate);
@@ -1874,7 +1874,12 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked, bRedirectScroll) {
 		var oSection = this.oCore.byId(sId),
-			iSnapPosition;
+			iSnapPosition,
+			oTargetSubSection,
+			bAnimationsEnabled = (sap.ui.getCore().getConfiguration().getAnimationMode()
+				!== Configuration.AnimationMode.none),
+			bAnimatedScroll,
+			bScrollOverAnotherSubSection;
 
 		if (!this.getDomRef()){
 			Log.warning("scrollToSection can only be used after the ObjectPage is rendered", this);
@@ -1886,7 +1891,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (!this._oSectionInfo[sId]) {
+		if (!this._oSectionInfo[sId] || !oSection._getInternalVisible()) {
 			Log.warning("scrollToSection aborted: section is hidden by UX rules", sId, this);
 			return;
 		}
@@ -1926,10 +1931,11 @@ sap.ui.define([
 			this.setAssociation("selectedSection", oToSelect.getId(), true);
 		}
 
+		oTargetSubSection = oSection instanceof ObjectPageSubSection ? oSection : this._getFirstVisibleSubSection(oSection);
 		if (bIsTabClicked) {
 			this.fireNavigate({
 				section: ObjectPageSection._getClosestSection(oSection),
-				subSection: oSection instanceof ObjectPageSubSection ? oSection : oSection.getSubSections()[0]
+				subSection: oTargetSubSection
 			});
 		}
 
@@ -1972,6 +1978,19 @@ sap.ui.define([
 			this.getHeaderTitle() && this._shiftHeaderTitle();
 
 			iScrollTo += iOffset;
+			bAnimatedScroll = bAnimationsEnabled && iDuration;
+			bScrollOverAnotherSubSection = (this._sScrolledSubSectionId !== oTargetSubSection.getId())
+				&& (iScrollTo !== this._$opWrapper.get(0).scrollTop);
+
+			if (bAnimatedScroll && this.getEnableLazyLoading() && bScrollOverAnotherSubSection) {
+				// suppress lazyLoading during the animated scroll
+				// to avoid loading of intermediate sections
+				this._oLazyLoading.suppress();
+				setTimeout(function() {
+					this._oLazyLoading.resume();
+					this._oLazyLoading.doLazyLoading();
+				}.bind(this), iDuration);
+			}
 
 			if (!this._bStickyAnchorBar && this._shouldSnapHeaderOnScroll(iScrollTo)) {
 				iSnapPosition = this._getSnapPosition();
@@ -1991,7 +2010,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._hasSingleVisibleFullscreenSubSection = function (oSection) {
-		var aVisibleSubSections = oSection.getSubSections().filter(function(oSubSection) {
+		var aVisibleSubSections = oSection.getSubSections().filter(function (oSubSection) {
 			return oSubSection.getVisible() && oSubSection._getInternalVisible() && (oSubSection.getBlocks().length > 0);
 		});
 		return (aVisibleSubSections.length === 1) && aVisibleSubSections[0].hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
@@ -2701,9 +2720,7 @@ sap.ui.define([
 		// problem if this happened BEFORE _requestAdjustLayout executed => wrong section may have been selected
 
 		// solution [implemented bellow] is to ensure that scroll handler is called with the latest scrollTop => we ensure the correct section is selected
-		if (this._hasDynamicTitle()) {
-			this._adjustHeaderHeights();
-		}
+		this._adjustHeaderHeights();
 		this._requestAdjustLayout() // call adjust layout to calculate the new section sizes
 			.then(function () {
 				iScrollTop = this._$opWrapper.scrollTop();
@@ -3088,7 +3105,7 @@ sap.ui.define([
 				// current section/subsection is inside the view port
 				if (oInfo.positionTop <= iScrollPageBottom && iScrollTop <= oInfo.positionBottom) {
 					// scrolling position is over current section/subsection
-					if (oInfo.positionTop <= iScrollTop && oInfo.positionBottom > iScrollTop) {
+					if (oInfo.positionTop <= iScrollTop && oInfo.positionBottom >= iScrollTop) {
 						sClosestId = sId;
 						return false;
 					}
@@ -3202,6 +3219,7 @@ sap.ui.define([
 		this._bStickyAnchorBar = bStuck;
 		this._$headerContent.css("overflow", sValue);
 		this._$headerContent.toggleClass("sapContrastPlus", !bStuck); // contrast only in expanded mode
+		this._$headerContent.toggleClass("sapUxAPObjectPageHeaderDetailsHidden", bStuck); // hide header content
 		this._$anchorBar.css("visibility", sValue);
 		if (exists(this._$stickyAnchorBar)) {
 			this._$stickyAnchorBar.attr("aria-hidden", !bStuck);

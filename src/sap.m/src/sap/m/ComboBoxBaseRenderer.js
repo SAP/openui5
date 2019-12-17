@@ -11,7 +11,7 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/co
 		 * @namespace
 		 */
 		var ComboBoxBaseRenderer = Renderer.extend(ComboBoxTextFieldRenderer);
-
+		ComboBoxBaseRenderer.apiVersion = 2;
 		/**
 		 * CSS class to be applied to the root element of the control.
 		 *
@@ -47,7 +47,7 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/co
 			ComboBoxTextFieldRenderer.writeAccAttributes.apply(this, arguments);
 
 			if (Core.getConfiguration().getAccessibility()) {
-				oRm.writeAttribute("aria-expanded", oControl.isOpen());
+				oRm.attr("aria-expanded", oControl.isOpen());
 			}
 		};
 
@@ -61,14 +61,14 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/co
 			ComboBoxTextFieldRenderer.addOuterClasses.apply(this, arguments);
 
 			var CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE;
-			oRm.addClass(CSS_CLASS);
+			oRm.class(CSS_CLASS);
 
 			if (!oControl.getEnabled()) {
-				oRm.addClass(CSS_CLASS + "Disabled");
+				oRm.class(CSS_CLASS + "Disabled");
 			}
 
 			if (!oControl.getEditable()) {
-				oRm.addClass(CSS_CLASS + "Readonly");
+				oRm.class(CSS_CLASS + "Readonly");
 			}
 		};
 
@@ -81,7 +81,7 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/co
 		 */
 		ComboBoxBaseRenderer.addButtonClasses = function (oRm, oControl) {
 			ComboBoxTextFieldRenderer.addButtonClasses.apply(this, arguments);
-			oRm.addClass(ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Arrow");
+			oRm.class(ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Arrow");
 		};
 
 		return ComboBoxBaseRenderer;
