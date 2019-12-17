@@ -764,6 +764,7 @@ sap.ui.define([
 
 	/* --- Event Handling --- */
 	GenericTile.prototype.ontouchstart = function () {
+		this.addStyleClass("sapMGTPressActive");
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").addClass("sapMGTPressActive");
 		}
@@ -773,12 +774,14 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.ontouchcancel = function () {
+		this.removeStyleClass("sapMGTPressActive");
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").removeClass("sapMGTPressActive");
 		}
 	};
 
 	GenericTile.prototype.ontouchend = function () {
+		this.removeStyleClass("sapMGTPressActive");
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").removeClass("sapMGTPressActive");
 		}
@@ -799,6 +802,7 @@ sap.ui.define([
 
 	GenericTile.prototype.onkeydown = function (event) {
 		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
+			this.addStyleClass("sapMGTPressActive");
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").addClass("sapMGTPressActive");
 			}
@@ -835,6 +839,7 @@ sap.ui.define([
 			bFirePress = true;
 		}
 		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
+			this.addStyleClass("sapMGTPressActive");
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").removeClass("sapMGTPressActive");
 			}
