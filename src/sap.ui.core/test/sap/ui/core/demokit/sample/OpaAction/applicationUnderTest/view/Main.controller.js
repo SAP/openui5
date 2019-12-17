@@ -16,24 +16,28 @@ function(Controller, Press, JSONModel) {
 				// Opa will wait until the button is not busy
 				oButton.setBusy(false);
 			}, 5000);
-},
+		},
 
-onNavButtonPress : function () {
-	this.byId("myApp").to(this.byId("secondPage").getId());
-},
+		onNavButtonPress : function () {
+			this.byId("myApp").to(this.byId("secondPage").getId());
+		},
 
-onBack: function () {
-	this.byId("myApp").to(this.byId("firstPage").getId());
-},
+		onBack: function () {
+			this.byId("myApp").to(this.byId("firstPage").getId());
+		},
 
-onPress: function () {
-	// You may also invoke actions without letting OPA do it
-	new Press().executeOn(this.byId("secondPage"));
-},
+		onPress: function () {
+			// You may also invoke actions without letting OPA do it
+			new Press().executeOn(this.byId("secondPage"));
+		},
 
-onDelete: function (oEvent) {
-	this.byId("productList").removeItem(oEvent.getParameter("listItem"));
-}
-});
+		onDelete: function (oEvent) {
+			this.byId("productList").removeItem(oEvent.getParameter("listItem"));
+		},
+
+		onToolbarButtonPress: function (oEvent) {
+			this.byId("toolbar-text").setText("Pressed " + oEvent.getSource().getText() + " Button");
+		}
+		});
 
 });

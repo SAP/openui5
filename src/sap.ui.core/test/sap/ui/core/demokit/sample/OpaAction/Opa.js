@@ -21,15 +21,16 @@ sap.ui.require([
 			 EnterText) {
 	"use strict";
 
-	QUnit.module("Navigation using the press action");
-
 	// set defaults
 	Opa5.extendConfig({
 		viewNamespace: "appUnderTest.view.",
 		// we only have one view
 		viewName : "Main",
-		autoWait : true
+		autoWait : true,
+		asyncPolling: true
 	});
+
+	QUnit.module("Navigation using the press action");
 
 	opaTest("Should navigate to page 2", function(Given, When, Then) {
 		Given.iStartMyUIComponent({
@@ -180,6 +181,98 @@ sap.ui.require([
 			},
 			errorMessage: "USA was not selected"
 		});
+
+		Then.iTeardownMyApp();
+	});
+
+	QUnit.module("Select buttons in a responsive toolbar");
+
+	Opa5.extendConfig({
+		actions: {
+			pressToggleButton: function (sToolbarId) {
+				// press the toggle button to show the overflowing content, or,
+				// do nothing if the button is not present (the entire content fits on the page)
+				this.waitFor({
+					id: sToolbarId,
+					success: function (oToolbar) {
+						this.waitFor({
+							controlType: "sap.m.ToggleButton",
+							visible: false,
+							matchers: new Ancestor(oToolbar),
+							success: function (aToggleButton) {
+								if (aToggleButton[0].$().length) {
+									this.waitFor({
+										controlType: "sap.m.ToggleButton",
+										matchers: new Ancestor(oToolbar),
+										actions: new Press()
+									});
+								} else {
+									Opa5.assert.ok(true, "The toggle button is not present");
+								}
+							}
+						});
+					}
+				});
+			},
+			iPressToolbarButton: function (sToolbarId, sButtonText) {
+				this.waitFor({
+					id: sToolbarId,
+					success: function (oToolbar) {
+						this.waitFor({
+							controlType: "sap.m.Button",
+							matchers: [
+								new Properties({text: sButtonText}),
+								new Ancestor(oToolbar)
+							],
+							actions: new Press()
+						});
+					}
+				});
+			}
+		},
+		assertions: {
+			iShouldCheckTheResult: function (sText) {
+				this.waitFor({
+					id: "toolbar-text",
+					success: function (oText) {
+						Opa5.assert.strictEqual(oText.getText(), "Pressed " + sText + " Button", "Pressed the expected button");
+					}
+				});
+			}
+		}
+	});
+
+	opaTest("Should select buttons in an overflowing toolbar", function (Given, When, Then) {
+		Given.iStartMyUIComponent({
+			componentConfig: {
+				name: "appUnderTest"
+			}
+		});
+
+		// press the toggle button to show the overflowing content
+		When.pressToggleButton("toolbar-overflow");
+		// press a button that is not in the overflow popover
+		When.iPressToolbarButton("toolbar-overflow", "Always Visible");
+
+		Then.iShouldCheckTheResult("Always Visible");
+
+		// press the toggle button to show the overflowing content
+		When.pressToggleButton("toolbar-overflow");
+		// press a button that is in the overflow popover
+		When.iPressToolbarButton("toolbar-overflow", "Overflowing");
+
+		Then.iShouldCheckTheResult("Overflowing");
+	});
+
+	opaTest("Should select buttons in a toolbar that is not overflowing", function (Given, When, Then) {
+		When.pressToggleButton("toolbar-fit");
+
+		// press a button that is not in the overflow popover
+		When.iPressToolbarButton("toolbar-fit", "Should Overflow");
+
+		Then.iShouldCheckTheResult("Should Overflow");
+
+		Then.iTeardownMyApp();
 	});
 
 	QUnit.start();
