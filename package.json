@@ -73,7 +73,7 @@
     "grunt-git": "^1.0.1",
     "grunt-jsdoc": "^2.2.1",
     "grunt-mocha-test": "^0.12.6",
-    "grunt-openui5": "^0.14.0",
+    "grunt-openui5": "^0.16.0",
     "grunt-text-replace": "^0.4.0",
     "grunt-timer": "^0.5.4",
     "json2json": "^0.2.4",
@@ -82,7 +82,7 @@
     "karma-coverage": "^1.1.2",
     "karma-junit-reporter": "^2.0.1",
     "karma-ui5": "^1.1.0",
-    "load-grunt-config": "^0.19.2",
+    "load-grunt-config": "^3.0.1",
     "mkdirp": "^0.5.0",
     "mocha": "^5.2.0",
     "moment": "^2.22.2",
@@ -96,7 +96,7 @@
     "selenium-webdriver": "^3.6.0",
     "semver": "^4.3.0",
     "status-bar": "^2.0.2",
-    "wsrun": "^3.0.0"
+    "wsrun": "^5.2.0"
   },
   "workspaces": [
     "src/!(testsuite-utils)"
