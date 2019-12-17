@@ -15,6 +15,7 @@
 				<Table
 					id="table1"
 					selectionMode="Single"
+					ariaLabelledBy="title"
 					rows="{
 						path: '/ProductCollection',
 						filters: {path: 'Rank', operator: 'EQ', value1: '0'}
@@ -22,7 +23,7 @@
 					visibleRowCount="10">
 					<extension>
 						<m:OverflowToolbar>
-							<m:Title text="Available Products"/>
+							<m:Title id="title" text="Available Products"/>
 							<m:ToolbarSpacer/>
 							<m:Button
 								icon="sap-icon://hint"
@@ -84,6 +85,7 @@
 				<Table
 					id="table2"
 					selectionMode="Single"
+					ariaLabelledBy="title"
 					rows="{
 						path: '/ProductCollection',
 						filters: {path: 'Rank', operator: 'GT', value1: '0'},
@@ -93,7 +95,7 @@
 					noData="Please drag-and-drop products here.">
 					<extension>
 						<m:OverflowToolbar>
-							<m:Title text="Selected Products"/>
+							<m:Title id="title" text="Selected Products"/>
 							<m:ToolbarSpacer/>
 							<m:Button
 								icon="sap-icon://navigation-up-arrow"
