@@ -728,7 +728,14 @@ function (
 	ElementOverlay.prototype._domChangedCallback = function (mParameters) {
 		mParameters.targetOverlay = this;
 		if (this.isReady()) {
-			this.fireApplyStylesRequired(mParameters);
+			//FIXME: temporal solution for cancel not relevant mutation. Should be finally done in the TaskManager
+			if (this._iApplyStylesRequest) {
+				window.cancelAnimationFrame(this._iApplyStylesRequest);
+			}
+			this._iApplyStylesRequest = window.requestAnimationFrame(function () {
+				this.fireApplyStylesRequired(mParameters);
+				delete this._iApplyStylesRequest;
+			}.bind(this));
 		}
 	};
 

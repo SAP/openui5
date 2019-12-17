@@ -24,6 +24,12 @@ function(
 ) {
 	'use strict';
 
+	// Styles on "qunit-fixture" influence the scrolling tests if positioned on the screen during test execution.
+	// Please keep this tag without any styling.
+	jQuery("#qunit-fixture").removeAttr("style");
+
+	var sandbox = sinon.sandbox.create();
+
 	QUnit.module("Given that a MutationObserver is created", {
 		beforeEach: function() {
 			this.sNodeId = 'node-id';
@@ -52,14 +58,19 @@ function(
 			assert.notOk(this.oMutationObserver._sRootId, "then root registration is empty");
 		});
 
-		QUnit.test("when window is resized", function(assert) {
+		QUnit.test("when window is resized several times directly behind each other", function(assert) {
 			var fnDone = assert.async();
-
-			this.oMutationObserver.registerHandler(this.$Node.attr('id'), function (mParameters) {
-				assert.ok(mParameters.type, "MutationOnResize", 'then DomChanged callback is called');
-				fnDone();
-			}, true);
-			jQuery(window).trigger("resize");
+			var fnHandlerSpy = sinon.spy(function (mParameters) {
+				assert.strictEqual(mParameters.type, "MutationOnResize", "then DomChanged handler is triggered by resize mutation");
+				window.requestAnimationFrame(function () {
+					assert.strictEqual(fnHandlerSpy.callCount, 1, "then DomChanged handler is called just once");
+					fnDone();
+				});
+			});
+			this.oMutationObserver.registerHandler(this.$Node.attr("id"), fnHandlerSpy, true);
+			for (var i = 0; i < 3; i++) {
+				jQuery(window).trigger("resize");
+			}
 		});
 
 		QUnit.test("when a relevant Node is modified", function (assert) {
@@ -171,11 +182,12 @@ function(
 		},
 		afterEach: function() {
 			this.oMutationObserver.destroy();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when mutations in static UIArea happen inside irrelevant node", function (assert) {
 			var fnDone = assert.async();
-			var oSpy = sinon.spy();
+			var oSpy = sandbox.spy();
 			this.oMutationObserver.registerHandler(this.$Node.attr('id'), oSpy);
 			jQuery("<div/>").appendTo("#sap-ui-static");
 			// setTimeout is needed because of async nature of native MutationObserver
@@ -274,17 +286,18 @@ function(
 		afterEach: function() {
 			this.oOuterPanel.destroy();
 			this.oDesignTime.destroy();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when the panel outside of DT is scrolled", function(assert) {
 			var fnDone = assert.async();
-			var spy = sinon.spy();
-			this.oVerticalLayoutRootOverlay.attachEventOnce("applyStylesRequired", spy);
-			setTimeout(function () {
-				assert.equal(spy.called, false, "then the domchanged callback was not called");
-				fnDone();
-			}, 50);
+			var fnHandlerSpy = sandbox.spy();
+			this.oVerticalLayoutRootOverlay.attachEventOnce("applyStylesRequired", fnHandlerSpy);
 			this.oOutsidePanel.$().find('>.sapMPanelContent').scrollTop(50);
+			window.requestAnimationFrame(function () {
+				assert.equal(fnHandlerSpy.called, false, "then the domchanged callback was not called");
+				fnDone();
+			});
 		});
 
 		QUnit.test("when the outer vertical layout is scrolled", function(assert) {
@@ -298,7 +311,7 @@ function(
 
 		QUnit.test("when a panel inside DT is scrolled", function(assert) {
 			var fnDone = assert.async();
-			var spy = sinon.spy();
+			var spy = sandbox.spy();
 			this.oVerticalLayoutRootOverlay.attachEventOnce("applyStylesRequired", spy);
 			setTimeout(function() {
 				assert.equal(spy.called, false, "then the domchanged callback was not fired");
