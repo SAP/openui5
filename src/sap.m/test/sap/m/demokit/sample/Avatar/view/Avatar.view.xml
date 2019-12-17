@@ -1,10 +1,10 @@
 <mvc:View
-		controllerName="sap.f.sample.Avatar.controller.Avatar"
+		controllerName="sap.m.sample.Avatar.controller.Avatar"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:f="sap.f"
 		xmlns="sap.m"
 		xmlns:l="sap.ui.layout"
 		height="100%">
+
 	<ScrollContainer
 			height="100%"
 			width="100%"
@@ -18,7 +18,7 @@
 				defaultSpan="XL2 L3 M6 S6">
 			<l:content>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Speakers_avatar_01.jpg"
 							displaySize="XL"
 							displayShape="Square"
@@ -29,7 +29,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_01.png"
 							displaySize="XL"
 							showBorder="true"
@@ -39,7 +39,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							initials="IS"
 							displaySize="XL"
 							displayShape="Square"
@@ -49,7 +49,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							displaySize="XL"
 							backgroundColor="Transparent"
 							press="onPress"/>
@@ -58,7 +58,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							initials="IS"
 							displaySize="XL"
 							backgroundColor="TileIcon"
@@ -68,7 +68,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							displaySize="XL"
 							backgroundColor="Placeholder"
 							displayShape="Square"
@@ -89,7 +89,7 @@
 				<VBox
 						alignItems="Center"
 						alignContent="End">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
 							displaySize="XL"
 							displayShape="Square"/>
@@ -100,7 +100,7 @@
 				<VBox
 						alignItems="Center"
 						alignContent="End">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
 							displaySize="L"
 							displayShape="Square"/>
@@ -109,7 +109,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
 							displaySize="M"
 							displayShape="Square"/>
@@ -118,7 +118,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
 							displaySize="S"
 							displayShape="Square"/>
@@ -127,7 +127,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
 							displaySize="XS"
 							displayShape="Square"/>
@@ -142,7 +142,7 @@
 				class="sapUiMediumMarginTop">
 			<l:content>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_02.png"
 							displaySize="XL"/>
 					<Text
@@ -150,7 +150,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_02.png"
 							displaySize="L"/>
 					<Text
@@ -158,7 +158,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_02.png"
 							displaySize="M"/>
 					<Text
@@ -166,7 +166,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_02.png"
 							displaySize="S"/>
 					<Text
@@ -174,7 +174,7 @@
 							class="sapUiSmallMarginTop"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_02.png"
 							displaySize="XS"/>
 					<Text
@@ -188,7 +188,7 @@
 				class="sapUiMediumMarginTop">
 			<l:content>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							initials="IS"
 							displaySize="XL"
 							backgroundColor="Accent1"/>
@@ -198,7 +198,7 @@
 					<Text text="Accent1"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							initials="IS"
 							displaySize="L"
 							backgroundColor="Accent2"/>
@@ -208,7 +208,7 @@
 					<Text text="Accent2"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							initials="IS"
 							displaySize="M"
 							backgroundColor="Accent3"/>
@@ -218,7 +218,7 @@
 					<Text text="Accent3"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							initials="IS"
 							displaySize="S"
 							backgroundColor="Accent4"/>
@@ -228,7 +228,7 @@
 					<Text text="Accent4"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							initials="IS"
 							displaySize="XS"
 							backgroundColor="Accent5"/>
@@ -244,7 +244,7 @@
 				class="sapUiMediumMarginTop">
 			<l:content>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="sap-icon://lab"
 							displaySize="XL"
 							backgroundColor="Accent6"/>
@@ -254,7 +254,7 @@
 					<Text text="Accent6"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="sap-icon://lab"
 							displaySize="L"
 							backgroundColor="Accent7"/>
@@ -264,7 +264,7 @@
 					<Text text="Accent7"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="sap-icon://lab"
 							displaySize="M"
 							backgroundColor="Accent8"/>
@@ -274,7 +274,7 @@
 					<Text text="Accent8"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="sap-icon://lab"
 							displaySize="S"
 							backgroundColor="Accent9"/>
@@ -284,7 +284,7 @@
 					<Text text="Accent9"/>
 				</VBox>
 				<VBox alignItems="Center">
-					<f:Avatar
+					<Avatar
 							src="sap-icon://lab"
 							displaySize="XS"
 							backgroundColor="Accent10"/>
@@ -303,7 +303,7 @@
 							text="The Avatar can be set to a custom size:"
 							width="100%"
 							class="sapUiMediumMarginTop sapUiMediumMarginBottom"/>
-					<f:Avatar
+					<Avatar
 							src="./test-resources/sap/f/images/Lamp_avatar_01.jpg"
 							displaySize="Custom"
 							customDisplaySize="250px"
@@ -322,7 +322,7 @@
 							defaultSpan="XL4 L4 M6 S6">
 						<l:content>
 							<VBox alignItems="Center">
-								<f:Avatar
+								<Avatar
 										displaySize="L"
 										displayShape="Square"
 										backgroundColor="Random"/>
@@ -331,7 +331,7 @@
 										class="sapUiSmallMarginTop"/>
 							</VBox>
 							<VBox alignItems="Center">
-								<f:Avatar
+								<Avatar
 										displaySize="L"
 										backgroundColor="Random"/>
 								<Text
@@ -339,7 +339,7 @@
 										class="sapUiSmallMarginTop"/>
 							</VBox>
 							<VBox alignItems="Center">
-								<f:Avatar
+								<Avatar
 										displaySize="L"
 										displayShape="Square"
 										fallbackIcon="sap-icon://accelerated"
@@ -349,7 +349,7 @@
 										class="sapUiSmallMarginTop"/>
 							</VBox>
 							<VBox alignItems="Center">
-								<f:Avatar
+								<Avatar
 										displaySize="L"
 										initials="PB"
 										src="images/cannotfind_Woman_avatar_01.png"
