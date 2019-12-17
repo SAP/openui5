@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
@@ -15,6 +16,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	FlexCustomData,
 	Utils,
+	DependencyHandler,
 	FlUtils
 ) {
 	"use strict";
@@ -150,8 +152,6 @@ sap.ui.define([
 	}
 
 	var Applier = {
-		PENDING: "sap.ui.fl:PendingChange",
-
 		/**
 		 * Applying a specific change on the passed control, if it is not already applied.
 		 *
@@ -233,14 +233,13 @@ sap.ui.define([
 				oChange.setQueuedForApply();
 				if (!mChangesMap.mDependencies[oChange.getId()]) {
 					aPromiseStack.push(function() {
-						return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag)
-						.then(function() {
-							oFlexController._updateDependencies(mChangesMap, oChange.getId());
+						return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function() {
+							DependencyHandler.removeChangeFromDependencies(mChangesMap, oChange.getId());
 						});
 					});
 				} else {
-					//saves the information whether a change was already processed but not applied.
-					mChangesMap.mDependencies[oChange.getId()][Applier.PENDING] = Applier.applyChangeOnControl.bind(Applier, oChange, oControl, mPropertyBag);
+					var fnCallback = Applier.applyChangeOnControl.bind(Applier, oChange, oControl, mPropertyBag);
+					DependencyHandler.addChangeApplyCallbackToDependency(mChangesMap, oChange.getId(), fnCallback);
 				}
 			});
 
@@ -250,7 +249,7 @@ sap.ui.define([
 			if (aChangesForControl.length || mChangesMap.mControlsWithDependencies[sControlId]) {
 				delete mChangesMap.mControlsWithDependencies[sControlId];
 				return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function () {
-					return oFlexController._processDependentQueue(mChangesMap, oAppComponent);
+					return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent);
 				});
 			}
 			return new FlUtils.FakePromise();
