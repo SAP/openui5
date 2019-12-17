@@ -629,7 +629,11 @@ function (
 			.then(
 				function (oElementOverlay) {
 					Overlay.getOverlayContainer().append(oElementOverlay.render());
-					oElementOverlay.applyStyles();
+					this._oTaskManager.add({
+						type: "applyStyles",
+						callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
+						overlayId: oElementOverlay.getId()
+					}, "overlayId");
 					this._oTaskManager.complete(iTaskId);
 					return oElementOverlay;
 				}.bind(this),
@@ -1204,7 +1208,11 @@ function (
 					.then(function (oElementOverlay) {
 						var vInsertChildReply = oParentAggregationOverlay.insertChild(null, oElementOverlay);
 						if (vInsertChildReply === true) {
-							oElementOverlay.applyStyles(); // TODO: remove after Task Manager implementation
+							this._oTaskManager.add({
+								type: "applyStyles",
+								callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
+								overlayId: oElementOverlay.getId()
+							}, "overlayId");
 
 							var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay);
 
