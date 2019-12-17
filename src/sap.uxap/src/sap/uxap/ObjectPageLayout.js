@@ -1980,7 +1980,7 @@ sap.ui.define([
 			iScrollTo += iOffset;
 			bAnimatedScroll = bAnimationsEnabled && iDuration;
 			bScrollOverAnotherSubSection = (this._sScrolledSubSectionId !== oTargetSubSection.getId())
-				&& (iScrollTo !== this._$opWrapper.get(0).scrollTop);
+				&& this._$opWrapper.length && (this._$opWrapper.get(0).scrollTop !== iScrollTo);
 
 			if (bAnimatedScroll && this.getEnableLazyLoading() && bScrollOverAnotherSubSection) {
 				// suppress lazyLoading during the animated scroll
