@@ -30,7 +30,7 @@ sap.ui.define([
 	 *   than one property is set, they are evaluated in the mentioned order
 	 * @param {boolean} [oData.async=false]
 	 *   Whether the language bundle should be loaded asynchronously
-	 * @param {sap.base.i18n.ResourceBundle} [oData.bundle]
+	 * @param {module:sap/base/i18n/ResourceBundle} [oData.bundle]
 	 *   A resource bundle instance; when given, this bundle is used instead of creating a bundle
 	 *   from the provided <code>bundleUrl</code>, <code>bundleName</code> and
 	 *   <code>bundleLocale</code> properties. However, to support reloading the bundle when the
@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.BindingMode} [oData.defaultBindingMode=OneWay]
 	 *   The default binding mode to use; it can be <code>OneWay</code> or <code>OneTime</code>
 	 *   (only when synchronous loading is used); the <code>TwoWay</code> mode is not supported
-	 * @param {sap.base.i18n.ResourceBundle[]} [oData.enhanceWith]
+	 * @param {module:sap/base/i18n/ResourceBundle[]} [oData.enhanceWith]
 	 *   Optional list of resource bundles that enhance the texts from the main bundle; intended for
 	 *   extensibility scenarios; also see the class documentation.
 	 *
@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @class Model implementation for resource bundles.
 	 *
 	 * This model allows to bind control properties against translatable texts. Its data is taken
-	 * from a {@link sap.base.i18n.ResourceBundle} and it only supports property bindings.
+	 * from a {@link module:sap/base/i18n/ResourceBundle} and it only supports property bindings.
 	 *
 	 * In contrast to most other models, binding paths for a <code>ResourceModel</code> must not
 	 * start with a slash; they are absolute by default, and there's no further structure. Each key
@@ -141,7 +141,7 @@ sap.ui.define([
 	 *   URL pointing to the base ".properties" file of a bundle
 	 * @param {object} bAsync
 	 *   Whether the resource bundle should be loaded asynchronously
-	 * @returns {sap.base.i18n.ResourceBundle|Promise<sap.base.i18n.ResourceBundle>}
+	 * @returns {module:sap/base/i18n/ResourceBundle|Promise<module:sap/base/i18n/ResourceBundle>}
 	 *   Loaded resource bundle or <code>Promise</code> resolving with the resource bundle in async
 	 *   case
 	 *
@@ -176,7 +176,7 @@ sap.ui.define([
 	 * the last added resource bundle are preferred over texts from previously added bundles or
 	 * texts from the main bundle.
 	 *
-	 * @param {sap.base.i18n.ResourceBundle|object} oData
+	 * @param {module:sap/base/i18n/ResourceBundle|object} oData
 	 *   Either an already loaded bundle instance, or a configuration object with parameters to load
 	 *   a new resource bundle. When a configuration object is given, at least one of
 	 *   <code>bundleUrl</code> or <code>bundleName</code> must be set; if both are set,
@@ -277,7 +277,7 @@ sap.ui.define([
 	/**
 	 * Gets the resource bundle of this model.
 	 *
-	 * @returns {(sap.base.i18n.ResourceBundle|Promise<sap.base.i18n.ResourceBundle>)}
+	 * @returns {(module:sap/base/i18n/ResourceBundle|Promise<module:sap/base/i18n/ResourceBundle>)}
 	 *   The loaded resource bundle or a Promise resolving with it in asynchronous case
 	 *
 	 * @public
