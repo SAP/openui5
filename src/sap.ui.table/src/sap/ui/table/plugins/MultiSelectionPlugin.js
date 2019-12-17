@@ -62,8 +62,8 @@ sap.ui.define([
 			 * <li>With server-side models if they are used in client mode</li>
 			 * <li>If the entity set is small</li>
 			 * </ul>
-			 * In other cases, we recommend to set the limit to at least double the value of the {@link sap.ui.table.Table#getThreshold threshold} property
-			 * of the related <code>sap.ui.table.Table</code> control.
+			 * In other cases, we recommend to set the limit to at least double the value of the {@link sap.ui.table.Table#getThreshold threshold}
+			 * property of the related <code>sap.ui.table.Table</code> control.
 			 */
 			limit : {type : "int", group : "Behavior", defaultValue : 200},
 			/**
@@ -90,14 +90,19 @@ sap.ui.define([
 				parameters : {
 
 					/**
-					 * Array of indices whose selection has been changed (either selected or deselected).
+					 * Array of indices whose selection has been changed (either selected or deselected)
 					 */
 					indices : {type : "int[]"},
 
 					/**
-					 * Indicates whether the selection limit has been reached.
+					 * Indicates whether the selection limit has been reached
 					 */
-					limitReached : {type : "boolean"}
+					limitReached : {type : "boolean"},
+
+					/**
+					 * Contains the data passed to the function that triggered the event
+					 */
+					customPayload : {type : "object"}
 				}
 			}
 		}
@@ -272,15 +277,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the binding contexts and adds all indices to the selection if the limit is disabled.
+	 * Requests the binding contexts and adds all indices to the selection if the limit is disabled or the binding length is smaller then the limit.
 	 *
+	 * @param {object} [oEventPayload] If the function call triggers a {@link #event:selectionChange selectionChange} event, this object is
+	 * transferred to the event in the <code>customPayload</code> parameter
+	 * @returns {Promise} A Promise that resolves after the selection has been completed or is rejected with an error
 	 * @public
 	 */
-	MultiSelectionPlugin.prototype.selectAll = function() {
-		if (this._bLimitDisabled){
-			var iLastIndex = this.getTableBinding().getLength() - 1;
-			this.addSelectionInterval(0, iLastIndex);
+	MultiSelectionPlugin.prototype.selectAll = function(oEventPayload) {
+		if (!this._bLimitDisabled) {
+			return Promise.reject(new Error("Not possible if the limit is enabled"));
 		}
+
+		var iSelectableCount = this.getSelectableCount();
+
+		if (iSelectableCount === 0) {
+			return Promise.reject(new Error("Nothing to select"));
+		}
+
+		return this.addSelectionInterval(0, iSelectableCount - 1, oEventPayload);
 	};
 
 	/**
@@ -290,37 +305,46 @@ sap.ui.define([
 	 * @param {int} iIndexFrom The start index of the range selection.
 	 * @param {int} iIndexTo The end index of the range selection.
 	 * @param {boolean} [bAddSelection=false] Whether to prepare for adding or setting the selection.
-	 * @return {Promise|Promise<{indexTo: *, indexFrom: *}>} A promise that resolves with the corrected start and end index when the contexts are
-	 * loaded.
+	 * @return {Promise|Promise<{indexTo: int, indexFrom: int}>} A promise that resolves with the corrected start and end index when the contexts are
+	 * loaded. The Promise is rejected if the index is out of range.
 	 */
 	function prepareSelection(oMultiSelectionPlugin, iIndexFrom, iIndexTo, bAddSelection) {
+		var iSelectableCount = oMultiSelectionPlugin.getSelectableCount();
+
+		if (iIndexFrom < 0 && iIndexTo < 0 || iIndexFrom >= iSelectableCount && iIndexTo >= iSelectableCount) {
+			// Selection is not possible if the index range it completely out of the selectable range.
+			return Promise.reject(new Error("Out of range"));
+		}
+
+		// Restrict indices to boundaries.
+		iIndexFrom = Math.min(Math.max(0, iIndexFrom), iSelectableCount - 1);
+		iIndexTo = Math.min(Math.max(0, iIndexTo), iSelectableCount - 1);
+
 		var iLimit = oMultiSelectionPlugin.getLimit();
-		var bReverse = iIndexTo < iIndexFrom;
-		var oBinding = oMultiSelectionPlugin.getTableBinding();
+		var bReverse = iIndexTo < iIndexFrom; // Indicates whether the selection is made from bottom to top.
 		var iGetContextsStartIndex = bReverse ? iIndexTo : iIndexFrom;
+		var iGetContextsLength;
 
 		// If the start index is already selected, the range starts from the next index.
-		if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom) && bAddSelection) {
-			if (!bReverse) {
-				if (iIndexFrom !== iIndexTo) {
-					iIndexFrom++;
-					iGetContextsStartIndex++;
-				}
-			} else {
+		if (bAddSelection && oMultiSelectionPlugin.isIndexSelected(iIndexFrom)) {
+			if (bReverse) {
 				iIndexFrom--;
+			} else if (iIndexFrom !== iIndexTo) {
+				iIndexFrom++;
+				iGetContextsStartIndex++;
 			}
 		}
 
-		var iGetContextsLength = Math.abs(iIndexTo - iIndexFrom) + 1;
+		iGetContextsLength = Math.abs(iIndexTo - iIndexFrom) + 1;
 
 		if (!oMultiSelectionPlugin._bLimitDisabled) {
 			oMultiSelectionPlugin.setLimitReached(iGetContextsLength > iLimit);
 
 			if (oMultiSelectionPlugin.isLimitReached()) {
-				if (!bReverse) {
-					iIndexTo = iIndexFrom + iLimit - 1;
-				} else {
+				if (bReverse) {
 					iIndexTo = iIndexFrom - iLimit + 1;
+				} else {
+					iIndexTo = iIndexFrom + iLimit - 1;
 				}
 
 				// The table will be scrolled one row further to make it transparent for the user where the selection ends.
@@ -329,13 +353,9 @@ sap.ui.define([
 			}
 		}
 
-		if (oBinding && iGetContextsStartIndex >= 0 && iGetContextsLength > 0) {
-			return loadMultipleContexts(oBinding, iGetContextsStartIndex, iGetContextsLength).then(function () {
-				return {indexFrom: iIndexFrom, indexTo: iIndexTo};
-			});
-		}
-
-		return Promise.resolve();
+		return loadMultipleContexts(oMultiSelectionPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function () {
+			return {indexFrom: iIndexFrom, indexTo: iIndexTo};
+		});
 	}
 
 	/**
@@ -348,21 +368,27 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
+	 * @param {object} [oEventPayload] If the function call triggers a {@link #event:selectionChange selectionChange} event, this object is
+	 * transferred to the event in the <code>customPayload</code> parameter
+	 * @returns {Promise} A Promise that resolves after the selection has been completed or is rejected with an error
 	 * @public
 	 */
-	MultiSelectionPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
+	MultiSelectionPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo, oEventPayload) {
 		var sSelectionMode = this.getSelectionMode();
+
 		if (sSelectionMode === SelectionMode.None) {
-			return;
-		} else if (sSelectionMode === SelectionMode.Single) {
+			return Promise.reject(new Error("SelectionMode is '" + SelectionMode.None + "'"));
+		}
+
+		if (sSelectionMode === SelectionMode.Single) {
 			iIndexFrom = iIndexTo;
 		}
 
-		prepareSelection(this, iIndexFrom, iIndexTo, false).then(function(mIndices) {
-			if (mIndices) {
-				this.oInnerSelectionPlugin.setSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
-				this._scrollTableToRow(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
-			}
+		return prepareSelection(this, iIndexFrom, iIndexTo, false).then(function(mIndices) {
+			this._oCustomEventPayloadTmp = oEventPayload;
+			this.oInnerSelectionPlugin.setSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
+			delete this._oCustomEventPayloadTmp;
+			return this._scrollTableToIndex(mIndices.indexTo, mIndices.indexFrom > mIndices.indexTo);
 		}.bind(this));
 	};
 
@@ -370,10 +396,13 @@ sap.ui.define([
 	 * Requests the context and sets the selected index to <code>iIndex</code>.
 	 *
 	 * @param {int} iIndex The index to select
+	 * @param {object} [oEventPayload] If the function call triggers a {@link #event:selectionChange selectionChange} event, this object is
+	 * transferred to the event in the <code>customPayload</code> parameter
+	 * @returns {Promise} A Promise that resolves after the selection has been completed or is rejected with an error
 	 * @public
 	 */
-	MultiSelectionPlugin.prototype.setSelectedIndex = function(iIndex) {
-		this.setSelectionInterval(iIndex, iIndex);
+	MultiSelectionPlugin.prototype.setSelectedIndex = function(iIndex, oEventPayload) {
+		return this.setSelectionInterval(iIndex, iIndex, oEventPayload);
 	};
 
 	/**
@@ -386,54 +415,69 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
+	 * @param {object} [oEventPayload] If the function call triggers a {@link #event:selectionChange selectionChange} event, this object is
+	 * transferred to the event in the <code>customPayload</code> parameter
+	 * @returns {Promise} A Promise that resolves after the selection has been completed or is rejected with an error
 	 * @public
 	 */
-	MultiSelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
+	MultiSelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo, oEventPayload) {
 		var sSelectionMode = this.getSelectionMode();
+
 		if (sSelectionMode === SelectionMode.None) {
-			return;
-		} else if (sSelectionMode === SelectionMode.Single) {
-			iIndexFrom = iIndexTo;
-			this.setSelectionInterval(iIndexFrom, iIndexTo);
-			return;
+			return Promise.reject(new Error("SelectionMode is '" + SelectionMode.None + "'"));
 		}
 
-		prepareSelection(this, iIndexFrom, iIndexTo, true).then(function(mIndices) {
-			if (mIndices) {
+		if (sSelectionMode === SelectionMode.Single) {
+			return this.setSelectionInterval(iIndexTo, iIndexTo);
+		}
+
+		if (sSelectionMode === SelectionMode.MultiToggle) {
+			return prepareSelection(this, iIndexFrom, iIndexTo, true).then(function(mIndices) {
+				this._oCustomEventPayloadTmp = oEventPayload;
 				this.oInnerSelectionPlugin.addSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
-				this._scrollTableToRow(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
-			}
-		}.bind(this));
+				delete this._oCustomEventPayloadTmp;
+				return this._scrollTableToIndex(mIndices.indexTo, mIndices.indexFrom > mIndices.indexTo);
+			}.bind(this));
+		}
 	};
 
 	/**
 	 * If the limit is reached, the table is scrolled to the <code>iIndex</code>.
 	 * If <code>bReverse</code> is true the <code>firstVisibleRow</code> property of the Table is set to <code>iIndex</code> - 1,
 	 * otherwise to <code>iIndex</code> - row count + 2.
+	 *
+	 * @param {int} iIndex The index of the row to which to scroll to.
+	 * @param {boolean} bReverse Whether the row should be displayed at the bottom of the table.
+	 * @returns {Promise} A promise that resolves when the table is scrolled.
 	 * @private
 	 */
-	MultiSelectionPlugin.prototype._scrollTableToRow = function(bReverse, iIndex) {
+	MultiSelectionPlugin.prototype._scrollTableToIndex = function(iIndex, bReverse) {
 		var oTable = this.getParent();
 
 		if (!oTable || !this.isLimitReached()) {
-			return;
+			return Promise.resolve();
 		}
 
 		var iFirstVisibleRow = oTable.getFirstVisibleRow();
 		var mRowCounts = oTable._getRowCounts();
 		var iLastVisibleRow = iFirstVisibleRow + mRowCounts.scrollable - 1;
+		var bExpectRowsUpdatedEvent = false;
 
 		if (iIndex < iFirstVisibleRow || iIndex > iLastVisibleRow) {
-			if (!bReverse) {
-				oTable.setFirstVisibleRow(Math.max(0, iIndex - mRowCounts.scrollable - mRowCounts.fixedTop + 2));
-			} else {
-				oTable.setFirstVisibleRow(Math.max(0, iIndex - mRowCounts.fixedTop - 1));
-			}
+			var iNewIndex = bReverse ? iIndex - mRowCounts.fixedTop - 1 : iIndex - mRowCounts.scrollable - mRowCounts.fixedTop + 2;
+
+			bExpectRowsUpdatedEvent = oTable.setFirstVisibleRowIndex(Math.max(0, iNewIndex));
 		}
 
-		if (this.getEnableNotification()) {
-			this.showNotificationPopoverAtIndex(iIndex);
-		}
+		this._showNotificationPopoverAtIndex(iIndex);
+
+		return new Promise(function(resolve) {
+			if (bExpectRowsUpdatedEvent) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			} else {
+				resolve();
+			}
+		});
 	};
 
 	/**
@@ -444,26 +488,31 @@ sap.ui.define([
 	 * @private
 	 * @returns {Promise} which resolves when the notification Popover has been initialised
 	 */
-	MultiSelectionPlugin.prototype.showNotificationPopoverAtIndex = function(iIndex) {
+	MultiSelectionPlugin.prototype._showNotificationPopoverAtIndex = function(iIndex) {
 		var that = this;
 		var oPopover = this._oNotificationPopover;
 		var oTable = this.getParent();
 		var oRow = oTable.getRows()[iIndex - oTable._getFirstRenderedRowIndex()];
-		var sTitle = TableUtils.getResourceText('TBL_SELECT_LIMIT_TITLE');
-		var sMessage = TableUtils.getResourceText('TBL_SELECT_LIMIT', [this.getLimit()]);
+		var sTitle = TableUtils.getResourceText("TBL_SELECT_LIMIT_TITLE");
+		var sMessage = TableUtils.getResourceText("TBL_SELECT_LIMIT", [this.getLimit()]);
 
-		return new Promise(function(resolve, reject) {
-			sap.ui.require(['sap/m/Popover', 'sap/m/Bar', 'sap/m/Title', 'sap/m/Text', 'sap/m/HBox', 'sap/ui/core/library', 'sap/m/library'],
-							function(Popover, Bar, Title, Text, HBox, coreLib, mLib) {
+		if (!this.getEnableNotification()) {
+			return Promise.resolve();
+		}
 
+		return new Promise(function(resolve) {
+			sap.ui.require([
+				"sap/m/Popover", "sap/m/Bar", "sap/m/Title", "sap/m/Text", "sap/m/HBox", "sap/ui/core/library", "sap/m/library"
+			], function(Popover, Bar, Title, Text, HBox, coreLib, mLib) {
 				if (!oPopover) {
-					oPopover = new Popover(that.getId() + '-notificationPopover', {
+					oPopover = new Popover(that.getId() + "-notificationPopover", {
 						customHeader: [
 							new Bar({
 								contentMiddle: [
 									new HBox({
 										items: [
-											new Icon({src: 'sap-icon://message-warning', color: coreLib.IconColor.Critical}).addStyleClass("sapUiTinyMarginEnd"),
+											new Icon({src: "sap-icon://message-warning", color: coreLib.IconColor.Critical})
+												.addStyleClass("sapUiTinyMarginEnd"),
 											new Title({text: sTitle, level: coreLib.TitleLevel.H2})
 										],
 										renderType: mLib.FlexRendertype.Bare,
@@ -528,7 +577,6 @@ sap.ui.define([
 		}
 
 		oBinding.attachEventOnce("dataReceived", function() {
-			aContexts = oBinding.getContexts(iStartIndex, iLength);
 			if (aContexts.length == iLength) {
 				fResolve(aContexts);
 			} else {
@@ -540,12 +588,16 @@ sap.ui.define([
 	/**
 	 * Removes the complete selection.
 	 *
+	 * @param {object} [oEventPayload] If the function call triggers a {@link #event:selectionChange selectionChange} event, this object is
+	 * transferred to the event in the <code>customPayload</code> parameter
 	 * @public
 	 */
-	MultiSelectionPlugin.prototype.clearSelection = function() {
+	MultiSelectionPlugin.prototype.clearSelection = function(oEventPayload) {
 		if (this.oInnerSelectionPlugin) {
 			this.setLimitReached(false);
+			this._oCustomEventPayloadTmp = oEventPayload;
 			this.oInnerSelectionPlugin.clearSelection();
+			delete this._oCustomEventPayloadTmp;
 		}
 	};
 
@@ -625,12 +677,16 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndexFrom Index from which the deselection starts
 	 * @param {int} iIndexTo Index up to which to deselect
+	 * @param {object} [oEventPayload] If the function call triggers a {@link #event:selectionChange selectionChange} event, this object is
+	 * transferred to the event in the <code>customPayload</code> parameter
 	 * @public
 	 */
-	MultiSelectionPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
+	MultiSelectionPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo, oEventPayload) {
 		if (this.oInnerSelectionPlugin) {
 			this.setLimitReached(false);
+			this._oCustomEventPayloadTmp = oEventPayload;
 			this.oInnerSelectionPlugin.removeSelectionInterval(iIndexFrom, iIndexTo);
+			delete this._oCustomEventPayloadTmp;
 		}
 	};
 
@@ -645,7 +701,8 @@ sap.ui.define([
 
 		this.fireSelectionChange({
 			rowIndices: aRowIndices,
-			limitReached: this.isLimitReached()
+			limitReached: this.isLimitReached(),
+			customPayload: typeof this._oCustomEventPayloadTmp === "object" ? this._oCustomEventPayloadTmp : null
 		});
 	};
 
