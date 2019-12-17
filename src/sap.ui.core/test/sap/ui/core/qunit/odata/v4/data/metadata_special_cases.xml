@@ -127,6 +127,12 @@
 				<Parameter Name="Name" Type="Edm.String" />
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
 			</Action>
+			<Action Name="Create" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="Collection(special.cases.PublicationsType)" Nullable="false"/>
+				<Parameter Name="Price" Type="Edm.Decimal" Precision="13" Scale="variable" />
+				<Parameter Name="CurrencyCode" Type="Edm.String" MaxLength="5"/>
+				<ReturnType Type="special.cases.PublicationsType" Nullable="false"/>
+			</Action>
 			<Function Name="GetDefaults" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="Collection(special.cases.ArtistsType)" Nullable="false"/>
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
@@ -170,6 +176,21 @@
 			</Annotations>
 			<Annotations Target="MySchema.Create(Collection(MySchema.ArtistsType))/Countryoforigin">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Country of Origin"/>
+			</Annotations>
+			<Annotations Target="special.cases.Create/CurrencyCode">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListReferences">
+					<Collection>
+						<String>../CurrencyCode/$metadata</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.Create(Collection(special.cases.PublicationsType))/Price">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListReferences">
+					<Collection>
+						<String>../Price/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

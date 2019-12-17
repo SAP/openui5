@@ -1039,20 +1039,23 @@ sap.ui.define([
 		},
 
 		/**
-		 * Determines the namespace of the given qualified name.
+		 * Determines the namespace of the given qualified name or annotation target.
 		 *
 		 * @param {string} sName
-		 *   The qualified name
+		 *   The qualified name or annotation target
 		 * @returns {string}
 		 *   The namespace
 		 */
 		namespace : function (sName) {
-			var iIndex = sName.indexOf("/");
+			var iIndex;
 
-			if (iIndex >= 0) {
+			sName = sName
 				// consider only the first path segment
-				sName = sName.slice(0, iIndex);
-			}
+				.split("/")[0]
+				// remove signature if sName is an annotation target in 4.01 syntax like
+				// special.cases.Create(Collection(special.cases.ArtistsType))/Countryoforigin
+				.split("(")[0];
+
 			// now we have a qualified name, drop the last segment (the name)
 			iIndex = sName.lastIndexOf(".");
 
