@@ -1966,5 +1966,21 @@
         ]
       }
     ]
+  },
+  "1.52.37": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "b757a7dbc22d4b7d269cb2bd0c553936e6ee7b58",
+        "type": "FIX",
+        "text": " jQuery: Make parseHTML work with domain relaxation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007453322019"
+          }
+        ]
+      }
+    ]
   }
 }

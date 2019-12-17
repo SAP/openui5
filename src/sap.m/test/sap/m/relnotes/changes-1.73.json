@@ -1294,5 +1294,21 @@
         ]
       }
     ]
+  },
+  "1.73.2": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "94aa799517e95f72ba033ca5f44d7b5d5cc20c90",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Header calendar fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970517223"
+          }
+        ]
+      }
+    ]
   }
 }

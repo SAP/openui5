@@ -3067,5 +3067,43 @@
         ]
       }
     ]
+  },
+  "1.60.22": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "b833d1d98d7b28c1615fe6394ce86ba5a7a47bc7",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: Property truncateValueTo is not ignored anymore \u0026 Case insensitive NumericContent lang map + add en_US lang.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006220662019"
+          }
+        ]
+      },
+      {
+        "id": "77c627bfb4efce342faf288059cc7722f59680cd",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Doesn\u0027t load density aware image by default",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007126932019"
+          }
+        ]
+      },
+      {
+        "id": "fdced4f599480fa5de08520f1ae1df68ad6a67a1",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: valueState is now updated if there is a Message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500005744122019"
+          }
+        ]
+      }
+    ]
   }
 }
