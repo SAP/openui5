@@ -1854,13 +1854,6 @@ sap.ui.define([
 		oInput._$input.focus().val("").trigger("input");
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
-
-		// check for re-rendering when changing "showSuggestion" property
-		oInput.setShowSuggestion(false);
-		assert.strictEqual(oInputRendererSpy.callCount, 0, "the input field is not re-rendered when property \"showSuggestion\" is changed");
-		oInput.setShowSuggestion(true);
-		assert.strictEqual(oInputRendererSpy.callCount, 0, "the input field is not re-rendered when property \"showSuggestion\" is changed");
-
 		oInput.destroy();
 	});
 
