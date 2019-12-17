@@ -49,6 +49,20 @@ sap.ui.define([
 				.then(function (oSettings) {
 					return oSettings.isKeyUser();
 				});
+		},
+
+		/**
+		 * Checks if the data storing implementation for a given layer is capable of handling drafts.
+		 *
+		 * @param {string} sLayer - Layer to check for the draft availability
+		 * @returns {Promise<boolean>} Resolves to a boolean indicating if draft is available
+		 * @public
+		 */
+		isDraftEnabled: function (sLayer) {
+			return Settings.getInstance()
+				.then(function (oSettings) {
+					return oSettings.isDraftEnabled(sLayer);
+				});
 		}
 	};
 

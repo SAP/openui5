@@ -46,7 +46,16 @@ sap.ui.define([
 	function sendLoadFeaturesToConnector(aConnectors) {
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
 			return oConnectorConfig.writeConnectorModule.loadFeatures({url: oConnectorConfig.url})
-				.catch(ApplyUtils.logAndResolveDefault.bind(null, {}, oConnectorConfig, "loadFeatures"));
+				.then(function (oFeatures) {
+					return {
+						features: oFeatures,
+						layers: oConnectorConfig.layers
+					};
+				})
+				.catch(ApplyUtils.logAndResolveDefault.bind(null, {
+					features: {},
+					layers: oConnectorConfig.layers
+				}, oConnectorConfig, "loadFeatures"));
 		});
 
 		return Promise.all(aConnectorPromises);
