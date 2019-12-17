@@ -594,7 +594,9 @@ sap.ui.define([
 			},
 			getItems: function () {
 				return [];
-			}
+			},
+			removeStyleClass: function () { },
+			addStyleClass: function () { }
 		};
 
 		// Act
@@ -619,7 +621,9 @@ sap.ui.define([
 			},
 			getItems: function () {
 				return [];
-			}
+			},
+			removeStyleClass: function () { },
+			addStyleClass: function () { }
 		};
 
 		var oResizeEventMock = {

@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+ <html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>ResponsiveColumnLayout - sap.ui.layout.cssgrid</title>
+		<style>
+			.grid-cell {
+				background-color: rgba(211, 211, 211, 0.3);
+				height: 5rem;
+			}
+		</style>
+		<script src="shared-config.js"></script>
+		<script id='sap-ui-bootstrap'
+				src='../../../../resources/sap-ui-core.js'
+				data-sap-ui-libs='sap.ui.layout, sap.m'
+				data-sap-ui-async='true'>
+		</script>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/m/App",
+					"sap/m/Page",
+					"sap/m/Panel",
+					"sap/ui/core/HTML",
+					"sap/ui/layout/cssgrid/CSSGrid",
+					"sap/ui/layout/cssgrid/ResponsiveColumnLayout"
+				], function (
+					App,
+					Page,
+					Panel,
+					HTML,
+					CSSGrid,
+					ResponsiveColumnLayout
+				) {
+
+					var oCSSGrid = new CSSGrid({
+						customLayout: new ResponsiveColumnLayout()
+					});
+
+					for (var i = 1; i <= 50; i++) {
+						oCSSGrid.addItem(new HTML({ content: "<div class='grid-cell'></div>" }));
+					}
+
+					var oContainer = new Panel("panelContainer", {
+						content: [oCSSGrid]
+					});
+
+					var oPage = new Page({
+						title: "Test Page for sap.ui.layout.cssgrid.ResponsiveColumnLayout",
+						content: [oContainer]
+					});
+
+					var oApp = new App({
+						pages: [oPage]
+					}).placeAt("body");
+				});
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody" role="application">
+	</body>
+</html>
