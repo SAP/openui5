@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/rta/Utils"
-], function (
+], function(
 	Controller,
 	Filter,
 	FilterOperator,
@@ -15,7 +15,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.rta.plugin.iframe.URLBuilderDialogController", {
-		constructor: function (oJSONModel, mParameters) {
+		constructor: function(oJSONModel, mParameters) {
 			this._oJSONModel = oJSONModel;
 			this._importParameters(mParameters);
 			this._mParameterHashMap = this._buildParameterHashMap(mParameters);
@@ -24,8 +24,8 @@ sap.ui.define([
 		/**
 		 * Event handler for Show Preview button
 		 */
-		onShowPreview: function () {
-			var sURL = this._buildPreviewURL(this._oJSONModel.getProperty("/editURL/value"));
+		onShowPreview: function() {
+			var sURL = this._buildPreviewURL(this._buildReturnedURL());
 			this._oJSONModel.setProperty("/previewUrl/value", sURL);
 			var oIframe = sap.ui.getCore().byId("sapUiRtaUrlBuilderIframe");
 			oIframe.setUrl(sURL);
@@ -35,7 +35,7 @@ sap.ui.define([
 		 * Event handler for pressing a parameter
 		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
-		onParameterPress: function (oEvent) {
+		onParameterPress: function(oEvent) {
 			var sKey = oEvent.getSource().getBindingContext().getObject().key;
 			this._oJSONModel.setProperty("/editURL/value", this._addURLParameter(sKey));
 		},
@@ -44,7 +44,7 @@ sap.ui.define([
 		 * Event handler for search
 		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
-		onSearch: function (oEvent) {
+		onSearch: function(oEvent) {
 			var oFilter = new Filter("label", FilterOperator.Contains, oEvent.getParameter("query"));
 			var oBinding = sap.ui.getCore().byId("sapUiRtaUrlBuilderParameterTable").getBinding("items");
 			oBinding.filter([oFilter]);
@@ -53,14 +53,14 @@ sap.ui.define([
 		/**
 		 * Event handler for OK button
 		 */
-		onSavePress: function () {
+		onSavePress: function() {
 			this._close(this._buildReturnedURL());
 		},
 
 		/**
 		 * Event handler for Cancel button
 		 */
-		onCancelPress: function () {
+		onCancelPress: function() {
 			this._close();
 		},
 
@@ -70,7 +70,7 @@ sap.ui.define([
 		 * @param {object|undefined} mReturnedURL - URL to be returned
 		 * @private
 		 */
-		_close: function (mReturnedURL) {
+		_close: function(mReturnedURL) {
 			var oURLBuilderDialog = sap.ui.getCore().byId("sapUiRtaURLBuilderDialog");
 			this._mReturnedURL = mReturnedURL;
 			oURLBuilderDialog.close();
@@ -82,7 +82,7 @@ sap.ui.define([
 		 * @returns {object|undefined} Built URL
 		 * @public
 		 */
-		getURL: function () {
+		getURL: function() {
 			return this._mReturnedURL;
 		},
 
@@ -92,9 +92,9 @@ sap.ui.define([
 		 * @param {object} mParameters - URL parameters
 		 * @private
 		 */
-		_importParameters: function (mParameters) {
+		_importParameters: function(mParameters) {
 			if (mParameters) {
-				Object.keys(mParameters).forEach(function (sFieldName) {
+				Object.keys(mParameters).forEach(function(sFieldName) {
 					this._oJSONModel.setProperty("/" + sFieldName + "/value", mParameters[sFieldName]);
 				}, this);
 			}
@@ -107,8 +107,8 @@ sap.ui.define([
 		 * @returns {string} URL with parameters and values
 		 * @private
 		 */
-		_buildPreviewURL: function (sEditURL) {
-			return sEditURL.replace(/{(.*?)}/g, function (sMatch) {
+		_buildPreviewURL: function(sEditURL) {
+			return sEditURL.replace(/{(.*?)}/g, function(sMatch) {
 				return this._mParameterHashMap[sMatch];
 			}.bind(this));
 		},
@@ -120,8 +120,8 @@ sap.ui.define([
 		 * @returns {string} URL with the added parameter
 		 * @private
 		 */
-		_addURLParameter: function (sParameter) {
-			return this._oJSONModel.getProperty("/editURL/value") + sParameter;
+		_addURLParameter: function(sParameter) {
+			return this._buildReturnedURL() + sParameter;
 		},
 
 		/**
@@ -130,8 +130,8 @@ sap.ui.define([
 		 * @returns {string} URL to be returned
 		 * @private
 		 */
-		_buildReturnedURL: function () {
-			return this._buildPreviewURL(this._oJSONModel.getProperty("/editURL/value"));
+		_buildReturnedURL: function() {
+			return this._oJSONModel.getProperty("/editURL/value");
 		},
 
 		/**
@@ -141,7 +141,7 @@ sap.ui.define([
 		 * @returns {object} Parameter hashmap
 		 * @private
 		 */
-		_buildParameterHashMap: function (mParameters) {
+		_buildParameterHashMap: function(mParameters) {
 			if (mParameters && mParameters.parameters) {
 				return Utils.buildHashMapFromArray(mParameters.parameters, "key", "value");
 			}

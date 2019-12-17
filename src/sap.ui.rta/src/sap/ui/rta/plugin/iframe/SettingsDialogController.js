@@ -2,10 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/ValueState",
 	"sap/ui/rta/plugin/iframe/URLBuilderDialog"
 ], function (
+	Log,
 	Controller,
 	ValueState,
 	URLBuilderDialog
@@ -62,7 +64,9 @@ sap.ui.define([
 				if (sUrl) {
 					this._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				}
-			}.bind(this));
+			}.bind(this)).catch(function (oError) {
+				Log.error("Error closing URLBuilderDialog: ", oError);
+			});
 		},
 
 		/**

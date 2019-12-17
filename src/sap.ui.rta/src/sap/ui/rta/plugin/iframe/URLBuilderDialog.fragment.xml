@@ -1,60 +1,88 @@
-<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:form="sap.ui.layout.form" xmlns:util="sap.ui.fl.util">
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:form="sap.ui.layout.form" xmlns:util="sap.ui.fl.util" xmlns:layout="sap.ui.layout">
 	<Dialog id="sapUiRtaURLBuilderDialog" title="{/text/dialogTitle}" verticalScrolling="false" resizable="true" draggable="true" contentWidth="50rem" contentHeight="40rem">
 		<content>
-			<form:SimpleForm editable="true" layout="ResponsiveGridLayout" adjustLabelSpan="false" singleContainerFullSize="false" labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1">
-				<form:content>
-					<Label text="{/text/previewUrlLabel}" />
-					<Link href="{/previewUrl/value}" text="{/previewUrl/value}" wrapping="true" />
-				</form:content>
-			</form:SimpleForm>
-			<util:IFrame id="sapUiRtaUrlBuilderIframe" height="30%" />
-			<VBox alignItems="Center">
+			<VBox fitContainer="true">
 				<items>
-					<Button text="{/text/showPreviewButton}" type="Emphasized" press="onShowPreview" class="sapUiTinyMarginTop" />
-				</items>
-			</VBox>
-			<form:SimpleForm editable="true" title="{/text/urlTitle}" layout="ResponsiveGridLayout" adjustLabelSpan="false" singleContainerFullSize="false" labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1">
-				<form:content>
-					<VBox width="95%">
+					<form:SimpleForm editable="true" layout="ResponsiveGridLayout" adjustLabelSpan="false" singleContainerFullSize="false" labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1">
+						<form:content>
+							<Label text="{/text/previewUrlLabel}" />
+							<Link href="{/previewUrl/value}" text="{/previewUrl/value}" wrapping="true" />
+						</form:content>
+					</form:SimpleForm>
+
+					<VBox renderType="Bare">
+						<layoutData>
+							<FlexItemData growFactor="1"/>
+						</layoutData>
 						<items>
-							<Label text="{/text/editUrlLabel}" design="Bold" />
-							<TextArea value="{/editURL/value}" rows="10" width="100%" />
+							<util:IFrame id="sapUiRtaUrlBuilderIframe"/>
 						</items>
 					</VBox>
 
-					<VBox width="95%">
+					<VBox alignItems="Center">
+						<layoutData>
+							<FlexItemData growFactor="0"/>
+						</layoutData>
 						<items>
-							<Label text="{/text/parametersLabel}" design="Bold"/>
-							<SearchField search="onSearch" />
-							<ScrollContainer height="10rem" vertical="true" >
-								<Table id="sapUiRtaUrlBuilderParameterTable" items="{/parameters/value}"
-									class="sapUiSizeCompact">
-									<columns>
-										<Column>
-											<header>
-												<Label text="{/text/columnParameterLabel}"/>
-											</header>
-										</Column>
-										<Column>
-											<header>
-												<Label text="{/text/columnUiValueLabel}"/>
-											</header>
-										</Column>
-									</columns>
-									<items>
-										<ColumnListItem type="Active" press="onParameterPress">
-											<cells>
-												<Text text="{label}"/>
-												<Text text="{value}"/>
-											</cells>
-										</ColumnListItem>
-									</items>
-								</Table>
-							</ScrollContainer>
+							<Button text="{/text/showPreviewButton}" type="Emphasized" press="onShowPreview" class="sapUiTinyMarginTop" />
 						</items>
 					</VBox>
-				</form:content>
-			</form:SimpleForm>
+
+					<VBox>
+						<layoutData>
+							<FlexItemData growFactor="0"/>
+						</layoutData>
+						<items>
+							<layout:Grid defaultSpan="XL6 L6 M6 S6">
+								<Title level="H3" titleStyle="H3" text="{/text/urlTitle}">
+									<layoutData>
+										<layout:GridData span="XL12 L12 M12 S12"/>
+									</layoutData>
+								</Title>
+								<layout:content>
+									<VBox>
+										<items>
+											<Label text="{/text/editUrlLabel}" design="Bold" />
+											<TextArea value="{/editURL/value}" rows="10" width="100%" />
+										</items>
+									</VBox>
+									<VBox>
+										<items>
+											<Label text="{/text/parametersLabel}" design="Bold"/>
+											<SearchField search="onSearch" />
+											<ScrollContainer height="10rem" vertical="true" >
+												<Table id="sapUiRtaUrlBuilderParameterTable" items="{/parameters/value}"
+													class="sapUiSizeCompact">
+													<columns>
+														<Column>
+															<header>
+																<Label text="{/text/columnParameterLabel}"/>
+															</header>
+														</Column>
+														<Column>
+															<header>
+																<Label text="{/text/columnUiValueLabel}"/>
+															</header>
+														</Column>
+													</columns>
+													<items>
+														<ColumnListItem type="Active" press="onParameterPress">
+															<cells>
+																<Text text="{label}"/>
+																<Text text="{value}" wrapping="false"/>
+															</cells>
+														</ColumnListItem>
+													</items>
+												</Table>
+											</ScrollContainer>
+										</items>
+									</VBox>
+								</layout:content>
+							</layout:Grid>
+						</items>
+					</VBox>
+				</items>
+			</VBox>
 		</content>
 
 		<beginButton>
