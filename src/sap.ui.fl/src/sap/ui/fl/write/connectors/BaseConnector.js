@@ -121,6 +121,18 @@ sap.ui.define([
 		 */
 		loadFeatures: function () {
 			return Promise.reject("loadFeatures is not implemented");
+		},
+
+		/**
+		 * Interface called to get the flex versions.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+		 * @param {string} mPropertyBag.reference Flex reference
+		 * @returns {Promise<object>} Resolves with an object containing the data for the versions
+		 */
+		loadVersions: function () {
+			return Promise.reject("loadVersions is not implemented");
 		}
 	};
 

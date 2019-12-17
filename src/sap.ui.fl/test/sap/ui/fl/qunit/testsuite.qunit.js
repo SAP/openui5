@@ -257,6 +257,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/api/FeaturesAPI"]
 				}
 			},
+			"write/api/VersionsAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/VersionsAPI"]
+				}
+			},
 			"write/api/UI2PersonalizationWriteAPI": {
 				group: "Write API",
 				coverage: {
@@ -272,19 +278,25 @@ sap.ui.define(function () {
 			"write/_internal/Storage": {
 				group: "Write Internal",
 				coverage: {
-					only: ["sap/ui/fl/write/api/_internal/Storage"]
+					only: ["sap/ui/fl/write/_internal/Storage"]
 				}
 			},
 			"write/_internal/CompatibilityConnector": {
 				group: "Write Internal",
 				coverage: {
-					only: ["sap/ui/fl/write/api/_internal/CompatibilityConnector"]
+					only: ["sap/ui/fl/write/_internal/CompatibilityConnector"]
 				},
 				ui5: {
 					resourceroots: {
 						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
 					},
 					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]}]'
+				}
+			},
+			"write/_internal/Versions": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/Versions"]
 				}
 			},
 			"write/_internal/connectors/ObjectPathConnector": {
