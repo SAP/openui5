@@ -162,23 +162,11 @@ sap.ui.define([
 	QUnit.test("isDisplayOnly with Label control", function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
-		var bEditable = true;
-		var oParent = {
-				getParent: function() {
-					return {
-						getEditable: function() {
-							return bEditable;
-						}
-					};
-				}
-		};
-
-		// simulate FormContainer
-		sinon.stub(oFormElement, "getParent").callsFake(function() {return oParent;});
+		oFormElement._setEditable(true);
 
 		assert.notOk(oLabel.isDisplayOnly(), "Label is not display only");
 
-		bEditable = false;
+		oFormElement._setEditable(false);
 		assert.ok(oLabel.isDisplayOnly(), "Label is display only");
 
 		oLabel.setDisplayOnly(false);
@@ -188,23 +176,11 @@ sap.ui.define([
 	QUnit.test("isDisplayOnly with Label as string", function(assert) {
 		oFormElement.setLabel("Test");
 		var oLabel = oFormElement.getLabelControl();
-		var bEditable = true;
-		var oParent = {
-				getParent: function() {
-					return {
-						getEditable: function() {
-							return bEditable;
-						}
-					};
-				}
-		};
-
-		// simulate FormContainer
-		sinon.stub(oFormElement, "getParent").callsFake(function() {return oParent;});
+		oFormElement._setEditable(true);
 
 		assert.notOk(oLabel.isDisplayOnly(), "Label is not display only");
 
-		bEditable = false;
+		oFormElement._setEditable(false);
 		assert.ok(oLabel.isDisplayOnly(), "Label is display only");
 	});
 
