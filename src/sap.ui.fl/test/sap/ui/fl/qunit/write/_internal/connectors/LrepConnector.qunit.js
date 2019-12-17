@@ -785,7 +785,7 @@ sap.ui.define([
 		QUnit.test("given a mock server, when appVariant.list is triggered", function (assert) {
 			var mPropertyBag = {
 				layer: "VENDOR",
-				"sap.app/id": "someId",
+				reference: "someId",
 				url: "/sap/bc/lrep"
 			};
 			var sUrl = "/sap/bc/lrep/app_variant_overview/?layer=VENDOR&sap.app%2fid=someId";

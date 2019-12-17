@@ -960,7 +960,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Save As scenario) when listAllAppVariants is called", function(assert) {
-			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantWriteAPI.listAllAppVariants({
 				selector: {
 					appId: "reference.app"
@@ -980,7 +980,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Save As scenario) when getManifest is called", function(assert) {
-			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantWriteAPI.getManifest({
 				appVarUrl: "mock/appvar/url",
 				layer: "CUSTOMER"
@@ -997,7 +997,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Save As scenario) when assignCatalogs is called", function(assert) {
-			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantWriteAPI.assignCatalogs({
 				selector: {
 					appId: "customer.reference.app.id"
@@ -1018,7 +1018,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Save As scenario) when unassignCatalogs is called", function(assert) {
-			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantWriteAPI.unassignCatalogs({
 				selector: {
 					appId: "customer.reference.app.id"

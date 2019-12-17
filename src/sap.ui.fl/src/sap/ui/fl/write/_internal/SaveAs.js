@@ -213,8 +213,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					// Save the app variant to backend
-					return mPropertyBag.bIsForSapDelivery ? oAppVariantClosure.submit()
-							: oAppVariantClosure.submitViaNewConnectors()
+					return oAppVariantClosure.submit()
 						.catch(function(oError) {
 							oError.messageKey = "MSG_SAVE_APP_VARIANT_FAILED";
 							oError.saveAsFailed = true;
@@ -305,8 +304,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					// Updates the app variant saved in backend
-					return mPropertyBag.bIsForSapDelivery ? oAppVariantClosure.submit()
-							: oAppVariantClosure.submitViaNewConnectors()
+					return oAppVariantClosure.submit()
 						.catch(function(oError) {
 							oError.messageKey = "MSG_UPDATE_APP_VARIANT_FAILED";
 							throw oError;
@@ -351,8 +349,7 @@ sap.ui.define([
 					throw new Error("Transport information could not be determined");
 				})
 				.then(function () {
-					return mPropertyBag.bIsForSapDelivery ? oAppVariantClosure.submit()
-							: oAppVariantClosure.submitViaNewConnectors()
+					return oAppVariantClosure.submit()
 						.catch(function(oError) {
 							oError.messageKey = "MSG_DELETE_APP_VARIANT_FAILED";
 							throw oError;

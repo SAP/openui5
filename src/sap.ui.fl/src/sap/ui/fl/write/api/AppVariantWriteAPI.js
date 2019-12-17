@@ -5,13 +5,25 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/_internal/SaveAs",
-	"sap/ui/fl/write/_internal/Storage"
+	"sap/ui/fl/write/_internal/connectors/LrepConnector"
 ], function(
 	ChangesController,
 	SaveAs,
-	Storage
+	LrepConnector
 ) {
 	"use strict";
+
+	var _callAppVariantFunction = function(sFunctionName, mPropertyBag) {
+		if (!mPropertyBag.layer) {
+			return Promise.reject("Layer must be provided");
+		}
+
+		var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+		mPropertyBag.reference = oFlexController.getComponentName();
+		mPropertyBag.url = "/sap/bc/lrep";
+		// Since this method is only called for Save As App Variant scenario on ABAP platform, the direct usage of write LrepConnector is triggered.
+		return LrepConnector.appVariant[sFunctionName](mPropertyBag);
+	};
 
 	/**
 	 * Provides an API for tools to create, update, delete app variants.
@@ -85,13 +97,7 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		listAllAppVariants: function(mPropertyBag) {
-			if (!mPropertyBag.layer) {
-				return Promise.reject("Layer must be provided");
-			}
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag["sap.app/id"] = oFlexController.getComponentName();
-
-			return Storage.appVariant.list(mPropertyBag);
+			return _callAppVariantFunction("list", mPropertyBag);
 		},
 		/**
 		 * Gets the manifest of an app(variant) from backend
@@ -107,7 +113,8 @@ sap.ui.define([
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
-			return Storage.appVariant.getManifest(mPropertyBag);
+			// Since this method is only called for Save As App Variant scenario on ABAP platform, the direct usage of write LrepConnector is triggered.
+			return LrepConnector.appVariant.getManifest(mPropertyBag);
 		},
 		/**
 		 * Assigns the same catalogs to app varriant as of reference application
@@ -122,13 +129,7 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		assignCatalogs: function(mPropertyBag) {
-			if (!mPropertyBag.layer) {
-				return Promise.reject("Layer must be provided");
-			}
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag.reference = oFlexController.getComponentName();
-
-			return Storage.appVariant.assignCatalogs(mPropertyBag);
+			return _callAppVariantFunction("assignCatalogs", mPropertyBag);
 		},
 		/**
 		 * Assigns the same catalogs to app varriant as of reference application
@@ -142,13 +143,7 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		unassignCatalogs: function(mPropertyBag) {
-			if (!mPropertyBag.layer) {
-				return Promise.reject("Layer must be provided");
-			}
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag.reference = oFlexController.getComponentName();
-
-			return Storage.appVariant.unassignCatalogs(mPropertyBag);
+			return _callAppVariantFunction("unassignCatalogs", mPropertyBag);
 		}
 	};
 	return AppVariantWriteAPI;

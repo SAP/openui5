@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
-	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/sinon-4"
@@ -14,7 +14,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory,
 	DescriptorVariantFactory,
 	DescriptorChangeFactory,
-	LrepConnector,
+	WriteUtils,
 	CompatibilityConnector,
 	Settings,
 	sinon
@@ -1653,7 +1653,7 @@ sap.ui.define([
 	QUnit.module("DescriptorVariant", {
 		beforeEach: function() {
 			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
+			this._oSandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference"
@@ -1765,7 +1765,7 @@ sap.ui.define([
 	QUnit.module("DescriptorVariantFactory", {
 		beforeEach: function() {
 			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
+			this._oSandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference"
@@ -2173,7 +2173,7 @@ sap.ui.define([
 	QUnit.module("DescriptorVariantFactory - ATO false", {
 		beforeEach: function() {
 			this._oSandbox = sinon.sandbox.create();
-			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
+			this._fStubSend = this._oSandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference",
@@ -2217,7 +2217,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit().then(function(oResponse) {
 					assert.notEqual(oResponse, null);
 					assert.equal(that._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/");
-					assert.equal(that._fStubSend.getCall(0).args[2].referenceVersion, "1.1");
+					assert.equal(JSON.parse(that._fStubSend.getCall(0).args[2].payload).referenceVersion, "1.1");
 				});
 			});
 		});
@@ -2249,7 +2249,7 @@ sap.ui.define([
 	QUnit.module("DescriptorVariantFactory - ATO true and app variant not yet published", {
 		beforeEach: function() {
 			this._oSandbox = sinon.sandbox.create();
-			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send");
+			this._fStubSend = this._oSandbox.stub(WriteUtils, "sendRequest");
 			this._fStubSend.resolves({
 				response: JSON.stringify({
 					id : "a.id",
@@ -2327,7 +2327,7 @@ sap.ui.define([
 	QUnit.module("DescriptorVariantFactory - ATO true and app variant already published", {
 		beforeEach: function() {
 			this._oSandbox = sinon.sandbox.create();
-			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send");
+			this._fStubSend = this._oSandbox.stub(WriteUtils, "sendRequest");
 			this._fStubSend.resolves({
 				response: JSON.stringify({
 					id : "a.id",
@@ -2405,7 +2405,7 @@ sap.ui.define([
 	QUnit.module("DescriptorChangeFactory - ATO false", {
 		beforeEach: function() {
 			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
+			this._oSandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference"
@@ -2439,7 +2439,7 @@ sap.ui.define([
 	QUnit.module("DescriptorChangeFactory - ATO true", {
 		beforeEach: function() {
 			this._oSandbox = sinon.sandbox.create();
-			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
+			this._fStubSend = this._oSandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference"
