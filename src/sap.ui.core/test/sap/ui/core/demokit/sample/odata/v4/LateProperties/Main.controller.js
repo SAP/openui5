@@ -20,7 +20,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.core.sample.odata.v4.LateProperties.Main", {
 		onOpenEditDeliveryDate : function(oEvent) {
 			var oDialog = new Dialog({
-					title: "Edit Delivery Date",
+					title : "Edit Delivery Date",
 					content : new SimpleForm({
 						content : [
 							new Title({text : "Sales Order"}),
@@ -39,7 +39,7 @@ sap.ui.define([
 									"expanded Sales Orders->SO_2_BP"}),
 							new Title({text : "Schedule"}),
 							new Label({text : "Schedule Key"}),
-							new Text({text : "{ScheduleKey}",
+							new Text({id : "ScheduleKey", text : "{ScheduleKey}",
 								tooltip : "ScheduleKey reused from Schedules"}),
 							new Label({text : "Item Key"}),
 							new Text({id : "ItemKey", text : "{ItemKey}",
