@@ -530,7 +530,7 @@ sap.ui.define([
 		// set the flag to initial state as same menu could be used as a context menu or a normal menu
 		this._bOpenedAsContextMenu = false;
 
-		bRecalculate && this.oPopup.setPosition("begin top", "begin top", $Window, iCalcedX + " " + iCalcedY, "flip");
+		bRecalculate && this.oPopup.setPosition("begin top", "begin top", $Window, iCalcedX + " " + iCalcedY, "flipfit");
 	};
 
 	/**
