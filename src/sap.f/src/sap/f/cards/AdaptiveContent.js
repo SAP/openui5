@@ -208,15 +208,20 @@ sap.ui.define([
 				id: "webcomponents-loader",
 				url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/webcomponents-loader.js")
 			});
-			includeScript({
-				id: "webcomponents-bundle",
-				attributes: {type: "module"},
-				url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.esm.js")
-			});
-			includeScript({
-				id: "webcomponents-bundle-es5",
-				attributes: {nomodule: "nomodule"},
-				url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.es5.js")
+
+			// The Web Components need to wait a bit for the Web Components loader and eventual polyfills
+			// to get ready. There's a CustomEvent for which we need to subscribe.
+			document.addEventListener("WebComponentsReady", function () {
+				includeScript({
+					id: "webcomponents-bundle",
+					attributes: {type: "module"},
+					url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.esm.js")
+				});
+				includeScript({
+					id: "webcomponents-bundle-es5",
+					attributes: {nomodule: "nomodule"},
+					url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.es5.js")
+				});
 			});
 		};
 
