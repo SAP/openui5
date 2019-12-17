@@ -61,6 +61,10 @@ sap.ui.define([
 				group: "Form"
 			},
 
+			"SemanticFormElement": {
+				group: "Form"
+			},
+
 			"GridLayout": {
 				group: "Form"
 			},

@@ -791,8 +791,19 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 7, false, 0, 12, false, 0);
 	});
 
+	QUnit.test("ColumnElementData on label with -1", function(assert) {
+		var oLayoutData = new ColumnElementData({cellsLarge: -1, cellsSmall: -1});
+		oLabel1.setLayoutData(oLayoutData);
+		sap.ui.getCore().applyChanges();
+
+		var $Element = jQuery("#FE1");
+		var aChildren = $Element.children();
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 12, false, 0, 8, false, 0);
+	});
+
 	QUnit.test("ColumnElementData on field", function(assert) {
-		oFormElement1.addField(new Text("T2", {text: "Text2"}));
+		oFormElement1.addField(new Text("T2", {text: "Text2", layoutData: new ColumnElementData({cellsLarge: -1, cellsSmall: -1})}));
 		var oLayoutData = new ColumnElementData({cellsLarge: 1, cellsSmall: 1});
 		oField1.setLayoutData(oLayoutData);
 		sap.ui.getCore().applyChanges();
@@ -882,6 +893,74 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
+		oToolbar.destroy();
+	});
+
+	QUnit.test("getLayoutDataForDelimiter", function(assert) {
+		var oLayoutData = oColumnLayout.getLayoutDataForDelimiter();
+		assert.ok(oLayoutData, "LayoutData returned");
+		assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.form.ColumnElementData"), "ColumnElementData returned");
+		assert.equal(oLayoutData && oLayoutData.getCellsLarge(), 1, "cellsLarge");
+		assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 1, "cellsSmall");
+
+		// test for promise
+		var oStub = sinon.stub(sap.ui, "require");
+		oStub.withArgs("sap/ui/layout/form/ColumnElementData").onFirstCall().returns(undefined);
+		oStub.callThrough();
+
+		oLayoutData = oColumnLayout.getLayoutDataForDelimiter();
+		assert.ok(oLayoutData instanceof Promise, "Promise returned");
+		if (oLayoutData instanceof Promise) {
+			var fnDone = assert.async();
+			oLayoutData.then(function(oLayoutData) {
+				assert.ok(oLayoutData, "LayoutData returned");
+				assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.form.ColumnElementData"), "ColumnElementData returned");
+				assert.equal(oLayoutData && oLayoutData.getCellsLarge(), 1, "cellsLarge");
+				assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 1, "cellsSmall");
+				fnDone();
+			});
+		}
+
+		oStub.restore();
+	});
+
+	QUnit.test("getLayoutDataForSemanticField", function(assert) {
+		var oLayoutData = oColumnLayout.getLayoutDataForSemanticField(2, 1);
+		assert.ok(oLayoutData, "LayoutData returned");
+		assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.form.ColumnElementData"), "ColumnElementData returned");
+		assert.equal(oLayoutData && oLayoutData.getCellsLarge(), -1, "cellsLarge");
+		assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 11, "cellsSmall");
+
+		var oLayoutData2 = oColumnLayout.getLayoutDataForSemanticField(2, 1, oLayoutData);
+		assert.ok(oLayoutData, "LayoutData returned");
+		assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.form.ColumnElementData"), "ColumnElementData returned");
+		assert.equal(oLayoutData && oLayoutData.getCellsLarge(), -1, "cellsLarge");
+		assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 11, "cellsSmall");
+		assert.equal(oLayoutData, oLayoutData2, "LayoutData just updated, no new instance");
+
+		oLayoutData.destroy();
+		oLayoutData2.destroy();
+
+		// test for promise
+		var oStub = sinon.stub(sap.ui, "require");
+		oStub.withArgs("sap/ui/layout/form/ColumnElementData").onFirstCall().returns(undefined);
+		oStub.callThrough();
+
+		oLayoutData = oColumnLayout.getLayoutDataForSemanticField(3, 3);
+		assert.ok(oLayoutData instanceof Promise, "Promise returned");
+		if (oLayoutData instanceof Promise) {
+			var fnDone = assert.async();
+			oLayoutData.then(function(oLayoutData) {
+				assert.ok(oLayoutData, "LayoutData returned");
+				assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.form.ColumnElementData"), "ColumnElementData returned");
+				assert.equal(oLayoutData && oLayoutData.getCellsLarge(), -1, "cellsLarge");
+				assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 11, "cellsSmall");
+				oLayoutData.destroy();
+				fnDone();
+			});
+		}
+
+		oStub.restore();
 	});
 
 });

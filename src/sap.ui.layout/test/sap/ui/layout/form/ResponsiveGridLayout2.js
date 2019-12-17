@@ -2,6 +2,7 @@ sap.ui.require([
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/SemanticFormElement",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/m/Label",
 	"sap/m/Text"
@@ -10,6 +11,7 @@ sap.ui.require([
 		Form,
 		FormContainer,
 		FormElement,
+		SemanticFormElement,
 		ResponsiveGridLayout,
 		Label,
 		Text
@@ -31,13 +33,13 @@ sap.ui.require([
 						label: "ID",
 						fields: [new Text({text: "SAP SE"})]
 					}),
-					new FormElement({
+					new SemanticFormElement({
 						label: "Street / Number",
-						fields: [new Text({text: "Dietmar-Hopp-Allee 16"})]
+						fields: [new Text({text: "Dietmar-Hopp-Allee"}), new Text({text: "16"})]
 					}),
-					new FormElement({
+					new SemanticFormElement({
 						label: new Label({text: "Post code / City"}),
-						fields: [new Text({text: "69190 Walldorf"})]
+						fields: [new Text({text: "69190"}), new Text({text: "Walldorf"})]
 					}),
 					new FormElement({
 						label: "Country",

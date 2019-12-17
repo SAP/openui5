@@ -1005,6 +1005,38 @@ sap.ui.define([
 		assert.equal(oGrid._iBreakPointTablet, "500", "BreapointM on Main Grid");
 	});
 
+	QUnit.test("getLayoutDataForDelimiter", function(assert) {
+		var oLayoutData = oResponsiveGridLayout.getLayoutDataForDelimiter();
+		assert.ok(oLayoutData, "LayoutData returned");
+		assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.GridData"), "GridData returned");
+		assert.equal(oLayoutData.getSpanS(), 1, "spanS");
+		assert.equal(oLayoutData.getSpanM(), 1, "spanM");
+		assert.equal(oLayoutData.getSpanL(), 1, "spanL");
+		assert.equal(oLayoutData.getSpanXL(), 1, "spanXL");
+	});
+
+	QUnit.test("getLayoutDataForSemanticField", function(assert) {
+		var oLayoutData = oResponsiveGridLayout.getLayoutDataForSemanticField(2, 1);
+		assert.ok(oLayoutData, "LayoutData returned");
+		assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.GridData"), "GridData returned");
+		assert.equal(oLayoutData.getSpanS(), 11, "spanS");
+		assert.equal(oLayoutData.getSpanM(), 3, "spanM");
+		assert.equal(oLayoutData.getSpanL(), 3, "spanL");
+		assert.equal(oLayoutData.getSpanXL(), 3, "spanXL");
+
+		var oLayoutData2 = oResponsiveGridLayout.getLayoutDataForSemanticField(2, 2);
+		assert.ok(oLayoutData2, "LayoutData returned");
+		assert.ok(oLayoutData2 && oLayoutData.isA("sap.ui.layout.GridData"), "GridData returned");
+		assert.equal(oLayoutData2.getSpanS(), 11, "spanS");
+		assert.equal(oLayoutData2.getSpanM(), 4, "spanM");
+		assert.equal(oLayoutData2.getSpanL(), 4, "spanL");
+		assert.equal(oLayoutData2.getSpanXL(), 4, "spanXL");
+		assert.equal(oLayoutData2, oLayoutData2, "LayoutData just updated, no new instance");
+
+		oLayoutData.destroy();
+		oLayoutData2.destroy();
+	});
+
 	QUnit.module("LayoutData one Container", {
 		beforeEach: initTestOneContainer,
 		afterEach: afterTest

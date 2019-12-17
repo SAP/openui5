@@ -723,7 +723,7 @@ sap.ui.define([
 	 * @classdesc An <code>int</code> type that defines how many cells a control inside of a column
 	 * of a <code>Form</code> control using the <code>ColumnLayout</code> control as layout can use.
 	 *
-	 * Allowed values are numbers from 1 to 12.
+	 * Allowed values are numbers from 1 to 12 and -1. -1 means the value is calculated.
 	 *
 	 * @final
 	 * @namespace
@@ -733,7 +733,9 @@ sap.ui.define([
 	 */
 	sap.ui.layout.form.ColumnCells = DataType.createType('sap.ui.layout.form.ColumnCells', {
 		isValid : function(vValue) {
-			if (vValue > 0 && vValue <= 12) {
+			if (vValue === -1) {
+				return true;
+			} else if (vValue > 0 && vValue <= 12) {
 				return true;
 			} else {
 				return false;
@@ -779,6 +781,10 @@ sap.ui.define([
 			addFormClass: function(){ return null; },
 			setToolbar: function(oToolbar){ return oToolbar; }, /* allow to overwrite toolbar settings */
 			getToolbarTitle: function(oToolbar) { return oToolbar && oToolbar.getId(); }, /* To determine title ID in toolbar for aria-label */
+			createDelimiter: function(sDelimiter, sId){ throw new Error("no delimiter control available!"); }, /* must return a kind of text control */
+			createSemanticDisplayControl: function(sText, sId){ throw new Error("no display control available!"); }, /* must return a kind of text control */
+			updateDelimiter: function(oDelimiter, sDelimiter){ throw new Error("no delimiter control available!"); },
+			updateSemanticDisplayControl: function(oControl, sText){ throw new Error("no display control available!"); },
 			bArrowKeySupport: true, /* enables the keyboard support for arrow keys */
 			bFinal: false /* if true, the helper must not be overwritten by an other library */
 		};

@@ -1768,6 +1768,59 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Marker interface for controls that can be used as content of <code>sap.ui.layout.form.SemanticFormElement</code>.
+	 *
+	 * If the value-holding property of the control is not <code>value</code or <code>text</code>, the name of the
+	 * value-holding property must be returned in the <code>getFormValueProperty</code> function.
+	 *
+	 * If the value of the control needs some special output formatting (to show a description instead of a key), this
+	 * formatted text needs to be returned in the <code>getFormFormattedValue</code> function.
+	 *
+	 * @since 1.86.0
+	 * @name sap.ui.core.ISemanticFormContent
+	 * @interface
+	 * @public
+	 * @experimental As of version 1.86
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Returns the formatted value of a control used in a <code>SemanticFormElement</code>.
+	 *
+	 * In the <code>SemanticFormElement</code> element, the assigned fields are rendered in edit mode. In display mode, a text
+	 * is rendered that concatenates the values of all assigned fields. In some cases the displayed text does not match the value
+	 * of the field and needs some formatting. In other cases the control does not have a <code>value</code> property,
+	 * so the <code>SemanticFormElement</code> element cannot determine the value.
+	 *
+	 * This is an optional method. If not defined, the <code>value</code> property or the <code>text</code> property is used to determine the value.
+	 *
+	 * @returns {string|Promise} Formatted value or a <code>Promise</code> returning the formatted value if resolved
+	 * @since 1.86.0
+	 * @public
+	 * @experimental As of version 1.86
+	 * @function
+	 * @name sap.ui.core.ISemanticFormContent.getFormFormattedValue?
+	 */
+
+	/**
+	 * Returns the name of the value-holding property of a control used in a <code>SemanticFormElement</code>.
+	 *
+	 * In the <code>SemanticFormElement</code> element, the assigned fields are rendered in edit mode. In display mode, a text
+	 * is rendered that concatenates the values of all assigned fields.
+	 * So the concatenated text needs to be updated if the value of a control changes. If a control does not have a <code>value</code> property,
+	 * the <code>SemanticFormElement</code> element needs to know the propery it has to listen for changes.
+	 *
+	 * This is an optional method. If not defined, the <code>value</code> property or the <code>text</code> property is used to determine the value.
+	 *
+	 * @returns {string} Name of the value-holding property
+	 * @since 1.86.0
+	 * @public
+	 * @experimental As of version 1.86
+	 * @function
+	 * @name sap.ui.core.ISemanticFormContent.getFormValueProperty?
+	 */
+
+	/**
 	 * @classdesc A string type that represents an RFC 3986 conformant URI.
 	 *
 	 * @final

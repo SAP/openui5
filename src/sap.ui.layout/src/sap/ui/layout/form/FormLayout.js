@@ -908,6 +908,37 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * In <code>sap.ui.layout.form.SemanticFormElement</> delimiters are rendered.
+	 * They should use only a small space. So <code>Layout</code> dependent <code>LayoutData</code>
+	 * are needed.
+	 *
+	 * This function need to be implemented by the specific <code>Layout</code>.
+	 *
+	 * @return {sap.ui.core.LayoutData | Promise} LayoutData or promise retuning LayoutData
+	 * @private
+	 * @since: 1.86.0
+	 */
+	FormLayout.prototype.getLayoutDataForDelimiter = function() {
+	};
+
+	/**
+	 * In <code>sap.ui.layout.form.SemanticFormElement</> delimiters are rendered.
+	 * The fields should be rendered per default in a way, the field and the corresponding delimiter filling one row in
+	 * phone mode. In desktop mode they should all be in one row.
+	 *
+	 * This function need to be implemented by the specific <code>Layout</code>.
+	 *
+	 * @param {int} iFields Number of field in the <code>SemanticFormElement</code>
+	 * @param {int} iIndex Index of field in the <code>SemanticFormElement</code>
+	 * @param {sap.ui.core.LayoutData} [oLayoutData] existing <code>LayoutData</code> that might be just changed
+	 * @return {sap.ui.core.LayoutData | Promise} LayoutData or promise retuning LayoutData
+	 * @private
+	 * @since: 1.86.0
+	 */
+	FormLayout.prototype.getLayoutDataForSemanticField = function(iFields, iIndex, oLayoutData) {
+	};
+
 	return FormLayout;
 
 });

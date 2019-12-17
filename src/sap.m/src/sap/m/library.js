@@ -5162,6 +5162,18 @@ sap.ui.define([
 				return oToolbar.getId(); // fallback
 			}
 		},
+		createDelimiter: function(sDelimiter, sId){
+			return new sap.m.Text(sId, {text: sDelimiter, textAlign: CoreLibrary.TextAlign.Center});
+		},
+		createSemanticDisplayControl: function(sText, sId){
+			return new sap.m.Text(sId, {text: sText});
+		},
+		updateDelimiter: function(oText, sDelimiter){
+			oText.setText(sDelimiter);
+		},
+		updateSemanticDisplayControl: function(oText, sText){
+			oText.setText(sText);
+		},
 		bArrowKeySupport: false, /* disables the keyboard support for arrow keys */
 		bFinal: true
 	});
