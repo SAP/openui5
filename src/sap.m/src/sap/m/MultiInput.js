@@ -486,20 +486,6 @@ function(
 		this.$("inner").css("opacity", "1");
 	};
 
-	/**
-	 * Setter for property <code>enableMultiLineMode</code>.
-	 * @param {boolean} bMultiLineMode Property value
-	 * @returns {sap.m.MultiInput} Pointer to the control instance for chaining
-	 * @since 1.28
-	 * @public
-	 * @deprecated Since version 1.58.
-	 */
-	MultiInput.prototype.setEnableMultiLineMode = function (bMultiLineMode) {
-		// the multiline functionality is deprecated
-		// the method is left for backwards compatibility
-		return this.setProperty("enableMultiLineMode", bMultiLineMode, true);
-	};
-
 	MultiInput.prototype.onmousedown = function (e) {
 		if (e.target == this.getDomRef('content')) {
 			e.preventDefault();
