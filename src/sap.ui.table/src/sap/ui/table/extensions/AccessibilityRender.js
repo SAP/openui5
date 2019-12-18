@@ -76,9 +76,6 @@ sap.ui.define([
 			oRm.attr("aria-hidden", "true");
 			oRm.openEnd();
 
-			// aria description for the table
-			var sDesc = oTable.getTitle() && oTable.getTitle().getText && oTable.getTitle().getText() != "" ? oTable.getTitle().getText() : "";
-			_writeAccText(oRm, sTableId, "ariadesc", sDesc);
 			// aria description for the row and column count
 			_writeAccText(oRm, sTableId, "ariacount");
 			// aria description for toggling the edit mode

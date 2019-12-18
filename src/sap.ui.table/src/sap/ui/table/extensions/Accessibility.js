@@ -315,7 +315,7 @@ sap.ui.define([
 
 			var sLabel = "";
 			if (oCountChangeInfo.initial) {
-				sLabel = oTable.getAriaLabelledBy().join(" ") + " " + oTable.getId() + "-ariadesc " + oTable.getId() + "-ariacount";
+				sLabel = oTable.getId() + "-ariacount";
 				if (oTable.getSelectionMode() !== SelectionMode.None) {
 					sLabel = sLabel + " " + oTable.getId() + "-ariaselection";
 				}
@@ -735,6 +735,11 @@ sap.ui.define([
 				case AccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 					mAttributes["role"] = TableUtils.Grouping.isGroupMode(oTable) || TableUtils.Grouping.isTreeMode(oTable) ? "treegrid" : "grid";
 
+					mAttributes["aria-labelledby"] = oTable.getAriaLabelledBy();
+					if (oTable.getTitle()) {
+						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
+					}
+
 					if (oTable.getSelectionMode() === SelectionMode.MultiToggle) {
 						mAttributes["aria-multiselectable"] = "true";
 					}
@@ -868,7 +873,7 @@ sap.ui.define([
 
 				case AccExtension.ELEMENTTYPES.OVERLAY: //The overlay container
 					mAttributes["role"] = "region";
-					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
+					mAttributes["aria-labelledby"] = oTable.getAriaLabelledBy();
 					if (oTable.getTitle()) {
 						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
 					}
