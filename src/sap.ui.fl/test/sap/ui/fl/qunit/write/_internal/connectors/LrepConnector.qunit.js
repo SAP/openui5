@@ -305,6 +305,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling resetChanges in CUSTOMER layer with ATO_NOTIFICATION", function (assert) {
+			var oMockTransportInfo = {
+				transport : "ATO_NOTIFICATION"
+			};
 			// changes for the component
 			var oUserChange = new Change({
 				fileType: "change",
@@ -367,6 +370,7 @@ sap.ui.define([
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves(oMockTransportInfo);
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&appVersion=1.0.0&changelist=ATO_NOTIFICATION&generator=Change.createInitialFileContent";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
 
@@ -378,6 +382,7 @@ sap.ui.define([
 				changes: aChanges,
 				reference: "flexReference"
 			}).then(function() {
+				assert.equal(fnOpenTransportSelectionStub.callCount, 3, "then openTransportSelection called three times");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",

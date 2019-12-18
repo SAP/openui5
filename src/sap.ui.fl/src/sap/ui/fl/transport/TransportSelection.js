@@ -4,11 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/transport/Transports",
 	"sap/ui/fl/transport/TransportDialog",
 	"sap/ui/fl/registry/Settings"
 ], function(
 	LayerUtils,
+	Layer,
 	Transports,
 	TransportDialog,
 	FlexSettings
@@ -36,13 +38,13 @@ sap.ui.define([
 
 	/**
 	 * Selects a transport request for a given LREP object.
-	 * First checks if the Adaptation Transport Organizer (ATO) is enabled
-	 * If ATO is enabled and the layered repository object is in the CUSTOMER layer, the request 'ATO_NOTIFICATION' has to be used.
-	 * This request triggers in the back end that the change is added to an ATO collection.
-	 * If ATO is not enabled or LREP object not in CUSTOMER layer:
+	 * If the object info is not provided or not completed, ATO is enabled and the layered repository object is in the CUSTOMER layer:
+	 * The request 'ATO_NOTIFICATION' has to be used. This request triggers in the back end that the change is added to an ATO collection.
+	 * If the Object Info is completely provided or ATO is not enabled or LREP object not in CUSTOMER layer:
 	 * If the LREP object is already assigned to an open transport request or the LREP object is
-	 * assigned to a local ABAP package, no dialog to select a transport is started. Instead the success callback is invoked directly. The transport
-	 * dialog is shown if a package or a transport request has still to be selected, so if more than one transport request is available for the
+	 * assigned to a local ABAP package, no dialog to select a transport is started. Instead the success callback is invoked directly.
+	 * If the LREP object is not local and ATO is enabled and the layered repository object is in the CUSTOMER layer, The request 'ATO_NOTIFICATION' has to be used.
+	 * Otherwise, dialog is shown if a package or a transport request has still to be selected, so if more than one transport request is available for the
 	 * current user and the LREP object is not locked in an open transport request.
 	 *
 	 * @param {object} oObjectInfo the LREP object, which has the attributes name, name space, type, layer and package.
@@ -53,66 +55,45 @@ sap.ui.define([
 	 * @public
 	 */
 	TransportSelection.prototype.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl, sStyleClass) {
-		var that = this;
-
-		if (oObjectInfo) {
-			var sLayerType = LayerUtils.getCurrentLayer(false);
-
-			// if object layer are known and layer is CUSTOMER
-			// check in settings if the adaptation transport organizer (ATO) is enabled
-			if (sLayerType && sLayerType === 'CUSTOMER') {
-				// retrieve the settings and check if ATO is enabled
-				FlexSettings.getInstance().then(function(oSettings) {
-					// ATO is enabled - signal that change is to be added to an ATO collection
-					// instead of a transport
-					if (oSettings.isAtoEnabled()) {
-						var oTransport = { transportId: "ATO_NOTIFICATION" };
-						fOkay(that._createEventObject(oObjectInfo, oTransport));
-						//ATO is not enabled, use CTS instead
-					} else {
-						that._selectTransport(oObjectInfo, fOkay, fError, bCompactMode, sStyleClass);
-					}
-				});
-			// do not have the required info to check for ATO or not CUSTOMER layer - use CTS
-			} else {
-				that._selectTransport(oObjectInfo, fOkay, fError, bCompactMode, sStyleClass);
-			}
-		}
-	};
-
-	/**
-	 * Selects a transport request for a given LREP object. If the LREP object is already assigned to an open transport request or the LREP object is
-	 * assigned to a local ABAP package, no dialog to select a transport is started. Instead the success callback is invoked directly. The transport
-	 * dialog is shown if a package or a transport request has still to be selected, so if more than one transport request is available for the
-	 * current user and the LREP object is not locked in an open transport request.
-	 *
-	 * @param {object} oObjectInfo the LREP object, which has the attributes name, name space, type, layer and package.
-	 * @param {function} fOkay call-back to be invoked when a transport request has successfully been selected.
-	 * @param {function} fError call-back to be invoked when an error occurred during selection of a transport request.
-	 * @param {boolean} bCompactMode flag indicating whether the transport dialog should be opened in compact mode.
-	 * @private
-	 */
-	TransportSelection.prototype._selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, sStyleClass) {
-		var that = this;
-
-		if (oObjectInfo) {
+		var retrieveTransportInfo = function(oObjectInfo, fOkay, fError, bCompactMode, sStyleClass, bATOActive) {
 			this.oTransports.getTransports(oObjectInfo).then(function(oGetTransportsResult) {
-				var oTransport;
-
-				if (that._checkDialog(oGetTransportsResult)) {
-					that._openDialog({
+				if (this._checkDialog(oGetTransportsResult, bATOActive)) {
+					this._openDialog({
 						hidePackage: !LayerUtils.doesCurrentLayerRequirePackage(),
 						pkg: oObjectInfo.package,
 						transports: oGetTransportsResult.transports,
-						lrepObject: that._toLREPObject(oObjectInfo)
+						lrepObject: this._toLREPObject(oObjectInfo)
 					}, fOkay, fError, bCompactMode, sStyleClass);
 				} else {
-					oTransport = that._getTransport(oGetTransportsResult);
-					fOkay(that._createEventObject(oObjectInfo, oTransport));
+					var oTransport = (!oGetTransportsResult.localonly && bATOActive) ? { transportId: "ATO_NOTIFICATION" } : this._getTransport(oGetTransportsResult);
+					fOkay(this._createEventObject(oObjectInfo, oTransport));
 				}
-			}, function(oResult) {
+			}.bind(this), function(oResult) {
 				fError(oResult);
 			});
+		};
+
+		var sLayerType = LayerUtils.getCurrentLayer(false);
+		//First check the current layer
+		if (sLayerType && ((sLayerType === Layer.CUSTOMER) || (sLayerType === Layer.CUSTOMER_BASE))) {
+			//CUSTOMER layer --> retrieve the settings and check if ATO is enabled
+			FlexSettings.getInstance().then(function (oSettings) {
+				if (oSettings.isAtoEnabled()) {
+					//ATO is enabled
+					if (!(oObjectInfo && oObjectInfo.name && oObjectInfo.namespace && oObjectInfo.type)) {
+						//Object info is not completed (public scenario)+ ATO is enabled + CUSTOMER layer: No getTransport is necessary
+						var oTransport = { transportId: "ATO_NOTIFICATION" };
+						fOkay(this._createEventObject(oObjectInfo, oTransport));
+					} else {
+						//Object info is completed (delete/reset scenario) --> retrieve transport info to distinguish local object
+						retrieveTransportInfo.apply(this, [oObjectInfo, fOkay, fError, bCompactMode, sStyleClass, true]);
+					}
+				} else {
+					retrieveTransportInfo.apply(this, [oObjectInfo, fOkay, fError, bCompactMode, sStyleClass, false]);
+				}
+			}.bind(this));
+		} else {
+			retrieveTransportInfo.apply(this, [oObjectInfo, fOkay, fError, bCompactMode, sStyleClass, false]);
 		}
 	};
 
@@ -217,13 +198,14 @@ sap.ui.define([
 	/**
 	 * Returns whether the dialog to select a transport should be started.
 	 *
-	 * @param {object} oTransports the available transports.
+	 * @param {object} oTransports The available transports.
+	 * @param {boolean} bATOActive Whether the system is using ATO_NOTIFICATION or not.
 	 * @returns {boolean} <code>true</code>, if the LREP object is already locked in one of the transports, <code>false</code> otherwise.
 	 * @private
 	 */
-	TransportSelection.prototype._checkDialog = function(oTransports) {
+	TransportSelection.prototype._checkDialog = function(oTransports, bATOActive) {
 		if (oTransports) {
-			if (oTransports.localonly || this._hasLock(oTransports.transports)) {
+			if (oTransports.localonly || this._hasLock(oTransports.transports) || (!oTransports.localonly && bATOActive)) {
 				return false;
 			}
 		}
