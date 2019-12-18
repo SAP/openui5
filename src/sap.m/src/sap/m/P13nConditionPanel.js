@@ -2398,9 +2398,9 @@ sap.ui.define([
 			if (oControl.getDateValue && !(oControl.isA("sap.m.TimePicker")) && oType.getName() !== "sap.ui.comp.odata.type.StringDate") {
 				oValue = oControl.getDateValue();
 				if (oType && oValue) {
-					if (oEvent && oEvent.getParameter("valid")){
+					if ((oEvent && oEvent.getParameter("valid")) || oControl.isValidValue()) {
 						sValue = oType.formatValue(oValue, "string");
-					}else {
+					} else {
 						sValue = "";
 					}
 				}
