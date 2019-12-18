@@ -23,8 +23,8 @@ function (
 		"sap.card": {
 			"type": "List",
 			"header": {
-				"title": "The date is The date is {= format.date('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }",
-				"subtitle": "The date is The date is {= format.date('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }",
+				"title": "The date is The date is {= format.dateTime('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }",
+				"subtitle": "The date is The date is {= format.dateTime('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }",
 				"icon": {
 					"src": "sap-icon://desktop-mobile"
 				},
@@ -65,7 +65,7 @@ function (
 					]
 				},
 				"item": {
-					"title": "The date is {= format.date('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }",
+					"title": "The date is {= format.dateTime('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }",
 					"description": "The price is lower than 50: {= ${price} < 50 ? 'true' : 'false'}",
 					"highlight": "{Highlight}"
 				}
@@ -114,8 +114,8 @@ function (
 						"title": "Contact Details",
 						"items": [
 							{
-								"label": "First Name {= format.date('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'})}",
-								"value": "{firstName} {= format.date('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }"
+								"label": "First Name {= format.dateTime('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'})}",
+								"value": "{firstName} {= format.dateTime('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }"
 							},
 							{
 								"label": "Last Name",
@@ -244,8 +244,8 @@ function (
 				"row": {
 					"columns": [
 						{
-							"title": "Sales Order {= format.date('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }",
-							"value": "{salesOrder} {= format.date('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }",
+							"title": "Sales Order {= format.dateTime('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }",
+							"value": "{salesOrder} {= format.dateTime('{{parameters.NOW_ISO}}', {pattern: 'd MMM y'}) }",
 							"identifier": true
 						},
 						{

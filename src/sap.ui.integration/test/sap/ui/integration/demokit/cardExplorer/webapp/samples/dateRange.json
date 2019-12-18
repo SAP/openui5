@@ -26,7 +26,7 @@
 		},
 		"header": {
 			"title": "Top orders for last {{parameters.periodAge}} years",
-			"subTitle": "Since: {= format.date(dateRange.start('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'MMMM d, y'})}",
+			"subTitle": "Since: {= format.dateTime(dateRange.start('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'MMMM d, y'})}",
 			"icon": {
 				"src": "sap-icon://compare-2"
 			},
@@ -42,7 +42,7 @@
 						"$format": "json",
 						"$top": "{{parameters.maxItems}}",
 						"$orderby": "Freight desc",
-						"$filter": "OrderDate ge datetime'{= format.date(dateRange.start('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}' and OrderDate le datetime'{= format.date(dateRange.end('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}'"
+						"$filter": "OrderDate ge datetime'{= format.dateTime(dateRange.start('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}' and OrderDate le datetime'{= format.dateTime(dateRange.end('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}'"
 					}
 				},
 				"path": "/value/"
@@ -63,7 +63,7 @@
 					},
 					{
 						"title": "Date",
-						"value": "{= format.date(${OrderDate}, {pattern: 'MMMM, y'})}"
+						"value": "{= format.dateTime(${OrderDate}, {pattern: 'MMMM, y'})}"
 					}
 				]
 			}

@@ -7,7 +7,7 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "Order status {= format.dateTime(Date.now(), {pattern: 'H:mm, MMMM d, y'}) }",
+			"title": "Order status {= format.dateTime(Date.now(), {format: 'yMMMd'}) }",
 			"subTitle": "Orders exceeding 50$ are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
