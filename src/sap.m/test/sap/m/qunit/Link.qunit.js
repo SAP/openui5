@@ -221,8 +221,8 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
-	QUnit.test("Disabled link should not have the preseted href", function(assert) {
-		assert.equal(oLink2.$().attr("href"), undefined, "oLink2 href should not exist");
+	QUnit.test("Disabled link should have empty href", function(assert) {
+		assert.equal(oLink2.$().attr("href"), "", "oLink2 href should be empty");
 		oLink2.setEnabled(true);
 		sap.ui.getCore().applyChanges();
 		assert.equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");
@@ -230,23 +230,6 @@ sap.ui.define([
 	});
 
 	// Keyboard handling
-	QUnit.test("Disabled link should not be :focusable", function(assert) {
-		var oLink1 = new Link("l1", {
-			text : sText,
-			href: "x.html",
-			target: "_blank",
-			width : "200px",
-			enabled : false
-		}).placeAt("uiArea1");
-
-		sap.ui.getCore().applyChanges();
-
-		var $oLink = oLink1.$();
-
-		assert.strictEqual($oLink.is(":focusable"), false, "jQuery indicates that a disabled link isn't :focusable");
-
-		oLink1.destroy();
-	});
 
 	QUnit.test("Link with empty or no text should not be in the tab chain", function(assert) {
 		var oLink1 = new Link("l1", {
@@ -343,7 +326,8 @@ sap.ui.define([
 
 		oLink1.setHref("");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual($oLink.attr("role"), "button","Links without href should have a button role");
+		assert.notOk($oLink.attr("role"), "Links without href shouldn't have a role too");
+		assert.strictEqual($oLink.attr("href"), "", "Links without href should have an empty href attribute");
 
 		// ARIA disabled
 		oLink1.setEnabled(false);
@@ -465,7 +449,7 @@ sap.ui.define([
 		oLink.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oLink.$().attr("href"), undefined, "Link href should not exist if an invalid URL is provided");
+		assert.equal(oLink.$().attr("href"), "", "Link href should be empty if an invalid URL is provided");
 
 		oLink.setHref(sValidUrl);
 		sap.ui.getCore().applyChanges();
@@ -475,7 +459,7 @@ sap.ui.define([
 		oLink.setHref(sInvalidUrl);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oLink.$().attr("href"), undefined, "Link href should not exist if an invalid URL is set");
+		assert.equal(oLink.$().attr("href"), "", "Link href should be empty if an invalid URL is set");
 
 		oLink.destroy();
 	});
