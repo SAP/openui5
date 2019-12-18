@@ -5,6 +5,10 @@
 		"type": "card"
 	},
 	"sap.card": {
+		"header": {
+			"title": "Contact Details Card",
+				"subTitle": "Adaptive Card with sap.f.cards.Header"
+		},
 		"type": "AdaptiveCard",
 		"content": {
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

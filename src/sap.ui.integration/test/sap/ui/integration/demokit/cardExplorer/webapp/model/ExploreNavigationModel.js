@@ -138,7 +138,7 @@ sap.ui.define([
 						]
 					},
 					{
-						title: 'Adaptive',
+						title: 'Adaptive (Experimental)',
 						target: 'exploreSamples',
 						key: 'adaptive',
 						subSamples: [
