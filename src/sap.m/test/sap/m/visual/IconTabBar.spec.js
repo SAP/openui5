@@ -186,6 +186,12 @@ describe("sap.m.IconTabBar", function() {
 				expect(takeScreenshot(element(by.id("backgroundDesignIconTabBar")))).toLookAs(sType + "_21_headerBackgroundDesign_Solid");
 			});
 		});
+
+		it("should have Responsive Padding in Fiori 3 themes", function() {
+			browser.executeScript("document.getElementById('itb_rp').scrollIntoView()").then(function() {
+				expect(takeScreenshot(element(by.id("itb_rp")))).toLookAs(sType + "_22_responsivePadding");
+			});
+		});
 	};
 
 	//check tabDensityMode property = Cozy

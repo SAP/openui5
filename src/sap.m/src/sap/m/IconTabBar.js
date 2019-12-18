@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'./IconTabBarRenderer',
 	'./IconTabHeader',
+	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, ManagedObject, IconTabBarRenderer, IconTabHeader, jQuery) {
+	function(library, Control, ManagedObject, IconTabBarRenderer, IconTabHeader, ResponsivePaddingsEnablement, jQuery) {
 	"use strict";
 
 
@@ -84,6 +85,7 @@ sap.ui.define([
 	 *<li>On desktop, tabs can be dragged and dropped (property <code>enableTabReordering</code>).</li>
 	 *<li>If you have a large number of tabs, you can scroll through them with the arrows. Additionally all tabs are available in an overflow button (property <code>showOverflowSelectList</code>).</li>
 	 *</ul>
+	 * When using the <code>sap.m.IconTabBar</code> in SAP Quartz themes, the breakpoints and layout paddings could be determined by the Icon Tab Bar's width. To enable this concept and add responsive paddings to an element of the Icon Tab Bar control, you have to add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--content</code>.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.m.ObjectHeaderContainer, sap.f.IDynamicPageStickyContent
 	 *
@@ -291,6 +293,20 @@ sap.ui.define([
 		},
 		designtime: "sap/m/designtime/IconTabBar.designtime"
 	}});
+
+	ResponsivePaddingsEnablement.call(IconTabBar.prototype, {
+		header: { selector: ".sapMITHWrapper" },
+		content: { suffix: "content" }
+	});
+
+	/**
+	 * Initialization lifecycle method.
+	 *
+	 * @private
+	 */
+	IconTabBar.prototype.init = function () {
+		this._initResponsivePaddingsEnablement();
+	};
 
 	/**
 	 * Sets the tab content as expanded.
