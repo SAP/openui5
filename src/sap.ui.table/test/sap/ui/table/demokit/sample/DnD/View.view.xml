@@ -85,7 +85,7 @@
 				<Table
 					id="table2"
 					selectionMode="Single"
-					ariaLabelledBy="title"
+					ariaLabelledBy="title2"
 					rows="{
 						path: '/ProductCollection',
 						filters: {path: 'Rank', operator: 'GT', value1: '0'},
@@ -95,7 +95,7 @@
 					noData="Please drag-and-drop products here.">
 					<extension>
 						<m:OverflowToolbar>
-							<m:Title id="title" text="Selected Products"/>
+							<m:Title id="title2" text="Selected Products"/>
 							<m:ToolbarSpacer/>
 							<m:Button
 								icon="sap-icon://navigation-up-arrow"
