@@ -102,6 +102,51 @@ sap.ui.define([
 			assert.equal(this.cut.getClient(), "someClient");
 		});
 
+		QUnit.test("isDraftEnabled returns a 'true' flag if it is maintained in the settings for the passed layer", function(assert) {
+			var sLayer = "CUSTOMER";
+			var oSettings = {
+				draft : {}
+			};
+			oSettings.draft[sLayer] = true;
+
+			this.cut = new Settings(oSettings);
+			assert.equal(this.cut.isDraftEnabled(sLayer), true);
+		});
+
+		QUnit.test("isDraftEnabled returns a 'true' flag if it is maintained for 'ALL' layers in the settings for the passed layer", function(assert) {
+			var sLayer = "CUSTOMER";
+			var oSettings = {
+				draft : {
+					ALL : true
+				}
+			};
+
+			this.cut = new Settings(oSettings);
+			assert.equal(this.cut.isDraftEnabled(sLayer), true);
+		});
+
+		QUnit.test("isDraftEnabled returns a 'false' flag if the layer is NOT maintained in the settings for the passed layer", function(assert) {
+			var sLayer = "CUSTOMER";
+			var oSettings = {
+				draft : {
+					VENDOR : true
+				}
+			};
+
+			this.cut = new Settings(oSettings);
+			assert.equal(this.cut.isDraftEnabled(sLayer), false);
+		});
+
+		QUnit.test("isDraftEnabled returns a 'false' flag if NO layer is maintained in the settings for the passed layer", function(assert) {
+			var sLayer = "CUSTOMER";
+			var oSettings = {
+				draft : {}
+			};
+
+			this.cut = new Settings(oSettings);
+			assert.equal(this.cut.isDraftEnabled(sLayer), false);
+		});
+
 		QUnit.test("get instance from flex settings request when load settings promise is not available", function(assert) {
 			var oSetting = {
 				isKeyUser: true,

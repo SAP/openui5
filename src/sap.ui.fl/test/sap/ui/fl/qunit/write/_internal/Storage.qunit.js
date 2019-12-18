@@ -267,9 +267,18 @@ sap.ui.define([
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", url: this.url},
-				{connector: "PersonalizationConnector", url: this.url},
-				{connector: "JsObjectConnector"}
+				{
+					connector: "LrepConnector",
+					url: this.url,
+					layers: []
+				}, {
+					connector: "JsObjectConnector",
+					layers: ["CUSTOMER"]
+				}, {
+					connector : "PersonalizationConnector",
+					url : this.url,
+					layers : ["USER"]
+				}
 			]);
 
 			var oExpectedResponse = {
@@ -277,6 +286,10 @@ sap.ui.define([
 				isVariantSharingEnabled: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
+				draft: {
+					CUSTOMER: false,
+					USER: false
+				},
 				isProductiveSystem: true,
 				isZeroDowntimeUpgradeRunning: false,
 				system: "",
@@ -350,6 +363,7 @@ sap.ui.define([
 				isVariantSharingEnabled: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
+				draft: {},
 				isProductiveSystem: true,
 				isZeroDowntimeUpgradeRunning: false,
 				system: "",
@@ -357,7 +371,7 @@ sap.ui.define([
 			};
 
 			return Storage.loadFeatures().then(function (mFeatures) {
-				assert.equal(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 8 feature was provided");
+				assert.equal(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 9 feature was provided");
 				assert.equal(mFeatures.isProductiveSystem, true, "the property was overruled by the second connector");
 			});
 		});

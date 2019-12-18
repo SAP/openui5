@@ -102,7 +102,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sends request to the back end for settings content. Stores content into internal setting instance and returns the instance.
+	 * Sends request to the back end for settings content; Stores content into internal setting instance and returns the instance.
 	 *
 	 * @returns {Promise} With parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 * @private
@@ -118,6 +118,7 @@ sap.ui.define([
 					isAtoAvailable: false,
 					isAtoEnabled: false,
 					isProductiveSystem: true,
+					draft: {},
 					_bFlexChangeMode: false,
 					_bFlexibilityAdaptationButtonAllowed: false
 				};
@@ -132,7 +133,7 @@ sap.ui.define([
 	/**
 	 * Writes the data received from the storage into an internal instance and then returns the settings object within a Promise.
 	 *
-	 * @param oSettings - Data received from the storage
+	 * @param {object} oSettings - Data received from the storage
 	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 * @protected
 	 *
@@ -182,6 +183,18 @@ sap.ui.define([
 	 */
 	Settings.prototype.isKeyUser = function() {
 		return this._getBooleanProperty("isKeyUser");
+	};
+
+	/**
+	 * Returns a flag if the draft is enabled for a given layer.
+	 *
+	 * @param {string} sLayer - Layer to check.
+	 * @returns {boolean} true if draft is supported in the given layer.
+	 * @public
+	 */
+	Settings.prototype.isDraftEnabled = function(sLayer) {
+		// there may be a draft information for all layers
+		return !!(this._oSettings.draft[sLayer] || this._oSettings.draft["ALL"]);
 	};
 
 	/**
