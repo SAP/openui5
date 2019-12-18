@@ -91,6 +91,10 @@
 		<!-- JSLint/ESLint report path -->
 		<sonar.javascript.jslint.reportPath>target/jslint/jslint.xml</sonar.javascript.jslint.reportPath>
 
+		<!-- Maven build phase in which npm-sources should be packaged     -->
+		<!-- Set to 'package' to enable packaging for a project in general -->
+		<npm.package.phase>never</npm.package.phase>
+
  	</properties>
 
 
@@ -139,6 +143,33 @@
 					</delimiters>
 
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<executions>
+					<execution>
+						<id>npm-resources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<!-- we use the 'phase' as a substitute for the missing 'skip' property of the jar-plugin           -->
+						<!-- for non-library projects and for all builds other than the nightly build, it is set to 'never' --> 
+						<phase>never</phase>
+						<configuration>
+							<classesDirectory>${project.basedir}</classesDirectory>
+							<classifier>npm-resources</classifier>
+							<includes>
+								<include>package.json</include>
+								<include>ui5.yaml</include>
+								<include>src/**/*</include>
+								<include>test/**/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
@@ -191,30 +222,6 @@
 					</plugin>
 
 				</plugins>
-
-			</build>
-
-		</profile>
-
-		<!-- internal build related plugins & configuration -->
-		<profile>
-
-			<id>internal.build</id>
-
-			<build>
-
-				<pluginManagement>
-					<plugins>
-
-						<!-- legacy migration helper (for internal use) -->
-						<plugin>
-							<groupId>com.sap.ui5.tools.build</groupId>
-							<artifactId>ui5builder-maven-plugin</artifactId>
-							<version>1.75.0-SNAPSHOT</version>
-						</plugin>
-
-					</plugins>
-				</pluginManagement>
 
 			</build>
 
@@ -310,6 +317,23 @@
 				<sap.ui5.eslint.onlyChangedFiles>false</sap.ui5.eslint.onlyChangedFiles>
 
 			</properties>
+
+			<build>
+				<plugins>
+					<!--  create the npm-resources jar only in the nightly.build -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.3.2</version>
+						<executions>
+							<execution>
+								<id>npm-resources</id>
+								<phase>${npm.package.phase}</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 
 		</profile>
 

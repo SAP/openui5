@@ -49,6 +49,9 @@
 		<!-- enable eslint validation -->
 		<sap.ui5.eslint.skip.validation>false</sap.ui5.eslint.skip.validation>
 
+		<!-- enable the packaging of the NPM resources -->
+		<npm.package.phase>package</npm.package.phase>
+
 	</properties>
 
 
@@ -69,62 +72,6 @@
 			</resource>
 		</resources>
 	</build>
-
-	<!--**************************************************************************
-	* POM SECTION: Profiles Settings
-	***************************************************************************-->
-
-	<profiles>
-
-		<!-- creation of a webjars compatible JAR file -->
-		<profile>
-			<id>webjars.build</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.5</version>
-						<executions>
-							<execution>
-								<id>webjars-copy-resources</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.directory}/webjars/META-INF/resources/openui5/${project.version}</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.build.outputDirectory}/META-INF/resources</directory>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>2.3.2</version>
-						<executions>
-							<execution>
-								<id>webjars-jar</id>
-								<phase>package</phase>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<configuration>
-									<classesDirectory>${project.build.directory}/webjars</classesDirectory>
-									<classifier>webjars</classifier>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 
 </project>
