@@ -3,7 +3,22 @@
 	"sap.app": {
 		"id": "card.explorer.dynamic.counter.list.card",
 		"type": "card",
-		"i18n": "i18n/i18n.properties"
+		"i18n": "i18n/i18n.properties",
+		"title": "Sample for Translation usage in Cards",
+		"subTitle": "Sample for Translation usage in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Translation",
+				"Card",
+				"Sample"
+			]
+		}
 	},
 	"sap.card": {
 		"data": {

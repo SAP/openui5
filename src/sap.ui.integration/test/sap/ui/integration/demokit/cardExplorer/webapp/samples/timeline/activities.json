@@ -4,7 +4,20 @@
 		"id": "card.explorer.activities.timeline.card",
 		"type": "card",
 		"title": "Sample of a Activities Timeline",
-		"subTitle": "Sample of a Activities Timeline"
+		"subTitle": "Sample of a Activities Timeline",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Timeline",
+				"Card",
+				"Sample"
+			]
+		}
 	},
 	"sap.ui": {
 		"technology": "UI5",
