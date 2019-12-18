@@ -1272,106 +1272,106 @@
 	},
 	"objectContent": {
 		"card1": {
-		  "sap.app": {
-			"type": "card"
-		  },
-		  "sap.card": {
-			"type": "Object",
-			"data": {
-			  "json": {
-				"firstName": "Donna",
-				"lastName": "Moore",
-				"position": "Sales Executive",
-				"phone": "+1 202 555 5555",
-				"email": "my@mymail.com",
-				"photo": "./images/Woman_avatar_01.png",
-				"manager": {
-				  "firstName": "John",
-				  "lastName": "Miller",
-				  "photo": "./images/Woman_avatar_02.png"
-				},
-				"company": {
-				  "name": "Robert Brown Entertainment",
-				  "address": "481 West Street, Anytown OH 45066, USA",
-				  "email": "mail@mycompany.com",
-				  "emailSubject": "Subject",
-				  "website": "www.company_a.example.com",
-				  "url": "http://www.company_a.example.com"
-				}
-			  }
+			"sap.app": {
+				"type": "card"
 			},
-			"header": {
-			  "icon": {
-				"src": "{photo}"
-			  },
-			  "title": "{firstName} {lastName}",
-			  "subTitle": "{position}"
-			},
-			"content": {
-			  "groups": [
-				{
-				  "title": "Contact Details",
-				  "items": [
-					{
-					  "label": "First Name",
-					  "value": "{firstName}"
-					},
-					{
-					  "label": "Last Name",
-					  "value": "{lastName}"
-					},
-					{
-					  "label": "Phone",
-					  "value": "{phone}",
-					  "type": "phone"
-					},
-					{
-					  "label": "Email",
-					  "value": "{email}",
-					  "type": "email"
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {
+						"firstName": "Donna",
+						"lastName": "Moore",
+						"position": "Sales Executive",
+						"phone": "+1 202 555 5555",
+						"email": "my@mymail.com",
+						"photo": "./images/Woman_avatar_01.png",
+						"manager": {
+							"firstName": "John",
+							"lastName": "Miller",
+							"photo": "./images/Woman_avatar_02.png"
+						},
+						"company": {
+							"name": "Robert Brown Entertainment",
+							"address": "481 West Street, Anytown OH 45066, USA",
+							"email": "mail@mycompany.com",
+							"emailSubject": "Subject",
+							"website": "www.company_a.example.com",
+							"url": "http://www.company_a.example.com"
+						}
 					}
-				  ]
 				},
-				{
-				  "title": "Organizational Details",
-				  "items": [
-					{
-					  "label": "Direct Manager",
-					  "value": "{manager/firstName} {manager/lastName}",
-					  "icon": {
-						"src": "{manager/photo}"
-					  }
-					}
-				  ]
+				"header": {
+					"icon": {
+						"src": "{photo}"
+					},
+					"title": "{firstName} {lastName}",
+					"subTitle": "{position}"
 				},
-				{
-				  "title": "Company Details",
-				  "items": [
-					{
-					  "label": "Company Name",
-					  "value": "{company/name}"
-					},
-					{
-					  "label": "Address",
-					  "value": "{company/address}"
-					},
-					{
-					  "label": "Email",
-					  "value": "{company/email}",
-					  "emailSubject": "{company/emailSubject}",
-					  "type": "email"
-					},
-					{
-					  "label": "Website",
-					  "value": "{company/website}",
-					  "url": "{company/url}",
-					  "type": "link"
-					}
-				  ]
+				"content": {
+					"groups": [
+						{
+							"title": "Contact Details",
+							"items": [
+								{
+									"label": "First Name",
+									"value": "{firstName}"
+								},
+								{
+									"label": "Last Name",
+									"value": "{lastName}"
+								},
+								{
+									"label": "Phone",
+									"value": "{phone}",
+									"type": "phone"
+								},
+								{
+									"label": "Email",
+									"value": "{email}",
+									"type": "email"
+								}
+							]
+						},
+						{
+							"title": "Organizational Details",
+							"items": [
+								{
+									"label": "Direct Manager",
+									"value": "{manager/firstName} {manager/lastName}",
+									"icon": {
+										"src": "{manager/photo}"
+									}
+								}
+							]
+						},
+						{
+							"title": "Company Details",
+							"items": [
+								{
+									"label": "Company Name",
+									"value": "{company/name}"
+								},
+								{
+									"label": "Address",
+									"value": "{company/address}"
+								},
+								{
+									"label": "Email",
+									"value": "{company/email}",
+									"emailSubject": "{company/emailSubject}",
+									"type": "email"
+								},
+								{
+									"label": "Website",
+									"value": "{company/website}",
+									"url": "{company/url}",
+									"type": "link"
+								}
+							]
+						}
+					]
 				}
-			  ]
 			}
-		  }
 		}
 	},
 	"tableManifests": {
@@ -2448,7 +2448,8 @@
 						"state": "{state}"
 					},
 					"details": "{details}",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Target",
 							"number": "{target/number}",
 							"unit": "{target/unit}"
@@ -2485,11 +2486,14 @@
 						},
 						"path": "/list"
 					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
 							"label": "Revenue",
 							"value": "{Revenue}"
 						},
@@ -2524,7 +2528,8 @@
 						"state": "{valueColor}"
 					},
 					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
 							"number": "3252.234",
 							"unit": "K"
@@ -2560,11 +2565,14 @@
 						},
 						"path": "/list"
 					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
 							"label": "Revenue",
 							"value": "{Revenue}"
 						},
@@ -2612,14 +2620,18 @@
 						},
 						"path": "/list"
 					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
-						"label": "Revenue",
-						"value": "{Revenue}"
-					}]
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
 				}
 			}
 		},
@@ -2644,11 +2656,13 @@
 						"trend": "{trend}",
 						"state": "{valueColor}"
 					},
-					"sideIndicators": [{
-						"title": "Decrease",
-						"number": "24",
-						"unit": "weeks"
-					}]
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
 				},
 				"content": {
 					"chartType": "Donut",
@@ -2676,14 +2690,18 @@
 						},
 						"path": "/milk"
 					},
-					"dimensions": [{
-						"label": "Store Name",
-						"value": "{Store Name}"
-					}],
-					"measures": [{
-						"label": "Revenue",
-						"value": "{Revenue}"
-					}]
+					"dimensions": [
+						{
+							"label": "Store Name",
+							"value": "{Store Name}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
 				}
 			}
 		},
@@ -2737,11 +2755,13 @@
 					}
 				},
 				"content": {
-					"items": [{
-						"title": "Call Simone",
-						"icon": "sap-icon://call",
-						"infoState": "Error"
-					}]
+					"items": [
+						{
+							"title": "Call Simone",
+							"icon": "sap-icon://call",
+							"infoState": "Error"
+						}
+					]
 				}
 			}
 		},
@@ -2756,7 +2776,8 @@
 					}
 				},
 				"content": {
-					"items": [{
+					"items": [
+						{
 							"title": "Alain Chevalier",
 							"icon": "sap-icon://person-placeholder"
 						},
@@ -2781,6 +2802,123 @@
 							"icon": "sap-icon://business-card"
 						}
 					]
+				}
+			}
+		},
+		"table": {
+			"_version": "1.15.0",
+			"sap.app": {
+				"id": "card.explorer.table.card",
+				"type": "card",
+				"title": "Sample of a Table Card",
+				"subTitle": "Sample of a Table Card"
+			},
+			"sap.ui": {
+				"technology": "UI5",
+				"icons": {
+					"icon": "sap-icon://table-view"
+				}
+			},
+			"sap.card": {
+				"type": "Table",
+				"data": {
+					"json": [
+						{
+							"salesOrder": "5000",
+							"customerName": "Robert",
+							"netAmount": "2K USD",
+							"status": "Delivered",
+							"statusState": "Success"
+						},
+						{
+							"salesOrder": "500",
+							"customerName": "Brazil",
+							"netAmount": "127k USD",
+							"status": "Canceled",
+							"statusState": "Error"
+						},
+						{
+							"salesOrder": "5000",
+							"customerName": "Brazil ",
+							"netAmount": "8K USD",
+							"status": "In Progress",
+							"statusState": "Warning"
+						},
+						{
+							"salesOrder": "500",
+							"customerName": "Brazil",
+							"netAmount": "25K USD",
+							"status": "Delivered",
+							"statusState": "Success"
+						},
+						{
+							"salesOrder": "500",
+							"customerName": "Brazil",
+							"netAmount": "7K USD",
+							"status": "Delivered",
+							"statusState": "Success"
+						},
+						{
+							"salesOrder": "500",
+							"customerName": "Robert",
+							"netAmount": "2K USD",
+							"status": "Delivered",
+							"statusState": "Success"
+						},
+						{
+							"salesOrder": "5000",
+							"customerName": "Brazil",
+							"netAmount": "127k USD",
+							"status": "Canceled",
+							"statusState": "Error"
+						},
+						{
+							"salesOrder": "5000",
+							"customerName": "Brazil ",
+							"netAmount": "8K USD",
+							"status": "In Progress",
+							"statusState": "Warning"
+						},
+						{
+							"salesOrder": "500001",
+							"customerName": "Brazil",
+							"netAmount": "8K USD",
+							"status": "In Progress",
+							"statusState": "Warning"
+						}
+					]
+				},
+				"header": {
+					"title": "Sales Orders for Key Accounts",
+					"subTitle": "Today",
+					"status": {
+						"text": "{headerData/statusText}"
+					}
+				},
+				"content": {
+					"maxItems": "7",
+					"row": {
+						"columns": [
+							{
+								"title": "Sales Order",
+								"value": "{salesOrder}",
+								"identifier": true
+							},
+							{
+								"title": "Customer",
+								"value": "{customerName}"
+							},
+							{
+								"title": "Net Amount",
+								"value": "{netAmount}"
+							},
+							{
+								"title": "Status",
+								"value": "{status}",
+								"state": "{statusState}"
+							}
+						]
+					}
 				}
 			}
 		}

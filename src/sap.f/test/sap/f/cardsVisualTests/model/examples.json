@@ -19,16 +19,16 @@
 		"group": "Card Type Examples"
 	},
 	{
-	  "title": "Object Card",
-	  "description": "Example page for Card of type Object",
-	  "route": "objectContent",
-	  "group": "Card Type Examples"
+		"title": "Object Card",
+		"description": "Example page for Card of type Object",
+		"route": "objectContent",
+		"group": "Card Type Examples"
 	},
 	{
-	  "title": "Adaptive Card",
-	  "description": "Example page for Card of type AdaptiveCard",
-	  "route": "adaptiveContent",
-	  "group": "Card Type Examples"
+		"title": "Adaptive Card",
+		"description": "Example page for Card of type AdaptiveCard",
+		"route": "adaptiveContent",
+		"group": "Card Type Examples"
 	},
 	{
 		"title": "Numeric Header",
@@ -43,7 +43,7 @@
 		"group": "Other Card Examples"
 	},
 	{
-		"title": "Min height",
+		"title": "Min Height",
 		"description": "Cards with default min height",
 		"route": "minHeight",
 		"group": "Other Card Examples"
