@@ -2,12 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./library",
 	"sap/m/ListBase",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"./GridListRenderer"
 ], function(
+	library,
 	ListBase,
 	ManagedObjectObserver,
 	GridLayoutDelegate,
