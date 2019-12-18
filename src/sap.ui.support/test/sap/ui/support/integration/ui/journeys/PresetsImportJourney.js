@@ -14,8 +14,8 @@ sap.ui.define([
 	QUnit.module("Support Assistant Rule Presets - Import");
 
 	opaTest("Should have error if import file is invalid", function(Given, When, Then) {
-		Given.iStartMyApp()
-			.and.iDeletePersistedData();
+		Given.iDeletePersistedData()
+			.and.iStartMyApp();
 
 		When.onThePresetsPage.iOpenImportDialog();
 

@@ -13,8 +13,8 @@ sap.ui.define([
 
 	opaTest("Should create new temporary rule", function (Given, When, Then) {
 
-		Given.iStartMyApp()
-			.and.iDeletePersistedData();
+		Given.iDeletePersistedData()
+			.and.iStartMyApp();
 
 		Then.onTheMainPage.iShouldSeeRulesButton(45);
 
@@ -296,8 +296,8 @@ sap.ui.define([
 
 	opaTest("Should select duplicated rules together", function (Given, When, Then) {
 
-		Given.iStartMyApp()
-			.and.iDeletePersistedData();
+		Given.iDeletePersistedData()
+			.and.iStartMyApp();
 
 		When.onTheRulesPage.iPressButtonWithText(CREATE_RULE_BUTTON);
 
@@ -323,8 +323,8 @@ sap.ui.define([
 
 	opaTest("Should run analyze and see issues", function (Given, When, Then) {
 
-		Given.iStartMyApp()
-			.and.iDeletePersistedData();
+		Given.iDeletePersistedData()
+			.and.iStartMyApp();
 
 		When.onTheRulesPage.iPressAnalyze();
 

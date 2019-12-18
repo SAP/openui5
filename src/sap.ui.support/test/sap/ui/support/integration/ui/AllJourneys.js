@@ -32,7 +32,8 @@ sap.ui.require([
 		"sap/ui/support/integration/ui/journeys/PresetsDialogJourney",
 		"sap/ui/support/integration/ui/journeys/PresetsExportJourney",
 		"sap/ui/support/integration/ui/journeys/PresetsImportJourney",
-		"sap/ui/support/integration/ui/journeys/PresetsPersistenceJourney"
+		"sap/ui/support/integration/ui/journeys/PresetsPersistenceJourney",
+		"sap/ui/support/integration/ui/journeys/TemporaryRulesJourney"
 	], function () {
 		QUnit.start();
 	});

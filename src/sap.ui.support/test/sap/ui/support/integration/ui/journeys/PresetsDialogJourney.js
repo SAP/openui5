@@ -14,8 +14,8 @@ sap.ui.define([
 	QUnit.module("Support Assistant Rule Presets - Dialog");
 
 	opaTest("Should see the Rule Presets variant select", function (Given, When, Then) {
-		Given.iStartMyApp()
-			.and.iDeletePersistedData();
+		Given.iDeletePersistedData()
+			.and.iStartMyApp();
 
 		Then.onThePresetsPage.iShouldSeePresetsVariantSelect();
 
