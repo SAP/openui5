@@ -373,6 +373,7 @@ sap.ui.define([
 		this._attachTitleMouseOverHandlers();
 		this._addStickySubheaderAfterRenderingDelegate();
 		this._detachScrollHandler();
+		this._detachResizeHandlers();
 		this._toggleAdditionalNavigationClass();
 	};
 
@@ -388,7 +389,6 @@ sap.ui.define([
 
 		this._bPinned = false;
 		this._cacheDomElements();
-		this._detachResizeHandlers();
 		this._attachResizeHandlers();
 		this._updateMedia(this._getWidth(this));
 		this._attachScrollHandler();
