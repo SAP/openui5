@@ -33,7 +33,6 @@
 			sHref = oControl.getHref(),
 			sRel = defaultLinkTypes(oControl.getRel(), oControl.getTarget()),
 			oAccAttributes =  {
-				role: sHref ? "" : "button",
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
 			},
 			bIsValid = sHref && oControl._isHrefValid(sHref),
@@ -85,6 +84,8 @@
 		/* set href only if link is enabled - BCP incident 1570020625 */
 		if (bIsValid && bEnabled) {
 			oRm.attr("href", sHref);
+		} else {
+			oRm.attr("href", "");
 		}
 
 		if (oControl.getTarget()) {
