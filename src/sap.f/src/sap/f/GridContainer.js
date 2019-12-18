@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/base/ManagedObjectObserver",
@@ -13,7 +14,8 @@ sap.ui.define([
 	"sap/f/GridContainerSettings",
 	"sap/base/strings/capitalize",
 	"sap/ui/core/InvisibleRenderer"
-], function (Control,
+], function (library,
+			Control,
 			Core,
 			ManagedObjectObserver,
 			ResizeHandler,
