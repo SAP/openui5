@@ -293,20 +293,20 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 */
 	Column.prototype.exit = function() {
 		this._destroyTemplateClones();
-		ColumnMenu._destroyColumnVisibilityMenuItem();
+		ColumnMenu._destroyColumnVisibilityMenuItem(this.oParent);
 	};
 
 	/**
 	 * called when the column's parent is set
 	 */
 	Column.prototype.setParent = function(oParent, sAggregationName, bSuppressRerendering) {
+		ColumnMenu._destroyColumnVisibilityMenuItem(this.oParent);
 		var vReturn = Element.prototype.setParent.apply(this, arguments);
 		var oMenu = this.getAggregation("menu");
 		if (oMenu && typeof oMenu._updateReferences === "function") {
 			//if menu is set update menus internal references
 			oMenu._updateReferences(this);
 		}
-		ColumnMenu._destroyColumnVisibilityMenuItem();
 		return vReturn;
 	};
 
@@ -1045,7 +1045,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 
 	Column.prototype.setVisible = function(bVisible) {
 		this.setProperty("visible", bVisible);
-		ColumnMenu._updateVisibilityIcon(this.getIndex(), bVisible);
+		ColumnMenu._updateVisibilityIcon(this.getParent(), this.getIndex(), bVisible);
 		return this;
 	};
 

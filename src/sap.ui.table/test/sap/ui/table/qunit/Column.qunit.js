@@ -520,6 +520,8 @@ sap.ui.require([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
+			this._oColumn1.destroy();
+			this._oColumn2.destroy();
 			this._oTable.destroy();
 		}
 	});
@@ -573,5 +575,58 @@ sap.ui.require([
 
 		assert.strictEqual(oVisibilitySubmenuAfter.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
 		assert.strictEqual(oVisibilitySubmenuAfter.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
+	});
+
+	QUnit.test("Multiple tables", function(assert) {
+		var oModel = new JSONModel();
+		oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
+		this._oTable2 = new Table();
+		this._oTable2.bindRows("/");
+		this._oTable2.setModel(oModel);
+		this._oTable2.setShowColumnVisibilityMenu(true);
+
+		this._oColumn21 = new Column({
+			template: new Text({text: "col1value"}),
+			label: new Text({text: "col1header"})
+		});
+
+		this._oColumn22 = new Column({
+			template: new Text({text: "col2value"}),
+			label: new Text({text: "col2header"})
+		});
+
+		this._oColumn23 = new Column({
+			template: new Text({text: "col3value"}),
+			label: new Text({text: "col3header"})
+		});
+
+		this._oTable2.addColumn(this._oColumn21);
+		this._oTable2.addColumn(this._oColumn22);
+		this._oTable2.addColumn(this._oColumn23);
+
+		this._oTable2.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		this._oColumn2.setVisible(false);
+		this._oColumn1._openMenu();
+		var oColumnMenuTable1 = this._oColumn1.getMenu();
+		var oVisibilitySubmenuTable1 = oColumnMenuTable1.getItems()[0].getSubmenu();
+		assert.strictEqual(oVisibilitySubmenuTable1.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+		assert.strictEqual(oVisibilitySubmenuTable1.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
+
+		this._oColumn21._openMenu();
+		var oColumnMenuTable2 = this._oColumn21.getMenu();
+		var oVisibilitySubmenuTable2 = oColumnMenuTable2.getItems()[0].getSubmenu();
+		assert.strictEqual(oVisibilitySubmenuTable2.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+		assert.strictEqual(oVisibilitySubmenuTable2.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked. Changing the column visibility in the first table hasn't affected the column visibility in the second table");
+
+		assert.notEqual(oVisibilitySubmenuTable1, oVisibilitySubmenuTable2, "The visibility submenu instances for both tables are not the same instance");
+		assert.equal(oVisibilitySubmenuTable1.getItems().length, 2, "The visibility submenu of the first table has 2 items");
+		assert.equal(oVisibilitySubmenuTable2.getItems().length, 3, "The visibility submenu of the second table has 3 items");
+
+		this._oColumn21.destroy();
+		this._oColumn22.destroy();
+		this._oColumn23.destroy();
+		this._oTable2.destroy();
 	});
 });
