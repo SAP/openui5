@@ -726,6 +726,10 @@ sap.ui.define([
 				return 2 /*rem*/ * 16 /*px*/;
 			}
 
+			if (system.phone && Device.resize.width > 320) {
+				return 1 /*rem*/ * 16 /*px*/;
+			}
+
 			return 0;
 		}
 
