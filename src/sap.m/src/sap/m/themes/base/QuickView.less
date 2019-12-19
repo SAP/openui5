@@ -8,6 +8,7 @@
 @_sap_m_QuickView_PagePaddingTop: 3rem;
 @_sap_m_QuickView_Compact_PagePaddingTop: 2.5rem;
 @_sap_m_QuickView_TitleMaxHeight: 2.25rem;
+@_sap_m_QuickView_TitleTextShadow: @sapUiShadowText;
 
 .sapMQuickView .sapMNav,
 .sapMQuickViewCard .sapMNav {
@@ -232,7 +233,7 @@ html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 }
 
 .sapMQuickViewPage .sapMIBar-CTX .sapMTitle {
-	text-shadow: @sapUiShadowText;
+	text-shadow: @_sap_m_QuickView_TitleTextShadow;
 }
 
 html.sap-desktop .sapMQuickViewHeader,
