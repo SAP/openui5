@@ -9,6 +9,7 @@
     "testsuite": "cross-env OPENUI5_SRV_OPEN=/test-resources/testsuite/testframe.html node lib/server/testsuiteServer.js",
     "test": "npm run lint",
     "lint": "eslint ./src",
+    "eslint": "eslint",
     "link-all": "wsrun --serial link",
     "unlink-all": "wsrun --serial unlink",
     "karma": "karma start lib/test/karma.conf.js",
