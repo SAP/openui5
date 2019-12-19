@@ -612,7 +612,7 @@ sap.ui.define([
 		// make sure to call rendering event delegates even in case of DOM patching
 		var oBeforeRenderingEvent = jQuery.Event("BeforeRendering");
 		oBeforeRenderingEvent.setMarked("renderRows");
-		oBeforeRenderingEvent.srcControl = this;
+		oBeforeRenderingEvent.srcControl = oTable;
 		oTable._handleEvent(oBeforeRenderingEvent);
 
 		var oRM = sap.ui.getCore().createRenderManager();
@@ -624,7 +624,7 @@ sap.ui.define([
 		// make sure to call rendering event delegates even in case of DOM patching
 		var oAfterRenderingEvent = jQuery.Event("AfterRendering");
 		oAfterRenderingEvent.setMarked("renderRows");
-		oAfterRenderingEvent.srcControl = this;
+		oAfterRenderingEvent.srcControl = oTable;
 		oTable._handleEvent(oAfterRenderingEvent);
 	};
 
