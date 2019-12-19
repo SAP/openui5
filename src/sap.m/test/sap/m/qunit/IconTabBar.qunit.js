@@ -3610,4 +3610,55 @@ sap.ui.define([
 		// Clean Up
 		oIconTabBar.destroy();
 	});
+
+	QUnit.module("Responsive padding support");
+
+	QUnit.test("Correct Responsive padding is applied", function (assert) {
+		// Arrange
+		this.stub(window, "requestAnimationFrame", window.setTimeout);
+
+		var oITB = getIconTabBarWithOverflowList();
+		oITB.addStyleClass("sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer");
+
+		oITB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		this.clock.tick(500);
+
+		var fnHasClass = function (sSelector, sClass) {
+			return oITB.$().find(sSelector).hasClass(sClass);
+		};
+		var fnAssertCorrectPaddingsAppliedOnBreakpoint = function (sBreakpoint) {
+			var sClass = "sapUi-Std-Padding" + sBreakpoint;
+			assert.ok(fnHasClass(".sapMITHWrapper", sClass), "Header has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
+			assert.ok(fnHasClass(".sapMITBContent", sClass), "Content has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
+		};
+		this.clock.tick(500);
+
+		// Act
+		oITB.$().width("350px"); // set S breakpoint width
+
+		this.clock.tick(500);
+
+		// Assert
+		fnAssertCorrectPaddingsAppliedOnBreakpoint("S");
+
+		// Act
+		oITB.$().width("800px"); // set M breakpoint width
+		this.clock.tick(500);
+
+		// Assert
+		fnAssertCorrectPaddingsAppliedOnBreakpoint("M");
+
+		// Act
+		oITB.$().width("350px"); // set it back to S breakpoint width
+		this.clock.tick(500);
+
+		// Assert
+		fnAssertCorrectPaddingsAppliedOnBreakpoint("S");
+
+		// Clean up
+		oITB.destroy();
+	});
+
 });

@@ -368,6 +368,25 @@
 				]
 			}).addStyleClass("sapContrast sapContrastPlus");
 
+			var labelIconTabBarResponsivePadding = new sap.m.Label({
+				text: "IconTabBar with Responsive Padding (Fiori 3 themes only)"
+			}).addStyleClass("label");
+
+			var iconTabBarResponsivePadding = new sap.m.IconTabBar("itb_rp", {
+				showOverflowSelectList: true,
+				items: (function() {
+					var aTabFilters = [];
+					for (var i = 1; i <= 50; i++) {
+						aTabFilters.push(new sap.m.IconTabFilter({
+							text: "Tab " + i,
+							content: new sap.m.Text({
+								text: "Lorem Ipsum " + i
+							})
+						}));
+					}
+					return aTabFilters;
+				})()
+			}).addStyleClass("sapUiResponsivePadding--header sapUiResponsivePadding--content");
 
 			var page1 = new sap.m.Page("page1", {
 				content: [
@@ -1258,6 +1277,8 @@
 						]
 					}).addStyleClass("ITBContainer"),
 					iconTabBarOverflowSelectList,
+					labelIconTabBarResponsivePadding,
+					iconTabBarResponsivePadding,
 					panelBackgroundDesign,
 					new sap.m.Label({
 						text: "Contrast IconTabBar with transparent backgrounds"
@@ -1265,6 +1286,7 @@
 					contrastPlusIconTabBar
 				]
 			});
+
 			app.addPage(page1);
 		</script>
 	</head>
