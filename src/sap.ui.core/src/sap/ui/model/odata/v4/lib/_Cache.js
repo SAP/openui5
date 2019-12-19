@@ -609,10 +609,13 @@ sap.ui.define([
 			// the type is available synchronously because the binding read it when checking for
 			// late properties
 			var sMetaPath = _Helper.buildPath(sFullResourceMetaPath, sBasePath),
-				oEntityType = that.oRequestor.fetchTypeForPath(sMetaPath).getResult(),
+				oEntityType = mTypeForMetaPath[sMetaPath],
 				sExpand;
 
-			mTypeForMetaPath[sMetaPath] = oEntityType;
+			if (!oEntityType) {
+				oEntityType = that.oRequestor.fetchTypeForPath(sMetaPath).getResult();
+				mTypeForMetaPath[sMetaPath] = oEntityType;
+			}
 			(oEntityType.$Key || []).forEach(function (vKey) {
 				if (typeof vKey === "object") {
 					vKey = vKey[Object.keys(vKey)[0]]; // the path for the alias

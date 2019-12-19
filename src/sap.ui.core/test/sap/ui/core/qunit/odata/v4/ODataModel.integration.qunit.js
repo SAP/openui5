@@ -2107,19 +2107,21 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'1\')}">\
 	<Table id="table" growing="true" growingThreshold="2"\
-			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true,\
+				$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 		<ColumnListItem>\
 			<Text id="name" text="{Name}" />\
 		</ColumnListItem>\
 	</Table>\
 </FlexBox>\
-<Text id="age1" text="{AGE}" />\
+<Input id="age1" value="{AGE}" />\
 <Text id="age2" text="{AGE}" />\
 <Input id="team" value="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}"/>\
 <Input id="budget" value="{EMPLOYEE_2_TEAM/Budget}"/>',
 			that = this;
 
-		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
+		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES"
+				+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=2", {
 				value : [
 					{"@odata.etag" : "etag0", ID : "2", Name : "Frederic Fall"},
 					{"@odata.etag" : "etag0", ID : "3", Name : "Jonathan Smith"}
@@ -2163,6 +2165,41 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// BCP 1980517597
+			that.expectChange("age1", "18")
+				.expectRequest({
+					method : "PATCH",
+					headers : {"If-Match" : "etag0"},
+					url : "EMPLOYEES('2')",
+					payload : {AGE : 18}
+				}, {
+					"@odata.etag" : "etag23",
+					AGE : 18,
+					__CT__FAKE__Message : {
+						__FAKE__Messages : [{
+							code : "1",
+							message : "That is very young",
+							numericSeverity : 3,
+							target : "AGE",
+							transition : false
+						}]
+					}
+				})
+				.expectMessages([{
+					code : "1",
+					descriptionUrl : undefined,
+					message : "That is very young",
+					persistent : false,
+					target : "/TEAMS('1')/TEAM_2_EMPLOYEES('2')/AGE",
+					technical : false,
+					type : "Warning"
+				}]);
+
+			// code under test
+			that.oView.byId("age1").getBinding("value").setValue(18);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			that.expectChange("team", "changed")
 				.expectRequest({
 					method : "PATCH",
@@ -2171,6 +2208,7 @@ sap.ui.define([
 					payload : {TEAM_ID : "changed"}
 				});
 
+			// code under test
 			that.oView.byId("team").getBinding("value").setValue("changed");
 
 			return that.waitForChanges(assert);
@@ -2188,14 +2226,15 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("age2", "42");
+			that.expectChange("age2", "18");
 
 			// code under test - AGE is cached now
 			that.oView.byId("age2").setBindingContext(oRowContext);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=2&$top=2", {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES"
+				+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=2&$top=2", {
 					value : [
 						{ID : "4", Name : "Peter Burke"}
 					]
