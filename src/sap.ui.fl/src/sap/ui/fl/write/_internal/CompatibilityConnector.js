@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @param {object} mComponent Contains component data needed for reading changes
 	 * @param {string} mComponent.name Name of component
 	 * @param {string} [mComponent.appVersion] Current running version of application
-	 * @param {string} [mComponent.appName] Component name of the current application which may differ in case of an app variant
+	 * @param {string} [mPropertyBag.appName] Component name of the current application which may differ in case of an app variant
 	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
 	 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 	 * @param {string} [mPropertyBag.cacheKey] Pre-calculated cache key of the component
@@ -61,7 +61,7 @@ sap.ui.define([
 		return ApplyStorage.loadFlexData({
 			reference: mComponent.name,
 			appVersion: mComponent.appVersion,
-			componentName: mComponent.appName,
+			componentName: mPropertyBag.appName,
 			cacheKey: mPropertyBag.cacheKey,
 			siteId: mPropertyBag.siteId,
 			appDescriptor: mPropertyBag.appDescriptor
