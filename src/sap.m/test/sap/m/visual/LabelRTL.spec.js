@@ -3,6 +3,8 @@
 describe("sap.m.LabelRTL", function() {
 	"use strict";
 
+	browser.testrunner.currentSuite.meta.controlName = "sap.m.Label";
+
 	it("should load test page", function () {
 		expect(takeScreenshot()).toLookAs("0_initial");
 	});
