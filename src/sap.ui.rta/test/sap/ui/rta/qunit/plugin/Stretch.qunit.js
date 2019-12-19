@@ -225,9 +225,11 @@ function (
 			};
 
 			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
-				this.oStretchPlugin._onElementOverlayChanged(oEvent);
-				assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
-				done();
+				window.requestAnimationFrame(function () {
+					this.oStretchPlugin._onElementOverlayChanged(oEvent);
+					assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
+					done();
+				}.bind(this));
 			}, this);
 			this.oLayout.setWidth("400px");
 		});
