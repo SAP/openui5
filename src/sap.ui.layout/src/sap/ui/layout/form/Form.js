@@ -199,14 +199,13 @@ sap.ui.define([
 				this.$().removeClass("sapUiFormEdit").removeClass("sapUiFormEdit-CTX");
 				this.$().attr("aria-readonly", "true");
 			}
+		}
 
-			// invalidate Labels
-			var aFormContainers = this.getFormContainers();
-			for (var i = 0; i < aFormContainers.length; i++) {
-				var oFormContainer = aFormContainers[i];
-				oFormContainer._setEditable(bEditable);
-			}
-
+		// update edit mode to FormElement (invalidate Labels)
+		var aFormContainers = this.getFormContainers();
+		for (var i = 0; i < aFormContainers.length; i++) {
+			var oFormContainer = aFormContainers[i];
+			oFormContainer._setEditable(bEditable);
 		}
 
 	}
