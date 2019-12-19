@@ -1424,6 +1424,98 @@ sap.ui.define([
 		}.bind(this), 1000);
 	});
 
+	QUnit.test("Show Only Selected button toggled on displays only selected items", function (assert) {
+
+		var oShowOnlySelected,
+			aItems,
+			iItems,
+			iVisibleItems,
+			iSelectedItems,
+			oFirstSelected;
+
+		this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+		this.oVSD.open();
+		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
+
+		oShowOnlySelected = this.oVSD._showOnlySelectedButton;
+		aItems = this.oVSD._filterDetailList.getItems();
+		iItems = aItems.length;
+
+		sap.ui.getCore().applyChanges();
+
+		getItemsInfo(aItems);
+
+		// get initial state: 7 items total, 7 displayed, 4 of them selected
+		assert.equal(iItems, 7, "There are 7 items initially");
+		assert.equal(iVisibleItems, 7, "There are 7 items displayed initially");
+		assert.equal(iSelectedItems, 4, "There are 4 items selected initially");
+
+		// Action 1
+		// simulate button press
+		oShowOnlySelected.setPressed(true);
+		oShowOnlySelected.firePress();
+		sap.ui.getCore().applyChanges();
+
+		getItemsInfo(aItems);
+
+		// get state after the toggle button press: only selected items are displayed (4)
+		assert.equal(iVisibleItems, 4, "There are 4 items displayed");
+		assert.equal(iSelectedItems, 4, "There are 4 items selected");
+
+		// Action 2
+		// unselect one of the selected items
+		oFirstSelected.setSelected(false);
+
+		getItemsInfo(aItems);
+
+		// get state after the item unselect: 4 items displayed, 3 of them - selected
+		assert.equal(iVisibleItems, 4, "There are 4 items displayed");
+		assert.equal(iSelectedItems, 3, "There are 3 items selected");
+
+		// Action 3
+		// simulate button press
+		oShowOnlySelected.setPressed(false);
+		oShowOnlySelected.firePress();
+		sap.ui.getCore().applyChanges();
+
+		getItemsInfo(aItems);
+
+		// get state after second button toggle: 7 items are displayed, 3 of them - selected
+		assert.equal(iVisibleItems, 7, "There are 7 items displayed");
+		assert.equal(iSelectedItems, 3, "There are 3 items selected");
+
+		// Action 4
+		// simulate button press
+		oShowOnlySelected.setPressed(true);
+		oShowOnlySelected.firePress();
+		sap.ui.getCore().applyChanges();
+
+		getItemsInfo(aItems);
+
+		// get state after the third toggle button press: only selected items are displayed (3)
+		assert.equal(iVisibleItems, 3, "There are 3 items displayed");
+		assert.equal(iSelectedItems, 3, "There are 3 items selected");
+
+		// Helper function for getting the counts of visible and selected items
+		function getItemsInfo(aItems) {
+			iVisibleItems = 0;
+			iSelectedItems = 0;
+			aItems.forEach(function(oItem){
+				if (oItem.getSelected()) {
+					iSelectedItems++;
+					if (!oFirstSelected) {
+						oFirstSelected = oItem;
+					}
+				}
+				if (oItem.getVisible()) {
+					iVisibleItems++;
+				}
+			});
+		}
+	});
+
 	QUnit.test("Select All checkbox works correctly", function (assert) {
 		var done = assert.async(),
 				that = this;
@@ -1494,14 +1586,16 @@ sap.ui.define([
 				aFilteredItems;
 
 			//Act
-			oSearchField.fireLiveChange({ newValue: "Mo" }); // Matches: Mousepad, Monitor
+			oSearchField.setValue("Mo"); // Matches: Mousepad, Monitor
+			oSearchField.fireLiveChange();
 			aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 			//Assert
 			assert.equal(aFilteredItems.length, 2, "After filter search there are 2 visible items in the list.");
 
 			//Act
 			that.oVSD.setFilterSearchOperator(StringFilterOperator.Contains);
-			oSearchField.fireLiveChange({ newValue: "Mo" }); // Matches: Mousepad, Monitor, Optical Mouse
+			oSearchField.setValue("Mo"); // Matches: Mousepad, Monitor
+			oSearchField.fireLiveChange();
 
 			aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 			//Assert
@@ -1509,14 +1603,16 @@ sap.ui.define([
 
 			//Act
 			that.oVSD.setFilterSearchOperator(StringFilterOperator.Equals);
-			oSearchField.fireLiveChange({ newValue: "Mouse" }); // Matches: None
+			oSearchField.setValue("Mouse"); // Matches: None
+			oSearchField.fireLiveChange();
 
 			aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 			//Assert
 			assert.equal(aFilteredItems.length, 0, "After filter search with 'equals', there are 0 visible items in the list.");
 
 			//Act
-			oSearchField.fireLiveChange({ newValue: "Mousepad" }); // Matches: Mousepad
+			oSearchField.setValue("Mousepad"); // Matches: Mousepad
+			oSearchField.fireLiveChange();
 
 			aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 			//Assert
@@ -1524,21 +1620,24 @@ sap.ui.define([
 
 			//Act
 			that.oVSD.setFilterSearchOperator(StringFilterOperator.AnyWordStartsWith);
-			oSearchField.fireLiveChange({ newValue: "mou" }); // Matches: Mousepad, Optical Mouse
+			oSearchField.setValue("mou"); // Matches: Mousepad, Optical Mouse
+			oSearchField.fireLiveChange();
 
 			aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 			//Assert
 			assert.equal(aFilteredItems.length, 2, "After filter search with 'anywordstartswith', there are 2 visible items in the list.");
 
 			//Act
-			oSearchField.fireLiveChange({ newValue: "ou" }); // Matches: None
+			oSearchField.setValue("ou"); // Matches: None
+			oSearchField.fireLiveChange();
 
 			aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 			//Assert
 			assert.equal(aFilteredItems.length, 0, "After filter search with 'anywordstartswith', there are 0 visible items in the list.");
 
 			//Act
-			oSearchField.fireLiveChange({ newValue: "" }); // Matches: All
+			oSearchField.setValue(""); // Matches: All
+			oSearchField.fireLiveChange();
 			aFilteredItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
 				return oItem.getVisible();
 			});
@@ -1546,7 +1645,7 @@ sap.ui.define([
 			assert.equal(aFilteredItems.length, 7, "Empty query in filter search shows all items.");
 
 			//Act
-			oSearchField.fireLiveChange({ newValue: "1" }); // Matches: none
+			oSearchField.fireLiveChange(); // Matches: none
 
 			//Assert
 			Log.info(that.oVSD._createSelectAllCheckbox(), that.oVSD._createSelectAllCheckbox().getSelected());
@@ -1605,7 +1704,6 @@ sap.ui.define([
 
 	QUnit.test("setFilterSearchCallback", function (assert) {
 		var done = assert.async(),
-			that = this,
 			oCallbackSpy = {
 				callCount: 0,
 				args: []
@@ -1626,19 +1724,20 @@ sap.ui.define([
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
 
 		setTimeout(function() {
-			var oSearchField = that.oVSD._filterSearchField,
+			var oSearchField = this.oVSD._filterSearchField,
 				sSearchString = "Mo";
 
 			//Act
-			oSearchField.fireLiveChange({newValue: sSearchString});
+			oSearchField.setValue(sSearchString);
+			oSearchField.fireLiveChange();
 
 			//Assert
 			assert.equal(oCallbackSpy.callCount, 7, "filter function is called as many times as it should");
 			assert.equal(oCallbackSpy.args[0][0], sSearchString, "filter function is called with the right first argument");
-			assert.equal(oCallbackSpy.args[0][1], that.oVSD.getFilterItems()[0].getItems()[0].getText(), "filter function is called with the right second argument");
+			assert.equal(oCallbackSpy.args[0][1], this.oVSD.getFilterItems()[0].getItems()[0].getText(), "filter function is called with the right second argument");
 
 			done();
-		}, 1000);
+		}.bind(this), 1000);
 	});
 
 	QUnit.test("Query filter search field updates the select all checkbox", function (assert){
@@ -1659,7 +1758,8 @@ sap.ui.define([
 			assert.ok(!oSelectAllCheckbox.getSelected(), "At first the select all checkbox is not selected.");
 
 			//Act
-			oSearchField.fireLiveChange({ newValue: "H" }); // Matches: Headphone
+			oSearchField.setValue("H"); // Matches: Headphone
+			oSearchField.fireLiveChange();
 			//Assert
 			assert.ok(oSelectAllCheckbox.getSelected(), "After filter search with selected results only, the select all checkbox is also selected.");
 
@@ -1690,7 +1790,8 @@ sap.ui.define([
 			assert.equal(aSelectedItems.length, 4, "At first the selected items are 4.");
 
 			//Act
-			oSearchField.fireLiveChange({ newValue: "H" }); // Matches: Headphone
+			oSearchField.setValue("H"); // Matches: Headphone
+			oSearchField.fireLiveChange(); // Matches: Headphone
 			oSelectAllCheckbox.setSelected(false);
 			oSelectAllCheckbox.fireSelect({ selected: false });
 
@@ -1734,7 +1835,8 @@ sap.ui.define([
 			assert.equal(bAllEnabled, true, "At first the Select all checkbox is enabled.");
 
 			// Act: Type "Z" in the Search box
-			oSearchField.fireLiveChange({ newValue: "Z" }); // Matches: (nothing)
+			oSearchField.setValue("Z"); // Matches: (nothing)
+			oSearchField.fireLiveChange();
 			aVisibleItems = that.oVSD._filterDetailList.getItems().filter(function (oItem) {
 				return oItem.getVisible();
 			});
@@ -1745,7 +1847,8 @@ sap.ui.define([
 			assert.equal(bAllEnabled, false, "Now the Select all checkbox is disabled.");
 
 			// Back to initial state: nothing in the Search box
-			oSearchField.fireLiveChange({ newValue: "" }); // Matches: All items
+			oSearchField.setValue(""); // Matches: All items
+			oSearchField.fireLiveChange();
 			aVisibleItems = that.oVSD._filterDetailList.getItems().filter(function (oItem) {
 				return oItem.getVisible();
 			});
