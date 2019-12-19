@@ -33,6 +33,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.reference - Flex Reference
 		 * @param {string} mPropertyBag.componentData - Component data of the current component
 		 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
+		 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be loaded
 		 * @returns {Promise<object>} resolves with the change file for the given component from the Storage
 		 */
 		loadFlexData: function (mPropertyBag) {

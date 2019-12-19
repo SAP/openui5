@@ -136,6 +136,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.rawManifest] - Raw JSON manifest that belongs to current component
 	 * @param {string} [mPropertyBag.componentData] - Component data of the current component
 	 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
+	 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be loaded
 	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
 	FlexState.initialize = function (mPropertyBag) {

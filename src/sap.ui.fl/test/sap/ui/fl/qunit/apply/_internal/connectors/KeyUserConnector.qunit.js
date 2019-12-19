@@ -24,10 +24,12 @@ sap.ui.define([
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "reference",
-				appVersion: "1.0.0"
+				appVersion: "1.0.0",
+				draftLayer: "CUSTOMER"
 			};
 			var mParameter = {
-				appVersion: "1.0.0"
+				appVersion: "1.0.0",
+				draft: true
 			};
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?appVersion=1.0.0";
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
