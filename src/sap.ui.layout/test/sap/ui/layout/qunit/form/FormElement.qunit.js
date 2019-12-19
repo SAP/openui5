@@ -150,6 +150,7 @@ sap.ui.define([
 	QUnit.test("_setEditable function", function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
+		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
 		sinon.spy(oLabel, "invalidate");
 
 		assert.notOk(oFormElement.getProperty("_editable"), "Default: not editable");
@@ -157,6 +158,8 @@ sap.ui.define([
 
 		assert.ok(oFormElement.getProperty("_editable"), "Default: editable set");
 		assert.ok(oLabel.invalidate.called, "Label invalidated");
+
+		oLabel.getDomRef.restore();
 	});
 
 	QUnit.test("isDisplayOnly with Label control", function(assert) {
@@ -254,10 +257,12 @@ sap.ui.define([
 		assert.equal(oLabel.getLabelForRendering(), "I1", "Label points to first field");
 		assert.notOk(oLabel.isRequired(), "Label not required");
 
+		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
 		sinon.spy(oLabel, "invalidate");
 		oField2.setRequired(true);
 		assert.ok(oLabel.isRequired(), "Label is required");
 		assert.ok(oLabel.invalidate.called, "Label invalidated");
+		oLabel.getDomRef.restore();
 
 		oFormElement.setLabel();
 		assert.notOk(oLabel.isRequired(), "Label not required");
@@ -281,10 +286,13 @@ sap.ui.define([
 		assert.equal(oLabel.getLabelForRendering(), "I2", "Label points to first field");
 		assert.notOk(oLabel.isRequired(), "Label not required");
 
+		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
 		sinon.spy(oLabel, "invalidate");
 		oField2.setRequired(true);
 		assert.ok(oLabel.isRequired(), "Label is required");
 		assert.ok(oLabel.invalidate.called, "Label invalidated");
+
+		oLabel.getDomRef.restore();
 	});
 
 	QUnit.test("removeField", function(assert) {
@@ -307,9 +315,12 @@ sap.ui.define([
 		assert.notOk(oLabel.isRequired(), "Label not required");
 		oField1.destroy();
 
+		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
 		sinon.spy(oLabel, "invalidate");
 		oField2.setRequired(true); // to test Field2 is still observed
 		assert.ok(oLabel.invalidate.called, "Label invalidated");
+
+		oLabel.getDomRef.restore();
 	});
 
 	QUnit.test("removeAllFields", function(assert) {

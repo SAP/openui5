@@ -326,7 +326,7 @@ sap.ui.define([
 
 		var oLabel = this.getLabelControl();
 
-		if (oLabel) {
+		if (oLabel && oLabel.getDomRef()) { // only if already rendered.
 			oLabel.invalidate();
 		}
 
