@@ -11393,7 +11393,7 @@ sap.ui.define([
 		assert.equal(selectedText, "", "There is no selected text when matching a suggestion");
 
 		// Act
-		this.comboBox._$input.blur();
+		this.comboBox.onsapfocusleave({});
 		this.clock.tick(500);
 		this.comboBox._$input.focus();
 		this.comboBox.onfocusin({});
@@ -12650,6 +12650,7 @@ sap.ui.define([
 		var oSpy = new sinon.spy(this.oCombobox, "toggleIconPressedStyle"),
 			oFakeEvent = {
 				isMarked: function () {return false;},
+				setMarked: function () {},
 				target: {
 					value: "A Item"
 				},
