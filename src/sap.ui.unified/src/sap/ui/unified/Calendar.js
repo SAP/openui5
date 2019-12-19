@@ -2252,14 +2252,14 @@ sap.ui.define([
 	Calendar.prototype._showYearRangePicker = function () {
 		var oYearRangePicker = this.getAggregation("yearRangePicker"),
 			oYearPicker = this._getYearPicker(),
-			oDateInMiddleRange = CalendarDate.fromLocalJSDate(oYearPicker.getFirstRenderedDate(), this.getPrimaryCalendarType());
+			oRangeMidDate = CalendarDate.fromLocalJSDate(oYearPicker.getFirstRenderedDate(), this.getPrimaryCalendarType());
 
 		oYearRangePicker.getDomRef() ? oYearRangePicker.$().css("display", "") : this._renderPicker(oYearRangePicker);
 
 		// Check for the edge case in february from the overloaded function if its relevant
 		this._showOverlay();
 
-		oYearRangePicker.setDate(oDateInMiddleRange.toLocalJSDate());
+		oYearRangePicker.setDate(oRangeMidDate.toLocalJSDate());
 		this._togglePrevNexYearPicker();
 		this._iMode = 3;
 		this._updateHeadersButtons();

@@ -36,6 +36,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', "./ColorPickerDisplayMo
 			"sap.ui.unified.calendar.MonthsRow",
 			"sap.ui.unified.calendar.TimesRow",
 			"sap.ui.unified.calendar.YearPicker",
+			"sap.ui.unified.calendar.YearRangePicker",
 			"sap.ui.unified.Calendar",
 			"sap.ui.unified.CalendarDateInterval",
 			"sap.ui.unified.CalendarWeekInterval",

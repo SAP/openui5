@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>YearRangePicker - sap.ui.unified.calendar</title>
+
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_fiori_3"
+				data-sap-ui-trace="false"
+				data-sap-ui-libs="sap.ui.unified, sap.m"
+				src="../../../../resources/sap-ui-core.js"
+		>
+		</script>
+		<script>
+
+			jQuery.sap.require("sap.ui.core.date.UniversalDate");
+			var UniversalDate = sap.ui.core.date.UniversalDate;
+
+			new sap.ui.unified.calendar.YearRangePicker("YRP1", {
+				select: function(oEvent) {
+					var oInput = sap.ui.getCore().byId("I1"),
+						oYRP = oEvent.oSource,
+						oDate = new UniversalDate(oYRP.getDate());
+
+					oInput.setValue(oDate.getFullYear());
+				}
+			}).placeAt("sample1");
+
+			new sap.m.Label({text: "selected Year", labelFor: "I1"}).placeAt("event1");
+
+			new sap.m.Input("I1", {
+				placeHolder: "Enter a year...",
+				change: function(oEvent){
+					var oInput = oEvent.oSource,
+						sValue = oEvent.getParameter('newValue'),
+						oYRP = sap.ui.getCore().byId("YRP1"),
+						iYear, oDate;
+
+					if (sValue && !isNaN(sValue)){
+						iYear = parseInt(sValue),
+						oDate = new UniversalDate();
+
+						oDate.setFullYear(iYear);
+						oDate.setMonth(0);
+						oDate.setDate(1);
+						oYRP.setDate(oDate.getJSDate());
+					}
+				}
+			}).placeAt("event1");
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1>Test Page for <code>sap.ui.unified.calendar.YearRangePicker</code></h1>
+		<br>
+		<div>
+		<h2>Default YearRangePicker</h2>
+		<div id="sample1" style="display:inline-block;"></div>
+		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
+
+	</body>
+</html>
