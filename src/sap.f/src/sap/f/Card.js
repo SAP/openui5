@@ -4,11 +4,15 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/f/CardRenderer",
-	"sap/f/library"
+	"sap/f/library",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Core"
 ], function (
 	Control,
 	CardRenderer,
-	library
+	library,
+	InvisibleText,
+	Core
 ) {
 	"use strict";
 
@@ -114,6 +118,26 @@ sap.ui.define([
 		},
 		renderer: CardRenderer
 	});
+
+	/**
+	 * Initialization hook.
+	 *
+	 *
+	 * @private
+	 */
+	Card.prototype.init = function () {
+		this._oRb  = Core.getLibraryResourceBundle("sap.f");
+		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
+		this._ariaText.setText(this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"));
+	};
+
+	Card.prototype.exit = function () {
+
+		if (this._ariaText) {
+			this._ariaText.destroy();
+			this._ariaText = null;
+		}
+	};
 
 	/**
 	 * Implements sap.f.ICard interface.
