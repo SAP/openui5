@@ -690,8 +690,10 @@ sap.ui.define([
 		 * @since 1.48 All config parameters could be overwritten from URL. Should be prefixed with 'opa'
 		 * and have uppercase first character. Like 'opaExecutionDelay=1000' will overwrite 'executionDelay'
 		 *
-		 * @returns {jQuery.promise} A promise that gets resolved on success.
-		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
+		 * @returns {object} an object extending a jQuery promise.
+		 * The object is essentially a jQuery promise with an additional "and" method that can be used for chaining waitFor statements.
+		 * The promise is resolved when the waitFor completes successfully.
+		 * The promise is rejected with the options object, if an error occurs. In this case, options.errorMessage will contain a detailed error message containing the stack trace and Opa logs.
 		 * @public
 		 */
 		Opa5.prototype.waitFor = function (options) {
