@@ -95,12 +95,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		setProperty: function (oControl, sPropertyName, vPropertyValue) {
-			var sValue = vPropertyValue;
-			if (isPlainObject(vPropertyValue)) {
-				//not a property like aggregation
-				//type object can be json objects
-				sValue = JSON.stringify(vPropertyValue);
-			}
+			var sValue = this._getSerializedValue(vPropertyValue);
 			oControl.setAttribute(sPropertyName, sValue);
 		},
 

@@ -7,12 +7,14 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
+	"sap/base/util/isPlainObject",
 	"sap/base/Log"
 ], function(
 	ManagedObject,
 	ManagedObjectMetadata,
 	ObjectPath,
 	XMLHelper,
+	isPlainObject,
 	Log
 ) {
 
@@ -345,6 +347,21 @@ sap.ui.define([
 				}.bind(this));
 			}
 			recurse.call(this, oRootNode, oRootNode, false);
+		},
+
+		_getSerializedValue: function (vPropertyValue) {
+			if (this._isSerializable(vPropertyValue) && typeof vPropertyValue !== "string") {
+				//not a property like aggregation
+				//type object can be json objects
+				//should not be already stringified
+				return JSON.stringify(vPropertyValue);
+			}
+			return vPropertyValue;
+		},
+
+		_isSerializable: function (vPropertyValue) {
+			// check for plain object, array, primitives
+			return isPlainObject(vPropertyValue) || Array.isArray(vPropertyValue) || Object(vPropertyValue) !== vPropertyValue;
 		},
 
 		/**

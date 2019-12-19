@@ -337,7 +337,11 @@ function(
 
 			var mData = { key : "value"};
 			JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", mData);
-			assert.deepEqual(this.oControl.getCrossAppNavCallback(), mData, "then serializable data can be passed");
+			assert.deepEqual(this.oControl.getCrossAppNavCallback(), mData, "then serializable data (plain object) can be passed");
+
+			var aData = [mData];
+			JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", aData);
+			assert.deepEqual(this.oControl.getCrossAppNavCallback(), aData, "then serializable data (array) can be passed");
 
 			assert.throws(function(){
 				JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", oSomeObject);
