@@ -1915,6 +1915,11 @@ if ( eventCaptureSupported ) {
 				var mouseDownTarget = event.target,
 					mouseDownEvent = event.originalEvent,
 					timer,
+					// SAP MODIFICATION: save the coordinate from the 'mousedown' event
+					oMouseDownCoord = {
+						x: event.clientX,
+						y: event.clientY
+					},
 					// SAP Modification: Workaround for an Edge browser issue which occurs with EdgeHTML 14 and higher.
 					// The root cause are inconsistent event targets of fired events, when a button is tapped.
 
@@ -1952,7 +1957,9 @@ if ( eventCaptureSupported ) {
 					clearTapTimer();
 
 					$this.unbind( "vclick", clickHandler )
-						.unbind( "vmouseup", clearTapTimer );
+						.unbind( "vmouseup", clearTapTimer )
+						// SAP MODIFICATION: deregister the function of clearing handlers from 'mouseout' event
+						.unbind( "mouseout", checkAndClearTapHandlersOnMouseout );
 					$document.unbind( "vmousecancel", clearTapHandlers )
 					// SAP MODIFICATION: deregister the function of clearing handlers from 'mouseup' event
 					// on document
@@ -1969,6 +1976,26 @@ if ( eventCaptureSupported ) {
 					}
 				}
 
+				// SAP MODIFICATION: terminate the firing of 'tap" event if the element on the same coordinate as the
+				// mouse down event is changed when the 'mouseout' event is fired
+				// This is needed because BlockLayerUtils swallows the mouseup event and the checkAndClearTapHandlers
+				// can't terminate the fire of 'tap'
+				function checkAndClearTapHandlersOnMouseout() {
+					// some event objects which are fired in tests are mocked and don't have coordinates set correctly
+					if (oMouseDownCoord.x !== undefined && oMouseDownCoord.y !== undefined) {
+						// get the topmost dom element on the same coordinate as in the mousedown event
+						var dom = document.elementFromPoint(oMouseDownCoord.x, oMouseDownCoord.y);
+
+						// when it's a different element than the mousedown target, it means that there's
+						// already some layer rendered on top of the mousedown target, and the browser
+						// won't fire the mouseup event on the mousedown target anymore. We need to clear
+						// tap handler by ourselves.
+						if (dom !== mouseDownTarget) {
+							clearTapHandlers();
+						}
+					}
+				}
+
 				function clickHandler( event ) {
 					clearTapHandlers();
 
@@ -1980,7 +2007,9 @@ if ( eventCaptureSupported ) {
 				}
 
 				$this.bind( "vmouseup", clearTapTimer )
-					.bind( "vclick", clickHandler );
+					.bind( "vclick", clickHandler )
+					// SAP MODIFICATION: register the function of clearing handlers to the 'mouseout' event
+					.bind( "mouseout", checkAndClearTapHandlersOnMouseout );
 				$document.bind( "vmousecancel", clearTapHandlers )
 				// SAP MODIFICATION: register the function of clearing handlers to 'mouseup' event
 				// on document
