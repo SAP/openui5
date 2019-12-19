@@ -3,6 +3,8 @@
 /* Belize theme                        */
 /* =================================== */
 
+@_sap_tnt_ToolHeader_AvatarColor: @sapUiContentContrastTextColor;
+
 .sapTntToolHeader.sapMTB {
 	background-color: darken(@sapUiPageHeaderBackground, 8);
 	border: 1px solid darken(@sapUiPageHeaderBorderColor, 8);
@@ -11,4 +13,65 @@
 .sapTntToolHeader .sapMITH,
 .sapTntToolHeaderPopover.sapMOTAPopover.sapMPopover {
 	background-color: darken(@sapUiPageHeaderBackground, 8);
+}
+
+.sapTntToolHeader {
+	.sapContrast.sapMObjStatus .sapMObjStatusText,
+	.sapContrast.sapMObjStatus .sapMObjStatusIcon {
+		text-shadow: none;
+	}
+}
+
+.sapTntToolHeader {
+	&.sapContrast .sapMObjStatus .sapMObjStatusText,
+	&.sapContrast .sapMObjStatus .sapMObjStatusIcon {
+		text-shadow: none;
+	}
+}
+
+.sapTntToolHeader .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive::after {
+	color: @sapUiButtonEmphasizedTextColor;
+}
+
+.sapTntToolHeader .sapMBtnDisabled .sapMBtnTransparent > .sapMBtnIcon {
+	color: @sapContent_IconColor;
+}
+
+.sapTntToolHeader span.sapMBtnInner.sapMBtnEmphasized {
+	background-color: transparent;
+	border-color:  transparent;
+	font-weight: bold;
+	.sapMBtnIcon {
+		color: @sapUiShellInteractiveTextColor;
+	}
+
+}
+
+html.sap-desktop .sapTntToolHeader .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
+	outline-color: @_sap_tnt_ToolHeader_BorderColor;
+}
+
+.sapTntToolHeader .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+	background: fade(lighten(@sapPrimary1, 18%), 50%);
+	border-color: transparent;
+	bdi {
+		color:@sapUiShellInteractiveTextColor
+	}
+}
+
+.sapTntToolHeader .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled)  .sapMBtnInner.sapMBtnActive {
+	background: @sapButton_Active_Background;
+}
+
+
+.sapTntToolHeader .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnEmphasized::after {
+	color: @sapContent_IconColor;
+}
+
+.sapTntToolHeader span.sapMBtnInner.sapMBtnEmphasized .sapMBtnIcon {
+    color: @sapContent_IconColor;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop .sapTntToolHeader .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
+	border-color: @sapUiContentFocusColor;
 }
