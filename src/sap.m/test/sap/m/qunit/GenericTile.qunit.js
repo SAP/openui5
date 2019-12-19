@@ -377,6 +377,29 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("GenericTile focus and hover overlay rendered - Fiori 3", function (assert) {
+		if (Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		var done = assert.async();
+		this.applyTheme("sap_fiori_3", function () {
+			this.oGenericTile.rerender();
+			// hover overlay is used only in case of tiles with background image
+			assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
+			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
+			assert.ok(!jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
+			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile hover overlay");
+			this.oGenericTile.ontouchstart();
+			assert.ok(jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile");
+			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile hover overlay");
+			this.oGenericTile.ontouchend();
+			assert.ok(!jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile");
+			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile hover overlay");
+			done();
+		});
+	});
+
 	QUnit.test("GenericTile does not expand on focus - theme hcb", function(assert) {
 		var $tile = this.oGenericTile.$();
 

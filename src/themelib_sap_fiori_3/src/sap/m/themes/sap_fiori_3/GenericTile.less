@@ -7,6 +7,7 @@
 	.sapMGTContent {
 		border-bottom-left-radius: 0.125rem;
 		border-bottom-right-radius: 0.125rem;
+		height: 6.250rem;
 	}
 }
 
@@ -167,7 +168,7 @@ html.sap-desktop .sapMGTWithImageHoverOverlay {
 	right: 0;
 	left: 0;
 	bottom: 0;
-	transition: background 0.2s;
+	border-radius: 0.25rem
 }
 
 html.sap-phone .sapMGTWithoutImageHoverOverlay,
@@ -180,43 +181,44 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	right: 0;
 	left: 0;
 	bottom: 0;
+	border-radius: 0.25rem
 }
 
-html.sap-desktop .sapMGTWithoutImageHoverOverlay.sapMGTPressActive,
-html.sap-phone .sapMGTWithoutImageHoverOverlay.sapMGTPressActive,
-html.sap-tablet .sapMGTWithoutImageHoverOverlay.sapMGTPressActive {
-	background: fade(@sapUiShellActiveBackground, 8) !important;
+.sapMGT.sapMGTPressActive:not(.sapMGTBackgroundImage) {
+	background: @sapUiTileActiveBackground;
+	box-shadow: 0 0 0 1px fade(@sapUiContentShadowColor, 30);
 }
 
-html.sap-desktop .sapMGTWithImageHoverOverlay.sapMGTPressActive,
-html.sap-phone .sapMGTWithImageHoverOverlay.sapMGTPressActive,
-html.sap-tablet .sapMGTWithImageHoverOverlay.sapMGTPressActive {
-	background: fade(@sapUiShellActiveBackground, 22) !important;
+.sapMGTWithImageHoverOverlay.sapMGTPressActive {
+	background: fade(@sapUiTileActiveBackground, 20%);
+	box-shadow: 0 0 0 1px fade(@sapUiContentShadowColor, 30);
 }
 
-html.sap-desktop .sapMGT:hover .sapMGTWithoutImageHoverOverlay:not(.sapMGTWithoutImagePressActive) {
-	background: fade(@sapUiShellHoverBackground, 4);
+html.sap-desktop .sapMGT:hover:not(.sapMGTBackgroundImage):not(.sapMGTPressActive) {
+	background: @sapUiTileHoverBackground;
+	box-shadow: 0 0 0 1px fade(@sapUiContentShadowColor, 30);
+	transition: background 0.2s;
 }
 
-html.sap-desktop .sapMGT:hover .sapMGTWithImageHoverOverlay:not(.sapMGTWithImagePressActive) {
-	background: fade(@sapUiShellHoverBackground, 18);
+html.sap-desktop .sapMGT:hover .sapMGTWithImageHoverOverlay:not(.sapMGTPressActive) {
+	background: fade(@sapUiTileHoverBackground, 10%);
+	box-shadow: 0 0 0 1px fade(@sapUiContentShadowColor, 30);
+	transition: background 0.2s;
 }
 
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv,
 html.sap-desktop .sapMGT:active .sapMGTFocusDiv,
 html.sap-desktop .sapMGTLineModePress .sapMGTFocusDiv {
-	border: 1px dotted @sapUiContentFocusColor;
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 }
-
 
 html.sap-desktop .sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv,
 html.sap-desktop .sapMGT.sapMGTBackgroundImage:active .sapMGTFocusDiv {
 	&:after {
 		content: "";
 		.sapMGTOverlayMixin();
-		border-radius: 0.125rem;
-		margin: -1px;
-		border: 1px dashed @sapUiContentContrastFocusColor;
+		border-radius: 0.25rem;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentContrastFocusColor;
 		z-index: 0;
 	}
 }
