@@ -12,6 +12,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
+	'sap/ui/core/InvisibleText',
 	"./DatePickerRenderer",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
@@ -31,6 +32,7 @@ sap.ui.define([
 		library,
 		Control,
 		coreLibrary,
+		InvisibleText,
 		DatePickerRenderer,
 		deepEqual,
 		assert,
@@ -1255,6 +1257,7 @@ sap.ui.define([
 
 		this.$("inner").attr("aria-owns", this.getId() + "-cal");
 		this.$("inner").attr("aria-expanded", true);
+		this.$("cal").attr("aria-labelledby", InvisibleText.getStaticId("sap.m", "DATEPICKER_TYPE"));
 
 		InstanceManager.addPopoverInstance(this._oPopup);
 	}
