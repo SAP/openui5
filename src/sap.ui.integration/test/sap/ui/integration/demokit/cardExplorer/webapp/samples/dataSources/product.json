@@ -1,0 +1,94 @@
+{
+	"sap.app": {
+		"id": "card.explorer.dataSources.product",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Sample of a Card with Data Source",
+		"dataSources": {
+			"products": {
+				"uri": "./SEPMRA_PROD_MAN",
+				"type": "OData"
+			}
+		}
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"product": {
+					"value": "HT-2001"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product(ProductDraftUUID=guid'00000000-0000-0000-0000-000000000000',ActiveProduct='{{parameters.product}}')",
+				"parameters": {
+					"$expand": "to_ProductTextInOriginalLang,to_Supplier"
+				}
+			}
+		},
+		"type": "Object",
+		"header": {
+			"data": {
+				"path": "/d"
+			},
+			"title": "{Name}",
+			"subTitle": "{Product}",
+			"icon": {
+				"shape": "Square",
+				"src": "{ProductPictureURL}"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "https://sapes5.sapdevcenter.com/sap/bc/ui5_ui5/ui2/ushell/shells/abap/FioriLaunchpad.html#EPMProduct-shop?ProductDraftUUID=00000000-0000-0000-0000-000000000000&/Product/{{parameters.product}}"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"path": "/d"
+			},
+			"groups": [
+				{
+					"title": "Information",
+					"items": [
+						{
+							"label": "{{DIMENSIONS}}",
+							"value": "{Height} x {Width} x {Depth} {DimensionUnit}"
+						},
+						{
+							"label": "{{WEIGHT}}",
+							"value": "{Weight} {WeightUnit}"
+						},
+						{
+							"label": "{{DESCRIPTION}}",
+							"value": "{to_ProductTextInOriginalLang/Description}"
+						}
+					]
+				},
+				{
+					"title": "Supplier",
+					"items": [
+						{
+							"label": "{{COMPANY_NAME}}",
+							"value": "{to_Supplier/CompanyName}"
+						},
+						{
+							"label": "{{EMAIL}}",
+							"value": "{to_Supplier/EmailAddress}",
+							"type": "email"
+						},
+						{
+							"label": "{{PHONE}}",
+							"value": "{to_Supplier/PhoneNumber}",
+							"type": "phone"
+						}
+					]
+				}
+			]
+		}
+	}
+}

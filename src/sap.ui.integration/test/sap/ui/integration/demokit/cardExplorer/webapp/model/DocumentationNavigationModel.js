@@ -121,6 +121,12 @@ sap.ui.define([
 						topicTitle: 'Integration Card Features'
 					},
 					{
+						title: 'Data Sources',
+						target: 'learnDetail',
+						key: 'dataSources',
+						topicTitle: 'Integration Card Data Sources'
+					},
+					{
 						title: 'Dynamic Parameters',
 						target: 'learnDetail',
 						key: 'dynamicParameters',

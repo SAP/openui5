@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Data Sources</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../css/style.css">
+	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+
+	<link rel="stylesheet" href="../../google-code-prettify/prettify.css">
+	<script src="../../google-code-prettify/run_prettify.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+
+			<h1>Data Sources</h1>
+
+			<h2 id="overview">Overview</h2>
+
+			<p>
+				Data Sources are named and reusable manifest entities that hold configuration settings for services.
+				This concept comes from the App Descriptor (see <a id="linkToAppDescriptorDocumentation" target="_blank">"sap.app" namespace</a>).
+				In the card context, named Data Sources can be used with a special double bracket syntax to construct data request urls - "{{dataSources.dataSourceName.uri}}".
+			</p>
+
+			<p>Data Sources' properties:</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+					</tr>
+					<tr>
+						<td>uri</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>URL to the data source.</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>string</td>
+						<td>no</td>
+						<td>Either <code>OData</code> or <code>JSON</code>.</td>
+						<td></td>
+					</tr>
+				</table>
+			</div>
+
+			<p>
+				<b>Note:</b> Types <code>ODataAnnotation</code>, <code>INA</code>, and <code>XML</code>, as well as properties
+				<code>localUri</code>, <code>annotations</code> and <code>maxAge</code> are no supported.
+			</p>
+
+			<h2 id="examples">Examples</h2>
+
+			<p>Using the configured <code>dataSources</code> in "sap.app" to make request for top products:</p>
+
+<pre class="prettyprint lang-js">
+{
+	"sap.app": {
+		"id": "card.explorer.dataSources.topProducts",
+		"type": "card",
+		"dataSources": {
+			"products": {
+				"uri": "./SEPMRA_PROD_MAN",
+				"type": "OData"
+			}
+		}
+	},
+	"sap.card": {
+		"data": {
+			"request": {
+				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product",
+				"parameters": {
+					"$inlinecount": "allpages"
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			...
+		},
+		"content": {
+			"data": {
+				"path": "/d/results"
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{ProductCategory}"
+			}
+			...
+		}
+	}
+}
+</pre>
+
+			<a class="try-button" href="../../../index.html#/explore/dataSources" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#examples">Examples</a></div>
+		</div>
+	</div>
+	<script>
+		var sPathToDemoKitLocal = "../../../../../../../../../../documentation.html#";
+		var sPathToDemoKit = "../../../../../../../../../../#";
+
+		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+			document.getElementById("linkToAppDescriptorDocumentation").href = sPathToDemoKitLocal + "/topic/be0cf40f61184b358b5faedaec98b2da";
+		} else {
+			document.getElementById("linkToAppDescriptorDocumentation").href = sPathToDemoKit + "/topic/be0cf40f61184b358b5faedaec98b2da";
+		}
+	</script>
+</body>
+</html>

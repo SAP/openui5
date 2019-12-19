@@ -210,6 +210,39 @@ sap.ui.define([
 						manifestUrl: '/samples/parameters.json'
 					},
 					{
+						key: 'dataSources',
+						target: 'exploreSamples',
+						title: 'Data Sources',
+						subSamples: [
+							{
+								title: 'Top Products',
+								key: 'topProducts',
+								manifestUrl: '/samples/dataSources/topProducts.json'
+							},
+							{
+								title: 'Product',
+								key: 'product',
+								settings: {
+									columns: 6
+								},
+								files: [
+									{
+										url: '/samples/dataSources/product.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										content: ''
+									},
+									{
+										url: '/samples/dataSources/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n/i18n.properties',
+										content: ''
+									}
+								]
+							}
+						]
+					},
+					{
 						key: 'dynamicCounter',
 						target: 'exploreSamples',
 						title: 'Dynamic Counter',
@@ -220,7 +253,7 @@ sap.ui.define([
 						target: 'exploreSamples',
 						title: 'Date Range',
 						settings: {
-							columns: 6
+							columns: 7
 						},
 						manifestUrl: '/samples/dateRange.json'
 					},
