@@ -66,7 +66,8 @@
 		  "sap.uxap.sample.ChildObjectPage",
 		  "sap.uxap.sample.ObjectPageHeaderExpanded",
 		  "sap.uxap.sample.ObjectPageHeaderContentPriorities",
-		  "sap.uxap.sample.ObjectPageFormLayout"
+		  "sap.uxap.sample.ObjectPageFormLayout",
+		  "sap.uxap.sample.ObjectPageFormFocusableInput"
 		]
 	  },
 	  {
@@ -288,6 +289,11 @@
 		"id": "sap.uxap.sample.ObjectPageFormLayout",
 		"name": "ObjectPage with forms",
 		"description": "Object Page automatically adjusts form layout to match block column layout"
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageFormFocusableInput",
+		"name": "ObjectPage with first editable input",
+		"description": "Object Page that focuses its first editable input in the currently selected section."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageDynamicSideContentBtn",
