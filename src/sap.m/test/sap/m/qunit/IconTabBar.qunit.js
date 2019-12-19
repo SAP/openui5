@@ -2534,9 +2534,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering", function (assert) {
-		assert.strictEqual(this.oIconTabBar.$().find('.sapMBtn').length, 1, "Overflow button is rendered");
+		assert.strictEqual(this.oIconTabBar.$().find('.sapMITHOverflowButton button').length, 1, "Overflow button is rendered");
 
-		var oButton = this.oIconTabBar.$().find('.sapMBtn');
+		var oButton = this.oIconTabBar.$().find('.sapMITHOverflowButton button');
 		oButton.trigger('tap');
 
 		sap.ui.getCore().applyChanges();
@@ -2549,7 +2549,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		var oButton = this.oIconTabBar.$().find('.sapMBtn');
+		var oButton = this.oIconTabBar.$().find('.sapMITHOverflowButton button');
 		oButton.trigger('tap');
 
 		sap.ui.getCore().applyChanges();
@@ -2567,7 +2567,7 @@ sap.ui.define([
 	QUnit.test("Filters cloning", function (assert) {
 		// Arrange
 		var oIconTabHeader = this.oIconTabBar.getAggregation("_header"),
-			oOverflowButton = this.oIconTabBar.$().find('.sapMBtn'),
+			oOverflowButton = this.oIconTabBar.$().find('.sapMITHOverflowButton button'),
 			aItems = oIconTabHeader.getItems(),
 			aClonedItems;
 

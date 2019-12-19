@@ -20,7 +20,7 @@ sap.ui.define([],
 			},
 			aggregations: {
 				items: {
-					domRef: ":sap-domref > .sapMITH > .sapMITBScrollContainer > .sapMITBHead",
+					domRef: ":sap-domref > .sapMITH > .sapMITHWrapper .sapMITHScrollContainer > .sapMITHScrollContainerInner .sapMITBHead",
 					actions: {
 						move: "moveControls"
 					}

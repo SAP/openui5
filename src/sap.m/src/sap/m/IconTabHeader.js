@@ -6,6 +6,7 @@
 
 sap.ui.define([
 	'./library',
+	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -13,11 +14,11 @@ sap.ui.define([
 	'sap/ui/core/delegate/ScrollEnablement',
 	'./IconTabBarSelectList',
 	'./Button',
+	'./AccButton',
 	'./ResponsivePopover',
 	'./IconTabFilter',
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
-	'sap/ui/core/Icon',
 	'./IconTabBarDragAndDropUtil',
 	'./IconTabHeaderRenderer',
 	"sap/ui/thirdparty/jquery",
@@ -26,6 +27,7 @@ sap.ui.define([
 ],
 function(
 	library,
+	Core,
 	Control,
 	EnabledPropagator,
 	ItemNavigation,
@@ -33,11 +35,11 @@ function(
 	ScrollEnablement,
 	IconTabBarSelectList,
 	Button,
+	AccButton,
 	ResponsivePopover,
 	IconTabFilter,
 	Device,
 	ResizeHandler,
-	Icon,
 	IconTabBarDragAndDropUtil,
 	IconTabHeaderRenderer,
 	jQuery,
@@ -48,9 +50,6 @@ function(
 
 	// shortcut for sap.m.touch
 	var touch = library.touch;
-
-	// shortcut for sap.m.ImageHelper
-	var ImageHelper = library.ImageHelper;
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
@@ -169,7 +168,17 @@ function(
 			/**
 			 * Internal aggregation for managing the overflow button.
 			 */
-			_overflowButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"}
+			_overflowButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
+
+			/**
+			 * Internal aggregation for managing the scroll back button.
+			 */
+			_leftArrowButton : {type: "sap.m.Button", multiple : false, visibility : "hidden"},
+
+			/**
+			 * Internal aggregation for managing the scroll forward button.
+			 */
+			_rightArrowButton : {type: "sap.m.Button", multiple : false, visibility : "hidden"}
 		},
 		events : {
 
@@ -195,8 +204,24 @@ function(
 		}
 	}});
 
+	/**
+	 * Library internationalization resource bundle.
+	 *
+	 * @type {sap.base.i18n.ResourceBundle}
+	 */
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 	EnabledPropagator.apply(IconTabHeader.prototype, [true]);
 	IconTabHeader.SCROLL_STEP = 264; // how many pixels to scroll with every overflow arrow click
+
+	/**
+	 * Enumeration for the two arrow buttons used to scroll through the tabs.
+	 * @private
+	 */
+	IconTabHeader.prototype._ARROWS = {
+		Left: "Left",
+		Right: "Right"
+	};
 
 	IconTabHeader.prototype.init = function() {
 		this._bPreviousScrollForward = false; // remember the item overflow state
@@ -333,7 +358,6 @@ function(
 	 */
 	IconTabHeader.prototype._createPopoverCloseButton = function() {
 		var that = this;
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		return new Button({
 			text: oResourceBundle.getText("SELECT_CANCEL_BUTTON"),
 			press: function() {
@@ -479,13 +503,6 @@ function(
 	};
 
 	IconTabHeader.prototype.exit = function() {
-		if (this._oArrowLeft) {
-			this._oArrowLeft.destroy();
-		}
-		if (this._oArrowRight) {
-			this._oArrowRight.destroy();
-		}
-
 		if (this._oItemNavigation) {
 			this.removeDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
@@ -563,7 +580,7 @@ function(
 
 	IconTabHeader.prototype.onBeforeRendering = function() {
 
-		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRtl = Core.getConfiguration().getRTL();
 		this._onOverflowButtonEventDelegate = {
 			onlongdragover: this._handleOnLongDragOver.bind(this),
 			ondragover: this._handleOnDragOver.bind(this),
@@ -864,11 +881,15 @@ function(
 					.attr({ 'aria-selected': true });
 		}
 
-		setTimeout(this["_checkOverflow"].bind(this), 350);
+		if (Core.isThemeApplied()) {
+			setTimeout(this["_checkOverflow"].bind(this), 350);
 
-		// scroll to selected item if it is out of screen and we render the control the first time
-		if (this.oSelectedItem) {
-			this._scrollIntoView(this.oSelectedItem, 500);
+			// scroll to selected item if it is out of screen and we render the control the first time
+			if (this.oSelectedItem) {
+				this._scrollIntoView(this.oSelectedItem, 500);
+			}
+		} else {
+			Core.attachThemeChanged(this._handleThemeLoad, this);
 		}
 
 		this._initItemNavigation();
@@ -882,6 +903,23 @@ function(
 		this._sResizeListenerId = ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._fnResize, this));
 
 		this._bCheckIfIntoView = true;
+	};
+
+	/**
+	 * Fired when the theme is loaded
+	 *
+	 * @private
+	 */
+	IconTabHeader.prototype._handleThemeLoad = function() {
+
+		setTimeout(this["_checkOverflow"].bind(this), 350);
+
+		// scroll to selected item if it is out of screen and we render the control the first time
+		if (this.oSelectedItem) {
+			this._scrollIntoView(this.oSelectedItem, 500);
+		}
+
+		Core.detachThemeChanged(this._handleThemeLoad, this);
 	};
 
 	/*
@@ -1106,7 +1144,7 @@ function(
 		var $bar = this.$();
 
 		var bScrolling = false;
-		var domScrollCont = this.getDomRef("scrollContainer");
+		var domScrollCont = this.getDomRef("scrollContainerInner");
 		var domHead = this.getDomRef("head");
 
 		if (domHead && domScrollCont) {
@@ -1127,43 +1165,60 @@ function(
 	};
 
 	/**
-	 * Gets the icon of the requested arrow (left/right).
+	 * Returns the underlying button control of the requested scroll direction.
 	 * @private
-	 * @param {string} sName Left or right
-	 * @returns Icon of the requested arrow
+	 * @param {string} sDirection Scroll direction of the button aggregation. Either <code>Left</code> or <code>Right</code>.
+	 * @returns {sap.m.Button} The button stored in the aggregation
 	 */
-	IconTabHeader.prototype._getScrollingArrow = function(sName) {
-		var src = IconPool.getIconURI("slim-arrow-" + sName);
+	IconTabHeader.prototype._getScrollButton = function (sDirection) {
+		var sAggregationName = "_" + sDirection.toLowerCase() + "ArrowButton";
 
-		var mProperties = {
-			src : src,
-			useIconTooltip : false
-		};
-
-		var sSuffix = this._bTextOnly ? "TextOnly" : "";
-		var sLeftArrowClass = "sapMITBArrowScrollLeft" + sSuffix;
-		var sRightArrowClass = "sapMITBArrowScrollRight" + sSuffix;
-		//sapMITHVerticallyCenteredArrow class is implemented only in fiori 3.0 theme. It aligns all arrows vertically
-		var aCssClassesToAddLeft = ["sapMITBArrowScroll", sLeftArrowClass, "sapMITHVerticallyCenteredArrow"];
-		var aCssClassesToAddRight = ["sapMITBArrowScroll", sRightArrowClass, "sapMITHVerticallyCenteredArrow"];
-
-		if (this._bInLine || this.isInlineMode()) {
-			aCssClassesToAddLeft.push('sapMITBArrowScrollLeftInLine');
-			aCssClassesToAddRight.push('sapMITBArrowScrollRightInLine');
+		if (this.getAggregation(sAggregationName)) {
+			return this.getAggregation(sAggregationName);
 		}
 
-		if (sName === "left") {
-			if (!this._oArrowLeft) {
-				this._oArrowLeft = ImageHelper.getImageControl(this.getId() + "-arrowScrollLeft", this._oArrowLeft, this, mProperties, aCssClassesToAddLeft);
+		var sTranslationKey = sDirection === this._ARROWS.Left ? "TABSTRIP_SCROLL_BACK" : "TABSTRIP_SCROLL_FORWARD";
+		var sTooltip = oResourceBundle.getText(sTranslationKey);
+		var sIconSrc = IconPool.getIconURI("slim-arrow-" + sDirection.toLowerCase());
+
+		var oButton = new AccButton(this.getId() + "-arrowScroll" + sDirection, {
+			type: ButtonType.Transparent,
+			icon: sIconSrc,
+			tooltip: sTooltip,
+			tabIndex: "-1",
+			ariaHidden: "true",
+			press: this._onScrollButtonPress.bind(this, sDirection)
+		});
+		this.setAggregation(sAggregationName, oButton);
+
+		return this.getAggregation(sAggregationName);
+	};
+
+	IconTabHeader.prototype._onScrollButtonPress = function (sDirection) {
+		var iScrollStep = sDirection === this._ARROWS.Left ? IconTabHeader.SCROLL_STEP : -IconTabHeader.SCROLL_STEP; // Scrolling backwards or forwards
+
+		if (this._bRtl) {
+			iScrollStep = -iScrollStep;
+		}
+
+		var iScrollNewPos = this._oScroller.getScrollLeft() - iScrollStep;
+
+		if (sDirection === this._ARROWS.Left) {
+			if (iScrollNewPos < 0) {
+				iScrollNewPos  = 0;
 			}
-			return this._oArrowLeft;
-		}
-		if (sName === "right") {
-			if (!this._oArrowRight) {
-				this._oArrowRight = ImageHelper.getImageControl(this.getId() + "-arrowScrollRight", this._oArrowRight, this, mProperties, aCssClassesToAddRight);
+		} else {
+			var iContainerWidth = this.$("scrollContainerInner").width();
+			var iHeadWidth = this.$("head").width();
+			if (iScrollNewPos > (iHeadWidth - iContainerWidth)) {
+				iScrollNewPos = iHeadWidth - iContainerWidth;
 			}
-			return this._oArrowRight;
 		}
+
+		// execute manual scrolling with iScroll's scrollTo method (setTimeout 0 is needed for positioning glitch)
+		this._scrollPreparation();
+		setTimeout(this._oScroller["scrollTo"].bind(this._oScroller, iScrollNewPos, 0, 500), 0);
+		setTimeout(this["_afterIscroll"].bind(this), 500);
 	};
 
 	/**
@@ -1183,13 +1238,23 @@ function(
 			var bScrollBack = false;
 			var bScrollForward = false;
 
-			var domScrollCont = this.getDomRef("scrollContainer");
+			var domScrollCont = this.getDomRef("scrollContainerInner");
 			var domHead = this.getDomRef("head");
+
 			if (this._oScroller.getScrollLeft() > 0) {
-				bScrollBack = true;
+				if (this._bRtl) {
+					bScrollForward = true;
+				} else {
+					bScrollBack = true;
+				}
 			}
+
 			if ((this._oScroller.getScrollLeft() + domScrollCont.offsetWidth) < domHead.offsetWidth) {
-				bScrollForward = true;
+				if (this._bRtl) {
+					bScrollBack = true;
+				} else {
+					bScrollForward = true;
+				}
 			}
 
 			// only do DOM changes if the state changed to avoid periodic application of identical values
@@ -1217,7 +1282,7 @@ function(
 			sControlId,
 			$target = jQuery(oEvent.target);
 
-		if (oControl instanceof  Button) {
+		if (oControl instanceof Button) {
 			return;
 		}
 
@@ -1229,49 +1294,22 @@ function(
 			//do nothing because element is inside content
 		} else {
 			if (sTargetId) {
-				var sId = this.getId();
-
 				// For items: do not navigate away! Stay on the page and handle the click in-place. Right-click + "Open in new Tab" still works.
-				// For scroll buttons: Prevent IE from firing beforeunload event -> see CSN 4378288 2012// TODO remove after 1.62 version
+				// For scroll buttons: Prevent IE from firing beforeunload event -> see CSN 4378288 2012
 				oEvent.preventDefault();
 
-				//on mobile devices click on arrows has no effect
-				if (sTargetId == sId + "-arrowScrollLeft" && Device.system.desktop) {
-					var iScrollLeft = this._oScroller.getScrollLeft() - IconTabHeader.SCROLL_STEP;
-					if (iScrollLeft < 0) {
-						iScrollLeft = 0;
-					}
-					// execute manual scrolling with iScroll's scrollTo method (delayedCall 0 is needed for positioning glitch)
-					this._scrollPreparation();
-					setTimeout(this._oScroller["scrollTo"].bind(this._oScroller, iScrollLeft, 0, 500), 0);
-					setTimeout(this["_afterIscroll"].bind(this), 500);
-
-				} else if (sTargetId == sId + "-arrowScrollRight" && Device.system.desktop) {
-					var iScrollLeft = this._oScroller.getScrollLeft() + IconTabHeader.SCROLL_STEP;
-					var iContainerWidth = this.$("scrollContainer").width();
-					var iHeadWidth = this.$("head").width();
-					if (iScrollLeft > (iHeadWidth - iContainerWidth)) {
-						iScrollLeft = iHeadWidth - iContainerWidth;
-					}
-					// execute manual scrolling with iScroll's scrollTo method (delayedCall 0 is needed for positioning glitch)
-					this._scrollPreparation();
-					setTimeout(this._oScroller["scrollTo"].bind(this._oScroller, iScrollLeft, 0, 500), 0);
-					setTimeout(this["_afterIscroll"].bind(this), 500);
-				} else {
-
-					// should be one of the items - select it
-					if ($target.hasClass('sapMITBFilterIcon') || $target.hasClass('sapMITBCount') || $target.hasClass('sapMITBText') || $target.hasClass('sapMITBTab') || $target.hasClass('sapMITBContentArrow') || $target.hasClass('sapMITBSep') || $target.hasClass('sapMITBSepIcon')) {
-						// click on icon: fetch filter instead
-						sControlId = oEvent.srcControl.getId().replace(/-icon$/, "");
-						oControl = sap.ui.getCore().byId(sControlId);
-						if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof sap.m.IconTabSeparator)) {
-							this.setSelectedItem(oControl);
-						}
-					} else if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof sap.m.IconTabSeparator)) {
-						// select item if it is an iconTab but not a separator
-
+				// should be one of the items - select it
+				if ($target.hasClass('sapMITBFilterIcon') || $target.hasClass('sapMITBCount') || $target.hasClass('sapMITBText') || $target.hasClass('sapMITBTab') || $target.hasClass('sapMITBContentArrow') || $target.hasClass('sapMITBSep') || $target.hasClass('sapMITBSepIcon')) {
+					// click on icon: fetch filter instead
+					sControlId = oEvent.srcControl.getId().replace(/-icon$/, "");
+					oControl = Core.byId(sControlId);
+					if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof sap.m.IconTabSeparator)) {
 						this.setSelectedItem(oControl);
 					}
+				} else if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof sap.m.IconTabSeparator)) {
+					// select item if it is an iconTab but not a separator
+
+					this.setSelectedItem(oControl);
 				}
 			} else {
 				//no target id, so we have to check if showAll is set or it's a text only item, because clicking on the number then also leads to selecting the item
@@ -1302,14 +1340,12 @@ function(
 			iContainerWidth;
 
 		if ($item.length > 0) {
-			var $head = this.$('head');
-			var iHeadPaddingWidth = $head.innerWidth() - $head.width();
 			var iItemWidth = $item.outerWidth(true);
-			var iItemPosLeft = $item.position().left - iHeadPaddingWidth / 2;
+			var iItemPosLeft = $item.position().left;
 
 			iScrollLeft = this._oScroller.getScrollLeft();
-			iContainerWidth = this.$("scrollContainer").width();
-			iNewScrollLeft = 0;
+			iContainerWidth = this.$("scrollContainerInner").width() - 100;
+			iNewScrollLeft = -50;
 
 			// check if item is outside of viewport
 			if (iItemPosLeft - iScrollLeft < 0 || iItemPosLeft - iScrollLeft > iContainerWidth - iItemWidth) {
@@ -1344,8 +1380,8 @@ function(
 
 		var oDomRef = this.getDomRef("head");
 		var iScrollLeft = oDomRef.scrollLeft;
-		var bIsIE = Device.browser.msie || Device.browser.edge;// TODO remove after 1.62 version
-		if (!bIsIE && this._bRtl) {// TODO remove after 1.62 version
+		var bIsIE = Device.browser.msie || Device.browser.edge;
+		if (!bIsIE && this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
 		var iScrollTarget = iScrollLeft + iDelta;
@@ -1479,7 +1515,7 @@ function(
 		}
 
 		var iScrollLeft = this._oScroller.getScrollLeft(),
-			iContainerWidth = this.$("scrollContainer").width(),
+			iContainerWidth = this.$("scrollContainerInner").width(),
 			$head = this.$('head'),
 			iHeadPaddingWidth = $head.innerWidth() - $head.width(),
 			leftMargin = $tab.css('padding-left'),

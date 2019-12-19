@@ -82,7 +82,7 @@
 // TextOnly (same as cozy)
 @_sap_m_IconTabBar_Compact_TextOnlyVerticalHeight: @_sap_m_IconTabBar_TextOnlyVerticalHeight;
 @_sap_m_IconTabBar_Compact_TextOnlyTabPadding: @_sap_m_IconTabBar_TextOnlyTabPadding;
-@_sap_m_IconTabBar_Compact_TextOnlyHeadMargin: 0 0.75rem 0 0.25rem;
+@_sap_m_IconTabBar_Compact_TextOnlyHeadMargin: 0 0.75rem 0 0;
 @_sap_m_IconTabBar_Compact_TextOnlyTextLineHeight: 1rem;
 @_sap_m_IconTabBar_Compact_TextOnlyTextPadding: 0;
 
@@ -121,6 +121,7 @@
 @_sap_m_IconTabBar_SelectedTextColor: @sapUiSelected;
 @_sap_m_IconTabBar_SelectedTextHoverColor: lighten(@sapUiSelected, 10);
 @_sap_m_IconTabBar_HeaderShadow: 0 0.25rem 0.25rem -0.25rem fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiObjectHeaderBorderColor;
+@_sap_m_IconTabBar_ArrowScroll_AfterHeight: 1px;
 
 /* Head Container */
 .sapMITH {
@@ -129,7 +130,6 @@
 	border-bottom: none;
 
 	.sapMITBHead {
-
 		margin-top: 0.875rem;
 
 		&.sapMITBNoText {
@@ -142,21 +142,12 @@
 			margin-top: 0;
 		}
 	}
-	//&.sapUiSizeCompact .sapMITBFilter .sapMITBText {
-	//	padding: 0.25rem 0 0 0;
-	//}
-	/* Arrows */
-	.sapMITBArrowScrollRightTextOnly, .sapMITBArrowScrollLeftTextOnly {
-		top: 0.375rem;
-	}
-	.sapMITBArrowScrollRightInLine, .sapMITBArrowScrollLeftInLine {
-		top: 0;
-		padding: 0.875rem 0.4rem;
-	}
 }
+
 /* Head Container - compact */
 
 .sapUiSizeCompact.sapMITH {
+
 	.sapMITBHead {
 		margin-top: 0.875rem;
 	}
@@ -168,7 +159,7 @@
 		margin-top: 0;
 	}
 
-	/* Arrows - compact */
+	/* Bottom borders on the currently selected tab - compact */
 	.sapMITBTextOnly > .sapMITBVertical.sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
 		height: 0.875rem;
 	}
@@ -223,17 +214,6 @@
 	+ .sapMITBSep {
 		margin-top: 0.125rem;
 	}
-}
-
-// vertically center all left and right arrows, and overflow buttons
-.sapMITH .sapMITHVerticallyCenteredArrow, // left and right arrows
-.sapMITH .sapMBtn.sapMITHVerticallyCenteredArrow, // overflow button
-.sapUiSizeCompact .sapMITH .sapMBtn.sapMITHVerticallyCenteredArrow, // overflow button - compact
-.sapUiMedia-Std-Phone .sapUiSizeCompact .sapMITH .sapMBtn.sapMITHVerticallyCenteredArrow, // overflow button - phone with compact
-.sapUiMedia-Std-Phone .sapMITH .sapMBtn.sapMITHVerticallyCenteredArrow, // overflow button - phone
-.sapUiMedia-Std-Desktop .sapMITH .sapMBtn.sapMITHVerticallyCenteredArrow { // overflow button - desktop
-	top: 50%;
-	transform: translateY(-50%);
 }
 
 /* Content Container */
@@ -380,17 +360,18 @@ html.sap-phone.sap-ios .sapMITH.sapUiSizeCompact {
 
 .sapMITH .sapMITBHead.sapMITBNoText {
 	> .sapMITBSepLine {
-		margin: 0.25rem 0.25rem 0 0.25rem;
+		margin: 0.25rem 0.25rem 0 0;
 	}
 }
 
 .sapMITH.sapUiSizeCompact .sapMITBHead.sapMITBNoText {
 	> .sapMITBSepLine {
-		margin: 0rem 0.125rem 0 0.125rem;
+		margin: 0 0.125rem 0 0;
 	}
 }
 
 .sapMITBAll {
+
 	.sapMITBTab {
 		display: inline-block;
 		height: 2.875rem;
@@ -399,6 +380,7 @@ html.sap-phone.sap-ios .sapMITH.sapUiSizeCompact {
 		margin-top: 0.4rem;
 		margin-bottom: 0.3rem;
 	}
+
 	&.sapMITBHorizontal {
 		> .sapMITBTab {
 			margin-top: 0;
@@ -460,11 +442,11 @@ html.sap-desktop {
 
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon, // TODO remove after 1.62 version
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText, // TODO remove after 1.62 version
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus.sapMITBAll, // TODO remove after 1.62 version
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus.sapMITBAll,
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 	&::after {
 		border: 1px dashed @sapUiContentFocusColor;
@@ -472,15 +454,16 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 }
 
 /* container background design */
+
 .sapMITBBackgroundDesignTranslucent > .sapMITBContainerContent > .sapMITBContent {
+	background-color: fade(@sapUiGroupContentBackground, 60);
+}
+
+.sapMITHBackgroundDesignTranslucent {
 	background-color: fade(@sapUiGroupContentBackground, 60);
 }
 
 /* header background design */
 .sapMITHBackgroundDesignTransparent {
 	background-color: transparent;
-}
-
-.sapMITHBackgroundDesignTranslucent {
-	background-color: fade(@sapUiGroupContentBackground, 60);
 }
