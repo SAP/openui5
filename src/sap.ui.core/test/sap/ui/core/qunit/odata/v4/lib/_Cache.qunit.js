@@ -3169,7 +3169,9 @@ sap.ui.define([
 			mQueryOptionsForPath = {
 				$select : [sRequestedPropertyPath]
 			},
-			mTypeForMetaPath = {};
+			mTypeForMetaPath = {
+				"~2~" : oEntityType
+			};
 
 		oCache.mLateQueryOptions = {
 			$apply : "A.P.P.L.E.",
@@ -3198,8 +3200,7 @@ sap.ui.define([
 			.returns(mQueryOptions);
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "").returns("~1~");
 		oHelperMock.expects("buildPath").withExactArgs("~1~", undefined).returns("~2~");
-		this.oRequestorMock.expects("fetchTypeForPath").withExactArgs("~2~")
-			.returns(SyncPromise.resolve(oEntityType));
+		this.oRequestorMock.expects("fetchTypeForPath").never();
 		oHelperMock.expects("buildPath").withExactArgs(undefined, "key").returns("key");
 		oHelperMock.expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(mQueryOptions), "").returns(mQueryOptionsForPath);
@@ -3260,7 +3261,9 @@ sap.ui.define([
 			mQueryOptionsForPath = {
 				$select : [sRequestedPropertyPath]
 			},
-			mTypeForMetaPath = {};
+			mTypeForMetaPath = {
+				"/entity/meta/path" : oEntityType
+			};
 
 		oCache.mLateQueryOptions = {
 			$expand : {n1 : {$select : ["p1"]}},
@@ -3287,8 +3290,7 @@ sap.ui.define([
 			.returns("/Employees/entity/path");
 		oHelperMock.expects("buildPath").withExactArgs("/Employees/entity/path", undefined)
 			.returns("/entity/meta/path");
-		this.oRequestorMock.expects("fetchTypeForPath").withExactArgs("/entity/meta/path")
-			.returns(SyncPromise.resolve(oEntityType));
+		this.oRequestorMock.expects("fetchTypeForPath").never();
 		oHelperMock.expects("buildPath").withExactArgs(undefined, "key").returns("key");
 		oHelperMock.expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(mQueryOptions), "('31')/entity/path")
@@ -3369,7 +3371,9 @@ sap.ui.define([
 			oTypeFoo = {
 				$Key : ["foo1", {foo2 : "t/foo2"}]
 			},
-			mTypeForMetaPath = {},
+			mTypeForMetaPath = {
+				"~" : oEntityType
+			},
 			oUpdateSelectedCall,
 			oVisitResponseCall;
 
@@ -3392,12 +3396,11 @@ sap.ui.define([
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(mQueryOptions);
+		this.oRequestorMock.expects("fetchTypeForPath").never();
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "entity/path")
 			.returns(oCache.sMetaPath + "/entity/path");
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", undefined)
 			.returns("~");
-		this.oRequestorMock.expects("fetchTypeForPath").withExactArgs("~")
-			.returns(SyncPromise.resolve(oEntityType));
 		oHelperMock.expects("buildPath").withExactArgs(undefined, "foo").returns("foo");
 		oHelperMock.expects("buildPath").withExactArgs(undefined, "key").returns("key");
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", "foo")
@@ -3479,7 +3482,9 @@ sap.ui.define([
 			oPromise2,
 			mQueryOptions = {$select: []},
 			oRequestGroupLock,
-			mTypeForMetaPath = {};
+			mTypeForMetaPath = {
+				"/Employees" : oEntityType
+			};
 
 		oCache.mLateQueryOptions = {
 			$expand : {expand : {}},
@@ -3503,9 +3508,6 @@ sap.ui.define([
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(mQueryOptions);
-		this.oRequestorMock.expects("fetchTypeForPath").twice()
-			.withExactArgs(oCache.sMetaPath)
-			.returns(SyncPromise.resolve(oEntityType));
 		this.oRequestorMock.expects("buildQueryString").twice()
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptions), false, true)
 			.returns("?$select=property");
