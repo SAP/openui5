@@ -445,15 +445,7 @@ sap.ui.define([
 			}
 
 			var oFormElement = this.getParent();
-			var oFormContainer = oFormElement.getParent();
-
-			if (oFormContainer) {
-				var oForm = oFormContainer.getParent();
-
-				if (oForm) {
-					return !oForm.getEditable();
-				}
-			}
+			return !oFormElement.getProperty("_editable");
 		}
 
 		return false;
