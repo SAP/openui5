@@ -377,6 +377,44 @@ sap.ui.define([
 		});
 	});
 
+
+	QUnit.module("Given Storage when loadVersions is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a list of versions is returned", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: "CUSTOMER"
+			};
+
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector", layers: ["CUSTOMER"], url: "/flexKeyUser"}
+			]);
+
+			var aReturnedVersions = [];
+			sandbox.stub(JsObjectConnector, "loadVersions").resolves(aReturnedVersions);
+
+			return Storage.loadVersions(mPropertyBag).then(function (aVersions) {
+				assert.equal(aVersions, aReturnedVersions);
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector", function (assert) {
+			assert.expect(1);
+			var mPropertyBag = {
+				reference: "reference",
+				layer: "CUSTOMER"
+			};
+
+			return Storage.loadVersions(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "loadVersions is not implemented", "then the rejection message is passed");
+			});
+		});
+	});
+
+
 	QUnit.module("Given Storage when reset is called", {
 		beforeEach: function () {
 			ApplyLrepConnector.xsrfToken = "123";

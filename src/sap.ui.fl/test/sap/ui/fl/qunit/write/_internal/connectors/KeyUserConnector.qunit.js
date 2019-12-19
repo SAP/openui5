@@ -160,8 +160,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector loadFeatures", {
-		beforeEach : function () {
-		},
 		afterEach: function() {
 			ApplyConnector.xsrfToken = undefined;
 			ApplyUtils.sendRequest.restore();
@@ -186,6 +184,26 @@ sap.ui.define([
 			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
 				assert.ok(oStubSendRequest.notCalled, "no request is sent to back end");
 				assert.deepEqual(oResponse.response, {isKeyUser: true}, "the settings object is obtain from apply connector correctly");
+			});
+		});
+	});
+
+	QUnit.module("KeyUserConnector loadVersions", {
+		afterEach: function() {
+			ApplyUtils.sendRequest.restore();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("get Versions", function (assert) {
+			var mPropertyBag = {
+				url : "/flexKeyuser",
+				reference: "com.sap.test.app"
+			};
+			var aReturnedVersions = [];
+			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : aReturnedVersions});
+			return KeyUserConnector.loadVersions(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, aReturnedVersions, "the versions list is returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/com.sap.test.app", "the request has the correct url");
 			});
 		});
 	});

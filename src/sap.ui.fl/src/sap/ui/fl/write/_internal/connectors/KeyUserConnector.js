@@ -6,11 +6,13 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/_internal/connectors/BackendConnector",
 	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/Layer"
 ], function(
 	merge,
 	BackendConnector,
 	ApplyConnector,
+	ApplyUtils,
 	Layer
 ) {
 	"use strict";
@@ -34,9 +36,22 @@ sap.ui.define([
 		ROUTES: {
 			CHANGES: PREFIX + API_VERSION + "/changes/",
 			SETTINGS: PREFIX + API_VERSION + "/settings",
-			TOKEN: PREFIX + API_VERSION + "/settings"
+			TOKEN: PREFIX + API_VERSION + "/settings",
+			VERSIONS: PREFIX + API_VERSION + "/versions/"
 		}
 	});
+
+	/**
+	 * Called to get the versions.
+	 *
+	 * @return {Promise<object>} Promise resolves with an list of the versions
+	 */
+	KeyUserConnector.loadVersions = function (mPropertyBag) {
+		var sVersionsUrl = ApplyUtils.getUrl(this.ROUTES.VERSIONS, mPropertyBag);
+		return ApplyUtils.sendRequest(sVersionsUrl).then(function (oResult) {
+			return oResult.response;
+		});
+	};
 
 	KeyUserConnector.applyConnector = ApplyConnector;
 	return KeyUserConnector;

@@ -43,7 +43,7 @@ sap.ui.define([
 		}
 	}
 
-	function sendLoadFeaturesToConnector(aConnectors) {
+	function _sendLoadFeaturesToConnector(aConnectors) {
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
 			return oConnectorConfig.writeConnectorModule.loadFeatures({url: oConnectorConfig.url})
 				.then(function (oFeatures) {
@@ -59,6 +59,11 @@ sap.ui.define([
 		});
 
 		return Promise.all(aConnectorPromises);
+	}
+
+	function _sendLoadVersionsToConnector(mPropertyBag, oConnectorConfig) {
+		mPropertyBag.url = oConnectorConfig.url;
+		return oConnectorConfig.writeConnectorModule.loadVersions(mPropertyBag);
 	}
 
 	/**
@@ -164,13 +169,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Provides a list of versions for a given application and layer.
+	 *
+	 * @param {object} mPropertyBag Property bag
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+	 * @param {string} mPropertyBag.reference Flex reference
+	 * @returns {Promise<sap.ui.fl.Versions[]>} Promise resolving with a list of versions if available;
+	 * rejects if an error occurs or the layer does not support draft handling
+	 */
+	Storage.loadVersions = function(mPropertyBag) {
+		return WriteUtils.getWriteConnectors()
+			.then(findConnectorConfigForLayer.bind(this, mPropertyBag.layer))
+			.then(_sendLoadVersionsToConnector.bind(this, mPropertyBag));
+	};
+
+	/**
 	 * Provides the information which features are provided based on the responses of the involved connectors.
 	 *
 	 * @returns {Promise<Object>} Map feature flags and additional provided information from the connectors
 	 */
 	Storage.loadFeatures = function() {
 		return WriteUtils.getWriteConnectors()
-			.then(sendLoadFeaturesToConnector)
+			.then(_sendLoadFeaturesToConnector)
 			.then(StorageFeaturesMerger.mergeResults);
 	};
 
