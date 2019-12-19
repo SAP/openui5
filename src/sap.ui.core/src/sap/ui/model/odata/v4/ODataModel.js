@@ -1335,13 +1335,15 @@ sap.ui.define([
 	 *   Whether the created lock is locked
 	 * @param {boolean} [bModifying]
 	 *   Whether the reason for the group lock is a modifying request
+	 * @param {function} [fnCancel]
+	 *   Function that is called when the group lock is canceled
 	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
 	 *   The group lock
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.lockGroup = function (sGroupId, oOwner, bLocked, bModifying) {
-		return this.oRequestor.lockGroup(sGroupId, oOwner, bLocked, bModifying);
+	ODataModel.prototype.lockGroup = function (sGroupId, oOwner, bLocked, bModifying, fnCancel) {
+		return this.oRequestor.lockGroup(sGroupId, oOwner, bLocked, bModifying, fnCancel);
 	};
 
 	/**
