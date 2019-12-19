@@ -1902,7 +1902,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 */
-	RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId) {
+	RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId, oControlBeforeRerender /* private */) {
 		assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
 
 		aPreserveContentListeners.forEach(function(oListener) {
@@ -1924,6 +1924,25 @@ sap.ui.define([
 			// return false;
 		}
 
+		// determines whether given parameters are within the same visible control tree as well as DOM tree
+		function isAncestor(oAncestor, oDescendant, oDescendantDom) {
+			if (oAncestor === oDescendant) {
+				return true;
+			}
+
+			for (var oParent = oDescendant.getParent(), oParentDom; oParent && (oParentDom = oParent.getDomRef()); oParent = oParent.getParent()) {
+				if (oParent.isA("sap.ui.core.Control") && !oParent.getVisible()) {
+					return false;
+				}
+				if (!oParentDom.contains(oDescendantDom)) {
+					return false;
+				}
+				if (oParent === oAncestor) {
+					return true;
+				}
+			}
+		}
+
 		function check(candidate) {
 
 			// don't process the preserve area or the static area
@@ -1931,7 +1950,21 @@ sap.ui.define([
 				return;
 			}
 
-			if ( candidate.hasAttribute(ATTR_PRESERVE_MARKER) )  { // node is marked with the preserve marker
+			var sPreserveMarker = candidate.getAttribute(ATTR_PRESERVE_MARKER);
+			if ( sPreserveMarker )  { // node is marked with the preserve marker
+
+				// before the re-rendering, UIArea moves all "to-be-preserved" nodes to the preserved area
+				// except the control dom nodes which must be moved to preserved area via control rendering cycle
+				if ( oControlBeforeRerender ) {
+					var oCandidateControl = sap.ui.getCore().byId(sPreserveMarker);
+
+					// let the rendering cycle of the control handles the preserving
+					// but only when the control stack and the dom stack are in sync
+					if ( oCandidateControl && isAncestor(oControlBeforeRerender, oCandidateControl, candidate) ) {
+						return;
+					}
+				}
+
 				// always create a placeholder
 				// - when the current node is the root node then we're doing a single control rerendering and need to know where to rerender
 				// - when the parent DOM belongs to the preserved DOM of another control, that control needs a placeholder as well
