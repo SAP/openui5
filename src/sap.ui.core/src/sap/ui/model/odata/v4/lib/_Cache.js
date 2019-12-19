@@ -613,8 +613,7 @@ sap.ui.define([
 				sExpand;
 
 			if (!oEntityType) {
-				oEntityType = that.oRequestor.fetchTypeForPath(sMetaPath).getResult();
-				mTypeForMetaPath[sMetaPath] = oEntityType;
+				oEntityType = that.fetchType(mTypeForMetaPath, sMetaPath).getResult();
 			}
 			(oEntityType.$Key || []).forEach(function (vKey) {
 				if (typeof vKey === "object") {
@@ -702,6 +701,50 @@ sap.ui.define([
 	};
 
 	/**
+	 * Fetches the type for the given path and puts it into mTypeForMetaPath. Recursively fetches
+	 * the key properties' parent types if they are complex.
+	 *
+	 * @param {object} mTypeForMetaPath
+	 *   A map from resource path and entity path to the type
+	 * @param {string} sMetaPath
+	 *   The meta path of the resource + navigation or key path (which may lead to an entity or
+	 *   complex type)
+	 * @returns {SyncPromise<object>}
+	 *   A promise resolving with the type
+	 */
+	Cache.prototype.fetchType = function (mTypeForMetaPath, sMetaPath) {
+		var that = this;
+
+		return this.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
+			var oMessageAnnotation,
+				aPromises = [];
+
+			if (oType) {
+				oMessageAnnotation = that.oRequestor.getModelInterface()
+					.fetchMetadata(sMetaPath + "/" + sMessagesAnnotation).getResult();
+				if (oMessageAnnotation) {
+					oType = Object.create(oType);
+					oType[sMessagesAnnotation] = oMessageAnnotation;
+				}
+
+				mTypeForMetaPath[sMetaPath] = oType;
+
+				(oType.$Key || []).forEach(function (vKey) {
+					if (typeof vKey === "object") {
+						// key has an alias
+						vKey = vKey[Object.keys(vKey)[0]];
+						aPromises.push(that.fetchType(mTypeForMetaPath,
+							sMetaPath + "/" + vKey.slice(0, vKey.lastIndexOf("/"))));
+					}
+				});
+				return SyncPromise.all(aPromises).then(function () {
+					return oType;
+				});
+			}
+		});
+	};
+
+	/**
 	 * Fetches the type from the metadata for the root entity plus all types for $expand and puts
 	 * them into a map from meta path to type. Checks the types' key properties and puts their types
 	 * into the map, too, if they are complex. If a type has a
@@ -728,53 +771,19 @@ sap.ui.define([
 
 					sNavigationPath.split("/").forEach(function (sSegment) {
 						sMetaPath += "/" + sSegment;
-						fetchType(sMetaPath);
+						aPromises.push(that.fetchType(mTypeForMetaPath, sMetaPath));
 					});
 					fetchExpandedTypes(sMetaPath, mQueryOptions.$expand[sNavigationPath]);
 				});
 			}
 		}
 
-		/*
-		 * Adds a promise to aPromises to fetch the type for the given path, put it into
-		 * mTypeForMetaPath and recursively add the key properties' types if they are complex.
-		 * @param {string} sMetaPath The meta path of the resource + navigation or key path (which
-		 *   may lead to an entity or complex type or to <code>undefined</code>)
-		 */
-		function fetchType(sMetaPath) {
-			aPromises.push(that.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
-				var oMessageAnnotation = that.oRequestor.getModelInterface()
-						.fetchMetadata(sMetaPath + "/" + sMessagesAnnotation).getResult();
-
-				if (oMessageAnnotation) {
-					oType = Object.create(oType);
-					oType[sMessagesAnnotation] = oMessageAnnotation;
-				}
-
-				mTypeForMetaPath[sMetaPath] = oType;
-				if (oType && oType.$Key) {
-					oType.$Key.forEach(function (vKey) {
-						var iIndexOfSlash, sKeyPath;
-
-						if (typeof vKey !== "string") {
-							sKeyPath = vKey[Object.keys(vKey)[0]];
-							iIndexOfSlash = sKeyPath.lastIndexOf("/");
-							if (iIndexOfSlash >= 0) {
-								// drop the property name and fetch the type containing it
-								fetchType(sMetaPath + "/" + sKeyPath.slice(0, iIndexOfSlash));
-							}
-						}
-					});
-				}
-			}));
-		}
-
 		if (!this.oTypePromise) {
 			aPromises = [];
 			mTypeForMetaPath = {};
-			fetchType(this.sMetaPath);
+			aPromises.push(this.fetchType(mTypeForMetaPath, this.sMetaPath));
 			if (this.bFetchOperationReturnType) {
-				fetchType(this.sMetaPath + "/$Type");
+				aPromises.push(this.fetchType(mTypeForMetaPath, this.sMetaPath + "/$Type"));
 			}
 			fetchExpandedTypes(this.sMetaPath, this.mQueryOptions);
 			this.oTypePromise = SyncPromise.all(aPromises).then(function () {
