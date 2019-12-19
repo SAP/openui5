@@ -540,6 +540,9 @@ function(
 			this._oButtonToolbar.destroy();
 			this._oButtonToolbar = null;
 		}
+
+		// Unregister custom events handlers after migration to semantic rendering
+		this.$().off("click");
 	};
 
 	/**
@@ -578,6 +581,12 @@ function(
 			}
 		}
 
+		if (this._oSuggPopover  &&  this._oSuggPopover._oPopover && this.getShowTableSuggestionValueHelp()) {
+			this._addShowMoreButton();
+		} else {
+			this._removeShowMoreButton();
+		}
+
 		if (bShowIcon) {
 
 			// ensure the creation of an icon
@@ -590,6 +599,10 @@ function(
 				oIcon.setProperty("visible", false, true);
 			}
 		}
+
+		!this.getWidth() && this.setWidth("100%");
+		// Unregister custom event handlers after migration to semantic rendering
+		this.$().off("click");
 	};
 
 	/**
@@ -1061,17 +1074,6 @@ function(
 	};
 
 	/**
-	 * Defines the width of the input. Default value is 100%.
-	 *
-	 * @public
-	 * @param {string} sWidth The new width of the input.
-	 * @returns {void} Sets the width of the Input.
-	 */
-	Input.prototype.setWidth = function(sWidth) {
-		return InputBase.prototype.setWidth.call(this, sWidth || "100%");
-	};
-
-	/**
 	 * Returns the width of the input.
 	 *
 	 * @public
@@ -1415,7 +1417,6 @@ function(
 		 */
 		Input.prototype.setShowSuggestion = function(bValue){
 			this.setProperty("showSuggestion", bValue, true);
-
 			if (bValue) {
 				this._oSuggPopover = this._getSuggestionsPopover();
 				this._oSuggPopover._iPopupListSelectedIndex = -1;
@@ -1435,29 +1436,6 @@ function(
 
 			return this;
 		};
-
-		/**
-		 * Shows value help suggestions in table.
-		 *
-		 * @public
-		 * @param {boolean} bValue Show suggestions.
-		 * @return {sap.m.Input} this Input instance for chaining.
-		 */
-		Input.prototype.setShowTableSuggestionValueHelp = function(bValue) {
-			this.setProperty("showTableSuggestionValueHelp", bValue, true);
-
-			if (!(this._oSuggPopover && this._oSuggPopover._oPopover)) {
-				return this;
-			}
-
-			if (bValue) {
-				this._addShowMoreButton();
-			} else {
-				this._removeShowMoreButton();
-			}
-			return this;
-		};
-
 		/**
 		 * Event handler for browsers' <code>change</code> event.
 		 *

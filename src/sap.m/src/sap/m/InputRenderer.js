@@ -47,8 +47,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 			oRm.attr("step", "any");
 		}
 		if (oControl.getType() == InputType.Number && sap.ui.getCore().getConfiguration().getRTL()) {
-			oRm.attr("dir", "ltr");
-			oRm.style("text-align", "right");
+			oRm.attr("dir", "ltr").style("text-align", "right");
 		}
 
 		if (oControl.getShowSuggestion() || oControl.getShowValueStateMessage()) {
@@ -73,18 +72,16 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	};
 
 	InputRenderer.writeDescription = function (oRm, oControl) {
-		oRm.openStart("div");
-		oRm.class("sapMInputDescriptionWrapper");
-		oRm.style("width", "calc(100% - " + oControl.getFieldWidth() + ")");
-		oRm.openEnd();
+		oRm.openStart("div")
+			.class("sapMInputDescriptionWrapper")
+			.style("width", "calc(100% - " + oControl.getFieldWidth() + ")")
+			.openEnd();
 
-		oRm.openStart("span", oControl.getId() + "-descr");
-		oRm.class("sapMInputDescriptionText");
-		oRm.openEnd();
-
-		oRm.text(oControl.getDescription());
-
-		oRm.close("span");
+		oRm.openStart("span", oControl.getId() + "-descr")
+			.class("sapMInputDescriptionText")
+			.openEnd()
+			.text(oControl.getDescription())
+			.close("span");
 		oRm.close("div");
 	};
 
@@ -95,7 +92,10 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
-				oRm.openStart("span", oControl.getId() + "-SuggDescr").class("sapUiPseudoInvisibleText").attr("role", "status").attr("aria-live", "polite").openEnd().close("span");
+				oRm.openStart("span", oControl.getId() + "-SuggDescr").class("sapUiPseudoInvisibleText")
+					.attr("role", "status").attr("aria-live", "polite")
+					.openEnd()
+					.close("span");
 			}
 		}
 	};
