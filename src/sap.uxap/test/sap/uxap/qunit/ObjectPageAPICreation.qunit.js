@@ -766,6 +766,33 @@ function (
 		helpers.renderObject(oObjectPage);
 	});
 
+	QUnit.test("height metrics are updated on content-resize", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oHtmlBlock,
+			oFirstSection = oObjectPage.getSections()[0],
+			oSpy = sinon.spy(oObjectPage, "_adjustHeaderHeights"),
+			done = assert.async();
+
+		assert.expect(1);
+
+		// setup step1: add content with defined height
+		oHtmlBlock = new HTML("b1", { content: '<div class="innerDiv" style="height:300px"></div>'});
+		oFirstSection.getSubSections()[0].addBlock(oHtmlBlock);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+
+			// Act: change height without invalidating any control
+			Core.byId("b1").getDomRef().style.height = "250px";
+			oSpy.reset();
+			oObjectPage._onUpdateContentSize();
+
+			assert.equal(oSpy.callCount, 1, "recalculation of heights is called");
+			done();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("test setSelectedSection functionality");
 
 	QUnit.test("test setSelectedSection with initially empty ObjectPage", function (assert) {
