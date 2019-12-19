@@ -7,6 +7,16 @@
 		"subTitle": "Sample of a Component Content",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Component",
+				"Card",
+				"Sample"
+			]
 		}
 	},
 	"sap.ui": {

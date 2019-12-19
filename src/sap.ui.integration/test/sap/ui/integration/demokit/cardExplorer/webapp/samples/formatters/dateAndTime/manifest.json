@@ -2,7 +2,24 @@
 	"_version": "1.17.0",
 	"sap.app": {
 		"id": "card.explorer.format.date",
-		"type": "card"
+		"type": "card",
+		"title": "Sample for DateTime Formatters",
+		"subTitle": "Sample for DateTime Formatters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Date",
+				"Time",
+				"Formatter",
+				"Card",
+				"Sample"
+			]
+		}
 	},
 	"sap.card": {
 		"type": "List",
