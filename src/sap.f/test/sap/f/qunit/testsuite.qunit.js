@@ -196,6 +196,11 @@ sap.ui.define(function () {
 			// Designtime tests:
 			// -------------------------------------------------------------------------------
 
+			"Designtime-Avatar": {
+				group: "Designtime",
+				sinon: false,
+				module: "./designtime/Avatar.qunit"
+			},
 			"Designtime-DynamicPage": {
 				group: "Designtime",
 				sinon: false,
