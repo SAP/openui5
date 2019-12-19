@@ -88,6 +88,10 @@ sap.ui.define(function () {
 			// Designtime tests:
 			// -------------------------------------------------------------------------------
 
+			"Designtime-Avatar": {
+				group: "Designtime",
+				module: "./designtime/Avatar.qunit"
+			},
 			"Designtime-DynamicPage": {
 				group: "Designtime",
 				module: "./designtime/DynamicPage.qunit"
