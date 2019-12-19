@@ -8,7 +8,6 @@
 // ==========================================================================
 
 @_sap_m_IconTabBar_TextColor: @sapUiGroupTitleTextColor;
-@_sap_m_IconTabBar_HeaderShadow: @sapUiShadowHeader;
 @_sap_m_IconTabBar_TextShadow: @sapUiShadowText;
 
 // Left and right arrows
@@ -69,8 +68,16 @@
 @_sap_m_IconTabBar_SeparatorIconHeight: 3rem;
 @__sap_m_IconTabBar_SeparatorIconLineHeight: 3rem;
 
+// Header
+@_sap_m_IconTabBar_HeaderBackground: @sapUiObjectHeaderBackground;
+@_sap_m_IconTabBar_HeaderBackgroundTranslucent: fade(@sapUiObjectHeaderBackground, 60);
+
+@_sap_m_IconTabBar_HeaderBorderBottom: 0.125rem solid @sapUiObjectHeaderBackground;
+@_sap_m_IconTabBar_HeaderShadow: @sapUiShadowHeader;
+
 // Content
 @_sap_m_IconTabBar_ContentBackground: @sapUiGroupContentBackground;
+@_sap_m_IconTabBar_ContentBackgroundTranslucent: fade(@sapUiGroupContentBackground, 60);
 
 // ==================== Compact size ====================
 
@@ -644,7 +651,11 @@
 	overflow: visible;
 }
 
+
+
 .sapMITH {
+	background-color: @_sap_m_IconTabBar_HeaderBackground;
+	border-bottom: @_sap_m_IconTabBar_HeaderBorderBottom;
 	box-shadow: @_sap_m_IconTabBar_HeaderShadow;
 	position: relative;
 
@@ -1108,6 +1119,29 @@ html.sap-phone  {
 
 	&::after {
 		background: @sapUiObjectHeaderBorderColor;
+	}
+}
+
+/* container background design - translucent */
+.sapMITBBackgroundDesignTranslucent .sapMITBContainerContent .sapMITBContent {
+	background-color: @_sap_m_IconTabBar_ContentBackgroundTranslucent;
+}
+
+/* header background design - translucent */
+.sapMITHBackgroundDesignTranslucent {
+	background-color: @_sap_m_IconTabBar_HeaderBackgroundTranslucent;
+
+	.sapMITBWrapper .sapMITHScrollContainer .sapMITBArrowScroll {
+		background: transparent;
+	}
+}
+
+/* header background design - transparent */
+.sapMITHBackgroundDesignTransparent {
+	background: transparent;
+
+	.sapMITHWrapper .sapMITHScrollContainer .sapMITBArrowScroll {
+		background: transparent;
 	}
 }
 
