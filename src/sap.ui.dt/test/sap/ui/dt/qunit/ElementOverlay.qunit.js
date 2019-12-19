@@ -88,7 +88,10 @@ function (
 				element: this.oButton,
 				init: function (oEvent) {
 					oEvent.getSource().placeInOverlayContainer();
-					fnDone();
+					// Wait until the overlay styles are applied (fixes IE11 timing issue)
+					this.attachEventOnce('geometryChanged', function () {
+						fnDone();
+					});
 				}
 			});
 			this.oElementOverlay.attachEvent('applyStylesRequired', this.oElementOverlay.applyStyles.bind(this.oElementOverlay));
@@ -269,7 +272,6 @@ function (
 						done();
 					}.bind(this))
 			);
-
 			this.oButton.addStyleClass("sapUiDtTestAnimate");
 		});
 
