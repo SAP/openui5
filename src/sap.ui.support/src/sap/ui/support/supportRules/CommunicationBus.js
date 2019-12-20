@@ -6,13 +6,11 @@
  * @typedef {object} EventListener
  */
 sap.ui.define([
-	"sap/base/Log",
 	"jquery.sap.script", // contains jQuery.sap.getUriParameters
-	"sap/ui/thirdparty/URI",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBConfig"
 ],
-function (Log, jQuery, URI, CommunicationBusCommon, CommunicationBusConfig) {
+function (jQuery, CommunicationBusCommon, CommunicationBusConfig) {
 	"use strict";
 
 	var oCommunicationBus;
@@ -26,8 +24,7 @@ function (Log, jQuery, URI, CommunicationBusCommon, CommunicationBusConfig) {
 					uriParams: {
 						origin: "sap-ui-xx-support-origin",
 						frameId: "sap-ui-xx-frame-identifier"
-					},
-					namespace: "support"
+					}
 				});
 				CommunicationBusCommon.call(this, oConfig);
 			} else {

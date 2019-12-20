@@ -22,8 +22,7 @@ sap.ui.define([
 					uriParams: {
 						origin: "sap-ui-testrecorder-origin",
 						frameId: "sap-ui-testrecorder-frame-identifier"
-					},
-					namespace: "testRecorder"
+					}
 				});
 				CommunicationBus.call(this, oConfig);
 			} else {
