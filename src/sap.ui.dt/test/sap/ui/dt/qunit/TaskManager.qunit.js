@@ -150,6 +150,13 @@ sap.ui.define([
 
 			assert.equal(iTaskId, aTaskIdsInEvent[0], 'then event is called with same task ID');
 		});
+		QUnit.test("must remove task from the pending list", function (assert) {
+			var iTaskId = this.oTaskManager.add({ type: "foo" });
+			this.oTaskManager.add({ type: "bar" });
+			assert.strictEqual(this.oTaskManager.getQueuedTasks("foo").length, 1, "one task is added to the pending list");
+			this.oTaskManager.complete(iTaskId);
+			assert.strictEqual(this.oTaskManager.getList("foo").length, 0, "then function task was removed properly");
+		});
 	});
 
 	QUnit.module("Public API - completeBy()", {
@@ -309,6 +316,48 @@ sap.ui.define([
 			}), 'function returns the values with the right taskType');
 			// there is no sorting. it tests only that the task adding order is the same as the task running order
 			assert.ok(aTaskList[0].order < aTaskList[1].order, 'function returns the values with the same order as they are added');
+		});
+	});
+
+	QUnit.module("Public API - getQueuedTasks()", {
+		beforeEach: function () {
+			this.oTaskManager = new TaskManager();
+		},
+		afterEach: function () {
+			this.oTaskManager.destroy();
+		}
+	}, function () {
+		QUnit.test("must return unique arrays each time it's called", function (assert) {
+			assert.ok(Array.isArray(this.oTaskManager.getQueuedTasks()), "function return an array value");
+			assert.notStrictEqual(this.oTaskManager.getQueuedTasks(), this.oTaskManager.getQueuedTasks(), "function returns unique instances (arrays)");
+		});
+		QUnit.test("must return the task just once (once asked the task is marked pending and is removed from the queued list)", function (assert) {
+			this.oTaskManager.add({ type: "foo" });
+			assert.strictEqual(this.oTaskManager.getQueuedTasks()[0].type, "foo", "on first call function returns added task");
+			assert.strictEqual(this.oTaskManager.getQueuedTasks().length, 0, "on second call function should not return the task again (not queued anymore)");
+			assert.ok(!this.oTaskManager.isEmpty(), "after the get calls the task still exists in the task manager");
+		});
+		QUnit.test("must return unique array with the queued taskList", function (assert) {
+			this.oTaskManager.add({ type: "foo" });
+			this.oTaskManager.add({ type: "bar" });
+			var aTaskList = this.oTaskManager.getQueuedTasks();
+			assert.strictEqual(aTaskList.length, 2, "function returns the right amount of values");
+			assert.strictEqual(aTaskList[0].type, "foo", "function returns the values in the correct order");
+			assert.strictEqual(aTaskList[1].type, "bar", "function returns the values in the correct order");
+		});
+		QUnit.test("must return unique array with the taskList selected by given taskType", function (assert) {
+			this.oTaskManager.add({ type: "foo", order: 1 });
+			this.oTaskManager.add({ type: "foo", order: 2 });
+			this.oTaskManager.add({ type: "bar" });
+			var aTaskList = this.oTaskManager.getQueuedTasks("foo");
+			assert.ok(Array.isArray(aTaskList), "function return an array value");
+			assert.strictEqual(aTaskList.length, 2, "function returns the right amount of values");
+			assert.ok(aTaskList.every(function (mTask) {
+				return mTask.type === "foo";
+			}), "function returns the values with the right taskType");
+			// there is no sorting. it tests only that the task adding order is the same as the task running order
+			assert.ok(aTaskList[0].order < aTaskList[1].order, "function returns the values with the same order as they are added");
+			assert.strictEqual(this.oTaskManager.count(), 3, "task manager still contains 3 tasks");
 		});
 	});
 

@@ -578,7 +578,7 @@ function (
 		this.fireBeforeGeometryChanged();
 
 		if (!this.isRendered() || this._bIsBeingDestroyed || this.getShouldBeDestroyed()) {
-			return;
+			return Promise.resolve();
 		}
 
 		var oGeometryChangedPromise = Promise.resolve();
@@ -591,11 +591,12 @@ function (
 
 				if (!this.isRoot()) {
 					var aPromises = [];
-					this.getParent()._oScrollbarSynchronizers.forEach(function(oShr) {
-						if (oShr._bSyncing) {
+					this.getParent()._oScrollbarSynchronizers.forEach(function(oScrollbarSynchronizer) {
+						if (oScrollbarSynchronizer.isSyncing()) {
 							aPromises.push(
 								new Promise(function (fnResolve) {
-									oShr.attachEventOnce('synced', fnResolve);
+									oScrollbarSynchronizer.attachEventOnce('synced', fnResolve);
+									oScrollbarSynchronizer.attachEventOnce('destroyed', fnResolve);
 								})
 							);
 						}
@@ -618,7 +619,7 @@ function (
 		}
 
 		// TODO: refactor geometryChanged event
-		oGeometryChangedPromise
+		return oGeometryChangedPromise
 			.catch(function (vError) {
 				Log.error(Util.createError(
 					'Overlay#applyStyles',

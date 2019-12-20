@@ -145,7 +145,8 @@ function (
 
 			// Place component in container and display
 			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent
+				component: this.oUiComponent,
+				height: '100%'
 			});
 			this.oUiComponentContainer.placeAt(mOptions.placeAt || "qunit-fixture");
 

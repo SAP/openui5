@@ -40,7 +40,7 @@ sap.ui.define([
 	QUnit.module("TaskRunner API - run", {
 		beforeEach: function () {
 			this.observableTaskType = "TestType";
-			this.oCallbackSpy = sandbox.spy();
+			this.oCallbackStub = sandbox.stub().resolves();
 			this.oTaskManager = new TaskManager();
 			this.oTaskRunner = new TaskRunner({
 				taskManager: this.oTaskManager,
@@ -53,17 +53,18 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("must start the task execution process", function (assert) {
-			var done = assert.async(2);
+			var fnDone = assert.async(2);
 			var mTask = {
 				type: this.observableTaskType,
-				callbackFn: this.oCallbackSpy
+				callbackFn: this.oCallbackStub
 			};
-			var iCounter = 1;
+			var iCounter = 0;
 			var aTaskId = [this.oTaskManager.add(mTask)];
 			this.oTaskManager.attachComplete(function (oEvent) {
-				assert.strictEqual(this.oCallbackSpy.callCount, iCounter++, "then the added task with existing callback function is executed sucessfully");
-				assert.strictEqual(oEvent.getParameters().taskId[0], aTaskId.shift(), "then the added task is marked as completed by task manager");
-				done();
+				var sTaskId = aTaskId.shift();
+				assert.strictEqual(this.oCallbackStub.getCall(iCounter++).thisValue.id, sTaskId, "then the added task with existing callback function is executed sucessfully");
+				assert.strictEqual(oEvent.getParameters().taskId[0], sTaskId, "then the added task is marked as completed by task manager");
+				fnDone();
 			}.bind(this));
 
 			this.oTaskRunner.run();
@@ -75,23 +76,23 @@ sap.ui.define([
 			var done = assert.async();
 			var mTask = {
 				type: this.observableTaskType,
-				callbackFn: this.oCallbackSpy
+				callbackFn: this.oCallbackStub
 			};
 			var sAlternativeTaskType = "alternative task type";
 			this.oTaskRunner.run(sAlternativeTaskType);
 
 			this.oTaskManager.add(mTask);
 
-			var oCallback1Spy = sandbox.spy();
+			var oCallback1Stub = sandbox.stub().resolves();
 			var mSecondTask = {
 				type: sAlternativeTaskType,
-				callbackFn: oCallback1Spy
+				callbackFn: oCallback1Stub
 			};
 			var iTaskId = this.oTaskManager.add(mSecondTask);
 
 			this.oTaskManager.attachComplete(function (oEvent) {
-				assert.strictEqual(this.oCallbackSpy.callCount, 0, "then added task with initial type is not executed");
-				assert.strictEqual(oCallback1Spy.callCount, 1, "then added task with alternative type is executed sucessfully");
+				assert.strictEqual(this.oCallbackStub.callCount, 0, "then added task with initial type is not executed");
+				assert.strictEqual(oCallback1Stub.callCount, 1, "then added task with alternative type is executed sucessfully");
 				assert.strictEqual(oEvent.getParameters().taskId[0], iTaskId, "then the task with alternative type is marked as completed by task manager");
 				done();
 			}.bind(this));
@@ -101,7 +102,7 @@ sap.ui.define([
 	QUnit.module("TaskRunner API - stop", {
 		beforeEach: function () {
 			this.observableTaskType = "TestType";
-			this.oCallbackSpy = sandbox.spy();
+			this.oCallbackStub = sandbox.stub().resolves();
 			this.oTaskManager = new TaskManager();
 			this.oTaskRunner = new TaskRunner({
 				taskManager: this.oTaskManager,
@@ -117,18 +118,18 @@ sap.ui.define([
 			var done = assert.async();
 			var mTask = {
 				type: this.observableTaskType,
-				callbackFn: this.oCallbackSpy
+				callbackFn: this.oCallbackStub
 			};
 
 			this.oTaskRunner.run();
 			this.oTaskManager.add(mTask);
 			this.oTaskManager.attachEventOnce('complete', function () {
-				assert.strictEqual(this.oCallbackSpy.callCount, 1, "then, before stop, the added task with existing callback function is executed sucessfully");
+				assert.strictEqual(this.oCallbackStub.callCount, 1, "then, before stop, the added task with existing callback function is executed sucessfully");
 				this.oTaskRunner.stop();
 
 				this.oTaskManager.add(mTask);
 				window.requestAnimationFrame(function () {
-					assert.strictEqual(this.oCallbackSpy.callCount, 1, "then after stop() the newly added task is not executed anymore");
+					assert.strictEqual(this.oCallbackStub.callCount, 1, "then after stop() the newly added task is not executed anymore");
 					done();
 				}.bind(this));
 			}.bind(this));

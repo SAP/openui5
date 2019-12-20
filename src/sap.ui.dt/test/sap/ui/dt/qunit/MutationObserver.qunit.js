@@ -84,6 +84,20 @@ function(
 			this.$Node.text("test");
 		});
 
+		QUnit.test("when the overlay container is added to the body", function (assert) {
+			var fnDone = assert.async();
+			var oMutationHandlerSpy = sandbox.spy();
+			this.oMutationObserver.registerHandler(this.sNodeId, oMutationHandlerSpy, true);
+			jQuery("<div/>").attr("id", "overlay-container").appendTo("body");
+			// setTimeout required. requestAnimationFrame inside MutationObserver should be started first
+			setTimeout(function () {
+				window.requestAnimationFrame(function () {
+					assert.notOk(oMutationHandlerSpy.called, "the handler should not be called when overlay-container is added to the body");
+					fnDone();
+				});
+			});
+		});
+
 		QUnit.test("when the text node of a relevant node is modified", function (assert) {
 			var fnDone = assert.async();
 			this.$Node.append("test");
