@@ -1,7 +1,9 @@
 /* global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/PreprocessorImpl",
+	"sap/ui/fl/Change",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/base/ManagedObject",
@@ -12,7 +14,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 function(
+	FlexState,
 	PreprocessorImpl,
+	Change,
 	Component,
 	ComponentContainer,
 	ManagedObject,
@@ -25,7 +29,6 @@ function(
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var controls = [];
 
 	QUnit.module("sap.ui.fl.PreprocessorImpl", {
 		beforeEach: function() {
@@ -34,10 +37,6 @@ function(
 		},
 		afterEach: function() {
 			sandbox.restore();
-			controls.forEach(function(control) {
-				control.destroy();
-			});
-			controls = [];
 		}
 	}, function() {
 		QUnit.test("When an sync view is processed", function(assert) {
@@ -109,6 +108,7 @@ function(
 					resolve(oFileContent);
 				}
 			);
+
 			var oAppComponent = {
 				getManifest: function () {
 					return {

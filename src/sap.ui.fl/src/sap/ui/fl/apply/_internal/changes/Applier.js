@@ -263,8 +263,6 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.viewId - ID of the processed view
 		 * @param {string} mPropertyBag.appComponent - Application component instance responsible for the view
 		 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
-		 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
-		 * @param {string} mPropertyBag.siteId - ID of the flp site containing this application
 		 * @param {sap.ui.fl.Change[]} aChanges List of flexibility changes on controls for the current processed view
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
 		 */

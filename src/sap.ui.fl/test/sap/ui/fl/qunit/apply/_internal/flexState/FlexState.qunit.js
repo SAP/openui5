@@ -1,10 +1,12 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
+	UIComponent,
 	FlexState,
 	Loader,
 	sinon
@@ -13,6 +15,7 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 	var sReference = "sap.ui.fl.reference";
+	var sComponentId = "componentId";
 
 	function _mockPrepareFunctions(sMapName) {
 		var oReturn = {};
@@ -30,17 +33,18 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves();
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "_callPrepareFunction").callsFake(_mockPrepareFunctions);
+			this.oAppComponent = new UIComponent(sComponentId);
 		},
 		afterEach: function () {
 			FlexState.clearState();
+			this.oAppComponent.destroy();
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when initForReference is called with complete information", function (assert) {
-			return FlexState.initForReference({
-				component: {},
+		QUnit.test("when initialize is called with complete information", function (assert) {
+			return FlexState.initialize({
 				reference: sReference,
-				componentId: "componentId"
+				componentId: sComponentId
 			}).then(function(oReturn) {
 				assert.equal(oReturn, undefined, "the function resolves without value");
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the FlexState made a call to load the flex data");
@@ -48,44 +52,57 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when initForReference is called without a reference", function(assert) {
+		QUnit.test("when initialize is called with a reference ending in '.Component'", function (assert) {
+			return FlexState.initialize({
+				reference: sReference + ".Component",
+				componentId: sComponentId
+			}).then(function(oReturn) {
+				assert.equal(oReturn, undefined, "the function resolves without value");
+				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the FlexState made a call to load the flex data");
+				assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
+				assert.notEqual(FlexState.getStorageResponse(sReference + ".Component"), undefined, "the FlexState was initialized");
+				assert.notEqual(FlexState.getStorageResponse(sReference), undefined, "the FlexState was initialized");
+			}.bind(this));
+		});
+
+		QUnit.test("when initialize is called without a reference", function(assert) {
 			assert.throws(
-				function() {FlexState.initForReference({storageResponse: "FlexResponse"});},
+				function() {FlexState.initialize({storageResponse: "FlexResponse"});},
 				"the init function throws an error"
 			);
 		});
 
-		QUnit.test("when initForReference is called twice with the same reference with waiting", function(assert) {
-			return FlexState.initForReference({
+		QUnit.test("when initialize is called twice with the same reference with waiting", function(assert) {
+			return FlexState.initialize({
 				reference: sReference,
-				component: {}
+				componentId: sComponentId
 			})
-			.then(FlexState.initForReference.bind(null, {
+			.then(FlexState.initialize.bind(null, {
 				reference: sReference,
-				component: {}
+				componentId: sComponentId
 			}))
 			.then(function() {
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the data is only requested once");
 			}.bind(this));
 		});
 
-		QUnit.test("when initForReference is called twice with the same reference with waiting", function(assert) {
-			FlexState.initForReference({
+		QUnit.test("when initialize is called twice with the same reference with waiting", function(assert) {
+			FlexState.initialize({
 				reference: sReference,
-				component: {}
+				componentId: sComponentId
 			});
-			return FlexState.initForReference({
+			return FlexState.initialize({
 				reference: sReference,
-				component: {}
+				componentId: sComponentId
 			}).then(function() {
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the data is only requested once");
 			}.bind(this));
 		});
 
 		QUnit.test("when getUIChanges / getAppDescriptorChanges / getVariantsState is called without initialization", function(assert) {
-			return FlexState.initForReference({
+			return FlexState.initialize({
 				reference: "sap.ui.fl.other.reference",
-				component: {}
+				componentId: sComponentId
 			})
 			.then(function() {
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
@@ -105,9 +122,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getAppDescriptorChanges / getUIChanges / getVariantsState is called with proper initialization", function(assert) {
-			return FlexState.initForReference({
+			return FlexState.initialize({
 				reference: sReference,
-				component: {}
+				componentId: sComponentId
 			})
 			.then(function() {
 				assert.equal(FlexState.getAppDescriptorChanges(sReference), "appDescriptorMap", "the correct map is returned");
@@ -130,13 +147,14 @@ sap.ui.define([
 		QUnit.test("when clearState is called with and without reference", function(assert) {
 			var sReference2 = "second.reference";
 			var sReference3 = "third.reference";
-			return FlexState.initForReference({
+			return FlexState.initialize({
 				reference: sReference,
-				component: {}
+				component: {},
+				componentId: sComponentId
 			})
-			.then(FlexState.initForReference.bind(null, {
+			.then(FlexState.initialize.bind(null, {
 				reference: sReference2,
-				component: {}
+				componentId: sComponentId
 			}))
 			.then(function() {
 				assert.ok(FlexState.getUIChanges(sReference), "before clearState state1 is available");
@@ -148,9 +166,9 @@ sap.ui.define([
 				);
 				assert.ok(FlexState.getUIChanges(sReference2), "after clearState(1) state2 is still there");
 			})
-			.then(FlexState.initForReference.bind(null, {
+			.then(FlexState.initialize.bind(null, {
 				reference: sReference3,
-				component: {}
+				componentId: sComponentId
 			}))
 			.then(function() {
 				assert.ok(FlexState.getUIChanges(sReference2), "before clearState state2 is available");

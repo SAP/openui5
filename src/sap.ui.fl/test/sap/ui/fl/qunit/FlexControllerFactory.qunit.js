@@ -2,8 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/thirdparty/jquery",
@@ -11,8 +13,10 @@ sap.ui.define([
 ],
 function (
 	Component,
+	FlexState,
+	Applier,
 	FlexControllerFactory,
-	ChangePersistenceFactory,
+	ChangePersistence,
 	Utils,
 	VariantModel,
 	jQuery,
@@ -24,6 +28,7 @@ function (
 
 	QUnit.module("sap.ui.fl.FlexControllerFactory", {
 		beforeEach: function () {
+			this.oInitializeStub = sandbox.stub(FlexState, "initialize").resolves();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -34,36 +39,28 @@ function (
 		});
 
 		QUnit.test("shall create a new FlexController", function (assert) {
-			var oFlexController;
-
-			//Call CUT
-			oFlexController = FlexControllerFactory.create("myComponent");
-			assert.ok(oFlexController);
+			assert.ok(FlexControllerFactory.create("myComponent"));
 		});
 
 		QUnit.test("shall cache and reuse the created FlexController instances", function (assert) {
-			var oFlexController1;
-			var oFlexController2;
-
-			//Call CUT
-			oFlexController1 = FlexControllerFactory.create("myComponent");
-			oFlexController2 = FlexControllerFactory.create("myComponent");
+			var oFlexController1 = FlexControllerFactory.create("myComponent");
+			var oFlexController2 = FlexControllerFactory.create("myComponent");
 
 			assert.strictEqual(oFlexController1, oFlexController2);
 		});
 
 		QUnit.test("propagates even if there are no changes for the component", function (assert) {
-			sandbox.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").resolves({});
+			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").resolves({});
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 
 			var oComponent = {
 				getManifestObject: function () {
 					return {};
 				},
-				addPropagationListener: function () {
-				},
-				setModel: function () {
-				}
+				addPropagationListener: function () {},
+				setModel: function () {},
+				getId: function() {},
+				getComponentData: function() {}
 			};
 
 			var oAddPropagationListenerStub = sandbox.stub(oComponent, "addPropagationListener");
@@ -75,7 +72,8 @@ function (
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {})
 			.then(function () {
 				assert.equal(oAddPropagationListenerStub.callCount, 1, "propagation was triggered");
-			});
+				assert.equal(this.oInitializeStub.callCount, 1, "FlexState was initialized");
+			}.bind(this));
 		});
 
 		QUnit.test("does propagate if there are changes for the component", function (assert) {
@@ -92,10 +90,12 @@ function (
 				addPropagationListener: function () {
 				},
 				getManifest: function () {},
-				setModel: function () {}
+				setModel: function () {},
+				getId: function() {},
+				getComponentData: function() {}
 			};
 
-			sandbox.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve(function() {return mDeterminedChanges;}));
+			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").returns(Promise.resolve(function() {return mDeterminedChanges;}));
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 			sandbox.stub(Utils, "getComponentClassName")
 			.callThrough()
@@ -115,7 +115,9 @@ function (
 				},
 				addPropagationListener: function () {
 					assert.notOk(true, "addPropagationListener shouldn't be called again for an app component");
-				}
+				},
+				getId: function() {},
+				getComponentData: function() {}
 			};
 
 			var oComponent = {
@@ -126,7 +128,9 @@ function (
 				getManifestObject: function () {},
 				addPropagationListener: function () {
 					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
-				}
+				},
+				getId: function() {},
+				getComponentData: function() {}
 			};
 
 			sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
@@ -140,12 +144,14 @@ function (
 			var oAppComponent = new Component();
 			sandbox.stub(Utils, "isApplication").returns(true);
 			sandbox.stub(Utils, "getComponentClassName")
-			.callThrough()
-			.withArgs(oAppComponent)
-			.returns("mockName");
+				.callThrough()
+				.withArgs(oAppComponent)
+				.returns("mockName");
 			sandbox.spy(oAppComponent, "setModel");
 			sandbox.spy(oAppComponent, "addPropagationListener");
 			sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
+			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").resolves(function() {});
+			sandbox.stub(Applier, "applyAllChangesForControl");
 
 			var oComponent = {
 				setModel: function (oModelSet, sModelName) {
@@ -156,7 +162,9 @@ function (
 				getManifestObject: function () {},
 				addPropagationListener: function () {
 					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
-				}
+				},
+				getId: function() {},
+				getComponentData: function() {}
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
 

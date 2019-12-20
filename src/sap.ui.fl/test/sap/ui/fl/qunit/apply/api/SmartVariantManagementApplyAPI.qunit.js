@@ -1,14 +1,12 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/Change",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/StandardVariant",
 	"sap/ui/fl/DefaultVariant",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/core/UIComponent",
@@ -16,14 +14,12 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Change,
 	ChangePersistence,
 	ChangePersistenceFactory,
 	StandardVariant,
 	DefaultVariant,
 	Utils,
 	LayerUtils,
-	Cache,
 	SmartVariantManagementApplyAPI,
 	CompatibilityConnector,
 	UIComponent,

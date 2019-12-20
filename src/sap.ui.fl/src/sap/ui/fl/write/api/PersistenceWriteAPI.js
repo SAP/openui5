@@ -132,7 +132,9 @@ sap.ui.define([
 				return SaveAs.updateAppVariant(mPropertyBag);
 			}
 
+			// with invalidation more parameters are required to make a new storage request
 			mPropertyBag.invalidateCache = true;
+			mPropertyBag.componentId = ChangesController.getAppComponentForSelector(mPropertyBag.selector).getId();
 			return oFlexController.saveAll(mPropertyBag.skipUpdateCache)
 				.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, mPropertyBag.skipUpdateCache))
 				.then(PersistenceWriteAPI._getUIChanges.bind(null, _omit(mPropertyBag, "skipUpdateCache")));

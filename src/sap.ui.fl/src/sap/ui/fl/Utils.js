@@ -28,6 +28,13 @@ function(
 ) {
 	"use strict";
 
+	function appendComponentToString(sComponentName) {
+		if (sComponentName.length > 0 && sComponentName.indexOf(".Component") < 0) {
+			sComponentName += ".Component";
+		}
+		return sComponentName;
+	}
+
 	/**
 	 * Provides utility functions for the SAPUI5 flexibility library
 	 *
@@ -325,10 +332,7 @@ function(
 			if (oComponent) {
 				sComponentName = oComponent.getMetadata().getName();
 			}
-			if (sComponentName.length > 0 && sComponentName.indexOf(".Component") < 0) {
-				sComponentName += ".Component";
-			}
-			return sComponentName;
+			return appendComponentToString(sComponentName);
 		},
 
 		/**
@@ -916,28 +920,16 @@ function(
 						return oManifest.getEntry("sap.ui5").appVariantId;
 					}
 					if (oManifest.getEntry("sap.ui5").componentName) {
-						var sComponentName = oManifest.getEntry("sap.ui5").componentName;
-						if (sComponentName.length > 0 && sComponentName.indexOf(".Component") < 0) {
-							sComponentName += ".Component";
-						}
-						return sComponentName;
+						return appendComponentToString(oManifest.getEntry("sap.ui5").componentName);
 					}
 				}
 				if (oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").id) {
-					var sAppId = oManifest.getEntry("sap.app").id;
-					if (sAppId === Utils.APP_ID_AT_DESIGN_TIME && oManifest.getComponentName) {
-						sAppId = oManifest.getComponentName();
-					}
-					if (sAppId.length > 0 && sAppId.indexOf(".Component") < 0) {
-						sAppId += ".Component";
-					}
-					return sAppId;
+					return appendComponentToString(Utils.getAppIdFromManifest(oManifest));
 				}
 			}
 			Log.warning("No Manifest received.");
 			return "";
 		},
-
 
 		/**
 		 * Returns the descriptor Id, which is alwas the reference for descriptor changes
@@ -949,7 +941,11 @@ function(
 		getAppIdFromManifest: function (oManifest) {
 			if (oManifest) {
 				var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
-				return oSapApp && oSapApp.id;
+				var sAppId = oSapApp && oSapApp.id;
+				if (sAppId === Utils.APP_ID_AT_DESIGN_TIME && oManifest.getComponentName) {
+					sAppId = oManifest.getComponentName();
+				}
+				return sAppId;
 			}
 
 			throw new Error("No Manifest received, descriptor changes are not possible");

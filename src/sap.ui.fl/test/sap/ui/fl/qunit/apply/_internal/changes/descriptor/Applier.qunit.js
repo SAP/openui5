@@ -25,6 +25,11 @@ function (
 	QUnit.module("applyChange", {
 		beforeEach: function (assert) {
 			var done = assert.async();
+			this.oConfig = {
+				componentData: {},
+				asyncHints: {},
+				id: "componentId"
+			};
 
 			jQuery.getJSON("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
 				.done(function(oTestApplierManifestResponse) {
@@ -33,7 +38,6 @@ function (
 				}.bind(this));
 		},
 		afterEach: function () {
-			Cache.clearEntries();
 			FlexState.clearState();
 			sandbox.restore();
 		}
@@ -55,14 +59,12 @@ function (
 				}
 			}];
 
-			var fnGetChangesFillingCacheSpy = sandbox.spy(Cache, "getChangesFillingCache");
 			var fnGetAppDescriptorChangesSpy = sandbox.spy(FlexState, "getAppDescriptorChanges");
 			var fnApplyChangeSpy = sandbox.spy(AddLibrary, "applyChange");
 
 			sandbox.stub(Storage, "loadFlexData").resolves({ appDescriptorChanges: aChanges });
 
-			return Applier.preprocessManifest(this.oManifest).then(function(oNewManifest) {
-				assert.equal(fnGetChangesFillingCacheSpy.callCount, 1, "getchangesFillingCache is called once");
+			return Applier.preprocessManifest(this.oManifest, this.oConfig).then(function(oNewManifest) {
 				assert.equal(fnGetAppDescriptorChangesSpy.callCount, 1, "FlexState.getAppDescriptorChanges is called once");
 				assert.equal(fnApplyChangeSpy.callCount, 1, "AddLibrary.applyChange is called once");
 
@@ -121,14 +123,12 @@ function (
 				}
 			];
 
-			var fnGetChangesFillingCacheSpy = sandbox.spy(Cache, "getChangesFillingCache");
 			var fnGetAppDescriptorChangesSpy = sandbox.spy(FlexState, "getAppDescriptorChanges");
 			var fnApplyChangeSpy = sandbox.spy(AddLibrary, "applyChange");
 
 			sandbox.stub(Storage, "loadFlexData").resolves({ appDescriptorChanges: aChanges });
 
-			return Applier.preprocessManifest(this.oManifest).then(function(oNewManifest) {
-				assert.equal(fnGetChangesFillingCacheSpy.callCount, 1, "getchangesFillingCache is called once");
+			return Applier.preprocessManifest(this.oManifest, this.oConfig).then(function(oNewManifest) {
 				assert.equal(fnGetAppDescriptorChangesSpy.callCount, 1, "FlexState.getAppDescriptorChanges is called once");
 				assert.equal(fnApplyChangeSpy.callCount, 3, "AddLibrary.applyChange is called three times");
 
@@ -178,14 +178,12 @@ function (
 				}
 			];
 
-			var fnGetChangesFillingCacheSpy = sandbox.spy(Cache, "getChangesFillingCache");
 			var fnGetAppDescriptorChangesSpy = sandbox.spy(FlexState, "getAppDescriptorChanges");
 			var fnApplyChangeSpy = sandbox.spy(AddLibrary, "applyChange");
 
 			sandbox.stub(Storage, "loadFlexData").resolves({ appDescriptorChanges: aChanges });
 
-			return Applier.preprocessManifest(this.oManifest).then(function(oNewManifest) {
-				assert.equal(fnGetChangesFillingCacheSpy.callCount, 1, "getchangesFillingCache is called once");
+			return Applier.preprocessManifest(this.oManifest, this.oConfig).then(function(oNewManifest) {
 				assert.equal(fnGetAppDescriptorChangesSpy.callCount, 1, "FlexState.getAppDescriptorChanges is called once");
 				assert.equal(fnApplyChangeSpy.callCount, 1, "AddLibrary.applyChange is called once");
 
