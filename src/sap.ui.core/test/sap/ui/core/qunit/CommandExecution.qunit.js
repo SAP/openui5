@@ -1,16 +1,24 @@
 /*global sinon, QUnit */
 sap.ui.define([
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/CommandExecution",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
 	"sap/ui/core/Shortcut",
+	"sap/ui/core/routing/Targets",
+	"sap/ui/core/routing/TargetCache",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Panel"
 ], function(
+	ManagedObject,
 	CommandExecution,
 	Component,
+	ComponentContainer,
 	Control,
 	Shortcut,
+	Targets,
+	TargetCache,
 	JSONModel,
 	Panel
 ) {
@@ -40,6 +48,9 @@ sap.ui.define([
 						"commands": {
 							"Save": {
 								"shortcut": "Ctrl+S"
+							},
+							"Create": {
+								"shortcut": "Ctrl+D"
 							},
 							"Exit": {
 								"shortcut": "Ctrl+E"
@@ -101,11 +112,42 @@ sap.ui.define([
 	+  '<Input value="{viewModel>/value}" />'
 	+  '</Popover>'
 	+  '</dependents>'
-	+  '<Panel headerText="Button">'
+	+  '<Panel id="PANEL" headerText="Button">'
+	+  '<headerToolbar>'
+	+  '<Toolbar>'
+	+  '<Button text="TBButton" />'
+	+  '</Toolbar>'
+	+  '</headerToolbar>'
+	+  '<dependents>'
+	+  '<core:CommandExecution id="CE_SAVE_PANEL" command="Save" enabled="true" execute=".onSave" />'
+	+  '</dependents>'
+	+  '<Panel id="PANEL2" headerText="innerButton">'
+	+  '<dependents>'
+	+  '<core:CommandExecution id="CE_CREATE_INNER" command="Create" enabled="true" execute=".onExit" />'
+	+  '<core:CommandExecution id="CE_SAVE_INNER" command="Save" enabled="true" execute=".onSave" />'
+	+  '<core:CommandExecution id="CE_EXIT_INNER" command="Exit" enabled="true" execute=".onExit" />'
+	+  '</dependents>'
+	+  '<Button text="Save" press="cmd:Save" />'
+	+  '</Panel>'
 	+  '<Button text="Save" press="cmd:Save" />'
 	+  '</Panel>'
 	+  '<Panel headerText="sap.m.Input">'
 	+  '<Input id="myInput" value="{viewModel>/value}" />'
+	+  '<Table>'
+	+  '<columns>'
+	+  '<Column width="12em">'
+	+  '<Text text="Product" />'
+	+  '</Column>'
+	+  '</columns>'
+	+  '<items>'
+	+  '<StandardListItem title="Name">'
+	+  '<dependents>'
+	+  '<core:CommandExecution id="CE_SAVE_ITEM" command="Save" enabled="true" execute=".onSave" />'
+	+  '<core:CommandExecution id="CE_EXIT_ITEM" command="Exit" enabled="true" execute=".onExit" />'
+	+  '</dependents>'
+	+  '</StandardListItem>'
+	+  '</items>'
+	+  '</Table>'
 	+  '</Panel>'
 	+  '</Page>'
 	+  '</App>'
@@ -443,6 +485,138 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("CommandExecution destroy component with routing", function(assert) {
+		assert.expect(1);
+		var oPanel = new Panel({id: "test"}),
+			oTargets = new Targets({
+			config: {
+				async: true
+			},
+			cache: new TargetCache(),
+			targets: {
+				"test": {
+					type: "Component",
+					name: "my.command",
+					controlId: "test",
+					controlAggregation: "content",
+					options: {
+						manifest: false
+					},
+					containerOptions: {
+						propagateModel: true,
+						lifecycle: "Application"
+					}
+				}
+			}
+		});
+		oPanel.placeAt("qunit-fixture");
+		return oTargets.display("test").then(function(oParams) {
+			//get ComponentContainer
+			var oContainer = oParams[0].view;
+			//add a model to comp container to fore propagation on comp container exit
+			oContainer.setModel(new sap.ui.model.json.JSONModel());
+			return oContainer.getComponentInstance().getRootControl().loaded().then(function() {
+				return oContainer.getComponentInstance();
+			});
+		}).then(function(oComponent) {
+			//destroy Component
+			oComponent.destroy();
+			assert.ok(true, "Must not fail!");
+		});
+	});
+
+	QUnit.test("CommandExecution destroy component with multiple executions", function(assert) {
+		assert.expect(1);
+		var oComponent;
+
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(myComponent) {
+			oComponent = myComponent;
+			return oComponent.getRootControl().loaded();
+		}).then(function(oView) {
+			var oPanel = oView.byId("PANEL2");
+			oPanel.destroyDependents();
+			assert.strictEqual(oPanel._propagateProperties, ManagedObject.prototype._propagateProperties, "_propagateProperties resetted correctly");
+			var oCOE3 = oView.byId("CE_SAVE_PANEL");
+			oCOE3.destroy();
+			oComponent.destroy();
+		});
+	});
+
+	QUnit.test("CommandExecution check prototype chain", function(assert) {
+		assert.expect(21);
+		var oComponent;
+
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(myComponent) {
+			oComponent = myComponent;
+			return oComponent.getRootControl().loaded();
+		}).then(function(oView) {
+			var oCOE1 = oView.byId("CE_SAVE");
+			var oCOE2 = oView.byId("CE_EXIT");
+			var oCOE3 = oView.byId("CE_SAVE_PANEL");
+			var oCOE4 = oView.byId("CE_SAVE_INNER");
+			var oCOE5 = oView.byId("CE_CREATE_INNER");
+			var oCOE6 = oView.byId("CE_EXIT_INNER");
+
+			//root CE data has no prototype
+			var oProt1 = Object.getPrototypeOf(oCOE1.getBindingContext("$cmd").getObject());
+			var oProt2 = Object.getPrototypeOf(oCOE2.getBindingContext("$cmd").getObject());
+			assert.strictEqual(oProt1, null, "Command execution on Page has no prototype");
+			assert.strictEqual(oProt2, null, "Command execution on Page has no prototype");
+			//panel CE has the root data as prototype
+			var oProt3 = Object.getPrototypeOf(oCOE3.getBindingContext("$cmd").getObject());
+			assert.strictEqual(oProt3, oCOE1.getBindingContext("$cmd").getObject(), "Command execution on Panel has root data prototype");
+			assert.strictEqual(Object.getPrototypeOf(oProt3), null, "Command execution on Page has no prototype");
+			//Inner CEs have the panel data as prototype
+			var oProt4 = Object.getPrototypeOf(oCOE4.getBindingContext("$cmd").getObject());
+			var oProt5 = Object.getPrototypeOf(oCOE5.getBindingContext("$cmd").getObject());
+			var oProt6 = Object.getPrototypeOf(oCOE6.getBindingContext("$cmd").getObject());
+			assert.strictEqual(oProt4, oCOE3.getBindingContext("$cmd").getObject(), "Command execution on inner Panel has panel data prototype");
+			assert.strictEqual(oProt5, oCOE3.getBindingContext("$cmd").getObject(), "Command execution on inner Panel has panel data prototype");
+			assert.strictEqual(oProt6, oCOE3.getBindingContext("$cmd").getObject(), "Command execution on inner Panel has panel data prototype");
+			assert.strictEqual(Object.getPrototypeOf(oProt4), oProt3, "Command execution on Page has no prototype");
+			assert.strictEqual(Object.getPrototypeOf(oProt5), oProt3, "Command execution on Page has no prototype");
+			assert.strictEqual(Object.getPrototypeOf(oProt6), oProt3, "Command execution on Page has no prototype");
+
+			//delete panel CE
+			oCOE3.destroy();
+			//root CE data has no prototype
+			oProt1 = Object.getPrototypeOf(oCOE1.getBindingContext("$cmd").getObject());
+			oProt2 = Object.getPrototypeOf(oCOE2.getBindingContext("$cmd").getObject());
+			assert.strictEqual(oProt1, null, "Command execution on Page has no prototype");
+			assert.strictEqual(oProt2, null, "Command execution on Page has no prototype");
+			//Inner CEs have the root data as prototype
+			oProt4 = Object.getPrototypeOf(oCOE4.getBindingContext("$cmd").getObject());
+			oProt5 = Object.getPrototypeOf(oCOE5.getBindingContext("$cmd").getObject());
+			oProt6 = Object.getPrototypeOf(oCOE6.getBindingContext("$cmd").getObject());
+			assert.strictEqual(oProt4, oCOE1.getBindingContext("$cmd").getObject(), "Command execution on inner Panel has page data prototype");
+			assert.strictEqual(oProt5, oCOE1.getBindingContext("$cmd").getObject(), "Command execution on inner Panel has page data prototype");
+			assert.strictEqual(oProt6, oCOE1.getBindingContext("$cmd").getObject(), "Command execution on inner Panel has page data prototype");
+			assert.strictEqual(Object.getPrototypeOf(oProt4), oProt2, "Command execution on Page has no prototype");
+			assert.strictEqual(Object.getPrototypeOf(oProt5), oProt2, "Command execution on Page has no prototype");
+			assert.strictEqual(Object.getPrototypeOf(oProt6), oProt2, "Command execution on Page has no prototype");
+
+			//delete root CE
+			oCOE1.destroy();
+			oCOE2.destroy();
+			//Inner CEs have the root data as prototype
+			oProt4 = Object.getPrototypeOf(oCOE4.getBindingContext("$cmd").getObject());
+			oProt5 = Object.getPrototypeOf(oCOE5.getBindingContext("$cmd").getObject());
+			oProt6 = Object.getPrototypeOf(oCOE6.getBindingContext("$cmd").getObject());
+			assert.strictEqual(oProt4, null, "Command execution on inner Panel has page data prototype");
+			assert.strictEqual(oProt4, null, "Command execution on inner Panel has page data prototype");
+			assert.strictEqual(oProt4, null, "Command execution on inner Panel has page data prototype");
+			oComponent.destroy();
+		});
+	});
+
 	QUnit.test("CommandExecution visibility - initial values", function(assert) {
 		assert.expect(6);
 		var oComponent;
@@ -473,7 +647,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("CommandExecution visibility - switch values", function(assert) {
-		assert.expect(20);
+		assert.expect(21);
 		var oComponent;
 
 		// load the test component
@@ -513,10 +687,12 @@ sap.ui.define([
 			assert.equal(oModel.getProperty("Save/visible", oPageContext), true, "visible property correctly set in  model");
 			assert.equal(oModel.getProperty("Exit/visible", oPageContext), true, "visible property correctly set in  model");
 			CO_S_P.setVisible(true);
+			CO_S.setVisible(false);
 			assert.equal(oModel.getProperty("Save/visible", oPagePopoverContext), true, "visible property correctly set in  model");
-			assert.equal(oModel.getProperty("Save/visible", oPageContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Save/visible", oPageContext), false, "visible property correctly set in  model");
 			assert.equal(oModel.getProperty("Exit/visible", oPageContext), true, "visible property correctly set in  model");
 			CO_E.setVisible(false);
+			assert.equal(oModel.getProperty("Save/visible", oPagePopoverContext), true, "visible property correctly set in  model");
 			assert.equal(oModel.getProperty("Exit/visible", oPageContext), false, "visible property correctly set in  model");
 			assert.equal(oModel.getProperty("Exit/visible", oPageContext), false, "visible property correctly set in  model");
 			oComponent.destroy();
