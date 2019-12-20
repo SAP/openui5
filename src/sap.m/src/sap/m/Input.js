@@ -1038,13 +1038,36 @@ function(
 						}
 
 						that.bValueHelpRequested = true;
-						that.fireValueHelpRequest({ fromSuggestions: false });
+
+						that._fireValueHelpRequest(false);
 					}
 				}
 			});
 		}
 
 		return oValueStateIcon;
+	};
+
+	/**
+	 * Fire valueHelpRequest event.
+	 *
+	 * @private
+	 */
+	Input.prototype._fireValueHelpRequest = function(bFromSuggestions) {
+
+		// The goal is to provide a value in the value help event, which can be used to filter the opened Value Help Dialog.
+		var sTypedInValue = "";
+
+		if (this.getShowSuggestion() && this._oSuggPopover) {
+			sTypedInValue = this._oSuggPopover._sTypedInValue || "";
+		} else {
+			sTypedInValue = this.getDOMValue();
+		}
+
+		this.fireValueHelpRequest({
+			fromSuggestions: bFromSuggestions,
+			_userInputValue: sTypedInValue // NOTE: Private parameter for the SmartControls which need only the value entered by the user.
+		});
 	};
 
 	/**
@@ -1058,7 +1081,7 @@ function(
 			if (Device.system.phone) {
 				this.focus();
 			}
-			this.fireValueHelpRequest({fromSuggestions: false});
+			this._fireValueHelpRequest(false);
 		}
 	};
 
@@ -2122,7 +2145,7 @@ function(
 		}
 
 		this.bValueHelpRequested = true;
-		this.fireValueHelpRequest({fromSuggestions: false});
+		this._fireValueHelpRequest(false);
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
@@ -2405,7 +2428,7 @@ function(
 						this._oSuggPopover._resetTypeAhead();
 					}
 
-					this.fireValueHelpRequest({fromSuggestions: true});
+					this._fireValueHelpRequest(true);
 					this._oSuggPopover._iPopupListSelectedIndex = -1;
 					this._closeSuggestionPopup();
 				}
