@@ -424,8 +424,8 @@ function(
 				});
 			}
 		}
-
-		if (item) {
+		// If item is selected and no token was already created on sapfocusleave
+		if (item && !this._bTokenIsAdded) {
 			var text = this.getValue();
 			this._tokenizer._addValidateToken({
 				text: text,
@@ -456,6 +456,7 @@ function(
 
 			this._oSuggPopover._oPopupInput.focus();
 		}
+		this._bTokenIsAdded = false;
 	};
 
 	MultiInput.prototype._onValueHelpRequested = function () {
@@ -656,7 +657,6 @@ function(
 		if (!this.getEnabled()) {
 			return;
 		}
-
 		if (oEvent.which === KeyCodes.TAB) {
 			this._tokenizer._changeAllTokensSelection(false);
 		}
@@ -1101,6 +1101,8 @@ function(
 				text: item.getText(),
 				key: item.getKey()
 			});
+
+			this._bTokenIsAdded = true;
 		}
 
 		// if maxTokens limit is not set or the added tokens are less than the limit
