@@ -6,8 +6,10 @@ sap.ui.define([
 	"sap/ui/core/RenderManager",
 	"sap/ui/commons/layout/MatrixLayout",
 	"sap/ui/testlib/TestButton",
-	"sap/ui/thirdparty/jquery"
-], function(HTML, oCore, Control, RenderManager, MatrixLayout, TestButton, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer"
+], function(HTML, oCore, Control, RenderManager, MatrixLayout, TestButton, jQuery, UIComponent, ComponentContainer) {
 	"use strict";
 
 	var normalize = (function() {
@@ -334,7 +336,7 @@ sap.ui.define([
 		assert.ok(oHtml3Dom === oHtml3.getDomRef(), "html3 has the same DOM before rendering");
 	});
 
-	QUnit.test("move & rerender", function(assert) {
+	QUnit.test("component & move & rerender", function(assert) {
 		var oGrandChild = new HTML({
 			content: "<br>"
 		});
@@ -345,16 +347,38 @@ sap.ui.define([
 		var oParent = new TestContainer({
 			content : [oChild1, oChild2]
 		});
-		oParent.placeAt("uiAreaF");
+
+		var TestComponent = UIComponent.extend("my.UIComponent", {
+			metadata: {
+				manifest: {
+					"sap.app": {
+						"id": "",
+						"type": "application"
+					}
+				}
+			},
+			createContent: function() {
+				return oParent;
+			}
+		});
+		var oUIComponent = new TestComponent();
+		var oUiComponentContainer = new ComponentContainer({
+			component: oUIComponent,
+			async: false
+		});
+		oUiComponentContainer.placeAt("uiAreaF");
 		oCore.applyChanges();
 
 		var oGrandChildDom = oGrandChild.getDomRef();
+		oUiComponentContainer.rerender();
+		assert.ok(oGrandChildDom === oGrandChild.getDomRef(), "oGrandChild DOM reference has not changed after ComponentContainer rerender");
+
 		oChild2.addContent(oChild1.removeContent(0));
-		oParent.rerender();
+		oCore.applyChanges();
 		assert.ok(oGrandChildDom === oGrandChild.getDomRef(), "oGrandChild DOM reference has not changed after moving from child1 to child2");
 
 		oChild1.addContent(oChild2.removeContent(0));
-		oParent.rerender();
+		oCore.applyChanges();
 		assert.ok(oGrandChildDom === oGrandChild.getDomRef(), "oGrandChild DOM reference has not changed after moving from child2 to child1");
 
 		oParent.setVisible(false);
