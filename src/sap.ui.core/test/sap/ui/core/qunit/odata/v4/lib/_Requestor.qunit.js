@@ -1112,6 +1112,43 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("request(...): mQueryOptions, $batch", function (assert) {
+		var mQueryOptions = {$select : ["foo"]},
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		oRequestor.request("GET", "EntitySet", this.createGroupLock("groupId"),
+			undefined, undefined, undefined, undefined, undefined, undefined, false, mQueryOptions);
+
+		TestUtils.deepContains(oRequestor.mBatchQueue, {
+			"groupId" : [
+				[],
+				{
+					method : "GET",
+					url : "EntitySet",
+					$queryOptions : mQueryOptions
+				}
+			]
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request(...): mQueryOptions, $direct", function (assert) {
+		var mQueryOptions = {},
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		this.mock(oRequestor).expects("addQueryString")
+			.withExactArgs("EntitySet('42')?foo=bar", "/EntitySet", sinon.match.same(mQueryOptions))
+			.returns("EntitySet('42')?foo=bar&~");
+		this.mock(oRequestor).expects("sendRequest").withArgs("GET", "EntitySet('42')?foo=bar&~")
+			.resolves({});
+
+		// code under test
+		return oRequestor.request("GET", "EntitySet('42')?foo=bar", this.createGroupLock("$direct"),
+			undefined, undefined, undefined, undefined, "/EntitySet", undefined, false,
+			mQueryOptions);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("processBatch: fail, unsupported OData service version", function (assert) {
 		var oError = {},
 			oGetProductsPromise,
@@ -1271,6 +1308,7 @@ sap.ui.define([
 				$cancel : undefined,
 				$metaPath : undefined,
 				$promise : sinon.match.defined,
+				$queryOptions : undefined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
 				$resourcePath : "~Customers",
@@ -1287,6 +1325,7 @@ sap.ui.define([
 				$cancel : undefined,
 				$metaPath : undefined,
 				$promise : sinon.match.defined,
+				$queryOptions : undefined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
 				$resourcePath : "~SalesOrders('42')",
@@ -1304,11 +1343,13 @@ sap.ui.define([
 				$cancel : undefined,
 				$metaPath : undefined,
 				$promise : sinon.match.defined,
+				$queryOptions : undefined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
 				$resourcePath : "~Products('23')",
 				$submit : undefined
 			}],
+			aMergedRequests,
 			aPromises = [],
 			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}, {}],
 			aBatchResults = [
@@ -1352,8 +1393,16 @@ sap.ui.define([
 			.returns("~SalesOrders");
 		oRequestor.request("GET", "SalesOrders", this.createGroupLock("group2"));
 		aExpectedRequests.iChangeSet = 0;
-		this.mock(_Requestor).expects("cleanBatch")
+		this.mock(oRequestor).expects("mergeGetRequests")
 			.withExactArgs(aExpectedRequests)
+			.callsFake(function (aRequests) {
+				aMergedRequests = aRequests.slice();
+				return aMergedRequests;
+			});
+		this.mock(_Requestor).expects("cleanBatch")
+			.withExactArgs(sinon.match(function (aRequests) {
+				return aRequests === aMergedRequests;
+			}))
 			.returns(aCleanedRequests);
 
 		this.mock(oRequestor).expects("sendBatch")
@@ -1364,7 +1413,7 @@ sap.ui.define([
 			assert.strictEqual(oResult, undefined);
 			assert.deepEqual(aResults, [null, null, null], "all batch requests already resolved");
 		}));
-		aPromises.push(oRequestor.processBatch("group1")); // must not call request again
+		aPromises.push(oRequestor.processBatch("group1")); // must not call sendBatch again
 
 		assert.strictEqual(oRequestor.mBatchQueue.group1, undefined);
 		TestUtils.deepContains(oRequestor.mBatchQueue.group2, [[/*change set*/], {
@@ -1559,6 +1608,7 @@ sap.ui.define([
 					$cancel : undefined,
 					$metaPath : sMetaPath,
 					$promise : sinon.match.defined,
+					$queryOptions : undefined,
 					$reject : sinon.match.func,
 					$resolve : sinon.match.func,
 					$resourcePath : "Products",
@@ -3946,6 +3996,104 @@ sap.ui.define([
 			// code under test - at least one locked group lock
 			oRequestor.checkForOpenRequests();
 		}, new Error(sErrorMessage));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("mergeGetRequests", function (assert) {
+		var oHelperMock = this.mock(_Helper),
+			oMergedQueryOptions = {},
+			aMergedRequests,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			aRequests = [[
+				/* change set */
+			], {
+				url : "EntitySet1('42')?foo=bar",
+				$metaPath : "/EntitySet1",
+				$promise : {},
+				$queryOptions : {}
+			}, {
+				url : "EntitySet1('42')?foo=bar",
+				$promise : {}
+			}, {
+				url : "EntitySet1('42')?foo=bar",
+				$queryOptions : {},
+				$resolve : function () {}
+			}, {
+				url : "EntitySet1('42')?foo=bar"
+			}, {
+				url : "EntitySet3('42')",
+				$metaPath : "/EntitySet3",
+				$queryOptions : {}
+			}, {
+				url : "EntitySet2('42')",
+				$metaPath : "/EntitySet2",
+				$promise : {},
+				$queryOptions : {}
+			}, {
+				url : "EntitySet2('42')",
+				$queryOptions : {},
+				$resolve : function () {}
+			}];
+
+		aRequests.iChangeSet = 1;
+		oHelperMock.expects("aggregateQueryOptions")
+			.withExactArgs(sinon.match.same(aRequests[1].$queryOptions),
+				sinon.match.same(aRequests[3].$queryOptions))
+			.returns(oMergedQueryOptions);
+		this.mock(aRequests[3]).expects("$resolve")
+			.withExactArgs(sinon.match.same(aRequests[1].$promise));
+		oHelperMock.expects("aggregateQueryOptions")
+			.withExactArgs(sinon.match.same(aRequests[6].$queryOptions),
+				sinon.match.same(aRequests[7].$queryOptions))
+			.returns(oMergedQueryOptions);
+		this.mock(aRequests[7]).expects("$resolve")
+			.withExactArgs(sinon.match.same(aRequests[6].$promise));
+		oRequestorMock.expects("addQueryString")
+			.withExactArgs(aRequests[1].url, aRequests[1].$metaPath,
+				sinon.match.same(aRequests[1].$queryOptions))
+			.returns("EntitySet1('42')?$select=name");
+		oRequestorMock.expects("addQueryString")
+			.withExactArgs(aRequests[5].url, aRequests[5].$metaPath,
+				sinon.match.same(aRequests[5].$queryOptions))
+			.returns("EntitySet3('42')?$select=foo");
+		oRequestorMock.expects("addQueryString")
+			.withExactArgs(aRequests[6].url, aRequests[6].$metaPath,
+				sinon.match.same(aRequests[6].$queryOptions))
+			.returns("EntitySet2('42')?$select=birthdate");
+
+		// code under test
+		aMergedRequests = oRequestor.mergeGetRequests(aRequests);
+
+		assert.strictEqual(aMergedRequests.length, 6);
+		assert.strictEqual(aMergedRequests.iChangeSet, aRequests.iChangeSet);
+		assert.strictEqual(aMergedRequests[0], aRequests[0]);
+		assert.strictEqual(aMergedRequests[1], aRequests[1]);
+		assert.strictEqual(aMergedRequests[2], aRequests[2]);
+		assert.strictEqual(aMergedRequests[3], aRequests[4]);
+		assert.strictEqual(aMergedRequests[4], aRequests[5]);
+		assert.strictEqual(aMergedRequests[5], aRequests[6]);
+		assert.strictEqual(aMergedRequests[1].url, "EntitySet1('42')?$select=name");
+		assert.strictEqual(aMergedRequests[4].url, "EntitySet3('42')?$select=foo");
+		assert.strictEqual(aMergedRequests[5].url, "EntitySet2('42')?$select=birthdate");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addQueryString", function (assert) {
+		var mQueryOptions = {},
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(oRequestor).expects("buildQueryString").twice()
+			.withExactArgs("/meta/path", sinon.match.same(mQueryOptions), false, true)
+			.returns("?~");
+
+		// code under test
+		assert.strictEqual(
+			oRequestor.addQueryString("EntitySet", "/meta/path", mQueryOptions),
+			"EntitySet?~");
+		assert.strictEqual(
+			oRequestor.addQueryString("EntitySet?foo=bar", "/meta/path", mQueryOptions),
+			"EntitySet?foo=bar&~");
 	});
 });
 // TODO: continue-on-error? -> flag on model
