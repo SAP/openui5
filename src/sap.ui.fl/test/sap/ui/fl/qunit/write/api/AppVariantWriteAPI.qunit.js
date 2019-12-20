@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/base/Log",

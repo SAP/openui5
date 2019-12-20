@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
