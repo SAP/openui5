@@ -63,7 +63,7 @@
 				border-bottom: 2px solid @_sap_ui_rta_Toolbar_Base_TextColor;
 				left: 0.4375rem;
 				right: 0.4375rem;
-				bottom: 0;
+				bottom: 2px;
 			}
 
 			+ .sapMSegBBtn .sapMSegBBtnInner {
@@ -85,14 +85,35 @@
 		}
 	}
 
-	.sapMBtn .sapMBtnContent,
-	.sapMBtn .sapMBtnTransparent .sapMBtnIcon {
-		text-shadow: none; /* Override shadow of `.sapMBtnInner` in sap.m */
-		color: @_sap_ui_rta_Toolbar_Base_TextColor;
-	}
-
 	.sapMBtn:focus .sapMFocusable {
 		outline: none;
 		border: 1px dotted @_sap_ui_rta_Toolbar_Base_TextColor;
 	}
+}
+
+html.sap-desktop .sapUiRtaMode .sapUiRtaToolbar .sapMBtn:focus {
+	> .sapMFocusable {
+		outline: none;
+	}
+}
+
+// Special handling for IE and EDGE Browsers
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiRtaToolbar .sapMSegBBtn.sapMSegBBtnFocusable:focus .sapMSegBBtnInner,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiRtaToolbar .sapMSegBBtn.sapMSegBBtnFocusable:focus .sapMSegBBtnInner {
+	outline: 1px dotted;
+	outline-color: @_sap_ui_rta_Toolbar_Base_TextColor;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiRtaToolbar .sapMBtn:focus .sapMBtnFocusDiv,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiRtaToolbar .sapMBtn:focus .sapMBtnFocusDiv {
+	border: none;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner:before,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner:before,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable:focus .sapMSegBBtnInner:before,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable:focus .sapMSegBBtnInner:before {
+	border: none;
 }

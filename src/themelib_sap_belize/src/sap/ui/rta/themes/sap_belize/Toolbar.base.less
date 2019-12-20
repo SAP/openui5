@@ -24,6 +24,11 @@
 			background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
 		}
 	}
+	.sapMBtn .sapMBtnContent,
+	.sapMBtn .sapMBtnTransparent .sapMBtnIcon {
+		text-shadow: none; /* Override shadow of `.sapMBtnInner` in sap.m */
+		color: @_sap_ui_rta_Toolbar_Base_TextColor;
+	}
 }
 
 html.sap-desktop .sapUiRtaToolbar .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover .sapMSegBBtnInner,
@@ -33,4 +38,11 @@ html.sap-desktop .sapUiRtaToolbar .sapMSegBBtnFocusable.sapMBtnActive:hover .sap
 
 html.sap-desktop .sapUiRtaToolbar .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner {
 	outline-offset: -1px;
+}
+
+.sapUiRtaToolbar .sapMBtn:hover:not(.sapMBtnDisabled) > .sapMBtnHoverable.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed) > .sapMBtnIcon,
+.sapUiRtaToolbar *.sapMBtn:hover:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed) > .sapMBtnIcon,
+.sapUiRtaToolbar :not(.sapMBtnDisabled):not(.sapMSBActive) > span.sapMBtnInner.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed):hover > .sapMBtnIcon,
+.sapUiRtaToolbar .sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi {
+	color: @_sap_ui_rta_Toolbar_Base_TextColor;
 }
