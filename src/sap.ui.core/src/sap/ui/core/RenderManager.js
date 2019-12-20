@@ -1930,13 +1930,18 @@ sap.ui.define([
 				return true;
 			}
 
-			for (var oParent = oDescendant.getParent(), oParentDom; oParent && (oParentDom = oParent.getDomRef()); oParent = oParent.getParent()) {
-				if (oParent.isA("sap.ui.core.Control") && !oParent.getVisible()) {
-					return false;
+			for (var oParent = oDescendant.getParent(); oParent; oParent = oParent.isA("sap.ui.core.UIComponent") ? oParent.oContainer : oParent.getParent()) {
+				if (oParent.isA("sap.ui.core.Control")) {
+					if (!oParent.getVisible()) {
+						return false;
+					}
+
+					var oParentDom = oParent.getDomRef();
+					if (oParentDom && !oParentDom.contains(oDescendantDom)) {
+						return false;
+					}
 				}
-				if (!oParentDom.contains(oDescendantDom)) {
-					return false;
-				}
+
 				if (oParent === oAncestor) {
 					return true;
 				}
