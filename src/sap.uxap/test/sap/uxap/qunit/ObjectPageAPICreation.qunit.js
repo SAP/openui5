@@ -1441,19 +1441,13 @@ function (
 	});
 
 	QUnit.test("test AnchorBar not rendering using ShowAnchorBar within XMLView", function (assert) {
-		var oObjectPage = this.oSampleView.byId("objectPage13"),
-			fnDone = assert.async();
-
-		assert.expect(2);
-
-		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
-			assert.equal(oObjectPage.getShowAnchorBar(), false);
-			assert.equal(checkObjectExists(".sapUxAPAnchorBar"), false);
-			fnDone();
-		});
+		var oObjectPage = this.oSampleView.byId("objectPage13");
 
 		oObjectPage.setShowAnchorBar(false);
 		Core.applyChanges();
+
+		assert.equal(oObjectPage.getShowAnchorBar(), false);
+		assert.strictEqual(oObjectPage.$().find(".sapUxAPAnchorBar").length, 0, "AnchorBar is not rendered");
 	});
 
 	QUnit.test("test AnchorBar rendering using ShowAnchorBar within XMLView", function (assert) {
