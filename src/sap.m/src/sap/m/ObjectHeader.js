@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/library',
+	'sap/ui/core/util/ResponsivePaddingsEnablement',
 	'sap/ui/Device',
 	'sap/m/Text',
 	'sap/ui/events/KeyCodes',
@@ -21,6 +22,7 @@ sap.ui.define([
 		Control,
 		IconPool,
 		coreLibrary,
+		ResponsivePaddingsEnablement,
 		Device,
 		Text,
 		KeyCodes,
@@ -68,6 +70,13 @@ sap.ui.define([
 	 * <code>ObjectHeader</code> is a display control that enables the user to easily identify
 	 * a specific object. The object header title is the key identifier of the object and
 	 * additional text and icons can be used to further distinguish it from other objects.
+	 *
+	 * <h3>Responsive behavior</h3>
+	 *
+	 * When using the <code>sap.m.ObjectHeader</code> in SAP Quartz theme, the breakpoints and layout paddings could be automatically determined by the container's width.
+	 * To enable this concept and implement responsive padding to the <code>ObjectHeader</code> control, add the following class:
+	 * <code>sapUiResponsivePadding--header</code>.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -468,6 +477,10 @@ sap.ui.define([
 		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	};
 
+	ResponsivePaddingsEnablement.call(ObjectHeader.prototype, {
+		header: {selector: ".sapMOH, .sapMOHR"}
+	});
+
 	ObjectHeader.prototype.init = function() {
 		this._oTitleArrowIcon = IconPool.createControlByURI({
 			id : this.getId() + "-titleArrow",
@@ -484,6 +497,7 @@ sap.ui.define([
 		this._fNumberWidth = undefined;
 		this._titleText = new Text(this.getId() + "-titleText");
 		this._titleText.setMaxLines(3);
+		this._initResponsivePaddingsEnablement();
 
 	};
 

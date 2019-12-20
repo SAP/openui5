@@ -14,6 +14,7 @@
 	jQuery.sap.require("sap.ui.core.IconPool");
 
 	function addToPage(oOH){
+		oOH.addStyleClass("sapUiResponsivePadding--header")
 		detail.addContent(oOH);
 		detail.addContent(new sap.ui.core.HTML({
 			content : "<div style='width:100%;height:2px;background-color:blue'/>"

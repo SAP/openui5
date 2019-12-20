@@ -190,6 +190,7 @@
 
 			// connect IconTabBar and ObjectHeader
 			oh1.setHeaderContainer(itb1);
+			oh1.addStyleClass("sapUiResponsivePadding--header");
 
 			var oh1Small = new sap.m.ObjectHeader("oh1Small", {
 				responsive: true,
@@ -449,7 +450,7 @@
 
 			// connect IconTabBar and ObjectHeader
 			oh2.setHeaderContainer(itb2);
-
+			oh2.addStyleClass("sapUiResponsivePadding--header");
 			//test popover title
 			var domRef = null;
 			var titleSelectorEventHandler = function(oEvent) {
@@ -505,7 +506,8 @@
 				markFavorite: true,
 				numberState: sap.ui.core.ValueState.Success
 			});
-
+			oh3.addStyleClass("sapUiResponsivePadding--header");
+			
 			var itb3 = new sap.m.IconTabBar("itb3", {
 				selectedKey: "key13",
 				items: [
@@ -642,6 +644,7 @@
 					text: "Progress Indicator"
 				})]
 			});
+			oh4.addStyleClass("sapUiResponsivePadding--header");
 
 			var itb4 = new sap.m.IconTabBar("itb4", {
 				selectedKey: "key13",
@@ -764,6 +767,7 @@
 					})
 				]
 			});
+			oh7.addStyleClass("sapUiResponsivePadding--header");
 
 			var itb7 = new sap.m.IconTabBar("itb7", {
 				selectedKey: "key3",
@@ -835,6 +839,7 @@
 				 	})
 				]
 			});
+			oh9.addStyleClass("sapUiResponsivePadding--header");
 
 			if (sap.suite) {
 				var hc9 = new sap.suite.ui.commons.HeaderContainer({
@@ -907,7 +912,7 @@
 				 	})
 				]
 			});
-
+			oh10.addStyleClass("sapUiResponsivePadding--header");
 			if (sap.suite) {
 				var xml = '' +
 				'<HeaderContainer xmlns="sap.suite.ui.commons" xmlns:m="sap.m" scrollStep="200" scrollTime="500">' +
@@ -1051,6 +1056,7 @@
 				 	})
 				]
 			});
+			oh11.addStyleClass("sapUiResponsivePadding--header");
 
 			var itb11 = new sap.m.IconTabBar("itb11", {
 				selectedKey: "key1",
@@ -1181,6 +1187,7 @@
 				 	})
 				]
 			});
+			oh12.addStyleClass("sapUiResponsivePadding--header");
 
 			var itb12 = new sap.m.IconTabBar("itb12", {
 				selectedKey: "key1",
@@ -1349,6 +1356,7 @@
 				markFavorite: true,
 				numberState: sap.ui.core.ValueState.Success
 			});
+			oh14.addStyleClass("sapUiResponsivePadding--header");
 
 			/* special case: responsive with no markers, but not states, attributes, and tabs */
 			var oh15 = new sap.m.ObjectHeader("oh15", {
@@ -1359,6 +1367,7 @@
 				numberUnit: "Euro",
 				numberState: sap.ui.core.ValueState.Success
 			});
+			oh15.addStyleClass("sapUiResponsivePadding--header");
 
 			var oLongTitleOH = new sap.m.ObjectHeader({
 				title : "TitleThatDoesNotHaveAnySpaceAsItIsOneVeryLongWordWithoutNarrowClassSet",
