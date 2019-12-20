@@ -442,10 +442,23 @@ function(
 	};
 
 	Tree.prototype.onItemLongDragOver = function(oItem) {
-		var iIndex = this.indexOfItem(oItem);
-		this._updateDeepestLevel(oItem);
+		var iIndex = this.indexOfItem(oItem),
+			oBinding = this.getBinding("items"),
+			oBindingInfo = this.getBindingInfo("items"),
+			oItemContext = oItem && oItem.getBindingContext(oBindingInfo.model);
 
-		this.getBinding("items").expand(iIndex);
+		// toggleOpenState event should be fired when an item is expand via DnD interaction
+		if (oItem) {
+			this._updateDeepestLevel(oItem);
+			if (!oItem.isLeaf()) {
+				oBinding.expand(iIndex);
+				this.fireToggleOpenState({
+					itemIndex: iIndex,
+					itemContext: oItemContext,
+					expanded: oBinding.isExpanded(iIndex)
+				});
+			}
+		}
 	};
 
 	Tree.prototype.isGrouped = function() {
