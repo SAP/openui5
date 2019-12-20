@@ -3,22 +3,25 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/ui/events/KeyCodes"
 ], function (
 	BaseEditor,
 	QUnitUtils,
-	ObjectPath
+	ObjectPath,
+	KeyCodes
 ) {
 	"use strict";
 
 	function getMapEditorContent (oEditor) {
 		return {
-			addButton: oEditor.getContent().getColumns()[2].getHeader(),
-			items: oEditor.getContent().getItems().map(function (item) {
+			addButton: oEditor.getContent().getItems()[1],
+			items: oEditor.getContent().getItems()[0].getItems().map(function (item) {
 				return {
 					key: item.getCells()[0],
-					value: item.getCells()[1],
-					deleteButton: item.getCells()[2]
+					type: item.getCells()[1],
+					value: item.getCells()[2],
+					deleteButton: item.getCells()[3]
 				};
 			})
 		};
@@ -36,12 +39,16 @@ sap.ui.define([
 				},
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"json": "sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor"
 				}
 			};
 			var mJson = {
 				sampleMap: {
-					"foo": "bar"
+					"foo": "bar",
+					"complex": {
+						"complexChild": "childValue"
+					}
 				}
 			};
 
@@ -52,11 +59,11 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			this.oBaseEditor.getPropertyEditor("sampleMap").then(function (oPropertyEditor) {
-				this.oEditor = oPropertyEditor;
+				this.oMapEditor = oPropertyEditor;
 				sap.ui.getCore().applyChanges();
-				var oEditorContent = getMapEditorContent(this.oEditor);
-				this.oAddButton = oEditorContent.addButton;
-				this.aItems = oEditorContent.items;
+				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
+				this.oAddButton = oMapEditorContent.addButton;
+				this.aItems = oMapEditorContent.items;
 				fnDone();
 			}.bind(this));
 		},
@@ -65,9 +72,9 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("When a MapEditor is created", function (assert) {
-			assert.ok(this.oEditor.getDomRef() instanceof HTMLElement, "Then it is rendered correctly (1/3)");
-			assert.ok(this.oEditor.getDomRef() && this.oEditor.getDomRef().offsetHeight > 0, "Then it is rendered correctly (2/3)");
-			assert.ok(this.oEditor.getDomRef() && this.oEditor.getDomRef().offsetWidth > 0, "Then it is rendered correctly (3/3)");
+			assert.ok(this.oMapEditor.getDomRef() instanceof HTMLElement, "Then it is rendered correctly (1/3)");
+			assert.ok(this.oMapEditor.getDomRef() && this.oMapEditor.getDomRef().offsetHeight > 0, "Then it is rendered correctly (2/3)");
+			assert.ok(this.oMapEditor.getDomRef() && this.oMapEditor.getDomRef().offsetWidth > 0, "Then it is rendered correctly (3/3)");
 		});
 
 		QUnit.test("When a model is set", function (assert) {
@@ -84,11 +91,11 @@ sap.ui.define([
 
 		QUnit.test("When an element is added", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachValueChange(function (oEvent) {
-				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 2, "Then editor contains two keys");
+			this.oMapEditor.attachValueChange(function (oEvent) {
+				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 3, "Then editor contains three keys");
 				assert.strictEqual(
 					Object.keys(ObjectPath.get(["sampleMap"], this.oBaseEditor.getJson())).length,
-					2,
+					3,
 					"Then the base editor JSON is updated"
 				);
 				fnDone();
@@ -98,11 +105,11 @@ sap.ui.define([
 
 		QUnit.test("When two elements are added", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachEventOnce("valueChange", function (oEvent) {
+			this.oMapEditor.attachEventOnce("valueChange", function (oEvent) {
 				assert.ok(oEvent.getParameter("value").hasOwnProperty("key"), "Then a new key is added");
 
-				this.oEditor.attachValueChange(function (oEvent) {
-					assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 3, "Then editor contains three keys");
+				this.oMapEditor.attachValueChange(function (oEvent) {
+					assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 4, "Then editor contains four keys");
 					fnDone();
 				});
 				QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
@@ -112,12 +119,12 @@ sap.ui.define([
 
 		QUnit.test("When an element is removed", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachValueChange(function (oEvent) {
+			this.oMapEditor.attachValueChange(function (oEvent) {
 				assert.notOk(oEvent.getParameter("value").hasOwnProperty("foo"), "Then the property is removed");
-				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 0, "Then editor contains no more keys");
+				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 1, "Then editor contains one key");
 				assert.strictEqual(
 					Object.keys(ObjectPath.get(["sampleMap"], this.oBaseEditor.getJson())).length,
-					0,
+					1,
 					"Then the base editor JSON is updated"
 				);
 				fnDone();
@@ -129,11 +136,11 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function (oEvent) {
-				this.oEditor = oEvent.getParameter("propertyEditors")[0];
+				this.oMapEditor = oEvent.getParameter("propertyEditors")[0];
 				sap.ui.getCore().applyChanges();
-				this.oAddButton = getMapEditorContent(this.oEditor).addButton;
+				this.oAddButton = getMapEditorContent(this.oMapEditor).addButton;
 
-				this.oEditor.attachValueChange(function (oEvent) {
+				this.oMapEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 1, "Then editor contains one key");
 					fnDone();
 				});
@@ -146,11 +153,14 @@ sap.ui.define([
 
 		QUnit.test("When an element key is changed to an unique value", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachEventOnce("valueChange", function () {
-				this.oEditor.attachValueChange(function (oEvent) {
+			this.oMapEditor.attachEventOnce("valueChange", function () {
+				this.oMapEditor.attachValueChange(function (oEvent) {
 					assert.deepEqual(
 						oEvent.getParameter("value"),
 						{
+							complex: {
+								complexChild: "childValue"
+							},
 							foo2: "bar",
 							key: ""
 						},
@@ -166,14 +176,17 @@ sap.ui.define([
 
 		QUnit.test("When an element key is changed to an existing value", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachEventOnce("valueChange", function () {
-				this.oEditorContent = getMapEditorContent(this.oEditor);
+			this.oMapEditor.attachEventOnce("valueChange", function () {
+				this.oMapEditorContent = getMapEditorContent(this.oMapEditor);
 				this.aItems[0].key.setValue("key");
 				QUnitUtils.triggerEvent("input", this.aItems[0].key.getDomRef());
 
 				assert.deepEqual(
-					this.oEditor.getAggregation("propertyEditor").getBindingContext().getObject().value,
+					this.oMapEditor.getAggregation("propertyEditor").getBindingContext().getObject().value,
 					{
+						complex: {
+							complexChild: "childValue"
+						},
 						foo: "bar",
 						key: ""
 					},
@@ -185,35 +198,64 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
 		});
 
+		QUnit.test("When the type of an element is changed", function (assert) {
+			var fnDone = assert.async();
+			assert.strictEqual(this.aItems[0].value.getConfig()[0].type, "string", "Then the initial type is set");
+
+			this.aItems[0].value.attachEventOnce("configChange", function () {
+				assert.strictEqual(this.aItems[0].value.getConfig()[0].type, "json", "Then the change is reflected in the nested editor config");
+				fnDone();
+			}, this);
+
+			var oTypeSelector = this.aItems[0].type.getDomRef();
+			oTypeSelector.value = "Object";
+			QUnitUtils.triggerEvent("input", oTypeSelector);
+			QUnitUtils.triggerKeydown(oTypeSelector, KeyCodes.ENTER);
+		});
+
 		QUnit.test("When a value is updated and the new value is valid", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachValueChange(function (oEvent) {
+
+			assert.deepEqual(
+				this.oMapEditor.getValue(),
+				{
+					complex: {
+						complexChild: "childValue"
+					},
+					foo: "bar"
+				}
+			);
+
+			this.aItems[0].value.getAggregation("propertyEditors")[0].attachEventOnce("valueChange", function () {
 				assert.deepEqual(
-					oEvent.getParameter("value"),
+					this.oMapEditor.getValue(),
 					{
+						complex: {
+							complexChild: "childValue"
+						},
 						foo: "baz"
 					},
 					"Then the value is updated"
 				);
 				fnDone();
-			});
-			// FIXME: Timing issue
-			sap.ui.getCore().applyChanges();
+			}, this);
+
 			var oInput = this.aItems[0].value.getAggregation("propertyEditors")[0].getContent();
 			oInput.setValue("baz");
 			QUnitUtils.triggerEvent("input", oInput.getDomRef());
 		});
 
 		QUnit.test("When a value is updated and the new value is not valid", function (assert) {
-			// FIXME: Timing issue
-			sap.ui.getCore().applyChanges();
 			var oInput = this.aItems[0].value.getAggregation("propertyEditors")[0].getContent();
 			oInput.setValue("{someInvalidBindingString");
 			QUnitUtils.triggerEvent("input", oInput.getDomRef());
 
 			assert.deepEqual(
-				this.oEditor.getAggregation("propertyEditor").getBindingContext().getObject().value,
+				this.oMapEditor.getAggregation("propertyEditor").getBindingContext().getObject().value,
 				{
+					complex: {
+						complexChild: "childValue"
+					},
 					foo: "bar"
 				},
 				"Then the value is not updated"

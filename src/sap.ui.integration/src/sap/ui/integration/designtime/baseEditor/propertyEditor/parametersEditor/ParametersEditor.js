@@ -2,12 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 	"sap/base/util/deepClone",
 	"sap/base/util/isPlainObject"
 ], function (
-	BasePropertyEditor,
 	MapEditor,
 	deepClone,
 	isPlainObject
@@ -20,28 +18,14 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var ParametersEditor = MapEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.parametersEditor.ParametersEditor", {
-		setValue: function (mValue) {
-			mValue = isPlainObject(mValue) ? mValue : {};
-
-			var aItems = Object.keys(mValue).map(function (sKey) {
-				var oValue = (mValue[sKey] || {}).value;
-				return {
-					key: sKey,
-					value: [{
-						type: isPlainObject(oValue) ? "json" : "string",
-						path: sKey,
-						value: oValue
-					}]
-				};
-			});
-			this._itemsModel.setData(aItems);
-			BasePropertyEditor.prototype.setValue.call(this, mValue);
+		formatInputValue: function(oValue) {
+			return (oValue || {}).value;
 		},
 
 		fireValueChange: function(mParams) {
 			var mFormattedParams = {};
 			Object.keys(mParams).forEach(function (sKey) {
-				mFormattedParams[sKey] = this._formatValue(deepClone(mParams[sKey]), sKey);
+				mFormattedParams[sKey] = this._formatOutputValue(deepClone(mParams[sKey]));
 			}.bind(this));
 			this.fireEvent("valueChange", {
 				path: this.getConfig().path,
@@ -49,8 +33,7 @@ sap.ui.define([
 			});
 		},
 
-		_formatValue: function(oValue, sKey) {
-			// FIXME: Workaround to make sure that oObject is actually an object
+		_formatOutputValue: function(oValue) {
 			// Parameters that are retrieved from the manifest arrive as key-value-pairs and thus must be converted
 			if (!isPlainObject(oValue) || !oValue.hasOwnProperty("value")) {
 				oValue = {value: oValue};

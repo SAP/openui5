@@ -365,10 +365,6 @@ sap.ui.define([
 							this.fireValueChange(oEvent.getParameters());
 						}, this);
 
-						var bRenderLabel = this.getRenderLabel();
-						if (bRenderLabel !== undefined) {
-							oPropertyEditor.setRenderLabel(bRenderLabel);
-						}
 						this._sCreatedBy = sCreatedBy;
 						delete this._fnCancelInit;
 
@@ -382,6 +378,10 @@ sap.ui.define([
 
 			mPromise.promise.then(function (oPropertyEditor) {
 				this.setAggregation("propertyEditor", oPropertyEditor);
+				var bRenderLabel = this.getRenderLabel();
+				if (bRenderLabel !== undefined) {
+					oPropertyEditor.setRenderLabel(bRenderLabel);
+				}
 				oPropertyEditor.attachReady(this._onPropertyEditorReady, this);
 				if (oPropertyEditor.isReady()) { // in case it's already ready
 					this.fireReady();
@@ -412,6 +412,14 @@ sap.ui.define([
 			} else {
 				this.addPropagationListener(this._propagationListener);
 			}
+		}
+	};
+
+	PropertyEditor.prototype.setRenderLabel = function (bRenderLabel) {
+		this.setProperty("renderLabel", bRenderLabel);
+		var oNestedEditor = this.getAggregation("propertyEditor");
+		if (oNestedEditor) {
+			oNestedEditor.setRenderLabel(bRenderLabel);
 		}
 	};
 

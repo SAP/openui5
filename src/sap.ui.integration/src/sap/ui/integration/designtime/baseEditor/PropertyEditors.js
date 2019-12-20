@@ -190,6 +190,9 @@ sap.ui.define([
 					|| !Array.isArray(aPreviousConfig)
 					|| !Array.isArray(aConfig)
 					|| aPreviousConfig.length !== aConfig.length
+					|| aPreviousConfig.some(function (oPreviousConfig, iIdx) {
+						return oPreviousConfig.type !== aConfig[iIdx].type;
+					})
 				) {
 					this._removePropertyEditors();
 					this._initPropertyEditors();
@@ -393,10 +396,10 @@ sap.ui.define([
 
 				oPromise
 					.then(function (aPropertyEditors) {
-						var bRenderLabels = this.getProperty("renderLabels");
+						var bRenderLabels = this.getRenderLabels();
 						if (bRenderLabels !== undefined) {
-							aPropertyEditors.forEach(function (propertyEditor) {
-								propertyEditor.setProperty("renderLabel", bRenderLabels);
+							aPropertyEditors.forEach(function (oPropertyEditor) {
+								oPropertyEditor.setRenderLabel(bRenderLabels);
 							});
 						}
 						this._sCreatedBy = sCreatedBy;
