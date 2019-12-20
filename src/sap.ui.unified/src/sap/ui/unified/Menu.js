@@ -827,8 +827,8 @@ sap.ui.define([
 
 		if (checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			if (!this.oOpenedSubMenu || !(this.oOpenedSubMenu.getParent() === this.oHoveredItem)) {
-				this.setHoveredItem(null);
-				this.focus();
+				this.setHoveredItem(this.oHoveredItem);
+
 			}
 			this._discardOpenSubMenuDelayed();
 		}
