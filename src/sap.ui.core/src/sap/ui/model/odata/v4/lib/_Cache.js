@@ -302,6 +302,7 @@ sap.ui.define([
 			oEntityData, fnCancelCallback, fnErrorCallback, fnSubmitCallback) {
 		var aCollection,
 			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
+			oPostBody,
 			that = this;
 
 		// Clean-up when the create has been canceled.
@@ -332,7 +333,7 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oEntityData, "transient", sPostGroupId);
 			_Helper.addByPath(that.mPostRequests, sPath, oEntityData);
 			return SyncPromise.all([
-				that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oEntityData,
+				that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oPostBody,
 					setCreatePending, cleanUp, undefined,
 					_Helper.buildPath(that.sResourcePath, sPath, sTransientPredicate)),
 				that.fetchTypes()
@@ -340,6 +341,7 @@ sap.ui.define([
 				var oCreatedEntity = aResult[0],
 					sPredicate;
 
+				_Helper.deletePrivateAnnotation(oEntityData, "postBody");
 				_Helper.deletePrivateAnnotation(oEntityData, "transient");
 				oEntityData["@$ui5.context.isTransient"] = false;
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
@@ -378,16 +380,19 @@ sap.ui.define([
 		}
 
 		// clone data to avoid modifications outside the cache
-		oEntityData = jQuery.extend(true, {}, oEntityData);
+		oEntityData = _Helper.merge({}, oEntityData);
 		// remove any property starting with "@$ui5."
 		oEntityData = _Requestor.cleanPayload(oEntityData);
+		oPostBody = _Helper.merge({}, oEntityData);
+		// keep post body separate to allow local property changes in the cache
+		_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);
 		_Helper.setPrivateAnnotation(oEntityData, "transientPredicate", sTransientPredicate);
 		oEntityData["@$ui5.context.isTransient"] = true;
 
 		aCollection = this.getValue(sPath);
 		if (!Array.isArray(aCollection)) {
 			throw new Error("Create is only supported for collections; '" + sPath
-					+ "' does not reference a collection");
+				+ "' does not reference a collection");
 		}
 		aCollection.unshift(oEntityData);
 		aCollection.$created += 1;
@@ -1203,8 +1208,7 @@ sap.ui.define([
 	 *   Path of the entity, relative to the cache (as used by change listeners)
 	 * @returns {Promise}
 	 *   A promise which resolves with <code>undefined</code> once the value has been set, or is
-	 *   rejected with an error if setting fails somehow, for example because the affected entity
-	 *   is transient
+	 *   rejected with an error if setting fails somehow
 	 *
 	 * @public
 	 */
@@ -1212,10 +1216,6 @@ sap.ui.define([
 		var that = this;
 
 		return this.fetchValue(_GroupLock.$cached, sEntityPath).then(function (oEntity) {
-			if (_Helper.getPrivateAnnotation(oEntity, "transient")) {
-				// Note: includes "No 'update' allowed while waiting for server response"
-				throw new Error("Cannot update a transient entity w/o PATCH");
-			}
 			_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity,
 				Cache.makeUpdateData(sPropertyPath.split("/"), vValue));
 		});
@@ -1305,6 +1305,7 @@ sap.ui.define([
 				sGroupId = oGroupLock.getGroupId(),
 				vOldValue,
 				oPatchPromise,
+				oPostBody,
 				sParkedGroup,
 				sTransientGroup,
 				sUnitOrCurrencyValue,
@@ -1419,6 +1420,11 @@ sap.ui.define([
 			vOldValue = _Helper.drillDown(oEntity, aPropertyPath);
 			// write the changed value into the cache
 			_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
+			oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody");
+			if (oPostBody) {
+				// change listeners are already informed
+				_Helper.updateAll({}, sEntityPath, oPostBody, oUpdateData);
+			}
 			if (sUnitOrCurrencyPath) {
 				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
 				sUnitOrCurrencyPath = _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath);
@@ -1428,17 +1434,17 @@ sap.ui.define([
 							+ " when updating " + sFullPath,
 						that.toString(), "sap.ui.model.odata.v4.lib._Cache");
 				} else {
-					jQuery.extend(true,
-						sTransientGroup ? oEntity : oUpdateData,
+					// some servers need unit and currency information
+					_Helper.merge(sTransientGroup ? oPostBody : oUpdateData,
 						Cache.makeUpdateData(aUnitOrCurrencyPath, sUnitOrCurrencyValue));
 				}
 			}
 			if (sTransientGroup) {
-				// When updating a transient entity, _Helper.updateSelected has already updated the
-				// POST request, because the request body is a reference into the cache.
+				// When updating a transient entity, _Helper.updateAll has already updated the
+				// POST request.
 				if (sParkedGroup) {
 					_Helper.setPrivateAnnotation(oEntity, "transient", sTransientGroup);
-					that.oRequestor.relocate(sParkedGroup, oEntity, sTransientGroup);
+					that.oRequestor.relocate(sParkedGroup, oPostBody, sTransientGroup);
 				}
 				oGroupLock.unlock();
 				return Promise.resolve();

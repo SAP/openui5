@@ -1224,21 +1224,24 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("processBatch(...): with empty group", function (assert) {
-		var oBody = {},
-			oRequestor = _Requestor.create("/Service/", oModelInterface),
+		var oRequestor = _Requestor.create("/Service/", oModelInterface),
 			that = this;
 
 		this.mock(oRequestor).expects("sendBatch").never();
 
 		// code under test
 		return oRequestor.processBatch("groupId").then(function (oResult) {
-			var oPromise;
+			var oBody = {},
+				oEntity = {},
+				oPromise;
 
 			assert.deepEqual(oResult, undefined);
 
+			_Helper.setPrivateAnnotation(oEntity, "postBody", oBody);
 			oPromise = oRequestor.request("POST", "Customers", that.createGroupLock(), {},
 				oBody, undefined, function () {});
-			oRequestor.removePost("groupId", oBody);
+
+			oRequestor.removePost("groupId", oEntity);
 			oRequestor.addChangeSet("groupId");
 
 			return Promise.all([
@@ -2286,6 +2289,7 @@ sap.ui.define([
 		var oBody = {},
 			fnCancel1 = this.spy(),
 			fnCancel2 = this.spy(),
+			oEntity = {},
 			aExpectedRequests = [
 				sinon.match({
 					method : "POST",
@@ -2308,9 +2312,12 @@ sap.ui.define([
 			oRequestor.request("POST", "Products", this.createGroupLock(), {}, {Name : "bar"},
 					undefined, fnCancel2)
 		]);
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntity), "postBody")
+			.returns(oBody);
 
 		// code under test
-		oRequestor.removePost("groupId", oBody);
+		oRequestor.removePost("groupId", oEntity);
 
 		assert.ok(oRequestor.cancelChangesByFilter.calledWithExactly(sinon.match.func, "groupId"));
 
@@ -2330,6 +2337,7 @@ sap.ui.define([
 	QUnit.test("removePost with only one POST", function (assert) {
 		var oBody = {},
 			fnCancel = this.spy(),
+			oEntity = {},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
 
@@ -2341,9 +2349,12 @@ sap.ui.define([
 					assert.strictEqual(oError.canceled, true);
 				}
 		);
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntity), "postBody")
+			.returns(oBody);
 
 		// code under test
-		oRequestor.removePost("groupId", oBody);
+		oRequestor.removePost("groupId", oEntity);
 		sinon.assert.calledOnce(fnCancel);
 
 		this.mock(oRequestor).expects("request").never();

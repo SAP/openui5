@@ -1251,24 +1251,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the pending POST request with the given body from the given group. Only requests for
-	 * which the <code>$cancel</code> callback is defined are removed.
+	 * Removes the pending POST request for the given entity from the given group. Only requests
+	 * for which the <code>$cancel</code> callback is defined are removed.
 	 *
-	 * The request's promise is rejected with an error with property <code>canceled = true</code>.
+	 * The request's promise is rejected with an error with a property <code>canceled = true</code>.
 	 *
 	 * @param {string} sGroupId
 	 *   The ID of the group containing the request
-	 * @param {object} oBody
-	 *   The body of the request
+	 * @param {object} oEntity
+	 *   The entity of the request containing a private annotation <code>postBody</code> identifying
+	 *   the POST body
 	 * @throws {Error}
 	 *   If the request is not in the queue, assuming that it has been submitted already
 	 *
 	 * @private
 	 */
-	Requestor.prototype.removePost = function (sGroupId, oBody) {
-		var bCanceled = this.cancelChangesByFilter(function (oChangeRequest) {
-			return oChangeRequest.body === oBody;
-		}, sGroupId);
+	Requestor.prototype.removePost = function (sGroupId, oEntity) {
+		var oBody = _Helper.getPrivateAnnotation(oEntity, "postBody"),
+			bCanceled = this.cancelChangesByFilter(function (oChangeRequest) {
+				return oChangeRequest.body === oBody;
+			}, sGroupId);
+
 		if (!bCanceled) {
 			throw new Error("Cannot reset the changes, the batch request is running");
 		}
