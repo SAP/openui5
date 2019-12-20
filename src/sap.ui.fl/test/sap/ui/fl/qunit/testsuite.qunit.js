@@ -432,6 +432,18 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/ChangePersistenceFactory"]
 				}
 			},
+			Condenser: {
+				coverage: {
+					only: ["sap/ui/fl/Condenser"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/qunit": "test-resources/sap/ui/rta/qunit/",
+						"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+						"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+					}
+				}
+			},
 			FlexController: {
 				coverage: {
 					only: ["sap/ui/fl/FlexController"]

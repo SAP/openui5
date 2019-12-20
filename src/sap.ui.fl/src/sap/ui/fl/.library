@@ -38,6 +38,7 @@
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <all-in-one>
         <exclude name="sap/ui/fl/support/" />
+        <exclude name="sap/ui/fl/write/_internal/Condenser.js" />
       </all-in-one>
     </packaging>
 

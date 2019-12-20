@@ -104,6 +104,16 @@ sap.ui.define([
 		UiAdaptation: "UI_ADAPTATION"
 	};
 
+	/**
+	 * Available classification types
+	 *
+	 * @enum {string}
+	 */
+	sap.ui.fl.ClassificationType = {
+		LastOneWins: "lastOneWins",
+		Reverse: "reverse"
+	};
+
 	RegistrationDelegator.registerAll();
 
 	function _isTrialSystem() {

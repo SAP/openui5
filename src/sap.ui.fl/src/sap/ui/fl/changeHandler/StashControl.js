@@ -86,6 +86,20 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Retrieves the condenser-specific information.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @returns {object} - Condenser-specific information
+	 * @public
+	 */
+	StashControl.getCondenserInfo = function(/* oChange */) {
+		return {
+			classificationType: sap.ui.fl.ClassificationType.Reverse,
+			uniqueKey: "stashed"
+		};
+	};
+
 	return StashControl;
 },
 /* bExport= */true);
