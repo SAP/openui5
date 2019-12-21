@@ -63,6 +63,7 @@ module.exports = [
 	"QuickViewCard.spec.js",
 	"RadioButton.spec.js",
 	"RadioButtonGroup.spec.js",
+	"RangeSlider.spec.js",
 	"RatingIndicator.spec.js",
 	"ResponsivePopover.spec.js",
 	"SearchField.spec.js",
