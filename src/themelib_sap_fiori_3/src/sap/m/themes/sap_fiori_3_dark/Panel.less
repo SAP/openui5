@@ -4,7 +4,7 @@
 /* ================================== */
 
 .sapMPanelBGSolid {
-	background-color: @sapUiGroupContentBackground;
+	background-color: @sapUiGroupTitleBackground;
 }
 
 .sapMPanelBGTranslucent {
@@ -23,11 +23,11 @@
 .sapMPanelWrappingDiv,
 /* do not want border if expanded and if only header text */
 .sapMPanelWrappingDivTb {
-	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
+	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
 }
 
 .sapMPanelContent:not(.sapMPanelBGTransparent) {
-	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
+	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
 }
 
 .sapMPanel .sapMPanelHdr {
