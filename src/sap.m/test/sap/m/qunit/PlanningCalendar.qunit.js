@@ -3016,6 +3016,73 @@ sap.ui.define([
 		this.oPC2._dateNav.setCurrent(oStartDate);
 	});
 
+	QUnit.test("previous button when minDate >= current view start date initially", function(assert) {
+		// arange
+		var oPC = new PlanningCalendar({
+			viewKey: "One Month",
+			startDate: new Date(2019, 11, 6),
+			minDate: new Date(2019, 11, 1)
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(
+			oPC._getHeader()._oPrevBtn.getEnabled(),
+			false,
+			"previous button is disabled");
+
+		// clean
+		oPC.destroy();
+	});
+
+	QUnit.test("today press disables previous button if necessary", function(assert) {
+		// arrange
+		var oFakeNow = new Date(2019, 11, 22),
+			clock = sinon.useFakeTimers(oFakeNow.getTime()),
+			oPC = new PlanningCalendar({
+				viewKey: "One Month",
+				startDate: new Date(2020, 0, 6),
+				minDate: new Date(2019, 11, 1)
+			}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oPC._getHeader()._oTodayBtn.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(
+			oPC._getHeader()._oPrevBtn.getEnabled(),
+			false,
+			"previous button is disabled");
+
+		// clean
+		clock.restore();
+		oPC.destroy();
+	});
+
+	QUnit.test("previous button when navigated to a view where minDate = start date without the hours", function(assert) {
+		// arrange
+		var oPC = new PlanningCalendar({
+				viewKey: "One Month",
+				startDate: new Date(2020, 0, 6, 8, 0, 0),
+				minDate: new Date(2019, 11, 1, 0, 0, 0)
+			}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oPC._getHeader()._oPrevBtn.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(
+			oPC._getHeader()._oPrevBtn.getEnabled(),
+			false,
+			"previous button is disabled");
+
+		// clean
+		oPC.destroy();
+	});
 
 	QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area)", function(assert) {
 		var $Days = this.oPC2Interval.$("days"),

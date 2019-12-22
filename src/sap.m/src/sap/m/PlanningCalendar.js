@@ -763,6 +763,7 @@ sap.ui.define([
 		}
 
 		this._updatePickerSelection();
+		this._updateHeaderButtons();
 
 		Device.orientation.detachHandler(this._updateStickyHeader, this);
 
@@ -852,23 +853,14 @@ sap.ui.define([
 			this._dateNav.next();
 		}
 
-		if (this.getMinDate()) {
-			if (this._dateNav.getStart().getTime() <= this.getMinDate().getTime()) {
-				this._getHeader()._oPrevBtn.setEnabled(false);
-				this._dateNav.setStart(this.getMinDate());
-				this._dateNav.setCurrent(this.getMinDate());
-			} else {
-				this._getHeader()._oPrevBtn.setEnabled(true);
-			}
+		if (this.getMinDate() && this._dateNav.getStart().getTime() <= this.getMinDate().getTime()) {
+			this._dateNav.setStart(this.getMinDate());
+			this._dateNav.setCurrent(this.getMinDate());
 		}
-		if (this.getMaxDate()){
-			if (this._dateNav.getEnd().getTime() >= this.getMaxDate().getTime()) {
-				this._getHeader()._oNextBtn.setEnabled(false);
-				this._dateNav.setStart(this.getMaxDate());
-				this._dateNav.setCurrent(this.getMaxDate());
-			} else {
-				this._getHeader()._oNextBtn.setEnabled(true);
-			}
+
+		if (this.getMaxDate() && this._dateNav.getEnd().getTime() >= this.getMaxDate().getTime()) {
+			this._dateNav.setStart(this.getMaxDate());
+			this._dateNav.setCurrent(this.getMaxDate());
 		}
 
 		var oRow = this._getRowInstanceByViewKey(this.getViewKey());
@@ -1300,6 +1292,8 @@ sap.ui.define([
 			this._updateCurrentTimeVisualization(false);
 			this._updatePickerSelection();
 		}
+
+		this._updateHeaderButtons();
 
 		return this;
 
@@ -2511,8 +2505,7 @@ sap.ui.define([
 		var sViewKey = this.getViewKey(),
 			oCurrentView = this._getView(sViewKey),
 			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
-			sControlRef,
-			oEndDate = new Date(this._dateNav.getEnd().setHours(23,59,59));
+			sControlRef;
 
 		if (sCurrentViewIntervalType === "Hour") {
 			sCurrentViewIntervalType = "Time";
@@ -2525,15 +2518,6 @@ sap.ui.define([
 
 		if (this[sControlRef]) {
 			this[sControlRef].setDate(oStartDate);
-		}
-
-		if (oStartDate > this.getMinDate() && oStartDate < this.getMaxDate()) {
-			this._getHeader()._oNextBtn.setEnabled(true);
-			this._getHeader()._oPrevBtn.setEnabled(true);
-		} else if (this.getMinDate() >= this._dateNav.getStart() && this.getMinDate() <= oEndDate) {
-			this._getHeader()._oPrevBtn.setEnabled(false);
-		} else if (this.getMaxDate() >= this._dateNav.getStart() && this.getMaxDate() <= oEndDate) {
-			this._getHeader()._oNextBtn.setEnabled(false);
 		}
 	};
 
@@ -4036,6 +4020,26 @@ sap.ui.define([
 		oCreateConfig.setProperty("groupName", CREATE_CONFIG_NAME);
 
 		return oCreateConfig;
+	};
+
+	PlanningCalendar.prototype._updateHeaderButtons = function() {
+		var sViewKey = this.getViewKey(),
+			oCurrentView = this._getView(sViewKey),
+			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
+			oStartDate = new Date(this._dateNav.getStart().getTime()),
+			oEndDate = new Date(this._dateNav.getEnd().getTime()),
+			oMinDate = this.getMinDate() ? new Date(this.getMinDate().getTime()) : undefined,
+			oMaxDate = this.getMaxDate() ? new Date(this.getMaxDate().getTime()) : undefined;
+
+		if (sCurrentViewIntervalType !== "Hour") {
+			oMinDate && oMinDate.setHours(0, 0, 0, 0);
+			oMaxDate && oMaxDate.setHours(23, 59, 59, 999);
+			oStartDate.setHours(0, 0, 0, 0);
+			oEndDate.setHours(23, 59, 59, 999);
+		}
+
+		this._getHeader()._oPrevBtn.setEnabled(!oMinDate || oStartDate.getTime() > oMinDate.getTime());
+		this._getHeader()._oNextBtn.setEnabled(!oMaxDate || oEndDate.getTime() < oMaxDate.getTime());
 	};
 
 	function getResizeGhost() {
