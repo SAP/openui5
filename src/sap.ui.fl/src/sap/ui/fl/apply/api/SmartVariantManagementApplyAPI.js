@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/DefaultVariant",
 	"sap/ui/fl/StandardVariant",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/base/Log"
 ], function(
+	FlexState,
 	DefaultVariant,
 	StandardVariant,
 	ChangePersistenceFactory,
@@ -57,7 +59,13 @@ sap.ui.define([
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 
-			return oChangePersistence.getChangesForVariant(this._PERSISTENCY_KEY, sStableId, mParameters);
+			// TODO clarify why in a test we come here without an initialized FlexState (1980546095)
+			return FlexState.initialize({
+				componentId: Utils.getAppComponentForControl(oControl).getId()
+			})
+			.then(function() {
+				return oChangePersistence.getChangesForVariant(this._PERSISTENCY_KEY, sStableId, mParameters);
+			}.bind(this));
 		},
 
 		/**
