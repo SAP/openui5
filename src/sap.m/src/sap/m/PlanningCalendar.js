@@ -1318,6 +1318,8 @@ sap.ui.define([
 			this._bNoStartDateChange = true; // set the start date after all calendars are updated
 
 			oHeader.getAggregation("_calendarPicker").setMinDate(new Date(oDate.getTime()));
+			oHeader.getAggregation("_monthPicker").setMinDate(new Date(oDate.getTime()));
+			oHeader.getAggregation("_yearPicker").setMinDate(new Date(oDate.getTime()));
 
 			if (oMaxDate && oMaxDate.getTime() < oDate.getTime()) {
 				Log.warning("minDate > maxDate -> maxDate set to end of the month", this);
@@ -1341,6 +1343,8 @@ sap.ui.define([
 		} else {
 			this.setProperty("minDate", undefined, true);
 			oHeader.getAggregation("_calendarPicker").setMinDate();
+			oHeader.getAggregation("_monthPicker").setMinDate();
+			oHeader.getAggregation("_yearPicker").setMinDate();
 		}
 
 		var oToday = new Date();
@@ -1373,6 +1377,8 @@ sap.ui.define([
 			this._bNoStartDateChange = true; // set the start date after all calendars are updated
 
 			oHeader.getAggregation("_calendarPicker").setMaxDate(new Date(oDate.getTime()));
+			oHeader.getAggregation("_monthPicker").setMaxDate(new Date(oDate.getTime()));
+			oHeader.getAggregation("_yearPicker").setMaxDate(new Date(oDate.getTime()));
 
 			if (oMinDate && oMinDate.getTime() > oDate.getTime()) {
 				Log.warning("maxDate < minDate -> maxDate set to begin of the month", this);
@@ -1402,6 +1408,8 @@ sap.ui.define([
 			this.setProperty("maxDate", undefined, true);
 
 			oHeader.getAggregation("_calendarPicker").setMaxDate();
+			oHeader.getAggregation("_monthPicker").setMaxDate();
+			oHeader.getAggregation("_yearPicker").setMaxDate();
 		}
 
 		var oToday = new Date();
@@ -1594,10 +1602,12 @@ sap.ui.define([
 		if (oMinDate) {
 			oHeader.getAggregation("_calendarPicker").setMinDate(new Date(oMinDate.getTime()));
 			oHeader.getAggregation("_yearPicker").setMinDate(new Date(oMinDate.getTime()));
+			oHeader.getAggregation("_monthPicker").setMinDate(new Date(oMinDate.getTime()));
 		}
 		if (oMaxDate) {
 			oHeader.getAggregation("_calendarPicker").setMaxDate(new Date(oMaxDate.getTime()));
 			oHeader.getAggregation("_yearPicker").setMaxDate(new Date(oMaxDate.getTime()));
+			oHeader.getAggregation("_monthPicker").setMaxDate(new Date(oMaxDate.getTime()));
 		}
 		this._updateTodayButtonState();
 

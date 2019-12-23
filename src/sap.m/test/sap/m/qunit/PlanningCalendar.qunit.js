@@ -1466,7 +1466,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	});
 
-	QUnit.test("minDate/maxDate", function(assert) {
+	QUnit.test("Calendar: minDate/maxDate", function(assert) {
 		assert.ok(!oPC1.getMinDate(), "no minDate set by default");
 		assert.ok(!sap.ui.getCore().byId("PC1-Header-Cal").getMinDate(), "Calendar no minDate set by default");
 
@@ -1490,6 +1490,52 @@ sap.ui.define([
 		oPC1.setMaxDate();
 		assert.ok(!oPC1.getMaxDate(), "no maxDate");
 		assert.ok(!sap.ui.getCore().byId("PC1-Header-Cal").getMaxDate(), "Calendar no maxDate");
+	});
+
+	QUnit.test("CustomMonthPicker: minDate/maxDate", function(assert) {
+		// Prepare
+		var oMinDate = new Date(2000, 0 , 1, 0, 0, 0),
+			oMaxDate = new Date(2050, 11 , 31, 23, 59, 59),
+			oCustomMonthPicker = this.oPC._getHeader().getAggregation("_monthPicker");
+
+		// Act
+		this.oPC.setMinDate(oMinDate);
+		this.oPC.setMaxDate(oMaxDate);
+
+		// Assert
+		assert.deepEqual(
+			oCustomMonthPicker.getMinDate(),
+			this.oPC.getMinDate(),
+			"CustomMonthPicker has minDate set"
+		);
+		assert.deepEqual(
+			oCustomMonthPicker.getMaxDate(),
+			this.oPC.getMaxDate(),
+			"CustomMonthPicker has maxDate set"
+		);
+	});
+
+	QUnit.test("CustomYearPicker: minDate/maxDate", function(assert) {
+		// Prepare
+		var oMinDate = new Date(2000, 0 , 1, 0, 0, 0),
+			oMaxDate = new Date(2050, 11 , 31, 23, 59, 59),
+			oCustomYearPicker = this.oPC._getHeader().getAggregation("_yearPicker");
+
+		// Act
+		this.oPC.setMinDate(oMinDate);
+		this.oPC.setMaxDate(oMaxDate);
+
+		// Assert
+		assert.deepEqual(
+			oCustomYearPicker.getMinDate(),
+			this.oPC.getMinDate(),
+			"CustomYearPicker has minDate set"
+		);
+		assert.deepEqual(
+			oCustomYearPicker.getMaxDate(),
+			this.oPC.getMaxDate(),
+			"CustomYearPicker has maxDate set"
+		);
 	});
 
 	QUnit.test("rows", function(assert) {
