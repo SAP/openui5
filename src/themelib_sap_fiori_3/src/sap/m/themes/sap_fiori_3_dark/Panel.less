@@ -52,9 +52,11 @@
 }
 
 .sapMPanelExpandableIcon {
+	box-sizing: border-box;
 	margin: 0 0.25rem;
 	width: 2.25rem;
 	line-height: 2.25rem;
+	outline-offset: -0.1875rem;
 	border-radius: @sapUiButtonBorderCornerRadius;
 	background-color: @sapUiButtonLiteBackground;
 	border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
@@ -98,8 +100,39 @@ html[data-sap-ui-animation='on'] {
 	}
 }
 
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"],
+html[data-sap-ui-browser^="ed"] {
+	.sapMPanelExpandableIcon:focus {
+		outline: none;
+	}
+
+	.sapMPanelExpandableIcon:focus::after {
+		content: " ";
+		box-sizing: border-box;
+		position: absolute;
+		top: 0.0625rem;
+		left: 0.0625rem;
+		right: 0.0625rem;
+		bottom: 0.0625rem;
+		border: 0.0625rem dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
 .sapMPanel .sapMPanelWrappingDiv .sapMPanelHdr,
 .sapMPanel .sapMPanelWrappingDivTb .sapMIBar.sapMTB {
 	padding-left: 0;
 	margin-left: 2.75rem;
+}
+
+.sapMPanelExpandableIconExpanded {
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+
+	&:before {
+		display: block;
+		-webkit-transform: rotate(90deg);
+		transform: rotate(90deg);
+	}
 }
