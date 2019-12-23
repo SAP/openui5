@@ -1746,6 +1746,16 @@ sap.ui.define([
 				skip: true,
 				group: "Designtime"
 			},
+			"designtime/OverflowToolbarButton": {
+				title: "QUnit Page for sap.m.OverflowToolbarButton design time and rta enabling",
+				_alternativeTitle: "QUnit Page for sap.m.OverflowToolbarButton rta enabling",
+				ui5: {
+					libs: "sap.m,sap.ui.rta"
+				},
+				qunit: 2,
+				sinon: false,
+				group: "Designtime"
+			},
 			"designtime/Page": {
 				title: "QUnit Page for sap.m.Page design time and rta enabling",
 				ui5: {
