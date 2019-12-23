@@ -26,11 +26,21 @@
 	opacity: 0;
 	transition: opacity 0.3s ease-in;
 	-webkit-transition: opacity 0.3s ease-in;
+	outline: none;
 
-	&:focus {
-		outline: 1px dotted @sapUiContentFocusColor;
+	&:focus:after {
+		content: "";
+		position: absolute;
+		left: 1px;
+		top: 1px;
+		right: 1px;
+		bottom: 1px;
+		border: 1px dotted @sapUiContentFocusColor;
+		pointer-events: none;
+
+		html[data-sap-ui-browser^="ed"] &,
 		html[data-sap-ui-browser^="ie"] & {
-			outline-style: dashed;
+			border-style: dashed;
 		}
 	}
 }
