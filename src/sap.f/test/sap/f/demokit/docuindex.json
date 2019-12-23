@@ -49,7 +49,8 @@
 			"sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
 			"sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
 			"sap.f.sample.FlexibleColumnLayoutWithFullscreenPage",
-			"sap.f.sample.FlexibleColumnLayoutSimple"
+			"sap.f.sample.FlexibleColumnLayoutSimple",
+			"sap.f.sample.ShellBarWithFlexibleColumnLayout"
 		  ]
 		},
 		{
