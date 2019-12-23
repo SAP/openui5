@@ -264,6 +264,7 @@ function(
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
 			sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
 			sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
+			sandbox.stub(RtaAppVariantFeature, "isManifestSupported").resolves(false);
 
 			return this.oRta.start()
 			.then(function() {

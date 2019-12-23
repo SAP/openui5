@@ -1005,13 +1005,11 @@ function(
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
 
-			var bExtendedOverview;
-
 			if (bIsAppVariantSupported) {
 				// Sets the visibility of 'Save As' button in RTA toolbar
 				this.getToolbar().getControl('saveAs').setVisible(bIsAppVariantSupported);
 				// Flag which represents either the key user view or SAP developer view
-				bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
+				var bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
 
 				if (bExtendedOverview) {
 					// Sets the visibility of 'i' menu button (App Variant Overview: SAP developer view) in RTA toolbar
