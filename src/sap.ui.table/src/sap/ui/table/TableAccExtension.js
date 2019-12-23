@@ -706,9 +706,11 @@ sap.ui.define([
 
 					mAttributes["aria-labelledby"] = aLabels;
 
-					/*if (oTable.getSelectionMode() !== SelectionMode.None) {
-					 mAttributes["aria-selected"] = "false";
-					 }*/
+					if (oTable.getSelectionMode() !== SelectionMode.None && mParams && mParams.rowSelected) {
+						mAttributes["aria-selected"] = "true";
+					} else {
+						mAttributes["aria-selected"] = "false";
+					}
 
 					// Handle expand state for first Column in TreeTable
 					if (TableUtils.Grouping.isTreeMode(oTable) && mParams && mParams.firstCol && mParams.row) {
@@ -1130,7 +1132,7 @@ sap.ui.define([
 		}
 
 		if ($Ref.row) {
-			$Ref.row.children("td").add($Ref.row).attr("aria-selected", bIsSelected ? "true" : null);
+			$Ref.row.children("td").add($Ref.row).attr("aria-selected", bIsSelected ? "true" : "false");
 			if (bIsSelected && $Ref.rowSelectorText) {
 				var sText = $Ref.rowSelectorText.text();
 				if (sText) {

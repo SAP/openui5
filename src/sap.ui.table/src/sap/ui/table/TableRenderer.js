@@ -999,19 +999,22 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex});
 
 		rm.write(">");
+
+		var bSelected = !oRow._bHidden && oTable.isIndexSelected(oRow.getIndex());
+
 		var aCells = oRow.getCells();
 		// render the row headers
 		if (TableUtils.hasRowHeader(oTable) || aCells.length === 0) {
 			rm.write("<td");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER_TD", {
-				rowSelected: !oRow._bHidden && oTable.isIndexSelected(oRow.getIndex()), //see TableRenderer.renderRowAddon
+				rowSelected: bSelected,
 				index: iRowIndex
 			});
 			rm.write("></td>");
 		}
 
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {
-			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns);
+			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns, bSelected);
 		}
 		if (!bFixedTable && bHasOnlyFixedColumns && aCells.length > 0) {
 			rm.write('<td class="sapUiTableTDDummy"');
@@ -1021,7 +1024,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.write("</tr>");
 	};
 
-	TableRenderer.renderTableCell = function(rm, oTable, oRow, oCell, iCellIndex, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns) {
+	TableRenderer.renderTableCell = function(rm, oTable, oRow, oCell, iCellIndex, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns, bSelected) {
 		var iColIndex = oCell.data("sap-ui-colindex");
 		var oColumn = oTable.getColumns()[iColIndex];
 		if (oColumn.shouldRender() && iStartColumn <= iColIndex && iEndColumn > iColIndex) {
@@ -1040,7 +1043,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 				column: oColumn,
 				row: oRow,
 				fixed: bFixedTable,
-				firstCol: bIsFirstColumn
+				firstCol: bIsFirstColumn,
+				rowSelected: bSelected
 			});
 
 			var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oCell && oCell.getTextDirection && oCell.getTextDirection());
