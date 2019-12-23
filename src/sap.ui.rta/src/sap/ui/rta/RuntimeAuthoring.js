@@ -1144,6 +1144,7 @@ function(
 	RuntimeAuthoring.prototype._deleteChanges = function() {
 		var oRootControl = this.getRootControlInstance();
 		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
+		BusyIndicator.show(500);
 
 		return PersistenceWriteAPI.reset({
 			selector: oAppComponent,
@@ -1151,9 +1152,11 @@ function(
 			generator: "Change.createInitialFileContent"
 		})
 			.then(function () {
+				BusyIndicator.hide();
 				this._reloadPage();
 			}.bind(this))
 			.catch(function (oError) {
+				BusyIndicator.hide();
 				if (oError !== "cancel") {
 					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
 				}

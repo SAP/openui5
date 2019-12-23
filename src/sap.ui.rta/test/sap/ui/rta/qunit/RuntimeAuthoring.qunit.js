@@ -853,7 +853,8 @@ function(
 					layer: "CUSTOMER"
 				}
 			});
-			sandbox.stub(BusyIndicator, "show");
+			this.oBusyIndicatorShowStub = sandbox.stub(BusyIndicator, "show");
+			this.oBusyIndicatorHideStub = sandbox.stub(BusyIndicator, "hide");
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
 			this.oDeleteChangesStub = sandbox.stub(this.oRta, "_deleteChanges");
 			this.oEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
@@ -1049,7 +1050,7 @@ function(
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully", function(assert) {
-			assert.expect(2);
+			assert.expect(4);
 			this.oDeleteChangesStub.restore();
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
@@ -1061,6 +1062,8 @@ function(
 			});
 
 			return this.oRta._deleteChanges().then(function() {
+				assert.equal(this.oBusyIndicatorShowStub.callCount, 1, "the BusyIndicator was shown");
+				assert.equal(this.oBusyIndicatorHideStub.callCount, 1, "the BusyIndicator was hidden");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
 			}.bind(this));
 		});
@@ -1093,6 +1096,8 @@ function(
 			});
 
 			return this.oRta._deleteChanges().then(function() {
+				assert.equal(this.oBusyIndicatorShowStub.callCount, 1, "the BusyIndicator was shown");
+				assert.equal(this.oBusyIndicatorHideStub.callCount, 1, "the BusyIndicator was hidden");
 				assert.equal(this.oReloadPageStub.callCount, 0, "then page reload is not triggered");
 			}.bind(this));
 		});
