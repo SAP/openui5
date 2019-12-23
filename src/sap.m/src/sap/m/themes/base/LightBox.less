@@ -10,6 +10,7 @@
 @_sap_m_LightBox_FooterTwoLinesHeightMobile: 4.5rem;
 @_sap_m_LightBox_TitleSectionPadding: 1rem;
 @_sap_m_LightBox_BusyIndicatorHeight: 1rem;
+@_sap_m_LightBox_SubtitleMarginTop: 0.5rem;
 @_sap_m_LightBox_OverlayBackground: @sapUiBlockLayerBackground;
 @_sap_m_LightBox_ContainerBackground: @sapUiGlobalBackgroundColor;
 
@@ -42,9 +43,14 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 	max-height: calc(~"100% - 2rem");
 }
 
+.sap-phone .sapMLightBox {
+	max-width: calc(~"100% - 1rem");
+	max-height: calc(~"100% - 1rem");
+}
+
 .sapMLightBoxFooter {
-  background-color: @sapUiPageFooterBackground;
-  border-top: 1px solid @sapUiPageFooterBorderColor;
+	background-color: @sapUiPageFooterBackground;
+	border-top: 1px solid @sapUiPageFooterBorderColor;
 }
 
 /* ==========================================================================
@@ -86,7 +92,7 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 	-webkit-box-orient: horizontal;
 	-webkit-box-align: start;
 	justify-content: space-between;
-	height: 3rem;
+	height: @_sap_m_LightBox_FooterOneLineHeightMobile;
 	align-items: flex-end;
 	border-radius: 0 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius;
 
@@ -96,7 +102,7 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 }
 
 .sapMLightBoxSubtitle {
-	margin-top: 0.5rem;
+	margin-top: @_sap_m_LightBox_SubtitleMarginTop;
 }
 
 .sapMLightBoxTitleSection {
@@ -133,22 +139,23 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 	text-overflow: ellipsis;
 }
 
-/* Footer title
+/* ==========================================================================
+   Footer title
   ========================================================================== */
 
 .sapMLightBoxImageContainer {
-	min-height: (@_sap_m_LightBox_MinHeight - 4rem); //TODO: ma trqq go calnem
+	min-height: calc(@_sap_m_LightBox_MinHeight - 3.5rem);
 	position: absolute;
 	top: 0;
-	bottom: 2.5rem;
+	bottom: @_sap_m_LightBox_FooterOneLineHeightMobile;
 	width: 100%;
 }
 
 .sapMLightBoxImageContainerTwoHeaders {
+	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightMobile);
 	position: absolute;
 	top: 0;
 	width: 100%;
-	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightMobile);
 }
 
 /* ==========================================================================
@@ -237,33 +244,42 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 
 .sapMLightBox .sapMLightBoxErrorContainer .sapUiIcon::before,
 .sapMLightBox .sapMLightBoxErrorContainerTwoHeaders .sapUiIcon::before {
-  color: @sapUiContentNonInteractiveIconColor;
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 /* ==========================================================================
    Compact
   ========================================================================== */
 
-.sapUiSizeCompact .sapMLightBoxImageContainerTwoHeaders {
-	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightDesktop);
-}
+.sapUiSizeCompact {
 
-.sapUiSizeCompact .sapMLightBoxFooter {
-	height: 2.5rem;
-	&.sapMLightBoxFooterTwoLines {
-		height: 4rem;
+	.sapMLightBoxImageContainer {
+		bottom: @_sap_m_LightBox_FooterOneLineHeightDesktop;
 	}
-}
 
-.sapUiSizeCompact .sapMLightBoxTitleSection {
-	padding: 0.75rem 0;
-}
+	.sapMLightBoxImageContainerTwoHeaders {
+		bottom: @_sap_m_LightBox_FooterTwoLinesHeightDesktop;
+		height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightDesktop);
+	}
 
-.sapUiSizeCompact .sapMLightBoxFooter .sapMBtn {
-	padding-right: 0.5rem;
-	margin-bottom: 0.25rem;
-}
+	.sapMLightBoxFooter {
+		height: 2.5rem;
 
-.sapUiSizeCompact .sapMLightBox .sapMLightBoxErrorContainerTwoHeaders {
-	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightDesktop);
+		&.sapMLightBoxFooterTwoLines {
+			height: 4rem;
+		}
+	}
+
+	.sapMLightBoxTitleSection {
+		padding: 0.75rem 0;
+	}
+
+	.sapMLightBoxFooter .sapMBtn {
+		padding-right: 0.5rem;
+		margin-bottom: 0.25rem;
+	}
+
+	.sapMLightBox .sapMLightBoxErrorContainerTwoHeaders {
+		height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightDesktop);
+	}
 }

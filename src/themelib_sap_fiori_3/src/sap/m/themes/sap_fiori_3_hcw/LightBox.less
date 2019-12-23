@@ -1,11 +1,48 @@
-/* ================================= */
+/* --------------------------------- */
 /* CSS for control sap.m/LightBox    */
-/* Quartz High Contrast White theme  */
-/* ================================= */
+/* Quartz High Contrast Black theme  */
+/* --------------------------------- */
 
-/* ==========================================================================
-   Overlay
-  ========================================================================== */
+/* ------------------------------- */
+/* Variables overriding            */
+/* ------------------------------- */
+
+@_sap_m_LightBox_SubtitleMarginTop: 0.25rem;
+
+/* ------------------------------- */
+/* Footer                          */
+/* ------------------------------- */
+
+.sapMLightBoxFooter {
+	align-items: center;
+
+	.sapMLightBoxTitleSection {
+		margin: 0 0 0 1rem;
+		padding: 0;
+	}
+
+	.sapMBtn {
+		margin: 0 1rem 0;
+		padding-right: 0;
+	}
+}
+
+.sapUiSizeCompact {
+
+	.sapMLightBoxFooter {
+
+		.sapMBtn {
+			padding-right: 0;
+			margin-bottom: 0;
+		}
+	}
+
+}
+
+/* ------------------------------- */
+/* Overlay                         */
+/* ------------------------------- */
+
 .sapMLightBox + .sapUiBLy {
 	background: @sapUiBlockLayerBackground;
 	opacity: 0.3;
