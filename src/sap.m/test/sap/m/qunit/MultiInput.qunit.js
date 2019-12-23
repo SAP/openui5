@@ -2390,18 +2390,15 @@ sap.ui.define([
 	QUnit.test("Do not listen for resize while resizing", function (assert) {
 		// Setup
 		var oRegisterResizeSpy = this.spy(this.multiInput, "_registerResizeHandler"),
-			oDeregisterResizeSpy = this.spy(this.multiInput, "_deregisterResizeHandler"),
 			oMaxWidthSetterSpy = this.spy(this.multiInput._tokenizer, "setMaxWidth");
 
 		// Act
 		this.multiInput._onResize();
 
 		//Assert
-		assert.ok(oDeregisterResizeSpy.calledOnce, "Deregister resize handler");
 		assert.ok(oRegisterResizeSpy.calledOnce, "Register resize handler");
 		assert.ok(oMaxWidthSetterSpy.calledOnce, "Tokens MaxWidth setter called");
-		assert.ok(oDeregisterResizeSpy.calledBefore(oRegisterResizeSpy), "Deregister, do something and register again");
-		assert.ok(oDeregisterResizeSpy.calledBefore(oMaxWidthSetterSpy), "Deregister and the resize");
+		assert.ok(oRegisterResizeSpy.calledAfter(oMaxWidthSetterSpy), "Register and the resize");
 		assert.ok(oMaxWidthSetterSpy.calledBefore(oRegisterResizeSpy), "Finally, subscribe again for the resize handler");
 	});
 
