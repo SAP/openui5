@@ -18,10 +18,17 @@ sap.ui.define([
 	 * @since 1.58
 	 */
 	return {
+
 		/**
+		 * Determines the object with the given <code>oOptions</code>, <code>sType</code> and <code>oTargetCreateInfo</code>
+		 *
+		 * @param {object} oOptions The options of the desired object
+		 * @param {string} sType The type of the desired object, e.g. 'View', 'Component', etc.
+		 * @param {object} oTargetCreateInfo The object which contains extra information for the creation of the target
+		 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
 		 * @private
 		 */
-		_getObjectWithGlobalId : function (oOptions, sType, oInfo) {
+		_getObjectWithGlobalId : function (oOptions, sType, oTargetCreateInfo) {
 			var that = this,
 				vPromiseOrObject,
 				sName,
@@ -29,7 +36,7 @@ sap.ui.define([
 				oOwnerComponent = this._oComponent,
 				aWrittenIds = [];
 
-			oInfo = oInfo || {};
+			oTargetCreateInfo = oTargetCreateInfo || {};
 
 			function fnCreateObjectAsync() {
 				switch (sType) {
@@ -46,7 +53,7 @@ sap.ui.define([
 						return View._legacyCreate(oOptions);
 					case "Component":
 						// create the RouterHashChanger for the component which is going to be created
-						var oRouterHashChanger = that._createRouterHashChanger(oInfo.prefix);
+						var oRouterHashChanger = that._createRouterHashChanger(oTargetCreateInfo.prefix);
 						if (oRouterHashChanger) {
 							oOptions.settings = oOptions.settings || {};
 							// put the RouterHashChanger as a private property to the Component constructor
@@ -70,8 +77,8 @@ sap.ui.define([
 						oInstanceCache[sId] = oObject;
 					});
 
-					if (oInfo.afterCreate) {
-						oInfo.afterCreate(oObject);
+					if (oTargetCreateInfo.afterCreate) {
+						oTargetCreateInfo.afterCreate(oObject);
 					}
 
 					that.fireCreated({
@@ -125,6 +132,13 @@ sap.ui.define([
 			return vPromiseOrObject;
 		},
 
+		/**
+		 * Determines the view with the given <code>oOptions</code>
+		 *
+		 * @param {object} oOptions The options of the desired object
+		 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
+		 * @private
+		 */
 		_getViewWithGlobalId : function (oOptions) {
 			if (oOptions && !oOptions.name) {
 				oOptions.name = oOptions.viewName;
@@ -132,10 +146,25 @@ sap.ui.define([
 			return this._getObjectWithGlobalId(oOptions, "View");
 		},
 
-		_getComponentWithGlobalId : function(oOptions, oInfo) {
-			return this._getObjectWithGlobalId(oOptions, "Component", oInfo);
+		/**
+		 * Determines the component with the given <code>oOptions</code> and <code>oTargetCreateInfo</code>
+		 *
+		 * @param {object} oOptions The options of the desired object
+		 * @param {object} oTargetCreateInfo The object which contains extra information for the creation of the target
+		 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
+		 * @private
+		 */
+		_getComponentWithGlobalId : function(oOptions, oTargetCreateInfo) {
+			return this._getObjectWithGlobalId(oOptions, "Component", oTargetCreateInfo);
 		},
 
+		/**
+		 * Creates a new hash changer for the nested component
+		 *
+		 * @param {string} [sPrefix] The prefix of the target
+		 * @returns {sap.ui.core.routing.HashChanger} The created sub hash changer, if creation was not possible the hash changer of the current component is returned
+		 * @private
+		 */
 		_createRouterHashChanger: function(sPrefix) {
 			var oRouterHashChanger;
 

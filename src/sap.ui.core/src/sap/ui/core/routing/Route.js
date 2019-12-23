@@ -247,7 +247,7 @@ sap.ui.define([
 			 * Converts the different format of targets info into the object format
 			 * which has the key of a target saved under the "name" property
 			 *
-			 * @param {string|string[]|object|object[]} vTargetsInfo The key of the target or
+			 * @param {string|string[]|object|object[]} vTarget The key of the target or
 			 *  an object which has the key of the target under property 'name' as specified
 			 *  in the {@link #constructor} or an array of keys or objects
 			 * @return {object[]} Array of objects and each of the objects contains at least
@@ -346,7 +346,7 @@ sap.ui.define([
 			/**
 			 * Returns whether the given hash can be matched by the Route
 			 *
-			 * @param {string} hash which will be tested by the Route
+			 * @param {string} sHash which will be tested by the Route
 			 * @return {boolean} whether the hash can be matched
 			 * @public
 			 * @since 1.58.0

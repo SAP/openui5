@@ -22,8 +22,8 @@ sap.ui.define([
 		/**
 		 * Creates a view and puts it in an aggregation of a control that has been defined in the {@link #constructor}.
 		 *
-		 * @param {*} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
-		 * @return {Promise} resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with error information
+		 * @param {*} [vData] An object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
+		 * @return {Promise} Resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with error information
 		 * @private
 		 */
 		display: function (vData) {
@@ -33,6 +33,12 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a view and puts it in an aggregation of a control that has been defined in the {@link #constructor}.
+		 *
+		 * @param {*} [vData] An object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
+		 * @param {Promise} oSequencePromise Promise chain for resolution in the correct order
+		 * @param {object} [oTargetCreateInfo] Additional information  for the component creation. Currently the object only contains the prefix for the routerHashChanger
+		 * @returns {Promise} Resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with error information
 		 * @private
 		 */
 		_display: function (vData, oSequencePromise, oTargetCreateInfo) {
@@ -162,6 +168,7 @@ sap.ui.define([
 		 * @param {object} [vData] an object that will be passed to the display event in the data property. If the
 		 * 		target has parents, the data will also be passed to them.
 		 * @param {Promise} oSequencePromise Promise chain for resolution in the correct order
+		 * @param {object} oTargetCreateInfo Additional information  for the component creation. Currently the object only contains the prefix for the routerHashChanger
 		 * @return {Promise} resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with an error message
 		 * @private
 		 */
@@ -375,7 +382,7 @@ sap.ui.define([
 		/**
 		 * Validates the target options, will also be called from the route but route will not log errors
 		 *
-		 * @param oParentInfo
+		 * @param {object} oParentInfo The parent info {name: *, view: *, control: *}
 		 * @returns {boolean|string} returns true if it's valid otherwise the error message
 		 * @private
 		 */
@@ -404,6 +411,11 @@ sap.ui.define([
 		},
 
 		/**
+		 * Refuses the target with the name <code>sName</code> by throwing an error asynchronously
+		 *
+		 * @param {string} sName The name of the target
+		 * @param {string} sMessage The error message with more insights why the target is invalid
+		 * @returns {Promise} The rejected promise
 		 * @private
 		 */
 		_refuseInvalidTarget : function(sName, sMessage) {

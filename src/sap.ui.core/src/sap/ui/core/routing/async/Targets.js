@@ -26,8 +26,9 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		},
 
 		/**
-		 * hook to distinguish between the router and an application calling this
-		 * @param {array|object} vTargets targets or single target to be displayed
+		 * Hook to distinguish between the router and an application calling this
+		 *
+		 * @param {string|string[]|object|object[]} vTargets targets or single target to be displayed
 		 * @param {object} vData  an object that will be passed to the display event in the data property. If the
 				target has parents, the data will also be passed to them.
 		 * @param {string} sTitleTarget the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged titleChanged} event
@@ -65,12 +66,13 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		/**
 		 * Displays a single target
 		 *
-		 * @param {string} sName name of the single target
+		 * @param {object} oTargetInfo the object containing information (e.g. name) about the single target
 		 * @param {any} vData an object that will be passed to the display event in the data property.
 		 * @param {Promise} oSequencePromise the promise which for chaining
 		 * @param {object} [oTargetCreateInfo] the object which contains extra information for the creation of the target
 		 * @param {function} [oTargetCreateInfo.afterCreate] the function which is called after a target View/Component is instantiated
 		 * @param {string} [oTargetCreateInfo.prefix] the prefix which will be used by the RouterHashChanger of the target
+		 * @returns {Promise} Resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with error information
 		 * @private
 		 */
 		_displaySingleTarget : function (oTargetInfo, vData, oSequencePromise, oTargetCreateInfo) {
