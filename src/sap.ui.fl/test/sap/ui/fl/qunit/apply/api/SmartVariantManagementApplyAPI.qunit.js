@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Control",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangePersistence,
@@ -25,6 +26,7 @@ sap.ui.define([
 	UIComponent,
 	Control,
 	Settings,
+	FlexState,
 	sinon
 ) {
 	"use strict";
@@ -35,6 +37,7 @@ sap.ui.define([
 		beforeEach : function() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(FlexState, "initialize").resolves();
 		},
 		afterEach: function() {
 			if (this.oControl) {
@@ -66,9 +69,10 @@ sap.ui.define([
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").withArgs(this.oControl).returns({
 				getChangesForVariant: fnStub
 			});
-			SmartVariantManagementApplyAPI.loadChanges({control: this.oControl});
-
-			assert.ok(fnStub.calledWith("persistencyKey", "sStableId", mPropertyBag));
+			return SmartVariantManagementApplyAPI.loadChanges({control: this.oControl})
+				.then(function() {
+					assert.ok(fnStub.calledWith("persistencyKey", "sStableId", mPropertyBag));
+				});
 		});
 
 		QUnit.test("When loadChanges() is called all arguments are passed correctly and the return flow is correct", function (assert) {
@@ -93,10 +97,11 @@ sap.ui.define([
 				}
 			});
 
-			var aVariantChange = SmartVariantManagementApplyAPI.loadChanges({control: this.oControl});
-
-			assert.ok(getChangePersistenceForControlStub.calledWith(this.oControl));
-			assert.equal(aVariantChange, aChanges);
+			return SmartVariantManagementApplyAPI.loadChanges({control: this.oControl})
+				.then(function(aVariantChange) {
+					assert.ok(getChangePersistenceForControlStub.calledWith(this.oControl));
+					assert.equal(aVariantChange, aChanges);
+				}.bind(this));
 		});
 
 		QUnit.test("When getChangeById() is called all arguments are passed correctly and the return flow is correct", function (assert) {
