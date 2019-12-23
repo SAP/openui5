@@ -463,6 +463,7 @@ sap.ui.define([
 				},
 				"sap.m.MenuButton": "sap/m/flexibility/MenuButton",
 				"sap.m.OverflowToolbar":"sap/m/flexibility/OverflowToolbar",
+				"sap.m.OverflowToolbarButton": "sap/m/flexibility/OverflowToolbarButton",
 				"sap.m.Page": "sap/m/flexibility/Page",
 				"sap.m.Panel": "sap/m/flexibility/Panel",
 				"sap.m.Popover": "sap/m/flexibility/Popover",
