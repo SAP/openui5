@@ -70,6 +70,11 @@ sap.ui.define([
 		variantsMap: prepareVariantsMap
 	};
 
+	function _updateComponentData(mPropertyBag) {
+		var oComponent = Component.get(mPropertyBag.componentId);
+		_mInstances[mPropertyBag.reference].componentData = oComponent ? oComponent.getComponentData() : mPropertyBag.componentData;
+	}
+
 	function _enhancePropertyBag(mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
 		mPropertyBag.componentData = mPropertyBag.componentData || oComponent.getComponentData() || {};
@@ -86,7 +91,8 @@ sap.ui.define([
 
 		if (!_mInstances[sReference].preparedMaps[sMapName]) {
 			var mPropertyBag = {
-				storageResponse: _mInstances[sReference].unfilteredStorageResponse,
+				unfilteredStorageResponse: _mInstances[sReference].unfilteredStorageResponse,
+				storageResponse: _mInstances[sReference].storageResponse,
 				componentId: _mInstances[sReference].componentId,
 				componentData: _mInstances[sReference].componentData
 			};
@@ -232,14 +238,15 @@ sap.ui.define([
 
 			return loadFlexData(mPropertyBag);
 		}.bind(null, mPropertyBag))
-			.then(function(mPropertyBag, mResponse) {
-				// filtering should only be done once; can be reset via function
-				if (!_mInstances[mPropertyBag.reference].storageResponse) {
-					_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
-				}
+		.then(function(mPropertyBag, mResponse) {
+			// filtering should only be done once; can be reset via function
+			if (!_mInstances[mPropertyBag.reference].storageResponse) {
+				_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
+				_updateComponentData(mPropertyBag);
 				//for the time being ensure variantSection is available, remove once everyone is asking for getVariantState
 				FlexState.getVariantsState(mPropertyBag.reference);
-			}.bind(null, mPropertyBag));
+			}
+		}.bind(null, mPropertyBag));
 	};
 
 	/**
@@ -303,8 +310,6 @@ sap.ui.define([
 
 	FlexState.getVariantsState = function(sReference) {
 		var oVariantsMap = getVariantsMap(sReference);
-		// temporary until ChangePersistence.getChangesForComponent is gone
-		_mInstances[sReference].unfilteredStorageResponse.changes.variantSection = oVariantsMap;
 		return oVariantsMap;
 	};
 
@@ -326,7 +331,7 @@ sap.ui.define([
 	};
 	// temporary function until the maps are ready
 	FlexState.getFlexObjectsFromStorageResponse = function(sReference) {
-		return _mInstances[sReference].unfilteredStorageResponse.changes;
+		return _mInstances[sReference] && _mInstances[sReference].unfilteredStorageResponse.changes;
 	};
 
 	// temporary function until Variant Controller map is removed

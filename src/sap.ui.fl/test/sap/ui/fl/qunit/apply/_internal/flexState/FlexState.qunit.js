@@ -58,7 +58,7 @@ sap.ui.define([
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "_callPrepareFunction").callsFake(_mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
-			this.oFilterStub = sandbox.stub(LayerUtils, "filterChangeDefinitionsByMaxLayer");
+			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
 		},
 		afterEach: function () {
 			FlexState.clearState();
@@ -80,10 +80,9 @@ sap.ui.define([
 				assert.equal(this.oFilterStub.callCount, 0, "nothing got filtered");
 				return FlexState.getStorageResponse(sReference);
 			}.bind(this))
-			.then(function (mStorageResponse) {
+			.then(function () {
 				assert.deepEqual(FlexState.getVariantsState(sReference), _mockPrepareFunctions("variantsMap"), "then variants map was prepared correctly");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "variant prepare function was not called again");
-				assert.deepEqual(mStorageResponse.changes.variantSection, _mockPrepareFunctions("variantsMap"), "then for the time being the correct variantsSection is prepared");
 			}.bind(this));
 		});
 
@@ -96,11 +95,10 @@ sap.ui.define([
 				FlexState.clearPreparedMaps(sReference);
 				return FlexState.getStorageResponse(sReference);
 			}.bind(this))
-			.then(function (mStorageResponse) {
+			.then(function () {
 				FlexState.getVariantsState(sReference);
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "then prepare function was called again");
 				assert.ok(this.oCallPrepareFunctionStub.secondCall.calledWith("variantsMap"), "then prepare function for variants map was called again");
-				assert.deepEqual(mStorageResponse.changes.variantSection, _mockPrepareFunctions("variantsMap"), "then variant section is still set in the storage response");
 			}.bind(this));
 		});
 
@@ -320,7 +318,7 @@ sap.ui.define([
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "_callPrepareFunction").callsFake(_mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(true);
-			this.oFilterStub = sandbox.stub(LayerUtils, "filterChangeDefinitionsByMaxLayer");
+			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
 		},
 		afterEach: function () {
 			FlexState.clearState();

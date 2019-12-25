@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/rta/api/startKeyUserAdaptation",
 	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -23,6 +24,7 @@ function (
 	VariantModel,
 	startKeyUserAdaptation,
 	Log,
+	StorageUtils,
 	jQuery,
 	sinon
 ) {
@@ -33,6 +35,7 @@ function (
 	QUnit.module("sap.ui.fl.FlexControllerFactory", {
 		beforeEach: function () {
 			this.oInitializeStub = sandbox.stub(FlexState, "initialize").resolves();
+			sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(StorageUtils.getEmptyFlexDataResponse());
 		},
 		afterEach: function () {
 			sandbox.restore();

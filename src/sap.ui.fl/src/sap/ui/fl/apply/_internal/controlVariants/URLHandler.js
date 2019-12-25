@@ -7,17 +7,21 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/base/util/merge",
+	"sap/base/util/ObjectPath",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/thirdparty/hasher"
+	"sap/ui/thirdparty/hasher",
+	"sap/base/util/includes"
 ], function(
 	Component,
 	Utils,
 	Log,
 	merge,
+	ObjectPath,
 	isEmptyObject,
 	ManagedObjectObserver,
-	hasher
+	hasher,
+	includes
 ) {
 	"use strict";
 
@@ -32,29 +36,49 @@ sap.ui.define([
 	 * @returns {boolean} oIfUpdateIsRequiredWithCurrentVariants.updateRequired - If update is required
 	 * @returns {object} oIfUpdateIsRequiredWithCurrentVariants.currentVariantReferences - Current variant references
 	 */
-	function getCurrentVariantsAndCheckIfHashUpdateIsRequired(oModel, oNewParsedHash) {
+	function _getUpdatedURLParameters(oNewParsedHash, oModel) {
 		var aNewHashParameters = oNewParsedHash.params[URLHandler.variantTechnicalParameterName];
-
-		return aNewHashParameters.reduce(function (mResult, sVariantReference) {
+		var aAddedVMReferences = [];
+		return aNewHashParameters.reduce(function (aResultantParameters, sVariantReference) {
 			var sVariantManagementReference = oModel.getVariantManagementReference(sVariantReference).variantManagementReference;
-			if (
-				// there exists a variant management reference AND current variant has changed
-				sVariantManagementReference
-				&& oModel.oData[sVariantManagementReference].currentVariant !== sVariantReference
-			) {
-				mResult.updateRequired = true;
+
+			if (sVariantManagementReference) {
+				// check if a URL parameter for this variant management reference was already added
+				if (includes(aAddedVMReferences, sVariantManagementReference)) {
+					return aResultantParameters;
+				}
+				aAddedVMReferences.push(sVariantManagementReference);
+			}
+			// if there exists a variant management reference AND current variant has changed
+			if (sVariantManagementReference && oModel.oData[sVariantManagementReference].currentVariant !== sVariantReference) {
 				if (oModel.oData[sVariantManagementReference].currentVariant !== oModel.oData[sVariantManagementReference].defaultVariant) {
 					// the current variant is not equal to default variant
 					// add the updated variant
-					mResult.currentVariantReferences.push(oModel.oData[sVariantManagementReference].currentVariant);
+					aResultantParameters.push(oModel.oData[sVariantManagementReference].currentVariant);
 				}
 			} else {
 				// when the variant management reference is unknown OR the current variant hasn't changed
-				mResult.currentVariantReferences.push(sVariantReference);
+				aResultantParameters.push(sVariantReference);
 			}
 
-			return mResult;
-		}, {updateRequired: false, currentVariantReferences: []});
+			return aResultantParameters;
+		}, []);
+	}
+
+	function _checkAndUpdateURLParameters(oParsedHash, oModel) {
+		var bRelevantParameters = ObjectPath.get(["params", URLHandler.variantTechnicalParameterName], oParsedHash);
+		var aUpdatedParameters = bRelevantParameters ? _getUpdatedURLParameters(oParsedHash, oModel) : [];
+
+		URLHandler.update({
+			updateURL: !oModel._bDesignTimeMode, // not required in UI Adaptation mode
+			parameters: aUpdatedParameters,
+			updateHashEntry: true,
+			model: oModel
+		});
+
+		if (oModel._bDesignTimeMode) {
+			URLHandler.clearAllVariantURLParameters({model: oModel});
+		}
 	}
 
 	/**
@@ -75,24 +99,7 @@ sap.ui.define([
 		try {
 			var oURLParsing = oUshellContainer.getService("URLParsing");
 			var oNewParsedHash = oURLParsing.parseShellHash(sNewHash);
-
-			var bRelevantParameters = oNewParsedHash && oNewParsedHash.params.hasOwnProperty(URLHandler.variantTechnicalParameterName);
-
-			if (bRelevantParameters) {
-				var mUpdatedReferences = getCurrentVariantsAndCheckIfHashUpdateIsRequired(oModel, oNewParsedHash);
-				if (mUpdatedReferences.updateRequired) {
-					URLHandler.update({
-						updateURL: !oModel._bDesignTimeMode, // not required in UI Adaptation mode
-						parameters: mUpdatedReferences.currentVariantReferences,
-						updateHashEntry: true,
-						model: oModel
-					});
-				}
-
-				if (oModel._bDesignTimeMode) {
-					URLHandler.clearAllVariantURLParameters({model: oModel});
-				}
-			}
+			_checkAndUpdateURLParameters(oNewParsedHash, oModel);
 		} catch (oError) {
 			Log.error(oError.message);
 		}
@@ -246,13 +253,8 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.variants.VariantModel
 		 */
 		initialize: function (mPropertyBag) {
-			var mURLParameters = Utils.getParsedURLHash().params;
-			mPropertyBag.model._oHashData = {
-				hashParams: (mURLParameters && mURLParameters[URLHandler.variantTechnicalParameterName]) || [],
-				controlPropertyObservers: [],
-				variantControlIds: []
-			};
-
+			var oParsedHash = Utils.getParsedURLHash();
+			_checkAndUpdateURLParameters(oParsedHash, mPropertyBag.model);
 			URLHandler.attachHandlers(mPropertyBag);
 		},
 
@@ -378,6 +380,13 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.variants.VariantModel
 		 */
 		update: function(mPropertyBag) {
+			if (!mPropertyBag.model._oHashData) {
+				mPropertyBag.model._oHashData = {
+					hashParams: [],
+					controlPropertyObservers: [],
+					variantControlIds: []
+				};
+			}
 			if (!mPropertyBag || !Array.isArray(mPropertyBag.parameters)) {
 				Log.info("Variant URL parameters could not be updated since invalid parameters were received");
 				return;

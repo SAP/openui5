@@ -201,9 +201,43 @@
 				"service":"",
 				"user":""
 			}
+		},
+		{
+			"fileName":"invisibleVariant",
+			"fileType":"ctrl_variant",
+			"variantManagementReference":"vmReference2",
+			"variantReference":"",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{
+				"title":"variant A"
+			},
+			"layer":"CUSTOMER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
 		}
 	],
 	"variantChanges": [
+		{
+			"fileName": "variantChange3",
+			"fileType": "ctrl_variant_change",
+			"changeType": "setVisible",
+			"selector": {
+				"id": "invisibleVariant"
+			},
+			"content": {
+				"visible": false,
+				"createdByReset": true
+			}
+		},
 		{
 			"fileName": "id_1507716136285_38_setTitle",
 			"fileType": "ctrl_variant_change",

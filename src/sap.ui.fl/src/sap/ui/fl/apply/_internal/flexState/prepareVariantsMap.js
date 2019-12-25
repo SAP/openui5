@@ -68,6 +68,21 @@ sap.ui.define([
 		return oVariantsMapClone;
 	}
 
+	// filter invisible variants
+	function filterInvisibleVariants(oVariantsMap) {
+		var oVariantsMapClone = merge({}, oVariantsMap);
+		values(oVariantsMap).forEach(function(oVariant) {
+			var aSetVisibleChanges = ObjectPath.get("variantChanges.setVisible", oVariant);
+			if (aSetVisibleChanges && aSetVisibleChanges.length > 0) {
+				var oSetVisibleActiveChange = getActiveChange(aSetVisibleChanges);
+				if (!oSetVisibleActiveChange.getContent().visible && oSetVisibleActiveChange.getContent().createdByReset) {
+					delete oVariantsMapClone[oVariant.content.fileName];
+				}
+			}
+		});
+		return oVariantsMapClone;
+	}
+
 	// resolve references
 	function resolveReferences(oVariantsMap) {
 		var oVariantsMapClone = merge({}, oVariantsMap);
@@ -109,6 +124,7 @@ sap.ui.define([
 		oVariantsMap = addVariants(oVariantsMap, oStorageResponse.variants);
 		oVariantsMap = addVariantDependentControlChanges(oVariantsMap, oStorageResponse.variantDependentControlChanges);
 		oVariantsMap = addVariantChanges(oVariantsMap, oStorageResponse.variantChanges);
+		oVariantsMap = filterInvisibleVariants(oVariantsMap);
 		oVariantsMap = resolveReferences(oVariantsMap);
 
 		return oVariantsMap;
@@ -312,7 +328,8 @@ sap.ui.define([
 	 * Prepares the variants map from the flex response for the passed flex state
 	 *
 	 * @param {object} mPropertyBag
-	 * @param {object} mPropertyBag.storageResponse - Flex response
+	 * @param {object} mPropertyBag.storageResponse - Filtered flex response
+	 * @param {object} mPropertyBag.unfilteredStorageResponse - Unfiltered flex response
 	 * @param {string} mPropertyBag.componentId - Component id
 	 *
 	 * @returns {object} Prepared variants map
@@ -329,16 +346,11 @@ sap.ui.define([
 			return {};
 		}
 
-		var oComponentData = mPropertyBag.componentData;
-		var oComponent = Component.get(mPropertyBag.componentId);
-		if (isEmptyObject(oComponentData) && oComponent) {
-			oComponentData = oComponent.getComponentData();
-		}
-		var aTechnicalParameters = ObjectPath.get(["technicalParameters", VariantsApplyUtil.VARIANT_TECHNICAL_PARAMETER], oComponentData) || [];
+		var aTechnicalParameters = ObjectPath.get(["technicalParameters", VariantsApplyUtil.VARIANT_TECHNICAL_PARAMETER], mPropertyBag.componentData) || [];
 
 		var oVariantsMap = getVariantsMap(mPropertyBag.storageResponse.changes);
 		oVariantsMap = assembleResult(oVariantsMap, mPropertyBag.storageResponse.changes.variantManagementChanges, aTechnicalParameters);
-		merge(mPropertyBag.storageResponse.changes, {
+		merge(mPropertyBag.unfilteredStorageResponse.changes, {
 			variantSection: oVariantsMap
 		});
 		return oVariantsMap;

@@ -8,12 +8,14 @@ sap.ui.define([
 	"sap/base/security/encodeURLParameters",
 	"sap/base/Log",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils"
+	"sap/ui/fl/LayerUtils",
+	"sap/base/util/isEmptyObject"
 ], function (
 	encodeURLParameters,
 	Log,
 	Layer,
-	LayerUtils
+	LayerUtils,
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -244,6 +246,22 @@ sap.ui.define([
 				variantDependentControlChanges: [],
 				variantManagementChanges: [],
 				ui2personalization: {}
+			});
+		},
+
+		/**
+		 * Internal function to identify if storage response has flex objects
+		 *
+		 * @param {object} oResponse Storage response
+		 * @returns {boolean} Indicated if storage response contains flex objects
+		 * @ui5-restricted sap.ui.fl
+		 */
+		isStorageResponseFilled: function (oResponse) {
+			return Object.keys(oResponse || {}).some(function(sKey) {
+				if (Array.isArray(oResponse[sKey])) {
+					return oResponse[sKey].length !== 0;
+				}
+				return !isEmptyObject(oResponse[sKey]);
 			});
 		}
 	};

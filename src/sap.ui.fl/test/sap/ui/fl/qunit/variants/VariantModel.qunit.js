@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -37,6 +38,7 @@ function(
 	UIComponent,
 	ComponentContainer,
 	XMLView,
+	FlexState,
 	jQuery,
 	sinon
 ) {
@@ -53,6 +55,14 @@ function(
 	};
 
 	QUnit.module("Given an instance of VariantModel", {
+		before: function() {
+			return FlexState.initialize({
+				reference: "MyComponent",
+				componentId: "RTADemoAppMD",
+				componentData: {},
+				manifest: {}
+			});
+		},
 		beforeEach: function() {
 			var oManifestObj = {
 				"sap.app": {
@@ -78,6 +88,7 @@ function(
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns(this.oComponent.name);
 			sandbox.stub(URLHandler, "attachHandlers");
+			sandbox.stub(FlexState, "getVariantsState").returns({});
 
 			this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
 			this.oData = {
@@ -111,18 +122,21 @@ function(
 				}
 			};
 
-
 			this.fnRevertChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges").resolves();
 			sandbox.spy(URLHandler, "initialize");
 			sandbox.spy(this.oFlexController._oChangePersistence._oVariantController, "assignResetMapListener");
-			this.oModel = new VariantModel(this.oData, this.oFlexController, this.oComponent);
+			sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "fillVariantModel").returns(this.oData);
+			this.oModel = new VariantModel({}, this.oFlexController, this.oComponent);
 			this.fnLoadSwitchChangesStub = sandbox.stub(this.oModel.oChangePersistence, "loadSwitchChangesMapForComponent").returns({changesToBeReverted:[], changesToBeApplied:[]});
 		},
 		afterEach: function() {
 			sandbox.restore();
 			this.oModel.destroy();
 			delete this.oFlexController;
+		},
+		after: function() {
+			FlexState.clearState();
 		}
 	}, function() {
 		QUnit.test("when initializing a variant model instance", function(assert) {
@@ -1563,6 +1577,14 @@ function(
 	});
 
 	QUnit.module("Given a VariantModel with no data and a VariantManagement control", {
+		before: function() {
+			return FlexState.initialize({
+				reference: "MyComponent",
+				componentId: "RTADemoAppMD",
+				componentData: {},
+				manifest: {}
+			});
+		},
 		beforeEach : function() {
 			var oManifestObj = {
 				"sap.app": {
@@ -1591,22 +1613,29 @@ function(
 				}.bind(this)
 			};
 
-			this.fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
-
+			sandbox.stub(FlexState, "getVariantsState").returns({});
+			this.fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
-			this.oModel = new VariantModel({}, this.oFlexController, oComponent);
-			this.fnLoadSwitchChangesStub = sandbox.stub(this.oModel.oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
 			this.fnRevertChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges").resolves();
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves();
 			this.oAttachHandlersStub = sandbox.stub(URLHandler, "attachHandlers");
+
+			sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "fillVariantModel").returns(this.oData);
+			sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+
+			this.oModel = new VariantModel({}, this.oFlexController, oComponent);
+			this.fnLoadSwitchChangesStub = sandbox.stub(this.oModel.oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
 		},
 		afterEach : function() {
 			sandbox.restore();
 			this.oModel.destroy();
 			this.oVariantManagement.destroy();
 			delete this.oFlexController;
+		},
+		after: function () {
+			FlexState.clearState();
 		}
 	}, function() {
 		QUnit.test("when calling 'setModel' of VariantManagement control", function(assert) {
@@ -1620,6 +1649,7 @@ function(
 		});
 
 		QUnit.test("when variant management controls are initialized with with 'updateVariantInURL' property set and default (false)", function(assert) {
+			this.oAttachHandlersStub.resetHistory();
 			var oVariantManagementWithURLUpdate = new VariantManagement("varMgmtRef2", {updateVariantInURL: true});
 			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 			oVariantManagementWithURLUpdate.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
@@ -1743,6 +1773,14 @@ function(
 	});
 
 	QUnit.module("Given a variant management control in personalization mode", {
+		before: function() {
+			return FlexState.initialize({
+				reference: "MockController.Component",
+				componentId: "testComponent",
+				componentData: {},
+				manifest: {}
+			});
+		},
 		beforeEach: function () {
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
@@ -1765,7 +1803,7 @@ function(
 				}
 			});
 
-			this.oComp = new MockComponent("testComponent");
+			this.oComp = new MockComponent({id: "testComponent"});
 			this.oFlexController = ChangesController.getFlexControllerInstance(this.oComp);
 			this.oVariantModel = new VariantModel({}, this.oFlexController, this.oComp);
 			this.oComp.setModel(this.oVariantModel, Utils.VARIANT_MODEL_NAME);
@@ -1813,6 +1851,9 @@ function(
 		afterEach: function() {
 			sandbox.restore();
 			this.oCompContainer.destroy();
+		},
+		after: function() {
+			FlexState.clearState();
 		}
 	}, function() {
 		function clickOnVMControl(oVMControl) {

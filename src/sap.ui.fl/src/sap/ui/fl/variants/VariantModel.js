@@ -15,7 +15,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/base/util/merge",
 	"sap/base/util/includes",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/base/util/isEmptyObject"
 ], function(
 	JSONModel,
 	JsControlTreeModifier,
@@ -29,7 +31,9 @@ sap.ui.define([
 	URLHandler,
 	fnBaseMerge,
 	includes,
-	ObjectPath
+	ObjectPath,
+	FlexState,
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -214,6 +218,7 @@ sap.ui.define([
 			if (!oFlexController) {
 				oFlexController = sap.ui.requireSync("sap/ui/fl/FlexControllerFactory").createForControl(oAppComponent);
 			}
+
 			// FlexControllerFactory creates a FlexController instance for an application component,
 			// which creates a ChangePersistence instance,
 			// which creates a VariantController instance.
@@ -227,8 +232,10 @@ sap.ui.define([
 			this._oVariantSwitchPromise = Promise.resolve();
 			this.oVariantController.assignResetMapListener(_resetMapListener.bind(this));
 
-			//initialize hash data
-			URLHandler.initialize({model: this});
+			// set variant model data
+			if (isEmptyObject(oData)) {
+				oData = this.oVariantController.fillVariantModel();
+			}
 
 			if (oData && typeof oData === "object") {
 				Object.keys(oData).forEach(function (sKey) {
@@ -247,6 +254,9 @@ sap.ui.define([
 
 				this.setData(oData);
 			}
+
+			//initialize hash data - variants map & model should exist at this point
+			URLHandler.initialize({model: this});
 		}
 	});
 
@@ -754,7 +764,9 @@ sap.ui.define([
 								user: this.oVariantController.DEFAULT_AUTHOR
 							},
 							content: {
-								title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE")
+								title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
+								favorite: true,
+								visible: true
 							}
 						},
 						controlChanges: [],
