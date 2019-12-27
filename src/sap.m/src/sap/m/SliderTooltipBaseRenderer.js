@@ -13,7 +13,9 @@ sap.ui.define(['sap/ui/core/Renderer'],
 		 * @author SAP SE
 		 * @namespace
 		 */
-		var SliderTooltipBaseRenderer = {};
+		var SliderTooltipBaseRenderer = {
+			apiVersion: 2
+		};
 
 		SliderTooltipBaseRenderer.CSS_CLASS = "sapMSliderTooltip";
 
@@ -24,15 +26,12 @@ sap.ui.define(['sap/ui/core/Renderer'],
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 		 */
 		SliderTooltipBaseRenderer.render = function (oRM, oControl) {
-			oRM.write("<div");
-			oRM.writeControlData(oControl);
-			oRM.writeClasses();
-
-			oRM.write(">");
+			oRM.openStart("div", oControl)
+				.openEnd();
 
 			this.renderTooltipContent(oRM, oControl);
 
-			oRM.write("</div>");
+			oRM.close("div");
 		};
 
 		/**
