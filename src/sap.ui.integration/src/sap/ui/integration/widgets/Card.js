@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/f/CardRenderer",
 	"sap/f/library",
-	"sap/ui/integration/library"
+	"sap/ui/integration/library",
+	"sap/ui/core/InvisibleText"
 ], function (
 	jQuery,
 	Core,
@@ -42,7 +43,8 @@ sap.ui.define([
 	LoaderExtensions,
 	CardRenderer,
 	fLibrary,
-	library
+	library,
+	InvisibleText
 ) {
 	"use strict";
 	/* global Map */
@@ -267,6 +269,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.init = function () {
+		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
+		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this.setModel(new JSONModel(), "parameters");
 		this.setBusyIndicatorDelay(0);
 		this._busyStates = new Map();
@@ -432,6 +436,12 @@ sap.ui.define([
 	Card.prototype.exit = function () {
 		this.destroyManifest();
 		this._busyStates = null;
+		this._oRb = null;
+
+		if (this._ariaText) {
+			this._ariaText.destroy();
+			this._ariaText = null;
+		}
 	};
 
 	/**
@@ -647,7 +657,10 @@ sap.ui.define([
 		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
 			bIsComponent = sCardType && sCardType.toLowerCase() === "component",
 			oManifestContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-			bHasContent = !!oManifestContent;
+			bHasContent = !!oManifestContent,
+			sAriaText = sCardType + " " + this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD");
+
+		this._ariaText.setText(sAriaText);
 
 		if (bHasContent && !sCardType) {
 			Log.error("Card type property is mandatory!");

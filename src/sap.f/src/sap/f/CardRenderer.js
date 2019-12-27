@@ -51,17 +51,8 @@ sap.ui.define([
 		//Accessibility state
 		oRm.writeAccessibilityState(oCard, {
 			role: "region",
-			roledescription: {value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD"), append: true}
+			labelledby: {value: oCard.getId() + "-ariaText", append: true}
 		});
-		if (oHeader) {
-			var oTitle = oHeader._getTitle();
-			if (oTitle) {
-				oRm.writeAccessibilityState(oCard, {
-					labelledby: {value: oTitle.getId(), append: true}
-				});
-			}
-
-		}
 		oRm.writeStyles();
 		oRm.write(">");
 
@@ -77,6 +68,8 @@ sap.ui.define([
 		if (bCardHeaderBottom) {
 			oRm.renderControl(oHeader);
 		}
+
+		oRm.renderControl(oCard._ariaText);
 
 		//end
 		oRm.write("</div>");
