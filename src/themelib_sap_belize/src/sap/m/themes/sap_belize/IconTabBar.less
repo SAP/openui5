@@ -11,9 +11,6 @@
 /* Header Container */
 
 .sapMITH {
-  	background-color: @sapUiObjectHeaderBackground;
-	border-bottom: 0.125rem solid @sapUiObjectHeaderBackground;
-
 	.sapMITBHead {
 		margin-top: 1rem;
 	}
@@ -261,28 +258,5 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus.sapMITBAll,
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 	&::after {
 		border: 1px dashed @sapUiContentFocusColor;
-	}
-}
-
-/* container background design */
-
-.sapMITBBackgroundDesignTranslucent > .sapMITBContainerContent > .sapMITBContent {
-	background-color: fade(@sapUiGroupContentBackground, 60);
-}
-
-/* header background design */
-.sapMITHBackgroundDesignTranslucent {
-	background-color: fade(@sapUiGroupContentBackground, 60);
-
-	.sapMITBWrapper .sapMITHScrollContainer .sapMITBArrowScroll {
-		background: transparent;
-	}
-}
-
-.sapMITHBackgroundDesignTransparent {
-	background: transparent;
-
-	.sapMITHWrapper .sapMITHScrollContainer .sapMITBArrowScroll {
-		background: transparent;
 	}
 }

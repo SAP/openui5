@@ -65,8 +65,15 @@
 @_sap_m_IconTabBar_ArrowScrollPadding: 0.875rem 0.4rem;
 @_sap_m_IconTabBar_SplitContainerArrowScrollPadding: 0.875rem 0.4rem;
 
+// Header
+@_sap_m_IconTabBar_HeaderBackgroundTranslucent: @sapUiObjectHeaderBackground;
+
+@_sap_m_IconTabBar_HeaderBorderBottom: none;
+@_sap_m_IconTabBar_HeaderShadow: 0 0.25rem 0.25rem -0.25rem fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiObjectHeaderBorderColor;
+
 // Content
-@_sap_m_IconTabBar_ContentBackground: @sapBackgroundColor;
+@_sap_m_IconTabBar_ContentBackground: @sapUiBaseBG;
+@_sap_m_IconTabBar_ContentBackgroundTranslucent: @sapUiGroupContentBackground;
 
 // ==================== Compact size ====================
 
@@ -120,14 +127,11 @@
 @_sap_m_IconTabBar_TextHoverColor: lighten(@sapUiGroupTitleTextColor, 10);
 @_sap_m_IconTabBar_SelectedTextColor: @sapUiSelected;
 @_sap_m_IconTabBar_SelectedTextHoverColor: lighten(@sapUiSelected, 10);
-@_sap_m_IconTabBar_HeaderShadow: 0 0.25rem 0.25rem -0.25rem fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiObjectHeaderBorderColor;
 @_sap_m_IconTabBar_ArrowScroll_AfterHeight: 1px;
 
 /* Head Container */
 .sapMITH {
 	z-index: 1; // shows the bottom shadow of the ITHeader over the content of the ITB
-	background-color: @sapUiObjectHeaderBackground;
-	border-bottom: none;
 
 	.sapMITBHead {
 		margin-top: 0.875rem;
@@ -470,19 +474,4 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 	&::after {
 		border: 1px dashed @sapUiContentFocusColor;
 	}
-}
-
-/* container background design */
-
-.sapMITBBackgroundDesignTranslucent > .sapMITBContainerContent > .sapMITBContent {
-	background-color: fade(@sapUiGroupContentBackground, 60);
-}
-
-.sapMITHBackgroundDesignTranslucent {
-	background-color: fade(@sapUiGroupContentBackground, 60);
-}
-
-/* header background design */
-.sapMITHBackgroundDesignTransparent {
-	background-color: transparent;
 }
