@@ -21277,23 +21277,23 @@ sap.ui.define([
 	<ColumnListItem>\
 		<Text id="city" text="{Address/City}"/>\
 		<Text id="type" text="{Address/AddressType}"/>\
-		<Text id="created" text="{CreatedAt}"/>\
+		<Text id="company" text="{CompanyName}"/>\
 	</ColumnListItem>\
 </Table>',
 			that = this;
 
 		this.expectRequest("BusinessPartnerList?$select=Address/AddressType,Address/City"
-			+ ",BusinessPartnerID,CreatedAt&$skip=0&$top=100",
+			+ ",BusinessPartnerID,CompanyName&$skip=0&$top=100",
 				{value : []})
 			.expectChange("city", [])
 			.expectChange("type", [])
-			.expectChange("created", []);
+			.expectChange("company", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("city", ["Heidelberg"])
 				// CPOUI5ODATAV4-114
 				.expectChange("type", ["42"])
-				.expectChange("created", ["Jan 1, 1971, 12:59:58 AM"]);
+				.expectChange("company", ["Nestle"]);
 
 			oCreatedContext = that.oView.byId("table").getBinding("items").create({
 				Address : {City : "Heidelberg"}
@@ -21310,7 +21310,7 @@ sap.ui.define([
 					}),
 				// code under test (CPOUI5ODATAV4-114)
 				oCreatedContext.setProperty("Address/AddressType", "42", null),
-				oCreatedContext.setProperty("CreatedAt", "1970-12-31T23:59:58Z", null),
+				oCreatedContext.setProperty("CompanyName", "Nestle", null),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -21321,11 +21321,11 @@ sap.ui.define([
 				}, {
 					Address : null,
 					BusinessPartnerId : "1",
-					CreatedAt : "1970-12-31T23:59:59Z"
+					CompanyName : "SAP"
 				})
 				.expectChange("city", [null])
 				.expectChange("type", [null])
-				.expectChange("created", ["Jan 1, 1971, 12:59:59 AM"]);
+				.expectChange("company", ["SAP"]);
 
 			return Promise.all([
 				oModel.submitBatch("update"),
