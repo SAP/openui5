@@ -1607,8 +1607,8 @@ sap.ui.define([
 							!this.bFocusoutDueRendering &&
 							!this.getSelectedText()) {
 
-							this.selectText(0, this.getValue().length);
-						}
+								this.selectText(0, this.getValue().length);
+							}
 						this.bIsFocused = true;
 					}.bind(this), 0);
 				}
