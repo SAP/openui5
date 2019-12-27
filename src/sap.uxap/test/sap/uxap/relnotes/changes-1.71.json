@@ -106,5 +106,21 @@
         ]
       }
     ]
+  },
+  "1.71.8": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "addfb77dcb74e98061cc52e9ef82fa5eed07c734",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Update cache on content-resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361124"
+          }
+        ]
+      }
+    ]
   }
 }
