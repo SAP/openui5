@@ -12,19 +12,19 @@
 }
 
 .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled {
-	.sapFDynamicPageTitle:hover,
 	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
 		.title-hover(@sapUiObjectHeaderBackground);
 	}
 
-	.sapFDynamicPageTitle.sapFDynamicPageTitleTranslucent:hover,
 	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle.sapFDynamicPageTitleTranslucent {
 		.title-hover(fade(@sapUiObjectHeaderBackground, 60%));
 	}
 
-	.sapFDynamicPageTitle.sapFDynamicPageTitleTransparent:hover,
 	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle.sapFDynamicPageTitleTransparent {
 		.title-hover(transparent);
+	}
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageToggleHeaderIndicator .sapMBtnInner.sapMBtnHoverable {
+				background-color: darken(@sapUiObjectHeaderBorderColor, 3);
 	}
 }
 
@@ -53,18 +53,7 @@
 				background: transparent;
 			}
 		}
-
-		&.sapUxAPObjectPageLayoutTitleClickEnabled {
-			&.sapUxAPObjectPageLayoutTitleForceHovered {
-			.sapFDynamicPageToggleHeaderIndicator {
-				.sapMBtnInner.sapMBtnHoverable {
-					background-color: darken(@sapUiObjectHeaderBorderColor, 3);
-				}
-			}
-		}
 	}
-}
-
 
   // Toggle Header Visual Indicator
   .sapFDynamicPageToggleHeaderIndicator.sapMBtn {
@@ -81,6 +70,7 @@
     }
 
     // active state
+    & > .sapMBtnInner.sapMFocusable.sapMBtnActive,
     &:focus > .sapMBtnInner.sapMFocusable.sapMBtnActive {
       background: @sapUiSelected;
       color: @sapUiButtonActiveBackground;
@@ -91,7 +81,6 @@
 .sapUshellShell {
   .sapUxAPObjectPageLayout {
     &.sapUxAPObjectPageLayoutTitleClickEnabled {
-      .sapFDynamicPageTitle:hover,
       &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
         background-color: fade(@sapUiObjectHeaderBackground, 75%);
       }

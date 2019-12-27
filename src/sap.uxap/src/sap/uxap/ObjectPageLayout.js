@@ -661,8 +661,10 @@ sap.ui.define([
 		}
 
 		this._attachVisualIndicatorsPressHandlers(this._handleDynamicTitlePress, this);
-		this._attachVisualIndicatorMouseOverHandlers(this._addHoverClass, this._removeHoverClass, this);
-		this._attachTitleMouseOverHandlers(this._addHoverClass, this._removeHoverClass, this);
+		if (Device.system.desktop) {
+			this._attachVisualIndicatorMouseOverHandlers(this._addHoverClass, this._removeHoverClass, this);
+			this._attachTitleMouseOverHandlers(this._addHoverClass, this._removeHoverClass, this);
+		}
 
 		if (this.getFooter() && this._bIsFooterAanimationGoing) {
 			this._onToggleFooterAnimationEnd(this.getFooter());

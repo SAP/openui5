@@ -28,16 +28,9 @@
 	width: auto;
 }
 
-// title hover
-.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled .sapFDynamicPageTitle:hover {
-	background: @sapUiHighlight;
-	box-shadow: @sapUiShadowHeader;
-}
-
 // toggle header visual indicator
 .sapUxAPObjectPageLayout {
   &.sapUxAPObjectPageLayoutTitleClickEnabled {
-    .sapFDynamicPageTitle:hover,
     &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
       background: @sapUiHighlight;
       box-shadow: @sapUiShadowHeader;
