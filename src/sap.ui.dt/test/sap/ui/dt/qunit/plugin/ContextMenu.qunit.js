@@ -240,7 +240,7 @@ sap.ui.define([
 			var fnSpy = sandbox.spy(oContextMenuControl, "_rememberPosition");
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
-				openContextMenu.call(this, this.oButton2Overlay).then(function() {
+				openContextMenu.call(this, this.oButton2Overlay, false, false, true).then(function() {
 					// the popup uses another setTimeout (50ms on firefox), without this the opened event won't be fired
 					this.clock.tick(52);
 				}.bind(this));
