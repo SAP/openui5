@@ -937,7 +937,8 @@ function(
 			 * @private
 			 */
 			function handleChild(node, oAggregation, mAggregations, childNode, bActivate, pRequireContext) {
-				var oNamedAggregation;
+				var oNamedAggregation,
+					fnCreateStashedControl;
 				// inspect only element nodes
 				if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
 
@@ -956,25 +957,34 @@ function(
 						// TODO consider moving this to a place where HTML and SVG nodes can be handled properly
 						// create a StashedControl for inactive controls, which is not placed in an aggregation
 						if (!bActivate && childNode.getAttribute("stashed") === "true" && !bEnrichFullIds) {
-							StashedControlSupport.createStashedControl(getId(oView, childNode), {
-								sParentId: mSettings["id"],
-								sParentAggregationName: oAggregation.name,
-								fnCreate: function() {
-									// EVO-Todo: stashed control-support is still mandatory SYNC
-									// this means we need to switch back the view processing to synchronous too
-									// at this point everything is sync again
-									var bPrevAsync = bAsync;
-									bAsync = false;
+							fnCreateStashedControl = function() {
+								StashedControlSupport.createStashedControl(getId(oView, childNode), {
+									sParentId: mSettings["id"],
+									sParentAggregationName: oAggregation.name,
+									fnCreate: function() {
+										// EVO-Todo: stashed control-support is still mandatory SYNC
+										// this means we need to switch back the view processing to synchronous too
+										// at this point everything is sync again
+										var bPrevAsync = bAsync;
+										bAsync = false;
 
-									try {
-										return unwrapSyncPromise(handleChild(node, oAggregation, mAggregations, childNode, true, pRequireContext));
-									} finally {
-										// EVO-Todo:revert back to the original async/sync behavior
-										// if we moved to the sync path for the stashed control, we might now go back to the async path.
-										bAsync = bPrevAsync;
+										try {
+											return unwrapSyncPromise(handleChild(node, oAggregation, mAggregations, childNode, true, pRequireContext));
+										} finally {
+											// EVO-Todo:revert back to the original async/sync behavior
+											// if we moved to the sync path for the stashed control, we might now go back to the async path.
+											bAsync = bPrevAsync;
+										}
 									}
-								}
-							});
+								});
+							};
+
+							if (oView.fnScopedRunWithOwner) {
+								oView.fnScopedRunWithOwner(fnCreateStashedControl);
+							} else {
+								fnCreateStashedControl();
+							}
+
 							return;
 						}
 

@@ -99,20 +99,12 @@ sap.ui.define([
 				this.oServer.xhr.supportCORS = true;
 				this.oServer.xhr.useFilters = true;
 				this.oServer.xhr.filters = [];
-				this.oServer.xhr.addFilter(function(method, url) {
-					return url.match(/ExtensionPoints\/Parent\/manifest.json/) == null;
-				});
 				this.oServer.autoRespond = true;
 
-				this.oServer.respondWithJSONContent = function(oManifest) {
-					this.respondWith("GET", /ExtensionPoints\/Parent\/manifest\.json/, [
-						200,
-						{
-							"Content-Type": "application/json"
-						},
-						JSON.stringify(oManifest)
-					]);
-				};
+				this.oServer.xhr.addFilter(function(method, url) {
+					return url.match(/ExtensionPoints\/Parent\/manifest.json/) == null
+							&& url.match(/StashedControl\/manifest.json/) == null;
+				});
 			},
 			afterEach: function() {
 				this._cleanup.forEach(function(ctrl) {
@@ -430,7 +422,13 @@ sap.ui.define([
 				}
 			};
 
-			this.oServer.respondWithJSONContent(oManifest);
+			this.oServer.respondWith("GET", /ExtensionPoints\/Parent\/manifest\.json/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifest)
+			]);
 
 			var fnAssertions = function(oComponent, oView) {
 				// resolved view content, extensionpoints are embedded
@@ -486,6 +484,104 @@ sap.ui.define([
 			} else {
 				var oComponent = sap.ui.component({
 					name:"sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child"
+				});
+				sap.ui.getCore().applyChanges();
+				fnAssertions(oComponent, oComponent.getRootControl());
+			}
+
+		});
+
+		QUnit.test("Owner component setting for stashed control", function(assert) {
+			var done = assert.async();
+
+			var sComponentName = "sap.ui.core.qunit.mvc.viewprocessing.StashedControl" + bAsyncView + sProcessingMode;
+
+			sap.ui.predefine((sComponentName + ".Component").replace(/\./g, "/"), ["sap/ui/core/UIComponent"], function(UIComponent) {
+				return UIComponent.extend(sComponentName + ".Component", { });
+			});
+
+			// responds changed parent manifest
+			// async switch on root-view is switched based on test-execution
+			var oManifest = {
+				"_version": "0.0.1",
+				"sap.app": {
+					"id": sComponentName
+				},
+				"sap.ui5": {
+					"rootView": {
+						"viewName": "sap.ui.core.qunit.mvc.viewprocessing.StashedControl.Main",
+						"type": "XML",
+						"async": bAsyncView,
+						"processingMode": sProcessingMode,
+						"id": "app"
+					}
+				}
+			};
+
+			var fnAssertions = function(oComponent, oView) {
+				var oStashedPanel = oView.byId("panel");
+				var oStashedButton = oView.byId("stashedButton");
+				var oNormalButtonInStashedParent = oView.byId("normalButtonInStashedParent");
+
+				assert.ok(!oStashedButton, "Stashed button in stashed area isn't created");
+				assert.ok(!oNormalButtonInStashedParent, "Normal button in stashed area isn't created");
+
+				var oButton = oView.byId("normalButton");
+
+				var oOwnerComponent = Component.getOwnerComponentFor(oStashedPanel);
+				assert.ok(oOwnerComponent, "Owner Component for stashed panel can be found");
+				if (oOwnerComponent) {
+					assert.strictEqual(oOwnerComponent.getId(), oComponent.getId(), "Stashed Panel should have owner component");
+				}
+
+				oOwnerComponent = Component.getOwnerComponentFor(oButton);
+				assert.ok(oOwnerComponent, "Owner Component for normal button can be found");
+				if (oOwnerComponent) {
+					assert.strictEqual(oOwnerComponent.getId(), oComponent.getId(), "Normal button should have owner component");
+				}
+
+				// unstash the stashed panel
+				oStashedPanel.setStashed(false);
+				var oRealPanel = oView.byId("panel");
+				assert.ok(oRealPanel.isA("sap.m.Panel"), "The real panel instance is created after unstash");
+
+				oStashedButton = oView.byId("stashedButton");
+				oNormalButtonInStashedParent = oView.byId("normalButtonInStashedParent");
+
+				assert.ok(oStashedButton, "Stashed button in stashed area is created");
+				assert.ok(oNormalButtonInStashedParent, "Normal button in stashed area is created");
+
+				oOwnerComponent = Component.getOwnerComponentFor(oStashedButton);
+				assert.ok(oOwnerComponent, "Owner Component for stashed button can be found");
+				if (oOwnerComponent) {
+					assert.strictEqual(oOwnerComponent.getId(), oComponent.getId(), "Stashed button should have owner component");
+				}
+
+				oOwnerComponent = Component.getOwnerComponentFor(oNormalButtonInStashedParent);
+				assert.ok(oOwnerComponent, "Owner Component for normal button in stashed area can be found");
+				if (oOwnerComponent) {
+					assert.strictEqual(oOwnerComponent.getId(), oComponent.getId(), "Normal button in stashed area should have owner component");
+				}
+
+				// clean-up components
+				oComponent.destroy();
+				done();
+			};
+
+			if (bAsyncView) {
+				Component.create({
+					name: sComponentName,
+					manifest: oManifest
+				}).then(function(oComponent) {
+					oComponent.getRootControl().loaded().then(function(oView) {
+						fnAssertions(oComponent, oView);
+					});
+				});
+			} else {
+				var oComponent = sap.ui.component({
+					name: sComponentName,
+					manifest: oManifest,
+					async: false
 				});
 				sap.ui.getCore().applyChanges();
 				fnAssertions(oComponent, oComponent.getRootControl());
