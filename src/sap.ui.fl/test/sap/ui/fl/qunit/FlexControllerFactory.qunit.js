@@ -29,6 +29,7 @@ function (
 	QUnit.module("sap.ui.fl.FlexControllerFactory", {
 		beforeEach: function () {
 			this.oInitializeStub = sandbox.stub(FlexState, "initialize").resolves();
+			this.VariantsStateStub = sandbox.stub(FlexState, "getVariantsState");
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -73,6 +74,7 @@ function (
 			.then(function () {
 				assert.equal(oAddPropagationListenerStub.callCount, 1, "propagation was triggered");
 				assert.equal(this.oInitializeStub.callCount, 1, "FlexState was initialized");
+				assert.equal(this.VariantsStateStub.callCount, 1, "FlexState was initialized");
 			}.bind(this));
 		});
 

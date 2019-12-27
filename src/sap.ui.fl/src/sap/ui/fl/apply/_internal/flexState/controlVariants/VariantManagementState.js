@@ -29,19 +29,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function _getIndexToSortVariant(aVariants, oVariantData) {
-		var iIndex = 0;
-		aVariants.some(function (oExistingVariantData, index) {
-			if (VariantsApplyUtil.compareVariants(oVariantData, oExistingVariantData) < 0) {
-				iIndex = index;
-				return true;
-			}
-			//insert to the end of array
-			iIndex = index + 1;
-		});
-		return iIndex;
-	}
-
 	function _getReferencedChanges(mPropertyBag) {
 		var aReferencedVariantChanges = [];
 		if (mPropertyBag.variantData.content.variantReference) {
@@ -181,7 +168,7 @@ sap.ui.define([
 		addVariantToVariantManagement: function (mPropertyBag) {
 			var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
 			var aVariants = oVariantsMap[mPropertyBag.vmReference].variants.slice().splice(1);
-			var iIndex = _getIndexToSortVariant(aVariants, mPropertyBag.variantData);
+			var iIndex = VariantsApplyUtil.getIndexToSortVariant(aVariants, mPropertyBag.variantData);
 
 			//Set the whole list of changes to the variant
 			if (mPropertyBag.variantData.content.variantReference) {
@@ -251,7 +238,7 @@ sap.ui.define([
 				aVariants.splice(mPropertyBag.previousIndex, 1);
 
 				//slice to skip first element, which is the standard variant
-				var iSortedIndex = _getIndexToSortVariant(aVariants.slice(1), oVariantData);
+				var iSortedIndex = VariantsApplyUtil.getIndexToSortVariant(aVariants.slice(1), oVariantData);
 
 				//add at sorted index (+1 to accommodate standard variant)
 				aVariants.splice(iSortedIndex + 1, 0, oVariantData);

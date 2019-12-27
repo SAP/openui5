@@ -7,7 +7,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return {
+	var VariantsApplyUtil = {
 		DEFAULT_AUTHOR: "SAP",
 
 		VARIANT_TECHNICAL_PARAMETER: "sap-ui-fl-control-variant-id",
@@ -19,6 +19,18 @@ sap.ui.define([
 				return 1;
 			}
 			return 0;
+		},
+
+		getIndexToSortVariant: function (aVariants, oVariantData) {
+			var iSortedIndex = aVariants.length;
+			aVariants.some(function (oExistingVariantData, index) {
+				if (VariantsApplyUtil.compareVariants(oVariantData, oExistingVariantData) < 0) {
+					iSortedIndex = index;
+					return true;
+				}
+			});
+			return iSortedIndex;
 		}
 	};
-}, true);
+	return VariantsApplyUtil;
+});
