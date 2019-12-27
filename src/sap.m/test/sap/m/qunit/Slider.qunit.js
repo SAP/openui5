@@ -2245,6 +2245,26 @@ sap.ui.define([
 
 			assert.ok(true, "should not throw an error");
 		});
+
+		QUnit.test("Tooltips: Setting the editable property should toggle a class", function (assert) {
+			// arrange
+			var oSliderTooltip = this.oSlider.getUsedTooltips()[0];
+
+			// act
+			this.oSlider.getAggregation("_tooltipContainer").show(this.oSlider);
+			var oLeftTooltip = jQuery("#" + this.oSlider.getId() + "-" + "leftTooltip-input");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should be applied");
+
+			//act
+			oSliderTooltip.setEditable(true);
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.notOk(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should not be applied");
+		});
 	});
 
 	QUnit.module("Accessibility");

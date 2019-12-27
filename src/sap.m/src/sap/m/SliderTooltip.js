@@ -108,6 +108,16 @@ function(
 			this._fLastValidValue = 0;
 		};
 
+		SliderTooltip.prototype.onBeforeRendering = function () {
+			SliderTooltipBase.prototype.setValue.call(this, this.getValue());
+		};
+
+		SliderTooltip.prototype.onAfterRendering = function () {
+			if (this.getDomRef()) {
+				this.getFocusDomRef().toggleClass(SliderUtilities.CONSTANTS.TOOLTIP_CLASS + "NotEditable", !this.getEditable());
+			}
+		};
+
 		SliderTooltip.prototype.getValueStateText = function () {
 			return "";
 		};
@@ -118,15 +128,6 @@ function(
 
 		SliderTooltip.prototype.getDomRefForValueStateMessage = function () {
 			return this.getDomRef();
-		};
-
-		SliderTooltip.prototype.setValue = function (fValue) {
-			// validate given value
-			fValue = this.validateProperty("value", fValue);
-
-			SliderTooltipBase.prototype.setValue.call(this, fValue);
-
-			return this.setProperty("value", fValue, true);
 		};
 
 		/**
@@ -147,26 +148,6 @@ function(
 			this._fLastValidValue = fValue;
 
 			this.setValueState(ValueState.None);
-		};
-
-		/**
-		 * Sets the property <code>editable</code>.
-		 * Indicates whether the Tooltip can be edited or not.
-		 *
-		 * @param {boolean} bEditable New value for property <code>editable</code>.
-		 * @returns {sap.m.SliderTooltip} <code>this</code> to allow method chaining.
-		 * @public
-		 */
-		SliderTooltip.prototype.setEditable = function (bEditable) {
-
-			// validate given value
-			bEditable = this.validateProperty("editable", bEditable);
-
-			if (this.getDomRef()) {
-				this.getFocusDomRef().toggleClass(SliderUtilities.CONSTANTS.TOOLTIP_CLASS + "NotEditable");
-			}
-
-			return this.setProperty("editable", bEditable, true);
 		};
 
 		/**
