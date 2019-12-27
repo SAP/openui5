@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.ui.table",
-  "version": "1.71.8-SNAPSHOT",
+  "version": "1.71.8",
   "description": "OpenUI5 UI Library sap.ui.table",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -14,7 +14,7 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "dependencies": {
-    "@openui5/sap.ui.core": "1.71.8-SNAPSHOT",
-    "@openui5/sap.ui.unified": "1.71.8-SNAPSHOT"
+    "@openui5/sap.ui.core": "1.71.8",
+    "@openui5/sap.ui.unified": "1.71.8"
   }
 }
