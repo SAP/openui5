@@ -1087,6 +1087,50 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Message with a simple target in a complex data type
+	// JIRA: CPOUI5MODELS-35
+	QUnit.test("Messages: simple target with complex data type", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox binding="{/BusinessPartnerSet(\'1\')}">\
+	<Text id="CompanyName" text="{CompanyName}" />\
+	<Input id="City" value="{Address/City}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerSet('1')", {
+				CompanyName : "SAP SE",
+				Address : {
+					City : "Walldorf"
+				}
+			}, {
+				"sap-message" : getMessageHeader({
+					code : "A",
+					message : "Foo",
+					severity : "error",
+					target : "Address/City"
+				})
+			})
+			.expectChange("CompanyName", null)
+			.expectChange("CompanyName", "SAP SE")
+			.expectChange("City", null)
+			.expectChange("City", "Walldorf")
+			.expectMessages([{
+				code : "A",
+				fullTarget : "/BusinessPartnerSet('1')/Address/City",
+				message : "Foo",
+				persistent : false,
+				target : "/BusinessPartnerSet('1')/Address/City",
+				type : MessageType.Error
+			}]);
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			return that.checkValueState(assert, "City", "Error", "Foo");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Messages are visualized at controls that are bound against the messages' target.
 	QUnit.test("Messages: check value state", function (assert) {
 		var oModel = createSalesOrdersModel(),
