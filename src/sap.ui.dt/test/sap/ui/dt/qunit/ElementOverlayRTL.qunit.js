@@ -45,8 +45,8 @@ sap.ui.define([
 			this.oOverlay.attachEventOnce("geometryChanged", function() {
 				// Math.round is required for IE and Edge
 				assert.equal(
-					Math.round(this.oOverlay.$().offset().left),
-					Math.round(this.oButton.$().offset().left),
+					Math.ceil(this.oOverlay.$().offset().left),
+					Math.ceil(this.oButton.$().offset().left),
 					"overlay has same left position as the control"
 				);
 				assert.equal(
