@@ -2169,7 +2169,7 @@ sap.ui.define([
 	Calendar.prototype._selectMonth = function () {
 		var oFocusedDate = new CalendarDate(this._getFocusedDate(), this.getPrimaryCalendarType()),
 			oMonthPicker = this._getMonthPicker(),
-			iMonth = oMonthPicker.getMonth();
+			iMonth = oMonthPicker._focusedMonth ? oMonthPicker._focusedMonth : oMonthPicker.getMonth();
 
 		oFocusedDate.setMonth(iMonth);
 		if (iMonth != oFocusedDate.getMonth()){
