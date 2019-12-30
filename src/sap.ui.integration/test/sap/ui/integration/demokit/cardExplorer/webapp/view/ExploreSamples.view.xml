@@ -72,8 +72,7 @@
 									<menu>
 										<Menu>
 											<MenuItem text="Manifest File" icon="sap-icon://document-text" press="onDownloadManifestFile" />
-											<MenuItem text="Bundle as .zip" icon="sap-icon://attachment-zip-file" press="onDownloadZip" />
-											<MenuItem text="Bundle as .card" icon="sap-icon://ppt-attachment" press="onDownloadBundle" />
+											<MenuItem text="Bundle as card.zip" icon="sap-icon://attachment-zip-file" press="onDownloadZip" />
 										</Menu>
 									</menu>
 								</MenuButton>

@@ -41,7 +41,7 @@ sap.ui.define([
 			aFileNames = aFiles.map(function (oFile) { return oFile.name; });
 
 		When.onTheNavigationList.iSwitchToSample("htmlConsumption");
-		When.onTheExplorePage.iPressDownload("Bundle as .zip");
+		When.onTheExplorePage.iPressDownload("Bundle as card.zip");
 
 		Then.onTheExplorePage
 			.iShouldHaveZip(aFileNames)

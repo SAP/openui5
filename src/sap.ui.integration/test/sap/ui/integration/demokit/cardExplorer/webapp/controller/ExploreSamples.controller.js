@@ -197,12 +197,8 @@ sap.ui.define([
 			FileUtils.downloadFilesCompressed(aFiles, sArchiveName, sExtension);
 		},
 
-		onDownloadBundle: function () {
-			this._onDownloadCompressed("card");
-		},
-
 		onDownloadZip: function () {
-			this._onDownloadCompressed("zip");
+			this._onDownloadCompressed(".card.zip");
 		},
 
 		showError: function (sMessage) {
