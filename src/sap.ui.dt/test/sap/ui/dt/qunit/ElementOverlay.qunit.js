@@ -266,11 +266,14 @@ function (
 						assert.ok(true);
 					})
 					// Second call triggered by animationend event
-					.onSecondCall().callsFake(window.requestAnimationFrame.bind(null, function () {
-						assert.strictEqual(this.oButton.$().width(), 200, "then the button width is correct");
-						assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "then the overlay size is in sync");
-						done();
-					}.bind(this)))
+					.onSecondCall().callsFake(function() {
+						setTimeout(function() {
+							// setTimeout added to cover animation duration
+							assert.strictEqual(this.oButton.$().width(), 200, "then the button width is correct");
+							assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "then the overlay size is in sync");
+							done();
+						}.bind(this), 51);
+					}.bind(this))
 			);
 			this.oButton.addStyleClass("sapUiDtTestAnimate");
 		});
