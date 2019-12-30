@@ -97,11 +97,11 @@ sap.ui.define([
 				mParameters = BindingResolver.resolveValue(oAction.parameters, oModel, sPath);
 
 				if (vValue.__resolved) {
-					if (vValue.__enabled) {
-						return "Navigation";
-					} else {
+					if (!vValue.__enabled || vValue.__enabled === "false") {
 						return "Inactive";
 					}
+
+					return "Navigation";
 				}
 
 				if (!vValue.__promise) {
@@ -188,18 +188,18 @@ sap.ui.define([
 			if (typeof oAction.enabled === "object") {
 				oBindingInfo = oAction.enabled;
 				oBindingInfo.formatter = function (vValue) {
-					if (vValue && (typeof vValue === "string")) {
-						return "Navigation";
-					} else {
+					if (!vValue || vValue === "false") {
 						return "Inactive";
 					}
+
+					return "Navigation";
 				};
 			}
 
 			if (oBindingInfo) {
 				oItemTemplate.bindProperty("type", oBindingInfo);
 			} else {
-				sType = oAction.enabled !== false ? "Navigation" : "Inactive";
+				sType = (oAction.enabled === false || oAction.enabled === "false") ? "Inactive" : "Navigation";
 				oItemTemplate.setProperty("type", sType);
 			}
 		};
@@ -320,7 +320,7 @@ sap.ui.define([
 			} else {
 				// Handle the "enabled" state when there is no service and item template with formatter.
 				if (bCheckEnabledState) {
-					if (oAction.enabled !== false) {
+					if (oAction.enabled !== false && oAction.enabled !== "false") {
 						attachPress();
 					}
 				} else {
