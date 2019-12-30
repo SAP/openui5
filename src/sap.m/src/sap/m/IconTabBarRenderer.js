@@ -6,11 +6,12 @@ sap.ui.define([],
 	function() {
 	"use strict";
 
-/**
-	 * HBox renderer.
+	/**
+	 * IconTabBar renderer.
 	 * @namespace
 	 */
 	var IconTabBarRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -22,55 +23,61 @@ sap.ui.define([],
 
 
 	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 * Renders the HTML for the IconTabBar control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.IconTabBar} oIconTabBar An object representation of the control that should be rendered
 	 */
-	IconTabBarRenderer.render = function(oRm, oControl){
-		var oContent = oControl.getContent(),
-			oHeader = oControl._getIconTabHeader();
+	IconTabBarRenderer.render = function(oRM, oIconTabBar){
+		var oContent = oIconTabBar.getContent(),
+			oHeader = oIconTabBar._getIconTabHeader();
 
 		// start control wrapper
-		oRm.write("<div ");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMITB");
-		if (oControl.getStretchContentHeight()) {
-			oRm.addClass("sapMITBStretch");
-		}
-		if (!oControl.getApplyContentPadding()) {
-			oRm.addClass("sapMITBNoContentPadding");
-		}
-		oRm.addClass("sapMITBBackgroundDesign" + oControl.getBackgroundDesign());
+		oRM.openStart("div", oIconTabBar)
+			.class("sapMITB");
 
-		oRm.writeClasses();
-		oRm.write(">");
+		if (oIconTabBar.getStretchContentHeight()) {
+			oRM.class("sapMITBStretch");
+		}
+		if (!oIconTabBar.getApplyContentPadding()) {
+			oRM.class("sapMITBNoContentPadding");
+		}
+
+		oRM.class("sapMITBBackgroundDesign" + oIconTabBar.getBackgroundDesign())
+			.openEnd();
+
 		// render icon tab header (if not configured to hide by ObjectHeader)
-		if (!oControl._bHideHeader) {
-			oRm.renderControl(oHeader);
+		if (!oIconTabBar._bHideHeader) {
+			oRM.renderControl(oHeader);
 		}
 
 		// render outer content
-		oRm.write("<div id='" + oControl.getId() + "-containerContent' ");
-		oRm.addClass("sapMITBContainerContent");
-		if (!oControl.getExpanded()) { // add special styles  when closed
-			oRm.addClass("sapMITBContentClosed");
+		oRM.openStart("div", oIconTabBar.getId() + "-containerContent")
+			.class("sapMITBContainerContent");
+
+		if (!oIconTabBar.getExpanded()) { // add special styles  when closed
+			oRM.class("sapMITBContentClosed");
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRM.openEnd();
 
 		// render inner content
-		oRm.write("<div id='" + oControl.getId() + "-content' class='sapMITBContent' role='tabpanel' ");
-		if (!oControl.getExpanded()) { // hide content when closed
-			oRm.write("style='display: none'");
+		oRM.openStart("div",  oIconTabBar.getId() + "-content")
+			.class("sapMITBContent")
+			.attr("role", "tabpanel");
+
+		if (!oIconTabBar.getExpanded()) { // hide content when closed
+			oRM.style("display", "none");
 		}
 
 		if (oHeader.oSelectedItem) {
-			oRm.writeAttribute('aria-labelledby', oHeader.oSelectedItem.getId());
+			oRM.accessibilityState({
+				labelledby: oHeader.oSelectedItem.getId()
+			});
 		}
 
-		oRm.write(">");
-		if (oControl.getExpanded()) {
+		oRM.openEnd();
+
+		if (oIconTabBar.getExpanded()) {
 			// content from selected item
 			if (oHeader.oSelectedItem && oHeader.oSelectedItem.getContent()) {
 				var oContentSelectedTab = oHeader.oSelectedItem.getContent();
@@ -79,22 +86,15 @@ sap.ui.define([],
 				}
 			}
 			// render the content
-			if (oContent.length > 0) {
-				for (var i = 0; i < oContent.length; i++) {
-					oRm.renderControl(oContent[i]);
-				}
-			}
+			oContent.forEach(function (oControl) {
+				oRM.renderControl(oControl);
+			});
 		}
-		oRm.write("</div>");
 
-		// end outer content
-		oRm.write("</div>");
-
-		// end control wrapper
-		oRm.write("</div>");
+		oRM.close("div") // inner content
+			.close("div") // outer content
+			.close("div"); // control wrapper
 	};
-
-
 
 	return IconTabBarRenderer;
 
