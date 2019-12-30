@@ -3,7 +3,8 @@
 /* Fiori 3 theme                       */
 /* =================================== */
 
-.sapMPage .sapMPageHeader, .sapMPageWithSubHeader .sapMPageSubHeader {
+.sapMPage .sapMPageHeader:not(.sapMBar-CTX),
+.sapMPageWithSubHeader .sapMPageSubHeader:not(.sapMBar-CTX) {
 	position: relative;
 	border-bottom: none;
 	box-shadow: none;
@@ -17,7 +18,7 @@
 	}
 }
 
-.sapMPageWithSubHeader {
+.sapMPageWithHeader.sapMPageWithSubHeader {
 	.sapMPageHeader {
 		box-shadow: none;
 		&:after {
