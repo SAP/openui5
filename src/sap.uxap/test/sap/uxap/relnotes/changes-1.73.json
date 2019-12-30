@@ -40,45 +40,6 @@
             "reference": "1970407479"
           }
         ]
-      },
-      {
-        "id": "b4ad27db2c0627a592ba66821f48b9e3a4adfb8f",
-        "type": "FEATURE",
-        "text": " sap.uxap.ObjectPageHeader: New background color property introduced",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970466184"
-          }
-        ]
-      },
-      {
-        "id": "95871b1bb86d7da43f7f37d8dcc10c03b6fbcbb4",
-        "type": "FEATURE",
-        "text": " uxap.ObjectPageLayout: sectionChange event implemented",
-        "references": []
-      },
-      {
-        "id": "e246693b63683423f88c98dae2d656d79d3d2117",
-        "type": "FIX",
-        "text": " sap.uxap.ObjectPageHeader: Fixed element checking",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970569747"
-          }
-        ]
-      },
-      {
-        "id": "4a639266a4e98184ef724cddab709cd782d0cf0d",
-        "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: Corrected scroll issue",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970407479"
-          }
-        ]
       }
     ]
   }

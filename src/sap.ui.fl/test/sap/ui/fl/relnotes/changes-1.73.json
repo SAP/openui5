@@ -41,46 +41,6 @@
         "type": "FIX",
         "text": " fl.VariantManagement: provide busy handling",
         "references": []
-      },
-      {
-        "id": "2c25e1441cb6c5392fa58fcbf8137e315d8af654",
-        "type": "FIX",
-        "text": " Enable passing changelist\u003dATO_NOTIFICATION for smart business",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970579412"
-          }
-        ]
-      },
-      {
-        "id": "01057d258b19711337a81dbcc66c97a8a364cedc",
-        "type": "FIX",
-        "text": " Small fixes and follow up change",
-        "references": []
-      },
-      {
-        "id": "2dce2b07d8746fd432ad0412648657a4c3ec9d41",
-        "type": "FIX",
-        "text": " fl.VariantManagement: provide busy handling",
-        "references": []
-      },
-      {
-        "id": "ca40764346640965942c0850bf0c68440ab89cee",
-        "type": "FIX",
-        "text": " sap.ui.fl: Variant Personalization changes are cached wrongly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970579079"
-          }
-        ]
-      },
-      {
-        "id": "ea9c427c930f5f6188e6edb9769e1105b71f06e8",
-        "type": "FIX",
-        "text": " sap.ui.fl: undo of setDefault triggers update of current variant",
-        "references": []
       }
     ]
   }

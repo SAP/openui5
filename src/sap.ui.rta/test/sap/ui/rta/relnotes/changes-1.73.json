@@ -43,48 +43,6 @@
         "type": "FIX",
         "text": " sap.ui.rta: Update of toolbar buttons after pressing Publish",
         "references": []
-      },
-      {
-        "id": "e682bddee29d725245d87c009b20c80260016085",
-        "type": "FIX",
-        "text": " Enable fake lrep for Variant Management test app",
-        "references": []
-      },
-      {
-        "id": "c696f551b19037cb67e7a73400f02c3d36099cf4",
-        "type": "FIX",
-        "text": " Fixing the response get from backend",
-        "references": []
-      },
-      {
-        "id": "ba949ddeca8062629dc70ec834e6dd6f28c33df5",
-        "type": "FIX",
-        "text": " fixing busy indicator",
-        "references": []
-      },
-      {
-        "id": "2dce2b07d8746fd432ad0412648657a4c3ec9d41",
-        "type": "FIX",
-        "text": " fl.VariantManagement: provide busy handling",
-        "references": []
-      },
-      {
-        "id": "870300847b1594f89832bc4ba1c643c0793cd783",
-        "type": "FIX",
-        "text": " sap.ui.rta: Handle appDescriptor change publish and exit",
-        "references": []
-      },
-      {
-        "id": "3f00ac922982938e8c2df574fda75ff085fd23aa",
-        "type": "FIX",
-        "text": " sap.ui.rta: Update of toolbar buttons after pressing Publish",
-        "references": []
-      },
-      {
-        "id": "8699de0aff83bab4c3424d9ba276b60109b1e11f",
-        "type": "FIX",
-        "text": ": RTA - Toolbar Mode Buttons in RTL-Mode",
-        "references": []
       }
     ]
   }

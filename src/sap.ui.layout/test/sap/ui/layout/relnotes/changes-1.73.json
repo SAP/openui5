@@ -21,30 +21,7 @@
         "references": [
           {
             "type": "BCP",
-            "reference": "1970521519"
-          }
-        ]
-      },
-      {
-        "id": "11544b855407af6f1025e8a855dc46701648779d",
-        "type": "FEATURE",
-        "text": " sap.m.Label: Asterisk for required label is now in right",
-        "references": []
-      },
-      {
-        "id": "f6d05979394e71844c229d568619779fabe77702",
-        "type": "FEATURE",
-        "text": " sap.ui.layout.cssgrid.ResponsiveColumnLayout: IE polyfill",
-        "references": []
-      },
-      {
-        "id": "717ae5f50fa316a3c093239232e35aa9fcf3b83d",
-        "type": "FIX",
-        "text": " sap.ui.layout.DynamicSideContent: breakpointChanged is fired after resize calculations",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970521519"
+             "reference": "1970521519"
           }
         ]
       }

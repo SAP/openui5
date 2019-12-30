@@ -50,55 +50,6 @@
             "reference": "002075129400006570372019"
           }
         ]
-      },
-      {
-        "id": "ad02953be02cce72fe37e0ff3f713b0c2922ef8b",
-        "type": "FEATURE",
-        "text": " sap.m.Button: Introducing four new types",
-        "references": []
-      },
-      {
-        "id": "e8cfd1bc41f5c9d8de91af1a21d8dc9c6906af8f",
-        "type": "FEATURE",
-        "text": " sap.m.WheelSlider: Implemented new control",
-        "references": []
-      },
-      {
-        "id": "b4ad27db2c0627a592ba66821f48b9e3a4adfb8f",
-        "type": "FEATURE",
-        "text": " sap.uxap.ObjectPageHeader: New background color property introduced",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970466184"
-          }
-        ]
-      },
-      {
-        "id": "be4bcd19130161255d7b8a6fe155811bfab00435",
-        "type": "FIX",
-        "text": " core.Icon: move the focus outline out of the icon area",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970423523"
-          },
-          {
-            "type": "BCP",
-            "reference": "1980355440"
-          }
-        ]
-      },
-      {
-        "id": "42e5ae61e5c2cd3a88764e0592bd3b546c89ee84",
-        "type": "FIX",
-        "text": " sap.ui.unified.Calendar: Belize plus colors adjusted",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129400006570372019"
-          }
-        ]
       }
     ]
   }

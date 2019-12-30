@@ -7,12 +7,6 @@
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: ID of the internal button is now stable",
         "references": []
-      },
-      {
-        "id": "2b3338655408a115cc8f7a5041b8e18c4e6b4865",
-        "type": "FIX",
-        "text": " sap.ui.unified.FileUploader: ID of the internal button is now stable",
-        "references": []
       }
     ]
   }
