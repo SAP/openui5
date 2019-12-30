@@ -56,7 +56,11 @@ function (
 
 			var oComponent = {
 				getManifestObject: function () {
-					return {};
+					return {
+						"sap.app": {
+							id: "componentId"
+						}
+					};
 				},
 				addPropagationListener: function () {},
 				setModel: function () {},
@@ -70,11 +74,16 @@ function (
 			.withArgs(oComponent)
 			.returns("mockName");
 
-			return FlexControllerFactory.getChangesAndPropagate(oComponent, {})
+			return FlexControllerFactory.getChangesAndPropagate(oComponent, {asyncHints: true})
 			.then(function () {
 				assert.equal(oAddPropagationListenerStub.callCount, 1, "propagation was triggered");
 				assert.equal(this.oInitializeStub.callCount, 1, "FlexState was initialized");
-				assert.equal(this.VariantsStateStub.callCount, 1, "FlexState was initialized");
+				assert.ok(this.oInitializeStub.calledWith({
+					componentId: oComponent.getId(),
+					asyncHints: true
+				}), "FlexState was initialized with the correct parameters");
+				assert.equal(this.VariantsStateStub.callCount, 1, "Variants map was prepared");
+				assert.ok(this.VariantsStateStub.calledWith("componentId.Component"), "Variants map was prepared with the correct parameters");
 			}.bind(this));
 		});
 

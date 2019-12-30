@@ -11,7 +11,7 @@ function(
 	"use strict";
 
 	function appendComponentToReference(sComponentName) {
-		if (sComponentName.length > 0 && sComponentName.indexOf(".Component") < 0) {
+		if (sComponentName && sComponentName.indexOf(".Component") < 0) {
 			sComponentName += ".Component";
 		}
 		return sComponentName;
@@ -28,8 +28,8 @@ function(
 	 */
 	var ManifestUtils = {
 		getFlexReference: function(mPropertyBag) {
-			var oManifest = mPropertyBag.manifest;
-			var oComponentData = mPropertyBag.componentData;
+			var oManifest = mPropertyBag.manifest || {};
+			var oComponentData = mPropertyBag.componentData || {};
 
 			// support of old app variants
 			if (oComponentData.startupParameters) {

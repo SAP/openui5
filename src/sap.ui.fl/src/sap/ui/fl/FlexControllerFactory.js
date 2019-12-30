@@ -8,17 +8,18 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], function(
 	FlexController,
 	Utils,
 	Applier,
 	FlexState,
 	VariantModel,
-	Log
+	Log,
+	ManifestUtils
 ) {
 	"use strict";
-
 	/**
 	 * Factory to create new instances of {sap.ui.fl.FlexController}
 	 * @constructor
@@ -94,7 +95,10 @@ sap.ui.define([
 				componentId: vConfig.id || oComponent.getId(),
 				asyncHints: vConfig.asyncHints
 			})
-				.then(FlexState.getVariantsState.bind(null, Utils.getComponentClassName(oComponent)))
+				.then(FlexState.getVariantsState.bind(null, ManifestUtils.getFlexReference({
+					manifest: oComponent.getManifestObject(),
+					componentData: oComponent.getComponentData()
+				})))
 				.then(_propagateChangesForAppComponent.bind(this, oComponent));
 		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);

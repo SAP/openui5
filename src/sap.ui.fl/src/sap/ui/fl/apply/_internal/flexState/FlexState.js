@@ -100,25 +100,20 @@ sap.ui.define([
 		}
 	}
 
-	/**
-	 * Initializes the FlexState for a given reference. A request for the flex data is sent to the Loader and the response is saved.
-	 * The FlexState can only be initialized once, every subsequent init call will just resolve as soon as it is initialized.
-	 *
-	 * @param {object} mPropertyBag - Contains additional data needed for reading and storing changes
-	 * @param {string} mPropertyBag.componentId - ID of the component
-	 * @param {string} [mPropertyBag.reference] - Flex reference of the app
-	 * @param {object} [mPropertyBag.manifest] - Manifest that belongs to current component
-	 * @param {object} [mPropertyBag.rawManifest] - Raw JSON manifest that belongs to current component
-	 * @param {string} [mPropertyBag.componentData] - Component data of the current component
-	 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
-	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized
-	 */
-	FlexState.initialize = function (mPropertyBag) {
-		enhancePropertyBag(mPropertyBag);
-		if (_mInitPromises[mPropertyBag.reference]) {
-			return _mInitPromises[mPropertyBag.reference];
-		}
+	function rePrepareMaps(aPreviousKeys, mPropertyBag) {
+		var aMapNames = aPreviousKeys.filter(function(sKey) {
+			return sKey === "variantsMap" || sKey === "changesMap" || sKey === "appDescriptorMap";
+		});
 
+		aMapNames.forEach(function (sMapName) {
+			_mInstances[mPropertyBag.reference][sMapName] = FlexState._callPrepareFunction(sMapName, {
+				storageResponse: _mInstances[mPropertyBag.reference].storageResponse,
+				componentId: mPropertyBag.componentId
+			});
+		});
+	}
+
+	function loadFlexData(mPropertyBag) {
 		_mInitPromises[mPropertyBag.reference] = Loader.loadFlexData(mPropertyBag)
 			.then(function (mResponse) {
 				_mInstances[mPropertyBag.reference] = merge({}, {
@@ -136,6 +131,34 @@ sap.ui.define([
 			});
 
 		return _mInitPromises[mPropertyBag.reference];
+	}
+	/**
+	 * Initializes the FlexState for a given reference. A request for the flex data is sent to the Loader and the response is saved.
+	 * The FlexState can only be initialized once, every subsequent init call will just resolve as soon as it is initialized.
+	 *
+	 * @param {object} mPropertyBag - Contains additional data needed for reading and storing changes
+	 * @param {string} mPropertyBag.componentId - ID of the component
+	 * @param {string} [mPropertyBag.reference] - Flex reference of the app
+	 * @param {object} [mPropertyBag.manifest] - Manifest that belongs to current component
+	 * @param {object} [mPropertyBag.rawManifest] - Raw JSON manifest that belongs to current component
+	 * @param {string} [mPropertyBag.componentData] - Component data of the current component
+	 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
+	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized
+	 */
+	FlexState.initialize = function (mPropertyBag) {
+		enhancePropertyBag(mPropertyBag);
+		// if the component with the same reference was rendered with a new ID - clear existing state
+		if (_mInitPromises[mPropertyBag.reference]) {
+			return _mInitPromises[mPropertyBag.reference]
+				.then(function (mPropertyBag) {
+					if (_mInstances[mPropertyBag.reference].componentId === mPropertyBag.componentId) {
+						return;
+					}
+					return loadFlexData(mPropertyBag);
+				}.bind(null, mPropertyBag));
+		}
+
+		return loadFlexData(mPropertyBag);
 	};
 
 	/**
@@ -150,8 +173,13 @@ sap.ui.define([
 	 */
 	FlexState.clearAndInitialize = function(mPropertyBag) {
 		enhancePropertyBag(mPropertyBag);
+
+		var aPreviousResponseKeys = _mInstances[mPropertyBag.reference] ? Object.keys(_mInstances[mPropertyBag.reference]) : [];
+
 		FlexState.clearState(mPropertyBag.reference);
-		return FlexState.initialize(mPropertyBag);
+
+		return FlexState.initialize(mPropertyBag)
+			.then(rePrepareMaps.bind(null, aPreviousResponseKeys, mPropertyBag));
 	};
 
 	FlexState.clearState = function (sReference) {
