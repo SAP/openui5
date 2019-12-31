@@ -130,7 +130,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
  	 * @param {string} sId ID of the element defined by <code>openStart</code> or <code>voidStart</code>
 	 * @param {string} sTagName Tag name of the element defined by <code>openStart</code> or <code>voidStart</code>
 	 * @param {HTMLElement} oParent HTML element where the returned element is to be inserted
-	 * @returns {HTMLElemnt|null} Clone of the corresponding HTML element to be patched or null to create elements from scratch
+	 * @returns {HTMLElement|null} Clone of the corresponding HTML element to be patched or null to create elements from scratch
 	 * @virtual
 	 */
 	Patcher.createElement = function(sId, sTagName, oParent) {
