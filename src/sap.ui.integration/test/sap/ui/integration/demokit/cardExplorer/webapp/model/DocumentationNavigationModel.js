@@ -47,28 +47,10 @@ sap.ui.define([
 				key: 'types',
 				items: [
 					{
-						title: 'List',
-						topicTitle: 'Integration Card Types',
+						title: 'Adaptive (Experimental)',
+						topicTitle: 'AdaptiveCard',
 						target: 'learnDetail',
-						key: 'list'
-					},
-					{
-						title: 'Table',
-						topicTitle: 'Integration Card Types',
-						target: 'learnDetail',
-						key: 'table'
-					},
-					{
-						title: 'Object',
-						topicTitle: 'Integration Card Types',
-						target: 'learnDetail',
-						key: 'object'
-					},
-					{
-						title: 'Timeline',
-						topicTitle: 'Integration Card Types',
-						target: 'learnDetail',
-						key: 'timeline'
+						key: 'adaptive'
 					},
 					{
 						title: 'Analytical',
@@ -83,10 +65,28 @@ sap.ui.define([
 						key: 'component'
 					},
 					{
-						title: 'Adaptive (Experimental)',
-						topicTitle: 'AdaptiveCard',
+						title: 'List',
+						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
-						key: 'adaptive'
+						key: 'list'
+					},
+					{
+						title: 'Table',
+						topicTitle: 'Integration Card Types',
+						target: 'learnDetail',
+						key: 'table'
+					},
+					{
+						title: 'Timeline',
+						topicTitle: 'Integration Card Types',
+						target: 'learnDetail',
+						key: 'timeline'
+					},
+					{
+						title: 'Object',
+						topicTitle: 'Integration Card Types',
+						target: 'learnDetail',
+						key: 'object'
 					}
 				]
 			},
@@ -109,9 +109,27 @@ sap.ui.define([
 						topicTitle: 'Integration Card Features'
 					},
 					{
-						title: 'Translation',
+						title: 'Data Sources',
 						target: 'learnDetail',
-						key: 'translation',
+						key: 'dataSources',
+						topicTitle: 'Integration Card Data Sources'
+					},
+					{
+						title: 'Date Range Handling',
+						target: 'learnDetail',
+						key: 'dateRangeHandling',
+						topicTitle: 'Integration Card Date Range Handling'
+					},
+					{
+						title: 'Dynamic Counter',
+						target: 'learnDetail',
+						key: 'dynamicCounter',
+						topicTitle: 'Integration Card Features'
+					},
+					{
+						title: 'Dynamic Parameters',
+						target: 'learnDetail',
+						key: 'dynamicParameters',
 						topicTitle: 'Integration Card Features'
 					},
 					{
@@ -121,28 +139,10 @@ sap.ui.define([
 						topicTitle: 'Integration Card Features'
 					},
 					{
-						title: 'Data Sources',
+						title: 'Translation',
 						target: 'learnDetail',
-						key: 'dataSources',
-						topicTitle: 'Integration Card Data Sources'
-					},
-					{
-						title: 'Dynamic Parameters',
-						target: 'learnDetail',
-						key: 'dynamicParameters',
+						key: 'translation',
 						topicTitle: 'Integration Card Features'
-					},
-					{
-						title: 'Dynamic Counter',
-						target: 'learnDetail',
-						key: 'dynamicCounter',
-						topicTitle: 'Integration Card Features'
-					},
-					{
-						title: 'Date Range Handling',
-						target: 'learnDetail',
-						key: 'dateRangeHandling',
-						topicTitle: 'Integration Card Date Range Handling'
 					}
 				]
 			},
@@ -160,15 +160,15 @@ sap.ui.define([
 				key: 'formatters',
 				items: [
 					{
-						title: 'Date and Time',
-						target: 'learnDetail',
-						key: 'dateAndTime',
-						topicTitle: 'Formatters'
-					},
-					{
 						title: 'Currency',
 						target: 'learnDetail',
 						key: 'currency',
+						topicTitle: 'Formatters'
+					},
+					{
+						title: 'Date and Time',
+						target: 'learnDetail',
+						key: 'dateAndTime',
 						topicTitle: 'Formatters'
 					},
 					{
