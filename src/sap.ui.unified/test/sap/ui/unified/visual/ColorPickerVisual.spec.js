@@ -26,6 +26,7 @@ describe("sap.ui.unified.ColorPickerVisual", function() {
 
 	// Large mode
 	it("should render large mode HSL color picker with RGB output", function() {
+		element(by.id("hsv_hsl_btn")).click();
 		element(by.id("select_mode-label")).click();
 		element(by.id("large_mode")).click();
 		element(by.id("remove_focus_btn")).click();

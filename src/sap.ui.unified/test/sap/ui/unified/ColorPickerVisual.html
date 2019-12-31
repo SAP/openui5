@@ -44,7 +44,7 @@
 							new sap.ui.layout.VerticalLayout({
 								width: "100%",
 								content: [
-									new sap.m.Label({text: "HSV:"}),
+									new sap.m.Label({text: "HSL:"}),
 									new sap.ui.layout.HorizontalLayout({
 										width: "100%",
 										content: [
@@ -64,7 +64,7 @@
 									new sap.m.ToggleButton("hsv_hsl_btn", {
 										text: "Toggle HSV/HSL",
 										press: function () {
-											oCP.setMode(sap.ui.unified.ColorPickerMode[this.getPressed() ? 'HSL':'HSV']);
+											oCP.setMode(sap.ui.unified.ColorPickerMode[this.getPressed() ? 'HSV':'HSL']);
 										}
 									})
 								]
