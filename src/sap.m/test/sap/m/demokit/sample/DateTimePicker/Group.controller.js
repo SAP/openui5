@@ -1,10 +1,13 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
-	'sap/ui/core/ValueState',
+	'sap/ui/core/library',
 	"sap/ui/core/Core"
-], function(Controller, JSONModel,ValueState, Core) {
+], function(Controller, JSONModel, coreLibrary, Core) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	return Controller.extend("sap.m.sample.DateTimePicker.Group", {
 

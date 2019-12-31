@@ -4,15 +4,18 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/ValueState",
+	"sap/ui/core/library",
 	"sap/ui/rta/plugin/iframe/URLBuilderDialog"
 ], function (
 	Log,
 	Controller,
-	ValueState,
+	coreLibrary,
 	URLBuilderDialog
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	var _aTextInputFields = ["frameUrl"];
 	var _aNumericInputFields = ["frameWidth", "frameHeight"];

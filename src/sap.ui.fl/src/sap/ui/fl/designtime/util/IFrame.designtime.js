@@ -4,20 +4,24 @@
 
 sap.ui.define([
 	"sap/m/Dialog",
-	"sap/m/DialogType",
 	"sap/m/Label",
 	"sap/m/TextArea",
 	"sap/m/Button",
-	"sap/m/ButtonType"
+	"sap/m/library"
 ], function(
 	Dialog,
-	DialogType,
 	Label,
 	TextArea,
 	Button,
-	ButtonType
+	mobileLibrary
 ) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.m.DialogType
+	var DialogType = mobileLibrary.DialogType;
 
 	// Use a temporary dialog until the official one is ready
 	function editIFrame (oControl/*, mPropertyBag*/) {

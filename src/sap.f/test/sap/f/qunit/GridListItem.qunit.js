@@ -3,20 +3,26 @@
 sap.ui.define([
 	"sap/f/GridListItem",
 	"sap/m/Text",
-	"sap/ui/core/MessageType",
-	"sap/m/ListType",
+	"sap/ui/core/library",
+	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ],
 function (
 	GridListItem,
 	Text,
-	MessageType,
-	ListType,
+	coreLibrary,
+	mobileLibrary,
 	Core,
 	createAndAppendDiv
 ) {
 	"use strict";
+
+	// shortcut for sap.m.ListType
+	var ListType = mobileLibrary.ListType;
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
 
 	var DOM_RENDER_LOCATION = "gridListItem-fixture";
 	createAndAppendDiv(DOM_RENDER_LOCATION);

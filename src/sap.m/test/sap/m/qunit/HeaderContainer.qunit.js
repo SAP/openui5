@@ -8,14 +8,20 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/Device",
 	"sap/ui/core/Icon",
-	"sap/ui/core/Orientation",
-	"sap/m/BackgroundDesign",
+	"sap/ui/core/library",
+	"sap/m/library",
 	"sap/base/Log",
 	"sap/m/Text",
 	"jquery.sap.events"
-], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, Orientation, BackgroundDesign,
+], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, mobileLibrary,
 			Log, Text) {
 	"use strict";
+
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = mobileLibrary.BackgroundDesign;
+
+	// shortcut for sap.ui.core.Orientation
+	var Orientation = coreLibrary.Orientation;
 
 	jQuery.sap.initMobile();
 

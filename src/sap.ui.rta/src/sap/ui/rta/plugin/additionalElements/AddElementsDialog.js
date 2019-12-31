@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/SearchField",
 	"sap/m/Button",
-	"sap/m/ButtonType",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/ui/model/Filter",
@@ -30,7 +29,6 @@ sap.ui.define([
 	JSONModel,
 	SearchField,
 	Button,
-	ButtonType,
 	Toolbar,
 	ToolbarSpacer,
 	Filter,
@@ -47,6 +45,9 @@ sap.ui.define([
 	Text
 ) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	// shortcut for sap.m.ListType
 	var ListType = mobileLibrary.ListType;

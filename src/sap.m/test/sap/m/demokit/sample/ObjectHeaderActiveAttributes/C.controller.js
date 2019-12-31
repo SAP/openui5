@@ -7,10 +7,13 @@ sap.ui.define([
 		'sap/m/VBox',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
-		'sap/m/ButtonType',
+		'sap/m/library',
 		'sap/ui/core/Popup'
-], function(Button, Dialog, MessageToast, RatingIndicator, TextArea, VBox, Controller, JSONModel,ButtonType,Popup) {
+], function(Button, Dialog, MessageToast, RatingIndicator, TextArea, VBox, Controller, JSONModel,mobileLibrary,Popup) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.m.sample.ObjectHeaderActiveAttributes.C", {
 
