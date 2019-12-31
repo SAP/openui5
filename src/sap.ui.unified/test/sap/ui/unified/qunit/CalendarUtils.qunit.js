@@ -391,6 +391,19 @@ sap.ui.define([
 		assert.equal(CalendarUtils._minDate("Gregorian").getMonth(), 0, "the month is the same");
 		assert.equal(CalendarUtils._minDate("Gregorian").getDate(), 1, "the date is the same");
 
+		assert.equal(CalendarUtils._minDate("Islamic").getYear(), 1, "the date is the same");
+		assert.equal(CalendarUtils._minDate("Islamic").getMonth(), 0, "the date is the same");
+		assert.equal(CalendarUtils._minDate("Islamic").getDate(), 1, "the date is the same");
+
+		assert.equal(CalendarUtils._minDate("Persian").getYear(), 1, "the date is the same");
+		assert.equal(CalendarUtils._minDate("Persian").getMonth(), 0, "the date is the same");
+		assert.equal(CalendarUtils._minDate("Persian").getDate(), 1, "the date is the same");
+
+		assert.equal(CalendarUtils._minDate("Japanese").getYear(), 1, "the date is the same");
+		assert.equal(CalendarUtils._minDate("Japanese").getMonth(), 0, "the date is the same");
+		assert.equal(CalendarUtils._minDate("Japanese").getDate(), 1, "the date is the same");
+		assert.equal(CalendarUtils._minDate("Japanese").getEra(), 0, "the date is the same");
+
 	});
 
 	QUnit.test("_maxDate", function(assert) {
@@ -404,6 +417,19 @@ sap.ui.define([
 		assert.equal(CalendarUtils._maxDate("Gregorian").getYear(), 9999, "the year is the same");
 		assert.equal(CalendarUtils._maxDate("Gregorian").getMonth(), 11, "the month is the same");
 		assert.equal(CalendarUtils._maxDate("Gregorian").getDate(), 31, "the date is the same");
+
+		assert.equal(CalendarUtils._maxDate("Islamic").getYear(), 9999, "the year is the same");
+		assert.equal(CalendarUtils._maxDate("Islamic").getMonth(), 11, "the month is the same");
+		assert.equal(CalendarUtils._maxDate("Islamic").getDate(), 29, "the date is the same");
+
+		assert.equal(CalendarUtils._maxDate("Persian").getYear(), 9999, "the year is the same");
+		assert.equal(CalendarUtils._maxDate("Persian").getMonth(), 11, "the month is the same");
+		assert.equal(CalendarUtils._maxDate("Persian").getDate(), 29, "the date is the same");
+
+		assert.equal(CalendarUtils._maxDate("Japanese").getYear(), 9999, "the year is the same");
+		assert.equal(CalendarUtils._maxDate("Japanese").getMonth(), 11, "the month is the same");
+		assert.equal(CalendarUtils._maxDate("Japanese").getDate(), 31, "the date is the same");
+		assert.equal(CalendarUtils._maxDate("Japanese").getEra(), 236, "the date is the same");
 
 	});
 
