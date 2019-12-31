@@ -161,6 +161,7 @@ sap.ui.define([
 					"xx-avoidAriaApplicationRole" : { type : "boolean",  defaultValue : false}, // Avoid ACC role 'application'
 					"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty|disable
 					"xx-flexBundleRequestForced" : { type : "boolean",  defaultValue : false },
+					"xx-cssVariables"       : { type : "string",   defaultValue : "false" }, // false|true|additional (additional just includes the css-variables.css in addition)
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -547,6 +548,12 @@ sap.ui.define([
 			} else {
 				// Validate and set the provided value for the animation mode
 				this.setAnimationMode(this.getAnimationMode());
+			}
+
+			// disable the css variables in case of IE11
+			if (Device.browser.msie && config["xx-cssVariables"] !== "false") {
+				config["xx-cssVariables"] = "false";
+				Log.warning("The option xx-cssVariables is not supported on Microsoft Internet Explorer!");
 			}
 		},
 
