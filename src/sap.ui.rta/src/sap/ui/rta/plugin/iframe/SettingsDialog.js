@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/ValueState",
+	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/plugin/iframe/SettingsDialogController"
@@ -13,12 +13,15 @@ sap.ui.define([
 	Log,
 	ManagedObject,
 	Fragment,
-	ValueState,
+	coreLibrary,
 	JSONModel,
 	RtaUtils,
 	SettingsDialogController
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	var _oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	var _mText = {

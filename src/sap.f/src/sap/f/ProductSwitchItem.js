@@ -6,7 +6,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Icon",
-	"sap/ui/core/TextAlign",
+	"sap/ui/core/library",
 	"sap/m/Text",
 	"sap/ui/events/KeyCodes",
 	"sap/f/ProductSwitchItemRenderer"
@@ -14,12 +14,16 @@ sap.ui.define([
 	function (
 		Control,
 		Icon,
-		TextAlign,
+		library,
 		Text,
 		KeyCodes,
 		ProductSwitchItemRenderer
 	) {
 		"use strict";
+
+		// shortcut for sap.ui.core.TextAlign
+		var TextAlign = library.TextAlign;
+
 		/**
 		 * Constructor for a new <code>ProductSwitchItem</code>.
 		 *
@@ -193,4 +197,4 @@ sap.ui.define([
 
 		return ProductSwitchItem;
 
-	}, /* bExport= */ true);
+	});

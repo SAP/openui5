@@ -2,14 +2,17 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/Core',
 	'sap/ui/core/message/Message',
-	'sap/ui/core/MessageType'
-], function (
+	'sap/ui/core/library'
+], function(
 	Controller,
 	Core,
 	Message,
-	MessageType
+	coreLibrary
 ) {
 		"use strict";
+
+		// shortcut for sap.ui.core.MessageType
+		var MessageType = coreLibrary.MessageType;
 
 		return Controller.extend("sap.m.sample.MessageViewMessageManager.controller.MessageViewMessageManager", {
 			onInit: function () {

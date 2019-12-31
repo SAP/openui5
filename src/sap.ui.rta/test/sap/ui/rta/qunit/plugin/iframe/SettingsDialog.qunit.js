@@ -3,19 +3,22 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/iframe/SettingsDialog",
 	"sap/base/Log",
-	"sap/ui/core/ValueState",
+	"sap/ui/core/library",
 	"sap/ui/rta/plugin/iframe/SettingsDialogController",
 	"sap/ui/rta/plugin/iframe/URLBuilderDialog",
 	"sap/ui/qunit/QUnitUtils"
 ], function (
 	SettingsDialog,
 	Log,
-	ValueState,
+	coreLibrary,
 	SettingsDialogController,
 	URLBuilderDialog,
 	QUnitUtils
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	var aTextInputFields = ["frameUrl"];

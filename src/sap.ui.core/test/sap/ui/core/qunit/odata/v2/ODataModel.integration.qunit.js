@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/Device",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/MessageType",
+	"sap/ui/core/library",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/BindingMode",
@@ -18,10 +18,13 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper'
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Device, SyncPromise, MessageType, Controller, View, BindingMode, CountMode,
+], function (Log, uid, Device, SyncPromise, coreLibrary, Controller, View, BindingMode, CountMode,
 		MessageScope, ODataModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit*/
 	"use strict";
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		NO_CONTENT = {/*204 no content*/};

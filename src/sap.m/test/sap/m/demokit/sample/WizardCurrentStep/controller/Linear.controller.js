@@ -1,8 +1,11 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/ValueState'
-], function (Controller, ValueState) {
+	'sap/ui/core/library'
+], function (Controller, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	return Controller.extend("sap.m.sample.WizardCurrentStep.controller.Linear", {
 		_syncSelect: function (sStepId) {

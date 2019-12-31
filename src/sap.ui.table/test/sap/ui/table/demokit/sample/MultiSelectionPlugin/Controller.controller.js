@@ -4,9 +4,12 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
-	"sap/ui/table/SelectionMode"
-], function(Controller, MockServer, ODataModel, JSONModel, MessageToast, SelectionMode) {
+	"sap/ui/table/library"
+], function(Controller, MockServer, ODataModel, JSONModel, MessageToast, library) {
 	"use strict";
+
+	// shortcut for sap.ui.table.SelectionMode
+	var SelectionMode = library.SelectionMode;
 
 	var sServiceUrl = "http://my.test.service.com/";
 

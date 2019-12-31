@@ -8,9 +8,12 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/VerticalLayout",
-	"sap/m/ButtonType"
-], function (Button, Dialog, Label, MessageToast, Text, TextArea, Controller, HorizontalLayout, VerticalLayout, ButtonType) {
+	"sap/m/library"
+], function (Button, Dialog, Label, MessageToast, Text, TextArea, Controller, HorizontalLayout, VerticalLayout, mobileLibrary) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.m.sample.DialogConfirm.C", {
 

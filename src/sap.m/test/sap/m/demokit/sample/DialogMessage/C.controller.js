@@ -3,9 +3,12 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Text",
 	"sap/ui/core/mvc/Controller",
-	"sap/m/ButtonType"
-], function (Button, Dialog, Text, Controller, ButtonType) {
+	"sap/m/library"
+], function(Button, Dialog, Text, Controller, mobileLibrary) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.m.sample.DialogMessage.C", {
 
