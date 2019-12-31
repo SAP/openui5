@@ -623,7 +623,7 @@ function(
 				break;
 			case PlanningCalendarStickyMode.NavBarAndColHeaders:
 				// Since the action toolbar will be hidden, columnHeaders should be
-				iTop = this._getHeader()._getNavigationToolbar().$().outerHeight();
+				iTop = this._getHeader()._getActionsToolbar().$().outerHeight();
 				break;
 			default:
 				// Reset to default, if not in sticky mode
