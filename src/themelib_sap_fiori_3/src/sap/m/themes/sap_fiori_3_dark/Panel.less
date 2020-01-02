@@ -3,6 +3,10 @@
 /* Quartz Dark theme                  */
 /* ================================== */
 
+.sapMPanel {
+	min-height: 2.5rem;
+}
+
 .sapMPanelBGSolid {
 	background-color: @sapUiGroupTitleBackground;
 }
@@ -79,6 +83,18 @@
 		// we need white color in both light and
 		// dark versions when close button is active
 		border-color: @sapUiContentContrastFocusColor;
+	}
+}
+
+html[data-sap-ui-animation='on'] {
+	.sapMPanelExpandableIcon {
+		-webkit-transition: none;
+		transition: none;
+	}
+
+	.sapMPanelExpandableIconExpanded {
+		-webkit-transition: none;
+		transition: none;
 	}
 }
 
