@@ -50,6 +50,10 @@
 	position: relative;
 }
 
+.sapUiMnuItm:not(.sapUiMnuItmDsbl) {
+	cursor: pointer;
+}
+
 .sapUiMnuItm:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -3px;
@@ -120,6 +124,10 @@ html[data-sap-ui-browser*='ie'] {
 
 .sapUiMnuItmIco > .sapUiIcon {
 	line-height: @_sap_ui_unified_Menu_ItmHeight;
+}
+
+.sapUiMnuItmIco > .sapUiIcon {
+	cursor: inherit;
 }
 
 .sapUiMnu .sapUiMnuItmIco .sapUiIcon {
