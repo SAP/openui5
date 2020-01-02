@@ -1,6 +1,7 @@
-sap.ui.define(["sap/ui/core/mvc/Controller",
-	"sap/ui/core/UIComponent"],
-	function(Controller, UIComponent) {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/UIComponent"
+], function(Controller, UIComponent) {
 		"use strict";
 
 		return Controller.extend("sap.ui.demo.cardExplorer.controller.BaseController", {
@@ -9,7 +10,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			 * @public
 			 * @returns {sap.ui.core.routing.Router} the router for this component
 			 */
-			getRouter : function () {
+			getRouter: function () {
 				return UIComponent.getRouterFor(this);
 			},
 
@@ -19,7 +20,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			 * @param {string} [sName] the model name
 			 * @returns {sap.ui.model.Model} the model instance
 			 */
-			getModel : function (sName) {
+			getModel: function (sName) {
 				return this.getView().getModel(sName);
 			},
 
@@ -30,7 +31,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			 * @param {string} sName the model name
 			 * @returns {sap.ui.mvc.View} the view instance
 			 */
-			setModel : function (oModel, sName) {
+			setModel: function (oModel, sName) {
 				return this.getView().setModel(oModel, sName);
 			},
 
@@ -41,6 +42,21 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			 */
 			getResourceBundle : function () {
 				return this.getOwnerComponent().getModel("i18n").getResourceBundle();
+			},
+
+			/**
+			 * Adds eventListener on "load" event listener to the iframe, which is used to display topics.
+			 */
+			onFrameSourceChange: function () {
+				var oDomRef = this.byId("topicFrame").getDomRef();
+
+				// sync sapUiSizeCompact with the iframe
+				if (oDomRef) {
+					oDomRef.querySelector("iframe").addEventListener("load", function (oEvent) {
+						var sClass = this.getOwnerComponent().getContentDensityClass();
+						oEvent.target.contentDocument.body.classList.add(sClass);
+					}.bind(this));
+				}
 			}
 		});
 	}

@@ -29,7 +29,12 @@
 							</contentRight>
 						</Bar>
 					</customHeader>
-					<MessageStrip visible="{= ${/sample/key} === 'calendar'}" showIcon="true" type="Warning" text="This type of card is in a beta state - incompatible API changes in the manifest may be done before its official public release." />
+					<MessageStrip
+						text="This type of card is in a beta state - incompatible API changes in the manifest may be done before its official public release."
+						visible="{= !!${/sample/experimental}}"
+						showIcon="true"
+						type="Warning"
+						class="sapUiSmallMargin"/>
 					<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }">
 						<w:Card id="cardSample" action="._onCardAction"/>
 					</f:GridContainer>
@@ -99,7 +104,7 @@
 							selectedKey="{extendedFileEditor>/selectedFileKey}"
 							select="onFileSwitch"
 							visible="{= ${settings>/useExtendedFileEditor} }"
-							items="{extendedFileEditor>/files}">
+							items="{path: 'extendedFileEditor>/files', templateShareable: false}">
 						<items>
 							<IconTabFilter text="{extendedFileEditor>name}" key="{extendedFileEditor>key}"/>
 						</items>

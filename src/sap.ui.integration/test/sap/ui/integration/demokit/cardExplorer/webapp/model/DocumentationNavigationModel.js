@@ -3,6 +3,7 @@ sap.ui.define([
 ], function (JSONModel) {
 	"use strict";
 
+	// Please order topics alphabetically by "title"
 	return new JSONModel({
 		selectedKey: 'overview',
 		navigation: [
@@ -47,10 +48,11 @@ sap.ui.define([
 				key: 'types',
 				items: [
 					{
-						title: 'Adaptive (Experimental)',
+						title: 'Adaptive',
 						topicTitle: 'AdaptiveCard',
 						target: 'learnDetail',
-						key: 'adaptive'
+						key: 'adaptive',
+						experimental: true
 					},
 					{
 						title: 'Analytical',
@@ -71,6 +73,12 @@ sap.ui.define([
 						key: 'list'
 					},
 					{
+						title: 'Object',
+						topicTitle: 'Integration Card Types',
+						target: 'learnDetail',
+						key: 'object'
+					},
+					{
 						title: 'Table',
 						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
@@ -81,12 +89,6 @@ sap.ui.define([
 						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'timeline'
-					},
-					{
-						title: 'Object',
-						topicTitle: 'Integration Card Types',
-						target: 'learnDetail',
-						key: 'object'
 					}
 				]
 			},
@@ -115,10 +117,11 @@ sap.ui.define([
 						topicTitle: 'Integration Card Data Sources'
 					},
 					{
-						title: 'Date Range Handling',
+						title: 'Date Ranges',
 						target: 'learnDetail',
-						key: 'dateRangeHandling',
-						topicTitle: 'Integration Card Date Range Handling'
+						key: 'dateRanges',
+						topicTitle: 'Integration Card Date Range Handling',
+						experimental: true
 					},
 					{
 						title: 'Dynamic Counter',
