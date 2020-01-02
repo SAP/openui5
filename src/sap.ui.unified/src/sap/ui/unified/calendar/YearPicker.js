@@ -118,7 +118,7 @@ sap.ui.define([
 		events : {
 
 			/**
-			 * Month selection changed
+			 * Year selection changed
 			 */
 			select : {},
 

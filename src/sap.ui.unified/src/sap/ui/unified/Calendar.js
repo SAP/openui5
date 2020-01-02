@@ -2214,39 +2214,26 @@ sap.ui.define([
 
 	Calendar.prototype._selectYearRange = function() {
 		var oYearRangePicker = this.getAggregation("yearRangePicker"),
-			oYearPicker = this._getYearPicker(),
-			sPrimaryCalendarType = this.getPrimaryCalendarType(),
 			oHeader = this.getAggregation("header"),
-			oFirstDate = CalendarDate.fromLocalJSDate(oYearRangePicker.getDate(), sPrimaryCalendarType),
-			oSecondDate = new CalendarDate(oFirstDate, sPrimaryCalendarType),
-			oSelectedDate = new CalendarDate(oFirstDate, sPrimaryCalendarType),
-			sFirstYear,
-			sSecondYear;
+			iRangeSize = oYearRangePicker.getRangeSize(),
+			sPrimaryCalendarType = this.getPrimaryCalendarType(),
+			oStartDate = CalendarDate.fromLocalJSDate(oYearRangePicker.getDate(), sPrimaryCalendarType),
+			oEndDate = new CalendarDate(oStartDate.getYear() + iRangeSize - 1, 0, 1, sPrimaryCalendarType),
+			oFocusedDate = new CalendarDate(oStartDate.getYear() + Math.floor(iRangeSize / 2), 0, 1, sPrimaryCalendarType),
+			sStartDate, sEndDate;
 
-		oSecondDate.setYear(oSecondDate.getYear() + oYearRangePicker.getRangeSize() - 1);
-		oSelectedDate.setYear(oSelectedDate.getYear() + Math.floor(oYearRangePicker.getRangeSize() / 2));
-		oFirstDate.setDate(1); // always use the first of the month to have stable year in Japanese calendar
-		oSecondDate.setDate(1);
-		oSelectedDate.setDate(1);
-
-		// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
-		sFirstYear = this._oYearFormat.format(UniversalDate.getInstance(oFirstDate.toUTCJSDate(), oFirstDate.getCalendarType()), true);
-		sSecondYear = this._oYearFormat.format(UniversalDate.getInstance(oSecondDate.toUTCJSDate(), oSecondDate.getCalendarType()), true);
+		oStartDate.setMonth(0, 1); // always use the first of the month to have stable year in Japanese calendar
+		this._setFocusedDate(oFocusedDate);
 
 		this._hideYearRangePicker();
 		this._showYearPicker();
-		this._updateHeadersButtons();
-		oHeader.setTextButton2(sFirstYear + " - " + sSecondYear);
-		oHeader._setTextButton4(sFirstYear + " - " + sSecondYear);
 
-		// check the given object if it's a JS Date object
-		// null is a default value so it should not throw error but set it instead
-		oFirstDate.setMonth(0);
-		CalendarUtils._checkJSDateObject(oFirstDate.toLocalJSDate());
-		CalendarUtils._checkYearInValidRange(oFirstDate.toLocalJSDate().getFullYear());
-		oYearPicker.getDomRef() && oYearPicker._updateYears(oFirstDate, Math.floor(oYearPicker.getYears() / 2));
+		// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
+		sStartDate = this._oYearFormat.format(UniversalDate.getInstance(oStartDate.toUTCJSDate(), oStartDate.getCalendarType()), true);
+		sEndDate = this._oYearFormat.format(UniversalDate.getInstance(oEndDate.toUTCJSDate(), oEndDate.getCalendarType()), true);
 
-		this._togglePrevNexYearPicker();
+		oHeader.setTextButton2(sStartDate + " - " + sEndDate);
+		oHeader._setTextButton4(sStartDate + " - " + sEndDate);
 	};
 
 	Calendar.prototype._showYearRangePicker = function () {
