@@ -1,12 +1,10 @@
 /*global QUnit sinon */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/tnt/SideNavigation',
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem'
 ], function(
-	jQuery,
 	SideNavigation,
 	NavigationList,
 	NavigationListItem) {
@@ -277,6 +275,13 @@ sap.ui.define([
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), selectedItem.sId, 'selection is correct');
 	});
 
+	QUnit.test('Selected key set, no items, no fixedItem', function (assert) {
+		this.sideNavigation.getItem().destroyItems();
+		this.sideNavigation.getFixedItem().destroy();
+		this.sideNavigation.setFixedItem(null);
+		this.sideNavigation.setSelectedKey("some_key");
+		assert.ok(true, '_findItemByKey was NOT called on fixedItem');
+	});
 
 	QUnit.module('Changing properties', {
 		beforeEach: function () {

@@ -265,19 +265,14 @@ sap.ui.define([
 		SideNavigation.prototype.setSelectedKey = function (selectedKey) {
 
 			var selectedItem,
-				navigationList,
-				fixedNavigationList;
+				navigationList = this.getItem(),
+				fixedNavigationList = this.getFixedItem();
 
-			if (selectedKey) {
-				navigationList = this.getAggregation('item');
+			if (selectedKey && navigationList) {
+				selectedItem = navigationList._findItemByKey(selectedKey);
 
-				if (navigationList) {
-					selectedItem = navigationList._findItemByKey(selectedKey);
-
-					if (!selectedItem) {
-						fixedNavigationList = this.getAggregation('fixedItem');
-						selectedItem = fixedNavigationList._findItemByKey(selectedKey);
-					}
+				if (!selectedItem && fixedNavigationList) {
+					selectedItem = fixedNavigationList._findItemByKey(selectedKey);
 				}
 			}
 
