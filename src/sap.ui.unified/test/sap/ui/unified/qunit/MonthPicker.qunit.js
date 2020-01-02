@@ -1,3 +1,4 @@
+
 /*global QUnit, window, sinon */
 
 sap.ui.define([
@@ -420,8 +421,9 @@ sap.ui.define([
 
 		QUnit.test("_markInterval", function(assert) {
 			// arrange
-			var oSep_01_2019 = new Date(2019, 8, 1),
-				oDec_01_2019 = new Date(2019, 11, 1),
+			var sCurrentYear = new Date().getFullYear(),
+				oSep_01_2019 = new Date(sCurrentYear, 8, 1),
+				oDec_01_2019 = new Date(sCurrentYear, 11, 1),
 				aRefs;
 
 			this.MP.placeAt("qunit-fixture");
