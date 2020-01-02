@@ -31,7 +31,7 @@ sap.ui.define([
 		 * @param {object} oManifest - Raw manifest provided by core Component
 		 * @param {object} oConfig - Copy of the configuration of loaded component
 		 * @param {object} oConfig.asyncHints - Async hints passed from the app index to the core Component processing
-		 * @param {object} oConfig.asyncHints - Component Data from the Component processing
+		 * @param {object} oConfig.componentData - Component Data from the Component processing
 		 * @returns {Promise<object>} - Processed manifest
 		 */
 		preprocessManifest: function(oManifest, oConfig) {
@@ -44,7 +44,8 @@ sap.ui.define([
 				componentData: oConfig.componentData,
 				asyncHints: oConfig.asyncHints,
 				rawManifest: oManifest,
-				componentId: oConfig.id
+				componentId: oConfig.id,
+				reference: sReference
 			}).then(function() {
 				var aAppDescriptorChanges = FlexState.getAppDescriptorChanges(sReference);
 				var oUpdatedManifest = Object.assign({}, oManifest);
