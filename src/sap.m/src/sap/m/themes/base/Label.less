@@ -71,7 +71,7 @@ html[dir="ltr"] .sapMLabel[dir="rtl"].sapMLabelRequired .sapMLabelColonAndRequir
 }
 
 .sapMLabel:not(.sapMLabelWrapped).sapMLabelRequired .sapMLabelTextWrapper {
-	max-width: calc(~"100% - @{_sap_m_Label_AsteriskWidth} -  0.125rem"); /* make space for the asterisk when we have single line label and subtract 2px margin-left to look nicer */
+	max-width: calc(~"100% - (@{_sap_m_Label_AsteriskWidth} -  0.125rem)"); /* make space for the asterisk when we have single line label and subtract 2px margin-left to look nicer */
 
 	html[data-sap-ui-browser^="sf"] & {
 		max-width: 100%;
