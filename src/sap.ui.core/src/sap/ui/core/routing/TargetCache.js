@@ -272,8 +272,9 @@ sap.ui.define([
 
 			/**
 			 * Hook for retrieving views synchronous way since Targets and router are not doing this yet
-			 * @param oOptions
-			 * @returns {*}
+			 * @param {object} oOptions The options to determine the view
+			 * @param {boolean} bGlobalId True, if a global id should be generated
+			 * @returns {*} the view
 			 * @private
 			 */
 			_getView : function (oOptions, bGlobalId) {

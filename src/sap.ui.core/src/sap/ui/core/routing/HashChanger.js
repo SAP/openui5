@@ -176,7 +176,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * Reconstructs the hash
 	 *
+	 * @param {string[]} aKeys The prefixes of the RouterHashChangers which changed their hash during the last navTo call
+	 * @param {string[]} aValues The new hashes in the last navTo call
+	 * @param {string[]} aDeleteKeys The prefixes of the RouterHashChanger which are navigated away and their hashes will be deleted from the browser hash
+	 * @returns {string} The reconstructed hash
+	 * @private
 	 */
 	HashChanger.prototype._reconstructHash = function(aKeys, aValues, aDeleteKeys) {
 		var aParts = this.getHash().split("&/"),

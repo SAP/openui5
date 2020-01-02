@@ -13,6 +13,10 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/mvc/View"], function(Log, View) {
 	return {
 
 		/**
+		 * Determines the view with the given <code>oOptions</code> and creates the view if it is not existing so far
+		 *
+		 * @param {object} oOptions The options of the desired view
+		 * @returns {sap.ui.core.mvc.View} The desired view
 		 * @private
 		 */
 		_getObjectWithGlobalId : function (oOptions) {
@@ -62,6 +66,13 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/mvc/View"], function(Log, View) {
 			return oView;
 		},
 
+		/**
+		 * Determines the view with the given <code>oOptions</code> and creates the view if it is not existing so far
+		 *
+		 * @param {object} [oOptions] The options of the desired view
+		 * @returns {object} The desired view
+		 * @private
+		 */
 		_getViewWithGlobalId : function (oOptions) {
 			if (oOptions && !oOptions.name) {
 				oOptions.name = oOptions.viewName;

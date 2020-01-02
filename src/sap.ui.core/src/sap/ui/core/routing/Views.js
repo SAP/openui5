@@ -81,8 +81,8 @@ sap.ui.define([
 			 * @return {sap.ui.core.routing.Views} this for chaining.
 			 * @public
 			 */
-			setView: function (sName, oView) {
-				return this.set(sName, "View", oView);
+			setView: function (sViewName, oView) {
+				return this.set(sViewName, "View", oView);
 			},
 
 			/**
