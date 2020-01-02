@@ -92,8 +92,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ChangePersistenceFactory._onLoadComponent = function (oConfig, oManifest) {
-		// stop processing if the component is not of the type application
-		if (!Utils.isApplication(oManifest)) {
+		// stop processing if the component is not of the type application or component ID is missing
+		if (!Utils.isApplication(oManifest) || !oConfig.id) {
 			return;
 		}
 

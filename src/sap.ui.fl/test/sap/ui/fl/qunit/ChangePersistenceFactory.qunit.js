@@ -89,12 +89,9 @@ sap.ui.define([
 				}
 			};
 
-			var oChangePersistence = new ChangePersistence(oComponent);
-			var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
-
+			var oInitializeStub = sandbox.stub(FlexState, "initialize");
 			ChangePersistenceFactory._onLoadComponent(oConfig, undefined);
-
-			assert.equal(oChangePersistenceStub.callCount, 0, "no change request was sent");
+			assert.equal(oInitializeStub.callCount, 0, "then flex state was not initialized");
 		});
 
 		QUnit.test("onLoadComponent does nothing if the passed manifest does not contain a type", function (assert) {
@@ -120,12 +117,9 @@ sap.ui.define([
 				}
 			};
 
-			var oChangePersistence = new ChangePersistence(oComponent);
-			var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
-
+			var oInitializeStub = sandbox.stub(FlexState, "initialize");
 			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
-
-			assert.equal(oChangePersistenceStub.callCount, 0, "no change request was sent");
+			assert.equal(oInitializeStub.callCount, 0, "then flex state was not initialized");
 		});
 
 		QUnit.test("onLoadComponent does nothing if the passed manifest is not of the type 'application'", function (assert) {
@@ -153,12 +147,26 @@ sap.ui.define([
 				}
 			};
 
-			var oChangePersistence = new ChangePersistence(oComponent);
-			var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
-
+			var oInitializeStub = sandbox.stub(FlexState, "initialize");
 			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
+			assert.equal(oInitializeStub.callCount, 0, "then flex state was not initialized");
+		});
 
-			assert.equal(oChangePersistenceStub.callCount, 0, "no change request was sent");
+		QUnit.test("onLoadComponent does nothing if component ID is not passed", function (assert) {
+			var oConfig = {};
+
+			var oManifest = {
+				"sap.app": {
+					type: "application"
+				},
+				getEntry: function (key) {
+					return this[key];
+				}
+			};
+
+			var oInitializeStub = sandbox.stub(FlexState, "initialize");
+			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
+			assert.equal(oInitializeStub.callCount, 0, "then flex state was not initialized");
 		});
 
 		QUnit.test("onLoadComponent determines legacy app variant ids and has no caching", function (assert) {
