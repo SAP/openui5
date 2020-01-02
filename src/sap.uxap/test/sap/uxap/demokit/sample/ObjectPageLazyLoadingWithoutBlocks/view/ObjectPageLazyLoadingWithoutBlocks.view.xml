@@ -7,13 +7,22 @@
 >
 	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true">
 		<headerTitle>
-			<ObjectPageHeader objectTitle="ObjectPage with LazyLoading without the use of Blocks">
+			<ObjectPageDynamicHeaderTitle>
+				<heading>
+					<m:Title text="ObjectPage with LazyLoading without the use of Blocks" />
+				</heading>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Header Title On Phone"/>
+				</snappedTitleOnMobile>
+
 				<actions>
-					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
+					<m:OverflowToolbarButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
+					<m:OverflowToolbarButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
 				</actions>
-			</ObjectPageHeader>
+			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
+
 		<sections>
 			<ObjectPageSection title="my section">
 				<subSections>

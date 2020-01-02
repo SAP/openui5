@@ -1,40 +1,57 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.uxap"
-	xmlns:layout="sap.ui.layout"
+	xmlns:l="sap.ui.layout"
 	xmlns:m="sap.m"
 	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
 	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
 	controllerName="sap.uxap.sample.ObjectPageHeaderExpanded.controller.ObjectPageHeaderExpanded"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" alwaysShowContentHeader="true">
+	<ObjectPageLayout id="ObjectPageLayout" preserveHeaderStateOnScroll="true">
 		<headerTitle>
-			<ObjectPageHeader id="headerForTest"
-							  objectTitle="Denise Smith"
-							  objectSubtitle="Example of a ObjectPage with Header Content always shown on desktop"
-							  objectImageShape="Circle"
-							  objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png">
-				<actions>
-					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" tooltip="action"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings" tooltip="action-settings"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit" tooltip="edit"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false" tooltip="save"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://refresh" text="{buttons>/text}" tooltip="refresh"/>
-				</actions>
-			</ObjectPageHeader>
-		</headerTitle>
-		<headerContent>
-			<layout:VerticalLayout>
-				<m:ObjectStatus title="User ID" text="12345678"/>
-				<m:ObjectStatus title="Functional Area" text="Developement"/>
-				<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
-				<m:ObjectStatus title="Email" text="email@address.com"/>
-			</layout:VerticalLayout>
-			<m:Text width="200px"
-					text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+			<ObjectPageDynamicHeaderTitle>
+				<heading>
+					<m:Title text="Denise Smith" />
+				</heading>
 
-			<m:ObjectStatus text="In Stock" state="Error"/>
-			<m:ObjectStatus title="Label" text="In Stock" state="Warning"/>
+				<expandedContent>
+					<m:Text text="Example of a ObjectPage with Header Content always shown on desktop"/>
+				</expandedContent>
+
+				<snappedContent>
+					<m:Text text="Example of a ObjectPage with Header Content always shown on desktop"/>
+				</snappedContent>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Header Title On Phone"/>
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:OverflowToolbarButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
+					<m:OverflowToolbarButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<m:FlexBox wrap="Wrap" fitContainer="true">
+				<l:VerticalLayout class="sapUiSmallMarginEnd">
+					<m:ObjectStatus title="User ID" text="12345678"/>
+					<m:ObjectStatus title="Functional Area" text="Developement"/>
+					<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
+					<m:ObjectStatus title="Email" text="email@address.com"/>
+				</l:VerticalLayout>
+
+				<l:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:Text width="200px" text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+				</l:VerticalLayout>
+
+				<l:HorizontalLayout class="sapUiSmallMarginBeginEnd">
+					<m:ObjectStatus text="In Stock" state="Error" class="sapUiMediumMarginEnd"/>
+					<m:ObjectStatus title="Label" text="In Stock" state="Warning"/>
+				</l:HorizontalLayout>
+			</m:FlexBox>
 		</headerContent>
+
 		<sections>
 			<ObjectPageSection title="2014 Goals Plan">
 				<subSections>
