@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/Component",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap",
@@ -14,7 +14,7 @@ sap.ui.define([
 ], function(
 	merge,
 	Component,
-	ConnectorUtils,
+	StorageUtils,
 	Loader,
 	ManifestUtils,
 	prepareAppDescriptorMap,
@@ -93,7 +93,7 @@ sap.ui.define([
 			aParts.pop();
 			var sReferenceWithoutComponent = aParts.join(".");
 			_mInstances[sReferenceWithoutComponent] = merge({}, {
-				storageResponse: {changes: ConnectorUtils.getEmptyFlexDataResponse()},
+				storageResponse: {changes: StorageUtils.getEmptyFlexDataResponse()},
 				componentId: mPropertyBag.componentId
 			});
 			_mInitPromises[sReferenceWithoutComponent] = _mInitPromises[mPropertyBag.reference];

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/thirdparty/jquery"
@@ -12,7 +12,7 @@ sap.ui.define([
 	ObjectStorageUtils,
 	JsObjectConnector,
 	SessionStorageConnector,
-	ConnectorUtils,
+	StorageUtils,
 	JsObjectWriteConnector,
 	SessionStorageWriteConnector,
 	jQuery
@@ -21,7 +21,7 @@ sap.ui.define([
 
 	QUnit.module("Loading of Connector", {}, function() {
 		QUnit.test("given a custom connector is configured", function(assert) {
-			return ConnectorUtils.getApplyConnectors().then(function (aConnectors) {
+			return StorageUtils.getApplyConnectors().then(function (aConnectors) {
 				assert.equal(aConnectors.length, 2, "two connectors are loaded");
 				assert.equal(aConnectors[0].connector, "StaticFileConnector", "the StaticFileConnector is the first connector");
 				assert.equal(aConnectors[1].connector, "ObjectStorageConnector", "the ObjectStorageConnector is the second connector");

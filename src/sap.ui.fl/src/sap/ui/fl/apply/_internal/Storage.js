@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/apply/_internal/storageResultDisassemble"
 ], function(
-	ApplyUtils,
+	StorageUtils,
 	StorageResultMerger,
 	storageResultDisassemble
 ) {
@@ -27,7 +27,11 @@ sap.ui.define([
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
 			var oConnectorSpecificPropertyBag = Object.assign(mPropertyBag, {url: oConnectorConfig.url, path: oConnectorConfig.url});
 			return oConnectorConfig.applyConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
-				.catch(ApplyUtils.logAndResolveDefault.bind(undefined, ApplyUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));
+				.then(function (oResponse) {
+					// ensure an object with the corresponding propeties
+					return oResponse || StorageUtils.getEmptyFlexDataResponse();
+				})
+				.catch(StorageUtils.logAndResolveDefault.bind(undefined, StorageUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));
 		});
 
 		return Promise.all(aConnectorPromises);
@@ -79,7 +83,7 @@ sap.ui.define([
 			return Promise.reject("No reference was provided");
 		}
 
-		return ApplyUtils.getApplyConnectors()
+		return StorageUtils.getApplyConnectors()
 			.then(loadFlexDataFromConnectors.bind(this, mPropertyBag))
 			.then(flattenResponses)
 			.then(disassembleVariantSectionsIfNecessary)

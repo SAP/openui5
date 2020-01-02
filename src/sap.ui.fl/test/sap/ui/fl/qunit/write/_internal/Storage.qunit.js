@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
@@ -14,6 +15,7 @@ sap.ui.define([
 ], function(
 	sinon,
 	Storage,
+	StorageUtils,
 	ApplyUtils,
 	WriteUtils,
 	ApplyLrepConnector,
@@ -26,6 +28,21 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+
+	QUnit.module("ApplyStorage.getWriteConnectors", {
+		beforeEach : function () {
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("getWriteConnectors", function (assert) {
+			var oStubGetConnectors = sandbox.stub(StorageUtils, "getConnectors").resolves([]);
+			return Storage.loadFeatures().then(function () {
+				assert.ok(oStubGetConnectors.calledWith("sap/ui/fl/write/_internal/connectors/", false), "StorageUtils getConnectors is called with correct params");
+			});
+		});
+	});
 
 	QUnit.module("Given Storage when write is called", {
 		beforeEach: function () {
@@ -295,7 +312,7 @@ sap.ui.define([
 				system: "",
 				client: ""
 			};
-			var oLogResolveSpy = sandbox.spy(ApplyUtils, "logAndResolveDefault");
+			var oLogResolveSpy = sandbox.spy(StorageUtils, "logAndResolveDefault");
 
 			return Storage.loadFeatures().then(function (oResponse) {
 				assert.equal(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
