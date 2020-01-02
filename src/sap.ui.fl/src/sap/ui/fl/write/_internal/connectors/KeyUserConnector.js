@@ -37,20 +37,29 @@ sap.ui.define([
 			CHANGES: PREFIX + API_VERSION + "/changes/",
 			SETTINGS: PREFIX + API_VERSION + "/settings",
 			TOKEN: PREFIX + API_VERSION + "/settings",
-			VERSIONS: PREFIX + API_VERSION + "/versions/"
+			VERSIONS: {
+				GET: PREFIX + API_VERSION + "/versions/",
+				ACTIVATE: PREFIX + API_VERSION + "/versions/draft/activate/"
+
+			}
 		}
 	});
 
-	/**
-	 * Called to get the versions.
-	 *
-	 * @return {Promise<object>} Promise resolves with an list of the versions
-	 */
-	KeyUserConnector.loadVersions = function (mPropertyBag) {
-		var sVersionsUrl = ApplyUtils.getUrl(this.ROUTES.VERSIONS, mPropertyBag);
-		return ApplyUtils.sendRequest(sVersionsUrl).then(function (oResult) {
-			return oResult.response;
-		});
+	KeyUserConnector.versions = {
+		load: function (mPropertyBag) {
+			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag);
+			return ApplyUtils.sendRequest(sVersionsUrl).then(function (oResult) {
+				return oResult.response;
+			});
+		},
+
+		activateDraft: function (mPropertyBag) {
+			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag);
+			return ApplyUtils.sendRequest(sVersionsUrl, "POST").then(function (oResult) {
+				return oResult.response;
+			});
+		}
+
 	};
 
 	KeyUserConnector.applyConnector = ApplyConnector;

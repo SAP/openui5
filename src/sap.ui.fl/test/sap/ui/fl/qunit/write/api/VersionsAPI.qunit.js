@@ -146,4 +146,56 @@ sap.ui.define([
 				});
 		});
 	});
+
+	QUnit.module("Given VersionsAPI.activateDraft is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when no selector is provided", function (assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER"
+			};
+
+			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No selector was provided", "then an Error is thrown");
+			});
+		});
+		QUnit.test("when no layer is provided", function (assert) {
+			var mPropertyBag = {
+				selector: new Control()
+			};
+
+			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
+			});
+		});
+
+		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				selector: new Control()
+			};
+
+			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "The application ID could not be determined", "then an Error is thrown");
+			});
+		});
+
+		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function(assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				selector: new Control()
+			};
+
+			sandbox.stub(Utils, "getComponentClassName").returns("com.sap.app");
+			var aReturnedVersions = [];
+			sandbox.stub(Versions, "activateDraft").resolves(aReturnedVersions);
+
+			return VersionsAPI.activateDraft(mPropertyBag)
+				.then(function(oResult) {
+					assert.equal(oResult, aReturnedVersions, "then the returned version list is passed");
+				});
+		});
+	});
 });

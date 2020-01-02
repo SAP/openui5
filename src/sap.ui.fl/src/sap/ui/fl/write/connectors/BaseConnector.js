@@ -124,16 +124,30 @@ sap.ui.define([
 			return Promise.reject("loadFeatures is not implemented");
 		},
 
-		/**
-		 * Interface called to get the flex versions.
-		 *
-		 * @param {object} mPropertyBag Property bag
-		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
-		 * @param {string} mPropertyBag.reference Flex reference
-		 * @returns {Promise<object>} Resolves with an object containing the data for the versions
-		 */
-		loadVersions: function () {
-			return Promise.reject("loadVersions is not implemented");
+		versions: {
+			/**
+			 * Interface called to get the flex versions.
+			 *
+			 * @param {object} mPropertyBag Property bag
+			 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+			 * @param {string} mPropertyBag.reference Flex reference
+			 * @returns {Promise<sap.ui.fl.Version[]>} Resolves with an object containing the data for the versions
+			 */
+			load: function () {
+				return Promise.reject("versions.load is not implemented");
+			},
+
+			/**
+			 * Interface called to get the flex versions.
+			 *
+			 * @param {object} mPropertyBag Property bag
+			 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+			 * @param {string} mPropertyBag.reference Flex reference
+			 * @returns {Promise<sap.ui.fl.Version>} Resolves with an object containing the version activated
+			 */
+			activateDraft: function () {
+				return Promise.reject("versions.activateDraft is not implemented");
+			}
 		}
 	};
 

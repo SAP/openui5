@@ -452,8 +452,7 @@ sap.ui.define([
 		});
 	});
 
-
-	QUnit.module("Given Storage when loadVersions is called", {
+	QUnit.module("Given Storage when versions.load is called", {
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -469,9 +468,9 @@ sap.ui.define([
 			]);
 
 			var aReturnedVersions = [];
-			sandbox.stub(JsObjectConnector, "loadVersions").resolves(aReturnedVersions);
+			sandbox.stub(JsObjectConnector.versions, "load").resolves(aReturnedVersions);
 
-			return Storage.loadVersions(mPropertyBag).then(function (aVersions) {
+			return Storage.versions.load(mPropertyBag).then(function (aVersions) {
 				assert.equal(aVersions, aReturnedVersions);
 			});
 		});
@@ -483,12 +482,47 @@ sap.ui.define([
 				layer: "CUSTOMER"
 			};
 
-			return Storage.loadVersions(mPropertyBag).catch(function (sRejectionMessage) {
-				assert.equal(sRejectionMessage, "loadVersions is not implemented", "then the rejection message is passed");
+			return Storage.versions.load(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "versions.load is not implemented", "then the rejection message is passed");
 			});
 		});
 	});
 
+	QUnit.module("Given Storage when versions.activateDraft is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a list of versions is returned", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: "CUSTOMER"
+			};
+
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector", layers: ["CUSTOMER"], url: "/flexKeyUser"}
+			]);
+
+			var oActivatedVersion = {};
+			sandbox.stub(JsObjectConnector.versions, "activateDraft").resolves(oActivatedVersion);
+
+			return Storage.versions.activateDraft(mPropertyBag).then(function (oReturnedActivatedVersion) {
+				assert.equal(oReturnedActivatedVersion, oActivatedVersion);
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector", function (assert) {
+			assert.expect(1);
+			var mPropertyBag = {
+				reference: "reference",
+				layer: "CUSTOMER"
+			};
+
+			return Storage.versions.activateDraft(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "versions.activateDraft is not implemented", "then the rejection message is passed");
+			});
+		});
+	});
 
 	QUnit.module("Given Storage when reset is called", {
 		beforeEach: function () {

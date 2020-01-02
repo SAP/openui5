@@ -198,7 +198,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("KeyUserConnector loadVersions", {
+	QUnit.module("KeyUserConnector.versions.load", {
 		afterEach: function() {
 			ApplyUtils.sendRequest.restore();
 			sandbox.restore();
@@ -211,9 +211,29 @@ sap.ui.define([
 			};
 			var aReturnedVersions = [];
 			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : aReturnedVersions});
-			return KeyUserConnector.loadVersions(mPropertyBag).then(function (oResponse) {
+			return KeyUserConnector.versions.load(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, aReturnedVersions, "the versions list is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/com.sap.test.app", "the request has the correct url");
+			});
+		});
+	});
+
+	QUnit.module("KeyUserConnector.versions.activateDraft", {
+		afterEach: function() {
+			ApplyUtils.sendRequest.restore();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("activate draft", function (assert) {
+			var mPropertyBag = {
+				url : "/flexKeyuser",
+				reference: "com.sap.test.app"
+			};
+			var oActivatedVersion = [];
+			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : oActivatedVersion});
+			return KeyUserConnector.versions.activateDraft(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, oActivatedVersion, "the activated version is returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/draft/activate/com.sap.test.app", "the request has the correct url");
 			});
 		});
 	});
