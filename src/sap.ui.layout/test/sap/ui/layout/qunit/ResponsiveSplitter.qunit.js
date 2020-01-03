@@ -678,4 +678,33 @@ sap.ui.define([
 		// Clean up
 		oSplitter.destroy();
 	});
+
+	QUnit.test("Should preserve HTML elements", function (assert) {
+		// Arrange
+		var oHTMLElement = new HTML("elementThatShouldBePreseved", {content: "<button id='elementThatShouldBePreseved'>HTML button</button>"}),
+			oSplitter = new ResponsiveSplitter({
+			rootPaneContainer: new PaneContainer({
+				panes: [
+					new SplitPane({
+						content: oHTMLElement
+					})
+				]
+			})
+		});
+
+		oSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oHTMLElement.getDomRef().innerText = "changed content";
+		oSplitter.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oHTMLElement.getDomRef().innerText, "changed content", "HTML element content should be preserved.");
+
+		// Clean up
+		oSplitter.destroy();
+	});
+
 });

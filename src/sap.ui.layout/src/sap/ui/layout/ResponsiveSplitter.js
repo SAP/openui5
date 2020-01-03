@@ -12,8 +12,8 @@ sap.ui.define([
 	"./SplitPane",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/ResizeHandler",
-	"./ResponsiveSplitterRenderer",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/RenderManager",
+	"./ResponsiveSplitterRenderer"
 ], function(
 	library,
 	Control,
@@ -23,8 +23,8 @@ sap.ui.define([
 	SplitPane,
 	ItemNavigation,
 	ResizeHandler,
-	ResponsiveSplitterRenderer,
-	jQuery
+	RenderManager,
+	ResponsiveSplitterRenderer
 ) {
 	"use strict";
 
@@ -127,13 +127,16 @@ sap.ui.define([
 
 	ResponsiveSplitter.prototype.onBeforeRendering = function () {
 		var oRootContainer = this.getRootPaneContainer();
+
 		if (oRootContainer) {
-			oRootContainer._oSplitter.addEventDelegate({
+			this._oSplitterDelegate = this._oSplitterDelegate || {
 				onAfterRendering: function () {
 					this._setSplitterBarsTooltips(oRootContainer._oSplitter);
 					this._updatePaginatorButtonsTooltips();
 				}
-			}, this);
+			};
+
+			oRootContainer._oSplitter.addEventDelegate(this._oSplitterDelegate, this);
 
 			this._createWidthIntervals();
 			this._createPages();
@@ -154,6 +157,7 @@ sap.ui.define([
 	 */
 	ResponsiveSplitter.prototype.exit = function () {
 		this._detachResizeHandler();
+		this._oSplitterDelegate = null;
 	};
 
 	/**
@@ -359,11 +363,24 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._createPages = function () {
-		var iMaxPageCount = this._getMaxPageCount();
-		this.destroyAggregation("_pages", true);
-		for (var i = 0; i < iMaxPageCount; i++) {
-			var oPage = new ResponsiveSplitterPage();
-			this.addAggregation("_pages", oPage, true);
+		var iMaxPageCount = this._getMaxPageCount(),
+			aPages = this.getAggregation("_pages") || [],
+			i = aPages.length;
+
+		if (i < iMaxPageCount) { // we need to add more pages
+			while (i < iMaxPageCount) {
+				i++;
+				var oPage = new ResponsiveSplitterPage();
+				this.addAggregation("_pages", oPage, true);
+			}
+		} else if (i > iMaxPageCount) { // we need to destroy unneeded pages
+			while (i > iMaxPageCount) {
+				i--;
+				if (aPages[i].getDomRef()) {
+					RenderManager.preserveContent(aPages[i].getDomRef());
+				}
+				aPages[i].destroy();
+			}
 		}
 	};
 
