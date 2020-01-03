@@ -932,7 +932,7 @@ function(
 		},
 
 		/**
-		 * Returns the descriptor Id, which is alwas the reference for descriptor changes
+		 * Returns the descriptor Id, which is always the reference for descriptor changes
 		 *
 		 * @param {object} oManifest - Manifest of the component
 		 * @returns {string} Version of application if it is available in the manifest, otherwise an empty string

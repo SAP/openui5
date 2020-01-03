@@ -2,11 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	UIComponent,
+	Utils,
 	FlexState,
 	Loader,
 	sinon
@@ -65,11 +67,24 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when initialize is called without a reference", function(assert) {
+		QUnit.test("when initialize is called without a reference or componentId", function(assert) {
 			assert.throws(
-				function() {FlexState.initialize({storageResponse: "FlexResponse"});},
+				function() {FlexState.initialize();},
 				"the init function throws an error"
 			);
+		});
+
+		QUnit.test("when initialize is called without a reference and with a componentID", function(assert) {
+			var oMockResponse = {response: "FlexResponse"};
+			this.oLoadFlexDataStub.resolves(oMockResponse);
+
+			return FlexState.initialize({
+				componentId: sComponentId
+			})
+				.then(FlexState.getStorageResponse.bind(null, Utils.getComponentClassName(this.oAppComponent)))
+				.then(function (oFlexResponse) {
+					assert.deepEqual(oFlexResponse, oMockResponse, "then flex state was initialized correctly");
+				});
 		});
 
 		QUnit.test("when initialize is called twice with the same reference with waiting", function(assert) {

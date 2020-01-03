@@ -83,7 +83,7 @@ function (
 					asyncHints: true
 				}), "FlexState was initialized with the correct parameters");
 				assert.equal(this.VariantsStateStub.callCount, 1, "Variants map was prepared");
-				assert.ok(this.VariantsStateStub.calledWith("componentId.Component"), "Variants map was prepared with the correct parameters");
+				assert.ok(this.VariantsStateStub.calledWith("mockName"), "Variants map was prepared with the correct parameters");
 			}.bind(this));
 		});
 
