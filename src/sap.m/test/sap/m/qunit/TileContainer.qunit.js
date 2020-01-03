@@ -1117,4 +1117,66 @@ sap.ui.define([
 		editableCnt.destroy();
 		notEditableCnt.destroy();
 	});
+
+	QUnit.module("Swipes & drags", {
+		beforeEach: function() {
+			jQuery("#qunit-fixture").css("width", "800px");
+
+			this.sut = new TileContainer({
+				// 1 row, 3 columns (tiles)
+				height: "400px",
+				tiles: [
+					new StandardTile({ title: "1st" }),
+					new StandardTile({ title: "2nd" }),
+					new StandardTile({ title: "3rd" }),
+					new StandardTile({ title: "4th" })
+				]
+			});
+
+			this.sut.placeAt('qunit-fixture');
+			core.applyChanges();
+		},
+		afterEach: function() {
+			this.sut.destroy();
+			this.sut = null;
+
+			jQuery("#qunit-fixture").css("width", "auto");
+		}
+	});
+
+	QUnit.test("Swipe back to a previous page after shrink", function(assert) {
+		var done = assert.async();
+		// arrange
+		// scroll to the second page
+		this.sut.$("rightscroller").click();
+
+		// act
+		// shrink the container to show only 2 tiles
+		jQuery("#qunit-fixture").css("width", "600px");
+
+		setTimeout(function() {
+			// start a touch
+			this.sut._oTouchSession = {
+				dStartTime: new Date(2020, 11, 3, 0, 0, 0, 0),
+				fStartX: 300,
+				fStartY: 300,
+				fDiffX: 0,
+				fDiffY: 0,
+				oControl: null,
+				iOffsetX: 300
+			};
+
+			// move to the right - which brings the previous page
+			this.sut._onmove({
+				isMarked: function() { },
+				targetTouches: [{
+					pageX: 310
+				}]
+			});
+
+			// assert
+			assert.strictEqual(this.sut.$().find(".sapMTile").length, 4, "all tiles are rendered");
+			done();
+		}.bind(this), 200); //the default interval trigger of the resize handler
+	});
 });
