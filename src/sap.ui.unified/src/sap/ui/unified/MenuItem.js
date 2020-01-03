@@ -108,11 +108,11 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 		rm.write("><div class=\"sapUiMnuItmL\"></div>");
 
 		// icon/check column
-		rm.write("<div class=\"sapUiMnuItmIco\">");
 		if (oItem.getIcon()) {
+			rm.write("<div class=\"sapUiMnuItmIco\">");
 			rm.writeIcon(oItem.getIcon(), null, {title: null});
+			rm.write("</div>");
 		}
-		rm.write("</div>");
 
 		// Text column
 		rm.write("<div id=\"" + this.getId() + "-txt\" class=\"sapUiMnuItmTxt\">");
