@@ -469,6 +469,7 @@ sap.ui.define([
 		assert.strictEqual(oExpectedBind2.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind3.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind4.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedCreate.firstCall.args[1], oModel.oInterface);
 
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto", true)

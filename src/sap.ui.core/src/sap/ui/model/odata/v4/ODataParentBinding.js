@@ -648,18 +648,9 @@ sap.ui.define([
 				return oMetaModel.fetchObject(sFullMetaPath.slice(0,
 					sFullMetaPath.lastIndexOf("/") + 1));
 			}
-			return oMetaModel.fetchObject(sFullMetaPath).then(function (oProperty) {
-				if (oProperty && oProperty.$kind === "NavigationProperty") {
-					// Ensure that the target type of the navigation property is available
-					// synchronously. This is only necessary for navigation properties and may only
-					// be done for them because it would fail for properties with a simple type like
-					// "Edm.String".
-					return oMetaModel.fetchObject(sFullMetaPath + "/").then(function () {
-						return oProperty;
-					});
-				}
-				return oProperty;
-			});
+
+			return _Helper.fetchPropertyAndType(that.oModel.oInterface.fetchMetadata,
+				sFullMetaPath);
 		}
 
 		if (bDependsOnOperation || this.getRootBinding().isSuspended()) {
@@ -719,8 +710,7 @@ sap.ui.define([
 				|| oProperty
 				&& (oProperty.$kind === "Property" || oProperty.$kind === "NavigationProperty")) {
 				mWrappedChildQueryOptions = _Helper.wrapChildQueryOptions(sBaseMetaPath,
-					sChildMetaPath, mChildQueryOptions,
-					that.oModel.oRequestor.getModelInterface().fetchMetadata);
+					sChildMetaPath, mChildQueryOptions, that.oModel.oInterface.fetchMetadata);
 				if (mWrappedChildQueryOptions) {
 					return that.aggregateQueryOptions(mWrappedChildQueryOptions, sBaseMetaPath,
 							bCacheImmutable)

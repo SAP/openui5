@@ -8583,22 +8583,36 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings
-	// The SalesOrders application does not have such a scenario.
+	// Additionally add a path with navigation properties to $select which must be converted to a
+	// $expand.
+	// JIRA: CPOUI5ODATAV4-112
 	QUnit.test("Auto-$expand/$select: Absolute ODCB with relative ODPB", function (assert) {
-		var sView = '\
-<FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE,ROOM_ID\'}}">\
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
+		parameters : {$select : \'AGE,ROOM_ID,EMPLOYEE_2_TEAM/Name\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
-		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,LOCATION/City/CITYNAME,Name,ROOM_ID", {
+		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,LOCATION/City/CITYNAME,Name,ROOM_ID"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)", {
 				Name : "Frederic Fall",
-				LOCATION : {City : {CITYNAME : "Walldorf"}}
+				LOCATION : {City : {CITYNAME : "Walldorf"}},
+				EMPLOYEE_2_TEAM : {
+					Name : "Team #1",
+					Team_Id : "1"
+				}
 			})
 			.expectChange("name", "Frederic Fall")
 			.expectChange("city", "Walldorf");
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(
+				that.oView.byId("form").getBindingContext().getProperty("EMPLOYEE_2_TEAM/Name"),
+				"Team #1");
+		});
 	});
 
 	//*********************************************************************************************
