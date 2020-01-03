@@ -1136,7 +1136,7 @@ function(
 		aVisibleTiles = aVisibleTiles || this._getVisibleTiles();
 		iIndex = this._indexOfVisibleTile(aAllTiles[iIndex]);//find tile's index amongst visible tiles
 
-		if (!!iIndex && iIndex >= 0) {
+		if (iIndex > -1) {
 			this._renderTilesInTheSamePage(iIndex, aVisibleTiles);
 		}
 
@@ -1678,10 +1678,11 @@ function(
 			}
 			var aVisibleTiles = this._getVisibleTiles();
 
-			var iNextPageStartTileIndex = this._iCurrentTileStartIndex + this._iMaxTiles;
-			var iNextPageEndTileIndex = iNextPageStartTileIndex + this._iMaxTiles - 1;
+			var iDirection = oTouchSession.fDiffX > 0 ? 1 : -1;
+			var iGoToPageStartTileIndex = this._iCurrentTileStartIndex + iDirection * this._iMaxTiles;
+			var iGoToPageEndTileIndex = iGoToPageStartTileIndex + this._iMaxTiles - 1;
 
-			this._renderTiles(aVisibleTiles, iNextPageStartTileIndex, iNextPageEndTileIndex);
+			this._renderTiles(aVisibleTiles, iGoToPageStartTileIndex, iGoToPageEndTileIndex);
 			this._applyTranslate(this.$("cnt"),iNewLeft,0,false);
 		}
 	};
