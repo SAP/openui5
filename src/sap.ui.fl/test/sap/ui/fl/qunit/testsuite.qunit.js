@@ -149,12 +149,6 @@ sap.ui.define(function () {
 					]
 				}
 			},
-			"apply/_internal/connectors/Utils": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/connectors/Utils"]
-				}
-			},
 			"apply/_internal/controlVariants/URLHandler": {
 				group: "Apply Internal",
 				coverage: {
@@ -225,6 +219,12 @@ sap.ui.define(function () {
 				},
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/Storage"]
+				}
+			},
+			"apply/_internal/StorageUtils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/StorageUtils"]
 				}
 			},
 			"apply/_internal/storageResultDisassemble": {

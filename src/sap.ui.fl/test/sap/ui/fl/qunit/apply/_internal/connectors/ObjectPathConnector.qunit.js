@@ -3,12 +3,12 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ObjectPathConnector,
 	LoaderExtensions,
-	ApplyUtils,
+	StorageUtils,
 	sinon
 ) {
 	"use strict";
@@ -35,7 +35,7 @@ sap.ui.define([
 
 			return ObjectPathConnector.loadFlexData()
 				.then(function(oResponse) {
-					assert.deepEqual(oResponse, Object.assign(ApplyUtils.getEmptyFlexDataResponse(), oReturnObj), "then the correct response is received");
+					assert.deepEqual(oResponse, Object.assign(StorageUtils.getEmptyFlexDataResponse(), oReturnObj), "then the correct response is received");
 				});
 		});
 
@@ -53,7 +53,7 @@ sap.ui.define([
 
 			return ObjectPathConnector.loadFlexData({path: sPath})
 				.then(function(oResponse) {
-					assert.deepEqual(oResponse, Object.assign(ApplyUtils.getEmptyFlexDataResponse(), oReturnObj), "then the correct response is received");
+					assert.deepEqual(oResponse, Object.assign(StorageUtils.getEmptyFlexDataResponse(), oReturnObj), "then the correct response is received");
 				});
 		});
 
@@ -62,7 +62,7 @@ sap.ui.define([
 
 			return ObjectPathConnector.loadFlexData({})
 				.then(function(oResponse) {
-					assert.deepEqual(oResponse, ApplyUtils.getEmptyFlexDataResponse(), "then the correct response is received");
+					assert.deepEqual(oResponse, undefined, "then no data is returned");
 				});
 		});
 	});

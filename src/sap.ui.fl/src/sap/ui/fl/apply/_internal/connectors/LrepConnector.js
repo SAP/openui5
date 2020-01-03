@@ -85,10 +85,11 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 		 * @param {string} [mPropertyBag.cacheKey] Cache buster token
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
+		 * or resolves with undefined in case cache bustering determines that no data is present
 		 */
 		loadFlexData: function(mPropertyBag) {
 			if (mPropertyBag.cacheKey === "<NO CHANGES>") {
-				return Promise.resolve(ApplyUtils.getEmptyFlexDataResponse());
+				return Promise.resolve();
 			}
 
 			var mParameters = _pick(mPropertyBag, ["appVersion"]);

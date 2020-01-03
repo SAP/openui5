@@ -96,13 +96,10 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when loadFlexData is called with '<NO CHANGES>' as cache key", function(assert) {
-			var sResponse = "myEmptyFlexDataResponse";
-			var oGetEmptyResponseStub = sandbox.stub(ApplyUtils, "getEmptyFlexDataResponse").returns(sResponse);
 			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest");
 			return LrepConnector.loadFlexData({cacheKey: "<NO CHANGES>"}).then(function(oResponse) {
-				assert.equal(oGetEmptyResponseStub.callCount, 1, "the Utility for getting the empty data repsonse was called");
 				assert.equal(oSendRequestStub.callCount, 0, "no request was sent");
-				assert.equal(oResponse, sResponse, "the function returns the value of the default empty data response");
+				assert.equal(oResponse, undefined, "the function returns no data");
 			});
 		});
 	});

@@ -11,15 +11,13 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/apply/connectors/BaseConnector",
 	"my/lib/apply/BrokenConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/Utils"
+	"sap/ui/fl/apply/_internal/StorageUtils"
 ], function(
 	sinon,
 	Storage,
 	BaseConnector,
 	BrokenConnector,
-	ApplyUtils,
-	WriteUtils
+	StorageUtils
 ) {
 	"use strict";
 
@@ -33,19 +31,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("given a custom connector is configured when loading apply connectors", function(assert) {
-			return ApplyUtils.getApplyConnectors().then(function (aConnectors) {
+			return StorageUtils.getApplyConnectors().then(function (aConnectors) {
 				assert.equal(aConnectors.length, 2, "two connectors are loaded");
 				assert.equal(aConnectors[0].connector, "StaticFileConnector", "the StaticFileConnector is the first connector");
 				assert.equal(aConnectors[1].applyConnector, "my/lib/apply/BrokenConnector", "the BrokenConnector is the second connector");
 				assert.equal(aConnectors[1].applyConnectorModule.testApplyCheckProperty, true, "the test property identifying the BrokenConnector is present");
-			});
-		});
-
-		QUnit.test("given a custom connector is configured when loading write connectors", function(assert) {
-			return WriteUtils.getWriteConnectors().then(function (aConnectors) {
-				assert.equal(aConnectors.length, 1, "one connector is loaded");
-				assert.equal(aConnectors[0].writeConnector, "my/lib/write/BrokenConnector", "the BrokenConnector is the connector");
-				assert.equal(aConnectors[0].writeConnectorModule.testWriteCheckProperty, true, "the test property identifying the BrokenConnector is present");
 			});
 		});
 

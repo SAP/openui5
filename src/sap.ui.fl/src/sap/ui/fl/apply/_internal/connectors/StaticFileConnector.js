@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions"
 ], function(
 	merge,
 	BaseConnector,
-	Utils,
 	Log,
 	LoaderExtensions
 ) {
@@ -76,7 +74,7 @@ sap.ui.define([
 				});
 			}
 
-			return Promise.resolve(Utils.getEmptyFlexDataResponse());
+			return Promise.resolve();
 		}
 	});
 

@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/apply/_internal/StorageUtils"
 ],
 function(
-	ApplyUtils
+	StorageUtils
 ) {
 	"use strict";
 
@@ -51,7 +51,7 @@ function(
 			aFlexObjects = oVariantManagement.variants.reduce(_collectControlVariantFlexObjects, aFlexObjects);
 		}
 
-		var mGroupedFlexObjects = ApplyUtils.getGroupedFlexObjects(aFlexObjects);
-		return ApplyUtils.filterAndSortResponses(mGroupedFlexObjects);
+		var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFlexObjects);
+		return StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
 	};
 });

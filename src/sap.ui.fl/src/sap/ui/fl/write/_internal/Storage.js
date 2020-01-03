@@ -3,13 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/write/_internal/StorageFeaturesMerger",
 	"sap/base/util/ObjectPath"
 ], function(
 	ApplyUtils,
-	WriteUtils,
 	StorageFeaturesMerger,
 	ObjectPath
 ) {
@@ -24,6 +22,17 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
+
+	var WRITE_CONNECTOR_NAME_SPACE = "sap/ui/fl/write/_internal/connectors/";
+
+	/**
+	 * Provides all mandatory connectors to write data; these are the connector mentioned in the core-Configuration.
+	 *
+	 * @returns {Promise<map[]>} Resolving with a list of maps for all configured write connectors and their requested modules
+	 */
+	function _getWriteConnectors() {
+		return ApplyUtils.getConnectors(WRITE_CONNECTOR_NAME_SPACE, false);
+	}
 
 	function findConnectorConfigForLayer(sLayer, aConnectors) {
 		var aFilteredConnectors = aConnectors.filter(function (oConnector) {
@@ -76,7 +85,7 @@ sap.ui.define([
 		if (!sLayer) {
 			return Promise.reject("No layer was provided");
 		}
-		return WriteUtils.getWriteConnectors()
+		return _getWriteConnectors()
 			.then(findConnectorConfigForLayer.bind(this, sLayer));
 	}
 
@@ -178,7 +187,7 @@ sap.ui.define([
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	Storage.loadVersions = function(mPropertyBag) {
-		return WriteUtils.getWriteConnectors()
+		return _getWriteConnectors()
 			.then(findConnectorConfigForLayer.bind(this, mPropertyBag.layer))
 			.then(_sendLoadVersionsToConnector.bind(this, mPropertyBag));
 	};
@@ -189,7 +198,7 @@ sap.ui.define([
 	 * @returns {Promise<Object>} Map feature flags and additional provided information from the connectors
 	 */
 	Storage.loadFeatures = function() {
-		return WriteUtils.getWriteConnectors()
+		return _getWriteConnectors()
 			.then(_sendLoadFeaturesToConnector)
 			.then(StorageFeaturesMerger.mergeResults);
 	};

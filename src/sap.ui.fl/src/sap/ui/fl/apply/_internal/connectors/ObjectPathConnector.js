@@ -5,12 +5,12 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/base/util/LoaderExtensions"
 ], function(
 	merge,
 	BaseConnector,
-	ApplyUtils,
+	StorageUtils,
 	LoaderExtensions
 ) {
 	"use strict";
@@ -38,10 +38,10 @@ sap.ui.define([
 					url: sPath,
 					async: true
 				}).then(function (oResponse) {
-					return Object.assign(ApplyUtils.getEmptyFlexDataResponse(), oResponse);
+					return Object.assign(StorageUtils.getEmptyFlexDataResponse(), oResponse);
 				});
 			}
-			return Promise.resolve(ApplyUtils.getEmptyFlexDataResponse());
+			return Promise.resolve();
 		}
 	});
 
