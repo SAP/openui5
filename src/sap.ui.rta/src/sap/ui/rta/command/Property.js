@@ -63,4 +63,4 @@ sap.ui.define([
 	};
 
 	return Property;
-}, /* bExport= */true);
+});

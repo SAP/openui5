@@ -1873,4 +1873,4 @@ sap.ui.define([
 	};
 
 	return VariantManagement;
-}, /* bExport= */true);
+});

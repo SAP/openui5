@@ -100,4 +100,4 @@ sap.ui.define(['sap/m/semantic/Segment', 'sap/ui/base/Metadata', "sap/base/Log"]
 
 	return SegmentedContainer;
 
-}, /* bExport= */ false);
+});

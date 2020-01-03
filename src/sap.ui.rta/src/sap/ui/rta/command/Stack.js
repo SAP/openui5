@@ -317,4 +317,4 @@ sap.ui.define([
 	};
 
 	return Stack;
-}, /* bExport= */true);
+});

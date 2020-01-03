@@ -205,4 +205,4 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObj
 	};
 
 	return Context;
-}, /* bExport= */true);
+});

@@ -159,4 +159,4 @@ function(
 	};
 
 	return DragDrop;
-}, /* bExport= */ true);
+});

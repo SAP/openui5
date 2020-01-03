@@ -350,4 +350,4 @@ function (
 	}
 
 	return Selection;
-}, /* bExport= */true);
+});

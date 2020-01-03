@@ -254,4 +254,4 @@ sap.ui.define([
 	};
 
 	return FlexCommand;
-}, /* bExport= */true);
+});

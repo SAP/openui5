@@ -599,4 +599,4 @@ function (
 	};
 
 	return PopupManager;
-}, /* bExport= */ true);
+});

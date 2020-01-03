@@ -25,4 +25,4 @@ sap.ui.define( ["sap/ui/core/mvc/Controller", "sap/ui/Device"], function (Contro
 		}
 	});
 
-}, /* bExport= */ true);
+});

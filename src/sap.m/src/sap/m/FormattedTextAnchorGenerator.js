@@ -159,4 +159,4 @@ sap.ui.define([
 	};
 
 	return AnchorGenerator;
-}, /* bExport= */ false);
+});

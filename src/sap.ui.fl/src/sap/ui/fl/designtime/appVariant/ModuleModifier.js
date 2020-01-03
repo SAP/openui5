@@ -88,4 +88,4 @@ sap.ui.define([
 	};
 
 	return ModuleModifier;
-}, /* bExport= */false);
+});

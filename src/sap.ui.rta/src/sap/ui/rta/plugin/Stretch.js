@@ -419,4 +419,4 @@ function (
 	};
 
 	return Stretch;
-}, /* bExport= */ true);
+});

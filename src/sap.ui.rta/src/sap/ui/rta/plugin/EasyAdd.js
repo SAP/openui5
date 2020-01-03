@@ -196,4 +196,4 @@ sap.ui.define([
 	};
 
 	return EasyAdd;
-}, /* bExport= */true);
+});

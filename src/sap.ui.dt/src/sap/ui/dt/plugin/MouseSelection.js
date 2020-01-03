@@ -72,4 +72,4 @@ function(Plugin) {
 	};
 
 	return MouseSelection;
-}, /* bExport= */ true);
+});

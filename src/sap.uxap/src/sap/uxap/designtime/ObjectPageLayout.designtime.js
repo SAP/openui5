@@ -91,4 +91,4 @@ sap.ui.define(["sap/uxap/library"],
 		}
 	};
 
-}, /* bExport= */ false);
+});

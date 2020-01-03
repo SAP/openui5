@@ -161,4 +161,4 @@ sap.ui.define([
 	};
 
 	return SettingsDialog;
-}, /* bExport= */ false);
+});

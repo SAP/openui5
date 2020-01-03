@@ -673,4 +673,4 @@ sap.ui.define([
 	};
 
 	return ManagedObjectObserver;
-}, /* bExport= */true);
+});

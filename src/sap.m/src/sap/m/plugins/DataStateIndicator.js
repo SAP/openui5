@@ -235,4 +235,4 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 
 	return DataStateIndicator;
 
-}, /* bExport= */ true);
+});

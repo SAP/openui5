@@ -162,4 +162,4 @@ sap.ui.define(['sap/ui/base/Metadata', "sap/base/Log"], function(Metadata, Log) 
 
 	return Segment;
 
-}, /* bExport= */ false);
+});

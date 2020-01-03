@@ -339,4 +339,4 @@ function(
 	};
 
 	return RTAElementMover;
-}, /* bExport= */ true);
+});

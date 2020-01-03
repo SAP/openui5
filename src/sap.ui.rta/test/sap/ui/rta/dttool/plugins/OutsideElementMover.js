@@ -133,4 +133,4 @@ function(
 	};
 
 	return OutsideElementMover;
-}, /* bExport= */ true);
+});

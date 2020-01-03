@@ -157,4 +157,4 @@ sap.ui.define([],
 		};
 
 		return WheelSliderRenderer;
-	}, /* bExport= */ false);
+	});

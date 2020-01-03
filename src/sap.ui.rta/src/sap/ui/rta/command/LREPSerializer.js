@@ -212,4 +212,4 @@ sap.ui.define([
 	};
 
 	return LREPSerializer;
-}, /* bExport= */true);
+});

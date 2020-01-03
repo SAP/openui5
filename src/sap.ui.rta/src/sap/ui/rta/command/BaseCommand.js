@@ -96,4 +96,4 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function(ManagedObject) {
 	};
 
 	return BaseCommand;
-}, /* bExport= */true);
+});

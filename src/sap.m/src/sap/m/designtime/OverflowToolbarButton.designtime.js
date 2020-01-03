@@ -19,4 +19,4 @@ sap.ui.define([], function () {
 			create: "sap/m/designtime/OverflowToolbarButton.create.fragment.xml"
 		}
 	};
-}, /* bExport= */ false);
+});

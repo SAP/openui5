@@ -106,4 +106,4 @@ sap.ui.define([
 	};
 
 	return ControlVariantSetTitle;
-}, /* bExport= */true);
+});

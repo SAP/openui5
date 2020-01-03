@@ -1767,4 +1767,4 @@ function(
 	};
 
 	return RuntimeAuthoring;
-}, /* bExport= */true);
+});

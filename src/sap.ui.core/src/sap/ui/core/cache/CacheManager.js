@@ -376,4 +376,4 @@ sap.ui.define([
 		}
 
 		return CacheManager;
-	}, /* bExport= */ false);
+	});

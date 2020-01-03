@@ -36,7 +36,7 @@ function(ManagedObject) {
 	});
 
 	/**
-	 * @type {map} Status Enum. Provides all availabe status.
+	 * @type {map} Status Enum. Provides all available status.
 	 * @static
 	 */
 	Test.STATUS = {
@@ -279,4 +279,4 @@ function(ManagedObject) {
 	};
 
 	return Test;
-}, /* bExport= */ true);
+});

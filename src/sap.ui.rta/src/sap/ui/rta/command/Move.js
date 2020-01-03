@@ -76,4 +76,4 @@ function(
 	};
 
 	return Move;
-}, /* bExport= */true);
+});

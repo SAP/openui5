@@ -221,4 +221,4 @@ sap.ui.define(["./DragDropBase"],
 
 	return DropInfo;
 
-}, /* bExport= */ true);
+});

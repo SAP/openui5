@@ -48,4 +48,4 @@ function (
 	};
 
 	return AggregationDesignTimeMetadata;
-}, /* bExport= */ true);
+});

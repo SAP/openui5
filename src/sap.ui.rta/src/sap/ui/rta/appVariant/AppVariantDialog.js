@@ -350,4 +350,4 @@ function(
 	});
 
 	return AppVariantDialog;
-}, /* bExport= */ true);
+});

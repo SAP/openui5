@@ -331,4 +331,4 @@ sap.ui.define([
 
 		return LazyLoading;
 
-	}, /* bExport= */ false);
+	});

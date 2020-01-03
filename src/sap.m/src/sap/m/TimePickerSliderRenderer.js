@@ -143,4 +143,4 @@ sap.ui.define([],
 		};
 
 		return TimePickerSliderRenderer;
-	}, /* bExport= */ false);
+	});

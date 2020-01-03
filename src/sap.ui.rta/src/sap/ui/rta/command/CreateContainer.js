@@ -51,4 +51,4 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 		return mSpecificInfo;
 	};
 	return CreateContainer;
-}, /* bExport= */true);
+});

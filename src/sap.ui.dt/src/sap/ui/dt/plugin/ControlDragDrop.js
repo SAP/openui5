@@ -164,4 +164,4 @@ sap.ui.define([
 	};
 
 	return ControlDragDrop;
-}, /* bExport= */true);
+});

@@ -545,4 +545,4 @@ function(
 	};
 
 	return TransportDialog;
-}, /* bExport= */ true);
+});

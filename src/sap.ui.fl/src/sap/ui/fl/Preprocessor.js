@@ -18,4 +18,4 @@ sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
 	 * @implements sap.ui.core.mvc.View.Preprocessor
 	 */
 	return BaseObject.extend("sap.ui.fl.Preprocessor", {});
-}, /* bExport= */true);
+});

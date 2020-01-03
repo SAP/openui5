@@ -129,4 +129,4 @@ sap.ui.define([
 
 		return AdditionalContentSupport;
 
-	}, /* bExport= */ false);
+	});

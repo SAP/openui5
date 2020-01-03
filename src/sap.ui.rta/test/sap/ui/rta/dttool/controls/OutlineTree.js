@@ -83,4 +83,4 @@ sap.ui.define([
 	};
 
 	return OutlineTree;
-}, /* bExport= */ true);
+});

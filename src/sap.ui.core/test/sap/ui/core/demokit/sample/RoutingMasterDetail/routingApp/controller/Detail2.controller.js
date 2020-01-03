@@ -36,4 +36,4 @@ sap.ui.define( ["sap/ui/core/mvc/Controller", "sap/ui/core/routing/History", "sa
 		}
 	});
 
-}, /* bExport= */ true);
+});

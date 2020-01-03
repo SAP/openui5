@@ -18,4 +18,4 @@ sap.ui.define([],
 				create: "sap/m/designtime/DraftIndicator.create.fragment.xml"
 			}
 		};
-	}, /* bExport= */ false);
+	});

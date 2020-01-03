@@ -53,4 +53,4 @@ sap.ui.define([
 	};
 
 	return SwitchContextProvider;
-}, /* bExport= */true);
+});

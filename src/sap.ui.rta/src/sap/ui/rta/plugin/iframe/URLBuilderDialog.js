@@ -122,4 +122,4 @@ sap.ui.define([
 	};
 
 	return URLBuilderDialog;
-}, /* bExport= */ false);
+});

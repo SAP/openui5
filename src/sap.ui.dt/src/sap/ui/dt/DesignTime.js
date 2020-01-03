@@ -1379,4 +1379,4 @@ function (
 
 
 	return DesignTime;
-}, /* bExport= */ true);
+});
