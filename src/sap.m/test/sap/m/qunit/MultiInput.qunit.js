@@ -569,6 +569,51 @@ sap.ui.define([
 		assert.equal(this.multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
 	});
 
+	QUnit.test("do not duplicate tokens on sapfocusleave when using custom validator", function(assert) {
+		var aItems = [
+			new sap.ui.core.Item("itemId", {
+				key: "1",
+				text: "Token 1"
+			}),
+			new sap.ui.core.Item({
+				key: "2",
+				text: "Token 2"
+			}),
+			new sap.ui.core.Item({
+				key: "3",
+				text: "Token 3"
+			})
+		];
+		var oMockEvent = {
+			relatedControlId: "itemId"
+		};
+		var oMockItem = {
+			selectedItem: aItems[0],
+			selectedRow: null,
+			getParameter: function() {
+				return aItems[0];
+			}
+		};
+
+		aItems.forEach(function(oItem) {
+			this.multiInput1.addSuggestionItem(oItem);
+			}.bind(this)
+		);
+
+		this.multiInput1.addValidator(function(args) {
+			return new sap.m.Token({ text: args.text });
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		this.multiInput1.setValue("Token 1");
+		this.multiInput1.onsapfocusleave(oMockEvent);
+		this.multiInput1._onSuggestionItemSelected(oMockItem);
+
+		assert.equal(this.multiInput1.getTokens().length, 1, "MultiInput contains 1 token");
+	});
+
 	QUnit.test("removeValidator", function(assert) {
 
 		var oSpy = sinon.spy(Tokenizer.prototype, "removeValidator"),
