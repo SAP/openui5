@@ -58,6 +58,7 @@
 		description : "Maximum deviation",
 		imageDescription : "",
 		backgroundImage : "images/NewsImage1.png",
+        width:"174px",
 		newsTileContent : [{
 			footer : "August 21, 2013",
 			contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
@@ -241,6 +242,21 @@
 	});
 	oGenericTile4.addStyleClass("sapUiSmallMargin");
 
+    var oGenericTile5 = new sap.m.GenericTile({
+        mode : "{/mode}",
+        subheader : "{/subheader}",
+        frameType : "{/frameType}",
+        header : "{/header}",
+        tooltip : "{/tooltip}",
+        state : "{/state}",
+        scope : "{/scope}",
+        width : "{/width}",
+        headerImage : "{/headerImage}",
+        wrappingType: "{/wrappingType}",
+        backgroundImage : "{/backgroundImage}",
+        imageDescription : "{/imageDescription}"
+    });
+
 	var oModeLabel = new sap.m.Label({
 		id: "mode-label",
 		text: "Mode"
@@ -267,6 +283,28 @@
 		placeholder : 'Enter header ...'
 	});
 	oTitleInput.bindValue("/header");
+
+    var oImgSrc = new sap.m.Label({
+        text : "Background Image",
+        labelFor : "backgroundImage-value"
+    });
+
+    var oImgSrcInput = new sap.m.Input("backgroundImage-value", {
+        type : sap.m.InputType.Text,
+        placeholder : 'Enter URL...'
+    });
+    oImgSrcInput.bindValue("/backgroundImage");
+
+    var oWidth = new sap.m.Label({
+        text : "Width",
+        labelFor : "width-value"
+    });
+
+    var oWidthInput = new sap.m.Input("width-value", {
+        type : sap.m.InputType.Text,
+        placeholder : 'Enter Width in px...'
+    });
+    oWidthInput.bindValue("/width");
 
 	var oTitleDscr = new sap.m.Label({
 		text : "Subheader",
@@ -490,7 +528,7 @@
 
 	var oControlForm = new sap.ui.layout.Grid("numeric-content-form", {
 		defaultSpan : "XL4 L4 M6 S12",
-		content : [oGenericTile1, oGenericTile2, oGenericTile3, oGenericTile4]
+		content : [oGenericTile1, oGenericTile2, oGenericTile3, oGenericTile4, oGenericTile5]
 	});
 
 	var oWrappingLabel = new sap.m.Label({
@@ -514,7 +552,7 @@
 		editable : true,
 		content : [new sap.ui.core.Title({ // this starts a new group
 			text : "Modify Tile"
-		}), oModeLabel, oModeSelect, oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit,
+		}), oModeLabel, oModeSelect, oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oImgSrc, oImgSrcInput, oWidth, oWidthInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit,
 				oUnitInput, oFailedLabel, oFailedInput, oFrameTypeLabel, oFrameTypeSelect, oPictureLbl, oPictureSlct,oImageDescLbl, oImageDescInput, oStateLabel, oStateSelect, oScopeLabel, oScopeSelect, oPressLbl,
 				oPressSwtch, oIndicatorLabel, oIndicatorSelect, oSizeLbl, oSizeBtn, oWrappingLabel, oWrappingSelect]
 	});
