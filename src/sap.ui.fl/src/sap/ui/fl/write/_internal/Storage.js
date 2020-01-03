@@ -90,7 +90,27 @@ sap.ui.define([
 	}
 
 	function executeActionByName(sActionName, mPropertyBag) {
-		return getConnectorConfigByLayer(mPropertyBag.layer)
+		var oValidation;
+		if (mPropertyBag.draft) {
+			oValidation = new Promise(function (resolve, reject) {
+				// no loop of classes included since loadFeatures is not using executeActionsByName
+				sap.ui.require(["sap/ui/fl/write/api/FeaturesAPI"], function (FeaturesAPI) {
+					FeaturesAPI.isDraftEnabled(mPropertyBag.layer)
+						.then(function (bDraftEnabled) {
+							if (bDraftEnabled) {
+								resolve();
+							} else {
+								reject("Draft is not supported for the given layer: " + mPropertyBag.layer);
+							}
+						});
+				});
+			});
+		} else {
+			oValidation = Promise.resolve();
+		}
+
+		return oValidation
+			.then(getConnectorConfigByLayer.bind(undefined, mPropertyBag.layer))
 			.then(function (oConnectorConfig) {
 				mPropertyBag.url = oConnectorConfig.url;
 				var oConnector = ObjectPath.get(sActionName, oConnectorConfig.writeConnectorModule);
@@ -109,6 +129,7 @@ sap.ui.define([
 	 * @param {object[]} mPropertyBag.flexObjects Data to be stored
 	 * @param {string} [mPropertyBag._transport] The transport ID which will be handled internally, so there is no need to be passed
 	 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the update data has file type .variant or not
+	 * @param {boolean} [mPropertyBag.draft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
 	Storage.write = function(mPropertyBag) {

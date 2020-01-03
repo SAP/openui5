@@ -120,6 +120,24 @@ function (
 			assert.ok(this.oFlexController instanceof FlexController, "then an instance of FlexController was created");
 		});
 
+		QUnit.test("when saveAll is called with skipping the cache", function (assert) {
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges");
+			this.oFlexController.saveAll(true);
+			assert.ok(fnChangePersistenceSaveStub.calledWith(true));
+		});
+
+		QUnit.test("when saveAll is called for draft", function (assert) {
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges");
+			this.oFlexController.saveAll(undefined, true);
+			assert.ok(fnChangePersistenceSaveStub.calledWith(undefined, undefined, true));
+		});
+
+		QUnit.test("when saveAll is called with skipping the cache and for draft", function (assert) {
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges");
+			this.oFlexController.saveAll(true, true);
+			assert.ok(fnChangePersistenceSaveStub.calledWith(true, undefined, true));
+		});
+
 		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", function (assert) {
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges");
 			var aChanges = ["mockChange1", "mockChange2"];

@@ -865,9 +865,10 @@ sap.ui.define([
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @param {sap.ui.fl.Change} [aChanges] If passed only those changes are saved
+	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function(bSkipUpdateCache, aChanges) {
+	ChangePersistence.prototype.saveDirtyChanges = function(bSkipUpdateCache, aChanges, bDraft) {
 		var aDirtyChanges = aChanges || this._aDirtyChanges;
 		var aDirtyChangesClone = aDirtyChanges.slice(0);
 		var aRequests = this._getRequests(aDirtyChanges);
@@ -876,13 +877,13 @@ sap.ui.define([
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
 			var sRequest = aRequests[0];
 			var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aDirtyChanges);
-			return CompatibilityConnector.create(aPreparedDirtyChangesBulk, sRequest)
+			return CompatibilityConnector.create(aPreparedDirtyChangesBulk, sRequest, undefined, bDraft)
 			.then(function(oResponse) {
 				this._massUpdateCacheAndDirtyState(aDirtyChanges, aDirtyChangesClone, bSkipUpdateCache);
 				return oResponse;
 			}.bind(this));
 		}
-		return this.saveSequenceOfDirtyChanges(aDirtyChangesClone, bSkipUpdateCache);
+		return this.saveSequenceOfDirtyChanges(aDirtyChangesClone, bSkipUpdateCache, bDraft);
 	};
 
 	/**
@@ -893,22 +894,23 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change[] | sap.ui.fl.Variant[]} aDirtyChanges - Array of dirty changes to be saved.
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
+	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache) {
+	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache, bDraft) {
 		var aAllDirtyChanges = this.getDirtyChanges();
 
 		return aDirtyChanges.reduce(function (oPreviousPromise, oDirtyChange) {
 			return oPreviousPromise
-				.then(this._performSingleSaveAction(oDirtyChange))
+				.then(this._performSingleSaveAction(oDirtyChange, bDraft))
 				.then(this._updateCacheAndDirtyState.bind(this, aAllDirtyChanges, oDirtyChange, bSkipUpdateCache));
 		}.bind(this), Promise.resolve());
 	};
 
-	ChangePersistence.prototype._performSingleSaveAction = function (oDirtyChange) {
+	ChangePersistence.prototype._performSingleSaveAction = function (oDirtyChange, bDraft) {
 		return function() {
 			if (oDirtyChange.getPendingAction() === "NEW") {
-				return CompatibilityConnector.create(oDirtyChange.getDefinition(), oDirtyChange.getRequest());
+				return CompatibilityConnector.create(oDirtyChange.getDefinition(), oDirtyChange.getRequest(), undefined, bDraft);
 			}
 
 			if (oDirtyChange.getPendingAction() === "DELETE") {
