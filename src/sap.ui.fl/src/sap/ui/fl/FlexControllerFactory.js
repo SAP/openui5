@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/performance/Measurement"
 ], function(
 	FlexController,
 	Utils,
 	Applier,
 	FlexState,
 	VariantModel,
-	Log
+	Log,
+	Measurement
 ) {
 	"use strict";
 	/**
@@ -141,6 +143,7 @@ sap.ui.define([
 			var oData = oFlexController.getVariantModelData() || {};
 			var oVariantModel = new VariantModel(oData, oFlexController, oAppComponent);
 			oAppComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
+			Measurement.end("flexProcessing");
 			return oVariantModel;
 		});
 	}
