@@ -420,6 +420,22 @@ sap.ui.define([
 					});
 				},
 
+				iShouldSeeImportDataOfTypeDate: function(sId, sDate) {
+					return this.waitFor({
+						id: "presetImport--" + sId,
+						check: function(oText) {
+							var oDate1 = new Date(oText.getText()),
+								oDate2 = new Date(sDate);
+
+							return oDate1.toString() === oDate2.toString();
+						},
+						success: function() {
+							Opa5.assert.ok(true, "I see import data '" + sId + "' with date '" + sDate + "'");
+						},
+						errorMessage: "Was not able to locate import data '" + sId + "' with date '" + sDate + "'"
+					});
+				},
+
 				iShouldSeeExportData: function(sId, sValue) {
 					return this.waitFor({
 						id: "presetExport--" + sId,
@@ -483,7 +499,7 @@ sap.ui.define([
 					return this.iShouldSeeImportData("fileName", sFileName)
 						.and.iShouldSeeImportData("title", oPreset.title)
 						.and.iShouldSeeImportData("rulesCount", " (" + oPreset.selections.length + " rules selected)")
-						.and.iShouldSeeImportData("dateExported", DateFormat.getDateTimeInstance({style: "medium"}).format(new Date(oPreset.dateExported)))
+						.and.iShouldSeeImportDataOfTypeDate("dateExported", oPreset.dateExported)
 						.and.iShouldSeeImportData("description", oPreset.description);
 				},
 
