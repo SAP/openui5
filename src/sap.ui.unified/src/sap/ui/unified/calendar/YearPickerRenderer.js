@@ -27,21 +27,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 	 */
 	YearPickerRenderer.render = function(oRm, oYP){
 
-		var sTooltip = oYP.getTooltip_AsString(),
-			sId = oYP.getId(),
-			oDate = oYP._getDate(),
-			iYears = oYP.getYears(),
-			iColumns = oYP.getColumns(),
-			sWidth = "",
-			oCurrentDate = new CalendarDate(oDate, oYP.getPrimaryCalendarType()),
-			bEnabledCheck = false, // check for disabled years only needed if borders touched
-			oFirstDate = oYP._checkFirstDate(oCurrentDate),
-			bEnabled = false,
-			bApplySelection,
-			bApplySelectionBetween,
-			mAccProps, sYyyymmdd, i;
-
-		oCurrentDate.setYear(oCurrentDate.getYear() - Math.floor(iYears / 2));
+		var sTooltip = oYP.getTooltip_AsString();
 
 		oRm.openStart("div", oYP);
 		oRm.class("sapUiCalYearPicker");
@@ -50,14 +36,40 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 			oRm.attr('title', sTooltip);
 		}
 
-		oRm.accessibilityState(oYP, {
+		oRm.accessibilityState(oYP, this.getAccessibilityState(oYP));
+
+		oRm.openEnd(); // div element
+
+		this.renderCells(oRm, oYP);
+
+		oRm.close("div");
+
+	};
+
+	YearPickerRenderer.getAccessibilityState = function(oYP) {
+		return {
 			role: "grid",
 			readonly: "true",
 			multiselectable: oYP.getIntervalSelection(),
 			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("YEAR_PICKER")
-		});
+		};
+	};
 
-		oRm.openEnd(); // div element
+	YearPickerRenderer.renderCells = function(oRm, oYP) {
+
+		var oCurrentDate = new CalendarDate(oYP._getDate(), oYP.getPrimaryCalendarType()),
+			iYears = oYP.getYears(),
+			sId = oYP.getId(),
+			iColumns = oYP.getColumns(),
+			sWidth = "",
+			bEnabled = false,
+			bEnabledCheck = false, // check for disabled years only needed if borders touched
+			oFirstDate = oYP._checkFirstDate(oCurrentDate),
+			bApplySelection,
+			bApplySelectionBetween,
+			mAccProps, sYyyymmdd, i;
+
+		oCurrentDate.setYear(oCurrentDate.getYear() - Math.floor(iYears / 2));
 
 		if (!oFirstDate.isSame(oCurrentDate)) {
 			oCurrentDate = oFirstDate;
@@ -122,6 +134,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
 			oRm.text(oYP._oYearFormat.format(UniversalDate.getInstance(oCurrentDate.toUTCJSDate(), oCurrentDate.getCalendarType()))); // to render era in Japanese
 			oRm.close("div");
+
 			oCurrentDate.setYear(oCurrentDate.getYear() + 1);
 
 			if (iColumns > 0 && ((i + 1) % iColumns == 0)) {
@@ -129,9 +142,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 				oRm.close("div");
 			}
 		}
-
-		oRm.close("div");
-
 	};
 
 	return YearPickerRenderer;
