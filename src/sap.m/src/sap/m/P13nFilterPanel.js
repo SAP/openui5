@@ -4,14 +4,14 @@
 
 // Provides control sap.m.P13nFilterPanel.
 sap.ui.define([
-	'./P13nConditionPanel', './P13nPanel', './library', 'sap/m/Panel', './P13nFilterItem'
-], function(P13nConditionPanel, P13nPanel, library, Panel, P13nFilterItem) {
+	'./P13nConditionPanel', './P13nPanel', './library', 'sap/m/Panel', './P13nFilterItem', './P13nOperationsHelper'
+], function(P13nConditionPanel, P13nPanel, library, Panel, P13nFilterItem, P13nOperationsHelper) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType
 	var P13nPanelType = library.P13nPanelType;
 
-	// shortcut for sap.m.P13nConditionOperation TODO: use enum in library.js or official API
+	// shortcut for sap.m.P13nConditionOperation
 	var P13nConditionOperation = library.P13nConditionOperation;
 
 	/**
@@ -417,56 +417,7 @@ sap.ui.define([
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._aIncludeOperations = {};
-
-		if (!this._aIncludeOperations["default"]) {
-			this.setIncludeOperations([
-				P13nConditionOperation.EQ, P13nConditionOperation.BT, P13nConditionOperation.LT, P13nConditionOperation.LE, P13nConditionOperation.GT, P13nConditionOperation.GE
-			]);
-		}
-
-		if (!this._aIncludeOperations["string"]) {
-			this.setIncludeOperations([
-				P13nConditionOperation.Contains, P13nConditionOperation.EQ, P13nConditionOperation.BT, P13nConditionOperation.StartsWith, P13nConditionOperation.EndsWith, P13nConditionOperation.LT, P13nConditionOperation.LE, P13nConditionOperation.GT, P13nConditionOperation.GE
-			], "string");
-		}
-		if (!this._aIncludeOperations["date"]) {
-			this.setIncludeOperations([
-				P13nConditionOperation.EQ, P13nConditionOperation.BT, P13nConditionOperation.LT, P13nConditionOperation.LE, P13nConditionOperation.GT, P13nConditionOperation.GE
-			], "date");
-		}
-		if (!this._aIncludeOperations["time"]) {
-			this.setIncludeOperations([
-				P13nConditionOperation.EQ, P13nConditionOperation.BT, P13nConditionOperation.LT, P13nConditionOperation.LE, P13nConditionOperation.GT, P13nConditionOperation.GE
-			], "time");
-		}
-		if (!this._aIncludeOperations["datetime"]) {
-			this.setIncludeOperations([
-				P13nConditionOperation.EQ, P13nConditionOperation.BT, P13nConditionOperation.LT, P13nConditionOperation.LE, P13nConditionOperation.GT, P13nConditionOperation.GE
-			], "datetime");
-		}
-		if (!this._aIncludeOperations["numeric"]) {
-			this.setIncludeOperations([
-				P13nConditionOperation.EQ, P13nConditionOperation.BT, P13nConditionOperation.LT, P13nConditionOperation.LE, P13nConditionOperation.GT, P13nConditionOperation.GE
-			], "numeric");
-		}
-		if (!this._aIncludeOperations["numc"]) {
-			this.setIncludeOperations([
-				P13nConditionOperation.Contains, P13nConditionOperation.EQ, P13nConditionOperation.BT, P13nConditionOperation.EndsWith, P13nConditionOperation.LT, P13nConditionOperation.LE, P13nConditionOperation.GT, P13nConditionOperation.GE
-			], "numc");
-		}
-		if (!this._aIncludeOperations["boolean"]) {
-			this.setIncludeOperations([
-				P13nConditionOperation.EQ
-			], "boolean");
-		}
-
 		this._aExcludeOperations = {};
-
-		if (!this._aExcludeOperations["default"]) {
-			this.setExcludeOperations([
-				P13nConditionOperation.EQ
-			]);
-		}
 
 		this._oIncludePanel = new Panel({
 			expanded: true,
@@ -482,10 +433,6 @@ sap.ui.define([
 			dataChange: this._handleDataChange()
 		});
 		this._oIncludeFilterPanel._sAddRemoveIconTooltipKey = "FILTER";
-
-		for (var sType in this._aIncludeOperations) {
-			this._oIncludeFilterPanel.setOperations(this._aIncludeOperations[sType], sType);
-		}
 
 		this._oIncludePanel.addContent(this._oIncludeFilterPanel);
 
@@ -507,8 +454,18 @@ sap.ui.define([
 		});
 		this._oExcludeFilterPanel._sAddRemoveIconTooltipKey = "FILTER";
 
-		for (var sType in this._aExcludeOperations) {
+		if (!this._oOperationsHelper) {
+			this._oOperationsHelper = new P13nOperationsHelper();
+		}
+		this._updateOperations();
+
+		var sType;
+		for (sType in this._aExcludeOperations) {
 			this._oExcludeFilterPanel.setOperations(this._aExcludeOperations[sType], sType);
+		}
+
+		for (sType in this._aIncludeOperations) {
+			this._oIncludeFilterPanel.setOperations(this._aIncludeOperations[sType], sType);
 		}
 
 		this._oExcludePanel.addContent(this._oExcludeFilterPanel);
@@ -527,6 +484,7 @@ sap.ui.define([
 			return null;
 		};
 
+		this._oOperationsHelper = destroyHelper(this._oOperationsHelper);
 		this._aKeyFields = destroyHelper(this._aKeyFields);
 		this._aIncludeOperations = destroyHelper(this._aIncludeOperations);
 		this._aExcludeOperations = destroyHelper(this._aExcludeOperations);
@@ -623,6 +581,34 @@ sap.ui.define([
 			});
 			this.setConditions(aConditions);
 		}
+	};
+
+	/**
+	 * Update the operations list
+	 * @private
+	 */
+	P13nFilterPanel.prototype._updateOperations = function () {
+		// Include
+		this._oOperationsHelper.getIncludeTypes().forEach(function (sType) {
+			this.setIncludeOperations(this._oOperationsHelper.getIncludeOperationsByType(sType), sType);
+		}.bind(this));
+
+		// Exclude
+		this._oOperationsHelper.getExcludeTypes().forEach(function (sType) {
+			this.setExcludeOperations(this._oOperationsHelper.getExcludeOperationsByType(sType), sType);
+		}.bind(this));
+	};
+
+	/**
+	 * Enables extended exclude operations
+	 * @ui5-restricted sap.ui.comp.ValueHelpDialog, sap.ui.comp.personalization.FilterController
+	 * @private
+	 */
+	P13nFilterPanel.prototype._enableEnhancedExcludeOperations = function () {
+		if (this._oOperationsHelper) {
+			this._oOperationsHelper.setUseExcludeOperationsExtended();
+		}
+		this._updateOperations();
 	};
 
 	/**

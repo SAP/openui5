@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/P13nItem",
 	"sap/m/P13nFilterItem",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/m/P13nOperationsHelper"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -16,7 +17,8 @@ sap.ui.define([
 	JSONModel,
 	P13nItem,
 	P13nFilterItem,
-	mobileLibrary
+	mobileLibrary,
+	P13nOperationsHelper
 ) {
 	"use strict";
 
@@ -408,31 +410,76 @@ sap.ui.define([
 		// cleanup
 		oP13nFilterPanel.destroy();
 
-		QUnit.test("Include and Exclude operations list", function (assert) {
-			// Arrange
-			var oP13nFilterPanel = new P13nFilterPanel();
+	});
 
-			// Assert
-			assert.strictEqual(
-				JSON.stringify(oP13nFilterPanel._aIncludeOperations),
-				'{"default":["EQ","BT","LT","LE","GT","GE"],' +
-				'"string":["Contains","EQ","BT","StartsWith","EndsWith","LT","LE","GT","GE"],' +
-				'"date":["EQ","BT","LT","LE","GT","GE"],' +
-				'"time":["EQ","BT","LT","LE","GT","GE"],"datetime":["EQ","BT","LT","LE","GT","GE"],' +
-				'"numeric":["EQ","BT","LT","LE","GT","GE"],' +
-				'"numc":["Contains","EQ","BT","EndsWith","LT","LE","GT","GE"],' +
-				'"boolean":["EQ"]}',
-				"Include operations list should match"
-			);
-			assert.strictEqual(
-				JSON.stringify(oP13nFilterPanel._aExcludeOperations),
-				'{"default":["EQ"]}',
-				"Exclude operations list should match"
-			);
+	QUnit.test("Include and Exclude operations list", function (assert) {
+		// Arrange
+		var oP13nFilterPanel = new P13nFilterPanel();
 
-			// Cleanup
-			oP13nFilterPanel.destroy();
-		});
+		// Assert
+		assert.strictEqual(
+			JSON.stringify(oP13nFilterPanel._aIncludeOperations),
+			'{"default":["EQ","BT","LT","LE","GT","GE"],' +
+			'"string":["Contains","EQ","BT","StartsWith","EndsWith","LT","LE","GT","GE"],' +
+			'"date":["EQ","BT","LT","LE","GT","GE"],' +
+			'"time":["EQ","BT","LT","LE","GT","GE"],"datetime":["EQ","BT","LT","LE","GT","GE"],' +
+			'"numeric":["EQ","BT","LT","LE","GT","GE"],' +
+			'"numc":["Contains","EQ","BT","EndsWith","LT","LE","GT","GE"],' +
+			'"boolean":["EQ"]}',
+			"Include operations list should match"
+		);
+		assert.strictEqual(
+			JSON.stringify(oP13nFilterPanel._aExcludeOperations),
+			'{"default":["EQ"]}',
+			"Exclude operations list should match"
+		);
+
+		// Cleanup
+		oP13nFilterPanel.destroy();
+	});
+
+	QUnit.module("Internal methods", {
+		beforeEach: function () {
+			this.oFP = new P13nFilterPanel();
+		},
+		afterEach: function () {
+			this.oFP.destroy();
+			this.oFP = null;
+		}
+	});
+
+	QUnit.test("_updateOperations", function (assert) {
+		// Arrange
+		var oSetIncludeOperationsSpy = sinon.spy(this.oFP, "setIncludeOperations"),
+			oSetExcludeOperationsSpy = sinon.spy(this.oFP, "setExcludeOperations");
+
+		// Act
+		this.oFP._updateOperations();
+
+		// Assert
+		assert.ok(oSetIncludeOperationsSpy.called, "Include setter called");
+		assert.ok(oSetExcludeOperationsSpy.called, "Exclude setter called");
+
+		// Cleanup
+		oSetIncludeOperationsSpy.restore();
+		oSetExcludeOperationsSpy.restore();
+	});
+
+	QUnit.test("_enableEnhancedExcludeOperations", function (assert) {
+		// Arrange
+		var oUpdateOperationsSpy = sinon.spy(this.oFP, "_updateOperations"),
+			oSetEnhancedExcludeOperationsSpy = sinon.spy(this.oFP._oOperationsHelper, "setUseExcludeOperationsExtended");
+
+		// Act
+		this.oFP._enableEnhancedExcludeOperations();
+
+		// Assert
+		assert.strictEqual(oUpdateOperationsSpy.callCount, 1, "_updateOperations called once");
+		assert.strictEqual(oSetEnhancedExcludeOperationsSpy.callCount, 1, "setUseExcludeOperationsExtended called once");
+
+		// Cleanup
+		oUpdateOperationsSpy.restore();
+		oSetEnhancedExcludeOperationsSpy.restore();
 	});
 
 });

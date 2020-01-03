@@ -811,6 +811,16 @@ sap.ui.define([
 					version: 4
 				}
 			},
+			P13nOperationsHelper: {
+				title: "Test Page for sap.m.P13nOperationsHelper",
+				_alternativeTitle: "QUnit Page for sap.m.P13nOperationsHelper",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
+			},
 			PDFViewer: {
 				title: "PdfViewer - sap.m",
 				qunit: {
