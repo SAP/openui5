@@ -23,8 +23,8 @@
 					<Image id="aboutLogoSAP" src="./resources/sap/ui/documentation/sdk/images/Logo_B_SAPUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
 					<Image id="aboutLogoUI5" src="./resources/sap/ui/documentation/sdk/images/Logo_B_OpenUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{versionData>/isOpenUI5}"/>
 					<Text text="UI5 Demo Kit - UI Development Toolkit for HTML5" class="sapMTitleStyleH2 sapUiSmallMarginBottom" />
-					<Text text="© Copyright 2009-2019 SAP SE. All rights reserved." class="sapUiMediumMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
-					<Text text="© 2009-2019 SAP SE or an SAP affiliate company." visible="{versionData>/isOpenUI5}"/>
+					<Text text="© Copyright 2009-2020 SAP SE. All rights reserved." class="sapUiMediumMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
+					<Text text="© 2009-2020 SAP SE or an SAP affiliate company." visible="{versionData>/isOpenUI5}"/>
 					<custom:JSDocText class="sapUiMediumMarginBottom" visible="{versionData>/isOpenUI5}" text="Licensed under the Apache License, Version 2.0 – see &lt;a href='LICENSE.txt' target='_blank' class='sapMLnk sapMLnkMaxWidth aboutLink'&gt;LICENSE.txt&lt;/a&gt;"/>
 					<Text text="{versionData>/versionName} Version {versionData>/fullVersion}" class="sapMTitleStyleH4 sapUiSmallMarginBottom"/>
 					<Text text="Open UI5 Version {versionData>/openUi5Version}" class="sapMTitleStyleH5 sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
