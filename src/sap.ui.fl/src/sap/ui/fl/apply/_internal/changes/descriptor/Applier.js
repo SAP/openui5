@@ -6,11 +6,13 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/DescriptorChangeHandlerRegistration",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/performance/Measurement"
 ], function(
 	DescriptorChangeHandlerRegistration,
 	FlexState,
-	ManifestUtils
+	ManifestUtils,
+	Measurement
 ) {
 	"use strict";
 
@@ -35,6 +37,10 @@ sap.ui.define([
 		 * @returns {Promise<object>} - Processed manifest
 		 */
 		preprocessManifest: function(oManifest, oConfig) {
+			// Measurement for the whole flex processing until the VariantModel is attached to the component; this does not include actual CodeExt or UI change applying
+			Measurement.start("flexProcessing", "Complete flex processing", ["sap.ui.fl"]);
+			Measurement.start("flexStateInitialize", "Initialization of flex state", ["sap.ui.fl"]);
+
 			var sReference = ManifestUtils.getFlexReference({
 				manifest: oManifest,
 				componentData: oConfig.componentData || {}
@@ -47,6 +53,9 @@ sap.ui.define([
 				componentId: oConfig.id,
 				reference: sReference
 			}).then(function() {
+				Measurement.end("flexStateInitialize");
+				Measurement.start("flexAppDescriptorMerger", "Client side app descriptor merger", ["sap.ui.fl"]);
+
 				var aAppDescriptorChanges = FlexState.getAppDescriptorChanges(sReference);
 				var oUpdatedManifest = Object.assign({}, oManifest);
 				aAppDescriptorChanges.forEach(function (oChange) {
@@ -56,6 +65,7 @@ sap.ui.define([
 						oUpdatedManifest = oChangeHandler.applyChange(oUpdatedManifest, oChange);
 					}
 				});
+				Measurement.end("flexAppDescriptorMerger");
 				return oUpdatedManifest;
 			});
 		}
