@@ -241,7 +241,16 @@
 		var oHeader = oDynamicPageUtil.getHeader();
 		var oFooter = oDynamicPageUtil.getFooter();
 
-		var oPage = oDynamicPageUtil.getDynamicPage(true, oTitle, oHeader, oWizard, oFooter);
+		oWizard.addStyleClass("sapUiResponsivePadding--content");
+		oWizard.addStyleClass("sapUiResponsivePadding--header");
+
+		var oPage = oDynamicPageUtil.getDynamicPageWithStickyHeader(false, oTitle, oHeader, oWizard, oFooter, oWizard);
+		// Leaves the Wizard to handle the scroll
+		oPage.setFitContent(true);
+		oPage.setHeaderExpanded(false);
+		// Makes the Wizard take 100% of the DynamicPage's width.
+		oPage.addStyleClass("sapUiNoContentPadding");
+
 
 		var oApp = new sap.m.App();
 		oApp.addPage(oPage).placeAt("body");

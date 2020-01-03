@@ -98,6 +98,16 @@
 				content: oContent,
 				footer: oFooter
 			});
+		},
+		getDynamicPageWithStickyHeader: function(bPreserveHeader, oTitle, oHeader, oContent, oFooter, oStickyHeaderProvider) {
+			return new sap.f.DynamicPage({
+				preserveHeaderStateOnScroll: bPreserveHeader,
+				stickySubheaderProvider: oStickyHeaderProvider.getId(),
+				title: oTitle,
+				header: oHeader,
+				content: oContent,
+				footer: oFooter
+			});
 		}
 	};
 }());

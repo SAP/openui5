@@ -1122,4 +1122,75 @@ sap.ui.define([
 		this.stub().reset();
 		oWizard.destroy();
 	});
+
+	QUnit.module("Wizard sticky content interface", {
+		sWizardId: "wizard-sticky-id",
+		beforeEach: function () {
+			this.oWizard = new Wizard(this.sWizardId, {
+				steps: [
+					new WizardStep({
+						validated: true,
+						title: "Step 1"
+					}),
+					new WizardStep({
+						validated: true,
+						title: "Step 2"
+					}),
+					new WizardStep({
+						title: "Step 3"
+					})
+				]
+			});
+
+			this.oWizard.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oWizard.destroy();
+			this.oWizard = null;
+		}
+	});
+
+	QUnit.test("_setStickySubheaderSticked / _getStickySubheaderSticked", function (assert) {
+		var undef,
+			bSticked = true;
+
+		// Assert
+		assert.strictEqual(this.oWizard._bStickyContentSticked, undef, "_bStickyContentSticked is undefined");
+
+		// Act
+		this.oWizard._setStickySubheaderSticked(bSticked);
+
+		// Assert
+		assert.strictEqual(this.oWizard._bStickyContentSticked, bSticked, "_bStickyContentSticked is set to true");
+		assert.strictEqual(this.oWizard._getStickySubheaderSticked(), bSticked, "_getStickySubheaderSticked returned true");
+	});
+
+	QUnit.test("_getStickyContent returns the progress navigator", function (assert) {
+		// Assert
+		assert.deepEqual(this.oWizard._getStickyContent(), this.oWizard._getProgressNavigator(), "_getStickyContent returns the progress navigator");
+	});
+
+	QUnit.test("_returnStickyContent inserts the progress navigator back into the wizard's DOM", function (assert) {
+		var $WizardElement = this.oWizard.$()[0],
+			oPrependSpy = new sinon.spy(),
+			oStub = {
+				$: {
+					prependTo: oPrependSpy
+				}
+			},
+			oProgressNavigator = this.oWizard._getProgressNavigator(),
+			oProgressDomStub = this.stub(oProgressNavigator, "$").returns(oStub.$);
+
+		// Act
+		this.oWizard._returnStickyContent();
+
+		// Assert
+		assert.ok(oProgressDomStub.calledOnce, "The progress navigator's $ was  called once.");
+		assert.ok(oPrependSpy.calledOnce, "prependTo was called once.");
+		assert.strictEqual(oPrependSpy.firstCall.args[0][0], $WizardElement, "The sticky content was returned to the correct DOM element.");
+
+		// Clean
+		oProgressDomStub.restore();
+	});
 });
