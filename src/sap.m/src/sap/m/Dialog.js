@@ -454,48 +454,17 @@ function(
 			 * @private
 			 */
 			this.oPopup._applyPosition = function (oPosition, bFromResize) {
-				var scrollPosY;
-				var scrollPosX;
 
 				that._setDimensions();
 				that._adjustScrollingPane();
 
-				//set to hard 50% or the values set from a drag or resize
-				oPosition.at = {};
-
 				if (that._oManuallySetPosition) {
-					oPosition.at.left = that._oManuallySetPosition.x;
-					oPosition.at.top = that._oManuallySetPosition.y;
+					oPosition.at = {
+						left: that._oManuallySetPosition.x,
+						top: that._oManuallySetPosition.y
+					};
 				} else {
-					// the top and left position need to be calculated with the
-					// window scroll position
-					if (window.scrollY === undefined) {
-						scrollPosY = window.pageYOffset;
-					} else {
-						scrollPosY = window.scrollY;
-					}
-
-					// on iOS this can be a negative integer
-					// which is causing the dialog to be rendered partially off-screen
-					if (Device.os.ios || scrollPosY < 0) {
-						scrollPosY = 0;
-					}
-
-					oPosition.at.top = 'calc(50% + ' + scrollPosY + 'px)';
-
-					if (that._bRTL) {
-						oPosition.at.left = 'auto'; // RTL mode adds right 50% so we have to remove left 50%
-					} else {
-						if (window.scrollX === undefined) {
-							scrollPosX = window.pageXOffset;
-						} else {
-							scrollPosX = window.scrollX;
-						}
-						if (Device.os.ios || scrollPosX < 0) {
-							scrollPosX = 0;
-						}
-						oPosition.at.left = 'calc(50% + ' + scrollPosX + 'px)';
-					}
+					oPosition.at = that._calcCenter();
 				}
 
 				//deregister the content resize handler before repositioning
@@ -607,6 +576,7 @@ function(
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Dialog.prototype.open = function () {
+
 			var oPopup = this.oPopup;
 			// Set the initial focus to the dialog itself.
 			// The initial focus should be set because otherwise the first focusable element will be focused.
@@ -900,7 +870,7 @@ function(
 			$this.css(oStyles);
 
 			if (!bStretch && !this._oManuallySetSize && !this._bDisableRepositioning) {
-				this._applyCustomTranslate();
+				this._centerDialog();
 			}
 
 			//In Chrome when the dialog is stretched the footer is not rendered in the right position;
@@ -1014,7 +984,7 @@ function(
 			}
 
 			if (!this.getStretch() && !this._oManuallySetSize && !this._bDisableRepositioning) {
-				this._applyCustomTranslate();
+				this._centerDialog();
 			}
 		};
 
@@ -1036,39 +1006,30 @@ function(
 		};
 
 		/**
-		 * Solves blurring issue that is coming from css transform translate when any of the
-		 * X or Y transform values is odd. The method just floors the value to an even number.
+		 * Centers the dialog
 		 *
 		 * @private
 		 */
-		Dialog.prototype._applyCustomTranslate = function() {
+		Dialog.prototype._centerDialog = function() {
+			this.$().css(this._calcCenter());
+		};
 
-			// Blurring is not appearing on IE. On the opposite - applying custom translation would break the positioning
-			if (Device.browser.msie) {
-				return;
-			}
+		/**
+		 * Calculates "left" and "top" positions, so the dialog is centered.
+		 *
+		 * @private
+		 */
+		Dialog.prototype._calcCenter = function () {
+			var windowWidth = window.innerWidth,
+				windowHeight = window.innerHeight,
+				$this = this.$(),
+				dialogWidth = $this.outerWidth(),
+				dialogHeight  = $this.outerHeight();
 
-			var $dialog = this.$(),
-				sTranslateX,
-				sTranslateY,
-				iDialogWidth = $dialog.innerWidth(),
-				iDialogHeight = $dialog.innerHeight();
-
-			if (Device.system.desktop && (iDialogWidth % 2 !== 0 || iDialogHeight % 2 !== 0)) {
-				if (!this._bRTL) {
-					sTranslateX = '-' + Math.floor(iDialogWidth / 2) + "px";
-				} else {
-					sTranslateX = Math.floor(iDialogWidth / 2) + "px";
-				}
-
-				sTranslateY = '-' + Math.floor(iDialogHeight / 2) + "px";
-				var sCalculatedPosition = 'translate(' + sTranslateX + ',' + sTranslateY + ') scale(1) ';
-				$dialog.css('transform', sCalculatedPosition );
-				$dialog.css('-webkit-transform', sCalculatedPosition + ' translateZ(0px)');
-			} else {
-				$dialog.css('transform', '');
-				$dialog.css('-webkit-transform', '');
-			}
+			return {
+				left: Math.round((windowWidth - dialogWidth) / 2),
+				top: Math.round((windowHeight - dialogHeight) / 2)
+			};
 		};
 
 		/**
@@ -1757,7 +1718,6 @@ function(
 
 					//call the reposition
 					this.oPopup && this.oPopup._applyPosition(this.oPopup._oLastPosition, true);
-					this._$dialog.removeClass('sapMDialogTouched');
 
 					//BCP: 1880238929
 					$dialogContent.css({
@@ -1833,8 +1793,6 @@ function(
 					that._bDisableRepositioning = true;
 
 					that._$dialog.addClass('sapDialogDisableTransition');
-					//remove the transform translate
-					that._$dialog.addClass('sapMDialogTouched');
 
 					that._oManuallySetPosition = {
 						x: initial.position.x,
@@ -1845,8 +1803,7 @@ function(
 					that._$dialog.css({
 						left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - initial.width),
 						top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - initial.height),
-						width: initial.width,
-						transform: ""
+						width: initial.width
 					});
 				}
 
@@ -1869,8 +1826,7 @@ function(
 							//move the dialog
 							that._$dialog.css({
 								left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - initial.width),
-								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - initial.outerHeight),
-								transform: ""
+								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - initial.outerHeight)
 							});
 						});
 					});
@@ -1906,7 +1862,6 @@ function(
 
 							if (that._bRTL) {
 								styles.left = Math.min(Math.max(event.pageX, 0), maxLeftOffset);
-								styles.transform = "";
 								that._oManuallySetSize.width = initial.width + initial.x - Math.max(event.pageX, 0);
 							}
 

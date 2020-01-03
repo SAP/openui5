@@ -67,26 +67,11 @@ sap.ui.define([
 	var ButtonType = mobileLibrary.ButtonType;
 
 	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"html {" +
-		"    /* This is needed because Popup.js sets the overflow hidden to html tag after modal popup is positioned," +
-		"       which makes the position calculation wrong */" +
-		"    overflow: hidden;" +
-		"}";
-	document.head.appendChild(styleElement);
-
-
-	var realTimeout = setTimeout;
-
-
 
 	function marginCompare(value1, value2, margin) {
-		var margin = margin || 2;
-		return (Math.abs(value1 - value2)) < margin;
+		var _margin = margin || 2;
+		return (Math.abs(value1 - value2)) < _margin;
 	}
-
-
 
 	function overwriteAnimationIE(oDialog) {// TODO remove after 1.62 version
 		if (Device.browser.msie) {
@@ -377,11 +362,11 @@ sap.ui.define([
 		assert.ok(oDialog.isOpen(), "Dialog is already open");
 		this.clock.tick(600);
 		var $Dialog = jQuery.sap.byId("dialog"),
-				$ScrollDiv = oDialog.$("scroll"),
-				oTitleDom = jQuery.sap.domById(oDialog.getId() + "-title"),
-				oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
-				oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
-				oSearchField = sap.ui.getCore().byId("__field0").getFocusDomRef();
+			$ScrollDiv = oDialog.$("scroll"),
+			oTitleDom = jQuery.sap.domById(oDialog.getId() + "-title"),
+			oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
+			oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
+			oSearchField = sap.ui.getCore().byId("__field0").getFocusDomRef();
 		assert.ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 		assert.ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 		assert.ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
@@ -509,12 +494,12 @@ sap.ui.define([
 			resultingScrollPaneWidth;
 
 		//System under Test
-				sut = new Dialog({
-					contentWidth: "500px",
-					content: new Text({
-						text: "This is just a sample text with width set to 700 px. We are testing vertical scrolling of wider content.",
-						width: "700px"})
-				});
+		sut = new Dialog({
+			contentWidth: "500px",
+			content: new Text({
+				text: "This is just a sample text with width set to 700 px. We are testing vertical scrolling of wider content.",
+				width: "700px"})
+		});
 
 		//Act
 		sut.open();
@@ -540,11 +525,11 @@ sap.ui.define([
 		});
 
 		var resultingContentWidth,
-				resultingScrollPaneWidth,
-		//System under Test
-				sut = new Dialog({
-					content: new HTML({content: '<p style="width: 90px"></p>'})
-				});
+			resultingScrollPaneWidth,
+			//System under Test
+			sut = new Dialog({
+				content: new HTML({content: '<p style="width: 90px"></p>'})
+			});
 
 		//Act
 		sut.open();
@@ -641,12 +626,12 @@ sap.ui.define([
 		this.stub(Device, "system", oSystem);
 
 		var oDialog = new Dialog({
-					content: new HTML({
-						content: "<div style='width: 1000px; height: 1000px'></div>"
-					}),
-					contentWidth: "500px"
+				content: new HTML({
+					content: "<div style='width: 1000px; height: 1000px'></div>"
 				}),
-				iValue = 500;
+				contentWidth: "500px"
+			}),
+			iValue = 500;
 
 		oDialog.open();
 		this.clock.tick(500);
@@ -735,24 +720,24 @@ sap.ui.define([
 		var done = assert.async();
 		// arrange
 		var escapeHandlerFunction = function (oPromise) {
-			oPromise.resolve();
-		},
+				oPromise.resolve();
+			},
 
-		fnEscapeHandlerFunctionSpy = this.spy(escapeHandlerFunction),
+			fnEscapeHandlerFunctionSpy = this.spy(escapeHandlerFunction),
 
-		oDialog = new Dialog('escapeDialog', {
-			escapeHandler: fnEscapeHandlerFunctionSpy,
-			afterClose: function (oEvent) {
-				assert.strictEqual(oDialog.isOpen(), false, 'Dialog should be closed.');
-				assert.notOk(oEvent.getParameter("origin"), 'Origin should not be set.');
+			oDialog = new Dialog('escapeDialog', {
+				escapeHandler: fnEscapeHandlerFunctionSpy,
+				afterClose: function (oEvent) {
+					assert.strictEqual(oDialog.isOpen(), false, 'Dialog should be closed.');
+					assert.notOk(oEvent.getParameter("origin"), 'Origin should not be set.');
 
-				oDialog.destroy();
-				oDialog = null;
+					oDialog.destroy();
+					oDialog = null;
 
-				done();
-				done = null;
-			}
-		});
+					done();
+					done = null;
+				}
+			});
 
 		// act
 		oDialog.open();
@@ -781,10 +766,10 @@ sap.ui.define([
 		var oBBtn = new Button("beginButton", { text: "beginButton" });
 		var oEBtn = new Button("endButton", { text: "endButton" });
 		var aButtons = [
-				new Button("buttons1", { text: "buttons1" }),
-				new Button("buttons2", { text: "buttons2" }),
-				new Button("buttons3", { text: "buttons3" })
-			];
+			new Button("buttons1", { text: "buttons1" }),
+			new Button("buttons2", { text: "buttons2" }),
+			new Button("buttons3", { text: "buttons3" })
+		];
 
 		// instantiate dialog with begin and endButton
 		var oDialog = new Dialog("testDialog", {
@@ -849,10 +834,10 @@ sap.ui.define([
 		var oBBtn = new Button("beginButton", { text: "beginButton" });
 		var oEBtn = new Button("endButton", { text: "endButton" });
 		var aButtons = [
-				new Button("buttons1", { text: "buttons1" }),
-				new Button("buttons2", { text: "buttons2" }),
-				new Button("buttons3", { text: "buttons3" })
-			];
+			new Button("buttons1", { text: "buttons1" }),
+			new Button("buttons2", { text: "buttons2" }),
+			new Button("buttons3", { text: "buttons3" })
+		];
 
 		// instantiate dialog with begin/endButton
 		var oDialog = new Dialog("testDialog", {
@@ -1035,7 +1020,7 @@ sap.ui.define([
 		var subHeaderId = oDialog.$().find('.sapMDialogSubHeader > .sapMBar').attr('id');
 		var dialogAriaLabelledBy = oDialog.getAriaLabelledBy();
 		assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogTitleId + ' ' + subHeaderId +
-				' ' + TEXT_ID);
+			' ' + TEXT_ID);
 		assert.strictEqual(dialogAriaLabelledBy.length, 3);
 		assert.strictEqual(dialogAriaLabelledBy.indexOf(dialogTitleId), 0);
 		assert.strictEqual(dialogAriaLabelledBy.indexOf(subHeaderId), 1);
@@ -1254,10 +1239,10 @@ sap.ui.define([
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new Dialog(),
-				sContentSelector = "section > .sapMDialogScroll > .sapMDialogScrollCont",
-				sResponsiveSize = (Device.resize.width <= 599 ? "0" : (Device.resize.width <= 1023 ? "16px" : "16px 32px")), // eslint-disable-line no-nested-ternary
-				aResponsiveSize = sResponsiveSize.split(" "),
-				$containerContent;
+			sContentSelector = "section > .sapMDialogScroll > .sapMDialogScrollCont",
+			sResponsiveSize = (Device.resize.width <= 599 ? "0" : (Device.resize.width <= 1023 ? "16px" : "16px 32px")), // eslint-disable-line no-nested-ternary
+			aResponsiveSize = sResponsiveSize.split(" "),
+			$containerContent;
 
 		// Act
 		oContainer.placeAt("qunit-fixture");
@@ -1506,6 +1491,10 @@ sap.ui.define([
 			title: "Some title",
 			beginButton: new Button({text: "button"}),
 			content: [
+				// add 3 texts to avoid same height - because there is min height of 3 rems
+				new Text({
+					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
+				}),
 				new Text({
 					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
 				}),
@@ -1615,48 +1604,14 @@ sap.ui.define([
 
 		this.clock.tick(500);
 
-		window.scrollY = 50;
-
-		this.oDialog.oPopup._applyPosition(this.mockPosition);
-
-		// assert
-		assert.strictEqual(this.mockPosition.at.top, "calc(50% + 0px)", "The top position should not add additional pixels in scrollPosY ");
-		assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
-
-	});
-
-	QUnit.test("ScrollY should be included in the top position calculation", function(assert) {
-		this.stub(Device, "os", {ios: false});
-
-		// act
-		this.oDialog.open();
-
-		this.clock.tick(500);
-
-		window.scrollY = 50;
-
-		this.oDialog.oPopup._applyPosition(this.mockPosition);
-
-		// assert
-		assert.strictEqual(this.mockPosition.at.top, "calc(50% + 50px)", "The top position should include scrollPosY");
-		assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
-	});
-
-	QUnit.test("ScrollY should not be included in the top position calculation", function(assert) {
-		this.stub(Device, "os", {ios: false});
-
-		// act
-		this.oDialog.open();
-
-		this.clock.tick(500);
-
 		window.scrollY = -50;
 
 		this.oDialog.oPopup._applyPosition(this.mockPosition);
 
 		// assert
-		assert.strictEqual(this.mockPosition.at.top, "calc(50% + 0px)", "The top position should not add additional pixels in scrollPosY ");
-		assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
+		assert.strictEqual(this.mockPosition.at.top, Math.round((window.innerHeight - this.oDialog.$().outerHeight()) / 2), "The top position should not add additional pixels in scrollPosY ");
+		assert.strictEqual(this.mockPosition.at.left, Math.round((window.innerWidth - this.oDialog.$().outerWidth()) / 2), "The left position should not add additional pixels in scrollPosX");
+
 	});
 
 	QUnit.module("Resizable Dialog",{
