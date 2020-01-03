@@ -32,6 +32,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.transport] The transport ID
 		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
+		 * @param {boolean} [mPropertyBag.draft=false] - Indicates if changes should be written as a draft
 		 * @returns {Promise} Resolves as soon as the writing is completed without data
 		 */
 		write: function (/* mPropertyBag */) {

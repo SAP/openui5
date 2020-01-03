@@ -3057,6 +3057,27 @@ function (
 			}.bind(this));
 		});
 
+		QUnit.test("Shall save the dirty changes for a draft when adding a new change and return a promise", function (assert) {
+			var oChangeContent;
+
+			oChangeContent = {
+				fileName: "Gizorillus",
+				layer: "VENDOR",
+				fileType: "change",
+				changeType: "addField",
+				selector: { id: "control1" },
+				content: { },
+				originalLanguage: "DE"
+			};
+
+			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+			return this.oChangePersistence.saveDirtyChanges(undefined, undefined, true).then(function() {
+				assert.equal(this.oCreateStub.callCount, 1, "the Connector was called once");
+				assert.equal(this.oCreateStub.getCall(0).args[3], true, "the draft flag was passed");
+			}.bind(this));
+		});
+
 		QUnit.test("(Save As scenario) Shall save the dirty changes for the created app variant when pressing a 'Save As' button and return a promise", function (assert) {
 			var oChangeContent;
 
@@ -3447,6 +3468,55 @@ function (
 				assert.equal(this.oCreateStub.callCount, 2, "the create method of the connector is called for each selected change");
 				assert.deepEqual(this.oCreateStub.getCall(0).args[0], oChangeContent1, "the first change was processed first");
 				assert.deepEqual(this.oCreateStub.getCall(1).args[0], oChangeContent3, "the second change was processed afterwards");
+			}.bind(this));
+		});
+
+		QUnit.test("saveSequenceOfDirtyChanges shall save a sequence of the dirty changes in a bulk for drafts", function (assert) {
+			var oChangeContent1;
+			var oChangeContent2;
+			var oChangeContent3;
+
+			oChangeContent1 = {
+				fileName: "Gizorillus1",
+				layer: "VENDOR",
+				fileType: "change",
+				changeType: "addField",
+				selector: { id: "control1" },
+				content: { },
+				originalLanguage: "DE"
+			};
+
+			oChangeContent2 = {
+				fileName: "Gizorillus2",
+				layer: "VENDOR",
+				fileType: "change",
+				changeType: "addField",
+				selector: { id: "control1" },
+				content: { },
+				originalLanguage: "DE"
+			};
+
+			oChangeContent3 = {
+				fileName: "Gizorillus3",
+				layer: "VENDOR",
+				fileType: "change",
+				changeType: "addField",
+				selector: { id: "control1" },
+				content: { },
+				originalLanguage: "DE"
+			};
+			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+			this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
+			this.oChangePersistence.addChange(oChangeContent3, this._oComponentInstance);
+
+			var aDirtyChanges = [this.oChangePersistence._aDirtyChanges[0], this.oChangePersistence._aDirtyChanges[2]];
+
+			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges, undefined, true).then(function() {
+				assert.equal(this.oCreateStub.callCount, 2, "the create method of the connector is called for each selected change");
+				assert.deepEqual(this.oCreateStub.getCall(0).args[0], oChangeContent1, "the first change was processed first");
+				assert.equal(this.oCreateStub.getCall(0).args[3], true, "the draft flag was passed");
+				assert.deepEqual(this.oCreateStub.getCall(1).args[0], oChangeContent3, "the second change was processed afterwards");
+				assert.equal(this.oCreateStub.getCall(1).args[3], true, "the draft flag was passed");
 			}.bind(this));
 		});
 

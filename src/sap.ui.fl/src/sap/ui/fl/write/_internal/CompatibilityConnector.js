@@ -92,12 +92,13 @@ sap.ui.define([
 	 * @see sap.ui.fl.LrepConnector.prototype.create
 	 * @see sap.ui.fl.write._internal.Storage.write
 	 *
-	 * @param {object} vFlexObjects The content which is send to the server
-	 * @param {string} [sChangelist] The transport ID which will be handled internally, so there is no need to be passed
-	 * @param {boolean} [bIsVariant] Whether the data has file type .variant or not
+	 * @param {object} vFlexObjects - The content which is send to the server
+	 * @param {string} [sChangelist] - The transport ID which will be handled internally, so there is no need to be passed
+	 * @param {boolean} [bIsVariant] - Whether the data has file type .variant or not
+	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} Resolve if successful, rejects with errors
 	 */
-	CompatibilityConnector.create = function(vFlexObjects, sChangelist, bIsVariant) {
+	CompatibilityConnector.create = function(vFlexObjects, sChangelist, bIsVariant, bDraft) {
 		if (_isMethodOverwritten("create")) {
 			return FakeLrepConnector.prototype.create(vFlexObjects, sChangelist, bIsVariant);
 		}
@@ -106,11 +107,13 @@ sap.ui.define([
 		if (!Array.isArray(aFlexObjects)) {
 			aFlexObjects = [vFlexObjects];
 		}
+
 		return WriteStorage.write({
 			layer : aFlexObjects[0].layer,
-			flexObjects: aFlexObjects,
-			_transport: sChangelist,
-			isLegacyVariant: bIsVariant
+			flexObjects : aFlexObjects,
+			_transport : sChangelist,
+			isLegacyVariant : bIsVariant,
+			draft : bDraft
 		});
 	};
 

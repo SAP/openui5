@@ -135,6 +135,29 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when save is called for a draft", function(assert) {
+			var mPropertyBag = {};
+			mPropertyBag.layer = "CUSTOMER";
+			mPropertyBag.selector = this.vSelector;
+			mPropertyBag.draft = true;
+
+			var fnFlexStub = getMethodStub([mPropertyBag.skipUpdateCache], Promise.resolve());
+			var fnDescriptorStub = getMethodStub([mPropertyBag.skipUpdateCache], Promise.resolve());
+
+			mockFlexController(mPropertyBag.selector, { saveAll : fnFlexStub });
+			mockDescriptorController(mPropertyBag.selector, { saveAll : fnDescriptorStub });
+
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges")
+				.withArgs(Object.assign({selector: mPropertyBag.selector, invalidateCache: true, componentId: "appComponent"}))
+				.resolves(sReturnValue);
+
+			return PersistenceWriteAPI.save(mPropertyBag)
+				.then(function() {
+					var aFlexArgs = fnFlexStub.getCall(0).args;
+					assert.equal(aFlexArgs[1], true, "then the draft flag was passed to the flex save operation");
+				});
+		});
+
 		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update a published app variant in CUSTOMER_BASE layer", function(assert) {
 			var mPropertyBag = {
 				layer: "CUSTOMER_BASE"

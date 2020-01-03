@@ -451,11 +451,13 @@ sap.ui.define([
 	/**
 	 * Saves all changes of a persistence instance.
 	 *
+	 * @param {boolean} [bSkipUpdateCache=false] - Indicates the cache should not be updated
+	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} resolving with an array of responses or rejecting with the first error
 	 * @public
 	 */
-	FlexController.prototype.saveAll = function (bSkipUpdateCache) {
-		return this._oChangePersistence.saveDirtyChanges(bSkipUpdateCache);
+	FlexController.prototype.saveAll = function (bSkipUpdateCache, bDraft) {
+		return this._oChangePersistence.saveDirtyChanges(bSkipUpdateCache, undefined, bDraft);
 	};
 
 	/**

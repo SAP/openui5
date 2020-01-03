@@ -111,6 +111,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.layer=CUSTOMER] - Proposed layer (might be overwritten by the backend) when creating a new app variant - Smart Business must pass the layer
 		 * @param {string} [mPropertyBag.isForSAPDelivery=false] - Determines whether app variant updation is intended for SAP delivery
 		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by Smart Business
+		 * @param {boolean} [mPropertyBag.draft=false] - Indicates if changes should be written as a draft
 		 *
 		 * @returns {Promise} Promise that resolves with an array of responses or is rejected with the first error
 		 *
@@ -135,7 +136,7 @@ sap.ui.define([
 			// with invalidation more parameters are required to make a new storage request
 			mPropertyBag.invalidateCache = true;
 			mPropertyBag.componentId = ChangesController.getAppComponentForSelector(mPropertyBag.selector).getId();
-			return oFlexController.saveAll(mPropertyBag.skipUpdateCache)
+			return oFlexController.saveAll(mPropertyBag.skipUpdateCache, mPropertyBag.draft)
 				.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, mPropertyBag.skipUpdateCache))
 				.then(PersistenceWriteAPI._getUIChanges.bind(null, _omit(mPropertyBag, "skipUpdateCache")));
 		},

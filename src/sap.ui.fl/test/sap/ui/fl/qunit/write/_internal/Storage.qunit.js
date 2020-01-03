@@ -5,9 +5,11 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector"
@@ -16,9 +18,11 @@ sap.ui.define([
 	Storage,
 	ApplyUtils,
 	WriteUtils,
+	FeaturesAPI,
 	ApplyLrepConnector,
 	WriteLrepConnector,
 	ApplyKeyUserConnector,
+	WriteKeyUserConnector,
 	JsObjectConnector,
 	ApplyPersonalizationConnector,
 	WritePersonalizationConnector
@@ -177,6 +181,60 @@ sap.ui.define([
 				assert.equal(oSendRequestCallArgs[0], sExpectedWriteUrl, "with correct url");
 				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
 			});
+		});
+
+
+
+		QUnit.test("with valid mPropertyBag and Connector: KeyUserConnector aiming for CUSTOMER layer when writing draft changes", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector"}
+			]);
+			sandbox.stub(FeaturesAPI, "isDraftEnabled").resolves(true);
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				flexObjects: [{}],
+				draft: true
+			};
+			var oWriteStub = sandbox.stub(WriteKeyUserConnector, "write").resolves();
+
+			return Storage.write(mPropertyBag).then(function() {
+				assert.equal(oWriteStub.getCall(0).args[0].draft, true, "then the draft flag is passed");
+			});
+		});
+
+		QUnit.test("when creating changes without a draft flag", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector"}
+			]);
+			var oIsDraftEnabledStub = sandbox.stub(FeaturesAPI, "isDraftEnabled").resolves(true);
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				flexObjects: [{}]
+			};
+			sandbox.stub(WriteKeyUserConnector, "write").resolves();
+
+			return Storage.write(mPropertyBag)
+				.then(function () {
+					assert.equal(oIsDraftEnabledStub.callCount, 0, "then draftEnabled is not checked");
+				});
+		});
+
+		QUnit.test("when creating changes for a draft but the layer does not support a draft", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector"}
+			]);
+			sandbox.stub(FeaturesAPI, "isDraftEnabled").resolves(false);
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				flexObjects: [{}],
+				draft: true
+			};
+
+			return Storage.write(mPropertyBag)
+				.catch(function (sRejectionMessage) {
+					assert.equal(sRejectionMessage, "Draft is not supported for the given layer: CUSTOMER",
+						"then request is rejected with an error message");
+				});
 		});
 
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector, KeyUserConnector aiming for USER layer", function (assert) {
