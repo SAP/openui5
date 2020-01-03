@@ -64,15 +64,16 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 			sWidth = "",
 			bEnabled = false,
 			bEnabledCheck = false, // check for disabled years only needed if borders touched
-			oFirstDate = oYP._checkFirstDate(oCurrentDate),
+			oCurrentValidatedDate,
 			bApplySelection,
 			bApplySelectionBetween,
 			mAccProps, sYyyymmdd, i;
 
 		oCurrentDate.setYear(oCurrentDate.getYear() - Math.floor(iYears / 2));
+		oCurrentValidatedDate = oYP._checkFirstDate(oCurrentDate);
 
-		if (!oFirstDate.isSame(oCurrentDate)) {
-			oCurrentDate = oFirstDate;
+		if (!oCurrentValidatedDate.isSame(oCurrentDate)) {
+			oCurrentDate = oCurrentValidatedDate;
 			bEnabledCheck = true;
 		}
 

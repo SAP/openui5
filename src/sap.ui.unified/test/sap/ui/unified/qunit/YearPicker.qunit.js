@@ -299,6 +299,15 @@ sap.ui.define([
 			}
 		});
 
+		QUnit.test("Year is set to 0001", function(assert) {
+			// Act
+			this.oYP.setYear(1);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.ok(true, "Error is not thrown trying to format date with negative year value");
+		});
+
 		QUnit.test("_isValueInThreshold return true if provided value is in provided threshold", function (assert) {
 			assert.ok(this.oYP._isValueInThreshold(248, 258, 10), "value is between 238 and 258 - upper boundary"); // (reference value, actual value, threshold)
 			assert.ok(this.oYP._isValueInThreshold(248, 238, 10), "value is between 238 and 258 - lower boundary"); // (reference value, actual value, threshold)
