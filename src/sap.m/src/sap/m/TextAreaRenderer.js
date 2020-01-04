@@ -23,14 +23,7 @@ sap.ui.define([
 	var TextAreaRenderer = {
 		apiVersion: 2
 	};
-
-
-	/**
-	 * Input renderer.
-	 * @namespace
-	 *
-	 * TextAreaRenderer extends the TextAreaRenderer
-	 */
+	
 	TextAreaRenderer = Renderer.extend(InputBaseRenderer);
 
 	// Adds control specific class
