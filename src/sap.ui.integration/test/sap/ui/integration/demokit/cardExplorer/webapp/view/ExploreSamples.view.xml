@@ -20,6 +20,7 @@
 							</contentLeft>
 							<contentRight>
 								<ComboBox
+									id="subSample"
 									selectedKey="{/subSample/key}"
 									items="{/sample/subSamples}"
 									visible="{= ${/sample/subSamples} ? true : false }"
