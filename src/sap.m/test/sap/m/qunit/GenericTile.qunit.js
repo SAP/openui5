@@ -256,6 +256,19 @@ sap.ui.define([
 			this.applyTheme(this.sStartTheme, done);
 
 			this.fnSpyBeforeRendering.restore();
+		},
+		fnWithRenderAsserts: function (assert) {
+			assert.ok(document.getElementById("generic-tile"), "Generic tile was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-hdr-text"), "Generic tile header was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-icon-image"), "Generic tile icon was rendered successfully");
+			assert.ok(document.getElementById("tile-cont"), "TileContent was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt"), "NumericContent was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-indicator"), "Indicator was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-value"), "Value was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-scale"), "Scale was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+			assert.ok(this.oGenericTile.$().hasClass("OneByOne"), "FrameType class has been added");
 		}
 	});
 
@@ -263,18 +276,15 @@ sap.ui.define([
 		assert.ok(this.fnSpyBeforeRendering.calledOnce, "Generic tile was rendered only once");
 	});
 
-	QUnit.test("GenericTile rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("generic-tile"), "Generic tile was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-hdr-text"), "Generic tile header was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-icon-image"), "Generic tile icon was rendered successfully");
-		assert.ok(jQuery.sap.domById("tile-cont"), "TileContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt"), "NumericContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-indicator"), "Indicator was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-value"), "Value was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-scale"), "Scale was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-icon-image"), "Icon was rendered successfully");
-		assert.ok(this.oGenericTile.$().hasClass("OneByOne"), "FrameType class has been added");
+	QUnit.test("GenericTile rendered", function (assert) {
+		this.fnWithRenderAsserts(assert);
+	});
+
+	QUnit.test("GenericTile rendered with custom width", function (assert) {
+		this.oGenericTile.setWidth("500px");
+		sap.ui.getCore().applyChanges();
+
+		this.fnWithRenderAsserts(assert);
 	});
 
 	QUnit.test("GenericTile border rendered - blue crystal", function(assert) {
