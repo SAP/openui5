@@ -117,9 +117,7 @@ sap.ui.define([
 	 * @private
 	 */
 	PlanningCalendarInCard.prototype._handlePickerButtonPress = function (oEvent) {
-		var oRm,
-			$Container,
-			oCalStartDate;
+		var oCalStartDate;
 
 		oEvent.preventDefault();
 
@@ -128,19 +126,12 @@ sap.ui.define([
 			this._oYearPicker.setVisible(false);
 			if (!this._oYearRangePicker) { // YearRangePicker
 				this._createYearRangePicker();
-				this._oInfoToolbar.insertAggregation("content", this._oYearRangePicker, 4, true);
+				this._oInfoToolbar.insertAggregation("content", this._oYearRangePicker, 4);
 			} else {
 				this._oYearRangePicker.setVisible(true); // YearRangePicker
 			}
-			oRm = sap.ui.getCore().createRenderManager();
-			$Container = this._oInfoToolbar.getDomRef();
-
-			oRm.renderControl(this._oYearRangePicker);
-			oRm.flush($Container, false, true);
-			oRm.destroy();
-
 			oCalStartDate = CalendarDate.fromLocalJSDate(this.getStartDate());
-			oCalStartDate.setYear(oCalStartDate.getYear() - 10);
+			oCalStartDate.setMonth(0, 1);
 
 			this._oYearRangePicker.setDate(oCalStartDate.toLocalJSDate());
 			this._getHeader()._oPickerBtn.setVisible(false);
@@ -177,7 +168,7 @@ sap.ui.define([
 			select: function () {
 				var oCalStartDate = CalendarDate.fromLocalJSDate(this.getStartDate()),
 					oStartDate;
-				oCalStartDate.setYear(this._oYearRangePicker.getYear() + 10);
+				oCalStartDate.setYear(this._oYearRangePicker.getYear() + Math.floor(this._oYearRangePicker.getRangeSize() / 2));
 				oStartDate = oCalStartDate.toLocalJSDate();
 				this.setStartDate(oStartDate);
 				this._oYearRangePicker.setYear(oStartDate.getFullYear());
@@ -249,7 +240,7 @@ sap.ui.define([
 	PlanningCalendarInCard.prototype._formatYearPickerText = function () {
 		var iCurrentYear = this._oYearPicker.getYear(),
 			iYearsShown = this._oYearPicker.getYears(),
-			iStartYear = iCurrentYear - iYearsShown / 2,
+			iStartYear = iCurrentYear - Math.floor(iYearsShown / 2),
 			iEndYear = iCurrentYear + iYearsShown / 2 - 1;
 		return "" + iStartYear + " - " + iEndYear;
 	};
@@ -261,7 +252,7 @@ sap.ui.define([
 	 */
 	PlanningCalendarInCard.prototype._applyArrowsLogic = function(bBackwards) {
 		var iDirection = bBackwards ? -1 : 1,
-			oCalStartDate = CalendarDate.fromLocalJSDate(this.getStartDate()),
+			oCalStartDate,
 			aContent = this._oInfoToolbar.getContent(),
 			oContent;
 
@@ -271,20 +262,17 @@ sap.ui.define([
 			for (var i = 2; i < aContent.length; i++) {
 				oContent = aContent[i];
 				if (oContent.getVisible()) {
+					oCalStartDate = CalendarDate.fromLocalJSDate(this.getStartDate());
 					if (oContent.isA("sap.ui.unified.calendar.MonthPicker")) {
 						oCalStartDate.setYear(oCalStartDate.getYear() + iDirection);
 						this.setStartDate(oCalStartDate.toLocalJSDate());
 						this._getHeader().setPickerText(this._formatMonthPickerText());
 						return;
 					} else if (oContent.isA("sap.ui.unified.calendar.YearRangePicker")) {
-						oCalStartDate.setYear(oCalStartDate.getYear() + iDirection * 180);
-						oContent.setDate(oCalStartDate.toLocalJSDate());
-						this.setStartDate(oCalStartDate.toLocalJSDate());
+						bBackwards ? oContent.previousPage() : oContent.nextPage();
 						return;
 					} else if (oContent.isA("sap.ui.unified.calendar.YearPicker")) {
-						oCalStartDate.setYear(oCalStartDate.getYear() + iDirection * 20);
-						oContent.setDate(oCalStartDate.toLocalJSDate());
-						this.setStartDate(oCalStartDate.toLocalJSDate());
+						bBackwards ? oContent.previousPage() : oContent.nextPage();
 						this._getHeader().setPickerText(this._formatYearPickerText());
 						return;
 					}
@@ -303,7 +291,6 @@ sap.ui.define([
 			oStartDate;
 
 		if (this._bYearRangePickerView) {
-			oCalDate.setYear((oCalDate.getYear() - 10));
 			this._oYearRangePicker.setYear(oCalDate.toLocalJSDate().getFullYear());
 			this.setStartDate(oCalDate.toLocalJSDate());
 			return;

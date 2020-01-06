@@ -221,26 +221,30 @@ sap.ui.define([
 
 		// Act
 		this.oPC._handlePickerButtonPress(oEvent);
+		sap.ui.getCore().applyChanges();
 		this.oPC._applyArrowsLogic(true);
 		// Assert
-		assert.equal(this.oPC._oYearPicker.getYear(), 1999, "year set correct");
+		assert.equal(this.oPC._oYearPicker.getFirstRenderedDate().getFullYear(), 1989, "year set correct");
 
 		// Act
+		sap.ui.getCore().applyChanges();
 		this.oPC._applyArrowsLogic(false);
 		// Assert
-		assert.equal(this.oPC._oYearPicker.getYear(), 2019, "year set correct");
+		assert.equal(this.oPC._oYearPicker.getFirstRenderedDate().getFullYear(), 2009, "year set correct");
 
 		// Act
 		this.oPC._handlePickerButtonPress(oEvent);
-		this.oPC._applyArrowsLogic(true);
+		sap.ui.getCore().applyChanges();
+		this.oPC._applyArrowsLogic(false);
 		// Assert
-		assert.equal(this.oPC._oYearRangePicker.getYear(), 1839, "year range set correct");
+		assert.equal(this.oPC._oYearRangePicker.getFirstRenderedDate().getFullYear(), 2109, "year range set correct");
 
 		// Act
 		this.oPC._handlePickerButtonPress(oEvent);
-		this.oPC._applyArrowsLogic(false);
+		sap.ui.getCore().applyChanges();
+		this.oPC._applyArrowsLogic(true);
 		// Assert
-		assert.equal(this.oPC._oYearRangePicker.getYear(), 2019, "year range set correct");
+		assert.equal(this.oPC._oYearRangePicker.getFirstRenderedDate().getFullYear(), 1759, "year range set correct");
 	});
 
 	QUnit.test("Today button", function(assert) {
@@ -278,7 +282,7 @@ sap.ui.define([
 		this.oPC._handlePickerButtonPress(oEvent);
 		this.oPC._handleTodayPress();
 		// Assert
-		assert.equal(this.oPC._oYearRangePicker.getYear(), 2010, "year range set correct");
+		assert.equal(this.oPC._oYearRangePicker.getYear(), 2020, "year range set correct");
 
 		// Cleanup
 		clock.restore();
