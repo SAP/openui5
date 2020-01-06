@@ -2,11 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
+		"sap/m/library",
 		"sap/f/library",
 		"sap/ui/base/ManagedObject",
 		"sap/base/Log",
 		"sap/f/cards/BindingResolver"],
-	function (library,
+	function (mLibrary,
+			  library,
 			  ManagedObject,
 			  Log,
 			  BindingResolver) {
@@ -20,7 +22,9 @@ sap.ui.define([
 			return vService;
 		}
 
-		var AreaType = library.cards.AreaType;
+		var AreaType = library.cards.AreaType,
+			ActionType = library.cards.ActionType,
+			ListType = mLibrary.ListType;
 
 		/**
 		 * Constructor for a new <code>CardActions</code>.
@@ -44,6 +48,7 @@ sap.ui.define([
 		var CardActions = ManagedObject.extend("sap.f.cards.CardActions", {
 			metadata: {
 				properties: {
+					card: {type: "object"},
 					areaType: {type: "sap.f.cards.AreaType", defaultValue: AreaType.None}
 				}
 			}
@@ -66,10 +71,10 @@ sap.ui.define([
 
 			// For now we allow for only one action of type navigation.
 			var oAction = mItem.actions[0];
-			if (oAction && oAction.type === "Navigation") {
-				this._attachNavigationAction(mItem);
+			if (oAction && oAction.type) { // todo - check if the type is valid
+				this._attachAction(mItem, oAction);
 			} else {
-				//For now firing the event here, after refactor need to think of a way to sync async navigation setters
+				// For now firing the event here, after refactor need to think of a way to sync async navigation setters
 				this._fireActionReady();
 			}
 		};
@@ -98,10 +103,10 @@ sap.ui.define([
 
 				if (vValue.__resolved) {
 					if (!vValue.__enabled || vValue.__enabled === "false") {
-						return "Inactive";
+						return ListType.Inactive;
 					}
 
-					return "Navigation";
+					return ListType.Navigation;
 				}
 
 				if (!vValue.__promise) {
@@ -130,17 +135,16 @@ sap.ui.define([
 						});
 				}
 
-				return "Inactive";
+				return ListType.Inactive;
 			};
 
 			oItemTemplate.bindProperty("type", oBindingInfo);
 		};
 
-		CardActions.prototype._setSingleActionEnabledState = function (mItem) {
-			var oAction = mItem.actions[0],
-				oAreaControl = this._oAreaControl,
+		CardActions.prototype._setSingleActionEnabledState = function (mItem, oAction) {
+			var oAreaControl = this._oAreaControl,
 				oBindingContext = oAreaControl.getBindingContext(),
-				mParameters = oAction.parameters,
+				mParameters,
 				oModel = oAreaControl.getModel(),
 				sPath;
 
@@ -189,17 +193,17 @@ sap.ui.define([
 				oBindingInfo = oAction.enabled;
 				oBindingInfo.formatter = function (vValue) {
 					if (!vValue || vValue === "false") {
-						return "Inactive";
+						return ListType.Inactive;
 					}
 
-					return "Navigation";
+					return ListType.Navigation;
 				};
 			}
 
 			if (oBindingInfo) {
 				oItemTemplate.bindProperty("type", oBindingInfo);
 			} else {
-				sType = (oAction.enabled === false || oAction.enabled === "false") ? "Inactive" : "Navigation";
+				sType = (oAction.enabled === false || oAction.enabled === "false") ? ListType.Inactive : ListType.Navigation;
 				oItemTemplate.setProperty("type", sType);
 			}
 		};
@@ -214,25 +218,66 @@ sap.ui.define([
 			this._oAreaControl.fireEvent(sEventName);
 		};
 
-		CardActions.prototype._attachNavigationAction = function (mItem) {
-			var oAction = mItem.actions[0],
-				oActionControl = this.getAreaType() === AreaType.ContentItem ? this._oAreaControl._oItemTemplate : this._oAreaControl,
-				fnHandler,
-				bCheckEnabledState = true,
-				sActionType = this.getAreaType(),
-				bSingleAction = sActionType === AreaType.Header ||
-					sActionType === AreaType.Content,
-				bContentItemAction = sActionType === AreaType.ContentItem;
+		CardActions.prototype._handleServiceAction = function (oSource, oAction) {
+			var oBindingContext = oSource.getBindingContext(),
+				oModel = oSource.getModel(),
+				sPath;
 
-			var attachPress = function () {
+			if (oBindingContext) {
+				sPath = oBindingContext.getPath();
+			}
 
-				oActionControl.attachPress(fnHandler.bind(this));
+			this._oAreaControl._oServiceManager.getService(_getServiceName(oAction.service))
+				.then(function (oService) {
+					if (oService) {
+						oService.navigate({ // only for navigation?
+							parameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath)
+						});
+					}
+				})
+				.catch(function (e) {
+					Log.error("Navigation service unavailable", e);
+				}).finally(function () {
+				this._processAction(oSource, oAction, oModel, sPath);
+			}.bind(this));
+		};
 
-				if (bSingleAction) {
-					this._addClickableClass();
+		CardActions.prototype._handleAction = function (oSource, oAction) {
+			var oBindingContext = oSource.getBindingContext(),
+				oModel = oSource.getModel(),
+				sPath;
+
+			if (oBindingContext) {
+				sPath = oBindingContext.getPath();
+			}
+
+			this._processAction(oSource, oAction, oModel, sPath);
+		};
+
+		CardActions.prototype._attachPressEvent = function (oActionControl, oAction, bSingleAction) {
+
+			if (bSingleAction) {
+				this._addClickableClass();
+			}
+
+			oActionControl.attachPress(function (oEvent) {
+				var oSource = oEvent.getSource();
+
+				if (oAction.service) {
+					this._handleServiceAction(oSource, oAction);
+				} else {
+					this._handleAction(oSource, oAction);
 				}
+			}.bind(this));
+		};
 
-			}.bind(this);
+		CardActions.prototype._attachAction = function (mItem, oAction) {
+			var oActionControl = this.getAreaType() === AreaType.ContentItem ? this._oAreaControl._oItemTemplate : this._oAreaControl,
+				bCheckEnabledState = true,
+				sAreaType = this.getAreaType(),
+				bSingleAction = sAreaType === AreaType.Header || sAreaType === AreaType.Content,
+				bContentItemAction = sAreaType === AreaType.ContentItem,
+				bActionEnabled = true;
 
 			if (oAction.service) {
 
@@ -240,107 +285,113 @@ sap.ui.define([
 					this._setItemTemplateTypeFormatter(oAction);
 				}
 
-				fnHandler = function (oEvent) {
-					var oSource = oEvent.getSource(),
-						oBindingContext = oSource.getBindingContext(),
-						oModel = oSource.getModel(),
-						sPath;
-
-					if (oBindingContext) {
-						sPath = oBindingContext.getPath();
-					}
-
-					this._oAreaControl._oServiceManager.getService(_getServiceName(oAction.service))
-						.then(function (oNavigationService) {
-							if (oNavigationService) {
-								oNavigationService.navigate({
-									parameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath)
-								});
-							}
-						})
-						.catch(function (e) {
-							Log.error("Navigation service unavailable", e);
-						}).finally(function () {
-						this._fireAction(oEvent.getSource(), oAction.parameters, oModel, sPath);
-					}.bind(this));
-				}.bind(this);
-
 				// When there is a service let it handle the "enabled" state.
-				// attachPress();
 				bCheckEnabledState = false;
-			} else {
+			} else if (bContentItemAction) {
+
+				this._setItemTemplateEnabledState(oAction);
 
 				// When there is a list item template handle the "enabled" state with bindProperty + formatter
-				if (bContentItemAction) {
-					this._setItemTemplateEnabledState(oAction);
-					bCheckEnabledState = false;
-				}
-
-				if (oAction.url) {
-					fnHandler = function (oEvent) {
-						var oSource = oEvent.getSource(),
-							oBindingContext = oSource.getBindingContext(),
-							oModel = oSource.getModel(),
-							sPath,
-							sUrl;
-
-						if (oBindingContext) {
-							sPath = oBindingContext.getPath();
-						}
-						sUrl = BindingResolver.resolveValue(oAction.url, oModel, sPath);
-
-						// we are able to mock tests
-						this.openUrl(sUrl, oAction);
-
-						this._fireAction(oEvent.getSource(), oAction.parameters, oModel, sPath);
-					}.bind(this);
-				} else {
-					fnHandler = function (oEvent) {
-						var oSource = oEvent.getSource(),
-							oBindingContext = oSource.getBindingContext(),
-							oModel = oSource.getModel(),
-							sPath;
-
-						if (oBindingContext) {
-							sPath = oBindingContext.getPath();
-						}
-
-						this._fireAction(oEvent.getSource(), oAction.parameters, oModel, sPath);
-					}.bind(this);
-				}
+				bCheckEnabledState = false;
 			}
 
 			if (bSingleAction && oAction.service) {
-				this._setSingleActionEnabledState(mItem).then(function (bEnabled) {
+				this._setSingleActionEnabledState(mItem, oAction).then(function (bEnabled) {
 					if (bEnabled) {
-						attachPress();
+						this._attachPressEvent(oActionControl, oAction, bSingleAction);
 					}
+
 					this._fireActionReady();
 				}.bind(this));
 			} else {
-				// Handle the "enabled" state when there is no service and item template with formatter.
 				if (bCheckEnabledState) {
-					if (oAction.enabled !== false && oAction.enabled !== "false") {
-						attachPress();
-					}
-				} else {
-					attachPress();
+					// Handle the "enabled" state when there is no service and item template with formatter.
+					bActionEnabled = oAction.enabled !== false && oAction.enabled !== "false";
+				}
+
+				if (bActionEnabled) {
+					this._attachPressEvent(oActionControl, oAction, bSingleAction);
 				}
 
 				this._fireActionReady();
 			}
 		};
 
-		CardActions.prototype.openUrl = function (sUrl, oAction) {
-			window.open(sUrl, oAction.target || "_blank");
+		CardActions.prototype._processAction = function (oSource, oAction, oModel, sPath) {
+
+			var oHost = this._getHostInstance(),
+				oCard = this.getCard(),
+				sUrl = oAction.url;
+
+			if (sUrl) {
+				sUrl = BindingResolver.resolveValue(sUrl, oModel, sPath);
+			}
+
+			CardActions.fireAction({
+				card: oCard,
+				host: oHost,
+				action: oAction,
+				manifestParameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath),
+				source: oSource,
+				url: sUrl
+			});
 		};
 
-		CardActions.prototype._fireAction = function (oSource, oActionParams, oModel, sPath) {
-			this._oAreaControl.fireEvent("action", {
-				type: "Navigation",
-				actionSource: oSource,
-				manifestParameters: BindingResolver.resolveValue(oActionParams, oModel, sPath)
-			});
+		CardActions.prototype._getHostInstance = function () {
+			var oCard = this.getCard();
+			if (oCard) {
+				return oCard.getHostInstance();
+			}
+
+			return null;
+		};
+
+		CardActions.fireAction = function (mConfig) {
+			var oHost = mConfig.host,
+				oCard = mConfig.card,
+				oAction = mConfig.action,
+				mActionParams = {
+					type: oAction.type,
+					card: oCard,
+					actionSource: mConfig.source,
+					manifestParameters: mConfig.manifestParameters || {}
+				},
+				bActionResult = oCard.fireAction(mActionParams);
+
+			if (!bActionResult) {
+				return false;
+			}
+
+			if (oHost) {
+				bActionResult = oHost.fireOnAction(mActionParams);
+			}
+
+			if (bActionResult) {
+				CardActions._doPredefinedAction(mConfig);
+			}
+
+			return bActionResult;
+		};
+
+		CardActions._doPredefinedAction = function (mConfig) {
+			var oAction = mConfig.action,
+				fnAction,
+				sUrl;
+
+			switch (oAction.type) {
+				case ActionType.Navigation:
+					sUrl = mConfig.url;
+					if (sUrl) {
+						window.open(sUrl, oAction.target || "_blank");
+					}
+					break;
+				case ActionType.Custom:
+					fnAction = oAction.action;
+					if (fnAction && jQuery.isFunction(fnAction)) {
+						fnAction(mConfig.card, mConfig.source);
+					}
+					break;
+			}
 		};
 
 		return CardActions;
