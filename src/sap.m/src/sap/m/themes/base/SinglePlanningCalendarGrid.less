@@ -27,8 +27,7 @@
 	.sapUiCalItem.sapUiCalItemNow {
 		border: 0.125rem solid;
 
-		&.sapUiCalItemSel:not(:focus) {
-			outline: 0.0625rem solid;
+		&:not(:focus) {
 			outline-offset: -3px;
 		}
 
@@ -433,7 +432,11 @@ html[data-sap-ui-browser^=ie] .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps 
 
 .sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems,
 .sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems > .sapUiCalItem {
-	height: @_sap_m_SinglePlanningCalendarGrid_CompactRowHeight;
+	height: 2.75rem;
+}
+
+.sapMSinglePC .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText {
+	padding-top: 0.75rem;
 }
 
 .sapUiSizeCompact {
