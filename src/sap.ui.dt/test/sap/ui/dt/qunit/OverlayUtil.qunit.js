@@ -495,7 +495,7 @@ function(
 		QUnit.test("when iterateOverlayElementTree function is called", function(assert) {
 			var oSpy = sandbox.spy();
 			OverlayUtil.iterateOverlayElementTree(this.oVBoxOverlay0, oSpy);
-			assert.strictEqual(oSpy.callCount, 18, "callback was called 18 times for oVBoxOverlay0");
+			assert.strictEqual(oSpy.callCount, 21, "callback was called 21 times for oVBoxOverlay0");
 			oSpy.reset();
 			OverlayUtil.iterateOverlayElementTree(this.oSectionOverlay0, oSpy);
 			assert.strictEqual(oSpy.callCount, 4, "callback was called 4 times for oSectionOverlay0");

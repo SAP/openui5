@@ -160,6 +160,62 @@ sap.ui.define([
 		afterRedo : fnConfirmSection1IsOn2ndPosition
 	});
 
+	// check mmoving anchors
+	elementActionTest("Checking the move action for sections based on the internal anchor bar", {
+		xmlView :
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+			'<uxap:ObjectPageLayout id="layout">' +
+				'<uxap:sections>' +
+					'<uxap:ObjectPageSection id="section">' +
+						'<uxap:subSections>' +
+							'<uxap:ObjectPageSubSection id="subSection" title="Subsection with button">' +
+								'<m:Button text="Button" />' +
+							'</uxap:ObjectPageSubSection>' +
+							'<uxap:ObjectPageSubSection id="subSection1" title="Subsection empty">' +
+							'</uxap:ObjectPageSubSection>' +
+						'</uxap:subSections>' +
+					'</uxap:ObjectPageSection>' +
+					'<uxap:ObjectPageSection id="section2">' +
+						'<uxap:subSections>' +
+							'<uxap:ObjectPageSubSection id="subSection3" title="Subsection3 with button">' +
+								'<m:Button text="Button2" />' +
+							'</uxap:ObjectPageSubSection>' +
+							'<uxap:ObjectPageSubSection id="subSection4" title="Subsection4 empty">' +
+							'</uxap:ObjectPageSubSection>' +
+						'</uxap:subSections>' +
+					'</uxap:ObjectPageSection>' +
+				'</uxap:sections>' +
+			'</uxap:ObjectPageLayout>' +
+		'</mvc:View>',
+		action : {
+			name : "move",
+			control : function(oView) {
+				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
+			},
+			parameter : function(oView){
+				return {
+					movedElements : [{
+						element : oView.byId("layout").getAggregation("_anchorBar").getContent()[0],
+						sourceIndex : 0,
+						targetIndex : 1
+					}],
+					source : {
+						aggregation: "_anchorBar",
+						parent: oView.byId("layout").getAggregation("_anchorBar")
+					},
+					target : {
+						aggregation: "_anchorBar",
+						parent: oView.byId("layout").getAggregation("_anchorBar")
+					}
+				};
+			}
+		},
+		afterAction : fnConfirmSection1IsOn2ndPosition,
+		afterUndo : fnConfirmSection1IsOn1stPosition,
+		afterRedo : fnConfirmSection1IsOn2ndPosition
+	});
+
 	QUnit.module("Given ObjectPageLayout with Sections and headerContent,", {
 		beforeEach : function(assert) {
 
