@@ -648,11 +648,7 @@ sap.ui.define([
 		if (!this.mLateQueryOptions) {
 			return undefined;
 		}
-		mQueryOptions = _Helper.intersectQueryOptions({
-				// ensure that $select precedes $expand in the resulting query
-				$select : this.mLateQueryOptions.$select,
-				$expand : this.mLateQueryOptions.$expand
-			},
+		mQueryOptions = _Helper.intersectQueryOptions(this.mLateQueryOptions,
 			// no need to convert sRequestedPropertyPath to a metapath, intersectQueryOptions will
 			// reject the resulting invalid path
 			[_Helper.buildPath(sResourceMetaPath, sRequestedPropertyPath)],
@@ -807,10 +803,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.prototype.getLateQueryOptions = function () {
-		return this.mLateQueryOptions && {
-			$expand : this.mLateQueryOptions.$expand,
-			$select : this.mLateQueryOptions.$select
-		};
+		return this.mLateQueryOptions;
 	};
 
 	/**
@@ -1191,18 +1184,19 @@ sap.ui.define([
 
 	/**
 	 * Sets query options after the cache has sent a read request to allow adding late properties.
-	 * Merges it with the existing query options because only $select and $expand may have changed.
+	 * Accepts only $expand and $select.
 	 *
 	 * @param {object} mQueryOptions
-	 *   The new query options
+	 *   The new late query options
 	 *
 	 * @public
 	 */
 	Cache.prototype.setLateQueryOptions = function (mQueryOptions) {
-		this.mLateQueryOptions = Object.assign({}, this.mQueryOptions, {
-			$expand : mQueryOptions.$expand,
-			$select : mQueryOptions.$select
-		});
+		this.mLateQueryOptions = {
+			// ensure that $select precedes $expand in the resulting query
+			$select : mQueryOptions.$select,
+			$expand : mQueryOptions.$expand
+		};
 	};
 
 	/**

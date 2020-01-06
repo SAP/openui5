@@ -3181,34 +3181,15 @@ sap.ui.define([
 	QUnit.test("Cache#getLateQueryOptions", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees('31')", {});
 
-		// code under test
-		assert.strictEqual(oCache.getLateQueryOptions(), null);
-
-		oCache.mLateQueryOptions = {
-			foo : "bar",
-			$select : ["a", "b", "c"],
-			$expand : {d : {}, e : {}},
-			$filter : "filter"
-		};
+		oCache.mLateQueryOptions = {};
 
 		// code under test
-		assert.deepEqual(oCache.getLateQueryOptions(), {
-			$select : ["a", "b", "c"],
-			$expand : {d : {}, e : {}}
-		});
+		assert.strictEqual(oCache.getLateQueryOptions(), oCache.mLateQueryOptions);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("Cache#setLateQueryOptions", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Employees('31')", {}),
-			mLateQueryOptions = {};
-
-		this.mock(Object).expects("assign")
-			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions), {
-				$expand : {n : {$select : 'p3'}},
-				$select : ['p1', 'p2']
-			})
-			.returns(mLateQueryOptions);
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {});
 
 		// code under test
 		oCache.setLateQueryOptions({
@@ -3219,7 +3200,10 @@ sap.ui.define([
 			$$ownRequest : true
 		});
 
-		assert.strictEqual(oCache.mLateQueryOptions, mLateQueryOptions);
+		assert.deepEqual(oCache.mLateQueryOptions, {
+			$expand : {n : {$select : 'p3'}},
+			$select : ['p1', 'p2']
+		});
 	});
 
 	//*********************************************************************************************
@@ -3250,17 +3234,7 @@ sap.ui.define([
 				"~2~" : oEntityType
 			};
 
-		oCache.mLateQueryOptions = {
-			$apply : "A.P.P.L.E.",
-			$count : true,
-			$expand : {n1 : {$select : ["p1"]}},
-			$filter : "bar eq 42",
-			$orderby : "qux",
-			$search : "search",
-			$select : ["p1", "p2"],
-			"sap-client" : "123",
-			"sap-language" : "en"
-		};
+		oCache.mLateQueryOptions = {};
 		this.mock(oCache).expects("fetchTypes")
 			.withExactArgs().returns(SyncPromise.resolve(mTypeForMetaPath));
 		oHelperMock.expects("getMetaPath").withExactArgs("").returns("");
@@ -3268,10 +3242,7 @@ sap.ui.define([
 			.withExactArgs("", sRequestedPropertyPath)
 			.returns("~path~");
 		oHelperMock.expects("intersectQueryOptions")
-			.withExactArgs({
-					$expand : {n1 : {$select : ["p1"]}},
-					$select : ["p1", "p2"]
-				}, ["~path~"],
+			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["~path~"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(mQueryOptions);
@@ -3343,12 +3314,7 @@ sap.ui.define([
 				"/entity/meta/path" : oEntityType
 			};
 
-		oCache.mLateQueryOptions = {
-			$expand : {n1 : {$select : ["p1"]}},
-			$select : ["p1", "p2"],
-			"sap-client" : "123",
-			"sap-language" : "en"
-		};
+		oCache.mLateQueryOptions = {};
 		this.mock(oCache).expects("fetchTypes")
 			.withExactArgs().returns(SyncPromise.resolve(mTypeForMetaPath));
 		oHelperMock.expects("getMetaPath").withExactArgs("('31')/entity/path")
@@ -3357,10 +3323,7 @@ sap.ui.define([
 			.withExactArgs("entity/path", sRequestedPropertyPath)
 			.returns("~path~");
 		oHelperMock.expects("intersectQueryOptions")
-			.withExactArgs({
-					$expand : {n1 : {$select : ["p1"]}},
-					$select : ["p1", "p2"]
-				}, ["~path~"],
+			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["~path~"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(mQueryOptions);
@@ -3476,10 +3439,7 @@ sap.ui.define([
 			oUpdateSelectedCall,
 			oVisitResponseCall;
 
-		oCache.mLateQueryOptions = {
-			$expand : {expand : {}},
-			$select : ["select"]
-		};
+		oCache.mLateQueryOptions = {};
 		this.mock(oCache).expects("fetchTypes")
 			.withExactArgs().returns(SyncPromise.resolve(mTypeForMetaPath));
 		oHelperMock.expects("getMetaPath").withExactArgs("('1')/entity/path")
@@ -3488,10 +3448,7 @@ sap.ui.define([
 			.withExactArgs("entity/path", "foo/bar/baz/qux")
 			.returns("~path~");
 		oHelperMock.expects("intersectQueryOptions")
-			.withExactArgs({
-					$expand : {expand : {}},
-					$select : ["select"]
-				}, ["~path~"],
+			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["~path~"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(mQueryOptions);
@@ -3589,25 +3546,16 @@ sap.ui.define([
 				"/Employees" : oEntityType
 			};
 
-		oCache.mLateQueryOptions = {
-			$expand : {expand : {}},
-			$select : ["select"]
-		};
+		oCache.mLateQueryOptions = {};
 		this.mock(oCache).expects("fetchTypes").twice()
 			.withExactArgs().returns(SyncPromise.resolve(mTypeForMetaPath));
 		oHelperMock.expects("intersectQueryOptions")
-			.withExactArgs({
-					$expand : {expand : {}},
-					$select : ["select"]
-				}, ["property/foo"],
+			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property/foo"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(mQueryOptions);
 		oHelperMock.expects("intersectQueryOptions")
-			.withExactArgs({
-					$expand : {expand : {}},
-					$select : ["select"]
-				}, ["property/bar"],
+			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property/bar"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(mQueryOptions);
@@ -3647,32 +3595,19 @@ sap.ui.define([
 	QUnit.test("Cache#fetchLateProperty: request failed", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees('31')", {}),
 			oEntity = {},
-			oEntityType = {
-				$Key : ["key"]
-			},
 			oError = new Error(),
 			oGroupLock = {
 				getUnlockedCopy : function () {}
 			},
 			mQueryOptions = {$select: []},
-			oRequestGroupLock,
-			mTypeForMetaPath = {
-				"/Employees" : oEntityType
-			};
+			oRequestGroupLock;
 
 		oCache.fetchValue = function () {};
 
-		oCache.mLateQueryOptions = {
-			$expand : {expand : {}},
-			$select : ["select"]
-		};
-		this.mock(oCache).expects("fetchTypes").withExactArgs()
-			.returns(SyncPromise.resolve(mTypeForMetaPath));
+		oCache.mLateQueryOptions = {};
+		this.mock(oCache).expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve({}));
 		this.mock(_Helper).expects("intersectQueryOptions")
-			.withExactArgs({
-					$expand : {expand : {}},
-					$select : ["select"]
-				}, ["property"],
+			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(mQueryOptions);
@@ -3739,10 +3674,7 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 		this.mock(_Helper).expects("intersectQueryOptions")
-			.withExactArgs({
-					$expand : {expand : {}},
-					$select : ["select"]
-				}, ["property"],
+			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(mQueryOptions);
@@ -3792,16 +3724,10 @@ sap.ui.define([
 	QUnit.test("Cache#fetchLateProperty: not a late property", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees");
 
-		oCache.mLateQueryOptions = {
-			$expand : {expand : {}},
-			$select : ["select"]
-		};
+		oCache.mLateQueryOptions = {};
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("('1')").returns("");
 		this.mock(_Helper).expects("intersectQueryOptions")
-			.withExactArgs({
-					$expand : {expand : {}},
-					$select : ["select"]
-				}, ["property"],
+			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
 			.returns(undefined);
