@@ -341,6 +341,10 @@ function(
 		if (!this._iResizeHandlerId) {
 			this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
 		}
+
+		if (!this._iTokenizerResizeHandler) {
+			this._iTokenizerResizeHandler = ResizeHandler.register(this._tokenizer, this._onResize.bind(this));
+		}
 	};
 
 	/**
@@ -353,6 +357,11 @@ function(
 			ResizeHandler.deregister(this._iResizeHandlerId);
 			this._iResizeHandlerId = null;
 		}
+
+		if (this._iTokenizerResizeHandler) {
+			ResizeHandler.deregister(this._iTokenizerResizeHandler);
+			this._iTokenizerResizeHandler = null;
+		}
 	};
 
 	/**
@@ -361,8 +370,6 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._onResize = function () {
-		this._deregisterResizeHandler();
-
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._handleInnerVisibility();
 		this._syncInputWidth(this._tokenizer);
@@ -538,7 +545,6 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onBeforeRendering = function () {
-
 		Input.prototype.onBeforeRendering.apply(this, arguments);
 
 		this._deregisterResizeHandler();
@@ -1029,6 +1035,8 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onfocusin = function (oEvent) {
+		this._deregisterResizeHandler();
+
 		this._bValueHelpOpen = false; //This means the ValueHelp is closed and the focus is back. So, reset that var
 
 		if (oEvent.target === this.getFocusDomRef()) {
