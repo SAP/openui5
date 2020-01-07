@@ -19,6 +19,15 @@ describe("sap.m.ComboBox", function() {
 		defaultArrow.click();
 	});
 
+	// check ComboBox - Filtering
+	it("should open first ComboBox - Default", function() {
+		var defaultArrow = element(by.id("box_default-arrow"));
+		defaultArrow.click();
+		browser.actions().sendKeys("B").perform();
+		expect(takeScreenshot()).toLookAs("combobox-filtering");
+
+	});
+
    // check ComboBox - Two column layout
 	it("should open second ComboBox - Two column layout", function() {
 		var twoColumnArrow = element(by.id("box_two_column-arrow"));
@@ -72,6 +81,14 @@ describe("sap.m.ComboBox", function() {
 			element(by.id("box_warning")).click();
 			element(by.id("title_warning")).click();
 			expect(takeScreenshot(element(by.id("layout_warning")))).toLookAs("warning");
+		});
+	});
+
+	// check ComboBox - MultiLine Value state
+	it("should open ComboBox - Long value state", function() {
+		browser.executeScript('document.getElementById("box_longValueState").scrollIntoView()').then(function() {
+			element(by.id("box_longValueState")).click();
+			expect(takeScreenshot()).toLookAs("multiline-value-state");
 		});
 	});
 

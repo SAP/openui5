@@ -6412,7 +6412,7 @@ sap.ui.define([
 		this.clock.tick(200);
 
 		// deselect the first item
-		jQuery(this.oMCB1.getPicker().getContent()[0].getFlexContent()[0].getItems()[0]).tap();
+		jQuery(this.oMCB1.getPicker().getContent()[0].getItems()[0]).tap();
 
 		this.clock.tick(200);
 		// assert
@@ -6500,7 +6500,7 @@ sap.ui.define([
 		oMCB._oTokenizer._oIndicator.click();
 		this.clock.tick(1000);
 
-		aEditModeContent = oMCB.getPicker().getContent()[0].getFlexContent()[0];
+		aEditModeContent = oMCB.getPicker().getContent()[0];
 		assert.ok(aEditModeContent.isA("sap.m.List"), "The popover aggregated a list.");
 		assert.strictEqual(aEditModeContent.getMode(), "MultiSelect", "The list is in mode 'MultiSelect'.");
 		assert.strictEqual(aEditModeContent.getItems().length, 2, "The list has 2 items.");
