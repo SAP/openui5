@@ -410,12 +410,12 @@ function(
 			},
 
 			/**
-			 * This event is fired when user presses the <code>Enter</code> key on the input.
+			 * This event is fired when user presses the <kbd>Enter</kbd> key on the input.
 			 *
 			 * <b>Notes:</b>
 			 * <ul>
 			 * <li>The event is fired independent of whether there was a change before or not. If a change was performed, the event is fired after the change event.</li>
-			 * <li>The event is also fired when an item of the select list is selected via <code>Enter</code>.</li>
+			 * <li>The event is also fired when an item of the select list is selected via <kbd>Enter</kbd>.</li>
 			 * <li>The event is only fired on an input which allows text input (<code>editable</code>, <code>enabled</code> and not <code>valueHelpOnly</code>).</li>
 			 * </ul>
 			 *
