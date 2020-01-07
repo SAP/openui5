@@ -4,6 +4,7 @@
 
 // Provides control sap.m.PlanningCalendarHeader.
 sap.ui.define([
+	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	'./library',
 	'./Toolbar',
@@ -24,6 +25,7 @@ sap.ui.define([
 	"./PlanningCalendarHeaderRenderer"
 ],
 function(
+	Element,
 	Control,
 	library,
 	Toolbar,
@@ -298,7 +300,7 @@ function(
 				if (this.fireEvent("_pickerButtonPress", {}, true)) {
 					var oDate = this.getStartDate() || new Date(),
 						sCurrentPickerId = this.getAssociation("currentPicker");
-					oPicker = sap.ui.getCore().byId(sCurrentPickerId);
+					oPicker = Element.registry.get(sCurrentPickerId);
 					oPicker.displayDate(oDate);
 					this._openCalendarPickerPopup(oPicker);
 				}
@@ -491,7 +493,7 @@ function(
 	 */
 	PlanningCalendarHeader.prototype._handlePickerDateSelect = function () {
 		var sCurrentPickerId = this.getAssociation("currentPicker"),
-			oPicker = sap.ui.getCore().byId(sCurrentPickerId),
+			oPicker = Element.registry.get(sCurrentPickerId),
 			oSelectedDate = oPicker.getSelectedDates()[0].getStartDate();
 
 		this.setStartDate(oSelectedDate);
@@ -542,6 +544,8 @@ function(
 		oPopup.onsapescape = function(oEvent) {
 			this.onsapescape(oEvent);
 		}.bind(this);
+
+		oPopup.attachEvent("opened", this._handlePopupOpenedEvent, this);
 		oPopup.attachEvent("closed", this._handlePopupClosedEvent, this);
 
 		return oPopup;
@@ -580,6 +584,14 @@ function(
 		this.fireCancel();
 		this._closeCalendarPickerPopup();
 		oPickerBtnDomRef && oPickerBtnDomRef.focus();
+	};
+
+	/**
+	 * Ensures the focus is corretly set after the popup is opened
+	 * @private
+	 */
+	PlanningCalendarHeader.prototype._handlePopupOpenedEvent = function() {
+		Element.registry.get(this.getAssociation("currentPicker")).focus();
 	};
 
 	/**
