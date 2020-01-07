@@ -2207,7 +2207,8 @@ sap.ui.define([
 			// determine index range for aggregation levels included in child level
 			// (rule: take all lower levels up to and including the first grouped level; G3 in above example
 			if (that.aMaxAggregationLevel.length > 0) {
-				while (that.oDimensionDetailsSet[that.aMaxAggregationLevel[iChildGroupToLevel]].grouped == false) {
+				while (that.aMaxAggregationLevel[iChildGroupToLevel]
+						&& that.oDimensionDetailsSet[that.aMaxAggregationLevel[iChildGroupToLevel]].grouped == false) {
 					if (++iChildGroupToLevel == that.aMaxAggregationLevel.length) {
 						break;
 					}
