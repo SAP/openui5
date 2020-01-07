@@ -17,6 +17,13 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
+	function _prepareResponsesAndStubMethod(sReference, aReturnedVersions, sFunctionName, aDirtyChanges) {
+		sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+		sandbox.stub(oChangePersistence, "getDirtyChanges").returns(aDirtyChanges);
+		return sandbox.stub(oChangePersistence, sFunctionName).resolves();
+	}
+
 	QUnit.module("Internal Caching", {
 		beforeEach: function () {
 			this.aReturnedVersions = [];
@@ -155,11 +162,7 @@ sap.ui.define([
 				{versionNumber : 0}
 			];
 
-			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
-
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			sandbox.stub(oChangePersistence, "getDirtyChanges").returns([]);
-			var oSaveStub = sandbox.stub(oChangePersistence, "saveDirtyChanges").resolves();
+			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
 
 			var oActivatedVersion = {
 				activatedBy : "qunit",
@@ -201,10 +204,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			sandbox.stub(oChangePersistence, "getDirtyChanges").returns([]);
-			var oSaveStub = sandbox.stub(oChangePersistence, "saveDirtyChanges").resolves();
-			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
+			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -236,11 +236,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
-
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			sandbox.stub(oChangePersistence, "getDirtyChanges").returns([{}]);
-			var oSaveStub = sandbox.stub(oChangePersistence, "saveDirtyChanges").resolves();
+			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", [{}]);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -267,6 +263,158 @@ sap.ui.define([
 					assert.equal(aVersions[0], oFirstVersion, "where the older version is the first");
 					assert.equal(aVersions[1], oActivatedVersion, "and the newly activated is the second");
 				});
+		});
+	});
+
+	QUnit.module("Calling the Storage: Given Versions.discardDraft is called", {
+		beforeEach: function () {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector : "KeyUserConnector", layers : ["CUSTOMER"], url: "/flexKeyUser"}
+			]);
+		},
+		afterEach: function() {
+			Versions.clearInstances();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a connector is configured and a draft exists while discard is called", function (assert) {
+			var sReference = "com.sap.app";
+			var mPropertyBag = {
+				layer : "CUSTOMER",
+				reference : sReference
+			};
+
+			var oFirstVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a while ago",
+				versionNumber : 1
+			};
+
+			var aReturnedVersions = [
+				oFirstVersion,
+				{versionNumber : 0}
+			];
+
+			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", [{}]);
+			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
+
+			return Versions.discardDraft(mPropertyBag)
+				.then(function () {
+					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
+				})
+				.then(Versions.getVersions.bind(Versions, mPropertyBag))
+				.then(function (aVersions) {
+					assert.equal(aVersions.length, 1, "and a getting the versions anew will return one version");
+					assert.equal(oDiscardStub.callCount, 1, "discarding the draft was called");
+					assert.equal(aVersions[0], oFirstVersion, "which is the activated version");
+				});
+		});
+
+		QUnit.test("and a connector is configured and a draft does NOT exists while discard is called", function (assert) {
+			var sReference = "com.sap.app";
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: sReference
+			};
+
+			var oFirstVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				versionNumber: 1
+			};
+
+			var aReturnedVersions = [
+				oFirstVersion
+			];
+
+			_prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", [{}]);
+
+			return Versions.discardDraft(mPropertyBag).then(function (bDiscardingTookPlace) {
+				assert.equal(bDiscardingTookPlace, false, "no discarding took place");
+			});
+		});
+
+		QUnit.test("and a connector is configured and a draft does NOT exists but dirty changes exists " +
+			"while discard is called with a flag to discard the dirty changes", function (assert) {
+			var sReference = "com.sap.app";
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: sReference,
+				updateState: true
+			};
+
+			var oFirstVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				versionNumber: 1
+			};
+
+			var aReturnedVersions = [
+				oFirstVersion
+			];
+
+			var oDeleteStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "deleteChange", [{}, {}]);
+
+			return Versions.discardDraft(mPropertyBag).then(function (bDiscardingTookPlace) {
+				assert.equal(bDiscardingTookPlace, true, "some discarding took place");
+				assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
+			});
+		});
+
+		QUnit.test("and a connector is configured and a draft does NOT exists but dirty changes exists " +
+			"while discard is called withOUT a flag to discard the dirty changes", function (assert) {
+			var sReference = "com.sap.app";
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: sReference
+			};
+
+			var oFirstVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				versionNumber: 1
+			};
+
+			var aReturnedVersions = [
+				oFirstVersion
+			];
+
+			var oDeleteStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "deleteChange", [{}, {}]);
+
+			return Versions.discardDraft(mPropertyBag).then(function (bDiscardingTookPlace) {
+				assert.equal(bDiscardingTookPlace, false, "no discarding took place");
+				assert.equal(oDeleteStub.callCount, 0, "no changes were deleted");
+			});
+		});
+
+		QUnit.test("and a connector is configured and a draft exists and dirty changes exists " +
+			"while discard is called with a flag to discard the dirty changes", function (assert) {
+			var sReference = "com.sap.app";
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: sReference,
+				updateState: true
+			};
+
+			var oFirstVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				versionNumber: 1
+			};
+
+			var aReturnedVersions = [
+				oFirstVersion,
+				{versionNumber : 0}
+			];
+
+			var oDeleteStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "deleteChange", [{}, {}]);
+			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
+
+			return Versions.discardDraft(mPropertyBag).then(function (bDiscardingTookPlace) {
+				assert.equal(bDiscardingTookPlace, true, "some discarding took place");
+				assert.equal(oDiscardStub.callCount, 1, "discarding the draft was called");
+				assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
+			});
 		});
 	});
 

@@ -102,5 +102,39 @@ sap.ui.define([
 			});
 	};
 
+	/**
+	 * Discards the draft for a given application and layer; dirty changes are only.
+	 *
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 * @param {boolean=false} mPropertyBag.updateState - Flag if the state should be updated
+	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
+	 * rejects if an error occurs or the layer does not support draft handling
+	 */
+	Versions.discardDraft = function(mPropertyBag) {
+		return Versions.getVersions(mPropertyBag).then(function (aVersions) {
+			var bDirtyChangesExistsAndDiscarded = false;
+
+			if (mPropertyBag.updateState) {
+				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
+				var aDirtyChanges = oChangePersistence.getDirtyChanges();
+				bDirtyChangesExistsAndDiscarded = aDirtyChanges.length > 0;
+				// TODO: the handling should move to the FlexState as soon as it is ready
+				aDirtyChanges.forEach(oChangePersistence.deleteChange);
+			}
+
+			if (!_doesDraftExist(aVersions)) {
+				return bDirtyChangesExistsAndDiscarded;
+			}
+
+			return Storage.versions.discardDraft(mPropertyBag)
+				.then(function () {
+					aVersions.pop();
+					return true;
+				});
+		});
+	};
+
 	return Versions;
 });

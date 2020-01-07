@@ -39,8 +39,8 @@ sap.ui.define([
 			TOKEN: PREFIX + API_VERSION + "/settings",
 			VERSIONS: {
 				GET: PREFIX + API_VERSION + "/versions/",
-				ACTIVATE: PREFIX + API_VERSION + "/versions/draft/activate/"
-
+				ACTIVATE: PREFIX + API_VERSION + "/versions/draft/activate/",
+				DISCARD: PREFIX + API_VERSION + "/versions/draft/"
 			}
 		}
 	});
@@ -52,14 +52,16 @@ sap.ui.define([
 				return oResult.response;
 			});
 		},
-
 		activateDraft: function (mPropertyBag) {
 			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag);
 			return ApplyUtils.sendRequest(sVersionsUrl, "POST").then(function (oResult) {
 				return oResult.response;
 			});
+		},
+		discardDraft: function (mPropertyBag) {
+			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.DISCARD, mPropertyBag);
+			return ApplyUtils.sendRequest(sVersionsUrl, "DELETE");
 		}
-
 	};
 
 	KeyUserConnector.applyConnector = ApplyConnector;

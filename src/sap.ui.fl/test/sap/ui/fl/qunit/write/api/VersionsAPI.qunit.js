@@ -184,25 +184,31 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function (assert) {
+			var sComponentId = "comSapApp";
 			var sLayer = "CUSTOMER";
 			var mPropertyBag = {
 				layer : sLayer,
-				selector : new Control()
+				selector : new Control(),
+				componentData: {},
+				manifest: {}
 			};
 
 			var sReference = "com.sap.app";
 			sandbox.stub(Utils, "getComponentClassName").returns(sReference);
+			sandbox.stub(Utils, "getAppComponentForControl").returns({
+				getId: function () {
+					return sComponentId;
+				}
+			});
 			var aReturnedVersions = [];
-			var oClearStateStub = sandbox.stub(FlexState, "clearState");
-			var oInitializeStub = sandbox.stub(FlexState, "initialize").resolves(aReturnedVersions);
+			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves(aReturnedVersions);
 
 			return VersionsAPI.loadDraftForApplication(mPropertyBag)
 				.then(function () {
-					assert.equal(oClearStateStub.callCount, 1, "then the flex state is cleared");
-					assert.equal(oClearStateStub.getCall(0).args[0], sReference, "for the given application");
-					assert.equal(oInitializeStub.callCount, 1, "and reinitialized");
-					var oInitializePropertyBag = oInitializeStub.getCall(0).args[0];
-					assert.equal(oInitializePropertyBag.componentId, sReference, "for the same application");
+					assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
+					var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
+					assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
+					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
 					assert.equal(oInitializePropertyBag.draftLayer, sLayer, "and passing the draft layer accordingly");
 				});
 		});
@@ -256,6 +262,63 @@ sap.ui.define([
 			return VersionsAPI.activateDraft(mPropertyBag)
 				.then(function(oResult) {
 					assert.equal(oResult, aReturnedVersions, "then the returned version list is passed");
+				});
+		});
+	});
+
+	QUnit.module("Given VersionsAPI.discardDraft is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when no selector is provided", function (assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER"
+			};
+
+			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No selector was provided", "then an Error is thrown");
+			});
+		});
+		QUnit.test("when no layer is provided", function (assert) {
+			var mPropertyBag = {
+				selector: new Control()
+			};
+
+			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
+			});
+		});
+
+		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				selector: new Control()
+			};
+
+			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "The application ID could not be determined", "then an Error is thrown");
+			});
+		});
+
+		QUnit.test("when a selector, a layer and a flag to update the state were provided and the request returns a list of versions", function(assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				selector: new Control(),
+				updateState: true
+			};
+
+			var sReference = "com.sap.app";
+			sandbox.stub(Utils, "getComponentClassName").returns(sReference);
+			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves(true);
+
+			return VersionsAPI.discardDraft(mPropertyBag)
+				.then(function(oResult) {
+					assert.equal(oResult, true, "then result was returned");
+					var oCallingPropertyBag = oDiscardStub.getCall(0).args[0];
+					assert.equal(oCallingPropertyBag.reference, sReference, "the reference was passed");
+					assert.equal(oCallingPropertyBag.layer, mPropertyBag.layer, "the layer was passed");
+					assert.equal(oCallingPropertyBag.updateState, mPropertyBag.updateState, "the flag for updating the state was passed");
 				});
 		});
 	});

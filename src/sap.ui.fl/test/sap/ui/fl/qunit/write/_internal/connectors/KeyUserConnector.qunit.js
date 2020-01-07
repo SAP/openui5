@@ -28,7 +28,7 @@ sap.ui.define([
 		QUnit.test("given a mock server, when write is triggered", function (assert) {
 			var mPropertyBag = {url : "/flexKeyuser", flexObjects : []};
 			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return KeyUserConnector.write(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
 					xsrfToken : ApplyConnector.xsrfToken,
@@ -43,7 +43,7 @@ sap.ui.define([
 		QUnit.test("given a mock server, when write is triggered for a draft", function (assert) {
 			var mPropertyBag = {url : "/flexKeyuser", flexObjects : [], draft: true};
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/changes/?draft=true";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return KeyUserConnector.write(mPropertyBag).then(function () {
 				var aArgs = oStubSendRequest.getCall(0).args;
 				var sUrl = aArgs[0];
@@ -58,7 +58,7 @@ sap.ui.define([
 			};
 			var mPropertyBag = {url : "/flexKeyuser", flexObject : oFlexObject};
 			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/myFileName";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return KeyUserConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
 					xsrfToken : ApplyConnector.xsrfToken,
@@ -83,7 +83,7 @@ sap.ui.define([
 				url: "/flexKeyuser"
 			};
 			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/myFileName?namespace=myNamespace";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
 			return KeyUserConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
@@ -106,7 +106,7 @@ sap.ui.define([
 				changeTypes : ["changeType1", "changeType2"]
 			};
 			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/?reference=flexReference&appVersion=1.0.0&generator=someGenerator&selector=selector1,selector2&changeType=changeType1,changeType2";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves([]);
 			return KeyUserConnector.reset(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					xsrfToken : ApplyConnector.xsrfToken,
@@ -122,7 +122,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			ApplyConnector.xsrfToken = undefined;
-			ApplyUtils.sendRequest.restore();
 			sandbox.restore();
 		}
 	}, function () {
@@ -131,7 +130,7 @@ sap.ui.define([
 
 			ApplyConnector.xsrfToken = "oldToken123";
 
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest");
 			oStubSendRequest.onCall(0).rejects({status : 403});
 			oStubSendRequest.onCall(1).resolves({xsrfToken : newToken});
 			oStubSendRequest.onCall(2).resolves({response : "something"});
@@ -153,7 +152,7 @@ sap.ui.define([
 
 			ApplyConnector.xsrfToken = undefined;
 
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest");
 			oStubSendRequest.onCall(0).resolves({xsrfToken : newToken});
 			oStubSendRequest.onCall(1).resolves({response : "something"});
 
@@ -172,7 +171,6 @@ sap.ui.define([
 	QUnit.module("KeyUserConnector loadFeatures", {
 		afterEach: function() {
 			ApplyConnector.xsrfToken = undefined;
-			ApplyUtils.sendRequest.restore();
 			sandbox.restore();
 		}
 	}, function () {
@@ -180,7 +178,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				url : "/flexKeyuser"
 			};
-			sinon.stub(ApplyUtils, "sendRequest").resolves({response : "something"});
+			sandbox.stub(ApplyUtils, "sendRequest").resolves({response : "something"});
 			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, "something", "the settings object is returned correctly");
 			});
@@ -189,7 +187,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				url : "/flexKeyuser"
 			};
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : "something"});
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : "something"});
 			ApplyConnector.settings = {isKeyUser: true};
 			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
 				assert.ok(oStubSendRequest.notCalled, "no request is sent to back end");
@@ -200,7 +198,6 @@ sap.ui.define([
 
 	QUnit.module("KeyUserConnector.versions.load", {
 		afterEach: function() {
-			ApplyUtils.sendRequest.restore();
 			sandbox.restore();
 		}
 	}, function () {
@@ -210,7 +207,7 @@ sap.ui.define([
 				reference: "com.sap.test.app"
 			};
 			var aReturnedVersions = [];
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : aReturnedVersions});
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : aReturnedVersions});
 			return KeyUserConnector.versions.load(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, aReturnedVersions, "the versions list is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/com.sap.test.app", "the request has the correct url");
@@ -220,7 +217,6 @@ sap.ui.define([
 
 	QUnit.module("KeyUserConnector.versions.activateDraft", {
 		afterEach: function() {
-			ApplyUtils.sendRequest.restore();
 			sandbox.restore();
 		}
 	}, function () {
@@ -230,10 +226,30 @@ sap.ui.define([
 				reference: "com.sap.test.app"
 			};
 			var oActivatedVersion = [];
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : oActivatedVersion});
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : oActivatedVersion});
 			return KeyUserConnector.versions.activateDraft(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, oActivatedVersion, "the activated version is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/draft/activate/com.sap.test.app", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
+			});
+		});
+	});
+
+	QUnit.module("KeyUserConnector.versions.discardDraft", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("discard draft", function (assert) {
+			var mPropertyBag = {
+				url : "/flexKeyuser",
+				reference: "com.sap.test.app"
+			};
+			var oActivatedVersion = [];
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : oActivatedVersion});
+			return KeyUserConnector.versions.discardDraft(mPropertyBag).then(function () {
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/draft/com.sap.test.app", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "DELETE", "the method is correct");
 			});
 		});
 	});
