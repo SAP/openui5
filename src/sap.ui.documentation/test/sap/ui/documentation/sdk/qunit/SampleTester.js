@@ -159,6 +159,14 @@ sap.ui.define([
 					name: sampleConfig.id,
 					manifest: false
 				}).then(function(oComponent) {
+					// if root control is a view, wait for it being loaded
+					if ( oComponent.getRootControl() && typeof oComponent.getRootControl().loaded === "function" ) {
+						return oComponent.getRootControl().loaded().then(function() {
+							return oComponent;
+						});
+					}
+					return oComponent;
+				}).then(function(oComponent) {
 
 					// load and create content
 					oPage.addContent(
@@ -217,6 +225,14 @@ sap.ui.define([
 
 					return Promise.all([pListed, pRequested]);
 
+				}).catch(function(err) {
+					// if an error occurred during component loading or creation, report it and let test fail
+					assert.pushResult({
+						result: false,
+						actual: err,
+						expected: null,
+						message: "no error should have occurred during component loading and creation"
+					});
 				}).finally(done);  // do not rely on QUnit's promise handling to be able to run with QUnit 1
 			});
 
