@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/library",
+	"sap/ui/core/InvisibleText",
 	"jquery.sap.keycodes",
 	"sap/ui/Device",
 	"sap/ui/unified/library",
@@ -31,6 +32,7 @@ sap.ui.define([
 	TypeDate,
 	ODataModel,
 	coreLibrary,
+	InvisibleText,
 	jQuery,
 	Device,
 	unifiedLibrary,
@@ -1470,6 +1472,22 @@ sap.ui.define([
 		assert.equal(oDP.$("inner").attr("aria-owns"), "DP-cal", "DP input has correct 'aria-owns' when the picker is open");
 		assert.equal(oDP.$("inner").attr("aria-expanded"), "true", "DP input has 'aria-expand' set to true when the picker is open");
 
+		oDP.destroy();
+	});
+
+	QUnit.test("Popup has aria-labelledby after being opened", function(assert) {
+		// Arrange
+		var oDP = new DatePicker("DP").placeAt("uiArea4");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerEvent("click", "DP-icon"); // Open the popup
+
+		// Assert
+		assert.equal(oDP.$("cal").attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "DATEPICKER_TYPE"),
+				"Reference to the hidden label is placed in aria-labelledby");
+
+		// Cleanup
 		oDP.destroy();
 	});
 
