@@ -1131,6 +1131,21 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format([-123456.789, "JPY"]), "JPY" + "\ufeff" + "-123,457", "-123456.789 JPY");
 	});
 
+	QUnit.test("Currency format for locale DE", function (assert) {
+		var oLocale = new Locale("de-DE");
+		// currency only supports "short" style. Therefore, result should be the same for both styles.
+		["long", "short"].forEach(function(sStyle) {
+			var oFormat = NumberFormat.getCurrencyInstance({ style: sStyle }, oLocale);
+			// thousand format for locale "de" does not reformat the number (pattern: "100000-other": "0")
+			assert.equal(oFormat.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "EUR");
+			assert.equal(oFormat.format(-123456.789, "JPY"), "-123.457" + "\xa0" + "JPY");
+
+			// million format for locale "de" does reformat the number (pattern: "1000000-other": "0 Mio'.' ¤")
+			assert.equal(oFormat.format(47123456.789, "EUR"), "47" + "\xa0" + "Mio." + "\xa0" + "EUR");
+			assert.equal(oFormat.format(-47123456.789, "JPY"), "-47" + "\xa0" + "Mio." + "\xa0" + "JPY");
+		});
+	});
+
 	QUnit.test("Currency format with different parameters undefined", function (assert) {
 		var oFormat = NumberFormat.getCurrencyInstance({
 			currencyCode: false,
