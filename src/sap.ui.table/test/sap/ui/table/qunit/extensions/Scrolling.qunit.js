@@ -935,10 +935,12 @@ sap.ui.define([
 					oCell = jQuery.sap.domById(oTable.getId() + "-rows-row" + (iRowIndex - 1) + "-col" + iColIndex);
 				}
 
-				window.setTimeout(function() {
-					that.assertSynchronization(assert);
-					resolve();
-				}, iAssertionDelay);
+				window.requestAnimationFrame(function() {
+					setTimeout(function() {
+						that.assertSynchronization(assert);
+						resolve();
+					}, iAssertionDelay);
+				});
 			});
 		}
 
@@ -998,10 +1000,12 @@ sap.ui.define([
 
 			return new Promise(
 				function(resolve) {
-					window.setTimeout(function() {
-						that.assertSynchronization(assert);
-						resolve();
-					}, iAssertionDelay);
+					window.requestAnimationFrame(function() {
+						setTimeout(function() {
+							that.assertSynchronization(assert);
+							resolve();
+						}, iAssertionDelay);
+					});
 				}
 			);
 
@@ -1060,10 +1064,12 @@ sap.ui.define([
 			qutils.triggerKeydown(oCell, "HOME", false, false, false);
 
 			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					that.assertSynchronization(assert, 0);
-					resolve();
-				}, iAssertionDelay);
+				window.requestAnimationFrame(function() {
+					setTimeout(function() {
+						that.assertSynchronization(assert, 0);
+						resolve();
+					}, iAssertionDelay);
+				});
 			});
 		});
 	});
