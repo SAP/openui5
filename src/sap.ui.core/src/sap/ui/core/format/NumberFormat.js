@@ -1446,8 +1446,13 @@ sap.ui.define([
 
 		// Use "other" format to find the right magnitude, the actual format will be retrieved later
 		// after the value has been calculated
-		if (bIndianCurrency) {
-			sCldrFormat = getIndianCurrencyFormat(sStyle, sKey, "other", true);
+		if (oOptions.type === mNumberType.CURRENCY) {
+			if (bIndianCurrency) {
+				sCldrFormat = getIndianCurrencyFormat(sStyle, sKey, "other", true);
+			} else {
+				// Use currency specific format because for some languages there is a difference between the decimalFormat and the currencyFormat
+				sCldrFormat = oLocaleData.getCurrencyFormat(sStyle, sKey, "other");
+			}
 		} else {
 			sCldrFormat = oLocaleData.getDecimalFormat(sStyle, sKey, "other");
 		}
