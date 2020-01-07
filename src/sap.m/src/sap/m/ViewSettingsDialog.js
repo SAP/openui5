@@ -717,7 +717,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype.setTitle = function(sTitle) {
 		this._getTitleLabel().setText(sTitle);
-		this.setProperty("title", sTitle, true);
+		this.setProperty("title", sTitle);
 		return this;
 	};
 
