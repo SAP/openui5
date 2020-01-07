@@ -8,4 +8,5 @@ src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty
 src/sap.ui.codeeditor/src/sap/ui/codeeditor/js
 src/sap.ui.fl/test/sap/ui/fl/qunit/registry/TestChangeHandlersBROKEN.flexibility.js
 src/sap.ui.integration/src/sap/ui/integration/thirdparty
+src/sap.ui.integration/src/sap/ui/integration/designtime/thirdparty
 src/testsuite-utils

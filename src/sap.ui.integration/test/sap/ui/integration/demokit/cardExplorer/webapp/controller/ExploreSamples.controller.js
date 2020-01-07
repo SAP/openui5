@@ -6,6 +6,7 @@ sap.ui.define([
 	"../model/ExploreSettingsModel",
 	"../model/formatter",
 	"../util/FileUtils",
+	"../util/SchemaValidator",
 	"../localService/SEPMRA_PROD_MAN/mockServer",
 	"sap/m/MessageToast",
 	"sap/m/Dialog",
@@ -24,6 +25,7 @@ sap.ui.define([
 	exploreSettingsModel,
 	formatter,
 	FileUtils,
+	SchemaValidator,
 	mockServer,
 	MessageToast,
 	Dialog,
@@ -41,6 +43,8 @@ sap.ui.define([
 
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.ExploreSamples", {
 
+		formatter: formatter,
+
 		constructor: function () {
 			this.onCodeEditorChangeDebounced = _debounce(this.onCodeEditorChangeDebounced, 100);
 			this.onCardEditorChangeDebounced = _debounce(this.onCardEditorChangeDebounced, 100);
@@ -56,7 +60,9 @@ sap.ui.define([
 			var oRouter = this.getRouter();
 			oRouter.getRoute("exploreSamples").attachMatched(this._onRouteMatched, this);
 
-			this.oModel = new JSONModel();
+			this.oModel = new JSONModel({
+				schemaErrors: ""
+			});
 			this.oModel.setDefaultBindingMode(BindingMode.OneWay);
 
 			this.getView().setModel(this.oModel);
@@ -86,15 +92,25 @@ sap.ui.define([
 			this._deregisterResize();
 		},
 
+		/**
+		 * Syncs CodeEditor & CardEditor. Updates the manifest of the card, if autoRun is enabled. Validates the schema, if enabled.
+		 * @param {string} sValue Current value of the CodeEditor
+		 */
 		onCodeEditorChangeDebounced: function (sValue) {
 			if (!this._sEditSource) {
 				this._sEditSource = "codeEditor";
 			}
 			var oCardEditor = this.byId("cardEditor");
 			oCardEditor.setJson(sValue);
-			this._updateSample(sValue);
 			this._sEditSource = null;
 
+			if (exploreSettingsModel.getProperty("/schemaValidation")) {
+				this.validateManifest(JSON.parse(sValue));
+			}
+
+			if (exploreSettingsModel.getProperty("/autoRun")) {
+				this._updateSample(sValue);
+			}
 		},
 		onCodeEditorChange: function (oEvent) {
 
@@ -102,7 +118,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (this._sEditSource !== "cardEditor" && exploreSettingsModel.getProperty("/autoRun")) {
+			if (this._sEditSource !== "cardEditor") {
 				var sValue = oEvent.getParameter("value");
 				this.onCodeEditorChangeDebounced(sValue);
 			}
@@ -112,8 +128,10 @@ sap.ui.define([
 			if (!this._sEditSource) {
 				this._sEditSource = "cardEditor";
 			}
-			this._editor.setValue(JSON.stringify(mValue, '\t', 4));
-			this._updateSample(mValue);
+
+			var sValue = JSON.stringify(mValue, '\t', 4);
+			this._editor.setValue(sValue);
+			this._updateSample(sValue);
 			this._sEditSource = null;
 		},
 
@@ -179,7 +197,7 @@ sap.ui.define([
 			var oCardEditor = this.byId("cardEditor"),
 				aFiles,
 				oJSON,
-				sArchiveName = formatter._formatExampleName(this._getManifestFileAsJson());
+				sArchiveName = formatter.formatExampleName(this._getManifestFileAsJson());
 
 			if (exploreSettingsModel.getProperty("/useExtendedFileEditor")) {
 				aFiles = this.getModel("extendedFileEditor").getProperty("/files");
@@ -472,21 +490,12 @@ sap.ui.define([
 
 		/**
 		 * Reflects changes in the code editor to the card.
-		 * @param {string|object} vValue The value of the manifest.json file.
+		 * @param {string} sValue The value of the manifest.json file.
 		 */
-		_updateSample: function (vValue) {
-			var oValue,
-				sValue;
+		_updateSample: function (sValue) {
+			var oValue = oValue = JSON.parse(sValue);
 
-			if (typeof vValue === "string") {
-				sValue = vValue;
-				oValue = JSON.parse(vValue);
-			} else {
-				sValue = JSON.stringify(vValue, null, "\t");
-				oValue = vValue;
-			}
-
-			if (!vValue) {
+			if (!sValue) {
 				// TODO hide the card or something like that. Currently it shows busy indicator which might be confusing
 				this.byId("cardSample").setManifest(null);
 				return;
@@ -591,6 +600,31 @@ sap.ui.define([
 			}).addStyleClass("sapUiSizeCompact sapUiResponsiveContentPadding");
 
 			oDialog.open();
+		},
+
+		/**
+		 * Validates the current manifest and shows errors, if any.
+		 * @param {object} oManifest Current manifest.
+		 */
+		validateManifest: function (oManifest) {
+			SchemaValidator
+				.validate(oManifest["sap.card"])
+				.then(function () {
+					this.oModel.setProperty("/schemaErrors", "");
+				}.bind(this))
+				.catch(function (vErrors) {
+					this.oModel.setProperty("/schemaErrors", vErrors);
+				}.bind(this));
+		},
+
+		/**
+		 * Handler for selection of "Schema Validation" checkbox.
+		 * @param {jQuery.Event} oEvent The given event.
+		 */
+		onSchemaValidationCheck: function (oEvent) {
+			if (oEvent.getParameter("selected")) {
+				this.validateManifest(this.byId("cardSample").getManifest());
+			}
 		}
 	});
 });

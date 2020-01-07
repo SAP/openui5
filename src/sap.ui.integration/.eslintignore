@@ -1,3 +1,4 @@
 # Note: Changes to this file also must be applied to the top level .eslintignore file.
 src/sap/ui/integration/thirdparty
+src/sap/ui/integration/designtime/thirdparty
 target

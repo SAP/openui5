@@ -65,6 +65,13 @@
 									selected="{settings>/autoRun}"
 									enabled="{settings>/editable}"
 								/>
+								<CheckBox
+									class="sapUiSmallMarginBegin"
+									text="Schema Validation"
+									selected="{settings>/schemaValidation}"
+									enabled="{settings>/editable}"
+									select=".onSchemaValidationCheck"
+								/>
 							</contentLeft>
 							<contentRight>
 								<MenuButton
@@ -100,6 +107,14 @@
 						</Bar>
 					</customHeader>
 					<MessageStrip id="errorMessageStrip" visible="false" type="Error" showIcon="true" />
+					<MessageStrip 
+						visible="{= ${settings>/schemaValidation} &amp;&amp; !!${/schemaErrors}}"
+						type="Error"
+						showIcon="true" 
+						text="{
+							path: '/schemaErrors',
+							formatter: '.formatter.formatSchemaErrors'
+						}"/>
 					<MessageStrip visible="{= !${settings>/editable} }" showIcon="true" type="Warning" text="Only manifest.json file is editable." />
 					<IconTabHeader
 							selectedKey="{extendedFileEditor>/selectedFileKey}"
