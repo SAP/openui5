@@ -12,6 +12,12 @@ sap.ui.define(function() {
 		name : "Internal TestSuite for UI5 Core - Models",
 		defaults : {
 			group : "UI5 Core - Models",
+			loader : {
+				paths : {
+					"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit"
+				}
+			},
+			module : "test-resources/sap/ui/core/qunit/{name}.qunit",
 			qunit : {
 				version : 2,
 				testTimeout : 6000
@@ -20,18 +26,22 @@ sap.ui.define(function() {
 				version : 4,
 				qunitBridge : true,
 				useFakeTimers : false
-			},
-			loader : {
-				paths : {
-					"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit"
-				}
-			},
-			module : "test-resources/sap/ui/core/qunit/{name}.qunit"
+			}
 		},
 		tests : {
 			// all other sinon 4 UI5 Core - Models tests
 			"1Ring" : {
 				title : "1RingModels.qunit",
+				loader : {
+					paths : {
+						"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit",
+						"sap/ui/test/qunit" : "test-resources/sap/ui/test/qunit",
+						"sap/ui/testlib" : "test-resources/sap/ui/core/qunit/testdata/uilib",
+						"test-resources/sap/ui/support" : "test-resources/sap/ui/support",
+						"testdata" : "test-resources/sap/ui/core/qunit/testdata"
+					}
+				},
+				module : ["test-resources/sap/ui/core/qunit/internal/1RingModels.qunit"],
 				qunit : {
 					version : "edge",
 					reorder : false
@@ -42,16 +52,23 @@ sap.ui.define(function() {
 				ui5 : {
 					// to avoid failing tests because of log messages caused by theme initialization
 					"xx-waitForTheme" : true
-				},
-				module : ["test-resources/sap/ui/core/qunit/internal/1RingModels.qunit"],
-				loader : {
-					paths : {
-						"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit",
-						"sap/ui/test/qunit" : "test-resources/sap/ui/test/qunit",
-						"sap/ui/testlib" : "test-resources/sap/ui/core/qunit/testdata/uilib",
-						"test-resources/sap/ui/support" : "test-resources/sap/ui/support",
-						"testdata" : "test-resources/sap/ui/core/qunit/testdata"
-					}
+				}
+			},
+			// *************************************************************************
+			// Tests considering AnalyticalBinding
+			// *************************************************************************
+			// contained in testsuite.databinding.qunit.js
+			AnalyticalBinding : {
+				title : "sap.ui.model.analytics.AnalyticalBinding",
+				module : ["test-resources/sap/ui/core/qunit/analytics/AnalyticalBinding.qunit"],
+				sinon : 1
+			},
+			// contained in sap.ui.table/test/sap/ui/table/qunit/testsuite.qunit.js
+			AnalyticalTable : {
+				title : "sap.ui.table.qunit.AnalyticalTable.qunit",
+				module : ["test-resources/sap/ui/table/qunit/AnalyticalTable.qunit"],
+				ui5 : {
+					libs : ["sap.ui.table", "sap.m"]
 				}
 			},
 			// *************************************************************************
@@ -61,8 +78,8 @@ sap.ui.define(function() {
 			CanonicalRequests : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.v2.ODataModel (CanonicalRequests.qunit)",
-				sinon : 1,
-				module : ["test-resources/sap/ui/core/qunit/odata/v2/CanonicalRequests.qunit"]
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/CanonicalRequests.qunit"],
+				sinon : 1
 			},
 			// contained in testsuite.messages.qunit.js
 			messagesEnd2End : {
@@ -95,8 +112,8 @@ sap.ui.define(function() {
 			ODataModel : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.v2.ODataModel (V2ODataModel.qunit)",
-				sinon : 1,
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/V2ODataModel.qunit"],
+				sinon : 1,
 				ui5 : {
 					language : "en-US"
 				}
@@ -108,13 +125,13 @@ sap.ui.define(function() {
 			ResourceModel : {
 				// not in 1RingModels.qunit because "originInfo" cannot be changes at runtime
 				title : "sap.ui.model.resource.ResourceModel",
-				module : ["test-resources/sap/ui/core/qunit/resource/ResourceModel.qunit"],
 				loader : {
 					paths : {
 						testdata : "test-resources/sap/ui/core/qunit/testdata",
 						"sap/ui/testlib" : "test-resources/sap/ui/core/qunit/testdata/uilib"
 					}
 				},
+				module : ["test-resources/sap/ui/core/qunit/resource/ResourceModel.qunit"],
 				ui5 : {
 					language : "en",
 					originInfo : true
