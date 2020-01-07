@@ -48,7 +48,9 @@ sap.ui.define(["sap/uxap/library"],
 			_anchorBar : {
 				ignore: false,
 				domRef : function(oElement) {
-					return oElement.getAggregation("_anchorBar").getDomRef();
+					if (oElement.getAggregation("_anchorBar")) {
+						return oElement.getAggregation("_anchorBar").getDomRef();
+					}
 				},
 				propagateRelevantContainer: true,
 				propagateMetadata : function(oElement) {
