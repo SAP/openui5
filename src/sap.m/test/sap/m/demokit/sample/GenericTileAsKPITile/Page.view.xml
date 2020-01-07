@@ -37,7 +37,7 @@
 		</TileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMarginTop"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop"
 			backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
 			frameType="TwoByOne" press="pressOnTileOne">
 		<TileContent footer="August 21, 2016">
