@@ -7,6 +7,7 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
 	"sap/m/ScrollBar",
+	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device",
@@ -19,6 +20,7 @@ sap.ui.define([
 	library,
 	Control,
 	ScrollBar,
+	ManagedObjectObserver,
 	ResizeHandler,
 	ScrollEnablement,
 	Device,
@@ -306,6 +308,7 @@ sap.ui.define([
 			horizontal: false,
 			vertical: true
 		});
+		this._oHeaderObserver = null;
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
@@ -317,6 +320,7 @@ sap.ui.define([
 		this._attachVisualIndicatorsPressHandlers();
 		this._attachVisualIndicatorMouseOverHandlers();
 		this._attachTitleMouseOverHandlers();
+		this._attachHeaderObserver();
 		this._detachScrollHandler();
 	};
 
@@ -361,6 +365,10 @@ sap.ui.define([
 		if (this._oScrollHelper) {
 			this._oScrollHelper.destroy();
 		}
+
+		if (this._oHeaderObserver) {
+			this._oHeaderObserver.disconnect();
+		}
 	};
 
 	DynamicPage.prototype.setShowFooter = function (bShowFooter) {
@@ -369,6 +377,28 @@ sap.ui.define([
 		this._toggleFooter(bShowFooter);
 
 		return vResult;
+	};
+
+	DynamicPage.prototype.setHeader = function (oHeader) {
+		var oOldHeader;
+
+		if (oHeader === oOldHeader) {
+			return;
+		}
+
+		oOldHeader = this.getHeader();
+
+		if (oOldHeader) {
+			if (this._oHeaderObserver) {
+				this._oHeaderObserver.disconnect();
+			}
+
+			this._bAlreadyAttachedHeaderObserver = false;
+		}
+
+		this.setAggregation("header", oHeader);
+
+		return this;
 	};
 
 	DynamicPage.prototype.setHeaderExpanded = function (bHeaderExpanded) {
@@ -1223,7 +1253,13 @@ sap.ui.define([
 		var bHeaderExpanded,
 			bCollapseVisualIndicatorVisible,
 			bExpandVisualIndicatorVisible,
-			bHasTitleAndHeader = this._hasVisibleTitleAndHeader();
+			bHasTitleAndHeader = this._hasVisibleTitleAndHeader(),
+			oHeader = this.getHeader(),
+			bHeaderHasContent = false;
+
+		if (exists(oHeader)) {
+			bHeaderHasContent = !!oHeader.getContent().length;
+		}
 
 		if (!this.getToggleHeaderOnTitleClick() || !bHasTitleAndHeader) {
 			bCollapseVisualIndicatorVisible = false;
@@ -1233,6 +1269,9 @@ sap.ui.define([
 			bCollapseVisualIndicatorVisible = bHeaderExpanded;
 			bExpandVisualIndicatorVisible = !bHeaderExpanded;
 		}
+
+		bExpandVisualIndicatorVisible = bExpandVisualIndicatorVisible && bHeaderHasContent;
+		bCollapseVisualIndicatorVisible = bCollapseVisualIndicatorVisible && bHeaderHasContent;
 
 		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
 		this._toggleExpandVisualIndicator(bExpandVisualIndicatorVisible);
@@ -1850,6 +1889,24 @@ sap.ui.define([
 		if (exists(oHeader) && !this._bAlreadyAttachedPinPressHandler) {
 			oHeader.attachEvent(DynamicPage.EVENTS.PIN_UNPIN_PRESS, this._onPinUnpinButtonPress, this);
 			this._bAlreadyAttachedPinPressHandler = true;
+		}
+	};
+
+	/**
+	* Attaches observer to the <code>DynamicPageHeader</code> content aggregation.
+	* @private
+	*/
+	DynamicPage.prototype._attachHeaderObserver = function () {
+		var oHeader = this.getHeader();
+
+		if (exists(oHeader) && !this._bAlreadyAttachedHeaderObserver) {
+			if (!this._oHeaderObserver) {
+				this._oHeaderObserver = new ManagedObjectObserver(this._updateToggleHeaderVisualIndicators.bind(this));
+			}
+
+			this._oHeaderObserver.observe(oHeader, {aggregations: ["content"]});
+
+			this._bAlreadyAttachedHeaderObserver = true;
 		}
 	};
 
