@@ -249,7 +249,7 @@ function (
 	 * @private
 	 */
 	PostMessageBus.prototype._processEvent = function (oEvent) {
-		return new Promise(function (fnResolve) {
+		return new Promise(function (fnResolve, fnReject) {
 			var mData = oEvent.data;
 			var sOrigin = oEvent.origin;
 
@@ -305,7 +305,7 @@ function (
 								}.bind(this)
 							)
 							.then(fnResolve);
-						}.bind(this));
+						}.bind(this), fnReject);
 					}
 					break;
 				}

@@ -371,7 +371,7 @@
 					sap.ui.require(["sap/ui/core/Core"], function(core) {
 						core.boot();
 						core.attachInit(resolve);
-					});
+					}, reject);
 				});
 			});
 		}

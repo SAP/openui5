@@ -241,7 +241,7 @@ sap.ui.define([
 				 return new Promise(function(resolve, reject) {
 					sap.ui.require([sPreprocessorName], function(oPreprocessorImpl) {
 						resolve(oPreprocessorImpl);
-					});
+					}, reject);
 				});
 			} else {
 				return sap.ui.requireSync(sPreprocessorName);
@@ -952,9 +952,7 @@ sap.ui.define([
 			 var sViewClass = getViewClassName(mParameters);
 			 sap.ui.require([sViewClass], function(ViewClass){
 				 resolve(ViewClass);
-			 }, function(oError) {
-				 reject(oError);
-			 });
+			 }, reject);
 		})
 		.then(function(ViewClass) {
 			// Activate the asynchronous processing for XMLViews

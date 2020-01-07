@@ -594,11 +594,11 @@ function(
 			var oClassObject = sap.ui.require(sResourceName);
 			if (!oClassObject) {
 				if (bAsync) {
-					return new Promise(function(resolve) {
+					return new Promise(function(resolve, reject) {
 						sap.ui.require([sResourceName], function(oClassObject) {
 							oClassObject = getObjectFallback(oClassObject);
 							resolve(oClassObject);
-						});
+						}, reject);
 					});
 				} else {
 					oClassObject = sap.ui.requireSync(sResourceName);
@@ -652,7 +652,7 @@ function(
 						return new Promise(function (resolve, reject) {
 							sap.ui.require(["sap/ui/core/mvc/XMLView"], function(XMLView) {
 								resolve([fnCreateView(XMLView)]);
-							});
+							}, reject);
 						});
 					} else {
 						var XMLView = sap.ui.requireSync("sap/ui/core/mvc/XMLView");

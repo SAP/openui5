@@ -3073,7 +3073,7 @@ sap.ui.define([
 					return Promise.all(aModuleNames.map(function(sModuleName) {
 						// All modules are required separately to have a better error logging.
 						// This "preloading" is done for optimization to enable async loading
-						// in case the underlaying loader supports it. If loading fails, the component
+						// in case the underlying loader supports it. If loading fails, the component
 						// should still be created which might fail once the required module is actually used / loaded
 						return new Promise(function(resolve, reject) {
 							var bResolved = false;
