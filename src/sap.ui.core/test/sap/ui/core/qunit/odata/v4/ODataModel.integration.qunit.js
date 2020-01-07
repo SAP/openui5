@@ -2197,6 +2197,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("age1"), "Warning", "That is very young");
+		}).then(function () {
 			that.expectChange("team", "changed")
 				.expectRequest({
 					method : "PATCH",
