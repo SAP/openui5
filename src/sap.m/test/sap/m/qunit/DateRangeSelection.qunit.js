@@ -507,6 +507,18 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Change date with page up key when 'date' value is not set", function(assert) {
+		// prepare
+		this.oDRS.setDateValue(null);
+		this.oDRS._$input.cursorPos(0);
+
+		// act
+		this.oDRS.onsappageup(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnFireChangeEventSpy.notCalled, "fireChangeEvent was not called");
+	});
+
 	QUnit.test("Change date day with page up key", function(assert) {
 		// prepare
 		this.oDRS._$input.cursorPos(11);
