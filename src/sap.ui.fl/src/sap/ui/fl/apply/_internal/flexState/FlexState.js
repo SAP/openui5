@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap",
 	"sap/ui/fl/apply/_internal/flexState/prepareChangesMap",
 	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/util/ObjectPath"
 ], function(
 	merge,
 	Component,
@@ -21,7 +22,8 @@ sap.ui.define([
 	prepareAppDescriptorMap,
 	prepareChangesMap,
 	prepareVariantsMap,
-	Utils
+	Utils,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -104,19 +106,6 @@ sap.ui.define([
 		}
 	}
 
-	function rePrepareMaps(aPreviousKeys, mPropertyBag) {
-		var aMapNames = aPreviousKeys.filter(function(sKey) {
-			return sKey === "variantsMap" || sKey === "changesMap" || sKey === "appDescriptorMap";
-		});
-
-		aMapNames.forEach(function (sMapName) {
-			_mInstances[mPropertyBag.reference][sMapName] = FlexState._callPrepareFunction(sMapName, {
-				storageResponse: _mInstances[mPropertyBag.reference].storageResponse,
-				componentId: mPropertyBag.componentId
-			});
-		});
-	}
-
 	function loadFlexData(mPropertyBag) {
 		_mInitPromises[mPropertyBag.reference] = Loader.loadFlexData(mPropertyBag)
 			.then(function (mResponse) {
@@ -151,14 +140,14 @@ sap.ui.define([
 	 */
 	FlexState.initialize = function (mPropertyBag) {
 		enhancePropertyBag(mPropertyBag);
-		// if the component with the same reference was rendered with a new ID - clear existing state
+
 		if (_mInitPromises[mPropertyBag.reference]) {
 			return _mInitPromises[mPropertyBag.reference]
 				.then(function (mPropertyBag) {
-					if (_mInstances[mPropertyBag.reference].componentId === mPropertyBag.componentId) {
-						return;
+					// if the component with the same reference was rendered with a new ID - clear existing state
+					if (_mInstances[mPropertyBag.reference].componentId !== mPropertyBag.componentId) {
+						return loadFlexData(mPropertyBag);
 					}
-					return loadFlexData(mPropertyBag);
 				}.bind(null, mPropertyBag));
 		}
 
@@ -166,7 +155,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and then triggeres a call to the backend to fetch new data
+	 * Clears the cache and then triggers a call to the backend to fetch new data
 	 *
 	 * @param {object} mPropertyBag - Contains additional data needed for reading and storing changes
 	 * @param {string} mPropertyBag.componentId - ID of the component
@@ -177,13 +166,16 @@ sap.ui.define([
 	 */
 	FlexState.clearAndInitialize = function(mPropertyBag) {
 		enhancePropertyBag(mPropertyBag);
-
-		var aPreviousResponseKeys = _mInstances[mPropertyBag.reference] ? Object.keys(_mInstances[mPropertyBag.reference]) : [];
+		var bVariantsMapExists = !!ObjectPath.get("variantsMap", _mInstances[mPropertyBag.reference]);
 
 		FlexState.clearState(mPropertyBag.reference);
 
 		return FlexState.initialize(mPropertyBag)
-			.then(rePrepareMaps.bind(null, aPreviousResponseKeys, mPropertyBag));
+			.then(function(bVariantsMapExists, sReference) {
+				if (bVariantsMapExists) {
+					return FlexState.getVariantsState(sReference);
+				}
+			}.bind(null, bVariantsMapExists, mPropertyBag.reference));
 	};
 
 	FlexState.clearState = function (sReference) {
