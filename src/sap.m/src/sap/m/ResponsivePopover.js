@@ -479,13 +479,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Creates a new instance of <code>sap.m.ResponsivePopover</code> with the same settings as the <code>sap.m.ResponsivePopover</code> on which the method is called.
-	 * @param {string} sIdSuffix a suffix to be appended to the cloned element ID
-	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
-	 * @returns {sap.m.ResponsivePopover} New instance of ResponsivePopover
-	 * @public
-	 */
 	ResponsivePopover.prototype.clone = function(){
 		var oClone = Control.prototype.clone.apply(this, arguments),
 			aContent = this.getAggregation('_popup').getContent();
