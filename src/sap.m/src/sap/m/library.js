@@ -1905,7 +1905,7 @@ sap.ui.define([
 	 * Gets the map of texts to be hyphenated and rendered.
 	 * For example, for <code>sap.m.Text</code> this would be the <code>text</code> property.
 	 *
-	 * @returns {map} The texts map which should be hyphenated
+	 * @returns {Object<string,string>} The texts map which should be hyphenated
 	 *
 	 * @function
 	 * @name sap.m.IHyphenation.getTextsToBeHyphenated

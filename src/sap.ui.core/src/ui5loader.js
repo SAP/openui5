@@ -2308,7 +2308,7 @@
 	 * Executes all available handlers which are defined in the config object
 	 *
 	 * @param {object} oCfg config to handle
-	 * @param {map} mHandlers all available handlers
+	 * @param {Object<string,function>} mHandlers all available handlers
 	 */
 	function handleConfigObject(oCfg, mHandlers) {
 

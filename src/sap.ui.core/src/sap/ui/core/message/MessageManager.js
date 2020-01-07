@@ -178,7 +178,7 @@ sap.ui.define([
 
 	/**
 	 * push messages to registered MessageProcessors
-	 * @param {map} mProcessors A Map containing the affected processor ids
+	 * @param {Object<string,sap.ui.core.message.MessageProcessor>} mProcessors A map containing the affected processor IDs
 	 * @private
 	 */
 	MessageManager.prototype._pushMessages = function(mProcessors) {
@@ -195,7 +195,8 @@ sap.ui.define([
 	/**
 	 * sort messages by type 'Error', 'Warning', 'Success', 'Information'
 	 *
-	 * @param {map|sap.ui.core.message.Message[]} vMessages Map or array of Messages to be sorted (in order of severity) by their type property
+	 * @param {Object<string,sap.ui.core.message.Message[]>|sap.ui.core.message.Message[]} vMessages
+	 *   Map or array of Messages to be sorted (in order of severity) by their type property
 	 * @private
 	 */
 	MessageManager.prototype._sortMessages = function(vMessages) {
@@ -216,7 +217,7 @@ sap.ui.define([
 
 	/**
 	 * update MessageModel
-	 * @param {map} mProcessors A Map containing the affected processor ids
+	 * @param {Object<string,sap.ui.core.message.MessageProcessor>} mProcessors A map containing the affected processor IDs
 	 * @private
 	 */
 	MessageManager.prototype._updateMessageModel = function(mProcessors) {
@@ -434,8 +435,8 @@ sap.ui.define([
 
 	/**
 	 * getAffectedProcessors
-	 * @return {map} mProcessors A Map containing the affected processor ids
 	 * @param {sap.ui.core.message.Message|sap.ui.core.message.Message[]} vMessages Array of sap.ui.core.message.Message or single sap.ui.core.message.Message
+	 * @return {Object<string,sap.ui.core.message.MessageProcessor>} mProcessors A map containing the affected processor IDs
 	 * @private
 	 */
 	MessageManager.prototype.getAffectedProcessors = function(vMessages) {

@@ -1240,7 +1240,7 @@ sap.ui.define([
 	 * <li>'to' of type <code>object</code> Current end date after change.</li>
 	 * </ul>
 	 *
-	 * @param {Map} [mArguments] The arguments to pass along with the event.
+	 * @param {object} [mArguments] The arguments to pass along with the event.
 	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining
 	 * @protected
 	 * @name sap.m.DateRangeSelection#fireChange

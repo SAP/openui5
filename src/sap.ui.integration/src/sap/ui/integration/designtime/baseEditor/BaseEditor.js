@@ -105,7 +105,7 @@ sap.ui.define([
 				/**
 				 * Configuration Map
 				 *   config.context {string} Path in the JSON that will be edited e.g. <code>"path/subpath"</code> for <code>json.path.subpath</code>
-				 *   config.properties {map} Defines which fields in the context are editable
+				 *   config.properties {Object<string,object>} Defines which fields in the context are editable
 				 *     config.properties.<key>.label {string} of the property to show on the UI
 				 *     config.properties.<key>.type {string} of the property (property editor for this type will be shown)
 				 *     config.properties.<key>.path {string} that will be changed, relative to the context. Example: If the context is <code>root</code> and the path is <code>header/name</code>, the <code>json.root.header.name</code> field is to be changed
@@ -113,7 +113,7 @@ sap.ui.define([
 				 *     config.properties.<key>.tags {array} Strings to categorize the property
 				 *     config.properties.<key>.visible {string|boolean} Should be used as a binding relative to the context to define the conditions under which this property should be changeable, e.g. <code>{= ${context>anotherProperty} === 'someValue'}</code>
 				 *     config.properties.<key>.<other configurations> {any} It is possible to define additional configurations in this namespace. These configurations will be passed to the dedicated property editor. Binding strings relative to context model are supported as well, e.g. <code>{= ${context>someProperty} + ${context>anotherProperty}}</code>
-				 *   config.propertyEditors {map} Defines which property editors should be loaded. Key is the property type and value is the editor module path. Example: <code>propertyEditors: {"string": "sap/ui/integration/designtime/controls/propertyEditors/StringEditor"}</code> defines the module responsible for all properties with the type <code>string</code>
+				 *   config.propertyEditors {Object<string,string>} Defines which property editors should be loaded. Key is the property type and value is the editor module path. Example: <code>propertyEditors: {"string": "sap/ui/integration/designtime/controls/propertyEditors/StringEditor"}</code> defines the module responsible for all properties with the type <code>string</code>
 				 *   config.i18n {string|array} Module path or array of paths for i18n property files. i18n binding, for example, <code>{i18n>key}</code> is available in the <code>/properties<code> section, e.g. for <code>label</code>
 				 */
 				"config": {

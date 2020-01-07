@@ -132,9 +132,8 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 	 * Implement in inheriting classes
 	 * @abstract
 	 *
-	 * @name sap.ui.core.message.MessageProcessor.prototype.checkMessage
+	 * @name sap.ui.core.message.MessageProcessor.prototype.checkMessages
 	 * @function
-	 * @return {sap.ui.model.ListBinding}
 	 * @public
 	 */
 
@@ -144,7 +143,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 	 *
 	 * @name sap.ui.core.message.MessageProcessor.prototype.setMessages
 	 * @function
-	 * @param {map}
+	 * @param {Object<string,array>}
 	 *         vMessages map of messages: {'target': [array of messages],...}
 	 * @public
 	 */

@@ -21,11 +21,11 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 *   Metadata object with the metadata information needed to parse the annotations
-	 * @param {map} mOptions Obligatory options
+	 * @param {object} mOptions Obligatory options
 	 * @param {string|map|string[]|map[]} mOptions.source
 	 *   One or several annotation sources; see {@link #addSource} for more details
-	 * @param {map} mOptions.headers A map of headers to be sent with every request; see
-	 *   {@link #setHeaders} for more details
+	 * @param {Object<string,string>} mOptions.headers A map of headers to be sent with every request;
+	 *   see {@link #setHeaders} for more details
 	 * @param {boolean} mOptions.skipMetadata Whether the metadata document will not be parsed for
 	 *   annotations
 	 * @param {string} [mOptions.cacheKey] A valid cache key
@@ -160,7 +160,7 @@ sap.ui.define([
 	/**
 	 * Returns a map of custom headers that are sent with every request to an annotation URL.
 	 * @public
-	 * @returns {map} A map of all custom headers.
+	 * @returns {Object<string,string>} A map of all custom headers.
 	 */
 	ODataAnnotations.prototype.getHeaders = function() {
 		return jQuery.extend({}, this._mCustomHeaders);
@@ -173,11 +173,11 @@ sap.ui.define([
 	 * To remove these headers, simply set the <code>mHeaders</code> parameter to <code>{}</code>. Note that when calling this method
 	 * again, all previous custom headers are removed, unless they are specified again in the <code>mCustomHeaders</code> parameter.
 	 *
-	 * @param {map} mHeaders the header name/value map.
+	 * @param {Object<string,string>} mHeaders the header name/value map.
 	 * @public
 	 */
 	ODataAnnotations.prototype.setHeaders = function(mHeaders) {
-		// Copy headers (dont use reference to mHeaders map)
+		// Copy headers (don't use reference to mHeaders map)
 		this._mCustomHeaders = jQuery.extend({}, mHeaders);
 	};
 
@@ -195,14 +195,14 @@ sap.ui.define([
 	/**
 	 * An annotation source, containing either a URL to be loaded or an XML string to be parsed.
 	 *
-	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.Source
+	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.Source
 	 * @property {string} type The source type. Either "url" or "xml".
 	 * @property {string|Promise} data The data or a Promise that resolves with the data.
 	 *           In case the type is set to "url" the data must be a URL, in case it is set to "xml" the data must be
 	 *           an XML string.
 	 * @property {string} [xml] (Set internally, available in event-callback) The XML string of the annotation source
 	 * @property {Document} [document] (Set internally, available in event-callback) The parsed XML document of the annotation source
-	 * @property {map} [annotations] (Set internally, available in event-callback) The parsed Annotations object of the annotation source
+	 * @property {Object} [annotations] (Set internally, available in event-callback) The parsed Annotations object of the annotation source
 	 * @public
 	 */
 
@@ -290,7 +290,7 @@ sap.ui.define([
 	/**
 	 * Parameters of the <code>success</code> event
 	 *
-	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.successParameters
+	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.successParameters
 	 * @property {sap.ui.model.odata.v2.ODataAnnotations.Source} result The source type. Either "url" or "xml".
 	 * @public
 	 */
@@ -350,7 +350,7 @@ sap.ui.define([
 	/**
 	 * Parameters of the <code>error</code> event.
 	 *
-	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.errorParameters
+	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.errorParameters
 	 * @property {Error} result The error that occurred. Also contains the properties from {@link sap.ui.model.odata.v2.ODataAnnotations.Source}
 	 *           that could be filled up to that point
 	 * @public
@@ -411,7 +411,7 @@ sap.ui.define([
 	/**
 	 * Parameters of the <code>loaded</code> event.
 	 *
-	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.loadedParameters
+	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.loadedParameters
 	 * @property {sap.ui.model.odata.v2.ODataAnnotations.Source[]|Error[]|any} result An array of results and Errors
 	 *           (@see sap.ui.model.v2.ODataAnnotations#success and @see sap.ui.model.v2.ODataAnnotations#error) that
 	 *           occurred while loading a group of annotations
@@ -472,7 +472,7 @@ sap.ui.define([
 	/**
 	 * Parameters of the <code>failed</code> event.
 	 *
-	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.failedParameters
+	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.failedParameters
 	 * @property {Error[]} result An array of Errors (@see sap.ui.model.v2.ODataAnnotations#error) that occurred while
 	 *           loading a group of annotations
 	 * @public
@@ -616,7 +616,7 @@ sap.ui.define([
 	 * Fires the <code>success</code> event whenever a source has successfully been (loaded,) parsed and merged into the annotation
 	 * data.
 	 *
-	 * @param {map} mResult The filled source-map of the successful loading and parsing
+	 * @param {Object} mResult The filled source-map of the successful loading and parsing
 	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 */
@@ -861,9 +861,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a map of the public and private headers headers that are sent with every request to an annotation URL.
+	 * Returns a map of the public and private headers that are sent with every request to an annotation URL.
 	 * @private
-	 * @returns {map} A map of all public and private headers.
+	 * @returns {Object<string,string>} A map of all public and private headers.
 	 */
 	ODataAnnotations.prototype._getHeaders = function() {
 		//The 'sap-cancel-on-close' header marks the OData annotation request as cancelable. This helps to save resources at the back-end.

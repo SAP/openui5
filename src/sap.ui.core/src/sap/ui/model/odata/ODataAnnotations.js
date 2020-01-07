@@ -254,7 +254,7 @@ sap.ui.define([
 	 * To remove these headers simply set the mHeaders parameter to {}. Please also note that when calling this method
 	 * again all previous custom headers are removed unless they are specified again in the mCustomHeaders parameter.
 	 *
-	 * @param {map} mHeaders the header name/value map.
+	 * @param {Object<string,string>} mHeaders the header name/value map.
 	 * @public
 	 */
 	ODataAnnotations.prototype.setHeaders = function(mHeaders) {
@@ -349,7 +349,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oXMLDocument The XML document to parse for annotations
 	 * @param {string} sXMLContent The XML content as string to parse for annotations
-	 * @param {map} [mOptions] Additional options
+	 * @param {object} [mOptions] Additional options
 	 * @param {function} [mOptions.success] Success callback gets an objec as argument with the
 	 *                   properties "annotations" containing the parsed annotations and "xmlDoc"
 	 *                   containing the XML-Document that was returned by the request.

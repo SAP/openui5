@@ -127,7 +127,7 @@ sap.ui.define([
 		/**
 		 * Map of all available properties in the sap.ui.unified.MenuItem.
 		 * Needed when syncs between sap.m.MenuItem and unified.MenuItem are performed.
-		 * @type {map}
+		 * @type {Object<string,Object>}
 		 * @private
 		 */
 		Menu.UNFIFIED_MENU_ITEMS_PROPS = UfdMenuItem.getMetadata().getAllProperties();
@@ -143,7 +143,7 @@ sap.ui.define([
 		/**
 		 * Map of all available properties in the sap.m.MenuListItem
 		 * Needed when syncs between sap.m.MenuItem and sap.m.MenuListItem are performed.
-		 * @type {map}
+		 * @type {Object<string,Object>}
 		 * @private
 		 */
 		Menu.MENU_LIST_ITEMS_PROPS = MenuListItem.getMetadata().getAllProperties();
