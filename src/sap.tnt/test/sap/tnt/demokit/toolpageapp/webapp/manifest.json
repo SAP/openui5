@@ -20,7 +20,7 @@
 		"supportedThemes": [
 			"sap_hcb",
 			"sap_bluecrystal",
-			"sap_belize"
+			"sap_fiori_3"
 		]
 	},
 	"sap.ui5": {
