@@ -23,8 +23,8 @@ sap.ui.define([
 			// Configure URL separator
 			this._URLSeparator = window['sap-ui-documentation-static'] ? "%23" : "#";
 
-			this.getRoute("entitySamplesLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
-			this.getRoute("entityAboutLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
+			this.getRoute("entitySamplesLegacyRoute").attachPatternMatched(this._onOldEntityRouteMatched, this);
+			this.getRoute("entityAboutLegacyRoute").attachPatternMatched(this._onOldEntityRouteMatched, this);
 			this.getRoute("entityPropertiesLegacyRoute").attachPatternMatched({entityType: "controlProperties"}, this._forwardToAPIRef, this);
 			this.getRoute("entityAggregationsLegacyRoute").attachPatternMatched({entityType: "aggregations"}, this._forwardToAPIRef, this);
 			this.getRoute("entityAssociationsLegacyRoute").attachPatternMatched({entityType: "associations"}, this._forwardToAPIRef, this);
@@ -43,10 +43,10 @@ sap.ui.define([
 			}, this);
 		},
 
-		_onEntityOldRouteMatched: function(oEvent) {
+		_onOldEntityRouteMatched: function(oEvent) {
 			this.navTo("entity", {
 				id: oEvent.getParameter("arguments").id
-			});
+			}, true);
 		},
 
 		_forwardToAPIRef: function(oEvent, oData) {
@@ -77,7 +77,7 @@ sap.ui.define([
 				}
 
 				// Nav to new route
-				this.navTo(oEventData.routeName, oNavigationObject);
+				this.navTo(oEventData.routeName, oNavigationObject, true);
 			}.bind(this));
 		},
 
@@ -87,7 +87,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_onOldTopicRouteMatched: function(oEvent) {
-			this.navTo("topicId", {id: oEvent.getParameter("arguments").id.replace(/.html$/, "")});
+			this.navTo("topicId", {id: oEvent.getParameter("arguments").id.replace(/.html$/, "")}, true);
 		},
 
 		/**
@@ -121,7 +121,7 @@ sap.ui.define([
 				}
 			}
 
-			this.navTo("apiId", {id: sId, entityType: sEntityType, entityId: sEntityId});
+			this.navTo("apiId", {id: sId, entityType: sEntityType, entityId: sEntityId}, true);
 		},
 
 		/**
@@ -405,6 +405,7 @@ sap.ui.define([
 	 */
 	DocumentationRouter.prototype.navTo = function (sName, oParameters, bReplace) {
 		var sPath;
+		var sReplaceMethod = bReplace ? "replaceState" : "pushState";
 
 		this._destroySampleComponent(); // BCP: 1880458601
 
@@ -430,9 +431,9 @@ sap.ui.define([
 
 		// Modify URL
 		if (window['sap-ui-documentation-static']) {
-			window.history.pushState({},undefined,"#/" + sPath.replace("#", this._URLSeparator));
+			window.history[sReplaceMethod]({}, undefined, "#/" + sPath.replace("#", this._URLSeparator));
 		} else {
-			window.history.pushState({}, undefined, sPath);
+			window.history[sReplaceMethod]({}, undefined, sPath);
 		}
 
 		return this;
