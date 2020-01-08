@@ -1735,19 +1735,36 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 	color: #0070b1;
 }
 
-.sapUiDemokit .toolsPageVbox {
-	width: 95%;
+.sapUiDemokit .toolsPageImage {
+	width: 100%;
 }
 
-@media (min-width: 1600px) {
-	.sapUiDemokit .toolsPageVbox {
-		width: 50%;
+.sapUiDemokit .threeColumnLayoutCard {
+	height: 25rem;
+}
+
+@media (min-width: 1440px) {
+	.sapUiDemokit .toolpageResponsiveMargins {
+		margin: 1rem 2rem 0 2rem;
 	}
 }
 
-.sapUiDemokit .toolsPageImage {
-	width: 350px;
-	max-width: 100%;
+@media (min-width: 1024px) and (max-width: 1439px) {
+	.sapUiDemokit .toolpageResponsiveMargins {
+		margin: 1rem 1rem 0 1rem;
+	}
+}
+
+@media (max-width: 1024px) {
+	.sapUiDemokit .toolpageResponsiveMargins {
+		margin-top: 1rem;
+	}
+}
+
+@media (min-width: 600px) and (max-width: 1439px) {
+	.sapUiDemokit .threeColumnLayoutCard {
+		height: 22rem;
+	}
 }
 
 /* FireFox does not handle aspect ratio optimization so this must be disabled for it only by resetting the element position */
