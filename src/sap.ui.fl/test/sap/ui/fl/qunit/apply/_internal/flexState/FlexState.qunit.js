@@ -210,8 +210,6 @@ sap.ui.define([
 			})
 				.then(function() {
 					FlexState.getVariantsState(sReference);
-					FlexState.getUIChanges(sReference);
-					FlexState.getAppDescriptorChanges(sReference);
 				})
 				.then(FlexState.clearAndInitialize.bind(null, {
 					reference: sReference,
@@ -219,35 +217,23 @@ sap.ui.define([
 				}))
 				.then(function() {
 					assert.ok(FlexState.clearState.calledWith(sReference), "then state was cleared for reference1");
-					assert.ok(FlexState._callPrepareFunction.calledWith("variantsMap", {storageResponse: {mockData: "mockData"}, componentId: sComponentId}), "then pre-existing map was re-prepared");
-					assert.ok(FlexState._callPrepareFunction.calledWith("changesMap", {storageResponse: {mockData: "mockData"}, componentId: sComponentId}), "then pre-existing map was re-prepared");
-					assert.ok(FlexState._callPrepareFunction.calledWith("appDescriptorMap", {storageResponse: {mockData: "mockData"}, componentId: sComponentId}), "then pre-existing map was re-prepared");
+					assert.ok(FlexState._callPrepareFunction.calledWith("variantsMap", {storageResponse: {mockData: "mockData"}, componentId: sComponentId}), "then pre-existing variants map was prepared implicitly");
 					FlexState._callPrepareFunction.resetHistory();
 					assert.deepEqual(FlexState.getVariantsState(sReference), _mockPrepareFunctions("variantsMap"), "then the correct map result was returned");
-					assert.deepEqual(FlexState.getUIChanges(sReference), _mockPrepareFunctions("changesMap").changes, "then the correct map result was returned");
-					assert.deepEqual(FlexState.getAppDescriptorChanges(sReference), _mockPrepareFunctions("appDescriptorMap").appDescriptorChanges, "then the correct map result was returned");
-					assert.ok(FlexState._callPrepareFunction.notCalled, "then maps were only prepared during the clearAndInitialize() call");
+					assert.equal(FlexState._callPrepareFunction.callCount, 0, "then variants map was only prepared during the clearAndInitialize() call");
 				})
 				.then(FlexState.initialize.bind(null, {
 					reference: sReference2,
 					componentId: sComponentId
 				}))
-				.then(function() {
-					FlexState.getVariantsState(sReference2);
-					FlexState.getUIChanges(sReference2);
-				})
 				.then(FlexState.clearAndInitialize.bind(null, {
 					reference: sReference2,
 					componentId: sComponentId
 				}))
 				.then(function() {
 					assert.ok(FlexState.clearState.calledWith(sReference2), "then state was cleared for reference2");
-					assert.ok(FlexState._callPrepareFunction.calledWith("variantsMap", {storageResponse: {mockData: "mockData"}, componentId: sComponentId}), "then pre-existing map was re-prepared");
-					assert.ok(FlexState._callPrepareFunction.calledWith("changesMap", {storageResponse: {mockData: "mockData"}, componentId: sComponentId}), "then pre-existing map was re-prepared");
-					FlexState._callPrepareFunction.resetHistory();
+					assert.equal(FlexState._callPrepareFunction.callCount, 0, "then variants maps was not prepared implicitly");
 					assert.deepEqual(FlexState.getVariantsState(sReference2), _mockPrepareFunctions("variantsMap"), "then the correct map result was returned");
-					assert.deepEqual(FlexState.getUIChanges(sReference2), _mockPrepareFunctions("changesMap").changes, "then the correct map result was returned");
-					assert.ok(FlexState._callPrepareFunction.notCalled, "then maps were only prepared during the clearAndInitialize() call");
 				});
 		});
 	});
