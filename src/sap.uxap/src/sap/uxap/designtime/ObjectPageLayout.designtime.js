@@ -74,6 +74,17 @@ sap.ui.define(["sap/uxap/library"],
 								}
 							}
 						};
+					} else if (oElement.isA("sap.m.Button") || oElement.isA("sap.m.MenuButton")) {
+						//Until we can map other controls to public APIs, remove other actions from here
+						return {
+							actions: null //still allows the move inside the relevant container
+						};
+					} else {
+						//other internal controls will be disabled
+						return {
+							actions: "not-adaptable" //overwrites all actions for all other controls and
+													 //no property changes or other technical changes are possible (not editable/selectable)
+						};
 					}
 				}
 			},
@@ -83,7 +94,8 @@ sap.ui.define(["sap/uxap/library"],
 				},
 				actions : {
 					move : function(oElement){
-						if (!oElement || oElement.getMetadata().getName() !== 'sap.uxap.ObjectPageSection'){
+						if (oElement && oElement.getParent() && (oElement.getParent().isA(["sap.uxap.ObjectPageHeaderContent", "sap.uxap.ObjectPageDynamicHeaderContent"]))){
+							//only allow move inside the header
 							return "moveControls";
 						}
 					}
