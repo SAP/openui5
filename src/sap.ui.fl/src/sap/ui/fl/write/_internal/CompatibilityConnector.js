@@ -111,7 +111,7 @@ sap.ui.define([
 		return WriteStorage.write({
 			layer : aFlexObjects[0].layer,
 			flexObjects : aFlexObjects,
-			_transport : sChangelist,
+			transport : sChangelist,
 			isLegacyVariant : bIsVariant,
 			draft : bDraft
 		});
