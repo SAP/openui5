@@ -99,7 +99,7 @@ function(
 			valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None },
 
 			/**
-			 * Defines the name of the control for the purposes of form submission.
+			 * The name to be used in the HTML code (for example, for HTML forms that send data to the server via submission).
 			 */
 			name: { type: "string", group: "Misc", defaultValue: null },
 
