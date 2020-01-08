@@ -122,4 +122,9 @@ body {
 
 .sapMPanelContent:not(.sapMPanelBGTransparent) {
 	border-bottom: none !important;
+	transform: none !important;
+}
+
+.sapMPanelContent:not(.sapMPanelBGTransparent) .sapMITBContent {
+	border-bottom: none !important;
 }

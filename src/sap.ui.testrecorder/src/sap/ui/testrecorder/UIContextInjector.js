@@ -46,8 +46,12 @@ sap.ui.define([
 			this._openWindow();
 		}
 
-		// beforeunload will only work if the page was loaded and received interactions
-		window.communicationWindows.testRecorder.addEventListener("beforeunload", this.close.bind(this));
+		// beforeunload will only work if the page was loaded and received; it is not guarateed to fire
+		window.communicationWindows.testRecorder.addEventListener("beforeunload", function () {
+			if (!this._dockStarted && !this._closeTriggered) {
+				this.close();
+			}
+		}.bind(this));
 
 		CommunicationBus.subscribe(CommunicationChannels.HIDE_IFRAME, this.hideFrame.bind(this));
 		CommunicationBus.subscribe(CommunicationChannels.SHOW_IFRAME, this.showFrame.bind(this));
@@ -123,6 +127,7 @@ sap.ui.define([
 		};
 		this._isInIframe = false;
 		this._dockStarted = false;
+		this._closeTriggered = false;
 	};
 
 	UIContextInjector.prototype._openFrame = function () {
@@ -145,9 +150,17 @@ sap.ui.define([
 		window.communicationWindows.testRecorder = iFrame.contentWindow;
 		this._dockStarted = false;
 		this._isInIframe = true;
+		this._closeTriggered = false;
 	};
 
 	UIContextInjector.prototype.close = function () {
+		// the window can close via window buttons and app view buttons.
+		// when docking or closing with app buttons,
+		// if onbeforeunload is triggered, close will be executed 2 times, causing errors in IE11 and Edge
+		if (this._closeTriggered) {
+			return;
+		}
+		this._closeTriggered = true;
 		if (this._isInIframe) {
 			var frame = document.getElementById(IFRAME_ID);
 			var frameWindow = frame && frame.contentWindow;
@@ -163,7 +176,7 @@ sap.ui.define([
 				}
 				frame.remove();
 			}
-		} else {
+		} else if (window.communicationWindows.testRecorder) {
 			window.communicationWindows.testRecorder.close();
 		}
 
