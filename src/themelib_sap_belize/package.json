@@ -1,6 +1,6 @@
 {
   "name": "@openui5/themelib_sap_belize",
-  "version": "1.72.4-SNAPSHOT",
+  "version": "1.72.4",
   "description": "OpenUI5 Theme Library sap_belize",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -14,19 +14,19 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "devDependencies": {
-    "@openui5/sap.f": "1.72.4-SNAPSHOT",
-    "@openui5/sap.m": "1.72.4-SNAPSHOT",
-    "@openui5/sap.tnt": "1.72.4-SNAPSHOT",
-    "@openui5/sap.ui.codeeditor": "1.72.4-SNAPSHOT",
-    "@openui5/sap.ui.commons": "1.72.4-SNAPSHOT",
-    "@openui5/sap.ui.core": "1.72.4-SNAPSHOT",
-    "@openui5/sap.ui.dt": "1.72.4-SNAPSHOT",
-    "@openui5/sap.ui.layout": "1.72.4-SNAPSHOT",
-    "@openui5/sap.ui.rta": "1.72.4-SNAPSHOT",
-    "@openui5/sap.ui.suite": "1.72.4-SNAPSHOT",
-    "@openui5/sap.ui.table": "1.72.4-SNAPSHOT",
-    "@openui5/sap.ui.unified": "1.72.4-SNAPSHOT",
-    "@openui5/sap.ui.ux3": "1.72.4-SNAPSHOT",
-    "@openui5/sap.uxap": "1.72.4-SNAPSHOT"
+    "@openui5/sap.f": "1.72.4",
+    "@openui5/sap.m": "1.72.4",
+    "@openui5/sap.tnt": "1.72.4",
+    "@openui5/sap.ui.codeeditor": "1.72.4",
+    "@openui5/sap.ui.commons": "1.72.4",
+    "@openui5/sap.ui.core": "1.72.4",
+    "@openui5/sap.ui.dt": "1.72.4",
+    "@openui5/sap.ui.layout": "1.72.4",
+    "@openui5/sap.ui.rta": "1.72.4",
+    "@openui5/sap.ui.suite": "1.72.4",
+    "@openui5/sap.ui.table": "1.72.4",
+    "@openui5/sap.ui.unified": "1.72.4",
+    "@openui5/sap.ui.ux3": "1.72.4",
+    "@openui5/sap.uxap": "1.72.4"
   }
 }
