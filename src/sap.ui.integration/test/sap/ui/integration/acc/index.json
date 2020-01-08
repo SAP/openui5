@@ -1,0 +1,9 @@
+{
+  "tests" : [
+    {
+      "control": "sap.ui.integration.widgets.Card",
+      "url": "Card.html",
+      "appComponent": "CA-UI5-CTR-ROD"
+    }
+  ]
+}
