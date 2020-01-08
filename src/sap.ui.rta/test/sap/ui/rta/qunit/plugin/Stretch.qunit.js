@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit*/
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
@@ -225,11 +225,11 @@ function (
 			};
 
 			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
-				window.requestAnimationFrame(function () {
+				setTimeout(function () {
 					this.oStretchPlugin._onElementOverlayChanged(oEvent);
 					assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
 					done();
-				}.bind(this));
+				}.bind(this), 60);
 			}, this);
 			this.oLayout.setWidth("400px");
 		});
