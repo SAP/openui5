@@ -36,8 +36,8 @@
 								{
 									"type": "Image",
 									"url": "https://sapui5.hana.ondemand.com/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/topics/images/Woman_avatar_01.png",
-									"size": "Small",
-									"style": "Person"
+									"size": "small",
+									"style": "person"
 								}
 							]
 						},
@@ -48,7 +48,7 @@
 								{
 									"type": "TextBlock",
 									"text": "Donna Moore",
-									"weight": "Bolder",
+									"weight": "bolder",
 									"wrap": true
 								},
 								{

@@ -38,7 +38,7 @@
 					"type": "TextBlock",
 					"text": "Your Name",
 					"isSubtle": true,
-					"size": "Medium"
+					"size": "medium"
 				},
 				{
 					"type": "Input.Text",
@@ -50,7 +50,7 @@
 					"type": "TextBlock",
 					"text": "Email address",
 					"isSubtle": true,
-					"size": "Medium"
+					"size": "medium"
 				},
 				{
 					"type": "Input.Text",
@@ -62,7 +62,7 @@
 					"type": "TextBlock",
 					"text": "Phone Number",
 					"isSubtle": true,
-					"size": "Medium"
+					"size": "medium"
 				},
 				{
 					"type": "Input.Text",
@@ -75,7 +75,7 @@
 					"type": "TextBlock",
 					"text": "Age",
 					"isSubtle": true,
-					"size": "Medium"
+					"size": "medium"
 				},
 				{
 					"type": "Input.Number",
@@ -88,7 +88,7 @@
 					"type": "TextBlock",
 					"text": "Starting Date",
 					"isSubtle": true,
-					"size": "Medium"
+					"size": "medium"
 				},
 				{
 					"type": "Input.Date",
@@ -117,7 +117,7 @@
 								"type": "TextBlock",
 								"text": "Website",
 								"isSubtle": true,
-								"size": "Medium"
+								"size": "medium"
 							},
 							{
 								"type": "Input.Text",
@@ -129,7 +129,7 @@
 								"type": "TextBlock",
 								"text": "Description",
 								"isSubtle": true,
-								"size": "Medium"
+								"size": "medium"
 							},
 							{
 								"type": "Input.Text",
