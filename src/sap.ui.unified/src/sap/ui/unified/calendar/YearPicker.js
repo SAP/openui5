@@ -401,8 +401,10 @@ sap.ui.define([
 			&& this._isValueInThreshold(this._oMousedownPosition.clientY, oEvent.clientY, 10)
 		) {
 			iIndex = this._oItemNavigation.getFocusedIndex();
-			this._selectYear(iIndex);
-			this.fireSelect();
+			if (!$DomRefs[iIndex].classList.contains("sapUiCalItemDsbl")) {
+				this._selectYear(iIndex);
+				this.fireSelect();
+			}
 		}
 
 	};
@@ -631,12 +633,6 @@ sap.ui.define([
 
 		this._oItemNavigation.focusItem(iSelectedIndex);
 
-	};
-
-	YearPicker.prototype.ontouchstart = function (oEvent){
-		if (!Device.system.desktop && oEvent.target.classList.contains("sapUiCalItem")){
-			oEvent.target.classList.add("sapUiCalItemSel");
-		}
 	};
 
 	YearPicker.prototype._selectYear = function (iIndex) {
