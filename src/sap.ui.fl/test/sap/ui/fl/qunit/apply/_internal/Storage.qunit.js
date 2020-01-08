@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
@@ -18,7 +19,8 @@ sap.ui.define([
 	Change,
 	Variant,
 	StorageResultMerger,
-	Utils,
+	StorageUtils,
+	FlUtils,
 	StaticFileConnector,
 	LrepConnector,
 	JsObjectConnector,
@@ -31,7 +33,7 @@ sap.ui.define([
 
 	QUnit.module("Storage checks the input parameters", {
 		beforeEach: function () {
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -56,17 +58,17 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("Given all connectors provide empty variant properties", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
-			sandbox.stub(JsObjectConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			sandbox.stub(JsObjectConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, Utils.getEmptyFlexDataResponse());
+				assert.deepEqual(oResult, StorageUtils.getEmptyFlexDataResponse());
 			});
 		});
 
 		QUnit.test("Given some connector provides multiple layers", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 			var sVariant1 = "variant1";
 			var oVariant1 = Variant.createInitialFileContent({
 				content: {
@@ -125,25 +127,25 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given all connectors provide empty variant sections", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, Utils.getEmptyFlexDataResponse());
+				assert.deepEqual(oResult, StorageUtils.getEmptyFlexDataResponse());
 			});
 		});
 
 		QUnit.test("Given the first connector provide an empty variant section and the second provides variant data in separate properties", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, Utils.getEmptyFlexDataResponse());
+				assert.deepEqual(oResult, StorageUtils.getEmptyFlexDataResponse());
 			});
 		});
 
 		QUnit.test("Given only one connector provides variant data in a variantSection", function (assert) {
-			var oStaticFileConnectorResponse = Object.assign(Utils.getEmptyFlexDataResponse(), {variantSection: {}});
+			var oStaticFileConnectorResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {variantSection: {}});
 			var sVariantManagementKey = "management1";
 
 			var oVariant = Variant.createInitialFileContent({
@@ -164,7 +166,7 @@ sap.ui.define([
 				variantManagementChanges: {}
 			};
 
-			var oExpectedStorageResponse = Object.assign(Utils.getEmptyFlexDataResponse(), {
+			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 				variants: [oVariant.content]
 			});
 
@@ -178,8 +180,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given 2 connectors provide variant data in variants properties", function (assert) {
-			var oStaticFileConnectorResponse = Utils.getEmptyFlexDataResponse();
-			var oLrepConnectorResponse = Utils.getEmptyFlexDataResponse();
+			var oStaticFileConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
+			var oLrepConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
 			var sVariantManagementKey = "management1";
 
 			var oVariant1 = Variant.createInitialFileContent({
@@ -213,7 +215,7 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oLrepConnectorResponse);
 
-			var oExpectedStorageResponse = Object.assign(Utils.getEmptyFlexDataResponse(), {
+			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 				variants: [oVariant1.content, oVariant2.content]
 			});
 
@@ -224,8 +226,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given 2 connectors provide a change with the same id - i.e. not deleted file from changes-bundle.json", function (assert) {
-			var oStaticFileConnectorResponse = Utils.getEmptyFlexDataResponse();
-			var oLrepConnectorResponse = Utils.getEmptyFlexDataResponse();
+			var oStaticFileConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
+			var oLrepConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
 
 			var oChange1 = new Change({
 				fileName: "rename_id_123",
@@ -262,7 +264,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("Given the first connector provide a variant in a variants property and the second provides a variant section with a variant", function (assert) {
-			var oResponse1 = Utils.getEmptyFlexDataResponse();
+			var oResponse1 = StorageUtils.getEmptyFlexDataResponse();
 			oResponse1.variants.push({
 				fileName: "variant1",
 				fileType: "ctrl_variant",
@@ -271,7 +273,7 @@ sap.ui.define([
 				creation: "2019-07-22T10:33:19.7491090Z"
 			});
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oResponse1);
-			var oResponse2 = Utils.getEmptyFlexDataResponse();
+			var oResponse2 = StorageUtils.getEmptyFlexDataResponse();
 			oResponse2.variantSection = {
 				variantManagement1: {
 					variantManagementChanges: {},
@@ -291,7 +293,7 @@ sap.ui.define([
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oResponse2);
 
-			var oExpectedResponse = merge({}, Utils.getEmptyFlexDataResponse(), {
+			var oExpectedResponse = merge({}, StorageUtils.getEmptyFlexDataResponse(), {
 				variants: [oResponse1.variants[0], oResponse2.variantSection.variantManagement1.variants[0].content]
 			});
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
@@ -345,12 +347,98 @@ sap.ui.define([
 			};
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oResponse2);
 
-			var oExpectedResponse = Object.assign({}, Utils.getEmptyFlexDataResponse(), {
+			var oExpectedResponse = Object.assign({}, StorageUtils.getEmptyFlexDataResponse(), {
 				variants: [oResponse1.variantSection.variantManagement1.variants[0].content, oResponse2.variantSection.variantManagement1.variants[0].content]
 			});
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, oExpectedResponse, "then the expected result is returned");
+			});
+		});
+
+		QUnit.test("Given two connectors are provided and one is in charge of a draft layer", function (assert) {
+			var sDraftLayer = "CUSTOMER";
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", layers: [sDraftLayer]},
+				{connector: "JsObjectConnector", layers: ["USER"]}
+			]);
+
+			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
+			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
+			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
+
+			return Storage.loadFlexData({
+				reference: "app.id",
+				draftLayer: sDraftLayer
+			}).then(function () {
+				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].draftLayer, undefined, "the StaticFileConnector has the draft flag NOT set");
+				assert.equal(oLrepConnectorStub.getCall(0).args[0].draftLayer, sDraftLayer, "the connector for draft layer has the draft flag set");
+				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].draftLayer, undefined, "the connector NOT in charge for draft layer has the draft flag NOT set");
+			});
+		});
+
+		QUnit.test("Given two connectors are provided and one is in charge of all layers and a draft layer is set", function (assert) {
+			var sDraftLayer = "CUSTOMER";
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector"},
+				{connector: "LrepConnector", layers: ["ALL"]}
+			]);
+
+			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
+			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
+			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
+
+			return Storage.loadFlexData({
+				reference: "app.id",
+				draftLayer: sDraftLayer
+			}).then(function () {
+				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].draftLayer, undefined, "the StaticFileConnector has the draft flag NOT set");
+				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].draftLayer, undefined, "the connector NOT in charge for draft layer has the draft flag NOT set");
+				assert.equal(oLrepConnectorStub.getCall(0).args[0].draftLayer, sDraftLayer, "the connector for draft layer has the draft flag set");
+			});
+		});
+
+		QUnit.test("Given two connectors are provided and one is in charge of a draft layer provided by a url parameter", function (assert) {
+			var sDraftLayer = "CUSTOMER";
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", layers: [sDraftLayer]},
+				{connector: "JsObjectConnector", layers: ["USER"]}
+			]);
+
+			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
+			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
+			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
+
+			sandbox.stub(FlUtils, "getUrlParameter").returns(sDraftLayer);
+
+			return Storage.loadFlexData({
+				reference: "app.id"
+			}).then(function () {
+				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].draftLayer, undefined, "the StaticFileConnector has the draft flag NOT set");
+				assert.equal(oLrepConnectorStub.getCall(0).args[0].draftLayer, sDraftLayer, "the connector for draft layer has the draft flag set");
+				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].draftLayer, undefined, "the connector NOT in charge for draft layer has the draft flag NOT set");
+			});
+		});
+
+		QUnit.test("Given two connectors are provided and one is in charge of all layers and a draft layer provided by a url parameter", function (assert) {
+			var sDraftLayer = "CUSTOMER";
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector"},
+				{connector: "LrepConnector", layers: ["ALL"]}
+			]);
+
+			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
+			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
+			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
+
+			sandbox.stub(FlUtils, "getUrlParameter").returns(sDraftLayer);
+
+			return Storage.loadFlexData({
+				reference: "app.id"
+			}).then(function () {
+				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].draftLayer, undefined, "the StaticFileConnector has the draft flag NOT set");
+				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].draftLayer, undefined, "the connector NOT in charge for draft layer has the draft flag NOT set");
+				assert.equal(oLrepConnectorStub.getCall(0).args[0].draftLayer, sDraftLayer, "the connector for draft layer has the draft flag set");
 			});
 		});
 	});

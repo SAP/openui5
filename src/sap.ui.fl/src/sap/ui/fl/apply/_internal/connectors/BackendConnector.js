@@ -33,11 +33,16 @@ sap.ui.define([
 		 * @param {object} mPropertyBag Further properties
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} mPropertyBag.reference Flexibility reference
+		 * @param {string} [mPropertyBag.draftLayer] Layer for which a draft should be loaded
 		 * @param {string} [mPropertyBag.appVersion] Version of the application
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function(mPropertyBag) {
 			var mParameters = _pick(mPropertyBag, ["appVersion"]);
+
+			if (mPropertyBag.draftLayer) {
+				mParameters.draft = true;
+			}
 
 			var sDataUrl = ApplyUtils.getUrl(this.ROUTES.DATA, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl, "GET", { xsrfToken: this.xsrfToken}).then(function (oResult) {

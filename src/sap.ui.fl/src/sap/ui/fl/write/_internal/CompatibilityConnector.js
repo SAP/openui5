@@ -47,6 +47,7 @@ sap.ui.define([
 	 * @param {string} [mComponent.appVersion] Current running version of application
 	 * @param {string} [mPropertyBag.appName] Component name of the current application which may differ in case of an app variant
 	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
+	 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be loaded
 	 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 	 * @param {string} [mPropertyBag.cacheKey] Pre-calculated cache key of the component
 	 * @returns {Promise} Returns a Promise with the changes response
@@ -64,7 +65,8 @@ sap.ui.define([
 			componentName: mPropertyBag.appName,
 			cacheKey: mPropertyBag.cacheKey,
 			siteId: mPropertyBag.siteId,
-			appDescriptor: mPropertyBag.appDescriptor
+			appDescriptor: mPropertyBag.appDescriptor,
+			draftLayer: mPropertyBag.draftLayer
 		}).then(function(mFlexData) {
 			return {
 				changes: mFlexData,
