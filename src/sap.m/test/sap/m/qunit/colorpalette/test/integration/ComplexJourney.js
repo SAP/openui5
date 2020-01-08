@@ -242,6 +242,23 @@ sap.ui.define([
 					errorMessage: "ColorPalettePopover was NOT successfully closed."
 				});
 			},
+			firstTwoColorsOfRecentColorsBlockShouldBe: function (aRecentColors){
+				return this.waitFor({
+					searchOpenDialogs: true,
+					controlType: "sap.m.ColorPalette",
+					check: function (aElements){
+						if (JSON.stringify(aRecentColors) === JSON.stringify(aElements[0]._getRecentColors())){
+							return true;
+						} else {
+							return false;
+						}
+					},
+					success: function () {
+						Opa5.assert.ok(true, "ColorPalette Recent colors section contains the right colors");
+					},
+					errorMessage: "ColorPalette doesn't contains the right colors"
+				});
+			},
 			complexControlDefaultsColorPalettePopoverShouldRenderAllChildControls: function () {
 				//Assuming that Complex ControlDefaults ColorPalettePopover is already opened
 				return this.waitFor({
@@ -567,6 +584,24 @@ sap.ui.define([
 
 		opaTest("Fake test to have a root module with at least one test, otherwise qunit-2 will fail", function () {
 			Opa5.assert.ok(true, "assert ok");
+		});
+	});
+
+	QUnit.module("Recent Colors", function () {
+		/* THIS MODULE CONTAINS TEST DEPENDENCIES ON TEST ENVIRONMENT STATE */
+
+		opaTest("Selected colors should be in recent colors section", function (Given, When, Then) {
+			Given.iStartMyComponent("cp.opa.test.app");
+			When.iOpenComplexControlDefaultsColorPalettePopover();
+			Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
+			When.iClickOnAColorSwatch("gold");
+			When.iOpenComplexControlDefaultsColorPalettePopover();
+			When.iClickOnAColorSwatch("darkorange");
+			When.iOpenComplexControlDefaultsColorPalettePopover();
+			Then.firstTwoColorsOfRecentColorsBlockShouldBe(["darkorange", "gold"]);
+
+			// Cleanup
+			Given.iTeardownMyUIComponent();
 		});
 	});
 });

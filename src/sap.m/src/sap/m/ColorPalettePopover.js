@@ -91,6 +91,12 @@ sap.ui.define([
 					showMoreColorsButton: {type: "boolean", group: "Appearance", defaultValue: true},
 
 					/**
+					 * Indicates if the Recent Colors section is available
+					 * @since 1.74
+					 */
+					showRecentColorsSection: {type: "boolean", group: "Appearance", defaultValue: true},
+
+					/**
 					 * Determines the <code>displayMode</code> of the <code>ColorPicker</code> among three types - Default, Large and Simplified
 					 * @since 1.70
 					 */
@@ -104,7 +110,7 @@ sap.ui.define([
 					colorSelect: {
 						parameters: {
 							/**
-							 * The color that is returned when user chooses the "Default color" button.
+							 * The color that is returned when user chooses the "Default Color" button.
 							 */
 							"value": {type: "sap.ui.core.CSSColor"},
 							/**
@@ -132,6 +138,7 @@ sap.ui.define([
 				defaultColor: "_setDefaultColor",
 				showDefaultColorButton: "_setShowDefaultColorButton",
 				showMoreColorsButton: "_setShowMoreColorsButton",
+				showRecentColorsSection: "_setShowRecentColorsSection",
 				displayMode: "_setDisplayMode"
 			},
 			POPOVER_METHODS: {
@@ -281,6 +288,7 @@ sap.ui.define([
 
 			oColorPalette._setShowDefaultColorButton(this.getShowDefaultColorButton());
 			oColorPalette._setShowMoreColorsButton(this.getShowMoreColorsButton());
+			oColorPalette._setShowRecentColorsSection(this.getShowRecentColorsSection());
 
 			return oColorPalette;
 		};
