@@ -174,6 +174,7 @@ sap.ui.define([
 
 			// Act
 			this.MP.setMonth(5);
+			sap.ui.getCore().applyChanges();
 			iFocusedIndex = this.MP._oItemNavigation.getFocusedIndex();
 
 			// Assert
@@ -276,12 +277,14 @@ sap.ui.define([
 			// act
 			this.MP._selectMonth(0);
 			this.MP._handleMousedown(oFakeMousedownEvent, 6);
+			sap.ui.getCore().applyChanges();
 
 			// assert
 			assert.strictEqual(oSelectedDates[0].getStartDate().getMonth(), 6, "July is selected start month");
 
 			// act
 			this.MP.onmouseup(oFakeMouseupEvent);
+			sap.ui.getCore().applyChanges();
 
 			// assert
 			assert.strictEqual(oSelectedDates[0].getEndDate().getMonth(), 8, "September is selected end month");
