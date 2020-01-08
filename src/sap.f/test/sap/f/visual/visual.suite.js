@@ -1,6 +1,7 @@
 /*global module*/
 
 module.exports = [
+	"AdaptiveCardVisualTests.spec.js",
 	"Avatar.spec.js",
 	"CardsVisualTests.spec.js",
 	"DynamicPage.spec.js",
