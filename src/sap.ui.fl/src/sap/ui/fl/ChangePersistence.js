@@ -610,14 +610,22 @@ sap.ui.define([
 			switch (oChange.getPendingAction()) {
 				case "NEW":
 					aPromises.push(CompatibilityConnector.create(oChange.getDefinition(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
-						oChange.setState(Change.states.PERSISTED);
+						if (result && result.response && result.response[0]) {
+							oChange.setResponse(result.response[0]);
+						} else {
+							oChange.setState(Change.states.PERSISTED);
+						}
 						Cache.addChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
 					}.bind(this)));
 					break;
 				case "UPDATE":
 					aPromises.push(CompatibilityConnector.update(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
-						oChange.setState(Change.states.PERSISTED);
+						if (result && result.response) {
+							oChange.setResponse(result.response);
+						} else {
+							oChange.setState(Change.states.PERSISTED);
+						}
 						Cache.updateChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
 					}.bind(this)));
