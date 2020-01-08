@@ -12,17 +12,16 @@ sap.ui.define([
 	/**
 	 * Prepares the ChangesMap from the flex response
 	 *
-	 * @param {object} mPropertyBag
-	 * @param {object} mPropertyBag.storageResponse - Storage response
-	 *
-	 * @returns {object} The prepared map of changes
-	 *
 	 * @experimental since 1.74
 	 * @function
 	 * @since 1.74
 	 * @private
 	 * @ui5-restricted
 	 * @alias module:sap/ui/fl/apply/_internal/flexState/prepareChangesMap
+	 *
+	 * @param {object} mPropertyBag - Contains additional data needed for preparing the map
+	 * @param {object} mPropertyBag.storageResponse - Storage response with the flex data
+	 * @returns {object} The prepared map for changes
 	 */
 	return function(mPropertyBag) {
 		var aChangeDefinitions = mPropertyBag.storageResponse.changes.changes;

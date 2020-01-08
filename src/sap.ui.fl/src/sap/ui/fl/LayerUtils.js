@@ -167,6 +167,21 @@ function(
 		},
 
 		/**
+		 * The function loops over the array and filteres the object if the layer property is over the current max layer
+		 *
+		 * @param {object[]} aChangeDefinitions - Array of change definitions
+		 * @returns {object[]} Array of filtered change definitions
+		 */
+		filterChangeDefinitionsByMaxLayer: function(aChangeDefinitions) {
+			return aChangeDefinitions.filter(function(oChangeDefinition) {
+				if (oChangeDefinition.layer && LayerUtils.isOverMaxLayer(oChangeDefinition.layer)) {
+					return false;
+				}
+				return true;
+			});
+		},
+
+		/**
 		 * Returns the value of the specified url parameter of the current url
 		 *
 		 * @param {String} sParameterName Name of the url parameter

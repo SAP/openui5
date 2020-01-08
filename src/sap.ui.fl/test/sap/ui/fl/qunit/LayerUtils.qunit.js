@@ -209,6 +209,43 @@ function(
 		});
 	});
 
+	QUnit.module("LayerUtils.filterChangeDefinitionsByMaxLayer", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with max layer = ", function(assert) {
+			var aChangeDefinitions = [
+				{fileName: "user1", layer: "USER"},
+				{fileName: "customer1", layer: "CUSTOMER"},
+				{fileName: "customer_base1", layer: "CUSTOMER_BASE"},
+				{fileName: "vendor1", layer: "VENDOR"},
+				{fileName: "user2", layer: "USER"}
+			];
+			var oMaxLayerStub = sandbox.stub(LayerUtils, "getMaxLayer").returns("USER");
+			var aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
+			assert.equal(aFilteredChanges.length, 5, "USER: all 5 changes are returned");
+
+			oMaxLayerStub.returns("CUSTOMER");
+			aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
+			assert.equal(aFilteredChanges.length, 3, "CUSTOMER: 3 changes are returned");
+			assert.equal(aFilteredChanges[0].fileName, "customer1");
+			assert.equal(aFilteredChanges[1].fileName, "customer_base1");
+			assert.equal(aFilteredChanges[2].fileName, "vendor1");
+
+			oMaxLayerStub.returns("CUSTOMER_BASE");
+			aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
+			assert.equal(aFilteredChanges.length, 2, "CUSTOMER_BASE: 2 changes are returned");
+			assert.equal(aFilteredChanges[0].fileName, "customer_base1");
+			assert.equal(aFilteredChanges[1].fileName, "vendor1");
+
+			oMaxLayerStub.returns("VENDOR");
+			aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
+			assert.equal(aFilteredChanges.length, 1, "VENDOR: 1 change is returned");
+			assert.equal(aFilteredChanges[0].fileName, "vendor1");
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});
