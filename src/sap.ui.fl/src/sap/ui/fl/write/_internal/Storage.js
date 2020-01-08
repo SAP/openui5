@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/StorageFeaturesMerger",
 	"sap/base/util/ObjectPath"
 ], function(
-	ApplyUtils,
+	StorageUtils,
 	StorageFeaturesMerger,
 	ObjectPath
 ) {
@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @returns {Promise<map[]>} Resolving with a list of maps for all configured write connectors and their requested modules
 	 */
 	function _getWriteConnectors() {
-		return ApplyUtils.getConnectors(WRITE_CONNECTOR_NAME_SPACE, false);
+		return StorageUtils.getConnectors(WRITE_CONNECTOR_NAME_SPACE, false);
 	}
 
 	function findConnectorConfigForLayer(sLayer, aConnectors) {
@@ -61,7 +61,7 @@ sap.ui.define([
 						layers: oConnectorConfig.layers
 					};
 				})
-				.catch(ApplyUtils.logAndResolveDefault.bind(null, {
+				.catch(StorageUtils.logAndResolveDefault.bind(null, {
 					features: {},
 					layers: oConnectorConfig.layers
 				}, oConnectorConfig, "loadFeatures"));
@@ -72,7 +72,12 @@ sap.ui.define([
 
 	function _sendLoadVersionsToConnector(mPropertyBag, oConnectorConfig) {
 		mPropertyBag.url = oConnectorConfig.url;
-		return oConnectorConfig.writeConnectorModule.loadVersions(mPropertyBag);
+		return oConnectorConfig.writeConnectorModule.versions.load(mPropertyBag);
+	}
+
+	function _sendActivateDraftToConnector(mPropertyBag, oConnectorConfig) {
+		mPropertyBag.url = oConnectorConfig.url;
+		return oConnectorConfig.writeConnectorModule.versions.activateDraft(mPropertyBag);
 	}
 
 	/**
@@ -178,7 +183,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset
 	 * @returns {Promise} Resolves after the reset is completed and rejects in case of an error
 	 */
-	Storage.reset = function (mPropertyBag) {
+	Storage.reset = function(mPropertyBag) {
 		return executeActionByName("reset", mPropertyBag);
 	};
 
@@ -194,23 +199,8 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.appVersion] Version of the application
 	 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 	 */
-	Storage.getFlexInfo = function (mPropertyBag) {
+	Storage.getFlexInfo = function(mPropertyBag) {
 		return executeActionByName("getFlexInfo", mPropertyBag);
-	};
-
-	/**
-	 * Provides a list of versions for a given application and layer.
-	 *
-	 * @param {object} mPropertyBag Property bag
-	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
-	 * @param {string} mPropertyBag.reference Flex reference
-	 * @returns {Promise<sap.ui.fl.Versions[]>} Promise resolving with a list of versions if available;
-	 * rejects if an error occurs or the layer does not support draft handling
-	 */
-	Storage.loadVersions = function(mPropertyBag) {
-		return _getWriteConnectors()
-			.then(findConnectorConfigForLayer.bind(this, mPropertyBag.layer))
-			.then(_sendLoadVersionsToConnector.bind(this, mPropertyBag));
 	};
 
 	/**
@@ -241,6 +231,38 @@ sap.ui.define([
 	 */
 	Storage.publish = function(mPropertyBag) {
 		return executeActionByName("publish", mPropertyBag);
+	};
+
+	Storage.versions = {
+		/**
+		 * Loads the versions for a given application and layer.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+		 * @param {string} mPropertyBag.reference Flex reference
+		 * @returns {Promise<sap.ui.fl.Version[]>} Promise resolving with a list of versions if available;
+		 * rejects if an error occurs or the layer does not support draft handling
+		 */
+		load: function (mPropertyBag) {
+			return _getWriteConnectors()
+				.then(findConnectorConfigForLayer.bind(undefined, mPropertyBag.layer))
+				.then(_sendLoadVersionsToConnector.bind(undefined, mPropertyBag));
+		},
+
+		/**
+		 * Activates the draft for a given application and layer.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+		 * @param {string} mPropertyBag.reference Flex reference
+		 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the activated version;
+		 * rejects if an error occurs or the layer does not support draft handling
+		 */
+		activateDraft: function (mPropertyBag) {
+			return _getWriteConnectors()
+				.then(findConnectorConfigForLayer.bind(undefined, mPropertyBag.layer))
+				.then(_sendActivateDraftToConnector.bind(undefined, mPropertyBag));
+		}
 	};
 
 	return Storage;

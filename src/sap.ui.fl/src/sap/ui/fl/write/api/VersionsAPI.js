@@ -49,7 +49,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 *
-	 * @returns {Promise<sap.ui.fl.Versions[]>} Promise resolving with a list of versions if available;
+	 * @returns {Promise<sap.ui.fl.Version[]>} Promise resolving with a list of versions if available;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	VersionsAPI.getVersions = function (mPropertyBag) {
@@ -68,6 +68,40 @@ sap.ui.define([
 		}
 
 		return Versions.getVersions({
+			reference: sReference,
+			layer: mPropertyBag.layer
+		});
+	};
+
+	/**
+	 * Activates a draft version.
+	 *
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 *
+	 * @ui5-restricted sap.ui.rta
+	 *
+	 * @returns {Promise<sap.ui.fl.Version[]>} Promise resolving with the updated list of versions for the application
+	 * when the version was activated;
+	 * rejects if an error occurs or the layer does not support draft handling or there is no draft to activate
+	 */
+	VersionsAPI.activateDraft = function (mPropertyBag) {
+		if (!mPropertyBag.selector) {
+			return Promise.reject("No selector was provided");
+		}
+		if (!mPropertyBag.layer) {
+			return Promise.reject("No layer was provided");
+		}
+
+		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		var sReference = Utils.getComponentClassName(oAppComponent);
+
+		if (!sReference) {
+			return Promise.reject("The application ID could not be determined");
+		}
+
+		return Versions.activateDraft({
 			reference: sReference,
 			layer: mPropertyBag.layer
 		});
