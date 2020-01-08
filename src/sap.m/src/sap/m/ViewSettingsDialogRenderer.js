@@ -11,6 +11,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var ViewSettingsDialogRenderer = {
+		apiVersion: 2
 	};
 
 	/**
