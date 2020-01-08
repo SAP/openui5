@@ -300,4 +300,176 @@ sap.ui.define([
 			ODataModel.prototype._processChange.call(oModel, sKey, oData, sUpdateMethod, sDeepPath),
 			oRequest);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_writePathCache: ", function (assert) {
+		var oModel = {
+				mPathCache : {}
+			},
+			_writePathCache = ODataModel.prototype._writePathCache;
+
+		// code under test
+		_writePathCache.call(oModel, "", "");
+
+		assert.deepEqual(oModel.mPathCache, {});
+
+		// code under test
+		_writePathCache.call(oModel, "/Path", "");
+
+		assert.deepEqual(oModel.mPathCache, {});
+
+		// code under test
+		_writePathCache.call(oModel, "", "/Canonical");
+
+		assert.deepEqual(oModel.mPathCache, {});
+
+		// code under test
+		_writePathCache.call(oModel, "/Deep/Path", "/Canonical");
+
+		assert.deepEqual(oModel.mPathCache, { "/Deep/Path" : { canonicalPath : "/Canonical"}});
+
+		// code under test
+		_writePathCache.call(oModel, "/Deep/Path", "/OtherCanonical");
+
+		assert.deepEqual(oModel.mPathCache, { "/Deep/Path" : { canonicalPath : "/OtherCanonical"}});
+
+		// code under test
+		_writePathCache.call(oModel, "/Deep/Path2", "/Canonical2");
+
+		assert.deepEqual(oModel.mPathCache, {
+			"/Deep/Path" : { canonicalPath : "/OtherCanonical"},
+			"/Deep/Path2" : { canonicalPath : "/Canonical2"}
+		});
+
+		// code under test
+		_writePathCache.call(oModel, "/Canonical1", "/Canonical2");
+
+		assert.deepEqual(oModel.mPathCache, {
+			"/Deep/Path" : { canonicalPath : "/OtherCanonical"},
+			"/Deep/Path2" : { canonicalPath : "/Canonical2"},
+			"/Canonical1" : { canonicalPath : "/Canonical1"}
+		});
+
+		// code under test
+		_writePathCache.call(oModel, "/FunctionImport", "/Canonical", /*bFunctionImport*/true);
+
+		assert.deepEqual(oModel.mPathCache, {
+			"/Deep/Path" : { canonicalPath : "/OtherCanonical"},
+			"/Deep/Path2" : { canonicalPath : "/Canonical2"},
+			"/Canonical1" : { canonicalPath : "/Canonical1"},
+			"/FunctionImport" : { canonicalPath : "/Canonical"}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_importData for function import", function (assert) {
+		var mChangedEntities = {},
+			oData = {},
+			oModel = {
+				_getEntity : function () {},
+				_getKey : function () {},
+				hasContext : function () {},
+				resolveFromCache : function () {},
+				_updateChangedEntities : function () {},
+				_writePathCache : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oData)).returns("key");
+		oModelMock.expects("_getEntity").withExactArgs("key").returns("entry");
+		oModelMock.expects("hasContext").withExactArgs("/key").returns(false);
+		oModelMock.expects("_updateChangedEntities").withExactArgs({key : "entry"});
+		oModelMock.expects("resolveFromCache").withExactArgs("sDeepPath").returns("/key");
+		// test that bFunctionImport is propagated to _writePathCache
+		oModelMock.expects("_writePathCache").withExactArgs("/key", "/key", "bFunctionImport");
+		oModelMock.expects("_writePathCache").withExactArgs("sPath", "/key", "bFunctionImport");
+		oModelMock.expects("_writePathCache").withExactArgs("sDeepPath", "/key", "bFunctionImport");
+
+		// the parameter oResponse is unused in this test as there is no array or navigation
+		// properties in the data nor are there bindable response headers
+		// the parameter sKey is unused in this test as it is always unset in non-recursive calls to
+		// _importData
+
+		// code under test
+		ODataModel.prototype._importData.call(oModel, oData, mChangedEntities,
+			/*oResponse*/ undefined, "sPath", "sDeepPath", /*sKey*/ undefined, "bFunctionImport");
+
+		assert.ok(mChangedEntities["key"]);
+	});
+
+	//*********************************************************************************************
+["requestKey", undefined].forEach(function (sRequestKey, i) {
+[{ isFunction : "isFunction" }, undefined].forEach(function (oEntityType, j) {
+	QUnit.test("_processSuccess for function import:" + i + ", " + j, function (assert) {
+		var aRequests = [],
+			oModel = {
+				_createEventInfo : function () {},
+				_decreaseDeferredRequestCount : function () {},
+				decreaseLaundering : function () {},
+				fireRequestCompleted : function () {},
+				_getEntity : function () {},
+				_importData : function () {},
+				oMetadata : {
+					_getEntityTypeByPath : function () {}
+				},
+				_normalizePath : function () {},
+				_parseResponse : function () {},
+				sServiceUrl : "/service/",
+				_updateETag : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oRequest = {
+				data : "requestData",
+				deepPath : "deepPath",
+				key : sRequestKey,
+				requestUri : "/service/path"
+			},
+			oResponse = {
+				data : {
+					_metadata : {}
+				},
+				_imported : false,
+				statusCode : 200
+			},
+			bSuccess;
+
+		oModelMock.expects("_normalizePath").withExactArgs("/path").returns("normalizedPath");
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("normalizedPath")
+			.returns(oEntityType);
+		oModelMock.expects("_normalizePath")
+			.withExactArgs("/path", undefined, /*bCanonical*/ !oEntityType)
+			.returns("normalizedPath");
+		oModelMock.expects("decreaseLaundering").withExactArgs("normalizedPath","requestData");
+		oModelMock.expects("_decreaseDeferredRequestCount")
+			.withExactArgs(sinon.match.same(oRequest));
+		// test that bFunctionImport is propagated to _importData
+		if (sRequestKey) {
+			oModelMock.expects("_importData").withExactArgs(oResponse.data,
+			/*mLocalGetEntities*/ {}, oResponse, /*sPath*/ undefined, /*sDeepPath*/ undefined,
+			/*sKey*/ undefined, oEntityType && "isFunction");
+		} else {
+			oModelMock.expects("_importData").withExactArgs(oResponse.data,
+			/*mLocalGetEntities*/ {}, oResponse, "normalizedPath", "deepPath",
+			/*sKey*/ undefined, oEntityType && "isFunction");
+		}
+		oModelMock.expects("_getEntity").withExactArgs(sRequestKey). returns({__metadata : {}});
+		oModelMock.expects("_parseResponse").withExactArgs(oResponse, oRequest,
+			/*mLocalGetEntities*/ {}, /*mLocalChangeEntities*/ {});
+		oModelMock.expects("_updateETag").withExactArgs(oRequest, oResponse);
+		oModelMock.expects("_createEventInfo").withExactArgs(oRequest, oResponse, aRequests)
+			.returns("oEventInfo");
+		oModelMock.expects("fireRequestCompleted").withExactArgs("oEventInfo");
+
+		// code under test
+		bSuccess = ODataModel.prototype._processSuccess.call(oModel, oRequest, oResponse,
+			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {},
+			/*mEntityTypes*/ {}, /*bBatch*/ false, aRequests);
+
+		assert.strictEqual(bSuccess, true);
+	});
+});
+});
+
+	//TODO refactor ODataModel#mPathCache to a simple map path -> canonical path instead of map
+	// path -> object with single property 'canonicalPath'
 });
