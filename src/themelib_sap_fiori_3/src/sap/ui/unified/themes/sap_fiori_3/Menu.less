@@ -21,6 +21,11 @@
 	.sapUiMnuDiv {
 	  height: 1px;
 	}
+
+	.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf {
+		height: @_sap_ui_unified_Menu_ItmHeightCozy - 0.625rem;
+	}
+
 }
 
 .sapUiMnuItm.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov:hover {
@@ -96,4 +101,34 @@ html.sap-phone .sapMMenuLIImgThumbIcon{
 .sapUiMnu .sapUiMnuLst .sapUiMnuItm.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov:active{
 	border-bottom: 1px solid transparent;
 	background-color: @sapUiListActiveBackground;
+}
+
+html.sap-phone .sapUiSizeCozy .sapUiMnuItm {
+		.sapUiMnuItmTxt {
+			padding-left: 1rem;
+		}
+		.sapUiMnuItmIco + .sapUiMnuItmTxt {
+			padding-left: 0;
+		}
+	}
+
+html.sap-desktop,
+html.sap-tablet {
+	.sapUiSizeCozy .sapUiMnuItm {
+		.sapUiMnuItmTxt {
+			padding-left: 0.75rem;
+		}
+		.sapUiMnuItmIco + .sapUiMnuItmTxt {
+			padding-left: 0;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapUiMnuItm {
+	.sapUiMnuItmTxt {
+		padding-left: 0.5rem;
+	}
+	.sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0;
+	}
 }
