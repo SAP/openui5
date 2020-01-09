@@ -2218,6 +2218,11 @@ sap.ui.define([
 	* @private
 	*/
 	ObjectPageLayout.prototype._updateMedia = function (iWidth, oMedia) {
+        if (!iWidth) {
+            // in case of rerendering or when the control does not exist at the moment, a zero is passed as iWidth and
+            // phone media styles are applied which is causing flickering when the actual size is passed
+            return;
+        }
 		// Applies the provided CSS Media (oMedia) class and removes the rest.
 		// Example: If the <code>sapFDynamicPage-Std-Phone</code> class should be applied,
 		// the <code>sapFDynamicPage-Std-Tablet</code> and <code>sapFDynamicPage-Std-Desktop</code> classes will be removed.
