@@ -74,6 +74,15 @@ html.sap-phone .sapMMenuLIImgThumbIcon{
 	line-height:  2.75rem;
 }
 
+html.sap-phone .sapUiSizeCozy .sapUiMnuItm {
+	.sapUiMnuItmTxt {
+		padding-left: 1rem;
+	}
+	.sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0;
+	}
+}
+
 .sapMMenuLIArrowRightIcon {
 	font-size: 0.75rem;
 	width: 2.75rem;
@@ -103,32 +112,35 @@ html.sap-phone .sapMMenuLIImgThumbIcon{
 	background-color: @sapUiListActiveBackground;
 }
 
-html.sap-phone .sapUiSizeCozy .sapUiMnuItm {
-		.sapUiMnuItmTxt {
-			padding-left: 1rem;
-		}
-		.sapUiMnuItmIco + .sapUiMnuItmTxt {
-			padding-left: 0;
-		}
-	}
-
 html.sap-desktop,
 html.sap-tablet {
-	.sapUiSizeCozy .sapUiMnuItm {
-		.sapUiMnuItmTxt {
+	.sapUiSizeCozy{
+		.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
 			padding-left: 0.75rem;
 		}
-		.sapUiMnuItmIco + .sapUiMnuItmTxt {
+		.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+			padding-left: 0;
+		}
+		.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
+		.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
 			padding-left: 0;
 		}
 	}
 }
 
-.sapUiSizeCompact .sapUiMnuItm {
-	.sapUiMnuItmTxt {
+/** Compact Mode **/
+
+.sapUiSizeCompact{
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
 		padding-left: 0.5rem;
 	}
-	.sapUiMnuItmIco + .sapUiMnuItmTxt {
+
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0rem;
+	}
+
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt{
 		padding-left: 0;
 	}
 }
