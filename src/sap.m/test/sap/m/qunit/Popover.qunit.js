@@ -731,6 +731,7 @@ sap.ui.define([
 	QUnit.test("Set vertical/horizontal scrolling", function (assert){
 		oPopover.setVerticalScrolling(false);
 		oPopover.setHorizontalScrolling(false);
+		sap.ui.getCore().applyChanges();
 
 		assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
 		assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
@@ -739,6 +740,7 @@ sap.ui.define([
 
 		oPopover.setVerticalScrolling(true);
 		oPopover.setHorizontalScrolling(true);
+		sap.ui.getCore().applyChanges();
 
 		assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
 		assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
@@ -751,10 +753,10 @@ sap.ui.define([
 		oPopover.setModal(true);
 		oPopover.setShowHeader(false);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.byId(oPopover.getId() + "-intHeader").css("display") === "none", "Internal header is removed");
+		assert.ok(!jQuery.sap.domById(oPopover.getId() + "-intHeader"), "Internal header is removed");
 		oPopover.setShowHeader(true);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.byId(oPopover.getId() + "-intHeader").css("display") !== "none", "Internal header is rendered");
+		assert.ok(jQuery.sap.byId(oPopover.getId() + "-intHeader").css("display") !== "none", "Internal header is re-rendered");
 	});
 
 	QUnit.test("Set custom header", function (assert){
