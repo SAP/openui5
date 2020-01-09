@@ -832,6 +832,7 @@ sap.ui.define([
 		}
 
 		if (aSelectedTokens.length < 2) {
+			oEvent.preventDefault();
 			this.onsapprevious(oEvent);
 		} else {
 			this._focusUnselectedToken(oEvent);
