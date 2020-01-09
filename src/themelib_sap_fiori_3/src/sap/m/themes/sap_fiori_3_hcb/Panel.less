@@ -24,3 +24,26 @@
 		border-width: 2px;
 	}
 }
+
+html[data-sap-ui-animation='on'] {
+	.sapMPanelExpandableIcon {
+		-webkit-transition: none;
+		transition: none;
+	}
+
+	.sapMPanelExpandableIconExpanded {
+		-webkit-transition: none;
+		transition: none;
+	}
+}
+
+.sapMPanelExpandableIconExpanded {
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+
+	&:before {
+		display: block;
+		-webkit-transform: rotate(90deg);
+		transform: rotate(90deg);
+	}
+}
