@@ -381,7 +381,7 @@ sap.ui.define([
 			}
 		};
 
-		/**
+		/**cal
 		 * Compares the given month and the one from the <code>startDate</code>.
 		 *
 		 * @param {Date} oDate1 JavaScript date

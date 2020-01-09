@@ -266,8 +266,8 @@ sap.ui.define([
 			if (mItem.template.endDate) {
 				mAppointmentSettings.endDate = BindingHelper.formattedProperty(mItem.template.endDate, this.dateFormatter);
 			}
-			if (mItem.template.icon) {
-				mAppointmentSettings.icon = BindingHelper.formattedProperty(mItem.template.icon, function (sValue) {
+			if (mItem.template.icon && mItem.template.icon.src) {
+				mAppointmentSettings.icon = BindingHelper.formattedProperty(mItem.template.icon.src, function (sValue) {
 					return IconFormatter.formatSrc(sValue, this._sAppId);
 				}.bind(this));
 			}
@@ -289,8 +289,8 @@ sap.ui.define([
 			if (mItem.template.endDate) {
 				mBlockerSettings.endDate = BindingHelper.formattedProperty(mItem.template.endDate, this.dateFormatter);
 			}
-			if (mItem.template.icon) {
-				mBlockerSettings.icon = BindingHelper.formattedProperty(mItem.template.icon, function (sValue) {
+			if (mItem.template.icon && mItem.template.icon.src) {
+				mBlockerSettings.icon = BindingHelper.formattedProperty(mItem.template.icon.src, function (sValue) {
 					return IconFormatter.formatSrc(sValue, this._sAppId);
 				}.bind(this));
 			}

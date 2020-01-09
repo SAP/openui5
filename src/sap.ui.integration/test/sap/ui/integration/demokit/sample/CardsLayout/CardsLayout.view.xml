@@ -53,6 +53,11 @@
 							<f:GridContainerItemLayoutData  minRows="5" columns="6" />
 						</w:layoutData>
 					</w:Card>
+					<w:Card manifest="{manifests>/calendar}" action="onAction">
+						<w:layoutData>
+							<f:GridContainerItemLayoutData minRows="4" columns="4" />
+						</w:layoutData>
+					</w:Card>
 				</f:GridContainer>
 				<Title
 					text="Incidents"

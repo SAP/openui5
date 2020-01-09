@@ -45,6 +45,7 @@
 				"Object",
 				"Timeline",
 				"Component",
+				"Calendar",
 				"AdaptiveCard"
 			]
 		},
@@ -113,10 +114,16 @@
 			]
 		},
 		{
-			"allOf": [
-				{ "properties": { "type": { "enum": [ "AdaptiveCard" ] } }},
-				{ "properties": { "content": { "$ref": "#/definitions/ContentType.AdaptiveCard" } }}
-			]
+		  "allOf": [
+			{ "properties": { "type": { "enum": [ "Calendar" ] } }},
+			{ "properties": { "content": { "$ref": "#/definitions/ContentType.Calendar" }}}
+		  ]
+		},
+		{
+		  "allOf": [
+			{ "properties": { "type": { "enum": [ "AdaptiveCard" ] } }},
+			{ "properties": { "content": { "$ref": "#/definitions/ContentType.AdaptiveCard" } }}
+		  ]
 		}
 	],
 	"definitions": {
@@ -974,6 +981,277 @@
 					"$ref": "#/definitions/progressIndicator"
 				}
 			}
+		},
+		"ContentType.Calendar": {
+			"description": "The calendar card is used to display a schedule of a single entity (such as person, resource) for a selected time interval.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"data": {
+					"$ref": "#/definitions/data"
+				},
+				"item": {
+					"$ref": "#/definitions/ContentType.Calendar.Item"
+				},
+				"legendItem": {
+					"$ref": "#/definitions/ContentType.Calendar.LegendItem"
+				},
+				"specialDate": {
+					"$ref": "#/definitions/ContentType.Calendar.SpecialDate"
+				},
+				"date": {
+					"description": "The initial date of the calendar which appointments are initially shown",
+					"oneOf": [
+						{ "type": "number" },
+						{ "type": "string" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"maxItems": {
+					"description": "Represents number of items displayed",
+					"oneOf": [
+						{ "type": "number" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"maxLegendItems": {
+					"description": "Represents number of legendItems displayed",
+					"oneOf": [
+						{ "type": "number" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"noItemsText": {
+					"description": "The text shown when there are no items for the selected day",
+					"oneOf": [
+						{ "type": "string" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"moreItems": {
+					"description": "Defines actions that can be applied on the button showing there are more items than the shown",
+					"type": "object",
+					"properties": {
+						"actions": {
+							"description": "Represents an action that can be applied on he button showing there are more items than the shown.",
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/action"
+							}
+						}
+					}
+				}
+			}
+		},
+		"ContentType.Calendar.Item": {
+			"description": "Describes each item.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"template": {
+					"$ref": "#/definitions/ContentType.Calendar.Item.Template"
+				},
+				"path": {
+					"description": "Defines the path to the structure holding the data about the items.",
+					"type": "string"
+				}
+			}
+		},
+		"ContentType.Calendar.Item.Template": {
+			"description": "The template for all items",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"visualization": {
+					"description": "Defines the visualization of the item in the card. Available visualizations: \"appointment\" and \"blocker\".",
+					"oneOf": [
+						{ "$ref": "#/definitions/field" },
+						{ "type": "string" }
+					]
+				},
+				"startDate": {
+					"description": "The start date of the item.",
+					"oneOf": [
+						{ "type": "number" },
+						{ "type": "string" }
+					]
+				},
+				"endDate": {
+					"description": "The end date of the item.",
+					"oneOf": [
+						{ "type": "number" },
+						{ "type": "string" }
+					]
+				},
+				"title": {
+					"description": "The title of the item.",
+					"type": "string"
+				},
+				"text": {
+					"description": "The additional information of the item. Note: It is available only for items of visualization type \"appointment\".",
+					"type": "string"
+				},
+				"icon": {
+					"$ref": "#/definitions/icon"
+				},
+				"type": {
+					"description": "The type of the item - one of the types defined in the legend.",
+					"oneOf": [
+						{
+							"enum": [
+								"Type01",
+								"Type02",
+								"Type03",
+								"Type04",
+								"Type05",
+								"Type06",
+								"Type07",
+								"Type08",
+								"Type09",
+								"Type10",
+								"Type11",
+								"Type12",
+								"Type13",
+								"Type14",
+								"Type15",
+								"Type16",
+								"Type17",
+								"Type18",
+								"Type19",
+								"Type20"
+							],
+							"default": "Type01"
+						},
+						{ "type": "string" }
+					]
+				}
+			}
+		},
+		"ContentType.Calendar.LegendItem": {
+			"description": "Describes each legendItem.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"template": {
+					"$ref": "#/definitions/ContentType.Calendar.LegendItem.Template"
+				},
+				"path": {
+					"description": "Defines the path to the structure holding the data about the legendItems.",
+					"type": "string"
+				}
+			}
+		},
+		"ContentType.Calendar.LegendItem.Template": {
+			"description": "The template for all legendItems",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"category": {
+					"description": "Defines which card component describes the legend item. Available categories: \"calendar\" (represented as square) or \"appointment\" (circle).",
+					"type": "string"
+				},
+				"text": {
+					"description": "The describing information of the item.",
+					"type": "string"
+				},
+				"type": {
+					"description": "The type of the legend item corresponding with the described component.",
+					"oneOf": [
+						{
+							"enum": [
+								"Type01",
+								"Type02",
+								"Type03",
+								"Type04",
+								"Type05",
+								"Type06",
+								"Type07",
+								"Type08",
+								"Type09",
+								"Type10",
+								"Type11",
+								"Type12",
+								"Type13",
+								"Type14",
+								"Type15",
+								"Type16",
+								"Type17",
+								"Type18",
+								"Type19",
+								"Type20"
+							],
+							"default": "Type01"
+						},
+						{ "type": "string" }
+					]
+				}
+			}
+		},
+		"ContentType.Calendar.SpecialDate": {
+			"description": "Describes each specialDate.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"template": {
+					"$ref": "#/definitions/ContentType.Calendar.SpecialDate.Template"
+				},
+				"path": {
+					"description": "Defines the path to the structure holding the data about the specialDates.",
+					"type": "string"
+				}
+			}
+		},
+		"ContentType.Calendar.SpecialDate.Template": {
+			"description": "The template for all specialDates",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"startDate": {
+					"description": "The start date of the special date.",
+					"oneOf": [
+						{ "type": "number" },
+						{ "type": "string" }
+					]
+				},
+				"endDate": {
+					"description": "The end date of the special date.",
+					"oneOf": [
+						{ "type": "number" },
+						{ "type": "string" }
+					]
+				},
+				"type": {
+					"description": "The type of the special date - one of the types defined in the legend.",
+					"oneOf": [
+						{
+							"enum": [
+								"Type01",
+								"Type02",
+								"Type03",
+								"Type04",
+								"Type05",
+								"Type06",
+								"Type07",
+								"Type08",
+								"Type09",
+								"Type10",
+								"Type11",
+								"Type12",
+								"Type13",
+								"Type14",
+								"Type15",
+								"Type16",
+								"Type17",
+								"Type18",
+								"Type19",
+								"Type20"
+							],
+							"default": "Type01"
+						},
+						{ "type": "string" }
+					]
+				}
+			  }
 		},
 		"ContentType.AdaptiveCard": {
 			"description": "Represents AdaptiveCard content",

@@ -150,7 +150,9 @@
 		  "endDate": "{end}",
 		  "title": "{title}",
 		  "text": "{text}",
-		  "icon": "{icon}",
+		  "icon": {
+			"src": "{icon}"
+		  },
 		  "type": "{type}"
 		},
 		"path": "/item"

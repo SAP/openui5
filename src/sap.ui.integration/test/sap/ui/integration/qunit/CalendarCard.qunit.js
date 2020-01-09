@@ -170,7 +170,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/appointment"
@@ -181,7 +183,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/blocker"
@@ -302,7 +306,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"
@@ -421,7 +427,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"
@@ -506,7 +514,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"
@@ -582,7 +592,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon":  {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"
@@ -685,7 +697,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"
@@ -770,7 +784,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"
@@ -846,7 +862,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"
@@ -949,7 +967,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"
@@ -1034,7 +1054,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"
@@ -1110,7 +1132,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"
@@ -1239,7 +1263,9 @@ sap.ui.define([
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",
-							"icon": "{icon}",
+							"icon": {
+								"src": "{icon}"
+							},
 							"type": "{type}"
 						},
 						"path": "/item"

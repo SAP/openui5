@@ -75,8 +75,8 @@ sap.ui.define([
 						title: 'Calendar',
 						target: 'exploreSamples',
 						key: 'calendar',
-						manifestUrl: '/samples/calendar/calendar.json',
 						experimental: true,
+						manifestUrl: '/samples/calendar/calendar.json',
 						settings: {
 							columns: 7
 						}
