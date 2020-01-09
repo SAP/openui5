@@ -1321,6 +1321,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._updateMedia = function (iWidth) {
+        if (!iWidth) {
+            // in case of rerendering or when the control does not exist at the moment, a zero is passed as iWidth and
+            // phone media styles are applied which is causing flickering when the actual size is passed
+            return;
+        }
 		if (iWidth <= DynamicPage.BREAK_POINTS.PHONE) {
 			this._updateMediaStyle(DynamicPage.MEDIA.PHONE);
 		} else if (iWidth <= DynamicPage.BREAK_POINTS.TABLET) {
