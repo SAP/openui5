@@ -13,16 +13,26 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
 				"sap.m": {},
 				"sap.f": {}
 			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "RevealGrid/RevealGrid.css"
+				}
+			]
 		},
 		"config": {
 			"sample": {
 				"files": [
 					"GridListResponsiveColumnLayout.view.xml",
 					"GridListResponsiveColumnLayout.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"RevealGrid/RevealGrid.js",
+					"RevealGrid/RevealGrid.css"
 				]
 			}
 		}

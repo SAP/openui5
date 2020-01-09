@@ -3,6 +3,11 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:grid="sap.ui.layout.cssgrid">
+	<ToggleButton
+		id="revealGrid"
+		text="Reveal Grid"
+		press="onRevealGrid"
+		class="sapUiSmallMargin" />
 	<Panel width="100%" height="100%">
 		<headerToolbar>
 			<OverflowToolbar height="3rem">

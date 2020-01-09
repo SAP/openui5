@@ -1,12 +1,13 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/f/sample/GridListBoxContainerReal/RevealGrid/RevealGrid"
+], function (Controller, RevealGrid) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.GridListBoxContainerReal.GridListBoxContainerReal", {
 		onInit: function () {
-			var model = new sap.ui.model.json.JSONModel();
-			var data = [
+			var oModel = new sap.ui.model.json.JSONModel();
+			var oData = [
 				{ title: "Grid item title 1", subtitle: "Subtitle 1", group: "Group A" },
 				{ title: "Grid item title 2", subtitle: "Subtitle 2", group: "Group A" },
 				{ title: "Grid item title 3", subtitle: "Subtitle 3", group: "Group A" },
@@ -35,15 +36,22 @@ sap.ui.define([
 				{ title: "Grid item title B 26", subtitle: "Subtitle 26", group: "Group B" },
 				{ title: "Grid item title B 27", subtitle: "Subtitle 27", group: "Group B" }
 			];
-			model.setData(data);
-
-			this.getView().setModel(model);
+			oModel.setData(oData);
+			this.getView().setModel(oModel);
 		},
+
+		onExit: function() {
+			RevealGrid.destroy(["gridList1", "gridList2", "gridList3"], this.getView());
+		},
+
+		onRevealGrid: function () {
+			RevealGrid.toggle(["gridList1", "gridList2", "gridList3"], this.getView());
+		},
+
 		onSliderMoved: function (oEvent) {
-			var value = oEvent.getParameter("value");
-			this.byId("gridList").setWidth(value + "%");
+			var fValue = oEvent.getParameter("value");
+			this.byId("gridList").setWidth(fValue + "%");
 		}
+
 	});
-
 });
-

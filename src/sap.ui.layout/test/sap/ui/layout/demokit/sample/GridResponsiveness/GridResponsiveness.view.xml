@@ -4,6 +4,11 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:grid="sap.ui.layout.cssgrid"
 	xmlns:form="sap.ui.layout.form">
+	<ToggleButton
+		id="revealGrid"
+		text="Reveal Grid"
+		press="onRevealGrid"
+		class="sapUiSmallMargin"/>
 	<Slider
 		value="100"
 		liveChange=".onSliderMoved"

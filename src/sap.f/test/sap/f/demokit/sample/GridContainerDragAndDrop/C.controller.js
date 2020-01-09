@@ -1,14 +1,15 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	'sap/ui/core/dnd/DragInfo',
-	'sap/f/dnd/GridDropInfo'
-], function (Controller, JSONModel, DragInfo, GridDropInfo) {
+	"sap/ui/core/dnd/DragInfo",
+	"sap/f/dnd/GridDropInfo",
+	"sap/f/sample/GridContainerDragAndDrop/RevealGrid/RevealGrid"
+], function (Controller, JSONModel, DragInfo, GridDropInfo, RevealGrid) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.GridContainerDragAndDrop.C", {
-		onInit: function () {
 
+		onInit: function () {
 			var oCardManifests = new JSONModel(sap.ui.require.toUrl("sap/f/sample/GridContainerDragAndDrop/cardManifests.json"));
 			var oGrid = this.byId("grid1");
 
@@ -17,6 +18,7 @@ sap.ui.define([
 			oGrid.addDragDropConfig(new DragInfo({
 				sourceAggregation: "items"
 			}));
+
 			oGrid.addDragDropConfig(new GridDropInfo({
 				targetAggregation: "items",
 				dropPosition: "Between",
@@ -41,7 +43,6 @@ sap.ui.define([
 					} else {
 						oDropParent.insertItem(oDragged, iDropPosition + 1);
 					}
-
 				}
 			}));
 
@@ -57,6 +58,15 @@ sap.ui.define([
 					oGrid.addStyleClass("sapUiSmallMargin");
 				}
 			});
+		},
+
+		onRevealGrid: function () {
+			RevealGrid.toggle("grid1", this.getView());
+		},
+
+		onExit: function () {
+			RevealGrid.destroy("grid1", this.getView());
 		}
+
 	});
 });

@@ -1,6 +1,9 @@
 {
 	"listContent": {
 		"smallList": {
+			"sap.app": {
+				"id": "smallListCard"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -11,7 +14,8 @@
 					}
 				},
 				"content": {
-					"items": [{
+					"items": [
+						{
 							"title": "Call Simone",
 							"icon": "sap-icon://call",
 							"infoState": "Error"
@@ -26,6 +30,9 @@
 			}
 		},
 		"mediumList": {
+			"sap.app": {
+				"id": "mediumListCard"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -36,7 +43,8 @@
 					}
 				},
 				"content": {
-					"items": [{
+					"items": [
+						{
 							"title": "Alain Chevalier",
 							"icon": "sap-icon://person-placeholder"
 						},
@@ -65,6 +73,9 @@
 			}
 		},
 		"largeList": {
+			"sap.app": {
+				"id": "largeListCard"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -96,7 +107,6 @@
 									"state": "Success",
 									"info": "27.45 EUR",
 									"infoState": "Success"
-
 								},
 								{
 									"Name": "Notebook Basic 18",

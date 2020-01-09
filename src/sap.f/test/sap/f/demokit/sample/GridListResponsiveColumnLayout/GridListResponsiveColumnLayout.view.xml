@@ -1,9 +1,14 @@
 <mvc:View
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:grid="sap.ui.layout.cssgrid"
-		xmlns:f="sap.f"
-		controllerName="sap.f.sample.GridListResponsiveColumnLayout.GridListResponsiveColumnLayout">
+	controllerName="sap.f.sample.GridListResponsiveColumnLayout.GridListResponsiveColumnLayout"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f">
+	<ToggleButton
+		id="revealGrid"
+		text="Reveal Grid"
+		press="onRevealGrid"
+		class="sapUiSmallMargin" />
 	<Slider value="100" liveChange="onSliderMoved"/>
 	<Panel id="panelForGridList">
 		<headerToolbar>
@@ -11,66 +16,64 @@
 				<Title text="GridList with ResponsiveColumnLayout" />
 			</Toolbar>
 		</headerToolbar>
-		<content>
-			<f:GridList>
-				<f:customLayout>
-					<grid:ResponsiveColumnLayout>
-					</grid:ResponsiveColumnLayout>
-				</f:customLayout>
-				<f:GridListItem>
-					<f:layoutData>
-						<grid:ResponsiveColumnItemLayoutData columns="4" rows="4" />
-					</f:layoutData>
-					<VBox class="sapUiSmallMargin">
-						<Title text="4 / 4" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-					</VBox>
-				</f:GridListItem>
-				<f:GridListItem>
-					<f:layoutData>
-						<grid:ResponsiveColumnItemLayoutData columns="3" rows="2" />
-					</f:layoutData>
-					<VBox class="sapUiSmallMargin">
-						<Title text="3 / 2" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-					</VBox>
-				</f:GridListItem>
-				<f:GridListItem>
-					<f:layoutData>
-						<grid:ResponsiveColumnItemLayoutData columns="3" rows="2" />
-					</f:layoutData>
-					<VBox class="sapUiSmallMargin">
-						<Title text="3 / 2" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-					</VBox>
-				</f:GridListItem>
-				<f:GridListItem>
-					<f:layoutData>
-						<grid:ResponsiveColumnItemLayoutData columns="1" rows="1" />
-					</f:layoutData>
-					<VBox class="sapUiSmallMargin">
-						<Title text="1 / 1" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-					</VBox>
-				</f:GridListItem>
-				<f:GridListItem>
-					<f:layoutData>
-						<grid:ResponsiveColumnItemLayoutData columns="1" rows="1" />
-					</f:layoutData>
-					<VBox class="sapUiSmallMargin">
-						<Title text="1 / 1" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-						<Label text="Subtitle" wrapping="true" />
-					</VBox>
-				</f:GridListItem>
-			</f:GridList>
-		</content>
+
+		<f:GridList id="grid1">
+			<f:customLayout>
+				<grid:ResponsiveColumnLayout />
+			</f:customLayout>
+			<f:GridListItem>
+				<f:layoutData>
+					<grid:ResponsiveColumnItemLayoutData columns="4" rows="4" />
+				</f:layoutData>
+				<VBox class="sapUiSmallMargin">
+					<Title text="4 / 4" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+				</VBox>
+			</f:GridListItem>
+			<f:GridListItem>
+				<f:layoutData>
+					<grid:ResponsiveColumnItemLayoutData columns="3" rows="2" />
+				</f:layoutData>
+				<VBox class="sapUiSmallMargin">
+					<Title text="3 / 2" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+				</VBox>
+			</f:GridListItem>
+			<f:GridListItem>
+				<f:layoutData>
+					<grid:ResponsiveColumnItemLayoutData columns="3" rows="2" />
+				</f:layoutData>
+				<VBox class="sapUiSmallMargin">
+					<Title text="3 / 2" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+				</VBox>
+			</f:GridListItem>
+			<f:GridListItem>
+				<f:layoutData>
+					<grid:ResponsiveColumnItemLayoutData columns="1" rows="1" />
+				</f:layoutData>
+				<VBox class="sapUiSmallMargin">
+					<Title text="1 / 1" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+				</VBox>
+			</f:GridListItem>
+			<f:GridListItem>
+				<f:layoutData>
+					<grid:ResponsiveColumnItemLayoutData columns="1" rows="1" />
+				</f:layoutData>
+				<VBox class="sapUiSmallMargin">
+					<Title text="1 / 1" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+					<Label text="Subtitle" wrapping="true" />
+				</VBox>
+			</f:GridListItem>
+		</f:GridList>
 	</Panel>
 </mvc:View>
