@@ -260,6 +260,15 @@ sap.ui.define(function () {
 					'./cards/AdaptiveContent/UI5InputChoiceSet.qunit'
 				]
 			},
+			"ActionRender": {
+				coverage: {
+					only: ["sap/f/cards/adaptivecards/overwrites/ActionRender"]
+				},
+				module: [
+					'./cards/AdaptiveContent/ActionRender.qunit'
+				]
+			},
+
 			// -------------------------------------------------------------------------------
 			// Designtime tests:
 			// -------------------------------------------------------------------------------
