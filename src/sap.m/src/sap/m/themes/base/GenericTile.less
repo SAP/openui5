@@ -18,6 +18,8 @@
 
 .sapMGTBackgroundImage {
 	background-clip: padding-box;
+	background-color: inherit;
+	background-position: inherit;
 	background-size: cover;
 }
 
@@ -81,10 +83,6 @@
 	font-size: @sapMFontHeader5Size;
 }
 
-.sapMGTSubHdrTxt {
-  margin-top: 0.5rem;
-}
-
 .sapMGTSubHdrTxt > .sapMText,
 .sapMGTSubHdrTxt {
 	overflow: hidden;
@@ -97,10 +95,10 @@
 }
 
 .sapMGTHdrContent {
-	height: 4rem;
-	margin-top: 0.625rem;
-	margin-left: 0.94rem;
-	margin-right: 0.94rem;
+	height: 3.625rem;
+	margin-top: 1rem;
+	margin-left: 1rem;
+	margin-right: 1rem;
 }
 
 .sapMGTHdrIconImage {
@@ -256,6 +254,14 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 }
 
 /************************ LINE MODE LIST VIEW ********************/
+
+.sapMGTLineModeListContainer {
+	background-color: @sapUiGroupContentBackground;
+	border: @sapUiTileBorderColor;
+	border-radius: 0.25rem;
+	box-shadow: @sapUiShadowLevel0;
+}
+
 /* COZY */
 .sapUiMedia-GenericTileDeviceSet-small {
 	.sapMGTLineMode.sapMGT {
@@ -414,6 +420,14 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 	}
 }
 /************************ LINE MODE FLOATING VIEW *****************/
+
+.sapMGTLineModeFloatingContainer {
+	background-color: @sapUiTileBackground;
+	border: @sapUiTileBorderColor;
+	border-radius: 0.25rem;
+	box-shadow: @sapUiShadowLevel0;
+}
+
 /* COZY */
 .sapUiMedia-GenericTileDeviceSet-large {
 	&.sapMGTLineModeContainer, .sapMGTLineModeContainer {
@@ -642,10 +656,6 @@ html[dir=rtl] .sapMGenericTileFtrFldTxt {
 	vertical-align: bottom;
 }
 
-.sapMST .sapMGT.sapMGTBackgroundImage {
-    border: none;
-}
-
 /* the following is needed for non-webkit browsers that don't support line-clamping */
 
 /* some places should be left for subheader when the subheader exists*/
@@ -666,16 +676,6 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 }
 
 .sapMTileSmallPhone {
-	.sapMGTHdrTxt .sapMText {
-		line-height: 1.1875rem;
-	}
-
-	&.sapMGT:not(.sapMGTLineMode) .sapMGTSubHdrTxt > .sapMText {
-		line-height: 1.1875rem;
-	}
-	&.sapMGT:not(.sapMGTLineMode) .sapMGTSubHdrTxt {
-		line-height: 1.1875rem;
-	}
 
 	&.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
 		max-height: 4.72rem;

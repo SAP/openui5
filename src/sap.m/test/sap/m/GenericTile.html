@@ -185,15 +185,6 @@
 	});
 	oGenericTile2.addStyleClass("sapUiSmallMargin");
 
-	var oNewsTileContent = new sap.m.TileContent("news-tile-cont-2x1",{
-		footer : "{footer}",
-		frameType : sap.m.FrameType.TwoByOne,
-		content : new sap.m.NewsContent({
-			contentText : "{contentText}",
-			subheader : "{subheader}"
-		})
-	});
-
 	var oGenericTile3 = new sap.m.GenericTile({
 		mode : "{/mode}",
 		tooltip : "{/tooltip}",
@@ -207,7 +198,14 @@
 		press : fnPress,
 		failedText : "{/failedText}",
 		tileContent : {
-			template : oNewsTileContent,
+			template : new sap.m.TileContent("news-tile-cont-2x1",{
+				footer : "{footer}",
+				frameType : sap.m.FrameType.TwoByOne,
+				content : new sap.m.NewsContent({
+					contentText : "{contentText}",
+					subheader : "{subheader}"
+				})
+			}),
 			path : "/newsTileContent"
 		}
 	});
@@ -242,20 +240,31 @@
 	});
 	oGenericTile4.addStyleClass("sapUiSmallMargin");
 
-    var oGenericTile5 = new sap.m.GenericTile({
-        mode : "{/mode}",
-        subheader : "{/subheader}",
-        frameType : "{/frameType}",
-        header : "{/header}",
-        tooltip : "{/tooltip}",
-        state : "{/state}",
-        scope : "{/scope}",
-        width : "{/width}",
-        headerImage : "{/headerImage}",
-        wrappingType: "{/wrappingType}",
-        backgroundImage : "{/backgroundImage}",
-        imageDescription : "{/imageDescription}"
-    });
+	var oGenericTile5 = new sap.m.GenericTile({
+		mode : "{/mode}",
+		tooltip : "{/tooltip}",
+		frameType : sap.m.FrameType.OneByOne,
+		state : "{/state}",
+		scope : "{/scope}",
+		headerImage : "{/headerImage}",
+		imageDescription : "{/imageDescription}",
+		backgroundImage : "{/backgroundImage}",
+		wrappingType: "{/wrappingType}",
+		press : fnPress,
+		failedText : "{/failedText}",
+		tileContent : {
+			template : new sap.m.TileContent("news-tile-cont-1x1",{
+				footer : "{footer}",
+				frameType : sap.m.FrameType.OneByOne,
+				content : new sap.m.NewsContent({
+					contentText : "{contentText}",
+					subheader : "{subheader}"
+				})
+			}),
+			path : "/newsTileContent"
+		}
+	});
+	oGenericTile5.addStyleClass("sapUiSmallMargin");
 
 	var oModeLabel = new sap.m.Label({
 		id: "mode-label",
@@ -284,27 +293,16 @@
 	});
 	oTitleInput.bindValue("/header");
 
-    var oImgSrc = new sap.m.Label({
-        text : "Background Image",
-        labelFor : "backgroundImage-value"
-    });
+	var oImgSrc = new sap.m.Label({
+		text : "Background Image",
+		labelFor : "backgroundImage-value"
+	});
 
-    var oImgSrcInput = new sap.m.Input("backgroundImage-value", {
-        type : sap.m.InputType.Text,
-        placeholder : 'Enter URL...'
-    });
-    oImgSrcInput.bindValue("/backgroundImage");
-
-    var oWidth = new sap.m.Label({
-        text : "Width",
-        labelFor : "width-value"
-    });
-
-    var oWidthInput = new sap.m.Input("width-value", {
-        type : sap.m.InputType.Text,
-        placeholder : 'Enter Width in px...'
-    });
-    oWidthInput.bindValue("/width");
+	var oImgSrcInput = new sap.m.Input("backgroundImage-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter URL...'
+	});
+	oImgSrcInput.bindValue("/backgroundImage");
 
 	var oTitleDscr = new sap.m.Label({
 		text : "Subheader",
@@ -552,7 +550,7 @@
 		editable : true,
 		content : [new sap.ui.core.Title({ // this starts a new group
 			text : "Modify Tile"
-		}), oModeLabel, oModeSelect, oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oImgSrc, oImgSrcInput, oWidth, oWidthInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit,
+		}), oModeLabel, oModeSelect, oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oImgSrc, oImgSrcInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit,
 				oUnitInput, oFailedLabel, oFailedInput, oFrameTypeLabel, oFrameTypeSelect, oPictureLbl, oPictureSlct,oImageDescLbl, oImageDescInput, oStateLabel, oStateSelect, oScopeLabel, oScopeSelect, oPressLbl,
 				oPressSwtch, oIndicatorLabel, oIndicatorSelect, oSizeLbl, oSizeBtn, oWrappingLabel, oWrappingSelect]
 	});

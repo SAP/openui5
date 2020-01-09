@@ -7,7 +7,7 @@
 	.sapMGTContent {
 		border-bottom-left-radius: 0.125rem;
 		border-bottom-right-radius: 0.125rem;
-		height: 6.250rem;
+		height: auto;
 	}
 }
 
@@ -92,7 +92,7 @@
 .sapUiMedia-GenericTileDeviceSet-large {
 	&.sap-desktop .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
 		&:hover .sapMGTLineStyleHelperInner {
-			background: fade(@sapUiShellHoverBackground, 10);
+			background: @sapUiTileHoverBackground;
 		}
 	}
 	.sapMGT.sapMGTLineMode {
@@ -184,26 +184,29 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	border-radius: 0.25rem
 }
 
-.sapMGT.sapMGTPressActive:not(.sapMGTBackgroundImage) {
-	background: @sapUiTileActiveBackground;
+.sapMGT.sapMGTPressActive {
 	box-shadow: 0 0 0 1px fade(@sapUiContentContrastShadowColor, 30);
+
+	&:not(.sapMGTBackgroundImage) {
+		background: @sapUiTileActiveBackground;
+	}
 }
 
 .sapMGTWithImageHoverOverlay.sapMGTPressActive {
 	background: fade(@sapUiTileActiveBackground, 20%);
-	box-shadow: 0 0 0 1px fade(@sapUiContentContrastShadowColor, 30);
 }
 
-html.sap-desktop .sapMGT:hover:not(.sapMGTBackgroundImage):not(.sapMGTPressActive) {
-	background: @sapUiTileHoverBackground;
+html.sap-desktop .sapMGT:hover:not(.sapMGTPressActive) {
 	box-shadow: 0 0 0 1px fade(@sapUiContentContrastShadowColor, 30);
 	transition: background 0.2s;
-}
 
-html.sap-desktop .sapMGT:hover .sapMGTWithImageHoverOverlay:not(.sapMGTPressActive) {
-	background: fade(@sapUiTileHoverBackground, 10%);
-	box-shadow: 0 0 0 1px fade(@sapUiContentContrastShadowColor, 30);
-	transition: background 0.2s;
+	&:not(.sapMGTBackgroundImage) {
+		background: @sapUiTileHoverBackground;
+	}
+
+	.sapMGTWithImageHoverOverlay {
+		background: fade(@sapUiTileHoverBackground, 10%);
+	}
 }
 
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv,
