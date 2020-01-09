@@ -59,9 +59,9 @@
 					<contentRight>
 					<Toolbar
 							id="navToolbar">
-							<Button id="issuesBtn" text="{= 'Issues (' + ${/issuesCount} + ')' }" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
+							<Button id="issuesBtn" text="Issues ({/issuesCount})" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
 
-							<Button id="analysisBtn" text="{path: '/libraries', formatter: '.setRulesLabel'}" press="goToAnalysis" type="Emphasized"/>
+							<Button id="analysisBtn" text="Rules ({/selectedRulesCount})" press="goToAnalysis" type="Emphasized"/>
 
 							<c:Icon width="100%" id="settingsIcon" src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin"/>
 

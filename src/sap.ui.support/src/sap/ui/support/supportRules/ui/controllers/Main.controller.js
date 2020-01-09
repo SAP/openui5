@@ -187,18 +187,6 @@ sap.ui.define([
 			Documentation.openTopic("57ccd7d7103640e3a187ed55e1d2c163");
 		},
 
-		setRulesLabel: function (libs) {
-			var selectedCounter = 0;
-			if (libs === null) {
-				return "Rules (" + selectedCounter + ")";
-			} else {
-				libs.forEach(function (lib, libIndex) {
-					selectedCounter += lib.rules.length;
-				});
-				return "Rules (" + selectedCounter + ")";
-			}
-		},
-
 		updateShowButton: function () {
 			// When hidden is true - the frame is minimized and we show the "show" button
 			this.byId("sapSTShowButtonBar").setVisible(this.hidden);
