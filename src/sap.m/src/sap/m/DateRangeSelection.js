@@ -1012,7 +1012,7 @@ sap.ui.define([
 			bSecondDate,
 			oDate;
 
-		if (!this.getEditable() || !this.getEnabled()) {
+		if (!oFirstOldDate || !this.getEditable() || !this.getEnabled()) {
 			return;
 		}
 
