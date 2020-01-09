@@ -151,6 +151,7 @@ sap.ui.define([
 		}
 
 		if (this.getIntervalSelection()) {
+			this._oItemNavigation && this._oItemNavigation.focusItem(iMonth);
 			return this;
 		}
 
