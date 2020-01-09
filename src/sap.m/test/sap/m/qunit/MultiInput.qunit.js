@@ -1549,6 +1549,47 @@ sap.ui.define([
 		assert.strictEqual(oSpyChangeEvent.callCount, 1, "Change event should be fired once");
 	});
 
+	QUnit.test("The binding data and the value should be an empty string after adding a token when focusing out of the control", function (assert) {
+		// Arrange
+		var oMultiInput = new MultiInput({
+			value: "{/value}",
+			suggestionItems: [
+				new ListItem("itemId", {
+					key: "1",
+					text: "Token 1"
+				})
+			]
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		var oModel = new JSONModel({
+			value: ""
+		});
+
+		oMultiInput.addValidator(function (o) {
+			return o.suggestedToken ? o.suggestedToken : new Token({text: o.text});
+		});
+
+		oMultiInput.setModel(oModel);
+		oMultiInput.setValue("Token 1");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act - trigger onsapfocusleave and close
+		// the suggestion popover when an item is selected
+		oMultiInput.onsapfocusleave({});
+		oMultiInput.setSelectedKey("1");
+		oMultiInput._oSuggPopover._oPopover.close();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiInput.getValue(), "", "Value of the input should be empty");
+		assert.strictEqual(oMultiInput.getBinding("value").getModel().getProperty("/value"), "", "The binding value should be an empty string");
+
+		oMultiInput.destroy();
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach : function() {
 			this.multiInput1 = new MultiInput({
