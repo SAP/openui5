@@ -10,11 +10,11 @@
     "build": "rimraf dist && ui5 build --a"
   },
   "dependencies": {
-    "@openui5/sap.m": "^1.60",
-    "@openui5/sap.f": "^1.60",
-    "@openui5/sap.ui.core": "^1.60",
-    "@openui5/sap.ui.layout": "^1.60",
-    "@openui5/themelib_sap_belize": "^1.60"
+    "@openui5/sap.m": "^1",
+    "@openui5/sap.f": "^1",
+    "@openui5/sap.ui.core": "^1",
+    "@openui5/sap.ui.layout": "^1",
+    "@openui5/themelib_sap_fiori_3": "^1"
   },
   "devDependencies": {
     "@ui5/cli": "^1.0.0",
