@@ -685,6 +685,35 @@ sap.ui.define([
 		assert.equal(this.tokenizer.getTokens().length, 1, "Two tokens were removed");
 	});
 
+	QUnit.test("backspace on tokenizer with one token", function(assert) {
+		var oToken = new Token("token", { text : "Token 1", selected : true}),
+			oTokenizer = new Tokenizer("tokenizer", {
+				tokens: [
+					oToken
+				]
+			});
+		oTokenizer.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+
+		var preventDefaultSpy = this.spy(),
+			oFakeEvent = {
+				preventDefault: preventDefaultSpy,
+				target: oToken,
+				setMarked: function () {},
+				keyCode: KeyCodes.BACKSPACE,
+				which: KeyCodes.BACKSPACE
+			};
+
+		// Act
+		oTokenizer.onsapbackspace(oFakeEvent);
+
+		//Assert
+		assert.strictEqual(preventDefaultSpy.callCount, 2, "The default action of onsapbackspace and onsapprevious is prevented.");
+
+		oTokenizer.destroy();
+	});
+
 	QUnit.test("tab", function(assert) {
 		// act
 		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.TAB);
