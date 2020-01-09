@@ -4314,8 +4314,7 @@ sap.ui.define([
 
 	QUnit.module("findAggregatedObjects()");
 
-	QUnit.skip("findAggregatedObjects()", function (assert) {
-
+	QUnit.test("findAggregatedObjects()", function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -4327,13 +4326,17 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oComboBox.open();
 		var fnFindAggregatedObjectsSpy = this.spy(oComboBox, "findAggregatedObjects");
 
 		// act
 		oComboBox.findAggregatedObjects();
+		var oItem = fnFindAggregatedObjectsSpy.returnValues.pop();
 
 		// assert
-		assert.ok(fnFindAggregatedObjectsSpy.returned(oComboBox.getItems()));
+		assert.strictEqual(oItem[1], oComboBox._getList().getItems()[0], "findAggregatedObjects's should return list with an item.");
 
 		// cleanup
 		oComboBox.destroy();
@@ -5090,7 +5093,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.skip("it should update update the value of the input field when the selected item is pressed", function (assert) {
+	QUnit.test("it should update update the value of the input field when the selected item is pressed", function (assert) {
 
 		// system under test
 		var oItem;
@@ -5114,8 +5117,7 @@ sap.ui.define([
 		oComboBox.getFocusDomRef().value = "foo";
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox._getList().getDomRef(), {
-			srcControl: oItem,
+		sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox._getList().getSelectedItem().getDomRef(), {
 			changedTouches: {
 				0: {
 					pageX: 1,
@@ -9951,7 +9953,7 @@ sap.ui.define([
 	});
 
 	// BCP 1680061025
-	QUnit.skip("it should fire the change event after the selection is updated on mobile devices", function (assert) {
+	QUnit.test("it should fire the change event after the selection is updated on mobile devices", function (assert) {
 		var done = assert.async();
 		this.stub(Device, "system", {
 			desktop: false,
@@ -9989,35 +9991,30 @@ sap.ui.define([
 		// tick the clock ahead 1 second, after the open animation is completed
 		this.clock.tick(1000);
 
-		var oListDomRef = oComboBox._getList().getDomRef();
-		var oListItem = oComboBox.getListItem(oItem);
+		var oListItem = oComboBox.getListItem(oItem).getDomRef();
 		var oTouches = {
 			0: {
 				pageX: 1,
 				pageY: 1,
-				identifier: 0,
-				target: oListItem.getDomRef()
+				identifier: 0
 			},
 
 			length: 1
 		};
 
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oListDomRef, {
-			srcControl: oListItem,
+		sap.ui.test.qunit.triggerTouchEvent("touchstart", oListItem, {
 			touches: oTouches,
 			targetTouches: oTouches
 		});
 
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oListDomRef, {
-			srcControl: oListItem,
+		sap.ui.test.qunit.triggerTouchEvent("touchend", oListItem, {
 			changedTouches: oTouches,
 			touches: {
 				length: 0
 			}
 		});
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oListDomRef, {
-			srcControl: oListItem,
+		sap.ui.test.qunit.triggerTouchEvent("tap", oListItem, {
 			changedTouches: oTouches,
 			touches: {
 				length: 0
