@@ -60,38 +60,36 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 			oSubMenu = oItem.getSubmenu(),
 			bIsEnabled = oItem.getEnabled();
 
-		rm.write("<li");
+		rm.openStart("li", oItem);
 
 		if (oItem.getVisible() && bIsEnabled) {
-			rm.writeAttribute("tabindex", "0");
+			rm.attr("tabindex", "0");
 		}
 
-		var sClass = "sapUiMnuItm";
+		rm.class("sapUiMnuItm");
 		if (oInfo.iItemNo == 1) {
-			sClass += " sapUiMnuItmFirst";
+			rm.class("sapUiMnuItmFirst");
 		} else if (oInfo.iItemNo == oInfo.iTotalItems) {
-			sClass += " sapUiMnuItmLast";
+			rm.class("sapUiMnuItmLast");
 		}
 		if (!oMenu.checkEnabled(oItem)) {
-			sClass += " sapUiMnuItmDsbl";
+			rm.class("sapUiMnuItmDsbl");
 		}
 		if (oItem.getStartsSection()) {
-			sClass += " sapUiMnuItmSepBefore";
+			rm.class("sapUiMnuItmSepBefore");
 		}
 
-		rm.writeAttribute("class", sClass);
 		if (!bIsEnabled) {
-			rm.writeAttribute("disabled", "disabled");
+			rm.attr("disabled", "disabled");
 		}
 
 		if (oItem.getTooltip_AsString()) {
-			rm.writeAttributeEscaped("title", oItem.getTooltip_AsString());
+			rm.attr("title", oItem.getTooltip_AsString());
 		}
-		rm.writeElementData(oItem);
 
 		// ARIA
 		if (oInfo.bAccessible) {
-			rm.writeAccessibilityState(oItem, {
+			rm.accessibilityState(oItem, {
 				role: "menuitem",
 				disabled: null, // Prevent aria-disabled as a disabled attribute is enough
 				posinset: oInfo.iItemNo,
@@ -99,40 +97,59 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 				labelledby: {value: /*oMenu.getId() + "-label " + */this.getId() + "-txt " + this.getId() + "-scuttxt", append: true}
 			});
 			if (oSubMenu) {
-				rm.writeAttribute("aria-haspopup", true);
-				rm.writeAttribute("aria-owns", oSubMenu.getId());
+				rm.attr("aria-haspopup", true);
+				rm.attr("aria-owns", oSubMenu.getId());
 			}
 		}
 
 		// Left border
-		rm.write("><div class=\"sapUiMnuItmL\"></div>");
+		rm.openEnd();
+		rm.openStart("div");
+		rm.class("sapUiMnuItmL");
+		rm.openEnd();
+		rm.close("div");
 
 		// icon/check column
+		rm.openStart("div");
+		rm.class("sapUiMnuItmIco");
+		rm.openEnd();
 		if (oItem.getIcon()) {
-			rm.write("<div class=\"sapUiMnuItmIco\">");
-			rm.writeIcon(oItem.getIcon(), null, {title: null});
-			rm.write("</div>");
+			rm.icon(oItem.getIcon(), null, {title: null});
 		}
+		rm.close("div");
 
 		// Text column
-		rm.write("<div id=\"" + this.getId() + "-txt\" class=\"sapUiMnuItmTxt\">");
-		rm.writeEscaped(oItem.getText());
-		rm.write("</div>");
+		rm.openStart("div", this.getId() + "-txt");
+		rm.class("sapUiMnuItmTxt");
+		rm.openEnd();
+		rm.text(oItem.getText());
+		rm.close("div");
 
 		// Shortcut column
-		rm.write("<div id=\"" + this.getId() + "-scuttxt\" class=\"sapUiMnuItmSCut\"></div>");
+		rm.openStart("div", this.getId() + "-scuttxt");
+		rm.class("sapUiMnuItmSCut");
+		rm.openEnd();
+		rm.close("div");
 
 		// Submenu column
-		rm.write("<div class=\"sapUiMnuItmSbMnu\">");
+		rm.openStart("div");
+		rm.class("sapUiMnuItmSbMnu");
+		rm.openEnd();
 		if (oSubMenu) {
-			rm.write("<div class=\"sapUiIconMirrorInRTL\"></div>");
+			rm.openStart("div");
+			rm.class("sapUiIconMirrorInRTL");
+			rm.openEnd();
+			rm.close("div");
 		}
-		rm.write("</div>");
+		rm.close("div");
 
 		// Right border
-		rm.write("<div class=\"sapUiMnuItmR\"></div>");
+		rm.openStart("div");
+		rm.class("sapUiMnuItmR");
+		rm.openEnd();
+		rm.close("div");
 
-		rm.write("</li>");
+		rm.close("li");
 	};
 
 	MenuItem.prototype.hover = function(bHovered, oMenu){

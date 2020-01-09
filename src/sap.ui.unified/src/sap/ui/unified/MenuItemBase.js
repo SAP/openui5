@@ -94,14 +94,20 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 */
 	MenuItemBase.prototype.render = function(oRenderManager, oItem, oMenu){
 		var rm = oRenderManager;
-		rm.write("<li");
-		rm.writeElementData(oItem);
-		rm.write("><div style=\"white-space:nowrap;display:inline-block;padding:1px;color:black;\" id=\"" + this.getId() + "-txt\">");
-		rm.write(oItem.getId());
+		rm.openStart("li", oItem);
+		rm.openEnd();
+		rm.openStart("div", this.getId() + "-txt");
+		rm.style("white-space", "nowrap");
+		rm.style("display", "inline-block");
+		rm.style("padding", "1px");
+		rm.style("color", "black");
+		rm.openEnd();
+		rm.text(oItem.getId());
 		if (this.getSubmenu()) {
-			rm.write("&nbsp;&nbsp;->");
+			rm.text("&nbsp;&nbsp;->");
 		}
-		rm.write("</div></li>");
+		rm.close("div");
+		rm.close("li");
 	};
 
 	/**
