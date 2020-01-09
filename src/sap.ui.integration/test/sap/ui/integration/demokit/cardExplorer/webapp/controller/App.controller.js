@@ -1,6 +1,5 @@
 sap.ui.define([
 		"sap/ui/demo/cardExplorer/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
 		"sap/ui/Device",
 		"sap/base/Log",
 		"sap/ui/core/routing/History",
@@ -8,7 +7,6 @@ sap.ui.define([
 		"../model/ExploreNavigationModel",
 		"../model/IntegrateNavigationModel"
 	], function (BaseController,
-				 JSONModel,
 				 Device,
 				 Log,
 				 History,

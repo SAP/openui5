@@ -3,20 +3,17 @@
 
 <head>
 	<title>Integration Cards</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="Content-Type" content="text/html">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../../css/topic.css">
 	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
 
-	<link href="../google-code-prettify/prettify.css" rel="stylesheet">
-	<link href="../css/prettify-light.css" rel="stylesheet">
-
-	<script src="../google-code-prettify/run_prettify.js"></script>
-
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
 </head>
-
 <body class="sapUiBody topicBody">
 	<div class="topic">
 		<div class="content">
@@ -41,14 +38,22 @@
 					<li>Design-time artifacts that define the design-time behavior of the card</li>
 					<li>UI5 Component files in case of a <a href="./types/component.html">Component Card</a></li>
 				</ul>
-				These files are <b>refered relative</b> to the manifest and will be loaded from there.
-				Translation files should be stored in a seperate folder for convenience.
 			</p>
 
-			<h2 id="naming">Naming Conventions</h2>
+			<h2 id="resolvingPaths">How are paths resolved?</h2>
+			<p>
+				When the <code>manifest</code> property of the card is set as a URL to the <code>manifest.json</code> file all paths are
+				<b>resolved relatively</b> to that file and will be loaded from there. If the <code>manifest</code> property is set as an <code>object</code>
+				the <a href="../../index.html#/integrate/usage" target="_parent">baseUrl</a> property can be used as a starting point when resolving paths.
+			</p>
+
+			<h2 id="conventions">Conventions</h2>
 			<p>
 				A Card Bundle should have the name:
 				<pre>[CARDNAME].card.zip</pre>
+			</p>
+			<p>
+				Translation files and images should be stored in a separate folders for convenience.
 			</p>
 
 			<h1 id="example">Example</h1>
@@ -62,6 +67,7 @@
 -  images
    -  news.png
 -  i18n
+   -  messagebundle.properties
    -  messagebundle_en.properties
    -  messagebundle_de.properties
 -  designtime
@@ -77,6 +83,7 @@
 	"sap.app": {
 		"id": "cardexplorer.sample.news",
 		"type": "card",
+		"i18n": "i18n/messagebundle.properties"
 		"title": "{{mainTitle}}",
 		"subTitle": "{{mainDescription}}"
 	},
@@ -153,9 +160,10 @@
 		<div class="navigation">
 			<h4>Table of Contents</h4>
 			<div><a href="#overview">Overview</a></div>
-			<div><a href="#contained">What is contained in a Card Bundle</a></div>
 			<div><a href="#what">What is a Card Bundle</a></div>
-			<div><a href="#naming">Naming Conventions</a></div>
+			<div><a href="#contained">What is contained in a Card Bundle</a></div>
+			<div><a href="#resolvingPaths">How are paths resolved</a></div>
+			<div><a href="#conventions">Conventions</a></div>
 			<div><a href="#example">Example</a></div>
 		</div>
 	</div>

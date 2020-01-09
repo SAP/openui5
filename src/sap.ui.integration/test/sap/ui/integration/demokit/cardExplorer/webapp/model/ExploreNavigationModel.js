@@ -3,6 +3,7 @@ sap.ui.define([
 ], function (JSONModel) {
 	'use strict';
 
+	// Please order topics alphabetically by "title"
 	return new JSONModel({
 		selectedKey: 'learnGettingStarted',
 		navigation: [
@@ -14,9 +15,10 @@ sap.ui.define([
 				hasExpander: false,
 				items: [
 					{
-						title: 'Adaptive (Experimental)',
+						title: 'Adaptive',
 						target: 'exploreSamples',
 						key: 'adaptive',
+						experimental: true,
 						subSamples: [
 							{
 								title: 'Card',
@@ -68,6 +70,16 @@ sap.ui.define([
 								manifestUrl: '/samples/analytical/donut.json'
 							}
 						]
+					},
+					{
+						title: 'Calendar',
+						target: 'exploreSamples',
+						key: 'calendar',
+						manifestUrl: '/samples/calendar/calendar.json',
+						experimental: true,
+						settings: {
+							columns: 7
+						}
 					},
 					{
 						title: 'Component',
@@ -122,13 +134,13 @@ sap.ui.define([
 						]
 					},
 					{
-						title: 'Calendar (Еxperimental)',
+						title: 'Object',
 						target: 'exploreSamples',
-						key: 'calendar',
-						manifestUrl: '/samples/calendar/calendar.json',
+						key: 'object',
 						settings: {
-							columns: 7
-						}
+							columns: 5
+						},
+						manifestUrl: '/samples/object.json'
 					},
 					{
 						title: 'Table',
@@ -158,15 +170,6 @@ sap.ui.define([
 								manifestUrl: '/samples/timeline/members.json'
 							}
 						]
-					},
-					{
-						title: 'Object',
-						target: 'exploreSamples',
-						key: 'object',
-						settings: {
-							columns: 5
-						},
-						manifestUrl: '/samples/object.json'
 					}
 				]
 			},
@@ -260,7 +263,8 @@ sap.ui.define([
 					{
 						key: 'dateRange',
 						target: 'exploreSamples',
-						title: 'Date Range',
+						title: 'Date Ranges',
+						experimental: true,
 						settings: {
 							columns: 7
 						},

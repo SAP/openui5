@@ -42,7 +42,9 @@ sap.ui.define([
 				topicURL : sTopicURL,
 				bIsPhone : Device.system.phone
 			};
+
 			this.jsonDefModel.setData(jsonObj);
+			this.onFrameSourceChange();
 		},
 
 		_findNavEntry: function (key) {
