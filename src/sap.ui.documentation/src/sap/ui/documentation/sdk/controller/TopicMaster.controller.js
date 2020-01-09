@@ -8,8 +8,9 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/MasterTreeBaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/m/library",
-		"sap/base/Log"
-	], function (Device, MasterTreeBaseController, JSONModel, mobileLibrary, Log) {
+		"sap/base/Log",
+		"sap/ui/documentation/sdk/controller/util/Highlighter"
+	], function (Device, MasterTreeBaseController, JSONModel, mobileLibrary, Log, Highlighter) {
 		"use strict";
 
 		// shortcut for sap.m.SplitAppMode
@@ -22,6 +23,8 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit : function () {
+				this._oTree = this.byId("tree");
+
 				var oModel = new JSONModel();
 				oModel.setSizeLimit(10000);
 				this.getView().setModel(oModel);
@@ -57,6 +60,27 @@ sap.ui.define([
 				this._oIndexPromise.then(function () {
 					this._expandTreeToNode(this._preProcessTopicID(this._topicId), this.getModel());
 				}.bind(this));
+			},
+
+			onAfterRendering: function () {
+				if (!this.highlighter) {
+					this.highlighter = new Highlighter(this._oTree.getDomRef(), {
+						shouldBeObserved: true
+					});
+				}
+			},
+
+			onExit: function () {
+				this.highlighter.destroy();
+			},
+
+			onTreeFilter: function () {
+				MasterTreeBaseController.prototype.onTreeFilter.apply(this, arguments);
+
+				if (this.highlighter) {
+					this.highlighter.highlight(this._sFilter);
+				}
+				return this;
 			},
 
 			_onMatched: function () {

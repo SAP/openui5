@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/UriParameters",
 	"sap/ui/util/Storage",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/documentation/sdk/controller/util/Highlighter"
 ], function(
 	jQuery,
 	Device,
@@ -29,7 +30,8 @@ sap.ui.define([
 	jQueryDOM,
 	UriParameters,
 	Storage,
-	Core
+	Core,
+	Highlighter
 ) {
 		"use strict";
 
@@ -82,6 +84,8 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit : function () {
+				this._oList = this.byId("exploredMasterList");
+
 				var oEntityModel, oDeviceModel, oFilterModel,
 					fnOnDataReady = function (oControlsData) {
 						this._oView.getModel().setData({
@@ -173,6 +177,14 @@ sap.ui.define([
 
 				this.bus = Core.getEventBus();
 
+			},
+
+			onAfterRendering: function () {
+				if (!this.highlighter) {
+					this.highlighter = new Highlighter(this._oList.getDomRef(), {
+						shouldBeObserved: true
+					});
+				}
 			},
 
 			_viewSettingsResetOnNavigation: function (oEvent) {
@@ -525,6 +537,7 @@ sap.ui.define([
 			onExit: function() {
 				this._oCore.detachThemeChanged(this._scrollToSelectedListItem, this);
 				this._oCore.detachLocalizationChanged(this._onLocalizationChange, this);
+				this.highlighter.destroy();
 			},
 
 			onConfirmViewSettings: function (oEvent) {
@@ -562,6 +575,9 @@ sap.ui.define([
 
 			handleListFilter: function (oEvent) {
 				this._sFilterValue = oEvent.getParameter("newValue").trim();
+				if (this.highlighter) {
+					this.highlighter.highlight(this._sFilterValue);
+				}
 				this._updateView();
 			},
 
