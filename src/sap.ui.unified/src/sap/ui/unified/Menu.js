@@ -302,10 +302,6 @@ sap.ui.define([
 
 	//****** API Methods ******
 
-	Menu.prototype.setPageSize = function(iSize){
-		return this.setProperty("pageSize", iSize, true); /*No rerendering required*/
-	};
-
 	Menu.prototype.addItem = function(oItem){
 		this.addAggregation("items", oItem, !!this.getDomRef());
 		this._delayedRerenderItems();
