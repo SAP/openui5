@@ -81,10 +81,18 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		}
 	};
 
-	QUnit.module("ObjectPage Content scroll visibility");
+	QUnit.module("ObjectPage Content scroll visibility", {
+		beforeEach: function (assert) {
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+			this.oObjectPage = null;
+		}
+	});
 
 	QUnit.test("sectionChange event is fired upon scrolling", function (assert) {
-		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10),
+		var oObjectPage = this.oObjectPage,
 			oSection = oObjectPage.getSections()[9],
 			fnDone = assert.async();
 
@@ -99,7 +107,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	});
 
 	QUnit.test("ObjectPage Content CustomScrollBar visibility", function (assert) {
-		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10),
+		var oObjectPage = this.oObjectPage,
 			fnDone = assert.async();
 
 		assert.expect(2);
