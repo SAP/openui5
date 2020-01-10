@@ -549,18 +549,27 @@ sap.ui.define([
 		 * Evaluates months between two dates.
 		 * @param {object} oFirstDate JavaScript date
 		 * @param {object} oSecondDate JavaScript date
-		 * @return {int} iMinutes
+		 * @param {boolean} bDontAbsResult if omitted or false, the result will be positive number of months between dates;
+		 * 					if true, the result will be positive or negative depending of the direction of the difference
+		 * @return {int} iMonths
 		 * @private
 		 */
-		CalendarUtils._monthsBetween = function(oFirstDate, oSecondDate) {
+		CalendarUtils._monthsBetween = function(oFirstDate, oSecondDate, bDontAbsResult) {
 			var oUTCFirstDate = new Date(Date.UTC(oFirstDate.getUTCFullYear(), oFirstDate.getUTCMonth(), oFirstDate.getUTCDate())),
-				oUTCSecondDate = new Date(Date.UTC(oSecondDate.getUTCFullYear(), oSecondDate.getUTCMonth(), oSecondDate.getUTCDate()));
+				oUTCSecondDate = new Date(Date.UTC(oSecondDate.getUTCFullYear(), oSecondDate.getUTCMonth(), oSecondDate.getUTCDate())),
+				iMonths;
 
 			oUTCFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear());
 			oUTCSecondDate.setUTCFullYear(oSecondDate.getUTCFullYear());
 
-			return Math.abs(oUTCFirstDate.getUTCFullYear() * 12 + oUTCFirstDate.getUTCMonth()
-				- oUTCSecondDate.getUTCFullYear() * 12 - oUTCSecondDate.getUTCMonth());
+			iMonths = (oUTCSecondDate.getUTCFullYear() * 12 + oUTCSecondDate.getUTCMonth())
+					- (oUTCFirstDate.getUTCFullYear() * 12 + oUTCFirstDate.getUTCMonth());
+
+			if (!bDontAbsResult) {
+				iMonths = Math.abs(iMonths);
+			}
+
+			return iMonths;
 		};
 
 		/**
