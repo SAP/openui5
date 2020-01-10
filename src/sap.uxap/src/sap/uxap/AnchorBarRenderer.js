@@ -25,6 +25,9 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 				rm.renderControl(oToolbar._getScrollArrowLeft());
 
 				rm.openStart("div", oToolbar.getId() + "-scrollContainer");
+				if (oToolbar._bHideScrollContainer) {
+					rm.style("display", "none");
+				}
 				// ARIA attributes
 				rm.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_LABEL"))
 					.class("sapUxAPAnchorBarScrollContainer")
@@ -34,7 +37,9 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 					.attr("role", "menubar")
 					.openEnd();
 
-				AnchorBarRenderer.renderBarItems(rm, oToolbar);
+				if (!oToolbar._bHideScrollContainer) {
+					AnchorBarRenderer.renderBarItems(rm, oToolbar);
+				}
 
 				rm.close("div");
 
