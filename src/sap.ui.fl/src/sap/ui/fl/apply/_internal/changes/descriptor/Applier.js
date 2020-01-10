@@ -41,12 +41,6 @@ sap.ui.define([
 		preprocessManifest: function(oManifest, oConfig) {
 			// Measurement for the whole flex processing until the VariantModel is attached to the component; this does not include actual CodeExt or UI change applying
 			Measurement.start("flexProcessing", "Complete flex processing", ["sap.ui.fl"]);
-			Measurement.start("flexStateInitialize", "Initialization of flex state", ["sap.ui.fl"]);
-
-			var sReference = ManifestUtils.getFlexReference({
-				manifest: oManifest,
-				componentData: oConfig.componentData || {}
-			});
 
 			// toggle client side appdescriptor change merger with url parameter sap-ui-xx-appdescriptor-merger=true
 			// TODO: remove after performance testing is done
@@ -55,6 +49,12 @@ sap.ui.define([
 			if (!sClientSideMergerEnabled) {
 				return Promise.resolve(oManifest);
 			}
+
+			Measurement.start("flexStateInitialize", "Initialization of flex state", ["sap.ui.fl"]);
+			var sReference = ManifestUtils.getFlexReference({
+				manifest: oManifest,
+				componentData: oConfig.componentData || {}
+			});
 
 			return FlexState.initialize({
 				componentData: oConfig.componentData,
