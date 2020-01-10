@@ -2258,7 +2258,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("lockGroup", function (assert) {
-		var sGroupId = {/*string*/},
+		var fnCancel = {},
+			sGroupId = {/*string*/},
 			oGroupLock = {},
 			bLocked  = {/*boolean*/},
 			oModel = createModel(),
@@ -2267,11 +2268,12 @@ sap.ui.define([
 
 		this.mock(oModel.oRequestor).expects("lockGroup")
 			.withExactArgs(sinon.match.same(sGroupId), sinon.match.same(oOwner),
-				sinon.match.same(bLocked), sinon.match.same(bModifying))
+				sinon.match.same(bLocked), sinon.match.same(bModifying), sinon.match.same(fnCancel))
 			.returns(oGroupLock);
 
 		// code under test
-		assert.strictEqual(oModel.lockGroup(sGroupId, oOwner, bLocked, bModifying), oGroupLock);
+		assert.strictEqual(oModel.lockGroup(sGroupId, oOwner, bLocked, bModifying, fnCancel),
+			oGroupLock);
 	});
 
 	//*********************************************************************************************

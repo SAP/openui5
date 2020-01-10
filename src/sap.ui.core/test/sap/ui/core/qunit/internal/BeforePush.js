@@ -37,7 +37,6 @@
 	// 'integration': integration test mode only
 	// everything else: full & integration test mode
 	var mTests = {
-		'qunit/analytics/testsuite4analytics.qunit.html?hidepassed' : 'full',
 		'qunit/internal/AnnotationParser.qunit.html?hidepassed&coverage' : 'full',
 		'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
 		'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true&module=sap.ui.model.odata.v4.ODataModel.integration' : 'integration',

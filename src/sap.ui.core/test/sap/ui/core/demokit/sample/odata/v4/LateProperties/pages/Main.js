@@ -48,8 +48,10 @@ sap.ui.define([
 						id :[
 							"SalesOrderID",
 							"Note",
+							"GrossAmount",
 							"CompanyName",
 							"WebAddress",
+							"EmailAddress",
 							"ScheduleKey",
 							"ItemKey",
 							"DeliveryDate"

@@ -2101,8 +2101,10 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1878
 	// JIRA: CPOUI5ODATAV4-23 see that a late property for a nested entity (within $expand) is
 	// fetched
+	// JIRA: CPOUI5ODATAV4-27 see that two late property requests are merged (group ID "$auto"
+	// is required for this)
 	QUnit.test("ODLB: late property", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$auto"}),
 			oRowContext,
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'1\')}">\
@@ -2134,16 +2136,11 @@ sap.ui.define([
 			.expectChange("budget");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE,ID", {
-					"@odata.etag" : "etag0",
-					AGE : 42,
-					ID : "2"
-				})
-				//TODO: one request -> CPOUI5ODATAV4-27
-				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=ID"
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE,ID"
 					+ "&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
 					+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))", {
 					"@odata.etag" : "etag0",
+					AGE : 42,
 					ID : "2",
 					EMPLOYEE_2_TEAM : {
 						"@odata.etag" : "etag1",
@@ -2332,9 +2329,8 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest(
 				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
-				+ "/SOITEM_2_PRODUCT?$select=ProductID"
-				+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)"
-				+ "&sap-client=123", {
+				+ "/SOITEM_2_PRODUCT?sap-client=123&$select=ProductID"
+				+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)", {
 					"@odata.etag" : "etag1",
 					ProductID : "HT-1000",
 					PRODUCT_2_BP : {
@@ -2381,9 +2377,8 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
-				+ "?$select=ProductID"
-				+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)"
-				+ "&sap-client=123", {
+				+ "?sap-client=123&$select=ProductID"
+				+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)", {
 					"@odata.etag" : "ETag",
 					ProductID : "HT-1000",
 					PRODUCT_2_BP : {
@@ -2440,16 +2435,15 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var sMessage = "GET SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT?"
 				+ "$select=ProductID&$expand=PRODUCT_2_BP($select=BusinessPartnerID,"
-				+ "CompanyName)&sap-client=123: " + oFixture.error;
+				+ "CompanyName): " + oFixture.error;
 
 			that.oLogMock.expects("error")
 				.withArgs("Failed to read path /SalesOrderList('1')/SO_2_SOITEM('0010')/"
 					+ "SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName");
 
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
-					+ "?$select=ProductID"
-					+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)"
-					+ "&sap-client=123", {
+					+ "?sap-client=123&$select=ProductID"
+					+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)", {
 					"@odata.etag" : oFixture.lateEtag,
 					ProductID : oFixture.lateID,
 					PRODUCT_2_BP : {
@@ -2475,6 +2469,44 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity without using a UI and reset it immediately via ODataModel.
+	// No request is added to the queue and ODataModel#hasPendingChanges and
+	// ODataListBinding#hasPendingChanges work as expected.
+	// JIRA: CPOUI5ODATAV4-36
+	QUnit.test("create an entity and immediately reset changes (no UI)", function (assert) {
+		var // use autoExpandSelect so that the cache is created asynchronously
+			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "$auto"}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oListBindingWithoutUI = oModel.bindList("/SalesOrderList"),
+				oCreatedPromise = oListBindingWithoutUI.create({}, true).created();
+
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(oListBindingWithoutUI.hasPendingChanges());
+			assert.strictEqual(oListBindingWithoutUI.getLength(), 1 + 10/*length is not final*/);
+
+			oModel.resetChanges();
+
+			// the changes must disappear synchronously
+			assert.notOk(oModel.hasPendingChanges());
+			assert.notOk(oListBindingWithoutUI.hasPendingChanges());
+			assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
+
+			return oCreatedPromise.catch(function (oError) {
+				// create (which ran asynchronously) must not have changed anything
+				assert.ok(oError.canceled);
+
+				assert.notOk(oModel.hasPendingChanges());
+				assert.notOk(oListBindingWithoutUI.hasPendingChanges());
+				assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
+
+				return that.checkCanceled(assert, oCreatedPromise);
+			});
+		});
+	});
 });
 
 	//*********************************************************************************************
@@ -2485,7 +2517,7 @@ sap.ui.define([
 		var oModel = createModel(sSalesOrderService, {autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'1\')/Address}">\
-      <Text id="city" text="{City}"/>\
+	<Text id="city" text="{City}"/>\
 </FlexBox>\
 <Text id="postalCode" text="{PostalCode}"/>',
 			that = this;
@@ -9552,8 +9584,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: master/detail where the detail needs additional $expand/$select and thus causes
 	// late property requests
+	// JIRA: CPOUI5ODATAV4-27 see that two late property requests are merged (group ID "$auto"
+	// is required for this)
 	QUnit.test("Auto-$expand/$select: master/detail with separate requests", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$auto"}),
 			sView = '\
 <Table id="master" items="{/TEAMS}">\
 	<ColumnListItem>\
@@ -9562,6 +9596,7 @@ sap.ui.define([
 </Table>\
 <FlexBox id="detail" binding="{}">\
 	<Text id="text1" text="{Name}" />\
+	<Text id="text2" text="{Budget}" />\
 </FlexBox>',
 			that = this;
 
@@ -9569,15 +9604,17 @@ sap.ui.define([
 				value : [{Team_Id : "TEAM_01"}]
 			})
 			.expectChange("text0", ["TEAM_01"])
-			.expectChange("text1"); // expect a later change
+			.expectChange("text1") // expect a later change
+			.expectChange("text2");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
 
-			// 'Name' is added to the table row
-			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id",
-					{Name : "Team #1", Team_Id : "TEAM_01"})
-				.expectChange("text1", "Team #1");
+			// 'Budget' and 'Name' are added to the table row
+			that.expectRequest("TEAMS('TEAM_01')?$select=Budget,Name,Team_Id",
+					{Budget : "456", Name : "Team #1", Team_Id : "TEAM_01"})
+				.expectChange("text1", "Team #1")
+				.expectChange("text2", "456");
 
 			that.oView.byId("detail").setBindingContext(oContext);
 
