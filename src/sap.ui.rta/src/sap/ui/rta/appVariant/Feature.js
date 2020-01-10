@@ -363,6 +363,9 @@ sap.ui.define([
 					var fnDeleteAppVariant = function() {
 						return oAppVariantManager.deleteAppVariant(sAppVariantId)
 							.catch(function(oError) {
+								if (oError === 'cancel') {
+									return Promise.reject("cancel");
+								}
 								var sMessageKey = oError.messageKey;
 								if (!sMessageKey) {
 									sMessageKey = "MSG_DELETE_APP_VARIANT_FAILED";
@@ -416,7 +419,10 @@ sap.ui.define([
 						.then(fnDeleteAppVariant)
 						.then(fnDeleteSuccessMessage)
 						.then(fnTriggerS4HanaRefresh.bind(this))
-						.catch(function() {
+						.catch(function(oError) {
+							if (oError === 'cancel') {
+								return false;
+							}
 							if (bIsS4HanaCloud) {
 								fnS4HanaRemoveBrowserCloseWarning();
 							}
