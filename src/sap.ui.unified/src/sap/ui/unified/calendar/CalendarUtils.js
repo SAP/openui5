@@ -394,6 +394,92 @@ sap.ui.define([
 				|| oDate1.getFullYear() > oDate2.getFullYear();
 		};
 
+		/**
+		 * Evaluates minutes between two dates.
+		 * @param {Date} oFirstDate JavaScript date
+		 * @param {Date} oSecondDate JavaScript date
+		 * @return {int} iMinutes
+		 * @private
+		 */
+		CalendarUtils._minutesBetween = function(oFirstDate, oSecondDate) {
+			var iMinutes = (oSecondDate.getTime() - oFirstDate.getTime()) / 1000;
+			iMinutes = iMinutes / 60;
+
+			return Math.abs(Math.round(iMinutes));
+		};
+
+		/**
+		 * Evaluates whether the given minutes are less than the current.
+		 * The function uses local js date for comparison.
+		 * @param {int} iMinutes The minutes to check
+		 * @return {boolean} true if the give minutes are less than the current
+		 * @private
+		 */
+		CalendarUtils._areCurrentMinutesLessThan = function (iMinutes) {
+			var iCurrentMinutes = new Date().getMinutes();
+
+			return iMinutes >= iCurrentMinutes;
+		};
+
+		/**
+		 * Evaluates whether the given minutes are more than the current.
+		 * The function uses local js date for comparison.
+		 * @param {int} iMinutes The minutes to check
+		 * @return {boolean} true if the give minutes are more than the current
+		 * @private
+		 */
+		CalendarUtils._areCurrentMinutesMoreThan = function (iMinutes) {
+			var iCurrentMinutes = new Date().getMinutes();
+
+			return iMinutes <= iCurrentMinutes;
+		};
+
+		/**
+		 * Evaluates months between two dates.
+		 * @param {object} oFirstDate JavaScript date
+		 * @param {object} oSecondDate JavaScript date
+		 * @param {boolean} bDontAbsResult if omitted or false, the result will be positive number of months between dates;
+		 * 					if true, the result will be positive or negative depending of the direction of the difference
+		 * @return {int} iMonths
+		 * @private
+		 */
+		CalendarUtils._monthsBetween = function(oFirstDate, oSecondDate, bDontAbsResult) {
+			var oUTCFirstDate = new Date(Date.UTC(oFirstDate.getUTCFullYear(), oFirstDate.getUTCMonth(), oFirstDate.getUTCDate())),
+				oUTCSecondDate = new Date(Date.UTC(oSecondDate.getUTCFullYear(), oSecondDate.getUTCMonth(), oSecondDate.getUTCDate())),
+				iMonths;
+
+			oUTCFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear());
+			oUTCSecondDate.setUTCFullYear(oSecondDate.getUTCFullYear());
+
+			iMonths = (oUTCSecondDate.getUTCFullYear() * 12 + oUTCSecondDate.getUTCMonth())
+				- (oUTCFirstDate.getUTCFullYear() * 12 + oUTCFirstDate.getUTCMonth());
+
+			if (!bDontAbsResult) {
+				iMonths = Math.abs(iMonths);
+			}
+
+			return iMonths;
+		};
+
+		/**
+		 * Evaluates hours between two dates.
+		 * @param {object} oFirstDate JavaScript date
+		 * @param {object} oSecondDate JavaScript date
+		 * @return {int} iMinutes
+		 * @private
+		 */
+		CalendarUtils._hoursBetween = function(oFirstDate, oSecondDate) {
+			var oNewFirstDate = new Date(Date.UTC(oFirstDate.getUTCFullYear(),
+				oFirstDate.getUTCMonth(), oFirstDate.getUTCDate(), oFirstDate.getUTCHours()));
+			var oNewSecondDate = new Date(Date.UTC(oSecondDate.getUTCFullYear(),
+				oSecondDate.getUTCMonth(), oSecondDate.getUTCDate(), oSecondDate.getUTCHours()));
+
+			oNewFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear());
+			oNewSecondDate.setUTCFullYear(oSecondDate.getUTCFullYear());
+
+			return Math.abs((oNewFirstDate.getTime() - oNewSecondDate.getTime()) / (1000 * 60 * 60));
+		};
+
 		 // Utilities for working with sap.ui.unified.calendar.CalendarDate
 
 		/**
@@ -512,25 +598,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Evaluates hours between two dates.
-		 * @param {object} oFirstDate JavaScript date
-		 * @param {object} oSecondDate JavaScript date
-		 * @return {int} iMinutes
-		 * @private
-		 */
-		CalendarUtils._hoursBetween = function(oFirstDate, oSecondDate) {
-			var oNewFirstDate = new Date(Date.UTC(oFirstDate.getUTCFullYear(),
-				oFirstDate.getUTCMonth(), oFirstDate.getUTCDate(), oFirstDate.getUTCHours()));
-			var oNewSecondDate = new Date(Date.UTC(oSecondDate.getUTCFullYear(),
-				oSecondDate.getUTCMonth(), oSecondDate.getUTCDate(), oSecondDate.getUTCHours()));
-
-			oNewFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear());
-			oNewSecondDate.setUTCFullYear(oSecondDate.getUTCFullYear());
-
-			return Math.abs((oNewFirstDate.getTime() - oNewSecondDate.getTime()) / (1000 * 60 * 60));
-		};
-
-		/**
 		 * Calculates the difference between two calendar dates in days.
 		 * @param {sap.ui.unified.calendar.CalendarDate} oFirstDate the first date
 		 * @param {sap.ui.unified.calendar.CalendarDate} oSecondDate the second date
@@ -543,33 +610,6 @@ sap.ui.define([
 			this._checkCalendarDate(oSecondDate);
 
 			return Math.ceil((oFirstDate.valueOf() - oSecondDate.valueOf()) / (this.HOURS24));
-		};
-
-		/**
-		 * Evaluates months between two dates.
-		 * @param {object} oFirstDate JavaScript date
-		 * @param {object} oSecondDate JavaScript date
-		 * @param {boolean} bDontAbsResult if omitted or false, the result will be positive number of months between dates;
-		 * 					if true, the result will be positive or negative depending of the direction of the difference
-		 * @return {int} iMonths
-		 * @private
-		 */
-		CalendarUtils._monthsBetween = function(oFirstDate, oSecondDate, bDontAbsResult) {
-			var oUTCFirstDate = new Date(Date.UTC(oFirstDate.getUTCFullYear(), oFirstDate.getUTCMonth(), oFirstDate.getUTCDate())),
-				oUTCSecondDate = new Date(Date.UTC(oSecondDate.getUTCFullYear(), oSecondDate.getUTCMonth(), oSecondDate.getUTCDate())),
-				iMonths;
-
-			oUTCFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear());
-			oUTCSecondDate.setUTCFullYear(oSecondDate.getUTCFullYear());
-
-			iMonths = (oUTCSecondDate.getUTCFullYear() * 12 + oUTCSecondDate.getUTCMonth())
-					- (oUTCFirstDate.getUTCFullYear() * 12 + oUTCFirstDate.getUTCMonth());
-
-			if (!bDontAbsResult) {
-				iMonths = Math.abs(iMonths);
-			}
-
-			return iMonths;
 		};
 
 		/**
@@ -623,46 +663,6 @@ sap.ui.define([
 		CalendarUtils._getWeek = function (oCalendarDate) {
 			this._checkCalendarDate(oCalendarDate);
 			return UniversalDate.getWeekByDate(oCalendarDate.getCalendarType(), oCalendarDate.getYear(), oCalendarDate.getMonth(), oCalendarDate.getDate());
-		};
-
-		/**
-		 * Evaluates whether the given minutes are less than the current.
-		 * The function uses local js date for comparison.
-		 * @param {int} iMinutes The minutes to check
-		 * @return {boolean} true if the give minutes are less than the current
-		 * @private
-		 */
-		CalendarUtils._areCurrentMinutesLessThan = function (iMinutes) {
-			var iCurrentMinutes = new Date().getMinutes();
-
-			return iMinutes >= iCurrentMinutes;
-		};
-
-		/**
-		 * Evaluates whether the given minutes are more than the current.
-		 * The function uses local js date for comparison.
-		 * @param {int} iMinutes The minutes to check
-		 * @return {boolean} true if the give minutes are more than the current
-		 * @private
-		 */
-		CalendarUtils._areCurrentMinutesMoreThan = function (iMinutes) {
-			var iCurrentMinutes = new Date().getMinutes();
-
-			return iMinutes <= iCurrentMinutes;
-		};
-
-		/**
-		 * Evaluates minutes between two dates.
-		 * @param {Date} oFirstDate JavaScript date
-		 * @param {Date} oSecondDate JavaScript date
-		 * @return {int} iMinutes
-		 * @private
-		 */
-		CalendarUtils._minutesBetween = function(oFirstDate, oSecondDate) {
-			var iMinutes = (oSecondDate.getTime() - oFirstDate.getTime()) / 1000;
-				iMinutes = iMinutes / 60;
-
-			return Math.abs(Math.round(iMinutes));
 		};
 
 		/**
