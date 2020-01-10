@@ -433,6 +433,32 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("No error is thrown when showSuggestion is set to false", function (assert) {
+		var oInput = new Input({
+				showValueHelp: true
+			}),
+			oSuggPopover = oInput._getSuggestionsPopover(),
+			oUpdateSpy = new sinon.spy(oSuggPopover, "updateValueState");
+
+		// Arrange
+		oInput.setShowSuggestion(false);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		try {
+			oInput.setValueState("Error");
+		} catch (e) {
+			// continue
+		}
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(!oUpdateSpy.threw(), "No error was thrown.");
+
+		// Clean
+		oUpdateSpy.restore();
+	});
+
 	QUnit.test("Submit Event", function(assert) {
 
 		var sEvents = "";

@@ -165,6 +165,7 @@ sap.ui.define([
 
 			this._oProposedItem = null;
 			this._oInputDelegate = null;
+			this._oValueStateHeader = null; // The value state header is destroyed by the Popover
 
 			if (this._oPickerValueStateText) {
 				this._oPickerValueStateText.destroy();
@@ -534,6 +535,11 @@ sap.ui.define([
 		if (this._oPickerValueStateText) {
 			this._oPickerValueStateText.destroy();
 			this._oPickerValueStateText = null;
+		}
+
+		if (this._oValueStateHeader) {
+			this._oValueStateHeader.destroy();
+			this._oValueStateHeader = null;
 		}
 
 		this._getInput().removeEventDelegate(this._oInputDelegate, this);
@@ -1146,6 +1152,10 @@ sap.ui.define([
 	SuggestionsPopover.prototype.updateValueState = function(sValueState, sValueStateText, bShowValueStateMessage) {
 		var bShow = bShowValueStateMessage && sValueState !== ValueState.None;
 		sValueStateText = sValueStateText || ValueStateSupport.getAdditionalText(sValueState);
+
+		if (!this._oPopover) {
+			return this;
+		}
 
 		if (this._oPopupInput) {
 			this._oPopupInput.setValueState(sValueState);
