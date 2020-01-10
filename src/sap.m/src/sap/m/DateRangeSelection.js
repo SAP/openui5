@@ -1028,8 +1028,8 @@ sap.ui.define([
 		// as they don't make the input to be considered invalid, but make the cursor position calculations wrong
 		sValue = _trim(sValue, [sDelimiter, " "]);
 		iCurPos = this._$input.cursorPos();
-		iFirstDateValueLen = oFormat.format(oFirstOldDate).length;
-		iSecondDateValueLen = oFormat.format(oSecondOldDate).length;
+		iFirstDateValueLen = oFirstOldDate ? oFormat.format(oFirstOldDate).length : 0;
+		iSecondDateValueLen = oSecondOldDate ? oFormat.format(oSecondOldDate).length : 0;
 
 		iValueLen = sValue.length;
 		bFirstDate = iCurPos <= iFirstDateValueLen + 1;
