@@ -112,6 +112,31 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when creating single change, update it and then delete it with a transport", function (assert) {
+			var sId = ObjectStorageUtils.createFlexKey(oTestData.fileName);
+			var oSpyStorageWrite = sandbox.spy(WriteStorage, "write");
+			var oSpyStorageUpdate = sandbox.spy(WriteStorage, "update");
+			var oSpyStorageRemove = sandbox.spy(WriteStorage, "remove");
+			return CompatibilityConnector.create(oTestData, "aTransport")
+				.then(function () {
+					assert.ok(oSpyStorageWrite.calledOnce, "StorageWrite got called");
+					assert.equal(oSpyStorageWrite.getCalls()[0].args[0].transport, "aTransport", "with transport info in the parameter");
+					assert.ok(JsObjectConnector.oStorage.getItem(sId), "JsObjectConnector got the change");
+					return CompatibilityConnector.update(oTestDataNew, "aTransport");
+				})
+				.then(function () {
+					assert.ok(oSpyStorageUpdate.calledOnce, "StorageWrite got called");
+					assert.equal(oSpyStorageUpdate.getCalls()[0].args[0].transport, "aTransport", "with transport info in the parameter");
+					assert.ok(JsObjectConnector.oStorage.getItem(sId).content.isNewContent, "the change content got updated");
+					return CompatibilityConnector.deleteChange(oTestDataNew, "aTransport");
+				})
+				.then(function () {
+					assert.ok(oSpyStorageRemove.calledOnce, "StorageWrite got called");
+					assert.equal(oSpyStorageRemove.getCalls()[0].args[0].transport, "aTransport", "with transport info in the parameter");
+					assert.notOk(JsObjectConnector.oStorage.getItem(sId), "the change got deleted");
+				});
+		});
+
 		QUnit.test("when creating multiple changes at once", function (assert) {
 			return CompatibilityConnector.create(aTestData)
 				.then(function () {
