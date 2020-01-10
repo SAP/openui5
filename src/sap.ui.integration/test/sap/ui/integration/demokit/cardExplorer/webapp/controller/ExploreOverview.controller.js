@@ -41,6 +41,7 @@ sap.ui.define([
 			};
 
 			this.jsonDefModel.setData(jsonObj);
+			this.onFrameSourceChange();
 
 		}
 	});

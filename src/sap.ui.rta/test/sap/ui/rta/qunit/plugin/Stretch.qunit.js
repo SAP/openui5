@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit*/
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
@@ -158,7 +158,7 @@ function (
 			var bVBox1;
 			var bVBox2;
 
-			var oObserver = new MutationObserver(function(aMutations) {
+			this.oObserver = new MutationObserver(function(aMutations) {
 				aMutations.forEach(function(oMutation) {
 					if (oMutation.target === this.oLayout.getDomRef() && oMutation.attributeName === "class") {
 						assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
@@ -175,12 +175,13 @@ function (
 				}.bind(this));
 
 				if (bLayout && bVBox1 && bVBox2) {
-					oObserver.disconnect();
+					this.oObserver.disconnect();
+					delete this.oObserver;
 					done();
 				}
 			}.bind(this));
 			var oConfig = { attributes: true, childList: false, characterData: false, subtree : true};
-			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
+			this.oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
 
 			this.oLayout.getParent().invalidate();
 			sap.ui.getCore().applyChanges();
@@ -224,9 +225,11 @@ function (
 			};
 
 			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
-				this.oStretchPlugin._onElementOverlayChanged(oEvent);
-				assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
-				done();
+				setTimeout(function () {
+					this.oStretchPlugin._onElementOverlayChanged(oEvent);
+					assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
+					done();
+				}.bind(this), 60);
 			}, this);
 			this.oLayout.setWidth("400px");
 		});
@@ -310,16 +313,15 @@ function (
 					};
 				}.bind(this)
 			};
-			this.oLayout.setWidth("300px");
 			this.oStretchPlugin.isBusy = function() {
 				return true;
 			};
-
 			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
 				this.oStretchPlugin._onElementOverlayChanged(oEvent);
 				assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
 				done();
 			}, this);
+			this.oLayout.setWidth("300px");
 		});
 
 		QUnit.test("When the inner vbox gets destroyed", function(assert) {

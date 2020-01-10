@@ -21300,8 +21300,9 @@ sap.ui.define([
 	// Scenario: Create a row. See that the city (a nested property inside the address) is removed,
 	// when the POST response nulls the address (the complex property containing it).
 	// JIRA: CPOUI5UISERVICESV3-1878
-	// Also check on-the-fly that setting a property w/o PATCH is refused for the transient row.
-	// JIRA: CPOUI5ODATAV4-14
+	// Also checks that setting properties with group ID null on a transient context is not
+	// reflected in the POST payload.
+	// JIRA: CPOUI5ODATAV4-114
 	QUnit.test("create removes a nested property", function (assert) {
 		var oCreatedContext,
 			oModel = createSalesOrdersModel({
@@ -21312,23 +21313,31 @@ sap.ui.define([
 <Table id="table" items="{/BusinessPartnerList}">\
 	<ColumnListItem>\
 		<Text id="city" text="{Address/City}"/>\
+		<Text id="type" text="{Address/AddressType}"/>\
+		<Text id="company" text="{CompanyName}"/>\
 	</ColumnListItem>\
 </Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartnerList?$select=Address/City,BusinessPartnerID"
-			+ "&$skip=0&$top=100",
+		this.expectRequest("BusinessPartnerList?$select=Address/AddressType,Address/City"
+			+ ",BusinessPartnerID,CompanyName&$skip=0&$top=100",
 				{value : []})
-			.expectChange("city", []);
+			.expectChange("city", [])
+			.expectChange("type", [])
+			.expectChange("company", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("city", ["Heidelberg"]);
+			that.expectChange("city", ["Heidelberg"])
+				// CPOUI5ODATAV4-114
+				.expectChange("type", ["42"])
+				.expectChange("company", ["Nestle"]);
 
 			oCreatedContext = that.oView.byId("table").getBinding("items").create({
 				Address : {City : "Heidelberg"}
 			}, true);
 
 			return Promise.all([
+				// code under test (CPOUI5ODATAV4-14)
 				oCreatedContext.setProperty("Address/City", "St. Ingbert", "$direct")
 					.then(function () {
 						assert.ok(false);
@@ -21336,14 +21345,9 @@ sap.ui.define([
 						assert.strictEqual(oError.message, "The entity will be created via group"
 							+ " 'update'. Cannot patch via group '$direct'");
 					}),
-				// code under test (CPOUI5ODATAV4-14)
-				oCreatedContext.setProperty("Address/City", "St. Ingbert", null)
-					.then(function () {
-						assert.ok(false);
-					}, function (oError) {
-						assert.strictEqual(oError.message,
-							"Cannot update a transient entity w/o PATCH");
-					}),
+				// code under test (CPOUI5ODATAV4-114)
+				oCreatedContext.setProperty("Address/AddressType", "42", null),
+				oCreatedContext.setProperty("CompanyName", "Nestle", null),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -21352,10 +21356,13 @@ sap.ui.define([
 					url : "BusinessPartnerList",
 					payload : {Address : {City : "Heidelberg"}}
 				}, {
+					Address : null,
 					BusinessPartnerId : "1",
-					Address : null
+					CompanyName : "SAP"
 				})
-				.expectChange("city", [null]);
+				.expectChange("city", [null])
+				.expectChange("type", [null])
+				.expectChange("company", ["SAP"]);
 
 			return Promise.all([
 				oModel.submitBatch("update"),

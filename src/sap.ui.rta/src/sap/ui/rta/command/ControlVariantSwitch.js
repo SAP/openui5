@@ -85,4 +85,4 @@ sap.ui.define([
 	};
 
 	return ControlVariantSwitch;
-}, /* bExport= */true);
+});

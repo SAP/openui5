@@ -527,7 +527,7 @@
 @sapUiChartDataPointBG: saturate(lighten(@sapUiChartNeutral, 30), 1);  // #d5dadc
 @sapUiChartDataPointBGBorderColor: saturate(lighten(@sapUiChartNeutral, 30), 1);  // #d5dadc
 @sapUiChartDataLineColorWithBG: darken(@sapUiChartGridlineColor, 70);   // #333333
-@sapUiChartDataLineColor: darken(@sapUiChartGridlineColor, 70);   // #333333
+@sapUiChartDataLineColor: lighten(@sapUiChartGridlineColor, 30);   // #d1d7de
 
 @sapUiChartRadialRemainingCircle: lighten(@sapUiChartNeutral, 35);  // #e3e6e7
 @sapUiChartRadialRemainingCircleBorderColor: lighten(@sapUiChartNeutral, 35);  // #e3e6e7
@@ -779,12 +779,12 @@
 @sapUiDragAndDropActiveBackground: fade(@sapUiDragAndDropActiveColor, 5);
 @sapUiDragAndDropActiveBorderColor: @sapUiDragAndDropActiveColor;
 
-@sapUiShadowLevel0: 0 0 0 0.0625rem fade(@sapUiContentShadowColor, 10), 0 0.125rem 0.5rem 0 fade(@sapUiContentShadowColor, 10);
-@sapUiShadowLevel1: 0 0 0 0.0625rem fade(@sapUiContentShadowColor, 15), 0 0.125rem 0.5rem 0 fade(@sapUiContentShadowColor, 30);
-@sapUiShadowLevel2: 0 0 0 0.0625rem fade(@sapUiContentShadowColor, 50), 0 0.625rem 1.875rem 0 fade(@sapUiContentShadowColor, 60);
-@sapUiShadowLevel3: 0 0 0 0.0625rem fade(@sapUiContentShadowColor, 15), 0 1.25rem 5rem 0 fade(@sapUiContentShadowColor, 30);
+@sapUiShadowLevel0: 0 0 0 0.0625rem fade(@sapUiContentContrastShadowColor, 20), 0 0.125rem 0.5rem 0 fade(@sapUiContentShadowColor, 30);
+@sapUiShadowLevel1: 0 0 0 0.0625rem fade(@sapUiContentContrastShadowColor, 50), 0 0.125rem 0.5rem 0 fade(@sapUiContentShadowColor, 60);
+@sapUiShadowLevel2: 0 0 0 0.0625rem fade(@sapUiContentContrastShadowColor, 50), 0 0.625rem 1.875rem 0 fade(@sapUiContentShadowColor, 60);
+@sapUiShadowLevel3: 0 0 0 0.0625rem fade(@sapUiContentContrastShadowColor, 50), 0 1.25rem 5rem 0 fade(@sapUiContentShadowColor, 60);
 @sapUiShadowText: none;
-@sapUiShadowHeader: 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiObjectHeaderBorderColor;
+@sapUiShadowHeader: 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 80), inset 0 -0.0625rem 0 0 @sapUiObjectHeaderBorderColor;
 
 //images for shell
 @sapUiUx3ShellHeaderImageURL: ~"";

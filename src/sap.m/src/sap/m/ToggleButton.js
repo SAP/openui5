@@ -85,7 +85,7 @@ sap.ui.define([
 	ToggleButton.prototype.setPressed = function(bPressed) {
 		bPressed = !!bPressed;
 		if (bPressed != this.getPressed()) {
-			this.setProperty("pressed", bPressed, true);
+			this.setProperty("pressed", bPressed);
 			this.$().attr("aria-pressed", bPressed);
 			this.$("inner").toggleClass("sapMToggleBtnPressed",bPressed && !this._isUnstyled());
 		}

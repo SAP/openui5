@@ -13,17 +13,27 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Basic functions", {
+	QUnit.module("Send request functions", {
 		beforeEach : function () {
 		},
 		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("getWriteConnectors", function (assert) {
-			var oStubGetConnectors = sinon.stub(ApplyUtils, "getConnectors");
-			WriteUtils.getWriteConnectors();
-			assert.ok(oStubGetConnectors.calledWith("sap/ui/fl/write/_internal/connectors/", false), "ApplyUtils getConnectors is called with correct params");
+		QUnit.test("sendRequest success at the first time", function (assert) {
+			var sUrl = "anUrl";
+			var sMethod = "POST";
+			var mPropertyBag = {
+				applyConnector: {
+					xsrfToken: "123"
+				}
+			};
+
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : "something"});
+			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, {response : "something"}, "correct response is returned");
+				assert.ok(oStubSendRequest.calledWith(sUrl, sMethod, mPropertyBag), "there is one request sent");
+			});
 		});
 
 		QUnit.test("getRequestOptions", function (assert) {
@@ -43,31 +53,6 @@ sap.ui.define([
 			oExpectedOptions.dataType = "dataType";
 			assert.deepEqual(WriteUtils.getRequestOptions(oApplyConnector, sTokenUrl, [], "contentType", "dataType"), oExpectedOptions);
 		});
-	});
-
-	QUnit.module("Send request functions", {
-		beforeEach : function () {
-		},
-		afterEach: function() {
-			ApplyUtils.sendRequest.restore();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("sendRequest success at the first time", function (assert) {
-			var sUrl = "anUrl";
-			var sMethod = "POST";
-			var mPropertyBag = {
-				applyConnector: {
-					xsrfToken: "123"
-				}
-			};
-
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : "something"});
-			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
-				assert.deepEqual(oResponse, {response : "something"}, "correct response is returned");
-				assert.ok(oStubSendRequest.calledWith(sUrl, sMethod, mPropertyBag), "there is one request sent");
-			});
-		});
 
 		QUnit.test("sendRequest failed with error code different from 403", function (assert) {
 			var sUrl = "anUrl";
@@ -78,7 +63,7 @@ sap.ui.define([
 				}
 			};
 
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").rejects({status : 500});
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").rejects({status : 500});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
 				assert.equal(oError.status, 500, "correct error is returned");
 				assert.ok(oStubSendRequest.calledWith(sUrl, sMethod, mPropertyBag), "there is one request sent");
@@ -98,7 +83,7 @@ sap.ui.define([
 				xsrfToken : "oldToken"
 			};
 
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest");
 			oStubSendRequest.onCall(0).rejects({status : 403});
 			oStubSendRequest.onCall(1).resolves({xsrfToken : "newToken"});
 			oStubSendRequest.onCall(2).resolves({response : "something"});
@@ -126,7 +111,7 @@ sap.ui.define([
 				xsrfToken : "oldToken"
 			};
 
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest");
 			oStubSendRequest.onCall(0).rejects({status : 403});
 			oStubSendRequest.onCall(1).resolves({xsrfToken : "newToken"});
 			oStubSendRequest.onCall(2).rejects({status : 500});
@@ -153,7 +138,7 @@ sap.ui.define([
 				applyConnector: oApplyConnector
 			};
 
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest");
 			oStubSendRequest.onCall(0).rejects({status : 403});
 			oStubSendRequest.onCall(1).rejects({status : 500});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {

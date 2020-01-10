@@ -2,299 +2,304 @@
 		controllerName="sap.f.sample.Avatar.controller.Avatar"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:f="sap.f"
-		xmlns:m="sap.m"
+		xmlns="sap.m"
 		xmlns:l="sap.ui.layout"
 		height="100%">
-
-	<m:ScrollContainer
+	<ScrollContainer
 			height="100%"
 			width="100%"
 			horizontal="false"
 			vertical="true">
-		<m:Text
+		<Text
 				text="The Avatar Control allows usage of different shapes, sizes and content. Border can also be applied:"
 				width="100%"
 				class="sapUiSmallMarginTop sapUiSmallMarginBegin sapUiMediumMarginBottom"/>
 		<l:Grid
 				defaultSpan="XL2 L3 M6 S6">
 			<l:content>
-				<m:VBox alignItems="Center">
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Speakers_avatar_01.jpg"
 							displaySize="XL"
 							displayShape="Square"
-							showBorder="true"/>
-					<m:Text
+							showBorder="true"
+							press="onPress"/>
+					<Text
 							text="Avatar of a product with border"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_01.png"
 							displaySize="XL"
-							showBorder="true"/>
-					<m:Text
+							showBorder="true"
+							press="onPress"/>
+					<Text
 							text="Avatar of a person with border"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							initials="IS"
 							displaySize="XL"
-							displayShape="Square"/>
-					<m:Text
+							displayShape="Square"
+							press="onPress"/>
+					<Text
 							text="Square with initials"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							displaySize="XL"
-							backgroundColor="Transparent"/>
-					<m:Text
+							backgroundColor="Transparent"
+							press="onPress"/>
+					<Text
 							text="Transparent background"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							initials="IS"
 							displaySize="XL"
-							backgroundColor="TileIcon"/>
-					<m:Text
+							backgroundColor="TileIcon"
+							press="onPress"/>
+					<Text
 							text="TileIcon background"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							displaySize="XL"
 							backgroundColor="Placeholder"
-							displayShape="Square"/>
-					<m:Text
+							displayShape="Square"
+							press="onPress"/>
+					<Text
 							text="Placeholder background"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
+				</VBox>
 			</l:content>
 		</l:Grid>
-		<m:Text
+		<Text
 				text="The Avatar can be set to a square or circular shape with a predefined size:"
 				width="100%"
 				class="sapUiSmallMarginBegin sapUiMediumMarginTop sapUiMediumMarginBottom"/>
 		<l:Grid
 				defaultSpan="XL2 L2 M3 S12">
 			<l:content>
-				<m:VBox
+				<VBox
 						alignItems="Center"
 						alignContent="End">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
 							displaySize="XL"
 							displayShape="Square"/>
-					<m:Text
+					<Text
 							text="XL"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox
+				</VBox>
+				<VBox
 						alignItems="Center"
 						alignContent="End">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
 							displaySize="L"
 							displayShape="Square"/>
-					<m:Text
+					<Text
 							text="L"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
 							displaySize="M"
 							displayShape="Square"/>
-					<m:Text
+					<Text
 							text="M"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
 							displaySize="S"
 							displayShape="Square"/>
-					<m:Text
+					<Text
 							text="S"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
 							displaySize="XS"
 							displayShape="Square"/>
-					<m:Text
+					<Text
 							text="XS"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
+				</VBox>
 			</l:content>
 		</l:Grid>
 		<l:Grid
 				defaultSpan="XL2 L2 M3 S12"
 				class="sapUiMediumMarginTop">
 			<l:content>
-				<m:VBox alignItems="Center">
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_02.png"
 							displaySize="XL"/>
-					<m:Text
+					<Text
 							text="XL"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_02.png"
 							displaySize="L"/>
-					<m:Text
+					<Text
 							text="L"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_02.png"
 							displaySize="M"/>
-					<m:Text
+					<Text
 							text="M"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_02.png"
 							displaySize="S"/>
-					<m:Text
+					<Text
 							text="S"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="./test-resources/sap/f/images/Woman_avatar_02.png"
 							displaySize="XS"/>
-					<m:Text
+					<Text
 							text="XS"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
+				</VBox>
 			</l:content>
 		</l:Grid>
 		<l:Grid
 				defaultSpan="XL2 L2 M3 S12"
 				class="sapUiMediumMarginTop">
 			<l:content>
-				<m:VBox alignItems="Center">
+				<VBox alignItems="Center">
 					<f:Avatar
 							initials="IS"
 							displaySize="XL"
 							backgroundColor="Accent1"/>
-					<m:Text
+					<Text
 							text="XL"
 							class="sapUiSmallMarginTop"/>
-					<m:Text text="Accent1"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+					<Text text="Accent1"/>
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							initials="IS"
 							displaySize="L"
 							backgroundColor="Accent2"/>
-					<m:Text
+					<Text
 							text="L"
 							class="sapUiSmallMarginTop"/>
-					<m:Text text="Accent2"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+					<Text text="Accent2"/>
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							initials="IS"
 							displaySize="M"
 							backgroundColor="Accent3"/>
-					<m:Text
+					<Text
 							text="M"
 							class="sapUiSmallMarginTop"/>
-					<m:Text text="Accent3"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+					<Text text="Accent3"/>
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							initials="IS"
 							displaySize="S"
 							backgroundColor="Accent4"/>
-					<m:Text
+					<Text
 							text="S"
 							class="sapUiSmallMarginTop"/>
-					<m:Text text="Accent4"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+					<Text text="Accent4"/>
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							initials="IS"
 							displaySize="XS"
 							backgroundColor="Accent5"/>
-					<m:Text
+					<Text
 							text="XS"
 							class="sapUiSmallMarginTop"/>
-					<m:Text text="Accent5"/>
-				</m:VBox>
+					<Text text="Accent5"/>
+				</VBox>
 			</l:content>
 		</l:Grid>
 		<l:Grid
 				defaultSpan="XL2 L2 M3 S12"
 				class="sapUiMediumMarginTop">
 			<l:content>
-				<m:VBox alignItems="Center">
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="sap-icon://lab"
 							displaySize="XL"
 							backgroundColor="Accent6"/>
-					<m:Text
+					<Text
 							text="XL"
 							class="sapUiSmallMarginTop"/>
-					<m:Text text="Accent6"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+					<Text text="Accent6"/>
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="sap-icon://lab"
 							displaySize="L"
 							backgroundColor="Accent7"/>
-					<m:Text
+					<Text
 							text="L"
 							class="sapUiSmallMarginTop"/>
-					<m:Text text="Accent7"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+					<Text text="Accent7"/>
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="sap-icon://lab"
 							displaySize="M"
 							backgroundColor="Accent8"/>
-					<m:Text
+					<Text
 							text="M"
 							class="sapUiSmallMarginTop"/>
-					<m:Text text="Accent8"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+					<Text text="Accent8"/>
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="sap-icon://lab"
 							displaySize="S"
 							backgroundColor="Accent9"/>
-					<m:Text
+					<Text
 							text="S"
 							class="sapUiSmallMarginTop"/>
-					<m:Text text="Accent9"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
+					<Text text="Accent9"/>
+				</VBox>
+				<VBox alignItems="Center">
 					<f:Avatar
 							src="sap-icon://lab"
 							displaySize="XS"
 							backgroundColor="Accent10"/>
-					<m:Text
+					<Text
 							text="XS"
 							class="sapUiSmallMarginTop"/>
-					<m:Text text="Accent10"/>
-				</m:VBox>
+					<Text text="Accent10"/>
+				</VBox>
 			</l:content>
 		</l:Grid>
 		<l:Grid
 				defaultSpan="XL4 L5 M6 S12">
 			<l:content>
-				<m:VBox alignItems="Center">
-					<m:Text
+				<VBox alignItems="Center">
+					<Text
 							text="The Avatar can be set to a custom size:"
 							width="100%"
 							class="sapUiMediumMarginTop sapUiMediumMarginBottom"/>
@@ -303,12 +308,12 @@
 							displaySize="Custom"
 							customDisplaySize="250px"
 							displayShape="Square"/>
-					<m:Text
+					<Text
 							text="Avatar with custom Size"
 							class="sapUiSmallMarginTop"/>
-				</m:VBox>
-				<m:VBox alignItems="Center">
-					<m:Text
+				</VBox>
+				<VBox alignItems="Center">
+					<Text
 							text="If there is no image, icon or initials set, the Avatar displays a Placeholder.
 							If there is invalid image src, the control displays either initials (if provided) or icon Placeholder (if no initials are proivided):"
 							width="100%"
@@ -316,48 +321,48 @@
 					<l:Grid
 							defaultSpan="XL4 L4 M6 S6">
 						<l:content>
-							<m:VBox alignItems="Center">
+							<VBox alignItems="Center">
 								<f:Avatar
 										displaySize="L"
 										displayShape="Square"
 										backgroundColor="Random"/>
-								<m:Text
+								<Text
 										text="With product icon"
 										class="sapUiSmallMarginTop"/>
-							</m:VBox>
-							<m:VBox alignItems="Center">
+							</VBox>
+							<VBox alignItems="Center">
 								<f:Avatar
 										displaySize="L"
 										backgroundColor="Random"/>
-								<m:Text
+								<Text
 										text="With person icon"
 										class="sapUiSmallMarginTop"/>
-							</m:VBox>
-							<m:VBox alignItems="Center">
+							</VBox>
+							<VBox alignItems="Center">
 								<f:Avatar
 										displaySize="L"
 										displayShape="Square"
 										fallbackIcon="sap-icon://accelerated"
 										backgroundColor="Random"/>
-								<m:Text
+								<Text
 										text="With custom fallback icon"
 										class="sapUiSmallMarginTop"/>
-							</m:VBox>
-							<m:VBox alignItems="Center">
+							</VBox>
+							<VBox alignItems="Center">
 								<f:Avatar
 										displaySize="L"
 										initials="PB"
 										src="images/cannotfind_Woman_avatar_01.png"
 										backgroundColor="Random"/>
-								<m:Text
+								<Text
 										text="With invalid image source, but initials provided"
 										class="sapUiSmallMarginTop"
 										textAlign="Center"/>
-							</m:VBox>
+							</VBox>
 						</l:content>
 					</l:Grid>
-				</m:VBox>
+				</VBox>
 			</l:content>
 		</l:Grid>
-	</m:ScrollContainer>
+	</ScrollContainer>
 </mvc:View>

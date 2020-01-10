@@ -34,18 +34,6 @@
 		]
 	  },
 	  {
-		"id": "sap.uxap.ObjectPageDynamicHeaderTitle",
-		"name": "Object Page Dynamic Header Title",
-		"category": "Display",
-		"since": "1.52",
-		"formFactors": "-",
-			"samples": [
-			  "sap.uxap.sample.ObjectPageWithDynamicHeader",
-			  "sap.uxap.sample.ObjectPageHeaderActionButtons",
-			  "sap.uxap.sample.ObjectPageHeaderBackgroundDesign"
-			]
-	  },
-	  {
 		"id": "sap.uxap.ObjectPageLayout",
 		"name": "Object Page Layout",
 		"category": "Layout",
@@ -66,7 +54,8 @@
 		  "sap.uxap.sample.ChildObjectPage",
 		  "sap.uxap.sample.ObjectPageHeaderExpanded",
 		  "sap.uxap.sample.ObjectPageHeaderContentPriorities",
-		  "sap.uxap.sample.ObjectPageFormLayout"
+		  "sap.uxap.sample.ObjectPageFormLayout",
+		  "sap.uxap.sample.ObjectPageFormFocusableInput"
 		]
 	  },
 	  {
@@ -123,11 +112,6 @@
 		"id": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign",
 		"name": "Object Page with Translucent backgroundDesign",
 		"description": "This example demonstrates ObjectPage with ObjectPageDynamicHeaderTitle with Solid backgroundDesign and Translucent backgroundDesignAnchorBar."
-	  },
-	  {
-		"id": "sap.uxap.sample.ObjectPageDynamicHeader",
-		"name": "Object Page with Dynamic Header",
-		"description": "This example demonstrates the classic ObjectPageLayout achieved by using ObjectPageDynamicHeaderTitle for the headerContent aggregation."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageSubSection",
@@ -288,6 +272,11 @@
 		"id": "sap.uxap.sample.ObjectPageFormLayout",
 		"name": "ObjectPage with forms",
 		"description": "Object Page automatically adjusts form layout to match block column layout"
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageFormFocusableInput",
+		"name": "ObjectPage with first editable input",
+		"description": "Object Page that focuses its first editable input in the currently selected section."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageDynamicSideContentBtn",

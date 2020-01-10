@@ -5,22 +5,21 @@
 sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/changes/Applier",
-	// "sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/performance/Measurement"
 ], function(
 	FlexController,
 	Utils,
-	ChangePersistenceFactory,
 	Applier,
-	// FlexState,
+	FlexState,
 	VariantModel,
-	Log
+	Log,
+	Measurement
 ) {
 	"use strict";
-
 	/**
 	 * Factory to create new instances of {sap.ui.fl.FlexController}
 	 * @constructor
@@ -92,11 +91,12 @@ sap.ui.define([
 		// if component's manifest is of type 'application' then only a flex controller and change persistence instances are created.
 		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created. The variant model is fetched from the outer app component and applied on this component type.
 		if (Utils.isApplicationComponent(oComponent)) {
-			// disabled to not send multiple requests to the backend
-			// blocking call
-			// return FlexState.initForReference({...});
-
-			return _propagateChangesForAppComponent(oComponent, vConfig);
+			return FlexState.initialize({
+				componentId: vConfig.id || oComponent.getId(),
+				asyncHints: vConfig.asyncHints
+			})
+				.then(FlexState.getVariantsState.bind(null, Utils.getComponentClassName(oComponent)))
+				.then(_propagateChangesForAppComponent.bind(this, oComponent));
 		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
@@ -108,7 +108,7 @@ sap.ui.define([
 						// then a new variant model should be set on it.
 						// Setting a variant model will ensure that at least a standard variant will exist
 						// for all variant management controls.
-						return _propagateChangesForAppComponent(oAppComponent, vConfig);
+						return _propagateChangesForAppComponent(oAppComponent);
 					}
 					return oExistingVariantModel;
 				}).then(function (oVariantModel) {
@@ -130,12 +130,12 @@ sap.ui.define([
 	 * after all propagation changes and listeners have been set.
 	 * @private
 	 */
-	function _propagateChangesForAppComponent (oAppComponent, vConfig) {
+	function _propagateChangesForAppComponent (oAppComponent) {
 		// only manifest with type = "application" will fetch changes
 		var oManifest = oAppComponent.getManifestObject();
 		var oFlexController;
 		oFlexController = FlexControllerFactory.createForControl(oAppComponent, oManifest);
-		return ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oAppComponent)
+		return oFlexController._oChangePersistence.loadChangesMapForComponent(oAppComponent)
 		.then(function (fnGetChangesMap) {
 			var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, oAppComponent, oFlexController);
 			fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
@@ -143,6 +143,7 @@ sap.ui.define([
 			var oData = oFlexController.getVariantModelData() || {};
 			var oVariantModel = new VariantModel(oData, oFlexController, oAppComponent);
 			oAppComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
+			Measurement.end("flexProcessing");
 			return oVariantModel;
 		});
 	}

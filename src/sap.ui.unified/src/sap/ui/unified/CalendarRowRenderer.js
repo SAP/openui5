@@ -616,17 +616,20 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			oPC = oRow._getPlanningCalendar(),
 			// gets a concatenated array with appointments + interval headers, which intersect the visible interval
 			// then sorts the array using our custom comparer
-			aSortedAppInfos = aAppointments.concat(oRow.getIntervalHeaders().filter(function(oIntHeadApp) {
-				var iAppStart = oIntHeadApp.getStartDate().getTime(),
-					iAppEnd = oIntHeadApp.getEndDate().getTime(),
-					iRowStart = oRowStartDate.getTime(),
-					iRowEnd = iRowStart + 1000 * 60 * 60 * 24;
-				return !(iAppStart >= iRowEnd || iAppEnd <= iRowStart);
-			}).map(function(oIntHeadApp) {
-				return {appointment: oIntHeadApp, isHeader: true};
-			})).sort(CalendarAppointment._getComparer(oRowStartDate)),
+			aSortedAppInfos,
 			oAppointmentInfo,
 			aSelectedDates = [];
+
+		oRowStartDate.setHours(0, 0, 0, 0); // get the appointments and interval headers for the whole day
+		aSortedAppInfos = aAppointments.concat(oRow.getIntervalHeaders().filter(function(oIntHeadApp) {
+			var iAppStart = oIntHeadApp.getStartDate().getTime(),
+				iAppEnd = oIntHeadApp.getEndDate().getTime(),
+				iRowStart = oRowStartDate.getTime(),
+				iRowEnd = iRowStart + 1000 * 60 * 60 * 24;
+			return !(iAppStart >= iRowEnd || iAppEnd <= iRowStart);
+		}).map(function(oIntHeadApp) {
+			return {appointment: oIntHeadApp, isHeader: true};
+		})).sort(CalendarAppointment._getComparer(oRowStartDate));
 
 		if (oPC) {
 			aSelectedDates = oPC._getSelectedDates();
@@ -670,7 +673,16 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 		}
 
 		if (aSelectedDates.length > 0) {
-			for (i = 0; i < aSortedAppInfos.length; i++) {
+			var iStart = 0,
+				iEnd = aSortedAppInfos.length;
+
+			if (oPC.getRows()[0]._calculateVisibleAppointments) {
+				var oStartAndEnd = oPC.getRows()[0]._calculateVisibleAppointments(aSelectedDates, aSortedAppInfos);
+				iStart = oStartAndEnd.iStart;
+				iEnd = oStartAndEnd.iEnd;
+			}
+
+			for (i = iStart; i < iEnd; i++) {
 				oAppointmentInfo = aSortedAppInfos[i];
 
 				oRm.openStart("div");
@@ -680,8 +692,14 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 				oRm.class("sapUiCalendarAppContainerLeft");
 				oRm.openEnd();
 				oRm.openStart("div");
+				oRm.class("sapUiCalendarAppStart");
 				oRm.openEnd();
-				oRm.text(oAppointmentInfo.appointment._getDateRangeIntersectionText(oRowStartDate));
+				oRm.text(oAppointmentInfo.appointment._getDateRangeIntersectionText(oRowStartDate).start);
+				oRm.close("div");
+				oRm.openStart("div");
+				oRm.class("sapUiCalendarAppEnd");
+				oRm.openEnd();
+				oRm.text(oAppointmentInfo.appointment._getDateRangeIntersectionText(oRowStartDate).end);
 				oRm.close("div");
 				oRm.close("div");
 				oRm.openStart("div");
@@ -701,7 +719,8 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			oRm.openStart("div");
 			oRm.class("sapUiCalendarNoApps");
 			oRm.openEnd();
-			sNoAppointments = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PLANNINGCALENDAR_ROW_NO_APPOINTMENTS");
+			var oPCRow = sap.ui.getCore().byId(oRow.getAssociation("row"));
+			sNoAppointments = oPCRow.getNoAppointmentsText() ? oPCRow.getNoAppointmentsText() : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PLANNINGCALENDAR_ROW_NO_APPOINTMENTS");
 			oRm.text(sNoAppointments);
 			oRm.close("div");
 		}

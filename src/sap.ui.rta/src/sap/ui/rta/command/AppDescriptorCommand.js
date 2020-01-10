@@ -95,4 +95,4 @@ sap.ui.define([
 		}.bind(this));
 	};
 	return AppDescriptorCommand;
-}, /* bExport= */true);
+});

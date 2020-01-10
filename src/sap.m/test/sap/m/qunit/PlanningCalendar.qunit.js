@@ -1466,7 +1466,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	});
 
-	QUnit.test("minDate/maxDate", function(assert) {
+	QUnit.test("Calendar: minDate/maxDate", function(assert) {
 		assert.ok(!oPC1.getMinDate(), "no minDate set by default");
 		assert.ok(!sap.ui.getCore().byId("PC1-Header-Cal").getMinDate(), "Calendar no minDate set by default");
 
@@ -1490,6 +1490,52 @@ sap.ui.define([
 		oPC1.setMaxDate();
 		assert.ok(!oPC1.getMaxDate(), "no maxDate");
 		assert.ok(!sap.ui.getCore().byId("PC1-Header-Cal").getMaxDate(), "Calendar no maxDate");
+	});
+
+	QUnit.test("CustomMonthPicker: minDate/maxDate", function(assert) {
+		// Prepare
+		var oMinDate = new Date(2000, 0 , 1, 0, 0, 0),
+			oMaxDate = new Date(2050, 11 , 31, 23, 59, 59),
+			oCustomMonthPicker = this.oPC._getHeader().getAggregation("_monthPicker");
+
+		// Act
+		this.oPC.setMinDate(oMinDate);
+		this.oPC.setMaxDate(oMaxDate);
+
+		// Assert
+		assert.deepEqual(
+			oCustomMonthPicker.getMinDate(),
+			this.oPC.getMinDate(),
+			"CustomMonthPicker has minDate set"
+		);
+		assert.deepEqual(
+			oCustomMonthPicker.getMaxDate(),
+			this.oPC.getMaxDate(),
+			"CustomMonthPicker has maxDate set"
+		);
+	});
+
+	QUnit.test("CustomYearPicker: minDate/maxDate", function(assert) {
+		// Prepare
+		var oMinDate = new Date(2000, 0 , 1, 0, 0, 0),
+			oMaxDate = new Date(2050, 11 , 31, 23, 59, 59),
+			oCustomYearPicker = this.oPC._getHeader().getAggregation("_yearPicker");
+
+		// Act
+		this.oPC.setMinDate(oMinDate);
+		this.oPC.setMaxDate(oMaxDate);
+
+		// Assert
+		assert.deepEqual(
+			oCustomYearPicker.getMinDate(),
+			this.oPC.getMinDate(),
+			"CustomYearPicker has minDate set"
+		);
+		assert.deepEqual(
+			oCustomYearPicker.getMaxDate(),
+			this.oPC.getMaxDate(),
+			"CustomYearPicker has maxDate set"
+		);
 	});
 
 	QUnit.test("rows", function(assert) {
@@ -3016,6 +3062,73 @@ sap.ui.define([
 		this.oPC2._dateNav.setCurrent(oStartDate);
 	});
 
+	QUnit.test("previous button when minDate >= current view start date initially", function(assert) {
+		// arange
+		var oPC = new PlanningCalendar({
+			viewKey: "One Month",
+			startDate: new Date(2019, 11, 6),
+			minDate: new Date(2019, 11, 1)
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(
+			oPC._getHeader()._oPrevBtn.getEnabled(),
+			false,
+			"previous button is disabled");
+
+		// clean
+		oPC.destroy();
+	});
+
+	QUnit.test("today press disables previous button if necessary", function(assert) {
+		// arrange
+		var oFakeNow = new Date(2019, 11, 22),
+			clock = sinon.useFakeTimers(oFakeNow.getTime()),
+			oPC = new PlanningCalendar({
+				viewKey: "One Month",
+				startDate: new Date(2020, 0, 6),
+				minDate: new Date(2019, 11, 1)
+			}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oPC._getHeader()._oTodayBtn.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(
+			oPC._getHeader()._oPrevBtn.getEnabled(),
+			false,
+			"previous button is disabled");
+
+		// clean
+		clock.restore();
+		oPC.destroy();
+	});
+
+	QUnit.test("previous button when navigated to a view where minDate = start date without the hours", function(assert) {
+		// arrange
+		var oPC = new PlanningCalendar({
+				viewKey: "One Month",
+				startDate: new Date(2020, 0, 6, 8, 0, 0),
+				minDate: new Date(2019, 11, 1, 0, 0, 0)
+			}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oPC._getHeader()._oPrevBtn.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(
+			oPC._getHeader()._oPrevBtn.getEnabled(),
+			false,
+			"previous button is disabled");
+
+		// clean
+		oPC.destroy();
+	});
 
 	QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area)", function(assert) {
 		var $Days = this.oPC2Interval.$("days"),
@@ -4869,22 +4982,41 @@ sap.ui.define([
 				new CalendarAppointment({
 					startDate: new Date(2015, 0, 2, 7, 0),
 					endDate: new Date(2015, 0, 2, 15, 0)
+				}),
+				new CalendarAppointment({
+					startDate: new Date(2015, 0, 2, 7, 0),
+					endDate: new Date(2015, 0, 2, 15, 34)
+				}),
+				new CalendarAppointment({
+					startDate: new Date(2015, 0, 2, 7, 0),
+					endDate: new Date(2015, 0, 2, 7, 34)
 				})
 			],
 			oCurrentlyDisplayedDate = new Date(2015, 0, 2),
 			oTimeFormat = DateFormat.getTimeInstance({pattern: 'HH:mm'}),
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oLocaleData = LocaleData.getInstance(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
+			oOriginalFormatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			sOriginalFormatLocale = oOriginalFormatLocale.getLanguage() + "_" +  oOriginalFormatLocale.getRegion();
 
-		assert.equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate), '');
-		assert.equal(aAppInfos[1]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
-			oResourceBundle.getText('PLANNINGCALENDAR_ALLDAY'));
-		assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
-			oResourceBundle.getText('PLANNINGCALENDAR_UNTIL', [oTimeFormat.format(aAppInfos[2].getEndDate())]));
-		assert.equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
-			oTimeFormat.format(aAppInfos[3].getStartDate()));
-		assert.equal(aAppInfos[4]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
-			oTimeFormat.format(aAppInfos[4].getStartDate()) + ' - ' + oTimeFormat.format(aAppInfos[4].getEndDate()));
+		sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
 
+		assert.equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, '');
+		assert.equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, undefined);
+		assert.equal(aAppInfos[1]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "All Day");
+		assert.equal(aAppInfos[1]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, undefined);
+		// assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "until"); // TODO: will be uncommented after chnage in the translation
+		assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "11:00");
+		assert.equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "from");
+		assert.equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "09:00");
+		assert.equal(aAppInfos[4]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "07:00");
+		assert.equal(aAppInfos[4]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "8 hrs");
+		assert.equal(aAppInfos[5]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "07:00");
+		assert.equal(aAppInfos[5]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "8 hrs, 34 mins");
+		assert.equal(aAppInfos[6]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "07:00");
+		assert.equal(aAppInfos[6]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "34 mins");
+
+		sap.ui.getCore().getConfiguration().setFormatLocale(sOriginalFormatLocale);
 	});
 
 	QUnit.module('showDayNamesLine', {

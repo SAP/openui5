@@ -3735,7 +3735,7 @@ sap.ui.define([
 		oComboBox.syncPickerContent();
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(oComboBox._oSuggestionPopover._getPickerValueStateText().getText(), sText,
+		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), sText,
 			"The text is forwarded correctly.");
 
 		// Act
@@ -3743,14 +3743,14 @@ sap.ui.define([
 		oComboBox.setValueState("Error");
 
 		// Assert
-		assert.strictEqual(oComboBox._oSuggestionPopover._getPickerValueStateText().getText(), ValueStateSupport.getAdditionalText(oComboBox),
+		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), ValueStateSupport.getAdditionalText(oComboBox),
 			"The text is set correctly when the state is Error and not specific valueStateText is set.");
 
 		// Act
 		oComboBox.setValueStateText(sValueStateText);
 
 		// Assert
-		assert.strictEqual(oComboBox._oSuggestionPopover._getPickerValueStateText().getText(), sValueStateText, "The text is set correctly when is set from the user.");
+		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), sValueStateText, "The text is set correctly when is set from the user.");
 
 		// cleanup
 		oComboBox.destroy();
@@ -3768,7 +3768,7 @@ sap.ui.define([
 		oComboBox.syncPickerContent();
 		sap.ui.getCore().applyChanges();
 
-		var fnShowValueStateTextSpy = this.spy(oComboBox._oSuggestionPopover, "_showValueStateText");
+		var fnShowValueStateTextSpy = this.spy(oComboBox._oSuggestionPopover, "_showValueStateHeader");
 		oComboBox.setValueState("None");
 		assert.ok(fnShowValueStateTextSpy.calledWith(false));
 
@@ -3823,9 +3823,10 @@ sap.ui.define([
 		oErrorComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+
 		// Assert
-		assert.ok(oErrorComboBox._oSuggestionPopover._oSimpleFixFlex.getFixContent().hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ValueState"), "Header has value state class");
-		assert.ok(oErrorComboBox._oSuggestionPopover._oSimpleFixFlex.getFixContent().hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ErrorState"), "Header has error value state class");
+		assert.ok(oErrorComboBox._oSuggestionPopover._oPopover.hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ValueState"), "Header has value state class");
+		assert.ok(oErrorComboBox._oSuggestionPopover._oPopover.hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ErrorState"), "Header has error value state class");
 
 		// Cleanup
 		oErrorComboBox.destroy();
@@ -3851,7 +3852,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oErrorComboBox._getSuggestionsPopover()._oSimpleFixFlex.getFixContent().getText(), "custom", "text should be custom");
+		assert.strictEqual(oErrorComboBox._getSuggestionsPopover()._oPopover.getCustomHeader().getText(), "custom", "text should be custom");
 
 		// Cleanup
 		oErrorComboBox.destroy();
@@ -4313,8 +4314,7 @@ sap.ui.define([
 
 	QUnit.module("findAggregatedObjects()");
 
-	QUnit.skip("findAggregatedObjects()", function (assert) {
-
+	QUnit.test("findAggregatedObjects()", function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -4326,13 +4326,17 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oComboBox.open();
 		var fnFindAggregatedObjectsSpy = this.spy(oComboBox, "findAggregatedObjects");
 
 		// act
 		oComboBox.findAggregatedObjects();
+		var oItem = fnFindAggregatedObjectsSpy.returnValues.pop();
 
 		// assert
-		assert.ok(fnFindAggregatedObjectsSpy.returned(oComboBox.getItems()));
+		assert.strictEqual(oItem[1], oComboBox._getList().getItems()[0], "findAggregatedObjects's should return list with an item.");
 
 		// cleanup
 		oComboBox.destroy();
@@ -5089,7 +5093,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.skip("it should update update the value of the input field when the selected item is pressed", function (assert) {
+	QUnit.test("it should update update the value of the input field when the selected item is pressed", function (assert) {
 
 		// system under test
 		var oItem;
@@ -5113,8 +5117,7 @@ sap.ui.define([
 		oComboBox.getFocusDomRef().value = "foo";
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox._getList().getDomRef(), {
-			srcControl: oItem,
+		sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox._getList().getSelectedItem().getDomRef(), {
 			changedTouches: {
 				0: {
 					pageX: 1,
@@ -9157,9 +9160,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// asserts
-		assert.ok(oComboBox._oSuggestionPopover._getScrollableContent().scrollTop, "The picker was scrolled");
-		assert.ok(oComboBox._oSuggestionPopover._getScrollableContent().scrollTop < oComboBox.getListItem(oComboBox.getSelectedItem()).getDomRef().offsetTop,
-				"The selected item is on the viewport");
+		assert.ok(oComboBox.getPicker().getDomRef("cont").scrollTop < oComboBox._oSuggestionPopover._oList.getSelectedItem().getDomRef().offsetTop, "Selected Item should be visible after scrolling");
 
 		// cleanup
 		oComboBox.destroy();
@@ -9952,7 +9953,7 @@ sap.ui.define([
 	});
 
 	// BCP 1680061025
-	QUnit.skip("it should fire the change event after the selection is updated on mobile devices", function (assert) {
+	QUnit.test("it should fire the change event after the selection is updated on mobile devices", function (assert) {
 		var done = assert.async();
 		this.stub(Device, "system", {
 			desktop: false,
@@ -9990,35 +9991,30 @@ sap.ui.define([
 		// tick the clock ahead 1 second, after the open animation is completed
 		this.clock.tick(1000);
 
-		var oListDomRef = oComboBox._getList().getDomRef();
-		var oListItem = oComboBox.getListItem(oItem);
+		var oListItem = oComboBox.getListItem(oItem).getDomRef();
 		var oTouches = {
 			0: {
 				pageX: 1,
 				pageY: 1,
-				identifier: 0,
-				target: oListItem.getDomRef()
+				identifier: 0
 			},
 
 			length: 1
 		};
 
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oListDomRef, {
-			srcControl: oListItem,
+		sap.ui.test.qunit.triggerTouchEvent("touchstart", oListItem, {
 			touches: oTouches,
 			targetTouches: oTouches
 		});
 
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oListDomRef, {
-			srcControl: oListItem,
+		sap.ui.test.qunit.triggerTouchEvent("touchend", oListItem, {
 			changedTouches: oTouches,
 			touches: {
 				length: 0
 			}
 		});
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oListDomRef, {
-			srcControl: oListItem,
+		sap.ui.test.qunit.triggerTouchEvent("tap", oListItem, {
 			changedTouches: oTouches,
 			touches: {
 				length: 0
@@ -11393,7 +11389,7 @@ sap.ui.define([
 		assert.equal(selectedText, "", "There is no selected text when matching a suggestion");
 
 		// Act
-		this.comboBox._$input.blur();
+		this.comboBox.onsapfocusleave({});
 		this.clock.tick(500);
 		this.comboBox._$input.focus();
 		this.comboBox.onfocusin({});
@@ -12650,6 +12646,7 @@ sap.ui.define([
 		var oSpy = new sinon.spy(this.oCombobox, "toggleIconPressedStyle"),
 			oFakeEvent = {
 				isMarked: function () {return false;},
+				setMarked: function () {},
 				target: {
 					value: "A Item"
 				},

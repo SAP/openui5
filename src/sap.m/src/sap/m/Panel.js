@@ -294,7 +294,7 @@ sap.ui.define([
 
 	Panel.prototype._createIcon = function () {
 		var that = this,
-			sCollapsedIconURI = IconPool.getIconURI("navigation-right-arrow"),
+			sCollapsedIconURI = IconPool.getIconURI("slim-arrow-right"),
 			sTooltipBundleText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PANEL_ICON");
 
 		return IconPool.createControlByURI({

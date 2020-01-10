@@ -2,21 +2,21 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/test/matchers/Matcher'], function ($, Matcher) {
+sap.ui.define(['sap/ui/test/matchers/Matcher'], function (Matcher) {
 	"use strict";
 
 	/**
-	 * AggregationContainsPropertyEqual - checks if an aggregation contains at least one item that has a Property set to a certain value.
+	 * Creates a new instance of the SwatchColor matcher.
 	 *
-	 * @class AggregationContainsPropertyEqual - checks if an aggregation contains at least one item that has a Property set to a certain value
+	 * @class Checks if a color palette entry matches the given color.
 	 * @extends sap.ui.test.matchers.Matcher
-	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationContainsPropertyEqualMatcher
-	 * @public
-	 * @name sap.ui.test.matchers.AggregationContainsPropertyEqual
+	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new SwatchColor matcher
+	 * @private
+	 * @name cp.opa.test.env.integration.matchers.SwatchColor
 	 * @author SAP SE
 	 * @since 1.23
 	 */
-	return Matcher.extend("sap.ui.test.matchers.AggregationContainsPropertyEqual", /** @lends sap.ui.test.matchers.AggregationContainsPropertyEqual.prototype */ {
+	return Matcher.extend("cp.opa.test.env.integration.matchers.SwatchColor", /** @lends cp.opa.test.env.integration.matchers.SwatchColor.prototype */ {
 
 		metadata : {
 			publicMethods : [ "isMatching" ],
@@ -29,10 +29,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/matchers/Matcher'], function ($
 		},
 
 		/**
-		 * Checks if the control has a filled aggregation with at least one control that have a property equaling propertyName/Value.
-		 *
+		 * Checks if one of the control's color palette entries has the given color.
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher
-		 * @return {boolean} true if the Aggregation set in the property aggregationName is filled, false if it is not.
+		 * @return {boolean} true if at least one of the control's color palette entries has the given color
 		 * @public
 		 */
 		isMatching : function (oControl) {
@@ -50,4 +49,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/matchers/Matcher'], function ($
 
 	});
 
-}, /* bExport= */ true);
+});

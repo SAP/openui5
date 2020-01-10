@@ -9,10 +9,47 @@
 	padding: 0.125rem 0.125rem 0 0.125rem;
 }
 
-.sapMITBScrollContainer {
+.sapMITHScrollContainer {
 	/* the same padding as on the sapMITBHead is needed
 	to correct the scrolling calculations*/
-	padding: 0.125rem 0.125rem 0 0.125rem;
+	padding-left: 1px;
+}
+
+:not(.sapUiSizeCompact),
+.sapMITB:not(.sapUiSizeCompact) {
+
+	.sapMITHOverflowList {
+		.sapMITHScrollContainerInner {
+			margin-right: 3rem;
+		}
+
+		.sapMITBArrowScrollRight,
+		.sapMITBArrowScrollRightInLine {
+			right: 3rem;
+		}
+	}
+
+	.sapMITBArrowScrollLeftTextOnly,
+	.sapMITBArrowScrollRightTextOnly {
+		align-items: flex-end;
+
+		+ .sapMITHOverflowButton {
+			align-items: flex-end;
+		}
+	}
+}
+
+.sapUiSizeCompact {
+
+	.sapMITBArrowScrollLeftTextOnly,
+	.sapMITBArrowScrollRightTextOnly {
+		padding-bottom: 0.5rem;
+
+		+ .sapMITHOverflowButton {
+			padding-bottom: 0.5rem;
+		}
+	}
+
 }
 
 /* Arrow */
@@ -94,11 +131,11 @@ html.sap-desktop .sapMITH.sapUiSizeCompact {
 	}
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,// TODO remove after 1.62 version
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,// TODO remove after 1.62 version
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus.sapMITBAll,// TODO remove after 1.62 version
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus.sapMITBAll,
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll{
 	&::after {
 		border: 0.125rem dashed @sapUiContentFocusColor;

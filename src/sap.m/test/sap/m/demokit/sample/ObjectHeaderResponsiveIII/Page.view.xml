@@ -24,7 +24,8 @@
 		markFlagged="true"
 		markFavorite="true"
 		numberState="Success"
-		backgroundDesign="Translucent">
+		backgroundDesign="Translucent"
+		class="sapUiResponsivePadding--header" >
 		<ObjectAttribute
 			title="ProductID"
 			text="{ProductId}"/>

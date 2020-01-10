@@ -256,6 +256,19 @@ sap.ui.define([
 			this.applyTheme(this.sStartTheme, done);
 
 			this.fnSpyBeforeRendering.restore();
+		},
+		fnWithRenderAsserts: function (assert) {
+			assert.ok(document.getElementById("generic-tile"), "Generic tile was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-hdr-text"), "Generic tile header was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-icon-image"), "Generic tile icon was rendered successfully");
+			assert.ok(document.getElementById("tile-cont"), "TileContent was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt"), "NumericContent was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-indicator"), "Indicator was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-value"), "Value was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-scale"), "Scale was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+			assert.ok(this.oGenericTile.$().hasClass("OneByOne"), "FrameType class has been added");
 		}
 	});
 
@@ -263,18 +276,15 @@ sap.ui.define([
 		assert.ok(this.fnSpyBeforeRendering.calledOnce, "Generic tile was rendered only once");
 	});
 
-	QUnit.test("GenericTile rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("generic-tile"), "Generic tile was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-hdr-text"), "Generic tile header was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-icon-image"), "Generic tile icon was rendered successfully");
-		assert.ok(jQuery.sap.domById("tile-cont"), "TileContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt"), "NumericContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-indicator"), "Indicator was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-value"), "Value was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-scale"), "Scale was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-icon-image"), "Icon was rendered successfully");
-		assert.ok(this.oGenericTile.$().hasClass("OneByOne"), "FrameType class has been added");
+	QUnit.test("GenericTile rendered", function (assert) {
+		this.fnWithRenderAsserts(assert);
+	});
+
+	QUnit.test("GenericTile rendered with custom width", function (assert) {
+		this.oGenericTile.setWidth("500px");
+		sap.ui.getCore().applyChanges();
+
+		this.fnWithRenderAsserts(assert);
 	});
 
 	QUnit.test("GenericTile border rendered - blue crystal", function(assert) {
@@ -373,6 +383,29 @@ sap.ui.define([
 			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added");
 			this.oGenericTile.ontouchend();
 			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed");
+			done();
+		});
+	});
+
+	QUnit.test("GenericTile focus and hover overlay rendered - Fiori 3", function (assert) {
+		if (Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		var done = assert.async();
+		this.applyTheme("sap_fiori_3", function () {
+			this.oGenericTile.rerender();
+			// hover overlay is used only in case of tiles with background image
+			assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
+			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
+			assert.ok(!jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
+			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile hover overlay");
+			this.oGenericTile.ontouchstart();
+			assert.ok(jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile");
+			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile hover overlay");
+			this.oGenericTile.ontouchend();
+			assert.ok(!jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile");
+			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile hover overlay");
 			done();
 		});
 	});
@@ -645,7 +678,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("All elements found", function(assert) {
+	QUnit.test("All elements found", function (assert) {
 		assert.ok(this.oGenericTile.$().hasClass("sapMGT"), "Tile has class 'sapMGT'");
 		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"), "Tile has class 'sapMGTLineMode'");
 		assert.ok(this.oGenericTile.$("hdr-text").length > 0, "Header was found");
@@ -655,6 +688,10 @@ sap.ui.define([
 		assert.ok(this.oGenericTile.$("focus").length > 0, "Focus helper was found");
 		assert.ok(this.oGenericTile.$("touchArea").length > 0, "Touch area for line mode was found");
 		assert.ok(this.oGenericTile.$("lineModeHelpContainer").length > 0, "Help container for line mode was found");
+
+		var $Parent = this.oGenericTile.$().parent();
+		assert.ok($Parent.hasClass("sapMGTLineModeListContainer"), "Parent container should have class for the line mode list container.");
+		assert.notOk($Parent.hasClass("sapMGTLineModeFloatingContainer"), "Parent container should not have class for the line mode floating container.");
 	});
 
 	QUnit.module("LineMode FloatingView (large screen only) w/o parent", {
@@ -725,6 +762,11 @@ sap.ui.define([
 		assert.ok(this.oGenericTile.$("subHdr-text").length > 0, "SubHeader was found");
 		assert.equal(this.oGenericTile.$("subHdr-text").text(), "subheaderText", "SubHeader text was correct");
 		assert.ok(this.oGenericTile.$("styleHelper").length > 0, "Style helper was found.");
+
+		var $Parent = this.oGenericTile.$().parent();
+		assert.ok($Parent.hasClass("sapMGTLineModeContainer"), "Parent container should have class for the line mode container.");
+		assert.ok($Parent.hasClass("sapMGTLineModeFloatingContainer"), "Parent container should have class for the line mode floating container.");
+		assert.notOk($Parent.hasClass("sapMGTLineModeListContainer"), "Parent container should not have class for the line mode list container.");
 	});
 
 	QUnit.module("sap.m.GenericTileMode.LineMode ListView compact (small screen only)", {
@@ -760,9 +802,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("All elements found", function(assert) {
-		//Arrange
-		//Act
-		//Assert
 		assert.ok(this.oGenericTile.$().hasClass("sapMGT"), "Tile has class 'sapMGT'");
 		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"), "Tile has class 'sapMGTLineMode'");
 		assert.ok(this.oGenericTile.$("hdr-text").length > 0, "Header was found.");
@@ -772,6 +811,10 @@ sap.ui.define([
 		assert.ok(this.oGenericTile.$("focus").length > 0, "Focus helper was found");
 		assert.ok(this.oGenericTile.$("touchArea").length > 0, "Touch area for line mode was found");
 		assert.ok(this.oGenericTile.$("lineModeHelpContainer").length > 0, "Help container for line mode was found");
+
+		var $Parent = this.oGenericTile.$().parent();
+		assert.ok($Parent.hasClass("sapMGTLineModeListContainer"), "Parent container should have class for the line mode list container.");
+		assert.notOk($Parent.hasClass("sapMGTLineModeFloatingContainer"), "Parent container should not have class for the line mode floating container.");
 	});
 
 	QUnit.module("sap.m.GenericTileMode.LineMode FloatingView compact (large screen only)", {
@@ -823,9 +866,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("All elements found", function(assert) {
-		//Arrange
-		//Act
-		//Assert
 		assert.ok(this.oGenericTile.$().hasClass("sapMGT"), "Tile has class 'sapMGT'");
 		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"), "Tile has class 'sapMGTLineMode'");
 		assert.ok(this.oGenericTile.$("startMarker").length > 0, "StartMarker was found.");
@@ -835,6 +875,11 @@ sap.ui.define([
 		assert.ok(this.oGenericTile.$("subHdr-text").length > 0, "SubHeader was found.");
 		assert.equal(this.oGenericTile.$("subHdr-text").text(), "Expenses By Region", "SubHeader was correct.");
 		assert.ok(this.oGenericTile.$("styleHelper").length > 0, "Style helper was found.");
+
+		var $Parent = this.oGenericTile.$().parent();
+		assert.ok($Parent.hasClass("sapMGTLineModeContainer"), "Parent container should have class for the line mode container.");
+		assert.ok($Parent.hasClass("sapMGTLineModeFloatingContainer"), "Parent container should have class for the line mode floating container.");
+		assert.notOk($Parent.hasClass("sapMGTLineModeListContainer"), "Parent container should not have class for the line mode list container.");
 	});
 
 	QUnit.module("sap.m.GenericTileMode.LineMode FloatingView Functions tests (large screen only)", {

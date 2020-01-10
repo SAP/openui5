@@ -13,15 +13,27 @@
 			</Toolbar>
 		</subHeader>
 		<content>
-			<Panel>
-				<w:Card class="sapUiMediumMargin" id="lineChart" manifest="{manifests>/minHeight/line}" width="400px"/>
-				<w:Card class="sapUiMediumMargin" id="stackedColumnChart" manifest="{manifests>/minHeight/stackedColumn}" width="400px"/>
-				<w:Card class="sapUiMediumMargin" id="stackedBarChart" manifest="{manifests>/minHeight/stackedBar}" width="400px"/>
-				<w:Card class="sapUiMediumMargin" id="donutChart" manifest="{manifests>/minHeight/donut}" width="400px"/>
-				<w:Card class="sapUiMediumMargin" id="smallList" manifest="{manifests>/minHeight/smallList}" width="400px"/>
-				<w:Card class="sapUiMediumMargin" id="mediumList" manifest="{manifests>/minHeight/mediumList}" width="400px"/>
-				<w:Card class="sapUiMediumMargin" id="largeList" manifest="{manifests>/minHeight/largeList}" width="400px"/>
+			<Panel id="panelInCozy">
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/line}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/stackedColumn}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/stackedBar}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/donut}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/smallList}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/mediumList}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/largeList}" width="400px"/>
 				<w:Card class="sapUiMediumMargin" manifest="./cardsVisualTests/cardcontent/objectcontent/staticData.json" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/table}" width="400px"/>
+			</Panel>
+			<Panel id="panelInCompact" class="sapUiSizeCompact">
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/line}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/stackedColumn}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/stackedBar}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/donut}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/smallList}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/mediumList}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/largeList}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="./cardsVisualTests/cardcontent/objectcontent/staticData.json" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/table}" width="400px"/>
 			</Panel>
 		</content>
 	</Page>

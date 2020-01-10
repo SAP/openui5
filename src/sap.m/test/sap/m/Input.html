@@ -905,6 +905,29 @@
 						valueHelpRequest: function(oEvent) {
 							sap.m.MessageBox.alert("Value help requested");
 						}
+					}),
+					new sap.m.Input({
+						placeholder: "Input Search Without Suggestions",
+						showValueHelp: true,
+						valueHelpRequest: function(oEvent){
+							sap.m.MessageBox.alert("Value help requested with valueForSearch: '" + oEvent.getParameter("_userInputValue") + "'");
+						}
+					}),
+					new sap.m.Input({
+						placeholder: "Input Search With Suggestions - type 'text'",
+						showValueHelp: true,
+						showSuggestion: true,
+						suggestionItems: [
+							new sap.ui.core.Item({text: "text 1"}),
+							new sap.ui.core.Item({text: "text 2"}),
+							new sap.ui.core.Item({text: "text 3"}),
+							new sap.ui.core.Item({text: "text 4"}),
+							new sap.ui.core.Item({text: "text 15"})
+						],
+						valueHelpRequest: function(oEvent){
+							console.log("Zzz: " + oEvent.getParameter("userInputValue"));
+							sap.m.MessageBox.alert("Value help requested with valueForSearch: '" + oEvent.getParameter("_userInputValue") + "'");
+						}
 					})
 			],
 			footer: createFooter()

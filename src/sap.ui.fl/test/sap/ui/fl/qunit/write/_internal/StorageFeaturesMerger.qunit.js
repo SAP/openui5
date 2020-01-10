@@ -25,6 +25,7 @@ sap.ui.define([
 				isAtoAvailable: false,
 				isAtoEnabled: false,
 				isProductiveSystem: true,
+				draft: {},
 				isZeroDowntimeUpgradeRunning: false,
 				system: "",
 				client: ""
@@ -37,10 +38,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("mergeResults with different responses", function (assert) {
-			var oResponse_1 = {isProductiveSystem: false, isKeyUser: false};
-			var oResponse_2 = {isAtoAvailable: true, isKeyUser: true};
-			var oResponse_3 = {newKey: true};
-			var aResponse = [oResponse_1, oResponse_2, oResponse_3];
+			var oResponse1 = {
+				layers: [],
+				features: {isProductiveSystem: false}
+			};
+			var oResponse2 = {
+				layers : [],
+				features : {isAtoAvailable : true, isKeyUser : true}
+			};
+			var oResponse3 = {
+				layers : [],
+				features : {newKey : true}
+			};
+			var aResponse = [oResponse1, oResponse2, oResponse3];
 
 			var oResult = StorageFeaturesMerger.mergeResults(aResponse);
 
@@ -48,6 +58,30 @@ sap.ui.define([
 			assert.equal(oResult.isKeyUser, true, "last isKeyuser is true");
 			assert.equal(oResult.isAtoAvailable, true, "isAtoAvailable to true");
 			assert.equal(oResult.isProductiveSystem, false, "isProductiveSystem is false");
+		});
+
+		QUnit.test("mergeResults handles the draft flag", function (assert) {
+			var oResponse1 = {
+				layers: ["VENDOR", "CUSTOMER_BASE"],
+				features: {isDraftEnabled: false}
+			};
+			var oResponse2 = {
+				layers: ["CUSTOMER"],
+				features: {isDraftEnabled: true}
+			};
+			var oResponse3 = {
+				layers: ["USER"],
+				features: {isDraftEnabled: false}
+			};
+			var aResponse = [oResponse1, oResponse2, oResponse3];
+
+			var oResult = StorageFeaturesMerger.mergeResults(aResponse);
+
+			assert.equal(oResult.draft.VENDOR, false);
+			assert.equal(oResult.draft.CUSTOMER_BASE, false);
+			assert.equal(oResult.draft.PARTNER, undefined);
+			assert.equal(oResult.draft.CUSTOMER, true);
+			assert.equal(oResult.draft.USER, false);
 		});
 	});
 

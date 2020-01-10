@@ -110,6 +110,7 @@ sap.ui.define([
 			"sap.m.ObjectMarkerVisibility",
 			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
+			"sap.m.P13nConditionOperation",
 			"sap.m.PageBackgroundDesign",
 			"sap.m.PanelAccessibleRole",
 			"sap.m.PDFViewerDisplayType",
@@ -485,6 +486,7 @@ sap.ui.define([
 				},
 				"sap.m.MenuButton": "sap/m/flexibility/MenuButton",
 				"sap.m.OverflowToolbar":"sap/m/flexibility/OverflowToolbar",
+				"sap.m.OverflowToolbarButton": "sap/m/flexibility/OverflowToolbarButton",
 				"sap.m.Page": "sap/m/flexibility/Page",
 				"sap.m.Panel": "sap/m/flexibility/Panel",
 				"sap.m.Popover": "sap/m/flexibility/Popover",
@@ -1903,7 +1905,7 @@ sap.ui.define([
 	 * Gets the map of texts to be hyphenated and rendered.
 	 * For example, for <code>sap.m.Text</code> this would be the <code>text</code> property.
 	 *
-	 * @returns {map} The texts map which should be hyphenated
+	 * @returns {Object<string,string>} The texts map which should be hyphenated
 	 *
 	 * @function
 	 * @name sap.m.IHyphenation.getTextsToBeHyphenated
@@ -2686,6 +2688,40 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * @enum {string}
+	 * @public
+	 * @experimental since version 1.26 !!! THIS TYPE IS ONLY FOR INTERNAL USE !!!
+	 */
+	thisLib.P13nConditionOperation = {
+		// filter operations
+		BT: "BT",
+		EQ: "EQ",
+		Contains: "Contains",
+		StartsWith: "StartsWith",
+		EndsWith: "EndsWith",
+		LT: "LT",
+		LE: "LE",
+		GT: "GT",
+		GE: "GE",
+		Initial: "Initial",
+		Empty: "Empty",
+		NotEmpty: "NotEmpty",
+
+		// sort operations
+		Ascending: "Ascending",
+		Descending: "Descending",
+
+		// group operations
+		GroupAscending: "GroupAscending",
+		GroupDescending: "GroupDescending",
+		//
+		// calculation operations
+		Total: "Total",
+		Average: "Average",
+		Minimum: "Minimum",
+		Maximum: "Maximum"
+	};
 
 	/**
 	 * Available Page Background Design.

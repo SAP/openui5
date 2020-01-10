@@ -501,4 +501,4 @@ sap.ui.define([
 	})();
 
 	return SemanticConfiguration;
-}, /* bExport= */ false);
+});

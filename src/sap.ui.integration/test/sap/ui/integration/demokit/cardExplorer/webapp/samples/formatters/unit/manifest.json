@@ -2,7 +2,23 @@
 	"_version": "1.17.0",
 	"sap.app": {
 		"id": "card.explorer.format.unit",
-		"type": "card"
+		"type": "card",
+		"title": "Sample for Unit Formatters",
+		"subTitle": "Sample for Unit Formatters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Unit",
+				"Formatter",
+				"Card",
+				"Sample"
+			]
+		}
 	},
 	"sap.card": {
 		"type": "List",
@@ -14,8 +30,8 @@
 			}
 		},
 		"header": {
-			"title": "Order status",
-			"subTitle": "Orders exceeding {= format.unit(50, '{{parameters.cardUnitType}}', 'de')} are highlighted as important",
+			"title": "Fleet management",
+			"subTitle": "Company vehicles located further than {= format.unit(150, '{{parameters.cardUnitType}}', 'de')} from base are highlighted in red",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -27,41 +43,36 @@
 			"data": {
 				"json": [
 					{
-						"Name": "Keyboard and Mouse",
-						"image": "sap-icon://keyboard-and-mouse",
-						"Distance": 155,
-						"arrivalDate": "Sun Dec 1 2019 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"Name": "Cargo truck",
+						"image": "sap-icon://shipping-status",
+						"Distance": 155
 					},
 					{
-						"Name": "ITelO Vault",
-						"image": "sap-icon://shield",
-						"Distance": 30,
-						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"Name": "Tow truck",
+						"image": "sap-icon://vehicle-repair",
+						"Distance": 30
 					},
 					{
-						"Name": "Notebook Professional 15",
-						"image": "sap-icon://laptop",
-						"Distance": 30,
-						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"Name": "Company bus",
+						"image": "sap-icon://bus-public-transport",
+						"Distance": 130
 					},
 					{
-						"Name": "Ergo Screen E-I",
-						"image": "sap-icon://desktop-mobile",
-						"arrivalDate": "Sun Nov 2 2019 03:24:00 GMT+0200 (Eastern European Standard Time)",
-						"Distance": 69
+						"Name": "Maintenance truck",
+						"image": "sap-icon://inventory",
+						"Distance": 169
 					},
 					{
-						"Name": "Laser Professional Eco",
-						"image": "sap-icon://keyboard-and-mouse",
-						"arrivalDate": "Sun Jan 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)",
-						"Distance": 40
+						"Name": "Company car",
+						"image": "sap-icon://car-rental",
+						"Distance": 140
 					}
 				]
 			},
 			"item": {
 				"title": "{Name}",
-				"description": "Distance:",
-				"highlight": "{= ${Distance} < 50 ? 'Success' : 'Error'}",
+				"description": "Distance from base:",
+				"highlight": "{= ${Distance} < 150 ? 'Success' : 'Error'}",
 				"icon": {
 					"src": "{image}"
 				},

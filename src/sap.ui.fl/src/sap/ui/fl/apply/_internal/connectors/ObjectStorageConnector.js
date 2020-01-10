@@ -6,12 +6,12 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/connectors/BaseConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/apply/_internal/StorageUtils"
 ], function(
 	merge,
 	BaseConnector,
 	ObjectStorageUtils,
-	ApplyUtils
+	StorageUtils
 ) {
 	"use strict";
 
@@ -52,8 +52,8 @@ sap.ui.define([
 				storage: this.oStorage,
 				reference: mPropertyBag.reference
 			}).then(function (aFlexObjects) {
-				var mGroupedFlexObjects = ApplyUtils.getGroupedFlexObjects(aFlexObjects);
-				return ApplyUtils.filterAndSortResponses(mGroupedFlexObjects);
+				var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFlexObjects);
+				return StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
 			});
 		}
 	});

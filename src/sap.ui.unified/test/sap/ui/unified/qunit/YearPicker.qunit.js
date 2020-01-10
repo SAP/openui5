@@ -33,6 +33,33 @@ sap.ui.define([
 			assert.equal(oFirstRenderedDate.getHours(), 0, "hours are correct");
 		});
 
+		QUnit.test("setYear", function(assert) {
+			// Prepare
+			var oGridItemRefs = this.oYP._oItemNavigation.getItemDomRefs(),
+				iFocusedIndex;
+
+			// Act
+			this.oYP.setYear(2017);
+			iFocusedIndex = this.oYP._oItemNavigation.getFocusedIndex();
+
+			// Assert
+			assert.equal(this.oYP.getSelectedDates()[0].getStartDate().getFullYear(), 2017, "There is a selected date");
+			assert.ok(oGridItemRefs[iFocusedIndex].classList.contains("sapUiCalItemSel"));
+
+		});
+
+		QUnit.test("setYear with interval selection", function(assert) {
+			// Prepare
+			this.oYP.setIntervalSelection(true);
+
+			// Act
+			this.oYP.setYear(2017);
+
+			// Assert
+			assert.notOk(this.oYP.getSelectedDates(), "There are no selected dates after setYear");
+
+		});
+
 		QUnit.module("interval selection", {
 			beforeEach: function() {
 				this.YP = new YearPicker({
@@ -43,6 +70,11 @@ sap.ui.define([
 				this.YP.destroy();
 				this.YP = null;
 			}
+		});
+
+		QUnit.test("selectedDates initially", function(assert) {
+			// Assert
+			assert.notOk(this.YP.getSelectedDates(), "There are no selected dates initially");
 		});
 
 		QUnit.test("_setSelectedDatesControlOrigin", function(assert) {
@@ -265,6 +297,15 @@ sap.ui.define([
 				this.oYP.destroy();
 				this.oYP = null;
 			}
+		});
+
+		QUnit.test("Year is set to 0001", function(assert) {
+			// Act
+			this.oYP.setYear(1);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.ok(true, "Error is not thrown trying to format date with negative year value");
 		});
 
 		QUnit.test("_isValueInThreshold return true if provided value is in provided threshold", function (assert) {

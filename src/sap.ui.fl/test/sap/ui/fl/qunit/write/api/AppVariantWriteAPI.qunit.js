@@ -923,7 +923,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("(Key User Delete Appvar scenario - S4/Hana Cloud system) when deleteAppVariant is called", function(assert) {
+		QUnit.test("(Key User Delete Appvar scenario - S4/Hana Cloud system) when deleteAppVariant is called for a published variant", function(assert) {
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(true);
 
@@ -945,6 +945,16 @@ sap.ui.define([
 				}
 			};
 
+			var oTransportResponse = {
+				response: {
+					errorCode: "",
+					localonly: false,
+					transports: []
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
 			oNewConnectorCall.onSecondCall().resolves(); // Delete call to backend
@@ -953,14 +963,62 @@ sap.ui.define([
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
 				.then(function() {
+					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "DELETE"), "then the parameters are correct");
 					assert.ok(oOpenDialogStub.notCalled, "the dialog was never opened");
 				});
 		});
 
-		QUnit.test("(Save As scenario) when listAllAppVariants is called", function(assert) {
+		QUnit.test("(Key User Delete Appvar scenario - S4/Hana Cloud system) when deleteAppVariant is called for a local variant", function(assert) {
+			var oAppComponent = createAppComponent();
+			simulateSystemConfig(true);
+
+			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "layer1",
+					fileType: "fileType1",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oTransportResponse = {
+				response: {
+					errorCode: "",
+					localonly: true,
+					transports: []
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			oNewConnectorCall.onSecondCall().resolves(); // Delete call to backend
+
+			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog");
+
+			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
+				.then(function() {
+					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
+					assert.ok(oOpenDialogStub.notCalled, "the dialog was never opened");
+				});
+		});
+
+		QUnit.test("(Save As scenario) when listAllAppVariants is called", function(assert) {
+			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantWriteAPI.listAllAppVariants({
 				selector: {
 					appId: "reference.app"
@@ -980,7 +1038,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Save As scenario) when getManifest is called", function(assert) {
-			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantWriteAPI.getManifest({
 				appVarUrl: "mock/appvar/url",
 				layer: "CUSTOMER"
@@ -997,7 +1055,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Save As scenario) when assignCatalogs is called", function(assert) {
-			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantWriteAPI.assignCatalogs({
 				selector: {
 					appId: "customer.reference.app.id"
@@ -1018,7 +1076,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Save As scenario) when unassignCatalogs is called", function(assert) {
-			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantWriteAPI.unassignCatalogs({
 				selector: {
 					appId: "customer.reference.app.id"

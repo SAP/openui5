@@ -5,13 +5,26 @@
 	height="100%">
 	<ObjectPageLayout id="ObjectPageLayout" showAnchorBarPopover="false">
 		<headerTitle>
-			<ObjectPageHeader objectTitle="Navigation to sections"/>
+			<ObjectPageDynamicHeaderTitle>
+				<heading>
+					<m:Title text="Navigation to sections"/>
+				</heading>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Header Title On Phone" />
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:OverflowToolbarButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
+					<m:OverflowToolbarButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
 
 		<headerContent>
-			<m:ObjectAttribute title=""
-							   text="This example shows how to change the default behavior in order to be able to navigate to sections instead of subsections, using the Anchor Bar"/>
+			<m:Title text="This example shows how to change the default behavior in order to be able to navigate to sections instead of subsections, using the Anchor Bar" titleStyle="H6"/>
 		</headerContent>
+
 		<sections>
 			<ObjectPageSection title="Section 1">
 				<subSections>
@@ -42,7 +55,6 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-
 		</sections>
 
 	</ObjectPageLayout>

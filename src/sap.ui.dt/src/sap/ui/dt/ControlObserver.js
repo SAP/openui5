@@ -95,4 +95,4 @@ function(ManagedObjectObserver) {
 	};
 
 	return ControlObserver;
-}, /* bExport= */ true);
+});

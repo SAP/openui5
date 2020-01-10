@@ -2,21 +2,16 @@
 <html lang="en">
 <head>
 	<title>Timeline Card</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="Content-Type" content="text/html">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../../css/style.css">
-	<script id="sap-ui-bootstrap"
-			src="../../../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_fiori_3">
-	</script>
+	<link rel="stylesheet" href="../../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
 
-	<link  href="../../google-code-prettify/prettify.css" rel="stylesheet">
-	<link href="../../css/prettify-light.css" rel="stylesheet">
-
-	<script src="../../google-code-prettify/run_prettify.js"></script>
-
+	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
 </head>
 <body class="sapUiBody topicBody">
 <div class="topic">
@@ -142,79 +137,80 @@
 		<pre class="prettyprint  lang-js">"header": {
 	"title": "New Team Members",
 	"icon": {
-	  "src": "sap-icon://group"
+		"src": "sap-icon://group"
 	}
 }</pre>
 		<p>Define the time content:</p>
 		<pre class="prettyprint  lang-js">"content": {
 	"item": {
-	  "dateTime" : {
-		"label": "{{hireDate_label}}",
-		"value": "{HireDate}"
-	  },
-	  "description" : {
-		"label": "{{jobResponsibilities_label}}",
-		"value": "{JobResponsibilities}"
-	  },
-	  "title" : {
-		"label": "{{jobTitle_label}}",
-		"value": "{JobTitle}"
-	  },
-	  "owner" : {
-		"label": "{{name_label}}",
-		"value": "{Name}"
-	  },
-	  "ownerImage" : {
-		"label": "{{picture_label}}",
-		"value": "{Photo}"
-	  },
-	  "icon": {
-		"src": "{Icon}"
-	  }
+		"dateTime" : {
+			"label": "{{hireDate_label}}",
+			"value": "{HireDate}"
+		},
+		"description" : {
+			"label": "{{jobResponsibilities_label}}",
+			"value": "{JobResponsibilities}"
+		},
+		"title" : {
+			"label": "{{jobTitle_label}}",
+			"value": "{JobTitle}"
+		},
+		"owner" : {
+			"label": "{{name_label}}",
+			"value": "{Name}"
+		},
+		"ownerImage" : {
+			"label": "{{picture_label}}",
+			"value": "{Photo}"
+		},
+		"icon": {
+			"src": "{Icon}"
+		}
 	}
 }</pre>
 		<p>Here is the final manifest definition:</p>
-		<pre class="prettyprint  lang-js">{
-"sap.card": {
-	  "type": "Timeline",
-	  "header": {
-		"title": "New Team Members",
-		"icon": {
-		  "src": "sap-icon://group"
-		}
-	  },
-	  "content": {
-		"data": {
-		  "request": {
-			"url": "./employees.json"
-		  }
+		<pre class="prettyprint  lang-js">
+{
+	"sap.card": {
+		"type": "Timeline",
+		"header": {
+			"title": "New Team Members",
+			"icon": {
+				"src": "sap-icon://group"
+			}
 		},
-		"item": {
-		  "dateTime" : {
-			"label": "{{hireDate_label}}",
-			"value": "{HireDate}"
-		  },
-		  "description" : {
-			"label": "{{jobResponsibilities_label}}",
-			"value": "{JobResponsibilities}"
-		  },
-		  "title" : {
-			"label": "{{jobTitle_label}}",
-			"value": "{JobTitle}"
-		  },
-		  "owner" : {
-			"label": "{{name_label}}",
-			"value": "{Name}"
-		  },
-		  "ownerImage" : {
-			"label": "{{picture_label}}",
-			"value": "{Photo}"
-		  },
-		  "icon": {
-			"src": "{Icon}"
-		  }
+		"content": {
+			"data": {
+				"request": {
+					"url": "./employees.json"
+				}
+			},
+			"item": {
+				"dateTime" : {
+					"label": "{{hireDate_label}}",
+					"value": "{HireDate}"
+				},
+				"description" : {
+					"label": "{{jobResponsibilities_label}}",
+					"value": "{JobResponsibilities}"
+				},
+				"title" : {
+					"label": "{{jobTitle_label}}",
+					"value": "{JobTitle}"
+				},
+				"owner" : {
+					"label": "{{name_label}}",
+					"value": "{Name}"
+				},
+				"ownerImage" : {
+					"label": "{{picture_label}}",
+					"value": "{Photo}"
+				},
+				"icon": {
+					"src": "{Icon}"
+				}
+			}
 		}
-	  }
 	}
 }</pre>
 		<p>Create the widget card that can actually use the manifest.json which we created:</p>

@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/m/Button",
-	"sap/m/ButtonType",
+	"sap/m/library",
 	"sap/m/Dialog",
 	"sap/m/Input",
 	"sap/m/Label",
@@ -13,9 +13,12 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/core/Title",
 	"sap/ui/layout/form/SimpleForm"
-], function (Button, ButtonType, Dialog, Input, Label, MessageToast, Text, Controller, Title,
+], function (Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text, Controller, Title,
 		SimpleForm) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.LateProperties.Main", {
 		onOpenEditDeliveryDate : function(oEvent) {

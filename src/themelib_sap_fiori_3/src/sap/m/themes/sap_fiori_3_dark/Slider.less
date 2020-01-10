@@ -26,12 +26,17 @@
 
 /* slider handle */
 .sapMSliderHandle {
-	width: 1.625rem;
-	height: 1.625rem;
-	top: -0.85rem;
 	background: @sapUiButtonBackground;
-	border: 0.125rem solid @sapUiFieldBorderColor;
-	box-shadow: 0 0.0625rem 0.125rem 0 fade(@sapUiContentShadowColor, 20);
+	border: solid 0.125rem @sapUiFieldBorderColor;
+	width: 1.225rem;
+	height: 1.225rem;
+	top: -0.66rem;
+	&:hover {
+		background: @sapUiButtonHoverBackground;
+	}
+	&:active {
+		background: @sapUiActive;
+	}
 }
 
 .sapMSliderInner .sapMSliderHandle:hover {
@@ -46,6 +51,21 @@
 	left: -1rem;
 	font-size: @sapMFontSmallSize;
 	color: @sapUiContentLabelColor;
+}
+
+.sapMSliderLabels {
+	height: 1rem;
+	.sapMSliderRangeLabel {
+		width: 2rem;
+		font-size: @sapMFontSmallSize;
+		color: @sapUiContentLabelColor;
+	}
+}
+
+
+
+.sapMSliderTickmarks {
+	top: 0.675rem;
 }
 
 .sapMSliderTick {

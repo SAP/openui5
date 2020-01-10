@@ -2,7 +2,22 @@
 	"_version": "1.14.0",
 	"sap.app": {
 		"id": "card.explorer.data.list.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample for Data usage in Cards",
+		"subTitle": "Sample for Data usage in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Card",
+				"Sample"
+			]
+		}
 	},
 	"sap.card": {
 		"type": "List",

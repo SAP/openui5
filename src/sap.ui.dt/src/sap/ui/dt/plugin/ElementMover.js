@@ -356,4 +356,4 @@ sap.ui.define([
 	};
 
 	return ElementMover;
-}, /* bExport= */true);
+});

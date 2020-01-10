@@ -55,10 +55,10 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext Context that the <code>sPath</code> is based on
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] Initial sort order, can be either a sorter or an array of sorters
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filters, can be either a filter or an array of filters
-	 * @param {map} [mParameters] A map which contains additional parameters for the binding
+	 * @param {object} [mParameters] A map which contains additional parameters for the binding
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
-	 * @param {map} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>
+	 * @param {Object<string,string>} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] Defines the count mode of this binding;
 	 *           if not specified, the default count mode of the <code>oModel</code> is applied
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] Defines the operation mode of this binding
@@ -876,7 +876,7 @@ sap.ui.define([
 	/**
 	 * fireRefresh
 	 *
-	 * @param {map} mParameters Map of event parameters
+	 * @param {object} mParameters Map of event parameters
 	 * @private
 	 */
 	ODataListBinding.prototype._fireRefresh = function(mParameters) {

@@ -118,7 +118,7 @@ sap.ui.define([
 		events : {
 
 			/**
-			 * Month selection changed
+			 * Year selection changed
 			 */
 			select : {},
 
@@ -170,7 +170,21 @@ sap.ui.define([
 		// no rerendering needed, just select new year or update years
 		this.setProperty("year", iYear, true);
 		iYear = this.getProperty("year"); // to have type conversion, validation....
-		var oDate = new CalendarDate(iYear, 0, 1, this.getPrimaryCalendarType());
+
+		var oDate = new CalendarDate(iYear, 0, 1, this.getPrimaryCalendarType()),
+			oSelectedDates = this._getSelectedDates()[0],
+			oYearPickerSelectedDates = this.getAggregation("selectedDates");
+
+		if (!oSelectedDates || this.getIntervalSelection()) {
+			return this;
+		}
+
+		if (!this._oSelectedDatesControlOrigin) {
+			if (!oYearPickerSelectedDates || !oYearPickerSelectedDates.length) {
+				this.addAggregation("selectedDates", oSelectedDates, true);
+			}
+			!this.getIntervalSelection() && oSelectedDates.setStartDate(oDate.toLocalJSDate());
+		}
 
 		this.setDate(oDate.toLocalJSDate());
 
@@ -835,13 +849,13 @@ sap.ui.define([
 			case "sapnext":
 			case "sapnextmodifiers":
 				if (oEvent.keyCode === KeyCodes.ARROW_DOWN && iColumns < iYears) {
-					sYyyymmdd = aDomRefs[iIndex - iYears + iColumns].attr("data-sap-year-start");
+					sYyyymmdd = aDomRefs[iIndex - iYears + iColumns].getAttribute("data-sap-year-start");
 					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
 
 					//same column in first row of next group (only if more than one row)
 					this._updatePage(true, iIndex - iYears + iColumns, true);
 				} else {
-					sYyyymmdd = aDomRefs[0].attr("data-sap-year-start");
+					sYyyymmdd = aDomRefs[0].getAttribute("data-sap-year-start");
 					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
 
 					// first year in next group
@@ -852,13 +866,13 @@ sap.ui.define([
 			case "sapprevious":
 			case "sappreviousmodifiers":
 				if (oEvent.keyCode === KeyCodes.ARROW_UP && iColumns < iYears) {
-					sYyyymmdd = aDomRefs[iYears - iColumns + iIndex].attr("data-sap-year-start");
+					sYyyymmdd = aDomRefs[iYears - iColumns + iIndex].getAttribute("data-sap-year-start");
 					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
 
 					//same column in last row of previous group (only if more than one row)
 					this._updatePage(false, iYears - iColumns + iIndex, true);
 				} else {
-					sYyyymmdd = aDomRefs[iYears - 1].attr("data-sap-year-start");
+					sYyyymmdd = aDomRefs[iYears - 1].getAttribute("data-sap-year-start");
 					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
 
 					// last year in previous group
@@ -867,7 +881,7 @@ sap.ui.define([
 				break;
 
 			case "sappagedown":
-				sYyyymmdd = aDomRefs[iIndex].attr("data-sap-year-start");
+				sYyyymmdd = aDomRefs[iIndex].getAttribute("data-sap-year-start");
 				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
 
 				// same index in next group
@@ -875,7 +889,7 @@ sap.ui.define([
 				break;
 
 			case "sappageup":
-				sYyyymmdd = aDomRefs[iIndex].attr("data-sap-year-start");
+				sYyyymmdd = aDomRefs[iIndex].getAttribute("data-sap-year-start");
 				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
 
 				// same index in previous group

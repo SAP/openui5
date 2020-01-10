@@ -1,3 +1,4 @@
+
 /*global QUnit, window, sinon */
 
 sap.ui.define([
@@ -152,6 +153,47 @@ sap.ui.define([
 			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: 1 })), "pageChange is fired with the correct arguments");
 		});
 
+		QUnit.module("API", {
+			beforeEach: function() {
+				this.MP = new MonthPicker();
+			},
+			afterEach: function() {
+				this.MP.destroy();
+				this.MP = null;
+			}
+		});
+
+		QUnit.test("setMonth", function(assert) {
+			// Prepare
+			var oGridItemRefs,
+				iFocusedIndex;
+
+			this.MP.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oGridItemRefs = this.MP._oItemNavigation.getItemDomRefs();
+
+			// Act
+			this.MP.setMonth(5);
+			iFocusedIndex = this.MP._oItemNavigation.getFocusedIndex();
+
+			// Assert
+			assert.equal(this.MP.getSelectedDates()[0].getStartDate().getMonth(), 5, "There is a selected date");
+			assert.ok(oGridItemRefs[iFocusedIndex].classList.contains("sapUiCalItemSel"));
+
+		});
+
+		QUnit.test("setMonth with interval selection", function(assert) {
+			// Prepare
+			this.MP.setIntervalSelection(true);
+
+			// Act
+			this.MP.setMonth(5);
+
+			// Assert
+			assert.notOk(this.MP.getSelectedDates(), "There are no selected dates after setMonth");
+
+		});
+
 		QUnit.module("interval selection", {
 			beforeEach: function() {
 				this.MP = new MonthPicker({
@@ -162,6 +204,11 @@ sap.ui.define([
 				this.MP.destroy();
 				this.MP = null;
 			}
+		});
+
+		QUnit.test("selectedDates initially", function(assert) {
+			// Assert
+			assert.notOk(this.MP.getSelectedDates(), "There are no selected dates initially");
 		});
 
 		QUnit.test("_setSelectedDatesControlOrigin", function(assert) {
@@ -374,8 +421,9 @@ sap.ui.define([
 
 		QUnit.test("_markInterval", function(assert) {
 			// arrange
-			var oSep_01_2019 = new Date(2019, 8, 1),
-				oDec_01_2019 = new Date(2019, 11, 1),
+			var sCurrentYear = new Date().getFullYear(),
+				oSep_01_2019 = new Date(sCurrentYear, 8, 1),
+				oDec_01_2019 = new Date(sCurrentYear, 11, 1),
 				aRefs;
 
 			this.MP.placeAt("qunit-fixture");

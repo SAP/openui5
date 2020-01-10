@@ -67,7 +67,7 @@ function (
 		QUnit.test("invisible section", function(assert) {
 			var fnDone = assert.async();
 
-			OverlayRegistry.getOverlay(this.oButton).attachEventOnce("geometryChanged", function() {
+			OverlayRegistry.getOverlay(this.oSection).attachEventOnce("geometryChanged", function() {
 				var oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
 				var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 

@@ -302,10 +302,6 @@ sap.ui.define([
 
 	//****** API Methods ******
 
-	Menu.prototype.setPageSize = function(iSize){
-		return this.setProperty("pageSize", iSize, true); /*No rerendering required*/
-	};
-
 	Menu.prototype.addItem = function(oItem){
 		this.addAggregation("items", oItem, !!this.getDomRef());
 		this._delayedRerenderItems();
@@ -530,7 +526,7 @@ sap.ui.define([
 		// set the flag to initial state as same menu could be used as a context menu or a normal menu
 		this._bOpenedAsContextMenu = false;
 
-		bRecalculate && this.oPopup.setPosition("begin top", "begin top", $Window, iCalcedX + " " + iCalcedY, "flip");
+		bRecalculate && this.oPopup.setPosition("begin top", "begin top", $Window, iCalcedX + " " + iCalcedY, "flipfit");
 	};
 
 	/**
@@ -827,8 +823,8 @@ sap.ui.define([
 
 		if (checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			if (!this.oOpenedSubMenu || !(this.oOpenedSubMenu.getParent() === this.oHoveredItem)) {
-				this.setHoveredItem(null);
-				this.focus();
+				this.setHoveredItem(this.oHoveredItem);
+
 			}
 			this._discardOpenSubMenuDelayed();
 		}

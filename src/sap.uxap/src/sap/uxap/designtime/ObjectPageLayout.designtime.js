@@ -45,6 +45,38 @@ sap.ui.define(["sap/uxap/library"],
 					}
 				}
 			},
+			_anchorBar : {
+				ignore: false,
+				domRef : function(oElement) {
+					if (oElement.getAggregation("_anchorBar")) {
+						return oElement.getAggregation("_anchorBar").getDomRef();
+					}
+				},
+				propagateRelevantContainer: true,
+				propagateMetadata : function(oElement) {
+					if (oElement.isA("sap.uxap.AnchorBar")) {
+						return {
+							aggregations : {
+								content : {
+									childNames : {
+										singular : function(){
+											return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
+										},
+										plural : function(){
+											return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
+										}
+									},
+									actions : {
+										move : {
+											changeType : "moveControls"
+										}
+									}
+								}
+							}
+						};
+					}
+				}
+			},
 			headerContent : {
 				domRef : function(oElement) {
 					return oElement._getHeaderContent() ? oElement._getHeaderContent().getDomRef() : null;
@@ -91,4 +123,4 @@ sap.ui.define(["sap/uxap/library"],
 		}
 	};
 
-}, /* bExport= */ false);
+});

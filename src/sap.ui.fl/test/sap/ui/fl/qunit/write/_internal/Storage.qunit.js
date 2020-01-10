@@ -3,22 +3,28 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector"
 ], function(
 	sinon,
 	Storage,
+	StorageUtils,
 	ApplyUtils,
 	WriteUtils,
+	FeaturesAPI,
 	ApplyLrepConnector,
 	WriteLrepConnector,
 	ApplyKeyUserConnector,
+	WriteKeyUserConnector,
 	JsObjectConnector,
 	ApplyPersonalizationConnector,
 	WritePersonalizationConnector
@@ -26,6 +32,21 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+
+	QUnit.module("ApplyStorage.getWriteConnectors", {
+		beforeEach : function () {
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("getWriteConnectors", function (assert) {
+			var oStubGetConnectors = sandbox.stub(StorageUtils, "getConnectors").resolves([]);
+			return Storage.loadFeatures().then(function () {
+				assert.ok(oStubGetConnectors.calledWith("sap/ui/fl/write/_internal/connectors/", false), "StorageUtils getConnectors is called with correct params");
+			});
+		});
+	});
 
 	QUnit.module("Given Storage when write is called", {
 		beforeEach: function () {
@@ -179,6 +200,60 @@ sap.ui.define([
 			});
 		});
 
+
+
+		QUnit.test("with valid mPropertyBag and Connector: KeyUserConnector aiming for CUSTOMER layer when writing draft changes", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector"}
+			]);
+			sandbox.stub(FeaturesAPI, "isDraftEnabled").resolves(true);
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				flexObjects: [{}],
+				draft: true
+			};
+			var oWriteStub = sandbox.stub(WriteKeyUserConnector, "write").resolves();
+
+			return Storage.write(mPropertyBag).then(function() {
+				assert.equal(oWriteStub.getCall(0).args[0].draft, true, "then the draft flag is passed");
+			});
+		});
+
+		QUnit.test("when creating changes without a draft flag", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector"}
+			]);
+			var oIsDraftEnabledStub = sandbox.stub(FeaturesAPI, "isDraftEnabled").resolves(true);
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				flexObjects: [{}]
+			};
+			sandbox.stub(WriteKeyUserConnector, "write").resolves();
+
+			return Storage.write(mPropertyBag)
+				.then(function () {
+					assert.equal(oIsDraftEnabledStub.callCount, 0, "then draftEnabled is not checked");
+				});
+		});
+
+		QUnit.test("when creating changes for a draft but the layer does not support a draft", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector"}
+			]);
+			sandbox.stub(FeaturesAPI, "isDraftEnabled").resolves(false);
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				flexObjects: [{}],
+				draft: true
+			};
+
+			return Storage.write(mPropertyBag)
+				.catch(function (sRejectionMessage) {
+					assert.equal(sRejectionMessage, "Draft is not supported for the given layer: CUSTOMER",
+						"then request is rejected with an error message");
+				});
+		});
+
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector, KeyUserConnector aiming for USER layer", function (assert) {
 			var mPropertyBag = {
 				layer: "USER",
@@ -267,9 +342,18 @@ sap.ui.define([
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", url: this.url},
-				{connector: "PersonalizationConnector", url: this.url},
-				{connector: "JsObjectConnector"}
+				{
+					connector: "LrepConnector",
+					url: this.url,
+					layers: []
+				}, {
+					connector: "JsObjectConnector",
+					layers: ["CUSTOMER"]
+				}, {
+					connector : "PersonalizationConnector",
+					url : this.url,
+					layers : ["USER"]
+				}
 			]);
 
 			var oExpectedResponse = {
@@ -277,12 +361,16 @@ sap.ui.define([
 				isVariantSharingEnabled: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
+				draft: {
+					CUSTOMER: false,
+					USER: false
+				},
 				isProductiveSystem: true,
 				isZeroDowntimeUpgradeRunning: false,
 				system: "",
 				client: ""
 			};
-			var oLogResolveSpy = sandbox.spy(ApplyUtils, "logAndResolveDefault");
+			var oLogResolveSpy = sandbox.spy(StorageUtils, "logAndResolveDefault");
 
 			return Storage.loadFeatures().then(function (oResponse) {
 				assert.equal(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
@@ -350,6 +438,7 @@ sap.ui.define([
 				isVariantSharingEnabled: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
+				draft: {},
 				isProductiveSystem: true,
 				isZeroDowntimeUpgradeRunning: false,
 				system: "",
@@ -357,8 +446,80 @@ sap.ui.define([
 			};
 
 			return Storage.loadFeatures().then(function (mFeatures) {
-				assert.equal(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 8 feature was provided");
+				assert.equal(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 9 feature was provided");
 				assert.equal(mFeatures.isProductiveSystem, true, "the property was overruled by the second connector");
+			});
+		});
+	});
+
+	QUnit.module("Given Storage when versions.load is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a list of versions is returned", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: "CUSTOMER"
+			};
+
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector", layers: ["CUSTOMER"], url: "/flexKeyUser"}
+			]);
+
+			var aReturnedVersions = [];
+			sandbox.stub(JsObjectConnector.versions, "load").resolves(aReturnedVersions);
+
+			return Storage.versions.load(mPropertyBag).then(function (aVersions) {
+				assert.equal(aVersions, aReturnedVersions);
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector", function (assert) {
+			assert.expect(1);
+			var mPropertyBag = {
+				reference: "reference",
+				layer: "CUSTOMER"
+			};
+
+			return Storage.versions.load(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "versions.load is not implemented", "then the rejection message is passed");
+			});
+		});
+	});
+
+	QUnit.module("Given Storage when versions.activateDraft is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a list of versions is returned", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: "CUSTOMER"
+			};
+
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector", layers: ["CUSTOMER"], url: "/flexKeyUser"}
+			]);
+
+			var oActivatedVersion = {};
+			sandbox.stub(JsObjectConnector.versions, "activateDraft").resolves(oActivatedVersion);
+
+			return Storage.versions.activateDraft(mPropertyBag).then(function (oReturnedActivatedVersion) {
+				assert.equal(oReturnedActivatedVersion, oActivatedVersion);
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector", function (assert) {
+			assert.expect(1);
+			var mPropertyBag = {
+				reference: "reference",
+				layer: "CUSTOMER"
+			};
+
+			return Storage.versions.activateDraft(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "versions.activateDraft is not implemented", "then the rejection message is passed");
 			});
 		});
 	});
@@ -605,273 +766,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given Storage.appVariant when different methods are called", {
-		beforeEach: function () {
-			ApplyLrepConnector.xsrfToken = "123";
-			ApplyKeyUserConnector.xsrfToken = "123";
-			ApplyPersonalizationConnector.xsrfToken = "123";
-		},
-		afterEach: function() {
-			ApplyLrepConnector.xsrfToken = undefined;
-			ApplyKeyUserConnector.xsrfToken = undefined;
-			ApplyPersonalizationConnector.xsrfToken = undefined;
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("then it calls Storage.appVariant.list of the connector to list all app variants for a key user", function(assert) {
-			var mPropertyBag = {
-				layer: "CUSTOMER*",
-				"sap.app/id": "someId"
-			};
-			var sUrl = "/sap/bc/lrep";
-
-			var sExpectedUrl = sUrl + "/app_variant_overview/?sap.app/id=someId&layer=CUSTOMER*";
-			var sExpectedMethod = "GET";
-
-			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oGetUrlStub = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
-
-			return Storage.appVariant.list(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oGetUrlStub.getCall(0).args;
-				var oSendRequestCallArgs = oSendRequestStub.getCall(0).args;
-
-				assert.equal(oGetUrlStub.callCount, 1, "getUrl is called once");
-				assert.strictEqual(oGetUrlCallArgs[0], "/app_variant_overview/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.deepEqual(oGetUrlCallArgs[2], {
-					layer: "CUSTOMER*",
-					"sap.app/id": "someId"
-				}, "with correct parameters");
-				assert.equal(oSendRequestStub.callCount, 1, "sendRequest is called once");
-				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-			});
-		});
-
-		QUnit.test("then it calls Storage.appVariant.list of the connector to list all app variants for a SAP developer", function(assert) {
-			var mPropertyBag = {
-				layer: "VENDOR",
-				"sap.app/id": "someId"
-			};
-			var sUrl = "/sap/bc/lrep";
-
-			var sExpectedUrl = sUrl + "/app_variant_overview/?sap.app/id=someId&layer=VENDOR";
-			var sExpectedMethod = "GET";
-
-			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oGetUrlStub = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
-
-			return Storage.appVariant.list(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oGetUrlStub.getCall(0).args;
-				var oSendRequestCallArgs = oSendRequestStub.getCall(0).args;
-
-				assert.equal(oGetUrlStub.callCount, 1, "getUrl is called once");
-				assert.strictEqual(oGetUrlCallArgs[0], "/app_variant_overview/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.deepEqual(oGetUrlCallArgs[2], {
-					layer: "VENDOR",
-					"sap.app/id": "someId"
-				}, "with correct parameters");
-				assert.equal(oSendRequestStub.callCount, 1, "sendRequest is called once");
-				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-			});
-		});
-
-		QUnit.test("then it calls Storage.appVariant.getManifest of the connector", function(assert) {
-			var mPropertyBag = {
-				appVarUrl: "/sap/bc/lrep/content/apps/someBaseAppId/appVariants/someAppVariantID/manifest.appdescr_variant",
-				layer: "CUSTOMER"
-			};
-
-			var sExpectedUrl = "/sap/bc/lrep/content/apps/someBaseAppId/appVariants/someAppVariantID/manifest.appdescr_variant";
-			var sExpectedMethod = "GET";
-
-			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-
-			return Storage.appVariant.getManifest(mPropertyBag).then(function () {
-				var oSendRequestCallArgs = oSendRequestStub.getCall(0).args;
-				assert.equal(oSendRequestStub.callCount, 1, "sendRequest is called once");
-				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-			});
-		});
-
-		QUnit.test("then it calls Storage.appVariant.create of the connector to create an app variant", function(assert) {
-			var mPropertyBag = {
-				flexObject: {
-					fileName: "manifest",
-					fileType: "appdescr_variant",
-					id: "someAppVariantId",
-					isAppVariantRoot: true,
-					layer: "CUSTOMER",
-					namespace: "apps/someBaseApplicationId/appVariants/someAppVariantId/",
-					packageName: "",
-					reference: "sap.ui.rta.test.variantManagement",
-					version: "1.0.0",
-					content: []
-				},
-				layer: "CUSTOMER",
-				isAppVariantRoot: true
-			};
-
-			var sExpectedUrl = "/sap/bc/lrep/appdescr_variants/";
-			var sExpectedMethod = "POST";
-
-			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oGetUrlStub = sandbox.spy(ApplyUtils, "getUrl");
-
-			var sExpectedPayload = JSON.stringify(mPropertyBag.flexObject);
-			return Storage.appVariant.create(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oGetUrlStub.firstCall.args;
-				var oSendRequestCallArgs = oSendRequestStub.getCall(0).args;
-				assert.equal(oGetUrlStub.callCount, 2, "getUrl is called twice");
-				assert.strictEqual(oGetUrlCallArgs[0], "/appdescr_variants/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				oGetUrlCallArgs = oGetUrlStub.secondCall.args;
-				assert.strictEqual(oGetUrlCallArgs[0], "/actions/getcsrftoken/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oSendRequestStub.callCount, 1, "sendRequest is called once");
-				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-				assert.strictEqual(oSendRequestCallArgs[2].payload, sExpectedPayload, "with correct payload");
-			});
-		});
-
-		QUnit.test("then it calls Storage.appVariant.load of the connector to load an app variant", function(assert) {
-			var mPropertyBag = {
-				layer: "CUSTOMER",
-				reference: "someAppVariantId"
-			};
-
-			var sExpectedUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId";
-			var sExpectedMethod = "GET";
-
-			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oGetUrlStub = sandbox.spy(ApplyUtils, "getUrl");
-
-			return Storage.appVariant.load(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oGetUrlStub.getCall(0).args;
-				var oSendRequestCallArgs = oSendRequestStub.getCall(0).args;
-				assert.equal(oGetUrlStub.callCount, 1, "getUrl is called once");
-				assert.strictEqual(oGetUrlCallArgs[0], "/appdescr_variants/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-			});
-		});
-
-		QUnit.test("then it calls Storage.appVariant.update of the connector to update an existing app variant", function(assert) {
-			var mPropertyBag = {
-				layer: "CUSTOMER",
-				reference: "someAppVariantId",
-				isAppVariantRoot: true
-			};
-
-			var sExpectedUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId";
-			var sExpectedMethod = "PUT";
-
-			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oGetUrlStub = sandbox.spy(ApplyUtils, "getUrl");
-
-			return Storage.appVariant.update(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oGetUrlStub.firstCall.args;
-				var oSendRequestCallArgs = oSendRequestStub.getCall(0).args;
-				assert.equal(oGetUrlStub.callCount, 2, "getUrl is called twice");
-				assert.strictEqual(oGetUrlCallArgs[0], "/appdescr_variants/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				oGetUrlCallArgs = oGetUrlStub.secondCall.args;
-				assert.strictEqual(oGetUrlCallArgs[0], "/actions/getcsrftoken/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oSendRequestStub.callCount, 1, "sendRequest is called once");
-				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-			});
-		});
-
-		QUnit.test("then it calls Storage.appVariant.delete of the connector to delete an existing app variant", function(assert) {
-			var mPropertyBag = {
-				layer: "CUSTOMER",
-				reference: "someAppVariantId",
-				isAppVariantRoot: true
-			};
-
-			var sExpectedUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId";
-			var sExpectedMethod = "DELETE";
-
-			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oGetUrlStub = sandbox.spy(ApplyUtils, "getUrl");
-
-			return Storage.appVariant.remove(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oGetUrlStub.firstCall.args;
-				var oSendRequestCallArgs = oSendRequestStub.getCall(0).args;
-				assert.equal(oGetUrlStub.callCount, 2, "getUrl is called twice");
-				assert.strictEqual(oGetUrlCallArgs[0], "/appdescr_variants/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				oGetUrlCallArgs = oGetUrlStub.secondCall.args;
-				assert.strictEqual(oGetUrlCallArgs[0], "/actions/getcsrftoken/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oSendRequestStub.callCount, 1, "sendRequest is called once");
-				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-			});
-		});
-
-		QUnit.test("then it calls Storage.appVariant.assignCatalogs of the connector to assign an app variant to some catalogs", function(assert) {
-			var mPropertyBag = {
-				action: "assignCatalogs",
-				assignFromAppId: "someBaseApplicationId",
-				layer: "CUSTOMER"
-			};
-
-			var sExpectedUrl = "/sap/bc/lrep/appdescr_variants/?action=assignCatalogs&assignFromAppId=someBaseApplicationId";
-			var sExpectedMethod = "POST";
-
-			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oGetUrlStub = sandbox.spy(ApplyUtils, "getUrl");
-
-			return Storage.appVariant.assignCatalogs(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oGetUrlStub.firstCall.args;
-				var oSendRequestCallArgs = oSendRequestStub.getCall(0).args;
-				assert.equal(oGetUrlStub.callCount, 2, "getUrl is called twice");
-				assert.strictEqual(oGetUrlCallArgs[0], "/appdescr_variants/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				oGetUrlCallArgs = oGetUrlStub.secondCall.args;
-				assert.strictEqual(oGetUrlCallArgs[0], "/actions/getcsrftoken/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oSendRequestStub.callCount, 1, "sendRequest is called once");
-				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-			});
-		});
-
-		QUnit.test("then it calls Storage.appVariant.assignCatalogs of the connector to assign an app variant to some catalogs", function(assert) {
-			var mPropertyBag = {
-				action: "unassignCatalogs",
-				layer: "CUSTOMER"
-			};
-
-			var sExpectedUrl = "/sap/bc/lrep/appdescr_variants/?action=unassignCatalogs";
-			var sExpectedMethod = "POST";
-
-			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oGetUrlStub = sandbox.spy(ApplyUtils, "getUrl");
-
-			return Storage.appVariant.assignCatalogs(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oGetUrlStub.firstCall.args;
-				var oSendRequestCallArgs = oSendRequestStub.getCall(0).args;
-				assert.equal(oGetUrlStub.callCount, 2, "getUrl is called twice");
-				assert.strictEqual(oGetUrlCallArgs[0], "/appdescr_variants/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				oGetUrlCallArgs = oGetUrlStub.secondCall.args;
-				assert.strictEqual(oGetUrlCallArgs[0], "/actions/getcsrftoken/", "with correct route path");
-				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oSendRequestStub.callCount, 1, "sendRequest is called once");
-				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-			});
-		});
-	});
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

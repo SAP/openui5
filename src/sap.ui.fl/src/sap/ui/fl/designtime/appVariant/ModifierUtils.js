@@ -30,4 +30,4 @@ sap.ui.define([], function() {
 		return false;
 	};
 	return ModifierUtils;
-}, /* bExport= */false);
+});

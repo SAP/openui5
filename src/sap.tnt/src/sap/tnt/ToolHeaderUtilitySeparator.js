@@ -43,4 +43,4 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 
 		return ToolHeaderUtilitySeparator;
 
-	}, /* bExport= */ true);
+	});

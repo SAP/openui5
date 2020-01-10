@@ -364,4 +364,4 @@ sap.ui.define([
 
 	return ABHelper;
 
-}, /* bExport= */ false);
+});

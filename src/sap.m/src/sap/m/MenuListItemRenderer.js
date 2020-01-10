@@ -18,6 +18,8 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 		 */
 		var MenuListItemRenderer = Renderer.extend(ListItemBaseRenderer);
 
+		MenuListItemRenderer.apiVersion = 2;
+
 		/**
 		 * Renders the HTML starting tag of the <code>MenuListItem</code>.
 		 *
@@ -27,9 +29,20 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 		 */
 		MenuListItemRenderer.openItemTag = function(rm, oLI) {
 			if (oLI.getStartsSection()) {
-				rm.write("<li ");
-				rm.write("role=\"separator\" ");
-				rm.write("class=\"sapUiMnuDiv\"><div class=\"sapUiMnuDivL\"></div><hr><div class=\"sapUiMnuDivR\"></div></li>");
+				rm.openStart("li");
+				rm.attr("role", "separator");
+				rm.class("sapUiMnuDiv");
+				rm.openEnd();
+				rm.openStart("div");
+				rm.class("sapUiMnuDivL");
+				rm.openEnd();
+				rm.close();
+				rm.voidStart("hr").voidEnd();
+				rm.openStart("div");
+				rm.class("sapUiMnuDivR");
+				rm.openEnd();
+				rm.close("div");
+				rm.close("li");
 			}
 
 			ListItemBaseRenderer.openItemTag(rm, oLI);
@@ -47,16 +60,16 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 		 *          rendered
 		 */
 		MenuListItemRenderer.renderLIAttributes = function(rm, oLI) {
-			rm.addClass("sapMSLI");
+			rm.class("sapMSLI");
 			if (oLI.getIcon()) {
-				rm.addClass("sapMSLIIcon");
+				rm.class("sapMSLIIcon");
 			}
 			if (oLI.getType() == ListType.Detail || oLI.getType() == ListType.DetailAndActive) {
-				rm.addClass("sapMSLIDetail");
+				rm.class("sapMSLIDetail");
 			}
 
 			if (oLI._hasSubItems()) {
-				rm.addClass("sapMMenuLIHasChildren");
+				rm.class("sapMMenuLIHasChildren");
 			}
 		};
 
@@ -68,36 +81,36 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 				rm.renderControl(oLI._getImage((oLI.getId() + "-img"), "sapMMenuLIImgThumb", oLI.getIcon(), oLI.getIconDensityAware()));
 			}
 
-			rm.write("<div");
-			rm.addClass("sapMSLIDiv");
-			rm.addClass("sapMSLITitleDiv");
-			rm.writeClasses();
-			rm.write(">");
+			rm.openStart("div");
+			rm.class("sapMSLIDiv");
+			rm.class("sapMSLITitleDiv");
+			rm.openEnd();
 
 			//noFlex: make an additional div for the contents table
 			if (oLI._bNoFlex) {
-				rm.write('<div class="sapMLIBNoFlex">');
+				rm.openStart("div");
+				rm.class("sapMLIBNoFlex");
+				rm.openEnd();
 			}
 
 			// List item text (also written when no title for keeping the space)
-			rm.write("<div");
-			rm.addClass("sapMSLITitleOnly");
-			rm.writeClasses();
+			rm.openStart("div");
+			rm.class("sapMSLITitleOnly");
 
 			if (sTextDir !== TextDirection.Inherit) {
-				rm.writeAttribute("dir", sTextDir.toLowerCase());
+				rm.attr("dir", sTextDir.toLowerCase());
 			}
 
-			rm.write(">");
-			rm.writeEscaped(oLI.getTitle());
-			rm.write("</div>");
+			rm.openEnd();
+			rm.text(oLI.getTitle());
+			rm.close("div");
 
 
 			//noFlex: make an additional div for the contents table
 			if (oLI._bNoFlex) {
-				rm.write('</div>');
+				rm.close('div');
 			}
-			rm.write("</div>");
+			rm.close("div");
 
 			// arrow right if there is a sub-menu
 			if (oLI._hasSubItems()) {

@@ -25,7 +25,7 @@ sap.ui.define([
 		},
 		handleClose: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/endColumn/closeColumn");
-			this.oRouter.navTo("master", {layout: sNextLayout});
+			this.oRouter.navTo("detail", {layout: sNextLayout, product: this._product});
 		},
 		_onSupplierMatched: function (oEvent) {
 			this._supplier = oEvent.getParameter("arguments").supplier || this._supplier || "0";

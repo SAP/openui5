@@ -302,4 +302,4 @@ sap.ui.define(['sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToo
 		}
 
 		return OverflowToolbarAssociativePopoverControls;
-	}, /* bExport= */ false);
+	});

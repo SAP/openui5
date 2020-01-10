@@ -138,11 +138,11 @@ sap.ui.define([
 			});
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+			sandbox.stub(Cache, "setVariantManagementSection");
 
 			var oComponent = {
 				name: "MyComponent",
-				appVersion: "1.2.3",
-				getId : function() {return "RTADemoAppMD";}
+				appVersion: "1.2.3"
 			};
 			var oChangePersistence = new ChangePersistence(oComponent);
 
@@ -1186,6 +1186,7 @@ sap.ui.define([
 						});
 
 					/*To prepare VariantController data*/
+					sandbox.stub(Cache, "setVariantManagementSection");
 					this.oFlexController._oChangePersistence.loadChangesMapForComponent(this.oComponent, this.mPropertyBag)
 						.then(function() {
 							var oData = this.oFlexController.getVariantModelData();

@@ -50,4 +50,4 @@ sap.ui.define([
 	};
 
 	return ToolHooks;
-}, /* bExport= */true);
+});

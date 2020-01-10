@@ -177,7 +177,7 @@ function(
 	/**
 	 * Checks whether DOM Element has horizontal scrollbar
 	 * @param {HTMLElement} oDomRef - DOM Element
-	 * @return {boolean} <code>true</code> if horizontal scrollbar is available on DOM Element.
+	 * @return {boolean} <code>true</code> if horizontal scrollbar is available on DOM Element
 	 */
 	DOMUtil.hasHorizontalScrollBar = function (oDomRef) {
 		var $DomRef = jQuery(oDomRef);

@@ -5,10 +5,9 @@
 // Provides default renderer for control sap.f.cards.NumericHeader
 sap.ui.define([],
 	function () {
-        "use strict";
+		"use strict";
 
-        var NumericHeaderRenderer = {},
-			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
+		var NumericHeaderRenderer = {};
 
 		/**
 		 * Render a numeric header.
@@ -17,16 +16,17 @@ sap.ui.define([],
 		 * @param {sap.f.cards.NumericHeader} oControl An object representation of the control that should be rendered
 		 */
 		NumericHeaderRenderer.render = function (oRm, oControl) {
-			oRm.write("<header");
+			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapFCardHeader");
 			oRm.addClass("sapFCardNumericHeader");
 			oRm.writeAttribute("tabindex", "0");
 			//Accessibility state
 			oRm.writeAccessibilityState(oControl, {
-				role: "group",
+				role: oControl._sAriaRole,
 				labelledby: {value: oControl._getHeaderAccessibility(), append: true},
-				roledescription: {value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), append: true}
+				roledescription: {value: oControl._sAriaRoleDescritoion, append: true},
+				level: {value: oControl._sAriaHeadingLevel}
 			});
 			oRm.writeClasses();
 			oRm.writeStyles();
@@ -42,7 +42,7 @@ sap.ui.define([],
 				oRm.renderControl(oDetails);
 			}
 
-			oRm.write("</header>");
+			oRm.write("</div>");
 		};
 
 		/**

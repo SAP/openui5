@@ -581,6 +581,7 @@ function (
 			return;
 		}
 
+		var oGeometryChangedPromise = Promise.resolve();
 		if (this.isVisible()) {
 			var oGeometry = this.getGeometry(true);
 
@@ -600,15 +601,14 @@ function (
 						}
 					});
 					if (aPromises.length) {
-						Promise.all(aPromises).then(function () {
-							this._applySizes(oGeometry, $RenderingParent, bForceScrollbarSync);
-							this.fireGeometryChanged();
+						oGeometryChangedPromise = Promise.all(aPromises).then(function () {
+							return this._applySizes(oGeometry, $RenderingParent, bForceScrollbarSync);
 						}.bind(this));
 					} else {
-						this._applySizes(oGeometry, $RenderingParent, bForceScrollbarSync);
+						oGeometryChangedPromise = this._applySizes(oGeometry, $RenderingParent, bForceScrollbarSync);
 					}
 				} else {
-					this._applySizes(oGeometry, $RenderingParent, bForceScrollbarSync);
+					oGeometryChangedPromise = this._applySizes(oGeometry, $RenderingParent, bForceScrollbarSync);
 				}
 			} else {
 				this.$().css("display", "none");
@@ -618,9 +618,16 @@ function (
 		}
 
 		// TODO: refactor geometryChanged event
-		if (!aPromises || !aPromises.length) {
-			this.fireGeometryChanged();
-		}
+		oGeometryChangedPromise
+			.catch(function (vError) {
+				Log.error(Util.createError(
+					'Overlay#applyStyles',
+					'Error occured during applySizes calculation: ' + vError
+				));
+			})
+			.then(function () {
+				this.fireGeometryChanged();
+			}.bind(this));
 	};
 
 	Overlay.prototype._applySizes = function (oGeometry, $RenderingParent, bForceScrollbarSync) {
@@ -628,12 +635,20 @@ function (
 		if (oGeometry.domRef) {
 			this._setZIndex(oGeometry, this.$());
 		}
-
-		this.getChildren().forEach(function(oChild) {
-			var mParameters = {};
-			mParameters.bForceScrollbarSync = bForceScrollbarSync;
-			oChild.fireApplyStylesRequired(mParameters);
-		});
+		// We need to know when all our children have correct positions
+		var aPromises = this.getChildren()
+			.filter(function (oChild) {
+				return oChild.isRendered();
+			})
+			.map(function(oChild) {
+				var mParameters = {};
+				mParameters.bForceScrollbarSync = bForceScrollbarSync;
+				return new Promise(function (fnResolve) {
+					oChild.attachEventOnce('geometryChanged', fnResolve);
+					oChild.fireApplyStylesRequired(mParameters);
+				});
+			});
+		return Promise.all(aPromises);
 	};
 
 	/**

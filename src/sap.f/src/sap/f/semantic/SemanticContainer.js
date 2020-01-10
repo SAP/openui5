@@ -151,4 +151,4 @@ sap.ui.define([
 
 	return SemanticContainer;
 
-}, /* bExport= */ false);
+});

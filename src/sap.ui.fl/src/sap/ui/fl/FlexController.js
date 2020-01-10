@@ -58,8 +58,6 @@ sap.ui.define([
 		}
 	};
 
-	FlexController.PENDING = "sap.ui.fl:PendingChange";
-
 	/**
 	 * Sets the component name of the FlexController
 	 *
@@ -453,11 +451,13 @@ sap.ui.define([
 	/**
 	 * Saves all changes of a persistence instance.
 	 *
+	 * @param {boolean} [bSkipUpdateCache=false] - Indicates the cache should not be updated
+	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} resolving with an array of responses or rejecting with the first error
 	 * @public
 	 */
-	FlexController.prototype.saveAll = function (bSkipUpdateCache) {
-		return this._oChangePersistence.saveDirtyChanges(bSkipUpdateCache);
+	FlexController.prototype.saveAll = function (bSkipUpdateCache, bDraft) {
+		return this._oChangePersistence.saveDirtyChanges(bSkipUpdateCache, undefined, bDraft);
 	};
 
 	/**
@@ -473,28 +473,14 @@ sap.ui.define([
 	FlexController.prototype.processXmlView = function (oView, mPropertyBag) {
 		var oViewComponent = Component.get(mPropertyBag.componentId);
 		var oAppComponent = Utils.getAppComponentForControl(oViewComponent);
-		var oManifest = oAppComponent.getManifest();
 
-		mPropertyBag.siteId = Utils.getSiteId(oAppComponent);
 		mPropertyBag.appComponent = oAppComponent;
-		mPropertyBag.appDescriptor = oManifest;
 		mPropertyBag.modifier = XmlTreeModifier;
 		mPropertyBag.view = oView;
 
 		return this._oChangePersistence.getChangesForView(mPropertyBag.viewId, mPropertyBag)
 		.then(Applier.applyAllChangesForXMLView.bind(Applier, mPropertyBag))
 		.catch(this._handlePromiseChainError.bind(this, mPropertyBag.view));
-	};
-
-	FlexController.prototype._checkForDependentSelectorControls = function (oChange, mPropertyBag) {
-		var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
-
-		aDependentControlSelectorList.forEach(function(sDependentControlSelector) {
-			var oDependentControl = mPropertyBag.modifier.bySelector(sDependentControlSelector, mPropertyBag.appComponent, mPropertyBag.view);
-			if (!oDependentControl) {
-				throw new Error("A dependent selector control of the flexibility change is not available.");
-			}
-		});
 	};
 
 	FlexController.prototype._handlePromiseChainError = function (oView, oError) {
@@ -724,105 +710,6 @@ sap.ui.define([
 		}.bind(this));
 
 		return Utils.execPromiseQueueSequentially(aPromiseStack);
-	};
-
-	FlexController.prototype._updateControlsDependencies = function (mChangesMap, oAppComponent) {
-		var oControl;
-		Object.keys(mChangesMap.mDependencies).forEach(function(sChangeKey) {
-			var oDependency = mChangesMap.mDependencies[sChangeKey];
-			if (oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) {
-				var iLength = oDependency.controlsDependencies.length;
-				while (iLength--) {
-					var oSelector = oDependency.controlsDependencies[iLength];
-					oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
-					if (oControl) {
-						oDependency.controlsDependencies.splice(iLength, 1);
-						delete mChangesMap.mControlsWithDependencies[oControl.getId()];
-					}
-				}
-			}
-		});
-	};
-
-	FlexController.prototype._updateDependencies = function (mChangesMap, sChangeKey) {
-		if (mChangesMap.mDependentChangesOnMe[sChangeKey]) {
-			mChangesMap.mDependentChangesOnMe[sChangeKey].forEach(function (sKey) {
-				var oDependency = mChangesMap.mDependencies[sKey];
-
-				// oDependency might be undefined, since initial dependencies were not copied yet from applyAllChangesForControl() for change with ID sKey
-				var iIndex = oDependency ? oDependency.dependencies.indexOf(sChangeKey) : -1;
-				if (iIndex > -1) {
-					oDependency.dependencies.splice(iIndex, 1);
-				}
-			});
-			delete mChangesMap.mDependentChangesOnMe[sChangeKey];
-		}
-	};
-
-	/**
-	 * Iterating over <code>mDependencies</code> once, executing relevant dependencies, and clearing dependencies queue.
-	 *
-	 * @param {object} mChangesMap - Changes map
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise for asynchronous or FakePromise for synchronous processing scenario
-	 * @private
-	 */
-	FlexController.prototype._iterateDependentQueue = function(mChangesMap, oAppComponent) {
-		var aCoveredChanges = [];
-		var aDependenciesToBeDeleted = [];
-		var aPromises = [];
-		this._updateControlsDependencies(mChangesMap, oAppComponent);
-		Object.keys(mChangesMap.mDependencies).forEach(function(sDependencyKey) {
-			var oDependency = mChangesMap.mDependencies[sDependencyKey];
-			if (
-				oDependency[FlexController.PENDING]
-				&& oDependency.dependencies.length === 0
-				&& !(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0)
-			) {
-				aPromises.push(
-					function() {
-						return oDependency[FlexController.PENDING]()
-						.then(function () {
-							aDependenciesToBeDeleted.push(sDependencyKey);
-							aCoveredChanges.push(oDependency.changeObject.getId());
-						});
-					}
-				);
-			}
-		});
-
-		return Utils.execPromiseQueueSequentially(aPromises)
-
-		.then(function () {
-			for (var j = 0; j < aDependenciesToBeDeleted.length; j++) {
-				delete mChangesMap.mDependencies[aDependenciesToBeDeleted[j]];
-			}
-
-			// dependencies should be updated after all processing functions are executed and dependencies are deleted
-			for (var k = 0; k < aCoveredChanges.length; k++) {
-				this._updateDependencies(mChangesMap, aCoveredChanges[k]);
-			}
-
-			return aCoveredChanges;
-		}.bind(this));
-	};
-
-	/**
-	 * Recursive iterations, which are processed sequentially, as long as dependent changes can be applied.
-	 *
-	 * @param {object} mChangesMap - Changes map
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all dependencies were processed for asynchronous or FakePromise for the synchronous processing scenario
-	 * @private
-	 */
-	FlexController.prototype._processDependentQueue = function (mChangesMap, oAppComponent) {
-		return this._iterateDependentQueue(mChangesMap, oAppComponent)
-
-		.then(function(aCoveredChanges) {
-			if (aCoveredChanges.length > 0) {
-				return this._processDependentQueue(mChangesMap, oAppComponent);
-			}
-		}.bind(this));
 	};
 
 	/**

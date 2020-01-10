@@ -88,6 +88,9 @@ sap.ui.define([
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
+	// shortcut for sap.m.P13nConditionOperation
+	var P13nConditionOperation = library.P13nConditionOperation;
+
 	// lazy dependency to sap.ui.layout.Grid
 	var Grid;
 	// lazy dependency to sap.ui.layout.GridData
@@ -2398,9 +2401,9 @@ sap.ui.define([
 			if (oControl.getDateValue && !(oControl.isA("sap.m.TimePicker")) && oType.getName() !== "sap.ui.comp.odata.type.StringDate") {
 				oValue = oControl.getDateValue();
 				if (oType && oValue) {
-					if (oEvent && oEvent.getParameter("valid")){
+					if ((oEvent && oEvent.getParameter("valid")) || oControl.isValidValue()) {
 						sValue = oType.formatValue(oValue, "string");
-					}else {
+					} else {
 						sValue = "";
 					}
 				}
@@ -2842,42 +2845,6 @@ sap.ui.define([
 		}
 
 		return sConditionText;
-	};
-
-	/**
-	 * @enum {string}
-	 * @public
-	 * @experimental since version 1.26 !!! THIS TYPE IS ONLY FOR INTERNAL USE !!!
-	 */
-	// TODO: move to library.js
-	var P13nConditionOperation = sap.m.P13nConditionOperation = {
-		// filter operations
-		BT: "BT",
-		EQ: "EQ",
-		Contains: "Contains",
-		StartsWith: "StartsWith",
-		EndsWith: "EndsWith",
-		LT: "LT",
-		LE: "LE",
-		GT: "GT",
-		GE: "GE",
-		Initial: "Initial",
-		Empty: "Empty",
-		NotEmpty: "NotEmpty",
-
-		// sort operations
-		Ascending: "Ascending",
-		Descending: "Descending",
-
-		// group operations
-		GroupAscending: "GroupAscending",
-		GroupDescending: "GroupDescending",
-
-		// calculation operations
-		Total: "Total",
-		Average: "Average",
-		Minimum: "Minimum",
-		Maximum: "Maximum"
 	};
 
 	P13nConditionPanel._oConditionMap = {

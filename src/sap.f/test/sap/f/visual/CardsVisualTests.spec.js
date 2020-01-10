@@ -5,21 +5,33 @@ describe("sap.f.CardsVisualTests", function () {
 
 	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.widgets.Card";
 
+	function getListItem(sTitle) {
+		return element(by.control({
+			controlType: "sap.m.CustomListItem",
+			viewName: "Main",
+			viewNamespace: "sap.f.cardsVisualTests.view.",
+			descendant: {
+				controlType: "sap.m.Title",
+				properties: {text: sTitle}
+			}
+		}));
+	}
+
 	it('Test page loaded', function() {
 		expect(takeScreenshot()).toLookAs("0_Initial");
 	});
 
 	it('List Card', function() {
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-0")).click(); // also can be selected with element(by.css(".visualTestsGridList li:nth-of-type(2)"))
+		getListItem("List Card").click();
+
 		var oCard = element(by.id("container-cardsVisualTests---listContent--listCount"));
 		expect(takeScreenshot(oCard)).toLookAs("1_ListCard");
 	});
 
 	it('Default Headers', function() {
 		browser.executeScript("window.history.back()");
-		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-3").scrollIntoView()');
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-3")).click();
 
+		getListItem("No layout").click();
 
 		var Header1 = element(by.css("#container-cardsVisualTests---nolayout--somedfault > div"));
 		expect(takeScreenshot(Header1)).toLookAs("2_Default_Header_1");
@@ -58,8 +70,8 @@ describe("sap.f.CardsVisualTests", function () {
 
 	it('Numeric Header', function() {
 		browser.executeScript("window.history.back()");
-		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-4").scrollIntoView()');
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-4")).click();
+
+		getListItem("Numeric Header").click();
 
 		var oCard1 = element(by.css("#container-cardsVisualTests---numericHeader--header1 .sapFCardHeader"));
 		expect(takeScreenshot(oCard1)).toLookAs("3_NumericHeader_1");
@@ -92,8 +104,8 @@ describe("sap.f.CardsVisualTests", function () {
 
 	it('Grid Container', function() {
 		browser.executeScript("window.history.back()");
-		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-5").scrollIntoView()');
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-5")).click();
+
+		getListItem("Grid Container").click();
 
 		var oCard = element(by.css("#container-cardsVisualTests---GridContainer--cContainer"));
 		expect(takeScreenshot(oCard)).toLookAs("4_GridContainer");
@@ -101,8 +113,8 @@ describe("sap.f.CardsVisualTests", function () {
 
 	it('Object Card', function() {
 		browser.executeScript("window.history.back()");
-		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-2").scrollIntoView()');
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-2")).click();
+
+		getListItem("Object Card").click();
 
 		var oCard = element(by.css("#container-cardsVisualTests---objectContent--objectId"));
 		expect(takeScreenshot(oCard)).toLookAs("5_Object_Card_1");
@@ -110,8 +122,8 @@ describe("sap.f.CardsVisualTests", function () {
 
 	it("Table Card", function () {
 		browser.executeScript("window.history.back()");
-		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-1").scrollIntoView()');
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-1")).click();
+
+		getListItem("Table Card").click();
 
 		var oCard = element(by.css("#container-cardsVisualTests---tableContent--tablecard1"));
 		expect(takeScreenshot(oCard)).toLookAs("6_Table_Card_1");
@@ -122,8 +134,8 @@ describe("sap.f.CardsVisualTests", function () {
 
 	it("Adaptive Card", function () {
 		browser.executeScript("window.history.back()");
-		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-3").scrollIntoView()');
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-3")).click();
+
+		getListItem("Adaptive Card").click();
 
 		var oCard = element(by.css("#container-cardsVisualTests---adaptiveContent--adaptivecard1"));
 		expect(takeScreenshot(oCard)).toLookAs("8_Adaptive_Card_1");
@@ -137,9 +149,13 @@ describe("sap.f.CardsVisualTests", function () {
 
 	it("Min Height", function () {
 		browser.executeScript("window.history.back()");
-		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-6").scrollIntoView()');
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-6")).click();
 
-		expect(takeScreenshot()).toLookAs("7_Min_Height");
+		getListItem("Min Height").click();
+
+		browser.executeScript('document.getElementById("container-cardsVisualTests---minHeight--panelInCozy").scrollIntoView()');
+		expect(takeScreenshot()).toLookAs("7_Min_Height_Cozy");
+
+		browser.executeScript('document.getElementById("container-cardsVisualTests---minHeight--panelInCompact").scrollIntoView()');
+		expect(takeScreenshot()).toLookAs("7_Min_Height_Compact");
 	});
 });

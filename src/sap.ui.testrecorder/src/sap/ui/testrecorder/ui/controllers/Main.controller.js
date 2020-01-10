@@ -167,7 +167,8 @@ sap.ui.define([
 			if (mData.codeSnippet) {
 				this.getView().getModel("controls").setProperty("/codeSnippet", mData.codeSnippet);
 			} else if (mData.error) {
-				this.getView().getModel("controls").setProperty("/codeSnippet", this.getView().getModel("i18n").getProperty("TestRecorder.Inspect.Snippet.NotFound.Text") + " #" + mData.domElement);
+				var sNotFoundText = this.getView().getModel("i18n").getResourceBundle().getText("TestRecorder.Inspect.Snippet.NotFound.Text", "#" + mData.domElement);
+				this.getView().getModel("controls").setProperty("/codeSnippet", sNotFoundText);
 			}
 		},
 		_onUpdateSelection: function (mData) {

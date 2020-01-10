@@ -1841,7 +1841,7 @@ sap.ui.define([
 		var $Input = jQuery(oDP.getFocusDomRef());
 		var $LabelledByReference = jQuery.sap.byId($Input.attr("aria-labelledby"));
 		var $DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
-		var sDateAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE");
+		var sDateAnnouncement = "date";
 
 		assert.strictEqual($DescribedByReference.text(), sDateAnnouncement, "Date announcement added into aria-describedby");
 
@@ -1866,14 +1866,14 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value  Date", "Description");
+		assert.strictEqual(oInfo.description, "Value  date", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Date", "Description");
+		assert.strictEqual(oInfo.description, "date", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -1887,7 +1887,7 @@ sap.ui.define([
 		oInput.setDisplayFormat("yyyy-MM-dd");
 		oInput.setValue("2014.03.26");
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "2014-03-26  Date", "Description");
+		assert.strictEqual(oInfo.description, "2014-03-26  date", "Description");
 		oInput.destroy();
 	});
 

@@ -46,11 +46,14 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given new connector configuration in bootstrap", {
-		beforeEach : function() {
+		beforeEach: function() {
 			JsObjectConnector.oStorage.clear();
+		},
+		afterEach: function () {
+			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("and static preload when loading flex data", function (assert) {
+		QUnit.test("and static preload when loading flex data, get name/reference from mComponent", function (assert) {
 			// simulate a component-preload
 			jQuery.sap.registerPreloadedModules({
 				version : "2.0",
@@ -60,7 +63,24 @@ sap.ui.define([
 				}
 			})
 			;
-			return CompatibilityConnector.loadChanges({name: "test.app", appVersion: "1.0.0", appName: "test.app"}).then(function (oResult) {
+			return CompatibilityConnector.loadChanges({name: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
+				assert.equal(oResult.changes.changes.length, 1, "one change was loaded");
+				var oChange = oResult.changes.changes[0];
+				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
+			});
+		});
+
+		QUnit.test("and static preload when loading flex data, get appName/componentName from mPropertyBag", function (assert) {
+			// simulate a component-preload
+			jQuery.sap.registerPreloadedModules({
+				version : "2.0",
+				name : "test.app",
+				modules : {
+					"test/app/changes/changes-bundle.json" : '[{"dummy":true}]'
+				}
+			})
+			;
+			return CompatibilityConnector.loadChanges({name: "NOTHING", appVersion: "1.0.0"}, {appName: "test.app"}).then(function (oResult) {
 				assert.equal(oResult.changes.changes.length, 1, "one change was loaded");
 				var oChange = oResult.changes.changes[0];
 				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
@@ -94,11 +114,11 @@ sap.ui.define([
 
 		QUnit.test("when creating multiple changes at once", function (assert) {
 			return CompatibilityConnector.create(aTestData)
-			.then(function () {
-				assert.equal(numberOfChange(), aTestData.length, "then spot-checking that JsObjectConnector got the changes");
-				var sId = ObjectStorageUtils.createFlexKey(aTestData[2].fileName);
-				assert.ok(JsObjectConnector.oStorage.getItem(sId), "then spot-checking that JsObjectConnector got the changes");
-			});
+				.then(function () {
+					assert.equal(numberOfChange(), aTestData.length, "then spot-checking that JsObjectConnector got the changes");
+					var sId = ObjectStorageUtils.createFlexKey(aTestData[2].fileName);
+					assert.ok(JsObjectConnector.oStorage.getItem(sId), "then spot-checking that JsObjectConnector got the changes");
+				});
 		});
 
 		QUnit.test("when resetting changes", function (assert) {

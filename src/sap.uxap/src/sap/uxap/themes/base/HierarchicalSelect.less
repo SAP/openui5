@@ -133,8 +133,11 @@
 
 	.sapMSlt.sapUxAPHierarchicalSelect.sapMBarChild {
 		height: 3rem;
-		border: none;
-		padding-left: 1rem;
+
+		&.sapMBarLastVisibleChild.sapMBarFirstVisibleChild {
+			border: none;
+			padding-left: 1rem;
+		}
 	}
 }
 

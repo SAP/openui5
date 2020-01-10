@@ -22,4 +22,4 @@ sap.ui.define([],
 				create: "sap/m/designtime/Input.create.fragment.xml"
 			}
 		};
-	}, /* bExport= */ false);
+	});

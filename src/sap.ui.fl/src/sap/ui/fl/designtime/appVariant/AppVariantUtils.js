@@ -43,4 +43,4 @@ sap.ui.define([
 	};
 
 	return AppVariantUtils;
-}, /* bExport= */false);
+});

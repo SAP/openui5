@@ -256,4 +256,4 @@ sap.ui.define([
 	};
 
 	return CreateContainer;
-}, /* bExport= */true);
+});

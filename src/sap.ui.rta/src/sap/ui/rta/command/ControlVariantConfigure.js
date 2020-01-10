@@ -108,4 +108,4 @@ sap.ui.define([
 	};
 
 	return ControlVariantConfigure;
-}, /* bExport= */true);
+});

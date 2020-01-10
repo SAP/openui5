@@ -45,8 +45,9 @@ sap.ui.define([
 	 * @param {object} mComponent Contains component data needed for reading changes
 	 * @param {string} mComponent.name Name of component
 	 * @param {string} [mComponent.appVersion] Current running version of application
-	 * @param {string} [mComponent.appName] Component name of the current application which may differ in case of an app variant
+	 * @param {string} [mPropertyBag.appName] Component name of the current application which may differ in case of an app variant
 	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
+	 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be loaded
 	 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 	 * @param {string} [mPropertyBag.cacheKey] Pre-calculated cache key of the component
 	 * @returns {Promise} Returns a Promise with the changes response
@@ -61,10 +62,11 @@ sap.ui.define([
 		return ApplyStorage.loadFlexData({
 			reference: mComponent.name,
 			appVersion: mComponent.appVersion,
-			componentName: mComponent.appName,
+			componentName: mPropertyBag.appName,
 			cacheKey: mPropertyBag.cacheKey,
 			siteId: mPropertyBag.siteId,
-			appDescriptor: mPropertyBag.appDescriptor
+			appDescriptor: mPropertyBag.appDescriptor,
+			draftLayer: mPropertyBag.draftLayer
 		}).then(function(mFlexData) {
 			return {
 				changes: mFlexData,
@@ -92,12 +94,13 @@ sap.ui.define([
 	 * @see sap.ui.fl.LrepConnector.prototype.create
 	 * @see sap.ui.fl.write._internal.Storage.write
 	 *
-	 * @param {object} vFlexObjects The content which is send to the server
-	 * @param {string} [sChangelist] The transport ID which will be handled internally, so there is no need to be passed
-	 * @param {boolean} [bIsVariant] Whether the data has file type .variant or not
+	 * @param {object} vFlexObjects - The content which is send to the server
+	 * @param {string} [sChangelist] - The transport ID which will be handled internally, so there is no need to be passed
+	 * @param {boolean} [bIsVariant] - Whether the data has file type .variant or not
+	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} Resolve if successful, rejects with errors
 	 */
-	CompatibilityConnector.create = function(vFlexObjects, sChangelist, bIsVariant) {
+	CompatibilityConnector.create = function(vFlexObjects, sChangelist, bIsVariant, bDraft) {
 		if (_isMethodOverwritten("create")) {
 			return FakeLrepConnector.prototype.create(vFlexObjects, sChangelist, bIsVariant);
 		}
@@ -106,11 +109,13 @@ sap.ui.define([
 		if (!Array.isArray(aFlexObjects)) {
 			aFlexObjects = [vFlexObjects];
 		}
+
 		return WriteStorage.write({
 			layer : aFlexObjects[0].layer,
-			flexObjects: aFlexObjects,
-			_transport: sChangelist,
-			isLegacyVariant: bIsVariant
+			flexObjects : aFlexObjects,
+			_transport : sChangelist,
+			isLegacyVariant : bIsVariant,
+			draft : bDraft
 		});
 	};
 

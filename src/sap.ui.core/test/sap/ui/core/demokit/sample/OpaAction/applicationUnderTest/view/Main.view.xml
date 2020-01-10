@@ -13,6 +13,41 @@
 						text="I navigate to a secondPage"/>
 			</headerContent>
 			<content>
+				<OverflowToolbar id="toolbar-fit" width="600px">
+					<Button text="Always Visible" press="onToolbarButtonPress">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow"/>
+						</layoutData>
+					</Button>
+					<Button text="Mostly Visible" press="onToolbarButtonPress">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="High"/>
+						</layoutData>
+					</Button>
+					<Button text="Should Overflow" press="onToolbarButtonPress">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="Low"/>
+						</layoutData>
+					</Button>
+				</OverflowToolbar>
+				<OverflowToolbar id="toolbar-overflow" width="300px">
+					<Button text="Always Visible" press="onToolbarButtonPress">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow"/>
+						</layoutData>
+					</Button>
+					<Button text="Mostly Visible" press="onToolbarButtonPress">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="High"/>
+						</layoutData>
+					</Button>
+					<Button text="Overflowing" press="onToolbarButtonPress">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="Low"/>
+						</layoutData>
+					</Button>
+				</OverflowToolbar>
+				<Text id="toolbar-text" text="Press a button in the toolbar to change this text" />
 				<Text text="Opa5 is waiting until controls are interactable (not busy) before executing actions.
 				When you want to trigger a Press on a certain domref you may specify the idSuffix for example 'mode' will trigger the delete."/>
 				<List

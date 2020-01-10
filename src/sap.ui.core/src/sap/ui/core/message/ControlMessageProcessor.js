@@ -49,7 +49,7 @@ sap.ui.define(['sap/ui/core/message/MessageProcessor', "sap/ui/thirdparty/jquery
 
 	/**
 	 * Set Messages to check
-	 * @param {map}
+	 * @param {Object<string,array>}
 	 *         vMessages map of messages: {'target': [array of messages],...}
 	 * @protected
 	 */

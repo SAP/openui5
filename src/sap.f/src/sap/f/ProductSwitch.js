@@ -313,4 +313,4 @@ sap.ui.define([
 
 		return ProductSwitch;
 
-	}, /* bExport= */ true);
+	});

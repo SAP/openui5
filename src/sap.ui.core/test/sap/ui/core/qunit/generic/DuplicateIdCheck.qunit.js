@@ -116,6 +116,10 @@ sap.ui.define([
 			return true;
 		}
 
+		if (sControlName === "sap.f.PlanningCalendarInCard" && sPropertyName === "viewKey") { // control fails when key is set where nothing is registered
+			return true;
+		}
+
 		if ((sControlName === "sap.m.SinglePlanningCalendarGrid" || sControlName === "sap.m.SinglePlanningCalendarMonthGrid")
 			&& sPropertyName === "startDate") {
 			return true;
@@ -225,6 +229,7 @@ sap.ui.define([
 			"sap.m.internal.NumericInput",
 			"sap.m.QuickViewPage",
 			"sap.m.PlanningCalendar",
+			"sap.f.PlanningCalendarInCard",
 			"sap.m.SelectionDetailsListItem", // not prepared to be used standalone
 			"sap.m.TimePickerSlider",
 			"sap.m.TimePickerSliders",

@@ -36,7 +36,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 				}, "");
 
 			oRm.openStart("div", oSlider);
-			oRm.class(CSS_CLASS);
+			this.addClass(oRm, oSlider);
 
 			if (!bEnabled) {
 				oRm.class(CSS_CLASS + "Disabled");
@@ -67,9 +67,9 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 
 			if (oSlider.getEnableTickmarks()) {
 				this.renderTickmarks(oRm, oSlider);
+			} else {
+				this.renderLabels(oRm, oSlider);
 			}
-
-			this.renderLabels(oRm, oSlider);
 
 			if (oSlider.getName()) {
 				this.renderInput(oRm, oSlider);

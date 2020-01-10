@@ -15,8 +15,8 @@ sap.ui.define([
 
 	// /* Accessibility System Preset related tests */
 	opaTest("Should be able to switch to 'Accessibility' Preset", function (Given, When, Then) {
-		Given.iStartMyApp()
-			.and.iDeletePersistedData();
+		Given.iDeletePersistedData()
+			.and.iStartMyApp();
 
 		// allow persistance in local storage -- crucial to next steps in journey
 		When.onTheRulesPage.iPressSettingsButton();

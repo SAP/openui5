@@ -6,9 +6,12 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/m/HBox',
 	'sap/ui/layout/SplitterLayoutData',
-	'sap/ui/core/Orientation'
-], function (Button, CheckBox, Input, Text, Controller, HBox, SplitterLayoutData, Orientation) {
+	'sap/ui/core/library'
+], function (Button, CheckBox, Input, Text, Controller, HBox, SplitterLayoutData, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.Orientation
+	var Orientation = coreLibrary.Orientation;
 
 	return Controller.extend("sap.ui.layout.sample.Splitter.Splitter", {
 

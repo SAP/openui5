@@ -485,4 +485,4 @@ sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
 
 	return GridData;
 
-}, /* bExport= */ true);
+});

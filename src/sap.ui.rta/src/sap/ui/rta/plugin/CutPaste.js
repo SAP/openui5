@@ -209,4 +209,4 @@ function(
 	};
 
 	return CutPaste;
-}, /* bExport= */ true);
+});

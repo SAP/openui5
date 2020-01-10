@@ -2,13 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
-	"sap/ui/demo/cardExplorer/model/ExploreNavigationModel",
+	"sap/ui/demo/cardExplorer/controller/ExploreSamples.controller",
 	"./pages/NavigationList",
 	"./pages/Explore"
-], function (opaTest, ExploreNavigationModel) {
+], function (opaTest, ExploreSamplesController) {
 	"use strict";
-
-	var PATH_TO_HTML_CONSUMPTION_SAMPLE = "/navigation/1/items/6/files";
 
 	QUnit.module("Home");
 
@@ -38,11 +36,12 @@ sap.ui.define([
 
 	opaTest("Should be able to download files as zip.", function (Given, When, Then) {
 
-		var aFiles = ExploreNavigationModel.getProperty(PATH_TO_HTML_CONSUMPTION_SAMPLE),
+		var oSample = ExploreSamplesController.prototype._findSample.call(null, "htmlConsumption"),
+			aFiles = oSample.files,
 			aFileNames = aFiles.map(function (oFile) { return oFile.name; });
 
 		When.onTheNavigationList.iSwitchToSample("htmlConsumption");
-		When.onTheExplorePage.iPressDownload("Bundle as .zip");
+		When.onTheExplorePage.iPressDownload("Bundle as card.zip");
 
 		Then.onTheExplorePage
 			.iShouldHaveZip(aFileNames)

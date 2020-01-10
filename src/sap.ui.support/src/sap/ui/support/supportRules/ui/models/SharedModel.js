@@ -86,6 +86,7 @@ sap.ui.define([
 		selectedRules: true,
 		filteredIssues: null,
 		issuesCount: 0,
+		selectedRulesCount: 0,
 		visibleRowCount: 5,
 		supportAssistantOrigin: "",
 		supportAssistantVersion: "",

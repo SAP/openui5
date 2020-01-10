@@ -13,6 +13,12 @@ sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"], function(Log, jQuery
 	return {
 
 		/**
+		 * Executes the route matched logic
+		 *
+		 * @param {object} oArguments The arguments of the event
+		 * @param {boolean} bInital Identifies if the route is matched the first time
+		 * @param {sap.ui.core.routing.Route} oNestingChild The nesting route
+		 * @returns {object} The place info
 		 * @private
 		 */
 		_routeMatched : function(oArguments, bInital, oNestingChild) {

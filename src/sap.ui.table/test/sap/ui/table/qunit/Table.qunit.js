@@ -265,50 +265,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("bindRows, unbindRows", function(assert) {
-		var oBindingInfo = oTable.getBindingInfo("rows");
-		var oBindSpy = sinon.spy(oTable, "_bindRows");
-		var oUnbindSpy = sinon.spy(oTable, "_unbindRows");
-		var oChangeSpy = this.spy();
-		var oDataRequestedSpy = this.spy();
-		var oDataReceivedSpy = this.spy();
-
-		oTable.unbindAggregation("rows");
-		assert.ok(oUnbindSpy.calledOnce, "_unbindRows is called once");
-		oTable.bindAggregation("rows", oBindingInfo);
-		assert.ok(oBindSpy.calledOnce, "_bindRows is called once");
-		assert.ok(oBindSpy.calledWithExactly(oBindingInfo), "_bindRows is called with the correct parameter");
-
-		oBindSpy.reset();
-		oUnbindSpy.reset();
-
-		oTable.unbindRows();
-		assert.ok(oUnbindSpy.calledOnce, "_unbindRows is called once");
-		oBindingInfo.events = {
-			change: oChangeSpy,
-			dataRequested: oDataRequestedSpy,
-			dataReceived: oDataReceivedSpy
-		};
-		oTable.bindRows(oBindingInfo);
-		assert.ok(oBindSpy.calledOnce, "_bindRows is called once");
-		assert.ok(oBindSpy.calledWithExactly(oBindingInfo), "_bindRows is called with the correct parameter");
-
-		oChangeSpy.reset();
-		var oBinding = oTable.getBinding("rows");
-		oBinding.fireEvent("change");
-		oBinding.fireEvent("dataRequested");
-		oBinding.fireEvent("dataReceived");
-
-		assert.ok(oChangeSpy.calledOnce, "The change event listener was called once");
-		assert.ok(oDataRequestedSpy.calledOnce, "The dataRequested event listener was called once");
-		assert.ok(oDataReceivedSpy.calledOnce, "The dataReceived event listener was called once");
-
-		oTable._bRowsBeingBound = true;
-		oUnbindSpy.reset();
-		oTable.unbindAggregation("rows");
-		assert.ok(!oUnbindSpy.called, "_unbindRows is not called");
-	});
-
 	QUnit.test("Initialize skip propagation", function(assert) {
 		var oTable = new Table();
 
@@ -1048,7 +1004,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Row Settings Template", function(assert) {
-		var oOnAfterRenderingEventListener = this.spy();
+		var oOnAfterRenderingEventListener = sinon.spy();
 		var oRowSettings;
 
 		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
@@ -2387,7 +2343,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Prevent re-rendering on setEnableBusyIndicator", function(assert) {
-		var spy = this.spy();
+		var spy = sinon.spy();
 		oTable.addEventDelegate({onAfterRendering: spy});
 
 		// act
@@ -2411,149 +2367,316 @@ sap.ui.define([
 			assert.deepEqual(oActualBindingInfo.sorter, oExpectedBindingInfo.sorter, sTestTitle + ": The sorter is correct");
 			assert.deepEqual(oActualBindingInfo.filters, oExpectedBindingInfo.filters, sTestTitle + ": The filters are correct");
 			assert.deepEqual(oActualBindingInfo.template, oExpectedBindingInfo.template, sTestTitle + ": The template is correct");
+		},
+		testBindRows: function(oTable, fnBind, assert) {
+			var oDestroyRows = sinon.spy(oTable, "destroyRows");
+			var oInnerBindRows = sinon.spy(oTable, "_bindRows");
+			var oInnerUnbindRows = sinon.spy(oTable, "_unbindRows");
+			var oOnBindingChange = sinon.spy(oTable, "_onBindingChange");
+			var oOnBindingDataRequested = sinon.spy(oTable, "_onBindingDataRequested");
+			var oOnBindingDataReceived = sinon.spy(oTable, "_onBindingDataReceived");
+			var oBindAggregationOfControl = sinon.spy(Control.prototype, "bindAggregation");
+			var oBindingInfo = oTable.getBindingInfo("rows");
+
+			function resetSpies() {
+				oDestroyRows.reset();
+				oInnerBindRows.reset();
+				oInnerUnbindRows.reset();
+				oOnBindingChange.reset();
+				oOnBindingDataRequested.reset();
+				oOnBindingDataReceived.reset();
+				oBindAggregationOfControl.reset();
+			}
+
+			// Rebind
+			fnBind(oBindingInfo);
+			assert.ok(oInnerBindRows.calledOnce, "Rebind - _bindRows was called once");
+			assert.ok(oInnerBindRows.calledWith(oBindingInfo), "Rebind - _bindRows was called with the correct parameters");
+			assert.ok(oInnerUnbindRows.notCalled, "Rebind - _unbindRows was not called");
+			assert.ok(oDestroyRows.notCalled, "Rebind - destroyRows was not called");
+			assert.ok(oBindAggregationOfControl.calledOnce, "Rebind - bindAggregation of Control was called once");
+			assert.ok(oBindAggregationOfControl.calledWithExactly("rows", oBindingInfo),
+				"Rebind - bindAggregation of Control was called with the correct parameters");
+			assert.ok(oBindAggregationOfControl.calledOn(oTable), "Rebind - bindAggregation of Control was called with the correct context");
+			resetSpies();
+
+			// Temporary fix for the Support Assistant hacks. Support Assistant should implement a selection plugin.
+			// TODO: Before we recommend to implement a selection plugin -> Complete BLI CPOUIFTEAMB-1464
+			//oTable.getBinding("rows").fireEvent("change");
+			//oTable.getBinding("rows").fireEvent("dataRequested");
+			//oTable.getBinding("rows").fireEvent("dataReceived");
+			//assert.ok(oOnBindingChange.calledOnce, "The change event listener was called once");
+			//assert.ok(oOnBindingChange.calledOn(oTable), "The change event listener was called with the correct context");
+			//assert.ok(oOnBindingDataRequested.calledOnce, "The dataRequested event listener was called once");
+			//assert.ok(oOnBindingChange.calledOn(oTable), "The dataRequested event listener was called with the correct context");
+			//assert.ok(oOnBindingDataReceived.calledOnce, "The dataReceived event listener was called once");
+			//assert.ok(oOnBindingChange.calledOn(oTable), "The dataReceived event listener was called with the correct context");
+			//resetSpies();
+
+			// Rebind to non-existing model
+			fnBind("otherModel>" + oBindingInfo.path);
+			assert.ok(oInnerBindRows.calledOnce, "Rebind to non-existing model - _bindRows was called once");
+			assert.ok(oInnerBindRows.calledWith(oTable.getBindingInfo("rows")),
+				"Rebind to non-existing model - _bindRows was called with the correct parameters");
+			assert.ok(oInnerUnbindRows.notCalled, "Rebind to non-existing - _unbindRows was not called");
+			assert.ok(oDestroyRows.notCalled, "Rebind to non-existing model - destroyRows was not called");
+			assert.ok(oBindAggregationOfControl.calledOnce, "Rebind to non-existing model - bindAggregation of Control was called once");
+			assert.ok(oBindAggregationOfControl.calledWithExactly("rows", oTable.getBindingInfo("rows")),
+				"Rebind to non-existing model - bindAggregation of Control was called with the correct parameters");
+			assert.ok(oBindAggregationOfControl.calledOn(oTable),
+				"Rebind to non-existing model - bindAggregation of Control was called with the correct context");
+			resetSpies();
+
+			// Set the model.
+			oTable.setModel(oTable.getModel(), "otherModel");
+			assert.ok(oInnerBindRows.notCalled, "Set the model - _bindRows was not called");
+			assert.ok(oInnerUnbindRows.notCalled, "Set the model - _unbindRows was not called");
+			assert.ok(oDestroyRows.notCalled, "Set the model - destroyRows was not called");
+			resetSpies();
+
+			oTable.getBinding("rows").fireEvent("change");
+			oTable.getBinding("rows").fireEvent("dataRequested");
+			oTable.getBinding("rows").fireEvent("dataReceived");
+			assert.ok(oOnBindingChange.calledOnce, "The change event listener was called once");
+			assert.ok(oOnBindingChange.calledOn(oTable), "The change event listener was called with the correct context");
+			assert.ok(oOnBindingDataRequested.calledOnce, "The dataRequested event listener was called once");
+			assert.ok(oOnBindingChange.calledOn(oTable), "The dataRequested event listener was called with the correct context");
+			assert.ok(oOnBindingDataReceived.calledOnce, "The dataReceived event listener was called once");
+			assert.ok(oOnBindingChange.calledOn(oTable), "The dataReceived event listener was called with the correct context");
+			resetSpies();
+
+			// Change the model.
+			oTable.setModel(new JSONModel(oTable.getModel().getData()), "otherModel");
+			assert.ok(oInnerBindRows.notCalled, "Change the model - _bindRows was not called");
+			assert.ok(oInnerUnbindRows.notCalled, "Change the model - _unbindRows was not called");
+			assert.ok(oDestroyRows.notCalled, "Change the model - destroyRows was not called");
+			resetSpies();
+
+			oTable.getBinding("rows").fireEvent("change");
+			oTable.getBinding("rows").fireEvent("dataRequested");
+			oTable.getBinding("rows").fireEvent("dataReceived");
+			assert.ok(oOnBindingChange.calledOnce, "The change event listener was called once");
+			assert.ok(oOnBindingChange.calledOn(oTable), "The change event listener was called with the correct context");
+			assert.ok(oOnBindingDataRequested.calledOnce, "The dataRequested event listener was called once");
+			assert.ok(oOnBindingChange.calledOn(oTable), "The dataRequested event listener was called with the correct context");
+			assert.ok(oOnBindingDataReceived.calledOnce, "The dataReceived event listener was called once");
+			assert.ok(oOnBindingChange.calledOn(oTable), "The dataReceived event listener was called with the correct context");
+			resetSpies();
+
+			var oExternalChangeSpy = sinon.spy();
+			var oExternalDataRequestedSpy = sinon.spy();
+			var oExternalDataReceivedSpy = sinon.spy();
+			oBindingInfo = {
+				path: "/modelData",
+				sorter: new Sorter({
+					path: "modelData>money",
+					descending: true
+				}),
+				filters: [
+					new Filter({
+						path: "modelData>money",
+						operator: "LT",
+						value: 5
+					})
+				],
+				template: new Label({
+					text: "Last Name"
+				}),
+				events: {
+					change: oExternalChangeSpy,
+					dataRequested: oExternalDataRequestedSpy,
+					dataReceived: oExternalDataReceivedSpy
+				}
+			};
+			fnBind(oBindingInfo);
+			this.assertBindingInfo(assert, "BindingInfo", oTable.getBindingInfo("rows"), oBindingInfo);
+			resetSpies();
+			oExternalChangeSpy.reset();
+			oExternalDataRequestedSpy.reset();
+			oExternalDataReceivedSpy.reset();
+
+			oTable.getBinding("rows").fireEvent("change");
+			oTable.getBinding("rows").fireEvent("dataRequested");
+			oTable.getBinding("rows").fireEvent("dataReceived");
+			assert.ok(oOnBindingChange.calledOnce, "The change event listener was called once");
+			assert.ok(oOnBindingChange.calledOn(oTable), "The change event listener was called with the correct context");
+			assert.ok(oExternalChangeSpy.calledOnce, "The external change event listener was called once");
+			assert.ok(oExternalChangeSpy.calledOn(oTable.getBinding("rows")),
+				"The external change event listener was called with the correct context");
+			assert.ok(sinon.calledInOrder(oOnBindingChange, oExternalChangeSpy),
+				"The change event listener of the table was called before the external change spy");
+			assert.ok(oOnBindingDataRequested.calledOnce, "The dataRequested event listener was called once");
+			assert.ok(oOnBindingDataRequested.calledOn(oTable), "The dataRequested event listener was called with the correct context");
+			assert.ok(oExternalDataRequestedSpy.calledOnce, "The external dataRequested event listener was called once");
+			assert.ok(oExternalDataRequestedSpy.calledOn(oTable.getBinding("rows")),
+				"The external dataRequested event listener was called with the correct context");
+			assert.ok(sinon.calledInOrder(oOnBindingDataRequested, oExternalDataRequestedSpy),
+				"The dataRequested event listener of the table was called before the external dataRequested spy");
+			assert.ok(oOnBindingDataReceived.calledOnce, "The dataReceived event listener was called once");
+			assert.ok(oOnBindingDataReceived.calledOn(oTable), "The dataReceived event listener was called with the correct context");
+			assert.ok(oExternalDataReceivedSpy.calledOnce, "The external dataReceived event listener was called once");
+			assert.ok(oExternalDataReceivedSpy.calledOn(oTable.getBinding("rows")),
+				"The external dataReceived event listener was called with the correct context");
+			assert.ok(sinon.calledInOrder(oOnBindingDataReceived, oExternalDataReceivedSpy),
+				"The dataReceived event listener of the table was called before the external dataReceived spy");
+
+			oBindAggregationOfControl.restore();
+		},
+		testBindRowsLegacy: function(oTable, fnBind, assert) {
+			var oInnerBindRows = sinon.spy(oTable, "_bindRows");
+			var oBindAggregationOfControl = sinon.spy(Control.prototype, "bindAggregation");
+			var oSorter = new Sorter({
+				path: "modelData>money",
+				descending: true
+			});
+			var oFilter = new Filter({
+				path: "modelData>money",
+				operator: "LT",
+				value: 5
+			});
+			var oTemplate = new Label({
+				text: "Last Name"
+			});
+
+			// (sPath)
+			fnBind("/modelData");
+			assert.ok(oInnerBindRows.calledOnce, "_bindRows was called once");
+			assert.ok(oInnerBindRows.calledWith(oTable.getBindingInfo("rows")), "_bindRows was called with the correct parameters");
+			assert.ok(oBindAggregationOfControl.calledOnce, "bindAggregation of Control was called once");
+			assert.ok(oBindAggregationOfControl.calledWithExactly("rows", oTable.getBindingInfo("rows")),
+				"bindAggregation of Control was called with the correct parameters");
+			assert.ok(oBindAggregationOfControl.calledOn(oTable), "bindAggregation of Control was called with the correct context");
+			this.assertBindingInfo(assert, "(sPath)", oTable.getBindingInfo("rows"), {
+				path: "/modelData"
+			});
+			oInnerBindRows.reset();
+			oBindAggregationOfControl.reset();
+
+			// (sPath, oSorter)
+			fnBind("/modelData", oSorter);
+			assert.ok(oInnerBindRows.calledOnce, "_bindRows was called once");
+			assert.ok(oInnerBindRows.calledWith(oTable.getBindingInfo("rows")), "_bindRows was called with the correct parameters");
+			assert.ok(oBindAggregationOfControl.calledOnce, "bindAggregation of Control was called once");
+			assert.ok(oBindAggregationOfControl.calledWithExactly("rows", oTable.getBindingInfo("rows")),
+				"bindAggregation of Control was called with the correct parameters");
+			assert.ok(oBindAggregationOfControl.calledOn(oTable), "bindAggregation of Control was called with the correct context");
+			this.assertBindingInfo(assert, "(sPath, oSorter)", oTable.getBindingInfo("rows"), {
+				path: "/modelData",
+				sorter: oSorter
+			});
+			oInnerBindRows.reset();
+			oBindAggregationOfControl.reset();
+
+			// (sPath, oSorter, aFilters)
+			fnBind("/modelData", oSorter, [oFilter]);
+			assert.ok(oInnerBindRows.calledOnce, "_bindRows was called once");
+			assert.ok(oInnerBindRows.calledWith(oTable.getBindingInfo("rows")), "_bindRows was called with the correct parameters");
+			assert.ok(oBindAggregationOfControl.calledOnce, "bindAggregation of Control was called once");
+			assert.ok(oBindAggregationOfControl.calledWithExactly("rows", oTable.getBindingInfo("rows")),
+				"bindAggregation of Control was called with the correct parameters");
+			assert.ok(oBindAggregationOfControl.calledOn(oTable), "bindAggregation of Control was called with the correct context");
+			this.assertBindingInfo(assert, "(sPath, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
+				path: "/modelData",
+				sorter: oSorter,
+				filters: [oFilter]
+			});
+			oInnerBindRows.reset();
+			oBindAggregationOfControl.reset();
+
+			// (sPath, vTemplate, oSorter, aFilters)
+			fnBind("/modelData", oTemplate, oSorter, [oFilter]);
+			assert.ok(oInnerBindRows.calledOnce, "_bindRows was called once");
+			assert.ok(oInnerBindRows.calledWith(oTable.getBindingInfo("rows")), "_bindRows was called with the correct parameters");
+			assert.ok(oBindAggregationOfControl.calledOnce, "bindAggregation of Control was called once");
+			assert.ok(oBindAggregationOfControl.calledWithExactly("rows", oTable.getBindingInfo("rows")),
+				"bindAggregation of Control was called with the correct parameters");
+			assert.ok(oBindAggregationOfControl.calledOn(oTable), "bindAggregation of Control was called with the correct context");
+			this.assertBindingInfo(assert, "(sPath, vTemplate, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
+				path: "/modelData",
+				sorter: oSorter,
+				filters: [oFilter],
+				template: oTemplate
+			});
+
+			oBindAggregationOfControl.restore();
 		}
 	});
 
-	QUnit.test("Bind rows using bindRows method", function(assert) {
-		var oDestroyRows = this.spy(oTable, "destroyRows");
-
-		// bind rows again, binding could be resolved because model is set
-		oTable.bindRows(oTable.getBindingInfo("rows"));
-
-		// bind rows to different model which is not yet set
-		oTable.bindRows("otherModel>/root");
-
-		// bind rows again. Binding was not yet resolved
-		oTable.bindRows("otherModel>/root");
-
-		// BindingInfo
-		var oBindingInfo = {
-			path: "/modelData",
-			sorter: new Sorter({
-				path: "modelData>money",
-				descending: true
-			}),
-			filters: [
-				new Filter({
-					path: "modelData>money",
-					operator: "LT",
-					value: 5
-				})
-			],
-			template: new Label({
-				text: "Last Name"
-			})
-		};
-		oTable.bindRows(oBindingInfo);
-		this.assertBindingInfo(assert, "BindingInfo", oTable.getBindingInfo("rows"), oBindingInfo);
-
-		// destroy rows must not be called
-		assert.ok(oDestroyRows.notCalled, "destroyRows was not called");
+	QUnit.test("Bind rows with \"bindRows\" method", function(assert) {
+		this.testBindRows(oTable, oTable.bindRows.bind(oTable), assert);
 	});
 
-	QUnit.test("Bind rows using bindRows method - legacy API", function(assert) {
-		var oInnerBindRows = this.spy(oTable, "_bindRows");
-		var oSorter = new Sorter({
-			path: "modelData>money",
-			descending: true
-		});
-		var oFilter = new Filter({
-			path: "modelData>money",
-			operator: "LT",
-			value: 5
-		});
-		var oTemplate = new Label({
-			text: "Last Name"
-		});
-
-		// (sPath)
-		oTable.bindRows("/modelData");
-		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
-		this.assertBindingInfo(assert, "(sPath)", oTable.getBindingInfo("rows"), {
-			path: "/modelData"
-		});
-		oInnerBindRows.reset();
-
-		// (sPath, oSorter)
-		oTable.bindRows("/modelData", oSorter);
-		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
-		this.assertBindingInfo(assert, "(sPath, oSorter)", oTable.getBindingInfo("rows"), {
-			path: "/modelData",
-			sorter: oSorter
-		});
-		oInnerBindRows.reset();
-
-		// (sPath, oSorter, aFilters)
-		oTable.bindRows("/modelData", oSorter, [oFilter]);
-		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
-		this.assertBindingInfo(assert, "(sPath, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
-			path: "/modelData",
-			sorter: oSorter,
-			filters: [oFilter]
-		});
-		oInnerBindRows.reset();
-
-		// (sPath, vTemplate, oSorter, aFilters)
-		oTable.bindRows("/modelData", oTemplate, oSorter, [oFilter]);
-		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
-		this.assertBindingInfo(assert, "(sPath, vTemplate, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
-			path: "/modelData",
-			sorter: oSorter,
-			filters: [oFilter],
-			template: oTemplate
-		});
+	QUnit.test("Bind rows with \"bindAggregation\" method", function(assert) {
+		this.testBindRows(oTable, oTable.bindAggregation.bind(oTable, "rows"), assert);
 	});
 
-	QUnit.test("Bind rows using the constructor", function(assert) {
-		var oInnerBindRows = this.spy(Table.prototype, "_bindRows");
+	QUnit.test("Bind rows with \"bindRows\" method - legacy API", function(assert) {
+		this.testBindRowsLegacy(oTable, oTable.bindRows.bind(oTable), assert);
+	});
+
+	QUnit.test("Bind rows with \"bindAggregation\" method - legacy API", function(assert) {
+		this.testBindRowsLegacy(oTable, oTable.bindAggregation.bind(oTable, "rows"), assert);
+	});
+
+	QUnit.test("Bind rows in the constructor", function(assert) {
+		var oInnerBindRows = sinon.spy(Table.prototype, "_bindRows");
+		var oTable;
 
 		/*eslint-disable no-new */
-		new Table({
+		oTable = new Table({
+			rows: {path: "/modelData"},
+			columns: [new Column()],
+			models: new JSONModel()
+		});
+		/*eslint-enable no-new */
+
+		assert.ok(oInnerBindRows.calledOnce, "With model - _bindRows was called");
+		assert.ok(oInnerBindRows.calledWithExactly(oTable.getBindingInfo("rows")),
+			"With model - _bindRows was called with the correct parameters");
+		oInnerBindRows.reset();
+
+		/*eslint-disable no-new */
+		oTable = new Table({
 			rows: {path: "/modelData"},
 			columns: [new Column()]
 		});
 		/*eslint-enable no-new */
 
-		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
+		assert.ok(oInnerBindRows.calledOnce, "Without model - _bindRows was called");
+		assert.ok(oInnerBindRows.calledWithExactly(oTable.getBindingInfo("rows")),
+			"Without model - _bindRows was called with the correct parameters");
 
 		oInnerBindRows.restore();
 	});
 
-	QUnit.test("Binding events", function(assert) {
-		var aEventListenerSequence = [];
+	QUnit.test("Unbind rows with \"unbindRows\" method", function(assert) {
+		var oDestroyRows = sinon.spy(oTable, "destroyRows");
+		var oInnerUnbindRows = sinon.spy(oTable, "_unbindRows");
+		var oUnbindAggregationOfControl = sinon.spy(Control.prototype, "unbindAggregation");
 
-		oTable._onBindingChange = function() {
-			aEventListenerSequence.push("change_table");
-		};
-		oTable._onBindingDataRequested = function() {
-			aEventListenerSequence.push("dataRequested_table");
-		};
-		oTable._onBindingDataReceived = function() {
-			aEventListenerSequence.push("dataReceived_table");
-		};
+		oTable.unbindRows();
+		assert.ok(oInnerUnbindRows.calledOnce, "_unbindRows was called once");
+		assert.ok(oDestroyRows.notCalled, "destroyRows was not called");
+		assert.ok(oUnbindAggregationOfControl.calledOnce, "unbindAggregation of Control was called once");
+		assert.ok(oUnbindAggregationOfControl.calledWithExactly("rows", true), "unbindAggregation of Control was called with the correct parameters");
+		assert.ok(oUnbindAggregationOfControl.calledOn(oTable), "unbindAggregation of Control was called with the correct context");
 
-		oTable.bindRows({
-			path: "/modelData",
-			events: {
-				change: function() {
-					aEventListenerSequence.push("change_other");
-				},
-				dataRequested: function() {
-					aEventListenerSequence.push("dataRequested_other");
-				},
-				dataReceived: function() {
-					aEventListenerSequence.push("dataReceived_other");
-				}
-			}
-		});
+		oUnbindAggregationOfControl.restore();
+	});
 
-		var oBinding = oTable.getBinding("rows");
-		oBinding.fireEvent("dataRequested");
-		oBinding.fireEvent("dataReceived");
+	QUnit.test("Unbind rows with \"unbindAggregation\" method", function(assert) {
+		var oDestroyRows = sinon.spy(oTable, "destroyRows");
+		var oInnerUnbindRows = sinon.spy(oTable, "_unbindRows");
+		var oUnbindAggregationOfControl = sinon.spy(Control.prototype, "unbindAggregation");
 
-		assert.deepEqual(aEventListenerSequence, [
-			"change_table", "change_other", "dataRequested_table", "dataRequested_other", "dataReceived_table", "dataReceived_other"
-		], "The binding event listeners were called in the correct order");
+		oTable.unbindAggregation("rows");
+		assert.ok(oInnerUnbindRows.calledOnce, "_unbindRows was called once");
+		assert.ok(oDestroyRows.notCalled, "destroyRows was not called");
+		assert.ok(oUnbindAggregationOfControl.calledOnce, "unbindAggregation of Control was called once");
+		assert.ok(oUnbindAggregationOfControl.calledWithExactly("rows", true), "unbindAggregation of Control was called with the correct parameters");
+		assert.ok(oUnbindAggregationOfControl.calledOn(oTable), "unbindAggregation of Control was called with the correct context");
+
+		oUnbindAggregationOfControl.restore();
 	});
 
 	QUnit.module("Callbacks", {
@@ -4420,7 +4543,7 @@ sap.ui.define([
 		oTable.setEnableBusyIndicator(true);
 
 		// No binding: No busy state change.
-		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
+		sinon.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
 		test(true, 0, false);
 		test(true, 0, false);
 		test(false, 0, false);
@@ -4439,7 +4562,7 @@ sap.ui.define([
 			return false;
 		};
 
-		this.stub(TableUtils, "canUsePendingRequestsCounter").returns(true);
+		sinon.stub(TableUtils, "canUsePendingRequestsCounter").returns(true);
 		test(true, 1, true); // Data requested: Set busy state to true.
 		test(true, 2, true); // // Data requested: Keep busy state.
 		test(false, 1, true); // Data received: Keep busy state.
@@ -4461,8 +4584,8 @@ sap.ui.define([
 		var sNoDataClassOfTable = "sapUiTableEmpty";
 		var oBinding = oTable.getBinding("rows");
 		var oBindingInfo = oTable.getBindingInfo("rows");
-		var oGetBindingLength = this.stub(oBinding, "getLength");
-		var oBindingIsA = this.stub(oBinding, "isA");
+		var oGetBindingLength = sinon.stub(oBinding, "getLength");
+		var oBindingIsA = sinon.stub(oBinding, "isA");
 		var oClock = sinon.useFakeTimers();
 
 		function testNoData(bVisible, sTestTitle) {

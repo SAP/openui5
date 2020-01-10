@@ -150,6 +150,7 @@ sap.ui.define([
 	QUnit.test("_setEditable function", function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
+		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
 		sinon.spy(oLabel, "invalidate");
 
 		assert.notOk(oFormElement.getProperty("_editable"), "Default: not editable");
@@ -157,28 +158,18 @@ sap.ui.define([
 
 		assert.ok(oFormElement.getProperty("_editable"), "Default: editable set");
 		assert.ok(oLabel.invalidate.called, "Label invalidated");
+
+		oLabel.getDomRef.restore();
 	});
 
 	QUnit.test("isDisplayOnly with Label control", function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
-		var bEditable = true;
-		var oParent = {
-				getParent: function() {
-					return {
-						getEditable: function() {
-							return bEditable;
-						}
-					};
-				}
-		};
-
-		// simulate FormContainer
-		sinon.stub(oFormElement, "getParent").callsFake(function() {return oParent;});
+		oFormElement._setEditable(true);
 
 		assert.notOk(oLabel.isDisplayOnly(), "Label is not display only");
 
-		bEditable = false;
+		oFormElement._setEditable(false);
 		assert.ok(oLabel.isDisplayOnly(), "Label is display only");
 
 		oLabel.setDisplayOnly(false);
@@ -188,23 +179,11 @@ sap.ui.define([
 	QUnit.test("isDisplayOnly with Label as string", function(assert) {
 		oFormElement.setLabel("Test");
 		var oLabel = oFormElement.getLabelControl();
-		var bEditable = true;
-		var oParent = {
-				getParent: function() {
-					return {
-						getEditable: function() {
-							return bEditable;
-						}
-					};
-				}
-		};
-
-		// simulate FormContainer
-		sinon.stub(oFormElement, "getParent").callsFake(function() {return oParent;});
+		oFormElement._setEditable(true);
 
 		assert.notOk(oLabel.isDisplayOnly(), "Label is not display only");
 
-		bEditable = false;
+		oFormElement._setEditable(false);
 		assert.ok(oLabel.isDisplayOnly(), "Label is display only");
 	});
 
@@ -254,10 +233,12 @@ sap.ui.define([
 		assert.equal(oLabel.getLabelForRendering(), "I1", "Label points to first field");
 		assert.notOk(oLabel.isRequired(), "Label not required");
 
+		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
 		sinon.spy(oLabel, "invalidate");
 		oField2.setRequired(true);
 		assert.ok(oLabel.isRequired(), "Label is required");
 		assert.ok(oLabel.invalidate.called, "Label invalidated");
+		oLabel.getDomRef.restore();
 
 		oFormElement.setLabel();
 		assert.notOk(oLabel.isRequired(), "Label not required");
@@ -281,10 +262,13 @@ sap.ui.define([
 		assert.equal(oLabel.getLabelForRendering(), "I2", "Label points to first field");
 		assert.notOk(oLabel.isRequired(), "Label not required");
 
+		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
 		sinon.spy(oLabel, "invalidate");
 		oField2.setRequired(true);
 		assert.ok(oLabel.isRequired(), "Label is required");
 		assert.ok(oLabel.invalidate.called, "Label invalidated");
+
+		oLabel.getDomRef.restore();
 	});
 
 	QUnit.test("removeField", function(assert) {
@@ -307,9 +291,12 @@ sap.ui.define([
 		assert.notOk(oLabel.isRequired(), "Label not required");
 		oField1.destroy();
 
+		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
 		sinon.spy(oLabel, "invalidate");
 		oField2.setRequired(true); // to test Field2 is still observed
 		assert.ok(oLabel.invalidate.called, "Label invalidated");
+
+		oLabel.getDomRef.restore();
 	});
 
 	QUnit.test("removeAllFields", function(assert) {

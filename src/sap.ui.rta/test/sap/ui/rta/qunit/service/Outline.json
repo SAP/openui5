@@ -170,6 +170,29 @@
 																"technicalName": "landmarkInfo",
 																"editable": false,
 																"type": "aggregation"
+															},
+															{
+																"id": "objPage",
+																"technicalName": "_anchorBar",
+																"editable": false,
+																"type": "aggregation",
+																"elements": [
+																	{
+																		"id": "objPage-anchBar",
+																		"technicalName": "sap.uxap.AnchorBar",
+																		"editable": true,
+																		"type": "element",
+																		"visible": false,
+																		"elements": [
+																			{
+																			"id": "objPage-anchBar",
+																			"technicalName": "content",
+																			"editable": false,
+																			"type": "aggregation"
+																			}
+																		]
+																	}
+																]
 															}
 														]
 													}

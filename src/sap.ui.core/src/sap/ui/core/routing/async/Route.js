@@ -13,6 +13,12 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 	return {
 
 		/**
+		 * Executes the route matched logic
+		 *
+		 * @param {object} oArguments The arguments of the event
+		 * @param {Promise} oSequencePromise Promise chain for resolution in the correct order
+		 * @param {sap.ui.core.routing.Route} oNestingChild The nesting route
+		 * @returns {Promise} resolves with {name: *, view: *, control: *}
 		 * @private
 		 */
 		_routeMatched : function(oArguments, oSequencePromise, oNestingChild) {

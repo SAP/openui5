@@ -763,6 +763,7 @@ sap.ui.define([
 		}
 
 		this._updatePickerSelection();
+		this._updateHeaderButtons();
 
 		Device.orientation.detachHandler(this._updateStickyHeader, this);
 
@@ -852,23 +853,14 @@ sap.ui.define([
 			this._dateNav.next();
 		}
 
-		if (this.getMinDate()) {
-			if (this._dateNav.getStart().getTime() <= this.getMinDate().getTime()) {
-				this._getHeader()._oPrevBtn.setEnabled(false);
-				this._dateNav.setStart(this.getMinDate());
-				this._dateNav.setCurrent(this.getMinDate());
-			} else {
-				this._getHeader()._oPrevBtn.setEnabled(true);
-			}
+		if (this.getMinDate() && this._dateNav.getStart().getTime() <= this.getMinDate().getTime()) {
+			this._dateNav.setStart(this.getMinDate());
+			this._dateNav.setCurrent(this.getMinDate());
 		}
-		if (this.getMaxDate()){
-			if (this._dateNav.getEnd().getTime() >= this.getMaxDate().getTime()) {
-				this._getHeader()._oNextBtn.setEnabled(false);
-				this._dateNav.setStart(this.getMaxDate());
-				this._dateNav.setCurrent(this.getMaxDate());
-			} else {
-				this._getHeader()._oNextBtn.setEnabled(true);
-			}
+
+		if (this.getMaxDate() && this._dateNav.getEnd().getTime() >= this.getMaxDate().getTime()) {
+			this._dateNav.setStart(this.getMaxDate());
+			this._dateNav.setCurrent(this.getMaxDate());
 		}
 
 		var oRow = this._getRowInstanceByViewKey(this.getViewKey());
@@ -1210,9 +1202,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PlanningCalendar.prototype.setStartDate = function(oDate) {
-		var oFirstDateOfWeek,
-			oFirstDateOfMonth,
-			oStartDate;
+		var oStartDate;
 
 		if (!oDate) {
 			//set default value
@@ -1222,27 +1212,7 @@ sap.ui.define([
 			oStartDate = new Date(oDate.getTime());
 		}
 
-		if (this.getViewKey() === PlanningCalendarBuiltInView.Week) {
-			/* Calculate the first week date for the given oStartDate. Have in mind that the oStartDate is the date that
-			 * the user sees in the UI, thus - local one. As CalendarUtils.getFirstDateOfWeek works with UTC dates (this
-			 * is because the dates are timezone irrelevant), it should be called with the local datetime values presented
-			 * as UTC ones(e.g. if oStartDate is 21 Dec 1981, 13:00 GMT+02:00, it will be converted to 21 Dec 1981, 13:00 GMT+00:00)
-			 */
-			oFirstDateOfWeek = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true));
-			//CalendarUtils.getFirstDateOfWeek works with UTC based date values, restore the result back in local timezone.
-			oStartDate.setTime(CalendarUtils._createLocalDate(oFirstDateOfWeek, true).getTime());
-		}
-
-		if (this.getViewKey() === PlanningCalendarBuiltInView.OneMonth || this.getViewKey() === PlanningCalendarBuiltInView.Month) {
-			/*
-			 * Have in mind that the oStartDate is the date that the user sees in the UI, thus - local one. As
-			 * CalendarUtils.getFirstDateOfMonth works with UTC dates (this is because the dates are timezone irrelevant),
-			 * it should be called with the local datetime values presented as UTC ones.
-			 */
-			oFirstDateOfMonth = CalendarUtils.getFirstDateOfMonth(CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true));
-			//CalendarUtils.getFirstDateOfMonth works with UTC based date values, restore the result back in local timezone.
-			oStartDate.setTime(CalendarUtils._createLocalDate(oFirstDateOfMonth, true).getTime());
-		}
+		oStartDate = this._shiftStartDate(oStartDate);
 
 		if (deepEqual(oStartDate, this.getStartDate())) {
 			/* Logically this _updateTodayButtonState should not be needed, because if the date didn't change,
@@ -1301,6 +1271,8 @@ sap.ui.define([
 			this._updatePickerSelection();
 		}
 
+		this._updateHeaderButtons();
+
 		return this;
 
 	};
@@ -1324,6 +1296,8 @@ sap.ui.define([
 			this._bNoStartDateChange = true; // set the start date after all calendars are updated
 
 			oHeader.getAggregation("_calendarPicker").setMinDate(new Date(oDate.getTime()));
+			oHeader.getAggregation("_monthPicker").setMinDate(new Date(oDate.getTime()));
+			oHeader.getAggregation("_yearPicker").setMinDate(new Date(oDate.getTime()));
 
 			if (oMaxDate && oMaxDate.getTime() < oDate.getTime()) {
 				Log.warning("minDate > maxDate -> maxDate set to end of the month", this);
@@ -1347,6 +1321,8 @@ sap.ui.define([
 		} else {
 			this.setProperty("minDate", undefined, true);
 			oHeader.getAggregation("_calendarPicker").setMinDate();
+			oHeader.getAggregation("_monthPicker").setMinDate();
+			oHeader.getAggregation("_yearPicker").setMinDate();
 		}
 
 		var oToday = new Date();
@@ -1379,6 +1355,8 @@ sap.ui.define([
 			this._bNoStartDateChange = true; // set the start date after all calendars are updated
 
 			oHeader.getAggregation("_calendarPicker").setMaxDate(new Date(oDate.getTime()));
+			oHeader.getAggregation("_monthPicker").setMaxDate(new Date(oDate.getTime()));
+			oHeader.getAggregation("_yearPicker").setMaxDate(new Date(oDate.getTime()));
 
 			if (oMinDate && oMinDate.getTime() > oDate.getTime()) {
 				Log.warning("maxDate < minDate -> maxDate set to begin of the month", this);
@@ -1408,6 +1386,8 @@ sap.ui.define([
 			this.setProperty("maxDate", undefined, true);
 
 			oHeader.getAggregation("_calendarPicker").setMaxDate();
+			oHeader.getAggregation("_monthPicker").setMaxDate();
+			oHeader.getAggregation("_yearPicker").setMaxDate();
 		}
 
 		var oToday = new Date();
@@ -1600,10 +1580,12 @@ sap.ui.define([
 		if (oMinDate) {
 			oHeader.getAggregation("_calendarPicker").setMinDate(new Date(oMinDate.getTime()));
 			oHeader.getAggregation("_yearPicker").setMinDate(new Date(oMinDate.getTime()));
+			oHeader.getAggregation("_monthPicker").setMinDate(new Date(oMinDate.getTime()));
 		}
 		if (oMaxDate) {
 			oHeader.getAggregation("_calendarPicker").setMaxDate(new Date(oMaxDate.getTime()));
 			oHeader.getAggregation("_yearPicker").setMaxDate(new Date(oMaxDate.getTime()));
+			oHeader.getAggregation("_monthPicker").setMaxDate(new Date(oMaxDate.getTime()));
 		}
 		this._updateTodayButtonState();
 
@@ -1653,6 +1635,37 @@ sap.ui.define([
 			oRowInstance.setStartDate(oStart);
 			oRowInstance.setDate(oCurrent);
 		}
+	};
+
+	/**
+	 * Changes the start date in Week and OneMonth views to the first date of the week or of the month.
+	 * @param {object} oStartDate the date to be shifted
+	 * @returns {object} the shifted date
+	 * @private
+	 */
+	PlanningCalendar.prototype._shiftStartDate = function(oStartDate){
+		if (this.getViewKey() === PlanningCalendarBuiltInView.Week) {
+			/* Calculates the first week's datei for the given oStartDate. Have in mind that the oStartDate is the date that
+			 * the user sees in the UI, thus - local one. As CalendarUtils.getFirstDateOfWeek works with UTC dates (this
+			 * is because the dates are timezone irrelevant), it should be called with the local datetime values presented
+			 * as UTC ones(e.g. if oStartDate is 21 Dec 1981, 13:00 GMT+02:00, it will be converted to 21 Dec 1981, 13:00 GMT+00:00)
+			 */
+			var oFirstDateOfWeek = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true));
+			//CalendarUtils.getFirstDateOfWeek works with UTC based date values, restore the result back in local timezone.
+			oStartDate.setTime(CalendarUtils._createLocalDate(oFirstDateOfWeek, true).getTime());
+		}
+
+		if ((this.getViewKey() === PlanningCalendarBuiltInView.OneMonth || this.getViewKey() === PlanningCalendarBuiltInView.Month)) {
+			/*
+			 * Have in mind that the oStartDate is the date that the user sees in the UI, thus - local one. As
+			 * CalendarUtils.getFirstDateOfMonth works with UTC dates (this is because the dates are timezone irrelevant),
+			 * it should be called with the local datetime values presented as UTC ones.
+			 */
+			var oFirstDateOfMonth = CalendarUtils.getFirstDateOfMonth(CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true));
+			//CalendarUtils.getFirstDateOfMonth works with UTC based date values, restore the result back in local timezone.
+			oStartDate.setTime(CalendarUtils._createLocalDate(oFirstDateOfMonth, true).getTime());
+		}
+		return oStartDate;
 	};
 
 	/**
@@ -1865,7 +1878,7 @@ sap.ui.define([
 
 		this.$().toggleClass("sapMPlanCalNoHead", !bShowRowHeaders);
 		positionSelectAllCheckBox.call(this);
-		setSelectionMode.call(this);
+		this._setSelectionMode.call(this);
 
 		return this;
 
@@ -1961,7 +1974,7 @@ sap.ui.define([
 
 		updateSelectAllCheckBox.call(this);
 
-		setSelectionMode.call(this);
+		this._setSelectionMode.call(this);
 
 		return oRow;
 	};
@@ -1976,7 +1989,7 @@ sap.ui.define([
 
 		updateSelectAllCheckBox.call(this);
 
-		setSelectionMode.call(this);
+		this._setSelectionMode.call(this);
 
 		return aRows;
 
@@ -1993,7 +2006,7 @@ sap.ui.define([
 
 		updateSelectAllCheckBox.call(this);
 
-		setSelectionMode.call(this);
+		this._setSelectionMode.call(this);
 
 		return destroyed;
 
@@ -2005,7 +2018,7 @@ sap.ui.define([
 		this.setProperty("singleSelection", bSingleSelection, true);
 
 		positionSelectAllCheckBox.call(this);
-		setSelectionMode.call(this);
+		this._setSelectionMode.call(this);
 
 		if (bSingleSelection) {
 			this.selectAllRows(false);
@@ -2511,8 +2524,7 @@ sap.ui.define([
 		var sViewKey = this.getViewKey(),
 			oCurrentView = this._getView(sViewKey),
 			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
-			sControlRef,
-			oEndDate = new Date(this._dateNav.getEnd().setHours(23,59,59));
+			sControlRef;
 
 		if (sCurrentViewIntervalType === "Hour") {
 			sCurrentViewIntervalType = "Time";
@@ -2525,15 +2537,6 @@ sap.ui.define([
 
 		if (this[sControlRef]) {
 			this[sControlRef].setDate(oStartDate);
-		}
-
-		if (oStartDate > this.getMinDate() && oStartDate < this.getMaxDate()) {
-			this._getHeader()._oNextBtn.setEnabled(true);
-			this._getHeader()._oPrevBtn.setEnabled(true);
-		} else if (this.getMinDate() >= this._dateNav.getStart() && this.getMinDate() <= oEndDate) {
-			this._getHeader()._oPrevBtn.setEnabled(false);
-		} else if (this.getMaxDate() >= this._dateNav.getStart() && this.getMaxDate() <= oEndDate) {
-			this._getHeader()._oNextBtn.setEnabled(false);
 		}
 	};
 
@@ -3030,7 +3033,7 @@ sap.ui.define([
 			oRowTimeline.setShowSubIntervals(oView.getShowSubIntervals());
 		}
 
-		setSelectionMode.call(this);
+		this._setSelectionMode.call(this);
 
 		//when there's a new row added, be sure that if there's a custom sorter, it'll be set to the corresponding row
 		if (this._fnCustomSortedAppointments) {
@@ -3171,6 +3174,8 @@ sap.ui.define([
 		oRowTimeline.getIntervalHeaders = function() {
 			return oRow.getIntervalHeaders();
 		};
+
+		oRowTimeline.setAssociation("row",  oRow.getId());
 
 		oListItem = new PlanningCalendarRowListItem(oRow.getId() + LISTITEM_SUFFIX, {
 			cells: [oRowHeader, oRowTimeline]
@@ -3356,6 +3361,9 @@ sap.ui.define([
 			aggregations : {
 				intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true},
 				_intervalPlaceholders : {type : "IntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}}
+			},
+			associations: {
+				row: { type: "sap.m.PlanningCalendarRow", multiple: false }
 			},
 			dnd: true
 		},
@@ -4038,6 +4046,26 @@ sap.ui.define([
 		return oCreateConfig;
 	};
 
+	PlanningCalendar.prototype._updateHeaderButtons = function() {
+		var sViewKey = this.getViewKey(),
+			oCurrentView = this._getView(sViewKey),
+			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
+			oStartDate = new Date(this._dateNav.getStart().getTime()),
+			oEndDate = new Date(this._dateNav.getEnd().getTime()),
+			oMinDate = this.getMinDate() ? new Date(this.getMinDate().getTime()) : undefined,
+			oMaxDate = this.getMaxDate() ? new Date(this.getMaxDate().getTime()) : undefined;
+
+		if (sCurrentViewIntervalType !== "Hour") {
+			oMinDate && oMinDate.setHours(0, 0, 0, 0);
+			oMaxDate && oMaxDate.setHours(23, 59, 59, 999);
+			oStartDate.setHours(0, 0, 0, 0);
+			oEndDate.setHours(23, 59, 59, 999);
+		}
+
+		this._getHeader()._oPrevBtn.setEnabled(!oMinDate || oStartDate.getTime() > oMinDate.getTime());
+		this._getHeader()._oNextBtn.setEnabled(!oMaxDate || oEndDate.getTime() < oMaxDate.getTime());
+	};
+
 	function getResizeGhost() {
 		var $ghost = jQuery("<span></span>").addClass("sapUiCalAppResizeGhost");
 		$ghost.appendTo(document.body);
@@ -4306,7 +4334,11 @@ sap.ui.define([
 
 	}
 
-	function setSelectionMode() {
+	/**
+	 * Sets the selection mode of the inner used Table.
+	 * @private
+	 */
+	PlanningCalendar.prototype._setSelectionMode = function () {
 
 		var oTable = this.getAggregation("table");
 		var sMode = oTable.getMode();
@@ -4327,7 +4359,7 @@ sap.ui.define([
 			oTable.setMode(sModeNew);
 		}
 
-	}
+	};
 
 	function isThereAnIntervalInstance() {
 		return this._oTimesRow || this._oDatesRow || this._oMonthsRow || this._oWeeksRow || this._oOneMonthsRow;

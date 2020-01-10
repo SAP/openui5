@@ -692,9 +692,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the preprocessors for a view instance.
+	 * Returns the preprocessors for this view instance.
 	 *
-	 * @returns {map} mPreprocessors A map containing the view preprocessors
+	 * @returns {Object<string,sap.ui.core.mvc.View.Preprocessor[]>} A map containing the view preprocessors, keyed by their type
 	 *
 	 * @private
 	 */

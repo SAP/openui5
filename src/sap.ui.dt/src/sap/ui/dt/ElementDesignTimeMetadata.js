@@ -282,4 +282,4 @@ function(
 	};
 
 	return ElementDesignTimeMetadata;
-}, /* bExport= */ true);
+});

@@ -11,4 +11,4 @@ sap.ui.define([
 			this.getView().setModel(this.oDataModel, "objectPageData");
 		}
 	});
-}, /* bExport= */ true);
+});

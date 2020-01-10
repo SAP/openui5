@@ -88,7 +88,10 @@ function (
 				element: this.oButton,
 				init: function (oEvent) {
 					oEvent.getSource().placeInOverlayContainer();
-					fnDone();
+					// Wait until the overlay styles are applied (fixes IE11 timing issue)
+					this.attachEventOnce('geometryChanged', function () {
+						fnDone();
+					});
 				}
 			});
 			this.oElementOverlay.attachEvent('applyStylesRequired', this.oElementOverlay.applyStyles.bind(this.oElementOverlay));
@@ -263,13 +266,15 @@ function (
 						assert.ok(true);
 					})
 					// Second call triggered by animationend event
-					.onSecondCall().callsFake(function () {
-						assert.strictEqual(this.oButton.$().width(), 200, "then the button width is correct");
-						assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "then the overlay size is in sync");
-						done();
+					.onSecondCall().callsFake(function() {
+						setTimeout(function() {
+							// setTimeout added to cover animation duration
+							assert.strictEqual(this.oButton.$().width(), 200, "then the button width is correct");
+							assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "then the overlay size is in sync");
+							done();
+						}.bind(this), 51);
 					}.bind(this))
 			);
-
 			this.oButton.addStyleClass("sapUiDtTestAnimate");
 		});
 
@@ -392,6 +397,20 @@ function (
 			this.oElementOverlay.applyStyles();
 			assert.equal(oIsVisibleSpy.callCount, 0, "the applyStyles function directly returned");
 		});
+
+		QUnit.test("when the overlay is being renamed several times in a row", function(assert) {
+			var fnDone = assert.async();
+			var fnHandlerSpy = sinon.spy(function () {
+				window.requestAnimationFrame(function () {
+					assert.strictEqual(fnHandlerSpy.callCount, 1, "then geometryChanged event is called just once");
+					fnDone();
+				});
+			});
+			this.oElementOverlay.attachEventOnce("geometryChanged", fnHandlerSpy);
+			['text1', 'text2', 'text3'].forEach(function (sText) {
+				this.oButton.setText(sText);
+			}, this);
+		});
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
@@ -448,10 +467,15 @@ function (
 		QUnit.test("when the layout's domRef is changed to visible...", function(assert) {
 			var fnDone = assert.async();
 			assert.strictEqual(this.oLayoutOverlay.isVisible(), false, "the layout's overlay should not be in the DOM when the layout is invisible");
-			this.oLayoutOverlay.attachEventOnce("geometryChanged", function () {
-				assert.strictEqual(this.oLayoutOverlay.isVisible(), true, "the layout's overlay is also in DOM");
-				assert.strictEqual(this.oLabelOverlay.isVisible(), true, "layout children's overlay is also in DOM");
-				fnDone();
+			this.oLabelOverlay.attachEventOnce("geometryChanged", function () {
+				assert.ok(true, "the geometry changed event called first on the label (child) overlay");
+				assert.strictEqual(this.oLabelOverlay.isVisible(), true, "the label's overlay is also in DOM");
+				this.oLayoutOverlay.attachEventOnce("geometryChanged", function () {
+					assert.ok(true, "the geometry changed event called finaly on the layout (parent) overlay");
+					assert.strictEqual(this.oLayoutOverlay.isVisible(), true, "the layout's overlay is also in DOM");
+					assert.strictEqual(this.oLabelOverlay.isVisible(), true, "layout children's overlay is also in DOM");
+					fnDone();
+				}, this);
 			}, this);
 			this.oVerticalLayout.$().css("display", "block");
 			sap.ui.getCore().applyChanges();

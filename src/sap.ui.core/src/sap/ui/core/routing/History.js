@@ -109,8 +109,10 @@ sap.ui.define([
 
 	/**
 	 * Detaches all events and cleans up this instance
+	 *
+	 * @private
 	 */
-	History.prototype.destroy = function(sNewHash) {
+	History.prototype.destroy = function() {
 		this._unRegisterHashChanger();
 	};
 
@@ -203,14 +205,14 @@ sap.ui.define([
 		this.aHistory[0] = this._oHashChanger.getHash();
 	};
 
-		/**
-		 * Determines what the navigation direction for a newly given hash would be
-		 * @param {string} sNewHash the new hash
-		 * @param {boolean} bHistoryLengthIncreased if the history length has increased compared with the last check
-		 * @param {boolean} bCheckHashChangerEvents Checks if the hash was set or replaced by the hashchanger. When getDirection is called by an app this has to be false.
-		 * @returns {sap.ui.core.routing.HistoryDirection}
-		 * @private
-		 */
+	/**
+	 * Determines what the navigation direction for a newly given hash would be
+	 * @param {string} sNewHash the new hash
+	 * @param {boolean} bHistoryLengthIncreased if the history length has increased compared with the last check
+	 * @param {boolean} bCheckHashChangerEvents Checks if the hash was set or replaced by the hashchanger. When getDirection is called by an app this has to be false.
+	 * @returns {sap.ui.core.routing.HistoryDirection} The history direction
+	 * @private
+	 */
 	History.prototype._getDirection = function(sNewHash, bHistoryLengthIncreased, bCheckHashChangerEvents) {
 
 		//Next hash was set by the router - it has to be a new entry
@@ -303,6 +305,10 @@ sap.ui.define([
 
 	/**
 	 * Handles a hash change and cleans up the History
+	 *
+	 * @param {string} sNewHash The new hash
+	 * @param {string} sOldHash The old hash
+	 * @param {string} sFullHash The full hash
 	 * @private
 	 */
 	History.prototype._hashChange = function(sNewHash, sOldHash, sFullHash) {
@@ -398,6 +404,7 @@ sap.ui.define([
 
 	/**
 	 * Handles a hash change and cleans up the History
+	 * @param {sap.ui.base.Event} oEvent The event containing the hash
 	 * @private
 	 */
 	History.prototype._hashSet = function(oEvent) {
@@ -406,6 +413,7 @@ sap.ui.define([
 
 	/**
 	 * Handles a hash change and cleans up the History
+	 * @param {sap.ui.base.Event} oEvent The event containing the hash
 	 * @private
 	 */
 	History.prototype._hashReplaced = function(oEvent) {
@@ -414,8 +422,8 @@ sap.ui.define([
 
 	/**
 	 * Sets the next hash that is going to happen in the hashChange function - used to determine if the app or the browserHistory/links triggered this navigation
-	 * @param {string} sNewHash
-	 * @param {boolean} bWasReplaced
+	 * @param {string} sNewHash The new hash
+	 * @param {boolean} bWasReplaced If the hash was replaced
 	 */
 	History.prototype._hashChangedByApp = function(sNewHash, bWasReplaced) {
 		this._oNextHash = { sHash : sNewHash, bWasReplaced : bWasReplaced };

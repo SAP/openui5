@@ -26,7 +26,7 @@ grunt/bin
 # Ignore npm files/folders
 node_modules
 npm-debug.log
-package-lock.json
+src/**/package-lock.json
 
 # Ignore bower folder
 bower_components

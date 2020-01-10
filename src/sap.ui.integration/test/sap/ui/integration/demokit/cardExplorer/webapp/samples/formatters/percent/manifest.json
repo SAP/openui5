@@ -2,7 +2,23 @@
 	"_version": "1.17.0",
 	"sap.app": {
 		"id": "card.explorer.format.percent",
-		"type": "card"
+		"type": "card",
+		"title": "Sample for Percent Formatters",
+		"subTitle": "Sample for Percent Formatters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Percent",
+				"Formatter",
+				"Card",
+				"Sample"
+			]
+		}
 	},
 	"sap.card": {
 		"type": "List",
@@ -14,8 +30,8 @@
 			}
 		},
 		"header": {
-			"title": "Order status",
-			"subTitle": "Orders exceeding {= format.percent(0.50)} are highlighted as important",
+			"title": "Discount status",
+			"subTitle": "Discounts exceeding {= format.percent(0.50)} are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -29,31 +45,26 @@
 					{
 						"Name": "Keyboard and Mouse",
 						"image": "sap-icon://keyboard-and-mouse",
-						"Discount": 0.55,
-						"arrivalDate": "Sun Dec 1 2019 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"Discount": 0.55
 					},
 					{
 						"Name": "ITelO Vault",
 						"image": "sap-icon://shield",
-						"Discount": 0.03,
-						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"Discount": 0.03
 					},
 					{
 						"Name": "Notebook Professional 15",
 						"image": "sap-icon://laptop",
-						"Discount": 0.001,
-						"arrivalDate": "Sun Nov 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"Discount": 0.001
 					},
 					{
 						"Name": "Ergo Screen E-I",
 						"image": "sap-icon://desktop-mobile",
-						"arrivalDate": "Sun Nov 2 2019 03:24:00 GMT+0200 (Eastern European Standard Time)",
 						"Discount": 0.69
 					},
 					{
 						"Name": "Laser Professional Eco",
 						"image": "sap-icon://keyboard-and-mouse",
-						"arrivalDate": "Sun Jan 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)",
 						"Discount": 0.40
 					}
 				]

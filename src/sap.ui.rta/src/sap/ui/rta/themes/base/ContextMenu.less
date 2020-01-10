@@ -42,3 +42,9 @@
 		}
 	}
 }
+
+// Special handling for IE and EDGE Browsers
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiDtContextMenu .sapMBtn:focus .sapMBtnFocusDiv,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiDtContextMenu .sapMBtn:focus .sapMBtnFocusDiv {
+	border: none;
+}

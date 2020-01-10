@@ -275,7 +275,7 @@ sap.ui.define([
 			}
 		};
 
-		var oManifest_ListCard_Action_Disabled = {
+		var oManifest_ListCard_Action_Enabled = {
 			"_version": "1.8.0",
 			"sap.app": {
 				"type": "card"
@@ -295,7 +295,7 @@ sap.ui.define([
 				"content": {
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/someitems_services.json"
+							"url": "test-resources/sap/ui/integration/qunit/manifests/someitems_services_action_enabled.json"
 						},
 						"path": "/"
 					},
@@ -313,7 +313,7 @@ sap.ui.define([
 							{
 								"type": "Navigation",
 								"target": "_blank",
-								"enabled": true,
+								"enabled": "{= ${enabled}}",
 								"url": "{url}"
 							}
 						]
@@ -1209,7 +1209,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Action disabled in template, no service", function (assert) {
+		QUnit.test("Action enabled/disabled in template, no service", function (assert) {
 
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
@@ -1217,7 +1217,7 @@ sap.ui.define([
 					Log.error(LOG_MESSAGE);
 				}),
 				oCard = new Card({
-					manifest: oManifest_ListCard_Action_Disabled,
+					manifest: oManifest_ListCard_Action_Enabled,
 					width: "400px",
 					height: "600px"
 				});
@@ -1231,12 +1231,16 @@ sap.ui.define([
 				var oCardListItems = oCard.getCardContent()._getList().getItems();
 
 				//Act
-				oCardListItems[0].firePress();
+				oCardListItems[3].firePress();
 				Core.applyChanges();
 
 				// Assert
-				assert.ok(oCardListItems[0].getType() === "Navigation", "Card list item is actionable");
-				assert.ok(oCardListItems[1].getType() === "Navigation" , "Card list item is NOT actionable");
+				assert.notOk(oCardListItems[0].getType() === "Navigation", "Card list item is NOT actionable");
+				assert.notOk(oCardListItems[1].getType() === "Navigation" , "Card list item is NOT actionable");
+				assert.notOk(oCardListItems[2].getType() === "Navigation", "Card list item is NOT actionable");
+				assert.ok(oCardListItems[3].getType() === "Navigation" , "Card list item is actionable");
+				assert.ok(oCardListItems[4].getType() === "Navigation" , "Card list item is actionable");
+
 				assert.ok(oActionSpy.callCount, "Card List item is clicked");
 
 				//Clean up

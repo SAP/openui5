@@ -8,14 +8,14 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge",
-	"sap/ui/fl/write/_internal/Storage"
+	"sap/ui/fl/write/_internal/connectors/LrepConnector"
 ], function(
 	LayerUtils,
 	Utils,
 	Settings,
 	jQuery,
 	fnBaseMerge,
-	Storage
+	LrepConnector
 ) {
 	"use strict";
 
@@ -151,61 +151,12 @@ sap.ui.define([
 	/**
 	 * Submits the app variant to the backend
 	 * @return {Promise} resolving when submitting the app variant was successful
-	 *
+	 * Since this method is only called for app variants on ABAP platform, the direct usage of write LrepConnector is triggered.
 	 * @private
 	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.submit = function() {
-		// In case of CRUD appvariant operations are intended for a SAP developer, it will be given to the old LREPConnector
-		var sRoute = '/sap/bc/lrep/appdescr_variants/';
-		var sMethod;
-
-		var mMap = this._getMap();
-
-		switch (this._mode) {
-			case 'NEW':
-				sMethod = 'POST';
-				break;
-			case 'FROM_EXISTING':
-				sMethod = 'PUT';
-				sRoute = sRoute + mMap.id;
-				break;
-			case 'DELETION':
-				sMethod = 'DELETE';
-				sRoute = sRoute + this._id;
-				break;
-			default:
-				// do nothing
-		}
-
-		if (this._sTransportRequest) {
-			//set to URL-Parameter 'changelist', as done in LrepConnector
-			sRoute += '?changelist=' + this._sTransportRequest;
-		} else if (
-			this._oSettings.isAtoEnabled()
-			&& (this._skipIam || ((sMethod === 'PUT' || sMethod === 'DELETE') && mMap.packageName !== '$TMP'))
-			&& LayerUtils.isCustomerDependentLayer(mMap.layer)
-		) {
-			// Smart Business created KPI tiles on S4 Cloud and the query parameter will be added to support their usecase
-			sRoute += '?changelist=ATO_NOTIFICATION';
-		}
-		if (this._skipIam) {
-			sRoute += (sRoute.indexOf('?') < 0) ? '?' : '&';
-			sRoute += 'skipIam=' + this._skipIam;
-		}
-
-		return Utils.sendRequest(sRoute, sMethod, mMap);
-	};
-
-	/**
-	 * Submits the app variant to the backend via new connectors
-	 * @return {Promise} resolving when submitting the app variant was successful
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.rta, smart business
-	 */
-	DescriptorVariant.prototype.submitViaNewConnectors = function() {
 		var mMap = this._getMap();
 
 		var mPropertyBag = {
@@ -230,19 +181,24 @@ sap.ui.define([
 			mPropertyBag.layer = mMap.layer;
 		}
 
+		if (!mPropertyBag.url) {
+			mPropertyBag.url = "/sap/bc/lrep";
+		}
+
 		var oBackendOperation;
 		switch (this._mode) {
 			case 'NEW':
 				Object.assign(mPropertyBag.flexObject, mMap);
-				oBackendOperation = Storage.appVariant.create(mPropertyBag);
+				oBackendOperation = LrepConnector.appVariant.create(mPropertyBag);
 				break;
 			case 'FROM_EXISTING':
 				mPropertyBag.reference = mMap.id;
-				oBackendOperation = Storage.appVariant.update(mPropertyBag);
+				Object.assign(mPropertyBag.flexObject, mMap);
+				oBackendOperation = LrepConnector.appVariant.update(mPropertyBag);
 				break;
 			case 'DELETION':
 				mPropertyBag.reference = mMap.id;
-				oBackendOperation = Storage.appVariant.remove(mPropertyBag);
+				oBackendOperation = LrepConnector.appVariant.remove(mPropertyBag);
 				break;
 			default:
 				return Promise.reject("Please provide a valid operation.");
@@ -358,11 +314,11 @@ sap.ui.define([
 	var DescriptorVariantFactory = {};
 
 	DescriptorVariantFactory._getDescriptorVariant = function(mPropertyBag) {
-		if (mPropertyBag.isForSAPDelivery || !mPropertyBag.layer) {
-			var sRoute = '/sap/bc/lrep/appdescr_variants/' + mPropertyBag.reference;
-			return Utils.sendRequest(sRoute, 'GET');
+		if (!mPropertyBag.url) {
+			mPropertyBag.url = "/sap/bc/lrep";
 		}
-		return Storage.appVariant.load(mPropertyBag);
+		// Since this method is only called internally for app variants on ABAP platform, the direct usage of write LrepConnector is triggered.
+		return LrepConnector.appVariant.load(mPropertyBag);
 	};
 
 	/**

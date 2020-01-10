@@ -25,11 +25,10 @@ sap.ui.define([
 	'sap/m/StandardListItem',
 	'sap/m/Table',
 	'sap/m/Title',
-	'sap/m/Text',
 	'sap/ui/core/IconPool',
-	'sap/m/SimpleFixFlex',
 	"sap/base/security/encodeXML",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/m/ValueStateHeader"
 ], function (
 	Device,
 	EventProvider,
@@ -53,11 +52,10 @@ sap.ui.define([
 	StandardListItem,
 	Table,
 	Title,
-	Text,
 	IconPool,
-	SimpleFixFlex,
 	encodeXML,
-	KeyCodes
+	KeyCodes,
+	ValueStateHeader
 ) {
 	"use strict";
 
@@ -270,10 +268,7 @@ sap.ui.define([
 	 * @private
 	 */
 	SuggestionsPopover.prototype._getScrollableContent = function () {
-		var oSimpleFixFlexDomRef = this._oSimpleFixFlex && this._oSimpleFixFlex.getDomRef(),
-			oScrollableContentDomRef = oSimpleFixFlexDomRef && oSimpleFixFlexDomRef.querySelector('.sapUiSimpleFixFlexFlexContent');
-
-		return oScrollableContentDomRef;
+		return this._oPopover && this._oPopover.getDomRef("scroll");
 	};
 
 	/**
@@ -338,6 +333,7 @@ sap.ui.define([
 	SuggestionsPopover.prototype.getCancelButton = function() {
 		var oButton = this._oPopover
 			&& this._oPopover.getCustomHeader()
+			&& this._oPopover.getCustomHeader().getContentRight
 			&& this._oPopover.getCustomHeader().getContentRight()[0];
 
 		return oButton || null;
@@ -384,7 +380,7 @@ sap.ui.define([
 			(new Popover(oInput.getId() + "-popup", {
 				showArrow: false,
 				placement: PlacementType.VerticalPreferredBottom,
-				showHeader: false,
+				showHeader: true,
 				initialFocus: oInput,
 				horizontalScrolling: true
 			}))
@@ -479,24 +475,40 @@ sap.ui.define([
 			this._oList = this._oInput._getSuggestionsTable();
 		}
 
-		this._oSimpleFixFlex = this._createSimpleFixFlex();
-
 		if (this._oPopover) {
 			if (this._bUseDialog) {
 				// this._oList needs to be manually rendered otherwise it triggers a rerendering of the whole
 				// dialog and may close the opened on screen keyboard
-				this._oPopover.addAggregation("content", this._oSimpleFixFlex, true);
+				this._oPopover.addAggregation("content", this._oList, true);
 				var oRenderTarget = this._oPopover.$("scrollCont")[0];
 				if (oRenderTarget) {
 					var rm = sap.ui.getCore().createRenderManager();
-					rm.renderControl(this._oSimpleFixFlex);
+					rm.renderControl(this._oList);
 					rm.flush(oRenderTarget);
 					rm.destroy();
 				}
 			} else {
-				this._oPopover.addContent(this._oSimpleFixFlex);
+				this._oPopover.addContent(this._oList);
 			}
 		}
+	};
+
+	SuggestionsPopover.prototype._getValueStateHeader = function () {
+		if (!this._oValueStateHeader) {
+			this._oValueStateHeader = new ValueStateHeader();
+
+			if (this._oPopover.isA("sap.m.Popover")) {
+				// when we are using the Popover the value state header is shown in the header of the Popover
+				this._oPopover.setCustomHeader(this._oValueStateHeader);
+			} else {
+				// on mobile the content is used and sticky position is set on the header
+				this._oPopover.insertContent(this._oValueStateHeader, 0);
+			}
+
+			this._oValueStateHeader.setPopup(this._oPopover);
+		}
+
+		return this._oValueStateHeader;
 	};
 
 	/**
@@ -888,22 +900,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates SimpleFixFlex control.
-	 *
-	 * @private
-	 * @returns {sap.m.SimpleFixFlex} Created sap.m.SimpleFixFlex control.
-	 */
-	SuggestionsPopover.prototype._createSimpleFixFlex = function () {
-		var sSimpleFixFlexId = this._oInput.getId() + "-simplefixflex";
-
-		return new SimpleFixFlex({
-			id: sSimpleFixFlexId,
-			fixContent: this._getPickerValueStateText(),
-			flexContent: this._oList
-		});
-	};
-
-	/**
 	 * Highlights text in DOM items.
 	 *
 	 * @param {Array<HTMLElement>} aItemsDomRef DOM elements on which formatting would be applied
@@ -1155,27 +1151,12 @@ sap.ui.define([
 			this._oPopupInput.setValueState(sValueState);
 		}
 
-		this._setValueStateText(sValueStateText);
-
-		this._showValueStateText(bShow);
-
+		this._getValueStateHeader().setValueState(sValueState);
+		this._setValueStateHeaderText(sValueStateText);
+		this._showValueStateHeader(bShow);
 		this._alignValueStateStyles(sValueState);
+
 		return this;
-	};
-
-	/*
-	 * Gets the picker value state message object.
-	 *
-	 * @returns {sap.m.Text}
-	 * @private
-	 * @since 1.46
-	 */
-	SuggestionsPopover.prototype._getPickerValueStateText = function() {
-		if (!this._oPickerValueStateText) {
-			this._oPickerValueStateText = new Text({ width: "100%" });
-		}
-
-		return this._oPickerValueStateText;
 	};
 
 	/**
@@ -1183,9 +1164,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SuggestionsPopover.prototype._showValueStateText = function(bShow) {
-		if (this._oPickerValueStateText) {
-			this._oPickerValueStateText.setVisible(bShow);
+	SuggestionsPopover.prototype._showValueStateHeader = function(bShow) {
+		if (this._oValueStateHeader) {
+			this._oValueStateHeader.setVisible(bShow);
 		}
 	};
 
@@ -1194,16 +1175,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SuggestionsPopover.prototype._setValueStateText = function(sText) {
-		var oValueStateText;
-
-		oValueStateText = this._getPickerValueStateText();
-		if (oValueStateText) {
-			oValueStateText.setText(sText);
-
-			if (this._oSimpleFixFlex) {
-				this._oSimpleFixFlex.setFixContent(this._oPickerValueStateText);
-			}
+	SuggestionsPopover.prototype._setValueStateHeaderText = function(sText) {
+		if (this._oValueStateHeader) {
+			this._oValueStateHeader.setText(sText);
 		}
 	};
 
@@ -1217,11 +1191,10 @@ sap.ui.define([
 			sOldCssClass = CSS_CLASS_SUGGESTIONS_POPOVER + this._sOldValueState + "State",
 			sCssClass = CSS_CLASS_SUGGESTIONS_POPOVER + sValueState + "State";
 
-		if (this._oPickerValueStateText) {
-			this._oPickerValueStateText.addStyleClass(sPickerWithState);
-			this._oPickerValueStateText.removeStyleClass(sOldCssClass);
-			this._oPickerValueStateText.addStyleClass(sCssClass);
-		}
+		this._oPopover.addStyleClass(sPickerWithState);
+		this._oPopover.removeStyleClass(sOldCssClass);
+		this._oPopover.addStyleClass(sCssClass);
+
 		this._sOldValueState = sValueState;
 	};
 
@@ -1231,10 +1204,8 @@ sap.ui.define([
 	 * @param {sap.m.Control} oControl Control to be added
 	 * @protected
 	 */
-	SuggestionsPopover.prototype.addFlexContent = function(oControl) {
-		if (this._oSimpleFixFlex) {
-			this._oSimpleFixFlex.addFlexContent(oControl);
-		}
+	SuggestionsPopover.prototype.addContent = function(oControl) {
+		this._oPopover.addContent(oControl);
 	};
 
 	return SuggestionsPopover;

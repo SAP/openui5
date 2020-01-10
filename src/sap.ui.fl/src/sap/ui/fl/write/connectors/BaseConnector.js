@@ -32,6 +32,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.transport] The transport ID
 		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
+		 * @param {boolean} [mPropertyBag.draft=false] - Indicates if changes should be written as a draft
 		 * @returns {Promise} Resolves as soon as the writing is completed without data
 		 */
 		write: function (/* mPropertyBag */) {
@@ -123,30 +124,29 @@ sap.ui.define([
 			return Promise.reject("loadFeatures is not implemented");
 		},
 
-		appVariant: {
-			getManifest: function() {
-				return Promise.reject("appVariant.getManifest is not implemented");
+		versions: {
+			/**
+			 * Interface called to get the flex versions.
+			 *
+			 * @param {object} mPropertyBag Property bag
+			 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+			 * @param {string} mPropertyBag.reference Flex reference
+			 * @returns {Promise<sap.ui.fl.Version[]>} Resolves with an object containing the data for the versions
+			 */
+			load: function () {
+				return Promise.reject("versions.load is not implemented");
 			},
-			create: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.create is not implemented");
-			},
-			load: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.load is not implemented");
-			},
-			update:  function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.update is not implemented");
-			},
-			remove: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.remove is not implemented");
-			},
-			list: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.list is not implemented");
-			},
-			assignCatalogs: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.assignCatalogs is not implemented");
-			},
-			unassignCatalogs: function(/* mPropertyBag */) {
-				return Promise.reject("appVariant.unassignCatalogs is not implemented");
+
+			/**
+			 * Interface called to get the flex versions.
+			 *
+			 * @param {object} mPropertyBag Property bag
+			 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+			 * @param {string} mPropertyBag.reference Flex reference
+			 * @returns {Promise<sap.ui.fl.Version>} Resolves with an object containing the version activated
+			 */
+			activateDraft: function () {
+				return Promise.reject("versions.activateDraft is not implemented");
 			}
 		}
 	};

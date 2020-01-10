@@ -53,3 +53,9 @@ html.sap-desktop .sapUiRtaMode .sapMBtn:focus {
 		outline-offset: -0.0625rem;
 	}
 }
+
+// Special handling for IE and EDGE Browsers
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUIRtaFieldRepositoryDialog .sapMBtn:focus .sapMBtnFocusDiv,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUIRtaFieldRepositoryDialog .sapMBtn:focus .sapMBtnFocusDiv {
+	border: none;
+}

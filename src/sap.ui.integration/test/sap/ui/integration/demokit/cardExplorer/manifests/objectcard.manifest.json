@@ -1,9 +1,12 @@
 {
+	"sap.app": {
+		"id": "card.explorer.landingPage"
+	},
 	"sap.card": {
 		"type": "Object",
 		"header": {
 			"icon": {
-				"src": "../cardExplorer/images/Sabine_Mayer.png"
+				"src": "./images/Sabine_Mayer.png"
 			},
 			"title": "Sabine Mayer",
 			"subTitle": "Executive Assistant"
@@ -37,7 +40,7 @@
 							"label": "Direct Manager",
 							"value": "Michael Adams",
 							"icon": {
-								"src": "../cardExplorer/images/Michael_Adams.png"
+								"src": "./images/Michael_Adams.png"
 							}
 						},
 						{

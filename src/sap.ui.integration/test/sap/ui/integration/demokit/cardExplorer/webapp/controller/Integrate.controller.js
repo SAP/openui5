@@ -43,6 +43,7 @@ sap.ui.define([
 			};
 
 			this.oJsonDefModel.setData(oJsonObj);
+			this.onFrameSourceChange();
 		}
 	});
 });

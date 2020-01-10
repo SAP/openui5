@@ -81,4 +81,4 @@ sap.ui.define([
 	};
 
 	return BindProperty;
-}, /* bExport= */true);
+});

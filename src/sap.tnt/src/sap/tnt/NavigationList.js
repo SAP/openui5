@@ -183,8 +183,8 @@ sap.ui.define([
 				this._marginRight = 10;
 				this._marginBottom = 10;
 
-				this._arrowOffset = 18;
-				this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
+				this._arrowOffset = 8;
+				this._offsets = ["0 -8", "8 0", "0 8", "-8 0"];
 
 				this._myPositions = ["center bottom", "begin top", "center top", "end top"];
 				this._atPositions = ["center top", "end top", "center bottom", "begin top"];

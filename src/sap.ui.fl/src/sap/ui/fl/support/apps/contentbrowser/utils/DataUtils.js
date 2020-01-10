@@ -116,7 +116,7 @@ sap.ui.define(["sap/m/GroupHeaderListItem", "sap/ui/thirdparty/jquery"],
 
 			/**
 			 * Title formatter: combines the items namespace, filename and type.
-			 * @param {map} mModelData
+			 * @param {object} mModelData
 			 * @param {string} mModelData.namespace
 			 * @param {string} mModelData.fileName
 			 * @param {string} mModelData.fileType

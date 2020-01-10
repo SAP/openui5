@@ -31,14 +31,13 @@ sap.ui.define([
 		QUnit.test("load is called and complains about too few parameters (missing container key)", function(assert) {
 			return UI2PersonalizationApplyAPI.load({
 				selector: {
-					appId: "testComponent",
-					appVersion: "1.2.3"
+					appId: "testComponent"
 				}
 			})
-				.catch(function () {
-					assert.ok(true, "a rejection took place");
-					assert.ok(this.fnStubCacheGetPersonalization.notCalled, "then Cache.getPersonalization is not called");
-				}.bind(this));
+			.catch(function () {
+				assert.ok(true, "a rejection took place");
+				assert.ok(this.fnStubCacheGetPersonalization.notCalled, "then Cache.getPersonalization is not called");
+			}.bind(this));
 		});
 
 		QUnit.test("load is called and complains about missing component name", function(assert) {
@@ -55,15 +54,14 @@ sap.ui.define([
 
 			return UI2PersonalizationApplyAPI.load({
 				selector: {
-					appId: "testComponent",
-					appVersion: "1.2.3"
+					appId: "testComponent"
 				},
 				containerKey: "someContainerKey"
 			})
-				.catch(function () {
-					assert.ok(true, "a rejection took place");
-					assert.ok(this.fnStubCacheGetPersonalization.notCalled, "then Cache.getPersonalization is not called");
-				}.bind(this));
+			.catch(function () {
+				assert.ok(true, "a rejection took place");
+				assert.ok(this.fnStubCacheGetPersonalization.notCalled, "then Cache.getPersonalization is not called");
+			}.bind(this));
 		});
 
 		QUnit.test("load is called and selector contains only appId (but no appVersion)", function(assert) {
@@ -73,36 +71,34 @@ sap.ui.define([
 				},
 				containerKey: "someContainerKey"
 			})
-				.then(function () {
-					assert.ok(this.fnStubCacheGetPersonalization.calledWithExactly("testComponent", "DEFAULT_APP_VERSION", "someContainerKey", undefined), "then Cache.getPersonalization is called with correct parameters and default appVersion is taken");
-				}.bind(this));
+			.then(function () {
+				assert.ok(this.fnStubCacheGetPersonalization.calledWithExactly("testComponent", "someContainerKey", undefined), "then Cache.getPersonalization is called with correct parameters and default appVersion is taken");
+			}.bind(this));
 		});
 
 		QUnit.test("load is called and successful", function(assert) {
 			return UI2PersonalizationApplyAPI.load({
 				selector: {
-					appId: "testComponent",
-					appVersion: "1.2.3"
+					appId: "testComponent"
 				},
 				containerKey: "someContainerKey"
 			})
-				.then(function() {
-					assert.ok(this.fnStubCacheGetPersonalization.calledWithExactly("testComponent", "1.2.3", "someContainerKey", undefined), "then Cache.getPersonalization is called with correct parameters");
-				}.bind(this));
+			.then(function() {
+				assert.ok(this.fnStubCacheGetPersonalization.calledWithExactly("testComponent", "someContainerKey", undefined), "then Cache.getPersonalization is called with correct parameters");
+			}.bind(this));
 		});
 
 		QUnit.test("load is called and property bag contains itemName too", function(assert) {
 			return UI2PersonalizationApplyAPI.load({
 				selector: {
-					appId: "testComponent",
-					appVersion: "1.2.3"
+					appId: "testComponent"
 				},
 				containerKey: "someContainerKey",
 				itemName: "someItemName"
 			})
-				.then(function() {
-					assert.ok(this.fnStubCacheGetPersonalization.calledWithExactly("testComponent", "1.2.3", "someContainerKey", "someItemName"), "then Cache.getPersonalization is called with correct parameters");
-				}.bind(this));
+			.then(function() {
+				assert.ok(this.fnStubCacheGetPersonalization.calledWithExactly("testComponent", "someContainerKey", "someItemName"), "then Cache.getPersonalization is called with correct parameters");
+			}.bind(this));
 		});
 	});
 });

@@ -15,8 +15,8 @@ sap.ui.define([
 	QUnit.module("Support Assistant Rule Presets - Export");
 
 	opaTest("Should see validation messages when required inputs are not filled", function(Given, When, Then) {
-		Given.iStartMyApp()
-			.and.iDeletePersistedData();
+		Given.iDeletePersistedData()
+			.and.iStartMyApp();
 
 		When.onThePresetsPage.iOpenPresetsPopover();
 

@@ -125,4 +125,10 @@ describe('sap.m.MultiInput', function() {
 		oMultiInputInner.click();
 		expect(takeScreenshot(element(by.id("multiInput7")))).toLookAs("cropped_focused_tokens");
 	});
+
+	it("should invalidate the MultiInput, so all MI elements are there", function () {
+		browser.executeScript('sap.ui.getCore().byId("dataBoundMultiInput").getTokens()[1].setText("Lorem ipsulum")').then(function () {
+			expect(takeScreenshot(element(by.id("dataBoundMultiInput")))).toLookAs("token-update-text");
+		});
+	});
 });

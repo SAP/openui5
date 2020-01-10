@@ -47,7 +47,7 @@
 											items="{path: 'items', templateShareable: false}"
 											key="{key}"
 											hasExpander="{hasExpander}">
-						<tnt:NavigationListItem text="{title}"
+						<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}"
 												key="{key}"
 												enabled="{enabled}">
 							<tnt:customData>
@@ -59,13 +59,6 @@
 						</tnt:customData>
 					</tnt:NavigationListItem>
 				</tnt:NavigationList>
-				<tnt:fixedItem>
-					<tnt:NavigationList items="{path: '/fixedNavigation'}">
-						<tnt:NavigationListItem text="{title}"
-												icon="{icon}">
-						</tnt:NavigationListItem>
-					</tnt:NavigationList>
-				</tnt:fixedItem>
 			</tnt:SideNavigation>
 		</tnt:sideContent>
 		<tnt:mainContents>

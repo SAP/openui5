@@ -44,13 +44,14 @@
 	right: 0;
 	left: 0;
 	box-sizing: border-box;
-	height: 1.1875rem;
+	height: 1rem;
 	bottom: 1rem;
-	margin-left: 0.9375rem;
-	margin-right: 0.9375rem;
-	line-height: 1.1875rem;
+	margin-left: 1rem;
+	margin-right: 1rem;
+	line-height: normal;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
+	font-weight: normal;
 }
 
 .sapMGT .sapMTileCntFtrTxt {
@@ -95,8 +96,8 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	height: 3.875rem;
 	margin-bottom: 0.25rem;
 	margin-top: 0.25rem;
-	padding-left: 0.9375rem;
-	padding-right: 0.9375rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
 .sapMTileCnt + .sapMTileCnt {
@@ -109,7 +110,7 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 
 .sapMTileCnt.News {
 	height: 6.125rem;
-	margin-top: 0.3125rem;
+	margin-top: 0.125rem;
 	background-color: @sapUiTileBackground;
 
 	.sapMTileCntContent {
@@ -130,53 +131,35 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 .sapMTileSmallPhone {
 	.sapMTileCnt {
 		height: 5.5rem;
-
-		&.sapMFrameTypeAuto {
-			min-width: 9.125rem;
-			max-width: 19rem;
-		}
-
-		&.sapMFrameTypeTwoByOne {
-			width: 18.875rem;
-
-			&.News {
-				width: 19rem;
-			}
-		}
-		&.sapMFrameTypeOneByOne {
-			width: 9.125rem;
-		}
 	}
 
 	.sapMTileCntFtrTxt {
 		height: 1.063rem;
-		line-height: 1.063rem;
-		bottom: 0.4375rem;
-		margin-left: 0.5625rem;
-		margin-right: 0.5625rem;
+		line-height: normal;
+		bottom: 0.5rem;
+		margin-left: 0.5rem;
+		margin-right: 0.5rem;
 		font-size: @sapMFontSmallSize;
 	}
 
 	.sapMTileCntContent {
-		height: 3.563rem;
-		line-height: 3.563rem;
 		margin-bottom: 0.25rem;
 		margin-top: 0.25rem;
-		padding-left: 0.5625rem;
-		padding-right: 0.5625rem;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
 	}
 
 	.sapMTileCnt.News {
 		height: 5.25rem;
 
 		.sapMTileCntContent {
-			padding-left: 0.625rem;
-			padding-right: 0.625rem;
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
 		}
 
 		.sapMTileCntFtrTxt {
-			margin-left: 0.625rem;
-			margin-right: 0.625rem;
+			margin-left: 0.5rem;
+			margin-right: 0.5rem;
 		}
 	}
 }

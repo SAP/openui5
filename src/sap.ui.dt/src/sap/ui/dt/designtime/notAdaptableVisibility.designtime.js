@@ -12,4 +12,4 @@ sap.ui.define([], function() {
 			reveal: null
 		}
 	};
-}, /* bExport= */ false);
+});

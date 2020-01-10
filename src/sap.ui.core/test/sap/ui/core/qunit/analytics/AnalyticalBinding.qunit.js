@@ -27,8 +27,7 @@ sap.ui.define([
 		ODataModelAdapter, ChangeReason, Filter, FilterOperator, FilterProcessor, Sorter,
 		ODataModelV1, ODataModelV2, TreeAutoExpandMode, o4aFakeService) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0 */
-	/*eslint no-warning-comments: 0 */
+	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
 
 	var iGroupMembersQueryType = AnalyticalBinding._requestType.groupMembersQuery,
@@ -3003,5 +3002,77 @@ sap.ui.define([
 				oBinding._calculateRequiredGroupSection("/", 34, 2, 3),
 				{startIndex : 34 - 3, length : 3 + 2 + 3});
 		});
+	});
+
+	//*********************************************************************************************
+	// BCP: 1980533509
+	QUnit.test("_prepareGroupMembersAutoExpansionQueryRequest/prepareLevelMembersQueryRequest:"
+			+ " Allow expansion of all dimensions", function (assert) {
+
+		return setupAnalyticalBinding(2, {
+					autoExpandMode : "Bundled",
+					numberOfExpandedLevels : 2,
+					useBatchRequests : true,
+					sumOnTop : false
+				},
+				/*fnODataV2Callback*/null,
+				[oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal]
+			).then(function (oBinding) {
+				var oGroupExpansionFirstMissingMember = {
+						groupId_Missing : "/",
+						startIndex_Missing : 0,
+						length_Missing : 35
+					},
+					oResult;
+
+				// code under test
+				oResult = oBinding._prepareGroupMembersAutoExpansionQueryRequest(/*iRequestType*/ 3,
+					/*sGroupId*/ "/", oGroupExpansionFirstMissingMember, /*iLength*/ 35,
+					/*iNumberOfExpandedLevels*/ 2);
+
+				assert.strictEqual(oResult.iRequestType, 3);
+				assert.strictEqual(oResult.aRequestId.length, 3);
+				assert.strictEqual(oResult.sGroupId, "/");
+				assert.strictEqual(oResult.iLength, 35);
+				assert.strictEqual(oResult.aGroupMembersAutoExpansionRequestDetails.length, 3);
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[0].aAggregationLevel,
+					["CostCenter"]);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[0].iLength, 12);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[0].iLevel, 1);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[0].iRequestType, 4);
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[0].aSelectedUnitPropertyName,
+					["Currency"]);
+
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[1].aAggregationLevel,
+					["CostCenter", "Currency"]);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[1].iLength, 17);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[1].iLevel, 2);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[1].iRequestType, 4);
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[1].aSelectedUnitPropertyName,
+					[]);
+
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[2].aAggregationLevel,
+					["CostCenter", "Currency"]);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[2].iLength, 32);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[2].iLevel, 3);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[2].iRequestType, 4);
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[2].aSelectedUnitPropertyName,
+					[]);
+			});
 	});
 });

@@ -71,15 +71,6 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 				oAccAttributes.role = "group";
 			}
 
-			/* ARIA region adding the aria-describedby to ObjectStatus */
-
-			if (sState !== ValueState.None) {
-				oAccAttributes.describedby = {
-					value: oObjStatus.getId() + "sapSRH",
-					append: true
-				};
-			}
-
 			oRm.accessibilityState(oObjStatus, oAccAttributes);
 
 			oRm.openEnd();

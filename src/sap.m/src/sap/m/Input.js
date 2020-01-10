@@ -540,6 +540,9 @@ function(
 			this._oButtonToolbar.destroy();
 			this._oButtonToolbar = null;
 		}
+
+		// Unregister custom events handlers after migration to semantic rendering
+		this.$().off("click");
 	};
 
 	/**
@@ -578,6 +581,12 @@ function(
 			}
 		}
 
+		if (this._oSuggPopover  &&  this._oSuggPopover._oPopover && this.getShowTableSuggestionValueHelp()) {
+			this._addShowMoreButton();
+		} else {
+			this._removeShowMoreButton();
+		}
+
 		if (bShowIcon) {
 
 			// ensure the creation of an icon
@@ -590,6 +599,10 @@ function(
 				oIcon.setProperty("visible", false, true);
 			}
 		}
+
+		!this.getWidth() && this.setWidth("100%");
+		// Unregister custom event handlers after migration to semantic rendering
+		this.$().off("click");
 	};
 
 	/**
@@ -1025,13 +1038,36 @@ function(
 						}
 
 						that.bValueHelpRequested = true;
-						that.fireValueHelpRequest({ fromSuggestions: false });
+
+						that._fireValueHelpRequest(false);
 					}
 				}
 			});
 		}
 
 		return oValueStateIcon;
+	};
+
+	/**
+	 * Fire valueHelpRequest event.
+	 *
+	 * @private
+	 */
+	Input.prototype._fireValueHelpRequest = function(bFromSuggestions) {
+
+		// The goal is to provide a value in the value help event, which can be used to filter the opened Value Help Dialog.
+		var sTypedInValue = "";
+
+		if (this.getShowSuggestion() && this._oSuggPopover) {
+			sTypedInValue = this._oSuggPopover._sTypedInValue || "";
+		} else {
+			sTypedInValue = this.getDOMValue();
+		}
+
+		this.fireValueHelpRequest({
+			fromSuggestions: bFromSuggestions,
+			_userInputValue: sTypedInValue // NOTE: Private parameter for the SmartControls which need only the value entered by the user.
+		});
 	};
 
 	/**
@@ -1045,7 +1081,7 @@ function(
 			if (Device.system.phone) {
 				this.focus();
 			}
-			this.fireValueHelpRequest({fromSuggestions: false});
+			this._fireValueHelpRequest(false);
 		}
 	};
 
@@ -1058,17 +1094,6 @@ function(
 	Input.prototype.ontap = function(oEvent) {
 		InputBase.prototype.ontap.call(this, oEvent);
 		this._fireValueHelpRequestForValueHelpOnly();
-	};
-
-	/**
-	 * Defines the width of the input. Default value is 100%.
-	 *
-	 * @public
-	 * @param {string} sWidth The new width of the input.
-	 * @returns {void} Sets the width of the Input.
-	 */
-	Input.prototype.setWidth = function(sWidth) {
-		return InputBase.prototype.setWidth.call(this, sWidth || "100%");
 	};
 
 	/**
@@ -1415,7 +1440,6 @@ function(
 		 */
 		Input.prototype.setShowSuggestion = function(bValue){
 			this.setProperty("showSuggestion", bValue, true);
-
 			if (bValue) {
 				this._oSuggPopover = this._getSuggestionsPopover();
 				this._oSuggPopover._iPopupListSelectedIndex = -1;
@@ -1435,29 +1459,6 @@ function(
 
 			return this;
 		};
-
-		/**
-		 * Shows value help suggestions in table.
-		 *
-		 * @public
-		 * @param {boolean} bValue Show suggestions.
-		 * @return {sap.m.Input} this Input instance for chaining.
-		 */
-		Input.prototype.setShowTableSuggestionValueHelp = function(bValue) {
-			this.setProperty("showTableSuggestionValueHelp", bValue, true);
-
-			if (!(this._oSuggPopover && this._oSuggPopover._oPopover)) {
-				return this;
-			}
-
-			if (bValue) {
-				this._addShowMoreButton();
-			} else {
-				this._removeShowMoreButton();
-			}
-			return this;
-		};
-
 		/**
 		 * Event handler for browsers' <code>change</code> event.
 		 *
@@ -2144,7 +2145,7 @@ function(
 		}
 
 		this.bValueHelpRequested = true;
-		this.fireValueHelpRequest({fromSuggestions: false});
+		this._fireValueHelpRequest(false);
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
@@ -2427,7 +2428,7 @@ function(
 						this._oSuggPopover._resetTypeAhead();
 					}
 
-					this.fireValueHelpRequest({fromSuggestions: true});
+					this._fireValueHelpRequest(true);
 					this._oSuggPopover._iPopupListSelectedIndex = -1;
 					this._closeSuggestionPopup();
 				}

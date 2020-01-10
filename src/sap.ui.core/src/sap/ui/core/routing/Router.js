@@ -533,22 +533,22 @@ sap.ui.define([
 			 *
 			 * @param {string} sName Name of the route
 			 * @param {object} [oParameters] Parameters for the route
-			 * @returns {string} The unencoded pattern with interpolated arguments
+			 * @returns {string | undefined} The unencoded pattern with interpolated arguments or <code>undefined</code> if no matching route can be determined
 			 * @public
 			 */
 			getURL : function (sName, oParameters) {
 				var oRoute = this.getRoute(sName);
-				if (!oRoute) {
+				if (oRoute) {
+					return oRoute.getURL(oParameters);
+				} else {
 					Log.warning("Route with name " + sName + " does not exist", this);
-					return;
 				}
-				return oRoute.getURL(oParameters);
 			},
 
 			/**
 			 * Returns whether the given hash can be matched by any of the routes in the router.
 			 *
-			 * @param {string} Hash which will be tested by the Router
+			 * @param {string} sHash which will be tested by the Router
 			 * @returns {boolean} Whether the hash can be matched
 			 * @public
 			 * @since 1.58.0
@@ -560,9 +560,10 @@ sap.ui.define([
 			},
 
 			/**
-			 * Returns the first route which matches the given hash
-			 * @param {string} sHash
-			 * @return {sap.ui.core.routing.Route} The matched Route
+			 * Returns the first route which matches the given hash or <code>undefined</code> if no matching route can be determined
+			 *
+			 * @param {string} sHash The hash of the desired route
+			 * @return {sap.ui.core.routing.Route|undefined} The matched route
 			 * @public
 			 * @since 1.74
 			 */
@@ -1311,6 +1312,7 @@ sap.ui.define([
 			 * Use {@link sap.ui.core.routing.Router.getRouter Router.getRouter()} to retrieve the instance.
 			 *
 			 * @param {string} sName Name of the router instance
+			 * @returns {sap.ui.core.routing.Router} The router instance
 			 * @public
 			 */
 			register : function (sName) {

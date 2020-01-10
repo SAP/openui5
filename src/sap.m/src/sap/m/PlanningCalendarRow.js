@@ -162,7 +162,12 @@ sap.ui.define(['sap/ui/core/Element', 'sap/m/CustomListItem'], function (Element
 			 *
 			 * @since 1.56
 			 */
-			enableAppointmentsCreate : {type : "boolean", group : "Misc", defaultValue : false}
+			enableAppointmentsCreate : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * Defines the text that is displayed when no {@link sap.ui.unified.CalendarAppointment CalendarAppointments} are assigned.
+			 */
+			noAppointmentsText : {type : "string", group : "Misc", defaultValue : null}
 
 		},
 		aggregations : {

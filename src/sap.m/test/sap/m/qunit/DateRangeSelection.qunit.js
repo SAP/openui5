@@ -507,6 +507,18 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Change date with page up key when 'date' value is not set", function(assert) {
+		// prepare
+		this.oDRS.setDateValue(null);
+		this.oDRS._$input.cursorPos(0);
+
+		// act
+		this.oDRS.onsappageup(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnFireChangeEventSpy.notCalled, "fireChangeEvent was not called");
+	});
+
 	QUnit.test("Change date day with page up key", function(assert) {
 		// prepare
 		this.oDRS._$input.cursorPos(11);
@@ -833,14 +845,14 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value  Date", "Description");
+		assert.strictEqual(oInfo.description, "Value  date", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Date", "Description");
+		assert.strictEqual(oInfo.description, "date", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -853,7 +865,7 @@ sap.ui.define([
 		oInput.setDisplayFormat("yyyy-MM-dd");
 		oInput.setValue("2014-03-26@2014-03-27");
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "2014-03-26 @ 2014-03-27  Date", "Description");
+		assert.strictEqual(oInfo.description, "2014-03-26 @ 2014-03-27  date", "Description");
 		oInput.destroy();
 	});
 

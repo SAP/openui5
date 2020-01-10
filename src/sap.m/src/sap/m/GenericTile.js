@@ -402,17 +402,28 @@ sap.ui.define([
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
 
 		var sMode = this.getMode();
-		if (sMode === library.GenericTileMode.LineMode && this._isScreenLarge()) {
-			// This class needs to be added in order to account for the paddings of the tile.
-			// As this LineMode tile is rendered with display: inline, we cannot apply padding to each line separately, but only the
-			// container can apply a padding for text containment. Thus, this class adds a preset padding-right to the tile's direct DOM parent.
-			this.$().parent().addClass("sapMGTLineModeContainer");
-			this._updateHoverStyle(true); //force update
+		var bScreenLarge = this._isScreenLarge();
+		if (sMode === library.GenericTileMode.LineMode) {
+			var $Parent = this.$().parent();
+			if (bScreenLarge) {
+				// This class needs to be added in order to account for the paddings of the tile.
+				// As this LineMode tile is rendered with display: inline, we cannot apply padding to each line separately, but only the
+				// container can apply a padding for text containment. Thus, this class adds a preset padding-right to the tile's direct DOM parent.
+				$Parent.addClass("sapMGTLineModeContainer");
 
-			if (this.getParent() instanceof Control) {
-				this._sParentResizeListenerId = ResizeHandler.register(this.getParent(), this._handleResize.bind(this));
+				$Parent.removeClass("sapMGTLineModeListContainer");
+				$Parent.addClass("sapMGTLineModeFloatingContainer");
+
+				this._updateHoverStyle(true); //force update
+
+				if (this.getParent() instanceof Control) {
+					this._sParentResizeListenerId = ResizeHandler.register(this.getParent(), this._handleResize.bind(this));
+				} else {
+					this._sParentResizeListenerId = ResizeHandler.register($Parent, this._handleResize.bind(this));
+				}
 			} else {
-				this._sParentResizeListenerId = ResizeHandler.register(this.$().parent(), this._handleResize.bind(this));
+				$Parent.removeClass("sapMGTLineModeFloatingContainer");
+				$Parent.addClass("sapMGTLineModeListContainer");
 			}
 		}
 
@@ -764,6 +775,7 @@ sap.ui.define([
 
 	/* --- Event Handling --- */
 	GenericTile.prototype.ontouchstart = function () {
+		this.addStyleClass("sapMGTPressActive");
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").addClass("sapMGTPressActive");
 		}
@@ -773,12 +785,14 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.ontouchcancel = function () {
+		this.removeStyleClass("sapMGTPressActive");
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").removeClass("sapMGTPressActive");
 		}
 	};
 
 	GenericTile.prototype.ontouchend = function () {
+		this.removeStyleClass("sapMGTPressActive");
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").removeClass("sapMGTPressActive");
 		}
@@ -799,6 +813,7 @@ sap.ui.define([
 
 	GenericTile.prototype.onkeydown = function (event) {
 		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
+			this.addStyleClass("sapMGTPressActive");
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").addClass("sapMGTPressActive");
 			}
@@ -835,6 +850,7 @@ sap.ui.define([
 			bFirePress = true;
 		}
 		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
+			this.addStyleClass("sapMGTPressActive");
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").removeClass("sapMGTPressActive");
 			}

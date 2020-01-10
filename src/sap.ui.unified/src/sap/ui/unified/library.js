@@ -36,6 +36,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', "./ColorPickerDisplayMo
 			"sap.ui.unified.calendar.MonthsRow",
 			"sap.ui.unified.calendar.TimesRow",
 			"sap.ui.unified.calendar.YearPicker",
+			"sap.ui.unified.calendar.YearRangePicker",
 			"sap.ui.unified.Calendar",
 			"sap.ui.unified.CalendarDateInterval",
 			"sap.ui.unified.CalendarWeekInterval",
@@ -250,25 +251,25 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', "./ColorPickerDisplayMo
 	thisLib.StandardCalendarLegendItem = {
 		/**
 		 * Type used for visualization of the current date.
-         * @public
+		 * @public
 		 */
 		Today: "Today",
 
 		/**
 		 * Type used for visualization of the regular work days.
-         * @public
+		 * @public
 		 */
 		WorkingDay: "WorkingDay",
 
 		/**
 		 * Type used for visualization of the non-working days.
-         * @public
+		 * @public
 		 */
 		NonWorkingDay: "NonWorkingDay",
 
 		/**
 		 * Type used for visualization of the currently selected day.
-         * @public
+		 * @public
 		 */
 		Selected: "Selected"
 	};
@@ -448,14 +449,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', "./ColorPickerDisplayMo
 
 	};
 
-	/**
-	 * Types of a color picker display mode
-	 *
-	 * @enum {string}
-	 * @public
-	 * @since 1.58.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	// expose imported enum as property of library namespace, for documentation see module
 	thisLib.ColorPickerDisplayMode = ColorPickerDisplayMode;
 
 	/**
@@ -477,8 +471,8 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', "./ColorPickerDisplayMo
 	 * One use case could be to create and upload zip archives based on the passed Blobs.
 	 * The default implementation of this API should simply resolve with the received Blobs (parameter <code>aBlobs</code>).
 	 * @public
-         * @since 1.52
-         * @param {Blob[]} aBlobs The initial Blobs which can be used to determine a new array of Blobs for further processing.
+	 * @since 1.52
+	 * @param {Blob[]} aBlobs The initial Blobs which can be used to determine a new array of Blobs for further processing.
 	 * @return {Promise} A Promise that resolves with an array of Blobs which is used for the final uploading.
 	 * @function
 	 * @name sap.ui.unified.IProcessableBlobs.getProcessedBlobsFromArray

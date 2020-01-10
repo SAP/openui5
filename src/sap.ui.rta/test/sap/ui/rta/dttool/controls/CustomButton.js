@@ -40,4 +40,4 @@ sap.ui.define([
 	});
 
 	return CustomButton;
-}, /* bExport= */ true);
+});

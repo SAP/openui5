@@ -341,6 +341,10 @@ function(
 		if (!this._iResizeHandlerId) {
 			this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
 		}
+
+		if (!this._iTokenizerResizeHandler) {
+			this._iTokenizerResizeHandler = ResizeHandler.register(this._tokenizer, this._onResize.bind(this));
+		}
 	};
 
 	/**
@@ -353,6 +357,11 @@ function(
 			ResizeHandler.deregister(this._iResizeHandlerId);
 			this._iResizeHandlerId = null;
 		}
+
+		if (this._iTokenizerResizeHandler) {
+			ResizeHandler.deregister(this._iTokenizerResizeHandler);
+			this._iTokenizerResizeHandler = null;
+		}
 	};
 
 	/**
@@ -361,8 +370,6 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._onResize = function () {
-		this._deregisterResizeHandler();
-
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._handleInnerVisibility();
 		this._syncInputWidth(this._tokenizer);
@@ -424,8 +431,8 @@ function(
 				});
 			}
 		}
-
-		if (item) {
+		// If item is selected and no token was already created on sapfocusleave
+		if (item && !this._bTokenIsAdded) {
 			var text = this.getValue();
 			this._tokenizer._addValidateToken({
 				text: text,
@@ -456,6 +463,7 @@ function(
 
 			this._oSuggPopover._oPopupInput.focus();
 		}
+		this._bTokenIsAdded = false;
 	};
 
 	MultiInput.prototype._onValueHelpRequested = function () {
@@ -484,20 +492,6 @@ function(
 	 */
 	MultiInput.prototype._setValueVisible = function () {
 		this.$("inner").css("opacity", "1");
-	};
-
-	/**
-	 * Setter for property <code>enableMultiLineMode</code>.
-	 * @param {boolean} bMultiLineMode Property value
-	 * @returns {sap.m.MultiInput} Pointer to the control instance for chaining
-	 * @since 1.28
-	 * @public
-	 * @deprecated Since version 1.58.
-	 */
-	MultiInput.prototype.setEnableMultiLineMode = function (bMultiLineMode) {
-		// the multiline functionality is deprecated
-		// the method is left for backwards compatibility
-		return this.setProperty("enableMultiLineMode", bMultiLineMode, true);
 	};
 
 	MultiInput.prototype.onmousedown = function (e) {
@@ -551,7 +545,6 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onBeforeRendering = function () {
-
 		Input.prototype.onBeforeRendering.apply(this, arguments);
 
 		this._deregisterResizeHandler();
@@ -670,7 +663,6 @@ function(
 		if (!this.getEnabled()) {
 			return;
 		}
-
 		if (oEvent.which === KeyCodes.TAB) {
 			this._tokenizer._changeAllTokensSelection(false);
 		}
@@ -1043,6 +1035,8 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onfocusin = function (oEvent) {
+		this._deregisterResizeHandler();
+
 		this._bValueHelpOpen = false; //This means the ValueHelp is closed and the focus is back. So, reset that var
 
 		if (oEvent.target === this.getFocusDomRef()) {
@@ -1115,6 +1109,8 @@ function(
 				text: item.getText(),
 				key: item.getKey()
 			});
+
+			this._bTokenIsAdded = true;
 		}
 
 		// if maxTokens limit is not set or the added tokens are less than the limit

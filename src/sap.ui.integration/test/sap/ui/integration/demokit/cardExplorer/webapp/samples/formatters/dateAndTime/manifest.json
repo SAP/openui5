@@ -2,12 +2,29 @@
 	"_version": "1.17.0",
 	"sap.app": {
 		"id": "card.explorer.format.date",
-		"type": "card"
+		"type": "card",
+		"title": "Sample for DateTime Formatters",
+		"subTitle": "Sample for DateTime Formatters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Date",
+				"Time",
+				"Formatter",
+				"Card",
+				"Sample"
+			]
+		}
 	},
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "Order status {= format.dateTime(Date.now(), {pattern: 'H:mm, MMMM d, y'}) }",
+			"title": "Order status {= format.dateTime(Date.now(), {format: 'yMMMd'}) }",
 			"subTitle": "Orders exceeding 50$ are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"

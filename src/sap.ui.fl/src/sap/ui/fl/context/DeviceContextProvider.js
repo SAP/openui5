@@ -55,4 +55,4 @@ sap.ui.define([
 	};
 
 	return DeviceContextProvider;
-}, /* bExport= */true);
+});

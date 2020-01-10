@@ -35,4 +35,4 @@ sap.ui.define([],
 				plural: "SCROLL_CONTAINER_CONTROL_NAME_PLURAL"
 			}
 		};
-	}, /* bExport= */ false);
+	});

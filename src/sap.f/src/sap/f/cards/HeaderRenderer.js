@@ -5,8 +5,7 @@
 sap.ui.define([], function () {
 	"use strict";
 
-	var HeaderRenderer = {},
-		oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
+	var HeaderRenderer = {};
 
 	/**
 	 * Render a header.
@@ -24,9 +23,10 @@ sap.ui.define([], function () {
 		oRm.addClass("sapFCardHeader");
 		//Accessibility state
 		oRm.writeAccessibilityState(oControl, {
-			role: "group",
+			role: oControl._sAriaRole,
 			labelledby: {value: oControl._getHeaderAccessibility(), append: true},
-			roledescription: {value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), append: true}
+			roledescription: {value: oControl._sAriaRoleDescritoion, append: true},
+			level: {value: oControl._sAriaHeadingLevel}
 		});
 		oRm.writeClasses();
 		oRm.write(">");

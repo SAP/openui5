@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions"
 ], function(
 	sinon,
 	StaticFileConnector,
-	Utils,
 	Log,
 	LoaderExtensions
 ) {
@@ -32,7 +30,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("given no static flexibility-bundle.json and changes-bundle.json placed for 'reference' resource roots, when loading flex data", function (assert) {
 			return StaticFileConnector.loadFlexData({reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
-				assert.deepEqual(oResult, Utils.getEmptyFlexDataResponse(), "the default response was returned");
+				assert.deepEqual(oResult, undefined, "no data was returned");
 			});
 		});
 
@@ -45,7 +43,7 @@ sap.ui.define([
 			var oLogWarning = sandbox.spy(Log, "warning");
 
 			return StaticFileConnector.loadFlexData({reference: "test.app.broken", appVersion: "1.0.0", componentName: "test.app.broken"}).then(function (oResult) {
-				assert.deepEqual(oResult, Utils.getEmptyFlexDataResponse(), "the default response was returned");
+				assert.deepEqual(oResult, undefined, "no data was returned");
 				if (oLogSpy.callCount !== 1) {
 					assert.equal(oLogWarning.callCount, 1, "an error or warning was logged");
 				}

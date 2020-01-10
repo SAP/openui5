@@ -598,4 +598,4 @@ sap.ui.define([
 	};
 
 	return CodeEditor;
-}, /* bExport= */true);
+});

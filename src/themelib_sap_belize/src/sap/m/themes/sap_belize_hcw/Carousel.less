@@ -3,14 +3,13 @@
 /* Belize High Contrast White theme  */
 /* ================================= */
 
-/* Carousel controls: Bulleted */
-.sapMCrslBulleted > span {
-	border: 1px solid @sapUiContentForegroundBorderColor;
-}
+@_sap_m_Carousel_BulletInactiveBackground: none;
+@_sap_m_Carousel_BulletInactiveBorderColor: @sapUiContentForegroundBorderColor;
 
-.sapMCrslBulleted > span.sapMCrslActive {
-	border: none;
-}
+@_sap_m_Carousel_BulletActiveBorder: @sapUiContentForegroundBorderColor;
+
+@_sap_m_Carousel_BulletInactiveWidth: 0.5rem;
+@_sap_m_Carousel_BulletInactiveMargin: 0 0.25rem;
 
 /* Carousel controls: HUD */
 .sapMCrsl {

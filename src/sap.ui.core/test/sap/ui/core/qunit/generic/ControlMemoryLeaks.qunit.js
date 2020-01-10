@@ -97,7 +97,7 @@ sap.ui.define([
 
 	// checks whether the given property should not be set for this test
 	var shouldIgnoreProperty = function(sControlName, sPropertyName) {
-		if (sControlName === "sap.m.PlanningCalendar" && (sPropertyName === "viewKey" || sPropertyName === "builtInViews")) { // control fails when key is set where nothing is registered
+		if ((sControlName === "sap.m.PlanningCalendar" || sControlName === "sap.f.PlanningCalendarInCard") && (sPropertyName === "viewKey" || sPropertyName === "builtInViews")) { // control fails when key is set where nothing is registered
 			return true;
 		}
 

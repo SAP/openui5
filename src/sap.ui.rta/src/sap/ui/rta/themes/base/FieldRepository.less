@@ -81,3 +81,13 @@
 .sapUIRtaFieldRepositoryDialog .sapUIRtaBusinessContextContainer > div {
 	padding-left: 10px;
 }
+
+html.sap-desktop .sapUIRtaFieldRepositoryDialog .sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
+	outline: none;
+}
+
+// Special handling for IE Browsers
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUIRtaFieldRepositoryDialog .sapMBtn {
+	padding-right: 1px;
+	padding-left: 1px;
+}

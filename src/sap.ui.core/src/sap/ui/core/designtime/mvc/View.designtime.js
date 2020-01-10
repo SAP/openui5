@@ -11,4 +11,4 @@ sap.ui.define([],
 		controllerExtensionTemplate : "sap/ui/core/designtime/mvc/ControllerExtensionTemplate"
 	};
 
-}, /* bExport= */ false);
+});

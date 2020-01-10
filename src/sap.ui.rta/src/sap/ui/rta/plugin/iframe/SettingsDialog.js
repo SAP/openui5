@@ -2,21 +2,26 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/ValueState",
+	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/plugin/iframe/SettingsDialogController"
 ], function (
+	Log,
 	ManagedObject,
 	Fragment,
-	ValueState,
+	coreLibrary,
 	JSONModel,
 	RtaUtils,
 	SettingsDialogController
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	var _oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	var _mText = {
@@ -130,7 +135,9 @@ sap.ui.define([
 			this._oDialog.addStyleClass(RtaUtils.getRtaStyleClassName());
 			this._oDialog.setModel(this._oJSONModel);
 			this._openDialog();
-		}.bind(this));
+		}.bind(this)).catch(function (oError) {
+			Log.error("Error loading fragment sap.ui.rta.plugin.iframe.SettingsDialog: ", oError);
+		});
 	};
 
 	/**
@@ -154,4 +161,4 @@ sap.ui.define([
 	};
 
 	return SettingsDialog;
-}, /* bExport= */ false);
+});

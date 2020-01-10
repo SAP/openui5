@@ -903,4 +903,4 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 		}
 
 		return LRUPersistentCache;
-	}, /* bExport= */false);
+	});

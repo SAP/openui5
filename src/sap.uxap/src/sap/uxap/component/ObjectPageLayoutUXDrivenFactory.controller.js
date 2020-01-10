@@ -125,4 +125,4 @@ sap.ui.define([
 			return fnNameSpace;
 		}
 	});
-}, /* bExport= */ true);
+});

@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/Log"
@@ -25,7 +24,6 @@ sap.ui.define([
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	FlexCustomData,
-	LrepConnector,
 	jQuery,
 	sinon,
 	Log
@@ -65,7 +63,7 @@ sap.ui.define([
 				elementId: "selector",
 				elementType: "sap.ui.core.Control",
 				appComponent: {
-					id: "appComponent"
+					getId: function() {return "appComponent";}
 				}
 			};
 
@@ -128,7 +126,7 @@ sap.ui.define([
 			mockDescriptorController(mPropertyBag.selector, { saveAll : fnDescriptorStub });
 
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges")
-				.withArgs(Object.assign({selector: mPropertyBag.selector, invalidateCache: true}))
+				.withArgs(Object.assign({selector: mPropertyBag.selector, invalidateCache: true, componentId: "appComponent"}))
 				.resolves(sReturnValue);
 
 			return PersistenceWriteAPI.save(mPropertyBag)
@@ -137,7 +135,30 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update an app variant in CUSTOMER_BASE layer", function(assert) {
+		QUnit.test("when save is called for a draft", function(assert) {
+			var mPropertyBag = {};
+			mPropertyBag.layer = "CUSTOMER";
+			mPropertyBag.selector = this.vSelector;
+			mPropertyBag.draft = true;
+
+			var fnFlexStub = getMethodStub([mPropertyBag.skipUpdateCache], Promise.resolve());
+			var fnDescriptorStub = getMethodStub([mPropertyBag.skipUpdateCache], Promise.resolve());
+
+			mockFlexController(mPropertyBag.selector, { saveAll : fnFlexStub });
+			mockDescriptorController(mPropertyBag.selector, { saveAll : fnDescriptorStub });
+
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges")
+				.withArgs(Object.assign({selector: mPropertyBag.selector, invalidateCache: true, componentId: "appComponent"}))
+				.resolves(sReturnValue);
+
+			return PersistenceWriteAPI.save(mPropertyBag)
+				.then(function() {
+					var aFlexArgs = fnFlexStub.getCall(0).args;
+					assert.equal(aFlexArgs[1], true, "then the draft flag was passed to the flex save operation");
+				});
+		});
+
+		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update a published app variant in CUSTOMER_BASE layer", function(assert) {
 			var mPropertyBag = {
 				layer: "CUSTOMER_BASE"
 			};
@@ -169,21 +190,31 @@ sap.ui.define([
 				}
 			};
 
+			var oTransportResponse = {
+				response: {
+					errorCode: "",
+					localonly: false,
+					transports: []
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(sap.ui.fl.LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
 			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
 
 			return PersistenceWriteAPI.save(mPropertyBag)
 				.then(function() {
+					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "PUT"), "then the parameters are correct");
 				});
 		});
 
-		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update an app variant in VENDOR layer", function(assert) {
+		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update a local app variant in CUSTOMER_BASE layer", function(assert) {
 			var mPropertyBag = {
-				layer: "VENDOR",
-				bIsForSapDelivery: true
+				layer: "CUSTOMER_BASE"
 			};
 			mPropertyBag.selector = {
 				appId: "customer.reference.app.id"
@@ -213,14 +244,25 @@ sap.ui.define([
 				}
 			};
 
-			var fnOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves();
-			fnOldConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnOldConnectorCall.onSecondCall().resolves(); // Delete call to backend
+			var oTransportResponse = {
+				response: {
+					errorCode: "",
+					localonly: true,
+					transports: []
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(sap.ui.fl.LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
 
 			return PersistenceWriteAPI.save(mPropertyBag)
 				.then(function() {
-					assert.ok(fnOldConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnOldConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "PUT"), "then the parameters are correct");
+					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "PUT"), "then the parameters are correct");
 				});
 		});
 

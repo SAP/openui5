@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/Cache",
+	"sap/base/util/UriParameters",
 	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
@@ -13,7 +13,7 @@ function (
 	Applier,
 	AddLibrary,
 	FlexState,
-	Cache,
+	UriParameters,
 	Storage,
 	jQuery,
 	sinon
@@ -25,6 +25,11 @@ function (
 	QUnit.module("applyChange", {
 		beforeEach: function (assert) {
 			var done = assert.async();
+			this.oConfig = {
+				componentData: {},
+				asyncHints: {},
+				id: "componentId"
+			};
 
 			jQuery.getJSON("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
 				.done(function(oTestApplierManifestResponse) {
@@ -33,7 +38,6 @@ function (
 				}.bind(this));
 		},
 		afterEach: function () {
-			Cache.clearEntries();
 			FlexState.clearState();
 			sandbox.restore();
 		}
@@ -55,14 +59,15 @@ function (
 				}
 			}];
 
-			var fnGetChangesFillingCacheSpy = sandbox.spy(Cache, "getChangesFillingCache");
 			var fnGetAppDescriptorChangesSpy = sandbox.spy(FlexState, "getAppDescriptorChanges");
 			var fnApplyChangeSpy = sandbox.spy(AddLibrary, "applyChange");
+			sandbox.stub(UriParameters.prototype, "get")
+				.withArgs("sap-ui-xx-appdescriptor-merger")
+				.returns("true");
 
 			sandbox.stub(Storage, "loadFlexData").resolves({ appDescriptorChanges: aChanges });
 
-			return Applier.preprocessManifest(this.oManifest).then(function(oNewManifest) {
-				assert.equal(fnGetChangesFillingCacheSpy.callCount, 1, "getchangesFillingCache is called once");
+			return Applier.preprocessManifest(this.oManifest, this.oConfig).then(function(oNewManifest) {
 				assert.equal(fnGetAppDescriptorChangesSpy.callCount, 1, "FlexState.getAppDescriptorChanges is called once");
 				assert.equal(fnApplyChangeSpy.callCount, 1, "AddLibrary.applyChange is called once");
 
@@ -121,14 +126,15 @@ function (
 				}
 			];
 
-			var fnGetChangesFillingCacheSpy = sandbox.spy(Cache, "getChangesFillingCache");
 			var fnGetAppDescriptorChangesSpy = sandbox.spy(FlexState, "getAppDescriptorChanges");
 			var fnApplyChangeSpy = sandbox.spy(AddLibrary, "applyChange");
+			sandbox.stub(UriParameters.prototype, "get")
+				.withArgs("sap-ui-xx-appdescriptor-merger")
+				.returns("true");
 
 			sandbox.stub(Storage, "loadFlexData").resolves({ appDescriptorChanges: aChanges });
 
-			return Applier.preprocessManifest(this.oManifest).then(function(oNewManifest) {
-				assert.equal(fnGetChangesFillingCacheSpy.callCount, 1, "getchangesFillingCache is called once");
+			return Applier.preprocessManifest(this.oManifest, this.oConfig).then(function(oNewManifest) {
 				assert.equal(fnGetAppDescriptorChangesSpy.callCount, 1, "FlexState.getAppDescriptorChanges is called once");
 				assert.equal(fnApplyChangeSpy.callCount, 3, "AddLibrary.applyChange is called three times");
 
@@ -178,14 +184,15 @@ function (
 				}
 			];
 
-			var fnGetChangesFillingCacheSpy = sandbox.spy(Cache, "getChangesFillingCache");
 			var fnGetAppDescriptorChangesSpy = sandbox.spy(FlexState, "getAppDescriptorChanges");
 			var fnApplyChangeSpy = sandbox.spy(AddLibrary, "applyChange");
 
 			sandbox.stub(Storage, "loadFlexData").resolves({ appDescriptorChanges: aChanges });
+			sandbox.stub(UriParameters.prototype, "get")
+				.withArgs("sap-ui-xx-appdescriptor-merger")
+				.returns("true");
 
-			return Applier.preprocessManifest(this.oManifest).then(function(oNewManifest) {
-				assert.equal(fnGetChangesFillingCacheSpy.callCount, 1, "getchangesFillingCache is called once");
+			return Applier.preprocessManifest(this.oManifest, this.oConfig).then(function(oNewManifest) {
 				assert.equal(fnGetAppDescriptorChangesSpy.callCount, 1, "FlexState.getAppDescriptorChanges is called once");
 				assert.equal(fnApplyChangeSpy.callCount, 1, "AddLibrary.applyChange is called once");
 
@@ -194,6 +201,23 @@ function (
 				assert.equal(oNewLib.minVersion, oExpectedNewLib.minVersion, "minVersion is correct");
 				assert.equal(oNewLib.lazy, oExpectedNewLib.lazy, "lazy is correct");
 			});
+		});
+
+		QUnit.test("when calling 'preprocessManifest' without uri parameter 'appdescriptor-merger'", function (assert) {
+			var fnGetAppDescriptorChangesSpy = sandbox.spy(FlexState, "getAppDescriptorChanges");
+			var fnApplyChangeSpy = sandbox.spy(AddLibrary, "applyChange");
+
+			var fnUriParamtersGetStub = sandbox.stub(UriParameters.prototype, "get")
+				.withArgs("sap-ui-xx-appdescriptor-merger")
+				.returns(undefined);
+
+			return Applier.preprocessManifest(this.oManifest, this.oConfig).then(function(oNewManifest) {
+				assert.equal(fnUriParamtersGetStub.callCount, 1, "UriParamters.get is called once");
+				assert.equal(fnGetAppDescriptorChangesSpy.callCount, 0, "FlexState.getAppDescriptorChanges is not called");
+				assert.equal(fnApplyChangeSpy.callCount, 0, "AddLibrary.applyChange is not called");
+
+				assert.deepEqual(oNewManifest, this.oManifest, "manifest.json has not changed");
+			}.bind(this));
 		});
 	});
 

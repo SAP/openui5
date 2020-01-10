@@ -14,7 +14,8 @@
 		showMarkers="false"
 		markFlagged="true"
 		markFavorite="true"
-		backgroundDesign="Translucent">
+		backgroundDesign="Translucent"
+		class="sapUiResponsivePadding--header" >
 		<ObjectAttribute
 			title="Manufacturer"
 			text="{SupplierName}"/>

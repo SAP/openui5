@@ -45,7 +45,7 @@ var mSeverityMap = {
 /**
  * A map containing the relevant request-URL and (if available) the request and response objects
  *
- * @typedef {map} ODataMessageParser~RequestInfo
+ * @typedef {object} ODataMessageParser~RequestInfo
  * @property {string} url - The URL of the request
  * @property {object} request - The request object
  * @property {object} response - The response object
@@ -54,9 +54,9 @@ var mSeverityMap = {
 /**
  * A map containing a parsed URL
  *
- * @typedef {map} ODataMessageParser~UrlInfo
+ * @typedef {object} ODataMessageParser~UrlInfo
  * @property {string} url - The URL, stripped of query and hash
- * @property {map} parameters - A map of the query parameters
+ * @property {Object<string,string>} parameters - A map of the query parameters
  * @property {string} hash - The hash value of the URL
  */
 
@@ -129,8 +129,8 @@ ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
  *
  * @param {object} oResponse - The response from the server containing body and headers
  * @param {object} oRequest - The original request that lead to this response
- * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
- * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
+ * @param {Object<string,any>} mGetEntities - A map containing the entities requested from the back-end as keys
+ * @param {Object<string,any>} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @public
  */
 ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities, bMessageScopeSupported) {

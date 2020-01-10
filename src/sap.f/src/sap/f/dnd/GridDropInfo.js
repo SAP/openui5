@@ -266,4 +266,4 @@ sap.ui.define([
 
 	return GridDropInfo;
 
-}, /* bExport= */ true);
+});

@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/fl/EventHistory"
+	"sap/ui/fl/EventHistory",
+	"sap/ui/fl/apply/_internal/changes/descriptor/Applier"
 ], function(
 	FlexControllerFactory,
 	Component,
@@ -18,7 +19,8 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	MvcController,
 	XMLView,
-	EventHistory
+	EventHistory,
+	Applier
 ) {
 	"use strict";
 
@@ -65,7 +67,7 @@ sap.ui.define([
 
 	function _registerDescriptorChangeHandler() {
 		//TODO: enable Applier.preprocessManifest after FlexState is updated
-		Component._fnPreprocessManifest = null;
+		Component._fnPreprocessManifest = Applier.preprocessManifest;
 	}
 
 	/**

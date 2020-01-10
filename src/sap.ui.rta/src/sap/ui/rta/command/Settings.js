@@ -53,4 +53,4 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	};
 
 	return Settings;
-}, /* bExport= */true);
+});

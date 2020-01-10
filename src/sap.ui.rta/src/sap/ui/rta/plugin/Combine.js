@@ -223,4 +223,4 @@ sap.ui.define([
 	};
 
 	return Combine;
-}, /* bExport= */true);
+});

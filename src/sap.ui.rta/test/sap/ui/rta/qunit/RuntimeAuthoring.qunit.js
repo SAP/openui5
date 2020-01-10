@@ -264,6 +264,7 @@ function(
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
 			sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
 			sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
+			sandbox.stub(RtaAppVariantFeature, "isManifestSupported").resolves(false);
 
 			return this.oRta.start()
 			.then(function() {
@@ -853,7 +854,8 @@ function(
 					layer: "CUSTOMER"
 				}
 			});
-			sandbox.stub(BusyIndicator, "show");
+			this.oBusyIndicatorShowStub = sandbox.stub(BusyIndicator, "show");
+			this.oBusyIndicatorHideStub = sandbox.stub(BusyIndicator, "hide");
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
 			this.oDeleteChangesStub = sandbox.stub(this.oRta, "_deleteChanges");
 			this.oEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
@@ -1049,7 +1051,7 @@ function(
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully", function(assert) {
-			assert.expect(2);
+			assert.expect(4);
 			this.oDeleteChangesStub.restore();
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
@@ -1061,6 +1063,8 @@ function(
 			});
 
 			return this.oRta._deleteChanges().then(function() {
+				assert.equal(this.oBusyIndicatorShowStub.callCount, 1, "the BusyIndicator was shown");
+				assert.equal(this.oBusyIndicatorHideStub.callCount, 1, "the BusyIndicator was hidden");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
 			}.bind(this));
 		});
@@ -1093,6 +1097,8 @@ function(
 			});
 
 			return this.oRta._deleteChanges().then(function() {
+				assert.equal(this.oBusyIndicatorShowStub.callCount, 1, "the BusyIndicator was shown");
+				assert.equal(this.oBusyIndicatorHideStub.callCount, 1, "the BusyIndicator was hidden");
 				assert.equal(this.oReloadPageStub.callCount, 0, "then page reload is not triggered");
 			}.bind(this));
 		});

@@ -1168,8 +1168,8 @@ code {
 }
 
 /* remove white shadow for header bars */
-.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX,
-.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMHeader-CTX {
+.sapUiDemokit .sapMSplitContainerMaster .sapUiDocumentationMasterPage .sapMIBar.sapMSubHeader-CTX,
+.sapUiDemokit .sapMSplitContainerMaster .sapUiDocumentationMasterPage .sapMIBar.sapMHeader-CTX {
 	box-shadow: none;
 }
 
@@ -1275,7 +1275,7 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 	min-height: 7rem;
 }
 
-html.sap-phone .sapMITHOverflowList.tabHeaderNoLeftMargin .sapMITBScrollContainer {
+html.sap-phone .sapMITHOverflowList.tabHeaderNoLeftMargin .sapMITHScrollContainer {
 	margin-left: 0;
 }
 

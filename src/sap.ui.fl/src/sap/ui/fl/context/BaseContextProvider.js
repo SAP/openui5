@@ -69,4 +69,4 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function(ManagedObject) {
 	};
 
 	return BaseContextProvider;
-}, /* bExport= */true);
+});

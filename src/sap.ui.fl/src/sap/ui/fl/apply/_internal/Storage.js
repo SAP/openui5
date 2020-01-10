@@ -3,15 +3,28 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/apply/_internal/storageResultDisassemble"
 ], function(
-	ApplyUtils,
+	StorageUtils,
+	FlUtils,
 	StorageResultMerger,
 	storageResultDisassemble
 ) {
 	"use strict";
+
+	function _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, sDraftLayer) {
+		if (oConnectorConfig.layers && (oConnectorConfig.layers[0] === "ALL" || oConnectorConfig.layers.indexOf(sDraftLayer) !== -1)) {
+			oConnectorSpecificPropertyBag.draftLayer = sDraftLayer;
+		} else {
+			// removes an existing draftLayer entry copied from the original mPropertyBag
+			delete oConnectorSpecificPropertyBag.draftLayer;
+		}
+
+		return oConnectorSpecificPropertyBag;
+	}
 
 	/**
 	 * Abstraction providing an API to handle communication with persistence like back ends, local & session storage or work spaces.
@@ -23,17 +36,28 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 
-	function loadFlexDataFromConnectors (mPropertyBag, aConnectors) {
+	function _loadFlexDataFromConnectors(mPropertyBag, aConnectors) {
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
-			var oConnectorSpecificPropertyBag = Object.assign(mPropertyBag, {url: oConnectorConfig.url, path: oConnectorConfig.url});
+			var oConnectorSpecificPropertyBag = Object.assign({}, mPropertyBag, {
+				url: oConnectorConfig.url,
+				path: oConnectorConfig.url
+			});
+
+			var sDraftLayer = mPropertyBag.draftLayer || FlUtils.getUrlParameter("sap-ui-fl-draft") || "";
+			oConnectorSpecificPropertyBag = _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, sDraftLayer);
+
 			return oConnectorConfig.applyConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
-				.catch(ApplyUtils.logAndResolveDefault.bind(undefined, ApplyUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));
+				.then(function (oResponse) {
+					// ensure an object with the corresponding propeties
+					return oResponse || StorageUtils.getEmptyFlexDataResponse();
+				})
+				.catch(StorageUtils.logAndResolveDefault.bind(undefined, StorageUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));
 		});
 
 		return Promise.all(aConnectorPromises);
 	}
 
-	function flattenResponses(aResponses) {
+	function _flattenResponses(aResponses) {
 		var aFlattenedResponses = [];
 
 		aResponses.forEach(function (oResponse) {
@@ -47,48 +71,18 @@ sap.ui.define([
 	}
 
 
-	function flattenInnerResponses(mResponseObject) {
-		mResponseObject.responses = flattenResponses(mResponseObject.responses);
+	function _flattenInnerResponses(mResponseObject) {
+		mResponseObject.responses = _flattenResponses(mResponseObject.responses);
 		return mResponseObject;
 	}
 
-	function containsVariantData(aResponses) {
-		return aResponses.some(function(oResponse) {
-			return oResponse.variants && oResponse.variants.length > 0
-				|| oResponse.variantChanges && oResponse.variantChanges.length > 0
-				|| oResponse.variantDependentControlChanges && oResponse.variantDependentControlChanges.length > 0
-				|| oResponse.variantManagementChanges && oResponse.variantManagementChanges.length > 0;
+	function _disassembleVariantSectionsIfNecessary(aResponses) {
+		var aDisassembledResponses = aResponses.map(function (oResponse) {
+			return oResponse.variantSection ? storageResultDisassemble(oResponse) : oResponse;
 		});
-	}
-
-	function countVariantProvidingResponses(aResponses) {
-		var iVariantProvidingResponses = 0;
-		aResponses.forEach(function(oResponse) {
-			if (oResponse.variantSection && Object.keys(oResponse.variantSection).length > 0) {
-				iVariantProvidingResponses++;
-			}
-		});
-
-		return iVariantProvidingResponses;
-	}
-
-	function disassembleVariantSectionsIfNecessary(aResponses) {
-		var aDisassembledResponses = [];
-		var bResponseContainingFilledVariantPropertyExists = containsVariantData(aResponses);
-		var nNumberOfVariantProvidingResponses = countVariantProvidingResponses(aResponses);
-		var bVariantSectionSufficient = !bResponseContainingFilledVariantPropertyExists && nNumberOfVariantProvidingResponses <= 1;
-
-		if (bVariantSectionSufficient) {
-			aDisassembledResponses = aResponses;
-		} else {
-			aDisassembledResponses = aResponses.map(function (oResponse) {
-				return oResponse.variantSection ? storageResultDisassemble(oResponse) : oResponse;
-			});
-		}
 
 		return {
-			responses: aDisassembledResponses,
-			variantSectionSufficient: bVariantSectionSufficient
+			responses: aDisassembledResponses
 		};
 	}
 
@@ -102,6 +96,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.componentName] componentName of the application which may differ from the reference in case of an app variant
 	 * @param {string} [mPropertyBag.appVersion] version of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
+	 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be loaded
 	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
 	 */
 	Storage.loadFlexData = function (mPropertyBag) {
@@ -109,11 +104,11 @@ sap.ui.define([
 			return Promise.reject("No reference was provided");
 		}
 
-		return ApplyUtils.getApplyConnectors()
-			.then(loadFlexDataFromConnectors.bind(this, mPropertyBag))
-			.then(flattenResponses)
-			.then(disassembleVariantSectionsIfNecessary)
-			.then(flattenInnerResponses)
+		return StorageUtils.getApplyConnectors()
+			.then(_loadFlexDataFromConnectors.bind(this, mPropertyBag))
+			.then(_flattenResponses)
+			.then(_disassembleVariantSectionsIfNecessary)
+			.then(_flattenInnerResponses)
 			.then(StorageResultMerger.merge);
 	};
 

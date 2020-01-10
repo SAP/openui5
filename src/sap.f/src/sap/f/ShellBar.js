@@ -690,4 +690,4 @@ function(
 
 	return ShellBar;
 
-}, /* bExport= */ true);
+});

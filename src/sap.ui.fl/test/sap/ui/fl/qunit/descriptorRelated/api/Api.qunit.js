@@ -5,27 +5,30 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
-	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
 	DescriptorInlineChangeFactory,
 	DescriptorVariantFactory,
 	DescriptorChangeFactory,
-	LrepConnector,
+	WriteUtils,
 	CompatibilityConnector,
 	Settings,
+	Cache,
 	sinon
 ) {
 	"use strict";
 
+	var sandbox = sinon.sandbox.create();
+
 	QUnit.module("DescriptorInlineChangeFactory", {
 		beforeEach : function() {
 			//define sandboxes and stubs explicitly for each modules
-			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
 					isAtoAvailable:false,
@@ -35,12 +38,11 @@ sap.ui.define([
 			);
 		},
 		afterEach : function() {
-			this._oSandbox.restore();
-			delete this._oSandbox;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("createForExistingVariant", function(assert) {
-			var oServer = this._oSandbox.useFakeServer();
+			var oServer = sandbox.useFakeServer();
 			oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.string",
 								[200, { "Content-Type": "text/plain" }, //Simulate an server with incorrect content type response
 								'{ "id": "id.string", "reference":"base.id", "content": [] }']);
@@ -1652,14 +1654,13 @@ sap.ui.define([
 
 	QUnit.module("DescriptorVariant", {
 		beforeEach: function() {
-			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
+			sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference"
 				})
 			});
-			this._oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
 					isAtoAvailable:false,
@@ -1669,8 +1670,7 @@ sap.ui.define([
 			);
 		},
 		afterEach: function() {
-			this._oSandbox.restore();
-			delete this._oSandbox;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("addDescriptorInlineChange", function(assert) {
@@ -1764,14 +1764,13 @@ sap.ui.define([
 
 	QUnit.module("DescriptorVariantFactory", {
 		beforeEach: function() {
-			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
+			sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference"
 				})
 			});
-			this._oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
 					isAtoAvailable:false,
@@ -1781,8 +1780,7 @@ sap.ui.define([
 			);
 		},
 		afterEach: function() {
-			this._oSandbox.restore();
-			delete this._oSandbox;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("createNew", function(assert) {
@@ -1937,10 +1935,10 @@ sap.ui.define([
 			this.sCreateResponse = JSON.stringify({
 				reference: "a.reference"
 			});
-			this._oSandbox = sinon.sandbox.create();
 			// required since we store changes via changepersistence --> CompatibilityConnector
-			this._oSandbox.stub(CompatibilityConnector, "create").resolves(this.sCreateResponse);
-			this._oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Cache, "addChange");
+			sandbox.stub(CompatibilityConnector, "create").resolves(this.sCreateResponse);
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
 					isAtoAvailable:false,
@@ -1950,8 +1948,7 @@ sap.ui.define([
 			);
 		},
 		afterEach: function() {
-			this._oSandbox.restore();
-			delete this._oSandbox;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("setPackage - default", function(assert) {
@@ -2133,8 +2130,7 @@ sap.ui.define([
 
 	QUnit.module("DescriptorChangeFactory", {
 		beforeEach: function() {
-			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
 					isAtoAvailable:false,
@@ -2144,8 +2140,7 @@ sap.ui.define([
 			);
 		},
 		afterEach: function() {
-			this._oSandbox.restore();
-			delete this._oSandbox;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("createNew", function(assert) {
@@ -2172,15 +2167,14 @@ sap.ui.define([
 
 	QUnit.module("DescriptorVariantFactory - ATO false", {
 		beforeEach: function() {
-			this._oSandbox = sinon.sandbox.create();
-			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
+			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER"
 				})
 			});
-			this._oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
 					isAtoAvailable:false,
@@ -2190,8 +2184,7 @@ sap.ui.define([
 			);
 		},
 		afterEach: function() {
-			this._oSandbox.restore();
-			delete this._oSandbox;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("new - submit", function(assert) {
@@ -2217,7 +2210,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit().then(function(oResponse) {
 					assert.notEqual(oResponse, null);
 					assert.equal(that._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/");
-					assert.equal(that._fStubSend.getCall(0).args[2].referenceVersion, "1.1");
+					assert.equal(JSON.parse(that._fStubSend.getCall(0).args[2].payload).referenceVersion, "1.1");
 				});
 			});
 		});
@@ -2248,8 +2241,7 @@ sap.ui.define([
 
 	QUnit.module("DescriptorVariantFactory - ATO true and app variant not yet published", {
 		beforeEach: function() {
-			this._oSandbox = sinon.sandbox.create();
-			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send");
+			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest");
 			this._fStubSend.resolves({
 				response: JSON.stringify({
 					id : "a.id",
@@ -2258,7 +2250,7 @@ sap.ui.define([
 					packageName: '$TMP'
 				})
 			});
-			this._oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
 					isAtoAvailable:false,
@@ -2268,8 +2260,7 @@ sap.ui.define([
 			);
 		},
 		afterEach: function() {
-			this._oSandbox.restore();
-			delete this._oSandbox;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("new - submit", function(assert) {
@@ -2326,8 +2317,7 @@ sap.ui.define([
 
 	QUnit.module("DescriptorVariantFactory - ATO true and app variant already published", {
 		beforeEach: function() {
-			this._oSandbox = sinon.sandbox.create();
-			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send");
+			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest");
 			this._fStubSend.resolves({
 				response: JSON.stringify({
 					id : "a.id",
@@ -2336,7 +2326,7 @@ sap.ui.define([
 					packageName: "YY1_DEFAULT_123"
 				})
 			});
-			this._oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
 					isAtoAvailable:false,
@@ -2346,8 +2336,7 @@ sap.ui.define([
 			);
 		},
 		afterEach: function() {
-			this._oSandbox.restore();
-			delete this._oSandbox;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("new - submit", function(assert) {
@@ -2404,14 +2393,13 @@ sap.ui.define([
 
 	QUnit.module("DescriptorChangeFactory - ATO false", {
 		beforeEach: function() {
-			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
+			sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference"
 				})
 			});
-			this._oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
 					isAtoAvailable:false,
@@ -2421,8 +2409,7 @@ sap.ui.define([
 			);
 		},
 		afterEach: function() {
-			this._oSandbox.restore();
-			delete this._oSandbox;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("create new", function(assert) {
@@ -2438,14 +2425,13 @@ sap.ui.define([
 
 	QUnit.module("DescriptorChangeFactory - ATO true", {
 		beforeEach: function() {
-			this._oSandbox = sinon.sandbox.create();
-			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
+			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference"
 				})
 			});
-			this._oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
 					isAtoAvailable:false,
@@ -2455,8 +2441,7 @@ sap.ui.define([
 			);
 		},
 		afterEach: function() {
-			this._oSandbox.restore();
-			delete this._oSandbox;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("create new - CUSTOMER layer", function(assert) {

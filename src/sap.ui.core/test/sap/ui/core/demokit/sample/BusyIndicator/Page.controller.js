@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/Busyindicator', 'sap/ui/core/mvc/Controller'],
+sap.ui.define(['sap/ui/core/BusyIndicator', 'sap/ui/core/mvc/Controller'],
 	function(BusyIndicator, Controller) {
 	"use strict";
 

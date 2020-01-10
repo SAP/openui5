@@ -43,6 +43,19 @@ sap.ui.define([
 						assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
 					});
 			});
+
+			QUnit.test("when isDraftEnabled(sLayer) is called in a " +
+					(bValueToBeSet ? "draft enabled" : "non draft enabled") + " layer", function (assert) {
+				sandbox.stub(Settings, "getInstance").resolves({
+					isDraftEnabled: function () {
+						return bValueToBeSet;
+					}
+				});
+				return FeaturesAPI.isDraftEnabled("CUSTOMER")
+					.then(function (bReturnValue) {
+						assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
+					});
+			});
 		});
 	});
 });

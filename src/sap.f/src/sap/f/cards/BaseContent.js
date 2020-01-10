@@ -251,7 +251,7 @@ sap.ui.define([
 			oAggregation = oControl.getAggregation(sAggregation);
 
 		if (oBindingContext) {
-			oBindingInfo.path = oBindingContext.getPath();
+			oBindingInfo.path = oBindingInfo.path || oBindingContext.getPath();
 			oControl.bindAggregation(sAggregation, oBindingInfo);
 
 			if (this.getModel("parameters") && oAggregation) {
@@ -348,6 +348,9 @@ sap.ui.define([
 					case "list":
 						sap.ui.require(["sap/f/cards/ListContent"], fnCreateContentInstance);
 						break;
+					case "calendar":
+						sap.ui.require(["sap/f/cards/CalendarContent"], fnCreateContentInstance);
+						break;
 					case "table":
 						sap.ui.require(["sap/f/cards/TableContent"], fnCreateContentInstance);
 						break;
@@ -426,14 +429,14 @@ sap.ui.define([
 	BaseContent._getMinListHeight = function (oContent) {
 		var iCount = oContent.maxItems || 0,
 			oTemplate = oContent.item,
-			iItemHeight = 3;
+			iItemHeight = 3; // list item height in "rem"
 
 		if (!oTemplate) {
 			return 0;
 		}
 
 		if (oTemplate.icon || oTemplate.description) {
-			iItemHeight = 4;
+			iItemHeight = 4; // list item height with icon in "rem"
 		}
 
 		return iCount * iItemHeight;
@@ -441,15 +444,17 @@ sap.ui.define([
 
 	BaseContent._getMinTableHeight = function (oContent) {
 		var iCount = oContent.maxItems || 0,
-			iRowHeight = 3,
-			iTableHeaderHeight = 3;
+			iRowHeight = 2, // table row height in "rem" for compact mode
+			iTableHeaderHeight = 2; // table header height in "rem" for compact mode
+
+		// if higher accuracy is needed, then a detection for is it cozy or compact should be added
 
 		return iCount * iRowHeight + iTableHeaderHeight;
 	};
 
 	BaseContent._getMinTimelineHeight = function (oContent) {
 		var iCount = oContent.maxItems || 0,
-			iItemHeight = 6;
+			iItemHeight = 6; // timeline item height in "rem"
 
 		return iCount * iItemHeight;
 	};

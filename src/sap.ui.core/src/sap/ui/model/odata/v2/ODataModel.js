@@ -97,7 +97,7 @@ sap.ui.define([
 	 *            If set to <code>true</code>, request payloads will be JSON, XML for <code>false</code>
 	 * @param {string} [mParameters.user] User for the service
 	 * @param {string} [mParameters.password] Password for service
-	 * @param {map} [mParameters.headers]
+	 * @param {Object<string,string>} [mParameters.headers]
 	 *            Map of custom headers (name/value pairs) like {"myHeader":"myHeaderValue",...}
 	 * @param {boolean} [mParameters.tokenHandling=true] Enable/disable XCSRF-Token handling
 	 * @param {boolean} [mParameters.withCredentials]
@@ -115,9 +115,9 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.loadAnnotationsJoined]
 	 *            Whether the <code>metadataLoaded</code> event will be fired only after all annotations have
 	 *            been loaded as well
-	 * @param {map} [mParameters.serviceUrlParams]
+	 * @param {Object<string,string>} [mParameters.serviceUrlParams]
 	 *            Map of URL parameters (name/value pairs) - these parameters will be attached to all requests, except for the <code>$metadata</code> request
-	 * @param {map} [mParameters.metadataUrlParams]
+	 * @param {Object<string,string>} [mParameters.metadataUrlParams]
 	 *            Map of URL parameters for metadata requests - only attached to a <code>$metadata</code> request
 	 * @param {sap.ui.model.BindingMode} [mParameters.defaultBindingMode=OneWay]
 	 *            Sets the default binding mode for the model
@@ -584,7 +584,7 @@ sap.ui.define([
 	 * @param {string} oEvent.getParameters.ID The request ID
 	 * @param {string} oEvent.getParameters.url The URL which is sent to the backend
 	 * @param {string} oEvent.getParameters.method The HTTP method
-	 * @param {map} oEvent.getParameters.headers The request headers
+	 * @param {Object<string,string>} oEvent.getParameters.headers The request headers
 	 * @param {boolean} oEvent.getParameters.async If the request is synchronous or asynchronous (if available)
 	 * @param {boolean} oEvent.getParameters.success Request was successful or not
 	 * @param {object} oEvent.getParameters.response The response object - empty object if no response
@@ -606,7 +606,7 @@ sap.ui.define([
 	 * @param {string} oEvent.getParameters.ID The request ID
 	 * @param {string} oEvent.getParameters.url The URL which is sent to the backend
 	 * @param {string} oEvent.getParameters.method The HTTP method
-	 * @param {map} oEvent.getParameters.headers The request headers
+	 * @param {Object<string,string>} oEvent.getParameters.headers The request headers
 	 * @param {boolean} oEvent.getParameters.async If the request is synchronous or asynchronous (if available)
 	 *
 	 * @public
@@ -627,7 +627,7 @@ sap.ui.define([
 	 * @param {string} oEvent.getParameters.ID The request ID
 	 * @param {string} oEvent.getParameters.url The URL which is sent to the backend
 	 * @param {string} oEvent.getParameters.method The HTTP method
-	 * @param {map} oEvent.getParameters.headers The request headers
+	 * @param {Object<string,string>} oEvent.getParameters.headers The request headers
 	 * @param {boolean} oEvent.getParameters.success Request was successful or not
 	 * @param {boolean} oEvent.getParameters.async If the request is synchronous or asynchronous (if available)
 	 * @param {object} oEvent.getParameters.response The response object - empty object if no response:
@@ -648,7 +648,7 @@ sap.ui.define([
 	 * @param {string} oEvent.getParameters.ID The request ID
 	 * @param {string} oEvent.getParameters.url The URL which is sent to the backend
 	 * @param {string} oEvent.getParameters.method The HTTP method
-	 * @param {map} oEvent.getParameters.headers The request headers
+	 * @param {Object<string,string>} oEvent.getParameters.headers The request headers
 	 * @param {boolean} oEvent.getParameters.async If the request is synchronous or asynchronous (if available)
 	 * @param {boolean} oEvent.getParameters.success Request was successful or not
 	 * @param {object} oEvent.getParameters.response The response object - empty object if no response
@@ -704,7 +704,7 @@ sap.ui.define([
 	 * @param {string} oParameters.ID The request ID
 	 * @param {string} oParameters.url The URL which is sent to the backend
 	 * @param {string} oParameters.method The HTTP method
-	 * @param {map} oParameters.headers The request headers
+	 * @param {Object<string,string>} oParameters.headers The request headers
 	 * @param {boolean} oParameters.async If the request is synchronous or asynchronous (if available)
 	 * @param {boolean} oParameters.success Request was successful or not
 	 * @param {object} oParameters.response The response object - empty object if no response
@@ -805,7 +805,7 @@ sap.ui.define([
 	 * @param {string} oEvent.getParameters.ID The request ID
 	 * @param {string} oEvent.getParameters.url The URL which is sent to the backend
 	 * @param {string} oEvent.getParameters.method The HTTP method
-	 * @param {map} oEvent.getParameters.headers The request headers
+	 * @param {Object<string,string>} oEvent.getParameters.headers The request headers
 	 * @param {boolean} oEvent.getParameters.success Request was successful or not
 	 * @param {boolean} oEvent.getParameters.async If the request is synchronous or asynchronous (if available)
 	 * @param {array} oEvent.getParameters.requests Array of embedded requests ($batch)
@@ -861,7 +861,7 @@ sap.ui.define([
 	 * @param {string} oParameters.ID The request ID
 	 * @param {string} oParameters.url The URL which is sent to the backend
 	 * @param {string} oParameters.method The HTTP method
-	 * @param {map} oParameters.headers The request headers
+	 * @param {Object<string,string>} oParameters.headers The request headers
 	 * @param {boolean} oParameters.success Request was successful or not
 	 * @param {boolean} oParameters.async If the request is synchronous or asynchronous (if available)
 	 * @param {array} oParameters.requests Array of embedded requests ($batch) - empty array for non batch requests.
@@ -1813,7 +1813,7 @@ sap.ui.define([
 	 * @param {string} sPath Path pointing to the property that should be bound;
 	 *                 either an absolute path or a path relative to a given <code>oContext</code>
 	 * @param {object} [oContext] A context object for the new binding
-	 * @param {map} [mParameters] Map of optional parameters for the binding; the ODataModel (v2) currently supports no additional parameters
+	 * @param {Object<string,any>} [mParameters] Map of optional parameters for the binding; the ODataModel (v2) currently supports no additional parameters
 	 * @returns {sap.ui.model.PropertyBinding} The new property binding
 	 * @public
 	 */
@@ -1829,10 +1829,10 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext] Binding context referring to this model
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] Initial sort order, can be either a sorter or an array of sorters
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filters, can be either a filter or an array of filters
-	 * @param {map} [mParameters] Map which contains additional parameters for the binding
+	 * @param {object} [mParameters] Map which contains additional parameters for the binding
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
-	 * @param {map} [mParameters.custom] Optional map of custom query parameters (name/value pairs); names of custom parameters must not start with <code>$</code>
+	 * @param {Object<string,string>} [mParameters.custom] Optional map of custom query parameters (name/value pairs); names of custom parameters must not start with <code>$</code>
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] Count mode for this binding;
 	 *           if not specified, the default count mode for this model is used
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] Operation mode for this binding;
@@ -1858,7 +1858,7 @@ sap.ui.define([
 	 * @param {string} sPath Binding path, either absolute or relative to a given <code>oContext</code>
 	 * @param {sap.ui.model.Context} [oContext] Binding context referring to this model
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filters, can be either a filter or an array of filters
-	 * @param {map} [mParameters] Map of parameters for the tree binding
+	 * @param {object} [mParameters] Map of parameters for the tree binding
 	 * @param {object} [mParameters.treeAnnotationProperties] This parameter defines the mapping between data properties and
 	 *														the hierarchy used to visualize the tree, if not provided by the services metadata.
 	 *														For correct metadata annotation, please check the "SAP Annotations for OData Version 2.0" Specification.
@@ -1912,11 +1912,11 @@ sap.ui.define([
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 * @param {string} sPath Binding path
 	 * @param {object} [oContext] Binding context
-	 * @param {map} [mParameters] Map which contains additional parameters for the binding
+	 * @param {object} [mParameters] Map which contains additional parameters for the binding
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
 	 * @param {boolean} [mParameters.preliminaryContext] Whether a preliminary Context will be created
-	 * @param {map} [mParameters.custom] Optional map of custom query parameters, names of custom parameters must not start with <code>$</code>.
+	 * @param {Object<string,string>} [mParameters.custom] Optional map of custom query parameters, names of custom parameters must not start with <code>$</code>.
 	 * @param {function} [fnCallBack] Function to be called when context has been created. The parameter of the callback function is the newly created binding context.
 	 * @param {boolean} [bReload] Whether to reload data
 	 * @return {sap.ui.model.Context} The created binding context, only if the data is already available and the binding context could be created synchronously
@@ -2360,7 +2360,7 @@ sap.ui.define([
 	 * @see sap.ui.model.Model.prototype.bindContext
 	 * @param {string} sPath Resolved path
 	 * @param {sap.ui.model.Context} oContext Context object
-	 * @param {map} [mParameters] Map of parameters
+	 * @param {Object<string,any>} [mParameters] Map of parameters
 	 * @returns {sap.ui.model.ContextBinding} The new context binding
 	 * @public
 	 */
@@ -2589,7 +2589,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath Path referencing the object
 	 * @param {object} [oContext] Context the path should be resolved with, in case it is relative
-	 * @param {map} [mParameters] Map of parameters
+	 * @param {object} [mParameters] Map of parameters
 	 * @param {string} [mParameters.select] Comma-separated list of properties/paths to select
 	 * @param {string} [mParameters.expand] Comma-separated list of navigation properties/paths to expand
 	 * @returns {any} The value for the given path/context or <code>undefined</code> if data or entity type could not be found or was incomplete
@@ -4415,7 +4415,7 @@ sap.ui.define([
 	 * 		The path is concatenated to the sServiceUrl which was specified
 	 * 		in the model constructor.
 	 * @param {object} oData Data of the entry that should be updated.
-	 * @param {map} [mParameters] Optional, can contain the following attributes:
+	 * @param {object} [mParameters] Optional, can contain the following attributes:
 	 * @param {object} [mParameters.context] If specified the sPath has to be is relative to the path given with the context.
 	 * @param {function} [mParameters.success] A callback function which is called when the data has been successfully updated.
 	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
@@ -4424,8 +4424,8 @@ sap.ui.define([
 	 * 		Caution: This feature in not officially supported as using asynchronous requests can lead
 	 * 		to data inconsistencies. If you decide to use this feature nevertheless, you have to make
 	 * 		sure that the request is completed before the data is processed any further.
-	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {map} [mParameters.headers] A map of headers for this request
+	 * @param {Object<string,string>} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
+	 * @param {Object<string,string>} [mParameters.headers] A map of headers for this request
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
@@ -4496,7 +4496,7 @@ sap.ui.define([
 	 *		should be created. The path is concatenated to the service URL
 	 *		which was specified in the model constructor.
 	 * @param {object} oData Data of the entry that should be created.
-	 * @param {map} [mParameters] Optional parameter map containing any of the following properties:
+	 * @param {object} [mParameters] Optional parameter map containing any of the following properties:
 	 * @param {object} [mParameters.context] If specified , <code>sPath</code> has to be relative to the path given with the context.
 	 * @param {function} [mParameters.success] A callback function which is called when the data has
 	 *		been successfully retrieved. The handler can have the
@@ -4504,8 +4504,8 @@ sap.ui.define([
 	 *		The <code>response</code> parameter contains information about the response of the request.
 	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
 	 *		The handler can have the parameter <code>oError</code> which contains additional error information.
-	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {map} [mParameters.headers] A map of headers for this request
+	 * @param {Object<string,string>} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
+	 * @param {Object<string,string>} [mParameters.headers] A map of headers for this request
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
@@ -4581,8 +4581,8 @@ sap.ui.define([
 	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.eTag] If specified, the <code>If-Match</code> header will be set to this ETag.
-	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {map} [mParameters.headers] A map of headers for this request
+	 * @param {Object<string,string>} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
+	 * @param {Object<string,string>} [mParameters.headers] A map of headers for this request
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
@@ -4663,14 +4663,14 @@ sap.ui.define([
 	 *
 	 * @param {string} sFunctionName A string containing the name of the function to call. The name is concatenated to the service URL which was
 	 *        specified in the model constructor.
-	 * @param {map} [mParameters] Optional parameter map containing any of the following properties:
+	 * @param {object} [mParameters] Optional parameter map containing any of the following properties:
 	 * @param {string} [mParameters.method='GET'] HTTP method to use for the function call, should match the metadata for the function import
-	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
+	 * @param {Object<string,string>} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {function} [mParameters.success] A callback function which is called when the data has been successfully retrieved. The handler can have
 	 *        the following parameters: <code>oData</code> and <code>response</code>.
 	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
-	 * @param {map} [mParameters.headers] A map of headers for this request
+	 * @param {Object<string,string>} [mParameters.headers] A map of headers for this request
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.eTag] If the function import changes an entity, the ETag for this entity could be passed with this parameter
@@ -4831,10 +4831,10 @@ sap.ui.define([
 	 * @param {string} sPath A string containing the path to the data which should
 	 *		be retrieved. The path is concatenated to the service URL
 	 *		which was specified in the model constructor.
-	 * @param {map} [mParameters] Optional parameter map containing any of the following properties:
+	 * @param {object} [mParameters] Optional parameter map containing any of the following properties:
 	 * @param {object} [mParameters.context] If specified, <code>sPath</code> has to be relative to the path
 	 * 		given with the context.
-	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
+	 * @param {Object<string,string>} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {sap.ui.model.Filter[]} [mParameters.filters] An array of filters to be included in the request URL
 	 * @param {sap.ui.model.Sorter[]} [mParameters.sorters] An array of sorters to be included in the request URL
 	 * @param {function} [mParameters.success] A callback function which is called when the data has
@@ -5622,7 +5622,7 @@ sap.ui.define([
 	/**
 	 * Searches the specified headers map for the specified header name and returns the found header value
 	 * @param {string} sHeader The header
-	 * @param {map} mHeaders The map of headers
+	 * @param {Object<string,string>} mHeaders The map of headers
 	 * @returns {string} The value of the header
 	 */
 	ODataModel.prototype._getHeader = function(sHeader, mHeaders) {
@@ -5678,7 +5678,7 @@ sap.ui.define([
 	 * In contrast to the two related functions {@link #hasPendingChanges} and {@link #resetChanges}, only
 	 * client data changes are supported.
 	 *
-	 * @return {map} the pending changes in a map
+	 * @return {Object<string,object>} the pending changes in a map
 	 * @public
 	 */
 	ODataModel.prototype.getPendingChanges = function() {
@@ -5770,7 +5770,7 @@ sap.ui.define([
 	 * Please note that deep creates (including data defined by navigation properties) are not supported.
 	 *
 	 * @param {string} sPath Name of the path to the EntitySet
-	 * @param {map} mParameters A map of the following parameters:
+	 * @param {object} mParameters A map of the following parameters:
 	 * @param {array|object} [mParameters.properties] An array that specifies a set of properties or the entry
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
@@ -5778,8 +5778,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [mParameters.context] The binding context
 	 * @param {function} [mParameters.success] The success callback function
 	 * @param {function} [mParameters.error] The error callback function
-	 * @param {map} [mParameters.headers] A map of headers
-	 * @param {map} [mParameters.urlParameters] A map of URL parameters
+	 * @param {Object<string,string>} [mParameters.headers] A map of headers
+	 * @param {Object<string,string>} [mParameters.urlParameters] A map of URL parameters
 	 * @param {boolean} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
 	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 *
@@ -6213,9 +6213,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Definition of a change group.
+	 *
+	 * @typedef {object} sap.ui.model.odata.v2.ODataModel.ChangeGroupDefinition
+	 * @property {string} groupId Id of the batch group
+	 * @property {string} [changeSetId] ID of a <code>ChangeSet</code> which bundles the changes for the entity type.
+	 * @property {boolean} [single=true] Defines if every change will get an own change set
+	 * @public
+	 */
+
+	/**
 	 * Definition of batch groups per entity type for two-way binding changes.
 	 *
-	 * @param {map} mGroups A map containing the definition of batch groups for two-way binding changes. The map has the
+	 * @param {Object<string,sap.ui.model.odata.v2.ODataModel.ChangeGroupDefinition>} mGroups A map containing the definition of batch groups for two-way binding changes. The map has the
 	 * following format:
 	 * <pre>
 	 * {
@@ -6244,8 +6254,9 @@ sap.ui.define([
 	/**
 	 * Definition of groups per entity type for two-way binding changes.
 	 *
-	 * @param {map} mGroups A map containing the definition of batch groups for two-way binding changes. The map has the
-	 * following format:
+	 * @param {Object<string,sap.ui.model.odata.v2.ODataModel.ChangeGroupDefinition>} mGroups
+	 *   A map containing the definition of batch groups for two-way binding changes, keyed by entity names.
+	 *   The map has the following format:
 	 * <pre>
 	 * {
 	 *   "EntityTypeName": {
@@ -6267,8 +6278,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the definition of batch groups per entity type for two-way binding changes
-	 * @returns {map} Definition of batch groups for two-way binding changes
+	 * Returns the definition of batch groups per entity type for two-way binding changes.
+	 *
+	 * @returns {Object<string,sap.ui.model.odata.v2.ODataModel.ChangeGroupDefinition>}
+	 *   Definition of batch groups for two-way binding changes, keyed by entity names.
 	 * @deprecated Since 1.36 use {@link #getChangeGroups} instead
 	 * @public
 	 */
@@ -6278,7 +6291,8 @@ sap.ui.define([
 
 	/**
 	 * Returns the definition of groups per entity type for two-way binding changes
-	 * @returns {map} mChangeGroups Definition of groups for two-way binding changes
+	 * @returns {Object<string,sap.ui.model.odata.v2.ODataModel.ChangeGroupDefinition>}
+	 *   Definition of groups for two-way binding changes, keyed by entity names.
 	 * @public
 	 */
 	ODataModel.prototype.getChangeGroups = function() {

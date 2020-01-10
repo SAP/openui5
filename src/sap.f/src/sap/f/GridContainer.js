@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/base/ManagedObjectObserver",
@@ -13,7 +14,8 @@ sap.ui.define([
 	"sap/f/GridContainerSettings",
 	"sap/base/strings/capitalize",
 	"sap/ui/core/InvisibleRenderer"
-], function (Control,
+], function (library,
+			Control,
 			Core,
 			ManagedObjectObserver,
 			ResizeHandler,
@@ -961,7 +963,10 @@ sap.ui.define([
 
 		if (!this.getWidth() && oSettings.getColumns()) {
 			// use virtual grid width only if grid width is not specified and we know the columns count
-			$that.css("width", virtualGrid.getWidth() + "px");
+			if (!this.getContainerQuery()) {
+				// centering GridContainer in IE11 when containerQuery is set to true doesn't work
+				$that.css("width", virtualGrid.getWidth() + "px");
+			}
 		}
 	};
 

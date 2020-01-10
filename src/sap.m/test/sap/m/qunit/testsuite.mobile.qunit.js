@@ -811,6 +811,16 @@ sap.ui.define([
 					version: 4
 				}
 			},
+			P13nOperationsHelper: {
+				title: "Test Page for sap.m.P13nOperationsHelper",
+				_alternativeTitle: "QUnit Page for sap.m.P13nOperationsHelper",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
+			},
 			PDFViewer: {
 				title: "PdfViewer - sap.m",
 				qunit: {
@@ -1744,6 +1754,16 @@ sap.ui.define([
 				qunit: 2,
 				sinon: false,
 				skip: true,
+				group: "Designtime"
+			},
+			"designtime/OverflowToolbarButton": {
+				title: "QUnit Page for sap.m.OverflowToolbarButton design time and rta enabling",
+				_alternativeTitle: "QUnit Page for sap.m.OverflowToolbarButton rta enabling",
+				ui5: {
+					libs: "sap.m,sap.ui.rta"
+				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Page": {

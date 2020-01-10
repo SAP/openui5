@@ -14,7 +14,8 @@
 				formatOptions: {showMeasure: false}
 			}"
 			numberUnit="{CurrencyCode}"
-			responsive="true">
+			responsive="true"
+			class="sapUiResponsivePadding--header" >
 			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
 			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
 			<markers>

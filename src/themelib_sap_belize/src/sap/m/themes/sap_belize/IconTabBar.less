@@ -8,11 +8,65 @@
 @_sap_m_IconTabBar_SelectedTextHoverColor: darken(@sapUiSelected, 10);
 @_sap_m_IconTabBar_HeaderShadow: inset 0 -0.25rem 0 -0.125rem @sapUiObjectHeaderBorderColor;
 
-/* Head Container */
+/* Header Container */
 
 .sapMITH {
-  	background-color: @sapUiObjectHeaderBackground;
-	border-bottom: 0.125rem solid @sapUiObjectHeaderBackground;
+	.sapMITBHead {
+		margin-top: 1rem;
+	}
+}
+
+
+.sapMITHOverflowList {
+	.sapMITHScrollContainerInner {
+		margin-right: 3rem;
+	}
+
+	.sapMITBArrowScrollRight,
+	.sapMITBArrowScrollRightTextOnly {
+		right: 3rem;
+	}
+
+	.sapMBtnTextOnly,
+	.sapMBtnInline {
+		align-items: flex-end;
+	}
+}
+
+.sapMITBArrowScrollLeftTextOnly,
+.sapMITBArrowScrollRightTextOnly {
+	align-items: flex-end;
+}
+
+
+.sapUiSizeCompact {
+
+	.sapMITBArrowScrollLeftTextOnly,
+	.sapMITBArrowScrollRightTextOnly {
+		align-items: center;
+	}
+
+	.sapMITHOverflowList,
+	&.sapMITHOverflowList {
+		.sapMBtnTextOnly,
+		.sapMBtnInline {
+			align-items: center;
+		}
+	}
+
+	&.sapITH {
+		.sapMITBArrowScrollLeftTextOnly,
+		.sapMITBArrowScrollRightTextOnly {
+			padding-bottom: 0.5rem;
+		}
+
+		&.sapMITHOverflowList {
+			.sapMBtnTextOnly,
+			.sapMBtnInline {
+				padding-bottom: 0.5rem;
+			}
+		}
+	}
 }
 
 /* Arrow */
@@ -196,27 +250,13 @@ html.sap-desktop .sapMITH.sapUiSizeCompact {
 }
 
 
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,// TODO remove after 1.62 version
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,// TODO remove after 1.62 version
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus.sapMITBAll,// TODO remove after 1.62 version
-html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll{
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus.sapMITBAll,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 	&::after {
 		border: 1px dashed @sapUiContentFocusColor;
 	}
-}
-
-/* container background design */
-.sapMITBBackgroundDesignTranslucent > .sapMITBContainerContent > .sapMITBContent {
-	background-color: fade(@sapUiGroupContentBackground, 60);
-}
-
-/* header background design */
-.sapMITHBackgroundDesignTransparent {
-	background-color: transparent;
-}
-
-.sapMITHBackgroundDesignTranslucent {
-	background-color: fade(@sapUiGroupContentBackground, 60);
 }

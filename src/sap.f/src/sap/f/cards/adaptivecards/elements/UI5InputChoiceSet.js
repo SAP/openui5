@@ -7,49 +7,61 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 	function UI5ChoiceSet (){
 		AdaptiveCards.ChoiceSetInput.apply(this, arguments);
 	}
+	/**
+	 * Constructor for a new <code>UI5InputChoiceSet</code>.
+	 *
+	 * @class
+	 * An object that overwrites Microsoft's Adaptive Card <code>Input.ChoiceSet</code> element by replacing it with
+	 * <code>ui5-select</code>, or container with <code>ui5-radiobutton</code>, or <code>ui5-checkbox</code> web components.
+	 *
+	 * @author SAP SE
+	 * @version ${version}
+	 *
+	 * @private
+	 * @since 1.74
+	 */
 
 	UI5ChoiceSet.prototype = Object.create(AdaptiveCards.ChoiceSetInput.prototype);
 
 	UI5ChoiceSet.prototype.internalRender = function () {
 		if (!this.isMultiSelect) {
-			// render ui5-select
 			if (this.isCompact) {
+				//if this.isMultiSelect is false and this.isCompact is true, we need to render an ui5-select web component
 				this._selectElement = document.createElement("ui5-select");
 				this._selectElement.setAttribute('ac-select', '');
 				this._selectElement.id = this.id;
-				// placeholder?
-				// empty initial value?
 				this._selectElement.addEventListener("change", function () {
 					this.valueChanged();
 				}.bind(this));
 
+				// we handle the empty initial value and the placeholder internally,
+				// since that use case is not supported in the ui5-select web component
 				var oPlaceholder = document.createElement("ui5-option");
 				oPlaceholder.setAttribute('ac-select-placeholder', '');
-                oPlaceholder.selected = true;
-                oPlaceholder.value = "";
+				oPlaceholder.selected = true;
+				oPlaceholder.value = "";
 
-                if (this.placeholder) {
-                    oPlaceholder.innerHTML = this.placeholder;
+				if (this.placeholder) {
+					oPlaceholder.innerHTML = this.placeholder;
 				}
 
 				this._selectElement.appendChild(oPlaceholder);
 
 				for (var i = 0; i < this.choices.length; i++) {
-				    var oOption = document.createElement("ui5-option");
-				    oOption.value = this.choices[i].value;
-				    oOption.innerHTML = this.choices[i].title;
+					var oOption = document.createElement("ui5-option");
+					oOption.value = this.choices[i].value;
+					oOption.innerHTML = this.choices[i].title;
 
-				    if (this.choices[i].value === this.defaultValue) {
+					if (this.choices[i].value === this.defaultValue) {
 						oOption.selected = true;
-				    }
+					}
 
-				    this._selectElement.appendChild(oOption);
+					this._selectElement.appendChild(oOption);
 				}
 
 				return this._selectElement;
 			}
-			// render container with ui5-radiobuttons
-			// wrap?
+			//if this.isMultiSelect is false and this.isCompact is false, we need to render a container with ui5-radiobutton web components
 			var oRbContainer = document.createElement("div");
 			oRbContainer.classList.add("sapFCardAdaptiveContentChoiceSetWrapper");
 			oRbContainer.id = this.id;
@@ -62,19 +74,19 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 				oRb.value = this.choices[j].value;
 				oRb.text = this.choices[j].title;
 				oRb.name = this.id;
+				oRb.wrap = this.wrap;
 
 				if (this.choices[j].value === this.defaultValue) {
 					oRb.selected = true;
 				}
 
 				this._toggleInputs.push(oRb);
-
 				oRbContainer.appendChild(oRb);
 			}
 
 			return oRbContainer;
 		}
-		// render container with ui5-checkbox
+		//if this.isMultiSelect is true and this.isCompact is false, we need to render a container with ui5-checkbox web components
 		var defaultValues = this.defaultValue ? this.defaultValue.split(",") : null;
 		var oCbContainer = document.createElement("div");
 		oCbContainer.classList.add("sapFCardAdaptiveContentChoiceSetWrapper");
@@ -93,13 +105,18 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 			}
 
 			this._toggleInputs.push(oCb);
-
 			oCbContainer.appendChild(oCb);
 		}
 
 		return oCbContainer;
 	};
 
+	/**
+	 * Overwrites getValue method of Microsoft's Adaptive Card <code>Input.ChoiceSet</code>
+	 *
+	 * That method is overwritten in order to get the correct value
+	 * @private
+	 */
 	Object.defineProperty(UI5ChoiceSet.prototype, "value" , {
 		get: function value() {
 			var i;
@@ -116,7 +133,6 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 							return this._toggleInputs[i].value;
 						}
 					}
-
 					return null;
 				}
 			} else {
@@ -124,19 +140,18 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 					return null;
 				}
 
-				var result = "";
+				var sResult = "";
 
 				for (i = 0; i < this._toggleInputs.length; i++) {
 					if (this._toggleInputs[i].checked) {
-						if (result !== "") {
-							result += this.hostConfig.choiceSetInputValueSeparator;
+						if (sResult !== "") {
+							sResult += this.hostConfig.choiceSetInputValueSeparator;
 						}
 
-						result += this._toggleInputs[i].value;
+						sResult += this._toggleInputs[i].value;
 					}
 				}
-
-				return result === "" ? null : result;
+				return sResult === "" ? null : sResult;
 			}
 		}
 	});

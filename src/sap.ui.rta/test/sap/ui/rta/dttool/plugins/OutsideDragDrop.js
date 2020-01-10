@@ -74,4 +74,4 @@ function(
 	};
 
 	return OutsideDragDrop;
-}, /* bExport= */ true);
+});

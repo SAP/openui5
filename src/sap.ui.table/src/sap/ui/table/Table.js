@@ -1813,9 +1813,9 @@ sap.ui.define([
 		Table._addBindingListener(oBindingInfo, "dataReceived", function() {
 			this._onBindingDataReceived.apply(this, arguments);
 		}.bind(this));
-		//Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
-		//Table._addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequested.bind(this));
-		//Table._addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceived.bind(this));
+		//Table._addBindingListener(oBindingInfo, "change", this._onBindingChange, this);
+		//Table._addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequested, this);
+		//Table._addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceived, this);
 
 		if (this.getEnableBusyIndicator()) {
 			this.setBusy(false);
@@ -1961,21 +1961,21 @@ sap.ui.define([
 		return oBindingInfo;
 	}
 
-	Table._addBindingListener = function(oBindingInfo, sEventName, fHandler) {
+	Table._addBindingListener = function(oBindingInfo, sEventName, fHandler, oThis) {
 		if (!oBindingInfo.events) {
 			oBindingInfo.events = {};
 		}
 
-		if (!oBindingInfo.events[sEventName]) {
-			oBindingInfo.events[sEventName] = fHandler;
-		} else {
-			// Wrap the event handler of the other party to add our handler.
-			var fOriginalHandler = oBindingInfo.events[sEventName];
-			oBindingInfo.events[sEventName] = function() {
-				fHandler.apply(this, arguments);
+		// Wrap the event handler of the other party to add our handler.
+		var fOriginalHandler = oBindingInfo.events[sEventName];
+
+		oBindingInfo.events[sEventName] = function() {
+			fHandler.apply(oThis, arguments);
+
+			if (fOriginalHandler) {
 				fOriginalHandler.apply(this, arguments);
-			};
-		}
+			}
+		};
 	};
 
 	/**

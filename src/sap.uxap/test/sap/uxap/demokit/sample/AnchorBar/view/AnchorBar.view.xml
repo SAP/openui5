@@ -5,12 +5,20 @@
 	height="100%">
 	<ObjectPageLayout id="ObjectPageLayout">
 		<headerTitle>
-			<ObjectPageHeader objectTitle="AnchorBar sample"/>
+			<ObjectPageDynamicHeaderTitle>
+				<heading>
+					<m:Title text="AnchorBar sample" wrapping="true"/>
+				</heading>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Header Title On Phone"/>
+				</snappedTitleOnMobile>
+			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
 
-		<headerContent>
-			<m:ObjectAttribute title="" text="This example explains how the Anchor Bar is built based on page content"/>
-		</headerContent>
+	<headerContent>
+		<m:Title text="This example explains how the Anchor Bar is built based on page content" titleStyle="H6"/>
+	</headerContent>
 
 		<sections>
 			<ObjectPageSection id="section1" title="Section 1">

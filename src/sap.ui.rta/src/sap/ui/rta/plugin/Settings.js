@@ -316,4 +316,4 @@ sap.ui.define([
 	};
 
 	return Settings;
-}, /* bExport= */true);
+});

@@ -17,7 +17,7 @@
 	  "entities": [
 		{
 		  "id": "sap.f.Avatar",
-		  "name": "Avatar",
+		  "name": "Avatar (sap.f)",
 		  "category": "Display",
 		  "since": "1.46",
 		  "samples": ["sap.f.sample.Avatar"]
@@ -49,7 +49,8 @@
 			"sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
 			"sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
 			"sap.f.sample.FlexibleColumnLayoutWithFullscreenPage",
-			"sap.f.sample.FlexibleColumnLayoutSimple"
+			"sap.f.sample.FlexibleColumnLayoutSimple",
+			"sap.f.sample.ShellBarWithFlexibleColumnLayout"
 		  ]
 		},
 		{

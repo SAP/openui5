@@ -14,4 +14,4 @@ sap.ui.define([
 				create: "sap/f/designtime/Avatar.create.fragment.xml"
 			}
 		});
-	}, /* bExport= */ false);
+	});

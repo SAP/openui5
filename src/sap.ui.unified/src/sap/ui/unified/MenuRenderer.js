@@ -17,6 +17,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var MenuRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -37,39 +38,37 @@ sap.ui.define([],
 			oMenu.oHoveredItem = null;
 		}
 
-		oRm.write("<div");
-		oRm.writeAttribute("tabindex", -1);
-		oRm.writeAttribute("hideFocus", true);
+		oRm.openStart("div", oMenu);
+		oRm.attr("tabindex", -1);
+		oRm.attr("hideFocus", true);
 
 		if (oMenu.getTooltip_AsString()) {
-			oRm.writeAttributeEscaped("title", oMenu.getTooltip_AsString());
+			oRm.attr("title", oMenu.getTooltip_AsString());
 		}
 
 		// ARIA
 		if (bAccessible) {
-			oRm.writeAccessibilityState(oMenu, {
+			oRm.accessibilityState(oMenu, {
 				disabled: null,
 				labelledby: {value: oMenu.getId() + "-label", append: true}
 			});
 		}
 
-		oRm.addClass("sapUiMnu");
+		oRm.class("sapUiMnu");
 
 		if (oRootMenu.bUseTopStyle) {
-			oRm.addClass("sapUiMnuTop");
+			oRm.class("sapUiMnuTop");
 		}
 
 		if (oRootMenu.isCozy()) {
-			oRm.addClass("sapUiSizeCozy");
+			oRm.class("sapUiSizeCozy");
 		}
 
 		if (oMenu.bCozySupported) {
-			oRm.addClass("sapUiMnuCozySupport");
+			oRm.class("sapUiMnuCozySupport");
 		}
 
-		oRm.writeClasses();
-		oRm.writeControlData(oMenu);
-		oRm.write(">");
+		oRm.openEnd();
 		MenuRenderer.renderItems(oRm, oMenu);
 		if (bAccessible) {
 			/*var _getText = function(sKey, aArgs) {
@@ -80,11 +79,14 @@ sap.ui.define([],
 				return sKey;
 			};*/
 
-			oRm.write("<span id='" + oMenu.getId() + "-label' class='sapUiInvisibleText' aria-hidden='true'>");
-			oRm.writeEscaped(oMenu.getAriaDescription() ? oMenu.getAriaDescription() : ""/*_getText("MNU_ARIA_NAME")*/);
-			oRm.write("</span>");
+			oRm.openStart("span", oMenu.getId() + "-label");
+			oRm.class("sapUiInvisibleText");
+			oRm.attr("aria-hidden", true);
+			oRm.openEnd();
+			oRm.text(oMenu.getAriaDescription() ? oMenu.getAriaDescription() : ""/*_getText("MNU_ARIA_NAME")*/);
+			oRm.close("span");
 		}
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	MenuRenderer.renderItems = function(oRm, oMenu) {
@@ -97,9 +99,9 @@ sap.ui.define([],
 			i,
 			oItem;
 
-		oRm.write("<ul");
-		oRm.writeAttribute("role", "menu");
-		oRm.addClass("sapUiMnuLst");
+		oRm.openStart("ul");
+		oRm.attr("role", "menu");
+		oRm.class("sapUiMnuLst");
 
 		for (i = 0; i < aItems.length; i++) {
 			if (aItems[i].getIcon && aItems[i].getIcon()) {
@@ -111,14 +113,13 @@ sap.ui.define([],
 		}
 
 		if (!bHasIcons) {
-			oRm.addClass("sapUiMnuNoIco");
+			oRm.class("sapUiMnuNoIco");
 		}
 		if (!bHasSubMenus) {
-			oRm.addClass("sapUiMnuNoSbMnu");
+			oRm.class("sapUiMnuNoSbMnu");
 		}
 
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		iNumberOfVisibleItems = 0;
 		for (i = 0; i < aItems.length; i++) {
@@ -134,36 +135,33 @@ sap.ui.define([],
 				index++;
 
 				if (oItem.getStartsSection()) {
-					oRm.write("<li");
+					oRm.openStart("li");
 					if (bAccessible) {
-						oRm.writeAttribute("role", "separator");
+						oRm.attr("role", "separator");
 					}
-					oRm.addClass("sapUiMnuDiv");
-					oRm.writeClasses();
-					oRm.write(">");
+					oRm.class("sapUiMnuDiv");
+					oRm.openEnd();
 
-					oRm.write("<div");
-					oRm.addClass("sapUiMnuDivL");
-					oRm.writeClasses();
-					oRm.write(">");
-					oRm.write("</div>");
+					oRm.openStart("div");
+					oRm.class("sapUiMnuDivL");
+					oRm.openEnd();
+					oRm.close("div");
 
-					oRm.write("<hr>");
+					oRm.voidStart("hr").voidEnd();
 
-					oRm.write("<div");
-					oRm.addClass("sapUiMnuDivR");
-					oRm.writeClasses();
-					oRm.write(">");
-					oRm.write("</div>");
+					oRm.openStart("div");
+					oRm.class("sapUiMnuDivR");
+					oRm.openEnd();
+					oRm.close("div");
 
-					oRm.write("</li>");
+					oRm.close("li");
 				}
 
 				oItem.render(oRm, oItem, oMenu, {bAccessible: bAccessible, iItemNo: index, iTotalItems: iNumberOfVisibleItems});
 			}
 		}
 
-		oRm.write("</ul>");
+		oRm.close("ul");
 	};
 
 	return MenuRenderer;

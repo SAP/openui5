@@ -297,7 +297,7 @@ function(
 	 * always the same instances get returned.
 	 *
 	 * @public
-	 * @return {map} Map with plugins
+	 * @return {Object<string,sap.ui.rta.plugin.Plugin>} Map with plugins
 	 */
 	RuntimeAuthoring.prototype.getDefaultPlugins = function() {
 		if (!this._mDefaultPlugins) {
@@ -1005,13 +1005,11 @@ function(
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
 
-			var bExtendedOverview;
-
 			if (bIsAppVariantSupported) {
 				// Sets the visibility of 'Save As' button in RTA toolbar
 				this.getToolbar().getControl('saveAs').setVisible(bIsAppVariantSupported);
 				// Flag which represents either the key user view or SAP developer view
-				bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
+				var bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
 
 				if (bExtendedOverview) {
 					// Sets the visibility of 'i' menu button (App Variant Overview: SAP developer view) in RTA toolbar
@@ -1144,6 +1142,7 @@ function(
 	RuntimeAuthoring.prototype._deleteChanges = function() {
 		var oRootControl = this.getRootControlInstance();
 		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
+		BusyIndicator.show(500);
 
 		return PersistenceWriteAPI.reset({
 			selector: oAppComponent,
@@ -1151,9 +1150,11 @@ function(
 			generator: "Change.createInitialFileContent"
 		})
 			.then(function () {
+				BusyIndicator.hide();
 				this._reloadPage();
 			}.bind(this))
 			.catch(function (oError) {
+				BusyIndicator.hide();
 				if (oError !== "cancel") {
 					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
 				}
@@ -1766,4 +1767,4 @@ function(
 	};
 
 	return RuntimeAuthoring;
-}, /* bExport= */true);
+});

@@ -9,4 +9,4 @@ sap.ui.define([], function() {
 	return {
 		actions: "not-adaptable"
 	};
-}, /* bExport= */ false);
+});

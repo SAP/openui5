@@ -4,7 +4,21 @@
 		"id": "card.explorer.numeric.list.card",
 		"type": "card",
 		"title": "Sample of a List with Numeric Header",
-		"subTitle": "Sample of a List with Numeric Header"
+		"subTitle": "Sample of a List with Numeric Header",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Numeric",
+				"Card",
+				"Sample"
+			]
+		}
 	},
 	"sap.ui": {
 		"technology": "UI5",

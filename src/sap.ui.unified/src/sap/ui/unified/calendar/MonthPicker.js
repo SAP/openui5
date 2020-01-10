@@ -150,6 +150,11 @@ sap.ui.define([
 			throw new Error("Property month must be between 0 and 11; " + this);
 		}
 
+		if (this.getIntervalSelection()) {
+			this._oItemNavigation && this._oItemNavigation.focusItem(iMonth);
+			return this;
+		}
+
 		if (this.getDomRef()) {
 			if (this.getMonths() < 12) {
 				var iStartMonth = this.getStartMonth();
@@ -602,7 +607,7 @@ sap.ui.define([
 
 	MonthPicker.prototype._markInterval = function(oStartDate, oEndDate) {
 		var aDomRefs = this._oItemNavigation.getItemDomRefs(),
-			oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType()),
+			oCurrentDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType()),
 			i;
 
 		//swap if necessary
@@ -616,16 +621,16 @@ sap.ui.define([
 		}
 
 		for (i = 0; i < aDomRefs.length; ++i) {
-			oFocusedDate.setMonth(this._extractMonth(aDomRefs[i]), 1);
-			this._iYear && oFocusedDate.setYear(this._iYear);
+			oCurrentDate.setMonth(this._extractMonth(aDomRefs[i]), 1);
+			this._iYear && oCurrentDate.setYear(this._iYear);
 
-			if (CalendarUtils._isBetween(oFocusedDate, oStartDate, oEndDate)) {
+			if (CalendarUtils._isBetween(oCurrentDate, oStartDate, oEndDate)) {
 				jQuery(aDomRefs[i]).addClass("sapUiCalItemSelBetween");
 			} else {
 				jQuery(aDomRefs[i]).removeClass("sapUiCalItemSelBetween");
 			}
 
-			if (this._bMousedownChange && !oFocusedDate.isSame(oStartDate) && !oFocusedDate.isSame(oEndDate)) {
+			if (this._bMousedownChange && !oCurrentDate.isSame(oStartDate) && !oCurrentDate.isSame(oEndDate)) {
 				jQuery(aDomRefs[i]).removeClass("sapUiCalItemSel");
 			}
 		}
@@ -766,15 +771,14 @@ sap.ui.define([
 			bApplySelectionBetween,
 			oCurrentDate;
 
-		if (bDontSetMonth) {
-			return;
-		}
-
-		this.setProperty("month", iMonth, true);
+		// Marking internally the focused month
+		this._focusedMonth = iMonth;
 
 		if (!oSelectedDates) {
 			return;
 		}
+
+		!bDontSetMonth && this.setProperty("month", iMonth, true);
 
 		oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType());
 		oFocusedDate.setMonth(iMonth, 1);
@@ -787,7 +791,7 @@ sap.ui.define([
 			!this.getIntervalSelection() && oSelectedDates.setStartDate(oFocusedDate.toLocalJSDate());
 		}
 
-		if (this.getIntervalSelection()) {
+		if (this.getIntervalSelection() && !bDontSetMonth) {
 			if (!oSelectedDates.getStartDate()) {
 				oSelectedDates.setStartDate(oFocusedDate.toLocalJSDate());
 			} else if (!oSelectedDates.getEndDate()) {

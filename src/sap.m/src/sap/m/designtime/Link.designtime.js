@@ -87,4 +87,4 @@ sap.ui.define([],
 			create: "sap/m/designtime/Link.create.fragment.xml"
 		}
 	};
-}, /* bExport= */false);
+});

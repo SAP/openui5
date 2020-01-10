@@ -1,4 +1,6 @@
 {
+	"ui2personalization": {},
+	"appDescriptorChanges": [],
 	"changes" : [
 		{
 			"variantReference":"",
@@ -70,501 +72,516 @@
 			}
 		}
 	],
-	"variantSection" : {
-		"vmReference1" : {
-			"variants" : [
-				{
-					"content": {
-						"fileName":"variant0",
-						"fileType":"ctrl_variant",
-						"variantManagementReference":"vmReference1",
-						"variantReference":"",
-						"reference":"sap.ui.rta.test.Demo.md.Component",
-						"packageName":"$TMP",
-						"content":{
-							"title":"variant A"
-						},
-						"layer":"VENDOR",
-						"texts":{
-							"TextDemo": {
-								"value": "Text for TextDemo",
-								"type": "myTextType"
-							}
-						},
-						"namespace":"sap.ui.rta.test.Demo.md.Component",
-						"creation":"",
-						"originalLanguage":"EN",
-						"conditions":{},
-						"support":{
-							"generator":"Change.createInitialFileContent",
-							"service":"",
-							"user":""
-						}
-					},
-					"controlChanges" : [
-						{
-							"variantReference":"variant0",
-							"fileName":"id_1445501120486_41",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"VENDOR",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"2018-10-16T08:00:02",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						},
-						{
-							"variantReference":"variant0",
-							"fileName":"id_1445501120486_42",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"CUSTOMER",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"2018-10-16T08:00:01",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						},
-						{
-							"variantReference":"variant0",
-							"fileName":"id_1445501120486_43",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"VENDOR",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"2018-10-16T08:00:04",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						}
-					],
-					"variantChanges": {
-						"setTitle": [
-							{
-								"fileName": "id_1507716136285_38_setTitle",
-								"fileType": "ctrl_variant_change",
-								"changeType": "setTitle",
-								"content": {
-									"title": "New Variant Title"
-								},
-								"selector": {"id": "variant0", "idIsLocal": false},
-								"layer": "CUSTOMER",
-								"texts": {
-									"title": {
-										"value": "New Variant Title",
-										"type": "XFLD"
-									}
-								}
-							}
-						],
-						"setFavorite": [
-							{
-								"fileName": "id_1507716136286_39_setFavorite",
-								"fileType": "ctrl_variant_change",
-								"changeType": "setFavorite",
-								"content": {
-									"favorite": false
-								},
-								"selector": {"id": "variant0", "idIsLocal": false},
-								"layer": "CUSTOMER",
-								"variantReference": "variant0"
-							}
-						]
-					}
-				},
-				{
-					"content": {
-						"fileName":"vmReference1",
-						"fileType":"ctrl_variant",
-						"variantManagementReference":"vmReference1",
-						"variantReference":"",
-						"reference":"sap.ui.rta.test.Demo.md.Component",
-						"support":{
-							"generator":"Change.createInitialFileContent",
-							"service":""
-						},
-						"content": {
-							"title":"{i18n>STANDARD_VARIANT_TITLE}"
-						}
-					},
-					"controlChanges" : [
-						{
-							"variantReference":"vmReference1",
-							"fileName":"id_1445501120486_41",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"VENDOR",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						},
-						{
-							"variantReference":"vmReference1",
-							"fileName":"id_1445501120486_44",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"CUSTOMER",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						}
-					],
-					"variantChanges": {}
-				},
-				{
-					"content": {
-						"fileName":"variant2",
-						"fileType":"ctrl_variant",
-						"variantManagementReference":"vmReference1",
-						"variantReference":"variant0",
-						"reference":"sap.ui.rta.test.Demo.md.Component",
-						"packageName":"$TMP",
-						"content":{
-							"title":"variant AA"
-						},
-						"layer":"CUSTOMER",
-						"texts":{},
-						"namespace":"sap.ui.rta.test.Demo.md.Component",
-						"creation":"",
-						"originalLanguage":"EN",
-						"conditions":{},
-						"support":{
-							"generator":"Change.createInitialFileContent",
-							"service":"",
-							"user":""
-						}
-					},
-					"controlChanges" : [
-						{
-							"variantReference":"variant2",
-							"fileName":"id_1445501120486_41",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"CUSTOMER",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						},
-						{
-							"variantReference":"variant2",
-							"fileName":"id_1445501120486_42",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"CUSTOMER",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						}
-					],
-					"variantChanges": {
-						"setVisible": [
-							{
-								"changeType": "setVisible",
-								"content": {
-									"visible": false,
-									"createdByReset": false
-								},
-								"fileName": "id_1575231865073_60_setVisible",
-								"fileType": "ctrl_variant_change",
-								"layer": "CUSTOMER",
-								"selector": {
-									"id": "variant2",
-									"idIsLocal": false
-								},
-								"texts": {}
-							}
-						]
-					}
+	"variants": [
+		{
+			"fileName":"variant0",
+			"fileType":"ctrl_variant",
+			"variantManagementReference":"vmReference1",
+			"variantReference":"",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{
+				"title":"variant A"
+			},
+			"layer":"VENDOR",
+			"texts":{
+				"TextDemo": {
+					"value": "Text for TextDemo",
+					"type": "myTextType"
 				}
-			],
-			"variantManagementChanges": {
-				"setDefault" : [{
-					"fileName": "id_1510920910626_29_setDefault",
-					"fileType": "ctrl_variant_management_change",
-					"changeType": "setDefault",
-					"content": {
-						"defaultVariant":"variant0"
-					},
-					"selector": {
-						"id": "vmReference1"
-					}
-				}]
+			},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
 			}
 		},
-		"vmReference2" : {
-			"variants" : [
-				{
-					"content": {
-						"fileName":"variant00",
-						"fileType":"ctrl_variant",
-						"variantManagementReference":"vmReference2",
-						"variantReference":"",
-						"reference":"sap.ui.rta.test.Demo.md.Component",
-						"packageName":"$TMP",
-						"content":{
-							"title":"variant A"
-						},
-						"layer":"CUSTOMER",
-						"texts":{},
-						"namespace":"sap.ui.rta.test.Demo.md.Component",
-						"creation":"",
-						"originalLanguage":"EN",
-						"conditions":{},
-						"support":{
-							"generator":"Change.createInitialFileContent",
-							"service":"",
-							"user":""
-						}
-					},
-					"controlChanges" : [
-						{
-							"variantReference":"variant00",
-							"fileName":"id_1445501120486_51",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"CUSTOMER",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						},
-						{
-							"variantReference":"variant00",
-							"fileName":"id_1445501120486_52",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"CUSTOMER",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						}
-					],
-					"variantChanges": {}
-				},
-				{
-					"content": {
-						"fileName":"variant11",
-						"fileType":"ctrl_variant",
-						"variantManagementReference":"vmReference2",
-						"variantReference":"variant00",
-						"reference":"sap.ui.rta.test.Demo.md.Component",
-						"packageName":"$TMP",
-						"content":{
-							"title":"variant B"
-						},
-						"layer":"USER",
-						"texts":{},
-						"namespace":"sap.ui.rta.test.Demo.md.Component",
-						"creation":"",
-						"originalLanguage":"EN",
-						"conditions":{},
-						"support":{
-							"generator":"Change.createInitialFileContent",
-							"service":"",
-							"user":""
-						}
-					},
-					"controlChanges" : [
-						{
-							"variantReference":"variant11",
-							"fileName":"id_1445501120486_51",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"USER",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						},
-						{
-							"variantReference":"variant11",
-							"fileName":"id_1445501120486_53",
-							"fileType":"change",
-							"changeType":"hideControl",
-							"reference":"sap.ui.rta.test.Demo.md.Component",
-							"packageName":"$TMP",
-							"content":{},
-							"selector":{
-								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-							},
-							"layer":"USER",
-							"texts":{},
-							"namespace":"sap.ui.rta.test.Demo.md.Component",
-							"creation":"",
-							"originalLanguage":"EN",
-							"conditions":{},
-							"support":{
-								"generator":"Change.createInitialFileContent",
-								"service":"",
-								"user":""
-							}
-						}
-					],
-					"variantChanges": {}
-				},
-				{
-					"content": {
-						"fileName": "vmReference2",
-						"fileType": "ctrl_variant",
-						"variantManagementReference": "vmReference2",
-						"variantReference": "",
-						"reference": "sap.ui.rta.test.Demo.md.Component",
-						"packageName": "$TMP",
-						"content": {
-							"title": "variant C"
-						},
-						"layer": "CUSTOMER",
-						"texts": {},
-						"namespace": "sap.ui.rta.test.Demo.md.Component",
-						"creation": "",
-						"originalLanguage": "EN",
-						"conditions": {},
-						"support": {
-							"generator": "Change.createInitialFileContent",
-							"service": "",
-							"user": ""
-						}
-					},
-					"controlChanges": [],
-					"variantChanges": {}
-				}
-			],
-			"variantManagementChanges": {
-				"setDefault" : [{
-					"fileName": "id_1510920910626_30_setDefault",
-					"fileType": "ctrl_variant_management_change",
-					"changeType": "setDefault",
-					"content": {
-						"defaultVariant":"variant00"
-					},
-					"selector": {
-						"id": "vmReference2"
-					}
-				}]
+		{
+			"fileName":"vmReference1",
+			"fileType":"ctrl_variant",
+			"variantManagementReference":"vmReference1",
+			"variantReference":"",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":""
+			},
+			"content": {
+				"title":"{i18n>STANDARD_VARIANT_TITLE}"
+			}
+		},
+		{
+			"fileName":"variant2",
+			"fileType":"ctrl_variant",
+			"variantManagementReference":"vmReference1",
+			"variantReference":"variant0",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{
+				"title":"variant AA"
+			},
+			"layer":"CUSTOMER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"fileName":"variant11",
+			"fileType":"ctrl_variant",
+			"variantManagementReference":"vmReference2",
+			"variantReference":"variant00",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{
+				"title":"variant B"
+			},
+			"layer":"USER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"fileName": "vmReference2",
+			"fileType": "ctrl_variant",
+			"variantManagementReference": "vmReference2",
+			"variantReference": "",
+			"reference": "sap.ui.rta.test.Demo.md.Component",
+			"packageName": "$TMP",
+			"content": {
+				"title": "variant C"
+			},
+			"layer": "CUSTOMER",
+			"texts": {},
+			"namespace": "sap.ui.rta.test.Demo.md.Component",
+			"creation": "",
+			"originalLanguage": "EN",
+			"conditions": {},
+			"support": {
+				"generator": "Change.createInitialFileContent",
+				"service": "",
+				"user": ""
+			}
+		},
+		{
+			"fileName":"variant00",
+			"fileType":"ctrl_variant",
+			"variantManagementReference":"vmReference2",
+			"variantReference":"",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{
+				"title":"variant A"
+			},
+			"layer":"CUSTOMER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
 			}
 		}
-	}
+	],
+	"variantChanges": [
+		{
+			"fileName": "id_1507716136285_38_setTitle",
+			"fileType": "ctrl_variant_change",
+			"changeType": "setTitle",
+			"content": {
+				"title": "New Variant Title"
+			},
+			"selector": {
+				"id": "variant0",
+				"idIsLocal": false
+			},
+			"layer": "CUSTOMER",
+			"texts": {
+				"title": {
+					"value": "New Variant Title",
+					"type": "XFLD"
+				}
+			}
+		},
+		{
+			"fileName": "id_1507716136286_39_setFavorite",
+			"fileType": "ctrl_variant_change",
+			"changeType": "setFavorite",
+			"content": {
+				"favorite": false
+			},
+			"selector": {
+				"id": "variant0",
+				"idIsLocal": false
+			},
+			"layer": "CUSTOMER",
+			"variantReference": "variant0"
+		},
+		{
+			"changeType": "setVisible",
+			"content": {
+				"visible": false,
+				"createdByReset": false
+			},
+			"fileName": "id_1575231865073_60_setVisible",
+			"fileType": "ctrl_variant_change",
+			"layer": "CUSTOMER",
+			"selector": {
+				"id": "variant2",
+				"idIsLocal": false
+			},
+			"texts": {}
+		},
+		{
+			"changeType": "setVisible",
+			"content": {
+				"visible": false,
+				"createdByReset": false
+			},
+			"fileName": "id_1575231865999_60_setVisible",
+			"fileType": "ctrl_variant_change",
+			"layer": "CUSTOMER",
+			"selector": {
+				"id": "nonExistingVariant1",
+				"idIsLocal": false
+			},
+			"texts": {}
+		},
+		{
+			"fileName": "id_1507716136999_39_setFavorite",
+			"fileType": "ctrl_variant_change",
+			"changeType": "setFavorite",
+			"content": {
+				"favorite": false
+			},
+			"selector": {
+				"id": "nonExistingVariant1",
+				"idIsLocal": false
+			},
+			"layer": "CUSTOMER",
+			"variantReference": "variant0"
+		}
+	],
+	"variantDependentControlChanges": [
+		{
+			"variantReference":"variant0",
+			"fileName":"id_1445501120486_41",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"VENDOR",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"2018-10-16T08:00:02",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"variant0",
+			"fileName":"id_1445501120486_42",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"CUSTOMER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"2018-10-16T08:00:01",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"variant0",
+			"fileName":"id_1445501120486_43",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"VENDOR",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"2018-10-16T08:00:04",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"vmReference1",
+			"fileName":"id_1445501120486_41",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"VENDOR",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"vmReference1",
+			"fileName":"id_1445501120486_44",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"CUSTOMER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"variant2",
+			"fileName":"id_1445501120486_41",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"CUSTOMER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"variant2",
+			"fileName":"id_1445501120486_42",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"CUSTOMER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"variant00",
+			"fileName":"id_1445501120486_51",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"CUSTOMER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"variant00",
+			"fileName":"id_1445501120486_52",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"CUSTOMER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"variant11",
+			"fileName":"id_1445501120486_51",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"USER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"variant11",
+			"fileName":"id_1445501120486_53",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+			},
+			"layer":"USER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"variantReference":"nonExistingVariant2",
+			"fileName":"id_1445501120999_53",
+			"fileType":"change",
+			"changeType":"hideControl",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{},
+			"selector":{
+				"id":"selectorId"
+			},
+			"layer":"USER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		}
+	],
+	"variantManagementChanges": [
+		{
+			"fileName": "id_1510920910626_29_setDefault",
+			"fileType": "ctrl_variant_management_change",
+			"changeType": "setDefault",
+			"content": {
+				"defaultVariant": "variant0"
+			},
+			"selector": {
+				"id": "vmReference1"
+			}
+		},
+		{
+			"fileName": "id_1510920910626_30_setDefault",
+			"fileType": "ctrl_variant_management_change",
+			"changeType": "setDefault",
+			"content": {
+				"defaultVariant": "variant00"
+			},
+			"selector": {
+				"id": "vmReference2"
+			}
+		}
+	]
 }

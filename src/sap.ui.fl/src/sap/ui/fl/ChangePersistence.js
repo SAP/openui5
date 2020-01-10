@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/Utils",
@@ -11,7 +12,6 @@ sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/context/ContextManager",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/core/Component",
@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/Log"
 ], function(
+	DependencyHandler,
 	Change,
 	Variant,
 	Utils,
@@ -29,7 +30,6 @@ sap.ui.define([
 	Cache,
 	Applier,
 	ContextManager,
-	Settings,
 	Storage,
 	VariantController,
 	Component,
@@ -610,19 +610,15 @@ sap.ui.define([
 			switch (oChange.getPendingAction()) {
 				case "NEW":
 					aPromises.push(CompatibilityConnector.create(oChange.getDefinition(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
-						if (Cache.isActive()) {
-							oChange.setState(Change.states.PERSISTED);
-							Cache.addChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
-						}
+						oChange.setState(Change.states.PERSISTED);
+						Cache.addChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
 					}.bind(this)));
 					break;
 				case "UPDATE":
 					aPromises.push(CompatibilityConnector.update(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
-						if (Cache.isActive()) {
-							oChange.setState(Change.states.PERSISTED);
-							Cache.updateChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
-						}
+						oChange.setState(Change.states.PERSISTED);
+						Cache.updateChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
 					}.bind(this)));
 					break;
@@ -632,9 +628,7 @@ sap.ui.define([
 						if (oChange.getPendingAction() === "DELETE") {
 							delete this._mVariantsChanges[sStableId][sChangeId];
 						}
-						if (Cache.isActive()) {
-							Cache.deleteChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
-						}
+						Cache.deleteChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
 					}.bind(this)));
 					break;
@@ -652,106 +646,15 @@ sap.ui.define([
 	}
 
 	/**
-	 * @param {sap.ui.core.Component} oAppComponent - Application component containing the control for which the change should be added
-	 * @param {sap.ui.fl.Change} oChange change which should be added into the mapping
-	 * @see sap.ui.fl.Change
-	 * @returns {map} mChanges map with added change
-	 * @private
-	 */
-	ChangePersistence.prototype._addChangeIntoMap = function (oAppComponent, oChange) {
-		var oSelector = oChange.getSelector();
-		if (oSelector && oSelector.id) {
-			var sSelectorId = _getCompleteIdFromSelector(oSelector, oAppComponent);
-
-			this._addMapEntry(sSelectorId, oChange);
-
-			// if the localId flag is missing and the selector has a component prefix that is not matching the
-			// application component, adds the change for a second time replacing the component ID prefix with
-			// the application component ID prefix
-			if (oSelector.idIsLocal === undefined && sSelectorId.indexOf("---") !== -1) {
-				var sComponentPrefix = sSelectorId.split("---")[0];
-
-				if (sComponentPrefix !== oAppComponent.getId()) {
-					sSelectorId = sSelectorId.split("---")[1];
-					sSelectorId = oAppComponent.createId(sSelectorId);
-					this._addMapEntry(sSelectorId, oChange);
-				}
-			}
-		}
-
-		return this._mChanges;
-	};
-
-	/**
-	 *
-	 * @param {string} sSelectorId Key in the mapping for which the entry is written
-	 * @param {sap.ui.fl.Change} oChange Change object to be added to the mapping
-	 * @private
-	 */
-	ChangePersistence.prototype._addMapEntry = function (sSelectorId, oChange) {
-		if (!this._mChanges.mChanges[sSelectorId]) {
-			this._mChanges.mChanges[sSelectorId] = [];
-		}
-		// don't add the same change twice
-		if (this._mChanges.mChanges[sSelectorId].indexOf(oChange) === -1) {
-			this._mChanges.mChanges[sSelectorId].push(oChange);
-		}
-
-		if (this._mChanges.aChanges.indexOf(oChange) === -1) {
-			this._mChanges.aChanges.push(oChange);
-		}
-	};
-
-	ChangePersistence.prototype._addDependency = function (oDependentChange, oChange, bRunTimeCreatedChange) {
-		var mChanges = bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges;
-		if (!mChanges.mDependencies[oDependentChange.getId()]) {
-			mChanges.mDependencies[oDependentChange.getId()] = {
-				changeObject: oDependentChange,
-				dependencies: []
-			};
-		}
-		mChanges.mDependencies[oDependentChange.getId()].dependencies.push(oChange.getId());
-
-		if (!mChanges.mDependentChangesOnMe[oChange.getId()]) {
-			mChanges.mDependentChangesOnMe[oChange.getId()] = [];
-		}
-		mChanges.mDependentChangesOnMe[oChange.getId()].push(oDependentChange.getId());
-	};
-
-	ChangePersistence.prototype._addControlsDependencies = function (oDependentChange, oAppComponent, aControlSelectorList, bRunTimeCreatedChange) {
-		var mChanges = bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges;
-		if (aControlSelectorList.length > 0) {
-			if (!mChanges.mDependencies[oDependentChange.getId()]) {
-				mChanges.mDependencies[oDependentChange.getId()] = {
-					changeObject: oDependentChange,
-					dependencies: [],
-					controlsDependencies: []
-				};
-			}
-			mChanges.mDependencies[oDependentChange.getId()].controlsDependencies = aControlSelectorList;
-
-			var sSelectorId;
-			aControlSelectorList.forEach(function(oSelector) {
-				sSelectorId = _getCompleteIdFromSelector(oSelector, oAppComponent);
-				mChanges.mControlsWithDependencies[sSelectorId] = true;
-			});
-		}
-	};
-
-	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
 	 * @param {object} oAppComponent - Component instance used to prepare the IDs (e.g. local)
-	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
-	 * @param {object} mPropertyBag.appDescriptor - Manifest belonging to actual component
-	 * @param {string} mPropertyBag.siteId - ID of the site belonging to actual component
 	 * @see sap.ui.fl.Change
 	 * @returns {Promise} Promise resolving with a getter for the changes map
 	 * @public
 	 */
-	ChangePersistence.prototype.loadChangesMapForComponent = function (oAppComponent, mPropertyBag) {
-		mPropertyBag.component = !isEmptyObject(oAppComponent) && oAppComponent;
-		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
+	ChangePersistence.prototype.loadChangesMapForComponent = function (oAppComponent) {
+		return this.getChangesForComponent({component: oAppComponent}).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {
 			//Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
@@ -819,33 +722,11 @@ sap.ui.define([
 		// the change status should always be initial when it gets added to the map / dependencies
 		// if the component gets recreated the status of the change might not be initial
 		oChange.setInitialApplyState();
-		this._addChangeIntoMap(oAppComponent, oChange);
-		this._updateDependencies(oChange, oAppComponent, false);
+		DependencyHandler.addChangeAndUpdateDependencies(oChange, oAppComponent, this._mChanges);
 	};
 
 	ChangePersistence.prototype._addRunTimeCreatedChangeAndUpdateDependencies = function(oAppComponent, oChange) {
-		this._addChangeIntoMap(oAppComponent, oChange);
-		this._updateDependencies(oChange, oAppComponent, true);
-	};
-
-	ChangePersistence.prototype._updateDependencies = function (oChange, oAppComponent, bRunTimeCreatedChange) {
-		//create dependencies map
-		var aChanges = this.getChangesMapForComponent().aChanges;
-		var aDependentSelectorList = oChange.getDependentSelectorList();
-		var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
-		this._addControlsDependencies(oChange, oAppComponent, aDependentControlSelectorList, bRunTimeCreatedChange);
-
-		// start from last change in map, excluding the recently added change
-		aChanges.slice(0, aChanges.length - 1).reverse().forEach(function(oExistingChange) {
-			var aExistingDependentSelectorList = oExistingChange.getDependentSelectorList();
-			aDependentSelectorList.some(function(oDependentSelectorList) {
-				var iDependentIndex = Utils.indexOfObject(aExistingDependentSelectorList, oDependentSelectorList);
-				if (iDependentIndex > -1) {
-					this._addDependency(oChange, oExistingChange, bRunTimeCreatedChange);
-					return true;
-				}
-			}.bind(this));
-		}.bind(this));
+		DependencyHandler.addRuntimeChangeAndUpdateDependencies(oChange, oAppComponent, this._mChanges, this._mChangesInitial);
 	};
 
 	/**
@@ -873,11 +754,9 @@ sap.ui.define([
 	 *
 	 * @param {string} sViewId the id of the view, changes should be retrieved for
 	 * @param {map} mPropertyBag contains additional data that are needed for reading of changes
-	 * @param {object} mPropertyBag.appDescriptor - Manifest that belongs to actual component
-	 * @param {string} [mPropertyBag.siteId] - id of the site that belongs to actual component
 	 * @param {string} mPropertyBag.viewId - id of the view
 	 * @param {string} mPropertyBag.name - name of the view
-	 * @param {sap.ui.core.Component} mPropertyBag.component - Application component for the view
+	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component for the view
 	 * @param {string} mPropertyBag.componentId - responsible component's id for the view
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - responsible modifier
 	 * @returns {Promise} resolving with an array of changes
@@ -986,9 +865,10 @@ sap.ui.define([
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @param {sap.ui.fl.Change} [aChanges] If passed only those changes are saved
+	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function(bSkipUpdateCache, aChanges) {
+	ChangePersistence.prototype.saveDirtyChanges = function(bSkipUpdateCache, aChanges, bDraft) {
 		var aDirtyChanges = aChanges || this._aDirtyChanges;
 		var aDirtyChangesClone = aDirtyChanges.slice(0);
 		var aRequests = this._getRequests(aDirtyChanges);
@@ -997,13 +877,13 @@ sap.ui.define([
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
 			var sRequest = aRequests[0];
 			var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aDirtyChanges);
-			return CompatibilityConnector.create(aPreparedDirtyChangesBulk, sRequest)
+			return CompatibilityConnector.create(aPreparedDirtyChangesBulk, sRequest, undefined, bDraft)
 			.then(function(oResponse) {
 				this._massUpdateCacheAndDirtyState(aDirtyChanges, aDirtyChangesClone, bSkipUpdateCache);
 				return oResponse;
 			}.bind(this));
 		}
-		return this.saveSequenceOfDirtyChanges(aDirtyChangesClone, bSkipUpdateCache);
+		return this.saveSequenceOfDirtyChanges(aDirtyChangesClone, bSkipUpdateCache, bDraft);
 	};
 
 	/**
@@ -1014,22 +894,23 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change[] | sap.ui.fl.Variant[]} aDirtyChanges - Array of dirty changes to be saved.
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
+	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache) {
+	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache, bDraft) {
 		var aAllDirtyChanges = this.getDirtyChanges();
 
 		return aDirtyChanges.reduce(function (oPreviousPromise, oDirtyChange) {
 			return oPreviousPromise
-				.then(this._performSingleSaveAction(oDirtyChange))
+				.then(this._performSingleSaveAction(oDirtyChange, bDraft))
 				.then(this._updateCacheAndDirtyState.bind(this, aAllDirtyChanges, oDirtyChange, bSkipUpdateCache));
 		}.bind(this), Promise.resolve());
 	};
 
-	ChangePersistence.prototype._performSingleSaveAction = function (oDirtyChange) {
+	ChangePersistence.prototype._performSingleSaveAction = function (oDirtyChange, bDraft) {
 		return function() {
 			if (oDirtyChange.getPendingAction() === "NEW") {
-				return CompatibilityConnector.create(oDirtyChange.getDefinition(), oDirtyChange.getRequest());
+				return CompatibilityConnector.create(oDirtyChange.getDefinition(), oDirtyChange.getRequest(), undefined, bDraft);
 			}
 
 			if (oDirtyChange.getPendingAction() === "DELETE") {

@@ -2942,7 +2942,7 @@ sap.ui.define([
 	 *            [oThat] is an optional control instance. If another
 	 *            instance than "this" is given the corresponding control
 	 *            instance will be used to fetch the Popup.
-	 * @returns [string] ParentPopupId
+	 * @returns {string} ParentPopupId
 	 */
 	Popup.prototype.getParentPopupId = function(oThis) {
 		var $ParentPopup = this.getParentPopup(oThis);
@@ -2952,9 +2952,9 @@ sap.ui.define([
 	/**
 	 * Adds the given child Popup id to the given parent's association.
 	 *
-	 * @param [string]
+	 * @param {string}
 	 *            sParentPopupId to which the id will be added
-	 * @param [string]
+	 * @param {string}
 	 *            sChildPopupId that will be added to the parent Popup
 	 */
 	Popup.prototype.addChildToPopup = function(sParentPopupId, sChildPopupId) {
@@ -2984,7 +2984,7 @@ sap.ui.define([
 	/**
 	 * Closes a specific Popup when the control instance isn't available
 	 *
-	 * @param [string]
+	 * @param {string}
 	 *            sPopupId of Popup that should be closed
 	 */
 	Popup.prototype.closePopup = function(sPopupId) {
@@ -2995,9 +2995,9 @@ sap.ui.define([
 	/**
 	 * This function calls a popup to increase its z-index
 	 *
-	 * @param [string]
+	 * @param {string}
 	 *            sPopupId of Popup that should increase its z-index
-	 * @param [boolean]
+	 * @param {boolean}
 	 *            bIsParent marks if a parent Popup calls its child Popups
 	 *            to increase their z-index
 	 */
@@ -3018,24 +3018,24 @@ sap.ui.define([
 	 * with buttons it has to be checked whether a button or content-element
 	 * is available that can be focused.
 	 *
-	 * @param [object]
+	 * @param {object}
 	 *            mParameters contain all necessary parameters
-	 * @param [object.object]
+	 * @param {object}
 	 *            mParameter.that is the control that calls this function.
 	 *            Needed for debug logging info
-	 * @param [object.object]
+	 * @param {object}
 	 *            mParameters.event is the event that is being forwarded
 	 *            from the
-	 * @param [object.string]
+	 * @param {string}
 	 *            mParameters.firstFocusable is the first focusable element
 	 *            in the control
-	 * @param [object.string]
+	 * @param {string}
 	 *            mParameters.lastFocusable is the last focusable element in
 	 *            the control
-	 * @param [object.jQuery]
+	 * @param {jQuery}
 	 *            mParameters.$FocusablesContent are focusable elements in
 	 *            the content area of the control
-	 * @param [object.jQuery]
+	 * @param {jQuery}
 	 *            mParameters.$FocusablesFooter are focusable elements in
 	 *            the footer area of the control (e.g. buttons)
 	 */

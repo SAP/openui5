@@ -3,6 +3,7 @@ sap.ui.define([
 ], function (JSONModel) {
 	"use strict";
 
+	// Please order topics alphabetically by "title"
 	return new JSONModel({
 		selectedKey: 'overview',
 		navigation: [
@@ -47,28 +48,11 @@ sap.ui.define([
 				key: 'types',
 				items: [
 					{
-						title: 'List',
-						topicTitle: 'Integration Card Types',
+						title: 'Adaptive',
+						topicTitle: 'AdaptiveCard',
 						target: 'learnDetail',
-						key: 'list'
-					},
-					{
-						title: 'Table',
-						topicTitle: 'Integration Card Types',
-						target: 'learnDetail',
-						key: 'table'
-					},
-					{
-						title: 'Object',
-						topicTitle: 'Integration Card Types',
-						target: 'learnDetail',
-						key: 'object'
-					},
-					{
-						title: 'Timeline',
-						topicTitle: 'Integration Card Types',
-						target: 'learnDetail',
-						key: 'timeline'
+						key: 'adaptive',
+						experimental: true
 					},
 					{
 						title: 'Analytical',
@@ -83,10 +67,28 @@ sap.ui.define([
 						key: 'component'
 					},
 					{
-						title: 'Adaptive',
-						topicTitle: 'AdaptiveCard',
+						title: 'List',
+						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
-						key: 'adaptive'
+						key: 'list'
+					},
+					{
+						title: 'Object',
+						topicTitle: 'Integration Card Types',
+						target: 'learnDetail',
+						key: 'object'
+					},
+					{
+						title: 'Table',
+						topicTitle: 'Integration Card Types',
+						target: 'learnDetail',
+						key: 'table'
+					},
+					{
+						title: 'Timeline',
+						topicTitle: 'Integration Card Types',
+						target: 'learnDetail',
+						key: 'timeline'
 					}
 				]
 			},
@@ -109,15 +111,22 @@ sap.ui.define([
 						topicTitle: 'Integration Card Features'
 					},
 					{
-						title: 'Translation',
+						title: 'Data Sources',
 						target: 'learnDetail',
-						key: 'translation',
-						topicTitle: 'Integration Card Features'
+						key: 'dataSources',
+						topicTitle: 'Integration Card Data Sources'
 					},
 					{
-						title: 'Manifest Parameters',
+						title: 'Date Ranges',
 						target: 'learnDetail',
-						key: 'manifestParameters',
+						key: 'dateRanges',
+						topicTitle: 'Integration Card Date Range Handling',
+						experimental: true
+					},
+					{
+						title: 'Dynamic Counter',
+						target: 'learnDetail',
+						key: 'dynamicCounter',
 						topicTitle: 'Integration Card Features'
 					},
 					{
@@ -127,16 +136,16 @@ sap.ui.define([
 						topicTitle: 'Integration Card Features'
 					},
 					{
-						title: 'Dynamic Counter',
+						title: 'Manifest Parameters',
 						target: 'learnDetail',
-						key: 'dynamicCounter',
+						key: 'manifestParameters',
 						topicTitle: 'Integration Card Features'
 					},
 					{
-						title: 'Date Range Handling',
+						title: 'Translation',
 						target: 'learnDetail',
-						key: 'dateRangeHandling',
-						topicTitle: 'Integration Card Date Range Handling'
+						key: 'translation',
+						topicTitle: 'Integration Card Features'
 					}
 				]
 			},
@@ -154,15 +163,15 @@ sap.ui.define([
 				key: 'formatters',
 				items: [
 					{
-						title: 'Date and Time',
-						target: 'learnDetail',
-						key: 'dateAndTime',
-						topicTitle: 'Formatters'
-					},
-					{
 						title: 'Currency',
 						target: 'learnDetail',
 						key: 'currency',
+						topicTitle: 'Formatters'
+					},
+					{
+						title: 'Date and Time',
+						target: 'learnDetail',
+						key: 'dateAndTime',
 						topicTitle: 'Formatters'
 					},
 					{

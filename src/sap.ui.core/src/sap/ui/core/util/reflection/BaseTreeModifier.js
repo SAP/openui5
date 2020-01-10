@@ -7,12 +7,14 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
+	"sap/base/util/isPlainObject",
 	"sap/base/Log"
 ], function(
 	ManagedObject,
 	ManagedObjectMetadata,
 	ObjectPath,
 	XMLHelper,
+	isPlainObject,
 	Log
 ) {
 
@@ -347,6 +349,21 @@ sap.ui.define([
 			recurse.call(this, oRootNode, oRootNode, false);
 		},
 
+		_getSerializedValue: function (vPropertyValue) {
+			if (this._isSerializable(vPropertyValue) && typeof vPropertyValue !== "string") {
+				//not a property like aggregation
+				//type object can be json objects
+				//should not be already stringified
+				return JSON.stringify(vPropertyValue);
+			}
+			return vPropertyValue;
+		},
+
+		_isSerializable: function (vPropertyValue) {
+			// check for plain object, array, primitives
+			return isPlainObject(vPropertyValue) || Array.isArray(vPropertyValue) || Object(vPropertyValue) !== vPropertyValue;
+		},
+
 		/**
 		 * Checks if there is a property binding and returns it if available, otherwise returns the value of the property.
 		 *
@@ -588,7 +605,7 @@ sap.ui.define([
 		 * See {@link sap.ui.base.ManagedObjectMetadata#getAllAggregations} method.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
-		 * @return {map} Map of aggregation info objects keyed by aggregation names
+		 * @return {Object<string,object>} Map of aggregation info objects keyed by aggregation names
 		 * @public
 		 */
 		getAllAggregations: function (vControl) {},

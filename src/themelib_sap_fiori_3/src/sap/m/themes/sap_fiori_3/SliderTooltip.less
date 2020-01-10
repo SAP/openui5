@@ -9,10 +9,14 @@
 
 .sapMSliderTooltip {
 	background: @sapUiFieldBackground;
-	border-radius: 0.125rem;
+	border-radius: @sapUiElementBorderCornerRadius;
 	border: 1px solid @sapUiFieldBorderColor;
 	box-shadow: none;
-	height: 1.5rem;
+	height: 1.375rem;
+	min-width: 2rem;
+	padding: 0.25rem;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiContentLabelColor;
 }
 
 .sapMSliderTooltipInput {

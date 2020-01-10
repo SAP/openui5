@@ -40,6 +40,16 @@ sap.ui.define([
 				}), "a send request with correct parameters and options is sent");
 			});
 		});
+		QUnit.test("given a mock server, when write is triggered for a draft", function (assert) {
+			var mPropertyBag = {url : "/flexKeyuser", flexObjects : [], draft: true};
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/changes/?draft=true";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+			return KeyUserConnector.write(mPropertyBag).then(function () {
+				var aArgs = oStubSendRequest.getCall(0).args;
+				var sUrl = aArgs[0];
+				assert.equal(sUrl, sExpectedUrl, "a send request with correct url is sent");
+			});
+		});
 
 		QUnit.test("given a mock server, when update is triggered", function (assert) {
 			var oFlexObject = {
@@ -160,8 +170,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector loadFeatures", {
-		beforeEach : function () {
-		},
 		afterEach: function() {
 			ApplyConnector.xsrfToken = undefined;
 			ApplyUtils.sendRequest.restore();
@@ -186,6 +194,46 @@ sap.ui.define([
 			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
 				assert.ok(oStubSendRequest.notCalled, "no request is sent to back end");
 				assert.deepEqual(oResponse.response, {isKeyUser: true}, "the settings object is obtain from apply connector correctly");
+			});
+		});
+	});
+
+	QUnit.module("KeyUserConnector.versions.load", {
+		afterEach: function() {
+			ApplyUtils.sendRequest.restore();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("get Versions", function (assert) {
+			var mPropertyBag = {
+				url : "/flexKeyuser",
+				reference: "com.sap.test.app"
+			};
+			var aReturnedVersions = [];
+			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : aReturnedVersions});
+			return KeyUserConnector.versions.load(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, aReturnedVersions, "the versions list is returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/com.sap.test.app", "the request has the correct url");
+			});
+		});
+	});
+
+	QUnit.module("KeyUserConnector.versions.activateDraft", {
+		afterEach: function() {
+			ApplyUtils.sendRequest.restore();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("activate draft", function (assert) {
+			var mPropertyBag = {
+				url : "/flexKeyuser",
+				reference: "com.sap.test.app"
+			};
+			var oActivatedVersion = [];
+			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : oActivatedVersion});
+			return KeyUserConnector.versions.activateDraft(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, oActivatedVersion, "the activated version is returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/draft/activate/com.sap.test.app", "the request has the correct url");
 			});
 		});
 	});

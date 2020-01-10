@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ComponentContainer,
@@ -19,6 +20,7 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	VariantModel,
 	ChangesController,
+	FlexState,
 	sinon
 ) {
 	"use strict";
@@ -34,7 +36,7 @@ sap.ui.define([
 	QUnit.module("isPersonalized", {
 		beforeEach : function() {
 			this.oAppComponent = new UIComponent("AppComponent21");
-			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			this.oGetAppComponentStub = sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 		},
 		afterEach: function() {
 			if (this.oControl) {
@@ -120,6 +122,7 @@ sap.ui.define([
 				}
 			};
 
+			sandbox.stub(Cache, "setVariantManagementSection");
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls,
@@ -142,6 +145,7 @@ sap.ui.define([
 
 		QUnit.test("When isPersonalized() is called with an array of control maps, without an app component and empty changes", function(assert) {
 			var aControlIds = [{id: "controlId1"}];
+			this.oGetAppComponentStub.returns(undefined);
 			assert.throws(
 				FlexRuntimeInfoAPI.isPersonalized({
 					selectors: aControlIds,
@@ -159,6 +163,7 @@ sap.ui.define([
 					changes: [oChangeContent0]
 				}
 			};
+			sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oMockedWrappedContent.changes);
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls

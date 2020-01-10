@@ -355,6 +355,7 @@ sap.ui.define([
 			horizontal: false,
 			vertical: true
 		});
+		this._oStickyHeaderObserver = null;
 		this._oHeaderObserver = null;
 		this._oSubHeaderAfterRenderingDelegate = {onAfterRendering: function() {
 				this._bStickySubheaderInTitleArea = false; // reset the flag as the stickySubHeader is freshly rerendered with the iconTabBar
@@ -371,8 +372,10 @@ sap.ui.define([
 		this._attachVisualIndicatorsPressHandlers();
 		this._attachVisualIndicatorMouseOverHandlers();
 		this._attachTitleMouseOverHandlers();
+		this._attachHeaderObserver();
 		this._addStickySubheaderAfterRenderingDelegate();
 		this._detachScrollHandler();
+		this._detachResizeHandlers();
 		this._toggleAdditionalNavigationClass();
 	};
 
@@ -388,7 +391,6 @@ sap.ui.define([
 
 		this._bPinned = false;
 		this._cacheDomElements();
-		this._detachResizeHandlers();
 		this._attachResizeHandlers();
 		this._updateMedia(this._getWidth(this));
 		this._attachScrollHandler();
@@ -420,6 +422,10 @@ sap.ui.define([
 			this._oScrollHelper.destroy();
 		}
 
+		if (this._oStickyHeaderObserver) {
+			this._oStickyHeaderObserver.disconnect();
+		}
+
 		if (this._oHeaderObserver) {
 			this._oHeaderObserver.disconnect();
 		}
@@ -447,9 +453,14 @@ sap.ui.define([
 		oOldHeader = this.getHeader();
 
 		if (oOldHeader) {
+			if (this._oStickyHeaderObserver) {
+				this._oStickyHeaderObserver.disconnect();
+			}
+
 			if (this._oHeaderObserver) {
 				this._oHeaderObserver.disconnect();
 			}
+
 			this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.HEADER);
 			oOldHeader.detachEvent(DynamicPage.EVENTS.PIN_UNPIN_PRESS, this._onPinUnpinButtonPress);
 			this._bAlreadyAttachedPinPressHandler = false;
@@ -458,6 +469,7 @@ sap.ui.define([
 			oOldHeader.detachEvent(DynamicPage.EVENTS.VISUAL_INDICATOR_MOUSE_OVER, this._onVisualIndicatorMouseOver);
 			oOldHeader.detachEvent(DynamicPage.EVENTS.VISUAL_INDICATOR_MOUSE_OUT, this._onVisualIndicatorMouseOut);
 			this._bAlreadyAttachedVisualIndicatorMouseOverOutHandler = false;
+			this._bAlreadyAttachedStickyHeaderObserver = false;
 			this._bAlreadyAttachedHeaderObserver = false;
 		}
 
@@ -1388,7 +1400,13 @@ sap.ui.define([
 		var bHeaderExpanded,
 			bCollapseVisualIndicatorVisible,
 			bExpandVisualIndicatorVisible,
-			bHasTitleAndHeader = this._hasVisibleTitleAndHeader();
+			bHasTitleAndHeader = this._hasVisibleTitleAndHeader(),
+			oHeader = this.getHeader(),
+			bHeaderHasContent = false;
+
+		if (exists(oHeader)) {
+			bHeaderHasContent = !!oHeader.getContent().length;
+		}
 
 		if (!this.getToggleHeaderOnTitleClick() || !bHasTitleAndHeader) {
 			bCollapseVisualIndicatorVisible = false;
@@ -1398,6 +1416,9 @@ sap.ui.define([
 			bCollapseVisualIndicatorVisible = bHeaderExpanded;
 			bExpandVisualIndicatorVisible = Device.system.phone && this.getTitle().getAggregation("snappedTitleOnMobile") ? false : !bHeaderExpanded;
 		}
+
+		bExpandVisualIndicatorVisible = bExpandVisualIndicatorVisible && bHeaderHasContent;
+		bCollapseVisualIndicatorVisible = bCollapseVisualIndicatorVisible && bHeaderHasContent;
 
 		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
 		this._toggleExpandVisualIndicator(bExpandVisualIndicatorVisible);
@@ -2083,15 +2104,34 @@ sap.ui.define([
 	 * Attaches observer to the <code>DynamicPageHeader</code> visible property.
 	 * @private
 	 */
+	DynamicPage.prototype._attachStickyHeaderObserver = function () {
+		var oHeader = this.getHeader();
+
+		if (exists(oHeader) && !this._bAlreadyAttachedStickyHeaderObserver) {
+			if (!this._oStickyHeaderObserver) {
+				this._oStickyHeaderObserver = new ManagedObjectObserver(this._adjustStickyContent.bind(this));
+			}
+
+			this._oStickyHeaderObserver.observe(oHeader, {properties: ["visible"]});
+
+			this._bAlreadyAttachedStickyHeaderObserver = true;
+		}
+	};
+
+
+	/**
+	 * Attaches observer to the <code>DynamicPageHeader</code> visible property.
+	 * @private
+	 */
 	DynamicPage.prototype._attachHeaderObserver = function () {
 		var oHeader = this.getHeader();
 
 		if (exists(oHeader) && !this._bAlreadyAttachedHeaderObserver) {
 			if (!this._oHeaderObserver) {
-				this._oHeaderObserver = new ManagedObjectObserver(this._adjustStickyContent.bind(this));
+				this._oHeaderObserver = new ManagedObjectObserver(this._updateToggleHeaderVisualIndicators.bind(this));
 			}
 
-			this._oHeaderObserver.observe(oHeader, {properties: ["visible"]});
+			this._oHeaderObserver.observe(oHeader, {aggregations: ["content"]});
 
 			this._bAlreadyAttachedHeaderObserver = true;
 		}
@@ -2139,7 +2179,7 @@ sap.ui.define([
 				this._oStickySubheader.addEventDelegate(this._oSubHeaderAfterRenderingDelegate, this);
 
 				this._bAlreadyAddedStickySubheaderAfterRenderingDelegate = true;
-				this._attachHeaderObserver();
+				this._attachStickyHeaderObserver();
 			}
 		}
 	};

@@ -611,6 +611,16 @@ sap.ui.define([
 			}
 		};
 
+		XMLView.prototype.onBeforeRendering = function() {
+			// make sure to preserve the content if not preserved yet
+			var oDomRef = this.getDomRef();
+			if (oDomRef && !RenderManager.isPreservedContent(oDomRef)) {
+				RenderManager.preserveContent(oDomRef, /* bPreserveRoot= */ true);
+			}
+
+			View.prototype.onBeforeRendering.apply(this, arguments);
+		};
+
 		XMLView.prototype.exit = function() {
 			if (this.oAfterRenderingNotifier) {
 				this.oAfterRenderingNotifier.destroy();

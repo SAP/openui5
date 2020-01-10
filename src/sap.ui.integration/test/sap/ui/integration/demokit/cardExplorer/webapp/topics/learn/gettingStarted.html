@@ -3,47 +3,41 @@
 
 <head>
 	<title>Getting Started</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="Content-Type" content="text/html">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../css/style.css">
-	<script id="sap-ui-bootstrap"
-			src="../../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_fiori_3">
-	</script>
 
-	<link href="../google-code-prettify/prettify.css" rel="stylesheet">
-	<link href="../css/prettify-light.css" rel="stylesheet">
+	<link rel="stylesheet" href="../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
 
-	<script src="../google-code-prettify/run_prettify.js"></script>
-
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
 </head>
-
 <body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
 
-<div class="topic">
-	<div class="content">
+			<h1>
+				Getting Started
+			</h1>
 
-		<h1>
-			Getting Started
-		</h1>
+			<p>
+				Creating a card is as simple as creating a new manifest.json file.
+				The manifest holds all configurations necessary to render a card.
+			</p>
 
-		<p>
-			Creating a card is as simple as creating a new manifest.json file.
-			The manifest holds all configurations necessary to render a card.
-		</p>
+			<h2 id="step1">
+				Step 1: Add the manifest skeleton
+			</h2>
 
-		<h2 id="step1">
-			Step 1: Add the manifest skeleton
-		</h2>
+			<p>
+				Add sap.app namespace, set the type to "card" and set an id. Add the sap.card namespace where all card configurations will be added.
+				Set the type of the card to "List".
+			</p>
 
-		<p>
-			Add sap.app namespace, set the type to "card" and set an id. Add the sap.card namespace where all card configurations will be added.
-			Set the type of the card to "List".
-		</p>
-
-		<pre class="prettyprint lang-js">{
+			<pre class="prettyprint lang-js">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card"
@@ -53,15 +47,15 @@
 	}
 }</pre>
 
-		<h2 id="step2">
-			Step 2: Add a header
-		</h2>
+			<h2 id="step2">
+				Step 2: Add a header
+			</h2>
 
-		<p>
-			Add a header property with title, subTitle, and icon.
-		</p>
+			<p>
+				Add a header property with title, subTitle, and icon.
+			</p>
 
-		<pre class="prettyprint lang-js">{
+			<pre class="prettyprint lang-js">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card"
@@ -78,15 +72,15 @@
 	}
 }</pre>
 
-		<h2 id="step3">
-			Step 3: Add a navigation action
-		</h2>
+			<h2 id="step3">
+				Step 3: Add a navigation action
+			</h2>
 
-		<p>
-			Add an actions property with an action of type "Navigation". Set a URL to navigate to, when the header is clicked.
-		</p>
+			<p>
+				Add an actions property with an action of type "Navigation". Set a URL to navigate to, when the header is clicked.
+			</p>
 
-		<pre class="prettyprint  lang-js">{
+			<pre class="prettyprint  lang-js">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card"
@@ -109,17 +103,17 @@
 	}
 }</pre>
 
-		<h2 id="step4">
-			Step 4: Add a content
-		</h2>
+			<h2 id="step4">
+				Step 4: Add a content
+			</h2>
 
-		<p>
-			Add a content property to the card. Inside it add a data section with static JSON with an array of 3 sales orders.
-			After that add an item template that will be used for all items in the data section.
-			To bind the item title and description you can use UI5's binding syntax.
-		</p>
+			<p>
+				Add a content property to the card. Inside it add a data section with static JSON with an array of 3 sales orders.
+				After that add an item template that will be used for all items in the data section.
+				To bind the item title and description you can use UI5's binding syntax.
+			</p>
 
-		<pre class="prettyprint  lang-js">{
+			<pre class="prettyprint  lang-js">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card"
@@ -168,50 +162,49 @@
 	}
 }</pre>
 
-		<h2 id="step5">
-			Step 5: Integrate the card in a host environment
-		</h2>
-		<h3>
-			Use the card in an HTML Page
-		</h3>
-		<p>Create a UI Integration Card inside an HTML Page that points to the created manifest:</p>
+			<h2 id="step5">
+				Step 5: Integrate the card in a host environment
+			</h2>
+			<h3>
+				Use the card in an HTML Page
+			</h3>
+			<p>Create a UI Integration Card inside an HTML Page that points to the created manifest:</p>
 
-		<pre class="prettyprint lang-html">
-	&lt;html&gt;
-		&lt;head&gt;
-			&lt;script
-				id="sap-ui-bootstrap"
-				src="https://ui5.sap.com/resources/sap-ui-integration.js"&gt;
-			&lt;/script&gt;
-		&lt;/head&gt;
-		&lt;body&gt;
-			&lt;ui-integration-card manifest="./manifest.json"&gt;&lt;/ui-integration-card&gt;
-		&lt;/body&gt;
-	&lt;/html&gt;
-		</pre>
-		<h3>
-			Use the card in an XML View
-		</h3>
-		<p>Create a UI Integration Card inside an XML View that points to the created manifest:</p>
-
-		<pre class="prettyprint  lang-xml">
-	&lt;mvc:View xmlns:ui-integration="sap.ui.integration.widgets"&gt;
-		&lt;ui-integration:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
-	&lt;/mvc:View&gt;
-
+			<pre class="prettyprint lang-html">
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;script
+			id="sap-ui-bootstrap"
+			src="https://ui5.sap.com/resources/sap-ui-integration.js"&gt;
+		&lt;/script&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;ui-integration-card manifest="./manifest.json"&gt;&lt;/ui-integration-card&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
 </pre>
 
-	</div>
-	<div class="navigation">
-		<h4>Table of Contents</h4>
-		<div><a href="#step1">Step 1 - Skeleton</a></div>
-		<div><a href="#step2">Step 2 - Header</a></div>
-		<div><a href="#step3">Step 3 - Navigation</a></div>
-		<div><a href="#step4">Step 4 - Content</a></div>
-		<div><a href="#step5">Step 5 - Add in XML View</a></div>
-	</div>
-</div>
+			<h3>
+				Use the card in an XML View
+			</h3>
+			<p>Create a UI Integration Card inside an XML View that points to the created manifest:</p>
 
+			<pre class="prettyprint  lang-xml">
+&lt;mvc:View xmlns:ui-integration="sap.ui.integration.widgets"&gt;
+	&lt;ui-integration:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+&lt;/mvc:View&gt;
+</pre>
+
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#step1">Step 1 - Skeleton</a></div>
+			<div><a href="#step2">Step 2 - Header</a></div>
+			<div><a href="#step3">Step 3 - Navigation</a></div>
+			<div><a href="#step4">Step 4 - Content</a></div>
+			<div><a href="#step5">Step 5 - Add in XML View</a></div>
+		</div>
+	</div>
 </body>
 
 </html>

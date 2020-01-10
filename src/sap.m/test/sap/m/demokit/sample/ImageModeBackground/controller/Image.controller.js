@@ -2,9 +2,12 @@ sap.ui.define([
 		'sap/ui/Device',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
-		'sap/m/ImageMode'
-	], function(Device, Controller, JSONModel, ImageMode) {
+		'sap/m/library'
+	], function(Device, Controller, JSONModel, mobileLibrary) {
 	"use strict";
+
+	// shortcut for sap.m.ImageMode
+	var ImageMode = mobileLibrary.ImageMode;
 
 	var ImageController = Controller.extend("sap.m.sample.ImageModeBackground.controller.ImageController", {
 

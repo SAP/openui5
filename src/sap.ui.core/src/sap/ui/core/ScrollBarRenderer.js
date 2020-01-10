@@ -46,7 +46,7 @@ sap.ui.define(['sap/ui/Device', "sap/ui/dom/getScrollbarSize"],
 		var oBSS = getScrollbarSize(sScrollBarTouchClass);
 		var sWidth = oBSS.width;
 		var sHeight = oBSS.height;
-		// Fix for Fiory Client and Edge in Mobile Mode on Win8 and Win10
+		// Fix for Fiori Client and Edge in Mobile Mode on Win8 and Win10
 		if (Device.browser.edge) {
 			if (!sWidth) {
 				sWidth = "15";

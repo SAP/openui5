@@ -6,10 +6,9 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/Device",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/MessageType",
+	"sap/ui/core/library",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
-	"sap/ui/model/BindingMode",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -18,12 +17,14 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper'
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Device, SyncPromise, MessageType, Controller, View, BindingMode, CountMode,
-		MessageScope, ODataModel, TestUtils, datajs, XMLHelper) {
+], function (Log, uid, Device, SyncPromise, coreLibrary, Controller, View, CountMode, MessageScope,
+		ODataModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit*/
+	/*eslint-disable quote-props*/
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/};
 
 	/**
@@ -86,7 +87,6 @@ sap.ui.define([
 	 *
 	 * @param {object|object[]} vMessage
 	 *   A message object or an array of message objects as returned by an OData V2 service.
-	 *   "code", "message", "severity" and "target" are supported message object properties.
 	 * @returns {string}
 	 *   A stringified representation of the given messages
 	 */
@@ -94,22 +94,9 @@ sap.ui.define([
 		var bIsArray = Array.isArray(vMessage),
 			oMessage = bIsArray ? vMessage[0] : vMessage;
 
-		function normalizeMessage(oMessage0) {
-			return {
-				code : oMessage0.code,
-				message : oMessage0.message,
-				severity : oMessage0.severity,
-				target : oMessage0.target
-			};
-		}
-
-		return JSON.stringify({
-			code : oMessage.code,
-			details : bIsArray ? vMessage.slice(1).map(normalizeMessage) : [],
-			message : oMessage.message,
-			severity : oMessage.severity,
-			target : oMessage.target
-		});
+		return JSON.stringify(Object.assign(
+			oMessage, {details : bIsArray ? vMessage.slice(1) : []}
+		));
 	}
 
 	/**
@@ -1084,6 +1071,50 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Message with a simple target in a complex data type
+	// JIRA: CPOUI5MODELS-35
+	QUnit.test("Messages: simple target with complex data type", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox binding="{/BusinessPartnerSet(\'1\')}">\
+	<Text id="CompanyName" text="{CompanyName}" />\
+	<Input id="City" value="{Address/City}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerSet('1')", {
+				CompanyName : "SAP SE",
+				Address : {
+					City : "Walldorf"
+				}
+			}, {
+				"sap-message" : getMessageHeader({
+					code : "A",
+					message : "Foo",
+					severity : "error",
+					target : "Address/City"
+				})
+			})
+			.expectChange("CompanyName", null)
+			.expectChange("CompanyName", "SAP SE")
+			.expectChange("City", null)
+			.expectChange("City", "Walldorf")
+			.expectMessages([{
+				code : "A",
+				fullTarget : "/BusinessPartnerSet('1')/Address/City",
+				message : "Foo",
+				persistent : false,
+				target : "/BusinessPartnerSet('1')/Address/City",
+				type : MessageType.Error
+			}]);
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			return that.checkValueState(assert, "City", "Error", "Foo");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Messages are visualized at controls that are bound against the messages' target.
 	QUnit.test("Messages: check value state", function (assert) {
 		var oModel = createSalesOrdersModel(),
@@ -1140,6 +1171,87 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Messages are not removed after refresh, if messages are flagged as persistent
+	// (transient or transition)
+	// JIRA: CPOUI5MODELS-35
+[
+	{
+		bIsPersistent : true,
+		sTarget : "Note",
+		bTransient : true
+	}, {
+		bIsPersistent : true,
+		sTarget : "Note",
+		bTransition : true
+	}, {
+		bIsPersistent : true,
+		sTarget : "/#TRANSIENT#Note"
+	}, {
+		bIsPersistent : false,
+		sTarget : "Note"
+	}
+].forEach(function (oFixture) {
+	var sTitle = "Messages: message is persistent=" + oFixture.bIsPersistent + " (transient="
+			+ oFixture.bTransient + ", transition=" + oFixture.bTransition + ", target='"
+			+ oFixture.sTarget + "')";
+
+	QUnit.test(sTitle, function (assert) {
+		var oExpectedMessage = {
+				code : "code",
+				fullTarget : "/SalesOrderSet('1')/Note",
+				message : "Foo",
+				persistent : oFixture.bIsPersistent,
+				target : "/SalesOrderSet('1')/Note",
+				type : MessageType.Error
+			},
+			oModel = createSalesOrdersModel(),
+			that = this,
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>';
+
+		this.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1",
+				Note : "NoteA"
+			}, {
+				"sap-message" : getMessageHeader({
+					code : "code",
+					message : "Foo",
+					severity : "error",
+					target : oFixture.sTarget,
+					transient : oFixture.bTransient,
+					transition : oFixture.bTransition
+				})
+			})
+			.expectChange("note", null)
+			.expectChange("note", "NoteA")
+			.expectMessages([oExpectedMessage]);
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			return that.checkValueState(assert, "note", "Error", "Foo");
+		}).then(function () {
+			that.expectRequest("SalesOrderSet('1')", {
+					SalesOrderID : "1",
+					Note : "NoteB"
+				})
+				.expectChange("note", "NoteB")
+				.expectMessages(oFixture.bIsPersistent ? [oExpectedMessage] : []);
+
+			// code under test
+			that.oModel.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return oFixture.bIsPersistent
+				? that.checkValueState(assert, "note", "Error", "Foo")
+				: that.checkValueState(assert, "note", "None", "");
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: While refreshing a model or a binding, all messages belonging to that model or

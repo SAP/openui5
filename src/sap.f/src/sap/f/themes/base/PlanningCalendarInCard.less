@@ -1,0 +1,195 @@
+/* ======================================= */
+/* CSS for control                         */
+/* sap.m/PlanningCalendarInCard            */
+/* Base theme                              */
+/* ======================================= */
+
+.sapMPlanCalInCard {
+	padding: 1rem;
+	.sapMPlanCalHead,
+	.sapMListTbl .sapMLIB {
+		display: none;
+	}
+
+	.sapMListInfoTBar.sapMIBar.sapMTB .sapMBarChild:last-child {
+		margin: 0;
+	}
+
+	.sapUiCalendarRowAppsInt>.sapUiCalendarRowAppsIntHead {
+		height: 0;
+	}
+
+	.sapMList .sapMListInfoTBar.sapMTB {
+		display: flex;
+		flex-direction: column;
+		align-items: normal;
+	}
+
+	.sapMListShowSeparatorsAll .sapMListTblSubRow:last-child > td {
+		border: none;
+	}
+
+	.sapUiCalendarNoApps .sapMListTblSubRow:last-child > td {
+		border-top: none;
+	}
+
+	.sapUiCalMonthPicker,
+	.sapUiCalYearPicker,
+	.sapUiCalMonthView.sapMBarChild {
+		width: auto;
+		min-height: 14rem;
+	}
+
+	.sapUiUnifiedLegendSquareColor.sapMPlanCalLegendAppCircle {
+		border-radius: 1rem;
+	}
+
+	td .sapMLnk {
+		padding: 0 1rem;
+	}
+
+	.sapMTB .sapUiUnifiedLegendDescription {
+		white-space: normal;
+	}
+
+	.sapUiCalendarRowAppsIntHead {
+		margin-bottom: 0;
+	}
+
+	.sapUiUnifiedLegend {
+		padding: 1rem 0;
+	}
+
+	.sapUiCalendarRowApps {
+		padding: 0.5rem 0;
+	}
+
+	.sapFCard .sapFCardContent .sapMListTbl {
+		padding: 0;
+	}
+
+	.sapMListTblSubCntRow + .sapMListTblSubCntRow {
+		margin-top: 0;
+	}
+
+	.sapMListTblSubCntRow.sapMPlanCalAppRow {
+		width: 100%;
+	}
+
+	.sapUiCalendarRowAppsInt .sapUiCalendarNoApps {
+		border-top: none;
+	}
+
+	.sapUiCalendarAppContainer {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		box-sizing: border-box;
+		padding-right: 0;
+	}
+
+	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerLeft {
+		margin-right: 0.75rem;
+		padding: 0;
+		width: 4rem;
+		.sapUiCalendarAppStart {
+			font-size: @sapMFontMediumSize;
+			color: @sapUiBaseText;
+			text-align: right;
+		}
+		.sapUiCalendarAppEnd {
+			font-size: @sapMFontSmallSize;
+			color: @sapUiContentLabelColor;
+			margin-top: 0.25rem;
+			text-align: right;
+		}
+	}
+
+	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight {
+		flex: 1;
+		margin-right: 0;
+	}
+
+	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight > .sapUiCalendarRowAppsIntHead,
+	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight > .sapUiCalendarApp {
+		margin: 0;
+	}
+
+	.sapMListTblSubCnt {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.sapUiCalendarApp.sapUiCalendarAppSel,
+	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight > .sapUiCalendarApp:not(.sapUiCalendarAppSel):not(:active),
+	.sapUiCalendarApp.sapUiCalendarAppSel, .sapUiCalendarApp:active, .sapUiCalendarApp.sapUiCalendarAppSel:active {
+		background: transparent;
+	}
+
+	.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont > .sapUiCalendarAppIcon,
+	.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont > .sapUiCalendarAppArrowIconLeft,
+	.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont > .sapUiCalendarAppArrowIconRight,
+	.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont .sapUiCalendarAppTitle,
+	.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont .sapUiCalendarAppText {
+		color: @sapUiBaseText;
+	}
+
+}
+
+.sapUiSizeCompact .sapMPlanCalInCard {
+	.sapUiCalMonthPicker,
+	.sapUiCalYearPicker {
+		width: auto;
+	}
+
+	.sapMPlanCalInCard .sapUiCalYearPicker:not(.sapMBarChild) {
+		padding: 3rem 1rem;
+	}
+
+	.sapUiUnifiedLegend {
+		padding: 1rem 0;
+	}
+}
+
+.sapUiSizeCompact .sapFCard .sapFCardContent .sapMPlanCalInCard .sapMListTbl {
+	padding: 0;
+}
+
+html.sap-desktop .sapMPlanCalInCard .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active), html.sap-desktop .sapMPlanCalInCard .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active),
+html.sap-desktop .sapMPlanCalInCard .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active), html.sap-desktop .sapMPlanCalInCard .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sapUiCalendarAppCont {
+	background: transparent;
+}
+
+/* ======================================= */
+/* Two columns                            */
+/* ======================================= */
+
+
+.sapMPlanCalInCard.sapMPCInCardTwoColumns {
+	.sapMPCHead {
+		max-width: 50%;
+	}
+	.sapMList.sapMListTblCnt {
+		display: flex;
+	}
+	.sapMIBar {
+		min-width: 50%;
+	}
+	.sapMListTbl {
+		margin-top: -2rem;
+		position: inherit;
+	}
+	.sapMListInfoTBarContainer {
+		width: inherit;
+	}
+	.sapMTBStandard {
+		border: none;
+	}
+	.sapUiCalendarRowApps {
+		padding: 0;
+	}
+	.sapMListTbl {
+		margin-left: 2rem;
+	}
+}

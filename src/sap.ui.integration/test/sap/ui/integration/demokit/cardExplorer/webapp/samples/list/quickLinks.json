@@ -4,7 +4,21 @@
 		"id": "card.explorer.quick.links.list.card",
 		"type": "card",
 		"title": "Sample of a List with Quick Links",
-		"subTitle": "Sample of a List with Quick Links"
+		"subTitle": "Sample of a List with Quick Links",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Link",
+				"Card",
+				"Sample"
+			]
+		}
 	},
 	"sap.ui": {
 		"technology": "UI5",

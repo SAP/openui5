@@ -327,7 +327,7 @@ sap.ui.define([
 			 * together with the later aggregation change.
 			 *
 			 * @protected
-			 * @param {object} mArguments
+			 * @param {object} mArguments the object containing the arguments
 			 * @param {sap.ui.core.Control} mArguments.container the container where the view will be added
 			 * @param {sap.ui.core.Control} mArguments.view the view which will be added to the container
 			 * @param {object} [mArguments.data] the data passed from {@link sap.ui.core.routing.Target#display} method

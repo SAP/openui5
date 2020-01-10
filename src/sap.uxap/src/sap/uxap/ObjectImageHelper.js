@@ -139,4 +139,4 @@ sap.ui.define([
 
 	return ObjectImageHelper;
 
-}, /* bExport= */ false);
+});

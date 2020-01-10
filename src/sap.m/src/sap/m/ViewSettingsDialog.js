@@ -15,6 +15,7 @@ sap.ui.define([
 	'./StandardListItem',
 	'./Dialog',
 	'./Button',
+	'./ToggleButton',
 	'./Label',
 	'./NavContainer',
 	'./Bar',
@@ -44,6 +45,7 @@ function(
 	StandardListItem,
 	Dialog,
 	Button,
+	ToggleButton,
 	Label,
 	NavContainer,
 	Bar,
@@ -344,6 +346,7 @@ function(
 		this._sCustomTabsButtonsIdPrefix    = '-custom-button-';
 		this._sTitleLabelId                 = sId + "-title";
 		this._sFilterDetailTitleLabelId     = sId + "-detailtitle";
+		this._oFiltersSelectedOnly			= {};
 
 		/* setup a name map between the sortItems
 		 aggregation and an sap.m.List with items
@@ -714,7 +717,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype.setTitle = function(sTitle) {
 		this._getTitleLabel().setText(sTitle);
-		this.setProperty("title", sTitle, true);
+		this.setProperty("title", sTitle);
 		return this;
 	};
 
@@ -2037,7 +2040,11 @@ function(
 		}
 
 		this._filterSearchField = this._getFilterSearchField(this._filterDetailList);
-		this._getPage2().addContent(this._filterSearchField.addStyleClass('sapMVSDFilterSearchField'));
+		this._showOnlySelectedButton = this._getShowOnlySelectedButton();
+		this._searchBar = new Toolbar({
+			content: [ this._filterSearchField.addStyleClass('sapMVSDFilterSearchField').addStyleClass('sapMTBShrinkItem'), this._showOnlySelectedButton ]
+		});
+		this._getPage2().addContent(this._searchBar);
 		// add this css style for recognizing when after the sap.m.Bar is SearchField, so we can remove the bar border
 		this._getPage2().getCustomHeader().addStyleClass('sapMVSDBarWithSearch');
 
@@ -2052,7 +2059,7 @@ function(
 				content: [ this._selectAllCheckBox ]
 			}).addStyleClass('sapMVSDFilterHeaderToolbar'));
 		}
-
+		this._setFilterDetailItemsVisibility(this._filterDetailList, true);
 		this._getPage2().addContent(this._filterDetailList);
 	};
 
@@ -2850,6 +2857,7 @@ function(
 					var oVSDItem = oItem.data("item");
 					oVSDItem.setSelected(bSelected);
 				});
+
 				// enable/disable reset button if necessary
 				this._checkResetStatus();
 			}.bind(this)
@@ -2891,29 +2899,87 @@ function(
 	};
 
 	/**
+	 * Determines whether or not the passed oItem is visible based on what is entered in the Search field.
+	 *
+	 * @param {sap.m.StandardListItem} oItem An item from the filter details
+	 * @returns {boolean} visibility of the oItem
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._visibilityBySearchField = function(oItem) {
+		var sQuery = this._filterSearchField.getValue(),
+			fnStringFilter = this._getStringFilter(),
+			bTitleSatisfiesTheQuery = fnStringFilter(sQuery, oItem.getTitle());
+		return bTitleSatisfiesTheQuery;
+	};
+
+	/**
+	 * Determines whether or not the passed oItem is visible based on Show only selected button state.
+	 *
+	 * @param {sap.m.StandardListItem} oItem an item from the filter details
+	 * @returns {boolean} visibility of the oItem
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._visibilityByToggleButton = function(oItem) {
+		var bTitleSatisfiesTheToggleButton = this._showOnlySelectedButton.getPressed() ? oItem.getSelected() : true;
+		return bTitleSatisfiesTheToggleButton;
+	};
+
+	/**
 	 * Creates the filter items search field.
 	 *
-	 * @param {Array} oFilterDetailList The actual list created for the detail filter page
+	 * @param {object} oFilterDetailList The actual list created for the detail filter page
 	 * @returns {sap.m.SearchField} A search field instance
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getFilterSearchField = function(oFilterDetailList) {
 		var oFilterSearchField = new SearchField({
-				liveChange: function(oEvent) {
-					var sQuery = oEvent.getParameter('newValue'),
-						fnStringFilter = this._getStringFilter();
-
-					oFilterDetailList.getItems().forEach(function (oItem) {
-						var bTitleSatisfiesTheQuery = fnStringFilter(sQuery, oItem.getTitle());
-						oItem.setVisible(bTitleSatisfiesTheQuery);
-					});
-
-					//update Select All checkbox
-					this._updateSelectAllCheckBoxState();
+				liveChange: function() {
+					this._setFilterDetailItemsVisibility(oFilterDetailList);
 				}.bind(this)
 			});
 
 		return oFilterSearchField;
+	};
+
+	/**
+	 * Sets visibility of filter detail items depending on both Search field and Show only selected button state
+	 *
+	 * @param {object} oFilterDetailList The actual list created for the detail filter page
+	 * @param {boolean} bSkipSearch if <code>true</code>, skip the search field part (in initial phase)
+	 * @private
+	*/
+	ViewSettingsDialog.prototype._setFilterDetailItemsVisibility = function(oFilterDetailList, bSkipSearch) {
+		oFilterDetailList.getItems().forEach(function (oItem) {
+			oItem.setVisible(this._visibilityByToggleButton(oItem) && (bSkipSearch || this._visibilityBySearchField(oItem)));
+		}.bind(this));
+		//update Select All checkbox
+		this._updateSelectAllCheckBoxState();
+	};
+
+	/**
+	 * Creates the Show only selected Toggle Button.
+	 *
+	 * @returns {sap.m.ToggleButton} A search field instance
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getShowOnlySelectedButton = function() {
+		var bPressedForFilter = this._oContentItem && this._oFiltersSelectedOnly[this._oContentItem.getId()] ? true : false,
+			oShowOnlySelectedButton = new ToggleButton({
+				icon : IconPool.getIconURI("activity-2"),
+				pressed: bPressedForFilter,
+				press: function() {
+					var bPressed = this._showOnlySelectedButton.getPressed(),
+						sFilterIndex = this._oContentItem.getId();
+					if (bPressed) { // "remember" this filter "Show only selected" button
+						this._oFiltersSelectedOnly[sFilterIndex] = true;
+					} else { // "forget" this filter "Show only selected" button
+						delete this._oFiltersSelectedOnly[sFilterIndex];
+					}
+					this._setFilterDetailItemsVisibility(this._filterDetailList);
+				}.bind(this)
+			});
+
+		return oShowOnlySelectedButton;
 	};
 
 	/**

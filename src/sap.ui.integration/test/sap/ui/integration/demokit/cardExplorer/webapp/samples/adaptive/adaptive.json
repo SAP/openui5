@@ -2,7 +2,22 @@
 	"_version": "1.17.0",
 	"sap.app": {
 		"id": "adativecard.embedded",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of an Adaptive Card",
+		"subTitle": "Sample of an Adaptive Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Sample"
+			]
+		}
 	},
 	"sap.card": {
 		"type": "AdaptiveCard",
@@ -21,8 +36,8 @@
 								{
 									"type": "Image",
 									"url": "https://sapui5.hana.ondemand.com/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/topics/images/Woman_avatar_01.png",
-									"size": "Small",
-									"style": "Person"
+									"size": "small",
+									"style": "person"
 								}
 							]
 						},
@@ -33,7 +48,7 @@
 								{
 									"type": "TextBlock",
 									"text": "Donna Moore",
-									"weight": "Bolder",
+									"weight": "bolder",
 									"wrap": true
 								},
 								{

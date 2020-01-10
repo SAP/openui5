@@ -2,29 +2,27 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/library',
-			'sap/ui/Device'],
-	function(library,
-			 Device) {
+sap.ui.define([
+	"sap/m/library"
+], function (library) {
 	"use strict";
 
 	// shortcut for sap.m.IconTabFilterDesign
 	var IconTabFilterDesign = library.IconTabFilterDesign;
 
 	/**
-		 * HBox renderer.
-		 * @namespace
-		 */
-	var IconTabHeaderRenderer = {
-	};
+	 * IconTabHeader renderer.
+	 * @namespace
+	 */
+	var IconTabHeaderRenderer = {};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	IconTabHeaderRenderer.render = function(oRM, oControl){
+	IconTabHeaderRenderer.render = function (oRM, oControl) {
 		// return immediately if control is not visible
 		if (!oControl.getVisible()) {
 			return;
@@ -79,11 +77,13 @@ sap.ui.define(['sap/m/library',
 		oRM.writeClasses();
 		oRM.write(">");
 
-		// render left scroll arrow
-		oRM.renderControl(oControl._getScrollingArrow("left"));
+		oRM.write('<div class="sapMITHWrapper">');
+		oRM.write("<div id='" + oControl.getId() + "-scrollContainer' class='sapMITHScrollContainer'>");
 
-		// render scroll container on touch devices
-		oRM.write("<div id='" + oControl.getId() + "-scrollContainer' class='sapMITBScrollContainer'>");
+		// render left scroll button
+		this._renderArrowButton(oRM, oControl, oControl._ARROWS.Left, bTextOnly, bInLine);
+
+		oRM.write('<div id="' + oControl.getId() + '-scrollContainerInner" class="sapMITHScrollContainerInner">');
 
 		oRM.write("<div id='" + oControl.getId() + "-head' role='tablist' ");
 		oRM.addClass("sapMITBHead");
@@ -120,34 +120,71 @@ sap.ui.define(['sap/m/library',
 			}
 		}
 
-		oRM.write("</div>");
-
-		oRM.write("</div>"); //scrollContainer
+		oRM.write("</div>"); // close head
+		oRM.write("</div>"); // close .sapMITHScrollContainerInner
 
 		// render right scroll arrow
-		oRM.renderControl(oControl._getScrollingArrow("right"));
+		this._renderArrowButton(oRM, oControl, oControl._ARROWS.Right, bTextOnly, bInLine);
 
 		// render overflow button
 		if (bShowOverflowSelectList) {
-			var oOverflowButton = oControl._getOverflowButton();
-			if (bInLine) {
-				oOverflowButton.addStyleClass('sapMBtnInline');
-			} else if (bTextOnly) {
-				oOverflowButton.addStyleClass('sapMBtnTextOnly');
-			} else if (bNoText || bHasHorizontalDesign) {
-				oOverflowButton.addStyleClass('sapMBtnNoText');
-			}
-
-			// used to vertically center the button in Fiori 3 theme
-			oOverflowButton.addStyleClass("sapMITHVerticallyCenteredArrow");
-
-			oRM.renderControl(oOverflowButton);
+			this._renderOverflowButton(oRM, oControl, bInLine, bTextOnly, bNoText, bHasHorizontalDesign);
 		}
 
-		// end wrapper div
+		oRM.write("</div>"); // close scrollContainer
+		oRM.write("</div>"); // close sapMITHWrapper
+
+		oRM.write("</div>"); // close ITH
+	};
+
+	IconTabHeaderRenderer._renderArrowButton = function (oRM, oControl, sDirection, bTextOnly, bInLine) {
+		var sArrowClass = "sapMITBArrowScroll";
+		var oArrowButton = oControl._getScrollButton(sDirection);
+
+		var aCssClasses = ["sapMITBArrowScroll"];
+
+		sArrowClass += sDirection;
+
+		if (bTextOnly) {
+			aCssClasses.push(sArrowClass + "TextOnly");
+		} else {
+			aCssClasses.push(sArrowClass);
+		}
+		if (bInLine || oControl.isInlineMode()) {
+			aCssClasses.push(sArrowClass + "InLine");
+		}
+		oRM.write("<div");
+		oRM.addClass(aCssClasses.join(" "));
+		oRM.writeClasses();
+		oRM.write(">");
+
+		oRM.renderControl(oArrowButton);
+
 		oRM.write("</div>");
 	};
 
+	IconTabHeaderRenderer._renderOverflowButton = function (oRM, oControl, bInLine, bTextOnly, bNoText, bHasHorizontalDesign) {
+
+		oRM.write('<div');
+		oRM.addClass('sapMITHOverflowButton');
+
+		if (bInLine) {
+			oRM.addClass('sapMBtnInline');
+		} else if (bTextOnly) {
+			oRM.addClass('sapMBtnTextOnly');
+		} else if (bNoText || bHasHorizontalDesign) {
+			oRM.addClass('sapMBtnNoText');
+		}
+
+		oRM.writeClasses();
+		oRM.write(">");
+
+		var oOverflowButton = oControl._getOverflowButton();
+
+		oRM.renderControl(oOverflowButton);
+
+		oRM.write('</div>');
+	};
 
 	return IconTabHeaderRenderer;
 

@@ -354,4 +354,4 @@ function(
 	};
 
 	return BasePlugin;
-}, /* bExport= */ true);
+});

@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/f/cards/IconFormatter",
 	"sap/f/cards/CardActions",
 	"sap/base/strings/formatMessage",
-	"sap/f/cards/BindingHelper"
+	"sap/f/cards/BindingHelper",
+	"sap/ui/core/Core"
 ], function (
 	mLibrary,
 	library,
@@ -26,7 +27,8 @@ sap.ui.define([
 	IconFormatter,
 	CardActions,
 	formatMessage,
-	BindingHelper
+	BindingHelper,
+	Core
 ) {
 	"use strict";
 
@@ -131,6 +133,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Header.prototype.init = function () {
+		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this._aReadyPromises = [];
 		this._bReady = false;
 
@@ -149,6 +152,7 @@ sap.ui.define([
 	Header.prototype.exit = function () {
 		this._oServiceManager = null;
 		this._oDataProviderFactory = null;
+		this._oRb = null;
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
@@ -321,6 +325,7 @@ sap.ui.define([
 		oHeader.setServiceManager(oServiceManager);
 		oHeader.setDataProviderFactory(oDataProviderFactory);
 		oHeader._setData(mConfiguration.data);
+		oHeader._setAccessibilityAttributes(mConfiguration);
 
 		var oActions = new CardActions({
 			areaType: AreaType.Header
@@ -422,6 +427,24 @@ sap.ui.define([
 			}.bind(this));
 		} else {
 			this.fireEvent("_dataReady");
+		}
+	};
+
+	/**
+	 * Sets accessibility to the header to the header.
+	 *
+	 * @private
+	 * @param {object} mConfiguration A map containing the header configuration options, which are already parsed.
+	 */
+	Header.prototype._setAccessibilityAttributes = function (mConfiguration) {
+		if (!mConfiguration.actions) {
+			this._sAriaRole = 'heading';
+			this._sAriaHeadingLevel = '3';
+			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER");
+		} else {
+			this._sAriaRole = 'button';
+			this._sAriaHeadingLevel = undefined;
+			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER");
 		}
 	};
 

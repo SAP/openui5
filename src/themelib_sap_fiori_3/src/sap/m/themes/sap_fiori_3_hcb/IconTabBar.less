@@ -3,13 +3,42 @@
 /* Quartz High Contrast Black theme  */
 /* ================================= */
 
+// Header
+@_sap_m_IconTabBar_HeaderBackgroundTranslucent: @sapUiObjectHeaderBackground;
+
+@_sap_m_IconTabBar_HeaderBorderBottom: none;
+@_sap_m_IconTabBar_HeaderShadow: 0 0.25rem 0.25rem -0.25rem fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiObjectHeaderBorderColor;
+
+// Content
+@_sap_m_IconTabBar_ContentBackground: @sapUiBaseBG;
+@_sap_m_IconTabBar_ContentBackgroundTranslucent: @sapUiGroupContentBackground;
+
 /* Head Container */
 
 .sapMITBHead {
 	padding: 0.125rem 0.125rem 0 0.125rem;
 }
 
-.sapMITBScrollContainer {
+.sapUiResponsivePadding--header .sapMITHWrapper {
+
+	&.sapUi-Std-PaddingS {
+		padding-left: 2rem !important;
+		padding-right: 2rem !important;
+	}
+
+	&.sapUi-Std-PaddingM,
+	&.sapUi-Std-PaddingL {
+		padding-left: 3rem !important;
+		padding-right: 3rem !important;
+	}
+
+	&.sapUi-Std-PaddingXL {
+		padding-left: 4rem !important;
+		padding-right: 4rem !important;
+	}
+}
+
+.sapMITHScrollContainer {
 	/* the same padding as on the sapMITBHead is needed
 	to correct the scrolling calculations*/
 	padding: 0.125rem 0.125rem 0 0.125rem;

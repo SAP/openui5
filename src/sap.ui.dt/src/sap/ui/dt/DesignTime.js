@@ -629,7 +629,11 @@ function (
 			.then(
 				function (oElementOverlay) {
 					Overlay.getOverlayContainer().append(oElementOverlay.render());
-					oElementOverlay.applyStyles();
+					this._oTaskManager.add({
+						type: "applyStyles",
+						callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
+						overlayId: oElementOverlay.getId()
+					}, "overlayId");
 					this._oTaskManager.complete(iTaskId);
 					return oElementOverlay;
 				}.bind(this),
@@ -979,7 +983,7 @@ function (
 	 * @param {sap.ui.base.ManagedObject} oElement - Element for which the overlay cannot be created
 	 * @param {string} sParentElementClassName - Class name of the parent element relatively to oElement
 	 * @param {string} sAggregationName - Aggregation name in parent element where oElement is located
-	 * @returns {{severity: string, errorObject: Error, message: string}} Error map.
+	 * @returns {{severity: string, errorObject: Error, message: string}} Error map
 	 * @private
 	 */
 	DesignTime.prototype._enrichChildCreationError = function (oError, oElement, sParentElementClassName, sAggregationName) {
@@ -1204,7 +1208,11 @@ function (
 					.then(function (oElementOverlay) {
 						var vInsertChildReply = oParentAggregationOverlay.insertChild(null, oElementOverlay);
 						if (vInsertChildReply === true) {
-							oElementOverlay.applyStyles(); // TODO: remove after Task Manager implementation
+							this._oTaskManager.add({
+								type: "applyStyles",
+								callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
+								overlayId: oElementOverlay.getId()
+							}, "overlayId");
 
 							var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay);
 
@@ -1362,7 +1370,7 @@ function (
 
 	/**
 	 * Returns the current status of the designTime instance
-	 * @returns {string} DesignTime status.
+	 * @returns {string} DesignTime status
 	 * @public
 	 */
 	DesignTime.prototype.getStatus = function () {
@@ -1371,4 +1379,4 @@ function (
 
 
 	return DesignTime;
-}, /* bExport= */ true);
+});

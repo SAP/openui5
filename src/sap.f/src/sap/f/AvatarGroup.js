@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/events/KeyCodes"
-], function(library, Control, ItemNavigation, Rem, AvatarGroupRenderer, Button, mLibrary, ResizeHandler, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
+], function(library, Control, ItemNavigation, Rem, AvatarGroupRenderer, Button, mLibrary, ResizeHandler, KeyCodes, Core) {
 	"use strict";
 
 	var AvatarGroupType = library.AvatarGroupType;
@@ -213,7 +214,10 @@ sap.ui.define([
 
 		this._detachResizeHandlers();
 		this._attachResizeHandlers();
-		this._onResize();
+
+		if (Core.isThemeApplied()) {
+			this._onResize();
+		}
 
 		if (this._shouldShowMoreButton()) {
 			this._oShowMoreButton.$().attr("role", "button");
@@ -226,6 +230,10 @@ sap.ui.define([
 		}
 
 		this._updateAccState();
+	};
+
+	AvatarGroup.prototype.onThemeChanged = function () {
+		this._onResize();
 	};
 
 	AvatarGroup.prototype._getResourceBundle = function () {

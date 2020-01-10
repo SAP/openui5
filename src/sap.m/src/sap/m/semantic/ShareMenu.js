@@ -490,4 +490,4 @@ sap.ui.define([
 
 	return ShareMenu;
 
-}, /* bExport= */ false);
+});

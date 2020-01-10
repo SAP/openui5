@@ -1490,7 +1490,7 @@ sap.ui.define([
 	 * <li>'valid' of type <code>boolean</code> Indicator for a valid date.</li>
 	 * </ul>
 	 *
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
+	 * @param {object} [mArguments] the arguments to pass along with the event.
 	 * @return {sap.m.DatePicker} <code>this</code> to allow method chaining
 	 * @protected
 	 * @name sap.m.DatePicker#fireChange

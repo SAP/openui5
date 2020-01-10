@@ -3,6 +3,7 @@ sap.ui.define([
 ], function (JSONModel) {
 	'use strict';
 
+	// Please order topics alphabetically by "title"
 	return new JSONModel({
 		selectedKey: 'learnGettingStarted',
 		navigation: [
@@ -14,70 +15,25 @@ sap.ui.define([
 				hasExpander: false,
 				items: [
 					{
-						title: 'List',
+						title: 'Adaptive',
 						target: 'exploreSamples',
-						key: 'list',
+						key: 'adaptive',
+						experimental: true,
 						subSamples: [
 							{
-								title: 'Highlight',
-								key: 'highlight',
-								manifestUrl: '/samples/list/highlight.json'
+								title: 'Card',
+								key: 'adaptive',
+								manifestUrl: '/samples/adaptive/adaptive.json'
 							},
 							{
-								title: 'Icon',
-								key: 'icon',
-								manifestUrl: '/samples/list/icon.json'
+								title: 'RichTextBlock',
+								key: 'richtext',
+								manifestUrl: '/samples/adaptive/richtext.json'
 							},
 							{
-								title: 'Numeric',
-								key: 'numeric',
-								manifestUrl: '/samples/list/numeric.json'
-							},
-							{
-								title: 'Quick Links',
-								key: 'quickLinks',
-								settings: {
-									columns: 3
-								},
-								manifestUrl: '/samples/list/quickLinks.json'
-							}
-						]
-					},
-					{
-						title: 'Table',
-						target: 'exploreSamples',
-						key: 'table',
-						settings: {
-							columns: 6
-						},
-						manifestUrl: '/samples/table.json'
-					},
-					{
-						title: 'Object',
-						target: 'exploreSamples',
-						key: 'object',
-						settings: {
-							columns: 5
-						},
-						manifestUrl: '/samples/object.json'
-					},
-					{
-						title: 'Timeline',
-						target: 'exploreSamples',
-						key: 'timeline',
-						subSamples: [
-							{
-								title: 'Upcoming Activities',
-								key: 'general',
-								manifestUrl: '/samples/timeline/activities.json',
-								settings: {
-									columns: 3
-								}
-							},
-							{
-								title: 'New Team Members',
-								key: 'line',
-								manifestUrl: '/samples/timeline/members.json'
+								title: 'Form',
+								key: 'form',
+								manifestUrl: '/samples/adaptive/form.json'
 							}
 						]
 					},
@@ -116,6 +72,16 @@ sap.ui.define([
 						]
 					},
 					{
+						title: 'Calendar',
+						target: 'exploreSamples',
+						key: 'calendar',
+						manifestUrl: '/samples/calendar/calendar.json',
+						experimental: true,
+						settings: {
+							columns: 7
+						}
+					},
+					{
 						title: 'Component',
 						target: 'exploreSamples',
 						key: 'component',
@@ -138,24 +104,70 @@ sap.ui.define([
 						]
 					},
 					{
-						title: 'Adaptive',
+						title: 'List',
 						target: 'exploreSamples',
-						key: 'adaptive',
+						key: 'list',
 						subSamples: [
 							{
-								title: 'Card',
-								key: 'adaptive',
-								manifestUrl: '/samples/adaptive/adaptive.json'
+								title: 'Highlight',
+								key: 'highlight',
+								manifestUrl: '/samples/list/highlight.json'
 							},
 							{
-								title: 'RichTextBlock',
-								key: 'richtext',
-								manifestUrl: '/samples/adaptive/richtext.json'
+								title: 'Icon',
+								key: 'icon',
+								manifestUrl: '/samples/list/icon.json'
 							},
 							{
-								title: 'Form',
-								key: 'form',
-								manifestUrl: '/samples/adaptive/form.json'
+								title: 'Numeric',
+								key: 'numeric',
+								manifestUrl: '/samples/list/numeric.json'
+							},
+							{
+								title: 'Quick Links',
+								key: 'quickLinks',
+								settings: {
+									columns: 3
+								},
+								manifestUrl: '/samples/list/quickLinks.json'
+							}
+						]
+					},
+					{
+						title: 'Object',
+						target: 'exploreSamples',
+						key: 'object',
+						settings: {
+							columns: 5
+						},
+						manifestUrl: '/samples/object.json'
+					},
+					{
+						title: 'Table',
+						target: 'exploreSamples',
+						key: 'table',
+						settings: {
+							columns: 6
+						},
+						manifestUrl: '/samples/table.json'
+					},
+					{
+						title: 'Timeline',
+						target: 'exploreSamples',
+						key: 'timeline',
+						subSamples: [
+							{
+								title: 'Upcoming Activities',
+								key: 'general',
+								manifestUrl: '/samples/timeline/activities.json',
+								settings: {
+									columns: 3
+								}
+							},
+							{
+								title: 'New Team Members',
+								key: 'line',
+								manifestUrl: '/samples/timeline/members.json'
 							}
 						]
 					}
@@ -177,52 +189,6 @@ sap.ui.define([
 							columns: 3
 						},
 						manifestUrl: '/samples/actions.json'
-					},
-					{
-						key: 'data',
-						target: 'exploreSamples',
-						title: 'Data',
-						manifestUrl: '/samples/data/manifest.json'
-					},
-					{
-						key: 'translation',
-						target: 'exploreSamples',
-						title: 'Translation',
-						files: [
-							{
-								url: '/samples/translation/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json',
-								content: ''
-							},
-							{
-								url: '/samples/translation/i18n/i18n.properties',
-								name: 'i18n/i18n.properties',
-								key: 'i18n/i18n.properties',
-								content: ''
-							}
-						]
-					},
-					{
-						key: 'parameters',
-						target: 'exploreSamples',
-						title: 'Parameters',
-						manifestUrl: '/samples/parameters.json'
-					},
-					{
-						key: 'dynamicCounter',
-						target: 'exploreSamples',
-						title: 'Dynamic Counter',
-						manifestUrl: '/samples/dynamicCounter/manifest.json'
-					},
-					{
-						key: 'dateRange',
-						target: 'exploreSamples',
-						title: 'Date Range',
-						settings: {
-							columns: 6
-						},
-						manifestUrl: '/samples/dateRange.json'
 					},
 					{
 						key: 'htmlConsumption',
@@ -254,6 +220,86 @@ sap.ui.define([
 								content: ''
 							}
 						]
+					},
+					{
+						key: 'data',
+						target: 'exploreSamples',
+						title: 'Data',
+						manifestUrl: '/samples/data/manifest.json'
+					},
+					{
+						key: 'dataSources',
+						target: 'exploreSamples',
+						title: 'Data Sources',
+						subSamples: [
+							{
+								title: 'Top Products',
+								key: 'topProducts',
+								manifestUrl: '/samples/dataSources/topProducts.json'
+							},
+							{
+								title: 'Product',
+								key: 'product',
+								settings: {
+									columns: 6
+								},
+								files: [
+									{
+										url: '/samples/dataSources/product.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										content: ''
+									},
+									{
+										url: '/samples/dataSources/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n/i18n.properties',
+										content: ''
+									}
+								]
+							}
+						]
+					},
+					{
+						key: 'dateRange',
+						target: 'exploreSamples',
+						title: 'Date Ranges',
+						experimental: true,
+						settings: {
+							columns: 7
+						},
+						manifestUrl: '/samples/dateRange.json'
+					},
+					{
+						key: 'dynamicCounter',
+						target: 'exploreSamples',
+						title: 'Dynamic Counter',
+						manifestUrl: '/samples/dynamicCounter/manifest.json'
+					},
+					{
+						key: 'parameters',
+						target: 'exploreSamples',
+						title: 'Parameters',
+						manifestUrl: '/samples/parameters.json'
+					},
+					{
+						key: 'translation',
+						target: 'exploreSamples',
+						title: 'Translation',
+						files: [
+							{
+								url: '/samples/translation/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								content: ''
+							},
+							{
+								url: '/samples/translation/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n/i18n.properties',
+								content: ''
+							}
+						]
 					}
 				]
 			},
@@ -266,16 +312,16 @@ sap.ui.define([
 				hasExpander: false,
 				items: [
 					{
-						key: 'dateAndTime',
-						target: 'exploreSamples',
-						title: 'Date and Time',
-						manifestUrl: "/samples/formatters/dateAndTime/manifest.json"
-					},
-					{
 						key: 'currency',
 						target: 'exploreSamples',
 						title: 'Currency',
 						manifestUrl: "/samples/formatters/currency/manifest.json"
+					},
+					{
+						key: 'dateAndTime',
+						target: 'exploreSamples',
+						title: 'Date and Time',
+						manifestUrl: "/samples/formatters/dateAndTime/manifest.json"
 					},
 					{
 						key: 'float',

@@ -16,7 +16,7 @@
 				selectionMode="MultiToggle"
 				visibleRowCount="7"
 				paste="onPaste"
-				arialabelledby="title">
+				ariaLabelledBy="title">
 				<extension>
 					<m:OverflowToolbar>
 						<m:Title id="title" text="Products"/>

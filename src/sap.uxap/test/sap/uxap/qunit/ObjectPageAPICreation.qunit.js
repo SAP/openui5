@@ -269,12 +269,19 @@ function (
 	});
 
 
-	QUnit.module("test scrollToSection API");
+	QUnit.module("test scrollToSection API", {
+		beforeEach: function () {
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
 
 	QUnit.test("Calling scrollToSection when OPL is not rendered should do nothing", function (assert) {
 		assert.ok(Log, "Log module should be available");
 
-		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5),
+		var oObjectPage = this.oObjectPage,
 			oFirstSection = oObjectPage.getSections()[0],
 			oLoggerSpy = this.spy(Log, "warning"),
 			oComputeScrollPositionSpy = this.spy(oObjectPage, "_computeScrollPosition");
@@ -286,6 +293,33 @@ function (
 		assert.ok(!oComputeScrollPositionSpy.called, "Compute scroll position not called when OPL is not rendered");
 
 		assert.ok(oLoggerSpy.calledWith("scrollToSection can only be used after the ObjectPage is rendered", oObjectPage), "Warning message is logged");
+	});
+
+	QUnit.test("Calling scrollToSection before its onAfterRendring hook should not throw error", function (assert) {
+		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5),
+			oAnchorBar,
+			oFirstSection = oObjectPage.getSections()[0];
+
+		oObjectPage.addEventDelegate({
+			onBeforeRendering: function() {
+				oAnchorBar = oObjectPage.getAggregation("_anchorBar");
+				oAnchorBar.addEventDelegate({
+					onAfterRendering: function() {
+						assert.strictEqual(oObjectPage._bDomReady, false, "ObjectPage DOM is not ready");
+						try {
+							oObjectPage.scrollToSection(oFirstSection.getId());
+							assert.ok(true, "No error is thrown");
+						} catch (e) {
+							assert.notOk(e, "Error should be thrown");
+						}
+						oAnchorBar.removeEventDelegate(this);
+					}
+				});
+				oObjectPage.removeEventDelegate(this);
+			}
+		});
+
+		helpers.renderObject(oObjectPage);
 	});
 
 	QUnit.module("Use IconTabBar with no sections", {
@@ -1413,7 +1447,7 @@ function (
 		Core.applyChanges();
 
 		assert.equal(oObjectPage.getShowAnchorBar(), false);
-		assert.equal(checkObjectExists(".sapUxAPAnchorBar"), false);
+		assert.strictEqual(oObjectPage.$().find(".sapUxAPAnchorBar").length, 0, "AnchorBar is not rendered");
 	});
 
 	QUnit.test("test AnchorBar rendering using ShowAnchorBar within XMLView", function (assert) {

@@ -2,9 +2,33 @@
 	"_version": "1.17.0",
 	"sap.app": {
 		"id": "adativecard.embedded",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of an Adaptive Card with formatted text",
+		"subTitle": "Sample of an Adaptive with formatted text",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Formatted",
+				"RichText",
+				"Sample"
+			]
+		}
 	},
 	"sap.card": {
+		"header": {
+			"title": "Rich Text Card",
+			"subTitle": "Adaptive Card with sap.f.cards.Header",
+			"icon": {
+				"src": "sap-icon://text-formatting"
+			}
+		},
 		"type": "AdaptiveCard",
 		"content": {
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

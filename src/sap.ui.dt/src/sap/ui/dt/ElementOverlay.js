@@ -345,34 +345,20 @@ function (
 	};
 
 	ElementOverlay.prototype._applySizes = function () {
-		// We need to know when all our children have correct positions
-		var aPromises = this.getChildren()
-			.filter(function (oChild) {
-				return oChild.isRendered();
-			})
-			.map(function(oChild) {
-				return new Promise(function (fnResolve) {
-					oChild.attachEventOnce('geometryChanged', fnResolve);
-				});
-			});
+		return Overlay.prototype._applySizes.apply(this, arguments)
+			.then(function () {
+				this._sortChildren(this.getChildrenDomRef());
+				if (!this.bIsDestroyed) {
+					this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
+						var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || jQuery();
+						var $ScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
 
-		Overlay.prototype._applySizes.apply(this, arguments);
-
-		Promise.all(aPromises).then(function () {
-			this._sortChildren(this.getChildrenDomRef());
-
-			// TODO: re-think async flow of applyStyles as part of Managing Updates BLI
-			if (!this.bIsDestroyed) {
-				this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
-					var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || jQuery();
-					var $ScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
-
-					if ($ScrollContainerDomRef.length) {
-						this._sortChildren($ScrollContainerOverlayDomRef.get(0));
-					}
-				}, this);
-			}
-		}.bind(this));
+						if ($ScrollContainerDomRef.length) {
+							this._sortChildren($ScrollContainerOverlayDomRef.get(0));
+						}
+					}, this);
+				}
+			}.bind(this));
 	};
 
 	/**
@@ -742,7 +728,14 @@ function (
 	ElementOverlay.prototype._domChangedCallback = function (mParameters) {
 		mParameters.targetOverlay = this;
 		if (this.isReady()) {
-			this.fireApplyStylesRequired(mParameters);
+			//FIXME: temporal solution for cancel not relevant mutation. Should be finally done in the TaskManager
+			if (this._iApplyStylesRequest) {
+				window.cancelAnimationFrame(this._iApplyStylesRequest);
+			}
+			this._iApplyStylesRequest = window.requestAnimationFrame(function () {
+				this.fireApplyStylesRequired(mParameters);
+				delete this._iApplyStylesRequest;
+			}.bind(this));
 		}
 	};
 

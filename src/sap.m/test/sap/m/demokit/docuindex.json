@@ -172,6 +172,13 @@
 		  "samples": ["sap.m.sample.ActionSheet"]
 		},
 		{
+		"id": "sap.m.Avatar",
+		"name": "Avatar (sap.m)",
+		"category": "Display",
+		"since": "1.73",
+		"samples": ["sap.m.sample.Avatar"]
+		},
+		{
 		  "id": "sap.m.ActionListItem",
 		  "name": "Action List Item",
 		  "category": "List",
@@ -536,7 +543,8 @@
 			"sap.m.sample.IconTabBarOverflowSelectList",
 			"sap.m.sample.IconTabBarBackgroundDesign",
 			"sap.m.sample.IconTabBarDragDrop",
-            "sap.m.sample.IconTabBarTabDensityMode"
+			"sap.m.sample.IconTabBarTabDensityMode",
+			"sap.m.sample.IconTabBarResponsivePadding"
 		  ]
 		},
 		{
@@ -1526,6 +1534,11 @@
 	  ],
 	  "samples": [
 		{
+		  "id": "sap.m.sample.Avatar",
+		  "name": "Avatar",
+		  "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
+		},
+		{
 		  "id": "sap.m.sample.NewsContent",
 		  "name": "News Content",
 		  "description": "This control is used to display the news content text and subheader in a tile."
@@ -1887,7 +1900,7 @@
 		},
 		{
 		  "id": "sap.m.sample.IconTabSeparator",
-		  "name": "Icon Tab - Separator",
+		  "name": "Icon Tab Bar - Separator",
 		  "description": "This is an example how to use separators in the Icon Tab Bar. You can choose an icon as a separator or use the default vertical line."
 		},
 		{
@@ -1905,11 +1918,16 @@
 		  "name": "Icon Tab Bar - Tabs drag and drop",
 		  "description": "This example shows how the tab filters can be reordered with drag and drop. Works only on desktop devices."
 		},
-        {
-          "id": "sap.m.sample.IconTabBarTabDensityMode",
-          "name": "Icon Tab Bar - Tab Density Mode",
-          "description": "In this example, the Icon Tab Bar is used in different tab density modes."
-        },
+		{
+		  "id": "sap.m.sample.IconTabBarTabDensityMode",
+		  "name": "Icon Tab Bar - Tab Density Mode",
+		  "description": "In this example, the Icon Tab Bar is used in different tab density modes."
+		},
+		{
+		  "id": "sap.m.sample.IconTabBarResponsivePadding",
+		  "name": "Icon Tab Bar - Responsive Padding",
+		  "description": "This example demonstrates the Icon Tab Bar's support for paddings that depend on the width of its container"
+		},
 		{
 		  "id": "sap.m.sample.BusyIndicator",
 		  "name": "Busy Indicator",

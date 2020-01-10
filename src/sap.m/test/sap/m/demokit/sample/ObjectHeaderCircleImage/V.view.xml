@@ -8,7 +8,8 @@
 		imageShape="Circle"
 		responsive="true"
 		title="Denise Smith"
-		intro="Senior Developer" >
+		intro="Senior Developer"
+		class="sapUiResponsivePadding--header" >
 			<ObjectAttribute title="Email address" text="DeniseSmith@sap.com" active="true" />
 			<ObjectAttribute title="Office Phone" text="+33 6 453 564" />
 			<ObjectAttribute title="Functional Area" text="Development" />

@@ -16,10 +16,8 @@ sap.ui.define([
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl.write._internal
+	 * @ui5-restricted sap.ui.fl.write._internal.connectors
 	 */
-
-	var WRITE_CONNECTOR_NAME_SPACE = "sap/ui/fl/write/_internal/connectors/";
 
 	/**
 	 * Gets new X-CSRF token from the back end and update token value in the PropertyBag and apply connector.
@@ -77,15 +75,6 @@ sap.ui.define([
 	}
 
 	return {
-		/**
-		 * Provides all mandatory connectors to write data; these are the connector mentioned in the core-Configuration.
-		 *
-		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured write connectors and their requested modules
-		 */
-		getWriteConnectors: function () {
-			return ApplyUtils.getConnectors(WRITE_CONNECTOR_NAME_SPACE, false);
-		},
-
 		/**
 		 * Gets options for requests which writing data to the back end.
 		 *

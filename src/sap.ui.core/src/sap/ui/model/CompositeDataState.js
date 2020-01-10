@@ -304,7 +304,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	 * </pre>
 	 * The map only contains the changed properties.
 	 *
-	 * @returns {map} the changed of the data state
+	 * @returns {Object<string,{oldValue:any,value:any}>} the changed of the data state
 	 * @public
 	 */
 	CompositeDataState.prototype.getChanges = function() {

@@ -467,7 +467,11 @@ sap.ui.define([
 		 * @private
 		 */
 		CalendarUtils._minDate = function (sCalendarType) {
-			return new CalendarDate(1, 0, 1, sCalendarType);
+			var oCalDate = new CalendarDate(1, 0, 1, sCalendarType);
+			oCalDate.setYear(1);
+			oCalDate.setMonth(0);
+			oCalDate.setDate(1);
+			return oCalDate;
 		};
 
 		/**
@@ -478,6 +482,8 @@ sap.ui.define([
 		 */
 		CalendarUtils._maxDate = function (sCalendarType) {
 			var oCalDate = new CalendarDate(9999, 11, 1, sCalendarType);
+			oCalDate.setYear(9999);
+			oCalDate.setMonth(11);
 			oCalDate.setDate(this._daysInMonth(oCalDate));// 31st for Gregorian Calendar
 			return new CalendarDate(oCalDate);
 		};

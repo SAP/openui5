@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
@@ -15,6 +16,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	FlexCustomData,
 	Utils,
+	DependencyHandler,
 	FlUtils
 ) {
 	"use strict";
@@ -150,8 +152,6 @@ sap.ui.define([
 	}
 
 	var Applier = {
-		PENDING: "sap.ui.fl:PendingChange",
-
 		/**
 		 * Applying a specific change on the passed control, if it is not already applied.
 		 *
@@ -233,14 +233,13 @@ sap.ui.define([
 				oChange.setQueuedForApply();
 				if (!mChangesMap.mDependencies[oChange.getId()]) {
 					aPromiseStack.push(function() {
-						return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag)
-						.then(function() {
-							oFlexController._updateDependencies(mChangesMap, oChange.getId());
+						return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function() {
+							DependencyHandler.removeChangeFromDependencies(mChangesMap, oChange.getId());
 						});
 					});
 				} else {
-					//saves the information whether a change was already processed but not applied.
-					mChangesMap.mDependencies[oChange.getId()][Applier.PENDING] = Applier.applyChangeOnControl.bind(Applier, oChange, oControl, mPropertyBag);
+					var fnCallback = Applier.applyChangeOnControl.bind(Applier, oChange, oControl, mPropertyBag);
+					DependencyHandler.addChangeApplyCallbackToDependency(mChangesMap, oChange.getId(), fnCallback);
 				}
 			});
 
@@ -250,7 +249,7 @@ sap.ui.define([
 			if (aChangesForControl.length || mChangesMap.mControlsWithDependencies[sControlId]) {
 				delete mChangesMap.mControlsWithDependencies[sControlId];
 				return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function () {
-					return oFlexController._processDependentQueue(mChangesMap, oAppComponent);
+					return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent);
 				});
 			}
 			return new FlUtils.FakePromise();
@@ -264,8 +263,6 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.viewId - ID of the processed view
 		 * @param {string} mPropertyBag.appComponent - Application component instance responsible for the view
 		 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
-		 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
-		 * @param {string} mPropertyBag.siteId - ID of the flp site containing this application
 		 * @param {sap.ui.fl.Change[]} aChanges List of flexibility changes on controls for the current processed view
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
 		 */

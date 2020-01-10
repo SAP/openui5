@@ -348,4 +348,4 @@ function(
 	};
 
 	return Plugin;
-}, /* bExport= */ true);
+});

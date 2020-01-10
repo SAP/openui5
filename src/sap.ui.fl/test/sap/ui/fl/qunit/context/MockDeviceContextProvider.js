@@ -58,4 +58,4 @@ sap.ui.define(["sap/ui/fl/context/BaseContextProvider"], function(BaseContextPro
 		});
 	};
 	return MockDeviceContextProvider;
-}, /* bExport= */true);
+});

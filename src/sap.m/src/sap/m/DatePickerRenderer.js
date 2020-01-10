@@ -49,7 +49,8 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'],
 	DatePickerRenderer.getDescribedByAnnouncement = function(oDP) {
 
 		var sBaseAnnouncement = InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE") + " " + sBaseAnnouncement;
+		//JAWS ignores the word 'Date', but reads the word 'date'
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE").toLowerCase() + " " + sBaseAnnouncement;
 
 	};
 

@@ -473,7 +473,6 @@ sap.ui.define([
 		//Act
 		assert.strictEqual(oObjectStatus.$().attr("aria-roledescription"), oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS"),
 			"Custom control name is in aria-roledescription");
-		assert.ok(oObjectStatus.$().attr("aria-describedby"), "aria-describedby attribute is present");
 		assert.notOk(oObjectStatus.$().children(":last-child").attr("aria-hidden"), "hidden element doesn't have aria-hidden attribute");
 
 		//Cleanup

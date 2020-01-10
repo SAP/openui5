@@ -38,6 +38,17 @@ sap.ui.define(['sap/ui/core/Control', 'sap/f/shellBar/ControlSpacerRenderer'],
 		renderer: ControlSpacerRenderer
 	});
 
+	ControlSpacer.prototype.setWidth = function(sWidth) {
+		// Despite using the Semantic Rendering, we need to override this setter in order to set the width immediately on the DomRef.
+		// When width of ControlSpacer is changed, sometimes there is a race condition. If OverflowToolbar's
+		// doLayout function is executed before the ControlSpacer is rerendered, a wrong width value is cached.
+		if (this.$().length) {
+			this.$().width(sWidth);
+		}
+
+		return this.setProperty("width", sWidth, true);
+	};
+
 	return ControlSpacer;
 
 });

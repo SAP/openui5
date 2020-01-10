@@ -152,8 +152,10 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 		oRM.openStart("div")
 			.class(SliderRenderer.CSS_CLASS + "Labels")
 			.openEnd();
+
 		this.renderStartLabel(oRM, oControl);
 		this.renderEndLabel(oRM, oControl);
+
 		oRM.close("div");
 	};
 

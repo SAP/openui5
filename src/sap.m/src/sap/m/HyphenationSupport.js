@@ -81,8 +81,8 @@ sap.ui.define([
 		/**
 		 * Checks which keys are not present in mTextsToDiff or their values are different
 		 *
-		 * @param {map} mTextsMain The map of texts to compare
-		 * @param {map} mTextsToDiff The map of texts to compare against
+		 * @param {Object<string,string>} mTextsMain The map of texts to compare
+		 * @param {Object<string,string>} mTextsToDiff The map of texts to compare against
 		 * @returns {Array} An array containing all keys for which there is difference
 		 * @private
 		 */

@@ -6,14 +6,10 @@
 
 sap.ui.define([
 	"sap/base/security/encodeURLParameters",
-	"sap/base/Log",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils"
+	"sap/base/Log"
 ], function (
 	encodeURLParameters,
-	Log,
-	Layer,
-	LayerUtils
+	Log
 ) {
 	"use strict";
 
@@ -24,106 +20,10 @@ sap.ui.define([
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
+	 * @ui5-restricted sap.ui.fl.apply._internal.connectors, sap.ui.fl.write._internal.connectors
 	 */
-
-	var APPLY_CONNECTOR_NAME_SPACE = "sap/ui/fl/apply/_internal/connectors/";
-	var STATIC_FILE_CONNECTOR_CONFIGURATION = {
-		connector: "StaticFileConnector"
-	};
-
-	/**
-	 * Sort grouped flexibility objects by their creation timestamp.
-	 *
-	 * @param {object} [mResult] Grouped flexibility objects
-	 * @returns {object} Map of grouped flexibility objects per layer sorted by their creation timestamp
-	 */
-	function sortGroupedFlexObjects(mResult) {
-		function byCreation(oChangeA, oChangeB) {
-			return new Date(oChangeA.creation) - new Date(oChangeB.creation);
-		}
-
-		[
-			"changes",
-			"variantChanges",
-			"variants",
-			"variantDependentControlChanges",
-			"variantManagementChanges"
-		].forEach(function (sSectionName) {
-			mResult[sSectionName] = mResult[sSectionName].sort(byCreation);
-		});
-
-		return mResult;
-	}
-
-	function _filterValidLayers(aLayers, aValidLayers) {
-		return aLayers.filter(function (sLayer) {
-			return aValidLayers.indexOf(sLayer) !== -1 || aValidLayers[0] === "ALL";
-		});
-	}
 
 	return {
-		/**
-		 * Provides all mandatory connectors required to apply or write data depending on the given namespace.
-		 *
-		 * @param {string} sNameSpace Namespace to determine the path to the configured connectors
-		 * @param {boolean} bLoadApplyConnectors Flag to determine if StaticFileConnector should be included and write layers should be checked
-		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
-		 */
-		getConnectors: function (sNameSpace, bLoadApplyConnectors) {
-			var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityServices();
-			var mConnectors = [];
-			if (bLoadApplyConnectors) {
-				mConnectors = [STATIC_FILE_CONNECTOR_CONFIGURATION];
-			}
-
-			mConnectors = mConnectors.concat(aConfiguredConnectors);
-
-			return new Promise(function (resolve) {
-				var aConnectors = mConnectors.map(function (mConnectorConfiguration) {
-					var sConnector = mConnectorConfiguration.connector;
-					var sConnectorModuleName;
-
-					if (!mConnectorConfiguration.custom) {
-						sConnectorModuleName = sNameSpace + sConnector;
-					} else {
-						sConnectorModuleName = bLoadApplyConnectors ? mConnectorConfiguration.applyConnector : mConnectorConfiguration.writeConnector;
-					}
-
-					return sConnectorModuleName;
-				});
-
-				sap.ui.require(aConnectors, function () {
-					Array.from(arguments).forEach(function (oConnector, iIndex) {
-						if (!bLoadApplyConnectors) {
-							if (!mConnectors[iIndex].layers) {
-								mConnectors[iIndex].layers = oConnector.layers;
-							} else {
-								mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
-							}
-						}
-						if (bLoadApplyConnectors) {
-							mConnectors[iIndex].applyConnectorModule = oConnector;
-						} else {
-							mConnectors[iIndex].writeConnectorModule = oConnector;
-						}
-					});
-
-					resolve(mConnectors);
-				});
-			});
-		},
-
-		/**
-		 * Provides all mandatory connectors required to read data for the apply case; these are the static file connector as well as all connectors
-		 * mentioned in the core-Configuration.
-		 *
-		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured apply connectors and their requested modules
-		 */
-		getApplyConnectors: function () {
-			return this.getConnectors(APPLY_CONNECTOR_NAME_SPACE, true);
-		},
-
 		/**
 		 * Creates a Error messages in case of a failed Connector call while getting responses from multiple endpoints
 		 *
@@ -256,93 +156,6 @@ sap.ui.define([
 					}
 				};
 			});
-		},
-
-		/**
-		 * Internal function to allow the connectors to generate a response object with all needed properties;
-		 * Also usable for tests to generate these responses.
-		 *
-		 * @returns {object} Object containing an empty flex data response
-		 */
-		getEmptyFlexDataResponse: function () {
-			return Object.assign({}, {
-				appDescriptorChanges: [],
-				changes: [],
-				variants: [],
-				variantChanges: [],
-				variantDependentControlChanges: [],
-				variantManagementChanges: [],
-				ui2personalization: {}
-			});
-		},
-
-		/**
-		 * Groups flexibility objects according to their layer and semantics.
-		 *
-		 * @param {array} aFlexObjects Flexibility objects
-		 * @returns {object} Map of grouped flexibility objects per layer
-		 */
-		getGroupedFlexObjects: function (aFlexObjects) {
-			var mGroupedFlexObjects = {};
-
-			// build empty groups
-			Object.keys(Layer).forEach(function (sLayer) {
-				mGroupedFlexObjects[sLayer] = this.getEmptyFlexDataResponse();
-				mGroupedFlexObjects[sLayer].index = LayerUtils.getLayerIndex(sLayer);
-			}.bind(this));
-
-			// fill groups
-			aFlexObjects.forEach(function (oFlexObject) {
-				var sLayer = oFlexObject.layer;
-
-				if (oFlexObject.fileType === "ctrl_variant" && oFlexObject.variantManagementReference) {
-					mGroupedFlexObjects[sLayer].variants.push(oFlexObject);
-				} else if (oFlexObject.fileType === "ctrl_variant_change") {
-					mGroupedFlexObjects[sLayer].variantChanges.push(oFlexObject);
-				} else if (oFlexObject.fileType === "ctrl_variant_management_change") {
-					mGroupedFlexObjects[sLayer].variantManagementChanges.push(oFlexObject);
-				} else if (oFlexObject.fileType === "change" || oFlexObject.fileType === "variant") {
-					if (oFlexObject.variantReference) {
-						mGroupedFlexObjects[sLayer].variantDependentControlChanges.push(oFlexObject);
-					} else {
-						mGroupedFlexObjects[sLayer].changes.push(oFlexObject);
-					}
-				}
-			});
-
-			// sort groups
-			Object.keys(mGroupedFlexObjects).forEach(function (sLayer) {
-				sortGroupedFlexObjects(mGroupedFlexObjects[sLayer]);
-			});
-
-			return mGroupedFlexObjects;
-		},
-
-		/**
-		 * Takes grouped flexibility objects as input and returns an array of non-empty responses sorted by layer.
-		 *
-		 * @param {object} mGroupedFlexObjects Grouped flexibility objects
-		 * @returns {array} Array of non-empty responses sorted by layer
-		 */
-		filterAndSortResponses: function (mGroupedFlexObjects) {
-			var aResponses = [];
-			Object.keys(mGroupedFlexObjects).forEach(function (sLayer) {
-				aResponses.push(mGroupedFlexObjects[sLayer]);
-			});
-
-			aResponses = aResponses.filter(function (oResponse) {
-				return oResponse.changes.length > 0
-					|| oResponse.variants.length > 0
-					|| oResponse.variantChanges.length > 0
-					|| oResponse.variantManagementChanges.length > 0
-					|| oResponse.variantDependentControlChanges.length > 0;
-			});
-
-			aResponses.sort(function (a, b) {
-				return a.index - b.index;
-			});
-
-			return aResponses;
 		}
 	};
 });

@@ -426,7 +426,7 @@ sap.ui.define([
 			 * an error log will be written to the console.
 			 *
 			 * @param {string} sName Name of a target
-			 * @param {object} oTarget Options of a target. The option names are the same as the ones in "oOptions.targets.anyName" of {@link #constructor}.
+			 * @param {object} oTargetOptions Options of a target. The option names are the same as the ones in "oOptions.targets.anyName" of {@link #constructor}.
 			 * @returns {sap.ui.core.routing.Targets} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 *
@@ -643,10 +643,10 @@ sap.ui.define([
 			},
 
 			/**
-			 * created all targets
+			 * Creates a target
 			 *
-			 * @param {string} sName
-			 * @param {object} oTargetOptions
+			 * @param {string} sName The name of the target
+			 * @param {object} oTargetOptions The options of the target
 			 * @return {sap.ui.core.routing.Target} The created target object
 			 * @private
 			 */
@@ -672,7 +672,8 @@ sap.ui.define([
 			},
 
 			/**
-			 * @param oTarget
+			 * Adds the parent target to the given <code>oTarget</code>
+			 * @param {sap.ui.core.routing.Target} oTarget The target
 			 * @private
 			 */
 			_addParentTo : function (oTarget) {
@@ -695,6 +696,9 @@ sap.ui.define([
 
 			/**
 			 * Hook for the mobile library
+			 * @param {object} oOptions The target options
+			 * @param {sap.ui.core.routing.Target} oParent The parent of this target
+			 * @returns {sap.ui.core.routing.Target} the new target
 			 * @private
  			 */
 			_constructTarget : function (oOptions, oParent) {
@@ -720,7 +724,7 @@ sap.ui.define([
 			/**
 			 * Called by the UIComponent since the rootView id is not known in the constructor
 			 *
-			 * @param {string} sId
+			 * @param {string} sId The id of the root view
 			 * @private
 			 */
 			_setRootViewId: function (sId) {

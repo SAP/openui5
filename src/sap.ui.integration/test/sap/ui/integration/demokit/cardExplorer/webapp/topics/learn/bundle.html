@@ -1,78 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<title>Integration Cards</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="Content-Type" content="text/html">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="../css/style.css">
-	<script id="sap-ui-bootstrap"
-			src="../../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_fiori_3">
-	</script>
+	<link rel="stylesheet" href="../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
 
-	<link  href="../google-code-prettify/prettify.css" rel="stylesheet">
-	<link href="../css/prettify-light.css" rel="stylesheet">
-
-	<script src="../google-code-prettify/run_prettify.js"></script>
-
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
 </head>
 <body class="sapUiBody topicBody">
-<div class="topic">
-	<div class="content">
+	<div class="topic">
+		<div class="content">
 
-		<h1 id="overview">Overview</h1>
-		<p>
-			There are cases where a manifest.json is not enough to render a card.
-			Sometimes the card needs translation files or other static resources, such as, images and icons.
-			In such cases, you can place the manifest.json in a separate folder and add all required
-			static resources there. The paths to those static resources will be relative to the manifest.json.
-		</p>
+			<h1 id="overview">Card Bundle Overview</h1>
+			<h2 id="what">What is a Card Bundle?</h2>
+			<p>
+				A Card Bundle is the zipped version of a folder that contains all resources that the card needs for
+				rendering and configuration.
+				This zip file should have the extension <code>[CARDNAME].card.zip</code>
+			</p>
+			<h2 id="contained">What is contained in the Card Bundle?</h2>
+			<p>
+				The card's manifest.json contains the most important information to configure a card.
+				Nevertheless there might be the necessity to add other resources needed for design-time or runtime
+				purposes.
+				Such files are:
+				<ul>
+					<li>Image resources that are used instead of icons from an icon font</li>
+					<li>Translations of texts for the card <a href="./features/translation.html">details</a></li>
+					<li>Other static resources, for example static JSON data</li>
+					<li>Design-time artifacts that define the design-time behavior of the card</li>
+					<li>UI5 Component files in case of a <a href="./types/component.html">Component Card</a></li>
+				</ul>
+			</p>
 
-		<p>
-			A card with manifest.json and static resources is a card bundle.
-		</p>
+			<h2 id="resolvingPaths">How are paths resolved?</h2>
+			<p>
+				When the <code>manifest</code> property of the card is set as a URL to the <code>manifest.json</code> file all paths are
+				<b>resolved relatively</b> to that file and will be loaded from there. If the <code>manifest</code> property is set as an <code>object</code>
+				the <a href="../../index.html#/integrate/usage" target="_parent">baseUrl</a> property can be used as a starting point when resolving paths.
+			</p>
 
-		<p>
-			An example folder structure of a card bundle which includes a manifest.json, i18n translation files and an icon:
-		</p>
+			<h2 id="conventions">Conventions</h2>
+			<p>
+				A Card Bundle should have the name:
+				<pre>[CARDNAME].card.zip</pre>
+			</p>
+			<p>
+				Translation files and images should be stored in a separate folders for convenience.
+			</p>
 
-		<img src="../images/card_bundle.png" alt="Card bundle folder structure">
+			<h1 id="example">Example</h1>
+			<p>
+				Here is an example folder structure of a Card Bundle which includes a manifest.json, i18n translation
+				files, an icon and designtime configuration.<br />
+				<a href="./resources/news.card.zip">Download the Card Bundle: news.card.zip</a>
+			</p>
+			<pre class="prettyprint lang-xml">
+-  manifest.json
+-  images
+   -  news.png
+-  i18n
+   -  messagebundle.properties
+   -  messagebundle_en.properties
+   -  messagebundle_de.properties
+-  designtime
+   -  Card.designtime.js
+		</pre>
 
-		<p>
-			The manifest.json of the example card bundle:
-		</p>
+			<p>
+				The manifest.json refers these files
+			</p>
 
-		<pre class="prettyprint  lang-xml">{
+			<pre class="prettyprint  lang-js">{
+	"_version": "1.15.0",
 	"sap.app": {
+		"id": "cardexplorer.sample.news",
 		"type": "card",
-		"i18n": "i18n/i18n.properties",
-		"id": "my.card"
+		"i18n": "i18n/messagebundle.properties"
+		"title": "{{mainTitle}}",
+		"subTitle": "{{mainDescription}}"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "images/news.png"
+		}
 	},
 	"sap.card": {
-		"type": "List",
-		"header": {
-			"title": "{{appTitle}}",
-			"subTitle": "{{appDescription}}",
-			"icon": {
-				"src": "./icons/edit.png"
+		"designtime" : "designtime/Card.designtime",
+		"configuration": {
+			"parameters": {
+				"city": {
+					"value": "Singapore"
+				}
 			}
 		},
+		"type": "List",
+		"header": {
+			"title": "{{cardTitle}} {{parameters.city}}",
+			"subTitle": "{{cardSubTitle}}",
+			"icon": {
+				"src": "sap-icon://newspaper"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "https://newsapi.org"
+					}
+				}
+			]
+		},
 		"content": {
-			...
+			"data": {
+				"request": {
+					"url": "https://newsapi.org/v2/everything",
+					"parameters": {
+						"from": "{{parameters.TODAY_ISO}}",
+						"q": "{{parameters.city}}",
+						"sortBy": "relevancy",
+						"apiKey": "da959b2d34334e1db76c53f54a1303aa",
+						"language:": "en",
+						"pageSize": "10"
+					}
+				},
+				"path": "/articles"
+			},
+			"item": {
+				"icon": {
+					"src": "{urlToImage}"
+				},
+				"title": "{title}",
+				"description": "{description}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{= ${url}}",
+						"url": "{url}"
+					}
+				]
+			},
+			"maxItems":5
 		}
 	}
-}</pre>
-		<p>
-			NOTE: The paths to the i18n translation files and to the header icon are relative to the manifest.json
-		</p>
+}
+</pre>
+			<p>
+				NOTE: The paths to the i18n translation files and to the header icon are relative to the manifest.json
+			</p>
 
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#what">What is a Card Bundle</a></div>
+			<div><a href="#contained">What is contained in a Card Bundle</a></div>
+			<div><a href="#resolvingPaths">How are paths resolved</a></div>
+			<div><a href="#conventions">Conventions</a></div>
+			<div><a href="#example">Example</a></div>
+		</div>
 	</div>
-	<div class="navigation">
-		<h4>Table of Contents</h4>
-		<div><a href="#overview">Overview</a></div>
-	</div>
-</div>
 </body>
+
 </html>

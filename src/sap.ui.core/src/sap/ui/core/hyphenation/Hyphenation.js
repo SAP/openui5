@@ -8,7 +8,7 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 
 	/**
 	 * Words which are suitable for testing of browser-native hyphenation.
-	 * @type {map}
+	 * @type {Object<string,string>}
 	 * @private
 	 */
 	var oTestingWords = {
@@ -43,7 +43,7 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 
 	/**
 	 * Flat list of languages that are supported by Hyphenopoly.
-	 * @type {map}
+	 * @type {Object<string,boolean>}
 	 * @private
 	 */
 	var oThirdPartySupportedLanguages = {
@@ -78,7 +78,7 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 
 	/**
 	 * Holds a map of names of languages in english. Like <code>{"de" => "German"}</code>
-	 * @type {map}
+	 * @type {Object<string,string>}
 	 * @private
 	 */
 	var mLanguageNamesInEnglish = {
@@ -127,7 +127,7 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 	 * Loads language-specific resources.
 	 *
 	 * @param {string} sLanguage What language to initialize
-	 * @param {map} oConfig What config to sent to Hyphenopoly
+	 * @param {object} oConfig What config to sent to Hyphenopoly
 	 * @param {function} resolve Callback to resolve the promise created on initialize
 	 * @private
 	 */
@@ -145,7 +145,7 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 	 * Applies new config to a language.
 	 *
 	 * @param {string} sLanguage What language to re-initialize
-	 * @param {map} oConfig What is the new config
+	 * @param {object} oConfig What is the new config
 	 * @param {function} resolve Callback to resolve the promise created on initialize
 	 * @private
 	 */
@@ -186,7 +186,7 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 	 * Transforms the given config so it can be sent to Hyphenopoly.
 	 *
 	 * @param {string} sLanguage The language for which a config is prepared.
-	 * @param {map} oConfig Object map with configuration
+	 * @param {object} oConfig Object map with configuration
 	 * @returns {Object} {{require: [*], hyphen: string, path: (string|*)}}
 	 * @private
 	 */
@@ -657,7 +657,7 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 	 *
 	 * @see sap.ui.core.hyphenation.Hyphenation#addExceptions
 	 * @param {string} sLang The language for which to see the exceptions
-	 * @returns {map} An object map with all exceptions for the given language
+	 * @returns {Object<string,string>} An object map with all exceptions for the given language
 	 * @private
 	 */
 	Hyphenation.prototype.getExceptions = function (sLang) {
@@ -680,7 +680,7 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 	 *   addExceptions("en", {"academy": "a-c-a-d-e-m-y"})
 	 *
 	 * @param {string} sLang The language for which an exception is added
-	 * @param {map} oExceptions An object map of word exceptions. Example <code>{"academy": "a-c-a-d-e-m-y", "word": "w-o-r-d"}</code>
+	 * @param {Object<string,string>} oExceptions An object map of word exceptions. Example <code>{"academy": "a-c-a-d-e-m-y", "word": "w-o-r-d"}</code>
 	 * @throws {Error} Logs an error if the language is not initialized
 	 * @private
 	 */

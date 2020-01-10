@@ -6,7 +6,12 @@ sap.ui.define([
 	"../model/ExploreSettingsModel",
 	"../model/formatter",
 	"../util/FileUtils",
+	"../localService/SEPMRA_PROD_MAN/mockServer",
 	"sap/m/MessageToast",
+	"sap/m/Dialog",
+	"sap/m/Button",
+	"sap/m/library",
+	"sap/m/FormattedText",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
@@ -19,13 +24,20 @@ sap.ui.define([
 	exploreSettingsModel,
 	formatter,
 	FileUtils,
+	mockServer,
 	MessageToast,
+	Dialog,
+	Button,
+	library,
+	FormattedText,
 	GridContainerItemLayoutData,
 	Device,
 	jQuery,
 	_debounce
 ) {
 	"use strict";
+
+	var ButtonType = library.ButtonType;
 
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.ExploreSamples", {
 
@@ -68,8 +80,6 @@ sap.ui.define([
 
 			this._errorMessageStrip = this.getView().byId("errorMessageStrip");
 			this._registerResize();
-
-			this.byId("cardSample").attachEvent("action", this._onCardAction, this);
 		},
 
 		onExit: function () {
@@ -187,12 +197,8 @@ sap.ui.define([
 			FileUtils.downloadFilesCompressed(aFiles, sArchiveName, sExtension);
 		},
 
-		onDownloadBundle: function () {
-			this._onDownloadCompressed("card");
-		},
-
 		onDownloadZip: function () {
-			this._onDownloadCompressed("zip");
+			this._onDownloadCompressed(".card.zip");
 		},
 
 		showError: function (sMessage) {
@@ -278,11 +284,11 @@ sap.ui.define([
 				return;
 			}
 
-			bUseExtendedEditor = !!oSample.files;
+			bUseExtendedEditor = !!oSample.files || !!(oSubSample && oSubSample.files);
 			exploreSettingsModel.setProperty("/useExtendedFileEditor", bUseExtendedEditor);
 
 			if (bUseExtendedEditor) {
-				this._showExtendedFileEditor(oSample);
+				this._showExtendedFileEditor(oSubSample || oSample);
 			} else {
 				exploreSettingsModel.setProperty("/codeEditorType", "json");
 				exploreSettingsModel.setProperty("/editable", true);
@@ -294,17 +300,23 @@ sap.ui.define([
 		_onCardAction: function (oEvent) {
 			var sType = oEvent.getParameter("type"),
 				mParameters = oEvent.getParameter("manifestParameters"),
+				sKey = exploreNavigationModel.getProperty("/selectedKey"),
 				sMessage;
 
-			sMessage = "Action '" + sType + "'";
-			if (mParameters) {
-				sMessage += " with parameters '" + JSON.stringify(mParameters) + "'";
-			}
+			if (sKey === "dataSources") {
+				this._openConfirmNavigationDialog(mParameters);
+			} else {
+				sMessage = "Action '" + sType + "'";
 
-			MessageToast.show(sMessage, {
-				at: "center center",
-				width: "25rem"
-			});
+				if (mParameters) {
+					sMessage += " with parameters '" + JSON.stringify(mParameters) + "'";
+				}
+
+				MessageToast.show(sMessage, {
+					at: "center center",
+					width: "25rem"
+				});
+			}
 		},
 
 		_findSample: function (sSampleKey) {
@@ -343,7 +355,13 @@ sap.ui.define([
 
 		_showSample: function (oSample, oSubSample) {
 
-			var bUseIFrame = oSample.key === "htmlConsumption";
+			var oCurrentSample = oSubSample || oSample,
+				bUseIFrame = oCurrentSample.key === "htmlConsumption";
+
+			// init mock server only on demand
+			if (oCurrentSample.key === "topProducts" || oCurrentSample.key === "product") {
+				mockServer.init();
+			}
 
 			exploreSettingsModel.setProperty("/useIFrame", bUseIFrame);
 
@@ -359,7 +377,7 @@ sap.ui.define([
 
 				oFrameWrapperEl.addEventDelegate(oDelegate, this);
 			} else {
-				var sManifestUrl,
+				var sManifestUrl = oCurrentSample.manifestUrl,
 					oLayoutSettings = {
 						minRows: 1,
 						columns: 4
@@ -372,20 +390,17 @@ sap.ui.define([
 
 				if (oSubSample) {
 					this.oModel.setProperty("/subSample", oSubSample);
-					oLayoutSettings = Object.assign(oLayoutSettings, oSubSample.settings);
-					sManifestUrl = oSubSample.manifestUrl;
-				} else {
-					oLayoutSettings = Object.assign(oLayoutSettings, oSample.settings);
-					sManifestUrl = oSample.manifestUrl;
 				}
+
+				oLayoutSettings = Object.assign(oLayoutSettings, oCurrentSample.settings);
 
 				if (oCard) {
 					oCard.setLayoutData(new GridContainerItemLayoutData(oLayoutSettings));
 					this.byId("cardContainer").invalidate();
 				}
 
-				if (oSample.files) {
-					aFiles = oSample.files;
+				if (oCurrentSample.files) {
+					aFiles = oCurrentSample.files;
 					oManifestFile = aFiles.find(function (oFile) {
 						return oFile.name === "manifest.json";
 					});
@@ -405,7 +420,6 @@ sap.ui.define([
 		},
 
 		_showExtendedFileEditor: function (oSample) {
-
 			var oExtendedFileEditorModel = this.getView().getModel("extendedFileEditor"),
 				oEditor = this.byId("editor");
 
@@ -488,7 +502,9 @@ sap.ui.define([
 				}
 			} else {
 				try {
-					var sBaseUrl = this._sSampleManifestUrl.substring(0, this._sSampleManifestUrl.length - "manifest.json".length);
+					var sManifestFileName = this._sSampleManifestUrl.split("/").pop(),
+						sBaseUrl = this._sSampleManifestUrl.substring(0, this._sSampleManifestUrl.length - sManifestFileName.length);
+
 					this.byId("cardSample")
 						.setBaseUrl(sBaseUrl)
 						.setManifest(oValue)
@@ -534,6 +550,47 @@ sap.ui.define([
 			} else {
 				return oCardEditor.getJson();
 			}
+		},
+
+		/**
+		 * Shows confirmation dialog before doing navigation to another app.
+		 * @param {object} mParameters Parameters from manifest action.
+		 */
+		_openConfirmNavigationDialog: function (mParameters) {
+
+			var oDialog = new Dialog({
+				title: "Confirm Navigation to App",
+				content: [
+					new FormattedText({
+						htmlText: "<p class='sapUiNoMargin'><span class='sapMText'>You are about to open </span></p>"
+									+ "<cite class='sapMText'>" + mParameters.url + "</cite>"
+									+ "<p class='sapUiNoMargin'>"
+									+ "<span class='sapMText'>This is the Manage Products Fiori Reference App. If you don't have registration for it, follow the instructions "
+									+ "<a target='_blank' href='https://developers.sap.com/tutorials/gateway-demo-signup.html'>here</a>. "
+									+ "Do you want to continue?" + "</span></p>",
+						width: "100%"
+					})
+				],
+				beginButton: new Button({
+					type: ButtonType.Emphasized,
+					text: "Navigate",
+					press: function () {
+						window.open(mParameters.url, "_blank");
+						oDialog.close();
+					}
+				}),
+				endButton: new Button({
+					text: "Cancel",
+					press: function () {
+						oDialog.close();
+					}
+				}),
+				afterClose: function () {
+					oDialog.destroy();
+				}
+			}).addStyleClass("sapUiSizeCompact sapUiResponsiveContentPadding");
+
+			oDialog.open();
 		}
 	});
 });

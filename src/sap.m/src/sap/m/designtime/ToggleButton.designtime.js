@@ -18,4 +18,4 @@ sap.ui.define([],
 				create: "sap/m/designtime/ToggleButton.create.fragment.xml"
 			}
 		};
-	}, /* bExport= */ false);
+	});
