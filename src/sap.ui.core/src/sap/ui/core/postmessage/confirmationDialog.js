@@ -36,7 +36,7 @@ sap.ui.define(function () {
 							}
 						}
 					);
-				});
+				}, fnReject);
 			} else {
 				var bConfirmed = window.confirm(sMessage); // eslint-disable-line no-alert
 

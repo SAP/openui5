@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define([], function() {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	/**
@@ -50,6 +50,8 @@ sap.ui.define([], function() {
 									var oInfo = getModuleSystemInfo();
 									return { modules : oInfo.modules, prefixes : oInfo.prefixes, config: oCfgData };
 								});
+							}, function (oError) {
+								Log.error("Could not load module 'sap/ui/core/support/techinfo/TechnicalInfo':", oError);
 							});
 						} else if ( e.keyCode === 83 ) { // 'S'
 							sap.ui.require(['sap/ui/core/support/Support'], function(Support) {
@@ -58,6 +60,8 @@ sap.ui.define([], function() {
 									return;
 								}
 								oSupport.openSupportTool();
+							}, function (oError) {
+								Log.error("Could not load module 'sap/ui/core/support/Support':", oError);
 							});
 						}
 					}

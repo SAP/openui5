@@ -203,8 +203,8 @@ sap.ui.define([
 		if (!mRegistry[mSettings.viewName]) {
 			var sModuleName = mSettings.viewName.replace(/\./g, "/") + ".view";
 			if ( mSettings.async ) {
-				oPromise = new Promise(function(resolve) {
-					sap.ui.require([sModuleName], resolve);
+				oPromise = new Promise(function(resolve, reject) {
+					sap.ui.require([sModuleName], resolve, reject);
 				});
 			} else {
 				sap.ui.requireSync(sModuleName);

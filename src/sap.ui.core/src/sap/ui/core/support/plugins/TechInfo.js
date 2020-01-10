@@ -4,12 +4,13 @@
 
 // Provides class sap.ui.core.support.plugins.TechInfo (TechInfo support plugin)
 sap.ui.define([
+	'sap/base/Log',
 	'../Plugin',
 	'../Support',
 	'../ToolsAPI',
 	"sap/base/security/encodeXML"
 ],
-	function(Plugin, Support, ToolsAPI, encodeXML) {
+	function(Log, Plugin, Support, ToolsAPI, encodeXML) {
 	"use strict";
 
 
@@ -209,6 +210,8 @@ sap.ui.define([
 						trace: traceXml
 					});
 				});
+			}, function (oError) {
+				Log.error("Could not load module 'sap/ui/testrecorder/Bootstrap':", oError);
 			});
 
 		};
