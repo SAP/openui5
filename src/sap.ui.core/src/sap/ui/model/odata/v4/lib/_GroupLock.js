@@ -23,6 +23,8 @@ sap.ui.define([
 	 *   Whether the reason for the group lock is a modifying request
 	 * @param {number} [iSerialNumber=Infinity]
 	 *   A serial number which may be used on unlock
+	 * @param {function} [fnCancel]
+	 *   Function that is called when the group lock is canceled
 	 * @throws {Error}
 	 *   If <code>oOwner</code> is missing, or if <code>bModifying</code> is set but
 	 *   <code>bLocked</code> is unset
@@ -31,13 +33,15 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 */
-	function _GroupLock(sGroupId, oOwner, bLocked, bModifying, iSerialNumber) {
+	function _GroupLock(sGroupId, oOwner, bLocked, bModifying, iSerialNumber, fnCancel) {
 		if (!oOwner) {
 			throw new Error("Missing owner");
 		}
 		if (bModifying && !bLocked) {
 			throw new Error("A modifying group lock has to be locked");
 		}
+		this.fnCancel = fnCancel;
+		this.bCanceled = false;
 		this.sGroupId = sGroupId;
 		this.bLocked = !!bLocked; // whether it is locked; explicitly unlocked if undefined
 		this.bModifying = !!bModifying; // whether this lock belongs to a modifying request
@@ -45,6 +49,21 @@ sap.ui.define([
 		this.oPromise = null; // the promise resolving when the lock is unlocked
 		this.iSerialNumber = iSerialNumber === undefined ? Infinity : iSerialNumber;
 	}
+
+	/**
+	 * Cancels and unlocks the group lock.
+	 *
+	 * @public
+	 */
+	_GroupLock.prototype.cancel = function () {
+		if (!this.bCanceled) {
+			this.bCanceled = true;
+			if (this.fnCancel) {
+				this.fnCancel();
+			}
+			this.unlock(true);
+		}
+	};
 
 	/**
 	 * Returns the group ID.
@@ -82,6 +101,17 @@ sap.ui.define([
 	 */
 	_GroupLock.prototype.getUnlockedCopy = function () {
 		return new _GroupLock(this.sGroupId, this.oOwner, false, false, this.iSerialNumber);
+	};
+
+	/**
+	 * Returns <code>true</code> if the lock is canceled.
+	 *
+	 * @returns {boolean} <code>true</code> if the lock is canceled
+	 *
+	 * @public
+	 */
+	_GroupLock.prototype.isCanceled = function () {
+		return this.bCanceled;
 	};
 
 	/**

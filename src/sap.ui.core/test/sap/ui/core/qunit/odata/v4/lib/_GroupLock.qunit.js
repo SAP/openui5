@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_GroupLock"
 ], function (Log, _GroupLock) {
-	/*global QUnit */
+	/*global QUnit, sinon */
 	"use strict";
 
 	//*********************************************************************************************
@@ -22,6 +22,7 @@ sap.ui.define([
 		var oOwner = {/*owner*/},
 			oGroupLock = new _GroupLock("foo", oOwner);
 
+		assert.strictEqual(oGroupLock.isCanceled(), false);
 		assert.strictEqual(oGroupLock.getGroupId(), "foo");
 		assert.strictEqual(oGroupLock.oOwner, oOwner);
 		assert.strictEqual(oGroupLock.isLocked(), false);
@@ -162,5 +163,39 @@ sap.ui.define([
 		assert.throws(function () {
 			return new _GroupLock("group", {/*owner*/}, false, true, 42);
 		}, new Error("A modifying group lock has to be locked"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("cancel w/o function", function (assert) {
+		var oGroupLock = new _GroupLock("group", {/*owner*/}, true);
+
+		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+
+		// code under test
+		oGroupLock.cancel();
+
+		assert.ok(oGroupLock.isCanceled());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("cancel w/ function", function (assert) {
+		var fnCancel = sinon.spy(),
+			oGroupLock = new _GroupLock("group", {/*owner*/}, true, false, undefined, fnCancel);
+
+		assert.strictEqual(oGroupLock.fnCancel, fnCancel);
+
+		sinon.assert.notCalled(fnCancel);
+		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+
+		// code under test
+		oGroupLock.cancel();
+
+		assert.ok(oGroupLock.isCanceled());
+		sinon.assert.calledOnce(fnCancel);
+		sinon.assert.calledWithExactly(fnCancel);
+
+		oGroupLock.cancel();
+
+		sinon.assert.calledOnce(fnCancel); // cancel function must not be called again
 	});
 });

@@ -22,31 +22,31 @@ sap.ui.define([
 				"SalesOrderList('0500000002')/SO_2_SCHDL?custom-option=value&$select=ItemKey,ScheduleKey&$skip=0&$top=100" : {
 					source : "SalesOrderList(0500000002)-SO_2_SCHDL.json"
 				},
-				"SalesOrderList('0500000002')?$select=Note,SalesOrderID&custom-option=value" : {
-					source : "SalesOrderList(0500000002)-Note.json"
+				"SalesOrderList('0500000002')?custom-option=value&$select=GrossAmount,Note,SalesOrderID" : {
+					source : "SalesOrderList(0500000002)-GrossAmount+Note.json"
 				},
-				"SalesOrderList('0500000002')/SO_2_BP?$select=BusinessPartnerID,WebAddress&custom-option=value" : {
-					source : "SalesOrderList(0500000002)-SO_2_BP-WebAddress.json"
+				"SalesOrderList('0500000002')/SO_2_BP?custom-option=value&$select=BusinessPartnerID,EmailAddress,WebAddress" : {
+					source : "SalesOrderList(0500000002)-SO_2_BP-EmailAddress+WebAddress.json"
 				},
-				"GET SalesOrderList('0500000002')/SO_2_SCHDL('FA163E7AD4F11EE9B3F785A8E123EA14')?$select=DeliveryDate,ScheduleKey&custom-option=value" : {
+				"GET SalesOrderList('0500000002')/SO_2_SCHDL('FA163E7AD4F11EE9B3F785A8E123EA14')?custom-option=value&$select=DeliveryDate,ScheduleKey" : {
 					source : "SalesOrderList(0500000002)-SO_2_SCHDL(FA163E7AD4F11EE9B3F785A8E123EA14)-DeliveryDate.json"
 				},
-				"GET SalesOrderList('0500000002')/SO_2_SCHDL('FA163E7AD4F11EE9B3F785A8E1242A14')?$select=DeliveryDate,ScheduleKey&custom-option=value" : {
+				"GET SalesOrderList('0500000002')/SO_2_SCHDL('FA163E7AD4F11EE9B3F785A8E1242A14')?custom-option=value&$select=DeliveryDate,ScheduleKey" : {
 					source : "SalesOrderList(0500000002)-SO_2_SCHDL(FA163E7AD4F11EE9B3F785A8E1242A14)-DeliveryDate.json"
 				},
 				"SalesOrderList('0500000003')/SO_2_SCHDL?custom-option=value&$select=ItemKey,ScheduleKey&$skip=0&$top=100" : {
 					source : "SalesOrderList(0500000003)-SO_2_SCHDL.json"
 				},
-				"SalesOrderList('0500000003')?$select=Note,SalesOrderID&custom-option=value" : {
-					source : "SalesOrderList(0500000003)-Note.json"
+				"SalesOrderList('0500000003')?custom-option=value&$select=GrossAmount,Note,SalesOrderID" : {
+					source : "SalesOrderList(0500000003)-GrossAmount+Note.json"
 				},
-				"SalesOrderList('0500000003')/SO_2_BP?$select=BusinessPartnerID,WebAddress&custom-option=value" : {
-					source : "SalesOrderList(0500000003)-SO_2_BP-WebAddress.json"
+				"SalesOrderList('0500000003')/SO_2_BP?custom-option=value&$select=BusinessPartnerID,EmailAddress,WebAddress" : {
+					source : "SalesOrderList(0500000003)-SO_2_BP-EmailAddress+WebAddress.json"
 				},
-				"GET SalesOrderList('0500000003')/SO_2_SCHDL('FA163E7AD4F11EE9B3F785B28B5E2A14')?$select=DeliveryDate,ScheduleKey&custom-option=value" : {
+				"GET SalesOrderList('0500000003')/SO_2_SCHDL('FA163E7AD4F11EE9B3F785B28B5E2A14')?custom-option=value&$select=DeliveryDate,ScheduleKey" : {
 					source : "SalesOrderList(0500000003)-SO_2_SCHDL(FA163E7AD4F11EE9B3F785B28B5E2A14)-DeliveryDate.json"
 				},
-				"GET SalesOrderList('0500000003')/SO_2_SCHDL('FA163E7AD4F11EE9B3F785B28B5E6A14')?$select=DeliveryDate,ScheduleKey&custom-option=value" : {
+				"GET SalesOrderList('0500000003')/SO_2_SCHDL('FA163E7AD4F11EE9B3F785B28B5E6A14')?custom-option=value&$select=DeliveryDate,ScheduleKey" : {
 					source : "SalesOrderList(0500000003)-SO_2_SCHDL(FA163E7AD4F11EE9B3F785B28B5E6A14)-DeliveryDate.json"
 				}
 			},

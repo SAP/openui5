@@ -285,8 +285,6 @@ sap.ui.define([
 	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 	 * @param {string} [oEntityData={}]
 	 *   The initial entity data
-	 * @param {function} fnCancelCallback
-	 *   A function which is called after a transient entity has been canceled from the cache
 	 * @param {function} fnErrorCallback
 	 *   A function which is called with an error object each time a POST request for the create
 	 *   fails
@@ -299,7 +297,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
-			oEntityData, fnCancelCallback, fnErrorCallback, fnSubmitCallback) {
+			oEntityData, fnErrorCallback, fnSubmitCallback) {
 		var aCollection,
 			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
 			oPostBody,
@@ -316,7 +314,7 @@ sap.ui.define([
 				// Note: sPath is empty only in a CollectionCache, so we may call adjustReadRequests
 				that.adjustReadRequests(0, -1);
 			}
-			fnCancelCallback();
+			oGroupLock.cancel();
 		}
 
 		// Sets a marker that the create request is pending, so that update and delete fail.
@@ -593,6 +591,8 @@ sap.ui.define([
 	Cache.prototype.fetchLateProperty = function (oGroupLock, oResource, sResourcePath,
 			sRequestedPropertyPath, sMissingPropertyPath) {
 		var sFullResourceMetaPath,
+			sFullResourcePath,
+			sMergeBasePath, // full resource path plus custom query options
 			oPromise,
 			mQueryOptions,
 			sRequestPath,
@@ -663,28 +663,25 @@ sap.ui.define([
 		}
 		mQueryOptions = _Helper.getQueryOptionsForPath(mQueryOptions, sResourcePath);
 
-		// custom query options must be sent with each request
-		Object.keys(this.mLateQueryOptions).forEach(function (sName) {
-			if (sName[0] !== "$") {
-				mQueryOptions[sName] = that.mLateQueryOptions[sName];
-			}
-		});
-
 		sFullResourceMetaPath = _Helper.buildPath(this.sMetaPath, sResourceMetaPath);
 		visitQueryOptions(mQueryOptions);
-		sRequestPath = _Helper.buildPath(this.sResourcePath, sResourcePath)
-			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
+		sFullResourcePath = _Helper.buildPath(this.sResourcePath, sResourcePath);
+		sRequestPath = sFullResourcePath
+			+ this.oRequestor.buildQueryString(sFullResourceMetaPath, mQueryOptions, false, true);
 		oPromise = this.mPropertyRequestByPath[sRequestPath];
 		if (!oPromise) {
-			oPromise = this.oRequestor.request("GET", sRequestPath, oGroupLock.getUnlockedCopy())
-				.then(function (oData) {
-					that.visitResponse(oData, mTypeForMetaPath, sFullResourceMetaPath,
-							sResourcePath);
-					return oData;
-				})
-				.finally(function () {
-					delete that.mPropertyRequestByPath[sRequestPath];
-				});
+			sMergeBasePath = sFullResourcePath
+				+ this.oRequestor.buildQueryString(sFullResourceMetaPath, this.mQueryOptions, true);
+			oPromise = this.oRequestor.request("GET", sMergeBasePath, oGroupLock.getUnlockedCopy(),
+				undefined, undefined, undefined, undefined, sFullResourceMetaPath, undefined,
+				false, mQueryOptions
+			).then(function (oData) {
+				that.visitResponse(oData, mTypeForMetaPath, sFullResourceMetaPath, sResourcePath);
+
+				return oData;
+			}).finally(function () {
+				delete that.mPropertyRequestByPath[sRequestPath];
+			});
 			this.mPropertyRequestByPath[sRequestPath] = oPromise;
 		}
 		// With the V2 adapter the surrounding complex type is requested for nested properties. So
