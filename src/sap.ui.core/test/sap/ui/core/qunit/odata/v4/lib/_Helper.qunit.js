@@ -2827,6 +2827,68 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[{
+	aggregated : {$select : ["Name"]},
+	additional : {$select : ["ID"]},
+	result : {$select : ["Name", "ID"]},
+	title : "merge $select"
+}, {
+	aggregated : {},
+	additional : {$select : ["ID"]},
+	result : {$select : ["ID"]},
+	title : "add $select"
+}, {
+	aggregated : {$select : ["Name"]},
+	additional : {},
+	result : {$select : ["Name"]},
+	title : "no additional $select"
+}, {
+	aggregated : {$select : ["ID", "Name"]},
+	additional : {$select : ["ID"]},
+	result : {$select : ["ID", "Name"]},
+	title : "$select unchanged"
+}, {
+	aggregated : {foo : "bar", $select : ["ID"]},
+	additional : {foo : "bar", $select : ["ID"]},
+	result : {foo : "bar", $select : ["ID"]},
+	title : "custom query option"
+}, {
+	aggregated : {},
+	additional : {$expand : {foo : null}},
+	result : {$expand : {foo : null}},
+	title : "added $expand"
+}, {
+	aggregated : {$expand : {foo : null}},
+	additional : {$expand : {bar : null, baz : null}},
+	result : {$expand : {foo : null, bar : null, baz : null}},
+	title : "added $expand path"
+}].forEach(function (oFixture) {
+	QUnit.test("aggregateQueryOptions: " + oFixture.title, function (assert) {
+		// code under test
+		_Helper.aggregateQueryOptions(oFixture.aggregated, oFixture.additional);
+
+		assert.deepEqual(oFixture.aggregated, oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("aggregateQueryOptions: recursion", function (assert) {
+		var mAggregatedQueryOptions = {$expand : {foo : {}}},
+			oHelperMock = this.mock(_Helper),
+			mQueryOptions = {$expand : {foo : {}}};
+
+		oHelperMock.expects("aggregateQueryOptions")
+			.withExactArgs(sinon.match.same(mAggregatedQueryOptions),
+				sinon.match.same(mQueryOptions))
+			.callThrough(); // start the recursion
+		oHelperMock.expects("aggregateQueryOptions")
+			.withExactArgs(sinon.match.same(mAggregatedQueryOptions.$expand.foo),
+				sinon.match.same(mQueryOptions.$expand.foo));
+
+		_Helper.aggregateQueryOptions(mAggregatedQueryOptions, mQueryOptions);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("merge", function (assert) {
 		assert.strictEqual(_Helper.merge, merge);
 	});

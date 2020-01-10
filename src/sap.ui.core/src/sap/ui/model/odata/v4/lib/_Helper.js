@@ -96,6 +96,31 @@ sap.ui.define([
 		},
 
 		/**
+		 * Recursively merges $select and $expand from mQueryOptions into mAggregatedQueryOptions.
+		 * All other query options in mAggregatedQueryOptions remain untouched.
+		 *
+		 * @param {object} mAggregatedQueryOptions The aggregated query options
+		 * @param {object} mQueryOptions The query options to merge into the aggregated query
+		 *   options
+		 */
+		aggregateQueryOptions : function (mAggregatedQueryOptions, mQueryOptions) {
+			if (mQueryOptions.$select) {
+				_Helper.addToSelect(mAggregatedQueryOptions, mQueryOptions.$select);
+			}
+			if (mQueryOptions.$expand) {
+				mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
+				Object.keys(mQueryOptions.$expand).forEach(function (sPath) {
+					if (mAggregatedQueryOptions.$expand[sPath]) {
+						_Helper.aggregateQueryOptions(mAggregatedQueryOptions.$expand[sPath],
+							mQueryOptions.$expand[sPath]);
+					} else {
+						mAggregatedQueryOptions.$expand[sPath] = mQueryOptions.$expand[sPath];
+					}
+				});
+			}
+		},
+
+		/**
 		 * Builds a relative path from the given arguments. Iterates over the arguments and appends
 		 * them to the path if defined and non-empty. The arguments are expected to be strings or
 		 * integers, but this is not checked.

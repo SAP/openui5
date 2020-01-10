@@ -2001,7 +2001,6 @@ sap.ui.define([
 				oCreateResult = {},
 				oCreatePromise = SyncPromise.resolve(
 					bCancel ? Promise.reject(oCreateError) : oCreateResult),
-				fnCancel = function () {},
 				fnError = function () {},
 				oInitialData = {},
 				fnSubmit = function () {},
@@ -2011,13 +2010,13 @@ sap.ui.define([
 
 			this.mock(oCache).expects("create")
 				.withExactArgs("updateGroupId", "EMPLOYEES", "", sTransientPredicate,
-					sinon.match.same(oInitialData), sinon.match.same(fnCancel),
+					sinon.match.same(oInitialData),
 					sinon.match.same(fnError), sinon.match.same(fnSubmit))
 				.returns(oCreatePromise);
 
 			// code under test
 			return oBinding.createInCache("updateGroupId", "EMPLOYEES", "", sTransientPredicate,
-				oInitialData, fnCancel, fnError, fnSubmit)
+				oInitialData, fnError, fnSubmit)
 				.then(function (oResult) {
 					assert.strictEqual(bCancel, false);
 					assert.strictEqual(oResult, oCreateResult);
@@ -2040,7 +2039,6 @@ sap.ui.define([
 				mCacheByResourcePath : undefined,
 				oCachePromise : SyncPromise.resolve(oCache)
 			}),
-			fnCancel = function () {},
 			oCreateResult = {},
 			oCreatePromise = SyncPromise.resolve(oCreateResult),
 			fnError = function () {},
@@ -2051,14 +2049,13 @@ sap.ui.define([
 
 		this.mock(oCache).expects("create")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "", sTransientPredicate,
-				sinon.match.same(oInitialData), sinon.match.same(fnCancel),
-				sinon.match.same(fnError), sinon.match.same(fnSubmit))
+				sinon.match.same(oInitialData), sinon.match.same(fnError),
+				sinon.match.same(fnSubmit))
 			.returns(oCreatePromise);
 
 		// code under test
 		return oBinding.createInCache(
-				oGroupLock, "EMPLOYEES", "", sTransientPredicate, oInitialData, fnCancel, fnError,
-				fnSubmit
+				oGroupLock, "EMPLOYEES", "", sTransientPredicate, oInitialData, fnError, fnSubmit
 			).then(function (oResult) {
 				assert.strictEqual(oResult, oCreateResult);
 			});
@@ -2082,7 +2079,6 @@ sap.ui.define([
 				//getUpdateGroupId : function () {},
 				sPath : "SO_2_SCHEDULE"
 			}),
-			fnCancel = {},
 			fnError = {},
 			oGroupLock = {},
 			oInitialData = {},
@@ -2095,14 +2091,13 @@ sap.ui.define([
 			.returns("~");
 		this.mock(oParentBinding).expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrderList('4711')/SO_2_SCHEDULE",
-				"~", sTransientPredicate, oInitialData, sinon.match.same(fnCancel),
-				sinon.match.same(fnError), sinon.match.same(fnSubmit))
+				"~", sTransientPredicate, oInitialData, sinon.match.same(fnError),
+				sinon.match.same(fnSubmit))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
 			oBinding.createInCache(oGroupLock, "SalesOrderList('4711')/SO_2_SCHEDULE", "",
-				sTransientPredicate, oInitialData, fnCancel, fnError, fnSubmit).getResult(),
-			oResult);
+				sTransientPredicate, oInitialData, fnError, fnSubmit).getResult(), oResult);
 	});
 
 	//*********************************************************************************************
