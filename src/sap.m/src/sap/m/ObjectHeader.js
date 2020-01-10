@@ -640,7 +640,7 @@ sap.ui.define([
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setNumberState = function (sState) {
-		this.setProperty("numberState", sState, true);
+		this.setProperty("numberState", sState);
 		this._getObjectNumber().setState(sState);
 		return this;
 	};
@@ -653,7 +653,7 @@ sap.ui.define([
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setTitleSelectorTooltip = function (sTooltip) {
-		this.setProperty("titleSelectorTooltip", sTooltip, false);
+		this.setProperty("titleSelectorTooltip", sTooltip);
 		this._oTitleArrowIcon.setTooltip(sTooltip);
 		return this;
 	};
@@ -692,7 +692,7 @@ sap.ui.define([
 			aAllMarkers = this.getMarkers(),
 			i;
 
-		this.setProperty("showMarkers", bMarked, false);
+		this.setProperty("showMarkers", bMarked);
 
 		for (i = 0; i < aAllMarkers.length; i++) {
 			sMarkerType = aAllMarkers[i].getType();
