@@ -330,10 +330,11 @@ sap.ui.define([
 			&& this._isValueInThreshold(this._oMousedownPosition.clientY, oEvent.clientY, 10)
 		) {
 			iMonth = this._oItemNavigation.getFocusedIndex() + this.getStartMonth();
-			this._selectMonth(iMonth);
-			this.fireSelect();
+			if (iMonth >= this._iMinMonth && iMonth <= this._iMaxMonth) {
+				this._selectMonth(iMonth);
+				this.fireSelect();
+			}
 		}
-
 	};
 
 	MonthPicker.prototype.onmouseover = function(oEvent) {
@@ -512,12 +513,6 @@ sap.ui.define([
 			iUpperThreshold = iReference + iThreshold;
 
 		return iValue >= iLowerThreshold && iValue <= iUpperThreshold;
-	};
-
-	MonthPicker.prototype.ontouchstart = function (oEvent){
-		if (!Device.system.desktop && oEvent.target.classList.contains("sapUiCalItem")){
-			oEvent.target.classList.add("sapUiCalItemSel");
-		}
 	};
 
 	function _initItemNavigation(){

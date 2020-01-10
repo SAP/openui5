@@ -461,5 +461,53 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(this.oMP.$().attr("aria-label"), sControlDescription , "Control description is added");
 		});
+
+		QUnit.module("Interaction", {
+			beforeEach: function() {
+				this.MP = new MonthPicker();
+				this.MP.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.MP.destroy();
+				this.MP = null;
+			}
+		});
+
+		QUnit.test("Selecting a month that is disabled due to min/max motnhs set on mobile", function(assert) {
+			// prepare
+			var iFocusedIndex = 8,
+				oDeviceStub = this.stub(sap.ui.Device.support, "touch", true),
+				oIsValueInThresholdStub = this.stub(this.MP, "_isValueInThreshold", function () { return true; }),
+				oItemNavigationStub = this.stub(this.MP._oItemNavigation, "getFocusedIndex", function () { return iFocusedIndex; }),
+				oFakeEvent = {
+					target: jQuery("<div></div>").attr({
+						"id": this.MP.getId() + "-m8",
+						"class": "sapUiCalItem"
+					}).get(0),
+					classList: {
+						contains: function() {
+							return true;
+						}
+					}
+				},
+				fnFireSelectSpy = this.spy(this.MP, "fireSelect");
+
+			this.MP.setMinMax(1, 6);
+
+			// act
+			this.MP.onmousedown({});
+			this.MP.onmouseup(oFakeEvent);
+
+			// assert
+			assert.ok(fnFireSelectSpy.notCalled, "'fireSelect' is not called");
+
+			// cleanup
+			oDeviceStub.restore();
+			oIsValueInThresholdStub.restore();
+			oItemNavigationStub.restore();
+			fnFireSelectSpy.restore();
+		});
 	})();
+
 });
