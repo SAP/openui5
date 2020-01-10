@@ -100,7 +100,7 @@ sap.ui.define([
 			oValidation = new Promise(function (resolve, reject) {
 				// no loop of classes included since loadFeatures is not using executeActionsByName
 				sap.ui.require(["sap/ui/fl/write/api/FeaturesAPI"], function (FeaturesAPI) {
-					FeaturesAPI.isDraftEnabled(mPropertyBag.layer)
+					FeaturesAPI.isVersioningEnabled(mPropertyBag.layer)
 						.then(function (bDraftEnabled) {
 							if (bDraftEnabled) {
 								resolve();

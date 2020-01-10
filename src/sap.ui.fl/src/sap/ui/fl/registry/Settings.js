@@ -118,7 +118,7 @@ sap.ui.define([
 					isAtoAvailable: false,
 					isAtoEnabled: false,
 					isProductiveSystem: true,
-					draft: {},
+					versioning: {},
 					_bFlexChangeMode: false,
 					_bFlexibilityAdaptationButtonAllowed: false
 				};
@@ -186,15 +186,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a flag if the draft is enabled for a given layer.
+	 * Returns a flag if the versioning is enabled for a given layer.
 	 *
 	 * @param {string} sLayer - Layer to check.
-	 * @returns {boolean} true if draft is supported in the given layer.
+	 * @returns {boolean} true if versioning is supported in the given layer.
 	 * @public
 	 */
-	Settings.prototype.isDraftEnabled = function(sLayer) {
-		// there may be a draft information for all layers
-		return !!(this._oSettings.draft[sLayer] || this._oSettings.draft["ALL"]);
+	Settings.prototype.isVersioningEnabled = function(sLayer) {
+		// there may be a versioning information for all layers
+		return !!(this._oSettings.versioning[sLayer] || this._oSettings.versioning["ALL"]);
 	};
 
 	/**

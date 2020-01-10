@@ -63,15 +63,15 @@ sap.ui.define([
 		QUnit.test("mergeResults handles the draft flag", function (assert) {
 			var oResponse1 = {
 				layers: ["VENDOR", "CUSTOMER_BASE"],
-				features: {isDraftEnabled: false}
+				features: {isVersioningEnabled: false}
 			};
 			var oResponse2 = {
 				layers: ["CUSTOMER"],
-				features: {isDraftEnabled: true}
+				features: {isVersioningEnabled: true}
 			};
 			var oResponse3 = {
 				layers: ["USER"],
-				features: {isDraftEnabled: false}
+				features: {isVersioningEnabled: false}
 			};
 			var aResponse = [oResponse1, oResponse2, oResponse3];
 
