@@ -659,14 +659,6 @@ sap.ui.define([
 
 		_updateHeader.call(this);
 
-		if (this.getDomRef()) {
-			if (this._getShowItemHeader()) {
-				this.$().addClass("sapUiCalIntHead");
-			}else {
-				this.$().removeClass("sapUiCalIntHead");
-			}
-		}
-
 		return this;
 
 	};
