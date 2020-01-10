@@ -11,6 +11,8 @@ sap.ui.define([
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Change",
 	"sap/ui/core/Component",
 	"sap/ui/core/BusyIndicator",
 	"sap/base/Log",
@@ -25,6 +27,8 @@ sap.ui.define([
 	TransportSelection,
 	Settings,
 	Layer,
+	LayerUtils,
+	Change,
 	Component,
 	BusyIndicator,
 	Log,
@@ -68,11 +72,10 @@ sap.ui.define([
 		} else {
 			sRoute = ROUTES.CHANGES;
 		}
-
-		var mParameters = _pick({
-			changelist: mPropertyBag.transport,
-			skipIam: mPropertyBag.skipIam
-		}, ["changelist", "skipIam"]);
+		var mParameters = mPropertyBag.transport ? {changelist : mPropertyBag.transport} : {};
+		if (mPropertyBag.skipIam) {
+			mParameters.skipIam = mPropertyBag.skipIam;
+		}
 
 		ApplyConnector._addClientAndLanguageInfo(mParameters);
 		//single update --> fileName needs to be in the url
@@ -91,6 +94,49 @@ sap.ui.define([
 			"application/json; charset=utf-8", "json"
 		);
 		return WriteUtils.sendRequest(sWriteUrl, mPropertyBag.method, oRequestOption);
+	};
+
+	var _prepareAppVariantSpecificChange = function(oAppVariant) {
+		// Only content in the VENDOR layer have the real ABAP package
+		// This check avoid sending ATO package to get transport info
+		var sPackage = oAppVariant.getDefinition().layer === Layer.VENDOR ? oAppVariant.getPackage() : "";
+		return new Change({
+			fileName: oAppVariant.getDefinition().fileName,
+			fileType: oAppVariant.getDefinition().fileType,
+			packageName: sPackage,
+			namespace: oAppVariant.getNamespace()
+		});
+	};
+
+	var _selectTransportForAppVariant = function(mPropertyBag) {
+		var oTransportSelectionPromise;
+		if (mPropertyBag.transport) {
+			oTransportSelectionPromise = Promise.resolve({transport: mPropertyBag.transport});
+		} else {
+			var oChange = _prepareAppVariantSpecificChange(mPropertyBag.appVariant);
+			oTransportSelectionPromise = new TransportSelection().openTransportSelection(oChange);
+		}
+		return oTransportSelectionPromise.then(function (oTransportInfo) {
+			if (oTransportInfo === "cancel") {
+				return Promise.reject("cancel");
+			}
+			if (oTransportInfo && oTransportInfo.transport !== undefined) {
+				return oTransportInfo.transport;
+			}
+			return Promise.reject(new Error("Transport information could not be determined"));
+		});
+	};
+
+	var _handleSmartBusinessKPITileCreationCase = function(mPropertyBag) {
+		if (
+			!mPropertyBag.transport
+			&& mPropertyBag.settings.isAtoEnabled()
+			&& mPropertyBag.skipIam
+			&& LayerUtils.isCustomerDependentLayer(mPropertyBag.layer)
+		) {
+			// Smart Business created KPI tiles on S4 Cloud and the query parameter will be added to support their usecase
+			mPropertyBag.transport = "ATO_NOTIFICATION";
+		}
 	};
 
 	/**
@@ -361,6 +407,7 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sAppVariantUrl, "GET", oRequestOption);
 		},
 		create: function(mPropertyBag) {
+			_handleSmartBusinessKPITileCreationCase(mPropertyBag);
 			mPropertyBag.method = "POST";
 			mPropertyBag.isAppVariant = true;
 			return _doWrite(mPropertyBag);
@@ -402,27 +449,33 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sCatalogUnAssignmentUrl, "POST", oRequestOption);
 		},
 		update: function(mPropertyBag) {
-			mPropertyBag.method = "PUT";
-			mPropertyBag.isAppVariant = true;
-			return _doWrite(mPropertyBag);
+			return _selectTransportForAppVariant(mPropertyBag).then(function(sTransport) {
+				if (sTransport) {
+					mPropertyBag.transport = sTransport;
+				}
+				mPropertyBag.method = "PUT";
+				mPropertyBag.isAppVariant = true;
+				return _doWrite(mPropertyBag);
+			});
 		},
 		remove: function(mPropertyBag) {
-			var mParameters = {};
-			if (mPropertyBag.transport) {
-				mParameters.changelist = mPropertyBag.transport;
-			}
+			return _selectTransportForAppVariant(mPropertyBag).then(function(sTransport) {
+				var mParameters = {};
+				if (sTransport) {
+					mParameters.changelist = sTransport;
+				}
+				var sDeleteUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
+				delete mPropertyBag.reference;
+				var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
-			var sDeleteUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
-			delete mPropertyBag.reference;
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
-
-			var oRequestOption = WriteUtils.getRequestOptions(
-				ApplyConnector,
-				sTokenUrl,
-				undefined,
-				"application/json; charset=utf-8", "json"
-			);
-			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
+				var oRequestOption = WriteUtils.getRequestOptions(
+					ApplyConnector,
+					sTokenUrl,
+					undefined,
+					"application/json; charset=utf-8", "json"
+				);
+				return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
+			});
 		},
 		list: function(mPropertyBag) {
 			var mParameters = {};

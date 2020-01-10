@@ -181,7 +181,7 @@ sap.ui.define([
 					reference: "reference.app",
 					fileName: "fileName1",
 					namespace: "namespace1",
-					layer: "layer1",
+					layer: "CUSTOMER_BASE",
 					fileType: "fileType1",
 					content: [{
 						changeType: "changeType2",
@@ -235,7 +235,7 @@ sap.ui.define([
 					reference: "reference.app",
 					fileName: "fileName1",
 					namespace: "namespace1",
-					layer: "layer1",
+					layer: "CUSTOMER_BASE",
 					fileType: "fileType1",
 					content: [{
 						changeType: "changeType2",

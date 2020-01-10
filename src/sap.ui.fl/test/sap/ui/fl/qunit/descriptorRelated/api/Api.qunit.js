@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4"
@@ -17,6 +18,7 @@ sap.ui.define([
 	DescriptorChangeFactory,
 	WriteUtils,
 	CompatibilityConnector,
+	TransportSelection,
 	Settings,
 	Cache,
 	sinon
@@ -2215,27 +2217,61 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("for existing - submit", function(assert) {
+		QUnit.test("for existing - submit - local", function(assert) {
 			var that = this;
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
 			return DescriptorVariantFactory.createForExisting("a.id"
 					).then(function(oDescriptorVariant) {
 						return oDescriptorVariant.submit().then(function(oResponse) {
+							assert.ok(oStubOpenTransportSelection.calledOnce);
 							assert.notEqual(oResponse, null);
-							assert.equal(that._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/a.id");
+							assert.equal(that._fStubSend.callCount, 2);
+							assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id");
 						});
 					});
 		});
 
-		QUnit.test("delete - submit", function(assert) {
+		QUnit.test("for existing - submit - published", function(assert) {
 			var that = this;
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
+			return DescriptorVariantFactory.createForExisting("a.id"
+			).then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit().then(function(oResponse) {
+					assert.ok(oStubOpenTransportSelection.calledOnce);
+					assert.notEqual(oResponse, null);
+					assert.equal(that._fStubSend.callCount, 2);
+					assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?changelist=aTransport");
+				});
+			});
+		});
+
+		QUnit.test("delete - submit -local", function(assert) {
+			var that = this;
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
 			return DescriptorVariantFactory.createDeletion(
 						"a.id"
 					).then(function(oDescriptorVariant) {
 						return oDescriptorVariant.submit().then(function(oResponse) {
+							assert.ok(oStubOpenTransportSelection.calledOnce);
 							assert.notEqual(oResponse, null);
 							assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
 						});
 					});
+		});
+
+		QUnit.test("delete - submit - published", function(assert) {
+			var that = this;
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
+			return DescriptorVariantFactory.createDeletion(
+				"a.id"
+			).then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit().then(function(oResponse) {
+					assert.ok(oStubOpenTransportSelection.calledOnce);
+					assert.notEqual(oResponse, null);
+					assert.equal(that._fStubSend.callCount, 2);
+					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=aTransport');
+				});
+			});
 		});
 	});
 
@@ -2294,22 +2330,28 @@ sap.ui.define([
 
 		QUnit.test("for existing - submit", function(assert) {
 			var that = this;
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
 			return DescriptorVariantFactory.createForExisting("a.id")
 				.then(function(oDescriptorVariant) {
 					return oDescriptorVariant.submit();
 				}).then(function(oResponse) {
+					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.notEqual(oResponse, null);
+					assert.equal(that._fStubSend.callCount, 2);
 					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
 				});
 		});
 
 		QUnit.test("delete - submit", function(assert) {
 			var that = this;
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
 			return DescriptorVariantFactory.createDeletion("a.id")
 				.then(function(oDescriptorVariant) {
 					return oDescriptorVariant.submit();
 				}).then(function(oResponse) {
+					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.notEqual(oResponse, null);
+					assert.equal(that._fStubSend.callCount, 2);
 					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
 				});
 		});
