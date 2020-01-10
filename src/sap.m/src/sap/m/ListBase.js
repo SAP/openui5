@@ -1271,6 +1271,49 @@ function(
 		}
 	};
 
+	ListBase.prototype.setBusy = function(bBusy, sBusySection) {
+		if (this.getBusy() == bBusy) {
+			return this;
+		}
+
+		Control.prototype.setBusy.apply(this, arguments);
+		if (!bBusy || !window.IntersectionObserver) {
+			clearTimeout(this._iBusyTimer);
+			return this;
+		}
+
+		this._iBusyTimer = setTimeout(function() {
+			var oBusyDom = this.getDomRef(sBusySection);
+			var oAnimDom = this.getDomRef("busyIndicator");
+			var oScrollDelegate = library.getScrollDelegate(this, true);
+			if (!oBusyDom || !oAnimDom || !oScrollDelegate) {
+				return;
+			}
+
+			var oBusyObserver = new window.IntersectionObserver(function(aEntries) {
+				oBusyObserver.disconnect();
+				var oEntry = aEntries.pop();
+				var fRatio = oEntry.intersectionRatio;
+				if (fRatio <= 0 || fRatio >= 1) {
+					return;
+				}
+
+				var oStyle = oAnimDom.firstChild.style;
+				if (oEntry.intersectionRect.height >= oEntry.rootBounds.height) {
+					oStyle.position = "sticky";
+				} else {
+					oStyle.top = ((oEntry.boundingClientRect.top < 0 ? 1 - fRatio : 0) + (fRatio / 2)) * 100 + "%";
+				}
+			}, {
+				root: oScrollDelegate.getContainerDomRef()
+			});
+
+			oBusyObserver.observe(oBusyDom);
+		}.bind(this), this.getBusyIndicatorDelay());
+
+		return this;
+	};
+
 	ListBase.prototype.onItemBindingContextSet = function(oItem) {
 		// determine whether selection remember is necessary or not
 		if (!this._bSelectionMode || !this.getRememberSelections() || !this.isBound("items")) {
