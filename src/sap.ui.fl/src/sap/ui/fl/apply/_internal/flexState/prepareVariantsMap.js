@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/each",
 	"sap/base/util/values",
-	"sap/base/util/deepClone",
 	"sap/base/util/merge",
 	"sap/ui/core/Component",
 	"sap/ui/fl/LayerUtils"
@@ -26,7 +25,6 @@ sap.ui.define([
 	isEmptyObject,
 	each,
 	values,
-	deepClone,
 	merge,
 	Component,
 	LayerUtils
@@ -37,7 +35,7 @@ sap.ui.define([
 
 	// ctrl_variant
 	function addVariants(oVariantsMap, aVariants) {
-		var oVariantsMapClone = deepClone(oVariantsMap);
+		var oVariantsMapClone = merge({}, oVariantsMap);
 		aVariants.forEach(function (oVariant) {
 			oVariantsMapClone[oVariant.fileName] = {
 				content: oVariant,
@@ -50,7 +48,7 @@ sap.ui.define([
 
 	// change
 	function addVariantDependentControlChanges(oVariantsMap, aVariantDependentChanges) {
-		var oVariantsMapClone = deepClone(oVariantsMap);
+		var oVariantsMapClone = merge({}, oVariantsMap);
 		aVariantDependentChanges.forEach(function (oChange) {
 			oVariantsMapClone[oChange.variantReference] = oVariantsMapClone[oChange.variantReference] || createStandardVariant(oChange.variantReference);
 			oVariantsMapClone[oChange.variantReference].controlChanges.push(oChange);
@@ -60,7 +58,7 @@ sap.ui.define([
 
 	// ctrl_variant_change
 	function addVariantChanges(oVariantsMap, aVariantChanges) {
-		var oVariantsMapClone = deepClone(oVariantsMap);
+		var oVariantsMapClone = merge({}, oVariantsMap);
 		aVariantChanges.forEach(function (oChange) {
 			oVariantsMapClone[oChange.selector.id] = oVariantsMapClone[oChange.selector.id] || createStandardVariant(oChange.selector.id);
 			var aVariantChangesOfTheChangeType = oVariantsMapClone[oChange.selector.id].variantChanges[oChange.changeType] || [];
@@ -72,7 +70,7 @@ sap.ui.define([
 
 	// resolve references
 	function resolveReferences(oVariantsMap) {
-		var oVariantsMapClone = deepClone(oVariantsMap);
+		var oVariantsMapClone = merge({}, oVariantsMap);
 		values(oVariantsMapClone).forEach(function(oVariant) {
 			var sVariantReference = oVariant.content.variantReference;
 			var oReferencedVariant;
@@ -88,7 +86,7 @@ sap.ui.define([
 		if (!oReferencedVariant) {
 			return [];
 		}
-		return deepClone(oReferencedVariant.controlChanges).filter(function(oReferencedChange) {
+		return values(merge({}, oReferencedVariant.controlChanges)).filter(function(oReferencedChange) {
 			return LayerUtils.compareAgainstCurrentLayer(oReferencedChange.layer, sVariantLayer) === -1;
 		});
 	}
@@ -127,7 +125,7 @@ sap.ui.define([
 
 	// add prepared variants to resultant variant section
 	function addVariantsToResult(oResult, oVariantsMap, aTechnicalParameters) {
-		var oResultClone = deepClone(oResult);
+		var oResultClone = merge({}, oResult);
 		values(oVariantsMap).forEach(function (oVariant) {
 			var sVariantManagementId = oVariant.content.variantManagementReference;
 			if (!oResultClone[sVariantManagementId]) {
@@ -152,7 +150,7 @@ sap.ui.define([
 
 	// add variant management changes to resultant variant section
 	function addVariantManagementChangesToResult(oResult, aVariantManagementChanges) {
-		var oResultClone = deepClone(oResult);
+		var oResultClone = merge({}, oResult);
 		aVariantManagementChanges.forEach(function (oChange) {
 			var sVariantManagementId = oChange.selector.id;
 			if (!oResultClone[sVariantManagementId]) {
@@ -171,7 +169,7 @@ sap.ui.define([
 
 	// add missing standard variants to resultant variant section
 	function addStandardVariants(oResult) {
-		var oResultClone = deepClone(oResult);
+		var oResultClone = merge({}, oResult);
 		each(oResultClone, function (sVariantManagementId, oVariantManagement) {
 			var iStandardVariantIndex = oVariantManagement.variants.findIndex(function (oVariant) {
 				return oVariant.content.fileName === sVariantManagementId;
@@ -227,7 +225,7 @@ sap.ui.define([
 
 	// set ctrl_variant_management_change via map properties
 	function applyChangesOnVariantManagement(oVariantManagement) {
-		var oVariantManagementClone = deepClone(oVariantManagement);
+		var oVariantManagementClone = merge({}, oVariantManagement);
 		var mVariantManagementChanges = oVariantManagementClone.variantManagementChanges;
 		var oActiveChange;
 		if (!isEmptyObject(mVariantManagementChanges)) {
@@ -241,7 +239,7 @@ sap.ui.define([
 
 	// set ctrl_variant_change via map properties
 	function applyChangesOnVariant(oVariant) {
-		var oVariantClone = deepClone(oVariant);
+		var oVariantClone = merge({}, oVariant);
 		var mVariantChanges = oVariantClone.variantChanges;
 		var oActiveChange;
 		each(mVariantChanges, function (sChangeType, aChanges) {
@@ -284,7 +282,7 @@ sap.ui.define([
 
 	// set default map properties
 	function setDefaultProperties(oVariant) {
-		var oVariantClone = deepClone(oVariant);
+		var oVariantClone = merge({}, oVariant);
 		if (oVariantClone.content.fileName === oVariantClone.content.variantManagementReference) {
 			// standard Variant should always contain the value: "SAP" in "author" / "Created by" field
 			// case when standard variant exists in the backend response
