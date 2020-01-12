@@ -2210,14 +2210,15 @@ sap.ui.define([
 	 */
 	UploadCollection.prototype._handleTerminate = function(event, item) {
 		var oFileList, oDialog;
-		oFileList = new List({
-			items: [
-				new StandardListItem({
-					title: item.getFileName(),
-					icon: this._getIconFromFilename(item.getFileName())
-				})
-			]
-		});
+        oFileList = new List({
+            items: [
+                new StandardListItem({
+                    icon: this._getIconFromFilename(item.getFileName())
+                })
+            ]
+        });
+        //For handling curly braces in file name we have to use setter.Otherwise it will be treated as binding.
+        oFileList.getItems()[0].setTitle(item.getFileName());
 
 		oDialog = new Dialog({
 			id: this.getId() + "deleteDialog",
@@ -2534,9 +2535,8 @@ sap.ui.define([
 				this._aFileUploadersForPendingUpload.push(this._oFileUploader);
 			}
 			for (i = 0; i < iCountFiles; i++) {
-				oItem = new UploadCollectionItem({
-					fileName: event.getParameter("files")[i].name
-				});
+                oItem = new UploadCollectionItem();
+                oItem.setFileName(event.getParameter("files")[i].name);
 				// attach the File object to the UC item, so that
 				// the item can be identified if it comes from drag and drop
 				if (event.getParameter("fromDragDrop")) {
