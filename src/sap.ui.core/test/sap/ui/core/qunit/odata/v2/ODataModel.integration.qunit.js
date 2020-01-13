@@ -25,7 +25,9 @@ sap.ui.define([
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
-		NO_CONTENT = {/*204 no content*/};
+		NO_CONTENT = {/*204 no content*/},
+		// determine the row in which the entity is expected from the context path
+		rRowIndex = /~(\d+)~/;
 
 	/**
 	 * Creates an error response object for a technical error (http status code = 4xx/5xx).
@@ -375,7 +377,7 @@ sap.ui.define([
 		checkValue : function (assert, sValue, sControlId, vRow) {
 			var sExpectedValue,
 				iRow = (typeof vRow === "string")
-					? vRow.slice(vRow.indexOf("(@") + 2, vRow.indexOf("~)"))
+					? Number(rRowIndex.exec(vRow)[1])
 					: vRow,
 				aExpectedValues = (iRow === undefined)
 					? this.mChanges[sControlId]
@@ -554,7 +556,7 @@ sap.ui.define([
 					return {
 						uri : (iIndex === undefined)
 							? sRequestUri
-							: sRequestUri + "(@" + iIndex + "~)"
+							: sRequestUri + "('~" + iIndex + "~')"
 					};
 				}
 
@@ -684,15 +686,14 @@ sap.ui.define([
 		 * You must call the function before {@link #createView}, even if you do not expect a change
 		 * to the control's value initially. This is necessary because createView must attach a
 		 * formatter function to the binding info before the bindings are created in order to see
-		 * the change. If you do not expect a value initially, leave out the vValue parameter.
+		 * the change. If you expect a value at a later time but not initially, set the vValue
+		 * parameter to <code>null</code>.
 		 *
 		 * Examples:
 		 * this.expectChange("foo", "bar"); // expect value "bar" for the control with ID "foo"
-		 * this.expectChange("foo"); // listen to changes for the control with ID "foo", but do not
-		 *                           // expect a change (in createView)
 		 * this.expectChange("foo", false); // listen to changes for the control with ID "foo", but
-		 *                                 // do not expect a change (in createView). To be used if
-		 *                                 // the control is a template within a table.
+		 *                                  // do not expect a change (in createView). To be used if
+		 *                                  // the control is a template within a table.
 		 * this.expectChange("foo", ["a", "b"]); // expect values for two rows of the control with
 		 *                                       // ID "foo"; may be combined with an offset vRow
 		 * this.expectChange("foo", ["a",,"b"]); // expect values for the rows 0 and 2 of the
@@ -706,11 +707,15 @@ sap.ui.define([
 		 * this.expectChange("foo", null, null); // table.Table sets the binding context on an
 		 *                                       // existing row to null when scrolling
 		 * this.expectChange("foo", null); // row is deleted in table.Table so that its context is
-		 *                                 // destroyed
+		 *                                 // destroyed; this can also be used to listen to control
+		 *                                 // changes that are not expected; a controls with a
+		 *                                 // property binding (e.g. Text/Input) that expects
+		 *                                 // changes must be initialized with <code>null</code>
 		 *
 		 * @param {string} sControlId The control ID
-		 * @param {string|string[]|boolean} [vValue] The expected value, a list of expected values
-		 *   or <code>false</code> to enforce listening to a template control.
+		 * @param {string|string[]|boolean|null} [vValue] The expected value, a list of expected
+		 *   values, <code>false</code> to enforce listening to a template control or
+		 *   <code>null</code> to initialize a control for a later change.
 		 * @param {number|string} [vRow] The row index (for the model) or the path of its parent
 		 *   context (for the metamodel), in case that a change is expected for a single row of a
 		 *   list (in this case <code>vValue</code> must be a string).
@@ -1215,6 +1220,151 @@ sap.ui.define([
 
 		// code under test
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Messages are bound against targets with a deeper path (more than one navigation
+	// property). Tested with simple type (productName) and complex type (supplierAddress).
+	// JIRA: CPOUI5MODELS-103
+	QUnit.test("Messages: more than one navigation property", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			oMsgProductName = {
+				code : "A",
+				message : "Msg1",
+				severity : "Error",
+				target : "Name"
+			},
+			oMsgSupplierAddress = {
+				code : "B",
+				message : "Msg2",
+				severity : "Warning",
+				target : "Address/City"
+			},
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderId" text="{SalesOrderID}" />\
+	<Table id="table" items="{ToLineItems}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="detailProduct" binding="{ToProduct}">\
+	<Input id="productName" value="{Name}" />\
+</FlexBox>\
+<FlexBox id="detailSupplier" binding="{ToSupplier}">\
+	<Input id="supplierAddress" value="{Address/City}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1"
+			})
+			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
+				results : [{
+					__metadata : {
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					SalesOrderID : "1",
+					ItemPosition : "10"
+				}, {
+					__metadata : {
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					},
+					SalesOrderID : "1",
+					ItemPosition : "20"
+				}]
+			})
+			.expectChange("salesOrderId", null)
+			.expectChange("salesOrderId", "1")
+			.expectChange("itemPosition", ["10", "20"])
+			.expectChange("productName", null) // expect a later change
+			.expectChange("supplierAddress", null); // expect a later change
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct",
+					method : "GET",
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						+ "/ToProduct"
+				}, {
+					__metadata : {
+						uri : "ProductSet('P1')"
+					},
+					ProductID : "P1",
+					Name : "Product 1"
+				}, {
+					"sap-message" : getMessageHeader([oMsgProductName])
+				})
+				.expectChange("productName", "Product 1")
+				.expectMessages([{
+					code : "A",
+					fullTarget : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Name",
+					message : "Msg1",
+					persistent : false,
+					target : "/ProductSet('P1')/Name",
+					type : MessageType.Error
+				}]);
+
+			// code under test
+			that.oView.byId("detailProduct").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext()
+			);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct"
+						+ "/ToSupplier",
+					method : "GET",
+					requestUri : "ProductSet('P1')/ToSupplier"
+				}, {
+					__metadata : {
+						uri : "BusinessPartnerSet('BP1')"
+					},
+					BusinessPartnerID : "BP1",
+					Address : {
+						City : "Walldorf"
+					}
+				}, {
+					"sap-message" : getMessageHeader([oMsgSupplierAddress])
+				})
+				.expectChange("supplierAddress", "Walldorf")
+				.expectMessages([{
+					code : "A",
+					fullTarget : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Name",
+					message : "Msg1",
+					persistent : false,
+					target : "/ProductSet('P1')/Name",
+					type : MessageType.Error
+				}, {
+					code : "B",
+					fullTarget : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/ToSupplier"
+						+ "/Address/City",
+					message : "Msg2",
+					persistent : false,
+					target : "/BusinessPartnerSet('BP1')/Address/City",
+					type : MessageType.Warning
+				}]);
+
+			// code under test
+			that.oView.byId("detailSupplier").setBindingContext(
+				that.oView.byId("detailProduct").getBindingContext()
+			);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return Promise.all([
+				that.checkValueState(assert, "productName", "Error", "Msg1"),
+				that.checkValueState(assert, "supplierAddress", "Warning", "Msg2")
+			]);
+		});
 	});
 
 	//*********************************************************************************************
