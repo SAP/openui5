@@ -1043,16 +1043,15 @@ function(
 			Input.prototype.onfocusin.apply(this, arguments);
 		}
 
-		if (!this._bUseDialog && this.getEditable() && (!oEvent.target.classList.contains("sapMInputValHelp")
-			&& !oEvent.target.classList.contains("sapMInputValHelpInner"))) {
+		if (!this._bUseDialog &&
+			this.getEditable() &&
+			oEvent.target === this.getDomRef("inner") &&
+			!(this._oSuggestionPopup && this._oSuggestionPopup.isOpen())
+		) {
 
-				if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
-					return;
-				}
-
-				this._tokenizer._useCollapsedMode(false);
-				this._setValueVisible();
-				this._tokenizer.scrollToEnd();
+			this._tokenizer._useCollapsedMode(false);
+			this._setValueVisible();
+			this._tokenizer.scrollToEnd();
 		}
 	};
 
