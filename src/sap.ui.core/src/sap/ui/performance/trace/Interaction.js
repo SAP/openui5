@@ -62,7 +62,8 @@ sap.ui.define([
 			bytesReceived: 0, // sum over all response bytes
 			requestCompression: undefined, // true if all responses have been sent gzipped
 			busyDuration: 0, // summed GlobalBusyIndicator duration during this interaction
-			id: uid()
+			id: uid(), //Interaction id
+			passportAction: "undetermined_startup_0" //default PassportAction for startup
 		};
 	}
 
@@ -277,8 +278,7 @@ sap.ui.define([
 							sRootContextID = sEpp.substring(372, 404);
 						}
 					}
-					var sTrigger = oPendingInteraction.trigger + "_" + oPendingInteraction.event;
-					if (!sEpp || sAction && sRootContextID && sAction.startsWith(sTrigger)) {
+					if (!sEpp || sAction && sRootContextID && oPendingInteraction.passportAction.endsWith(sAction)) {
 						this.addEventListener("readystatechange", handleResponse.bind(this,  oPendingInteraction.id));
 					}
 				}
@@ -418,6 +418,12 @@ sap.ui.define([
 				finalizeInteraction(iTime);
 			}
 
+			//reset async counter/timer
+			if (iInteractionStepTimer) {
+				clearTimeout(iInteractionStepTimer);
+			}
+			iInteractionCounter = 0;
+
 			// clear request timings for new interaction
 			if (window.performance.clearResourceTimings) {
 				window.performance.clearResourceTimings();
@@ -546,7 +552,7 @@ sap.ui.define([
 
 					// update pending interaction infos
 					if (oPendingInteraction && !oPendingInteraction.completed && Interaction.onInteractionStarted) {
-						Interaction.onInteractionStarted(oPendingInteraction, bForce);
+						oPendingInteraction.passportAction = Interaction.onInteractionStarted(oPendingInteraction, bForce);
 					}
 					oCurrentBrowserEvent = null;
 					//only handle the first browser event within a call stack. Ignore virtual/harmonization events.
@@ -610,8 +616,8 @@ sap.ui.define([
 		 * @private
 		*/
 		notifyAsyncStepEnd : function(sId) {
-			iInteractionCounter--;
 			if (oPendingInteraction && sId === oPendingInteraction.id) {
+				iInteractionCounter--;
 				Interaction.notifyStepEnd(true);
 				Log.info("Interaction relevant step stopped - Number of pending steps: " + iInteractionCounter);
 			}
