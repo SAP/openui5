@@ -206,7 +206,7 @@ sap.ui.define([
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
-			sandbox.stub(FeaturesAPI, "isDraftEnabled").resolves(true);
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			var mPropertyBag = {
 				layer: "CUSTOMER",
 				flexObjects: [{}],
@@ -223,7 +223,7 @@ sap.ui.define([
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
-			var oIsDraftEnabledStub = sandbox.stub(FeaturesAPI, "isDraftEnabled").resolves(true);
+			var oIsDraftEnabledStub = sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			var mPropertyBag = {
 				layer: "CUSTOMER",
 				flexObjects: [{}]
@@ -240,7 +240,7 @@ sap.ui.define([
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
-			sandbox.stub(FeaturesAPI, "isDraftEnabled").resolves(false);
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
 			var mPropertyBag = {
 				layer: "CUSTOMER",
 				flexObjects: [{}],

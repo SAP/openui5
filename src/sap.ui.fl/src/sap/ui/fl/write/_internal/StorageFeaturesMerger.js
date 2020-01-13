@@ -33,7 +33,7 @@ sap.ui.define([
 
 	function _getDraftFromResponse(oResponse) {
 		var oDraft = {};
-		var bDraftEnabled = !!oResponse.features.isDraftEnabled;
+		var bDraftEnabled = !!oResponse.features.isVersioningEnabled;
 
 		oResponse.layers.forEach(function(sLayer) {
 			oDraft[sLayer] = bDraftEnabled;
@@ -56,7 +56,7 @@ sap.ui.define([
 			var oResult = DEFAULT_FEATURES;
 			aResponses.forEach(function (oResponse) {
 				Object.keys(oResponse.features).forEach(function (sKey) {
-					if (sKey !== "isDraftEnabled") {
+					if (sKey !== "isVersioningEnabled") {
 						oResult[sKey] = oResponse.features[sKey];
 					}
 				});
