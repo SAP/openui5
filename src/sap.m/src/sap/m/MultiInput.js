@@ -550,28 +550,36 @@ function(
 
 		this._deregisterResizeHandler();
 	};
+
 	/**
-	 * Function adds a validation callback called before any new token gets added to the tokens aggregation
+	 * A validation callback called before any new token gets added to the tokens aggregation.
 	 *
+	 * @callback sap.m.MultiInput.fnValidator
+	 * @param {string} text The source text
+	 * @param {sap.m.Token} suggestedToken Suggested token
+	 * @param {object} suggestionObject Any object used to find the suggested token. This property is available when the <code>MultiInput</code> has a list or tabular suggestions.
+	 * @param {function} asyncCallback Callback which accepts {sap.m.Token} as a parameter and gets called after validation has finished.
 	 * @public
-	 * @param {function} fValidator The validation callback whose parameter contains the following properties:
-	 * @param {string} fValidator.text The source text
-	 * @param {sap.m.Token} [fValidator.suggestedToken] Suggested token
-	 * @param {object} [fValidator.suggestionObject] Any object used to find the suggested token, this property is available when the multiInput has a list or tabular suggestions
-	 * @param {function} [fValidator.asyncCallback] Callback which accepts {sap.m.Token} as a parameter and gets called after validation has finished
 	 */
-	MultiInput.prototype.addValidator = function (fValidator) {
-		this._tokenizer.addValidator(fValidator);
+
+	/**
+	 * Function adds a validation callback called before any new token gets added to the tokens aggregation.
+	 *
+	 * @param {sap.m.MultiInput.fnValidator} fnValidator The validation callback
+	 * @public
+	 */
+	MultiInput.prototype.addValidator = function (fnValidator) {
+		this._tokenizer.addValidator(fnValidator);
 	};
 
 	/**
 	 * Function removes a validation callback
 	 *
-	 * @param {function} fValidator The validation callback to be removed
+	 * @param {sap.m.MultiInput.fnValidator} fnValidator The validation callback to be removed
 	 * @public
 	 */
-	MultiInput.prototype.removeValidator = function (fValidator) {
-		this._tokenizer.removeValidator(fValidator);
+	MultiInput.prototype.removeValidator = function (fnValidator) {
+		this._tokenizer.removeValidator(fnValidator);
 	};
 
 	/**
