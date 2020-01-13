@@ -211,6 +211,7 @@ sap.ui.define([
 		var aSpies1 = [];
 		var aSpies2 = [];
 		var aSpies3 = [];
+		var oContext = {};
 
 		this.aHookKeys.forEach(function(sHookKey) {
 			var oSpy1 = sinon.spy();
@@ -228,8 +229,10 @@ sap.ui.define([
 
 		Hook.install(oTable, oObject1);
 		Hook.install(oTable, oObject1);
+		Hook.install(oTable, oObject1, oContext);
 		Hook.install(oTable, oObject2);
-		Hook.install(oTable, oObject2);
+		Hook.install(oTable, oObject2, oContext);
+		Hook.install(oTable, oObject3);
 		Hook.install(oTable, oObject3);
 		Hook.uninstall(oTable, oObject2);
 
@@ -331,5 +334,20 @@ sap.ui.define([
 		assert.ok(oInstallationSpy.calledOn(oObject), "Installed hook called with the correct context");
 		assert.ok(oRegistrationSpy.firstCall.calledOn(undefined), "Hook that was registered without context was called without context");
 		assert.ok(oRegistrationSpy.secondCall.calledOn(oContext), "Hook that was registered with context was called with that context");
+
+		// Try to change the context of an installation.
+		oInstallationSpy.reset();
+		Hook.install(oTable, oObject, oContext);
+		Hook.call(oTable, sHookKey);
+
+		assert.ok(oInstallationSpy.calledOn(oObject), "Installing the same hook with another context does not change the context");
+
+		// Uninstall and install with a context.
+		oInstallationSpy.reset();
+		Hook.uninstall(oTable, oObject);
+		Hook.install(oTable, oObject, oContext);
+		Hook.call(oTable, sHookKey);
+
+		assert.ok(oInstallationSpy.calledOn(oContext), "After uninstall and install with a context, the hook was called with the correct context");
 	});
 });

@@ -11,17 +11,39 @@ sap.ui.define([], function() {
 
 	var mHookKeys = Object.freeze({
 		Table: Object.freeze({
+			/* Called when Table#bindRows or Table#bindAggregation("rows", ...) is called, before Control#bindAggregation.
+			 * Arguments: BindingInfo */
 			BindRows: "Table.BindRows",
+			/* Called when a binding object is created for the rows aggregation.
+			 * Arguments: sap.ui.model.Binding */
+			RowsBound: "Table.RowsBound",
+			/* Called when Table#unbindRows or Table#unbindAggregation("rows", ...) is called, before Control#unbindAggregation.
+			 * Arguments: sap.ui.model.Binding */
 			UnbindRows: "Table.UnbindRows",
+			/* Called after the Table.UnbindRows hook, if the unbind is not caused by rebind or destroy.
+			 * Arguments: none */
+			RowsUnbound: "Table.RowsUnbound",
+			/* Called when Table#refreshRows is called.
+			 * Arguments: none */
 			RefreshRows: "Table.RefreshRows",
+			/* Called when Table#updateRows is called.
+			 * Arguments: none */
 			UpdateRows: "Table.UpdateRows",
+			/* Called when Table#_updateTableSizes is called.
+			 * Arguments: none */
 			UpdateSizes: "Table.UpdateSizes",
+			/* Called when a menu is opened.
+			 * Arguments: sap.ui.unified.Menu */
 			OpenMenu: "Table.OpenMenu"
 		}),
 		Row: Object.freeze({
+			/* Called when the state of a row is updated.
+			 * Arguments: sap.ui.table.Row.State */
 			UpdateState: "Row.UpdateState"
 		}),
 		Column: Object.freeze({
+			/* Called when the table needs to know whether menu items will be added on the Table.OpenMenu hook.
+			 * Arguments: function():boolean */
 			MenuItemNotification: "Column.MenuItemNotification"
 		})
 	});
@@ -130,8 +152,11 @@ sap.ui.define([], function() {
 			aHooks.forEach(function(oHook) {
 				if (oHook.key === MASTER_HOOK_KEY) {
 					var oCall = {};
+					var oHandlerContext = oHook.handlerContext == null ? oHook.target : oHook.handlerContext;
+
 					oCall[sHookKey] = aArguments;
-					HookUtils.TableUtils.dynamicCall(oHook.target.hooks, oCall, oHook.target);
+					HookUtils.TableUtils.dynamicCall(oHook.target.hooks, oCall, oHandlerContext);
+
 				} else if (oHook.key === sHookKey) {
 					oHook.handler.apply(oHook.handlerContext, aArguments);
 				}
@@ -147,8 +172,9 @@ sap.ui.define([], function() {
 		 *
 		 * @param {sap.ui.table.Table} oScope The table whose hooks are installed.
 		 * @param {Object} oTarget The object the hooks are installed in.
+		 * @param {Object} [oThis] The context of hook handler calls.
 		 */
-		install: function(oScope, oTarget) {
+		install: function(oScope, oTarget, oThis) {
 			if (!HookUtils.TableUtils.isA(oScope, "sap.ui.table.Table") || !oTarget) {
 				return;
 			}
@@ -169,7 +195,8 @@ sap.ui.define([], function() {
 
 			aHooks.push({
 				key: MASTER_HOOK_KEY,
-				target: oTarget
+				target: oTarget,
+				handlerContext: oThis
 			});
 
 			Hooks.set(oScope, aHooks);
@@ -206,12 +233,12 @@ sap.ui.define([], function() {
 
 		/**
 		 * Registers to a hook of a table.
-		 * Multiple registrations with the same handler and handler context are possible.
+		 * Multiple registrations with the same <code>fnHandler</code> and <code>oThis</code> are possible.
 		 *
 		 * @param {sap.ui.table.Table} oScope The table to whose hook to register.
 		 * @param {string} sHookKey The hook to register to.
 		 * @param {Function} fnHandler The handler of the hook.
-		 * @param {Object} oThis The context of hook handler calls.
+		 * @param {Object} [oThis] The context of hook handler calls.
 		 */
 		register: function(oScope, sHookKey, fnHandler, oThis) {
 			if (!HookUtils.TableUtils.isA(oScope, "sap.ui.table.Table") || !isValidHookKey(sHookKey)) {
@@ -235,12 +262,13 @@ sap.ui.define([], function() {
 
 		/**
 		 * Deregisters from a hook of a table.
-		 * If there are multiple registrations with the same handler and handler context, one deregistration per registration is required.
+		 * If there are multiple registrations with the same <code>fnHandler</code> and <code>oThis</code>, one deregistration per
+		 * registration is required.
 		 *
 		 * @param {sap.ui.table.Table} oScope The table to whose hook to deregister from.
 		 * @param {string} sHookKey The hook to deregister from.
 		 * @param {Function} fnHandler The handler of the hook.
-		 * @param {Object} oThis The context of hook handler calls.
+		 * @param {Object} [oThis] The context of hook handler calls.
 		 */
 		deregister: function(oScope, sHookKey, fnHandler, oThis) {
 			var aHooks = Hooks.get(oScope);
