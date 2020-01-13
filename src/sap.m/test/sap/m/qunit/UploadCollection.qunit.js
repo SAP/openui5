@@ -1022,6 +1022,23 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	});
 
+    QUnit.test("handle Change - Special characters in the fileName property is displayed correctly", function (assert) {
+        //Arrange
+        var oFileUploader = this.oUploadCollection._getFileUploader();
+        oFileUploader._aXhr = [];
+        var oFile2 = {
+            name: "{Document}.txt"
+        };
+        oFileUploader.fireChange({
+            files: [oFile2]
+        });
+        //Act
+        this.oUploadCollection.invalidate();
+        sap.ui.getCore().applyChanges();
+        //Assert
+        assert.equal(this.oUploadCollection.aItems[0].getFileName(), oFile2.name, "Special characters in the fileName property is displayed correctly");
+    });
+
 	QUnit.module("List API Methods", {
 		beforeEach: function () {
 			this.oUploadCollection = new UploadCollection("uploadCollection", {
