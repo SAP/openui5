@@ -3105,5 +3105,73 @@
         ]
       }
     ]
+  },
+  "1.60.23": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "cd897bacde4f1a052c19da36b2b2a97a8ac67e72",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Hidden label is now placed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000293072019"
+          }
+        ]
+      },
+      {
+        "id": "108d58dbfbb1aedc3b551eac08a48f1a63752b03",
+        "type": "FIX",
+        "text": " sap.m.SearchField: search event is now fired correctly in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980550843"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970045315"
+          }
+        ]
+      },
+      {
+        "id": "975c716a6d833610d5a6b47b6dfaeaeb59c22865",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Do not auto-correct values without user interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980546816"
+          }
+        ]
+      },
+      {
+        "id": "9740ad5d26bdab8ab042d50f2b5f74d6b568a8b8",
+        "type": "FIX",
+        "text": " sap.m.StepInput: mouse wheel behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007806722019"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970022844"
+          }
+        ]
+      },
+      {
+        "id": "de8f749d3d9ccfc95cf069e12829e87de61b6ef2",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Consistent visualization for the sort items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970201189"
+          }
+        ]
+      }
+    ]
   }
 }
