@@ -75,6 +75,9 @@ function(
 	// shortcut for sap.m.TitleAlignment
 	var TitleAlignment = library.TitleAlignment;
 
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
 	var LIST_ITEM_SUFFIX = "-list-item";
 
 	/**
@@ -1668,7 +1671,7 @@ function(
 				titleAlignment		: this.getTitleAlignment(),
 				beginButton         : new Button(this.getId() + "-acceptbutton", {
 					text : this._rb.getText("VIEWSETTINGS_ACCEPT"),
-					type: sap.m.ButtonType.Emphasized
+					type: ButtonType.Emphasized
 				}).attachPress(this._onConfirm, this),
 				endButton           : new Button(this.getId() + "-cancelbutton", {
 					text : this._rb.getText("VIEWSETTINGS_CANCEL")
@@ -2965,7 +2968,9 @@ function(
 	ViewSettingsDialog.prototype._getShowOnlySelectedButton = function() {
 		var bPressedForFilter = this._oContentItem && this._oFiltersSelectedOnly[this._oContentItem.getId()] ? true : false,
 			oShowOnlySelectedButton = new ToggleButton({
-				icon : IconPool.getIconURI("activity-2"),
+				icon : IconPool.getIconURI("multi-select"),
+				tooltip: this._rb.getText("SHOW_SELECTED_ONLY"),
+				type : ButtonType.Transparent,
 				pressed: bPressedForFilter,
 				press: function() {
 					var bPressed = this._showOnlySelectedButton.getPressed(),
