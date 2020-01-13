@@ -149,16 +149,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 		// Subclasses may override this: Called after the item is rendered
 	};
 
-
-
-	MenuItemBase.prototype.onmouseover = function(oEvent){
-		var oParent = this.getParent();
-		if (oParent && oParent instanceof sap.ui.unified.Menu && this.getTooltip() instanceof sap.ui.core.TooltipBase) {
-			//TooltipBase stops the event propagation
-			oParent.onmouseover(oEvent);
-		}
-	};
-
 	MenuItemBase.prototype.onsapshow = function(oEvent) {
 		if (this.getParent() && this.getParent().close) {
 			this.getParent().close();
