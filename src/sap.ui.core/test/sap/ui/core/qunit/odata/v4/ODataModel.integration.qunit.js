@@ -20,13 +20,14 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/test/TestUtils",
 	'sap/ui/util/XMLHelper',
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, SyncPromise,
 		Controller, View, ChangeReason, Filter, FilterOperator, Sorter, OperationMode,
-		AnnotationHelper, ODataListBinding, ODataModel, TestUtils, XMLHelper) {
+		AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
@@ -283,7 +284,11 @@ sap.ui.define([
 				"/special/cases/$metadata?sap-client=123"
 					: {source : "odata/v4/data/metadata_special_cases.xml"},
 				"/special/countryoforigin/$metadata"
-					: {source : "odata/v4/data/metadata_countryoforigin.xml"}
+					: {source : "odata/v4/data/metadata_countryoforigin.xml"},
+				"/special/CurrencyCode/$metadata"
+					: {source : "odata/v4/data/metadata_CurrencyCode.xml"},
+				"/special/Price/$metadata"
+					: {source : "odata/v4/data/metadata_Price.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -19841,14 +19846,14 @@ sap.ui.define([
 
 		return oModel.getMetaModel().requestValueListType(sPropertyPath)
 			.then(function (sValueListType) {
-				assert.strictEqual(sValueListType, "Fixed");
+				assert.strictEqual(sValueListType, ValueListType.Fixed);
 
 				return oModel.getMetaModel().requestValueListInfo(sPropertyPath);
-			}).then(function (mQualifier2ValueListType) {
-				var oValueHelpModel = mQualifier2ValueListType[""].$model;
-
-				delete mQualifier2ValueListType[""].$model;
-				assert.deepEqual(mQualifier2ValueListType, {
+			}).then(function (mQualifier2ValueList) {
+				assert.strictEqual(mQualifier2ValueList[""].$model.toString(),
+					"sap.ui.model.odata.v4.ODataModel: /special/countryoforigin/");
+				delete mQualifier2ValueList[""].$model;
+				assert.deepEqual(mQualifier2ValueList, {
 					"" : {
 						CollectionPath : "I_AIVS_CountryCode",
 						Label : "Country Code Value Help",
@@ -19861,9 +19866,73 @@ sap.ui.define([
 						}]
 					}
 				});
-				assert.strictEqual(oValueHelpModel.toString(),
-					"sap.ui.model.odata.v4.ODataModel: /special/countryoforigin/");
 			});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request value list information for a parameter of a bound action via annotations
+	// with targets in 4.01 syntax and ValueListType.Fixed.
+	// JIRA: CPOUI5ODATAV4-54
+	QUnit.test("Value help at bound action parameter, 4.01 syntax, fixed", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			oOperationBinding
+				= oModel.bindContext("/Artists('42')/_Publication/special.cases.Create(...)"),
+			oPropertyBinding
+				= oModel.bindProperty("CurrencyCode", oOperationBinding.getParameterContext());
+
+		return oModel.getMetaModel().requestData().then(function () {
+			assert.strictEqual(oPropertyBinding.getValueListType(), ValueListType.Fixed);
+
+			return oPropertyBinding.requestValueListInfo();
+		}).then(function (mQualifier2ValueList) {
+			assert.strictEqual(mQualifier2ValueList[""].$model.toString(),
+				"sap.ui.model.odata.v4.ODataModel: /special/CurrencyCode/");
+			delete mQualifier2ValueList[""].$model;
+			assert.deepEqual(mQualifier2ValueList, {
+				"" : {
+					Label : "Publication's Currency"
+				}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request value list information for a parameter of a bound action via annotations
+	// with targets both in 4.0 and 4.01 syntax.
+	// JIRA: CPOUI5ODATAV4-54
+	QUnit.test("Value help at bound action parameter, 4.01 syntax, standard", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			oOperationBinding
+				= oModel.bindContext("/Artists('42')/_Publication/special.cases.Create(...)"),
+			oPropertyBinding
+				= oModel.bindProperty("Price", oOperationBinding.getParameterContext());
+
+		return oModel.getMetaModel().requestData().then(function () {
+			assert.strictEqual(oPropertyBinding.getValueListType(), ValueListType.Standard);
+
+			return oPropertyBinding.requestValueListInfo();
+		}).then(function (mQualifier2ValueList) {
+			assert.strictEqual(mQualifier2ValueList[""].$model.toString(),
+				"sap.ui.model.odata.v4.ODataModel: /special/Price/");
+			delete mQualifier2ValueList[""].$model;
+			assert.strictEqual(mQualifier2ValueList.A.$model.toString(),
+				"sap.ui.model.odata.v4.ODataModel: /special/Price/");
+			delete mQualifier2ValueList.A.$model;
+			assert.strictEqual(mQualifier2ValueList.B.$model.toString(),
+				"sap.ui.model.odata.v4.ODataModel: /special/Price/");
+			delete mQualifier2ValueList.B.$model;
+			assert.deepEqual(mQualifier2ValueList, {
+				"" : {
+					Label : "Price #"
+				},
+				"A" : {
+					Label : "Price #A"
+				},
+				"B" : {
+					Label : "Price #B"
+				}
+			});
+		});
 	});
 
 	//*********************************************************************************************
