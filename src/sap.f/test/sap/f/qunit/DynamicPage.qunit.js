@@ -2518,4 +2518,15 @@ function (
 		assert.strictEqual(this.oDynamicPage._getScrollPosition(), iActualSetScrollPosition,
 			"Scroll position " + iActualSetScrollPosition + "is preserved.");
 	});
+
+	QUnit.test("Calling _updateMedia with falsy value should not take action", function(assert) {
+		// setup
+		var oUpdateMediaStyleSpy = sinon.spy(this.oDynamicPage, "_updateMediaStyle");
+
+		// act
+		this.oDynamicPage._updateMedia(0);
+
+		// assert
+		assert.ok(oUpdateMediaStyleSpy.notCalled, "Media styles were not changed");
+	});
 });
