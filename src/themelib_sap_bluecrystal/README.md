@@ -3,6 +3,9 @@
 # @openui5/themelib_sap_bluecrystal
 Runtime resources of the [OpenUI5](https://github.com/SAP/openui5) Theme Library **sap_bluecrystal**.
 
+## Deprecation
+**This library is deprecated and should not be used for new projects.**
+
 ## Install
 ```
 npm install @openui5/themelib_sap_bluecrystal

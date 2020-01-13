@@ -3,6 +3,9 @@
 # @openui5/sap.ui.ux3
 Runtime resources of the [OpenUI5](https://github.com/SAP/openui5) UI Library **sap.ui.ux3**.
 
+## Deprecation
+**This library is deprecated and should not be used for new projects.**
+
 ## Install
 ```
 npm install @openui5/sap.ui.ux3

@@ -3,6 +3,9 @@
 # @openui5/sap.ui.commons
 Runtime resources of the [OpenUI5](https://github.com/SAP/openui5) UI Library **sap.ui.commons**.
 
+## Deprecation
+**This library is deprecated and should not be used for new projects.**
+
 ## Install
 ```
 npm install @openui5/sap.ui.commons
