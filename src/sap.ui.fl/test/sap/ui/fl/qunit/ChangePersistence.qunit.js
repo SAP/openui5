@@ -3547,7 +3547,7 @@ function (
 			assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
 		});
 
-		QUnit.test("saveAllChangesForVariant should use the CompatibilityConnector to create the change in the backend if pending action is NEW or delete the change if pending action is DELETE", function(assert) {
+		QUnit.test("saveAllChangesForVariant should use the CompatibilityConnector to create the change in the backend if pending action is NEW, update when pending action is UPDATE and delete the change if pending action is DELETE", function(assert) {
 			var mParameters = {
 				id: "changeId",
 				type: "filterBar",
@@ -3572,12 +3572,16 @@ function (
 			assert.ok(sId);
 			var oChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
 			assert.equal(oChange.getPendingAction(), "NEW");
-			var oCreateResponse = {response : oChange._oDefinition};
+			var oCreatedContent = fnBaseUtilMerge(oChange.getDefinition(), {support: { user: "creator"}});
+			var oCreateResponse = {response: [oCreatedContent]};
+			var oUpdatedContent = fnBaseUtilMerge(oCreatedContent, {texts: { variantName: "newName"}});
+			var oUpdateResponse = {response: oUpdatedContent};
 			var oDeleteResponse = {};
 
 			// this test requires a slightly different setup
 			this.oCreateStub.restore();
 			sandbox.stub(CompatibilityConnector, "create").returns(Promise.resolve(oCreateResponse));
+			sandbox.stub(CompatibilityConnector, "update").returns(Promise.resolve(oUpdateResponse));
 			this.oDeleteChangeStub.restore();
 			this.oDeleteChangeStub = sandbox.stub(CompatibilityConnector, "deleteChange").returns(Promise.resolve(oDeleteResponse));
 
@@ -3585,14 +3589,67 @@ function (
 				assert.ok(Array.isArray(aResults));
 				assert.equal(aResults.length, 1);
 				assert.strictEqual(aResults[0], oCreateResponse);
-				oChange.markForDeletion();
+				assert.equal(oChange.getDefinition().support.user, "creator");
+				assert.equal(oChange.getState(), Change.states.PERSISTED);
+				oChange.setState(Change.states.DIRTY);
 				return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
-					assert.ok(Array.isArray(aResults));
-					assert.equal(aResults.length, 1);
-					assert.strictEqual(aResults[0], oDeleteResponse);
-					assert.ok(this.oDeleteChangeStub.calledWith(oChange.getDefinition(), ""));
-					assert.deepEqual(this.oChangePersistence._mVariantsChanges["SmartFilterbar"], {});
+					assert.strictEqual(aResults[0], oUpdateResponse);
+					assert.equal(oChange.getDefinition().texts.variantName, "newName");
+					assert.equal(oChange.getState(), Change.states.PERSISTED);
+					oChange.markForDeletion();
+					return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+						assert.ok(Array.isArray(aResults));
+						assert.equal(aResults.length, 1);
+						assert.strictEqual(aResults[0], oDeleteResponse);
+						assert.ok(this.oDeleteChangeStub.calledWith(oChange.getDefinition(), ""));
+						assert.deepEqual(this.oChangePersistence._mVariantsChanges["SmartFilterbar"], {});
+					}.bind(this));
 				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("saveAllChangesForVariant should update state of variant when using with non-backend connectors", function(assert) {
+			var mParameters = {
+				id: "changeId",
+				type: "filterBar",
+				ODataService: "LineItems",
+				texts: {variantName: "myVariantName"},
+				content: {
+					filterBarVariant: {},
+					filterbar: [
+						{
+							group: "CUSTOM_GROUP",
+							name: "MyOwnFilterField",
+							partOfVariant: true,
+							visibleInFilterBar: true
+						}
+					]
+				},
+				isVariant: true,
+				packageName: "",
+				isUserDependend: true
+			};
+			var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
+			assert.ok(sId);
+			var oChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
+			assert.equal(oChange.getPendingAction(), "NEW");
+
+			// this test requires a slightly different setup
+			this.oCreateStub.restore();
+			sandbox.stub(CompatibilityConnector, "create").resolves();
+			sandbox.stub(CompatibilityConnector, "update").resolves();
+
+			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+				assert.ok(Array.isArray(aResults));
+				assert.equal(aResults.length, 1);
+				assert.equal(aResults[0], undefined);
+				assert.equal(oChange.getState(), Change.states.PERSISTED);
+				oChange.setState(Change.states.DIRTY);
+				return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+					assert.equal(aResults[0], undefined);
+					assert.equal(oChange.getState(), Change.states.PERSISTED);
+					oChange.markForDeletion();
+				});
 			}.bind(this));
 		});
 
