@@ -104,7 +104,7 @@ sap.ui.define([
 	}});
 
 	MultiSelectionPlugin.prototype.init = function() {
-		SelectionPlugin.prototype.init.call(this);
+		SelectionPlugin.prototype.init.apply(this, arguments);
 
 		var oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.resetIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
