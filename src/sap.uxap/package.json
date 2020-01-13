@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.uxap",
-  "version": "1.72.5-SNAPSHOT",
+  "version": "1.72.5",
   "description": "OpenUI5 UI Library sap.uxap",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -14,9 +14,9 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "dependencies": {
-    "@openui5/sap.f": "1.72.5-SNAPSHOT",
-    "@openui5/sap.m": "1.72.5-SNAPSHOT",
-    "@openui5/sap.ui.core": "1.72.5-SNAPSHOT",
-    "@openui5/sap.ui.layout": "1.72.5-SNAPSHOT"
+    "@openui5/sap.f": "1.72.5",
+    "@openui5/sap.m": "1.72.5",
+    "@openui5/sap.ui.core": "1.72.5",
+    "@openui5/sap.ui.layout": "1.72.5"
   }
 }
