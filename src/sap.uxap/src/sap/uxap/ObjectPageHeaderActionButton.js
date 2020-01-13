@@ -108,9 +108,8 @@ sap.ui.define(["sap/m/Button", "./library", "./ObjectPageHeaderActionButtonRende
 
 	ObjectPageHeaderActionButton.prototype.setVisible = function (bVisible) {
 		var vResult = Button.prototype.setVisible.apply(this, arguments);
-		if (this.getParent() && typeof this.getParent()._adaptLayoutDelayed === "function") {
-			this.getParent()._adaptLayoutDelayed();
-		}
+		this.getParent() && this.getParent().invalidate();
+
 		return vResult;
 	};
 
