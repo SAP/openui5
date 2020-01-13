@@ -1046,6 +1046,10 @@ sap.ui.define([
 
 		this._bExpandedState = bExpanded;
 
+		if (!this.getDomRef()) {
+			return;
+		}
+
 		if (Device.system.phone && this.getSnappedTitleOnMobile()) {
 			this.$snappedTitleOnMobileWrapper.toggleClass("sapUiHidden", bExpanded);
 			this.$topArea.toggleClass("sapUiHidden", !bExpanded);
