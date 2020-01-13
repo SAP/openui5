@@ -1297,14 +1297,11 @@ function(
 				namespace: "namespace"
 			});
 
-			assert.deepEqual(
-				this.oRta.getFlexSettings(),
-				{
-					layer: "USER",
-					developerMode: true,
-					namespace: "namespace"
-				}
-			);
+			assert.deepEqual(this.oRta.getFlexSettings(), {
+				layer: "USER",
+				developerMode: true,
+				namespace: "namespace"
+			});
 
 			this.oRta.setFlexSettings({
 				scenario: "scenario"

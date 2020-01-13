@@ -568,7 +568,7 @@ function(
 			}
 
 			//Check if the application has personalized changes and reload without them
-			return this._handleHigherLayerChangesOnStart()
+			return this._determineReload()
 			.then(function(bReloadTriggered) {
 				if (bReloadTriggered) {
 					// FLP Plugin reacts on this error string and doesn't pass the error on the UI
@@ -1342,7 +1342,8 @@ function(
 
 	/**
 	 * Function to automatically start the rename plugin on a container when it gets created
-	 * @param {object} vAction       The create action from designtime metadata
+	 *
+	 * @param {object} vAction The create action from designtime metadata
 	 * @param {string} sNewControlID The id of the newly created container
 	 */
 	RuntimeAuthoring.prototype._scheduleRenameOnCreatedContainer = function(vAction, sNewControlID) {
@@ -1430,6 +1431,7 @@ function(
 	/**
 	 * Build the navigation arguments object required to trigger the navigation
 	 * using the CrossApplicationNavigation ushell service.
+	 *
 	 * @param  {Object} mParsedHash Parsed URL hash
 	 * @return {Object} Returns argument map ("oArg" parameter of the "toExternal" function)
 	 */
@@ -1447,37 +1449,46 @@ function(
 	};
 
 	/**
-	 * Returns true if the max layer parameter is set to current layer
-	 * (skips personalization and other higher level changes)
+	 * Returns true if the max layer / draft parameter is set to current layer
+	 * (skips personalization and other higher level changes) / applies draft changes
 	 *
 	 * @param  {map} mParsedHash The parsed URL hash
+	 * @param  {string} sParameterName The parameter for which the layer should be checked
 	 * @return {boolean} True if the parameter is in the hash
 	 */
-	RuntimeAuthoring.prototype._hasMaxLayerParameter = function(mParsedHash) {
+	RuntimeAuthoring.prototype._hasParameter = function(mParsedHash, sParameterName) {
 		var sCurrentLayer = this.getLayer();
 		return mParsedHash.params &&
-			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] &&
-			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM][0] === sCurrentLayer;
+			mParsedHash.params[sParameterName] &&
+			mParsedHash.params[sParameterName][0] === sCurrentLayer;
 	};
 
 	/**
 	 * Reload the app inside FLP adding the parameter to skip personalization changes
-	 * @param  {map} mParsedHash URL parsed hash
-	 * @param  {sap.ushell.services.CrossApplicationNavigation} oCrossAppNav ushell service
-	 * @return {Promise} resolving to true if reload was triggered
+	 *
+	 * @param  {map} mParsedHash URL Parsed hash
+	 * @param  {sap.ushell.services.CrossApplicationNavigation} oCrossAppNav Ushell service
+	 * @param  {Object} oReloadInfo Contains the information needed to set the correct url parameters
+	 * @return {Promise} Resolving to true if reload was triggered
 	 */
-	RuntimeAuthoring.prototype._reloadWithoutHigherLayerChangesOnStart = function(mParsedHash, oCrossAppNav) {
-		var sCurrentLayer = this.getLayer();
-		if (!this._hasMaxLayerParameter(mParsedHash)) {
-			if (!mParsedHash.params) {
-				mParsedHash.params = {};
-			}
-			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] = [sCurrentLayer];
-			RuntimeAuthoring.enableRestart(sCurrentLayer);
-			// triggers the navigation without leaving FLP
-			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
-			return Promise.resolve(true);
+	RuntimeAuthoring.prototype._reloadWithMaxLayerOrDraftParam = function(mParsedHash, oCrossAppNav, oReloadInfo) {
+		if (!mParsedHash.params) {
+			mParsedHash.params = {};
 		}
+		if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.hasHigherLayerChanges) {
+			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] = [oReloadInfo.layer];
+		}
+
+		if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM) && oReloadInfo.hasDraftChanges) {
+			mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = [oReloadInfo.layer];
+		}
+
+		RuntimeAuthoring.enableRestart(oReloadInfo.layer);
+		// clears FlexState and triggers reloading of the flex data without blocking
+		// VersionsAPI.loadDraftForApplication(oReloadInfo);
+		// triggers the navigation without leaving FLP
+		oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
+		return Promise.resolve(true);
 	};
 
 	/**
@@ -1489,7 +1500,7 @@ function(
 			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
 			var mParsedHash = FlexUtils.getParsedURLHash();
 			if (oCrossAppNav.toExternal && mParsedHash) {
-				if (this._hasMaxLayerParameter(mParsedHash)) {
+				if (this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM)) {
 					delete mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM];
 					// triggers the navigation without leaving FLP
 					oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
@@ -1501,16 +1512,29 @@ function(
 	/**
 	 * Handler for the message box warning the user that personalization changes exist
 	 * and the app will be reloaded
+	 *
+	 * @param  {Object} oReloadInfo Information to determine which message to show
 	 * @return {Promise} Resolving when the user clicks on OK
 	 */
-	RuntimeAuthoring.prototype._handleReloadWithoutHigherLayerChangesMessageBoxOnStart = function() {
-		var sLayer = this.getLayer();
-		//Non key user get more technical message
-		var sReason = sLayer === "CUSTOMER" ? "MSG_PERSONALIZATION_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
-		return Utils._showMessageBox(
-			MessageBox.Icon.INFORMATION,
-			"HEADER_PERSONALIZATION_EXISTS",
-			sReason);
+	RuntimeAuthoring.prototype._handleReloadMessageBoxOnStart = function(oReloadInfo) {
+		var sReason;
+		var bIsCustomerLayer = oReloadInfo.layer === "CUSTOMER";
+
+		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.hasDraftChanges) {
+			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_AND_DRAFT_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_AND_DRAFT_EXISTS";
+		} else if (oReloadInfo.hasHigherLayerChanges) {
+			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
+		} else if (oReloadInfo.hasDraftChanges) {
+			sReason = "MSG_DRAFT_EXISTS";
+		}
+
+		if (sReason) {
+			return Utils._showMessageBox(
+				MessageBox.Icon.INFORMATION,
+				"HEADER_PERSONALIZATION_EXISTS",
+				sReason
+			);
+		}
 	};
 
 	/**
@@ -1529,28 +1553,58 @@ function(
 	};
 
 	/**
-	 * Check if there are e.g. personalization changes and restart the application without them
-	 * Warn the user that the application will be restarted without personalization
-	 * This is only valid when a UShell is present
-	 * @return {Promise} Resolving to false means that reload is not necessary
+	 * Check if there are personalization changes/draft changes and restart the application without/with them;
+	 * Warn the user that the application will be restarted without personalization / with draft changes;
+	 * This is only valid when a UShell is present;
+	 *
+	 * @return {Promise<boolean>} Resolving to false means that reload is not necessary
 	 */
-	RuntimeAuthoring.prototype._handleHigherLayerChangesOnStart = function() {
+	RuntimeAuthoring.prototype._determineReload = function() {
 		var oUshellContainer = FlexUtils.getUshellContainer();
-		if (oUshellContainer && this.getLayer() !== "USER") {
-			var mParsedHash = FlexUtils.getParsedURLHash();
-			return PersistenceWriteAPI.hasHigherLayerChanges({
+		if (oUshellContainer) {
+			var oReloadInfo = {
+				hasHigherLayerChanges: false,
+				hasDraftChanges: false,
+				layer: this.getLayer(),
 				selector: this.getRootControlInstance(),
-				ignoreMaxLayerParameter: false})
-				.then(function (bHasHigherLayerChanges) {
-					if (bHasHigherLayerChanges) {
-						return this._handleReloadWithoutHigherLayerChangesMessageBoxOnStart().then(function () {
-							var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
-							if (oCrossAppNav.toExternal && mParsedHash) {
-								return this._reloadWithoutHigherLayerChangesOnStart(mParsedHash, oCrossAppNav);
-							}
-						}.bind(this));
-					}
-				}.bind(this));
+				ignoreMaxLayerParameter: false
+			};
+			var oHigherLayerChangesValidationPromise;
+			var oDraftValidationPromise;
+			var mParsedHash = FlexUtils.getParsedURLHash();
+
+			if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.layer !== "USER") {
+				oHigherLayerChangesValidationPromise = PersistenceWriteAPI.hasHigherLayerChanges({
+					selector: oReloadInfo.selector,
+					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter
+				});
+			}
+			if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
+				oDraftValidationPromise = this._isVersioningEnabled().then(function (bVersioningEnabled) {
+					return bVersioningEnabled && VersionsAPI.isDraftAvailable({
+						selector: oReloadInfo.selector,
+						layer: oReloadInfo.layer
+					});
+				});
+			}
+
+			return Promise.all([
+				oHigherLayerChangesValidationPromise,
+				oDraftValidationPromise
+			])
+			.then(function(aReloadInfo) {
+				oReloadInfo.hasHigherLayerChanges = aReloadInfo[0];
+				oReloadInfo.hasDraftChanges = aReloadInfo[1];
+
+				if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges) {
+					return this._handleReloadMessageBoxOnStart(oReloadInfo).then(function () {
+						var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
+						if (oCrossAppNav.toExternal && mParsedHash) {
+							return this._reloadWithMaxLayerOrDraftParam(mParsedHash, oCrossAppNav, oReloadInfo);
+						}
+					}.bind(this));
+				}
+			}.bind(this));
 		}
 		return Promise.resolve(false);
 	};
