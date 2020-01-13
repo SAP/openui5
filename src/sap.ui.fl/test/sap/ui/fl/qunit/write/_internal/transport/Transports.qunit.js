@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/transport/Transports",
+	"sap/ui/fl/write/_internal/transport/Transports",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -11,7 +11,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	QUnit.module("sap.ui.fl.transport.Transports", {
+	QUnit.module("sap.ui.fl.write._internal.transport.Transports", {
 		beforeEach: function() {
 			this.oTransports = new Transports();
 			this.oServer = sinon.fakeServer.create();
@@ -22,7 +22,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("sap.ui.fl.transport.Transports.getTransports", function(assert) {
+	QUnit.test("sap.ui.fl.write._internal.transport.Transports.getTransports", function(assert) {
 		var oObject;
 		this.oServer.respondWith([200, {
 			"Content-Type": "application/json",
@@ -44,7 +44,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("sap.ui.fl.transport.Transports.makeChangesTransportable", function(assert) {
+	QUnit.test("sap.ui.fl.write._internal.transport.Transports.makeChangesTransportable", function(assert) {
 		var oParams;
 		this.oServer.respondWith([204, {}, ""]);
 		this.oServer.autoRespond = true;
@@ -62,7 +62,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("sap.ui.fl.transport.Transports.makeChangesTransportable - no transport", function(assert) {
+	QUnit.test("sap.ui.fl.write._internal.transport.Transports.makeChangesTransportable - no transport", function(assert) {
 		var oParams;
 		this.oServer.respondWith([204, {}, ""]);
 		this.oServer.autoRespond = true;
@@ -80,7 +80,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("sap.ui.fl.transport.Transports.makeChangesTransportable - no change IDs", function(assert) {
+	QUnit.test("sap.ui.fl.write._internal.transport.Transports.makeChangesTransportable - no change IDs", function(assert) {
 		var oParams;
 		this.oServer.respondWith([204, {}, ""]);
 		this.oServer.autoRespond = true;

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/Change",
 	"sap/m/MessageBox"
 ], function(
