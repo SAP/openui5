@@ -1,6 +1,6 @@
 ---
-specVersion: "0.1"
-type: library
+specVersion: "1.1"
+type: theme-library
 metadata:
   name: themelib_sap_belize
   copyright: |-

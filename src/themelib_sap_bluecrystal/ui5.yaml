@@ -1,7 +1,8 @@
 ---
-specVersion: "0.1"
-type: library
+specVersion: "1.1"
+type: theme-library
 metadata:
+  deprecated: true
   name: themelib_sap_bluecrystal
   copyright: |-
    OpenUI5
