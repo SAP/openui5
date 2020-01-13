@@ -4,18 +4,18 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/demo/cardExplorer/controller/ExploreSamples.controller",
 	"./pages/NavigationList",
-	"./pages/Explore"
+	"./pages/ExploreSamples"
 ], function (opaTest, ExploreSamplesController) {
 	"use strict";
 
-	QUnit.module("Home");
+	QUnit.module("Download Samples");
 
 	opaTest("Should be able to download manifest file.", function (Given, When, Then) {
 		Given.iStartMyApp({ hash: "explore/list"});
 
-		When.onTheExplorePage.iPressDownload("Manifest File");
+		When.onTheExploreSamplesPage.iPressDownload("Manifest File");
 
-		Then.onTheExplorePage.iShouldHaveFile();
+		Then.onTheExploreSamplesPage.iShouldHaveFile();
 	});
 
 	opaTest("Should be able to download manifest file.", function (Given, When, Then) {
@@ -27,11 +27,11 @@ sap.ui.define([
 			}
 		}, null, "\t");
 
-		When.onTheExplorePage
+		When.onTheExploreSamplesPage
 			.iChangeCodeEditorValue(sNewValue)
 			.and.iPressDownload("Manifest File");
 
-		Then.onTheExplorePage.iShouldHaveFile(sNewValue);
+		Then.onTheExploreSamplesPage.iShouldHaveFile(sNewValue);
 	});
 
 	opaTest("Should be able to download files as zip.", function (Given, When, Then) {
@@ -41,9 +41,9 @@ sap.ui.define([
 			aFileNames = aFiles.map(function (oFile) { return oFile.name; });
 
 		When.onTheNavigationList.iSwitchToSample("htmlConsumption");
-		When.onTheExplorePage.iPressDownload("Bundle as card.zip");
+		When.onTheExploreSamplesPage.iPressDownload("Bundle as card.zip");
 
-		Then.onTheExplorePage
+		Then.onTheExploreSamplesPage
 			.iShouldHaveZip(aFileNames)
 			.and.iTeardownMyApp();
 	});
