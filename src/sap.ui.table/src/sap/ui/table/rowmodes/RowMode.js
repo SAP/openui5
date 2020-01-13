@@ -61,7 +61,7 @@ sap.ui.define([
 
 	var TableDelegate = {};
 
-	RowMode.prototype.init = function(oTableDelegate) {
+	RowMode.prototype.init = function() {
 		/*
 		 * Flag indicating whether the first _rowsUpdated event after rendering was fired.
 		 *
