@@ -1,14 +1,15 @@
-/* eslint-disable quote-props */
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/Cache",
+	"sap/ui/core/UIComponent",
+	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/api/UI2PersonalizationApplyAPI",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Cache,
+	UIComponent,
+	UI2PersonalizationState,
 	UI2PersonalizationApplyAPI,
 	ChangesController,
 	jQuery,
@@ -16,15 +17,16 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	jQuery('#qunit-fixture').hide();
+	jQuery("#qunit-fixture").hide();
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("load personalization", {
 		beforeEach: function() {
-			this.fnStubCacheGetPersonalization = sandbox.stub(Cache, "getPersonalization").resolves();
+			this.oAppComponent = new UIComponent("testComponent");
+			this.oGetPersonalizationStub = sandbox.stub(UI2PersonalizationState, "getPersonalization");
 		},
-
 		afterEach: function () {
+			this.oAppComponent.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -36,7 +38,7 @@ sap.ui.define([
 			})
 			.catch(function () {
 				assert.ok(true, "a rejection took place");
-				assert.ok(this.fnStubCacheGetPersonalization.notCalled, "then Cache.getPersonalization is not called");
+				assert.ok(this.oGetPersonalizationStub.notCalled, "then UI2PersonalizationState.getPersonalization is not called");
 			}.bind(this));
 		});
 
@@ -60,7 +62,7 @@ sap.ui.define([
 			})
 			.catch(function () {
 				assert.ok(true, "a rejection took place");
-				assert.ok(this.fnStubCacheGetPersonalization.notCalled, "then Cache.getPersonalization is not called");
+				assert.ok(this.oGetPersonalizationStub.notCalled, "then UI2PersonalizationState.getPersonalization is not called");
 			}.bind(this));
 		});
 
@@ -72,7 +74,7 @@ sap.ui.define([
 				containerKey: "someContainerKey"
 			})
 			.then(function () {
-				assert.ok(this.fnStubCacheGetPersonalization.calledWithExactly("testComponent", "someContainerKey", undefined), "then Cache.getPersonalization is called with correct parameters and default appVersion is taken");
+				assert.ok(this.oGetPersonalizationStub.calledWithExactly("testComponent", "someContainerKey", undefined), "then UI2PersonalizationState.getPersonalization is called with correct parameters and default appVersion is taken");
 			}.bind(this));
 		});
 
@@ -84,7 +86,7 @@ sap.ui.define([
 				containerKey: "someContainerKey"
 			})
 			.then(function() {
-				assert.ok(this.fnStubCacheGetPersonalization.calledWithExactly("testComponent", "someContainerKey", undefined), "then Cache.getPersonalization is called with correct parameters");
+				assert.ok(this.oGetPersonalizationStub.calledWithExactly("testComponent", "someContainerKey", undefined), "then UI2PersonalizationState.getPersonalization is called with correct parameters");
 			}.bind(this));
 		});
 
@@ -97,7 +99,7 @@ sap.ui.define([
 				itemName: "someItemName"
 			})
 			.then(function() {
-				assert.ok(this.fnStubCacheGetPersonalization.calledWithExactly("testComponent", "someContainerKey", "someItemName"), "then Cache.getPersonalization is called with correct parameters");
+				assert.ok(this.oGetPersonalizationStub.calledWithExactly("testComponent", "someContainerKey", "someItemName"), "then UI2PersonalizationState.getPersonalization is called with correct parameters");
 			}.bind(this));
 		});
 	});

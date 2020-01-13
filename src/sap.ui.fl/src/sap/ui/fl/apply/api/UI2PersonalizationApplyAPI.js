@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/Cache"
+	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/ChangesController"
 ], function(
-	ChangesController,
-	Cache
+	UI2PersonalizationState,
+	FlexState,
+	ChangesController
 ) {
 	"use strict";
 
@@ -49,7 +51,12 @@ sap.ui.define([
 				return Promise.reject(new Error("not all mandatory properties were provided for the loading of the personalization"));
 			}
 
-			return Cache.getPersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
+			return FlexState.initialize({
+				componentId: mPropertyBag.reference
+			})
+			.then(function() {
+				return UI2PersonalizationState.getPersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
+			});
 		}
 	};
 

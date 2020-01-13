@@ -173,6 +173,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher"]
 				}
 			},
+			"apply/_internal/flexState/UI2Personalization/UI2PersonalizationState": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState"]
+				}
+			},
 			"apply/_internal/flexState/FlexState": {
 				group: "Apply Internal",
 				coverage: {
