@@ -182,6 +182,7 @@ sap.ui.define([
 		// update Passport relevant fields
 		sPassportComponentInfo = oInteraction ? oInteraction.component + sAppVersion : undefined;
 		sPassportAction = oInteraction ? oInteraction.trigger + "_" + oInteraction.event + "_" + iStepCounter : undefined;
+		return sPassportAction;
 	}
 
 	function onInteractionFinished(oFinishedInteraction) {
