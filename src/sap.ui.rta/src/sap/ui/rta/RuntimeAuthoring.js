@@ -188,7 +188,8 @@ function(
 					type: "object",
 					defaultValue: {
 						layer: "CUSTOMER",
-						developerMode: true
+						developerMode: true,
+						versioning: undefined
 					}
 				},
 
@@ -501,6 +502,9 @@ function(
 			mFlexSettings.namespace = sLRepRootNamespace + "changes/";
 		}
 
+		//TODO: change to 'mFlexSettings.draft = FeaturesAPI.isVersioningEnabled();' as soon as the draft story is complete
+		mFlexSettings.versioning = Promise.resolve(false);
+
 		Utils.setRtaStyleClassName(mFlexSettings.layer);
 		this.setProperty("flexSettings", mFlexSettings);
 	};
@@ -558,7 +562,7 @@ function(
 			return this._handleHigherLayerChangesOnStart()
 			.then(function(bReloadTriggered) {
 				if (bReloadTriggered) {
-					// FLP Plugin reacts on this error string and doesn't the error on the UI
+					// FLP Plugin reacts on this error string and doesn't pass the error on the UI
 					return Promise.reject("Reload triggered");
 				}
 

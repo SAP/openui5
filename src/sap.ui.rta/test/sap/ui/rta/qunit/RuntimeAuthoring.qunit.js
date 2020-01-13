@@ -1219,7 +1219,8 @@ function(
 				this.oRta.getFlexSettings(),
 				{
 					layer: "CUSTOMER",
-					developerMode: true
+					developerMode: true,
+					versioning: undefined
 				}
 			);
 
@@ -1231,7 +1232,8 @@ function(
 			assert.deepEqual(this.oRta.getFlexSettings(), {
 				layer: "USER",
 				developerMode: true,
-				namespace: "namespace"
+				namespace: "namespace",
+				versioning: Promise.reject(false)
 			});
 
 			this.oRta.setFlexSettings({
@@ -1243,7 +1245,8 @@ function(
 				developerMode: true,
 				namespace: "rootNamespace/changes/",
 				rootNamespace: "rootNamespace/",
-				scenario: "scenario"
+				scenario: "scenario",
+				versioning: Promise.reject(false)
 			});
 		});
 	});
