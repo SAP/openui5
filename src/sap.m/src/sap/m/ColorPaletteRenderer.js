@@ -47,6 +47,18 @@ sap.ui.define(['sap/ui/Device'],
 					this.renderSeparator(oRm);
 				}
 			}
+
+			//render Recent Colors section
+			if (oColorPalette._getShowRecentColorsSection()) {
+				if (!oColorPalette._getShowMoreColorsButton() || !Device.system.phone) {
+					this.renderSeparator(oRm);
+				}
+
+				this.renderRecentColorsSection(oRm, oColorPalette);
+				if (Device.system.phone) {
+					this.renderSeparator(oRm);
+				}
+			}
 			oRm.close("div"); //close palette container
 		};
 
@@ -58,7 +70,8 @@ sap.ui.define(['sap/ui/Device'],
 		ColorPaletteRenderer.renderSwatches = function (oRm, oColorPalette) {
 			var sColors = oColorPalette.getColors();
 
-			oRm.openStart("div", oColorPalette.getId() + "-swatchCont");
+			oRm.openStart("div");
+			oRm.attr("id", oColorPalette.getId() + "-swatchCont-paletteColor");
 			oRm.class("sapMColorPaletteContent");
 			oRm.accessibilityState(oColorPalette, {
 				"role": "region",
@@ -67,7 +80,7 @@ sap.ui.define(['sap/ui/Device'],
 			oRm.openEnd();
 
 			sColors.forEach(function (sColor, iIndex) {
-				this.renderSquare(oRm, oColorPalette, sColor, iIndex);
+				this.renderSquare(oRm, oColorPalette, sColor, iIndex, false);
 			}, this);
 
 			oRm.close("div"); //close palette squares container
@@ -80,37 +93,37 @@ sap.ui.define(['sap/ui/Device'],
 		 * @param {sap.ui.core.CSSColor} sColor A color used as background
 		 * @param {number} iIndex the index of the color amongst its siblings
 		 */
-		ColorPaletteRenderer.renderSquare = function (oRm, oColorPalette, sColor, iIndex) {
+		ColorPaletteRenderer.renderSquare = function (oRm, oColorPalette, sColor, iIndex, bIsRecentColor) {
 			var sNamedColor = oColorPalette._ColorsHelper.getNamedColor(sColor),
 				sCustomOrPredefinedColor = (sNamedColor === undefined) ? oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_CUSTOM") : oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_" + sNamedColor.toUpperCase()),
-				sColorNameAria = oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [iIndex + 1, sCustomOrPredefinedColor]);
+				sColorNameAria = bIsRecentColor ? oLibraryResourceBundle.getText("COLOR_PALETTE_RECENT_COLOR", [iIndex + 1, sCustomOrPredefinedColor]) : oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [iIndex + 1, sCustomOrPredefinedColor]);
 
 			oRm.openStart("div");
 			oRm.class("sapMColorPaletteSquare");
+			if (bIsRecentColor && sColor === "") {
+				oRm.class("sapMRecentColorSquareDisabled");
+			}
 			oRm.attr("data-sap-ui-color", sColor);
 			oRm.attr("tabindex", "-1");
-
 			oRm.attr("title", sColorNameAria);
 			oRm.accessibilityState(oColorPalette, {
 				"role": "button",
 				"label": sColorNameAria
 			});
 			oRm.openEnd();
-
-			//swatch inner content
 			oRm.openStart("div");
 			oRm.style("background-color", sColor);
 			oRm.openEnd();
 			oRm.close("div");
-
-			oRm.close("div"); //close palette swatch
+			oRm.close("div");
 		};
 
 		ColorPaletteRenderer.renderSeparator = function (oRm) {
 			oRm.openStart("div");
 			oRm.class("sapMColorPaletteSeparator");
 			oRm.openEnd();
-			oRm.voidStart("hr").voidEnd();
+			oRm.voidStart("hr");
+			oRm.voidEnd();
 			oRm.close("div");
 		};
 
@@ -130,6 +143,34 @@ sap.ui.define(['sap/ui/Device'],
 		 */
 		ColorPaletteRenderer.renderMoreColorsButton = function (oRm, oColorPalette) {
 			oRm.renderControl(oColorPalette._getMoreColorsButton());
+		};
+
+		/**
+		 * Renders the Recent Colors section.
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+		 */
+		ColorPaletteRenderer.renderRecentColorsSection = function (oRm, oColorPalette) {
+			var sColor,
+				aRecentColors = oColorPalette._getRecentColors(),
+				iCountOfBoxes = 5,
+				sContainer = oLibraryResourceBundle.getText("COLOR_PALETTE_SWATCH_RECENT_COLOR_CONTAINER_TITLE");
+
+			oRm.openStart("div");
+			oRm.class("sapMColorPaletteContent");
+			oRm.attr("id", oColorPalette.getId() + "-swatchCont-recentColors");
+			oRm.attr("role","region");
+			oRm.attr("aria-label",sContainer); // Change with translation variable
+			oRm.openEnd();
+			// Use render square function
+			for (var i = 0; i < iCountOfBoxes; i++) {
+				if (aRecentColors[i]) {
+					sColor = aRecentColors[i];
+				} else {
+					sColor = "";
+				}
+				this.renderSquare(oRm, oColorPalette, sColor, i, true);
+			}
+			oRm.close("div");
 		};
 
 		return ColorPaletteRenderer;

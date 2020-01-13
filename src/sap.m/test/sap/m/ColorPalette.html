@@ -373,6 +373,7 @@
 				oColorPalette._setDefaultColor("#FFFBBB");
 				oColorPalette._setShowDefaultColorButton(true);
 				oColorPalette._setShowMoreColorsButton(true);
+				oColorPalette._setShowRecentColorsSection(true);
 
 				oSimpleForm = new sap.ui.layout.form.SimpleForm("SF2", {
 					maxContainerCols: 3,
@@ -453,6 +454,13 @@
 									oCPPop.setShowMoreColorsButton(oEvent.getParameter("selected"))
 								}
 							}),
+							new CheckBox({
+								text: "Recent Colors",
+								selected: true,
+								select: function (oEvent) {
+									oCPPop.setShowRecentColorsSection(oEvent.getParameter("selected"))
+								}
+							}),
 							new Select("settingsDisplayModeoCPPop", {
 								selectedKey: "Default",
 								items: [
@@ -489,6 +497,13 @@
 									oCPPop2Colors.setShowMoreColorsButton(oEvent.getParameter("selected"))
 								}
 							}),
+							new CheckBox({
+								text: "Recent Colors",
+								selected: true,
+								select: function (oEvent) {
+									oCPPop2Colors.setShowRecentColorsSection(oEvent.getParameter("selected"))
+								}
+							}),
 							new Select("settingsDisplayModeoCPPop2Colors", {
 								selectedKey: "Default",
 								items: [
@@ -523,6 +538,13 @@
 								selected: false,
 								select: function (oEvent) {
 									oCPPop7Colors.setShowMoreColorsButton(oEvent.getParameter("selected"))
+								}
+							}),
+							new CheckBox({
+								text: "Recent Colors",
+								selected: false,
+								select: function (oEvent) {
+									oCPPop7Colors.setShowRecentColorsSection(oEvent.getParameter("selected"))
 								}
 							}),
 							new Select("settingsDisplayModeoCPPop7Colors", {
