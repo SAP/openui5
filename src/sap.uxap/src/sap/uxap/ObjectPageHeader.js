@@ -890,16 +890,6 @@ sap.ui.define([
 		this._adaptObjectPageHeaderIndentifierLine($headerDomRef);
 	};
 
-	ObjectPageHeader.prototype._adaptLayoutDelayed = function () {
-		if (this._adaptLayoutTimeout) {
-			clearTimeout(this._adaptLayoutTimeout);
-		}
-		this._adaptLayoutTimeout = setTimeout(function() {
-			this._adaptLayoutTimeout = null;
-			this._adaptLayout();
-		}.bind(this), 0);
-	};
-
 	/**
 	 * Adapt title/subtitle container and action buttons
 	 * @private
