@@ -666,7 +666,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Different types for a button (predefined types).
+	 * Different predefined button types for the {@link sap.m.Button sap.m.Button}.
 	 *
 	 * @enum {string}
 	 * @public
