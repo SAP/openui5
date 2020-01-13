@@ -306,6 +306,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onAfterRendering = function () {
+		this._bTokenIsValidated = false;
 		this._tokenizer.scrollToEnd();
 		this._registerResizeHandler();
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
@@ -821,6 +822,7 @@ function(
 		this._bIsValidating = false;
 		if (bValidated) {
 			this.setValue("");
+			this._bTokenIsValidated = true;
 			if (this._bUseDialog && this._oSuggPopover && this._oSuggPopover._oPopupInput && (iOldLength < iNewLength)) {
 				this._oSuggPopover._oPopupInput.setValue("");
 			}
@@ -1374,6 +1376,41 @@ function(
 		if (this._oSuggPopover._oPopupInput) {
 			this._oSuggPopover._oPopupInput.setDOMValue('');
 		}
+	};
+
+	/**
+	 * Overwrites the change event handler of the {@link sap.m.InputBase}.
+	 * In case of added token it will not reset the value.
+	 *
+	 * @protected
+	 * @param {object} oEvent
+	 * @param {object} [mParameters] Additional event parameters to be passed in to the change event handler if * the value has changed
+	 * @param {string} sNewValue Passed value on change
+	 * @returns {boolean|undefined} true when change event is fired
+	 */
+	MultiInput.prototype.onChange = function(oEvent, mParameters, sNewValue) {
+
+		mParameters = mParameters || this.getChangeEventParams();
+
+		if (!this.getEditable() || !this.getEnabled()) {
+			return;
+		}
+
+		var sValue = this._getInputValue(sNewValue);
+
+		if (sValue === this._lastValue) {
+			this._bCheckDomValue = false;
+			return;
+		}
+
+		if (!this._bTokenIsValidated) {
+			this.setValue(sValue);
+			sValue = this.getValue();
+			this._lastValue = sValue;
+		}
+
+		this.fireChangeEvent(sValue, mParameters);
+		return true;
 	};
 
 	/**
