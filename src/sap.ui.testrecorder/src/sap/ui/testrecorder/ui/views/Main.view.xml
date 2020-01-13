@@ -73,7 +73,7 @@
 								id="codeEditor"
 								value="{controls>/codeSnippet}"
 								editable="false"
-								height="300px"
+								height="calc(100vh - 180px)"
 								width="100%"
 								type="javascript"
 								colorTheme="theme-ambiance"
