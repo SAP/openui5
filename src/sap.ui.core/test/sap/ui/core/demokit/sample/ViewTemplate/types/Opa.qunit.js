@@ -65,9 +65,16 @@ sap.ui.getCore().attachInit(function () {
 			When.onTheMainPage.enterStepInputValue("stepInput", 102);
 			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.Error,
 				"Enter a number with a maximum value of 99");
+			When.onTheMainPage.enterStepInputValueInteger("stepInput", 1.234);
+			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.None, "");
+			/* 	this is fixed with change #4530100 - value with decimals cannot be entered
+				anymore when scale/displayValuePrecision is 0; that's why this is commented
+
 			When.onTheMainPage.enterStepInputValue("stepInput", 1.234);
 			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.Error,
 				"Enter a number with no decimal places");
+
+			*/
 			When.onTheMainPage.enterStepInputValue("stepInput", 0);
 			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.None);
 
