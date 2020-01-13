@@ -155,6 +155,8 @@ sap.ui.define([
 				.then(function() {
 					var aFlexArgs = fnFlexStub.getCall(0).args;
 					assert.equal(aFlexArgs[1], true, "then the draft flag was passed to the flex save operation");
+					var aDescriptorArgs = fnDescriptorStub.getCall(0).args;
+					assert.equal(aDescriptorArgs[1], true, "and the draft flag was passed to the descriptor save operation");
 				});
 		});
 
