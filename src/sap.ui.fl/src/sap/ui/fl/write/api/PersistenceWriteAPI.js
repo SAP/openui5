@@ -137,7 +137,7 @@ sap.ui.define([
 			mPropertyBag.invalidateCache = true;
 			mPropertyBag.componentId = ChangesController.getAppComponentForSelector(mPropertyBag.selector).getId();
 			return oFlexController.saveAll(mPropertyBag.skipUpdateCache, mPropertyBag.draft)
-				.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, mPropertyBag.skipUpdateCache))
+				.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, mPropertyBag.skipUpdateCache, mPropertyBag.draft))
 				.then(PersistenceWriteAPI._getUIChanges.bind(null, _omit(mPropertyBag, "skipUpdateCache")));
 		},
 
