@@ -7,9 +7,10 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	"sap/ui/core/syncStyleClass",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	'./utils/TableUtils'
 ],
-	function(ManagedObject, syncStyleClass, Log, jQuery) {
+	function(ManagedObject, syncStyleClass, Log, jQuery, TableUtils) {
 	"use strict";
 
 
@@ -362,13 +363,7 @@ sap.ui.define([
 				}
 			}
 			if (bForDialog) {
-				oColumnInfo.text = sPersoKey;
-				var aMultiLabels = oColumn.getMultiLabels();
-				if (aMultiLabels && aMultiLabels.length > 0) {
-					oColumnInfo.text = aMultiLabels[aMultiLabels.length - 1].getText();
-				} else if (oColumn.getLabel()) {
-					oColumnInfo.text = oColumn.getLabel().getText();
-				}
+				oColumnInfo.text = TableUtils.Column.getHeaderText(oTable, i) || sPersoKey;
 			}
 			oData.aColumns.push(oColumnInfo);
 		}
