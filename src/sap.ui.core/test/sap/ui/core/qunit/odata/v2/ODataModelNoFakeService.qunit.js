@@ -326,38 +326,38 @@ sap.ui.define([
 		// code under test
 		_writePathCache.call(oModel, "/Deep/Path", "/Canonical");
 
-		assert.deepEqual(oModel.mPathCache, { "/Deep/Path" : { canonicalPath : "/Canonical"}});
+		assert.deepEqual(oModel.mPathCache, {"/Deep/Path" : {canonicalPath : "/Canonical"}});
 
 		// code under test
 		_writePathCache.call(oModel, "/Deep/Path", "/OtherCanonical");
 
-		assert.deepEqual(oModel.mPathCache, { "/Deep/Path" : { canonicalPath : "/OtherCanonical"}});
+		assert.deepEqual(oModel.mPathCache, {"/Deep/Path" : {canonicalPath : "/OtherCanonical"}});
 
 		// code under test
 		_writePathCache.call(oModel, "/Deep/Path2", "/Canonical2");
 
 		assert.deepEqual(oModel.mPathCache, {
-			"/Deep/Path" : { canonicalPath : "/OtherCanonical"},
-			"/Deep/Path2" : { canonicalPath : "/Canonical2"}
+			"/Deep/Path" : {canonicalPath : "/OtherCanonical"},
+			"/Deep/Path2" : {canonicalPath : "/Canonical2"}
 		});
 
 		// code under test
 		_writePathCache.call(oModel, "/Canonical1", "/Canonical2");
 
 		assert.deepEqual(oModel.mPathCache, {
-			"/Deep/Path" : { canonicalPath : "/OtherCanonical"},
-			"/Deep/Path2" : { canonicalPath : "/Canonical2"},
-			"/Canonical1" : { canonicalPath : "/Canonical1"}
+			"/Deep/Path" : {canonicalPath : "/OtherCanonical"},
+			"/Deep/Path2" : {canonicalPath : "/Canonical2"},
+			"/Canonical1" : {canonicalPath : "/Canonical1"}
 		});
 
 		// code under test
 		_writePathCache.call(oModel, "/FunctionImport", "/Canonical", /*bFunctionImport*/true);
 
 		assert.deepEqual(oModel.mPathCache, {
-			"/Deep/Path" : { canonicalPath : "/OtherCanonical"},
-			"/Deep/Path2" : { canonicalPath : "/Canonical2"},
-			"/Canonical1" : { canonicalPath : "/Canonical1"},
-			"/FunctionImport" : { canonicalPath : "/Canonical"}
+			"/Deep/Path" : {canonicalPath : "/OtherCanonical"},
+			"/Deep/Path2" : {canonicalPath : "/Canonical2"},
+			"/Canonical1" : {canonicalPath : "/Canonical1"},
+			"/FunctionImport" : {canonicalPath : "/Canonical"}
 		});
 	});
 
@@ -399,7 +399,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 ["requestKey", undefined].forEach(function (sRequestKey, i) {
-[{ isFunction : "isFunction" }, undefined].forEach(function (oEntityType, j) {
+	[{isFunction : "isFunction" }, undefined].forEach(function (oEntityType, j) {
 	QUnit.test("_processSuccess for function import:" + i + ", " + j, function (assert) {
 		var aRequests = [],
 			oModel = {
@@ -467,7 +467,7 @@ sap.ui.define([
 
 		assert.strictEqual(bSuccess, true);
 	});
-});
+	});
 });
 
 	//TODO refactor ODataModel#mPathCache to a simple map path -> canonical path instead of map
