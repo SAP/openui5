@@ -956,18 +956,20 @@ sap.ui.define([
 		// other settings, initialization of legacy row modes and plugins can be avoided.
 		if (mSettings) {
 			var aEarlySettings = ["rowMode", "plugins"];
-			var _mEarlySettings = {}; // ManagedObject#applySettings returns if an empty object is passed.
+			var mEarlySettings = {};
 
 			for (var i = 0; i < aEarlySettings.length; i++) {
 				var sSetting = aEarlySettings[i];
 
 				if (sSetting in mSettings) {
-					_mEarlySettings[sSetting] = mSettings[sSetting];
+					mEarlySettings[sSetting] = mSettings[sSetting];
 					delete mSettings[sSetting]; // Avoid applying it twice.
 				}
 			}
 
-			Control.prototype.applySettings.call(this, _mEarlySettings, oScope);
+			if (Object.keys(mEarlySettings).length > 0) {
+				Control.prototype.applySettings.call(this, mEarlySettings, oScope);
+			}
 		}
 
 		this._initLegacyRowMode();
