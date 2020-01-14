@@ -1394,8 +1394,9 @@ sap.ui.define([
 	 * @param {string} [sPath] The path to the data
 	 * @param {string} [sDeepPath] The deep path to the data
 	 * @param {string} [sKey] The cache key to the data if known
-	 * @param {boolean} [bFunctionImport] Whether the imported data is from a function import
-	 *   response
+	 * @param {boolean} [bFunctionImport] Whether the imported data is for a function import
+	 *   response; recursive calls to this method importing entities within the function response
+	 *   do not set this flag.
 	 * @return {string|string[]} Key of imported data or array of keys in case of nested entries
 	 * @private
 	 */
