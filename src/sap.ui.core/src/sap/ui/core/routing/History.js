@@ -14,7 +14,6 @@ sap.ui.define([
 	// shortcut for enum(s)
 	var HistoryDirection = library.routing.HistoryDirection;
 
-
 	/**
 	 * Used to determine the {@link sap.ui.core.routing.HistoryDirection} of the current or a future navigation,
 	 * done with a {@link sap.ui.core.routing.Router} or {@link sap.ui.core.routing.HashChanger}.
@@ -32,8 +31,7 @@ sap.ui.define([
 		this.aHistory = [];
 		this._bIsInitial = true;
 
-		if (!Device.browser.msie) { // the state information isn't used for IE
-			// because it doesn't clear the state after new hash is set
+		if (History._bUsePushState) {
 			var oState = window.history.state === null ? {} : window.history.state,
 				sHash = window.location.hash;
 
@@ -65,6 +63,14 @@ sap.ui.define([
 	 */
 	History._aStateHistory = [];
 
+	/*
+	 * Whether the push state API should be used.
+	 *
+	 * The state information isn't used for IE because it doesn't clear the state after new hash is set
+	 * @private
+	 */
+	History._bUsePushState = !Device.browser.msie;
+
 	/**
 	 * Returns the length difference between the history state stored in browser's
 	 * pushState and the state maintained in this class.
@@ -94,7 +100,7 @@ sap.ui.define([
 	 */
 	History.prototype.getHistoryStateOffset = function() {
 		// browser doesn't fully support pushState
-		if (Device.browser.msie) {
+		if (!History._bUsePushState) {
 			return undefined;
 		}
 
@@ -188,7 +194,7 @@ sap.ui.define([
 	};
 
 
-		/**
+	/**
 	 * Empties the history array, and sets the instance back to the unknown state.
 	 * @private
 	 */
@@ -320,7 +326,7 @@ sap.ui.define([
 			//Since a replace has taken place, the current history entry is also replaced
 			this.aHistory[this.iHistoryPosition] = sNewHash;
 
-			if (sFullHash !== undefined && !Device.browser.msie && this === History.getInstance()) {
+			if (sFullHash !== undefined && History._bUsePushState && this === History.getInstance()) {
 				// after the hash is replaced, the history state is cleared.
 				// We need to update the last entry in _aStateHistory and save the
 				// history back to the browser history state
@@ -352,7 +358,7 @@ sap.ui.define([
 		// new entry determination. Once the window.history.state is changed, it
 		// can't be used again for the same hashchange event to determine the
 		// direction which is the case if additional History instance is created
-		if (sFullHash !== undefined && !Device.browser.msie && this === History.getInstance()) {
+		if (sFullHash !== undefined && History._bUsePushState && this === History.getInstance()) {
 			sDirection = this._getDirectionWithState(sFullHash);
 		}
 
