@@ -436,6 +436,26 @@ var factory = function (signals) {
             return str;
         },
 
+        // ##### BEGIN: MODIFIED BY SAP
+        extrapolate : function(request) {
+            var args = {};
+
+            if (!request){
+                return args;
+            }
+
+            var parObj = this._getParamsObject(request);
+
+            this._paramsIds.forEach(function(id) {
+                if (parObj.hasOwnProperty(id)) {
+                    args[id] = parObj[id];
+                }
+            });
+
+           return args;
+        },
+        // ##### END: MODIFIED BY SAP
+
         dispose : function () {
             this._router.removeRoute(this);
         },
@@ -660,32 +680,40 @@ var factory = function (signals) {
             }
 
             var replaceFn = function(match, prop){
-                    var val;
-                    prop = (prop.substr(0, 1) === '?')? prop.substr(1) : prop;
-                    if (replacements[prop] != null) {
-                        if (typeof replacements[prop] === 'object') {
-                            var queryParts = [];
-                            for(var key in replacements[prop]) {
-                                queryParts.push(encodeURI(key + '=' + replacements[prop][key]));
-                            }
-                            val = '?' + queryParts.join('&');
-                        } else {
-                            // make sure value is a string see #gh-54
-                            val = String(replacements[prop]);
-                        }
+                // ##### BEGIN: MODIFIED BY SAP
+                var val, vParamValue;
 
-                        if (match.indexOf('*') === -1 && val.indexOf('/') !== -1) {
-                            throw new Error('Invalid value "'+ val +'" for segment "'+ match +'".');
+                if (prop.charAt(0) === '?') {
+                    vParamValue = replacements[prop] || replacements[prop.substring(1)];
+                } else {
+                    vParamValue = replacements[prop];
+                }
+
+                if (vParamValue != null) {
+                    if (typeof vParamValue === 'object') {
+                        var queryParts = [];
+                        for (var key in vParamValue) {
+                            queryParts.push(encodeURI(key + '=' + vParamValue[key]));
                         }
+                        val = '?' + queryParts.join('&');
+                    } else {
+                        // make sure value is a string see #gh-54
+                        val = String(vParamValue);
+                        // ##### END: MODIFIED BY SAP
                     }
-                    else if (match.indexOf('{') !== -1) {
-                        throw new Error('The segment '+ match +' is required.');
+
+                    if (match.indexOf('*') === -1 && val.indexOf('/') !== -1) {
+                        throw new Error('Invalid value "'+ val +'" for segment "'+ match +'".');
                     }
-                    else {
-                        val = '';
-                    }
-                    return val;
-                };
+                }
+                else if (match.indexOf('{') !== -1) {
+                    throw new Error('The segment '+ match +' is required.');
+                }
+                else {
+                    val = '';
+                }
+                return val;
+            };
 
             if (! TOKENS.OS.trail) {
                 TOKENS.OS.trail = new RegExp('(?:'+ TOKENS.OS.id +')+$');

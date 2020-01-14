@@ -227,15 +227,21 @@ sap.ui.define([
 					})
 					.then(function(oViewInfo) {
 						// loaded and do placement
-						var vValid = that._isValid(oViewInfo.parentInfo);
+						var vValid = that._isValid(oViewInfo.parentInfo),
+						 oView, oRootControl;
 
 						oObject = oViewInfo.object;
-
-						// TODO: check how to handle the title change for the loaded component
-						if (oObject.isA("sap.ui.core.mvc.View")) {
-							that._bindTitleInTitleProvider(oObject);
-							that._addTitleProviderAsDependent(oObject);
+						if (oObject.isA("sap.ui.core.UIComponent")) {
+							oRootControl = oObject.getRootControl();
+							if (oRootControl && oRootControl.isA("sap.ui.core.mvc.View")) {
+								oView = oRootControl;
+							}
+						} else {
+							oView = oObject;
 						}
+
+						that._bindTitleInTitleProvider(oView);
+						that._addTitleProviderAsDependent(oView);
 
 						// validate config and log errors if necessary
 						if (vValid !== true) {
