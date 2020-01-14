@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.ui.demokit",
-  "version": "1.60.23",
+  "version": "1.60.24-SNAPSHOT",
   "description": "OpenUI5 UI Library sap.ui.demokit",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -14,9 +14,9 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "dependencies": {
-    "@openui5/sap.ui.commons": "1.60.23",
-    "@openui5/sap.ui.core": "1.60.23",
-    "@openui5/themelib_sap_belize": "1.60.23",
-    "@openui5/themelib_sap_bluecrystal": "1.60.23"
+    "@openui5/sap.ui.commons": "1.60.24-SNAPSHOT",
+    "@openui5/sap.ui.core": "1.60.24-SNAPSHOT",
+    "@openui5/themelib_sap_belize": "1.60.24-SNAPSHOT",
+    "@openui5/themelib_sap_bluecrystal": "1.60.24-SNAPSHOT"
   }
 }
