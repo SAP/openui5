@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/LayerUtils",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	UIComponent,
@@ -13,6 +14,7 @@ sap.ui.define([
 	FlexState,
 	Loader,
 	LayerUtils,
+	Log,
 	sinon
 ) {
 	"use strict";
@@ -297,6 +299,143 @@ sap.ui.define([
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 2, "the check was made again");
 				assert.equal(this.oFilterStub.callCount, 10, "everything was filtered again");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("FlexState with a ushell container", {
+		beforeEach: function () {
+			sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
+			sandbox.stub(FlexState, "_callPrepareFunction").callsFake(_mockPrepareFunctions);
+			sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
+
+			this.oAppComponent = new UIComponent(sComponentId);
+
+			this.oClearMaxLayerFilteringStub = sandbox.stub(FlexState, "clearMaxLayerFiltering");
+			this.oErrorLog = sandbox.stub(Log, "error");
+			this.oGetMaxLayerTechnicalParameter = sandbox.stub(LayerUtils, "getMaxLayerTechnicalParameter").callThrough();
+			this.oRegistrationHandlerStub = sandbox.stub();
+			this.oDeRegistrationHandlerStub = sandbox.stub();
+
+			var oUShellService = {
+				getService: function(sService) {
+					if (sService === "ShellNavigation") {
+						return {
+							registerNavigationFilter: this.oRegistrationHandlerStub,
+							unregisterNavigationFilter: this.oDeRegistrationHandlerStub,
+							NavigationFilterStatus: {
+								Continue: "continue"
+							}
+						};
+					}
+				}.bind(this)
+			};
+			sandbox.stub(LayerUtils, "getUshellContainer").returns(oUShellService);
+		},
+		afterEach: function () {
+			FlexState.clearState();
+			this.oAppComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when max layer parameter is changed to a different layer", function(assert) {
+			var sNewHash = "sNewLayer";
+			var sOldHash = "sOldLayer";
+
+			this.oGetMaxLayerTechnicalParameter
+				.withArgs(sNewHash).returns(sNewHash)
+				.withArgs(sOldHash).returns(sOldHash);
+
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			}).then(function() {
+				var fnRegistrationHandler = this.oRegistrationHandlerStub.getCall(0).args[0];
+				var sStatus = fnRegistrationHandler(sNewHash, sOldHash);
+				assert.equal(this.oRegistrationHandlerStub.callCount, 1, "then a handler was registered for max layer changes");
+				assert.equal(sStatus, "continue", "then the correct status was returned for shell navigation");
+				assert.equal(this.oClearMaxLayerFilteringStub.callCount, 1, "then max layer filtering was cleared");
+				FlexState.clearState(sReference);
+				assert.equal(this.oDeRegistrationHandlerStub.callCount, 1, "then the handler was de-registered for max layer changes");
+				assert.ok(this.oDeRegistrationHandlerStub.calledWith(sinon.match.func), 1, "then de-registration happens with a handler function");
+			}.bind(this));
+		});
+
+		QUnit.test("when max layer parameter value is unchanged", function(assert) {
+			var sNewHash = "sLayer";
+			var sOldHash = "sLayer";
+
+			this.oGetMaxLayerTechnicalParameter
+				.withArgs(sNewHash).returns(sNewHash)
+				.withArgs(sOldHash).returns(sOldHash);
+
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			}).then(function() {
+				var fnRegistrationHandler = this.oRegistrationHandlerStub.getCall(0).args[0];
+				var sStatus = fnRegistrationHandler(sNewHash, sOldHash);
+				assert.equal(this.oRegistrationHandlerStub.callCount, 1, "then a handler was registered for max layer changes");
+				assert.equal(sStatus, "continue", "then the correct status was returned for shell navigation");
+				assert.equal(this.oClearMaxLayerFilteringStub.callCount, 0, "then max layer filtering was not cleared");
+				FlexState.clearState(sReference);
+				assert.equal(this.oDeRegistrationHandlerStub.callCount, 1, "then the handler was de-registered for max layer changes");
+				assert.ok(this.oDeRegistrationHandlerStub.calledWith(sinon.match.func), 1, "then de-registration happens with a handler function");
+			}.bind(this));
+		});
+
+		QUnit.test("when max layer parameter value is undefined", function(assert) {
+			this.oGetMaxLayerTechnicalParameter.returns();
+
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			}).then(function() {
+				var fnRegistrationHandler = this.oRegistrationHandlerStub.getCall(0).args[0];
+				var sStatus = fnRegistrationHandler();
+				assert.equal(this.oRegistrationHandlerStub.callCount, 1, "then a handler was registered for max layer changes");
+				assert.equal(sStatus, "continue", "then the correct status was returned for shell navigation");
+				assert.equal(this.oClearMaxLayerFilteringStub.callCount, 0, "then max layer filtering was not cleared");
+				FlexState.clearState(sReference);
+				assert.equal(this.oDeRegistrationHandlerStub.callCount, 1, "then the handler was de-registered for max layer changes");
+				assert.ok(this.oDeRegistrationHandlerStub.calledWith(sinon.match.func), "then de-registration happens with a handler function");
+			}.bind(this));
+		});
+
+		QUnit.test("when an error occurs during max layer parameter change handling", function(assert) {
+			this.oGetMaxLayerTechnicalParameter.throws();
+
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			}).then(function() {
+				var fnRegistrationHandler = this.oRegistrationHandlerStub.getCall(0).args[0];
+				var sStatus = fnRegistrationHandler();
+				assert.equal(this.oRegistrationHandlerStub.callCount, 1, "then a handler was registered for max layer changes");
+				assert.equal(sStatus, "continue", "then the correct status was returned for shell navigation");
+				assert.equal(this.oClearMaxLayerFilteringStub.callCount, 0, "then max layer filtering was not cleared");
+				assert.equal(this.oErrorLog.callCount, 1, "then error was logged");
+				FlexState.clearState(sReference);
+				assert.equal(this.oDeRegistrationHandlerStub.callCount, 1, "then the reference instance is de-registered for max layer changes");
+				assert.ok(this.oDeRegistrationHandlerStub.calledWith(sinon.match.func), "then de-registration happens with a handler function");
+			}.bind(this));
+		});
+
+		QUnit.test("when clearState() is called without a reference", function(assert) {
+			var sReference2 = "second.reference";
+
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			})
+				.then(FlexState.initialize.bind(null, {
+					reference: sReference2,
+					componentId: sComponentId
+				}))
+				.then(function () {
+					FlexState.clearState();
+					assert.equal(this.oDeRegistrationHandlerStub.callCount, 2, "then the handler was de-registered for all existing references");
+					assert.ok(this.oDeRegistrationHandlerStub.alwaysCalledWith(sinon.match.func), "then de-registration always happens with a handler function");
+				}.bind(this));
 		});
 	});
 
