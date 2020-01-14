@@ -215,15 +215,15 @@ html.sap-desktop .sapUiCalRow .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiC
 	border-bottom-left-radius: 0;
 }
 
+.sapUiCalItemNow:not(.sapUiCalItemSel):not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
+	box-shadow: inset 1px 1px 0 0 @_sap_ui_unified_Calendar_ItemBorderColor, inset -1px -1px 0 0 @_sap_ui_unified_Calendar_ItemBorderColor;
+}
+
 html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalDayName {
 	border-top-left-radius: 0.25rem;
 	border-bottom-left-radius: 0.25rem;
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
-}
-
-html.sap-desktop .sapUiCal:not(.sapUiCalDateInt) .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
-	border-radius: 0;
 }
 
 .sapUiCalItem {
