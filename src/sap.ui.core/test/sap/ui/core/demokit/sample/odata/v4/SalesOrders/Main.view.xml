@@ -137,7 +137,49 @@
 							&amp;&amp; !${ui>/bCreateItemPending}}"
 						id="confirmSalesOrder"
 						icon="sap-icon://accept"
-						press="onConfirmSalesOrder" tooltip="Confirm selected sales order"/>
+						press="onConfirmSalesOrder" tooltip="Confirm selected sales order" />
+					<Button
+							enabled="{= ${ui>/bSalesOrderSelected}
+								&amp;&amp; !${ui>/bSelectedSalesOrderTransient}
+								&amp;&amp; !${ui>/bCreateItemPending}}"
+							id="openSimulateDiscountDialog"
+							icon="sap-icon://simulate"
+							press="onOpenSimulateDiscountDialog"
+							tooltip="Simulate discount for selected sales order">
+						<dependents>
+							<Dialog id="SimulateDiscountDialog" title="Simulate Discount"
+									binding="{FuSalesOrderSimulateDiscount(...)}">
+								<buttons>
+									<Button icon="sap-icon://simulate" text="Simulate"
+										id="executeSimulateDiscount"
+										press="onExecuteSimulateDiscount" type="Accept"
+										tooltip="Execute discount simulation"/>
+									<Button id="closeSimulateDiscountDialog"
+										icon="sap-icon://sys-cancel-2" text="Close"
+										press="onCloseSimulateDiscountDialog"/>
+								</buttons>
+								<form:SimpleForm ariaLabelledBy="SimulateDiscountDialog"
+										id="SimulateDiscountForm" layout="ResponsiveGridLayout">
+									<Label text="Sales Order" />
+									<Text id="SimulateDiscountForm::SalesOrderID"
+										text="{SalesOrderID}" />
+									<Label text="Gross Amount" />
+									<Text id="SimulateDiscountForm::GrossAmount"
+										text="{GrossAmount}" />
+									<Label text="Reduction in %" />
+									<StepInput id="SimulateDiscountForm::Discount" min="0" max="100"
+										step="5" value="{parameterContext>Discount}"/>
+								</form:SimpleForm>
+								<form:SimpleForm ariaLabelledBy="SimulateDiscountDialog"
+										editable="true" id="SimulateDiscountResult"
+										layout="ResponsiveGridLayout">
+									<Label text="Calculated Gross Amount" />
+									<Input id="SimulateDiscountResult::Result" value="{value}"
+										editable="false"/>
+								</form:SimpleForm>
+							</Dialog>
+						</dependents>
+					</Button>
 					<ToolbarSeparator />
 					<Button icon="sap-icon://refresh" id="refreshSalesOrders"
 						press="onRefreshSalesOrdersList" tooltip="Refresh sales orders"/>

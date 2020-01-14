@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="../cases/$metadata">
+		<edmx:Include Namespace="special.cases"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="Price" Alias="SAP__self">
+			<EntityType Name="PriceType">
+				<Key>
+					<PropertyRef Name="Price"/>
+				</Key>
+				<Property Name="Price" Type="Edm.String" Nullable="false" MaxLength="3"/>
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="Prices" EntityType="SAP__self.PriceType"/>
+			</EntityContainer>
+			<Annotations Target="special.cases.Create/Price">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListMapping">
+					<Record>
+						<PropertyValue Property="Label" String="do not use"/>
+					</Record>
+				</Annotation>
+				<Annotation Qualifier="A" Term="com.sap.vocabularies.Common.v1.ValueListMapping">
+					<Record>
+						<PropertyValue Property="Label" String="Price #A"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.Create(Collection(special.cases.PublicationsType))/Price">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListMapping">
+					<Record>
+						<PropertyValue Property="Label" String="Price #"/>
+					</Record>
+				</Annotation>
+				<Annotation Qualifier="B" Term="com.sap.vocabularies.Common.v1.ValueListMapping">
+					<Record>
+						<PropertyValue Property="Label" String="Price #B"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.Create(Collection(special.cases.FooType))/Price">
+				<Annotation Qualifier="A" Term="com.sap.vocabularies.Common.v1.ValueListMapping">
+					<Record>
+						<PropertyValue Property="Label" String="do not use"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

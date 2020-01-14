@@ -20,13 +20,14 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/test/TestUtils",
 	'sap/ui/util/XMLHelper',
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, SyncPromise,
 		Controller, View, ChangeReason, Filter, FilterOperator, Sorter, OperationMode,
-		AnnotationHelper, ODataListBinding, ODataModel, TestUtils, XMLHelper) {
+		AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
@@ -283,7 +284,11 @@ sap.ui.define([
 				"/special/cases/$metadata?sap-client=123"
 					: {source : "odata/v4/data/metadata_special_cases.xml"},
 				"/special/countryoforigin/$metadata"
-					: {source : "odata/v4/data/metadata_countryoforigin.xml"}
+					: {source : "odata/v4/data/metadata_countryoforigin.xml"},
+				"/special/CurrencyCode/$metadata"
+					: {source : "odata/v4/data/metadata_CurrencyCode.xml"},
+				"/special/Price/$metadata"
+					: {source : "odata/v4/data/metadata_Price.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -2197,6 +2202,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("age1"), "Warning", "That is very young");
+		}).then(function () {
 			that.expectChange("team", "changed")
 				.expectRequest({
 					method : "PATCH",
@@ -3565,6 +3573,7 @@ sap.ui.define([
 	// Scenario: Allow setting parameters of operations via control property binding
 	// - parameters change because of change in property binding
 	// JIRA: CPOUI5UISERVICESV3-2010
+	// JIRA: CPOUI5ODATAV4-29, check message target for unbound action
 	QUnit.test("Allow binding of operation parameters: Changing with controls", function (assert) {
 		var oOperation,
 			oParameterContext,
@@ -3625,6 +3634,45 @@ sap.ui.define([
 			oOperation.execute();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			// JIRA: CPOUI5ODATAV4-29
+			var oError = createError({
+					message : "Invalid Budget",
+					target : "Budget"
+				});
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
+				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
+			that.expectRequest({
+					method : "POST",
+					url : "ChangeTeamBudgetByID",
+					payload : {
+						Budget : "-42",
+						TeamID : "TEAM_01"
+					}
+				}, oError) // simulates failure
+				.expectMessages([{
+					code : undefined,
+					message : "Invalid Budget",
+					persistent : true,
+					target : "/ChangeTeamBudgetByID(...)/$Parameter/Budget",
+					technical : true,
+					type : "Error"
+				}])
+				.expectChange("budget", "-42");
+
+			return Promise.all([
+				oOperation.setParameter("Budget", "-42").execute()
+					.then(function () {
+						assert.ok(false, "Unexpected success");
+					}, function (oError0) {
+						assert.strictEqual(oError0, oError);
+					}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			return that.checkValueState(assert, "budget", "Error", "Invalid Budget");
 		});
 	});
 
@@ -4636,6 +4684,57 @@ sap.ui.define([
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
 				.setValue("New");
 
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request Late property with navigation properties in entity with key aliases
+	// JIRA: CPOUI5ODATAV4-122
+	QUnit.test("Late property in entity with key aliases", function (assert) {
+		var oBinding,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/As(\'1\')}">\
+	<Text text="{AValue}"/>\
+</FlexBox>\
+<Input id="value" value="{AtoEntityWithComplexKey/Value}"/>',
+			that = this;
+
+		this.expectRequest("As('1')?$select=AID,AValue", {
+				AID : "1",
+				AValue : "avalue"
+			})
+			.expectChange("value");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("As('1')?$select=AID"
+				+ "&$expand=AtoEntityWithComplexKey($select=Key/P1,Key/P2,Value)", {
+					AID : "1",
+					AtoEntityWithComplexKey : {
+						Key : {
+							P1 : "p1",
+							P2 : 2
+						},
+						Value : "42"
+					}
+				})
+				.expectChange("value", "42");
+
+			oBinding = that.oView.byId("value").getBinding("value");
+			oBinding.setContext(
+				that.oView.byId("form").getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("value", "changed")
+				.expectRequest({
+					method : "PATCH",
+					url : "EntityWithComplexKey(Key1='p1',Key2=2)",
+					payload : {Value : "changed"}
+				});
+
+			oBinding.setValue("changed");
 			return that.waitForChanges(assert);
 		});
 	});
@@ -8870,6 +8969,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: bound action (success and failure)
+	// JIRA: CPOUI5ODATAV4-29 (bound action parameter and error with message target)
 	QUnit.test("Bound action", function (assert) {
 		var sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
@@ -8878,6 +8978,7 @@ sap.ui.define([
 	<FlexBox id="action" \
 			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
+		<Input id="parameterTeamId" value="{$Parameter/TeamID}" />\
 		<Text id="teamId" text="{TEAM_ID}" />\
 	</FlexBox>\
 </FlexBox>',
@@ -8892,9 +8993,16 @@ sap.ui.define([
 			})
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("status", "")
+			.expectChange("parameterTeamId", "")
 			.expectChange("teamId", null);
 
 		return this.createView(assert, sView).then(function () {
+			that.expectChange("parameterTeamId", "42");
+
+			that.oView.byId("parameterTeamId").getBinding("value").setValue("42");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			that.expectRequest({
 					method : "POST",
 					headers : {"If-Match" : "ETag"},
@@ -8904,27 +9012,31 @@ sap.ui.define([
 				.expectChange("teamId", "42");
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().setParameter("TeamID", "42").execute(),
+				that.oView.byId("action").getObjectBinding().execute(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
 			var oError = createError({
 					message : "Missing team ID",
-					target : "TeamID",
+					target : "TeamID", // error targeting a parameter
 					details : [{
 						message : "Illegal Status",
 						"@Common.numericSeverity" : 4,
-						target : "EMPLOYEE/STATUS"
+						target : "EMPLOYEE/STATUS" // error targeting part of binding parameter
 					}, {
 						message : "Target resolved to ''",
 						"@Common.numericSeverity" : 4,
-						target : "EMPLOYEE"
-					}]
+						target : "EMPLOYEE" // error targeting the complete binding parameter
+					}, {
+						message : "Unexpected Error w/o target",
+						"@Common.numericSeverity" : 4,
+						target : ""
+					} ]
 				});
 
 			that.oLogMock.expects("error").withExactArgs("Failed to execute /" + sUrl + "(...)",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
-			that.oLogMock.expects("error").withExactArgs(
+			that.oLogMock.expects("error").withExactArgs(//TODO: prevent log -> CPOUI5ODATAV4-127
 				"Failed to read path /" + sUrl + "(...)/TEAM_ID", sinon.match(oError.message),
 				"sap.ui.model.odata.v4.ODataPropertyBinding");
 			that.expectRequest({
@@ -8937,7 +9049,8 @@ sap.ui.define([
 					code : undefined,
 					message : "Missing team ID",
 					persistent : true,
-					target : "",
+					target : "/EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
+						+ ".AcChangeTeamOfEmployee(...)/$Parameter/TeamID",
 					technical : true,
 					type : "Error"
 				}, {
@@ -8954,7 +9067,14 @@ sap.ui.define([
 					// how this target : "EMPLOYEE" is meant to be handled
 					target : "/EMPLOYEES('1')",
 					type : "Error"
+				}, {
+					code : undefined,
+					message : "Unexpected Error w/o target",
+					persistent : true,
+					target : "",
+					type : "Error"
 				}])
+				.expectChange("parameterTeamId", "")
 				.expectChange("teamId", null); // reset to initial state
 
 			return Promise.all([
@@ -8967,7 +9087,10 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			return that.checkValueState(assert, "status", "Error", "Illegal Status");
+			return Promise.all([
+				that.checkValueState(assert, "status", "Error", "Illegal Status"),
+				that.checkValueState(assert, "parameterTeamId", "Error", "Missing team ID")
+			]);
 		});
 	});
 
@@ -19841,14 +19964,14 @@ sap.ui.define([
 
 		return oModel.getMetaModel().requestValueListType(sPropertyPath)
 			.then(function (sValueListType) {
-				assert.strictEqual(sValueListType, "Fixed");
+				assert.strictEqual(sValueListType, ValueListType.Fixed);
 
 				return oModel.getMetaModel().requestValueListInfo(sPropertyPath);
-			}).then(function (mQualifier2ValueListType) {
-				var oValueHelpModel = mQualifier2ValueListType[""].$model;
-
-				delete mQualifier2ValueListType[""].$model;
-				assert.deepEqual(mQualifier2ValueListType, {
+			}).then(function (mQualifier2ValueList) {
+				assert.strictEqual(mQualifier2ValueList[""].$model.toString(),
+					"sap.ui.model.odata.v4.ODataModel: /special/countryoforigin/");
+				delete mQualifier2ValueList[""].$model;
+				assert.deepEqual(mQualifier2ValueList, {
 					"" : {
 						CollectionPath : "I_AIVS_CountryCode",
 						Label : "Country Code Value Help",
@@ -19861,9 +19984,73 @@ sap.ui.define([
 						}]
 					}
 				});
-				assert.strictEqual(oValueHelpModel.toString(),
-					"sap.ui.model.odata.v4.ODataModel: /special/countryoforigin/");
 			});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request value list information for a parameter of a bound action via annotations
+	// with targets in 4.01 syntax and ValueListType.Fixed.
+	// JIRA: CPOUI5ODATAV4-54
+	QUnit.test("Value help at bound action parameter, 4.01 syntax, fixed", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			oOperationBinding
+				= oModel.bindContext("/Artists('42')/_Publication/special.cases.Create(...)"),
+			oPropertyBinding
+				= oModel.bindProperty("CurrencyCode", oOperationBinding.getParameterContext());
+
+		return oModel.getMetaModel().requestData().then(function () {
+			assert.strictEqual(oPropertyBinding.getValueListType(), ValueListType.Fixed);
+
+			return oPropertyBinding.requestValueListInfo();
+		}).then(function (mQualifier2ValueList) {
+			assert.strictEqual(mQualifier2ValueList[""].$model.toString(),
+				"sap.ui.model.odata.v4.ODataModel: /special/CurrencyCode/");
+			delete mQualifier2ValueList[""].$model;
+			assert.deepEqual(mQualifier2ValueList, {
+				"" : {
+					Label : "Publication's Currency"
+				}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request value list information for a parameter of a bound action via annotations
+	// with targets both in 4.0 and 4.01 syntax.
+	// JIRA: CPOUI5ODATAV4-54
+	QUnit.test("Value help at bound action parameter, 4.01 syntax, standard", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			oOperationBinding
+				= oModel.bindContext("/Artists('42')/_Publication/special.cases.Create(...)"),
+			oPropertyBinding
+				= oModel.bindProperty("Price", oOperationBinding.getParameterContext());
+
+		return oModel.getMetaModel().requestData().then(function () {
+			assert.strictEqual(oPropertyBinding.getValueListType(), ValueListType.Standard);
+
+			return oPropertyBinding.requestValueListInfo();
+		}).then(function (mQualifier2ValueList) {
+			assert.strictEqual(mQualifier2ValueList[""].$model.toString(),
+				"sap.ui.model.odata.v4.ODataModel: /special/Price/");
+			delete mQualifier2ValueList[""].$model;
+			assert.strictEqual(mQualifier2ValueList.A.$model.toString(),
+				"sap.ui.model.odata.v4.ODataModel: /special/Price/");
+			delete mQualifier2ValueList.A.$model;
+			assert.strictEqual(mQualifier2ValueList.B.$model.toString(),
+				"sap.ui.model.odata.v4.ODataModel: /special/Price/");
+			delete mQualifier2ValueList.B.$model;
+			assert.deepEqual(mQualifier2ValueList, {
+				"" : {
+					Label : "Price #"
+				},
+				"A" : {
+					Label : "Price #A"
+				},
+				"B" : {
+					Label : "Price #B"
+				}
+			});
+		});
 	});
 
 	//*********************************************************************************************

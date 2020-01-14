@@ -593,7 +593,7 @@ sap.ui.define([
 			// @override
 			// @see sap.ui.model.Binding#setContext
 			setContext : function (oContext) {
-				if (this.oContext != oContext) {
+				if (this.oContext !== oContext) {
 					this.oContext = oContext;
 					if (this.bRelative) {
 						this.checkUpdate(false, ChangeReason.Context);
@@ -1672,29 +1672,54 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fetches the value list mappings from the metadata of the given model.
+	 * Fetches the value list mappings for a property or an operation parameter from the metadata of
+	 * the given model.
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oValueListModel
 	 *   The value list model containing the "ValueListMapping" annotations
-	 * @param {string} sNamespace
-	 *   The namespace of the property in the data service; only annotations for that namespace are
-	 *   observed
-	 * @param {object|string} vTarget
-	 *   The property in the data service or the expected external annotation target
+	 * @param {string} sQualifiedParentName
+	 *   The qualified name of the structured type containing the property or the operation
+	 *   containing the parameter; only annotations for its namespace are observed
+	 * @param {object} oProperty
+	 *   The metadata for the property or the operation parameter in the data service
+	 * @param {object[]} [aOverloads]
+	 *   The list of operation overloads in case of an operation parameter, must contain exactly one
+	 *   entry (which means that the parameter's binding path exactly matches one overload)
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with a map containing all "ValueListMapping" annotations in
 	 *   the metadata of the given model by qualifier.
 	 *
 	 *   It is rejected with an error if the value list model contains annotation targets in the
-	 *   namespace of the data service that are not mappings for the given target, or if there are
-	 *   no mappings for the given target.
+	 *   namespace of the data service that are not mappings for the given target, if there are
+	 *   no mappings for the given target, or if there is not exactly one overload for an operation
+	 *   parameter.
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype.fetchValueListMappings = function (oValueListModel, sNamespace,
-			vTarget) {
+	ODataMetaModel.prototype.fetchValueListMappings = function (oValueListModel,
+			sQualifiedParentName, oProperty, aOverloads) {
 		var that = this,
 			oValueListMetaModel = oValueListModel.getMetaModel();
+
+		/**
+		 * Determines the annotation target for the specific overload.
+		 *
+		 * @returns {string} The annotation target
+		 */
+		function getOverloadTarget () {
+			var oOverload = aOverloads[0],
+				sSignature = "";
+
+			if (aOverloads.length !== 1) {
+				throw new Error("Expected a single overload, but found " + aOverloads.length);
+			}
+			if (oOverload.$IsBound) {
+				sSignature = oOverload.$Parameter[0].$isCollection
+					? "Collection(" + oOverload.$Parameter[0].$Type + ")"
+					: oOverload.$Parameter[0].$Type;
+			}
+			return sQualifiedParentName + "(" + sSignature + ")";
+		}
 
 		// We cannot use fetchObject here for two reasons: We only have a property path and not
 		// necessarily the property's qualified name, and accessing a property annotation would fail
@@ -1704,24 +1729,37 @@ sap.ui.define([
 		return oValueListMetaModel.fetchEntityContainer().then(function (oValueListMetadata) {
 			var mAnnotationByTerm,
 				mAnnotationMapByTarget = oValueListMetadata.$Annotations,
+				sIndividualOverloadTarget,
+				sNamespace = _Helper.namespace(sQualifiedParentName),
 				mValueListMappingByQualifier = {},
 				bValueListOnValueList = that === oValueListMetaModel,
-				aTargets;
+				aTargets,
+				sXAllOverloadsTarget;
 
-			// Note: This filter iterates over all targets, but matches at most once
+			// operation parameters (those with $Name) require a different target
+			// Note: in this case, we need to determine the target from the overload
+			if (oProperty.$Name) {
+				sIndividualOverloadTarget = getOverloadTarget() + "/" + oProperty.$Name;
+				sXAllOverloadsTarget = sQualifiedParentName + "/" + oProperty.$Name;
+			}
+
+			// Note: This filter iterates over all targets, but matches at most twice
 			aTargets = Object.keys(mAnnotationMapByTarget).filter(function (sTarget) {
 				if (_Helper.namespace(sTarget) === sNamespace) {
-					if (typeof vTarget === "string"
-							? sTarget === vTarget
-							: that.getObject("/" + sTarget) === vTarget) {
+					if (sIndividualOverloadTarget
+						? sTarget === sIndividualOverloadTarget || sTarget === sXAllOverloadsTarget
+						: that.getObject("/" + sTarget) === oProperty) {
 						// this is the target for the given property
 						return true;
 					}
-					if (!bValueListOnValueList) {
-						throw new Error("Unexpected annotation target '" + sTarget
-							+ "' with namespace of data service in "
-							+ oValueListModel.sServiceUrl);
+					if (bValueListOnValueList
+							|| sXAllOverloadsTarget
+								&& _Helper.getMetaPath(sTarget) === sXAllOverloadsTarget) {
+						return false;
 					}
+					throw new Error("Unexpected annotation target '" + sTarget
+						+ "' with namespace of data service in "
+						+ oValueListModel.sServiceUrl);
 				}
 				return false;
 			});
@@ -1731,7 +1769,13 @@ sap.ui.define([
 					oValueListModel.sServiceUrl);
 			}
 
-			mAnnotationByTerm = mAnnotationMapByTarget[aTargets[0]];
+			if (aTargets.length === 1) {
+				mAnnotationByTerm = mAnnotationMapByTarget[aTargets[0]];
+			} else { // length === 2
+				mAnnotationByTerm = Object.assign({}, mAnnotationMapByTarget[sXAllOverloadsTarget],
+					mAnnotationMapByTarget[sIndividualOverloadTarget]);
+			}
+
 			Object.keys(mAnnotationByTerm).forEach(function (sTerm) {
 				var sQualifier = getValueListQualifier(sTerm);
 
@@ -2769,7 +2813,8 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath, bAutoExpandSelect) {
 		var sPropertyMetaPath = this.getMetaPath(sPropertyPath),
-			sParentMetaPath = sPropertyMetaPath.slice(0, sPropertyMetaPath.lastIndexOf("/")),
+			sParentMetaPath = sPropertyMetaPath.slice(0, sPropertyMetaPath.lastIndexOf("/"))
+				.replace("/$Parameter", ""),
 			sQualifiedName = sParentMetaPath.slice(sParentMetaPath.lastIndexOf("/") + 1),
 			that = this;
 
@@ -2783,13 +2828,12 @@ sap.ui.define([
 			this.requestObject(sPropertyMetaPath), // the property itself
 			this.requestObject(sPropertyMetaPath + "@"), // all property annotations
 			// flag for "fixed values"
-			this.requestObject(sPropertyMetaPath + sValueListWithFixedValues)
+			this.requestObject(sPropertyMetaPath + sValueListWithFixedValues),
+			this.requestObject(sParentMetaPath + "/@$ui5.overload")
 		]).then(function (aResults) {
 			var mAnnotationByTerm = aResults[2],
 				bFixedValues = aResults[3],
 				mMappingUrlByQualifier = {},
-				// Only annotations in the type's namespace are relevant
-				sNamespace = _Helper.namespace(aResults[0]),
 				oProperty = aResults[1],
 				oValueListInfo = {};
 
@@ -2847,12 +2891,10 @@ sap.ui.define([
 				return Promise.all(aMappingUrls.map(function (sMappingUrl) {
 					var oValueListModel = that.getOrCreateSharedModel(sMappingUrl, undefined,
 							bAutoExpandSelect);
+
 					// fetch the mappings for the given mapping URL
-					return that.fetchValueListMappings(
-						oValueListModel, sNamespace,
-						// operation parameters (those with $Name) require a different target
-						// Note: in this case, we always have a qualified name currently
-						oProperty.$Name ? sQualifiedName + "/" + oProperty.$Name : oProperty
+					return that.fetchValueListMappings(oValueListModel,
+						/*sQualifiedParentName*/aResults[0], oProperty, /*aOverloads*/aResults[4]
 					).then(function (mValueListMappingByQualifier) {
 						// insert the returned mappings into oValueListInfo
 						Object.keys(mValueListMappingByQualifier).forEach(function (sQualifier) {

@@ -34,6 +34,7 @@ sap.ui.define([
 
 			// the same model can be accessed via two names to allow for different binding contexts
 			this.setModel(oModel, "headerContext");
+			this.setModel(oModel, "parameterContext");
 
 			// simulate a Fiori Elements app, where the view is only created after
 			// $metadata has been loaded

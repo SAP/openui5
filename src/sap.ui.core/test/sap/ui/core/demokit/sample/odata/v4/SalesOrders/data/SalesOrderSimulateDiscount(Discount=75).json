@@ -1,0 +1,7 @@
+{
+	"error" : {
+		"code" : "OO/000",
+		"message" : "User John Doe is not authorized to approve more than 50% discount",
+		"target" : "Discount"
+	}
+}

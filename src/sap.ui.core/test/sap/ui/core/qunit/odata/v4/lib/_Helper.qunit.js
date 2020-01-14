@@ -1099,6 +1099,23 @@ sap.ui.define([
 		assert.strictEqual(_Helper.namespace("zui5_epm_sample.v1.Products"), "zui5_epm_sample.v1");
 		assert.strictEqual(_Helper.namespace("zui5_epm_sample.v1.Products/Category/type.cast"),
 			"zui5_epm_sample.v1");
+		assert.strictEqual(
+			_Helper.namespace("zui5_epm_sample.v1.Action(ui5_epm_sample.v1.EnityType)/"),
+			"zui5_epm_sample.v1");
+		assert.strictEqual(
+			_Helper.namespace("zui5_epm_sample.v1.Action(ui5_epm_sample.v1.EnityType)/Country"),
+			"zui5_epm_sample.v1");
+		assert.strictEqual(
+			_Helper.namespace("zui5_epm_sample.v1.Action(Collection(ui5_epm_sample.v1.EnityType))"),
+			"zui5_epm_sample.v1");
+		assert.strictEqual(
+			_Helper.namespace("zui5_epm_sample.v1.Action(Collection(ui5_epm_sample.v1.EnityType))"
+				+ "/Country"),
+			"zui5_epm_sample.v1");
+		assert.strictEqual(
+			_Helper.namespace("zui5_epm_sample.v1.Action(Collection(ui5_epm_sample.v1.EnityType))"
+				+ "/Address/Country"),
+			"zui5_epm_sample.v1");
 	});
 
 	//*********************************************************************************************
@@ -1524,6 +1541,7 @@ sap.ui.define([
 					changed : "changed",
 					unchanged : "same"
 				},
+				falsy : "",
 				getDeep : {
 					inside : "value"
 				},
@@ -1538,6 +1556,7 @@ sap.ui.define([
 					old : "old",
 					unchanged : "same"
 				},
+				falsy : null,
 				getDeep : "value",
 				getFlat : {
 					inside : "any"
@@ -1564,6 +1583,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/old", null);
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/getDeep/inside", "value");
+		oHelperMock.expects("fireChange")
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/falsy", "");
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/getFlat", "now");
 		oHelperMock.expects("fireChange")
