@@ -472,6 +472,11 @@ sap.ui.define([
 			$Cell = getCell(1, i, true, assert);
 			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {firstTime: i == 0, colChange: true, group: true});
 			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true, group: true}, true);
+			oTable.setSelectionMode(SelectionMode.Row);
+			sap.ui.getCore().applyChanges();
+			assert.ok(!$Cell[0].hasAttribute("title"), "Group row data cells have no title");
+			assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
+				"Group row doesn't have row selector text");
 		}
 
 		setFocusOutsideOfTable(assert);
@@ -507,6 +512,11 @@ sap.ui.define([
 				colChange: true,
 				sum: true
 			});
+			oTable.setSelectionMode(SelectionMode.Row);
+			sap.ui.getCore().applyChanges();
+			assert.ok(!$Cell[0].hasAttribute("title"), "Sum row data cells have no title");
+			assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
+				"Sum row doesn't have row selector text");
 		}
 
 		setFocusOutsideOfTable(assert);
@@ -796,6 +806,10 @@ sap.ui.define([
 		this.testAriaLabels($Cell, 1, assert, {group: true, focus: true, firstTime: true, expanded: true});
 		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
 
+		assert.ok(!$Cell[0].hasAttribute("title"), "The row header of a group row has no title");
+		assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
+			"The row header of a group row doesn't have row selector text");
+
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			that.testAriaLabels($Cell, 1, assert);
@@ -813,6 +827,10 @@ sap.ui.define([
 
 		$Cell = getRowHeader(0, true, assert, oTreeTable);
 		this.testAriaLabels($Cell, 0, assert, {group: true, focus: true, firstTime: true, rowChange: true, colChange: true, table: oTreeTable});
+
+		assert.ok(!$Cell[0].hasAttribute("title"), "The row header of a group row has no title");
+		assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
+			"The row header of a group row doesn't have row selector text");
 
 		oTreeTable.expand(0);
 		oTreeTable.attachEventOnce("_rowsUpdated", function() {
@@ -839,6 +857,10 @@ sap.ui.define([
 		this.testAriaLabels($Cell, 1, assert, {sum: true, focus: true, firstTime: true});
 		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
 
+		assert.ok(!$Cell[0].hasAttribute("title"), "The row header of a sum row has no title");
+		assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
+			"The row header of a sum row doesn't have row selector text");
+
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			that.testAriaLabels($Cell, 1, assert);
@@ -864,16 +886,94 @@ sap.ui.define([
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
-	QUnit.test("Title", function(assert) {
-		var $Cell = getRowHeader(0, true, assert);
+	function testTitleAndSelectorText(assert, sSelectionMode, sSelectionBehavior, iFixedColumnCount, bSelected) {
+		var oRow = oTable.getRows()[0];
+		var $Ref = oRow.getDomRefs(true);
+		var $Cell = getRowHeader(0);
+		var $RowSelectorTextRef = jQuery(document.getElementById(oRow.getId() + "-rowselecttext"));
+
+		if (sSelectionMode === "None") {
+			assert.ok(!$Cell[0].hasAttribute("title"), "The row header has no title because SelectionMode is \"None\"");
+			assert.ok(!$Ref.rowScrollPart[0].hasAttribute("title"), "The scrollable part of the row has no title because SelectionMode is \"None\"");
+			assert.ok(!$Ref.rowActionPart[0].hasAttribute("title"), "The action part of the row has no title because SelectionMode is \"None\"");
+			assert.ok($RowSelectorTextRef.empty(), "The row header doesn't have row selector text because SelectionMode is \"None\"");
+		} else {
+			var sTitle = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT") : TableUtils.getResourceText("TBL_ROW_SELECT");
+			var sRowSelectorText = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT_KEY") :
+				TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
+			var sText = bSelected ? "deselects" : "selects";
+
+			assert.equal($Cell[0].title, sTitle,
+				"selectionBehavior = " + sSelectionBehavior + ", fixedColumnCount = " + iFixedColumnCount +
+				", The row header has a title saying that clicking " + sText + " the row");
+			if (sSelectionBehavior === "Row") {
+				assert.equal($Ref.rowScrollPart[0].title, sTitle, "selectionBehavior = Row, fixedColumnCount = " + iFixedColumnCount +
+				", The scrollable part of the row has a title saying that clicking " + sText + " the row");
+
+				if (iFixedColumnCount === "1") {
+					assert.equal($Ref.rowFixedPart[0].title, sTitle,
+						"selectionBehavior = Row, fixedColumnCount = 1, The fixed part of the row has a title saying that clicking deselects the row");
+				}
+
+				assert.equal($Ref.rowActionPart[0].title, sTitle,
+					"selectionBehavior = " + sSelectionBehavior + ", fixedColumnCount = " + iFixedColumnCount +
+					", The action part of the row has a title saying that clicking " + sText + " the row");
+			}
+			assert.ok($RowSelectorTextRef.html().indexOf(sRowSelectorText) > -1,
+				"selectionBehavior = " + sSelectionBehavior + ", fixedColumnCount = " + iFixedColumnCount +
+				" The row header has a row selector text saying that pressing SPACE " + sText + " the row");
+		}
+	}
+
+	QUnit.test("Title and selector text", function(assert) {
+		var oRow = oTable.getRows()[0];
+		var $Cell = getRowHeader(0);
+		var $RowSelectorTextRef = jQuery(document.getElementById(oRow.getId() + "-rowselecttext"));
+		initRowActions(oTable, 1, 1);
+		initRowActions(oTreeTable, 1, 1);
 
 		return new Promise(function(resolve) {
 			oTable.attachEventOnce("_rowsUpdated", resolve);
 		}).then(function() {
-			assert.ok($Cell[0].title.toLowerCase().indexOf("deselect") > -1, "The row header has a title saying that clicking deselects the row");
+			testTitleAndSelectorText(assert, "MultiToggle","RowSelector", 1, true);
+			oTable.clearSelection();
+			testTitleAndSelectorText(assert, "MultiToggle", "RowSelector", 1, false);
 
-			oTable.setSelectedIndex(0);
-			assert.ok($Cell[0].title.toLowerCase().indexOf("select") > -1, "The row header has a title saying that clicking selects the row");
+			oTable.setSelectionBehavior("Row");
+			sap.ui.getCore().applyChanges();
+
+			return new Promise(function(resolve) {
+				oTable._getSelectionPlugin().attachEventOnce("selectionChange", resolve);
+				oTable.setSelectedIndex(0);
+			});
+		}).then(function() {
+			testTitleAndSelectorText(assert, "MultiToggle", "Row", 1, true);
+			oTable.clearSelection();
+			testTitleAndSelectorText(assert, "MultiToggle", "Row", 1, false);
+
+			oTable.setFixedColumnCount(0, false);
+			sap.ui.getCore().applyChanges();
+
+			return new Promise(function (resolve) {
+				oTable._getSelectionPlugin().attachEventOnce("selectionChange", resolve);
+				oTable.setSelectedIndex(0);
+			});
+		}).then(function() {
+			testTitleAndSelectorText(assert, "MultiToggle", "Row", 0, true);
+			oTable.clearSelection();
+			testTitleAndSelectorText(assert, "MultiToggle", "Row", 0, false);
+
+			oTable.setSelectionMode(SelectionMode.Single);
+			sap.ui.getCore().applyChanges();
+
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable.setSelectedIndex(0);
+			});
+		}).then(function() {
+			testTitleAndSelectorText(assert, "Single", "Row", 0, true);
+			oTable.clearSelection();
+			testTitleAndSelectorText(assert, "Single", "Row", 0, false);
 
 			oTable.setSelectionMode(SelectionMode.None);
 			sap.ui.getCore().applyChanges();
@@ -882,7 +982,7 @@ sap.ui.define([
 				oTable.attachEventOnce("_rowsUpdated", resolve);
 			});
 		}).then(function() {
-			assert.ok(!$Cell[0].hasAttribute("title"), "The row header has no title because SelectionMode is \"None\"");
+			testTitleAndSelectorText(assert,"None");
 
 			oTable.setSelectionMode(SelectionMode.MultiToggle);
 			sap.ui.getCore().applyChanges();
@@ -891,8 +991,7 @@ sap.ui.define([
 				oTable.attachEventOnce("_rowsUpdated", resolve);
 			});
 		}).then(function() {
-			assert.ok($Cell[0].title.toLowerCase().indexOf("select") > -1, "The row header has a title saying that clicking selects the row");
-
+			testTitleAndSelectorText(assert, "MultiToggle", "Row", 0, false);
 			oTable.getModel().setData([]);
 
 			return new Promise(function(resolve) {
@@ -900,6 +999,7 @@ sap.ui.define([
 			});
 		}).then(function() {
 			assert.ok(!$Cell[0].hasAttribute("title"), "The row has no title because it is empty");
+			assert.ok($RowSelectorTextRef.empty(), "The row doesn't have row selector text because it is empty");
 		});
 	});
 
@@ -1083,6 +1183,12 @@ sap.ui.define([
 
 		$Cell = getRowAction(1, true, assert, oTreeTable);
 		this.testAriaLabels($Cell, 1, assert, {group: true, focus: true, firstTime: true, rowChange: true, colChange: true, table: oTreeTable});
+
+		oTreeTable.setSelectionMode(SelectionMode.Row);
+		sap.ui.getCore().applyChanges();
+		assert.ok(!$Cell[0].hasAttribute("title"), "Group row data cells have no title");
+		assert.ok(jQuery(document.getElementById(oTable.getRows()[1].getId() + "-rowselecttext")).empty(),
+			"Group row data cells don't have row selector text");
 
 		oTreeTable.expand(1);
 		oTreeTable.attachEventOnce("_rowsUpdated", function() {
