@@ -26,7 +26,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var MyCompositeType = CompositeType.extend("MyCompositeType", {
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		MyCompositeType = CompositeType.extend("MyCompositeType", {
 		constructor: function() {
 			CompositeType.apply(this);
 			this.sName = "MyCompositeType";
@@ -120,8 +121,9 @@ sap.ui.define([
 		return a + b + c;
 	}
 
-	QUnit.module("Basic functionality", {
+	QUnit.module("sap.ui.model.CompositeBinding: Basic functionality", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			this.model = new JSONModel({
 				a: 1,
 				b: 2,
@@ -143,6 +145,8 @@ sap.ui.define([
 			this.binding2 = null;
 			this.binding3 = null;
 			this.composite = null;
+			// reset the language
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -244,8 +248,9 @@ sap.ui.define([
 		this.composite.resume();
 	});
 
-	QUnit.module("With inner types/formatters", {
+	QUnit.module("sap.ui.model.CompositeBinding: With inner types/formatters", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			this.model = new JSONModel({
 				a: 1,
 				b: 2,
@@ -277,6 +282,8 @@ sap.ui.define([
 			this.composite = null;
 			this.compositeraw = null;
 			this.compositeinternal = null;
+			// reset the language
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -418,8 +425,9 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Unresolved inner bindings", {
+	QUnit.module("sap.ui.model.CompositeBinding: Unresolved inner bindings", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			this.model = new JSONModel({
 				a: 1,
 				obj: {
@@ -438,6 +446,8 @@ sap.ui.define([
 			this.binding2 = null;
 			this.binding3 = null;
 			this.composite = null;
+			// reset the language
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -448,8 +458,9 @@ sap.ui.define([
 		assert.equal(this.composite.isResolved(), true, "Resolved after binding context has been set");
 	});
 
-	QUnit.module("Use internal values", {
+	QUnit.module("sap.ui.model.CompositeBinding: Use internal values", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			this.type = new TypeString();
 
 			this.model = new JSONModel({
@@ -477,6 +488,8 @@ sap.ui.define([
 			this.binding2 = null;
 			this.binding3 = null;
 			this.compositeUseInternalValue = null;
+			// reset the language
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -573,8 +586,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Use mixed binding modes", {
+	QUnit.module("sap.ui.model.CompositeBinding: Use mixed binding modes", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			this.model = new JSONModel({
 				a: "1",
 				b: "2",
@@ -604,6 +618,8 @@ sap.ui.define([
 			this.binding2 = null;
 			this.binding3 = null;
 			this.composite = null;
+			// reset the language
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 

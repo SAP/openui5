@@ -242,7 +242,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CompositeBinding.prototype.setExternalValue = function(oValue) {
-		var oInternalType, oDataState, pValues,
+		var oInternalType, oDataState, vResult, pValues,
 			that = this;
 
 		if (this.sInternalType === "raw") {
@@ -289,7 +289,7 @@ sap.ui.define([
 			pValues = SyncPromise.resolve([oValue]);
 		}
 
-		return pValues.then(function(aValues) {
+		vResult = pValues.then(function(aValues) {
 			that.aBindings.forEach(function(oBinding, iIndex) {
 				var sBindingMode = oBinding.getBindingMode();
 				oValue = aValues[iIndex];
@@ -306,7 +306,10 @@ sap.ui.define([
 			});
 			oDataState.setValue(that.getValue());
 			oDataState.setInvalidValue(undefined);
-		}).unwrap();
+		});
+		vResult.catch(function () {/*avoid "Uncaught (in promise)"*/});
+
+		return vResult.unwrap();
 	};
 
 	/**

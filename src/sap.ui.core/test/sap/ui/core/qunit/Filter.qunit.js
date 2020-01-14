@@ -13,7 +13,7 @@ sap.ui.define([
 	var sOneMissing = "When using the filter operator 'Any', a lambda variable and a condition have to be given or neither.";
 	var sLegacyAnyAll = "The filter operators 'Any' and 'All' are only supported with the parameter object notation.";
 
-	QUnit.module("Unsupported Filter Operators");
+	QUnit.module("sap.ui.model.Filter: Unsupported Filter Operators");
 
 	QUnit.test("constructor - create Filter Any/All - ok", function (assert) {
 		// "Any", object syntax
@@ -97,7 +97,7 @@ sap.ui.define([
 		);
 	});
 
-	QUnit.module("Filter AST generation");
+	QUnit.module("sap.ui.model.Filter: Filter AST generation");
 
 	QUnit.test("Simple filters", function (assert) {
 

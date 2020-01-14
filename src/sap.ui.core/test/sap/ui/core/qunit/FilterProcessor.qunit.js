@@ -7,7 +7,7 @@ sap.ui.define([
 ], function(FilterProcessor, Filter, FilterOperator, Device) {
 	"use strict";
 
-	QUnit.module("Operators");
+	QUnit.module("sap.ui.model.FilterProcessor: Operators");
 
 	QUnit.test("Contains", function(assert) {
 
@@ -113,7 +113,7 @@ sap.ui.define([
 		assert.deepEqual(aFiltered, ["Football", "Basketball", "Baseball"], "Filter result for NotEndsWith is correct.");
 	});
 
-	QUnit.module("Negated Operators");
+	QUnit.module("sap.ui.model.FilterProcessor: Negated Operators");
 
 	QUnit.test("NotContains", function(assert) {
 
@@ -219,7 +219,7 @@ sap.ui.define([
 		assert.deepEqual(aFiltered, ["Soccer", "Hockey", "Tennis"], "Filter result for NotEndsWith is correct.");
 	});
 
-	QUnit.module("Special cases");
+	QUnit.module("sap.ui.model.FilterProcessor: Special cases");
 
 	QUnit.test("getFilterFunction - EndsWith", function(assert) {
 		var oFilter = new Filter({
@@ -249,7 +249,7 @@ sap.ui.define([
 		assert.notOk(fnGetFilterFunction("dollars"), "does not endswith '\u0073\u0323\u0307'");
 	});
 
-	QUnit.module("Case-Sensitive & -Insensitive Filtering");
+	QUnit.module("sap.ui.model.FilterProcessor: Case-Sensitive & -Insensitive Filtering");
 
 	QUnit.test("Contains w/ caseSensitive = undefined", function(assert) {
 		var oFilter = new Filter({
@@ -342,7 +342,7 @@ sap.ui.define([
 		oToUpperCaseSpy.restore();
 	});
 
-	QUnit.module("FilterProcessor.groupFilters");
+	QUnit.module("sap.ui.model.FilterProcessor: groupFilters");
 
 	QUnit.test("groupFilters with same path", function(assert) {
 		var oGroupedFilter;
@@ -408,7 +408,7 @@ sap.ui.define([
 
 	if (String.prototype.normalize) {
 
-		QUnit.module("Normalizer cache");
+		QUnit.module("sap.ui.model.FilterProcessor: Normalizer cache");
 
 		QUnit.test("Caching of normalized values", function(assert) {
 			var oSpy = sinon.spy(String.prototype, "normalize");

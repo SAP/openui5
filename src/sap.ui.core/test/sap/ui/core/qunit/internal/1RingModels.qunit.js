@@ -31,17 +31,29 @@ sap.ui.require([
 		// ***************************************************************************************
 		// sap.ui.model.* - tests are contained in testsuite.databinding.qunit.js
 		// ***************************************************************************************
+		//TODO: get test running in 1RingModels.qunit; test has to be refactored
+		// "sap/ui/core/qunit/CalculatedFields.qunit",
+		"sap/ui/core/qunit/CompositeBinding.qunit",
+		//TODO: get test running in 1RingModels.qunit; test has to be refactored
+		// "sap/ui/core/qunit/DataBinding.qunit",
 		"sap/ui/core/qunit/DataState.qunit",
+		"sap/ui/core/qunit/Filter.qunit",
+		"sap/ui/core/qunit/FilterProcessor.qunit",
+		//TODO: get test running in 1RingModels.qunit; test has to be refactored
+		// "sap/ui/core/qunit/ListBinding.qunit",
+		//TODO: get test running in 1RingModels.qunit; test has to be refactored
+		// "sap/ui/core/qunit/MasterDetail.qunit",
+		"sap/ui/core/qunit/StaticBinding.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.analytics.* - tests are contained in testsuite.databinding.qunit.js
 		// ***************************************************************************************
 		//TODO: get test running in 1RingModels.qunit; it uses sinon 1
-		//"sap/ui/core/qunit/analytics/AnalyticalBinding.qunit",
+		// "sap/ui/core/qunit/analytics/AnalyticalBinding.qunit",
 		"sap/ui/core/qunit/analytics/odata4analytics.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses sinon 1
 		// test is contained in /sap.ui.table/test/sap/ui/table/qunit/testsuite.qunit.js
-		//"sap/ui/table/qunit/AnalyticalTable.qunit",
+		// "sap/ui/table/qunit/AnalyticalTable.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.message.*
@@ -84,10 +96,21 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/_ODataMetaModelUtils.qunit",
 		// Note: some types use lazy loading and are used by AnnotationHelper tests!
 		"sap/ui/core/qunit/odata/AnnotationHelper.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses ODataAnnotationsFakeService
+		// "sap/ui/core/qunit/odata/ODataAnnotations.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
 		// "sap/ui/core/qunit/odata/ODataMessageParser.qunit",
 		"sap/ui/core/qunit/odata/ODataMessageParserNoFakeService.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses MockServer
+		// "sap/ui/core/qunit/odata/ODataMetadata.qunit",
 		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
+		"sap/ui/core/qunit/odata/ODataUtils.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
+		// "sap/ui/core/qunit/odata/v1/ODataListBinding.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
+		// "sap/ui/core/qunit/odata/v1/ODataModel.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
+		// "sap/ui/core/qunit/odata/v1/ODataSharedMetadata.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.odata.v2.* - tests are contained in testsuite.odatav2.qunit.js
@@ -96,28 +119,28 @@ sap.ui.require([
 		// "sap/ui/core/qunit/odata/v2/CanonicalRequests.qunit",
 		"sap/ui/core/qunit/odata/v2/datajs.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
-//		"sap/ui/core/qunit/odata/v2/DerivedTypes.qunit",
+		// "sap/ui/core/qunit/odata/v2/DerivedTypes.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataAnnotationsFakeService
-//		"sap/ui/core/qunit/odata/v2/ODataAnnotationsV2.qunit",
+		// "sap/ui/core/qunit/odata/v2/ODataAnnotationsV2.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataListBindingNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModelNoFakeService.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
-		//"sap/ui/core/qunit/odata/v2/ODataPropertyBinding.qunit",
+		// "sap/ui/core/qunit/odata/v2/ODataPropertyBinding.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
-		//"sap/ui/core/qunit/odata/v2/ODataV2ListBinding.qunit",
+		// "sap/ui/core/qunit/odata/v2/ODataV2ListBinding.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
-		//"sap/ui/core/qunit/odata/v2/ODataV2ListBinding_Paging.qunit",
+		// "sap/ui/core/qunit/odata/v2/ODataV2ListBinding_Paging.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
-		//"sap/ui/core/qunit/odata/v2/ODataV2Model.qunit",
+		// "sap/ui/core/qunit/odata/v2/ODataV2Model.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
-		//"sap/ui/core/qunit/odata/v2/PendingChanges.qunit",
+		// "sap/ui/core/qunit/odata/v2/PendingChanges.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
 		// "sap/ui/core/qunit/odata/v2/V2ODataModel.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
-		//"sap/ui/core/qunit/odata/v2/V2ODataModelB.qunit",
+		// "sap/ui/core/qunit/odata/v2/V2ODataModelB.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
-		//"sap/ui/core/qunit/odata/v2/V2ODataModelDataState.qunit",
+		// "sap/ui/core/qunit/odata/v2/V2ODataModelDataState.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.resource.* - tests are contained in testsuite.databinding.qunit.js
