@@ -5005,7 +5005,7 @@ sap.ui.define([
 		assert.equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, undefined);
 		assert.equal(aAppInfos[1]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "All Day");
 		assert.equal(aAppInfos[1]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, undefined);
-		// assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "until"); // TODO: will be uncommented after chnage in the translation
+		assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "until");
 		assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "11:00");
 		assert.equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "from");
 		assert.equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "09:00");
