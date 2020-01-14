@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global FocusEvent, MouseEvent, document */
+/*global FocusEvent, DragEvent, FileList, DataTransfer, DataTransferItemList, MouseEvent, document */
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/qunit/QUnitUtils',
@@ -90,7 +90,10 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 					// if no adapter is set or no element is found for it -- fallback to control focus dom ref
 					$ActionDomRef = jQueryDOM(oControl.getFocusDomRef());
 					if (!$ActionDomRef.length) {
-						sErrorMessage += "DOM representation of control '" + oControl + "' has no focus DOM reference";
+						$ActionDomRef = oControl.$();
+						if (!$ActionDomRef.length) {
+							sErrorMessage += "DOM representation of control '" + oControl + "' has no focus DOM reference";
+						}
 					}
 				}
 			}
@@ -118,6 +121,12 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 		init: function () {
 			this.controlAdapters = {};
 			this.oLogger = _OpaLogger.getLogger(this.getMetadata().getName());
+		},
+
+		dropPosition: {
+			BEFORE: "BEFORE",
+			AFTER: "AFTER",
+			CENTER: "CENTER"
 		},
 
 		/**
@@ -247,6 +256,85 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 
 			oDomRef.dispatchEvent(oFocusEvent);
 			this.oLogger.info("Dispatched focus event: '" + sName + "'");
+		},
+
+		_createAndDispatchDragEvent: function (sName, oDomRef, oOptions) {
+			// calculate drop position based on user input
+			// determines where the source will be dropped: before, after or in place of the target
+			if (Device.browser.msie && Device.browser.version < 12) {
+				// drag and drop is not supported in IE11.
+				// IE11's support for HTML5 drag and drop is questionable..
+				// when an event is initialized, dataTransfer is nullified. later this causes a null reference error in sap/ui/core/dnd/DragDropInfo
+				// (Unable to set property 'effectAllowed' of undefined or null reference).
+				// Another difference is that DataTransfer is an object in IE11, and would be instantiate like: oDataTransfer = new DataTransfer.constructor()
+				return;
+			}
+			var mCoordinates = this._getEventCoordinates(oDomRef, oOptions);
+			var oDataTransfer = new DataTransfer();
+			var oDragEvent;
+
+			if (Device.browser.phantomJS || Device.browser.edge) {
+				oDragEvent = document.createEvent("DragEvent");
+				oDragEvent.initDragEvent(sName, true, true, window, 0, mCoordinates.x, mCoordinates.y, mCoordinates.x, mCoordinates.y,
+					false, false, false, false, 1, oDomRef, oDataTransfer);
+			} else {
+				oDragEvent = new DragEvent(sName, {
+					type: sName, // include the type so jQuery.event.fixHooks can copy properties properly
+					eventPhase: 3,
+					bubbles: true,
+					cancelable: true,
+					defaultPrevented: false,
+					composed: true,
+					returnValue: true,
+					cancelBubble: false,
+					target: oDomRef,
+					toElement: oDomRef,
+					srcElement: oDomRef,
+					radiusX: 1,
+					radiusY: 1,
+					rotationAngle: 0,
+					// coordinates are needed to infer drop elem. e.g. in the control handlers, the drop target can be recalculated using document.elementfromPoint.
+					// even if set, pageXY and screenXY are zeroed. if clientXY is set, then xy and pageXY will be = clientXY, and offsetXY will be calculated correctly.
+					// this may cause problems for controls outside the client area
+					// in this case, users should scroll before the drag event
+					clientX: mCoordinates.x,
+					clientY: mCoordinates.y,
+					// dataTransfer should be at least an empty object, to avoid undefined error
+					dataTransfer: oDataTransfer
+				});
+			}
+
+			oDomRef.dispatchEvent(oDragEvent);
+		},
+
+		_getEventCoordinates: function (oDomRef, oOptions) {
+			var $domRef = jQueryDOM(oDomRef);
+			var offset = $domRef.offset();
+			var mCenterCoordinates = {
+				x: offset.left + $domRef.outerWidth() / 2,
+				y: offset.top + $domRef.outerHeight() / 2
+			};
+			if (!oOptions) {
+				return mCenterCoordinates;
+			}
+
+			switch (oOptions.position) {
+				case this.dropPosition.BEFORE:
+					// coords of upper left corner
+					return {
+						x: offset.left,
+						y: offset.top
+					};
+				case this.dropPosition.AFTER:
+					// coords of bottom right corner
+					return {
+						x: offset.left + $domRef.outerWidth(),
+						y: offset.top + $domRef.outerHeight()
+					};
+				case this.dropPosition.CENTER:
+				default:
+					return mCenterCoordinates;
+			}
 		}
 	});
 

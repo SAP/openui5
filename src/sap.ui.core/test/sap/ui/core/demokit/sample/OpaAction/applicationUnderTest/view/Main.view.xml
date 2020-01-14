@@ -2,9 +2,10 @@
 	xmlns="sap.m"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc">
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:dnd="sap.ui.core.dnd">
 	<App id="myApp">
-		<Page id="firstPage" enableScrolling="false">
+		<Page id="firstPage">
 			<headerContent>
 				<Button id="navigationButton"
 						busy="true"
@@ -51,23 +52,15 @@
 				<Text text="Opa5 is waiting until controls are interactable (not busy) before executing actions.
 				When you want to trigger a Press on a certain domref you may specify the idSuffix for example 'mode' will trigger the delete."/>
 				<List
-						id = "productList"
-						items="{/ProductCollection}"
-						mode="Delete"
-						delete="onDelete"
-						includeItemInSelection="true">
-					<headerToolbar>
-						<Toolbar>
-							<content>
-								<Title
-										text="Product List"
-										level="H2"/>
-							</content>
-						</Toolbar>
-					</headerToolbar>
+					id="productList"
+					items="{deleteModeListModel>/ProductCollection}"
+					mode="Delete"
+					delete="onDelete"
+					includeItemInSelection="true"
+					headerText="Product List - delete mode">
 					<StandardListItem
-							title="{Name}"
-							description="{ProductId}"/>
+						title="{deleteModeListModel>Name}"
+						description="{deleteModeListModel>ProductId}"/>
 				</List>
 			</content>
 		</Page>
@@ -106,6 +99,22 @@
 			</form:SimpleForm>
 			<Button text="Press here to trigger a press on the page" press="onPressPage"/>
 			<Button text="Press here to open a popover" press="onPressOpenPopover"/>
+			<List
+				id="productListReorder"
+				items="{orderedListModel>/ProductCollection}"
+				headerText="Product List - reorder">
+				<StandardListItem
+					title="{orderedListModel>Name}"
+					description="{orderedListModel>ProductId}"/>
+				<dragDropConfig>
+					<dnd:DragDropInfo
+						sourceAggregation="items"
+						targetAggregation="items"
+						dropPosition="Between"
+						dragStart="onDragStart"
+						drop="onDrop"/>
+				</dragDropConfig>
+			</List>
 		</Page>
 	</App>
 </mvc:View>
