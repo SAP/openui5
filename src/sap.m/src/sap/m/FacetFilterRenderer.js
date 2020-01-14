@@ -16,6 +16,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * @namespace
 	 */
 	var FacetFilterRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -26,15 +27,12 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	FacetFilterRenderer.render = function(oRm, oControl){
-		switch (oControl.getType()) {
-
-		case FacetFilterType.Simple:
-			FacetFilterRenderer.renderSimpleFlow(oRm, oControl);
-			break;
-
-		case FacetFilterType.Light:
+		if (oControl.getType() === FacetFilterType.Light || oControl.getShowSummaryBar()) {
 			FacetFilterRenderer.renderSummaryBar(oRm, oControl);
-			break;
+
+		} else {
+			FacetFilterRenderer.renderSimpleFlow(oRm, oControl);
+
 		}
 	};
 
@@ -46,66 +44,54 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 */
 	FacetFilterRenderer.renderSimpleFlow = function(oRm, oControl) {
 
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMFF");
-		oRm.writeAccessibilityState(oControl, {
-			"role": "toolbar"
+		oRm.openStart("div", oControl);
+		oRm.class("sapMFF");
+		oRm.accessibilityState({
+			role: "toolbar"
 		});
 
-		if (oControl.getShowSummaryBar()) {
-
-			oRm.write(">");
-			FacetFilterRenderer.renderSummaryBar(oRm, oControl);
+		if (oControl._lastScrolling) {
+			oRm.class("sapMFFScrolling");
 		} else {
-
-			if (oControl._lastScrolling) {
-
-				oRm.addClass("sapMFFScrolling");
-			} else {
-
-				oRm.addClass("sapMFFNoScrolling");
-			}
-
-			if (oControl.getShowReset()) {
-
-				oRm.addClass("sapMFFResetSpacer");
-			}
-			oRm.writeClasses();
-			oRm.write(">");
-
-
-			if (Device.system.desktop) {
-				oRm.renderControl(oControl._getScrollingArrow("left"));
-			}
-			// Render the div for the carousel
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-head");
-			oRm.addClass("sapMFFHead");
-			oRm.writeClasses();
-			oRm.write(">");
-
-			FacetFilterRenderer.renderFacetFilterListButtons(oControl, oRm);
-
-			if (oControl.getShowPersonalization()) {
-				oRm.renderControl(oControl.getAggregation("addFacetButton"));
-			}
-			oRm.write("</div>"); // Close carousel div
-			if (Device.system.desktop) {
-				oRm.renderControl(oControl._getScrollingArrow("right"));
-			}
-
-			if (oControl.getShowReset()) {
-
-				oRm.write("<div");
-				oRm.addClass("sapMFFResetDiv");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.renderControl(oControl.getAggregation("resetButton"));
-				oRm.write("</div>");
-			}
+			oRm.class("sapMFFNoScrolling");
 		}
-		oRm.write("</div>");
+
+		if (oControl.getShowReset()) {
+			oRm.class("sapMFFResetSpacer");
+		}
+
+		oRm.openEnd();
+
+		if (Device.system.desktop) {
+			oRm.renderControl(oControl._getScrollingArrow("left"));
+		}
+
+		// Render the div for the carousel
+		oRm.openStart("div", oControl.getId() + "-head" );
+		oRm.class("sapMFFHead");
+		oRm.openEnd();
+
+		FacetFilterRenderer.renderFacetFilterListButtons(oControl, oRm);
+
+		if (oControl.getShowPersonalization()) {
+			oRm.renderControl(oControl.getAggregation("addFacetButton"));
+		}
+
+		oRm.close("div"); // Close carousel div
+
+		if (Device.system.desktop) {
+			oRm.renderControl(oControl._getScrollingArrow("right"));
+		}
+
+		if (oControl.getShowReset()) {
+			oRm.openStart("div");
+			oRm.class("sapMFFResetDiv");
+			oRm.openEnd();
+			oRm.renderControl(oControl.getAggregation("resetButton"));
+			oRm.close("div");
+		}
+
+		oRm.close("div");
 	};
 
 
@@ -119,13 +105,12 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 
 		// We cannot just render the toolbar without the parent div.  Otherwise it is
 		// not possible to switch type from light to simple.
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMFF");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div", oControl);
+		oRm.class("sapMFF");
+		oRm.openEnd();
 		oRm.renderControl(oControl.getAggregation("summaryBar"));
-		oRm.write("</div>");
+		oRm.close("div");
+
 	};
 
 
