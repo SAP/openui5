@@ -4649,6 +4649,57 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Request Late property with navigation properties in entity with key aliases
+	// JIRA: CPOUI5ODATAV4-122
+	QUnit.test("Late property in entity with key aliases", function (assert) {
+		var oBinding,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/As(\'1\')}">\
+	<Text text="{AValue}"/>\
+</FlexBox>\
+<Input id="value" value="{AtoEntityWithComplexKey/Value}"/>',
+			that = this;
+
+		this.expectRequest("As('1')?$select=AID,AValue", {
+				AID : "1",
+				AValue : "avalue"
+			})
+			.expectChange("value");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("As('1')?$select=AID"
+				+ "&$expand=AtoEntityWithComplexKey($select=Key/P1,Key/P2,Value)", {
+					AID : "1",
+					AtoEntityWithComplexKey : {
+						Key : {
+							P1 : "p1",
+							P2 : 2
+						},
+						Value : "42"
+					}
+				})
+				.expectChange("value", "42");
+
+			oBinding = that.oView.byId("value").getBinding("value");
+			oBinding.setContext(
+				that.oView.byId("form").getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("value", "changed")
+				.expectRequest({
+					method : "PATCH",
+					url : "EntityWithComplexKey(Key1='p1',Key2=2)",
+					payload : {Value : "changed"}
+				});
+
+			oBinding.setValue("changed");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Test events createSent and createCompleted for success and error cases
 	// (CPOUI5UISERVICESV3-1761)
 	QUnit.test("createSent and createCompleted", function (assert) {

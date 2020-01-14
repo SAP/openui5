@@ -54,6 +54,8 @@
 				<Property Name="AValue" Type="Edm.Int16"/>
 				<NavigationProperty Name="AtoB" Partner="BtoA" Type="special.cases.B"/>
 				<NavigationProperty Name="AtoCs" Partner="CtoA" Type="Collection(special.cases.C)"/>
+				<NavigationProperty Name="AtoEntityWithComplexKey"
+					Type="special.cases.EntityWithComplexKey"/>
 			</EntityType>
 			<EntityType Name="B">
 				<Key>
@@ -148,7 +150,10 @@
 			<EntityContainer Name="Container">
 				<EntitySet Name="EntitiesWithComplexKey" EntityType="special.cases.EntityWithComplexKey"/>
 				<EntitySet Name="Artists" EntityType="special.cases.ArtistsType"/>
-				<EntitySet Name="As" EntityType="special.cases.A"/>
+				<EntitySet Name="As" EntityType="special.cases.A">
+					<NavigationPropertyBinding Path="AtoEntityWithComplexKey"
+						Target="EntityWithComplexKey"/>
+				</EntitySet>
 				<EntitySet Name="Bs" EntityType="special.cases.B"/>
 				<ActionImport Name="HirePerson" Action="special.cases.AcHirePerson"/>
 			</EntityContainer>
