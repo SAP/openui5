@@ -1469,10 +1469,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("string validateValue", function (assert) {
-		var stringType = new StringType(null, {
-			minLength: 3,
-			maxLength: 10
-		});
+		var oLogMock = this.mock(Log),
+			stringType = new StringType(null, {
+				minLength: 3,
+				maxLength: 10
+			});
 
 		try {
 			assert.equal(stringType.validateValue("fff"), undefined, "validate test");
@@ -1521,6 +1522,16 @@ sap.ui.define([
 		}
 		assert.throws(function () { stringType.validateValue("cdb"); }, checkValidateException, "validate test");
 		assert.throws(function () { stringType.validateValue("adccsbba"); }, checkValidateException, "validate test");
+
+		stringType = new StringType(null, {
+			foo: "ab"
+		});
+
+		oLogMock.expects("warning")
+			.withExactArgs("Ignoring unknown constraint: 'foo'", null, "sap.ui.model.type.String");
+
+		// code under test
+		stringType.validateValue("ab");
 	});
 
 	//*********************************************************************************************
