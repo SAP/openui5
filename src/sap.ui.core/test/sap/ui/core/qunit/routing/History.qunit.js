@@ -9,7 +9,26 @@ sap.ui.define([
 
 	HashChanger.getInstance().init();
 
+	var bInitialHistoryUsePushState;
+
+	var fnBeforeHistoryModule = function(){
+		bInitialHistoryUsePushState = History._bUsePushState;
+		if (Device.browser.safari) {
+			// Safari has a restriction that the push state API can't be used more than 100 times in 30 seconds.
+			// The tests below break the restriction therefore we need to turn off push state for Safari.
+			History._bUsePushState = false;
+		}
+	};
+
+	var fnAfterHistoryModule = function(){
+		if (Device.browser.safari) {
+			History._bUsePushState = bInitialHistoryUsePushState;
+		}
+	};
+
 	QUnit.module("history.state enhancement", {
+		before: fnBeforeHistoryModule,
+		after: fnAfterHistoryModule,
 		beforeEach: function(assert) {
 			var that = this;
 			this.oExtendedHashChanger = HashChanger.getInstance();
@@ -78,7 +97,7 @@ sap.ui.define([
 		var that = this;
 		var pSetup = this.setup();
 
-		if (Device.browser.msie) {
+		if (!History._bUsePushState) {
 			return pSetup.then(function() {
 				assert.strictEqual(that.oHistory.getHistoryStateOffset(), undefined, "The functionality isn't available in IE");
 			});
@@ -154,7 +173,7 @@ sap.ui.define([
 				window.history.go(1);
 			}, function(sHash) {
 				if (sHash === "foo") {
-					assert.strictEqual(this.oHistory.getDirection(), Device.browser.msie ? "Unknown" : "Forwards");
+					assert.strictEqual(this.oHistory.getDirection(), !History._bUsePushState ? "Unknown" : "Forwards");
 				}
 			}.bind(this));
 		}.bind(this));
@@ -177,7 +196,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 		}.bind(this)).then(function() {
-			if (Device.browser.msie) {
+			if (!History._bUsePushState) {
 				assert.equal(oSpy.callCount, 0, "there's no log written for IE");
 			} else {
 				assert.ok(oSpy.alwaysCalledWith("Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History"), "The debug log is done correctly");
@@ -187,7 +206,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("The new direction method should return undefined if hashChanged event is fired without browser hash change", function(assert) {
-		assert.expect(Device.browser.msie ? 6 : 7);
+		assert.expect(!History._bUsePushState ? 6 : 7);
 		var oSpy, that = this;
 		return this.setup().then(function() {
 			return that.checkDirection(function() {
@@ -195,12 +214,12 @@ sap.ui.define([
 				that.oExtendedHashChanger.fireHashChanged("");
 			}, function(sHash) {
 				if (sHash === "") {
-					if (Device.browser.msie) {
+					if (!History._bUsePushState) {
 						assert.equal(oSpy.callCount, 0, "function is not called in IE");
 					} else {
 						assert.equal(oSpy.callCount, 1, "function is called once");
 					}
-					if (!Device.browser.msie) {
+					if (History._bUsePushState) {
 						assert.equal(oSpy.getCall(0).returnValue, undefined, "the function should return undefined");
 					}
 					assert.strictEqual(that.oHistory.getDirection(), "Unknown", "the direction should be Unknown");
@@ -234,6 +253,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("history management", {
+		before: fnBeforeHistoryModule,
+		after: fnAfterHistoryModule,
 		beforeEach : function() {
 			HashChanger.getInstance().replaceHash(""); //since the initial hash will be parsed, we want it to be empty on every test
 		}
