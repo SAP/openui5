@@ -9,6 +9,14 @@
 			data-sap-ui-libs="sap.m, sap.ui.layout,sap.tnt">
 	</script>
 	<script>
+		new sap.m.ToggleButton({
+			text: "Compact Mode",
+			pressed: !sap.ui.Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
+			press: function () {
+				jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
+				jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
+			}
+		}).placeAt('content');
 
 		var toolHeader = new sap.tnt.ToolHeader({
 			content: [
@@ -41,6 +49,18 @@
 						minWidth: "20px"
 					})
 				}),
+				new sap.m.Avatar({
+					src: "images/Woman_avatar_01.png",
+					initials: "UI",
+					displaySize: "XS"
+				}),
+				new sap.m.Avatar({
+					initials: "UI",
+					displaySize: "XS"
+				}),
+				new sap.m.Avatar({
+					displaySize: "XS"
+				}),
 				new sap.m.Button({
 					type: sap.m.ButtonType.Transparent,
 					text: "User Name",
@@ -68,11 +88,10 @@
 
 		var toolHeaderButtons = new sap.tnt.ToolHeader({
 			content: [
-			new sap.m.Button({
+				new sap.m.Button({
 					type: sap.m.ButtonType.Transparent,
 					text: "File",
 					press: function() {
-
 					},
 					layoutData: new sap.m.OverflowToolbarLayoutData({
 						priority: sap.m.OverflowToolbarPriority.Low
@@ -82,7 +101,6 @@
 					type: sap.m.ButtonType.Transparent,
 					text: "Edit",
 					press: function() {
-
 					},
 					layoutData: new sap.m.OverflowToolbarLayoutData({
 						priority: sap.m.OverflowToolbarPriority.Low
@@ -93,7 +111,6 @@
 					text: "Edit",
 					enabled: false,
 					press: function() {
-
 					},
 					layoutData: new sap.m.OverflowToolbarLayoutData({
 						priority: sap.m.OverflowToolbarPriority.Low
@@ -114,7 +131,6 @@
 					type: sap.m.ButtonType.Transparent,
 					icon: "images/avatar.png",
 					press: function() {
-
 					},
 					layoutData: new sap.m.OverflowToolbarLayoutData({
 						priority: sap.m.OverflowToolbarPriority.Low
@@ -139,6 +155,23 @@
 					type: sap.m.ButtonType.Transparent,
 					enabled: false,
 					text: "Navigate",
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.MenuButton({
+					type: sap.m.ButtonType.Transparent,
+					icon:'sap-icon://customer',
+				}),
+				new sap.m.MenuButton({
+					type: sap.m.ButtonType.Emphasized,
+					text: "Mega Menu"
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Emphasized,
+					text: "Mega Menu",
+					iconFirst:false,
+					icon: "sap-icon://megamenu",
 					layoutData: new sap.m.OverflowToolbarLayoutData({
 						priority: sap.m.OverflowToolbarPriority.Low
 					})
@@ -285,6 +318,56 @@
 			]
 		}).addStyleClass("sapUiLargeMarginTop");
 		toolHeaderObjStatus.placeAt('content');
+
+		var toolHeaderObjStatusInverted = new sap.tnt.ToolHeader({
+			content: [
+				new sap.m.ObjectStatus({
+					title:'Error Status Title',
+					text:'Error Status Text',
+					icon:'sap-icon://status-negative',
+					state:sap.ui.core.ValueState.Error,
+					inverted: true
+				}),
+				new sap.m.ObjectStatus({
+					text:'Warning Status Text',
+					icon:'sap-icon://status-critical',
+					state:sap.ui.core.ValueState.Warning,
+					active: true,
+					inverted: true
+				}),
+				new sap.m.ObjectStatus({
+					text:'Information Status Text',
+					icon:'sap-icon://hint',
+					state:sap.ui.core.ValueState.Information,
+					inverted: true
+				}),
+				new sap.m.ObjectStatus({
+					title:'Success Status Title',
+					text:'Success Status Text',
+					icon:'sap-icon://status-positive',
+					state:sap.ui.core.ValueState.Success,
+					inverted: true
+				}),
+				new sap.m.ObjectStatus({
+					title:'None Status Title',
+					text:'None Status Text',
+					icon:'sap-icon://status-inactive',
+					state:sap.ui.core.ValueState.None,
+					inverted: true
+				}),
+				new sap.m.ObjectStatus({
+					text:'Only text followed with only icon',
+					state:sap.ui.core.ValueState.Information,
+					inverted: true
+				}),
+				new sap.m.ObjectStatus({
+					icon:'sap-icon://hint',
+					state:sap.ui.core.ValueState.Information,
+					inverted: true
+				}),
+			]
+		}).addStyleClass("sapUiLargeMarginTop");
+		toolHeaderObjStatusInverted.placeAt('content');
 	</script>
 
 </head>
