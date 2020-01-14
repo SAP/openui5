@@ -46,10 +46,6 @@ sap.ui.define([
 					}
 				}
 			}
-		},
-		constructor: function(oTable) {
-			this._oTable = oTable;
-			SelectionPlugin.call(this);
 		}
 	});
 
@@ -72,7 +68,7 @@ sap.ui.define([
 		return {
 			headerSelector: {
 				type: "toggle",
-				visible: TableUtils.hasSelectAll(this._oTable)
+				visible: TableUtils.hasSelectAll(this.getParent())
 			}
 		};
 	};
@@ -84,7 +80,7 @@ sap.ui.define([
 	 */
 	BindingSelectionPlugin.prototype.onHeaderSelectorPress = function() {
 		if (this.getRenderConfig().headerSelector.visible) {
-			this._oTable._toggleSelectAll();
+			this.getParent()._toggleSelectAll();
 		}
 	};
 
@@ -96,7 +92,7 @@ sap.ui.define([
 	 */
 	BindingSelectionPlugin.prototype.onKeyboardShortcut = function(sType) {
 		if (sType === "toggle") {
-			this._oTable._toggleSelectAll();
+			this.getParent()._toggleSelectAll();
 		} else if (sType === "clear") {
 			this.clearSelection();
 		}

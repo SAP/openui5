@@ -1332,7 +1332,7 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._createLegacySelectionPlugin = function() {
-		return new BindingSelectionPlugin(this);
+		return new BindingSelectionPlugin();
 	};
 
 	return AnalyticalTable;
