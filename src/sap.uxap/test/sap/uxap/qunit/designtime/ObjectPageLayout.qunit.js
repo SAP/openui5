@@ -160,7 +160,7 @@ sap.ui.define([
 		afterRedo : fnConfirmSection1IsOn2ndPosition
 	});
 
-	// check mmoving anchors
+	// check moving anchors
 	elementActionTest("Checking the move action for sections based on the internal anchor bar", {
 		xmlView :
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
@@ -221,14 +221,27 @@ sap.ui.define([
 
 			// ObjectPageLayout
 			//    headerContent
+			//        HorizontalLayout
 			//    sections
-			//        ObjectPageSection
+			//        visible ObjectPageSection based on ux rules
+			//        visible ObjectPageSection based on ux rules
 
-			this.oObjectPageSection = new ObjectPageSection("movedSection");
+			this.oObjectPageSection = new ObjectPageSection("movedSection", {
+				title: "makeMeVisible1",
+				subSections: [new ObjectPageSubSection({
+					blocks: [new Button({text: "makeMeVisible1"})]
+				})]
+			});
 			this.oHorizontalLayout = new HorizontalLayout("horizontalLayout");
 			this.oObjectPageLayout = new ObjectPageLayout("layout", {
 				headerContent : [this.oHorizontalLayout],
-				sections : [this.oObjectPageSection]
+				sections : [this.oObjectPageSection,
+					new ObjectPageSection("otherSection", {
+						title: "makeMeVisible2",
+						subSections: [new ObjectPageSubSection({
+							blocks: [new Button({text: "makeMeVisible2"})]
+						})]
+					})]
 			});
 
 			var oCommandFactory = new CommandFactory();
@@ -249,26 +262,21 @@ sap.ui.define([
 
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
-
-				this.oMovedSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
 				this.oHeaderContentAggregationOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout).getAggregationOverlay("headerContent");
 				this.oElementMover = this.oDragDropPlugin.getElementMover();
-				this.oElementMover.setMovedOverlay(this.oMovedSectionOverlay);
-
 				done();
 			}.bind(this));
 
 		},
 		afterEach : function(assert) {
-			this.oMovedSectionOverlay .destroy();
-			this.oHeaderContentAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
 			this.oObjectPageLayout.destroy();
 		}
 	});
 
 	QUnit.test("when DT is loaded and trying to move the section into the headerContent...", function(assert) {
-		this.oElementMover.setMovedOverlay(this.oMovedSectionOverlay);
+		var oMovedSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
+		this.oElementMover.setMovedOverlay(oMovedSectionOverlay);
 		return this.oElementMover.checkTargetZone(this.oHeaderContentAggregationOverlay)
 			.then(function(bTargetZone) {
 				assert.notOk(bTargetZone,
@@ -276,6 +284,16 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.test("when DT is loaded and trying to move the anchor representation of a section into the headerContent...", function(assert) {
+		var oMovedAnchorBarButton = this.oObjectPageLayout.getAggregation("_anchorBar").getContent()[0];
+		var oMovedAnchorBarButtonOverlay = OverlayRegistry.getOverlay(oMovedAnchorBarButton);
+		this.oElementMover.setMovedOverlay(oMovedAnchorBarButtonOverlay);
+		return this.oElementMover.checkTargetZone(this.oHeaderContentAggregationOverlay)
+			.then(function(bTargetZone) {
+				assert.notOk(bTargetZone,
+					"then the headerContent aggregation is not a possible target zone");
+			});
+	});
 
 	QUnit.module("Given ObjectPageLayout with two Sections,", {
 		beforeEach : function(assert) {
