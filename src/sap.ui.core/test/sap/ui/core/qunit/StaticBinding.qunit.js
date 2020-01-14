@@ -14,7 +14,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var MyObject = ManagedObject.extend("MyObject", {
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		MyObject = ManagedObject.extend("MyObject", {
 		metadata: {
 			properties: {
 				value: {type: "string"},
@@ -29,8 +30,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.module("Basic functionality", {
+	QUnit.module("sap.ui.model.StaticBinding: Basic functionality", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			this.static = new StaticBinding("test");
 			this.staticWithFormatter = new StaticBinding("test");
 			this.staticWithFormatter.setFormatter(function(sValue) {
@@ -43,6 +45,8 @@ sap.ui.define([
 			this.static = null;
 			this.staticWithFormatter = null;
 			this.staticWithType = null;
+			// reset the language
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -75,8 +79,9 @@ sap.ui.define([
 		assert.equal(this.staticWithType.getValue(), 456, "typed value is parsed correctly");
 	});
 
-	QUnit.module("In CompositeBinding", {
+	QUnit.module("sap.ui.model.StaticBinding: In CompositeBinding", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			this.static1 = new StaticBinding("test");
 			this.static2 = new StaticBinding(123);
 			this.composite = new CompositeBinding([this.static1, this.static2]);
@@ -85,6 +90,8 @@ sap.ui.define([
 			this.static1 = null;
 			this.static2 = null;
 			this.composite = null;
+			// reset the language
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -93,14 +100,17 @@ sap.ui.define([
 		assert.equal(this.composite.getExternalValue(), "test 123", "external value is space seperated");
 	});
 
-	QUnit.module("Created from binding info", {
+	QUnit.module("sap.ui.model.StaticBinding: Created from binding info", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			this.model = new JSONModel({
 				string: "foo"
 			});
 		},
 		afterEach: function() {
 			this.model = null;
+			// reset the language
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
