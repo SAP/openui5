@@ -264,8 +264,12 @@ sap.ui.define([
 				group: "Plugins",
 				module: "./plugins/{name}.qunit",
 				sinon: false /*uses Mockserver*/
+			},
+
+			"Support of external plugins": {
+				group: "Plugins",
+				module: "./plugins/SupportOfExternalPlugins.qunit"
 			}
 		}
 	};
-
 });
