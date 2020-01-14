@@ -1,45 +1,55 @@
 <mvc:View controllerName="sap.m.sample.GenericTileAsKPITile.Page" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin" subheader="Expenses" press="press">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin" subheader="Expenses" press="onPress">
 		<TileContent unit="EUR" footer="Current Quarter">
 			<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="US Profit Margin" press="press">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="US Profit Margin" press="onPress">
 		<TileContent unit="Unit">
 			<NumericContent scale="%" value="12" valueColor="Critical" indicator="Up" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Sales Fulfillment Application Title"
-				 subheader="Subtitle" press="press">
+				 subheader="Subtitle" press="onPress">
 		<TileContent unit="EUR" footer="Current Quarter">
 			<ImageContent src="sap-icon://home-share" />
 		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Master Data Type"
-				 subheader="Subtitle" press="press">
+				 subheader="Subtitle" press="onPress">
 		<TileContent>
 			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/SAPLogoLargeTile_28px_height.png" />
 		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Master Data Type With a Long Title Without an Icon"
-				 subheader="Subtitle Launch Tile" mode="HeaderMode" press="press">
+				 subheader="Subtitle Launch Tile" mode="HeaderMode" press="onPress">
 		<TileContent unit="EUR" footer="Current Quarter" />
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Jessica D. Prince Senior Consultant"
-				 subheader="Department" press="press">
+				 subheader="Department" press="onPress">
 		<TileContent>
 			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/ProfileImage_LargeGenTile.png" />
 		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop"
+	             backgroundImage="test-resources/sap/m/images/NewsImage1.png"
+	             frameType="OneByOne" press="onPress">
+		<TileContent footer="Report Available" frameType="OneByOne">
+			<NewsContent
+					contentText="Realtime Business Service Analytics"
+					subheader="SAP Analytics Cloud" />
+		</TileContent>
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop"
 			backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
-			frameType="TwoByOne" press="pressOnTileOne">
+			frameType="TwoByOne" press="onPress">
 		<TileContent footer="August 21, 2016">
 			<NewsContent
 					contentText="Wind Map: Monitoring Real-Time and Forecasted Wind Conditions across the Globe"
@@ -50,7 +60,7 @@
 	<SlideTile class="sapUiTinyMarginBegin sapUiTinyMarginTop" transitionTime="250" displayTime="2500">
 		<GenericTile
 				backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
-				frameType="TwoByOne" press="pressOnTileOne">
+				frameType="TwoByOne" press="onPress">
 			<TileContent footer="August 21, 2016">
 				<NewsContent
 						contentText="Wind Map: Monitoring Real-Time and Forecasted Wind Conditions across the Globe"
@@ -69,7 +79,7 @@
 	</SlideTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Feed Tile that shows updates of the last feeds given to a specific topic:"
-				 frameType="TwoByOne" press="press">
+				 frameType="TwoByOne" press="onPress">
 		<TileContent footer="New Notifications">
 			<FeedContent contentText="@@notify Great outcome of the Presentation today. New functionality well received."
 						 subheader="About 1 minute ago in Computer Market" value="352" />
