@@ -9,12 +9,15 @@ sap.ui.define([
 ], function (Log, library, Opa5, TestUtils) {
 	"use strict";
 
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = library.MessageType;
+	var MessageType = library.MessageType, // shortcut for sap.ui.core.MessageType
+		ValueState = library.ValueState; // shortcut for sap.ui.core.ValueState
+
 
 	return {
 		checkMessages : function (Given, When, Then, sUIComponent) {
-			var sNoteBoundWarning = "Enter customer reference if available",
+			var sDiscountFailure =
+					"User John Doe is not authorized to approve more than 50% discount",
+				sNoteBoundWarning = "Enter customer reference if available",
 				sNoteFailure = "Property `Note` value `RAISE_ERROR` not allowed!",
 				sQuantityBoundError = "Minimum order quantity is 2",
 				sQuantityFailure = "Value must be greater than 0",
@@ -214,6 +217,25 @@ sap.ui.define([
 			When.onTheSuccessInfo.confirm();
 			Then.onTheMainPage.checkMessagesButtonCount(2);
 
+			// Function scenario
+			When.onTheMainPage.selectSalesOrder(2);
+			When.onTheMainPage.pressOpenSimulateDiscountDialog();
+			Then.onTheSimulateDiscountDialog
+				.checkControlValue("SimulateDiscountForm::SalesOrderID", "0500000002");
+			Then.onTheSimulateDiscountDialog
+				.checkControlValue("SimulateDiscountForm::GrossAmount", "250.73");
+			Then.onTheSimulateDiscountDialog
+				.checkControlValue("SimulateDiscountResult::Result", "");
+			When.onTheSimulateDiscountDialog.enterDiscount(25);
+			When.onTheSimulateDiscountDialog.executeSimulateDiscount();
+			Then.onTheSimulateDiscountDialog
+				.checkControlValue("SimulateDiscountResult::Result", "188.05");
+			When.onTheSimulateDiscountDialog.enterDiscount(75);
+			When.onTheSimulateDiscountDialog.executeSimulateDiscount();
+			Then.onTheSimulateDiscountDialog.checkDiscountValueState(ValueState.Error,
+				sDiscountFailure);
+			When.onTheSimulateDiscountDialog.close();
+
 			Then.onAnyPage.checkLog([{
 					component : "sap.ui.model.odata.v4.Context",
 					level : Log.Level.ERROR,
@@ -225,6 +247,20 @@ sap.ui.define([
 					message: "POST on 'SalesOrderList('0500000004')/SO_2_SOITEM' failed"
 						+ "; will be repeated automatically",
 					details : "Value must be greater than 0"
+			}, {
+				component : "sap.ui.model.odata.v4.ODataContextBinding",
+				level : Log.Level.ERROR,
+				message: "Failed to execute /SalesOrderList('0500000002')/"
+					+ "com.sap.gateway.default.zui5_epm_sample.v0002."
+					+ "SalesOrderSimulateDiscount(...)",
+				details : sDiscountFailure
+			}, {
+				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+				level : Log.Level.ERROR,
+				message: "Failed to read path /SalesOrderList('0500000002')/"
+					+ "com.sap.gateway.default.zui5_epm_sample.v0002."
+					+ "SalesOrderSimulateDiscount(...)/value",
+				details : sDiscountFailure
 			}]);
 
 			Then.iTeardownMyUIComponent();

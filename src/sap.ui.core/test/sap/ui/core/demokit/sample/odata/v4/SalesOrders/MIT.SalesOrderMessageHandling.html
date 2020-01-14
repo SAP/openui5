@@ -174,5 +174,32 @@
 				because of the refreshSingle() triggered by the <code>Save sales order</code> in the
 				<code>Sales Order Details</code> section).</li>
 		</ol>
+		<h4>Function scenario</h4>
+		<ol>
+			<li>Select sales order with number "0500000002".</li>
+			<li>Press the <code>Simulate discount for selected sales order</code> button in the
+				<code>New Sales Orders</code> table.</li>
+			<li><b>Check:</b> A <code>Simulate Discount</code> dialog is opened.</li>
+			<li><b>Check:</b> The content for the <code>Sales Order:</code> text field is
+				"0500000002".</li>
+			<li><b>Check:</b> The content for the <code>Gross Amount:</code> text field is "250.73".
+				</li>
+			<li><b>Check:</b> The <code>Calculated Gross Amount:</code> text field is empty.</li>
+			<li>Enter a discount of "25" into the <code>Reduction in %:</code> step input control.
+				</li>
+			<li>Press the <code>Execute discount simulation</code> button in the dialog.</li>
+			<li><b>Check:</b> The <code>Calculated Gross Amount:</code> text field is "188.05".
+				</li>
+			<li>Enter a discount of "75" into the <code>Reduction in %:</code> step input control.
+				</li>
+			<li>Press the <code>Execute discount simulation</code> button in the dialog.</li>
+			<li><b>Check:</b> The error messages popover has opened and you got an error
+				"User John Doe is not authorized to approve more than 50% discount".
+			</li>
+			<li><b>Check:</b> The step input control has a red border. If you click into the step
+				input control you see the same error "User John Doe is not authorized to approve
+				more than 50% discount" beside the step input control.
+			</li>
+		</ol>
 	</body>
 </html>
