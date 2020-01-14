@@ -98,12 +98,14 @@ sap.ui.define([
 			var oModel = new JSONModel();
 			oModel.setData(aMockMessages);
 
-			var viewModel = new JSONModel();
-			viewModel.setData({
-				messagesLength: aMockMessages.length + ''
+			var oBackButton = new Button({
+				icon: sap.ui.core.IconPool.getIconURI("nav-back"),
+				visible: false,
+				press: function () {
+					that.oMessageView.navigateBack();
+					this.setVisible(false);
+				}
 			});
-
-			this.getView().setModel(viewModel);
 
 			this.oMessageView = new MessageView({
 					showDetailsPageHeader: false,
@@ -116,16 +118,9 @@ sap.ui.define([
 					},
 					groupItems: true
 				});
-			var oBackButton = new Button({
-					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
-					visible: false,
-					press: function () {
-						that.oMessageView.navigateBack();
-						this.setVisible(false);
-					}
-				});
 
-			this.oMessageView.setModel(oModel);
+			this.getView().setModel(oModel);
+			this.getView().addDependent(this.oMessageView);
 
 			this.oDialog = new Dialog({
 				content: this.oMessageView,
@@ -145,6 +140,57 @@ sap.ui.define([
 				}),
 				verticalScrolling: false
 			});
+		},
+
+		// Display the button type according to the message with the highest severity
+		// The priority of the message types are as follows: Error > Warning > Success > Info
+		buttonTypeFormatter: function () {
+			var sHighestSeverity;
+			var aMessages = this.getView().getModel().oData;
+
+			aMessages.forEach(function (sMessage) {
+				switch (sMessage.type) {
+					case "Error":
+						sHighestSeverity = "Negative";
+						break;
+					case "Warning":
+						sHighestSeverity = sHighestSeverity !== "Negative" ? "Critical" : sHighestSeverity;
+						break;
+					case "Success":
+						sHighestSeverity = sHighestSeverity !== "Negative" && sHighestSeverity !== "Critical" ?  "Success" : sHighestSeverity;
+						break;
+					default:
+						sHighestSeverity = !sHighestSeverity ? "Neutral" : sHighestSeverity;
+						break;
+				}
+			});
+
+			return sHighestSeverity;
+		},
+
+		// Set the button icon according to the message with the highest severity
+		buttonIconFormatter: function () {
+			var sIcon;
+			var aMessages = this.getView().getModel().oData;
+
+			aMessages.forEach(function (sMessage) {
+				switch (sMessage.type) {
+					case "Error":
+						sIcon = "sap-icon://message-error";
+						break;
+					case "Warning":
+						sIcon = sIcon !== "sap-icon://message-error" ? "sap-icon://message-warning" : sIcon;
+						break;
+					case "Success":
+						sIcon = "sap-icon://message-error" && sIcon !== "sap-icon://message-warning" ? "sap-icon://message-success" : sIcon;
+						break;
+					default:
+						sIcon = !sIcon ? "sap-icon://message-information" : sIcon;
+						break;
+				}
+			});
+
+			return sIcon;
 		},
 
 		handleMessageViewPress: function (oEvent) {
