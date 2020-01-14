@@ -2392,7 +2392,7 @@ sap.ui.define([
 			fnBind(oBindingInfo);
 			assert.ok(oInnerBindRows.calledOnce, "Rebind - _bindRows was called once");
 			assert.ok(oInnerBindRows.calledWith(oBindingInfo), "Rebind - _bindRows was called with the correct parameters");
-			assert.ok(oInnerUnbindRows.notCalled, "Rebind - _unbindRows was not called");
+			assert.ok(oInnerUnbindRows.calledOnce, "Rebind - _unbindRows was called");
 			assert.ok(oDestroyRows.notCalled, "Rebind - destroyRows was not called");
 			assert.ok(oBindAggregationOfControl.calledOnce, "Rebind - bindAggregation of Control was called once");
 			assert.ok(oBindAggregationOfControl.calledWithExactly("rows", oBindingInfo),
@@ -2418,7 +2418,7 @@ sap.ui.define([
 			assert.ok(oInnerBindRows.calledOnce, "Rebind to non-existing model - _bindRows was called once");
 			assert.ok(oInnerBindRows.calledWith(oTable.getBindingInfo("rows")),
 				"Rebind to non-existing model - _bindRows was called with the correct parameters");
-			assert.ok(oInnerUnbindRows.notCalled, "Rebind to non-existing - _unbindRows was not called");
+			assert.ok(oInnerUnbindRows.calledOnce, "Rebind to non-existing model - _unbindRows was called");
 			assert.ok(oDestroyRows.notCalled, "Rebind to non-existing model - destroyRows was not called");
 			assert.ok(oBindAggregationOfControl.calledOnce, "Rebind to non-existing model - bindAggregation of Control was called once");
 			assert.ok(oBindAggregationOfControl.calledWithExactly("rows", oTable.getBindingInfo("rows")),

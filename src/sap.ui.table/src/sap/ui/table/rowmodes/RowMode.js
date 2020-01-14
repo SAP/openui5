@@ -146,7 +146,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var Hook = TableUtils.Hook.Keys;
 
-		TableUtils.Hook.register(oTable, Hook.Table.UnbindRows, this._onTableUnbindRows, this);
+		TableUtils.Hook.register(oTable, Hook.Table.RowsUnbound, this._onTableRowsUnbound, this);
 		TableUtils.Hook.register(oTable, Hook.Table.UpdateRows, this._onTableUpdateRows, this);
 	};
 
@@ -159,7 +159,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var Hook = TableUtils.Hook.Keys;
 
-		TableUtils.Hook.deregister(oTable, Hook.Table.UnbindRows, this._onTableUnbindRows, this);
+		TableUtils.Hook.deregister(oTable, Hook.Table.RowsUnbound, this._onTableRowsUnbound, this);
 		TableUtils.Hook.deregister(oTable, Hook.Table.UpdateRows, this._onTableUpdateRows, this);
 	};
 
@@ -326,7 +326,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	RowMode.prototype._onTableUnbindRows = function() {
+	RowMode.prototype._onTableRowsUnbound = function() {
 		clearTimeout(this.getTable()._mTimeouts.refreshRowsCreateRows);
 		this.updateTable(TableUtils.RowsUpdateReason.Unbind);
 	};
