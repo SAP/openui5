@@ -77,8 +77,8 @@ sap.ui.define([
 		});
 	}
 
-	function pressButton(oOpa5, sId) {
-		return Helper.pressButton(oOpa5, sViewName, sId);
+	function pressButton(oOpa5, sId, bSearchOpenDialogs) {
+		return Helper.pressButton(oOpa5, sViewName, sId, bSearchOpenDialogs);
 	}
 
 	Opa5.createPageObjects({
@@ -92,6 +92,7 @@ sap.ui.define([
 						actions : new EnterText({ clearTextFirst : true, text : sNewNoteValue }),
 						controlType : "sap.m.Input",
 						id : "Note::new",
+						searchOpenDialogs : true,
 						success : function (oNewNoteInput) {
 							Opa5.assert.ok(true, "Note text set to " + sNewNoteValue);
 						},
@@ -99,12 +100,13 @@ sap.ui.define([
 					});
 				},
 				confirmDialog : function () {
-					return pressButton(this, "confirmCreateSalesOrder");
+					return pressButton(this, "confirmCreateSalesOrder", true);
 				},
 				pressValueHelpOnCurrencyCode : function () {
 					return this.waitFor({
 						controlType : "sap.ui.core.sample.common.ValueHelp",
 						id : "CurrencyCode::new",
+						searchOpenDialogs : true,
 						success : function (oValueHelp) {
 							oValueHelp.onValueHelp();
 							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
@@ -119,6 +121,7 @@ sap.ui.define([
 						controlType : "sap.ui.core.sample.common.ValueHelp",
 						matchers : new Interactable(),
 						id : "CurrencyCode::new",
+						searchOpenDialogs : true,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(oValueHelp.getAggregation("field").getShowValueHelp(),
 								"CurrencyCode has value help");
@@ -130,6 +133,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType : "sap.m.Input",
 						id : "BuyerID::new",
+						searchOpenDialogs : true,
 						success : function (oNewBuyerIDInput) {
 							Opa5.assert.strictEqual(oNewBuyerIDInput.getValue(), sExpectedBuyerID,
 								"New Buyer ID");
@@ -143,6 +147,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType : "sap.m.Input",
 						id : "Note::new",
+						searchOpenDialogs : true,
 						success : function (oNewNoteInput) {
 							sLastNewNoteValue = oNewNoteInput.getValue();
 							if (sExpectedNote) {
@@ -452,6 +457,9 @@ sap.ui.define([
 				},
 				pressMessagesButton : function () {
 					return pressButton(this, "showMessages");
+				},
+				pressOpenSimulateDiscountDialog : function () {
+					return pressButton(this, "openSimulateDiscountDialog");
 				},
 				pressRefreshAllButton : function () {
 					return pressButton(this, "refreshAll");
@@ -954,16 +962,17 @@ sap.ui.define([
 		onTheSalesOrderSchedulesDialog : {
 			actions : {
 				close : function () {
-					return pressButton(this, "closeSalesOrderSchedules");
+					return pressButton(this, "closeSalesOrderSchedules", true);
 				},
 				deleteSalesOrderSchedules : function () {
-					return pressButton(this, "deleteSalesOrderSchedules");
+					return pressButton(this, "deleteSalesOrderSchedules", true);
 				},
 				selectAll : function () {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.CheckBox",
 						id : "SO_2_SCHDL-sa",
+						searchOpenDialogs : true,
 						success : function (oCheckBox) {
 							Opa5.assert.ok(true, "All schedule lines selected");
 						},
@@ -980,6 +989,45 @@ sap.ui.define([
 						success : function (oControl) {
 							Opa5.assert.strictEqual(oControl.getItems().length, iLength,
 								iLength + " schedule lines");
+						},
+						viewName : sViewName
+					});
+				}
+			}
+		},
+		/*
+		 * Actions and assertions for the "Simulate Discount" dialog
+		 */
+		onTheSimulateDiscountDialog : {
+			actions : {
+				close : function () {
+					return pressButton(this, "closeSimulateDiscountDialog", true);
+				},
+				enterDiscount : function (fDiscount) {
+					return Helper.changeStepInputValue(this, sViewName,
+						"SimulateDiscountForm::Discount", fDiscount, true);
+				},
+				executeSimulateDiscount : function () {
+					return pressButton(this, "executeSimulateDiscount", true);
+				}
+			},
+			assertions : {
+				checkControlValue : function (sID, sValue) {
+					return Helper.checkControlValue(this, sViewName, sID, sValue, true);
+				},
+				checkDiscountValueState : function (sState, sMessage) {
+					return this.waitFor({
+						controlType : "sap.m.StepInput",
+						id : "SimulateDiscountForm::Discount",
+						searchOpenDialogs : true,
+						success : function (oStepInput) {
+							Opa5.assert.strictEqual(oStepInput.getValueState(), sState,
+								"checkStepInputValueState('" + oStepInput.getId() + "', '"
+									+ sState + "')");
+							if (sMessage) {
+								Opa5.assert.strictEqual(oStepInput.getValueStateText(), sMessage,
+									"ValueStateText: " + sMessage);
+							}
 						},
 						viewName : sViewName
 					});
@@ -1014,6 +1062,5 @@ sap.ui.define([
 				}
 			}
 		}
-
 	});
 });

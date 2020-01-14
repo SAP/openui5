@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_XJG',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="Z__UI" />
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Z__COMMON" />
@@ -107,7 +107,7 @@
 				<Property Name="DimUnit" Type="Edm.String" Nullable="false" MaxLength="3" />
 				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
-				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" Nullable="false" />
+				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" />
 				<NavigationProperty Name="PRODUCT_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner" Nullable="false" />
 			</EntityType>
 			<EntityType Name="SalesOrder">
@@ -131,7 +131,7 @@
 				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="SOItemCount" Type="Edm.Int16" />
-				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" Nullable="false" />
+				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" />
 				<NavigationProperty Name="SO_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner" />
 				<NavigationProperty Name="SO_2_SCHDL" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSchedule)" Partner="SCHDL_2_SO" ContainsTarget="true">
 					<OnDelete Action="Cascade" />
@@ -155,7 +155,7 @@
 				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" />
 				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" DefaultValue="EA" MaxLength="3" />
 				<Property Name="ProductID" Type="Edm.String" Nullable="false" MaxLength="10" />
-				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" Nullable="false" />
+				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" />
 				<NavigationProperty Name="SOITEM_2_PRODUCT" Type="com.sap.gateway.default.zui5_epm_sample.v0002.Product" />
 				<NavigationProperty Name="SOITEM_2_SCHDL" Type="com.sap.gateway.default.zui5_epm_sample.v0002.ItemSchedule" Nullable="false" ContainsTarget="true" />
 				<NavigationProperty Name="SOITEM_2_SO" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" Partner="SO_2_SOITEM" />
@@ -181,7 +181,7 @@
 				<Property Name="GeoLocation" Type="com.sap.gateway.default.zui5_epm_sample.v0002.GeoLocation" Nullable="false" />
 			</ComplexType>
 			<ComplexType Name="GeoLocation">
-				<Property Name="Longitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" />
+				<Property Name="Longitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" DefaultValue="0.0"/><!-- BEWARE: manual change! -->
 				<Property Name="Latitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" />
 			</ComplexType>
 			<ComplexType Name="Message">
@@ -227,6 +227,15 @@
 			<Function Name="FuGetSOContactList">
 				<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false" MaxLength="10" />
 				<ReturnType Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Contact)" />
+			</Function>
+			<Function Name="SalesOrderLineItem_CheckAvailability" IsBound="true">
+				<Parameter Name="SalesOrderLineItem" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem" Nullable="false"/>
+				<ReturnType Type="Edm.Decimal" Nullable="false" Precision="10" Scale="3"/>
+			</Function>
+			<Function Name="SalesOrderSimulateDiscount" IsBound="true">
+				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
+				<Parameter Name="Discount" Type="Edm.Byte" Nullable="false" />
+				<ReturnType Type="Edm.String" Nullable="false" />
 			</Function>
 			<EntityContainer Name="Container">
 				<EntitySet Name="BusinessPartnerList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner">

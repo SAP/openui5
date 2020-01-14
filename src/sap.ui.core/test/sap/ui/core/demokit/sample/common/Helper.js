@@ -16,7 +16,7 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 	Helper = {
 
 		/**
-		 * Change the value of a sap.m.Input field
+		 * Changes the value of a sap.m.Input field
 		 *
 		 * @param {sap.ui.test.Opa5} oOpa5
 		 *  An instance of Opa5 to access the current page object
@@ -40,6 +40,42 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 				success : function (oInput) {
 					Opa5.assert.strictEqual(oInput.getValue(), sValue, sId + ": Input value set to "
 						+ sValue);
+				},
+				viewName : sViewName
+			});
+		},
+
+		/**
+		 * Changes the value of a sap.m.StepInput field
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the searched control
+		 * @param {string} sId
+		 *  The ID of a "sap.m.StepInput" control inside the view sViewName
+		 * @param {string} sValue
+		 *  The external value of the control as a string
+		 * @param {boolean} bSearchOpenDialogs
+		 *  If set to true, Opa5 will only search in open dialogs
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		changeStepInputValue : function (oOpa5, sViewName, sId, sValue, bSearchOpenDialogs) {
+			oOpa5.waitFor({
+				actions : new EnterText({clearTextFirst : true, text : sValue}),
+				controlType : "sap.m.StepInput",
+				id : sId,
+				searchOpenDialogs : bSearchOpenDialogs,
+				viewName : sViewName
+			});
+			return oOpa5.waitFor({
+				controlType : "sap.m.StepInput",
+				id : sId,
+				searchOpenDialogs : bSearchOpenDialogs,
+				success : function (oControl) {
+					Opa5.assert.strictEqual(oControl.getValue(), sValue,
+						"Control: " + sId + " Value is: " + oControl.getValue());
 				},
 				viewName : sViewName
 			});
@@ -89,6 +125,36 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 				matchers : new Interactable(),
 				success : function (oButton) {
 					Opa5.assert.ok(oButton.getEnabled(), "Button is enabled: " + sButtonId);
+				},
+				viewName : sViewName
+			});
+		},
+
+		/**
+		 * Checks the value/text of a sap.m.Input/Text field
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the searched control
+		 * @param {string} sId
+		 *  The ID of a "sap.m.Input" or "sap.m.Text"  control inside the view sViewName
+		 * @param {string} sValue
+		 *  The external value of the control as a string
+		 * @param {boolean} bSearchOpenDialogs
+		 *  If set to true, Opa5 will only search in open dialogs
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		checkControlValue : function (oOpa5, sViewName, sId, sValue, bSearchOpenDialogs) {
+			oOpa5.waitFor({
+				//controlType : [sap.m.Text, sap.m.Input],
+				id : sId,
+				searchOpenDialogs : bSearchOpenDialogs,
+				success : function (oControl) {
+					var sActual = oControl.getValue ? oControl.getValue() : oControl.getText();
+					Opa5.assert.strictEqual(sActual, sValue,
+						"Control: " + sId + " Value is: " + sActual);
 				},
 				viewName : sViewName
 			});

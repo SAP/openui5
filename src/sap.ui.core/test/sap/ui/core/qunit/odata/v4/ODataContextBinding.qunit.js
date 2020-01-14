@@ -1736,82 +1736,164 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{
-		error : {
-			details : [
-				{target : "_it"},
-				{target : "_it/Name"},
-				{target : "bar"},
-				{target : null},
-				{}
-			],
-			target : "foo"
-		},
-		reported : {
-			details : [
-				{target : ""},
-				{target : "Name"},
-				{},
-				{},
-				{}
-			]
-		}
-	}, {
-		error : {target : "_it"},
-		reported : {target : ""}
-	}, {
-		error : {target : "_it/Name"},
-		reported : {target : "Name"}
-	}, {
-		error : {},
-		reported : {}
-	}, {
-		// no error -> nothing reported
-	}].forEach(function (oFixture, i) {
-		QUnit.test("_execute: bound operation failure with messages #" + i, function (assert) {
-			var oParentContext = Context.create(this.oModel, {/*binding*/}, "/TEAMS('42')"),
-				oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
-					{$$groupId : "groupId"}),
-				oBindingMock = this.mock(oBinding),
-				oError = new Error("Operation failed"),
-				oGroupLock = {
-					getGroupId : function () {},
-					unlock : function () {}
-				},
-				oOperationMetadata = {
-					$IsBound : true,
-					$Parameter : [{
-						$Name : "_it"
-					}]
-				};
+[{
+	error : {
+		details : [
+			{target : "_it"},
+			{target : "_it/Name"},
+			{target : "unknown"}, // unknown operation parameter
+			{target : null},
+			{target : ""},
+			{target : "$filter"}, // starting with $ (e.g. system query option)
+			{target : "Param"},
+			{target : "Complex/Param"}
+		],
+		target : "foo"
+	},
+	reported : {
+		details : [
+			{target : "/TEAMS('42')"},
+			{target : "/TEAMS('42')/Name"},
+			{},
+			{},
+			{},
+			{},
+			{target : "/TEAMS('42')/name.space.Operation(...)/$Parameter/Param"},
+			{target : "/TEAMS('42')/name.space.Operation(...)/$Parameter/Complex/Param"}
+		]
+	}
+}, {
+	error : {target : "_it"},
+	reported : {target : "/TEAMS('42')"}
+}, {
+	error : {target : "_it/Name"},
+	reported : {target : "/TEAMS('42')/Name"}
+}, {
+	error : {},
+	reported : {}
+}, {
+	// no error -> nothing reported
+}].forEach(function (oFixture, i) {
+	QUnit.test("_execute: bound operation failure with messages #" + i, function (assert) {
+		var oParentContext = Context.create(this.oModel, {/*binding*/}, "/TEAMS('42')"),
+			oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
+				{$$groupId : "groupId"}),
+			oBindingMock = this.mock(oBinding),
+			oError = new Error("Operation failed"),
+			oGroupLock = {
+				getGroupId : function () {},
+				unlock : function () {}
+			},
+			oOperationMetadata = {
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it"
+				}, {
+					$Name : "Complex"
+				}, {
+					$Name : "Param"
+				}]
+			};
 
-			oError.error = oFixture.error;
-			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
-				.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
-				.returns(SyncPromise.resolve([oOperationMetadata]));
-			oBindingMock.expects("createCacheAndRequest")
-				.withExactArgs(sinon.match.same(oGroupLock),
-					"/TEAMS('42')/name.space.Operation(...)",
-					sinon.match.same(oOperationMetadata), sinon.match.func)
-				.rejects(oError);
-			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
-			this.mock(oGroupLock).expects("unlock").withExactArgs(true);
-			this.mock(this.oModel).expects("reportError")
-				.withExactArgs("Failed to execute /TEAMS('42')/name.space.Operation(...)",
-					sClassName, sinon.match.same(oError))
-				.callsFake(function (sLogMessage, sReportingClassName, oError) {
-					assert.strictEqual(oError.resourcePath, "TEAMS('42')");
-					assert.deepEqual(oError.error, oFixture.reported);
-				});
-
-			// code under test
-			return oBinding._execute(oGroupLock).then(function () {
-				assert.ok(false);
-			}, function (oError0) {
-				assert.strictEqual(oError0, oError);
+		oError.error = oFixture.error;
+		oError.resourcePath = "~";
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+			.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+			.returns(SyncPromise.resolve([oOperationMetadata]));
+		oBindingMock.expects("createCacheAndRequest")
+			.withExactArgs(sinon.match.same(oGroupLock),
+				"/TEAMS('42')/name.space.Operation(...)",
+				sinon.match.same(oOperationMetadata), sinon.match.func)
+			.rejects(oError);
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
+		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+		this.mock(this.oModel).expects("reportError")
+			.withExactArgs("Failed to execute /TEAMS('42')/name.space.Operation(...)",
+				sClassName, sinon.match.same(oError))
+			.callsFake(function (sLogMessage, sReportingClassName, oError) {
+				assert.strictEqual(oError.resourcePath, "~"); // unchanged
+				assert.deepEqual(oError.error, oFixture.reported);
 			});
+
+		// code under test
+		return oBinding._execute(oGroupLock).then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
 		});
 	});
+});
+
+	//*********************************************************************************************
+[{
+	error : {
+		details : [
+			{target : "bar"},
+			{target : null},
+			{target : "Param"},
+			{target : "Complex/Param"}
+		],
+		target : "foo"
+	},
+	reported : {
+		details : [
+			{},
+			{},
+			{target : "/ActionImport(...)/$Parameter/Param"},
+			{target : "/ActionImport(...)/$Parameter/Complex/Param"}
+		]
+	}
+}, {
+	error : {},
+	reported : {}
+}, {
+	// no error -> nothing reported
+}].forEach(function (oFixture, i) {
+	QUnit.test("_execute: unbound operation failure with messages #" + i, function (assert) {
+		var oBinding = this.bindContext("/ActionImport(...)", null, {$$groupId : "groupId"}),
+			oBindingMock = this.mock(oBinding),
+			oError = new Error("Operation failed"),
+			oGroupLock = {
+				getGroupId : function () {},
+				unlock : function () {}
+			},
+			oOperationMetadata = {
+				$IsBound : false,
+				$Parameter : [{
+					$Name : "Complex"
+				}, {
+					$Name : "Param"
+				}]
+			};
+
+		oError.error = oFixture.error;
+		oError.resourcePath = "~";
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+			.withExactArgs("/ActionImport/@$ui5.overload")
+			.returns(SyncPromise.resolve([oOperationMetadata]));
+		oBindingMock.expects("createCacheAndRequest")
+			.withExactArgs(sinon.match.same(oGroupLock),
+				"/ActionImport(...)",
+				sinon.match.same(oOperationMetadata), undefined)
+			.rejects(oError);
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
+		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+		this.mock(this.oModel).expects("reportError")
+			.withExactArgs("Failed to execute /ActionImport(...)",
+				sClassName, sinon.match.same(oError))
+			.callsFake(function (sLogMessage, sReportingClassName, oError) {
+				assert.strictEqual(oError.resourcePath, "~"); // unchanged
+				assert.deepEqual(oError.error, oFixture.reported);
+			});
+
+		// code under test
+		return oBinding._execute(oGroupLock).then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("createCacheAndRequest: FunctionImport", function (assert) {

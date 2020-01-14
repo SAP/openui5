@@ -133,7 +133,7 @@
 				<Property Name="SOItemCount" Type="Edm.Int16" />
 				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" />
 				<NavigationProperty Name="SO_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner" />
-				<NavigationProperty Name="SO_2_SCHDL" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSchedule)" ContainsTarget="true">
+				<NavigationProperty Name="SO_2_SCHDL" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSchedule)" Partner="SCHDL_2_SO" ContainsTarget="true">
 					<OnDelete Action="Cascade" />
 				</NavigationProperty>
 				<NavigationProperty Name="SO_2_SOITEM" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem)" Partner="SOITEM_2_SO" ContainsTarget="true" />
@@ -169,6 +169,7 @@
 				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" />
 				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="2" />
 				<Property Name="DeliveryDate" Type="Edm.DateTimeOffset" Nullable="false" />
+				<NavigationProperty Name="SCHDL_2_SO" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" Partner="SO_2_SCHDL" />
 			</EntityType>
 			<ComplexType Name="Address">
 				<Property Name="City" Type="Edm.String" Nullable="false" MaxLength="40" />
@@ -190,6 +191,7 @@
 				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
 				<Property Name="target" Type="Edm.String" Nullable="true" />
 				<Property Name="transition" Type="Edm.Boolean" Nullable="false" />
+				<Property Name="additionalInfo" Type="Edm.String" Nullable="true" />
 			</ComplexType>
 			<Action Name="RegenerateEPMData">
 				<ReturnType Type="Collection(Edm.String)" Nullable="false" />
@@ -226,10 +228,14 @@
 				<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false" MaxLength="10" />
 				<ReturnType Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Contact)" />
 			</Function>
-			<!--TODO: adjust zui5_emp_sample in back-end as soon as gateway allows bound operations with return types others than entity types-->
 			<Function Name="SalesOrderLineItem_CheckAvailability" IsBound="true">
-				<Parameter Name="SalesOrderLineItem" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem" Nullable="false" />
-				<ReturnType Type="Edm.Decimal" Nullable="false"/>
+				<Parameter Name="SalesOrderLineItem" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem" Nullable="false"/>
+				<ReturnType Type="Edm.Decimal" Nullable="false" Precision="10" Scale="3"/>
+			</Function>
+			<Function Name="SalesOrderSimulateDiscount" IsBound="true">
+				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
+				<Parameter Name="Discount" Type="Edm.Byte" Nullable="false" />
+				<ReturnType Type="Edm.String" Nullable="false" />
 			</Function>
 			<EntityContainer Name="Container">
 				<EntitySet Name="BusinessPartnerList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner">

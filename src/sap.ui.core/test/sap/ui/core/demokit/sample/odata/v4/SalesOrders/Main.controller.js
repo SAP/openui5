@@ -104,6 +104,10 @@ sap.ui.define([
 			this.byId("salesOrderSchedulesDialog").close();
 		},
 
+		onCloseSimulateDiscountDialog : function (oEvent) {
+			this.byId("SimulateDiscountDialog").close();
+		},
+
 		onConfirmSalesOrder : function () {
 			var oTable = this.byId("SalesOrderList"),
 				oSalesOrderContext = oTable.getSelectedItem().getBindingContext(),
@@ -314,6 +318,20 @@ sap.ui.define([
 			});
 		},
 
+		onExecuteSimulateDiscount : function () {
+			var oView = this.getView(),
+				that = this;
+
+			oView.setBusy(true);
+			this.oSimulateDiscount.execute().then(function (oResult) {
+				MessageToast.show("Simulation Result: "
+					+ that.oSimulateDiscount.getBoundContext().getProperty("value"));
+			}, function (oError) {
+				MessageToast.show(oError.message);
+			});
+			oView.setBusy(false);
+		},
+
 		onFilter : function (oEvent) {
 			var oBinding = this.byId("SalesOrderList").getBinding("items"),
 				// TODO validation
@@ -346,6 +364,27 @@ sap.ui.define([
 
 		onInit : function () {
 			this.initMessagePopover("showMessages");
+		},
+
+		onOpenSimulateDiscountDialog : function (oEvent) {
+			var oTable = this.byId("SalesOrderList"),
+				oSalesOrderContext = oTable.getSelectedItem().getBindingContext();
+
+			// create function only once
+			if (!this.oSimulateDiscount) {
+				this.oSimulateDiscount = this.getView().getModel("parameterContext").bindContext(
+					"com.sap.gateway.default.zui5_epm_sample.v0002."
+					+ "SalesOrderSimulateDiscount(...)");
+				this.oSimulateDiscount.setParameter("Discount", 0);
+			}
+
+			this.oSimulateDiscount.setContext(oSalesOrderContext);
+			this.byId("SimulateDiscountForm").setBindingContext(oSalesOrderContext);
+			this.byId("SimulateDiscountDialog").setBindingContext(
+				this.oSimulateDiscount.getParameterContext(), "parameterContext");
+			this.byId("SimulateDiscountResult::Result").setBindingContext(
+				this.oSimulateDiscount.getBoundContext());
+			this.byId("SimulateDiscountDialog").open();
 		},
 
 		onRefreshAll : function () {
