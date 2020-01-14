@@ -2092,6 +2092,21 @@ function (
 		oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
 	});
 
+	QUnit.test("hidden title", function (assert) {
+		//arrange
+		this.oDynamicPage.setHeaderExpanded(false);
+		this.oDynamicPage.getTitle().setVisible(false);
+		this.oDynamicPage.getTitle().addSnappedContent(new sap.m.Text());
+
+		//act
+		try {
+			oUtil.renderObject(this.oDynamicPage);
+			assert.ok(true, "no error upon rendering");
+		} catch (e) {
+			assert.notOk(e, "error upon rendering");
+		}
+	});
+
 	QUnit.module("DynamicPage - toggleHeaderOnTitleClick", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageToggleHeaderFalse();
