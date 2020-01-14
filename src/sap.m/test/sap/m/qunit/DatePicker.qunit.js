@@ -1412,6 +1412,58 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
+	QUnit.test("Opening picker on year picker view on mobile and trying to select a year outside of the mix/max range", function (assert) {
+		//Prepare
+		var oDP = new DatePicker({
+				displayFormat: "yyyy",
+				minDate: new Date(2010, 0, 1),
+				maxDate: new Date(2020, 0, 1),
+				dateValue: new Date(2010, 0, 1)
+			}),
+			iFocusedIndex = 11,
+			oDeviceStub = this.stub(sap.ui.Device.support, "touch", true),
+			oYP,
+			oFakeEvent,
+			oItemNavigationStub,
+			oIsValueInThresholdStub,
+			fnFireSelectSpy;
+
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oDP.toggleOpen();
+
+		oYP = oDP._getCalendar()._getYearPicker();
+		oItemNavigationStub = this.stub(oYP._oItemNavigation, "getFocusedIndex", function () { return iFocusedIndex; });
+		oIsValueInThresholdStub = this.stub(oYP, "_isValueInThreshold", function () { return true; });
+		fnFireSelectSpy = this.spy(oYP, "fireSelect");
+
+		oFakeEvent = {
+			target: jQuery("<div></div>").attr({
+				"id": oYP.getId() + "-y20210101",
+				"class": "sapUiCalItem"
+			}).get(0),
+			classList: {
+				contains: function() {
+					return true;
+				}
+			}
+		};
+
+		// Act
+		oYP.onmousedown({});
+		oYP.onmouseup(oFakeEvent);
+
+		// Assert
+		assert.ok(fnFireSelectSpy.notCalled, "'fireSelect' is not called");
+
+		// Cleanup
+		oDP.destroy();
+		oDeviceStub.restore();
+		oItemNavigationStub.restore();
+		oIsValueInThresholdStub.restore();
+		fnFireSelectSpy.restore();
+	});
+
 	QUnit.test("special cases", function(assert) {
 		var oDate = new Date(1, 0, 1);
 		oDate.setFullYear(1);
