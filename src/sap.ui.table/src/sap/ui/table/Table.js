@@ -1800,7 +1800,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._bindRows = function(oBindingInfo) {
-		resetBindingFlags(this);
+		initBindingFlags(this);
 
 		// Temporary fix for the Support Assistant hacks. Support Assistant should implement a selection plugin.
 		// TODO: Before we recommend to implement a selection plugin -> Complete BLI CPOUIFTEAMB-1464
@@ -1834,7 +1834,7 @@ sap.ui.define([
 	Table.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
 			// If only the model has been changed, the ManagedObject only calls _bindAggregation while bindAggregation / bindRows is not called.
-			resetBindingFlags(this);
+			initBindingFlags(this);
 		}
 
 		// Create the binding.
@@ -1910,7 +1910,7 @@ sap.ui.define([
 		return this;
 	};
 
-	function resetBindingFlags(oTable) {
+	function initBindingFlags(oTable) {
 		oTable._bRowsBeingBound = true;
 		oTable._bBindingReady = false;
 		oTable._bContextsAvailable = false;
