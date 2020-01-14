@@ -145,6 +145,9 @@ sap.ui.define(["sap/m/library"],
 
 	PageRenderer.renderChildControls = function (oRm, oPage, oLandmarkInfo) {
 		oRm.openStart("section", oPage.getId() + "-cont")
+			// ensure that the content is not included in the tab chain in FF
+			// when a scroll is present, as it causes loss of the visual focus outline
+			.attr("tabindex", "-1")
 			.accessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Content"));
 
 		// The vertical scroll bar should be immediately available to avoid flickering
