@@ -359,18 +359,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("_setEditable", function(assert) {
+		assert.notOk(oFormContainer.getProperty("_editable"), "Default: not editable");
+
 		var oFormElement1 = new FormElement("FE1");
 		var oFormElement2 = new FormElement("FE2");
-		oFormContainer.addFormElement(oFormElement1);
-		oFormContainer.addFormElement(oFormElement2);
-
 		sinon.spy(oFormElement1, "_setEditable");
 		sinon.spy(oFormElement2, "_setEditable");
 
-		assert.notOk(oFormContainer.getProperty("_editable"), "Default: not editable");
+		oFormContainer.addFormElement(oFormElement1);
+
 		oFormContainer._setEditable(true);
 		assert.ok(oFormContainer.getProperty("_editable"), "Default: editable set");
 		assert.ok(oFormElement1._setEditable.calledWith(true), "_setEditable on FormElement1");
+
+		oFormContainer.addFormElement(oFormElement2);
 		assert.ok(oFormElement2._setEditable.calledWith(true), "_setEditable on FormElement2");
 	});
 

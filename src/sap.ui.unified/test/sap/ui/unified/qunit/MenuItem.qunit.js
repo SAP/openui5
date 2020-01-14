@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
-	"sap/m/Label"
-], function(Menu, MenuItem, Label) {
+	"sap/m/Label",
+	"sap/ui/commons/RichTooltip"
+], function(Menu, MenuItem, Label, RichTooltip) {
 	"use strict";
 
 	QUnit.module("Accessibility");
@@ -35,5 +36,38 @@ sap.ui.define([
 		oMenu.close();
 		oMenu.destroy();
 		oLabel.destroy();
+	});
+
+	QUnit.module("Events", {
+		beforeEach: function() {
+			this.oMenuItem = new MenuItem({
+				text: "Some MenuItem",
+				tooltip: new RichTooltip({
+					title: "Test"
+				})
+			});
+
+			this.oMenu = new Menu({
+				items: this.oMenuItem
+			});
+
+			this.oMenu.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oMenu.destroy();
+		}
+	});
+
+	QUnit.test("mouseover", function(assert) {
+		// Prepare
+		this.oMenu.open();
+
+		// Act
+		this.oMenuItem.$().mouseover();
+
+		// Assert
+		assert.ok(true, "mouseover event does not lead to an exception");
+
 	});
 });

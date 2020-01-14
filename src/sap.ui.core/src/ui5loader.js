@@ -1378,13 +1378,14 @@
 	 *           this is needed to detect cycles
 	 * @param {string} sModuleName Name of the module to be loaded, in URN form and with '.js' extension
 	 * @param {boolean} bAsync Whether the operation can be executed asynchronously
-	 * @param {boolean} bSkipShimDeps Whether shim dependencies should be ignored
+	 * @param {boolean} [bSkipShimDeps=false] Whether shim dependencies should be ignored (used by recursive calls)
+	 * @param {boolean} [bSkipBundle=false] Whether bundle information should be ignored (used by recursive calls)
 	 * @returns {any|Promise} Returns the module export in sync mode or a promise on it in async mode
 	 * @throws {Error} When loading failed in sync mode
 	 *
 	 * @private
 	 */
-	function requireModule(oRequestingModule, sModuleName, bAsync, bSkipShimDeps) {
+	function requireModule(oRequestingModule, sModuleName, bAsync, bSkipShimDeps, bSkipBundle) {
 
 		var bLoggable = log.isLoggable(),
 			oSplitName = urnToBaseIDAndSubType(sModuleName),
@@ -1410,7 +1411,8 @@
 				log.debug("require dependencies of raw module " + sModuleName);
 			}
 			return requireAll(oModule, oShim.deps, function() {
-				return requireModule(oRequestingModule, sModuleName, bAsync, /* bSkipShimDeps = */ true);
+				// set bSkipShimDeps to true to prevent endless recursion
+				return requireModule(oRequestingModule, sModuleName, bAsync, /* bSkipShimDeps = */ true, bSkipBundle);
 			}, function(oErr) {
 				oModule.fail(oErr);
 				if ( bAsync ) {
@@ -1418,6 +1420,29 @@
 				}
 				throw oErr;
 			}, bAsync);
+		}
+
+		// when there's bundle information for the module
+		// require the bundle first before requiring the module again with bSkipBundle = true
+		if ( oModule.state === INITIAL && oModule.group && oModule.group !== sModuleName && !bSkipBundle ) {
+			if ( bLoggable ) {
+				log.debug(sLogPrefix + "require bundle '" + oModule.group + "'"
+						+ " containing '" + sModuleName + "'");
+			}
+			if ( bAsync ) {
+				return requireModule(null, oModule.group, bAsync).catch(noop).then(function() {
+					// set bSkipBundle to true to prevent endless recursion
+					return requireModule(oRequestingModule, sModuleName, bAsync, bSkipShimDeps, /* bSkipBundle = */ true);
+				});
+			} else {
+				try {
+					requireModule(null, oModule.group, bAsync);
+				} catch (oError) {
+					if ( bLoggable ) {
+						log.error(sLogPrefix + "require bundle '" + oModule.group + "' failed (ignored)");
+					}
+				}
+			}
 		}
 
 		if ( bLoggable ) {
@@ -2252,6 +2277,17 @@
 			}
 			bGlobalAsyncMode = !!async;
 		},
+		bundles: function(bundle, modules) {
+			bundle += '.js';
+			modules.forEach(function(module) {
+				Module.get(module + '.js').group = bundle;
+			});
+		},
+		bundlesUI5: function(bundle, resources) {
+			resources.forEach(function(module) {
+				Module.get(module).group = bundle;
+			});
+		},
 		debugSources: function(debug) {
 			bDebugSources = !!debug;
 		},
@@ -2479,6 +2515,18 @@
 		 *       }
 		 *     },
 		 *
+		 *     // define two bundles that consists of JS modules only
+		 *     bundles: {
+		 *       bundle1: ['module1', 'module2'],
+		 *       bundle2: ['moduleX', 'moduleY']
+		 *     },
+		 *
+		 *     // define a bundle that also contains non-JS resources
+		 *     bundlesUI5: {
+		 *       'all.js': ['Component.js', 'manifest.json',
+		 *                  'App.controller.js', 'App.view.xml']
+		 *     },
+		 *
 		 *     // activate real async loading and module definitions
 		 *     async: true,
 		 *
@@ -2553,6 +2601,52 @@
 		 *
 		 *   <b>Note:</b> The ui5loader does not support the <code>init</code> option described by the
 		 *   "Common Config" section of the AMD spec.
+		 *
+		 * @param {Object.<string, string[]>} [cfg.bundles]
+		 *   A map of arrays that each define the modules contained in a bundle.
+		 *
+		 *   Each key of the map represents the module ID of a bundle file. The array value represents
+		 *   the set of JavaScript modules (their module IDs) that are contained in the bundle.
+		 *
+		 *   When a module is required that has not been loaded yet, and for which a containing bundle is
+		 *   known, that bundle will be required first. Only then the original module will be required
+		 *   again and usually be taken from the just loaded bundle.
+		 *
+		 *   A bundle will be loaded asynchronously only when the loader is in asynchronous mode and when
+		 *   the request for the contained module originates from an asynchronous API. In all other cases,
+		 *   the bundle has to be loaded synchronously to fulfill API contracts.
+		 *
+		 *   <b>Note:</b> The loader only supports one containing bundle per module. If a module is declared
+		 *   to be part of multiple bundles, only the last one will be taken into account.
+		 *
+		 *   This configuration option is basically provided to be compatible with requireJS or SystemJS
+		 *   configuration.
+		 *
+		 * @param {Object.<string, string[]>} [cfg.bundlesUI5]
+		 *   A map of arrays that each define the resources contained in a bundle.
+		 *
+		 *   This is similar to <code>bundles</code>, but all strings are unified resource names including
+		 *   a file type extension, not only module IDs. This allows to represent more than just JavaScript
+		 *   modules.
+		 *
+		 *   Each key of the map represents the resource name (in unified resource name syntax) of a bundle
+		 *   file. The array value represents the set of resources (also in unified resource name syntax)
+		 *   that are contained in the bundle. The array can contain JavaScript as well as other textual
+		 *   resource types (e.g. *.xml or *.json resources).
+		 *
+		 *   When a module is required that has not been loaded yet, and for which a containing bundle is
+		 *   known, that bundle will be required first. Only then the original module will be required
+		 *   again and usually be taken from the just loaded bundle.
+		 *
+		 *   A bundle will be loaded asynchronously only when the loader is in asynchronous mode and when
+		 *   the request for the contained module originates from an asynchronous API. In all other cases,
+		 *   the bundle has to be loaded synchronously to fulfill API contracts.
+		 *
+		 *   <b>Note:</b> The loader only supports one containing bundle per module. If a module is declared
+		 *   to be part of multiple bundles, only the last one will be taken into account.
+		 *
+		 *   <b>Note:</b> Although non-JS resources can be declared to be part of a bundle, only requests for
+		 *   JavaScript modules will currently trigger the loading of a bundle.
 		 *
 		 * @param {boolean} [cfg.async=false]
 		 *   When set to true, <code>sap.ui.require</code> loads modules asynchronously via script tags and

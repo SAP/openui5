@@ -56,6 +56,8 @@ sap.ui.define([
 							deferred.resolve();
 						}
 					});
+				}, function (oError) {
+					Log.error("Could not load module 'sap/ui/support/Bootstrap':", oError);
 				});
 			} else {
 				deferred.resolve();

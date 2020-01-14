@@ -728,11 +728,6 @@ sap.ui.define(function () {
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
-			Transports: {
-				coverage: {
-					only: ["sap/ui/fl/Transports"]
-				}
-			},
 			Utils: {
 				coverage: {
 					only: ["sap/ui/fl/Utils"]
@@ -829,16 +824,22 @@ sap.ui.define(function () {
 			},
 
 			// transport
-			"transport/TransportDialog": {
+			"write/_internal/transport/TransportDialog": {
 				group: "transport",
 				coverage: {
-					only: ["sap/ui/fl/transport/TransportDialog"]
+					only: ["sap/ui/fl/write/_internal/transport/TransportDialog"]
 				}
 			},
-			"transport/TransportSelection": {
+			"write/_internal/transport/TransportSelection": {
 				group: "transport",
 				coverage: {
-					only: ["sap/ui/fl/transport/TransportSelection"]
+					only: ["sap/ui/fl/write/_internal/transport/TransportSelection"]
+				}
+			},
+			"write/_internal/transport/Transports": {
+				group: "transport",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/transport/Transports"]
 				}
 			},
 			"designtime/Library": {

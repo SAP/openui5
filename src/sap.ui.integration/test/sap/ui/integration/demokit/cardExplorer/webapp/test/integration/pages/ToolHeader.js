@@ -18,6 +18,19 @@ sap.ui.define([
 						errorMessage: "Could not find tab with name: " + sTabName
 					});
 				}
+			},
+
+			assertions: {
+				iShouldBeOnSection: function (sTabName) {
+					return this.waitFor({
+						controlType: "sap.m.Page",
+						viewName: sTabName,
+						success: function () {
+							Opa5.assert.ok(true, "The navigation ended on the correct section: " + sTabName);
+						},
+						errorMessage: "The navigation isn't ended on the correct section: " + sTabName
+					});
+				}
 			}
 		}
 	});

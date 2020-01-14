@@ -54,17 +54,20 @@ sap.ui.define([
 	});
 
 	/**
-	 * @override
 	 * @inheritDoc
 	 */
 	BindingSelectionPlugin.prototype.exit = function() {
+		SelectionPlugin.prototype.exit.apply(this, arguments);
+
 		var oBinding = this._getBinding();
 		if (oBinding) {
 			oBinding.detachChange(this._onBindingChange, this);
 		}
-		SelectionPlugin.prototype.exit.call(this);
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	BindingSelectionPlugin.prototype.getRenderConfig = function() {
 		return {
 			headerSelector: {
@@ -306,7 +309,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
 	 * @inheritDoc
 	 */
 	BindingSelectionPlugin.prototype._setBinding = function(oBinding) {

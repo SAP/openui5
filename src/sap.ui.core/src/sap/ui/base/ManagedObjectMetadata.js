@@ -1788,11 +1788,11 @@ function(
 			} else {
 				oPromise = Promise.resolve();
 			}
-			return new Promise(function(fnResolve) {
+			return new Promise(function(fnResolve, fnReject) {
 				oPromise.then(function() {
 					sap.ui.require([oLibrary.designtime], function(oLib) {
 						fnResolve(oLib);
-					});
+					}, fnReject);
 				});
 			});
 		}
@@ -1810,7 +1810,7 @@ function(
 			return Promise.resolve(oMetadata._oDesignTime || {});
 		}
 
-		return new Promise(function(fnResolve) {
+		return new Promise(function(fnResolve, fnReject) {
 			var sModule;
 			if (typeof oMetadata._oDesignTime === "string") {
 				//oMetadata._oDesignTime points to resource path to another file, for example: "sap/ui/core/designtime/<control>.designtime"
@@ -1824,7 +1824,7 @@ function(
 					oMetadata._oDesignTime = mDesignTime;
 					mDesignTime._oLib = oLib;
 					fnResolve(mDesignTime);
-				});
+				}, fnReject);
 			});
 		});
 	}
@@ -1858,14 +1858,14 @@ function(
 		if (typeof sInstanceSpecificModule === "string") {
 			sInstanceSpecificModule = mPredefinedDesignTimeModules[sInstanceSpecificModule] || sInstanceSpecificModule;
 
-			return new Promise(function(fnResolve) {
+			return new Promise(function(fnResolve, fnReject) {
 				sap.ui.require([sInstanceSpecificModule], function(vDesignTime) {
 					if (typeof vDesignTime === "function") {
 						fnResolve(vDesignTime(oInstance));
 					} else {
 						fnResolve(vDesignTime);
 					}
-				});
+				}, fnReject);
 			});
 		} else {
 			return Promise.resolve({});

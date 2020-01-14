@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
@@ -21,7 +21,7 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("sap.ui.fl.transport.TransportSelection", {
+	QUnit.module("sap.ui.fl.write._internal.transport.TransportSelection", {
 		beforeEach: function () {
 			this.oTransportSelection = new TransportSelection();
 
@@ -44,7 +44,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("sap.ui.fl.transport.TransportSelection.selectTransport with package", function (assert) {
+		QUnit.test("sap.ui.fl.write._internal.transport.TransportSelection.selectTransport with package", function (assert) {
 			var done = assert.async();
 			this.oServer.respondWith([
 				200,
@@ -73,7 +73,7 @@ sap.ui.define([
 			this.oTransportSelection.selectTransport(oObject, fOkay, fError);
 		});
 
-		QUnit.test("sap.ui.fl.transport.TransportSelection.selectTransport without package", function (assert) {
+		QUnit.test("sap.ui.fl.write._internal.transport.TransportSelection.selectTransport without package", function (assert) {
 			var done = assert.async();
 			this.oServer.respondWith([
 				200,
@@ -255,7 +255,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("sap.ui.fl.transport.TransportSelection", {
+	QUnit.module("sap.ui.fl.write._internal.transport.TransportSelection", {
 		beforeEach: function () {
 			this.oTransportSelection = new TransportSelection();
 		},

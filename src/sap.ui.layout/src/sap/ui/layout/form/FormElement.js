@@ -312,9 +312,12 @@ sap.ui.define([
 	 */
 	FormElement.prototype._setEditable = function(bEditable) {
 
+		var bOldEditable = this.getProperty("_editable");
 		this.setProperty("_editable", bEditable, true); // do not invalidate whole FormElement
 
-		this.invalidateLabel();
+		if (bEditable !== bOldEditable) {
+			this.invalidateLabel();
+		}
 
 	};
 

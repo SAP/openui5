@@ -160,18 +160,13 @@ sap.ui.define([
 		var mMap = this._getMap();
 
 		var mPropertyBag = {
-			flexObject: {}
+			flexObject: {},
+			settings: this._oSettings,
+			appVariant: this
 		};
 
 		if (this._sTransportRequest) {
 			mPropertyBag.transport = this._sTransportRequest;
-		} else if (
-			this._oSettings.isAtoEnabled()
-			&& (this._skipIam || ((this._mode === 'FROM_EXISTING' || this._mode === 'DELETION') && mMap.packageName !== '$TMP'))
-			&& LayerUtils.isCustomerDependentLayer(mMap.layer)
-		) {
-			// Smart Business created KPI tiles on S4 Cloud and the query parameter will be added to support their usecase
-			mPropertyBag.transport = "ATO_NOTIFICATION";
 		}
 		if (this._skipIam) {
 			mPropertyBag.skipIam = this._skipIam;

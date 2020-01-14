@@ -67,7 +67,7 @@ sap.ui.define([
 	var TableDelegate = {};
 
 	AutoRowMode.prototype.init = function() {
-		RowMode.prototype.init.call(this, TableDelegate);
+		RowMode.prototype.init.apply(this, arguments);
 		this.bRowCountAutoAdjustmentActive = false;
 		this.iLastAvailableSpace = 0;
 

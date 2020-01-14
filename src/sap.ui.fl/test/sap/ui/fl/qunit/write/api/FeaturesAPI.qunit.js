@@ -44,14 +44,14 @@ sap.ui.define([
 					});
 			});
 
-			QUnit.test("when isDraftEnabled(sLayer) is called in a " +
+			QUnit.test("when isVersioningEnabled(sLayer) is called in a " +
 					(bValueToBeSet ? "draft enabled" : "non draft enabled") + " layer", function (assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isDraftEnabled: function () {
+					isVersioningEnabled: function () {
 						return bValueToBeSet;
 					}
 				});
-				return FeaturesAPI.isDraftEnabled("CUSTOMER")
+				return FeaturesAPI.isVersioningEnabled("CUSTOMER")
 					.then(function (bReturnValue) {
 						assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
 					});

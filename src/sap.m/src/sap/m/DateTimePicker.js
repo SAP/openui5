@@ -181,42 +181,42 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function(oRm, oPopup) {
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oPopup) {
 
-			oRm.write("<div");
-			oRm.writeControlData(oPopup);
-			oRm.addClass("sapMDateTimePopupCont");
-			oRm.addClass("sapMTimePickerDropDown");
-			oRm.writeClasses();
-			oRm.write(">");
+				oRm.openStart("div", oPopup);
+				oRm.class("sapMDateTimePopupCont")
+					.class("sapMTimePickerDropDown");
+				oRm.openEnd();
 
-			var oSwitcher = oPopup.getAggregation("_switcher");
-			if (oSwitcher) {
-				oRm.write("<div");
-				oRm.addClass("sapMTimePickerSwitch");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.renderControl(oSwitcher);
-				oRm.write("</div>");
+				var oSwitcher = oPopup.getAggregation("_switcher");
+				if (oSwitcher) {
+					oRm.openStart("div");
+					oRm.class("sapMTimePickerSwitch");
+					oRm.openEnd();
+					oRm.renderControl(oSwitcher);
+					oRm.close("div");
+
+				}
+
+				var oCalendar = oPopup.getCalendar();
+				if (oCalendar) {
+					oRm.renderControl(oCalendar);
+				}
+
+				oRm.openStart("div");
+				oRm.class("sapMTimePickerSep");
+				oRm.openEnd();
+				oRm.close("div");
+
+				var oSliders = oPopup.getTimeSliders();
+				if (oSliders) {
+					oRm.renderControl(oSliders);
+				}
+
+				oRm.close("div");
 			}
-
-			var oCalendar = oPopup.getCalendar();
-			if (oCalendar) {
-				oRm.renderControl(oCalendar);
-			}
-
-			oRm.write("<div");
-			oRm.addClass("sapMTimePickerSep");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.write("</div>");
-
-			var oSliders = oPopup.getTimeSliders();
-			if (oSliders) {
-				oRm.renderControl(oSliders);
-			}
-
-			oRm.write("</div>");
 		},
 
 		init: function() {

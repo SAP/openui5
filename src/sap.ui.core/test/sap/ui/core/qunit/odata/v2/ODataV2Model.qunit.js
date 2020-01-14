@@ -4960,11 +4960,10 @@ sap.ui.define([
 						"name": "'ReportDefinitionPropertiesSet'"
 					},
 					success: function() {
-						assert.ok(that.oModel.oMetadata._getEntityTypeByPath("/AuthorizationCheck").isFunction, "EntiyType is FunctionImport");
+						assert.ok(that.oModel.oMetadata._getEntityTypeByPath("/AuthorizationCheck").isFunction, "EntityType is FunctionImport");
 						assert.deepEqual(that.oModel.mPathCache, {
 							"/AuthorizationCheck": {
-								"canonicalPath": "/Products(1)",
-								"updateKey": "k"
+								"canonicalPath": "/Products(1)"
 							}
 						}, "mPathCache should be filled correctly");
 
@@ -4975,8 +4974,7 @@ sap.ui.define([
 							success: function() {
 								assert.deepEqual(that.oModel.mPathCache, {
 									"/AuthorizationCheck": {
-										"canonicalPath": "/Products(2)",
-										"updateKey": "k"
+										"canonicalPath": "/Products(2)"
 									}
 								}, "mPathCache should be filled correctly");
 
@@ -4987,8 +4985,7 @@ sap.ui.define([
 									success: function() {
 										assert.deepEqual(that.oModel.mPathCache, {
 											"/AuthorizationCheck": {
-												"canonicalPath": "/Products(1)",
-												"updateKey": "k"
+												"canonicalPath": "/Products(1)"
 											}
 										}, "mPathCache should be filled correctly");
 

@@ -20,7 +20,8 @@
 }
 
 .sapMInputBaseContentWrapper {
-	border: 1px solid @sapUiFieldBorderColor;
+	border: @sapUiFieldBorderWidth solid @sapUiFieldBorderColor;
+	border-radius: @sapUiFieldBorderCornerRadius;
 	background: @sapUiFieldBackground;
 	&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess){
 		border-width: 2px;
@@ -34,6 +35,11 @@
 	}
 	&:not(.sapMInputBaseReadonlyWrapper) {
 		border-radius: 0.125rem;
+	}
+
+	&:hover {
+		background: @sapUiFieldHoverBackground;
+		border-color: @sapUiFieldHoverBorderColor;
 	}
 }
 
@@ -75,9 +81,9 @@
 	border-color: @sapUiFieldInformationColor;
 }
 
-.sapMInputBaseReadonlyWrapper,
-.sapMInputBaseDisabledWrapper {
+.sapMInputBaseReadonlyWrapper {
 	background: @sapUiFieldReadOnlyBackground;
+	border-color: @sapUiFieldReadOnlyBorderColor;
 }
 
 .sapMFocus .sapMInputBaseContentWrapper {

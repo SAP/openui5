@@ -15,7 +15,7 @@ sap.ui.define([
 		oJSZipFileStub;
 
 	Opa5.createPageObjects({
-		onTheExplorePage: {
+		onTheExploreSamplesPage: {
 
 			actions: {
 				iPressDownload: function (sDownloadType) {
@@ -48,7 +48,26 @@ sap.ui.define([
 						actions: function (oCodeEditor) {
 							oCodeEditor.setValue(sValue);
 						},
-						errorMessage: "Could not CodeEditor"
+						errorMessage: "Could not edit CodeEditor"
+					});
+				},
+				iChangeDropdownValue: function (sText) {
+					return this.waitFor({
+						viewName: sViewName,
+						id: "subSample",
+						actions: new Press(),
+						success: function(oComboBox) {
+							this.waitFor({
+								controlType: "sap.m.StandardListItem",
+								matchers: [
+									new Ancestor(oComboBox),
+									new Properties({ title: sText})
+								],
+								actions: new Press(),
+								errorMessage: "Cannot select " + sText + " from the combo box"
+							});
+						},
+						errorMessage: "Could not change the sub sample"
 					});
 				}
 			},
@@ -92,6 +111,29 @@ sap.ui.define([
 							oJSZipFileStub.restore();
 						},
 						errorMessage: "Bundle as zip file was not downloaded."
+					});
+				},
+				iShouldSeeSampleTitle: function (sTitle) {
+					return this.waitFor({
+						viewName: sViewName,
+						controlType: "sap.m.Title",
+						matchers: new Properties({text: sTitle}),
+						success: function () {
+							Opa5.assert.ok(true, "The navigation ended on the correct topic: " + sTitle);
+						},
+						errorMessage: "The navigation isn't ended on the correct topic: " + sTitle
+					});
+				},
+				iShouldSeeSubSample: function (sKey) {
+					return this.waitFor({
+						viewName: sViewName,
+						controlType: "sap.m.ComboBox",
+
+						matchers: new Properties({selectedKey: sKey}),
+						success: function () {
+							Opa5.assert.ok(true, "The navigation ended on the correct sub sample: " + sKey);
+						},
+						errorMessage: "The navigation isn't ended on the correct sub sample: " + sKey
 					});
 				}
 			}

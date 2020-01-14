@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/Change",
 	"sap/m/MessageBox"
 ], function(
@@ -619,8 +619,10 @@ sap.ui.define([
 		beforeEach : function () {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
+			this.oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 		},
 		afterEach: function() {
+			WriteUtils.sendRequest.restore();
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
@@ -630,18 +632,16 @@ sap.ui.define([
 				layer: "CUSTOMER",
 				url: "/sap/bc/lrep"
 			};
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return LrepConnector.appVariant.getManifest(mPropertyBag).then(function () {
-				assert.ok(oStubSendRequest.calledWith(mPropertyBag.appVarUrl, "GET", {
+				assert.ok(this.oStubSendRequest.calledWith(mPropertyBag.appVarUrl, "GET", {
 					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : undefined,
 					applyConnector : ApplyConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json"
 				}), "a send request with correct parameters and options is sent");
-				WriteUtils.sendRequest.restore();
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("given a mock server, when appVariant.load is triggered", function (assert) {
@@ -651,21 +651,19 @@ sap.ui.define([
 				url: "/sap/bc/lrep"
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return LrepConnector.appVariant.load(mPropertyBag).then(function () {
-				assert.ok(oStubSendRequest.calledWith(sUrl, "GET", {
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
 					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : undefined,
 					applyConnector : ApplyConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json"
 				}), "a send request with correct parameters and options is sent");
-				WriteUtils.sendRequest.restore();
-			});
+			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.create is triggered", function (assert) {
+		QUnit.test("given a mock server, when appVariant.create is triggered with transport info provided", function (assert) {
 			var oFlexObject = {
 				fileName: "manifest",
 				fileType: "appdescr_variant",
@@ -682,13 +680,13 @@ sap.ui.define([
 				flexObject: oFlexObject,
 				layer: "CUSTOMER",
 				isAppVariantRoot: true,
-				url: "/sap/bc/lrep"
+				url: "/sap/bc/lrep",
+				transport: "aTransport"
 			};
-			var sUrl = "/sap/bc/lrep/appdescr_variants/";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=aTransport";
 
 			return LrepConnector.appVariant.create(mPropertyBag).then(function () {
-				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
 					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
 					applyConnector : ApplyConnector,
@@ -696,8 +694,84 @@ sap.ui.define([
 					dataType : "json",
 					payload : JSON.stringify(oFlexObject)
 				}), "a send request with correct parameters and options is sent");
-				WriteUtils.sendRequest.restore();
-			});
+			}.bind(this));
+		});
+
+		QUnit.test("given a mock server, when appVariant.create is triggered, ATO is enable and skipIam is provided", function (assert) {
+			var oFlexObject = {
+				fileName: "manifest",
+				fileType: "appdescr_variant",
+				id: "someAppVariantId",
+				isAppVariantRoot: true,
+				layer: "CUSTOMER",
+				namespace: "apps/someBaseApplicationId/appVariants/someAppVariantId/",
+				packageName: "",
+				reference: "sap.ui.rta.test.variantManagement",
+				version: "1.0.0",
+				content: []
+			};
+			var mPropertyBag = {
+				flexObject: oFlexObject,
+				layer: "CUSTOMER",
+				isAppVariantRoot: true,
+				url: "/sap/bc/lrep",
+				settings: {
+					isAtoEnabled: function() {
+						return true;
+					}
+				},
+				skipIam: true
+			};
+			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true";
+
+			return LrepConnector.appVariant.create(mPropertyBag).then(function () {
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector,
+					contentType : "application/json; charset=utf-8",
+					dataType : "json",
+					payload : JSON.stringify(oFlexObject)
+				}), "a send request with correct parameters and options is sent");
+			}.bind(this));
+		});
+
+		QUnit.test("given a mock server, when appVariant.create is triggered, no transport info provided and ATO is not enabled", function (assert) {
+			var oFlexObject = {
+				fileName: "manifest",
+				fileType: "appdescr_variant",
+				id: "someAppVariantId",
+				isAppVariantRoot: true,
+				layer: "CUSTOMER",
+				namespace: "apps/someBaseApplicationId/appVariants/someAppVariantId/",
+				packageName: "",
+				reference: "sap.ui.rta.test.variantManagement",
+				version: "1.0.0",
+				content: []
+			};
+			var mPropertyBag = {
+				flexObject: oFlexObject,
+				layer: "CUSTOMER",
+				isAppVariantRoot: true,
+				url: "/sap/bc/lrep",
+				settings: {
+					isAtoEnabled: function() {
+						return false;
+					}
+				}
+			};
+			var sUrl = "/sap/bc/lrep/appdescr_variants/";
+
+			return LrepConnector.appVariant.create(mPropertyBag).then(function () {
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector,
+					contentType : "application/json; charset=utf-8",
+					dataType : "json",
+					payload : JSON.stringify(oFlexObject)
+				}), "a send request with correct parameters and options is sent");
+			}.bind(this));
 		});
 
 		QUnit.test("given a mock server, when appVariant.assignCatalogs is triggered", function (assert) {
@@ -708,18 +782,16 @@ sap.ui.define([
 				url: "/sap/bc/lrep"
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?action=assignCatalogs&assignFromAppId=someBaseApplicationId";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return LrepConnector.appVariant.assignCatalogs(mPropertyBag).then(function () {
-				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
 					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
 					applyConnector : ApplyConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
-				WriteUtils.sendRequest.restore();
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("given a mock server, when appVariant.unassignCatalogs is triggered", function (assert) {
@@ -729,62 +801,222 @@ sap.ui.define([
 				url: "/sap/bc/lrep"
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?action=unassignCatalogs";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return LrepConnector.appVariant.unassignCatalogs(mPropertyBag).then(function () {
-				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
 					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
 					applyConnector : ApplyConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
-				WriteUtils.sendRequest.restore();
-			});
+			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.update is triggered", function (assert) {
+		QUnit.test("given a mock server, when appVariant.update is triggered with transport info provided", function (assert) {
 			var mPropertyBag = {
 				layer: "CUSTOMER",
 				reference: "someAppVariantId",
 				isAppVariantRoot: true,
-				url: "/sap/bc/lrep"
+				url: "/sap/bc/lrep",
+				transport: "aTransport"
 			};
-			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
 
 			return LrepConnector.appVariant.update(mPropertyBag).then(function () {
-				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
 					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
 					applyConnector : ApplyConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
-				WriteUtils.sendRequest.restore();
-			});
+			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when appVariant.remove is triggered", function (assert) {
+		QUnit.test("given a mock server, when appVariant.update is triggered with transport selection successful", function (assert) {
 			var mPropertyBag = {
 				layer: "CUSTOMER",
 				reference: "someAppVariantId",
 				isAppVariantRoot: true,
-				url: "/sap/bc/lrep"
+				url: "/sap/bc/lrep",
+				settings: {
+					isAtoEnabled: function() {
+						return true;
+					}
+				},
+				appVariant: {
+					getDefinition: function() {
+						return {
+							fileName: "manifest",
+							fileType: "appdescr_variant"
+						};
+					},
+					getPackage: function () {return "aPackage";},
+					getNamespace: function() {return "aNameSpace";}
+				}
 			};
-			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
-
-			return LrepConnector.appVariant.remove(mPropertyBag).then(function () {
-				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
+			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
+			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
+			return LrepConnector.appVariant.update(mPropertyBag).then(function () {
+				assert.ok(oStubOpenTransportSelection.calledOnce);
+				assert.equal(oStubOpenTransportSelection.getCalls()[0].args[0].getPackage(), "", "no package information is sent to get transport info");
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
 					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
 					applyConnector : ApplyConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
-				WriteUtils.sendRequest.restore();
-			});
+				TransportSelection.prototype.openTransportSelection.restore();
+			}.bind(this));
+		});
+
+		QUnit.test("given a mock server, when appVariant.update is triggered with with transport selection unsuccessful", function (assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: "someAppVariantId",
+				isAppVariantRoot: true,
+				url: "/sap/bc/lrep",
+				settings: {
+					isAtoEnabled: function() {
+						return true;
+					}
+				},
+				appVariant: {
+					getDefinition: function() {
+						return {
+							fileName: "manifest",
+							fileType: "appdescr_variant"
+						};
+					},
+					getPackage: function () {return "aPackage";},
+					getNamespace: function() {return "aNameSpace";}
+				}
+			};
+			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves(undefined);
+			return LrepConnector.appVariant.update(mPropertyBag).then(function () {},
+				function(oError) {
+					assert.ok(oStubOpenTransportSelection.calledOnce);
+					assert.equal(oError.message, "Transport information could not be determined", "promise rejected with correct error message");
+					TransportSelection.prototype.openTransportSelection.restore();
+				});
+		});
+
+		QUnit.test("given a mock server, when appVariant.remove is triggered with transport info provided", function (assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: "someAppVariantId",
+				isAppVariantRoot: true,
+				url: "/sap/bc/lrep",
+				transport: "aTransport"
+			};
+			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
+			return LrepConnector.appVariant.remove(mPropertyBag).then(function () {
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector,
+					dataType : "json",
+					contentType : "application/json; charset=utf-8"
+				}), "a send request with correct parameters and options is sent");
+			}.bind(this));
+		});
+
+		QUnit.test("given a mock server, when appVariant.remove is triggered with transport selection successful", function (assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: "someAppVariantId",
+				isAppVariantRoot: true,
+				url: "/sap/bc/lrep",
+				appVariant: {
+					getDefinition: function() {
+						return {
+							fileName: "manifest",
+							fileType: "appdescr_variant"
+						};
+					},
+					getPackage: function() {
+						return "aPackage";
+					},
+					getNamespace: function() {
+						return "aNameSpace";
+					}
+				}
+			};
+			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
+			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
+			return LrepConnector.appVariant.remove(mPropertyBag).then(function () {
+				assert.ok(oStubOpenTransportSelection.calledOnce);
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector,
+					dataType : "json",
+					contentType : "application/json; charset=utf-8"
+				}), "a send request with correct parameters and options is sent");
+				TransportSelection.prototype.openTransportSelection.restore();
+			}.bind(this));
+		});
+
+		QUnit.test("given a mock server, when appVariant.remove is triggered with transport selection unsuccessful", function (assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: "someAppVariantId",
+				isAppVariantRoot: true,
+				url: "/sap/bc/lrep",
+				appVariant: {
+					getDefinition: function() {
+						return {
+							fileName: "manifest",
+							fileType: "appdescr_variant"
+						};
+					},
+					getPackage: function() {
+						return "aPackage";
+					},
+					getNamespace: function() {
+						return "aNameSpace";
+					}
+				}
+			};
+			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves(undefined);
+			return LrepConnector.appVariant.remove(mPropertyBag).then(function () {},
+				function(oError) {
+					assert.ok(oStubOpenTransportSelection.calledOnce);
+					assert.equal(oError.message, "Transport information could not be determined", "promise rejected with correct error message");
+					TransportSelection.prototype.openTransportSelection.restore();
+				});
+		});
+
+		QUnit.test("given a mock server, when appVariant.remove is triggered with cancel from transport dialog", function (assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: "someAppVariantId",
+				isAppVariantRoot: true,
+				url: "/sap/bc/lrep",
+				appVariant: {
+					getDefinition: function() {
+						return {
+							fileName: "manifest",
+							fileType: "appdescr_variant"
+						};
+					},
+					getPackage: function() {
+						return "aPackage";
+					},
+					getNamespace: function() {
+						return "aNameSpace";
+					}
+				}
+			};
+			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves("cancel");
+			return LrepConnector.appVariant.remove(mPropertyBag).then(function () {},
+				function(oError) {
+					assert.ok(oStubOpenTransportSelection.calledOnce);
+					assert.equal(oError, "cancel", "promise rejected with cancel value");
+					TransportSelection.prototype.openTransportSelection.restore();
+				});
 		});
 
 		QUnit.test("given a mock server, when appVariant.list is triggered", function (assert) {
@@ -794,18 +1026,16 @@ sap.ui.define([
 				url: "/sap/bc/lrep"
 			};
 			var sUrl = "/sap/bc/lrep/app_variant_overview/?layer=VENDOR&sap.app%2fid=someId";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return LrepConnector.appVariant.list(mPropertyBag).then(function () {
-				assert.ok(oStubSendRequest.calledWith(sUrl, "GET", {
+				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
 					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : undefined,
 					applyConnector : ApplyConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
-				WriteUtils.sendRequest.restore();
-			});
+			}.bind(this));
 		});
 	});
 	QUnit.done(function () {
