@@ -6,18 +6,13 @@
 	<tnt:ToolPage id="toolPage">
 		<tnt:header>
 			<tnt:ToolHeader>
-				<Button id="sideNavigationToggleButton"
-					icon="sap-icon://menu2"
-					type="Transparent"
-					press="onSideNavButtonPress" />
 				<ToolbarSpacer />
-				<FormattedText htmlText='&lt;h3&gt;{i18n>appTitle}&lt;/h3&gt;' />
+				<Title text="{i18n>appTitle}" />
 				<ToolbarSpacer />
 			</tnt:ToolHeader>
 		</tnt:header>
 		<tnt:sideContent>
-			<tnt:SideNavigation expanded="false"
-				itemSelect=".onItemSelect">
+			<tnt:SideNavigation itemSelect=".onItemSelect">
 				<tnt:NavigationList id="navigationList">
 					<tnt:NavigationListItem text="Home"
 						icon="sap-icon://home"
@@ -38,7 +33,10 @@
 			</tnt:SideNavigation>
 		</tnt:sideContent>
 		<tnt:mainContents>
-			<App id="app" />
+			<Breadcrumbs id="breadcrumbs" separatorStyle="DoubleSlash" links="{titleModel>/breadcrumbs}" currentLocationText="{titleModel>/currentLocation/title}">
+				<Link text="{titleModel>title}" press="onBreadcrumbPress" />
+			</Breadcrumbs>
+			<App id="app" height="calc(100% - 23px)"></App>
 		</tnt:mainContents>
 	</tnt:ToolPage>
 </mvc:View>

@@ -13,3 +13,8 @@ li.sapTntNavLIItemSelected[id$="productsItem"] > div.sapTntNavLIItem {
 .maxWidth100 {
 	max-width: 100%;
 }
+
+nav.sapMBreadcrumbs {
+	margin: 0 !important;
+	padding: 5px;
+}

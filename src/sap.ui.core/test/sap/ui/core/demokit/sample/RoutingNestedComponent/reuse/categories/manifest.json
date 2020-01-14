@@ -98,23 +98,20 @@
 						"name": "products",
 						"prefix": "p"
 					}
-				},
-				{
-					"name": "notfound",
-					"pattern": "notFound",
-					"target": "notFound"
 				}
 			],
 			"targets": {
 				"list": {
 					"type": "View",
 					"id": "list",
-					"name": "List"
+					"name": "List",
+					"title": "Category List"
 				},
 				"detail": {
 					"type": "View",
 					"id": "detail",
-					"name": "Detail"
+					"name": "Detail",
+					"title": "{CategoryName}"
 				},
 				"products": {
 					"type": "Component",

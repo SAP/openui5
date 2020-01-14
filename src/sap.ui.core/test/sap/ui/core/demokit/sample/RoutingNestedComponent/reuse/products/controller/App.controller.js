@@ -1,6 +1,5 @@
-sap.ui.define(["sap/ui/core/sample/RoutingNestedComponent/base/BaseController"], function(BaseController) {
+sap.ui.define(["sap/ui/core/mvc/Controller"], function(Controller) {
 	"use strict";
-
-	return BaseController.extend("sap.ui.core.sample.RoutingNestedComponent.reuse.products.controller.App", {
+	return Controller.extend("sap.ui.core.sample.RoutingNestedComponent.reuse.products.controller.App", {
 	});
 });
