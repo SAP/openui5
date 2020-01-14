@@ -1823,8 +1823,8 @@ sap.ui.define([
 			this.setBusy(false);
 		}
 
+		TableUtils.Hook.call(this, Hook.BindRows, oBindingInfo);
 		Control.prototype.bindAggregation.call(this, "rows", oBindingInfo);
-
 		this._bRowsBeingBound = false;
 	};
 
@@ -1847,7 +1847,7 @@ sap.ui.define([
 			var oModel = oBinding ? oBinding.getModel() : null;
 
 			this._bRowsBeingBound = false;
-			TableUtils.Hook.call(this, Hook.BindRows, oBinding);
+			TableUtils.Hook.call(this, Hook.RowsBound, oBinding);
 			this._getSelectionPlugin()._setBinding(oBinding);
 
 			if (oModel && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
@@ -1863,11 +1863,7 @@ sap.ui.define([
 	 */
 	Table.prototype.unbindAggregation = function(sName, bSuppressReset) {
 		if (sName === "rows") {
-			// #unbindAggregation is called in #bindAggregation, if the aggregation is already bound.
-			// We don't to react to this to avoid unnecessary DOM updates and UI flickering.
-			if (!this._bRowsBeingBound) {
-				this._unbindRows();
-			}
+			this._unbindRows();
 			return this;
 		}
 
@@ -1883,16 +1879,18 @@ sap.ui.define([
 	};
 
 	Table.prototype._unbindRows = function() {
+		TableUtils.Hook.call(this, Hook.UnbindRows, this.getBinding("rows"));
 		Control.prototype.unbindAggregation.call(this, "rows", true);
-		this._bRowsBeingBound = false;
 		this._getSelectionPlugin()._setBinding(null);
 
-		if (this.bIsDestroyed || this._bIsBeingDestroyed) {
+		// We don't further react to unbind operations that are part of rebind and destruction
+		// to avoid unnecessary DOM updates and UI flickering.
+		if (this._bRowsBeingBound || this.bIsDestroyed || this._bIsBeingDestroyed) {
 			return;
 		}
 
 		this._adjustToTotalRowCount();
-		TableUtils.Hook.call(this, Hook.UnbindRows);
+		TableUtils.Hook.call(this, Hook.RowsUnbound);
 	};
 
 	/*
