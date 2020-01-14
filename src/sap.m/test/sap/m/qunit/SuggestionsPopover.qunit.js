@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/ComboBox",
 	"sap/m/MultiComboBox",
-	"sap/ui/thirdparty/sinon",
-	"sap/m/SimpleFixFlex"
+	"sap/ui/thirdparty/sinon"
 ], function (
 	Device,
 	qutils,
@@ -24,8 +23,7 @@ sap.ui.define([
 	Input,
 	ComboBox,
 	MultiComboBox,
-	sinon,
-	SimpleFixFlex
+	sinon
 ) {
 	"use strict";
 
@@ -289,6 +287,31 @@ sap.ui.define([
 		assert.strictEqual(oDivDomRef.innerHTML,
 			"<span class=\"sapMInputHighlight\">서비스</span> ID 유헝 <span class=\"sapMInputHighlight\">서비스</span> 성별",
 			"Double highlight with unicode characters");
+	});
+
+	QUnit.test("ValueStateHeader is destroyed when the SuggestionsPopover is destroyed", function (assert) {
+		var oSpy;
+
+		// Arrange
+		this.oSuggestionsPopover._createSuggestionPopup();
+		this.oSuggestionsPopover._createSuggestionPopupContent();
+		this.oSuggestionsPopover._getValueStateHeader();
+
+		// Assert
+		assert.ok(this.oSuggestionsPopover._oValueStateHeader, "The ValueStateHeader is created.");
+
+		// Arrange
+		oSpy = new this.spy(this.oSuggestionsPopover._oValueStateHeader, "destroy");
+
+		// Act
+		this.oSuggestionsPopover.destroy();
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "The value state header was destroyed.");
+		assert.strictEqual(this.oSuggestionsPopover._oValueStateHeader, null, "There is no reference to the ValueStateHeader in the SuggestionsPopover.");
+
+		// Clean
+		oSpy.restore();
 	});
 
 	QUnit.module("_createSuggestionPopupContent", {
