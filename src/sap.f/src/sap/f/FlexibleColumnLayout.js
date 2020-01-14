@@ -586,6 +586,27 @@ sap.ui.define([
 						 */
 						direction : {type : "string"}
 					}
+				},
+
+				/**
+				 * Fired when resize of each column has completed.
+				 * @since 1.76
+				 */
+				columnResize : {
+					parameters : {
+						/**
+						 * Determines whether <code>beginColumn</code> resize has completed.
+						 */
+						beginColumn : {type : "boolean"},
+						/**
+						 * Determines whether <code>midColumn</code> resize has completed.
+						 */
+						midColumn : {type : "boolean"},
+						/**
+						 * Determines whether <code>endColumn</code> resize has completed.
+						 */
+						endColumn : {type : "boolean"}
+					}
 				}
 			}
 		}
@@ -610,6 +631,12 @@ sap.ui.define([
 
 		// We need to have column navigating buttons single width for animations of the layout
 		this._iNavigationArrowWidth = DomUnitsRem.toPx(Parameters.get("_sap_f_FCL_navigation_arrow_width"));
+
+		this._oColumnWidthInfo = {
+			beginColumn: 0,
+			midColumn: 0,
+			endColumn: 0
+		};
 	};
 
 	/**
@@ -994,7 +1021,6 @@ sap.ui.define([
 
 			// Animations on - suspend ResizeHandler while animation is running
 			if (bHasAnimations) {
-
 				var oColumnDomRef = oColumn.get(0);
 
 				// Clear previous timeouts if present
@@ -1094,12 +1120,25 @@ sap.ui.define([
 	 *	@private
 	*/
 	FlexibleColumnLayout.prototype._adjustColumnDisplay = function(oColumn, iNewWidth) {
+		var oColumnInfo = {
+				beginColumn: oColumn.hasClass("sapFFCLColumnBegin"),
+				midColumn: oColumn.hasClass("sapFFCLColumnMid"),
+				endColumn: oColumn.hasClass("sapFFCLColumnEnd")
+			},
+			sCurrentColumn = getCurrentColumn(oColumnInfo);
+
 		//BCP: 1980006195
 		if (iNewWidth === 0) {
 			oColumn.addClass("sapFFCLColumnHidden");
 		} else {
 			oColumn.removeClass("sapFFCLColumnHidden");
 		}
+
+		if (this._oColumnWidthInfo[sCurrentColumn] !== iNewWidth) {
+			this.fireColumnResize(oColumnInfo);
+		}
+
+		this._oColumnWidthInfo[sCurrentColumn] = iNewWidth;
 	};
 
 	/**
@@ -1934,6 +1973,19 @@ sap.ui.define([
 	 */
 	function LayoutHistory () {
 		this._aLayoutHistory = [];
+	}
+
+	function getCurrentColumn(oColumnInfo) {
+		var sCurrentColumn;
+
+		for (var sKey in oColumnInfo) {
+			if (oColumnInfo[sKey]) {
+				sCurrentColumn = sKey;
+				break;
+			}
+		}
+
+		return sCurrentColumn;
 	}
 
 	/**
