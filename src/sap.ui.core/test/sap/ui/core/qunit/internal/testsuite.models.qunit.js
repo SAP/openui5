@@ -8,6 +8,7 @@ sap.ui.define(function() {
 	 */
 
 	"use strict";
+	/*eslint camelcase: 0*/
 	return {
 		name : "Internal TestSuite for UI5 Core - Models",
 		defaults : {
@@ -109,7 +110,45 @@ sap.ui.define(function() {
 			// data state tests in combination with OData V2 model
 			// *************************************************************************
 			// contained in testsuite.odatav2.qunit.js
-			ODataModel : {
+			DerivedTypes: {
+				// not in 1RingModels.qunit because of MockServer usage
+				title: "DerivedTypes",
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/DerivedTypes.qunit"]
+			},
+			ODataAnnotationsV2: {
+				// not in 1RingModels.qunit because of ODataAnnotationsFakeService usage
+				title: "sap.ui.model.odata.v2.ODataAnnotations",
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataAnnotationsV2.qunit"]
+			},
+			ODataPropertyBinding: {
+				// not in 1RingModels.qunit because of ODataModelFakeService usage
+				title: "sap.ui.model.odata.v2.ODataPropertyBinding",
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataPropertyBinding.qunit"]
+			},
+			ODataV2ListBinding: {
+				// not in 1RingModels.qunit because of ODataModelFakeService usage
+				title: "sap.ui.model.odata.v2.ODataListBinding",
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataV2ListBinding.qunit"]
+			},
+			ODataV2ListBinding_Paging: {
+				// not in 1RingModels.qunit because of ODataModelFakeService usage
+				title: "sap.ui.model.odata.v2.ODataListBinding - Paging",
+				module : [
+					"test-resources/sap/ui/core/qunit/odata/v2/ODataV2ListBinding_Paging.qunit"
+				]
+			},
+			ODataV2Model: {
+				// not in 1RingModels.qunit because of ODataModelFakeService usage
+				title: "sap.ui.model.odata.v2.ODataModel (ODataV2Model)",
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataV2Model.qunit"]
+			},
+			PendingChanges: {
+				// not in 1RingModels.qunit because of MockServer usage
+				title: "sap.ui.model.odata.v2.ODataModel - Get all pending changes",
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/PendingChanges.qunit"],
+				sinon: 1
+			},
+			V2ODataModel : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.v2.ODataModel (V2ODataModel.qunit)",
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/V2ODataModel.qunit"],
@@ -118,6 +157,25 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
+			V2ODataModelB : {
+				// not in 1RingModels.qunit because of MockServer usage
+				title : "sap.ui.model.odata.v2.ODataModel (V2ODataModelB.qunit)",
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/V2ODataModelB.qunit"],
+				sinon : 1,
+				ui5 : {
+					language : "en-US"
+				}
+			},
+			V2ODataModelDataState : {
+				// not in 1RingModels.qunit because of MockServer usage
+				title : "sap.ui.model.odata.v2.ODataModel (V2ODataModelDataState.qunit)",
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/V2ODataModelDataState.qunit"],
+				sinon : 1,
+				ui5 : {
+					language : "en-US"
+				}
+			},
+
 			// *************************************************************************
 			// ResourceModel test
 			// *************************************************************************

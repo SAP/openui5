@@ -1,6 +1,7 @@
 sap.ui.define(function() {
 
 	"use strict";
+	/*eslint camelcase: 0*/
 	return {
 		name: "TestSuite for sap.ui.core: GTP testcase CORE/DATABINDING",
 		defaults: {
