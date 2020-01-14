@@ -1,5 +1,7 @@
+/* eslint-disable default-case */
 /*global QUnit, jQuery, sinon */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"jquery.sap.global",
 	"sap/ui/qunit/QUnitUtils",
@@ -14,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"jquery.sap.mobile"
 ], function(
+	Core,
 	createAndAppendDiv,
 	jQuery,
 	qutils,
@@ -95,8 +98,6 @@ sap.ui.define([
 		return oPopover;
 	}
 
-
-
 QUnit.module("Initial Check");
 
 QUnit.test("Overview rendered", function(assert){
@@ -146,11 +147,20 @@ QUnit.test("Item render", function(assert){
 	var $spacer = $toolbar.find(".sapMTBSpacer");
 	assert.ok($spacer, "toolbar has a spacer");
 
+	var $buttons = $popover.find("button");
+
+	var sDefaultLanguage = Core.getConfiguration().getLanguage();
+	// Set language to english to test te text of the close button
+	Core.getConfiguration().setLanguage("en-US");
+
 	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	var sCloseText = oRB.getText("COLUMNHEADERPOPOVER_CLOSE_BUTTON");
-	var $buttons = $popover.find("button");
+
 	assert.equal($buttons.length, 4, "Popover has four buttons");
-	assert.equal($buttons[3].title, sCloseText, "last one item is close item");
+	assert.equal($buttons[3].title, sCloseText, "last visible item is close button");
+
+	// Set language back to default
+	Core.getConfiguration().setLanguage(sDefaultLanguage);
 
 	oButton.destroy();
 	oPopover.destroy();
@@ -275,12 +285,12 @@ QUnit.test("ColumnPopoverCustomItem", function(assert){
 QUnit.test("ColumnPopoverSortItem", function(assert){
 	var oPopover = createCHP("test5");
 	var oSortItem1 = new ColumnPopoverSortItem({
-		sortChildren:[
+		items:[
 			new Item({ text: "item1"})
 		]
 	});
 	var oSortItem2 = new ColumnPopoverSortItem({
-		sortChildren:[
+		items:[
 			new Item({ text: "item1", key: "item1"}),
 			new Item({ text: "item2", key: "item2"})
 		]

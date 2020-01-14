@@ -1,197 +1,280 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>sap.m.ColumnHeaderPopover</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.ColumnHeaderPopover</title>
 
-<script src="shared-config.js"></script>
-<script src="../../../resources/sap-ui-core.js" data-sap-ui-xx-bindingSyntax="complex"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
-</script>
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js" data-sap-ui-xx-bindingSyntax="complex"
+			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+	</script>
 
-<script>
+	<script>
 
 
-//***********************TABLE*********************************
+		//***********************TABLE*********************************
 
-//***********************DATA**********************************
-	var oTableData = {
-		headers : [
-			{
-				text : "LastName"
-			},
-			{
-				text : "FirstName"
-			},
-			{
-				hAlign: "Center",
-				text : "Available"
-			},
-			{
-				text : "Test2",
-				minScreenWidth : "XXLarge",
-				popinDisplay : "Inline",
-				demandPopin : true,
-				hAlign : "End"
-			},
-			{
-				hAlign: "Center",
-				text : "Image",
-				minScreenWidth : "Phone",
-			},
-			{
-				text : "Raiting",
-				minScreenWidth : "Tablet",
-				popinDisplay : "WithoutHeader",
-				demandPopin : true
-			},
-			{
-				text : "Birthday",
-				minScreenWidth: "800px"
-			}
-		],
-		models : [
-			{id: Math.random(), lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "male", rating: 4, money: 5.67, birthday: "1984-06-01", currency: "EUR", type: "Inactive"},
-			{id: Math.random(), lastName: "Friese", name: "Andy", checked: true, linkText: "www.google.de", href: "http://www.google.de", src: "leads", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", type: "Inactive"},
-			{id: Math.random(), lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "employee", gender: "female", rating: 3, money: 1345.212, birthday: "1987-01-07", currency: "EUR", type: "Inactive"},
-			{id: Math.random(), lastName: "Schutt", name: "Doris", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "female", rating: 4, money: 1.1, birthday: "2001-03-01", currency: "USD", type: "Inactive"},
-			{id: Math.random(), lastName: "Open", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "female", rating: 2, money: 55663.1, birthday: "1953-01-04", currency: "USD", type: "Inactive"},
-			{id: Math.random(), lastName: "Dewit", name: "Kenya", checked: false, linkText: "www.google.de", href: "http://www.google.de", src: "employee", gender: "female", rating: 3, money: 34.23, birthday: "1957-01-01", currency: "EUR", type: "Inactive"}
+		//***********************DATA**********************************
+		var oTableData = {
+			headers: [
+				{
+					text: "LastName"
+				},
+				{
+					text: "FirstName"
+				},
+				{
+					hAlign: "Center",
+					text: "Available"
+				},
+				{
+					text: "Test2",
+					minScreenWidth: "XXLarge",
+					popinDisplay: "Inline",
+					demandPopin: true,
+					hAlign: "End"
+				},
+				{
+					hAlign: "Center",
+					text: "Image",
+					minScreenWidth: "Phone",
+				},
+				{
+					text: "Raiting",
+					minScreenWidth: "Tablet",
+					popinDisplay: "WithoutHeader",
+					demandPopin: true
+				},
+				{
+					text: "Birthday",
+					minScreenWidth: "800px"
+				}
+			],
+			models: [
+				{
+					id: Math.random(),
+					lastName: "Dente",
+					name: "Al",
+					checked: true,
+					linkText: "www.sap.com",
+					href: "http://www.sap.com",
+					src: "employee",
+					gender: "male",
+					rating: 4,
+					money: 5.67,
+					birthday: "1984-06-01",
+					currency: "EUR",
+					type: "Inactive"
+				},
+				{
+					id: Math.random(),
+					lastName: "Friese",
+					name: "Andy",
+					checked: true,
+					linkText: "www.google.de",
+					href: "http://www.google.de",
+					src: "leads",
+					gender: "male",
+					rating: 2,
+					money: 10.45,
+					birthday: "1975-01-01",
+					currency: "EUR",
+					type: "Inactive"
+				},
+				{
+					id: Math.random(),
+					lastName: "Mann",
+					name: "Anita",
+					checked: false,
+					linkText: "www.kicker.de",
+					href: "http://www.kicker.de",
+					src: "employee",
+					gender: "female",
+					rating: 3,
+					money: 1345.212,
+					birthday: "1987-01-07",
+					currency: "EUR",
+					type: "Inactive"
+				},
+				{
+					id: Math.random(),
+					lastName: "Schutt",
+					name: "Doris",
+					checked: true,
+					linkText: "www.facebook.de",
+					href: "http://www.facebook.de",
+					src: "employee",
+					gender: "female",
+					rating: 4,
+					money: 1.1,
+					birthday: "2001-03-01",
+					currency: "USD",
+					type: "Inactive"
+				},
+				{
+					id: Math.random(),
+					lastName: "Open",
+					name: "Doris",
+					checked: true,
+					linkText: "www.spiegel.de",
+					href: "http://www.spiegel.de",
+					src: "doctor",
+					gender: "female",
+					rating: 2,
+					money: 55663.1,
+					birthday: "1953-01-04",
+					currency: "USD",
+					type: "Inactive"
+				},
+				{
+					id: Math.random(),
+					lastName: "Dewit",
+					name: "Kenya",
+					checked: false,
+					linkText: "www.google.de",
+					href: "http://www.google.de",
+					src: "employee",
+					gender: "female",
+					rating: 3,
+					money: 34.23,
+					birthday: "1957-01-01",
+					currency: "EUR",
+					type: "Inactive"
+				}
 			]
-	};
+		};
 
-//******************TEMPLATE*************************************************
+		//******************TEMPLATE*************************************************
 
-	var oColumnTemplate = new sap.m.Column({
-		header : new sap.m.Label({text : "{text}"}),
-		hAlign: "{hAlign}",
-		minScreenWidth : "{minScreenWidth}",
-		popinDisplay : "{popinDisplay}",
-		demandPopin : "{demandPopin}"
-	});
+		var oColumnTemplate = new sap.m.Column({
+			header: new sap.m.Label({text: "{text}"}),
+			hAlign: "{hAlign}",
+			minScreenWidth: "{minScreenWidth}",
+			popinDisplay: "{popinDisplay}",
+			demandPopin: "{demandPopin}"
+		});
 
-	var oListTemplate = new sap.m.ColumnListItem({
-		vAlign: "Middle",
-		type : "{type}",
-		cells : [
-			new sap.m.Text({
-				text : "{lastName}",
-				wrapping : false
-			}),
-			new sap.m.Text({
-				text : "{name}",
-				wrapping : false
-			}),
-			new sap.m.CheckBox({
-				selected: "{checked}"
-			}),
-			new sap.m.Link({
-				text: "{linkText}"
-			}),
-			new sap.ui.core.Icon({
-				src : "sap-icon://{src}",
-				decorative: false,
-				press: function() {}
-			}),
-			new sap.m.RatingIndicator({
-				value: "{rating}"
-			}),
-			new sap.m.DatePicker({
-				value : "{birthday}",
-				valueFormat : "yyyy-MM-dd",
-				displayFormat : "dd.MM.yyyy"
-			}),
-			new sap.m.Text({
-				text : "{money} EUR",
+		var oListTemplate = new sap.m.ColumnListItem({
+			vAlign: "Middle",
+			type: "{type}",
+			cells: [
+				new sap.m.Text({
+					text: "{lastName}",
+					wrapping: false
+				}),
+				new sap.m.Text({
+					text: "{name}",
+					wrapping: false
+				}),
+				new sap.m.CheckBox({
+					selected: "{checked}"
+				}),
+				new sap.m.Link({
+					text: "{linkText}"
+				}),
+				new sap.ui.core.Icon({
+					src: "sap-icon://{src}",
+					decorative: false,
+					press: function () {
+					}
+				}),
+				new sap.m.RatingIndicator({
+					value: "{rating}"
+				}),
+				new sap.m.DatePicker({
+					value: "{birthday}",
+					valueFormat: "yyyy-MM-dd",
+					displayFormat: "dd.MM.yyyy"
+				}),
+				new sap.m.Text({
+					text: "{money} EUR",
+				})
+			]
+		});
+
+
+		//*****************MODEL AND BINDING**********************************
+
+		var oTable = new sap.m.Table({
+			growing: true,
+			growingThreshold: 5
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel(oTableData);
+		oTable.setModel(oModel);
+
+		oTable.bindAggregation("columns", {
+			path: "/headers",
+			template: oColumnTemplate
+		});
+		oTable.bindItems({
+			path: "/models",
+			template: oListTemplate,
+			key: "id"
+		});
+
+		oTable.attachEvent("columnPress", function (oEvent) {
+			var oColumn = oEvent.getParameter("column");
+			//if (oColumn === oTable.getColumns()[1]) {
+				var sSortProperty = oColumn.getHeader().getText();
+				// hand added key
+				var oSortItem = new sap.m.ColumnPopoverSortItem({
+					items: [
+						new sap.ui.core.Item({
+							text: sSortProperty + " 1"
+						}),
+						new sap.ui.core.Item({
+							text: sSortProperty + " 2"
+						})
+					],
+					sort: function (oEvent) {
+						var oTableBinding = oTable.getBinding("items"),
+								bAscending = false,
+								oSorter = new sap.ui.model.Sorter("name", !bAscending);
+						oTableBinding.sort([oSorter]);
+					}
+				});
+				// TODO: improve - no parent ??
+				//	oColumn.addDependent(oPopover);
+				oPopover.addItem(oSortItem);
+
+				var oGroupItem = new sap.m.ColumnPopoverActionItem({
+					icon: "sap-icon://group",
+					text: "group",
+					press: function (oEvent) {
+						var oTableBinding = oTable.getBinding("items"),
+								oGrouping = new sap.ui.model.Sorter("name", true, function (oContext) {
+									var sKey = oContext.getProperty("name");
+									return {
+										key: sKey,
+										text: sKey
+									};
+								});
+						oTable.getBinding("items").sort(oGrouping);
+					}
+				});
+				oPopover.addItem(oGroupItem);
+				oPopover.openBy(oColumn);
+			}
+
+		);
+		oTable.bActiveHeaders = true;
+
+
+		//**********************CHP**********************************
+
+		var oList = new sap.m.List();
+		oList.setModel(oModel);
+		oList.bindItems({
+			path: "/headers",
+			template: new sap.m.StandardListItem({
+				title: "{text}"
 			})
-		]
-	});
+		});
 
-
-//*****************MODEL AND BINDING*********************************
-
-	var oTable = new sap.m.Table({
-		growing: true,
-		growingThreshold: 5
-	});
-
-	var oModel = new sap.ui.model.json.JSONModel(oTableData);
-	oTable.setModel(oModel);
-
-	oTable.bindAggregation("columns", {
-		path: "/headers",
-		template: oColumnTemplate
-	});
-	oTable.bindItems({
-		path: "/models",
-		template : oListTemplate,
-		key: "id"
-	});
-
-	oTable.attachEvent( "columnPress", function(oEvent) {
-		var oColumn = oEvent.getParameter("column");
-		if (oColumn === oTable.getColumns()[1]) {
-			var sSortProperty = oColumn.getHeader().getText();
-			// hand added key
-			var oSortItem = new sap.m.ColumnPopoverSortItem({
-				sortChildren: [
-					new sap.ui.core.Item({
-						text: sSortProperty
-					}),
-					new sap.ui.core.Item({
-						text: sSortProperty + "1"
-					})
-				],
-				sort: function(oEvent) {
-					var oTableBinding = oTable.getBinding("items"),
-					bAscending = false,
-
-					oSorter = new sap.ui.model.Sorter("name", !bAscending);
-					oTableBinding.sort([oSorter]);
-				}
-			});
-			// TODO: improve - no parent
-		//	oColumn.addDependent(oPopover);
-			oPopover.addItem(oSortItem);
-
-			var oGroupItem = new sap.m.ColumnPopoverActionItem({
-				icon: "sap-icon://group",
-				text: "group",
-				press: function(oEvent) {
-					var oTableBinding = oTable.getBinding("items"),
-					oGrouping = new sap.ui.model.Sorter("name", true, function(oContext) {
-						var sKey = oContext.getProperty("name");
-						return {
-							key: sKey,
-							text: sKey
-						};
-					});
-					oTable.getBinding("items").sort(oGrouping);
-				}
-			});
-			oPopover.addItem(oGroupItem);
-			oPopover.openBy(oColumn);
-		}
-
-	});
-	oTable.bActiveHeaders = true;
-
-
-
-//**********************CHP**********************************
-
-	var oList = new sap.m.List();
-	oList.setModel(oModel);
-	oList.bindItems({
-		path : "/headers",
-		template: new sap.m.StandardListItem({
-			title: "{text}"
-		})
-	});
-
-	var oListfilter = new sap.m.List({
-		items: [
-			new sap.m.StandardListItem({
+		var oListfilter = new sap.m.List({
+			items: [
+				new sap.m.StandardListItem({
 					type: "Active",
 					title: "Doris",
 					press: function (oEvent) {
@@ -200,112 +283,104 @@
 						oPopover.getAggregation("_popover").close();
 					}
 				})
-		]
-	});
+			]
+		});
 
-	var oData = [
-		{
-			type: "action",
-			visible : false,
-			text: "sort",
-			icon: "sap-icon://money-bills"
-		},
-		{
-			type: "custom",
-			visible : true,
-			text: "custom item tooltip",
-			icon: "sap-icon://call",
-			content: oList
-		},
-		{
-			type: "sort",
-			visible : false
-		},
-		{
-			type: "custom",
-			visible : true,
-			text: "filter",
-			icon: "sap-icon://filter",
-			content: oListfilter
-		},
-// 		{
-// 			type: "action",
-// 			visible : true,
-// 			text: "action",
-// 			icon: "sap-icon://meeting-room"
-// 		},
-// 		{
-// 			type: "custom",
-// 			visible : true,
-// 			text: "custom item tooltip",
-// 			icon: "sap-icon://money-bills",
-// 			content: new sap.m.Input()
-// 		}
-
+		var oData = [
+			{
+				type: "action",
+				visible: false,
+				text: "sort",
+				icon: "sap-icon://money-bills"
+			},
+			{
+				type: "custom",
+				visible: true,
+				text: "custom item tooltip",
+				icon: "sap-icon://call",
+				content: oList
+			},
+			{
+				type: "sort",
+				visible: false
+			},
+			{
+				type: "custom",
+				visible: true,
+				text: "filter",
+				icon: "sap-icon://filter",
+				content: oListfilter
+			} ,
+			{
+				type: "action",
+				visible : true,
+				text: "action",
+				icon: "sap-icon://meeting-room"
+			},
+			{
+				type: "custom",
+				visible : true,
+				text: "custom item tooltip",
+				icon: "sap-icon://money-bills",
+				content: new sap.m.Input()
+			}
 		];
 
+		function handlePressEvent(oEvent) {
+			jQuery.sap.require("sap.m.MessageToast");
+			sap.m.MessageToast.show("action");
+		};
 
-	function handlePressEvent(oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
-		sap.m.MessageToast.show("action");
-	};
+		var oPopover = new sap.m.ColumnHeaderPopover();
 
-	var oPopover = new sap.m.ColumnHeaderPopover();
+		var oModel = new sap.ui.model.json.JSONModel();
+		oPopover.setModel(oModel);
+		oModel.setData(oData);
+		oPopover.bindItems("/", function (id, oContext) {
+			var oItem = oContext.getObject();
+			switch (oItem.type) {
+				case "action":
+					return new sap.m.ColumnPopoverActionItem({
+						visible: "{visible}",
+						text: "{text}",
+						icon: "{icon}",
+						press: handlePressEvent
+					});
+				case "custom":
+					return new sap.m.ColumnPopoverCustomItem({
+						visible: "{visible}",
+						text: "{text}",
+						icon: "{icon}",
+						content: oItem.content
+					});
+				case "sort":
+					return new sap.m.ColumnPopoverSortItem({
+						visible: "{visible}"
+					});
+			}
+		});
 
-	var oModel = new sap.ui.model.json.JSONModel();
-	oPopover.setModel(oModel);
-	oModel.setData(oData);
-	oPopover.bindItems("/", function(id, oContext) {
-		var oItem = oContext.getObject();
-		switch (oItem.type) {
-			case "action":
-				return new sap.m.ColumnPopoverActionItem({
-					visible: "{visible}",
-					text: "{text}",
-					icon: "{icon}",
-					press: handlePressEvent
-				});
-			case "custom":
-				return new sap.m.ColumnPopoverCustomItem({
-					visible: "{visible}",
-					text: "{text}",
-					icon: "{icon}",
-					content: oItem.content
-				});
-			case "sort":
-				return new sap.m.ColumnPopoverSortItem({
-					visible: "{visible}"
-				});
-		}
-	});
+		var oButton = new sap.m.Button({
+			text: "columnHeaderPopover",
+			press: function () {
+				oPopover.openBy(this);
+			}
+		});
 
-	var oButton =  new sap.m.Button({
-	 	text : "columnHeaderPopover",
-	  	press: function(){
-	  		oPopover.openBy(this);
-	  	}
-	});
+		//*****************PAGE*********************************************
 
+		var oApp = new sap.m.App;
 
+		var oPage = new sap.m.Page({
+			title: "ColumnPopover Test Page",
+			enableScrolling: true,
+			content: [oTable, oButton]
+		});
 
+		oApp.addPage(oPage).placeAt("body");
 
-//*****************PAGE*********************************************
-
-	var oApp = new sap.m.App;
-
-	var oPage = new sap.m.Page({
-		title: "ColumnPopover Test Page",
-		enableScrolling : true,
-		content : [oTable, oButton]
-	});
-
-	oApp.addPage(oPage).placeAt("body");
-
-</script>
-
+	</script>
 </head>
-
 <body id="body" class="sapUiBody">
 </body>
-
 </html>
