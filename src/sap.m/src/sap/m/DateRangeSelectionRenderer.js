@@ -11,6 +11,7 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer'],
 	 * @namespace
 	 */
 	var DateRangeSelectionRenderer = Renderer.extend(DatePickerRenderer);
+	DateRangeSelectionRenderer.apiVersion = 2;
 
 	/**
 	 * Write the value of the input.
@@ -22,9 +23,9 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer'],
 	DateRangeSelectionRenderer.writeInnerValue = function(oRm, oControl) {
 
 		if (oControl._bValid) {
-			oRm.writeAttributeEscaped("value", oControl._formatValue(oControl.getDateValue(), oControl.getSecondDateValue()));
+			oRm.attr("value", oControl._formatValue(oControl.getDateValue(), oControl.getSecondDateValue()));
 		} else {
-			oRm.writeAttributeEscaped("value", oControl.getValue());
+			oRm.attr("value", oControl.getValue());
 		}
 
 	};

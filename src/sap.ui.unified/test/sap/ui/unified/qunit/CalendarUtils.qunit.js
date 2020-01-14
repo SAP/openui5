@@ -527,10 +527,15 @@ sap.ui.define([
 			CalendarUtils._monthsBetween(new Date());
 		}, "Without second parameter");
 
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 1, 1)), 1, "1 month in the same year");
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2016, 11, 1)), 1, "1 month in different years");
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 1, 1), new Date(2017, 0, 1)), 1, "1 month negative");
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 0, 1)), 0, "no delta");
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 1, 1)), 1, "with abs(): 1 month in the same year");
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2016, 11, 1)), 1, "with abs(): 1 month in different years");
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 1, 1), new Date(2017, 0, 1)), 1, "with abs(): 1 month negative");
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 0, 1)), 0, "with abs(): no delta");
+
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 1, 1), true), 1, "without abs(): 1 month in the same year");
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2016, 11, 1), true), -1, "without abs(): 1 month in different years");
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 1, 1), new Date(2017, 0, 1), true), -1, "without abs(): 1 month negative");
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 0, 1), true), 0, "without abs(): no delta");
 
 	});
 

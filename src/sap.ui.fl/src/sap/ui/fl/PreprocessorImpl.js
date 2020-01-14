@@ -65,8 +65,9 @@ function(
 				return Promise.resolve([]);
 			}
 			var sFlexReference = Utils.getComponentClassName(oAppComponent);
+			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest(), sAppVersion);
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 			return oChangePersistence.getChangesForComponent().then(function(aChanges) {
 				var aExtensionModules = aChanges.filter(function (oChange) {
 					return isCodeExt(oChange) && isForController(sControllerName, oChange);

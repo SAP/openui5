@@ -12,10 +12,10 @@ sap.ui.define([
 	/**
 	 * Entity that handles ABAP transport related information.
 	 * @constructor
-	 * @alias sap.ui.fl.transport.Transports
+	 * @alias sap.ui.fl.write._internal.transport.Transports
 	 * @author SAP SE
 	 * @version ${version}
-	 * @since 1.38.0
+	 * @since 1.74.0
 	 */
 	var Transports = function() {
 	};

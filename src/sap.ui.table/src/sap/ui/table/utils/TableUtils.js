@@ -1209,7 +1209,7 @@ sap.ui.define([
 		 *
 		 * @param {function():T | T} vObject The object, or a function returning the object, on which methods will be called.
 		 * @param {function(this:U, T) | Object<string, Array.<*>>} vCall Called if <code>vObject</code> is, or returns an object.
-		 * @param {U} [oThis] Context in the function calls, or in the callback if <code>vCall</code>is a function. Default is <code>vObject</code>.
+		 * @param {U} [oThis] Context in the function calls, or in the callback if <code>vCall</code> is a function. Default is <code>vObject</code>.
 		 * @returns {undefined | Array.<*>} If <code>vCall</code> is a map, the return values of the calls are returned. In case of multiple calls, an
 		 *                                  array of return values is returned.
 		 * @template T, U

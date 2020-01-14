@@ -63,10 +63,10 @@ sap.ui.define([
 				oItemNavigation = new ColorPalette.prototype._ItemNavigation();
 
 			oCP._oMoreColorsDialog = new Dialog();
-			oCP._oItemNavigation = oItemNavigation;
+			oCP._oPaletteColorItemNavigation = oItemNavigation;
 
 			oSpyMoreColorsDialogDestroy = this.spy(oCP._oMoreColorsDialog, "destroy");
-			oSpyItemNavDestroy = this.spy(oCP._oItemNavigation, "destroy");
+			oSpyItemNavDestroy = this.spy(oCP._oPaletteColorItemNavigation, "destroy");
 			oSpyRemoveDelegate = this.spy(oCP, "removeDelegate");
 
 			// Act
@@ -77,7 +77,7 @@ sap.ui.define([
 			assert.strictEqual(this._oMoreColorsDialog, undefined, "There is no reference to the 'More colors' dialog");
 
 			assert.equal(oSpyItemNavDestroy.callCount, 1, "ItemNavigation#destroy is called");
-			assert.strictEqual(this._oItemNavigation, undefined, "There is no reference to the ItemNavigation");
+			assert.strictEqual(this._oPaletteColorItemNavigation, undefined, "There is no reference to the ItemNavigation");
 
 			assert.equal(oSpyRemoveDelegate.callCount, 1, "Call to removeDelegate should be executed");
 			assert.strictEqual(oSpyRemoveDelegate.getCall(0).args[0], oItemNavigation, "Delegate to the ItemNavigation" +
@@ -99,8 +99,8 @@ sap.ui.define([
 			oCP.onAfterRendering();
 
 			// Assert
-			assert.ok(oCP._oItemNavigation, ".. should be initialized");
-			assert.ok(oCP._oItemNavigation instanceof ColorPalette.prototype._ItemNavigation, "..should be of expected type");
+			assert.ok(oCP._oPaletteColorItemNavigation, ".. should be initialized");
+			assert.ok(oCP._oPaletteColorItemNavigation instanceof ColorPalette.prototype._ItemNavigation, "..should be of expected type");
 
 			// Cleanup
 			oCP.destroy();
@@ -466,7 +466,7 @@ sap.ui.define([
 			oCP._setShowDefaultColorButton(false);
 			oCP.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			oSpyFocusFirstSwatch = this.spy(oCP._getAllSwatches()[0], "focus");
+			oSpyFocusFirstSwatch = this.spy(oCP._getAllPaletteColorSwatches()[0], "focus");
 
 			// Act
 			oCP._focusFirstElement();
@@ -660,7 +660,7 @@ sap.ui.define([
 						oMockEvent = this.mockEhancedKeybEvent("", ItemNavigationHomeEnd.BorderReachedDirectionForward),
 						oMockMoreColorsButton = {focus: oSpyFocus};
 
-					this.stub(oCP, "_getAllSwatches").returns(aMockSwatches);
+					this.stub(oCP, "_getAllPaletteColorSwatches").returns(aMockSwatches);
 					this.stub(oCP, "_getShowMoreColorsButton").returns(true);
 					this.stub(oCP, "_getShowDefaultColorButton").returns(false);
 					this.stub(oCP, "_getMoreColorsButton").returns(oMockMoreColorsButton);
@@ -679,9 +679,10 @@ sap.ui.define([
 						oMockEvent = this.mockEhancedKeybEvent("", ItemNavigationHomeEnd.BorderReachedDirectionForward),
 						oMockDefaulColorButton = {focus: oSpyFocus};
 
-					this.stub(oCP, "_getAllSwatches").returns(aMockSwatches);
+					this.stub(oCP, "_getAllPaletteColorSwatches").returns(aMockSwatches);
 					this.stub(oCP, "_getShowMoreColorsButton").returns(false);
 					this.stub(oCP, "_getShowDefaultColorButton").returns(true);
+					this.stub(oCP, "_getShowRecentColorsSection").returns(false);
 					this.stub(oCP,  "_getDefaultColorButton").returns(oMockDefaulColorButton);
 
 					// Act
@@ -700,9 +701,10 @@ sap.ui.define([
 							oMockDefaultColorButton = {focus: oSpyFocus},
 							vResult;
 
-						this.stub(oCP, "_getAllSwatches").returns(aMockSwatches);
+						this.stub(oCP, "_getAllPaletteColorSwatches").returns(aMockSwatches);
 						this.stub(oCP, "_getShowMoreColorsButton").returns(false);
 						this.stub(oCP, "_getShowDefaultColorButton").returns(true);
+						this.stub(oCP, "_getShowRecentColorsSection").returns(false);
 						this.stub(oCP,  "_getDefaultColorButton").returns(oMockDefaultColorButton);
 
 						// Act
@@ -722,7 +724,8 @@ sap.ui.define([
 							oMockEvent = this.mockEhancedKeybEvent("", ItemNavigationHomeEnd.BorderReachedDirectionForward);
 
 						aMockSwatches[0] = oMockFirstSwatch;
-						this.stub(oCP, "_getAllSwatches").returns(aMockSwatches);
+						this.stub(oCP, "_getAllPaletteColorSwatches").returns(aMockSwatches);
+						this.stub(oCP, "_getShowRecentColorsSection").returns(false);
 
 						// Act
 						oCP._onSwatchContainerBorderReached(oMockEvent);
@@ -739,7 +742,7 @@ sap.ui.define([
 						oMockEvent = this.mockEhancedKeybEvent("", ItemNavigationHomeEnd.BorderReachedDirectionBackward),
 						oMockMoreColorsButton = {focus: oSpyFocus};
 
-					this.stub(oCP, "_getAllSwatches").returns(aMockSwatches);
+					this.stub(oCP, "_getAllPaletteColorSwatches").returns(aMockSwatches);
 					this.stub(oCP, "_getShowMoreColorsButton").returns(true);
 					this.stub(oCP, "_getShowDefaultColorButton").returns(false);
 					this.stub(oCP, "_getMoreColorsButton").returns(oMockMoreColorsButton);
@@ -758,7 +761,7 @@ sap.ui.define([
 						oMockEvent = this.mockEhancedKeybEvent("", ItemNavigationHomeEnd.BorderReachedDirectionBackward),
 						oMockDefaulColorButton = {focus: oSpyFocus};
 
-					this.stub(oCP, "_getAllSwatches").returns(aMockSwatches);
+					this.stub(oCP, "_getAllPaletteColorSwatches").returns(aMockSwatches);
 					this.stub(oCP, "_getShowMoreColorsButton").returns(false);
 					this.stub(oCP, "_getShowDefaultColorButton").returns(true);
 					this.stub(oCP,  "_getDefaultColorButton").returns(oMockDefaulColorButton);
@@ -779,7 +782,7 @@ sap.ui.define([
 							oMockMoreColorsButton = {focus: oSpyFocus},
 							vResult;
 
-						this.stub(oCP, "_getAllSwatches").returns(aMockSwatches);
+						this.stub(oCP, "_getAllPaletteColorSwatches").returns(aMockSwatches);
 						this.stub(oCP, "_getShowDefaultColorButton").returns(false);
 						this.stub(oCP, "_getShowMoreColorsButton").returns(true);
 						this.stub(oCP,  "_getMoreColorsButton").returns(oMockMoreColorsButton);
@@ -803,8 +806,9 @@ sap.ui.define([
 
 						oCP._ensureItemNavigation();
 						aMockSwatches[iMockIndexOfTheLastItemInLastRow] = oMockLastSwatch;
-						this.stub(oCP, "_getAllSwatches").returns(aMockSwatches);
-						this.stub(oCP._oItemNavigation, "_getIndexOfTheFirstItemInLastRow").returns(iMockIndexOfTheLastItemInLastRow);
+						this.stub(oCP, "_getAllPaletteColorSwatches").returns(aMockSwatches);
+						this.stub(oCP, "_getShowRecentColorsSection").returns(false);
+						this.stub(oCP._oPaletteColorItemNavigation, "_getIndexOfTheFirstItemInLastRow").returns(iMockIndexOfTheLastItemInLastRow);
 
 						// Act
 						oCP._onSwatchContainerBorderReached(oMockEvent);
@@ -824,7 +828,7 @@ sap.ui.define([
 
 				oColorPalette._ensureItemNavigation();
 
-				oItemNavigation = oColorPalette._oItemNavigation;
+				oItemNavigation = oColorPalette._oPaletteColorItemNavigation;
 
 				function callSut(iItemCount, iExpectedResult) {
 					if (oStubGetItemDomRefs) {
@@ -860,16 +864,16 @@ sap.ui.define([
 
 					this.stub(ColorPalette.prototype._ItemNavigation.prototype, "setItemDomRefs", function () {});
 					oCP._ensureItemNavigation();
-					oCP._oItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
-					var oMockEvent = {keyCode: KeyCodes.ARROW_UP, preventDefault: oSpyPreventDefault, target: oCP._oItemNavigation.getRootDomRef()};
+					oCP._oPaletteColorItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
+					var oMockEvent = {keyCode: KeyCodes.ARROW_UP, preventDefault: oSpyPreventDefault, target: oCP._oPaletteColorItemNavigation.getRootDomRef()};
 
-					oSpyFireEvent = this.spy(oCP._oItemNavigation, "fireEvent");
-					this.stub(oCP._oItemNavigation, "getFocusedIndex").returns(0);
-					this.stub(oCP._oItemNavigation, "getItemDomRefs").returns(new Array(oCP.getColors().length));
+					oSpyFireEvent = this.spy(oCP._oPaletteColorItemNavigation, "fireEvent");
+					this.stub(oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(0);
+					this.stub(oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(new Array(oCP.getColors().length));
 
 					// Act
 
-					oCP._oItemNavigation.onsapprevious(oMockEvent);
+					oCP._oPaletteColorItemNavigation.onsapprevious(oMockEvent);
 
 					// Assert
 					assert.equal(oSpyFireEvent.callCount, 1, "Event should be fired");
@@ -887,14 +891,14 @@ sap.ui.define([
 
 					this.stub(ColorPalette.prototype._ItemNavigation.prototype, "setItemDomRefs", function () {});
 					oCP._ensureItemNavigation();
-					oCP._oItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
-					var oMockEvent = {keyCode: KeyCodes.ARROW_LEFT, target: oCP._oItemNavigation.getRootDomRef()};
+					oCP._oPaletteColorItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
+					var oMockEvent = {keyCode: KeyCodes.ARROW_LEFT, target: oCP._oPaletteColorItemNavigation.getRootDomRef()};
 
-					this.stub(oCP._oItemNavigation, "getFocusedIndex").returns(0);
-					this.stub(oCP._oItemNavigation, "getItemDomRefs").returns(new Array(oCP.getColors().length));
+					this.stub(oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(0);
+					this.stub(oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(new Array(oCP.getColors().length));
 
 					// Act
-					oCP._oItemNavigation.onsapprevious(oMockEvent);
+					oCP._oPaletteColorItemNavigation.onsapprevious(oMockEvent);
 
 					// Assert
 					assert.equal(oSpyParentOnSapPrevious.callCount, 1, "..should forward to the parent's onsapprevious");
@@ -913,19 +917,19 @@ sap.ui.define([
 
 					this.stub(ColorPalette.prototype._ItemNavigation.prototype, "setItemDomRefs", function () {});
 					oCP._ensureItemNavigation();
-					oCP._oItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
-					var oMockEvent = {keyCode: KeyCodes.ARROW_DOWN, preventDefault: oSpyPreventDefault, target: oCP._oItemNavigation.getRootDomRef()};
+					oCP._oPaletteColorItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
+					var oMockEvent = {keyCode: KeyCodes.ARROW_DOWN, preventDefault: oSpyPreventDefault, target: oCP._oPaletteColorItemNavigation.getRootDomRef()};
 
-					oSpyFireEvent = this.spy(oCP._oItemNavigation, "fireEvent");
-					this.stub(oCP._oItemNavigation, "getFocusedIndex").returns(0);
-					this.stub(oCP._oItemNavigation, "getItemDomRefs").returns(new Array(oCP.getColors().length));
-					this.stub(oCP._oItemNavigation, "_getItemInfo").returns({
+					oSpyFireEvent = this.spy(oCP._oPaletteColorItemNavigation, "fireEvent");
+					this.stub(oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(0);
+					this.stub(oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(new Array(oCP.getColors().length));
+					this.stub(oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 						bIsLastItem: true,
 						bIsInTheLastColumn: true
 					});
 
 					// Act
-					oCP._oItemNavigation.onsapnext(oMockEvent);
+					oCP._oPaletteColorItemNavigation.onsapnext(oMockEvent);
 
 					// Assert
 					assert.equal(oSpyFireEvent.callCount, 1, " Event should be fired");
@@ -943,14 +947,14 @@ sap.ui.define([
 
 					this.stub(ColorPalette.prototype._ItemNavigation.prototype, "setItemDomRefs", function () {});
 					oCP._ensureItemNavigation();
-					oCP._oItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
-					var oMockEvent = {keyCode: KeyCodes.ARROW_RIGHT, target: oCP._oItemNavigation.getRootDomRef()};
+					oCP._oPaletteColorItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
+					var oMockEvent = {keyCode: KeyCodes.ARROW_RIGHT, target: oCP._oPaletteColorItemNavigation.getRootDomRef()};
 
-					this.stub(oCP._oItemNavigation, "getFocusedIndex").returns(0);
-					this.stub(oCP._oItemNavigation, "getItemDomRefs").returns(new Array(oCP.getColors().length));
+					this.stub(oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(0);
+					this.stub(oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(new Array(oCP.getColors().length));
 
 					// Act
-					oCP._oItemNavigation.onsapnext(oMockEvent);
+					oCP._oPaletteColorItemNavigation.onsapnext(oMockEvent);
 
 					// Assert
 					assert.equal(oSpyParentOnSapNext.callCount, 1, "..should forward to the parent's onsapnext");
@@ -969,14 +973,14 @@ sap.ui.define([
 
 					this.stub(ColorPalette.prototype._ItemNavigation.prototype, "setItemDomRefs", function () {});
 					oCP._ensureItemNavigation();
-					oCP._oItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
-					var oMockEvent = {keyCode: KeyCodes.ARROW_DOWN, preventDefault: oSpyPreventDefault, target: oCP._oItemNavigation.getRootDomRef()};
+					oCP._oPaletteColorItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
+					var oMockEvent = {keyCode: KeyCodes.ARROW_DOWN, preventDefault: oSpyPreventDefault, target: oCP._oPaletteColorItemNavigation.getRootDomRef()};
 
-					this.stub(oCP._oItemNavigation, "getFocusedIndex").returns(8);
+					this.stub(oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(8);
 					aMockItems[11] = oMockLastItem;
-					this.stub(oCP._oItemNavigation, "getItemDomRefs").returns(aMockItems);
+					this.stub(oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(aMockItems);
 
-					this.stub(oCP._oItemNavigation, "_getItemInfo").returns({
+					this.stub(oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 						bIsLastItem: false,
 						bIsInTheLastColumn: true,
 						bNextRowExists: true,
@@ -984,7 +988,7 @@ sap.ui.define([
 					});
 
 					// Act
-					oCP._oItemNavigation.onsapnext(oMockEvent);
+					oCP._oPaletteColorItemNavigation.onsapnext(oMockEvent);
 
 					// Assert
 					assert.equal(oSpyFocus.callCount, 1, "..should focus on the last available item in the last row");
@@ -1001,7 +1005,7 @@ sap.ui.define([
 					this.oStubSetDomRef = sinon.stub(ColorPalette.prototype._ItemNavigation.prototype, "setItemDomRefs", function() {});
 
 					this.oCP._ensureItemNavigation();
-					this.oStubGetItemDomRefs = sinon.stub(this.oCP._oItemNavigation, "getItemDomRefs").returns(new Array(this.oCP.getColors().length));
+					this.oStubGetItemDomRefs = sinon.stub(this.oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(new Array(this.oCP.getColors().length));
 				},
 				afterEach: function() {
 					this.oStubSetDomRef.restore();
@@ -1011,7 +1015,7 @@ sap.ui.define([
 				QUnit.test("Enriches the event parameters in case of the Border Reached Event with first item index",
 					function (assert) {
 						// Prepare
-						var oStubGetItemInfo = this.stub(this.oCP._oItemNavigation, "_getItemInfo").returns({
+						var oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 								bIsFirstItem: true,
 								bIsLastItem: false,
 								bIsInTheLastColumn: false,
@@ -1023,7 +1027,7 @@ sap.ui.define([
 							oSpyFireEventsHandler = this.stub(ItemNavigation.prototype, "fireEvent");
 
 						// Act
-						this.oCP._oItemNavigation.fireEvent(ItemNavigation.Events.BorderReached, {
+						this.oCP._oPaletteColorItemNavigation.fireEvent(ItemNavigation.Events.BorderReached, {
 							index: 0,
 							event: oEvent
 						});
@@ -1045,7 +1049,7 @@ sap.ui.define([
 				QUnit.test("Enriches the event parameters in case of the Border Reached Event with last item index",
 					function (assert) {
 						// Prepare
-						var oStubGetItemInfo = this.stub(this.oCP._oItemNavigation, "_getItemInfo").returns({
+						var oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 								bIsFirstItem: false,
 								bIsLastItem: true,
 								bIsInTheLastColumn: true,
@@ -1057,8 +1061,8 @@ sap.ui.define([
 							oSpyFireEventsHandler = this.stub(ItemNavigation.prototype, "fireEvent");
 
 						// Act
-						this.oCP._oItemNavigation.fireEvent(ItemNavigation.Events.BorderReached, {
-							index: this.oCP._oItemNavigation.getItemDomRefs().length - 1,
+						this.oCP._oPaletteColorItemNavigation.fireEvent(ItemNavigation.Events.BorderReached, {
+							index: this.oCP._oPaletteColorItemNavigation.getItemDomRefs().length - 1,
 							event: oEvent
 						});
 
@@ -1069,7 +1073,7 @@ sap.ui.define([
 							{
 								"direction": ItemNavigationHomeEnd.BorderReachedDirectionForward,
 								event: oEvent,
-								index: this.oCP._oItemNavigation.getItemDomRefs().length - 1
+								index: this.oCP._oPaletteColorItemNavigation.getItemDomRefs().length - 1
 							}
 						], "..event BorderReached should be fired with certain parameters");
 
@@ -1082,7 +1086,7 @@ sap.ui.define([
 						oSpyFireEventsHandler = this.stub(ItemNavigation.prototype, "fireEvent");
 
 					// Act
-					this.oCP._oItemNavigation.fireEvent("MyEvent", oEventParams);
+					this.oCP._oPaletteColorItemNavigation.fireEvent("MyEvent", oEventParams);
 
 					//Assert
 					assert.equal(oSpyFireEventsHandler.callCount, 1, "..event should be fired");
@@ -1100,9 +1104,9 @@ sap.ui.define([
 					this.oStubSetDomRef = sinon.stub(ColorPalette.prototype._ItemNavigation.prototype, "setItemDomRefs", function() {});
 
 					this.oCP._ensureItemNavigation();
-					this.oCP._oItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
+					this.oCP._oPaletteColorItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
 					this.oEvent.target = document.getElementsByClassName("sapUiBody")[0];
-					this.oStubGetItemDomRefs = sinon.stub(this.oCP._oItemNavigation, "getItemDomRefs").returns(new Array(this.oCP.getColors().length));
+					this.oStubGetItemDomRefs = sinon.stub(this.oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(new Array(this.oCP.getColors().length));
 				},
 				afterEach: function() {
 					this.oStubSetDomRef.restore();
@@ -1111,10 +1115,10 @@ sap.ui.define([
 			}, function() {
 				QUnit.test("ItemNavigationHomeEnd.onsaphome when HOME is pressed outside items (swatch) container)",
 					function(assert) {
-						var oSpyGetItemInfo = this.spy(this.oCP._oItemNavigation, "_getItemInfo");
+						var oSpyGetItemInfo = this.spy(this.oCP._oPaletteColorItemNavigation, "_getItemInfo");
 						this.oEvent.target = undefined;
 						// Act
-						this.oCP._oItemNavigation.onsaphome(this.oEvent);
+						this.oCP._oPaletteColorItemNavigation.onsaphome(this.oEvent);
 						// Assert
 						assert.equal(oSpyGetItemInfo.callCount, 0, "..should skip any further processing");
 					});
@@ -1123,14 +1127,14 @@ sap.ui.define([
 					" in the row", function (assert) {
 					// Prepare
 					var oStubOnSaphomeParent = this.stub(ItemNavigation.prototype, "onsaphome", function() {}),
-						oStubGetFocusedIndex = this.stub(this.oCP._oItemNavigation, "getFocusedIndex").returns(1),
-						oStubGetItemInfo = this.stub(this.oCP._oItemNavigation, "_getItemInfo").returns({
+						oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(1),
+						oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 							bNextRowExists: true,
 							bItemSameColumnNextRowExists: true
 						});
 
 					// Act
-					this.oCP._oItemNavigation.onsaphome(this.oEvent);
+					this.oCP._oPaletteColorItemNavigation.onsaphome(this.oEvent);
 
 					// Assert
 					assert.equal(oStubOnSaphomeParent.callCount, 1, "..should skip custom processing and forward to" +
@@ -1143,19 +1147,19 @@ sap.ui.define([
 					function (assert) {
 						// Prepare
 						var oStubOnSaphomeParent = this.stub(ItemNavigation.prototype, "onsaphome", function() {}),
-							oStubGetFocusedIndex = this.stub(this.oCP._oItemNavigation, "getFocusedIndex").returns(5),
+							oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(5),
 							oStubFirstItemFocusFunction = this.stub(),
-							oStubGetItemDomRefs = this.oCP._oItemNavigation.getItemDomRefs()[0] = {
+							oStubGetItemDomRefs = this.oCP._oPaletteColorItemNavigation.getItemDomRefs()[0] = {
 								focus: oStubFirstItemFocusFunction
 							},
-							oStubGetItemInfo = this.stub(this.oCP._oItemNavigation, "_getItemInfo").returns({
+							oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 								bIsInTheFirstColumn: true,
 								bNextRowExists: true,
 								bItemSameColumnNextRowExists: true
 							});
 
 						// Act
-						this.oCP._oItemNavigation.onsaphome(this.oEvent);
+						this.oCP._oPaletteColorItemNavigation.onsaphome(this.oEvent);
 
 						// Assert
 						assert.equal(oStubOnSaphomeParent.callCount, 0, "..should not forward to the parent's function onsaphome");
@@ -1168,9 +1172,9 @@ sap.ui.define([
 					function (assert) {
 						// Prepare
 						var oStubOnSaphomeParent = this.stub(ItemNavigation.prototype, "onsaphome", function() {}),
-							oStubFireEventOnInstance = this.stub(this.oCP._oItemNavigation, "fireEvent", function() {}),
-							oStubGetFocusedIndex = this.stub(this.oCP._oItemNavigation, "getFocusedIndex").returns(0), //on first item
-							oStubGetItemInfo = this.stub(this.oCP._oItemNavigation, "_getItemInfo").returns({
+							oStubFireEventOnInstance = this.stub(this.oCP._oPaletteColorItemNavigation, "fireEvent", function() {}),
+							oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(0), //on first item
+							oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 								bIsFirstItem: true,
 								bIsInTheFirstColumn: true,
 								bNextRowExists: true,
@@ -1178,7 +1182,7 @@ sap.ui.define([
 							});
 
 						// Act
-						this.oCP._oItemNavigation.onsaphome(this.oEvent);
+						this.oCP._oPaletteColorItemNavigation.onsaphome(this.oEvent);
 
 						// Assert
 						assert.equal(oStubOnSaphomeParent.callCount, 0, "..should not forward to the parent.saphome");
@@ -1200,9 +1204,9 @@ sap.ui.define([
 					this.oStubSetDomRef = sinon.stub(ColorPalette.prototype._ItemNavigation.prototype, "setItemDomRefs", function() {});
 
 					this.oCP._ensureItemNavigation();
-					this.oCP._oItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
+					this.oCP._oPaletteColorItemNavigation.oDomRef = document.getElementsByClassName("sapUiBody")[0];
 					this.oEvent.target = document.getElementsByClassName("sapUiBody")[0];
-					this.oStubGetItemDomRefs = sinon.stub(this.oCP._oItemNavigation, "getItemDomRefs").returns(new Array(this.oCP.getColors().length));
+					this.oStubGetItemDomRefs = sinon.stub(this.oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(new Array(this.oCP.getColors().length));
 				},
 				afterEach: function() {
 					this.oStubSetDomRef.restore();
@@ -1211,10 +1215,10 @@ sap.ui.define([
 
 				QUnit.test("ItemNavigationHomeEnd.onsapend when END is pressed outside items (swatch) container)",
 					function(assert) {
-						var oSpyGetItemInfo = this.spy(this.oCP._oItemNavigation, "_getItemInfo");
+						var oSpyGetItemInfo = this.spy(this.oCP._oPaletteColorItemNavigation, "_getItemInfo");
 						this.oEvent.target = undefined;
 						// Act
-						this.oCP._oItemNavigation.onsapend(this.oEvent);
+						this.oCP._oPaletteColorItemNavigation.onsapend(this.oEvent);
 						// Assert
 						assert.equal(oSpyGetItemInfo.callCount, 0, "..should skip any further processing");
 					});
@@ -1224,14 +1228,14 @@ sap.ui.define([
 					" in the row", function (assert) {
 					// Prepare
 					var oStubOnSapendParent = this.stub(ItemNavigation.prototype, "onsapend", function() {}),
-						oStubGetFocusedIndex = this.stub(this.oCP._oItemNavigation, "getFocusedIndex").returns(1),
-						oStubGetItemInfo = this.stub(this.oCP._oItemNavigation, "_getItemInfo").returns({
+						oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(1),
+						oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 							bNextRowExists: true,
 							bItemSameColumnNextRowExists: true
 						});
 
 					// Act
-					this.oCP._oItemNavigation.onsapend(this.oEvent);
+					this.oCP._oPaletteColorItemNavigation.onsapend(this.oEvent);
 
 					// Assert
 					assert.equal(oStubOnSapendParent.callCount, 1, "..should skip custom processing and forward to" +
@@ -1244,12 +1248,12 @@ sap.ui.define([
 					function (assert) {
 						// Prepare
 						var oStubOnSapendParent = this.stub(ItemNavigation.prototype, "onsapend", function() {}),
-							oStubGetFocusedIndex = this.stub(this.oCP._oItemNavigation, "getFocusedIndex").returns(9),
+							oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(9),
 							oStubLastItemFocusFunction = this.stub(),
-							oStubGetItemDomRefs = this.oCP._oItemNavigation.getItemDomRefs()[this.oCP.getColors().length - 1] = {
+							oStubGetItemDomRefs = this.oCP._oPaletteColorItemNavigation.getItemDomRefs()[this.oCP.getColors().length - 1] = {
 								focus: oStubLastItemFocusFunction
 							},
-							oStubGetItemInfo = this.stub(this.oCP._oItemNavigation, "_getItemInfo").returns({
+							oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 								bIsInTheLastColumn: true,
 								bNextRowExists: true,
 								bItemSameColumnNextRowExists: true
@@ -1257,7 +1261,7 @@ sap.ui.define([
 
 
 						// Act
-						this.oCP._oItemNavigation.onsapend(this.oEvent);
+						this.oCP._oPaletteColorItemNavigation.onsapend(this.oEvent);
 
 						// Assert
 						assert.equal(oStubOnSapendParent.callCount, 0, "..should not forward to the parent.onsapend");
@@ -1270,15 +1274,15 @@ sap.ui.define([
 					function (assert) {
 						// Prepare
 						var oStubOnSapendParent = this.stub(ItemNavigation.prototype, "onsapend", function() {}),
-							oStubFireEventOnInstance = this.stub(this.oCP._oItemNavigation, "fireEvent", function() {}),
-							oStubGetFocusedIndex = this.stub(this.oCP._oItemNavigation, "getFocusedIndex").returns(this.oCP.getColors().length - 1), //on last item
-							oStubGetItemInfo = this.stub(this.oCP._oItemNavigation, "_getItemInfo").returns({
+							oStubFireEventOnInstance = this.stub(this.oCP._oPaletteColorItemNavigation, "fireEvent", function() {}),
+							oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(this.oCP.getColors().length - 1), //on last item
+							oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 								bIsLastItem: true,
 								bIsInTheLastColumn: true
 							});
 
 						// Act
-						this.oCP._oItemNavigation.onsapend(this.oEvent);
+						this.oCP._oPaletteColorItemNavigation.onsapend(this.oEvent);
 
 						// Assert
 						assert.equal(oStubOnSapendParent.callCount, 0, "..should not forward to the parent.onsapend");
@@ -1309,11 +1313,11 @@ sap.ui.define([
 				callGetItemInfo: function(iIndex, itemsCount, oExpected, sMsg, assert) {
 					// Prepare
 					var aItemDomRefs = new Array(itemsCount),
-						oStubGetItemDomRefs = this.stub(this.oCP._oItemNavigation, "getItemDomRefs").returns(aItemDomRefs),
+						oStubGetItemDomRefs = this.stub(this.oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(aItemDomRefs),
 						oResult;
 
 					// Act
-					oResult = this.oCP._oItemNavigation._getItemInfo(iIndex);
+					oResult = this.oCP._oPaletteColorItemNavigation._getItemInfo(iIndex);
 
 					// Assert
 					assert.deepEqual(oResult, oExpected, sMsg);
@@ -1535,7 +1539,7 @@ sap.ui.define([
 			assert.equal($SwatchContainer.attr("aria-label"), sCPSwatchContainerTitle, "Swatch Container: aria-label");
 
 			// swatches
-			$aSwatches = oCP._getAllSwatches();
+			$aSwatches = oCP._getAllPaletteColorSwatches();
 
 			assert.equal($aSwatches[0].getAttribute("role"), "button", "Swatch 1 role");
 			assert.equal($aSwatches[0].getAttribute("aria-label"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [1, sBlack]),
@@ -1920,6 +1924,60 @@ sap.ui.define([
 
 				// Cleanup
 				oCPP.destroy();
+			});
+		});
+
+		QUnit.module("ColorPalette Recent Colors", function() {
+			QUnit.test("When color is selected it is pushed to recent colors array", function (assert) {
+				// Prepare
+				var oCP = new ColorPalette();
+
+				// Act
+				oCP._fireColorSelect("red", false, {});
+
+				// Assert
+				assert.strictEqual(oCP._getRecentColors().length,1,"The color is pushed into the recent colors array");
+
+				// Cleanup
+				oCP.destroy();
+			});
+
+			QUnit.test("When color is selected and it's already in the array it goes to first place", function (assert) {
+				// Prepare
+				var oCP = new ColorPalette(),
+					aTestArray = ["blue", "pink", "red"];
+
+				// Act
+				oCP._fireColorSelect("red", false, {});
+				oCP._fireColorSelect("blue", false, {});
+				oCP._fireColorSelect("pink", false, {});
+				oCP._fireColorSelect("blue", false, {});
+
+				// Assert
+				assert.deepEqual(oCP._getRecentColors(), aTestArray, "The color is pushed into the recent colors array");
+
+				// Cleanup
+				oCP.destroy();
+			});
+
+			QUnit.test("When color is selected and there are already 5 colors in the array it goes to first place and the last one is popped", function (assert) {
+				// Prepare
+				var oCP = new ColorPalette(),
+					aTestArray = ["black", "green", "purple","pink","blue"];
+
+				// Act
+				oCP._fireColorSelect("red", false, {});
+				oCP._fireColorSelect("blue", false, {});
+				oCP._fireColorSelect("pink", false, {});
+				oCP._fireColorSelect("purple", false, {});
+				oCP._fireColorSelect("green", false, {});
+				oCP._fireColorSelect("black", false, {});
+
+				// Assert
+				assert.deepEqual(oCP._getRecentColors(), aTestArray, "The color is pushed into the recent colors array and the last one is popped");
+
+				// Cleanup
+				oCP.destroy();
 			});
 		});
 

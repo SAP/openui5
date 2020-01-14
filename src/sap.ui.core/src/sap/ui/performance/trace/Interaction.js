@@ -435,7 +435,7 @@ sap.ui.define([
 				oPendingInteraction.trigger = oSrcElement.getId();
 			}
 			/*eslint-disable no-console */
-			if (console && console.time) {
+			if (Log.isLoggable(null, "sap.ui.Performance")) {
 				console.time("INTERACTION: " + oPendingInteraction.trigger + " - " + oPendingInteraction.event);
 			}
 			/*eslint-enable no-console */
@@ -453,7 +453,7 @@ sap.ui.define([
 			if (oPendingInteraction) {
 				if (bForce) {
 					/*eslint-disable no-console */
-					if (console && console.time) {
+					if (Log.isLoggable(null, "sap.ui.Performance")) {
 						console.timeEnd("INTERACTION: " + oPendingInteraction.trigger + " - " + oPendingInteraction.event);
 					}
 					/*eslint-enable no-console */
@@ -571,7 +571,7 @@ sap.ui.define([
 		notifyAsyncStep : function(sStepName) {
 			if (oPendingInteraction) {
 				/*eslint-disable no-console */
-				if (console.time && sStepName) {
+				if (Log.isLoggable(null, "sap.ui.Performance") && sStepName) {
 					console.time(sStepName);
 				}
 				/*eslint-enable no-console */
@@ -580,7 +580,7 @@ sap.ui.define([
 				return function() {
 					Interaction.notifyAsyncStepEnd(sInteractionId);
 					/*eslint-disable no-console */
-					if (console.time && sStepName) {
+					if (Log.isLoggable(null, "sap.ui.Performance") && sStepName) {
 						console.timeEnd(sStepName);
 					}
 					/*eslint-enable no-console */

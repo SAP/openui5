@@ -56,21 +56,20 @@ sap.ui.define([
 	});
 
 	/**
-	 * Initialization of the SelectionModelPlugin
-	 * @public
+	 * @inheritDoc
 	 */
 	SelectionModelPlugin.prototype.init = function() {
+		SelectionPlugin.prototype.init.apply(this, arguments);
 		this.oSelectionModel = new SelectionModel(this._getSelectionMode);
 		this.oSelectionModel.attachSelectionChanged(this._onSelectionChange, this);
-
-		SelectionPlugin.prototype.init.call(this);
 	};
 
 	/**
-	 * @override
 	 * @inheritDoc
 	 */
 	SelectionModelPlugin.prototype.exit = function() {
+		SelectionPlugin.prototype.exit.apply(this, arguments);
+
 		var oBinding = this._getBinding();
 		if (oBinding) {
 			oBinding.detachChange(this._onBindingChange, this);
@@ -79,7 +78,6 @@ sap.ui.define([
 			this.oSelectionModel.destroy();
 			this.oSelectionModel = null;
 		}
-		SelectionPlugin.prototype.exit.call(this);
 	};
 
 	SelectionModelPlugin.prototype.getRenderConfig = function() {

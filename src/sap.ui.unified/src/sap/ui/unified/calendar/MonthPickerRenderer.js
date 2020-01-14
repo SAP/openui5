@@ -12,6 +12,7 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate"],
 	 * @namespace
 	 */
 	var MonthPickerRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -44,24 +45,21 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate"],
 			aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 		}
 
-		oRm.write("<div");
-		oRm.writeControlData(oMP);
-		oRm.addClass("sapUiCalMonthPicker");
-		oRm.writeClasses();
+		oRm.openStart("div",oMP);
+		oRm.class("sapUiCalMonthPicker");
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped('title', sTooltip);
+			oRm.attr("tooltip", sTooltip);
 		}
 
-		oRm.writeAccessibilityState(oMP, {
+		oRm.accessibilityState(oMP, {
 			role: "grid",
 			readonly: "true",
 			multiselectable: oMP.getIntervalSelection(),
 			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER")
 		});
 
-		oRm.write(">"); // div element
-
+		oRm.openEnd(); // div element
 		var mAccProps;
 
 		if (iMonths > 12) {
@@ -96,25 +94,24 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate"],
 
 			if (iColumns > 0 && i % iColumns == 0) {
 				// begin of row
-				oRm.write("<div");
-				oRm.writeAccessibilityState(null, {role: "row"});
-				oRm.write(">"); // div element
+				oRm.openStart("div");
+				oRm.accessibilityState(null, {role: "row"});
+				oRm.openEnd();
 			}
 
-			oRm.write("<div");
-			oRm.writeAttribute("id", sId + "-m" + (iCurrentMonth));
-			oRm.addClass("sapUiCalItem");
+			oRm.openStart("div", sId + "-m" + (iCurrentMonth));
+			oRm.class("sapUiCalItem");
 
 			bApplySelection = oMP._fnShouldApplySelection(oCurrentDate);
 			bApplySelectionBetween = oMP._fnShouldApplySelectionBetween(oCurrentDate);
 
 			if (bApplySelection) {
-				oRm.addClass("sapUiCalItemSel");
+				oRm.class("sapUiCalItemSel");
 				mAccProps["selected"] = true;
 			}
 
 			if (bApplySelectionBetween) {
-				oRm.addClass("sapUiCalItemSelBetween");
+				oRm.class("sapUiCalItemSelBetween");
 				mAccProps["selected"] = true;
 			}
 
@@ -123,27 +120,24 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate"],
 			}
 
 			if (iCurrentMonth < oMP._iMinMonth || iCurrentMonth > oMP._iMaxMonth) {
-				oRm.addClass("sapUiCalItemDsbl"); // month disabled
+				oRm.class("sapUiCalItemDsbl"); // month disabled
 				mAccProps["disabled"] = true;
 			}
 
-			oRm.writeAttribute("tabindex", "-1");
-			oRm.addStyle("width", sWidth);
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.writeAccessibilityState(null, mAccProps);
-			oRm.write(">"); // div element
-			oRm.write(aMonthNames[iCurrentMonth]);
-			oRm.write("</div>");
+			oRm.attr("tabindex", "-1");
+			oRm.style("width", sWidth);
+			oRm.accessibilityState(null, mAccProps);
+			oRm.openEnd();
+			oRm.text(aMonthNames[iCurrentMonth]);
+			oRm.close("div");
 
 			if (iColumns > 0 && ((i + 1) % iColumns == 0)) {
 				// end of row
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 		}
 
-		oRm.write("</div>");
-
+		oRm.close("div");
 	};
 
 	return MonthPickerRenderer;

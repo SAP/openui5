@@ -102,49 +102,49 @@ sap.ui.define([
 			assert.equal(this.cut.getClient(), "someClient");
 		});
 
-		QUnit.test("isDraftEnabled returns a 'true' flag if it is maintained in the settings for the passed layer", function(assert) {
+		QUnit.test("isVersioningEnabled returns a 'true' flag if it is maintained in the settings for the passed layer", function(assert) {
 			var sLayer = "CUSTOMER";
 			var oSettings = {
-				draft : {}
+				versioning : {}
 			};
-			oSettings.draft[sLayer] = true;
+			oSettings.versioning[sLayer] = true;
 
 			this.cut = new Settings(oSettings);
-			assert.equal(this.cut.isDraftEnabled(sLayer), true);
+			assert.equal(this.cut.isVersioningEnabled(sLayer), true);
 		});
 
-		QUnit.test("isDraftEnabled returns a 'true' flag if it is maintained for 'ALL' layers in the settings for the passed layer", function(assert) {
+		QUnit.test("isVersioningEnabled returns a 'true' flag if it is maintained for 'ALL' layers in the settings for the passed layer", function(assert) {
 			var sLayer = "CUSTOMER";
 			var oSettings = {
-				draft : {
+				versioning : {
 					ALL : true
 				}
 			};
 
 			this.cut = new Settings(oSettings);
-			assert.equal(this.cut.isDraftEnabled(sLayer), true);
+			assert.equal(this.cut.isVersioningEnabled(sLayer), true);
 		});
 
-		QUnit.test("isDraftEnabled returns a 'false' flag if the layer is NOT maintained in the settings for the passed layer", function(assert) {
+		QUnit.test("isVersioningEnabled returns a 'false' flag if the layer is NOT maintained in the settings for the passed layer", function(assert) {
 			var sLayer = "CUSTOMER";
 			var oSettings = {
-				draft : {
+				versioning : {
 					VENDOR : true
 				}
 			};
 
 			this.cut = new Settings(oSettings);
-			assert.equal(this.cut.isDraftEnabled(sLayer), false);
+			assert.equal(this.cut.isVersioningEnabled(sLayer), false);
 		});
 
-		QUnit.test("isDraftEnabled returns a 'false' flag if NO layer is maintained in the settings for the passed layer", function(assert) {
+		QUnit.test("isVersioningEnabled returns a 'false' flag if NO layer is maintained in the settings for the passed layer", function(assert) {
 			var sLayer = "CUSTOMER";
 			var oSettings = {
-				draft : {}
+				versioning : {}
 			};
 
 			this.cut = new Settings(oSettings);
-			assert.equal(this.cut.isDraftEnabled(sLayer), false);
+			assert.equal(this.cut.isVersioningEnabled(sLayer), false);
 		});
 
 		QUnit.test("get instance from flex settings request when load settings promise is not available", function(assert) {

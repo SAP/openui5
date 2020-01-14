@@ -1,7 +1,7 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/transport/TransportDialog",
+	"sap/ui/fl/write/_internal/transport/TransportDialog",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -13,7 +13,7 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("sap.ui.fl.transport.TransportDialog", {
+	QUnit.module("sap.ui.fl.write._internal.transport.TransportDialog", {
 		beforeEach: function () {
 			this.oDialog = new TransportDialog();
 		},
@@ -343,7 +343,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("_oPackage - change event executing promise ", function (assert) {
-			sap.ui.fl.transport.Transports = function () {
+			sap.ui.fl.write._internal.transport.Transports = function () {
 				return {
 					getTransports: function () {
 						return {

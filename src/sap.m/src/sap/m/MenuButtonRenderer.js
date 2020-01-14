@@ -10,7 +10,9 @@ sap.ui.define([],
 		 * <code>MenuButton</code> renderer.
 		 * @namespace
 		 */
-		var MenuButtonRenderer = {};
+		var MenuButtonRenderer = {
+			apiVersion: 2
+		};
 
 		MenuButtonRenderer.CSS_CLASS = "sapMMenuBtn";
 
@@ -27,27 +29,15 @@ sap.ui.define([],
 		MenuButtonRenderer.render = function(oRm, oMenuButton) {
 			var sWidth = oMenuButton.getWidth();
 
-			//write root DOM element
-			oRm.write("<div");
-			oRm.writeControlData(oMenuButton);
-
-			//classes
-			oRm.addClass(MenuButtonRenderer.CSS_CLASS);
-			oRm.addClass(MenuButtonRenderer.CSS_CLASS + oMenuButton.getButtonMode());
-			oRm.writeClasses();
-
-			// set user defined width
+			oRm.openStart("div", oMenuButton);
+			oRm.class(MenuButtonRenderer.CSS_CLASS).class(MenuButtonRenderer.CSS_CLASS + oMenuButton.getButtonMode());
 			if (sWidth != "") {
-				oRm.addStyle("width", sWidth);
+				oRm.style("width", sWidth);
 			}
-			oRm.writeStyles();
-
-			oRm.write(">");
-
+			oRm.openEnd();
 			oMenuButton._ensureBackwardsReference();
 			oRm.renderControl(oMenuButton._getButtonControl());
-
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		return MenuButtonRenderer;

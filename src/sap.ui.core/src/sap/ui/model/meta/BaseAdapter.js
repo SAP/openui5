@@ -183,7 +183,7 @@ sap.ui.define([
 				], function(ParentAdapter) {
 					var oParent = new ParentAdapter(mMetadataContext);
 					resolve(oParent);
-				});
+				}, reject);
 			});
 		},
 		getAdapterModel: function() {

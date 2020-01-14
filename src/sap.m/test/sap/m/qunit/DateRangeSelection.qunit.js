@@ -507,7 +507,24 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Change date with page up key when 'date' value is not set", function(assert) {
+	QUnit.test("Change date range with keyboard handlng when 'secondDateValue' isn't set", function(assert) {
+		// prepare
+		var oSpyLogError = this.spy(Log, "error");
+
+		this.oDRS.setSecondDateValue(null);
+		this.oDRS._$input.cursorPos(0);
+
+		// act
+		this.oDRS.onsappageup(this.oFakeEvent);
+
+		// assert
+		assert.ok(oSpyLogError.notCalled, "Error is not logged");
+
+		// clean
+		oSpyLogError.restore();
+	});
+
+	QUnit.test("Change date with page up key when 'date' value isn't set", function(assert) {
 		// prepare
 		this.oDRS.setDateValue(null);
 		this.oDRS._$input.cursorPos(0);

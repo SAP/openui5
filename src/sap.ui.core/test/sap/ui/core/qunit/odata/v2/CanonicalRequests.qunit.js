@@ -735,10 +735,9 @@ sap.ui.define([
 
 	QUnit.test("ODataModel._invalidatePathCache - Ensure correct invalidation", function (assert) {
 
-		this.oModel.mPathCache["/myEntity('1')/toStatus"] = { canonicalPath: "/myStatus('A')", updateKey: "('1')/toStatus" };
-		this.oModel.mPathCache["/myEntity('1')/toStatus/LongText"] = { canonicalPath: "/myStatus('A')/LongText", updateKey: "('1')/toStatus/LongText" };
-		this.oModel.mPathCache["/myEntity('1')/toStatus/Description"] = { canonicalPath: null, updateKey: "('1')/toStatus/Description" };
-
+		this.oModel.mPathCache["/myEntity('1')/toStatus"] = { canonicalPath: "/myStatus('A')" };
+		this.oModel.mPathCache["/myEntity('1')/toStatus/LongText"] = { canonicalPath: "/myStatus('A')/LongText" };
+		this.oModel.mPathCache["/myEntity('1')/toStatus/Description"] = { canonicalPath: null };
 
 		this.oModel.mInvalidatedPaths["('1')/toStatus"] = "/myStatus('C')";
 

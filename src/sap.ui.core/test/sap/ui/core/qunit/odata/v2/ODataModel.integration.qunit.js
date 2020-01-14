@@ -53,6 +53,19 @@ sap.ui.define([
 	}
 
 	/**
+	 * Creates a V2 OData model for the Workcenter Groups service.
+	 *
+	 * @param {object} [mModelParameters]
+	 *   Map of parameters for model construction. The default parameters are set in the createModel
+	 *   function.
+	 * @returns {sap.ui.model.odata.v2.ODataModel}
+	 *   The model
+	 */
+	function createPPWorkcenterGroupModel(mModelParameters) {
+		return createModel("/sap/opu/odata/sap/PP_WORKCENTER_GROUP_SRV", mModelParameters);
+	}
+
+	/**
 	 * Creates a V2 OData model for <code>GWSAMPLE_BASIC</code>.
 	 *
 	 * @param {object} [mModelParameters]
@@ -197,7 +210,9 @@ sap.ui.define([
 					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
 				// GWSAMPLE_BASIC service with sap:message-scope-supported="true"
 				"/SalesOrderSrv/$metadata"
-					: {source : "testdata/SalesOrder/metadata.xml"}
+					: {source : "testdata/SalesOrder/metadata.xml"},
+				"/sap/opu/odata/sap/PP_WORKCENTER_GROUP_SRV/$metadata"
+					: {source : "model/PP_WORKCENTER_GROUP_SRV.metadata.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -545,12 +560,12 @@ sap.ui.define([
 						// oResponse needs __metadata for ODataModel.prototype._getKey
 						if (oResponse.data && Array.isArray(oResponse.data.results)) {
 							oResponse.data.results.forEach(function (oResponseItem, i) {
-								oResponseItem.__metadata = _getResponseMetadata(
-									oExpectedRequest.requestUri, i);
+								oResponseItem.__metadata = oResponseItem.__metadata
+									|| _getResponseMetadata(oExpectedRequest.requestUri, i);
 							});
 						} else if (oExpectedRequest.method !== "HEAD") {
-							oResponse.data.__metadata = _getResponseMetadata(
-								oExpectedRequest.requestUri);
+							oResponse.data.__metadata = oResponse.data.__metadata
+								|| _getResponseMetadata(oExpectedRequest.requestUri);
 						}
 					}
 
@@ -1754,4 +1769,85 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Refresh of navigation properties previously pointing to the *same* entity responds
+	// with a different entity for one of the navigation properties. Both navigation properties show
+	// correct data on the UI; bug was: the unchanged navigation property is updated with data
+	// from the changed one.
+	// BCP: 1980535595
+	QUnit.test("BCP 1980535595: refresh navigation properties to same entity", function (assert) {
+		var sAdminDataPath =
+				"/C_WorkCenterGroupAdminvData(ObjectTypeCode='G',ObjectInternalID='10000425')",
+			oModel = createPPWorkcenterGroupModel({preliminaryContext : true}),
+			sWCGroupToAdminDataRequest = "C_WorkCenterGroupTree(HierarchyRootNode='10000425'"
+				+ ",HierarchyParentNode='00000000',HierarchyNode='10000425',HierarchyNodeType='G')"
+				+ "/to_AdminData",
+			sView = '\
+<FlexBox id="objectPage" binding="{/' + sWCGroupToAdminDataRequest + '}">\
+	<Text id="id" text="{ObjectInternalID}" />\
+	<FlexBox id="createByUser" binding="{\
+			path :\'to_CreatedByUserContactCard\',\
+			parameters : {select : \'FullName\'}\
+		}">\
+		<Text id="name0" text="{FullName}" />\
+	</FlexBox> \
+	<FlexBox binding="{to_LastChangedByUserContactCard}">\
+		 <Text id="name1" text="{FullName}" />\
+	</FlexBox> \
+</FlexBox>',
+			that = this;
+
+		this.expectRequest(sWCGroupToAdminDataRequest, {
+				"__metadata" : {"uri" : sAdminDataPath},
+				ObjectTypeCode : "G",
+				ObjectInternalID : "10000425"
+			})
+			.expectRequest(sWCGroupToAdminDataRequest
+					+ "/to_CreatedByUserContactCard?$select=FullName", {
+				"__metadata" : {"uri" : "/I_UserContactCard('Smith')"},
+				FullName : "Smith"
+			})
+			.expectRequest(sWCGroupToAdminDataRequest + "/to_LastChangedByUserContactCard", {
+				"__metadata" : {"uri" : "/I_UserContactCard('Smith')"},
+				FullName : "Smith"
+			})
+			.expectChange("id", null)
+			.expectChange("id", "10000425")
+			.expectChange("name0", null)
+			.expectChange("name0", "Smith")
+			.expectChange("name1", null)
+			.expectChange("name1", "Smith");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest(sWCGroupToAdminDataRequest, {
+					"__metadata" : {"uri" : sAdminDataPath},
+					ObjectTypeCode : "G",
+					ObjectInternalID : "10000425"
+				})
+				.expectRequest(sWCGroupToAdminDataRequest
+						+ "/to_CreatedByUserContactCard?$select=FullName", {
+					"__metadata" : {"uri" : "/I_UserContactCard('Smith')"},
+					FullName : "Smith"
+				})
+				.expectRequest(sWCGroupToAdminDataRequest + "/to_LastChangedByUserContactCard", {
+					"__metadata" : {"uri" : "/I_UserContactCard('Muller')"},
+					FullName : "Muller"
+				})
+				.expectChange("name1", "Muller");
+
+			// code under test: refresh keeps canonical path for "/I_UserContactCard('Smith')" in
+			// ODataModel#mPathCache and does *not* replace it by "/I_UserContactCard('Muller')"
+			that.oView.byId("objectPage").getObjectBinding().refresh(/*bForceUpdate*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test: checkUpdate calls ODataModel#createBindingContext which creates a
+			// context for the "create by user" field based on the patch cache entry.
+			// This only happens if no reload is needed.
+			that.oView.byId("createByUser").getObjectBinding().checkUpdate();
+
+			return that.waitForChanges(assert);
+		});
+	});
 });

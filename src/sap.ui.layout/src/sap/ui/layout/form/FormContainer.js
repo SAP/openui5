@@ -5,10 +5,11 @@
 // Provides control sap.ui.layout.form.FormContainer.
 sap.ui.define([
 	'sap/ui/core/Element',
+	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/layout/library',
 	"sap/base/Log"
-	], function(Element, Parameters, library, Log) {
+	], function(Element, ManagedObjectObserver, Parameters, library, Log) {
 	"use strict";
 
 
@@ -116,6 +117,13 @@ sap.ui.define([
 
 		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 
+		this._oObserver = new ManagedObjectObserver(this._observeChanges.bind(this));
+
+		this._oObserver.observe(this, {
+			properties: ["expanded", "expandable"],
+			aggregations: ["formElements"]
+		});
+
 	};
 
 	FormContainer.prototype.exit = function(){
@@ -125,11 +133,12 @@ sap.ui.define([
 		}
 		this._rb = undefined;
 
+		this._oObserver.disconnect();
+		this._oObserver = undefined;
+
 	};
 
-	FormContainer.prototype.setExpandable = function(bExpandable){
-
-		this.setProperty("expandable", bExpandable);
+	function _expandableChanged(bExpandable){
 
 		if (bExpandable) {
 			if (!this._oExpandButton) {
@@ -142,9 +151,7 @@ sap.ui.define([
 			}
 		}
 
-		return this;
-
-	};
+	}
 
 	function _expandButtonCreated(oButton) {
 
@@ -156,9 +163,7 @@ sap.ui.define([
 
 	}
 
-	FormContainer.prototype.setExpanded = function(bExpanded){
-
-		this.setProperty("expanded", bExpanded, true); // no automatic rerendering
+	function _expandedChanged(bExpanded){
 
 		_setExpanderIcon.call(this);
 
@@ -167,9 +172,7 @@ sap.ui.define([
 			oForm.toggleContainerExpanded(this);
 		}
 
-		return this;
-
-	};
+	}
 
 	FormContainer.prototype.setToolbar = function(oToolbar) {
 
@@ -302,13 +305,16 @@ sap.ui.define([
 	 */
 	FormContainer.prototype._setEditable = function(bEditable) {
 
+		var bOldEditable = this.getProperty("_editable");
 		this.setProperty("_editable", bEditable, true); // do not invalidate whole FormContainer
 
-		var aFormElements = this.getFormElements();
+		if (bEditable !== bOldEditable) {
+			var aFormElements = this.getFormElements();
 
-		for (var i = 0; i < aFormElements.length; i++) {
-			var oFormElement = aFormElements[i];
-			oFormElement._setEditable(bEditable);
+			for (var i = 0; i < aFormElements.length; i++) {
+				var oFormElement = aFormElements[i];
+				oFormElement._setEditable(bEditable);
+			}
 		}
 
 	};
@@ -361,6 +367,31 @@ sap.ui.define([
 	function _handleExpButtonPress(oEvent){
 
 		this.setExpanded(!this.getExpanded());
+
+	}
+
+	/*
+	 * handles change of FormContainer
+	 * @private
+	 */
+	FormContainer.prototype._observeChanges = function(oChanges){
+
+		if (oChanges.name == "formElements") {
+			_formElementChanged.call(this, oChanges.mutation, oChanges.child);
+		} else if (oChanges.name == "expanded") {
+			_expandedChanged.call(this, oChanges.current);
+		} else if (oChanges.name == "expandable") {
+			_expandableChanged.call(this, oChanges.current);
+		}
+
+	};
+
+	function _formElementChanged(sMutation, oFormElement) {
+
+		if (sMutation === "insert") {
+			var bEditable = this.getProperty("_editable");
+			oFormElement._setEditable(bEditable);
+		}
 
 	}
 

@@ -2,6 +2,9 @@
 (function() {
 	"use strict";
 
+	QUnit.config.autostart = false;
+
+
 	//****************************************************
 	// module loading (require/declare/define)
 	//****************************************************

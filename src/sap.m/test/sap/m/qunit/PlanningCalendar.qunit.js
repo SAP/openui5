@@ -5197,134 +5197,219 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
-	QUnit.module("Drag and Drop");
+	QUnit.module("Drag and Drop", {
+		beforeEach: function () {
+			this.oPC = new PlanningCalendar();
+		},
+		afterEach: function () {
+			this.oPC.destroy();
+			this.oPC = null;
+		}
+	});
 
 	QUnit.test("_calcNewHoursAppPos: Calculate new position of the appointment in 'Hours' view", function(assert) {
 		//arrange
-		var oPCRow = new PlanningCalendar(),
-			oRowStartDate = new Date(2017, 10, 13),
+		var oRowStartDate = new Date(2017, 10, 13),
 			oAppStartDate = new Date(2017, 10, 13, 1, 0, 0),
 			oAppEndDate = new Date(2017, 10, 13, 2, 0, 0),
 			newAppPos;
 
 		//act
-		newAppPos = oPCRow._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 10);
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 10);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 5, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 6, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = oPCRow._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 16);
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 16);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 8, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 9, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = oPCRow._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 8);
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 8);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 4, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 5, 0, 0), "Correct new end position");
+	});
 
-		//clean
-		oPCRow.destroy();
+	QUnit.test("_calcNewHoursAppPos: Calculate new position of the appointment in 'Hours' view near DST change", function(assert) {
+		//arrange
+		var oRowStartDate = new Date(2019, 9, 27),
+			oAppStartDate = new Date(2019, 9, 27, 1, 0, 0),
+			oAppEndDate = new Date(2019, 9, 27, 3, 0, 0),
+			newAppPos;
+
+		//act
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 4);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 27, 2, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 4, 0, 0), "Correct new end position");
+
+		//act
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 27, 3, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 5, 0, 0), "Correct new end position");
+
+		//act
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 8);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 27, 4, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 6, 0, 0), "Correct new end position");
+
+		//act
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 14);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 27, 7, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 9, 0, 0), "Correct new end position");
 	});
 
 	QUnit.test("_calcNewDaysAppPos: Calculate new position of the appointment in 'Days' view", function(assert) {
 		//arrange
-		var oPCRow = new PlanningCalendar(),
-			oRowStartDate = new Date(2017, 10, 13),
+		var oRowStartDate = new Date(2017, 10, 13),
 			oAppStartDate = new Date(2017, 10, 15, 1, 0, 0),
 			oAppEndDate = new Date(2017, 10, 15, 2, 0, 0),
 			newAppPos;
 
 		//act
-		newAppPos = oPCRow._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 4);
+		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 4);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 17, 1, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 17, 2, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = oPCRow._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
+		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 16, 1, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 16, 2, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = oPCRow._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
+		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 19, 1, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 19, 2, 0, 0), "Correct new end position");
+	});
 
-		//clean
-		oPCRow.destroy();
+	QUnit.test("_calcNewDaysAppPos: Calculate new position of the appointment in 'Days' view near DST change", function(assert) {
+		//arrange
+		var oRowStartDate = new Date(2019, 9, 27),
+			oAppStartDate = new Date(2019, 9, 27, 0, 0, 0),
+			oAppEndDate = new Date(2019, 9, 27, 4, 0, 0),
+			newAppPos;
+
+		//act
+		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 1);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 28, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 28, 4, 0, 0), "Correct new end position");
+
+		//act
+		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 2);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 29, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 29, 4, 0, 0), "Correct new end position");
+
+		//act
+		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 0);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 27, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 4, 0, 0), "Correct new end position");
 	});
 
 	QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view", function(assert) {
 		//arrange
-		var oPCRow = new PlanningCalendar(),
-			oRowStartDate = new Date(2017, 10, 13),
+		var oRowStartDate = new Date(2017, 10, 13),
 			oAppStartDate = new Date(2017, 11, 13, 1, 0, 0),
 			oAppEndDate = new Date(2017, 11, 13, 2, 0, 0),
 			newAppPos;
 
 		//act
-		newAppPos = oPCRow._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
+		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2018, 1, 13, 1, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2018, 1, 13, 2, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = oPCRow._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 1);
+		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 1);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2017, 11, 13, 1, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 11, 13, 2, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = oPCRow._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 2);
+		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 2);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2018, 0, 13, 1, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2018, 0, 13, 2, 0, 0), "Correct new end position");
+	});
 
-		//clean
-		oPCRow.destroy();
+	QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view near DST change", function(assert) {
+		//arrange
+		var oRowStartDate = new Date(2019, 9, 27),
+			oAppStartDate = new Date(2019, 9, 27, 0, 0, 0),
+			oAppEndDate = new Date(2019, 9, 27, 4, 0, 0),
+			newAppPos;
+
+		//act
+		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 1);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2019, 10, 27, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 10, 27, 4, 0, 0), "Correct new end position");
+
+		//act
+		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 4);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2020, 1, 27, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2020, 1, 27, 4, 0, 0), "Correct new end position");
+
+		//act
+		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
+
+		//assert
+		assert.deepEqual(newAppPos.startDate, new Date(2020, 3, 27, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, new Date(2020, 3, 27, 4, 0, 0), "Correct new end position");
 	});
 
 	QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view when row start day is different than the appointment's day", function (assert) {
 		//arrange
-		var oPCRow = new PlanningCalendar(),
-			oRowStartDate = new Date(2017, 10, 13),
+		var oRowStartDate = new Date(2017, 10, 13),
 			oAppStartDate = new Date(2017, 11, 14, 1, 0, 0),
 			oAppEndDate = new Date(2017, 11, 14, 2, 0, 0),
 			newAppPos;
 
 		//act
-		newAppPos = oPCRow._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
+		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2018, 1, 14, 1, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2018, 1, 14, 2, 0, 0), "Correct new end position");
-
-		//clean
-		oPCRow.destroy();
 	});
 
 	QUnit.test("setEnableAppointmentsDragAndDrop", function(assert) {
 		//arrange
-		var oPC = new PlanningCalendar(),
-			oPCRow1 = new PlanningCalendarRow("row1"),
+		var oPCRow1 = new PlanningCalendarRow("row1"),
 			oPCRow2 = new PlanningCalendarRow("row2");
 
-		oPC.addRow(oPCRow1);
-		oPC.addRow(oPCRow2);
+		this.oPC.addRow(oPCRow1);
+		this.oPC.addRow(oPCRow2);
 
 		//act
 		oPCRow1.setEnableAppointmentsDragAndDrop(true);
@@ -5377,28 +5462,21 @@ sap.ui.define([
 		assert.equal(_getRowTimeline(oPCRow1).getDragDropConfig().length, 0, "Zero configs found");
 		assert.equal(oPCRow2.getDragDropConfig().length, 1, "One config found");
 		assert.equal(_getRowTimeline(oPCRow2).getDragDropConfig().length, 1, "One config found");
-
-		//clean
-		oPC.destroy();
 	});
 
 	QUnit.test("_calcCreateNewAppHours: Calculate proper position of the new appointment in 'Hours' view", function (assert) {
 		//arrange
-		var oPCRow = new PlanningCalendar(),
-			oRowStartDate = new Date(2017, 10, 13, 0, 38, 11),
+		var oRowStartDate = new Date(2017, 10, 13, 0, 38, 11),
 			iStartIndex = 3,
 			iEndIndex = 6,
 			newAppPos;
 
 		//act
-		newAppPos = oPCRow._calcCreateNewAppHours(oRowStartDate, iStartIndex, iEndIndex);
+		newAppPos = this.oPC._calcCreateNewAppHours(oRowStartDate, iStartIndex, iEndIndex);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 1, 30, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 3, 30, 0), "Correct new end position");
-
-		//clean
-		oPCRow.destroy();
 	});
 
 	function _getAppointmentsCount(oPC) {
@@ -5471,6 +5549,42 @@ sap.ui.define([
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 1, 30, 0), "End date hour is correct");
+	});
+
+	QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment in 'Hours' view near DST change", function (assert) {
+		// arrange
+		var oRowStartDate = new Date(2019, 9, 27, 0, 0, 0),
+			oAppStartDate = new Date(2019, 9, 27, 1, 0, 0),
+			oAppEndDate = new Date(2019, 9, 27, 3, 0, 0),
+			newAppPos;
+
+		// act - resize appointment's end to the 6th hour
+		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 11);
+
+		// assert
+		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 6, 0, 0), "End date hour is correct (6:00)");
+
+		// act - resize appointment's end to the 5th hour
+		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 9);
+
+		// assert
+		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 5, 0, 0), "End date hour is correct (5:00)");
+
+		// act - resize appointment's end to the 4th hour
+		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 7);
+
+		// assert
+		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 4, 0, 0), "End date hour is correct (4:00)");
+
+		// act - resize appointment's end to the 3th hour
+		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 5);
+
+		// assert
+		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 3, 0, 0), "End date hour is correct (3:00)");
 	});
 
 	QUnit.test("_calcResizeNewDaysAppPos: Calculate new size of the appointment in 'Days' view", function (assert) {
@@ -5710,6 +5824,44 @@ sap.ui.define([
 
 	QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (1h and 30 mins event in 1h and 30 mins from the row's startDate)", function (assert) {
 		this.test(assert, 6, 3, new Date(2017, 10, 13, 1, 30, 0), new Date(2017, 10, 13, 3, 0, 0));
+	});
+
+	QUnit.module("Create Appointments near DST change: _calcCreateNewAppHours", {
+		beforeEach: function () {
+			this.oPCRow = new PlanningCalendar();
+			this.oRowStartDate = new Date(2019, 9, 27, 0, 0, 0);
+			this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
+				// arrange
+				var oNewAppPos;
+
+				// act
+				oNewAppPos = this.oPCRow._calcCreateNewAppHours(this.oRowStartDate, iStartIndex, iEndIndex);
+
+				// assert
+				assert.deepEqual(oNewAppPos.startDate, oExpectedStartDate, "startDate is ok");
+				assert.deepEqual(oNewAppPos.endDate, oExpectedEndDate, "endDate is ok");
+			};
+		},
+		afterEach: function () {
+			this.oPCRow.destroy();
+			this.oPCRow = null;
+		}
+	});
+
+	QUnit.test("startIndex and endIndex are on the same side of DST (inside): startIndex = 0, endIndex = 2", function (assert) {
+		this.test(assert, 0, 1, this.oRowStartDate, new Date(2019, 9, 27, 1, 0, 0));
+	});
+
+	QUnit.test("startIndex and endIndex are on the same side of DST (outside): startIndex = 10, endIndex = 12", function (assert) {
+		this.test(assert, 10, 11, new Date(2019, 9, 27, 5, 0, 0), new Date(2019, 9, 27, 6, 0, 0));
+	});
+
+	QUnit.test("startIndex and endIndex are on the different sides of DST (inside-outside): startIndex = 6, endIndex = 7", function (assert) {
+		this.test(assert, 6, 7, new Date(2019, 9, 27, 3, 0, 0), new Date(2019, 9, 27, 4, 0, 0));
+	});
+
+	QUnit.test("startIndex and endIndex are on the different sides of DST (inside-outside): startIndex = 6, endIndex = 7", function (assert) {
+		this.test(assert, 4, 9, new Date(2019, 9, 27, 2, 0, 0), new Date(2019, 9, 27, 5, 0, 0));
 	});
 
 	QUnit.module("Create Appointments: _calcCreateNewAppDays", {

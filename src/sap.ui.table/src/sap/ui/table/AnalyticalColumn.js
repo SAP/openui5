@@ -85,10 +85,6 @@ sap.ui.define([
 		}
 	}});
 
-	AnalyticalColumn.prototype.init = function() {
-		Column.prototype.init.apply(this, arguments);
-	};
-
 	/**
 	 * map of filtertypes for re-use in getFilterType
 	 * @private

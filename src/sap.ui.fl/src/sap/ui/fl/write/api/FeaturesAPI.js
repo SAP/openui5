@@ -52,16 +52,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if the data storing implementation for a given layer is capable of handling drafts.
+		 * Checks if the data storing implementation for a given layer is capable of handling versioning.
 		 *
-		 * @param {string} sLayer - Layer to check for the draft availability
-		 * @returns {Promise<boolean>} Resolves to a boolean indicating if draft is available
+		 * @param {string} sLayer - Layer to check for the draft versioning
+		 * @returns {Promise<boolean>} Resolves to a boolean indicating if versioning is enabled
 		 * @public
 		 */
-		isDraftEnabled: function (sLayer) {
+		isVersioningEnabled: function (sLayer) {
 			return Settings.getInstance()
 				.then(function (oSettings) {
-					return oSettings.isDraftEnabled(sLayer);
+					return oSettings.isVersioningEnabled(sLayer);
 				});
 		}
 	};

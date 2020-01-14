@@ -3663,36 +3663,44 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype._calcNewHoursAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
-		var oStartDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate(), oRowStartDate.getHours());
-		oStartDate = new Date(oStartDate.getTime() + (iIndex * 30 * 60 * 1000)); // 30 min
+		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+			oAppStartUTC = CalendarUtils._createUniversalUTCDate(oAppStartDate, null, true),
+			oAppEndUTC = CalendarUtils._createUniversalUTCDate(oAppEndDate, null, true),
+			oStartDateUTC = new Date(oRowStartUTC.setUTCMinutes(0, 0, 0) + (iIndex * 30 * 60 * 1000));
 
 		return {
-			startDate: oStartDate,
-			endDate: new Date(oStartDate.getTime() + oAppEndDate.getTime() - oAppStartDate.getTime())
+			startDate: CalendarUtils._createLocalDate(oStartDateUTC, true),
+			endDate: CalendarUtils._createLocalDate(new Date(oStartDateUTC.getTime() + oAppEndUTC.getTime() - oAppStartUTC.getTime()), true)
 		};
 	};
 
 	PlanningCalendar.prototype._calcNewDaysAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
-		var oStartDate = new Date(oRowStartDate);
+		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+			oAppStartUTC = CalendarUtils._createUniversalUTCDate(oAppStartDate, null, true),
+			oAppEndUTC = CalendarUtils._createUniversalUTCDate(oAppEndDate, null, true),
+			iAppDelta = oAppEndUTC.getTime() - oAppStartUTC.getTime();
 
-		oStartDate.setDate(oStartDate.getDate() + iIndex);
-		oStartDate = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate(), oAppStartDate.getHours(), oAppStartDate.getMinutes(), oAppStartDate.getSeconds());
+		oAppStartUTC.setUTCFullYear(oRowStartUTC.getUTCFullYear(), oRowStartUTC.getUTCMonth(), oRowStartUTC.getUTCDate() + iIndex);
+		oAppEndUTC = new Date(oAppStartUTC.getTime() + iAppDelta);
 
 		return {
-			startDate: oStartDate,
-			endDate: new Date(oStartDate.getTime() + oAppEndDate.getTime() - oAppStartDate.getTime())
+			startDate: CalendarUtils._createLocalDate(oAppStartUTC, true),
+			endDate: CalendarUtils._createLocalDate(oAppEndUTC, true)
 		};
 	};
 
 	PlanningCalendar.prototype._calcNewMonthsAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
-		var oStartDate = new Date(oRowStartDate);
+		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+			oAppStartUTC = CalendarUtils._createUniversalUTCDate(oAppStartDate, null, true),
+			oAppEndUTC = CalendarUtils._createUniversalUTCDate(oAppEndDate, null, true),
+			iAppDelta = oAppEndUTC.getTime() - oAppStartUTC.getTime();
 
-		oStartDate.setMonth(oStartDate.getMonth() + iIndex);
-		oStartDate = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oAppStartDate.getDate(), oAppStartDate.getHours(), oAppStartDate.getMinutes(), oAppStartDate.getSeconds());
+		oAppStartUTC.setUTCFullYear(oRowStartUTC.getUTCFullYear(), oRowStartUTC.getUTCMonth() + iIndex);
+		oAppEndUTC = new Date(oAppStartUTC.getTime() + iAppDelta);
 
 		return {
-			startDate: oStartDate,
-			endDate: new Date(oStartDate.getTime() + oAppEndDate.getTime() - oAppStartDate.getTime())
+			startDate: CalendarUtils._createLocalDate(oAppStartUTC, true),
+			endDate: CalendarUtils._createLocalDate(oAppEndUTC, true)
 		};
 	};
 
@@ -3829,116 +3837,97 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype._calcResizeNewHoursAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
-		var oEndDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate(), oRowStartDate.getHours()),
-			iMinutesStep = 30 * 60 * 1000; // 30 min
+		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(new Date(oRowStartDate.getTime()), null, true),
+			iMinutesStep = 30 * 60 * 1000, // 30 min
+			oAppStartUTC = CalendarUtils._createUniversalUTCDate(oAppStartDate, null, true),
+			oAppEndUTC = new Date(oRowStartUTC.setUTCMinutes(0, 0, 0) + ((iIndex + 1) *  iMinutesStep));
 
-		oEndDate = new Date(oEndDate.getTime() + ((iIndex + 1) *  iMinutesStep));
-
-		if (oEndDate.getTime() <= oAppStartDate.getTime()) {
-			oEndDate = new Date(oAppStartDate.getTime() + iMinutesStep);
+		// check if the start date/time is after the end date/time and if so it just adds 1 period to the start date/time
+		if (oAppEndUTC.getTime() <= oAppStartUTC.getTime()) {
+			oAppEndUTC = new Date(oAppStartUTC.getTime() + iMinutesStep);
 		}
 
 		return {
-			startDate: oAppStartDate,
-			endDate: oEndDate
+			startDate: CalendarUtils._createLocalDate(oAppStartUTC, true),
+			endDate: CalendarUtils._createLocalDate(oAppEndUTC, true)
 		};
 	};
 
 	PlanningCalendar.prototype._calcResizeNewDaysAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
-		var oEndDate = new Date(oRowStartDate),
-			iNewEndDate = oEndDate.getDate() + iIndex + 1,
-			oNewEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate());
+		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+			oAppStartUTC = CalendarUtils._createUniversalUTCDate(oAppStartDate, null, true),
+			oAppEndUTC = new Date(oRowStartUTC.setUTCDate(oRowStartUTC.getUTCDate() + iIndex + 1)),
+			oDateTimes = {};
 
-		oNewEndDate.setDate(iNewEndDate);
+		oDateTimes.startDate = CalendarUtils._createLocalDate(oAppStartUTC);
+		oDateTimes.startDateTime = CalendarUtils._createLocalDate(oAppStartUTC, true);
+		oDateTimes.endDate = CalendarUtils._createLocalDate(oAppEndUTC);
 
-		// This line checks if the start date is after the new end date and if so it just adds 1 to the startdate.
-		if (oNewEndDate.getTime() <= oAppStartDate.getTime()) {
-			iNewEndDate = oAppStartDate.getDate() + 1;
+		// check if the start date is after the end date and if so it just adds 1 day to the start date
+		if (oDateTimes.endDate <= oDateTimes.startDate) {
+			oDateTimes.endDate = CalendarUtils._createLocalDate(new Date(oAppEndUTC.setUTCDate(oAppStartUTC.getUTCDate() + 1)));
 		}
 
-		oEndDate.setDate(iNewEndDate);
-		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate());
-
 		return {
-			startDate: oAppStartDate,
-			endDate: oEndDate
+			startDate: oDateTimes.startDateTime,
+			endDate: oDateTimes.endDate
 		};
 	};
 
 	PlanningCalendar.prototype._calcResizeNewMonthsAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
-		var oEndDate = new Date(oRowStartDate),
-			iNewEndMonth = oEndDate.getMonth() + iIndex + 1;
+		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+			oAppStartUTC = CalendarUtils._createUniversalUTCDate(oAppStartDate, null, true),
+			oAppEndUTC = new Date(oRowStartUTC.setUTCMonth(oRowStartUTC.getUTCMonth() + iIndex + 1, 1));
 
-		if (iNewEndMonth <= oAppStartDate.getMonth()) {
-			iNewEndMonth = oAppStartDate.getMonth() + 1;
+		// check if the start date is after the end date and if so it just adds 1 month to the start date
+		if (CalendarUtils._monthsBetween(oAppStartUTC, oAppEndUTC, true) < 0) {
+				oAppEndUTC = new Date(oAppEndUTC.setUTCFullYear(oAppStartUTC.getUTCFullYear(), oAppStartUTC.getUTCMonth() + 1, 1));
 		}
 
-		oEndDate.setMonth(iNewEndMonth);
-		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), 1);
-
 		return {
-			startDate: oAppStartDate,
-			endDate: oEndDate
+			startDate: CalendarUtils._createLocalDate(oAppStartUTC, true),
+			endDate: CalendarUtils._createLocalDate(oAppEndUTC)
 		};
 	};
 
 	PlanningCalendar.prototype._calcCreateNewAppHours = function(oRowStartDate, iStartIndex, iEndIndex) {
-		var iMinutesStep = 30 * 60 * 1000,  // 30 min
-		oRowStartDateTime = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate(), oRowStartDate.getHours()),
-		oStartDateTime,
-		oAppStartDate,
-		oAppEndDate;
-
-		// first clear minutes and seconds of the row starting date/time and then get
-		oStartDateTime = oRowStartDateTime.getTime();
-
-		if (iStartIndex <= iEndIndex) {
-			oAppStartDate = new Date(oStartDateTime + (iStartIndex *  iMinutesStep));
-			oAppEndDate = new Date(oStartDateTime + ((iEndIndex + 1) *  iMinutesStep));
-		} else {
-			oAppStartDate = new Date(oStartDateTime + (iEndIndex *  iMinutesStep));
-			oAppEndDate = new Date(oStartDateTime + (iStartIndex *  iMinutesStep));
-		}
+		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+			iMinutesStep = 30 * 60 * 1000,  // 30 min
+			iStartAddon = (iStartIndex <= iEndIndex) ? iStartIndex : iEndIndex,
+			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex,
+			oRowStartDateTimeUTC = new Date(oRowStartUTC.setUTCMinutes(0, 0, 0)),
+			oAppStartUTC = new Date(oRowStartDateTimeUTC.getTime() + iStartAddon * iMinutesStep),
+			oAppEndUTC = new Date(oRowStartDateTimeUTC.getTime() + iEndAddon * iMinutesStep);
 
 		return {
-			startDate: oAppStartDate,
-			endDate: oAppEndDate
+			startDate: CalendarUtils._createLocalDate(oAppStartUTC, true),
+			endDate: CalendarUtils._createLocalDate(oAppEndUTC, true)
 		};
 	};
 
 	PlanningCalendar.prototype._calcCreateNewAppDays = function(oRowStartDate, iStartIndex, iEndIndex) {
-		var oAppStartDate = new Date(oRowStartDate),
-			oAppEndDate = new Date(oRowStartDate);
-
-		if (iStartIndex <= iEndIndex) {
-			oAppStartDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate() + iStartIndex);
-			oAppEndDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate() + iEndIndex + 1);
-		} else {
-			oAppStartDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate() + iEndIndex);
-			oAppEndDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate() + iStartIndex);
-		}
+		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+			iStartAddon = (iStartIndex <= iEndIndex) ? iStartIndex : iEndIndex,
+			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex,
+			oAppStartUTC = new Date(oRowStartUTC.getTime()),
+			oAppEndUTC = new Date(oRowStartUTC.getTime());
 
 		return {
-			startDate: oAppStartDate,
-			endDate: oAppEndDate
+			startDate: CalendarUtils._createLocalDate(new Date(oAppStartUTC.setUTCDate(oAppStartUTC.getUTCDate() + iStartAddon))),
+			endDate: CalendarUtils._createLocalDate(new Date(oAppEndUTC.setUTCDate(oAppEndUTC.getUTCDate() + iEndAddon)))
 		};
 	};
 
 	PlanningCalendar.prototype._calcCreateNewAppMonths = function(oRowStartDate, iStartIndex, iEndIndex) {
-		var oAppStartDate = new Date(oRowStartDate),
-			oAppEndDate = new Date(oRowStartDate);
-
-		if (iStartIndex <= iEndIndex) {
-			oAppStartDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth() + iStartIndex, 1);
-			oAppEndDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth() + iEndIndex + 1, 1);
-		} else {
-			oAppStartDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth() + iEndIndex, 1);
-			oAppEndDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth() + iStartIndex, 1);
-		}
+		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+			iStartAddon = (iStartIndex <= iEndIndex) ? iStartIndex : iEndIndex,
+			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex,
+			oAppStartUTC = new Date(oRowStartUTC.getTime()),
+			oAppEndUTC = new Date(oRowStartUTC.getTime());
 
 		return {
-			startDate: oAppStartDate,
-			endDate: oAppEndDate
+			startDate: CalendarUtils._createLocalDate(new Date(oAppStartUTC.setUTCMonth(oAppStartUTC.getUTCMonth() + iStartAddon, 1))),
+			endDate: CalendarUtils._createLocalDate(new Date(oAppEndUTC.setUTCMonth(oAppEndUTC.getUTCMonth() + iEndAddon, 1)))
 		};
 	};
 
