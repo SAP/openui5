@@ -389,19 +389,7 @@ sap.ui.define([
 	 */
 	ColumnMenu.prototype._createColumnVisibilityMenuItem = function(sId, oColumn) {
 		var oTable = this._oTable;
-
-		function getLabelText(oLabel) {
-			return oLabel && oLabel.getText && oLabel.getText();
-		}
-		var sText = oColumn.getName() || getLabelText(oColumn.getLabel());
-
-		if (!sText) { // try the multiple labels case
-			oColumn.getMultiLabels().forEach( function(oLabel, index) {
-				if (TableUtils.Column.getHeaderSpan(oColumn, index) === 1) {
-					sText = getLabelText(oLabel) || sText;
-				}
-			});
-		}
+		var sText = TableUtils.Column.getHeaderText(oTable, oColumn.getIndex());
 
 		return new MenuItem(sId, {
 			text: sText,
