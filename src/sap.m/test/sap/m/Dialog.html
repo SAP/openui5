@@ -113,7 +113,7 @@
 			});
 
 			var oCustomHeader = new sap.m.Bar("customHeader", {
-				contentLeft: [new sap.ui.core.Icon("myAppIcon", {src: "manager"}),
+				contentLeft: [new sap.ui.core.Icon("myAppIcon", {src: "sap-icon://manager"}),
 					new sap.m.Label("IconHeader", {text: "Icon Header"})],
 				contentMiddle: [],
 				contentRight: []
@@ -862,7 +862,7 @@
 			var oDialogWithCustomHeader = new sap.m.Dialog({
 				title: "Dialog with Select",
 				customHeader: new sap.m.Bar({
-					contentLeft: [new sap.ui.core.Icon({src: "manager"}), new sap.m.Label({text: "Custom Header"})],
+					contentLeft: [new sap.ui.core.Icon({src: "sap-icon://manager"}), new sap.m.Label({text: "Custom Header"})],
 					contentMiddle: [],
 					contentRight: []
 				}),
@@ -966,28 +966,6 @@
 			}
 			_startResizingInterval();
 
-			// dialogWithWidthButton
-
-			// var endButton = new sap.m.Button('largeButton', {
-			// 	press: function() {
-			// 		dialogWithWidthButton.close();
-			// 	},
-			// 	text: "Close"
-			// });
-
-			// var dialogWithWidthButton = new sap.m.Dialog({
-			// 	endButton: endButton,
-			// 	content: [
-			// 		new sap.ui.core.HTML({content: '<div>Do you want to start a new world domination campaign?</div>'})
-			// 	]
-			// }).addDelegate({
-			// 			onAfterRendering: function() {
-			// 				jQuery('#largeButton').css({ width: '100%' });
-			// 			}
-			// 		});
-
-			// disabledScrollingDialogWithSplitter
-
 			var disabledScrollingDialogWithSplitter = new sap.m.Dialog({
 				contentWidth: '20rem',
 				contentHeight: "100%",
@@ -1000,7 +978,7 @@
 					},
 					text: "Close"
 				})],
-				content: sap.ui.layout.Splitter({
+				content: new sap.ui.layout.Splitter({
 					orientation: "Vertical",
 					contentAreas: [
 						new sap.m.Table({
@@ -1198,12 +1176,8 @@
 
 			var tbl = new sap.m.Table({
 				columns : [
-					new sap.m.Column({
-						//header : new sap.m.Label({ text : "Column 1"})
-					}),
-					new sap.m.Column({
-						//header : new sap.m.Label({ text : "Column 2"})
-					}),
+					new sap.m.Column({}),
+					new sap.m.Column({}),
 					new sap.m.Column({
 						header : new sap.m.Label({ text : "Column 3"})
 					})
@@ -1719,14 +1693,6 @@
 						}
 					}),
 
-					// new sap.m.Button({
-					// 	text: "Button with w:100% inline style",
-					// 	width: _buttonWidth,
-					// 	press: function () {
-					// 		dialogWithWidthButton.open();
-					// 	}
-					// }),
-
 					new sap.m.Button({
 						text: "Drag with more than one header",
 						width: _buttonWidth,
@@ -1780,7 +1746,7 @@
 					}),
 
 					new sap.m.Button({
-						text : "Dialog with table IE issue",// TODO remove after 1.62 version
+						text : "Dialog with table IE issue",
 						width: _buttonWidth,
 						press: function() {
 							dialogWithTable.open();

@@ -11,6 +11,7 @@ sap.ui.define([
 	"./Title",
 	"./library",
 	"./TitleAlignmentMixin",
+	"sap/m/Image",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Popup",
@@ -41,6 +42,7 @@ function(
 	Title,
 	library,
 	TitleAlignmentMixin,
+	Image,
 	Control,
 	IconPool,
 	Popup,
@@ -308,11 +310,6 @@ function(
 					_header: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
 					/**
-					 * The hidden aggregation for internal maintained <code>title</code> control.
-					 */
-					_title: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
-
-					/**
 					 * The hidden aggregation for internal maintained <code>icon</code> control.
 					 */
 					_icon: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
@@ -430,7 +427,6 @@ function(
 		/* =========================================================== */
 		Dialog.prototype.init = function () {
 			var that = this;
-			this._externalIcon = undefined;
 			this._oManuallySetSize = null;
 			this._oManuallySetPosition = null;
 			this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
@@ -441,7 +437,9 @@ function(
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);
 			this.oPopup.setNavigationMode("SCOPE");
-			if (Device.os.ios && Device.system.phone && !this._bMessageType) {
+			var bMessageType = this.getType() === DialogType.Message;
+
+			if (Device.os.ios && Device.system.phone && !bMessageType) {
 				this.oPopup.setModal(true, "sapMDialogTransparentBlk");
 			} else {
 				this.oPopup.setModal(true, "sapMDialogBlockLayerInit");
@@ -520,14 +518,21 @@ function(
 		Dialog.prototype.onBeforeRendering = function () {
 			//if content has scrolling, disable scrolling automatically
 			if (this._hasSingleScrollableContent()) {
-				this.setProperty("verticalScrolling", false);
-				this.setProperty("horizontalScrolling", false);
+				this.setVerticalScrolling(false);
+				this.setHorizontalScrolling(false);
+
 				Log.info("VerticalScrolling and horizontalScrolling in sap.m.Dialog with ID " + this.getId() + " has been disabled because there's scrollable content inside");
+
 			} else if (!this._oScroller) {
 				this._oScroller = new ScrollEnablement(this, this.getId() + "-scroll", {
 					horizontal: this.getHorizontalScrolling(), // will be disabled in adjustScrollingPane if content can fit in
 					vertical: this.getVerticalScrolling()
 				});
+			}
+
+			if (this._oScroller) {
+				this._oScroller.setVertical(this.getVerticalScrolling());
+				this._oScroller.setHorizontal(this.getHorizontalScrolling());
 			}
 
 			this._createToolbarButtons();
@@ -864,7 +869,7 @@ function(
 			var $this = this.$(),
 				bStretch = this.getStretch(),
 				bStretchOnPhone = this.getStretchOnPhone() && Device.system.phone,
-				bMessageType = this._bMessageType,
+				bMessageType = this.getType() === DialogType.Message,
 				oStyles = {};
 
 			//the initial size is set in the renderer when the dom is created
@@ -1079,8 +1084,26 @@ function(
 
 				// call the method that registers this Bar for alignment
 				this._setupBarTitleAlignment(this._header, this.getId() + "_header");
+				this.setAggregation("_header", this._header);
+			}
+		};
 
-				this.setAggregation("_header", this._header, false);
+		/**
+		 *
+		 * @private
+		 */
+		Dialog.prototype._applyTitleToHeader = function () {
+			var sTitle = this.getProperty("title");
+
+			if (this._headerTitle) {
+				this._headerTitle.setText(sTitle);
+			} else {
+				this._headerTitle = new Title(this.getId() + "-title", {
+					text: sTitle,
+					level: "H2"
+				}).addStyleClass("sapMDialogTitle");
+
+				this._header.addContentMiddle(this._headerTitle);
 			}
 		};
 
@@ -1122,7 +1145,8 @@ function(
 		 * @private
 		 */
 		Dialog.prototype._clearBlockLayerAnimation = function () {
-			if (Device.os.ios && Device.system.phone && !this._bMessageType) {
+			var bMessageType = this.getType === DialogType.Message;
+			if (Device.os.ios && Device.system.phone && !bMessageType) {
 				delete this.oPopup._showBlockLayer;
 				this.oPopup._hideBlockLayer = function () {
 					var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
@@ -1367,13 +1391,14 @@ function(
 				return oCustomHeader._setRootAccessibilityRole("heading");
 			} else {
 				var bShowHeader = this.getShowHeader();
-
 				// if showHeader is set to false and not for standard dialog in iOS in theme sap_mvi, no header.
 				if (!bShowHeader) {
 					return null;
 				}
 
 				this._createHeader();
+				this._applyTitleToHeader();
+				this._applyIconToHeader();
 				return this._header;
 			}
 		};
@@ -1548,23 +1573,7 @@ function(
 		/*                         begin: setters                      */
 		/* =========================================================== */
 
-		//Manage "sapMDialogWithSubHeader" class depending on the visibility of the subHeader
-		//This is because the dialog has content height and width and the box-sizing have to be content-box in
-		//order to not recalculate the size with js
-		Dialog.prototype.setSubHeader = function (oControl) {
-			this.setAggregation("subHeader", oControl);
-
-			if (oControl) {
-				oControl.setVisible = function (isVisible) {
-					this.$().toggleClass('sapMDialogWithSubHeader', isVisible);
-					oControl.setProperty("visible", isVisible);
-				}.bind(this);
-			}
-
-			return this;
-		};
-
-		//The public setters and getters should not be documented via JSDoc because they will appear in the explored app
+		// The public setters and getters should not be documented via JSDoc because they will appear in the documentation
 
 		Dialog.prototype.setLeftButton = function (vButton) {
 			if (typeof vButton === "string") {
@@ -1599,7 +1608,6 @@ function(
 		};
 
 		Dialog.prototype.setBeginButton = function (oButton) {
-
 			if (oButton && oButton.isA("sap.m.Button")) {
 				oButton.addStyleClass("sapMDialogBeginButton");
 			}
@@ -1608,7 +1616,6 @@ function(
 		};
 
 		Dialog.prototype.setEndButton = function (oButton) {
-
 			if (oButton && oButton.isA("sap.m.Button")) {
 				oButton.addStyleClass("sapMDialogEndButton");
 			}
@@ -1621,7 +1628,7 @@ function(
 			var originalResponse = Control.prototype.getAggregation.apply(this, Array.prototype.slice.call(arguments, 0, 2));
 
 			//if no buttons are set returns the begin and end buttons
-			if (sAggregationName === 'buttons' && originalResponse.length === 0) {
+			if (sAggregationName === 'buttons' && originalResponse && originalResponse.length === 0) {
 				this.getBeginButton() && originalResponse.push(this.getBeginButton());
 				this.getEndButton() && originalResponse.push(this.getEndButton());
 			}
@@ -1630,175 +1637,62 @@ function(
 		};
 
 		Dialog.prototype.getAriaLabelledBy = function() {
-			var header = this._getAnyHeader(),
+			var oHeader = this._getAnyHeader(),
 				// Due to a bug in getAssociation in ManagedObject slice the Array
 				// Remove slice when the bug is fixed.
-				labels = this.getAssociation("ariaLabelledBy", []).slice();
+				aLabels = this.getAssociation("ariaLabelledBy", []).slice();
 
-			var subHeader = this.getSubHeader();
-			if (subHeader) {
-				labels.unshift(subHeader.getId());
+			var oSubHeader = this.getSubHeader();
+			if (oSubHeader) {
+				aLabels.unshift(oSubHeader.getId());
 			}
 
-			if (header) {
-				var aTitles = header.findAggregatedObjects(true, function(oObject) {
+			if (oHeader) {
+				var aTitles = oHeader.findAggregatedObjects(true, function(oObject) {
 					return oObject.isA("sap.m.Title");
 				});
 
 				// if there are titles in the header, add all of them to labels, else use the full header
 				if (aTitles.length) {
-					labels = aTitles.map(function (oTitle) {
+					aLabels = aTitles.map(function (oTitle) {
 						return oTitle.getId();
-					}).concat(labels);
+					}).concat(aLabels);
 				} else {
-					labels.unshift(header.getId());
+					aLabels.unshift(oHeader.getId());
 				}
 			}
 
-			return labels;
+			return aLabels;
 		};
 
-		Dialog.prototype.setTitle = function (sTitle) {
-			this.setProperty("title", sTitle, true);
+		Dialog.prototype._applyIconToHeader = function () {
+			var sState = this.getState(),
+				sIcon = this.getIcon();
 
-			if (this._headerTitle) {
-				this._headerTitle.setText(sTitle);
-			} else {
-				this._headerTitle = new Title(this.getId() + "-title", {
-					text: sTitle,
-					level: "H2"
-				}).addStyleClass("sapMDialogTitle");
-
-				this._createHeader();
-				this._header.addContentMiddle(this._headerTitle);
-			}
-			return this;
-		};
-
-		Dialog.prototype.setState = function (sState) {
-			var mFlags = {},
-				$this = this.$(),
-				sName;
-			mFlags[sState] = true;
-
-			this.setProperty("state", sState, true);
-
-			for (sName in DialogRenderer._mStateClasses) {
-				$this.toggleClass(DialogRenderer._mStateClasses[sName], !!mFlags[sName]);
-			}
-			this.setIcon(Dialog._mIcons[sState], true);
-			return this;
-		};
-
-		Dialog.prototype.setIcon = function (sIcon, bInternal) {
-			if (!bInternal) {
-				this._externalIcon = sIcon;
-			} else {
-				if (this._externalIcon) {
-					sIcon = this._externalIcon;
+			if (sState === ValueState.None && !sIcon) {
+				if (this._iconImage) {
+					this._iconImage.destroy();
+					this._iconImage = null;
 				}
+
+				return;
 			}
 
-			if (sIcon) {
-				if (sIcon !== this.getIcon()) {
-					if (this._iconImage) {
-						this._iconImage.setSrc(sIcon);
-					} else {
-						this._iconImage = IconPool.createControlByURI({
-							id: this.getId() + "-icon",
-							src: sIcon,
-							useIconTooltip: false
-						}, sap.m.Image).addStyleClass("sapMDialogIcon");
-
-						this._createHeader();
-						this._header.insertAggregation("contentMiddle", this._iconImage, 0);
-					}
-				}
-			} else {
-				var sDialogState = this.getState();
-				if (!bInternal && sDialogState !== ValueState.None) {
-					if (this._iconImage) {
-						this._iconImage.setSrc(Dialog._mIcons[sDialogState]);
-					}
-				} else {
-					if (this._iconImage) {
-						this._iconImage.destroy();
-						this._iconImage = null;
-					}
-				}
+			if (!sIcon) {
+				sIcon = Dialog._mIcons[sState];
 			}
 
-			this.setProperty("icon", sIcon, true);
-			return this;
-		};
+			if (!this._iconImage) {
+				this._iconImage = IconPool.createControlByURI({
+					id: this.getId() + "-icon",
+					src: sIcon,
+					useIconTooltip: false
+				}, Image).addStyleClass("sapMDialogIcon");
 
-		Dialog.prototype.setType = function (sType) {
-			var sOldType = this.getType();
-			if (sOldType === sType) {
-				return this;
-			}
-			this._bMessageType = (sType === DialogType.Message);
-			return this.setProperty("type", sType, false);
-		};
-
-		Dialog.prototype.setStretch = function (bStretch) {
-			this._bStretchSet = true;
-			return this.setProperty("stretch", bStretch);
-		};
-
-		Dialog.prototype.setStretchOnPhone = function (bStretchOnPhone) {
-			if (this._bStretchSet) {
-				Log.warning("sap.m.Dialog: stretchOnPhone property is deprecated. Setting stretchOnPhone property is ignored when there's already stretch property set.");
-				return this;
-			}
-			this.setProperty("stretchOnPhone", bStretchOnPhone);
-			return this.setProperty("stretch", bStretchOnPhone && Device.system.phone);
-		};
-
-		Dialog.prototype.setVerticalScrolling = function (bValue) {
-			var bOldValue = this.getVerticalScrolling(),
-				bHasSingleScrollableContent = this._hasSingleScrollableContent();
-
-			if (bHasSingleScrollableContent) {
-				Log.warning("sap.m.Dialog: property verticalScrolling automatically reset to false. See documentation.");
-				bValue = false;
+				this._header.insertAggregation("contentMiddle", this._iconImage, 0);
 			}
 
-			if (bOldValue === bValue) {
-				return this;
-			}
-
-			this.$().toggleClass("sapMDialogVerScrollDisabled", !bValue);
-			this.setProperty("verticalScrolling", bValue);
-
-			if (this._oScroller) {
-				this._oScroller.setVertical(bValue);
-			}
-
-			return this;
-		};
-
-		Dialog.prototype.setHorizontalScrolling = function (bValue) {
-			var bOldValue = this.getHorizontalScrolling(),
-				bHasSingleScrollableContent = this._hasSingleScrollableContent();
-
-			if (bHasSingleScrollableContent) {
-				Log.warning("sap.m.Dialog: property horizontalScrolling automatically reset to false. See documentation.");
-				bValue = false;
-			}
-
-			if (bOldValue === bValue) {
-				return this;
-			}
-
-			this.$().toggleClass("sapMDialogHorScrollDisabled", !bValue);
-			this.setProperty("horizontalScrolling", bValue);
-
-			if (this._oScroller) {
-				this._oScroller.setHorizontal(bValue);
-			}
-
-			return this;
+			this._iconImage.setSrc(sIcon);
 		};
 
 		Dialog.prototype.setInitialFocus = function (sInitialFocus) {
