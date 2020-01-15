@@ -1303,6 +1303,8 @@ function(
 
 		var CustomSelectRenderer = Renderer.extend(SelectRenderer);
 
+		CustomSelectRenderer.apiVersion = 2;
+
 		var CustomSelect = Select.extend("sap.m.internal.TabStripSelect", {
 			metadata: {
 				library: "sap.m"
@@ -1368,59 +1370,62 @@ function(
 
 		var CustomSelectListRenderer = Renderer.extend(SelectListRenderer);
 
+		CustomSelectListRenderer.apiVersion = 2;
+
 		CustomSelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
-			oRm.write("<li");
-			oRm.writeElementData(oItem);
-			oRm.addClass(SelectListRenderer.CSS_CLASS + "ItemBase");
-			oRm.addClass(SelectListRenderer.CSS_CLASS + "Item");
-			oRm.addClass("sapMTSOverflowSelectListItem");
+			oRm.openStart("li", oItem);
+			oRm.class(SelectListRenderer.CSS_CLASS + "ItemBase");
+			oRm.class(SelectListRenderer.CSS_CLASS + "Item");
+			oRm.class("sapMTSOverflowSelectListItem");
 			if (oItem.getProperty("modified")) {
-				oRm.addClass("sapMTSOverflowSelectListItemModified");
+				oRm.class("sapMTSOverflowSelectListItemModified");
 			}
 			if (Device.system.desktop) {
-				oRm.addClass(SelectListRenderer.CSS_CLASS + "ItemBaseHoverable");
+				oRm.class(SelectListRenderer.CSS_CLASS + "ItemBaseHoverable");
 			}
 			if (oItem === oList.getSelectedItem()) {
-				oRm.addClass(SelectListRenderer.CSS_CLASS + "ItemBaseSelected");
+				oRm.class(SelectListRenderer.CSS_CLASS + "ItemBaseSelected");
 			}
-			oRm.writeAttribute("tabindex", 0);
-			oRm.writeClasses();
+			oRm.attr("tabindex", 0);
 			this.writeItemAccessibilityState.apply(this, arguments);
-			oRm.write(">");
+			oRm.openEnd();
 
-			oRm.write('<div class=\"sapMSelectListItemText\">');
+			oRm.openStart("div");
+			oRm.class("sapMSelectListItemText");
+			oRm.openEnd();
 
 			// write icon
 			if (oItem.getIcon()) {
 				oRm.renderControl(oItem._getImage());
 			}
 
-			oRm.write("<div"); // Start texts container
-			oRm.addClass("sapMTSTexts");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div"); // Start texts container
+			oRm.class("sapMTSTexts");
+			oRm.openEnd();
 			// write additional text
 			this.renderItemText(oRm, oItem.getAdditionalText(), TabStripItem.CSS_CLASS_TEXT);
 
 			// write label text
 			this.renderItemText(oRm, oItem.getText(), TabStripItem.CSS_CLASS_LABEL);
 
-			oRm.write("</div>");
-			oRm.write('</div>');
+			oRm.close("div");
+			oRm.close("div");
 
 			oRm.renderControl(oItem.getAggregation('_closeButton'));
 
-			oRm.write("</li>");
+			oRm.close("li");
 		};
 
 		CustomSelectListRenderer.renderItemText = function (oRm, sItemText, sCssClass) {
-			oRm.write("<div class='" + sCssClass + "'>");
-			oRm.writeEscaped(sItemText.slice(0, (Device.system.phone ? sItemText.length : TabStripItem.DISPLAY_TEXT_MAX_LENGTH)));
+			oRm.openStart("div");
+			oRm.class(sCssClass);
+			oRm.openEnd();
+			oRm.text(sItemText.slice(0, (Device.system.phone ? sItemText.length : TabStripItem.DISPLAY_TEXT_MAX_LENGTH)));
 			// add three dots "..." at the end if not the whole additional text is shown
 			if (!Device.system.phone && sItemText.length > TabStripItem.DISPLAY_TEXT_MAX_LENGTH) {
-				oRm.write('...');
+				oRm.text('...');
 			}
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		var CustomSelectList = SelectList.extend("sap.m.internal.TabStripSelectList", {
