@@ -1154,8 +1154,25 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 		 * Indication Color 5
 		 * @public
 		 */
-		Indication05 : "Indication05"
+		Indication05 : "Indication05",
 
+		/**
+		 * Indication Color 6
+		 * @public
+		 */
+		Indication06 : "Indication06",
+
+		/**
+		 * Indication Color 7
+		 * @public
+		 */
+		Indication07 : "Indication07",
+
+		/**
+		 * Indication Color 8
+		 * @public
+		 */
+		Indication08 : "Indication08"
 	};
 
 

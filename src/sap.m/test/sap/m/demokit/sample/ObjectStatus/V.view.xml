@@ -75,6 +75,18 @@
 			class="sapUiSmallMarginBottom"
 			text="Indication 5"
 			state="Indication05" />
+		<ObjectStatus
+			class="sapUiSmallMarginBottom"
+			text="Indication 6"
+			state="Indication06" />
+		<ObjectStatus
+			class="sapUiSmallMarginBottom"
+			text="Indication 7"
+			state="Indication07" />
+		<ObjectStatus
+			class="sapUiSmallMarginBottom"
+			text="Indication 8"
+			state="Indication08" />
 	</l:VerticalLayout>
 	<l:VerticalLayout
 		class="sapUiContentPadding"
@@ -116,6 +128,25 @@
 			inverted="true"
 			state="Error"
 			icon="sap-icon://alert" />
+
+		<ObjectStatus
+			class="sapUiSmallMarginBottom"
+			text="Inverted Indication6"
+			active="true"
+			inverted="true"
+			state="Indication06" />
+		<ObjectStatus
+			class="sapUiSmallMarginBottom"
+			text="Inverted Indication7"
+			active="true"
+			inverted="true"
+			state="Indication07" />
+		<ObjectStatus
+			class="sapUiSmallMarginBottom"
+			text="Inverted Indication8"
+			active="true"
+			inverted="true"
+			state="Indication08" />
 	</l:VerticalLayout>
 	<l:VerticalLayout
 		class="sapUiContentPadding"
