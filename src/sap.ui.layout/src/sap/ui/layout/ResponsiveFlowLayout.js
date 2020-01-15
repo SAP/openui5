@@ -454,7 +454,7 @@ sap.ui.define([
 						var tPercentage = percW;
 
 						oRm.renderControl(oCont.control);
-						oRm.write("</div>");
+						oRm.close("div");
 
 						/*
 						 * Render all following elements that should wrap with the
@@ -488,16 +488,16 @@ sap.ui.define([
 							oRm.writeHeader(sHeaderId, oStyles, aClasses);
 
 							oRm.renderControl(oCont.breakWith[jj].control);
-							oRm.write("</div>");
+							oRm.close("div");
 						}
 					} else {
 						oRm.renderControl(oCont.control);
 					}
-					oRm.write("</div>"); // content
+					oRm.close("div"); // content
 
-					oRm.write("</div>"); // container
+					oRm.close("div"); // container
 				}
-				oRm.write("</div>"); // row
+				oRm.close("div"); // row
 
 				this._iRowCounter++;
 			}
@@ -750,27 +750,22 @@ sap.ui.define([
 		ResponsiveFlowLayout.prototype._getRenderManager = function () {
 			if (!this.oRm) {
 				this.oRm = sap.ui.getCore().createRenderManager();
-				this.oRm.writeStylesAndClasses = function() {
-					this.writeStyles();
-					this.writeClasses();
-				};
 				this.oRm.writeHeader = function(sId, oStyles, aClasses) {
-					this.write('<div id="' + sId + '"');
+					this.openStart("div", sId);
 
 					if (oStyles) {
 						for ( var key in oStyles) {
 							if (key === "width" && oStyles[key] === "100%") {
-								this.addClass("sapUiRFLFullLength");
+								this.class("sapUiRFLFullLength");
 							}
-							this.addStyle(key, oStyles[key]);
+							this.style(key, oStyles[key]);
 						}
 					}
 					for (var i = 0; i < aClasses.length; i++) {
-						this.addClass(aClasses[i]);
+						this.class(aClasses[i]);
 					}
 
-					this.writeStylesAndClasses();
-					this.write(">");
+					this.openEnd();
 				};
 			}
 			return this.oRm;
