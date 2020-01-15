@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/base/Event",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -47,7 +48,8 @@ sap.ui.define([
 	coreLibrary,
 	containsOrEquals,
 	Event,
-	InvisibleText
+	InvisibleText,
+	Core
 ) {
 	createAndAppendDiv("content");
 
@@ -472,6 +474,51 @@ sap.ui.define([
 		this.multiInput1._mapTokenToListItem(oToken);
 
 		assert.ok(true, "No exception is thrown");
+	});
+
+	QUnit.test("Handle mapping between List items and Tokens on Token deletion", function (assert) {
+		// Setup
+		var aItems, aTokens, oItem, oToken,
+			oModel = new JSONModel({
+				items: [{text: "Token 0"},
+					{text: "Token 1"},
+					{text: "Token 2"}
+				]
+			}),
+			oMultiInput = new MultiInput({
+				tokens: {path: "/items", template: new Token({text: {path: "text"}})},
+				width: "200px"
+			}).setModel(oModel).placeAt("qunit-fixture"),
+			oEvent = {
+				getParameter: function () {
+					return oMultiInput._getTokensList().getItems()[0];
+				}
+			};
+
+		oMultiInput._handleIndicatorPress();
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oModel.setData({
+			items: [
+				{text: "Token 1"},
+				{text: "Token 2"}
+			]
+		});
+		oMultiInput._handleNMoreItemDelete(oEvent);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		aItems = oMultiInput._getTokensList().getItems();
+		aTokens = oMultiInput._tokenizer.getTokens();
+		assert.strictEqual(aItems.length, aTokens.length, "List items and tokens should be equal:" + aItems.length);
+
+		oItem = aItems[0];
+		oToken = Core.byId(oItem.data("tokenId"));
+		assert.strictEqual(oItem.getTitle(), oToken.getText(), "The first item in the list should be the same as the Token" + oItem.getTitle());
+
+		// Cleanup
+		oMultiInput.destroy();
 	});
 
 	QUnit.module("Validation", {

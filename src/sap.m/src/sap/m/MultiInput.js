@@ -1746,6 +1746,9 @@ function(
 			this._getTokensList().removeItem(oListItem);
 		}
 
+		this._getTokensList().destroyItems();
+		this._fillList();
+
 		this.focus();
 	};
 
