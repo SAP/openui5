@@ -374,9 +374,13 @@ sap.ui.define([
 
 			oVariantManagementControl.getTitle().setText(sCustomTextForDuplicate);
 
-			oVariantManagementOverlay.attachEventOnce("geometryChanged", function() {
+			if (oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg")) {
 				fnHandleStartEdit();
-			}, this);
+			} else {
+				oVariantManagementOverlay.attachEventOnce("geometryChanged", function() {
+					fnHandleStartEdit();
+				}, this);
+			}
 		} else {
 			fnHandleStartEdit();
 		}
