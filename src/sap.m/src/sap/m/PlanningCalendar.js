@@ -2365,7 +2365,7 @@ sap.ui.define([
 		}
 
 		if (!oView && !bNoError) {
-			throw new Error("PlanningCalendarView with key " + sKey + "not assigned " + this);
+			throw new Error("PlanningCalendarView with key " + sKey + " not assigned " + this);
 		}
 
 		return oView;
@@ -4037,8 +4037,8 @@ sap.ui.define([
 
 	PlanningCalendar.prototype._updateHeaderButtons = function() {
 		var sViewKey = this.getViewKey(),
-			oCurrentView = this._getView(sViewKey),
-			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
+			oCurrentView = this._getView(sViewKey, true),
+			sCurrentViewIntervalType = oCurrentView && oCurrentView.getIntervalType(),
 			oStartDate = new Date(this._dateNav.getStart().getTime()),
 			oEndDate = new Date(this._dateNav.getEnd().getTime()),
 			oMinDate = this.getMinDate() ? new Date(this.getMinDate().getTime()) : undefined,
