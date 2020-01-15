@@ -11,6 +11,8 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 	 */
 	var MaskInputRenderer = Renderer.extend(InputBaseRenderer);
 
+	MaskInputRenderer.apiVersion = 2;
+
 	/**
 	 * Returns the inner aria labelledby announcement texts for the accessibility.
 	 *
