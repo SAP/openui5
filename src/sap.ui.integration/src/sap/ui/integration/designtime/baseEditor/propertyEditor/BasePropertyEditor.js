@@ -54,12 +54,6 @@ sap.ui.define([
 					multiple: false
 				}
 			},
-			associations: {
-				"editor": {
-					type: "sap.ui.integration.designtime.BaseEditor",
-					multiple: false
-				}
-			},
 			events: {
 				/**
 				 * Fired when the property of the editor has changed
@@ -183,10 +177,6 @@ sap.ui.define([
 				// this._oConfigModel.checkUpdate();
 				this.onValueChange(oConfig.value);
 			}
-		},
-
-		getEditor: function() {
-			return sap.ui.getCore().byId(this.getAssociation("editor"));
 		},
 
 		getI18nProperty: function(sName) {
