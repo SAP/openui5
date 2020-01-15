@@ -569,7 +569,9 @@ sap.ui.define([
 
 	CodeEditor.prototype.onfocusin = function () {
 		if (!this.getEditable()) {
-			document.activeElement.blur(); // prevent virtual keyboard from opening when control is not editable
+			if (!Device.browser.firefox) { // in Firefox, when text has been selected, and the activeElement gets blurred, Firefox loses its selected text
+				document.activeElement.blur(); // prevent virtual keyboard from opening when control is not editable
+			}
 		}
 		this._oEditor.getSession().setUseWorker(true);
 	};
