@@ -81,11 +81,13 @@ sap.ui.define([
 
 		// act
 		oFileUploader.setEnabled(false);
+		sap.ui.getCore().applyChanges();
 		// assert
 		fnTestDisabledClass($fileUploader, true);
 
 		// act
 		oFileUploader.setEnabled(true);
+		sap.ui.getCore().applyChanges();
 		// assert
 		fnTestDisabledClass($fileUploader, false);
 
