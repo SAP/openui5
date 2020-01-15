@@ -574,6 +574,8 @@ sap.ui.define([
 
 	var CustomTextRenderer = Renderer.extend(TextRenderer);
 
+	CustomTextRenderer.apiVersion = 2;
+
 	CustomTextRenderer.renderText = function(oRm, oControl) {
 		oRm.renderControl(oControl._getIconAggregation());
 		TextRenderer.renderText(oRm, oControl);
@@ -620,14 +622,11 @@ sap.ui.define([
 		return oIcon;
 	};
 
-	CustomText.prototype.setText = function(sText, bSuppressInvalidate) {
-		this.setProperty("text", sText , bSuppressInvalidate);
-		return this;
-	};
-
 	/****************************************** CUSTOM LINK CONTROL ****************************************************/
 
 	var CustomLinkRenderer = Renderer.extend(LinkRenderer);
+
+	CustomLinkRenderer.apiVersion = 2;
 
 	CustomLinkRenderer.renderText = function(oRm, oControl) {
 		oRm.renderControl(oControl._getIconAggregation());
@@ -678,11 +677,6 @@ sap.ui.define([
 		}
 
 		return oIcon;
-	};
-
-	CustomLink.prototype.setText = function(sText, bSuppressInvalidate){
-		this.setProperty("text", sText, bSuppressInvalidate);
-		return this;
 	};
 
 	return ObjectMarker;
