@@ -590,7 +590,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the default aria attibutes for the given element type with the given settings.
+		 * Returns the default aria attributes for the given element type with the given settings.
 		 * @see sap.ui.table.extensions.Accessibility.ELEMENTTYPES
 		 */
 		getAriaAttributesFor: function(oExtension, sType, mParams) {
@@ -1271,7 +1271,7 @@ sap.ui.define([
 			oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']").attr("aria-hidden", "true");
 		} else {
 			oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']").removeAttr("aria-hidden");
-			if (TableUtils.isNoDataVisible(oTable)) {
+			if (TableUtils.isNoColumnsVisible(oTable) || TableUtils.isNoDataVisible(oTable)) {
 				oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']").attr("aria-hidden", "true");
 			} else {
 				oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']").removeAttr("aria-hidden");
