@@ -47,6 +47,28 @@
         "type": "FEATURE",
         "text": " sap.ui.suite: sap_belize_hcb and sap_belize_hcw themes",
         "references": []
+      },
+      {
+        "id": "fe73a55d0ad195fda9c9698490e6e441d1c8c7fa",
+        "type": "FIX",
+        "text": " Align GenericTile \u0026 SlideTile with Fiori 3.0 visual specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      },
+      {
+        "id": "3e529db675116795e9918874e8b587f78f2629c9",
+        "type": "FIX",
+        "text": " CSS of OneByOne tile with NewsContent + add to samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080016544"
+          }
+        ]
       }
     ]
   }

@@ -46,6 +46,23 @@
             "reference": "1980494167"
           }
         ]
+      },
+      {
+        "id": "43f6aefe028b2d8578902b26d9c2525ae9f75e03",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Calendar content added",
+        "references": []
+      },
+      {
+        "id": "728ac4dfea0b583048601714329558f57a4dfa7a",
+        "type": "FIX",
+        "text": " sap.f.cards.CardActions: \"Enabled\" state is now resolved correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980543559"
+          }
+        ]
       }
     ]
   }

@@ -185,6 +185,110 @@
             "reference": "002075129500006882642019"
           }
         ]
+      },
+      {
+        "id": "844f2f43c9f655064d2ba58b257f287eb660fb78",
+        "type": "FEATURE",
+        "text": " routing: Propagate titleChanged event from nested Component",
+        "references": []
+      },
+      {
+        "id": "43f6aefe028b2d8578902b26d9c2525ae9f75e03",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Calendar content added",
+        "references": []
+      },
+      {
+        "id": "fb4dbd91f2dac6bcce276a7eefbd8d42e8cc044b",
+        "type": "FEATURE",
+        "text": " ui5loader: support for \u0027bundles\u0027 configuration",
+        "references": []
+      },
+      {
+        "id": "e9b77599d7721bec738b0a9b2005b7d21692a461",
+        "type": "FIX",
+        "text": " All: fix AMD dependencies to types that are embedded in library.js",
+        "references": []
+      },
+      {
+        "id": "e6fc9b1b2e24c9cd00cd48f1ffa09656d8308abb",
+        "type": "FIX",
+        "text": " ResourceModel: fix JSDoc references to ResourceBundle",
+        "references": []
+      },
+      {
+        "id": "278fcc3732df613a8b936488125142fe7af80e6b",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: correctly set owner ID for stashed controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970586639"
+          },
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000781231 2019"
+          }
+        ]
+      },
+      {
+        "id": "b439045014ae57cc93cf6de58ae61dfabb7eecc4",
+        "type": "FIX",
+        "text": " format/NumberFormat: currency long format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080004890"
+          }
+        ]
+      },
+      {
+        "id": "8cb68cc8ec47b2d0086ab2c784f13dec122f5030",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: clean up the previous tap handler on new mousedown event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080020695"
+          }
+        ]
+      },
+      {
+        "id": "987a3547c09677bccf1658ad8fb7e465a8c84258",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: clean up the tap handler on \u0027mouseout\u0027",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970554912"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970532711"
+          }
+        ]
+      },
+      {
+        "id": "787c545710dfe7ca02df188d45fd7a7f6747bfc8",
+        "type": "FIX",
+        "text": " routing.HistoryTest: exclude Safari from using PushState in History Test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080023088"
+          }
+        ]
+      },
+      {
+        "id": "be1cf39c18de1ec0346e490b3684025b607b0c63",
+        "type": "FIX",
+        "text": " sap.m.Select: Busy select now has correct visible focus in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870362962"
+          }
+        ]
       }
     ]
   }

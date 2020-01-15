@@ -84,6 +84,117 @@
             "reference": "1980494167"
           }
         ]
+      },
+      {
+        "id": "43f6aefe028b2d8578902b26d9c2525ae9f75e03",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Calendar content added",
+        "references": []
+      },
+      {
+        "id": "e9b77599d7721bec738b0a9b2005b7d21692a461",
+        "type": "FIX",
+        "text": " All: fix AMD dependencies to types that are embedded in library.js",
+        "references": []
+      },
+      {
+        "id": "5dc6abd7cfceeee5f14e9978de9baa860c403f5b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Deregister resizeListener before rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980469448"
+          }
+        ]
+      },
+      {
+        "id": "6defe457520ebc1ba5687fa211a16b90934db84b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: ExpandHeader button is now hidden when no content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000567110 2019"
+          }
+        ]
+      },
+      {
+        "id": "b87b7861cadf047edc11d187eaf913244846873b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: No more error when hidden title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007433342019"
+          }
+        ]
+      },
+      {
+        "id": "446367b1e0a4b537e219392e90a98c26aac0e11c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Updated media styles at correct cases",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080015483"
+          }
+        ]
+      },
+      {
+        "id": "6fea1f13aeb4ac186c32ef2559d15ab161d0c008",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Fixed grid shrinking in IE11 when containerQuery is true",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980517215"
+          }
+        ]
+      },
+      {
+        "id": "b1a2b68fcad2c8549b74d70eb3051c4c78851398",
+        "type": "FIX",
+        "text": " sap.f.GridList \u0026 sap.f.GridContainer: Fixed library imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980512812"
+          }
+        ]
+      },
+      {
+        "id": "728ac4dfea0b583048601714329558f57a4dfa7a",
+        "type": "FIX",
+        "text": " sap.f.cards.CardActions: \"Enabled\" state is now resolved correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980543559"
+          }
+        ]
+      },
+      {
+        "id": "35cf06caddcf6bf513195a72218ad400526d5b9c",
+        "type": "FIX",
+        "text": " sap.f.shellBar.ControlSpacer: Width is set immediately on DomRef",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970461036"
+          }
+        ]
+      },
+      {
+        "id": "400b86979c78a32261a536e8b2bea4a54050f012",
+        "type": "FIX",
+        "text": " sap.ui.layout.cssgrid.ResponsiveColumnLayout: Preserve grid gap",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980516714"
+          }
+        ]
       }
     ]
   }

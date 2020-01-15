@@ -29,6 +29,45 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Update cache on content-resize",
         "references": []
+      },
+      {
+        "id": "7d26875da5626eab685e836dd2db897bea4ba7e4",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: RTA move of sections via anchorbar",
+        "references": []
+      },
+      {
+        "id": "80814f44fade7e5ce7e7c5290404ffc6726d9413",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080008166"
+          }
+        ]
+      },
+      {
+        "id": "68fe71bcb9db5870d5be9b43090d6eb5e7d7fbee",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: No error on early scrollToSection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980529374"
+          }
+        ]
+      },
+      {
+        "id": "14138755c596d5d956081dd5d429b66cb3920f7f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: No lazyLoading during animation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780437211"
+          }
+        ]
       }
     ]
   }

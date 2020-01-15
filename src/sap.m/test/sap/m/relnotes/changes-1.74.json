@@ -491,6 +491,251 @@
             "reference": "1980455339"
           }
         ]
+      },
+      {
+        "id": "da8010a650fed52d89e214a4d1a2540af720493b",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: Recent colors section implemented",
+        "references": []
+      },
+      {
+        "id": "299ad9fbb693f698cbb7d235678b02805c90e634",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectHeader: Responsive paddings enablement",
+        "references": []
+      },
+      {
+        "id": "b0c4d79b17c0dc6cfbaa4b289f9ea4f42b191afa",
+        "type": "FEATURE",
+        "text": " sap.m.ViewSettingsDialog: Show only selected items button implemented",
+        "references": []
+      },
+      {
+        "id": "43f6aefe028b2d8578902b26d9c2525ae9f75e03",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Calendar content added",
+        "references": []
+      },
+      {
+        "id": "fe73a55d0ad195fda9c9698490e6e441d1c8c7fa",
+        "type": "FIX",
+        "text": " Align GenericTile \u0026 SlideTile with Fiori 3.0 visual specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      },
+      {
+        "id": "e9b77599d7721bec738b0a9b2005b7d21692a461",
+        "type": "FIX",
+        "text": " All: fix AMD dependencies to types that are embedded in library.js",
+        "references": []
+      },
+      {
+        "id": "3e529db675116795e9918874e8b587f78f2629c9",
+        "type": "FIX",
+        "text": " CSS of OneByOne tile with NewsContent + add to samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080016544"
+          }
+        ]
+      },
+      {
+        "id": "5d98ab6f5954ed69fb395f51d2948400475d7fa0",
+        "type": "FIX",
+        "text": " Fiori 3.0 shadow levels \u0026 GenericTile focus/hover/active states",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      },
+      {
+        "id": "d955dad55056c03dd35f3beb2e30a8eccc33b52a",
+        "type": "FIX",
+        "text": " Rendering of GenericTile with custom width (after change 4518265)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080007736"
+          }
+        ]
+      },
+      {
+        "id": "0382caab43ce38b5049d358a7663e5021392e517",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: DescribedBy text is read clearly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080000721"
+          }
+        ]
+      },
+      {
+        "id": "9f242481c171b2b8f19362b756435fa955a4e665",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Images url having $value not set as backgroundImage.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007075562019"
+          }
+        ]
+      },
+      {
+        "id": "ac2d4c7cf6a7e80336b2eef072a10241cec53248",
+        "type": "FIX",
+        "text": " sap.m.Label: Reqiered label is not truncating on IOS now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980552109"
+          }
+        ]
+      },
+      {
+        "id": "491d9c7d9b9b6ef2280833c385da31d981dc0394",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Speech output is now more clear",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980211004"
+          }
+        ]
+      },
+      {
+        "id": "9e8eaab8580c9bcbfbde7b90eaa0557c440945cf",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Control \u0026 binding values misalignment fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980437334"
+          }
+        ]
+      },
+      {
+        "id": "b025db2b5455ebecde2f54fba5aeaca0a311d9e7",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fixed token duplication",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980437405"
+          }
+        ]
+      },
+      {
+        "id": "de46bebb3a744441ed72f1f796431069d435fbf3",
+        "type": "FIX",
+        "text": " sap.m.P13nConditionPanel: Define conditions tab on the ValueHelpDialog now shows the selected value correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980437959"
+          }
+        ]
+      },
+      {
+        "id": "70b7fb290c010aa3304f76e0e018fa41b31f3a49",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Min and max dates work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970513641"
+          }
+        ]
+      },
+      {
+        "id": "dc54ed3fa8da83e0fbf8d06b7ebbd046c8844e50",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: min/max date are now corretly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980546247"
+          }
+        ]
+      },
+      {
+        "id": "4a87f6a597f4c4ba0ee013bf43b42d1c9a6ff41c",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Popover is now displayed properly on iOS and OS X",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980505824"
+          }
+        ]
+      },
+      {
+        "id": "2221a6c0315b13a16ec4602dca00bb79358ebcd9",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Exchange usage of SimpleFixFlex with ValueStateHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970616340"
+          }
+        ]
+      },
+      {
+        "id": "2c79ee62483927997f6579d423c1d87881ac57f9",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Update items count on context change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980463599"
+          }
+        ]
+      },
+      {
+        "id": "c4432cf8a899ccd4c4c49e13f625dea7b374b93c",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: pre-renders tiles in both directions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080003916"
+          }
+        ]
+      },
+      {
+        "id": "271465a02ca7346813111e3c9b8e7833af1dc13b",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Default action on backspace prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970405635"
+          }
+        ]
+      },
+      {
+        "id": "1ba49348211f6e79cf82a37e1686005fc560731f",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Special character Curly braces in the file name disrupts the behavior.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970592551"
+          }
+        ]
+      },
+      {
+        "id": "7f218159a5d4a4a0dde02280fa171b4b9a341bde",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: proper icon for \"Show only selected\" Button",
+        "references": []
       }
     ]
   }

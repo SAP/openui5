@@ -23,6 +23,12 @@
             "reference": "1970623617"
           }
         ]
+      },
+      {
+        "id": "e9b77599d7721bec738b0a9b2005b7d21692a461",
+        "type": "FIX",
+        "text": " All: fix AMD dependencies to types that are embedded in library.js",
+        "references": []
       }
     ]
   }

@@ -18,6 +18,17 @@
             "reference": "1980484878"
           }
         ]
+      },
+      {
+        "id": "047889d4492474fe930b0d01e7d4b202084d7189",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Popover position is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980539510"
+          }
+        ]
       }
     ]
   }

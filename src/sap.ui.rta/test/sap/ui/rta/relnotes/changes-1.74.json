@@ -18,6 +18,35 @@
         "type": "FIX",
         "text": " Move error messages to correct messagebundle",
         "references": []
+      },
+      {
+        "id": "7d26875da5626eab685e836dd2db897bea4ba7e4",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: RTA move of sections via anchorbar",
+        "references": []
+      },
+      {
+        "id": "e9b77599d7721bec738b0a9b2005b7d21692a461",
+        "type": "FIX",
+        "text": " All: fix AMD dependencies to types that are embedded in library.js",
+        "references": []
+      },
+      {
+        "id": "a965545049d652b48620882c8952a0ebda497809",
+        "type": "FIX",
+        "text": " sap.ui.dt - objectPage test fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980531146"
+          }
+        ]
+      },
+      {
+        "id": "33e395fd3351f1bfa7e6726731a4c50eede92e2a",
+        "type": "FIX",
+        "text": ": RTA - Stretch QUnit fix for IE11",
+        "references": []
       }
     ]
   }

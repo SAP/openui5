@@ -86,6 +86,103 @@
         "type": "FEATURE",
         "text": " sap_fiori_3 themes: add \"72-Light\" font",
         "references": []
+      },
+      {
+        "id": "299ad9fbb693f698cbb7d235678b02805c90e634",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectHeader: Responsive paddings enablement",
+        "references": []
+      },
+      {
+        "id": "0b4b2cc2d2edbc16892113b1bdebc997a70cfea5",
+        "type": "FEATURE",
+        "text": " sap.m.TabContainer: Parameter changes for Dark themes",
+        "references": []
+      },
+      {
+        "id": "690ac732f3c6dc579fef2f4428e0f0330ece53a3",
+        "type": "FEATURE",
+        "text": " sap.ui.commons: new sap_fiori_3_dark theme",
+        "references": []
+      },
+      {
+        "id": "db850499a67e736430733348e905c125b0f6f0d1",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.ColorPicker: Parameter changes for Quartz Light\u0026Dark themes",
+        "references": []
+      },
+      {
+        "id": "a7f30bdbc12185ab2d1bbad2f2df95a4e4494a81",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Menu: Vertical alignment Icon to text",
+        "references": []
+      },
+      {
+        "id": "f021f967aac9e76d5c69420a81c34834aa263f1f",
+        "type": "FIX",
+        "text": " @sapUiChartDataLineColor for the Fiori 3.0 dark theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980437095"
+          }
+        ]
+      },
+      {
+        "id": "fe73a55d0ad195fda9c9698490e6e441d1c8c7fa",
+        "type": "FIX",
+        "text": " Align GenericTile \u0026 SlideTile with Fiori 3.0 visual specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      },
+      {
+        "id": "3e529db675116795e9918874e8b587f78f2629c9",
+        "type": "FIX",
+        "text": " CSS of OneByOne tile with NewsContent + add to samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080016544"
+          }
+        ]
+      },
+      {
+        "id": "5d98ab6f5954ed69fb395f51d2948400475d7fa0",
+        "type": "FIX",
+        "text": " Fiori 3.0 shadow levels \u0026 GenericTile focus/hover/active states",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      },
+      {
+        "id": "de1ffe73c52a6ef19d804846d233397e805a2fde",
+        "type": "FIX",
+        "text": " sap.m.ActionSelect button height fix for SAP Quartz themes",
+        "references": []
+      },
+      {
+        "id": "ad476cdb3325e7e844076d102323a8a7ee475b74",
+        "type": "FIX",
+        "text": " sap.m.Page: Missing border fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980513150"
+          }
+        ]
+      },
+      {
+        "id": "03f5decc9c8249c0494d2a69963327304a5be458",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Vertical alignment Icon to text in all themes",
+        "references": []
       }
     ]
   }

@@ -50,6 +50,90 @@
             "reference": "1980456120"
           }
         ]
+      },
+      {
+        "id": "43f6aefe028b2d8578902b26d9c2525ae9f75e03",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Calendar content added",
+        "references": []
+      },
+      {
+        "id": "a7f30bdbc12185ab2d1bbad2f2df95a4e4494a81",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Menu: Vertical alignment Icon to text",
+        "references": []
+      },
+      {
+        "id": "ccafed23a670ab2ba4ff3a08982d6a33b14f565f",
+        "type": "FIX",
+        "text": " sap.m.Menu: Is not cropped when there is no space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980513060"
+          }
+        ]
+      },
+      {
+        "id": "882bb0cbab4ed1d334f0a03221ff16105b8f17c2",
+        "type": "FIX",
+        "text": " sap.m.Menu: Items use pointer cursor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980556852"
+          }
+        ]
+      },
+      {
+        "id": "deaded85c6facf938eda8d3d5754e4ea95765109",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker - Horizontal scroll in IE fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980525251"
+          }
+        ]
+      },
+      {
+        "id": "e30176aa8f5b663f80db71da95608d3c724f44cb",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Focus lost on filter field fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980450702"
+          }
+        ]
+      },
+      {
+        "id": "03f5decc9c8249c0494d2a69963327304a5be458",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Vertical alignment Icon to text in all themes",
+        "references": []
+      },
+      {
+        "id": "b15384c0cc18d94ac9630f9e4c929fb520abd71a",
+        "type": "FIX",
+        "text": " sap.ui.unified.MenuItemBase: console error fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080020796"
+          }
+        ]
+      },
+      {
+        "id": "cf70c7d50f6c559d3291e1dc38327260074471c9",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CalendarUtils: min and max date in Persian and Islamic calendar type is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970524664"
+          }
+        ]
       }
     ]
   }
