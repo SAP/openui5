@@ -2,7 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
-	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/transport/Transports",
+	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Control",
@@ -10,9 +11,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	TransportSelection,
-	LrepConnector,
+	Transports,
+	WriteUtils,
 	Change,
-	Utils,
+	FlUtils,
 	Control,
 	jQuery,
 	sinon
@@ -26,18 +28,6 @@ sap.ui.define([
 			this.oTransportSelection = new TransportSelection();
 
 			this.oServer = sinon.fakeServer.create();
-			this.oLrepConnector = LrepConnector.createConnector();
-			this.mSampleDefaultHeader = {
-				type: "GET",
-				contentType: "application/json",
-				data: {},
-				headers: {
-					"Content-Type": "text/html",
-					"X-CSRF-Token": "ABCDEFGHIJKLMN123456789"
-				}
-			};
-			this.sendAjaxRequestStub = sandbox.stub(this.oLrepConnector, "_sendAjaxRequest").returns(Promise.resolve());
-			this.getDefaultOptionsStub = sandbox.stub(this.oLrepConnector, "_getDefaultOptions").returns(this.mSampleDefaultHeader);
 		},
 		afterEach: function () {
 			this.oServer.restore();
@@ -156,13 +146,13 @@ sap.ui.define([
 				}
 			};
 			var aMockLocalChanges = [oMockTransportedChange, oMockNewChange];
-			sandbox.stub(Utils, "getClient").returns('');
-			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			sandbox.stub(FlUtils, "getClient").returns('');
+			sandbox.stub(WriteUtils, "sendRequest").resolves();
 
 			assert.ok(this.oTransportSelection.checkTransportInfo(oMockTransportInfo), "then true is returned for a valid transport info");
 			assert.notOk(this.oTransportSelection.checkTransportInfo(oMockTransportInfoInvalid), "then false is returned for an invalid transport info");
 
-			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, null, {}).then(function() {
+			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, null, {reference: "aReference"}).then(function() {
 				assert.equal(aMockLocalChanges[0].packageName, "aPackage", "then the transported local change is not updated");
 				assert.equal(aMockLocalChanges[1].packageName, oMockTransportInfo.packageName, "but the new local change is updated");
 			});
@@ -219,10 +209,10 @@ sap.ui.define([
 			var aMockLocalChanges = [oMockNewChange];
 			var aAppVariantDescriptors = [oAppVariantDescriptor];
 
-			sandbox.stub(Utils, "getClient").returns('');
-			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			sandbox.stub(FlUtils, "getClient").returns('');
+			sandbox.stub(WriteUtils, "sendRequest").resolves();
 			assert.ok(this.oTransportSelection.checkTransportInfo(oMockTransportInfo), "then true is returned for a valid transport info");
-			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, {}).then(function() {
+			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, {reference: "aReference"}).then(function() {
 				assert.equal(aAppVariantDescriptors[0].packageName, "$TMP", "but the app variant descriptor should not be updated");
 				assert.equal(aMockLocalChanges[0].packageName, oMockTransportInfo.packageName, "but the new local change is updated");
 			});
@@ -244,13 +234,12 @@ sap.ui.define([
 				layer: sLayer
 			};
 
-			sandbox.stub(Utils, "getClient").returns('');
-			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-			var oConnectorStub = sandbox.stub(this.oLrepConnector, "send").resolves();
+			sandbox.stub(FlUtils, "getClient").returns('');
+			var oSendStub = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, oContentParameters).then(function() {
-				assert.equal(oConnectorStub.getCall(0).args[2].reference, sReference, "the reference is added to the request");
-				assert.equal(oConnectorStub.getCall(0).args[2].appVersion, sAppVersion, "the app version is added to the request");
-				assert.equal(oConnectorStub.getCall(0).args[2].layer, sLayer, "the layer is added to the request");
+				assert.equal(JSON.parse(oSendStub.getCall(0).args[2].payload).reference, sReference, "the reference is added to the request");
+				assert.equal(JSON.parse(oSendStub.getCall(0).args[2].payload).appVersion, sAppVersion, "the app version is added to the request");
+				assert.equal(JSON.parse(oSendStub.getCall(0).args[2].payload).layer, sLayer, "the layer is added to the request");
 			});
 		});
 	});
@@ -265,7 +254,6 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("shall be instantiable", function (assert) {
 			assert.ok(this.oTransportSelection);
-			assert.ok(this.oTransportSelection.oTransports);
 		});
 
 		QUnit.test("_createEventObject", function (assert) {
@@ -386,9 +374,7 @@ sap.ui.define([
 				]
 			});
 
-			this.oTransportSelection.oTransports.getTransports = function () {
-				return oTransportResponse;
-			};
+			sandbox.stub(Transports, "getTransports").returns(Promise.resolve(oTransportResponse));
 
 			return this.oTransportSelection.setTransports([oChange], oRootControl).then(function () {
 				assert.equal(oChange.getRequest(), sSecondTransportId, "the request was set to the transport id returned from the backend call");
@@ -432,7 +418,7 @@ sap.ui.define([
 			};
 
 			var oTransportSelection = new TransportSelection();
-			sandbox.stub(oTransportSelection.oTransports, "getTransports").returns(Promise.resolve(oTransportResponse));
+			sandbox.stub(Transports, "getTransports").resolves(oTransportResponse);
 			// var oOpenDialogStub = sandbox.stub(oTransportSelection, "_openDialog", fnSimulateDialogSelectionAndOk);
 			var oOpenDialogStub = sandbox.stub(oTransportSelection, "_openDialog").callsFake(fnSimulateDialogSelectionAndOk);
 
@@ -483,9 +469,7 @@ sap.ui.define([
 				]
 			});
 
-			this.oTransportSelection.oTransports.getTransports = function () {
-				return oTransportResponse;
-			};
+			sandbox.stub(Transports, "getTransports").resolves(oTransportResponse);
 
 			return this.oTransportSelection.setTransports(aChanges, oRootControl).then(function () {
 				assert.equal(aChanges[0].getRequest(), sSecondTransportId);

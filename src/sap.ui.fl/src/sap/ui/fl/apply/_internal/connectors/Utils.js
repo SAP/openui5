@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal.connectors, sap.ui.fl.write._internal.connectors
+	 * @ui5-restricted sap.ui.fl.apply._internal.connectors, sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
 	 */
 
 	return {
@@ -72,7 +72,7 @@ sap.ui.define([
 			// Adding Query-Parameters to the Url
 			if (mParameters) {
 				Object.keys(mParameters).forEach(function (sKey) {
-					if (mParameters[sKey] === undefined) {
+					if (!mParameters[sKey]) {
 						delete mParameters[sKey];
 					}
 				});
