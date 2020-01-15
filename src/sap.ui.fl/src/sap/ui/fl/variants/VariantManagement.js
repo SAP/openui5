@@ -778,7 +778,7 @@ sap.ui.define([
 					model: VariantManagement.INNER_MODEL_NAME
 				},
 				contentWidth: "400px",
-				placement: PlacementType.Bottom,
+				placement: PlacementType.VerticalPreferredBottom,
 				content: [
 					new Page(this.getId() + "-errorselpage", {
 						showSubHeader: false,
@@ -931,7 +931,7 @@ sap.ui.define([
 				model: VariantManagement.INNER_MODEL_NAME
 			},
 			contentWidth: "400px",
-			placement: PlacementType.Bottom,
+			placement: PlacementType.VerticalPreferredBottom,
 			content: [
 				this.oVariantSelectionPage
 			],
