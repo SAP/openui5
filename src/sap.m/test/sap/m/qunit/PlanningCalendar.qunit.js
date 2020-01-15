@@ -4879,6 +4879,66 @@ sap.ui.define([
 		assert.equal(this.oPC.getViews().length, 1, "When set, the there are views in the getViews array");
 	});
 
+	QUnit.test("with custom view and 'viewKey' comes from data binding", function(assert) {
+		// prepare
+		var oModel = new JSONModel();
+		oModel.setData({
+			startDate: new Date("2018", "6", "9"),
+			viewKey: CalendarIntervalType.Day
+		});
+
+		var oPC = new PlanningCalendar({
+			startDate: "{/startDate}",
+			viewKey: "{/viewKey}",
+			views: [
+				new PlanningCalendarView({
+					key: PlanningCalendarBuiltInView.Day
+				}),
+				new PlanningCalendarView({
+					key: PlanningCalendarBuiltInView.Month
+				})
+			]
+		}).setModel(oModel).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		// assert
+		assert.ok(true, "Error is not thrown");
+
+		// cleanup
+		oPC.destroy();
+	});
+
+	QUnit.test("Error should be thrown if view with key equal to 'viewKey' value doesn't exist", function(assert) {
+		// prepare
+		var sKey = "NotTestView",
+			oPC = new PlanningCalendar({
+				startDate: new Date("2018", "6", "9"),
+				viewKey: sKey,
+				views: [
+					new PlanningCalendarView({
+						key: "TestView"
+					})
+				]
+			}),
+			oExpectedError = new Error("PlanningCalendarView with key " + sKey + " not assigned " + oPC);
+
+		// act
+		// assert
+		assert.throws(
+			function() {
+				oPC.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			oExpectedError,
+			"throws correct Error object"
+		);
+
+		// cleanup
+		oPC.destroy();
+	});
+
 	QUnit.test("adding custom views and setting the property builtInViews with two arguments", function (assert) {
 		var oItemKey,
 			aViewType = PlanningCalendarBuiltInView,
