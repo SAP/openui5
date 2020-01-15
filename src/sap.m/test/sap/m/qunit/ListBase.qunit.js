@@ -948,6 +948,41 @@ sap.ui.define([
 			oList.destroy();
 		});
 
+		window.IntersectionObserver && QUnit.test("BusyIndicator in the middle", function(assert) {
+			createAndAppendDiv("uiArea1");
+			var done = assert.async();
+			var oList = new List({
+				busyIndicatorDelay: 0
+			});
+			var oScrollContainer = new ScrollContainer({
+				vertical: true,
+				height: "300px",
+				content: [oList, new Toolbar({height: "100px"})]
+			});
+			oScrollContainer.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oList.getDomRef().style.height = "500px";
+			oList.setBusy(true);
+			this.clock.tick(0);
+
+			this.clock.restore();
+			setTimeout(function() {
+				assert.strictEqual(oList.getDomRef("busyIndicator").firstChild.style.position, "sticky");
+
+				oList.setBusy(false);
+				oScrollContainer.scrollTo(0, 400);
+				oList.setBusy(true);
+
+				setTimeout(function() {
+					assert.strictEqual(oList.getDomRef("busyIndicator").firstChild.style.top, "20%");
+					oList.destroy();
+					done();
+				}, 100);
+			});
+		});
+
 		QUnit.test("setBackgroundDesign", function(assert) {
 			var oListItem = createListItem(),
 				oList = new List({

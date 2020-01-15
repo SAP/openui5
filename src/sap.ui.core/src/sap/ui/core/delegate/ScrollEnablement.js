@@ -407,6 +407,10 @@ sap.ui.define([
 				return ($Container && $Container[0]) ? $Container[0].scrollHeight - $Container[0].clientHeight : -1;
 			},
 
+			getContainerDomRef : function() {
+				return this._$Container && this._$Container[0];
+			},
+
 			_cleanup : function() {
 				if (this._sResizeListenerId) {
 					ResizeHandler.deregister(this._sResizeListenerId);
