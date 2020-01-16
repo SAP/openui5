@@ -14,7 +14,6 @@ function (jQuery, URI) {
 	var WCBConfig = function (oOptions) {
 		this._sModulePath = oOptions.modulePath;
 		this._sReceivingWindow = oOptions.receivingWindow;
-		this._sNamespace = oOptions.namespace;
 
 		if (oOptions.uriParams) {
 			this._sURIOrigin = oOptions.uriParams && oOptions.uriParams.origin;
