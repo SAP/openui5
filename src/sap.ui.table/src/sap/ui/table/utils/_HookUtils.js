@@ -168,7 +168,7 @@ sap.ui.define([], function() {
 		 * Installation of hooks is a short way of registering to all hooks. The target object needs to have a <code>hooks</code> map object with hook
 		 * keys as the keys, and functions as the values. For example: <code>oTarget.hooks.My_Hook = function() {...}</code> will be called, if the
 		 * "My_Hook" hook is called.
-		 * There can only be one installation in the target object.
+		 * There can only be one installation in the target object for each context.
 		 *
 		 * @param {sap.ui.table.Table} oScope The table whose hooks are installed.
 		 * @param {Object} oTarget The object the hooks are installed in.
@@ -186,7 +186,7 @@ sap.ui.define([], function() {
 			}
 
 			var bMasterHookInstalled = aHooks.some(function(oHook) {
-				return oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget;
+				return oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget && oHook.handlerContext === oThis;
 			});
 
 			if (bMasterHookInstalled) {
@@ -207,8 +207,9 @@ sap.ui.define([], function() {
 		 *
 		 * @param {sap.ui.table.Table} oScope The table whose hooks are uninstalled.
 		 * @param {Object} oTarget The object the hooks are uninstalled from.
+		 * @param {Object} [oThis] The context of hook handler calls.
 		 */
-		uninstall: function(oScope, oTarget) {
+		uninstall: function(oScope, oTarget, oThis) {
 			if (!HookUtils.TableUtils.isA(oScope, "sap.ui.table.Table") || !oTarget) {
 				return;
 			}
@@ -218,7 +219,7 @@ sap.ui.define([], function() {
 			for (var i = 0; i < aHooks.length; i++) {
 				var oHook = aHooks[i];
 
-				if (oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget) {
+				if (oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget && oHook.handlerContext === oThis) {
 					aHooks.splice(i, 1);
 					break;
 				}
@@ -263,7 +264,7 @@ sap.ui.define([], function() {
 		/**
 		 * Deregisters from a hook of a table.
 		 * If there are multiple registrations with the same <code>fnHandler</code> and <code>oThis</code>, one deregistration per
-		 * registration is required.
+		 * registration is required. The last registration is removed first.
 		 *
 		 * @param {sap.ui.table.Table} oScope The table to whose hook to deregister from.
 		 * @param {string} sHookKey The hook to deregister from.
