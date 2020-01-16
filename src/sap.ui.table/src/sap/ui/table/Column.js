@@ -751,7 +751,6 @@ function(
 				oDomRef = this.getDomRef();
 				oFocusDomRef = this.getFocusDomRef();
 			}
-			TableUtils.Hook.call(this._getTable(), TableUtils.Hook.Keys.Table.OpenMenu, TableUtils.getCellInfo(oDomRef), oMenu);
 			oMenu.open(null, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef);
 			return true;
 		} else {

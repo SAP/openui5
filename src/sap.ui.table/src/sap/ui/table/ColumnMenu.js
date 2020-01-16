@@ -181,6 +181,8 @@ sap.ui.define([
 			this._addColumnVisibilityMenuItem();
 		}
 
+		TableUtils.Hook.call(this._oTable, TableUtils.Hook.Keys.Table.OpenMenu, TableUtils.getCellInfo(arguments[4]), this);
+
 		if (this.getItems().length > 0) {
 			this._lastFocusedDomRef = arguments[4];
 			Menu.prototype.open.apply(this, arguments);
