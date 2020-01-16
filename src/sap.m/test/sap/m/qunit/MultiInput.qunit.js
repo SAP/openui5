@@ -1975,13 +1975,7 @@ sap.ui.define([
 	QUnit.test("onfocusin", function(assert) {
 		var oIndicator,
 			oEventMock = {
-				target : {
-					classList: {
-						contains: function () {
-							return false;
-						}
-					}
-				}
+				target : this.multiInput.getDomRef("inner")
 			};
 		this.multiInput.setWidth("200px");
 		this.multiInput.setTokens([
@@ -2000,8 +1994,39 @@ sap.ui.define([
 
 		//close and open the picker
 		this.multiInput.onfocusin(oEventMock);
+
 		// assert
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more label is hidden on focusin.");
+	});
+
+	QUnit.test("onfocusin 2", function (assert) {
+		var oTokenizerSpy;
+
+		this.multiInput.setWidth("200px");
+		this.multiInput.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+		sap.ui.getCore().applyChanges();
+
+		// Setup
+		oTokenizerSpy = this.spy(this.multiInput._tokenizer, "_useCollapsedMode");
+
+		// Act. Emulate click on the Icon
+		this.multiInput.onfocusin({target: this.multiInput.getDomRef("vhi")});
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oTokenizerSpy.calledOnce, "Collapsing should not be triggered");
+
+		// Act. Emulate "real" focusin
+		this.multiInput.onfocusin({target: this.multiInput.getDomRef("inner")});
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oTokenizerSpy.calledOnce, "Collapsing should be triggered when the focus is on the input");
 	});
 
 	QUnit.test("_mapTokenToListItem", function(assert) {
