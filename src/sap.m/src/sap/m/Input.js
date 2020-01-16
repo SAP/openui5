@@ -581,12 +581,6 @@ function(
 			}
 		}
 
-		if (this._oSuggPopover  &&  this._oSuggPopover._oPopover && this.getShowTableSuggestionValueHelp()) {
-			this._addShowMoreButton();
-		} else {
-			this._removeShowMoreButton();
-		}
-
 		if (bShowIcon) {
 
 			// ensure the creation of an icon
@@ -1459,6 +1453,29 @@ function(
 
 			return this;
 		};
+
+		/**
+		 * Shows value help suggestions in table.
+		 *
+		 * @public
+		 * @param {boolean} bValue Show suggestions.
+		 * @return {sap.m.Input} this Input instance for chaining.
+		 */
+		Input.prototype.setShowTableSuggestionValueHelp = function(bValue) {
+			this.setProperty("showTableSuggestionValueHelp", bValue, true);
+
+			if (!(this._oSuggPopover && this._oSuggPopover._oPopover)) {
+				return this;
+			}
+
+			if (bValue) {
+				this._addShowMoreButton();
+			} else {
+				this._removeShowMoreButton();
+			}
+			return this;
+		};
+
 		/**
 		 * Event handler for browsers' <code>change</code> event.
 		 *
