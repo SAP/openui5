@@ -751,7 +751,7 @@ sap.ui.define([
 			};
 
 			// no real binding is required here. Instead mock a binding object
-			this._oTable.getBinding = function() {
+			sinon.stub(this._oTable, "getBinding", function() {
 				var oBinding = {};
 				var aProperties = [
 					{name: "m1", type: "measure", filterable: false},
@@ -788,10 +788,11 @@ sap.ui.define([
 				};
 
 				return oBinding;
-			};
+			});
 			this._oColumn = new AnalyticalColumn();
 		},
 		afterEach: function() {
+			this._oTable.getBinding.restore();
 			this._oColumn.destroy();
 			this._oTable.destroy();
 		}

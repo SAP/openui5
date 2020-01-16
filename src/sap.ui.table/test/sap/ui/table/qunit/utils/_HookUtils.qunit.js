@@ -230,28 +230,45 @@ sap.ui.define([
 		Hook.install(oTable, oObject1);
 		Hook.install(oTable, oObject1);
 		Hook.install(oTable, oObject1, oContext);
+		Hook.install(oTable, oObject1, oContext);
+
 		Hook.install(oTable, oObject2);
 		Hook.install(oTable, oObject2, oContext);
-		Hook.install(oTable, oObject3);
-		Hook.install(oTable, oObject3);
 		Hook.uninstall(oTable, oObject2);
+
+		Hook.install(oTable, oObject3);
+		Hook.install(oTable, oObject3, oContext);
+		Hook.uninstall(oTable, oObject3, oContext);
 
 		this.aHookKeys.forEach(function(sHookKey, iIndex) {
 			Hook.call(oTable, sHookKey, "param", "param" + iIndex);
 		});
 
 		aSpies1.forEach(function(oSpy, iIndex) {
-			assert.ok(oSpy.calledOnceWithExactly("param", "param" + iIndex),
-				"The first installed hook was correctly called (" + this.aHookKeys[iIndex] + ")");
+			if (oSpy.callCount === 2) {
+				assert.ok(oSpy.firstCall.calledWithExactly("param", "param" + iIndex),
+					"1. Installation: First hook was correctly called (" + this.aHookKeys[iIndex] + ")");
+				assert.ok(oSpy.firstCall.calledOn(oObject1),
+					"1. Installation: First hook was called with the default context (" + this.aHookKeys[iIndex] + ")");
+				assert.ok(oSpy.secondCall.calledWithExactly("param", "param" + iIndex),
+					"1. Installation: Second hook was correctly called (" + this.aHookKeys[iIndex] + ")");
+				assert.ok(oSpy.secondCall.calledOn(oContext),
+					"1. Installation: Second hook was called with a custom context (" + this.aHookKeys[iIndex] + ")");
+			} else {
+				assert.ok(false, "1. Installation: Hook should have been called twice (" + this.aHookKeys[iIndex] + ")");
+			}
 		}.bind(this));
 
 		aSpies2.forEach(function(oSpy, iIndex) {
-			assert.ok(oSpy.notCalled, "The second installed hook was not called due to uninstallation (" + this.aHookKeys[iIndex] + ")");
+			assert.ok(oSpy.calledOnceWithExactly("param", "param" + iIndex),
+				"2. Installation: Hook was correctly called (" + this.aHookKeys[iIndex] + ")");
+			assert.ok(oSpy.calledOn(oContext), "2. Installation: Hook was called with the correct context (" + this.aHookKeys[iIndex] + ")");
 		}.bind(this));
 
 		aSpies3.forEach(function(oSpy, iIndex) {
 			assert.ok(oSpy.calledOnceWithExactly("param", "param" + iIndex),
-				"The third installed hook was correctly called (" + this.aHookKeys[iIndex] + ")");
+				"3. Installation: Hook was correctly called (" + this.aHookKeys[iIndex] + ")");
+			assert.ok(oSpy.calledOn(oObject3), "3. Installation: Hook was called with the correct context (" + this.aHookKeys[iIndex] + ")");
 		}.bind(this));
 	});
 
