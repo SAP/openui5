@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/base/assert",
+	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/getFirstEditableInput"
 ], function(
@@ -49,6 +50,7 @@ sap.ui.define([
 	Log,
 	getScrollbarSize,
 	assert,
+	merge,
 	KeyCodes,
 	getFirstEditableInput
 ) {
@@ -581,6 +583,7 @@ sap.ui.define([
 		this.iAnchorBarHeight = 0;                  // original height of the anchorBar
 		this.iFooterHeight = 0;                     // original height of the anchorBar
 		this.iTotalHeaderSize = 0;                  // total size of headerTitle + headerContent
+		this._oScrollContainerLastState = {};       // caches the metrics of the scroll container (used to identify scroll caused by change of scrollTop vs. scroll caused by underflow)
 
 		this._iREMSize = parseInt(jQuery("body").css("font-size"));
 		this._iOffset = parseInt(0.25 * this._iREMSize);
@@ -2373,6 +2376,14 @@ sap.ui.define([
 
 			this._$spacer.height(iSpacerHeight + "px");
 			Log.debug("ObjectPageLayout :: bottom spacer is now " + iSpacerHeight + "px");
+
+			// update the cached metrics of the scroll container
+			// with the latest changes to the spacer height
+			// (and thus to the length of the scrollable content)
+			merge(this._oScrollContainerLastState, {
+				iScrollableContentLength: Math.ceil(this._getScrollableContentLength()),
+				iSpacerHeight: iSpacerHeight
+			});
 		}
 
 		this._updateCustomScrollerHeight(bStickyTitleMode);
@@ -2834,13 +2845,13 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._isContentScrolledToBottom = function () {
-		return this._oLastScrollState.iScrollableContentLength <= (this._oLastScrollState.iScrollTop + this._oLastScrollState.iScrollableViewportHeight);
+		return this._oScrollContainerLastState.iScrollableContentLength <= (this._oScrollContainerLastState.iScrollTop + this._oScrollContainerLastState.iScrollableViewportHeight);
 	};
 
 	ObjectPageLayout.prototype._isContentLengthDecreased = function (oPreviousScrollState) {
 		if (oPreviousScrollState) {
-			return ((oPreviousScrollState.iScrollableContentLength > this._oLastScrollState.iScrollableContentLength)
-				&& (oPreviousScrollState.iSpacerHeight === this._oLastScrollState.iSpacerHeight)); // ignore spacer adjustments
+			return ((oPreviousScrollState.iScrollableContentLength > this._oScrollContainerLastState.iScrollableContentLength)
+				&& (oPreviousScrollState.iSpacerHeight === this._oScrollContainerLastState.iSpacerHeight)); // ignore spacer adjustments
 		}
 	};
 
@@ -2848,7 +2859,7 @@ sap.ui.define([
 		var iReachableScrollTop;
 		iExtraSpaceLength = iExtraSpaceLength || 0;
 
-		iReachableScrollTop = this._oLastScrollState.iScrollableContentLength + iExtraSpaceLength - this._oLastScrollState.iScrollableViewportHeight;
+		iReachableScrollTop = this._oScrollContainerLastState.iScrollableContentLength + iExtraSpaceLength - this._oScrollContainerLastState.iScrollableViewportHeight;
 		return iReachableScrollTop >= oRequiredScrollTop;
 	};
 
@@ -2889,9 +2900,9 @@ sap.ui.define([
 			bShouldStick = this._shouldSnapHeaderOnScroll(iScrollTop),
 			bShouldPreserveHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea(),
 			bScrolled = false,
-			oPreviousScrollState = this._oLastScrollState;
+			oPreviousScrollState = this._oScrollContainerLastState;
 
-		this._oLastScrollState = {
+		this._oScrollContainerLastState = {
 			iScrollTop: iScrollTop,
 			iScrollableContentLength: Math.ceil(this._getScrollableContentLength()),
 			iScrollableViewportHeight: $wrapper.offsetHeight,
@@ -2924,7 +2935,7 @@ sap.ui.define([
 			&& this._isContentScrolledToBottom()
 			&& this._isContentLengthDecreased(oPreviousScrollState)) {
 
-			var iContentLengthChange = oPreviousScrollState.iScrollableContentLength - this._oLastScrollState.iScrollableContentLength;
+			var iContentLengthChange = oPreviousScrollState.iScrollableContentLength - this._oScrollContainerLastState.iScrollableContentLength;
 			if (!this._canReachScrollTop(oPreviousScrollState.iScrollTop)
 				&& this._canReachScrollTop(oPreviousScrollState.iScrollTop, iContentLengthChange)) {
 
