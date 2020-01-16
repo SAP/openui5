@@ -1,0 +1,152 @@
+<mvc:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.Detail" height="100%"
+		xmlns="sap.uxap"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:m="sap.m"
+		xmlns:f="sap.f"
+		xmlns:form="sap.ui.layout.form">
+
+	<ObjectPageLayout id="ObjectPageLayout"
+					 showTitleInHeaderContent="true"
+					alwaysShowContentHeader="false"
+					preserveHeaderStateOnScroll="false"
+					headerContentPinnable="true"
+					isChildPage="true"
+					upperCaseAnchorBar="false">
+				<headerTitle>
+					<ObjectPageDynamicHeaderTitle>
+						<expandedHeading>
+							<m:Title text="{products>Name}" wrapping="true" class="sapUiSmallMarginEnd"/>
+						</expandedHeading>
+
+						<snappedHeading>
+							<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+								<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+									<f:Avatar src="../../../../../../../{products>ProductPicUrl}" displaySize="S" displayShape="Square"/>
+									<m:Title text="{products>Name}" wrapping="true" class="sapUiTinyMarginEnd"/>
+								</m:FlexBox>
+							</m:FlexBox>
+						</snappedHeading>
+
+						<navigationActions>
+							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"/>
+							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/exitFullScreen} !== null }"/>
+							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close column" visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
+						</navigationActions>
+
+						<actions>
+							<m:Button
+									text="Edit"
+									type="Emphasized"
+									press="toggleAreaPriority"/>
+							<m:Button
+									text="Delete"
+									type="Transparent"/>
+							<m:Button
+									text="Copy"
+									type="Transparent"/>
+							<m:Button
+									text="Toggle Footer"
+									type="Transparent"
+									press="onToggleFooter"/>
+							<m:Button
+									icon="sap-icon://action"
+									type="Transparent"/>
+						</actions>
+
+					</ObjectPageDynamicHeaderTitle>
+				</headerTitle>
+
+				<headerContent>
+					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
+						<f:Avatar src="../../../../../../../{products>ProductPicUrl}"
+								  displaySize="L"
+								  displayShape="Square"
+								  class="sapUiTinyMarginEnd">
+						</f:Avatar>
+						<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+							<m:Label text="Main Category"/>
+							<m:Text text="{products>MainCategory}"/>
+						</m:VBox>
+						<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+							<m:Label text="Subcategory"/>
+							<m:Text text="{products>Category}"/>
+						</m:VBox>
+						<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+							<m:Label text="Price"/>
+							<m:ObjectNumber number="{products>CurrencyCode} {products>Price}" emphasized="false"/>
+						</m:VBox>
+					</m:FlexBox>
+				</headerContent>
+
+		<sections>
+			<ObjectPageSection title="General Information">
+				<subSections>
+					<ObjectPageSubSection>
+						<blocks>
+							<form:SimpleForm
+								maxContainerCols="2"
+								editable="false"
+								layout="ResponsiveGridLayout"
+								labelSpanL="12"
+								labelSpanM="12"
+								emptySpanL="0"
+								emptySpanM="0"
+								columnsL="1"
+								columnsM="1">
+								<form:content>
+									<m:Label text="Product ID"/>
+									<m:Text text="{products>ProductId}"/>
+									<m:Label text="Description"/>
+									<m:Text text="{products>Description}"/>
+									<m:Label text="Supplier"/>
+									<m:Text text="{products>SupplierName}"/>
+								</form:content>
+							</form:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Navigate to section">
+				<subSections>
+					<ObjectPageSubSection>
+						<blocks>
+							<m:Table id="suppliersTable">
+								<m:columns>
+									<m:Column />
+								</m:columns>
+								<m:items>
+									<m:ColumnListItem type="Navigation" press="handleItemPress1">
+										<m:cells>
+											<m:ObjectIdentifier text="Nav to section 1" />
+										</m:cells>
+									</m:ColumnListItem>
+									<m:ColumnListItem type="Navigation" press="handleItemPress2">
+										<m:cells>
+											<m:ObjectIdentifier text="Nav to section 2" />
+										</m:cells>
+									</m:ColumnListItem>
+									<m:ColumnListItem type="Navigation" press="handleItemPress3">
+										<m:cells>
+											<m:ObjectIdentifier text="Nav to section 3" />
+										</m:cells>
+									</m:ColumnListItem>
+									<m:ColumnListItem type="Navigation" press="handleItemPress4">
+										<m:cells>
+											<m:ObjectIdentifier text="Nav to section 4" />
+										</m:cells>
+									</m:ColumnListItem>
+									<m:ColumnListItem type="Navigation" press="handleItemPress5">
+										<m:cells>
+											<m:ObjectIdentifier text="Nav to section 5" />
+										</m:cells>
+									</m:ColumnListItem>
+								</m:items>
+							</m:Table>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

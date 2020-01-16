@@ -1,7 +1,7 @@
 {
 	"sap.ui5": {
         "rootView": {
-			"viewName": "sap.f.FlexibleColumnLayoutWithFullscreenPage.view.FlexibleColumnLayout",
+			"viewName": "sap.f.FlexibleColumnLayoutWithOneColumnStart.view.FlexibleColumnLayout",
 			"type": "XML",
 			"async": true,
 			"id": "fcl"
@@ -23,7 +23,7 @@
 			"config": {
 				"routerClass": "sap.f.routing.Router",
 				"viewType": "XML",
-				"viewPath": "sap.f.FlexibleColumnLayoutWithFullscreenPage.view",
+				"viewPath": "sap.f.FlexibleColumnLayoutWithOneColumnStart.view",
 				"controlId": "fcl",
 				"transition": "slide",
 				"bypassed": {
@@ -39,27 +39,20 @@
 					]
 				},
 				{
-					"pattern": "detail/{category}/{layout}",
+					"pattern": "detail/{product}/{layout}",
 					"name": "detail",
 					"target": [
+						"master",
 						"detail"
 					]
 				},
 				{
-					"pattern": "detailDetail/{category}/{product}/{layout}",
+					"pattern": "detailDetail/{product}/{section}/{layout}",
 					"name": "detailDetail",
 					"target": [
+						"master",
 						"detail",
 						"detailDetail"
-					]
-				},
-				{
-					"pattern": "detailDetailDetail/{category}/{product}/{supplier}/{layout}",
-					"name": "detailDetailDetail",
-					"target": [
-						"detail",
-						"detailDetail",
-						"detailDetailDetail"
 					]
 				}
 			],
@@ -70,14 +63,10 @@
 				},
 				"detail": {
 					"viewName": "Detail",
-					"controlAggregation": "beginColumnPages"
+					"controlAggregation": "midColumnPages"
 				},
 				"detailDetail": {
 					"viewName": "DetailDetail",
-					"controlAggregation": "midColumnPages"
-				},
-				"detailDetailDetail": {
-					"viewName": "DetailDetailDetail",
 					"controlAggregation": "endColumnPages"
 				}
 			}

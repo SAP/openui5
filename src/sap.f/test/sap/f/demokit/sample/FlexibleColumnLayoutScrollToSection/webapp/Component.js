@@ -21,6 +21,8 @@ sap.ui.define([
 			var oProductsModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			oProductsModel.setSizeLimit(1000);
 			this.setModel(oProductsModel, "products");
+			this._matchedRoutePattern = false;
+			this._matchedRoutePatternEndColumn = false;
 
 
 			this.getRouter().initialize();
@@ -48,6 +50,21 @@ sap.ui.define([
 				};
 
 			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings);
+		},
+		getFCL: function () {
+			return this.getRootControl().byId("fcl");
+		},
+		setMatchedRoutePattern: function (bValue) {
+			this._matchedRoutePattern = bValue;
+		},
+		getMatchedRoutePattern: function () {
+			return this._matchedRoutePattern;
+		},
+		setMatchedRoutePatternEndColumn: function (bValue) {
+			this._matchedRoutePatternEndColumn = bValue;
+		},
+		getMatchedRoutePatternEndColumn: function () {
+			return this._matchedRoutePatternEndColumn;
 		}
 	});
 	return Component;
