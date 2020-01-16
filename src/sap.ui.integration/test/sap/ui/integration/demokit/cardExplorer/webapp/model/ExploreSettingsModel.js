@@ -5,6 +5,7 @@ sap.ui.define([
 
 	return new JSONModel({
 		autoRun: true,
+		schemaValidation: false,
 		splitViewVertically: false,
 		editable: true,
 		editorType: "text",

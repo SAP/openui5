@@ -50,6 +50,9 @@
         <lib name="ui5-web-components" displayName="UI5 Web Components" homepage="https://sap.github.io/ui5-webcomponents/">
             <license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache License 2.0" file="./thirdparty/licenses/web-components.txt"></license>
         </lib>
+        <lib name="ajv" displayName="ajv" homepage="https://ajv.js.org/">
+            <license url="https://ajv.js.org/license.html" type="MIT License" file="./designtime/thirdparty/licenses/ajv-LICENSE.txt"></license>
+        </lib>
     </thirdparty>
 
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
