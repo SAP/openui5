@@ -908,4 +908,84 @@
 		// Cleanup
 		oContainer.destroy();
 	});
+
+	QUnit.module("Change pages", {
+		beforeEach: function () {
+			sinon.config.useFakeTimers = false;
+
+			this.oCarousel = new sap.m.Carousel("myCrsl", {
+				pages: [
+					new sap.m.Page("keyTestPage_1"),
+					new sap.m.Page("keyTestPage_2"),
+					new sap.m.Page("keyTestPage_3"),
+					new sap.m.Page("keyTestPage_4"),
+					new sap.m.Page("keyTestPage_5"),
+					new sap.m.Page("keyTestPage_6"),
+					new sap.m.Page("keyTestPage_7"),
+					new sap.m.Page("keyTestPage_8"),
+					new sap.m.Page("keyTestPage_9")
+				],
+				activePage: "keyTestPage_4"
+			});
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oCarousel.destroy();
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("Simulate right arrow fast click twice", function (assert) {
+		// arrange
+		var oFakeEvent = {
+			target: this.oCarousel.getDomRef(),
+			preventDefault: function () {}
+		},
+		done = assert.async();
+
+		// await the initial animation
+		setTimeout(function () {
+			// act
+			this.oCarousel.$().find("a.sapMCrslNext").click();
+			this.oCarousel.ontouchend(oFakeEvent);
+			this.oCarousel.$().find("a.sapMCrslNext").click();
+			this.oCarousel.ontouchend(oFakeEvent);
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_6", "Should have the active page set to page #4...");
+
+				done();
+			}.bind(this), sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
+	QUnit.test("Simulate left arrow fast click twice", function (assert) {
+		// arrange
+		var oFakeEvent = {
+			target: this.oCarousel.getDomRef(),
+			preventDefault: function () {}
+		},
+		done = assert.async();
+
+		// await the initial animation
+		setTimeout(function () {
+			// act
+			this.oCarousel.$().find("a.sapMCrslPrev").click();
+			this.oCarousel.ontouchend(oFakeEvent);
+			this.oCarousel.$().find("a.sapMCrslPrev").click();
+			this.oCarousel.ontouchend(oFakeEvent);
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_2", "Should have the active page set to page #2...");
+
+				done();
+			}.bind(this), sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
 })();

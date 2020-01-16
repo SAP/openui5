@@ -298,6 +298,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Carousel.prototype.ontouchend = function(oEvent) {
 		if (this._oMobifyCarousel) {
+
+			if (this._oMobifyCarousel.hasActiveTransition()) {
+				this._oMobifyCarousel.onTransitionComplete();
+			}
 			this._oMobifyCarousel.touchend(oEvent);
 		}
 	};
@@ -1050,6 +1054,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		oEvent.preventDefault();
+
+		if (this._oMobifyCarousel.hasActiveTransition()) {
+			this._oMobifyCarousel.onTransitionComplete();
+		}
 
 		// Calculate the index of the next page that will be shown
 		if (nIndex !== 0) {
