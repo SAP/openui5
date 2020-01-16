@@ -109,14 +109,14 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 		rm.openEnd();
 		rm.close("div");
 
-		// icon/check column
-		rm.openStart("div");
-		rm.class("sapUiMnuItmIco");
-		rm.openEnd();
 		if (oItem.getIcon()) {
+			// icon/check column
+			rm.openStart("div");
+			rm.class("sapUiMnuItmIco");
+			rm.openEnd();
 			rm.icon(oItem.getIcon(), null, {title: null});
+			rm.close("div");
 		}
-		rm.close("div");
 
 		// Text column
 		rm.openStart("div", this.getId() + "-txt");
