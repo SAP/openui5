@@ -29,7 +29,7 @@ sap.ui.define([
 		},
 		handleClose: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/closeColumn");
-			this.navigateToView(sNextLayout, "detailDetail");
+			this.navigateToView(sNextLayout, "detail");
 		},
 		navigateToView: function (sNextLayout, sNextView) {
 			this.oRouter.navTo(sNextView, {layout: sNextLayout, category: this._category, product: this._product});
