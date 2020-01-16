@@ -188,8 +188,7 @@ function(
 					type: "object",
 					defaultValue: {
 						layer: "CUSTOMER",
-						developerMode: true,
-						versioning: undefined
+						developerMode: true
 					}
 				},
 
@@ -501,9 +500,6 @@ function(
 			mFlexSettings.rootNamespace = sLRepRootNamespace;
 			mFlexSettings.namespace = sLRepRootNamespace + "changes/";
 		}
-
-		//TODO: change to 'mFlexSettings.draft = FeaturesAPI.isVersioningEnabled();' as soon as the draft story is complete
-		mFlexSettings.versioning = Promise.resolve(false);
 
 		Utils.setRtaStyleClassName(mFlexSettings.layer);
 		this.setProperty("flexSettings", mFlexSettings);
@@ -949,14 +945,25 @@ function(
 		window.onbeforeunload = this._oldUnloadHandler;
 	};
 
+	RuntimeAuthoring.prototype._isVersioningEnabled = function () {
+		//TODO: change to FeaturesAPI.isVersioningEnabled(this.getLayer());' as soon as the draft functionality is completed
+		return Promise.resolve(false);
+	};
+
+	RuntimeAuthoring.prototype._serializeAndSave = function() {
+		return this._isVersioningEnabled().then(function (bVersioningEnabled) {
+			return this._oSerializer.saveCommands(bVersioningEnabled);
+		}.bind(this));
+	};
+
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
 		if (!this._bReloadNeeded) {
 			return this._oSerializer.needsReload().then(function(bReloadNeeded) {
 				this._bReloadNeeded = bReloadNeeded;
-				return this._oSerializer.saveCommands();
+				return this._serializeAndSave();
 			}.bind(this));
 		}
-		return this._oSerializer.saveCommands();
+		return this._serializeAndSave();
 	};
 
 	RuntimeAuthoring.prototype._onUndo = function() {

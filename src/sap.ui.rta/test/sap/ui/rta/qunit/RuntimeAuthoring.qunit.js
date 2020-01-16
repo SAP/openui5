@@ -745,6 +745,30 @@ function(
 			});
 		});
 
+		QUnit.test("when stopping rta with saving changes and versioning is disabled", function(assert) {
+			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+
+			return this.oRta._serializeToLrep()
+			.then(function () {
+				assert.equal(oSaveStub.callCount, 1, "save was triggered");
+				var aSavePropertyBag = oSaveStub.getCall(0).args[0];
+				assert.equal(aSavePropertyBag.draft, false, "the draft flag is set to false");
+			});
+		});
+
+		QUnit.test("when stopping rta with saving changes and versioning is enabled", function(assert) {
+			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+
+			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+
+			return this.oRta._serializeToLrep()
+			.then(function () {
+				assert.equal(oSaveStub.callCount, 1, "save was triggered");
+				var aSavePropertyBag = oSaveStub.getCall(0).args[0];
+				assert.equal(aSavePropertyBag.draft, true, "the draft flag is set to true");
+			});
+		});
+
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is not an application variant", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "publish").resolves();
 			var fnGetResetAndPublishInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
@@ -1215,13 +1239,11 @@ function(
 		});
 
 		QUnit.test("when setFlexSettings is called", function(assert) {
-			// create a Promise and await for it's resolving to have a comparable object for IE
 			assert.deepEqual(
 				this.oRta.getFlexSettings(),
 				{
 					layer: "CUSTOMER",
-					developerMode: true,
-					versioning: undefined
+					developerMode: true
 				}
 			);
 
@@ -1230,25 +1252,29 @@ function(
 				namespace: "namespace"
 			});
 
-			var oFlexSettings = this.oRta.getFlexSettings();
-			assert.equal(Object.keys(oFlexSettings).length, 4, "then 4 properties are set");
-			assert.equal(oFlexSettings.layer, "USER", "which are the layer property");
-			assert.equal(oFlexSettings.developerMode, true, "and the developerMode property");
-			assert.equal(oFlexSettings.namespace, "namespace", "and the namespace");
-			assert.ok(oFlexSettings.versioning instanceof Promise, "and the versioning promise is set");
+			assert.deepEqual(
+				this.oRta.getFlexSettings(),
+				{
+					layer: "USER",
+					developerMode: true,
+					namespace: "namespace"
+				}
+			);
 
 			this.oRta.setFlexSettings({
 				scenario: "scenario"
 			});
 
-			var oFlexSettings = this.oRta.getFlexSettings();
-			assert.equal(Object.keys(oFlexSettings).length, 6, "then 4 properties are set");
-			assert.equal(oFlexSettings.layer, "USER", "which are the layer property");
-			assert.equal(oFlexSettings.developerMode, true, "and the developerMode property");
-			assert.equal(oFlexSettings.namespace, "rootNamespace/changes/", "and the namespace");
-			assert.ok(oFlexSettings.versioning instanceof Promise, "and the versioning promise is set");
-			assert.equal(oFlexSettings.rootNamespace, "rootNamespace/", "and the rootNamespace property is set");
-			assert.equal(oFlexSettings.scenario, "scenario", "and the scenario property is set");
+			assert.deepEqual(
+				this.oRta.getFlexSettings(),
+				{
+					layer: "USER",
+					developerMode: true,
+					namespace: "rootNamespace/changes/",
+					rootNamespace: "rootNamespace/",
+					scenario: "scenario"
+				}
+			);
 		});
 	});
 
