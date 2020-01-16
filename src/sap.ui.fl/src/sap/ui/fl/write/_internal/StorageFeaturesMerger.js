@@ -24,22 +24,22 @@ sap.ui.define([
 		isVariantSharingEnabled: false,
 		isAtoAvailable: false,
 		isAtoEnabled: false,
-		draft: {},
+		versioning: {},
 		isProductiveSystem: true,
 		isZeroDowntimeUpgradeRunning: false,
 		system: "",
 		client: ""
 	};
 
-	function _getDraftFromResponse(oResponse) {
-		var oDraft = {};
-		var bDraftEnabled = !!oResponse.features.isVersioningEnabled;
+	function _getVersioningFromResponse(oResponse) {
+		var oVersioning = {};
+		var bVersioningEnabled = !!oResponse.features.isVersioningEnabled;
 
 		oResponse.layers.forEach(function(sLayer) {
-			oDraft[sLayer] = bDraftEnabled;
+			oVersioning[sLayer] = bVersioningEnabled;
 		});
 
-		return oDraft;
+		return oVersioning;
 	}
 
 	return {
@@ -60,7 +60,7 @@ sap.ui.define([
 						oResult[sKey] = oResponse.features[sKey];
 					}
 				});
-				oResult.draft = merge(oResult.draft, _getDraftFromResponse(oResponse));
+				oResult.versioning = merge(oResult.versioning, _getVersioningFromResponse(oResponse));
 			});
 			return oResult;
 		}
