@@ -178,6 +178,52 @@ sap.ui.define([
 		oList.destroy();
 	});
 
+	QUnit.test("Should react overflow event of the scroll container", function(assert) {
+		//Arrange
+		var done = assert.async();
+		var data = { items: [ {}, {}] };
+
+		var oModel = new JSONModel();
+		oModel.setData(data);
+
+		//System under Test
+		var oHtml = new HTML({content:'<div style="height: 5000px"></div>'});
+		var oList = new List({
+			growing : true,
+			growingScrollToLoad : true,
+			growingThreshold: 1,
+			items : {
+				path : "/items",
+				template : new CustomListItem({
+					content : new HTML({content:'<div style="height: 100px"></div>'})
+				})
+			}
+		}).setModel(oModel);
+		var oPage = new Page({
+			title: "List Page",
+			content : [oHtml, oList]
+		});
+
+		oPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
+
+		oHtml.setVisible(false);
+		setTimeout(function() {
+			assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is now visible");
+
+			oHtml.setVisible(true);
+			setTimeout(function() {
+				assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible again");
+
+				oPage.destroy();
+				oModel.destroy();
+				done();
+			}, 300);
+		}, 300);
+	});
+
 	QUnit.test("List without model", function(assert) {
 		var done = assert.async();
 		//Arrange
