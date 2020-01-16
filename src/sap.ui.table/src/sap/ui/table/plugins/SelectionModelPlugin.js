@@ -57,7 +57,6 @@ sap.ui.define([
 	SelectionModelPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.apply(this, arguments);
 		this.oSelectionModel = new SelectionModel(this._getSelectionMode);
-		this.oSelectionModel.attachSelectionChanged(this._onSelectionChange, this);
 	};
 
 	/**
@@ -66,21 +65,38 @@ sap.ui.define([
 	SelectionModelPlugin.prototype.exit = function() {
 		SelectionPlugin.prototype.exit.apply(this, arguments);
 
-		var oBinding = this._getBinding();
-		if (oBinding) {
-			oBinding.detachChange(this._onBindingChange, this);
-		}
 		if (this.oSelectionModel) {
 			this.oSelectionModel.destroy();
 			this.oSelectionModel = null;
 		}
 	};
 
+	/**
+	 * @inheritDoc
+	 */
+	SelectionModelPlugin.prototype.onActivate = function() {
+		SelectionPlugin.prototype.onActivate.apply(this, arguments);
+		this.oSelectionModel.attachSelectionChanged(this._onSelectionChange, this);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	SelectionModelPlugin.prototype.onDeactivate = function() {
+		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
+		this.oSelectionModel.detachSelectionChanged(this._onSelectionChange, this);
+		this.oSelectionModel.clearSelection();
+		detachFromBinding(this, this.getTableBinding());
+	};
+
+	/**
+	 * @inheritDoc
+	 */
 	SelectionModelPlugin.prototype.getRenderConfig = function() {
 		return {
 			headerSelector: {
 				type: "toggle",
-				visible: TableUtils.hasSelectAll(this.getParent())
+				visible: TableUtils.hasSelectAll(this.getTable())
 			}
 		};
 	};
@@ -92,7 +108,7 @@ sap.ui.define([
 	 */
 	SelectionModelPlugin.prototype.onHeaderSelectorPress = function() {
 		if (this.getRenderConfig().headerSelector.visible) {
-			this.getParent()._toggleSelectAll();
+			this.getTable()._toggleSelectAll();
 		}
 	};
 
@@ -104,7 +120,7 @@ sap.ui.define([
 	 */
 	SelectionModelPlugin.prototype.onKeyboardShortcut = function(sType) {
 		if (sType === "toggle") {
-			this.getParent()._toggleSelectAll();
+			this.getTable()._toggleSelectAll();
 		} else if (sType === "clear") {
 			this.clearSelection();
 		}
@@ -158,7 +174,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	SelectionModelPlugin.prototype.getSelectableCount = function() {
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 		return oBinding ? oBinding.getLength() : 0;
 	};
 
@@ -266,10 +282,10 @@ sap.ui.define([
 	 * @private
 	 */
 	SelectionModelPlugin.prototype._getLastIndex = function() {
-		if (!this._getBinding()) {
+		if (!this.getTableBinding()) {
 			return 0;
 		}
-		return this._getBinding().getLength() - 1;
+		return this.getTableBinding().getLength() - 1;
 	};
 
 	/**
@@ -289,28 +305,34 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the binding of the associated table.
-	 *
-	 * @override
-	 * @param {sap.ui.model.Binding} oBinding
-	 * @private
+	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype._setBinding = function(oBinding) {
-		var oCurrentBinding = this._getBinding();
-		SelectionPlugin.prototype._setBinding.call(this, oBinding);
-
-		if (oCurrentBinding !== oBinding) {
-			this._suspend();
-			this.clearSelection();
-			this._resume();
-			if (oBinding) {
-				oBinding.attachChange(this._onBindingChange, this);
-			}
-			if (oCurrentBinding) {
-				oCurrentBinding.detachChange(this._onBindingChange, this);
-			}
-		}
+	SelectionModelPlugin.prototype.onTableRowsBound = function(oBinding) {
+		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
+		attachToBinding(this, oBinding);
 	};
+
+	/**
+	 * @inheritDoc
+	 */
+	SelectionModelPlugin.prototype.onTableUnbindRows = function() {
+		SelectionPlugin.prototype.onTableUnbindRows.apply(this, arguments);
+		this._suspend();
+		this.clearSelection();
+		this._resume();
+	};
+
+	function attachToBinding(oPlugin, oBinding) {
+		if (oBinding) {
+			oBinding.attachChange(oPlugin._onBindingChange, oPlugin);
+		}
+	}
+
+	function detachFromBinding(oPlugin, oBinding) {
+		if (oBinding) {
+			oBinding.detachChange(oPlugin._onBindingChange, oPlugin);
+		}
+	}
 
 	/**
 	 *

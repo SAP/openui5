@@ -1853,7 +1853,6 @@ sap.ui.define([
 
 			this._bRowsBeingBound = false;
 			TableUtils.Hook.call(this, Hook.RowsBound, oBinding);
-			this._getSelectionPlugin()._setBinding(oBinding);
 
 			if (oModel && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
 				Log.error("The binding mode of the model is set to \"OneTime\"."
@@ -1886,7 +1885,6 @@ sap.ui.define([
 	Table.prototype._unbindRows = function() {
 		TableUtils.Hook.call(this, Hook.UnbindRows, this.getBinding("rows"));
 		Control.prototype.unbindAggregation.call(this, "rows", true);
-		this._getSelectionPlugin()._setBinding(null);
 
 		// We don't further react to unbind operations that are part of rebind and destruction
 		// to avoid unnecessary DOM updates and UI flickering.
@@ -4069,14 +4067,12 @@ sap.ui.define([
 	function attachSelectionPlugin(oTable, oSelectionPlugin) {
 		if (oSelectionPlugin && oSelectionPlugin.getMetadata().hasEvent("selectionChange")) {
 			oSelectionPlugin.attachSelectionChange(oTable._onSelectionChanged, oTable);
-			oSelectionPlugin._setBinding(oTable.getBinding("rows"));
 		}
 	}
 
 	function detachSelectionPlugin(oTable, oSelectionPlugin) {
 		if (oSelectionPlugin && oSelectionPlugin.getMetadata().hasEvent("selectionChange")) {
 			oSelectionPlugin.detachSelectionChange(oTable._onSelectionChanged, oTable);
-			oSelectionPlugin._setBinding();
 		}
 	}
 
