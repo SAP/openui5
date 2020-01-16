@@ -969,6 +969,20 @@ function(
 
 			this._bPaste = (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.V);
 
+			if (oEvent.which === KeyCodes.DOT) { //allow DOT (.) or not
+				var iPrecision = this.getDisplayValuePrecision(),
+					sValue = this._getInput().getValue(),
+					iDotPos = sValue.indexOf(".");
+
+				if (iPrecision == 0 || iDotPos != -1) {
+					oEvent.preventDefault();
+				}
+			}
+
+			if (oEvent.which === KeyCodes.E) { //filter e/E
+				oEvent.preventDefault();
+			}
+
 			if (oEvent.which === KeyCodes.ARROW_UP && !oEvent.altKey && oEvent.shiftKey &&
 				(oEvent.ctrlKey || oEvent.metaKey)) { //ctrl+shift+up
 				this._applyValue(this._getMax());
@@ -1193,35 +1207,36 @@ function(
 		StepInput.prototype._restrictCharsWhenDecimal = function (oEvent) {
 			var iDecimalMark = oEvent.getParameter("value").indexOf("."),
 				iCharsSet = this.getDisplayValuePrecision(),
-				iValue;
+				sEventValue = oEvent.getParameter("value"),
+				sValue;
 
-			if (iDecimalMark > 0 && iCharsSet > 0) { //only for decimals
-				var sEventValue = oEvent.getParameter("value"),
-					sEventValueAfterTheDecimal = sEventValue.split('.')[1],
+			if (iDecimalMark > 0 && iCharsSet >= 0) { //only for decimals
+				var sEventValueAfterTheDecimal = sEventValue.split('.')[1],
 					iCharsAfterTheDecimalSign = sEventValueAfterTheDecimal ? sEventValueAfterTheDecimal.length : 0,
-					sEventSourceValue = oEvent.getSource().getProperty("value"),
 					sCharsBeforeTheEventDecimalValue = sEventValue.split('.')[0],
-					sCharsAfterTheEventDecimalValue =  sEventSourceValue.substring(sEventSourceValue.indexOf('.') + 1, sEventSourceValue.length);
+					sCharsAfterTheEventDecimalValue = iCharsSet > 0 ? sEventValue.substring(sEventValue.indexOf('.') + 1, sEventValue.length) : '';
 
 				//scenario 1 - user typing after the decimal mark:
 				if (!this._bPaste) {
 					//if the characters after the decimal are more than the displayValuePrecision -> keep the current value after the decimal
 					if (iCharsAfterTheDecimalSign > iCharsSet) {
-						iValue = sCharsBeforeTheEventDecimalValue + "." + sCharsAfterTheEventDecimalValue;
+						sValue = sCharsBeforeTheEventDecimalValue + (iCharsSet > 0 ? "." + sCharsAfterTheEventDecimalValue.substr(0, iCharsSet) : '');
 						this._showWrongValueVisualEffect();
 					}
 
 					//scenario 2 - paste - cut the chars with length, bigger than displayValuePrecision
 				} else {
 					if (sEventValue.indexOf(".")){
-						iValue = sEventValue.split('.')[0] + "." + sEventValueAfterTheDecimal.substring(0, iCharsSet);
+						sValue = sEventValue.split('.')[0] + (iCharsSet > 0 ? "." + sEventValueAfterTheDecimal.substring(0, iCharsSet) : '');
 					}
 					this._bPaste = false;
 				}
+			} else {
+				sValue = sEventValue;
 			}
 
-			this._getInput().updateDomValue(iValue);
-			return iValue;
+			this._getInput().updateDomValue(sValue);
+			return sValue;
 		};
 
 		/**

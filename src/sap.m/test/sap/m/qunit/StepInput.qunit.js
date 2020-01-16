@@ -650,6 +650,51 @@ sap.ui.define([
 		assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 	});
 
+	QUnit.test("setting displayValuePrecision to different values (including 0)", function (assert) {
+		var oInput = this.stepInput._getInput();
+
+		// act
+		this.stepInput.setMax(20);
+		this.stepInput.setDisplayValuePrecision(0);
+		this.stepInput.placeAt('content');
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
+
+		// act
+		oInput.onfocusin();
+		oInput._$input.focus().val("3.12").trigger("input");
+		this.clock.tick(300);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oInput.getValue(), "3", "The value is proper (3)");
+
+		// act
+		this.stepInput.setDisplayValuePrecision(2);
+		oInput.onfocusin();
+		oInput._$input.focus().val("6.1267").trigger("input");
+		this.clock.tick(300);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oInput.getValue(), "6.12", "The value is proper (6.12)");
+
+		// act
+		this.stepInput.setDisplayValuePrecision(3);
+		oInput.onfocusin();
+		oInput._$input.focus().val("9.12588").trigger("input");
+		this.clock.tick(300);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oInput.getValue(), "9.125", "The value is proper (9.125)");
+
+	});
+
+
+
 	QUnit.test("displayValuePrecision formating when digits after the dot are more than the value precision", function (assert) {
 		this.stepInput.setDisplayValuePrecision(2);
 		this.stepInput.setValue(1.104);
