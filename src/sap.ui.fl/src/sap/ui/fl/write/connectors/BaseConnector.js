@@ -85,7 +85,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Publish flexibility files for a given application and layer.
+		 * Interface to publish flexibility files for a given application and layer.
 		 *
 		 * @param {object} mPropertyBag Property bag
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
@@ -100,7 +100,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets the flexibility info for a given application and layer.
+		 * Interface to retrieve the flexibility info for a given application and layer.
 		 * The flexibility info is a JSON string that has boolean properties 'isPublishEnabled' and 'isResetEnabled'
 		 * that indicate if for the given application and layer a publish and reset shall be enabled, respectively
 		 *
@@ -138,15 +138,27 @@ sap.ui.define([
 			},
 
 			/**
-			 * Interface called to get the flex versions.
+			 * Interface called to activate a draft.
 			 *
 			 * @param {object} mPropertyBag Property bag
 			 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
 			 * @param {string} mPropertyBag.reference Flex reference
-			 * @returns {Promise<sap.ui.fl.Version>} Resolves with an object containing the version activated
+			 * @returns {Promise<sap.ui.fl.Version[]>} Resolves with list of versions after the activation took place.
 			 */
 			activateDraft: function () {
 				return Promise.reject("versions.activateDraft is not implemented");
+			},
+
+			/**
+			 * Interface called to discard a draft.
+			 *
+			 * @param {object} mPropertyBag Property bag
+			 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+			 * @param {string} mPropertyBag.reference Flex reference
+			 * @returns {Promise<>} Resolves after the draft is discarded.
+			 */
+			discardDraft: function () {
+				return Promise.reject("versions.discardDraft is not implemented");
 			}
 		}
 	};

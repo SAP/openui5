@@ -76,6 +76,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Removes the internal stored state of a given application and refreshes the state including a draft for the given layer;
+	 * an actual reload of the application has to be triggered by the caller.
+	 *
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 *
+	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
+	 */
+	VersionsAPI.loadDraftForApplication = function (mPropertyBag) {
+		if (!mPropertyBag.selector) {
+			return Promise.reject("No selector was provided");
+		}
+		if (!mPropertyBag.layer) {
+			return Promise.reject("No layer was provided");
+		}
+
+		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		var sReference = Utils.getComponentClassName(oAppComponent);
+		if (!sReference) {
+			return Promise.reject("The application ID could not be determined");
+		}
+		return FlexState.clearAndInitialize({
+			componentId: oAppComponent.getId(),
+			reference: sReference,
+			draftLayer: mPropertyBag.layer
+		});
+	};
+
+	/**
 	 * Activates a draft version.
 	 *
 	 * @param {object} mPropertyBag - Property Bag
@@ -110,16 +140,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the internal stored state of a given application and refreshes the state including a draft for the given layer;
-	 * an actual reload of the application has to be triggered by the caller.
+	 * Discards the current draft within a given layer; This sends a call to the connector in case a draft exists and will
+	 * update the FlexState accordingly in case the <code>updateState</code> flag is set; This API does not revert the changes
+	 * and the consumer must take care of making a reload of the application itself.
 	 *
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 *
-	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
+	 * @param {boolean=false} mPropertyBag.updateState - Flag if the state should be updated
+	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
+	 * rejects if an error occurs or the layer does not support draft handling
 	 */
-	VersionsAPI.loadDraftForApplication = function (mPropertyBag) {
+	VersionsAPI.discardDraft = function (mPropertyBag) {
 		if (!mPropertyBag.selector) {
 			return Promise.reject("No selector was provided");
 		}
@@ -129,13 +161,15 @@ sap.ui.define([
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
 		var sReference = Utils.getComponentClassName(oAppComponent);
+
 		if (!sReference) {
 			return Promise.reject("The application ID could not be determined");
 		}
-		FlexState.clearState(sReference);
-		return FlexState.initialize({
-			componentId: sReference,
-			draftLayer: mPropertyBag.layer
+
+		return Versions.discardDraft({
+			reference: sReference,
+			layer: mPropertyBag.layer,
+			updateState: mPropertyBag.updateState
 		});
 	};
 

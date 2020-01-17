@@ -66,7 +66,7 @@ sap.ui.define([
 		variantsMap: prepareVariantsMap
 	};
 
-	function enhancePropertyBag(mPropertyBag) {
+	function _enhancePropertyBag(mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
 		mPropertyBag.componentData = mPropertyBag.componentData || oComponent.getComponentData() || {};
 		mPropertyBag.manifest = mPropertyBag.manifest || mPropertyBag.rawManifest || oComponent.getManifestObject();
@@ -75,7 +75,7 @@ sap.ui.define([
 		mPropertyBag.reference = mPropertyBag.reference || Utils.getComponentClassName(oComponent);
 	}
 
-	function getInstanceEntryOrThrowError(sReference, sMapName) {
+	function _getInstanceEntryOrThrowError(sReference, sMapName) {
 		if (!_mInstances[sReference]) {
 			throw Error("State is not yet initialized");
 		}
@@ -92,15 +92,15 @@ sap.ui.define([
 	}
 
 	function getAppDescriptorMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "appDescriptorMap");
+		return _getInstanceEntryOrThrowError(sReference, "appDescriptorMap");
 	}
 
 	function getChangesMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "changesMap");
+		return _getInstanceEntryOrThrowError(sReference, "changesMap");
 	}
 
 	function getVariantsMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "variantsMap");
+		return _getInstanceEntryOrThrowError(sReference, "variantsMap");
 	}
 
 	function createSecondInstanceIfNecessary(mPropertyBag) {
@@ -170,7 +170,7 @@ sap.ui.define([
 	 */
 	FlexState.initialize = function (mPropertyBag) {
 		return Promise.resolve().then(function(mPropertyBag) {
-			enhancePropertyBag(mPropertyBag);
+			_enhancePropertyBag(mPropertyBag);
 
 			if (_mInitPromises[mPropertyBag.reference]) {
 				return _mInitPromises[mPropertyBag.reference].then(function (mPropertyBag) {
@@ -200,10 +200,11 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.reference] - Flex reference of the app
 	 * @param {object} [mPropertyBag.manifest] - Manifest that belongs to actual component
 	 * @param {string} [mPropertyBag.componentData] - Component data of the current component
+	 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be retrieved
 	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized again
 	 */
 	FlexState.clearAndInitialize = function(mPropertyBag) {
-		enhancePropertyBag(mPropertyBag);
+		_enhancePropertyBag(mPropertyBag);
 		var bVariantsMapExists = !!ObjectPath.get(["preparedMaps", "variantsMap"], _mInstances[mPropertyBag.reference]);
 
 		FlexState.clearState(mPropertyBag.reference);
