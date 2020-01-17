@@ -89,6 +89,12 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	vertical-align: inherit;
+
+	// We need to reset the line-height in IE as the inherited "normal" is not properly
+	// handled when the focus is on the input on the initial loading of the application
+	html[data-sap-ui-browser*='ie'] & {
+		line-height: 0;
+	}
 }
 
 .sapMInputBaseReadonly .sapMInputBaseIconContainer {
