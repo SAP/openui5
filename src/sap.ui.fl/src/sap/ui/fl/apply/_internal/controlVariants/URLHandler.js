@@ -21,6 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var _mVariantIdChangeHandlers = {};
 	/**
 	 * Checks if the parsed shell hash contains outdated variant parameters.
 	 *
@@ -68,7 +69,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	function navigationFilter(oModel, sNewHash) {
+	function _handleVariantIdChangeInURL(oModel, sNewHash) {
 		var oUshellContainer = Utils.getUshellContainer();
 		var oShellNavigation = oUshellContainer.getService("ShellNavigation");
 		try {
@@ -99,18 +100,34 @@ sap.ui.define([
 	}
 
 	/**
-	 * Sets or un-sets the navigation filter function for the ushell ShellNavigation service.
+	 * Registers navigation filter function for the ushell ShellNavigation service.
 	 *
 	 * @param {sap.ui.fl.variants.VariantModel} oModel - Variant Model
-	 * @param {boolean} bSet - Indicates if the filter function needs to be set
 	 *
 	 * @private
 	 */
-	function setOrUnsetCustomNavigationForParameter(oModel, bSet) {
-		var sMethodName = bSet ? "registerNavigationFilter" : "unregisterNavigationFilter";
+	function _registerNavigationFilter(oModel) {
+		var sReference = Utils.getComponentClassName(oModel.oAppComponent);
 		var oUshellContainer = Utils.getUshellContainer();
-		if (oUshellContainer) {
-			oUshellContainer.getService("ShellNavigation")[sMethodName](navigationFilter.bind(null, oModel));
+		if (!_mVariantIdChangeHandlers[sReference] && oUshellContainer) {
+			_mVariantIdChangeHandlers[sReference] = _handleVariantIdChangeInURL.bind(null, oModel);
+			oUshellContainer.getService("ShellNavigation").registerNavigationFilter(_mVariantIdChangeHandlers[sReference]);
+		}
+	}
+
+	/**
+	 * De-registers navigation filter function for the ushell ShellNavigation service.
+	 *
+	 * @param {sap.ui.fl.variants.VariantModel} oModel - Variant Model
+	 *
+	 * @private
+	 */
+	function _deRegisterNavigationFilter(oModel) {
+		var sReference = Utils.getComponentClassName(oModel.oAppComponent);
+		var oUshellContainer = Utils.getUshellContainer();
+		if (_mVariantIdChangeHandlers[sReference] && oUshellContainer) {
+			oUshellContainer.getService("ShellNavigation").unregisterNavigationFilter(_mVariantIdChangeHandlers[sReference]);
+			delete _mVariantIdChangeHandlers[sReference];
 		}
 	}
 
@@ -326,7 +343,7 @@ sap.ui.define([
 						oObserver.destroy();
 					});
 					// deregister navigation filter if ushell is available
-					setOrUnsetCustomNavigationForParameter(mPropertyBag.model, false);
+					_deRegisterNavigationFilter(mPropertyBag.model);
 					mPropertyBag.model.oChangePersistence.resetVariantMap();
 					mPropertyBag.model.destroy();
 					mPropertyBag.model.oComponentDestroyObserver.unobserve(mPropertyBag.model.oAppComponent, {destroy: true});
@@ -335,7 +352,7 @@ sap.ui.define([
 			}
 
 			// register navigation filter for custom navigation
-			setOrUnsetCustomNavigationForParameter(mPropertyBag.model, /*bSet*/true);
+			_registerNavigationFilter(mPropertyBag.model);
 
 			if (!mPropertyBag.model.oComponentDestroyObserver && mPropertyBag.model.oAppComponent instanceof Component) {
 				mPropertyBag.model.oComponentDestroyObserver = new ManagedObjectObserver(observerHandler.bind(null));
