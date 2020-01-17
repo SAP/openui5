@@ -747,7 +747,7 @@ sap.ui.define([
 			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog").callsFake(fnSimulateDialogSelectionAndCancel);
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
-				.then(function() {
+				.catch(function() {
 					assert.ok(oNewConnectorCall.firstCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
 					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
 					assert.equal(oNewConnectorCall.secondCall, null, "then delete app variants backend call is never triggered");
