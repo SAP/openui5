@@ -1215,6 +1215,7 @@ function(
 		});
 
 		QUnit.test("when setFlexSettings is called", function(assert) {
+			// create a Promise and await for it's resolving to have a comparable object for IE
 			assert.deepEqual(
 				this.oRta.getFlexSettings(),
 				{
@@ -1229,25 +1230,25 @@ function(
 				namespace: "namespace"
 			});
 
-			assert.deepEqual(this.oRta.getFlexSettings(), {
-				layer: "USER",
-				developerMode: true,
-				namespace: "namespace",
-				versioning: Promise.reject(false)
-			});
+			var oFlexSettings = this.oRta.getFlexSettings();
+			assert.equal(Object.keys(oFlexSettings).length, 4, "then 4 properties are set");
+			assert.equal(oFlexSettings.layer, "USER", "which are the layer property");
+			assert.equal(oFlexSettings.developerMode, true, "and the developerMode property");
+			assert.equal(oFlexSettings.namespace, "namespace", "and the namespace");
+			assert.ok(oFlexSettings.versioning instanceof Promise, "and the versioning promise is set");
 
 			this.oRta.setFlexSettings({
 				scenario: "scenario"
 			});
 
-			assert.deepEqual(this.oRta.getFlexSettings(), {
-				layer: "USER",
-				developerMode: true,
-				namespace: "rootNamespace/changes/",
-				rootNamespace: "rootNamespace/",
-				scenario: "scenario",
-				versioning: Promise.reject(false)
-			});
+			var oFlexSettings = this.oRta.getFlexSettings();
+			assert.equal(Object.keys(oFlexSettings).length, 6, "then 4 properties are set");
+			assert.equal(oFlexSettings.layer, "USER", "which are the layer property");
+			assert.equal(oFlexSettings.developerMode, true, "and the developerMode property");
+			assert.equal(oFlexSettings.namespace, "rootNamespace/changes/", "and the namespace");
+			assert.ok(oFlexSettings.versioning instanceof Promise, "and the versioning promise is set");
+			assert.equal(oFlexSettings.rootNamespace, "rootNamespace/", "and the rootNamespace property is set");
+			assert.equal(oFlexSettings.scenario, "scenario", "and the scenario property is set");
 		});
 	});
 
