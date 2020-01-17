@@ -858,7 +858,7 @@ sap.ui.define([
 
 					var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
 						oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-						sHeight = BaseContent.getMinHeight(sType, oContent);
+						sHeight = BaseContent.getMinHeight(sType, oContent, this._oTemporaryContent);
 
 					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 						this._oTemporaryContent.$().css({ "min-height": sHeight });

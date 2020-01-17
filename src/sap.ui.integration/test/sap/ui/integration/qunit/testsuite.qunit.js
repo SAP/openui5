@@ -92,7 +92,8 @@ sap.ui.define(function () {
 						"sap/f/cards/RequestDataProvider",
 						"sap/f/cards/ServiceDataProvider",
 						"sap/f/cards/TableContent",
-						"sap/f/cards/IconFormatter"
+						"sap/f/cards/IconFormatter",
+						"sap/ui/integration/BaseContent"
 					]
 				},
 				module: [
@@ -106,7 +107,8 @@ sap.ui.define(function () {
 					'test-resources/sap/f/qunit/DataProvider.qunit',
 					'./CardActions.qunit',
 					'./cardbundle/CardStaticResources.qunit',
-					'./CardFormatters.qunit'
+					'./CardFormatters.qunit',
+					'./BaseContent.qunit'
 				]
 			},
 			"designtime/baseEditor/BaseEditor": {
