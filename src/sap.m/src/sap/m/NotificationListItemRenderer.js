@@ -59,6 +59,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			rm.addClass('sapMNLIUnread');
 		}
 
+		if (!authorAvatar) {
+			rm.addClass('sapMNLINoAvatar');
+		}
+
 		rm.writeClasses();
 
 		rm.writeAttribute('tabindex', '0');
@@ -195,7 +199,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		// avatar
 		rm.write('<div class="sapMNLIImage">');
-		rm.renderControl(authorAvatar);
+		if (authorAvatar) {
+			rm.renderControl(authorAvatar);
+		}
 		rm.write('</div>');
 
 		// end main
