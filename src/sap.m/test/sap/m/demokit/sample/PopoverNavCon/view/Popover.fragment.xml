@@ -32,14 +32,15 @@
 				showNavButton="true"
 				navButtonPress="onNavBack"
 				title="Product">
-				<ObjectHeader
-					title="{Name}" >
-					<attributes>
-						<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
-						<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
-						<ObjectAttribute text="{Description}" />
-					</attributes>
-				</ObjectHeader>
+				<content>
+					<ObjectHeader title="{Name}" >
+						<attributes>
+							<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+							<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+						</attributes>
+					</ObjectHeader>
+					<Text class="sapUiSmallMargin" text="{Description}" />
+				</content>
 			</Page>
 		</NavContainer>
 	</Popover>
