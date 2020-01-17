@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+
+<title>Table - sap.ui.table</title>
+<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.Table.gif">
+
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified"
+		data-sap-ui-compatVersion="edge"
+		src="../../../../resources/sap-ui-core.js"></script>
+
+<script src="Settings.js"></script>
+
+<style>
+	html {
+		height: 100%;
+	}
+	body {
+		display: flex;
+		flex-direction: column;
+	}
+	#content {
+		display: flex;
+		flex: 1 1 auto;
+	}
+</style>
+
+<script>
+
+var oTable = new sap.ui.table.Table({
+	extension: [
+		new sap.m.Toolbar({
+			content: [
+				new sap.m.Title({text: "Title of the Table ({headerContext>$count})"}),
+				new sap.m.ToggleButton({
+					text: "V4 plugin active",
+					pressed: true,
+					press: function(oEvent) {
+						var bPressed = oEvent.getParameter("pressed");
+						if (window.V4Plugin) {
+							if (bPressed) {
+								oTable.addDependent(window.V4Plugin);
+							} else {
+								oTable.removeDependent(window.V4Plugin);
+							}
+						}
+					}
+				}),
+				new sap.m.ToolbarSpacer()
+			]
+		})
+	],
+	footer: "Footer of the Table",
+	visibleRowCountMode: "Auto"
+});
+
+/* The plugin currently only considers
+  - groupable : boolean (default: false)
+  - aggregatable : boolean (default: false)
+  - aggregationDetails : {
+      grandtotal: boolean (default: true)
+      subtotals: boolean (default: true)
+
+      // V4 ODLB specific - just for testing.
+      // Each entry creates a menu item. On item select, the corresponding object is
+      // added to "aggregate" (see ODataListBinding#setaggregation)
+      custom: {
+        alias: {
+          name: string,
+          with: string,
+          grandTotal: boolean,
+          subtotals: boolean
+        },
+        otherAlias: {...},
+        ...
+      }
+    }
+*/
+
+oTable.addColumn(new sap.ui.table.Column({
+	label: new sap.m.Text({text: "Name"}),
+	template: new sap.m.Text({text: "{Name}", wrapping: false}),
+	sortProperty: "Name",
+	filterProperty: "Name",
+	width: "120px"
+}).data("propertyInfo", {
+	"Name": {
+		groupable: true
+	}
+}));
+
+oTable.addColumn(new sap.ui.table.Column({
+	label: new sap.m.Text({text: "Country"}),
+	template: new sap.m.Text({text: "{Country}", wrapping: false}),
+	width: "120px"
+}).data("propertyInfo", {
+	"Country": {
+		groupable: true
+	}
+}));
+
+oTable.addColumn(new sap.ui.table.Column({
+	label: new sap.m.Text({text: "Region"}),
+	template: new sap.m.Text({
+		text: {
+			parts: [
+				{path: "Region"},
+				{path: "Country"}
+			],
+			formatter: function(sRegion, sCountry) {
+				return sRegion + " (" + sCountry + ")";
+			}
+		},
+		wrapping: false}),
+	filterProperty: "Region",
+	width: "180px"
+}).data("propertyInfo", {
+	"Region": {
+		groupable: true
+	},
+	"Country": {
+		groupable: true
+	}
+}));
+
+oTable.addColumn(new sap.ui.table.Column({
+	label: new sap.m.Text({text: "Sales Amount"}),
+	template: new sap.m.HBox({
+		items: [
+			new sap.m.Text({text: "{SalesAmount}", wrapping: false}),
+			// TODO: Provide callback or event for app to adjust bindings, e.g. if different properties are needed for normal/group/summary rows?
+			new sap.m.Text({text: ", Min: {= %{SalesAmountMin} }", wrapping: false})
+		]
+	}),
+	sortProperty: "SalesAmount",
+	filterProperty: "SalesAmount",
+	width: "150px"
+}).data("propertyInfo", {
+	"SalesAmount": {
+		aggregatable: true,
+		aggregationDetails: {
+			custom: {
+				SalesAmountMin: {
+					with: "min",
+					name: "SalesAmount",
+					subtotals: true
+				}
+			}
+		}
+	}
+}));
+
+oTable.addColumn(new sap.ui.table.Column({
+	label: new sap.m.Text({text: "Currency"}),
+	template: new sap.m.Text({text: "{Currency}", wrapping: false}),
+	sortProperty: "Currency",
+	filterProperty: "Currency",
+	width: "80px"
+}).data("propertyInfo", {
+	"Currency": {
+		groupable: true
+	}
+}));
+
+oTable.addColumn(new sap.ui.table.Column({
+	label: new sap.m.Text({text: "Sales Amount Local Currency (only subtotals)"}),
+	template: new sap.m.Text({text: "{SalesAmountLocalCurrency}", wrapping: false}),
+	sortProperty: "SalesAmountLocalCurrency",
+	filterProperty: "SalesAmountLocalCurrency",
+	width: "120px"
+}).data("propertyInfo", {
+	"SalesAmountLocalCurrency": {
+		aggregatable: true,
+		aggregationDetails: {
+			grandtotal: false
+		}
+	}
+}));
+
+// The columns below provide insufficient information.
+// The plugin needs to know whether a property is aggregatable or groupable,
+// otherwise it doesn't know where to add the property in the object passed to
+// ODataListBinding#setAggregation (inside "group" or "aggregate", see V4Aggregation#updateAggregation)
+
+oTable.addColumn(new sap.ui.table.Column({
+	label: new sap.m.Text({text: "Local Currency"}),
+	template: new sap.m.Text({text: "{LocalCurrency}", wrapping: false}),
+	width: "80px"
+}).data("propertyInfo", {
+	"LocalCurrency": {}
+}));
+
+oTable.addColumn(new sap.ui.table.Column({
+	label: new sap.m.Text({text: "Industry"}),
+	template: new sap.m.Text({text: "{Industry}", wrapping: false}),
+	width: "80px"
+}));
+
+oTable.bindRows({
+	path: "/BusinessPartners",
+	parameters: {
+		$count: false
+	}
+});
+
+sap.ui.require([
+	"sap/ui/table/plugins/V4Aggregation", "sap/ui/model/odata/v4/ODataModel"
+], function(V4Aggregation, ODataModel) {
+	oTable.setModel(new ODataModel({
+		serviceUrl: "../../../../proxy/http/ui5-core-team.mo.sap.corp:9000/serviceroot.svc/",
+		synchronizationMode: "None",
+		operationMode: "Server",
+		autoExpandSelect: false
+	}));
+
+	oTable.setModel(oTable.getModel(), "headerContext");
+	oTable.getExtension()[0].setBindingContext(oTable.getBinding("rows").getHeaderContext(), "headerContext");
+
+	window.V4Plugin = new V4Aggregation();
+
+	// TODO: The "plugins" aggregation is currently of type sap.ui.table.plugins.SelectionPlugin
+	oTable.addDependent(window.V4Plugin);
+});
+
+TABLESETTINGS.init(oTable, function(oButton) {
+	var oToolbar = oTable.getExtension()[0];
+
+	if (!oToolbar) {
+		oToolbar = new sap.m.Toolbar();
+		oTable.addExtension(oToolbar);
+	}
+
+	oToolbar.addContent(oButton);
+});
+
+var oBindingInfo = oTable.getBindingInfo("rows");
+function rebind() {
+	oTable.bindRows(oBindingInfo);
+}
+function unbind() {
+	oTable.unbindRows();
+}
+
+var oVBox = new sap.m.VBox({
+	width: "100%",
+	items: [
+		oTable.setLayoutData(new sap.m.FlexItemData({growFactor: 1})),
+		new sap.m.Button({text: "Just a Button after"})
+	]
+}).placeAt("content");
+
+</script>
+</head>
+<body class="sapUiBody sapUiSizeCozy" role="application">
+<h1 id="header">Test Page for <code>sap.ui.table.Table</code> with <code>sap.ui.model.odata.v4.ODataModel</code></h1>
+<div id="content"></div>
+</body>
+</html>
