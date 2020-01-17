@@ -887,7 +887,7 @@ sap.ui.define([
 			var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aDirtyChanges);
 			return CompatibilityConnector.create(aPreparedDirtyChangesBulk, sRequest, undefined, bDraft)
 			.then(function(oResponse) {
-				this._massUpdateCacheAndDirtyState(aDirtyChanges, aDirtyChangesClone, bSkipUpdateCache);
+				this._massUpdateCacheAndDirtyState(aDirtyChangesClone, bSkipUpdateCache);
 				return oResponse;
 			}.bind(this));
 		}
@@ -906,12 +906,10 @@ sap.ui.define([
 	 * @returns {Promise} resolving after all changes have been saved
 	 */
 	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache, bDraft) {
-		var aAllDirtyChanges = this.getDirtyChanges();
-
 		return aDirtyChanges.reduce(function (oPreviousPromise, oDirtyChange) {
 			return oPreviousPromise
 				.then(this._performSingleSaveAction(oDirtyChange, bDraft))
-				.then(this._updateCacheAndDirtyState.bind(this, aAllDirtyChanges, oDirtyChange, bSkipUpdateCache));
+				.then(this._updateCacheAndDirtyState.bind(this, oDirtyChange, bSkipUpdateCache));
 		}.bind(this), Promise.resolve());
 	};
 
@@ -929,12 +927,11 @@ sap.ui.define([
 
 	/**
 	 * Updates the cache with the dirty change passed and removes it from the array of dirty changes if present.
-	 * @param {array} aDirtyChanges Dirty changes to be added or deleted
-	 * @param {sap.ui.fl.Change} oDirtyChange Dirty change
+	 * @param {sap.ui.fl.Change} oDirtyChange Dirty change which was saved
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app
 	 * therefore, the cache update of the current app is skipped
 	 */
-	ChangePersistence.prototype._updateCacheAndDirtyState = function (aDirtyChanges, oDirtyChange, bSkipUpdateCache) {
+	ChangePersistence.prototype._updateCacheAndDirtyState = function (oDirtyChange, bSkipUpdateCache) {
 		if (!bSkipUpdateCache) {
 			if (oDirtyChange.getPendingAction() === "NEW") {
 				Utils.isChangeRelatedToVariants(oDirtyChange)
@@ -947,19 +944,18 @@ sap.ui.define([
 			}
 		}
 
-		var iIndex = aDirtyChanges.indexOf(oDirtyChange);
-		if (iIndex > -1) {
-			aDirtyChanges.splice(iIndex, 1);
-		}
+		this._aDirtyChanges = this._aDirtyChanges.filter(function(oExistingDirtyChange) {
+			return oDirtyChange.getId() !== oExistingDirtyChange.getId();
+		});
 	};
 
 	/**
 	  * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	  * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 */
-	ChangePersistence.prototype._massUpdateCacheAndDirtyState = function (aDirtyChanges, aDirtyChangesClone, bSkipUpdateCache) {
+	ChangePersistence.prototype._massUpdateCacheAndDirtyState = function (aDirtyChangesClone, bSkipUpdateCache) {
 		aDirtyChangesClone.forEach(function(oDirtyChange) {
-			this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange, bSkipUpdateCache);
+			this._updateCacheAndDirtyState(oDirtyChange, bSkipUpdateCache);
 		}, this);
 	};
 
