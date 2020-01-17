@@ -2088,4 +2088,119 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Use reduced paths for the messages' full target path.
+	// A modification of an item causes sideeffects on the header, so the item and the header data
+	// need to be updated via a GET request on the item, using $expand for the header data.
+	// The backend returns messages with a target relative to the item. So the targets for header
+	// messages will contain partner navigation properties that have to be removed.
+	// JIRA: CPOUI5MODELS-82
+	QUnit.test("Use reduced paths for the messages' full target path", function (assert) {
+		var oModel = createSalesOrdersModel({preliminaryContext : true}),
+		sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="grossAmount" value="{GrossAmount}" />\
+	<Table id="table" items="{ToLineItems}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="grossAmount::item" value="{GrossAmount}" />\
+			<Input id="currencyCode" value="{CurrencyCode}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('1')", {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				GrossAmount : "0.00",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader({
+					code : "code",
+					message : "At least one item without zero amount",
+					severity : "warning",
+					target : "GrossAmount"
+				})
+			})
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectChange("grossAmount", null)
+			.expectChange("grossAmount", "0.00")
+			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					CurrencyCode : "EUR",
+					GrossAmount : "0.00",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition", ["10~0~"])
+			.expectChange("grossAmount::item", ["0.00"])
+			.expectChange("currencyCode", ["EUR"])
+			.expectMessages([{
+				code : "code",
+				fullTarget : "/SalesOrderSet('1')/GrossAmount",
+				message : "At least one item without zero amount",
+				persistent : false,
+				target : "/SalesOrderSet('1')/GrossAmount",
+				type : MessageType.Warning
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+			that.expectRequest({
+					"deepPath" : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')",
+					"headers" : {},
+					"method" : "GET",
+					"requestUri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						+ "?$expand=ToHeader"
+				}, {
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					SalesOrderID : "1",
+					ItemPosition : "10~0~",
+					GrossAmount : "1000.00",
+					ToHeader : {
+						"__metadata" : {
+							"uri" : "SalesOrderSet('1')"
+						},
+						SalesOrderID : "1",
+						GrossAmount : "1000.00"
+					}
+				}, {
+					"sap-message" : getMessageHeader({
+						code : "code",
+						message : "At least one item without amount > 100",
+						severity : "warning",
+						target : "ToHeader/GrossAmount"
+					})
+				})
+				.expectChange("grossAmount", "1000.00")
+				.expectChange("grossAmount::item", ["1000.00"])
+				.expectMessages([{
+					code : "code",
+					fullTarget : "/SalesOrderSet('1')/GrossAmount",
+					message : "At least one item without amount > 100",
+					persistent : false,
+					target : "/SalesOrderSet('1')/GrossAmount",
+					type : MessageType.Warning
+				}]);
+
+			// code under test
+			oModel.read("", {
+				context : oContext,
+				urlParameters : {"$expand" : "ToHeader"}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
