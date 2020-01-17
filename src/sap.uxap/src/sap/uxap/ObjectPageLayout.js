@@ -767,6 +767,7 @@ sap.ui.define([
 			bIsPageTop = (this._$opWrapper.scrollTop() <= (this._getSnapPosition() + 1));
 			if (bIsPageTop) {
 				this._scrollTo(this._getSnapPosition() + 1);
+				this._bSupressModifyOnScrollOnce = true; // the header is already in snapped state, no modification needed
 			}
 			return;
 		}
