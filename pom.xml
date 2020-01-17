@@ -311,6 +311,12 @@
 
 			<id>nightly.build</id>
 
+			<activation>
+				<property>
+					<name>ldi.releaseBuild</name>
+				</property>
+			</activation>
+
 			<properties>
 
 				<!-- validate all files for the nightly build (attention: profile nightly.build must stay after eslint.build!) -->
