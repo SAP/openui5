@@ -147,6 +147,9 @@ sap.ui.define([
 						if (xhr.getResponseHeader("X-CSRF-Token")) {
 							oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");
 						}
+						if (xhr.getResponseHeader("Etag")) {
+							oResult.etag = xhr.getResponseHeader("Etag");
+						}
 						resolve(oResult);
 					} else {
 						reject({

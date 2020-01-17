@@ -71,7 +71,7 @@ function (
 
 			var oMockedWrappedContent = {
 				changes: [{}],
-				etag: "abc123",
+				cacheKey: "abc123",
 				status: "success"
 			};
 			var oMockedAppComponent = {

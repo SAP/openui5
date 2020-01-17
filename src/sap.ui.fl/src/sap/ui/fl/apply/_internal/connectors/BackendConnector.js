@@ -50,6 +50,9 @@ sap.ui.define([
 				if (oResult.xsrfToken) {
 					this.xsrfToken = oResult.xsrfToken;
 				}
+				if (oResult.etag) {
+					oResponse.cacheKey = oResult.etag;
+				}
 				oResponse.changes = oResponse.changes.concat(oResponse.compVariants || []);
 				if (oResponse.settings) {
 					this.settings = oResponse.settings;

@@ -57,6 +57,21 @@ sap.ui.define([
 	}
 
 	/**
+	 * Concatenates all Etag from a list of flex data request responses headers into a passed result string.
+	 *
+	 * @param {object[]} aResponses List of responses containing Etag header to be concatenated
+	 * @param {string} [aResponses.etag] Etag value
+	 * @returns {string | null} Concatenated string of all etag values or null if no responses headers carry a etag value
+	 * @private
+	 * @ui5-restricted sap.ui.fl.Cache
+	 */
+	function _concatEtag(aResponses) {
+		return aResponses.reduce(function (sCacheKey, oResponse) {
+			return oResponse.cacheKey ? sCacheKey += oResponse.cacheKey : sCacheKey;
+		}, "") || null;
+	}
+
+	/**
 	 * Merges the results from all involved connectors.
 	 *
 	 * @param {object} mPropertyBag Further properties
@@ -75,7 +90,8 @@ sap.ui.define([
 			variants: _concatFlexObjects(mPropertyBag.responses, "variants"),
 			variantChanges: _concatFlexObjects(mPropertyBag.responses, "variantChanges"),
 			variantDependentControlChanges: _concatFlexObjects(mPropertyBag.responses, "variantDependentControlChanges"),
-			variantManagementChanges: _concatFlexObjects(mPropertyBag.responses, "variantManagementChanges")
+			variantManagementChanges: _concatFlexObjects(mPropertyBag.responses, "variantManagementChanges"),
+			cacheKey: _concatEtag(mPropertyBag.responses)
 		};
 	};
 
