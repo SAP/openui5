@@ -19,7 +19,8 @@
 		  "sap.uxap.sample.ProfileObjectPageHeader",
 		  "sap.uxap.sample.AlternativeProfileObjectPageHeader",
 		  "sap.uxap.sample.KPIObjectPageHeader",
-		  "sap.uxap.sample.ObjectPageDynamicSideContentBtn"
+		  "sap.uxap.sample.ObjectPageDynamicSideContentBtn",
+		  "sap.uxap.sample.ChildObjectPage"
 		]
 	  },
 	  {
@@ -51,7 +52,6 @@
 		  "sap.uxap.sample.AnchorBar",
 		  "sap.uxap.sample.AnchorBarWithNumbers",
 		  "sap.uxap.sample.AnchorBarNoPopover",
-		  "sap.uxap.sample.ChildObjectPage",
 		  "sap.uxap.sample.ObjectPageHeaderExpanded",
 		  "sap.uxap.sample.ObjectPageHeaderContentPriorities",
 		  "sap.uxap.sample.ObjectPageFormLayout",
