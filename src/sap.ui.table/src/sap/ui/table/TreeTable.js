@@ -560,7 +560,7 @@ sap.ui.define([
 	};
 
 	TreeTable.prototype._createLegacySelectionPlugin = function() {
-		return new BindingSelectionPlugin(this);
+		return new BindingSelectionPlugin();
 	};
 
 	return TreeTable;
