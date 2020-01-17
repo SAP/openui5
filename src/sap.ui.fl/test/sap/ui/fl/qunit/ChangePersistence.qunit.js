@@ -4,6 +4,7 @@ QUnit.dump.maxDepth = 10;
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
@@ -22,6 +23,7 @@ sap.ui.define([
 ],
 function (
 	FlexState,
+	DependencyHandler,
 	ChangePersistence,
 	Utils,
 	LayerUtils,
@@ -36,16 +38,21 @@ function (
 	jQuery,
 	URLHandler,
 	sinon,
-	fnBaseUtilMerge
+	merge
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 	var controls = [];
 
+	function getInitialChangesMap(mPropertyBag) {
+		return merge(DependencyHandler.createEmptyDependencyMap(), mPropertyBag);
+	}
+
 	QUnit.module("sap.ui.fl.ChangePersistence", {
 		beforeEach: function () {
 			sandbox.stub(FlexState, "initialize").resolves();
+			sandbox.stub(FlexState, "getVariantsState").returns({});
 			this._mComponentProperties = {
 				name: "MyComponent",
 				appVersion: "1.2.3"
@@ -890,6 +897,7 @@ function (
 			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent.getCall(2).args[0].fileName, "controlChange0", "then _getLayerFromChangeOrChangeContent() was called for the control change");
 			assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
 		});
+
 		QUnit.test("when getChangesForComponent is called with a change instance already existing in the Cache response", function(assert) {
 			var oExistingChangeInstance = new Change({
 				variantReference:"variantManagementId",
@@ -935,6 +943,7 @@ function (
 				assert.ok(aChanges[0].sId, oExistingChangeInstance.sId, "then no new change instance was created");
 			});
 		});
+
 		QUnit.test("when getChangesForComponent is called with no pre-existing change instance", function(assert) {
 			var oMockedWrappedContent = {
 				changes : {
@@ -1704,540 +1713,21 @@ function (
 			var oAppComponent = {
 				id: "mockAppComponent"
 			};
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
-				changes: {
-					changes: [
-						{
-							fileName: "change1",
-							fileType: "change",
-							layer: "USER",
-							reference: "appComponentReference",
-							selector: {id: "controlId"},
-							dependentSelector: []
-						},
-						{
-							fileName: "change2",
-							fileType: "change",
-							layer: "VENDOR",
-							reference: "appComponentReference",
-							selector: {id: "controlId"},
-							dependentSelector: []
-						},
-						{
-							fileName: "change3",
-							fileType: "change",
-							layer: "CUSTOMER",
-							reference: "appComponentReference",
-							selector: {id: "anotherControlId"},
-							dependentSelector: []
-						}
-					]
-				}
-			});
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
-			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-				.then(function (fnGetChangesMap) {
-					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-					var mChanges = fnGetChangesMap().mChanges;
-					assert.ok(mChanges);
-					assert.ok(mChanges["controlId"]);
-					assert.ok(mChanges["anotherControlId"]);
-					assert.equal(mChanges["controlId"].length, 2);
-					assert.equal(mChanges["anotherControlId"].length, 1);
-					assert.ok(mChanges["controlId"][0] instanceof Change, "Change is instanceof Change");
-					assert.ok(mChanges["controlId"][1] instanceof Change, "Change is instanceof Change");
-					assert.ok(mChanges["anotherControlId"][0] instanceof Change, "Change is instanceof Change");
-					assert.ok(mChanges["controlId"].some(function (oChange) {
-						return oChange.getId() === "change1";
-					}));
-					assert.ok(mChanges["controlId"].some(function (oChange) {
-						return oChange.getId() === "change2";
-					}));
-					assert.ok(mChanges["anotherControlId"].some(function (oChange) {
-						return oChange.getId() === "change3";
-					}));
-				});
-		});
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([new Change("a"), new Change("b"), new Change("c")]);
 
-		QUnit.test("when loadChangesMapForComponent is called with an app component containing a combination of app and embedded component changes", function(assert) {
-			var oAppComponent = {
-				createId: function(sSelectorId) {
-					return "mockAppComponent---" + sSelectorId;
-				}
-			};
-			var oChange1 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange1",
-					layer: "USER",
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {
-						id: "field3-2",
-						idIsLocal: true
-					},
-					dependentSelector: {
-						alias: [{
-							id: "group3",
-							idIsLocal: true
-						}, {
-							id: "group2",
-							idIsLocal: true
-						}]
-					}
-				})
-			);
-			oChange1.markFinished({});
-			var oChange2 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange2",
-					layer: "USER",
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {
-						id: "field3-2",
-						idIsLocal: true
-					},
-					dependentSelector: {
-						alias: [{
-							id: "group2",
-							idIsLocal: true
-						}, {
-							id: "group1"
-						}],
-						alias2: {
-							id: "field3-2",
-							idIsLocal: true
-						}
-					}
-				})
-			);
-			oChange2.markFinished({});
-			var oChange3 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange3",
-					layer: "USER",
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {id: "group1"}
-				})
-			);
-			var oChange4 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange4",
-					layer: "USER",
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {
-						id: "embeddedComponent---group1",
-						idIsLocal: false //embedded component
-					}
-				})
-			);
+			var mExpectedChangesMap = {changesStub: true};
+			var oAddChangeStub = sandbox.stub(DependencyHandler, "addChangeAndUpdateDependencies");
+			var oSetStateStub = sandbox.stub(Change.prototype, "setInitialApplyState");
+			sandbox.stub(DependencyHandler, "createEmptyDependencyMap").returns(mExpectedChangesMap);
+			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {}).then(function (fnGetChangesMap) {
+				assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+				assert.equal(oAddChangeStub.callCount, 3, "3 changes were added");
+				assert.equal(oSetStateStub.callCount, 3, "the state was set 3 times");
 
-			var mExpectedChanges = {
-				mChanges: {
-					"mockAppComponent---field3-2": [oChange1, oChange2],
-					group1: [oChange3],
-					"embeddedComponent---group1": [oChange4]
-				},
-				mDependencies: {
-					fileNameChange1: {
-						changeObject: oChange1,
-						dependencies: [],
-						controlsDependencies: [{id: "group3", idIsLocal: true}, {id: "group2", idIsLocal: true}]
-					},
-					fileNameChange2: {
-						changeObject: oChange2,
-						dependencies: ["fileNameChange1"],
-						controlsDependencies: [{id: "group2", idIsLocal: true}, {id: "group1"}]
-					},
-					fileNameChange3: {
-						changeObject: oChange3,
-						dependencies: ["fileNameChange2"]
-					}
-				},
-				mDependentChangesOnMe: {
-					fileNameChange1: ["fileNameChange2"],
-					fileNameChange2: ["fileNameChange3"]
-				},
-				mControlsWithDependencies: {
-					group1: true,
-					"mockAppComponent---group2": true,
-					"mockAppComponent---group3": true
-				},
-				aChanges: [oChange1, oChange2, oChange3, oChange4]
-			};
-
-			var oSetInitialStub = sandbox.stub(Change.prototype, "setInitialApplyState");
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange1, oChange2, oChange3, oChange4]);
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
-			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-			.then(function (fnGetChangesMap) {
-				assert.ok(typeof fnGetChangesMap === "function", "then a function for changes map returned");
-				var mChanges = fnGetChangesMap();
-				assert.deepEqual(mChanges, mExpectedChanges, "then the changes map is returned as expected");
-				assert.equal(oSetInitialStub.callCount, 4, "the apply state of all four changes got reset");
-			});
-		});
-
-		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test2", function (assert) {
-			var oAppComponent = {
-				id: "mockAppComponent"
-			};
-			var oChange0 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange0",
-					layer: "USER",
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {id: "group1"}
-				})
-			);
-			var oChange1 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange1",
-					layer: "USER",
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {id: "field3-2"},
-					dependentSelector: {
-						alias: [{
-							id: "group3"
-						}, {
-							id: "group2"
-						}]
-					}
-				})
-			);
-			var oChange2 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange2",
-					layer: "USER",
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {id: "field3-2"},
-					dependentSelector: {
-						alias: [{
-							id: "group2"
-						}, {
-							id: "group1"
-						}],
-						alias2: {
-							id: "field3-2"
-						}
-					}
-				})
-			);
-
-			var mExpectedChanges = {
-				mChanges: {
-					"field3-2": [oChange1, oChange2],
-					group1: [oChange0]
-				},
-				mDependencies: {
-					fileNameChange1: {
-						changeObject: oChange1,
-						dependencies: [],
-						controlsDependencies: [{id: "group3"}, {id: "group2"}]
-					},
-					fileNameChange2: {
-						changeObject: oChange2,
-						dependencies: ["fileNameChange1", "fileNameChange0"],
-						controlsDependencies: [{id: "group2"}, {id: "group1"}]
-					}
-				},
-				mDependentChangesOnMe: {
-					fileNameChange0: ["fileNameChange2"],
-					fileNameChange1: ["fileNameChange2"]
-				},
-				mControlsWithDependencies: {
-					group1: true,
-					group2: true,
-					group3: true
-				},
-				aChanges: [oChange0, oChange1, oChange2]
-			};
-
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange0, oChange1, oChange2]);
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
-
-			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-				.then(function (fnGetChangesMap) {
-					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-					assert.deepEqual(fnGetChangesMap(), mExpectedChanges);
-				});
-		});
-
-		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test3", function (assert) {
-			var oAppComponent = {
-				id: "mockAppComponent"
-			};
-			var oChange1 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange1",
-					layer: "USER",
-					namespace: "namespace",
-					selector: {id: "field3-2"},
-					reference: "appComponentReference",
-					dependentSelector: {
-						alias: {
-							id: "group3"
-						},
-						alias2: {
-							id: "group2"
-						}
-					}
-				})
-			);
-			var oChange2 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange2",
-					layer: "USER",
-					namespace: "namespace",
-					reference: "appComponentReference",
-					selector: {id: "group2"}
-				})
-			);
-
-			var mExpectedChanges = {
-				mChanges: {
-					"field3-2": [oChange1],
-					group2: [oChange2]
-				},
-				mDependencies: {
-					fileNameChange1: {
-						changeObject: oChange1,
-						dependencies: [],
-						controlsDependencies: [{id: "group3"}, {id: "group2"}]
-					},
-					fileNameChange2: {
-						changeObject: oChange2,
-						dependencies: ["fileNameChange1"]
-					}
-				},
-				mDependentChangesOnMe: {
-					fileNameChange1: ["fileNameChange2"]
-				},
-				mControlsWithDependencies: {
-					group2: true,
-					group3: true
-				},
-				aChanges: [oChange1, oChange2]
-			};
-
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange1, oChange2]);
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
-
-			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-				.then(function (fnGetChangesMap) {
-					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-					assert.deepEqual(fnGetChangesMap(), mExpectedChanges);
-				});
-		});
-
-		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test4", function(assert) {
-			var oAppComponent = {
-				id: "mockAppComponent"
-			};
-			var oChange1 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange1",
-					layer: "USER",
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {id: "group2"}
-				})
-			);
-			var oChange2 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange2",
-					layer: "USER",
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {id: "field3-2"},
-					dependentSelector: {
-						alias: {
-							id: "group3"
-						},
-						alias2: {
-							id: "group2"
-						}
-					}
-				})
-			);
-			var mExpectedChanges = {
-				mChanges: {
-					group2: [oChange1],
-					"field3-2": [oChange2]
-				},
-				mDependencies: {
-					fileNameChange2: {
-						changeObject: oChange2,
-						dependencies: ["fileNameChange1"],
-						controlsDependencies: [{id: "group3"}, {id: "group2"}]
-					}
-				},
-				mDependentChangesOnMe: {
-					fileNameChange1: ["fileNameChange2"]
-				},
-				mControlsWithDependencies: {
-					group2: true,
-					group3: true
-				},
-				aChanges: [oChange1, oChange2]
-			};
-
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([
-				oChange1,
-				oChange2
-			]);
-
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
-
-			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-				.then(function (fnGetChangesMap) {
-					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-					assert.deepEqual(fnGetChangesMap(), mExpectedChanges);
-				});
-		});
-
-		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test5", function(assert) {
-			var oAppComponent = {
-				id :"mockAppComponent"
-			};
-			var oChange1 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange1",
-					layer: "USER",
-					namespace: "namespace",
-					reference: "appComponentReference",
-					selector: {id: "group2"}
-				})
-			);
-			var oChange2 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange2",
-					layer: "USER",
-					namespace: "namespace",
-					reference: "appComponentReference",
-					selector: {id: "group2"}
-				})
-			);
-
-			var mExpectedChanges = {
-				mChanges: {
-					group2: [oChange1, oChange2]
-				},
-				mDependencies: {
-					fileNameChange2: {
-						changeObject: oChange2,
-						dependencies: ["fileNameChange1"]
-					}
-				},
-				mDependentChangesOnMe: {
-					fileNameChange1: ["fileNameChange2"]
-				},
-				mControlsWithDependencies: {},
-				aChanges: [oChange1, oChange2]
-			};
-
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange1, oChange2]);
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
-
-			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-				.then(function (fnGetChangesMap) {
-					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-					assert.deepEqual(fnGetChangesMap(), mExpectedChanges);
-				});
-		});
-
-		QUnit.skip("_addChangeIntoMap adds legacy change only once in case the component prefix matches the app component ID", function(assert) {
-			var sAppComponentId = "appComponentId";
-
-			var oComponent = {
-				getId: function () {
-					return sAppComponentId;
-				},
-				createId: function (sSuffix) {
-					return sAppComponentId + "---" + sSuffix;
-				}
-			};
-
-			var oChange = new Change({
-				fileName:"change1",
-				fileType: "change",
-				layer: "USER",
-				selector: { id: oComponent.createId("controlId") },
-				dependentSelector: []
-			});
-
-			this.oChangePersistence._addChangeIntoMap(oComponent, oChange);
-
-			assert.equal(Object.keys(this.oChangePersistence._mChanges.mChanges).length, 1, "thje change was written only once");
-			assert.equal(this.oChangePersistence._mChanges.mChanges[oComponent.createId("controlId")][0], oChange,
-				"the change was written for the selector ID");
-		});
-
-		QUnit.skip("_addChangeIntoMap adds legacy change twice in case the component prefix does not match the app component ID", function(assert) {
-			var sAppComponentId = "appComponentId";
-
-			var oComponent = {
-				getId: function () {
-					return sAppComponentId;
-				},
-				createId: function (sSuffix) {
-					return sAppComponentId + "---" + sSuffix;
-				}
-			};
-
-			var oChange = new Change({
-				fileName:"change1",
-				fileType: "change",
-				layer: "USER",
-				selector: { id: "anotherComponentId---controlId" },
-				dependentSelector: []
-			});
-
-			this.oChangePersistence._addChangeIntoMap(oComponent, oChange);
-
-			assert.equal(Object.keys(this.oChangePersistence._mChanges.mChanges).length, 2, "the change was written twice");
-			assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"].length, 1,
-				"a change was written for the original selector ID");
-			assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"][0], oChange,
-				"the change was written for the original selector ID");
-			assert.equal(this.oChangePersistence._mChanges.mChanges["appComponentId---controlId"].length, 1,
-				"a change was written for the selector ID concatenated with the app component ID");
-			assert.equal(this.oChangePersistence._mChanges.mChanges["appComponentId---controlId"][0], oChange,
-				"the change was written for the app selector ID");
-		});
-
-		QUnit.skip("_addChangeIntoMap adds non legacy change only once in case the component prefix does not match the app component ID", function(assert) {
-			var sAppComponentId = "appComponentId";
-
-			var oComponent = {
-				getId: function () {
-					return sAppComponentId;
-				},
-				createId: function (sSuffix) {
-					return sAppComponentId + "---" + sSuffix;
-				}
-			};
-
-			var oChange = new Change({
-				fileName:"change1",
-				fileType: "change",
-				layer: "USER",
-				selector: { id: "anotherComponentId---controlId", idIsLocal: false },
-				dependentSelector: []
-			});
-
-			this.oChangePersistence._addChangeIntoMap(oComponent, oChange);
-
-			assert.equal(Object.keys(this.oChangePersistence._mChanges.mChanges).length, 1, "the change was written only once");
-			assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"].length, 1,
-				"a change was written for the original selector ID");
-			assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"][0], oChange,
-				"the change was written for the original selector ID");
+				var mChangesMap = fnGetChangesMap();
+				assert.deepEqual(mChangesMap, mExpectedChangesMap, "the changes map is properly returned");
+				assert.deepEqual(mChangesMap, this.oChangePersistence._mChangesInitial, "the changes map is saved in _mChangesInitial");
+			}.bind(this));
 		});
 
 		QUnit.test("copyDependenciesFromInitialChangesMap", function(assert) {
@@ -2274,7 +1764,7 @@ function (
 				"field3-2": [oChange1, oChange2],
 				group1: [oChange0]
 			};
-			var mInitialChangesMap = {
+			var mInitialChangesMap = getInitialChangesMap({
 				mChanges: mChanges,
 				mDependencies: {
 					fileNameChange1: {
@@ -2293,18 +1783,22 @@ function (
 					fileNameChange1: ["fileNameChange2"]
 				},
 				mControlsWithDependencies: {
-					group1: true,
-					group2: true,
-					group3: true
+					group1: [
+						"fileNameChange2"
+					],
+					group2: [
+						"fileNameChange1",
+						"fileNameChange2"
+					],
+					group3: [
+						"fileNameChange1"
+					]
 				}
-			};
-			var mCurrentChangesMap = {
-				mChanges: mChanges,
-				mDependencies: {},
-				mDependentChangesOnMe: {},
-				mControlsWithDependencies: {}
-			};
-			var mExpectedDependenciesMapAfterFirstChange = {
+			});
+			var mCurrentChangesMap = getInitialChangesMap({
+				mChanges: mChanges
+			});
+			var mExpectedDependenciesMapAfterFirstChange = getInitialChangesMap({
 				mChanges: mChanges,
 				mDependencies: {
 					fileNameChange1: {
@@ -2313,14 +1807,17 @@ function (
 						controlsDependencies: ["group3", "group2"]
 					}
 				},
-				mDependentChangesOnMe: {},
 				mControlsWithDependencies: {
-					group2: true,
-					group3: true
+					group2: [
+						"fileNameChange1"
+					],
+					group3: [
+						"fileNameChange1"
+					]
 				}
-			};
+			});
 
-			var mExpectedDependenciesMapAfterSecondChange = {
+			var mExpectedDependenciesMapAfterSecondChange = getInitialChangesMap({
 				mChanges: mChanges,
 				mDependencies: {
 					fileNameChange1: {
@@ -2334,33 +1831,39 @@ function (
 						controlsDependencies: ["group2", "group1"]
 					}
 				},
-				mDependentChangesOnMe: {},
 				mControlsWithDependencies: {
-					group1: true,
-					group2: true,
-					group3: true
+					group1: [
+						"fileNameChange2"
+					],
+					group2: [
+						"fileNameChange1",
+						"fileNameChange2"
+					],
+					group3: [
+						"fileNameChange1"
+					]
 				}
-			};
+			});
 
 			this.oChangePersistence._mChangesInitial = mInitialChangesMap;
 			this.oChangePersistence._mChanges = mCurrentChangesMap;
-			function fnCallbackTrue() {
+			function dependencyValid() {
 				return true;
 			}
-			function fnCallbackFalse() {
+			function dependencyInvalid() {
 				return false;
 			}
 
-			var mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange0, fnCallbackTrue);
+			var mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange0, dependencyValid);
 			assert.deepEqual(mUpdatedDependenciesMap, mCurrentChangesMap, "no dependencies got copied");
 
-			mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange1, fnCallbackTrue);
+			mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange1, dependencyValid);
 			assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterFirstChange, "all dependencies from change1 got copied");
 
-			mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, fnCallbackFalse);
+			mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, dependencyInvalid);
 			assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterSecondChange, "no dependencies from change2 got copied");
 
-			mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, fnCallbackTrue);
+			mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, dependencyValid);
 			assert.deepEqual(mUpdatedDependenciesMap, mInitialChangesMap, "all dependencies from change2 got copied");
 
 			assert.deepEqual(mUpdatedDependenciesMap, this.oChangePersistence._mChanges, "the updated dependencies map is saved in the internal changes map");
@@ -2940,7 +2443,7 @@ function (
 			};
 
 			var fnAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
-			var fnAddRunTimeCreatedChangeAndUpdateDependenciesSpy = sandbox.spy(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
+			var fnAddRunTimeCreatedChangeAndUpdateDependenciesSpy = sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
 
 			var newChange1 = this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			var newChange2 = this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
@@ -2959,19 +2462,6 @@ function (
 			assert.strictEqual(aChanges[1], newChange2);
 			assert.strictEqual(aChanges[2].getId(), oChangeContent3.fileName);
 			assert.strictEqual(aChanges[2], newChange3);
-			//Test dependencies updated
-			assert.ok(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus2"]);
-			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus2"].changeObject, newChange2);
-			assert.ok(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus2"].dependencies);
-			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus2"].dependencies.length, 1);
-			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus2"].dependencies[0], oChangeContent1.fileName);
-
-			assert.ok(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"]);
-			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"].changeObject, newChange3);
-			assert.ok(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"].dependencies);
-			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"].dependencies.length, 2);
-			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"].dependencies[0], oChangeContent2.fileName);
-			assert.strictEqual(this.oChangePersistence._mChangesInitial.mDependencies["Gizorillus3"].dependencies[1], oChangeContent1.fileName);
 		});
 
 		QUnit.test("Shall add propagation listener on the app component if an embedded component is passed", function (assert) {
@@ -3728,9 +3218,9 @@ function (
 			assert.ok(sId);
 			var oChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
 			assert.equal(oChange.getPendingAction(), "NEW");
-			var oCreatedContent = fnBaseUtilMerge(oChange.getDefinition(), {support: { user: "creator"}});
+			var oCreatedContent = merge(oChange.getDefinition(), {support: { user: "creator"}});
 			var oCreateResponse = {response: [oCreatedContent]};
-			var oUpdatedContent = fnBaseUtilMerge(oCreatedContent, {texts: { variantName: "newName"}});
+			var oUpdatedContent = merge(oCreatedContent, {texts: { variantName: "newName"}});
 			var oUpdateResponse = {response: oUpdatedContent};
 			var oDeleteResponse = {};
 
@@ -3909,7 +3399,7 @@ function (
 				mDependentChangesOnMe: mDependentChangesOnMe
 			};
 
-			this.oChangePersistence._mChangesInitial = fnBaseUtilMerge({}, this.oChangePersistence._mChanges);
+			this.oChangePersistence._mChangesInitial = merge({}, this.oChangePersistence._mChanges);
 		},
 		afterEach: function () {
 			this.oChange1.destroy();

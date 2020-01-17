@@ -58,7 +58,6 @@ sap.ui.define([
 			oChange.setInitialApplyState();
 		} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
 			// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
-			// the change still needs to go through the process so that the dependencies are correctly updated and the whole process is not harmed
 			// scenario: viewCache
 			oChange.markFinished();
 		}
@@ -220,34 +219,39 @@ sap.ui.define([
 			var aPromiseStack = [];
 			var sControlId = oControl.getId();
 			var mChangesMap = fnGetChangesMap();
-			var mChanges = mChangesMap.mChanges;
-			var aChangesForControl = mChanges[sControlId] || [];
+			var aChangesForControl = mChangesMap.mChanges[sControlId] || [];
 			var mPropertyBag = {
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent,
 				view: FlUtils.getViewForControl(oControl)
 			};
+			var bControlWithDependencies;
+
+			if (mChangesMap.mControlsWithDependencies[sControlId]) {
+				DependencyHandler.removeControlsDependencies(mChangesMap, sControlId);
+				bControlWithDependencies = true;
+			}
 
 			aChangesForControl.forEach(function (oChange) {
 				mChangesMap = _checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag);
-				oChange.setQueuedForApply();
-				if (!mChangesMap.mDependencies[oChange.getId()]) {
-					aPromiseStack.push(function() {
-						return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function() {
-							DependencyHandler.removeChangeFromDependencies(mChangesMap, oChange.getId());
-						});
-					});
+				if (oChange.isApplyProcessFinished()) {
+					DependencyHandler.removeChangeFromDependencies(mChangesMap, oChange.getId());
 				} else {
-					var fnCallback = Applier.applyChangeOnControl.bind(Applier, oChange, oControl, mPropertyBag);
-					DependencyHandler.addChangeApplyCallbackToDependency(mChangesMap, oChange.getId(), fnCallback);
+					oChange.setQueuedForApply();
+					if (!mChangesMap.mDependencies[oChange.getId()]) {
+						aPromiseStack.push(function() {
+							return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function() {
+								DependencyHandler.removeChangeFromDependencies(mChangesMap, oChange.getId());
+							});
+						});
+					} else {
+						var fnCallback = Applier.applyChangeOnControl.bind(Applier, oChange, oControl, mPropertyBag);
+						DependencyHandler.addChangeApplyCallbackToDependency(mChangesMap, oChange.getId(), fnCallback);
+					}
 				}
 			});
 
-			// TODO improve handling of mControlsWithDependencies when change applying gets refactored
-			// 	- save the IDs of the waiting changes in the map
-			// 	- only try to apply those changes first
-			if (aChangesForControl.length || mChangesMap.mControlsWithDependencies[sControlId]) {
-				delete mChangesMap.mControlsWithDependencies[sControlId];
+			if (aChangesForControl.length || bControlWithDependencies) {
 				return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function () {
 					return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent);
 				});

@@ -77,7 +77,8 @@ function (
 			mDependencies: mPropertyBag.mDependencies || {},
 			mDependentChangesOnMe: mPropertyBag.mDependentChangesOnMe || {},
 			mControlsWithDependencies: mPropertyBag.mControlsWithDependencies || {},
-			aChanges: mPropertyBag.aChanges || []
+			aChanges: mPropertyBag.aChanges || [],
+			dependencyRemovedInLastBatch: []
 		};
 	}
 
@@ -1224,7 +1225,7 @@ function (
 			this.oChangeOnOtherControl = new Change(mChangeOnOtherControl);
 			this.mChanges = getInitialChangesMap();
 			this.fnGetChangesMap = function () {
-				return this.mChanges;
+				return getInitialChangesMap(this.mChanges);
 			}.bind(this);
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
@@ -1508,7 +1509,7 @@ function (
 			});
 		});
 
-		QUnit.test("with 4 async queued changes depending on on another and the last change already failed", function(assert) {
+		QUnit.test("with 4 async queued changes depending on one another and the last change already failed", function(assert) {
 			assert.expect(1);
 			var mDependencies = {
 				a2: {
