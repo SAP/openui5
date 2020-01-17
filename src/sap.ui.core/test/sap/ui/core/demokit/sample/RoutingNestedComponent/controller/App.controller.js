@@ -11,32 +11,6 @@ sap.ui.define([
 			this.getOwnerComponent().getRouter().attachRouteMatched(this._onRouteMatched, this);
 			this.getOwnerComponent().getRouter().attachBypassed(this._onBypassed, this);
 
-			var oTitlesModel = new JSONModel();
-			this.getView().setModel(oTitlesModel, "titleModel");
-
-			this.getOwnerComponent().getRouter().attachTitleChanged(function (oEvent) {
-				var aNestedHistory = oEvent.getParameters().nestedHistory;
-
-				if (aNestedHistory) {
-					if (aNestedHistory.length > 2) {
-						aNestedHistory.pop();
-					}
-					var oData = { breadcrumbs: [], currentLocation: "" };
-					var oCurrentLocation = aNestedHistory.pop();
-					oData.currentLocation = oCurrentLocation.history[oCurrentLocation.history.length - 1];
-					oData.breadcrumbs = aNestedHistory.map(function (oHistory, iIndex, aHistory) {
-						if (oHistory.history.length > 0) {
-							var oLastHistoryEntry = oHistory.history[oHistory.history.length - 1];
-							return {
-								hash: oLastHistoryEntry.hash,
-								title: oLastHistoryEntry.title,
-								ownerComponentId: oHistory.ownerComponentId
-							};
-						}
-					});
-					oTitlesModel.setData(oData);
-				}
-			});
 		},
 
 		_onRouteMatched: function(oEvent) {
@@ -64,14 +38,6 @@ sap.ui.define([
 			Log.info(this.getView().getControllerName(), "onItemSelect Key=" + sKey);
 
 			this.getOwnerComponent().getRouter().navTo(sKey);
-		},
-
-		onBreadcrumbPress: function(oEvent) {
-			var sHash = oEvent.getSource().getBindingContext("titleModel").getProperty("hash");
-			var sOwnerComponentId = oEvent.getSource().getBindingContext("titleModel").getProperty("ownerComponentId");
-			var oNestedRouter = sap.ui.getCore().getComponent(sOwnerComponentId).getRouter();
-			var oRouteInfo = oNestedRouter.getRouteInfoByHash(sHash);
-			oNestedRouter.navTo(oRouteInfo.name, oRouteInfo.arguments);
 		}
 	});
 });
