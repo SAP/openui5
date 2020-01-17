@@ -33,7 +33,7 @@
 			<Input
 				value="EDP_LAPTOP"
 				description="IT Laptops"
-				width="300px"
+				width="400px"
 				fieldWidth="75%"
 				class="sapUiSmallMarginBottom" />
 		</l:content>
