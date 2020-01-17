@@ -1010,8 +1010,8 @@ sap.ui.define([
 		};
 
 		Popover.prototype._onOrientationChange = function () {
-			var ePopupState = this.oPopup.getOpenState();
-			if (!(ePopupState === OpenState.OPEN || ePopupState === OpenState.OPENING)) {
+			var ePopupState = (this.oPopup && this.oPopup.getOpenState()) || {};
+			if (ePopupState !== OpenState.OPEN && ePopupState !== OpenState.OPENING) {
 				return;
 			}
 
