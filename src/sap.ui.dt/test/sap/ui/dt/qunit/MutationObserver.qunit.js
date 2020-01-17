@@ -79,7 +79,7 @@ function(
 			this.oMutationObserver.registerHandler(this.sNodeId, function (mParameters) {
 				assert.ok(includes(mParameters.type, "MutationObserver"), "then domChanged callback is called for relevant node");
 				fnDone();
-			});
+			}, true);
 
 			this.$Node.text("test");
 		});
@@ -92,7 +92,7 @@ function(
 				this.oMutationObserver.registerHandler(this.sNodeId, function (mParameters) {
 					assert.ok(includes(mParameters.type, "MutationObserver"), "then domChanged callback is called with a relevant node");
 					fnDone();
-				});
+				}, true);
 				this.$Node.contents().get(0).nodeValue = "123";
 			}.bind(this));
 		});
@@ -111,7 +111,7 @@ function(
 				assert.equal(this.$Node[0].childNodes[0].id, "test1", "then first div is appended");
 				assert.equal(this.$Node[0].childNodes[1].id, "test2", "then second div is appended");
 				fnDone();
-			}.bind(this));
+			}.bind(this), true);
 			this.$Node.append('<div id="test1"/>');
 			// setTimeout is needed to avoid native throttling by MutationObserver
 			setTimeout(function () {
@@ -142,7 +142,7 @@ function(
 					assert.ok(true, 'then domchanged callback called for mutation triggered by animationend');
 					fnDone();
 				}
-			});
+			}, true);
 
 			this.$Node.addClass('customClass');
 		});
@@ -162,7 +162,7 @@ function(
 					assert.ok(true, 'then domchanged callback called for mutation triggered by transitionend');
 					fnDone();
 				}
-			});
+			}, true);
 
 			this.$Node.width('200px');
 		});
@@ -188,7 +188,7 @@ function(
 		QUnit.test("when mutations in static UIArea happen inside irrelevant node", function (assert) {
 			var fnDone = assert.async();
 			var oSpy = sandbox.spy();
-			this.oMutationObserver.registerHandler(this.$Node.attr('id'), oSpy);
+			this.oMutationObserver.registerHandler(this.$Node.attr('id'), oSpy, true);
 			jQuery("<div/>").appendTo("#sap-ui-static");
 			// setTimeout is needed because of async nature of native MutationObserver
 			setTimeout(function () {
@@ -203,7 +203,7 @@ function(
 			this.oMutationObserver.registerHandler(this.$Node.attr('id'), function () {
 				assert.ok(true, 'then domChanged callback has been called');
 				fnDone();
-			});
+			}, true);
 			jQuery("<div/>").appendTo(this.$Node);
 		});
 
@@ -212,7 +212,7 @@ function(
 			this.oMutationObserver.registerHandler(this.$Node.attr('id'), function () {
 				assert.ok(true, 'then domChanged callback has been called');
 				fnDone();
-			}, this);
+			}, true);
 			this.$Node.replaceWith(this.$Node.clone());
 		});
 	});
@@ -361,11 +361,11 @@ function(
 					assert.ok(true, 'then domChanged callback on Inner Layout has been called');
 					fnDone();
 				}
-			});
+			}, true);
 			this.oButton.setText('hallo');
 		});
 
-		QUnit.test("when the the inner Layout and button are registered for mutations and the button is modified", function(assert) {
+		QUnit.skip("when the the inner Layout and button are registered for mutations and the button is modified", function(assert) {
 			var fnDone = assert.async();
 			var iCallCounter = 0;
 			this.oMutationObserver.registerHandler(this.oVerticalLayoutInner.getId(), function () {
@@ -373,7 +373,7 @@ function(
 				if (iCallCounter++ === 1) {
 					assert.notOk(true, 'then domChanged callback on Inner Layout should not been called');
 				}
-			});
+			}, true);
 			this.oMutationObserver.registerHandler(this.oButton.getId(), function () {
 				assert.ok(true, 'then domChanged callback on Button has been called');
 				fnDone();
