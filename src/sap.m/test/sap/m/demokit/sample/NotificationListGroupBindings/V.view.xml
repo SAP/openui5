@@ -27,6 +27,7 @@
 									press="{onListItemPress}"
 									authorPicture="{authorPicture}"
 									authorInitials="{authorInitials}"
+									authorAvatarColor="{authorAvatarColor}"
 									buttons="{path: 'itemButtons', templateShareable : true}">
 								<buttons>
 									<Button text="{text}" press="{onButtonPress}"/>
