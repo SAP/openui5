@@ -3,8 +3,12 @@
  */
 
 // Provides control sap.m.ToolbarSpacer.
-sap.ui.define(['./library', 'sap/ui/core/Control', './ToolbarSpacerRenderer'],
-	function(library, Control, ToolbarSpacerRenderer) {
+sap.ui.define(['./library',
+	'sap/ui/core/Control',
+	'./ToolbarSpacerRenderer',
+	"sap/base/Log"
+	],
+function(library, Control, ToolbarSpacerRenderer, Log) {
 	"use strict";
 
 	/**
@@ -16,7 +20,9 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ToolbarSpacerRenderer'],
 	 * @class
 	 * Adds horizontal space between the items used within a {@link sap.m.Toolbar}.
 	 *
-	 * <b>Note:</b> <code>ToolbarSpacer</code> should not be used together with {@link sap.m.ToolbarLayoutData}.
+	 * <b>Note:</b> The <code>sap.m.ToolbarSpacer</code> is a flex control that is intended to
+	 * control its own behavior, thus {@link sap.m.ToolbarLayoutData} is not supported as value for the
+	 * <code>layoutData</code> aggregation of <code>sap.m.ToolbarSpacer</code> and if set it's ignored.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -42,6 +48,15 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ToolbarSpacerRenderer'],
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''}
 		}
 	}});
+
+	ToolbarSpacer.prototype.setLayoutData = function (oLayoutData) {
+		if (oLayoutData && oLayoutData.isA("sap.m.ToolbarLayoutData")) {
+			Log.warning("sap.m.ToolbarLayoutData should not be set in the layoutData aggregation of sap.m.ToolbarSpacer");
+			return this;
+		}
+
+		return this.setAggregation("layoutData", oLayoutData);
+	};
 
 	return ToolbarSpacer;
 
