@@ -170,11 +170,18 @@ function (
 		 * @private
 		 */
 		function _cleanResponsiveClassNames($elemCollection) {
-			var sClassNames = Object.keys(MEDIA).map(function (sKey) {
+			var aClassNames = Object.keys(MEDIA).map(function (sKey) {
 				return MEDIA[sKey];
-			}).join(" ");
+			});
 
-			$elemCollection.removeClass(sClassNames);
+			$elemCollection.each(function (index, elem) {
+				var oControl = jQuery(elem).control(0);
+				if (elem === oControl.getDomRef()) {
+					aClassNames.forEach(oControl.removeStyleClass.bind(oControl));
+				} else {
+					jQuery(elem).removeClass(aClassNames.join(" "));
+				}
+			});
 		}
 
 		/**
@@ -203,7 +210,14 @@ function (
 					break;
 			}
 
-			$elemCollection.addClass(MEDIA[sKey]);
+			$elemCollection.each(function (index, elem) {
+				var oControl = jQuery(elem).control(0);
+				if (elem === oControl.getDomRef()) {
+					oControl.addStyleClass(MEDIA[sKey]);
+				} else {
+					jQuery(elem).addClass(MEDIA[sKey]);
+				}
+			});
 		}
 
 		/**
