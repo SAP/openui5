@@ -1122,7 +1122,7 @@
 							],
 							"default": "Type01"
 						},
-						{ "type": "string" }
+						{ "$ref": "#/definitions/simpleBinding" }
 					]
 				}
 			}
@@ -1182,7 +1182,7 @@
 							],
 							"default": "Type01"
 						},
-						{ "type": "string" }
+						{ "$ref": "#/definitions/simpleBinding" }
 					]
 				}
 			}
@@ -1248,7 +1248,7 @@
 							],
 							"default": "Type01"
 						},
-						{ "type": "string" }
+						{ "$ref": "#/definitions/simpleBinding" }
 					]
 				}
 			  }
