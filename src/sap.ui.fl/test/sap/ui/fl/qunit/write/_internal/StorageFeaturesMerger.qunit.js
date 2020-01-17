@@ -25,7 +25,7 @@ sap.ui.define([
 				isAtoAvailable: false,
 				isAtoEnabled: false,
 				isProductiveSystem: true,
-				draft: {},
+				versioning: {},
 				isZeroDowntimeUpgradeRunning: false,
 				system: "",
 				client: ""
@@ -60,7 +60,7 @@ sap.ui.define([
 			assert.equal(oResult.isProductiveSystem, false, "isProductiveSystem is false");
 		});
 
-		QUnit.test("mergeResults handles the draft flag", function (assert) {
+		QUnit.test("mergeResults handles the versioning flags", function (assert) {
 			var oResponse1 = {
 				layers: ["VENDOR", "CUSTOMER_BASE"],
 				features: {isVersioningEnabled: false}
@@ -77,11 +77,11 @@ sap.ui.define([
 
 			var oResult = StorageFeaturesMerger.mergeResults(aResponse);
 
-			assert.equal(oResult.draft.VENDOR, false);
-			assert.equal(oResult.draft.CUSTOMER_BASE, false);
-			assert.equal(oResult.draft.PARTNER, undefined);
-			assert.equal(oResult.draft.CUSTOMER, true);
-			assert.equal(oResult.draft.USER, false);
+			assert.equal(oResult.versioning.VENDOR, false);
+			assert.equal(oResult.versioning.CUSTOMER_BASE, false);
+			assert.equal(oResult.versioning.PARTNER, undefined);
+			assert.equal(oResult.versioning.CUSTOMER, true);
+			assert.equal(oResult.versioning.USER, false);
 		});
 	});
 

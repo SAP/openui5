@@ -361,7 +361,7 @@ sap.ui.define([
 				isVariantSharingEnabled: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
-				draft: {
+				versioning: {
 					CUSTOMER: false,
 					USER: false
 				},
