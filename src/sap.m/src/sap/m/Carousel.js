@@ -326,6 +326,10 @@ function(
 	 */
 	Carousel.prototype.ontouchend = function(oEvent) {
 		if (this._oMobifyCarousel) {
+
+			if (this._oMobifyCarousel.hasActiveTransition()) {
+				this._oMobifyCarousel.onTransitionComplete();
+			}
 			this._oMobifyCarousel.touchend(oEvent);
 		}
 	};
@@ -1103,6 +1107,10 @@ function(
 		}
 
 		oEvent.preventDefault();
+
+		if (this._oMobifyCarousel.hasActiveTransition()) {
+			this._oMobifyCarousel.onTransitionComplete();
+		}
 
 		// Calculate the index of the next page that will be shown
 		if (nIndex !== 0) {
