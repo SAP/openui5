@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/util/ObjectPath",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/base/Log"
 ], function (
 	createPromise,
+	PropertyEditorFactory,
 	Control,
 	ResourceModel,
 	ObjectPath,
@@ -246,6 +248,7 @@ sap.ui.define([
 	};
 
 	BaseEditor.prototype._setConfig = function (oConfig) {
+		PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
 		var vReturn = this.setProperty("config", oConfig, false);
 		this._initialize();
 		return vReturn;
@@ -381,39 +384,15 @@ sap.ui.define([
 		return mPromise.promise.then(removeHandler, removeHandler);
 	};
 
-	BaseEditor.prototype._loadClasses = function (aModules) {
-		return this._createPromise(function (fnResolve, fnReject) {
-			sap.ui.require(
-				aModules,
-				function () {
-					fnResolve(Array.from(arguments));
-				},
-				fnReject
-			);
-		});
-	};
-
 	BaseEditor.prototype.createPropertyEditor = function (oPropertyConfig) {
-		var mConfig = this.getConfig();
-		var aTypes = Object.keys(mConfig.propertyEditors);
-		var aModules = aTypes.map(function(sType) {
-			return mConfig.propertyEditors[sType];
-		});
+		return PropertyEditorFactory.create(oPropertyConfig.type).then(function (oPropertyEditor) {
+			oPropertyEditor.setModel(this._oContextModel, "_context");
+			oPropertyEditor.setModel(this._oI18nModel, "i18n");
+			oPropertyEditor.setConfig(_merge({}, oPropertyConfig)); // deep clone to avoid editor modifications to influence the outer config
 
-		return this._loadClasses(aModules).then(function (aClasses) {
-			var Editor = aClasses[aTypes.indexOf(oPropertyConfig.type)];
-			if (Editor) {
-				var oPropertyEditor = new Editor({
-					editor: this
-				});
-				oPropertyEditor.setModel(this._oContextModel, "_context");
-				oPropertyEditor.setModel(this._oI18nModel, "i18n");
-				oPropertyEditor.setConfig(_merge({}, oPropertyConfig)); // deep clone to avoid editor modifications to influence the outer config
-
-				// TODO: control styling via editor properties?
-				oPropertyEditor.addStyleClass("sapUiTinyMargin");
-				return oPropertyEditor;
-			}
+			// TODO: control styling via editor properties?
+			oPropertyEditor.addStyleClass("sapUiTinyMargin");
+			return oPropertyEditor;
 		}.bind(this));
 	};
 
