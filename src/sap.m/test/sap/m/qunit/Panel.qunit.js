@@ -688,6 +688,7 @@ sap.ui.define([
 	QUnit.test("Expandable panel in IE and Edge", function(assert) {
 		this.stub(sap.ui.Device, "browser", { msie: true });
 		var oPanel = new Panel({
+				headerText: "Title",
 				expandable: true,
 				accessibleRole: PanelAccessibleRole.Region
 			}),
@@ -774,5 +775,16 @@ sap.ui.define([
 		sContentId = this.oPanel.getDomRef("content").id;
 		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-controls"), sContentId,
 				"an aria-controls attribute with reference to the content should be added to the collapse button");
+	});
+
+	QUnit.test("aria-labelledby", function (assert) {
+		var oPanel = new Panel();
+
+		oPanel.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oPanel.$().attr("aria-labelledby"), undefined, "There should be no aria-labelledby when there's no header or headerText");
+
+		oPanel.destroy();
 	});
 });
