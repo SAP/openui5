@@ -904,6 +904,41 @@ function (
 		assert.strictEqual(_getVisibleControlsCount(this.oSB), 12, "phone mode requirements passed");
 	});
 
+	QUnit.test("LayoutData of Search", function (assert) {
+		// Arrange
+		var oSearchManager = this.oSB.getSearchManager(),
+			oSearchEventDelegate = {
+					"onAfterRendering": function() {
+						oSearchManager._oSearch.removeEventDelegate(oSearchEventDelegate);
+
+						// Assert
+						assert.strictEqual(oSearchManager._oSearch.getLayoutData().getPriority(), "AlwaysOverflow",
+							"Always priority is set when Search is not open and it is in the overflow menu of the OFT");
+
+						// Clean up
+						fnDone();
+				}
+			},
+			oOSBEventDelegate = {
+				"onAfterRendering": function() {
+					this.oSB._oSearch.removeEventDelegate(oOSBEventDelegate);
+
+					// Act
+					this.oSB._oOverflowToolbar._getOverflowButton().firePress();
+				}
+			},
+			fnDone = assert.async();
+
+
+		assert.expect(1);
+
+		// Act
+		oSearchManager._oSearch.setIsOpen(false);
+		oSearchManager._oSearch.addEventDelegate(oSearchEventDelegate);
+		this.oSB.addEventDelegate(oOSBEventDelegate, this);
+		this.oSB._oResponsiveHandler._transformToPhoneState();
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oSB = new ShellBar({

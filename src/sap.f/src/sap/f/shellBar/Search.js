@@ -186,9 +186,15 @@ sap.ui.define(['sap/ui/core/Control',
 		};
 
 		Search.prototype._switchOpenStateOnSearch = function () {
-			var oLayoutData = this.getIsOpen() ? this._layoutDataWhenOpen : this._layoutDataWhenClosed;
+			var oLayoutData;
 
-			if (this.getLayoutData() === oLayoutData) {
+			if (this.getIsOpen()) {
+				oLayoutData = this._layoutDataWhenOpen;
+			} else if (!this._bInOverflow) {
+				oLayoutData = this._layoutDataWhenClosed;
+			}
+
+			if (!oLayoutData || this.getLayoutData() === oLayoutData) {
 				return;
 			}
 
@@ -271,13 +277,17 @@ sap.ui.define(['sap/ui/core/Control',
 		Search.prototype._onBeforeEnterOverflow = function () {
 			var oSearchButton = this._getSearchButton();
 
+			this._bInOverflow = true;
 			oSearchButton._bInOverflow = true;
 			oSearchButton.addStyleClass("sapFShellBarSearchOverflowToolbar");
+
+			this._switchOpenStateOnSearch();
 		};
 
 		Search.prototype._onAfterExitOverflow = function () {
 			var oSearchButton = this._getSearchButton();
 
+			this._bInOverflow = false;
 			oSearchButton._bInOverflow = false;
 			oSearchButton.removeStyleClass("sapFShellBarSearchOverflowToolbar");
 		};
