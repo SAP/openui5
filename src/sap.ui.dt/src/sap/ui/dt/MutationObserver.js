@@ -70,7 +70,7 @@ sap.ui.define([
 		this._aIgnoredMutations = [];
 		this._bHandlerRegistred = false;
 		this._mMutationHandlers = {};
-
+		this._aRootIds = [];
 		this._startMutationObserver();
 	};
 
@@ -115,8 +115,8 @@ sap.ui.define([
 			this._bHandlerRegistred = true;
 		}
 		this._mMutationHandlers[sId].push(fnDomChangedHandler);
-		if (bIsRoot) {
-			this._sRootId = sId;
+		if (bIsRoot && this._aRootIds.indexOf(sId) === -1) {
+			this._aRootIds.push(sId);
 		}
 	};
 
@@ -129,9 +129,9 @@ sap.ui.define([
 		if (Object.keys(this._mMutationHandlers).length === 0) {
 			this._bHandlerRegistred = false;
 		}
-		if (sId === this._sRootId) {
-			this._sRootId = undefined;
-		}
+		this._aRootIds = this._aRootIds.filter(function(sRegiteredRootId) {
+			return sRegiteredRootId !== sId;
+		});
 	};
 
 	MutationObserver.prototype._hasScrollbar = function (bScrollbarOnElement, $Element) {
@@ -196,6 +196,7 @@ sap.ui.define([
 
 	MutationObserver.prototype._getRelevantElementId = function (oNode) {
 		var sNodeId = oNode && oNode.getAttribute && oNode.getAttribute('id');
+		var sRelevantElementId;
 		if (
 			// 1. Filter out overlay mutations
 			!DOMUtil.contains("overlay-container", oNode)
@@ -218,16 +219,20 @@ sap.ui.define([
 			// }
 			// // 4.2. Target Node is an ancestor of the root element, but not a static area
 			// return (this._sRootId && oNode.contains(document.getElementById(this._sRootId))) ? this._sRootId : undefined;
-			if (
-				// 4.1. Target Node is inside one of the white listed element
-				DOMUtil.contains(this._sRootId, oNode)
-				// 4.2. Target Node is an ancestor of one of the white listed element, but not a static area
-				|| oNode.contains(document.getElementById(this._sRootId))
-			) {
-				return this._sRootId;
+			var iIndex = 0;
+			while (this._aRootIds.length > iIndex && !sRelevantElementId) {
+				if (
+					// 4.1, OR the closest element need to be registered
+					DOMUtil.contains(this._aRootIds[iIndex], oNode)
+					// 4.2. Target Node is an ancestor of the root element, but not a static area
+					|| oNode.contains(document.getElementById(this._aRootIds[iIndex]))
+				) {
+					sRelevantElementId = this._aRootIds[iIndex];
+				}
+				iIndex++;
 			}
 		}
-		return undefined;
+		return sRelevantElementId;
 	};
 
 	MutationObserver.prototype._getRelevantElementIdsFromStaticArea = function (oMutation) {
@@ -333,12 +338,12 @@ sap.ui.define([
 	};
 
 	MutationObserver.prototype._callDomChangedOnResizeWithRoot = function (sMutationType) {
-		if (this._sRootId) {
+		if (this._aRootIds.length) {
 			if (this._iApplyStylesRequest) {
 				window.cancelAnimationFrame(this._iApplyStylesRequest);
 			}
 			this._iApplyStylesRequest = window.requestAnimationFrame(function () {
-				this._callRelevantCallbackFunctions([this._sRootId], sMutationType);
+				this._callRelevantCallbackFunctions(this._aRootIds, sMutationType);
 				delete this._iApplyStylesRequest;
 			}.bind(this));
 		}
@@ -346,24 +351,27 @@ sap.ui.define([
 
 	MutationObserver.prototype._fireDomChangeOnScroll = function (oEvent) {
 		var oTarget = oEvent.target;
+		var aTargetElementIds = [];
 		// The line below is required to avoid double scrollbars on the browser
 		// when the document is scrolled to negative values (relevant for Mac)
 		if (this._bHandlerRegistred && oTarget !== document) {
 			// Target Node is inside one of the registered element
 			var sTargetElementId = this._getRelevantElementId(oTarget);
-			// Target Node is an ancestor of one of the root element, but not a static area
-			if (
-				sTargetElementId === undefined
-				&& oTarget.contains(document.getElementById(this._sRootId))
-				&& oTarget.getAttribute("id") !== "sap-ui-static"
+			if (sTargetElementId) {
+				aTargetElementIds.push(sTargetElementId);
+			} else if (
+				// Target Node is an ancestor of one of the root element, but not a static area
+				oTarget.getAttribute("id") !== "sap-ui-static"
 			) {
-				sTargetElementId = this._sRootId;
+				aTargetElementIds = this._aRootIds.filter(function (sTargetElementId) {
+					return oTarget.contains(document.getElementById(sTargetElementId));
+				});
 			}
 			if (
-				sTargetElementId
+				aTargetElementIds.length
 				&& !OverlayUtil.getClosestOverlayForNode(oTarget)
 			) {
-				this._callRelevantCallbackFunctions([sTargetElementId], "MutationOnScroll");
+				this._callRelevantCallbackFunctions(aTargetElementIds, "MutationOnScroll");
 			}
 		}
 	};
