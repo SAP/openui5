@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/prepareChangesMap",
 	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/Log"
 ], function(
 	merge,
 	ObjectPath,
@@ -23,7 +24,8 @@ sap.ui.define([
 	prepareChangesMap,
 	prepareVariantsMap,
 	LayerUtils,
-	Utils
+	Utils,
+	Log
 ) {
 	"use strict";
 
@@ -59,6 +61,7 @@ sap.ui.define([
 	var FlexState = {};
 
 	var _mInstances = {};
+	var _mNavigationHandlers = {};
 	var _mInitPromises = {};
 	var _mPrepareFunctions = {
 		appDescriptorMap: prepareAppDescriptorMap,
@@ -143,6 +146,7 @@ sap.ui.define([
 				// temporarily create an instance without '.Component'
 				// TODO remove as soon as both with and without '.Component' are harmonized
 				createSecondInstanceIfNecessary(mPropertyBag);
+				_registerMaxLayerHandler(mPropertyBag.reference);
 
 				// no further changes to storageResponse properties allowed
 				// TODO enable the Object.freeze as soon as its possible
@@ -152,6 +156,40 @@ sap.ui.define([
 			});
 
 		return _mInitPromises[mPropertyBag.reference];
+	}
+
+	function _registerMaxLayerHandler(sReference) {
+		var oUshellContainer = LayerUtils.getUshellContainer();
+		if (oUshellContainer) {
+			_mNavigationHandlers[sReference] = _handleMaxLayerChange.bind(null, sReference);
+			oUshellContainer.getService("ShellNavigation").registerNavigationFilter(_mNavigationHandlers[sReference]);
+		}
+	}
+
+	function _deRegisterMaxLayerHandler(sReference) {
+		var oUshellContainer = LayerUtils.getUshellContainer();
+		if (oUshellContainer && _mNavigationHandlers[sReference]) {
+			oUshellContainer.getService("ShellNavigation").unregisterNavigationFilter(_mNavigationHandlers[sReference]);
+			delete _mNavigationHandlers[sReference];
+		}
+	}
+
+	function _handleMaxLayerChange(sReference, sNewHash, sOldHash) {
+		var oUshellContainer = LayerUtils.getUshellContainer();
+		if (oUshellContainer) {
+			var oShellNavigation = oUshellContainer.getService("ShellNavigation");
+			try {
+				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash);
+				var sPreviousMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sOldHash);
+				if (sCurrentMaxLayer !== sPreviousMaxLayer) {
+					FlexState.clearMaxLayerFiltering(sReference);
+				}
+			} catch (oError) {
+				// required to hinder any errors - can break FLP navigation
+				Log.error(oError.message);
+			}
+			return oShellNavigation.NavigationFilterStatus.Continue;
+		}
 	}
 
 	/**
@@ -219,9 +257,13 @@ sap.ui.define([
 
 	FlexState.clearState = function (sReference) {
 		if (sReference) {
+			_deRegisterMaxLayerHandler(sReference);
 			delete _mInstances[sReference];
 			delete _mInitPromises[sReference];
 		} else {
+			Object.keys(_mInstances).forEach(function(sReference) {
+				_deRegisterMaxLayerHandler(sReference);
+			});
 			_mInstances = {};
 			_mInitPromises = {};
 		}

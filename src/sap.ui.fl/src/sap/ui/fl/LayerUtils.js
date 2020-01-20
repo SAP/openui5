@@ -87,15 +87,8 @@ function(
 		 * @return {String} maxLayer
 		 */
 		getMaxLayer: function () {
-			var sParseMaxLayer;
-			var oUshellContainer = this.getUshellContainer();
-			if (oUshellContainer) {
-				var oParsedHash = oUshellContainer.getService("URLParsing").parseShellHash(hasher.getHash()) || {};
-				if (oParsedHash.params && oParsedHash.params.hasOwnProperty(this.FL_MAX_LAYER_PARAM)) {
-					sParseMaxLayer = oParsedHash.params[this.FL_MAX_LAYER_PARAM][0];
-				}
-			}
-			return sParseMaxLayer || this.getUrlParameter(this.FL_MAX_LAYER_PARAM) || this._sTopLayer;
+			var sParseMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(hasher.getHash());
+			return sParseMaxLayer || LayerUtils.getUrlParameter(this.FL_MAX_LAYER_PARAM) || LayerUtils._sTopLayer;
 		},
 
 		/**
@@ -200,6 +193,22 @@ function(
 		 */
 		getUshellContainer: function() {
 			return sap.ushell && sap.ushell.Container;
+		},
+
+		/**
+		 * Returns max layer technical parameter from the passed hash if ushell is available
+		 *
+		 * @param {string} sHash Hash value
+		 * @returns {string|undefined} Max layer parameter value, if available
+		 */
+		getMaxLayerTechnicalParameter: function(sHash) {
+			var oUshellContainer = this.getUshellContainer();
+			if (oUshellContainer) {
+				var oParsedHash = oUshellContainer.getService("URLParsing").parseShellHash(sHash) || {};
+				if (oParsedHash.params && oParsedHash.params.hasOwnProperty(this.FL_MAX_LAYER_PARAM)) {
+					return oParsedHash.params[this.FL_MAX_LAYER_PARAM][0];
+				}
+			}
 		}
 	};
 	return LayerUtils;
