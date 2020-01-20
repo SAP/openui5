@@ -58,7 +58,7 @@ sap.ui.define([
 				/**
 				 * Fired when the property of the editor has changed
 				 */
-				propertyChange: {
+				valueChange: {
 					parameters: {
 						/**
 						 * Path in the context object where the change should happen
@@ -210,8 +210,8 @@ sap.ui.define([
 			oRm.close("div");
 		},
 
-		firePropertyChange: function(vValue) {
-			this.fireEvent("propertyChange", {
+		fireValueChange: function(vValue) {
+			this.fireEvent("valueChange", {
 				path: this.getConfig().path,
 				value: vValue
 			});

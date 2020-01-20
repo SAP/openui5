@@ -17,7 +17,7 @@ sap.ui.define([
 	 * Constructor for a new <code>EnumStringEditor</code>.
 	 * This allows to select from predefined string values or to provide binding strings for a specified property of a JSON object.
 	 * The editor is rendered as a {@link sap.m.ComboBox}.
-	 * To get notified about changes made with the editor, you can use the <code>attachPropertyChange</code> method,
+	 * To get notified about changes made with the editor, you can use the <code>attachValueChange</code> method,
 	 * which passes the current property state as a string representing a valid option value or as a binding string to the provided callback function when the user selects a value or edits the input.
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
@@ -36,7 +36,7 @@ sap.ui.define([
 		_onChange: function() {
 			var oCombo = this.getContent();
 			if (this._validate()) {
-				this.firePropertyChange(oCombo.getSelectedKey() || oCombo.getValue());
+				this.fireValueChange(oCombo.getSelectedKey() || oCombo.getValue());
 			}
 		},
 

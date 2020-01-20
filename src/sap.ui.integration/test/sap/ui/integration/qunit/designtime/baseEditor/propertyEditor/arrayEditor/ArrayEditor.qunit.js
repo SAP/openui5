@@ -116,7 +116,7 @@ sap.ui.define([
 		QUnit.test("When the first delete button is pressed in the editor", function (assert) {
 			var done = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is only one side indicator");
 				assert.equal(oEvent.getParameter("value")[0].title, "Deviation", "Then it is updated correctly");
 				done();
@@ -128,7 +128,7 @@ sap.ui.define([
 		QUnit.test("When the second delete button is pressed in the editor", function (assert) {
 			var done = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is only one side indicator");
 				assert.strictEqual(oEvent.getParameter("value")[0].title, "Target", "Then it is updated correctly");
 				done();
@@ -171,7 +171,7 @@ sap.ui.define([
 			};
 			this.oEditor.setConfig(oConfig);
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.deepEqual(
 					oEvent.getParameter("value")[2],
 					{
@@ -193,7 +193,7 @@ sap.ui.define([
 		QUnit.test("When the add button is pressed in the editor", function (assert) {
 			var done = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 3, "Then there are three side indicators");
 				assert.deepEqual(oEvent.getParameter("value")[2], {title: "Side Indicator"}, "Then the new item is created with proper default values");
 				done();
@@ -205,7 +205,7 @@ sap.ui.define([
 		QUnit.test("When a new item is added to and an existing item is removed from an array", function (assert) {
 			var done = assert.async();
 
-			this.oEditor.attachEventOnce("propertyChange", function (oEvent) {
+			this.oEditor.attachEventOnce("valueChange", function (oEvent) {
 				var aEditorValueAfterAdding = oEvent.getParameter("value");
 				assert.deepEqual(
 					aEditorValueAfterAdding,
@@ -230,7 +230,7 @@ sap.ui.define([
 				ObjectPath.set(aParts, oEvent.getParameter("value"), oContext);
 				this.oContextModel.checkUpdate();
 
-				this.oEditor.attachPropertyChange(function (oEvent) {
+				this.oEditor.attachValueChange(function (oEvent) {
 					assert.deepEqual(
 						oEvent.getParameter("value"),
 						[{
@@ -270,7 +270,7 @@ sap.ui.define([
 				}
 			};
 			this.oEditor.setConfig(this.oPropertyConfig);
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is one item");
 				assert.deepEqual(oEvent.getParameter("value")[0], {title: "Default Title"}, "Then the new item is created with proper default values");
 				done();
@@ -309,7 +309,7 @@ sap.ui.define([
 		QUnit.test("when pressing moveUp", function (assert) {
 			var done = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				var aValue = oEvent.getParameter("value");
 				assert.strictEqual(aValue[0].title, "Deviation", "then Deviation is on the first place in array editor");
 				assert.strictEqual(aValue[1].title, "Target", "then Target is on the second place in array editor");
@@ -325,7 +325,7 @@ sap.ui.define([
 		QUnit.test("when pressing moveDown", function (assert) {
 			var done = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				var aValue = oEvent.getParameter("value");
 				assert.strictEqual(aValue[0].title, "Deviation", "then Deviation is on the first place in array editor");
 				assert.strictEqual(aValue[1].title, "Target", "then Target is on the second place in array editor");
@@ -405,7 +405,7 @@ sap.ui.define([
 		QUnit.test("when add button is pressed for parent array", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				var aValue = oEvent.getParameter("value");
 				var mLastChild = aValue.slice().pop();
 

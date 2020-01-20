@@ -84,7 +84,7 @@ sap.ui.define([
 
 		QUnit.test("When an element is added", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 2, "Then editor contains two keys");
 				assert.strictEqual(
 					Object.keys(ObjectPath.get(["sampleMap"], this.oBaseEditor.getJson())).length,
@@ -98,10 +98,10 @@ sap.ui.define([
 
 		QUnit.test("When two elements are added", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachEventOnce("propertyChange", function (oEvent) {
+			this.oEditor.attachEventOnce("valueChange", function (oEvent) {
 				assert.ok(oEvent.getParameter("value").hasOwnProperty("key"), "Then a new key is added");
 
-				this.oEditor.attachPropertyChange(function (oEvent) {
+				this.oEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 3, "Then editor contains three keys");
 					fnDone();
 				});
@@ -112,7 +112,7 @@ sap.ui.define([
 
 		QUnit.test("When an element is removed", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.notOk(oEvent.getParameter("value").hasOwnProperty("foo"), "Then the property is removed");
 				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 0, "Then editor contains no more keys");
 				assert.strictEqual(
@@ -133,7 +133,7 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				this.oAddButton = getMapEditorContent(this.oEditor).addButton;
 
-				this.oEditor.attachPropertyChange(function (oEvent) {
+				this.oEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 1, "Then editor contains one key");
 					fnDone();
 				});
@@ -146,8 +146,8 @@ sap.ui.define([
 
 		QUnit.test("When an element key is changed to an unique value", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachEventOnce("propertyChange", function () {
-				this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachEventOnce("valueChange", function () {
+				this.oEditor.attachValueChange(function (oEvent) {
 					assert.deepEqual(
 						oEvent.getParameter("value"),
 						{
@@ -166,7 +166,7 @@ sap.ui.define([
 
 		QUnit.test("When an element key is changed to an existing value", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachEventOnce("propertyChange", function () {
+			this.oEditor.attachEventOnce("valueChange", function () {
 				this.oEditorContent = getMapEditorContent(this.oEditor);
 				this.aItems[0].key.setValue("key");
 				QUnitUtils.triggerEvent("input", this.aItems[0].key.getDomRef());
@@ -187,7 +187,7 @@ sap.ui.define([
 
 		QUnit.test("When a value is updated and the new value is valid", function (assert) {
 			var fnDone = assert.async();
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.deepEqual(
 					oEvent.getParameter("value"),
 					{

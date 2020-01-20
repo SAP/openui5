@@ -68,7 +68,7 @@ sap.ui.define([
 		QUnit.test("When a value is changed in the editor", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value"), 43, "Then it is updated correctly");
 				fnDone();
 			});
@@ -80,7 +80,7 @@ sap.ui.define([
 		QUnit.test("When a binding path is provided", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value"), "{someBindingPath}", "Then the value is updated correctly");
 				fnDone();
 			});
