@@ -89,7 +89,13 @@
                 <module>sap/m/tutorial/Worklist-ManageProductStock</module>
             </modules>
         </component>
-         <component>
+        <component>
+            <name>CA-UI5-COR</name>
+            <modules>
+                <module>sap/m/tutorial/QuickStart</module>
+            </modules>
+        </component>
+        <component>
             <name>CA-UI5-CMP</name>
             <modules>
                 <module>sap/m/P13nDialog</module>
