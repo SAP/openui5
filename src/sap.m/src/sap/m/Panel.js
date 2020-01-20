@@ -361,19 +361,20 @@ sap.ui.define([
 		aAriaLabels = this.oIconCollapsed.getAriaLabelledBy();
 
 		// If the old label is different we should reinitialize the association, because we can have only one label
-		if (aAriaLabels.indexOf(sLabelId) === -1) {
+		if (sLabelId && aAriaLabels.indexOf(sLabelId) === -1) {
 			this.oIconCollapsed.removeAllAssociation("ariaLabelledBy");
 			!bFormRole && this.oIconCollapsed.addAriaLabelledBy(sLabelId);
 		}
 	};
 
 	Panel.prototype._getLabellingElementId = function () {
-		var headerToolbar = this.getHeaderToolbar(),
-			id;
+		var oHeaderToolbar = this.getHeaderToolbar(),
+			sHeaderText = this.getHeaderText(),
+			id = null;
 
-		if (headerToolbar) {
-			id = headerToolbar.getTitleId();
-		} else {
+		if (oHeaderToolbar) {
+			id = oHeaderToolbar.getTitleId();
+		} else if (sHeaderText) {
 			id = this.getId() + "-header";
 		}
 
