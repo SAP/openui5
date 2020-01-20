@@ -428,16 +428,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetadata.prototype._getEntityAssociationEnd = function(oEntityType, sName) {
+		var sCacheKey;
 
 		if (!this._checkMetadataLoaded()) {
 			return null;
 		}
+
+		this._mGetEntityAssociationEndCache = this._mGetEntityAssociationEndCache || {};
+		sCacheKey = oEntityType.namespace + "." + oEntityType.name + "/" + sName;
 		// fill the cache
-		if (!this._mGetEntityAssociationEndCache || !this._mGetEntityAssociationEndCache[oEntityType.name + "|" + sName]) {
-			this._mGetEntityAssociationEndCache = {};
+		if (this._mGetEntityAssociationEndCache[sCacheKey] === undefined) {
 			var oNavigationProperty = oEntityType
-				? Utils.findObject(oEntityType.navigationProperty, sName)
-				: null,
+					? Utils.findObject(oEntityType.navigationProperty, sName)
+					: null,
 				oAssociation = oNavigationProperty
 					? Utils.getObject(this.oMetadata.dataServices.schema, "association", oNavigationProperty.relationship)
 					: null,
@@ -445,11 +448,11 @@ sap.ui.define([
 					? Utils.findObject(oAssociation.end, oNavigationProperty.toRole, "role")
 					: null;
 
-			this._mGetEntityAssociationEndCache[oEntityType.name + "|" + sName] = oAssociationEnd;
+			this._mGetEntityAssociationEndCache[sCacheKey] = oAssociationEnd;
 		}
 
 		// return the value from the cache
-		return this._mGetEntityAssociationEndCache[oEntityType.name + "|" + sName];
+		return this._mGetEntityAssociationEndCache[sCacheKey];
 	};
 
 	function getEntitySetsMap(schema){
