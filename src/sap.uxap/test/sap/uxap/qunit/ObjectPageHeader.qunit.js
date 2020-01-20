@@ -481,6 +481,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 								'<actions>' +
 									'<m:CheckBox id="testCheckBox" text="Test"/>' +
 									'<ObjectPageHeaderActionButton id="installButton" text="Install" hideIcon="true" hideText="false" type="Emphasized"/>' +
+									'<ObjectPageHeaderActionButton id="testButton2" text="Test Button" type="Emphasized"/>' +
 								'</actions>' +
 							'</ObjectPageHeader>' +
 						'</headerTitle>' +
@@ -596,6 +597,38 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 
 		// assert
 		assert.ok(oSpy.called, "The _adaptObjectPageHeaderIndentifierLine function is called");
+	});
+
+	QUnit.test("Change of action visibility should result in invalidation, layout adaptation", function (assert) {
+		var done = assert.async();
+
+		var oHeader = this.myView.byId("applicationHeader"),
+			oInvalidateSpy = sinon.spy(oHeader, "invalidate"),
+			oAdaptLayoutSpy = sinon.spy(oHeader, "_adaptLayoutForDomElement");
+
+		var oActionButton = this.myView.byId("testButton2");
+
+		oInvalidateSpy.reset();
+		oAdaptLayoutSpy.reset();
+
+		var oDelegate = {
+			onAfterRendering: function() {
+				oHeader.removeEventDelegate(oDelegate);
+
+				assert.ok(oAdaptLayoutSpy.called, "the layout re-calculations are triggered after a new rendering");
+
+				done();
+			}
+		};
+
+		oHeader.addEventDelegate(oDelegate);
+
+		assert.notOk(oInvalidateSpy.called, "ObjectPageHeader is not invalidated yet");
+		assert.notOk(oAdaptLayoutSpy.called, "_adaptLayoutForDomElement is not called yet");
+
+		oActionButton.setVisible(false);
+
+		assert.ok(oInvalidateSpy.called, "ObjectPageHeader was invalidated");
 	});
 
 	QUnit.test("_adaptLayoutForDomElement skips calculations if 0 width", function (assert) {
