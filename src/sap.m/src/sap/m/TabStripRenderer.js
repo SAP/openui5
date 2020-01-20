@@ -9,7 +9,9 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * <code>TabStrip</code> renderer.
 	 * @namespace
 	 */
-	var TabStripRenderer = {};
+	var TabStripRenderer = {
+		apiVersion: 2
+	};
 
 		TabStripRenderer.LEFT_OVERRFLOW_BTN_CLASS_NAME = "sapMTSLeftOverflowButtons";
 		TabStripRenderer.RIGHT_OVERRFLOW_BTN_CLASS_NAME = "sapMTSRightOverflowButtons";
@@ -30,19 +32,23 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 		if (Device.system.phone === true) {
 			this.renderTouchArea(oRm, oControl);
 		} else {
-			oRm.write("<div id='" + oControl.getId() + "-leftOverflowButtons' class='" + this.LEFT_OVERRFLOW_BTN_CLASS_NAME + "'>");
+			oRm.openStart("div", oControl.getId() + "-leftOverflowButtons");
+			oRm.class(this.LEFT_OVERRFLOW_BTN_CLASS_NAME);
+			oRm.openEnd();
 			if (oControl.getAggregation("_leftArrowButton")) {
 				this.renderLeftOverflowButtons(oRm, oControl, false);
 			}
-			oRm.write("</div>");
+			oRm.close("div");
 			this.beginTabsContainer(oRm, oControl);
 			this.renderItems(oRm, oControl);
 			this.endTabsContainer(oRm);
-			oRm.write("<div id='" + oControl.getId() + "-rightOverflowButtons' class='" + this.RIGHT_OVERRFLOW_BTN_CLASS_NAME + "'>");
+			oRm.openStart("div", oControl.getId() + "-rightOverflowButtons");
+			oRm.class(this.RIGHT_OVERRFLOW_BTN_CLASS_NAME);
+			oRm.openEnd();
 			if (oControl.getAggregation("_rightArrowButton")) {
 				this.renderRightOverflowButtons(oRm, oControl, false);
 			}
-			oRm.write("</div>");
+			oRm.close("div");
 			this.renderTouchArea(oRm, oControl);
 		}
 		this.endTabStrip(oRm);
@@ -77,56 +83,58 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 			sTabTexDomId = getTabTextDomId(oItem),
 			bModified = oItem.getModified();
 
-		oRm.write("<div id='" + oItem.getId() + "'");
-		oRm.addClass(TabStripItem.CSS_CLASS);
+		oRm.openStart("div", oItem);
+		oRm.attr("id", oItem.getId());
+		oRm.class(TabStripItem.CSS_CLASS);
 		if (bModified) {
-			oRm.addClass(TabStripItem.CSS_CLASS_MODIFIED);
+			oRm.class(TabStripItem.CSS_CLASS_MODIFIED);
 		}
 		if (bSelected) {
-			oRm.addClass(TabStripItem.CSS_CLASS_SELECTED);
+			oRm.class(TabStripItem.CSS_CLASS_SELECTED);
 		}
-		oRm.writeClasses();
 
 		if (sTooltip){
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
-		oRm.writeElementData(oItem);
+		oRm.accessibilityState(oItem, getTabStripItemAccAttributes(oItem, oControl, sap.ui.getCore().byId(oControl.getSelectedItem())));
 
-		oRm.writeAccessibilityState(oItem, getTabStripItemAccAttributes(oItem, oControl, sap.ui.getCore().byId(oControl.getSelectedItem())));
-
-		oRm.write(">");
+		oRm.openEnd();
 
 		// write icon
 		if (oItem.getIcon()) {
 			oRm.renderControl(oItem._getImage());
 		}
 
-		oRm.write("<div"); // Start texts container
-		oRm.addClass("sapMTSTexts");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("<div id='" + sTabTexDomId + "-addText' class='" + TabStripItem.CSS_CLASS_TEXT + "'>");
+		oRm.openStart("div"); // Start texts container
+		oRm.class("sapMTSTexts");
+		oRm.openEnd();
+		oRm.openStart("div", sTabTexDomId + "-addText");
+		oRm.class(TabStripItem.CSS_CLASS_TEXT);
+		oRm.openEnd();
 		this.renderItemText(oRm, oItem.getAdditionalText());
-		oRm.write("</div>");
+		oRm.close("div");
 
 
-		oRm.write("<div id='" + sTabTexDomId + "-text' class='" + TabStripItem.CSS_CLASS_LABEL + "'>");
+		oRm.openStart("div", sTabTexDomId + "-text");
+		oRm.class(TabStripItem.CSS_CLASS_LABEL);
+		oRm.openEnd();
 		this.renderItemText(oRm, oItem.getText());
 		if (bModified) {
-			oRm.write("<span id='" + sTabTexDomId + "-symbol'");
-			oRm.addClass(TabStripItem.CSS_CLASS_MODIFIED_SYMBOL);
-			oRm.writeClasses();
-			oRm.writeAttribute("role", "presentation");
-			oRm.writeAttribute("aria-hidden", "true");
-			oRm.write("/>");
+			oRm.openStart("span", sTabTexDomId + "-symbol");
+			// oRm.class(this.LEFT_OVERRFLOW_BTN_CLASS_NAME);
+			oRm.class(TabStripItem.CSS_CLASS_MODIFIED_SYMBOL);
+			oRm.attr("role", "presentation");
+			oRm.attr("aria-hidden", "true");
+			oRm.openEnd();
+			oRm.close("span");
 		}
-		oRm.write("</div>");
-		oRm.write("</div>");
+		oRm.close("div");
+		oRm.close("div");
 
 		this.renderItemCloseButton(oRm, oItem);
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	/**
@@ -138,10 +146,10 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	TabStripRenderer.renderItemText = function (oRm, sItemText) {
 
 		if (sItemText.length > TabStripItem.DISPLAY_TEXT_MAX_LENGTH) {
-			oRm.writeEscaped(sItemText.slice(0, TabStripItem.DISPLAY_TEXT_MAX_LENGTH));
-			oRm.write('...');
+			oRm.text(sItemText.slice(0, TabStripItem.DISPLAY_TEXT_MAX_LENGTH));
+			oRm.text('...');
 		} else {
-			oRm.writeEscaped(sItemText);
+			oRm.text(sItemText);
 		}
 	};
 
@@ -152,9 +160,11 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @param {sap.m.TabStripItem} oItem <code>TabStripItem</code> instance for which text is to be rendered
 	 */
 	TabStripRenderer.renderItemCloseButton = function (oRm, oItem) {
-		oRm.write("<div class='sapMTSItemCloseBtnCnt'>");
+		oRm.openStart("div");
+		oRm.class("sapMTSItemCloseBtnCnt");
+		oRm.openEnd();
 		oRm.renderControl(oItem.getAggregation("_closeButton"));
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	/**
@@ -164,15 +174,13 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @param {sap.m.TabStrip} oControl An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
 	TabStripRenderer.beginTabStrip = function (oRm, oControl) {
-		oRm.write("<div");
-		oRm.addClass("sapMTabStribContainer");
-		oRm.writeClasses();
-		oRm.write("><div");
-		oRm.addClass("sapMTabStrip");
-		oRm.addClass("sapContrastPlus");
-		oRm.writeControlData(oControl);
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div");
+		oRm.class("sapMTabStribContainer");
+		oRm.openEnd();
+		oRm.openStart("div", oControl);
+		oRm.class("sapMTabStrip");
+		oRm.class("sapContrastPlus");
+		oRm.openEnd();
 	};
 
 	/**
@@ -181,8 +189,8 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 */
 	TabStripRenderer.endTabStrip = function (oRm) {
-		oRm.write("</div>");
-		oRm.write("</div>");
+		oRm.close("div");
+		oRm.close("div");
 	};
 
 	/**
@@ -192,12 +200,15 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @param {sap.m.TabStrip} oControl An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
 	TabStripRenderer.beginTabsContainer = function (oRm, oControl) {
-		oRm.write("<div id='" + oControl.getId() + "-tabsContainer' class='sapMTSTabsContainer'>");
-		oRm.write("<div id='" + oControl.getId() + "-tabs'  class='sapMTSTabs'");
-		oRm.writeAccessibilityState(oControl, {
+		oRm.openStart("div", oControl.getId() + "-tabsContainer");
+		oRm.class("sapMTSTabsContainer");
+		oRm.openEnd();
+		oRm.openStart("div", oControl.getId() + "-tabs");
+		oRm.class("sapMTSTabs");
+		oRm.accessibilityState(oControl, {
 			role: "tablist"
 		});
-		oRm.write(">");
+		oRm.openEnd();
 	};
 
 	/**
@@ -206,8 +217,8 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 */
 	TabStripRenderer.endTabsContainer = function (oRm) {
-		oRm.write("</div>");
-		oRm.write("</div>");
+		oRm.close("div");
+		oRm.close("div");
 	};
 
 	/**
@@ -247,12 +258,14 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @param {sap.m.TabStrip} oControl An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
 	TabStripRenderer.renderTouchArea = function (oRm, oControl) {
-		oRm.write("<div id='" + oControl.getId() + "-touchArea'  class='sapMTSTouchArea'>");
+		oRm.openStart("div", oControl.getId() + "-touchArea");
+		oRm.class("sapMTSTouchArea");
+		oRm.openEnd();
 
 		oRm.renderControl(oControl.getAggregation('_select'));
 		oRm.renderControl(oControl.getAddButton());
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	/**
