@@ -1,0 +1,13 @@
+{
+  "1.75.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "5a55615bc830e43d4dd06386c41503affddd29fb",
+        "type": "FIX",
+        "text": " Fixing the propagation of rejected promise to the caller",
+        "references": []
+      }
+    ]
+  }
+}

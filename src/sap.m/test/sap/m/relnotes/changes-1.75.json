@@ -1,0 +1,73 @@
+{
+  "1.75.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "5ee08eacee1b388b5114f2e913a8be28b770759d",
+        "type": "FIX",
+        "text": " Header Container: Text can be selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080012176"
+          }
+        ]
+      },
+      {
+        "id": "9360982ad6b6c42a01e9a00472dce7dcb39e5ff2",
+        "type": "FIX",
+        "text": " sap.m.Input: Return back setShowTableSuggestionValueHelp custom setter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080022792"
+          }
+        ]
+      },
+      {
+        "id": "74a7753b3e79f82450428cd832e2c5bc6549b17f",
+        "type": "FIX",
+        "text": " sap.m.Label: Fixed initial line-height",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080007278"
+          }
+        ]
+      },
+      {
+        "id": "0f13eb28b37df55a691e0ad37fe8da78d776488a",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Properly remove Token on List item deletion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980538132"
+          }
+        ]
+      },
+      {
+        "id": "7fa3a819e6fe473d9014a74dee456608bfdeec09",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Token expansion prevented on Icon click",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970628555"
+          }
+        ]
+      },
+      {
+        "id": "150b229d7720b9c26ddf740dc48b4d4c44b11028",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Avatar is optional now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080012698"
+          }
+        ]
+      }
+    ]
+  }
+}

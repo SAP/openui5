@@ -1,0 +1,18 @@
+{
+  "1.75.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "ce901297ad5dc6f83d936dcece4ec3856973ff4e",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Styled pressed state properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980551878"
+          }
+        ]
+      }
+    ]
+  }
+}
