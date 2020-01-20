@@ -2008,7 +2008,7 @@ sap.ui.define([
 
 		this.oRouter.attachTitleChanged(function() {
 
-			if (arguments[0].mParameters.name !== "home") {
+			if (hasher.getHash() !== this.oRouterConfig.home.pattern) {
 				hasher.setHash(this.oRouterConfig.home.pattern);
 			} else {
 				// Assert
@@ -2075,7 +2075,7 @@ sap.ui.define([
 				"title": "HOME"
 			};
 
-			if (arguments[0].mParameters.name !== "home") {
+			if (hasher.getHash() !== this.oRouterConfig.home.pattern) {
 				hasher.setHash(this.oRouterConfig.home.pattern);
 			} else {
 				// Assert

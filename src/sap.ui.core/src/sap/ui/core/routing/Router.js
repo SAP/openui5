@@ -291,13 +291,19 @@ sap.ui.define([
 				}
 				this.setHashChanger(oRouterHashChanger);
 
-				var oParentComponent = Component.getOwnerComponentFor(this._oOwner);
+				var oParentComponent = this._oOwner && Component.getOwnerComponentFor(this._oOwner);
 				var oParentRouter = oParentComponent && oParentComponent.getRouter();
 
 				if (oParentRouter) {
 					// attach titleChanged event and forward event parameters to parent router
 					this.attachTitleChanged(function(oEvent) {
-						var mParameters = oEvent.getParameters();
+						if (this._oOwner && !this._oOwner._bRoutingPropagateTitle) {
+							return;
+						}
+
+						var mParameters = oEvent.getParameters(),
+							aNestedHistory,
+							mForwardParameters;
 
 						if (oParentRouter._bCollectTitleChanged) {
 							// when the parent router will fire its own titleChange event, it saves
@@ -305,17 +311,24 @@ sap.ui.define([
 							// titleChanged event
 							oParentRouter.nestedHistory = mParameters.nestedHistory;
 						} else {
-							// mark the event as propagated to avoid the self history modification
-							// in Router.prototype.fireTitleChanged
-							mParameters.propagated = true;
-
-							// add its own history to the nested history information
-							mParameters.nestedHistory.unshift({
+							// make a copy of the nested history to avoid changing the original value
+							aNestedHistory = mParameters.nestedHistory.slice();
+							aNestedHistory.unshift({
 								ownerComponentId: oParentRouter._oOwner.getId(),
 								history: oParentRouter.getTitleHistory()
 							});
 
-							oParentRouter.fireTitleChanged(mParameters);
+							mForwardParameters = {
+								// mark the event as propagated to avoid the self history modification
+								// in Router.prototype.fireTitleChanged
+								propagated: true,
+								title: mParameters.title,
+								history: mParameters.history,
+								// add its own history to the nested history information
+								nestedHistory: aNestedHistory
+							};
+
+							oParentRouter.fireTitleChanged(mForwardParameters);
 						}
 					});
 				}
@@ -420,10 +433,14 @@ sap.ui.define([
 			},
 
 			_forwardTitleChanged: function(oEvent) {
-				var oEventParameters = oEvent.getParameters();
+				var oParameters = oEvent.getParameters();
+				// create a new parameter object for firing the titleChanged event on Router
+				var oEventParameters = {
+					title: oParameters.title
+				};
 				var oHomeRoute = this._oRoutes[this._oConfig.homeRoute];
 
-				if (oHomeRoute && isHomeRouteTarget(oEventParameters.name, oHomeRoute._oConfig.name)) {
+				if (oHomeRoute && isHomeRouteTarget(oParameters.name, oHomeRoute._oConfig.name)) {
 					oEventParameters.isHome = true;
 				}
 
@@ -457,9 +474,9 @@ sap.ui.define([
 					delete this._oTargets._sPreviousTitle;
 				}
 
-				if (this._matchedRoute) {
-					this._matchedRoute._routeSwitched();
-					this._matchedRoute = null;
+				if (this._oMatchedRoute) {
+					this._oMatchedRoute._routeSwitched();
+					this._oMatchedRoute = null;
 				}
 
 				this._bIsInitialized = false;
@@ -804,7 +821,7 @@ sap.ui.define([
 			 * @returns {string} The name of the last matched route
 			 */
 			_getLastMatchedRouteName: function() {
-				return this._matchedRoute && this._matchedRoute._oConfig.name;
+				return this._oMatchedRoute && this._oMatchedRoute._oConfig.name;
 			},
 
 			/**
@@ -1311,6 +1328,8 @@ sap.ui.define([
 			// private
 			fireTitleChanged : function(mParameters) {
 				if (!mParameters.propagated) {
+					mParameters.propagated = false;
+
 					var sDirection = History.getInstance().getDirection(),
 						sHash = this.getHashChanger().getHash(),
 						HistoryDirection = library.routing.HistoryDirection,
@@ -1370,6 +1389,8 @@ sap.ui.define([
 					this.nestedHistory = null;
 
 					this._bLastHashReplaced = false;
+
+					this._oPreviousTitleChangedRoute = this._oMatchedRoute;
 				}
 
 				this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mParameters);
