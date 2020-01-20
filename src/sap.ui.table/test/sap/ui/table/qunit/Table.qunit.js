@@ -377,7 +377,12 @@ sap.ui.define([
 
 	QUnit.test("SelectedIndex", function(assert) {
 		oTable.setSelectedIndex(8);
-		assert.equal(oTable.getSelectedIndex(), 8, "Selected Index is 8!");
+		assert.equal(oTable.getSelectedIndex(), 8, "selectedIndex is 8");
+		var aRows = oTable.getRows();
+		var $Row = aRows[3].getDomRefs(true);
+
+		$Row.rowSelector.click();
+		assert.equal(oTable.getProperty("selectedIndex"), -1, "selectedIndex is -1");
 	});
 
 	QUnit.test("Check Selection of Last fixedBottomRow", function(assert) {

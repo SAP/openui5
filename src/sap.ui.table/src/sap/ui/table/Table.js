@@ -3085,7 +3085,7 @@ sap.ui.define([
 
 		// If a selection plugin is applied to the table, the "rowSelectionChange" event should not be fired.
 		if (!this._hasSelectionPlugin()) {
-			this.setProperty("selectedIndex", iRowIndex, true);
+			this.setProperty("selectedIndex", oSelectionPlugin.getSelectedIndex(), true);
 			this.fireRowSelectionChange({
 				rowIndex: iRowIndex,
 				rowContext: this.getContextByIndex(iRowIndex),
