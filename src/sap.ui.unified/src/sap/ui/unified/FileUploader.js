@@ -751,12 +751,6 @@ sap.ui.define([
 		}
 	};
 
-	FileUploader.prototype.setXhrSettings = function (oXhrSettings) {
-		this.setAggregation("xhrSettings", oXhrSettings, true);
-
-		return this;
-	};
-
 	/**
 	 * Helper to ensure, that the types (file or mime) are inside an array.
 	 * The FUP also accepts comma-separated strings for its fileType and mimeType property.
@@ -941,11 +935,10 @@ sap.ui.define([
 	FileUploader.prototype.setEnabled = function(bEnabled){
 		var $oFileUpload = jQuery(this.oFileUpload);
 
-		this.setProperty("enabled", bEnabled, true);
+		this.setProperty("enabled", bEnabled);
 		this.oFilePath.setEnabled(bEnabled);
 		this.oBrowse.setEnabled(bEnabled);
 		bEnabled ? $oFileUpload.removeAttr('disabled') : $oFileUpload.attr('disabled', 'disabled');
-		this.$().toggleClass("sapUiFupDisabled", !bEnabled);
 
 		return this;
 	};
@@ -992,13 +985,6 @@ sap.ui.define([
 		}
 
 		return this.setProperty("valueStateText", sValueStateText, true);
-	};
-
-	FileUploader.prototype.setUploadUrl = function(sValue, bFireEvent) {
-		this.setProperty("uploadUrl", sValue, true);
-		var $uploadForm = this.$("fu_form");
-		$uploadForm.attr("action", this.getUploadUrl());
-		return this;
 	};
 
 	FileUploader.prototype.setPlaceholder = function(sPlaceholder) {
