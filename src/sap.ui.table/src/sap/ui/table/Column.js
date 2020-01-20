@@ -223,8 +223,8 @@ function(
 			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * The name of the column which is used in the column visibility menu item as text.
-			 * If not set as a fallback the column menu tries to get the text from the nested Label.
+			 * The name of the column which is used for the text representation of this column, for example, in menus.
+			 * If not set, the text from the multiLabels aggregation or the label aggregation (in that order) is used as a fallback option.
 			 * @since 1.11.1
 			 */
 			name : {type : "string", group : "Appearance", defaultValue : null},

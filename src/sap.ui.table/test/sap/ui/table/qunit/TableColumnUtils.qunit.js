@@ -7,8 +7,10 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/core/Control",
-	"sap/ui/Device"
-], function(TableQUnitUtils, qutils, TableUtils, Table, Column, Control, Device) {
+	"sap/ui/Device",
+	"sap/m/Label",
+	"sap/m/HBox"
+], function(TableQUnitUtils, qutils, TableUtils, Table, Column, Control, Device, Label, HBox) {
 	"use strict";
 
 	// mapping of global function calls
@@ -922,5 +924,42 @@ sap.ui.define([
 
 		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), 0, "Property: 0 fixed Columns");
 		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), 0, "Computed: 0 fixed Columns");
+	});
+
+	QUnit.test("getHeaderText", function(assert){
+		assert.strictEqual(ColumnUtils.getColumnWidth(), null, "Returned null: No parameters passed");
+		assert.strictEqual(ColumnUtils.getColumnWidth(oTable), null, "Returned null: No column index specified");
+		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, -1), null, "Returned null: Column index out of bound");
+		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, oTable.getColumns().length), null, "Returned null: Column index out of bound");
+
+		oTable.removeAllColumns();
+		oTable.addColumn(new Column("c1"));
+		oTable.addColumn(new Column("c2", {
+			label: new HBox(),
+			headerSpan: [1, 1]
+		}));
+		oTable.addColumn(new Column("c3", {
+			label: "Label1",
+			headerSpan: [2, 1]
+		}));
+		oTable.addColumn(new Column("c4", {
+			label: "Label2",
+			headerSpan: [1, 1],
+			multiLabels: [new Label({text: "Column2Label1"}), new Label({text: "Column2Label2"})]
+		}));
+		oTable.addColumn(new Column("c5", {
+			label: "Label3",
+			headerSpan: [1, 1],
+			multiLabels: [new Label({text: "Column3Label1"}), new Label({text: "Column3Label2"})],
+			name: "Name"
+		}));
+
+		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 0), "", "name, multiLabels, label are not set -> returned empty string");
+		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 1), "",
+			"name, multiLabels are not set, label is set to a control that doesn't implement the #getText method -> returned empty string");
+		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 2), "Label1", "name and multiLabels are not set -> returned the label text");
+		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 3), "Column2Label2",
+			"multiLabels and label are set -> returned the correct multiLabel text");
+		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 4), "Name", "name, multiLabels, label are set -> returned the name");
 	});
 });
