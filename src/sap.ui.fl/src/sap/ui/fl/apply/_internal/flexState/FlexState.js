@@ -253,6 +253,10 @@ sap.ui.define([
 		return oVariantsMap;
 	};
 
+	FlexState.getUI2Personalization = function(sReference) {
+		return _mInstances[sReference].unfilteredStorageResponse.changes.ui2personalization;
+	};
+
 	FlexState._callPrepareFunction = function(sMapName, mPropertyBag) {
 		return _mPrepareFunctions[sMapName](mPropertyBag);
 	};
