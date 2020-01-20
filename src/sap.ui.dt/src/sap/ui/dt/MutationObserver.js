@@ -211,13 +211,21 @@ sap.ui.define([
 			&& !DOMUtil.contains("sap-ui-preserve", oNode)
 
 		) {
-			// 4.1, OR the closest element need to be registered
-			var sRelevantElementId = this._getClosestParentIdForNodeRegisteredWithScrollbar(sNodeId, oNode);
-			if (sRelevantElementId) {
-				return sRelevantElementId;
+			// // 4.1, OR the closest element need to be registered
+			// var sRelevantElementId = this._getClosestParentIdForNodeRegisteredWithScrollbar(sNodeId, oNode);
+			// if (sRelevantElementId) {
+			// 	return sRelevantElementId;
+			// }
+			// // 4.2. Target Node is an ancestor of the root element, but not a static area
+			// return (this._sRootId && oNode.contains(document.getElementById(this._sRootId))) ? this._sRootId : undefined;
+			if (
+				// 4.1. Target Node is inside one of the white listed element
+				DOMUtil.contains(this._sRootId, oNode)
+				// 4.2. Target Node is an ancestor of one of the white listed element, but not a static area
+				|| oNode.contains(document.getElementById(this._sRootId))
+			) {
+				return this._sRootId;
 			}
-			// 4.2. Target Node is an ancestor of the root element, but not a static area
-			return (this._sRootId && oNode.contains(document.getElementById(this._sRootId))) ? this._sRootId : undefined;
 		}
 		return undefined;
 	};
