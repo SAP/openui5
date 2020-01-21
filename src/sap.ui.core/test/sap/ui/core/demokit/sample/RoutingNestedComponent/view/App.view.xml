@@ -33,10 +33,7 @@
 			</tnt:SideNavigation>
 		</tnt:sideContent>
 		<tnt:mainContents>
-			<Breadcrumbs id="breadcrumbs" separatorStyle="DoubleSlash" links="{titleModel>/breadcrumbs}" currentLocationText="{titleModel>/currentLocation/title}">
-				<Link text="{titleModel>title}" press="onBreadcrumbPress" />
-			</Breadcrumbs>
-			<App id="app" height="calc(100% - 23px)"></App>
+			<App id="app" />
 		</tnt:mainContents>
 	</tnt:ToolPage>
 </mvc:View>
