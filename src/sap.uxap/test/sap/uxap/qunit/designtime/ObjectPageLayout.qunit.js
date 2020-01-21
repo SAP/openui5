@@ -371,6 +371,67 @@ sap.ui.define([
 		}, 0);
 	});
 
+	function fnConfirmIframeAddedOn2ndPosition(oAppComponent, oViewAfterAction, assert){
+		var oObjectPageLayout = oViewAfterAction.byId("objectPage");
+		var aHeaderContent = oObjectPageLayout.getHeaderContent();
+		assert.equal(aHeaderContent.length, 4, "Header Content aggregation contains new elements");
+		var oIframe = aHeaderContent[1];
+		assert.equal(oIframe.getId(), oViewAfterAction.createId("foo"), "Added Iframe has expected properties set - id");
+		assert.equal(oIframe.getUrl(), "someUrl", "Added Iframe has expected properties set - url");
+		assert.equal(oIframe.getWidth(), "10px", "Added Iframe has expected properties set - width");
+		assert.equal(oIframe.getHeight(), "11px", "Added Iframe has expected properties set - height");
+	}
+	function fnConfirmIframeRemoved(oAppComponent, oViewAfterAction, assert){
+		var oObjectPageLayout = oViewAfterAction.byId("objectPage");
+		var aHeaderContent = oObjectPageLayout.getHeaderContent();
+		assert.equal(aHeaderContent.length, 3, "Header Content aggregation contains old elements");
+		var oButton = aHeaderContent[1];
+		assert.equal(oButton.getMetadata().getName(), "sap.m.Button", "at 2. position is a button again");
+	}
+	elementActionTest("Checking the add iframe action for a sap.uxap.ObjectPage control in headerContent", {
+		xmlView :
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+		'<uxap:ObjectPageLayout id="objectPage">' +
+			'<uxap:headerContent>' +
+				'<m:Button text="Button1" id="btn1"/>' +
+				'<m:Button text="Button1" id="btn2"/>' +
+				'<m:Button text="Button1" id="btn3"/>' +
+			'</uxap:headerContent>' +
+			'<uxap:sections>' +
+				'<uxap:ObjectPageSection id="section">' +
+					'<uxap:subSections>' +
+						'<uxap:ObjectPageSubSection id="subSection" title="Subsection with action buttons">' +
+							'<uxap:actions>' +
+								'<m:Button icon="sap-icon://synchronize" />' +
+								'<m:Button icon="sap-icon://expand" />' +
+							'</uxap:actions>' +
+							'<m:Button text="Subsection UI adaptation" />' +
+						'</uxap:ObjectPageSubSection>' +
+					'</uxap:subSections>' +
+				'</uxap:ObjectPageSection>' +
+			'</uxap:sections>' +
+		'</uxap:ObjectPageLayout>' +
+		'</mvc:View>',
+		action : {
+			name : "addIFrame",
+			controlId : "objectPage",
+			parameter : function(oView){
+				return {
+					baseId: oView.createId("foo"),
+					targetAggregation: "headerContent",
+					index: 1,
+					url: "someUrl",
+					width: "10px",
+					height: "11px"
+				};
+			}
+		},
+		afterAction : fnConfirmIframeAddedOn2ndPosition,
+		afterUndo : fnConfirmIframeRemoved,
+		afterRedo : fnConfirmIframeAddedOn2ndPosition
+	});
+
 	QUnit.module("Framework API overrides");
 
 	QUnit.test("clone()", function (assert) {

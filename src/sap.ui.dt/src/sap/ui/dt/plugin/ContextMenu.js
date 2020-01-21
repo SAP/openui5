@@ -703,9 +703,6 @@ sap.ui.define([
 						this.addMenuItem(mMenuItem, true, true);
 					}.bind(this));
 
-					mPosition.clientX = null;
-					mPosition.clientY = null;
-
 					this.oContextMenuControl.close();
 					setTimeout(function () {
 						this.open(mPosition, oOverlay, true, true);

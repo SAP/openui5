@@ -129,16 +129,20 @@ sap.ui.define([
 		});
 	});
 
-	function mockUserInfoService (bEnabled) {
+	function mockUserInfoService (bEnabled, bNoEmail) {
 		var oFormerUShell = sap.ushell;
 		var fnGetService;
 		if (bEnabled) {
+			var vUserEmail;
+			if (!bNoEmail) {
+				vUserEmail = sUserEmail;
+			}
 			fnGetService = function (sServiceName) {
 				if (sServiceName === "UserInfo") {
 					return {
 						getUser: function () {
 							return {
-								getEmail: function () { return sUserEmail; },
+								getEmail: function () { return vUserEmail; },
 								getFullName: function () { return sUserFullName; },
 								getFirstName: function () { return sUserFirstName; },
 								getLastName: function () { return sUserLastName; }
@@ -186,6 +190,27 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("URL should contain user information", function(assert) {
 			assert.strictEqual(this.oIFrame.getUrl(), sOpenUI5Url + "?domain=sap.com", "URL is the expected one");
+		});
+	});
+
+	QUnit.module("UserInfo binding (UserInfo service available but no email)", {
+		beforeEach : function() {
+			this.oUShellMock = mockUserInfoService(true, /*bNoEmail*/ true);
+			this.oIFrame = new IFrame({
+				width: sDefaultSize,
+				height: sDefaultSize,
+				url: sOpenUI5Url + "?domain={$user>/domain}"
+			});
+			this.oIFrame.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oIFrame.destroy();
+			this.oUShellMock.restore();
+		}
+	}, function () {
+		QUnit.test("URL should contain user information", function(assert) {
+			assert.strictEqual(this.oIFrame.getUrl(), sOpenUI5Url + "?domain=", "URL is the expected one");
 		});
 	});
 

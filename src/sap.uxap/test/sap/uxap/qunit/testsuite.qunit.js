@@ -278,6 +278,22 @@ sap.ui.define(function () {
 			},
 
 			// -------------------------------------------------------------------------------
+			// Change Handler tests:
+			// -------------------------------------------------------------------------------
+
+			"changeHandler/AddIFrameObjectPageLayout": {
+				group: "ChangeHandler",
+				coverage: {
+					only: ["sap/uxap/changeHandler/AddIFrameObjectPageLayout"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
+				}
+			},
+
+			// -------------------------------------------------------------------------------
 			// Designtime tests:
 			// -------------------------------------------------------------------------------
 

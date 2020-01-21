@@ -5,8 +5,8 @@
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
-	"sap/ui/fl/changeHandler/BaseRename"],
-function (
+	"sap/ui/fl/changeHandler/BaseRename"
+], function (
 	Utils,
 	Log,
 	BaseRename

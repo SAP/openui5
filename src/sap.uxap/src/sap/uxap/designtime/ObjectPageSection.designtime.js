@@ -16,6 +16,10 @@ sap.ui.define(["sap/uxap/library"],
 				return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 			}
 		},
+		select: function(oObjectPageSection) {
+			var oObjectPageLayout = oObjectPageSection.getParent();
+			oObjectPageLayout.setSelectedSection(oObjectPageSection);
+		},
 		palette: {
 			group: "CONTAINER",
 			icons: {

@@ -42,9 +42,8 @@ sap.ui.define([
 		if (!oAggregationDefinition) {
 			throw new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl));
 		}
-		var sIFrameId = "iframe_" + oChangeDefinition.content.baseId;
 		var iIndex = getTargetAggregationIndex(oChange, oControl, mPropertyBag);
-		var oIFrame = createIFrame(oChange, mPropertyBag, sIFrameId);
+		var oIFrame = createIFrame(oChange, mPropertyBag, oChangeDefinition.content.selector);
 		oModifier.insertAggregation(oControl, sAggregationName, oIFrame, iIndex, oView);
 		oChange.setRevertData([oModifier.getId(oIFrame)]);
 	};
@@ -71,10 +70,16 @@ sap.ui.define([
 	 * @param {string} [oSpecificChangeInfo.content.width] IFrame Width
 	 * @param {string} [oSpecificChangeInfo.content.height] IFrame Height
 	 * @param {string} oSpecificChangeInfo.content.url IFrame Url
+	 * @param {object} mPropertyBag Property bag containing the modifier, the appComponent and the view
+	 * @param {object} mPropertyBag.modifier Modifier for the controls
+	 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
+	 * @param {object} mPropertyBag.view Application view
 	 * @ui5-restricted sap.ui.fl
 	 */
-	AddIFrame.completeChangeContent = function (oChange, oSpecificChangeInfo) {
+	AddIFrame.completeChangeContent = function (oChange, oSpecificChangeInfo, mPropertyBag) {
 		var oChangeJson = oChange.getDefinition();
+		var oModifier = mPropertyBag.modifier;
+		var oAppComponent = mPropertyBag.appComponent;
 		// Required settings
 		["targetAggregation", "baseId", "url"].forEach(function (sRequiredProperty) {
 			if (!Object.prototype.hasOwnProperty.call(oSpecificChangeInfo.content, sRequiredProperty)) {
@@ -82,6 +87,7 @@ sap.ui.define([
 			}
 		});
 		oChangeJson.content = Object.assign(oChangeJson.content || {}, oSpecificChangeInfo.content);
+		oChangeJson.content.selector = oModifier.getSelector(oChangeJson.content.baseId, oAppComponent);
 	};
 
 	return AddIFrame;
