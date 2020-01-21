@@ -1,10 +1,12 @@
-/*global QUnit*/
+/*global QUnit,sinon*/
 sap.ui.define([
+	"sap/ui/model/odata/_ODataMetaModelUtils",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/util/MockServer"
 ], function(
+	_ODataMetaModelUtils,
 	ODataMetadata,
 	V1ODataModel,
 	V2ODataModel,
@@ -38,7 +40,7 @@ sap.ui.define([
 		return oModel;
 	}
 
-	QUnit.module("ODataModel Annotation path");
+	QUnit.module("ODataMetadata: ODataModel Annotation path");
 
 	QUnit.test("init MockServer Flight", function(assert) {
 		oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
@@ -103,7 +105,7 @@ sap.ui.define([
 	});
 
 	// Usually we should not test internal methods, but these might be candidates to be made publicly available
-	QUnit.module("Internal methods");
+	QUnit.module("ODataMetadata: Internal methods");
 
 	var mInternalTests = {
 		// Test data to check for
@@ -424,7 +426,7 @@ sap.ui.define([
 	QUnit.test("V2: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
 
 
-	QUnit.module("sap-cancel-on-close header handling");
+	QUnit.module("ODataMetadata: sap-cancel-on-close header handling");
 
 	var fnTestHeaderRequest = function(bCancelOnClose, bExpectedValue) {
 		return function(assert){
@@ -438,7 +440,7 @@ sap.ui.define([
 	QUnit.test("Set to true via parameter", fnTestHeaderRequest(true, true));
 	QUnit.test("Set to false via parameter", fnTestHeaderRequest(false, false));
 
-	QUnit.module("Nav property reference info", {
+	QUnit.module("ODataMetadata: Nav property reference info", {
 		beforeEach: function() {
 			this.oServer = initServer(sServiceUri, "model/GWSAMPLE_BASIC.metadata.xml", sDataRootPath);
 			this.oMetadata = new ODataMetadata(sServiceUri + "$metadata", {});
@@ -471,5 +473,65 @@ sap.ui.define([
 			assert.equal(this.oMetadata._getNavPropertyRefInfo(oEntity, "Price"), null, "Returns null for property not used in referential constraint");
 			assert.equal(this.oMetadata._getNavPropertyRefInfo(oEntity, "Unknown"), null, "Returns null for unknown property");
 		}.bind(this));
+	});
+
+	QUnit.test("_getEntityAssociationEnd", function (assert) {
+		var oMetadata = this.oMetadata;
+
+		// as long as metadata are not loaded _getEntityAssociationEnd() returns null
+		assert.strictEqual(oMetadata._getEntityAssociationEnd(), null);
+
+		return oMetadata.loaded().then(function () {
+			var oSalesOrderEntityType = oMetadata._getEntityTypeByName("GWSAMPLE_BASIC.SalesOrder"),
+				oToBusinessPartnerAssociationEnd,
+				oToLineItemsAssociationEnd;
+
+			// initially cache is not defined
+			assert.strictEqual(oMetadata._mGetEntityAssociationEndCache, undefined, "Initial");
+
+			// code under test
+			oToLineItemsAssociationEnd = oMetadata
+				._getEntityAssociationEnd(oSalesOrderEntityType, "ToLineItems");
+
+			assert.strictEqual(oToLineItemsAssociationEnd.type,
+				"GWSAMPLE_BASIC.SalesOrderLineItem", "ToLineItems");
+			assert.strictEqual(oToLineItemsAssociationEnd.multiplicity, "*");
+			assert.strictEqual(oToLineItemsAssociationEnd.role,
+				"ToRole_Assoc_SalesOrder_SalesOrderLineItems");
+			assert.deepEqual(oMetadata._mGetEntityAssociationEndCache, {
+				"GWSAMPLE_BASIC.SalesOrder/ToLineItems" : oToLineItemsAssociationEnd
+			});
+
+			// code under test
+			oToBusinessPartnerAssociationEnd = oMetadata
+				._getEntityAssociationEnd(oSalesOrderEntityType, "ToBusinessPartner");
+
+			assert.strictEqual(oToBusinessPartnerAssociationEnd.type,
+				"GWSAMPLE_BASIC.BusinessPartner", "ToBusinessPartner");
+			assert.strictEqual(oToBusinessPartnerAssociationEnd.multiplicity, "1");
+			assert.strictEqual(oToBusinessPartnerAssociationEnd.role,
+				"FromRole_Assoc_BusinessPartner_SalesOrders");
+			assert.deepEqual(oMetadata._mGetEntityAssociationEndCache, {
+				"GWSAMPLE_BASIC.SalesOrder/ToBusinessPartner" : oToBusinessPartnerAssociationEnd,
+				"GWSAMPLE_BASIC.SalesOrder/ToLineItems" : oToLineItemsAssociationEnd
+			});
+
+			sinon.mock(_ODataMetaModelUtils).expects("findObject")
+				.withExactArgs(oSalesOrderEntityType.navigationProperty, "Foo");
+
+			// code under test - unknown navigation property name
+			assert.strictEqual(oMetadata._getEntityAssociationEnd(oSalesOrderEntityType, "Foo"),
+				null, "Foo");
+
+			assert.deepEqual(oMetadata._mGetEntityAssociationEndCache, {
+				"GWSAMPLE_BASIC.SalesOrder/Foo" : null,
+				"GWSAMPLE_BASIC.SalesOrder/ToBusinessPartner" : oToBusinessPartnerAssociationEnd,
+				"GWSAMPLE_BASIC.SalesOrder/ToLineItems" : oToLineItemsAssociationEnd
+			});
+
+			// code under test - use association end from cache
+			assert.strictEqual(oMetadata._getEntityAssociationEnd(oSalesOrderEntityType, "Foo"),
+				null, "Foo");
+		});
 	});
 });
