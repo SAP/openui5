@@ -77,9 +77,16 @@ function() {
 		this._aRegExTerms = [];
 
 		this._aOldTerms.forEach(function(sTerm) {
+			// We escape any special RegExp character with '\' in front of it.
+			sTerm = this._escapeRegExp(sTerm);
+
 			oRegEx = this._bIsCaseSensitive ? new RegExp(sTerm, "g") : new RegExp(sTerm, "gi");
 			this._aRegExTerms.push(oRegEx);
 		}, this);
+	};
+
+	Highlighter.prototype._escapeRegExp = function (sText) {
+		return sText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 	};
 
 	Highlighter.prototype._isNewTermsSameAsOld = function (aTerms) {
