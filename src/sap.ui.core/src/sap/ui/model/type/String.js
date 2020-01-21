@@ -148,7 +148,7 @@ sap.ui.define([
 	 * constraints, see {@link #constructor}.
 	 *
 	 * @param {string} sValue
-	 *   The value to be validated
+	 *   The value to be validated; <code>null</code> is treated like an empty string
 	 * @throws {sap.ui.model.ValidateException}
 	 *   If the value is not valid
 	 *
@@ -159,6 +159,10 @@ sap.ui.define([
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
 				aViolatedConstraints = [],
 				aMessages = [];
+
+			if (sValue === null) {
+				sValue = "";
+			}
 			jQuery.each(this.oConstraints, function (sName, vConstraint) {
 				switch (sName) {
 					case "maxLength":
@@ -180,7 +184,7 @@ sap.ui.define([
 						}
 						break;
 					case "startsWithIgnoreCase":  // expects string
-						if (!((typeof vConstraint == "string" && vConstraint != "" ? sValue.toLowerCase().startsWith(vConstraint.toLowerCase()) : false))) {
+						if (!(typeof vConstraint == "string" && vConstraint != "" ? sValue.toLowerCase().startsWith(vConstraint.toLowerCase()) : false)) {
 							aViolatedConstraints.push("startsWithIgnoreCase");
 							aMessages.push(oBundle.getText("String.StartsWith", [vConstraint]));
 						}
