@@ -10,7 +10,9 @@ sap.ui.define([],
 	 * ResponsiveFlowLayout renderer.
 	 * @namespace
 	 */
-	var ResponsiveFlowLayoutRenderer = {};
+	var ResponsiveFlowLayoutRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -25,10 +27,8 @@ sap.ui.define([],
 	 */
 	(function() {
 		ResponsiveFlowLayoutRenderer.render = function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapUiRFL");
-			oRm.writeClasses();
+			oRm.openStart("div", oControl);
+			oRm.class("sapUiRFL");
 
 			var sRole = oControl._getAccessibleRole();
 			var mAriaProps;
@@ -36,13 +36,13 @@ sap.ui.define([],
 				mAriaProps = {role: sRole};
 			}
 
-			oRm.writeAccessibilityState(oControl, mAriaProps);
+			oRm.accessibilityState(oControl, mAriaProps);
 
-			oRm.write(">"); // div element
+			oRm.openEnd(); // div element
 
 			// rendering of content happens in oControl.fnRenderContent
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 	}());
 
