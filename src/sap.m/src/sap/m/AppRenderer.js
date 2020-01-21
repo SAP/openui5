@@ -16,6 +16,7 @@ sap.ui.define(['./NavContainerRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 	 * @namespace
 	 */
 	var AppRenderer = {
+		apiVersion: 2
 	};
 
 	var AppRenderer = Renderer.extend(NavContainerRenderer);
