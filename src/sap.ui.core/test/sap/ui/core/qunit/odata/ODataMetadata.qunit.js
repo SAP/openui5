@@ -532,6 +532,146 @@ sap.ui.define([
 			// code under test - use association end from cache
 			assert.strictEqual(oMetadata._getEntityAssociationEnd(oSalesOrderEntityType, "Foo"),
 				null, "Foo");
+
+			_ODataMetaModelUtils.findObject.restore();
 		});
 	});
+
+	QUnit.test("_fillElementCaches", function (assert) {
+		var oMetadata = this.oMetadata;
+
+		// code under test
+		oMetadata._fillElementCaches();
+
+		// as long as metadata is not loaded nothing is done
+		assert.strictEqual(oMetadata._entitySetMap, undefined);
+
+		return oMetadata.loaded().then(function () {
+			var oEntitySetMap,
+				oSchema = oMetadata.oMetadata.dataServices.schema[0],
+				aEntitySets = oSchema.entityContainer[0].entitySet,
+				oSalesOrderType = oSchema.entityType[2],
+				aSalesOrderNavigationProperties = oSalesOrderType.navigationProperty;
+
+			// caches are not available
+			assert.strictEqual(oMetadata._entitySetMap, undefined);
+			assert.strictEqual(aEntitySets[2].__entityType, undefined);
+			assert.strictEqual(oSalesOrderType.__navigationPropertiesMap, undefined);
+
+			// code under test
+			oMetadata._fillElementCaches();
+
+			oEntitySetMap = oMetadata._entitySetMap;
+
+			assert.deepEqual(oEntitySetMap, {
+				"GWSAMPLE_BASIC.BusinessPartner" : aEntitySets[0],
+				"GWSAMPLE_BASIC.Contact" : aEntitySets[4],
+				"GWSAMPLE_BASIC.Product" : aEntitySets[1],
+				"GWSAMPLE_BASIC.SalesOrder" : aEntitySets[2],
+				"GWSAMPLE_BASIC.SalesOrderLineItem" : aEntitySets[3],
+				"GWSAMPLE_BASIC.VH_AddressType" : aEntitySets[7],
+				"GWSAMPLE_BASIC.VH_BPRole" : aEntitySets[14],
+				"GWSAMPLE_BASIC.VH_Category" : aEntitySets[8],
+				"GWSAMPLE_BASIC.VH_Country" : aEntitySets[6],
+				"GWSAMPLE_BASIC.VH_Currency" : aEntitySets[9],
+				"GWSAMPLE_BASIC.VH_Language" : aEntitySets[15],
+				"GWSAMPLE_BASIC.VH_ProductTypeCode" : aEntitySets[13],
+				"GWSAMPLE_BASIC.VH_Sex" : aEntitySets[5],
+				"GWSAMPLE_BASIC.VH_UnitLength" : aEntitySets[12],
+				"GWSAMPLE_BASIC.VH_UnitQuantity" : aEntitySets[10],
+				"GWSAMPLE_BASIC.VH_UnitWeight" : aEntitySets[11]
+			});
+			assert.strictEqual(aEntitySets[2].__entityType, oSalesOrderType);
+			assert.deepEqual(oSalesOrderType.__navigationPropertiesMap, {
+				ToBusinessPartner : aSalesOrderNavigationProperties[0],
+				ToLineItems : aSalesOrderNavigationProperties[1]
+			});
+
+			// code under test
+			oMetadata._fillElementCaches();
+
+			assert.strictEqual(oMetadata._entitySetMap, oEntitySetMap, "same cache");
+		});
+	});
+
+[{
+	iCacheItemReferencesCalls : 0,
+	sPath : "/SalesOrderSet('42')",
+	sReducedPath : "/SalesOrderSet('42')"
+}, {
+	iCacheItemReferencesCalls : 0,
+	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')",
+	sReducedPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader",
+	sReducedPath : "/SalesOrderSet('42')"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
+	sReducedPath : "/SalesOrderSet('42')/Note"
+}, {
+	iCacheItemReferencesCalls : 2,
+	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader"
+		+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
+	sReducedPath : "/SalesOrderSet('42')/Note"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToProduct/Name",
+	sReducedPath :
+		"/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToProduct/Name"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderSet('42')/ToBusinessPartner/Address/City",
+	sReducedPath : "/SalesOrderSet('42')/ToBusinessPartner/Address/City"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+		+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/Note",
+	sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/Note"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+		+ "/ToLineItems(SalesOrderID='42',ItemPosition='20')/Note",
+	sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+		+ "/ToLineItems(SalesOrderID='42',ItemPosition='20')/Note"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader/ToLineItems",
+	sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+		+ "/ToLineItems"
+}, { // function import
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrder_Confirm(SalesOrderID='42')"
+		+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
+	sReducedPath : "/SalesOrder_Confirm(SalesOrderID='42')/Note"
+}, { // multiple nested partners
+	iCacheItemReferencesCalls : 2,
+	sPath : "/SalesOrderSet('42')/ToBusinessPartner/ToContacts('aa-bb')/ToBusinessPartner"
+		+ "/ToSalesOrders('42')/Note",
+	sReducedPath : "/SalesOrderSet('42')/Note"
+}, { // must not fail for invalid paths
+	iCacheItemReferencesCalls : 1,
+	sPath : "/A/ToB/ToC/ToD/Foo",
+	sReducedPath : "/A/ToB/ToC/ToD/Foo"
+}].forEach(function (oFixture) {
+	var sPath = oFixture.sPath,
+		sReducedPath = oFixture.sReducedPath,
+		sTitle = "_getReducedPath: " + sPath + " -> " + sReducedPath;
+
+	QUnit.test(sTitle, function (assert) {
+		var oMetadata = this.oMetadata;
+
+		return oMetadata.loaded().then(function () {
+			sinon.spy(oMetadata, "_fillElementCaches");
+
+			// code under test
+			assert.strictEqual(oMetadata._getReducedPath(sPath), sReducedPath);
+
+			assert.strictEqual(oMetadata._fillElementCaches.callCount,
+				oFixture.iCacheItemReferencesCalls);
+			oMetadata._fillElementCaches.restore();
+		});
+	});
+});
 });
