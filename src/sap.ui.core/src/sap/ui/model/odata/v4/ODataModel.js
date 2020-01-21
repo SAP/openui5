@@ -478,7 +478,9 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
 	 *   The context binding
 	 * @throws {Error}
-	 *   If disallowed binding parameters are provided
+	 *   If disallowed binding parameters are provided, for example if the binding parameter
+	 *   $$inheritExpandSelect is set to <code>true</code> and the binding is no operation binding
+	 *   or the binding has one of the parameters $expand or $select.
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindContext

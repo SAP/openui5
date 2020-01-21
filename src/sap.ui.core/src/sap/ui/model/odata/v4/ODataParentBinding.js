@@ -10,9 +10,8 @@ sap.ui.define([
 	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/model/ChangeReason",
-	"sap/ui/thirdparty/jquery"
-], function (asODataBinding, SubmitMode, _Helper, Log, SyncPromise, ChangeReason, jQuery) {
+	"sap/ui/model/ChangeReason"
+], function (asODataBinding, SubmitMode, _Helper, Log, SyncPromise, ChangeReason) {
 	"use strict";
 
 	/**
@@ -309,7 +308,7 @@ sap.ui.define([
 	 * @since 1.45.0
 	 */
 	ODataParentBinding.prototype.changeParameters = function (mParameters) {
-		var mBindingParameters = jQuery.extend(true, {}, this.mParameters),
+		var mBindingParameters = Object.assign({}, this.mParameters),
 			sChangeReason, // @see sap.ui.model.ChangeReason
 			sKey,
 			that = this;
@@ -363,7 +362,7 @@ sap.ui.define([
 			} else if (mBindingParameters[sKey] !== mParameters[sKey]) {
 				updateChangeReason(sKey);
 				if (typeof mParameters[sKey] === "object") {
-					mBindingParameters[sKey] = jQuery.extend(true, {}, mParameters[sKey]);
+					mBindingParameters[sKey] = _Helper.clone(mParameters[sKey]);
 				} else {
 					mBindingParameters[sKey] = mParameters[sKey];
 				}
@@ -371,7 +370,6 @@ sap.ui.define([
 		}
 
 		if (sChangeReason) {
-			this.createReadGroupLock(this.getGroupId(), true);
 			this.applyParameters(mBindingParameters, sChangeReason);
 		}
 	};
@@ -700,7 +698,7 @@ sap.ui.define([
 				sBaseMetaPath);
 			if (that.bAggregatedQueryOptionsInitial) {
 				that.selectKeyProperties(mLocalQueryOptions, sBaseMetaPath);
-				that.mAggregatedQueryOptions = jQuery.extend(true, {}, mLocalQueryOptions);
+				that.mAggregatedQueryOptions = _Helper.clone(mLocalQueryOptions);
 				that.bAggregatedQueryOptionsInitial = false;
 			}
 			if (bIsAdvertisement) {
@@ -1225,7 +1223,7 @@ sap.ui.define([
 		if (this) {
 			ODataParentBinding.apply(this, arguments);
 		} else {
-			jQuery.extend(oPrototype, ODataParentBinding.prototype);
+			Object.assign(oPrototype, ODataParentBinding.prototype);
 		}
 	}
 

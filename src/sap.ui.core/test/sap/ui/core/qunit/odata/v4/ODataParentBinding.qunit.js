@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
@@ -13,7 +12,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataParentBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, ODataModel,
+], function (Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, ODataModel,
 		asODataParentBinding, SubmitMode, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
@@ -255,17 +254,12 @@ sap.ui.define([
 					},
 					sPath : "/ProductList",
 					applyParameters : function () {}
-				}),
-				oBindingMock = this.mock(oBinding),
-				sGroupId = "myGroup";
+				});
 
-			oBindingMock.expects("checkSuspended").never();
-			oBindingMock.expects("hasPendingChanges").returns(false);
-			oBindingMock.expects("getGroupId").withExactArgs().returns(sGroupId);
-			oBindingMock.expects("createReadGroupLock").withExactArgs(sGroupId, true);
-			oBindingMock.expects("applyParameters")
-				.withExactArgs(oFixture.mExpectedParameters,
-					oFixture.sChangeReason || ChangeReason.Change);
+			this.mock(oBinding).expects("checkSuspended").never();
+			this.mock(oBinding).expects("hasPendingChanges").returns(false);
+			this.mock(oBinding).expects("applyParameters").withExactArgs(
+				oFixture.mExpectedParameters, oFixture.sChangeReason || ChangeReason.Change);
 
 			// code under test
 			oBinding.changeParameters(oFixture.mParameters);
@@ -360,7 +354,6 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		// refreshing the binding is unnecessary, if the binding parameters are unchanged
-		this.mock(oBinding).expects("createReadGroupLock").never();
 		this.mock(oBinding).expects("applyParameters").never();
 
 		// code under test
@@ -411,7 +404,6 @@ sap.ui.define([
 			};
 
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
-		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
 
 		// code under test
 		oBinding.changeParameters(mParameters);
@@ -683,7 +675,7 @@ sap.ui.define([
 			var oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : oFixture.aggregatedQueryOptions
 				}),
-				mOriginalQueryOptions = jQuery.extend(true, {}, oFixture.aggregatedQueryOptions),
+				mOriginalQueryOptions = _Helper.clone(oFixture.aggregatedQueryOptions),
 				bMergeSuccess;
 
 			// code under test
@@ -803,9 +795,8 @@ sap.ui.define([
 					oHelperMock.expects("getRelativePath")
 						.withExactArgs("/reduced/child/metapath", "/Set")
 						.returns("reducedChildMetaPath");
-					this.mock(jQuery).expects("extend")
-						.exactly(oFixture.initial ? 1 : 0)
-						.withExactArgs(true, {}, sinon.match.same(mLocalQueryOptions))
+					this.mock(_Helper).expects("clone").exactly(oFixture.initial ? 1 : 0)
+						.withExactArgs(sinon.match.same(mLocalQueryOptions))
 						.returns(mExtendResult);
 					oHelperMock.expects("wrapChildQueryOptions")
 						.withExactArgs("/Set", "reducedChildMetaPath",

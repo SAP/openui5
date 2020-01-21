@@ -14214,6 +14214,89 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: check that $$aggregation can be removed again
+	// BCP: 2080047558
+	QUnit.test("BCP: 2080047558", function (assert) {
+		var oListBinding,
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="1">\
+	<t:Column>\
+		<t:template>\
+			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			oModel = createSalesOrdersModel(),
+			that = this;
+
+		this.expectRequest("SalesOrderList?$skip=0&$top=1", {
+				value : [{GrossAmount : 1}]
+			})
+			.expectChange("grossAmount", 1);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("rows");
+
+			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
+					value : [{GrossAmount : 3}]
+				})
+				.expectChange("grossAmount", 3);
+
+			// code under test
+			oListBinding.setAggregation({
+				aggregate : {GrossAmount : {}}
+			});
+
+			assert.throws(function () {
+				// code under test
+				oListBinding.changeParameters({
+					$apply : "A.P.P.L.E."
+				});
+			}, new Error("Cannot combine $$aggregation and $apply"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$skip=0&$top=1", {
+					value : [{GrossAmount : 2}]
+				})
+				.expectChange("grossAmount", 2);
+
+			assert.throws(function () {
+				// code under test
+				oListBinding.setAggregation(null); // Note: null is not supported
+			}); // TypeError("Cannot read property 'groupLevels' of null")
+
+			// code under test
+			oListBinding.setAggregation({});
+
+			assert.throws(function () {
+				// code under test
+				oListBinding.changeParameters({
+					$apply : "A.P.P.L.E."
+				});
+			}, new Error("Cannot combine $$aggregation and $apply"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test (Note: no request!)
+			oListBinding.setAggregation();
+
+			that.expectRequest("SalesOrderList"
+				+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))&$skip=0&$top=1", {
+					value : [{GrossAmount : 3}]
+				})
+				.expectChange("grossAmount", 3);
+
+			// code under test
+			oListBinding.changeParameters({
+				$apply : "groupby((LifecycleStatus),aggregate(GrossAmount))"
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Application tries to overwrite client-side instance annotations.
 	QUnit.test("@$ui5.* is write-protected", function (assert) {
 		var oModel = createTeaBusiModel(),
@@ -14423,8 +14506,10 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				// no additional request for same aggregation data
-				that.oView.byId("table").getBinding("rows").updateAnalyticalInfo(aAggregation);
+				if (i > 0) {
+					// no additional request for same aggregation data
+					that.oView.byId("table").getBinding("rows").updateAnalyticalInfo(aAggregation);
+				}
 
 				return that.waitForChanges(assert);
 			}).then(function () {
