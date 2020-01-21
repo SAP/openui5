@@ -754,7 +754,10 @@ sap.ui.define([
 	 * @param {string} mOptions.manifestUrl URL of the manifest
 	 * @param {string} [mOptions.componentName] name of the component
 	 * @param {boolean} [mOptions.async] Flag whether to load the manifest async or not (defaults to false)
-	 * @param {boolean} [mOptions.failOnError] Flag whether to fail if an error occurs or not (defaults to true)
+	 * @param {boolean} [mOptions.failOnError] Flag whether to fail if an error occurs or not (defaults to true).
+	 * If set to <code>false</code>, errors during the loading of the manifest.json file (e.g. 404) will be ignored and
+	 * the resulting manifest object will be <code>null</code>.
+	 * For asynchronous calls the returned Promise will not reject but resolve with <code>null</code>.
 	 * @param {function} [mOptions.processJson] Callback for asynchronous processing of the loaded manifest.
 	 * The callback receives the parsed manifest object and must return a Promise which resolves with an object.
 	 * It allows to early access and modify the manifest object.
