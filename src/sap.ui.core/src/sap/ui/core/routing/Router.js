@@ -16,8 +16,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"./RouterHashChanger",
-	"sap/ui/core/Component"
+	"./RouterHashChanger"
 ],
 	function(
 		library,
@@ -33,8 +32,7 @@ sap.ui.define([
 		isEmptyObject,
 		Log,
 		jQuery,
-		RouterHashChanger,
-		Component
+		RouterHashChanger
 	) {
 	"use strict";
 
@@ -289,35 +287,6 @@ sap.ui.define([
 				if (oRouterHashChanger) {
 					this.setHashChanger(oRouterHashChanger);
 				}
-
-				var oParentComponent = Component.getOwnerComponentFor(this._oOwner);
-				var oParentRouter = oParentComponent && oParentComponent.getRouter();
-
-				if (oParentRouter) {
-					// attach titleChanged event and forward event parameters to parent router
-					this.attachTitleChanged(function(oEvent) {
-						var mParameters = oEvent.getParameters();
-
-						if (oParentRouter._bCollectTitleChanged) {
-							// when the parent router will fire its own titleChange event, it saves
-							// the nested history information and use it when it fires its own
-							// titleChanged event
-							oParentRouter.nestedHistory = mParameters.nestedHistory;
-						} else {
-							// mark the event as propagated to avoid the self history modification
-							// in Router.prototype.fireTitleChanged
-							mParameters.propagated = true;
-
-							// add its own history to the nested history information
-							mParameters.nestedHistory.unshift({
-								ownerComponentId: oParentRouter._oOwner.getId(),
-								history: oParentRouter.getTitleHistory()
-							});
-
-							oParentRouter.fireTitleChanged(mParameters);
-						}
-					});
-				}
 			},
 
 			/**
@@ -455,13 +424,10 @@ sap.ui.define([
 
 				if (this._oTargets) {
 					this._oTargets.detachTitleChanged(this._forwardTitleChanged, this);
-
-					// remove the last saved title since the router is reset
-					delete this._oTargets._sPreviousTitle;
 				}
 
 				if (this._matchedRoute) {
-					this._matchedRoute._routeSwitched();
+					this._matchedRoute.fireEvent("switched");
 					this._matchedRoute = null;
 				}
 
@@ -591,47 +557,6 @@ sap.ui.define([
 				return Object.keys(this._oRoutes).some(function(sRouteName) {
 					return this._oRoutes[sRouteName].match(sHash);
 				}.bind(this));
-			},
-
-			/**
-			 * Returns the first route which matches the given hash or <code>undefined</code> if no matching route can be determined
-			 *
-			 * @param {string} sHash The hash of the desired route
-			 * @returns {sap.ui.core.routing.Route|undefined} The matched route
-			 * @private
-			 * @ui5-restricted sap.ui.core
-			 */
-			getRouteByHash : function(sHash) {
-				for (var sRouteName in this._oRoutes) {
-					if (this._oRoutes.hasOwnProperty(sRouteName)) {
-						var oRoute = this.getRoute(sRouteName);
-						if (oRoute.match(sHash)) {
-							return oRoute;
-						}
-					}
-				}
-			},
-
-			/**
-			 * Returns a route info object containing the name and arguments of the route
-			 * which matches the given hash or <code>undefined</code>.
-			 *
-			 * @param {string} sHash The hash to be matched
-			 * @returns {object|undefined} An object containing the route <code>name</code> and the <code>arguments</code> or <code>undefined
-			 * @public
-			 * @since 1.74
-			 */
-			getRouteInfoByHash : function(sHash) {
-				var oRoute = this.getRouteByHash(sHash);
-
-				if (!oRoute) {
-					return undefined;
-				}
-
-				return {
-					name: oRoute._oConfig.name,
-					arguments:  oRoute.getPatternArguments(sHash)
-				};
 			},
 
 			/**
@@ -1244,16 +1169,6 @@ sap.ui.define([
 			 * @param {string} oEvent.getParameters.history.title The title
 			 * @param {string} oEvent.getParameters.history.hash The hash
 			 * @param {boolean} oEvent.getParameters.history.isHome The app home indicator
-			 * @param {array} oEvent.getParameters.nestedHistory An array which contains the title history information of the current router and of the router of the nested components,
-			 * 		so the application doesn't need to merge the <code>nestedHistory</code> with the <code>history</code> parameter together.
-			 * 		If a hierarchical control is used to show the title information (like the sap.m.Breadcrumbs control), the application can simply use the <code>nestedHistory</code>
-			 * 		to build up the control and doesn't need the <code>history</code> anymore.
-			 * @param {string} oEvent.getParameters.nestedHistory.ownerComponentId The id of the component which is associated to the history entries
-			 * @param {array} oEvent.getParameters.nestedHistory.history An array which contains the history of previous titles of the router of the associated component
-			 * @param {string} oEvent.getParameters.nestedHistory.history.title The title
-			 * @param {string} oEvent.getParameters.nestedHistory.history.hash The hash
-			 * @param {boolean} oEvent.getParameters.nestedHistory.history.isHome The app home indicator
-			 * @param {boolean} oEvent.getParameters.propagated Whether the titleChanged event is triggered by a nested component
 			 * @public
 			 */
 
@@ -1300,69 +1215,55 @@ sap.ui.define([
 
 			// private
 			fireTitleChanged : function(mParameters) {
-				if (!mParameters.propagated) {
-					var sDirection = History.getInstance().getDirection(),
-						sHash = this.getHashChanger().getHash(),
-						HistoryDirection = library.routing.HistoryDirection,
-						oLastHistoryEntry = this._aHistory[this._aHistory.length - 1],
-						oNewHistoryEntry;
+				var sDirection = History.getInstance().getDirection(),
+					sHash = this.oHashChanger.getHash(),
+					HistoryDirection = library.routing.HistoryDirection,
+					oLastHistoryEntry = this._aHistory[this._aHistory.length - 1],
+					oNewHistoryEntry;
 
-					// when back navigation, the last history state should be removed - except home route
-					if (sDirection === HistoryDirection.Backwards && oLastHistoryEntry && !oLastHistoryEntry.isHome) {
-						// but only if the last history entrie´s title is not the same as the current one
-						if (oLastHistoryEntry && oLastHistoryEntry.title !== mParameters.title) {
-							this._aHistory.pop();
+				// when back navigation, the last history state should be removed - except home route
+				if (sDirection === HistoryDirection.Backwards && oLastHistoryEntry && !oLastHistoryEntry.isHome) {
+					// but only if the last history entrie´s title is not the same as the current one
+					if (oLastHistoryEntry && oLastHistoryEntry.title !== mParameters.title) {
+						this._aHistory.pop();
+					}
+				} else if (oLastHistoryEntry && oLastHistoryEntry.hash == sHash) {
+					// if no actual navigation took place, we only need to update the title
+					oLastHistoryEntry.title = mParameters.title;
+
+					// check whether there's a duplicate history entry with the last history entry and remove it if there is
+					this._aHistory.some(function(oEntry, i, aHistory) {
+						if (i < aHistory.length - 1 && deepEqual(oEntry, oLastHistoryEntry)) {
+							return aHistory.splice(i, 1);
 						}
-					} else if (oLastHistoryEntry && oLastHistoryEntry.hash == sHash) {
-						// if no actual navigation took place, we only need to update the title
-						oLastHistoryEntry.title = mParameters.title;
-
-						// check whether there's a duplicate history entry with the last history entry and remove it if there is
-						this._aHistory.some(function(oEntry, i, aHistory) {
-							if (i < aHistory.length - 1 && deepEqual(oEntry, oLastHistoryEntry)) {
-								return aHistory.splice(i, 1);
-							}
-						});
-					} else {
-						if (this._bLastHashReplaced) {
-							// if the current hash change is done via replacement, the last history entry should be removed
-							this._aHistory.pop();
-						}
-
-						oNewHistoryEntry = {
-							hash: sHash,
-							title: mParameters.title
-						};
-
-						// Array.some is sufficient here, as we ensure there is only one occurence
-						this._aHistory.some(function(oEntry, i, aHistory) {
-							if (deepEqual(oEntry, oNewHistoryEntry)) {
-								return aHistory.splice(i, 1);
-							}
-						});
-
-						// push new history state into the stack
-						this._aHistory.push(oNewHistoryEntry);
+					});
+				} else {
+					if (this._bLastHashReplaced) {
+						// if the current hash change is done via replacement, the last history entry should be removed
+						this._aHistory.pop();
 					}
 
-					mParameters.history = this._aHistory.slice(0, -1);
+					oNewHistoryEntry = {
+						hash: sHash,
+						title: mParameters.title
+					};
 
-					// set the nestedHistory parameter
-					// if the router has collected nestedHistory, use the collected nestedHistory. Otherwise
-					// put its own history to the nested history
-					mParameters.nestedHistory = this.nestedHistory || [];
-					mParameters.nestedHistory.unshift({
-						history: this.getTitleHistory(),
-						ownerComponentId: this._oOwner && this._oOwner.getId()
+					// Array.some is sufficient here, as we ensure there is only one occurence
+					this._aHistory.some(function(oEntry, i, aHistory) {
+						if (deepEqual(oEntry, oNewHistoryEntry)) {
+							return aHistory.splice(i, 1);
+						}
 					});
 
-					this._bCollectTitleChanged = false;
-					this.nestedHistory = null;
-
-					this._bLastHashReplaced = false;
+					// push new history state into the stack
+					this._aHistory.push(oNewHistoryEntry);
 				}
 
+				mParameters.history = this._aHistory.slice(0, -1);
+
 				this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mParameters);
+
+				this._bLastHashReplaced = false;
 
 				return this;
 			},

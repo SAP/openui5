@@ -7,6 +7,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 	/**
 	 * Provide methods for sap.ui.core.routing.Route in async mode
 	 * @private
+	 * @experimental
 	 * @since 1.33
 	 */
 	return {
@@ -24,7 +25,6 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 
 			var oRouter = this._oRouter,
 				oTarget,
-				oTargets,
 				oConfig,
 				oEventData,
 				oView = null,
@@ -36,15 +36,6 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 
 			oRouter._matchedRoute = this;
 			oRouter._bMatchingProcessStarted = true;
-
-			oConfig = jQuery.extend({}, oRouter._oConfig, this._oConfig);
-
-			oTargets = oRouter.getTargets();
-			if (oTargets) {
-				if (oTargets._getTitleTargetName(oConfig.target, oConfig.titleTarget)) {
-					oRouter._bCollectTitleChanged = true;
-				}
-			}
 
 			if (!oSequencePromise || oSequencePromise === true) {
 				bInitial = true;
@@ -59,6 +50,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 				this._oNestingParent._routeMatched(oArguments, oSequencePromise, this);
 			}
 
+			oConfig = jQuery.extend({}, oRouter._oConfig, this._oConfig);
 
 			// make a copy of arguments and forward route config to target
 			oTargetData = jQuery.extend({}, oArguments);

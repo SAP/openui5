@@ -603,14 +603,7 @@ sap.ui.define([
 			},
 
 			fireTitleChanged : function(oParameters) {
-				// if the new title is different as the previous one, fire a titleChanged event
-				if (oParameters.title !== this._sPreviousTitle) {
-					// save the current title
-					this._sPreviousTitle = oParameters.title;
-					this.fireEvent(this.M_EVENTS.TITLE_CHANGED, oParameters);
-				}
-
-				return this;
+				return this.fireEvent(this.M_EVENTS.TITLE_CHANGED, oParameters);
 			},
 
 			M_EVENTS : {
@@ -754,30 +747,25 @@ sap.ui.define([
 			_getTitleTargetName: function(vTargetNames, sProvidedTitleTargetName) {
 				var oTarget, sTitleTargetName;
 
-				if (sProvidedTitleTargetName) {
-					// when titleTarget is defined, we use it directly without looping
-					// through the vTargetNames
-					vTargetNames = [sProvidedTitleTargetName];
+				sTitleTargetName = sProvidedTitleTargetName ||
+					(typeof vTargetNames === "string" ? vTargetNames : undefined);
+
+				if (!sTitleTargetName) {
+					vTargetNames.some(function(sTargetName) {
+						oTarget = this.getTarget(sTargetName);
+
+						// search the TitleTarget depth first
+						while (oTarget && oTarget._oParent && oTarget._oParent._oOptions.title) {
+							oTarget = oTarget._oParent;
+						}
+
+						if (oTarget && oTarget._oOptions.title) {
+							// we found the TitleTarget
+							sTitleTargetName = oTarget._oOptions._name;
+							return true;
+						}
+					}.bind(this));
 				}
-
-				vTargetNames = this._alignTargetsInfo(vTargetNames);
-
-				vTargetNames.some(function(sTargetName) {
-					oTarget = this.getTarget(sTargetName);
-
-					// find the first target along the parent chain which has title defined
-					while (oTarget && !oTarget._oOptions.title) {
-						// oTarget._oParent && oTarget._oParent._oOptions.title) {
-						oTarget = oTarget._oParent;
-					}
-
-					if (oTarget) {
-						// we found the TitleTarget
-						sTitleTargetName = oTarget._oOptions._name;
-						return true;
-					}
-
-				}.bind(this));
 
 				return sTitleTargetName;
 			},
@@ -796,12 +784,12 @@ sap.ui.define([
 			 * Calculate the 'TitleTarget' based on the given parameters and register to the titleChanged event on the 'TitleTarget'
 			 */
 			_attachTitleChanged: function(vTargets, sTitleTarget) {
-				var oTitleTarget, sCalculatedTargetName;
+				var oTitleTarget;
 
-				sCalculatedTargetName = this._getTitleTargetName(vTargets, sTitleTarget);
+				sTitleTarget = this._getTitleTargetName(vTargets, sTitleTarget);
 
-				if (sCalculatedTargetName) {
-					oTitleTarget = this.getTarget(sCalculatedTargetName);
+				if (sTitleTarget) {
+					oTitleTarget = this.getTarget(sTitleTarget);
 				}
 
 				if (this._oLastTitleTarget) {
