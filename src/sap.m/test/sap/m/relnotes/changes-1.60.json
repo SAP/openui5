@@ -3013,5 +3013,165 @@
         ]
       }
     ]
+  },
+  "1.60.20": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "b850682251d62aa5f15503f61e23fc54ceae96a4",
+        "type": "FIX",
+        "text": " GenericTile breathing \u0026 language fix.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "49891"
+          }
+        ]
+      },
+      {
+        "id": "fb873a5bb16f88b384d7aaeb463c17b7e37ab23d",
+        "type": "FIX",
+        "text": " sap.m.Input: Changing showSuggestion now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980358967"
+          }
+        ]
+      },
+      {
+        "id": "5725898f99a574866875089af6645f98973a3d5a",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: focus index is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970415298"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.21": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "452c1574f08819fe021460fefb3cd3652ca98880",
+        "type": "FIX",
+        "text": " Translation delivery: translations fixed for sap.m.TimePicker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005041000000799792019"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.22": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "b833d1d98d7b28c1615fe6394ce86ba5a7a47bc7",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: Property truncateValueTo is not ignored anymore \u0026 Case insensitive NumericContent lang map + add en_US lang.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006220662019"
+          }
+        ]
+      },
+      {
+        "id": "77c627bfb4efce342faf288059cc7722f59680cd",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Doesn\u0027t load density aware image by default",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007126932019"
+          }
+        ]
+      },
+      {
+        "id": "fdced4f599480fa5de08520f1ae1df68ad6a67a1",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: valueState is now updated if there is a Message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500005744122019"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.23": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "cd897bacde4f1a052c19da36b2b2a97a8ac67e72",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Hidden label is now placed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000293072019"
+          }
+        ]
+      },
+      {
+        "id": "108d58dbfbb1aedc3b551eac08a48f1a63752b03",
+        "type": "FIX",
+        "text": " sap.m.SearchField: search event is now fired correctly in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980550843"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970045315"
+          }
+        ]
+      },
+      {
+        "id": "975c716a6d833610d5a6b47b6dfaeaeb59c22865",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Do not auto-correct values without user interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980546816"
+          }
+        ]
+      },
+      {
+        "id": "9740ad5d26bdab8ab042d50f2b5f74d6b568a8b8",
+        "type": "FIX",
+        "text": " sap.m.StepInput: mouse wheel behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007806722019"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970022844"
+          }
+        ]
+      },
+      {
+        "id": "de8f749d3d9ccfc95cf069e12829e87de61b6ef2",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Consistent visualization for the sort items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970201189"
+          }
+        ]
+      }
+    ]
   }
 }

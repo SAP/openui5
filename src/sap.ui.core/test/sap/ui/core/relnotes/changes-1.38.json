@@ -3547,5 +3547,86 @@
         "references": []
       }
     ]
+  },
+  "1.38.42": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "3d46ec18bf7b33c1f81d70a3372aeb9eb5056c49",
+        "type": "FIX",
+        "text": " Improve jQuery.parseHTML implementation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "n/a"
+          }
+        ]
+      },
+      {
+        "id": "aa287b3ba4f5f9370892b2035034042e8fb6e22d",
+        "type": "FIX",
+        "text": " jQuery.sap.global: open the TechnicalInfo only when left \u0027alt\u0027 is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "301552"
+          }
+        ]
+      },
+      {
+        "id": "47aec47275141bff4b9bf38be394fc74738e19c9",
+        "type": "FIX",
+        "text": " sap/ui/Device: Detect iPads running on iOS 13",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970475024"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.43": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "247af2dbba5715b3dbf81c86b058839bdf46b804",
+        "type": "FIX",
+        "text": " NumberFormat: Percent formatting did not work for string values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003037702019"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.44": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "6cc3f844675fd48a880fbd383bf5969a58036ea9",
+        "type": "FIX",
+        "text": " jQuery: Make parseHTML work with domain relaxation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007453322019"
+          }
+        ]
+      },
+      {
+        "id": "168af5243f41148b075b35afcdf793caa2ad2756",
+        "type": "FIX",
+        "text": " v2.ODataModel: Normalize entity URL encoding and number values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970547623"
+          }
+        ]
+      }
+    ]
   }
 }

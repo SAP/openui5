@@ -5469,5 +5469,37 @@
         ]
       }
     ]
+  },
+  "1.44.43": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "272a0d34ca189d1a5fb16f534d8ea03500d7f6f3",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: focus index is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970415298"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.44": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "33725fb5ece65ceacd41b9db449c276cdbca9590",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: valueState is now updated if there is a Message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500005744122019"
+          }
+        ]
+      }
+    ]
   }
 }

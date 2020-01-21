@@ -176,5 +176,43 @@
         "references": []
       }
     ]
+  },
+  "1.65.12": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "0ae8a62838e35163754168edb471f858f7a40c88",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed visibility of collapse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005671102019"
+          }
+        ]
+      },
+      {
+        "id": "8a01474a759604e16aa421ca05ac3d16b8f76322",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: No more error when hidden title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007433342019"
+          }
+        ]
+      },
+      {
+        "id": "93ee6d060841800b255277d92f9f3c70462622e6",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fixed design time metadata",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376600003928952019"
+          }
+        ]
+      }
+    ]
   }
 }

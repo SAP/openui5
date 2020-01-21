@@ -27,5 +27,21 @@
         "references": []
       }
     ]
+  },
+  "1.65.12": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "0211d426935f30a759540e299a42483595f6f0f1",
+        "type": "FIX",
+        "text": " sap-icons-tnt: Restored backward compatibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008086842019"
+          }
+        ]
+      }
+    ]
   }
 }

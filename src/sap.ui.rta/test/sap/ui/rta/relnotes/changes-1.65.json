@@ -94,5 +94,21 @@
         ]
       }
     ]
+  },
+  "1.65.12": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "60286eeac2912d5e744e7e7c67c1be224b971ebb",
+        "type": "FIX",
+        "text": " sap.ui.rta: destroy RTA Instance after reload due to pers changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004987682019"
+          }
+        ]
+      }
+    ]
   }
 }

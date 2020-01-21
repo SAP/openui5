@@ -208,5 +208,48 @@
         "references": []
       }
     ]
+  },
+  "1.60.21": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "a26e5c388cca3cd5fd03aab58f580a756a977008",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed visibility of collapse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005671102019"
+          }
+        ]
+      },
+      {
+        "id": "3c618371930443dc7331fcbbfa06c8a9ee4ae571",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fixed design time metadata",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376600003928952019"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.23": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "9bbed4ec48ba33d08f088705e72055cbe28b02d5",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: ExpandHeader button is now hidden when no content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005671102019"
+          }
+        ]
+      }
+    ]
   }
 }

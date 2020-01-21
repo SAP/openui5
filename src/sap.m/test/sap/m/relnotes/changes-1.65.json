@@ -1127,5 +1127,76 @@
         ]
       }
     ]
+  },
+  "1.65.12": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "0ec0f51b743bb915a3dbb28e32547d75e869c774",
+        "type": "FIX",
+        "text": " GenericTile breathing \u0026 language fix.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000498912019"
+          }
+        ]
+      },
+      {
+        "id": "46544f9354fbb20f36c17586f7fd1f83f5e93bc3",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: setDisplayFormat does not trigger focus in",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005957622019"
+          }
+        ]
+      },
+      {
+        "id": "00c63982af09f4902638b841b5894e2bb4a1f8bd",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: Property truncateValueTo is not ignored anymore \u0026 Case insensitive NumericContent lang map + add en_US lang.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006220662019"
+          }
+        ]
+      },
+      {
+        "id": "7301fe48175412c204a7d9a8401169bcfabab913",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Doesn\u0027t load density aware image by default",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007126932019"
+          }
+        ]
+      },
+      {
+        "id": "9c504ca383f41e246957cc6f2b6d10fbed1aef6d",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: valueState is now updated if there is a Message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500005744122019"
+          }
+        ]
+      },
+      {
+        "id": "b03578b823780f723cc108bd0f98d48459e9ca8f",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Deletion of email when drag and dropped from MS outlook to chrome.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005214142019"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1179,5 +1179,97 @@
         ]
       }
     ]
+  },
+  "1.60.20": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "2592ce67846166bb89268bbe0084e16d5f8690ac",
+        "type": "FIX",
+        "text": " ODataModel: Don\u0027t send CSRF token for GET requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "529036"
+          }
+        ]
+      },
+      {
+        "id": "c087708d6c4c38d0dd2d815b2fd7b4fc9f0d4e1c",
+        "type": "FIX",
+        "text": " sap.ui.core.date.Islamic: Customization fall-back format is always A",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "364899"
+          }
+        ]
+      },
+      {
+        "id": "857e932190ead69fabd04f304a123439142bdb04",
+        "type": "FIX",
+        "text": " sap/ui/Device: Detect iPads running on iOS 13",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970475024"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.21": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "baa08d7e4eede1e27dad5e17ec6c773b113adb5f",
+        "type": "FIX",
+        "text": " Aggregation Forwarding: also clone forwarded bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500005492722019"
+          }
+        ]
+      },
+      {
+        "id": "a45b90fba1f82bcc55e76aa62cf199402de72007",
+        "type": "FIX",
+        "text": " ManagedObject.bindAggregation returns \u0027this\u0027 even when forwarded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970047588"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.22": {
+    "date": "December 2019",
+    "notes": [
+      {
+        "id": "f04dd558a7d5c74c644b56477cd06e3dfc272904",
+        "type": "FIX",
+        "text": " jQuery: Make parseHTML work with domain relaxation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007453322019"
+          }
+        ]
+      },
+      {
+        "id": "01152baa8bfd2914bca5638693fea9fef2bc5187",
+        "type": "FIX",
+        "text": " sap.ui.core.Hyphenation: Update Hyphenopoly bundle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980429483"
+          }
+        ]
+      }
+    ]
   }
 }

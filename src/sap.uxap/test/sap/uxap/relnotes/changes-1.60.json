@@ -349,5 +349,32 @@
         ]
       }
     ]
+  },
+  "1.60.20": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "6d4eba05d77a4e25f0b801ff585baa8bed0e8eb2",
+        "type": "FIX",
+        "text": " REG: Adapt UI ObjectPageLayout exception is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980328772"
+          }
+        ]
+      },
+      {
+        "id": "d2f07ff3a4c5c213790330400311d4c09cbab675",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevented iOS scroll issue on overflow change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "587571"
+          }
+        ]
+      }
+    ]
   }
 }

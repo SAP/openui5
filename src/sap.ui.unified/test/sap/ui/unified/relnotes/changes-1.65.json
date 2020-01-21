@@ -138,5 +138,33 @@
         ]
       }
     ]
+  },
+  "1.65.12": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "4763657f2a12563c8be1a94739e4289431e7196b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Menu is now handling the new iOS13 tablet views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970508436"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006496372019"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005577152019"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006664912019"
+          }
+        ]
+      }
+    ]
   }
 }
