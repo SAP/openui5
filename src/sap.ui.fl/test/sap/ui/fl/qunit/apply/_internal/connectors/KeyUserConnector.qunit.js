@@ -20,7 +20,10 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("loadFlexData trigger the correct request to back end then store the token and settings value", function (assert) {
+		QUnit.test("loadFlexData trigger the correct request to back end then:" +
+			"- store the token and settings values" +
+			"- return cacheKey value" +
+			"- merges the compVariants in the changes", function (assert) {
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "reference",
@@ -35,16 +38,18 @@ sap.ui.define([
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response : {
-					changes: [],
+					changes: [1],
+					compVariants: [2],
 					settings: {
 						isKeyUser: true,
 						isVariantSharingEnabled: true
 					}
 				},
 				xsrfToken : "newToken",
-				status: "200"
+				status: "200",
+				etag: "abc123"
 			});
-			return KeyUserConnector.loadFlexData(mPropertyBag).then(function () {
+			return KeyUserConnector.loadFlexData(mPropertyBag).then(function (oFlexData) {
 				assert.ok(oStubGetUrlWithQueryParameters.calledOnce, "getUrl is called once");
 				assert.equal(oStubGetUrlWithQueryParameters.getCall(0).args[0], "/flex/keyuser/v1/data/", "with correct route path");
 				assert.deepEqual(oStubGetUrlWithQueryParameters.getCall(0).args[1], mPropertyBag, "with correct property bag");
@@ -55,29 +60,10 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[2].xsrfToken, undefined, "with correct token");
 				assert.equal(KeyUserConnector.xsrfToken, "newToken", "new token is set");
 				assert.deepEqual(KeyUserConnector.settings, { isKeyUser: true, isVariantSharingEnabled: true}, "new settings is stored");
-			});
-		});
-
-		QUnit.test("loadFlexData merges the compVariants in the changes", function (assert) {
-			var mPropertyBag = {
-				url: "/flexKeyuser",
-				reference: "reference",
-				appVersion: "1.0.0"
-			};
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?appVersion=1.0.0";
-			sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
-			sandbox.stub(Utils, "sendRequest").resolves({
-				response : {
-					changes: [1],
-					compVariants: [2]
-				},
-				xsrfToken : "newToken",
-				status: "200"
-			});
-			return KeyUserConnector.loadFlexData(mPropertyBag).then(function (oFlexData) {
 				assert.equal(oFlexData.changes.length, 2, "two entries are in the change section");
 				assert.equal(oFlexData.changes[0], 1, "the change entry is contained");
 				assert.equal(oFlexData.changes[1], 2, "the compVariant entry is contained");
+				assert.equal(oFlexData.cacheKey, "abc123", "the cacheKey value is returned");
 			});
 		});
 	});

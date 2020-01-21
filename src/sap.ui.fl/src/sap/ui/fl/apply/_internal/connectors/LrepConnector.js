@@ -108,6 +108,11 @@ sap.ui.define([
 				if (oResult.xsrfToken) {
 					this.xsrfToken = oResult.xsrfToken;
 				}
+				if (oResult.etag) {
+					oResponse.cacheKey = oResult.etag;
+				} else if (mPropertyBag.cacheKey) {
+					oResponse.cacheKey = mPropertyBag.cacheKey;
+				}
 				oResponse.changes = oResponse.changes.concat(oResponse.compVariants || []);
 				if (oResponse.settings) {
 					this.settings = oResponse.settings;

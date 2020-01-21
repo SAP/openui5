@@ -13,8 +13,12 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	function fnReturnData(sData) {
-		sandbox.server.respondWith([200, { "Content-Type": "application/json" }, sData]);
+	function fnReturnData(sData, sEtag) {
+		var oHeaders = { "Content-Type": "application/json" };
+		if (sEtag) {
+			oHeaders.Etag = sEtag;
+		}
+		sandbox.server.respondWith([200, oHeaders, sData]);
 	}
 
 	QUnit.module("LrepConnector with a sinon fake server", {
@@ -42,6 +46,14 @@ sap.ui.define([
 
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", cacheKey: sCacheKey}).then(function (oServer) {
 				assert.equal(oServer.getRequest(0).url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "the cacheKey is included in the request");
+			}.bind(undefined, sandbox.server));
+		});
+
+		QUnit.test("given a mock server, when loading flex data is triggered end Etag is available in the response header", function (assert) {
+			fnReturnData(JSON.stringify({changes: [], loadModules: false}), "cacheKey");
+
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function (oServer, oResult) {
+				assert.deepEqual(oResult, {changes: [], loadModules: false, cacheKey: "cacheKey"}, "/sap/bc/lrep/flex/data/reference?appVersion=1.0.0", "cacheKey is set in the result");
 			}.bind(undefined, sandbox.server));
 		});
 
@@ -77,7 +89,7 @@ sap.ui.define([
 				assert.equal(oServer.requestCount, 1, "then there is one request to load data");
 				assert.equal(oServer.getRequest(0).url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "and the URL was correct");
 				assert.ok(oStubLoadModule.calledOnce, "loadModule triggered");
-				assert.deepEqual(oResult, {changes: [], loadModules: true}, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "and the flex_data response resolves the promise");
+				assert.deepEqual(oResult, {changes: [], loadModules: true, cacheKey: "abc123"}, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "and the flex_data response resolves the promise");
 			}.bind(undefined, sandbox.server));
 		});
 

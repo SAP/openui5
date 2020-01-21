@@ -200,7 +200,7 @@ sap.ui.define([
 					};
 				}
 			};
-			var oWrappedChangeFileContentMock = { etag: sEtag };
+			var oWrappedChangeFileContentMock = { cacheKey: sEtag };
 			this.oGetStorageResponseStub.resolves(oWrappedChangeFileContentMock);
 
 			return Cache.getCacheKey(mComponentMock, oAppComponentMock)

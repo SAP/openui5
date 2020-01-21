@@ -11,6 +11,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
+	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/base/util/merge"
 ], function (
@@ -24,6 +26,8 @@ sap.ui.define([
 	StaticFileConnector,
 	LrepConnector,
 	JsObjectConnector,
+	KeyUserConnector,
+	PersonalizationConnector,
 	ObjectStorageUtils,
 	merge
 ) {
@@ -63,7 +67,21 @@ sap.ui.define([
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, StorageUtils.getEmptyFlexDataResponse());
+				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: null}));
+			});
+		});
+
+		QUnit.test("Given 2 connectors provide their own cacheKey values", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector", layers: ["CUSTOMER"]},
+				{connector: "PersonalizationConnector", layers: ["USER"]}
+			]);
+			sandbox.stub(KeyUserConnector, "loadFlexData").resolves(merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: "abc"}));
+			sandbox.stub(PersonalizationConnector, "loadFlexData").resolves(merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: "123"}));
+
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: "abc123"}));
+				sap.ui.getCore().getConfiguration().getFlexibilityServices.restore();
 			});
 		});
 
@@ -131,7 +149,7 @@ sap.ui.define([
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, StorageUtils.getEmptyFlexDataResponse());
+				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: null}));
 			});
 		});
 
@@ -140,7 +158,7 @@ sap.ui.define([
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, StorageUtils.getEmptyFlexDataResponse());
+				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: null}));
 			});
 		});
 
@@ -174,8 +192,8 @@ sap.ui.define([
 			sandbox.stub(LrepConnector, "loadFlexData").resolves({changes: []});
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, oExpectedStorageResponse, "then the expected result is returned");
-				assert.equal(Object.keys(oResult).length, 7, "seven entries are in the result");
+				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
+				assert.equal(Object.keys(oResult).length, 8, "seven entries are in the result");
 			});
 		});
 
@@ -220,8 +238,8 @@ sap.ui.define([
 			});
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, oExpectedStorageResponse, "then the expected result is returned");
-				assert.equal(Object.keys(oResult).length, 7, "seven entries are in the result");
+				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
+				assert.equal(Object.keys(oResult).length, 8, "seven entries are in the result");
 			});
 		});
 
@@ -297,7 +315,7 @@ sap.ui.define([
 				variants: [oResponse1.variants[0], oResponse2.variantSection.variantManagement1.variants[0].content]
 			});
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, oExpectedResponse, "then the expected result is returned");
+				assert.deepEqual(oResult, merge(oExpectedResponse, {cacheKey: null}), "then the expected result is returned");
 			});
 		});
 
@@ -352,7 +370,7 @@ sap.ui.define([
 			});
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, oExpectedResponse, "then the expected result is returned");
+				assert.deepEqual(oResult, merge(oExpectedResponse, {cacheKey: null}), "then the expected result is returned");
 			});
 		});
 

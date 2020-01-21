@@ -70,6 +70,7 @@ sap.ui.define([
 		}).then(function(mFlexData) {
 			return {
 				changes: mFlexData,
+				cacheKey: mFlexData.cacheKey,
 				loadModules: false
 				//TODO check other return values build in LrepConnector.prototype._onChangeResponseReceived
 			};

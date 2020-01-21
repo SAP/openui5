@@ -105,8 +105,8 @@ function(
 		}
 		return this.getChangesFillingCache(mComponent)
 		.then(function (oWrappedChangeFileContent) {
-			if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
-				return _trimEtag(oWrappedChangeFileContent.etag);
+			if (oWrappedChangeFileContent && oWrappedChangeFileContent.cacheKey) {
+				return _trimEtag(oWrappedChangeFileContent.cacheKey);
 			}
 
 			return Cache.NOTAG;
