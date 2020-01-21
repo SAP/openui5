@@ -2771,6 +2771,7 @@ function (
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
 		beforeEach: function () {
 			sandbox.stub(FlexState, "initialize").resolves();
+			sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
 			this._mComponentProperties = {
 				name : "saveChangeScenario",
 				appVersion : "1.2.3"

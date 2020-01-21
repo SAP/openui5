@@ -86,7 +86,8 @@ sap.ui.define([
 		if (!_mInstances[sReference].preparedMaps[sMapName]) {
 			var mPropertyBag = {
 				storageResponse: _mInstances[sReference].unfilteredStorageResponse,
-				componentId: _mInstances[sReference].componentId
+				componentId: _mInstances[sReference].componentId,
+				componentData: _mInstances[sReference].componentData
 			};
 			_mInstances[sReference].preparedMaps[sMapName] = FlexState._callPrepareFunction(sMapName, mPropertyBag);
 		}
@@ -140,7 +141,8 @@ sap.ui.define([
 				_mInstances[mPropertyBag.reference] = merge({}, {
 					unfilteredStorageResponse: mResponse,
 					preparedMaps: {},
-					componentId: mPropertyBag.componentId
+					componentId: mPropertyBag.componentId,
+					componentData: mPropertyBag.componentData
 				});
 
 				// temporarily create an instance without '.Component'

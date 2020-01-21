@@ -66,7 +66,6 @@ sap.ui.define([
 	}
 
 	function _registerDescriptorChangeHandler() {
-		//TODO: enable Applier.preprocessManifest after FlexState is updated
 		Component._fnPreprocessManifest = Applier.preprocessManifest;
 	}
 
