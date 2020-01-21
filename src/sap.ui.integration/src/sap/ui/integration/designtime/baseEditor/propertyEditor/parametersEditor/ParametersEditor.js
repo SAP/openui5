@@ -38,12 +38,12 @@ sap.ui.define([
 			}
 		},
 
-		firePropertyChange: function(mParams) {
+		fireValueChange: function(mParams) {
 			var mFormattedParams = {};
 			Object.keys(mParams).forEach(function (sKey) {
 				mFormattedParams[sKey] = this._formatValue(deepClone(mParams[sKey]), sKey);
 			}.bind(this));
-			this.fireEvent("propertyChange", {
+			this.fireEvent("valueChange", {
 				path: this.getConfig().path,
 				value: mFormattedParams
 			});

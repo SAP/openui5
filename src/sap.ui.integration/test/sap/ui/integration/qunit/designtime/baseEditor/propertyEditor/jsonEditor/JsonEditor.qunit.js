@@ -184,7 +184,7 @@ sap.ui.define([
 		QUnit.test("When a value is correctly changed in the inline editor", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.deepEqual(
 					oEvent.getParameter("value"),
 					[{
@@ -233,7 +233,7 @@ sap.ui.define([
 				});
 			}.bind(this));
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.deepEqual(oEvent.getParameter("value"), {msg: "Hello World"}, "Then it is updated correctly");
 				fnDone();
 			});

@@ -81,7 +81,7 @@ sap.ui.define([
 				oI18nModel.setDefaultBindingMode("OneWay");
 				this.oEditor.setModel(oI18nModel, "i18n");
 
-				this.oEditor.attachPropertyChange(function (oEvent) {
+				this.oEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(oEvent.getParameter("value"), false, "Then it is updated correctly");
 					fnDone();
 				});
@@ -97,7 +97,7 @@ sap.ui.define([
 		QUnit.test("When a binding path is provided", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value"), "{someBindingPath}", "Then the value is updated correctly");
 				fnDone();
 			});

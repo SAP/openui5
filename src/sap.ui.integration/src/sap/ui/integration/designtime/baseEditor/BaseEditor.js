@@ -360,7 +360,7 @@ sap.ui.define([
 				var oPropertyEditor = mPropertyEditor[1];
 
 				if (oPropertyEditor) {
-					oPropertyEditor.attachPropertyChange(this._onPropertyChange.bind(this));
+					oPropertyEditor.attachValueChange(this._onValueChange.bind(this));
 					this._mPropertyEditors[sPropertyName] = oPropertyEditor;
 					this.addAggregation("_propertyEditors", oPropertyEditor);
 				}
@@ -448,7 +448,7 @@ sap.ui.define([
 		}
 	};
 
-	BaseEditor.prototype._onPropertyChange = function (oEvent) {
+	BaseEditor.prototype._onValueChange = function (oEvent) {
 		var sPath = oEvent.getParameter("path");
 		var aParts = sPath.split("/");
 

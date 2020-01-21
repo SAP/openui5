@@ -29,7 +29,7 @@ sap.ui.define([
 	 * Constructor for a new <code>IconEditor</code>.
 	 * This allows to set icon URIs or binding strings for a specified property of a JSON object.
 	 * The editor is rendered as a {@link sap.m.Input} with a {@link sap.m.SelectDialog} value help.
-	 * To get notified about changes made with the editor, you can use the <code>attachPropertyChange</code> method,
+	 * To get notified about changes made with the editor, you can use the <code>attachValueChange</code> method,
 	 * which passes the current property state as a string containing an icon URI or as a binding string to the provided callback function when the user edits the input or selects an item in the dialog.
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
@@ -72,12 +72,12 @@ sap.ui.define([
 	IconEditor.prototype._onLiveChange = function(oEvent) {
 		var sIconInput = oEvent.getParameter("value");
 		if (this._isValid(sIconInput)) {
-			this.firePropertyChange(sIconInput);
+			this.fireValueChange(sIconInput);
 		}
 	};
 
 	IconEditor.prototype._onSuggestionItemSelected = function(oEvent) {
-		this.firePropertyChange(oEvent.getParameter("selectedItem").getText());
+		this.fireValueChange(oEvent.getParameter("selectedItem").getText());
 	};
 
 	IconEditor.prototype._isValid = function (sSelectedIcon) {
@@ -143,7 +143,7 @@ sap.ui.define([
 	IconEditor.prototype.handleClose = function(oEvent) {
 		var oSelectedItem = oEvent.getParameter("selectedItem");
 		if (oSelectedItem) {
-			this.firePropertyChange(oSelectedItem.getIcon());
+			this.fireValueChange(oSelectedItem.getIcon());
 		}
 		oEvent.getSource().getBinding("items").filter([]);
 	};
