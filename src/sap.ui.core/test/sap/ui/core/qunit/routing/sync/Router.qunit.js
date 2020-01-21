@@ -1784,12 +1784,11 @@ sap.ui.define([
 		this.oRouter.initialize();
 		this.oRouter.navTo("product");
 		this.oRouter.navTo("productDetail");
-		assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired twice");
 		window.history.go(-1);
 
 		// Assert
 		this.oRouter.attachRouteMatched(function() {
-			assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event isn't fired again");
+			assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
 			assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
 			assert.equal(oParameters.history.length, 1, "history entry was not removed");
 			assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
@@ -1871,9 +1870,6 @@ sap.ui.define([
 		this.oOwner = {
 			getManifestEntry: function() {
 				return "HOME";
-			},
-			getId: function() {
-				return "component1";
 			}
 		};
 

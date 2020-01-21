@@ -52,9 +52,6 @@ sap.ui.define([
 				_oViews: oViews,
 				_isAsync: function() {
 					return true;
-				},
-				getTargets: function() {
-					return this._oTargets.targets;
 				}
 			};
 

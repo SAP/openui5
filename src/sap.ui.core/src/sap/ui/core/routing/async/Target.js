@@ -181,67 +181,40 @@ sap.ui.define([
 
 			var oOptions = this._oOptions,
 				that = this,
-				oObject, sErrorMessage, pLoaded,
-				bInstantResolve = true,
-				fnResolve,
-				pNestedRouteMatched;
+				oObject, sErrorMessage, pLoaded;
 
 			if ((oOptions.name || oOptions.usage) && oOptions.type) {
-				pNestedRouteMatched = new Promise(function(resolve) {
-					fnResolve = resolve;
-				});
-				pLoaded = this._load(oTargetCreateInfo).then(function (oObject) {
-					if (oObject.isA("sap.ui.core.UIComponent")) {
-						var oRouter = oObject.getRouter();
-						if (oRouter) {
-							var sHash = oRouter.getHashChanger().getHash();
-							var oRoute = oRouter.getRouteByHash(sHash);
-
-							// TODO: offer getter for target info
-							if (oRoute && oRoute._oConfig.target) {
-								bInstantResolve = false;
-								oRouter.attachRouteMatched(fnResolve);
-							}
-							if (oRouter.isStopped()) {
-								// initialize the router in nested component
-								// if it has been previously stopped
-								oRouter.initialize();
-							}
-						}
-					}
-
-					if (bInstantResolve) {
-						fnResolve();
-					}
-					return oObject;
-				});
+				pLoaded = this._load(oTargetCreateInfo);
 				// when target information is given
 				oSequencePromise = oSequencePromise
 					.then(function(oParentInfo) {
-						return pLoaded.then(function(oObject) {
-							return {
-								object: oObject,
-								parentInfo: oParentInfo || {}
-							};
-						});
+						return pLoaded
+							.then(function (oObject) {
+								if (oObject.isA("sap.ui.core.UIComponent")) {
+									var oRouter = oObject.getRouter();
+									if (oRouter && oRouter.isStopped()) {
+										// initialize the router in nested component
+										// if it has been previously stopped
+										oRouter.initialize();
+									}
+								}
+								return {
+									object: oObject,
+									parentInfo: oParentInfo || {}
+								};
+							});
 					})
 					.then(function(oViewInfo) {
 						// loaded and do placement
-						var vValid = that._isValid(oViewInfo.parentInfo),
-						 oView, oRootControl;
+						var vValid = that._isValid(oViewInfo.parentInfo);
 
 						oObject = oViewInfo.object;
-						if (oObject.isA("sap.ui.core.UIComponent")) {
-							oRootControl = oObject.getRootControl();
-							if (oRootControl && oRootControl.isA("sap.ui.core.mvc.View")) {
-								oView = oRootControl;
-							}
-						} else {
-							oView = oObject;
-						}
 
-						that._bindTitleInTitleProvider(oView);
-						that._addTitleProviderAsDependent(oView);
+						// TODO: check how to handle the title change for the loaded component
+						if (oObject.isA("sap.ui.core.mvc.View")) {
+							that._bindTitleInTitleProvider(oObject);
+							that._addTitleProviderAsDependent(oObject);
+						}
 
 						// validate config and log errors if necessary
 						if (vValid !== true) {
@@ -355,6 +328,14 @@ sap.ui.define([
 						Log.info("Did place the " + oOptions.type.toLowerCase() + " target '" + (oOptions.name ? that._getEffectiveObjectName(oOptions.name) : oOptions.usage) + "' with the id '" + oObject.getId() + "' into the aggregation '" + oOptions.controlAggregation + "' of a control with the id '" + oContainerControl.getId() + "'", that);
 						oContainerControl[oAggregationInfo._sMutator](oObject);
 
+						that.fireDisplay({
+							view : oObject.isA("sap.ui.core.mvc.View") ? oObject : undefined,
+							object: oObject,
+							control : oContainerControl,
+							config : that._oOptions,
+							data: vData
+						});
+
 						return {
 							name: oOptions._name,
 							view: oObject,
@@ -369,20 +350,7 @@ sap.ui.define([
 				});
 			}
 
-			return Promise.all([oSequencePromise, pNestedRouteMatched]).then(function(aObjects) {
-				var oContainerControl = aObjects[0].control;
-				var oObject = aObjects[0].view;
-				if (oContainerControl && oObject) {
-					that.fireDisplay({
-						view : oObject.isA("sap.ui.core.mvc.View") ? oObject : undefined,
-						object: oObject,
-						control : oContainerControl,
-						config : that._oOptions,
-						data: vData
-					});
-				}
-				return aObjects[0];
-			});
+			return oSequencePromise;
 		},
 
 		/**

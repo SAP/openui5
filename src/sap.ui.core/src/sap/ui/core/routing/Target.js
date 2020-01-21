@@ -315,9 +315,7 @@ sap.ui.define([
 				if (oOldParent) {
 					oOldParent.removeDependent(this._oTitleProvider);
 				}
-				if (oView instanceof View) {
-					oView.addDependent(this._oTitleProvider);
-				}
+				oView.addDependent(this._oTitleProvider);
 			},
 
 			/**
@@ -393,7 +391,7 @@ sap.ui.define([
 				// Setting title property should not trigger two way change in model
 				this.setProperty("title", sTitle, true);
 
-				if (this._oTarget._bIsDisplayed && sTitle) {
+				if (this._oTarget._bIsDisplayed) {
 					this._oTarget.fireTitleChanged({
 						name: this._oTarget._oOptions._name,
 						title: sTitle
