@@ -69,7 +69,7 @@ sap.ui.define([
 	 *     rendering or when the control is destroyed).</li>
 	 * </ul>
 	 *
-	 * See section "{@link topic:91f1703b6f4d1014b6dd926db0e91070 Developing OpenUI5/SAPUI5 Controls}"
+	 * See section "{@link topic:8dcab0011d274051808f959800cabf9f Developing Controls}"
 	 * in the documentation for an introduction to control development.
 	 *
 	 * @extends sap.ui.core.Element
