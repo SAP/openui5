@@ -1871,15 +1871,18 @@ function(
 	 * @return {String | null} CSSSize in px
 	 */
 	MultiInput.prototype._calculateSpaceForTokenizer = function () {
-		if (this.getDomRef()) {
+		var oDomRef = this.getDomRef();
+
+		if (oDomRef) {
 			var iSpace,
-				iControlWidth = this.getDomRef().offsetWidth,
-				iDescriptionWidth = this.$().find(".sapMInputDescriptionWrapper").width(),
-				iSummedIconsWidth = this._calculateIconsSpace(),
+				oDescriptionWrapper = this.$().find(".sapMInputDescriptionWrapper"),
 				oInputRef = this.$().find(".sapMInputBaseInner"),
+				iControlWidth = oDomRef.offsetWidth || 0,
+				iDescriptionWidth = oDescriptionWrapper.width() || 0,
+				iSummedIconsWidth = this._calculateIconsSpace(),
 				aInputRelevantCss = ["min-width", "padding-right", "padding-left"],
 				// calculate width of the input html element based on its min-width
-				iInputWidth = aInputRelevantCss.reduce(function(iAcc, sProperty) {
+				iInputWidth = aInputRelevantCss.reduce(function (iAcc, sProperty) {
 					return iAcc + (parseInt(oInputRef.css(sProperty)) || 0);
 				}, 0);
 
