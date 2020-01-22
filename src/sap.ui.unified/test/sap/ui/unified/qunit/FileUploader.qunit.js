@@ -3,8 +3,10 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/FileUploader",
-	"sap/ui/core/TooltipBase"
-], function(qutils, FileUploader, TooltipBase) {
+	"sap/ui/core/TooltipBase",
+	"sap/m/Label",
+	"sap/m/Text"
+], function(qutils, FileUploader, TooltipBase, Label, Text) {
 	"use strict";
 
 	/**
@@ -760,6 +762,102 @@ sap.ui.define([
 	}
 
 	QUnit.module("Accessibility");
+
+	QUnit.test("AriaLabelledBy", function(assert) {
+		// setup
+		var oFileUploader = new FileUploader("fu"),
+			oLabel = new Label({
+				text: "label for",
+				labelFor: "fu"
+			}),
+			oBrowse = oFileUploader.oBrowse,
+			aLabelledBy = [
+				new Text({text: "Labelled by 1"}),
+				new Text("labelledby2", {text: "Labelled by 2"}),
+				new Text({text: "Labelled by 3"})
+			];
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		aLabelledBy.forEach(function(oLabel) {
+			oFileUploader.addAriaLabelledBy(oLabel.getId());
+		});
+
+		// assert
+		assert.strictEqual(oFileUploader.getAriaLabelledBy().length, 3, "All three aria label IDs are added to the FileUploader 'ariaLabelledBy' association");
+		assert.ok(oBrowse.getAriaLabelledBy().indexOf("labelledby2") >= 0, "ID 'labelledby2' is added to the browse button 'ariaLabelledBy' association");
+
+		// act
+		oFileUploader.removeAriaLabelledBy("labelledby2");
+
+		// assert
+		assert.strictEqual(oFileUploader.getAriaLabelledBy().length, 2, "Aria label ID is removed from FileUploader 'ariaLabelledBy' association");
+		assert.ok(oFileUploader.getAriaLabelledBy().indexOf("labelledby2") === -1, "ID 'labelledby2' is removed from FileUploader 'ariaLabelledBy' association");
+		assert.ok(oBrowse.getAriaLabelledBy().indexOf("labelledby2") === -1, "ID 'labelledby2' is removed from browse button 'ariaLabelledBy' association");
+
+		// act
+		oFileUploader.removeAllAriaLabelledBy();
+
+		// assert
+		assert.ok(oFileUploader.getAriaLabelledBy().length === 0, "All label IDs are removed from FileUploader 'ariaLabelledBy' association");
+		assert.ok(oBrowse.getAriaLabelledBy().length === 1, "Initial label ID remains in the 'Browse' button 'ariaLabelledBy' association");
+
+		// cleanup
+		oLabel.destroy();
+		aLabelledBy.forEach(function(oLabel) {
+			oLabel.destroy();
+		});
+		oFileUploader.destroy();
+
+	});
+
+	QUnit.test("AriaDescribedBy", function(assert) {
+		// setup
+		var oFileUploader = new FileUploader("fu"),
+			oLabel = new Label({
+				text: "label for",
+				labelFor: "fu"
+			}),
+			oBrowse = oFileUploader.oBrowse,
+			aDescribedBy = [
+				new Text({text: "Described by 1"}),
+				new Text("describedby2", {text: "Described by 2"}),
+				new Text({text: "Described by 3"})
+			];
+
+		// act
+		aDescribedBy.forEach(function(oDesc) {
+			oFileUploader.addAriaDescribedBy(oDesc.getId());
+		});
+
+		// assert
+		assert.strictEqual(oFileUploader.getAriaDescribedBy().length, 3, "All three description IDs are added to the FileUploader 'ariaDescribedBy' association");
+		assert.ok(oBrowse.getAriaDescribedBy().indexOf("describedby2") >= 0, "ID 'describedby2' is added to the browse button 'ariaDescribedBy' association");
+
+		// act
+		oFileUploader.removeAriaDescribedBy("describedby2");
+
+		// assert
+		assert.strictEqual(oFileUploader.getAriaDescribedBy().length, 2, "Aria description ID is removed from FileUploader 'ariaDescribedBy' association");
+		assert.ok(oFileUploader.getAriaDescribedBy().indexOf("describedby2") === -1, "ID 'describedby2' is removed from FileUploader 'ariaDescribedBy' association");
+		assert.ok(oBrowse.getAriaDescribedBy().indexOf("describedby2") === -1, "ID 'describedby2' is removed from browse button 'ariaDescribedBy' association");
+
+		// act
+		oFileUploader.removeAllAriaDescribedBy();
+
+		// assert
+		assert.ok(oFileUploader.getAriaDescribedBy().length === 0, "All IDs are removed from FileUploader 'ariaDescribedBy' association");
+		assert.ok(oBrowse.getAriaDescribedBy().length === 1, "Initial description ID remains in the 'Browse' sap.m.Button 'ariaDescribedBy' association");
+
+		// cleanup
+		oLabel.destroy();
+		aDescribedBy.forEach(function(oDesc) {
+			oDesc.destroy();
+		});
+		oFileUploader.destroy();
+	});
 
 	QUnit.test("Label is redirected to internal button", function (assert) {
 		// setup
