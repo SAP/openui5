@@ -2487,6 +2487,23 @@ function (
 		});
 	});
 
+	QUnit.test("ObjectPage is not attached to MouseOut/MouseOver events of title on tablet/phone device", function (assert) {
+		// Setup
+		helpers.toPhoneMode(this.oObjectPage);
+
+		var oVisualIndicatorMouseoOverSpy = this.spy(this.oObjectPage, "_attachVisualIndicatorMouseOverHandlers"),
+			oTitleMouseOverSpy = this.spy(this.oObjectPage, "_attachTitleMouseOverHandlers");
+
+		// Act
+		this.oObjectPage.rerender();
+
+		// Assert
+		assert.ok(oVisualIndicatorMouseoOverSpy.notCalled, "ObjectPage is not attached to MouseOut/MouseOver events of snap/expand button");
+		assert.ok(oTitleMouseOverSpy.notCalled, "ObjectPage is not attached to MouseOut/MouseOver events of title");
+
+		helpers.toDesktopMode(this.oObjectPage);
+	});
+
 	QUnit.test("ObjectPage obtains correct anchorBar height", function (assert) {
 		// arrange
 		var oObjectPage = this.oObjectPage,
