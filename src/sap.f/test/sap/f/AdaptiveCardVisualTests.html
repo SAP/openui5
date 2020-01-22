@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta charset="utf-8">
-		<title>AdaptiveCard Visual Tests</title>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>AdaptiveCard Visual Tests</title>
 
-		<script src="../../../resources/sap-ui-integration.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_fiori_3">
-		</script>
-		<script>
-			delete Document.prototype.adoptedStyleSheets;
-		</script>
-	</head>
-	<body class="sapUiBody">
-		<ui-integration-card style="width: 50%" id="my-card" manifest="./adaptivecardvisualtests-manifest.json"></ui-integration-card>
-	</body>
-	<script>
-		document.getElementById("my-card").addEventListener("action", function (event) {
-			event.detail.getParameter("type") === "Submit" && console.log(event.detail.getParameter("manifestParameters"));
-		});
+	<script src="./shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-async="true">
 	</script>
+	<script src="./AdaptiveCardVisualTests.js"></script>
+</head>
+<body id="body" class="sapUiBody"></body>
 </html>
