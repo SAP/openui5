@@ -399,7 +399,9 @@ sap.ui.define([
 			// Act
 			this.oViews.destroy();
 
-			assert.equal(oDestroySpy.callCount, 1, "The component container is also destroyed once the cache is destroyed");
+			// callCount === 2 because the component instance is cache under both "undefined" and "baz" keys. We loop
+			// through all existing keys and call destroy on the single instance twice
+			assert.equal(oDestroySpy.callCount, 2, "The component container is also destroyed once the cache is destroyed");
 		}.bind(this));
 	});
 

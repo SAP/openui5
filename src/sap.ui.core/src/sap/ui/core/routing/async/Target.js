@@ -276,7 +276,7 @@ sap.ui.define([
 					.then(function(oContainerControl) {
 						var oComponent,
 							sComponentContainerId,
-							fnOriginalExit;
+							fnOriginalDestroy;
 
 						if (oObject.isA("sap.ui.core.UIComponent")) {
 							oComponent = oObject;
@@ -294,10 +294,10 @@ sap.ui.define([
 
 								oObject = new ComponentContainer(sComponentContainerId, oContainerOptions);
 
-								fnOriginalExit = oComponent.exit;
-								oComponent.exit = function () {
-									if (fnOriginalExit) {
-										fnOriginalExit.apply(this);
+								fnOriginalDestroy = oComponent.destroy;
+								oComponent.destroy = function () {
+									if (fnOriginalDestroy) {
+										fnOriginalDestroy.apply(this);
 									}
 
 									// destroy the component container when the component is destroyed
