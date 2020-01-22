@@ -494,6 +494,19 @@ sap.ui.define([
 				return this._bIsInitialized === true;
 			},
 
+			/**
+			 * Returns the hash changer instance which is used in the router.
+			 *
+			 * This hash changer behaves differently than the hash changer that is returned by
+			 * {@link sap.ui.core.routing.HashChanger.getInstance}, especially when the router is created in a component
+			 * which is nested within another component. When this hash changer is used, the other hash parts which
+			 * belong to the parent components are kept in the browser hash, while the complete browser hash is changed
+			 * when it's changed by using the {@link sap.ui.core.routing.HashChanger.getInstance}.
+			 *
+			 * @returns {sap.ui.core.routing.RouterHashChanger} The hash changer
+			 * @public
+			 * @since 1.75
+			 */
 			getHashChanger: function() {
 				return this.oHashChanger;
 			},
