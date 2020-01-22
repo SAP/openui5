@@ -5,7 +5,7 @@
 .sapMGenericTag {
 	.sapMGenericTagWrap {
 		padding: 0 0 0 @sapMGenericTagPaddingLeft;
-		border-radius: 0.25rem;
+		border-radius: @sapUiButtonBorderCornerRadius;
 		border-left-width: @sapMGenericTagBorderWidth;
 
 		.sapMGenericTagText {
@@ -65,9 +65,18 @@
 		}
 	}
 
-	.sapMGenericTagActive & .sapMGenericTagIcon {
-		color: @sapUiListActiveTextColor;
+	.sapMGenericTagActive & {
+		background: @sapUiListActiveBackground;
+
+		.sapMGenericTagIcon {
+			color: @sapUiListActiveTextColor;
+		}
 	}
+
+	&:hover {
+		background:@sapUiListHoverBackground;
+	}
+
 }
 
 html.sap-desktop .sapMGenericTag {
@@ -87,4 +96,9 @@ html.sap-desktop .sapMGenericTag {
 			height:  1.625rem;
 		}
 	}
+}
+
+html.sap-phone .sapMGenericTag {
+	margin-top: 0.5625rem ;
+	margin-bottom: 0.5625rem ;
 }
