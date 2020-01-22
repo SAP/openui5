@@ -1286,7 +1286,7 @@ sap.ui.define([
 
 			oRM.attr("tabindex", "0");
 			//ARIA attributes
-			oRM.writeAccessibilityState({
+			oRM.accessibilityState({
 				role: "link",
 				haspopup: !oOH.getTitleHref()
 			});
