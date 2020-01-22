@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/Change",
-	"sap/m/MessageBox"
+	"sap/m/MessageBox",
+	"sap/ui/core/BusyIndicator"
 ], function(
 	sinon,
 	ApplyConnector,
@@ -15,7 +16,8 @@ sap.ui.define([
 	WriteUtils,
 	TransportSelection,
 	Change,
-	MessageBox
+	MessageBox,
+	BusyIndicator
 ) {
 	"use strict";
 
@@ -207,7 +209,8 @@ sap.ui.define([
 				isAtoEnabled: function() {return false;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-
+			sandbox.spy(BusyIndicator, "hide");
+			sandbox.spy(BusyIndicator, "show");
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&generator=Change.createInitialFileContent";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
@@ -219,6 +222,8 @@ sap.ui.define([
 				changes: [oVENDORChange1, oVENDORChange2],
 				reference: "flexReference"
 			}).then(function(aChanges) {
+				assert.ok(BusyIndicator.show.calledTwice);
+				assert.ok(BusyIndicator.hide.calledOnce);
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.deepEqual(aChanges, [], "empty array is returned");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
