@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/transport/Transports",
 	"sap/ui/fl/write/_internal/transport/TransportDialog",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/core/BusyIndicator"
 ], function(
 	LayerUtils,
 	Layer,
 	Transports,
 	TransportDialog,
-	FlexSettings
+	FlexSettings,
+	BusyIndicator
 ) {
 	"use strict";
 	/**
@@ -165,7 +167,7 @@ sap.ui.define([
 		}
 
 		oDialog.open();
-
+		BusyIndicator.hide();
 		return oDialog;
 	};
 
