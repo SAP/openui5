@@ -24,7 +24,7 @@
 		var oContent = new sap.m.Button({text: "Home"});
 		var oFooter = oDynamicPageUtil.getFooter();
 
-		var oPage = oDynamicPageUtil.getDynamicPage(true, oTitle, oHeader, oContent, oFooter);
+		var oPage = oDynamicPageUtil.getDynamicPage(false, oTitle, oHeader, oContent, oFooter);
 
 		var oApp = new sap.m.App("myApp");
 		oApp.addPage(oPage).placeAt("body");
