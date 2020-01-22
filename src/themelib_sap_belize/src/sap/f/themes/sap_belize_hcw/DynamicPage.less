@@ -68,18 +68,15 @@
 
 .sapFDynamicPage {
 	/* DynamicPageTitle and Toggle Header Visual Indicator hover state */
-	html.sap-desktop & {
-		&.sapFDynamicPageTitleClickEnabled {
-			.sapFDynamicPageTitle:hover,
-			&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
-				background: @sapUiHighlight;
-				box-shadow: @sapUiShadowHeader;
-			}
-			&.sapFDynamicPageTitleForceHovered {
-				.sapFDynamicPageToggleHeaderIndicator {
-					.sapMBtnInner {
-						background-color: @sapUiHighlight;
-					}
+	&.sapFDynamicPageTitleClickEnabled {
+		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+			background: @sapUiHighlight;
+			box-shadow: @sapUiShadowHeader;
+		}
+		&.sapFDynamicPageTitleForceHovered {
+			.sapFDynamicPageToggleHeaderIndicator {
+				.sapMBtnInner {
+					background-color: @sapUiHighlight;
 				}
 			}
 		}

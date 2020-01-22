@@ -370,8 +370,10 @@ sap.ui.define([
 
 		this._attachTitlePressHandler();
 		this._attachVisualIndicatorsPressHandlers();
-		this._attachVisualIndicatorMouseOverHandlers();
-		this._attachTitleMouseOverHandlers();
+		if (Device.system.desktop) {
+			this._attachVisualIndicatorMouseOverHandlers();
+			this._attachTitleMouseOverHandlers();
+		}
 		this._attachHeaderObserver();
 		this._addStickySubheaderAfterRenderingDelegate();
 		this._detachScrollHandler();

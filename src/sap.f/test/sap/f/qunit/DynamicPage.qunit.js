@@ -997,6 +997,23 @@ function (
 		assert.ok(!$oDynamicPage.hasClass("sapFDynamicPageTitleForceHovered"), "DPageTitle hover state removed");
 	});
 
+	QUnit.test("DynamicPage is not attached to MouseOut/MouseOver events of title on tablet/phone device", function (assert) {
+		oUtil.toMobileMode();
+		// Setup
+		var oVisualIndicatorMouseoOverSpy = this.spy(this.oDynamicPage, "_attachVisualIndicatorMouseOverHandlers"),
+			oTitleMouseOverSpy = this.spy(this.oDynamicPage, "_attachTitleMouseOverHandlers");
+
+		// Act
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Assert
+		assert.ok(oVisualIndicatorMouseoOverSpy.notCalled, "DynamicPage is not attached to MouseOut/MouseOver events of snap/expand button");
+		assert.ok(oTitleMouseOverSpy.notCalled, "DynamicPage is not attached to MouseOut/MouseOver events of title");
+
+		oUtil.toDesktopMode();
+	});
+
+
 	QUnit.test("DynamicPage header resize", function (assert) {
 		var oHeader = this.oDynamicPage.getHeader(),
 			$oDynamicPage,
