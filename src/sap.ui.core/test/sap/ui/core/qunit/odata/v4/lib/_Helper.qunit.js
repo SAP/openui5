@@ -2659,50 +2659,94 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		mQueryOptions: undefined,
+		mQueryOptions : undefined,
 		sOrderBy : undefined,
-		sFilter : undefined
+		aFilters : undefined
 	}, {
-		mQueryOptions: {$orderby : "bar", $select : "Name"},
+		mQueryOptions : {$orderby : "bar", $select : "Name"},
 		sOrderBy : undefined,
-		sFilter : undefined
+		aFilters : [undefined]
 	}, {
-		mQueryOptions: undefined,
+		mQueryOptions : undefined,
 		sOrderBy : "foo",
-		sFilter : undefined,
+		aFilters : [""],
 		oResult : {$orderby : "foo"}
 	}, {
-		mQueryOptions: {$orderby : "bar", $select : "Name"},
+		mQueryOptions : {$orderby : "bar", $select : "Name"},
 		sOrderBy : "foo,bar",
-		sFilter : undefined,
+		aFilters : undefined,
 		oResult : {$orderby : "foo,bar", $select : "Name"}
 	}, {
-		mQueryOptions: {$orderby : "bar", $select : "Name"},
+		mQueryOptions : {$orderby : "bar", $select : "Name"},
 		sOrderBy : "bar",
-		sFilter : undefined
+		aFilters : undefined
 	}, {
-		mQueryOptions: undefined,
+		mQueryOptions : undefined,
 		sOrderBy : undefined,
-		sFilter : "foo",
+		aFilters : ["foo"],
 		oResult : {$filter : "foo"}
 	}, {
-		mQueryOptions: {$filter : "bar", $select : "Name"},
+		mQueryOptions : {$filter : "bar", $select : "Name"},
 		sOrderBy : undefined,
-		sFilter : "foo,bar",
+		aFilters : ["foo,bar"],
 		oResult : {$filter : "foo,bar", $select : "Name"}
 	}, {
-		mQueryOptions: {$filter: "bar", $select : "Name"},
+		mQueryOptions : {$filter: "bar", $select : "Name"},
 		sOrderBy : undefined,
-		sFilter : "bar"
+		aFilters : ["bar"]
 	}, {
-		mQueryOptions: {$filter: "bar", $orderby : "foo", $select : "Name"},
+		mQueryOptions : {$filter: "bar", $orderby : "foo", $select : "Name"},
 		sOrderBy : "foo",
-		sFilter : "bar"
+		aFilters : ["bar"]
 	}, {
-		mQueryOptions: {$filter: "foo", $orderby : "bar", $select : "Name"},
+		mQueryOptions : {$filter: "foo", $orderby : "bar", $select : "Name"},
 		sOrderBy : "foo,bar",
-		sFilter : "bar,baz",
+		aFilters : ["bar,baz"],
 		oResult : {$filter : "bar,baz", $orderby : "foo,bar", $select : "Name"}
+	}, {
+		mQueryOptions : {$filter : "foo", $orderby : "bar", $select : "Name"},
+		sOrderBy : "foo,bar",
+		aFilters : [undefined, "bar"],
+		oResult : {
+			$$filterBeforeAggregate : "bar",
+			$filter: "foo",
+			$orderby : "foo,bar",
+			$select : "Name"
+		}
+	}, {
+		mQueryOptions : {$filter : "foo", $orderby : "bar", $select : "Name"},
+		sOrderBy : "foo,bar",
+		aFilters : ["", "bar,baz"],
+		oResult : {
+			$$filterBeforeAggregate : "bar,baz",
+			$filter: "foo",
+			$orderby : "foo,bar",
+			$select : "Name"
+		}
+	}, {
+		mQueryOptions : {$filter : "foo", $orderby : "bar", $select : "Name"},
+		sOrderBy : "foo,bar",
+		aFilters : ["bar,baz", "foo,bar"],
+		oResult : {
+			$$filterBeforeAggregate : "foo,bar",
+			$filter : "bar,baz",
+			$orderby : "foo,bar",
+			$select : "Name"
+		}
+	}, {
+		mQueryOptions : {
+			$$filterBeforeAggregate : "baz",
+			$filter : "foo",
+			$orderby : "bar",
+			$select : "Name"},
+		sOrderBy : "foo,bar",
+		aFilters : ["bar,baz"],
+		oResult : {
+			$$filterBeforeAggregate : "baz",
+			$filter : "bar,baz",
+			$orderby : "foo,bar",
+			$select : "Name"
+		}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("mergeQueryOptions, " + i, function (assert) {
 			var oResult,
@@ -2710,7 +2754,7 @@ sap.ui.define([
 
 			// code under test
 			oResult = _Helper.mergeQueryOptions(oFixture.mQueryOptions, oFixture.sOrderBy,
-				oFixture.sFilter);
+				oFixture.aFilters);
 
 			assert.strictEqual(JSON.stringify(oFixture.mQueryOptions), sQueryOptionsJSON);
 			if ("oResult" in oFixture) {
@@ -2719,8 +2763,10 @@ sap.ui.define([
 				assert.strictEqual(oResult, oFixture.mQueryOptions, i);
 			}
 			if (oResult) {
-				assert.ok(oResult.$orderby || !("$orderby" in oResult), i + ": $orderby");
-				assert.ok(oResult.$filter || !("$filter" in oResult), i + ": $filter");
+				assert.ok(oResult.$orderby || !("$orderby" in oResult), "$orderby");
+				assert.ok(oResult.$filter || !("$filter" in oResult), "$filter");
+				assert.ok(oResult.$$filterBeforeAggregate
+					|| !("$$filterBeforeAggregate" in oResult), "$$filterBeforeAggregate");
 			}
 		});
 	});

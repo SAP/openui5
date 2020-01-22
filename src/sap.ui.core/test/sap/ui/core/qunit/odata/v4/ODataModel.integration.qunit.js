@@ -13834,6 +13834,82 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
+	// - those filters that can be applied before aggregating
+	// - those filters that must be applied after aggregating
+	// JIRA: CPOUI5ODATAV4-119
+	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "", createBusinessPartnerTestModel()).then(function () {
+			var oListBinding = that.oModel.bindList("/BusinessPartners");
+
+			oListBinding.setAggregation({
+				aggregate : {
+					SalesNumber : {grandTotal : true}
+				},
+				group : {
+					Region : {}
+				}
+			});
+
+			// code under test - filter should be applied before aggregating
+			oListBinding.filter([
+				new Filter("Name", FilterOperator.EQ, "Foo"),
+				new Filter("SalesNumber", FilterOperator.GT, 0)
+			]);
+
+			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
+				+ "/groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
+				+ "/concat(aggregate(SalesNumber),top(99))",
+				{value : [{}]});
+
+			return Promise.all([
+				oListBinding.requestContexts(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
+	// - those filters that can be applied before aggregating
+	// - those filters that must be applied after aggregating
+	// JIRA: CPOUI5ODATAV4-119
+	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _Cache.CollectionCache", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "", createBusinessPartnerTestModel()).then(function () {
+			var oListBinding = that.oModel.bindList("/BusinessPartners");
+
+			// code under test - filter should be applied before aggregating
+			oListBinding.filter([
+				new Filter("Name", FilterOperator.EQ, "Foo"),
+				new Filter("SalesNumber", FilterOperator.GT, 0)
+			]);
+
+			oListBinding.setAggregation({
+				aggregate : {
+					SalesNumber : {}
+				},
+				group : {
+					Region : {}
+				}
+			});
+
+			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
+				+ "/groupby((Region),aggregate(SalesNumber))&$filter=SalesNumber gt 0"
+				+ "&$skip=0&$top=100",
+				{value : [{}]});
+
+			return Promise.all([
+				oListBinding.requestContexts(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
 	[false, true].forEach(function (bCount) {

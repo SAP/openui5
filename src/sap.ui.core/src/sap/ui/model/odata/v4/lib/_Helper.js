@@ -1016,12 +1016,14 @@ sap.ui.define([
 		 *   The map of query options
 		 * @param {string} [sOrderby]
 		 *   The new value for the query option "$orderby"
-		 * @param {string} [sFilter]
-		 *   The new value for the query option "$filter"
+		 * @param {string[]} [aFilters]
+		 *   An array that consists of two filters, the first one ("$filter") has to be be applied
+		 *   after and the second one ("$$filterBeforeAggregate") has to be applied before
+		 *   aggregating the data. Both can be <code>undefined</code>.
 		 * @returns {object}
 		 *   The merged map of query options
 		 */
-		mergeQueryOptions : function (mQueryOptions, sOrderby, sFilter) {
+		mergeQueryOptions : function (mQueryOptions, sOrderby, aFilters) {
 			var mResult;
 
 			function set(sProperty, sValue) {
@@ -1034,7 +1036,10 @@ sap.ui.define([
 			}
 
 			set("$orderby", sOrderby);
-			set("$filter", sFilter);
+			if (aFilters) {
+				set("$filter", aFilters[0]);
+				set("$$filterBeforeAggregate", aFilters[1]);
+			}
 			return mResult || mQueryOptions;
 		},
 
