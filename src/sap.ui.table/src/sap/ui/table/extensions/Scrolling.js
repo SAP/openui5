@@ -157,6 +157,8 @@ sap.ui.define([
 		};
 		var pCancellablePromise;
 
+		log("Process started: " + oProcessInfo.id);
+
 		if (typeof fnExecutor === "function") {
 			pCancellablePromise = new Promise(function() {
 				fnExecutor.apply(this, Array.prototype.slice.call(arguments).concat(oProcessInterface));
@@ -168,13 +170,13 @@ sap.ui.define([
 		Object.assign(pCancellablePromise, oProcessInterface);
 
 		pCancellablePromise.then(function() {
-			if (!oProcessInterface.isCancelled()) {
+			if (oProcessInterface.isCancelled()) {
+				log("Process has finished due to cancellation: " + oProcessInfo.id);
+			} else {
 				log("Process has finished: " + oProcessInfo.id);
 			}
 			bRunning = false;
 		});
-
-		log("Process started: " + oProcessInfo.id);
 
 		return pCancellablePromise;
 	}
@@ -362,6 +364,10 @@ sap.ui.define([
 				// External vertical scrolling
 				oExternalVerticalScrollbar: null,
 				bIsVerticalScrollbarExternal: false,
+
+				// Timers
+				mTimeouts: {},
+				mAnimationFrames: {},
 
 				mTouchSessionData: null,
 				aOnRowsUpdatedPreprocessors: []
@@ -661,14 +667,16 @@ sap.ui.define([
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 */
 		performUpdateFromScrollbar: function(oTable) {
+			var _internal = internal(oTable);
+
 			log("VerticalScrollingHelper.performUpdateFromScrollbar", oTable);
-			clearTimeout(oTable._mTimeouts.largeDataScrolling);
-			delete oTable._mTimeouts.largeDataScrolling;
+			clearTimeout(_internal.mTimeouts.largeDataScrolling);
+			delete _internal.mTimeouts.largeDataScrolling;
 
 			VerticalScrollProcess.start(oTable, VerticalScrollProcess.UpdateFromScrollbar, function(resolve, reject, oProcessInterface) {
 				if (oTable._bLargeDataScrolling && !internal(oTable).bIsScrolledVerticallyByWheel) {
-					oTable._mTimeouts.largeDataScrolling = setTimeout(function() {
-						delete oTable._mTimeouts.largeDataScrolling;
+					_internal.mTimeouts.largeDataScrolling = setTimeout(function() {
+						delete _internal.mTimeouts.largeDataScrolling;
 
 						if (oTable._getScrollExtension().getVerticalScrollbar() != null) {
 							log("VerticalScrollingHelper.performUpdateFromScrollbar (async: large data scrolling)", oTable);
@@ -679,9 +687,9 @@ sap.ui.define([
 					}, 300);
 
 					oProcessInterface.addCancelListener(function() {
-						if (oTable._mTimeouts.largeDataScrolling != null) {
-							clearTimeout(oTable._mAnimationFrames.viewportUpdate);
-							delete oTable._mAnimationFrames.viewportUpdate;
+						if (_internal.mTimeouts.largeDataScrolling != null) {
+							clearTimeout(_internal.mTimeouts.largeDataScrolling);
+							delete _internal.mTimeouts.largeDataScrolling;
 							resolve();
 						}
 					});
@@ -1212,7 +1220,8 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 
-			var oScrollPosition = internal(oTable).oVerticalScrollPosition;
+			var _internal = internal(oTable);
+			var oScrollPosition = _internal.oVerticalScrollPosition;
 			var iIndex = oScrollPosition.getIndex();
 			var iBuffer = VerticalScrollingHelper.getScrollRangeBuffer(oTable);
 			var iScrollRange = VerticalScrollingHelper.getScrollRange(oTable);
@@ -1284,14 +1293,14 @@ sap.ui.define([
 				iScrollTop = Math.round(nScrollPosition);
 			}
 
-			window.cancelAnimationFrame(oTable._mAnimationFrames.verticalScrollbarUpdate);
-			delete oTable._mAnimationFrames.verticalScrollbarUpdate;
+			window.cancelAnimationFrame(_internal.mAnimationFrames.verticalScrollbarUpdate);
+			delete _internal.mAnimationFrames.verticalScrollbarUpdate;
 
 			return new Promise(function(resolve) {
-				oTable._mAnimationFrames.verticalScrollbarUpdate = window.requestAnimationFrame(function() {
+				_internal.mAnimationFrames.verticalScrollbarUpdate = window.requestAnimationFrame(function() {
 					var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 
-					delete oTable._mAnimationFrames.verticalScrollbarUpdate;
+					delete _internal.mAnimationFrames.verticalScrollbarUpdate;
 
 					if (oVSb) {
 						log("VerticalScrollingHelper.scrollScrollbar (async): Scroll from " + oVSb.scrollTop + " to " + iScrollTop, oTable);
@@ -1306,9 +1315,9 @@ sap.ui.define([
 
 				if (oProcessInterface) {
 					oProcessInterface.addCancelListener(function() {
-						if (oTable._mAnimationFrames.verticalScrollbarUpdate != null) {
-							window.cancelAnimationFrame(oTable._mAnimationFrames.verticalScrollbarUpdate);
-							delete oTable._mAnimationFrames.verticalScrollbarUpdate;
+						if (_internal.mAnimationFrames.verticalScrollbarUpdate != null) {
+							window.cancelAnimationFrame(_internal.mAnimationFrames.verticalScrollbarUpdate);
+							delete _internal.mAnimationFrames.verticalScrollbarUpdate;
 							resolve();
 						}
 					});
@@ -2256,6 +2265,11 @@ sap.ui.define([
 			TableUtils.removeDelegate(oTable, this._delegate);
 			this._delegate = null;
 			this._clearCache();
+
+			if (internal(oTable).pVerticalScrollUpdateProcess) {
+				internal(oTable).pVerticalScrollUpdateProcess.cancel();
+				internal(oTable).pVerticalScrollUpdateProcess = null;
+			}
 			internal.destroy(oTable);
 
 			ExtensionBase.prototype.destroy.apply(this, arguments);

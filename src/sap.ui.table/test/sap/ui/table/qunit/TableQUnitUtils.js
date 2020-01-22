@@ -289,6 +289,7 @@ sap.ui.define([
 		}
 		// Wrap functions that inevitably trigger a "_rowsUpdated" event.
 		wrapForRenderingDetection(oTable, "invalidate");
+		wrapForRenderingDetection(oTable, "rerender");
 		wrapForRenderingDetection(oTable, "refreshRows");
 		wrapForRenderingDetection(oTable, "updateRows");
 		wrapForRenderingDetection(oTable, "unbindRows");
