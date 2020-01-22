@@ -4,6 +4,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
+	"sap/ui/core/Core",
+	"sap/ui/core/IconPool",
 	"sap/m/Dialog",
 	"sap/m/Bar",
 	"sap/m/SearchField",
@@ -31,6 +33,8 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	Device,
+	Core,
+	IconPool,
 	Dialog,
 	Bar,
 	SearchField,
@@ -978,6 +982,59 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		assert.ok(oDialog.isOpen(), "Dialog remains opened when closeOnNavigation=false");
+
+		// Clean up
+		oDialog.destroy();
+	});
+
+	QUnit.test("Should have default icon", function (assert) {
+		// Arrange
+		var oDialog = new Dialog({
+			state: ValueState.Warning
+		});
+
+		// Act
+		oDialog.open();
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oDialog.getIcon(), "Dialog has a default icon");
+
+		// Clean up
+		oDialog.destroy();
+	});
+
+	QUnit.test("Should not have default icon if state is None", function (assert) {
+		// Arrange
+		var oDialog = new Dialog({
+			state: ValueState.None
+		});
+
+		// Act
+		oDialog.open();
+		Core.applyChanges();
+
+		// Assert
+		assert.notOk(oDialog.getIcon(), "Dialog does not have a default icon if state is None");
+
+		// Clean up
+		oDialog.destroy();
+	});
+
+	QUnit.test("Custom icon should override default icon", function (assert) {
+		// Arrange
+		var sCustomIcon = IconPool.getIconURI("appointment"),
+			oDialog = new Dialog({
+				state: ValueState.Warning,
+				icon: sCustomIcon
+			});
+
+		// Act
+		oDialog.open();
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oDialog.getIcon(), sCustomIcon, "Custom icon overrides default icon");
 
 		// Clean up
 		oDialog.destroy();

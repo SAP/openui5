@@ -1680,6 +1680,7 @@ function(
 
 			if (!sIcon) {
 				sIcon = Dialog._mIcons[sState];
+				this.setProperty("icon", sIcon, true);
 			}
 
 			if (!this._iconImage) {
