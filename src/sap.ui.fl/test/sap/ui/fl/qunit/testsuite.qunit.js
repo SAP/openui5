@@ -126,7 +126,10 @@ sap.ui.define(function () {
 			"apply/_internal/connectors/LrepConnector": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/connectors/LrepConnector"]
+					only: [
+						"sap/ui/fl/apply/_internal/connectors/LrepConnector",
+						"sap/ui/fl/apply/_internal/connectors/Utils"
+					]
 				}
 			},
 			"apply/_internal/connectors/PersonalizationConnector": {
@@ -373,7 +376,11 @@ sap.ui.define(function () {
 			"write/_internal/connectors/LrepConnector": {
 				group: "Write Internal",
 				coverage: {
-					only: ["sap/ui/fl/write/_internal/connectors/LrepConnector"]
+					only: [
+						"sap/ui/fl/write/_internal/connectors/LrepConnector",
+						"sap/ui/fl/write/_internal/connectors/Utils",
+						"sap/ui/fl/apply/_internal/connectors/Utils"
+					]
 				}
 			},
 			"write/_internal/connectors/KeyUserConnector": {

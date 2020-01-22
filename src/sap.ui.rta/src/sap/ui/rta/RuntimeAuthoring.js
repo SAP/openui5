@@ -740,21 +740,7 @@ function(
 
 	var fnShowTechnicalError = function(vError) {
 		BusyIndicator.hide();
-		var sErrorMessage = "";
-		if (vError.messages && Array.isArray(vError.messages) && vError.messages.length > 0) {
-			sErrorMessage = vError.messages.reduce(function(sConcatenatedMessage, oErrorResponse) {
-				return sConcatenatedMessage.concat(
-					oErrorResponse.severity === "Error"
-						? oErrorResponse.text + "\n"
-						: ""
-				);
-			}, sErrorMessage);
-		}
-		// when vError.messages doesn't contain valid error messages
-		// or messages are not set with correct severity
-		if (!sErrorMessage) {
-			sErrorMessage = vError.stack || vError.message || vError.status || vError;
-		}
+		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		Log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
 		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"

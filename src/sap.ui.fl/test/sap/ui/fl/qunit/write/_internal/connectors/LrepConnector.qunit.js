@@ -36,6 +36,29 @@ sap.ui.define([
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
+		QUnit.test("given a mock server, when error happen in the ABAP back end", function (assert) {
+			var oExpectedResponse = {
+				messages: [
+					{
+						severity: "Error",
+						text: "Error text 1"
+					},
+					{
+						severity: "Error",
+						text: "Error text 2"
+					}
+				]
+			};
+			fnReturnData(500, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
+
+			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", layer: "VENDOR"};
+			return LrepConnector.getFlexInfo(mPropertyBag).catch(function (oError) {
+				assert.equal(oError.userMessage, "Error text 1\nError text 2\n", "Correct user message is returned in the error object");
+				assert.equal(oError.status, "500", "Correct status is returned in the error object");
+				assert.equal(oError.message, "Internal Server Error", "Correct message is returned in the error object");
+			});
+		});
+
 		QUnit.test("given a mock server, when get flex info is triggered", function (assert) {
 			var oExpectedResponse = {
 				isResetEnabled: false,
