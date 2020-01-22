@@ -8,7 +8,7 @@
 	"sap.ui5": {
 		"config": {
 			"sample": {
-				"iframe": "../FlexibleColumnLayoutWithTwoColumnStart/webapp/index.html",
+				"iframe": "webapp/index.html",
 				"stretch": true,
 				"files": [
 					"webapp/view/Detail.view.xml",

@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (JSONModel, Controller) {
 	"use strict";
 
-	return Controller.extend("sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.FlexibleColumnLayout", {
+	return Controller.extend("sap.f.FlexibleColumnLayoutWithTwoColumnStart.controller.FlexibleColumnLayout", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oRouter.attachRouteMatched(this.onRouteMatched, this);

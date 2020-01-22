@@ -1,4 +1,4 @@
-<mvc:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.DetailDetail" height="100%"
+<mvc:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithTwoColumnStart.controller.DetailDetail" height="100%"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.f"
 		xmlns:m="sap.m">

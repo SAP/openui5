@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (jQuery, UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.f.FlexibleColumnLayoutWithOneColumnStart.Component", {
+	var Component = UIComponent.extend("sap.f.FlexibleColumnLayoutWithTwoColumnStart.Component", {
 		metadata: {
 			manifest: "json"
 		},
@@ -28,7 +28,7 @@ sap.ui.define([
 
 		createContent: function () {
 			return sap.ui.view({
-				viewName: "sap.f.FlexibleColumnLayoutWithOneColumnStart.view.FlexibleColumnLayout",
+				viewName: "sap.f.FlexibleColumnLayoutWithTwoColumnStart.view.FlexibleColumnLayout",
 				type: "XML"
 			});
 		},
