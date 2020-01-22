@@ -122,7 +122,7 @@ sap.ui.define([
 	}
 
 	function filterByMaxLayer(mResponse) {
-		var mFilteredReturn = Object.assign({}, mResponse);
+		var mFilteredReturn = merge({}, mResponse);
 		var mFlexObjects = mFilteredReturn.changes;
 		// TODO turn into utility or put it somewhere central
 		var aFilterableTypes = ["changes", "variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"];
@@ -227,6 +227,8 @@ sap.ui.define([
 			if (!_mInstances[mPropertyBag.reference].storageResponse) {
 				_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
 			}
+			//for the time being ensure variantSection is available, remove once everyone is asking for getVariantState
+			FlexState.getVariantsState(mPropertyBag.reference);
 		}.bind(null, mPropertyBag));
 	};
 
@@ -277,7 +279,7 @@ sap.ui.define([
 	 */
 	FlexState.clearMaxLayerFiltering = function(sReference) {
 		delete _mInstances[sReference].storageResponse;
-		_mInstances[sReference].preparedMaps = {};
+		FlexState.clearPreparedMaps(sReference);
 	};
 
 	FlexState.getUIChanges = function(sReference) {
@@ -314,6 +316,11 @@ sap.ui.define([
 	// temporary function until the maps are ready
 	FlexState.getFlexObjectsFromStorageResponse = function(sReference) {
 		return _mInstances[sReference].unfilteredStorageResponse.changes;
+	};
+
+	// temporary function until Variant Controller map is removed
+	FlexState.clearPreparedMaps = function(sReference) {
+		_mInstances[sReference].preparedMaps = {};
 	};
 
 	return FlexState;

@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge",
 	"sap/base/util/isEmptyObject",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/flexState/FlexState"
 ], function(
 	DependencyHandler,
 	Change,
@@ -37,7 +38,8 @@ sap.ui.define([
 	jQuery,
 	merge,
 	isEmptyObject,
-	Log
+	Log,
+	FlexState
 ) {
 	"use strict";
 
@@ -1218,6 +1220,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving when variant controller map has been reset and current changes have been reverted
 	 */
 	ChangePersistence.prototype.resetVariantMap = function (bResetAtRuntime) {
+		FlexState.clearPreparedMaps(this._mComponent.name);
 		return this._oVariantController.resetMap(bResetAtRuntime);
 	};
 
