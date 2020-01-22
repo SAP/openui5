@@ -28,6 +28,36 @@ sap.ui.define([
 		NO_CONTENT = {/*204 no content*/};
 
 	/**
+	 * Creates an error response object for a technical error (http status code = 4xx/5xx).
+	 *
+	 * @param {int} [iStatusCode=500]
+	 *   The HTTP status code
+	 * @param {string} [sMessage="Internal Server Error"]
+	 *   The message text
+	 * @param {string} [sMessageCode="UF0"]
+	 *   The message code
+	 * @returns {object}
+	 *   The error response
+	 */
+	function createErrorResponse(iStatusCode, sMessage, sMessageCode) {
+		sMessage = sMessage || "Internal Server Error";
+		sMessageCode = sMessageCode || "UF0";
+		iStatusCode = iStatusCode || 500;
+
+		return {
+			statusCode : iStatusCode,
+			body : JSON.stringify({
+				"error" : {
+					"message" : {
+						"value" : sMessage
+					},
+					"code" : sMessageCode
+				}
+			})
+		};
+	}
+
+	/**
 	 * Creates a V2 OData model.
 	 *
 	 * @param {string} sServiceUrl
@@ -551,6 +581,10 @@ sap.ui.define([
 						oResponse = {
 							statusCode : 204
 						};
+					} else if (oExpectedRequest.response.statusCode >= 400) {
+						oResponse = {
+							response : oExpectedRequest.response
+						};
 					} else {
 						oResponse = {
 							data : oExpectedRequest.response,
@@ -590,13 +624,12 @@ sap.ui.define([
 				}
 
 				return Promise.resolve(oResponse).then(function (oResponseBody) {
-					if (oResponseBody instanceof Error) {
+					if (oResponseBody.statusCode < 300) {
+						return fnSuccess({}, oResponseBody);
+					} else {
 						// TODO: correct error handling
-						oResponseBody.requestUrl = that.oModel.sServiceUrl + sUrl;
-						throw oResponseBody;
+						return fnError(oResponseBody);
 					}
-
-					return fnSuccess({}, oResponseBody);
 				}).finally(function () {
 					if (bWaitForResponse) {
 						that.iPendingResponses -= 1;
@@ -1127,6 +1160,61 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			return that.checkValueState(assert, "City", "Error", "Foo");
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Messages with a http status code of 4xx/5xx are expected to be technical
+	// JIRA: CPOUI5MODELS-103
+[
+	{statusCode : 400, message : "Bad Request"},
+	{statusCode : 500, message : "Internal Server Error"}
+].forEach(function (oFixture) {
+	var sTitle = "Messages: http status code '" + oFixture.statusCode + "' expects a technical "
+			+ "error message";
+
+	QUnit.test(sTitle , function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text text="{SalesOrderID}" />\
+</FlexBox>';
+
+		this.oLogMock.expects("fatal").once();
+
+		this.expectRequest("SalesOrderSet('1')",
+				createErrorResponse(oFixture.statusCode, oFixture.message))
+			.expectMessages([{
+				code : "UF0",
+				fullTarget : "/SalesOrderSet('1')",
+				message : oFixture.message,
+				persistent : false,
+				technical : true,
+				target : "/SalesOrderSet('1')",
+				type : MessageType.Error
+			}]);
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Error responses that contain messages within the response body (technical messages)
+	// will not process any messages if the http status code is <400.
+	// JIRA: CPOUI5MODELS-103
+	QUnit.test("Messages: messages within a response body are not processed if http status code is "
+			+ "'200'", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text text="{SalesOrderID}" />\
+</FlexBox>';
+
+		this.expectRequest("SalesOrderSet('1')", createErrorResponse(200))
+			.expectMessages([]);
+
+		// code under test
+		return this.createView(assert, sView, oModel);
 	});
 
 	//*********************************************************************************************
