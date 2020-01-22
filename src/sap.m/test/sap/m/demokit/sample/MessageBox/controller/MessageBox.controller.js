@@ -20,7 +20,7 @@ sap.ui.define([
 		},
 
 		handleInfoMessageBoxPress: function () {
-			MessageBox.information("You booking will be reserved for 24 hours.");
+			MessageBox.information("Your booking will be reserved for 24 hours.");
 		},
 
 		handleWarningMessageBoxPress: function () {
@@ -38,25 +38,23 @@ sap.ui.define([
 		},
 
 		handleError2MessageBoxPress: function () {
-			MessageBox.error(
-				"Product A does not exist.", {
-					actions: ["Manage Products", MessageBox.Action.CLOSE],
-					onClose: function (sAction) {
-						MessageToast.show("Action selected: " + sAction);
-					}
+			MessageBox.error("Product A does not exist.", {
+				actions: ["Manage Products", MessageBox.Action.CLOSE],
+				emphasizedAction: "Manage Products",
+				onClose: function (sAction) {
+					MessageToast.show("Action selected: " + sAction);
 				}
-			);
+			});
 		},
 
 		handleWarning2MessageBoxPress: function () {
-			MessageBox.warning(
-				"The quantity you have reported exceeds the quantity planned.", {
-					actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-					onClose: function (sAction) {
-						MessageToast.show("Action selected: " + sAction);
-					}
+			MessageBox.warning("The quantity you have reported exceeds the quantity planned.", {
+				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.OK,
+				onClose: function (sAction) {
+					MessageToast.show("Action selected: " + sAction);
 				}
-			);
+			});
 		}
 
 	});

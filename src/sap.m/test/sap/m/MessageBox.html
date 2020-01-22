@@ -133,8 +133,38 @@
 					title: "Set initial button focus",
 					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Custom button text"],
 					id: "messageBoxId1",
-					defaultAction: sap.m.MessageBox.Action.NO,
 					initialFocus: "Custom button text"
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Text("textEmphasizedAction", {
+					text: "\nemphasizedAction"
+				})
+		);
+
+		oVL.addContent(new sap.m.Button("btnEmphasizedAction", {
+			text: "Custom actions with emphasizedAction",
+			width: "300px",
+			press: function () {
+				sap.m.MessageBox.alert("MessageBox with custom actions and emphasizedAction set to YES", {
+					title: "This is an alert",
+					actions: [sap.m.MessageBox.Action.YES],
+					emphasizedAction: sap.m.MessageBox.Action.YES,
+					id: "mboxEmphasizedAction"
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Button("btnNoEmphasizedAction", {
+			text: "Custom actions with no emphasizedAction",
+			width: "300px",
+			press: function () {
+				sap.m.MessageBox.alert("MessageBox with custom actions and emphasizedAction set to null", {
+					title: "This is an alert",
+					actions: [sap.m.MessageBox.Action.YES],
+					emphasizedAction: null,
+					id: "mboxNoEmphasizedAction"
 				});
 			}
 		}));
@@ -210,7 +240,6 @@
 					title: "Error",
 					actions: [sap.m.MessageBox.Action.OK],
 					id: "messageBoxId1",
-					defaultAction: sap.m.MessageBox.Action.OK,
 					details: oJSON
 				});
 			}

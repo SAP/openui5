@@ -1160,6 +1160,55 @@ sap.ui.define([
 		oMessageBox.destroy();
 	});
 
+	QUnit.test("Check button types when specifying actions and emphasizedAction", function (assert) {
+		// Act
+		MessageBox.confirm(undefined, {
+			id: "messageboxButtonType17",
+			actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+			emphasizedAction: MessageBox.Action.NO
+		});
+		var oMessageBox = sap.ui.getCore().byId("messageboxButtonType17");
+
+		// assert
+		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "'YES' should be with 'Default' type.");
+		assert.equal(oMessageBox.getButtons()[1].getType(), ButtonType.Emphasized, "'NO' should be with 'Emphasized' type.");
+
+		// clean
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("Check button types when specifying actions but not specifying emphasizedAction", function (assert) {
+		// Act
+		MessageBox.information(undefined, {
+			id: "messageboxButtonType18",
+			actions: [MessageBox.Action.CLOSE ,MessageBox.Action.YES, MessageBox.Action.NO],
+			emphasizedAction: undefined // explicitly to showcase this test
+		});
+		var oMessageBox = sap.ui.getCore().byId("messageboxButtonType18");
+
+		// assert
+		oMessageBox.getButtons().forEach(function (oButton) {
+			assert.notEqual(oButton.getType(), ButtonType.Emphasized, "Button should not be with 'Emphasized' type.");
+		});
+
+		// clean
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("Check button type is type Default by default on Error method call", function (assert) {
+		// Act
+		MessageBox.error(undefined, {
+			id: "messageboxButtonType19"
+		});
+		var oMessageBox = sap.ui.getCore().byId("messageboxButtonType19");
+
+		// assert
+		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
+
+		// clean
+		oMessageBox.destroy();
+	});
+
 	QUnit.test("auto close when a routing navigation occurs", function (assert) {
 
 		var oDialog;
