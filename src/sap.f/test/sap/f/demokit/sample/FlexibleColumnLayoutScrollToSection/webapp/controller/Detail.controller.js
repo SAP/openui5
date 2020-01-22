@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (JSONModel, Controller) {
 	"use strict";
 
-	return Controller.extend("sap.f.ShellBarWithFlexibleColumnLayout.controller.Detail", {
+	return Controller.extend("sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.Detail", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oModel = this.getOwnerComponent().getModel();
@@ -12,13 +12,23 @@ sap.ui.define([
 			this.oRouter.getRoute("detail").attachPatternMatched(this._onProductMatched, this);
 			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onProductMatched, this);
 		},
-		handleItemPress: function (oEvent) {
-			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(2),
-				supplierPath = oEvent.getSource().getBindingContext("products").getPath(),
-				supplier = supplierPath.split("/").slice(-1).pop();
-
-			this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout,
-				product: this._product, supplier: supplier});
+		handleItemPress1: function () {
+			this.navToSection(1);
+		},
+		handleItemPress2: function () {
+			this.navToSection(2);
+		},
+		handleItemPress3: function () {
+			this.navToSection(3);
+		},
+		handleItemPress4: function () {
+			this.navToSection(4);
+		},
+		handleItemPress5: function () {
+			this.navToSection(5);
+		},
+		navToSection: function (iSection) {
+			this.oRouter.navTo("detailDetail", {layout: "EndColumnFullScreen", product: this._product, section: iSection, proba: true});
 		},
 		handleFullScreen: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/fullScreen");

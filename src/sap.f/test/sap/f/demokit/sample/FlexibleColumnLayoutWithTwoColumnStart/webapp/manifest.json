@@ -1,7 +1,7 @@
 {
 	"sap.ui5": {
         "rootView": {
-			"viewName": "sap.f.FlexibleColumnLayoutWithFullscreenPage.view.FlexibleColumnLayout",
+			"viewName": "sap.f.FlexibleColumnLayoutWithOneColumnStart.view.FlexibleColumnLayout",
 			"type": "XML",
 			"async": true,
 			"id": "fcl"
@@ -23,7 +23,7 @@
 			"config": {
 				"routerClass": "sap.f.routing.Router",
 				"viewType": "XML",
-				"viewPath": "sap.f.FlexibleColumnLayoutWithFullscreenPage.view",
+				"viewPath": "sap.f.FlexibleColumnLayoutWithOneColumnStart.view",
 				"controlId": "fcl",
 				"transition": "slide",
 				"bypassed": {
@@ -32,34 +32,34 @@
 			},
 			"routes": [
 				{
+					"pattern": "page2",
+					"name": "page2",
+					"target": "page2",
+					"layout": "EndColumnFullScreen"
+				},
+				{
 					"pattern": ":layout:",
 					"name": "master",
 					"target": [
-						"master"
-					]
-				},
-				{
-					"pattern": "detail/{category}/{layout}",
-					"name": "detail",
-					"target": [
+						"master",
 						"detail"
 					]
 				},
 				{
-					"pattern": "detailDetail/{category}/{product}/{layout}",
-					"name": "detailDetail",
+					"pattern": "detail/{product}/{layout}",
+					"name": "detail",
 					"target": [
-						"detail",
-						"detailDetail"
+						"master",
+						"detail"
 					]
 				},
 				{
-					"pattern": "detailDetailDetail/{category}/{product}/{supplier}/{layout}",
-					"name": "detailDetailDetail",
+					"pattern": "detailDetail/{product}/{supplier}/{layout}",
+					"name": "detailDetail",
 					"target": [
+						"master",
 						"detail",
-						"detailDetail",
-						"detailDetailDetail"
+						"detailDetail"
 					]
 				}
 			],
@@ -70,14 +70,14 @@
 				},
 				"detail": {
 					"viewName": "Detail",
-					"controlAggregation": "beginColumnPages"
+					"controlAggregation": "midColumnPages"
 				},
 				"detailDetail": {
 					"viewName": "DetailDetail",
-					"controlAggregation": "midColumnPages"
+					"controlAggregation": "endColumnPages"
 				},
-				"detailDetailDetail": {
-					"viewName": "DetailDetailDetail",
+				"page2": {
+					"viewName": "AboutPage",
 					"controlAggregation": "endColumnPages"
 				}
 			}
