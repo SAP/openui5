@@ -1,7 +1,7 @@
 {
 	"sap.ui5": {
         "rootView": {
-			"viewName": "sap.f.FlexibleColumnLayoutWithOneColumnStart.view.FlexibleColumnLayout",
+			"viewName": "sap.f.FlexibleColumnLayoutWithTwoColumnStart.view.FlexibleColumnLayout",
 			"type": "XML",
 			"async": true,
 			"id": "fcl"
@@ -23,7 +23,7 @@
 			"config": {
 				"routerClass": "sap.f.routing.Router",
 				"viewType": "XML",
-				"viewPath": "sap.f.FlexibleColumnLayoutWithOneColumnStart.view",
+				"viewPath": "sap.f.FlexibleColumnLayoutWithTwoColumnStart.view",
 				"controlId": "fcl",
 				"transition": "slide",
 				"bypassed": {
