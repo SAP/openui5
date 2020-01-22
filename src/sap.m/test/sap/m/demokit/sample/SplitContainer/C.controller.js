@@ -2,11 +2,19 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/MessageToast",
 	"sap/ui/core/mvc/Controller",
-	"sap/base/Log"
-], function (jQuery, MessageToast, Controller, Log) {
+	"sap/base/Log",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device"
+], function (jQuery, MessageToast, Controller, Log, JSONModel, Device) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.SplitContainer.C", {
+
+		onInit: function() {
+			var oDeviceModel = new JSONModel(Device);
+			oDeviceModel.setDefaultBindingMode("OneWay");
+			this.getView().setModel(oDeviceModel, "device");
+		},
 
 		onAfterRendering: function () {
 			var oSplitCont = this.getSplitContObj(),
