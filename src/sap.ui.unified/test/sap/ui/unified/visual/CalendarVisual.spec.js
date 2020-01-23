@@ -308,6 +308,32 @@ describe("sap.ui.unified.CalendarVisual", function() {
 			_pressYearPicker(sCalId); // click the year button to open YearPicker
 			expect(takeScreenshot(oCal)).toLookAs("105_year_picker_displayed");
 		});
+
+		it("sap.ui.unified.calendar.Header should test two months header button", function() {
+			_initCalendar("8");
+			expect(takeScreenshot(oCal)).toLookAs("106_month_displayed");
+			_pressNext(sCalId); // Month switched to February - March
+			expect(takeScreenshot(oCal)).toLookAs("107_february_march_displayed");
+			_pressPrev(sCalId); // Month switch to January - February
+			expect(takeScreenshot(oCal)).toLookAs("108_january_february_displayed");
+			_pressMonthPicker(sCalId); //right month picker open, focus on January
+			expect(takeScreenshot(oCal)).toLookAs("109_month_picker_displayed_focus_january");
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform(); // Show month is April and May
+			expect(takeScreenshot(oCal)).toLookAs("110_month_displayed_apr_may");
+			_pressMonthPickerSecondHeader(sCalId); //left month picker open, focus on May
+			expect(takeScreenshot(oCal)).toLookAs("111_month_picker_displayed_focus_may");
+			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform(); // Show month December prev. year and January
+			expect(takeScreenshot(oCal)).toLookAs("112_month_displayed_dec_jan");
+			_pressPrev(sCalId); // Month switch to Nov. - Dec.
+			expect(takeScreenshot(oCal)).toLookAs("113_november_december_displayed");
+			_pressNext(sCalId); // Month swich to Dec. - Jan next year
+			expect(takeScreenshot(oCal)).toLookAs("114_december_january_displayed");
+			_pressNext(sCalId); // Month switch to Jan - Dec
+			expect(takeScreenshot(oCal)).toLookAs("115_january_december_displayed");
+		});
 	}
 
 	function _initCalendar(sVersion) {
@@ -331,6 +357,10 @@ describe("sap.ui.unified.CalendarVisual", function() {
 
 	function _pressMonthPicker(sCalendarId) {
 		element(by.id(sCalendarId + "--Head-B1")).click();
+	}
+
+	function _pressMonthPickerSecondHeader(sCalendarId) {
+		element(by.id(sCalendarId + "--Head-B3")).click();
 	}
 
 	function _pressYearPicker(sCalendarId) {

@@ -569,7 +569,44 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Month Button appearance on two months in two columns", function (assert) {
+		// arrange
+		var oCal3 = new Calendar("Cal_3",{ months: 2 }).placeAt("content"),
+			oMP = oCal3.getAggregation("monthPicker");
+			sap.ui.getCore().applyChanges();
 
+		// act: click on first header month button and set month
+		qutils.triggerEvent("click", "Cal_3--Head-B1");
+		oMP.setMonth(7);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oCal3.getAggregation("header").getVisibleButton1(), "First header button must be hidden");
+		assert.ok(oCal3.getAggregation("header")._getVisibleButton3(), "Third header button must be visible");
+
+		// act: select month and close popover
+		oCal3._selectMonth(oMP.getMonth());
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oCal3.getAggregation("header").getVisibleButton1(), "First header button must be visible");
+		assert.ok(oCal3.getAggregation("header")._getVisibleButton3(), "Third header button must be visible");
+
+		// act: click on second header month button and set month
+		qutils.triggerEvent("click", "Cal_3--Head-B3");
+		oMP.setMonth(7);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oCal3.getAggregation("header").getVisibleButton1(), "First header button must be visible");
+		assert.notOk(oCal3.getAggregation("header")._getVisibleButton3(), "Third header button must be hidden");
+
+		// cleanup
+		oCal3.destroy();
+		oCal3 = null;
+		oMP.destroy();
+		oMP = null;
+	});
 
 	QUnit.module("initialize");
 
@@ -675,6 +712,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery("#Cal3--Head-B1").text(), "Dezember", "Dezember shown");
 		assert.equal(jQuery("#Cal3--Head-B2").text(), "2014", "year 2014 shown");
+		assert.equal(jQuery("#Cal3--Head-B3").text(), "Januar", "Januar shown");
+		assert.equal(jQuery("#Cal3--Head-B4").text(), "2015", "year 2015 shown");
 		aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalItem");
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20141125", "first displayed day");
 		aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalItem");
@@ -683,6 +722,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery("#Cal3--Head-B1").text(), "Januar", "january shown again");
 		assert.equal(jQuery("#Cal3--Head-B2").text(), "2015", "year 2015 shown again");
+		assert.equal(jQuery("#Cal3--Head-B3").text(), "Februar", "februar shown again");
+		assert.equal(jQuery("#Cal3--Head-B4").text(), "2015", "year 2015 shown again");
 		aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalItem");
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20141230", "first displayed day");
 		aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalItem");
@@ -1624,7 +1665,7 @@ QUnit.module("Misc");
 		oCalendar.onThemeChanged();
 
 		// assert
-		assert.equal(oupdateHeadersButtonsSpy.callCount, 1, "_updateHeadersButtons should be called once onThemeChanged");
+		assert.equal(oupdateHeadersButtonsSpy.callCount, 4, "_updateHeadersButtons should be called once onThemeChanged");
 		assert.equal(osetPrimaryHeaderMonthButtonTextSpy.callCount, 1, "_setPrimaryHeaderMonthButtonText should be called once onThemeChanged");
 		assert.equal(oToggleTwoMonthsInTwoColumnsCSSSpy.callCount, 1, "_toggleTwoMonthsInTwoColumnsCSS should be called once onThemeChanged");
 
@@ -2174,7 +2215,6 @@ QUnit.module("Misc");
 
 		// act: click on month select button
 		qutils.triggerEvent("click", "Cal_1--Head-B1");
-		sap.ui.getCore().applyChanges();
 
 		// act: select a month (February)
 		oMP.setMonth(iSelectedMonth);
