@@ -320,7 +320,9 @@ sap.ui.define([
 
 	// temporary function until Variant Controller map is removed
 	FlexState.clearPreparedMaps = function(sReference) {
-		_mInstances[sReference].preparedMaps = {};
+		if (_mInstances[sReference]) {
+			_mInstances[sReference].preparedMaps = {};
+		}
 	};
 
 	return FlexState;

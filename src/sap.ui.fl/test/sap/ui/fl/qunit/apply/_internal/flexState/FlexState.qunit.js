@@ -100,6 +100,16 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when initialize is followed by clearance of states, with a delayed reset of prepared maps", function (assert) {
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			}).then(function () {
+				FlexState.clearState();
+				assert.equal(FlexState.clearPreparedMaps(sReference), undefined, "then no error was thrown");
+			});
+		});
+
 		QUnit.test("when initialize is called with a reference ending in '.Component'", function (assert) {
 			return FlexState.initialize({
 				reference: sReference + ".Component",
