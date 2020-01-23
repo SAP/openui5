@@ -974,16 +974,25 @@ sap.ui.define([
 
 	QUnit.test("Should have default icon", function (assert) {
 		// Arrange
-		var oDialog = new Dialog({
-			state: ValueState.Warning
-		});
+		var mIcons = {},
+			oDialog = new Dialog();
 
-		// Act
+		mIcons[ValueState.Success] = IconPool.getIconURI("message-success");
+		mIcons[ValueState.Warning] = IconPool.getIconURI("message-warning");
+		mIcons[ValueState.Error] = IconPool.getIconURI("message-error");
+		mIcons[ValueState.Information] = IconPool.getIconURI("hint");
+		mIcons[ValueState.None] = "";
+
 		oDialog.open();
-		Core.applyChanges();
 
-		// Assert
-		assert.ok(oDialog.getIcon(), "Dialog has a default icon");
+		for (var sState in mIcons) {
+			// Act
+			oDialog.setState(sState);
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(oDialog.getIcon(), mIcons[sState], "Dialog has the correct icon for state " + sState);
+		}
 
 		// Clean up
 		oDialog.destroy();
