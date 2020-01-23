@@ -84,7 +84,7 @@ sap.ui.define([
 		assert.strictEqual(this.oControlVariantPlugin._getVariantTitleForCopy(sTitleToBeCopied, "varMgtKey", this.oModel.getData()), sExpectedTitle, "then correct title returned for duplicate");
 	};
 
-	var fnCheckErrorRequirements = function(assert, oOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, oPlugin, sTextKey, bShowError) {
+	var fnCheckErrorRequirements = function(assert, oOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, oPlugin, sTextKey, bShowError, bCheckHandlerEdit) {
 		assert.strictEqual(oPlugin._createSetTitleCommand.callCount, 0, "then _createSetTitleCommand() was not called");
 		assert.strictEqual(oPlugin._createDuplicateCommand.callCount, 0, "then _createDuplicateCommand() was not called");
 		assert.ok(oPlugin.stopEdit.calledOnce, "then stopEdit() was called once");
@@ -100,6 +100,9 @@ sap.ui.define([
 			assert.equal(typeof oOverlay.getValueStateText, "function", "then getValueStateText function set for VariantManagement control overlay");
 			assert.equal(oOverlay.getValueStateText(), getText(sTextKey), "then getValueStateText function set for VariantManagement control overlay");
 			assert.equal(typeof oOverlay.getDomRefForValueStateMessage, "function", "then getValueStateText function set for VariantManagement control overlay");
+			if (bCheckHandlerEdit) {
+				assert.ok(RenameHandler.startEdit.calledOnce, "then startEdit of the RenameHandler was called once");
+			}
 		}
 	};
 
@@ -648,8 +651,9 @@ sap.ui.define([
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
-			sandbox.stub(this.oControlVariantPlugin, "startEdit");
+			sandbox.spy(this.oControlVariantPlugin, "startEdit");
 			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
+			sandbox.spy(RenameHandler, "startEdit");
 
 			this.oModel.setData({
 				varMgtKey : {
@@ -670,7 +674,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true));
+				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true, true));
 		});
 
 		QUnit.test("when variant is RENAMED with the TITLE OF ANOTHER INVISIBLE VARIANT, after which _handlePostRename is called", function(assert) {
@@ -761,8 +765,9 @@ sap.ui.define([
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
-			sandbox.stub(this.oControlVariantPlugin, "startEdit");
+			sandbox.spy(this.oControlVariantPlugin, "startEdit");
 			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
+			sandbox.spy(RenameHandler, "startEdit");
 
 			var sOldVariantTitle = "Standard";
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sOldVariantTitle);
@@ -771,7 +776,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true));
+				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true, true));
 		});
 
 		QUnit.test("when variant RENAMED with the an EXISTING VARIANT TITLE, after which _handlePostRename is called", function(assert) {
