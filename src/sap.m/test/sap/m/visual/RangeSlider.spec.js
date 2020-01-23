@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,takeScreenshot,expect,browser*/
 
 describe("sap.m.RangeSlider", function() {
 	"use strict";
@@ -8,8 +8,8 @@ describe("sap.m.RangeSlider", function() {
 	});
 
 	it("should load test page", function() {
-		// scroll to bottom
-		element(by.id("__slider7-handle2")).click();
-		expect(takeScreenshot()).toLookAs("initial2");
+		browser.executeScript("document.getElementById('scrollToBottom').scrollIntoView()").then(function() {
+			expect(takeScreenshot()).toLookAs("initial2");
+		});
 	});
 });
