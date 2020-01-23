@@ -20,23 +20,22 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var ParametersEditor = MapEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.parametersEditor.ParametersEditor", {
-		setValue: function() {
-			var oConfig = this.getConfig();
-			if (oConfig.value) {
-				var aItems = Object.keys(oConfig.value).map(function (sKey) {
-					var oValue = (oConfig.value[sKey] || {}).value;
-					return {
-						key: sKey,
-						value: [{
-							type: isPlainObject(oValue) ? "json" : "string",
-							path: sKey,
-							value: oValue
-						}]
-					};
-				});
-				this._itemsModel.setData(aItems);
-				BasePropertyEditor.prototype.setValue.call(this, aItems);
-			}
+		setValue: function (mValue) {
+			mValue = isPlainObject(mValue) ? mValue : {};
+
+			var aItems = Object.keys(mValue).map(function (sKey) {
+				var oValue = (mValue[sKey] || {}).value;
+				return {
+					key: sKey,
+					value: [{
+						type: isPlainObject(oValue) ? "json" : "string",
+						path: sKey,
+						value: oValue
+					}]
+				};
+			});
+			this._itemsModel.setData(aItems);
+			BasePropertyEditor.prototype.setValue.call(this, mValue);
 		},
 
 		fireValueChange: function(mParams) {

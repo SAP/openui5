@@ -237,6 +237,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/util/binding/resolveBinding": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/util/ObjectBinding": {
 				group: "DesignTime Editor",
 				coverage: {

@@ -52,29 +52,32 @@ sap.ui.define([
 		this.setModel(this._itemsModel, "itemsModel");
 	};
 
-	ArrayEditor.prototype.setValue = function () {
+	ArrayEditor.prototype.setValue = function (aValue) {
 		var oConfig = this.getConfig();
-		if (oConfig.value && oConfig.template) {
+		aValue = Array.isArray(aValue) ? aValue : [];
+
+		if (oConfig.template) {
 			var aItems = [];
-			oConfig.value.forEach(function(oValue, iIndex) {
+			aValue.forEach(function(oValue, iIndex) {
 				var mItem = {
 					itemLabel: oConfig.itemLabel || "{i18n>BASE_EDITOR.ARRAY.ITEM_LABEL}",
 					index: iIndex,
-					total: oConfig.value.length,
+					total: aValue.length,
 					properties: Object.keys(oConfig.template).map(function (sKey) {
 						var mTemplate = oConfig.template[sKey];
 						var sPath = iIndex + "/" + mTemplate.path;
 						return _merge({}, mTemplate, {
 							path: sPath,
-							value: ObjectPath.get(sPath.split("/"), this.getValue())
+							value: ObjectPath.get(sPath.split("/"), aValue)
 						});
 					}, this)
 				};
 				aItems.push(mItem);
 			}, this);
 			this._itemsModel.setData(aItems);
-			BasePropertyEditor.prototype.setValue.call(this, aItems);
 		}
+
+		BasePropertyEditor.prototype.setValue.call(this, aValue);
 	};
 
 	ArrayEditor.prototype.getExpectedWrapperCount = function (vValue) {

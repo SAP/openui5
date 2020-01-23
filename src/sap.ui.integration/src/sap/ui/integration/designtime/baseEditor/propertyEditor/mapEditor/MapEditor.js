@@ -45,26 +45,26 @@ sap.ui.define([
 			this.setModel(this._itemsModel, "itemsModel");
 		},
 
-		setValue: function() {
-			var oConfig = this.getConfig();
-			if (oConfig.value) {
-				var aItems = Object.keys(oConfig.value).map(function (sKey) {
-					return {
-						key: sKey,
-						value: [{
-							type: isPlainObject(oConfig.value[sKey]) ? "json" : "string",
-							path: sKey,
-							value: oConfig.value[sKey]
-						}]
-					};
-				});
-				this._itemsModel.setData(aItems);
-				BasePropertyEditor.prototype.setValue.call(this, aItems);
-			}
+		setValue: function(mValue) {
+			mValue = isPlainObject(mValue) ? mValue : {};
+
+			var aItems = Object.keys(mValue).map(function (sKey) {
+				return {
+					key: sKey,
+					value: [{
+						type: isPlainObject(mValue[sKey]) ? "json" : "string",
+						path: sKey,
+						value: mValue[sKey]
+					}]
+				};
+			});
+
+			this._itemsModel.setData(aItems);
+			BasePropertyEditor.prototype.setValue.call(this, mValue);
 		},
 
-		getExpectedWrapperCount: function (vValue) {
-			return vValue.length;
+		getExpectedWrapperCount: function (mValue) {
+			return Object.keys(mValue).length;
 		},
 
 		_onRemoveElement: function(oEvent) {
