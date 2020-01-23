@@ -154,7 +154,7 @@ sap.ui.define([
 				priority: OverflowToolbarPriority.NeverOverflow
 			}));
 		}
-		this._oControls.oMegaMenu._iStaticWidth = 36;
+		this._oControls.oMegaMenu._iStaticWidth = 43;
 		this._oControls.oMegaMenu._sFontSize = Parameters.get("_sap_f_ShellBar_PrimaryTitle_FontSize");
 
 		return this._oControls.oMegaMenu;
