@@ -274,14 +274,6 @@ sap.ui.define(function() {
 				group: "Configuration",
 				page: "test-resources/sap/ui/core/qunit/bootstrap/PreloadCfg-debug-sync.qunit.html"
 			},
-			"PegasusEnvironment": {
-				group: "Bootstrap",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/PegasusEnvironment.qunit.html",
-				title: "Test Page that boots SAPUI5 dynamically using XHR",
-				qunit: {
-					version: 1
-				}
-			},
 			"ResourceRoot_ResourcesURL_ResOnly": {
 				group: "Resource Root Determination",
 				page: "test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ResourcesURL_ResOnly.qunit.html",

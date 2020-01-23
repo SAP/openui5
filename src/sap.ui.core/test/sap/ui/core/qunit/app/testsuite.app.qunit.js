@@ -7,10 +7,6 @@ sap.ui.define(function () {
 			beforeBootstrap: "./beforeBootstrap"
 		},
 		tests: {
-			Application: {
-				page: "test-resources/sap/ui/core/qunit/Application.qunit.html",
-				title: "Tests for Application.js"
-			},
 			MessageListBinding: {
 				title: "Tests for sap/ui/model/message/MessageListBinding"
 			},
