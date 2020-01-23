@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/transport/TransportDialog",
+	"sap/ui/fl/write/_internal/transport/Transports",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	TransportDialog,
+	Transports,
 	jQuery,
 	sinon
 ) {
@@ -343,17 +345,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("_oPackage - change event executing promise ", function (assert) {
-			sap.ui.fl.write._internal.transport.Transports = function () {
-				return {
-					getTransports: function () {
-						return {
-							then: function () {
-								assert.ok("promise executed");
-							}
-						};
-					}
-				};
-			};
+			sandbox.stub(Transports, "getTransports").returns(Promise.resolve(assert.ok("promise executed")));
 			this.oDialog._oPackage.fireChange();
 		});
 	});

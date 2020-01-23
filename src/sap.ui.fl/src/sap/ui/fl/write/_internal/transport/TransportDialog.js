@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/DialogRenderer",
 	"sap/m/Input",
 	"sap/m/MessageToast",
-	"sap/ui/core/ListItem"
+	"sap/ui/core/ListItem",
+	"sap/ui/fl/write/_internal/transport/Transports"
 ],
 function(
 	List,
@@ -23,7 +24,8 @@ function(
 	DialogRenderer,
 	Input,
 	MessageToast,
-	ListItem
+	ListItem,
+	Transports
 ) {
 	"use strict";
 
@@ -281,13 +283,11 @@ function(
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_PACKAGE_TT"),
 			width: "100%",
 			change: function() {
-				var oTransports;
 				var oPromise;
 				var oObject;
 
 				oObject = that._createObjectInfo();
-				oTransports = new sap.ui.fl.write._internal.transport.Transports(); // FIXME workaround to make test stub work with AMD
-				oPromise = oTransports.getTransports(oObject);
+				oPromise = Transports.getTransports(oObject);
 				oPromise.then(function(oResult) {
 					that._onPackageChangeSuccess(oResult);
 				}, function(oResult) {
