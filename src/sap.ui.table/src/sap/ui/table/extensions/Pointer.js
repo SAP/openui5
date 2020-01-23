@@ -174,7 +174,7 @@ sap.ui.define([
 		 * Drops the previous dragged column resize bar and recalculates the new column width.
 		 */
 		exitColumnResizing: function(oEvent) {
-			ColumnResizeHelper._resizeColumn(this, this._iLastHoveredColumnIndex);
+			ColumnResizeHelper._resizeColumn(this, this._iLastHoveredVisibleColumnIndex);
 		},
 
 		/*
@@ -194,7 +194,7 @@ sap.ui.define([
 
 			this._$colResize.toggleClass("sapUiTableColRszActive", true);
 
-			var oColumn = this._getVisibleColumns()[this._iLastHoveredColumnIndex];
+			var oColumn = this._getVisibleColumns()[this._iLastHoveredVisibleColumnIndex];
 			var iDeltaX = iLocationX - this._iColumnResizeStart;
 			var iColWidth = this.$().find("th[data-sap-ui-colid=\"" + oColumn.getId() + "\"]").width();
 			var iWidth = Math.max(iColWidth + iDeltaX * (this._bRtlMode ? -1 : 1), TableUtils.Column.getMinColumnWidth());
@@ -339,7 +339,7 @@ sap.ui.define([
 				var oColumn = this._getVisibleColumns()[iLastHoveredColumn];
 				if (oColumn && oColumn.getResizable()) {
 					this.$("rsz").css("left", iResizerPositionX + "px");
-					this._iLastHoveredColumnIndex = iLastHoveredColumn;
+					this._iLastHoveredVisibleColumnIndex = iLastHoveredColumn;
 				}
 			}.bind(oTable));
 		}
@@ -652,8 +652,8 @@ sap.ui.define([
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
 
 				} else if ($Target.hasClass("sapUiTableColResizer")) { // mousedown on mobile column resize button
-					var iColIndex = $Target.closest(".sapUiTableHeaderCell").attr("data-sap-ui-colindex");
-					this._iLastHoveredColumnIndex = parseInt(iColIndex);
+					var iColumnIndex = $Target.closest(".sapUiTableHeaderCell").attr("data-sap-ui-colindex");
+					this._iLastHoveredVisibleColumnIndex = this._getVisibleColumns().indexOf(this.getColumns()[iColumnIndex]);
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
 
 				} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
@@ -720,7 +720,7 @@ sap.ui.define([
 		ondblclick: function(oEvent) {
 			if (Device.system.desktop && oEvent.target === this.getDomRef("rsz")) {
 				oEvent.preventDefault();
-				ColumnResizeHelper.doAutoResizeColumn(this, this._iLastHoveredColumnIndex);
+				ColumnResizeHelper.doAutoResizeColumn(this, this._iLastHoveredVisibleColumnIndex);
 			}
 		},
 
@@ -832,7 +832,7 @@ sap.ui.define([
 			// Register the delegate
 			TableUtils.addDelegate(oTable, this._delegate, oTable);
 
-			oTable._iLastHoveredColumnIndex = 0;
+			oTable._iLastHoveredVisibleColumnIndex = 0;
 			oTable._bIsColumnResizerMoving = false;
 			oTable._iFirstReorderableIndex = sTableType == ExtensionBase.TABLETYPES.TREE ? 1 : 0;
 
