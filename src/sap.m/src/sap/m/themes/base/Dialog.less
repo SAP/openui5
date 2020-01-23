@@ -22,16 +22,17 @@
 }
 
 .sapMDialog {
+	// scale(1) - Chrome does not clip children when transform is not applied resulting in non-visible border-radius
+	// translateZ(0px) - Safari Problem with z-index - After dialog was opened it was inserted behind the dark overlay
+	-webkit-transform: scale(1) translateZ(0px);
 	background-clip: padding-box;
 	min-height: 6rem;
 	outline: none;
 	overflow: hidden;
-	position: absolute;
+	position: fixed !important;
 	opacity: 0;
-	-webkit-transition: opacity .15s, transform 0.2s;
-	transition: opacity .15s, transform 0.2s;
-	transform: translate(-50%, -50%) scale(1);
-	-webkit-transform: translate(-50%, -50%) scale(1) translateZ(0px);
+	-webkit-transition: opacity .15s, left 0.2s, top 0.2s;
+	transition: opacity .15s, left 0.2s, top 0.2s;
 	border-radius: @sapUiElementBorderCornerRadius;
 	box-shadow: @sapUiShadowLevel3;
 
@@ -41,15 +42,6 @@
 		-webkit-filter: blur(0);
 		filter: blur(0);
 	}
-}
-
-//the rtl will change the transform-translate from (-50% -50%) to (50% -50%)
-[dir="rtl"] .sapMDialog {
-	left: 50%; //this will be changed 'right: 50%' from the rtl mode
-}
-
-[dir="rtl"] .sapMDialog.sapMDialogTouched {
-	left: auto;
 }
 
 // set max height and max width ========================================================================================
@@ -115,8 +107,6 @@
 }
 
 .sapMDialog.sapMDialogStretched {
-	transform: none;
-	-webkit-transform: scale(1) translateZ(0px); // Chrome does not clip children when transform is not applied resulting in non-visible border-radius
 	top: 5% !important; //this is for preventing inline size/top sizes set the top
 	bottom: 5% !important;
 	left: 3.5% !important; //this is for preventing inline size/top sizes set the top
@@ -261,8 +251,6 @@ html.sap-desktop .sapMDialog {
 
 .sapMDialogOpen {
 	opacity: 1;
-	transform: translate(-50%, -50%) scale(1);
-	-webkit-transform: translate(-50%, -50%) scale(1) translateZ(0px);
 }
 
 .sapMDialogBlockLayerAnimation {
@@ -439,19 +427,13 @@ html.sap-desktop .sapMDialog {
 	user-select: none;
 }
 
-//remove the transform translate
-.sapMDialogTouched {
-	transform: scale(1);
-	-webkit-transform: scale(1) translateZ(0px);
-}
-
 .sapDialogDisableTransition {
 	transition: none;
 	-webkit-transition: none;
 }
 
 .sapMDialogResizeHandler {
-	bottom: 0rem;
+	bottom: 0;
 	cursor: se-resize;
 	position: absolute;
 	right: 0;
