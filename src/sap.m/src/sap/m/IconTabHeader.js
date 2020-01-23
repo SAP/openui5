@@ -1024,19 +1024,25 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabHeader.prototype._setItemsForStrip = function () {
-		if (!Core.isThemeApplied() || !this.oSelectedItem) {
+		var aTabFilters = this.getItems()
+			.filter(function (oItem) { return oItem.isA('sap.m.IconTabFilter') && oItem.getVisible(); });
+
+		if (!Core.isThemeApplied() || !aTabFilters.length) {
 			return;
 		}
 
-		var oTabStrip = this.getDomRef("head");
+		var oTabStrip = this.getDomRef("head"),
+			oSelectedItem = (this.oSelectedItem && this.oSelectedItem.getVisible()) ?  this.oSelectedItem : aTabFilters[0];
+
 		if (!oTabStrip) {
 			// control has not been rendered, exit
 			return;
 		}
+
 		var iTabStripWidth = oTabStrip.offsetWidth,
 			oItem,
 			i,
-			oSelectedItemDomRef = (this._oSelectedRootItem || this.oSelectedItem).getDomRef(),
+			oSelectedItemDomRef = (this._oSelectedRootItem || oSelectedItem).getDomRef(),
 			aItems = this.getItems()
 				.filter(function (oItem) { return Boolean(oItem.getDomRef()); })
 				.map(function (oItem) { return oItem.getDomRef(); });
@@ -1061,7 +1067,7 @@ sap.ui.define([
 		aItems.splice(aItems.indexOf(oSelectedItemDomRef), 1);
 
 		if (iTabStripWidth < iSumFittingItems) {
-		// selected item can't fit fully, truncate it's text and put all other items in the overflow
+			// selected item can't fit fully, truncate it's text and put all other items in the overflow
 			oSelectedItemDomRef.style.width = iTabStripWidth - 20 + "px";
 			oSelectedItemDomRef.classList.add("sapMITBFilterTruncated");
 			for (i = 0; i < aItems.length; i++) {
