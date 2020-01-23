@@ -72,7 +72,7 @@ sap.ui.define([
 	 * <li> Content - the table with the items.</li>
 	 * <li> Footer (optional) - a toolbar for actions.</li>
 	 * </ul>
-	 * Table select dialog supports multi-selection when the <code>multiSelect</code> property is set.
+	 * Table Select Dialog supports multi-selection when the <code>multiSelect</code> property is set to <code>true</code>.
 	 *
 	 * The selected items can be stored for later editing when the <code>rememberSelections</code> property is set.
 	 * <b>Note:</b> This property has to be set before the dialog is opened.
@@ -184,6 +184,7 @@ sap.ui.define([
 			showClearButton : {type : "boolean", group : "Behavior", defaultValue : false},
 			/**
 			 * Overwrites the default text for the confirmation button.
+			 * Note: This property applies only when the property <code>multiSelect</code> is set to <code>true</code>.
 			 * @since 1.68
 			 */
 			confirmButtonText: {type : "string", group : "Appearance"},
