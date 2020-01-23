@@ -2087,11 +2087,15 @@ sap.ui.define([
 	ODataMetaModel.prototype.getProperty = ODataMetaModel.prototype.getObject;
 
 	/**
-	 * Reduces the given path based on metadata. Removes adjacent partner navigation properties.
+	 * Reduces the given path based on metadata. Removes adjacent partner navigation properties and
+	 * reduces binding paths to properties of an operation's binding parameter.
 	 *
-	 * Example: The reduced binding path for "/SalesOrderList(42)/SO_2_SOITEM(20)/SOITEM_2_SO/Note"
-	 * is "/SalesOrderList(42)/Note" iff "SO_2_SOITEM" and "SOITEM_2_SO" are marked as partners of
-	 * each other.
+	 * Examples:
+	 * The reduced binding path for "/SalesOrderList(42)/SO_2_SOITEM(20)/SOITEM_2_SO/Note" is
+	 * "/SalesOrderList(42)/Note" iff "SO_2_SOITEM" and "SOITEM_2_SO" are marked as partners of each
+	 * other.
+	 * "/Employees(42)/name.space.AcIncreaseSalaryByFactor(...)/$Parameter/_it/Name" is reduced to
+	 * "/Employees(42)/Name" if "_it" is the binding parameter.
 	 *
 	 * The metadata for <code>sPath</code> must be available synchronously.
 	 *
@@ -2107,6 +2111,7 @@ sap.ui.define([
 	ODataMetaModel.prototype.getReducedPath = function (sPath, sRootPath) {
 		var i,
 			aMetadataForPathPrefix,
+			aOverloadMetadata,
 			iPotentialPartner,
 			iRootPathLength = sRootPath.split("/").length,
 			aSegments = sPath.split("/"),
@@ -2114,7 +2119,7 @@ sap.ui.define([
 
 		aMetadataForPathPrefix = aSegments.map(function (sSegment, j) {
 			return j < iRootPathLength || sSegment[0] === "#" || sSegment[0] === "@"
-					|| rNumber.test(sSegment)
+					|| rNumber.test(sSegment) || sSegment === "$Parameter"
 				? {} // simply an object w/o $Partner and $isCollection
 				: that.getObject(that.getMetaPath(aSegments.slice(0, j + 1).join("/"))) || {};
 		});
@@ -2129,6 +2134,19 @@ sap.ui.define([
 							=== aSegments[i].replace(rPredicate, "")) {
 					aMetadataForPathPrefix.splice(i, iPotentialPartner - i + 1);
 					aSegments.splice(i, iPotentialPartner - i + 1);
+				} else if (Array.isArray(aMetadataForPathPrefix[i])
+						&& aSegments[i + 1] === "$Parameter") {
+					// Filter via the binding parameter
+					aOverloadMetadata = that.getObject(
+						that.getMetaPath(aSegments.slice(0, i + 1).join("/") + "/@$ui5.overload")
+					);
+					// Note: This must be a bound operation with a binding parameter; otherwise it
+					// would be in the first segment and the loop would not touch it due to
+					// iRootPathLength. So we have $Parameter[0].
+					if (aOverloadMetadata.length === 1
+							&& aOverloadMetadata[0].$Parameter[0].$Name === aSegments[i + 2]) {
+						aSegments.splice(i, 3);
+					}
 				} else if (aMetadataForPathPrefix[i].$isCollection) {
 					break;
 				}

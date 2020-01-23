@@ -872,6 +872,33 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchValue: operation binding, path pointing to parent", function (assert) {
+		var oContext = {
+				getPath : function () { return "/Entity('42')"; },
+				fetchValue : function () {}
+			},
+			oBinding = this.bindContext("name.space.Operation(...)", oContext),
+			bCached = {},
+			oListener = {},
+			oResult = {};
+
+		oBinding.oCachePromise = SyncPromise.resolve();
+		this.mock(oBinding).expects("getRelativePath")
+			.withExactArgs("/Entity('42')/name")
+			.returns(undefined);
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs("/Entity('42')/name", sinon.match.same(oListener),
+				sinon.match.same(bCached))
+			.returns(SyncPromise.resolve(oResult));
+
+		assert.strictEqual(
+			// code under test
+			oBinding.fetchValue("/Entity('42')/name", oListener, bCached).getResult(),
+			oResult
+		);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchValue: operation binding, complex $Parameter value", function (assert) {
 		var oBinding = this.bindContext("/OperationImport(...)"),
 			oListener = {};
@@ -1239,7 +1266,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.oCachePromise, oCachePromise, "must not recreate the cache");
 
-		return oBinding.fetchValue("").then(function (vValue) {
+		return oBinding.fetchValue("/FunctionImport(...)").then(function (vValue) {
 			assert.strictEqual(vValue, undefined);
 		});
 	});

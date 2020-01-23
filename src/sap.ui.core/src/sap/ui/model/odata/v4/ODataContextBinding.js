@@ -866,6 +866,10 @@ sap.ui.define([
 				vValue;
 
 			if (that.oOperation) {
+				if (sRelativePath === undefined) {
+					// a reduced path to a property of the binding parameter
+					return that.oContext.fetchValue(sPath, oListener, bCached);
+				}
 				aSegments = sRelativePath.split("/");
 				if (aSegments[0] === "$Parameter") {
 					if (aSegments.length === 1) {

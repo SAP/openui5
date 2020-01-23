@@ -9133,33 +9133,53 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: bound action (success and failure)
 	// JIRA: CPOUI5ODATAV4-29 (bound action parameter and error with message target)
+	// JIRA: CPOUI5ODATAV4-132 (bind property of binding parameter relative to $Parameter)
 	QUnit.test("Bound action", function (assert) {
-		var sView = '\
-<FlexBox binding="{/EMPLOYEES(\'1\')}">\
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="name" text="{Name}" />\
 	<Input id="status" value="{STATUS}" />\
-	<FlexBox id="action" \
-			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
-		<layoutData><FlexItemData/></layoutData>\
-		<Input id="parameterTeamId" value="{$Parameter/TeamID}" />\
-		<Text id="teamId" text="{TEAM_ID}" />\
-	</FlexBox>\
+</FlexBox>\
+<FlexBox id="action" \
+		binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
+	<Text id="parameterName" text="{$Parameter/EMPLOYEE/Name}"/>\
+	<Text id="parameterAge" text="{$Parameter/EMPLOYEE/AGE}"/>\
+	<Input id="parameterTeamId" value="{$Parameter/TeamID}" />\
+	<Text id="teamId" text="{TEAM_ID}" />\
 </FlexBox>',
 			sUrl = "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 				+ ".AcChangeTeamOfEmployee",
 			that = this;
 
-		this.expectRequest("EMPLOYEES('1')", {
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name,STATUS", {
+				ID : "1",
 				Name : "Jonathan Smith",
 				STATUS : "",
 				"@odata.etag" : "ETag"
 			})
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("status", "")
-			.expectChange("parameterTeamId", "")
-			.expectChange("teamId", null);
+			.expectChange("parameterAge")
+			.expectChange("parameterName")
+			.expectChange("parameterTeamId")
+			.expectChange("teamId");
 
-		return this.createView(assert, sView).then(function () {
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("EMPLOYEES('1')?$select=AGE,ID", {
+					AGE : 23,
+					ID : "1",
+					"@odata.etag" : "ETag"
+				})
+				.expectChange("parameterName", "Jonathan Smith")
+				.expectChange("parameterTeamId", "")
+				.expectChange("parameterAge", "23");
+
+			that.oView.byId("action").setBindingContext(
+				that.oView.byId("form").getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			that.expectChange("parameterTeamId", "42");
 
 			that.oView.byId("parameterTeamId").getBinding("value").setValue("42");

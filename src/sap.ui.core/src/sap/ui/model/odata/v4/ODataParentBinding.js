@@ -652,7 +652,8 @@ sap.ui.define([
 				sFullMetaPath);
 		}
 
-		if (bDependsOnOperation || this.getRootBinding().isSuspended()) {
+		if (bDependsOnOperation && !sResolvedChildPath.includes("/$Parameter/")
+				|| this.getRootBinding().isSuspended()) {
 			// Note: Operation bindings do not support auto-$expand/$select yet
 			return SyncPromise.resolve(sResolvedChildPath);
 		}
@@ -689,6 +690,10 @@ sap.ui.define([
 				return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
 					_Helper.getRelativePath(sResolvedChildPath, that.oContext.getPath()),
 					oChildQueryOptionsPromise);
+			}
+
+			if (bDependsOnOperation) {
+				return SyncPromise.resolve(sReducedPath);
 			}
 
 			sChildMetaPath = _Helper.getRelativePath(_Helper.getMetaPath(sReducedPath),

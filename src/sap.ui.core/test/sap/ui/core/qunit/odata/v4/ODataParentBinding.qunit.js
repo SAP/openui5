@@ -1500,6 +1500,85 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bReduced, i) {
+	QUnit.test("fetchIfChildCanUseCache, operation parameter #" + i, function (assert) {
+		var oMetaModel = {
+				fetchObject : function () {},
+				getMetaPath : function () {},
+				getReducedPath : function () {}
+			},
+			fnFetchMetadata = function () {},
+			oModel = {
+				getMetaModel : function () { return oMetaModel; },
+				oInterface : {
+					fetchMetadata : fnFetchMetadata
+				},
+				resolve : function () {}
+			},
+			oParentBinding = {
+				fetchIfChildCanUseCache : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oContext : {
+					getBinding : function () { return oParentBinding; },
+					getPath : function () { return "/Set('2')"; }
+				},
+				doFetchQueryOptions : function () {
+					return SyncPromise.resolve({});
+				},
+				oModel : oModel,
+				sPath : "operation(...)"
+			}),
+			oChildQueryOptionsPromise = {},
+			oContext = Context.create(oModel, oBinding, "/Set('2')/operation(...)/$Parameter"),
+			oHelperMock = this.mock(_Helper),
+			oMetaModelMock = this.mock(oMetaModel),
+			oModelMock = this.mock(oBinding.oModel),
+			sPath = "foo/bar",
+			oPromise;
+
+		this.mock(oBinding).expects("getBaseForPathReduction")
+			.withExactArgs().returns("/base/path");
+		oModelMock.expects("resolve")
+			.withExactArgs("operation(...)", sinon.match.same(oBinding.oContext))
+			.returns("/Set('2')/operation(...)");
+		oModelMock.expects("resolve")
+			.withExactArgs(sPath, sinon.match.same(oContext))
+			.returns("/Set('2')/operation(...)/$Parameter/foo/bar");
+		oMetaModelMock.expects("getMetaPath")
+			.withExactArgs("/Set('2')/operation(...)/$Parameter")
+			.returns("/Set/operation/$Parameter");
+		oMetaModelMock.expects("getMetaPath")
+			.withExactArgs("/Set('2')/operation(...)/$Parameter/foo/bar")
+			.returns("/Set/operation/$Parameter/foo/bar");
+		this.mock(_Helper).expects("fetchPropertyAndType")
+			.withExactArgs(sinon.match.same(fnFetchMetadata), "/Set/operation/$Parameter/foo/bar")
+			.returns(SyncPromise.resolve());
+		oMetaModelMock.expects("getReducedPath")
+			.withExactArgs("/Set('2')/operation(...)/$Parameter/foo/bar", "/base/path")
+			.returns("/reduced/child/path");
+		oHelperMock.expects("getRelativePath")
+			.withExactArgs("/reduced/child/path", "/Set('2')/operation(...)")
+			.returns(bReduced ? undefined : "childPath");
+		oHelperMock.expects("getRelativePath").exactly(bReduced ? 1 : 0)
+			.withExactArgs("/Set('2')/operation(...)/$Parameter/foo/bar", "/Set('2')")
+			.returns("operation(...)/$Parameter/foo/bar");
+		this.mock(oParentBinding).expects("fetchIfChildCanUseCache").exactly(bReduced ? 1 : 0)
+			.withExactArgs(sinon.match.same(oBinding.oContext), "operation(...)/$Parameter/foo/bar",
+				sinon.match.same(oChildQueryOptionsPromise))
+			.returns("/reduced/child/path");
+		this.mock(oBinding).expects("aggregateQueryOptions").never();
+
+		// code under test
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sPath, oChildQueryOptionsPromise);
+
+		return oPromise.then(function (sReducedPath) {
+			assert.strictEqual(sReducedPath, "/reduced/child/path");
+		});
+	});
+});
+
+	//*********************************************************************************************
 [undefined, true].forEach(function (bImmutable) {
 	var sTitle = "fetchIfChildCanUseCache: non-deferred function and 'value', bImmutable = "
 			+ bImmutable;
