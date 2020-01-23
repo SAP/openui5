@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Control",
+	"sap/ui/core/BusyIndicator",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -14,6 +15,7 @@ sap.ui.define([
 	Change,
 	Utils,
 	Control,
+	BusyIndicator,
 	jQuery,
 	sinon
 ) {
@@ -311,8 +313,10 @@ sap.ui.define([
 			};
 			var fError = function () {
 			};
+			sandbox.spy(BusyIndicator, "hide");
 			var oEvent = this.oTransportSelection._openDialog({}, fSuccess, fError, false, "dummyStyleClass");
 			assert.ok(oEvent);
+			assert.ok(BusyIndicator.hide.calledOnce);
 			oEvent.close();
 		});
 
@@ -321,8 +325,10 @@ sap.ui.define([
 			};
 			var fError = function () {
 			};
+			sandbox.spy(BusyIndicator, "hide");
 			var oEvent = this.oTransportSelection._openDialog({}, fSuccess, fError, true, "dummyStyleClass");
 			assert.ok(oEvent);
+			assert.ok(BusyIndicator.hide.calledOnce);
 			oEvent.close();
 		});
 
