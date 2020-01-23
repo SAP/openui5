@@ -153,6 +153,56 @@ sap.ui.define([
 			}.bind(this));
 		},
 
+		// Display the button type according to the message with the highest severity
+		// The priority of the message types are as follows: Error > Warning > Success > Info
+		buttonTypeFormatter: function () {
+			var sHighestSeverity;
+			var aMessages = this._MessageManager.getMessageModel().oData;
+			aMessages.forEach(function (sMessage) {
+				switch (sMessage.type) {
+					case "Error":
+						sHighestSeverity = "Negative";
+						break;
+					case "Warning":
+						sHighestSeverity = sHighestSeverity !== "Negative" ? "Critical" : sHighestSeverity;
+						break;
+					case "Success":
+						sHighestSeverity = sHighestSeverity !== "Negative" && sHighestSeverity !== "Critical" ?  "Success" : sHighestSeverity;
+						break;
+					default:
+						sHighestSeverity = !sHighestSeverity ? "Neutral" : sHighestSeverity;
+						break;
+				}
+			});
+
+			return sHighestSeverity;
+		},
+
+		// Set the button icon according to the message with the highest severity
+		buttonIconFormatter: function () {
+			var sIcon;
+			var aMessages = this._MessageManager.getMessageModel().oData;
+
+			aMessages.forEach(function (sMessage) {
+				switch (sMessage.type) {
+					case "Error":
+						sIcon = "sap-icon://message-error";
+						break;
+					case "Warning":
+						sIcon = sIcon !== "sap-icon://message-error" ? "sap-icon://message-warning" : sIcon;
+						break;
+					case "Success":
+						sIcon = "sap-icon://message-error" && sIcon !== "sap-icon://message-warning" ? "sap-icon://message-success" : sIcon;
+						break;
+					default:
+						sIcon = !sIcon ? "sap-icon://message-information" : sIcon;
+						break;
+				}
+			});
+
+			return sIcon;
+		},
+
 		_generateInvalidUserInput: function () {
 			var oButton = this.getView().byId("messagePopoverBtn"),
 				oRequiredNameInput = this.oView.byId("formContainer").getItems()[4].getContent()[2],
@@ -171,6 +221,8 @@ sap.ui.define([
 
 			this.oMP.getBinding("items").attachChange(function(oEvent){
 				this.oMP.navigateBack();
+				oButton.setType(this.buttonTypeFormatter());
+				oButton.setIcon(this.buttonIconFormatter());
 			}.bind(this));
 
 			setTimeout(function(){
@@ -178,5 +230,4 @@ sap.ui.define([
 			}.bind(this), 100);
 		}
 	});
-
 });

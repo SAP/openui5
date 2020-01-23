@@ -10,9 +10,12 @@
 		</content>
 		<footer>
 			<OverflowToolbar>
-				<Button icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized"
-						press="handleMessagePopoverPress"/>
 				<ToolbarSpacer/>
+				<Button
+					id="messagePopoverBtn"
+					icon="{ path: '/', formatter: '.buttonIconFormatter' }"
+					type="{ path: '/', formatter: '.buttonTypeFormatter' }"
+					press=".handleMessagePopoverPress"/>
 			</OverflowToolbar>
 		</footer>
 	</Page>
