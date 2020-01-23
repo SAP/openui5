@@ -19,7 +19,13 @@
 	padding: 0.125rem 0.125rem 0 0.125rem;
 }
 
-.sapUiResponsivePadding--header .sapMITHWrapper {
+.sapMITHOverflowButton, .sapMITBFilterExpandBtn {
+	.sapMBtnInner {
+		border: none;
+	}
+}
+
+.sapUiResponsivePadding--header .sapMITH {
 
 	&.sapUi-Std-PaddingS {
 		padding-left: 2rem !important;
@@ -46,7 +52,7 @@
 
 /* Arrow */
 
-.sapMITBSelected > .sapMITBContentArrow {
+.sapMITBSelected > .sapMITBFilterWrapper > .sapMITBContentArrow {
 	border-bottom-color: @sapUiObjectHeaderBorderColor;
 	border-bottom-width: 0.25rem;
 }
@@ -60,7 +66,7 @@
 
 /* Tab Item */
 
-.sapMITBVertical > .sapMITBTab {
+.sapMITBVertical > .sapMITBFilterWrapper > .sapMITBTab {
 	position: relative;
 }
 

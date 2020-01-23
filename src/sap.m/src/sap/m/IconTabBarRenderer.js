@@ -21,7 +21,6 @@ sap.ui.define([],
 	 */
 	IconTabBarRenderer._aAllIconColors = ['sapMITBFilterCritical', 'sapMITBFilterPositive', 'sapMITBFilterNegative', 'sapMITBFilterDefault'];
 
-
 	/**
 	 * Renders the HTML for the IconTabBar control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
