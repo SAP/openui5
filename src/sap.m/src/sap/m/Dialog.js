@@ -659,6 +659,37 @@ function(
 		Dialog.prototype.isOpen = function () {
 			return this.oPopup && this.oPopup.isOpen();
 		};
+
+		/**
+		 * @inheritdoc
+		 */
+		Dialog.prototype.setIcon = function (sIcon) {
+			this._bHasCustomIcon = true;
+			return this.setProperty("icon", sIcon);
+		};
+
+		/**
+		 * @inheritdoc
+		 */
+		Dialog.prototype.setState = function (sState) {
+			var sDefaultIcon;
+
+			this.setProperty("state", sState);
+
+			if (this._bHasCustomIcon) {
+				return this;
+			}
+
+			if (sState === ValueState.None) {
+				sDefaultIcon = "";
+			} else {
+				sDefaultIcon = Dialog._mIcons[sState];
+			}
+
+			this.setProperty("icon", sDefaultIcon);
+			return this;
+		};
+
 		/* =========================================================== */
 		/*                     end: public functions                   */
 		/* =========================================================== */
@@ -1627,21 +1658,15 @@ function(
 		};
 
 		Dialog.prototype._applyIconToHeader = function () {
-			var sState = this.getState(),
-				sIcon = this.getIcon();
+			var sIcon = this.getIcon();
 
-			if (sState === ValueState.None && !sIcon) {
+			if (!sIcon) {
 				if (this._iconImage) {
 					this._iconImage.destroy();
 					this._iconImage = null;
 				}
 
 				return;
-			}
-
-			if (!sIcon) {
-				sIcon = Dialog._mIcons[sState];
-				this.setProperty("icon", sIcon, true);
 			}
 
 			if (!this._iconImage) {
