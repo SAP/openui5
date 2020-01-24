@@ -8,15 +8,29 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"./getContainerUserInfo",
+	"sap/base/util/extend",
 	"sap/ui/core/library",
 	"./IFrameRenderer"
 ], function(
 	library,
 	Control,
 	JSONModel,
-	getContainerUserInfo
+	getContainerUserInfo,
+	extend
 ) {
 	"use strict";
+
+	function unbind (vValue) {
+		if (vValue.parts && vValue.formatter) {
+			return vValue.formatter.apply(null, vValue.parts.map(function (oPart) {
+				if (oPart.model) {
+					return "{" + oPart.model + ">" + oPart.path + "}";
+				}
+				return "{" + oPart.path + "}";
+			}));
+		}
+		return vValue;
+	}
 
 	/**
 	 * Constructor for a new <code>IFrame</code>.
@@ -78,15 +92,19 @@ sap.ui.define([
 
 		applySettings: function (mSettings) {
 			Control.prototype.applySettings.apply(this, arguments);
-			if (mSettings && !mSettings._settings) {
+			if (mSettings) {
 				var mMergedSettings = this.getProperty("_settings") || {};
-				Object.keys(mSettings)
-					.filter(function (sPropertyName) {
-						return !!mSettings[sPropertyName];
-					})
-					.forEach(function (sPropertyName) {
-						mMergedSettings[sPropertyName] = mSettings[sPropertyName];
-					});
+				if (mSettings._settings) {
+					extend(mMergedSettings, mSettings._settings);
+				} else {
+					Object.keys(mSettings)
+						.filter(function (sPropertyName) {
+							return !!mSettings[sPropertyName];
+						})
+						.forEach(function (sPropertyName) {
+							mMergedSettings[sPropertyName] = unbind(mSettings[sPropertyName]);
+						});
+				}
 				this.setProperty("_settings", mMergedSettings);
 			}
 		},
