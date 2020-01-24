@@ -1727,7 +1727,6 @@ sap.ui.define([
 	// @override
 	ODataListBinding.prototype.getLength = function () {
 		if (this.bLengthFinal) {
-			// Note: non-transient created entities exist twice
 			return this.iMaxLength + this.iCreatedContexts;
 		}
 		return this.aContexts.length ? this.aContexts.length + 10 : 0;
