@@ -329,12 +329,12 @@ sap.ui.define([
 			return {};
 		}
 
-		var aTechnicalParameters = [];
-		if (mPropertyBag.componentId) {
-			var oComponent = Component.get(mPropertyBag.componentId);
-			var oComponentData = oComponent.getComponentData();
-			aTechnicalParameters = ObjectPath.get(["technicalParameters", VariantsApplyUtil.VARIANT_TECHNICAL_PARAMETER], oComponentData) || [];
+		var oComponentData = mPropertyBag.componentData;
+		var oComponent = Component.get(mPropertyBag.componentId);
+		if (isEmptyObject(oComponentData) && oComponent) {
+			oComponentData = oComponent.getComponentData();
 		}
+		var aTechnicalParameters = ObjectPath.get(["technicalParameters", VariantsApplyUtil.VARIANT_TECHNICAL_PARAMETER], oComponentData) || [];
 
 		var oVariantsMap = getVariantsMap(mPropertyBag.storageResponse.changes);
 		oVariantsMap = assembleResult(oVariantsMap, mPropertyBag.storageResponse.changes.variantManagementChanges, aTechnicalParameters);
