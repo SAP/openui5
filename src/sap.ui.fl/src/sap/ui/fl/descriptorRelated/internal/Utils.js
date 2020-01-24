@@ -68,7 +68,7 @@ sap.ui.define([
 	Utils.prototype.checkPackage = function(sPackage) {
 		//corresponding data element in ABAP: DEVCLASS, CHAR30
 		//partial check: length le 30, alphanumeric, upper case, / for namespace, underscore, no space
-		if (!/^[A-Z0-9/_]{1,30}$/.test(sPackage)) {
+		if (!/^[A-Z0-9/_]{1,30}$/.test(sPackage) && sPackage !== "$TMP") {
 			throw new Error("Wrong format for provided \"sPackage\" parameter");
 		}
 	};

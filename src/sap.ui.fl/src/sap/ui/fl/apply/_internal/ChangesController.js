@@ -49,6 +49,9 @@ sap.ui.define([
 		 * @returns {sap.ui.fl.FlexController} Returns the app component for the passed selector
 		 */
 		getAppComponentForSelector: function(vSelector) {
+			if (typeof vSelector.appId === "string") {
+				return vSelector;
+			}
 			return vSelector.appComponent || FlexUtils.getAppComponentForControl(vSelector);
 		}
 

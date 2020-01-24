@@ -340,7 +340,7 @@ sap.ui.define([
 
 
 			sandbox.stub(LrepConnector.prototype, "send").resolves();
-			sandbox.stub(WriteUtils, "sendRequest").rejects("App variant failed to save");
+			sandbox.stub(WriteUtils, "sendRequest").rejects({message:"App variant failed to save"});
 
 			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "App variant failed to save").returns();
 
@@ -393,27 +393,20 @@ sap.ui.define([
 						.catch(function(oError) {
 							assert.ok("then the promise got rejected");
 							assert.equal(oError.messageKey, "MSG_SAVE_APP_VARIANT_FAILED", "then the messagekey is correct");
-							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 4, "then Descriptor changes are still present in the persistence and will be removed");
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then Descriptor changes have been removed from the persistence");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change is still present in the persistence but the reference has been changed");
 							assert.equal(oUIChange.getComponent(), "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
 							assert.equal(oUIChange.getNamespace(), "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
-							// Delete dirty inline changes from persistence
-							var aDescrChanges = ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges();
-							aDescrChanges = aDescrChanges.slice();
-							aDescrChanges.forEach(function(oChange) {
-								ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.deleteChange(oChange);
-							});
 							// Delete the UI change from persistence
 							ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.deleteChange(oUIChange);
-							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then Descriptor changes have been removed from the persistence");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a UI change has been removed from the persistence");
 						});
 				});
 		});
 
-		QUnit.test("(Save As scenario) when saveAs is called and saving dirty changes failed", function(assert) {
+		QUnit.test("(Save As scenario) when saveAs is called and saving dirty UI changes failed", function(assert) {
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
@@ -428,7 +421,7 @@ sap.ui.define([
 				}
 			});
 
-			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").rejects("Dirty changes failed to save");
+			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").rejects({message: "Dirty changes failed to save"});
 
 			sandbox.stub(WriteUtils, "sendRequest").resolves();
 
@@ -559,85 +552,10 @@ sap.ui.define([
 							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 							assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
 							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
-							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
+							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
 							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/", "POST"), "then backend call is triggered with correct parameters");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a UI change has been removed from the persistence");
-						});
-				});
-		});
-
-		QUnit.test("(Smart Business - onPrem system) when saveAs is called with descriptor change already added into own persistence and IAM registration is skipped", function(assert) {
-			simulateSystemConfig(false);
-
-			sandbox.stub(LrepConnector.prototype, "send").resolves();
-
-			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
-
-			// Creates a descriptor change
-			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: {appId: "reference.app"}})
-				.then(function(oDescriptorInlineChange) {
-					// Adds a descriptor change to its own persistence
-					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: {appId: "reference.app"}});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
-					return AppVariantWriteAPI.saveAs({
-						selector: {
-							appId: "reference.app"
-						},
-						id: "customer.reference.app.id",
-						// eslint-disable-next-line quote-props
-						package: "TEST_PACKAGE",
-						transport: "U1YK123456",
-						layer: "CUSTOMER"
-					})
-						.then(function() {
-							assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
-							// Get the app variant to be saved to backend
-							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
-							assert.strictEqual(oAppVariant.packageName, "TEST_PACKAGE", "then the app variant will be saved with a provided package");
-							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
-							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
-							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456", "POST"), "then backend call is triggered with correct parameters");
-						});
-				});
-		});
-
-		QUnit.test("(Smart Business - S4/Hana Cloud system) when saveAs is called with descriptor change already added into own persistence and IAM registration is skipped", function(assert) {
-			simulateSystemConfig(true);
-
-			sandbox.stub(LrepConnector.prototype, "send").resolves();
-
-			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
-
-			// Creates a descriptor change
-			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: {appId: "reference.app"}})
-				.then(function(oDescriptorInlineChange) {
-					// Adds a descriptor change to its own persistence
-					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: {appId: "reference.app"}});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
-					return AppVariantWriteAPI.saveAs({
-						selector: {
-							appId: "reference.app"
-						},
-						id: "customer.reference.app.id",
-						// eslint-disable-next-line quote-props
-						layer: "CUSTOMER",
-						skipIam: true
-					})
-						.then(function() {
-							assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
-							// Get the app variant to be saved to backend
-							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
-							assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
-							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
-							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
-							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true", "POST"), "then backend call is triggered with correct parameters");
 						});
 				});
 		});
@@ -782,7 +700,7 @@ sap.ui.define([
 			sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			oNewConnectorCall.onFirstCall().rejects("Loading app variant failed"); // Get Descriptor variant call
+			oNewConnectorCall.onFirstCall().rejects({message: "Loading app variant failed"}); // Get Descriptor variant call
 			oNewConnectorCall.onSecondCall().resolves(); // Delete call to backend
 
 			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be deleted.", "Loading app variant failed").returns();
@@ -846,7 +764,7 @@ sap.ui.define([
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			oNewConnectorCall.onSecondCall().rejects("Deletion error"); // Delete call to backend
+			oNewConnectorCall.onSecondCall().rejects({message: "Deletion error"}); // Delete call to backend
 
 			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be deleted.", "Deletion error").returns();
 
