@@ -123,7 +123,7 @@ sap.ui.define([
 							}]
 						}
 					};
-				case "__xmlview0--firstButton":
+				case "Button One":
 					// as derived from appMock
 					sRaw = '{\n' +
 						'    controlType: "sap.m.Button",\n' +
@@ -173,7 +173,28 @@ sap.ui.define([
 							ownTotalCount: 9
 						}
 					};
-				default:
+				case "Button With ID -- viewId":
+					var sRaw = '{\n' +
+					'    id: "stableId",\n' +
+					'    viewId: "container-myComponent---main"';
+					return {
+						snippet: {
+							UIVERI5: {
+								Highlight: "element(by.control(" + sRaw + "\n}));"
+							}
+						}
+					};
+				case "Button With ID -- globalId":
+						var sRaw = '{\n' +
+						'    id: "container-myComponent---main--stableId"';
+						return {
+							snippet: {
+								UIVERI5: {
+									Highlight: "element(by.control(" + sRaw + "\n}));"
+								}
+							}
+						};
+					default:
 					return DEFAULT_OUTPUT;
 			}
 		}

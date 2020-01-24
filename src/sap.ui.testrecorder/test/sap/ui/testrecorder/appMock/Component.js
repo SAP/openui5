@@ -4,7 +4,7 @@ function(UIComponent) {
 
 	return UIComponent.extend('appMock.Component', {
 		metadata: {
-			'rootView': 'appMock.view.Main'
+			manifest: "json"
 		}
 	});
 });

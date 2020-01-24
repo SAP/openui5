@@ -9,7 +9,7 @@ sap.ui.define([
 
 	return {
 		/**
-		 * data exchange
+		 * control data
 		 */
 		REQUEST_ALL_CONTROLS_DATA: "REQUEST_ALL_CONTROLS_DATA",
 		RECEIVE_ALL_CONTROLS_DATA: "RECEIVE_ALL_CONTROL_DATA",
@@ -20,8 +20,12 @@ sap.ui.define([
 		REQUEST_CODE_SNIPPET: "REQUEST_CODE_SNIPPET",
 		RECEIVE_CODE_SNIPPET: "RECEIVE_CODE_SNIPPET",
 
+		/**
+		 * settings
+		 */
 		SET_DIALECT: "SET_DIALECT",
 		DIALECT_CHANGED: "DIALECT_CHANGED",
+		UPDATE_SELECTOR_SETTINGS: "UPDATE_SELECTOR_SETTINGS",
 
 		/**
 		 * interactions

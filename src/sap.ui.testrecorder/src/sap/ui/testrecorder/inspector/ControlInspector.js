@@ -21,6 +21,9 @@ sap.ui.define([
 	var oControlInspector = null;
 	var oHighlighter = new Highlighter(constants.HIGHLIGHTER_ID);
 	var mPrevCodeSnippetRequest;
+	var mSelectorSettings = {
+		preferViewId: false
+	};
 
 	var ControlInspector = BaseObject.extend("sap.ui.testrecorder.inspector.ControlInspector", {
 		constructor: function () {
@@ -42,6 +45,7 @@ sap.ui.define([
 		CommunicationBus.subscribe(CommunicationChannels.REQUEST_CODE_SNIPPET, this.getCodeSnippet.bind(this));
 		CommunicationBus.subscribe(CommunicationChannels.HIGHLIGHT_CONTROL, this.highlightControl.bind(this));
 		CommunicationBus.subscribe(CommunicationChannels.SET_DIALECT, this.setDialect.bind(this));
+		CommunicationBus.subscribe(CommunicationChannels.UPDATE_SELECTOR_SETTINGS, this.updateSelectorSettings.bind(this));
 	};
 
 	ControlInspector.prototype.getAllControlData = function () {
@@ -58,12 +62,15 @@ sap.ui.define([
 	};
 
 	ControlInspector.prototype.getCodeSnippet = function (mData) {
-		mPrevCodeSnippetRequest = mData;
-		return UIVeri5SelectorGenerator.getSelector(mData)
+		var mDataForGenerator = Object.assign({}, mData, {
+			settings: mSelectorSettings
+		});
+		mPrevCodeSnippetRequest = mDataForGenerator;
+		return UIVeri5SelectorGenerator.getSelector(mDataForGenerator)
 			.then(function (mSelector) {
 				return CodeSnippetProvider.getSnippet({
 					controlSelector: mSelector,
-					action: mData.action
+					action: mDataForGenerator.action
 				});
 			}).then(function (sSnippet) {
 				CommunicationBus.publish(CommunicationChannels.RECEIVE_CODE_SNIPPET, {
@@ -72,7 +79,7 @@ sap.ui.define([
 			}).catch(function (oError) {
 				CommunicationBus.publish(CommunicationChannels.RECEIVE_CODE_SNIPPET, {
 					error: "Could not generate code snippet for " + JSON.stringify(mData) + ". Details: " + oError,
-					domElement: mData.domElement
+					domElement: mDataForGenerator.domElement
 				});
 			});
 	};
@@ -94,6 +101,11 @@ sap.ui.define([
 		if (mPrevCodeSnippetRequest) {
 			this.getCodeSnippet(mPrevCodeSnippetRequest);
 		}
+	};
+
+	ControlInspector.prototype.updateSelectorSettings = function (mSettings) {
+		Object.assign(mSelectorSettings, mSettings); // only update the new values
+		UIVeri5SelectorGenerator.emptyCache();
 	};
 
 	ControlInspector.prototype.stop = function () {

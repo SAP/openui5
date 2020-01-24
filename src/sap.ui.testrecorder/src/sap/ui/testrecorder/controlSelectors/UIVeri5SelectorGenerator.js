@@ -23,6 +23,8 @@ sap.ui.define([
 	 * @param {object} mData data of the control for which to find a selector. Must contain either domElementId or controlId.
 	 * @param {string} mData.domElementId ID of a DOM element that is part of the control DOM tree
 	 * @param {string} mData.controlId ID of the control
+	 * @param {object} oOptions.settings preferences for the selector
+	 * @param {boolean} mData.settings.preferViewId true if selectors with view ID should have higher priority than selectors with global ID. Default value is false.
 	 * @returns {Promise<string>} Promise for a control selector or error
 	 */
 	UIVeri5SelectorGenerator.prototype.getSelector = function (mData) {
@@ -35,7 +37,8 @@ sap.ui.define([
 			return Promise.resolve(mCachedSelector);
 		}
 		return RecordReplay.findControlSelectorByDOMElement({
-			domElement: oDomElement
+			domElement: oDomElement,
+			settings: mData.settings
 		}).then(function (mSelector) {
 			this._cache(mCacheKey, mSelector);
 			return mSelector;

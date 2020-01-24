@@ -84,31 +84,29 @@ sap.ui.define([
                 var mBasic = {
                     controlType: oControl.getMetadata()._sClassName
                 };
-                var sViewname = this._getControlViewName(oControl);
-                if (sViewname) {
-                    mBasic.viewName = sViewname;
+                var oView = this._getControlView(oControl);
+                if (oView) {
+                    mBasic.viewName = oView.getViewName();
                 }
                 return mBasic;
             }
         },
 
         /**
-         * Get the viewName of the view to which a control belongs or undefined, if such a view does not exist
+         * Get the view to which a control belongs or undefined, if such a view does not exist
          * @param {object} oControl the control to examine
-         * @returns {string} viewName of the control's view
+         * @returns {object} the control's view
          * @private
          */
-        _getControlViewName: function (oControl) {
+        _getControlView: function (oControl) {
             // TODO: handle controls in static area?
             if (!oControl) {
                 return undefined;
             }
             if (oControl.getViewName) {
-                var sViewName = oControl.getViewName();
-                this._oLogger.debug("Control " + oControl + " has viewName " + sViewName);
-                return sViewName;
+                return oControl;
             } else {
-                return this._getControlViewName(oControl.getParent());
+                return this._getControlView(oControl.getParent());
             }
         },
 
