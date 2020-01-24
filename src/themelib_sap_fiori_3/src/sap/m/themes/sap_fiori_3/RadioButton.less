@@ -3,10 +3,18 @@
 /* Fiori 3 theme                      */
 /* ================================== */
 
-@_sap_m_RadioButton_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
-
 .sapMRb {
 	height: 2.75rem;
+
+	.sapMRbBOut {
+		stroke-width: 0.125rem;
+	}
+
+	&:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo) {
+		.sapMRbBOut {
+			stroke-width: @sapUiFieldBorderWidth;
+		}
+	}
 }
 
 .sapMRb .sapMRbB {
@@ -37,28 +45,17 @@
 }
 
 .sapUiSizeCompact {
+
 	.sapMRbB {
 		height:2rem;
 		line-height: 2rem;
 		width: 2rem;
-		.sapMRbBOut {
-			border-width: 0.0625rem;
-		}
 	}
 
 	.sapMRb > .sapMLabel {
 		height: 2rem;
 		line-height: 2rem;
 		max-width: calc(~"100% - 2rem");
-	}
-
-	.sapMRbErr .sapMRbBOut,
-	.sapMRbErr.sapMRbBTouched .sapMRbBOut,
-	.sapMRbWarn .sapMRbBOut,
-	.sapMRbWarn.sapMRbBTouched .sapMRbBOut,
-	.sapMRbInfo .sapMRbBOut,
-	.sapMRbInfo.sapMRbBTouched .sapMRbBOut {
-		border-width: 0.125rem;
 	}
 
 	.sapMRb:focus:before {
@@ -84,10 +81,6 @@
 
 .sapMLIBActive .sapMRbB .sapMRbBOut {
 	border: 1px solid @sapUiListActiveTextColor;
-}
-
-.sapMRbB .sapMRbBOut{
-	border-width: 0.0625rem;
 }
 
 .sapMLIBActive .sapMRbSel .sapMRbBOut {
@@ -119,7 +112,7 @@
 .sapMRbWarn.sapMRbSel,
 .sapMRbWarn.sapMRbSel.sapMRbRo {
 	.sapMRbBInn {
-		fill: @_sap_m_RadioButton_SelectedWarningColor;
+		fill: @sapUiFieldTextColor;
 		stroke: none;
 	}
 }
@@ -162,8 +155,4 @@
 		stroke: @sapUiFieldInformationColor;
 		fill: @sapUiFieldInformationBackground;
 	}
-}
-
-.sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo) > .sapMRbB .sapMRbBOut {
-	stroke-width: 1px;
 }
