@@ -626,6 +626,8 @@ function (
 		// Act
 		oItem.setBusy(true);
 
+		Core.applyChanges();
+
 		// Arrange
 		oItemPositionAfterBusy = oItem.$().position();
 
