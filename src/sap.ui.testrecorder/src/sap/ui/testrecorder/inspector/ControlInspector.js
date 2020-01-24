@@ -12,17 +12,18 @@ sap.ui.define([
 	"sap/ui/testrecorder/inspector/ControlAPI",
 	"sap/ui/testrecorder/Constants",
 	"sap/ui/testrecorder/DialectRegistry",
-	"sap/ui/testrecorder/controlSelectors/UIVeri5SelectorGenerator",
+	"sap/ui/testrecorder/controlSelectors/ControlSelectorGenerator",
 	"sap/ui/testrecorder/codeSnippets/CodeSnippetProvider"
 ], function (BaseObject, CommunicationBus, CommunicationChannels, DOMMutation, Highlighter, _ControlFinder, ControlAPI, constants,
-	DialectRegistry, UIVeri5SelectorGenerator, CodeSnippetProvider) {
+	DialectRegistry, ControlSelectorGenerator, CodeSnippetProvider) {
 	"use strict";
 
 	var oControlInspector = null;
 	var oHighlighter = new Highlighter(constants.HIGHLIGHTER_ID);
 	var mPrevCodeSnippetRequest;
 	var mSelectorSettings = {
-		preferViewId: false
+		preferViewId: false,
+		formatAsPOMethod: true
 	};
 
 	var ControlInspector = BaseObject.extend("sap.ui.testrecorder.inspector.ControlInspector", {
@@ -53,7 +54,7 @@ sap.ui.define([
 			renderedControls: ControlAPI.getAllControlData().renderedControls,
 			framework: ControlAPI.getFrameworkData().framework
 		});
-		UIVeri5SelectorGenerator.emptyCache();
+		ControlSelectorGenerator.emptyCache();
 	};
 
 	ControlInspector.prototype.getControlData = function (mData) {
@@ -66,11 +67,12 @@ sap.ui.define([
 			settings: mSelectorSettings
 		});
 		mPrevCodeSnippetRequest = mDataForGenerator;
-		return UIVeri5SelectorGenerator.getSelector(mDataForGenerator)
+		return ControlSelectorGenerator.getSelector(mDataForGenerator)
 			.then(function (mSelector) {
 				return CodeSnippetProvider.getSnippet({
 					controlSelector: mSelector,
-					action: mDataForGenerator.action
+					action: mDataForGenerator.action,
+					settings: mSelectorSettings
 				});
 			}).then(function (sSnippet) {
 				CommunicationBus.publish(CommunicationChannels.RECEIVE_CODE_SNIPPET, {
@@ -105,7 +107,14 @@ sap.ui.define([
 
 	ControlInspector.prototype.updateSelectorSettings = function (mSettings) {
 		Object.assign(mSelectorSettings, mSettings); // only update the new values
-		UIVeri5SelectorGenerator.emptyCache();
+		var bEmptyCache = mSettings.preferViewId !== null && mSettings.preferViewId !== undefined;
+		var bUpdateSnippet = bEmptyCache || mSettings.formatAsPOMethod !== null && mSettings.formatAsPOMethod !== undefined;
+		if (bEmptyCache) {
+			ControlSelectorGenerator.emptyCache();
+		}
+		if (bUpdateSnippet && mPrevCodeSnippetRequest) {
+			this.getCodeSnippet(mPrevCodeSnippetRequest);
+		}
 	};
 
 	ControlInspector.prototype.stop = function () {

@@ -55,13 +55,19 @@ sap.ui.define([
 					});
 				},
 				iSelectViewIdPreference: function () {
+					return this.iSelectSettingCheckBox("Prefer view ID over global ID", "viewId");
+				},
+				iSelectPOMethodPreference: function () {
+					return this.iSelectSettingCheckBox("Show snippets in page object methods", "formatAsPoMethod");
+				},
+				iSelectSettingCheckBox: function (sLabel, sPreference) {
 					this.waitFor({
 						matchers: function () {
 							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
 								controlType: "sap.m.CheckBox",
 								searchOpenDialogs: true,
 								matchers: new Properties({
-									text: "Prefer view ID over global ID"
+									text: sLabel
 								})
 							});
 						}.bind(this),
@@ -80,7 +86,7 @@ sap.ui.define([
 								errorMessage: "Cannot press the close button"
 							});
 						},
-						errorMessage: "Cannot change the viewID preference"
+						errorMessage: "Cannot change the " + sPreference + " preference"
 					});
 				}
 			},

@@ -33,6 +33,8 @@ sap.ui.define([
 	 * @param {object} mData data from which to generate a snippet
 	 * @param {string} mData.controlSelector control selector in string format
 	 * @param {string} mData.action name of the action to record for the control
+	 * @param {object} oOptions.settings preferences for the snippet e.g. formatting, method wrapping
+	 * @param {boolean} mData.settings.formatAsPOMethod true if selectors should be wrapped in a page object method. Default value is true.
 	 * @returns {Promise<string>} Promise for a code snippet or error
 	 */
 	CodeSnippetProvider.prototype.getSnippet = function (mData) {

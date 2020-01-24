@@ -66,6 +66,10 @@ sap.ui.define([
 		}
 	};
 
+	function _asPOMethod (sSnippet) {
+		return "<iDoAction>: function () {\n" + sSnippet.replace(/^/gm, "    ") + "\n}";
+	}
+
 	return {
 		DEFAULT_INPUT: DEFAULT_INPUT,
 		DEFAULT_OUTPUT: DEFAULT_OUTPUT,
@@ -83,9 +87,9 @@ sap.ui.define([
 					return {
 						snippet: {
 							UIVERI5: {
-								Highlight: "element(by.control(" + sRaw + "\n}));",
-								Press: "element(by.control(" + sRaw + "\n})).click();",
-								"Enter Text": 'element(by.control(" + sRaw + "\n})).sendKeys("test");'
+								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));"),
+								Press: _asPOMethod("element(by.control(" + sRaw + "\n})).click();"),
+								"Enter Text": _asPOMethod('element(by.control(" + sRaw + "\n})).sendKeys("test");')
 							},
 							RAW: {
 								Highlight: sRaw + "\n}",
@@ -93,13 +97,13 @@ sap.ui.define([
 								"Enter Text": sRaw + "\n}"
 							},
 							OPA5: {
-								Highlight: "this.waitFor(" + sRaw + "\n});",
-								Press: "this.waitFor(" + sRaw + ",\n" +
-								"	actions: new Press()" + "\n});",
-								"Enter Text": "this.waitFor(" + sRaw + ",\n" +
+								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});"),
+								Press: _asPOMethod("this.waitFor(" + sRaw + ",\n" +
+								"	actions: new Press()" + "\n});"),
+								"Enter Text": _asPOMethod("this.waitFor(" + sRaw + ",\n" +
 								"	actions: new EnterText({\n" +
 								'		text: "test"\n' +
-								"	})\n" + "\n});"
+								"	})\n" + "\n});")
 							}
 						},
 						properties: {
@@ -134,9 +138,9 @@ sap.ui.define([
 					return {
 						snippet: {
 							UIVERI5: {
-								Highlight: "element(by.control(" + sRaw + "\n}));",
-								Press: "element(by.control(" + sRaw + "\n})).click();",
-								"Enter Text": 'element(by.control(' + sRaw + '\n})).sendKeys("test");'
+								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));"),
+								Press: _asPOMethod("element(by.control(" + sRaw + "\n})).click();"),
+								"Enter Text": _asPOMethod('element(by.control(' + sRaw + '\n})).sendKeys("test");')
 							},
 							RAW: {
 								Highlight: sRaw + "\n}",
@@ -144,13 +148,13 @@ sap.ui.define([
 								"Enter Text": sRaw + "\n}"
 							},
 							OPA5: {
-								Highlight: "this.waitFor(" + sRaw + "\n});",
-								Press: "this.waitFor(" + sRaw + ",\n" +
-								"    actions: new Press()" + "\n});",
-								"Enter Text": "this.waitFor(" + sRaw + ",\n" +
+								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});"),
+								Press: _asPOMethod("this.waitFor(" + sRaw + ",\n" +
+								"    actions: new Press()" + "\n});"),
+								"Enter Text": _asPOMethod("this.waitFor(" + sRaw + ",\n" +
 								"    actions: new EnterText({\n" +
 								'        text: "test"\n' +
-								"    })" + "\n});"
+								"    })" + "\n});")
 							}
 						},
 						properties: {
@@ -180,7 +184,7 @@ sap.ui.define([
 					return {
 						snippet: {
 							UIVERI5: {
-								Highlight: "element(by.control(" + sRaw + "\n}));"
+								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));")
 							}
 						}
 					};
@@ -190,10 +194,20 @@ sap.ui.define([
 						return {
 							snippet: {
 								UIVERI5: {
-									Highlight: "element(by.control(" + sRaw + "\n}));"
+									Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));")
 								}
 							}
 						};
+				case "Button With ID -- noPOMethod":
+							var sRaw = '{\n' +
+							'    id: "container-myComponent---main--stableId"';
+							return {
+								snippet: {
+									UIVERI5: {
+										Highlight: "element(by.control(" + sRaw + "\n}));"
+									}
+								}
+							};
 					default:
 					return DEFAULT_OUTPUT;
 			}

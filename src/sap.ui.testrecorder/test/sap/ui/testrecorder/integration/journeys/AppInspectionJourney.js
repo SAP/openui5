@@ -142,17 +142,31 @@ sap.ui.define([
 	});
 
 	opaTest("Should change preference of view ID over global ID", function (Given, When, Then) {
+		// should be disabled by default -> click once to enable
 		When.onTheIFrameInspectPage.iOpenTheSettingsDialog();
 		When.onTheIFrameInspectPage.iSelectViewIdPreference();
 
 		When.onTheAppPage.iActOnControl(mItems[2].selector.viewId, "Highlight");
 		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[2].text + " -- viewId", Dialects.UIVERI5, "Highlight");
 
+		// reset setting to disabled
 		When.onTheIFrameInspectPage.iOpenTheSettingsDialog();
 		When.onTheIFrameInspectPage.iSelectViewIdPreference();
 
-		When.onTheAppPage.iActOnControl(mItems[2].selector.globalId, "Highlight");
 		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[2].text + " -- globalId", Dialects.UIVERI5, "Highlight");
+	});
+
+	opaTest("Should change PO method setting", function (Given, When, Then) {
+		// should be enabled by default -> click once to disable
+		When.onTheIFrameInspectPage.iOpenTheSettingsDialog();
+		When.onTheIFrameInspectPage.iSelectPOMethodPreference();
+		When.onTheAppPage.iActOnControl(mItems[2].selector.viewId, "Highlight");
+
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[2].text + " -- noPOMethod", Dialects.UIVERI5, "Highlight");
+
+		// reset setting to enabled
+		When.onTheIFrameInspectPage.iOpenTheSettingsDialog();
+		When.onTheIFrameInspectPage.iSelectPOMethodPreference();
 
 		Then.iTeardownMyApp();
 	});
