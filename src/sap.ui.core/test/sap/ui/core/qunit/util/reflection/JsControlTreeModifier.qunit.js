@@ -361,6 +361,13 @@ function(
 			assert.strictEqual(JsControlTreeModifier.getAssociation(this.oControl, "labelFor"), sID, "then association got set");
 
 		});
+
+		QUnit.test("when destroy modifier function is called", function (assert) {
+			this.oControl = new Button("test-id");
+			var oDestroySpy = sandbox.spy(this.oControl, "destroy");
+			JsControlTreeModifier.destroy(this.oControl, true);
+			assert.strictEqual(oDestroySpy.getCall(0).args[0], true, "then the destroy function of the button is called in the modifier including the bSuppressInvalidate parameter");
+		});
 	});
 
 	QUnit.module("Events", {
