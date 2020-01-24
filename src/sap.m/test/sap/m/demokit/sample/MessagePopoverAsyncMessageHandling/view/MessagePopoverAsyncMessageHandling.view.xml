@@ -10,11 +10,11 @@
 		</content>
 		<footer>
 			<OverflowToolbar>
-				<ToolbarSpacer/>
 				<Button id="messagePopoverBtn"
 					icon="{ path: '/', formatter: '.buttonIconFormatter' }"
 					type="{ path: '/', formatter: '.buttonTypeFormatter' }"
 					press=".handleMessagePopoverPress"/>
+				<ToolbarSpacer/>
 			</OverflowToolbar>
 		</footer>
 	</Page>

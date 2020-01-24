@@ -111,7 +111,6 @@
 		</content>
 		<footer>
 			<OverflowToolbar>
-				<ToolbarSpacer/>
 				<Button id="messagePopoverBtn"
 					visible="{=!!${message>/}.length}"
 					icon="{ path: '/', formatter: '.buttonIconFormatter' }"
@@ -120,6 +119,7 @@
 					/>
 				<Button type="Emphasized" text="Save" press="_generateInvalidUserInput" />
 				<Button text="Cancel" />
+				<ToolbarSpacer/>
 			</OverflowToolbar>
 		</footer>
 	</Page>
