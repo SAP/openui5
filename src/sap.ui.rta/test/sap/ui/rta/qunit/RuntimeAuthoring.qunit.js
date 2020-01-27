@@ -29,6 +29,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -60,6 +61,7 @@ function(
 	RtaQunitUtils,
 	QUnitUtils,
 	PersistenceWriteAPI,
+	VersionsAPI,
 	sinon
 ) {
 	"use strict";
@@ -245,8 +247,53 @@ function(
 			}.bind(this));
 		});
 
+		QUnit.test("when RTA is started in the customer layer, the versioning is not available", function(assert) {
+			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(false);
+
+			return this.oRta._isDraftAvailable()
+			.then(function(bDraftAvailable) {
+				assert.equal(bDraftAvailable, false, "then the 'isDraftAvailable' is false");
+			});
+		});
+
+		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is available", function(assert) {
+			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
+
+			return this.oRta._isDraftAvailable()
+			.then(function(bDraftAvailable) {
+				assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
+			});
+		});
+
+		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, no changes yet done", function(assert) {
+			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
+			sandbox.stub(this.oRta, "canUndo").returns(false);
+
+			return this.oRta._isDraftAvailable()
+			.then(function(bDraftAvailable) {
+				assert.equal(bDraftAvailable, false, "then the 'isDraftAvailable' is false");
+			});
+		});
+
+		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, there are unsaved changes", function(assert) {
+			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
+			sandbox.stub(this.oRta, "canUndo").returns(true);
+
+			return this.oRta._isDraftAvailable()
+			.then(function(bDraftAvailable) {
+				assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
+			});
+		});
+
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
-			sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
+			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
+				publishAvailable: true,
+				publisAppVariantSupported: true,
+				draftAvailable : false
+			}));
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: false}));
 			sandbox.stub(Utils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
 
@@ -262,7 +309,11 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
-			sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
+			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
+				publishAvailable: true,
+				publisAppVariantSupported: true,
+				draftAvailable : false
+			 }));
 			sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
 			sandbox.stub(RtaAppVariantFeature, "isManifestSupported").resolves(false);
 

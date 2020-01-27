@@ -75,6 +75,12 @@ function(
 					defaultValue: false
 				},
 
+				/** Determines whether draft buttons are visible */
+				draftVisible: {
+					type: "boolean",
+					defaultValue: false
+				},
+
 				/** Defines value of the switcher SegmentedButton */
 				modeSwitcher: {
 					type: "string",
