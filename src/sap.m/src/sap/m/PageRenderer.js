@@ -144,11 +144,14 @@ sap.ui.define(["sap/m/library"],
 	};
 
 	PageRenderer.renderChildControls = function (oRm, oPage, oLandmarkInfo) {
-		oRm.openStart("section", oPage.getId() + "-cont")
-			// ensure that the content is not included in the tab chain in FF
-			// when a scroll is present, as it causes loss of the visual focus outline
-			.attr("tabindex", "-1")
-			.accessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Content"));
+		oRm.openStart("section", oPage.getId() + "-cont");
+		oRm.accessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Content"));
+
+		// ensure that the content is not included in the tab chain in FF
+		// when a scroll is present, as it causes loss of the visual focus outline
+		if (sap.ui.Device.browser.firefox) {
+			oRm.attr("tabindex", "-1");
+		}
 
 		// The vertical scroll bar should be immediately available to avoid flickering
 		// and reduce size recalculations of embedded responsive controls that rely on
