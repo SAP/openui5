@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.InitialPagePattern",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.m.sample.InitialPagePattern.view.App",
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/App.view.xml",
+					"view/fragments/Dialog.fragment.xml",
+					"view/fragments/HeaderContent.fragment.xml",
+					"view/fragments/Input.fragment.xml",
+					"view/fragments/sections/MessagePage.fragment.xml",
+					"view/fragments/sections/ProductsTable.fragment.xml",
+					"view/fragments/sections/SupplierDetails.fragment.xml",
+					"controller/App.controller.js",
+					"model/Purchases.json",
+					"i18n/i18n.properties",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
