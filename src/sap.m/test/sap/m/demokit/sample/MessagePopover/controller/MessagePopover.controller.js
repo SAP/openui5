@@ -8,36 +8,27 @@ sap.ui.define([
 ], function(MessagePopover, MessageItem, MessageToast, Link, Controller, JSONModel) {
 	"use strict";
 
-	var oLink = new Link({
-		text: "Show more information",
-		href: "http://sap.com",
-		target: "_blank"
-	});
-
-	var oMessageTemplate = new MessageItem({
-		type: '{type}',
-		title: '{title}',
-		activeTitle: "{active}",
-		description: '{description}',
-		subtitle: '{subtitle}',
-		counter: '{counter}',
-		link: oLink
-	});
-
-	var oMessagePopover = new MessagePopover({
-		items: {
-			path: '/',
-			template: oMessageTemplate
-		},
-		activeTitlePress: function () {
-			MessageToast.show('Active title is pressed');
-		}
-	});
-
+	var oMessagePopover;
 
 	return Controller.extend("sap.m.sample.MessagePopover.controller.MessagePopover", {
 		onInit: function () {
 			// create any data and a model and set it to the view
+
+			var oLink = new Link({
+				text: "Show more information",
+				href: "http://sap.com",
+				target: "_blank"
+			});
+
+			var oMessageTemplate = new MessageItem({
+				type: '{type}',
+				title: '{title}',
+				activeTitle: "{active}",
+				description: '{description}',
+				subtitle: '{subtitle}',
+				counter: '{counter}',
+				link: oLink
+			});
 
 			var sErrorDescription = 'First Error message description. \n' +
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod' +
@@ -46,6 +37,16 @@ sap.ui.define([
 				'consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse' +
 				'cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non' +
 				'proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+
+			oMessagePopover = new MessagePopover({
+				items: {
+					path: '/',
+					template: oMessageTemplate
+				},
+				activeTitlePress: function () {
+					MessageToast.show('Active title is pressed');
+				}
+			});
 
 			var aMockMessages = [{
 				type: 'Error',
