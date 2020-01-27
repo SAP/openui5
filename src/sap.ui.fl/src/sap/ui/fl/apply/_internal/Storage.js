@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/apply/_internal/storageResultDisassemble"
 ], function(
 	StorageUtils,
 	FlUtils,
+	LayerUtils,
 	StorageResultMerger,
 	storageResultDisassemble
 ) {
@@ -43,7 +45,7 @@ sap.ui.define([
 				path: oConnectorConfig.url
 			});
 
-			var sDraftLayer = mPropertyBag.draftLayer || FlUtils.getUrlParameter("sap-ui-fl-draft") || "";
+			var sDraftLayer = mPropertyBag.draftLayer || FlUtils.getUrlParameter(LayerUtils.FL_DRAFT_PARAM) || "";
 			oConnectorSpecificPropertyBag = _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, sDraftLayer);
 
 			return oConnectorConfig.applyConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
