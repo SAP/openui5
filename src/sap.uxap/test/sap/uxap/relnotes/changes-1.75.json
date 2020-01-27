@@ -12,6 +12,17 @@
             "reference": "1970593988"
           }
         ]
+      },
+      {
+        "id": "8f98bc34ca43c962c0b706d701fd3389cbdbf1a1",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent unwanted snap on scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970448827"
+          }
+        ]
       }
     ]
   }
