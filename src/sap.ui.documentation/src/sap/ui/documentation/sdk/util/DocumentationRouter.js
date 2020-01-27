@@ -256,7 +256,8 @@ sap.ui.define([
 			sTarget = ""; // translate to base route
 		}
 
-		if (window['sap-ui-documentation-static']) {
+		if (window['sap-ui-documentation-static']
+			&& (this.getRoute("apiId").match(sTarget) || this.getRoute("apiSpecialRoute").match(sTarget))) {
 			sTarget = sTarget.replace("#", "%23");
 		}
 
