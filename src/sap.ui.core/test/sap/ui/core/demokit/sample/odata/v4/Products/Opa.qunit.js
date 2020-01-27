@@ -70,15 +70,15 @@ sap.ui.getCore().attachInit(function () {
 
 				// Test Currencies
 				When.onTheMainPage.changePrice("12.3 USD");
-				Then.onTheMainPage.checkPrice("USD\u00a012.30"); // "USD": 2 decimals
+				Then.onTheMainPage.checkPrice("12.30\u00a0USD"); // "USD": 2 decimals
 				Then.onTheMainPage.checkPriceValueState("None");
 
 				When.onTheMainPage.changePrice("21");
-				Then.onTheMainPage.checkPrice("USD\u00a021.00");
+				Then.onTheMainPage.checkPrice("21.00\u00a0USD");
 				Then.onTheMainPage.checkPriceValueState("None");
 
 				When.onTheMainPage.changePrice("");
-				Then.onTheMainPage.checkPrice("USD\u00a00.00");
+				Then.onTheMainPage.checkPrice("0.00\u00a0USD");
 				Then.onTheMainPage.checkPriceValueState("None");
 
 				When.onTheMainPage.changePrice("12.345 USD");
@@ -88,11 +88,11 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheMainPage.checkPriceValueState("Error");
 
 				When.onTheMainPage.changePrice("32");
-				Then.onTheMainPage.checkPrice("USD\u00a032.00"); // use last valid currency
+				Then.onTheMainPage.checkPrice("32.00\u00a0USD"); // use last valid currency
 				Then.onTheMainPage.checkPriceValueState("None");
 
 				When.onTheMainPage.changePrice("42 $");
-				Then.onTheMainPage.checkPrice("USD\u00a042.00"); // Symbol formatted as ISO code
+				Then.onTheMainPage.checkPrice("42.00\u00a0USD"); // Symbol formatted as ISO code
 				Then.onTheMainPage.checkPriceValueState("None");
 
 				When.onTheMainPage.changePrice("43 €"); // UI5 maps € to ISO-Code EUR
@@ -139,14 +139,14 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheMainPage.checkProductID("H-100");
 				Then.onTheMainPage.checkName("Notebook Basic 16");
 				Then.onTheMainPage.checkMeasure("18 KG");
-				Then.onTheMainPage.checkPrice("USD\u00a0700.00");
+				Then.onTheMainPage.checkPrice("700.00\u00a0USD");
 				Then.onTheMainPage.checkProductIDIsEditable(true);
 
 				When.onTheMainPage.changeProductID("H-1001");
 				Then.onTheMainPage.checkProductID("H-1001");
 				Then.onTheMainPage.checkName("Notebook Basic 16");
 				Then.onTheMainPage.checkMeasure("18 KG");
-				Then.onTheMainPage.checkPrice("USD\u00a0700.00");
+				Then.onTheMainPage.checkPrice("700.00\u00a0USD");
 				Then.onTheMainPage.checkProductIDIsEditable(false);
 
 				Then.onAnyPage.checkLog([{

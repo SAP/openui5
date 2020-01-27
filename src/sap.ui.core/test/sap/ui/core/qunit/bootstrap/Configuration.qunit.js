@@ -239,6 +239,16 @@ sap.ui.define([
 		assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
 	});
 
+	QUnit.test("setNumberFormatTrailingCurrencyCode", function(assert) {
+		assert.equal(this.oConfig.getFormatSettings().getNumberFormatTrailingCurrencyCode(), true, "Default configuration is true");
+
+		this.oConfig.getFormatSettings().setNumberFormatTrailingCurrencyCode(false);
+		assert.equal(this.oConfig.getFormatSettings().getNumberFormatTrailingCurrencyCode(), false, "Configuration set to false");
+
+		this.oConfig.getFormatSettings().setNumberFormatTrailingCurrencyCode(true);
+		assert.equal(this.oConfig.getFormatSettings().getNumberFormatTrailingCurrencyCode(), true, "Configuration set to true");
+	});
+
 	QUnit.test("applySettings", function(assert) {
 		this.oConfig.applySettings({
 			language: 'he',

@@ -20105,15 +20105,15 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("amount", "12.3")
-			.expectChange("price", "EUR\u00a012.30"); // "\u00a0" is a non-breaking space
+			.expectChange("price", "12.30\u00a0EUR"); // "\u00a0" is a non-breaking space
 
 		return this.createView(assert, sView, oModel).then(function () {
 			//TODO get rid of first change event which is due to using setRawValue([...]) on the
 			//  composite binding. Solution idea: change integration test framework to not use
 			//  formatters but overwrite formatValue on the binding's type if ever possible. Without
 			//  formatters, one can then set the value on the control.
-			that.expectChange("price", "EUR\u00a042.00")
-				.expectChange("price", "JPY\u00a042")
+			that.expectChange("price", "42.00\u00a0EUR")
+				.expectChange("price", "42\u00a0JPY")
 				.expectChange("amount", "42")
 				.expectRequest({
 					method : "PATCH",
@@ -20144,7 +20144,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// Check that the previous setValue led to the correct result
-			assert.strictEqual(oControl.getValue(), "JPY\u00a00");
+			assert.strictEqual(oControl.getValue(), "0\u00a0JPY");
 
 			that.expectMessages([{
 				code : undefined,

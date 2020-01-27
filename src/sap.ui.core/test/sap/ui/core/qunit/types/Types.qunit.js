@@ -89,11 +89,11 @@ sap.ui.define([
 
 	QUnit.test("currency formatValue", function (assert) {
 		var currencyType = new CurrencyType();
-		assert.equal(currencyType.formatValue([22, "EUR"], "string"), "EUR" + "\xa0" + "22.00", "format test");
-		assert.equal(currencyType.formatValue([22, "JPY"], "string"), "JPY" + "\xa0" + "22", "format test");
-		assert.equal(currencyType.formatValue([-6622.333, "EUR"], "string"), "EUR" + "\ufeff" + "-6,622.33", "format test");
-		assert.equal(currencyType.formatValue([1.0, "EUR"], "string"), "EUR" + "\xa0" + "1.00", "format test");
-		assert.equal(currencyType.formatValue([1.0000, "EUR"], "string"), "EUR" + "\xa0" + "1.00", "format test");
+		assert.equal(currencyType.formatValue([22, "EUR"], "string"), "22.00" + "\xa0" + "EUR", "format test");
+		assert.equal(currencyType.formatValue([22, "JPY"], "string"), "22" + "\xa0" + "JPY", "format test");
+		assert.equal(currencyType.formatValue([-6622.333, "EUR"], "string"), "-6,622.33" + "\xa0" + "EUR", "format test");
+		assert.equal(currencyType.formatValue([1.0, "EUR"], "string"), "1.00" + "\xa0" + "EUR", "format test");
+		assert.equal(currencyType.formatValue([1.0000, "EUR"], "string"), "1.00" + "\xa0" + "EUR", "format test");
 
 		assert.equal(currencyType.formatValue(null, "string"), null, "format test");
 		assert.equal(currencyType.formatValue([null, "EUR"], "string"), null, "format test");
@@ -175,14 +175,14 @@ sap.ui.define([
 			source: {}
 		});
 
-		assert.equal(currencyType.parseValue("EUR3333", "string"), "EUR" + "\xa0" + "3333.00", "parse test");
-		assert.equal(currencyType.parseValue("USD3333.555", "string"), "USD" + "\xa0" + "3333.56", "parse test");
-		assert.equal(currencyType.parseValue("$3.555", "string"), "USD" + "\xa0" + "3.56", "parse test");
-		assert.equal(currencyType.parseValue("JPY-3.555", "string"), "JPY" + "\ufeff" + "-4", "parse test");
+		assert.equal(currencyType.parseValue("EUR3333", "string"), "3333.00" + "\xa0" + "EUR", "parse test");
+		assert.equal(currencyType.parseValue("USD3333.555", "string"), "3333.56" + "\xa0" + "USD", "parse test");
+		assert.equal(currencyType.parseValue("$3.555", "string"), "3.56" + "\xa0" + "USD", "parse test");
+		assert.equal(currencyType.parseValue("JPY-3.555", "string"), "-4" + "\xa0" + "JPY", "parse test");
 
-		assert.equal(currencyType.formatValue("EUR22", "string"), "EUR" + "\xa0" + "22.00", "format test");
-		assert.equal(currencyType.formatValue("USD-6622.333", "string"), "USD" + "\ufeff" + "-6,622.33", "format test");
-		assert.equal(currencyType.formatValue("JPY-6622.339", "string"), "JPY" + "\ufeff" + "-6,622", "format test");
+		assert.equal(currencyType.formatValue("EUR22", "string"), "22.00" + "\xa0" + "EUR", "format test");
+		assert.equal(currencyType.formatValue("USD-6622.333", "string"), "-6,622.33" + "\xa0" + "USD", "format test");
+		assert.equal(currencyType.formatValue("JPY-6622.339", "string"), "-6,622" + "\xa0" + "JPY", "format test");
 	});
 
 	QUnit.test("currency formatOptions.source and validateValue", function (assert) {

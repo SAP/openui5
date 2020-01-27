@@ -52,6 +52,18 @@ sap.ui.define(function () {
 				},
 				title: "QUnit Page for sap/ui/core/format/NumberFormat"
 			},
+			NumberFormatCurrencies: {
+				coverage : {
+					only : "sap/ui/core/format/NumberFormatCurrencies"
+				},
+				title: "QUnit Page for sap/ui/core/format/NumberFormatCurrencies"
+			},
+			NumberFormatCurrenciesTrailing: {
+				coverage : {
+					only : "sap/ui/core/format/NumberFormatCurrenciesTrailing"
+				},
+				title: "QUnit Page for sap/ui/core/format/NumberFormatCurrenciesTrailing"
+			},
 			FileSizeFormat: {
 				coverage : {
 					only : "sap/ui/core/format/FileSizeFormat"

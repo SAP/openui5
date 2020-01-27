@@ -105,6 +105,7 @@ sap.ui.define([
 					"language"              : { type : "Locale",   defaultValue : detectLanguage() },
 					"formatLocale"          : { type : "Locale",   defaultValue : null },
 					"calendarType"          : { type : "string",   defaultValue : null },
+					"numberFormatTrailingCurrencyCode": { type : "boolean",  defaultValue : true },
 					// "timezone"              : "UTC",
 					"accessibility"         : { type : "boolean",  defaultValue : true },
 					"autoAriaBodyRole"      : { type : "boolean",  defaultValue : true,      noUrl:true }, //whether the framework automatically adds automatically the ARIA role 'application' to the html body
@@ -2210,6 +2211,39 @@ sap.ui.define([
 		 */
 		getLegacyDateCalendarCustomizing : function() {
 			return this.aLegacyDateCalendarCustomizing;
+		},
+
+		/**
+		 * Define whether the NumberFormatter shall always place the currency code after the numeric value, with
+		 * the only exception of right-to-left locales, where the currency code shall be placed before the numeric value.
+		 * Default configuration setting is <code>true</code>.
+		 *
+		 * When set to <code>false</code> the placement of the currency code is done dynamically, depending on the
+		 * configured locale using data provided by the Unicode Common Locale Data Repository (CLDR).
+		 *
+		 * Each currency instance ({@link sap.ui.core.format.NumberFormat#getCurrencyInstance}) will be created
+		 * with this setting unless overwritten on instance level.
+		 *
+		 * @param {boolean} bTrailingCurrencyCode Whether currency codes shall always be placed after the numeric value
+		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @since 1.75.0
+		 * @public
+		 */
+		setNumberFormatTrailingCurrencyCode : function(bTrailingCurrencyCode) {
+			check(typeof bTrailingCurrencyCode === "boolean", "bTrailingCurrencyCode must be a boolean");
+			this.oConfiguration.numberFormatTrailingCurrencyCode = bTrailingCurrencyCode;
+			return this;
+		},
+
+		/**
+		 * Returns current tailing-currency-code configuration for new NumberFormatter instances
+		 *
+		 * @return {boolean} Whether currency codes shall always be placed after the numeric value
+		 * @since 1.75.0
+		 * @public
+		 */
+		getNumberFormatTrailingCurrencyCode : function() {
+			return this.oConfiguration.numberFormatTrailingCurrencyCode;
 		},
 
 		/*

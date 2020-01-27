@@ -3935,7 +3935,9 @@
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
-		}
+		},
+		"sap-standard": "#,##0.00 ¤",
+		"sap-accounting": "#,##0.00 ¤"
 	},
 	"miscPattern": {
 		"approximately": "~{0}",
@@ -4838,6 +4840,32 @@
 		"minusSign": "-‐‒–⁻₋−➖﹣－",
 		"commaSign": ",،٫、︐︑﹐﹑，､",
 		"plusSign": "+⁺₊➕﬩﹢＋"
+	},
+	"currencyFormat-sap-short": {
+		"1000-one": "0k ¤",
+		"1000-other": "0k ¤",
+		"10000-one": "00k ¤",
+		"10000-other": "00k ¤",
+		"100000-one": "000k ¤",
+		"100000-other": "000k ¤",
+		"1000000-one": "0 mill'.' ¤",
+		"1000000-other": "0 mill'.' ¤",
+		"10000000-one": "00 mill'.' ¤",
+		"10000000-other": "00 mill'.' ¤",
+		"100000000-one": "000 mill'.' ¤",
+		"100000000-other": "000 mill'.' ¤",
+		"1000000000-one": "0 mrd'.' ¤",
+		"1000000000-other": "0 mrd'.' ¤",
+		"10000000000-one": "00 mrd'.' ¤",
+		"10000000000-other": "00 mrd'.' ¤",
+		"100000000000-one": "000 mrd'.' ¤",
+		"100000000000-other": "000 mrd'.' ¤",
+		"1000000000000-one": "0 bill'.' ¤",
+		"1000000000000-other": "0 bill'.' ¤",
+		"10000000000000-one": "00 bill'.' ¤",
+		"10000000000000-other": "00 bill'.' ¤",
+		"100000000000000-one": "000 bill'.' ¤",
+		"100000000000000-other": "000 bill'.' ¤"
 	},
 	"currencyDigits": {
 		"ADP": 0,
