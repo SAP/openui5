@@ -255,19 +255,13 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-ch
 
 /* Info Toolbar Context */
 .sapMTB-Info-CTX .sapMLabel {
-	font-style: italic;
 	font-size: @sapMFontMediumSize;
 	font-family: @sapUiFontFamily;
 	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
-	padding-right: 0.125rem; /* prevents truncation of the last letter */
 }
 
 .sapMTB-Info-CTX .sapMLabel.sapMLabelTBHeader {
 	text-shadow: none;
-}
-
-html[dir=rtl] .sapMTB-Info-CTX .sapMLabel {
-	padding-left: 0.125rem; /* prevents truncation of the rightmost symbol in RTL */
 }
 
 /* Transparent Toolbar Context*/
