@@ -14,8 +14,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/write/api/VersionsAPI"
+	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/thirdparty/sinon-4"
 ], function (
 	MessageToast,
 	ContextMenuPlugin,
@@ -30,8 +30,8 @@ sap.ui.define([
 	Remove,
 	RtaQunitUtils,
 	PersistenceWriteAPI,
-	sinon,
-	VersionsAPI
+	VersionsAPI,
+	sinon
 ) {
 	"use strict";
 
@@ -738,6 +738,23 @@ sap.ui.define([
 				}
 			});
 			assert.equal(this.oRta.iEditableOverlaysCount, 0, "the counter is now 0 again");
+		});
+
+		QUnit.test("when _onActivateDraft is called ", function(assert) {
+			var fnActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").returns(Promise.resolve(true));
+
+			return this.oRta._onActivateDraft().then(function() {
+				assert.ok(fnActivateDraftStub
+						.calledOnce, "then the activateDraft() method is called once ");
+			});
+		});
+
+		QUnit.test("when _onDiscardDraft is called ", function(assert) {
+			var fnDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").returns(Promise.resolve(true));
+
+			return this.oRta._onDiscardDraft().then(function() {
+				assert.ok(fnDiscardDraftStub.calledOnce, "then the discardDraft() method is called once ");
+			});
 		});
 	});
 

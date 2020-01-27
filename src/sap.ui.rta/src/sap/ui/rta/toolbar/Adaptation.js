@@ -70,7 +70,9 @@ function(
 				modeChange: {},
 				manageApps: {},
 				appVariantOverview: {},
-				saveAs: {}
+				saveAs: {},
+				activateDraft: {},
+				discardDraft: {}
 			},
 			properties: {
 				/** Determines whether publish button is visible */
