@@ -25,6 +25,7 @@
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
+			this.tokenizer = null;
 		}
 	});
 
@@ -49,6 +50,7 @@
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
+			this.tokenizer = null;
 		}
 	});
 
@@ -385,6 +387,7 @@
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
+			this.tokenizer = null;
 		}
 	});
 
@@ -427,6 +430,7 @@
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
+			this.tokenizer = null;
 		}
 	});
 
@@ -463,6 +467,7 @@
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
+			this.tokenizer = null;
 		}
 	});
 
@@ -540,6 +545,8 @@
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 2, "Copy was triggered");
+
+		fnCopySpy.restore();
 	});
 
 	QUnit.test("Ctrl + X (cut)", function(assert) {
@@ -550,6 +557,8 @@
 
 		// assert
 		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
+
+		fnCutSpy.restore();
 	});
 
 	QUnit.test("Ctrl + X (copy)", function(assert) {
@@ -563,6 +572,8 @@
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
+
+		fnCopySpy.restore();
 	});
 
 	QUnit.test("Shift + DELETE (cut)", function(assert) {
@@ -573,6 +584,8 @@
 
 		// assert
 		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
+
+		fnCutSpy.restore();
 	});
 
 	QUnit.test("Shift + DELETE (copy)", function(assert) {
@@ -586,6 +599,8 @@
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
+
+		fnCopySpy.restore();
 	});
 
 	QUnit.test("Arrow_right", function(assert) {
@@ -632,6 +647,7 @@
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
+			this.tokenizer = null;
 		}
 	});
 
@@ -662,12 +678,13 @@
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
+			this.tokenizer = null;
 		}
 	});
 
 	QUnit.test("parsing for copy and paste", function(assert) {
 		var text1 = "1\r\n2\r\n3",
-			aTextArray1 = this.tokenizer._parseString(text1);
+				aTextArray1 = this.tokenizer._parseString(text1);
 
 		assert.equal(aTextArray1[0], "1", "text separated");
 		assert.equal(aTextArray1[1], "2", "text separated");
@@ -681,67 +698,120 @@
 		assert.equal(aTextArray1[2], "3)\t(/&%$)", "text separated");
 	});
 
-	QUnit.test("copy to clipboard", function(assert) {
-		if (window.clipboardData) {
-			jQuery.sap.require("jquery.sap.script");
-			var sParam = jQuery.sap.getUriParameters().get("testIE");
-			sParam = sParam ? sParam.trim().toLowerCase() : null;
-			if (sParam != "x" && sParam != "true") {
-				assert.ok(true, "Test on IE skipped");
-				return;
-			}
+	QUnit.test("Copy to clipboard (Non IE):", function(assert) {
+		if (sap.ui.Device.browser.msie) {
+			assert.ok(true, "There is separate test for IE browser");
+			return;
 		}
+		assert.expect(6);
+		var oAddListenerSpy = new sinon.spy(document, "addEventListener"),
+				oExecCommandSpy = new sinon.spy(document, "execCommand"),
+				fnCopyToClipboard = null,
+				oDummyEvent1 = {
+					clipboardData: {
+						setData: function (sType, sText) {
+							assert.strictEqual(
+									sType,
+									"text/plain",
+									"Type 1: The correct type was added to the clipboard data object: " + sType
+							);
+							assert.strictEqual(
+									sText,
+									"Token 0\r\nToken 1\r\nToken 2\r\nToken 3",
+									"Type 1: The correct text was added to the clipboard data object: " + sText
+							);
+						}
+					},
+					preventDefault: function () {}
+				},
+				oDummyEvent2 = {
+					originalEvent : {
+						clipboardData: {
+							setData: function (sType, sText) {
+								assert.strictEqual(
+										sType,
+										"text/plain",
+										"Type 2: The correct type was added to the clipboard data object: " + sType
+								);
+								assert.strictEqual(
+										sText,
+										"Token 0\r\nToken 1\r\nToken 2\r\nToken 3",
+										"Type 2: The correct text was added to the clipboard data object: " + sText
+								);
+							}
+						}
+					},
+					preventDefault: function () {}
+				};
 
 		// arrange
 		for (var i = 0; i < 4; i++) {
 			this.tokenizer.addToken(new sap.m.Token({text: "Token " + i, key: "000" + i}));
 		}
-
 		sap.ui.getCore().applyChanges();
-
-		if (!sap.ui.Device.system.desktop && !sap.ui.Device.system.combi) {
-			assert.ok(!this.tokenizer._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
-			return;
-		} else {
-			assert.ok(this.tokenizer._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
-		}
-
-		function testCopiedText(sText) {
-			assert.equal(sText, "Token 0\r\nToken 1\r\nToken 2\r\nToken 3", "Copied text is correct");
-		}
 
 		this.tokenizer.focus();
 		this.tokenizer.selectAllTokens(true);
 
-		if (!sap.ui.Device.browser.phantomJS) {
-			try {
-				var oRange = window.getSelection().getRangeAt(0);
-				var oClipRef = this.tokenizer.getDomRef("clip");
-				assert.ok(oRange.startContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
-				assert.ok(oRange.endContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
-			} catch (e) {
-				jQuery.sap.log.warning(e);
-				assert.ok(false, "Problems with selection");
-			}
+		document.addEventListener("copy", oExecCommandSpy);
+
+		// act
+		this.tokenizer._copy();
+
+		// assert
+		// we can intercept the attached function by
+		// getting the second call - called from inside the _copy method
+		// and then its second argument
+		fnCopyToClipboard = oAddListenerSpy.getCall(1).args[1];
+		// Now we can check if it does attach the correct text
+		// to the provided event object
+
+		fnCopyToClipboard.call(this, oDummyEvent1);
+		fnCopyToClipboard.call(this, oDummyEvent2);
+
+		assert.strictEqual(oExecCommandSpy.callCount, 1, "The method was called only once");
+		assert.strictEqual(oExecCommandSpy.getCall(0).args[0], "copy", "The command was copy");
+
+		// cleanup
+		document.removeEventListener("copy", oExecCommandSpy);
+		oAddListenerSpy.restore();
+		oExecCommandSpy.restore();
+	});
+
+	QUnit.test("Copy to clipboard (IE):", function(assert) {
+		var done = assert.async();
+
+		if (!(sap.ui.Device.browser.msie && window.clipboardData && window.clipboardData.getData)) {
+			assert.ok(true, "There is separate test for non IE browsers");
+			done();
+			return;
 		}
+		assert.expect(1);
 
-		var oCopyEvent = jQuery.Event({
-			type: "copy",
-			clipboardData : {
-				setData : function(sType, sSelectedText) {
-					testCopiedText(sSelectedText);
-					assert.equal(sType, "text/plain", "Copied text type is correct");
-				}
-			}
-		});
-		this.tokenizer.$("clip").trigger(oCopyEvent);
-
-		if (window.clipboardData) {
-			testCopiedText(window.clipboardData.getData("text"));
-
-			//Reset clipboad again
-			window.clipboardData.setData("text", "Hello");
+		// arrange
+		for (var i = 0; i < 4; i++) {
+			this.tokenizer.addToken(new sap.m.Token({text: "Token " + i, key: "000" + i}));
 		}
+		sap.ui.getCore().applyChanges();
+
+		this.tokenizer.focus();
+		this.tokenizer.selectAllTokens(true);
+
+		setTimeout(function () {
+			// act
+			this.tokenizer._copy();
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(
+						window.clipboardData.getData("Text"),
+						"Token 0\r\nToken 1\r\nToken 2\r\nToken 3",
+						"The correct text was added to the clipboard data object"
+				);
+
+				done();
+			}.bind(this));
+		}.bind(this))
 	});
 
 </script>
