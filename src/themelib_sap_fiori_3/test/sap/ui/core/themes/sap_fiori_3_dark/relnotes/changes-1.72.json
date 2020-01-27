@@ -1,7 +1,72 @@
 {
   "1.72.0": {
-    "date": "October 2019",
+    "date": "September 2019",
     "notes": [
+      {
+        "id": "e75674b37bc723679f85632c4d52ec73198e275f",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed incorrect click behaviour in Quartz Light",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970456784"
+          }
+        ]
+      },
+      {
+        "id": "35b2fc1eda70a234420300f05868a15c2736c1b8",
+        "type": "FIX",
+        "text": " sap.m.Switch: width set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980424023"
+          }
+        ]
+      },
+      {
+        "id": "e1d5b6f21238cd320b0c9ddda583266315cf1a67",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "5951be854154d27e1f87352e8213537a7249d2a0",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Styles are more specific now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970465987"
+          }
+        ]
+      },
+      {
+        "id": "b482453bda4405b2a92f8fd5d2a1b30900f500b2",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Scrolling and \"sticky headers\" are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970467496"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970467937"
+          }
+        ]
+      },
+      {
+        "id": "1bd8a21bb7c44ad4506e174b527feeb990da879a",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Icon focus is now correct in contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980423718"
+          }
+        ]
+      },
       {
         "id": "7f7e4327f9e6ca226f829bff4222f96440ca7ae8",
         "type": "FEATURE",

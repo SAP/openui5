@@ -25,5 +25,21 @@
         ]
       }
     ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "e75d6d691b62d2607734cf1775cd7cf798fcf965",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: Rendering without SideNavigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880724502"
+          }
+        ]
+      }
+    ]
   }
 }

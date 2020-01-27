@@ -5,65 +5,55 @@
       {
         "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
         "type": "FIX",
-        "text": "QUnit Designtime Library tests in Firefox",
+        "text": " QUnit Designtime Library tests in Firefox",
         "references": []
       },
       {
         "id": "625807262b92f2ae4d7a7f144b9212707edc1abc",
         "type": "FIX",
-        "text": "Always return a Promise for ControllerExtensions",
+        "text": " Always return a Promise for ControllerExtensions",
         "references": []
       },
       {
         "id": "c941314f3d3bde2b8a43a8e699c107555a30f537",
         "type": "FIX",
-        "text": "Fix several issues in variant management control",
+        "text": " Fix several issues in variant management control",
         "references": []
       },
       {
         "id": "05ef3a73b62f976301efb7c9ef6e5b64130b7e1b",
         "type": "FIX",
-        "text": "sap.ui.fl: MoveControls now reverts to the correct position",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880169846"
-          }
-        ]
+        "text": " sap.ui.fl: MoveControls now reverts to the correct position",
+        "references": []
       },
       {
         "id": "b2bf2b7faf961d427609444570d3f23f4f8bee65",
         "type": "FIX",
-        "text": "Fix open issues",
+        "text": " Fix open issues",
         "references": []
       },
       {
         "id": "ff97aeb09fc61c7bb7b283f30bd5b2b2070a6553",
         "type": "FIX",
-        "text": "Add getPreparedChange to ctrl variant commands",
+        "text": " Add getPreparedChange to ctrl variant commands",
         "references": []
       },
       {
         "id": "a1632670edb941c451dfb819e0dfcb1975008215",
         "type": "FIX",
-        "text": "sap.ui.fl: Variant selection in URL should not change history",
+        "text": " sap.ui.fl: Variant selection in URL should not change history",
         "references": []
       },
       {
         "id": "2a068931696783ba988122b2fdfb47fa2fc7737d",
         "type": "FIX",
-        "text": "fl.VariantManagement: change display from inline to inline-block",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870056736"
-          }
-        ]
+        "text": " fl.VariantManagement: change display from inline to inline-block",
+        "references": []
       },
       {
         "id": "eb6e8a23450b47097826583f48825986efabe5d5",
         "type": "FIX",
-        "text": "Rename and move API for Control Personalization",
+        "text": " Rename and move API for Control Personalization",
         "references": []
       },
       {
@@ -75,13 +65,91 @@
       {
         "id": "6449fe09ea393eedea54d511f717244968df803f",
         "type": "FEATURE",
-        "text": "Component: Add async create() / load() API",
+        "text": " Component: Add async create() / load() API",
         "references": []
       },
       {
         "id": "66f4e9a7d5110fe01ac24cdf3632a23a931c9734",
         "type": "FIX",
-        "text": "Fix errors in variant management handling",
+        "text": " Fix errors in variant management handling",
+        "references": []
+      }
+    ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "fba9e19b79a45970b943fe7a6a99374add97b85d",
+        "type": "FIX",
+        "text": " set VariantModel to UI5-internal",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "e2a5b60e7b73b8d901863dfec8a37e9d2ddde285",
+        "type": "FIX",
+        "text": " Variant URL parameters should be added depending on the VM control(s) on the current view",
+        "references": []
+      },
+      {
+        "id": "cc7d06dd01b82a68d51c7808119c6b6af1fb1579",
+        "type": "FIX",
+        "text": " sap.ui.fl App variant version validity",
+        "references": []
+      },
+      {
+        "id": "920b7e95c4ed45f903afd2cb15504158a3f58b63",
+        "type": "FIX",
+        "text": " sap.ui.fl - Undefined parsed URL causing dump in VariantUtil",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "43f8961a723437ef0f3de7d178f208fc1854bb86",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fix issues with variants and FLP navigation:",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "f06c05b2efae9cf197a2e288d6d0540e18ca1533",
+        "type": "FIX",
+        "text": " Issues with displaying error messages in case of failed save",
+        "references": []
+      }
+    ]
+  },
+  "1.56.13": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "8a4f43782bea26c0898e514934a55bcbbb713520",
+        "type": "FIX",
+        "text": " sap.ui.fl.FlexController: On control re-creation, initial dependencies from change persistence map are not copied for failing changes",
+        "references": []
+      }
+    ]
+  },
+  "1.56.14": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "5290eccd8c073c951318d960edb883281ec89157",
+        "type": "FIX",
+        "text": " sap.ui.fl: Changes for VariantManagement are stored as instance",
         "references": []
       }
     ]
