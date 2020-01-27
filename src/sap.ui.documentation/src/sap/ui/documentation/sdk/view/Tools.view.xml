@@ -1,6 +1,7 @@
 <mvc:View
 		controllerName="sap.ui.documentation.sdk.controller.Tools"
 		xmlns="sap.m"
+		xmlns:f="sap.f"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:l="sap.ui.layout"
 		xmlns:core="sap.ui.core"
@@ -22,14 +23,14 @@
 							class="sapUiNoContentPadding sapUiDemokitLandingImageCell toolsImageCell">
 						<Image
 							id="phoneImage"
-							src="./resources/sap/ui/documentation/sdk/images/Tools_S_cropped.jpg"
+							src="./resources/sap/ui/documentation/sdk/images/Tools_S_cropped.png"
 							width="100%"
 							densityAware="false"
 							class="landingImage"
 							load="handleLandingImageLoad"
 							visible="{device>/system/phone}"/>
 						<Image
-							src="./resources/sap/ui/documentation/sdk/images/Tools_M_and_L_cropped.jpg"
+							src="./resources/sap/ui/documentation/sdk/images/Tools_M_and_L_cropped.png"
 							width="100%"
 							class="landingImage"
 							densityAware="false"
@@ -45,43 +46,31 @@
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
 		</Panel>
-
-		<Panel accessibleRole="Region" class="sapUiNoContentPadding" backgroundDesign="Transparent">
-			<l:BlockLayout>
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							class="largeCell"
-							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeE">
-						<FlexBox
-							alignItems="Start"
-							justifyContent="SpaceBetween"
-							wrap="Wrap">
-						<items>
-							<VBox class="toolsPageVbox">
-								<html:div class="sapUIDisclaimerLink sapUiMediumMarginBottom">
-									<custom:TitleLink
-											level="H1"
-											titleStyle="H1"
-											text="SAP Web IDE"
-											href="https://www.sap.com/developer/topics/sap-webide.html"
-											class="demokitInitialPagesWhiteText"
-											target="_blank"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-										tooltip="Information published on SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-								<Text text="SAP Web IDE on SAP CP is delivered on SAP Cloud Platform, SAP's public cloud,
-										and is used to build modern UI apps for desktop and mobile devices with the latest
-										SAPUI5 and SAP Fiori technologies."
-									  class="sapUiMediumMarginBottom"/>
-								<html:div class="sapUIDisclaimerLink">
+		<l:Grid defaultSpan="XL4 L6 M6 S12" class="toolpageResponsiveMargins">
+			<!-- WebIDE -->
+			<f:Card height="25rem">
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="SAP Web IDE"
+										href="https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"
+										target="_blank"/>
+								<Image
+									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+									tooltip="Information published on SAP site"
+									width="1.25rem"
+									press="onDisclaimerLinkPress"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="SAP Web IDE on SAP CP is delivered on SAP Cloud Platform, SAP's public cloud, and is used to build modern UI apps for desktop and mobile devices with the latest SAPUI5 and SAP Fiori technologies." />
+							<HBox wrap="Wrap">
+								<html:div class="sapUIDisclaimerLink sapUiMediumMarginEnd">
 									<Link text="View Documentation"
-										  target="_blank"
-										  href="https://help.sap.com/viewer/825270ffffe74d9f988a0f0066ad59f0/CF/en-US"
-										  class="demokitInitialPagesWhiteText"/>
+											target="_blank"
+											href="https://help.sap.com/viewer/825270ffffe74d9f988a0f0066ad59f0/CF/en-US"/>
 									<Image
 										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
 										tooltip="Information published on SAP site"
@@ -90,375 +79,308 @@
 								</html:div>
 								<html:div class="sapUIDisclaimerLink">
 									<Link text="SAP Web IDE SDK"
-										  target="_blank"
-										  href="https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"
-										  class="demokitInitialPagesWhiteText"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-										tooltip="Information published on SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-								<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
-									<Link text="Community"
-										  target="_blank"
-										  href="https://www.sap.com/developer/topics/sap-webide.html"
-										  class="demokitInitialPagesWhiteText sapUiSmallMarginBottom"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-										tooltip="Information published on SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-							</VBox>
-							<Image src="./resources/sap/ui/documentation/sdk/images/tools/WebIDE.png" class="toolsPageImage" alt="Picture showing SAP Web IDE"/>
-						</items>
-						</FlexBox>
-					</l:BlockLayoutCell>
-
-					<l:BlockLayoutCell
-							class="largeCell"
-							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeF" >
-						<FlexBox
-							alignItems="Start"
-							justifyContent="SpaceBetween"
-							wrap="Wrap">
-						<items>
-							<VBox class="toolsPageVbox">
-								<html:div class="sapUIDisclaimerLink sapUiMediumMarginBottom">
-									<custom:TitleLink
-											level="H1"
-											titleStyle="H1"
-											text="UI Theme Designer"
-											href="https://themedesigner-themedesigner.dispatcher.hanatrial.ondemand.com/index.html"
 											target="_blank"
-											class="demokitInitialPagesWhiteText"/>
+											href="https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"/>
 									<Image
 										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
 										tooltip="Information published on SAP site"
 										width="1.25rem"
 										press="onDisclaimerLinkPress"/>
 								</html:div>
-								<Text text="Use the UI theme designer to easily build corporate identity themes by modifying one of theme templates provided by SAP."
-									  class="sapUiMediumMarginBottom"/>
-								<html:div class="sapUIDisclaimerLink">
-									<Link text="View Documentation"
-										  target="_blank"
-										  href="https://help.sap.com/viewer/09f6818d8e064537973102d6289e2aca/Cloud/en-US"
-										  class="demokitInitialPagesWhiteText"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-										tooltip="Information published on SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-								<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
-									<Link text="Community"
-										  target="_blank"
-										  href="https://www.sap.com/community/topics/ui-theme-designer.html"
-										  class="demokitInitialPagesWhiteText sapUiSmallMarginBottom"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-										tooltip="Information published on SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-							</VBox>
-							<Image src="./resources/sap/ui/documentation/sdk/images/tools/ThemeDesigner.png" class="toolsPageImage"  alt="Picture showing SAP UI Theme Designer"/>
-						</items>
-						</FlexBox>
-					</l:BlockLayoutCell>
-				</l:BlockLayoutRow>
-
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							class="largeCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeB">
-						<FlexBox
-							alignItems="Start"
-							justifyContent="SpaceBetween"
-							wrap="Wrap">
-						<items>
-							<VBox class="toolsPageVbox">
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/WebIDE.png" class="toolsPageImage" alt="Picture showing SAP Web IDE"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- UI Theme Designer -->
+			<f:Card height="25rem">
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										level="H1"
 										titleStyle="H1"
-										text="Icon Explorer"
-										href="test-resources/sap/m/demokit/iconExplorer/webapp/index.html"
+										text="UI Theme Designer"
+										href="https://themedesigner-themedesigner.dispatcher.hanatrial.ondemand.com/index.html"
+										target="_blank"/>
+								<Image
+									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+									tooltip="Information published on SAP site"
+									width="1.25rem"
+									press="onDisclaimerLinkPress"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="Use the UI theme designer to easily build corporate identity themes by modifying one of theme templates provided by SAP." />
+							<HBox wrap="Wrap">
+								<html:div class="sapUIDisclaimerLink sapUiMediumMarginEnd">
+									<Link text="View Documentation"
 										target="_blank"
-										class="sapUiMediumMarginBottom"/>
-								<Text text="Browse and use our large collection of icons in our icon fonts."
-									  class="demokitInitialPagesBlueText sapUiMediumMarginBottom"/>
-								<Link text="View Documentation"
-									  target="_blank"
-									  href="topic/21ea0ea94614480d9a910b2e93431291"/>
-								<Link text="Run Integration Tests"
-									  target="_blank"
-									  href="test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html"/>
-								<Link text="Run Unit Tests"
-									  target="_blank"
-									  href="test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
-									  class="sapUiSmallMarginBottom"/>
-							</VBox>
-							<Image src="./resources/sap/ui/documentation/sdk/images/tools/IconExplorer.png" class="toolsPageImage"  alt="Picture showing SAP Icon Explorer"/>
-						</items>
-						</FlexBox>
-					</l:BlockLayoutCell>
-					<l:BlockLayoutCell
-							class="largeCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeA">
-						<FlexBox
-							alignItems="Start"
-							justifyContent="SpaceBetween"
-							wrap="Wrap">
-						<items>
-							<VBox class="toolsPageVbox">
-								<html:div class="sapUIDisclaimerLink sapUiMediumMarginBottom">
-									<custom:TitleLink
-											level="H1"
-											titleStyle="H1"
-											text="UI5 Inspector"
-											href="https://chrome.google.com/webstore/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo?hl=en"
-											target="_blank"/>
+										href="https://help.sap.com/viewer/09f6818d8e064537973102d6289e2aca/Cloud/en-US"/>
 									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-										tooltip="Information published on non SAP site"
+										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+										tooltip="Information published on SAP site"
 										width="1.25rem"
 										press="onDisclaimerLinkPress"/>
 								</html:div>
-								<Text text="With the UI5 Inspector, you can easily debug and support your OpenUI5 or SAPUI5-based apps."
-									  class="demokitInitialPagesBlueText sapUiMediumMarginBottom"/>
-								<Link text="View Documentation"
-									  target="_blank"
-									  href="topic/b24e72443eb34d0fb7bf6940f2d697eb"/>
-								<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
-									<Link text="View Source Code"
-										  target="_blank"
-										  href="https://github.com/SAP/ui5-inspector"
-										  class="sapUiSmallMarginBottom"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-										tooltip="Information published on non SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-							</VBox>
-							<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5Inspector.png" class="toolsPageImage"  alt="Picture showing SAP UI5 Inspector"/>
-						</items>
-						</FlexBox>
-					</l:BlockLayoutCell>
-				</l:BlockLayoutRow>
-
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							class="largeCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeA">
-						<FlexBox
-							alignItems="Start"
-							justifyContent="SpaceBetween"
-							wrap="Wrap">
-						<items>
-							<VBox class="toolsPageVbox">
-								<html:div class="sapUIDisclaimerLink sapUiMediumMarginBottom">
-									<custom:TitleLink
-											level="H1"
-											titleStyle="H1"
-											text="UI5 Tooling"
-											href="https://github.com/SAP/ui5-tooling"
-											target="_blank"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-										tooltip="Information published on non SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-								<Text text="An open and modular toolchain to develop state-of-the-art applications based on the UI5 framework, leveraging node.js and npm."
-									  class="demokitInitialPagesBlueText sapUiMediumMarginBottom"/>
 								<html:div class="sapUIDisclaimerLink">
+									<Link text="Community"
+										target="_blank"
+										href="https://www.sap.com/community/topics/ui-theme-designer.html"/>
+									<Image
+										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+										tooltip="Information published on SAP site"
+										width="1.25rem"
+										press="onDisclaimerLinkPress"/>
+								</html:div>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/ThemeDesigner.png" class="toolsPageImage" alt="Picture showing SAP UI Theme Designer"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- UI5 Tooling -->
+			<f:Card class="threeColumnLayoutCard">
+				<f:layoutData>
+					<l:GridData spanM="4" spanL="4"/>
+				</f:layoutData>
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="UI5 Tooling"
+										href="https://github.com/SAP/ui5-tooling"
+										target="_blank"/>
+								<Image
+									src="./resources/sap/ui/documentation/sdk/images/link-external.png"
+									tooltip="Information published on SAP site"
+									width="1.25rem"
+									press="onDisclaimerLinkPress"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="An open and modular toolchain to develop state-of-the-art applications based on the UI5 framework, leveraging node.js and npm." />
+							<HBox wrap="Wrap">
+								<html:div class="sapUIDisclaimerLink sapUiMediumMarginEnd">
 									<Link text="Overview"
-										  target="_blank"
-										  href="https://github.com/SAP/ui5-tooling#ui5-build-and-development-tooling"/>
+										target="_blank"
+										href="https://github.com/SAP/ui5-tooling#ui5-build-and-development-tooling"/>
 									<Image
 										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-										tooltip="Information published on non SAP site"
+										tooltip="Information published on SAP site"
 										width="1.25rem"
 										press="onDisclaimerLinkPress"/>
 								</html:div>
-								<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<html:div class="sapUIDisclaimerLink">
 									<Link text="CLI Documentation"
-										  target="_blank"
-										  href="https://github.com/SAP/ui5-cli#cli-usage"/>
+										target="_blank"
+										href="https://github.com/SAP/ui5-cli#cli-usage"/>
 									<Image
 										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-										tooltip="Information published on non SAP site"
+										tooltip="Information published on SAP site"
 										width="1.25rem"
 										press="onDisclaimerLinkPress"/>
 								</html:div>
-							</VBox>
-							<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5EvoTooling.png" class="toolsPageImage"  alt="Picture showing SAP UI5 Tooling page"/>
-						</items>
-						</FlexBox>
-					</l:BlockLayoutCell>
-					<l:BlockLayoutCell
-							class="largeCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeB">
-						<FlexBox
-							alignItems="Start"
-							justifyContent="SpaceBetween"
-							wrap="Wrap">
-						<items>
-							<VBox class="toolsPageVbox">
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5EvoTooling.png" class="toolsPageImage"  alt="Picture showing SAP UI5 Tooling page"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- UI5 Inspector -->
+			<f:Card class="threeColumnLayoutCard">
+				<f:layoutData>
+					<l:GridData spanM="4" spanL="4"/>
+				</f:layoutData>
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										level="H1"
 										titleStyle="H1"
-										text="Support Assistant"
-										href="topic/57ccd7d7103640e3a187ed55e1d2c163"
-										target="_blank"
-										class="sapUiMediumMarginBottom"/>
-								<Text text="The Support Assistant enables developers to check whether their apps are built according to the SAPUI5 best practices and guidelines."
-									  class="demokitInitialPagesBlueText sapUiMediumMarginBottom"/>
+										text="UI5 Inspector"
+										href="https://chrome.google.com/webstore/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo?hl=en"
+										target="_blank"/>
+								<Image
+									src="./resources/sap/ui/documentation/sdk/images/link-external.png"
+									tooltip="Information published on SAP site"
+									width="1.25rem"
+									press="onDisclaimerLinkPress"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="With the UI5 Inspector, you can easily debug and support your OpenUI5 or SAPUI5-based apps." />
+							<HBox wrap="Wrap">
 								<Link text="View Documentation"
-									  target="_blank"
-									  href="topic/57ccd7d7103640e3a187ed55e1d2c163"
-									  class="sapUiSmallMarginBottom"/>
-							</VBox>
-							<Image src="./resources/sap/ui/documentation/sdk/images/tools/SupportAssistant.png" class="toolsPageImage"  alt="Picture showing Support Assistant in action"/>
-						</items>
-						</FlexBox>
-					</l:BlockLayoutCell>
-				</l:BlockLayoutRow>
-
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							class="largeCell"
-							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeF">
-						<FlexBox
-							alignItems="Start"
-							justifyContent="SpaceBetween"
-							wrap="Wrap">
-						<items>
-							<VBox class="toolsPageVbox">
-								<html:div class="sapUIDisclaimerLink sapUiMediumMarginBottom">
-									<custom:TitleLink
-											level="H1"
-											titleStyle="H1"
-											text="Build"
-											href="https://www.build.me"
-											target="_blank"
-											class="demokitInitialPagesWhiteText sapUiMediumMarginBottom"/>
+									class="sapUiMediumMarginEnd"
+									target="_blank"
+									href="topic/b24e72443eb34d0fb7bf6940f2d697eb"/>
+								<html:div class="sapUIDisclaimerLink">
+									<Link text="View Source Code"
+										target="_blank"
+										href="https://github.com/SAP/ui5-inspector"/>
 									<Image
 										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-										tooltip="Information published on non SAP site"
+										tooltip="Information published on SAP site"
 										width="1.25rem"
 										press="onDisclaimerLinkPress"/>
 								</html:div>
-								<Text text="Everything you need to design beautiful apps in one set of cloud-based tools."
-									  class="sapUiMediumMarginBottom"/>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5Inspector.png" class="toolsPageImage"  alt="Picture showing SAP UI5 Inspector"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- Icon Explorer -->
+			<f:Card class="threeColumnLayoutCard">
+				<f:layoutData>
+					<l:GridData spanM="4" spanL="4"/>
+				</f:layoutData>
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Icon Explorer"
+								href="test-resources/sap/m/demokit/iconExplorer/webapp/index.html"
+								target="_blank"
+								class="sapUiSmallMarginBottom"/>
+							<Text class="sapUiSmallMarginBottom" text="Browse and use our large collection of icons in our icon fonts." />
+							<HBox wrap="Wrap">
+								<Link text="View Documentation"
+									target="_blank"
+									href="topic/21ea0ea94614480d9a910b2e93431291"
+									class="sapUiMediumMarginEnd"/>
+								<Link text="Run Integration Tests"
+									target="_blank"
+									href="test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html"
+									class="sapUiMediumMarginEnd"/>
+								<Link text="Run Unit Tests"
+									target="_blank"
+									href="test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"/>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/IconExplorer.png" class="toolsPageImage"  alt="Picture showing SAP Icon Explorer"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- Card Explorer -->
+			<f:Card height="25rem">
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Card Explorer"
+								href="test-resources/sap/ui/integration/demokit/cardExplorer/index.html"
+								target="_blank"
+								class="sapUiSmallMarginBottom"/>
+							<Text class="sapUiSmallMarginBottom" text="Integration Cards are new way to provide and consume widget-like cards for home page or dashboard." />
+							<HBox wrap="Wrap">
+								<Link text="View Documentation"
+									target="_blank"
+										href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html"
+									class="sapUiMediumMarginEnd"/>
+								<Link text="Explore Samples"
+									target="_blank"
+									href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/list"/>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/CardExplorer.png" class="toolsPageImage"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- Theme Parameter Toolbox -->
+			<f:Card height="25rem">
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<custom:TitleLink
+									level="H1"
+									titleStyle="H1"
+									text="Theme Parameter Toolbox"
+									class="sapUiSmallMarginBottom"
+									href="test-resources/sap/m/demokit/theming/webapp/index.html"
+									target="_blank"/>
+							<Text class="sapUiSmallMarginBottom" text="Search, filter and preview semantic theme parameters." />
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/ThemeParameterToolbox.png" class="toolsPageImage" alt="Picture showing Theme Parameter Toolbox"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- Support Assistant -->
+			<f:Card height="25rem">
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<custom:TitleLink
+									level="H1"
+									titleStyle="H1"
+									text="Support Assistant"
+									class="sapUiSmallMarginBottom"
+									href="topic/57ccd7d7103640e3a187ed55e1d2c163"
+									target="_blank"/>
+							<Text class="sapUiSmallMarginBottom" text="The Support Assistant enables developers to check whether their apps are built according to the SAPUI5 best practices and guidelines." />
+							<HBox wrap="Wrap">
+								<Link text="View Documentation"
+									target="_blank"
+									href="topic/57ccd7d7103640e3a187ed55e1d2c163"/>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/SupportAssistant.png" class="toolsPageImage"  alt="Picture showing Support Assistant in action"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- Build -->
+			<f:Card height="25rem">
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="Build"
+										href="https://www.build.me"
+										target="_blank"/>
+								<Image
+									src="./resources/sap/ui/documentation/sdk/images/link-external.png"
+									tooltip="Information published on SAP site"
+									width="1.25rem"
+									press="onDisclaimerLinkPress"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="Everything you need to design beautiful apps in one set of cloud-based tools." />
+							<HBox wrap="Wrap">
 								<html:div class="sapUIDisclaimerLink">
 									<Link text="View Documentation"
-										  target="_blank"
-										  href="http://sap.github.io/BUILD_User_Assistance/build/external/"
-										  class="demokitInitialPagesWhiteText"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-										tooltip="Information published on non SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-								<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
-									<Link text="View Source Code"
-										  target="_blank"
-										  href="https://www.github.com/SAP/BUILD"
-										  class="demokitInitialPagesWhiteText"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-										tooltip="Information published on non SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-							</VBox>
-							<Image src="./resources/sap/ui/documentation/sdk/images/tools/Build.png" class="toolsPageImage"  alt="Picture showing SAP UI5 Build in action"/>
-						</items>
-						</FlexBox>
-					</l:BlockLayoutCell>
-					<l:BlockLayoutCell
-							class="largeCell"
-							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeE">
-						<FlexBox
-							alignItems="Start"
-							justifyContent="SpaceBetween"
-							wrap="Wrap">
-						<items>
-							<VBox class="toolsPageVbox">
-								<custom:TitleLink
-										level="H1"
-										titleStyle="H1"
-										text="Theme Parameter Toolbox"
-										href="test-resources/sap/m/demokit/theming/webapp/index.html"
 										target="_blank"
-										class="demokitInitialPagesWhiteText sapUiMediumMarginBottom"/>
-								<Text text="Search, filter and preview semantic theme parameters."
-									  class="sapUiMediumMarginBottom"/>
-							</VBox>
-							<Image src="./resources/sap/ui/documentation/sdk/images/tools/ThemeParameterToolbox.png" class="toolsPageImage" alt="Picture showing Theme Parameter Toolbox"/>
-						</items>
-						</FlexBox>
-					</l:BlockLayoutCell>
-				</l:BlockLayoutRow>
-			</l:BlockLayout>
-		</Panel>
-
+										href="http://sap.github.io/BUILD_User_Assistance/build/external/"/>
+									<Image
+										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
+										tooltip="Information published on SAP site"
+										width="1.25rem"
+										press="onDisclaimerLinkPress"/>
+								</html:div>
+								<html:div class="sapUIDisclaimerLink">
+									<Link text="View Source Code"
+										target="_blank"
+										href="https://www.github.com/SAP/BUILD"/>
+									<Image
+										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
+										tooltip="Information published on SAP site"
+										width="1.25rem"
+										press="onDisclaimerLinkPress"/>
+								</html:div>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/Build.png" class="toolsPageImage"  alt="Picture showing SAP UI5 Build in action"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+		</l:Grid>
 		<l:BlockLayout>
-			<l:BlockLayoutRow>
-				<l:BlockLayoutCell
-						class="largeCell"
-						backgroundColorSet="ColorSet11"
-						backgroundColorShade="ShadeB">
-					<FlexBox
-							alignItems="Start"
-							justifyContent="SpaceBetween"
-							wrap="Wrap">
-						<items>
-							<VBox class="toolsPageVbox">
-								<custom:TitleLink
-										level="H1"
-										titleStyle="H1"
-										text="Card Explorer"
-										href="test-resources/sap/ui/integration/demokit/cardExplorer/index.html"
-										class="sapUiMediumMarginBottom"
-										target="_blank" />
-
-								<Text text="Integration Cards are new way to provide and consume widget-like cards for home page or dashboard."
-									  class="demokitInitialPagesBlueText sapUiMediumMarginBottom"/>
-
-								<Link text="View Documentation"
-									  target="_blank"
-									  href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html" />
-
-								<Link text="Explore Samples"
-									  target="_blank"
-									  href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/list"
-									  class="sapUiSmallMarginBottom" />
-							</VBox>
-							<Image src="./resources/sap/ui/documentation/sdk/images/tools/CardExplorer.png" class="toolsPageImage"/>
-						</items>
-					</FlexBox>
-				</l:BlockLayoutCell>
-
-				<l:BlockLayoutCell
-						class="largeCell"
-						backgroundColorSet="ColorSet11"
-						backgroundColorShade="ShadeB">
-				</l:BlockLayoutCell>
-			</l:BlockLayoutRow>
-
 			<l:BlockLayoutRow>
 				<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
 			</l:BlockLayoutRow>
