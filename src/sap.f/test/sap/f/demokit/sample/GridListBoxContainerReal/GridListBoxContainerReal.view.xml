@@ -1,179 +1,159 @@
 <mvc:View
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:grid="sap.ui.layout.cssgrid"
-		xmlns:f="sap.f"
-		controllerName="sap.f.sample.GridListBoxContainerReal.GridListBoxContainerReal"
-		xmlns:core="sap.ui.core"
-		xmlns:t="sap.tnt">
-
+	controllerName="sap.f.sample.GridListBoxContainerReal.GridListBoxContainerReal"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:t="sap.tnt">
+	<ToggleButton
+		id="revealGrid"
+		text="Reveal Grid"
+		press="onRevealGrid"
+		class="sapUiSmallMargin" />
 	<Panel width="100%">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text="Recommended designs for content, used in the GridList"/>
 			</Toolbar>
 		</headerToolbar>
-		<content>
-			<f:GridList
-					id="gridList1"
-					headerText="GridList, using GridBoxLayout - Toolbar Designs (boxWidth 15rem)">
 
-				<f:customLayout>
-					<grid:GridBoxLayout boxWidth="15rem"/>
-				</f:customLayout>
+		<f:GridList id="gridList1" headerText="GridList, using GridBoxLayout - Toolbar Designs (boxWidth 15rem)">
+			<f:customLayout>
+				<grid:GridBoxLayout boxWidth="15rem" />
+			</f:customLayout>
 
-				<f:GridListItem>
-					<VBox height="100%">
-						<VBox justifyContent="SpaceBetween">
-							<layoutData>
-								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
-							</layoutData>
-							<VBox class="sapUiSmallMargin">
-								<Title text="Title" wrapping="true"/>
-								<Label text="Subtitle" wrapping="true" class="sapUiTinyMarginBottom"/>
-								<Text text="A great description with useful information about this project. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy." wrapping="true"/>
-							</VBox>
-							<OverflowToolbar design="Solid" class="sapContrast">
-								<ToolbarSpacer/>
-								<Button text="Edit" type="Transparent"/>
-								<Button icon="sap-icon://sort" type="Transparent"/>
-								<Button icon="sap-icon://group-2" type="Transparent"/>
-							</OverflowToolbar>
-						</VBox>
+			<f:GridListItem>
+				<VBox height="100%" justifyContent="SpaceBetween">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<VBox class="sapUiSmallMargin">
+						<Title text="Title" wrapping="true" />
+						<Label text="Subtitle" wrapping="true" class="sapUiTinyMarginBottom" />
+						<Text text="A great description with useful information about this project. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy." wrapping="true" />
 					</VBox>
-				</f:GridListItem>
-				<f:GridListItem>
-					<VBox height="100%">
-						<VBox justifyContent="SpaceBetween">
-							<layoutData>
-								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
-							</layoutData>
-							<VBox class="sapUiSmallMargin">
-								<Title text="Title" wrapping="true"/>
-								<Label text="Subtitle" wrapping="true" class="sapUiTinyMarginBottom"/>
-								<Text text="A great description with useful information about this project." wrapping="true"/>
-							</VBox>
-							<OverflowToolbar design="Solid">
-								<ToolbarSpacer/>
-								<Button text="Edit" type="Transparent"/>
-								<Button icon="sap-icon://sort" type="Transparent"/>
-								<Button icon="sap-icon://group-2" type="Transparent"/>
-							</OverflowToolbar>
-						</VBox>
+					<OverflowToolbar design="Solid" class="sapContrast">
+						<ToolbarSpacer />
+						<Button text="Edit" type="Transparent" />
+						<Button icon="sap-icon://sort" type="Transparent" />
+						<Button icon="sap-icon://group-2" type="Transparent" />
+					</OverflowToolbar>
+				</VBox>
+			</f:GridListItem>
+			<f:GridListItem>
+				<VBox height="100%" justifyContent="SpaceBetween">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<VBox class="sapUiSmallMargin">
+						<Title text="Title" wrapping="true"/>
+						<Label text="Subtitle" wrapping="true" class="sapUiTinyMarginBottom" />
+						<Text text="A great description with useful information about this project." wrapping="true" />
 					</VBox>
-				</f:GridListItem>
-				<f:GridListItem>
-					<VBox height="100%">
-						<VBox justifyContent="SpaceBetween">
-							<layoutData>
-								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
-							</layoutData>
-							<VBox class="sapUiSmallMargin">
-								<Title text="Very long Box title that should wrap" wrapping="true"/>
-								<Label text="Very long Subtitle" wrapping="true" class="sapUiTinyMarginBottom"/>
-								<Text text="A great description with useful information about this project." wrapping="true"/>
-							</VBox>
-							<OverflowToolbar design="Transparent">
-								<ToolbarSpacer/>
-								<Button text="Edit" type="Transparent"/>
-								<Button icon="sap-icon://sort" type="Transparent"/>
-								<Button icon="sap-icon://group-2" type="Transparent"/>
-							</OverflowToolbar>
-						</VBox>
+					<OverflowToolbar design="Solid">
+						<ToolbarSpacer/>
+						<Button text="Edit" type="Transparent" />
+						<Button icon="sap-icon://sort" type="Transparent" />
+						<Button icon="sap-icon://group-2" type="Transparent" />
+					</OverflowToolbar>
+				</VBox>
+			</f:GridListItem>
+			<f:GridListItem>
+				<VBox height="100%" justifyContent="SpaceBetween">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<VBox class="sapUiSmallMargin">
+						<Title text="Very long Box title that should wrap" wrapping="true" />
+						<Label text="Very long Subtitle" wrapping="true" class="sapUiTinyMarginBottom" />
+						<Text text="A great description with useful information about this project." wrapping="true" />
 					</VBox>
-				</f:GridListItem>
-			</f:GridList>
+					<OverflowToolbar design="Transparent">
+						<ToolbarSpacer/>
+						<Button text="Edit" type="Transparent" />
+						<Button icon="sap-icon://sort" type="Transparent" />
+						<Button icon="sap-icon://group-2" type="Transparent" />
+					</OverflowToolbar>
+				</VBox>
+			</f:GridListItem>
+		</f:GridList>
 
-			<f:GridList
-					id="gridList2"
-					headerText="GridList, using GridBoxLayout - with Icons (boxWidth 22.5rem)">
+		<f:GridList id="gridList2" headerText="GridList, using GridBoxLayout - with Icons (boxWidth 22.5rem)">
+			<f:customLayout>
+				<grid:GridBoxLayout boxWidth="22.5rem" />
+			</f:customLayout>
 
-				<f:customLayout>
-					<grid:GridBoxLayout boxWidth="22.5rem"/>
-				</f:customLayout>
+			<f:GridListItem>
+				<VBox height="100%" class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<core:Icon src="sap-icon://activities" size="2.625rem" color="Default" class="sapUiTinyMarginBottom" />
+					<Title text="Title" wrapping="true" />
+					<Text text="A great description with useful information about this project. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy." wrapping="true" />
+				</VBox>
+			</f:GridListItem>
+			<f:GridListItem>
+					<VBox height="100%" class="sapUiSmallMargin">
+						<layoutData>
+							<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+						</layoutData>
+						<core:Icon src="sap-icon://badge" size="2.625rem" color="Default" class="sapUiTinyMarginBottom" />
+						<Title text="Longer Title" wrapping="true" />
+						<Text text="A great description with useful information about this project." wrapping="true" />
+					</VBox>
+			</f:GridListItem>
+		</f:GridList>
 
-				<f:GridListItem>
-					<VBox height="100%">
-						<VBox class="sapUiSmallMargin">
-							<layoutData>
-								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
-							</layoutData>
-							<core:Icon src="sap-icon://activities" size="2.625rem" color="Default" class="sapUiTinyMarginBottom"/>
+		<f:GridList id="gridList3" headerText="GridList, using GridBoxLayout - with ObjectStatus or InfoLabel (boxWidth 17.5rem)">
+			<f:customLayout>
+				<grid:GridBoxLayout boxWidth="17.5rem" />
+			</f:customLayout>
+
+			<f:GridListItem>
+				<VBox height="100%" justifyContent="SpaceBetween">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<VBox class="sapUiSmallMargin">
+						<HBox justifyContent="SpaceBetween">
+							<core:Icon src="sap-icon://org-chart" size="2.625rem" color="Default" class="sapUiTinyMarginBottom" />
+							<ObjectStatus text="Positive Status" state="Success" />
+						</HBox>
+						<Title text="Title" wrapping="true" />
+						<Label text="Subtitle" wrapping="true" class="sapUiTinyMarginBottom" />
+						<Text text="A great description with useful information about this project. Lorem ipsum dolor sit amet, consetetur sadipscing elitr" wrapping="true" />
+					</VBox>
+					<OverflowToolbar design="Solid">
+						<ToolbarSpacer />
+						<Button icon="sap-icon://edit" type="Transparent" />
+						<Button icon="sap-icon://delete" type="Transparent" />
+						<Button icon="sap-icon://message-information" type="Transparent" />
+					</OverflowToolbar>
+				</VBox>
+			</f:GridListItem>
+			<f:GridListItem>
+				<VBox height="100%" justifyContent="SpaceBetween">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<VBox class="sapUiSmallMargin">
+						<HBox justifyContent="SpaceBetween">
 							<Title text="Title" wrapping="true"/>
-							<Text text="A great description with useful information about this project. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy." wrapping="true"/>
-						</VBox>
+							<t:InfoLabel text="T-SHIRT SIZE M" colorScheme="4" />
+						</HBox>
+						<Label text="Subtitle" wrapping="true" class="sapUiTinyMarginBottom" />
+						<Text text="A great description with useful information about this project." wrapping="true" />
 					</VBox>
-				</f:GridListItem>
-				<f:GridListItem>
-					<VBox height="100%">
-						<VBox class="sapUiSmallMargin">
-							<layoutData>
-								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
-							</layoutData>
-							<core:Icon src="sap-icon://badge" size="2.625rem" color="Default" class="sapUiTinyMarginBottom"/>
-							<Title text="Longer Title" wrapping="true"/>
-							<Text text="A great description with useful information about this project." wrapping="true"/>
-						</VBox>
-					</VBox>
-				</f:GridListItem>
-			</f:GridList>
-
-			<f:GridList
-					id="gridList3"
-					headerText="GridList, using GridBoxLayout - with ObjectStatus or InfoLabel (boxWidth 17.5rem)">
-
-				<f:customLayout>
-					<grid:GridBoxLayout boxWidth="17.5rem"/>
-				</f:customLayout>
-
-				<f:GridListItem>
-					<VBox height="100%">
-						<VBox justifyContent="SpaceBetween">
-							<layoutData>
-								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
-							</layoutData>
-							<VBox class="sapUiSmallMargin">
-								<HBox justifyContent="SpaceBetween">
-									<core:Icon src="sap-icon://org-chart" size="2.625rem" color="Default" class="sapUiTinyMarginBottom"/>
-									<ObjectStatus text="Positive Status" state="Success" />
-								</HBox>
-								<Title text="Title" wrapping="true"/>
-								<Label text="Subtitle" wrapping="true" class="sapUiTinyMarginBottom"/>
-								<Text text="A great description with useful information about this project. Lorem ipsum dolor sit amet, consetetur sadipscing elitr" wrapping="true"/>
-							</VBox>
-							<OverflowToolbar design="Solid">
-								<ToolbarSpacer/>
-								<Button icon="sap-icon://edit" type="Transparent"/>
-								<Button icon="sap-icon://delete" type="Transparent"/>
-								<Button icon="sap-icon://message-information" type="Transparent"/>
-							</OverflowToolbar>
-						</VBox>
-					</VBox>
-				</f:GridListItem>
-				<f:GridListItem>
-					<VBox height="100%">
-						<VBox justifyContent="SpaceBetween">
-							<layoutData>
-								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
-							</layoutData>
-							<VBox class="sapUiSmallMargin">
-								<HBox justifyContent="End">
-									<t:InfoLabel text="T-SHIRT SIZE M" colorScheme="4"/>
-								</HBox>
-								<Title text="Title" wrapping="true"/>
-								<Label text="Subtitle" wrapping="true" class="sapUiTinyMarginBottom"/>
-								<Text text="A great description with useful information about this project." wrapping="true"/>
-							</VBox>
-							<OverflowToolbar design="Solid">
-								<ToolbarSpacer/>
-								<Button icon="sap-icon://edit" type="Transparent"/>
-								<Button icon="sap-icon://delete" type="Transparent"/>
-								<Button icon="sap-icon://message-information" type="Transparent"/>
-							</OverflowToolbar>
-						</VBox>
-					</VBox>
-				</f:GridListItem>
-			</f:GridList>
-		</content>
+					<OverflowToolbar design="Solid">
+						<ToolbarSpacer />
+						<Button icon="sap-icon://edit" type="Transparent" />
+						<Button icon="sap-icon://delete" type="Transparent" />
+						<Button icon="sap-icon://message-information" type="Transparent" />
+					</OverflowToolbar>
+				</VBox>
+			</f:GridListItem>
+		</f:GridList>
 	</Panel>
 </mvc:View>

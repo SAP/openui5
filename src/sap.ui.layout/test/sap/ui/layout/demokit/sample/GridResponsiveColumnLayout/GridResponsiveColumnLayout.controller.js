@@ -1,13 +1,23 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
-		"use strict";
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/layout/sample/GridResponsiveColumnLayout/RevealGrid/RevealGrid"
+], function (Controller, RevealGrid) {
+	"use strict";
 
-		var GridResponsiveness = Controller.extend("sap.ui.layout.sample.GridResponsiveColumnLayout.GridResponsiveColumnLayout", {
-			onSliderMoved: function (oEvent) {
-				var value = oEvent.getParameter("value");
-				this.byId("panelCSSGrid").setWidth(value + "%");
-			}
-		});
+	return Controller.extend("sap.ui.layout.sample.GridResponsiveColumnLayout.GridResponsiveColumnLayout", {
 
-		return GridResponsiveness;
+		onExit: function() {
+			RevealGrid.destroy("grid1", this.getView());
+		},
+
+		onRevealGrid: function () {
+			RevealGrid.toggle("grid1", this.getView());
+		},
+
+		onSliderMoved: function (oEvent) {
+			var fValue = oEvent.getParameter("value");
+			this.byId("panelCSSGrid").setWidth(fValue + "%");
+		}
+
 	});
+});

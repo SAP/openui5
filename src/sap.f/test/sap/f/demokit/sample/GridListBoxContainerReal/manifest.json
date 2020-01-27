@@ -13,16 +13,26 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {},
-				"sap.f": {}
+				"sap.ui.core": {},
+				"sap.f": {},
+				"sap.m": {}
 			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "RevealGrid/RevealGrid.css"
+				}
+			]
 		},
 		"config": {
 			"sample": {
 				"files": [
 					"GridListBoxContainerReal.view.xml",
 					"GridListBoxContainerReal.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"RevealGrid/RevealGrid.js",
+					"RevealGrid/RevealGrid.css"
 				]
 			}
 		}

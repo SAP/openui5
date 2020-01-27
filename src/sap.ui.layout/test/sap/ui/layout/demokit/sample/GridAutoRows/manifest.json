@@ -22,6 +22,9 @@
 			"css": [
 				{
 					"uri": "css/main.css"
+				},
+				{
+					"uri": "RevealGrid/RevealGrid.css"
 				}
 			]
 		},
@@ -29,8 +32,11 @@
 			"sample": {
 				"files": [
 					"GridAutoRows.view.xml",
+					"GridAutoRows.controller.js",
 					"css/main.css",
-					"manifest.json"
+					"manifest.json",
+					"RevealGrid/RevealGrid.js",
+					"RevealGrid/RevealGrid.css"
 				]
 			}
 		}
