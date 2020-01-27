@@ -123,10 +123,6 @@ sap.ui.define(['sap/ui/core/Element',
 		 * @public
 		 */
 		TabContainerItem.prototype.setProperty = function(sName, vValue, bSuppressInvalidation) {
-			if (sName === "modified") {
-				bSuppressInvalidation = true;
-			}
-
 			this.fireItemPropertyChanged({
 				itemChanged : this,
 				propertyKey : sName,
