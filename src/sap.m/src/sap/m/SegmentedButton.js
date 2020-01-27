@@ -924,6 +924,7 @@ function(
 		this.addStyleClass("sapMSegBSelectWrapper");
 		this._lazyLoadSelectForm();
 		this._syncSelect();
+		this._syncAriaAssociations();
 	};
 
 	/**
@@ -935,6 +936,24 @@ function(
 		this.removeStyleClass("sapMSegBSelectWrapper");
 		this.getAggregation("_select").removeAllItems();
 		this.destroyAggregation("_select");
+	};
+
+	SegmentedButton.prototype._syncAriaAssociations = function () {
+		var oSelect = this.getAggregation("_select");
+		this.getAriaLabelledBy().forEach(function (oLabel) {
+			if (oSelect.getAriaLabelledBy().indexOf(oLabel) === -1) {
+				oSelect.addAriaLabelledBy(oLabel);
+			}
+		});
+
+		// sap.m.Select doesn't have an ariaDescribedBy association, so we copy
+		// the ariaDescribedBy association elements from the sap.m.SegmentedButton instance
+		// into the ariaLabelledBy association in the sap.m.Select instance
+		this.getAriaDescribedBy().forEach(function (oDesc) {
+			if (oSelect.getAriaLabelledBy().indexOf(oDesc) === -1) {
+				oSelect.addAriaLabelledBy(oDesc);
+			}
+		});
 	};
 
 	/**

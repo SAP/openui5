@@ -161,6 +161,30 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	QUnit.test("Accessibility state is written when SegmentedButton is rendered as a sap.m.Select", function(assert) {
+		// prepare
+		var oSegmentedButton = new SegmentedButton({
+				ariaLabelledBy: [
+					new Label("labelledBy_test", {text: "labelledBy_test"})
+				],
+				ariaDescribedBy: [
+					new Label("describedBy_test", {text: "describedBy_test"})
+				]
+			}),
+			oSelect;
+
+		// act
+		oSegmentedButton._toSelectMode();
+		oSelect = oSegmentedButton.getAggregation("_select");
+
+		// assert
+		assert.equal(oSelect.getAriaLabelledBy()[0], "labelledBy_test", "select control has corret ariaLabelledBy values from sap.m.SegmentedButton");
+		assert.equal(oSelect.getAriaLabelledBy()[1], "describedBy_test", "select control has corret ariaDescribedBy values from sap.m.SegmentedButton");
+
+		// clean
+		oSegmentedButton.destroy();
+	});
+
 	QUnit.test("SegmentedButton selection before and after rendering", function(assert) {
 		// Arrange
 		var oButton1 = new Button(),
