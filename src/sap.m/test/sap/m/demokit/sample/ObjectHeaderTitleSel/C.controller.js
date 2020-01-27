@@ -26,7 +26,9 @@ sap.ui.define([
 					type: "XML",
 					name: "sap.m.sample.ObjectHeaderTitleSel.Popover",
 					controller: this
-				});
+				}).then(function (oPopover) {
+					this._oPopover = oPopover;
+				}.bind(this));
 			}
 			return this._oPopover;
 		},
@@ -47,9 +49,9 @@ sap.ui.define([
 
 			if (oPopoverFragment instanceof Promise) {
 				oPopoverFragment.then(function(oPopover) {
-					oPopover.setModel(oSourceControl.getModel());
-					oPopover.openBy(oControlDomRef);
-				});
+					this._oPopover.setModel(oSourceControl.getModel());
+					this._oPopover.openBy(oControlDomRef);
+				}.bind(this));
 			} else {
 				oPopoverFragment.setModel(oSourceControl.getModel());
 				oPopoverFragment.openBy(oControlDomRef);
