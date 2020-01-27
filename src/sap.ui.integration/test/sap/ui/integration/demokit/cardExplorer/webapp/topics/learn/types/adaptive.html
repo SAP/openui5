@@ -34,171 +34,145 @@
 		</div>
 		<p>With this type of card, application developers can visualize and reuse cards that are created using the Microsoft Adaptive Cards specification and manifest.
 			Default and Numeric card headers can be optionally used in order to provide a title and general information about the Adaptive Card. The content of the card
-			consist of a JSON object, which defines the card structure, content and actions. For more information of all properties of Adaptive Card, see <a href="https://adaptivecards.io/explorer/" target="_blank">https://adaptivecards.io</a>.
+			consist of a JSON object, which defines the card structure, content, and actions. For more information of all properties of Adaptive Card, see <a href="https://adaptivecards.io/explorer/" target="_blank">https://adaptivecards.io</a>.
 		</p>
 		<h2 id="properties">Usage</h2>
-		Microsoft Adaptive Card's <code>Action.OpenUrl</code> & <code>Action.Submit</code> event parameters could be accessed by attaching to the <code>action</code> event of the Integration Card. The following parameters will be received:
-		<h4>Action.OpenUrl</h4>
-			<table>
-				<tr>
-					<th>Property</th>
-					<th>Value</th>
-				</tr>
-				<tr>
-					<td>type</td>
-					<td>"Navigation"</td>
-				</tr>
-				<tr>
-					<td>manifestParameters</td>
-					<td>url (property of the Action.OpenUrl)</td>
-				</tr>
-			</table>
-		<h4>Action.Submit</h4>
-			<table>
-				<tr>
-					<th>Property</th>
-					<th>Value</th>
-				</tr>
-				<tr>
-					<td>type</td>
-					<td>"Submit"</td>
-				</tr>
-				<tr>
-					<td>manifestParameters</td>
-					<td>data (property of the Action.Submit)</td>
-				</tr>
-			</table>
+		<ul>
+			<li>The JSON-serialized card object model of a MS Adaptive Card could be added inline or dynamically, requested as a JSON file in the content area of an Integration Card.</li>
+			<li>
+					The <code>Action.OpenUrl</code> and <code>Action.Submit</code> event parameters could be accessed when attached to the <code>action</code> event of the Integration Card. The following parameters will be received:
+				<h4>Action.OpenUrl</h4>
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Value</th>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>"Navigation"</td>
+					</tr>
+					<tr>
+						<td>manifestParameters</td>
+						<td>url (property of the Action.OpenUrl)</td>
+					</tr>
+				</table>
+				<h4>Action.Submit</h4>
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Value</th>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>"Submit"</td>
+					</tr>
+					<tr>
+						<td>manifestParameters</td>
+						<td>data (property of the Action.Submit)</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
 
 		<h2 id="example">Example</h2>
-		<p>Define the type and data for the card:
-		</p>
-		<pre class="prettyprint">{
-	"sap.card": {
-		"type": "AdaptiveCard",
-		"content": {}
-	}
-}</pre>
-
-		<p>Define the content of the card:
-		</p>
-		<pre class="prettyprint">"content": {
-	  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-	  "type": "AdaptiveCard",
-	  "version": "1.0",
-	  "body": [
-		{
-		  "type": "TextBlock",
-		  "text": "Publish Adaptive Card schema",
-		  "weight": "Bolder",
-		  "size": "Medium"
-		},
-		{
-		  "type": "ColumnSet",
-		  "columns": [
-			{
-			  "type": "Column",
-			  "width": "auto",
-			  "items": [
-				{
-				  "type": "Image",
-				  "url": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
-				  "size": "Small",
-				  "style": "Person"
-				}
-			  ]
-			},
-			{
-			  "type": "Column",
-			  "width": "stretch",
-			  "items": [
-				{
-				  "type": "TextBlock",
-				  "text": "Matt Hidinger",
-				  "weight": "Bolder",
-				  "wrap": true
-				},
-				{
-				  "type": "TextBlock",
-				  "spacing": "None",
-				  "text": "Created {{DATE(2017-02-14T06:08:39Z, SHORT)}}",
-				  "isSubtle": true,
-				  "wrap": true
-				}
-			  ]
-			}
-		  ]
-		},
-		{
-		  "type": "TextBlock",
-		  "text": "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
-		  "wrap": true
-		},
-		{
-		  "type": "FactSet",
-		  "facts": [
-			{
-			  "title": "Board:",
-			  "value": "Adaptive Card"
-			},
-			{
-			  "title": "List:",
-			  "value": "Backlog"
-			},
-			{
-			  "title": "Assigned to:",
-			  "value": "Matt Hidinger"
-			},
-			{
-			  "title": "Due date:",
-			  "value": "Not set"
-			}
-		  ]
-		}
-	  ],
-	  "actions": [
-		{
-		  "type": "Action.ShowCard",
-		  "title": "Set due date",
-		  "card": {
+		<p>Define the type and data for the card:</p>
+	<pre class="prettyprint">{
+		"sap.card": {
 			"type": "AdaptiveCard",
-			"body": [
-			  {
-				"type": "Input.Date",
-				"id": "dueDate"
-			  }
-			],
-			"actions": [
-			  {
-				"type": "Action.Submit",
-				"title": "OK"
-			  }
-			]
-		  }
-		},
-		{
-		  "type": "Action.ShowCard",
-		  "title": "Comment",
-		  "card": {
-			"type": "AdaptiveCard",
-			"body": [
-			  {
-				"type": "Input.Text",
-				"id": "comment",
-				"isMultiline": true,
-				"placeholder": "Enter your comment"
-			  }
-			],
-			"actions": [
-			  {
-				"type": "Action.Submit",
-				"title": "OK"
-			  }
-			]
-		  }
+			"content": {}
 		}
-	  ]
 	}</pre>
 
+		<p>Define the content of the card by including the JSON-serialized card object model inline:</p>
+	<pre class="prettyprint">"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+			{
+				"type": "TextBlock",
+				"text": "Publish Adaptive Card schema",
+				"weight": "Bolder",
+				"size": "Medium"
+			},
+			{
+				"type": "ColumnSet",
+				"columns": [
+					{
+						"type": "Column",
+						"width": "auto",
+						"items": [
+							{
+								"type": "Image",
+								"url": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
+								"size": "Small",
+								"style": "Person"
+							}
+						]
+					},
+					{
+						"type": "Column",
+						"width": "auto",
+						"items": [
+							{
+								"type": "TextBlock",
+								"text": "Matt Hidinger",
+								"weight": "Bolder",
+								"wrap": true
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "TextBlock",
+				"text": "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
+				"wrap": true
+			},
+			{
+				"type": "FactSet",
+				"facts": [
+					{
+						"title": "Board:",
+						"value": "Adaptive Card"
+					},
+					{
+						"title": "List:",
+						"value": "Backlog"
+					}
+				]
+			}
+		],
+		"actions": [
+			{
+				"type": "Action.ShowCard",
+				"title": "Set due date",
+				"card": {
+					"type": "AdaptiveCard",
+					"body": [
+						{
+							"type": "Input.Date",
+							"id": "dueDate"
+						}
+					],
+					"actions": [
+						{
+							"type": "Action.Submit",
+							"title": "OK"
+						}
+					]
+				}
+			}
+		]
+	}</pre>
+
+		<p>Or load it from a JSON file:</p>
+
+	<pre class="prettyprint">"content": {
+		"request": {
+			"url": "./adaptiveCard.json"
+		}
+	}</pre>
 		<p>Create the widget card that can actually use the manifest.json which we created:</p>
 		<pre class="prettyprint">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
