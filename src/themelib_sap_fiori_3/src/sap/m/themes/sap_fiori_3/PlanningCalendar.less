@@ -78,3 +78,8 @@ html.sap-desktop .sapMPlanCal .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCal
 .sapMPlanCal:not(.sapMPlanCalNoHead) > .sapMList > table > tbody > tr > td > .sapUiCalendarRow:not(.sapMPlanCalRowLarge) > .sapUiCalendarRowApps {
 	min-height: 5rem;
 }
+
+.sapUiSizeCompact .sapMPlanCal .sapUiCalItem.sapUiCalItemNow > .sapUiCalSpecialDate,
+.sapMPlanCal .sapUiCalItem.sapUiCalItemNow > .sapUiCalSpecialDate {
+	width: calc(~'100% - 0.125rem');
+}
