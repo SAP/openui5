@@ -119,6 +119,17 @@
 				"config": "test-resources/sap/m/demokit/orderbrowser/demoapp.json"
 			},
 			{
+				"icon": "accelerated",
+				"text": "Team Calendar",
+				"desc": "Calendar demo app for team and team members",
+				"ref": "test-resources/sap/m/demokit/PlanningCalendarSinglePlanningCalendar/webapp/index.html",
+				"links": {
+					"Run Integration Tests": "test-resources/sap/m/demokit/PlanningCalendarSinglePlanningCalendar/webapp/test/integration/opaTests.qunit.html"
+				},
+				"category": "Showcase",
+				"config": "test-resources/sap/m/demokit/PlanningCalendarSinglePlanningCalendar/demoapp.json"
+			},
+			{
 				"icon": "widgets",
 				"text": "Icon Explorer",
 				"desc": "All our icons at your fingertips",

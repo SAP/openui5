@@ -1,0 +1,50 @@
+{
+	"sap.app": {
+		"id": "sap.m.demokit.PlanningCalendarSinglePlanningCalendar.webapp",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"config": {
+			"demokit": {
+				"iframe": "webapp/index.html",
+				"stretch": true,
+				"files": [
+					"webapp/controller/NotFound.controller.js",
+					"webapp/controller/PlanningCalendar.controller.js",
+					"webapp/controller/SinglePlanningCalendar.controller.js",
+					"webapp/images/Donna_Moore.jpg",
+					"webapp/images/Elena_Petrova.jpg",
+					"webapp/images/John_Li.jpg",
+					"webapp/images/John_Miller.png",
+					"webapp/model/Calendar.json",
+					"webapp/model/formatter.js",
+					"webapp/test/integration/arrangements/Startup.js",
+					"webapp/test/integration/pages/App.js",
+					"webapp/test/integration/pages/Browser.js",
+					"webapp/test/integration/pages/NotFound.js",
+					"webapp/test/integration/pages/PlanningCalendar.js",
+					"webapp/test/integration/pages/SinglePlanningCalendar.js",
+					"webapp/test/integration/AllJourneys.js",
+					"webapp/test/integration/NotFoundJourney.js",
+					"webapp/test/integration/PlanningCalendarJourney.js",
+					"webapp/test/integration/SinglePlanningCalendarJourney.js",
+					"webapp/test/integration/opaTests.qunit.js",
+					"webapp/test/integration/opaTests.qunit.html",
+					"webapp/view/App.view.xml",
+					"webapp/view/Legend.fragment.xml",
+					"webapp/view/NotFound.view.xml",
+					"webapp/view/ObjectNotFound.view.xml",
+					"webapp/view/PlanningCalendar.view.xml",
+					"webapp/view/SinglePlanningCalendar.view.xml",
+					"webapp/Component.js",
+					"webapp/index.html",
+					"webapp/manifest.json",
+					"manifest.json",
+					"ui5.yaml"
+				]
+			}
+		}
+	}
+}

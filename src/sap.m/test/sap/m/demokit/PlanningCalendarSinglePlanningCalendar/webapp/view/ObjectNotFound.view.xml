@@ -1,0 +1,19 @@
+<mvc:View
+	controllerName="teamCalendar.controller.NotFound"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<MessagePage
+		id="objectNotFoundPage"
+		title="Team Member Calendar"
+		text="Team Member not found"
+		icon="sap-icon://person-placeholder">
+		<customDescription>
+			<Link
+				id="link"
+				text="Back to Team Calendar"
+				press=".onLinkPressed" />
+		</customDescription>
+	</MessagePage>
+
+</mvc:View>

@@ -1,0 +1,546 @@
+
+{
+	"startDate": "2019-10-01T08:00:00",
+	"viewKey":	"OneMonth",
+	"supportedAppointmentItems": [
+		{
+			"text": "Team Meeting",
+			"type": "Type01"
+		},
+		{
+			"text": "Personal",
+			"type": "Type05"
+		},
+		{
+			"text": "Discussions",
+			"type": "Type08"
+		},
+		{
+			"text": "Out of office",
+			"type": "Type09"
+		},
+		{
+			"text": "Private meeting",
+			"type": "Type03"
+		}
+	],
+	"team": [
+
+		{
+			"personID": 	"PersonID_1",
+			"pic":			"images/John_Miller.png",
+			"name":			"John Miller",
+			"role":			"Scrum Master",
+			"appointments": [
+				{
+					"start":		"2019-10-01T09:00",
+					"end":			"2019-10-01T11:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 1",
+					"type":			"Type01",
+					"tentative":	true
+				 },
+				 {
+					"start":		"2019-10-04T09:00",
+					"end":			"2019-10-04T17:30",
+					"title":		"Face to Face",
+					"info": 		"Room 13",
+					"pic":			"images/Donna_Moore.jpg",
+					"type":			"Type05",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-07T09:00",
+					"end":			"2019-10-07T11:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 1",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-11T09:00",
+					"end":			"2019-10-11T17:30",
+					"title":		"Face to Face",
+					"info": 		"Room 13",
+					"pic":			"images/Donna_Moore.jpg",
+					"type":			"Type05",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-10T09:00",
+					"end":			"2019-10-10T17:00",
+					"title":		"Show and Tell",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-16T09:00",
+					"end":			"2019-10-16T11:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 1",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-17T14:00",
+					"end":			"2019-10-17T16:00",
+					"title":		"Release Plan Presentation",
+					"info": 		"Conf. Room 1",
+					"pic":			"sap-icon://legend",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-18T09:30",
+					"end":			"2019-10-18T12:00",
+					"title":		"Training",
+					"info": 		"Training Hall",
+					"pic":			"sap-icon://education",
+					"type":			"Type05",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-21T09:00",
+					"end":			"2019-10-21T11:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 1",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-23T10:00",
+					"end":			"2019-10-23T13:00",
+					"title":		"Company Security",
+					"info": 		"Conf. Room 3",
+					"pic":			"sap-icon://legend",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-24T09:30",
+					"end":			"2019-10-24T13:00",
+					"title":		"Dentist",
+					"info": 		"",
+					"pic":			"sap-icon://offsite-work",
+					"type":			"Type09",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-29T14:00",
+					"end":			"2019-10-29T15:00",
+					"title":		"Face to Face",
+					"info": 		"Room 13",
+					"pic":			"images/Donna_Moore.jpg",
+					"type":			"Type05",
+					"tentative":	false
+				 }
+			],
+			"headers": [
+				{
+					"start":		"2019-10-08T00:00:00",
+					"end":			"2019-10-10T00:00:00",
+					"title":		"Team Building",
+					"type":			"Type09"
+				},
+				{
+					"start":		"2019-10-24T00:00:00",
+					"end":			"2019-10-26T00:00:00",
+					"title":		"Business Trip",
+					"type":			"Type05"
+				}
+			]
+		},
+
+		{
+			"personID": 	"PersonID_2",
+			"pic":			"images/Donna_Moore.jpg",
+			"name":			"Donna Moore",
+			"role":			"Team Manager",
+			"appointments": [
+				{
+					"start":		"2019-10-01T09:00",
+					"end":			"2019-10-01T11:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 1",
+					"type":			"Type01",
+					"tentative":	true
+				 },
+				 {
+					"start":		"2019-10-04T09:00",
+					"end":			"2019-10-04T17:30",
+					"title":		"Face to Face",
+					"info": 		"Room 13",
+					"pic":			"images/John_Miller.jpg",
+					"type":			"Type05",
+					"tentative":	false
+				 },
+				{
+					"start":		"2019-10-07T09:00",
+					"end":			"2019-10-07T11:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 1",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-11T09:00",
+					"end":			"2019-10-11T17:30",
+					"title":		"Face to Face",
+					"info": 		"Room 13",
+					"pic":			"images/John_Miller.png",
+					"type":			"Type05",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-14T09:00",
+					"end":			"2019-10-14T17:00",
+					"title":		"Conference in Berlin",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-16T09:00",
+					"end":			"2019-10-16T11:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 1",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-17T14:00",
+					"end":			"2019-10-17T16:00",
+					"title":		"Release Plan Presentation",
+					"info": 		"Conf. Room 1",
+					"pic":			"sap-icon://legend",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-21T09:30",
+					"end":			"2019-10-21T12:00",
+					"title":		"Doctor",
+					"info": 		"City Clinic",
+					"pic":			"sap-icon://offsite-work",
+					"type":			"Type09",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-21T14:00",
+					"end":			"2019-10-21T17:00",
+					"title":		"Company Results",
+					"info": 		"Conf. Room 2",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-23T10:00",
+					"end":			"2019-10-23T13:00",
+					"title":		"Company Security",
+					"info": 		"Conf. Room 3",
+					"pic":			"sap-icon://legend",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-29T14:00",
+					"end":			"2019-10-29T15:00",
+					"title":		"Face to Face",
+					"info": 		"Room 13",
+					"pic":			"images/John_Miller.png",
+					"type":			"Type05",
+					"tentative":	false
+				 }
+			],
+			"headers": [
+				{
+					"start":		"2019-10-08T00:00:00",
+					"end":			"2019-10-10T00:00:00",
+					"title":		"Team Building",
+					"type":			"Type09"
+				},
+				{
+					"start":		"2019-10-14T00:00:00",
+					"end":			"2019-10-16T00:00:00",
+					"title":		"Business Trip",
+					"type":			"Type05"
+				}
+			]
+		},
+
+		{
+			"personID": 	"PersonID_3",
+			"pic":			"images/Elena_Petrova.jpg",
+			"name":			"Elena Petrova",
+			"role":			"Designer",
+			"appointments": [
+				{
+					"start":		"2019-10-03T09:00",
+					"end":			"2019-10-03T17:00",
+					"title":		"The new Design Guide",
+					"info":			"Conf. Room 3",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				{
+					"start":		"2019-10-07T13:00",
+					"end":			"2019-10-07T14:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 2",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-10T11:00",
+					"end":			"2019-10-10T12:30",
+					"title":		"Meet the developers",
+					"info": 		"Room 6",
+					"pic":			"images/John_Li.jpg",
+					"type":			"Type05",
+					"tentative":	true
+				 },
+				 {
+					"start":		"2019-10-11T09:00",
+					"end":			"2019-10-11T17:00",
+					"title":		"The new Design Guide",
+					"info":			"Conf. Room 3",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-14T09:00",
+					"end":			"2019-10-14T11:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 1",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-15T09:00",
+					"end":			"2019-10-15T17:00",
+					"title":		"Photoshop Training",
+					"info": 		"Training Hall",
+					"pic":			"sap-icon://education",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-18T09:30",
+					"end":			"2019-10-18T12:00",
+					"title":		"Security Training",
+					"info": 		"Training Hall",
+					"pic":			"sap-icon://education",
+					"type":			"Type05",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-22T11:00",
+					"end":			"2019-10-22T12:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 2",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-23T10:00",
+					"end":			"2019-10-23T13:00",
+					"title":		"Styling and Typography",
+					"info": 		"Training Hall",
+					"pic":			"sap-icon://education",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-24T19:00",
+					"end":			"2019-10-24T22:00",
+					"title":		"Family Dinner",
+					"info": 		"Nice Restaurant",
+					"type":			"Type03",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-28T09:00",
+					"end":			"2019-10-28T11:00",
+					"title":		"Talk to Mishelle",
+					"type":			"Type05",
+					"tentative":	true
+				 },
+				 {
+					"start":		"2019-10-29T09:00",
+					"end":			"2019-10-29T14:00",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 2",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-31T09:00",
+					"end":			"2019-10-31T17:00",
+					"title":		"Styling and Typography",
+					"info": 		"Training Hall",
+					"pic":			"sap-icon://education",
+					"type":			"Type08",
+					"tentative":	false
+				 }
+			],
+			"headers": [
+				{
+					"start":		"2019-10-08T00:00:00",
+					"end":			"2019-10-10T00:00:00",
+					"title":		"Team Building",
+					"type":			"Type09"
+				},
+				{
+					"start":		"2019-10-10T00:00:00",
+					"end":			"2019-10-12T00:00:00",
+					"title":		"Business Trip",
+					"type":			"Type05"
+				}
+			]
+		},
+
+		{
+			"personID": 	"PersonID_4",
+			"pic":			"images/John_Li.jpg",
+			"name":			"John Li",
+			"role":			"Developer",
+			"appointments": [
+				{
+					"start":		"2019-10-02T14:00",
+					"end":			"2019-10-02T16:00",
+					"title":		"Doctor",
+					"info": 		"Town Hospital",
+					"pic":			"sap-icon://offsite-work",
+					"type":			"Type09",
+					"tentative":	false
+				 },
+				{
+					"start":		"2019-10-07T13:00",
+					"end":			"2019-10-07T14:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 2",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-10T11:00",
+					"end":			"2019-10-10T12:30",
+					"title":		"Meet the designers",
+					"info": 		"Room 6",
+					"pic":			"images/Elena_Petrova.jpg",
+					"type":			"Type05",
+					"tentative":	true
+				 },
+				 {
+					"start":		"2019-10-14T09:00",
+					"end":			"2019-10-14T11:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 1",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-15T09:00",
+					"end":			"2019-10-15T17:00",
+					"title":		"Mastering JavaScript",
+					"info":			"Conf. Room 3",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-16T09:00",
+					"end":			"2019-10-16T17:00",
+					"title":		"Introduction to App Development",
+					"info": 		"Training Hall",
+					"pic":			"sap-icon://education",
+					"type":			"Type08",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-17T15:30",
+					"end":			"2019-10-17T17:00",
+					"title":		"Security Training",
+					"info": 		"Training Hall",
+					"pic":			"sap-icon://education",
+					"type":			"Type05",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-22T11:00",
+					"end":			"2019-10-22T12:30",
+					"title":		"Team Meeting",
+					"info": 		"Conf. Room 2",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-23T14:00",
+					"end":			"2019-10-23T16:00",
+					"title":		"Doctor",
+					"info": 		"Town Hospital",
+					"pic":			"sap-icon://offsite-work",
+					"type":			"Type09",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-25T18:00",
+					"end":			"2019-10-25T20:00",
+					"title":		"Play Tennis",
+					"info": 		"with Jessie",
+					"type":			"Type05",
+					"tentative":	true
+				 },
+				 {
+					"start":		"2019-10-29T09:00",
+					"end":			"2019-10-29T11:00",
+					"title":		"Developers Meeting",
+					"type":			"Type01",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-29T11:00",
+					"end":			"2019-10-29T13:00",
+					"title":		"Candidate Interview",
+					"info": 		"Room 7",
+					"type":			"Type05",
+					"tentative":	false
+				 },
+				 {
+					"start":		"2019-10-30T09:00",
+					"end":			"2019-10-30T17:00",
+					"title":		"Mastering JavaScript",
+					"info": 		"Training Hall",
+					"pic":			"sap-icon://education",
+					"type":			"Type08",
+					"tentative":	false
+				 }
+
+			],
+			"headers": [
+				{
+					"start":		"2019-10-08T00:00:00",
+					"end":			"2019-10-10T00:00:00",
+					"title":		"Team Building",
+					"type":			"Type09"
+				},
+				{
+					"start":		"2019-10-11T00:00:00",
+					"end":			"2019-10-12T00:00:00",
+					"title":		"Business Trip",
+					"type":			"Type05"
+				},
+				{
+					"start":		"2019-10-18T00:00:00",
+					"end":			"2019-10-19T00:00:00",
+					"title":		"Business Trip",
+					"type":			"Type05"
+				},
+				{
+					"start":		"2019-10-31T00:00:00",
+					"end":			"2019-11-02T00:00:00",
+					"title":		"Business Trip",
+					"type":			"Type05"
+				}
+			]
+		}
+	]
+}

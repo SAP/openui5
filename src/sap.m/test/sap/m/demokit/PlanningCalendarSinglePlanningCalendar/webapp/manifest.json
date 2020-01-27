@@ -1,0 +1,120 @@
+{
+	"_version": "1.0.0",
+
+	"sap.app": {
+		"id": "teamCalendar",
+		"type": "application",
+		"title": "Team and Personal Calendars Demo Application",
+		"description": "PC & SPC working together",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"mainService": {
+				"uri": "/here/goes/your/serviceUrl/",
+				"type": "JSON",
+				"settings": {
+				}
+			}
+		}
+	},
+
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://task",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+
+
+	"sap.ui5": {
+        "rootView": {
+			"viewName": "teamCalendar.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"models": {
+			"calendar": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/Calendar.json"
+			}
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {
+				},
+				"sap.m": {
+				},
+				"sap.f": {
+				}
+			}
+		},
+		"config": {
+			"fullWidth": true
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewPath": "teamCalendar.view",
+				"viewType": "XML",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": ["notFound"]
+				},
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "teamCalendar",
+					"target": ["teamCalendar"]
+				},
+				{
+					"pattern": "memberCalendar",
+					"name": "objectNotFound",
+					"target": ["objectNotFound"]
+				},
+				{
+					"pattern": "memberCalendar/{selectedKey}",
+					"name": "memberCalendar",
+					"target": ["memberCalendar"]
+				}
+			],
+			"targets": {
+				"teamCalendar": {
+					"viewName": "PlanningCalendar",
+					"viewId": "teamCalendar",
+					"viewLevel": 1,
+					"title": "Team Planning Calendar"
+				},
+				"memberCalendar": {
+					"viewName": "SinglePlanningCalendar",
+					"viewId": "memberCalendar",
+					"viewLevel": 2,
+					"title": "Team Member Calendar"
+				},
+				"objectNotFound": {
+					"viewName": "ObjectNotFound",
+					"viewId": "objectNotFound"
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"viewId": "notFound"
+				}
+			}
+		}
+	}
+}

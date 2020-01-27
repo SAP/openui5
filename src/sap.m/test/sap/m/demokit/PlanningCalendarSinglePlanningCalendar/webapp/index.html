@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Team Calendar Demo Application</title>
+		<script
+			id="sap-ui-bootstrap"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-theme="sap_fiori_3"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-resourceroots='{
+				"teamCalendar": "./",
+				"model": "./model/"
+			}'>
+		</script>
+
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/ui/core/ComponentContainer"
+				], function (ComponentContainer) {
+
+					new ComponentContainer({
+						name : 'teamCalendar',
+						height : "100%",
+						settings : {
+							id : "teamCalendar"
+						}
+					}).placeAt('content');
+				});
+			});
+		</script>
+
+	</head>
+	<body class="sapUiBody sapUiSizeCompact" id="content">
+	</body>
+</html>
