@@ -113,5 +113,21 @@
         ]
       }
     ]
+  },
+  "1.71.9": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "eb27664b55744468a990e8bdb304b0c6dc89259e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: ExpandHeader button is now hidden when no content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005671102019"
+          }
+        ]
+      }
+    ]
   }
 }

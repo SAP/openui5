@@ -1,0 +1,18 @@
+{
+  "1.71.9": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "80dfb816f8490231a9e22331ad7da50f6947c01c",
+        "type": "FIX",
+        "text": " sap-icons-tnt: Restored backward compatibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008086842019"
+          }
+        ]
+      }
+    ]
+  }
+}

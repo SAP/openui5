@@ -525,5 +525,47 @@
         ]
       }
     ]
+  },
+  "1.71.9": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "746e0e9ded8cf599ba4bf0e743762172b8f1d148",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: correctly set owner ID for stashed controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970586639"
+          },
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000781231 2019"
+          }
+        ]
+      },
+      {
+        "id": "cc34fe33d58c29762c3166c418590e0b87058176",
+        "type": "FIX",
+        "text": " format/NumberFormat: currency long format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080004890"
+          }
+        ]
+      },
+      {
+        "id": "03d6bf9ebda6c51bfc2a5bed4671e4b2127cc0a2",
+        "type": "FIX",
+        "text": " handlebars: upgrading to version 4.4.3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970505257"
+          }
+        ]
+      }
+    ]
   }
 }
