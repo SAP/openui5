@@ -12,6 +12,17 @@
             "reference": "1980551878"
           }
         ]
+      },
+      {
+        "id": "37723fbc862e6be88808d7d1544a700794ff83cf",
+        "type": "FIX",
+        "text": " GenericTile content background color in action mode and hover/active state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080040235"
+          }
+        ]
       }
     ]
   }

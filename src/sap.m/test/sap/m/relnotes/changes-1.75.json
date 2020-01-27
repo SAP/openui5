@@ -67,6 +67,133 @@
             "reference": "2080012698"
           }
         ]
+      },
+      {
+        "id": "f8bb46a9223a2480208799346ff0e2dd8694bdba",
+        "type": "FEATURE",
+        "text": " sap.m.UploadCollection",
+        "references": []
+      },
+      {
+        "id": "70aa7e7d17e5d2aeaf12333730e18ab76562518d",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Texts are no longer blurred in Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004104102019"
+          }
+        ]
+      },
+      {
+        "id": "e30d59b0c3643a5a294e2e7fa0963427f0d5bf4f",
+        "type": "FIX",
+        "text": " sap.m.Input: CSS Reset line-height in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970561151"
+          }
+        ]
+      },
+      {
+        "id": "f34488fb152373135ad08da9b8f2557a924f3802",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Arrow background on iPad fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980550812"
+          }
+        ]
+      },
+      {
+        "id": "17b84e2103dea6b18540eb3741ff3ed8d61b5bfb",
+        "type": "FIX",
+        "text": " sap.m.Label: Fixed alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080044780"
+          }
+        ]
+      },
+      {
+        "id": "ae25c7690734635b33adcc814b1fbd0da9dde29d",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: _calculateSpaceForTokenizer validation for missing DOM",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080045558"
+          }
+        ]
+      },
+      {
+        "id": "6340a9d7fc41e0727b15757ed51659478f1dbdfc",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080053598"
+          }
+        ]
+      },
+      {
+        "id": "daa6ba7543f82592486f1c90588ea786664762b1",
+        "type": "FIX",
+        "text": " sap.m.Page: Content section tabindex fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080023882"
+          }
+        ]
+      },
+      {
+        "id": "2d2067c2abb95582d066ce078952f5b34d129b37",
+        "type": "FIX",
+        "text": " sap.m.Panel: Update accordingly aria-labelledby",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080041226"
+          }
+        ]
+      },
+      {
+        "id": "bf174b4319036128ef703a9a9e9ed515a56366d1",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: error is not thrown now and control is rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080033050"
+          }
+        ]
+      },
+      {
+        "id": "cb51110fdcbc338098cc10a3a193efbfa26374ea",
+        "type": "FIX",
+        "text": " sap.m.ScrollBar: Racing condition issue with setContentSize fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980348279"
+          }
+        ]
+      },
+      {
+        "id": "ff00d7cd15b57203459340a3c6a70febcede19fe",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Global Search is displayed properly in the sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080050918"
+          }
+        ]
       }
     ]
   }

@@ -1,0 +1,29 @@
+{
+  "1.75.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "9d64571400af3706b038de0b2c4c1302de5d463b",
+        "type": "FIX",
+        "text": " Component: Only call flex preprocessing hook for valid manifests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080019684"
+          }
+        ]
+      },
+      {
+        "id": "123c2f335c164b442fdf5200b84d46919ca74968",
+        "type": "FIX",
+        "text": " commands: fix destruction of CommandExecutions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980539933"
+          }
+        ]
+      }
+    ]
+  }
+}

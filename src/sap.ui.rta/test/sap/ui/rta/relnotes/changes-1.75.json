@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " Fixing the propagation of rejected promise to the caller",
         "references": []
+      },
+      {
+        "id": "be309cad5ee70ae50797b35db37f3c5dca4dfc01",
+        "type": "FIX",
+        "text": ": RTA - Rename Variants error issue",
+        "references": []
       }
     ]
   }
