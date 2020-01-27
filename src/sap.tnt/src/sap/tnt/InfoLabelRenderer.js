@@ -30,6 +30,7 @@ sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library", "sap/
 				sText = oControl.getText(),
 				sTextDir = oControl.getTextDirection(),
 				sWidth = oControl.getWidth(),
+				sTooltip = oControl.getTooltip(),
 				bDisplayOnly = oControl.getDisplayOnly(),
 				oIcon = oControl.getIcon();
 
@@ -61,6 +62,12 @@ sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library", "sap/
 			if (oIcon) {
 				oRm.addClass("sapTntInfoLabelWithIcon");
 			}
+
+			// add tooltip if available
+			if (sTooltip) {
+				oRm.writeAttributeEscaped("title", sTooltip);
+			}
+
 			oRm.addClass("backgroundColor" + iColorVariant );
 			oRm.writeClasses();
 			oRm.writeStyles();
@@ -79,7 +86,11 @@ sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library", "sap/
 
 			// write the icon
 			if (oIcon) {
-				oRm.writeIcon(oIcon);
+				if (sText && oIcon) { // if there are icon and text the icon shouldn't have a tooltip
+					oRm.writeIcon(oIcon, [], {title: ""});
+				} else {
+					oRm.writeIcon(oIcon);
+				}
 			}
 
 			// write the text
@@ -97,15 +108,21 @@ sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library", "sap/
 
 				oRm.write("<span class='sapUiPseudoInvisibleText'>");
 
-				if (sText !== "") {
+				if (sText) {
 					// there is text content
 					oRm.writeEscaped(InfoLabelRenderer._sAriaText);
 				} else if (!oIcon) {
 					// no text and no icon
 					oRm.writeEscaped(InfoLabelRenderer._sAriaTextEmpty);
 				} else {
-					// icon only
-					oRm.writeEscaped(IconPool.getIconInfo(oControl.getIcon()).text + " " + InfoLabelRenderer._sAriaText);
+					// icon only - write the provided tooltip or icon text or name as fallback
+					if (sTooltip) {
+						oRm.writeEscaped(sTooltip + " " + InfoLabelRenderer._sAriaText);
+					} else if (IconPool.getIconInfo(oControl.getIcon()).text) {
+						oRm.writeEscaped(IconPool.getIconInfo(oControl.getIcon()).text + " " + InfoLabelRenderer._sAriaText);
+					} else {
+						oRm.writeEscaped(IconPool.getIconInfo(oControl.getIcon()).name + " " + InfoLabelRenderer._sAriaText);
+					}
 				}
 
 				oRm.write("</span>");
