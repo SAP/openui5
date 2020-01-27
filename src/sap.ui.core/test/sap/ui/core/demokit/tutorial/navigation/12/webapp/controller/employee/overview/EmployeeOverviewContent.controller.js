@@ -38,14 +38,10 @@ sap.ui.define([
 		_onRouteMatched : function (oEvent) {
 			// save the current query state
 			this._oRouterArgs = oEvent.getParameter("arguments");
-			this._oRouterArgs.query = this._oRouterArgs["?query"] || {};
+			this._oRouterArgs["?query"] = this._oRouterArgs["?query"] || {};
 
-			if (this._oRouterArgs.query) {
-
-				// search/filter via URL hash
-				this._applySearchFilter(this._oRouterArgs.query.search);
-
-			}
+			// search/filter via URL hash
+			this._applySearchFilter(this._oRouterArgs["?query"].search);
 		},
 
 		onSortButtonPressed : function (oEvent) {
@@ -55,8 +51,8 @@ sap.ui.define([
 		onSearchEmployeesTable : function (oEvent) {
 			var oRouter = this.getRouter();
 			// update the hash with the current search term
-			this._oRouterArgs.query.search = oEvent.getSource().getValue();
-			oRouter.navTo("employeeOverview",this._oRouterArgs, true /*no history*/);
+			this._oRouterArgs["?query"].search = oEvent.getSource().getValue();
+			oRouter.navTo("employeeOverview", this._oRouterArgs, true /*no history*/);
 		},
 
 		_initViewSettingsDialog : function () {

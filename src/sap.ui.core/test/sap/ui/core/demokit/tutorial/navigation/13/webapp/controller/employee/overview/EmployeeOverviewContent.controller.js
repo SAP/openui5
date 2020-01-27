@@ -38,17 +38,14 @@ sap.ui.define([
 		_onRouteMatched : function (oEvent) {
 			// save the current query state
 			this._oRouterArgs = oEvent.getParameter("arguments");
-			this._oRouterArgs.query = this._oRouterArgs["?query"] || {};
+			this._oRouterArgs["?query"] = this._oRouterArgs["?query"] || {};
+			var oQueryParameter = this._oRouterArgs["?query"];
 
-			if (this._oRouterArgs.query) {
+			// search/filter via URL hash
+			this._applySearchFilter(oQueryParameter.search);
 
-				// search/filter via URL hash
-				this._applySearchFilter(this._oRouterArgs.query.search);
-
-				// sorting via URL hash
-				this._applySorter(this._oRouterArgs.query.sortField, this._oRouterArgs.query.sortDescending);
-
-			}
+			// sorting via URL hash
+			this._applySorter(oQueryParameter.sortField, oQueryParameter.sortDescending);
 		},
 
 		onSortButtonPressed : function () {
@@ -58,8 +55,8 @@ sap.ui.define([
 		onSearchEmployeesTable : function (oEvent) {
 			var oRouter = this.getRouter();
 			// update the hash with the current search term
-			this._oRouterArgs.query.search = oEvent.getSource().getValue();
-			oRouter.navTo("employeeOverview",this._oRouterArgs, true /*no history*/);
+			this._oRouterArgs["?query"].search = oEvent.getSource().getValue();
+			oRouter.navTo("employeeOverview", this._oRouterArgs, true /*no history*/);
 		},
 
 		_initViewSettingsDialog : function () {
@@ -67,9 +64,9 @@ sap.ui.define([
 			this._oVSD = new ViewSettingsDialog("vsd", {
 				confirm: function (oEvent) {
 					var oSortItem = oEvent.getParameter("sortItem");
-					this._oRouterArgs.query.sortField = oSortItem.getKey();
-					this._oRouterArgs.query.sortDescending = oEvent.getParameter("sortDescending");
-					oRouter.navTo("employeeOverview",this._oRouterArgs, true /*without history*/);
+					this._oRouterArgs["?query"].sortField = oSortItem.getKey();
+					this._oRouterArgs["?query"].sortDescending = oEvent.getParameter("sortDescending");
+					oRouter.navTo("employeeOverview", this._oRouterArgs, true /*without history*/);
 				}.bind(this)
 			});
 
