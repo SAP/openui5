@@ -187,14 +187,13 @@ sap.ui.define([
 		/**
 		 * @param {object} oRootControl - Root control of an app (variant)
 		 * @returns {Promise} Resolved promise with an app variant descriptor
-		 * @param {string} sCurrentLayer - Current working layer
 		 * @description Getting here an app variant descriptor from the layered repository.
 		 */
-		getAppVariantDescriptor: function(oRootControl, sCurrentLayer) {
+		getAppVariantDescriptor: function(oRootControl) {
 			oRootControlRunningApp = oRootControl;
 			var oDescriptor = fnGetDescriptor();
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
-				return DescriptorVariantFactory.loadAppVariant(oDescriptor["sap.app"].id, false, sCurrentLayer);
+				return DescriptorVariantFactory.loadAppVariant(oDescriptor["sap.app"].id, false);
 			}
 			return Promise.resolve(false);
 		},

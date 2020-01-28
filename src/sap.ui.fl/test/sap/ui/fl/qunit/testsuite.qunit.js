@@ -269,6 +269,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/api/AppVariantWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
 				}
 			},
+			"write/api/SmartBusinessWriteAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/SmartBusinessWriteAPI"]
+				}
+			},
 			"write/api/FeaturesAPI": {
 				group: "Write API",
 				coverage: {
