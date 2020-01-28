@@ -185,6 +185,22 @@ function (
 				assert.equal(oNewLib.lazy, oExpectedNewLib.lazy, "lazy is correct");
 			}.bind(this));
 		});
+
+		QUnit.test("when calling 'preprocessManifest' with empty oManifest object ", function (assert) {
+			return Applier.preprocessManifest({}, this.oConfig).then(function() {
+				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 0, "FlexState.getAppDescriptorChanges is not called");
+				assert.equal(this.fnApplyChangeSpy.callCount, 0, "AddLibrary.applyChange is not called");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'preprocessManifest' with component manifest ", function (assert) {
+			var oManifest = {"sap.app": { type: "component" }};
+			return Applier.preprocessManifest(oManifest, this.oConfig).then(function(oNewManifest) {
+				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 0, "FlexState.getAppDescriptorChanges is not called");
+				assert.equal(this.fnApplyChangeSpy.callCount, 0, "AddLibrary.applyChange is not called");
+				assert.equal(oManifest, oNewManifest, "manifest is resolved and not changed");
+			}.bind(this));
+		});
 	});
 
 	QUnit.done(function() {

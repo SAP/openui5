@@ -878,13 +878,24 @@ function(
 			return oManifest && oManifest.getEntry && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type;
 		},
 
+		/** Returns the type of "sap.app" from the manifest object passed.
+		 * @param {sap.ui.core.Manifest} oRawManifest - raw manifest object
+		 * @returns {string | undefined} Manifest object's "type" property for "sap.app" entry
+		 * @private
+		 */
+		_getComponentTypeFromRawManifest: function(oManifest) {
+			return oManifest && oManifest["sap.app"] && oManifest["sap.app"].type;
+		},
+
 		/** Returns <code>true</code> if the passed manifest object is of type "application".
 		 * @param {sap.ui.core.Manifest} oManifest - Manifest object
+		 * @param {boolean} isRaw - is manifest raw object
 		 * @returns {boolean} <code>true</code> if the passed manifest object is of type "application"
 		 * @public
 		 */
-		isApplication: function (oManifest) {
-			return Utils._getComponentTypeFromManifest(oManifest) === "application";
+		isApplication: function (oManifest, isRaw) {
+			var sComponentType = isRaw ? Utils._getComponentTypeFromRawManifest(oManifest) : Utils._getComponentTypeFromManifest(oManifest);
+			return sComponentType === "application";
 		},
 
 		/** Returns <code>true</code> if the passed component is an application component.
