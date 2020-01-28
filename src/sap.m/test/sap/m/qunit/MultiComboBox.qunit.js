@@ -5678,31 +5678,66 @@ sap.ui.define([
 	QUnit.test("_selectItemByKey should set items with valid keys only", function(assert) {
 		// Arrange
 		var oMultiComboBox = new MultiComboBox();
+		var oAddAssociationStub = sinon.stub(oMultiComboBox, "addAssociation");
 		var oFakeEvent = {
 			setMarked: function () {}
 		};
-
 		var fnTestFunction = function() {
 			return "Test";
 		};
+		var aMockItems = [
+			{
+				getId: fnTestFunction,
+				getText: fnTestFunction,
+				data: fnTestFunction,
+				getKey: function () {
+					return null;
+				},
+				isA: function () {
+					return false;
+				},
+				sId: "item1"
+			},
+			{
+				getId: fnTestFunction,
+				getText: fnTestFunction,
+				data: fnTestFunction,
+				getKey: function () {
+					return undefined;
+				},
+				isA: function () {
+					return false;
+				},
+				sId: "item2"
+			},
+			{
+				getId: fnTestFunction,
+				getText: fnTestFunction,
+				data: fnTestFunction,
+				getKey: function () {
+					return "";
+				},
+				isA: function () {
+					return false;
+				},
+				sId: "Test"
+			},
+			{
+				getId: fnTestFunction,
+				getText: fnTestFunction,
+				data: fnTestFunction,
+				getKey: fnTestFunction,
+				isA: function () {
+					return false;
+				},
+				sId: "item3"
+			}
+		];
+
+
 
 		var oGetUnselectedItemsStub = sinon.stub(oMultiComboBox, "_getUnselectedItems", function() {
-			return [
-				{
-					getId: fnTestFunction,
-					getText: fnTestFunction,
-					data: fnTestFunction,
-					getKey: function () {
-						return "";
-					}
-				},
-				{
-					getId: fnTestFunction,
-					getText: fnTestFunction,
-					data: fnTestFunction,
-					getKey: fnTestFunction
-				}
-			];
+			return aMockItems;
 		}),
 		oGetEnabledStub = sinon.stub(oMultiComboBox, "getEnabled", function () {
 			return true;
@@ -5724,23 +5759,118 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// Assert
+		assert.ok(oAddAssociationStub.calledOnce, "addAssociation was called once");
+		assert.strictEqual(oAddAssociationStub.firstCall.args[1], aMockItems[2], "... with the correct item");
+
+
+		assert.ok(oSetSelectionSpy.calledOnce, "setSelection was called once");
 		assert.ok(oSetSelectionSpy.calledWith({
-			item: {
+			item: aMockItems[2],
+			id: "Test",
+			key: "",
+			fireChangeEvent: true,
+			fireFinishEvent: true,
+			suppressInvalidate: true,
+			listItemUpdated: false
+		}), "Selection should be called with item which does not have 'null' or 'undefined' as a key");
+
+		// cleanup
+		oGetUnselectedItemsStub.restore();
+		oAddAssociationStub.restore();
+		oGetEnabledStub.restore();
+		oGetListItemStub.restore();
+		oGetValueStub.restore();
+		oSetSelectionSpy.restore();
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("_selectItemByKey should set sap.ui.coreItems only", function(assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox();
+		var oAddAssociationStub = sinon.stub(oMultiComboBox, "addAssociation");
+		var oFakeEvent = {
+			setMarked: function () {}
+		};
+
+		var fnTestFunction = function() {
+			return "Test";
+		};
+		var aMockItems = [
+			{
 				getId: fnTestFunction,
 				getText: fnTestFunction,
 				data: fnTestFunction,
-				getKey: fnTestFunction
+				getKey: function () {
+					return "test";
+				},
+				isA: function () {
+					return true;
+				},
+				sId: "item1"
 			},
+			{
+				getId: fnTestFunction,
+				getText: fnTestFunction,
+				data: fnTestFunction,
+				getKey: fnTestFunction,
+				isA: function () {
+					return false;
+				},
+				sId: "Test"
+			},
+			{
+				getId: fnTestFunction,
+				getText: fnTestFunction,
+				data: fnTestFunction,
+				getKey: fnTestFunction,
+				isA: function () {
+					return false;
+				},
+				sId: "item2"
+			}
+		];
+
+		var oGetUnselectedItemsStub = sinon.stub(oMultiComboBox, "_getUnselectedItems", function() {
+				return aMockItems;
+			}),
+			oGetEnabledStub = sinon.stub(oMultiComboBox, "getEnabled", function () {
+				return true;
+			}),
+			oGetListItemStub = sinon.stub(oMultiComboBox, "getListItem", function (oItem) {
+				return {
+					isSelected: function () {
+						return false;
+					}
+				};
+			}),
+			oGetValueStub = sinon.stub(oMultiComboBox, "getValue", fnTestFunction),
+			oSetSelectionSpy = sinon.spy(oMultiComboBox, "setSelection");
+
+		// Act
+		oMultiComboBox._selectItemByKey(oFakeEvent);
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(oAddAssociationStub.calledOnce, "addAssociation was called once");
+		assert.strictEqual(oAddAssociationStub.firstCall.args[1], aMockItems[1], "... with the correct item");
+
+
+		assert.ok(oSetSelectionSpy.calledOnce, "setSelection was called once");
+		assert.ok(oSetSelectionSpy.calledWith({
+			item: aMockItems[1],
 			id: "Test",
 			key: "Test",
 			fireChangeEvent: true,
 			fireFinishEvent: true,
 			suppressInvalidate: true,
 			listItemUpdated: false
-		}), "Selection should be called with not empty string as a key");
+		}), "Selection should be called with item which does not have 'null' or 'undefined' as a key");
 
 		// cleanup
 		oGetUnselectedItemsStub.restore();
+		oAddAssociationStub.restore();
 		oGetEnabledStub.restore();
 		oGetListItemStub.restore();
 		oGetValueStub.restore();
