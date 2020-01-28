@@ -433,7 +433,7 @@ sap.ui.define([
 			initialFocus: ((Device.system.desktop && this._oSearchField) ? this._oSearchField : null),
 			draggable: this.getDraggable() && Device.system.desktop,
 			resizable: this.getResizable() && Device.system.desktop
-		});
+		}).addStyleClass("sapMTableSelectDialog");
 		this._dialog = this._oDialog; // for downward compatibility
 		this.setAggregation("_dialog", this._oDialog);
 
