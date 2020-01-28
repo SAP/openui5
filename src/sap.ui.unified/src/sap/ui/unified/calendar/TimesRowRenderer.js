@@ -76,7 +76,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 		this.renderHeader(oRm, oTimesRow, oDate);
 
 		// time items
-		oRm.write("<div id=\"" + sId + "-times\" class=\"sapUiCalItems\">"); // extra DIV around the times to allow rerendering only it's content
+		oRm.write("<div id=\"" + sId + "-times\" role=\"row\" class=\"sapUiCalItems\">"); // extra DIV around the times to allow rerendering only it's content
+
 		this.renderTimes(oRm, oTimesRow, oDate);
 		oRm.write("</div>");
 
