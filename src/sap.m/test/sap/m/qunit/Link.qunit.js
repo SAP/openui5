@@ -248,7 +248,7 @@ sap.ui.define([
 		oLink1.destroy();
 	});
 
-	QUnit.test("setEnabled(false) removes the tabindex", function(assert) {
+	QUnit.test("setEnabled(false) does not remove the tabindex", function(assert) {
 		// arrange
 		var oLink1 = new Link({
 				text: 'linkwithtext'
@@ -263,7 +263,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual($Link1.attr("tabindex"), undefined, "disabled link has no tabindex attribute");
+		assert.strictEqual($Link1.attr("tabindex"), "-1", "disabled link shouldn't be focusable");
 
 		// clean
 		oLink1.destroy();
