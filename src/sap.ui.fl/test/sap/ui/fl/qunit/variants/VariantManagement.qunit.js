@@ -1,8 +1,8 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/variants/VariantManagement", "sap/ui/fl/variants/VariantModel", "sap/ui/fl/Utils", "sap/ui/layout/Grid", "sap/m/Input", "sap/m/RadioButton", "sap/ui/core/Icon", "sap/ui/thirdparty/jquery", "sap/ui/thirdparty/sinon-4"
-], function(VariantManagement, VariantModel, flUtils, Grid, Input, RadioButton, Icon, jQuery, sinon) {
+	"sap/ui/fl/variants/VariantManagement", "sap/ui/fl/variants/VariantModel", "sap/ui/fl/Utils", "sap/ui/layout/Grid", "sap/m/OverflowToolbar", "sap/m/Input", "sap/m/RadioButton", "sap/ui/core/Icon", "sap/ui/thirdparty/jquery", "sap/ui/thirdparty/sinon-4"
+], function(VariantManagement, VariantModel, flUtils, Grid, OverflowToolbar, Input, RadioButton, Icon, jQuery, sinon) {
 	"use strict";
 
 	var oModel;
@@ -955,6 +955,31 @@ sap.ui.define([
 			oItem = this.oVariantManagement._getItemByKey("Standard");
 			assert.ok(oItem);
 			assert.ok(oItem.favorite);
+		});
+
+		QUnit.test("Checking usage inside OverflowToolBar", function(assert) {
+			var oOverflowToolbar = new OverflowToolbar();
+
+			var oContext = this.oVariantManagement.getOverflowToolbarConfig();
+			assert.ok(oContext);
+			assert.ok(oContext.invalidationEvents);
+			assert.equal(oContext.invalidationEvents.length, 3);
+			assert.equal(oContext.invalidationEvents[0], "save");
+			assert.equal(oContext.invalidationEvents[1], "manage");
+			assert.equal(oContext.invalidationEvents[2], "select");
+
+			assert.ok(!this.oVariantManagement.hasListeners(oContext.invalidationEvents[0]));
+			assert.ok(!this.oVariantManagement.hasListeners(oContext.invalidationEvents[1]));
+			assert.ok(!this.oVariantManagement.hasListeners(oContext.invalidationEvents[2]));
+
+			oOverflowToolbar.addContent(this.oVariantManagement);
+
+			assert.ok(this.oVariantManagement.hasListeners(oContext.invalidationEvents[0]));
+			assert.ok(this.oVariantManagement.hasListeners(oContext.invalidationEvents[1]));
+			assert.ok(this.oVariantManagement.hasListeners(oContext.invalidationEvents[2]));
+
+			oOverflowToolbar.removeContent(this.oVariantManagement);
+			oOverflowToolbar.destroy();
 		});
 	});
 
