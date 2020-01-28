@@ -931,14 +931,8 @@ sap.ui.define([
 	 * @since 1.61.0
 	 */
 	Context.prototype.requestSideEffects = function (aPathExpressions, sGroupId) {
-		var that = this,
-			oBinding,
-			oCandidate = /*consistent-this*/that,
-			oContext,
-			oParentContext,
-			sPath,
-			aPaths,
-			sPrefix = "";
+		var aPaths,
+			that = this;
 
 		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
@@ -966,15 +960,64 @@ sap.ui.define([
 				+ JSON.stringify(oPath));
 		});
 
+		sGroupId = sGroupId || this.getUpdateGroupId();
+
+		return Promise.resolve(
+			SyncPromise.resolve(
+				this.oModel.isAutoGroup(sGroupId)
+					&& this.oModel.oRequestor.waitForRunningChangeRequests(sGroupId)
+						.then(function () {
+							that.oModel.oRequestor.relocateAll("$parked." + sGroupId, sGroupId);
+						})
+			).then(function () {
+				// ensure that this is called synchronously when there are no running change
+				// requests (otherwise bubbling up might fail due to temporarily missing caches)
+				return that.requestSideEffectsInternal(aPaths, sGroupId);
+			})
+		).then(function () {
+			// return undefined;
+		});
+	};
+
+	/**
+	 * Finds the context to request side effects with, reduces the paths, checks whether these paths
+	 * are relative to this context and delegates them either to this context's binding or the
+	 * binding's parent context.
+	 *
+	 * @param {string[]} aPaths
+	 *   The paths to request side effects for, relative to this context
+	 * @param {string} sGroupId
+	 *   The effective group ID
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the side effects have been determined and
+	 *   rejecting with an error if loading of side effects fails
+	 *
+	 * @private
+	 */
+	Context.prototype.requestSideEffectsInternal = function (aPaths, sGroupId) {
+		var that = this,
+			sBaseForPathReduction,
+			oBinding,
+			oCandidate = /*consistent-this*/that,
+			oContext,
+			oMetaModel = this.oModel.getMetaModel(),
+			aOwnPaths = [],
+			oParentContext,
+			aParentPaths = [],
+			sParentPrefix,
+			sPath,
+			sPrefix = "",
+			aPromises = [];
+
 		for (;;) {
 			oBinding = oCandidate.getBinding();
 			sPath = oBinding.getPath();
 			oParentContext = oBinding.getContext();
 			if (oBinding.oCache && (!oContext || oBinding.oCache.hasChangeListeners())) {
-				oContext = oCandidate; // binding with own cache is a good target
+				oContext = oCandidate; // active binding with own cache is a good target
 			}
 			if (oContext && sPath) {
-				// bubble further up through empty path only
+				// if we already have a good target, bubble further up through empty path only
 				break;
 			}
 			if (!oBinding.getBoundContext) {
@@ -989,18 +1032,39 @@ sap.ui.define([
 			});
 		}
 
-		sGroupId = sGroupId || this.getUpdateGroupId();
+		oBinding = oContext.getBinding();
+		sBaseForPathReduction = oBinding.getBaseForPathReduction();
 
-		return Promise.resolve(
-			this.oModel.isAutoGroup(sGroupId)
-				? this.oModel.oRequestor.waitForRunningChangeRequests(sGroupId).then(function () {
-					that.oModel.oRequestor.relocateAll("$parked." + sGroupId, sGroupId);
-					return oContext.getBinding().requestSideEffects(sGroupId, aPaths, oContext);
-				})
-				: oContext.getBinding().requestSideEffects(sGroupId, aPaths, oContext)
-		).then(function () {
-			// return undefined;
+		aPaths.forEach(function (sPath) {
+			var sReducedPath = oMetaModel.getReducedPath(
+					_Helper.buildPath(oContext.getPath(), sPath), sBaseForPathReduction),
+				sReducedRelativePath = _Helper.getRelativePath(sReducedPath, oContext.getPath());
+
+			if (sReducedRelativePath === undefined) {
+				// reduced path is not relative to this context -> delegate up
+				aParentPaths.push(sPath);
+			} else {
+				aOwnPaths.push(sReducedRelativePath);
+			}
 		});
+
+		if (aParentPaths.length) {
+			sParentPrefix =
+				_Helper.getRelativePath(oContext.getPath(), oBinding.getContext().getPath());
+
+			aParentPaths = aParentPaths.map(function (sPath) {
+				return _Helper.buildPath(sParentPrefix, sPath);
+			});
+
+			aPromises.push(
+				oBinding.getContext().requestSideEffectsInternal(aParentPaths, sGroupId));
+		}
+
+		if (aOwnPaths.length) {
+			aPromises.push(oBinding.requestSideEffects(sGroupId, aOwnPaths, oContext));
+		}
+
+		return SyncPromise.all(aPromises);
 	};
 
 	/**

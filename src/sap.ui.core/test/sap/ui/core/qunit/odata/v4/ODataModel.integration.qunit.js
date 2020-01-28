@@ -22063,6 +22063,118 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: requestSideEffects refreshes properties at the parent entity with the help of path
+	// reduction via partner attributes. See that bubbling up is necessary again when processing the
+	// reduced path in the parent context.
+	// JIRA: CPOUI5ODATAV4-103
+	QUnit.test("requestSideEffects: path reduction", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<FlexBox binding="{}">\
+		<Text id="note" text="{Note}" />\
+		<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+			<ColumnListItem>\
+				<Text id="position" text="{ItemPosition}" />\
+				<Text id="amount" text="{GrossAmount}" />\
+			</ColumnListItem>\
+		</Table>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+				Note : "Note",
+				SalesOrderID : "42"
+			})
+			.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=GrossAmount,ItemPosition"
+				+ ",SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{GrossAmount : "3.14", ItemPosition : "0010", SalesOrderID : "42"},
+					{GrossAmount : "2.72", ItemPosition : "0020", SalesOrderID : "42"}
+				]
+			})
+			.expectChange("note", "Note")
+			.expectChange("position", ["0010", "0020"])
+			.expectChange("amount", ["3.14", "2.72"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+			that.expectRequest("SalesOrderList('42')?$select=Note", {Note : "refreshed Note"})
+				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?"
+					+ "$select=GrossAmount,ItemPosition,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '42' and ItemPosition eq '0010'", {
+					value : [
+						{GrossAmount : "1.41", ItemPosition : "0010", SalesOrderID : "42"}
+					]
+				})
+				.expectChange("note", "refreshed Note")
+				.expectChange("amount", ["1.41"]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([
+					{$PropertyPath : "SOITEM_2_SO/Note"},
+					{$PropertyPath : "GrossAmount"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: requestSideEffects is called at a binding w/o cache and has to delegate to a
+	// context of the parent binding. Additionally it requests a property from this parent binding
+	// with the help of path reduction via partner attributes. See that only one request is
+	// necessary.
+	// JIRA: CPOUI5ODATAV4-103
+	QUnit.test("requestSideEffects: path reduction and bubble up", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/As(1)}">\
+	<Text id="aValue" text="{AValue}" />\
+	<FlexBox id="bInstance" binding="{AtoB}">\
+		<Text id="bValue" text="{BValue}"/>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("As(1)?$select=AID,AValue&$expand=AtoB($select=BID,BValue)", {
+				AID : 1,
+				AValue : 11,
+				AtoB : {
+					BID : 2,
+					BValue : 12
+				}
+			})
+			.expectChange("aValue", "11")
+			.expectChange("bValue", "12");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("bInstance").getElementBinding().getBoundContext();
+
+			that.expectRequest("As(1)?$select=AValue&$expand=AtoB($select=BValue)", {
+					AValue : 111,
+					AtoB : {
+						BValue : 112
+					}
+				})
+				.expectChange("aValue", "111")
+				.expectChange("bValue", "112");
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([
+					{$PropertyPath : "BtoA/AValue"},
+					{$PropertyPath : "BValue"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: hasPendingChanges and resetChanges work even while late child bindings are trying
 	// to reuse the parent binding's cache.
 	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
