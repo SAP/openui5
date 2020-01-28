@@ -388,7 +388,7 @@ function(
 	 * for example inside ObjectAttribute
 	 */
 	Link.prototype._getTabindex = function() {
-		return this.getText() ? "0" : "-1";
+		return (this.getText() && this.getEnabled()) ? "0" : "-1";
 	};
 
 	/*
