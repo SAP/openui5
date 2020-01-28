@@ -3,8 +3,10 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/v4/lib/_AggregationHelper"
-], function (Log, _AggregationHelper) {
+], function (Log, Filter, FilterOperator, _AggregationHelper) {
 	/*global QUnit*/
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -311,6 +313,34 @@ sap.ui.define([
 			"UI5min__Amount2" : {measure : "Amount2", method : "min"},
 			"UI5max__Amount2" : {measure : "Amount2", method : "max"}
 		}
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesNumber : {}
+			},
+			group : {
+				Region : {}
+			}
+		},
+		mQueryOptions : {
+			$$filterBeforeAggregate : "Name eq 'Foo'"
+		},
+		sApply : "filter(Name eq 'Foo')/groupby((Region),aggregate(SalesNumber))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesNumber : {}
+			},
+			group : {
+				Region : {}
+			}
+		},
+		mQueryOptions : {
+			$$filterBeforeAggregate : "Name eq 'Foo'",
+			$filter : "SalesNumber ge 0"
+		},
+		sApply : "filter(Name eq 'Foo')/groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 0)"
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
 			var mAlias2MeasureAndMethod = {},
@@ -457,6 +487,64 @@ sap.ui.define([
 		assert.strictEqual(_AggregationHelper.hasGrandTotal({A : {}, B : {grandTotal : true}}),
 			true);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("splitFilter: oAggregation or oAggregation.aggregate empty", function (assert) {
+		var oFilter = {};
+
+		assert.deepEqual(_AggregationHelper.splitFilter(oFilter), [oFilter]);
+		assert.deepEqual(_AggregationHelper.splitFilter(oFilter, null), [oFilter]);
+		assert.deepEqual(_AggregationHelper.splitFilter(oFilter, {}), [oFilter]);
+	});
+
+	//*********************************************************************************************
+	function and() {
+		return new Filter(Array.prototype.slice.call(arguments), true);
+	}
+
+	function f(sPath) {
+		return new Filter(sPath);
+	}
+
+	function or() {
+		return new Filter(Array.prototype.slice.call(arguments), false);
+	}
+
+[{
+	filter : f("a1"),
+	result : [f("a1"), undefined]
+}, {
+	filter : f("b"),
+	result : [undefined, f("b")]
+}, {
+	filter : or(f("b1"), f("b2")),
+	result : [undefined, or(f("b1"), f("b2"))]
+}, {
+	filter : or(f("a1"), f("b")),
+	result : [or(f("a1"), f("b")), undefined]
+}, {
+	filter : and(f("a1"), f("a2")),
+	result : [and(f("a1"), f("a2")), undefined]
+}, {
+	filter : and(f("b"), f("a1")),
+	result : [f("a1"), f("b")]
+}, {
+	filter : and(f("a1"), f("a2"), f("b")),
+	result : [and(f("a1"), f("a2")), f("b")]
+}, {
+	filter : and(f("a2"), f("b1"), f("b2")),
+	result : [f("a2"), and(f("b1"), f("b2"))]
+}, {
+	filter : and(f("a1"), and(f("a2"), f("b"))),
+	result : [and(f("a1"), f("a2")), f("b")]
+}].forEach(function (oFixture, i) {
+	QUnit.test("splitFilter: " + i , function (assert) {
+		assert.deepEqual(
+			_AggregationHelper.splitFilter(oFixture.filter, {aggregate : {a1 : {}, a2 : {} }}),
+			oFixture.result
+		);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("hasMinOrMax", function (assert) {
