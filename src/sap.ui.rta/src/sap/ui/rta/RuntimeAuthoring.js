@@ -745,9 +745,12 @@ function(
 		return this._isVersioningEnabled()
 		.then(function (bVersioningEnabled) {
 			if (bVersioningEnabled) {
-				return VersionsAPI.isDraftAvailable();
+				return VersionsAPI.isDraftAvailable({
+					selector: this.getRootControlInstance(),
+					layer: this.getLayer()
+				});
 			}
-		})
+		}.bind(this))
 		.then(function(bDraftAvailable) {
 			if (bDraftAvailable) {
 				return bDraftAvailable;

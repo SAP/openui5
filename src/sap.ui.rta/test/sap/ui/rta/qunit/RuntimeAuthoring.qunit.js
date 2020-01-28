@@ -258,11 +258,16 @@ function(
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is available", function(assert) {
 			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
-			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
+			var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
+			var oPropertyBag = {
+				selector: oCompCont.getComponentInstance(),
+				layer: "CUSTOMER"
+			};
 
 			return this.oRta._isDraftAvailable()
 			.then(function(bDraftAvailable) {
 				assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
+				assert.deepEqual(oDraftAvailableStub.lastCall.args[0], oPropertyBag, "and the property bag was not set correctly");
 			});
 		});
 
