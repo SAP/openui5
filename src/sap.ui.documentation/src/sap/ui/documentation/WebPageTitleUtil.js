@@ -12,7 +12,7 @@ sap.ui.define(['sap/ui/core/Element'],
 		 * @private
 		 * @ui5-restricted sdk
 		 */
-		var WebPageTitleUtil = Element.extend("sap.ui.documentation.sdk.controls.WebPageTitleUtil", {
+		var WebPageTitleUtil = Element.extend("sap.ui.documentation.WebPageTitleUtil", {
 			metadata : {
 				properties: {
 					/**

@@ -15,7 +15,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sdk
 	 */
-	var SDKObjectPageSubSection = ObjectPageSubSection.extend("sap.ui.documentation.sdk.controls.ObjectPageSubSection", {
+	var SDKObjectPageSubSection = ObjectPageSubSection.extend("sap.ui.documentation.ObjectPageSubSection", {
 		metadata: {
 			library: "sap.ui.documentation"
 		},

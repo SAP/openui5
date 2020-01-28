@@ -121,7 +121,7 @@ sap.ui.getCore().attachInit(function() {
 					// main link
 					Then.waitFor({
 						viewName: sViewName,
-						controlType: "sap.ui.documentation.sdk.controls.TitleLink",
+						controlType: "sap.ui.documentation.TitleLink",
 						matchers: [
 							new Ancestor(oCell),
 							new Properties({

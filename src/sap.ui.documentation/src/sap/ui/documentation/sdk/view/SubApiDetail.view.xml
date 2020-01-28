@@ -5,7 +5,7 @@
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:layout="sap.ui.layout"
-		xmlns:custom="sap.ui.documentation.sdk.controls"
+		xmlns:custom="sap.ui.documentation"
 		xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 
 	<m:Page

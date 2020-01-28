@@ -24,20 +24,19 @@ sap.ui.define([
 		types: [],
 		interfaces: [],
 		controls: [
-			"sap.ui.documentation.sdk.controls.BorrowedList",
-			"sap.ui.documentation.sdk.controls.DemokitTreeItem",
-			"sap.ui.documentation.sdk.controls.JSDocText",
-			"sap.ui.documentation.sdk.controls.LightTable",
-			"sap.ui.documentation.sdk.controls.ObjectPageSubSection",
-			"sap.ui.documentation.sdk.controls.ParamText",
-			"sap.ui.documentation.sdk.controls.Search",
-			"sap.ui.documentation.sdk.controls.TitleLink"
+			"sap.ui.documentation.BorrowedList",
+			"sap.ui.documentation.DemokitTreeItem",
+			"sap.ui.documentation.JSDocText",
+			"sap.ui.documentation.LightTable",
+			"sap.ui.documentation.ObjectPageSubSection",
+			"sap.ui.documentation.ParamText",
+			"sap.ui.documentation.Search",
+			"sap.ui.documentation.TitleLink"
 		],
 		elements: [
-			"sap.ui.documentation.sdk.controls.Row",
-			"sap.ui.documentation.sdk.controls.WebPageTitleUtil"
-		],
-		noLibraryCSS: true
+			"sap.ui.documentation.Row",
+			"sap.ui.documentation.WebPageTitleUtil"
+		]
 	});
 
 	/**

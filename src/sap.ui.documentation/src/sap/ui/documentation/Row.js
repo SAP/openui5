@@ -12,7 +12,7 @@ sap.ui.define(['sap/ui/core/Element'],
 		 * @private
 		 * @ui5-restricted sdk
 		 */
-		return Element.extend("sap.ui.documentation.sdk.controls.Row", {
+		return Element.extend("sap.ui.documentation.Row", {
 			metadata : {
 				library: "sap.ui.documentation",
 				properties: {

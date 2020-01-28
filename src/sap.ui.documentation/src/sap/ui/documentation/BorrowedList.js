@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sdk
 	 */
-	return Control.extend("sap.ui.documentation.sdk.controls.BorrowedList", {
+	return Control.extend("sap.ui.documentation.BorrowedList", {
 		metadata: {
 			library: "sap.ui.documentation",
 			properties: {

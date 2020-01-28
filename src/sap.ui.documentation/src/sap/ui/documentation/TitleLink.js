@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sdk
 	 */
-	var TitleLink = Title.extend("sap.ui.documentation.sdk.controls.TitleLink", {
+	var TitleLink = Title.extend("sap.ui.documentation.TitleLink", {
 		metadata: {
 			library: "sap.ui.documentation",
 			properties: {

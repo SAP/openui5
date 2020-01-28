@@ -3,7 +3,7 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:f="sap.ui.layout.form"
 		xmlns:core="sap.ui.core"
-		xmlns:custom="sap.ui.documentation.sdk.controls">
+		xmlns:custom="sap.ui.documentation">
 	<Dialog
 			id="aboutDialog"
 			resizable="true"

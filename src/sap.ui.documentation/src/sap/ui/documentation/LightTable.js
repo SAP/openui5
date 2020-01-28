@@ -12,7 +12,7 @@ sap.ui.define(['sap/ui/core/Control'],
 		 * @private
 		 * @ui5-restricted sdk
 		 */
-		return Control.extend("sap.ui.documentation.sdk.controls.LightTable", {
+		return Control.extend("sap.ui.documentation.LightTable", {
 			metadata : {
 				library: "sap.ui.documentation",
 				properties: {
@@ -31,7 +31,7 @@ sap.ui.define(['sap/ui/core/Control'],
 					/**
 					 * Rows of the table.
 					 */
-					rows: {type: "sap.ui.documentation.sdk.controls.Row", multiple: true}
+					rows: {type: "sap.ui.documentation.Row", multiple: true}
 				}
 			},
 			renderer: {

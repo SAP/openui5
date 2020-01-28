@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
 		 * @private
 		 * @ui5-restricted sdk
 		 */
-        var Search = Control.extend("sap.ui.documentation.sdk.controls.Search", {
+        var Search = Control.extend("sap.ui.documentation.Search", {
             metadata : {
                 library : "sap.ui.documentation",
                 properties : {
