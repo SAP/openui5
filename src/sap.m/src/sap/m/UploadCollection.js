@@ -2826,7 +2826,7 @@ sap.ui.define([
 			var sTooltip = this.getInstantUpload() ? this._oRb.getText("UPLOADCOLLECTION_UPLOAD") : this._oRb.getText("UPLOADCOLLECTION_ADD");
 			this._iFUCounter = this._iFUCounter + 1; // counter for FileUploader instances
 			this._oFileUploader = new FileUploader(this.getId() + "-" + this._iFUCounter + "-uploader", {
-				buttonOnly: false,
+				buttonOnly: true,
 				buttonText: sTooltip,
 				tooltip: sTooltip,
 				iconOnly: false,
