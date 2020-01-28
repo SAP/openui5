@@ -118,6 +118,9 @@ sap.ui.define([
 	 */
 	var VariantManagement = Control.extend("sap.ui.fl.variants.VariantManagement", /** @lends sap.ui.fl.variants.VariantManagement.prototype */ {
 		metadata: {
+			interfaces : [
+				"sap.m.IOverflowToolbarContent"
+			],
 			library: "sap.ui.fl",
 			designtime: "sap/ui/fl/designtime/variants/VariantManagement.designtime",
 			properties: {
@@ -388,6 +391,21 @@ sap.ui.define([
 		this.addDependent(this.oVariantLayout);
 	};
 
+	/**
+	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+	 * Registers invalidations event which is fired when width of the control is changed.
+	 *
+	 * @protected
+	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 */
+	VariantManagement.prototype.getOverflowToolbarConfig = function() {
+		var oConfig = {
+			canOverflow: false,
+			invalidationEvents: ["save", "manage", "select"]
+		};
+
+		return oConfig;
+	};
 
 	/**
 	 * Returns the title control of the <code>VariantManagement</code>. This is used in the key user scenario.
