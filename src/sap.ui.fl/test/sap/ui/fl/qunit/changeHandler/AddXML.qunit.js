@@ -23,27 +23,9 @@ sap.ui.define([
 
 	var sFragmentPath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/Fragment";
 	mPreloadedModules[sFragmentPath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core"><Button xmlns="sap.m" id="button" text="Hello World"></Button></core:FragmentDefinition>';
-	var sFragmentInvalidTypePath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/FragmentInvalidType";
-	mPreloadedModules[sFragmentInvalidTypePath] = '<ManagedObject xmlns="sap.ui.base" id="managedObject"></ManagedObject>';
-	var sFragmentMultiplePath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/FragmentMultiple";
-	mPreloadedModules[sFragmentMultiplePath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
-		'<Button xmlns="sap.m" id="button1" text="Hello World"></Button>' +
-		'<Button xmlns="sap.m" id="button2" text="Hello World"></Button>' +
-		'<Button xmlns="sap.m" id="button3" text="Hello World"></Button>' +
-		'</core:FragmentDefinition>';
-	var sFragmentMultipleInvalidTypesPath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/FragmentMultipleInvalidTypes";
-	mPreloadedModules[sFragmentMultipleInvalidTypesPath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:base="sap.ui.base">' +
-		'<Button xmlns="sap.m" id="button" text="Hello World"></Button>' +
-		'<Button xmlns="sap.m" id="button2" text="Hello World"></Button>' +
-		'<base:ManagedObject id="managedObject"></base:ManagedObject>' +
-		'</core:FragmentDefinition>';
-	var sFragmentInvalidPath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/FragmentInvalid";
-	mPreloadedModules[sFragmentInvalidPath] = 'invalidFragment';
-	var sNonExistingPath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/NonExisting";
 
 	sap.ui.require.preload(mPreloadedModules);
 
-	var sTypeError = "The content of the xml fragment does not match the type of the targetAggregation: ";
 	var sWrongAggregationError = "The given Aggregation is not available in the given control: hbox";
 
 	// the completeChangeContent function ignores the fragment property, but in applyChange we still need the information.
@@ -179,9 +161,13 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("When applying the change on a js control tree", function(assert) {
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-
 			assert.equal(this.oHBox.getItems().length, 2, "after the change there are 2 items in the hbox");
 			assert.equal(this.oHBox.getItems()[1].getId(), "projectId.button", "the fragments control id is prefixed with project id");
+			var mRevertData = {
+				id: "projectId.button",
+				aggregationName: "items"
+			};
+			assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
@@ -194,44 +180,11 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("When applying the change on a js control tree with multiple root elements and one invalid type inside", function(assert) {
-			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
-
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
-
-			assert.equal(this.oHBox.getItems().length, 1, "after the change there is still only 1 item in the hbox");
-		});
-
 		QUnit.test("When reverting the change on a js control tree", function(assert) {
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
 			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
 			assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
 			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
-		});
-
-		QUnit.test("When reverting the change on a js control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultiplePath);
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
-			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
-		});
-
-		QUnit.test("When reverting a change that failed on a js control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
 		});
 	});
 
@@ -302,8 +255,13 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("When applying the change on a xml control tree", function(assert) {
 			var oHBoxItems = this.oHBox.childNodes[1];
+			var mRevertData = {
+				id: "projectId.button",
+				aggregationName: "items"
+			};
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
 			assert.equal(oHBoxItems.childNodes.length, 2, "after the addXML there are two children of the HBox");
+			assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {
@@ -312,16 +270,6 @@ sap.ui.define([
 			assert.throws(
 				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
 				Error(sWrongAggregationError),
-				"then apply change throws an error"
-			);
-		});
-
-		QUnit.test("When applying the change on a xml control tree with an invalid type", function(assert) {
-			this.oChange.setModuleName(sFragmentInvalidTypePath);
-
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error(sTypeError + this.sAggregationType),
 				"then apply change throws an error"
 			);
 		});
@@ -335,71 +283,7 @@ sap.ui.define([
 			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
 			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
 		});
-
-		QUnit.test("When applying the change on a xml control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultiplePath);
-
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			var oHBoxItems = this.oHBox.childNodes[1];
-			assert.equal(oHBoxItems.childNodes.length, 4, "after the change there are 4 items in the hbox");
-			assert.equal(oHBoxItems.childNodes[1].getAttribute("id"), "projectId.button1", "then the first button in the fragment has the correct index and ID");
-			assert.equal(oHBoxItems.childNodes[2].getAttribute("id"), "projectId.button2", "then the second button in the fragment has the correct index and ID");
-			assert.equal(oHBoxItems.childNodes[3].getAttribute("id"), "projectId.button3", "then the third button in the fragment has the correct index and ID");
-		});
-
-		QUnit.test("When applying the change on a xml control tree with multiple root elements and one invalid type inside", function(assert) {
-			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
-
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
-
-			var oHBoxItems = this.oHBox.childNodes[1];
-			assert.equal(oHBoxItems.childNodes.length, 1, "after the change there is still only 1 item in the hbox");
-		});
-
-		QUnit.test("When reverting the change on an xml control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultiplePath);
-
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			var oHBoxItems = this.oHBox.childNodes[1];
-			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
-			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
-		});
-
-		QUnit.test("When reverting a failed change on an xml control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
-
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			var oHBoxItems = this.oHBox.childNodes[1];
-			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
-		});
-
-		QUnit.test("When applying the change with a not found module", function(assert) {
-			this.oChange.setModuleName(sNonExistingPath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				function(err) {
-					var sErrorMessage = "Error: resource sap/ui/fl/qunit/changeHander/AddXML/" +
-						"changes/fragments/NonExisting could not be loaded from";
-					return err.toString().indexOf(sErrorMessage) === 0;
-				},
-				"then apply change throws an error"
-			);
-		});
 	});
-
 
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
