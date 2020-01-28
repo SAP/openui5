@@ -32,6 +32,9 @@ sap.ui.define(['./Element', './library', "sap/base/assert"],
 				mTexts[IndicationColor.Indication03] = rb.getText("INDICATION_STATE_INDICATION03");
 				mTexts[IndicationColor.Indication04] = rb.getText("INDICATION_STATE_INDICATION04");
 				mTexts[IndicationColor.Indication05] = rb.getText("INDICATION_STATE_INDICATION05");
+				mTexts[IndicationColor.Indication06] = rb.getText("INDICATION_STATE_INDICATION06");
+				mTexts[IndicationColor.Indication07] = rb.getText("INDICATION_STATE_INDICATION07");
+				mTexts[IndicationColor.Indication08] = rb.getText("INDICATION_STATE_INDICATION08");
 			}
 		};
 
