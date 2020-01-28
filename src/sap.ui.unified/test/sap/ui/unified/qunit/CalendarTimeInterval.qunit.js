@@ -250,6 +250,14 @@ sap.ui.define([
 		assert.ok(!jQuery("#Cal3--TimesRow-201508131000").hasClass("sapUiCalItemType02"), "20150813-1000 is not special month of Type02");
 	});
 
+	QUnit.test("Wrapper of hour cells has role row", function (assert) {
+		// Arrange
+		var $TimesRow = sap.ui.getCore().byId("Cal2").getAggregation("timesRow").$();
+
+		// Assert
+		assert.equal($TimesRow.find(".sapUiCalItems").attr("role"), "row", "The hour cell's wrapper has role row");
+	});
+
 	QUnit.module("change date via API");
 	QUnit.test("setStartDate", function(assert) {
 		oCal1.setStartDate(new Date("2015", "2", "10", "10", "10"));
