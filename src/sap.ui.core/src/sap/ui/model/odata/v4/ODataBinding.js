@@ -393,7 +393,10 @@ sap.ui.define([
 			// The aggregated query options of this binding and its dependent bindings are available
 			// in that.mAggregatedQueryOptions once all these promises are fulfilled.
 			oQueryOptionsPromise = SyncPromise.all([
-				oQueryOptionsPromise,
+				oQueryOptionsPromise.then(function (mQueryOptions) {
+					return _Helper.fetchResolvedSelect(that.oModel.oInterface.fetchMetadata,
+						_Helper.getMetaPath(sResolvedPath), mQueryOptions);
+				}),
 				Promise.resolve().then(function () {
 					return SyncPromise.all(that.aChildCanUseCachePromises);
 				})

@@ -2964,4 +2964,106 @@ sap.ui.define([
 	QUnit.test("uid", function (assert) {
 		assert.strictEqual(_Helper.uid, uid);
 	});
+
+	//*********************************************************************************************
+[{
+	// no $kind
+},{
+	$kind : "Property"
+}, {
+	$kind : "NavigationProperty"
+}].forEach(function (oFixture, i) {
+	QUnit.test("fetchPropertyAndType: " + i, function (assert) {
+		var oExpectedResult = oFixture.$kind ? { $kind : oFixture.$kind } : undefined,
+			oMetaModel = {
+				fetchObject : function () {}
+			},
+			oMetaModelMock = this.mock(oMetaModel),
+			oPromise,
+			oSyncPromise = SyncPromise.resolve(oExpectedResult);
+
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs("/resolved/child/metaPath")
+			.returns(oSyncPromise);
+
+		if (oFixture.$kind === "NavigationProperty") {
+			oMetaModelMock.expects("fetchObject")
+				.withExactArgs("/resolved/child/metaPath/")
+				.returns(SyncPromise.resolve());
+		}
+
+		// code under test
+		oPromise = _Helper.fetchPropertyAndType(oMetaModel.fetchObject, "/resolved/child/metaPath");
+
+		assert.strictEqual(oPromise.getResult(), oExpectedResult);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("fetchResolvedSelect: no $select", function (assert) {
+		var oMetaModel = {
+				fetchObject : function () {}
+			},
+			mQueryOptions = {},
+			oPromise;
+
+		// code under test
+		oPromise =
+			_Helper.fetchResolvedSelect(oMetaModel.fetchObject, "/meta/path", mQueryOptions);
+
+		assert.strictEqual(oPromise.getResult(), mQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchResolvedSelect", function (assert) {
+		var mChildQueryOptions = {},
+			fnFetchMetadata = {},
+			oHelperMock = this.mock(_Helper),
+			bProcessedBar = false,
+			bProcessedFoo = false,
+			mQueryOptions = {
+				$select : ["foo", "bar"]
+			},
+			oPromise;
+
+		oHelperMock.expects("fetchPropertyAndType")
+			.withExactArgs(sinon.match.same(fnFetchMetadata), "/meta/path/foo")
+			.returns(Promise.resolve().then(function () {
+				oHelperMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/meta/path", "foo", {}, sinon.match.same(fnFetchMetadata))
+					.returns(mChildQueryOptions);
+				oHelperMock.expects("aggregateQueryOptions")
+					.withExactArgs(sinon.match.same(mQueryOptions),
+						sinon.match.same(mChildQueryOptions))
+					.callsFake(function () {
+						bProcessedFoo = true;
+					});
+			}));
+		oHelperMock.expects("fetchPropertyAndType")
+			.withExactArgs(sinon.match.same(fnFetchMetadata), "/meta/path/bar")
+			.returns(Promise.resolve().then(function () {
+				oHelperMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/meta/path", "bar", {}, sinon.match.same(fnFetchMetadata))
+					.returns(mChildQueryOptions);
+				oHelperMock.expects("aggregateQueryOptions")
+					.withExactArgs(sinon.match.same(mQueryOptions),
+						sinon.match.same(mChildQueryOptions))
+					.callsFake(function () {
+						bProcessedBar = true;
+					});
+			}));
+
+		// code under test
+		oPromise = _Helper.fetchResolvedSelect(fnFetchMetadata, "/meta/path", mQueryOptions);
+
+		assert.strictEqual(oPromise.isPending(), true);
+
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(mQueryOptions.$select, undefined);
+			assert.ok("$select" in mQueryOptions);
+			assert.strictEqual(oResult, mQueryOptions);
+			assert.strictEqual(bProcessedBar, true);
+			assert.strictEqual(bProcessedFoo, true);
+		});
+	});
 });

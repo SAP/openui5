@@ -276,23 +276,25 @@ sap.ui.define([
 							this.mUriParameters),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
-					this.oRequestor = _Requestor.create(this.sServiceUrl, {
-							fetchEntityContainer :
-								this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
-							fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
-							fireSessionTimeout : function () {
-								that.fireEvent("sessionTimeout");
-							},
-							getGroupProperty : this.getGroupProperty.bind(this),
-							onCreateGroup : function (sGroupId) {
-								if (that.isAutoGroup(sGroupId)) {
-									sap.ui.getCore().addPrerenderingTask(
-										that._submitBatch.bind(that, sGroupId, true));
-								}
-							},
-							reportBoundMessages : this.reportBoundMessages.bind(this),
-							reportUnboundMessages : this.reportUnboundMessages.bind(this)
-						}, this.mHeaders, this.mUriParameters, sODataVersion);
+					this.oInterface = {
+						fetchEntityContainer :
+							this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
+						fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
+						fireSessionTimeout : function () {
+							that.fireEvent("sessionTimeout");
+						},
+						getGroupProperty : this.getGroupProperty.bind(this),
+						onCreateGroup : function (sGroupId) {
+							if (that.isAutoGroup(sGroupId)) {
+								sap.ui.getCore().addPrerenderingTask(
+									that._submitBatch.bind(that, sGroupId, true));
+							}
+						},
+						reportBoundMessages : this.reportBoundMessages.bind(this),
+						reportUnboundMessages : this.reportUnboundMessages.bind(this)
+					};
+					this.oRequestor = _Requestor.create(this.sServiceUrl, this.oInterface,
+						this.mHeaders, this.mUriParameters, sODataVersion);
 					this.changeHttpHeaders(mParameters.httpHeaders);
 					if (mParameters.earlyRequests) {
 						this.oMetaModel.fetchEntityContainer(true);
