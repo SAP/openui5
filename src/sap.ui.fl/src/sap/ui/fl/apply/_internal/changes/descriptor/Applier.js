@@ -7,12 +7,14 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/DescriptorChangeHandlerRegistration",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/performance/Measurement"
+	"sap/ui/performance/Measurement",
+	"sap/ui/fl/Utils"
 ], function(
 	DescriptorChangeHandlerRegistration,
 	FlexState,
 	ManifestUtils,
-	Measurement
+	Measurement,
+	Utils
 ) {
 	"use strict";
 
@@ -37,6 +39,11 @@ sap.ui.define([
 		 * @returns {Promise<object>} - Processed manifest
 		 */
 		preprocessManifest: function(oManifest, oConfig) {
+			// stop processing if the component is not of the type application or component ID is missing
+			if (!Utils.isApplication(oManifest, true) || !oConfig.id) {
+				return Promise.resolve(oManifest);
+			}
+
 			// Measurement for the whole flex processing until the VariantModel is attached to the component; this does not include actual CodeExt or UI change applying
 			Measurement.start("flexProcessing", "Complete flex processing", ["sap.ui.fl"]);
 			Measurement.start("flexStateInitialize", "Initialization of flex state", ["sap.ui.fl"]);

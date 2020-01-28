@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/hasher",
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
+	"sap/ui/core/Manifest",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
@@ -30,6 +31,7 @@ function(
 	hasher,
 	Log,
 	UriParameters,
+	Manifest,
 	_omit,
 	sinon,
 	jQuery
@@ -866,6 +868,32 @@ function(
 			};
 
 			assert.equal(Utils.getFlexReference(oManifest), sAppVariantId);
+		});
+	});
+
+	QUnit.module("Utils.isApplication", {
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("can handle null and empty manifest", function (assert) {
+			var oManifest = new Manifest();
+			sandbox.stub(oManifest, "getEntry").returns({});
+			assert.equal(false, Utils.isApplication(this.oManifest));
+			assert.equal(false, Utils.isApplication(null, true));
+			assert.equal(false, Utils.isApplication(this.oManifest));
+			assert.equal(false, Utils.isApplication({}, true));
+		});
+
+		QUnit.test("can handle corrupt manifest", function (assert) {
+			assert.equal(false, Utils.isApplication({"sap.app": {id: "id"}}, true), "false if no type node in sap.app");
+			assert.equal(false, Utils.isApplication({"sap.ui5": {dependencies: {libs: 1}}}, true), "false if no sap.app node");
+		});
+
+		QUnit.test("can determine if manifest is of type application", function (assert) {
+			assert.equal(true, Utils.isApplication({"sap.app": {type: "application"}}, true));
+			assert.equal(true, Utils.isApplication({"sap.app": {type: "application"}}, true));
+			assert.equal(false, Utils.isApplication({"sap.app": {type: "component"}}, true));
 		});
 	});
 
