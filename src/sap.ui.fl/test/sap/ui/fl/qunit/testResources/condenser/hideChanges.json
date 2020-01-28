@@ -1,0 +1,174 @@
+[
+	{
+		"fileName": "id_1_hideControl",
+		"fileType": "change",
+		"changeType": "hideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.294Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499657865_43_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_2_hideControl",
+		"fileType": "change",
+		"changeType": "hideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.294Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499657865_43_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_3_hideControl",
+		"fileType": "change",
+		"changeType": "hideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.294Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499657865_43_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_4_hideControl",
+		"fileType": "change",
+		"changeType": "hideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.294Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499657865_43_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	}
+]

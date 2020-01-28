@@ -17,10 +17,11 @@ sap.ui.define([
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Time",
 	"sap/ui/model/type/TimeInterval",
-	"sap/ui/model/type/Unit"
+	"sap/ui/model/type/Unit",
+	"sap/ui/test/TestUtils"
 ], function (Log, NumberFormat, FormatException, ParseException, ValidateException, BooleanType,
 		CurrencyType, DateType, DateIntervalType, DateTimeType, DateTimeIntervalType, FileSizeType,
-		FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType) {
+		FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
 	"use strict";
 
 		function checkValidateException(oEx) {
@@ -1435,37 +1436,39 @@ sap.ui.define([
 
 	QUnit.test("string formatValue", function (assert) {
 		var stringType = new StringType();
-		assert.equal(stringType.formatValue("true", "boolean"), true, "format test");
-		assert.equal(stringType.formatValue("false", "boolean"), false, "format test");
-		assert.equal(stringType.formatValue("X", "boolean"), true, "format test");
-		assert.equal(stringType.formatValue("", "boolean"), false, "format test");
-		assert.equal(stringType.formatValue(undefined, "boolean"), null, "format test");
-		assert.equal(stringType.formatValue(null, "boolean"), null, "format test");
-		assert.equal(stringType.formatValue("test", "string"), "test", "format test");
-		assert.equal(stringType.formatValue("X", "string"), "X", "format test");
-		assert.equal(stringType.formatValue("1234", "int"), 1234, "format test");
-		assert.equal(stringType.formatValue("34", "int"), 34, "format test");
-		assert.equal(stringType.formatValue("1.34", "float"), 1.34, "format test");
-		assert.equal(stringType.formatValue("33.456", "float"), 33.456, "format test");
+		assert.equal(stringType.formatValue("true", "boolean"), true);
+		assert.equal(stringType.formatValue("false", "boolean"), false);
+		assert.equal(stringType.formatValue("X", "boolean"), true);
+		assert.equal(stringType.formatValue("", "boolean"), false);
+		assert.equal(stringType.formatValue(undefined, "boolean"), null);
+		assert.equal(stringType.formatValue(null, "boolean"), null);
+		assert.equal(stringType.formatValue("test", "string"), "test");
+		assert.equal(stringType.formatValue("X", "string"), "X");
+		assert.equal(stringType.formatValue("1234", "int"), 1234);
+		assert.equal(stringType.formatValue("34", "int"), 34);
+		assert.equal(stringType.formatValue("1.34", "float"), 1.34);
+		assert.equal(stringType.formatValue("33.456", "float"), 33.456);
 
-		assert.throws(function () { stringType.formatValue("33.456", "untype"); }, "format test");
-		assert.throws(function () { stringType.formatValue("notfalse", "boolean"); }, FormatException, "format test");
-		assert.throws(function () { stringType.formatValue("NaN", "int"); }, FormatException, "format test");
-		assert.throws(function () { stringType.formatValue("d3f.442fs", "float"); }, FormatException, "format test");
+		assert.throws(function () { stringType.formatValue("33.456", "untype"); });
+		assert.throws(function () { stringType.formatValue("notfalse", "boolean"); },
+			FormatException);
+		assert.throws(function () { stringType.formatValue("NaN", "int"); }, FormatException);
+		assert.throws(function () { stringType.formatValue("d3f.442fs", "float"); },
+			FormatException);
 	});
 
 	QUnit.test("string parseValue", function (assert) {
 		var stringType = new StringType();
-		assert.equal(stringType.parseValue(true, "boolean"), "true", "parse test");
-		assert.equal(stringType.parseValue(false, "boolean"), "false", "parse test");
-		assert.equal(stringType.parseValue("true", "string"), "true", "parse test");
-		assert.equal(stringType.parseValue("false", "string"), "false", "parse test");
-		assert.equal(stringType.parseValue("X", "string"), "X", "parse test");
-		assert.equal(stringType.parseValue("", "string"), "", "parse test");
-		assert.equal(stringType.parseValue(-222, "int"), "-222", "parse test");
-		assert.equal(stringType.parseValue(-4.3657, "float"), "-4.3657", "parse test");
+		assert.equal(stringType.parseValue(true, "boolean"), "true");
+		assert.equal(stringType.parseValue(false, "boolean"), "false");
+		assert.equal(stringType.parseValue("true", "string"), "true");
+		assert.equal(stringType.parseValue("false", "string"), "false");
+		assert.equal(stringType.parseValue("X", "string"), "X");
+		assert.equal(stringType.parseValue("", "string"), "");
+		assert.equal(stringType.parseValue(-222, "int"), "-222");
+		assert.equal(stringType.parseValue(-4.3657, "float"), "-4.3657");
 
-		assert.throws(function () { stringType.parseValue(true, "untype"); }, ParseException, "parse test");
+		assert.throws(function () { stringType.parseValue(true, "untype"); }, ParseException);
 	});
 
 	QUnit.test("string validateValue", function (assert) {
@@ -1475,53 +1478,40 @@ sap.ui.define([
 				maxLength: 10
 			});
 
-		try {
-			assert.equal(stringType.validateValue("fff"), undefined, "validate test");
-			assert.equal(stringType.validateValue("ffdddddddd"), undefined, "validate test");
-		} catch (e) {
-			assert.ok(false, "one of the validation tests failed please check");
-		}
-		assert.throws(function () { stringType.validateValue("dd"); }, checkValidateException, "validate test");
-		assert.throws(function () { stringType.validateValue("ddggggggggggg"); }, checkValidateException, "validate test");
+		assert.equal(stringType.validateValue("fff"), undefined);
+		assert.equal(stringType.validateValue("ffdddddddd"), undefined);
+		assert.throws(function () { stringType.validateValue("dd"); }, checkValidateException);
+		assert.throws(function () { stringType.validateValue("ddggggggggggg"); },
+			checkValidateException);
 
 		stringType = new StringType(null, {
 			startsWith: "ab",
 			contains: "cd"
 		});
 
-		try {
-			assert.equal(stringType.validateValue("abcccdfff"), undefined, "validate test");
-			assert.equal(stringType.validateValue("abcd"), undefined, "validate test");
-		} catch (e) {
-			assert.ok(false, "one of the validation tests failed please check");
-		}
-		assert.throws(function () { stringType.validateValue("cdab"); }, checkValidateException, "validate test");
-		assert.throws(function () { stringType.validateValue("abdccsbaab"); }, checkValidateException, "validate test");
+		assert.equal(stringType.validateValue("abcccdfff"), undefined);
+		assert.equal(stringType.validateValue("abcd"), undefined);
+		assert.throws(function () { stringType.validateValue("cdab"); }, checkValidateException);
+		assert.throws(function () { stringType.validateValue("abdccsbaab"); },
+			checkValidateException);
 
 		stringType = new StringType(null, {
 			equals: "ab"
 		});
 
-		try {
-			assert.equal(stringType.validateValue("ab"), undefined, "validate test");
-		} catch (e) {
-			assert.ok(false, "one of the validation tests failed please check");
-		}
-		assert.throws(function () { stringType.validateValue("cdab"); }, checkValidateException, "validate test");
-		assert.throws(function () { stringType.validateValue("abdaab"); }, checkValidateException, "validate test");
+		assert.equal(stringType.validateValue("ab"), undefined);
+		assert.throws(function () { stringType.validateValue("cdab"); }, checkValidateException);
+		assert.throws(function () { stringType.validateValue("abdaab"); }, checkValidateException);
 
 		stringType = new StringType(null, {
 			search: "ab"
 		});
 
-		try {
-			assert.equal(stringType.validateValue("ddabcccdfff"), undefined, "validate test");
-			assert.equal(stringType.validateValue("abcd"), undefined, "validate test");
-		} catch (e) {
-			assert.ok(false, "one of the validation tests failed please check");
-		}
-		assert.throws(function () { stringType.validateValue("cdb"); }, checkValidateException, "validate test");
-		assert.throws(function () { stringType.validateValue("adccsbba"); }, checkValidateException, "validate test");
+		assert.equal(stringType.validateValue("ddabcccdfff"), undefined);
+		assert.equal(stringType.validateValue("abcd"), undefined);
+		assert.throws(function () { stringType.validateValue("cdb"); }, checkValidateException);
+		assert.throws(function () { stringType.validateValue("adccsbba"); },
+			checkValidateException);
 
 		stringType = new StringType(null, {
 			foo: "ab"
@@ -1533,6 +1523,50 @@ sap.ui.define([
 		// code under test
 		stringType.validateValue("ab");
 	});
+
+[
+	{contains : ""},
+	// {endsWith : ""}, /* empty string is invalid */
+	// {endsWithIgnoreCase : ""}, /* empty string is invalid */
+	{equals : ""},
+	{minLength : 0},
+	{maxLength : 0},
+	{maxLength : 10},
+	{search : ""}
+	// {startsWith : ""}, /* empty string is invalid */
+	// {startsWithIgnoreCase : ""} /* empty string is invalid */
+].forEach(function (oConstraints, i) {
+	QUnit.test("string validateValue with null, success, " + i, function (assert) {
+		var oType = new StringType(null, oConstraints);
+
+		assert.equal(oType.validateValue(null), undefined);
+	});
+});
+
+[
+	{constraints : {contains : "ab"}, message : "String.Contains ab"},
+	{constraints : {endsWith : "ab"}, message : "String.EndsWith ab"},
+	{constraints : {endsWithIgnoreCase : "ab"}, message : "String.EndsWith ab"},
+	{constraints : {equals : "ab"}, message : "String.Equals ab"},
+	{constraints : {minLength : 3}, message : "String.MinLength 3"},
+	{constraints : {search : "ab"}, message : "String.Search"},
+	{constraints : {startsWith : "ab"}, message : "String.StartsWith ab"},
+	{constraints : {startsWithIgnoreCase : "ab"}, message : "String.StartsWith ab"}
+].forEach(function (oFixture) {
+	QUnit.test("string validateValue with null, exception, " + oFixture.message, function (assert) {
+		var oType = new StringType(null, oFixture.constraints);
+
+		TestUtils.withNormalizedMessages(function () {
+			try {
+				oType.validateValue(null);
+				assert.ok(false);
+			} catch (e) {
+				assert.ok(e instanceof ValidateException);
+				assert.strictEqual(e.message, oFixture.message);
+			}
+		});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Time", {

@@ -29,7 +29,6 @@ function (
 	QUnit.module("sap.ui.fl.FlexControllerFactory", {
 		beforeEach: function () {
 			this.oInitializeStub = sandbox.stub(FlexState, "initialize").resolves();
-			this.VariantsStateStub = sandbox.stub(FlexState, "getVariantsState");
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -82,8 +81,6 @@ function (
 					componentId: oComponent.getId(),
 					asyncHints: true
 				}), "FlexState was initialized with the correct parameters");
-				assert.equal(this.VariantsStateStub.callCount, 1, "Variants map was prepared");
-				assert.ok(this.VariantsStateStub.calledWith("mockName"), "Variants map was prepared with the correct parameters");
 			}.bind(this));
 		});
 

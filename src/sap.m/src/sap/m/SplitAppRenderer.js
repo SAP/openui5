@@ -14,6 +14,7 @@ sap.ui.define(['./SplitContainerRenderer', 'sap/ui/core/Renderer', 'sap/m/librar
 		 * @namespace
 		 */
 	var SplitAppRenderer = {
+		apiVersion: 2
 	};
 
 	var SplitAppRenderer = Renderer.extend(SplitContainerRenderer);

@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/Cache"
+	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/ChangesController"
 ], function(
-	ChangesController,
-	Cache
+	UI2PersonalizationState,
+	FlexState,
+	ChangesController
 ) {
 	"use strict";
 
@@ -48,13 +50,19 @@ sap.ui.define([
 				return Promise.reject(new Error("not all mandatory properties were provided for the storage of the personalization"));
 			}
 
-			return Cache.setPersonalization({
-				reference: mPropertyBag.reference,
-				containerKey: mPropertyBag.containerKey,
-				itemName: mPropertyBag.itemName,
-				content: mPropertyBag.content
+			return FlexState.initialize({
+				componentId: mPropertyBag.reference
+			})
+			.then(function() {
+				return UI2PersonalizationState.setPersonalization({
+					reference: mPropertyBag.reference,
+					containerKey: mPropertyBag.containerKey,
+					itemName: mPropertyBag.itemName,
+					content: mPropertyBag.content
+				});
 			});
 		},
+
 		/**
 		 * Deletes the personalization for a given reference.
 		 *
@@ -80,7 +88,12 @@ sap.ui.define([
 				return Promise.reject(new Error("not all mandatory properties were provided for the deletion of the personalization"));
 			}
 
-			return Cache.deletePersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
+			return FlexState.initialize({
+				componentId: mPropertyBag.reference
+			})
+			.then(function() {
+				return UI2PersonalizationState.deletePersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
+			});
 		}
 	};
 

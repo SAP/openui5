@@ -111,13 +111,15 @@
 		</content>
 		<footer>
 			<OverflowToolbar>
-				<Button id="messagePopoverBtn" icon="sap-icon://message-popup" type="Emphasized"
-						text="{=${message>/}.length}"
-						visible="{=!!${message>/}.length}"
-						press="handleMessagePopoverPress"/>
-				<ToolbarSpacer/>
+				<Button id="messagePopoverBtn"
+					visible="{=!!${message>/}.length}"
+					icon="{ path: '/', formatter: '.buttonIconFormatter' }"
+					type="{ path: '/', formatter: '.buttonTypeFormatter' }"
+					press=".handleMessagePopoverPress"
+					/>
 				<Button type="Emphasized" text="Save" press="_generateInvalidUserInput" />
 				<Button text="Cancel" />
+				<ToolbarSpacer/>
 			</OverflowToolbar>
 		</footer>
 	</Page>

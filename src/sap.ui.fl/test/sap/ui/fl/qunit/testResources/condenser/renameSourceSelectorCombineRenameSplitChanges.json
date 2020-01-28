@@ -1,0 +1,240 @@
+[
+	{
+		"fileName": "id_1_renameField",
+		"fileType": "change",
+		"changeType": "renameField",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+			"fieldLabel": {
+				"value": "Code",
+				"type": "XFLD"
+			}
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-18T12:22:31.863Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_2_combineFields",
+		"fileType": "change",
+		"changeType": "combineFields",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"combineFieldSelectors": [
+				{
+					"id": "idMain1--GeneralLedgerDocument.Name",
+					"idIsLocal": true
+				},
+				{
+					"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+					"idIsLocal": true
+				}
+			],
+			"sourceSelector": {
+				"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+				"idIsLocal": true
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+			"fieldLabel0": {
+				"value": "Document Number",
+				"type": "XFLD"
+			},
+			"fieldLabel1": {
+				"value": "Code",
+				"type": "XFLD"
+			}
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-18T12:22:31.864Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+			"combinedFields": [
+				{
+					"id": "idMain1--GeneralLedgerDocument.Name",
+					"idIsLocal": true
+				},
+				{
+					"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+					"idIsLocal": true
+				}
+			],
+			"sourceControl": {
+				"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+				"idIsLocal": true
+			}
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_3_renameField",
+		"fileType": "change",
+		"changeType": "renameField",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+			"fieldLabel": {
+				"value": "Mix Data",
+				"type": "XFLD"
+			}
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-18T12:22:31.865Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_4_splitField",
+		"fileType": "change",
+		"changeType": "splitField",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"newElementIds": [
+				"Comp1---idMain1--id-1576671746128-48",
+				"Comp1---idMain1--id-1576671746128-49"
+			],
+			"sourceSelector": {
+				"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+				"idIsLocal": true
+			},
+			"parentSelector": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-18T12:22:31.866Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+			"sourceControl": {
+				"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+				"idIsLocal": true
+			},
+			"parent": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			}
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	}
+]

@@ -234,10 +234,15 @@ sap.ui.define([
 			var oAppVariantClosure;
 			var oAppVariantResultClosure;
 			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, false, mPropertyBag.layer, mPropertyBag.bIsForSapDelivery)
+				.catch(function(oError) {
+					oError.messageKey = "MSG_LOAD_APP_VARIANT_FAILED";
+					throw oError;
+				})
 				.then(function(oAppVariant) {
 					if (!oAppVariant) {
 						throw new Error("App variant with ID: " + mPropertyBag.referenceAppId + "does not exist");
 					}
+
 					oAppVariantClosure = merge({}, oAppVariant);
 					if (
 						mPropertyBag
@@ -277,10 +282,11 @@ sap.ui.define([
 					return oAppVariantResultClosure;
 				})
 				.catch(function(oError) {
-					if (oError !== "cancel") {
-						Log.error("the app variant could not be updated.", oError.message || oError.name);
-						throw oError;
+					if (oError === "cancel") {
+						return Promise.reject("cancel");
 					}
+					Log.error("the app variant could not be updated.", oError.message || oError.name);
+					throw oError;
 				});
 		},
 		deleteAppVariant: function(mPropertyBag) {
@@ -292,6 +298,10 @@ sap.ui.define([
 					throw oError;
 				})
 				.then(function(oAppVariant) {
+					if (!oAppVariant) {
+						throw new Error("App variant with ID: " + mPropertyBag.referenceAppId + "does not exist");
+					}
+
 					oAppVariantClosure = merge({}, oAppVariant);
 				})
 				.then(function () {
@@ -305,10 +315,11 @@ sap.ui.define([
 						});
 				})
 				.catch(function(oError) {
-					if (oError !== "cancel") {
-						Log.error("the app variant could not be deleted.", oError.message || oError.name);
-						throw oError;
+					if (oError === "cancel") {
+						return Promise.reject("cancel");
 					}
+					Log.error("the app variant could not be deleted.", oError.message || oError.name);
+					throw oError;
 				});
 		}
 	};

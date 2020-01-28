@@ -30,7 +30,10 @@ sap.ui.define(["sap/uxap/library"],
 					}
 				},
 				actions : {
-					move : "moveControls"
+					move : "moveControls",
+					addIFrame: {
+						changeType: "addIFrame"
+					}
 				},
 				beforeMove : function (ObjectPageLayout) {
 					if (ObjectPageLayout){
@@ -92,12 +95,20 @@ sap.ui.define(["sap/uxap/library"],
 				domRef : function(oElement) {
 					return oElement._getHeaderContent() ? oElement._getHeaderContent().getDomRef() : null;
 				},
+				childNames : {
+					singular : function(){
+						return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("HEADER_CONTROL_NAME");
+					}
+				},
 				actions : {
 					move : function(oElement){
 						if (oElement && oElement.getParent() && (oElement.getParent().isA(["sap.uxap.ObjectPageHeaderContent", "sap.uxap.ObjectPageDynamicHeaderContent"]))){
 							//only allow move inside the header
 							return "moveControls";
 						}
+					},
+					addIFrame: {
+						changeType: "addIFrame"
 					}
 				}
 			},

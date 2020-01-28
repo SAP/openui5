@@ -1,0 +1,327 @@
+[
+	{
+		"fileName": "id_1575964813623_132_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "useHorizontalLayout",
+			"newValue": true
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-10T08:01:26.564Z",
+		"originalLanguage": "EN",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.72.1",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {},
+		"dependentSelector": {},
+		"validAppVersions": {
+			"creation": "3.1.0",
+			"from": "3.1.0",
+			"to": "3.1.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1575964813623_132_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "useHorizontalLayout",
+			"newValue": false
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-10T08:01:26.564Z",
+		"originalLanguage": "EN",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.72.1",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {},
+		"dependentSelector": {},
+		"validAppVersions": {
+			"creation": "3.1.0",
+			"from": "3.1.0",
+			"to": "3.1.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1479218968907_101_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "elementForLabel",
+			"newValue": 0
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"creation": "2016-11-15T14:09:29.078Z",
+		"originalLanguage": "EN",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": ""
+		}
+	},
+	{
+		"fileName": "id_1479219043003_105_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "elementForLabel",
+			"newValue": 2
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"creation": "2016-11-15T14:10:43.138Z",
+		"originalLanguage": "EN",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": ""
+		}
+	},
+	{
+		"fileName": "id_1491823781561_91_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "elementForLabel",
+			"newValue": 1
+		},
+		"selector": {
+			"id": "idMain1--Victim",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"creation": "2017-04-10T11:29:44.929Z",
+		"originalLanguage": "DE",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": ""
+		}
+	},
+	{
+		"fileName": "id_1493382638641_97_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "horizontalLayoutGroupElementMinWidth",
+			"oldValue": "",
+			"newValue": "50%"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"creation": "2017-04-28T12:30:52.478Z",
+		"originalLanguage": "DE",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.44.12"
+		},
+		"dependentSelector": {}
+	},
+	{
+		"fileName": "id_1493382638641_97_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "horizontalLayoutGroupElementMinWidth",
+			"oldValue": "",
+			"newValue": "50%"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"creation": "2017-04-28T12:30:52.478Z",
+		"originalLanguage": "DE",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.44.12"
+		},
+		"dependentSelector": {}
+	},
+	{
+		"fileName": "id_1493382638641_97_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "horizontalLayoutGroupElementMinWidth",
+			"oldValue": "",
+			"newValue": "30%"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"creation": "2017-04-28T12:30:52.478Z",
+		"originalLanguage": "DE",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.44.12"
+		},
+		"dependentSelector": {}
+	},
+	{
+		"fileName": "id_1493382638641_97_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "horizontalLayoutGroupElementMinWidth",
+			"oldValue": "",
+			"newValue": "10%"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"creation": "2017-04-28T12:30:52.478Z",
+		"originalLanguage": "DE",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.44.12"
+		},
+		"dependentSelector": {}
+	},
+	{
+		"fileName": "id_1493382638641_97_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "horizontalLayoutGroupElementMinWidth",
+			"oldValue": "",
+			"newValue": "80%"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"creation": "2017-04-28T12:30:52.478Z",
+		"originalLanguage": "DE",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.44.12"
+		},
+		"dependentSelector": {}
+	}
+]

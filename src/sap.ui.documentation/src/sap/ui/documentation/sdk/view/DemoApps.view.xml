@@ -29,57 +29,50 @@
 						<l:BlockLayoutRow>
 							<l:BlockLayoutCell
 								class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
-							<Image
-								id="phoneImage"
-								src="./resources/sap/ui/documentation/sdk/images/DemoApps_S_cropped.jpg"
-								alt="{i18n>imagePhone}"
-								width="100%"
-								class="welcomeImage"
-								load=".handleLandingImageLoad"
-								visible="{device>/system/phone}"
-								densityAware="false"/>
-							<Image
-								id="desktopImage"
-								class="desktopImage welcomeImage"
-								src="./resources/sap/ui/documentation/sdk/images/DemoApps_M_and_L_cropped.jpg"
-								alt="{i18n>imageComp}"
-								densityAware="false"
-								load=".handleLandingImageLoad"
-								visible="{=!${device>/system/phone}}"
-								width="100%"/>
-							<l:Grid
-								id="landingImageHeadline"
-								width="100%"
-								visible="false"
-								class="headerGrid"
-								hSpacing="0"
-								defaultSpan="L6 M6 S12">
-								<l:VerticalLayout width="100%" class="sapUiTinyMarginTop sapUiTinyMarginEnd">
-									<Text class="headerText" text="{i18n>pageTitle}" width="100%" textAlign="Left"/>
-									<l:HorizontalLayout>
-										<Button
-											class="actionButton headerButton"
-											id="download"
-											text="{i18n>downloadButtonText}"
-											type="Emphasized"
-											press=".onDownloadButtonPress">
-										</Button>
-										<Button
-											class="actionButton headerButton sapContrast sapContrastPlus sapUiSmallMarginBegin"
-											id="readMoreButton"
-											text="{i18n>linkText}"
-											press=".onReadMoreButtonPress">
-										</Button>
-									</l:HorizontalLayout>
-								</l:VerticalLayout>
 								<Image
-									src="resources/sap/ui/documentation/sdk/images/demoAppsTeaser.png"
-									alt="{i18n>imageAllDev}"
+									id="phoneImage"
+									src="./resources/sap/ui/documentation/sdk/images/DemoApps_S_cropped.png"
+									alt="{i18n>imagePhone}"
+									width="100%"
+									class="welcomeImage"
+									load=".handleLandingImageLoad"
+									visible="{device>/system/phone}"
+									densityAware="false"/>
+								<Image
+									id="desktopImage"
+									class="desktopImage welcomeImage"
+									src="./resources/sap/ui/documentation/sdk/images/DemoApps_M_and_L_cropped.png"
+									alt="{i18n>imageComp}"
 									densityAware="false"
-									class="sapUiHideOnPhone"
+									load=".handleLandingImageLoad"
 									visible="{=!${device>/system/phone}}"
 									width="100%"/>
-							</l:Grid>
+								<l:Grid
+									id="landingImageHeadline"
+									width="100%"
+									visible="false"
+									class="headerGrid"
+									hSpacing="0"
+									defaultSpan="L6 M6 S12">
+									<l:VerticalLayout width="100%" class="sapUiTinyMarginTop sapUiTinyMarginEnd">
+										<Text class="headerText" text="{i18n>pageTitle}" width="100%" textAlign="Left"/>
+										<l:HorizontalLayout>
+											<Button
+												class="actionButton headerButton"
+												id="download"
+												text="{i18n>downloadButtonText}"
+												type="Emphasized"
+												press=".onDownloadButtonPress">
+											</Button>
+											<Button
+												class="actionButton headerButton sapContrast sapContrastPlus sapUiSmallMarginBegin"
+												id="readMoreButton"
+												text="{i18n>linkText}"
+												press=".onReadMoreButtonPress">
+											</Button>
+										</l:HorizontalLayout>
+									</l:VerticalLayout>
+								</l:Grid>
 							</l:BlockLayoutCell>
 						</l:BlockLayoutRow>
 					</l:BlockLayout>

@@ -248,7 +248,8 @@ function(
 	QUnit.module("Given multiple variant management controls", {
 		beforeEach: function () {
 			this.oAppComponent = new Component("appComponent");
-
+			this.oRegisterNavigationFilterStub = sandbox.stub();
+			this.oDeRegisterNavigationFilterStub = sandbox.stub();
 			// mock ushell services
 			var sDefaultStatus = "Continue";
 			sandbox.stub(Utils, "getUshellContainer").returns({
@@ -266,9 +267,8 @@ function(
 							NavigationFilterStatus: {
 								Continue: sDefaultStatus
 							},
-							registerNavigationFilter: function(fnHandler) {
-								this.fnNavigationFilter = fnHandler;
-							}.bind(this)
+							registerNavigationFilter: this.oRegisterNavigationFilterStub,
+							unregisterNavigationFilter: this.oDeRegisterNavigationFilterStub
 						};
 					}
 				}.bind(this)
@@ -322,12 +322,14 @@ function(
 			}, {
 				_oChangePersistence: {
 					_oVariantController: {
-						assignResetMapListener: function () {}
-					}
-				},
-				oAppComponent: this.oAppComponent
-			});
-
+						assignResetMapListener: function () {
+						}
+					},
+					resetVariantMap: function () {}
+				}
+			},
+				this.oAppComponent
+			);
 			this.oSwitchToDefaultVariantStub = sandbox.stub(this.oModel, "switchToDefaultForVariantManagement");
 
 			// variant management controls
@@ -345,15 +347,18 @@ function(
 				updateURL: true
 			};
 		},
-		afterEach: function () {
-			if (this.oAppComponent instanceof Component) {
-				this.oAppComponent.destroy();
-			}
-			this.oModel.destroy();
+		afterEach: function (assert) {
+			var done = assert.async();
+			this.oDeRegisterNavigationFilterStub.onCall(0).callsFake(function() {
+				sandbox.restore();
+				done();
+			});
 			this.oVariantManagement1.destroy();
 			this.oVariantManagement2.destroy();
 			this.oVariantManagement3.destroy();
-			sandbox.restore();
+			if (this.oAppComponent instanceof Component) {
+				this.oAppComponent.destroy();
+			}
 		}
 	}, function () {
 		QUnit.test("when 3 variant management controls are rendered", function (assert) {
@@ -435,7 +440,8 @@ function(
 
 		QUnit.test("when the registered navigationFilter function is called and there is an error in hash parsing", function (assert) {
 			var oLogErrorSpy = sandbox.spy(Log, "error");
-			assert.strictEqual(this.fnNavigationFilter({}), this.sDefaultStatus, "then the default navigation filter status was returned");
+			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
+			assert.strictEqual(fnVariantIdChangeHandler({}), this.sDefaultStatus, "then the default navigation filter status was returned");
 			assert.equal(oLogErrorSpy.callCount, 1, "then the error was logged");
 		});
 
@@ -445,8 +451,9 @@ function(
 			});
 
 			var oHash = {params: {}};
+			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			oHash.params[URLHandler.variantTechnicalParameterName] = ["paramValue1", "paramValue2"];
-			assert.strictEqual(this.fnNavigationFilter(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
 		});
 
 		QUnit.test("when the registered navigationFilter function is called and there is a unchanged variant parameter, belonging to a variant", function (assert) {
@@ -454,10 +461,10 @@ function(
 			sandbox.stub(URLHandler, "update").callsFake(function () {
 				assert.ok(false, "URLHandler.update() should not be called");
 			});
-
+			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			var oHash = {params: {}};
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
-			assert.strictEqual(this.fnNavigationFilter(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
 		});
 
 		QUnit.test("when the registered navigationFilter function is called and there is a changed variant parameter, belonging to a variant", function (assert) {
@@ -473,9 +480,10 @@ function(
 				assert.deepEqual(mPropertyBag, mExpectedPropertyBag, "then URLHandler.update() was called with right parameters");
 			});
 
+			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			var oHash = {params: {}};
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
-			assert.strictEqual(this.fnNavigationFilter(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
 		});
 
 		QUnit.test("when the registered navigationFilter function is called in UI Adaptation mode and there is a changed variant parameter, belonging to a variant", function (assert) {
@@ -503,8 +511,9 @@ function(
 			});
 
 			var oHash = {params: aParameterValues};
+			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
-			assert.strictEqual(this.fnNavigationFilter(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
 		});
 
 		QUnit.test("when the registered navigationFilter function is called in UI Adaptation mode and there is a changed variant parameter (default variant), belonging to a variant", function (assert) {
@@ -532,8 +541,9 @@ function(
 			});
 
 			var oHash = {params: aParameterValues};
+			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
-			assert.strictEqual(this.fnNavigationFilter(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
 		});
 	});
 
@@ -728,7 +738,7 @@ function(
 
 	QUnit.module("Given URLHandler.update to update hash parameters in URL", {
 		beforeEach: function () {
-			sandbox.stub(Utils, "getUshellContainer");
+			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			sandbox.stub(Log, "warning");
 			sandbox.stub(hasher, "replaceHash");
 			this.oModel = {};

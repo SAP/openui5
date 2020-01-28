@@ -54,17 +54,11 @@ sap.ui.define([
 					multiple: false
 				}
 			},
-			associations: {
-				"editor": {
-					type: "sap.ui.integration.designtime.BaseEditor",
-					multiple: false
-				}
-			},
 			events: {
 				/**
 				 * Fired when the property of the editor has changed
 				 */
-				propertyChange: {
+				valueChange: {
 					parameters: {
 						/**
 						 * Path in the context object where the change should happen
@@ -185,10 +179,6 @@ sap.ui.define([
 			}
 		},
 
-		getEditor: function() {
-			return sap.ui.getCore().byId(this.getAssociation("editor"));
-		},
-
 		getI18nProperty: function(sName) {
 			return this.getModel("i18n").getProperty(sName);
 		},
@@ -220,8 +210,8 @@ sap.ui.define([
 			oRm.close("div");
 		},
 
-		firePropertyChange: function(vValue) {
-			this.fireEvent("propertyChange", {
+		fireValueChange: function(vValue) {
+			this.fireEvent("valueChange", {
 				path: this.getConfig().path,
 				value: vValue
 			});

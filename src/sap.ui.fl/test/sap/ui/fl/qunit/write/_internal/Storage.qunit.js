@@ -361,7 +361,7 @@ sap.ui.define([
 				isVariantSharingEnabled: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
-				draft: {
+				versioning: {
 					CUSTOMER: false,
 					USER: false
 				},
@@ -520,6 +520,41 @@ sap.ui.define([
 
 			return Storage.versions.activateDraft(mPropertyBag).catch(function (sRejectionMessage) {
 				assert.equal(sRejectionMessage, "versions.activateDraft is not implemented", "then the rejection message is passed");
+			});
+		});
+	});
+
+	QUnit.module("Given Storage when versions.discardDraft is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and discarding takes place", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: "CUSTOMER"
+			};
+
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector", layers: ["CUSTOMER"], url: "/flexKeyUser"}
+			]);
+
+			var oDiscardStub = sandbox.stub(JsObjectConnector.versions, "discardDraft").resolves();
+
+			return Storage.versions.discardDraft(mPropertyBag).then(function () {
+				assert.equal(oDiscardStub.callCount, 1, "the discarding of the connector was called");
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector", function (assert) {
+			assert.expect(1);
+			var mPropertyBag = {
+				reference: "reference",
+				layer: "CUSTOMER"
+			};
+
+			return Storage.versions.discardDraft(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "versions.discardDraft is not implemented", "then the rejection message is passed");
 			});
 		});
 	});

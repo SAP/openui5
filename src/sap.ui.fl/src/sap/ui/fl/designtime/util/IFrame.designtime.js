@@ -3,88 +3,58 @@
  */
 
 sap.ui.define([
-	"sap/m/Dialog",
-	"sap/m/Label",
-	"sap/m/TextArea",
-	"sap/m/Button",
+	"sap/ui/rta/plugin/iframe/SettingsDialog",
 	"sap/m/library"
 ], function(
-	Dialog,
-	Label,
-	TextArea,
-	Button,
-	mobileLibrary
+	IFrameSettingsDialog
 ) {
 	"use strict";
 
-	// shortcut for sap.m.ButtonType
-	var ButtonType = mobileLibrary.ButtonType;
-
-	// shortcut for sap.m.DialogType
-	var DialogType = mobileLibrary.DialogType;
-
-	// Use a temporary dialog until the official one is ready
-	function editIFrame (oControl/*, mPropertyBag*/) {
-		return new Promise(function (fnResolve) {
-			var oDialog = new Dialog({
-				title: "Settings",
-				type: DialogType.Message,
-				content: [
-					new Label({
-						text: "Please enter the URL",
-						labelFor: "settingsDialogTextarea"
-					}),
-					new TextArea('settingsDialogTextarea', {
-						width: "100%",
-						placeholder: "Enter URL (required)",
-						value: oControl.getUrl(),
-						liveChange: function(oEvent) {
-							var sUrl = oEvent.getParameter('value');
-							oDialog.getBeginButton().setEnabled(sUrl.length > 0);
-						}
-					})
-				],
-				beginButton: new Button({
-					type: ButtonType.Emphasized,
-					text: 'Submit',
-					enabled: false,
-					press: function () {
-						fnResolve(sap.ui.getCore().byId('settingsDialogTextarea').getValue());
-						oDialog.close();
-					}
-				}),
-				endButton: new Button({
-					text: 'Cancel',
-					press: function () {
-						fnResolve();
-						oDialog.close();
-					}
-				}),
-				afterClose: function() {
-					oDialog.destroy();
+	function editIFrame (oIFrame/*, mPropertyBag*/) {
+		var oIFrameSettingsDialog = new IFrameSettingsDialog();
+		var oSettings = oIFrame.get_settings();
+		var mDialogSettings = {
+			urlBuilderParameters: IFrameSettingsDialog.buildUrlBuilderParametersFor(oIFrame),
+			frameUrl: oSettings.url,
+			frameWidth: oSettings.width,
+			frameHeight: oSettings.height
+		};
+		return oIFrameSettingsDialog.open(mDialogSettings)
+			.then(function (mSettings) {
+				if (!mSettings) {
+					return []; // No change
 				}
-			});
-			oDialog.open();
-		}).then(function (sUrl) {
-			if (sUrl) {
+				var sWidth;
+				var sHeight;
+				if (mSettings.frameWidth) {
+					sWidth = mSettings.frameWidth + mSettings.frameWidthUnit;
+				} else {
+					sWidth = "100%";
+				}
+				if (mSettings.frameHeight) {
+					sHeight = mSettings.frameHeight + mSettings.frameHeightUnit;
+				} else {
+					sHeight = "100%";
+				}
 				return [{
-					selectorControl: oControl,
+					selectorControl: oIFrame,
 					changeSpecificData: {
 						changeType: "updateIFrame",
 						content: {
-							url: sUrl
+							url: mSettings.frameUrl,
+							width: sWidth,
+							height: sHeight
 						}
 					}
 				}];
-			}
-			return []; // No change
-		});
+			});
 	}
 
 	return {
 		actions: {
 			settings: function () {
 				return {
+					icon: "sap-icon://add-product",
 					isEnabled: true,
 					handler: editIFrame
 				};

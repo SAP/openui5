@@ -1,0 +1,890 @@
+[
+	{
+		"fileName": "id_1576499657864_42_hideControl",
+		"fileType": "change",
+		"changeType": "hideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.294Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499657865_43_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499660689_44_hideControl",
+		"fileType": "change",
+		"changeType": "hideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.295Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499660689_45_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499675228_47_unhideControl",
+		"fileType": "change",
+		"changeType": "unhideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.296Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499675229_48_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499675248_49_moveControls",
+		"fileType": "change",
+		"changeType": "moveControls",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--Victim",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.297Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499675229_48_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+			"source": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			},
+			"target": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			},
+			"movedElements": [
+				{
+					"id": "idMain1--Victim",
+					"idIsLocal": true
+				}
+			]
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499688032_50_unhideControl",
+		"fileType": "change",
+		"changeType": "unhideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.298Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499688032_51_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499688032_52_moveControls",
+		"fileType": "change",
+		"changeType": "moveControls",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument.Name",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.299Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499688032_51_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+			"source": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			},
+			"target": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			},
+			"movedElements": [
+				{
+					"id": "idMain1--GeneralLedgerDocument.Name",
+					"idIsLocal": true
+				}
+			]
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499693095_56_hideControl",
+		"fileType": "change",
+		"changeType": "hideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.300Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499693096_57_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499695675_58_hideControl",
+		"fileType": "change",
+		"changeType": "hideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.301Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499695675_59_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499706216_60_unhideControl",
+		"fileType": "change",
+		"changeType": "unhideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.302Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499706216_61_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499706217_62_moveControls",
+		"fileType": "change",
+		"changeType": "moveControls",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.303Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499706216_61_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+			"source": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			},
+			"target": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			},
+			"movedElements": [
+				{
+					"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+					"idIsLocal": true
+				}
+			]
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499733800_66_hideControl",
+		"fileType": "change",
+		"changeType": "hideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.304Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499733800_67_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499768370_68_unhideControl",
+		"fileType": "change",
+		"changeType": "unhideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.305Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499768371_69_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499768371_70_moveControls",
+		"fileType": "change",
+		"changeType": "moveControls",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument.Name",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.306Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499768371_69_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+			"source": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			},
+			"target": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			},
+			"movedElements": [
+				{
+					"id": "idMain1--GeneralLedgerDocument.Name",
+					"idIsLocal": true
+				}
+			]
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499822704_74_hideControl",
+		"fileType": "change",
+		"changeType": "hideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.307Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499822705_75_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499832239_76_unhideControl",
+		"fileType": "change",
+		"changeType": "unhideControl",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.308Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499832239_77_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576499832241_78_moveControls",
+		"fileType": "change",
+		"changeType": "moveControls",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T12:37:17.309Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": "id_1576499832239_77_composite"
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+			"source": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			},
+			"target": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			},
+			"movedElements": [
+				{
+					"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+					"idIsLocal": true
+				}
+			]
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	}
+]

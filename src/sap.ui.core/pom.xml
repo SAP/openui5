@@ -49,6 +49,9 @@
 		<!-- enable eslint validation -->
 		<sap.ui5.eslint.skip.validation>false</sap.ui5.eslint.skip.validation>
 
+		<!-- enable the packaging of the NPM resources -->
+		<npm.package.phase>package</npm.package.phase>
+
 	</properties>
 
 
@@ -71,120 +74,7 @@
 			</resource>
 		</resources>
 
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<id>merge-modules</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<echo>Merging module: sap-ui-core.js</echo>
-								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core.js" overwrite="true" encoding="UTF-8" eol="lf" fixlastline="true">
-									<filelist dir="${project.build.outputDirectory}/META-INF/resources/">
-										<file name="sap/ui/thirdparty/baseuri.js"/>
-										<file name="sap/ui/thirdparty/es6-promise.js"/>
-										<file name="sap/ui/thirdparty/es6-shim-nopromise.js"/>
-										<file name="ui5loader.js"/>
-										<file name="ui5loader-autoconfig.js"/>
-									</filelist>
-								</concat>
-								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core.js" append="true" encoding="UTF-8" eol="lf" fixlastline="true"><![CDATA[sap.ui.requireSync("sap/ui/core/Core").boot();]]></concat>
-								<echo>Merging module: sap-ui-nojQuery.js</echo>
-								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core-nojQuery.js" overwrite="true" encoding="UTF-8"  eol="lf" fixlastline="true">
-									<filelist dir="${project.build.outputDirectory}/META-INF/resources/">
-										<file name="sap/ui/thirdparty/baseuri.js"/>
-										<file name="sap/ui/thirdparty/es6-promise.js"/>
-										<file name="sap/ui/thirdparty/es6-shim-nopromise.js"/>
-										<file name="ui5loader.js"/>
-										<file name="ui5loader-autoconfig.js"/>
-									</filelist>
-								</concat>
-								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core-nojQuery.js" append="true" encoding="UTF-8" eol="lf" fixlastline="true"><![CDATA[sap.ui.requireSync("sap/ui/core/Core").boot();]]></concat>
-								<echo>Merging module: sap-ui-debug.js</echo>
-								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-debug.js" overwrite="true" encoding="UTF-8"  eol="lf" fixlastline="true">
-									<filelist dir="${project.build.outputDirectory}/META-INF/resources/">
-										<file name="sap/ui/debug/ControlTree.js"/>
-										<file name="sap/ui/debug/Highlighter.js"/>
-										<file name="sap/ui/debug/LogViewer.js"/>
-										<file name="sap/ui/debug/PropertyList.js"/>
-										<file name="sap/ui/debug/DebugEnv.js"/>
-									</filelist>
-								</concat>
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-
 	</build>
-
-
-	<!--**************************************************************************
-	* POM SECTION: Profiles Settings
-	***************************************************************************-->
-
-	<profiles>
-
-		<!-- creation of a webjars compatible JAR file -->
-		<profile>
-			<id>webjars.build</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.5</version>
-						<executions>
-							<execution>
-								<id>webjars-copy-resources</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.directory}/webjars/META-INF/resources/openui5/${project.version}</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.build.outputDirectory}/META-INF/resources</directory>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>2.3.2</version>
-						<executions>
-							<execution>
-								<id>webjars-jar</id>
-								<phase>package</phase>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<configuration>
-									<classesDirectory>${project.build.directory}/webjars</classesDirectory>
-									<excludes>
-										<exclude>**/testsuite/**</exclude>
-									</excludes>
-									<classifier>webjars</classifier>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 
 </project>

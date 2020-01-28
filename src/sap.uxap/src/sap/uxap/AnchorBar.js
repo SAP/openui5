@@ -957,7 +957,8 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype._resetControl = function () {
-		this.destroyAggregation('content', true);
+		this.destroyAggregation('content');
+
 		return this;
 	};
 

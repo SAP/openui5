@@ -85,7 +85,7 @@ sap.ui.define([
 		QUnit.test("When an element key is changed to an unique value", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor.attachPropertyChange(function (oEvent) {
+			this.oEditor.attachValueChange(function (oEvent) {
 				assert.deepEqual(
 					oEvent.getParameter("value"),
 					{

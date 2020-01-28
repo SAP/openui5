@@ -1366,6 +1366,10 @@ sap.ui.define([
 				title: "Test Page for sap.m.ToolbarSeparator",
 				_alternativeTitle: "QUnit tests: sap.m.ToolbarSeparator"
 			},
+			ToolbarSpacer: {
+				title: "Test Page for sap.m.ToolbarSpacer",
+				_alternativeTitle: "QUnit tests: sap.m.ToolbarSpacer"
+			},
 			Tree: {
 				title: "QUnit Page for sap.m.Tree",
 				sinon: {

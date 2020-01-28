@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	'sap/ui/core/dnd/DragInfo',
 	'sap/ui/core/dnd/DropInfo',
-	'sap/f/dnd/GridDropInfo'
-], function (Controller, JSONModel, DragInfo, DropInfo, GridDropInfo) {
+	'sap/f/dnd/GridDropInfo',
+	'sap/f/sample/GridContainerDragAndDropFromList/RevealGrid/RevealGrid'
+], function (Controller, JSONModel, DragInfo, DropInfo, GridDropInfo, RevealGrid) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.GridContainerDragAndDropFromList.C", {
@@ -12,6 +13,14 @@ sap.ui.define([
 		onInit: function () {
 			this.initData();
 			this.attachDragAndDrop();
+		},
+
+		onRevealGrid: function () {
+			RevealGrid.toggle("grid1", this.getView());
+		},
+
+		onExit: function () {
+			RevealGrid.destroy("grid1", this.getView());
 		},
 
 		attachDragAndDrop: function () {

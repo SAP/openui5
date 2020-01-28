@@ -9,6 +9,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var PROPERTY_NAME = "visible";
+
 	/**
 	 * Change handler for hiding of a control.
 	 * @alias sap.ui.fl.changeHandler.HideControl
@@ -70,6 +72,20 @@ sap.ui.define([
 	 * @public
 	 */
 	HideControl.completeChangeContent = function() {
+	};
+
+	/**
+	 * Retrieves the condenser-specific information.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @returns {object} - Condenser-specific information
+	 * @public
+	 */
+	HideControl.getCondenserInfo = function(/* oChange */) {
+		return {
+			classificationType: sap.ui.fl.ClassificationType.Reverse,
+			uniqueKey: PROPERTY_NAME
+		};
 	};
 
 	return HideControl;

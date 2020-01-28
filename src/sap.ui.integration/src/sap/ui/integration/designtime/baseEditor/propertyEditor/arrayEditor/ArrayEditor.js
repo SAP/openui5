@@ -22,7 +22,7 @@ sap.ui.define([
 	 *
 	 * This property editor allows you to edit arrays in a flat way.
 	 *
-	 * To get notified about changes made with the editor, you can use the <code>propertyChange</code> event.
+	 * To get notified about changes made with the editor, you can use the <code>valueChange</code> event.
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
 	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor
@@ -82,7 +82,7 @@ sap.ui.define([
 		var iIndex = oEvent.getSource().data("index");
 		var aValue = (this.getValue() || []).slice();
 		aValue.splice(iIndex, 1);
-		this.firePropertyChange(aValue);
+		this.fireValueChange(aValue);
 	};
 
 	ArrayEditor.prototype._addItem = function () {
@@ -100,7 +100,7 @@ sap.ui.define([
 			}
 		});
 		aValue.push(oDefaultItem);
-		this.firePropertyChange(aValue);
+		this.fireValueChange(aValue);
 	};
 
 	ArrayEditor.prototype._moveUp = function (oEvent) {
@@ -109,7 +109,7 @@ sap.ui.define([
 			var aValue = this.getValue().slice();
 			var mRemovedItem = aValue.splice(iIndex, 1)[0];
 			aValue.splice(iIndex - 1, 0, mRemovedItem);
-			this.firePropertyChange(aValue);
+			this.fireValueChange(aValue);
 		}
 	};
 
@@ -120,16 +120,16 @@ sap.ui.define([
 		if (iIndex < aValue.length - 1) {
 			var mRemovedItem = aValue.splice(iIndex, 1)[0];
 			aValue.splice(iIndex + 1, 0, mRemovedItem);
-			this.firePropertyChange(aValue);
+			this.fireValueChange(aValue);
 		}
 	};
 
 	ArrayEditor.prototype._propertyEditorsChange = function (oEvent) {
 		oEvent.getParameter("previousPropertyEditors").forEach(function (oPropertyEditor) {
-			oPropertyEditor.detachPropertyChange(this._onPropertyValueChange, this);
+			oPropertyEditor.detachValueChange(this._onPropertyValueChange, this);
 		}, this);
 		oEvent.getParameter("propertyEditors").forEach(function (oPropertyEditor) {
-			oPropertyEditor.attachPropertyChange(this._onPropertyValueChange, this);
+			oPropertyEditor.attachValueChange(this._onPropertyValueChange, this);
 		}, this);
 	};
 
@@ -141,7 +141,7 @@ sap.ui.define([
 
 		ObjectPath.set(aParts, vValue, aEditorValue);
 
-		this.firePropertyChange(aEditorValue);
+		this.fireValueChange(aEditorValue);
 	};
 
 	return ArrayEditor;

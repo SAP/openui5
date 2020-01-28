@@ -102,8 +102,8 @@ sap.ui.define([
 		/**
 		 * Gets the manifest of an app(variant) from backend
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Connectors are now determined based on the layer
+		 * @param {sap.ui.fl.Layer} mPropertyBag.appVarUrl - Contains full url of app variant manifest
 		 * @returns {Promise} Promise that resolves with the app(variant) manifest
 		 *
 		 * @private

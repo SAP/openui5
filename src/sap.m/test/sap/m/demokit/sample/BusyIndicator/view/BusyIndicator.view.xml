@@ -7,16 +7,13 @@
 		width="100%">
 		<l:content>
 			<BusyIndicator text="... something happens"
-				class="sapUiSmallMarginBottom" />
+				class="sapUiTinyMarginBottom" />
 			<HBox
 				justifyContent="Start"
 				alignItems="Center" >
-				<BusyIndicator size="1.4em" />
 				<BusyIndicator size="3em" />
-				<BusyIndicator size="4.6em" />
-				<BusyIndicator size="3em" />
-				<BusyIndicator size="1.4em" />
 			</HBox>
+			<BusyIndicator size="1.6rem" class="sapUiMediumMarginBegin"/>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

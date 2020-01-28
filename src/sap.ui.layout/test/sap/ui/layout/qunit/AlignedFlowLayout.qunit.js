@@ -8,13 +8,15 @@ sap.ui.require([
 	"sap/ui/core/Control",
 	"sap/ui/Device",
 	"sap/ui/layout/AlignedFlowLayout",
-	"sap/ui/dom/units/Rem"
+	"sap/ui/dom/units/Rem",
+	"sap/ui/core/IntervalTrigger"
 ], function(
 	Core,
 	Control,
 	Device,
 	AlignedFlowLayout,
-	Rem
+	Rem,
+	IntervalTrigger
 ) {
 	"use strict";
 
@@ -757,7 +759,7 @@ sap.ui.require([
 
 		// Attach an event listener to the central core interval timeout timer to wait
 		// for the first resize event after the layout is made visible.
-		Core.attachIntervalTimer(fnAfterResize, this);
+		IntervalTrigger.addListener(fnAfterResize, this);
 
 		function fnAfterResize() {
 			var oEndItemDomRef = oButton.getDomRef().parentElement,
@@ -774,7 +776,7 @@ sap.ui.require([
 			assert.strictEqual(bOverlapX, false);
 
 			// cleanup
-			Core.detachIntervalTimer(fnAfterResize, this);
+			IntervalTrigger.removeListener(fnAfterResize, this);
 			oInput1.destroy();
 			oInput2.destroy();
 			oInput3.destroy();
@@ -833,7 +835,7 @@ sap.ui.require([
 
 		// Attach an event listener to the central core interval timeout timer to wait
 		// for the first resize event after the layout is made visible.
-		Core.attachIntervalTimer(fnAfterResize, this);
+		IntervalTrigger.addListener(fnAfterResize, this);
 
 		function fnAfterResize() {
 			var oItemDomRef1 = oInput1.getDomRef().parentElement,
@@ -864,7 +866,7 @@ sap.ui.require([
 			assert.strictEqual(bOverlapX, false, "the last items two items should not overlap");
 
 			// cleanup
-			Core.detachIntervalTimer(fnAfterResize, this);
+			IntervalTrigger.removeListener(fnAfterResize, this);
 			oAlignedFlowLayout.destroy();
 			done();
 		}
@@ -923,7 +925,7 @@ sap.ui.require([
 
 		// Attach an event listener to the central core interval timeout timer to wait
 		// for the first resize event after the layout is made visible.
-		Core.attachIntervalTimer(fnAfterResize, this);
+		IntervalTrigger.addListener(fnAfterResize, this);
 
 		function fnAfterResize() {
 			var oItemDomRef1 = oInput1.getDomRef().parentElement,
@@ -969,7 +971,7 @@ sap.ui.require([
 			}
 
 			// cleanup
-			Core.detachIntervalTimer(fnAfterResize, this);
+			IntervalTrigger.removeListener(fnAfterResize, this);
 			oAlignedFlowLayout.destroy();
 			done();
 		}
@@ -1028,7 +1030,7 @@ sap.ui.require([
 
 		// Attach an event listener to the central core interval timeout timer to wait
 		// for the first resize event after the layout is made visible.
-		Core.attachIntervalTimer(fnAfterResize, this);
+		IntervalTrigger.addListener(fnAfterResize, this);
 
 		function fnAfterResize() {
 			var oItemDomRef1 = oInput1.getDomRef().parentElement,
@@ -1063,7 +1065,7 @@ sap.ui.require([
 			assert.strictEqual(oEndContendItemDomRef.offsetTop, 20, "the end content item should be in the second line");
 
 			// cleanup
-			Core.detachIntervalTimer(fnAfterResize, this);
+			IntervalTrigger.removeListener(fnAfterResize, this);
 			oAlignedFlowLayout.destroy();
 			done();
 		}

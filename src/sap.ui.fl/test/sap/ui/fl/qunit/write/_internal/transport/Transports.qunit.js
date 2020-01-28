@@ -13,12 +13,10 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.write._internal.transport.Transports", {
 		beforeEach: function() {
-			this.oTransports = new Transports();
 			this.oServer = sinon.fakeServer.create();
 		},
 		afterEach: function() {
 			this.oServer.restore();
-			this.oTransports = null;
 		}
 	});
 
@@ -38,7 +36,7 @@ sap.ui.define([
 			type: "variant"
 		};
 
-		return this.oTransports.getTransports(oObject).then(function(oResult) {
+		return Transports.getTransports(oObject).then(function(oResult) {
 			assert.equal(oResult.transports[0].transportId, '4711');
 			assert.equal(oResult.localonly, false);
 		});
@@ -54,10 +52,11 @@ sap.ui.define([
 				namespace: "testnamespace/",
 				fileName: "testname",
 				fileType: "testtype"
-			}]
+			}],
+			reference: "aReference"
 		};
 
-		return this.oTransports.makeChangesTransportable(oParams).then(function() {
+		return Transports.makeChangesTransportable(oParams).then(function() {
 			assert.ok(true);
 		});
 	});
@@ -75,7 +74,7 @@ sap.ui.define([
 			}]
 		};
 
-		return this.oTransports.makeChangesTransportable(oParams)["catch"](function() {
+		return Transports.makeChangesTransportable(oParams)["catch"](function() {
 			assert.ok(true);
 		});
 	});
@@ -87,7 +86,7 @@ sap.ui.define([
 
 		oParams = {transportId: "testtransport1"};
 
-		return this.oTransports.makeChangesTransportable(oParams)["catch"](function() {
+		return Transports.makeChangesTransportable(oParams)["catch"](function() {
 			assert.ok(true);
 		});
 	});

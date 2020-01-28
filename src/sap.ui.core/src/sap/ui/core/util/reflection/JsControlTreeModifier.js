@@ -439,8 +439,8 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		destroy: function(oControl) {
-			oControl.destroy();
+		destroy: function(oControl, bSuppressInvalidate) {
+			oControl.destroy(bSuppressInvalidate);
 		},
 
 		/**

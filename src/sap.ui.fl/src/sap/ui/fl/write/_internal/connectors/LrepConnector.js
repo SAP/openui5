@@ -170,6 +170,7 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolves as soon as the reset has completed
 		 */
 		reset: function (mPropertyBag) {
+			BusyIndicator.show(0); //Reset takes a long time with app descriptor changes, so a BusyIndicator is needed.
 			var aChanges = [];
 			var oTransportSelectionPromise = Promise.resolve(); //By default, no transport needed for USER layer
 
@@ -192,6 +193,7 @@ sap.ui.define([
 			}
 
 			return oTransportSelectionPromise.then(function() {
+				BusyIndicator.show(0); //Re-display the busy indicator in case it was hide by transport selection
 				var aParameters = ["reference", "layer", "appVersion", "changelist", "generator"];
 				var mParameters = _pick(mPropertyBag, aParameters);
 
@@ -211,7 +213,13 @@ sap.ui.define([
 					ApplyConnector,
 					sTokenUrl
 				);
-				return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption);
+				return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption).then(function (oResponse) {
+					BusyIndicator.hide();
+					return oResponse;
+				}).catch(function(oError) {
+					BusyIndicator.hide();
+					return Promise.reject(oError);
+				});
 			});
 		},
 

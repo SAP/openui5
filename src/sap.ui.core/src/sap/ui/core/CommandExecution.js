@@ -80,6 +80,8 @@ sap.ui.define([
 			}
 		},
 
+		bSkipUpdate:false,
+
 		/**
 		 * Fires the execute event and triggers the attached handler.
 		 * If the CommandExecution is disabled, the handler will not be triggered.
@@ -138,6 +140,21 @@ sap.ui.define([
 		},
 
 		/**
+		 * Update Context data
+		 * @param {object} oCommandData The CommandData if it already exists
+		 * @private
+		 */
+		_updateContextData: function(oCommandData) {
+			var oParent = this.getParent();
+
+			oCommandData[this.getCommand()] = {};
+			oCommandData[this.getCommand()].enabled = this.getEnabled();
+			oCommandData[this.getCommand()].id = this.getId();
+			oCommandData[this.getCommand()].visible = this.getVisible();
+			this.getModel("$cmd").setProperty("/" + oParent.getId(), oCommandData);
+		},
+
+		/**
 		 * Creates command data in <code>$cmd</code> model.
 		 *
 		 * @param {object} [oParentData] An optional parent object to chain if necessary
@@ -145,32 +162,29 @@ sap.ui.define([
 		 * @private
 		 */
 		_createCommandData: function(oParentData) {
-			var oParent = this.getParent(),
-				oParentContext = oParent.getBindingContext("$cmd"),
+			if (!this.bSkipUpdate) {
+				//prevent multiple updates due to model changes;
+				this.bSkipUpdate = true;
+
+				var oParent = this.getParent(),
 				oModel = oParent.getModel("$cmd"),
 				oData = oModel.getData(),
 				oContainerData = oData[oParent.getId()];
 
-			if (!oContainerData) {
-				oParentData = oParentContext && oParentContext.getObject();
-				oContainerData = Object.create(oParentData || null);
-			} else if (oParentData && oParentData !== Object.getPrototypeOf(oContainerData)) {
-				oContainerData = Object.create(oParentData);
-			} else if (oContainerData[this.getCommand()]) {
-				return;
-			}
+				//no data yet
+				if (!oContainerData) {
+					oContainerData = Object.create(oParentData);
+				//parent data changed
+				} else if (oParentData !== Object.getPrototypeOf(oContainerData)) {
+					oContainerData = Object.create(oParentData);
+				}
 
-			oContainerData[this.getCommand()] = {};
-			oContainerData[this.getCommand()].enabled = this.getEnabled();
-			oContainerData[this.getCommand()].visible = this.getVisible();
-			oModel.setProperty("/" + oParent.getId(), oContainerData);
-			this.bindProperty("enabled", {
-				path: "$cmd>" + this.getCommand() + "/enabled"
-			});
-			this.bindProperty("visible", {
-				path: "$cmd>" + this.getCommand() + "/visible"
-			});
-			oParent.bindElement("$cmd>/" + oParent.getId());
+				this._updateContextData(oContainerData);
+				if (!oParent.getObjectBinding("$cmd")) {
+					oParent.bindElement("$cmd>/" + oParent.getId());
+				}
+				this.bSkipUpdate = false;
+			}
 		},
 
 		/** @inheritdoc */
@@ -178,19 +192,27 @@ sap.ui.define([
 			var that = this,
 				oCommand,
 				oOldParent = this.getParent(),
+				oParentData,
 				sShortcut,
 				bIsRegistered;
+
+			function getParentData() {
+				var oParentContext = oParent.oPropagatedProperties.oBindingContexts["$cmd"];
+				return oParentContext ? oParentContext.getObject() : null;
+			}
+
+			function fnModelChange() {
+				if (oParent.getModel("$cmd")) {
+					var oParentData = getParentData();
+					//detach listener first to avoid side effects
+					that.getParent().detachModelContextChange(fnModelChange);
+					that._createCommandData(oParentData);
+				}
+			}
 
 			Element.prototype.setParent.apply(this, arguments);
 
 			oCommand = this._getCommandInfo();
-
-			function fnModelChange() {
-				if (oParent.getModel("$cmd")) {
-					that._createCommandData();
-					that.getParent().detachModelContextChange(fnModelChange);
-				}
-			}
 
 			if (oCommand && this.getVisible()) {
 				if (oParent && oParent !== oOldParent) {
@@ -200,22 +222,36 @@ sap.ui.define([
 					if (!bIsRegistered) {
 						Shortcut.register(oParent, sShortcut, this.trigger.bind(this));
 					}
+
 					if (oParent.getModel("$cmd")) {
-						this._createCommandData();
+						oParentData = getParentData();
+						this._createCommandData(oParentData);
 					} else {
 						oParent.attachModelContextChange(fnModelChange);
 					}
-					var fnOriginalPropagate = oParent._propagateProperties;
-					oParent._propagateProperties = function() {
-						var oProperties = oParent.oPropagatedProperties; /* we need to check the map directly as the passed oProperties does not contain the parent information anymore */
-						var oParentContext = oProperties.oBindingContexts["$cmd"];
-						var oContext = that.getBindingContext("$cmd");
-						if (oParentContext && oContext && oParentContext !== oContext) {
-							that._createCommandData(oParentContext.getObject());
-						}
-						fnOriginalPropagate.apply(oParent, arguments);
-					};
-					oParent._propagateProperties._sapui_fnOrig = fnOriginalPropagate;
+
+					if (!oParent._propagateProperties._sapui_fnOrig) {
+						var fnOriginalPropagate = oParent._propagateProperties;
+						oParent._propagateProperties = function(vName, oObject, oProperties, bUpdateAll, sName, bUpdateListener) {
+							var oActualContext = oParent.getBindingContext("$cmd");
+							if (oActualContext) {
+								var oActualData = oActualContext.getObject();
+								var oOldParentData = Object.getPrototypeOf(oActualData);
+								oParentData = getParentData();
+								if (oOldParentData !== oParentData) {
+									//update all CommandExecutions if parent Context changed
+									var aDependents = this.getDependents();
+									aDependents.forEach(function(oDependent) {
+										if (oDependent.isA("sap.ui.core.CommandExecution")) {
+											that._createCommandData.apply(oDependent, [oParentData]);
+										}
+									});
+								}
+							}
+							fnOriginalPropagate.apply(oParent, arguments);
+						};
+						oParent._propagateProperties._sapui_fnOrig = fnOriginalPropagate;
+					}
 				}
 				if (oOldParent && oOldParent != oParent) {
 					//unregister shortcut
@@ -241,10 +277,16 @@ sap.ui.define([
 				var oCommandData = oControl.getBindingContext("$cmd").getObject();
 				if (oCommandData) {
 					delete oCommandData[this.getCommand()];
-				}
-				if (isEmptyObject(Object.assign({}, oCommandData))) {
-					oControl._propagateProperties = oControl._propagateProperties._sapui_fnOrig;
-					oControl.unbindElement("$cmd");
+					if (isEmptyObject(Object.assign({}, oCommandData))) {
+						//reset _propagateProperties if not yet done...
+						if (oControl._propagateProperties._sapui_fnOrig) {
+							oControl._propagateProperties = oControl._propagateProperties._sapui_fnOrig;
+						}
+						//unbindContext as no command execution data exists anymore (only if parent is not in destruction)
+						if (!oControl._bIsBeingDestroyed) {
+							oControl.unbindElement("$cmd");
+						}
+					}
 				}
 			}
 		},
@@ -260,20 +302,52 @@ sap.ui.define([
 		 * @public
 		 */
 		setVisible: function(bValue) {
-			var oParent = this.getParent();
+			var oParent = this.getParent(),
+				oCmdModel = this.getModel("$cmd");
 
 			this.setProperty("visible", bValue, true);
 
+			//when null/undefined is passed the property internally gets converted to a default value
+			bValue = this.getProperty("visible");
+
 			if (oParent) {
-				var oCommand = this._getCommandInfo();
-				var sShortcut = oCommand.shortcut;
-				var bIsRegistered = Shortcut.isRegistered(this.getParent(), sShortcut);
+				var oCommand = this._getCommandInfo(),
+					sShortcut = oCommand.shortcut,
+					bIsRegistered = Shortcut.isRegistered(oParent, sShortcut);
 
 				if (bValue && !bIsRegistered) {
 					Shortcut.register(oParent, sShortcut, this.trigger.bind(this));
 				} else if (!bValue && bIsRegistered) {
 					Shortcut.unregister(oParent, sShortcut);
 				}
+			}
+			//update $cmd Model
+			if (oCmdModel) {
+				var oContext = this.getBindingContext("$cmd");
+				oCmdModel.setProperty(this.getCommand() + "/visible", bValue, oContext);
+			}
+			return this;
+		},
+
+		/**
+		 * Sets whether the <code>CommandExecution</code> is enabled, or not. If set to
+		 * false, the <code>CommandExecution</code> will still register the shortcut.
+		 * This will block the default behavior for that shortcut.
+		 *
+		 * @param {boolean} bValue Whether the CommandExecution is enabled, or not.
+		 * @returns {sap.ui.core.Element} The CommandExecution
+		 *
+		 * @public
+		 */
+		setEnabled: function(bValue) {
+			var oCmdModel = this.getModel("$cmd");
+
+			this.setProperty("enabled", bValue, true);
+
+			//update $cmd Model
+			if (oCmdModel) {
+				var oContext = this.getBindingContext("$cmd");
+				oCmdModel.setProperty(this.getCommand() + "/enabled", this.getProperty("enabled"), oContext);
 			}
 			return this;
 		},

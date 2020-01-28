@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal.connectors, sap.ui.fl.write._internal.connectors
+	 * @ui5-restricted sap.ui.fl.apply._internal.connectors, sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
 	 */
 
 	return {
@@ -72,7 +72,7 @@ sap.ui.define([
 			// Adding Query-Parameters to the Url
 			if (mParameters) {
 				Object.keys(mParameters).forEach(function (sKey) {
-					if (mParameters[sKey] === undefined) {
+					if (!mParameters[sKey]) {
 						delete mParameters[sKey];
 					}
 				});
@@ -146,6 +146,9 @@ sap.ui.define([
 						oResult.status = xhr.status;
 						if (xhr.getResponseHeader("X-CSRF-Token")) {
 							oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");
+						}
+						if (xhr.getResponseHeader("Etag")) {
+							oResult.etag = xhr.getResponseHeader("Etag");
 						}
 						resolve(oResult);
 					} else {

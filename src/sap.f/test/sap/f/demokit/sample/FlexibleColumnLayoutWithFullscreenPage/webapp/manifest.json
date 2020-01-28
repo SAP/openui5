@@ -46,7 +46,7 @@
 					]
 				},
 				{
-					"pattern": "detailDetail/{category}/{layout}",
+					"pattern": "detailDetail/{category}/{product}/{layout}",
 					"name": "detailDetail",
 					"target": [
 						"detail",

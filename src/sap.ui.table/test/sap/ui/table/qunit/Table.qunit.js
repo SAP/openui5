@@ -39,16 +39,15 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/base/Log",
-	"sap/m/library",
-	"sap/m/plugins/DataStateIndicator"
+	"sap/m/library"
 ], function(qutils, TableQUnitUtils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
 			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin,
 			CoreLibrary, Control, MockServer, PasteHelper, Device, JSONModel, ODataModel, Sorter, Filter, FloatType,
-			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, library, DataStateIndicator) {
+			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, MLibrary) {
 	"use strict";
 
 	// shortcut for sap.m.ToolbarDesign
-	var ToolbarDesign = library.ToolbarDesign;
+	var ToolbarDesign = MLibrary.ToolbarDesign;
 
 	// Shortcuts
 	var SortOrder = TableLibrary.SortOrder;
@@ -377,7 +376,12 @@ sap.ui.define([
 
 	QUnit.test("SelectedIndex", function(assert) {
 		oTable.setSelectedIndex(8);
-		assert.equal(oTable.getSelectedIndex(), 8, "Selected Index is 8!");
+		assert.equal(oTable.getSelectedIndex(), 8, "selectedIndex is 8");
+		var aRows = oTable.getRows();
+		var $Row = aRows[3].getDomRefs(true);
+
+		$Row.rowSelector.click();
+		assert.equal(oTable.getProperty("selectedIndex"), -1, "selectedIndex is -1");
 	});
 
 	QUnit.test("Check Selection of Last fixedBottomRow", function(assert) {
@@ -5334,19 +5338,92 @@ sap.ui.define([
 		this.oTable.removePlugin(this.oTestPlugin);
 		this.oTable._enableLegacyMultiSelection();
 		assert.throws(this.oTable._legacyMultiSelection, "Table#_legacyMultiSelection throws an error if a selection plugin is applied");
-
 	});
 
-	QUnit.module("Dependents Plugins");
-
-	QUnit.test("DataStateIndicator Plugin Support", function(assert) {
-		try {
-			new Table({
-				dependents: new DataStateIndicator()
-			});
-			assert.ok(true, "Table supports DataStateIndicator plugin");
-		} catch (e) {
-			assert.ok(false, "Table does not support DataStateIndicator plugin");
+	QUnit.module("Hidden dependents", {
+		beforeEach: function() {
+			this.oTable = new Table();
+			this.oTableInvalidate = sinon.spy(this.oTable, "invalidate");
+		},
+		afterEach: function() {
+			this.oTable.destroy();
 		}
+	});
+
+	QUnit.test("insertAggregation", function(assert) {
+		this.oTable.insertAggregation("_hiddenDependents", new Text(), 0);
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when inserting a hidden dependent without suppressing invalidation");
+		this.oTableInvalidate.reset();
+
+		this.oTable.insertAggregation("_hiddenDependents", new Text(), 0, true);
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when inserting a hidden dependent and suppressing invalidation");
+	});
+
+	QUnit.test("addAggregation", function(assert) {
+		this.oTable.addAggregation("_hiddenDependents", new Text());
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when adding a hidden dependent without suppressing invalidation");
+		this.oTableInvalidate.reset();
+
+		this.oTable.addAggregation("_hiddenDependents", new Text(), true);
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when adding a hidden dependent and suppressing invalidation");
+	});
+
+	QUnit.test("removeAggregation", function(assert) {
+		var oText = new Text();
+
+		this.oTable.addAggregation("_hiddenDependents", oText);
+		this.oTableInvalidate.reset();
+		this.oTable.removeAggregation("_hiddenDependents", oText);
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when removing a hidden dependent without suppressing invalidation");
+		this.oTableInvalidate.reset();
+
+		this.oTable.addAggregation("_hiddenDependents", oText);
+		this.oTableInvalidate.reset();
+		this.oTable.removeAggregation("_hiddenDependents", oText, true);
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when removing a hidden dependent and suppressing invalidation");
+	});
+
+	QUnit.test("removeAllAggregation", function(assert) {
+		this.oTable.addAggregation("_hiddenDependents", new Text());
+		this.oTableInvalidate.reset();
+
+		this.oTable.removeAllAggregation("_hiddenDependents");
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when removing all hidden dependents without suppressing invalidation");
+		this.oTableInvalidate.reset();
+
+		this.oTable.removeAllAggregation("_hiddenDependents", true);
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when removing all hidden dependents and suppressing invalidation");
+	});
+
+	QUnit.test("destroyAggregation", function(assert) {
+		this.oTable.addAggregation("_hiddenDependents", new Text());
+		this.oTableInvalidate.reset();
+
+		this.oTable.destroyAggregation("_hiddenDependents");
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when destroying all hidden dependents without suppressing invalidation");
+		this.oTableInvalidate.reset();
+
+		this.oTable.destroyAggregation("_hiddenDependents", true);
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when destroying all hidden dependents and suppressing invalidation");
+	});
+
+	QUnit.test("destroy", function(assert) {
+		var oText = new Text();
+
+		this.oTable.addAggregation("_hiddenDependents", oText);
+		this.oTableInvalidate.reset();
+		oText.destroy();
+		assert.ok(this.oTableInvalidate.notCalled,
+			"The table is not invalidated when destroying a hidden dependent");
 	});
 });

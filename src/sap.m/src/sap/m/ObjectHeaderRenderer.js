@@ -29,7 +29,9 @@ sap.ui.define([
 	 * ObjectHeader renderer.
 	 * @namespace
 	 */
-	var ObjectHeaderRenderer = {};
+	var ObjectHeaderRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Check if the object exists. In case object has _isEmpty() method then this method is called. If there is no such method then object is not empty.
@@ -188,15 +190,14 @@ sap.ui.define([
 		}
 		// set text direction of the intro
 		oOH._introText.setTextDirection(oOH.getIntroTextDirection());
-		oRM.write("<div");
-		oRM.addClass(sIntroClass);
+		oRM.openStart("div");
+		oRM.class(sIntroClass);
 		if (oOH.getIntroActive()) {
-			oRM.addClass(sIntroActiveClass);
+			oRM.class(sIntroActiveClass);
 		}
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openEnd();
 		this._renderChildControl(oRM, oOH, oOH._introText);
-		oRM.write("</div>");
+		oRM.close("div");
 	};
 
 	/**
@@ -212,16 +213,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderAttribute = function(oRM, oOH, oAttr, bFullWidth) {
-		oRM.write("<div");
-		oRM.addClass("sapMOHAttr");
-		oRM.writeClasses();
+		oRM.openStart("div");
+		oRM.class("sapMOHAttr");
 		if (bFullWidth) {
-			oRM.addStyle("width", "100%");
-			oRM.writeStyles();
+			oRM.style("width", "100%");
 		}
-		oRM.write(">");
+		oRM.openEnd();
 		this._renderChildControl(oRM, oOH, oAttr);
-		oRM.write("</div>");
+		oRM.close("div");
 	};
 
 	/**
@@ -304,41 +303,38 @@ sap.ui.define([
 			return; // nothing to render
 		}
 
-		oRM.write("<div"); // Start attribute row container
-		oRM.addClass("sapMOHAttrRow");
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openStart("div"); // Start attribute row container
+		oRM.class("sapMOHAttrRow");
+		oRM.openEnd();
 
 		if (!ObjectHeaderRenderer._isEmptyObject(oLeft)) { // if the object with the attributes is not empty then render the attributes
 			this._renderAttribute(oRM, oOH, oLeft, ObjectHeaderRenderer._isEmptyArray(aRight));
 		} else if (ObjectHeaderRenderer._isEmptyObject(oLeft) && !ObjectHeaderRenderer._isEmptyArray(aRight)) {
 			// if there are no attributes at all and the array containing statuses and progress indicators isn't empty
 			if (aRight[0] instanceof sap.m.ProgressIndicator) { // check if the first element in the array is progress indicator, and if it's so then place an empty "attribute" div before the progress indicator
-				oRM.write("<div");
-				oRM.addClass("sapMOHAttr");
-				oRM.writeClasses();
-				oRM.write(">");
-				oRM.write("</div>");
+				oRM.openStart("div");
+				oRM.class("sapMOHAttr");
+				oRM.openEnd();
+				oRM.close("div");
 			}
 		}
 
 		if (!ObjectHeaderRenderer._isEmptyArray(aRight)) { // check do we have statuses, icons or progress indicators and render them accordingly
-			oRM.write("<div");
+			oRM.openStart("div");
 			if (aRight[0] instanceof sap.m.ProgressIndicator) {
-				oRM.addClass("sapMOHStatusFixedWidth");
+				oRM.class("sapMOHStatusFixedWidth");
 			} else if (aRight[0] instanceof sap.m.ObjectMarker) {
-				oRM.addClass("sapMOHStatusFixedWidth");
-				oRM.addClass("sapMObjStatusMarker");
+				oRM.class("sapMOHStatusFixedWidth");
+				oRM.class("sapMObjStatusMarker");
 			} else {
-				oRM.addClass("sapMOHStatus");
+				oRM.class("sapMOHStatus");
 			}
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openEnd();
 			ObjectHeaderRenderer._renderObjects(oRM, aRight, oOH);
-			oRM.write("</div>");
+			oRM.close("div");
 		}
 
-		oRM.write("</div>"); // end attribute row container
+		oRM.close("div"); // end attribute row container
 	};
 
 	/**
@@ -403,11 +399,9 @@ sap.ui.define([
 		}
 
 		// Container for a number and a units qualifier.
-		oRM.write("<div"); // Start Number/units container
-		oRM.writeAttribute("id", oOH.getId() + "-numberdiv");
-		oRM.addClass("sapMOHNumberDiv");
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openStart("div", oOH.getId() + "-numberdiv"); // Start Number/units container
+		oRM.class("sapMOHNumberDiv");
+		oRM.openEnd();
 
 		var oObjectNumber = oOH.getAggregation("_objectNumber");
 
@@ -415,7 +409,7 @@ sap.ui.define([
 			oObjectNumber.setTextDirection(oOH.getNumberTextDirection());
 			this._renderChildControl(oRM, oOH, oObjectNumber);
 		}
-		oRM.write("</div>"); // End Number/units container
+		oRM.close("div"); // End Number/units container
 
 		if (!oOH.getCondensed()) {
 			this._renderAdditionalNumbers(oRM, oOH);
@@ -438,25 +432,24 @@ sap.ui.define([
 		}
 
 		if (numbers.length === 1) {
-			oRM.write("<div");
-			oRM.addClass("additionalOHNumberSeparatorDiv");
-			oRM.writeClasses();
-			oRM.write("></div>");
+			oRM.openStart("div");
+			oRM.class("additionalOHNumberSeparatorDiv");
+			oRM.openEnd();
+			oRM.close("div");
 		}
 
 		for (var i = 0; i < numbers.length; i++) {
-			oRM.write("<div");
-			oRM.writeAttribute("id", oOH.getId() + "-additionalNumber" + i);
-			oRM.addClass("sapMOHNumberDiv additionalOHNumberDiv");
+			oRM.openStart("div", oOH.getId() + "-additionalNumber" + i);
+			oRM.class("sapMOHNumberDiv");
+			oRM.class("additionalOHNumberDiv");
 			if (numbers.length === 1) {
-				oRM.addClass("sapMOHOnlyANumber");
+				oRM.class("sapMOHOnlyANumber");
 			}
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openEnd();
 			numbers[i].setTextDirection(oOH.getNumberTextDirection());
 			this._renderChildControl(oRM, oOH, numbers[i]);
 
-			oRM.write("</div>"); // End container
+			oRM.close("div"); // End container
 		}
 	};
 
@@ -474,70 +467,69 @@ sap.ui.define([
 		// Start title text and title arrow container
 		oOH._oTitleArrowIcon.setVisible(oOH.getShowTitleSelector());
 		if (oOH.getShowTitleSelector() && oOH._oTitleArrowIcon.getVisible()) {
-			oRM.write("<div");
-			oRM.addClass("sapMOHTitleAndArrow");
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openStart("div");
+			oRM.class("sapMOHTitleAndArrow");
+			oRM.openEnd();
 		}
 
 		if (oOH.getTitle()) {
 			var sTitleLevel = (oOH.getTitleLevel() === TitleLevel.Auto) ? TitleLevel.H1 : oOH.getTitleLevel();
+
+			sTitleLevel = sTitleLevel.toLowerCase();
 
 			oOH._titleText.setText(oOH.getTitle());
 			// set text direction of the title
 			oOH._titleText.setTextDirection(oOH.getTitleTextDirection());
 
 			if (oOH.getTitleActive()) {
-				oRM.write("<a"); // Start Title Text container
+				oRM.openStart("a", oOH.getId() + "-title"); // Start Title Text container
 				if (oOH.getTitleHref()) { // if title is link write it
-					oRM.writeAttributeEscaped("href", oOH.getTitleHref());
+					oRM.attr("href", oOH.getTitleHref());
 					if (oOH.getTitleTarget()) {
-						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
+						oRM.attr("target", oOH.getTitleTarget());
 					}
 				}
 
 				//ARIA attributes
-				oRM.writeAccessibilityState({
+				oRM.accessibilityState({
 					role: "link",
 					haspopup: !oOH.getTitleHref()
 				});
 			} else {
-				oRM.write("<div"); // Start Title Text container
+				oRM.openStart("div", oOH.getId() + "-title"); // Start Title Text container
 			}
 
-			oRM.writeAttribute("id", oOH.getId() + "-title");
-			oRM.addClass("sapMOHTitle");
+			oRM.class("sapMOHTitle");
 			if (oOH.getTitleActive()) {
-				oRM.writeAttribute("tabindex", "0");
-				oRM.addClass("sapMOHTitleActive");
+				oRM.attr("tabindex", "0");
+				oRM.class("sapMOHTitleActive");
 			}
 			if (oOH.getShowTitleSelector()) {
-				oRM.addClass("sapMOHTitleFollowArrow");
+				oRM.class("sapMOHTitleFollowArrow");
 			}
-			oRM.writeClasses();
-			oRM.write(">");
-			oRM.write("<" + sTitleLevel + ">");
+			oRM.openEnd();
+			oRM.openStart(sTitleLevel);
+			oRM.openEnd();
 			this._renderChildControl(oRM, oOH, oOH._titleText);
-			oRM.write("</" + sTitleLevel + ">");
+			oRM.close(sTitleLevel);
 
 			if (oOH.getTitleActive()) {
-				oRM.write("</a>"); // End Title Text container
+				oRM.close("a"); // End Title Text container
 			} else {
-				oRM.write("</div>"); // End Title Text container
+				oRM.close("div"); // End Title Text container
 			}
 		}
 
 		if (oOH.getShowTitleSelector()) {
-			oRM.write("<span"); // Start title arrow container
-			oRM.addClass("sapMOHTitleArrow");
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openStart("span"); // Start title arrow container
+			oRM.class("sapMOHTitleArrow");
+			oRM.openEnd();
 			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
-			oRM.write("</span>"); // end title arrow container
+			oRM.close("span"); // end title arrow container
 		}
 
 		if (oOH.getShowTitleSelector() && oOH._oTitleArrowIcon.getVisible()) {
-			oRM.write("</div>"); // end title text and title arrow container
+			oRM.close("div"); // end title text and title arrow container
 		}
 	};
 
@@ -554,7 +546,7 @@ sap.ui.define([
 		var numbers = oOH.getAdditionalNumbers();
 
 		if (!oOH.getNumber() && (numbers && !numbers.length)) {
-			oRM.addClass("sapMOHTitleDivFull");
+			oRM.class("sapMOHTitleDivFull");
 		}
 	};
 
@@ -575,56 +567,57 @@ sap.ui.define([
 
 		// Container for fields placed on the top half of the item, below the intro. This
 		// includes title icon, title, title arrow, number, and number units.
-		oRM.write("<div"); // Start Top row container
-		oRM.addClass("sapMOHTopRow");
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openStart("div"); // Start Top row container
+		oRM.class("sapMOHTopRow");
+		oRM.openEnd();
 
 		// Title container displayed to the left of the number and number units container.
-		oRM.write("<div"); // Start Title container
-		oRM.writeAttribute("id", oOH.getId() + "-titlediv");
-		oRM.addClass("sapMOHTitleDiv");
+		oRM.openStart("div", oOH.getId() + "-titlediv"); // Start Title container
+		oRM.class("sapMOHTitleDiv");
 		if (oOH._hasIcon()) {
-			oRM.addClass("sapMOHTitleIcon");
+			oRM.class("sapMOHTitleIcon");
 		}
 
 		this._renderFullTitle(oRM, oOH);
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openEnd();
 
 		// Container for icon
 		if (oOH._hasIcon()) {
-			oRM.write("<div"); // Start icon container
-			oRM.addClass("sapMOHIcon");
-			oRM.addClass('sapMOHIcon' + oOH.getImageShape());
+			oRM.openStart("div"); // Start icon container
+			oRM.class("sapMOHIcon");
+			oRM.class('sapMOHIcon' + oOH.getImageShape());
 			if (oOH.getIconActive()) {
-				oRM.addClass("sapMPointer");
+				oRM.class("sapMPointer");
 			}
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openEnd();
 			this._renderChildControl(oRM, oOH, oOH._getImageControl());
-			oRM.write("</div>"); // end icon container
+			oRM.close("div"); // end icon container
 		}
 
 		this._renderTitle(oRM, oOH);
 
-		oRM.write("</div>"); // End Title container
+		oRM.close("div"); // End Title container
 
 		this._renderNumber(oRM, oOH);
 
-		oRM.write("<div class=\"sapMOHDivider\"></div>");
-		oRM.write("</div>"); // End Top row container
+		oRM.openStart("div");
+		oRM.class("sapMOHDivider");
+		oRM.openEnd();
+		oRM.close("div");
+		oRM.close("div"); // End Top row container
 
 		if (oOH._hasBottomContent()) {
-			oRM.write("<div"); // Start Bottom row container
-			oRM.addClass("sapMOHBottomRow");
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openStart("div"); // Start Bottom row container
+			oRM.class("sapMOHBottomRow");
+			oRM.openEnd();
 
 			this._renderAttributesAndStatuses(oRM, oOH);
 
-			oRM.write("<div class=\"sapMOHDivider\"></div>");
-			oRM.write("</div>"); // End Bottom row container
+			oRM.openStart("div");
+			oRM.class("sapMOHDivider");
+			oRM.openEnd();
+			oRM.close("div");
+			oRM.close("div"); // End Bottom row container
 		}
 	};
 
@@ -639,18 +632,16 @@ sap.ui.define([
 	 */
 	ObjectHeaderRenderer._renderCondensedOH = function(oRM, oOH) {
 		// Title container displayed to the left of the number and number units container.
-		oRM.write("<div"); // Start Title container
-		oRM.writeAttribute("id", oOH.getId() + "-titlediv");
-		oRM.addClass("sapMOHTitleDiv");
+		oRM.openStart("div", oOH.getId() + "-titlediv"); // Start Title container
+		oRM.class("sapMOHTitleDiv");
 
 		this._renderFullTitle(oRM, oOH);
 
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openEnd();
 
 		this._renderTitle(oRM, oOH);
 
-		oRM.write("</div>"); // End Title container
+		oRM.close("div"); // End Title container
 
 		this._renderNumber(oRM, oOH);
 
@@ -683,31 +674,29 @@ sap.ui.define([
 
 		var bCondensed = oOH.getCondensed();
 
-		oRM.write("<div");
-		oRM.writeControlData(oOH);
-		oRM.write(">");
+		oRM.openStart("div", oOH);
+		oRM.openEnd();
 
-		oRM.write("<div"); // Start Main container
-		oRM.addClass("sapMOH");
+		oRM.openStart("div"); // Start Main container
+		oRM.class("sapMOH");
 
 		// set contrast container, only when the background is not transparent
 		if (oOH._getBackground() !== BackgroundDesign.Transparent) {
-			oRM.addClass("sapContrastPlus");
+			oRM.class("sapContrastPlus");
 		}
 
 		if (bCondensed) {
-			oRM.addClass("sapMOHC");
+			oRM.class("sapMOHC");
 		}
 
-		oRM.addClass("sapMOHBg" + oOH._getBackground());
+		oRM.class("sapMOHBg" + oOH._getBackground());
 
-		oRM.writeClasses();
 		var sTooltip = oOH.getTooltip_AsString();
 		if (sTooltip) {
-			oRM.writeAttributeEscaped("title", sTooltip);
+			oRM.attr("title", sTooltip);
 		}
 		// ARIA attributes
-		oRM.writeAccessibilityState({
+		oRM.accessibilityState({
 			role : "region",
 			labelledby: {
 				value: oOH.getId() + "-titleText-inner",
@@ -715,7 +704,7 @@ sap.ui.define([
 			}
 		});
 
-		oRM.write(">");
+		oRM.openEnd();
 
 		if (bCondensed) {
 			this._renderCondensedOH(oRM, oOH);
@@ -723,9 +712,12 @@ sap.ui.define([
 			this._renderFullOH(oRM, oOH);
 		}
 
-		oRM.write("<div class=\"sapMOHLastDivider\"></div>");
-		oRM.write("</div>");
-		oRM.write("</div>"); // End Main container\
+		oRM.openStart("div");
+		oRM.class("sapMOHLastDivider");
+		oRM.openEnd();
+		oRM.close("div");
+		oRM.close("div");
+		oRM.close("div"); // End Main container\
 
 		this._cleanupNotRenderedChildControls(oRM, oOH);
 
@@ -764,48 +756,44 @@ sap.ui.define([
 			oHeaderContainer = oOH.getHeaderContainer();
 
 		// start outer div (containing ObjectHeader and IconTabBar content div)
-		oRM.write("<div");
-		oRM.addClass("sapMOHROuter");
-		oRM.writeClasses();
+		oRM.openStart("div", oOH);
+		oRM.class("sapMOHROuter");
 
 		var sTooltip = oOH.getTooltip_AsString();
 		if (sTooltip) {
-			oRM.writeAttributeEscaped("title", sTooltip);
+			oRM.attr("title", sTooltip);
 		}
 
 		//ARIA attributes
-		oRM.writeAccessibilityState({
+		oRM.accessibilityState({
 			role : "region",
 			labelledby: {
 				value: oOH.getId() + "-txt",
 				append: true
 			}
 		});
-		oRM.writeControlData(oOH);
-		oRM.write(">");
+		oRM.openEnd();
 
-		oRM.write("<div");
-		oRM.addClass("sapMOHR");
+		oRM.openStart("div");
+		oRM.class("sapMOHR");
 		// set contrast container, only when the background is not transparent
 		if (oOH._getBackground() !== BackgroundDesign.Transparent) {
-			oRM.addClass("sapContrastPlus");
+			oRM.class("sapContrastPlus");
 		}
 
 		if (bTabs) {
-			oRM.addClass("sapMOHRNoBorder");
+			oRM.class("sapMOHRNoBorder");
 		}
 
-		oRM.addClass("sapMOHRBg" + oOH._getBackground());
-		oRM.writeClasses();
-		oRM.write(">");
-		oRM.write("<div");
+		oRM.class("sapMOHRBg" + oOH._getBackground());
+		oRM.openEnd();
+		oRM.openStart("div");
 
 		if (Device.system.desktop && oOH._isMediaSize("Desktop") && oOH.getFullScreenOptimized() && oOH._iCountVisAttrStat >= 1 && oOH._iCountVisAttrStat <= 3) {
-			oRM.addClass("sapMOHRStatesOneOrThree");
+			oRM.class("sapMOHRStatesOneOrThree");
 		}
 
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openEnd();
 
 		this._renderResponsiveTitleBlock(oRM, oOH);
 
@@ -813,19 +801,19 @@ sap.ui.define([
 			this._renderResponsiveStates(oRM, oOH);
 		}
 
-		oRM.write("</div>"); // end wrapper div
+		oRM.close("div"); // end wrapper div
 
 		if (bTabs) {
 			this._renderResponsiveTabs(oRM, oOH);
 		}
 
-		oRM.write("</div>");
+		oRM.close("div");
 
 		if (oHeaderContainer && oHeaderContainer instanceof sap.m.IconTabBar) {
 			this._renderChildControl(oRM, oOH, oHeaderContainer);
 		}
 
-		oRM.write("</div>"); // end outer div
+		oRM.close("div"); // end outer div
 
 		if (!oOH.getTitle()) {
 			 //if value is set through data binding, there is time delay and fake warning will be logged, so set warning only if not data binding
@@ -850,56 +838,50 @@ sap.ui.define([
 	 **/
 	ObjectHeaderRenderer._renderResponsiveTitleBlock = function(oRM, oControl) {
 		// Title container displayed to the left of the number and number units container.
-		oRM.write("<div"); // Start Title and Number container (block1 and block2)
-		oRM.writeAttribute("id", oControl.getId() + "-titlenumdiv");
-		oRM.addClass("sapMOHRTitleNumberDiv"); // first block class
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openStart("div", oControl.getId() + "-titlenumdiv"); // Start Title and Number container (block1 and block2)
+		oRM.class("sapMOHRTitleNumberDiv"); // first block class
+		oRM.openEnd();
 
-		oRM.write("<div"); // Start Title container
-		oRM.writeAttribute("id", oControl.getId() + "-titlediv");
-		oRM.addClass("sapMOHRTitleDiv");
+		oRM.openStart("div", oControl.getId() + "-titlediv"); // Start Title container
+		oRM.class("sapMOHRTitleDiv");
 
 		if (oControl._hasIcon()) {
 			if (Device.system.phone || oControl._isMediaSize("Phone")) {
 				if (Device.orientation.landscape || (oControl._isMediaSize("Phone") && !Device.system.phone)) {
-					oRM.addClass("sapMOHRTitleIcon");
+					oRM.class("sapMOHRTitleIcon");
 				}
 			} else {
-				oRM.addClass("sapMOHRTitleIcon");
+				oRM.class("sapMOHRTitleIcon");
 			}
 		}
 
 		if (!oControl.getNumber()) {
-			oRM.addClass("sapMOHRTitleDivFull");
+			oRM.class("sapMOHRTitleDivFull");
 		}
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openEnd();
 
 		this._renderResponsiveTitle(oRM, oControl);
 
 		// render the title icon in a separate container
 		if (oControl._hasIcon()) {
-			oRM.write("<div");
-			oRM.writeAttribute("id", oControl.getId() + "-titleIcon");
-			oRM.addClass("sapMOHRIcon");
-			oRM.addClass('sapMOHRIcon' + oControl.getImageShape());
+			oRM.openStart("div", oControl.getId() + "-titleIcon");
+			oRM.class("sapMOHRIcon");
+			oRM.class('sapMOHRIcon' + oControl.getImageShape());
 			if ((Device.system.phone && Device.orientation.portrait)) {
-				oRM.addClass("sapMOHRHideIcon");
+				oRM.class("sapMOHRHideIcon");
 			}
 			if (oControl.getIconActive()) {
-				oRM.addClass("sapMPointer");
+				oRM.class("sapMPointer");
 			}
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openEnd();
 			this._renderChildControl(oRM, oControl, oControl._getImageControl());
-			oRM.write("</div>"); // end icon container
+			oRM.close("div"); // end icon container
 		}
-		oRM.write("</div>"); // End Title container
+		oRM.close("div"); // End Title container
 
 		this._renderResponsiveNumber(oRM, oControl);
 
-		oRM.write("</div>"); // End Title and Number container
+		oRM.close("div"); // End Title and Number container
 	};
 
 
@@ -913,13 +895,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveStates = function(oRM, oControl) {
-		oRM.write("<div");
-		oRM.writeAttribute("id", oControl.getId() + "-states");
-		oRM.addClass("sapMOHRStates");
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openStart("div", oControl.getId() + "-states");
+		oRM.class("sapMOHRStates");
+		oRM.openEnd();
 		this._renderResponsiveRow(oRM, oControl);
-		oRM.write("</div>");
+		oRM.close("div");
 	};
 
 	/**
@@ -1012,11 +992,10 @@ sap.ui.define([
 		var iContNum = 1; // container number (start from the first one)
 		for (var i = 0; i < aVisibleAttrAndStat.length; i++) {
 			if (iCurrentCountInCol == 0) {
-				oRM.write("<div"); // Start container
-				oRM.addClass("sapMOHRStatesCont" + iContNum);
-				oRM.addClass(sClassColCount);
-				oRM.writeClasses();
-				oRM.write(">");
+				oRM.openStart("div"); // Start container
+				oRM.class("sapMOHRStatesCont" + iContNum);
+				oRM.class(sClassColCount);
+				oRM.openEnd();
 			}
 
 			if (i < iCountVisibleAttr) {
@@ -1026,7 +1005,7 @@ sap.ui.define([
 			}
 			iCurrentCountInCol++;
 			if ((iCurrentCountInCol == iCountInCols && iContNum > iCountInBigCols) || (iCurrentCountInCol == (iCountInCols + 1) && iContNum <= iCountInBigCols) || i == aVisibleAttrAndStat.length - 1) {
-				oRM.write("</div>"); // end container
+				oRM.close("div"); // end container
 				iCurrentCountInCol = 0;
 				iContNum++;
 			}
@@ -1042,12 +1021,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveAttribute = function(oRM, oOH, oAttr) {
-		oRM.write("<div");
-		oRM.addClass("sapMOHRAttr");
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openStart("div");
+		oRM.class("sapMOHRAttr");
+		oRM.openEnd();
 		this._renderChildControl(oRM, oOH, oAttr);
-		oRM.write("</div>");
+		oRM.close("div");
 	};
 
 	/**
@@ -1059,12 +1037,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveStatus = function(oRM, oOH, oStatus) {
-		oRM.write("<div");
-		oRM.addClass("sapMOHRStatus");
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openStart("div");
+		oRM.class("sapMOHRStatus");
+		oRM.openEnd();
 		this._renderChildControl(oRM, oOH, oStatus[0]);
-		oRM.write("</div>");
+		oRM.close("div");
 	};
 
 	/**
@@ -1085,20 +1062,18 @@ sap.ui.define([
 		aMarkers = oControl._getVisibleMarkers();
 
 		// render markers
-		oRM.write("<span");
-		oRM.addClass("sapMObjStatusMarker");
+		oRM.openStart("span", oControl.getId() + "-markers");
+		oRM.class("sapMObjStatusMarker");
 
 		if ((sTextDir === TextDirection.LTR && bPageRTL) || (sTextDir === TextDirection.RTL && !bPageRTL)) {
-			oRM.addClass("sapMObjStatusMarkerOpposite");
+			oRM.class("sapMObjStatusMarkerOpposite");
 		}
-		oRM.writeClasses();
-		oRM.writeAttribute("id", oControl.getId() + "-markers");
 
-		oRM.write(">");
+		oRM.openEnd();
 		for (var i = 0; i < aMarkers.length; i++) {
 			this._renderChildControl(oRM, oControl, aMarkers[i]);
 		}
-		oRM.write("</span>");
+		oRM.close("span");
 	};
 
 	/**
@@ -1190,7 +1165,12 @@ sap.ui.define([
 		var oHeaderContainer = oControl.getHeaderContainer(),
 			oIconTabHeader;
 
-		oRM.write("<div class=\"sapMOHRTabs" + (oHeaderContainer instanceof sap.m.IconTabBar ? " sapMOHRTabsITB" : "") + "\">");
+		oRM.openStart("div");
+		oRM.class("sapMOHRTabs");
+		if (oHeaderContainer instanceof sap.m.IconTabBar) {
+			oRM.class("sapMOHRTabsITB");
+		}
+		oRM.openEnd();
 		if (oHeaderContainer) {
 			if (oHeaderContainer instanceof sap.m.IconTabBar) {
 				oIconTabHeader = oHeaderContainer._getIconTabHeader();
@@ -1204,7 +1184,7 @@ sap.ui.define([
 				Log.warning("The control " + oHeaderContainer + " is not supported for aggregation \"headerContainer\"");
 			}
 		}
-		oRM.write("</div>");
+		oRM.close("div");
 	};
 
 
@@ -1223,19 +1203,17 @@ sap.ui.define([
 		// Start title text and title arrow container
 		oOH._oTitleArrowIcon.setVisible(oOH.getShowTitleSelector());
 
-		oRM.write("<div"); // Start Title Text container
+		oRM.openStart("div", oOH.getId() + "-title"); // Start Title Text container
 
-		oRM.writeAttribute("id", oOH.getId() + "-title");
-		oRM.addClass("sapMOHRTitle");
+		oRM.class("sapMOHRTitle");
 
 		if (oOH.getTitle().length && oOH.getTitleActive()) {
-			oRM.addClass("sapMOHRTitleActive");
+			oRM.class("sapMOHRTitleActive");
 		}
 		if (oOH.getShowTitleSelector()) {
-			oRM.addClass("sapMOHRTitleFollowArrow");
+			oRM.class("sapMOHRTitleFollowArrow");
 		}
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openEnd();
 
 		// Cut the title to 50 or 80 chars according to the design specification
 		if ((Device.system.phone && Device.orientation.portrait)) {
@@ -1244,20 +1222,18 @@ sap.ui.define([
 			nCutLen = 80;
 		}
 
-		oRM.write("<div"); // Start TitleArrow container
-		oRM.writeAttribute("id", oOH.getId() + "-title-arrow");
-		oRM.addStyle("display", "inline-block");
-		oRM.writeStyles();
-		oRM.write(">");
+		oRM.openStart("div", oOH.getId() + "-title-arrow"); // Start TitleArrow container
+		oRM.style("display", "inline-block");
+		oRM.openEnd();
 		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
-		oRM.write("</div>");
+		oRM.close("div");
 
 		// Introductory text at the top of the item, like "On behalf of Julie..."
 		if (oOH.getIntro()) {
 			this._renderIntro(oRM, oOH, "sapMOHRIntro", "sapMOHRIntroActive");
 		}
 
-		oRM.write("</div>"); // End Title Text container
+		oRM.close("div"); // End Title Text container
 	};
 
 	/**
@@ -1288,44 +1264,42 @@ sap.ui.define([
 		var bMarkers = !!oOH._getVisibleMarkers().length;
 		var sTitleLevel = (oOH.getTitleLevel() === TitleLevel.Auto) ? TitleLevel.H1 : oOH.getTitleLevel();
 
-		oRM.write("<" + sTitleLevel + ">");
-		oRM.write("<span");
-		oRM.addClass("sapMOHRTitleTextContainer");
-		oRM.writeClasses();
+		sTitleLevel = sTitleLevel.toLowerCase();
+
+		oRM.openStart(sTitleLevel);
+		oRM.openEnd();
+		oRM.openStart("span");
+		oRM.class("sapMOHRTitleTextContainer");
 		// set title text direction, it will be inherit from the "flags" also
 		if (sTextDir != TextDirection.Inherit) {
-			oRM.writeAttribute("dir", sTextDir.toLowerCase());
+			oRM.attr("dir", sTextDir.toLowerCase());
 		}
-		oRM.write(">");
+		oRM.openEnd();
 		if (oOH.getTitle().length && oOH.getTitleActive()) {
-			oRM.write("<a");
+			oRM.openStart("a", oOH.getId() + "-txt");
 			if (oOH.getTitleHref()) { // if title is link write it
-				oRM.writeAttributeEscaped("href", oOH.getTitleHref());
+				oRM.attr("href", oOH.getTitleHref());
 				if (oOH.getTitleTarget()) {
-					oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
+					oRM.attr("target", oOH.getTitleTarget());
 				}
 			}
 
-			oRM.writeAttribute("tabindex", "0");
+			oRM.attr("tabindex", "0");
 			//ARIA attributes
-			oRM.writeAccessibilityState({
+			oRM.accessibilityState({
 				role: "link",
 				haspopup: !oOH.getTitleHref()
 			});
 		} else {
-			oRM.write("<span");
+			oRM.openStart("span", oOH.getId() + "-txt");
 		}
-		oRM.writeAttribute("id", oOH.getId() + "-txt");
-		oRM.addClass("sapMOHRTitleText");
-		oRM.writeClasses();
+		oRM.class("sapMOHRTitleText");
 
-		oRM.write(">");
+		oRM.openEnd();
 
-		oRM.write("<span");
-		oRM.writeAttribute("id", oOH.getId() + "-titletxtwrap");
-		oRM.addClass("sapMOHRTitleTextWrappable");
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openStart("span", oOH.getId() + "-titletxtwrap");
+		oRM.class("sapMOHRTitleTextWrappable");
+		oRM.openEnd();
 
 		if (oOH.getTitle().length > nCutLen) {
 			sOHTitle = oOH.getTitle().substr(0, nCutLen).trim();
@@ -1343,40 +1317,43 @@ sap.ui.define([
 				sOHTitleStart = '';
 			}
 
-			oRM.writeEscaped(sOHTitleStart);
-			oRM.write("</span>");
+			oRM.text(sOHTitleStart);
+			oRM.close("span");
 
-			oRM.writeEscaped(sOHTitleEnd);
-			oRM.write(sEllipsis);
+			oRM.text(sOHTitleEnd);
+			oRM.text(sEllipsis);
 			if (oOH.getTitleActive()) {
-				oRM.write("</a>");
+				oRM.close("a");
 			} else {
-				oRM.write("</span>");
+				oRM.close("span");
 			}
 			this._renderResponsiveMarkers(oRM, oOH);
-			oRM.write("</span>");
+			oRM.close("span");
 		} else {
 			if (!sEllipsis){
-				oRM.writeEscaped(sOHTitle);
+				oRM.text(sOHTitle);
 			} else {
-				oRM.writeEscaped(sOHTitle + sEllipsis);
+				oRM.text(sOHTitle + sEllipsis);
 			}
 			if (oOH.getTitleActive()) {
-				oRM.write("</span></a></span>");
+				oRM.close("span");
+				oRM.close("a");
+				oRM.close("span");
 			} else {
-				oRM.write("</span></span></span>");
+				oRM.close("span");
+				oRM.close("span");
+				oRM.close("span");
 			}
 		}
 
 		if (oOH.getShowTitleSelector()) {
-			oRM.write("<span"); // Start title arrow container
-			oRM.addClass("sapMOHRTitleArrow");
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openStart("span"); // Start title arrow container
+			oRM.class("sapMOHRTitleArrow");
+			oRM.openEnd();
 			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
-			oRM.write("</span>"); // end title arrow container
+			oRM.close("span"); // end title arrow container
 		}
-		oRM.write("</" + sTitleLevel + ">");
+		oRM.close(sTitleLevel);
 
 	};
 

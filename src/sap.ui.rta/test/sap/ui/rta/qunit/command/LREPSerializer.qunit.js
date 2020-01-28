@@ -270,7 +270,7 @@ sap.ui.define([
 				assert.equal(oAddChangeSpy.callCount, 0, "no change got added");
 			})
 
-			.then(this.oSerializer.saveCommands.bind(this.oSerializer))
+			.then(this.oSerializer.saveCommands.bind(this.oSerializer, false))
 
 			.then(function() {
 				assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
@@ -303,7 +303,7 @@ sap.ui.define([
 				assert.equal(oAddChangeSpy.callCount, 2, "now 2. change got added directly after execute");
 			})
 
-			.then(this.oSerializer.saveCommands.bind(this.oSerializer))
+			.then(this.oSerializer.saveCommands.bind(this.oSerializer, false))
 
 			.then(function() {
 				assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
@@ -328,7 +328,7 @@ sap.ui.define([
 
 			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
 
-			.then(this.oSerializer.saveCommands.bind(this.oSerializer))
+			.then(this.oSerializer.saveCommands.bind(this.oSerializer, false))
 
 			.then(function() {
 				assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
@@ -399,7 +399,7 @@ sap.ui.define([
 
 			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
 
-			.then(this.oSerializer.saveCommands.bind(this.oSerializer))
+			.then(this.oSerializer.saveCommands.bind(this.oSerializer, false))
 
 			.then(function() {
 				assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
@@ -458,7 +458,7 @@ sap.ui.define([
 
 			.then(this.oCommandStack.undo.bind(this.oCommandStack))
 
-			.then(this.oSerializer.saveCommands.bind(this.oSerializer))
+			.then(this.oSerializer.saveCommands.bind(this.oSerializer, false))
 			.then(function() {
 				assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
 				assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
@@ -492,7 +492,7 @@ sap.ui.define([
 
 			.then(this.oCommandStack.undo.bind(this.oCommandStack))
 
-			.then(this.oSerializer.saveCommands.bind(this.oSerializer))
+			.then(this.oSerializer.saveCommands.bind(this.oSerializer, false))
 
 			.then(function() {
 				assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
@@ -572,7 +572,7 @@ sap.ui.define([
 
 			.then(this.oCommandStack.undo.bind(this.oCommandStack))
 
-			.then(this.oSerializer.saveCommands.bind(this.oSerializer))
+			.then(this.oSerializer.saveCommands.bind(this.oSerializer, false))
 
 			.then(function() {
 				assert.notOk(true, "then return promise shouldn't be resolved");
@@ -588,6 +588,32 @@ sap.ui.define([
 				oSaveChangesStub.restore();
 				this.oSerializer.saveCommands();
 			}.bind(this));
+		});
+
+		QUnit.test("Execute 1 'remove' command and save in a system where versioning is disabled", function(assert) {
+			var oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+
+			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
+				removedElement : this.oInput1
+			}, this.oInputDesignTimeMetadata)
+			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
+			.then(this.oSerializer.saveCommands.bind(this.oSerializer, false))
+			.then(function() {
+				assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
+				assert.equal(oSaveChangesStub.getCall(0).args[0].draft, false, "then the save on the persistence API is called with a draft flag, default value is false");
+			});
+		});
+
+		QUnit.test("Execute 1 'remove' command and save in a system where versioning is enabled", function(assert) {
+			var oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
+				removedElement : this.oInput1}, this.oInputDesignTimeMetadata)
+			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
+      .then(this.oSerializer.saveCommands.bind(this.oSerializer, true))
+			.then(function() {
+				assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
+				assert.equal(oSaveChangesStub.getCall(0).args[0].draft, true, "then the save on the persistence API is called with a draft flag");
+			});
 		});
 
 		QUnit.test("when needs restart is asked for normal commands", function(assert) {
@@ -680,7 +706,7 @@ sap.ui.define([
 
 			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
 
-			.then(this.oSerializer.saveCommands.bind(this.oSerializer))
+			.then(this.oSerializer.saveCommands.bind(this.oSerializer, false))
 
 			.then(function() {
 				assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
@@ -707,7 +733,7 @@ sap.ui.define([
 
 			.then(this.oCommandStack.undo.bind(this.oCommandStack))
 
-			.then(this.oSerializer.saveCommands.bind(this.oSerializer))
+			.then(this.oSerializer.saveCommands.bind(this.oSerializer, false))
 
 			.then(function() {
 				assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");

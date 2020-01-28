@@ -1,10 +1,12 @@
-/*global QUnit*/
+/*global QUnit,sinon*/
 sap.ui.define([
+	"sap/ui/model/odata/_ODataMetaModelUtils",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/util/MockServer"
 ], function(
+	_ODataMetaModelUtils,
 	ODataMetadata,
 	V1ODataModel,
 	V2ODataModel,
@@ -38,7 +40,7 @@ sap.ui.define([
 		return oModel;
 	}
 
-	QUnit.module("ODataModel Annotation path");
+	QUnit.module("ODataMetadata: ODataModel Annotation path");
 
 	QUnit.test("init MockServer Flight", function(assert) {
 		oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
@@ -103,7 +105,7 @@ sap.ui.define([
 	});
 
 	// Usually we should not test internal methods, but these might be candidates to be made publicly available
-	QUnit.module("Internal methods");
+	QUnit.module("ODataMetadata: Internal methods");
 
 	var mInternalTests = {
 		// Test data to check for
@@ -424,7 +426,7 @@ sap.ui.define([
 	QUnit.test("V2: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
 
 
-	QUnit.module("sap-cancel-on-close header handling");
+	QUnit.module("ODataMetadata: sap-cancel-on-close header handling");
 
 	var fnTestHeaderRequest = function(bCancelOnClose, bExpectedValue) {
 		return function(assert){
@@ -438,7 +440,7 @@ sap.ui.define([
 	QUnit.test("Set to true via parameter", fnTestHeaderRequest(true, true));
 	QUnit.test("Set to false via parameter", fnTestHeaderRequest(false, false));
 
-	QUnit.module("Nav property reference info", {
+	QUnit.module("ODataMetadata: Nav property reference info", {
 		beforeEach: function() {
 			this.oServer = initServer(sServiceUri, "model/GWSAMPLE_BASIC.metadata.xml", sDataRootPath);
 			this.oMetadata = new ODataMetadata(sServiceUri + "$metadata", {});
@@ -472,4 +474,204 @@ sap.ui.define([
 			assert.equal(this.oMetadata._getNavPropertyRefInfo(oEntity, "Unknown"), null, "Returns null for unknown property");
 		}.bind(this));
 	});
+
+	QUnit.test("_getEntityAssociationEnd", function (assert) {
+		var oMetadata = this.oMetadata;
+
+		// as long as metadata are not loaded _getEntityAssociationEnd() returns null
+		assert.strictEqual(oMetadata._getEntityAssociationEnd(), null);
+
+		return oMetadata.loaded().then(function () {
+			var oSalesOrderEntityType = oMetadata._getEntityTypeByName("GWSAMPLE_BASIC.SalesOrder"),
+				oToBusinessPartnerAssociationEnd,
+				oToLineItemsAssociationEnd;
+
+			// initially cache is not defined
+			assert.strictEqual(oMetadata._mGetEntityAssociationEndCache, undefined, "Initial");
+
+			// code under test
+			oToLineItemsAssociationEnd = oMetadata
+				._getEntityAssociationEnd(oSalesOrderEntityType, "ToLineItems");
+
+			assert.strictEqual(oToLineItemsAssociationEnd.type,
+				"GWSAMPLE_BASIC.SalesOrderLineItem", "ToLineItems");
+			assert.strictEqual(oToLineItemsAssociationEnd.multiplicity, "*");
+			assert.strictEqual(oToLineItemsAssociationEnd.role,
+				"ToRole_Assoc_SalesOrder_SalesOrderLineItems");
+			assert.deepEqual(oMetadata._mGetEntityAssociationEndCache, {
+				"GWSAMPLE_BASIC.SalesOrder/ToLineItems" : oToLineItemsAssociationEnd
+			});
+
+			// code under test
+			oToBusinessPartnerAssociationEnd = oMetadata
+				._getEntityAssociationEnd(oSalesOrderEntityType, "ToBusinessPartner");
+
+			assert.strictEqual(oToBusinessPartnerAssociationEnd.type,
+				"GWSAMPLE_BASIC.BusinessPartner", "ToBusinessPartner");
+			assert.strictEqual(oToBusinessPartnerAssociationEnd.multiplicity, "1");
+			assert.strictEqual(oToBusinessPartnerAssociationEnd.role,
+				"FromRole_Assoc_BusinessPartner_SalesOrders");
+			assert.deepEqual(oMetadata._mGetEntityAssociationEndCache, {
+				"GWSAMPLE_BASIC.SalesOrder/ToBusinessPartner" : oToBusinessPartnerAssociationEnd,
+				"GWSAMPLE_BASIC.SalesOrder/ToLineItems" : oToLineItemsAssociationEnd
+			});
+
+			sinon.mock(_ODataMetaModelUtils).expects("findObject")
+				.withExactArgs(oSalesOrderEntityType.navigationProperty, "Foo");
+
+			// code under test - unknown navigation property name
+			assert.strictEqual(oMetadata._getEntityAssociationEnd(oSalesOrderEntityType, "Foo"),
+				null, "Foo");
+
+			assert.deepEqual(oMetadata._mGetEntityAssociationEndCache, {
+				"GWSAMPLE_BASIC.SalesOrder/Foo" : null,
+				"GWSAMPLE_BASIC.SalesOrder/ToBusinessPartner" : oToBusinessPartnerAssociationEnd,
+				"GWSAMPLE_BASIC.SalesOrder/ToLineItems" : oToLineItemsAssociationEnd
+			});
+
+			// code under test - use association end from cache
+			assert.strictEqual(oMetadata._getEntityAssociationEnd(oSalesOrderEntityType, "Foo"),
+				null, "Foo");
+
+			_ODataMetaModelUtils.findObject.restore();
+		});
+	});
+
+	QUnit.test("_fillElementCaches", function (assert) {
+		var oMetadata = this.oMetadata;
+
+		// code under test
+		oMetadata._fillElementCaches();
+
+		// as long as metadata is not loaded nothing is done
+		assert.strictEqual(oMetadata._entitySetMap, undefined);
+
+		return oMetadata.loaded().then(function () {
+			var oEntitySetMap,
+				oSchema = oMetadata.oMetadata.dataServices.schema[0],
+				aEntitySets = oSchema.entityContainer[0].entitySet,
+				oSalesOrderType = oSchema.entityType[2],
+				aSalesOrderNavigationProperties = oSalesOrderType.navigationProperty;
+
+			// caches are not available
+			assert.strictEqual(oMetadata._entitySetMap, undefined);
+			assert.strictEqual(aEntitySets[2].__entityType, undefined);
+			assert.strictEqual(oSalesOrderType.__navigationPropertiesMap, undefined);
+
+			// code under test
+			oMetadata._fillElementCaches();
+
+			oEntitySetMap = oMetadata._entitySetMap;
+
+			assert.deepEqual(oEntitySetMap, {
+				"GWSAMPLE_BASIC.BusinessPartner" : aEntitySets[0],
+				"GWSAMPLE_BASIC.Contact" : aEntitySets[4],
+				"GWSAMPLE_BASIC.Product" : aEntitySets[1],
+				"GWSAMPLE_BASIC.SalesOrder" : aEntitySets[2],
+				"GWSAMPLE_BASIC.SalesOrderLineItem" : aEntitySets[3],
+				"GWSAMPLE_BASIC.VH_AddressType" : aEntitySets[7],
+				"GWSAMPLE_BASIC.VH_BPRole" : aEntitySets[14],
+				"GWSAMPLE_BASIC.VH_Category" : aEntitySets[8],
+				"GWSAMPLE_BASIC.VH_Country" : aEntitySets[6],
+				"GWSAMPLE_BASIC.VH_Currency" : aEntitySets[9],
+				"GWSAMPLE_BASIC.VH_Language" : aEntitySets[15],
+				"GWSAMPLE_BASIC.VH_ProductTypeCode" : aEntitySets[13],
+				"GWSAMPLE_BASIC.VH_Sex" : aEntitySets[5],
+				"GWSAMPLE_BASIC.VH_UnitLength" : aEntitySets[12],
+				"GWSAMPLE_BASIC.VH_UnitQuantity" : aEntitySets[10],
+				"GWSAMPLE_BASIC.VH_UnitWeight" : aEntitySets[11]
+			});
+			assert.strictEqual(aEntitySets[2].__entityType, oSalesOrderType);
+			assert.deepEqual(oSalesOrderType.__navigationPropertiesMap, {
+				ToBusinessPartner : aSalesOrderNavigationProperties[0],
+				ToLineItems : aSalesOrderNavigationProperties[1]
+			});
+
+			// code under test
+			oMetadata._fillElementCaches();
+
+			assert.strictEqual(oMetadata._entitySetMap, oEntitySetMap, "same cache");
+		});
+	});
+
+[{
+	iCacheItemReferencesCalls : 0,
+	sPath : "/SalesOrderSet('42')",
+	sReducedPath : "/SalesOrderSet('42')"
+}, {
+	iCacheItemReferencesCalls : 0,
+	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')",
+	sReducedPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader",
+	sReducedPath : "/SalesOrderSet('42')"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
+	sReducedPath : "/SalesOrderSet('42')/Note"
+}, {
+	iCacheItemReferencesCalls : 2,
+	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader"
+		+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
+	sReducedPath : "/SalesOrderSet('42')/Note"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToProduct/Name",
+	sReducedPath :
+		"/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToProduct/Name"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderSet('42')/ToBusinessPartner/Address/City",
+	sReducedPath : "/SalesOrderSet('42')/ToBusinessPartner/Address/City"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+		+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/Note",
+	sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/Note"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+		+ "/ToLineItems(SalesOrderID='42',ItemPosition='20')/Note",
+	sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+		+ "/ToLineItems(SalesOrderID='42',ItemPosition='20')/Note"
+}, {
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader/ToLineItems",
+	sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+		+ "/ToLineItems"
+}, { // function import
+	iCacheItemReferencesCalls : 1,
+	sPath : "/SalesOrder_Confirm(SalesOrderID='42')"
+		+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
+	sReducedPath : "/SalesOrder_Confirm(SalesOrderID='42')/Note"
+}, { // multiple nested partners
+	iCacheItemReferencesCalls : 2,
+	sPath : "/SalesOrderSet('42')/ToBusinessPartner/ToContacts('aa-bb')/ToBusinessPartner"
+		+ "/ToSalesOrders('42')/Note",
+	sReducedPath : "/SalesOrderSet('42')/Note"
+}, { // must not fail for invalid paths
+	iCacheItemReferencesCalls : 1,
+	sPath : "/A/ToB/ToC/ToD/Foo",
+	sReducedPath : "/A/ToB/ToC/ToD/Foo"
+}].forEach(function (oFixture) {
+	var sPath = oFixture.sPath,
+		sReducedPath = oFixture.sReducedPath,
+		sTitle = "_getReducedPath: " + sPath + " -> " + sReducedPath;
+
+	QUnit.test(sTitle, function (assert) {
+		var oMetadata = this.oMetadata;
+
+		return oMetadata.loaded().then(function () {
+			sinon.spy(oMetadata, "_fillElementCaches");
+
+			// code under test
+			assert.strictEqual(oMetadata._getReducedPath(sPath), sReducedPath);
+
+			assert.strictEqual(oMetadata._fillElementCaches.callCount,
+				oFixture.iCacheItemReferencesCalls);
+			oMetadata._fillElementCaches.restore();
+		});
+	});
+});
 });

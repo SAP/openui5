@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/transport/Transports",
 	"sap/ui/fl/write/_internal/transport/TransportDialog",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/core/BusyIndicator"
 ], function(
 	LayerUtils,
 	Layer,
 	Transports,
 	TransportDialog,
-	FlexSettings
+	FlexSettings,
+	BusyIndicator
 ) {
 	"use strict";
 	/**
@@ -27,9 +29,7 @@ sap.ui.define([
 	 *        of the SmartVariant control.
 	 * @returns {sap.ui.fl.write._internal.transport.TransportSelection} New instance of <code>sap.ui.fl.write._internal.transport.TransportSelection</code>
 	 */
-	var TransportSelection = function() {
-		this.oTransports = new sap.ui.fl.write._internal.transport.Transports();
-	};
+	var TransportSelection = function() {};
 
 	/**
 	 * Selects a transport request for a given LREP object.
@@ -51,7 +51,7 @@ sap.ui.define([
 	 */
 	TransportSelection.prototype.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl, sStyleClass) {
 		var retrieveTransportInfo = function(oObjectInfo, fOkay, fError, bCompactMode, sStyleClass, bATOActive) {
-			this.oTransports.getTransports(oObjectInfo).then(function(oGetTransportsResult) {
+			Transports.getTransports(oObjectInfo).then(function(oGetTransportsResult) {
 				if (this._checkDialog(oGetTransportsResult, bATOActive)) {
 					this._openDialog({
 						hidePackage: !LayerUtils.doesCurrentLayerRequirePackage(),
@@ -165,7 +165,7 @@ sap.ui.define([
 		}
 
 		oDialog.open();
-
+		BusyIndicator.hide();
 		return oDialog;
 	};
 
@@ -364,8 +364,7 @@ sap.ui.define([
 	 */
 	TransportSelection.prototype._prepareChangesForTransport = function(oTransportInfo, aAllLocalChanges, aAppVariantDescriptors, oContentParameters) {
 		// Pass list of changes to be transported with transport request to backend
-		var oTransports = new Transports();
-		var aTransportData = oTransports._convertToChangeTransportData(aAllLocalChanges, aAppVariantDescriptors);
+		var aTransportData = Transports.convertToChangeTransportData(aAllLocalChanges, aAppVariantDescriptors);
 		var oTransportParams = {};
 		//packageName is '' in CUSTOMER layer (no package input field in transport dialog)
 		oTransportParams.package = oTransportInfo.packageName;
@@ -375,7 +374,7 @@ sap.ui.define([
 		oTransportParams.appVersion = oContentParameters.appVersion;
 		oTransportParams.layer = oContentParameters.layer;
 
-		return oTransports.makeChangesTransportable(oTransportParams).then(function() {
+		return Transports.makeChangesTransportable(oTransportParams).then(function() {
 			// remove the $TMP package from all changes; has been done on the server as well,
 			// but is not reflected in the client cache until the application is reloaded
 			aAllLocalChanges.forEach(function(oChange) {

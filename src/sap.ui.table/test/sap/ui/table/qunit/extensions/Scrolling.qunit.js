@@ -2541,7 +2541,79 @@ sap.ui.define([
 			});
 
 			return oTable.qunit.whenInitialRenderingFinished().then(oTable.qunit.$scrollVSbTo(49)).then(function() {
-				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", ScrollTop set to 48");
+				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", ScrollTop set to 49");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					rowMode: oRowModeConfig.rowMode
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
+	QUnit.test("Scroll with scrollbar if re-rendered after setting FirstVisibleRow; Small data; Fixed row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode
+			});
+
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				return new Promise(function(resolve) {
+					oTable.setFirstVisibleRow(1);
+					oTable.attachEventOnce("_rowsUpdated", function() {
+						setTimeout(function() {
+							oTable.rerender();
+							oTable.qunit.whenNextRenderingFinished().then(resolve);
+						}, 0);
+					});
+				});
+			}).then(function() {
+				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
+			}).then(oTable.qunit.$scrollVSbTo(98)).then(function() {
+				that.assertPosition(assert, 2, 98, 0, mConfig.rowMode + ", ScrollTop set to 98");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					rowMode: oRowModeConfig.rowMode
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
+	QUnit.test("Scroll with scrollbar if re-rendered while setting FirstVisibleRow; Small data; Fixed row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode
+			});
+
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				return new Promise(function(resolve) {
+					oTable.setFirstVisibleRow(1);
+					setTimeout(function() {
+						oTable.rerender();
+						oTable.qunit.whenRenderingFinished().then(resolve);
+					}, 0);
+				});
+			}).then(function() {
+				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
+			}).then(oTable.qunit.$scrollVSbTo(98)).then(function() {
+				that.assertPosition(assert, 2, 98, 0, mConfig.rowMode + ", ScrollTop set to 98");
 			});
 		}
 
@@ -2852,7 +2924,7 @@ sap.ui.define([
 				oTable.invalidate();
 				sap.ui.getCore().applyChanges();
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
-				that.assertPosition(assert, 1, 49, 0, "FirstVisibleRow = 1");
+				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
 			});
 		}
 

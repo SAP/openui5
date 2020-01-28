@@ -137,17 +137,19 @@ function(
 	};
 
 	NotificationListItem.prototype._getAuthorAvatar = function() {
-		if (!this._avatar) {
-			this._avatar = new Avatar({
-				displaySize: AvatarSize.XS
-			});
+		if (this.getAuthorInitials() || this.getAuthorPicture()) {
+			if (!this._avatar) {
+				this._avatar = new Avatar({
+					displaySize: AvatarSize.XS
+				});
+			}
+
+			this._avatar.setInitials(this.getAuthorInitials());
+			this._avatar.setSrc(this.getAuthorPicture());
+			this._avatar.setBackgroundColor(this.getAuthorAvatarColor());
+
+			return this._avatar;
 		}
-
-		this._avatar.setInitials(this.getAuthorInitials());
-		this._avatar.setSrc(this.getAuthorPicture());
-		this._avatar.setBackgroundColor(this.getAuthorAvatarColor());
-
-		return this._avatar;
 	};
 
 	/**

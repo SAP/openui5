@@ -1,0 +1,29 @@
+{
+  "1.75.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "ce901297ad5dc6f83d936dcece4ec3856973ff4e",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Styled pressed state properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980551878"
+          }
+        ]
+      },
+      {
+        "id": "37723fbc862e6be88808d7d1544a700794ff83cf",
+        "type": "FIX",
+        "text": " GenericTile content background color in action mode and hover/active state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080040235"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,6 +1,5 @@
 {
 	"_version": "1.12.0",
-
 	"sap.app": {
 		"id": "sap.ui.rta.qunitrta",
 		"type": "application",
@@ -32,7 +31,6 @@
 			}
 		}
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"deviceTypes": {
@@ -41,7 +39,6 @@
 			"phone": false
 		}
 	},
-
 	"sap.ui5": {
 		"dependencies": {
 			"minUI5Version": "${project.version}",
@@ -56,6 +53,9 @@
 					"minVersion": "${project.version}"
 				},
 				"sap.ui.rta": {
+					"minVersion": "${project.version}"
+				},
+				"sap.ui.comp": {
 					"minVersion": "${project.version}"
 				}
 			}

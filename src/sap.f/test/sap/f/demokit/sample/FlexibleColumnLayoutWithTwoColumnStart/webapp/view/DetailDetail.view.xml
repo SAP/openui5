@@ -1,0 +1,27 @@
+<mvc:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithTwoColumnStart.controller.DetailDetail" height="100%"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.f"
+		xmlns:m="sap.m">
+
+	<DynamicPage toggleHeaderOnTitleClick="false">
+		<title>
+			<DynamicPageTitle>
+				<heading>
+					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+						<m:Title text="{products>text}" wrapping="true" class="sapUiTinyMarginEnd"/>
+					</m:FlexBox>
+				</heading>
+
+				<navigationActions>
+					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/endColumn/fullScreen} !== null }"/>
+					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{= ${/actionButtonsInfo/endColumn/exitFullScreen} !== null }"/>
+					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close column" visible="{= ${/actionButtonsInfo/endColumn/closeColumn} !== null }"/>
+				</navigationActions>
+
+			</DynamicPageTitle>
+		</title>
+		<content>
+			<m:Link text="Navigate to next page…" press="handleAboutPress" />
+		</content>
+	</DynamicPage>
+</mvc:View>

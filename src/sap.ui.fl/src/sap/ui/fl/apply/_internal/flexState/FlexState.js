@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/prepareChangesMap",
 	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/Log"
 ], function(
 	merge,
 	ObjectPath,
@@ -23,7 +24,8 @@ sap.ui.define([
 	prepareChangesMap,
 	prepareVariantsMap,
 	LayerUtils,
-	Utils
+	Utils,
+	Log
 ) {
 	"use strict";
 
@@ -59,6 +61,7 @@ sap.ui.define([
 	var FlexState = {};
 
 	var _mInstances = {};
+	var _mNavigationHandlers = {};
 	var _mInitPromises = {};
 	var _mPrepareFunctions = {
 		appDescriptorMap: prepareAppDescriptorMap,
@@ -66,7 +69,7 @@ sap.ui.define([
 		variantsMap: prepareVariantsMap
 	};
 
-	function enhancePropertyBag(mPropertyBag) {
+	function _enhancePropertyBag(mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
 		mPropertyBag.componentData = mPropertyBag.componentData || oComponent.getComponentData() || {};
 		mPropertyBag.manifest = mPropertyBag.manifest || mPropertyBag.rawManifest || oComponent.getManifestObject();
@@ -75,7 +78,7 @@ sap.ui.define([
 		mPropertyBag.reference = mPropertyBag.reference || Utils.getComponentClassName(oComponent);
 	}
 
-	function getInstanceEntryOrThrowError(sReference, sMapName) {
+	function _getInstanceEntryOrThrowError(sReference, sMapName) {
 		if (!_mInstances[sReference]) {
 			throw Error("State is not yet initialized");
 		}
@@ -83,7 +86,8 @@ sap.ui.define([
 		if (!_mInstances[sReference].preparedMaps[sMapName]) {
 			var mPropertyBag = {
 				storageResponse: _mInstances[sReference].unfilteredStorageResponse,
-				componentId: _mInstances[sReference].componentId
+				componentId: _mInstances[sReference].componentId,
+				componentData: _mInstances[sReference].componentData
 			};
 			_mInstances[sReference].preparedMaps[sMapName] = FlexState._callPrepareFunction(sMapName, mPropertyBag);
 		}
@@ -92,15 +96,15 @@ sap.ui.define([
 	}
 
 	function getAppDescriptorMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "appDescriptorMap");
+		return _getInstanceEntryOrThrowError(sReference, "appDescriptorMap");
 	}
 
 	function getChangesMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "changesMap");
+		return _getInstanceEntryOrThrowError(sReference, "changesMap");
 	}
 
 	function getVariantsMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "variantsMap");
+		return _getInstanceEntryOrThrowError(sReference, "variantsMap");
 	}
 
 	function createSecondInstanceIfNecessary(mPropertyBag) {
@@ -119,7 +123,7 @@ sap.ui.define([
 	}
 
 	function filterByMaxLayer(mResponse) {
-		var mFilteredReturn = Object.assign({}, mResponse);
+		var mFilteredReturn = merge({}, mResponse);
 		var mFlexObjects = mFilteredReturn.changes;
 		// TODO turn into utility or put it somewhere central
 		var aFilterableTypes = ["changes", "variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"];
@@ -137,12 +141,14 @@ sap.ui.define([
 				_mInstances[mPropertyBag.reference] = merge({}, {
 					unfilteredStorageResponse: mResponse,
 					preparedMaps: {},
-					componentId: mPropertyBag.componentId
+					componentId: mPropertyBag.componentId,
+					componentData: mPropertyBag.componentData
 				});
 
 				// temporarily create an instance without '.Component'
 				// TODO remove as soon as both with and without '.Component' are harmonized
 				createSecondInstanceIfNecessary(mPropertyBag);
+				_registerMaxLayerHandler(mPropertyBag.reference);
 
 				// no further changes to storageResponse properties allowed
 				// TODO enable the Object.freeze as soon as its possible
@@ -152,6 +158,40 @@ sap.ui.define([
 			});
 
 		return _mInitPromises[mPropertyBag.reference];
+	}
+
+	function _registerMaxLayerHandler(sReference) {
+		var oUshellContainer = LayerUtils.getUshellContainer();
+		if (oUshellContainer) {
+			_mNavigationHandlers[sReference] = _handleMaxLayerChange.bind(null, sReference);
+			oUshellContainer.getService("ShellNavigation").registerNavigationFilter(_mNavigationHandlers[sReference]);
+		}
+	}
+
+	function _deRegisterMaxLayerHandler(sReference) {
+		var oUshellContainer = LayerUtils.getUshellContainer();
+		if (oUshellContainer && _mNavigationHandlers[sReference]) {
+			oUshellContainer.getService("ShellNavigation").unregisterNavigationFilter(_mNavigationHandlers[sReference]);
+			delete _mNavigationHandlers[sReference];
+		}
+	}
+
+	function _handleMaxLayerChange(sReference, sNewHash, sOldHash) {
+		var oUshellContainer = LayerUtils.getUshellContainer();
+		if (oUshellContainer) {
+			var oShellNavigation = oUshellContainer.getService("ShellNavigation");
+			try {
+				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash);
+				var sPreviousMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sOldHash);
+				if (sCurrentMaxLayer !== sPreviousMaxLayer) {
+					FlexState.clearMaxLayerFiltering(sReference);
+				}
+			} catch (oError) {
+				// required to hinder any errors - can break FLP navigation
+				Log.error(oError.message);
+			}
+			return oShellNavigation.NavigationFilterStatus.Continue;
+		}
 	}
 
 	/**
@@ -170,7 +210,7 @@ sap.ui.define([
 	 */
 	FlexState.initialize = function (mPropertyBag) {
 		return Promise.resolve().then(function(mPropertyBag) {
-			enhancePropertyBag(mPropertyBag);
+			_enhancePropertyBag(mPropertyBag);
 
 			if (_mInitPromises[mPropertyBag.reference]) {
 				return _mInitPromises[mPropertyBag.reference].then(function (mPropertyBag) {
@@ -189,6 +229,8 @@ sap.ui.define([
 			if (!_mInstances[mPropertyBag.reference].storageResponse) {
 				_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
 			}
+			//for the time being ensure variantSection is available, remove once everyone is asking for getVariantState
+			FlexState.getVariantsState(mPropertyBag.reference);
 		}.bind(null, mPropertyBag));
 	};
 
@@ -200,10 +242,11 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.reference] - Flex reference of the app
 	 * @param {object} [mPropertyBag.manifest] - Manifest that belongs to actual component
 	 * @param {string} [mPropertyBag.componentData] - Component data of the current component
+	 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be retrieved
 	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized again
 	 */
 	FlexState.clearAndInitialize = function(mPropertyBag) {
-		enhancePropertyBag(mPropertyBag);
+		_enhancePropertyBag(mPropertyBag);
 		var bVariantsMapExists = !!ObjectPath.get(["preparedMaps", "variantsMap"], _mInstances[mPropertyBag.reference]);
 
 		FlexState.clearState(mPropertyBag.reference);
@@ -218,9 +261,13 @@ sap.ui.define([
 
 	FlexState.clearState = function (sReference) {
 		if (sReference) {
+			_deRegisterMaxLayerHandler(sReference);
 			delete _mInstances[sReference];
 			delete _mInitPromises[sReference];
 		} else {
+			Object.keys(_mInstances).forEach(function(sReference) {
+				_deRegisterMaxLayerHandler(sReference);
+			});
 			_mInstances = {};
 			_mInitPromises = {};
 		}
@@ -234,7 +281,7 @@ sap.ui.define([
 	 */
 	FlexState.clearMaxLayerFiltering = function(sReference) {
 		delete _mInstances[sReference].storageResponse;
-		_mInstances[sReference].preparedMaps = {};
+		FlexState.clearPreparedMaps(sReference);
 	};
 
 	FlexState.getUIChanges = function(sReference) {
@@ -252,6 +299,10 @@ sap.ui.define([
 		return oVariantsMap;
 	};
 
+	FlexState.getUI2Personalization = function(sReference) {
+		return _mInstances[sReference].unfilteredStorageResponse.changes.ui2personalization;
+	};
+
 	FlexState._callPrepareFunction = function(sMapName, mPropertyBag) {
 		return _mPrepareFunctions[sMapName](mPropertyBag);
 	};
@@ -267,6 +318,13 @@ sap.ui.define([
 	// temporary function until the maps are ready
 	FlexState.getFlexObjectsFromStorageResponse = function(sReference) {
 		return _mInstances[sReference].unfilteredStorageResponse.changes;
+	};
+
+	// temporary function until Variant Controller map is removed
+	FlexState.clearPreparedMaps = function(sReference) {
+		if (_mInstances[sReference]) {
+			_mInstances[sReference].preparedMaps = {};
+		}
 	};
 
 	return FlexState;

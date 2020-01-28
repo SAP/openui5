@@ -1,0 +1,424 @@
+[
+	{
+		"fileName": "id_1576490260883_39_renameField",
+		"fileType": "change",
+		"changeType": "renameField",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+			"fieldLabel": {
+				"value": "Number",
+				"type": "XFLD"
+			}
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T09:58:40.596Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576490267699_40_renameField",
+		"fileType": "change",
+		"changeType": "renameField",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+			"fieldLabel": {
+				"value": "Button",
+				"type": "XFLD"
+			}
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T09:58:40.597Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576490271933_41_renameField",
+		"fileType": "change",
+		"changeType": "renameField",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+			"fieldLabel": {
+				"value": "Code",
+				"type": "XFLD"
+			}
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T09:58:40.598Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576490280160_42_renameField",
+		"fileType": "change",
+		"changeType": "renameField",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+			"fieldLabel": {
+				"value": "Just a button",
+				"type": "XFLD"
+			}
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T09:58:40.599Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_2_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "label",
+			"newValue": "DNumber"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-10T08:01:26.564Z",
+		"originalLanguage": "EN",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.72.1",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {},
+		"dependentSelector": {},
+		"validAppVersions": {
+			"creation": "3.1.0",
+			"from": "3.1.0",
+			"to": "3.1.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576490291953_44_propertyChange",
+		"fileType": "change",
+		"changeType": "propertyChange",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"property": "label",
+			"newValue": "CCode"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-10T08:01:26.564Z",
+		"originalLanguage": "EN",
+		"conditions": {},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.72.1",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {},
+		"dependentSelector": {},
+		"validAppVersions": {
+			"creation": "3.1.0",
+			"from": "3.1.0",
+			"to": "3.1.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576490301337_45_renameField",
+		"fileType": "change",
+		"changeType": "renameField",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+			"fieldLabel": {
+				"value": "Doc Number",
+				"type": "XFLD"
+			}
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T09:58:40.602Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576490309078_46_renameField",
+		"fileType": "change",
+		"changeType": "renameField",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+			"fieldLabel": {
+				"value": "Company-Code",
+				"type": "XFLD"
+			}
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T09:58:40.603Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	},
+	{
+		"fileName": "id_1576490317689_47_renameField",
+		"fileType": "change",
+		"changeType": "renameField",
+		"moduleName": "",
+		"reference": "sap.ui.rta.test.Component",
+		"packageName": "$TMP",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"layer": "CUSTOMER",
+		"texts": {
+			"fieldLabel": {
+				"value": "Button",
+				"type": "XFLD"
+			}
+		},
+		"namespace": "apps/sap.ui.rta.test/changes/",
+		"projectId": "sap.ui.rta.test",
+		"creation": "2019-12-16T09:58:40.604Z",
+		"originalLanguage": "EN",
+		"conditions": {
+		},
+		"context": "",
+		"support": {
+			"generator": "Change.createInitialFileContent",
+			"service": "",
+			"user": "",
+			"sapui5Version": "1.74.0-SNAPSHOT",
+			"sourceChangeFileName": "",
+			"compositeCommand": ""
+		},
+		"oDataInformation": {
+		},
+		"dependentSelector": {
+		},
+		"validAppVersions": {
+			"creation": "1.0.0",
+			"from": "1.0.0"
+		},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+	}
+]

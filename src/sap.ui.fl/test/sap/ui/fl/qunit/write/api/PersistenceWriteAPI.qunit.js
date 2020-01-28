@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -20,6 +21,7 @@ sap.ui.define([
 	ChangesController,
 	DescriptorInlineChangeFactory,
 	Settings,
+	ApplyUtils,
 	WriteUtils,
 	FeaturesAPI,
 	PersistenceWriteAPI,
@@ -200,15 +202,14 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(sap.ui.fl.LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
-
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
 			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
 			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
 
 			return PersistenceWriteAPI.save(mPropertyBag)
 				.then(function() {
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "PUT"), "then the parameters are correct");
 				});
@@ -254,15 +255,14 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(sap.ui.fl.LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
-
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
 			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
 			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
 
 			return PersistenceWriteAPI.save(mPropertyBag)
 				.then(function() {
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "PUT"), "then the parameters are correct");
 				});

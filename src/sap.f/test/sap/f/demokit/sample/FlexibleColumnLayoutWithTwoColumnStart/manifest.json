@@ -8,22 +8,22 @@
 	"sap.ui5": {
 		"config": {
 			"sample": {
-				"iframe": "../FlexibleColumnLayoutWithOneColumnStart/webapp/index.html?initial=2",
+				"iframe": "webapp/index.html",
 				"stretch": true,
 				"files": [
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/view/Detail.view.xml",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/view/DetailDetail.view.xml",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/view/FlexibleColumnLayout.view.xml",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/view/Master.view.xml",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/view/AboutPage.view.xml",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/controller/Detail.controller.js",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/controller/DetailDetail.controller.js",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/controller/FlexibleColumnLayout.controller.js",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/controller/Master.controller.js",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/controller/AboutPage.controller.js",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/Component.js",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/index.html",
-					"../FlexibleColumnLayoutWithOneColumnStart/webapp/manifest.json",
+					"webapp/view/Detail.view.xml",
+					"webapp/view/DetailDetail.view.xml",
+					"webapp/view/FlexibleColumnLayout.view.xml",
+					"webapp/view/Master.view.xml",
+					"webapp/view/AboutPage.view.xml",
+					"webapp/controller/Detail.controller.js",
+					"webapp/controller/DetailDetail.controller.js",
+					"webapp/controller/FlexibleColumnLayout.controller.js",
+					"webapp/controller/Master.controller.js",
+					"webapp/controller/AboutPage.controller.js",
+					"webapp/Component.js",
+					"webapp/index.html",
+					"webapp/manifest.json",
 					"manifest.json"
 				]
 			}

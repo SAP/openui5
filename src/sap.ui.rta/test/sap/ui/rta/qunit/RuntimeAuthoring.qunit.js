@@ -29,6 +29,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -60,6 +61,7 @@ function(
 	RtaQunitUtils,
 	QUnitUtils,
 	PersistenceWriteAPI,
+	VersionsAPI,
 	sinon
 ) {
 	"use strict";
@@ -245,8 +247,53 @@ function(
 			}.bind(this));
 		});
 
+		QUnit.test("when RTA is started in the customer layer, the versioning is not available", function(assert) {
+			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(false);
+
+			return this.oRta._isDraftAvailable()
+			.then(function(bDraftAvailable) {
+				assert.equal(bDraftAvailable, false, "then the 'isDraftAvailable' is false");
+			});
+		});
+
+		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is available", function(assert) {
+			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
+
+			return this.oRta._isDraftAvailable()
+			.then(function(bDraftAvailable) {
+				assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
+			});
+		});
+
+		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, no changes yet done", function(assert) {
+			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
+			sandbox.stub(this.oRta, "canUndo").returns(false);
+
+			return this.oRta._isDraftAvailable()
+			.then(function(bDraftAvailable) {
+				assert.equal(bDraftAvailable, false, "then the 'isDraftAvailable' is false");
+			});
+		});
+
+		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, there are unsaved changes", function(assert) {
+			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
+			sandbox.stub(this.oRta, "canUndo").returns(true);
+
+			return this.oRta._isDraftAvailable()
+			.then(function(bDraftAvailable) {
+				assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
+			});
+		});
+
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
-			sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
+			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
+				publishAvailable: true,
+				publisAppVariantSupported: true,
+				draftAvailable : false
+			}));
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: false}));
 			sandbox.stub(Utils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
 
@@ -262,7 +309,11 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
-			sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
+			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
+				publishAvailable: true,
+				publisAppVariantSupported: true,
+				draftAvailable : false
+			 }));
 			sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
 			sandbox.stub(RtaAppVariantFeature, "isManifestSupported").resolves(false);
 
@@ -745,6 +796,30 @@ function(
 			});
 		});
 
+		QUnit.test("when stopping rta with saving changes and versioning is disabled", function(assert) {
+			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+
+			return this.oRta._serializeToLrep()
+			.then(function () {
+				assert.equal(oSaveStub.callCount, 1, "save was triggered");
+				var aSavePropertyBag = oSaveStub.getCall(0).args[0];
+				assert.equal(aSavePropertyBag.draft, false, "the draft flag is set to false");
+			});
+		});
+
+		QUnit.test("when stopping rta with saving changes and versioning is enabled", function(assert) {
+			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+
+			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+
+			return this.oRta._serializeToLrep()
+			.then(function () {
+				assert.equal(oSaveStub.callCount, 1, "save was triggered");
+				var aSavePropertyBag = oSaveStub.getCall(0).args[0];
+				assert.equal(aSavePropertyBag.draft, true, "the draft flag is set to true");
+			});
+		});
+
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is not an application variant", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "publish").resolves();
 			var fnGetResetAndPublishInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
@@ -854,8 +929,6 @@ function(
 					layer: "CUSTOMER"
 				}
 			});
-			this.oBusyIndicatorShowStub = sandbox.stub(BusyIndicator, "show");
-			this.oBusyIndicatorHideStub = sandbox.stub(BusyIndicator, "hide");
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
 			this.oDeleteChangesStub = sandbox.stub(this.oRta, "_deleteChanges");
 			this.oEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
@@ -1051,7 +1124,7 @@ function(
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully", function(assert) {
-			assert.expect(4);
+			assert.expect(2);
 			this.oDeleteChangesStub.restore();
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
@@ -1063,8 +1136,6 @@ function(
 			});
 
 			return this.oRta._deleteChanges().then(function() {
-				assert.equal(this.oBusyIndicatorShowStub.callCount, 1, "the BusyIndicator was shown");
-				assert.equal(this.oBusyIndicatorHideStub.callCount, 1, "the BusyIndicator was hidden");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
 			}.bind(this));
 		});
@@ -1097,8 +1168,6 @@ function(
 			});
 
 			return this.oRta._deleteChanges().then(function() {
-				assert.equal(this.oBusyIndicatorShowStub.callCount, 1, "the BusyIndicator was shown");
-				assert.equal(this.oBusyIndicatorHideStub.callCount, 1, "the BusyIndicator was hidden");
 				assert.equal(this.oReloadPageStub.callCount, 0, "then page reload is not triggered");
 			}.bind(this));
 		});
@@ -1219,8 +1288,7 @@ function(
 				this.oRta.getFlexSettings(),
 				{
 					layer: "CUSTOMER",
-					developerMode: true,
-					versioning: undefined
+					developerMode: true
 				}
 			);
 
@@ -1229,25 +1297,29 @@ function(
 				namespace: "namespace"
 			});
 
-			assert.deepEqual(this.oRta.getFlexSettings(), {
-				layer: "USER",
-				developerMode: true,
-				namespace: "namespace",
-				versioning: Promise.reject(false)
-			});
+			assert.deepEqual(
+				this.oRta.getFlexSettings(),
+				{
+					layer: "USER",
+					developerMode: true,
+					namespace: "namespace"
+				}
+			);
 
 			this.oRta.setFlexSettings({
 				scenario: "scenario"
 			});
 
-			assert.deepEqual(this.oRta.getFlexSettings(), {
-				layer: "USER",
-				developerMode: true,
-				namespace: "rootNamespace/changes/",
-				rootNamespace: "rootNamespace/",
-				scenario: "scenario",
-				versioning: Promise.reject(false)
-			});
+			assert.deepEqual(
+				this.oRta.getFlexSettings(),
+				{
+					layer: "USER",
+					developerMode: true,
+					namespace: "rootNamespace/changes/",
+					rootNamespace: "rootNamespace/",
+					scenario: "scenario"
+				}
+			);
 		});
 	});
 

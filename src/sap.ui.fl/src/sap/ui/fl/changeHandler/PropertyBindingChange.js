@@ -104,5 +104,19 @@ sap.ui.define([
 		oChangeJson.content = oSpecificChangeInfo.content;
 	};
 
+	/**
+	 * Retrieves the condenser-specific information.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @returns {object} - Condenser-specific information
+	 * @public
+	 */
+	PropertyBindingChange.getCondenserInfo = function(oChange) {
+		return {
+			classificationType: sap.ui.fl.ClassificationType.LastOneWins,
+			uniqueKey: oChange.getContent().property
+		};
+	};
+
 	return PropertyBindingChange;
 }, /* bExport= */true);

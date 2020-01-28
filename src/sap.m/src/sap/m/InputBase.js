@@ -319,12 +319,6 @@ function(
 		 */
 		this.bRenderingPhase = false;
 
-		/**
-		 * Indicates whether the <code>focusout</code> event is triggered due a rendering.
-		 */
-		this.bFocusoutDueRendering = false;
-
-
 		this._oValueStateMessage = new ValueStateMessage(this);
 		// handle composition events & validation of composition symbols
 		this._bIsComposingCharacter = false;
@@ -463,13 +457,6 @@ function(
 	InputBase.prototype.onfocusout = function(oEvent) {
 		this.bFocusoutDueRendering = this.bRenderingPhase;
 		this.removeStyleClass("sapMFocus");
-
-		// because dom is replaced during the rendering
-		// onfocusout event is triggered probably focus goes to the document
-		// so we ignore this event that comes during the rendering
-		if (this.bRenderingPhase) {
-			return;
-		}
 
 		// close value state message popup when focus is out of the input
 		this.closeValueStateMessage();

@@ -2275,6 +2275,22 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("When Manifest-Loading fails (404), the hook should not be called", function(assert) {
+		Component._fnPreprocessManifest = function() {
+			assert.ok(false, "Should not be called when Manifest Request failed.");
+		};
+
+		// create a legacy Component without a manifest.json
+		// Manifest-first loading fails with 404, but is ignored, since the component controller contains metadata.
+		return Component.create({
+			name: "sap.ui.test.other"
+		}).then(function(oComponent) {
+			assert.ok(oComponent, "Component was created.");
+		}).catch(function() {
+			assert.ok(false, "Should not be called. Hook should not be called (fail) when no manifest exists.");
+		});
+	});
+
 	QUnit.module("Commands in manifest", {
 		beforeEach: function () {
 			cleanUpRegistry();

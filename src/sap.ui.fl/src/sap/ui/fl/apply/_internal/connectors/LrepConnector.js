@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage
+	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage, sap.ui.fl.write._internal.transport
 	 */
 	var LrepConnector = merge({}, BaseConnector,  /** @lends sap.ui.fl.apply._internal.connectors.LrepConnector */ {
 
@@ -107,6 +107,11 @@ sap.ui.define([
 				var oResponse = oResult.response;
 				if (oResult.xsrfToken) {
 					this.xsrfToken = oResult.xsrfToken;
+				}
+				if (oResult.etag) {
+					oResponse.cacheKey = oResult.etag;
+				} else if (mPropertyBag.cacheKey) {
+					oResponse.cacheKey = mPropertyBag.cacheKey;
 				}
 				oResponse.changes = oResponse.changes.concat(oResponse.compVariants || []);
 				if (oResponse.settings) {

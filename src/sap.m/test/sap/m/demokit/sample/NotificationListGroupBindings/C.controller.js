@@ -24,6 +24,7 @@ sap.ui.define([
 								"unread": true,
 								"authorName": "Michael Muller",
 								"authorPicture": "sap-icon://person-placeholder",
+								"authorAvatarColor": "Accent2",
 								"onItemClose": "onItemClose",
 								"onListItemPress": "onListItemPress",
 								"itemButtons": [

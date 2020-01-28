@@ -4410,18 +4410,18 @@ sap.ui.define([
 		 * @protected
 		 */
 		addBackgroundColorStyles: function(rm, sBgColor, sBgImgUrl, sCustomBGClass) {
-			rm.addClass(sCustomBGClass || "sapUiGlobalBackgroundColor");
+			rm.class(sCustomBGClass || "sapUiGlobalBackgroundColor");
 
 			if (sBgColor && !DataType.getType("sap.ui.core.CSSColor").isValid(sBgColor)) {
 				Log.warning(sBgColor + " is not a valid sap.ui.core.CSSColor type");
 				sBgColor = "";
 			}
 			if (sBgColor || sBgImgUrl) { // when an image or color is configured, the gradient needs to be removed, so the color can be seen behind the image
-				rm.addStyle("background-image", "none");
-				rm.addStyle("filter", "none");
+				rm.style("background-image", "none");
+				rm.style("filter", "none");
 			}
 			if (sBgColor) {
-				rm.addStyle("background-color", sBgColor);
+				rm.style("background-color", sBgColor);
 			}
 		},
 
@@ -4458,28 +4458,28 @@ sap.ui.define([
 		 * @protected
 		 */
 		renderBackgroundImageTag: function(rm, oControl, vCssClass, sBgImgUrl, bRepeat, fOpacity) {
-			rm.write("<div id='" + oControl.getId() + "-BG' ");
+			rm.openStart("div", oControl.getId() + "-BG");
 
 			if (Array.isArray(vCssClass)) {
 				for (var i = 0; i < vCssClass.length; i++) {
-					rm.addClass(vCssClass[i]);
+					rm.class(vCssClass[i]);
 				}
 			} else {
-				rm.addClass(vCssClass);
+				rm.class(vCssClass);
 			}
 
-			rm.addClass("sapUiGlobalBackgroundImage"); // this adds the background image from the theme
+			rm.class("sapUiGlobalBackgroundImage"); // this adds the background image from the theme
 
 			if (sBgImgUrl) { // use the settings only if a background image is configured
-				rm.addStyle("display", "block"); // enforce visibility even if a parent has also a background image
-				rm.addStyle("background-image", "url(" + encodeCSS(sBgImgUrl) + ")");
+				rm.style("display", "block"); // enforce visibility even if a parent has also a background image
+				rm.style("background-image", "url(" + encodeCSS(sBgImgUrl) + ")");
 
-				rm.addStyle("background-repeat", bRepeat ? "repeat" : "no-repeat");
+				rm.style("background-repeat", bRepeat ? "repeat" : "no-repeat");
 				if (!bRepeat) {
-					rm.addStyle("background-size", "cover");
-					rm.addStyle("background-position", "center");
+					rm.style("background-size", "cover");
+					rm.style("background-position", "center");
 				} else { // repeat
-					rm.addStyle("background-position", "left top");
+					rm.style("background-position", "left top");
 				}
 
 			} //else {
@@ -4490,14 +4490,13 @@ sap.ui.define([
 				if (fOpacity > 1) { // greater than 1 enforces 1
 					fOpacity = 1;
 				}
-				rm.addStyle("opacity", fOpacity);
+				rm.style("opacity", fOpacity);
 			}
 
 			// no custom class from the control's custom class
 			// If a class is added using addStyleClass, this class will be output to this background image div without the 'false' param.
-			rm.writeClasses(false);
-			rm.writeStyles();
-			rm.write("></div>");
+			rm.openEnd();
+			rm.close("div");
 		}
 	};
 

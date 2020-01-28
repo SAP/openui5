@@ -88,6 +88,19 @@ function(Control, ScrollBarRenderer) {
 		return this.setProperty("scrollPosition", iPos, true);
 	};
 
+	/**
+	 * @override
+	 * Custom setter, helping DOM changes to appear to the element, before DOM event handlers hit on it.
+	 */
+	ScrollBar.prototype.setContentSize = function (sContentSize) {
+		var $SbCnt = this.$("sbcnt");
+		if ($SbCnt.length) {
+			$SbCnt.height(sContentSize);
+		}
+
+		return this.setProperty("contentSize", sContentSize);
+	};
+
 
 	//=============================================================================
 	// Private Members

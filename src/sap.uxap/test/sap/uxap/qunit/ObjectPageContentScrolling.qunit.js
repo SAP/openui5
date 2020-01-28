@@ -167,6 +167,47 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			"correct scroll position is restored");
 	});
 
+	QUnit.module("Modify on scroll", {
+		beforeEach: function (assert) {
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 1);
+			this.sandbox = sinon.sandbox.create();
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+			this.sandbox.restore();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("suppress modify on scroll if already snapped", function (assert) {
+
+		var oObjectPage = this.oObjectPage,
+			iScrollTop = 0, // the exact value is not important for the test
+			oToggleHeaderSpy = this.sandbox.spy(this.oObjectPage, "_toggleHeader"),
+			oScrollToSpy = this.sandbox.spy(this.oObjectPage, "_scrollTo"),
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oScrollToSpy.reset();
+			// act
+			oObjectPage._snapHeader(true /*keep header in content area */);
+			// check test setup
+			assert.strictEqual(oScrollToSpy.callCount, 1, "snapHeader calls scrollTo");
+
+			oToggleHeaderSpy.reset();
+			// mock the invocation of the scroll listener
+			oObjectPage._onScroll({target: { scrollTop: iScrollTop}});
+
+			// check
+			assert.ok(oToggleHeaderSpy.notCalled, "no header modification on scroll");
+			done();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("ObjectPage Content scrolling", {
 		beforeEach: function (assert) {
 			var done = assert.async();

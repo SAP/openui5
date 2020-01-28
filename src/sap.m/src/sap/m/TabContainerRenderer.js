@@ -11,6 +11,7 @@ sap.ui.define([],
 		 * @namespace
 		 */
 		var TabContainerRenderer = {
+			apiVersion: 2
 		};
 
 		/**
@@ -24,30 +25,28 @@ sap.ui.define([],
 				oSelectedItemContent = oControl._getSelectedItemContent();
 
 			// start control wrapper
-			oRm.write("<div ");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapMTabContainer");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div", oControl);
+			oRm.class("sapMTabContainer");
+			oRm.openEnd();
 
 			if (oTabStrip) {
 				oRm.renderControl(oTabStrip);
 			}
 
 			// render outer content
-			oRm.write("<div id='" + oControl.getId() + "-containerContent' ");
-			oRm.addClass("sapMTabContainerContent");
+			oRm.openStart("div", oControl.getId() + "-containerContent");
+			oRm.class("sapMTabContainerContent");
 			if (oControl.getBackgroundDesign()) {
 				oRm.class("sapMTabContainerContent" + oControl.getBackgroundDesign());
 			}
 
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 
 			// render inner content
-			oRm.write("<div id='" + this.getContentDomId(oControl) + "' class='sapMTabContainerInnerContent'");
-			oRm.writeAccessibilityState(oControl, this.getTabContentAccAttributes(oControl));
-			oRm.write(">");
+			oRm.openStart("div", this.getContentDomId(oControl));
+			oRm.class("sapMTabContainerInnerContent");
+			oRm.accessibilityState(oControl, this.getTabContentAccAttributes(oControl));
+			oRm.openEnd();
 
 			// render the content
 			if (oSelectedItemContent) {
@@ -56,13 +55,13 @@ sap.ui.define([],
 				});
 			}
 
-			oRm.write("</div>");
+			oRm.close("div");
 
 			// end outer content
-			oRm.write("</div>");
+			oRm.close("div");
 
 			// end control wrapper
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		/**

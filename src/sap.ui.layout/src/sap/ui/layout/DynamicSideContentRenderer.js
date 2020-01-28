@@ -16,21 +16,20 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
 		 * Renderer for sap.ui.layout.DynamicSideContent.
 		 * @namespace
 		 */
-		var DynamicSideContentRenderer = {};
+		var DynamicSideContentRenderer = {
+			apiVersion: 2
+		};
 
 		DynamicSideContentRenderer.render = function (oRm, oSideContent) {
-			oRm.write("<div");
-			oRm.writeControlData(oSideContent);
+			oRm.openStart("div", oSideContent);
 
-			oRm.addClass("sapUiDSC");
-			oRm.writeClasses();
-			oRm.addStyle("height", "100%");
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.class("sapUiDSC");
+			oRm.style("height", "100%");
+			oRm.openEnd();
 
 			this.renderSubControls(oRm, oSideContent);
 
-			oRm.write("</div>");
+			oRm.close("div");
 
 		};
 
@@ -59,47 +58,43 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
 		};
 
 		DynamicSideContentRenderer._renderMainContent = function(oRm, oSideControl, iSideContentId, bShouldSetHeight) {
-			oRm.write("<div id='" + iSideContentId + "-MCGridCell'");
+			oRm.openStart("div", iSideContentId + "-MCGridCell");
 
 			if (oSideControl._iMcSpan) {
-				oRm.addClass("sapUiDSCSpan" + oSideControl._iMcSpan);
-				oRm.writeClasses();
+				oRm.class("sapUiDSCSpan" + oSideControl._iMcSpan);
 			}
 			if (bShouldSetHeight) {
-				oRm.addStyle("height", "100%");
-				oRm.writeStyles();
+				oRm.style("height", "100%");
 			}
-			oRm.write(">");
+			oRm.openEnd();
 
 			this.renderControls(oRm, oSideControl.getMainContent());
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		DynamicSideContentRenderer._renderSideContent = function(oRm, oSideControl, iSideContentId, bShouldSetHeight) {
 			// on firefox the 'aside' side content is not shown when below the main content; use div instead
 			var sSideContentTag = Device.browser.firefox ? "div" : "aside";
 
-			oRm.write("<" + sSideContentTag + " id='" + iSideContentId + "-SCGridCell'");
+			oRm.openStart(sSideContentTag, iSideContentId + "-SCGridCell");
 
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
-			oRm.writeAttribute("aria-label", oMessageBundle.getText(SIDE_CONTENT_LABEL));
+			oRm.attr("aria-label", oMessageBundle.getText(SIDE_CONTENT_LABEL));
 
-			oRm.writeAccessibilityState(oSideControl, {
+			oRm.accessibilityState(oSideControl, {
 				role: "complementary"
 			});
 
 			if (oSideControl._iScSpan) {
-				oRm.addClass("sapUiDSCSpan" + oSideControl._iScSpan);
-				oRm.writeClasses();
+				oRm.class("sapUiDSCSpan" + oSideControl._iScSpan);
 			}
 			if (bShouldSetHeight) {
-				oRm.addStyle("height", "100%");
-				oRm.writeStyles();
+				oRm.style("height", "100%");
 			}
-			oRm.write(">");
+			oRm.openEnd();
 
 			this.renderControls(oRm, oSideControl.getSideContent());
-			oRm.write("</" + sSideContentTag + ">");
+			oRm.close(sSideContentTag);
 		};
 
 		return DynamicSideContentRenderer;

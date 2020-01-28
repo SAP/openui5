@@ -1,0 +1,32 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:core="sap.ui.core"
+	controllerName="sap.m.sample.InitialPagePattern.controller.App"
+	height="100%">
+
+	<ObjectPageLayout
+		id="ObjectPageLayout"
+		showHeaderContent="{= !!${/selectedPurchase} }"
+		toggleHeaderOnTitleClick="{= !!${/selectedPurchase} }">
+
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<heading>
+					<core:Fragment fragmentName="sap.m.sample.InitialPagePattern.view.fragments.Input" type="XML"/>
+				</heading>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<core:Fragment fragmentName="sap.m.sample.InitialPagePattern.view.fragments.HeaderContent" type="XML"/>
+		</headerContent>
+
+		<sections>
+			<core:Fragment fragmentName="sap.m.sample.InitialPagePattern.view.fragments.sections.MessagePage" type="XML"/>
+			<core:Fragment fragmentName="sap.m.sample.InitialPagePattern.view.fragments.sections.ProductsTable" type="XML"/>
+			<core:Fragment fragmentName="sap.m.sample.InitialPagePattern.view.fragments.sections.SupplierDetails" type="XML"/>
+		</sections>
+
+	</ObjectPageLayout>
+
+</mvc:View>

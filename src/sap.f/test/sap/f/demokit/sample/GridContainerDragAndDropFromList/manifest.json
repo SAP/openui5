@@ -18,12 +18,21 @@
 				"sap.ui.core": {}
 			}
 		},
+		"resources": {
+			"css": [
+				{
+					"uri": "RevealGrid/RevealGrid.css"
+				}
+			]
+		},
 		"config": {
 			"sample": {
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"RevealGrid/RevealGrid.js",
+					"RevealGrid/RevealGrid.css"
 				]
 			}
 		}

@@ -190,6 +190,10 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	&:not(.sapMGTBackgroundImage) {
 		background: @sapUiTileActiveBackground;
 	}
+
+	&.sapMGTScopeActions .sapMTileCntContent:after {
+		background-color: fade(@sapUiTileActiveBackground, 70);
+	}
 }
 
 .sapMGTWithImageHoverOverlay.sapMGTPressActive {
@@ -206,6 +210,11 @@ html.sap-desktop .sapMGT:hover:not(.sapMGTPressActive) {
 
 	.sapMGTWithImageHoverOverlay {
 		background: fade(@sapUiTileHoverBackground, 10%);
+		transition: background 0.2s;
+	}
+
+	&.sapMGTScopeActions .sapMTileCntContent:after {
+		background-color: fade(@sapUiTileHoverBackground, 70);
 		transition: background 0.2s;
 	}
 }

@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @class
 	 * Constructor for a new <code>MapEditor</code>.
 	 * This allows you to edit key-value pairs.
-	 * To get notified about changes made with the editor, you can attach a handler to the <code>propertyChange</code> event.
+	 * To get notified about changes made with the editor, you can attach a handler to the <code>valueChange</code> event.
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
 	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor
@@ -65,14 +65,14 @@ sap.ui.define([
 		_onRemoveElement: function(oEvent) {
 			var sKeyToDelete = oEvent.getSource().getBindingContext("itemsModel").getObject().key;
 			var mParams = this.getConfig().value;
-			this.firePropertyChange(_omit(mParams, sKeyToDelete));
+			this.fireValueChange(_omit(mParams, sKeyToDelete));
 		},
 
 		_onAddElement: function() {
 			var mParams = _merge({}, this.getValue());
 			var sKey = this._getUniqueKey(mParams);
 			mParams[sKey] = "";
-			this.firePropertyChange(mParams);
+			this.fireValueChange(mParams);
 		},
 
 		_getUniqueKey: function(mParams) {
@@ -110,7 +110,7 @@ sap.ui.define([
 					aItems.forEach(function (oItem) {
 						oMap[oItem.key] = oItem.value[0].value;
 					});
-					this.firePropertyChange(oMap);
+					this.fireValueChange(oMap);
 				}
 			} else {
 				oInput.setValueState("Error");
@@ -122,10 +122,10 @@ sap.ui.define([
 			var oPreviousPropertyEditor = oEvent.getParameter("previousPropertyEditors")[0];
 			var oPropertyEditor = oEvent.getParameter("propertyEditors")[0];
 			if (oPreviousPropertyEditor) {
-				oPreviousPropertyEditor.detachPropertyChange(this._onPropertyValueChange, this);
+				oPreviousPropertyEditor.detachValueChange(this._onPropertyValueChange, this);
 			}
 			if (oPropertyEditor) {
-				oPropertyEditor.attachPropertyChange(this._onPropertyValueChange, this);
+				oPropertyEditor.attachValueChange(this._onPropertyValueChange, this);
 			}
 		},
 
@@ -137,7 +137,7 @@ sap.ui.define([
 
 			ObjectPath.set(aParts, vValue, oEditorValue);
 
-			this.firePropertyChange(oEditorValue);
+			this.fireValueChange(oEditorValue);
 		},
 
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render

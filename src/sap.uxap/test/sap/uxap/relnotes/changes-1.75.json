@@ -1,0 +1,29 @@
+{
+  "1.75.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "2b1215a4c1b0184e4df6d43b37c36ea9ff5d30ef",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Detect auto-scroll on resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970593988"
+          }
+        ]
+      },
+      {
+        "id": "8f98bc34ca43c962c0b706d701fd3389cbdbf1a1",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent unwanted snap on scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970448827"
+          }
+        ]
+      }
+    ]
+  }
+}

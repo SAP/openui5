@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/plugin/Stretch",
 	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/rta/plugin/iframe/AddIFrame",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/plugin/TabHandling",
@@ -38,6 +39,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
@@ -83,6 +85,7 @@ function(
 	SettingsPlugin,
 	StretchPlugin,
 	ControlVariantPlugin,
+	AddIFramePlugin,
 	ToolHooksPlugin,
 	ContextMenuPlugin,
 	TabHandlingPlugin,
@@ -92,6 +95,7 @@ function(
 	FlexUtils,
 	LayerUtils,
 	FeaturesAPI,
+	VersionsAPI,
 	PersistenceWriteAPI,
 	MessageBox,
 	MessageToast,
@@ -188,8 +192,7 @@ function(
 					type: "object",
 					defaultValue: {
 						layer: "CUSTOMER",
-						developerMode: true,
-						versioning: undefined
+						developerMode: true
 					}
 				},
 
@@ -388,6 +391,15 @@ function(
 				commandFactory : oCommandFactory
 			});
 
+			// Add IFrame
+			var oUriParams = UriParameters.fromQuery(window.location.search);
+			var sAddEnableIFrame = oUriParams.get("sap-ui-xx-rta-addiframe");
+			if (sAddEnableIFrame === "true") {
+				this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
+					commandFactory : oCommandFactory
+				});
+			}
+
 			//ToolHooks
 			this._mDefaultPlugins["toolHooks"] = new ToolHooksPlugin();
 		}
@@ -501,9 +513,6 @@ function(
 			mFlexSettings.rootNamespace = sLRepRootNamespace;
 			mFlexSettings.namespace = sLRepRootNamespace + "changes/";
 		}
-
-		//TODO: change to 'mFlexSettings.draft = FeaturesAPI.isVersioningEnabled();' as soon as the draft story is complete
-		mFlexSettings.versioning = Promise.resolve(false);
 
 		Utils.setRtaStyleClassName(mFlexSettings.layer);
 		this.setProperty("flexSettings", mFlexSettings);
@@ -641,18 +650,12 @@ function(
 			.then(function () {
 				if (this.getShowToolbars()) {
 					// Create ToolsMenu
-					return this._getPublishAndAppVariantSupportVisibility()
-					.then(function (aButtonsSupport) {
-						var bShowPublish = aButtonsSupport[0];
-						var bIsAppVariantSupported = aButtonsSupport[1];
-						this._createToolsMenu(bShowPublish, bIsAppVariantSupported);
-					}.bind(this));
+					return this._getToolbarButtonsVisibility()
+					.then(this._createToolsMenu.bind(this));
 				}
 			}.bind(this))
-			.then(function () {
-				// this is needed to initially check if undo is available, e.g. when the stack gets initialized with changes
-				this._onStackModified();
-			}.bind(this))
+			// this is needed to initially check if undo is available, e.g. when the stack gets initialized with changes
+			.then(this._onStackModified.bind(this))
 			.then(function () {
 				// non-blocking style loading
 				StylesLoader
@@ -717,17 +720,39 @@ function(
 	}
 
 	/**
-	 * Checks the Publish button and app variant support (i.e. Save As and Overview of App Variants) availability
+	 * Checks the publish button, draft buttons(activate and delete) and app variant support (i.e. Save As and Overview of App Variants) availability
 	 * @private
-	 * @returns {Promise<boolean[]>} Returns a Promise with an array of boolean values [bPublishAvailable, bAppVariantSupportAvailable]
+	 * @returns {Promise<map>} with publishAvailable, publisAppVariantSupported and draftAvailable values
 	 * @description The publish button shall not be available if the system is productive and if a merge error occurred during merging changes into the view on startup
 	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
 	 */
-	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
-		return FeaturesAPI.isPublishAvailable().then(function(bIsPublishAvailabe) {
+	RuntimeAuthoring.prototype._getToolbarButtonsVisibility = function() {
+		return Promise.all([FeaturesAPI.isPublishAvailable(), this._isDraftAvailable()]).then(function(aArgs) {
+			var bIsPublishAvailable = aArgs[0];
+			var bIsDraftAvailable = aArgs[1];
 			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this.getRootControlInstance(), this.getLayer(), this._oSerializer);
-			return [bIsPublishAvailabe, bIsPublishAvailabe && bIsAppVariantSupported];
+			var bPublisAppVariantSupported = bIsPublishAvailable && bIsAppVariantSupported;
+			return {
+				publishAvailable: bIsPublishAvailable,
+				publisAppVariantSupported: bPublisAppVariantSupported,
+				draftAvailable: bIsDraftAvailable
+			};
+		}.bind(this));
+	};
+
+	RuntimeAuthoring.prototype._isDraftAvailable = function() {
+		return this._isVersioningEnabled()
+		.then(function (bVersioningEnabled) {
+			if (bVersioningEnabled) {
+				return VersionsAPI.isDraftAvailable();
+			}
+		})
+		.then(function(bDraftAvailable) {
+			if (bDraftAvailable) {
+				return bDraftAvailable;
+			}
+			return this.canUndo();
 		}.bind(this));
 	};
 
@@ -949,14 +974,25 @@ function(
 		window.onbeforeunload = this._oldUnloadHandler;
 	};
 
+	RuntimeAuthoring.prototype._isVersioningEnabled = function () {
+		//TODO: change to FeaturesAPI.isVersioningEnabled(this.getLayer());' as soon as the draft functionality is completed
+		return Promise.resolve(false);
+	};
+
+	RuntimeAuthoring.prototype._serializeAndSave = function() {
+		return this._isVersioningEnabled().then(function (bVersioningEnabled) {
+			return this._oSerializer.saveCommands(bVersioningEnabled);
+		}.bind(this));
+	};
+
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
 		if (!this._bReloadNeeded) {
 			return this._oSerializer.needsReload().then(function(bReloadNeeded) {
 				this._bReloadNeeded = bReloadNeeded;
-				return this._oSerializer.saveCommands();
+				return this._serializeAndSave();
 			}.bind(this));
 		}
-		return this._oSerializer.saveCommands();
+		return this._serializeAndSave();
 	};
 
 	RuntimeAuthoring.prototype._onUndo = function() {
@@ -969,7 +1005,7 @@ function(
 		return this.getCommandStack().redo();
 	};
 
-	RuntimeAuthoring.prototype._createToolsMenu = function(bPublishAvailable, bIsAppVariantSupported) {
+	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
 		if (!this.getDependent('toolbar')) {
 			var fnConstructor;
 
@@ -991,8 +1027,9 @@ function(
 			} else {
 				this.addDependent(new fnConstructor({
 					modeSwitcher: this.getMode(),
-					publishVisible: bPublishAvailable,
+					publishVisible: aButtonsVisibility.publishAvailable,
 					textResources: this._getTextResources(),
+					draftVisible: aButtonsVisibility.draftAvailable,
 					//events
 					exit: this.stop.bind(this, false, false),
 					transport: this._onTransport.bind(this),
@@ -1009,18 +1046,18 @@ function(
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
 
-			if (bIsAppVariantSupported) {
+			if (aButtonsVisibility.publisAppVariantSupported) {
 				// Sets the visibility of 'Save As' button in RTA toolbar
-				this.getToolbar().getControl('saveAs').setVisible(bIsAppVariantSupported);
+				this.getToolbar().getControl('saveAs').setVisible(aButtonsVisibility.publisAppVariantSupported);
 				// Flag which represents either the key user view or SAP developer view
 				var bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
 
 				if (bExtendedOverview) {
 					// Sets the visibility of 'i' menu button (App Variant Overview: SAP developer view) in RTA toolbar
-					this.getToolbar().getControl('appVariantOverview').setVisible(bIsAppVariantSupported);
+					this.getToolbar().getControl('appVariantOverview').setVisible(aButtonsVisibility.publisAppVariantSupported);
 				} else {
 					// Sets the visibility of 'i' button (App Variant Overview: Key user view) in RTA toolbar
-					this.getToolbar().getControl('manageApps').setVisible(bIsAppVariantSupported);
+					this.getToolbar().getControl('manageApps').setVisible(aButtonsVisibility.publisAppVariantSupported);
 				}
 
 				RtaAppVariantFeature.isManifestSupported().then(function(bResult) {
@@ -1146,7 +1183,6 @@ function(
 	RuntimeAuthoring.prototype._deleteChanges = function() {
 		var oRootControl = this.getRootControlInstance();
 		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
-		BusyIndicator.show(500);
 
 		return PersistenceWriteAPI.reset({
 			selector: oAppComponent,
@@ -1154,11 +1190,9 @@ function(
 			generator: "Change.createInitialFileContent"
 		})
 			.then(function () {
-				BusyIndicator.hide();
 				this._reloadPage();
 			}.bind(this))
 			.catch(function (oError) {
-				BusyIndicator.hide();
 				if (oError !== "cancel") {
 					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
 				}
@@ -1254,53 +1288,79 @@ function(
 	};
 
 	/**
+	 * Triggers a callback when a control gets created with its associated overlay.
+	 * @param {string} sNewControlID - ID of the newly created control
+	 * @param {Function} fnCallback - Callback to execute when the conditions are met, the overlay is the only parameter
+	 */
+	RuntimeAuthoring.prototype._scheduleOnCreated = function (sNewControlID, fnCallback) {
+		function onElementOverlayCreated (oEvent) {
+			var oNewOverlay = oEvent.getParameter("elementOverlay");
+			if (oNewOverlay.getElement().getId() === sNewControlID) {
+				this._oDesignTime.detachEvent("elementOverlayCreated", onElementOverlayCreated, this);
+				fnCallback(oNewOverlay);
+			}
+		}
+
+		this._oDesignTime.attachEvent("elementOverlayCreated", onElementOverlayCreated, this);
+	};
+
+	/**
+	 * Triggers a callback when a control gets created and its associated overlay is visible.
+	 * @param {string} sNewControlID - ID of the newly created control
+	 * @param {Function} fnCallback - Callback to execute when the conditions are met, the overlay is the only parameter
+	 */
+	RuntimeAuthoring.prototype._scheduleOnCreatedAndVisible = function (sNewControlID, fnCallback) {
+		function onGeometryChanged (oEvent) {
+			var oElementOverlay = oEvent.getSource();
+			if (oElementOverlay.getGeometry() && oElementOverlay.getGeometry().visible) {
+				oElementOverlay.detachEvent("geometryChanged", onGeometryChanged);
+				fnCallback(oElementOverlay);
+			}
+		}
+
+		function onGeometryCheck (oElementOverlay) {
+			// the control can be set to visible, but still have no size when we do the check
+			// that's why we also attach to 'geometryChanged' and check if the overlay has a size
+			if (!oElementOverlay.getGeometry() || !oElementOverlay.getGeometry().visible) {
+				oElementOverlay.attachEvent('geometryChanged', onGeometryChanged);
+			} else {
+				fnCallback(oElementOverlay);
+			}
+		}
+
+		this._scheduleOnCreated(sNewControlID, function (oNewOverlay) {
+			// the overlay needs to be rendered
+			if (oNewOverlay.isRendered()) {
+				onGeometryCheck(oNewOverlay);
+			} else {
+				oNewOverlay.attachEventOnce('afterRendering', function (oEvent) {
+					onGeometryCheck(oEvent.getSource());
+				});
+			}
+		});
+	};
+
+	/**
 	 * Function to automatically start the rename plugin on a container when it gets created
 	 * @param {object} vAction       The create action from designtime metadata
 	 * @param {string} sNewControlID The id of the newly created container
 	 */
 	RuntimeAuthoring.prototype._scheduleRenameOnCreatedContainer = function(vAction, sNewControlID) {
 		var fnStartEdit = function (oElementOverlay) {
+			oElementOverlay.setSelected(true);
+			this.getPlugins()["rename"].startEdit(oElementOverlay);
+		}.bind(this);
+
+		this._scheduleOnCreatedAndVisible(sNewControlID, function (oElementOverlay) {
 			// get container of the new control for rename
 			var sNewContainerID = this.getPlugins()["createContainer"].getCreatedContainerId(vAction, oElementOverlay.getElement().getId());
 			var oContainerElementOverlay = OverlayRegistry.getOverlay(sNewContainerID);
-			oContainerElementOverlay.setSelected(true);
-			this.getPlugins()["rename"].startEdit(oContainerElementOverlay);
-		};
-
-		var fnGeometryChangedCallback = function (oEvent) {
-			var oElementOverlay = oEvent.getSource();
-			if (oElementOverlay.getGeometry() && oElementOverlay.getGeometry().visible) {
-				fnStartEdit.call(this, oElementOverlay);
-				oElementOverlay.detachEvent('geometryChanged', fnGeometryChangedCallback, this);
-			}
-		};
-
-		var fnGeometryCheck = function (oElementOverlay) {
-			// the control can be set to visible, but still have no size when we do the check
-			// that's why we also attach to 'geometryChanged' and check if the overlay has a size
-			if (!oElementOverlay.getGeometry() || !oElementOverlay.getGeometry().visible) {
-				oElementOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
+			if (oContainerElementOverlay) {
+				fnStartEdit(oContainerElementOverlay);
 			} else {
-				fnStartEdit.call(this, oElementOverlay);
+				this._scheduleOnCreatedAndVisible(sNewContainerID, fnStartEdit);
 			}
-		};
-
-		var fnElementOverlayCreatedCallback = function(oEvent) {
-			var oNewOverlay = oEvent.getParameter("elementOverlay");
-			if (oNewOverlay.getElement().getId() === sNewControlID) {
-				this._oDesignTime.detachEvent("elementOverlayCreated", fnElementOverlayCreatedCallback, this);
-				// the overlay needs to be rendered before we can trigger the rename on it
-				if (oNewOverlay.isRendered()) {
-					fnGeometryCheck.call(this, oNewOverlay);
-				} else {
-					oNewOverlay.attachEventOnce('afterRendering', function (oEvent) {
-						fnGeometryCheck.call(this, oEvent.getSource());
-					}, this);
-				}
-			}
-		};
-
-		this._oDesignTime.attachEvent("elementOverlayCreated", fnElementOverlayCreatedCallback, this);
+		}.bind(this));
 	};
 
 	/**
@@ -1318,8 +1378,17 @@ function(
 
 		var oCommand = oEvent.getParameter("command");
 		if (oCommand instanceof sap.ui.rta.command.BaseCommand) {
-			if (vAction && sNewControlID) {
-				this._scheduleRenameOnCreatedContainer(vAction, sNewControlID);
+			if (sNewControlID) {
+				this._scheduleOnCreated(sNewControlID, function (oElementOverlay) {
+					var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
+					var fnSelect = oDesignTimeMetadata.getData().select;
+					if (typeof fnSelect === "function") {
+						fnSelect(oElementOverlay.getElement());
+					}
+				});
+				if (vAction) {
+					this._scheduleRenameOnCreatedContainer(vAction, sNewControlID);
+				}
 			}
 			return this.getCommandStack().pushAndExecute(oCommand)
 			// Error handling when a command fails is done in the Stack

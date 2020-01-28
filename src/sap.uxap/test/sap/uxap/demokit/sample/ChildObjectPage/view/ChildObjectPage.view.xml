@@ -10,64 +10,39 @@
 
 	<ObjectPageLayout id="ObjectPageLayout" isChildPage="true">
 		<headerTitle>
-			<ObjectPageDynamicHeaderTitle>
-				<breadcrumbs>
-					<m:Breadcrumbs>
-						<m:Link text="Page 2 long link" press="handleLink2Press"/>
-					</m:Breadcrumbs>
-				</breadcrumbs>
-
-				<expandedHeading>
-					<m:Title text="Denise Smith" wrapping="true"/>
-				</expandedHeading>
-
-				<snappedHeading>
-					<m:Title text="Denise Smith" wrapping="true"/>
-				</snappedHeading>
-
-				<expandedContent>
-					<m:Text text="Example of a child page in ObjectPage terms"/>
-				</expandedContent>
-
-				<snappedContent>
-					<m:Text text="Example of a child page in ObjectPage terms"/>
-				</snappedContent>
-
-				<snappedTitleOnMobile>
-					<m:Title text="Header Title On Phone"/>
-				</snappedTitleOnMobile>
-
+			<ObjectPageHeader id="headerForTest"
+							  objectTitle="Denise Smith"
+							  objectSubtitle="Example of a child page in ObjectPage terms"
+							  objectImageShape="Circle"
+							  objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png">
 				<actions>
-					<m:OverflowToolbarButton icon="sap-icon://action" text="action" tooltip="action"/>
-					<m:OverflowToolbarButton icon="sap-icon://action-settings" text="settings" tooltip="action-settings"/>
-					<m:OverflowToolbarButton icon="sap-icon://edit" text="edit" tooltip="edit"/>
-					<m:OverflowToolbarButton icon="sap-icon://save" text="save" visible="false" tooltip="save"/>
-					<m:OverflowToolbarButton icon="sap-icon://refresh" text="{buttons>/text}" tooltip="refresh"/>
-					<m:OverflowToolbarButton icon="{buttons>/icon}" text="{path:'/text', model:'buttons', formatter:'.onFormat'}" tooltip="chain-link"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" tooltip="action"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings" tooltip="action-settings"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit" tooltip="edit"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false" tooltip="save"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://refresh" text="{buttons>/text}" tooltip="refresh"/>
+					<ObjectPageHeaderActionButton icon="{buttons>/icon}"
+												  text="{path:'/text', model:'buttons', formatter:'.onFormat'}" tooltip="chain-link"/>
 				</actions>
-			</ObjectPageDynamicHeaderTitle>
+				<breadCrumbsLinks>
+					<m:Link text="Page 2 long link" press="handleLink2Press"/>
+				</breadCrumbsLinks>
+			</ObjectPageHeader>
 		</headerTitle>
-
 		<headerContent>
-			<m:FlexBox wrap="Wrap" fitContainer="true">
-					<layout:VerticalLayout class="sapUiSmallMarginEnd">
-						<m:ObjectStatus title="User ID" text="12345678"/>
-						<m:ObjectStatus title="Functional Area" text="Developement"/>
-						<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
-						<m:ObjectStatus title="Email" text="email@address.com"/>
-					</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<m:ObjectStatus title="User ID" text="12345678"/>
+				<m:ObjectStatus title="Functional Area" text="Developement"/>
+				<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
+				<m:ObjectStatus title="Email" text="email@address.com"/>
+			</layout:VerticalLayout>
+			<m:Text width="200px"
+					text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
 
-					<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
-						<m:Text width="200px" text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
-					</layout:VerticalLayout>
+			<m:ObjectStatus text="In Stock" state="Error"/>
+			<m:ObjectStatus title="Label" text="In Stock" state="Warning"/>
 
-				<layout:HorizontalLayout class="sapUiSmallMarginBeginEnd">
-					<m:ObjectStatus text="In Stock" state="Error" class="sapUiSmallMarginEnd"/>
-					<m:ObjectStatus title="Label" text="In Stock" state="Warning" class="sapUiSmallMarginBegin"/>
-				</layout:HorizontalLayout>
-			</m:FlexBox>
 		</headerContent>
-
 		<sections>
 			<ObjectPageSection title="2014 Goals Plan">
 				<subSections>

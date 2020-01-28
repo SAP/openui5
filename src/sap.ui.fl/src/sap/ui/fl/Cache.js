@@ -105,8 +105,8 @@ function(
 		}
 		return this.getChangesFillingCache(mComponent)
 		.then(function (oWrappedChangeFileContent) {
-			if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
-				return _trimEtag(oWrappedChangeFileContent.etag);
+			if (oWrappedChangeFileContent && oWrappedChangeFileContent.cacheKey) {
+				return _trimEtag(oWrappedChangeFileContent.cacheKey);
 			}
 
 			return Cache.NOTAG;
@@ -223,102 +223,6 @@ function(
 					return aChangeNames.indexOf(oChange.getFileName()) === -1;
 				});
 			});
-		});
-	};
-
-	/**
-	 * Retrieve a personalization object stored for an application under a given container ID and item name;
-	 * in case no itemName is given all items for the given container key are returned.
-	 *
-	 * @param {string} sReference - The reference of the application for which the personalization should be retrieved
-	 * @param {string} sAppVersion - Currently running version of the application
-	 * @param {string} sContainerKey - The key of the container in which the personalization was stored
-	 * @param {string} [sItemName] - The item name under which the personalization was stored
-	 * @returns {Promise} Promise resolving with the object stored under the passed container key and item name,
-	 * or undefined in case no entry was stored for these;
-	 * in case no sItemName was passed all entries known for the container key
-	 */
-	Cache.getPersonalization = function (sReference, sContainerKey, sItemName) {
-		var mComponent = {
-			name: sReference
-		};
-		return this.getChangesFillingCache(mComponent).then(function (oResponse) {
-			if (!oResponse || !oResponse.changes || !oResponse.changes.ui2personalization ||
-				!oResponse.changes.ui2personalization[sContainerKey]) {
-				// return undefined in case there is no personalization for the item or an empty array if a list was requested
-				return sItemName ? undefined : [];
-			}
-
-			if (!sItemName) {
-				return oResponse.changes.ui2personalization[sContainerKey] || [];
-			}
-
-			return oResponse.changes.ui2personalization[sContainerKey].filter(function (oEntry) {
-				return oEntry.itemName === sItemName;
-			})[0];
-		});
-	};
-
-	/**
-	 * Stores a personalization object for an application under a given key pair.
-	 *
-	 * @param {object} mPersonalization - Object with information about the personalization
-	 * @param {string} mPersonalization.reference - The reference of the application for which the personalization should be stored
-	 * @param {string} mPersonalization.containerKey - The key of the container in which the personalization should stored
-	 * @param {string} mPersonalization.itemName - The name under which the personalization should be stored
-	 * @param {string} mPersonalization.content - The personalization content to be stored
-	 * @returns {Promise} Promise resolving with the object stored under the passed container key and item name,
-	 * or undefined in case no entry was stored for these
-	 */
-	Cache.setPersonalization = function (mPersonalization) {
-		if (!mPersonalization || !mPersonalization.reference ||
-			!mPersonalization.containerKey || !mPersonalization.itemName || !mPersonalization.content) {
-			return Promise.reject("not all mandatory properties were provided for the storage of the personalization");
-		}
-
-		return LrepConnector.createConnector().send("/sap/bc/lrep/ui2personalization/", "PUT", mPersonalization, {})
-			.then(this._addPersonalizationToEntries.bind(this, mPersonalization));
-	};
-
-	Cache._addPersonalizationToEntries = function (mPersonalization) {
-		var oEntry = FlexState.getFlexObjectsFromStorageResponse(mPersonalization.reference);
-		var oPersonalizationSubsection = oEntry.ui2personalization;
-		if (!oPersonalizationSubsection[mPersonalization.containerKey]) {
-			oPersonalizationSubsection[mPersonalization.containerKey] = [];
-		}
-
-		oPersonalizationSubsection[mPersonalization.containerKey].push(mPersonalization);
-	};
-
-	/**
-	 * Deletes the personalization for a given reference
-	 *
-	 * @param {string} sReference - The reference of the application for which the personalization should be deleted
-	 * @param {string} sContainerKey - The key of the container for which the personalization should be deleted
-	 * @param {string} sItemName - The name under which the personalization should be deleted
-	 * @returns {Promise} Promise resolving in case the deletion request was successful
-	 */
-	Cache.deletePersonalization = function(sReference, sContainerKey, sItemName) {
-		if (!sReference || !sContainerKey || !sItemName) {
-			return Promise.reject("not all mandatory properties were provided for the storage of the personalization");
-		}
-
-		var sUrl = "/sap/bc/lrep/ui2personalization/?reference=";
-		sUrl += sReference + "&containerkey=" + sContainerKey + "&itemname=" + sItemName;
-
-		return LrepConnector.createConnector().send(sUrl, "DELETE", {})
-			.then(this._removePersonalizationFromEntries.bind(this, sReference, sContainerKey, sItemName));
-	};
-
-	Cache._removePersonalizationFromEntries = function (sReference, sContainerKey, sItemName) {
-		var oGetAllItemsPromise = Cache.getPersonalization(sReference, sContainerKey);
-		var oGetItemPromise = Cache.getPersonalization(sReference, sContainerKey, sItemName);
-
-		return Promise.all([oGetAllItemsPromise, oGetItemPromise]).then(function (aParams) {
-			var aItems = aParams[0];
-			var oToBeDeletedItem = aParams[1];
-			var nIndexOfItem = aItems.indexOf(oToBeDeletedItem);
-			aItems.splice(nIndexOfItem, 1);
 		});
 	};
 

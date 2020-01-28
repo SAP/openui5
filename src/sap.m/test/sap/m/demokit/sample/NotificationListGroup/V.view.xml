@@ -77,7 +77,7 @@
 								priority="None"
 								close="onItemClose"
 								press="onListItemPress"
-								authorInitials="BN" />
+								authorInitials="BN"/>
 						<NotificationListItem
 								title="New order (#2524)"
 								description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
@@ -86,7 +86,8 @@
 								unread="true"
 								priority="High"
 								close="onItemClose"
-								press="onListItemPress">
+								press="onListItemPress"
+								authorPicture="sap-icon://car-rental">
 							<buttons>
 								<Button text="Accept" press="onAcceptPress"/>
 								<Button text="Reject" press="onRejectPress"/>
@@ -100,7 +101,9 @@
 								datetime="3 days"
 								priority="High"
 								close="onItemClose"
-								press="onListItemPress">
+								press="onListItemPress"
+								authorInitials="YR"
+								authorAvatarColor="Accent7">
 							<buttons>
 								<Button text="Accept" press="onAcceptPress"/>
 								<Button text="Reject" press="onRejectPress"/>
@@ -136,7 +139,9 @@
 								unread="true"
 								priority="High"
 								close="onItemClose"
-								press="onListItemPress">
+								press="onListItemPress"
+								authorPicture="sap-icon://car-rental"
+								authorAvatarColor="Accent8">
 							<buttons>
 								<Button text="Accept" press="onAcceptPress"/>
 							</buttons>
@@ -149,7 +154,8 @@
 								datetime="3 days"
 								priority="High"
 								close="onItemClose"
-								press="onListItemPress">
+								press="onListItemPress"
+								authorInitials="BN">
 							<buttons>
 								<Button text="Accept" press="onAcceptPress"/>
 								<Button text="Reject" press="onRejectPress"/>
@@ -185,7 +191,8 @@
 								unread="true"
 								priority="High"
 								close="onItemClose"
-								press="onListItemPress">
+								press="onListItemPress"
+								authorInitials="BN">
 							<buttons>
 								<Button text="Accept" press="onAcceptPress"/>
 								<Button text="Reject" press="onRejectPress"/>

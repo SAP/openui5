@@ -73,7 +73,7 @@ sap.ui.define([
 					done();
 				}.bind(this));
 
-				this.oBaseEditor.getPropertyEditorsSync()[0].firePropertyChange("test");
+				this.oBaseEditor.getPropertyEditorsSync()[0].fireValueChange("test");
 			}.bind(this));
 		});
 

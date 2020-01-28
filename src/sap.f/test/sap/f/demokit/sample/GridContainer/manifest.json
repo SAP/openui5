@@ -13,10 +13,17 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
 				"sap.f": {},
-				"sap.m": {},
-				"sap.ui.core": {}
+				"sap.m": {}
 			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "RevealGrid/RevealGrid.css"
+				}
+			]
 		},
 		"config": {
 			"sample": {
@@ -26,7 +33,9 @@
 					"C.controller.js",
 					"manifest.json",
 					"model/cities.json",
-					"model/products.json"
+					"model/products.json",
+					"RevealGrid/RevealGrid.js",
+					"RevealGrid/RevealGrid.css"
 				]
 			}
 		}

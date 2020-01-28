@@ -42,12 +42,6 @@
 								<layout:content>
 									<VBox>
 										<items>
-											<Label text="{/text/editUrlLabel}" design="Bold" />
-											<TextArea value="{/editURL/value}" rows="10" width="100%" />
-										</items>
-									</VBox>
-									<VBox>
-										<items>
 											<Label text="{/text/parametersLabel}" design="Bold"/>
 											<SearchField search="onSearch" />
 											<ScrollContainer height="10rem" vertical="true" >
@@ -75,6 +69,12 @@
 													</items>
 												</Table>
 											</ScrollContainer>
+										</items>
+									</VBox>
+									<VBox>
+										<items>
+											<Label text="{/text/editUrlLabel}" design="Bold" />
+											<TextArea value="{/editURL/value}" rows="10" width="100%" />
 										</items>
 									</VBox>
 								</layout:content>

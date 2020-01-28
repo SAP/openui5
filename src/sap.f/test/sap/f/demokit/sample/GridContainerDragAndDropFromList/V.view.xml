@@ -1,13 +1,17 @@
 <mvc:View
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:f="sap.f"
-		xmlns:card="sap.f.cards"
-		xmlns:core="sap.ui.core"
-		displayBlock="true"
-		height="100%"
-		controllerName="sap.f.sample.GridContainerDragAndDropFromList.C">
-
+	controllerName="sap.f.sample.GridContainerDragAndDropFromList.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
+	displayBlock="true"
+	height="100%">
+	<ScrollContainer height="100%" width="100%" vertical="true">
+		<ToggleButton
+			id="revealGrid"
+			text="Reveal Grid"
+			press="onRevealGrid"
+			class="sapUiSmallMarginBegin sapUiSmallMarginTop sapUiTinyMarginBottom" />
 		<HBox renderType="Bare">
 			<List
 				id="list1"
@@ -16,14 +20,12 @@
 				items="{ path: '/' }">
 					<StandardListItem title="{title}" />
 			</List>
-
 			<f:GridContainer
 				id="grid1"
 				class="sapUiSmallMargin"
 				width="100%"
 				snapToRow="true"
 				items="{ path: '/' }">
-
 				<f:layout>
 					<f:GridContainerSettings rowSize="84px" columnSize="84px" gap="8px" />
 				</f:layout>
@@ -31,14 +33,15 @@
 					<f:GridContainerSettings rowSize="70px" columnSize="70px" gap="8px" />
 				</f:layoutXS>
 
-					<f:Card>
-						<f:layoutData>
-							<f:GridContainerItemLayoutData minRows="{rows}" columns="{columns}" />
-						</f:layoutData>
-						<f:header>
-							<card:Header title="{title}" />
-						</f:header>
-					</f:Card>
+				<f:Card>
+					<f:layoutData>
+						<f:GridContainerItemLayoutData minRows="{rows}" columns="{columns}" />
+					</f:layoutData>
+					<f:header>
+						<card:Header title="{title}" />
+					</f:header>
+				</f:Card>
 			</f:GridContainer>
 		</HBox>
+	</ScrollContainer>
 </mvc:View>

@@ -104,6 +104,20 @@ sap.ui.define([
 					} else {
 						throw new Error("oSpecificChangeInfo.value attribute required");
 					}
+				},
+
+				/**
+				 * Retrieves the condenser-specific information.
+				 *
+				 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+				 * @returns {object} - Condenser-specific information
+				 * @public
+				 */
+				getCondenserInfo: function(/* oChange */) {
+					return {
+						classificationType: sap.ui.fl.ClassificationType.LastOneWins,
+						uniqueKey: mRenameSettings.propertyName
+					};
 				}
 			};
 		}

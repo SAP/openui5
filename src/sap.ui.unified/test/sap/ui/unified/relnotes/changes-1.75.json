@@ -1,0 +1,24 @@
+{
+  "1.75.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "328e178d258b8b35ac7048d42561708b2988a585",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Vertical alignment Icon to text",
+        "references": []
+      },
+      {
+        "id": "7659beb355bd6f4622a31a58cea143fcd0efed95",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: ariaLabelledBy/ariaDescribedBy are now read by Jaws",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080016342"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -726,6 +726,7 @@ sap.ui.define([
 		 * Applications should call this method if they don't need the object any longer.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
 		 * @public
 		 */
 		destroy: function(vControl) {},

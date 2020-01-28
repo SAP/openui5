@@ -363,6 +363,7 @@ function (
 
 		QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {
 			var vAction = {
+				aggregationName: "formContainers",
 				getIndex : function(oForm, oFormContainer) {
 					var sAggregationName = vAction.aggregationName;
 					var oMetadata = oForm.getMetadata();
@@ -384,6 +385,7 @@ function (
 
 		QUnit.test("when the designTimeMetadata has no getContainerIndex property given and a function _determineIndex() is called", function(assert) {
 			var vAction = {
+				aggregationName: "formContainers",
 				changeType : "addGroup"
 			};
 

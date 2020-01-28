@@ -1,11 +1,13 @@
-sap.ui.define(['sap/ui/core/UIComponent'],
-	function (UIComponent) {
-		"use strict";
+sap.ui.define([
+	"sap/ui/core/UIComponent"
+], function (UIComponent) {
+	"use strict";
 
-		return UIComponent.extend("sap.f.sample.GridListBoxContainerReal.Component", {
+	return UIComponent.extend("sap.f.sample.GridListBoxContainerReal.Component", {
 
-			metadata: {
-				manifest: "json"
-			}
-		});
+		metadata: {
+			manifest: "json"
+		}
+
 	});
+});

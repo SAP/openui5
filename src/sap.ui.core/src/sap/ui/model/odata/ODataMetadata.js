@@ -18,6 +18,7 @@ sap.ui.define([
 ],
 	function(EventProvider, OData, CacheManager, Utils, uid, Log, assert, each, jQuery) {
 	"use strict";
+	/*eslint max-nested-callbacks: 0*/
 
 	/**
 	 * Constructor for a new ODataMetadata.
@@ -428,16 +429,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetadata.prototype._getEntityAssociationEnd = function(oEntityType, sName) {
+		var sCacheKey;
 
 		if (!this._checkMetadataLoaded()) {
 			return null;
 		}
+
+		this._mGetEntityAssociationEndCache = this._mGetEntityAssociationEndCache || {};
+		sCacheKey = oEntityType.namespace + "." + oEntityType.name + "/" + sName;
 		// fill the cache
-		if (!this._mGetEntityAssociationEndCache || !this._mGetEntityAssociationEndCache[oEntityType.name + "|" + sName]) {
-			this._mGetEntityAssociationEndCache = {};
+		if (this._mGetEntityAssociationEndCache[sCacheKey] === undefined) {
 			var oNavigationProperty = oEntityType
-				? Utils.findObject(oEntityType.navigationProperty, sName)
-				: null,
+					? Utils.findObject(oEntityType.navigationProperty, sName)
+					: null,
 				oAssociation = oNavigationProperty
 					? Utils.getObject(this.oMetadata.dataServices.schema, "association", oNavigationProperty.relationship)
 					: null,
@@ -445,11 +449,11 @@ sap.ui.define([
 					? Utils.findObject(oAssociation.end, oNavigationProperty.toRole, "role")
 					: null;
 
-			this._mGetEntityAssociationEndCache[oEntityType.name + "|" + sName] = oAssociationEnd;
+			this._mGetEntityAssociationEndCache[sCacheKey] = oAssociationEnd;
 		}
 
 		// return the value from the cache
-		return this._mGetEntityAssociationEndCache[oEntityType.name + "|" + sName];
+		return this._mGetEntityAssociationEndCache[sCacheKey];
 	};
 
 	function getEntitySetsMap(schema){
@@ -1135,6 +1139,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates caches for entity sets, entity types and navigation properties if not yet done and if
+	 * the metadata are loaded, otherwise nothing is done.
+	 *
+	 * <code>this._entitySetMap</code> maps the name of an entity type (including the namespace,
+	 * for example "GWSAMPLE_BASIC.SalesOrder") to its corresponding entity set object as returned
+	 * by datajs.
+	 * At each entity set object contained in <code>this.oMetadata</code> the reference
+	 * <code>__entityType</code> to the corresponding entity type object is added.
+	 * At each entity type object contained in <code>this.oMetadata</code> the map
+	 * <code>__navigationPropertiesMap</code> is added which maps the navigation property name to
+	 * the corresponding navigation property object as returned by datajs.
+	 */
+	ODataMetadata.prototype._fillElementCaches = function () {
+		var that = this;
+
+		if (this._entitySetMap || !this._checkMetadataLoaded()) {
+			return;
+		}
+
+		this._entitySetMap = {};
+		this.oMetadata.dataServices.schema.forEach(function (mSchema) {
+			(mSchema.entityContainer || []).forEach(function (mContainer) {
+				(mContainer.entitySet || []).forEach(function (mEntitySet) {
+					var oEntityType = that._getEntityTypeByName(mEntitySet.entityType);
+					oEntityType.__navigationPropertiesMap = {};
+					(oEntityType.navigationProperty || []).forEach(function (oProp) {
+						oEntityType.__navigationPropertiesMap[oProp.name] = oProp;
+					});
+					mEntitySet.__entityType = oEntityType;
+					that._entitySetMap[mEntitySet.entityType] = mEntitySet;
+				});
+			});
+		});
+	};
+
+	/**
 	 * creation of a request object for changes
 	 *
 	 * @return {object} request object
@@ -1175,38 +1215,14 @@ sap.ui.define([
 	 */
 	ODataMetadata.prototype._getEntitySetByPath = function(sEntityPath) {
 		var oEntityType;
-		if (!this._entitySetMap && this._checkMetadataLoaded()) {
-			// Cache results of entity set lookup
-			this._entitySetMap = {};
-			this.oMetadata.dataServices.schema.forEach(function(mShema) {
-				if (mShema.entityContainer) {
-					mShema.entityContainer.forEach(function(mContainer) {
-						if (mContainer.entitySet) {
-							mContainer.entitySet.forEach(function(mEntitySet) {
-								oEntityType = this._getEntityTypeByName(mEntitySet.entityType);
-								//convert navProp array to map
-								oEntityType.__navigationPropertiesMap = {};
-								if (oEntityType.navigationProperty && oEntityType.navigationProperty.length > 0) {
-									oEntityType.navigationProperty.forEach(function(oProp) {
-										oEntityType.__navigationPropertiesMap[oProp.name] = oProp;
-									});
-								}
-								mEntitySet.__entityType = oEntityType;
-								this._entitySetMap[mEntitySet.entityType] = mEntitySet;
-							}, this);
-						}
-					}, this);
-				}
-			}, this);
-		}
+
+		this._fillElementCaches();
 
 		oEntityType = this._getEntityTypeByPath(sEntityPath);
 
 		if (oEntityType)  {
 			return this._entitySetMap[oEntityType.entityType];
 		}
-
-		return;
 	};
 
 	/**
@@ -1454,6 +1470,70 @@ sap.ui.define([
 		return bCollection;
 	};
 
-	return ODataMetadata;
+	/**
+	 * Reduces the given path based on metadata by removing adjacent partner navigation properties.
+	 * If there are no adjacent partner navigation properties or if the path does not match the
+	 * metadata the given path is returned.
+	 *
+	 * Example: The reduced path for
+	 * "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/ToHeader/GrossAmount"
+	 * is "/SalesOrderSet('1')/GrossAmount" iff "ToLineItems" and "ToHeader" are marked as partners
+	 * of each other, that means both navigation properties have the same relationship attribute.
+	 *
+	 * The metadata must be available.
+	 *
+	 * @param {string} sPath
+	 *   The absolute data path to be reduced
+	 * @returns {string}
+	 *   The reduced absolute path
+	 *
+	 * @private
+	 */
+	ODataMetadata.prototype._getReducedPath = function (sPath) {
+		var oAssociationEnd,
+			i,
+			sKeyPredicate,
+			oNavigatedEntityType,
+			oNavigationProperty1,
+			oNavigationProperty2,
+			sNavigationPropertyName,
+			aSegments = sPath.split("/"),
+			oStartEntityType;
 
+		if (aSegments.length < 4) {
+			// no partner properties that can be removed
+			return sPath;
+		}
+		// ensure __navigationPropertiesMap is available at all entity types
+		this._fillElementCaches();
+
+		for (i = 1; i < aSegments.length - 2; i += 1) {
+			oStartEntityType = this._getEntityTypeByPath(aSegments.slice(0, i + 1).join('/'));
+			oNavigationProperty1 = oStartEntityType
+				&& oStartEntityType.__navigationPropertiesMap[aSegments[i + 1].split("(")[0]];
+			if (!oNavigationProperty1) { // segment could be a structural property
+				continue;
+			}
+			sNavigationPropertyName = aSegments[i + 2].split("(")[0];
+			oNavigatedEntityType = this._getEntityTypeByNavPropertyObject(oNavigationProperty1);
+			oNavigationProperty2 = oNavigatedEntityType
+				&& oNavigatedEntityType.__navigationPropertiesMap[sNavigationPropertyName];
+			if (!oNavigationProperty2
+					|| oNavigationProperty1.relationship !== oNavigationProperty2.relationship) {
+				continue;
+			}
+			sKeyPredicate = aSegments[i + 2].slice(sNavigationPropertyName.length);
+			oAssociationEnd
+				= this._getEntityAssociationEnd(oNavigatedEntityType, sNavigationPropertyName);
+
+			if (oAssociationEnd.multiplicity !== "*" // 1 or 0..1
+					|| sKeyPredicate && aSegments[i].endsWith(sKeyPredicate)) {
+				aSegments.splice(i + 1, 2);
+				return this._getReducedPath(aSegments.join("/"));
+			}
+		}
+		return aSegments.join("/");
+	};
+
+	return ODataMetadata;
 });

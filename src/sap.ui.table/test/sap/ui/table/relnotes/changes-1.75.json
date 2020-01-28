@@ -1,0 +1,18 @@
+{
+  "1.75.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "b4d0fbf7dc734b0d3d05557075272e5f9ddbd505",
+        "type": "FIX",
+        "text": " Table: Scrolling when inside a ValueHelpDialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080018556"
+          }
+        ]
+      }
+    ]
+  }
+}

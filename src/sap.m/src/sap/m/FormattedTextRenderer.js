@@ -12,7 +12,9 @@ sap.ui.define([
 		 * FormattedText renderer.
 		 * @namespace
 		 */
-		var FormattedTextRenderer = {};
+		var FormattedTextRenderer = {
+			apiVersion: 2
+		};
 
 		// Renderer with "indexed" placeholders
 		// (each placeholder has an index and is replaced with control with this index from the aggregation)
@@ -27,26 +29,23 @@ sap.ui.define([
 				iStrPos = 0;
 
 			// begin the rendering
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapMFT");
+			oRm.openStart("div", oControl);
+			oRm.class("sapMFT");
 			if (iWidth) {
-				oRm.addClass("sapMFTOverflowWidth");
+				oRm.class("sapMFTOverflowWidth");
 			}
 
 			if (iHeight) {
-				oRm.addClass("sapMFTOverflowHeight");
+				oRm.class("sapMFTOverflowHeight");
 			}
-			oRm.writeClasses();
 
 			// render Tooltip
 			if (oControl.getTooltip_AsString()) {
-				oRm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
+				oRm.attr("title", oControl.getTooltip_AsString());
 			}
-			oRm.addStyle("width", iWidth || null);
-			oRm.addStyle("height", iHeight || null);
-			oRm.writeStyles();
-			oRm.write(">"); // span element
+			oRm.style("width", iWidth || null);
+			oRm.style("height", iHeight || null);
+			oRm.openEnd(); // span element
 
 			// render HTML text and replace placeholders if any
 			while (sText !== '' && sText !== sNewText) {
@@ -55,22 +54,30 @@ sap.ui.define([
 
 			// output the rest of the text (if any)
 			if (sText !== '') {
-				oRm.write(sText);
+				try { // unsafeHtml assumes that sText contains only HTML tags
+					oRm.unsafeHtml(sText);
+				} catch (error){
+					oRm.text(sText);
+				}
 			}
 
 			// finalize the rendering
-			oRm.write("</div>");
+			oRm.close("div");
 
 			// placeholder processing function
 			function _placeholderReplacer(match, index, pos) {
 				var iMatchLen = match.length;
 
 				// output the text before the placeholder (if any) and increase string pointer accordingly
-				oRm.write(sText.substr(0, pos));
+				try { // unsafeHtml assumes that sText contains only HTML tags
+					oRm.unsafeHtml(sText.substr(0, pos));
+				} catch (error){
+					oRm.text(sText.substr(0, pos));
+				}
 				iStrPos += pos;
 
 				// output control (if exists and not used yet), or error message otherwise
-				if (aControls[index] !== undefined) {
+				if (aControls && aControls[index] !== undefined) {
 					if (aRenderedControls[index] === undefined) {
 						// render the control
 						oRm.renderControl(aControls[index]);
@@ -82,7 +89,7 @@ sap.ui.define([
 					}
 				} else {
 					// write the placeholder anyway
-					oRm.write(match);
+					oRm.text(match);
 					// log an error for missing control
 					Log.error("Missing control for placeholder '" + match + "' (htmlText@" + iStrPos + ")!", 'sap.m.FormattedText:', oControl.getId());
 				}

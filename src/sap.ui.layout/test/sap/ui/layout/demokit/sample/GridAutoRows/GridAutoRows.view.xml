@@ -1,8 +1,16 @@
 <mvc:View
+	controllerName="sap.ui.layout.sample.GridAutoRows.GridAutoRows"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:grid="sap.ui.layout.cssgrid"
 	xmlns:form="sap.ui.layout.form">
+	<Panel>
+		<ToggleButton
+			id="revealGrid"
+			text="Reveal Grid"
+			press="onRevealGrid"
+			class="sapUiTinyMarginTopBottom sapUiTinyMarginBeginEnd" />
+	</Panel>
 	<Panel>
 		<headerToolbar>
 			<OverflowToolbar height="3rem">

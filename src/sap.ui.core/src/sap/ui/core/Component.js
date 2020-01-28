@@ -2470,20 +2470,20 @@ sap.ui.define([
 			}
 		}
 
-		function preprocessManifestJSON(rawJson) {
-			// call flex-hook if given
-			if (typeof Component._fnPreprocessManifest === "function") {
+		function preprocessManifestJSON(oRawJson) {
+			// the preprocessing flex-hook is only called if a manifest.json was loaded or an object was given via config
+			if (typeof Component._fnPreprocessManifest === "function" && oRawJson != null) {
 				try {
 					// secure configuration from manipulation
 					var oConfigCopy = jQuery.extend(true, {}, oConfig);
-					return Component._fnPreprocessManifest(rawJson, oConfigCopy);
+					return Component._fnPreprocessManifest(oRawJson, oConfigCopy);
 				} catch (oError) {
 					// in case the hook itself crashes without 'safely' rejecting, we log the error and reject directly
 					Log.error("Failed to execute flexibility hook for manifest preprocessing.", oError);
 					return Promise.reject(oError);
 				}
 			} else {
-				return Promise.resolve(rawJson);
+				return Promise.resolve(oRawJson);
 			}
 		}
 
@@ -2524,7 +2524,11 @@ sap.ui.define([
 				manifestUrl: sManifestUrl,
 				componentName: sName,
 				processJson: preprocessManifestJSON,
-				async: oConfig.async
+				async: oConfig.async,
+				// If a dedicated manifest URL is given, e.g. for a Variant
+				// we expect that the Manifest can be loaded successfully
+				// If not, the manifest loading promise rejects and the further Component creation is stopped
+				failOnError: true
 			});
 		}
 
@@ -2562,8 +2566,10 @@ sap.ui.define([
 				manifestUrl: getManifestUrl(sName),
 				componentName: sName,
 				async: oConfig.async,
-				failOnError: false,
-				processJson: preprocessManifestJSON
+				processJson: preprocessManifestJSON,
+				// Legacy components might not have a manifest.json but use the Component metadata instead.
+				// For compatibility reasons we don't want to break the Component creation in these cases.
+				failOnError: false
 			});
 		}
 

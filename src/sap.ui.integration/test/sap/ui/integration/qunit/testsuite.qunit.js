@@ -217,6 +217,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/propertyEditor/PropertyEditorFactory": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/util/ObjectBinding": {
 				group: "DesignTime Editor",
 				coverage: {

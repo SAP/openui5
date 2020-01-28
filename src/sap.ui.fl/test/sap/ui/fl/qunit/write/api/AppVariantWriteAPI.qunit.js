@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/Utils",
@@ -28,6 +29,7 @@ sap.ui.define([
 	ChangeRegistry,
 	LrepConnector,
 	CompatibilityConnector,
+	ApplyUtils,
 	WriteUtils,
 	TransportSelection,
 	flexUtils,
@@ -670,7 +672,7 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -696,7 +698,7 @@ sap.ui.define([
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
 				.then(function() {
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
 				});
@@ -732,7 +734,7 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
 			oNewConnectorCall.onSecondCall().resolves(); // Delete call to backend
@@ -747,9 +749,9 @@ sap.ui.define([
 			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog").callsFake(fnSimulateDialogSelectionAndCancel);
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
-				.then(function() {
+				.catch(function() {
 					assert.ok(oNewConnectorCall.firstCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.equal(oNewConnectorCall.secondCall, null, "then delete app variants backend call is never triggered");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
 				});
@@ -777,7 +779,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+			sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().rejects("Loading app variant failed"); // Get Descriptor variant call
@@ -840,7 +842,7 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -870,7 +872,7 @@ sap.ui.define([
 					assert.ok("then the promise got rejected");
 					assert.equal(oError.messageKey, "MSG_DELETE_APP_VARIANT_FAILED", "then the messagekey is correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
 				});
@@ -907,7 +909,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+			sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -953,7 +955,7 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -963,7 +965,7 @@ sap.ui.define([
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
 				.then(function() {
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "DELETE"), "then the parameters are correct");
 					assert.ok(oOpenDialogStub.notCalled, "the dialog was never opened");
@@ -1000,7 +1002,7 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -1010,7 +1012,7 @@ sap.ui.define([
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
 				.then(function() {
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.ok(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
 					assert.ok(oOpenDialogStub.notCalled, "the dialog was never opened");

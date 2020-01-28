@@ -1,30 +1,33 @@
-/* eslint-disable quote-props */
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/Cache",
-	"sap/ui/fl/write/api/UI2PersonalizationWriteAPI",
+	"sap/ui/core/UIComponent",
+	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/write/api/UI2PersonalizationWriteAPI",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Cache,
-	UI2PersonalizationWriteAPI,
+	UIComponent,
+	UI2PersonalizationState,
 	ChangesController,
+	UI2PersonalizationWriteAPI,
 	jQuery,
 	sinon
 ) {
 	"use strict";
 
-	jQuery('#qunit-fixture').hide();
+	jQuery("#qunit-fixture").hide();
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("setPersonalization", {
 		beforeEach: function() {
-			this.fnCacheSetPersonalization = sandbox.stub(Cache, "setPersonalization").resolves();
-			this.fnCacheDeletePersonalization = sandbox.stub(Cache, "deletePersonalization").resolves();
+			this.oAppComponent = new UIComponent("testComponent");
+			this.oSetPersonalizationStub = sandbox.stub(UI2PersonalizationState, "setPersonalization");
+			this.oDeletePersonalizationStub = sandbox.stub(UI2PersonalizationState, "deletePersonalization");
 		},
 		afterEach: function () {
+			this.oAppComponent.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -37,7 +40,7 @@ sap.ui.define([
 			})
 				.catch(function() {
 					assert.ok(true, "a rejection took place");
-					assert.ok(this.fnCacheSetPersonalization.notCalled, "then Cache.setPersonalization is not called");
+					assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
 				}.bind(this));
 		});
 
@@ -61,7 +64,7 @@ sap.ui.define([
 			})
 				.catch(function () {
 					assert.ok(true, "a rejection took place");
-					assert.ok(this.fnCacheSetPersonalization.notCalled, "then Cache.setPersonalization is not called");
+					assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
 				}.bind(this));
 		});
 
@@ -76,7 +79,7 @@ sap.ui.define([
 			})
 				.catch(function() {
 					assert.ok(true, "a rejection took place");
-					assert.ok(this.fnCacheSetPersonalization.notCalled, "then Cache.setPersonalization is not called");
+					assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
 				}.bind(this));
 		});
 
@@ -91,7 +94,7 @@ sap.ui.define([
 			})
 				.catch(function() {
 					assert.ok(true, "a rejection took place");
-					assert.ok(this.fnCacheSetPersonalization.notCalled, "then Cache.setPersonalization is not called");
+					assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
 				}.bind(this));
 		});
 
@@ -106,12 +109,12 @@ sap.ui.define([
 				content: {}
 			})
 				.then(function() {
-					assert.ok(this.fnCacheSetPersonalization.calledWithExactly({
+					assert.ok(this.oSetPersonalizationStub.calledWithExactly({
 						reference: "testComponent",
 						containerKey: "someContainerKey",
 						itemName: "someItemName",
 						content: {}
-					}), "then Cache.setPersonalization is called with correct parameters");
+					}), "then UI2PersonalizationState.setPersonalization is called with correct parameters");
 				}.bind(this));
 		});
 
@@ -124,7 +127,7 @@ sap.ui.define([
 				itemName: "someItemName"
 			})
 				.then(function () {
-					assert.ok(this.fnCacheDeletePersonalization.calledWithExactly("testComponent", "someContainerKey", "someItemName"), "then Cache.deletePersonalization is called with correct parameters");
+					assert.ok(this.oDeletePersonalizationStub.calledWithExactly("testComponent", "someContainerKey", "someItemName"), "then UI2PersonalizationState.deletePersonalization is called with correct parameters");
 				}.bind(this));
 		});
 
@@ -146,7 +149,7 @@ sap.ui.define([
 			})
 				.catch(function () {
 					assert.ok(true, "a rejection took place");
-					assert.ok(this.fnCacheDeletePersonalization.notCalled, "then Cache.deletePersonalization is not called");
+					assert.ok(this.oDeletePersonalizationStub.notCalled, "then UI2PersonalizationState.deletePersonalization is not called");
 				}.bind(this));
 		});
 
@@ -158,7 +161,7 @@ sap.ui.define([
 			})
 				.catch(function() {
 					assert.ok(true, "a rejection took place");
-					assert.ok(this.fnCacheDeletePersonalization.notCalled, "then Cache.deletePersonalization is not called");
+					assert.ok(this.oDeletePersonalizationStub.notCalled, "then UI2PersonalizationState.deletePersonalization is not called");
 				}.bind(this));
 		});
 	});

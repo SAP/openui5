@@ -711,6 +711,62 @@ sap.ui.define([
 		return this;
 	};
 
+	FileUploader.prototype.addAriaLabelledBy = function(sID) {
+		this.addAssociation("ariaLabelledBy", sID);
+		this.oBrowse.addAriaLabelledBy(sID);
+
+		return this;
+	};
+
+	FileUploader.prototype.removeAriaLabelledBy = function(sID) {
+		var sLabelId = this.removeAssociation("ariaLabelledBy", sID);
+		this.oBrowse.removeAriaLabelledBy(sLabelId);
+
+		return sLabelId;
+	};
+
+	FileUploader.prototype.removeAllAriaLabelledBy = function() {
+		var aLabelIds = this.removeAllAssociation("ariaLabelledBy"),
+			aButtonLabels = this.oBrowse.getAriaLabelledBy();
+
+		// We make sure to leave any sap.m.Label in the button's ariaLabelledBy
+		aLabelIds.forEach(function(sLabelId) {
+			if (aButtonLabels.indexOf(sLabelId) >= 0) {
+				this.oBrowse.removeAriaLabelledBy(sLabelId);
+			}
+		}.bind(this));
+
+		return aLabelIds;
+	};
+
+	FileUploader.prototype.addAriaDescribedBy = function(sID) {
+		this.addAssociation("ariaDescribedBy", sID);
+		this.oBrowse.addAriaDescribedBy(sID);
+
+		return this;
+	};
+
+	FileUploader.prototype.removeAriaDescribedBy = function(sID) {
+		var sDescriptionId = this.removeAssociation("ariaDescribedBy", sID);
+		this.oBrowse.removeAriaDescribedBy(sDescriptionId);
+
+		return sDescriptionId;
+	};
+
+	FileUploader.prototype.removeAllAriaDescribedBy = function() {
+		var aDescriptionIds = this.removeAllAssociation("ariaDescribedBy"),
+			aButtonDescriptionIds = this.oBrowse.getAriaDescribedBy();
+
+		// Keep the default accessibility description in the -AccDescr element
+		aDescriptionIds.forEach(function(sLabelId) {
+			if (aButtonDescriptionIds.indexOf(sLabelId) >= 0) {
+				this.oBrowse.removeAriaDescribedBy(sLabelId);
+			}
+		}.bind(this));
+
+		return aDescriptionIds;
+	};
+
 	/*
 	 * Generates the text, which would be placed as an accessibility description,
 	 * based on the current FileUploader's placeholder, value and tooltip.
@@ -749,12 +805,6 @@ sap.ui.define([
 		if (oAccDescriptionHolder) {
 			oAccDescriptionHolder.innerHTML = encodeXML(sNewDescription);
 		}
-	};
-
-	FileUploader.prototype.setXhrSettings = function (oXhrSettings) {
-		this.setAggregation("xhrSettings", oXhrSettings, true);
-
-		return this;
 	};
 
 	/**
@@ -941,11 +991,10 @@ sap.ui.define([
 	FileUploader.prototype.setEnabled = function(bEnabled){
 		var $oFileUpload = jQuery(this.oFileUpload);
 
-		this.setProperty("enabled", bEnabled, true);
+		this.setProperty("enabled", bEnabled);
 		this.oFilePath.setEnabled(bEnabled);
 		this.oBrowse.setEnabled(bEnabled);
 		bEnabled ? $oFileUpload.removeAttr('disabled') : $oFileUpload.attr('disabled', 'disabled');
-		this.$().toggleClass("sapUiFupDisabled", !bEnabled);
 
 		return this;
 	};
@@ -992,13 +1041,6 @@ sap.ui.define([
 		}
 
 		return this.setProperty("valueStateText", sValueStateText, true);
-	};
-
-	FileUploader.prototype.setUploadUrl = function(sValue, bFireEvent) {
-		this.setProperty("uploadUrl", sValue, true);
-		var $uploadForm = this.$("fu_form");
-		$uploadForm.attr("action", this.getUploadUrl());
-		return this;
 	};
 
 	FileUploader.prototype.setPlaceholder = function(sPlaceholder) {

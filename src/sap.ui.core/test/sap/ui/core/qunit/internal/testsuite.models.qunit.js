@@ -96,6 +96,7 @@ sap.ui.define(function() {
 			AnalyticalTable : {
 				title : "sap.ui.table.qunit.AnalyticalTable.qunit",
 				module : ["test-resources/sap/ui/table/qunit/AnalyticalTable.qunit"],
+				sinon : 1,
 				ui5 : {
 					libs : ["sap.ui.table", "sap.m"]
 				}

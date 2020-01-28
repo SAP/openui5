@@ -71,7 +71,7 @@ function (
 
 			var oMockedWrappedContent = {
 				changes: [{}],
-				etag: "abc123",
+				cacheKey: "abc123",
 				status: "success"
 			};
 			var oMockedAppComponent = {
@@ -2771,6 +2771,7 @@ function (
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
 		beforeEach: function () {
 			sandbox.stub(FlexState, "initialize").resolves();
+			sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
 			this._mComponentProperties = {
 				name : "saveChangeScenario",
 				appVersion : "1.2.3"
@@ -3113,60 +3114,101 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("Shall save the dirty changes when deleting a change and return a promise", function (assert) {
-			var oChangeContent;
-			var oChange;
-
-			oChangeContent = {
+		QUnit.test("Shall save all dirty changes with changes in DELETE state", function (assert) {
+			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
-				originalLanguage: "DE"
+				selector: { id: "control1" }
 			};
-			oChange = new Change(oChangeContent);
+			var oChange = new Change(oChangeContent);
 
 			this.oChangePersistence.deleteChange(oChange);
 
+			assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change exists initially");
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
 				assert.equal(this.oDeleteChangeStub.callCount, 1);
 				assert.equal(this.oCreateStub.callCount, 0);
+				assert.equal(this.oChangePersistence.getDirtyChanges().length, 0, "then no dirty changes exist anymore");
 			}.bind(this));
 		});
 
-		QUnit.test("Shall save the dirty changes in a bulk", function (assert) {
-			// REVISE There might be more elegant implementation
-			var oChangeContent1;
-			var oChangeContent2;
-
-			oChangeContent1 = {
+		QUnit.test("Shall save passed dirty changes with changes in DELETE state", function (assert) {
+			var oChangeNotToBeSaved = new Change({
 				fileName: "Gizorillus1",
-				layer: "VENDOR",
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
-				originalLanguage: "DE"
+				selector: { id: "control1" }
+			});
+
+			var oChangeToBeSaved = new Change({
+				fileName: "Gizorillus2",
+				fileType: "change",
+				changeType: "addField",
+				selector: { id: "control2" }
+			});
+
+			this.oChangePersistence.deleteChange(oChangeNotToBeSaved);
+			this.oChangePersistence.deleteChange(oChangeToBeSaved);
+
+			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exists initially");
+			return this.oChangePersistence.saveDirtyChanges(false, [oChangeToBeSaved]).then(function() {
+				assert.equal(this.oDeleteChangeStub.callCount, 1);
+				assert.equal(this.oCreateStub.callCount, 0);
+				assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change still exists");
+				assert.deepEqual(this.oChangePersistence.getDirtyChanges()[0], oChangeNotToBeSaved, "the the correct dirty change was not saved");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall save all dirty changes in a bulk", function (assert) {
+			var oChangeContent1 = {
+				fileName: "Gizorillus1",
+				fileType: "change",
+				changeType: "addField",
+				selector: { id: "control1" }
 			};
 
-			oChangeContent2 = {
+			var oChangeContent2 = {
 				fileName: "Gizorillus2",
-				layer: "VENDOR",
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
-				originalLanguage: "DE"
+				selector: { id: "control1" }
 			};
 			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 
+			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exist initially");
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
 				assert.ok(this.oCreateStub.calledOnce, "the create method of the connector is called once");
 				assert.deepEqual(this.oCreateStub.getCall(0).args[0][0], oChangeContent1, "the first change was processed first");
 				assert.deepEqual(this.oCreateStub.getCall(0).args[0][1], oChangeContent2, "the second change was processed afterwards");
+				assert.equal(this.oChangePersistence.getDirtyChanges(), 0, "then no dirty changes exist any more");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall save passed dirty changes in a bulk", function (assert) {
+			var oChangeContent1 = {
+				fileName: "Gizorillus1",
+				fileType: "change",
+				changeType: "addField",
+				selector: { id: "control1" }
+			};
+
+			var oChangeContent2 = {
+				fileName: "Gizorillus2",
+				fileType: "change",
+				changeType: "addField",
+				selector: { id: "control2" }
+			};
+
+			var oChangeToBeSaved = this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+			var oChangeNotToBeSaved = this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
+
+			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exist initially");
+			return this.oChangePersistence.saveDirtyChanges(false, [oChangeToBeSaved]).then(function() {
+				assert.ok(this.oCreateStub.calledOnce, "the create method of the connector is called once");
+				assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change still exists");
+				assert.deepEqual(this.oChangePersistence.getDirtyChanges()[0], oChangeNotToBeSaved, "then the correct change was not saved");
 			}.bind(this));
 		});
 
