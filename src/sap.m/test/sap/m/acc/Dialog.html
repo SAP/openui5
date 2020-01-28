@@ -1,211 +1,211 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <script src="../shared-config.js"></script>
-    <script src="../../../../resources/sap-ui-core.js"
-            id="sap-ui-bootstrap"
-            data-sap-ui-libs="sap.m"
-            data-sap-ui-xx-bindingSyntax="complex">
-    </script>
-    <script>
-        var _buttonWidth = "200px",
-            oSimpleDialog = new sap.m.Dialog({
-                title: "Simple Dialog",
-                content: new sap.ui.core.HTML({
-                    content: '<div id="helloWorld">Hello world text</div>' +
-                        '<div id="testPageText">This is accessibility test page for sap.m.Dialog</div>'
-                }),
-                beginButton: new sap.m.Button('simpleDialogAcceptButton', {
-                    text: "Accept", press: function () {
-                        oSimpleDialog.close();
-                    }
-                }),
-                endButton: new sap.m.Button('simpleDialogCancelButton', {
-                    text: "Cancel", press: function () {
-                        oSimpleDialog.close();
-                    }
-                }),
-                ariaLabelledBy : ["helloWorld", "testPageText"]
-            }),
-            oMessageDialog = new sap.m.Dialog({
-                title: "Message Dialog",
-                type: sap.m.DialogType.Message,
-                content: new sap.ui.core.HTML({
-                    content: '<div id="messageDialogText">Sample text</div>'
-                }),
-                beginButton: new sap.m.Button({
-                    text: "Accept", press: function () {
-                        oMessageDialog.close();
-                    }
-                }),
-                endButton: new sap.m.Button({
-                    text: "Cancel", press: function () {
-                        oMessageDialog.close();
-                    }
-                }),
-                ariaLabelledBy : ["messageDialogText"]
-            }),
-            oCustomHeaderDialog = new sap.m.Dialog({
-                title: "Dialog with Select",
-                customHeader: new sap.m.Bar({
-                    contentLeft: [new sap.ui.core.Icon({src: "manager"}), new sap.m.Label({text: "Custom Header"})],
-                    contentMiddle: [],
-                    contentRight: []
-                }),
-                content: [
-                    new sap.m.Text("contentText", {text: "This is a dialog with custom header"})
-                ],
-                beginButton: new sap.m.Button({
-                    press: function () {
-                        oCustomHeaderDialog.close();
-                    },
-                    text: "Close"
-                }),
-                ariaLabelledBy : ["contentText"]
-            }),
-            oSuccessStateDialog = new sap.m.Dialog("dialogWithSuccessState", {
-                title: "Set your goals",
-                icon: "sap-icon://employee",
-                ariaLabelledBy: "p1",
-                state: sap.ui.core.ValueState.Success,
-                content: [
-                    new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">' +
-                    'One of the keys to success is creating realistic goals that can be achieved in a reasonable amount of time.</p>'})
-                ],
-                buttons: [
-                    new sap.m.Button({
-                        text: "OK",
-                        press: function () {
-                            oSuccessStateDialog.close();
-                        }
-                    })
-                ]
-            }),
-            oWarningStateDialog = new sap.m.Dialog("dialogWithWarningState", {
-                title: "World Domination",
-                icon: "sap-icon://employee",
-                ariaLabelledBy: "p1",
-                state: sap.ui.core.ValueState.Warning,
-                content: [
-                    new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">Do you want to start a new world domination campaign?</p>'})
-                ],
-                buttons: [
-                    new sap.m.Button({
-                        text: "Accept",
-                        press: function () {
-                            oWarningStateDialog.close();
-                        }
-                    }),
-                    new sap.m.Button({
-                        text: "Reject",
-                        icon: "sap-icon://employee",
-                        press: function () {
-                            oWarningStateDialog.close();
-                        }
-                    })
-                ]
-            }),
-            oErrorStateDialog = new sap.m.Dialog("dialogWithErrorState", {
-                title: "Don't Give Up",
-                icon: "sap-icon://employee",
-                ariaLabelledBy: "p1",
-                state: sap.ui.core.ValueState.Error,
-                content: [
-                    new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">' +
-                    'The only error you can make is not even trying.</p>'})
-                ],
-                buttons: [
-                    new sap.m.Button({
-                        text: "OK",
-                        press: function () {
-                            oErrorStateDialog.close();
-                        }
-                    })
-                ]
-            }),
-            oSearchFieldDialog = new sap.m.Dialog({
-                title: "Dialog with Search Field",
-                subHeader: new sap.m.Bar({
-                    contentMiddle: new sap.m.SearchField()
-                }),
-                content: new sap.ui.core.HTML({
-                    content: '<div style="width: 30px; height: 1000px;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.</div>'
-                }),
-                contentWidth: "40rem",
-                contentHeight: "250px",
-                beginButton: new sap.m.Button({
-                    text: "Close",
-                    press: function () {
-                        oSearchFieldDialog.close();
-                    }
-                })
-            });
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-xx-bindingSyntax="complex">
+	</script>
+	<script>
+		var _buttonWidth = "200px",
+			oSimpleDialog = new sap.m.Dialog({
+				title: "Simple Dialog",
+				content: new sap.ui.core.HTML({
+					content: '<div id="helloWorld">Hello world text</div>' +
+						'<div id="testPageText">This is accessibility test page for sap.m.Dialog</div>'
+				}),
+				beginButton: new sap.m.Button('simpleDialogAcceptButton', {
+					text: "Accept", press: function () {
+						oSimpleDialog.close();
+					}
+				}),
+				endButton: new sap.m.Button('simpleDialogCancelButton', {
+					text: "Cancel", press: function () {
+						oSimpleDialog.close();
+					}
+				}),
+				ariaLabelledBy : ["helloWorld", "testPageText"]
+			}),
+			oMessageDialog = new sap.m.Dialog({
+				title: "Message Dialog",
+				type: sap.m.DialogType.Message,
+				content: new sap.ui.core.HTML({
+					content: '<div id="messageDialogText">Sample text</div>'
+				}),
+				beginButton: new sap.m.Button({
+					text: "Accept", press: function () {
+						oMessageDialog.close();
+					}
+				}),
+				endButton: new sap.m.Button({
+					text: "Cancel", press: function () {
+						oMessageDialog.close();
+					}
+				}),
+				ariaLabelledBy : ["messageDialogText"]
+			}),
+			oCustomHeaderDialog = new sap.m.Dialog({
+				title: "Dialog with Select",
+				customHeader: new sap.m.Bar({
+					contentLeft: [new sap.ui.core.Icon({src: "manager"}), new sap.m.Label({text: "Custom Header"})],
+					contentMiddle: [],
+					contentRight: []
+				}),
+				content: [
+					new sap.m.Text("contentText", {text: "This is a dialog with custom header"})
+				],
+				beginButton: new sap.m.Button({
+					press: function () {
+						oCustomHeaderDialog.close();
+					},
+					text: "Close"
+				}),
+				ariaLabelledBy : ["contentText"]
+			}),
+			oSuccessStateDialog = new sap.m.Dialog("dialogWithSuccessState", {
+				title: "Set your goals",
+				icon: "sap-icon://employee",
+				ariaLabelledBy: "p1",
+				state: sap.ui.core.ValueState.Success,
+				content: [
+					new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">' +
+					'One of the keys to success is creating realistic goals that can be achieved in a reasonable amount of time.</p>'})
+				],
+				buttons: [
+					new sap.m.Button({
+						text: "OK",
+						press: function () {
+							oSuccessStateDialog.close();
+						}
+					})
+				]
+			}),
+			oWarningStateDialog = new sap.m.Dialog("dialogWithWarningState", {
+				title: "World Domination",
+				icon: "sap-icon://employee",
+				ariaLabelledBy: "p1",
+				state: sap.ui.core.ValueState.Warning,
+				content: [
+					new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">Do you want to start a new world domination campaign?</p>'})
+				],
+				buttons: [
+					new sap.m.Button({
+						text: "Accept",
+						press: function () {
+							oWarningStateDialog.close();
+						}
+					}),
+					new sap.m.Button({
+						text: "Reject",
+						icon: "sap-icon://employee",
+						press: function () {
+							oWarningStateDialog.close();
+						}
+					})
+				]
+			}),
+			oErrorStateDialog = new sap.m.Dialog("dialogWithErrorState", {
+				title: "Don't Give Up",
+				icon: "sap-icon://employee",
+				ariaLabelledBy: "p1",
+				state: sap.ui.core.ValueState.Error,
+				content: [
+					new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">' +
+					'The only error you can make is not even trying.</p>'})
+				],
+				buttons: [
+					new sap.m.Button({
+						text: "OK",
+						press: function () {
+							oErrorStateDialog.close();
+						}
+					})
+				]
+			}),
+			oSearchFieldDialog = new sap.m.Dialog({
+				title: "Dialog with Search Field",
+				subHeader: new sap.m.Bar({
+					contentMiddle: new sap.m.SearchField()
+				}),
+				content: new sap.ui.core.HTML({
+					content: '<div style="width: 30px; height: 1000px;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.</div>'
+				}),
+				contentWidth: "40rem",
+				contentHeight: "250px",
+				beginButton: new sap.m.Button({
+					text: "Close",
+					press: function () {
+						oSearchFieldDialog.close();
+					}
+				})
+			});
 
-        var page = new sap.m.Page("page", {
-            title: "Dialog Accessibility Test Page",
-            content: [
-                new sap.m.Button('simpleDialogButton', {
-                    text: "Simple Dialog",
-                    width: _buttonWidth,
-                    press: function () {
-                        oSimpleDialog.open();
-                    }
-                }),
-                new sap.ui.core.HTML({content: "<br>"}),
-                new sap.m.Button({
-                    text: "Message Dialog",
-                    width: _buttonWidth,
-                    press: function () {
-                        oMessageDialog.open();
-                    }
-                }),
-                new sap.ui.core.HTML({content: "<br>"}),
-                new sap.m.Button({
-                    text: "With Custom Header",
-                    width: _buttonWidth,
-                    press: function () {
-                        oCustomHeaderDialog.open();
-                    }
-                }),
-                new sap.ui.core.HTML({content: "<br>"}),
-                new sap.m.Button('dialogWithSuccessStateButton', {
-                    text: "Dialog With Succes State",
-                    width: _buttonWidth,
-                    press: function () {
-                        oSuccessStateDialog.open();
-                    }
-                }),
-                new sap.ui.core.HTML({content: "<br>"}),
-                new sap.m.Button('dialogWithWarningStateButton', {
-                    text: "Dialog With Warning State",
-                    width: _buttonWidth,
-                    press: function () {
-                        oWarningStateDialog.open();
-                    }
-                }),
-                new sap.ui.core.HTML({content: "<br>"}),
-                new sap.m.Button('dialogWithErrorStateButton', {
-                    text: "Dialog With Error State",
-                    width: _buttonWidth,
-                    press: function () {
-                        oErrorStateDialog.open();
-                    }
-                }),
-                new sap.ui.core.HTML({content: "<br>"}),
-                new sap.m.Button({
-                    text: "SearchField in Dialog",
-                    width: _buttonWidth,
-                    press: function () {
-                        oSearchFieldDialog.open();
-                    }
-                })
-            ]
-        }).placeAt('content');
+		var page = new sap.m.Page("page", {
+			title: "Dialog Accessibility Test Page",
+			content: [
+				new sap.m.Button('simpleDialogButton', {
+					text: "Simple Dialog",
+					width: _buttonWidth,
+					press: function () {
+						oSimpleDialog.open();
+					}
+				}),
+				new sap.ui.core.HTML({content: "<br>"}),
+				new sap.m.Button({
+					text: "Message Dialog",
+					width: _buttonWidth,
+					press: function () {
+						oMessageDialog.open();
+					}
+				}),
+				new sap.ui.core.HTML({content: "<br>"}),
+				new sap.m.Button({
+					text: "With Custom Header",
+					width: _buttonWidth,
+					press: function () {
+						oCustomHeaderDialog.open();
+					}
+				}),
+				new sap.ui.core.HTML({content: "<br>"}),
+				new sap.m.Button('dialogWithSuccessStateButton', {
+					text: "Success Dialog",
+					width: _buttonWidth,
+					press: function () {
+						oSuccessStateDialog.open();
+					}
+				}),
+				new sap.ui.core.HTML({content: "<br>"}),
+				new sap.m.Button('dialogWithWarningStateButton', {
+					text: "Warning Dialog",
+					width: _buttonWidth,
+					press: function () {
+						oWarningStateDialog.open();
+					}
+				}),
+				new sap.ui.core.HTML({content: "<br>"}),
+				new sap.m.Button('dialogWithErrorStateButton', {
+					text: "Error Dialog",
+					width: _buttonWidth,
+					press: function () {
+						oErrorStateDialog.open();
+					}
+				}),
+				new sap.ui.core.HTML({content: "<br>"}),
+				new sap.m.Button({
+					text: "SearchField in Dialog",
+					width: _buttonWidth,
+					press: function () {
+						oSearchFieldDialog.open();
+					}
+				})
+			]
+		}).placeAt('content');
 
-        var oApp = new sap.m.App("myApp", { initialPage: "page" });
-        oApp.addPage(page).placeAt("content");
-    </script>
+		var oApp = new sap.m.App("myApp", { initialPage: "page" });
+		oApp.addPage(page).placeAt("content");
+	</script>
 
 </head>
 <body id="body" class="sapUiBody" role="application">
