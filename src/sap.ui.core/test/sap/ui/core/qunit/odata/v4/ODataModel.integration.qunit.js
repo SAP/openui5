@@ -22927,19 +22927,25 @@ sap.ui.define([
 	// A (context) binding that did not yet read its data does not allow setting a property w/o a
 	// PATCH request.
 	// JIRA: CPOUI5ODATAV4-14
+	// Additionally we show that it is possible to prevent a PATCH request by a binding parameter
+	// $$noPatch: true
+	// JIRA: CPOUI5ODATAV4-53
 	QUnit.test("CPOUI5ODATAV4-14", function (assert) {
 		var oBinding,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'42\')}" id="form">\
 	<Input id="name" value="{Name}"/>\
+	<Input id="budget" value="{path : \'Budget\', parameters : {$$noPatch : true}}" />\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("TEAMS('42')?$select=Name,Team_Id", {
+		this.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id", {
+				Budget : 1234,
 				Name : "Team #1",
 				Team_Id : "42"
 			})
+			.expectChange("budget", "1,234")
 			.expectChange("name", "Team #1");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -22954,7 +22960,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("TEAMS('42')?$select=Name,Team_Id", {
+			that.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id", {
+					Budget : 1234,
 					Name : "Team #1",
 					Team_Id : "42"
 				})
@@ -22976,6 +22983,27 @@ sap.ui.define([
 					}),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			that.expectChange("budget", "54,321");
+			// expect no PATCH request!
+
+			return Promise.all([
+				// code under test
+				// JIRA: CPOUI5ODATAV4-53
+				that.oView.byId("budget").getBinding("value").setValue(54321),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id", {
+					Budget : 1234,
+					Name : "Team #1",
+					Team_Id : "42"
+				})
+				.expectChange("budget", "1,234");
+
+			oBinding.refresh();
+
+			return that.waitForChanges(assert);
 		});
 	});
 

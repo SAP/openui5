@@ -2194,7 +2194,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["$$canonicalPath", "$$ownRequest", "$$patchWithoutSideEffects"].forEach(function (sName) {
+["$$canonicalPath", "$$noPatch", "$$ownRequest", "$$patchWithoutSideEffects"]
+	.forEach(function (sName) {
 		QUnit.test("checkBindingParameters, " + sName, function (assert) {
 			var aAllowedParameters = [sName],
 				oBinding = new ODataBinding(),
@@ -2213,7 +2214,7 @@ sap.ui.define([
 			// code under test
 			oBinding.checkBindingParameters(mParameters, aAllowedParameters);
 		});
-	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("checkBindingParameters, unknown $$-parameter", function (assert) {

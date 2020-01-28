@@ -73,8 +73,9 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 				if (mParameters) {
-					this.checkBindingParameters(mParameters, ["$$groupId"]);
+					this.checkBindingParameters(mParameters, ["$$groupId", "$$noPatch"]);
 					this.sGroupId = mParameters.$$groupId;
+					this.bNoPatch = mParameters.$$noPatch;
 				} else {
 					this.sGroupId = undefined;
 				}
@@ -680,9 +681,14 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, the new value is not primitive, no value has
-	 *   been read before, or if the binding is not relative to a
-	 *   {@link sap.ui.model.odata.v4.Context}
+	 *   If one of the following situations occurs:
+	 *   <ul>
+	 *   <li> The binding's root binding is suspended.
+	 *   <li> The new value is not primitive.
+	 *   <li> No value has been read before.
+	 *   <li> The binding is not relative to a {@link sap.ui.model.odata.v4.Context}.
+	 *   <li> The binding has the parameter <code>$$noPatch</code> and a group ID has been given.
+	 *   </ul>
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
@@ -701,6 +707,10 @@ sap.ui.define([
 		}
 
 		this.checkSuspended();
+		if (this.bNoPatch && sGroupId) {
+			throw reportError(new Error("Must not specify a group ID (" + sGroupId
+				+ ") with $$noPatch"));
+		}
 		this.oModel.checkGroupId(sGroupId);
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw reportError(new Error("Not a primitive value"));
@@ -715,9 +725,13 @@ sap.ui.define([
 					+ " to a sap.ui.model.odata.v4.Context"));
 				return; // do not update this.vValue!
 			}
-			oGroupLock = this.lockGroup(sGroupId || this.getUpdateGroupId(), true, true);
+			oGroupLock = this.bNoPatch
+				? null
+				: this.lockGroup(sGroupId || this.getUpdateGroupId(), true, true);
 			this.oContext.doSetProperty(this.sPath, vValue, oGroupLock).catch(function (oError) {
-				oGroupLock.unlock(true);
+				if (oGroupLock) {
+					oGroupLock.unlock(true);
+				}
 				reportError(oError);
 			});
 		}
