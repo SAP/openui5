@@ -12,9 +12,12 @@
 				id="detail"
 				title="Detail 1"
 				backgroundDesign= "Solid"
+				showNavButton="{= !${device>/system/desktop} }"
+				navButtonText="Back"
+				navButtonPress=".onPressDetailBack"
 				class="sapUiStdPage">
-				<Label text="Detail page 1" />
-				<Button text="Go to Detail page2" press=".onPressNavToDetail" />
+				<Label text="Detail page 1" class="sapUiTinyMarginEnd" />
+				<Button text="Go to Detail page 2" press=".onPressNavToDetail" />
 			</Page>
 			<Page
 				id="detailDetail"
@@ -25,7 +28,7 @@
 				navButtonText="Back"
 				navButtonPress=".onPressDetailBack">
 				<VBox class="sapUiSmallMargin">
-					<Label text="This is Detail Page2" />
+					<Label text="This is Detail Page 2" />
 					<Text text="Here you could change the Split Application mode. After the mode change, resize the browser window to see the difference in the master form behaviour." />
 					<RadioButtonGroup
 						columns="1"
@@ -49,7 +52,7 @@
 				showNavButton="true"
 				navButtonText="Back"
 				navButtonPress=".onPressDetailBack">
-				<Label text="This is Detail Page3" />
+				<Label text="This is Detail Page 3" />
 				<Input/>
 				<Label text="Label 2" />
 				<Input/>
