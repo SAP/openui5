@@ -100,23 +100,24 @@ sap.ui.define(['sap/ui/unified/library', "sap/ui/thirdparty/jquery"],
 			oRm.attr('title', sTooltip);
 		}
 		oRm.openEnd();
-		oRm.openStart("input");
+		oRm.voidStart("input");
 		oRm.attr("type", "hidden");
 		oRm.attr("name", "_charset_");
 		oRm.attr("aria-hidden", "true");
-		oRm.openEnd();
-		oRm.openStart("input", oFileUploader.getId() + "-fu_data");
+		oRm.voidEnd();
+		oRm.voidStart("input", oFileUploader.getId() + "-fu_data");
+		oRm.attr("type", "hidden");
 		oRm.attr("aria-hidden", "true");
 		oRm.attr('name', sName + '-data');
 		oRm.attr('value', oFileUploader.getAdditionalData() || "");
-		oRm.openEnd();
+		oRm.voidEnd();
 		jQuery.each(oFileUploader.getParameters(), function(iIndex, oParam) {
-			oRm.openStart("input");
+			oRm.voidStart("input");
 			oRm.attr("type", "hidden");
 			oRm.attr("aria-hidden", "true");
 			oRm.attr('name', oParam.getName() || "");
 			oRm.attr('value', oParam.getValue() || "");
-			oRm.openEnd();
+			oRm.voidEnd();
 		});
 		oRm.close("div");
 
