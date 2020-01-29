@@ -415,7 +415,7 @@ function(
 			initialFocus: (Device.system.desktop ? this._oSearchField : null),
 			draggable: this.getDraggable() && Device.system.desktop,
 			resizable: this.getResizable() && Device.system.desktop
-		}).addStyleClass("sapMSelectDialog", true);
+		}).addStyleClass("sapMSelectDialog");
 		// for downward compatibility reasons
 		this._dialog = this._oDialog;
 		this.setAggregation("_dialog", this._oDialog);
