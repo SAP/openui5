@@ -68,6 +68,7 @@ sap.ui.define([
 	 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
 	 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
 	 * <li> '$$inheritExpandSelect' with allowed values <code>false</code> and <code>true</code>
+	 * <li> "$$noPatch" with value <code>true</code>
 	 * <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
 	 * <li> '$$ownRequest' with value <code>true</code>
 	 * <li> '$$patchWithoutSideEffects' with value <code>true</code>
@@ -124,6 +125,7 @@ sap.ui.define([
 					}
 					break;
 				case "$$canonicalPath":
+				case "$$noPatch":
 				case "$$ownRequest":
 				case "$$patchWithoutSideEffects":
 					if (vValue !== true) {
@@ -391,7 +393,10 @@ sap.ui.define([
 			// The aggregated query options of this binding and its dependent bindings are available
 			// in that.mAggregatedQueryOptions once all these promises are fulfilled.
 			oQueryOptionsPromise = SyncPromise.all([
-				oQueryOptionsPromise,
+				oQueryOptionsPromise.then(function (mQueryOptions) {
+					return _Helper.fetchResolvedSelect(that.oModel.oInterface.fetchMetadata,
+						_Helper.getMetaPath(sResolvedPath), mQueryOptions);
+				}),
 				Promise.resolve().then(function () {
 					return SyncPromise.all(that.aChildCanUseCachePromises);
 				})
