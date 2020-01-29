@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/Storage",
+	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -13,6 +14,7 @@ function (
 	AddLibrary,
 	FlexState,
 	Storage,
+	UriParameters,
 	jQuery,
 	sinon
 ) {
@@ -37,6 +39,7 @@ function (
 
 			this.fnGetAppDescriptorChangesSpy = sandbox.spy(FlexState, "getAppDescriptorChanges");
 			this.fnApplyChangeSpy = sandbox.spy(AddLibrary, "applyChange");
+			this.fnUriParamtersGetStub = sandbox.stub(UriParameters.prototype, "get").onCall(0).returns("true");
 		},
 		afterEach: function () {
 			FlexState.clearState();
@@ -199,6 +202,18 @@ function (
 				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 0, "FlexState.getAppDescriptorChanges is not called");
 				assert.equal(this.fnApplyChangeSpy.callCount, 0, "AddLibrary.applyChange is not called");
 				assert.equal(oManifest, oNewManifest, "manifest is resolved and not changed");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'preprocessManifest' without uri parameter 'appdescriptor-merger'", function (assert) {
+			this.fnUriParamtersGetStub.onCall(0).returns(null);
+
+			return Applier.preprocessManifest(this.oManifest, this.oConfig).then(function(oNewManifest) {
+				assert.equal(this.fnUriParamtersGetStub.callCount, 1, "UriParamters.get is called once");
+				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 0, "FlexState.getAppDescriptorChanges is called once");
+				assert.equal(this.fnApplyChangeSpy.callCount, 0, "AddLibrary.applyChange is called once");
+
+				assert.deepEqual(oNewManifest, this.oManifest, "manifest.json has not changed");
 			}.bind(this));
 		});
 	});
