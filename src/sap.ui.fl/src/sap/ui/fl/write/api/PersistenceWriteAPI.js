@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/_internal/SaveAs",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/Layer"
 ], function(
 	includes,
 	_omit,
@@ -21,7 +22,8 @@ sap.ui.define([
 	DescriptorInlineChangeFactory,
 	FeaturesAPI,
 	SaveAs,
-	Log
+	Log,
+	Layer
 ) {
 	"use strict";
 
@@ -153,7 +155,7 @@ sap.ui.define([
 					};
 					var bPublishAvailable = aResetPublishInfo[2];
 
-					var bIsBackEndCallNeeded = !oFlexInfo.isResetEnabled || (bPublishAvailable && !oFlexInfo.isPublishEnabled);
+					var bIsBackEndCallNeeded = !(mPropertyBag.layer === Layer.USER) && (!oFlexInfo.isResetEnabled || (bPublishAvailable && !oFlexInfo.isPublishEnabled));
 					if (bIsBackEndCallNeeded) {
 						return ChangesController.getFlexControllerInstance(mPropertyBag.selector).getResetAndPublishInfo(mPropertyBag)
 							.then(function(oResponse) {
