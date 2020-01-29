@@ -144,6 +144,7 @@ function(
 		switch (sMode) {
 			case Adaptation.modes.MOBILE:
 			case Adaptation.modes.TABLET:
+				this.getControl("draftLabel").setVisible(false);
 				this.getControl("iconBox").setVisible(false);
 				this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
 				this._showButtonIcon("navigationSwitcherButton", "sap-icon://split", "BTN_NAVIGATION");
@@ -152,6 +153,7 @@ function(
 				this._showButtonIcon("exit", "sap-icon://decline", "BTN_EXIT");
 				break;
 			case Adaptation.modes.DESKTOP:
+				this.getControl("draftLabel").setVisible(this.getDraftVisible());
 				this.getControl("iconBox").setVisible(true);
 				this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
 				this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
@@ -180,6 +182,8 @@ function(
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.Adaptation",
 			controller: {
+				activateDraft: this.eventHandler.bind(this, "ActivateDraft"),
+				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
@@ -208,6 +212,19 @@ function(
 
 	Adaptation.prototype.setRestoreEnabled = function (bEnabled) {
 		this.getControl("restore").setEnabled(bEnabled);
+	};
+
+	Adaptation.prototype._setDraftLabelVisibility = function (bVisible) {
+		var bLabelVisible = bVisible && this.sMode === Adaptation.modes.DESKTOP;
+		this.getControl("draftLabel").setVisible(bLabelVisible);
+	};
+
+	Adaptation.prototype.setDraftVisible = function (bVisible) {
+		this._setDraftLabelVisibility(bVisible);
+		this.getControl("activateDraft").setVisible(bVisible);
+		this.getControl("discardDraft").setVisible(bVisible);
+		this.setProperty("draftVisible", bVisible);
+		return bVisible;
 	};
 
 	/* Methods propagation */
