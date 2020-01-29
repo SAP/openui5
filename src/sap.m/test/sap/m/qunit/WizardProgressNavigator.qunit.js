@@ -499,4 +499,39 @@ sap.ui.define([
 			assert.strictEqual($anchors.eq(i).attr("title"), sStepTitle, "'title' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + sStepTitle + "'");
 		}
 	});
+
+	QUnit.module("Error robustness", {
+		beforeEach: function () {
+			this.oProgressNavigator = new WizardProgressNavigator({
+				stepCount: 3
+			});
+
+			this.oProgressNavigator.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oProgressNavigator.destroy();
+			this.oProgressNavigator = null;
+		}
+	});
+
+	QUnit.test("_updateOpenSteps should not throw when this._aCachedSteps is undefined.", function (assert) {
+		var oThrowSpy = new sinon.spy(this.oProgressNavigator, "_updateOpenSteps");
+
+		// arrange
+		this.oProgressNavigator._aCachedSteps = undefined;
+
+		// act
+		try {
+			oThrowSpy.apply(this.oProgressNavigator);
+		} catch (e) {
+			// continue
+		}
+
+		// assert
+		assert.ok(!oThrowSpy.threw(), "The method didn't threw.");
+
+		// clean
+		oThrowSpy.restore();
+	});
 });
