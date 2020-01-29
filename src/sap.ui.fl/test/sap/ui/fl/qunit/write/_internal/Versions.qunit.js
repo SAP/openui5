@@ -153,13 +153,20 @@ sap.ui.define([
 
 			var oFirstVersion = {
 				activatedBy : "qunit",
-				activatedAt : "a while ago",
+				activatedAt : "a long while ago",
 				versionNumber : 1
 			};
 
+			var oSecondVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a while ago",
+				versionNumber : 2
+			};
+
 			var aReturnedVersions = [
-				oFirstVersion,
-				{versionNumber : 0}
+				{versionNumber : 0},
+				oSecondVersion,
+				oFirstVersion
 			];
 
 			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
@@ -175,15 +182,17 @@ sap.ui.define([
 				.then(function (oResponse) {
 					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
 					assert.equal(Array.isArray(oResponse), true, "then the versions list is returned");
-					assert.equal(oResponse.length, 2, "with two versions");
-					assert.equal(oResponse[0], oFirstVersion, "where the older version is the first");
-					assert.equal(oResponse[1], oActivatedVersion, "and the newly activated is the second");
+					assert.equal(oResponse.length, 3, "with three versions");
+					assert.equal(oResponse[0], oActivatedVersion, "and the newly activated is the first");
+					assert.equal(oResponse[1], oSecondVersion, "where the old version is the second");
+					assert.equal(oResponse[2], oFirstVersion, "where the older version is the third");
 				})
 				.then(Versions.getVersions.bind(Versions, mPropertyBag))
 				.then(function (aVersions) {
-					assert.equal(aVersions.length, 2, "and a getting the versions anew will return two versions");
-					assert.equal(aVersions[0], oFirstVersion, "where the older version is the first");
-					assert.equal(aVersions[1], oActivatedVersion, "and the newly activated is the second");
+					assert.equal(aVersions.length, 3, "with three versions");
+					assert.equal(aVersions[0], oActivatedVersion, "and the newly activated is the first");
+					assert.equal(aVersions[1], oSecondVersion, "where the old version is the second");
+					assert.equal(aVersions[2], oFirstVersion, "where the older version is the third");
 				});
 		});
 
@@ -254,14 +263,14 @@ sap.ui.define([
 					assert.equal(aSaveCallArgs[2], true, "the draft flag is set");
 					assert.equal(Array.isArray(oResponse), true, "then the versions list is returned");
 					assert.equal(oResponse.length, 2, "with two versions");
-					assert.equal(oResponse[0], oFirstVersion, "where the older version is the first");
-					assert.equal(oResponse[1], oActivatedVersion, "and the newly activated is the second");
+					assert.equal(oResponse[0], oActivatedVersion, "and the newly activated is the second");
+					assert.equal(oResponse[1], oFirstVersion, "where the older version is the first");
 				})
 				.then(Versions.getVersions.bind(Versions, mPropertyBag))
 				.then(function (aVersions) {
 					assert.equal(aVersions.length, 2, "and a getting the versions anew will return two versions");
-					assert.equal(aVersions[0], oFirstVersion, "where the older version is the first");
-					assert.equal(aVersions[1], oActivatedVersion, "and the newly activated is the second");
+					assert.equal(aVersions[0], oActivatedVersion, "and the newly activated is the first");
+					assert.equal(aVersions[1], oFirstVersion, "where the older version is the second");
 				});
 		});
 	});
@@ -291,8 +300,8 @@ sap.ui.define([
 			};
 
 			var aReturnedVersions = [
-				oFirstVersion,
-				{versionNumber : 0}
+				{versionNumber : 0},
+				oFirstVersion
 			];
 
 			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", [{}]);

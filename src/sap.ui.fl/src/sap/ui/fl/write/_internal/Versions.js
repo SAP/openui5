@@ -22,9 +22,9 @@ sap.ui.define([
 
 	function _updateInstanceAfterDraftActivation(aVersions, oVersion) {
 		if (_doesDraftExist(aVersions)) {
-			aVersions.pop();
+			aVersions.shift();
 		}
-		aVersions.push(oVersion);
+		aVersions.splice(0, 0, oVersion);
 		return aVersions;
 	}
 
@@ -130,7 +130,7 @@ sap.ui.define([
 
 			return Storage.versions.discardDraft(mPropertyBag)
 				.then(function () {
-					aVersions.pop();
+					aVersions.shift();
 					return true;
 				});
 		});
