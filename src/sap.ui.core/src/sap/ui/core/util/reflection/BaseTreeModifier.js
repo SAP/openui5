@@ -759,6 +759,16 @@ sap.ui.define([
 		 * @param {string} sFunctionPath - Absolute path to a function
 		 * @public
 		 */
-		detachEvent: function(oObject, sEventName, sFunctionPath) {}
+		detachEvent: function(oObject, sEventName, sFunctionPath) {},
+
+		/**
+		 * Returns an object containing parent control, aggregation name and index for controls to be added of the given extension point.
+		 *
+		 * @param {string} sExtensionPointName - Name of the extension point
+		 * @param {sap.ui.core.mvc.View|Element} oView - View control or XML node of the view
+		 * @returns {{parent: object, aggregation: string, index: number}} - Object containing parent control, aggregation name and index
+		 * @experimental
+		 */
+		getExtensionPointInfo: function(sExtensionPointName, oView) {}
 	};
 });

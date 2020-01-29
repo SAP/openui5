@@ -496,7 +496,12 @@ sap.ui.define([
 		unbindAggregation: function (oControl, sAggregationName) {
 			// bSuppressReset is not supported
 			oControl.unbindAggregation(sAggregationName);
-		}
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		getExtensionPointInfo: function(sExtensionPointName, oView) {}
 	};
 
 	return merge(
