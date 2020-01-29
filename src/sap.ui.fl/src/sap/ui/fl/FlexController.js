@@ -478,7 +478,7 @@ sap.ui.define([
 		mPropertyBag.modifier = XmlTreeModifier;
 		mPropertyBag.view = oView;
 
-		return this._oChangePersistence.getChangesForView(mPropertyBag.viewId, mPropertyBag)
+		return this._oChangePersistence.getChangesForView(mPropertyBag)
 		.then(Applier.applyAllChangesForXMLView.bind(Applier, mPropertyBag))
 		.catch(this._handlePromiseChainError.bind(this, mPropertyBag.view));
 	};

@@ -37,12 +37,19 @@ sap.ui.define([
 				'<HBox id="hbox">' +
 					'<items>' +
 						'<core:ExtensionPoint name="ExtensionPoint1" />' +
-						'<Label id="label" text="TestLabel" />' +
+						'<Label id="label1" text="TestLabel" />' +
 					'</items>' +
 				'</HBox>' +
 				'<Panel id="panel">' +
 					'<content>' +
 						'<core:ExtensionPoint name="ExtensionPoint2" />' +
+						'<Label id="label2" text="Panel with stable id" />' +
+					'</content>' +
+				'</Panel>' +
+				'<Panel>' +
+					'<content>' +
+						'<core:ExtensionPoint name="ExtensionPoint3" />' +
+						'<Label id="label3" text="Panel without stable id" />' +
 					'</content>' +
 				'</Panel>' +
 			'</mvc:View>';
@@ -119,14 +126,19 @@ sap.ui.define([
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			this.oChange1 = _createAddXMLAtExtensionPointChange(sFragmentPath, "ExtensionPoint1");
 			this.oChange2 = _createAddXMLAtExtensionPointChange(sSecondFragmentPath, "ExtensionPoint2");
+			this.oChange3 = _createAddXMLAtExtensionPointChange(sThirdFragmentPath, "ExtensionPoint3");
 			var oChangeSpecificContent1 = {
 				fragmentPath: "fragments/Fragment"
 			};
 			var oChangeSpecificContent2 = {
 				fragmentPath: "fragments/SecondFragment"
 			};
+			var oChangeSpecificContent3 = {
+				fragmentPath: "fragments/ThirdFragment"
+			};
 			this.oChangeHandler.completeChangeContent(this.oChange1, oChangeSpecificContent1);
 			this.oChangeHandler.completeChangeContent(this.oChange2, oChangeSpecificContent2);
+			this.oChangeHandler.completeChangeContent(this.oChange3, oChangeSpecificContent3);
 
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "testComponent",
@@ -139,6 +151,7 @@ sap.ui.define([
 			this.oXmlView = _createXMLViewWithExtensionPoints();
 			this.oHBox = this.oXmlView.childNodes[0];
 			this.oPanel = this.oXmlView.childNodes[1];
+			this.oPanelWithoutStableId = this.oXmlView.childNodes[2];
 			this.oPropertyBag = {
 				modifier: XmlTreeModifier,
 				view: this.oXmlView,
@@ -180,33 +193,57 @@ sap.ui.define([
 			assert.equal(oHBoxItems.childNodes.length, 4, "then there are four children of the HBox");
 			assert.equal(oHBoxItems.childNodes[1].getAttribute('id'), "projectId.third_button", "then the control added last to the first extension point is on the first position behind the extension point.");
 			assert.equal(oHBoxItems.childNodes[2].getAttribute('id'), "projectId.button", "then the control added first to the first extension point is on the last position behind the extension point.");
-			assert.equal(oPanelContent.childNodes.length, 2, "then there are two children of the Panel");
+			assert.equal(oPanelContent.childNodes.length, 3, "then there are three children of the Panel");
 			assert.equal(oPanelContent.childNodes[1].getAttribute('id'), "projectId.second_button", "then the control added to the second extension point is placed behind the second extension point.");
 		});
 
-		QUnit.test("When reverting one change on an xml control tree", function(assert) {
-			sandbox.stub(XmlTreeModifier, "getExtensionPointInfo")
-			.onFirstCall().returns({
-				aggregation: "items",
-				index: 1
-			});
-			var oHBoxItems = this.oHBox.childNodes[0];
+		QUnit.test("When reverting one change on an xml control tree with stable Id on extension point parent", function(assert) {
+			var oParent = this.oHBox;
+			var oChange = this.oChange1;
+			var oParentChildItems = oParent.childNodes[0];
+			var mExpectedRevertData = [{
+				id: "projectId.button",
+				aggregationName: "items"
+			}];
 
-			this.oChangeHandler.applyChange(this.oChange1, this.oHBox, this.oPropertyBag);
-			assert.equal(oHBoxItems.childNodes.length, 3, "after apply there are three children in the HBox");
-			assert.equal(oHBoxItems.childNodes[1].getAttribute('id'), "projectId.button", "with the newly applied control on second position");
+			this.oChangeHandler.applyChange(oChange, oParent, this.oPropertyBag);
+			assert.equal(oParentChildItems.childNodes.length, 3, "after apply there are three children in the parent control");
+			assert.equal(oParentChildItems.childNodes[1].getAttribute('id'), "projectId.button", "with the newly applied control on third position");
+			assert.deepEqual(oChange.getRevertData(), mExpectedRevertData, "and the revert data is set");
 
-			this.oChangeHandler.revertChange(this.oChange1, this.oHBox, this.oPropertyBag);
-			assert.equal(oHBoxItems.childNodes.length, 2, "after reversal there are two children in the HBox");
-			assert.equal(oHBoxItems.childNodes[1].getAttribute('id'), "label", "with the label again on second position");
-			assert.equal(this.oChange1.getRevertData(), undefined, "and the revert data got reset");
+			this.oChangeHandler.revertChange(oChange, oParent, this.oPropertyBag);
+			assert.equal(oParentChildItems.childNodes.length, 2, "after reversal there are again just two children in the parent control");
+			assert.equal(oParentChildItems.childNodes[1].getAttribute('id'), "label1", "with the label again on first position");
+			assert.equal(oChange.getRevertData(), undefined, "and the revert data got reset");
+		});
+
+		QUnit.test("When reverting one change on an xml control tree without stable Id on extension point parent", function(assert) {
+			var oParent = this.oPanelWithoutStableId;
+			var oChange = this.oChange3;
+			var oParentChildItems = oParent.childNodes[0];
+			var mExpectedRevertData = [{
+				id: "projectId.third_button",
+				aggregationName: "content"
+			}];
+
+			this.oChangeHandler.applyChange(oChange, oParent, this.oPropertyBag);
+			assert.equal(oParentChildItems.childNodes.length, 3, "after apply there are three children in the parent control");
+			assert.equal(oParentChildItems.childNodes[1].getAttribute('id'), "projectId.third_button", "with the newly applied control on third position");
+			assert.deepEqual(oChange.getRevertData(), mExpectedRevertData, "and the revert data is set");
+
+			this.oChangeHandler.revertChange(oChange, oParent, this.oPropertyBag);
+			assert.equal(oParentChildItems.childNodes.length, 2, "after reversal there are again just two children in the parent control");
+			assert.equal(oParentChildItems.childNodes[1].getAttribute('id'), "label3", "with the label again on first position");
+			assert.equal(oChange.getRevertData(), undefined, "and the revert data got reset");
 		});
 
 		QUnit.test("When extensionpoint is not existing or multiple times available with the same name in the view", function(assert) {
 			sandbox.stub(XmlTreeModifier, "getExtensionPointInfo").returns(undefined);
 			assert.throws(
 				function () { this.oChangeHandler.applyChange(this.oChange1, this.oHBox, this.oPropertyBag); },
-				Error("Either no Extension-Point found by name or multiple Extension-Points available with the given name in the view. Multiple Extension-points with the same name in one view are not supported!"),
+				Error("AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name 'ExtensionPoint1' "
+				+ "or multiple Extension-Points available with the given name in the view (view.id='testComponent---myView'). "
+				+ "Multiple Extension-points with the same name in one view are not supported!"),
 				"then the changehandler throws an appropriate Error"
 			);
 		});
