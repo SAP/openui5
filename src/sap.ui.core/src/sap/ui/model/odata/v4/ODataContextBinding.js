@@ -747,7 +747,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
 	 */
-	ODataContextBinding.prototype.doSetProperty = function(sPath, vValue, oGroupLock) {
+	ODataContextBinding.prototype.doSetProperty = function (sPath, vValue, oGroupLock) {
 		if (this.oOperation && (sPath === "$Parameter" || sPath.startsWith("$Parameter/"))) {
 			_Helper.updateAll(this.oOperation.mChangeListeners, "", this.oOperation.mParameters,
 				_Cache.makeUpdateData(sPath.split("/").slice(1), vValue));

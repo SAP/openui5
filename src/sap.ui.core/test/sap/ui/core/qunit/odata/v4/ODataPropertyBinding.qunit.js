@@ -1357,6 +1357,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("$$noPatch", function (assert) {
+		var oBinding = this.oModel.bindProperty("/foo");
+
+		// code under test
+		assert.strictEqual(oBinding.bNoPatch, undefined);
+
+		oBinding = this.oModel.bindProperty("/foo", undefined, {$$noPatch : true});
+
+		// code under test
+		assert.strictEqual(oBinding.bNoPatch, true);
+	});
+
+	//*********************************************************************************************
 	[undefined, "$direct"].forEach(function (sGroupId) {
 		QUnit.test("initialize, binding group ID " + sGroupId , function (assert) {
 			var oBinding = this.oModel.bindProperty("/absolute", undefined, {$$groupId : sGroupId}),
@@ -1612,6 +1625,46 @@ sap.ui.define([
 		oBinding.setValue(oFixture.value, oFixture.updateGroupId);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("setValue with $$noPatch", function (assert) {
+		var oParentBinding = this.oModel.bindContext("/ProductList('HT-1000')"),
+			oContext = oParentBinding.getBoundContext(),
+			oContextMock = this.mock(oContext),
+			oBinding = this.oModel.bindProperty("Name", oContext, {$$noPatch : true}),
+			oGroupIdNoPatchError = new Error("Must not specify a group ID (group) with $$noPatch"),
+			oIntentionallyFailedError = new Error("This call intentionally failed"),
+			oModelMock = this.mock(this.oModel),
+			oUpdatePromise = SyncPromise.reject(oIntentionallyFailedError);
+
+		oBinding.vValue = ""; // simulate a read - intentionally use a falsy value
+
+		oModelMock.expects("lockGroup").never();
+		this.mock(oBinding).expects("checkSuspended").thrice().withExactArgs();
+		oContextMock.expects("doSetProperty").withExactArgs("Name", "foo", null)
+			.returns(SyncPromise.resolve());
+
+		// code under test
+		oBinding.setValue("foo");
+
+		oContextMock.expects("doSetProperty").withExactArgs("Name", "bar", null)
+			.returns(oUpdatePromise);
+		oModelMock.expects("reportError").withExactArgs(
+			"Failed to update path /ProductList('HT-1000')/Name", sClassName,
+			sinon.match.same(oIntentionallyFailedError));
+
+		// code under test
+		oBinding.setValue("bar");
+
+		oModelMock.expects("reportError").withExactArgs(
+			"Failed to update path /ProductList('HT-1000')/Name", sClassName,
+			sinon.match({message : oGroupIdNoPatchError.message}));
+
+		// code under test
+		assert.throws(function () {
+			oBinding.setValue("baz", "group");
+		}, oGroupIdNoPatchError);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding): error handling", function (assert) {

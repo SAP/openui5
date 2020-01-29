@@ -868,6 +868,11 @@ sap.ui.define([
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
 
+		if (!bAggregate && mQueryOptions.$$filterBeforeAggregate) {
+			mQueryOptions.$apply = "filter(" +  mQueryOptions.$$filterBeforeAggregate + ")/"
+				+ mQueryOptions.$apply;
+			delete mQueryOptions.$$filterBeforeAggregate;
+		}
 		// w/o grouping or min/max, $apply is sufficient; else _AggregationCache is needed
 		return bAggregate
 			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.oAggregation,
@@ -892,8 +897,8 @@ sap.ui.define([
 			that = this;
 
 		return this.fetchFilter(oContext, this.mQueryOptions.$filter)
-			.then(function (sFilter) {
-				return _Helper.mergeQueryOptions(that.mQueryOptions, sOrderby, sFilter);
+			.then(function (aFilters) {
+				return _Helper.mergeQueryOptions(that.mQueryOptions, sOrderby, aFilters);
 			});
 	};
 
@@ -1062,14 +1067,16 @@ sap.ui.define([
 	 *   that the cache promise is already created when the events are fired.
 	 * @param {string} sStaticFilter
 	 *   The static filter value
-	 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or
-	 *   undefined if the filter arrays are empty and the static filter parameter is not given. It
-	 *   rejects with an error if a filter has an unknown operator or an invalid path.
+	 * @returns {sap.ui.base.SyncPromise} A promise which resolves with an array that consists of
+	 *   two filters, the first one ("$filter") has to be be applied after and the second one
+	 *   ("$$filterBeforeAggregate") has to be applied before aggregating the data.
+	 *   Both can be <code>undefined</code>. It rejects with an error if a filter has an unknown
+	 *   operator or an invalid path.
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.fetchFilter = function (oContext, sStaticFilter) {
-		var oCombinedFilter, oMetaModel, oMetaContext;
+		var oCombinedFilter, aFilters, oMetaModel, oMetaContext;
 
 		/**
 		 * Returns the $filter value for the given single filter using the given Edm type to
@@ -1132,6 +1139,12 @@ sap.ui.define([
 		 *   rejects with an error if the filter value uses an unknown operator
 		 */
 		function fetchFilter(oFilter, mLambdaVariableToPath, bWithinAnd) {
+			var sResolvedPath;
+
+			if (!oFilter) {
+				return SyncPromise.resolve();
+			}
+
 			if (oFilter.aFilters) {
 				return SyncPromise.all(oFilter.aFilters.map(function (oSubFilter) {
 					return fetchFilter(oSubFilter, mLambdaVariableToPath, oFilter.bAnd);
@@ -1142,15 +1155,15 @@ sap.ui.define([
 				});
 			}
 
-			return oMetaModel.fetchObject(
-				replaceLambdaVariables(oFilter.sPath, mLambdaVariableToPath),
-				oMetaContext
-			).then(function (oPropertyMetadata) {
+			sResolvedPath = oMetaModel.resolve(
+				replaceLambdaVariables(oFilter.sPath, mLambdaVariableToPath), oMetaContext);
+
+			return oMetaModel.fetchObject(sResolvedPath).then(function (oPropertyMetadata) {
 				var oCondition, sLambdaVariable, sOperator;
 
 				if (!oPropertyMetadata) {
 					throw new Error("Type cannot be determined, no metadata for path: "
-						+ oMetaContext.getPath());
+						+ sResolvedPath);
 				}
 
 				sOperator = oFilter.sOperator;
@@ -1205,16 +1218,20 @@ sap.ui.define([
 
 		oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 		if (!oCombinedFilter) {
-			return SyncPromise.resolve(sStaticFilter);
+			return SyncPromise.resolve([sStaticFilter]);
 		}
+		aFilters = _AggregationHelper.splitFilter(oCombinedFilter, this.oAggregation);
 		oMetaModel = this.oModel.getMetaModel();
 		oMetaContext = oMetaModel.getMetaContext(this.oModel.resolve(this.sPath, oContext));
-		return fetchFilter(oCombinedFilter, {}, sStaticFilter).then(function (sFilterString) {
-			if (sStaticFilter) {
-				sFilterString += " and (" + sStaticFilter + ")";
-			}
-			return sFilterString;
-		});
+
+		return SyncPromise.all([
+			fetchFilter(aFilters[0], {}, /*bWithAnd*/sStaticFilter).then(function (sFilter) {
+				return sFilter && sStaticFilter
+					? sFilter + " and (" + sStaticFilter + ")"
+					: sFilter || sStaticFilter;
+			}),
+			fetchFilter(aFilters[1], {})
+		]);
 	};
 
 	/**
@@ -1727,7 +1744,6 @@ sap.ui.define([
 	// @override
 	ODataListBinding.prototype.getLength = function () {
 		if (this.bLengthFinal) {
-			// Note: non-transient created entities exist twice
 			return this.iMaxLength + this.iCreatedContexts;
 		}
 		return this.aContexts.length ? this.aContexts.length + 10 : 0;

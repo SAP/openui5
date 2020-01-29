@@ -3806,10 +3806,13 @@ sap.ui.define([
 
 			this.mock(this.oModel).expects("resolve")
 				.withExactArgs(oBinding.sPath, undefined).returns(oBinding.sPath);
+			oMetaModelMock.expects("resolve")
+				.withExactArgs("SupplierName", sinon.match.same(oMetaContext))
+				.returns("/resolved/path");
 			oMetaModelMock.expects("getMetaContext")
 				.withExactArgs(oBinding.sPath).returns(oMetaContext);
 			oMetaModelMock.expects("fetchObject")
-				.withExactArgs("SupplierName", sinon.match.same(oMetaContext))
+				.withExactArgs("/resolved/path")
 				.returns(SyncPromise.resolve(oPropertyMetadata));
 			oHelperMock.expects("formatLiteral").withExactArgs("SAP", sType)
 				.returns("'SAP'");
@@ -3828,7 +3831,7 @@ sap.ui.define([
 			})];
 
 			// code under test
-			assert.strictEqual(oBinding.fetchFilter().getResult(), oFixture.result);
+			assert.deepEqual(oBinding.fetchFilter().getResult(), [oFixture.result, undefined]);
 		});
 	});
 
@@ -3849,11 +3852,17 @@ sap.ui.define([
 					.returns(sResolvedPath);
 				oMetaModelMock.expects("getMetaContext")
 					.withExactArgs(sResolvedPath).returns("~");
-				oMetaModelMock.expects("fetchObject")
+				oMetaModelMock.expects("resolve")
 					.withExactArgs("SO_2_BP/CompanyName", "~")
-					.returns(SyncPromise.resolve({$Type : "Edm.String"}));
+					.returns("/resolved/path1");
 				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("/resolved/path1")
+					.returns(SyncPromise.resolve({$Type : "Edm.String"}));
+				oMetaModelMock.expects("resolve")
 					.withExactArgs("GrossAmount", "~")
+					.returns("/resolved/path2");
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("/resolved/path2")
 					.returns(SyncPromise.resolve({$Type : "Edm.Decimal"}));
 				oHelperMock.expects("formatLiteral").withExactArgs("SAP", "Edm.String")
 					.returns("'SAP'");
@@ -3869,12 +3878,12 @@ sap.ui.define([
 					})
 				];
 
-				assert.strictEqual(
+				assert.deepEqual(
 					oBinding.fetchFilter(oContext, "GrossAmount ge 1000").getResult(),
-					(bAnd
+					[(bAnd
 						? "SO_2_BP/CompanyName eq 'SAP' and GrossAmount le 12345"
 						: "(SO_2_BP/CompanyName eq 'SAP' or GrossAmount le 12345)"
-					) + " and (GrossAmount ge 1000)"
+					) + " and (GrossAmount ge 1000)", undefined]
 				);
 			});
 		});
@@ -3884,9 +3893,9 @@ sap.ui.define([
 	QUnit.test("fetchFilter: static filter only", function (assert) {
 		var oBinding = this.bindList("/SalesOrderList");
 
-		assert.strictEqual(
+		assert.deepEqual(
 			oBinding.fetchFilter(undefined, "GrossAmount ge 1000").getResult(),
-			"GrossAmount ge 1000");
+			["GrossAmount ge 1000"]);
 	});
 
 	//*********************************************************************************************
@@ -3898,8 +3907,11 @@ sap.ui.define([
 			.withExactArgs(oBinding.sPath, undefined).returns(oBinding.sPath);
 		this.mock(this.oModel.oMetaModel).expects("getMetaContext")
 			.withExactArgs(oBinding.sPath).returns("~");
-		this.mock(this.oModel.oMetaModel).expects("fetchObject")
+		this.mock(this.oModel.oMetaModel).expects("resolve")
 			.withExactArgs("SO_2_BP/CompanyName", "~")
+			.returns("/resolved/path");
+		this.mock(this.oModel.oMetaModel).expects("fetchObject")
+			.withExactArgs("/resolved/path")
 			.returns(SyncPromise.resolve(oPropertyMetadata));
 		this.mock(_Helper).expects("formatLiteral").withExactArgs("SAP", "Edm.String")
 			.returns("'SAP'");
@@ -3922,8 +3934,11 @@ sap.ui.define([
 
 		this.mock(this.oModel.oMetaModel).expects("getMetaContext")
 			.withExactArgs(oBinding.sPath).returns(oMetaContext);
-		this.mock(this.oModel.oMetaModel).expects("fetchObject")
+		this.mock(this.oModel.oMetaModel).expects("resolve")
 			.withExactArgs("SO_2_BP/CompanyName", sinon.match.same(oMetaContext))
+			.returns("/resolved/path");
+		this.mock(this.oModel.oMetaModel).expects("fetchObject")
+			.withExactArgs("/resolved/path")
 			.returns(SyncPromise.resolve());
 		oBinding.aApplicationFilters = [new Filter("SO_2_BP/CompanyName", FilterOperator.EQ,
 			"SAP")];
@@ -3932,14 +3947,14 @@ sap.ui.define([
 			assert.ok(false);
 		}, function (oError) {
 			assert.strictEqual(oError.message, "Type cannot be determined, no metadata for path: "
-				+ "/SalesOrderList/SO_2_BP/CompanyName");
+				+ "/resolved/path");
 		});
 	});
 
 	//*********************************************************************************************
 	[
-		{ filters : [], result : undefined },
-		{ filters : ["path0", "path1"], result : "path0 eq path0Value and path1 eq path1Value" },
+		{filters : [], result : undefined},
+		{filters : ["path0", "path1"], result : "path0 eq path0Value and path1 eq path1Value"},
 		{ // "grouping": or conjunction for filters with same path
 			filters : [{ p : "path0", v : "foo" }, "path1", { p : "path0", v : "bar" }],
 			result : "(path0 eq foo or path0 eq bar) and path1 eq path1Value"
@@ -3966,16 +3981,20 @@ sap.ui.define([
 				}
 
 				aFilters.push(new Filter(sPath, FilterOperator.EQ, sValue));
-				oMetaModelMock.expects("fetchObject")
+				oMetaModelMock.expects("resolve")
 					.withExactArgs(sPath, "~")
+					.returns("/resolved/path");
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("/resolved/path")
 					.returns(SyncPromise.resolve(oPropertyMetadata));
 				oHelperMock.expects("formatLiteral").withExactArgs(sValue, "Edm.Type")
 					.returns(sValue);
 			});
 			oBinding.aApplicationFilters = aFilters;
 
-			return oBinding.fetchFilter().then(function (sFilterValue) {
-				assert.strictEqual(sFilterValue, oFixture.result);
+			return oBinding.fetchFilter().then(function (aFilterValues) {
+				assert.strictEqual(aFilterValues[0], oFixture.result);
+				assert.strictEqual(aFilterValues[1], undefined);
 			});
 		});
 	});
@@ -4008,26 +4027,42 @@ sap.ui.define([
 			oPromise = Promise.resolve(oPropertyMetadata);
 
 		oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath).returns("~");
-		oMetaModelMock.expects("fetchObject").withExactArgs("p0.0", "~").returns(oPromise);
-		oMetaModelMock.expects("fetchObject").withExactArgs("p1.0", "~").returns(oPromise);
-		oMetaModelMock.expects("fetchObject").withExactArgs("p1.1", "~").returns(oPromise);
-		oMetaModelMock.expects("fetchObject").withExactArgs("p2.0", "~").returns(oPromise);
-		oMetaModelMock.expects("fetchObject").withExactArgs("p2.1", "~").returns(oPromise);
-		oMetaModelMock.expects("fetchObject").withExactArgs("p2.2", "~").returns(oPromise);
-		oMetaModelMock.expects("fetchObject").withExactArgs("p3.0", "~").returns(oPromise);
-		oMetaModelMock.expects("fetchObject").withExactArgs("p3.1", "~").returns(oPromise);
+
+		oMetaModelMock.expects("resolve").withExactArgs("p0.0", "~").returns("/resolved/p0.0");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/p0.0").returns(oPromise);
+
+		oMetaModelMock.expects("resolve").withExactArgs("p1.0", "~").returns("/resolved/p1.0");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/p1.0").returns(oPromise);
+
+		oMetaModelMock.expects("resolve").withExactArgs("p1.1", "~").returns("/resolved/p1.1");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/p1.1").returns(oPromise);
+
+		oMetaModelMock.expects("resolve").withExactArgs("p2.0", "~").returns("/resolved/p2.0");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/p2.0").returns(oPromise);
+
+		oMetaModelMock.expects("resolve").withExactArgs("p2.1", "~").returns("/resolved/p2.1");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/p2.1").returns(oPromise);
+
+		oMetaModelMock.expects("resolve").withExactArgs("p2.2", "~").returns("/resolved/p2.2");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/p2.2").returns(oPromise);
+
+		oMetaModelMock.expects("resolve").withExactArgs("p3.0", "~").returns("/resolved/p3.0");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/p3.0").returns(oPromise);
+
+		oMetaModelMock.expects("resolve").withExactArgs("p3.1", "~").returns("/resolved/p3.1");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/p3.1").returns(oPromise);
 		oBinding.aApplicationFilters = aFilters;
 
 		oFilterPromise = oBinding.fetchFilter();
 
 		assert.strictEqual(oFilterPromise.isFulfilled(), false);
 		return oFilterPromise.then(function (sFilterValue) {
-			assert.strictEqual(sFilterValue,
-				"p0.0 eq 'v0.0'"
+			assert.deepEqual(sFilterValue,
+				["p0.0 eq 'v0.0'"
 				+ " and (p1.0 eq 'v1.0' or p1.1 eq 'v1.1')"
 				+ " and p2.0 eq 'v2.0' and p2.1 eq 'v2.1' and p2.2 eq 'v2.2'"
 				+ " and p3.0 eq 'v3.0'"
-				+ " and (p3.1 lt 'v3.1' or p3.1 gt 'v3.1')"
+				+ " and (p3.1 lt 'v3.1' or p3.1 gt 'v3.1')", undefined]
 			);
 		});
 	});
@@ -4178,17 +4213,20 @@ sap.ui.define([
 					.withExactArgs(oBinding.sPath)
 					.returns("~");
 
-				aFetchObjectKeys.forEach(function (sFetchObjectPath) {
+				aFetchObjectKeys.forEach(function (sObjectPath) {
+					oMetaModelMock.expects("resolve")
+						.withExactArgs(sObjectPath, "~")
+						.returns("/resolved/path");
 					oMetaModelMock.expects("fetchObject")
-						.withExactArgs(sFetchObjectPath, "~")
+						.withExactArgs("/resolved/path")
 						.returns(SyncPromise.resolve({
-							$Type : oFixture.fetchObjects[sFetchObjectPath]
+							$Type : oFixture.fetchObjects[sObjectPath]
 						}));
 				});
 
 				// code under test
-				return oBinding.fetchFilter().then(function (sFilterValue) {
-					assert.strictEqual(sFilterValue, oFixture.expectedResult);
+				return oBinding.fetchFilter().then(function (aFilterValues) {
+					assert.deepEqual(aFilterValues, [oFixture.expectedResult, undefined]);
 				});
 			});
 		});
@@ -4205,14 +4243,15 @@ sap.ui.define([
 
 		oBinding.aApplicationFilters = [oFilter];
 		oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath).returns("~");
-		oMetaModelMock.expects("fetchObject").withExactArgs("p0", "~")
+		oMetaModelMock.expects("resolve").withExactArgs("p0", "~").returns("/resolved/path");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/path")
 			.returns(SyncPromise.resolve({
 				$Type : "Type0"
 			}));
 
 		// code under test
-		return oBinding.fetchFilter().then(function (sFilterValue) {
-			assert.strictEqual(sFilterValue, "p0/any()");
+		return oBinding.fetchFilter().then(function (aFilterValues) {
+			assert.deepEqual(aFilterValues, ["p0/any()", undefined]);
 		});
 	});
 
@@ -4223,16 +4262,19 @@ sap.ui.define([
 			oPropertyMetadata = {$Type : "Edm.String"},
 			oPromise = Promise.resolve(oPropertyMetadata);
 
-		oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath)
-			.returns("~");
-		oMetaModelMock.expects("fetchObject").withExactArgs("p0.0", "~").returns(oPromise);
-		oMetaModelMock.expects("fetchObject").withExactArgs("p1.0", "~").returns(oPromise);
+		oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath).returns("~");
+		oMetaModelMock.expects("resolve").withExactArgs("p0.0", "~").returns("/resolved/p0.0");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/p0.0").returns(oPromise);
+
+		oMetaModelMock.expects("resolve").withExactArgs("p1.0", "~").returns("/resolved/p1.0");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/p1.0").returns(oPromise);
+
 		oBinding.aFilters = [new Filter("p0.0", FilterOperator.EQ, "v0.0")];
 		oBinding.aApplicationFilters = [new Filter("p1.0", FilterOperator.EQ, "v1.0")];
 
 		return oBinding.fetchFilter(undefined, "p2.0 eq 'v2.0'").then(function (sFilterValue) {
-			assert.strictEqual(sFilterValue,
-				"p0.0 eq 'v0.0' and p1.0 eq 'v1.0' and (p2.0 eq 'v2.0')");
+			assert.deepEqual(sFilterValue,
+				["p0.0 eq 'v0.0' and p1.0 eq 'v1.0' and (p2.0 eq 'v2.0')", undefined]);
 		});
 	});
 
@@ -4245,11 +4287,12 @@ sap.ui.define([
 			oPromise = Promise.resolve(oPropertyMetadata);
 
 		oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath).returns("~");
-		oMetaModelMock.expects("fetchObject").withExactArgs("AmountIn€", "~").returns(oPromise);
+		oMetaModelMock.expects("resolve").withExactArgs("AmountIn€", "~").returns("/resolved/path");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/path").returns(oPromise);
 		oBinding.aApplicationFilters = [new Filter("AmountIn%E2%82%AC", FilterOperator.GT, "1000")];
 
-		return oBinding.fetchFilter().then(function (sFilterValue) {
-			assert.strictEqual(sFilterValue, "AmountIn€ gt 1000");
+		return oBinding.fetchFilter().then(function (aFilterValues) {
+			assert.deepEqual(aFilterValues, ["AmountIn€ gt 1000", undefined]);
 		});
 	});
 
@@ -4318,11 +4361,65 @@ sap.ui.define([
 			oBinding.aApplicationFilters = buildFilters(oFixture.filters);
 
 			// code under test
-			return oBinding.fetchFilter().then(function (sFilterValue) {
-				assert.strictEqual(sFilterValue, oFixture.result);
+			return oBinding.fetchFilter().then(function (aFilterValues) {
+				assert.deepEqual(aFilterValues, [oFixture.result, undefined]);
 			});
 		});
 	});
+
+	//*********************************************************************************************
+[{
+	split : [new Filter("a", FilterOperator.GT, 42), undefined],
+	result : ["a gt 42", undefined]
+}, {
+	split : [undefined, new Filter("b", FilterOperator.EQ, "before")],
+	result : [undefined, "b eq 'before'"]
+}, {
+	split : [undefined, new Filter("b", FilterOperator.EQ, "before")],
+	staticFilter : "c eq 47",
+	result : ["c eq 47", "b eq 'before'"]
+}, {
+	split : [
+		new Filter(
+			[new Filter("a", FilterOperator.EQ, 1), new Filter("a", FilterOperator.EQ, 2)], false
+		),
+		new Filter("b", FilterOperator.EQ, "before")],
+	staticFilter : "c eq 47",
+	result : ["(a eq 1 or a eq 2) and (c eq 47)", "b eq 'before'"]
+}, {
+	split : [new Filter("a", FilterOperator.GT, 42), new Filter("b", FilterOperator.EQ, "before")],
+	result : ["a gt 42", "b eq 'before'"]
+}].forEach(function (oFixture, i) {
+	QUnit.test("fetchFilter:  list binding aggregates data " + i, function (assert) {
+		var oBinding = this.bindList("Set"),
+			oContext = {},
+			oFilter = {/*any filter*/},
+			oMetaModelMock = this.mock(this.oModel.oMetaModel);
+
+		oBinding.oAggregation = {};
+
+		this.mock(FilterProcessor).expects("combineFilters").returns(oFilter);
+		this.mock(_AggregationHelper).expects("splitFilter")
+			.withExactArgs(sinon.match.same(oFilter), sinon.match.same(oBinding.oAggregation))
+			.returns(oFixture.split);
+		this.mock(this.oModel).expects("resolve").withExactArgs("Set", sinon.match.same(oContext))
+			.returns("~");
+		oMetaModelMock.expects("getMetaContext").withExactArgs("~").returns("oMetaContext");
+		oMetaModelMock.expects("resolve").withExactArgs("a", "oMetaContext").atLeast(0)
+			.returns("/resolved/a");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/a").atLeast(0)
+			.returns(Promise.resolve({$Type: "Edm.Decimal"}));
+		oMetaModelMock.expects("resolve").withExactArgs("b", "oMetaContext").atLeast(0)
+			.returns("/resolved/b");
+		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/b").atLeast(0)
+			.returns(Promise.resolve({$Type: "Edm.String"}));
+
+		// code under test
+		return oBinding.fetchFilter(oContext, oFixture.staticFilter).then(function (aFilterValues) {
+			assert.deepEqual(aFilterValues, oFixture.result);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getOrderby", function (assert) {
@@ -4401,7 +4498,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doCreateCache", function (assert) {
+[
+	{},
+	{$$filterBeforeAggregate : "foo", $apply : "bar"}
+].forEach(function (mMergedQueryOptions, i) {
+	QUnit.test("doCreateCache: Cache._CollectionCache " + i, function (assert) {
 		var oAggregation = {
 				group : {
 					Dimension : {}
@@ -4414,9 +4515,8 @@ sap.ui.define([
 			oCache = {},
 			oContext = {},
 			sDeepResourcePath = "deep/resource/path",
-			mMergedQueryOptions = {},
-			sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
-			mQueryOptions = {};
+			mQueryOptions = {},
+			sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES";
 
 		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
 
@@ -4433,7 +4533,12 @@ sap.ui.define([
 		assert.strictEqual(
 			oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext, sDeepResourcePath),
 			oCache);
+
+		if (i > 1) {
+			assert.deepEqual(mMergedQueryOptions, {$apply : "filter(foo)/bar"});
+		}
 	});
+});
 
 	//*********************************************************************************************
 	[{

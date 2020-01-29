@@ -8583,22 +8583,36 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings
-	// The SalesOrders application does not have such a scenario.
+	// Additionally add a path with navigation properties to $select which must be converted to a
+	// $expand.
+	// JIRA: CPOUI5ODATAV4-112
 	QUnit.test("Auto-$expand/$select: Absolute ODCB with relative ODPB", function (assert) {
-		var sView = '\
-<FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE,ROOM_ID\'}}">\
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
+		parameters : {$select : \'AGE,ROOM_ID,EMPLOYEE_2_TEAM/Name\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
-		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,LOCATION/City/CITYNAME,Name,ROOM_ID", {
+		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,LOCATION/City/CITYNAME,Name,ROOM_ID"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)", {
 				Name : "Frederic Fall",
-				LOCATION : {City : {CITYNAME : "Walldorf"}}
+				LOCATION : {City : {CITYNAME : "Walldorf"}},
+				EMPLOYEE_2_TEAM : {
+					Name : "Team #1",
+					Team_Id : "1"
+				}
 			})
 			.expectChange("name", "Frederic Fall")
 			.expectChange("city", "Walldorf");
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(
+				that.oView.byId("form").getBindingContext().getProperty("EMPLOYEE_2_TEAM/Name"),
+				"Team #1");
+		});
 	});
 
 	//*********************************************************************************************
@@ -13831,6 +13845,82 @@ sap.ui.define([
 			.expectChange("salesAmountCurrency", ["EUR", "EUR", "EUR", "EUR", "EUR"]);
 
 		return this.createView(assert, sView, createBusinessPartnerTestModel());
+	});
+
+	//*********************************************************************************************
+	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
+	// - those filters that can be applied before aggregating
+	// - those filters that must be applied after aggregating
+	// JIRA: CPOUI5ODATAV4-119
+	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "", createBusinessPartnerTestModel()).then(function () {
+			var oListBinding = that.oModel.bindList("/BusinessPartners");
+
+			oListBinding.setAggregation({
+				aggregate : {
+					SalesNumber : {grandTotal : true}
+				},
+				group : {
+					Region : {}
+				}
+			});
+
+			// code under test - filter should be applied before aggregating
+			oListBinding.filter([
+				new Filter("Name", FilterOperator.EQ, "Foo"),
+				new Filter("SalesNumber", FilterOperator.GT, 0)
+			]);
+
+			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
+				+ "/groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
+				+ "/concat(aggregate(SalesNumber),top(99))",
+				{value : [{}]});
+
+			return Promise.all([
+				oListBinding.requestContexts(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
+	// - those filters that can be applied before aggregating
+	// - those filters that must be applied after aggregating
+	// JIRA: CPOUI5ODATAV4-119
+	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _Cache.CollectionCache", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "", createBusinessPartnerTestModel()).then(function () {
+			var oListBinding = that.oModel.bindList("/BusinessPartners");
+
+			// code under test - filter should be applied before aggregating
+			oListBinding.filter([
+				new Filter("Name", FilterOperator.EQ, "Foo"),
+				new Filter("SalesNumber", FilterOperator.GT, 0)
+			]);
+
+			oListBinding.setAggregation({
+				aggregate : {
+					SalesNumber : {}
+				},
+				group : {
+					Region : {}
+				}
+			});
+
+			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
+				+ "/groupby((Region),aggregate(SalesNumber))&$filter=SalesNumber gt 0"
+				+ "&$skip=0&$top=100",
+				{value : [{}]});
+
+			return Promise.all([
+				oListBinding.requestContexts(),
+				that.waitForChanges(assert)
+			]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -22063,6 +22153,118 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: requestSideEffects refreshes properties at the parent entity with the help of path
+	// reduction via partner attributes. See that bubbling up is necessary again when processing the
+	// reduced path in the parent context.
+	// JIRA: CPOUI5ODATAV4-103
+	QUnit.test("requestSideEffects: path reduction", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<FlexBox binding="{}">\
+		<Text id="note" text="{Note}" />\
+		<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+			<ColumnListItem>\
+				<Text id="position" text="{ItemPosition}" />\
+				<Text id="amount" text="{GrossAmount}" />\
+			</ColumnListItem>\
+		</Table>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+				Note : "Note",
+				SalesOrderID : "42"
+			})
+			.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=GrossAmount,ItemPosition"
+				+ ",SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{GrossAmount : "3.14", ItemPosition : "0010", SalesOrderID : "42"},
+					{GrossAmount : "2.72", ItemPosition : "0020", SalesOrderID : "42"}
+				]
+			})
+			.expectChange("note", "Note")
+			.expectChange("position", ["0010", "0020"])
+			.expectChange("amount", ["3.14", "2.72"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+			that.expectRequest("SalesOrderList('42')?$select=Note", {Note : "refreshed Note"})
+				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?"
+					+ "$select=GrossAmount,ItemPosition,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '42' and ItemPosition eq '0010'", {
+					value : [
+						{GrossAmount : "1.41", ItemPosition : "0010", SalesOrderID : "42"}
+					]
+				})
+				.expectChange("note", "refreshed Note")
+				.expectChange("amount", ["1.41"]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([
+					{$PropertyPath : "SOITEM_2_SO/Note"},
+					{$PropertyPath : "GrossAmount"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: requestSideEffects is called at a binding w/o cache and has to delegate to a
+	// context of the parent binding. Additionally it requests a property from this parent binding
+	// with the help of path reduction via partner attributes. See that only one request is
+	// necessary.
+	// JIRA: CPOUI5ODATAV4-103
+	QUnit.test("requestSideEffects: path reduction and bubble up", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/As(1)}">\
+	<Text id="aValue" text="{AValue}" />\
+	<FlexBox id="bInstance" binding="{AtoB}">\
+		<Text id="bValue" text="{BValue}"/>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("As(1)?$select=AID,AValue&$expand=AtoB($select=BID,BValue)", {
+				AID : 1,
+				AValue : 11,
+				AtoB : {
+					BID : 2,
+					BValue : 12
+				}
+			})
+			.expectChange("aValue", "11")
+			.expectChange("bValue", "12");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("bInstance").getElementBinding().getBoundContext();
+
+			that.expectRequest("As(1)?$select=AValue&$expand=AtoB($select=BValue)", {
+					AValue : 111,
+					AtoB : {
+						BValue : 112
+					}
+				})
+				.expectChange("aValue", "111")
+				.expectChange("bValue", "112");
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([
+					{$PropertyPath : "BtoA/AValue"},
+					{$PropertyPath : "BValue"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: hasPendingChanges and resetChanges work even while late child bindings are trying
 	// to reuse the parent binding's cache.
 	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
@@ -22739,19 +22941,25 @@ sap.ui.define([
 	// A (context) binding that did not yet read its data does not allow setting a property w/o a
 	// PATCH request.
 	// JIRA: CPOUI5ODATAV4-14
+	// Additionally we show that it is possible to prevent a PATCH request by a binding parameter
+	// $$noPatch: true
+	// JIRA: CPOUI5ODATAV4-53
 	QUnit.test("CPOUI5ODATAV4-14", function (assert) {
 		var oBinding,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'42\')}" id="form">\
 	<Input id="name" value="{Name}"/>\
+	<Input id="budget" value="{path : \'Budget\', parameters : {$$noPatch : true}}" />\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("TEAMS('42')?$select=Name,Team_Id", {
+		this.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id", {
+				Budget : 1234,
 				Name : "Team #1",
 				Team_Id : "42"
 			})
+			.expectChange("budget", "1,234")
 			.expectChange("name", "Team #1");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -22766,7 +22974,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("TEAMS('42')?$select=Name,Team_Id", {
+			that.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id", {
+					Budget : 1234,
 					Name : "Team #1",
 					Team_Id : "42"
 				})
@@ -22788,6 +22997,27 @@ sap.ui.define([
 					}),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			that.expectChange("budget", "54,321");
+			// expect no PATCH request!
+
+			return Promise.all([
+				// code under test
+				// JIRA: CPOUI5ODATAV4-53
+				that.oView.byId("budget").getBinding("value").setValue(54321),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id", {
+					Budget : 1234,
+					Name : "Team #1",
+					Team_Id : "42"
+				})
+				.expectChange("budget", "1,234");
+
+			oBinding.refresh();
+
+			return that.waitForChanges(assert);
 		});
 	});
 

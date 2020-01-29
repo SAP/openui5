@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/URI"
-], function (Log, isEmptyObject, merge, uid, URI) {
+], function (Log, isEmptyObject, merge, uid, SyncPromise, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,
@@ -447,6 +448,60 @@ sap.ui.define([
 		 */
 		encodePair : function (sKey, sValue) {
 			return _Helper.encode(sKey, true) + "=" + _Helper.encode(sValue, false);
+		},
+
+		/**
+		 * Fetches the property that is reached by the meta path and (if necessary) its type.
+		 *
+		 * @param {function} fnFetchMetadata Function which fetches metadata for a given meta path
+		 * @param {string} sMetaPath The meta path
+		 * @returns {sap.ui.base.SyncPromise<object>} A promise resolving with the property reached
+		 *   by the meta path or <code>undefined</code> otherwise.
+		 */
+		fetchPropertyAndType : function (fnFetchMetadata, sMetaPath) {
+			return fnFetchMetadata(sMetaPath).then(function (oProperty) {
+				if (oProperty && oProperty.$kind === "NavigationProperty") {
+					// Ensure that the target type of the navigation property is available
+					// synchronously. This is only necessary for navigation properties and may only
+					// be done for them because it would fail for properties with a simple type like
+					// "Edm.String".
+					return fnFetchMetadata(sMetaPath + "/").then(function () {
+						return oProperty;
+					});
+				}
+				return oProperty;
+			});
+		},
+
+		/**
+		 * Resolves all paths in $select containing navigation properties and converts them into
+		 * appropriate $expand.
+		 *
+		 * @param {function} fnFetchMetadata Function which fetches metadata for a given meta path
+		 * @param {string} sMetaPath The meta path
+		 * @param {object} mQueryOptions The query options to resolve
+		 * @returns {sap.ui.base.SyncPromise<object>} A promise that resolves with mQueryOptions
+		 *   when all paths in $select have been processed
+		 */
+		fetchResolvedSelect : function (fnFetchMetadata, sMetaPath, mQueryOptions) {
+			var aSelect = mQueryOptions.$select;
+
+			if (aSelect) {
+				mQueryOptions.$select = undefined; // do not delete to avoid reordering
+			} else {
+				return SyncPromise.resolve(mQueryOptions);
+			}
+
+			return SyncPromise.all((aSelect).map(function (sSelectPath) {
+				return _Helper.fetchPropertyAndType(
+					fnFetchMetadata, sMetaPath + "/" + sSelectPath
+				).then(function () {
+					_Helper.aggregateQueryOptions(mQueryOptions,
+						_Helper.wrapChildQueryOptions(sMetaPath, sSelectPath, {}, fnFetchMetadata));
+				});
+			})).then(function () {
+				return mQueryOptions;
+			});
 		},
 
 		/**
@@ -1016,12 +1071,14 @@ sap.ui.define([
 		 *   The map of query options
 		 * @param {string} [sOrderby]
 		 *   The new value for the query option "$orderby"
-		 * @param {string} [sFilter]
-		 *   The new value for the query option "$filter"
+		 * @param {string[]} [aFilters]
+		 *   An array that consists of two filters, the first one ("$filter") has to be be applied
+		 *   after and the second one ("$$filterBeforeAggregate") has to be applied before
+		 *   aggregating the data. Both can be <code>undefined</code>.
 		 * @returns {object}
 		 *   The merged map of query options
 		 */
-		mergeQueryOptions : function (mQueryOptions, sOrderby, sFilter) {
+		mergeQueryOptions : function (mQueryOptions, sOrderby, aFilters) {
 			var mResult;
 
 			function set(sProperty, sValue) {
@@ -1034,7 +1091,10 @@ sap.ui.define([
 			}
 
 			set("$orderby", sOrderby);
-			set("$filter", sFilter);
+			if (aFilters) {
+				set("$filter", aFilters[0]);
+				set("$$filterBeforeAggregate", aFilters[1]);
+			}
 			return mResult || mQueryOptions;
 		},
 

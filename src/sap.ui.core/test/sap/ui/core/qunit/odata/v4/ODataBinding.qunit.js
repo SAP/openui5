@@ -680,18 +680,23 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchQueryOptionsForOwnCache, auto-$expand/$select: can use parent binding cache",
 		function (assert) {
-			var oBinding = new ODataBinding({
+			var fnFetchMetadata = function () {},
+				oBinding = new ODataBinding({
 					mAggregatedQueryOptions : {},
 					aChildCanUseCachePromises : [], // binding is a parent binding
 					doFetchQueryOptions : function () {},
 					oModel : {
 						bAutoExpandSelect : true,
+						oInterface : {
+							fetchMetadata : fnFetchMetadata
+						},
 						resolve : function () {}
 					},
 					sPath : "relative",
 					bRelative : true,
 					updateAggregatedQueryOptions : function () {} // binding is a parent binding
 				}),
+				mConvertedBindingQueryOptions = {},
 				mCurrentBindingQueryOptions = {},
 				oExpectation,
 				oParentBinding = {
@@ -706,8 +711,15 @@ sap.ui.define([
 			this.mock(oBinding).expects("doFetchQueryOptions")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(SyncPromise.resolve(mCurrentBindingQueryOptions));
+			this.mock(_Helper).expects("getMetaPath")
+				.withExactArgs("/resolved/path")
+				.returns("/resolved/metaPath");
+			this.mock(_Helper).expects("fetchResolvedSelect")
+				.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/metaPath",
+					mCurrentBindingQueryOptions)
+				.returns(SyncPromise.resolve(mConvertedBindingQueryOptions));
 			this.mock(oBinding).expects("updateAggregatedQueryOptions")
-				.withExactArgs(sinon.match.same(mCurrentBindingQueryOptions));
+				.withExactArgs(sinon.match.same(mConvertedBindingQueryOptions));
 			oExpectation = this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
 				.withArgs(sinon.match.same(oContext), "relative")
 				.returns(SyncPromise.resolve("/reduced/path"));
@@ -730,18 +742,23 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchQueryOptionsForOwnCache, auto-$expand/$select: can't use parent binding cache",
 		function (assert) {
-			var oBinding = new ODataBinding({
+			var fnFetchMetadata = function () {},
+				oBinding = new ODataBinding({
 					mAggregatedQueryOptions : {},
 					aChildCanUseCachePromises : [], // binding is a parent binding
 					doFetchQueryOptions : function () {},
 					oModel : {
 						bAutoExpandSelect : true,
+						oInterface : {
+							fetchMetadata : fnFetchMetadata
+						},
 						resolve : function () {}
 					},
 					sPath : "relative",
 					bRelative : true,
 					updateAggregatedQueryOptions : function () {} // binding is a parent binding
 				}),
+				mConvertedBindingQueryOptions = {},
 				mCurrentBindingQueryOptions = {},
 				aChildCanUseCachePromises,
 				oParentBinding = {
@@ -756,8 +773,15 @@ sap.ui.define([
 			this.mock(oBinding).expects("doFetchQueryOptions")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(SyncPromise.resolve(mCurrentBindingQueryOptions));
+			this.mock(_Helper).expects("getMetaPath")
+				.withExactArgs("/resolved/path")
+				.returns("/resolved/metaPath");
+			this.mock(_Helper).expects("fetchResolvedSelect")
+				.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/metaPath",
+					mCurrentBindingQueryOptions)
+				.returns(SyncPromise.resolve(mConvertedBindingQueryOptions));
 			this.mock(oBinding).expects("updateAggregatedQueryOptions")
-				.withExactArgs(sinon.match.same(mCurrentBindingQueryOptions));
+				.withExactArgs(sinon.match.same(mConvertedBindingQueryOptions));
 			this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
 				.withArgs(sinon.match.same(oContext), "relative")
 				.returns(SyncPromise.resolve(undefined));
@@ -2194,7 +2218,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["$$canonicalPath", "$$ownRequest", "$$patchWithoutSideEffects"].forEach(function (sName) {
+["$$canonicalPath", "$$noPatch", "$$ownRequest", "$$patchWithoutSideEffects"]
+	.forEach(function (sName) {
 		QUnit.test("checkBindingParameters, " + sName, function (assert) {
 			var aAllowedParameters = [sName],
 				oBinding = new ODataBinding(),
@@ -2213,7 +2238,7 @@ sap.ui.define([
 			// code under test
 			oBinding.checkBindingParameters(mParameters, aAllowedParameters);
 		});
-	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("checkBindingParameters, unknown $$-parameter", function (assert) {

@@ -1371,12 +1371,37 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{auto : true, parked : "$parked.any", text : "unpark for auto group (no group ID)"},
-	{auto : false, context : {}, text : "relative binding, no auto group"},
-	{auto : true, group : "group", parked : "$parked.group", text : "unpark for auto group"},
-	{auto : false, group : "different", text : "different group ID"}
-].forEach(function (oFixture) {
+[{
+	async : true,
+	auto : true,
+	parked : "$parked.any",
+	text : "wait and unpark for auto group (no group ID)"
+}, {
+	async : false,
+	auto : true,
+	parked : "$parked.any",
+	text : "unpark for auto group (no group ID)"
+}, {
+	auto : false,
+	context : {},
+	text : "relative binding, no auto group"
+}, {
+	async : true,
+	auto : true,
+	group : "group",
+	parked : "$parked.group",
+	text : "wait and unpark for auto group"
+}, {
+	async : false,
+	auto : true,
+	group : "group",
+	parked : "$parked.group",
+	text : "unpark for auto group"
+}, {
+	auto : false,
+	group : "different",
+	text : "different group ID"
+}].forEach(function (oFixture) {
 	QUnit.test("requestSideEffects: " + oFixture.text, function (assert) {
 		var oBinding = {
 				oCache : {
@@ -1385,8 +1410,7 @@ sap.ui.define([
 				checkSuspended : function () {},
 				getContext : function () { return oFixture.context; },
 				getPath : function () { return "/EMPLOYEES('42')"; },
-				isRelative : function () { return !!oFixture.context; },
-				requestSideEffects : function () {}
+				isRelative : function () { return !!oFixture.context; }
 			},
 			oModel = {
 				checkGroupId : function () {},
@@ -1397,35 +1421,39 @@ sap.ui.define([
 				}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
+			oExpectation,
 			sGroupId = oFixture.group || "any",
-			oPromise = Promise.resolve(),
+			oPromise,
+			oWaitPromise = oFixture.async ? Promise.resolve() : SyncPromise.resolve(),
 			that = this;
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(oFixture.group);
 		this.mock(oContext).expects("getUpdateGroupId").exactly(oFixture.group ? 0 : 1)
 			.withExactArgs().returns("any");
-		this.mock(oModel).expects("isAutoGroup")
-			.withExactArgs(sGroupId).returns(oFixture.auto);
+		this.mock(oModel).expects("isAutoGroup").withExactArgs(sGroupId).returns(oFixture.auto);
 		this.mock(oModel.oRequestor).expects("waitForRunningChangeRequests")
 			.exactly(oFixture.auto ? 1 : 0)
-			.withExactArgs(sGroupId).returns(SyncPromise.resolve(oPromise));
-
-		this.mock(oBinding).expects("requestSideEffects")
-			// Note: $select not yet sorted
-			.withExactArgs(sGroupId, ["TEAM_ID", "EMPLOYEE_2_MANAGER", "ROOM_ID", ""],
-				sinon.match.same(oContext))
-			.returns(SyncPromise.resolve({}));
+			.withExactArgs(sGroupId).returns(SyncPromise.resolve(oWaitPromise));
 
 		if (oFixture.auto) {
-			oPromise.then(function () {
+			oWaitPromise.then(function () {
 				that.mock(oModel.oRequestor).expects("relocateAll").exactly(oFixture.auto ? 1 : 0)
 					.withExactArgs(oFixture.parked, sGroupId);
+				oExpectation = that.mock(oContext).expects("requestSideEffectsInternal")
+					// Note: $select not yet sorted
+					.withExactArgs(["TEAM_ID", "EMPLOYEE_2_MANAGER", "ROOM_ID", ""], sGroupId)
+					.returns(SyncPromise.resolve({}));
 			});
+		} else {
+			oExpectation = this.mock(oContext).expects("requestSideEffectsInternal")
+				// Note: $select not yet sorted
+				.withExactArgs(["TEAM_ID", "EMPLOYEE_2_MANAGER", "ROOM_ID", ""], sGroupId)
+				.returns(SyncPromise.resolve({}));
 		}
 
 		// code under test
-		return oContext.requestSideEffects([{
+		oPromise = oContext.requestSideEffects([{
 				$PropertyPath : "TEAM_ID"
 			}, {
 				$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"
@@ -1437,6 +1465,12 @@ sap.ui.define([
 			.then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 			});
+
+		assert.ok(oPromise instanceof Promise);
+		if (oExpectation) {
+			assert.ok(oExpectation.called, "requestSideEffectsInternal called synchronously");
+		}
+		return oPromise;
 	});
 });
 
@@ -1455,6 +1489,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId).throws(oError);
+		this.mock(oContext).expects("requestSideEffectsInternal").never();
 
 		assert.throws(function () {
 			// code under test
@@ -1472,6 +1507,7 @@ sap.ui.define([
 			oError = new Error("Must not call...");
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs().throws(oError);
+		this.mock(oContext).expects("requestSideEffectsInternal").never();
 
 		assert.throws(function () {
 			// code under test
@@ -1487,8 +1523,7 @@ sap.ui.define([
 				checkSuspended : function () {},
 				getContext : function () {},
 				getPath : function () { return "/EMPLOYEES('42')"; },
-				isRelative : function () { return false; },
-				requestSideEffects : function () {}
+				isRelative : function () { return false; }
 			},
 			oModel = {
 				checkGroupId : function () {},
@@ -1510,8 +1545,8 @@ sap.ui.define([
 		this.mock(oModel.oRequestor).expects("relocateAll").exactly(bAuto ? 1 : 0)
 			.withExactArgs("$parked.update", "update");
 		this.mock(oModel).expects("isAutoGroup").withExactArgs("update").returns(bAuto);
-		this.mock(oBinding).expects("requestSideEffects")
-			.withExactArgs("update", ["TEAM_ID"], sinon.match.same(oContext))
+		this.mock(oContext).expects("requestSideEffectsInternal")
+			.withExactArgs(["TEAM_ID"], "update")
 			.returns(SyncPromise.reject(oError));
 
 		// code under test
@@ -1528,194 +1563,250 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bAuto) {
-	[function (oModel, oBinding, oTargetBinding, oTargetContext) {
-		// bubble up to good target:
-		// oBinding > oParentBinding > oTargetBinding
-		// oParentBinding has no cache
-		// --> please think of "/..." as "/TEAMS('1')"
-		var oHelperMock = this.mock(_Helper),
-			oParentBinding = {
-				oCache : null,
-				getBoundContext : function () {},
-				getContext : function () { return oTargetContext; },
-				getPath : function () { return "TEAM_2_MANAGER"; }
+	QUnit.test("requestSideEffectsInternal: binding with cache", function (assert) {
+		var oMetaModel = {
+				getReducedPath : function () {}
 			},
-			oParentContext = Context.create(oModel, oParentBinding, "/.../TEAM_2_MANAGER");
-
-		this.mock(oBinding).expects("getContext").twice()
-			.returns(oParentContext);
-		this.mock(oBinding).expects("getPath")
-			.returns("Manager_to_Team");
-		oHelperMock.expects("buildPath")
-			.withExactArgs("Manager_to_Team", "")
-			.returns("Manager_to_Team");
-		oHelperMock.expects("buildPath")
-			.withExactArgs("TEAM_2_MANAGER", "Manager_to_Team")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		this.mock(oTargetBinding).expects("getPath")
-			.returns("/...");
-		this.mock(oTargetBinding.oCache).expects("hasChangeListeners").never();
-	}, function (oModel, oBinding, oTargetBinding, oTargetContext) {
-		// bubble up through empty path:
-		// oBinding > oIntermediateBinding > oParentBinding > oTargetBinding
-		// oIntermediateBinding has cache, but empty path
-		// oParentBinding has cache, but empty path
-		// --> please think of "/..." as "/TEAMS('1')"
-		var oHelperMock = this.mock(_Helper),
-			oIntermediateBinding = {
-				oCache : {/*oCache*/},
-				getBoundContext : function () {},
-				getContext : function () { /*return oParentContext;*/ },
-				getPath : function () { return ""; }
+			oMetaModelMock = this.mock(oMetaModel),
+			oModel = {
+				getMetaModel : function () { return oMetaModel; }
 			},
-			oIntermediateContext = Context.create(oModel, oIntermediateBinding,
-				"/.../TEAM_2_MANAGER"),
-			oParentBinding = {
-				oCache : {
-					hasChangeListeners : function () { return true; }
-				},
-				getBoundContext : function () {},
-				getContext : function () { return oTargetContext; },
-				getPath : function () { return ""; }
+			oBinding = {
+				oCache : {},
+				getBaseForPathReduction : function () {},
+				getContext : function () {},
+				getPath : function () { return "/TEAMS"; },
+				requestSideEffects : function () {}
 			},
-			oParentContext = Context.create(oModel, oParentBinding, "/.../TEAM_2_MANAGER");
-
-		this.mock(oBinding).expects("getContext").twice()
-			.returns(oIntermediateContext);
-		this.mock(oBinding).expects("getPath")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		oHelperMock.expects("buildPath")
-			.withExactArgs("TEAM_2_MANAGER/Manager_to_Team", "")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		oHelperMock.expects("buildPath").twice()
-			.withExactArgs("", "TEAM_2_MANAGER/Manager_to_Team")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		this.mock(oIntermediateBinding).expects("getContext").returns(oParentContext);
-		this.mock(oTargetBinding).expects("getPath")
-			.returns("/...");
-		this.mock(oTargetBinding.oCache).expects("hasChangeListeners")
-			.returns(true);
-	}, function (oModel, oBinding, oTargetBinding, oTargetContext) {
-		// do not bubble up into return value context w/o change listeners (@see BCP: 1980108040):
-		// oBinding > oTargetBinding > oOperationBinding
-		// oTargetBinding has empty path and is relative to operation binding's return value context
-		// --> please think of "/..." as "/TEAMS('1')/some.Operation(...)"
-		var oHelperMock = this.mock(_Helper),
-			oOperationBinding = {
-				oCache : {
-					hasChangeListeners : function () { return false; }
-				},
-				// oReturnValueContext : oReturnValueContext,
-				getContext : function () { return null; },
-				getPath : function () { return "/..."; }
-			},
-			oReturnValueContext = Context.createReturnValueContext(oModel, oOperationBinding,
-				"/...");
-
-		this.mock(oBinding).expects("getContext").twice()
-			.returns(oTargetContext);
-		this.mock(oBinding).expects("getPath")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		oHelperMock.expects("buildPath")
-			.withExactArgs("TEAM_2_MANAGER/Manager_to_Team", "")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		this.mock(oTargetBinding).expects("getPath")
-			.returns("");
-		oHelperMock.expects("buildPath")
-			.withExactArgs("", "TEAM_2_MANAGER/Manager_to_Team")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		this.mock(oTargetBinding).expects("getContext")
-			.returns(oReturnValueContext);
-		this.mock(oTargetBinding.oCache).expects("hasChangeListeners").never();
-	}, function (oModel, oBinding, oTargetBinding, oTargetContext) {
-		// do not bubble up into error case:
-		// oBinding > oTargetBinding > oListBinding
-		// oTargetBinding has empty path
-		// oListBinding has no cache
-		// --> please think of "/..." as "/Department(...)/DEPARTMENT_2_TEAMS('1')"
-		var oDepartmentContext = {},
+			oContext = Context.create(oModel, oBinding, "/TEAMS('42')"),
 			oHelperMock = this.mock(_Helper),
-			oListBinding = {
-				oCache : null,
-				getContext : function () { return oDepartmentContext; },
-				getPath : function () { return "..."; } // DEPARTMENT_2_TEAMS
+			bSideEffectsRequested = false,
+			oPromise = new Promise(function (resolve) {
+				window.setTimeout(function () {
+					bSideEffectsRequested = true;
+					resolve();
+				});
+			}),
+			oResultPromise;
+
+		function expectPathConversion(sPath, sReducedPath) {
+			oHelperMock.expects("buildPath")
+				.withExactArgs("/TEAMS('42')", sPath)
+				.returns("/TEAMS('42')/" + sPath);
+			oMetaModelMock.expects("getReducedPath")
+				.withExactArgs("/TEAMS('42')/" + sPath, "/TEAMS")
+				.returns("/TEAMS('42')/" + sReducedPath);
+			oHelperMock.expects("getRelativePath")
+				.withExactArgs("/TEAMS('42')/" + sReducedPath, oContext.sPath)
+				.returns(sReducedPath);
+		}
+
+		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs().returns("/TEAMS");
+		expectPathConversion("Name", "Name");
+		expectPathConversion("Team_2_Manager/Manager_2_Team/TeamBudget", "TeamBudget");
+		this.mock(oBinding).expects("requestSideEffects")
+			.withExactArgs("groupId", ["Name", "TeamBudget"], sinon.match.same(oContext))
+			.returns(oPromise);
+
+		// code under test
+		oResultPromise = oContext.requestSideEffectsInternal([
+			"Name",
+			"Team_2_Manager/Manager_2_Team/TeamBudget"
+		], "groupId");
+
+		assert.strictEqual(oResultPromise.isPending(), true, "a SyncPromise");
+		return oResultPromise.then(function () {
+			assert.strictEqual(bSideEffectsRequested, true);
+		});
+	});
+
+	//*********************************************************************************************
+[function (oModel, oBinding, oTargetBinding, oTargetContext, oHelperMock) {
+	// bubble up to good target:
+	// oBinding > oParentBinding > oTargetBinding
+	// oParentBinding has no cache
+	// --> please think of "/..." as "/TEAMS('1')"
+	var oParentBinding = {
+			oCache : null,
+			getBoundContext : function () {},
+			getContext : function () { return oTargetContext; },
+			getPath : function () { return "TEAM_2_MANAGER"; }
+		},
+		oParentContext = Context.create(oModel, oParentBinding, "/.../TEAM_2_MANAGER");
+
+	this.mock(oBinding).expects("getContext")
+		.returns(oParentContext);
+	this.mock(oBinding).expects("getPath")
+		.returns("Manager_to_Team");
+	oHelperMock.expects("buildPath")
+		.withExactArgs("Manager_to_Team", "")
+		.returns("Manager_to_Team");
+	oHelperMock.expects("buildPath")
+		.withExactArgs("TEAM_2_MANAGER", "Manager_to_Team")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	this.mock(oTargetBinding).expects("getPath")
+		.returns("/...");
+	this.mock(oTargetBinding.oCache).expects("hasChangeListeners").never();
+}, function (oModel, oBinding, oTargetBinding, oTargetContext, oHelperMock) {
+	// bubble up through empty path:
+	// oBinding > oIntermediateBinding > oParentBinding > oTargetBinding
+	// oIntermediateBinding has cache, but empty path
+	// oParentBinding has cache, but empty path
+	// --> please think of "/..." as "/TEAMS('1')"
+	var oIntermediateBinding = {
+			oCache : {/*oCache*/},
+			getBoundContext : function () {},
+			getContext : function () { /*return oParentContext;*/ },
+			getPath : function () { return ""; }
+		},
+		oIntermediateContext = Context.create(oModel, oIntermediateBinding,
+			"/.../TEAM_2_MANAGER"),
+		oParentBinding = {
+			oCache : {
+				hasChangeListeners : function () { return true; }
 			},
-			oListContext = Context.create(oModel, oListBinding, "/...");
+			getBoundContext : function () {},
+			getContext : function () { return oTargetContext; },
+			getPath : function () { return ""; }
+		},
+		oParentContext = Context.create(oModel, oParentBinding, "/.../TEAM_2_MANAGER");
 
-		this.mock(oBinding).expects("getContext").twice()
-			.returns(oTargetContext);
-		this.mock(oBinding).expects("getPath")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		oHelperMock.expects("buildPath")
-			.withExactArgs("TEAM_2_MANAGER/Manager_to_Team", "")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		this.mock(oTargetBinding).expects("getPath")
-			.returns("");
-		this.mock(oTargetBinding).expects("getContext")
-			.returns(oListContext);
-		oHelperMock.expects("buildPath")
-			.withExactArgs("", "TEAM_2_MANAGER/Manager_to_Team")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		this.mock(oTargetBinding.oCache).expects("hasChangeListeners").never();
-	}, function (oModel, oBinding, oTargetBinding, oTargetContext) {
-		// do not bubble up too far: once a binding with own cache has been found, only empty paths
-		// may be skipped!
-		// oBinding > oTargetBinding > oWrongBinding
-		// oTargetBinding has empty path
-		// oWrongBinding has no cache and non-empty path: bubbling must go back to oTargetBinding!
-		// --> please think of "/..." as "/Department(...)/DEPARTMENT_2_TEAMS('1')"
-		var oDepartmentContext = {},
-			oHelperMock = this.mock(_Helper),
-			oWrongBinding = {
-				oCache : null,
-				getContext : function () { return oDepartmentContext; },
-				getPath : function () { return "..."; } // DEPARTMENT_2_TEAMS('1')
+	this.mock(oBinding).expects("getContext")
+		.returns(oIntermediateContext);
+	this.mock(oBinding).expects("getPath")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	oHelperMock.expects("buildPath")
+		.withExactArgs("TEAM_2_MANAGER/Manager_to_Team", "")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	oHelperMock.expects("buildPath").twice()
+		.withExactArgs("", "TEAM_2_MANAGER/Manager_to_Team")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	this.mock(oIntermediateBinding).expects("getContext").returns(oParentContext);
+	this.mock(oTargetBinding).expects("getPath")
+		.returns("/...");
+	this.mock(oTargetBinding.oCache).expects("hasChangeListeners")
+		.returns(true);
+}, function (oModel, oBinding, oTargetBinding, oTargetContext, oHelperMock) {
+	// do not bubble up into return value context w/o change listeners (@see BCP: 1980108040):
+	// oBinding > oTargetBinding > oOperationBinding
+	// oTargetBinding has empty path and is relative to operation binding's return value context
+	// --> please think of "/..." as "/TEAMS('1')/some.Operation(...)"
+	var oOperationBinding = {
+			oCache : {
+				hasChangeListeners : function () { return false; }
 			},
-			oWrongContext = Context.create(oModel, oWrongBinding, "/...");
+			// oReturnValueContext : oReturnValueContext,
+			getContext : function () { return null; },
+			getPath : function () { return "/..."; }
+		},
+		oReturnValueContext = Context.createReturnValueContext(oModel, oOperationBinding,
+			"/...");
 
-		this.mock(oBinding).expects("getContext").twice()
-			.returns(oTargetContext);
-		this.mock(oBinding).expects("getPath")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		oHelperMock.expects("buildPath")
-			.withExactArgs("TEAM_2_MANAGER/Manager_to_Team", "")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-		this.mock(oTargetBinding).expects("getPath")
-			.returns("");
-		this.mock(oTargetBinding).expects("getContext")
-			.returns(oWrongContext);
-		this.mock(oTargetBinding.oCache).expects("hasChangeListeners").never();
-		oHelperMock.expects("buildPath")
-			.withExactArgs("", "TEAM_2_MANAGER/Manager_to_Team")
-			.returns("TEAM_2_MANAGER/Manager_to_Team");
-	}].forEach(function (fnArrange, i) {
-		var sTitle = "requestSideEffects: no own cache with auto group: " + bAuto + ", " + i;
+	this.mock(oBinding).expects("getContext")
+		.returns(oTargetContext);
+	this.mock(oBinding).expects("getPath")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	oHelperMock.expects("buildPath")
+		.withExactArgs("TEAM_2_MANAGER/Manager_to_Team", "")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	this.mock(oTargetBinding).expects("getPath")
+		.returns("");
+	oHelperMock.expects("buildPath")
+		.withExactArgs("", "TEAM_2_MANAGER/Manager_to_Team")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	this.mock(oTargetBinding).expects("getContext")
+		.returns(oReturnValueContext);
+	this.mock(oTargetBinding.oCache).expects("hasChangeListeners").never();
+}, function (oModel, oBinding, oTargetBinding, oTargetContext, oHelperMock) {
+	// do not bubble up into error case:
+	// oBinding > oTargetBinding > oListBinding
+	// oTargetBinding has empty path
+	// oListBinding has no cache
+	// --> please think of "/..." as "/Department(...)/DEPARTMENT_2_TEAMS('1')"
+	var oDepartmentContext = {},
+		oListBinding = {
+			oCache : null,
+			getContext : function () { return oDepartmentContext; },
+			getPath : function () { return "..."; } // DEPARTMENT_2_TEAMS
+		},
+		oListContext = Context.create(oModel, oListBinding, "/...");
 
-	QUnit.test(sTitle, function (assert) {
-		var oModel = {
-				checkGroupId : function () {},
-				isAutoGroup : function () {},
-				oRequestor : {
-					relocateAll : function (sCurrentGroupId, sGroupId) {},
-					waitForRunningChangeRequests : function (sGroupId) {}
-				}
+	this.mock(oBinding).expects("getContext")
+		.returns(oTargetContext);
+	this.mock(oBinding).expects("getPath")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	oHelperMock.expects("buildPath")
+		.withExactArgs("TEAM_2_MANAGER/Manager_to_Team", "")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	this.mock(oTargetBinding).expects("getPath")
+		.returns("");
+	this.mock(oTargetBinding).expects("getContext")
+		.returns(oListContext);
+	oHelperMock.expects("buildPath")
+		.withExactArgs("", "TEAM_2_MANAGER/Manager_to_Team")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	this.mock(oTargetBinding.oCache).expects("hasChangeListeners").never();
+}, function (oModel, oBinding, oTargetBinding, oTargetContext, oHelperMock) {
+	// do not bubble up too far: once a binding with own cache has been found, only empty paths
+	// may be skipped!
+	// oBinding > oTargetBinding > oWrongBinding
+	// oTargetBinding has empty path
+	// oWrongBinding has no cache and non-empty path: bubbling must go back to oTargetBinding!
+	// --> please think of "/..." as "/Department(...)/DEPARTMENT_2_TEAMS('1')"
+	var oDepartmentContext = {},
+		oWrongBinding = {
+			oCache : null,
+			getContext : function () { return oDepartmentContext; },
+			getPath : function () { return "..."; } // DEPARTMENT_2_TEAMS('1')
+		},
+		oWrongContext = Context.create(oModel, oWrongBinding, "/...");
+
+	this.mock(oBinding).expects("getContext")
+		.returns(oTargetContext);
+	this.mock(oBinding).expects("getPath")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	oHelperMock.expects("buildPath")
+		.withExactArgs("TEAM_2_MANAGER/Manager_to_Team", "")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+	this.mock(oTargetBinding).expects("getPath")
+		.returns("");
+	this.mock(oTargetBinding).expects("getContext")
+		.returns(oWrongContext);
+	this.mock(oTargetBinding.oCache).expects("hasChangeListeners").never();
+	oHelperMock.expects("buildPath")
+		.withExactArgs("", "TEAM_2_MANAGER/Manager_to_Team")
+		.returns("TEAM_2_MANAGER/Manager_to_Team");
+}].forEach(function (fnArrange, i) {
+
+	QUnit.test("requestSideEffectsInternal: no own cache #" + i, function (assert) {
+		var oMetaModel = {
+				getReducedPath : function () {}
+			},
+			oMetaModelMock = this.mock(oMetaModel),
+			oModel = {
+				getMetaModel : function () { return oMetaModel; }
 			},
 			oBinding = {
 				oCache : null,
-				checkSuspended : function () {},
 				getBoundContext : function () {},
 				getContext : function () {},
-				getPath : function () {},
-				isRelative : function () { return true; }
+				getPath : function () {}
 			},
 			// this is where we call #requestSideEffects
 			oContext = Context.create(oModel, oBinding, "/.../TEAM_2_MANAGER/Manager_to_Team"),
-			oPromise,
+			oHelperMock = this.mock(_Helper),
+			bSideEffectsRequested = false,
+			oPromise = new Promise(function (resolve) {
+				window.setTimeout(function () {
+					bSideEffectsRequested = true;
+					resolve();
+				});
+			}),
 			oTargetBinding = {
 				oCache : {
 					hasChangeListeners : function () {}
 				},
+				getBaseForPathReduction : function () { return "/..."; },
 				getBoundContext : function () {},
 				getContext : function () {},
 				getPath : function () {},
@@ -1723,64 +1814,143 @@ sap.ui.define([
 			},
 			oTargetContext = Context.create(oModel, oTargetBinding, "/...");
 
-		this.mock(oBinding).expects("checkSuspended")
-			.withExactArgs();
-		this.mock(oModel).expects("checkGroupId")
-			.withExactArgs("group");
-		fnArrange.call(this, oModel, oBinding, oTargetBinding, oTargetContext);
-		this.mock(oModel).expects("isAutoGroup")
-			.withExactArgs("group")
-			.returns(bAuto);
-		this.mock(oModel.oRequestor).expects("waitForRunningChangeRequests").exactly(bAuto ? 1 : 0)
-			.withExactArgs("group")
-			.returns(SyncPromise.resolve());
-		this.mock(oModel.oRequestor).expects("relocateAll").exactly(bAuto ? 1 : 0)
-			.withExactArgs("$parked.group", "group");
+		function expectPathConversion(sPath) {
+			sPath = sPath ? "/" + sPath : "";
+			oHelperMock.expects("buildPath")
+				.withExactArgs("/...", "TEAM_2_MANAGER/Manager_to_Team" + sPath)
+				.returns("/.../TEAM_2_MANAGER/Manager_to_Team" + sPath);
+			oMetaModelMock.expects("getReducedPath")
+				.withExactArgs("/.../TEAM_2_MANAGER/Manager_to_Team" + sPath, "/...")
+				.returns("/.../TEAM_2_MANAGER/Manager_to_Team" + sPath);
+			oHelperMock.expects("getRelativePath")
+				.withExactArgs("/.../TEAM_2_MANAGER/Manager_to_Team" + sPath, oTargetContext.sPath)
+				.returns("TEAM_2_MANAGER/Manager_to_Team" + sPath);
+		}
+
+		fnArrange.call(this, oModel, oBinding, oTargetBinding, oTargetContext, oHelperMock);
+		expectPathConversion("TEAM_ID");
+		expectPathConversion("NAME");
+		expectPathConversion("");
 		this.mock(oTargetBinding).expects("requestSideEffects")
 			.withExactArgs("group", [
 					"TEAM_2_MANAGER/Manager_to_Team/TEAM_ID",
 					"TEAM_2_MANAGER/Manager_to_Team/NAME",
 					"TEAM_2_MANAGER/Manager_to_Team"
 				], oTargetContext)
-			.returns(SyncPromise.resolve(42));
+			.returns(oPromise);
+
 
 		// code under test
-		oPromise = oContext.requestSideEffects([
-				{$PropertyPath : "TEAM_ID"},
-				{$PropertyPath : "NAME"},
-				{$NavigationPropertyPath : ""}
-			], "group");
-
-		assert.ok(oPromise instanceof Promise);
-
-		return oPromise.then(function (oResult) {
-			assert.strictEqual(oResult, undefined);
-		});
+		return oContext.requestSideEffectsInternal(["TEAM_ID", "NAME", ""], "group")
+			.then(function () {
+				assert.strictEqual(bSideEffectsRequested, true);
+			});
 	});
 
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bCurrency, i) {
+	QUnit.test("requestSideEffectsInternal: path reduction and recursion #" + i, function (assert) {
+		var oParentContext = {
+				getPath : function () { return "/SalesOrder('42')"; },
+				requestSideEffectsInternal : function () {}
+			},
+			oBinding = {
+				oCache : {},
+				getBaseForPathReduction : function () {},
+				getContext : function () { return oParentContext; },
+				getPath : function () { return "SO_2_SOITEM"; },
+				requestSideEffects : function () {}
+			},
+			oHelperMock = this.mock(_Helper),
+			oMetaModel = {
+				getReducedPath : function () {}
+			},
+			oMetaModelMock = this.mock(oMetaModel),
+			oModel = {
+				getMetaModel : function () { return oMetaModel; }
+			},
+			oContext = Context.create(oModel, oBinding, "/SalesOrder('42')/SO_2_SOITEM('0010')"),
+			bSideEffectsRequested = false,
+			oPromise1 = new Promise(function (resolve) {
+				window.setTimeout(function () {
+					bSideEffectsRequested = true;
+					resolve();
+				});
+			}),
+			oPromise2 = Promise.resolve();
+
+		// path conversion for Note
+		this.mock(oBinding).expects("getBaseForPathReduction")
+			.withExactArgs()
+			.returns("/SalesOrder('42')");
+		oHelperMock.expects("buildPath")
+			.withExactArgs("/SalesOrder('42')/SO_2_SOITEM('0010')", "SOITEM_2_SO/Note")
+			.returns("/SalesOrder('42')/SO_2_SOITEM('0010')/SOITEM_2_SO/Note");
+		oMetaModelMock.expects("getReducedPath")
+			.withExactArgs("/SalesOrder('42')/SO_2_SOITEM('0010')/SOITEM_2_SO/Note",
+				"/SalesOrder('42')")
+			.returns("/SalesOrder('42')/Note");
+		oHelperMock.expects("getRelativePath")
+			.withExactArgs("/SalesOrder('42')/Note", oContext.sPath)
+			.returns(undefined);
+		// path conversion for Currency
+		if (bCurrency) {
+			oHelperMock.expects("buildPath")
+				.withExactArgs("/SalesOrder('42')/SO_2_SOITEM('0010')", "Currency")
+				.returns("/SalesOrder('42')/SO_2_SOITEM('0010')/Currency");
+			oMetaModelMock.expects("getReducedPath")
+				.withExactArgs("/SalesOrder('42')/SO_2_SOITEM('0010')/Currency",
+					"/SalesOrder('42')")
+				.returns("/SalesOrder('42')/SO_2_SOITEM('0010')/Currency");
+			oHelperMock.expects("getRelativePath")
+				.withExactArgs("/SalesOrder('42')/SO_2_SOITEM('0010')/Currency", oContext.sPath)
+				.returns("Currency");
+		}
+		// adding prefix for Note
+		oHelperMock.expects("getRelativePath")
+			.withExactArgs("/SalesOrder('42')/SO_2_SOITEM('0010')", "/SalesOrder('42')")
+			.returns("SO_2_SOITEM('0010')");
+		oHelperMock.expects("buildPath")
+			.withExactArgs("SO_2_SOITEM('0010')", "SOITEM_2_SO/Note")
+			.returns("SO_2_SOITEM('0010')/SOITEM_2_SO/Note");
+		this.mock(oParentContext).expects("requestSideEffectsInternal")
+			.withExactArgs(["SO_2_SOITEM('0010')/SOITEM_2_SO/Note"], "groupId")
+			.returns(oPromise1);
+		this.mock(oBinding).expects("requestSideEffects").exactly(bCurrency ? 1 : 0)
+			.withExactArgs("groupId", ["Currency"], oContext)
+			.returns(oPromise2);
+
+		// code under test
+		return oContext.requestSideEffectsInternal(
+			bCurrency ? ["SOITEM_2_SO/Note", "Currency"] : ["SOITEM_2_SO/Note"],
+			"groupId"
+		).then(function () {
+			assert.strictEqual(bSideEffectsRequested, true);
+		});
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects without own cache: error case unsupported list binding",
+	QUnit.test("requestSideEffectsInternal without own cache: error case unsupported list binding",
 			function (assert) {
 		var oListBinding = {
 				oCache : null,
-				checkSuspended : function () {},
 //				getBoundContext : function () {},
 				getContext : function () { return {}; },
 				getPath : function () { return "TEAM_2_EMPLOYEES"; },
-				isRelative : function () { return true; },
 				toString : function () { return "Foo Bar"; }
 			},
+			oMetaModel = {},
 			oModel = {
-				checkGroupId : function () {}
+				getMetaModel : function () { return oMetaModel; }
 			},
 			oContext = Context.create(oModel, oListBinding, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')");
 
 		assert.throws(function () {
 			// code under test
-			oContext.requestSideEffects([{$PropertyPath : "ID"}]);
+			oContext.requestSideEffectsInternal(["ID"], "groupId");
 		}, new Error("Not a context binding: " + oListBinding));
 	});
 
@@ -1796,6 +1966,7 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext).expects("requestSideEffectsInternal").never();
 
 		assert.throws(function () {
 			// code under test
@@ -1817,6 +1988,8 @@ sap.ui.define([
 				checkGroupId : function () {}
 			},
 			oHeaderContext = Context.create(oModel, oBinding, "/EMPLOYEES");
+
+		this.mock(oHeaderContext).expects("requestSideEffectsInternal").never();
 
 		assert.throws(function () {
 			// code under test
