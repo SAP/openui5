@@ -45,7 +45,8 @@ sap.ui.define([
 				appName: ManifestUtils.getBaseComponentNameFromManifest(mPropertyBag.manifest),
 				cacheKey: ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.asyncHints, mPropertyBag.reference),
 				siteId: Utils.getSiteIdByComponentData(mPropertyBag.componentData),
-				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest
+				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
+				draftLayer: mPropertyBag.draftLayer
 			};
 			return CompatibilityConnector.loadChanges(mComponent, mProperties);
 		}

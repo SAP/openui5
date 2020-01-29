@@ -40,7 +40,8 @@ sap.ui.define([
 				manifest: this.oManifest,
 				otherValue: "a",
 				reference: "reference",
-				componentData: {}
+				componentData: {},
+				draftLayer: "CUSTOMER"
 			};
 			var oExpectedComponent = {
 				name: "reference",
@@ -50,7 +51,8 @@ sap.ui.define([
 				cacheKey: "cacheKey",
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
-				appName: "baseName"
+				appName: "baseName",
+				draftLayer: "CUSTOMER"
 			};
 
 			assert.equal(Loader.loadFlexData(mPropertyBag), "foo", "the Loader returns whatever the CompatibilityConnector returns");
@@ -60,7 +62,9 @@ sap.ui.define([
 			assert.equal(this.oGetBaseCompNameStub.callCount, 1, "the name was retrieved from the Utils");
 			assert.equal(this.oGetCacheKeyStub.callCount, 1, "the cache key was retrieved from the Utils");
 			assert.deepEqual(this.oLoadFlexDataStub.firstCall.args[0], oExpectedComponent, "the first argument is the component");
-			assert.deepEqual(this.oLoadFlexDataStub.firstCall.args[1], oExpectedProperties, "the second argument is the property bag");
+			var mPassedPropertyBag = this.oLoadFlexDataStub.firstCall.args[1];
+			assert.equal(Object.keys(mPassedPropertyBag).length, 5, "the second argument has the right amount of keys");
+			assert.deepEqual(this.oLoadFlexDataStub.firstCall.args[1], oExpectedProperties, "and is the property bag");
 		});
 
 		QUnit.test("when loadFlexData is called without app version ", function (assert) {
@@ -78,9 +82,10 @@ sap.ui.define([
 				cacheKey: "cacheKey",
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
-				appName: "baseName"
+				appName: "baseName",
+				draftLayer: undefined
 			};
-			this.oGetAppVersionStub.returns(undefined);
+			this.oGetAppVersionStub.returns();
 
 			assert.equal(Loader.loadFlexData(mPropertyBag), "foo", "the Loader returns whatever the CompatibilityConnector returns");
 			assert.equal(this.oLoadFlexDataStub.callCount, 1, "the CompatibilityConnector was called");
