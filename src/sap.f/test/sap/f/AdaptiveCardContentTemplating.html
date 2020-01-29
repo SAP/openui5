@@ -13,11 +13,7 @@
 		</script>
 	</head>
 	<body class="sapUiBody">
-		<ui-integration-card style="width: 40%" id="my-card" manifest="./adaptivecard-manifest.json"></ui-integration-card>
+		<ui-integration-card style="width: 40%" id="my-card" manifest="./adaptivecard-templating-manifest.json"></ui-integration-card>
+		<ui-integration-card style="width: 40%" id="my-card2" manifest="./adaptivecard-templating-manifest2.json"></ui-integration-card>
 	</body>
-	<script>
-			document.getElementById("my-card").addEventListener("action", function (event) {
-				event.detail.getParameter("type") === "Submit" && console.log(event.detail.getParameter("manifestParameters"));
-			});
-	</script>
 </html>
