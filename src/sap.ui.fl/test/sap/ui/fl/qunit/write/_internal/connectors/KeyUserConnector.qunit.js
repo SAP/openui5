@@ -206,11 +206,18 @@ sap.ui.define([
 				url : "/flexKeyuser",
 				reference: "com.sap.test.app"
 			};
+			var mExpectedPropertyBag = Object.assign({
+				xsrfToken: undefined,
+				applyConnector: ApplyConnector,
+				tokenUrl: KeyUserConnector.ROUTES.TOKEN
+			}, mPropertyBag);
 			var aReturnedVersions = [];
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : aReturnedVersions});
 			return KeyUserConnector.versions.load(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, aReturnedVersions, "the versions list is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/com.sap.test.app", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
 			});
 		});
 	});
@@ -225,12 +232,18 @@ sap.ui.define([
 				url : "/flexKeyuser",
 				reference: "com.sap.test.app"
 			};
+			var mExpectedPropertyBag = Object.assign({
+				xsrfToken: undefined,
+				applyConnector: ApplyConnector,
+				tokenUrl: KeyUserConnector.ROUTES.TOKEN
+			}, mPropertyBag);
 			var oActivatedVersion = [];
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : oActivatedVersion});
 			return KeyUserConnector.versions.activateDraft(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, oActivatedVersion, "the activated version is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/draft/activate/com.sap.test.app", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
 			});
 		});
 	});
@@ -245,11 +258,17 @@ sap.ui.define([
 				url : "/flexKeyuser",
 				reference: "com.sap.test.app"
 			};
+			var mExpectedPropertyBag = Object.assign({
+				xsrfToken: undefined,
+				applyConnector: ApplyConnector,
+				tokenUrl: KeyUserConnector.ROUTES.TOKEN
+			}, mPropertyBag);
 			var oActivatedVersion = [];
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : oActivatedVersion});
 			return KeyUserConnector.versions.discardDraft(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/draft/com.sap.test.app", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "DELETE", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
 			});
 		});
 	});
