@@ -1,0 +1,138 @@
+<mvc:View
+		controllerName="sap.m.sample.Avatar.controller.Avatar"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		height="100%">
+
+	<ScrollContainer
+			height="100%"
+			width="100%"
+			horizontal="false"
+			vertical="true">
+		<Text
+				text="The Avatar Control allows usage of different shapes, sizes and content, configured
+with various types of visual affordance"
+				width="100%"
+				class="sapUiSmallMarginTop sapUiSmallMarginBegin sapUiMediumMarginBottom"/>
+		<l:Grid
+				defaultSpan="XL3 L3 M6 S6">
+			<l:content>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/m/images/274827_274827_l_srgb_s_gl.jpg"
+							displaySize="L"
+							displayShape="Circle">
+						<detailBox>
+							<LightBox>
+								<LightBoxItem
+										imageSrc="test-resources/sap/m/images/274827_274827_l_srgb_s_gl.jpg"
+										alt="Michael Adams"
+										title="This is Michael Adams"
+										subtitle="Michael Adams Human Relations">
+								</LightBoxItem>
+							</LightBox>
+						</detailBox>
+					</Avatar>
+					<Text
+							textAlign="Center"
+							text="Avatar with Lightbox attached"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/m/images/284133_GettyImages-145058106_2600.jpg"
+							displaySize="XL"
+							imageFitType="Cover"
+							press="onPress"
+							badgeIcon="sap-icon://camera"
+							badgeTooltip= "Sabine Mayer"/>
+					<Text
+							textAlign="Center"
+							text="Avatar with predefined visual affordance suggesting an image change with a custom tooltip"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="M"
+							displayShape="Circle"
+							press="onPress"
+							src="./test-resources/sap/m/images/282627_low_shutterstock_402830878.jpg"
+							badgeIcon="sap-icon://edit"
+							badgeTooltip= "Julie Armstrong"/>
+					<Text
+							textAlign="Center"
+							text="Avatar with predefined visual affordance suggesting an editing action with a custom tooltip"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="M"
+							backgroundColor="Accent7"
+							initials="JD"
+							press="onPress"
+							badgeIcon="sap-icon://camera" />
+					<Text
+							textAlign="Center"
+							text="Avatar with predefined visual affordance suggesting an image change with default tooltip"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+
+			</l:content>
+		</l:Grid>
+		<l:Grid
+				defaultSpan="XL3 L3 M6 S6">
+			<l:content>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="M"
+							backgroundColor="Accent3"
+							press="onPress"
+							badgeIcon="sap-icon://edit" />
+					<Text
+							textAlign="Center"
+							text="Avatar with predefined badge affordance and badge tooltip"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="XL"
+							displayShape="Square"
+							press="onPress"
+							src="./test-resources/sap/m/images/283930_shutterstock_56287057.jpg"
+							badgeIcon="sap-icon://edit" />
+					<Text
+							textAlign="Center"
+							text="Avatar with predefined visual affordance suggesting an editing action with default tooltip"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="XL"
+							backgroundColor="Accent5"
+							src= "sap-icon://soccer"
+							displayShape="Square"
+							press="onPress"
+							badgeIcon="sap-icon://edit" />
+					<Text
+							textAlign="Center"
+							text="Avatar with custom visual affordance and a custom tooltip"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="XL"
+							backgroundColor="Accent3"
+							src= "sap-icon://customer"
+							press="onPress"
+							badgeIcon="sap-icon://add"
+							badgeTooltip="People"/>
+					<Text
+							textAlign="Center"
+							text="Avatar with custom badge affordance icon and custom badge tooltip"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+			</l:content>
+		</l:Grid>
+	</ScrollContainer>
+</mvc:View>

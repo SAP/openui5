@@ -73,7 +73,7 @@
 	text-align: center;
 	background-color: transparent;
 
-	.sapUiIcon, .sapFAvatarInitialsHolder {
+	.sapFAvatarTypeIcon, .sapFAvatarInitialsHolder {
 		display: none;
 	}
 }
@@ -145,6 +145,8 @@
 	height: 5rem;
 	width: 5rem;
 	font-size: 2.5rem;
+	bottom: -0.1875rem;
+	right: -0.1875rem;
 
 	.sapFAvatarInitialsHolder {
 		font-size: 2rem;
@@ -185,4 +187,88 @@ html:not(.sap-desktop) .sapFAvatarFocusable:focus {
 //restrinct inner elements of blocking press event of the whole control
 .sapFAvatar * {
 	pointer-events: none;
+}
+
+.sapFAvatarBadgeIconActiveArea {
+	position: absolute;
+	pointer-events: all;
+
+	.sapFAvatarCircle & {
+		width: 100%;
+		height: 50%;
+		bottom: 0;
+		right: 0;
+	}
+	.sapFAvatarSquare & {
+		width: ~"calc(100% + 0.125rem)";
+		height: ~"calc(100% + 0.125rem)";
+		bottom: -0.125rem;
+		right:  -0.125rem;
+	}
+	.sapFAvatarSquare.sapFAvatarXL & {
+		width: ~"calc(100% + 0.25rem)";
+		height: ~"calc(100% + 0.25rem)";
+		bottom: -0.25rem;
+		right: -0.25rem;
+	}
+	.sapFAvatarSquare.sapFAvatarL & {
+		width: ~"calc(100% + 0.1875rem)";
+		height: ~"calc(100% + 0.1875rem)";
+		bottom: -0.1875rem;
+		right: -0.1875rem;
+	}
+	.sapFAvatarSquare.sapFAvatarCustom & {
+		width: 104%;
+		height: 104%;
+		bottom: 4%;
+		right: 4%;
+	}
+}
+
+.sapFAvatarBadgeIcon {
+	display: inline-block;
+	position: absolute;
+	bottom: 0;
+	right:  0;
+
+	width: 1.125rem;
+	height: 1.125rem;
+
+	border-radius: 50%;
+	font-size: 0.75rem;
+	text-align: center;
+
+	background-color: @sapUiLink;
+	border-color: @sapUiContentContrastTextColor;
+
+	>.sapUiIcon {
+		vertical-align: middle;
+		color: @sapUiContentContrastTextColor;
+	}
+	&:after {
+		content: "";
+		display: inline-block;
+		vertical-align: middle;
+		height: 100%;
+	}
+	.sapFAvatarL & {
+
+		width: 1.25rem;
+		height: 1.25rem;
+		font-size: 0.875rem;
+	}
+
+	.sapFAvatarXL & {
+
+		width: 1.75rem;
+		height: 1.75rem;
+		font-size: 1rem;
+	}
+
+	.sapFAvatarCustom & {
+		font-size: 	66%;
+
+		width: 25%;
+		height: 50%;
+	}
 }
