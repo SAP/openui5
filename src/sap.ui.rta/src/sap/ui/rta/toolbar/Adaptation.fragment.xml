@@ -1,0 +1,150 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core" >
+    <HBox width="33.333%" >
+        <OverflowToolbar class="sapUiRta_iconAndDraftBar">
+            <content>
+                <HBox id="sapUiRta_iconBox" />
+                <ToolbarSpacer
+                        id="sapUiRta_iconSpacer"
+                        width="0%"
+                        visible="false" />
+            </content>
+        </OverflowToolbar>
+    </HBox>
+    <HBox
+            id="sapUiRta_switcherSection"
+            class="sapUiRtaToolbarSwitcherSection"
+            width="33.333%" >
+        <OverflowToolbar>
+            <content>
+                <ToolbarSpacer />
+                <SegmentedButton
+                        id="sapUiRta_modeSwitcher"
+                        selectionChange=".modeChange"
+                        width="auto" >
+                    <items>
+                        <SegmentedButtonItem
+                                id="sapUiRta_adaptationSwitcherButton"
+                                text="{i18n>BTN_ADAPTATION}"
+                                width="auto"
+                                key="adaptation" />
+                        <SegmentedButtonItem
+                                id="sapUiRta_navigationSwitcherButton"
+                                text="{i18n>BTN_NAVIGATION}"
+                                width="auto"
+                                key="navigation" />
+                    </items>
+                </SegmentedButton>
+                <ToolbarSpacer />
+            </content>
+        </OverflowToolbar>
+    </HBox>
+    <HBox width="33.333%" justifyContent="End" >
+        <OverflowToolbar id="sapUiRta_actionsToolbar" >
+            <content>
+                <ToolbarSpacer />
+                <Button
+                        id="sapUiRta_undo"
+                        icon="sap-icon://undo"
+                        press=".undo"
+                        enabled="false"
+                        type="Transparent"
+                        tooltip="{i18n>BTN_UNDO}" >
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                    </layoutData>
+                </Button>
+                <Button
+                        id="sapUiRta_redo"
+                        icon="sap-icon://redo"
+                        press=".redo"
+                        enabled="false"
+                        type="Transparent"
+                        tooltip="{i18n>BTN_REDO}" >
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                    </layoutData>
+                </Button>
+                <Button
+                        id="sapUiRta_publish"
+                        enabled="false"
+                        press=".publish"
+                        type="Transparent"
+                        text="{i18n>BTN_PUBLISH}" >
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="High" />
+                    </layoutData>
+                </Button>
+                <Button
+                        id="sapUiRta_restore"
+                        enabled="false"
+                        press=".restore"
+                        type="Transparent"
+                        text="{i18n>BTN_RESTORE}" >
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="High" />
+                    </layoutData>
+                </Button>
+                <Button
+                    id="sapUiRta_manageApps"
+                    press=".manageApps"
+                    enabled="false"
+                    visible="false"
+                    type="Transparent"
+                    text="{i18n>BTN_MANAGE_APPS_TXT}" >
+                <layoutData>
+                    <OverflowToolbarLayoutData priority="Low" />
+                </layoutData>
+            </Button>
+                <MenuButton
+                        id="sapUiRta_appVariantOverview"
+                        enabled="false"
+                        visible="false"
+                        type="Transparent"
+                        text="{i18n>BTN_MANAGE_APPS_TXT}" >
+                    <menu>
+                        <Menu
+                                itemSelected=".appVariantOverview"
+                                id="sapUiRta_appVariantMenu" >
+                            <MenuItem
+                                    id="sapUiRta_keyUser"
+                                    text="{i18n>MENU_ITEM_KEY_USER}" />
+                            <MenuItem
+                                    id="sapUiRta_developer"
+                                    text="{i18n>MENU_ITEM_SAP_DEVELOPER}" />
+                        </Menu>
+                    </menu>
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </MenuButton>
+                <Button
+                        id="sapUiRta_saveAs"
+                        visible="false"
+                        enabled="false"
+                        press=".saveAs"
+                        type="Transparent"
+                        text="{i18n>BTN_SAVE_AS}" >
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </Button>
+            </content>
+            <layoutData>
+                <FlexItemData
+                        growFactor="1"
+                        minWidth="0" />
+            </layoutData>
+        </OverflowToolbar>
+        <Button
+                id="sapUiRta_exit"
+                type="Transparent"
+                press=".exit"
+                text="{i18n>BTN_EXIT}" >
+        </Button>
+        <layoutData>
+            <FlexItemData growFactor="0" />
+        </layoutData>
+    </HBox>
+</core:FragmentDefinition>

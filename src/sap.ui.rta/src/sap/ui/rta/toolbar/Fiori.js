@@ -44,10 +44,9 @@ function(
 	});
 
 	Fiori.prototype.init = function () {
-		Adaptation.prototype.init.apply(this, arguments);
-
 		this._oRenderer = Utils.getFiori2Renderer();
 		this._oFioriHeader = this._oRenderer.getRootControl().getOUnifiedShell().getHeader();
+		Adaptation.prototype.init.apply(this, arguments);
 	};
 
 	Fiori.prototype.show = function () {
@@ -57,31 +56,34 @@ function(
 	};
 
 	Fiori.prototype.buildControls = function () {
-		var aControls = Adaptation.prototype.buildControls.apply(this, arguments);
-		var sLogoPath = this._oFioriHeader.getLogo();
+		return Adaptation.prototype.buildControls.apply(this, arguments).then(function (aControls) {
+			var sLogoPath = this._oFioriHeader.getLogo();
 
-		if (this._oFioriHeader.getShowLogo() && sLogoPath) {
-			// Unstable: if FLP changes ID of <img/> element, logo could be not found
-			var $logo = this._oFioriHeader.$().find('#shell-header-icon');
-			var iWidth;
-			var iHeight;
+			if (this._oFioriHeader.getShowLogo() && sLogoPath) {
+				// Unstable: if FLP changes ID of <img/> element, logo could be not found
+				var $logo = this._oFioriHeader.$().find('#shell-header-icon');
+				var iWidth;
+				var iHeight;
 
-			if ($logo.length) {
-				iWidth = $logo.width();
-				iHeight = $logo.height();
-				this._checkLogoSize($logo, iWidth, iHeight);
+				if ($logo.length) {
+					iWidth = $logo.width();
+					iHeight = $logo.height();
+					this._checkLogoSize($logo, iWidth, iHeight);
+				}
+
+				this.getControl("iconSpacer").setWidth("10%");
+
+				// first control is the left HBox
+				this.getControl("iconBox").addItem(
+					new Image("sapUiRta_icon", {
+						src: sLogoPath,
+						width: iWidth ? iWidth + 'px' : iWidth,
+						height: iHeight ? iHeight + 'px' : iHeight
+					})
+				);
 			}
-
-			// first control is the left HBox
-			aControls[0].addItem(
-				this._mControls["logo"] = new Image({
-					src: sLogoPath,
-					width: iWidth ? iWidth + 'px' : iWidth,
-					height: iHeight ? iHeight + 'px' : iHeight
-				})
-			);
-		}
-		return aControls;
+			return aControls;
+		}.bind(this));
 	};
 
 	Fiori.prototype.hide = function () {

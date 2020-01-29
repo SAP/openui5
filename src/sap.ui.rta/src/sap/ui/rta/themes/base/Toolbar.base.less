@@ -15,6 +15,8 @@
 	height: 48px; /* Overrider `.sapUiSizeCompact .sapMTB` */
 
 	.sapMBtn {
+		padding: 0;
+		height: 40px;
 		margin: 0 4px;
 		&.sapMBtnDisabled .sapMBtnInner{
 			opacity: 0.5;
@@ -89,6 +91,16 @@
 		outline: none;
 		border: 1px dotted @_sap_ui_rta_Toolbar_Base_TextColor;
 	}
+
+	.sapMTBStandard {
+		height: 2.5rem;
+		border-bottom: none;
+	}
+
+}
+
+.sapUiRtaToolbarSwitcherSection > div {
+	width: 100%;
 }
 
 html.sap-desktop .sapUiRtaMode .sapUiRtaToolbar .sapMBtn:focus {

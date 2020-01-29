@@ -112,8 +112,9 @@ function(
 		});
 
 		QUnit.test('buildControls() method', function(assert) {
-			var aControls = this.oToolbar.buildControls();
-			assert.ok(Array.isArray(aControls) && aControls.length === 0, 'returns an empty array');
+			return this.oToolbar.buildControls().then(function(aControls) {
+				assert.ok(Array.isArray(aControls) && aControls.length === 0, 'returns an empty array');
+			});
 		});
 	});
 
@@ -137,20 +138,22 @@ function(
 
 			CustomToolbar.prototype.buildControls = function () {
 				// expose button to the context of the unit test
-				that.oButton = new Button({
+				that.oButton = new Button("sapUiRta_action", {
 					type: 'Transparent',
 					icon: 'sap-icon://home',
 					press: this.eventHandler.bind(this, 'Action')
 				}).data('name', 'action');
 
-				return [
+				return Promise.resolve([
 					that.oButton
-				];
+				]);
 			};
 
 			this.oToolbar = new CustomToolbar();
 		},
 		afterEach: function() {
+			// by default RuntimeAuthoring takes care of destroying the controls
+			this.oButton.destroy();
 			this.oToolbar.destroy();
 		}
 	}, function () {
