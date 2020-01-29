@@ -2921,6 +2921,52 @@
 					}
 				}
 			}
+		},
+		"timeline": {
+			"sap.card": {
+				"type": "Timeline",
+				"header": {
+					"title": "Upcoming Activities",
+					"subTitle": "For Today"
+				},
+				"content": {
+					"maxItems": "3",
+					"data": {
+						"json": [
+							{
+								"Title": "Weekly sync: Marketplace / Design Stream",
+								"Description": "MRR WDF18 C3.2(GLASSBOX)",
+								"Icon": "sap-icon://appointment-2",
+								"Time": "10:00 - 10:30"
+							},
+							{
+								"Title": "Video Conference for FLP@SF, S4,Hybris",
+								"Icon": "sap-icon://my-view",
+								"Time": "14:00 - 15:30"
+							},
+							{
+								"Title": "Call 'Project Nimbus'",
+								"Icon": "sap-icon://outgoing-call",
+								"Time": "16:00 - 16:30"
+							}
+						]
+					},
+					"item": {
+						"dateTime": {
+							"value": "{Time}"
+						},
+						"description": {
+							"value": "{Description}"
+						},
+						"title": {
+							"value": "{Title}"
+						},
+						"icon": {
+							"src": "{Icon}"
+						}
+					}
+				}
+			}
 		}
 	}
 }

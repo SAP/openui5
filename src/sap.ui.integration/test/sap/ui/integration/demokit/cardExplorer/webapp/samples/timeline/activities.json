@@ -32,6 +32,7 @@
 			"subTitle": "For Today"
 		},
 		"content": {
+			"maxItems": "7",
 			"data": {
 				"json": [
 					{

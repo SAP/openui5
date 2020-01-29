@@ -59,7 +59,7 @@ sap.ui.define([
 			var sLibrary = oCardContent.getMetadata().getLibraryName();
 			var sName = oCardContent.getMetadata().getName();
 			var sType = sName.slice(sLibrary.length + 1, sName.length);
-			var sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration());
+			var sHeight;
 			var oCard = oCardContent.getParent();
 			sClass += sType;
 
@@ -70,6 +70,7 @@ sap.ui.define([
 			oRm.writeClasses();
 
 			if (oCard && oCard.isA("sap.f.ICard") && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+				sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration(), oCardContent.getParent() || oCardContent);
 				oRm.addStyle("min-height", sHeight);
 			}
 
@@ -397,22 +398,24 @@ sap.ui.define([
 		});
 	};
 
-	BaseContent.getMinHeight = function (sType, oContent) {
+	BaseContent.getMinHeight = function (sType, oConfiguration, oContent) {
 
 		var MIN_HEIGHT = 5,
-			iHeight;
+			iHeight,
+			isCompact = oContent.$().parents().hasClass('sapUiSizeCompact');
 
-		if (jQuery.isEmptyObject(oContent)) {
+
+		if (jQuery.isEmptyObject(oConfiguration)) {
 			return "0rem";
 		}
 
 		switch (sType) {
 			case "ListContent":
-				iHeight = BaseContent._getMinListHeight(oContent); break;
+				iHeight = BaseContent._getMinListHeight(oConfiguration, isCompact); break;
 			case "TableContent":
-				iHeight = BaseContent._getMinTableHeight(oContent); break;
+				iHeight = BaseContent._getMinTableHeight(oConfiguration, isCompact); break;
 			case "TimelineContent":
-				iHeight = BaseContent._getMinTimelineHeight(oContent); break;
+				iHeight = BaseContent._getMinTimelineHeight(oConfiguration, isCompact); break;
 			case "AnalyticalContent":
 				iHeight = 14; break;
 			case "AnalyticsCloudContent":
@@ -423,38 +426,36 @@ sap.ui.define([
 				iHeight = 0;
 		}
 
-		return  (iHeight !== 0 ? iHeight : MIN_HEIGHT) + "rem";
+		return (iHeight !== 0 ? iHeight : MIN_HEIGHT) + "rem";
 	};
 
-	BaseContent._getMinListHeight = function (oContent) {
-		var iCount = oContent.maxItems || 0,
-			oTemplate = oContent.item,
-			iItemHeight = 3; // list item height in "rem"
+	BaseContent._getMinListHeight = function (oConfiguration, isCompact) {
+		var iCount = parseInt(oConfiguration.maxItems) || 0,
+			oTemplate = oConfiguration.item,
+			iItemHeight = isCompact ? 2 : 3; // list item height in "rem"
 
 		if (!oTemplate) {
 			return 0;
 		}
 
 		if (oTemplate.icon || oTemplate.description) {
-			iItemHeight = 4; // list item height with icon in "rem"
+			iItemHeight = isCompact ? 3 : 4; // list item height with icon in "rem"
 		}
 
 		return iCount * iItemHeight;
 	};
 
-	BaseContent._getMinTableHeight = function (oContent) {
-		var iCount = oContent.maxItems || 0,
-			iRowHeight = 2, // table row height in "rem" for compact mode
-			iTableHeaderHeight = 2; // table header height in "rem" for compact mode
-
-		// if higher accuracy is needed, then a detection for is it cozy or compact should be added
+	BaseContent._getMinTableHeight = function (oConfiguration, isCompact) {
+		var iCount = parseInt(oConfiguration.maxItems) || 0,
+			iRowHeight = isCompact ? 2 : 3, // table row height in "rem"
+			iTableHeaderHeight = isCompact ? 2 : 3; // table header height in "rem"
 
 		return iCount * iRowHeight + iTableHeaderHeight;
 	};
 
-	BaseContent._getMinTimelineHeight = function (oContent) {
-		var iCount = oContent.maxItems || 0,
-			iItemHeight = 6; // timeline item height in "rem"
+	BaseContent._getMinTimelineHeight = function (oConfiguration, isCompact) {
+		var iCount = parseInt(oConfiguration.maxItems) || 0,
+			iItemHeight = isCompact ? 4 : 5; // timeline item height in "rem"
 
 		return iCount * iItemHeight;
 	};

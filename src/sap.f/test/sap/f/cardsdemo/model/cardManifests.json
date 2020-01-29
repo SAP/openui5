@@ -2106,6 +2106,7 @@
 					}
 				},
 				"content": {
+					"maxItems": "7",
 					"data": {
 						"request": {
 							"url": "./cardcontent/employees.json"
@@ -2148,6 +2149,7 @@
 					"subTitle": "For Today"
 				},
 				"content": {
+					"maxItems": "5",
 					"data": {
 						"request": {
 							"url": "./cardcontent/employees.json"
@@ -2193,6 +2195,7 @@
 					}
 				},
 				"content": {
+					"maxItems": "7",
 					"items": [{
 							"owner": "Laurent Dubois",
 							"title": "Accounts Payable Manager",
