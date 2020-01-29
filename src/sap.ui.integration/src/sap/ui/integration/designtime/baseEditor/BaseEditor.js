@@ -363,11 +363,24 @@ sap.ui.define([
 					oPropertyEditor.attachValueChange(this._onValueChange.bind(this));
 					this._mPropertyEditors[sPropertyName] = oPropertyEditor;
 					this.addAggregation("_propertyEditors", oPropertyEditor);
+
+					oPropertyEditor.ready().then(function () {
+						this._checkReady();
+					}.bind(this));
 				}
 			}, this);
-			this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditorsSync()});
+			this._checkReady();
 		}.bind(this));
 
+	};
+
+	BaseEditor.prototype._checkReady = function () {
+		if (this.getPropertyEditorsSync().every(function (oEditor) {
+			return oEditor.isReady();
+		})) {
+			// All property editors are ready
+			this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditorsSync()});
+		}
 	};
 
 	BaseEditor.prototype._createPromise = function (fn) {

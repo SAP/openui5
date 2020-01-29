@@ -14,6 +14,9 @@ sap.ui.define([
 
 	var CREATED_BY_CONFIG = "config";
 	var CREATED_BY_TAGS = "tags";
+	var STATUS_CREATED = "created"; // Initial state: wrapper was just created, initialization was not executed yet
+	var STATUS_SYNCING = "syncing"; // Initialization in progress
+	var STATUS_READY = "ready"; // Initialization completed
 
 	/**
 	 * @class
@@ -116,6 +119,11 @@ sap.ui.define([
 				},
 
 				/**
+				 * Fires when the wrapper is initialized.
+				 */
+				init: {},
+
+				/**
 				 * Fires when <code>config</code> changes.
 				 */
 				configChange: {
@@ -147,6 +155,7 @@ sap.ui.define([
 
 		_bEditorAutoDetect: false,
 		_sCreatedBy: null, // possible values: null | propertyName | config
+		_sState: STATUS_CREATED,
 
 		constructor: function() {
 			Control.prototype.constructor.apply(this, arguments);
@@ -198,6 +207,12 @@ sap.ui.define([
 
 			// init
 			this._initPropertyEditors();
+		},
+
+		init: function () {
+			Promise.resolve().then(function () {
+				this.fireInit();
+			}.bind(this));
 		},
 
 		renderer: function (oRm, oControl) {
@@ -295,6 +310,38 @@ sap.ui.define([
 		}
 	};
 
+	PropertyEditors.prototype.isReady = function () {
+		// The wrapper is ready when the initialization was executed and all nested editors are ready
+		return this._sState === STATUS_READY && this.getAggregation("propertyEditors").every(function (oNestedEditor) {
+			return oNestedEditor.isReady();
+		});
+	};
+
+	/**
+	 * Wait for the wrapper and its nested editors to be ready.
+	 * @returns {Promise} Promise which will resolve once all nested editors are ready. Resolves immediately if all nested editors are currently ready.
+	 */
+	PropertyEditors.prototype.ready = function () {
+		return new Promise(function (resolve) {
+			var fnCheckPropertyEditorsReady = function () {
+				Promise.all(this.getAggregation("propertyEditors").map(function (oPropertyEditor) {
+					return oPropertyEditor.ready();
+				})).then(function () {
+					resolve();
+				});
+			}.bind(this);
+
+			if (this._sState !== STATUS_READY) {
+				// Wait for initialization of nested editors before checking their ready states
+				this.attachEventOnce("propertyEditorsChange", function () {
+					fnCheckPropertyEditorsReady();
+				});
+			} else {
+				fnCheckPropertyEditorsReady();
+			}
+		}.bind(this));
+	};
+
 	PropertyEditors.prototype._initPropertyEditors = function () {
 		if (
 			this.getEditor()
@@ -306,6 +353,7 @@ sap.ui.define([
 				)
 			)
 		) {
+			this._sState = STATUS_SYNCING;
 			var oEditor = this.getEditor();
 			// Cancel previous async process if any
 			if (this._fnCancelInit) {
@@ -353,6 +401,7 @@ sap.ui.define([
 				aPropertyEditors.forEach(function (oPropertyEditor) {
 					this.addAggregation("propertyEditors", oPropertyEditor);
 				}, this);
+				this._sState = STATUS_READY;
 				this.firePropertyEditorsChange({
 					previousPropertyEditors: aPreviousPropertyEditors,
 					propertyEditors: (this.getAggregation("propertyEditors") || []).slice()

@@ -45,7 +45,7 @@ sap.ui.define([
 			this.setModel(this._itemsModel, "itemsModel");
 		},
 
-		onValueChange: function() {
+		setValue: function() {
 			var oConfig = this.getConfig();
 			if (oConfig.value) {
 				var aItems = Object.keys(oConfig.value).map(function (sKey) {
@@ -59,7 +59,12 @@ sap.ui.define([
 					};
 				});
 				this._itemsModel.setData(aItems);
+				BasePropertyEditor.prototype.setValue.call(this, aItems);
 			}
+		},
+
+		getExpectedWrapperCount: function (vValue) {
+			return vValue.length;
 		},
 
 		_onRemoveElement: function(oEvent) {

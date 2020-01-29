@@ -55,6 +55,7 @@ sap.ui.define([
 			text: "{icons>path}",
 			additionalText: "{icons>name}"
 		}));
+		return Promise.resolve();
 	};
 
 	IconEditor.prototype._getIconModel = function () {

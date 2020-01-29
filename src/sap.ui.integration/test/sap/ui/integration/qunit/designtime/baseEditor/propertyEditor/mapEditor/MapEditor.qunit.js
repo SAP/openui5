@@ -128,7 +128,7 @@ sap.ui.define([
 		QUnit.test("When an element is added to an empty map", function (assert) {
 			var fnDone = assert.async();
 
-			this.oBaseEditor.attachPropertyEditorsReady(function (oEvent) {
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function (oEvent) {
 				this.oEditor = oEvent.getParameter("propertyEditors")[0];
 				sap.ui.getCore().applyChanges();
 				this.oAddButton = getMapEditorContent(this.oEditor).addButton;
