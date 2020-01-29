@@ -93,16 +93,13 @@ sap.ui.define([
 	QUnit.test("getHashChanger", function(assert) {
 		var oRouter = new Router({}, {async: true}, null, {});
 
-		assert.strictEqual(oRouter.getHashChanger(), undefined, "The router has no hash changer assigned from the constructor");
+		assert.ok(oRouter.getHashChanger().isA("sap.ui.core.routing.RouterHashChanger"), "The router has default hashchanger created in the constructor");
 		oRouter.destroy();
 	});
 
 	QUnit.test("setHashChanger", function(assert) {
 		var oRouter = new Router({}, {async: true}, null, {});
-		var oRouterHashChanger = HashChanger.getInstance().createRouterHashChanger();
-		oRouter.setHashChanger(oRouterHashChanger);
-
-		assert.strictEqual(oRouter.getHashChanger(), oRouterHashChanger, "The RouterHashChanger is set by the setter");
+		var oRouterHashChanger = oRouter.getHashChanger();
 
 		var oWarningSpy = sinon.spy(Log, "warning");
 		oRouter.setHashChanger({});
@@ -127,9 +124,7 @@ sap.ui.define([
 	QUnit.test("constructor without RouterHashChanger", function(assert) {
 		var oRouter = new Router({}, {async: true}, null, {});
 
-		assert.strictEqual(oRouter.getHashChanger(), undefined, "The hash changer isn't assigned to the router yet");
-		oRouter.initialize();
-		assert.ok(oRouter.getHashChanger(), "The router should be assigned with a hashchanger automatically after init");
+		assert.ok(oRouter.getHashChanger().isA("sap.ui.core.routing.RouterHashChanger"), "A hash changer is created by default");
 		oRouter.destroy();
 	});
 
@@ -156,6 +151,38 @@ sap.ui.define([
 		assert.strictEqual(parseSpy.callCount, 2, "did notify for hashChanged");
 
 		//Cleanup
+		router.destroy();
+	});
+
+	QUnit.test("Should get the hash from browser after the router is initialized", function(assert) {
+		var hash = "foobar",
+			hashChanger = new HashChanger(),
+			router, parseSpy;
+
+		// destroy the previous hash changer
+		HashChanger.getInstance().destroy();
+
+		// replace the global hash changer with a new one
+		HashChanger.replaceHashChanger(hashChanger);
+
+		// create the router
+		router = fnCreateRouter();
+		parseSpy = this.spy(router, "parse");
+
+		// change the browser hash
+		hasher.setHash(hash);
+
+		// init the hash changer to listen to the browser hash change
+		HashChanger.getInstance().init();
+
+		// Act
+		router.initialize();
+
+		// Assert
+		assert.equal(parseSpy.callCount, 1, "did notify after initialized");
+		assert.equal(parseSpy.getCall(0).args[0], hash, "the correct hash is parsed");
+
+		// Cleanup
 		router.destroy();
 	});
 
