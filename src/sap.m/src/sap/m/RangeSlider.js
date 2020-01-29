@@ -8,7 +8,8 @@ sap.ui.define([
     "./SliderTooltip",
     "./SliderUtilities",
     "./RangeSliderRenderer",
-    "sap/ui/thirdparty/jquery"
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/events/KeyCodes"
 ],
     function(
         InvisibleText,
@@ -17,7 +18,8 @@ sap.ui.define([
         SliderTooltip,
         SliderUtilities,
         RangeSliderRenderer,
-        jQuery
+        jQuery,
+        KeyCodes
     ) {
         "use strict";
 
@@ -959,6 +961,10 @@ sap.ui.define([
 
             if (bF2Pressed && bShowAdvancedTooltips && bFocusableTooltip && bTargetIsHandle) {
                 this._mHandleTooltip[bStartTooltipFocused ? "start" : "end"].tooltip.focus();
+            }
+
+            if (oEvent.keyCode === KeyCodes.SPACE) {
+                oEvent.preventDefault();
             }
         };
 

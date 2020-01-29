@@ -15,7 +15,8 @@ sap.ui.define([
 	'./SliderUtilities',
 	'./SliderRenderer',
 	'./ResponsiveScale',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	Control,
@@ -30,7 +31,8 @@ function(
 	SliderUtilities,
 	SliderRenderer,
 	ResponsiveScale,
-	jQuery
+	jQuery,
+	KeyCodes
 ) {
 		"use strict";
 
@@ -1264,6 +1266,10 @@ function(
 
 			if (oEvent.keyCode === SliderUtilities.CONSTANTS.F2_KEYCODE && aTooltips[0] && this.getInputsAsTooltips()) {
 				aTooltips[0].focus();
+			}
+
+			if (oEvent.keyCode === KeyCodes.SPACE) {
+				oEvent.preventDefault();
 			}
 		};
 

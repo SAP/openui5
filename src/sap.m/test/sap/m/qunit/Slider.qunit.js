@@ -1939,6 +1939,35 @@ sap.ui.define([
 	});
 
 	/* =========================================================== */
+	/* keydown                                                     */
+	/* =========================================================== */
+
+	QUnit.test("Firing event keydown === SPACE should prevent the page to scroll down", function(assert) {
+
+		// system under test
+		var oSlider = new Slider();
+
+
+		// arrange
+		var preventDefaultSpy = this.spy(),
+			fnFakeEvent = {
+				preventDefault: preventDefaultSpy,
+				keyCode: KeyCodes.SPACE
+			};
+		oPage.addContent(oSlider);
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oSlider.onkeydown(fnFakeEvent);
+
+		// assert
+		assert.ok(preventDefaultSpy.calledOnce, "Prevent default should be called once.");
+
+		// cleanup
+		oSlider.destroy();
+	});
+
+	/* =========================================================== */
 	/* RTL module                                                  */
 	/* =========================================================== */
 

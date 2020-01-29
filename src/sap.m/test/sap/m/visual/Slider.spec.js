@@ -1,10 +1,16 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser, protractor*/
 
 describe("sap.m.Slider", function() {
 	"use strict";
 
 	it("should load test page",function(){
 		expect(takeScreenshot()).toLookAs("initial");
+	});
+
+	it("Shouldn't scroll the page down on Space press", function() {
+		element(by.id("__slider0-handle")).click();
+		element(by.id("__slider0-handle")).sendKeys(protractor.Key.SPACE);
+		expect(takeScreenshot()).toLookAs("slider-space-press");
 	});
 
 	it("should show default Slider", function() {
@@ -56,5 +62,4 @@ describe("sap.m.Slider", function() {
 			expect(takeScreenshot(element(by.id("__slider14")))).toLookAs("slider-tickmarks-and-labels-resized2");
 		});
 	});
-
 });
