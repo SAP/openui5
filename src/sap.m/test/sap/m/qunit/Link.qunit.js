@@ -333,12 +333,11 @@ sap.ui.define([
 		oLink1.setEnabled(false);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok($oLink.attr("disabled"), "Attribute 'disabled' should be placed on disabled links");
-		assert.notOk($oLink.attr("aria-disabled"), "Attribute 'aria-disabled' is redundant if 'disabled' is also there");
+		assert.ok($oLink.attr("aria-disabled"), "Attribute 'aria-disabled' should be placed on disabled links");
 		oLink1.setEnabled(true);
 		sap.ui.getCore().applyChanges();
 
-		assert.notOk($oLink.attr("disabled"), "Attribute 'disabled' should not exist for non-disabled links");
+		assert.notOk($oLink.attr("aria-disabled"), "Attribute 'aria-disabled' should not exist for non-disabled links");
 
 		// ARIA describedby for Subtle link
 		oLink1.setSubtle(true);
