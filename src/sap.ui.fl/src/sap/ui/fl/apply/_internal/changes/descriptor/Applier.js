@@ -8,13 +8,15 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/performance/Measurement",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/util/UriParameters"
 ], function(
 	DescriptorChangeHandlerRegistration,
 	FlexState,
 	ManifestUtils,
 	Measurement,
-	Utils
+	Utils,
+	UriParameters
 ) {
 	"use strict";
 
@@ -39,13 +41,21 @@ sap.ui.define([
 		 * @returns {Promise<object>} - Processed manifest
 		 */
 		preprocessManifest: function(oManifest, oConfig) {
+			// Measurement for the whole flex processing until the VariantModel is attached to the component; this does not include actual CodeExt or UI change applying
+			Measurement.start("flexProcessing", "Complete flex processing", ["sap.ui.fl"]);
+
+			// toggle client side appdescriptor change merger with url parameter sap-ui-xx-appdescriptor-merger=true
+			var oUriParameters = new UriParameters(window.location.href);
+			var sClientSideMergerEnabled = oUriParameters.get("sap-ui-xx-appdescriptor-merger");
+			if (sClientSideMergerEnabled !== "true") {
+				return Promise.resolve(oManifest);
+			}
+
 			// stop processing if the component is not of the type application or component ID is missing
 			if (!Utils.isApplication(oManifest, true) || !oConfig.id) {
 				return Promise.resolve(oManifest);
 			}
 
-			// Measurement for the whole flex processing until the VariantModel is attached to the component; this does not include actual CodeExt or UI change applying
-			Measurement.start("flexProcessing", "Complete flex processing", ["sap.ui.fl"]);
 			Measurement.start("flexStateInitialize", "Initialization of flex state", ["sap.ui.fl"]);
 
 			var oComponentData = oConfig.componentData || {};
