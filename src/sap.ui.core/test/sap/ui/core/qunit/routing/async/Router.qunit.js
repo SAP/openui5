@@ -97,16 +97,13 @@ sap.ui.define([
 	QUnit.test("getHashChanger", function(assert) {
 		var oRouter = new Router({}, {async: true}, null, {});
 
-		assert.strictEqual(oRouter.getHashChanger(), undefined, "The router has no hash changer assigned from the constructor");
+		assert.ok(oRouter.getHashChanger().isA("sap.ui.core.routing.RouterHashChanger"), "The router has default hashchanger created in the constructor");
 		oRouter.destroy();
 	});
 
 	QUnit.test("setHashChanger", function(assert) {
 		var oRouter = new Router({}, {async: true}, null, {});
-		var oRouterHashChanger = HashChanger.getInstance().createRouterHashChanger();
-		oRouter.setHashChanger(oRouterHashChanger);
-
-		assert.strictEqual(oRouter.getHashChanger(), oRouterHashChanger, "The RouterHashChanger is set by the setter");
+		var oRouterHashChanger = oRouter.getHashChanger();
 
 		var oWarningSpy = sinon.spy(Log, "warning");
 		oRouter.setHashChanger({});
@@ -131,9 +128,7 @@ sap.ui.define([
 	QUnit.test("constructor without RouterHashChanger", function(assert) {
 		var oRouter = new Router({}, {async: true}, null, {});
 
-		assert.strictEqual(oRouter.getHashChanger(), undefined, "The hash changer isn't assigned to the router yet");
-		oRouter.initialize();
-		assert.ok(oRouter.getHashChanger(), "The router should be assigned with a hashchanger automatically after init");
+		assert.ok(oRouter.getHashChanger().isA("sap.ui.core.routing.RouterHashChanger"), "A hash changer is created by default");
 		oRouter.destroy();
 	});
 
