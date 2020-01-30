@@ -21,8 +21,8 @@ sap.ui.define([
 	var _oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	var _mText = {
 		dialogTitle: _oTextResources.getText("IFRAME_URLBUILDER_DIALOG_TITLE"),
-		urlTitle: _oTextResources.getText("IFRAME_URLBUILDER_DIALOG_URL_TITLE"),
 		previewUrlLabel: _oTextResources.getText("IFRAME_URLBUILDER_DIALOG_PREVIEW_URL_LABEL"),
+		previewUrlMessage: _oTextResources.getText("IFRAME_URLBUILDER_DIALOG_BUTTON_PREVIEW_MESSAGE"),
 		showPreviewButton: _oTextResources.getText("IFRAME_URLBUILDER_DIALOG_BUTTON_SHOW_PREVIEW"),
 		editUrlLabel: _oTextResources.getText("IFRAME_URLBUILDER_DIALOG_EDIT_URL_LABEL"),
 		parametersLabel: _oTextResources.getText("IFRAME_URLBUILDER_DIALOG_PARAMETERS_LABEL"),

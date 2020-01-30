@@ -15,7 +15,8 @@
 							<FlexItemData growFactor="1"/>
 						</layoutData>
 						<items>
-							<util:IFrame id="sapUiRtaUrlBuilderIframe"/>
+							<Label text="{/text/previewUrlMessage}" textAlign="Center" visible="{= !${/previewUrl/value} }" />
+							<util:IFrame id="sapUiRtaUrlBuilderIframe" visible="{= !!${/previewUrl/value} }"/>
 						</items>
 					</VBox>
 
@@ -34,11 +35,6 @@
 						</layoutData>
 						<items>
 							<layout:Grid defaultSpan="XL6 L6 M6 S6">
-								<Title level="H3" titleStyle="H3" text="{/text/urlTitle}">
-									<layoutData>
-										<layout:GridData span="XL12 L12 M12 S12"/>
-									</layoutData>
-								</Title>
 								<layout:content>
 									<VBox>
 										<items>

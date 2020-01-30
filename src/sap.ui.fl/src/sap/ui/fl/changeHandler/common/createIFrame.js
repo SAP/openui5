@@ -24,9 +24,11 @@ sap.ui.define([
 		var oChangeDefinition = oChange.getDefinition();
 		var oView = mPropertyBag.view;
 		var oComponent = mPropertyBag.appComponent;
-		var mIFrameSettings = {};
+		var mIFrameSettings = { _settings: {} };
 		["url", "width", "height"].forEach(function (sIFrameProperty) {
-			mIFrameSettings[sIFrameProperty] = oChangeDefinition.content[sIFrameProperty];
+			var vValue = oChangeDefinition.content[sIFrameProperty];
+			mIFrameSettings[sIFrameProperty] = vValue;
+			mIFrameSettings._settings[sIFrameProperty] = vValue;
 		});
 		var oIFrame = oModifier.createControl("sap.ui.fl.util.IFrame", oComponent, oView, oSelector, mIFrameSettings, false);
 		return oIFrame;
