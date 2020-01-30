@@ -979,7 +979,7 @@ sap.ui.define([
 
 			this._bIsVerticalScrollbarExternal = false;
 
-			oTable.addEventDelegate(this._delegate, oTable);
+			TableUtils.addDelegate(this._delegate, oTable, true);
 
 			return "ScrollExtension";
 		},

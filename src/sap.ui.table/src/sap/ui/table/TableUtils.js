@@ -1462,6 +1462,17 @@ sap.ui.define([
 			}
 
 			return null;
+		},
+
+		/**
+		 * Adds a delegate that listens to the events that are fired on the object passed as second parameter.
+		 *
+		 * @param oDelegate the delegate object
+		 * @param oThis this object will be the "this" context in the listener methods
+		 */
+		addDelegate: function(oDelegate, oThis, bIsContext) {
+			var oElement = bIsContext ? oThis : undefined;
+			oThis.addDelegate(oDelegate, false, oElement, false);
 		}
 	};
 

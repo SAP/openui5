@@ -265,7 +265,7 @@ sap.ui.define([
 		_init: function(oTable, sTableType, mSettings) {
 			this._oDelegate = ExtensionDelegate;
 
-			oTable.addEventDelegate(this._oDelegate, oTable);
+			TableUtils.addDelegate(this._oDelegate, oTable, true);
 
 			return "DragAndDropExtension";
 		},
