@@ -269,9 +269,9 @@ sap.ui.define([
 			this._actionMode = false;
 
 			// Register the delegates in correct order
-			oTable.addEventDelegate(ExtensionDelegate, oTable);
-			oTable.addEventDelegate(this._delegate, oTable);
-			oTable.addEventDelegate(ItemNavigationDelegate, oTable);
+			TableUtils.addDelegate(ExtensionDelegate, oTable, true);
+			TableUtils.addDelegate(this._delegate, oTable, true);
+			TableUtils.addDelegate(ItemNavigationDelegate, oTable, true);
 
 			/**
 			 * Gets the item navigation.

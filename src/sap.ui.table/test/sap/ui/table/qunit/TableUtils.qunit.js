@@ -1151,6 +1151,15 @@ sap.ui.define([
 		assert.strictEqual($InteractiveElements, null, "(HTMLElement) Tree icon cell of leaf node: No element was returned");
 	});
 
+	QUnit.test("addDelegate", function(assert) {
+		var oDelegateSpy = sinon.spy(oTable, "addDelegate");
+		TableUtils.addDelegate(1, oTable, true);
+		assert.ok(oDelegateSpy.calledWith(1, false, oTable, false), "addDelegate is called with the correct parameters");
+		TableUtils.addDelegate(1, oTable, false);
+		assert.ok(oDelegateSpy.calledWith(1, false, undefined, false), "addDelegate is called with the correct parameters");
+		oDelegateSpy.restore();
+	});
+
 	QUnit.module("Cozy", {
 		beforeEach: function() {
 			jQuery(document.body).toggleClass("sapUiSizeCozy", true);
