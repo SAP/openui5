@@ -27,16 +27,21 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function _getParents(bSibling, oOverlay) {
+	function _getParents(bSibling, oOverlay, oPlugin) {
 		var oParentOverlay;
-		var oRelevantContainer = oOverlay.getRelevantContainer(!bSibling);
+		var oResponsibleElementOverlay = oOverlay;
+		if (oPlugin) {
+			oResponsibleElementOverlay = oPlugin.getResponsibleElementOverlay(oOverlay);
+		}
+		var oRelevantContainer = oResponsibleElementOverlay.getRelevantContainer(!bSibling);
 		var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
 		if (bSibling) {
-			oParentOverlay = oOverlay.getParentElementOverlay();
+			oParentOverlay = oResponsibleElementOverlay.getParentElementOverlay();
 		} else {
-			oParentOverlay = oOverlay;
+			oParentOverlay = oResponsibleElementOverlay;
 		}
 		return {
+			responsibleElementOverlay: oResponsibleElementOverlay,
 			relevantContainerOverlay : oRelevantContainerOverlay,
 			parentOverlay : oParentOverlay,
 			relevantContainer : oRelevantContainer,
@@ -222,8 +227,11 @@ sap.ui.define([
 			if (aElementOverlays.length > 1) {
 				return false;
 			}
+			var aResponsibleElementOverlays = aElementOverlays.map(function(oElementOverlay) {
+				return this.getResponsibleElementOverlay(oElementOverlay);
+			}.bind(this));
 
-			var oOverlay = aElementOverlays[0];
+			var oOverlay = aResponsibleElementOverlays[0];
 			var oParentOverlay;
 			var bIsEnabled;
 			if (bOverlayIsSibling) {
@@ -270,7 +278,7 @@ sap.ui.define([
 		},
 
 		_getRevealActions: function(bSibling, oOverlay) {
-			var mParents = _getParents(bSibling, oOverlay);
+			var mParents = _getParents(bSibling, oOverlay, this);
 
 			var aParents = [mParents.parentOverlay];
 			if (mParents.relevantContainer !== mParents.parent) {
@@ -284,8 +292,8 @@ sap.ui.define([
 			}
 			var aAggregationNames;
 			if (bSibling) {
-				var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
-				aAggregationNames = oParentAggregationOverlay ? [oOverlay.getParentAggregationOverlay().getAggregationName()] : [];
+				var oParentAggregationOverlay = mParents.responsibleElementOverlay.getParentAggregationOverlay();
+				aAggregationNames = oParentAggregationOverlay ? [mParents.responsibleElementOverlay.getParentAggregationOverlay().getAggregationName()] : [];
 			} else {
 				aAggregationNames = mParents.parentOverlay.getAggregationOverlays().filter(function(oAggregationOverlay) {
 					return !oAggregationOverlay.getDesignTimeMetadata().isIgnored(mParents.parent);
@@ -573,17 +581,17 @@ sap.ui.define([
 
 		showAvailableElements: function(bOverlayIsSibling, aElementOverlays, iIndex, sControlName) {
 			var oElementOverlay = aElementOverlays[0];
-			var mParents = _getParents(bOverlayIsSibling, oElementOverlay);
+			var mParents = _getParents(bOverlayIsSibling, oElementOverlay, this);
 			var oSiblingElement = bOverlayIsSibling && oElementOverlay.getElement();
 			var mActions;
 
-			return this._getActions(bOverlayIsSibling, oElementOverlay)
+			return this._getActions(bOverlayIsSibling, mParents.responsibleElementOverlay)
 				.then(function(mAllActions) {
 					mActions = mAllActions;
 				})
 
 				.then(function() {
-					return this.getAllElements(bOverlayIsSibling, aElementOverlays, iIndex, sControlName);
+					return this.getAllElements(bOverlayIsSibling, [mParents.responsibleElementOverlay], iIndex, sControlName);
 				}.bind(this))
 
 				.then(function(aAllElements) {

@@ -86,7 +86,10 @@ sap.ui.define([
 	 * @public
 	 */
 	Remove.prototype.isEnabled = function (aElementOverlays) {
-		var oElementOverlay = aElementOverlays[0];
+		var aResponsibleElementOverlays = aElementOverlays.map(function(oElementOverlay) {
+			return this.getResponsibleElementOverlay(oElementOverlay);
+		}.bind(this));
+		var oElementOverlay = aResponsibleElementOverlays[0];
 		var oAction = this.getAction(oElementOverlay);
 		var bIsEnabled = false;
 
@@ -103,7 +106,7 @@ sap.ui.define([
 		} else {
 			bIsEnabled = true;
 		}
-		return bIsEnabled && this._canBeRemovedFromAggregation(aElementOverlays);
+		return bIsEnabled && this._canBeRemovedFromAggregation(aResponsibleElementOverlays);
 	};
 
 	/**
@@ -220,10 +223,11 @@ sap.ui.define([
 		var oNextOverlaySelection = Remove._getElementToFocus(aElementOverlays);
 
 		aElementOverlays.forEach(function(oOverlay) {
-			var oRemovedElement = oOverlay.getElement();
-			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-			var sVariantManagementReference = this.getVariantManagementReference(oOverlay);
-			var sConfirmationText = this._getConfirmationText(oOverlay);
+			var oResponsibleElementOverlay = this.getResponsibleElementOverlay(oOverlay);
+			var oRemovedElement = oResponsibleElementOverlay.getElement();
+			var oDesignTimeMetadata = oResponsibleElementOverlay.getDesignTimeMetadata();
+			var sVariantManagementReference = this.getVariantManagementReference(oResponsibleElementOverlay);
+			var sConfirmationText = this._getConfirmationText(oResponsibleElementOverlay);
 
 			aPromises.push(
 				Promise.resolve()

@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/base/ManagedObject"
+	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/OverlayRegistry"
 ],
 function(
-	ManagedObject
+	ManagedObject,
+	OverlayRegistry
 ) {
 	"use strict";
 
@@ -330,21 +332,47 @@ function(
 	 * @return {object[]} Returns an array with the object containing the required data for a context menu item
 	 */
 	Plugin.prototype._getMenuItems = function (aElementOverlays, mPropertyBag) {
-		var oElementOverlay = aElementOverlays[0]; // by default we get menu items only for the first overlay
+		var aResponsibleElementOverlays = aElementOverlays.map(function(oElementOverlay) {
+			return this.getResponsibleElementOverlay(oElementOverlay);
+		}.bind(this));
+		var oElementOverlay = aResponsibleElementOverlays[0]; // by default we get menu items only for the first overlay
 		var mAction = this.getAction(oElementOverlay);
-		if (!mAction || !this.isAvailable(aElementOverlays)) {
+		if (!mAction || !this.isAvailable(aResponsibleElementOverlays)) {
 			return [];
 		}
 
 		return [{
 			id: mPropertyBag.pluginId,
-			text: this.getActionText(oElementOverlay, mAction, mPropertyBag.pluginId),
+			text: this.getActionText(aResponsibleElementOverlays[0], mAction, mPropertyBag.pluginId),
 			handler: this.handler.bind(this),
 			enabled: this.isEnabled.bind(this),
 			rank: mPropertyBag.rank,
 			icon: mPropertyBag.icon,
 			group: mPropertyBag.group
 		}];
+	};
+
+	/**
+	 * Generic function to retrieve the responsible element overlay
+	 * from design time metadata of a source element overlay
+	 *
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Source element overlay
+	 * @return {sap.ui.dt.ElementOverlay} Returns the element overlay of the responsible element
+	 */
+	Plugin.prototype.getResponsibleElementOverlay = function(oElementOverlay) {
+		var oElement = oElementOverlay.getElement();
+		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
+		if (oDesignTimeMetadata) {
+			var oResponsibleElement = oDesignTimeMetadata.getResponsibleElement(oElement);
+			if (oResponsibleElement) {
+				try {
+					return OverlayRegistry.getOverlay(oResponsibleElement);
+				} catch (oError) {
+					return oElementOverlay;
+				}
+			}
+		}
+		return oElementOverlay;
 	};
 
 	return Plugin;

@@ -233,5 +233,18 @@ function(
 		return this.getData().controllerExtensionTemplate;
 	};
 
+	/**
+	 * Returns responsible element from the designTimeMetadata
+	 * @param {sap.ui.core.Element} oElement Source element
+	 * @returns {sap.ui.core.Element|undefined} Responsible element if available
+	 * @public
+	 */
+	DesignTimeMetadata.prototype.getResponsibleElement = function(oElement) {
+		var oActions = this.getData().actions;
+		if (oActions && typeof oActions.getResponsibleElement === "function") {
+			return oActions.getResponsibleElement(oElement);
+		}
+	};
+
 	return DesignTimeMetadata;
 });

@@ -246,6 +246,21 @@ function (
 				fnDone();
 			});
 		});
+
+		QUnit.test("when evaluateEditable is called for an element which has a responsible element", function(assert) {
+			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
+
+			// clearing up all default actions and replacing with getResponsibleElement()
+			this.oLayoutOverlay.getDesignTimeMetadata().getData().actions = {
+				getResponsibleElement: function () {
+					return this.oButton;
+				}.bind(this)
+			};
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
+			assert.ok(this.oPlugin._isEditable.alwaysCalledWith(this.oButtonOverlay), "then editable evaluation is always performed on the responsible element");
+			assert.equal(oModifyPluginListSpy.callCount, 1, "_modifyPluginList was called once");
+			assert.equal(oModifyPluginListSpy.lastCall.args[0], this.oLayoutOverlay, "first parameter is the overlay");
+		});
 	});
 
 	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable not stubbed", {

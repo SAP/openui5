@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/registry/ChangeRegistry",
@@ -15,11 +16,13 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	VerticalLayout,
 	DesignTime,
+	flUtils,
 	CommandFactory,
 	OverlayRegistry,
 	ChangeRegistry,
@@ -32,6 +35,7 @@ function (
 	Button,
 	Label,
 	KeyCodes,
+	UIComponent,
 	sinon
 ) {
 	"use strict";
@@ -234,9 +238,10 @@ function (
 				commandFactory: new CommandFactory()
 			});
 
-			this.oButton = new Button({text : "Button"});
-			this.oLabel = new Label({text : "Label"});
+			this.oButton = new Button({text : "Button", id: "button"});
+			this.oLabel = new Label({text : "Label", id: "label"});
 			this.oVerticalLayout = new VerticalLayout({
+				id: "layout",
 				content : [this.oButton, this.oLabel],
 				width: "200px"
 			}).placeAt("qunit-fixture");
@@ -284,6 +289,36 @@ function (
 					this.oRenamePlugin.stopEdit(this.oLayoutOverlay);
 					assert.equal(this.oLayoutOverlay.getSelected(), true, "then the overlay is still selected");
 					fnDone();
+				}
+			}, this);
+			this.oRenamePlugin.startEdit(this.oLayoutOverlay);
+		});
+
+		QUnit.test("when the Label gets renamed with a responsible element", function(assert) {
+			var fnDone = assert.async();
+			var oMockAppComponent = new UIComponent("mockAppComponent");
+			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
+
+			this.oLayoutOverlay.getDesignTimeMetadata().getData().actions.getResponsibleElement = function (oElement) {
+				if (oElement === this.oVerticalLayout) {
+					return this.oButton;
+				}
+			}.bind(this);
+
+			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
+				if (mParams.overlay === this.oLayoutOverlay) {
+					this.oRenamePlugin._$oEditableControlDomRef.text("New Value");
+					this.oRenamePlugin._$editableField.text(this.oRenamePlugin._$oEditableControlDomRef.text());
+					this.oRenamePlugin.attachEventOnce("elementModified", function(oEvent) {
+						var oRenameCommand = oEvent.getParameter("command");
+						assert.equal(this.oButton.getId(), oRenameCommand.getSelector().id, "then a command is created for the responsible element");
+						assert.equal(oRenameCommand.getName(), "rename", "then a rename command was created");
+						oMockAppComponent.destroy();
+						fnDone();
+					}, this);
+					var $Event = jQuery.Event("keydown");
+					$Event.keyCode = KeyCodes.ENTER;
+					this.oRenamePlugin._$editableField.trigger($Event);
 				}
 			}, this);
 			this.oRenamePlugin.startEdit(this.oLayoutOverlay);
