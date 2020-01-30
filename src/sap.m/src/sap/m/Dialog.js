@@ -1767,9 +1767,10 @@ function(
 				var timeout;
 				var that = this;
 				var $w = jQuery(document);
+
 				var $target = jQuery(e.target);
 				var bResize = $target.hasClass('sapMDialogResizeHandler') && this.getResizable();
-				var fnMouseMoveHandler = function (action) {
+				var fnMouseMoveHandlerDelayed = function (action) {
 					timeout = timeout ? clearTimeout(timeout) : setTimeout(function () {
 						action();
 					}, 0);
@@ -1793,6 +1794,7 @@ function(
 						y: that._$dialog.offset().top
 					}
 				};
+				var mouseMoveHandler;
 
 				function mouseUpHandler() {
 					var $dialog = that.$(),
@@ -1800,7 +1802,9 @@ function(
 						dialogHeight,
 						dialogBordersHeight;
 
-					$w.off("mouseup mousemove");
+					$w.off("mouseup", mouseUpHandler);
+					$w.off("mousemove", mouseMoveHandler);
+
 
 					if (bResize) {
 						that._$dialog.removeClass('sapMDialogResizing');
@@ -1834,14 +1838,14 @@ function(
 				}
 
 				if (isHeaderClicked(e.target) && this.getDraggable()) {
-					$w.on("mousemove", function (event) {
+					mouseMoveHandler = function (event) {
 
 						if (event.buttons === 0) {
 							mouseUpHandler();
 							return;
 						}
 
-						fnMouseMoveHandler(function () {
+						fnMouseMoveHandlerDelayed(function () {
 							that._bDisableRepositioning = true;
 
 							that._oManuallySetPosition = {
@@ -1855,7 +1859,9 @@ function(
 								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - initial.outerHeight)
 							});
 						});
-					});
+					};
+
+					$w.on("mousemove", mouseMoveHandler);
 				} else if (bResize) {
 
 					that._$dialog.addClass('sapMDialogResizing');
@@ -1867,8 +1873,8 @@ function(
 					var handleOffsetX = $target.width() - e.offsetX;
 					var handleOffsetY = $target.height() - e.offsetY;
 
-					$w.on("mousemove", function (event) {
-						fnMouseMoveHandler(function () {
+					mouseMoveHandler = function (event) {
+						fnMouseMoveHandlerDelayed(function () {
 							that._bDisableRepositioning = true;
 							// BCP: 1680048166 remove inline set height and width so that the content resizes together with the mouse pointer
 							that.$('cont').height('').width('');
@@ -1896,7 +1902,9 @@ function(
 
 							that._$dialog.css(styles);
 						});
-					});
+					};
+
+					$w.on("mousemove", mouseMoveHandler);
 				} else {
 					return;
 				}

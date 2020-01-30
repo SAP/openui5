@@ -1647,6 +1647,51 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Check if dragging the dialog affects only its own event handlers", function(assert) {
+
+		//Arrange
+		var oDialog = new Dialog({
+			draggable: true,
+			title: "Some title",
+			beginButton: new Button({text: "button"}),
+			content: [
+				new Text({
+					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
+				})
+			]
+		});
+
+		var spy = sinon.spy();
+
+		jQuery(document).on("mousemove", spy);
+		oDialog.open();
+
+
+		var oMockEvent = {
+			pageX: 608,
+			pageY: 646,
+			offsetX: 177,
+			offsetY: 35,
+			preventDefault: function () {},
+			stopPropagation: function () {},
+			target: oDialog.getAggregation("_header").$().find(".sapMBarPH")[0]
+		};
+
+		//Act
+		oDialog.onmousedown(oMockEvent);
+		qutils.triggerEvent("mouseup", document);
+
+		qutils.triggerEvent("mousemove", document);
+
+		//Assert
+		assert.ok(spy.called, "Spy was called on mousemove");
+
+		//Cleanup
+		jQuery(document).off("mousemove", spy);
+		oDialog.destroy();
+
+	});
+
 	QUnit.module("PopUp Position",{
 		beforeEach: function() {
 			this.scrollY = window.scrollY;
