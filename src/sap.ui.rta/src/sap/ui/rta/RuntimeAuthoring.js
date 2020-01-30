@@ -1007,6 +1007,20 @@ function(
 		return this.getCommandStack().redo();
 	};
 
+	RuntimeAuthoring.prototype._onActivateDraft = function() {
+		return VersionsAPI.activateDraft({
+			layer: this.getLayer(),
+			selector: this.getRootControlInstance()
+		});
+	};
+
+	RuntimeAuthoring.prototype._onDiscardDraft = function() {
+		return VersionsAPI.discardDraft({
+			layer: this.getLayer(),
+			selector: this.getRootControlInstance()
+		});
+	};
+
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
 		if (!this.getDependent('toolbar')) {
 			var fnConstructor;
@@ -1041,7 +1055,9 @@ function(
 					modeChange: this._onModeChange.bind(this),
 					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true, this.getLayer()),
 					appVariantOverview: this._onGetAppVariantOverview.bind(this),
-					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, true, true, this.getLayer(), null)
+					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, true, true, this.getLayer(), null),
+					activateDraft: this._onActivateDraft.bind(this),
+					discardDraft: this._onDiscardDraft.bind(this)
 				}), 'toolbar');
 			}
 
