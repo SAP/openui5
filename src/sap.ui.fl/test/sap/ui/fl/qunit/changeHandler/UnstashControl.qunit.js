@@ -138,11 +138,15 @@ sap.ui.define([
 			assert.deepEqual(this.oXmlLayout.childNodes[0].childNodes[0], this.oXmlObjectPageSection3, "unstashed ObjectPageSection is at first position");
 		});
 
-		QUnit.test('applyChange is called with an invisible ObjectPageSection on an xml tree', function(assert) {
-			assert.equal(this.oXmlObjectPageSection4.getAttribute("visible"), "false", "initially xml invisible node visible property is true");
+		QUnit.test('applyChange is called with an invisible ObjectPageSection on an xml tree, followed by a revert on js control tree', function(assert) {
+			assert.equal(this.oXmlObjectPageSection4.getAttribute("visible"), "false", "initially xml invisible node visible property is false");
+			assert.equal(this.oXmlObjectPageSection3.getAttribute("visible"), null, "xml stashed node doesn't have the visible property");
+
 			this.oChangeHandler.applyChange(this.oChange, this.oXmlObjectPageSection4, {modifier: XmlTreeModifier, view: this.oXmlView});
-			assert.equal(this.oXmlObjectPageSection3.getAttribute("visible"), null, "xml invisible node doesn't have the visible attribute");
-			assert.deepEqual(this.oXmlLayout.childNodes[0].childNodes[0], this.oXmlObjectPageSection4, "invisible ObjectPageSection is at first position");
+			assert.deepEqual(this.oXmlLayout.childNodes[0].childNodes[0], this.oXmlObjectPageSection4, "invisible ObjectPageSection unstashed at first position");
+
+			this.oChangeHandler.revertChange(this.oChange, this.oObjectPageSectionInvisible, {modifier: JsControlTreeModifier});
+			assert.equal(this.oObjectPageSectionInvisible.getVisible(), false, "then the section is made invisible on revert again");
 		});
 
 		QUnit.test('revertChange is called with a ObjectPageSection on an xml tree', function(assert) {
