@@ -18,6 +18,14 @@ function(
 		return Core.byId(sSectionId);
 	}
 
+	function isHeaderInTitleArea(oPage) {
+		return oPage._shouldPreserveHeaderInTitleArea() || isHeaderTemporarilyInTitleArea(oPage);
+	}
+
+	function isHeaderTemporarilyInTitleArea(oPage) {
+		return oPage._bHeaderExpanded && oPage._bStickyAnchorBar;
+	}
+
 	return {
 		name : {
 			singular : function(){
@@ -146,12 +154,12 @@ function(
 		scrollContainers : [{
 			domRef : "> .sapUxAPObjectPageWrapper",
 			aggregations : function(oElement) {
-				if ((!oElement._hasDynamicTitle() && oElement.getAlwaysShowContentHeader()) ||
-					(oElement._hasDynamicTitle() && (oElement.getPreserveHeaderStateOnScroll() ||
-													 oElement._bPinned))) {
+				if (isHeaderInTitleArea(oElement)) {
 					return ["sections"];
-				} else {
+				} else if (oElement._bStickyAnchorBar){
 					return ["sections", "headerContent"];
+				} else {
+					return ["sections", "anchorBar", "headerContent"];
 				}
 			}
 		}, {
