@@ -49,17 +49,76 @@ sap.ui.define([
 		 * In Fiori 3 Default theme the ToolHeader is with dark design unlike most of the other controls. This defines the usage of limited controls inside it, which will result in good design combination.<br/>
 		 * The ToolHeader stylizes the contained controls with the Shell color parameters, to match the dark design requirement. However, that's not a dark theme.<br/><br/>
 		 * Only the following controls are supported:
-		 * <ul>
-		 * <li>sap.m.Text</li>
-		 * <li>sap.m.Title</li>
-		 * <li>sap.m.ObjectStatus</li>
-		 * <li>sap.ui.core.Icon</li>
-		 * <li>sap.m.Button</li>
-		 * <li>sap.m.MenuButton</li>
-		 * <li>sap.m.Select</li>
-		 * <li>sap.m.SearchField</li>
-		 * <li>sap.m.IconTabHeader</li>
-		 * </ul>
+			<div>
+			<table>
+
+			<tr>
+				<th style="text-align: left;">Control name</th>
+				<th style="text-align: left;">Supported</th>
+				<th style="text-align: left;">Not supported</th>
+			</tr>
+			<tr>
+				<td>sap.m.Text</td>
+				<td>Single line text, text truncation</td>
+				<td>Wrapping</td>
+			</tr>
+			<tr>
+				<td>sap.m.Title</td>
+				<td>Single line text, text truncation. Consider using title headings of H4, H5, H6.</td>
+				<td>Wrapping</td>
+			</tr>
+			<tr>
+				<td>sap.m.Label</td>
+				<td>Single line text, text truncation</td>
+				<td>Wrapping</td>
+			</tr>
+			<tr>
+				<td>sap.m.ObjectStatus</td>
+				<td>Labels, semantic colors</td>
+				<td>Indication colors</td>
+			</tr>
+			<tr>
+				<td>sap.ui.core.Icon</td>
+				<td>sap.ui.core.IconColor enumeration for both icons and backgrounds.</td>
+				<td>Interaction state colors</td>
+			</tr>
+			<tr>
+				<td>sap.m.Button</td>
+				<td>Buttons in their Back, Default, Transparent and Up types. All four types are over-styled to look as transparent buttons.</td>
+				<td>-</td>
+			</tr>
+			<tr>
+				<td>sap.m.MenuButton</td>
+				<td>Emphasized button type. Should be used for triggering Mega menu. If there is no Mega menu, use Title (H6) instead. </br> Default (over-styled as Transparent) and Transparent types are used for standard menu representation.</td>
+				<td>-</td>
+			</tr>
+			<tr>
+				<td>sap.m.Select</td>
+				<td>Default and IconOnly types. IconOnly looks like a button while Default looks is like an input.</td>
+				<td>Semantic states</td>
+			</tr>
+			<tr>
+				<td>sap.m.SearchField</td>
+				<td>Support for the regular state of the control.</td>
+				<td>-</td>
+			</tr>
+			<tr>
+				<td>sap.m.IconTabHeader</td>
+				<td>All background design variations (all are transparent). Text tab filters or text and count tab filters in Inline mode only.</td>
+				<td>Semantic colors, icons and separators.</td>
+			</tr>
+			<tr>
+				<td>sap.f.Avatar/sap.m.Avatar</td>
+				<td>Support for default (Accent 6) color. Image avatar.</td>
+				<td>-</td>
+			</tr>
+			<tr>
+				<td>sap.m.Image</td>
+				<td>Primarily used for displaying the company logo.</td>
+				<td>Interaction states</td>
+			</tr>
+			</table>
+			</div>
 		 *
 		 * @extends sap.m.OverflowToolbar
 		 * @implements sap.tnt.IToolHeader
