@@ -22,7 +22,7 @@ sap.ui.define([
 		});
 
 		CommunicationBus.subscribe(CommunicationChannels.REQUEST_CONTROL_DATA, function (mData) {
-			CommunicationBus.publish(CommunicationChannels.RECEIVE_CONTROL_DATA, testTreeAPI.getMockData(mData.domElement));
+			CommunicationBus.publish(CommunicationChannels.RECEIVE_CONTROL_DATA, testTreeAPI.getMockData(mData.domElementId));
 		});
 
 		CommunicationBus.subscribe(CommunicationChannels.REQUEST_CONTROL_SELECTOR, function () {
@@ -37,6 +37,9 @@ sap.ui.define([
 		CommunicationBus.subscribe(CommunicationChannels.SET_DIALECT, function (sDialect) {
 			// controlInspector is not used in renderMock --> simulate its behavior
 			DialectRegistry.setActiveDialect(sDialect);
+			CommunicationBus.publish(CommunicationChannels.DIALECT_CHANGED, {
+				dialect: sDialect
+			});
 		});
 
 		CommunicationBus.subscribe(CommunicationChannels.CONTEXT_MENU_HIGHLIGHT, _onSnippetRequest());
@@ -46,7 +49,7 @@ sap.ui.define([
 		function _onSnippetRequest(sAction) {
 			return function (mData) {
 				sAction = sAction || "Highlight";
-				var mSnippets = testTreeAPI.getMockData(mData.domElement || mData.domElementId).snippet;
+				var mSnippets = testTreeAPI.getMockData(mData.domElementId).snippet;
 				CommunicationBus.publish(CommunicationChannels.RECEIVE_CODE_SNIPPET, {
 					codeSnippet: mSnippets && mSnippets[DialectRegistry.getActiveDialect()][sAction]
 				});

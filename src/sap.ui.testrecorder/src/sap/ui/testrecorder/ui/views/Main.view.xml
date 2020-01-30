@@ -49,7 +49,7 @@
 					<!-- control tree pane -->
 
 					<l:SplitPane requiredParentWidth="300" id="tree-pane">
-						<Panel headerText="{i18n>TestRecorder.ControlTree.Title}" height="100%">
+						<Panel height="100%">
 						<c:HTML id="elementTreeContainer" content='&lt;control-tree&gt;  &lt;/control-tree&gt;'></c:HTML>
 						</Panel>
 					</l:SplitPane>
@@ -57,28 +57,35 @@
 					<!-- snippet pane -->
 
 					<l:SplitPane  requiredParentWidth="400">
-						<Panel headerText="{i18n>TestRecorder.Inspect.Snippet.Title}">
+						<Panel>
 						<ScrollContainer vertical="true">
-							<HBox alignItems="Center">
-								<Label text="{i18n>TestRecorder.Inspect.Snippet.Dropdown.Label}" labelFor="SelectDialect" class="sapUiSmallMarginEnd"/>
-								<Select
-									id="SelectDialect"
-									forceSelection="false"
-									selectedKey="{/selectedDialect}"
-									items="{/dialects}">
-									<c:Item key="{key}" text="{label}" />
-								</Select>
-								<Button text="{i18n>TestRecorder.Inspect.Snippet.Copy.Text}" press="copyCodeSnippet" class="sapUiMediumMarginBegin"/>
-							</HBox>
+							<VBox>
+								<HBox alignItems="Center">
+									<Label text="{i18n>TestRecorder.Inspect.Snippet.Dropdown.Label}" labelFor="SelectDialect" class="sapUiSmallMarginEnd"/>
+									<Select
+										id="SelectDialect"
+										forceSelection="false"
+										selectedKey="{/selectedDialect}"
+										items="{/dialects}"
+										class="sapUiSmallMarginEnd">
+										<c:Item key="{key}" text="{label}" />
+									</Select>
+									<Label text="{i18n>TestRecorder.Inspect.Snippet.MultiSwitch.Label}" labelFor="multiSwitch" class="sapUiSmallMarginEnd" />
+									<Switch id="multiSwitch" state="{/settings/multipleSnippets}" type="AcceptReject" change="_onChangeMultiple"/>
+								</HBox>
+							</VBox>
 							<code:CodeEditor
 								id="codeEditor"
 								value="{controls>/codeSnippet}"
-								editable="false"
 								height="calc(100vh - 180px)"
 								width="100%"
 								type="javascript"
 								colorTheme="theme-ambiance"
 								lineNumbers="false"/>
+							<HBox justifyContent="End" alignItems="Center">
+								<Button text="{i18n>TestRecorder.Inspect.Snippet.Copy.Text}" press="copyCodeSnippet"/>
+								<Button text="{i18n>TestRecorder.Inspect.Snippet.Clear.Text}" press="clearCodeSnippet" class="sapUiSmallMarginBegin"/>
+							</HBox>
 						</ScrollContainer>
 						</Panel>
 					</l:SplitPane>
@@ -86,7 +93,7 @@
 					<!-- common info pane -->
 
 					<l:SplitPane requiredParentWidth="900px">
-						<Panel headerText="{i18n>TestRecorder.Inspect.CommonInfo.Title}" class="ttCommonInfoPanel">
+						<Panel class="ttCommonInfoPanel">
 							<IconTabBar
 								id="tabBar"
 								class="sapUiResponsiveContentPadding"

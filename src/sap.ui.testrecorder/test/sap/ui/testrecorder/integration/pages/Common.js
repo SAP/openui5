@@ -33,12 +33,15 @@ sap.ui.define([
 					// start programatically, instead of waiting for the url param to be recognized,
 					// so that the recorder will also be started when the browser tab isn't active
 					Opa5.getWindow().sap.ui.testrecorder.Recorder.start([]);
-					Opa5.assert.ok(true, "Recorder started");
 					return this.waitFor({
 						matchers: [function () {
 							var oRecorderJQuery = this._getRecorderInFrame().jQuery;
-							return oRecorderJQuery && oRecorderJQuery("h2:contains(Control Tree)").length;
-						}.bind(this), function () {
+							return oRecorderJQuery;
+						}.bind(this), function (oRecorderJQuery) {
+							var oTree = oRecorderJQuery("tree");
+							return oTree.length && oTree.is(":visible") && oTree.css("visibility") !== "hidden";
+						}, function () {
+							Opa5.assert.ok(true, "Recorder started");
 							if (this._getRecorderInFrame().sap.ui.require("sap/ui/test/OpaPlugin")) {
 								return true;
 							} else {

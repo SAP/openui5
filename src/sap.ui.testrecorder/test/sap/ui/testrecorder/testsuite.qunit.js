@@ -9,9 +9,25 @@ sap.ui.define([
 			title: "QUnit Page for sap.ui.testrecorder.inspector.ControlAPI",
 			module: "./qunit/inspector/ControlAPI.qunit"
 		},
-		"qunit/controlSelectors/UIVeri5SelectorProvider": {
-			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.UIVeri5SelectorProvider",
-			module: "./qunit/controlSelectors/UIVeri5SelectorProvider.qunit"
+		"qunit/controlSelectors/ControlSelectorGenerator": {
+			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.ControlSelectorGenerator",
+			module: "./qunit/controlSelectors/ControlSelectorGenerator.qunit"
+		},
+		"qunit/codeSnippets/POMethodUtil": {
+			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.POMethodUtil",
+			module: "./qunit/codeSnippets/POMethodUtil.qunit"
+		},
+		"qunit/codeSnippets/CodeSnippetProvider": {
+			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.CodeSnippetProvider",
+			module: "./qunit/codeSnippets/CodeSnippetProvider.qunit"
+		},
+		"qunit/inspector/ControlInspector": {
+			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.ControlInspector",
+			module: "./qunit/inspector/ControlInspector.qunit"
+		},
+		"qunit/inspector/ControlInspectorRepo": {
+			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.ControlInspectorRepo",
+			module: "./qunit/inspector/ControlInspectorRepo.qunit"
 		}
 	};
 

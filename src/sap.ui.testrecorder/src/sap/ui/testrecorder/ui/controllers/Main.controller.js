@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/testrecorder/CommunicationChannels",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/model/Binding",
 	"sap/m/MessageToast",
 	"sap/m/Dialog",
 	"sap/m/CheckBox",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/ui/external/ElementTree",
 	"sap/ui/testrecorder/interaction/ContextMenu"
 ], function (Device, Storage, Controller, SharedModel, CommunicationBus, CommunicationChannels, JSONModel, ResourceModel,
-		MessageToast, Dialog, CheckBox, Button, VBox, ElementTree, ContextMenu) {
+		Binding, MessageToast, Dialog, CheckBox, Button, VBox, ElementTree, ContextMenu) {
 	"use strict";
 
 	return Controller.extend("sap.ui.testrecorder.ui.controllers.Main", {
@@ -52,6 +53,7 @@ sap.ui.define([
 			CommunicationBus.subscribe(CommunicationChannels.RECEIVE_CONTROL_DATA, this._onUpdateControlDetails.bind(this));
 			CommunicationBus.subscribe(CommunicationChannels.RECEIVE_CODE_SNIPPET, this._onUpdateCodeSnippet.bind(this));
 			CommunicationBus.subscribe(CommunicationChannels.SELECT_CONTROL_IN_TREE, this._onUpdateSelection.bind(this));
+			CommunicationBus.subscribe(CommunicationChannels.DIALECT_CHANGED, this._changeDialect.bind(this));
 		},
 		toggleHeaderToolbars: function () {
 			// When hidden is true - the frame is minimized and we show the "show" button
@@ -103,6 +105,10 @@ sap.ui.define([
 				document.removeEventListener('copy', fnCopyToClipboard);
 			}
 		},
+		clearCodeSnippet: function () {
+			CommunicationBus.publish(CommunicationChannels.CLEAR_SNIPPETS);
+			this.byId("codeEditor").setValue("");
+		},
 		openSettingsDialog: function () {
 			if (!this.settingsDialog) {
 				this.settingsDialog = new Dialog({
@@ -144,6 +150,7 @@ sap.ui.define([
 			this.getView().setModel(this.model);
 			this.model.setProperty("/isInIframe", !window.opener);
 
+			// setup stored settings
 			var sSelectedDialect = this._localStorage.get("dialect");
 			var bPreferViewId = this._localStorage.get("settings-preferViewId");
 			var bFormatAsPOMethod = this._localStorage.get("settings-formatAsPOMethod");
@@ -157,15 +164,15 @@ sap.ui.define([
 			if (bFormatAsPOMethod !== null && bFormatAsPOMethod !== "undefined") {
 				this.model.setProperty("/settings/formatAsPOMethod", bFormatAsPOMethod);
 			}
-			CommunicationBus.publish(CommunicationChannels.UPDATE_SELECTOR_SETTINGS, this.model.getProperty("/settings"));
+			CommunicationBus.publish(CommunicationChannels.UPDATE_SETTINGS, this.model.getProperty("/settings"));
 
-			var binding = new sap.ui.model.Binding(SharedModel, "/selectedDialect", SharedModel.getContext("/"));
+			// listen for changes in the dialect sap.m.Select
+			var binding = new Binding(SharedModel, "/", SharedModel.getContext("/selectedDialect"));
 			binding.attachChange(function() {
-				var sSelectedDialect = this.model.getProperty("/selectedDialect");
-				CommunicationBus.publish(CommunicationChannels.SET_DIALECT, sSelectedDialect);
-				this._localStorage.put("dialect", sSelectedDialect);
+				CommunicationBus.publish(CommunicationChannels.SET_DIALECT, this.model.getProperty("/selectedDialect"));
 			}.bind(this));
 
+			// initialize common models
 			var oI18nModel = new ResourceModel({
 				bundleName: "sap.ui.core.messagebundle"
 			});
@@ -185,6 +192,7 @@ sap.ui.define([
 			}), "controls");
 		},
 		_onUpdateAllControls: function (mData) {
+			// fill in model data when the app is loaded
 			this.elementTree.setContainerId(this.byId("elementTreeContainer").getId());
 			this._clearControlData();
 
@@ -205,6 +213,7 @@ sap.ui.define([
 			}
 		},
 		_onUpdateControlDetails: function (mData) {
+			// fill in data when a control is selected
 			if (mData.properties) {
 				this.getView().getModel("controls").setProperty("/properties", mData.properties);
 			}
@@ -213,35 +222,39 @@ sap.ui.define([
 			}
 		},
 		_onUpdateCodeSnippet: function (mData) {
-			if (mData.codeSnippet) {
+			// update models when a snippet is generated
+			if (mData.codeSnippet !== undefined) {
 				this.getView().getModel("controls").setProperty("/codeSnippet", mData.codeSnippet);
 			} else if (mData.error) {
-				var sNotFoundText = this.getView().getModel("i18n").getResourceBundle().getText("TestRecorder.Inspect.Snippet.NotFound.Text", "#" + mData.domElement);
+				var sNotFoundText = this.getView().getModel("i18n").getResourceBundle().getText("TestRecorder.Inspect.Snippet.NotFound.Text", "#" + mData.domElementId);
 				this.getView().getModel("controls").setProperty("/codeSnippet", sNotFoundText);
 			}
 		},
 		_onUpdateSelection: function (mData) {
-				this.elementTree.setSelectedElement(mData.rootElementId, false);
-				this._clearControlData();
+			// request data for a control that was selected in the app
+			this.elementTree.setSelectedElement(mData.rootElementId, false);
+			this._clearControlData();
 
-				// domElementId is the ID of the control focus ref *in the app*,
-				// interactionElementId is the ID of the right-clicked element *in the app*
-				CommunicationBus.publish(CommunicationChannels.REQUEST_CONTROL_DATA, {domElement: mData.rootElementId });
-				CommunicationBus.publish(CommunicationChannels.REQUEST_CODE_SNIPPET, {
-					domElement: mData.interactionElementId,
-					action: mData.action
-				});
-				CommunicationBus.publish(CommunicationChannels.HIGHLIGHT_CONTROL, {domElement: mData.rootElementId });
+			// domElementId is the ID of the control focus ref *in the app*,
+			// interactionElementId is the ID of the right-clicked element *in the app*
+			CommunicationBus.publish(CommunicationChannels.REQUEST_CONTROL_DATA, {domElementId: mData.rootElementId });
+			CommunicationBus.publish(CommunicationChannels.REQUEST_CODE_SNIPPET, {
+				domElementId: mData.interactionElementId,
+				action: mData.action
+			});
+			CommunicationBus.publish(CommunicationChannels.HIGHLIGHT_CONTROL, {domElementId: mData.rootElementId });
 		},
 		_onTreeSelectionChanged: function (domElementId) {
+			// request data for a control that was selected in the tree - via left click
 			this._clearControlData();
 
 			// here domElementId is the ID of the element *in the app*
-			CommunicationBus.publish(CommunicationChannels.REQUEST_CONTROL_DATA, {domElement: domElementId });
-			CommunicationBus.publish(CommunicationChannels.REQUEST_CODE_SNIPPET, {domElement: domElementId });
-			CommunicationBus.publish(CommunicationChannels.HIGHLIGHT_CONTROL, {domElement: domElementId });
+			CommunicationBus.publish(CommunicationChannels.REQUEST_CONTROL_DATA, {domElementId: domElementId });
+			CommunicationBus.publish(CommunicationChannels.REQUEST_CODE_SNIPPET, {domElementId: domElementId });
+			CommunicationBus.publish(CommunicationChannels.HIGHLIGHT_CONTROL, {domElementId: domElementId });
 		},
 		_onTreeContextMenu: function (mData) {
+			// request data for a control that was selected in the app - via right click
 			mData = mData || {};
 			// the context menu is in a different context than the dom element to be located, so communication should happen with events
 			mData.withEvents = true;
@@ -255,14 +268,25 @@ sap.ui.define([
 			this.getView().getModel("controls").setProperty("/bindings", {});
 			this.getView().getModel("controls").setProperty("/codeSnippet", "");
 		},
+		_changeDialect: function (mData) {
+			this._localStorage.put("dialect", mData.dialect);
+		},
 		_onSelectCheckBox: function (oEvent) {
+			// update models when selecting a checkbox in the settings dialog
 			var bSelected = oEvent.getParameter("selected");
 			var sSetting = oEvent.getSource().getName();
 			var mSetting = {};
 			mSetting[sSetting] = bSelected;
 			this.model.setProperty("/settings/" + sSetting, bSelected);
 			this._localStorage.put("settings-" + sSetting, bSelected);
-			CommunicationBus.publish(CommunicationChannels.UPDATE_SELECTOR_SETTINGS, mSetting);
+			CommunicationBus.publish(CommunicationChannels.UPDATE_SETTINGS, mSetting);
+		},
+		_onChangeMultiple: function (oEvent) {
+			// update models when changing the state of the multiple snippets sap.m.Switch
+			var bState = oEvent.getParameter("state");
+			CommunicationBus.publish(CommunicationChannels.UPDATE_SETTINGS, {
+				multipleSnippets: bState
+			});
 		}
 	});
 });

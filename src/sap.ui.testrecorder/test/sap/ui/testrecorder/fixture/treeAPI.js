@@ -208,6 +208,24 @@ sap.ui.define([
 									}
 								}
 							};
+				case "multi":
+					return {
+						snippet: {
+							UIVERI5: {
+								Highlight: _asPOMethod(
+									'element(by.control({\n' +
+									'    controlType: "sap.m.Button",\n' +
+									'    viewName: "appMock.view.Main",\n' +
+									'    properties: {\n' +
+									'        text: "Button One"\n' +
+									'    }\n' +
+									'}));\n\n' +
+									'element(by.control({\n' +
+									'    id: "container-myComponent---main--stableId"\n' +
+									'}));')
+							}
+						}
+					};
 					default:
 					return DEFAULT_OUTPUT;
 			}
