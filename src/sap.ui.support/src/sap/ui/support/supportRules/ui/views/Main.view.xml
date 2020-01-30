@@ -63,11 +63,11 @@
 
 							<Button id="analysisBtn" text="Rules ({/selectedRulesCount})" press="goToAnalysis" type="Emphasized"/>
 
-							<c:Icon width="100%" id="settingsIcon" src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin"/>
+							<c:Icon id="settingsIcon" src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin"/>
 
-							<c:Icon width="100%"  src="sap-icon://sys-help" press="goToWiki" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin" tooltip="Open Documentation" />
+							<c:Icon src="sap-icon://sys-help" press="goToWiki" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin" tooltip="Open Documentation" />
 
-							<c:Icon width="100%" src="sap-icon://minimize" press="toggleHide" class="STCustomHeaderInfo sapUiTinyMargin" visible="{/hasNoOpener}"/>
+							<c:Icon src="sap-icon://minimize" press="toggleHide" class="STCustomHeaderInfo sapUiTinyMargin" visible="{/hasNoOpener}"/>
 
 							<Button icon="sap-icon://down" press="resizeDown"  visible="{/hasNoOpener}"/>
 
