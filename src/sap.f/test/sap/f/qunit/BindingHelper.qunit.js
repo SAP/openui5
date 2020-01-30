@@ -146,4 +146,25 @@ function (
 		assert.strictEqual(vFormattedValue.formatter, fnFormatter,"The formatter should be the passed formatter.");
 		assert.strictEqual(vFormattedValue.parts[1], "second text with no binding", "Plain strings should NOT generate something different than string.");
 	});
+
+	QUnit.test("Call #formattedProperty with binding info 'object' and complex binding", function (assert) {
+		// arrange
+
+		var oValue = BindingHelper.createBindingInfos("{./images/}"),
+			fnFormatter = function (sValue) {
+				return sValue.toLowerCase() + ".jpg";
+			},
+			fnOtherFormatter = function (sValue) {
+				return sValue.toUpperCase() + "IMAGE";
+			};
+		oValue.formatter = fnOtherFormatter;
+		var vFormattedValue = BindingHelper.formattedProperty(oValue, fnFormatter);
+
+		//Act
+		var formattedProperty = fnFormatter(fnOtherFormatter(oValue.path));
+		var bindingHelperFormattedProperty = vFormattedValue.formatter(oValue.path);
+
+		// assert
+		assert.strictEqual(formattedProperty, bindingHelperFormattedProperty,"The formatter should be the passed formatter.");
+	});
 });
