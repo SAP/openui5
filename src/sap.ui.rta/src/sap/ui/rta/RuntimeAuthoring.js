@@ -38,6 +38,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -94,6 +95,7 @@ function(
 	ElementUtil,
 	FlexUtils,
 	LayerUtils,
+	Layer,
 	FeaturesAPI,
 	VersionsAPI,
 	PersistenceWriteAPI,
@@ -282,7 +284,7 @@ function(
 		},
 		_RESTART : {
 			NOT_NEEDED : "no restart",
-			VIA_HASH : "without max layer",
+			VIA_HASH : "CrossAppNavigation",
 			RELOAD_PAGE : "reload"
 		}
 	});
@@ -571,8 +573,11 @@ function(
 				return Promise.reject(vError);
 			}
 
-			//Check if the application has personalized changes and reload without them
 			return this._initVersioning()
+			/*
+			Check if the application has personalized changes and reload without them;
+			Also Check if the application has an available draft and if yes, reload with those changes.
+			 */
 			.then(this._determineReload.bind(this))
 			.then(function(bReloadTriggered) {
 				if (bReloadTriggered) {
@@ -884,7 +889,7 @@ function(
 				.then(function() {
 					this.fireStop();
 					if (sReload !== this._RESTART.NOT_NEEDED) {
-						this._removeMaxLayerParameter();
+						this._removeParameters();
 						if (sReload === this._RESTART.RELOAD_PAGE) {
 							this._reloadPage();
 						}
@@ -1524,16 +1529,19 @@ function(
 	 * Reload the app inside FLP removing the parameter to skip personalization changes
 	 * @return {boolean} resolving to true if reload was triggered
 	 */
-	RuntimeAuthoring.prototype._removeMaxLayerParameter = function() {
+	RuntimeAuthoring.prototype._removeParameters = function() {
 		if (FlexUtils.getUshellContainer() && this.getLayer() !== "USER") {
 			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
 			var mParsedHash = FlexUtils.getParsedURLHash();
 			if (oCrossAppNav.toExternal && mParsedHash) {
 				if (this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM)) {
 					delete mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM];
-					// triggers the navigation without leaving FLP
-					oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 				}
+				if (this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
+					delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
+				}
+				// triggers the navigation without leaving FLP; if parsedHash has changed.
+				oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 			}
 		}
 	};
@@ -1648,19 +1656,27 @@ function(
 				Promise.resolve(this._bReloadNeeded),
 			// When working with RTA, the MaxLayer parameter will be present in the URL and must
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
-			PersistenceWriteAPI.hasHigherLayerChanges({selector: this.getRootControlInstance(), ignoreMaxLayerParameter: true})
+			PersistenceWriteAPI.hasHigherLayerChanges({selector: this.getRootControlInstance(), ignoreMaxLayerParameter: true}),
+			this._isDraftAvailable()
 		]).then(function (aArgs) {
 			var bChangesNeedRestart = aArgs[0];
 			var bHasHigherLayerChanges = aArgs[1];
-			if (bChangesNeedRestart || bHasHigherLayerChanges) {
+			var bIsDraftAvailable = aArgs[2];
+			if (bChangesNeedRestart || bHasHigherLayerChanges || bIsDraftAvailable) {
 				var sRestart = this._RESTART.RELOAD_PAGE;
 				var sRestartReason;
 				var oUshellContainer;
-				if (bHasHigherLayerChanges) {
+				if (bHasHigherLayerChanges || bIsDraftAvailable) {
 					//Loading the app with personalization means the visualization might change,
 					//therefore this message takes precedence
-					var sLayer = this.getLayer();
-					sRestartReason = sLayer === "CUSTOMER" ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
+					var bIsCustomerLayer = this.getLayer() === Layer.CUSTOMER;
+					if (bHasHigherLayerChanges && bIsDraftAvailable) {
+						sRestartReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT" : "MSG_RELOAD_WITH_ALL_CHANGES";
+					} else if (bHasHigherLayerChanges) {
+						sRestartReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
+					} else if (bIsDraftAvailable) {
+						sRestartReason = "MSG_RELOAD_WITHOUT_DRAFT";
+					}
 					oUshellContainer = FlexUtils.getUshellContainer();
 					if (!bChangesNeedRestart && oUshellContainer) {
 						//if changes need restart this method has precedence, but in this case
