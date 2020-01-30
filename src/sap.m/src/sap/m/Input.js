@@ -225,6 +225,8 @@ function(
 
 			/**
 			 * Indicates when the value gets updated with the user changes: At each keystroke (true) or first when the user presses enter or tabs out (false).
+			 *
+			 * <b>Note:</b> When set to true and the value of the Input control is bound to a model, the change event becomes obsolete and will not be fired, as the value in the model will be updated each time the user provides input. In such cases, subscription to the liveChange event is more appropriate, as it corresponds to the way the underlying model gets updated.
 			 * @since 1.24
 			 */
 			valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false},
