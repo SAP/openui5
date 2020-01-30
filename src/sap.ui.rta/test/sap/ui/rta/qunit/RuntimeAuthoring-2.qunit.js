@@ -610,7 +610,8 @@ sap.ui.define([
 			var oSettings = {
 				isAtoAvailable: false,
 				isKeyUser: true,
-				isProductiveSystem: true
+				isProductiveSystem: true,
+				versioning: {}
 			};
 			var oSettingsInstance = new Settings(oSettings);
 			this.oRta = new RuntimeAuthoring({
@@ -637,7 +638,8 @@ sap.ui.define([
 			var oSettings = {
 				isAtoAvailable: true,
 				isKeyUser: true,
-				isProductiveSystem: false
+				isProductiveSystem: false,
+				versioning: {}
 			};
 			var oSettingsInstance = new Settings(oSettings);
 			this.oRta = new RuntimeAuthoring({

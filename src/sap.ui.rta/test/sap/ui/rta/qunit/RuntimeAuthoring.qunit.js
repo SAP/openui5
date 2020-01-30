@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/Feature",
@@ -46,6 +47,7 @@ function(
 	ChangeRegistry,
 	Change,
 	Utils,
+	FeaturesAPI,
 	RtaUtils,
 	AppVariantUtils,
 	RtaAppVariantFeature,
@@ -267,23 +269,25 @@ function(
 			return this.oRta._isDraftAvailable()
 			.then(function(bDraftAvailable) {
 				assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
-				assert.deepEqual(oDraftAvailableStub.lastCall.args[0], oPropertyBag, "and the property bag was not set correctly");
+				assert.deepEqual(oDraftAvailableStub.lastCall.args[0], oPropertyBag, "and the property bag was set correctly");
 			});
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, no changes yet done", function(assert) {
-			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			var oIsVersioningEnabledStub = sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
 			sandbox.stub(this.oRta, "canUndo").returns(false);
 
 			return this.oRta._isDraftAvailable()
 			.then(function(bDraftAvailable) {
+				assert.equal(oIsVersioningEnabledStub.callCount, 1, "the versionEnabled feature was checked");
+				assert.equal(oIsVersioningEnabledStub.getCall(0).args[0], this.oRta.getLayer(), "the layer was passed");
 				assert.equal(bDraftAvailable, false, "then the 'isDraftAvailable' is false");
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, there are unsaved changes", function(assert) {
-			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
 			sandbox.stub(this.oRta, "canUndo").returns(true);
 
@@ -813,7 +817,7 @@ function(
 		});
 
 		QUnit.test("when stopping rta with saving changes and versioning is enabled", function(assert) {
-			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 
 			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 

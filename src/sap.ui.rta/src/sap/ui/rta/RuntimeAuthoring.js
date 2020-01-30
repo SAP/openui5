@@ -978,8 +978,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._isVersioningEnabled = function () {
-		//TODO: change to FeaturesAPI.isVersioningEnabled(this.getLayer());' as soon as the draft functionality is completed
-		return Promise.resolve(false);
+		return FeaturesAPI.isVersioningEnabled(this.getLayer());
 	};
 
 	RuntimeAuthoring.prototype._serializeAndSave = function() {
