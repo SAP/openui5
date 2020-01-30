@@ -7,11 +7,11 @@ sap.ui.define([
 	var oTests = {
 		"qunit/inspector/ControlAPI": {
 			title: "QUnit Page for sap.ui.testrecorder.inspector.ControlAPI",
-			module: "./inspector/ControlAPI.qunit"
+			module: "./qunit/inspector/ControlAPI.qunit"
 		},
 		"qunit/controlSelectors/UIVeri5SelectorProvider": {
 			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.UIVeri5SelectorProvider",
-			module: "./controlSelectors/UIVeri5SelectorProvider.qunit"
+			module: "./qunit/controlSelectors/UIVeri5SelectorProvider.qunit"
 		}
 	};
 

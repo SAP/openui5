@@ -12,12 +12,13 @@ sap.ui.define([
 				iActOnControl:  function (mSelector, sAction) {
 					this.waitFor(jQuery.extend({}, mSelector, {
 						success: function (aControl) {
-							var oDom = aControl[0].$();
+							var oControl = jQuery.isArray(aControl) ? aControl[0] : aControl;
+							var oDom = oControl.$();
 							return this.waitFor({
 								matchers: [function () {
 									// workaround for limitations for right click in iframe
 									Opa5.getWindow().sap.ui.testrecorder.interaction.ContextMenu.show({
-										domElementId: aControl[0].getId(),
+										domElementId: oControl.getId(),
 										location: {
 											x: oDom.offset().left,
 											y: oDom.offset().top
@@ -40,7 +41,8 @@ sap.ui.define([
 				iShouldSeeTheSelectedControl: function (mSelector) {
 					this.waitFor(jQuery.extend({}, mSelector, {
 						success: function (aControl) {
-							var mControlRect = aControl[0].$()[0].getBoundingClientRect();
+							var oControl = jQuery.isArray(aControl) ? aControl[0] : aControl;
+							var mControlRect = oControl.$()[0].getBoundingClientRect();
 							var mHighlightRect = Opa5.getJQuery()("#ui5-test-recorder-highlighter > div")[0].getBoundingClientRect();
 							Opa5.assert.deepEqual(mControlRect, mHighlightRect, "Should highlight the root element");
 						}
