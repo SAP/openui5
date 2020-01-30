@@ -214,18 +214,151 @@ sap.ui.define([
 		};
 		this.oServer.respondWithJSONContent(this.oManifest);
 
+		var oComponentConstructorSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+
+		// scenario 1 - "_routerHashChanger"-property is being defined - via component load
+		// the "_routerHashChanger"-property is being removed from the component settings
 		var oRouterHashChanger = {};
-		var oComponent = sap.ui.component({
+		var oComponent1 = sap.ui.component({
 			manifestUrl : "/anylocation/manifest.json",
 			settings: {
 				_routerHashChanger: oRouterHashChanger
 			}
 		});
 
-		var oRouter = oComponent.getRouter();
-		assert.strictEqual(oRouter.getHashChanger(), oRouterHashChanger, "The RouterHashChanger is forwarded to the created Router");
+		var oRouter1 = oComponent1.getRouter();
+		assert.strictEqual(oComponentConstructorSpy.callCount, 2, "The constructor was called");
+		assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {}, "The settings object of the constructor is empty");
+		assert.strictEqual(oRouter1.getHashChanger(), oRouterHashChanger, "The RouterHashChanger is forwarded to the created Router");
 
-		oComponent.destroy();
+		// destroy the component
+		oComponent1.destroy();
+
+		// scenario 2 - "_routerHashChanger"-property is set but with value undefined
+		// the "_routerHashChanger"-property is being removed from the component settings
+		var oComponent2 = new UIComponent("component1", {
+			_routerHashChanger: undefined
+		});
+
+		var oRouter2 = oComponent2.getRouter();
+		assert.strictEqual(oComponentConstructorSpy.callCount, 3, "The constructor was called");
+		assert.deepEqual(oComponentConstructorSpy.getCall(2).args[0], {}, "The settings object of the constructor is empty");
+		assert.strictEqual(oRouter2, undefined, "The router is undefined");
+
+		// destroy the component
+		oComponent2.destroy();
+
+		// scenario 3 - "_routerHashChanger"-property is set but with value undefined - via component load
+		// the "_routerHashChanger"-property is being removed however a new RouterHashChanger is being created
+		var oComponent3 = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json",
+			settings: {
+				_routerHashChanger: undefined
+			}
+		});
+		var oRouter3 = oComponent3.getRouter();
+		assert.strictEqual(oComponentConstructorSpy.callCount, 5, "The constructor was called");
+		assert.deepEqual(oComponentConstructorSpy.getCall(2).args[0], {}, "The settings object of the constructor is empty");
+		assert.strictEqual(oRouter3.getHashChanger().getMetadata().getName(), "sap.ui.core.routing.RouterHashChanger","The RouterHashChanger is created by the Router");
+
+		// destroy the component
+		oComponent3.destroy();
+
+		// remove the spy
+		oComponentConstructorSpy.restore();
+	});
+
+	QUnit.test("forwarding propagateTitle to the creation of Router", function(assert) {
+		this.oManifest["sap.ui5"]["routing"] = {
+			routes: {
+			}
+		};
+		this.oServer.respondWithJSONContent(this.oManifest);
+
+		var oComponentConstructorSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+
+		// _propagateTitle is true
+		var oComponent1 = new UIComponent("component1", {
+			_propagateTitle: true
+		});
+
+		// _propagateTitle is false
+		var oComponent2 = new UIComponent("component2", {
+			_propagateTitle: false
+		});
+
+		// _propagateTitle is undefined
+		var oComponent3 = new UIComponent("component3", {
+			_propagateTitle: undefined
+		});
+
+		assert.strictEqual(oComponentConstructorSpy.callCount, 3, "The constructor should be called three times");
+		assert.strictEqual(oComponent1._bRoutingPropagateTitle, true, "The propagateTitle flag should be stored successfully in the component");
+		assert.deepEqual(oComponentConstructorSpy.getCall(0).args[0], {}, "The settings object of the constructor should be empty");
+		assert.strictEqual(oComponent2._bRoutingPropagateTitle, false, "The propagateTitle flag should be stored successfully in the component");
+		assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {}, "The settings object of the constructor should be empty");
+		assert.strictEqual(oComponent3._bRoutingPropagateTitle, undefined, "The propagateTitle flag should be stored successfully in the component");
+		assert.deepEqual(oComponentConstructorSpy.getCall(2).args[0], {}, "The settings object of the constructor should be empty");
+
+		// destroy the components
+		oComponent1.destroy();
+		oComponent2.destroy();
+		oComponent3.destroy();
+
+		oComponentConstructorSpy.resetHistory();
+
+		var done = assert.async();
+
+		// _propagateTitle is true - via component load
+		Component.create({
+			id: "component1b",
+			manifest : "/anylocation/manifest.json",
+			settings: {
+				_propagateTitle: true
+			}
+		}).then(function(oComponent){
+			assert.strictEqual(oComponentConstructorSpy.callCount, 2, "The component constructor and the button constructor should be called once");
+			assert.strictEqual(oComponent._bRoutingPropagateTitle, true, "The propagateTitle flag should be stored successfully in the component");
+			assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {id: "component1b"}, "The settings object of the constructor should contains only the id, the propagateTitle flag should be removed from the settings");
+
+			oComponent.destroy();
+			oComponentConstructorSpy.resetHistory();
+
+			// _propagateTitle is false - via component load
+			Component.create({
+				id: "component2b",
+				manifest : "/anylocation/manifest.json",
+				settings: {
+					_propagateTitle: false
+				}
+			}).then(function(oComponent){
+				assert.strictEqual(oComponentConstructorSpy.callCount, 2, "The component constructor and the button constructor should be called once");
+				assert.strictEqual(oComponent._bRoutingPropagateTitle, false, "The propagateTitle flag should be stored successfully in the component");
+				assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {id: "component2b"}, "The settings object of the constructor should contains only the id, the propagateTitle flag should be removed from the settings");
+
+				oComponent.destroy();
+				oComponentConstructorSpy.resetHistory();
+
+				// _propagateTitle is undefined - via component load
+				Component.create({
+					id: "component3b",
+					manifest : "/anylocation/manifest.json",
+					settings: {
+						_propagateTitle: undefined
+					}
+				}).then(function(oComponent){
+					assert.strictEqual(oComponentConstructorSpy.callCount, 2, "The component constructor and the button constructor should be called once");
+					assert.strictEqual(oComponent._bRoutingPropagateTitle, undefined, "The propagateTitle flag should be stored successfully in the component");
+					assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {id: "component3b"}, "The settings object of the constructor should contains only the id, the propagateTitle flag should be removed from the settings");
+					oComponent.destroy();
+
+					done();
+
+					// remove the spy
+					oComponentConstructorSpy.restore();
+				});
+			});
+		});
 	});
 
 	QUnit.module("UIComponent with rootView from Manifest", {
