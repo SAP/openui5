@@ -421,7 +421,7 @@ function(
 	 */
 	MultiComboBox.prototype._selectItemByKey = function(oEvent) {
 		var aVisibleItems, oParam,
-			oItem, i, bItemMatched,
+			oItem, i, bItemMatched, bKeyIsValid,
 			bPickerOpened = this.isOpen();
 
 		if (!this.getEnabled() || !this.getEditable()) {
@@ -437,7 +437,12 @@ function(
 		aVisibleItems = this._getUnselectedItems(bPickerOpened ? "" : this.getValue());
 
 		for (i = 0; i < aVisibleItems.length; i++) {
-			if (aVisibleItems[i].getText().toUpperCase() === this.getValue().toUpperCase() && aVisibleItems[i].getKey()) {
+			// Empty string should be valid key for sap.ui.core.Item only
+			// as sap.ui.core.SeparatorItem with empty key is used for Grouping
+			// while sap.ui.core.SeparatorItem without key and text is used for horizontal visible separator
+			bKeyIsValid = !(aVisibleItems[i].getKey() === undefined || aVisibleItems[i].getKey() === null) && !aVisibleItems[i].isA("sap.ui.core.SeparatorItem");
+
+			if (aVisibleItems[i].getText().toUpperCase() === this.getValue().toUpperCase() && bKeyIsValid) {
 				oItem = aVisibleItems[i];
 				bItemMatched = true;
 				break;
