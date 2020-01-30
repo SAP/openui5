@@ -197,6 +197,11 @@ sap.ui.define([
 							var sHash = oRouter.getHashChanger().getHash();
 							var oRoute = oRouter.getRouteByHash(sHash);
 
+							if (oRouter._oOwner) {
+								// update the flag once the component is displayed again after it's already loaded
+								oRouter._oOwner._bRoutingPropagateTitle = oTargetCreateInfo.propagateTitle;
+							}
+
 							// TODO: offer getter for target info
 							if (oRoute && oRoute._oConfig.target) {
 								bInstantResolve = false;

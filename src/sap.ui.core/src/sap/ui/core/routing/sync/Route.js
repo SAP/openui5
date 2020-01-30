@@ -36,7 +36,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"], function(Log, jQuery
 				aTargetControls,
 				aTargets;
 
-			oRouter._matchedRoute = this;
+			oRouter._oMatchedRoute = this;
 			oRouter._bMatchingProcessStarted = true;
 
 			// Recursively fire matched event and display views of this routes parents

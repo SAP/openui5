@@ -76,6 +76,11 @@ sap.ui.define([
 					delete mSettings._routerHashChanger;
 				}
 
+				if (mSettings && mSettings._propagateTitle){
+					this._bRoutingPropagateTitle = mSettings._propagateTitle;
+					delete mSettings._propagateTitle;
+				}
+
 				Component.apply(this, arguments);
 				bCreated = true;
 			} finally {
