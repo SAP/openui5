@@ -180,6 +180,7 @@ sap.ui.define([
 				assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
 				assert.ok(oContextMenuControl._oLastPosition === null, "The Last Position of the ContextMenu is not set, because it is the first opening");
 				QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
+				QUnitUtils.triggerKeyup(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
 				this.clock.tick(400); //animation of the closing of the Popover
 				var oLastPosition = oContextMenuControl._oLastPosition;
 				assert.strictEqual(fnSpy.callCount, 1, "The Position of the ContextMenu is stored before closing");
@@ -196,6 +197,7 @@ sap.ui.define([
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 				var fnSpy = sinon.spy(DOMUtil, "focusWithoutScrolling");
 				QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
+				QUnitUtils.triggerKeyup(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
 				this.clock.tick(400); //animation of the closing of the Popover
 				assert.strictEqual(fnSpy.callCount, 1, "the focus without scrolling function is called");
 				assert.ok(oContextMenuControl._oLastSourceOverlay === this.oButton2Overlay, "the last Caller Overlay of the ContextMenu is set");
@@ -210,6 +212,7 @@ sap.ui.define([
 				oContextMenuControl._oTarget.setAttribute("overlay", "");
 				var fnSpy = sinon.spy(DOMUtil, "focusWithoutScrolling");
 				QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
+				QUnitUtils.triggerKeyup(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
 				this.clock.tick(400); //animation of the closing of the Popover
 				assert.strictEqual(fnSpy.callCount, 0, "the focus without scrolling function is not called");
 				assert.ok(oContextMenuControl._oLastSourceOverlay === null, "the last Caller Overlay of the ContextMenu is not set");

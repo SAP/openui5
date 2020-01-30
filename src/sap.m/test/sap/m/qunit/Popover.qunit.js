@@ -400,6 +400,39 @@ sap.ui.define([
 		assert.strictEqual(this.oPopover.getDomRef("cont").offsetWidth, 50);
 	});
 
+	QUnit.test('ESCAPE should not dismiss the Popover in certain situations', function (assert) {
+		var fnKeyDownModifiers = function (iCode) {
+				sap.ui.test.qunit.triggerKeydown(this.oPopover.getDomRef(), iCode);
+				sap.ui.test.qunit.triggerKeydown(this.oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				this.clock.tick(1000);  // wait eventual animation
+			}.bind(this),
+			fnKeyUpModifiers = function (iCode) {
+				sap.ui.test.qunit.triggerKeyup(this.oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				sap.ui.test.qunit.triggerKeyup(this.oPopover.getDomRef(), iCode);
+				this.clock.tick(1000);  // wait eventual animation
+			}.bind(this);
+		// arrange
+		this.oPopover.openBy(this.oButton);
+		this.clock.tick(1000);  // wait 1s after the open animation is completed
+
+		// Act
+		fnKeyDownModifiers(jQuery.sap.KeyCodes.SPACE);
+		// Assert
+		assert.strictEqual(this.oPopover.isOpen(), true, "ESCAPE when Space is hold, should not close the Popover");
+		// Cleanup
+		fnKeyUpModifiers(jQuery.sap.KeyCodes.SPACE);
+		// Assert
+		assert.strictEqual(this.oPopover.isOpen(), true, "The Popover should still be in Open state");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(this.oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		sap.ui.test.qunit.triggerKeyup(this.oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(this.oPopover.isOpen(), false, "The Popover should be closed.");
+	});
+
 	QUnit.module("Position calculation");
 
 	QUnit.test("vertical calculation of Popover positioning should be correct", function (assert){
@@ -916,7 +949,7 @@ sap.ui.define([
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
 		assert.ok(oPopover.isOpen(), "Popover should be opened");
-		sap.ui.test.qunit.triggerKeydown(oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		sap.ui.test.qunit.triggerKeyup(oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 		this.clock.tick(500);
 		assert.ok(!oPopover.isOpen(), "Popover should be closed by ESCAPE key");
 		assert.equal(document.activeElement, oButton.getFocusDomRef(), "Focus should be set back to the button");
@@ -924,7 +957,7 @@ sap.ui.define([
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
 		assert.ok(oPopover.isOpen(), "Popover should be opened");
-		sap.ui.test.qunit.triggerKeydown(oPopover.getDomRef(), jQuery.sap.KeyCodes.F4, false, true);
+		sap.ui.test.qunit.triggerKeyup(oPopover.getDomRef(), jQuery.sap.KeyCodes.F4, false, true);
 		this.clock.tick(500);
 		assert.ok(!oPopover.isOpen(), "Popover should be closed by Alt+F4 key");
 		assert.equal(document.activeElement, oButton.getFocusDomRef(), "Focus should be set back to the button");
