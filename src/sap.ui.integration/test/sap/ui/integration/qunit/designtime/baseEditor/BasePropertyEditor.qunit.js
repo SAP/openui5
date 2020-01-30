@@ -128,17 +128,29 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("When an editor value changes", function (assert) {
+		QUnit.test("When the change of a complex editor leads to wrapper removal", function (assert) {
 			var fnDone = assert.async();
-			var oFooEditor = this.oBaseEditor.getPropertyEditorSync("foo");
-			this.oResolveAsyncInitDelay[oFooEditor.getId()]();
 
-			oFooEditor.ready().then(function () {
-				oFooEditor.attachEventOnce("ready", function () {
-					assert.strictEqual(oFooEditor.isReady(), true, "Then the ready event is fired again");
-					fnDone();
-				});
-				oFooEditor.setValue("Tesla");
+			var oCarsEditor = this.oBaseEditor.getPropertyEditorSync("cars");
+			var aWrappers = oCarsEditor._aEditorWrappers;
+			var aNestedEditors = aWrappers.map(function (oEditorWrapper) {
+				return oEditorWrapper.getAggregation("propertyEditors")[0];
+			});
+			aNestedEditors.forEach(function (oNestedEditor) {
+				this.oResolveAsyncInitDelay[oNestedEditor.getId()]();
+			}.bind(this));
+
+			oCarsEditor.ready().then(function () {
+				// Simulate value change to a nested editor
+				var oConfig = oCarsEditor.getConfig();
+				oConfig.value = [{
+					manufacturer: "Tesla"
+				}];
+				oCarsEditor.setConfig(oConfig);
+
+				assert.strictEqual(oCarsEditor.isReady(), true, "Then the ready state of the complex editor is not reset");
+				assert.strictEqual(oCarsEditor._aEditorWrappers.length, 1, "Then the outdated wrapper references on the complex editor are removed");
+				fnDone();
 			});
 		});
 
@@ -158,14 +170,15 @@ function (
 				// Simulate value change to a nested editor
 				oCarsEditor.attachEventOnce("ready", function () {
 					assert.strictEqual(oCarsEditor.isReady(), true, "Then the ready state of the complex editor is reset");
-					assert.strictEqual(oCarsEditor._aEditorWrappers.length, 1, "Then the outdated wrapper references on the complex editor are removed");
+					assert.strictEqual(oCarsEditor._aEditorWrappers.length, 3, "Then the wrapper references are updated");
 					fnDone();
 				});
 
+				sandbox.restore(); // Don't intercept asyncInit anymore
 				var oConfig = oCarsEditor.getConfig();
-				oConfig.value = [{
+				oConfig.value.push({
 					manufacturer: "Tesla"
-				}];
+				});
 				oCarsEditor.setConfig(oConfig);
 			});
 		});

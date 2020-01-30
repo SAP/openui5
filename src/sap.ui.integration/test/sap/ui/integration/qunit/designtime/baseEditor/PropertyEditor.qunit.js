@@ -743,6 +743,70 @@ function (
 		});
 	});
 
+	QUnit.module("Ready handling", {
+		beforeEach: function (assert) {
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", assert.async());
+
+			this.oPropertyEditor = new PropertyEditor();
+			this.oBaseEditor.addContent(this.oPropertyEditor);
+			this.oBaseEditor.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when there is no nested editor", function (assert) {
+			assert.strictEqual(this.oPropertyEditor.isReady(), false);
+		});
+
+		QUnit.test("when the property name is set and nested editor is initialised", function (assert) {
+			var fnDone = assert.async();
+			this.oPropertyEditor.attachEventOnce("ready", function () {
+				assert.strictEqual(
+					this.oPropertyEditor.getAggregation("propertyEditor").isReady(),
+					true,
+					"Then the wrapper fires ready even if the original editor was already ready"
+				);
+				fnDone();
+			}, this);
+			this.oPropertyEditor.setPropertyName("foo");
+		});
+
+		QUnit.test("when the property name changes", function (assert) {
+			var fnDone = assert.async();
+			var oSpy = sandbox.spy();
+			var oFooEditor = this.oBaseEditor.getPropertyEditorSync("foo");
+
+			this.oPropertyEditor.attachReady(oSpy);
+
+			this.oPropertyEditor.ready().then(function () {
+				assert.strictEqual(oSpy.callCount, 1);
+
+				this.oPropertyEditor.setPropertyName("bar");
+
+				this.oPropertyEditor.ready().then(function () {
+					assert.strictEqual(oSpy.callCount, 2);
+
+					oFooEditor.fireReady();
+
+					this.oPropertyEditor.ready().then(function () {
+						assert.strictEqual(oSpy.callCount, 2);
+						fnDone();
+					});
+				}.bind(this));
+			}.bind(this));
+
+			this.oPropertyEditor.setPropertyName("foo");
+		});
+	});
+
 	QUnit.module("Destroy", {
 		beforeEach: function (assert) {
 			this.oBaseEditor = new BaseEditor({

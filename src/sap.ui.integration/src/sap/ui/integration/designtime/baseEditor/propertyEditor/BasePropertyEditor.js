@@ -136,7 +136,6 @@ sap.ui.define([
 			this._iExpectedWrapperCount = this.getExpectedWrapperCount(vValue);
 			// If the value of the editor changes, its nested editors might have changed as well
 			// Therefore it must reevaluate the ready state
-			this._setReady(false);
 			this._checkReadyState();
 		},
 
@@ -158,12 +157,14 @@ sap.ui.define([
 			}
 			if (!this._bInitFinished) {
 				// The editor itself is not ready yet, no need to check nested editors
+				this._setReady(false);
 				return;
 			}
 			if (typeof this._iExpectedWrapperCount === "undefined") {
 				// Ready check was not initialized
 				// If the expected wrapper count is not set then BasePropertyEditor.setValue was not correctly
 				// called or the getExpectedWrapperCount calculation returns an invalid value
+				this._setReady(false);
 				throw new Error("Ready check was executed before setting the number of expected wrappers. Did you call BasePropertyEditor.prototype.setValue from your editor?");
 			} else if (this._iExpectedWrapperCount === 0) {
 				// If the editor is not complex and no nested editors are expected
@@ -175,16 +176,28 @@ sap.ui.define([
 			// Wait for the expected number of wrappers to report to the editor via _wrapperInit
 			// If all wrappers are initialized, execute the ready check
 			if (this._iExpectedWrapperCount === this._aEditorWrappers.length) {
-				this._mWrapperReadyCheck = createPromise(function (resolve) {
-					Promise.all(this._aEditorWrappers.map(function (oWrapper) {
-						return oWrapper.ready(); // Check the ready state of each nested editor
-					})).then(resolve);
-				}.bind(this));
-				this._mWrapperReadyCheck.promise.then(function () {
-					// All nested editors are ready
+				if (
+					this._aEditorWrappers.every(function (oWrapper) {
+						return oWrapper.isReady();
+					})
+				) {
+					// Editors haven't changed and are still ready
 					this._setReady(true);
-					delete this._mWrapperReadyCheck;
-				}.bind(this));
+				} else {
+					this._setReady(false);
+					this._mWrapperReadyCheck = createPromise(function (resolve) {
+						Promise.all(this._aEditorWrappers.map(function (oWrapper) {
+							return oWrapper.ready(); // Check the ready state of each nested editor
+						})).then(resolve);
+					}.bind(this));
+					this._mWrapperReadyCheck.promise.then(function () {
+						// All nested editors are ready
+						this._setReady(true);
+						delete this._mWrapperReadyCheck;
+					}.bind(this));
+				}
+			} else {
+				this._setReady(false);
 			}
 		},
 
@@ -193,7 +206,7 @@ sap.ui.define([
 		 * Registers the source of the <code>oEvent</code> on the editor as an element to consider
 		 * for the ready check.
 		 *
-		 * @param {object} oEvent - Init event of the nested editor
+		 * @param {sap.ui.base.Event} oEvent - Init event of the nested editor
 		 */
 		wrapperInit: function (oEvent) {
 			var oWrapper = oEvent.getSource();
@@ -203,13 +216,21 @@ sap.ui.define([
 				return;
 			}
 			this._aEditorWrappers.push(oWrapper);
+			oWrapper.attachReady(function () {
+				// If a nested editor got unready without a value change on the parent editor
+				// the ready state needs to be explicitly reevaluated to fire ready from the parent again
+				this._setReady(false);
+				this._checkReadyState();
+			}.bind(this));
 			// If the editor contains nested editors and setValue is called for the first time
 			// an observer is created to handle the destruction of nested wrappers
 			if (!this._oWrapperObserver) {
 				// Observe wrappers which are registered on the complex editor
 				// to remove them from the ready check list when they are destroyed
 				this._oWrapperObserver = new ManagedObjectObserver(function (mutation) {
-					this._aEditorWrappers.pop(mutation.object);
+					this._aEditorWrappers = this._aEditorWrappers.filter(function (oEditorWrapper) {
+						return oEditorWrapper !== mutation.object;
+					});
 				}.bind(this));
 			}
 			this._oWrapperObserver.observe(oWrapper, {
@@ -278,6 +299,9 @@ sap.ui.define([
 			this._oConfigModel.destroy();
 			if (this._oConfigBinding) {
 				this._oConfigBinding.destroy();
+			}
+			if (this._oWrapperObserver) {
+				this._oWrapperObserver.destroy();
 			}
 		},
 

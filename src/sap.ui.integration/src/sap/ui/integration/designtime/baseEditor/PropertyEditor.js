@@ -139,7 +139,12 @@ sap.ui.define([
 							type: "string"
 						}
 					}
-				}
+				},
+
+				/**
+				 * Fires when nested property editor is ready.
+				 */
+				ready: {}
 			}
 		},
 
@@ -241,6 +246,9 @@ sap.ui.define([
 	};
 
 	PropertyEditor.prototype.destroy = function () {
+		if (this._fnCancelInit) {
+			this._fnCancelInit();
+		}
 		this._removePropertyEditor();
 		Control.prototype.destroy.apply(this, arguments);
 	};
@@ -250,6 +258,7 @@ sap.ui.define([
 
 		if (oPropertyEditor) {
 			this.setAggregation("propertyEditor", null);
+			oPropertyEditor.detachReady(this._onPropertyEditorReady, this);
 			switch (this._sCreatedBy) {
 				case CREATED_BY_CONFIG:
 					oPropertyEditor.destroy();
@@ -265,6 +274,36 @@ sap.ui.define([
 				propertyEditor: null
 			});
 		}
+	};
+
+	PropertyEditor.prototype.isReady = function () {
+		var oNestedEditor = this.getAggregation("propertyEditor");
+		return oNestedEditor && oNestedEditor.isReady() || false;
+	};
+
+	PropertyEditor.prototype.ready = function () {
+		return new Promise(function (resolve) {
+			var fnCheckPropertyEditorReady = function (oNestedEditor) {
+				oNestedEditor.ready().then(resolve);
+			};
+			var oNestedEditor = this.getAggregation("propertyEditor");
+			if (oNestedEditor) {
+				fnCheckPropertyEditorReady(oNestedEditor);
+			} else {
+				var fnWaitForNestedEditor = function (oEvent) {
+					var oNestedEditor = oEvent.getParameter("propertyEditor");
+					if (oNestedEditor) {
+						this.detachPropertyEditorChange(fnWaitForNestedEditor, this);
+						fnCheckPropertyEditorReady(oNestedEditor);
+					}
+				};
+				this.attachPropertyEditorChange(fnWaitForNestedEditor, this);
+			}
+		}.bind(this));
+	};
+
+	PropertyEditor.prototype._onPropertyEditorReady = function () {
+		this.fireReady();
 	};
 
 	PropertyEditor.prototype._initPropertyEditor = function () {
@@ -314,6 +353,10 @@ sap.ui.define([
 
 			mPromise.promise.then(function (oPropertyEditor) {
 				this.setAggregation("propertyEditor", oPropertyEditor);
+				oPropertyEditor.attachReady(this._onPropertyEditorReady, this);
+				if (oPropertyEditor.isReady()) { // in case it's already ready
+					this.fireReady();
+				}
 				this.firePropertyEditorChange({
 					propertyEditor: oPropertyEditor
 				});
