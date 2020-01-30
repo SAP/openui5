@@ -744,6 +744,7 @@ function(
 		function createRegularControls(node, oClass, pRequireContext) {
 			var ns = node.namespaceURI,
 				mSettings = {},
+				mAggregationsWithExtensionPoints = {},
 				sStyleClasses = "",
 				aCustomData = [],
 				mCustomSettings = null,
@@ -995,7 +996,27 @@ function(
 								var oControl = aControls[j];
 								// append the child to the aggregation
 								var name = oAggregation.name;
-								if (oAggregation.multiple) {
+								if (oControl._isExtensionPoint) {
+									if (!mSettings[name]) {
+										mSettings[name] = [];
+									}
+
+									var aExtensionPointList = mAggregationsWithExtensionPoints[name];
+									if (!aExtensionPointList) {
+										aExtensionPointList = mAggregationsWithExtensionPoints[name] = [];
+									}
+									// if the aggregation already exists we get the
+									oControl.index = mSettings[name].length;
+									oControl.aggregationName = name;
+
+									// connect extension points
+									var oLast = aExtensionPointList[aExtensionPointList.length - 1];
+									if (oLast) {
+										oLast._nextSibling = oControl;
+									}
+
+									aExtensionPointList.push(oControl);
+								} else if (oAggregation.multiple) {
 									// 1..n AGGREGATION
 									if (!mSettings[name]) {
 										mSettings[name] = [];
@@ -1033,6 +1054,7 @@ function(
 			return handleChildren(node, oAggregation, mAggregations, pRequireContext).then(function() {
 				// apply the settings to the control
 				var vNewControlInstance;
+				var pProvider = SyncPromise.resolve();
 
 				if (bEnrichFullIds && node.hasAttribute("id")) {
 						setId(oView, node);
@@ -1057,19 +1079,59 @@ function(
 						}
 
 					} else {
+
+						var fnTriggerExtensionPointProvider = function(oTargetControl) {
+							if (ExtensionPoint._sExtensionProvider) {
+								var pExtensionPoints = [];
+
+								// in the async case we can collect the ExtensionPointProvider promises and
+								// then can delay the view.loaded() promise until all extension points are
+								var fnResolveExtensionPoints;
+								if (bAsync) {
+									pProvider = new Promise(function(resolve, reject) {
+										fnResolveExtensionPoints = resolve;
+									});
+								}
+
+								sap.ui.require([ExtensionPoint._sExtensionProvider], function(ExtensionPointProvider) {
+									Object.keys(mAggregationsWithExtensionPoints).forEach(function(sAggregationName) {
+										var aExtensionPoints = mAggregationsWithExtensionPoints[sAggregationName];
+										aExtensionPoints.forEach(function(oExtensionPoint) {
+											oExtensionPoint.targetControl = oTargetControl;
+											pExtensionPoints.push(ExtensionPointProvider.applyExtensionPoint(oExtensionPoint));
+										});
+									});
+									// we collect the ExtensionProvider Promises
+									if (bAsync) {
+										Promise.all(pExtensionPoints).then(fnResolveExtensionPoints);
+									}
+								});
+							}
+						};
+
 						// call the control constructor with the according owner in scope
 						var fnCreateInstance = function() {
+							var oInstance;
+
 							// Pass processingMode to Fragments only
 							if (oClass.getMetadata().isA("sap.ui.core.Fragment") && node.getAttribute("type") !== "JS" && oView._sProcessingMode === "sequential") {
 								mSettings.processingMode = "sequential";
 							}
+
+							// the scoped runWithOwner function is only during ASYNC processing!
 							if (oView.fnScopedRunWithOwner) {
-								return oView.fnScopedRunWithOwner(function() {
-									return new oClass(mSettings);
+								oInstance = oView.fnScopedRunWithOwner(function() {
+									var oInstance = new oClass(mSettings);
+									return oInstance;
 								});
 							} else {
-								return new oClass(mSettings);
+								oInstance = new oClass(mSettings);
 							}
+
+							// check if we need to hand the ExtensionPoint info to the ExtensionProvider
+							fnTriggerExtensionPointProvider(oInstance);
+
+							return oInstance;
 						};
 
 						if (oParseConfig && oParseConfig.fnRunWithPreprocessor) {
@@ -1123,7 +1185,9 @@ function(
 					});
 				}
 
-				return vNewControlInstance;
+				return pProvider.then(function() {
+					return vNewControlInstance;
+				});
 			});
 
 		}
