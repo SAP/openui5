@@ -1,14 +1,36 @@
 <core:FragmentDefinition
         xmlns="sap.m"
         xmlns:core="sap.ui.core" >
-    <HBox width="33.333%" >
+    <HBox
+            width="33.333%"
+            class="sapUiRtaToolbarIconAndDraftSection" >
         <OverflowToolbar class="sapUiRta_iconAndDraftBar">
             <content>
                 <HBox id="sapUiRta_iconBox" />
                 <ToolbarSpacer
                         id="sapUiRta_iconSpacer"
                         width="0%"
+                        visible="true" />
+                <Label
+                        id="sapUiRta_draftLabel"
+                        text="{i18n>LBL_DRAFT}"
+                        design="Bold"
+                        class="sapUiRtaDraftLabel"
                         visible="false" />
+                <Button
+                        id="sapUiRta_activateDraft"
+                        icon="sap-icon://activate"
+                        press=".activateDraft"
+                        visible="false"
+                        type="Transparent"
+                        tooltip="{i18n>TOL_ACTIVATE_DRAFT}" />
+                <Button
+                        id="sapUiRta_discardDraft"
+                        icon="sap-icon://delete"
+                        press=".discardDraft"
+                        visible="false"
+                        type="Transparent"
+                        tooltip="{i18n>TOL_DISCARD_DRAFT}" />
             </content>
         </OverflowToolbar>
     </HBox>
