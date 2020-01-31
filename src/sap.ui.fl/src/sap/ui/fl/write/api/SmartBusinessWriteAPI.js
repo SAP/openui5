@@ -9,17 +9,27 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/base/util/includes",
-	"sap/base/Log"
+	"sap/ui/fl/registry/Settings"
 ], function(
 	DescriptorVariantFactory,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	ChangesController,
 	SaveAs,
-	LrepConnector
+	LrepConnector,
+	Settings
 ) {
 	"use strict";
+
+	function _executeActionByName(sActionName, mPropertyBag) {
+		return Settings.getInstance().then(function(oSettings) {
+			if (oSettings.isAtoEnabled()) {
+				mPropertyBag.skipIam = true;
+				mPropertyBag.transport = "ATO_NOTIFICATION";
+			}
+			return SaveAs[sActionName](mPropertyBag);
+		});
+	}
 
 	/**
 	 * Provides an API for tools to create, update, delete app variants only for ABAP systems.
@@ -45,8 +55,6 @@ sap.ui.define([
 		 * Transport is required for onPremise systems until the app variant is not intended to be saved as a local object;
 		 * Transport is not required for S4/Hana Cloud systems
 		 *
-		 * @param {string} [mPropertyBag.skipIam] - This flag determines whether the IAM registration should be skipped in the backend;
-		 * It must be passed in case of S4/Hana Cloud systems
 		 *
 		 * @param {string} [mPropertyBag.package] - Package info for the app variant;
 		 * Package is required if the app variant is intended for VENDOR or CUSTOMER_BASE layer in onPremise systems;
@@ -55,8 +63,8 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.version] - Version of the app variant
 		 *
 		 * @returns {Promise} Promise which gets resolved with the app variant update response or gets rejected with a first error
-		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted
 		 */
 		create: function (mPropertyBag) {
 			if (!mPropertyBag.layer) {
@@ -77,7 +85,7 @@ sap.ui.define([
 			// Pass a flag to determine the consumer who is calling SaveAs handler
 			mPropertyBag.isForSmartBusiness = true;
 
-			return SaveAs.saveAs(mPropertyBag);
+			return _executeActionByName("saveAs", mPropertyBag);
 		},
 
 		/**
@@ -85,16 +93,14 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.appId - App variant ID
-		 * @param {string} [mPropertyBag.skipIam] - This flag determines whether the IAM registration should be skipped in the backend;
-		 * It must be passed in case of S4/Hana Cloud systems
 		 *
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant;
 		 * Transport is required for onPremise systems;
 		 * Transport is not required for S4/Hana Cloud systems
 		 *
 		 * @returns {Promise} Promise which gets resolved with the app variant update response or gets rejected with a first error
-		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted
 		 */
 		update: function (mPropertyBag) {
 			if (!mPropertyBag.appId) {
@@ -111,7 +117,7 @@ sap.ui.define([
 			// Pass a flag to know which consumer is calling SaveAs handler
 			mPropertyBag.isForSmartBusiness = true;
 
-			return SaveAs.updateAppVariant(mPropertyBag);
+			return _executeActionByName("updateAppVariant", mPropertyBag);
 		},
 
 		/**
@@ -123,12 +129,9 @@ sap.ui.define([
 		 * Transport is required for onPremise systems;
 		 * Transport is not required for S4/Hana Cloud systems
 		 *
-		 * @param {string} [mPropertyBag.skipIam] - This flag determines whether the IAM registration should be skipped in the backend;
-		 * It must be passed in case of S4/Hana Cloud systems
-		 *
 		 * @returns {Promise} Promise that resolves with the app variant deletion response
-		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted
 		 */
 		remove: function (mPropertyBag) {
 			if (!mPropertyBag.appId) {
@@ -144,7 +147,7 @@ sap.ui.define([
 			// Pass a flag to know which consumer is calling SaveAs handler
 			mPropertyBag.isForSmartBusiness = true;
 
-			return SaveAs.deleteAppVariant(mPropertyBag);
+			return _executeActionByName("deleteAppVariant", mPropertyBag);
 		},
 
 		/**
@@ -152,6 +155,8 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.appId - App variant ID
 		 * @returns {Promise<object>} Resolving with the loaded variant
+		 * @private
+		 * @ui5-restricted
 		 */
 		getDesignTimeVariant: function (mPropertyBag) {
 			if (!mPropertyBag.appId) {
@@ -166,6 +171,9 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.appId - ID of the reference application
 		 * @param {string} mPropertyBag.id - App variant ID
 		 * @returns {Promise<object>} Resolving with the loaded variant
+		 *
+		 * @private
+		 * @ui5-restricted
 		 */
 		getRunTimeVariant: function (mPropertyBag) {
 			if (!mPropertyBag.appId) {
@@ -213,6 +221,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.appId - Reference app ID or an app variant ID
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change instance
 		 *
+		 * @returns {Promise|sap.ui.fl.Change} Promise resolves with the added change in persistence.
 		 * @private
 	 	 * @ui5-restricted
 		 */

@@ -152,8 +152,7 @@ sap.ui.define([
 						},
 						id: "customer.reference.app.id",
 						// eslint-disable-next-line quote-props
-						layer: "CUSTOMER",
-						skipIam: true
+						layer: "CUSTOMER"
 					});
 				})
 				.then(function() {
@@ -171,8 +170,7 @@ sap.ui.define([
 		QUnit.test("(S4/Hana Cloud system) when update is called to update a published app variant in CUSTOMER layer", function(assert) {
 			simulateSystemConfig(true);
 			var mPropertyBag = {
-				appId: "customer.reference.app.id",
-				skipIam: true
+				appId: "customer.reference.app.id"
 			};
 
 			var mAppVariant = {
@@ -191,15 +189,7 @@ sap.ui.define([
 				}
 			};
 
-			var oTransportResponse = {
-				response: {
-					errorCode: "",
-					localonly: false,
-					transports: []
-				}
-			};
-
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse); // Get transports
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
 
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -207,13 +197,13 @@ sap.ui.define([
 
 			return SmartBusinessWriteAPI.update(mPropertyBag)
 				.then(function() {
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "GET"), "then the parameters are correct");
+					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "PUT"), "then the parameters are correct");
 				});
 		});
 
-		QUnit.test("(S4/Hana onPremise system) when update is called to update a local app variant in CUSTOMER layer", function(assert) {
+		QUnit.test("(S4/Hana onPremise system) when update is called to update a local app variant ($TMP) in CUSTOMER layer", function(assert) {
 			simulateSystemConfig(false);
 			var mPropertyBag = {
 				appId: "customer.reference.app.id"
@@ -254,6 +244,53 @@ sap.ui.define([
 					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "GET"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "PUT"), "then the parameters are correct");
+				});
+		});
+
+		QUnit.test("(S4/Hana onPremise system) when update is called to update an app variant with empty package in CUSTOMER layer", function(assert) {
+			simulateSystemConfig(false);
+			var mPropertyBag = {
+				appId: "customer.reference.app.id"
+			};
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "CUSTOMER",
+					fileType: "fileType1",
+					packageName: "",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oTransportResponse = {
+				response: {
+					errorCode: "",
+					localonly: true,
+					transports: []
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+
+			return SmartBusinessWriteAPI.update(mPropertyBag)
+				.then(function() {
+					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "PUT"), "then the parameters are correct");
+				})
+				.catch(function() {
+					assert.ok(false, "Should not fail");
 				});
 		});
 

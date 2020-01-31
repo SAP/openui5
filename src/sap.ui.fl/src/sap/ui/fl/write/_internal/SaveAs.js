@@ -41,7 +41,10 @@ sap.ui.define([
 		// (Transport Validation) Writing, updating or deleting content in onPremise systems in all layers must require a transport unless the package is not local object
 		if (
 			mPropertyBag.isForSmartBusiness
-			&& mPropertyBag.package !== '$TMP'
+			&& (
+				mPropertyBag.package !== '$TMP'
+				&& mPropertyBag.package !== ''
+			)
 			&& !mPropertyBag.transport
 			&& !oAppVariant.getSettings().isAtoEnabled()
 		) {
@@ -205,7 +208,6 @@ sap.ui.define([
 					return oAppVariantClosure.submit()
 						.catch(function(oError) {
 							oError.messageKey = "MSG_SAVE_APP_VARIANT_FAILED";
-							oError.saveAsFailed = true;
 							throw oError;
 						});
 				})
