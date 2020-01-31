@@ -315,13 +315,20 @@
 }
 
 .sapMLIBNavigated {
-	height: 100%;
 	width: 0.1875rem;
 	position: absolute;
 	right: 0;
 	top: 0;
 	bottom: 0;
 	background-color: @sapUiSelected;
+}
+
+// to make the focus outline visible when navigated=true
+.sapMLIBFocusable:focus .sapMLIBNavigated {
+	width: 0.09375rem;
+	right: 2px;
+	bottom: 1px;
+	top: 2px;
 }
 
 /* Compact size */
