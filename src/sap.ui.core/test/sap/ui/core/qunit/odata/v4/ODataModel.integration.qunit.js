@@ -3821,9 +3821,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: As a Fiori Elements developer you template the operation dialog and want to use
-	// the AnnotationHelper.format to bind the parameters so that you have the type information
-	// already available before the controls are created.
+	// Scenario: Within an application an operation dialog is templated. AnnotationHelper.format is
+	// used bind the parameters so that you have the type information already available before the
+	// controls are created.
 	// JIRA: CPOUI5ODATAV4-28
 	testXMLTemplating("Operation parameters with sap.ui.model.odata.v4.AnnotationHelper.format",
 		{models : {meta : createTeaBusiModel().getMetaModel()}},
@@ -3847,6 +3847,52 @@ sap.ui.define([
 		<Input value="{path:\'TeamID\',type:\'sap.ui.model.odata.type.String\',\
 			constraints:{\'maxLength\':10,\'nullable\':false},\
 			formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+	</FlexBox>\
+</FlexBox>');
+
+	//*********************************************************************************************
+	// Scenario: Within an application an operation dialog is templated. AnnotationHelper.format is
+	// used to control the visibility of the action dialog to send artist's autographs (via
+	// _it/sendsAutographs) and to determine the placeholder of the operation parameter 'Channel'
+	// (via _it/defaultChannel). Additionally the parameter's input field has a value help which is
+	// prefilled with the last used channel of the artist (via _it/lastUsedChannel).
+	// JIRA: CPOUI5ODATAV4-132
+	testXMLTemplating(
+		"Annotations on operations and parameters sap.ui.model.odata.v4.AnnotationHelper.format",
+		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+	<FlexBox binding="{special.cases.SendAutograph(...)}"\
+		visible="{meta>/Artists/special.cases.SendAutograph\
+@Org.OData.Core.V1.OperationAvailable@@format}">\
+		<FlexBox binding="{$Parameter}">\
+			<template:with path="meta>/Artists/special.cases.SendAutograph/$Parameter/Channel"\
+				var="param">\
+					<Input id="param" value="{Channel}"\
+						placeholder="{param>@com.sap.vocabularies.Common.v1.Text/@@format}"/>\
+					<template:with path="param>@com.sap.vocabularies.Common.v1.ValueListMapping"\
+						var="vh">\
+							<FlexBox id="valueHelp">\
+								<SearchField \
+									value="{vh>Parameters/0/LocalDataProperty@@format}" />\
+								<Table />\
+							</FlexBox>\
+					</template:with>\
+			</template:with>\
+		</FlexBox>\
+	</FlexBox>\
+</template:alias>',
+'<FlexBox binding="{special.cases.SendAutograph(...)}" \
+	visible="{path:\'sendsAutographs\',type:\'sap.ui.model.odata.type.Boolean\'}">\
+	<FlexBox binding="{$Parameter}">\
+		<Input id="param" value="{Channel}" placeholder="{path:\'_it/defaultChannel\'\
+			,type:\'sap.ui.model.odata.type.String\'\
+			,formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+		<FlexBox id="valueHelp">\
+			<SearchField value="{path:\'_it/lastUsedChannel\'\
+				,type:\'sap.ui.model.odata.type.String\'\
+				,formatOptions:{\'parseKeepsEmptyString\':true}}" />\
+			<Table />\
+		</FlexBox>\
 	</FlexBox>\
 </FlexBox>');
 

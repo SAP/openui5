@@ -138,7 +138,7 @@ sap.ui.define([
 			 * </pre>
 			 * <code>format</code> returns a binding with path "EQUIPMENT_2_PRODUCT/Name".
 			 *
-			 * Since 1.73 in addition to supporting annotations, this function also can be used to
+			 * Since 1.73.0 in addition to supporting annotations, this function also can be used to
 			 * interpret action or function parameters as a binding string.
 			 *
 			 * See an example of the metadata for an unbound action "AcChangeTeamBudgetByID":
@@ -160,6 +160,43 @@ sap.ui.define([
 			 * &lt;Text text="{path:'TeamID',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':10,'nullable':false}" />
 			 * </pre>
 			 *
+			 * Since 1.71.0, for annotations on an operation or a parameter, the binding parameter's
+			 * name is stripped off any dynamic "14.5.12 Expression edm:Path" and
+			 * "14.5.13 Expression edm:PropertyPath" where it might be used as a first segment.
+			 * Since 1.76.0 this does not apply to annotations on a parameter.
+			 * In the former case, we assume that the resulting data binding is
+			 * relative to the parent context of the operation binding, that is, to the context
+			 * representing the binding parameter itself.
+			 * In the latter case, we assume that the resulting data binding is relative to the
+			 * parameter context of the operation binding (see
+			 * {@link sap.ui.model.odata.v4.ODataContextBinding#getParameterContext}).
+			 *
+			 * Example:
+			 * <pre>
+			 *    &lt;Action Name="ShipProduct" EntitySetPath="_it" IsBound="true" >
+			 *        &lt;Parameter Name="_it" Type="name.space.Product" Nullable="false"/>
+			 *        &lt;Parameter Name="City" Type="Edm.String"/>
+			 *    &lt;/Action>
+			 * </pre>
+			 * For the operation <code>ShipProduct</code> mentioned above, the following annotation
+			 * targets an operation parameter and refers back to the binding parameter.
+			 * <pre>
+			 *     &lt;Annotations Target="name.space.ShipProduct(name.space.Product)/City">
+			 *        &lt;Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="_it/SupplierIdentifier"/>
+			 *     &lt;/Annotations>
+			 * </pre>
+			 *
+			 * Using <code>AnnotationHelper.format</code> like
+			 * <pre>
+			 * &lt;Text text="{meta>/Products/name.space.ShipProduct/$Parameter/City@com.sap.vocabularies.Common.v1.Text@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
+			 * </pre>
+			 * results in
+			 * <pre>
+			 * &lt;Text text="{path:'_it/SupplierIdentifier',type:'sap.ui.model.odata.type.Int32'}" />
+			 * </pre>
+			 * and the data binding evaluates to the <code>SupplierIdentifier</code> property of the
+			 * entity the operation is called on.
+			 *
 			 * @param {any} vRawValue
 			 *   The raw value from the meta model
 			 * @param {object} oDetails
@@ -168,10 +205,11 @@ sap.ui.define([
 			 *   Points to the given raw value, that is
 			 *   <code>oDetails.context.getProperty("") === vRawValue</code>
 			 * @param {object} [oDetails.overload]
-			 *   The single operation overload that was targeted by annotations of an operation or
+			 *   The single operation overload that was targeted by annotations on an operation or
 			 *   a parameter; needed to strip off the binding parameter's name from any dynamic
 			 *   "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath" where it
-			 *   might be used as a first segment (since 1.71.0)
+			 *   might be used as a first segment (since 1.71.0). This does not apply to annotations
+			 *   on a parameter (since 1.76.0)
 			 * @returns {string|Promise}
 			 *   A data binding, or a fixed text, or a sequence thereof, or a <code>Promise</code>
 			 *   resolving with that string, for example if not all type information is already
@@ -183,6 +221,7 @@ sap.ui.define([
 			 *
 			 * @public
 			 * @see sap.ui.model.odata.v4.AnnotationHelper.resolve$Path
+			 * @see sap.ui.model.odata.v4.AnnotationHelper.value
 			 * @since 1.63.0
 			 */
 			format : function (vRawValue, oDetails) {
@@ -199,6 +238,7 @@ sap.ui.define([
 							asExpression : false,
 							complexBinding : true,
 							ignoreAsPrefix : oDetails.overload && oDetails.overload.$IsBound
+								&& !sPath.includes("/$Parameter/")
 								? oDetails.overload.$Parameter[0].$Name + "/"
 								: "",
 							model : oModel,
@@ -287,7 +327,7 @@ sap.ui.define([
 			 * <li>"14.5.13 Expression edm:PropertyPath"</li>
 			 * </ul>
 			 * It returns the path of structural and navigation properties from the given path
-			 * value, but removes "$count", types casts, term casts, and annotations of navigation
+			 * value, but removes "$count", types casts, term casts, and annotations on navigation
 			 * properties.
 			 *
 			 * @param {string} sPath
@@ -377,7 +417,7 @@ sap.ui.define([
 			 * <li>"14.5.13 Expression edm:PropertyPath"</li>
 			 * </ul>
 			 * It returns the information whether the given path ends with "$count" or with a
-			 * multi-valued structural or navigation property. Term casts and annotations of
+			 * multi-valued structural or navigation property. Term casts and annotations on
 			 * navigation properties are ignored.
 			 *
 			 * Example:
@@ -595,6 +635,17 @@ sap.ui.define([
 			 * &lt;Text text="{meta>Value/@@sap.ui.model.odata.v4.AnnotationHelper.value}" />
 			 * </pre>
 			 *
+			 * Since 1.71.0, for annotations on an operation or a parameter, the binding parameter's
+			 * name is stripped off any dynamic "14.5.12 Expression edm:Path" and
+			 * "14.5.13 Expression edm:PropertyPath" where it might be used as a first segment.
+			 * Since 1.76.0 this does not apply to annotations on a parameter.
+			 * In the former case, we assume that the resulting data binding is
+			 * relative to the parent context of the operation binding, that is, to the context
+			 * representing the binding parameter itself.
+			 * In the latter case, we assume that the resulting data binding is relative to the
+			 * parameter context of the operation binding (see
+			 * {@link sap.ui.model.odata.v4.ODataContextBinding#getParameterContext}).
+			 *
 			 * @param {any} vRawValue
 			 *   The raw value from the meta model
 			 * @param {object} oDetails
@@ -603,14 +654,16 @@ sap.ui.define([
 			 *   Points to the given raw value, that is
 			 *   <code>oDetails.context.getProperty("") === vRawValue</code>
 			 * @param {object} [oDetails.overload]
-			 *   The single operation overload that was targeted by annotations of an operation or
+			 *   The single operation overload that was targeted by annotations on an operation or
 			 *   a parameter; needed to strip off the binding parameter's name from any dynamic
 			 *   "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath" where it
-			 *   might be used as a first segment (since 1.72.0)
+			 *   might be used as a first segment (since 1.72.0). This does not apply to annotations
+			 *   on a parameter (since 1.76.0)
 			 * @returns {string}
 			 *   A data binding or a fixed text or a sequence thereof
 			 *
 			 * @public
+			 * @see sap.ui.model.odata.v4.AnnotationHelper.format
 			 * @since 1.43.0
 			 */
 			value : function (vRawValue, oDetails) {
@@ -624,6 +677,7 @@ sap.ui.define([
 						asExpression : false,
 						complexBinding : false,
 						ignoreAsPrefix : oDetails.overload && oDetails.overload.$IsBound
+							&& !sPath.includes("/$Parameter/")
 							? oDetails.overload.$Parameter[0].$Name + "/"
 							: "",
 						model : oDetails.context.getModel(),
