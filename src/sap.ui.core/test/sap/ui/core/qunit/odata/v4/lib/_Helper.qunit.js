@@ -3016,19 +3016,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchResolvedSelect", function (assert) {
-		var mChildQueryOptions = {},
-			fnFetchMetadata = {},
+		var fnFetchMetadata = {},
 			oHelperMock = this.mock(_Helper),
 			bProcessedBar = false,
 			bProcessedFoo = false,
+			bProcessedQualifiedName = false,
 			mQueryOptions = {
-				$select : ["foo", "bar"]
+				$select : ["foo", "bar", "qualified.Name"]
 			},
 			oPromise;
 
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/meta/path/foo")
 			.returns(Promise.resolve().then(function () {
+				var mChildQueryOptions = {};
+
 				oHelperMock.expects("wrapChildQueryOptions")
 					.withExactArgs("/meta/path", "foo", {}, sinon.match.same(fnFetchMetadata))
 					.returns(mChildQueryOptions);
@@ -3042,6 +3044,8 @@ sap.ui.define([
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/meta/path/bar")
 			.returns(Promise.resolve().then(function () {
+				var mChildQueryOptions = {};
+
 				oHelperMock.expects("wrapChildQueryOptions")
 					.withExactArgs("/meta/path", "bar", {}, sinon.match.same(fnFetchMetadata))
 					.returns(mChildQueryOptions);
@@ -3050,6 +3054,19 @@ sap.ui.define([
 						sinon.match.same(mChildQueryOptions))
 					.callsFake(function () {
 						bProcessedBar = true;
+					});
+			}));
+		oHelperMock.expects("fetchPropertyAndType")
+			.withExactArgs(sinon.match.same(fnFetchMetadata), "/meta/path/qualified.Name")
+			.returns(Promise.resolve().then(function () {
+				oHelperMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/meta/path", "qualified.Name", {},
+						sinon.match.same(fnFetchMetadata))
+					.returns(undefined);
+				oHelperMock.expects("addToSelect")
+					.withExactArgs(sinon.match.same(mQueryOptions), ["qualified.Name"])
+					.callsFake(function () {
+						bProcessedQualifiedName = true;
 					});
 			}));
 
@@ -3064,6 +3081,7 @@ sap.ui.define([
 			assert.strictEqual(oResult, mQueryOptions);
 			assert.strictEqual(bProcessedBar, true);
 			assert.strictEqual(bProcessedFoo, true);
+			assert.strictEqual(bProcessedQualifiedName, true);
 		});
 	});
 });
