@@ -695,6 +695,16 @@ sap.ui.define([
 			Log.warning("Value can not be converted to a valid date", this);
 		}
 
+		// convert date object to value
+		var sValue = this._formatValue(oDate, true);
+
+		if (sValue !== this.getValue()) {
+			this._lastValue = sValue;
+		}
+
+		// set the property in any case but check validity on output
+		this.setProperty("value", sValue);
+
 		this.setProperty("dateValue", oDate);
 	};
 
