@@ -73,7 +73,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		getStashed: function (oControl) {
-			return this.getProperty(oControl, "stashed");
+			return this.getProperty(oControl, "stashed") || !this.getProperty(oControl, "visible");
 		},
 
 		/**
