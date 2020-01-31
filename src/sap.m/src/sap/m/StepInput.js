@@ -699,7 +699,6 @@ function(
 				this._changeValueWithStep(fMultiplier);
 				this._btndown = false;
 				this._changeValue();
-				this._getInput()._$input[0].focus();
 			} else {
 				// long click, skip it
 				this._bSpinStarted = false;
@@ -1490,9 +1489,7 @@ function(
 					this._bDelayedEventFire = true;
 					this._changeValueWithStep(bIncrementButton ? 1 : -1);
 					this._disableButtons(Number(this._getInput().getValue()), this._getMax(), this._getMin());
-					if ((!this._getIncrementButton().getEnabled() && bIncrementButton) || (!this._getDecrementButton().getEnabled() && !bIncrementButton)) {
-						this._getInput()._$input[0].focus();
-					} else {
+					if ((this._getIncrementButton().getEnabled() && bIncrementButton) || (this._getDecrementButton().getEnabled() && !bIncrementButton)) {
 						this._spinValues(bIncrementButton);
 					}
 				}
