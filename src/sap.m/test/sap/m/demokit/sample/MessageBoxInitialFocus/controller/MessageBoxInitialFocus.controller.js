@@ -15,8 +15,9 @@ sap.ui.define([
 					icon: MessageBox.Icon.WARNING,
 					title: "Focus on a Button",
 					actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-					styleClass: sResponsivePaddingClasses,
-					initialFocus: MessageBox.Action.CANCEL
+					emphasizedAction: MessageBox.Action.OK,
+					initialFocus: MessageBox.Action.CANCEL,
+					styleClass: sResponsivePaddingClasses
 				}
 			);
 		},
@@ -28,8 +29,9 @@ sap.ui.define([
 					icon: MessageBox.Icon.WARNING,
 					title: "Focus on a Custom Button",
 					actions: [MessageBox.Action.YES, MessageBox.Action.NO, "Custom Button"],
-					styleClass: sResponsivePaddingClasses,
-					initialFocus: "Custom Button"
+					emphasizedAction: "Custom Button",
+					initialFocus: "Custom Button",
+					styleClass: sResponsivePaddingClasses
 				}
 			);
 		}
