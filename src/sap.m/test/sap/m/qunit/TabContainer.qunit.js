@@ -303,6 +303,20 @@ sap.ui.define([
 		oTabContainer2 = null;
 	});
 
+	QUnit.test("modified property rerenders the control", function(assert) {
+		//Arrange
+		var oSpy = this.spy(this.oTabContainer.getItems()[0], "invalidate");
+
+		// Act
+		this.oTabContainer.getItems()[0].setModified(true);
+
+		// Assert
+		assert.equal(oSpy.calledOnce, true, 'Invalidate method called when the modified property is changed.');
+
+		// Cleanup
+		oSpy.restore();
+	});
+
 	QUnit.module("Focus", {
 		beforeEach: function () {
 			this.oTabContainer = new TabContainer({
