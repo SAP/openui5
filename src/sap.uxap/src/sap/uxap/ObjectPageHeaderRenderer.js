@@ -133,7 +133,7 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 			oRm.renderControl(oBreadCrumbsAggregation);
 		}
 
-		oRm.write("<h1");
+		oRm.write("<h2");
 		oRm.addClass('sapUxAPObjectPageHeaderIdentifierTitle');
 		if (oControl.getIsObjectTitleAlwaysVisible()) {
 			oRm.addClass('sapUxAPObjectPageHeaderIdentifierTitleForce');
@@ -196,7 +196,7 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 			oRm.writeEscaped(sOHTitle);
 			oRm.write("</span>");
 		}
-		oRm.write("</h1>");
+		oRm.write("</h2>");
 
 		oRm.write("<span");
 		oRm.addClass('sapUxAPObjectPageHeaderIdentifierDescription');
