@@ -6128,29 +6128,32 @@ sap.ui.define([
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function(oData) {
 				assert.ok(true, "success handler called");
-				var oSupplier = oContext.getObject();
-				assert.ok(oSupplier, "Supplier still exists");
-				assert.ok(!oSupplier.__metadata.created, "Supplier not flagged as created");
+				var oProduct = oContext.getObject();
+				assert.ok(oProduct, "Product still exists");
+				assert.ok(!that.oModel.oData[oContext.getPath().slice(1)].__metadata.created,
+					"Product not flagged as created");
 				done();
 			};
 			var fnError = function() {
 				assert.ok(true, "error handler called");
 				//hack the model so next request would be ok
-				delete that.oModel.oData[oContext.getPath().substr(1)].__metadata.created.urlParameters;
-				delete that.oModel.mChangedEntities[oContext.getPath().substr(1)].__metadata.created.urlParameters;
+				delete that.oModel.oData[oContext.getPath().slice(1)].__metadata.created.urlParameters;
+				delete that.oModel.mChangedEntities[oContext.getPath().slice(1)].__metadata.created.urlParameters;
 				that.oModel.setProperty('Name', "test2", oContext);
 				that.oModel.submitChanges();
 			};
 			var oContext = this.oModel.createEntry("/Products", {urlParameters: {'Fail500': true}, properties: {Name: 'test'}, success: fnSuccess, error:fnError});
 			var oProduct = this.oModel.getProperty('', oContext);
 			assert.ok(oProduct, "Product created");
-			assert.ok(oProduct.__metadata.created, "Product flagged as created");
+			assert.ok(that.oModel.oData[oContext.getPath().slice(1)].__metadata.created,
+				"Product flagged as created");
 			var fnCompl = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnCompl);
 				assert.ok(!oInfo.getParameter('success'), "request error");
 				var oProduct =  oContext.getObject();
 				assert.ok(oProduct, "Product still exists");
-				assert.ok(oProduct.__metadata.created, "Product still flagged as created");
+				assert.ok(that.oModel.oData[oContext.getPath().slice(1)].__metadata.created,
+					"Product still flagged as created");
 			};
 			this.oModel.attachRequestCompleted(fnCompl);
 			this.oModel.submitChanges();
