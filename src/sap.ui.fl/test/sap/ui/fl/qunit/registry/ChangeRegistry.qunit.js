@@ -212,7 +212,7 @@ function(
 			//Assert
 			assert.ok(mResult);
 			assert.strictEqual(Object.keys(mResult).length, 1);
-			assert.strictEqual(Object.keys(mResult["sap.ui.fl.DummyControl1"]).length, 4);
+			assert.strictEqual(Object.keys(mResult["sap.ui.fl.DummyControl1"]).length, 5, "added one and 4 default registryItems");
 			assert.deepEqual(mResult["sap.ui.fl.DummyControl1"]["myChangeType1"], registryItem1);
 		});
 

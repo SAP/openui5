@@ -516,6 +516,28 @@ sap.ui.define(function () {
 					}
 				}
 			},
+			"changeHandler/AddXMLAtExtensionPoint": {
+				group: "ChangeHandler",
+				coverage: {
+					only: ["sap/ui/fl/changeHandler/AddXMLAtExtensionPoint"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
+				}
+			},
+			"changeHandler/BaseAddXml": {
+				group: "ChangeHandler",
+				coverage: {
+					only: ["sap/ui/fl/changeHandler/BaseAddXml"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
+				}
+			},
 			"changeHandler/Base": {
 				group: "ChangeHandler",
 				coverage: {

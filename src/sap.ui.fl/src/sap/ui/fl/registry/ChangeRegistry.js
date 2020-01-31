@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/StashControl",
 	"sap/ui/fl/changeHandler/UnstashControl",
 	"sap/ui/fl/changeHandler/AddXML",
+	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/base/Log"
 ], function(
 	Utils,
@@ -33,6 +34,7 @@ sap.ui.define([
 	StashControl,
 	UnstashControl,
 	AddXML,
+	AddXMLAtExtensionPoint,
 	Log
 ) {
 	"use strict";
@@ -74,6 +76,9 @@ sap.ui.define([
 		},
 		addXML: {
 			changeHandler: AddXML
+		},
+		addXMLAtExtensionPoint: {
+			changeHandler: AddXMLAtExtensionPoint
 		}
 	};
 
