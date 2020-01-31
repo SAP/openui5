@@ -31,6 +31,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -64,9 +65,14 @@ function(
 	QUnitUtils,
 	PersistenceWriteAPI,
 	VersionsAPI,
+	ReloadInfoAPI,
 	sinon
 ) {
 	"use strict";
+
+	var sandbox = sinon.sandbox.create();
+	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
+	var oComp = oCompCont.getComponentInstance();
 
 	var fnTriggerKeydown = function(oTargetDomRef, iKeyCode, bShiftKey, bAltKey, bCtrlKey, bMetaKey) {
 		var oParams = {};
@@ -79,9 +85,14 @@ function(
 		QUnitUtils.triggerEvent("keydown", oTargetDomRef, oParams);
 	};
 
-	var sandbox = sinon.sandbox.create();
-	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
-	var oComp = oCompCont.getComponentInstance();
+	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
+		sandbox.stub(RtaUtils, "showMessageBox").callsFake(
+			function(oMessageType, sMessageKey) {
+				assert.equal(sMessageKey, sExpectedMessageKey, "then expected message is shown");
+				return Promise.resolve();
+			}
+		);
+	}
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
 		beforeEach : function() {
@@ -233,10 +244,10 @@ function(
 		QUnit.test("when RTA is started and stopped in the user layer", function(assert) {
 			var done = assert.async();
 			this.oRta.setFlexSettings({layer: Layer.USER});
-			var oReloadSpy = sandbox.spy(this.oRta, "_handleReloadOnExit");
+			var oHandleReloadOnExitSpy = sandbox.spy(this.oRta, "_handleReloadOnExit");
 
 			this.oRta.attachStop(function() {
-				assert.ok(oReloadSpy.notCalled, "the reload check was skipped");
+				assert.ok(oHandleReloadOnExitSpy.lastCall.args[0], true, "Boolean to skip the reload was passed");
 				done();
 			});
 
@@ -389,7 +400,24 @@ function(
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			this.oRta.oTriggerCrossAppNavigationStub = sandbox.stub(this.oRta, "_triggerCrossAppNavigation");
 			this.oRta.setFlexSettings({layer: Layer.CUSTOMER});
-			sandbox.stub(RtaUtils, "hasUrlParameterWithValue").resolves(true);
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getService: function() {
+					return {
+						toExternal: true,
+						getHash: function() {
+							return "Action-somestring";
+						},
+						parseShellHash: function() {
+							return {
+								semanticObject: "Action",
+								action: "somestring"
+							};
+						},
+						unregisterNavigationFilter: function() {},
+						registerNavigationFilter: function() {}
+					};
+				}
+			});
 		},
 		afterEach : function() {
 			sandbox.restore();
@@ -410,6 +438,9 @@ function(
 		QUnit.test("when RTA is started and a draft is available", function(assert) {
 			sandbox.stub(VersionsAPI, "getVersions").returns([{versionNumber: 0}]);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
+
 			return this.oRta.start().then(function () {
 				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
 			}.bind(this));
@@ -449,9 +480,7 @@ function(
 			};
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 			sandbox.stub(Utils, "getParsedURLHash").returns(mParsedHash);
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: true
-			});
+
 			return this.oRta.start()
 			.then(function () {
 				return new CommandFactory().getCommandFor(this.oGroupElement, "Remove", {
@@ -477,6 +506,8 @@ function(
 		QUnit.test("when RTA is started and a draft is available, and and the key user starts working", function(assert) {
 			sandbox.stub(VersionsAPI, "getVersions").returns([{versionNumber: 0}]);
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
 
 			return this.oRta.start()
 				.then(function() {
@@ -526,9 +557,10 @@ function(
 
 		QUnit.test("when RTA is started and a draft is available and versions just contain draft", function(assert) {
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-
+			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			var aVersions = [{versionNumber: 0}];
 			sandbox.stub(VersionsAPI, "getVersions").returns(aVersions);
+			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
 
 			return this.oRta.start().then(function () {
 				var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
@@ -553,9 +585,10 @@ function(
 
 		QUnit.test("when RTA is started and a draft is available and versions contain different versions and draft", function(assert) {
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-
+			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			var aVersions = [{versionNumber: 0}, {versionNumber: 2, title: "version_2"}, {versionNumber: 1, title: "version_1"}];
 			sandbox.stub(VersionsAPI, "getVersions").returns(aVersions);
+			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
 
 			return this.oRta.start().then(function () {
 				var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
@@ -1155,10 +1188,26 @@ function(
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
 			this.oDeleteChangesStub = sandbox.stub(this.oRta, "_deleteChanges");
 			this.oEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
-			this.oHandleParametersOnExitSpy = sandbox.spy(this.oRta, "_handleParametersOnExit");
+			this.oHandleParametersOnExitSpy = sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
 			this.oReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getService: function () {
+					return {
+						toExternal: function() {
+							return true;
+						},
+						parseShellHash: function () {
+							return {
+								params: {
+									"sap-ui-fl-version": [Layer.CUSTOMER]
+								}
+							};
+						}
+					};
+				}
+			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
