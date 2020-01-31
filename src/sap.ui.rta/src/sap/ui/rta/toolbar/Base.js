@@ -209,6 +209,7 @@ function(
 	Base.prototype.setUndoRedoEnabled = function () {};
 	Base.prototype.setPublishEnabled = function () {};
 	Base.prototype.setRestoreEnabled = function () {};
+	Base.prototype.setDraftVisible = function () {};
 
 	return Base;
 }, true);

@@ -722,7 +722,7 @@ function(
 	/**
 	 * Checks the publish button, draft buttons(activate and delete) and app variant support (i.e. Save As and Overview of App Variants) availability
 	 * @private
-	 * @returns {Promise<map>} with publishAvailable, publisAppVariantSupported and draftAvailable values
+	 * @returns {Promise<map>} with publishAvailable, publishAppVariantSupported and draftAvailable values
 	 * @description The publish button shall not be available if the system is productive and if a merge error occurred during merging changes into the view on startup
 	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
@@ -730,13 +730,13 @@ function(
 	RuntimeAuthoring.prototype._getToolbarButtonsVisibility = function() {
 		return Promise.all([FeaturesAPI.isPublishAvailable(), this._isDraftAvailable()]).then(function(aArgs) {
 			var bIsPublishAvailable = aArgs[0];
-			var bIsDraftAvailable = aArgs[1];
+			this.bInitialDraftAvailable = aArgs[1];
 			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this.getRootControlInstance(), this.getLayer(), this._oSerializer);
-			var bPublisAppVariantSupported = bIsPublishAvailable && bIsAppVariantSupported;
+			var bPublishAppVariantSupported = bIsPublishAvailable && bIsAppVariantSupported;
 			return {
 				publishAvailable: bIsPublishAvailable,
-				publisAppVariantSupported: bPublisAppVariantSupported,
-				draftAvailable: bIsDraftAvailable
+				publishAppVariantSupported: bPublishAppVariantSupported,
+				draftAvailable: this.bInitialDraftAvailable
 			};
 		}.bind(this));
 	};
@@ -840,6 +840,7 @@ function(
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
+			this.getToolbar().setDraftVisible(this.bInitialDraftAvailable || bCanUndo);
 		}
 		this.fireUndoRedoStackModified();
 	};
@@ -1064,18 +1065,18 @@ function(
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
 
-			if (aButtonsVisibility.publisAppVariantSupported) {
+			if (aButtonsVisibility.publishAppVariantSupported) {
 				// Sets the visibility of 'Save As' button in RTA toolbar
-				this.getToolbar().getControl('saveAs').setVisible(aButtonsVisibility.publisAppVariantSupported);
+				this.getToolbar().getControl('saveAs').setVisible(aButtonsVisibility.publishAppVariantSupported);
 				// Flag which represents either the key user view or SAP developer view
 				var bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
 
 				if (bExtendedOverview) {
 					// Sets the visibility of 'i' menu button (App Variant Overview: SAP developer view) in RTA toolbar
-					this.getToolbar().getControl('appVariantOverview').setVisible(aButtonsVisibility.publisAppVariantSupported);
+					this.getToolbar().getControl('appVariantOverview').setVisible(aButtonsVisibility.publishAppVariantSupported);
 				} else {
 					// Sets the visibility of 'i' button (App Variant Overview: Key user view) in RTA toolbar
-					this.getToolbar().getControl('manageApps').setVisible(aButtonsVisibility.publisAppVariantSupported);
+					this.getToolbar().getControl('manageApps').setVisible(aButtonsVisibility.publishAppVariantSupported);
 				}
 
 				RtaAppVariantFeature.isManifestSupported().then(function(bResult) {

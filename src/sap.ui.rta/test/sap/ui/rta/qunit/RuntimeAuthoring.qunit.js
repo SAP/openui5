@@ -303,7 +303,7 @@ function(
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
 			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
 				publishAvailable: true,
-				publisAppVariantSupported: true,
+				publishAppVariantSupported: true,
 				draftAvailable : false
 			}));
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: false}));
@@ -323,7 +323,7 @@ function(
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
 			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
 				publishAvailable: true,
-				publisAppVariantSupported: true,
+				publishAppVariantSupported: true,
 				draftAvailable : false
 			 }));
 			sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
@@ -358,6 +358,103 @@ function(
 		});
 	});
 
+	QUnit.module("Given a CUSTOMER layer with versioning enabled", {
+		beforeEach : function() {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
+			this.oGroupElement = new GroupElement({id : oComp.createId("element")});
+			var oGroup = new Group({
+				id : oComp.createId("group"),
+				groupElements : [this.oGroupElement]
+			});
+			this.oSmartForm = new SmartForm({
+				id : oComp.createId("smartform"),
+				groups : [oGroup]
+			});
+			this.oSmartForm.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
+				data : {
+					actions : {
+						remove : {
+							changeType : "hideControl"
+						}
+					}
+				}
+			});
+			this.oCommandStack = new Stack();
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oSmartForm,
+				commandStack : this.oCommandStack,
+				showToolbars : true
+			});
+		},
+		afterEach : function() {
+			sandbox.restore();
+			this.oRta.destroy();
+			this.oSmartForm.destroy();
+			return RtaQunitUtils.clear();
+		}
+	}, function() {
+		QUnit.test("when RTA is started and no draft is available", function(assert) {
+			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
+			return this.oRta.start().then(function () {
+				assert.equal(this.oRta.getToolbar().getDraftVisible(), false, "then the draft buttons are hidden");
+			}.bind(this));
+		});
+		QUnit.test("when RTA is started and a draft is available", function(assert) {
+			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
+			return this.oRta.start().then(function () {
+				assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are visible");
+			}.bind(this));
+		});
+
+		QUnit.test("when RTA is started and no draft is available, and and the key user starts working", function(assert) {
+			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(false);
+
+			return this.oRta.start()
+				.then(function() {
+					return new CommandFactory().getCommandFor(this.oGroupElement, "Remove", {
+						removedElement : this.oGroupElement
+					}, this.oGroupElementDesignTimeMetadata);
+				}.bind(this))
+				.then(function(oRemoveCommand) {
+					return this.oCommandStack.pushAndExecute(oRemoveCommand);
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are visible");
+				}.bind(this))
+				.then(this.oRta.undo.bind(this.oRta))
+				.then(function() {
+					assert.equal(this.oRta.getToolbar().getDraftVisible(), false, "then the draft buttons are hidden");
+				}.bind(this));
+		});
+
+		QUnit.test("when RTA is started and a draft is available, and and the key user starts working", function(assert) {
+			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(true);
+
+			return this.oRta.start()
+				.then(function() {
+					return new CommandFactory().getCommandFor(this.oGroupElement, "Remove", {
+						removedElement : this.oGroupElement
+					}, this.oGroupElementDesignTimeMetadata);
+				}.bind(this))
+				.then(function(oRemoveCommand) {
+					return this.oCommandStack.pushAndExecute(oRemoveCommand);
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are visible");
+				}.bind(this))
+				.then(this.oRta.undo.bind(this.oRta))
+				.then(function() {
+					assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are still visible");
+				}.bind(this));
+		});
+	});
 	QUnit.module("Given that RuntimeAuthoring is started without toolbar...", {
 		beforeEach : function() {
 			this.oRta = new RuntimeAuthoring({
@@ -765,9 +862,9 @@ function(
 			}.bind(this));
 		},
 		afterEach : function() {
+			sandbox.restore();
 			this.oSmartForm.destroy();
 			this.oRta.destroy();
-			sandbox.restore();
 			return RtaQunitUtils.clear();
 		}
 	}, function() {
