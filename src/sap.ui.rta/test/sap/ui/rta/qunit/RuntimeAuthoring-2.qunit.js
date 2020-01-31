@@ -791,7 +791,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("and versioning is available,", function(assert) {
+		QUnit.test("and versioning is available and a draft is available,", function(assert) {
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(this.mParsedHash);
 
 			var oHasParameterSpy = sandbox.spy(this.oRta, "_hasParameter");
@@ -843,6 +843,64 @@ sap.ui.define([
 
 				assert.equal(oReloadWithoutHigherLayerOrDraftChangesOnStart.callCount, 0, "then _reloadWithMaxLayerOrDraftParam is not called");
 			}.bind(this));
+		});
+	});
+	QUnit.module("Given that a CrossAppNavigation is needed because of a draft", {
+		beforeEach: function() {
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : false
+			});
+			this.oReloadInfo = {
+				hasHigherLayerChanges: false,
+				hasDraftChanges: true,
+				layer: this.oRta.getLayer(),
+				selector: this.oRta.getRootControlInstance(),
+				ignoreMaxLayerParameter: false
+			};
+			this.oCrossAppNav = {
+				toExternal: function() {
+					return Promise.resolve(true);
+				}
+			};
+		},
+		afterEach: function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and the url parameter for draft is present in the parsed hash", function(assert) {
+			var mParsedHash = {
+				params: {
+					"sap-ui-fl-draft": ["CUSTOMER"]
+				}
+			};
+
+			var oLoadForApplicationStub = sandbox.stub(VersionsAPI, "loadDraftForApplication");
+
+			return this.oRta._reloadWithMaxLayerOrDraftParam(mParsedHash, this.oCrossAppNav, this.oReloadInfo).then(function () {
+				assert.equal(oLoadForApplicationStub.callCount, 0, "then loadDraftForApplication is not called");
+			});
+		});
+
+		QUnit.test("and the url parameter for draft is not present in the parsed hash", function(assert) {
+			var mParsedHash = {
+				params: {
+					"sap-ui-fl-parameter": ["test"]
+				}
+			};
+
+			var oExpectedBag = {
+				selector: this.oReloadInfo.selector,
+				layer: this.oReloadInfo.layer
+			};
+			var oLoadForApplicationStub = sandbox.stub(VersionsAPI, "loadDraftForApplication");
+
+			return this.oRta._reloadWithMaxLayerOrDraftParam(mParsedHash, this.oCrossAppNav, this.oReloadInfo).then(function () {
+				assert.equal(oLoadForApplicationStub.callCount, 1, "then loadDraftForApplication is called once");
+				assert.deepEqual(oLoadForApplicationStub.lastCall.args[0], oExpectedBag, "then _hasParameter is called with the parsed hash");
+			});
 		});
 	});
 

@@ -1499,11 +1499,15 @@ function(
 
 		if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM) && oReloadInfo.hasDraftChanges) {
 			mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = [oReloadInfo.layer];
+
+			// clears FlexState and triggers reloading of the flex data without blocking
+			VersionsAPI.loadDraftForApplication({
+				selector: oReloadInfo.selector,
+				layer: oReloadInfo.layer
+			});
 		}
 
 		RuntimeAuthoring.enableRestart(oReloadInfo.layer);
-		// clears FlexState and triggers reloading of the flex data without blocking
-		// VersionsAPI.loadDraftForApplication(oReloadInfo);
 		// triggers the navigation without leaving FLP
 		oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 		return Promise.resolve(true);
