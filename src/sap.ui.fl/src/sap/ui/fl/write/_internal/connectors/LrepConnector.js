@@ -127,18 +127,6 @@ sap.ui.define([
 		});
 	};
 
-	var _handleSmartBusinessKPITileCreationCase = function(mPropertyBag) {
-		if (
-			!mPropertyBag.transport
-			&& mPropertyBag.settings.isAtoEnabled()
-			&& mPropertyBag.skipIam
-			&& LayerUtils.isCustomerDependentLayer(mPropertyBag.layer)
-		) {
-			// Smart Business created KPI tiles on S4 Cloud and the query parameter will be added to support their usecase
-			mPropertyBag.transport = "ATO_NOTIFICATION";
-		}
-	};
-
 	/**
 	 * Connector for requesting data from an LRep-based back end.
 	 *
@@ -415,7 +403,6 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sAppVariantUrl, "GET", oRequestOption);
 		},
 		create: function(mPropertyBag) {
-			_handleSmartBusinessKPITileCreationCase(mPropertyBag);
 			mPropertyBag.method = "POST";
 			mPropertyBag.isAppVariant = true;
 			return _doWrite(mPropertyBag);

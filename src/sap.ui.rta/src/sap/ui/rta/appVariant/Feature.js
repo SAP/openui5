@@ -209,7 +209,6 @@ sap.ui.define([
 		 */
 		onSaveAs: function(bSaveAsFromRta, bCopyUnsavedChanges, sCurrentLayer, oSelectedAppVariant) {
 			var bIsS4HanaCloud;
-			var aAllInlineChanges = [];
 			var oAppVariantSaveClosure;
 			var oDescriptor = fnGetDescriptor();
 
@@ -230,8 +229,8 @@ sap.ui.define([
 				};
 
 				var fnAddChangesToPersistence = function(aChanges) {
-					aAllInlineChanges = aChanges.slice();
-					return AppVariantUtils.addChangesToPersistence(aChanges, oRootControlRunningApp);
+					var aAllInlineChanges = aChanges.slice();
+					return AppVariantUtils.addChangesToPersistence(aAllInlineChanges, oRootControlRunningApp);
 				};
 
 				var fnCreateAppVariant = function() {
@@ -244,10 +243,6 @@ sap.ui.define([
 								sMessageKey = "MSG_SAVE_APP_VARIANT_FAILED";
 							}
 
-							// Since the saving of app variant failed, the descriptor inline changes which were created internally specific to the app variant, will now be removed from persistence
-							if (oError.saveAsFailed) {
-								AppVariantUtils.removeChangesFromPersistence(aAllInlineChanges, oRootControlRunningApp);
-							}
 							return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
 						});
 				};

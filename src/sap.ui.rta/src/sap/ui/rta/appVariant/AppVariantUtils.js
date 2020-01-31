@@ -282,18 +282,6 @@ function(
 		return Promise.resolve();
 	};
 
-	AppVariantUtils.removeChangesFromPersistence = function(aAllInlineChanges, oRootControl) {
-		return Promise.resolve()
-			.then(function() {
-				aAllInlineChanges.forEach(function(oChange) {
-					PersistenceWriteAPI.remove({
-						change: oChange,
-						selector: oRootControl
-					});
-				});
-			});
-	};
-
 	AppVariantUtils.getTransportInput = function(sPackageName, sNameSpace, sName, sType) {
 		return {
 			getPackage : function() {

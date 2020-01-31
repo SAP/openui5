@@ -62,7 +62,7 @@ sap.ui.define([
 			this._mode = 'FROM_EXISTING';
 		}
 		this._oSettings = oSettings;
-		this._sTransportRequest = null;
+		this._sTransportRequest = mParameters && mParameters.transport ? mParameters.transport : null;
 		this._content = [];
 	};
 
@@ -368,6 +368,10 @@ sap.ui.define([
 
 		if (mParameters.skipIam) {
 			Utils.checkParameterAndType(mParameters, "skipIam", "boolean");
+		}
+
+		if (mParameters.transport) {
+			Utils.checkTransportRequest(mParameters.transport);
 		}
 
 		return Settings.getInstance().then(function(oSettings) {

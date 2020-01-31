@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/AppVariantManager",
-	"sap/ui/rta/appVariant/AppVariantOverviewDialog",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Manifest",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/m/MessageBox"
@@ -27,7 +25,6 @@ sap.ui.define([
 	AppVariantOverviewUtils,
 	AppVariantUtils,
 	AppVariantManager,
-	AppVariantOverviewDialog,
 	DescriptorVariantFactory,
 	Settings,
 	FlUtils,
@@ -36,7 +33,6 @@ sap.ui.define([
 	Log,
 	UriParameters,
 	Manifest,
-	PersistenceWriteAPI,
 	AppVariantWriteAPI,
 	ChangesWriteAPI,
 	MessageBox
@@ -445,14 +441,11 @@ sap.ui.define([
 
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", {saveAsFailed: true}).returns();
 
-			var oPersistenceRemoveStub = sandbox.stub(PersistenceWriteAPI, "remove").resolves();
-
 			var oGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 
 			return RtaAppVariantFeature.onSaveAs(false, "CUSTOMER", oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called 10 times");
-				assert.equal(oPersistenceRemoveStub.callCount, 10, "then PersistenceWriteAPI.remove method is called 10 times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
 				assert.equal(oGetOverviewSpy.callCount, 1, "then the overview loads only once after the new app variant has been saved to LREP");
 				assert.strictEqual(oCatchErrorDialog.getCall(0).args[1], "MSG_SAVE_APP_VARIANT_FAILED", "then the oCatchErrorDialog method is called with correct message key");

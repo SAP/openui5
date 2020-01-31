@@ -720,12 +720,8 @@ sap.ui.define([
 				layer: "CUSTOMER",
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
-				settings: {
-					isAtoEnabled: function() {
-						return true;
-					}
-				},
-				skipIam: true
+				skipIam: true,
+				transport: "ATO_NOTIFICATION"
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true";
 
