@@ -92,7 +92,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			rm.class("sapUiTableRowNavIndicator");
 		}
 
-		if ((TableUtils.isNoColumnsVisible(oTable) || TableUtils.isNoDataVisible(oTable)) && !TableUtils.hasPendingRequests(oTable)) {
+		if (TableUtils.isNoDataVisible(oTable) && !TableUtils.hasPendingRequests(oTable)) {
 			rm.class("sapUiTableEmpty"); // no data!
 		}
 
@@ -280,24 +280,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "NODATA");
 		rm.openEnd();
 
-		// render text when no columns are visible
-		if (TableUtils.isNoColumnsVisible(oTable)) {
-			rm.openStart("span", oTable.getId() + "-noColumnsMsg");
+		if (oTable.getNoData() instanceof Control && oTable._getVisibleColumns().length > 0) {
+			rm.renderControl(oTable.getNoData());
+		} else {
+			rm.openStart("span", oTable.getId() + "-noDataMsg");
 			rm.class("sapUiTableCtrlEmptyMsg");
 			rm.openEnd();
-			rm.text(TableUtils.getNoColumnsText(oTable));
+			rm.text(TableUtils.getNoDataText(oTable));
 			rm.close("span");
-			// render control / text when no data is available
-		} else if (TableUtils.isNoDataVisible(oTable)) {
-			if (oTable.getNoData() instanceof Control) {
-				rm.renderControl(oTable.getNoData());
-			} else {
-				rm.openStart("span", oTable.getId() + "-noDataMsg");
-				rm.class("sapUiTableCtrlEmptyMsg");
-				rm.openEnd();
-				rm.text(TableUtils.getNoDataText(oTable));
-				rm.close("span");
-			}
 		}
 		rm.close("div");
 	};

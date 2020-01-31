@@ -2540,7 +2540,7 @@ sap.ui.define([
 		}
 
 		var oFocusRef = document.activeElement;
-		this.$().toggleClass("sapUiTableEmpty", TableUtils.isNoColumnsVisible(this) || TableUtils.isNoDataVisible(this));
+		this.$().toggleClass("sapUiTableEmpty", TableUtils.isNoDataVisible(this));
 		this._getAccExtension().updateAriaStateForOverlayAndNoData();
 		this._getKeyboardExtension().updateNoDataAndOverlayFocus(oFocusRef);
 	};
