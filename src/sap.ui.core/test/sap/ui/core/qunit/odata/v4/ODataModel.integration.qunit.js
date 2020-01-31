@@ -8584,19 +8584,22 @@ sap.ui.define([
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings
 	// Additionally add a path with navigation properties to $select which must be converted to a
-	// $expand.
+	// $expand and a qualified operation name which must stay in $select.
 	// JIRA: CPOUI5ODATAV4-112
+	// BCP: 2080084634
 	QUnit.test("Auto-$expand/$select: Absolute ODCB with relative ODPB", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
-		parameters : {$select : \'AGE,ROOM_ID,EMPLOYEE_2_TEAM/Name\'}}">\
+		parameters : {$select : \'AGE,ROOM_ID,EMPLOYEE_2_TEAM/Name\
+,com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
 </FlexBox>',
 			that = this;
 
 		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,LOCATION/City/CITYNAME,Name,ROOM_ID"
+				+ ",com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee"
 				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)", {
 				Name : "Frederic Fall",
 				LOCATION : {City : {CITYNAME : "Walldorf"}},
@@ -8604,6 +8607,8 @@ sap.ui.define([
 					Name : "Team #1",
 					Team_Id : "1"
 				}
+				// action advertisement
+//				"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee" : {}
 			})
 			.expectChange("name", "Frederic Fall")
 			.expectChange("city", "Walldorf");

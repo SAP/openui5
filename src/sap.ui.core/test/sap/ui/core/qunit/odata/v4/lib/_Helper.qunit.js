@@ -3021,8 +3021,9 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			bProcessedBar = false,
 			bProcessedFoo = false,
+			bProcessedQualifiedName = false,
 			mQueryOptions = {
-				$select : ["foo", "bar"]
+				$select : ["foo", "bar", "qualified.Name"]
 			},
 			oPromise;
 
@@ -3052,6 +3053,19 @@ sap.ui.define([
 						bProcessedBar = true;
 					});
 			}));
+		oHelperMock.expects("fetchPropertyAndType")
+			.withExactArgs(sinon.match.same(fnFetchMetadata), "/meta/path/qualified.Name")
+			.returns(Promise.resolve().then(function () {
+				oHelperMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/meta/path", "qualified.Name", {},
+						sinon.match.same(fnFetchMetadata))
+					.returns(undefined);
+				oHelperMock.expects("addToSelect")
+					.withExactArgs(sinon.match.same(mQueryOptions), ["qualified.Name"])
+					.callsFake(function () {
+						bProcessedQualifiedName = true;
+					});
+			}));
 
 		// code under test
 		oPromise = _Helper.fetchResolvedSelect(fnFetchMetadata, "/meta/path", mQueryOptions);
@@ -3064,6 +3078,7 @@ sap.ui.define([
 			assert.strictEqual(oResult, mQueryOptions);
 			assert.strictEqual(bProcessedBar, true);
 			assert.strictEqual(bProcessedFoo, true);
+			assert.strictEqual(bProcessedQualifiedName, true);
 		});
 	});
 });

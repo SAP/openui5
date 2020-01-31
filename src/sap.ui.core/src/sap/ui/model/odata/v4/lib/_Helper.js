@@ -496,8 +496,14 @@ sap.ui.define([
 				return _Helper.fetchPropertyAndType(
 					fnFetchMetadata, sMetaPath + "/" + sSelectPath
 				).then(function () {
-					_Helper.aggregateQueryOptions(mQueryOptions,
-						_Helper.wrapChildQueryOptions(sMetaPath, sSelectPath, {}, fnFetchMetadata));
+					var mWrappedQueryOptions = _Helper.wrapChildQueryOptions(
+							sMetaPath, sSelectPath, {}, fnFetchMetadata);
+
+					if (mWrappedQueryOptions) {
+						_Helper.aggregateQueryOptions(mQueryOptions, mWrappedQueryOptions);
+					} else {
+						_Helper.addToSelect(mQueryOptions, [sSelectPath]);
+					}
 				});
 			})).then(function () {
 				return mQueryOptions;
