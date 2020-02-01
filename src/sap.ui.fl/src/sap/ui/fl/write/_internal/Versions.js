@@ -108,7 +108,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 * @param {boolean=false} mPropertyBag.updateState - Flag if the state should be updated
+	 * @param {boolean} [mPropertyBag.updateState=false] - Flag if the state should be updated
 	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
