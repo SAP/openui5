@@ -167,9 +167,9 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			"correct scroll position is restored");
 	});
 
-	QUnit.module("Modify on scroll", {
+	QUnit.module("Scroll to snap", {
 		beforeEach: function (assert) {
-			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 1);
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 2);
 			this.sandbox = sinon.sandbox.create();
 		},
 		afterEach: function () {
@@ -179,29 +179,23 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		}
 	});
 
-	QUnit.test("suppress modify on scroll if already snapped", function (assert) {
-
+	QUnit.test("spacer sufficient to snap with scroll", function (assert) {
 		var oObjectPage = this.oObjectPage,
-			iScrollTop = 0, // the exact value is not important for the test
-			oToggleHeaderSpy = this.sandbox.spy(this.oObjectPage, "_toggleHeader"),
-			oScrollToSpy = this.sandbox.spy(this.oObjectPage, "_scrollTo"),
+			oWrapperDom,
+			iMaxScrollHeight,
 			done = assert.async();
 
-		assert.expect(2);
+		oObjectPage.setHeight("999.1px");
+		oObjectPage.setUseIconTabBar(true);
+		oObjectPage.addHeaderContent(new sap.m.Panel({height: "50.2px"}));
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			oScrollToSpy.reset();
 			// act
 			oObjectPage._snapHeader(true /*keep header in content area */);
-			// check test setup
-			assert.strictEqual(oScrollToSpy.callCount, 1, "snapHeader calls scrollTo");
+				oWrapperDom = oObjectPage._$opWrapper.get(0);
+				iMaxScrollHeight = oWrapperDom.scrollHeight - oWrapperDom.clientHeight;
 
-			oToggleHeaderSpy.reset();
-			// mock the invocation of the scroll listener
-			oObjectPage._onScroll({target: { scrollTop: iScrollTop}});
-
-			// check
-			assert.ok(oToggleHeaderSpy.notCalled, "no header modification on scroll");
+			assert.ok(iMaxScrollHeight >= oObjectPage._getSnapPosition(), "enough space to allow scroll");
 			done();
 		});
 

@@ -769,7 +769,6 @@ sap.ui.define([
 			bIsPageTop = (this._$opWrapper.scrollTop() <= (this._getSnapPosition() + 1));
 			if (bIsPageTop) {
 				this._scrollTo(this._getSnapPosition() + 1);
-				this._bSupressModifyOnScrollOnce = true; // the header is already in snapped state, no modification needed
 			}
 			return;
 		}
@@ -2509,7 +2508,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionTop = function(oSectionBase, bShouldStick) {
-		var iPosition = oSectionBase.$().position().top;
+		var iPosition = Math.ceil(oSectionBase.$().position().top);
 
 		if (!this._bStickyAnchorBar && !this._bHeaderInTitleArea && bShouldStick) { // in sticky mode the anchor bar is not part of the content
 			iPosition -= this.iAnchorBarHeight;
@@ -2572,8 +2571,13 @@ sap.ui.define([
 
 		iScrollableViewportHeight = this._getScrollableViewportHeight(bStickyTitleMode);
 
-		if (!bAllowSpaceToSnapViaScroll) {
-			iLastVisibleHeight = this._getSectionPositionBottom(oLastVisibleSubSection, false); /* in expanded mode, all the content above lastSection bottom is visible */
+		if (bAllowSpaceToSnapViaScroll) {
+			// since different browsers have slightly different formats of rounding (ceil/round/floor)
+			// force rounding such that the spacer height is the biggest possible (enough to allow snap via scroll)
+			iScrollableViewportHeight = Math.ceil(iScrollableViewportHeight);
+			iLastVisibleHeight = Math.floor(iLastVisibleHeight);
+		} else {
+			iLastVisibleHeight = this._$spacer.position().top; /* in expanded mode, all the content above lastSection bottom is visible */
 		}
 
 		//calculate the required additional space for the last section only
