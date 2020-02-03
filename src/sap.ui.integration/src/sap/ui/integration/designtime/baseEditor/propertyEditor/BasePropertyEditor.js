@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"./../util/ObjectBinding",
+	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
 	"./../util/isAggregationTemplate",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Label",
