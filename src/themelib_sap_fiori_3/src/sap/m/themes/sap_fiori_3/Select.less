@@ -39,6 +39,10 @@
 	line-height: 2.25rem;
 }
 
+.sapMSltPressed > .sapMSltArrow::before {
+	color: @sapUiButtonActiveTextColor;
+}
+
 html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
 	&:before {
 		pointer-events: none;
