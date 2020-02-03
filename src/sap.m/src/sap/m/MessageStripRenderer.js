@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./MessageStripUtilities", "sap/ui/core/InvisibleText"],
-	function (MSUtils, InvisibleText) {
+sap.ui.define(["./MessageStripUtilities"],
+	function (MSUtils) {
 	"use strict";
 
 	/**
@@ -85,19 +85,7 @@ sap.ui.define(["./MessageStripUtilities", "sap/ui/core/InvisibleText"],
 	};
 
 	MessageStripRenderer.renderCloseButton = function (oRm, oControl) {
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-		var MESSAGE_STRIP_CLOSE_BUTTON = oRb.getText("MESSAGE_STRIP_" + oControl.getType().toUpperCase() + "_CLOSE_BUTTON"),
-			MESSAGE_STRIP_TITLE = oRb.getText("MESSAGE_STRIP_TITLE"),
-			oAccText = new InvisibleText( {text: MESSAGE_STRIP_CLOSE_BUTTON})
-				.toStatic().getId();
-
-		oRm.openStart("button");
-		oRm.class(MSUtils.CLASSES.CLOSE_BUTTON);
-		oRm.attr("title", MESSAGE_STRIP_TITLE);
-		oRm.attr("aria-labelledby", oAccText);
-		oRm.openEnd();
-		oRm.close("button");
+		oRm.renderControl(oControl.getAggregation("_closeButton"));
 	};
 
 	MessageStripRenderer.endMessageStrip = function (oRm) {

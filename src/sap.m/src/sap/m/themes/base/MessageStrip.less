@@ -72,41 +72,20 @@ html[data-sap-ui-browser='ie11'] .sapMMsgStripMessage {
 }
 
 .sapMMsgStripCloseButton {
-	border: 0;
-	padding: 0;
-	background: transparent;
-	color: inherit;
-	width: 1.625rem;
-	height: 1.625rem;
 	position: absolute;
-	top: 0.125rem;
+	top: -0.5625rem;
 	right: 0.125rem;
-	box-sizing: border-box;
-	font-family: 'SAP-icons';
-	font-size: 0.75rem;
-	cursor: pointer;
+}
 
-	&:focus {
-		outline: 0;
-	}
+.sapUiSizeCompact .sapMMsgStripCloseButton {
+	top: -0.0625rem;
+}
 
-	&::-moz-focus-inner {
-		border: 0;
-	}
 
-	&::before {
-		content: "";
-		position: absolute;
-		top: -25%;
-		bottom: -25%;
-		left: -25%;
-		right: -25%;
-	}
-
-	&::after {
-		content: '\e03e';
-		position: absolute;
-	}
+.sapMMsgStripCloseButton {
+	position: absolute;
+	top: -0.5625rem;
+	right: 0.125rem;
 }
 
 .sapMMsgStripInformation {
