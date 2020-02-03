@@ -762,7 +762,7 @@ sap.ui.define(
         QUnit.test("'customData' should return a matcher that checks whether bound item has custom data with proper values", function(
             assert
         ) {
-            var fnBindingProperties = OpaBuilder.Matchers.customData({ text: "fitting text", number: 42 }),
+            var fnCustomDataMatcher = OpaBuilder.Matchers.customData({ text: "fitting text", number: 42 }),
                 oMockControl = {
                     data: function(sKey) {
                         return mDummyCustomData[sKey];
@@ -771,22 +771,68 @@ sap.ui.define(
                 mDummyCustomData = {
                     text: "not fitting text"
                 };
-            assert.strictEqual(fnBindingProperties(oMockControl), false);
+            assert.strictEqual(fnCustomDataMatcher(oMockControl), false);
 
-            assert.strictEqual(fnBindingProperties(), false, "should work with missing control");
+            assert.strictEqual(fnCustomDataMatcher(), false, "should work with missing control");
 
             mDummyCustomData = {
                 text: "fitting text"
             };
-            assert.strictEqual(fnBindingProperties(oMockControl), false);
+            assert.strictEqual(fnCustomDataMatcher(oMockControl), false);
 
             mDummyCustomData = {
                 text: "fitting text",
                 number: 42
             };
-            assert.strictEqual(fnBindingProperties(oMockControl), true);
+            assert.strictEqual(fnCustomDataMatcher(oMockControl), true);
 
             assert.strictEqual(OpaBuilder.Matchers.customData(null)({}), true, "returns true if no customData required");
+        });
+
+        QUnit.test("'focused' should return a matcher that checks for focused elements", function(assert) {
+            var fnFocusedMatcher = OpaBuilder.Matchers.focused(),
+                bHasFocusViaDom = false,
+                bHasFocusViaSapMFocusClass = false,
+                bHasChildWithFocus = false,
+                oMockControl = {
+                    isA: function (sIgnoredType) {
+                        return true;
+                    },
+                    $: function() {
+                        return {
+                            is: function (sSelector) {
+                                assert.strictEqual(sSelector, ":focus", "should check for focus");
+                                return bHasFocusViaDom;
+                            },
+                            hasClass: function (sClass) {
+                                assert.strictEqual(sClass, "sapMFocus", "should check for sapMFocus class");
+                                return bHasFocusViaSapMFocusClass;
+                            },
+                            find: function (sSelector) {
+                                assert.strictEqual(sSelector, ":focus", "should check for focus on children");
+                                return bHasChildWithFocus ? { length: 1 } : { length: 0 };
+                            }
+                        };
+                    }
+                };
+
+            assert.strictEqual(fnFocusedMatcher(), false, "should work with missing control and return false");
+            assert.strictEqual(fnFocusedMatcher( { isA: function () { return false; }}), false, "should work with non-element types and return false");
+            assert.strictEqual(fnFocusedMatcher(oMockControl), false);
+
+            bHasFocusViaDom = true;
+            assert.strictEqual(fnFocusedMatcher(oMockControl), true, "should find DOM focus");
+            bHasFocusViaDom = false;
+            bHasFocusViaSapMFocusClass = true;
+            assert.strictEqual(fnFocusedMatcher(oMockControl), true, "should find sapMFocus class");
+            bHasFocusViaSapMFocusClass = false;
+            bHasChildWithFocus = true;
+            assert.strictEqual(fnFocusedMatcher(oMockControl), false);
+
+            fnFocusedMatcher = OpaBuilder.Matchers.focused(true);
+            assert.strictEqual(fnFocusedMatcher(oMockControl), true, "should find children");
+            bHasChildWithFocus = false;
+            assert.strictEqual(fnFocusedMatcher(oMockControl), false);
         });
 
         QUnit.test("'filter' should return a matcher that filters given items based on defined matcher", function(assert) {
