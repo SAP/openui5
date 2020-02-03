@@ -280,6 +280,7 @@ sap.ui.define([
 			error : "EnterNumberFraction 1"},
 		{value : "12.3", constraints : {precision : 3, scale : 2},
 			error : "EnterNumberInteger 1"},
+		{value : "12", constraints : {precision : 1}, error : "EnterMaximumOfDigits 1"},
 		{value : "12.34", constraints : {precision : 3, scale : "variable"},
 			error : "EnterNumberPrecision 3"},
 		{value : "1.2", error : "EnterInt"},
@@ -287,7 +288,7 @@ sap.ui.define([
 			error : "EnterNumberIntegerFraction 2 1"},
 		// excess zeros are treated as error (parseValue removes them)
 		{value : "1.0", error : "EnterInt"},
-		{value : "012", constraints : {precision : 2}, error : "EnterNumberInteger 2"},
+		{value : "012", constraints : {precision : 2}, error : "EnterMaximumOfDigits 2"},
 		{value : "99", constraints : {minimum : "100"},
 			error : "EnterNumberMin 100"},
 		{value : "99.999", constraints : {precision : 6, scale : 3, minimum : "100"},
