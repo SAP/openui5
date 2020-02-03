@@ -305,11 +305,11 @@ sap.ui.define([
 							aNestedHistory,
 							mForwardParameters;
 
-						if (oParentRouter._bCollectTitleChanged) {
-							// when the parent router will fire its own titleChange event, it saves
-							// the nested history information and use it when it fires its own
-							// titleChanged event
-							oParentRouter.nestedHistory = mParameters.nestedHistory;
+						if (oParentRouter._fnTitleChangedFiredOnChild) {
+							// When the nested router informed its parent router to wait for the "titleChanged"
+							// event on the nested router, the nested router can now tell it parent to continue
+							// with its own "titleChanged" event
+							oParentRouter._fnTitleChangedFiredOnChild(mParameters);
 						} else {
 							// make a copy of the nested history to avoid changing the original value
 							aNestedHistory = mParameters.nestedHistory.slice();
@@ -438,6 +438,7 @@ sap.ui.define([
 				var oEventParameters = {
 					title: oParameters.title
 				};
+
 				var oHomeRoute = this._oRoutes[this._oConfig.homeRoute];
 
 				if (oHomeRoute && isHomeRouteTarget(oParameters.name, oHomeRoute._oConfig.name)) {
@@ -480,6 +481,8 @@ sap.ui.define([
 				}
 
 				this._bIsInitialized = false;
+
+				delete this._oPreviousTitleChangedRoute;
 
 				return this;
 
@@ -1340,6 +1343,16 @@ sap.ui.define([
 
 			// private
 			fireTitleChanged : function(mParameters) {
+				// if the router is stopped, don't fire any titleChanged event
+				if (this.isStopped()) {
+					return this;
+				}
+
+				// whether to fired the event immediately
+				// If there's no promise to wait for, the event should be
+				// fired immediately
+				var bImmediateFire = !this._pWaitForTitleChangedOnChild;
+
 				if (!mParameters.propagated) {
 					mParameters.propagated = false;
 
@@ -1388,25 +1401,36 @@ sap.ui.define([
 					}
 
 					mParameters.history = this._aHistory.slice(0, -1);
-
-					// set the nestedHistory parameter
-					// if the router has collected nestedHistory, use the collected nestedHistory. Otherwise
-					// put its own history to the nested history
-					mParameters.nestedHistory = this.nestedHistory || [];
-					mParameters.nestedHistory.unshift({
+					mParameters.nestedHistory = [{
 						history: this.getTitleHistory(),
 						ownerComponentId: this._oOwner && this._oOwner.getId()
-					});
-
-					this._bCollectTitleChanged = false;
-					this.nestedHistory = null;
+					}];
 
 					this._bLastHashReplaced = false;
-
 					this._oPreviousTitleChangedRoute = this._oMatchedRoute;
+
+					// The router's own titleChanged event is either scheduled or fired, the further route match in
+					// its child router should be propagated directly. Setting the following flag to false to let the
+					// event be propagated directly.
+					this._bFireTitleChanged = false;
+
+					if (this._pWaitForTitleChangedOnChild) {
+						this._pWaitForTitleChangedOnChild.then(function(oChildParameters) {
+							mParameters.title = oChildParameters.title;
+							mParameters.propagated = true;
+							// add all nestedHistory entry from the child to the current nestedHistory
+							Array.prototype.push.apply(mParameters.nestedHistory, oChildParameters.nestedHistory);
+
+							this._stopWaitingTitleChangedFromChild();
+
+							this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mParameters);
+						}.bind(this));
+					}
 				}
 
-				this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mParameters);
+				if (bImmediateFire) {
+					this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mParameters);
+				}
 
 				return this;
 			},
@@ -1428,6 +1452,19 @@ sap.ui.define([
 			 */
 			getTitleHistory: function() {
 				return this._aHistory || [];
+			},
+
+			_waitForTitleChangedOn: function(oNestedRouter) {
+				if (this._bFireTitleChanged) {
+					this._pWaitForTitleChangedOnChild = new Promise(function(resolve) {
+						this._fnTitleChangedFiredOnChild = resolve;
+					}.bind(this));
+				}
+			},
+
+			_stopWaitingTitleChangedFromChild: function() {
+				delete this._pWaitForTitleChangedOnChild;
+				delete this._fnTitleChangedFiredOnChild;
 			},
 
 			/**

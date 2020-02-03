@@ -319,10 +319,12 @@ sap.ui.define([
 					aTargets = [];
 				}
 
+				var that = this;
 				aLoadedPromises = aTargets.map(function(oTarget, index) {
 					if (oTarget._oOptions.type === "Component") {
 						var pLoaded = oTarget._load({
-							prefix: aTargetsConfig[index].prefix
+							prefix: aTargetsConfig[index].prefix,
+							propagateTitle: aTargetsConfig[index].hasOwnProperty("propagateTitle") ? aTargetsConfig[index].propagateTitle : that._oRouter._oConfig.propagateTitle
 						});
 
 						return pLoaded
