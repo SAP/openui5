@@ -27,7 +27,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		// get the object page section
 		// By default title is not centered, CSS:0120061532 0001349139 2014
 		var oSectionWithTwoSubSection = ObjectPageSectionView.byId("SectionWithSubSection");
-		assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").text(), "", "My first section title never visible");
+		assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"), true, "My first section title never visible");
 		// Test by finding own class
 		assert.strictEqual(oSectionWithTwoSubSection.$().find('.mysubsectiontotest').length == 2, true, "Section with two SubSections");
 

@@ -73,8 +73,8 @@ function($, Core) {
 		assert.strictEqual(objectPageSubSectionEmpty331, false, "Subsection 'id=ObjectPageSubSectionEmpty331' is not visible");
 	});
 	QUnit.test("ObjectPageId 1: 1st Title Section is not visible", function (assert) {
-		var objectPageTitle331 = $("#UxAP-331_ObjectPageRules1--ObjectPageSectionNoBlock331").find(".sapUxAPObjectPageSectionHeader").is(":visible");
-		assert.strictEqual(objectPageTitle331, false, "1st Title is not visible");
+		var objectPageTitle331 = $("#UxAP-331_ObjectPageRules1--ObjectPageSectionNoBlock331").find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden");
+		assert.strictEqual(objectPageTitle331, true, "1st Title is not visible");
 	});
 	QUnit.test("ObjectPageId 1: SubSection visible properties is false but rules say visible", function (assert) {
 		var objectPageTitle331 = $("#UxAP-331_ObjectPageRules1--ObjectPageSubSectionNotVisible331").is(":visible");
