@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/util/ObjectBinding",
+	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
 	"sap/ui/model/json/JSONModel"
 ],
 function (

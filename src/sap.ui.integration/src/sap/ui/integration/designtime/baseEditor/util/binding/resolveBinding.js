@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/util/ObjectBinding"
+	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding"
 ], function (
 	ObjectBinding
 ) {
