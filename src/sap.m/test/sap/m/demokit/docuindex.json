@@ -1403,7 +1403,8 @@
 		  "samples" : [
 			"sap.m.sample.Wizard",
 			"sap.m.sample.WizardBranching",
-			"sap.m.sample.WizardCurrentStep"
+			"sap.m.sample.WizardCurrentStep",
+			"sap.f.sample.DynamicPageWithWizard"
 		  ]
 		},
 		{
