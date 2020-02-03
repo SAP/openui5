@@ -1214,6 +1214,25 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("NoColumns handling", function (assert) {
+		var sNoDataClassOfTable = "sapUiTableEmpty";
+
+		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), false,
+			"Columns are visible - The table has the NoColumns class assigned: " + false);
+
+		assert.strictEqual(TableUtils.isNoColumnsVisible(oTable), false,
+			"Columns are visible - NoColumns text is visible: " + false);
+
+		oTable.removeAllColumns();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), true,
+			"No columns are visible - The table has the NoColumns class assigned: " + true);
+
+		assert.strictEqual(TableUtils.isNoColumnsVisible(oTable), true,
+			"No columns are visible - NoColumns text is visible: " + true);
+	});
+
 	QUnit.test("ColumnMenu", function(assert) {
 		var oColumn = oTable.getColumns()[1];
 		var oMenu = oColumn.getMenu();
