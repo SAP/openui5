@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/base/util/restricted/_merge",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/integration/designtime/baseEditor/util/createPromise"
+	"sap/ui/integration/designtime/baseEditor/util/createPromise",
+	"sap/base/util/ObjectPath"
 ], function (
 	Control,
 	ObjectBinding,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Fragment,
 	_merge,
 	ManagedObjectObserver,
-	createPromise
+	createPromise,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -117,15 +119,19 @@ sap.ui.define([
 		setValue: function (vValue) {
 			// FIXME: do not mutate existing JS object! Prefer this.getModel().getData() / this.getModel().setData()
 			var oConfig = this.getConfig();
-			if (typeof vValue === "undefined") {
-				if (typeof oConfig.value !== "undefined") {
-					vValue = oConfig.value; // FIXME: Separate value from config
-				} else if (typeof oConfig.defaultValue !== "undefined") {
-					vValue = oConfig.defaultValue;
-					oConfig.value = vValue;
-					this._oConfigModel.checkUpdate();
-				}
+
+			if (typeof vValue === "undefined" && typeof oConfig.defaultValue !== "undefined") {
+				vValue = oConfig.defaultValue;
 			}
+
+			this._oConfigModel.setData(Object.assign(
+				{},
+				oConfig,
+				{
+					value: vValue
+				}
+			));
+			oConfig.value = vValue; // backward compatibility
 
 			this._iExpectedWrapperCount = this.getExpectedWrapperCount(vValue);
 			// If the value of the editor changes, its nested editors might have changed as well
@@ -296,7 +302,17 @@ sap.ui.define([
 			var oJsonModel = this.getModel("_context");
 			if (oJsonModel && oConfig) {
 				if (oConfig.path && !oConfig.value) {
-					oConfig.value = "{context>" + oConfig.path + "}";
+					oConfig = Object.assign(
+						{},
+						oConfig,
+						{
+							value: "{context>" + oConfig.path + "}"
+						}
+					);
+					// backward compatibility
+					this.getConfig().value = oConfig.value;
+				} else {
+					this.setValue(oConfig.value); // backwards compatibility
 				}
 				// resolve binding strings
 				if (!this._oConfigBinding) {
@@ -309,15 +325,18 @@ sap.ui.define([
 						this._oConfigModel.checkUpdate();
 						if (oEvent.getParameter("path") === "value") {
 							this.setValue(oEvent.getParameter("value"));
+						} else {
+							// backward compatibility
+							ObjectPath.set(
+								oEvent.getParameter("path").split("/"),
+								oEvent.getParameter("value"),
+								this.getConfig()
+							);
 						}
 					}.bind(this));
 				}
 
 				this._oConfigBinding.setObject(oConfig);
-				//
-				this._oConfigModel.setData(oConfig);
-				// this._oConfigModel.checkUpdate();
-				this.setValue(oConfig.value);
 			}
 		},
 
