@@ -41,8 +41,9 @@ sap.ui.define([
 		* The function distinguishes between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
 		*
 		* @param {object} oSelector - Target of a flexibility change
-		* @param {string} oSelector.id - ID of the control targeted by the change
-		* @param {boolean} oSelector.isLocalId - <code>true</code> if the ID within the selector is a local ID or a global ID
+		* @param {string} [oSelector.id] - ID of the control targeted by the change. (name or id property is mandatory for selector)
+		* @param {boolean} [oSelector.isLocalId] - <code>true</code> if the ID within the selector is a local ID or a global ID
+		* @param {string} [oSelector.name] - Name of the extension point targeted by the change. (name or id property is mandatory for selector)
 		* @param {sap.ui.core.UIComponent} oAppComponent - Application component
 		* @param {Element} oView - For XML processing only: XML node of the view
 		* @returns {sap.ui.base.ManagedObject|Element} Control representation targeted within the selector
@@ -50,7 +51,12 @@ sap.ui.define([
 		* @public
 		*/
 		bySelector: function (oSelector, oAppComponent, oView) {
-			var sControlId = this.getControlIdBySelector(oSelector, oAppComponent);
+			var sControlId;
+			if (oSelector && oSelector.name) {
+				var oExtensionPointInfo = this.getExtensionPointInfo(oSelector.name, oView);
+				return oExtensionPointInfo ? oExtensionPointInfo.parent : undefined;
+			}
+			sControlId = this.getControlIdBySelector(oSelector, oAppComponent);
 			return this._byId(sControlId, oView);
 		},
 

@@ -748,6 +748,33 @@ sap.ui.define([
 		return this._mChanges;
 	};
 
+	function _changesHavingCorrectViewPrefix(mPropertyBag, oChange) {
+		var oModifier = mPropertyBag.modifier;
+		var oAppComponent = mPropertyBag.appComponent;
+		var oSelector = oChange.getSelector();
+		if (!oSelector || !mPropertyBag) {
+			return false;
+		}
+		if (oSelector.viewSelector) {
+			var sSelectorViewId = oModifier.getControlIdBySelector(oSelector.viewSelector, oAppComponent);
+			return sSelectorViewId === mPropertyBag.viewId;
+		}
+		var sSelectorId = oSelector.id;
+		if (sSelectorId) {
+			var sSelectorIdViewPrefix = sSelectorId.slice(0, sSelectorId.lastIndexOf("--"));
+			var sViewId;
+			if (oChange.getSelector().idIsLocal) {
+				if (oAppComponent) {
+					sViewId = oAppComponent.getLocalId(mPropertyBag.viewId);
+				}
+			} else {
+				sViewId = mPropertyBag.viewId;
+			}
+			return sSelectorIdViewPrefix === sViewId;
+		}
+		return false;
+	}
+
 	/**
 	 * Gets the changes for the given view id. The complete view prefix has to match.
 	 *
@@ -762,7 +789,6 @@ sap.ui.define([
 	 * view1
 	 * view1--view2--view3
 	 *
-	 * @param {string} sViewId the id of the view, changes should be retrieved for
 	 * @param {map} mPropertyBag contains additional data that are needed for reading of changes
 	 * @param {string} mPropertyBag.viewId - id of the view
 	 * @param {string} mPropertyBag.name - name of the view
@@ -772,34 +798,10 @@ sap.ui.define([
 	 * @returns {Promise} resolving with an array of changes
 	 * @public
 	 */
-	ChangePersistence.prototype.getChangesForView = function(sViewId, mPropertyBag) {
+	ChangePersistence.prototype.getChangesForView = function(mPropertyBag) {
 		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
-			return aChanges.filter(changesHavingCorrectViewPrefix.bind(this));
+			return aChanges.filter(_changesHavingCorrectViewPrefix.bind(this, mPropertyBag));
 		}.bind(this));
-
-		function changesHavingCorrectViewPrefix(oChange) {
-			var oSelector = oChange.getSelector();
-			if (!oSelector) {
-				return false;
-			}
-			var sSelectorId = oSelector.id;
-			if (!sSelectorId || !mPropertyBag) {
-				return false;
-			}
-			var sSelectorIdViewPrefix = sSelectorId.slice(0, sSelectorId.lastIndexOf("--"));
-			var sViewId;
-
-			if (oChange.getSelector().idIsLocal) {
-				var oComponent = mPropertyBag.appComponent;
-				if (oComponent) {
-					sViewId = oComponent.getLocalId(mPropertyBag.viewId);
-				}
-			} else {
-				sViewId = mPropertyBag.viewId;
-			}
-
-			return sSelectorIdViewPrefix === sViewId;
-		}
 	};
 
 	/**

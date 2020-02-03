@@ -42,7 +42,11 @@ sap.ui.define([
 		var oSelector = oChange.getDefinition().selector;
 		var mExtensionPointInfo = oModifier.getExtensionPointInfo(oSelector.name, oView);
 		if (!mExtensionPointInfo) {
-			throw new Error("Either no Extension-Point found by name or multiple Extension-Points available with the given name in the view. Multiple Extension-points with the same name in one view are not supported!");
+			throw new Error("AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '"
+				 + (oSelector && oSelector.name)
+				 + "' or multiple Extension-Points available with the given name in the view (view.id='"
+				 + (oView && oModifier.getId(oView))
+				 + "'). Multiple Extension-points with the same name in one view are not supported!");
 		}
 		return BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
 	};

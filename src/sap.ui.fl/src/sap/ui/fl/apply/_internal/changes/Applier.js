@@ -23,7 +23,7 @@ sap.ui.define([
 
 	function _checkControlAndDependentSelectorControls(oChange, mPropertyBag) {
 		var oSelector = oChange.getSelector && oChange.getSelector();
-		if (!oSelector || !oSelector.id) {
+		if (!oSelector || (!oSelector.id && !oSelector.name)) {
 			throw new Error("No selector in change found or no selector ID.");
 		}
 
