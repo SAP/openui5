@@ -38,6 +38,7 @@ sap.ui.define(function () {
 				]
 			},
 			"CalendarCard": {},
+			"AdaptiveCard": {},
 			"cardbundle/CardStaticResources": {},
 			"util/CardManifest": {
 				coverage: {
@@ -74,6 +75,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/ServiceManager",
 						"sap/ui/integration/customElements/",
 						"sap/f/cards/CalendarCard",
+						"sap/f/cards/AdaptiveCard",
 						"sap/f/cards/CardActions",
 						"sap/f/cards/AnalyticalContent",
 						"sap/f/cards/BindingHelper",

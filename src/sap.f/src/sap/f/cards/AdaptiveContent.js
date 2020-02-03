@@ -14,9 +14,11 @@ sap.ui.define([
 		"sap/f/cards/adaptivecards/elements/UI5InputDate",
 		"sap/f/cards/adaptivecards/elements/UI5InputToggle",
 		"sap/f/cards/adaptivecards/overwrites/ActionRender",
-		"sap/f/cards/adaptivecards/elements/hostConfig"
+		"sap/f/cards/adaptivecards/elements/hostConfig",
+		"sap/ui/model/json/JSONModel",
+		"sap/base/Log"
 	],
-	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig) {
+	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig, JSONModel, Log) {
 		"use strict";
 
 		/**
@@ -50,6 +52,9 @@ sap.ui.define([
 		});
 
 		AdaptiveContent.prototype.init = function () {
+			this._bComponentsReady = false;
+			this._bAdaptiveCardElementsReady = false;
+
 			this._setupAdaptiveCardDependency();
 			this._loadDependencies();
 		};
@@ -63,7 +68,39 @@ sap.ui.define([
 		 */
 		AdaptiveContent.prototype.setConfiguration = function (oConfiguration) {
 			this._oCardConfig = oConfiguration;
+
+			// if oConfiguration.request is present, load the adaptive card manifest from url
+			if (oConfiguration && oConfiguration.request && oConfiguration.request.url) {
+				this._loadManifestFromUrl(oConfiguration.request.url);
+				return;
+			}
+
 			this._renderMSCardContent();
+		};
+
+		/**
+		 * Loads the content of an Adaptive Card from a file.
+		 *
+		 * @param {string} sUrl Path to the MS Adaptive Card descriptor/manifest file.
+		 * @private
+		 */
+		AdaptiveContent.prototype._loadManifestFromUrl = function (sUrl) {
+			var oData = new JSONModel(),
+				that = this;
+
+			oData.loadData(sUrl)
+				.then(function () {
+					// set the data from the url as a card config
+					that._oCardConfig = oData.getData();
+					that._renderMSCardContent();
+				}).then(function () {
+					// destroy the data model, since it is not needed anymore
+					oData.destroy();
+					oData = null;
+				}).catch(function () {
+					// notify the user that the provided URL is not correct
+					Log.error("No JSON file found on this URL. Please provide a correct path to the JSON-serialized card object model file.");
+				});
 		};
 
 		AdaptiveContent.prototype.onAfterRendering = function () {
@@ -186,6 +223,16 @@ sap.ui.define([
 			if (this.adaptiveCardInstance && this._oCardConfig && oDom && oDom.size()) {
 				this.adaptiveCardInstance.parse(this._oCardConfig);
 				oDom.html(this.adaptiveCardInstance.render());
+
+				this._bAdaptiveCardElementsReady = true;
+				this._fireCardReadyEvent();
+			}
+		};
+
+		AdaptiveContent.prototype._fireCardReadyEvent = function () {
+			if (this._bAdaptiveCardElementsReady && this._bComponentsReady) {
+				this._bReady = true;
+				this.fireEvent("_ready");
 			}
 		};
 
@@ -201,6 +248,8 @@ sap.ui.define([
 		AdaptiveContent.prototype._loadDependencies = function () {
 			// Check weather the WebComponents are already loaded. We don't need to fetch the scripts again
 			if (document.querySelector("#webcomponents-loader")) {
+				this._bComponentsReady = true;
+				this._fireCardReadyEvent();
 				return;
 			}
 
@@ -222,7 +271,9 @@ sap.ui.define([
 					attributes: {nomodule: "nomodule"},
 					url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.es5.js")
 				});
-			});
+				this._bComponentsReady = true;
+				this._fireCardReadyEvent();
+			}.bind(this));
 		};
 
 		return AdaptiveContent;
