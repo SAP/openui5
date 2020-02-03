@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/library",
-	"sap/ui/rta/plugin/iframe/URLBuilderDialog"
+	"sap/ui/rta/plugin/iframe/URLBuilderDialog",
+	"sap/ui/rta/plugin/iframe/urlCleaner"
 ], function (
 	Log,
 	Controller,
 	coreLibrary,
-	URLBuilderDialog
+	URLBuilderDialog,
+	urlCleaner
 ) {
 	"use strict";
 
@@ -153,7 +155,11 @@ sap.ui.define([
 			var mSettings = {};
 			var oData = this._oJSONModel.getData();
 			_aTextInputFields.concat(_aNumericInputFields, _aSelectInputFields).forEach(function (sFieldName) {
-				mSettings[sFieldName] = oData[sFieldName].value;
+				var sValue = oData[sFieldName].value;
+				if (sFieldName === "frameUrl") {
+					sValue = urlCleaner(sValue);
+				}
+				mSettings[sFieldName] = sValue;
 			});
 			return mSettings;
 		},

@@ -55,6 +55,7 @@ sap.ui.define([
 			settings: function () {
 				return {
 					icon: "sap-icon://add-product",
+					name: "CTX_EDIT_IFRAME",
 					isEnabled: true,
 					handler: editIFrame
 				};

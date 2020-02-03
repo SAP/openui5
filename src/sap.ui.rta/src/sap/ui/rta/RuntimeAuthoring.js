@@ -392,13 +392,9 @@ function(
 			});
 
 			// Add IFrame
-			var oUriParams = UriParameters.fromQuery(window.location.search);
-			var sAddEnableIFrame = oUriParams.get("sap-ui-xx-rta-addiframe");
-			if (sAddEnableIFrame === "true") {
-				this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
-					commandFactory : oCommandFactory
-				});
-			}
+			this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
+				commandFactory : oCommandFactory
+			});
 
 			//ToolHooks
 			this._mDefaultPlugins["toolHooks"] = new ToolHooksPlugin();

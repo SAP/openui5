@@ -5,12 +5,16 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/Utils",
+	"sap/base/Log",
+	"sap/ui/rta/plugin/iframe/urlCleaner"
 ], function(
 	Controller,
 	Filter,
 	FilterOperator,
-	Utils
+	Utils,
+	Log,
+	urlCleaner
 ) {
 	"use strict";
 
@@ -26,9 +30,14 @@ sap.ui.define([
 		 */
 		onShowPreview: function() {
 			var sURL = this._buildPreviewURL(this._buildReturnedURL());
-			this._oJSONModel.setProperty("/previewUrl/value", sURL);
 			var oIframe = sap.ui.getCore().byId("sapUiRtaUrlBuilderIframe");
-			oIframe.setUrl(sURL);
+			oIframe.setUrl("about:blank"); // Resets the preview first
+			try {
+				this._oJSONModel.setProperty("/previewUrl/value", sURL);
+				oIframe.setUrl(sURL);
+			} catch (oError) {
+				Log.error("Error previewing the URL: ", oError);
+			}
 		},
 
 		/**
@@ -131,7 +140,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_buildReturnedURL: function() {
-			return this._oJSONModel.getProperty("/editURL/value");
+			return urlCleaner(this._oJSONModel.getProperty("/editURL/value"));
 		},
 
 		/**

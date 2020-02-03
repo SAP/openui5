@@ -127,6 +127,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/iframe/URLBuilderDialog"]
 				}
 			},
+			"plugin/iframe/urlCleaner": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/iframe/urlCleaner"]
+				}
+			},
 			"plugin/iframe/AddIFrame": {
 				group: "Plugin",
 				coverage: {

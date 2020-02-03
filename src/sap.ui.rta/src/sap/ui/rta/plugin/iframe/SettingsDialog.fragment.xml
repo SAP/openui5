@@ -7,13 +7,14 @@
 		validationSuccess="onValidationSuccess"
 		validationError="onValidationError"
 		parseError="onValidationError"
-		>
+		contentWidth="25%"
+	>
 		<content>
 			<form:SimpleForm editable="true" title="{/text/sectionTitle}" layout="ResponsiveGridLayout"
 				adjustLabelSpan="false" singleContainerFullSize="false"
 				labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4"
 				emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
-				columnsXL="2" columnsL="2" columnsM="2"
+				columnsXL="1" columnsL="1" columnsM="1"
 				visible="{/section/visible}"
 				>
 				<form:content>
@@ -28,7 +29,7 @@
 				adjustLabelSpan="false" singleContainerFullSize="false"
 				labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4"
 				emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
-				columnsXL="2" columnsL="2" columnsM="2"
+				columnsXL="1" columnsL="1" columnsM="1"
 				>
 				<form:content>
 					<Label text="{/text/widthLabel}"/>
@@ -43,17 +44,20 @@
 					<Select selectedKey="{/frameHeightUnit/value}" items="{/unitsOfMeasure}">
 						<core:Item key="{name}" text="{name}" />
 					</Select>
+					<Label/>
+					<Text text="{/text/percentUseLabel}"
+						visible="{= ${/frameWidthUnit/value} === '%' || ${/frameHeightUnit/value} === '%' }"/>
 				</form:content>
 			</form:SimpleForm>
 			<form:SimpleForm editable="true" title="{/text/urlTitle}" layout="ResponsiveGridLayout"
 				adjustLabelSpan="false" singleContainerFullSize="false"
 				labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4"
 				emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
-				columnsXL="2" columnsL="2" columnsM="2"
+				columnsXL="1" columnsL="1" columnsM="1"
 				>
 				<form:content>
 					<TextArea value="{path: '/frameUrl/value', type: 'sap.ui.model.type.String'}"
-						valueState="{/frameUrl/valueState}"/>
+						valueState="{/frameUrl/valueState}" width="100%" growing="true" growingMaxLines="6"/>
 				</form:content>
 			</form:SimpleForm>
 		</content>
