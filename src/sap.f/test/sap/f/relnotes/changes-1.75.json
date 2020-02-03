@@ -1,0 +1,18 @@
+{
+  "1.75.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "239bdbf606d16ed6e6913ad67d745e4dd6da081a",
+        "type": "FIX",
+        "text": " sap.f.Shellbar: Mega Menu Title doesn`t truncate incorrectly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980478346"
+          }
+        ]
+      }
+    ]
+  }
+}

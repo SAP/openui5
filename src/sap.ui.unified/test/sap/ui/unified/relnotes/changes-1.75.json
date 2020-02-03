@@ -18,6 +18,28 @@
             "reference": "2080016342"
           }
         ]
+      },
+      {
+        "id": "dcb554bb9676596022bc2c7d40d17de4cdd434f4",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Unnecessary readings now prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007710282019"
+          }
+        ]
+      },
+      {
+        "id": "d5a235bcafd390085b530887049b38f738ce8187",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Semantic rendering issues fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080069312"
+          }
+        ]
       }
     ]
   }

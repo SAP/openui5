@@ -23,6 +23,18 @@
             "reference": "1980539933"
           }
         ]
+      },
+      {
+        "id": "c2f98a4b369f005356ca76d89c80398b48ed827f",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Enhancing the indication color palette",
+        "references": []
+      },
+      {
+        "id": "1b095a37f8a2843c334c5139147b27e7043fb36d",
+        "type": "FEATURE",
+        "text": " test recorder: add settings dialog with viewId option",
+        "references": []
       }
     ]
   }
