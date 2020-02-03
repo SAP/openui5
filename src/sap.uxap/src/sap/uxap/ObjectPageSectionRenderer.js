@@ -40,29 +40,34 @@ sap.ui.define(function () {
 		oRm.writeControlData(oControl);
 		oRm.write(">");
 
-		if (bTitleVisible) {
-			oRm.write("<div");
-			oRm.writeAttribute("role", "heading");
-			oRm.writeAttribute("aria-level", oControl._getARIALevel());
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-header");
-			oRm.addClass("sapUxAPObjectPageSectionHeader");
-			oRm.writeClasses();
-			oRm.write(">");
+		oRm.write("<div");
+		oRm.writeAttribute("role", "heading");
+		oRm.writeAttribute("aria-level", oControl._getARIALevel());
+		oRm.writeAttributeEscaped("id", oControl.getId() + "-header");
+		oRm.addClass("sapUxAPObjectPageSectionHeader");
 
-			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-title");
-			oRm.addClass("sapUxAPObjectPageSectionTitle");
-			if (oControl.getTitleUppercase()) {
-				oRm.addClass("sapUxAPObjectPageSectionTitleUppercase");
-			}
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.writeEscaped(sTitle);
-			oRm.write("</div>");
+		oRm.addClass(bTitleVisible ? "" : "sapUxAPObjectPageSectionHeaderHidden");
+
+		oRm.writeClasses();
+		oRm.write(">");
+
+		oRm.write("<div");
+		oRm.writeAttributeEscaped("id", oControl.getId() + "-title");
+		oRm.addClass("sapUxAPObjectPageSectionTitle");
+		if (oControl.getTitleUppercase()) {
+			oRm.addClass("sapUxAPObjectPageSectionTitleUppercase");
+		}
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.writeEscaped(sTitle);
+		oRm.write("</div>");
+
+		if (bTitleVisible) {
 			oRm.renderControl(oControl._getShowHideAllButton());
 			oRm.renderControl(oControl._getShowHideButton());
-			oRm.write("</div>");
 		}
+
+		oRm.write("</div>");
 
 		oRm.write("<div");
 		oRm.addClass("sapUxAPObjectPageSectionContainer");
