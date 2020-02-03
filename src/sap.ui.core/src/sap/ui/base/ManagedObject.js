@@ -4969,7 +4969,9 @@ sap.ui.define([
 						}
 					} else {
 						// must be an alt type
-						mSettings[sName] = oAggregation;
+						mSettings[sName] =
+							typeof oAggregation === "string"
+								? escape(oAggregation) : oAggregation;
 					}
 				}
 			}
