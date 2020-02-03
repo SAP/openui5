@@ -696,12 +696,12 @@ function(
 
 		QUnit.test("when getExtensionPointInfo is called", function (assert) {
 			var oExtensionPointInfo1 = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint1", this.oXmlView2);
-			assert.equal(oExtensionPointInfo1.parent.id, "hbox1", "then the returned object contains the parent control");
+			assert.equal(oExtensionPointInfo1.parent.getAttribute("id"), "hbox1", "then the returned object contains the parent control");
 			assert.equal(oExtensionPointInfo1.aggregation, "items", "and the aggregation name");
 			assert.equal(oExtensionPointInfo1.index, 4, "and the index");
 
 			var oExtensionPointInfo2 = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint2", this.oXmlView2);
-			assert.equal(oExtensionPointInfo2.parent.id, "panel", "then the returned object contains the parent control");
+			assert.equal(oExtensionPointInfo2.parent.getAttribute("id"), "panel", "then the returned object contains the parent control");
 			assert.equal(oExtensionPointInfo2.aggregation, "content", "and the aggregation name");
 			assert.equal(oExtensionPointInfo2.index, 1, "and the index");
 		});
