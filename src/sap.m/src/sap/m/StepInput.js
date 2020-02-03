@@ -675,7 +675,6 @@ function(
 				// change the value and fire the event
 				this.setValue(this._fTempValue);
 				this.fireChange({value: this._fTempValue});
-				this._verifyValue();
 			} else {
 				// just update the visual value and buttons
 				this._applyValue(this._fTempValue);
@@ -862,6 +861,8 @@ function(
 
 			if (isNaN(oValue) || oValue === null) {
 				oValue = 0;
+			} else {
+				oValue = Number(oValue);
 			}
 
 			if (!this._validateOptionalNumberProperty("value", oValue)) {
@@ -874,7 +875,8 @@ function(
 			if (oValue !== this._fOldValue) {
 				// save current value (for ESC restoring)
 				this._fOldValue = oValue;
-				oResult = this.setProperty("value", parseFloat(oValue), true);
+				oResult = this.setProperty("value", oValue);
+				this._verifyValue();
 			} else {
 				oResult = this;
 			}
@@ -955,7 +957,7 @@ function(
 
 			// fix the entered value if the precision is 0; and filter 'e/E' meanwhile
 			if (this.getDisplayValuePrecision() === 0) {
-				sInputValue = Math.round(Number(sInputValue.toLowerCase().split('e')[0]));
+				sInputValue = Math.round(Number(sInputValue.toLowerCase().split('e')[0])).toString();
 			}
 
 			// calculates delta (difference) between input value and real control value

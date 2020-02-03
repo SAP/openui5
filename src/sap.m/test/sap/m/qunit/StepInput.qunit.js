@@ -305,6 +305,24 @@ sap.ui.define([
 			"_disableButtons is called and argument 1 is 'max'");
 	});
 
+	QUnit.test("setValue", function (assert) {
+		//act
+		this.stepInput.setValue(11.23);
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(typeof this.stepInput.getValue(), typeof this.stepInput._fTempValue, "Temporary value is the same type (number) as real value when value is set as a Number");
+		assert.equal(this.stepInput.getValue(), this.stepInput._fTempValue, "Temporary value is the same as real value");
+
+		//act
+		this.stepInput.setValue("3.14");
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(typeof this.stepInput.getValue(), typeof this.stepInput._fTempValue, "Temporary value is the same type (number) as real value when value is set as a String");
+		assert.equal(this.stepInput.getValue(), this.stepInput._fTempValue, "Temporary value is the same as real value");
+	});
+
 	QUnit.test("setValueState", function (assert) {
 		//prepare
 		var sValue = ValueState.Error;
