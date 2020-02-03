@@ -860,7 +860,7 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._cacheArrows = function () {
-		this._$columnButtons = {
+		this._oColumnSeparatorArrows = {
 			beginBack: this.$("beginBack"),
 			midForward: this.$("midForward"),
 			midBack: this.$("midBack"),
@@ -885,12 +885,12 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._getVisibleArrowsCount = function () {
-		if (!this._$columnButtons || !this._$columnButtons.length) {
+		if (!this._oColumnSeparatorArrows) {
 			return 0;
 		}
 
-		return Object.keys(this._$columnButtons).filter(function (sArrow) {
-			return this._$columnButtons[sArrow].data("visible");
+		return Object.keys(this._oColumnSeparatorArrows).filter(function (sArrow) {
+			return this._oColumnSeparatorArrows[sArrow].data("visible");
 		}, this).length;
 	};
 
@@ -1334,7 +1334,7 @@ sap.ui.define([
 		if (FlexibleColumnLayout.ARROWS_NAMES[sNewLayout][sShiftDirection] !== FlexibleColumnLayout.ARROWS_NAMES[sCurrentLayout][sShiftDirection] && bIsLayoutValid) {
 			var sOppositeShiftDirection = sShiftDirection === 'right' ? 'left' : 'right';
 
-			this._$columnButtons[FlexibleColumnLayout.ARROWS_NAMES[sNewLayout][sOppositeShiftDirection]].focus();
+			this._oColumnSeparatorArrows[FlexibleColumnLayout.ARROWS_NAMES[sNewLayout][sOppositeShiftDirection]].focus();
 		}
 		this._fireStateChange(true, false);
 	};
@@ -1373,7 +1373,7 @@ sap.ui.define([
 
 		bIsNavContainersContentRendered = this._hasAnyColumnPagesRendered();
 
-		Object.keys(this._$columnButtons).forEach(function (key) {
+		Object.keys(this._oColumnSeparatorArrows).forEach(function (key) {
 			this._toggleButton(key, aNeededArrows.indexOf(key) !== -1, bIsNavContainersContentRendered);
 		}, this);
 	};
@@ -1386,8 +1386,8 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayout.prototype._toggleButton = function (sButton, bShow, bReveal) {
 
-		this._$columnButtons[sButton].toggle(bShow && bReveal);
-		this._$columnButtons[sButton].data("visible", bShow);
+		this._oColumnSeparatorArrows[sButton].toggle(bShow && bReveal);
+		this._oColumnSeparatorArrows[sButton].data("visible", bShow);
 	};
 
 
