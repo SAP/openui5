@@ -125,6 +125,9 @@ sap.ui.define([
 				},
 				"name.space.OverloadedAction(tea_busi.TEAM)/parameter1" : {
 					"@Common.Label" : "My 1st label",
+					"@Common.Text" : {
+						"$Path" : "_it/Name"
+					},
 					"@Core.OperationAvailable" : {
 						"$Path" : "_it/TEAM_2_CONTAINED_S/Id"
 					}
@@ -1645,6 +1648,8 @@ sap.ui.define([
 		"/T€AMS@/@T€AMS/@sapui.name" : "@T€AMS", // dito
 		"/T€AMS/@UI.LineItem/0/@UI.Importance/@sapui.name" : "@UI.Importance", // in "JSON" mode
 		"/T€AMS/Team_Id@/@Common.Label@sapui.name" : "@Common.Label", // avoid indirection here!
+		"/T€AMS/name.space.OverloadedAction/$Parameter/parameter1@Common.Label@sapui.name"
+			: "@Common.Label",
 		"/T€AMS/tea_busi.NewAction/@sapui.name" : "tea_busi.TEAM", // due to $ReturnType insertion
 		"/T€AMS/tea_busi.NewAction/Name@sapui.name" : "Name", // property at return type
 		"/T€AMS/tea_busi.NewAction//Name@sapui.name" : "Name", // property at return type
@@ -2032,7 +2037,9 @@ sap.ui.define([
 	["@@computedAnnotation", "@@.computedAnnotation"].forEach(function (sSuffix) {
 		var mPathPrefix2Overload = {
 				"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable" : aOverloadedAction[1],
-				"/T€AMS/name.space.OverloadedAction/_it@Common.Label" : aOverloadedAction[1]
+				"/T€AMS/name.space.OverloadedAction/_it@Common.Label" : aOverloadedAction[1],
+				"/T€AMS/name.space.OverloadedAction/parameter1@Common.Text" : aOverloadedAction[1],
+				"/T€AMS/name.space.OverloadedAction/parameter1@Common.Text/" : aOverloadedAction[1]
 //TODO check if "/T€AMS/name.space.OverloadedAction/parameter1" : aOverloadedAction[1] should also
 // be expected for parameters and not only for annotations
 			},
@@ -2046,6 +2053,11 @@ sap.ui.define([
 				"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
 					: "name.space.OverloadedAction",
 				"/T€AMS/name.space.OverloadedAction/_it@Common.Label"
+					: "name.space.OverloadedAction",
+				// Note: because @Common.Label has a string value, a slash must not be appended!
+				"/T€AMS/name.space.OverloadedAction/parameter1@Common.Text"
+					: "name.space.OverloadedAction",
+				"/T€AMS/name.space.OverloadedAction/parameter1@Common.Text/"
 					: "name.space.OverloadedAction",
 				"/T€AMS/name.space.OverloadedAction/parameter1" : "name.space.OverloadedAction"
 			};
@@ -2069,6 +2081,8 @@ sap.ui.define([
 				this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1) // see oInput
 					.returns(SyncPromise.resolve(mScope));
 				oInput = this.oMetaModel.getObject(sPathPrefix);
+				// self-guard to avoid that a complex path evaluates to undefined
+				assert.notStrictEqual(oInput, undefined, "use this test for defined results only!");
 				fnComputedAnnotation = this.mock(oScope).expects("computedAnnotation");
 				fnComputedAnnotation
 					.withExactArgs(oInput, sinon.match({
