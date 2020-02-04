@@ -294,6 +294,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * Fires the <code>sap.f.cards.Header</code> press event.
+	 */
+	Header.prototype.onsapselect = function () {
+		this.firePress();
+	};
+
+	/**
 	 * @returns {boolean} Wether or not the parent of the header is an integration card.
 	 */
 	Header.prototype.isInsideIntegrationCard = function () {

@@ -420,7 +420,17 @@ sap.ui.define([
 		return oControl;
 	};
 
+	/**
+	 * Fires the <code>sap.f.cards.NumericHeader</code> press event.
+	 */
 	NumericHeader.prototype.ontap = function () {
+		this.firePress();
+	};
+
+	/**
+	 * Fires the <code>sap.f.cards.NumericHeader</code> press event.
+	 */
+	NumericHeader.prototype.onsapselect = function () {
 		this.firePress();
 	};
 
