@@ -427,6 +427,66 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given Versions.ensureDraftVersionExists is called", {
+		beforeEach: function () {
+		},
+		afterEach: function() {
+			Versions.clearInstances();
+			sandbox.restore();
+		}
+	}, function() {
+		function _setVersionsCallEnsureDraftAndCheckVersions(assert, aInitialVersions, aFinalVersions) {
+			var sReference = "com.sap.app";
+			var sLayer = "CUSTOMER";
+			var mPropertyBag = {
+				reference: sReference,
+				layer: sLayer
+			};
+			sandbox.stub(Storage.versions, "load").resolves(aInitialVersions);
+			return Versions.getVersions(mPropertyBag)
+				.then(function() {
+					Versions.ensureDraftVersionExists(mPropertyBag);
+				})
+				.then(Versions.getVersions.bind(undefined, mPropertyBag))
+				.then(function(aVersions) {
+					assert.equal(aVersions.length, aFinalVersions.length, "the number of versions is correct");
+					assert.deepEqual(aVersions, aFinalVersions, "the versions objects match");
+				});
+		}
+
+		QUnit.test("if no versions were present", function (assert) {
+			return _setVersionsCallEnsureDraftAndCheckVersions(
+				assert,
+				[],
+				[{versionNumber: 0}]
+			);
+		});
+
+		QUnit.test("if a draft version was present", function (assert) {
+			return _setVersionsCallEnsureDraftAndCheckVersions(
+				assert,
+				[{versionNumber: 0}],
+				[{versionNumber: 0}]
+			);
+		});
+
+		QUnit.test("if no draft version but other versions were present", function (assert) {
+			return _setVersionsCallEnsureDraftAndCheckVersions(
+				assert,
+				[{versionNumber: 2}, {versionNumber: 1}],
+				[{versionNumber: 0}, {versionNumber: 2}, {versionNumber: 1}]
+			);
+		});
+
+		QUnit.test("if a draft version and other versions were present", function (assert) {
+			return _setVersionsCallEnsureDraftAndCheckVersions(
+				assert,
+				[{versionNumber: 0}, {versionNumber: 2}, {versionNumber: 1}],
+				[{versionNumber: 0}, {versionNumber: 2}, {versionNumber: 1}]
+			);
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});
