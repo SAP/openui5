@@ -2,10 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/Element',
-	'../library'
+	"sap/ui/core/Element",
+	"./PluginBase",
+	"../library"
 ], function(
 	Element,
+	PluginBase,
 	library
 ) {
 
@@ -53,20 +55,19 @@ sap.ui.define([
 		}
     }});
 
+	// PluginBase is currently private and can therefore not be extended by the SelectionPlugin class that is the type of a public aggregation.
+	for (var sProp in PluginBase.prototype) {
+		if (!SelectionPlugin.prototype.hasOwnProperty(sProp)) {
+			SelectionPlugin.prototype[sProp] = PluginBase.prototype[sProp];
+		}
+	}
+
 	/**
 	 * Sets up the initial values.
 	 */
 	SelectionPlugin.prototype.init = function() {
+		PluginBase.prototype.init.apply(this, arguments);
 		this._bSuspended = false;
-	};
-
-	/**
-	 * Terminates the plugin
-	 *
-	 * @private
-	 */
-	SelectionPlugin.prototype.exit = function() {
-		this._oBinding = null;
 	};
 
 	SelectionPlugin.prototype.getRenderConfig = function() {
@@ -218,26 +219,6 @@ sap.ui.define([
 
 	SelectionPlugin.prototype._getSelectionMode = function() {
 		return this.getProperty("selectionMode");
-	};
-
-	/**
-	 * Gets the binding of the associated table.
-	 *
-	 * @returns {sap.ui.model.Binding|undefined}
-	 * @private
-	 */
-	SelectionPlugin.prototype._getBinding = function() {
-		return this._oBinding;
-	};
-
-	/**
-	 * Sets the binding of the associated table.
-	 *
-	 * @param {sap.ui.model.Binding} oBinding
-	 * @private
-	 */
-	SelectionPlugin.prototype._setBinding = function(oBinding) {
-		this._oBinding = oBinding;
 	};
 
 	/**
