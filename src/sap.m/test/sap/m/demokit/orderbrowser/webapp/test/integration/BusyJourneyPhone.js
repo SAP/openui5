@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (opaTest, Device) {
 	"use strict";
 
-	var iDelay = (Device.browser.msie || Device.browser.edge) ? 1500 : 1000;
+	var iDelay = 2500;
 
 	QUnit.module("Phone busy indication");
 
