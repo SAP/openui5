@@ -636,7 +636,7 @@ sap.ui.define([
 		// If we are not rendered, we do not need to resize since resizing is done after rendering
 		if (this.getDomRef()) {
 			clearTimeout(this._resizeTimeout);
-			setTimeout(this["_resize"].bind(this), iDelay);
+			this._resizeTimeout = setTimeout(this._resize.bind(this), iDelay);
 		}
 	};
 
