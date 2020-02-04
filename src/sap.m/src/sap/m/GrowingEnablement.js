@@ -108,7 +108,7 @@ sap.ui.define([
 				var oScrollDelegate = library.getScrollDelegate(oControl);
 				if (oScrollDelegate) {
 					this._oScrollDelegate = oScrollDelegate;
-					oScrollDelegate.setGrowingList(this.onScrollToLoad.bind(this), oControl.getGrowingDirection());
+					oScrollDelegate.setGrowingList(this.onScrollToLoad.bind(this), oControl.getGrowingDirection(), this._updateTrigger.bind(this, false));
 				}
 			} else if (this._oScrollDelegate) {
 				this._oScrollDelegate.setGrowingList(null);

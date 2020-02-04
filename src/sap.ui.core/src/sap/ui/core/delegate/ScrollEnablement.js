@@ -154,12 +154,14 @@ sap.ui.define([
 			 *
 			 * @param {function} fnScrollLoadCallback Scrolling callback
 			 * @param {sap.m.ListGrowingDirection} sScrollLoadDirection Scrolling direction
+			 * @param {function} fnOverflowChange listener for the <code>overflowChange</code> event
 			 * @protected
 			 * @since 1.11.0
 			 */
-			setGrowingList : function(fnScrollLoadCallback, sScrollLoadDirection) {
+			setGrowingList : function(fnScrollLoadCallback, sScrollLoadDirection, fnOverflowChange) {
 				this._fnScrollLoadCallback = fnScrollLoadCallback;
 				this._sScrollLoadDirection = sScrollLoadDirection;
+				this.onOverflowChange(fnOverflowChange);
 				return this;
 			},
 
@@ -640,9 +642,9 @@ sap.ui.define([
 
 			_checkOverflowChange: function(oEvent) {
 				var iMaxScrollTop = this.getMaxScrollTop(),
-				bOverflow = iMaxScrollTop > 0 && this._iLastMaxScrollTop === 0,
-				bUnderflow = iMaxScrollTop === 0 && this._iLastMaxScrollTop > 0,
-				bOverflowChange = bOverflow || bUnderflow;
+					bOverflow = iMaxScrollTop > 0 && this._iLastMaxScrollTop === 0,
+					bUnderflow = iMaxScrollTop === 0 && this._iLastMaxScrollTop > 0,
+					bOverflowChange = bOverflow || bUnderflow;
 
 				if (bOverflowChange) {
 					this._fnOverflowChangeCallback(bOverflow, iMaxScrollTop);
@@ -652,7 +654,7 @@ sap.ui.define([
 			},
 
 			_registerOverflowMonitor: function() {
-				IntervalTrigger.addListener(this._checkOverflowChange, this);
+				this._fnOverflowChangeCallback && IntervalTrigger.addListener(this._checkOverflowChange, this);
 			},
 
 			_deregisterOverflowMonitor: function() {
@@ -683,7 +685,8 @@ sap.ui.define([
 				}
 
 				if (this._fnOverflowChangeCallback) {
-					window.requestAnimationFrame(this._registerOverflowMonitor.bind(this));
+					this._iOverflowTimer && window.cancelAnimationFrame(this._iOverflowTimer);
+					this._iOverflowTimer = window.requestAnimationFrame(this._registerOverflowMonitor.bind(this));
 				}
 
 				//
