@@ -834,15 +834,27 @@ function(
 	SinglePlanningCalendar.prototype.setSelectedView = function(vView) {
 		var oPreviousGrid = this._getCurrentGrid();
 
+		// first check if vView is string (ID), or object with getKey method
+		if (typeof vView === "string") {
+			// it is string, try to find corresponding view
+			vView = this._getViewById(vView);
+		} else if (vView.isA("sap.m.SinglePlanningCalendarView") && !this._isViewKeyExisting(vView.getKey())) {
+			// non-existing view
+			vView = null;
+		}
+
+		if (!vView) {
+			// view is missing
+			Log.error("There is no such view.", this);
+			return this;
+		}
+
+		// view is found
 		this.setAssociation("selectedView", vView);
-
 		this._transferAggregations(oPreviousGrid);
-
 		this._alignColumns();
 		this._adjustColumnHeadersTopOffset();
-
 		this._getHeader()._getOrCreateViewSwitch().setSelectedKey(vView.getKey());
-
 		return this;
 	};
 
@@ -928,6 +940,40 @@ function(
 		return this.getViews().some(function (oView) {
 			return oView.getKey() === sKey;
 		});
+	};
+
+	/**
+	 * Finds the view object by given key
+	 * @param {String} sKey The key of the view
+	 * @private
+	 * @returns {sap.m.SinglePlanningCalendarView} the view object matched the given sKey, of null if there is no such view
+	 */
+	SinglePlanningCalendar.prototype._getViewByKey = function (sKey) {
+		var aViews = this.getViews(),
+			i;
+		for (i = 0; i < aViews.length; i++) {
+			if (aViews[i].getKey() === sKey) {
+				return aViews[i];
+			}
+		}
+		return null;
+	};
+
+	/**
+	 * Finds the view object by given ID
+	 * @param {String} sId The ID of the view
+	 * @private
+	 * @returns {sap.m.SinglePlanningCalendarView} the view object matched the given sId, of null if there is no such view
+	 */
+	SinglePlanningCalendar.prototype._getViewById = function (sId) {
+		var aViews = this.getViews(),
+			i;
+		for (i = 0; i < aViews.length; i++) {
+				if (aViews[i].getId() === sId) {
+				return aViews[i];
+			}
+		}
+		return null;
 	};
 
 	/**
@@ -1154,9 +1200,11 @@ function(
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._handleViewSwitchChange = function(oEvent) {
-		var oPreviousGrid = this._getCurrentGrid();
+		var oPreviousGrid = this._getCurrentGrid(),
+			sNewViewKey = oEvent.getParameter("item").getProperty("key"),
+			oNewView = this._getViewByKey(sNewViewKey);
 
-		this.setAssociation("selectedView", oEvent.getParameter("item"));
+		this.setAssociation("selectedView", oNewView);
 
 		this._transferAggregations(oPreviousGrid);
 
