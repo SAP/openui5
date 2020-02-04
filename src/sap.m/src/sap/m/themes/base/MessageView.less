@@ -49,13 +49,29 @@
 		font-size: @sapMFontHeader5Size;
 	}
 
+	.sapMMsgViewItem {
+		padding-left: 0;
+
+		&.sapMSLIWithDescription {
+			height: 3.3125rem;
+		}
+		&:not(.sapMSLIWithDescription) {
+			height: 2.75rem;
+		}
+	}
+
 	.sapMSLIDescription {
 		margin-top: 0.125rem;
-		font-size: @sapMFontMediumSize;
+		font-family: @sapUiFontFamily;
+		font-size:  @sapMFontMediumSize;
+		color: @sapUiContentLabelColor;
 	}
 
 	.sapMSLITitle {
-		font-size: @sapMFontLargeSize;
+		font-family: @sapUiFontHeaderFamily;
+		font-size: @sapMFontHeader5Size;
+		font-weight: @sapUiFontHeaderWeight;
+		color: @sapUiGroupTitleTextColor;
 
 		.sapMLnk {
 			display: block;
@@ -63,7 +79,7 @@
 	}
 
 	.sapMSLITitleOnly {
-		font-size: @sapMFontLargeSize;
+		font-size: @sapMFontHeader5Size;
 	}
 
 	.sapMLIB.sapMLIBActive {
@@ -101,7 +117,7 @@
 .sapMMsgViewItemActive {
 
 	& .sapMLnk {
-		font-size: 1rem;
+		font-size: @sapMFontHeader5Size;
 	}
 
 	& .sapMSLITitleOnly {
@@ -120,12 +136,15 @@
 	}
 
 	.sapMMsgViewItem {
-		height: 3.5rem;
 		padding-left: 0;
+
+		&.sapMSLIWithDescription {
+			height: 3.25rem;
+		}
 	}
 
 	.sapMMsgViewItemActive .sapMLnk {
-		font-size: @sapMFontMediumSize;
+		font-size: @sapMFontHeader6Size;
 	}
 
 	.sapMMsgViewItem:not(.sapMSLIWithDescription) {
@@ -173,11 +192,10 @@
 
 	.sapMSLIDescription {
 		margin-top: 0;
-		font-size: @sapMFontMediumSize;
 	}
 
-	.sapMSLITitle {
-		font-size: @sapMFontMediumSize;
+	.sapMSLITitle, .sapMSLITitleOnly {
+		font-size: @sapMFontHeader6Size;
 	}
 
 	.sapMSLIDescIcon .sapMSLITitle,
