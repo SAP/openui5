@@ -3,7 +3,7 @@
 describe("sap.ui.unified.YearRangePicker", function() {
 	"use strict";
 
-	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.unified.calendar.YearRangePicker';
+	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.unified.calendar.YearPicker';
 
 	it('YearRangePicker is rendered corretly', function() {
 		var oYearRangePicker = element(by.id("YRP1"));
