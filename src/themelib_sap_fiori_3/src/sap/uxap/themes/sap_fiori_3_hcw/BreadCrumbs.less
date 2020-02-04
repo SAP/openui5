@@ -3,15 +3,25 @@
 /* Quartz High Contrast White theme      */
 /* ===================================== */
 
-.sapUxAPBreadCrumbs {
-	.sapMText:focus {
-		outline: 0.125rem dotted @sapUiContentFocusColor;
-		outline-offset: 0.2rem;
+.sapMBreadcrumbs {
+
+	.sapMBreadcrumbsCurrentLocation:focus {
+		outline: 0.125rem dotted @sapUiHcStandardForeground;
+		outline-offset: -0.125rem;
 	}
 
-	.sapMSlt > .sapMSltArrow:hover,
-	.sapMSlt:hover > .sapMSltArrow,
-	.sapMSltPressed > .sapMSltArrow {
-		border-left: 0 none;
+	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem > 
+	.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
+
+		.sapMSltIcon:before {
+			border-bottom: 0.0625rem solid @sapUiLink;
+		}
+
+		&:focus,
+		&:hover {
+			.sapMSltIcon:before {
+				border-bottom: none;
+			}
+		}
 	}
 }
