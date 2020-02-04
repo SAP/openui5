@@ -75,6 +75,7 @@ sap.ui.define([],
 
 			if (sStatus) {
 				oRm.write("<span");
+				oRm.writeAttribute('id', oControl.getId() + '-status');
 				oRm.addClass("sapFCardStatus");
 				oRm.writeClasses();
 				oRm.write(">");
