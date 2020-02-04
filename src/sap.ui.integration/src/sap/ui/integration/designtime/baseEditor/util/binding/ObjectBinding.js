@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
-	"sap/ui/base/BindingParser"
+	"sap/ui/base/BindingParser",
+	"sap/base/util/includes"
 ], function (
 	ManagedObject,
 	deepClone,
 	ObjectPath,
 	isPlainObject,
-	BindingParser
+	BindingParser,
+	includes
 ) {
 	"use strict";
 
@@ -61,19 +63,23 @@ sap.ui.define([
 		_originalObject: null
 	});
 
-	/**
-	 * @inheritDoc
-	 */
+	ObjectBinding.prototype.init = function () {
+		this._aIgnoreList = [];
+	};
+
 	ObjectBinding.prototype.exit = function () {
 		this._cleanup();
 	};
 
 	ObjectBinding.prototype.setObject = function (oObject) {
-		var oClonedObject = deepClone(oObject, 50);
-		var vResult = this.setProperty("object", oClonedObject);
-		this._setOriginalObject(oObject); // intentionally passing original object here
+		this._setOriginalObject(oObject);
 		this._init();
-		return vResult;
+		return this;
+	};
+
+	ObjectBinding.prototype._setObject = function (oObject) {
+		var oClonedObject = deepClone(oObject, 50);
+		return this.setProperty("object", oClonedObject);
 	};
 
 	ObjectBinding.prototype._setOriginalObject = function (oObject) {
@@ -100,6 +106,7 @@ sap.ui.define([
 		this._cleanup();
 		var oObject = this._getOriginalObject();
 		if (oObject) {
+			this._setObject(oObject);
 			this._createPropertyBindings(oObject);
 		}
 	};
@@ -117,43 +124,47 @@ sap.ui.define([
 	};
 
 	ObjectBinding.prototype._createPropertyBindings = function (oObject, sPath) {
-		Object.keys(oObject).forEach(function(sKey) {
-			var sCurPath = sPath ? sPath + "/" + sKey : sKey;
-			if (typeof oObject[sKey] === "string") {
-				var oBindingInfo = BindingParser.complexParser(oObject[sKey]);
-				if (oBindingInfo) {
-					if (oBindingInfo.parts) {
-						// first check that all models for all parts are available
-						if (
-							!oBindingInfo.parts.find(
-								function(oPart) {
-									return !this.getModel(oPart.model);
-								}.bind(this)
-							)
-						) {
-							oBindingInfo.parts.forEach(function(oPart) {
-								this._createSimpleBinding(oPart, sCurPath, oBindingInfo);
-							}.bind(this));
+		Object.keys(oObject)
+			.filter(function (sKey) {
+				return !this.isIgnored(sKey);
+			}, this)
+			.forEach(function(sKey) {
+				var sCurPath = sPath ? sPath + "/" + sKey : sKey;
+				if (typeof oObject[sKey] === "string") {
+					var oBindingInfo = BindingParser.complexParser(oObject[sKey]);
+					if (oBindingInfo) {
+						if (oBindingInfo.parts) {
+							// first check that all models for all parts are available
+							if (
+								!oBindingInfo.parts.find(
+									function(oPart) {
+										return !this.getModel(oPart.model);
+									}.bind(this)
+								)
+							) {
+								oBindingInfo.parts.forEach(function(oPart) {
+									this._createSimpleBinding(oPart, sCurPath, oBindingInfo);
+								}.bind(this));
+							} else {
+								return;
+							}
+						} else if (this.getModel(oBindingInfo.model)) {
+							this._createSimpleBinding(oBindingInfo, sCurPath, oBindingInfo);
 						} else {
 							return;
 						}
-					} else if (this.getModel(oBindingInfo.model)) {
-						this._createSimpleBinding(oBindingInfo, sCurPath, oBindingInfo);
-					} else {
-						return;
+						this._updateValue(sCurPath, oBindingInfo);
 					}
-					this._updateValue(sCurPath, oBindingInfo);
+				} else if (
+					oObject[sKey]
+					&& (
+						isPlainObject(oObject[sKey])
+						|| Array.isArray(oObject[sKey])
+					)
+				) {
+					this._createPropertyBindings(oObject[sKey], sCurPath);
 				}
-			} else if (
-				oObject[sKey]
-				&& (
-					isPlainObject(oObject[sKey])
-					|| Array.isArray(oObject[sKey])
-				)
-			) {
-				this._createPropertyBindings(oObject[sKey], sCurPath);
-			}
-		}.bind(this));
+			}, this);
 	};
 
 	ObjectBinding.prototype._updateValue = function (sPath, oBindingInfo) {
@@ -188,6 +199,35 @@ sap.ui.define([
 			this._updateValue(sCurPath, oBindingInfo);
 		}.bind(this));
 		return oBinding;
+	};
+
+	/**
+	 * Adds ignore key to the list
+	 * @param {string} sKey - Key to ignore
+	 */
+	ObjectBinding.prototype.addToIgnore = function (sKey) {
+		this._aIgnoreList = this._aIgnoreList.concat(sKey);
+		this._init();
+	};
+
+	/**
+	 * Removes ignore key from the list
+	 * @param {string} sKey - Key to restore
+	 */
+	ObjectBinding.prototype.removeFromIgnore = function (sKey) {
+		this._aIgnoreList = this._aIgnoreList.filter(function (sIgnoreKey) {
+			return sIgnoreKey !== sKey;
+		});
+		this._init();
+	};
+
+	/**
+	 * Checks if a key is in the ignore list
+	 * @param {string} sKey - Key to check
+	 * @return {boolean} - `true` if specified key is in the ignore list
+	 */
+	ObjectBinding.prototype.isIgnored = function (sKey) {
+		return includes(this._aIgnoreList, sKey);
 	};
 
 	return ObjectBinding;
