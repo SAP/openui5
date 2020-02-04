@@ -225,7 +225,7 @@ function(
 		this._setDraftLabelVisibility(bVisible);
 		this.getControl("activateDraft").setVisible(bVisible);
 		this.getControl("discardDraft").setVisible(bVisible);
-		this.setProperty("draftVisible", bVisible);
+		this.setProperty("draftVisible", bVisible, true);
 		return bVisible;
 	};
 
