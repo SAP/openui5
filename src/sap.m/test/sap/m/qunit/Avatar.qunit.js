@@ -2,14 +2,18 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/Device",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/URI",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Avatar",
 	"sap/m/LightBox",
 	"sap/f/library"
 ], function(
 	oCore,
 	Device,
+	KeyCodes,
 	URI,
+	qutils,
 	Avatar,
 	LightBox,
 	library
@@ -693,4 +697,76 @@ sap.ui.define([
 		assert.strictEqual(sActualBackgroundColor, oAvatar._getActualBackgroundColor(),
 			"After re-rendering the Avatar, its background is kept (" + sActualBackgroundColor + ").");
 	});
+
+	QUnit.module("Keyboard handling", {
+		beforeEach: setupFunction,
+		afterEach: teardownFunction
+	});
+
+	QUnit.test("SPACE - press event", function(assert) {
+		//setup
+		var oSpy = this.spy(Avatar.prototype, "firePress");
+
+		//act
+		qutils.triggerKeydown(this.oAvatar, KeyCodes.SPACE);
+
+		//assert
+		assert.ok(oSpy.notCalled, "Press event is not fired onkeydown");
+
+		//act
+		qutils.triggerKeyup(this.oAvatar, KeyCodes.SPACE);
+
+		//assert
+		assert.ok(oSpy.called, "Press event is fired onkeyup");
+	});
+
+	QUnit.test("SPACE - press event interupt", function(assert) {
+		//setup
+		var	oSpy = this.spy(Avatar.prototype, "firePress");
+
+		testPressInterupt(assert, this.oAvatar, oSpy, KeyCodes.SHIFT);
+		testPressInterupt(assert, this.oAvatar, oSpy, KeyCodes.ESCAPE);
+	});
+
+	QUnit.test("ENTER - press event", function(assert) {
+		//setup
+		var oSpy = this.spy(Avatar.prototype, "firePress");
+
+		//act
+		qutils.triggerKeyup(this.oAvatar, KeyCodes.ENTER);
+
+		//assert
+		assert.ok(oSpy.notCalled, "Press event is not fired onkeyup");
+
+		//act
+		qutils.triggerKeydown(this.oAvatar, KeyCodes.ENTER);
+
+		//assert
+		assert.ok(oSpy.called, "Press event is fired onkeydown");
+	});
+
+	function testPressInterupt (assert, oAvatar, oSpy, sKey) {
+		//act
+		qutils.triggerKeydown(oAvatar, KeyCodes.SPACE);
+
+		//assert
+		assert.ok(oSpy.notCalled, "Press event is not fired onkeydown");
+		assert.ok(oAvatar._bSpacePressed, "Space key is marked as pressed");
+
+		//act
+		qutils.triggerKeydown(oAvatar, sKey);
+
+		//assert
+		assert.ok(oSpy.notCalled, "Press event is not fired onkeydown");
+		assert.ok(oAvatar._bSpacePressed, "Space key is marked as pressed");
+		assert.ok(oAvatar._bShouldInterupt, sKey + " key is marked as pressed");
+
+		//act
+		qutils.triggerKeyup(oAvatar, KeyCodes.SPACE);
+
+		//assert
+		assert.ok(oSpy.notCalled, "Press event is not fired onkeyup");
+		assert.notOk(oAvatar._bSpacePressed, "Space key is unmarked as pressed");
+		assert.notOk(oAvatar._bShouldInterupt, sKey + " key is unmarked as pressed");
+	}
 });

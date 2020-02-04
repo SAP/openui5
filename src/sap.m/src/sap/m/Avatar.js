@@ -296,14 +296,40 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the key up event for SPACE and ENTER.
+	 * @param {jQuery.Event} oEvent - the keyboard event.
+	 * @private
+	 */
+	Avatar.prototype.onkeydown = function (oEvent) {
+		if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+			this._bShouldInterupt = this._bSpacePressed;
+		}
+
+		if (oEvent.which === KeyCodes.SPACE) {
+			this._bSpacePressed = true;
+
+			// To prevent the browser scrolling.
+			oEvent.preventDefault();
+		}
+
+		if (oEvent.which === KeyCodes.ENTER) {
+			this.firePress({/* no parameters */});
+		}
+	};
+
+	/**
+	 * Handles the key up event for SPACE.
 	 *
 	 * @param {jQuery.Event} oEvent - the keyboard event.
 	 * @private
 	 */
 	Avatar.prototype.onkeyup = function (oEvent) {
-		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
-			this.firePress({/* no parameters */});
+		if (oEvent.which === KeyCodes.SPACE) {
+			if (!this._bShouldInterupt) {
+				this.firePress({/* no parameters */});
+			}
+
+			this._bShouldInterupt = false;
+			this._bSpacePressed = false;
 
 			//stop the propagation, it is handled by the control
 			oEvent.stopPropagation();
