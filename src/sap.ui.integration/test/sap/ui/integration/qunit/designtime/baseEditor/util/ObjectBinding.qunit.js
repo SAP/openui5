@@ -375,6 +375,63 @@ function (
 				]
 			);
 		});
+
+		QUnit.test("ignore properties", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				simpleBinding1: "{/root}",
+				simpleBinding2: "{value}",
+				nestedProperties: {
+					simpleBinding: "{/another/foo}"
+				}
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					simpleBinding1: "root",
+					simpleBinding2: "DefaultValue",
+					nestedProperties: {
+						simpleBinding: "bar"
+					}
+				}
+			);
+
+			this.oObjectBinding.addToIgnore("simpleBinding1");
+			this.oObjectBinding.addToIgnore("simpleBinding");
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					simpleBinding1: "{/root}",
+					simpleBinding2: "DefaultValue",
+					nestedProperties: {
+						simpleBinding: "{/another/foo}"
+					}
+				}
+			);
+
+			this.oObjectBinding.removeFromIgnore("simpleBinding1");
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					simpleBinding1: "root",
+					simpleBinding2: "DefaultValue",
+					nestedProperties: {
+						simpleBinding: "{/another/foo}"
+					}
+				}
+			);
+		});
+
 	});
 
 	QUnit.done(function() {
