@@ -1443,7 +1443,7 @@ function(
 
 			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			if (!this.getEnabled() || !this.getEditable() || this._bSpaceDown) {
 				return;
 			}
 
@@ -1479,13 +1479,21 @@ function(
 		};
 
 		/**
-		 * Handles the keydown event for SPACE on which we have to prevent the browser scrolling.
+		 * Handles the keydown events.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		Select.prototype.onsapspace = function(oEvent) {
-			oEvent.preventDefault();
+		Select.prototype.onkeydown = function(oEvent) {
+			if (oEvent.which === KeyCodes.SPACE) {
+				// note: prevent document scrolling when the spacebar key is pressed
+				oEvent.preventDefault();
+				this._bSpaceDown = true;
+			}
+
+			if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+				this._bSupressNextAction = this._bSpaceDown;
+			}
 		};
 
 		/**
@@ -1495,25 +1503,26 @@ function(
 		 * @private
 		 */
 		Select.prototype.onkeyup = function(oEvent) {
-
 			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
 			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
-			if (oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey) {
-				// mark the event for components that needs to know if the event was handled
-				oEvent.setMarked();
+			if (oEvent.which === KeyCodes.SPACE) {
+				if (!oEvent.shiftKey && !this._bSupressNextAction) {
 
-				// note: prevent document scrolling when the spacebar key is pressed
-				oEvent.preventDefault();
+					// mark the event for components that needs to know if the event was handled
+					oEvent.setMarked();
 
-				if (this.isOpen()) {
-					this._checkSelectionChange();
+					if (this.isOpen()) {
+						this._checkSelectionChange();
+					}
+
+					this.toggleOpenState();
 				}
-
-				this.toggleOpenState();
+				this._bSpaceDown = false;
+				this._bSupressNextAction = false;
 			}
 		};
 
