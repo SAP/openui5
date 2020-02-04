@@ -43,7 +43,15 @@ sap.ui.define([
 					return oTable.$("vsb").get(0);
 				}
 			}
-		}
+		},
+		scrollContainers: [
+			{
+				domRef: function(oTable) {
+					return oTable.$("sapUiTableCnt").get(0);
+				},
+				aggregations: ["rows"]
+			}
+		]
 	};
 
 });
