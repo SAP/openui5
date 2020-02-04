@@ -197,6 +197,7 @@
 									"type": "Input.ChoiceSet",
 									"id": "CompactSelectVal",
 									"style": "compact",
+									"value": "1",
 									"placeholder": "Enter a value",
 									"choices": [
 										{
@@ -339,6 +340,11 @@
 							}
 						]
 					}
+				},
+				{
+					"type": "Action.OpenUrl",
+					"title": "More Information",
+					"url": "http://www.company_a.example.com"
 				}
 			]
 		}
