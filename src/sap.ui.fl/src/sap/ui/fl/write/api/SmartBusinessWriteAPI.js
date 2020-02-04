@@ -21,7 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function _executeActionByName(sActionName, mPropertyBag) {
+	function _checkSettingsAndExecuteActionByName(sActionName, mPropertyBag) {
 		return Settings.getInstance().then(function(oSettings) {
 			if (oSettings.isAtoEnabled()) {
 				mPropertyBag.skipIam = true;
@@ -85,7 +85,7 @@ sap.ui.define([
 			// Pass a flag to determine the consumer who is calling SaveAs handler
 			mPropertyBag.isForSmartBusiness = true;
 
-			return _executeActionByName("saveAs", mPropertyBag);
+			return _checkSettingsAndExecuteActionByName("saveAs", mPropertyBag);
 		},
 
 		/**
@@ -117,7 +117,7 @@ sap.ui.define([
 			// Pass a flag to know which consumer is calling SaveAs handler
 			mPropertyBag.isForSmartBusiness = true;
 
-			return _executeActionByName("updateAppVariant", mPropertyBag);
+			return _checkSettingsAndExecuteActionByName("updateAppVariant", mPropertyBag);
 		},
 
 		/**
@@ -147,7 +147,7 @@ sap.ui.define([
 			// Pass a flag to know which consumer is calling SaveAs handler
 			mPropertyBag.isForSmartBusiness = true;
 
-			return _executeActionByName("deleteAppVariant", mPropertyBag);
+			return _checkSettingsAndExecuteActionByName("deleteAppVariant", mPropertyBag);
 		},
 
 		/**
