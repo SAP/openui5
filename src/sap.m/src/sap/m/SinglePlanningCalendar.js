@@ -832,8 +832,6 @@ function(
 	};
 
 	SinglePlanningCalendar.prototype.setSelectedView = function(vView) {
-		var oPreviousGrid = this._getCurrentGrid();
-
 		// first check if vView is string (ID), or object with getKey method
 		if (typeof vView === "string") {
 			// it is string, try to find corresponding view
@@ -850,10 +848,7 @@ function(
 		}
 
 		// view is found
-		this.setAssociation("selectedView", vView);
-		this._transferAggregations(oPreviousGrid);
-		this._alignColumns();
-		this._adjustColumnHeadersTopOffset();
+		this._setupNewView(vView);
 		this._getHeader()._getOrCreateViewSwitch().setSelectedKey(vView.getKey());
 		return this;
 	};
@@ -1027,7 +1022,6 @@ function(
 		oHeader.attachEvent("pressToday", this._handlePressToday, this);
 		oHeader.attachEvent("pressNext", this._handlePressArrow, this);
 		oHeader.attachEvent("dateSelect", this._handleCalendarPickerDateSelect, this);
-		oHeader._getOrCreateViewSwitch().attachEvent("selectionChange", this._handleViewSwitchChange, this);
 
 		return this;
 	};
@@ -1166,7 +1160,10 @@ function(
 	 * Handler for the viewChange event in the _header aggregation.
 	 * @private
 	 */
-	SinglePlanningCalendar.prototype._handleViewChange = function () {
+	SinglePlanningCalendar.prototype._handleViewChange = function (oEvent) {
+		var sNewViewKey = oEvent.getParameter("item").getProperty("key"),
+			oNewView = this._getViewByKey(sNewViewKey);
+		this._setupNewView(oNewView);
 		this.fireViewChange();
 	};
 
@@ -1195,19 +1192,15 @@ function(
 	};
 
 	/**
-	 * Handler for the selectionChange event in the _header aggregation.
-	 * @param {Date} oEvent The triggered event
+	 * Sets given view in the selectedView association and then prepares the calendar
+	 * for the new view.
+	 * @param {Object || String}  vViwe The new view
 	 * @private
 	 */
-	SinglePlanningCalendar.prototype._handleViewSwitchChange = function(oEvent) {
-		var oPreviousGrid = this._getCurrentGrid(),
-			sNewViewKey = oEvent.getParameter("item").getProperty("key"),
-			oNewView = this._getViewByKey(sNewViewKey);
-
-		this.setAssociation("selectedView", oNewView);
-
+	SinglePlanningCalendar.prototype._setupNewView = function(vView) {
+		var oPreviousGrid = this._getCurrentGrid();
+		this.setAssociation("selectedView", vView);
 		this._transferAggregations(oPreviousGrid);
-
 		this._alignColumns();
 		this._adjustColumnHeadersTopOffset();
 	};

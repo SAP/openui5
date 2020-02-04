@@ -472,19 +472,48 @@ sap.ui.define([
 	});
 
 	QUnit.test("viewChange", function (assert) {
-		var oSPC = new SinglePlanningCalendar({}),
+		var oSPC = new SinglePlanningCalendar({
+				views: [
+					new SinglePlanningCalendarDayView({
+						key: "DayView",
+						title: "Day View"
+					}),
+					new SinglePlanningCalendarDayView({
+						key: "MonthView",
+						title: "Month View"
+					})
+				]
+			}),
+			oMonthViewSegmentedButtonItem = oSPC._getHeader()._getOrCreateViewSwitch().getItems()[1],
+			sMonthViewId = oSPC.getViews()[1].getId(),
+			oDayViewSegmentedButtonItem = oSPC._getHeader()._getOrCreateViewSwitch().getItems()[0],
+			sDayViewId = oSPC.getViews()[0].getId(),
 			fnFireViewChange = this.spy(oSPC, "fireViewChange");
 
-		//act
-		oSPC._getHeader().fireViewChange();
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-		//assert
-		assert.ok(fnFireViewChange.calledOnce, "Event was fired");
+		// Act - simulate press on a Month View SegmentedButton
+		oMonthViewSegmentedButtonItem.oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		//assert - selected view must be Month View, and event must be called once
+		assert.equal(oSPC.getSelectedView(), sMonthViewId, "The proper View Id is stored in selectedView association");
+		assert.ok(fnFireViewChange.firstCall, "Event was fired");
+
+		// Act - simulate press on a Day View SegmentedButton
+		oDayViewSegmentedButtonItem.oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		//assert - selected view must be Day View, and event must be called once
+		assert.equal(oSPC.getSelectedView(), sDayViewId, "The proper View Id is stored in selectedView association");
+		assert.ok(fnFireViewChange.secondCall, "Event was fired");
 
 		//clean up
+		oSPC.removeAllViews();
 		oSPC.destroy();
+		oSPC = null;
 	});
-
 
 	QUnit.test("startDateChange: on next button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),

@@ -508,8 +508,8 @@ function(
 	 * Handler for the change event of the view switch.
 	 * @private
 	 */
-	PlanningCalendarHeader.prototype._handleViewSwitchChange = function () {
-		this.fireViewChange();
+	PlanningCalendarHeader.prototype._handleViewSwitchChange = function (oEvent) {
+		this.fireViewChange(oEvent.getParameters());
 	};
 
 
