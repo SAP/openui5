@@ -48,6 +48,12 @@ sap.ui.define([
 				 + (oView && oModifier.getId(oView))
 				 + "'). Multiple Extension-points with the same name in one view are not supported!");
 		}
+		// Remove default implementation of extension points only works with XmlTreeModifier
+		mExtensionPointInfo.defaultContent.forEach(function ($Content) {
+			if ($Content.parentNode) {
+				$Content.parentNode.removeChild($Content);
+			}
+		});
 		return BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
 	};
 

@@ -1,3 +1,5 @@
+// valid-jsdoc disabled because this check is validating just the params and return statement and those are all inherited from BaseTreeModifier.
+/* eslint-disable valid-jsdoc */
 /*!
  * ${copyright}
  */
