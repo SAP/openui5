@@ -181,8 +181,8 @@ function(
 					 * <li> If invalid or none <code>selectedKey</code> is used, the first item is
 					 * being selected.</li>
 					 * <li> Invalid or missing <code>selectedKey</code> leads to severe functional
-					 * issues in <code>sap.m.Table</code>, when the <code>sap.m.Select</code> is used inside a
-					 * <code>sap.m.Table</code> column.</li>
+					 * issues in <code>sap.ui.table.Table</code>, when the <code>sap.m.Select</code> is used inside a
+					 * <code>sap.ui.table.Table</code> column.</li>
 					 * </ul>
 					 *
 					 * @since 1.11
