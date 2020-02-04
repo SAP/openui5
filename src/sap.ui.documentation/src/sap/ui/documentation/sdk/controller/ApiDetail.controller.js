@@ -87,6 +87,7 @@ sap.ui.define([
 					.then(APIInfo.getIndexJsonPromise)
 					.then(this._processApiIndexAndLoadApiJson.bind(this))
 					.then(this._findEntityInApiJsonData.bind(this))
+					.then(this._addMissingNodesToControlData.bind(this))
 					.then(this._buildBorrowedModel.bind(this))
 					.then(this._createModelAndSubView.bind(this))
 					.then(this._initSubView.bind(this))
@@ -177,7 +178,7 @@ sap.ui.define([
 
 			/**
 			 * Handles the extracted Symbol data and init`s the Borrowed methods loading
-			 * @param {object} oControlData current symbol data loaded from api.json
+			 * @param {object} oControlData reworked symbol data loaded from api.json
 			 * @returns {Promise} borrowed entities promise
 			 * @private
 			 */
@@ -187,6 +188,72 @@ sap.ui.define([
 
 				// Collect borrowed data
 				return this.buildBorrowedModel(oControlData);
+			},
+
+			/**
+			* Adds the nodes which are present in the this._oEntityData.nodes,
+			* but aren't in the this._oControlData.nodes to the this._oControlData.nodes.
+			* @param {object} oControlData current symbol data loaded from api.json
+			* @returns {object} reworked symbol data loaded from api.json
+			* @private
+			*/
+			_addMissingNodesToControlData: function (oControlData) {
+				var aLibNodes,
+					sNodeName,
+					oNewNode,
+					sLibNodeName,
+					aEntityDataNodes;
+
+				if (this._oEntityData.kind === "namespace") {
+
+					aEntityDataNodes = Array.isArray(this._oEntityData.nodes) && this._oEntityData.nodes;
+					aLibNodes = Array.isArray(oControlData.nodes) && oControlData.nodes;
+
+					if (aEntityDataNodes && aLibNodes && aEntityDataNodes.length > aLibNodes.length) {
+
+						// Sort alphabetically by the value of the "name" key of an object
+						aLibNodes.sort(this._compareStringsCaseInsensitive);
+
+						aEntityDataNodes.forEach(function (oNode, iIndex) {
+							sNodeName = oNode.name;
+							sLibNodeName = aLibNodes[iIndex] && aLibNodes[iIndex].name;
+
+							if (sNodeName !== sLibNodeName) {
+								oNewNode = {};
+								oNewNode.name = sNodeName;
+								oNewNode.description = "";
+								oNewNode.href = "api/" + sNodeName;
+
+								if (oNode.deprecated) {
+									oNewNode.deprecated = true;
+								}
+
+								aLibNodes.splice(iIndex, 0, oNewNode);
+							}
+						});
+					}
+				}
+
+				return oControlData;
+			},
+
+			/**
+			 * Compare function, which comapares two strings case insensitive.
+			 * @param {string} a left operand
+			 * @param {string} b right operand
+			 * @returns {number} result
+			 * @private
+			 */
+			_compareStringsCaseInsensitive: function (a, b) {
+				var aLowerCaseName = a.name.toLowerCase(),
+					bLowerCaseName = b.name.toLowerCase();
+				if ( aLowerCaseName < bLowerCaseName ){
+					return -1;
+				}
+				if ( aLowerCaseName > bLowerCaseName ){
+					return 1;
+				}
+				return 0;
 			},
 
 			/**
