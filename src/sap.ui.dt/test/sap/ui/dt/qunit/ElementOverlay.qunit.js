@@ -1074,8 +1074,8 @@ function (
 			var iIndexHeaderContentOverlay = a$ScrollContainerChildren.index(this.oHeaderContentOverlay.getDomRef());
 			var iIndexSectionsOverlay = a$ScrollContainerChildren.index(this.oSectionsOverlay.getDomRef());
 
-			// FIXME: remove timeout when #1870203056 is implemented
-			setTimeout(function () {
+			var oScrollbarSynchronizer = this.oLayoutOverlay._oScrollbarSynchronizers.get($ScrollContainer[0]);
+			oScrollbarSynchronizer.attachEventOnce("synced", function () {
 				var a$Children = jQuery(this.oLayoutOverlay.getChildrenDomRef()).find(">");
 				var a$ScrollContainerChildren = $ScrollContainer.find(">");
 
