@@ -282,6 +282,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * Fires the <code>sap.f.cards.Header</code> press event.
+	 */
+	Header.prototype.onsapselect = function () {
+		this.firePress();
+	};
+
+	/**
 	 * Creates an instance of Header with the given options.
 	 *
 	 * @private
