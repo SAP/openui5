@@ -112,7 +112,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When the first delete button is pressed in the editor", function (assert) {
-			var done = assert.async(2);
+			var done = assert.async();
 
 			this.oEditor.attachEventOnce("valueChange", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is only one side indicator");
@@ -121,11 +121,6 @@ sap.ui.define([
 			});
 			var oDelButton0 = _getArrayEditorElements(this.oEditor)[0].getItems()[0].getContentRight()[2];
 			QUnitUtils.triggerEvent("tap", oDelButton0.getDomRef());
-			assert.strictEqual(this.oEditor.isReady(), false, "Then the ready state of the ArrayEditor is reset");
-			this.oEditor.attachEventOnce("ready", function () {
-				assert.strictEqual(this.oEditor.isReady(), true, "Then the ready event of the ArrayEditor is triggered again after the update");
-				done();
-			}, this);
 		});
 
 		QUnit.test("When the second delete button is pressed in the editor", function (assert) {
@@ -203,6 +198,16 @@ sap.ui.define([
 			});
 			var oAddButton = this.oEditorElement.getItems()[1];
 			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+		});
+
+		QUnit.test("Ready handling - When the editor items change", function (assert) {
+			var done = assert.async();
+			var oAddButton = this.oEditorElement.getItems()[1];
+			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+			this.oEditor.attachEventOnce("ready", function () {
+				assert.ok(true, "Then the ready event of the ArrayEditor is triggered again after the update");
+				done();
+			}, this);
 		});
 
 		QUnit.test("When a new item is added to and an existing item is removed from an array", function (assert) {

@@ -149,7 +149,12 @@ sap.ui.define([
 							type: "string"
 						}
 					}
-				}
+				},
+
+				/**
+				 * Fires when the nested editors are ready
+				 */
+				ready: {}
 			}
 		},
 
@@ -290,6 +295,7 @@ sap.ui.define([
 
 		if (aPropertyEditors.length) {
 			aPropertyEditors.forEach(function (oPropertyEditor) {
+				oPropertyEditor.detachReady(this._onPropertyEditorReady, this);
 				switch (this._sCreatedBy) {
 					case CREATED_BY_CONFIG:
 						oPropertyEditor.destroy();
@@ -315,6 +321,12 @@ sap.ui.define([
 		return this._sState === STATUS_READY && this.getAggregation("propertyEditors").every(function (oNestedEditor) {
 			return oNestedEditor.isReady();
 		});
+	};
+
+	PropertyEditors.prototype._onPropertyEditorReady = function () {
+		if (this.isReady()) {
+			this.fireReady();
+		}
 	};
 
 	/**
@@ -398,10 +410,17 @@ sap.ui.define([
 
 			mPromise.promise.then(function (aPropertyEditors) {
 				var aPreviousPropertyEditors = (this.getAggregation("propertyEditors") || []).slice();
+
 				aPropertyEditors.forEach(function (oPropertyEditor) {
 					this.addAggregation("propertyEditors", oPropertyEditor);
+					oPropertyEditor.attachReady(this._onPropertyEditorReady, this);
 				}, this);
+
 				this._sState = STATUS_READY;
+				if (this.isReady()) {
+					this.fireReady();
+				}
+
 				this.firePropertyEditorsChange({
 					previousPropertyEditors: aPreviousPropertyEditors,
 					propertyEditors: (this.getAggregation("propertyEditors") || []).slice()
