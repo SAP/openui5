@@ -173,11 +173,12 @@ function(
 			// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
 			// in case a control is marked as not adaptable by designTimeMetadata, it should not be possible to evaluate editable
 			// for this control due to parent aggregation action definitions
+			var oResponsibleElementOverlay = this.getResponsibleElementOverlay(oOverlay);
 			var vEditable =
-				oOverlay.getElement() &&
-				oOverlay.getDesignTimeMetadata() &&
-				!oOverlay.getDesignTimeMetadata().markedAsNotAdaptable() &&
-				this._isEditable(oOverlay, mPropertyBag);
+				oResponsibleElementOverlay.getElement() &&
+				oResponsibleElementOverlay.getDesignTimeMetadata() &&
+				!oResponsibleElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable() &&
+				this._isEditable(oResponsibleElementOverlay, mPropertyBag);
 
 			// handle promise return value by _isEditable function
 			if (vEditable && typeof vEditable.then === "function") {

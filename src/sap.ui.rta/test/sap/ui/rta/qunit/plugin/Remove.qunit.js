@@ -160,6 +160,30 @@ function (
 			this.oRemovePlugin.removeElement([this.oButtonOverlay]);
 		});
 
+		QUnit.test("when an overlay has remove action defined on a responsible element", function(assert) {
+			var done = assert.async();
+
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					getResponsibleElement: function (oElement) {
+						if (oElement === this.oButton) {
+							return this.oButton1;
+						}
+					}.bind(this)
+				}
+			});
+
+			this.oRemovePlugin.attachEventOnce("elementModified", function(oEvent) {
+				var oRemoveCommand = oEvent.getParameter("command").getCommands()[0];
+				assert.equal(this.oButton1.getId(), oRemoveCommand.getSelector().id, "then a command is created for the responsible element");
+				assert.equal(oRemoveCommand.getName(), "remove", "then a remove command was created");
+				done();
+			}.bind(this));
+
+			this.oButtonOverlay1.setSelectable(true);
+			this.oRemovePlugin.removeElement([this.oButtonOverlay]);
+		});
+
 		QUnit.test("when an overlay has remove action designTime metadata, but the control is the last visible element in an aggregation", function(assert) {
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions : {

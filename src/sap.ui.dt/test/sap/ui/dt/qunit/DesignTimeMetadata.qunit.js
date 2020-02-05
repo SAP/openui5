@@ -344,6 +344,37 @@ function(
 		});
 	});
 
+	QUnit.module("Given responsible element is requested", {
+		beforeEach: function() {
+			this.oDesignTimeMetadataWithResponsibleElement = new DesignTimeMetadata({
+				data: {
+					actions : {
+						getResponsibleElement: function(oElement) {
+							return oElement;
+						}
+					}
+				}
+			});
+
+			this.oDesignTimeMetadataWithoutResponsibleElement = new DesignTimeMetadata({
+				data: {
+					actions : {}
+				}
+			});
+
+			this.oDesignTimeMetadataWithoutActions = new DesignTimeMetadata({
+				data: {}
+			});
+		}
+	}, function() {
+		QUnit.test("then getResponsibleElement is called", function(assert) {
+			var oResponsibleElement = {type: "responsibleElement"};
+			assert.deepEqual(this.oDesignTimeMetadataWithResponsibleElement.getResponsibleElement(oResponsibleElement), oResponsibleElement, "then the resposible element was returned correctly");
+			assert.equal(this.oDesignTimeMetadataWithoutResponsibleElement.getResponsibleElement(oResponsibleElement), undefined);
+			assert.equal(this.oDesignTimeMetadataWithoutActions.getResponsibleElement(oResponsibleElement), undefined);
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
