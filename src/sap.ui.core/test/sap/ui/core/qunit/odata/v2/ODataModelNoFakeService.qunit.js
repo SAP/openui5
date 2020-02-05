@@ -469,7 +469,141 @@ sap.ui.define([
 	});
 	});
 });
-
 	//TODO refactor ODataModel#mPathCache to a simple map path -> canonical path instead of map
 	// path -> object with single property 'canonicalPath'
+
+	//*********************************************************************************************
+	QUnit.test("cleanUpMetadata", function (assert) {
+		var oEntity = {
+				__metadata : {
+					"content_type" : "content_type",
+					"edit_media" : "edit_media",
+					etag : "etag",
+					"media_etag" : "media_etag",
+					"media_src" : "media_src",
+					nonStandard : "foo",
+					type : "type",
+					uri : "uri"
+				},
+				p : "p"
+			};
+
+		// code under test
+		assert.strictEqual(ODataModel.cleanUpMetadata(oEntity), oEntity);
+
+		assert.deepEqual(oEntity, {
+			__metadata : {
+				"content_type" : "content_type",
+				"edit_media" : "edit_media",
+				etag : "etag",
+				"media_etag" : "media_etag",
+				"media_src" : "media_src",
+				type : "type",
+				uri : "uri"
+			},
+			p : "p"
+		});
+
+		// code under test
+		assert.strictEqual(ODataModel.cleanUpMetadata(), undefined);
+
+		// code under test: object w/o __metadata
+		assert.deepEqual(ODataModel.cleanUpMetadata({p : "p"}), {p : "p"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getObject cleans up __metadata", function (assert) {
+		var oCleanUpMetadataCall,
+			oEntity = {
+				__metadata : {
+					uri : "uri" // required, as getObject otherwise returns the object directly
+				},
+				p : "p"
+			},
+			oModel = {
+				_getObject : function () {},
+				oMetadata : {
+					_getEntityTypeByPath : function () {}
+				},
+				resolve : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("resolve").withExactArgs("path", "context").returns("resolvedPath");
+		oModelMock.expects("_getObject").withExactArgs("resolvedPath").returns(oEntity);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("resolvedPath")
+			.returns("entityType");
+		oCleanUpMetadataCall = this.mock(ODataModel).expects("cleanUpMetadata")
+			.withExactArgs({
+				__metadata : {
+					uri : "uri"
+				},
+				p : "p"
+			})
+			.returns("result");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.getObject.call(oModel, "path", "context"),
+			"result");
+
+		assert.notStrictEqual(oCleanUpMetadataCall.firstCall.args[0], oEntity, "called with copy");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getObject with $expand, $select cleans up __metadata", function (assert) {
+		var oEntity = {
+				__metadata : {
+					uri : "uri" // required, as getObject otherwise returns the object directly
+				},
+				p0 : "p0",
+				p1 : "p1"
+			},
+			oEntityType = {
+				property : "property"
+			},
+			oModel = {
+				_filterOwnExpand : function () {},
+				_filterOwnSelect : function () {},
+				_getObject : function () {},
+				oMetadata : {
+					_getEntityTypeByPath : function () {}
+				},
+				resolve : function () {},
+				_splitEntries : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oResultEntity;
+
+		oModelMock.expects("resolve").withExactArgs("path", "context").returns("resolvedPath");
+		oModelMock.expects("_getObject").withExactArgs("resolvedPath").returns(oEntity);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("resolvedPath")
+			.returns(oEntityType);
+		oModelMock.expects("_splitEntries").withExactArgs("p0").returns("aSelect");
+		oModelMock.expects("_filterOwnSelect").withExactArgs("aSelect", "property").returns(["p0"]);
+		this.mock(Object).expects("assign").withExactArgs({}, sinon.match.same(oEntity.__metadata))
+			.returns({uri : "uri"});
+		this.mock(ODataModel).expects("cleanUpMetadata")
+			.withExactArgs({
+				__metadata : {
+					uri : "uri"
+				},
+				p0 : "p0"
+			});
+		oModelMock.expects("_filterOwnExpand").withExactArgs([], "aSelect")
+			.returns([]);
+		oModelMock.expects("_filterOwnSelect").withExactArgs("aSelect", undefined /*no nav props*/)
+			.returns([]);
+
+		// code under test
+		oResultEntity = ODataModel.prototype.getObject.call(oModel, "path", "context",
+				{select : "p0"});
+
+		assert.deepEqual(oResultEntity, {
+				__metadata : {
+					uri : "uri"
+				},
+				p0 : "p0"
+			});
+		assert.notStrictEqual(oResultEntity.__metadata, oEntity.__metadata);
+	});
 });
