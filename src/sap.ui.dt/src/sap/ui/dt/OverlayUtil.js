@@ -105,7 +105,7 @@ function(
 		var minTop;
 		var maxBottom;
 		aGeometry.forEach(function(oElementGeometry) {
-			if (oElementGeometry) {
+			if (oElementGeometry && oElementGeometry.visible) {
 				if (!minLeft || oElementGeometry.position.left < minLeft) {
 					minLeft = oElementGeometry.position.left;
 				}
