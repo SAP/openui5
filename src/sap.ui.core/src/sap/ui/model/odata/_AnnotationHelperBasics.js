@@ -325,8 +325,9 @@ sap.ui.define([
 		 *   if true the value is to be embedded into a binding expression, otherwise in a
 		 *   composite binding
 		 * @param {boolean} [bWithType=false]
-		 *  if <code>true</code> and <code>oResult.result</code> is "binding", type and constraint
-		 *  information is written to the resulting binding string
+		 *  if <code>true</code>, <code>oResult.result</code> is "binding" and
+		 *  <code>oResult.type</code> maps to a UI5 type then type and constraint information is
+		 *  written to the resulting binding string
 		 * @returns {string}
 		 *   the resulting string to embed into a composite binding or a binding expression
 		 */
@@ -334,13 +335,13 @@ sap.ui.define([
 			var vValue = oResult.value;
 
 			function binding(bAddType) {
-				var sConstraints, sFormatOptions, sResult;
+				var sConstraints, sFormatOptions, sResult, sType = mUi5TypeForEdmType[oResult.type];
 
-				bAddType = bAddType && !oResult.ignoreTypeInPath && oResult.type;
+				bAddType = bAddType && !oResult.ignoreTypeInPath && sType;
 				if (bAddType || rBadChars.test(vValue)) {
 					sResult = "{path:" + Basics.toJSON(vValue);
 					if (bAddType) {
-						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
+						sResult += ",type:'" + sType + "'";
 						sConstraints = Basics.toJSON(oResult.constraints);
 						if (sConstraints && sConstraints !== "{}") {
 							sResult += ",constraints:" + sConstraints;

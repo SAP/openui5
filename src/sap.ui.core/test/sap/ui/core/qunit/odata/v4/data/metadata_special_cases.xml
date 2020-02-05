@@ -46,6 +46,10 @@
 				<Property Name="Key" Type="special.cases.ComplexKey"/>
 				<Property Name="Value" Type="Edm.String"/>
 			</EntityType>
+			<EntityType Name="EntityWithUnsupportedEdmTypes">
+				<Property Name="Binary" Type="Edm.Binary" />
+				<Property Name="Duration" Type="Edm.Duration" />
+			</EntityType>
 			<EntityType Name="A">
 				<Key>
 					<PropertyRef Name="AID"/>
@@ -169,6 +173,14 @@
 			</Annotations>
 			<Annotations Target="special.cases.ArtistsType">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist" />
+			</Annotations>
+			<Annotations Target="special.cases.EntityWithUnsupportedEdmTypes">
+				<Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">
+					<Collection>
+						<PropertyPath>Binary</PropertyPath>
+						<PropertyPath>Duration</PropertyPath>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="special.cases.Create/Countryoforigin">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="n/a"/>
