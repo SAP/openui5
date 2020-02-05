@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/App",
 	"jquery.sap.global",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -32,7 +33,8 @@ sap.ui.define([
 	App,
 	jQuery,
 	Device,
-	waitForThemeApplied
+	waitForThemeApplied,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -1265,6 +1267,38 @@ sap.ui.define([
 
 		assert.equal(oCustomHeader.getContentRight()[0].getVisible(), true, 'Clear button is not visible');
 		assert.ok(oCustomHeader.getContentRight()[0].getDomRef(), 'Clear button is in dom');
+	});
+
+	QUnit.module("Handling cancel", {
+		beforeEach : function () {
+			sinon.config.useFakeTimers = true;
+
+			this.fnCancelStub = sinon.stub();
+
+			this.oTableSelectDialog = new TableSelectDialog({
+				title: "Test dialog"
+			});
+
+			this.oTableSelectDialog.attachCancel(this.fnCancelStub);
+		},
+		afterEach : function () {
+			sinon.config.useFakeTimers = false;
+			this.fnCancelStub.reset();
+			this.oTableSelectDialog.destroy();
+		}
+	});
+
+	QUnit.test("Cancel should be fired when pressing ESC", function (assert) {
+		// Arrange
+		this.oTableSelectDialog.open();
+		this.clock.tick(500);
+
+		// Act
+		qutils.triggerKeydown(this.oTableSelectDialog.getDomRef(), KeyCodes.ESCAPE);
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(this.fnCancelStub.calledOnce, "Cancel is called once");
 	});
 
 	return waitForThemeApplied();

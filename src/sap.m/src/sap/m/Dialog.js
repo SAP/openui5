@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/library",
+	"sap/ui/events/KeyCodes",
 	"./TitlePropagationSupport",
 	"./DialogRenderer",
 	"sap/base/Log",
@@ -54,6 +55,7 @@ function(
 	Device,
 	ManagedObject,
 	coreLibrary,
+	KeyCodes,
 	TitlePropagationSupport,
 	DialogRenderer,
 	Log,
@@ -796,6 +798,10 @@ function(
 				oPromiseArgument = {},
 				that = this;
 
+			if (this._isSpaceOrEnterPressed) {
+				return;
+			}
+
 			if (oEvent.originalEvent && oEvent.originalEvent._sapui_handledByControl) {
 				return;
 			}
@@ -827,6 +833,46 @@ function(
 			//event should not trigger any further actions
 			oEvent.stopPropagation();
 		};
+
+		/**
+		 * Event handler for the onkeyup event.
+		 * Register if SPACE or ENTER is released.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 * @private
+		 */
+		Dialog.prototype.onkeyup = function (oEvent) {
+			if (this._isSpaceOrEnter(oEvent)) {
+				this._isSpaceOrEnterPressed = false;
+			}
+		};
+
+		/**
+		 * Event handler for the onkeydown event.
+		 * Register if SPACE or ENTER is pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 * @private
+		 */
+		Dialog.prototype.onkeydown = function (oEvent) {
+			if (this._isSpaceOrEnter(oEvent)) {
+				this._isSpaceOrEnterPressed = true;
+			}
+		};
+
+		/**
+		 * Determines if the key from oEvent is SPACE or ENTER.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 * @private
+		 * @return {boolean} True if the key from the event is space or enter
+		 */
+		Dialog.prototype._isSpaceOrEnter = function (oEvent) {
+			var iKeyCode = oEvent.which || oEvent.keyCode;
+
+			return iKeyCode == KeyCodes.SPACE || iKeyCode == KeyCodes.ENTER;
+		};
+
 
 		/* =========================================================== */
 		/*                      end: event handlers                  */
