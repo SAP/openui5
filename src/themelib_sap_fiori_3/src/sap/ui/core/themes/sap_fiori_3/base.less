@@ -381,11 +381,11 @@
 
 @sapContent_Shadow0: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 10), 0 0.125rem 0.5rem 0 fade(@sapContent_ShadowColor, 10);
 
-@sapContent_Shadow1: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 15), 0 0.125rem 0.5rem 0 fade(@sapContent_ShadowColor, 30);
+@sapContent_Shadow1: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 42), 0 0.125rem 0.5rem 0 fade(@sapContent_ShadowColor, 30);
 
-@sapContent_Shadow2: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 15), 0 0.625rem 1.875rem 0 fade(@sapContent_ShadowColor, 30);
+@sapContent_Shadow2: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 42), 0 0.625rem 1.875rem 0 fade(@sapContent_ShadowColor, 30);
 
-@sapContent_Shadow3: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 15), 0 1.25rem 5rem 0 fade(@sapContent_ShadowColor, 30);
+@sapContent_Shadow3: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 42), 0 1.25rem 5rem 0 fade(@sapContent_ShadowColor, 30);
 
 @sapContent_TextShadow: 0 0 0.125rem @sapContent_ContrastShadowColor;
 
@@ -526,7 +526,7 @@
 
 @sapShell_Navigation_TextColor: @sapShell_GroupTitleTextColor;
 
-@sapShell_Shadow: 0 0 0.25rem 0 fade(@sapContent_ShadowColor, 15), inset 0 -0.0625rem 0 0 fade(@sapContent_ShadowColor, 15);
+@sapShell_Shadow: 0 0 0.25rem 0 fade(@sapContent_ShadowColor, 15), inset 0 -0.0625rem 0 0 fade(@sapContent_ShadowColor, 20);
 
 // [Label "Button Border Thickness"]
 // [Description "The thickness of button borders."]
@@ -929,12 +929,12 @@
 // [Label "Scrollbar Face Color"]
 // [Description "The color of the surface of a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_FaceColor: darken(@sapBaseColor, 42); // darken(@sapPrimary6, 5);
+@sapScrollBar_FaceColor: darken(@sapScrollBar_TrackColor, 42);
 
 // [Label "Scrollbar Track Color"]
 // [Description "The color of the track of a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_TrackColor: lighten(@sapScrollBar_FaceColor, 42);
+@sapScrollBar_TrackColor: @sapBaseColor;
 
 // [Label "Scrollbar Border Color"]
 // [Description "The color of the borders of a scrollbar."]

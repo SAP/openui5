@@ -376,7 +376,7 @@
 // [Label "Image Placeholder Background Color"]
 // [Description "The background color of Image Placeholders."]
 // [Tags "Base", "Content", "Color"]
-@sapContent_ImagePlaceholderBackground: @sapBackgroundColor;
+@sapContent_ImagePlaceholderBackground: @sapContent_IconColor;
 
 // [Label "Image Placeholder Foreground Color"]
 // [Description "The foreground color of Image Placeholders."]
@@ -411,13 +411,13 @@
 // [Tags "Base", "Content", "Color"]
 @sapContent_ContrastShadowColor: @sapContent_ShadowColor;
 
-@sapContent_Shadow0: 0 0 1rem 0 fade(@sapContent_ContrastShadowColor, 50), 0 0 0 2px @sapContent_ShadowColor;
+@sapContent_Shadow0: 0 0 1rem 0 fade(@sapContent_ContrastShadowColor, 50), 0 0 0 0.125rem @sapContent_ShadowColor;
 
-@sapContent_Shadow1: 0 0.125rem 0.5rem 0 fade(@sapContent_ShadowColor, 20), @sapContent_Shadow0;
+@sapContent_Shadow1: 0 0 1rem 0 fade(@sapContent_ShadowColor, 50), 0 0 0 0.125rem @sapContent_ShadowColor;
 
-@sapContent_Shadow2: 0 0.25rem 2rem 0 fade(@sapContent_ContrastShadowColor, 60), 0 0 0 2px @sapContent_ShadowColor;
+@sapContent_Shadow2: 0 0.25rem 2rem 0 fade(@sapContent_ContrastShadowColor, 60), 0 0 0 0.125rem @sapContent_ShadowColor;
 
-@sapContent_Shadow3: 0 0.625rem 4rem 0 fade(@sapContent_ContrastShadowColor, 80), 0 0 0 2px @sapContent_ShadowColor;
+@sapContent_Shadow3: 0 0.625rem 4rem 0 fade(@sapContent_ContrastShadowColor, 80), 0 0 0 0.125rem @sapContent_ShadowColor;
 
 @sapContent_TextShadow: none;
 
@@ -904,7 +904,7 @@
 
 @sapList_TextColor: contrast(@sapList_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
-@sapList_Active_Background: @sapHighlightColor;
+@sapList_Active_Background: @sapActiveColor;
 
 @sapList_Active_TextColor: contrast(@sapList_Active_Background, @sapList_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
@@ -919,7 +919,7 @@
 // [Tags "Base", "List", "Color"]
 @sapList_SelectionBackgroundColor: @sapSelectedColor;
 
-@sapList_SelectionBorderColor: @sapList_BorderColor;
+@sapList_SelectionBorderColor: @sapHC_StandardForeground;
 
 @sapList_Hover_SelectionBackground: @sapList_Hover_Background;
 
