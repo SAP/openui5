@@ -9,7 +9,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 	 * NotificationListGroup renderer.
 	 * @namespace
 	 */
-	var NotificationListGroupRenderer = {};
+	var NotificationListGroupRenderer = {
+		apiVersion: 2
+	};
 
 	// shortcut for sap.ui.core.Priority
 	var Priority = coreLibrary.Priority;
@@ -36,7 +38,6 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			priority = control.getPriority(),
 			bShowItemsCounter = control.getShowItemsCounter(),
 			isUnread = control.getUnread(),
-			priorityClass = '',
 			visibleItemsCount = control._getVisibleItemsCount(),
 			maxNumberMsg,
 			sControlId = control.getId(),
@@ -44,25 +45,22 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			sInvisibleTitleText = sControlId + '-invisibleGroupTitleText',
 			sAriaLablledByIds = sGroupTitleId + ' ' + sInvisibleTitleText;
 
-		rm.write('<li');
-		rm.writeControlData(control);
-		rm.addClass('sapMLIB');
-		rm.addClass('sapMNLIB');
-		rm.addClass('sapMNLGroup');
+		rm.openStart('li', control)
+			.class('sapMLIB')
+			.class('sapMNLIB')
+			.class('sapMNLGroup');
 
 		if (isCollapsed) {
-			rm.addClass('sapMNLGroupCollapsed');
+			rm.class('sapMNLGroupCollapsed');
 		}
 
 		if (isUnread) {
-			rm.addClass('sapMNLGroupUnread');
+			rm.class('sapMNLGroupUnread');
 		}
 
-		rm.writeClasses();
+		rm.attr('tabindex', '0');
 
-		rm.writeAttribute('tabindex', '0');
-
-		rm.writeAccessibilityState(control, {
+		rm.accessibilityState(control, {
 			role: "option",
 			expanded: !control.getCollapsed(),
 			labelledby: {
@@ -70,77 +68,92 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			}
 		});
 
-		rm.write('>');
+		rm.openEnd();
 
 		// group header
-		rm.write('<div class="sapMNLGroupHeader">');
+		rm.openStart('div')
+			.class('sapMNLGroupHeader')
+			.openEnd();
 
 		// group header collapse/expand button
-		rm.write('<div class="sapMNLIItem sapMNLGroupCollapseButton">');
+		rm.openStart('div')
+			.class('sapMNLIItem')
+			.class('sapMNLGroupCollapseButton')
+			.openEnd();
+
 		rm.renderControl(control._getCollapseButton());
-		rm.write('</div>');
+		rm.close('div');
 
 		// content - title - priority icon
 		if (priority !== Priority.None) {
-			rm.write('<div');
+			rm.openStart('div')
+				.class('sapMNLIBPriority')
+				.class('sapMNLIBPriority' + priority)
+				.openEnd();
 
-			rm.addClass("sapMNLIBPriority");
-
-			switch (priority) {
-				case Priority.High:
-					priorityClass = 'sapMNLIBPriorityHigh';
-					break;
-				case Priority.Medium:
-					priorityClass = 'sapMNLIBPriorityMedium';
-					break;
-				case Priority.Low:
-					priorityClass = 'sapMNLIBPriorityLow';
-					break;
-			}
-
-			rm.addClass(priorityClass);
-			rm.writeClasses();
-			rm.write('>');
 			rm.renderControl(control._getPriorityIcon());
-			rm.write('</div>');
+			rm.close('div');
 		}
 
 		// group header title
-		rm.write('<div class="sapMNLIItem sapMNLGroupTitle" id="' + sControlId + '-groupTitle">');
-		rm.writeEscaped(control.getTitle());
-		rm.write('</div>');
+		rm.openStart('div', sControlId + '-groupTitle')
+			.class('sapMNLIItem')
+			.class('sapMNLGroupTitle')
+			.openEnd();
+
+		rm.text(control.getTitle());
+		rm.close('div');
 
 		if (bShowItemsCounter) {
-			rm.write('<div class="sapMNLGroupCount">(' + visibleItemsCount + ')</div>');
+			rm.openStart('div')
+				.class('sapMNLGroupCount')
+				.openEnd();
+
+			rm.text('(' + visibleItemsCount + ')');
+			rm.close('div');
 		}
 
 		// group header spacer
-		rm.write('<div class="sapMNLGroupHeaderSpacer"></div>');
+		rm.openStart('div')
+			.class('sapMNLGroupHeaderSpacer')
+			.openEnd()
+			.close('div');
 
 		// actions
-		if (control._shouldRenderOverflowToolbar() && (!isCollapsed || Device.system.phone)) {
-			rm.write('<div class="sapMNLIItem sapMNLIActions">');
-		} else {
-			rm.write('<div class="sapMNLIItem sapMNLIActions" style="display:none">');
+		rm.openStart('div')
+			.class('sapMNLIItem')
+			.class('sapMNLIActions');
+
+		if (!control._shouldRenderOverflowToolbar() || (isCollapsed && !Device.system.phone)) {
+			rm.style('display', 'none');
 		}
+
+		rm.openEnd();
 
 		if (control._shouldRenderOverflowToolbar()) {
 			rm.renderControl(control._getOverflowToolbar());
 		}
-		rm.write('</div>');
+		rm.close('div');
 
 		// close button
 		if (control._shouldRenderCloseButton()) {
-			rm.write('<div class="sapMNLIItem sapMNLICloseBtn">');
+			rm.openStart('div')
+				.class('sapMNLIItem')
+				.class('sapMNLICloseBtn')
+				.openEnd();
+
 			rm.renderControl(control._getCloseButton());
-			rm.write('</div>');
+			rm.close('div');
 		}
 
 		rm.renderControl(control._getGroupTitleInvisibleText());
 		// end group header
-		rm.write('</div>');
+		rm.close('div');
 
-		rm.write('<ul role="listbox" class="sapMNLGroupChildren">');
+		rm.openStart('ul')
+			.class('sapMNLGroupChildren')
+			.attr('role', 'listbox')
+			.openEnd();
 
 		control.getItems().forEach(function (item) {
 			rm.renderControl(item);
@@ -148,22 +161,31 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		if (control._isMaxNumberReached()) {
 			maxNumberMsg = control._getMaxNumberReachedMsg();
-			rm.write('<div class="sapMNLGroupMaxNotifications">');
 
-			rm.write('<div  class="sapMNLGroupMNTitle">');
-			rm.write(maxNumberMsg.title);
-			rm.write('</div>');
+			rm.openStart('div')
+				.class('sapMNLGroupMaxNotifications')
+				.openEnd();
 
-			rm.write('<div class="sapMNLGroupMNDescription">');
-			rm.write(maxNumberMsg.description);
-			rm.write('</div>');
+			rm.openStart('div')
+				.class('sapMNLGroupMNTitle')
+				.openEnd();
 
-			rm.write('</div>');
+			rm.text(maxNumberMsg.title);
+			rm.close('div');
+
+			rm.openStart('div')
+				.class('sapMNLGroupMNDescription')
+				.openEnd();
+
+			rm.text(maxNumberMsg.description);
+			rm.close('div');
+
+			rm.close('div');
 		}
 
-		rm.write('</ul>');
+		rm.close('ul');
 
-		rm.write('</li>');
+		rm.close('li');
 	};
 
 	return NotificationListGroupRenderer;
