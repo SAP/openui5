@@ -1301,5 +1301,7 @@ function (
 		assert.equal(parseInt($beginColumn[0].style.width), $beginColumn.width(), "Begin column width correct");
 		assert.equal(parseInt($midColumn[0].style.width), $midColumn.width(), "Mid column width correct");
 		assert.equal(parseInt($endColumn[0].style.width), $endColumn.width(), "End column width correct");
+		assert.ok(oFCL._iWidth > oFCL._getTotalColumnsWidth(), "Some space for arrows is allocated");
+		assert.ok(oFCL._getVisibleArrowsCount() > 0, "Visible arrows count is greater than 0");
 	}
 });
