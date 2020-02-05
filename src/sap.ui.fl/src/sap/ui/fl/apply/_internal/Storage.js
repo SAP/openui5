@@ -72,27 +72,17 @@ sap.ui.define([
 		return aFlattenedResponses;
 	}
 
-
-	function _flattenInnerResponses(mResponseObject) {
-		mResponseObject.responses = _flattenResponses(mResponseObject.responses);
-		return mResponseObject;
-	}
-
 	function _disassembleVariantSectionsIfNecessary(aResponses) {
-		var aDisassembledResponses = aResponses.map(function (oResponse) {
+		return aResponses.map(function (oResponse) {
 			return oResponse.variantSection ? storageResultDisassemble(oResponse) : oResponse;
 		});
-
-		return {
-			responses: aDisassembledResponses
-		};
 	}
 
 	function _flattenAndMergeResultPromise(aResponses) {
 		return Promise.resolve(aResponses)
 			.then(_flattenResponses)
 			.then(_disassembleVariantSectionsIfNecessary)
-			.then(_flattenInnerResponses)
+			.then(_flattenResponses)
 			.then(StorageResultMerger.merge);
 	}
 

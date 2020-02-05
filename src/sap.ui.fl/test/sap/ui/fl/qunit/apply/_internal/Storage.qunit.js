@@ -350,7 +350,10 @@ sap.ui.define([
 			var oResponse1 = {
 				changes: [],
 				variantSection: {},
-				ui2personalization: {}
+				ui2personalization: {
+					key1: "value1"
+				},
+				cacheKey: "key1"
 			};
 			oResponse1.variantSection = {
 				variantManagement1: {
@@ -372,7 +375,10 @@ sap.ui.define([
 			var oResponse2 = {
 				changes: [],
 				variantSection: {},
-				ui2personalization: {}
+				ui2personalization: {
+					key2: "value2"
+				},
+				cacheKey: "key2"
 			};
 			oResponse2.variantSection = {
 				variantManagement1: {
@@ -395,9 +401,13 @@ sap.ui.define([
 			var oExpectedResponse = Object.assign({}, StorageUtils.getEmptyFlexDataResponse(), {
 				variants: [oResponse1.variantSection.variantManagement1.variants[0].content, oResponse2.variantSection.variantManagement1.variants[0].content]
 			});
-
+			oExpectedResponse.ui2personalization = {
+				key1: "value1",
+				key2: "value2"
+			};
+			oExpectedResponse.cacheKey = "key1key2";
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, merge(oExpectedResponse, {cacheKey: null}), "then the expected result is returned");
+				assert.deepEqual(oResult, oExpectedResponse, "then the expected result is returned");
 			});
 		});
 

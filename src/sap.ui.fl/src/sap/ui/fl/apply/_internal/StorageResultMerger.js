@@ -74,24 +74,22 @@ sap.ui.define([
 	/**
 	 * Merges the results from all involved connectors.
 	 *
-	 * @param {object} mPropertyBag Further properties
-	 * @param {object[]} mPropertyBag.responses All responses provided by the different connectors
-	 * @param {boolean} mPropertyBag.variantSectionSufficient Flag if a provided variant section can be used directly
+	 * @param {object[]} aResponses All responses provided by the different connectors
 	 * @returns {object} Merged result
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.fl._internal.Storage
 	 */
-	oStorageResultMerger.merge = function(mPropertyBag) {
+	oStorageResultMerger.merge = function(aResponses) {
 		return {
-			appDescriptorChanges: _concatFlexObjects(mPropertyBag.responses, "appDescriptorChanges"),
-			changes: _concatFlexObjects(mPropertyBag.responses, "changes"),
-			ui2personalization: _concatUi2personalization(mPropertyBag.responses),
-			variants: _concatFlexObjects(mPropertyBag.responses, "variants"),
-			variantChanges: _concatFlexObjects(mPropertyBag.responses, "variantChanges"),
-			variantDependentControlChanges: _concatFlexObjects(mPropertyBag.responses, "variantDependentControlChanges"),
-			variantManagementChanges: _concatFlexObjects(mPropertyBag.responses, "variantManagementChanges"),
-			cacheKey: _concatEtag(mPropertyBag.responses)
+			appDescriptorChanges: _concatFlexObjects(aResponses, "appDescriptorChanges"),
+			changes: _concatFlexObjects(aResponses, "changes"),
+			ui2personalization: _concatUi2personalization(aResponses),
+			variants: _concatFlexObjects(aResponses, "variants"),
+			variantChanges: _concatFlexObjects(aResponses, "variantChanges"),
+			variantDependentControlChanges: _concatFlexObjects(aResponses, "variantDependentControlChanges"),
+			variantManagementChanges: _concatFlexObjects(aResponses, "variantManagementChanges"),
+			cacheKey: _concatEtag(aResponses)
 		};
 	};
 

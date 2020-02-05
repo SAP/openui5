@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/StorageUtils"
+	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/base/util/merge"
 ],
 function(
-	StorageUtils
+	StorageUtils,
+	merge
 ) {
 	"use strict";
 
@@ -52,6 +54,11 @@ function(
 		}
 
 		var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFlexObjects);
-		return StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
+		var aDisassembleResponses = StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
+		//Add un-disassembled parts of the original response into the first response of the result array
+		delete oResponse.changes;
+		delete oResponse.variantSection;
+		merge(aDisassembleResponses[0], oResponse);
+		return aDisassembleResponses;
 	};
 });
