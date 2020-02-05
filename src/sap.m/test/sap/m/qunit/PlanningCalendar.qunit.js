@@ -2606,6 +2606,16 @@ sap.ui.define([
 		assert.equal(oExpectedDate.getDate(), oStartDate.getDate(), "Start date is OK");
 		// If more tests are about to be added here, please consider that last date is the current one.
 
+		oPC1.setStartDate(new Date(2020,1,1));
+		oPC1.setViewKey(CalendarIntervalType.OneMonth);
+		sap.ui.getCore().applyChanges();
+		bStartDateChange = false;
+		var oPC1Interval = oPC1.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+		var aDays = oPC1Interval.$("days").children();
+		var $02Mar = aDays[30];
+		jQuery($02Mar).focus();
+		sap.ui.getCore().applyChanges();
+		assert.ok(bStartDateChange, "selected day from next month must fire startDateChange");
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 	});
 
