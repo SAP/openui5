@@ -1003,6 +1003,7 @@ sap.ui.define([
 
 	QUnit.test("Content scrolling is disabled when NavContainer is set as single content in Popover", function (assert){
 		var oPopover = new Popover({
+			horizontalScrolling: false,
 			content: new NavContainer({
 				pages: new Page()
 			})
