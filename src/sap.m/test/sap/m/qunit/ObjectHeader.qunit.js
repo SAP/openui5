@@ -497,7 +497,6 @@ sap.ui.define([
 	QUnit.test("Background is solid", function(assert) {
 
 		assert.equal(jQuery("#ohc2.sapMOHBgSolid").length, 1, "Solid background style should be set.");
-		assert.equal(jQuery.sap.byId("ohc2").css("background-color"), "rgb(255, 255, 255)", "Background color is solid");
 	});
 
 	/******************************************************************/
@@ -799,10 +798,13 @@ sap.ui.define([
 
 	QUnit.module("Events");
 
-	QUnit.test("Title color is blue", function(assert) {
+	QUnit.test("Title is active", function(assert) {
+		// Assert
+		var $objectHeaderTitle = ohe.$("title");
 
-		assert.equal(jQuery.sap.byId(ohe._titleText.getId()).css("color"), "rgb(0, 103, 158)", "Title color is blue.");
+		assert.ok($objectHeaderTitle.hasClass("sapMOHTitleActive"), "Title div has class \"sapMOHTitleActive\".");
 	});
+
 
 	QUnit.test("TestTitleTap", function(assert) {
 
