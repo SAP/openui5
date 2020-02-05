@@ -1640,23 +1640,18 @@ sap.ui.define([
 			},
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : mAggregatedQueryOptions,
-				oCache : {
-					getLateQueryOptions : function () {},
-					setLateQueryOptions : function () {}
-				},
+				oCache : {},
+				mLateQueryOptions : {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; }
 				}
 			}),
 			oHelperMock = this.mock(_Helper),
-			mLateQueryOptions = {},
 			oMetaModelMock = this.mock(oMetaModel);
 
-		this.mock(oBinding.oCache).expects("getLateQueryOptions").withExactArgs()
-			.returns(mLateQueryOptions);
 		oHelperMock.expects("merge")
 			.withExactArgs({}, sinon.match.same(oBinding.mAggregatedQueryOptions),
-				sinon.match.same(mLateQueryOptions))
+				sinon.match.same(oBinding.mLateQueryOptions))
 			.returns(oFixture.aggregatedQueryOptions);
 		if (oFixture.metadata) {
 			Object.keys(oFixture.metadata).forEach(function (sMetaPath) {
@@ -1664,9 +1659,6 @@ sap.ui.define([
 					.returns(SyncPromise.resolve(oFixture.metadata[sMetaPath]));
 			});
 		}
-		this.mock(oBinding.oCache).expects("setLateQueryOptions")
-			.exactly(oFixture.lateQueryOptions ? 1 : 0)
-			.withExactArgs(oFixture.lateQueryOptions);
 
 		assert.strictEqual(
 			// code under test
@@ -1675,6 +1667,9 @@ sap.ui.define([
 		);
 		assert.strictEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {}, "mAggregatedQueryOptions unchanged");
+		if (oFixture.lateQueryOptions) {
+			assert.strictEqual(oBinding.mLateQueryOptions, oFixture.aggregatedQueryOptions);
+		}
 	});
 });
 
@@ -1687,7 +1682,7 @@ sap.ui.define([
 			mChildQueryOptions = {$select : ["bar"]};
 
 		// code under test
-		assert.strictEqual(oBinding.aggregateQueryOptions(mChildQueryOptions, "", true), false);
+		assert.strictEqual(oBinding.aggregateQueryOptions(mChildQueryOptions, "", true), true);
 	});
 	// TODO instead of rejecting late properties if there is no cache, the binding should instead
 	//   aggregate the late query options (but not in mAggregatedQueryOptions) and bubble up to the

@@ -312,6 +312,8 @@ sap.ui.define([
 						}
 						that.oReturnValueContext = Context.createReturnValueContext(that.oModel,
 							that, getReturnValueContextPath(sResolvedPath, sResponsePredicate));
+						that.oCache.sResourcePath = that.oReturnValueContext.getPath().slice(1);
+						that.oCache.sMetaPath = _Helper.getMetaPath(that.oReturnValueContext.getPath());
 						return that.oReturnValueContext;
 					}
 				});

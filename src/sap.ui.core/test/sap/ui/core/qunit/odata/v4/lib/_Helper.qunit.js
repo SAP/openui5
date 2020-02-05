@@ -2070,6 +2070,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("intersectQueryOptions: bAllowCollections", function (assert) {
+		var mCacheQueryOptions = {
+				$expand : {
+					"toN" : null
+				},
+				$select : ["A"]
+			},
+			mMetaPath2Type = {
+				"/Me/toN" : "N",
+				"/Me/toN/a" : ""
+			};
+
+		// code under test
+		_Helper.intersectQueryOptions(mCacheQueryOptions, ["toN/a"],
+			getFetchMetadata(mMetaPath2Type), "/Me", {}, "", false, /*bAllowCollections*/true);
+	});
+
+	//*********************************************************************************************
 	[{
 		sPrefix : undefined,
 		mExpectedNavigationPropertyPaths : {"A/toN" : true, "toN" : true}

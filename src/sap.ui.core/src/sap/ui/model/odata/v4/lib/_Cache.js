@@ -652,7 +652,7 @@ sap.ui.define([
 			// no need to convert sRequestedPropertyPath to a metapath, intersectQueryOptions will
 			// reject the resulting invalid path
 			[_Helper.buildPath(sResourceMetaPath, sRequestedPropertyPath)],
-			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, {});
+			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, {}, "", false, true);
 		if (!mQueryOptions) {
 			return undefined;
 		}
@@ -2540,6 +2540,7 @@ sap.ui.define([
 			that.bPosting = false;
 			throw oError;
 		});
+		this.bSentReadRequest = true;
 		this.bPosting = true;
 
 		return this.oPromise;

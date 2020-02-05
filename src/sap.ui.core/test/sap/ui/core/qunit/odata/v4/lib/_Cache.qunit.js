@@ -3244,7 +3244,7 @@ sap.ui.define([
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["~path~"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath, {}, "", false, true)
 			.returns(mQueryOptions);
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "").returns("~1~");
 		oHelperMock.expects("buildPath").withExactArgs("~1~", undefined).returns("~2~");
@@ -3325,7 +3325,7 @@ sap.ui.define([
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["~path~"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath, {}, "", false, true)
 			.returns(mQueryOptions);
 		oHelperMock.expects("buildPath").withExactArgs("/Employees", "entity/path")
 			.returns("/Employees/entity/path");
@@ -3450,7 +3450,7 @@ sap.ui.define([
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["~path~"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath, {}, "", false, true)
 			.returns(mQueryOptions);
 		oCacheMock.expects("fetchType").never();
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "entity/path")
@@ -3552,12 +3552,12 @@ sap.ui.define([
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property/foo"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath, {}, "", false, true)
 			.returns(mQueryOptions);
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property/bar"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath, {}, "", false, true)
 			.returns(mQueryOptions);
 		this.oRequestorMock.expects("buildQueryString").twice()
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptions), false, true)
@@ -3609,7 +3609,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath, {}, "", false, true)
 			.returns(mQueryOptions);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptions), false, true)
@@ -3676,7 +3676,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath, {}, "", false, true)
 			.returns(mQueryOptions);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptions), false, true)
@@ -3729,7 +3729,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath, {}, "", false, true)
 			.returns(undefined);
 		this.oRequestorMock.expects("request").never();
 		this.mock(_Helper).expects("updateSelected").never();
