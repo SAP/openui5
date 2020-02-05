@@ -6,13 +6,14 @@
 sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/theming/Parameters",
 	"sap/ui/Device",
 	"./library",
 	"./ListItemBase",
 	"./Image",
 	"./StandardListItemRenderer"
 ],
-	function(coreLibrary, IconPool, Device, library, ListItemBase, Image, StandardListItemRenderer) {
+	function(coreLibrary, IconPool, ThemeParameters, Device, library, ListItemBase, Image, StandardListItemRenderer) {
 	"use strict";
 
 
@@ -230,13 +231,65 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code>, if the info text is less than or equal to maximum limit of characters.
-	 * @returns {boolean} show the complete info text.
+	 * Measures the info text width.
+	 * @param {boolean} bThemeChanged Indicated whether font style should be reinitialized if theme is changed
 	 *
+	 * @returns {integer} Info text width
 	 * @private
 	 */
-	StandardListItem.prototype.showCompleteInfoText = function() {
-		return this.getInfo().length <= 15;
+	StandardListItem.prototype._measureInfoTextWidth = function(bThemeChanged) {
+		if (!StandardListItem._themeInfo) {
+			StandardListItem._themeInfo = {};
+		}
+
+		if (!StandardListItem._themeInfo.sFontFamily || bThemeChanged) {
+			StandardListItem._themeInfo.sFontFamily = ThemeParameters.get("sapUiFontFamily");
+		}
+
+		if (!StandardListItem._themeInfo.sFontStyleInfoStateInverted || bThemeChanged) {
+			StandardListItem._themeInfo.sFontStyleInfoStateInverted = "700 " + ThemeParameters.get("sapMFontSmallSize") + " " + StandardListItem._themeInfo.sFontFamily;
+		}
+
+		if (!StandardListItem._themeInfo.sFontStyle || bThemeChanged) {
+			StandardListItem._themeInfo.sFontStyle = ThemeParameters.get("sapMFontMediumSize") + " " + StandardListItem._themeInfo.sFontFamily;
+		}
+
+		if (!StandardListItem._themeInfo.iBaseFontSize || bThemeChanged) {
+			StandardListItem._themeInfo.iBaseFontSize = parseInt(library.BaseFontSize) || 16;
+		}
+
+		if (!StandardListItem._oCanvas) {
+			StandardListItem._oCanvas = document.createElement("canvas");
+			StandardListItem._oCtx = StandardListItem._oCanvas.getContext("2d");
+		}
+
+		if (this.getInfoStateInverted()) {
+			StandardListItem._oCtx.font = StandardListItem._themeInfo.sFontStyleInfoStateInverted || "";
+		} else {
+			StandardListItem._oCtx.font = StandardListItem._themeInfo.sFontStyle || "";
+		}
+
+		return Math.ceil(StandardListItem._oCtx.measureText(this.getInfo()).width) / StandardListItem._themeInfo.iBaseFontSize;
+	};
+
+	/**
+	 * Returns the measured info text width in rem value.
+	 * @param {float} fWidth Measured info text width
+	 * @returns {string} rem value for info text min-width
+	 * @private
+	 */
+	StandardListItem.prototype._getInfoTextMinWidth = function(fWidth) {
+		if (this.getInfoStateInverted() && fWidth <= 7.5) {
+			// 0.625rem padding for the infoText if infoStateInverted=true
+			return fWidth + 0.625 + "rem";
+		}
+
+		if (fWidth <= 7.5) {
+			// no padding if infoStateInverted=false
+			return fWidth + "rem";
+		}
+
+		return "7.5rem";
 	};
 
 	StandardListItem.prototype.ontap = function(oEvent) {
@@ -321,6 +374,37 @@ sap.ui.define([
 	StandardListItem.prototype._getCollapsedText = function(sText) {
 		var iMaxCharacters = Device.system.phone ? 100 : 300;
 		return sText.substr(0, iMaxCharacters);
+	};
+
+	StandardListItem.prototype.onThemeChanged = function(oEvent) {
+		ListItemBase.prototype.onThemeChanged.apply(this, arguments);
+
+		var sTheme = oEvent.theme;
+		if (!this._initialRender) {
+			this._initialRender = true;
+			if (!StandardListItem._themeInfo) {
+				StandardListItem._themeInfo = {};
+			}
+			if (!StandardListItem._themeInfo.sCurrentTheme) {
+				StandardListItem._themeInfo.sCurrentTheme = sTheme;
+			}
+			return;
+		}
+
+		var oInfoDomRef = this.getDomRef("info");
+
+		if (oInfoDomRef) {
+			var fWidth;
+
+			if (StandardListItem._themeInfo.sCurrentTheme !== sTheme) {
+				StandardListItem._themeInfo.sCurrentTheme = sTheme;
+				fWidth = this._measureInfoTextWidth(true);
+			} else {
+				fWidth = this._measureInfoTextWidth();
+			}
+
+			oInfoDomRef.style.minWidth = this._getInfoTextMinWidth(fWidth);
+		}
 	};
 
 	return StandardListItem;

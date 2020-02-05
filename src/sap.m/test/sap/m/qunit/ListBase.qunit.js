@@ -2090,7 +2090,9 @@ sap.ui.define([
 
 			var oThemeStub = this.stub(ThemeParameters, "get");
 			oThemeStub.withArgs("_sap_m_ListItemBase_DeleteIcon").returns("decline");
-			oListItem1.onThemeChanged();
+			var oEvent = new jQuery.Event();
+			oEvent.theme = "sap_fiori_3";
+			oListItem1.onThemeChanged(oEvent);
 			sDeleteIcon = oListItem1._oDeleteControl.getIcon();
 			assert.equal(sDeleteIcon, "sap-icon://decline", "Delete icon has been changed");
 
