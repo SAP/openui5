@@ -539,6 +539,14 @@ function(
 		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	};
 
+
+	RuntimeAuthoring.prototype._initVersioning = function() {
+		return FeaturesAPI.isVersioningEnabled(this.getLayer())
+			.then(function (bVersioningEnabled) {
+				this._bVersioningEnabled = bVersioningEnabled;
+			}.bind(this));
+	};
+
 	/**
 	 * Start UI adaptation at runtime (RTA).
 	 * @return {Promise} Returns a Promise with the initialization of RTA
@@ -568,7 +576,8 @@ function(
 			}
 
 			//Check if the application has personalized changes and reload without them
-			return this._determineReload()
+			return this._initVersioning()
+			.then(this._determineReload.bind(this))
 			.then(function(bReloadTriggered) {
 				if (bReloadTriggered) {
 					// FLP Plugin reacts on this error string and doesn't pass the error on the UI
@@ -742,21 +751,20 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._isDraftAvailable = function() {
-		return this._isVersioningEnabled()
-		.then(function (bVersioningEnabled) {
-			if (bVersioningEnabled) {
-				return VersionsAPI.isDraftAvailable({
-					selector: this.getRootControlInstance(),
-					layer: this.getLayer()
-				});
-			}
-		}.bind(this))
-		.then(function(bDraftAvailable) {
-			if (bDraftAvailable) {
-				return bDraftAvailable;
-			}
-			return this.canUndo();
-		}.bind(this));
+		if (this._bVersioningEnabled) {
+			return VersionsAPI.isDraftAvailable({
+				selector: this.getRootControlInstance(),
+				layer: this.getLayer()
+			})
+			.then(function(bDraftAvailable) {
+				if (bDraftAvailable) {
+					return bDraftAvailable;
+				}
+				return this.canUndo();
+			}.bind(this));
+		}
+
+		return Promise.resolve(false);
 	};
 
 	var fnShowTechnicalError = function(vError) {
@@ -840,7 +848,8 @@ function(
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
-			this.getToolbar().setDraftVisible(this.bInitialDraftAvailable || bCanUndo);
+			var bDraftVisible = this._bVersioningEnabled && (this.bInitialDraftAvailable || bCanUndo);
+			this.getToolbar().setDraftVisible(bDraftVisible);
 		}
 		this.fireUndoRedoStackModified();
 	};
@@ -978,14 +987,8 @@ function(
 		window.onbeforeunload = this._oldUnloadHandler;
 	};
 
-	RuntimeAuthoring.prototype._isVersioningEnabled = function () {
-		return FeaturesAPI.isVersioningEnabled(this.getLayer());
-	};
-
 	RuntimeAuthoring.prototype._serializeAndSave = function() {
-		return this._isVersioningEnabled().then(function (bVersioningEnabled) {
-			return this._oSerializer.saveCommands(bVersioningEnabled);
-		}.bind(this));
+		return this._oSerializer.saveCommands(this._bVersioningEnabled);
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
@@ -1593,7 +1596,7 @@ function(
 				ignoreMaxLayerParameter: false
 			};
 			var oHigherLayerChangesValidationPromise;
-			var oDraftValidationPromise;
+			var oDraftValidationPromise = false;
 			var mParsedHash = FlexUtils.getParsedURLHash();
 
 			if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.layer !== "USER") {
@@ -1602,12 +1605,10 @@ function(
 					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter
 				});
 			}
-			if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
-				oDraftValidationPromise = this._isVersioningEnabled().then(function (bVersioningEnabled) {
-					return bVersioningEnabled && VersionsAPI.isDraftAvailable({
-						selector: oReloadInfo.selector,
-						layer: oReloadInfo.layer
-					});
+			if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM) && this._bVersioningEnabled) {
+				oDraftValidationPromise = VersionsAPI.isDraftAvailable({
+					selector: oReloadInfo.selector,
+					layer: oReloadInfo.layer
 				});
 			}
 

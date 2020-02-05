@@ -253,7 +253,7 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is not available", function(assert) {
-			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(false);
+			this.oRta._bVersiningEnabled = false;
 
 			return this.oRta._isDraftAvailable()
 			.then(function(bDraftAvailable) {
@@ -262,7 +262,7 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is available", function(assert) {
-			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			this.oRta._bVersioningEnabled = true;
 			var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
 			var oPropertyBag = {
 				selector: oCompCont.getComponentInstance(),
@@ -277,20 +277,18 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, no changes yet done", function(assert) {
-			var oIsVersioningEnabledStub = sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
+			this.oRta._bVersioningEnabled = true;
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
 			sandbox.stub(this.oRta, "canUndo").returns(false);
 
 			return this.oRta._isDraftAvailable()
 			.then(function(bDraftAvailable) {
-				assert.equal(oIsVersioningEnabledStub.callCount, 1, "the versionEnabled feature was checked");
-				assert.equal(oIsVersioningEnabledStub.getCall(0).args[0], this.oRta.getLayer(), "the layer was passed");
 				assert.equal(bDraftAvailable, false, "then the 'isDraftAvailable' is false");
-			}.bind(this));
+			});
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, there are unsaved changes", function(assert) {
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
+			this.oRta._bVersioningEnabled = true;
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
 			sandbox.stub(this.oRta, "canUndo").returns(true);
 
@@ -361,7 +359,6 @@ function(
 	QUnit.module("Given a CUSTOMER layer with versioning enabled", {
 		beforeEach : function() {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			this.oGroupElement = new GroupElement({id : oComp.createId("element")});
 			var oGroup = new Group({
 				id : oComp.createId("group"),
@@ -388,6 +385,7 @@ function(
 				commandStack : this.oCommandStack,
 				showToolbars : true
 			});
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 		},
 		afterEach : function() {
 			sandbox.restore();
@@ -399,6 +397,7 @@ function(
 		QUnit.test("when RTA is started and no draft is available", function(assert) {
 			this.oRta.setFlexSettings({layer: "CUSTOMER"});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
+
 			return this.oRta.start().then(function () {
 				assert.equal(this.oRta.getToolbar().getDraftVisible(), false, "then the draft buttons are hidden");
 			}.bind(this));
@@ -455,6 +454,7 @@ function(
 				}.bind(this));
 		});
 	});
+
 	QUnit.module("Given that RuntimeAuthoring is started without toolbar...", {
 		beforeEach : function() {
 			this.oRta = new RuntimeAuthoring({
@@ -917,7 +917,7 @@ function(
 		});
 
 		QUnit.test("when stopping rta with saving changes and versioning is enabled", function(assert) {
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
+			this.oRta._bVersioningEnabled = true;
 
 			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 
@@ -1426,6 +1426,57 @@ function(
 					scenario: "scenario"
 				}
 			);
+		});
+	});
+
+	QUnit.module("Given _onStackModified", {
+		beforeEach : function() {
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : true
+			});
+			return this.oRta.start();
+		},
+		afterEach : function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when versioning is not enabled", function(assert) {
+			this.oRta._bVersioningEnabled = false;
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], false, "to false");
+		});
+
+		QUnit.test("when versioning is enabled but no draft or undoable change is present", function(assert) {
+			this.oRta._bVersioningEnabled = true;
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], false, "to false");
+		});
+
+		QUnit.test("when versioning is enabled and a draft is present", function(assert) {
+			this.oRta._bVersioningEnabled = true;
+			this.oRta.bInitialDraftAvailable = true;
+			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], true, "to true");
+		});
+
+		QUnit.test("when versioning is enabled and a undoable change is present", function(assert) {
+			this.oRta._bVersioningEnabled = true;
+			sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
+			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], true, "to true");
 		});
 	});
 
