@@ -70,8 +70,10 @@ sap.ui.define(["sap/uxap/library"],
 										}
 									},
 									actions : {
-										move : {
-											changeType : "moveControls"
+										move : function(oElement){
+											if (oElement.isA("sap.m.Button") || oElement.isA("sap.m.MenuButton")) {
+												return "moveControls";
+											}
 										}
 									}
 								}
