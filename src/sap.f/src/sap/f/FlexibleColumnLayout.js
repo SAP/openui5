@@ -99,6 +99,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Determines whether the initial focus of the <code>NavContainer</code> instances is set automatically on first rendering and after navigating to a new page.
+				 *
+				 * For more information, see {@link sap.m.NavContainer#autoFocus}.
+				 * @since 1.76
+				 */
+				autoFocus: {type: "boolean", group: "Behavior", defaultValue: true},
+
+				/**
 				 * Determines the layout of the control - number of visible columns and their relative sizes.
 				 *
 				 * For more details, see {@link topic:3b9f760da5b64adf8db7f95247879086 Types of Layout} in the documentation.
@@ -665,6 +673,7 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._createNavContainer = function (sColumn) {
 		var sColumnCap = sColumn.charAt(0).toUpperCase() + sColumn.slice(1);
 		var oNavContainer = new NavContainer(this.getId() + "-" + sColumn + "ColumnNav", {
+			autoFocus: this.getAutoFocus(),
 			navigate: function(oEvent){
 				this._handleNavigationEvent(oEvent, false, sColumn);
 			}.bind(this),
@@ -760,6 +769,22 @@ sap.ui.define([
 		return vResult;
 	};
 
+	FlexibleColumnLayout.prototype.setAutoFocus = function (bNewAutoFocus) {
+		bNewAutoFocus = this.validateProperty("autoFocus", bNewAutoFocus);
+
+		var bCurrentAutoFocus = this.getAutoFocus();
+
+		if (bCurrentAutoFocus === bNewAutoFocus) {
+			return this;
+		}
+
+		this._getNavContainers().forEach(function (oNavContainer) {
+			oNavContainer.setAutoFocus(bNewAutoFocus);
+		});
+
+		return this.setProperty("autoFocus", bNewAutoFocus, true);
+	};
+
 	FlexibleColumnLayout.prototype.onBeforeRendering = function () {
 		this._deregisterResizeHandler();
 	};
@@ -826,6 +851,15 @@ sap.ui.define([
 		this.setAggregation("_beginColumnNav", this._createNavContainer("begin"), true);
 		this.setAggregation("_midColumnNav", this._createNavContainer("mid"), true);
 		this.setAggregation("_endColumnNav", this._createNavContainer("end"), true);
+	};
+
+	/**
+	 * Return array containing the nav containers
+	 * @return {Array.<object>}
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getNavContainers = function () {
+		return [this._getBeginColumn(), this._getMidColumn(), this._getEndColumn()];
 	};
 
 	/**
