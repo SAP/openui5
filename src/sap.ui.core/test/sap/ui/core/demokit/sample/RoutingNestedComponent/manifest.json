@@ -78,7 +78,8 @@
 				"bypassed": {
 					"target": "notFound"
 				},
-				"async": true
+				"async": true,
+				"propagateTitle": true
 			},
 			"routes": [
 				{

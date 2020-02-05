@@ -11,6 +11,11 @@ sap.ui.define([
 			this.getOwnerComponent().getRouter().attachRouteMatched(this._onRouteMatched, this);
 			this.getOwnerComponent().getRouter().attachBypassed(this._onBypassed, this);
 
+			var oTitlesModel = new JSONModel();
+			this.getView().setModel(oTitlesModel, "titleModel");
+			this.getOwnerComponent().getRouter().attachTitleChanged(function (oEvent) {
+				oTitlesModel.setData(oEvent.getParameters());
+			});
 		},
 
 		_onRouteMatched: function(oEvent) {
