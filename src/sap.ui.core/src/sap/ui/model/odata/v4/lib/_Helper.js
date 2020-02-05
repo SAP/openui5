@@ -921,6 +921,8 @@ sap.ui.define([
 		 *   Optional prefix for navigation property meta paths used during recursion
 		 * @param {boolean} [bAllowEmptySelect]
 		 *   Whether an empty "$select" is allowed
+		 * @param {boolean} [bAllowCollections]
+		 *   Whether collection-valued navigation properties are allowed in "$expand"
 		 * @returns {object}
 		 *   The updated query options or <code>null</code> if no request is needed
 		 * @throws {Error}
@@ -928,7 +930,8 @@ sap.ui.define([
 		 *   collection-valued navigation property
 		 */
 		intersectQueryOptions : function (mCacheQueryOptions, aPaths, fnFetchMetadata,
-				sRootMetaPath, mNavigationPropertyPaths, sPrefix, bAllowEmptySelect) {
+				sRootMetaPath, mNavigationPropertyPaths, sPrefix, bAllowEmptySelect,
+				bAllowCollections) {
 			var aExpands = [],
 				mExpands = {},
 				mResult,
@@ -992,7 +995,8 @@ sap.ui.define([
 
 					aStrippedPaths = _Helper.stripPathPrefix(sNavigationPropertyPath, aPaths);
 					if (aStrippedPaths.length) {
-						if (fnFetchMetadata(sMetaPath).getResult().$isCollection) {
+						if (!bAllowCollections
+								&& fnFetchMetadata(sMetaPath).getResult().$isCollection) {
 							throw new Error("Unsupported collection-valued navigation property "
 								+ sMetaPath);
 						}

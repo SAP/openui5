@@ -1447,8 +1447,14 @@ sap.ui.define([
 				oModelMock = this.mock(this.oModel),
 				oParentEntity = {},
 				oResponseEntity = {},
-				oReturnValueContextFirstExecute = {destroy : function () {}},
-				oReturnValueContextSecondExecute = {destroy : function () {}},
+				oReturnValueContextFirstExecute = {
+					destroy : function () {},
+					getPath : function () { return ""; }
+				},
+				oReturnValueContextSecondExecute = {
+					destroy : function () {},
+					getPath : function () { return ""; }
+				},
 				that = this;
 
 			function asyncRefresh() {
@@ -1468,6 +1474,7 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
 			}
 			_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
+			oBinding.oCache = {}; // "mock" createCacheAndRequest
 			oBindingMock.expects("createCacheAndRequest")
 				.withExactArgs(sinon.match.same(oGroupLock),
 					sParentContextPath + "/name.space.Operation(...)",
@@ -1584,6 +1591,7 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
 			_Helper.setPrivateAnnotation(oResponseEntity, "predicate",
 					"('" + oFixture.sId + "')");
+			oBinding.oCache = {}; // "mock" createCacheAndRequest
 			oBindingMock.expects("createCacheAndRequest")
 				.withExactArgs(sinon.match.same(oGroupLock),
 					"/TEAMS('42')/name.space.Operation(...)",
