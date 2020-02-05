@@ -52,7 +52,8 @@ sap.ui.define([
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
 				appName: "baseName",
-				draftLayer: "CUSTOMER"
+				draftLayer: "CUSTOMER",
+				partialFlexData: undefined
 			};
 
 			assert.equal(Loader.loadFlexData(mPropertyBag), "foo", "the Loader returns whatever the CompatibilityConnector returns");
@@ -63,7 +64,7 @@ sap.ui.define([
 			assert.equal(this.oGetCacheKeyStub.callCount, 1, "the cache key was retrieved from the Utils");
 			assert.deepEqual(this.oLoadFlexDataStub.firstCall.args[0], oExpectedComponent, "the first argument is the component");
 			var mPassedPropertyBag = this.oLoadFlexDataStub.firstCall.args[1];
-			assert.equal(Object.keys(mPassedPropertyBag).length, 5, "the second argument has the right amount of keys");
+			assert.equal(Object.keys(mPassedPropertyBag).length, 6, "the second argument has the right amount of keys");
 			assert.deepEqual(this.oLoadFlexDataStub.firstCall.args[1], oExpectedProperties, "and is the property bag");
 		});
 
@@ -83,7 +84,8 @@ sap.ui.define([
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
 				appName: "baseName",
-				draftLayer: undefined
+				draftLayer: undefined,
+				partialFlexData: undefined
 			};
 			this.oGetAppVersionStub.returns();
 

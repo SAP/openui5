@@ -274,6 +274,33 @@ sap.ui.define([
 		});
 	});
 
+
+	QUnit.module("Given all connector stubs", {
+		beforeEach: function () {
+			this.oGetStaticFileConnectorSpy = sandbox.spy(StorageUtils, "getStaticFileConnector");
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("completeFlexData with mocked partialFlexData", function (assert) {
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+
+			return Storage.completeFlexData({reference: "app.id", partialFlexData: StorageUtils.getEmptyFlexDataResponse()}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: null}));
+			});
+		});
+
+		QUnit.test("loadFlexData", function (assert) {
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: null}));
+			});
+		});
+	});
+
 	QUnit.module("Connector disassembles the variantSections", {
 		beforeEach: function () {
 		},

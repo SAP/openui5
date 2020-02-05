@@ -64,6 +64,46 @@ sap.ui.define([
 		return mResult;
 	}
 
+	function _getConnectorConfigurations(sNameSpace, bLoadApplyConnectors, mConnectors) {
+		return mConnectors.map(function (mConnectorConfiguration) {
+			var sConnector = mConnectorConfiguration.connector;
+			var sConnectorModuleName;
+
+			if (!mConnectorConfiguration.custom) {
+				sConnectorModuleName = sNameSpace + sConnector;
+			} else {
+				sConnectorModuleName = bLoadApplyConnectors ? mConnectorConfiguration.applyConnector : mConnectorConfiguration.writeConnector;
+			}
+
+			return sConnectorModuleName;
+		});
+	}
+
+	function _requireConnectorsByConfiguration(sNameSpace, bLoadApplyConnectors, mConnectors) {
+		var aConnectors = _getConnectorConfigurations(sNameSpace, bLoadApplyConnectors, mConnectors);
+
+		return new Promise(function (resolve) {
+			sap.ui.require(aConnectors, function () {
+				Array.from(arguments).forEach(function (oConnector, iIndex) {
+					if (!bLoadApplyConnectors) {
+						if (!mConnectors[iIndex].layers) {
+							mConnectors[iIndex].layers = oConnector.layers;
+						} else {
+							mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
+						}
+					}
+					if (bLoadApplyConnectors) {
+						mConnectors[iIndex].applyConnectorModule = oConnector;
+					} else {
+						mConnectors[iIndex].writeConnectorModule = oConnector;
+					}
+				});
+
+				resolve(mConnectors);
+			});
+		});
+	}
+
 	return {
 		/**
 		 * Provides all mandatory connectors required to apply or write data depending on the given namespace.
@@ -81,39 +121,7 @@ sap.ui.define([
 
 			mConnectors = mConnectors.concat(aConfiguredConnectors);
 
-			return new Promise(function (resolve) {
-				var aConnectors = mConnectors.map(function (mConnectorConfiguration) {
-					var sConnector = mConnectorConfiguration.connector;
-					var sConnectorModuleName;
-
-					if (!mConnectorConfiguration.custom) {
-						sConnectorModuleName = sNameSpace + sConnector;
-					} else {
-						sConnectorModuleName = bLoadApplyConnectors ? mConnectorConfiguration.applyConnector : mConnectorConfiguration.writeConnector;
-					}
-
-					return sConnectorModuleName;
-				});
-
-				sap.ui.require(aConnectors, function () {
-					Array.from(arguments).forEach(function (oConnector, iIndex) {
-						if (!bLoadApplyConnectors) {
-							if (!mConnectors[iIndex].layers) {
-								mConnectors[iIndex].layers = oConnector.layers;
-							} else {
-								mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
-							}
-						}
-						if (bLoadApplyConnectors) {
-							mConnectors[iIndex].applyConnectorModule = oConnector;
-						} else {
-							mConnectors[iIndex].writeConnectorModule = oConnector;
-						}
-					});
-
-					resolve(mConnectors);
-				});
-			});
+			return _requireConnectorsByConfiguration(sNameSpace, bLoadApplyConnectors, mConnectors);
 		},
 
 		/**
@@ -124,6 +132,16 @@ sap.ui.define([
 		 */
 		getApplyConnectors: function () {
 			return this.getConnectors(APPLY_CONNECTOR_NAME_SPACE, true);
+		},
+
+
+		/**
+		 * Provides only the static file connector.
+		 *
+		 * @returns {Promise<map[]>} Resolving with a list of maps static file connector and its requested modules
+		 */
+		getStaticFileConnector: function () {
+			return _requireConnectorsByConfiguration(APPLY_CONNECTOR_NAME_SPACE, true, [STATIC_FILE_CONNECTOR_CONFIGURATION]);
 		},
 
 		/**

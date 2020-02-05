@@ -34,7 +34,6 @@ sap.ui.define([
 		{ fileName: "id_1540450338001_81", fileType: "change", changeType: "appdescr_ui5_addLibraries", moduleName: "", reference: "sap.ui.rta.test.Demo.md", packageName: "$TMP", content: {libraries: {"sap.ui.comp": {minVersion: "1.48", lazy: false}}}, selector: {}, layer: "CUSTOMER", namespace: "apps/sap.ui.rta.test.Demo.md/changes/", projectId: "sap.ui.rta.test.Demo.md", creation: "", originalLanguage: "EN", conditions: {}, context: "", support: {generator: "Change.createInitialFileContent", service: "", user: "", sapui5Version: "1.59.0-SNAPSHOT", sourceChangeFileName: "", compositeCommand: ""}, oDataInformation: {}, dependentSelector: {}, validAppVersions: {creation: "1.0.0", from: "1.0.0"}, jsOnly: false, variantReference: ""}
 	];
 
-	//var sandbox = sinon.sandbox.create();
 
 	function writeTestDataToStorage() {
 		var aPromises = aTestData.map(function(oChange) {
@@ -194,6 +193,7 @@ sap.ui.define([
 
 	QUnit.module("Given methods are overwritten by the FakeLrepConnector", {
 		afterEach: function () {
+			FakeLrepConnector.prototype.loadChanges = undefined;
 			sandbox.restore();
 		}
 	}, function() {
@@ -300,6 +300,32 @@ sap.ui.define([
 					assert.equal(oFunctionStub.callCount, 1, "and the registered function was called");
 					assert.equal(oStorageStub.callCount, 0, "and the Storage function was NOT called");
 				});
+		});
+	});
+
+	QUnit.module("CompatibilityConnector.loadChanges", {
+		beforeEach: function() {
+			this.oStorageCompleteFlexDataStub = sandbox.spy(ApplyStorage, "completeFlexData");
+			this.oStorageLoadFlexDataStub = sandbox.spy(ApplyStorage, "loadFlexData");
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when 'loadChanges' is called to with partialFlexData", function (assert) {
+			return CompatibilityConnector.loadChanges({name: "test.app", appVersion: "1.0.0"}, {appName: "test.app", partialFlexData: {}})
+				.then(function () {
+					assert.equal(this.oStorageCompleteFlexDataStub.callCount, 1, "and Storage.completeFlexData was called");
+					assert.equal(this.oStorageLoadFlexDataStub.callCount, 0, "and the Storage.loadFlexData function was NOT called");
+				}.bind(this));
+		});
+
+		QUnit.test("when 'loadChanges' is called without partialFlexData", function (assert) {
+			return CompatibilityConnector.loadChanges({name: "test.app", appVersion: "1.0.0"})
+				.then(function () {
+					assert.equal(this.oStorageCompleteFlexDataStub.callCount, 0, "and Storage.completeFlexData was NOT called");
+					assert.equal(this.oStorageLoadFlexDataStub.callCount, 1, "and Storage.loadFlexData was called");
+				}.bind(this));
 		});
 	});
 

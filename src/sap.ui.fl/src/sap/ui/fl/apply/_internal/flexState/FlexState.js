@@ -48,6 +48,7 @@ sap.ui.define([
 	 * 			},
 	 * 			loadModules: <boolean>
 	 * 		}},
+	 * 		partialFlexState: <boolean>,
 	 * 		componentId: "<componentId>"
 	 * 	}
 	 *
@@ -116,7 +117,8 @@ sap.ui.define([
 				storageResponse: {changes: StorageUtils.getEmptyFlexDataResponse()},
 				unfilteredStorageResponse: {changes: StorageUtils.getEmptyFlexDataResponse()},
 				preparedMaps: {},
-				componentId: mPropertyBag.componentId
+				componentId: mPropertyBag.componentId,
+				partialFlexState: mPropertyBag.partialFlexState
 			});
 			_mInitPromises[sReferenceWithoutComponent] = _mInitPromises[mPropertyBag.reference];
 		}
@@ -142,7 +144,8 @@ sap.ui.define([
 					unfilteredStorageResponse: mResponse,
 					preparedMaps: {},
 					componentId: mPropertyBag.componentId,
-					componentData: mPropertyBag.componentData
+					componentData: mPropertyBag.componentData,
+					partialFlexState: mPropertyBag.partialFlexState
 				});
 
 				// temporarily create an instance without '.Component'
@@ -206,6 +209,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.componentData] - Component data of the current component
 	 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
 	 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be loaded
+	 * @param {boolean} [mPropertyBag.partialFlexState=false] - if true state is initialized partially and does not include flex bundles
 	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
 	FlexState.initialize = function (mPropertyBag) {
@@ -214,6 +218,10 @@ sap.ui.define([
 
 			if (_mInitPromises[mPropertyBag.reference]) {
 				return _mInitPromises[mPropertyBag.reference].then(function (mPropertyBag) {
+					if (_mInstances[mPropertyBag.reference].partialFlexState === true && mPropertyBag.partialFlexState !== true) {
+						mPropertyBag.partialFlexData = _mInstances[mPropertyBag.reference].unfilteredStorageResponse.changes;
+						return loadFlexData(mPropertyBag);
+					}
 					// if the component with the same reference was rendered with a new ID - clear existing state
 					if (_mInstances[mPropertyBag.reference].componentId !== mPropertyBag.componentId) {
 						return loadFlexData(mPropertyBag);

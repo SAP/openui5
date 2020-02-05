@@ -25,6 +25,15 @@ sap.ui.define([
 		return !!FakeLrepConnector.prototype[sMethodName];
 	}
 
+	function _formatFlexData(mFlexData) {
+		return {
+			changes: mFlexData,
+			cacheKey: mFlexData.cacheKey,
+			loadModules: false
+			//TODO check other return values build in LrepConnector.prototype._onChangeResponseReceived
+		};
+	}
+
 	/**
 	 * Adapts the existing @see sap.ui.fl.LrepConnector API to the new apply/write.Storage API
 	 *
@@ -50,6 +59,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be loaded
 	 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 	 * @param {string} [mPropertyBag.cacheKey] Pre-calculated cache key of the component
+	 * @param {object} [mPropertyBag.partialFlexData] Contains partial FlexState if reload of bundles is needed
 	 * @returns {Promise} Returns a Promise with the changes response
 	 */
 	CompatibilityConnector.loadChanges = function(mComponent, mPropertyBag) {
@@ -57,6 +67,14 @@ sap.ui.define([
 
 		if (_isMethodOverwritten("loadChanges")) {
 			return FakeLrepConnector.prototype.loadChanges(mComponent, mPropertyBag);
+		}
+
+		if (mPropertyBag.partialFlexData) {
+			return ApplyStorage.completeFlexData({
+				reference: mComponent.name,
+				componentName: mPropertyBag.appName,
+				partialFlexData: mPropertyBag.partialFlexData
+			}).then(_formatFlexData);
 		}
 
 		return ApplyStorage.loadFlexData({
@@ -67,14 +85,7 @@ sap.ui.define([
 			siteId: mPropertyBag.siteId,
 			appDescriptor: mPropertyBag.appDescriptor,
 			draftLayer: mPropertyBag.draftLayer
-		}).then(function(mFlexData) {
-			return {
-				changes: mFlexData,
-				cacheKey: mFlexData.cacheKey,
-				loadModules: false
-				//TODO check other return values build in LrepConnector.prototype._onChangeResponseReceived
-			};
-		});
+		}).then(_formatFlexData);
 	};
 
 	/**
