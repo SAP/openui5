@@ -78,7 +78,7 @@ sap.ui.define([
 			},
 			aggregations: {
 				propertyEditors: {
-					type: "sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor",
+					type: "sap.ui.integration.designtime.baseEditor.PropertyEditor",
 					visibility: "hidden"
 				}
 			},
@@ -110,10 +110,10 @@ sap.ui.define([
 				propertyEditorsChange: {
 					parameters: {
 						previousPropertyEditors: {
-							type: "sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor"
+							type: "sap.ui.integration.designtime.baseEditor.PropertyEditor"
 						},
 						propertyEditors: {
-							type: "sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor"
+							type: "sap.ui.integration.designtime.baseEditor.PropertyEditor"
 						}
 					}
 				},
@@ -196,7 +196,8 @@ sap.ui.define([
 				} else if (this._sCreatedBy) {
 					var aPropertyEditors = this.getAggregation("propertyEditors");
 					aConfig.forEach(function (mConfig, iIndex) {
-						aPropertyEditors[iIndex].setConfig(mConfig);
+						// workaround until PropertyEditor supports smart rendering
+						aPropertyEditors[iIndex].getAggregation("propertyEditor").setConfig(mConfig);
 					});
 				}
 			});
@@ -336,7 +337,7 @@ sap.ui.define([
 	PropertyEditors.prototype.ready = function () {
 		return new Promise(function (resolve) {
 			var fnCheckPropertyEditorsReady = function () {
-				Promise.all(this.getAggregation("propertyEditors").map(function (oPropertyEditor) {
+				Promise.all((this.getAggregation("propertyEditors") || []).map(function (oPropertyEditor) {
 					return oPropertyEditor.ready();
 				})).then(function () {
 					resolve();
@@ -380,7 +381,7 @@ sap.ui.define([
 				if (this.getConfig()) {
 					oPromise = Promise.all(
 						this.getConfig().map(function (mItemConfig) {
-							return oEditor.createPropertyEditor(mItemConfig);
+							return oEditor._createPropertyEditor(mItemConfig);
 						})
 					);
 					sCreatedBy = CREATED_BY_CONFIG;
@@ -398,7 +399,6 @@ sap.ui.define([
 								propertyEditor.setProperty("renderLabel", bRenderLabels);
 							});
 						}
-						this._sCreatedBy = sCreatedBy;
 						this._sCreatedBy = sCreatedBy;
 						delete this._fnCancelInit;
 						fnResolve(aPropertyEditors);

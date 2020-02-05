@@ -43,7 +43,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[0].getBindingContext().getObject().value, "value1", "Then value of the property is correctly retrieved from the context object");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[0].getAggregation("propertyEditor").getBindingContext().getObject().value, "value1", "Then value of the property is correctly retrieved from the context object");
 				done();
 			}.bind(this));
 		});
@@ -69,11 +69,11 @@ sap.ui.define([
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
 				this.oBaseEditor.attachJsonChange(function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("json").context.prop1, "test", "Then the value is updated in JSON");
-					assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getConfig().value, "test", "Then the value is updated in another editor interested in the same path");
+					assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getAggregation("propertyEditor").getConfig().value, "test", "Then the value is updated in another editor interested in the same path");
 					done();
 				}.bind(this));
 
-				this.oBaseEditor.getPropertyEditorsSync()[0].fireValueChange("test");
+				this.oBaseEditor.getPropertyEditorsSync()[0].getAggregation("propertyEditor").fireValueChange("test");
 			}.bind(this));
 		});
 
@@ -100,8 +100,8 @@ sap.ui.define([
 				}
 			});
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().val, "value1", "Then binding against property model works properly");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().i18n, "prop", "Then binding against other models is untouched");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getAggregation("propertyEditor").getBindingContext().getObject().val, "value1", "Then binding against property model works properly");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getAggregation("propertyEditor").getBindingContext().getObject().i18n, "prop", "Then binding against other models is untouched");
 				done();
 			}.bind(this));
 		});

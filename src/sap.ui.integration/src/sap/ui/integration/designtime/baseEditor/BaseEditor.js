@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
+	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/util/ObjectPath",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function (
 	createPromise,
 	PropertyEditorFactory,
+	PropertyEditor,
 	Control,
 	ResourceModel,
 	ObjectPath,
@@ -352,25 +354,36 @@ sap.ui.define([
 		return Promise.all(
 			Object.keys(oConfig.properties).map(function(sPropertyName) {
 				var oPropertyConfig = this.getConfig().properties[sPropertyName];
-				return Promise.all([sPropertyName, this.createPropertyEditor(oPropertyConfig)]);
+				return [
+					sPropertyName,
+					this._createPropertyEditor(oPropertyConfig)
+				];
 			}.bind(this))
 		).then(function (aPropertyEditors) {
-			aPropertyEditors.forEach(function (mPropertyEditor) {
-				var sPropertyName = mPropertyEditor[0];
-				var oPropertyEditor = mPropertyEditor[1];
+			return aPropertyEditors
+				.map(function (mPropertyEditor) {
+					var sPropertyName = mPropertyEditor[0];
+					var oPropertyEditor = mPropertyEditor[1];
 
-				if (oPropertyEditor) {
-					oPropertyEditor.attachValueChange(this._onValueChange.bind(this));
-					this._mPropertyEditors[sPropertyName] = oPropertyEditor;
-					this.addAggregation("_propertyEditors", oPropertyEditor);
-
-					oPropertyEditor.ready().then(function () {
-						this._checkReady();
-					}.bind(this));
-				}
-			}, this);
-			this._checkReady();
-		}.bind(this));
+					if (oPropertyEditor) {
+						oPropertyEditor.attachValueChange(this._onValueChange.bind(this));
+						this._mPropertyEditors[sPropertyName] = oPropertyEditor;
+						this.addAggregation("_propertyEditors", oPropertyEditor);
+						return oPropertyEditor;
+					}
+				}, this)
+				.filter(function (oPropertyEditor) {
+					return !!oPropertyEditor;
+				});
+		}.bind(this))
+		.then(function (aPropertyEditors) {
+			return Promise.all(
+				aPropertyEditors.map(function (oPropertyEditor) {
+					return oPropertyEditor.ready();
+				})
+			);
+		})
+		.then(this._checkReady.bind(this));
 
 	};
 
@@ -397,16 +410,15 @@ sap.ui.define([
 		return mPromise.promise.then(removeHandler, removeHandler);
 	};
 
-	BaseEditor.prototype.createPropertyEditor = function (oPropertyConfig) {
-		return PropertyEditorFactory.create(oPropertyConfig.type).then(function (oPropertyEditor) {
-			oPropertyEditor.setModel(this._oContextModel, "_context");
-			oPropertyEditor.setModel(this._oI18nModel, "i18n");
-			oPropertyEditor.setConfig(_merge({}, oPropertyConfig)); // deep clone to avoid editor modifications to influence the outer config
+	BaseEditor.prototype.getPropertyConfig = function (sPropertyName) {
+		return this.getConfig().properties[sPropertyName];
+	};
 
-			// TODO: control styling via editor properties?
-			oPropertyEditor.addStyleClass("sapUiTinyMargin");
-			return oPropertyEditor;
-		}.bind(this));
+	BaseEditor.prototype._createPropertyEditor = function (oPropertyConfig) {
+		return new PropertyEditor({
+			config: oPropertyConfig,
+			editor: this
+		});
 	};
 
 	BaseEditor.prototype.getPropertyEditor = function (sPropertyName) {

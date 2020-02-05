@@ -172,7 +172,7 @@ sap.ui.define([
 				QUnitUtils.triggerEvent("input", this.aItems[0].key.getDomRef());
 
 				assert.deepEqual(
-					this.oEditor.getBindingContext().getObject().value,
+					this.oEditor.getAggregation("propertyEditor").getBindingContext().getObject().value,
 					{
 						foo: "bar",
 						key: ""
@@ -212,7 +212,7 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("input", oInput.getDomRef());
 
 			assert.deepEqual(
-				this.oEditor.getBindingContext().getObject().value,
+				this.oEditor.getAggregation("propertyEditor").getBindingContext().getObject().value,
 				{
 					foo: "bar"
 				},

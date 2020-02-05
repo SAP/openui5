@@ -6,13 +6,17 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/ui/integration/designtime/baseEditor/util/escapeParameter",
-	"sap/base/util/isPlainObject"
+	"sap/base/util/isPlainObject",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
+	"sap/base/util/restricted/_merge"
 ], function (
 	Control,
 	findClosestInstance,
 	createPromise,
 	escapeParameter,
-	isPlainObject
+	isPlainObject,
+	PropertyEditorFactory,
+	_merge
 ) {
 	"use strict";
 
@@ -144,7 +148,18 @@ sap.ui.define([
 				/**
 				 * Fires when nested property editor is ready.
 				 */
-				ready: {}
+				ready: {},
+
+				/**
+				 * Fires when the value of the internal property editor changes
+				 */
+				valueChange: {
+					/**
+					 * Path in the context object where the change should happen
+					 */
+					path: {type: "string"},
+					value: {type: "any"}
+				}
 			}
 		},
 
@@ -163,16 +178,21 @@ sap.ui.define([
 			this._propagationListener = this._propagationListener.bind(this);
 
 			this.attachEditorChange(function () {
+				// FIXME: As soon as the context model is not used inside the wrapper anymore,
+				// we should only update the property editor if it was created via a property name
+				// and the config has changed
+
 				if (this._sCreatedBy) {
 					this._removePropertyEditor();
 				}
 				this._initPropertyEditor();
 			});
 
-			this.attachConfigChange(function (oEvent) {
+			this.attachConfigChange(function () {
 				if (this._sCreatedBy) {
 					this._removePropertyEditor();
 				}
+
 				this._initPropertyEditor();
 			});
 
@@ -307,17 +327,21 @@ sap.ui.define([
 	};
 
 	PropertyEditor.prototype._initPropertyEditor = function () {
+		// FIXME: A reference to the BaseEditor is still required in the current solution
+		// in order to set the models on the BasePropertyEditor
+		// Remove once the config is resolved before passing it to the editor
+		if (!this.getEditor()) {
+			return;
+		}
+
 		if (
-			this.getEditor()
-			&& (
-				this.getConfig()
-				|| (
-					!this.getBindingInfo("config") // If there is a binding on config property the value might not arrived yet
-					&& this.getPropertyName()
-				)
+			this.getConfig()
+			|| (
+				!this.getBindingInfo("config") // If there is a binding on config property the value might not arrived yet
+				&& this.getPropertyName()
+				&& this.getEditor()
 			)
 		) {
-			var oEditor = this.getEditor();
 			// Cancel previous async process if any
 			if (this._fnCancelInit) {
 				this._fnCancelInit();
@@ -325,27 +349,32 @@ sap.ui.define([
 			}
 
 			var mPromise = createPromise(function (fnResolve, fnReject) {
-				var oPromise;
-				var sCreatedBy;
+				var mConfig = this.getConfig() || this.getEditor().getPropertyConfig(this.getPropertyName());
+				var sCreatedBy = this.getConfig() ? CREATED_BY_CONFIG : CREATED_BY_PROPERTY_NAME;
 
-				if (this.getConfig()) {
-					oPromise = oEditor.createPropertyEditor(this.getConfig());
-					sCreatedBy = CREATED_BY_CONFIG;
-				} else {
-					oPromise = oEditor.getPropertyEditor(this.getPropertyName());
-					sCreatedBy = CREATED_BY_PROPERTY_NAME;
-				}
-
-				oPromise
+				PropertyEditorFactory.create(mConfig.type)
 					.then(function (oPropertyEditor) {
+						oPropertyEditor.setModel(this.getEditor()._oContextModel, "_context");
+						oPropertyEditor.setModel(this.getEditor().getModel("i18n"), "i18n");
+						oPropertyEditor.setConfig(_merge({}, mConfig)); // deep clone to avoid editor modifications to influence the outer config
+
+						// TODO: remove after Form layout BLI
+						oPropertyEditor.addStyleClass("sapUiTinyMargin");
+
+						oPropertyEditor.attachValueChange(function (oEvent) {
+							this.fireValueChange(oEvent.getParameters());
+						}, this);
+
 						var bRenderLabel = this.getRenderLabel();
 						if (bRenderLabel !== undefined) {
 							oPropertyEditor.setRenderLabel(bRenderLabel);
 						}
 						this._sCreatedBy = sCreatedBy;
 						delete this._fnCancelInit;
-						fnResolve(oPropertyEditor);
+
+						return oPropertyEditor;
 					}.bind(this))
+					.then(fnResolve)
 					.catch(fnReject);
 			}.bind(this));
 
@@ -384,6 +413,16 @@ sap.ui.define([
 				this.addPropagationListener(this._propagationListener);
 			}
 		}
+	};
+
+	PropertyEditor.prototype.getContent = function () {
+		var oNestedEditor = this.getAggregation("propertyEditor");
+		return oNestedEditor && oNestedEditor.getContent();
+	};
+
+	PropertyEditor.prototype.getValue = function () {
+		var oNestedEditor = this.getAggregation("propertyEditor");
+		return oNestedEditor && oNestedEditor.getValue();
 	};
 
 	return PropertyEditor;

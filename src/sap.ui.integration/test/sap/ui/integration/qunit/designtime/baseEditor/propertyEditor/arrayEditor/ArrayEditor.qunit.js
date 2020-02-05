@@ -87,7 +87,7 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			this.oBaseEditor.getPropertyEditor("sideIndicator").then(function (oPropertyEditor) {
-				this.oEditor = oPropertyEditor;
+				this.oEditor = oPropertyEditor.getAggregation("propertyEditor");
 				sap.ui.getCore().applyChanges();
 				this.oEditorElement = this.oEditor.getContent();
 				fnReady();
@@ -400,7 +400,7 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			this.oBaseEditor.getPropertyEditor("sideIndicator").then(function (oPropertyEditor) {
-				this.oEditor = oPropertyEditor;
+				this.oEditor = oPropertyEditor.getAggregation("propertyEditor");
 				sap.ui.getCore().applyChanges();
 				this.oEditorElement = this.oEditor.getContent();
 				fnReady();
@@ -517,7 +517,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function (oEvent) {
-				this.oArrayEditor = oEvent.getSource().getPropertyEditorSync("cars");
+				this.oArrayEditor = oEvent.getSource().getPropertyEditorSync("cars").getAggregation("propertyEditor");
 				assert.strictEqual(this.oArrayEditor.isReady(), true, "Ready is triggered for empty arrays and nested arrays");
 				fnDone();
 			}, this);
@@ -555,7 +555,7 @@ sap.ui.define([
 			});
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				var oArrayEditor = this.oBaseEditor.getPropertyEditorSync("cars");
+				var oArrayEditor = this.oBaseEditor.getPropertyEditorSync("cars").getAggregation("propertyEditor");
 				var oAddButton = oArrayEditor.getContent().getItems()[1];
 				assert.ok(oArrayEditor.getValue().length < oArrayEditor.getConfig().maxItems);
 				assert.ok(oAddButton.getEnabled(), "then add button is enabled");
@@ -576,7 +576,7 @@ sap.ui.define([
 				});
 
 				this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-					var oArrayEditor = this.oBaseEditor.getPropertyEditorSync("cars");
+					var oArrayEditor = this.oBaseEditor.getPropertyEditorSync("cars").getAggregation("propertyEditor");
 					var oAddButton = oArrayEditor.getContent().getItems()[1];
 
 					assert.strictEqual(this.oArrayEditor.getValue().length, this.oArrayEditor.getConfig().maxItems);
@@ -605,7 +605,7 @@ sap.ui.define([
 			});
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				var oArrayEditor = this.oBaseEditor.getPropertyEditorSync("cars");
+				var oArrayEditor = this.oBaseEditor.getPropertyEditorSync("cars").getAggregation("propertyEditor");
 				var aWrappers = oArrayEditor._aEditorWrappers;
 
 				assert.strictEqual(aWrappers.length, 2, "Then both wrappers are registered on the array editor");
@@ -626,9 +626,9 @@ sap.ui.define([
 
 		QUnit.test("when editing item in the nested array, then no re-rendering should take place", function (assert) {
 			var oVWCarEditor = _getArrayEditorElements(this.oArrayEditor)[0];
-			var oOwnersEditor = oVWCarEditor.getItems()[1].getAggregation("propertyEditors")[2];
+			var oOwnersEditor = oVWCarEditor.getItems()[1].getAggregation("propertyEditors")[2].getAggregation("propertyEditor");
 			var aOwnersItems = _getArrayEditorElements(oOwnersEditor);
-			var oOwnerNameEditor = aOwnersItems[0].getItems()[1].getAggregation("propertyEditors")[0];
+			var oOwnerNameEditor = aOwnersItems[0].getItems()[1].getAggregation("propertyEditors")[0].getAggregation("propertyEditor");
 			var oOwnerInput = oOwnerNameEditor.getContent();
 
 			oOwnerInput.focus();
