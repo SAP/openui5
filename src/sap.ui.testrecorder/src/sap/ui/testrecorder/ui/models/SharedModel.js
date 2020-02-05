@@ -27,7 +27,8 @@ sap.ui.define([
 		}],
 		selectedDialect: Dialects.UIVERI5,
 		settings: {
-			preferViewId: false
+			preferViewId: false,
+			formatAsPOMethod: true
 		}
 	});
 

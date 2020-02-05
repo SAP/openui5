@@ -15,10 +15,11 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/CheckBox",
 	"sap/m/Button",
+	"sap/m/VBox",
 	"sap/ui/support/supportRules/ui/external/ElementTree",
 	"sap/ui/testrecorder/interaction/ContextMenu"
 ], function (Device, Storage, Controller, SharedModel, CommunicationBus, CommunicationChannels, JSONModel, ResourceModel,
-		MessageToast, Dialog, CheckBox, Button, ElementTree, ContextMenu) {
+		MessageToast, Dialog, CheckBox, Button, VBox, ElementTree, ContextMenu) {
 	"use strict";
 
 	return Controller.extend("sap.ui.testrecorder.ui.controllers.Main", {
@@ -107,10 +108,21 @@ sap.ui.define([
 				this.settingsDialog = new Dialog({
 					title: this.getView().getModel("i18n").getProperty("TestRecorder.SettingsDialog.Title"),
 					content: [
-						new CheckBox({
-							text: this.getView().getModel("i18n").getProperty("TestRecorder.SettingsDialog.IDCheckBox.Text"),
-							selected: this.model.getProperty("/settings/preferViewId"),
-							select: this._onSelectCheckBox.bind(this)
+						new VBox({
+							items: [
+								new CheckBox({
+									text: this.getView().getModel("i18n").getProperty("TestRecorder.SettingsDialog.IDCheckBox.Text"),
+									name: "preferViewId",
+									selected: this.model.getProperty("/settings/preferViewId"),
+									select: this._onSelectCheckBox.bind(this)
+								}),
+								new CheckBox({
+									text: this.getView().getModel("i18n").getProperty("TestRecorder.SettingsDialog.POMethodCheckBox.Text"),
+									name: "formatAsPOMethod",
+									selected: this.model.getProperty("/settings/formatAsPOMethod"),
+									select: this._onSelectCheckBox.bind(this)
+								})
+							]
 						})
 					],
 					endButton: new Button({
@@ -133,17 +145,19 @@ sap.ui.define([
 			this.model.setProperty("/isInIframe", !window.opener);
 
 			var sSelectedDialect = this._localStorage.get("dialect");
-			var bPreferViewId = this._localStorage.get("preferViewId");
+			var bPreferViewId = this._localStorage.get("settings-preferViewId");
+			var bFormatAsPOMethod = this._localStorage.get("settings-formatAsPOMethod");
 			if (sSelectedDialect) {
 				this.model.setProperty("/selectedDialect", sSelectedDialect);
 				CommunicationBus.publish(CommunicationChannels.SET_DIALECT, sSelectedDialect);
 			}
-			if (bPreferViewId !== null && bPreferViewId !== undefined) {
+			if (bPreferViewId !== null && bPreferViewId !== "undefined") {
 				this.model.setProperty("/settings/preferViewId", bPreferViewId);
-				CommunicationBus.publish(CommunicationChannels.UPDATE_SELECTOR_SETTINGS, {
-					preferViewId: bPreferViewId
-				});
 			}
+			if (bFormatAsPOMethod !== null && bFormatAsPOMethod !== "undefined") {
+				this.model.setProperty("/settings/formatAsPOMethod", bFormatAsPOMethod);
+			}
+			CommunicationBus.publish(CommunicationChannels.UPDATE_SELECTOR_SETTINGS, this.model.getProperty("/settings"));
 
 			var binding = new sap.ui.model.Binding(SharedModel, "/selectedDialect", SharedModel.getContext("/"));
 			binding.attachChange(function() {
@@ -243,11 +257,12 @@ sap.ui.define([
 		},
 		_onSelectCheckBox: function (oEvent) {
 			var bSelected = oEvent.getParameter("selected");
-			this.model.setProperty("/settings/preferViewId", bSelected);
-			CommunicationBus.publish(CommunicationChannels.UPDATE_SELECTOR_SETTINGS, {
-				preferViewId: bSelected
-			});
-			this._localStorage.put("preferViewId", bSelected);
+			var sSetting = oEvent.getSource().getName();
+			var mSetting = {};
+			mSetting[sSetting] = bSelected;
+			this.model.setProperty("/settings/" + sSetting, bSelected);
+			this._localStorage.put("settings-" + sSetting, bSelected);
+			CommunicationBus.publish(CommunicationChannels.UPDATE_SELECTOR_SETTINGS, mSetting);
 		}
 	});
 });

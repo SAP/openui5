@@ -15,7 +15,7 @@ sap.ui.define([
 	/**
 	 * @class generates a control selector
 	 */
-	var UIVeri5SelectorGenerator = BaseObject.extend("sap.ui.testrecorder.controlSelectors.UIVeri5SelectorGenerator", {});
+	var ControlSelectorGenerator = BaseObject.extend("sap.ui.testrecorder.controlSelectors.ControlSelectorGenerator", {});
 
 	/**
 	 * generates a UIVeri5 selector for a control
@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @param {boolean} mData.settings.preferViewId true if selectors with view ID should have higher priority than selectors with global ID. Default value is false.
 	 * @returns {Promise<string>} Promise for a control selector or error
 	 */
-	UIVeri5SelectorGenerator.prototype.getSelector = function (mData) {
+	ControlSelectorGenerator.prototype.getSelector = function (mData) {
 		var oDomElement = _getDomElement(mData);
 		var mCacheKey = {
 			domElementId: oDomElement.id
@@ -45,7 +45,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	UIVeri5SelectorGenerator.prototype._findCached = function (mData) {
+	ControlSelectorGenerator.prototype._findCached = function (mData) {
 		var mSelector;
 		aSelectorCache.forEach(function (mPair) {
 			if (mPair.key === mData.domElementId) {
@@ -55,7 +55,7 @@ sap.ui.define([
 		return mSelector;
 	};
 
-	UIVeri5SelectorGenerator.prototype._cache = function (mData, mSelector) {
+	ControlSelectorGenerator.prototype._cache = function (mData, mSelector) {
 		if (aSelectorCache.length === SELECTOR_CACHE_LIMIT) {
 			// remove the oldest selector
 			aSelectorCache.shift();
@@ -66,7 +66,7 @@ sap.ui.define([
 		});
 	};
 
-	UIVeri5SelectorGenerator.prototype.emptyCache = function () {
+	ControlSelectorGenerator.prototype.emptyCache = function () {
 		aSelectorCache = [];
 	};
 
@@ -80,5 +80,5 @@ sap.ui.define([
 		}
 	}
 
-	return new UIVeri5SelectorGenerator();
+	return new ControlSelectorGenerator();
 });

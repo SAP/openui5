@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/test/RecordReplay",
-	"sap/ui/testrecorder/controlSelectors/UIVeri5SelectorGenerator"
-], function (RecordReplay, UIVeri5SelectorGenerator) {
+	"sap/ui/testrecorder/controlSelectors/ControlSelectorGenerator"
+], function (RecordReplay, ControlSelectorGenerator) {
 	"use strict";
 
-	QUnit.module("UIVeri5SelectorGenerator", {
+	QUnit.module("ControlSelectorGenerator", {
 		beforeEach: function () {
 			this.fnGetSelector = sinon.stub(RecordReplay, "findControlSelectorByDOMElement");
 			var testElement = document.createElement("div");
@@ -14,7 +14,7 @@ sap.ui.define([
 			document.getElementById("qunit-fixture").append(testElement);
 		},
 		afterEach: function () {
-			UIVeri5SelectorGenerator.emptyCache();
+			ControlSelectorGenerator.emptyCache();
 			this.fnGetSelector.restore();
 		}
 	});
@@ -24,7 +24,7 @@ sap.ui.define([
 		this.fnGetSelector.returns(Promise.resolve({
 			mySelector: "test"
 		}));
-		UIVeri5SelectorGenerator.getSelector({
+		ControlSelectorGenerator.getSelector({
 			domElement: "DomElement"
 		}).then(function (oSelector) {
 			assert.strictEqual(oSelector.mySelector, "test", "Should resolve with the selector value");
@@ -39,10 +39,10 @@ sap.ui.define([
 		this.fnGetSelector.returns(Promise.resolve({
 			mySelector: "test"
 		}));
-		UIVeri5SelectorGenerator.getSelector(mMemoized).then(function (oSelector) {
+		ControlSelectorGenerator.getSelector(mMemoized).then(function (oSelector) {
 			assert.ok(this.fnGetSelector.calledOnce, "Should generate selector first time");
 			assert.strictEqual(oSelector.mySelector, "test", "Should resolve with the selector value");
-			return UIVeri5SelectorGenerator.getSelector(mMemoized);
+			return ControlSelectorGenerator.getSelector(mMemoized);
 		}.bind(this)).then(function (oSelector) {
 			assert.ok(this.fnGetSelector.calledOnce, "Should not generate selector second time");
 			assert.strictEqual(oSelector.mySelector, "test", "Should resolve with the selector value");
@@ -54,7 +54,7 @@ sap.ui.define([
 		this.fnGetSelector.returns(Promise.reject({
 			error: "test"
 		}));
-		UIVeri5SelectorGenerator.getSelector({
+		ControlSelectorGenerator.getSelector({
 			domElement: "DomElement"
 		}).catch(function (oSelector) {
 			assert.strictEqual(oSelector.error, "test", "Should reject with error message");
