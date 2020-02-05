@@ -216,6 +216,7 @@ sap.ui.define([
 	DocumentationRouter.prototype.linkClickHandler = function (oEvent) {
 		var oElement = oEvent.target,
 			$Element = jQuery(oElement),
+			oAnchorElement,
 			sTarget;
 
 		if (!oElement) {
@@ -233,9 +234,8 @@ sap.ui.define([
 			return; // This is handled in the SubApiDetail controller
 		}
 
-		if (!sTarget) {
-			sTarget = getClosestHref(oElement);
-		}
+		oAnchorElement = getClosestParentLink(oElement);
+		sTarget = getHref(oAnchorElement);
 
 		// If we have no target by here we give up
 		if (!sTarget ||
@@ -256,8 +256,7 @@ sap.ui.define([
 			sTarget = ""; // translate to base route
 		}
 
-		if (window['sap-ui-documentation-static']
-			&& (this.getRoute("apiId").match(sTarget) || this.getRoute("apiSpecialRoute").match(sTarget))) {
+		if (window['sap-ui-documentation-static'] && this.shouldConvertHash(sTarget)) {
 			sTarget = sTarget.replace("#", "%23");
 		}
 
@@ -270,6 +269,29 @@ sap.ui.define([
 			window.history.pushState({},undefined, sTarget);
 		}
 
+	};
+
+	DocumentationRouter.prototype.mouseDownClickHandler = function (oEvent) {
+		var iPressedButton = oEvent.buttons,
+			oTarget = oEvent.target,
+			oAnchorElement = getClosestParentLink(oTarget),
+			sTargetHref;
+
+		if (oAnchorElement) {
+			sTargetHref = getHref(oAnchorElement);
+		}
+
+		// Do not change href if its already changed
+		if (!sTargetHref || /^https?:\/\//.test(sTargetHref)) {
+			return;
+		}
+
+		// When context menu of the Browser is opened or when the aux button is clicked,
+		// we change the href of the anchor element
+		if (iPressedButton === 2 || iPressedButton === 4) {
+			sTargetHref = this.convertToStaticFormat(sTargetHref);
+			oAnchorElement.setAttribute("href", sTargetHref);
+		}
 	};
 
 	DocumentationRouter.prototype.popstateHandler = function () {
@@ -285,6 +307,7 @@ sap.ui.define([
 	DocumentationRouter.prototype.attachGlobalLinkHandler = function () {
 		if (!this._bGlobalHandlerAttached) {
 			document.body.addEventListener("click", this.linkClickHandler.bind(this), true);
+			window['sap-ui-documentation-static'] && document.body.addEventListener("mousedown", this.mouseDownClickHandler.bind(this), true);
 			this._bGlobalHandlerAttached = true;
 		}
 	};
@@ -573,23 +596,46 @@ sap.ui.define([
 
 	}
 
-	// util
-	function getClosestHref(oAnchorElement, iMaxDrillUp) {
-		var sHref = getHref(oAnchorElement), iDrillUp = 0;
-		iMaxDrillUp || (iMaxDrillUp = 3);
+	DocumentationRouter.prototype.shouldConvertHash = function(sTarget) {
+		return this.getRoute("apiId").match(sTarget) || this.getRoute("apiSpecialRoute").match(sTarget);
+	};
 
-		while (!sHref && iDrillUp++ < iMaxDrillUp) {
-			oAnchorElement = oAnchorElement.parentElement;
-			sHref = getHref(oAnchorElement);
+	DocumentationRouter.prototype.convertToStaticFormat = function(sHref) {
+		var oLocation = window.location,
+			sNewHref = sHref;
+
+		if (this.shouldConvertHash(sHref)) {
+			sNewHref = sHref.replace("#", "%23");
 		}
 
-		return sHref;
+		sNewHref = oLocation.origin + oLocation.pathname + "#/" + sNewHref;
+
+		return sNewHref;
+	};
+
+	// util
+	function getClosestParentLink(oAnchorElement, iMaxDrillUp) {
+		var bIsAnchor = isAnchorElement(oAnchorElement), iDrillUp = 0;
+		iMaxDrillUp || (iMaxDrillUp = 3);
+
+		while (!bIsAnchor && iDrillUp++ < iMaxDrillUp) {
+			oAnchorElement = oAnchorElement.parentElement;
+			bIsAnchor = isAnchorElement(oAnchorElement);
+		}
+
+		return oAnchorElement;
+	}
+
+	function isAnchorElement(oAnchorElement) {
+		if (oAnchorElement && oAnchorElement.nodeName === "A" && oAnchorElement.getAttribute("target") !== "_blank") {
+			return true;
+		}
+
+		return false;
 	}
 
 	function getHref(oAnchorElement) {
-		if (oAnchorElement && oAnchorElement.nodeName === "A" && oAnchorElement.getAttribute("target") !== "_blank") {
-			return oAnchorElement.getAttribute("href");
-		}
+		return oAnchorElement.getAttribute("href");
 	}
 
 	return DocumentationRouter;
