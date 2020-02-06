@@ -12,9 +12,6 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/VBox",
 	"sap/m/Button",
-	"sap/m/List",
-	"sap/m/CustomListItem",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -29,12 +26,9 @@ function(
 	ObjectPageSubSection,
 	VBox,
 	Button,
-	List,
-	CustomListItem,
-	JSONModel,
 	sinon
 ) {
-	'use strict';
+	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
@@ -502,6 +496,60 @@ function(
 			assert.strictEqual(oSpy.args.length, 4, "number of Arguments is correct");
 			assert.strictEqual(oSpy.args[0][0], this.oSectionOverlay0, "first Argument for oSectionOverlay0 is correct");
 			assert.strictEqual(oSpy.args[1][0], this.oSubSectionOverlay0, "second Argument for oSectionOverlay0 is correct");
+		});
+	});
+
+	function createGeometryObject(iWidth, iHeight, iLeft, iTop, bVisible) {
+		return {
+			size: {
+				width: iWidth,
+				height: iHeight
+			},
+			position: {
+				left: iLeft,
+				top: iTop
+			},
+			visible: bVisible
+		};
+	}
+
+	QUnit.module("Given some geometry objects", {}, function() {
+		QUnit.test("when getGeometry is called with different overlays", function(assert) {
+			var oGeometry0 = createGeometryObject(20, 100, 5, 100, true);
+			var oGeometry1 = createGeometryObject(200, 200, 6, 300, true);
+			var oGeometry2 = createGeometryObject(0, 0, 0, 0, true);
+			var oGeometry3 = createGeometryObject(0, 0, 0, 0, false);
+
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry0, oGeometry1, oGeometry2, oGeometry3]),
+				createGeometryObject(206, 500, 0, 0, true),
+				"the geometry was correctly calculated"
+			);
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry0, oGeometry1, oGeometry2]),
+				createGeometryObject(206, 500, 0, 0, true),
+				"the geometry was correctly calculated"
+			);
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry0, oGeometry1, oGeometry3]),
+				createGeometryObject(201, 400, 5, 100, true),
+				"the geometry was correctly calculated"
+			);
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry0]),
+				oGeometry0,
+				"the Geometry is the same"
+			);
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry2]),
+				oGeometry2,
+				"the Geometry is the same"
+			);
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry3]),
+				undefined,
+				"nothing is returned because it's invisible"
+			);
 		});
 	});
 
