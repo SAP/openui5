@@ -36,6 +36,8 @@ sap.ui.define([
 		this.mCacheQueryOptions = undefined;
 		// used to create cache only for the latest call to #fetchCache
 		this.oFetchCacheCallToken = undefined;
+		// query options resulting from child bindings added when this binding already has data
+		this.mLateQueryOptions = undefined;
 		// the absolute binding path (possibly reduced if the binding uses a parent binding's cache)
 		this.sReducedPath = undefined;
 		// change reason to be used when the binding is resumed
@@ -278,6 +280,7 @@ sap.ui.define([
 		this.oCache = undefined;
 		aPromises = [this.fetchQueryOptionsForOwnCache(oContext), this.oModel.oRequestor.ready()];
 		this.mCacheQueryOptions = undefined;
+		this.mLateQueryOptions = undefined;
 		oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var mQueryOptions = aResult[0].mQueryOptions;
 

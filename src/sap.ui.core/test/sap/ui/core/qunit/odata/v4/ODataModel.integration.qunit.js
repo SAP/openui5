@@ -2060,10 +2060,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Return value context with data in cache, multiple context bindings w/o cache below,
-	// multiple properties bindings below these context bindings requesting their value late. One
+	// multiple property bindings below these context bindings requesting their value late. One
 	// request for all properties must occur. (The scenario of the incident.)
 	// BCP: 2080093480
-	QUnit.test("BCP 2080093480", function (assert) {
+	QUnit.test("BCP: 2080093480", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
 			sView = '\
@@ -2073,11 +2073,11 @@ sap.ui.define([
 </FlexBox>\
 <FlexBox id="result">\
 	<Text id="id2" text="{SalesOrderID}"/>\
-	<FlexBox id="noCache1" binding="{}">\
+	<FlexBox binding="{}">\
 		<Text id="note" text="{Note}"/>\
 		<Text id="language" text="{NoteLanguage}"/>\
 	</FlexBox>\
-	<FlexBox id="noCache2" binding="{SO_2_BP}">\
+	<FlexBox binding="{SO_2_BP}">\
 		<Text id="name" text="{CompanyName}"/>\
 		<Text id="legalForm" text="{LegalForm}"/>\
 	</FlexBox>\
@@ -2085,12 +2085,12 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID", {SalesOrderID : "1"})
-		.expectChange("id1", "1")
-		.expectChange("id2")
-		.expectChange("note")
-		.expectChange("language")
-		.expectChange("name")
-		.expectChange("legalForm");
+			.expectChange("id1", "1")
+			.expectChange("id2")
+			.expectChange("note")
+			.expectChange("language")
+			.expectChange("name")
+			.expectChange("legalForm");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
@@ -2109,21 +2109,21 @@ sap.ui.define([
 			var oReturnValueContext = aResults[0];
 
 			that.expectChange("id2", "1")
-			.expectRequest("SalesOrderList('1')?$select=Note,NoteLanguage,SalesOrderID"
-				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,LegalForm)", {
-				Note : "Note #1",
-				NoteLanguage : "en",
-				SalesOrderID : "1",
-				SO_2_BP : {
-					BusinessPartnerID : "2",
-					CompanyName : "TECUM",
-					LegalForm : "Ltd"
-				}
-			})
-			.expectChange("note", "Note #1")
-			.expectChange("language", "en")
-			.expectChange("name", "TECUM")
-			.expectChange("legalForm", "Ltd");
+				.expectRequest("SalesOrderList('1')?$select=Note,NoteLanguage,SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,LegalForm)", {
+					Note : "Note #1",
+					NoteLanguage : "en",
+					SalesOrderID : "1",
+					SO_2_BP : {
+						BusinessPartnerID : "2",
+						CompanyName : "TECUM",
+						LegalForm : "Ltd"
+					}
+				})
+				.expectChange("note", "Note #1")
+				.expectChange("language", "en")
+				.expectChange("name", "TECUM")
+				.expectChange("legalForm", "Ltd");
 
 			that.oView.byId("result").setBindingContext(oReturnValueContext);
 
@@ -2137,7 +2137,7 @@ sap.ui.define([
 	QUnit.test("ODCB w/o cache: late property", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox binding="{/SalesOrderList(\'1\')}">\
+<FlexBox id="outer" binding="{/SalesOrderList(\'1\')}">\
 	<FlexBox id="inner" binding="{SO_2_BP}">\
 		<Text id="companyName" text="{CompanyName}"/>\
 	</FlexBox>\
@@ -2169,10 +2169,29 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// code under test - value must be in the parent cache
 			assert.strictEqual(
 				that.oView.byId("inner").getBindingContext().getProperty("LegalForm"),
 				"Ltd"
 			);
+
+			that.expectChange("legalForm", null);
+
+			// TODO this should remove the property from the query options again
+			that.oView.byId("legalForm").setBindingContext(null);
+
+			that.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,LegalForm)", {
+					SalesOrderID : "1",
+					SO_2_BP : {
+						BusinessPartnerID : "2",
+						CompanyName : "TECUM (refreshed)",
+						LegalForm : "Ltd"
+					}
+				})
+				.expectChange("companyName", "TECUM (refreshed)");
+
+			that.oView.byId("outer").getObjectBinding().refresh();
 		});
 	});
 
