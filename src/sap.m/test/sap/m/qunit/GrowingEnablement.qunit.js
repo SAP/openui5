@@ -99,6 +99,8 @@ sap.ui.define([
 			assert.equal(oTrigger.TagName, "div", "Growing trigger has TagName as div");
 			assert.ok(oTrigger.$().is("div"), "Growing trigger rendered as div in DOM");
 			assert.ok(jQuery(".sapMSLITitle").is("span"), "More button rendered with span tag");
+			assert.strictEqual(oTrigger.$().attr("role"), "button", "role=button");
+			assert.strictEqual(oTrigger.$().attr("aria-selected"), undefined, "aria-selected attribute removed as role=button");
 
 			// act + assert growingScrollToLoad=true
 			oList.setGrowingScrollToLoad(false);
