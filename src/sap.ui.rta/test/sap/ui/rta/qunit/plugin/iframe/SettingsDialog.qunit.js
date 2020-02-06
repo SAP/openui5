@@ -231,11 +231,9 @@ sap.ui.define([
 		QUnit.test("When OK button is clicked then the returned settings should be correct", function (assert) {
 			this.oSettingsDialog.attachOpened(function () {
 				var oData = this.oSettingsDialog._oJSONModel.getData();
-				aTextInputFields.forEach(function (sFieldName) {
-					oData[sFieldName]["value"] = "Text entered";
-				});
+				oData.frameUrl.value = "https://www.sap.com/\tindex.html\r\n";
 				aNumericInputFields.forEach(function (sFieldName) {
-					oData[sFieldName]["value"] = 100;
+					oData[sFieldName].value = 100;
 				});
 				oData.asNewSection.value = true;
 				oData.frameWidthUnit.value = "rem";
@@ -243,9 +241,7 @@ sap.ui.define([
 				clickOnSave();
 			}, this);
 			return this.oSettingsDialog.open().then(function (mSettings) {
-				aTextInputFields.forEach(function (sFieldName) {
-					assert.strictEqual(mSettings[sFieldName], "Text entered", "Setting for " + sFieldName + " is correct");
-				});
+				assert.strictEqual(mSettings.frameUrl, "https://www.sap.com/index.html", "Setting for frameUrl is correct");
 				aNumericInputFields.forEach(function (sFieldName) {
 					assert.strictEqual(mSettings[sFieldName], 100, "Setting for " + sFieldName + " is correct");
 				});
