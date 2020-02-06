@@ -5,6 +5,9 @@
 
 @_sap_m_ListItemBase_DeleteIcon: sys-cancel;
 @_sap_m_ListItemBase_ButtonMarginTop: auto;
+@_sap_m_ListItemBase_SelectionControlWidth: 3rem;
+@_sap_m_ListItemBase_SelectionControlHeight: 3rem;
+@_sap_m_ListItemBase_compact_SelectionControlHeight: 2rem;
 
 .sapMLIB,
 .sapMLIBImgNav {
@@ -104,7 +107,8 @@
 
 .sapMLIBSelectS,
 .sapMLIBSelectM {
-	width: 3rem;
+	width: @_sap_m_ListItemBase_SelectionControlWidth;
+	height: @_sap_m_ListItemBase_SelectionControlHeight;
 	margin-left: 0;
 	padding-left: 0;
 }
@@ -334,16 +338,17 @@
 /* Compact size */
 .sapUiSizeCompact .sapMLIBSelectS,
 .sapUiSizeCompact .sapMLIBSelectM {
-	width: 2rem;
-}
-
-// adding margin-right 1rem so that width + margin-right = 3rem (according to the specs)
-.sapUiSizeCompact .sapMLIBSelectM,
-.sapUiSizeCompact .sapMListModeSingleSelectLeft > .sapMLIB > .sapMLIBSelectS {
-	margin-right: 1rem;
+	height: @_sap_m_ListItemBase_compact_SelectionControlHeight;
 }
 
 .sapUiSizeCompact .sapMLIB > .sapMLIBSelectS:first-child,
 .sapUiSizeCompact .sapMLIB > .sapMLIBSelectM:first-child {
+	margin-left: -0.5rem;
+}
+
+// Correct alignment of the selection control according to the specs.
+// 1rem padding-left (.sapMLIB) - 0.5rem margin-left (.sapMLIBSelectM) + 3rem width (.sapMLIBSelectM) - 0.5rem margin-left (.sapMLIBSelectM + .sapMLIBContent) = 3rem
+.sapUiSizeCompact .sapMLIB > .sapMLIBSelectM + .sapMLIBContent,
+.sapUiSizeCompact .sapMLIB > .sapMLIBSelectS + .sapMLIBContent {
 	margin-left: -0.5rem;
 }
