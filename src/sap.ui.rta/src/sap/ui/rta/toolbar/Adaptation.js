@@ -126,8 +126,9 @@ function(
 	function _setButtonProperties(sButtonName, sIcon, sTextKey, sToolTipKey) {
 		var oButton = this.getControl(sButtonName);
 		var sText = this.getTextResources().getText(sTextKey);
+		var sToolTip = this.getTextResources().getText(sToolTipKey);
 		oButton.setText(sText || "");
-		oButton.setTooltip(sToolTipKey || "");
+		oButton.setTooltip(sToolTip || "");
 		oButton.setIcon(sIcon || "");
 	}
 
@@ -149,7 +150,7 @@ function(
 				this.getControl("draftLabel").setVisible(false);
 				this.getControl("iconBox").setVisible(false);
 				this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
-				this._showButtonIcon("navigationSwitcherButton", "sap-icon://split", "BTN_NAVIGATION");
+				this._showButtonIcon("navigationSwitcherButton", "sap-icon://explorer", "BTN_NAVIGATION");
 				this.getControl("iconBox").setVisible(false);
 				this.getControl("iconSpacer").setVisible(false);
 				this._showButtonIcon("exit", "sap-icon://decline", "BTN_EXIT");
