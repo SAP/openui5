@@ -67,6 +67,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets a draft in case it is not already present; This function must be called after a save operation to ensure a correct versions state in the session.
+	 *
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 */
+	Versions.ensureDraftVersionExists = function(mPropertyBag) {
+		var aVersions = _mInstances[mPropertyBag.reference][mPropertyBag.layer];
+		if (!_doesDraftExist(aVersions)) {
+			_mInstances[mPropertyBag.reference][mPropertyBag.layer].splice(0, 0, {versionNumber: 0});
+		}
+	};
+
+	/**
 	 * Activates the draft for a given application and layer.
 	 *
 	 * @param {object} mPropertyBag - Property Bag

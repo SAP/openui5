@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/context/ContextManager",
+	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
@@ -26,6 +27,7 @@ sap.ui.define([
 	Variant,
 	ChangePersistenceFactory,
 	ContextManager,
+	Versions,
 	Applier,
 	Reverter,
 	URLHandler,
@@ -457,7 +459,21 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.saveAll = function (bSkipUpdateCache, bDraft) {
-		return this._oChangePersistence.saveDirtyChanges(bSkipUpdateCache, undefined, bDraft);
+		return this._oChangePersistence.saveDirtyChanges(bSkipUpdateCache, undefined, bDraft)
+		.then(function (oResult) {
+			if (bDraft && oResult && oResult.response) {
+				var vChangeDefinition = oResult.response;
+				if (Array.isArray(vChangeDefinition)) {
+					// the reference and layer of all items are the same
+					vChangeDefinition = vChangeDefinition[0];
+				}
+				Versions.ensureDraftVersionExists({
+					reference : vChangeDefinition.reference,
+					layer : vChangeDefinition.layer
+				});
+			}
+			return oResult;
+		});
 	};
 
 	/**
@@ -713,7 +729,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Saves changes sequentially on the associated change persistence instance
+	 * Saves changes sequentially on the associated change persistence instance;
+	 * This API must be only used in scnarios without draft (like personalization).
+	 *
 	 * @param {sap.ui.fl.Change[]} aDirtyChanges Array of dirty changes to be saved
 	 * @returns {Promise} A Promise which resolves when all changes have been saved
 	 * @public

@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/write/_internal/Versions",
 	"sap/base/util/deepClone",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
@@ -52,6 +53,7 @@ function (
 	FlexCustomData,
 	ChangeUtils,
 	Reverter,
+	Versions,
 	deepClone,
 	jQuery,
 	sinon
@@ -121,21 +123,54 @@ function (
 		});
 
 		QUnit.test("when saveAll is called with skipping the cache", function (assert) {
-			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges");
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			this.oFlexController.saveAll(true);
 			assert.ok(fnChangePersistenceSaveStub.calledWith(true));
 		});
 
 		QUnit.test("when saveAll is called for draft", function (assert) {
-			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges");
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			this.oFlexController.saveAll(undefined, true);
 			assert.ok(fnChangePersistenceSaveStub.calledWith(undefined, undefined, true));
 		});
 
 		QUnit.test("when saveAll is called with skipping the cache and for draft", function (assert) {
-			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges");
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			this.oFlexController.saveAll(true, true);
 			assert.ok(fnChangePersistenceSaveStub.calledWith(true, undefined, true));
+		});
+
+		function _runSaveAllAndAssumeVersionsCall(assert, vResponse, bDraft, nCallCount) {
+			var oVersionsStub = sandbox.stub(Versions, "ensureDraftVersionExists");
+			var oResult = vResponse ? {response: vResponse} : undefined;
+			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oResult);
+			return this.oFlexController.saveAll(undefined, bDraft).then(function () {
+				assert.equal(oVersionsStub.callCount, nCallCount);
+			});
+		}
+
+		QUnit.test("when saveAll is called without draft and no change was saved", function (assert) {
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, undefined, false, 0);
+		});
+
+		QUnit.test("when saveAll is called without draft and a change was saved", function (assert) {
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{}], false, 0);
+		});
+
+		QUnit.test("when saveAll is called without draft and multiple changes were saved", function (assert) {
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{}, {}], false, 0);
+		});
+
+		QUnit.test("when saveAll is called with draft and no change was saved", function (assert) {
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, undefined, true, 0);
+		});
+
+		QUnit.test("when saveAll is called with draft and a change was saved", function (assert) {
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{}], true, 1);
+		});
+
+		QUnit.test("when saveAll is called with draft and multiple changes were saved", function (assert) {
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{}, {}], true, 1);
 		});
 
 		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", function (assert) {
