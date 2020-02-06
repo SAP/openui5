@@ -5,7 +5,9 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Metadata",
+	"sap/ui/core/Core",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/Configuration",
 	"sap/ui/base/ManagedObjectObserver",
 	"./AnchorBar",
 	"sap/m/Button",
@@ -13,8 +15,11 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/ui/core/IconPool"
-], function (jQuery, Metadata, CustomData, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool) {
+], function (jQuery, Metadata, Core, CustomData, Configuration, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool) {
 	"use strict";
+
+	// animation modes that support animation upon scroll to section
+	var SCROLL_ANIMATION_MODES = [Configuration.AnimationMode.full, Configuration.AnimationMode.basic];
 
 	var ABHelper = Metadata.createClass("sap.uxap._helpers.AB", {
 		/**
@@ -199,8 +204,10 @@ sap.ui.define([
 			bAllowFocusMove = (oSection && !oObjectPage.getUseIconTabBar()) || (oObjectPage.getUseIconTabBar() && bIsSubSection),
 			iFocusMoveDelay = this._iFocusMoveDelay;
 
-		if (bAllowFocusMove) {
+		if (bAllowFocusMove && this._isScrollAnimationEnabled()) {
 			setTimeout(oSection.$()["focus"].bind(oSection.$()), iFocusMoveDelay);
+		} else if (bAllowFocusMove) {
+			oSection.$().focus();
 		}
 
 		// Handle the case of SubSection first rendering in IconTabBar mode
@@ -212,6 +219,10 @@ sap.ui.define([
 
 			oSection.addEventDelegate(oDelegate);
 		}
+	};
+
+	ABHelper.prototype._isScrollAnimationEnabled = function () {
+		return SCROLL_ANIMATION_MODES.indexOf(Core.getConfiguration().getAnimationMode()) >= 0;
 	};
 
 	ABHelper.prototype._instantiateAnchorBarButton = function (bIsMenuButton, sAriaDescribedBy, sId) {
@@ -293,10 +304,10 @@ sap.ui.define([
 					}));
 				} else {
 					oButtonClone = this._instantiateAnchorBarButton(false, oSectionBase, sId);
-					oButtonClone.attachPress(fnPressHandler);
 					oButtonClone.attachPress(function (oEvent) {
 						this._moveFocusOnSection(oEvent.getSource());
 					}, this);
+					oButtonClone.attachPress(fnPressHandler);
 				}
 
 				//has a ux rule been applied that we need to reflect here?
@@ -304,10 +315,10 @@ sap.ui.define([
 				oButtonClone.setText(sTitle);
 			} else {
 				oButtonClone = oButton.clone(); //keep original button parent control hierarchy
-				oButtonClone.attachPress(fnPressHandler);
 				oButtonClone.attachPress(function (oEvent) {
 					this._moveFocusOnSection(oEvent.getSource());
 				}, this);
+				oButtonClone.attachPress(fnPressHandler);
 				this._oObserver.observe(oButton, {
 					properties: true
 				});

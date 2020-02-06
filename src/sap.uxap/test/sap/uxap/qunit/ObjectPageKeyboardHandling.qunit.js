@@ -2,11 +2,12 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/core/Configuration",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
 	"sap/ui/core/mvc/XMLView"],
-function($, Core, KeyCodes, QUtils, Device, XMLView) {
+function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
@@ -381,6 +382,7 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 		assert.ok(oSpy.notCalled, "_scrollParent should not be called");
 	});
 
+
 	/*******************************************************************************
 	 * sap.uxap.ObjectPageSection/sap.uxap.ObjectPageSubSection F7
 	 ******************************************************************************/
@@ -538,6 +540,53 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 
 		oInput.onkeydown(oEventInput);
 		assert.notOk(oSpyInput.called, "preventDefault is not called on SPACE key for the internal input");
+	});
+
+	QUnit.module("Focus/scroll order", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-70_KeyboardHandling",
+				viewName: "view.UxAP-70_KeyboardHandling"
+			}).then(function (oView) {
+				this.anchorBarView = oView;
+				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+				this.oScrollSpy = sinon.spy(sap.uxap.AnchorBar.prototype, "_handleDirectScroll");
+				this.oFocusSpy = sinon.spy(this.oObjectPage._oABHelper, "_moveFocusOnSection");
+				this.anchorBarView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.anchorBarView.destroy();
+			this.oScrollSpy.restore();
+			this.oFocusSpy.restore();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("Focus from toolbar to section", function (assert) {
+		var oSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1],
+			oOrigAnimationMode = Core.getConfiguration().getAnimationMode();
+
+		assert.expect(3);
+
+		// Setup
+		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		this.oScrollSpy.reset();
+		this.oFocusSpy.reset();
+
+		// Act
+		oSectionButton.firePress();
+
+		// Check
+		assert.strictEqual(this.oScrollSpy.called, true, "Scroll to section is called");
+		assert.strictEqual(this.oFocusSpy.called, true, "Section must be focused");
+		sinon.assert.callOrder(this.oFocusSpy, this.oScrollSpy);
+
+		// restore state
+		Core.getConfiguration().setAnimationMode(oOrigAnimationMode);
 	});
 
 });
