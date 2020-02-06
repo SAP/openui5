@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -30,6 +31,7 @@ sap.ui.define([
 	Remove,
 	RtaQunitUtils,
 	PersistenceWriteAPI,
+	FeaturesAPI,
 	VersionsAPI,
 	sinon
 ) {
@@ -760,6 +762,46 @@ sap.ui.define([
 		});
 	});
 
+	function _mockStateCallIsDraftAvailableAndCheckResult(assert, oRta, bIsVersioningEnabled, bIsDraftAvailable, bCanUndo, bExpectedResult) {
+		oRta._bVersioningEnabled = bIsVersioningEnabled;
+		sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(bIsDraftAvailable);
+		sandbox.stub(oRta, "canUndo").returns(bCanUndo);
+		return oRta._isDraftAvailable()
+			.then(function (bResult) {
+				assert.equal(bResult, bExpectedResult);
+			});
+	}
+
+	QUnit.module("Given that RuntimeAuthoring wants to determine if a draft is available", {
+		beforeEach: function() {
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : false
+			});
+		},
+		afterEach: function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and versioning is not available", function (assert) {
+			return _mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, false, false, false, false);
+		});
+		QUnit.test("and versioning is available but no draft and no undo is available", function (assert) {
+			return _mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, false, false, false);
+		});
+		QUnit.test("and versioning and a draft is available", function (assert) {
+			return _mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, true, false, true);
+		});
+		QUnit.test("and versioning and a undo is available", function (assert) {
+			return _mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, false, true, true);
+		});
+		QUnit.test("and versioning, a draft and undo is available", function (assert) {
+			return _mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, true, true, true);
+		});
+	});
+
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a reload is needed", {
 		beforeEach: function() {
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
@@ -799,7 +841,7 @@ sap.ui.define([
 			var oHandleReloadMessageBoxOnStart = sandbox.stub(this.oRta, "_handleReloadMessageBoxOnStart").returns(Promise.resolve());
 			var oReloadWithoutHigherLayerOrDraftChangesOnStart = sandbox.stub(this.oRta, "_reloadWithMaxLayerOrDraftParam").returns(Promise.resolve());
 			var oIsDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
-			sandbox.stub(this.oRta, "_isVersioningEnabled").returns(Promise.resolve(true));
+			this.oRta._bVersioningEnabled = true;
 
 			return this.oRta._determineReload().then(function () {
 				assert.equal(oIsDraftAvailableStub.callCount, 1, "then isDraftAvailable is called once");
@@ -831,7 +873,7 @@ sap.ui.define([
 			var oHasParameterSpy = sandbox.spy(this.oRta, "_hasParameter");
 			var oHandleReloadMessageBoxOnStart = sandbox.stub(this.oRta, "_handleReloadMessageBoxOnStart").returns(Promise.resolve());
 			var oReloadWithoutHigherLayerOrDraftChangesOnStart = sandbox.stub(this.oRta, "_reloadWithMaxLayerOrDraftParam").returns(Promise.resolve());
-			sandbox.stub(this.oRta, "_isVersioningEnabled").returns(Promise.resolve(false));
+			this.oRta._bVersioningEnabled = false;
 
 			return this.oRta._determineReload().then(function () {
 				assert.equal(oIsDraftAvailableStub.callCount, 0, "then isDraftAvailable is not called");
