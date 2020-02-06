@@ -1471,7 +1471,67 @@ sap.ui.define([
 		this.oPopup.setAutoCloseAreas([this.oInput]);
 
 		assert.equal(this.oInput.aDelegates.length, 1, "there's only 1 delegate added");
-		assert.equal(this.oPopup._aAutoCloseAreas.length, 1, "the same control is only added once as autoclose area");
+		assert.equal(this.oPopup._aExtraContent.length, 1, "the same control is only added once as autoclose area");
+	});
+
+	QUnit.module("Extra Popup Content Seletor", {
+		beforeEach: function() {
+			var oPopupDomRef = jQuery.sap.domById("popup1");
+			this.oPopup = new Popup(oPopupDomRef);
+		},
+		afterEach: function() {
+			this.oPopup.destroy();
+		}
+	});
+
+	QUnit.test("External DOM element marked with data-ui5-integration-popup-content is part of the Popup", function(assert) {
+		var oExternalPopupContent = document.getElementById("focusableElementWithAttribute");
+		var oFocusableElement = document.getElementById("focusableElement");
+
+		assert.strictEqual(this.oPopup._contains(oFocusableElement), false, "The element without the attribute isn't part of the popup");
+		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), true, "The element with the attribute is part of the popup");
+	});
+
+	QUnit.test("External DOM element whose parent is marked with data-ui5-integration-popup-content is part of the Popup", function(assert) {
+		var oExternalPopupContent = document.getElementById("focusableElementWithAttributeInParent");
+
+		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), true, "The element with the attribute in parent is part of the popup");
+	});
+
+	QUnit.test("External DOM element marked with registerd custom attribute is part of the Popup", function(assert) {
+		var oExternalPopupContent = document.getElementById("focusableElementWithCustomAttribute");
+
+		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), false, "The element with the custom attribute isn't part of the popup before the selector is registered");
+
+		Popup.addExternalContent("[data-custom-popup-content]");
+
+		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), true, "The element with the custom attribute is part of the popup after the selector is registered");
+
+		Popup.removeExternalContent("[data-custom-popup-content]");
+
+		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), false, "The element with the custom attribute isn't part of the popup after the selector is removed");
+	});
+
+	QUnit.test("External DOM element whose parent is marked with custom attribute  is part of the Popup", function(assert) {
+		var oExternalPopupContent = document.getElementById("focusableElementWithCustomAttributeInParent");
+
+		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), false, "The element with the attribute in parent isn't part of the popup before the attribute is registered");
+
+		Popup.addExternalContent("[data-custom-popup-content-2]");
+
+		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), true, "The element with the custom attribute is part of the popup after the selector is registered");
+
+		Popup.removeExternalContent("[data-custom-popup-content-2]");
+
+		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), false, "The element with the custom attribute isn't part of the popup after the selector is removed");
+	});
+
+	QUnit.test("The default selector can't be deleted", function(assert) {
+		var oExternalPopupContent = document.getElementById("focusableElementWithAttributeInParent");
+		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), true, "The element with the attribute in parent is part of the popup");
+
+		Popup.removeExternalContent("[data-ui5-integration-popup-content]");
+		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), true, "The element with the attribute in parent is still part of the popup");
 	});
 
 	QUnit.module("bug fixes", {
