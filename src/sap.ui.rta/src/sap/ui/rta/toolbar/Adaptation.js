@@ -111,7 +111,7 @@ function(
 
 	Adaptation.prototype.onAfterRendering = function () {
 		if (!Device.media.hasRangeSet(DEVICE_SET)) {
-			Device.media.initRangeSet(DEVICE_SET, [600, 900], "px", [Adaptation.modes.MOBILE, Adaptation.modes.TABLET, Adaptation.modes.DESKTOP]);
+			Device.media.initRangeSet(DEVICE_SET, [900, 1200], "px", [Adaptation.modes.MOBILE, Adaptation.modes.TABLET, Adaptation.modes.DESKTOP]);
 		}
 		this._onSizeChanged(Device.media.getCurrentRange(DEVICE_SET));
 
@@ -140,29 +140,37 @@ function(
 		_setButtonProperties.call(this, sButtonName, "", sTextKey, "");
 	};
 
+	Adaptation.prototype._switchToIcons = function() {
+		this.getControl("draftLabel").setVisible(false);
+		this.getControl("iconBox").setVisible(false);
+		this.getControl("iconSpacer").setVisible(false);
+		this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
+		this._showButtonIcon("navigationSwitcherButton", "sap-icon://explorer", "BTN_NAVIGATION");
+		this._showButtonIcon("exit", "sap-icon://decline", "BTN_EXIT");
+	};
+
+	Adaptation.prototype._switchToTexts = function () {
+		this._setDraftLabelVisibility();
+		this.getControl("iconBox").setVisible(true);
+		this.getControl("iconSpacer").setVisible(true);
+		this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
+		this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
+		this._showButtonText("exit", "BTN_EXIT");
+	};
+
 	Adaptation.prototype._onSizeChanged = function(mParams) {
 		var sMode = mParams.name;
 		this.sMode = sMode;
 
 		switch (sMode) {
 			case Adaptation.modes.MOBILE:
+				this._switchToIcons();
+				break;
 			case Adaptation.modes.TABLET:
-				this.getControl("draftLabel").setVisible(false);
-				this.getControl("iconBox").setVisible(false);
-				this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
-				this._showButtonIcon("navigationSwitcherButton", "sap-icon://explorer", "BTN_NAVIGATION");
-				this.getControl("iconBox").setVisible(false);
-				this.getControl("iconSpacer").setVisible(false);
-				this._showButtonIcon("exit", "sap-icon://decline", "BTN_EXIT");
+				this._switchToTexts();
 				break;
 			case Adaptation.modes.DESKTOP:
-				this.getControl("draftLabel").setVisible(this.getDraftVisible());
-				this.getControl("iconBox").setVisible(true);
-				this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
-				this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
-				this.getControl("iconBox").setVisible(true);
-				this.getControl("iconSpacer").setVisible(true);
-				this._showButtonText("exit", "BTN_EXIT");
+				this._switchToTexts();
 				break;
 			default:
 			// no default
@@ -217,16 +225,16 @@ function(
 		this.getControl("restore").setEnabled(bEnabled);
 	};
 
-	Adaptation.prototype._setDraftLabelVisibility = function (bVisible) {
-		var bLabelVisible = bVisible && this.sMode === Adaptation.modes.DESKTOP;
+	Adaptation.prototype._setDraftLabelVisibility = function () {
+		var bLabelVisible = this.getDraftVisible() && this.sMode === Adaptation.modes.DESKTOP;
 		this.getControl("draftLabel").setVisible(bLabelVisible);
 	};
 
 	Adaptation.prototype.setDraftVisible = function (bVisible) {
-		this._setDraftLabelVisibility(bVisible);
+		this.setProperty("draftVisible", bVisible, true);
+		this._setDraftLabelVisibility();
 		this.getControl("activateDraft").setVisible(bVisible);
 		this.getControl("discardDraft").setVisible(bVisible);
-		this.setProperty("draftVisible", bVisible, true);
 		return bVisible;
 	};
 
