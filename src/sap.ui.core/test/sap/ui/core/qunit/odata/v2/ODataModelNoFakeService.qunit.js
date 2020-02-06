@@ -477,8 +477,10 @@ sap.ui.define([
 		var oEntity = {
 				__metadata : {
 					"content_type" : "content_type",
+					created : "created",
 					"edit_media" : "edit_media",
 					etag : "etag",
+					id : "id",
 					"media_etag" : "media_etag",
 					"media_src" : "media_src",
 					nonStandard : "foo",
@@ -494,8 +496,10 @@ sap.ui.define([
 		assert.deepEqual(oEntity, {
 			__metadata : {
 				"content_type" : "content_type",
+				created : "created",
 				"edit_media" : "edit_media",
 				etag : "etag",
+				id : "id",
 				"media_etag" : "media_etag",
 				"media_src" : "media_src",
 				type : "type",
