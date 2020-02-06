@@ -7,7 +7,7 @@
 		<tnt:header>
 			<tnt:ToolHeader>
 				<ToolbarSpacer />
-				<Title text="{i18n>appTitle}" />
+				<Title text="{= ${titleModel>/title} || ${i18n>appTitle}}" />
 				<ToolbarSpacer />
 			</tnt:ToolHeader>
 		</tnt:header>
