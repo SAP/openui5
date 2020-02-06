@@ -263,7 +263,12 @@ function (
 						// new teasks are created during element overlay registration
 						if (this._oTaskManager.isEmpty() && this._sStatus !== DesignTimeStatus.SYNCED) {
 							this._sStatus = DesignTimeStatus.SYNCED;
-							setTimeout(function () {
+							if (this._oCompleteTimeoutId) {
+								clearTimeout(this._oCompleteTimeoutId);
+								delete this._oCompleteTimeoutId;
+							}
+							this._oCompleteTimeoutId = setTimeout(function () {
+								delete this._oCompleteTimeoutId;
 								// checks if designTime status is still synced, due to asynchronity from setTimeout()
 								if (this._sStatus === DesignTimeStatus.SYNCED) {
 									this.fireSynced();

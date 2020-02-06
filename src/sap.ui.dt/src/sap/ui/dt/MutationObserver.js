@@ -194,12 +194,27 @@ sap.ui.define([
 		return mElementIds.result || mElementIds.closestElementInWhitlist/* when element with scrollbar and his parents are not registered */;
 	};
 
-	MutationObserver.prototype._getRelevantElementId = function (oNode) {
+	MutationObserver.prototype._isNodeOverlayRelated = function (oNode, oMutation) {
+		var sOverlayContainerId = "overlay-container";
+		if (DOMUtil.contains(sOverlayContainerId, oNode)) {
+			return true;
+		}
+		if (oNode === document.body) {
+			return oMutation
+				&& oMutation.addedNodes
+				&& oMutation.addedNodes[0]
+				&& oMutation.addedNodes[0].getAttribute
+				&& oMutation.addedNodes[0].getAttribute('id') === sOverlayContainerId;
+		}
+		return false;
+	};
+
+	MutationObserver.prototype._getRelevantElementId = function (oNode, oMutation) {
 		var sNodeId = oNode && oNode.getAttribute && oNode.getAttribute('id');
 		var sRelevantElementId;
 		if (
-			// 1. Filter out overlay mutations
-			!DOMUtil.contains("overlay-container", oNode)
+			// 1. Filter out overlay related mutations (overlays, overlay-container and body mutation when overlay-container is added)
+			!this._isNodeOverlayRelated(oNode, oMutation)
 
 			// 2. Mutation happened in Node which is still in actual DOM Tree
 			// Must be always on the first place since sometimes mutations for detached nodes may come
@@ -286,7 +301,7 @@ sap.ui.define([
 				var aOverallTargetElementIds = aMutations.reduce(function (aOverallTargetElementIds, oMutation) {
 					var aTargetElementIds = [];
 					var oTargetNode = this._getTargetNode(oMutation);
-					var oTargetElementId = this._getRelevantElementId(oTargetNode);
+					var oTargetElementId = this._getRelevantElementId(oTargetNode, oMutation);
 					if (oTargetElementId) {
 						aTargetElementIds.push(oTargetElementId);
 					} else {
