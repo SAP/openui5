@@ -83,8 +83,11 @@ sap.ui.define([
 	// entity
 	var mMetadataPropertyNames = {
 			"content_type" : true,
+			created : true, //TODO remove when controls relying on this private property are fixed
 			"edit_media" : true,
 			etag : true,
+			// not spec'd in OData V2, but in OData V3 "for services using OData 2.0", see odata.org
+			id : true,
 			"media_etag" : true,
 			"media_src" : true,
 			type : true,
