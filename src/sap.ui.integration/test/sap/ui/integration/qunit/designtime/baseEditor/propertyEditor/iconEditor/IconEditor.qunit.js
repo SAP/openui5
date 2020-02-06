@@ -128,7 +128,7 @@ sap.ui.define([
 				QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
 
 				assert.strictEqual(this.oEditorElement.getValueState(), "Error", "Then the error is displayed");
-				assert.strictEqual(this.oEditor.getBindingContext().getObject().value, "sap-icon://target-group", "Then the model is not updated");
+				assert.strictEqual(this.oEditor.getValue(), "sap-icon://target-group", "Then the editor value is not updated");
 
 				fnDone();
 			}.bind(this));
@@ -180,7 +180,7 @@ sap.ui.define([
 			this.oEditorElement.attachValueHelpRequest(function () {
 				this.oEditor._handleValueHelp.returnValues[0].then(function (oDialog) {
 					QUnitUtils.triggerEvent("tap", oDialog._getCancelButton().getDomRef());
-					assert.strictEqual(this.oEditor.getBindingContext().getObject().value, "sap-icon://target-group", "Then the model is not updated");
+					assert.strictEqual(this.oEditor.getValue(), "sap-icon://target-group", "Then the model is not updated");
 					fnDone();
 				}.bind(this));
 			}.bind(this));

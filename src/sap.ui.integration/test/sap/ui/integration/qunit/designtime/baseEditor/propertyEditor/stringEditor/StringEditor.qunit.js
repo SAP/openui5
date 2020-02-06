@@ -108,7 +108,7 @@ sap.ui.define([
 				QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
 
 				assert.strictEqual(this.oEditorElement.getValueState(), "Error", "Then the error is displayed");
-				assert.strictEqual(this.oEditor.getBindingContext().getObject().value, "Hello World.", "Then the model is not updated");
+				assert.strictEqual(this.oEditor.getValue(), "Hello World.", "Then the editor value is not updated");
 
 				fnDone();
 			}.bind(this));

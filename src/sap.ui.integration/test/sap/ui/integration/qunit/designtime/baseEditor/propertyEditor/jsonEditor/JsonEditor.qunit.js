@@ -164,7 +164,7 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
 
 			assert.strictEqual(this.oEditorElement.getValueState(), "Error", "Then the error is displayed");
-			assert.deepEqual(this.oEditor.getBindingContext().getObject().value, this.oOriginalModelContent.content, "Then the model is not updated");
+			assert.deepEqual(this.oEditor.getValue(), this.oOriginalModelContent.content, "Then the editor value is not updated");
 
 			// Edit the error in the dialog
 

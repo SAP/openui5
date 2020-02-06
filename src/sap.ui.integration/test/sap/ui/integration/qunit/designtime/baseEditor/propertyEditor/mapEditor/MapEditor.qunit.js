@@ -182,7 +182,7 @@ sap.ui.define([
 				QUnitUtils.triggerEvent("input", this.aItems[0].key.getDomRef());
 
 				assert.deepEqual(
-					this.oMapEditor.getAggregation("propertyEditor").getBindingContext().getObject().value,
+					this.oMapEditor.getValue(),
 					{
 						complex: {
 							complexChild: "childValue"
@@ -251,7 +251,7 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("input", oInput.getDomRef());
 
 			assert.deepEqual(
-				this.oMapEditor.getAggregation("propertyEditor").getBindingContext().getObject().value,
+				this.oMapEditor.getValue(),
 				{
 					complex: {
 						complexChild: "childValue"
