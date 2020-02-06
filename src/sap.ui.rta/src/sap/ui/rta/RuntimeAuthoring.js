@@ -1008,10 +1008,17 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._onActivateDraft = function() {
-		return VersionsAPI.activateDraft({
-			layer: this.getLayer(),
-			selector: this.getRootControlInstance()
-		});
+		return this._serializeAndSave()
+		.then(
+			VersionsAPI.activateDraft.bind(undefined, {
+				layer : this.getLayer(),
+				selector : this.getRootControlInstance()
+			})
+		).then(function () {
+			this.bInitialDraftAvailable = false;
+			this.getToolbar().setDraftVisible(false);
+			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
+		}.bind(this));
 	};
 
 	RuntimeAuthoring.prototype._onDiscardDraft = function() {

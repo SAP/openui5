@@ -745,11 +745,27 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _onActivateDraft is called ", function(assert) {
-			var fnActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").returns(Promise.resolve(true));
+			var oActivateDraftStub;
+			var oShowMessageToastStub;
+			var oRemoveAllCommandsSpy;
+			var oToolbarSetDraftVisibleSpy;
+			var oRta = this.oRta;
 
-			return this.oRta._onActivateDraft().then(function() {
-				assert.ok(fnActivateDraftStub
-						.calledOnce, "then the activateDraft() method is called once ");
+			return oRta.start().then(function () {
+				oRta.bInitialDraftAvailable = true;
+				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").returns(Promise.resolve(true));
+				oShowMessageToastStub = sandbox.stub(oRta, "_showMessageToast");
+				oRemoveAllCommandsSpy = sandbox.spy(oRta.getCommandStack(), "removeAllCommands");
+				oToolbarSetDraftVisibleSpy = sandbox.spy(oRta.getToolbar(), "setDraftVisible");
+			})
+			.then(oRta._onActivateDraft.bind(oRta))
+			.then(function() {
+				assert.equal(oActivateDraftStub.callCount, 1, "then the activateDraft() method is called once");
+				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
+				assert.equal(oRta.bInitialDraftAvailable, false, "and the initialDraftAvailable is removed");
+				assert.equal(oToolbarSetDraftVisibleSpy.callCount, 2, "and the draft info is set twice");
+				assert.equal(oToolbarSetDraftVisibleSpy.getCall(1).args[0], false, "to false");
+				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
 			});
 		});
 
