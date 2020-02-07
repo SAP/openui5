@@ -310,7 +310,7 @@ sap.ui.define([
 							this._oItemNavigation = new HeaderContainerItemNavigator();
 							this.addDelegate(this._oItemNavigation);
 							this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
-							this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleBorderReached, this);
+							this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleAfterFocus, this);
 							this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, this._handleBeforeFocus, this);
 							if (Device.browser.msie || Device.browser.edge) {
 								this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, this._handleFocusAgain, this);
@@ -894,7 +894,30 @@ sap.ui.define([
 			}
 		};
 
+		HeaderContainer.prototype._handleAfterFocus = function (oEvt) {
+			//For Edge and IE on mousedown input element not getting focused.Hence setting focus manually.
+			var oSrcEvent = oEvt.getParameter("event");
+			if ((Device.browser.msie || Device.browser.edge) && oSrcEvent.type === "mousedown" && oSrcEvent.srcControl instanceof sap.m.Input) {
+				oSrcEvent.srcControl.focus();
+			}
+			if (Device.browser.msie && this.bScrollInProcess) {
+				return;
+			}
+			var iIndex = oEvt.getParameter("index");
+			if (iIndex === 0) {
+				this._scroll(this._getScrollValue(false), this.getScrollTime());
+			} else if (iIndex === this._filterVisibleItems().length - 1) {
+				this._scroll(this._getScrollValue(true), this.getScrollTime());
+			}
+
+		};
+
 		HeaderContainer.prototype._handleFocusAgain = function (oEvt) {
+			//For Edge and IE on mousedown input element not getting focused.Hence setting focus manually.
+			var oSrcEvent = oEvt.getParameter("event");
+			if ((Device.browser.msie || Device.browser.edge) && oSrcEvent.type === "mousedown" && oSrcEvent.srcControl instanceof sap.m.Input) {
+				oSrcEvent.srcControl.focus();
+			}
 			oEvt.getParameter("event").preventDefault();
 		};
 
