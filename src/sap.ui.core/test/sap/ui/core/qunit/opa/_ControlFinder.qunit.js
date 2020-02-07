@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/_ControlFinder",
 	"sap/m/library",
 	"sap/m/Button",
@@ -8,10 +9,8 @@ sap.ui.define([
 	"sap/m/ObjectListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/_LogCollector"
-], function (_ControlFinder,  mobileLibrary, Button, SearchField, List, ObjectListItem, JSONModel, PropertyStrictEquals,
-		AggregationLengthEquals, _LogCollector) {
+], function ($, _ControlFinder,  mobileLibrary, Button, SearchField, List, ObjectListItem, JSONModel, PropertyStrictEquals, _LogCollector) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -201,7 +200,7 @@ sap.ui.define([
 	QUnit.module("_ControlFinder - interaction adapters", {
 		beforeEach: function () {
 			var oJSONModel = new JSONModel({
-                items: [{id: 1, name: "Item 11"}, {id: 2, name: "Item 22"}]
+				items: [{id: 1, name: "Item 11"}, {id: 2, name: "Item 22"}]
 			});
 			sap.ui.getCore().setModel(oJSONModel);
 			this.oList = new List("myList");
