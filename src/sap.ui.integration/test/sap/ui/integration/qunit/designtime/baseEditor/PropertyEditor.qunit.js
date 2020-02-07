@@ -655,6 +655,41 @@ function (
 
 			this.oPropertyEditor.setPropertyName("foo");
 		});
+
+		QUnit.test("when setRenderLabel is called right after creation", function (assert) {
+			var oPropertyEditor = new PropertyEditor({
+				editor: this.oBaseEditor,
+				propertyName: "foo"
+			});
+
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			oPropertyEditor.setRenderLabel(false);
+
+			return oPropertyEditor.ready().then(function () {
+				assert.strictEqual(oPropertyEditor.getRenderLabel(), false, "then wrapper has a correct value");
+				assert.strictEqual(oPropertyEditor.getAggregation("propertyEditor").getRenderLabel(), false, "then nested editor has a correct value");
+			});
+		});
+
+		QUnit.test("when setRenderLabel is called with some delay", function (assert) {
+			var oPropertyEditor = new PropertyEditor({
+				editor: this.oBaseEditor,
+				propertyName: "foo"
+			});
+
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return Promise.all([oPropertyEditor]).then(function (aPropertyEditors) {
+				aPropertyEditors[0].setRenderLabel(false);
+
+				return oPropertyEditor.ready().then(function () {
+					assert.strictEqual(aPropertyEditors[0].getRenderLabel(), false, "then wrapper has a correct value");
+					assert.strictEqual(aPropertyEditors[0].getAggregation("propertyEditor").getRenderLabel(), false, "then nested editor has a correct value");
+				});
+			});
+
+		});
 	});
 
 	QUnit.module("PropertyEditor is not descendant of BaseEditor initially", {

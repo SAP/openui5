@@ -11,12 +11,13 @@ sap.ui.define([
 
 	function getParameterEditorContent (oEditor) {
 		return {
-			addButton: oEditor.getContent().getColumns()[2].getHeader(),
-			items: oEditor.getContent().getItems().map(function (item) {
+			addButton: oEditor.getContent().getItems()[1],
+			items: oEditor.getContent().getItems()[0].getItems().map(function (item) {
 				return {
 					key: item.getCells()[0],
-					value: item.getCells()[1],
-					deleteButton: item.getCells()[2]
+					type: item.getCells()[1],
+					value: item.getCells()[2],
+					deleteButton: item.getCells()[3]
 				};
 			})
 		};
