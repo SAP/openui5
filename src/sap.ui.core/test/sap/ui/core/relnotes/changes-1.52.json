@@ -1982,5 +1982,32 @@
         ]
       }
     ]
+  },
+  "1.52.38": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "905aceeb148ad470a89d0ddbfd1dca294229f97c",
+        "type": "FIX",
+        "text": " handlebars: upgrading to version 4.4.3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970505257"
+          }
+        ]
+      },
+      {
+        "id": "e5f049e9d6ada0178bc5a37b6000472157034058",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Changing pages with fast clicks is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006800032019"
+          }
+        ]
+      }
+    ]
   }
 }
