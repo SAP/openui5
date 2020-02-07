@@ -71,6 +71,12 @@ sap.ui.define([],
 			reveal : {
 				changeType : "unhideControl"
 			},
+			rename: {
+				changeType: "rename",
+				domRef: function (oControl) {
+					return oControl.$()[0];
+				}
+			},
 			settings: function () {
 				return {
 					"changeLinkTarget": {
