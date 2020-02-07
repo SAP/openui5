@@ -117,7 +117,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object that should be reverted from the passed element
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which the change should be reverted
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} A resolved promise when the change was reverted successfully or unsuccessfully in asynchronous case, or FakePromise for synchronous processing scenario
+		 * @returns {Promise|sap.ui.fl.Utils.FakePromise<sap.ui.core.Element|false>} Promise or fake promise resolving to the control on which change was reverted successfully or false when unsuccessful
 		 * @private
 		 * @ui5-restricted
 		 */

@@ -52,7 +52,7 @@ function(
 		});
 
 		QUnit.test("when initialize() is called with oHashRegister.currentIndex set to null", function (assert) {
-			assert.expect(2);
+			assert.expect(3);
 			sandbox.stub(Utils, "getUshellContainer").returns({
 				getService: function() {
 					return {
@@ -66,12 +66,17 @@ function(
 					};
 				}
 			});
-			URLHandler.initialize({model: this.oModel});
+			sandbox.spy(URLHandler, "attachHandlers");
+			var mPropertyBag = {model: this.oModel};
+			URLHandler.initialize(mPropertyBag);
 			var oHashRegister = {
 				hashParams: [],
 				controlPropertyObservers: [],
 				variantControlIds: []
 			};
+
+			this.oModel.oComponentDestroyObserver.unobserve(this.oAppComponent, {destroy:true}); // remove component observer
+			assert.ok(URLHandler.attachHandlers.calledWith(mPropertyBag), "then required handlers and observers were subscribed");
 			assert.deepEqual(this.oModel._oHashData, oHashRegister, "then hash register object initialized");
 		});
 
