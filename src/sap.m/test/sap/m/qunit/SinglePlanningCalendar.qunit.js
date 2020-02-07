@@ -289,6 +289,51 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("getViewByKey: Return the view with matching key, or null if there is no match", function(assert) {
+
+		var oSPC = new SinglePlanningCalendar({
+				views: [
+					new SinglePlanningCalendarDayView({
+						key: "DayView",
+						title: "Day View"
+					}),
+					new SinglePlanningCalendarDayView({
+						key: "MonthView",
+						title: "Month View"
+					})
+				]
+			}),
+			oView;
+
+		// Act: try to find a view with "DayView" key
+		oView = oSPC.getViewByKey("DayView");
+
+		// assert
+		assert.equal(oSPC._isViewKeyExisting("DayView"), true, "View with key 'DayView' exists, dedicated method _isViewKeyExisting returns true");
+		assert.deepEqual(oSPC.getViews()[0], oView, "Returned View with key 'DayView' is correct");
+
+		// Act: try to find a view with "MonthView" key
+		oView = oSPC.getViewByKey("MonthView");
+
+		// assert
+		assert.equal(oSPC._isViewKeyExisting("MonthView"), true, "View with key 'MonthView' exists, dedicated method _isViewKeyExisting returns true");
+		assert.deepEqual(oSPC.getViews()[1], oView, "Returned View with key 'MonthView' is correct");
+
+		// Act: try to find a view with "WeekView" key
+		oView = oSPC.getViewByKey("WeekView");
+
+		// assert
+		assert.equal(oSPC._isViewKeyExisting("WeekView"), false, "View with key 'WeekView' is missing, dedicated method _isViewKeyExisting returns false");
+		assert.equal(oView, null, "View with key 'WeekView' is missing, null is returned");
+
+		// cleanup
+		oSPC.removeAllViews();
+		oSPC.destroy();
+		oSPC = null;
+
+	});
+
+
 	QUnit.module("Events");
 
 	QUnit.test("appointmentSelect: select a single appointment in day-based view", function (assert) {
@@ -1864,33 +1909,6 @@ sap.ui.define([
 			this.oSPC = null;
 		}
 	});
-
-	QUnit.test("_getViewByKey: Return the view with matching key, or null if there is no match", function(assert) {
-
-		var oView;
-
-		// Act: try to find a view with "DayView" key
-		oView = this.oSPC._getViewByKey("DayView");
-
-		// assert
-		assert.equal(this.oSPC._isViewKeyExisting("DayView"), true, "View with key 'DayView' exists, dedicated method _isViewKeyExisting returns true");
-		assert.deepEqual(this.oSPC.getViews()[0], oView, "Returned View with key 'DayView' is correct");
-
-		// Act: try to find a view with "MonthView" key
-		oView = this.oSPC._getViewByKey("MonthView");
-
-		// assert
-		assert.equal(this.oSPC._isViewKeyExisting("MonthView"), true, "View with key 'MonthView' exists, dedicated method _isViewKeyExisting returns true");
-		assert.deepEqual(this.oSPC.getViews()[1], oView, "Returned View with key 'MonthView' is correct");
-
-		// Act: try to find a view with "WeekView" key
-		oView = this.oSPC._getViewByKey("WeekView");
-
-		// assert
-		assert.equal(this.oSPC._isViewKeyExisting("WeekView"), false, "View with key 'WeekView' is missing, dedicated method _isViewKeyExisting returns false");
-		assert.equal(oView, null, "View with key 'WeekView' is missing, null is returned");
-	});
-
 
 	QUnit.test("_getViewByID: Return the view with matching ID, or null if there is no match", function(assert) {
 
