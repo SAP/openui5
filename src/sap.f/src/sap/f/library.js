@@ -531,12 +531,25 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * Specifies different card area types.
 	 *
 	 * @private
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.cards.AreaType = {
 		None: 'None',
 		ContentItem: 'ContentItem',
 		Content: 'Content',
 		Header: 'Header'
+	};
+
+	/*
+	 * Specifies different card action types.
+	 *
+	 * @enum {string}
+	 * @private
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.cards.ActionType = {
+		Navigation: 'Navigation',
+		Custom: 'Custom'
 	};
 
 	return thisLib;

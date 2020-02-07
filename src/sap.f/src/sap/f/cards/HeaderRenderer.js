@@ -15,7 +15,8 @@ sap.ui.define([], function () {
 	 */
 	HeaderRenderer.render = function (oRm, oControl) {
 
-		var sStatus = oControl.getStatusText();
+		var sStatus = oControl.getStatusText(),
+			oToolbar = oControl.getToolbar();
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -72,6 +73,18 @@ sap.ui.define([], function () {
 
 			oRm.write("</div>");
 		}
+
+		if (oToolbar) {
+			oRm.write("<div");
+			oRm.addClass("sapFCardHeaderToolbar");
+			oRm.writeClasses();
+			oRm.write(">");
+
+			oRm.renderControl(oToolbar);
+
+			oRm.write("</div>");
+		}
+
 		oRm.write("</div>");
 	};
 

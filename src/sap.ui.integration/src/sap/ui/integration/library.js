@@ -29,7 +29,10 @@ sap.ui.define(["sap/ui/base/DataType",
 				"sap.ui.integration.Widget",
 				"sap.ui.integration.host.HostConfiguration"
 			],
-			elements: [],
+			elements: [
+				"sap.ui.integration.Host",
+				"sap.ui.integration.Extension"
+			],
 
 			// define the custom elements that can be used in this library
 			customElements: {

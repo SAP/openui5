@@ -132,6 +132,10 @@ sap.ui.define([
 		}
 	};
 
+	BaseContent.prototype.getActions = function () {
+		return this._oActions;
+	};
+
 	/**
 	 * Await for an event which controls the overall "ready" state of the content.
 	 *

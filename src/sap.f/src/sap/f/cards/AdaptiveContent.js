@@ -158,7 +158,7 @@ sap.ui.define([
 		 */
 		AdaptiveContent.prototype._handleActions = function () {
 			this.adaptiveCardInstance.onExecuteAction = function (oAction) {
-				var sType, oPayload;
+				var sType, oPayload, oCard;
 
 				if (oAction instanceof AdaptiveCards.OpenUrlAction) {
 					oPayload = oAction.url;
@@ -172,11 +172,15 @@ sap.ui.define([
 					return;
 				}
 
-				this.fireEvent("action", {
-					actionSource: this,
-					manifestParameters: oPayload,
-					type: sType
-				});
+				oCard = this.getParent();
+
+				if (oCard) {
+					oCard.fireEvent("action", {
+						actionSource: this,
+						manifestParameters: oPayload,
+						type: sType
+					}, true);
+				}
 			}.bind(this);
 		};
 
