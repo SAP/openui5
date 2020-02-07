@@ -43,7 +43,11 @@ sap.ui.define([
 			});
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[0].getAggregation("propertyEditor").getBindingContext().getObject().value, "value1", "Then value of the property is correctly retrieved from the context object");
+				assert.strictEqual(
+					this.oBaseEditor.getPropertyEditorsSync()[0].getAggregation("propertyEditor").getValue(),
+					"value1",
+					"Then value of the property is correctly set on the property editor"
+				);
 				done();
 			}.bind(this));
 		});
@@ -74,35 +78,6 @@ sap.ui.define([
 				}.bind(this));
 
 				this.oBaseEditor.getPropertyEditorsSync()[0].getAggregation("propertyEditor").fireValueChange("test");
-			}.bind(this));
-		});
-
-
-		QUnit.test("When config with binding against property in the context model is set", function (assert) {
-			var done = assert.async();
-			this.oBaseEditor.setConfig({
-				context: "context",
-				properties: {
-					"prop1": {
-						path: "prop1",
-						type: "string",
-						val: "test"
-					},
-					"prop2": {
-						path: "prop2",
-						type: "string",
-						val: "{context>/prop1}",
-						i18n: "{i18n>prop}"
-					}
-				},
-				propertyEditors: {
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
-				}
-			});
-			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getAggregation("propertyEditor").getBindingContext().getObject().val, "value1", "Then binding against property model works properly");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getAggregation("propertyEditor").getBindingContext().getObject().i18n, "prop", "Then binding against other models is untouched");
-				done();
 			}.bind(this));
 		});
 
