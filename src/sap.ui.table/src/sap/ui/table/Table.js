@@ -481,8 +481,9 @@ sap.ui.define([
 			_messageStrip: {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
 
 			/**
-			 * Hidden dependents are dependents that are not cloned. But like for normal dependents, their databinding context and
+			 * Hidden dependents are dependents that are not cloned. But like for normal dependents, their data binding context and
 			 * lifecycle are bound to the table.
+			 *
 			 * @since 1.75
 			 */
 			_hiddenDependents : {type : "sap.ui.core.Element", multiple : true, visibility : "hidden"}
