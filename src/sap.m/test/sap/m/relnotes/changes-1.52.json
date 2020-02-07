@@ -4699,5 +4699,47 @@
         ]
       }
     ]
+  },
+  "1.52.38": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "8771391009842115dd208ede0202b23b47e22bae",
+        "type": "FIX",
+        "text": " ResponsivePopover: Recursive invalidation prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005040900000243032019"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870246417"
+          }
+        ]
+      },
+      {
+        "id": "e5f049e9d6ada0178bc5a37b6000472157034058",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Changing pages with fast clicks is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006800032019"
+          }
+        ]
+      },
+      {
+        "id": "65386e0a8b3474805d7ec6bda8a880ad43079032",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: qunit tests are passing now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080064781"
+          }
+        ]
+      }
+    ]
   }
 }

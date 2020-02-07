@@ -1260,5 +1260,32 @@
         ]
       }
     ]
+  },
+  "1.71.10": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "57de01b50ba5f06ce75760988d5c6014f904d0e8",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: qunit tests are passing now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080064781"
+          }
+        ]
+      },
+      {
+        "id": "ba38f1e4e83e5a7efd8822c5b6254cdd8e052cdb",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: pre-renders tiles in both directions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007904862019"
+          }
+        ]
+      }
+    ]
   }
 }

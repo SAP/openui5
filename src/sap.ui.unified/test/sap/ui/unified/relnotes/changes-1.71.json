@@ -146,5 +146,21 @@
         ]
       }
     ]
+  },
+  "1.71.10": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "510f8a64fe9946a7cf394f719a0223b5137ade1e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Unnecessary readings now prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007710282019"
+          }
+        ]
+      }
+    ]
   }
 }
