@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/SliderTooltipBase",
 	"sap/m/SliderTooltipBaseRenderer",
 	"sap/m/Text",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"jquery.sap.keycodes",
 	"sap/ui/model/json/JSONModel",
@@ -18,6 +19,7 @@ sap.ui.define([
 	SliderTooltipBase,
 	SliderTooltipBaseRenderer,
 	Text,
+	KeyCodes,
 	qutils,
 	jQuery,
 	JSONModel
@@ -1563,6 +1565,30 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			assert.ok(true, "should not throw an error");
+		});
+
+		QUnit.test("Firing event keydown === SPACE should prevent the page to scroll down", function(assert) {
+
+			// system under test
+			var oRangeSlider = new RangeSlider();
+
+			// arrange
+			var preventDefaultSpy = this.spy(),
+				fnFakeEvent = {
+					preventDefault: preventDefaultSpy,
+					keyCode: KeyCodes.SPACE
+				};
+			oRangeSlider.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oRangeSlider.onkeydown(fnFakeEvent);
+
+			// assert
+			assert.ok(preventDefaultSpy.calledOnce, "Prevent default should be called once.");
+
+			// cleanup
+			oRangeSlider.destroy();
 		});
 	});
 });
