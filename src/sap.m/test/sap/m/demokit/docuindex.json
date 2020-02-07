@@ -2845,6 +2845,11 @@
 		  "description": "You can nest NavContainers in Popovers (and Dialogs) to navigate to further details in place."
 		},
 		{
+		  "id": "sap.m.sample.PopoverControllingCloseBehavior",
+		  "name": "Popover Controlling Closing Behavior",
+		  "description": "In some cases the closing behavior of the Popover can lead to drill down navigation. This sample demonstrates how you can control this. When the Popover is opened, add a style \"pointer-events: none\" to the area that should remain static and when the Popover is closed, remove it. Please note that, when having nested controls with \"pointer-events\" set, depending on the value of the property, internal controls may fire events, which will bubble up and trigger other events where applicable. The application needs to handle such cases."
+		},
+		{
 		  "id": "sap.m.sample.SelectDialog",
 		  "name": "Select Dialog",
 		  "description": "The Select Dialog allows the user to search for and pick an item from a possibly long option list. Basically it is a convenience function to quickly assemble a Dialog, a Search Field and a List with Standard List Items. You can have single select or multi select mode. The dialog can remember the selections previously set on the dialog."
