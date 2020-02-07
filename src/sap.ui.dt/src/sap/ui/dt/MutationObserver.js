@@ -317,9 +317,7 @@ sap.ui.define([
 				}.bind(this), []);
 
 				if (aOverallTargetElementIds.length) {
-					window.requestAnimationFrame(function (_aOverallTargetElementIds) {
-						this._callRelevantCallbackFunctions(_aOverallTargetElementIds, "MutationObserver");
-					}.bind(this, aOverallTargetElementIds));
+					this._callRelevantCallbackFunctions(aOverallTargetElementIds, "MutationObserver");
 				}
 			}
 		}.bind(this));
