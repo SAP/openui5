@@ -1466,14 +1466,12 @@ sap.ui.define([
 	ObjectPageLayout.prototype._applyUxRules = function (bInvalidate) {
 		var aSections, aSubSections, iVisibleSubSections, iVisibleSection, iVisibleBlocks,
 			bVisibleAnchorBar, bUseIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection,
-			bFirstSectionTitleHidden, aContent, iFirstVisibleSectionVisibleSubSections, oTitleVisibilityInfo = {},
-			bShouldShowFirstSectionTitle;
+			bFirstSectionTitleHidden, aContent, iFirstVisibleSectionVisibleSubSections, oTitleVisibilityInfo = {};
 
 		aSections = this.getSections() || [];
 		iVisibleSection = 0;
 		bVisibleAnchorBar = this.getShowAnchorBar();
 		bUseIconTabBar = this.getUseIconTabBar();
-		bShouldShowFirstSectionTitle = aSections.length <= 1;
 
 		oFirstVisibleSection = null;
 
@@ -1558,7 +1556,7 @@ sap.ui.define([
 			}
 
 			if (bUseIconTabBar) {
-				oTitleVisibilityInfo[oSection.getId()] = bShouldShowFirstSectionTitle;
+				oTitleVisibilityInfo[oSection.getId()] = false;
 			}
 		}, this);
 
@@ -1567,6 +1565,9 @@ sap.ui.define([
 			bVisibleAnchorBar = false;
 			Log.info("ObjectPageLayout :: notEnoughVisibleSection UX rule matched", "anchorBar forced to hidden");
 			//rule firstSectionTitleHidden: the first section title is never visible if there is an anchorBar
+			if (bUseIconTabBar && oFirstVisibleSection) {
+				oTitleVisibilityInfo[oFirstVisibleSection.getId()] = true;
+			}
 		} else if (oFirstVisibleSection && bVisibleAnchorBar) {
 			bFirstSectionTitleHidden = true;
 			oTitleVisibilityInfo[oFirstVisibleSection.getId()] = false;
