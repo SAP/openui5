@@ -44,6 +44,10 @@ sap.ui.define([
 					'<content>' +
 						'<core:ExtensionPoint name="ExtensionPoint2" />' +
 						'<Label id="label2" text="Panel with stable id" />' +
+						'<core:ExtensionPoint name="ExtensionPoint4">' +
+							'<ListItem id="listItem1" text="Some Text" />' +
+							'<ListItem id="listItem2" text="Some other Text" />' +
+						'</core:ExtensionPoint>' +
 					'</content>' +
 				'</Panel>' +
 				'<Panel>' +
@@ -167,19 +171,6 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When applying changes on different extension points in xml control tree", function(assert) {
-			sandbox.stub(XmlTreeModifier, "getExtensionPointInfo")
-			.onFirstCall().returns({
-				aggregation: "items",
-				index: 1
-			})
-			.onSecondCall().returns({
-				aggregation: "content",
-				index: 1
-			})
-			.onThirdCall().returns({
-				aggregation: "items",
-				index: 1
-			});
 			var oChange3 = _createAddXMLAtExtensionPointChange(sSecondFragmentPath, "ExtensionPoint1");
 			var oChangeSpecificContent3 = {
 				fragmentPath: "fragments/ThirdFragment"
@@ -193,8 +184,21 @@ sap.ui.define([
 			assert.equal(oHBoxItems.childNodes.length, 4, "then there are four children of the HBox");
 			assert.equal(oHBoxItems.childNodes[1].getAttribute('id'), "projectId.third_button", "then the control added last to the first extension point is on the first position behind the extension point.");
 			assert.equal(oHBoxItems.childNodes[2].getAttribute('id'), "projectId.button", "then the control added first to the first extension point is on the last position behind the extension point.");
-			assert.equal(oPanelContent.childNodes.length, 3, "then there are three children of the Panel");
+			assert.equal(oPanelContent.childNodes.length, 4, "then there are three children of the Panel");
 			assert.equal(oPanelContent.childNodes[1].getAttribute('id'), "projectId.second_button", "then the control added to the second extension point is placed behind the second extension point.");
+		});
+
+		QUnit.test("When applying changes on extension point with default value in xml control tree", function(assert) {
+			var oChange4 = _createAddXMLAtExtensionPointChange(sThirdFragmentPath, "ExtensionPoint4");
+			var oChangeSpecificContent4 = {
+				fragmentPath: "fragments/ThirdFragment"
+			};
+			this.oChangeHandler.completeChangeContent(oChange4, oChangeSpecificContent4);
+			var oPanelContent = this.oPanel.childNodes[0];
+			this.oChangeHandler.applyChange(oChange4, this.oPanel, this.oPropertyBag);
+			assert.equal(oPanelContent.childNodes.length, 4, "then there are four children of the Panel");
+			assert.equal(oPanelContent.childNodes[2].childNodes.length, 0, "then the fourth extension point should not have any default content anymore.");
+			assert.equal(oPanelContent.childNodes[3].getAttribute('id'), "projectId.third_button", "then the control added to the fourth extension point is placed behind the fourth extension point.");
 		});
 
 		QUnit.test("When reverting one change on an xml control tree with stable Id on extension point parent", function(assert) {

@@ -1,3 +1,5 @@
+// valid-jsdoc disabled because this check is validating just the params and return statement and those are all inherited from BaseTreeModifier.
+/* eslint-disable valid-jsdoc */
 /*!
  * ${copyright}
  */
@@ -697,7 +699,8 @@ sap.ui.define([
 					var oExtensionPointInfo = {
 						parent: oParent,
 						aggregation: this.getParentAggregationName(oExtensionPoint, oParent),
-						index: this.findIndexInParentAggregation(oExtensionPoint) + 1
+						index: this.findIndexInParentAggregation(oExtensionPoint) + 1,
+						defaultContent: Array.prototype.slice.call(this._children(oExtensionPoint))
 					};
 
 					return oExtensionPointInfo;
