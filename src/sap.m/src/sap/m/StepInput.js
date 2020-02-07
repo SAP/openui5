@@ -860,7 +860,7 @@ function(
 			var oResult;
 
 			if (isNaN(oValue) || oValue === null) {
-				oValue = 0;
+				oValue = this._getDefaultValue(undefined, this._getMax(), this._getMin());
 			} else {
 				oValue = Number(oValue);
 			}
@@ -952,7 +952,7 @@ function(
 
 			// check for empty input value, and if so - return the last saved value
 			if (sInputValue === "") {
-				sInputValue = this._fOldValue.toString();
+				sInputValue = this._getDefaultValue(sInputValue, this._getMax(), this._getMin()).toString();
 			}
 
 			// fix the entered value if the precision is 0; and filter 'e/E' meanwhile

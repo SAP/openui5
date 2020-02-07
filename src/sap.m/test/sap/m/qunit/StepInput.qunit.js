@@ -2569,4 +2569,68 @@ sap.ui.define([
 
 		oStepInput.destroy();
 	});
+
+	QUnit.test("Set proper value when enter empty ('') or invalid value in the StepInput", function (assert) {
+		// arrange
+		var oStepInput = new StepInput(),
+			oInput = oStepInput._getInput(),
+			sInputSuffix = "inner",
+			iValidValue = 11,		// valid value to "type" in the StepInput
+			iInvalidResult = 0,		// value that must be set to StepInput when "type" invalid value
+			sInvalidValue = "abc",	// invalid value to "type" in the StepInput
+			sInvalidEmpty = "", 	// invalid value (empty string)
+			iMinValueToSet = 10;	// min value to set to StepInput
+
+
+		oStepInput.placeAt('qunit-fixture');
+		oCore.applyChanges();
+
+		// act - enter valid value
+		oInput.$(sInputSuffix).val(iValidValue);
+		oStepInput._change();
+		oCore.applyChanges();
+
+		// assert - the result must be what entered
+		assert.equal(oStepInput.getValue(), iValidValue, "Value of the StepInput is correct when enter valid value (" + iValidValue + " => " + iValidValue + ")");
+
+		// act - enter invalid value
+		oInput.$(sInputSuffix).val(sInvalidValue);
+		oStepInput._change();
+		oCore.applyChanges();
+
+		// assert - the result must be 0 (default)
+		assert.equal(oStepInput.getValue(), iInvalidResult, "Value of the StepInput is correct when enter invalid value (" + sInvalidValue + " => " + iInvalidResult + ")");
+
+		// act - set min value and enter invalid value again
+
+		// set min value
+		oStepInput.setMin(iMinValueToSet);
+		// enter invalid value again
+		oInput.$(sInputSuffix).val(sInvalidValue);
+		oStepInput._change();
+		oCore.applyChanges();
+
+		// assert - the result be at the min value (if min value > 0)
+		assert.equal(oStepInput.getValue(), iMinValueToSet, "Value of the stepInput is correct when enter invalid value and there is a min value set (" + sInvalidValue + " => " + iMinValueToSet + ")");
+
+		// act - enter valid value again
+		oInput.$(sInputSuffix).val(iValidValue);
+		oStepInput._change();
+		oCore.applyChanges();
+
+		// assert - the result must be what entered
+		assert.equal(oStepInput.getValue(), iValidValue, "Value of the StepInput is correct when enter valid value (" + iValidValue + " => " + iValidValue + ")");
+
+		// act - enter invalid value (empty string)
+		oInput.$(sInputSuffix).val(sInvalidEmpty);
+		oStepInput._change();
+		oCore.applyChanges();
+
+		// assert - the result must be min value (if min value > 0)
+		assert.equal(oStepInput.getValue(), iMinValueToSet, "Value of the StepInput is correct when enter invalid value (" + sInvalidEmpty + " => " + iMinValueToSet + ")");
+
+		// cleanup
+		oStepInput.destroy();
+	});
+
 });
