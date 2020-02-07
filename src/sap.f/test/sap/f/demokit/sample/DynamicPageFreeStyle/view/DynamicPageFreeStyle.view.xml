@@ -103,8 +103,9 @@
 			</f:header>
 			<f:content>
 				<Table id="idProductsTable"
-					   inset="false"
-					   items="{
+						sticky="HeaderToolbar,ColumnHeaders"
+						inset="false"
+						items="{
 							path: '/ProductCollection',
 							sorter: {
 								path: 'Name'
