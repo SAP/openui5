@@ -1475,6 +1475,41 @@ function(
 		});
 	});
 
+
+
+	QUnit.module("Given a started RTA", {
+		beforeEach: function() {
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : true
+			});
+			return this.oRta.start();
+		},
+		afterEach: function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the draft is activated", function (assert) {
+			var done = assert.async();
+			var sVersionName = "VersionName";
+			var oEvent = {
+				versionName: sVersionName
+			};
+			sandbox.stub(VersionsAPI, "activateDraft").callsFake(function (mPropertyBag) {
+				assert.equal(Object.keys(mPropertyBag).length, 3, "three parameters were passed");
+				assert.equal(mPropertyBag.selector, this.oRootControl, "the selector was passed correctly");
+				assert.equal(mPropertyBag.layer, "CUSTOMER", "the layer was passed correctly");
+				assert.equal(mPropertyBag.versionName, sVersionName, "the versionName was passed correctly");
+
+				done();
+			}.bind(this));
+
+			this.oRta.getToolbar().fireEvent("activateDraft", oEvent);
+		});
+	});
+
 	QUnit.done(function() {
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();

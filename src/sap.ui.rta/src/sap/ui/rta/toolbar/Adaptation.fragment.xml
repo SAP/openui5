@@ -111,16 +111,16 @@
                     </layoutData>
                 </Button>
                 <Button
-                    id="sapUiRta_manageApps"
-                    press=".manageApps"
-                    enabled="false"
-                    visible="false"
-                    type="Transparent"
-                    text="{i18n>BTN_MANAGE_APPS_TXT}" >
-                <layoutData>
-                    <OverflowToolbarLayoutData priority="Low" />
-                </layoutData>
-            </Button>
+                        id="sapUiRta_manageApps"
+                        press=".manageApps"
+                        enabled="false"
+                        visible="false"
+                        type="Transparent"
+                        text="{i18n>BTN_MANAGE_APPS_TXT}" >
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </Button>
                 <MenuButton
                         id="sapUiRta_appVariantOverview"
                         enabled="false"

@@ -125,8 +125,8 @@ function(
 
 	function _setButtonProperties(sButtonName, sIcon, sTextKey, sToolTipKey) {
 		var oButton = this.getControl(sButtonName);
-		var sText = this.getTextResources().getText(sTextKey);
-		var sToolTip = this.getTextResources().getText(sToolTipKey);
+		var sText = sTextKey ? this.getTextResources().getText(sTextKey) : "";
+		var sToolTip = sToolTipKey ? this.getTextResources().getText(sToolTipKey) : "";
 		oButton.setText(sText || "");
 		oButton.setTooltip(sToolTip || "");
 		oButton.setIcon(sIcon || "");
@@ -193,7 +193,7 @@ function(
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.Adaptation",
 			controller: {
-				activateDraft: this.eventHandler.bind(this, "ActivateDraft"),
+				activateDraft: this._openVersionNameDialog.bind(this),
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
 				undo: this.eventHandler.bind(this, "Undo"),
@@ -209,6 +209,49 @@ function(
 			this.getControl("publish").setVisible(this.getPublishVisible());
 			this.getControl("modeSwitcher").setSelectedKey(this.getModeSwitcher());
 			return aControls;
+		}.bind(this));
+	};
+
+	function _resetDialog() {
+		this.getControl("versionNameInput").setValue("");
+		this.getControl("confirmVersionNameButton").setEnabled(false);
+		return Promise.resolve(this._oDialog);
+	}
+
+	function _createDialog() {
+		return Fragment.load({
+			name : "sap.ui.rta.toolbar.VersionNameDialog",
+			controller : {
+				onConfirmVersioningDialog: function () {
+					var sVersionName = this.getControl("versionNameInput").getValue();
+					this.fireEvent("activateDraft", {versionName : sVersionName});
+					this._oDialog.close();
+				}.bind(this),
+				onCancelVersioningDialog: function () {
+					this._oDialog.close();
+				}.bind(this),
+				onVersionNameLiveChange: function (oEvent) {
+					var sValue = oEvent.getParameter("value");
+					this.getControl("confirmVersionNameButton").setEnabled(!!sValue);
+				}.bind(this)
+			}
+		}).then(function (oDialog) {
+			this._oDialog = oDialog;
+			this.addDependent(this._oDialog);
+		}.bind(this));
+	}
+
+	Adaptation.prototype._openVersionNameDialog = function () {
+		var oDialogPromise;
+
+		if (this._oDialog) {
+			oDialogPromise = _resetDialog.call(this);
+		} else {
+			oDialogPromise = _createDialog.call(this);
+		}
+
+		return oDialogPromise.then(function () {
+			return this._oDialog.open();
 		}.bind(this));
 	};
 
