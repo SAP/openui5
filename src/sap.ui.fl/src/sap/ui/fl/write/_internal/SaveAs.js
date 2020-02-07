@@ -297,6 +297,10 @@ sap.ui.define([
 					return _inlineDescriptorChanges(aAllInlineChanges, oAppVariantClosure);
 				})
 				.then(function() {
+					// Sets the flag for smart business before updating the app variant so as to make sure no transport handling takes place on connector level
+					if (mPropertyBag.isForSmartBusiness) {
+						oAppVariantClosure.setIsForSmartBusiness(mPropertyBag.isForSmartBusiness);
+					}
 					// Updates the app variant saved in backend
 					return oAppVariantClosure.submit()
 						.catch(function(oError) {
@@ -347,6 +351,10 @@ sap.ui.define([
 					return _setTransportAndPackageInfoForAppVariant(oAppVariantClosure, oTransportInfo);
 				})
 				.then(function () {
+					// Sets the flag for smart business before updating the app variant so as to make sure no transport handling takes place on connector level
+					if (mPropertyBag.isForSmartBusiness) {
+						oAppVariantClosure.setIsForSmartBusiness(mPropertyBag.isForSmartBusiness);
+					}
 					return oAppVariantClosure.submit()
 						.catch(function(oError) {
 							if (oError === "cancel") {

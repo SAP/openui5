@@ -42,7 +42,7 @@ sap.ui.define([
 		);
 	}
 
-	QUnit.module("Given PersistenceWriteAPI", {
+	QUnit.module("Given SmartBusinessWriteAPI", {
 		beforeEach: function () {
 			this.oDescrChangeSpecificData1 = {
 				changeType: 'appdescr_ovp_addNewCard',
@@ -167,170 +167,6 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("(S4/Hana Cloud system) when update is called to update a published app variant in CUSTOMER layer", function(assert) {
-			simulateSystemConfig(true);
-			var mPropertyBag = {
-				appId: "customer.reference.app.id"
-			};
-
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "CUSTOMER",
-					fileType: "fileType1",
-					packageName: "ATO_PACKAGE",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
-
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
-
-			return SmartBusinessWriteAPI.update(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "PUT"), "then the parameters are correct");
-				});
-		});
-
-		QUnit.test("(S4/Hana onPremise system) when update is called to update a local app variant ($TMP) in CUSTOMER layer", function(assert) {
-			simulateSystemConfig(false);
-			var mPropertyBag = {
-				appId: "customer.reference.app.id"
-			};
-
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "CUSTOMER",
-					fileType: "fileType1",
-					packageName: "$TMP",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
-
-			var oTransportResponse = {
-				response: {
-					errorCode: "",
-					localonly: true,
-					transports: []
-				}
-			};
-
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse); // Get transports
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
-
-			return SmartBusinessWriteAPI.update(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "PUT"), "then the parameters are correct");
-				});
-		});
-
-		QUnit.test("(S4/Hana onPremise system) when update is called to update an app variant with empty package in CUSTOMER layer", function(assert) {
-			simulateSystemConfig(false);
-			var mPropertyBag = {
-				appId: "customer.reference.app.id"
-			};
-
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "CUSTOMER",
-					fileType: "fileType1",
-					packageName: "",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
-
-			var oTransportResponse = {
-				response: {
-					errorCode: "",
-					localonly: true,
-					transports: []
-				}
-			};
-
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse); // Get transports
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
-
-			return SmartBusinessWriteAPI.update(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "PUT"), "then the parameters are correct");
-				})
-				.catch(function() {
-					assert.ok(false, "Should not fail");
-				});
-		});
-
-		QUnit.test("(S4/Hana onPremise system) when update is called to update a published app variant in CUSTOMER layer", function(assert) {
-			simulateSystemConfig(false);
-			var mPropertyBag = {
-				transport: "TRANSPORT123",
-				appId: "customer.reference.app.id"
-			};
-			mPropertyBag.selector = {
-				appId: "customer.reference.app.id"
-			};
-
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "layer1",
-					fileType: "fileType1",
-					packageName: "$TMP",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
-
-			return SmartBusinessWriteAPI.update(mPropertyBag)
-				.then(function() {
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "PUT"), "then the parameters are correct");
-				});
-		});
-
 		QUnit.test("(S4/Hana onPremise system) when create is called with a descriptor change already added into own persistence and submitting app variant to backend in VENDOR layer in a valid package failed", function(assert) {
 			simulateSystemConfig(false);
 
@@ -378,7 +214,7 @@ sap.ui.define([
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 
-			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "Package must be provided").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "Package must be provided or is valid").returns();
 
 			// Creates a descriptor change
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData1, appId: "reference.app"})
@@ -415,7 +251,7 @@ sap.ui.define([
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
-			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "Package must be provided").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "Package must be provided or is valid").returns();
 
 			// Creates a descriptor change
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData1, appId: "reference.app"})
@@ -481,6 +317,302 @@ sap.ui.define([
 				.catch(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 					assert.ok(oNewConnectorCall.notCalled, "then backend call is never triggered");
+				});
+		});
+
+		QUnit.test("(S4/Hana Cloud system) when update is called to update a published app variant in CUSTOMER layer", function(assert) {
+			simulateSystemConfig(true);
+			var mPropertyBag = {
+				appId: "customer.reference.app.id"
+			};
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "CUSTOMER",
+					fileType: "fileType1",
+					packageName: "ATO_PACKAGE",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+
+			return SmartBusinessWriteAPI.update(mPropertyBag)
+				.then(function() {
+					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "PUT"), "then the parameters are correct");
+				});
+		});
+
+		QUnit.test("(S4/Hana onPremise system) when update is called to update a local app variant ($TMP) in CUSTOMER layer", function(assert) {
+			simulateSystemConfig(false);
+			var mPropertyBag = {
+				appId: "customer.reference.app.id"
+			};
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "CUSTOMER",
+					fileType: "fileType1",
+					packageName: "$TMP",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+
+			return SmartBusinessWriteAPI.update(mPropertyBag)
+				.then(function() {
+					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "PUT"), "then the parameters are correct");
+				});
+		});
+
+		QUnit.test("(S4/Hana onPremise system) when update is called to update an app variant with empty package in CUSTOMER layer", function(assert) {
+			simulateSystemConfig(false);
+			var mPropertyBag = {
+				appId: "customer.reference.app.id"
+			};
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "CUSTOMER",
+					fileType: "fileType1",
+					packageName: "",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+
+			return SmartBusinessWriteAPI.update(mPropertyBag)
+				.then(function() {
+					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "PUT"), "then the parameters are correct");
+				})
+				.catch(function() {
+					assert.ok(false, "Should not fail");
+				});
+		});
+
+		QUnit.test("(S4/Hana onPremise system) when update is called to update a published app variant in CUSTOMER layer", function(assert) {
+			simulateSystemConfig(false);
+			var mPropertyBag = {
+				transport: "TRANSPORT123",
+				appId: "customer.reference.app.id"
+			};
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "layer1",
+					fileType: "fileType1",
+					packageName: "$TMP",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+
+			return SmartBusinessWriteAPI.update(mPropertyBag)
+				.then(function() {
+					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "PUT"), "then the parameters are correct");
+				});
+		});
+
+		QUnit.test("(S4/Hana Cloud system) when remove is called to delete a published app variant in CUSTOMER layer", function(assert) {
+			simulateSystemConfig(true);
+			var mPropertyBag = {
+				appId: "customer.reference.app.id"
+			};
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "CUSTOMER",
+					fileType: "fileType1",
+					packageName: "ATO_PACKAGE",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+
+			return SmartBusinessWriteAPI.remove(mPropertyBag)
+				.then(function() {
+					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "DELETE"), "then the parameters are correct");
+				});
+		});
+
+		QUnit.test("(S4/Hana onPremise system) when remove is called to delete a local app variant ($TMP) in CUSTOMER layer", function(assert) {
+			simulateSystemConfig(false);
+			var mPropertyBag = {
+				appId: "customer.reference.app.id"
+			};
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "CUSTOMER",
+					fileType: "fileType1",
+					packageName: "$TMP",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+
+			return SmartBusinessWriteAPI.remove(mPropertyBag)
+				.then(function() {
+					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
+				});
+		});
+
+		QUnit.test("(S4/Hana onPremise system) when remove is called to delete an app variant with empty package in CUSTOMER layer", function(assert) {
+			simulateSystemConfig(false);
+			var mPropertyBag = {
+				appId: "customer.reference.app.id"
+			};
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "CUSTOMER",
+					fileType: "fileType1",
+					packageName: "",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+
+			return SmartBusinessWriteAPI.remove(mPropertyBag)
+				.then(function() {
+					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
+				})
+				.catch(function() {
+					assert.ok(false, "Should not fail");
+				});
+		});
+
+		QUnit.test("(S4/Hana onPremise system) when remove is called to delete a published app variant in CUSTOMER layer", function(assert) {
+			simulateSystemConfig(false);
+			var mPropertyBag = {
+				transport: "TRANSPORT123",
+				appId: "customer.reference.app.id"
+			};
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "layer1",
+					fileType: "fileType1",
+					packageName: "$TMP",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+
+			return SmartBusinessWriteAPI.remove(mPropertyBag)
+				.then(function() {
+					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
 				});
 		});
 	});

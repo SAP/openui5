@@ -148,6 +148,10 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
+	DescriptorVariant.prototype.setIsForSmartBusiness = function(bIsForSmartBusiness) {
+		this._isForSmartBusiness = bIsForSmartBusiness;
+	};
+
 	/**
 	 * Submits the app variant to the backend
 	 * @return {Promise} resolving when submitting the app variant was successful
@@ -170,6 +174,10 @@ sap.ui.define([
 		}
 		if (this._skipIam) {
 			mPropertyBag.skipIam = this._skipIam;
+		}
+
+		if (this._isForSmartBusiness) {
+			mPropertyBag.isForSmartBusiness = this._isForSmartBusiness;
 		}
 
 		if (mMap.layer) {

@@ -31,6 +31,22 @@ sap.ui.define([
 		});
 	}
 
+	function _validateAndAdjustPropertyBag(mPropertyBag) {
+		if (!mPropertyBag.appId) {
+			return Promise.reject("App Variant ID must be provided");
+		}
+
+		mPropertyBag.selector = {
+			appId: mPropertyBag.appId
+		};
+
+		var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+
+		mPropertyBag.referenceAppId = oDescriptorFlexController.getComponentName();
+		// Pass a flag to know which consumer is calling SaveAs handler
+		mPropertyBag.isForSmartBusiness = true;
+	}
+
 	/**
 	 * Provides an API for tools to create, update, delete app variants only for ABAP systems.
 	 *
@@ -95,7 +111,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.appId - App variant ID
 		 *
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant;
-		 * Transport is required for onPremise systems;
+		 * Transport is required for onPremise systems until the app variant is not intended to be updated as a local object;
 		 * Transport is not required for S4/Hana Cloud systems
 		 *
 		 * @returns {Promise} Promise which gets resolved with the app variant update response or gets rejected with a first error
@@ -103,20 +119,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		update: function (mPropertyBag) {
-			if (!mPropertyBag.appId) {
-				return Promise.reject("App Variant ID must be provided");
-			}
-
-			mPropertyBag.selector = {
-				appId: mPropertyBag.appId
-			};
-
-			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
-
-			mPropertyBag.referenceAppId = oDescriptorFlexController.getComponentName();
-			// Pass a flag to know which consumer is calling SaveAs handler
-			mPropertyBag.isForSmartBusiness = true;
-
+			_validateAndAdjustPropertyBag(mPropertyBag);
 			return _checkSettingsAndExecuteActionByName("updateAppVariant", mPropertyBag);
 		},
 
@@ -125,8 +128,8 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.appId - App Variant ID
-		 * @param {string} mPropertyBag.transport - Transport request for the app variant;
-		 * Transport is required for onPremise systems;
+		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant;
+		 * Transport is required for onPremise systems until the app variant is not intended to be updated as a local object;
 		 * Transport is not required for S4/Hana Cloud systems
 		 *
 		 * @returns {Promise} Promise that resolves with the app variant deletion response
@@ -134,19 +137,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		remove: function (mPropertyBag) {
-			if (!mPropertyBag.appId) {
-				return Promise.reject("App Variant ID must be provided");
-			}
-
-			mPropertyBag.selector = {
-				appId: mPropertyBag.appId
-			};
-
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag.referenceAppId = oFlexController.getComponentName();
-			// Pass a flag to know which consumer is calling SaveAs handler
-			mPropertyBag.isForSmartBusiness = true;
-
+			_validateAndAdjustPropertyBag(mPropertyBag);
 			return _checkSettingsAndExecuteActionByName("deleteAppVariant", mPropertyBag);
 		},
 
