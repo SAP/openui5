@@ -842,6 +842,8 @@ function(
 				commandStack : this.oCommandStack,
 				showToolbars : true
 			});
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(Promise.resolve(false));
+
 			return RtaQunitUtils.clear()
 			.then(this.oRta.start.bind(this.oRta))
 			.then(function() {
