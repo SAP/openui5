@@ -313,8 +313,8 @@ sap.ui.define([
 		var secondNotification;
 
 		// act
-		notificationListItem.addAggregation('buttons', firstButton);
-		notificationListItem.addAggregation('buttons', secondButton);
+		notificationListItem.addButton(firstButton);
+		notificationListItem.addButton(secondButton);
 		secondNotification = notificationListItem.clone();
 
 		// assert
@@ -339,8 +339,8 @@ sap.ui.define([
 		var notification = new NotificationListItem({
 			buttons: {
 				path: "actions",
-				template: template,
-				templateShareable:true
+				templateShareable: true,
+				template: template
 			}
 		});
 
@@ -355,7 +355,11 @@ sap.ui.define([
 					type: "Reject",
 					nature: "POSITIVE"
 				}
-			]});
+			]
+		});
+
+		notification.setModel(model);
+		notification.bindObject("/");
 
 		// act
 		var notificationCloning = notification.clone();
@@ -363,14 +367,18 @@ sap.ui.define([
 			items: [
 				notification,
 				notificationCloning
-			]});
+			]
+		});
 
-		list.setModel(model);
-		list.bindObject("/");
+		list.placeAt(RENDER_LOCATION);
+		Core.applyChanges();
 
 		// assert
-		assert.strictEqual(notificationCloning.getButtons().length, 2,"The clone should have the binned aggregation");
-		assert.strictEqual(notification.getButtons().length, 2,"The original notification should have the binned aggregation");
+		assert.strictEqual(notificationCloning.getButtons().length, 2, "The clone should have the binned aggregation");
+		assert.strictEqual(notification.getButtons().length, 2, "The original notification should have the binned aggregation");
+
+		assert.ok(notificationCloning._getOverflowToolbar().getDomRef(), "Overflow toolbar has DOM reference");
+		assert.ok(notification._getOverflowToolbar().getDomRef(), "Overflow toolbar has DOM ref reference");
 
 		// cleanup
 		list.destroy();

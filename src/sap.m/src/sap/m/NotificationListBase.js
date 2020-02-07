@@ -242,6 +242,23 @@ sap.ui.define([
 			return this;
 		};
 
+		/* Clones the NotificationListBase.
+		 *
+		 * @public
+		 * @returns {sap.m.NotificationListBase} The cloned NotificationListBase.
+		 */
+		NotificationListBase.prototype.clone = function () {
+			var clonedObject = Control.prototype.clone.apply(this, arguments);
+			// overflow toolbar has been created but the clone of this item does no longer have bindings for the “buttons” aggregation; workaround: destroy and create anew as clone
+			clonedObject.destroyAggregation('_overflowToolbar');
+			var overflowToolbar = this.getAggregation('_overflowToolbar');
+			if (overflowToolbar) {
+				clonedObject.setAggregation("_overflowToolbar", overflowToolbar.clone(), true);
+			}
+
+			return clonedObject;
+		};
+
 		NotificationListBase.prototype._getOverflowToolbar = function () {
 			var overflowToolbar = this.getAggregation('_overflowToolbar');
 
