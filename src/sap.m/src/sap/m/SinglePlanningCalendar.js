@@ -940,10 +940,11 @@ function(
 	/**
 	 * Finds the view object by given key
 	 * @param {String} sKey The key of the view
-	 * @private
+	 * @public
+	 * @since 1.75
 	 * @returns {sap.m.SinglePlanningCalendarView} the view object matched the given sKey, of null if there is no such view
 	 */
-	SinglePlanningCalendar.prototype._getViewByKey = function (sKey) {
+	SinglePlanningCalendar.prototype.getViewByKey = function (sKey) {
 		var aViews = this.getViews(),
 			i;
 		for (i = 0; i < aViews.length; i++) {
@@ -1162,7 +1163,7 @@ function(
 	 */
 	SinglePlanningCalendar.prototype._handleViewChange = function (oEvent) {
 		var sNewViewKey = oEvent.getParameter("item").getProperty("key"),
-			oNewView = this._getViewByKey(sNewViewKey);
+			oNewView = this.getViewByKey(sNewViewKey);
 		this._setupNewView(oNewView);
 		this.fireViewChange();
 	};
