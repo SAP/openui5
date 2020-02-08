@@ -1195,7 +1195,7 @@ function(
 	/**
 	 * Sets given view in the selectedView association and then prepares the calendar
 	 * for the new view.
-	 * @param {Object || String}  vViwe The new view
+	 * @param {Object | String} vView The new view
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._setupNewView = function(vView) {

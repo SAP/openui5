@@ -461,8 +461,8 @@ sap.ui.define([
 
 		/**
 		 * Create view
-		 * @param {*} mParameter, the view metadata
-		 * @param {string} sMode, the mode associated with the view
+		 * @param {*} mParameter - the view metadata
+		 * @param {string} sMode - the mode associated with the view
 		 * @returns {*} Promise
 		 * @protected
 		 */
