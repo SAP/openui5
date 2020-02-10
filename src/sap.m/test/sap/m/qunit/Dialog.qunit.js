@@ -28,7 +28,7 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/InstanceManager",
 	"sap/ui/model/json/JSONModel",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -56,7 +56,8 @@ sap.ui.define([
 	ColumnListItem,
 	Column,
 	InstanceManager,
-	JSONModel
+	JSONModel,
+	KeyCodes
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -750,7 +751,7 @@ sap.ui.define([
 
 		oDialog._oCloseTrigger = 'some button';
 
-		qutils.triggerKeydown(oDialog.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oDialog.getDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(250);
 		sap.ui.getCore().applyChanges();
 
@@ -1797,7 +1798,7 @@ sap.ui.define([
 		// act
 		this.oDialog.open();
 		this.clock.tick(500);
-		qutils.triggerKeyup(this.oCloseButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyup(this.oCloseButton.getDomRef(), KeyCodes.SPACE);
 		this.clock.tick(500);
 
 
@@ -1810,7 +1811,7 @@ sap.ui.define([
 		// act
 		this.oDialog.open();
 		this.clock.tick(500);
-		qutils.triggerKeydown(this.oCloseButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(this.oCloseButton.getDomRef(), KeyCodes.ENTER);
 		this.clock.tick(500);
 
 
@@ -2224,4 +2225,60 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Close Dialog with ESC", {
+		beforeEach: function() {
+			this.oDialog = new Dialog({
+				title: 'Test close with ESC'
+			});
+		},
+		afterEach: function() {
+			this.oDialog.destroy();
+		}
+	});
+
+	QUnit.test("Pressing ESC should close the dialog", function (assert) {
+		// Arrange
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Act
+		qutils.triggerKeydown(this.oDialog.getDomRef(), KeyCodes.ESCAPE);
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(this.oDialog.isOpen(), "Dialog is closed after pressing ESC");
+	});
+
+	QUnit.test("Pressing SPACE/ENTER + ESC should not close the dialog", function (assert) {
+		// Arrange
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		[KeyCodes.SPACE, KeyCodes.ENTER].forEach(function (iCancelKey) {
+			// Act
+			qutils.triggerKeydown(this.oDialog.getDomRef(), iCancelKey);
+			qutils.triggerKeydown(this.oDialog.getDomRef(), KeyCodes.ESCAPE);
+			this.clock.tick(500);
+
+			// Assert
+			assert.ok(this.oDialog.isOpen(), "Dialog is not closed after holding SPACE/ENTER with ESC");
+		}.bind(this));
+	});
+
+	QUnit.test("Releasing SPACE/ENTER and then pressing ESC should close the dialog", function (assert) {
+		// Arrange
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		[KeyCodes.SPACE, KeyCodes.ENTER].forEach(function (iCancelKey) {
+			// Act
+			qutils.triggerKeydown(this.oDialog.getDomRef(), iCancelKey);
+			qutils.triggerKeyup(this.oDialog.getDomRef(), iCancelKey);
+			qutils.triggerKeydown(this.oDialog.getDomRef(), KeyCodes.ESCAPE);
+			this.clock.tick(500);
+
+			// Assert
+			assert.notOk(this.oDialog.isOpen(), "Dialog is closed after releasing SPACE/ENTER and than pressing ESC");
+		}.bind(this));
+	});
 });
