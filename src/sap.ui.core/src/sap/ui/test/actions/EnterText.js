@@ -54,6 +54,16 @@ sap.ui.define([
 				keepFocus: {
 					type: "boolean",
 					defaultValue: false
+				},
+				/*
+				 * If it is set to <code>true</code>, an ENTER key will be entered after the text.
+				 * Use this for inputs that shouldn't lose the focus after a text is entered.
+				 * (e.g. inputs in a sap.m.Popover shouldn't be focused out, as this will make the popover close in FF and IE11)
+				 * @since 1.76
+				 */
+				pressEnterKey: {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			publicMethods : [ "executeOn" ]
@@ -107,7 +117,13 @@ sap.ui.define([
 				oUtils.triggerEvent("input", oActionDomRef);
 			});
 
-			if (!this.getKeepFocus()) {
+			if (this.getPressEnterKey()) {
+				// trigger change event with enter key
+				oUtils.triggerKeydown(oActionDomRef, KeyCodes.ENTER);
+				oUtils.triggerKeyup(oActionDomRef, KeyCodes.ENTER);
+				oUtils.triggerEvent("input", oActionDomRef);
+				oUtils.triggerEvent("search", oActionDomRef);
+			} else if (!this.getKeepFocus()) {
 				// simulate the blur - focus stays but the value is updated now
 				this._simulateFocusout(oActionDomRef);
 

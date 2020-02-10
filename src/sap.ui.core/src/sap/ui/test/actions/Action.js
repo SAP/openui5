@@ -153,12 +153,13 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 		},
 
 		_tryOrSimulateFocusin: function ($DomRef, oControl) {
-			var isAlreadyFocused = $DomRef.is(":focus");
-			var bFireArtificialEvents;
 			var oDomRef = $DomRef[0];
+			var bFireArtificialEvents = false;
+			var isAlreadyFocused = $DomRef.is(":focus");
+			var bIsIE11 = Device.browser.msie && Device.browser.version < 12;
+			var bIsNewFF = Device.browser.firefox && Device.browser.version >= 60;
 
-			if (isAlreadyFocused || (Device.browser.msie && Device.browser.version < 12) ||
-				(Device.browser.firefox && Device.browser.version >= 60)) {
+			if (isAlreadyFocused || bIsIE11 || bIsNewFF) {
 				// If the event is already focused, make sure onfocusin event of the control will be properly fired when executing this action,
 				// otherwise the next blur will not be able to safely remove the focus.
 				// In IE11 (and often in Firefox v61.0/v60.0 ESR, if the focus action fails and focusin is dispatched, onfocusin will be called twice
@@ -179,6 +180,10 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 				this._createAndDispatchFocusEvent("focusin", oDomRef);
 				this._createAndDispatchFocusEvent("focus", oDomRef);
 				this._createAndDispatchFocusEvent("activate", oDomRef);
+			}
+
+			if (!$DomRef.is(":focus")) {
+				this.oLogger.error("Control " + oControl + " could not be focused!");
 			}
 		},
 
@@ -233,7 +238,11 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 				oFocusEvent = document.createEvent("FocusEvent");
 				oFocusEvent.initFocusEvent(sName, true, false, window, 0, oDomRef);
 			} else {
-				oFocusEvent = new FocusEvent(sName);
+				oFocusEvent = new FocusEvent(sName, {
+					type: sName,
+					target: oDomRef,
+					curentTarget: oDomRef
+				});
 			}
 
 			oDomRef.dispatchEvent(oFocusEvent);
