@@ -151,7 +151,8 @@ sap.ui.define([
 			aColumns.forEach(function (oColumn) {
 				oTable.addColumn(new Column({
 					header: new Text({ text: oColumn.title }),
-					width: oColumn.width
+					width: oColumn.width,
+					hAlign: oColumn.hAlign
 				}));
 				aCells.push(this._createCell(oColumn));
 			}.bind(this));
@@ -176,7 +177,8 @@ sap.ui.define([
 			aColumns.forEach(function (oColumn) {
 				oTable.addColumn(new Column({
 					header: new Text({ text: oColumn.title }),
-					width: oColumn.width
+					width: oColumn.width,
+					hAlign: oColumn.hAlign
 				}));
 			});
 

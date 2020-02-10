@@ -79,6 +79,13 @@
 					<td>1.15.0</td>
 				</tr>
 				<tr>
+					<td>hAlign</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Defines the horizontal alignment of the column content. For a list of possible values see <a id="linkToTextAlign" target="_blank">sap.ui.core.TextAlign</a>.</td>
+					<td>1.19.0</td>
+				</tr>
+				<tr>
 					<td>value</td>
 					<td>string</td>
 					<td>No</td>
@@ -166,7 +173,8 @@
 					},
 					{
 						"label": "Net Amount",
-						"value": "{netAmount}"
+						"value": "{netAmount}",
+						"hAlign": "End"
 					},
 					{
 						"label": "Status",
@@ -271,5 +279,16 @@
 		<div><a href="#example">Example</a></div>
 	</div>
 </div>
+<script>
+	var sPathToDemoKitLocal = "../../../../../../../../../../documentation.html#";
+	var sPathToDemoKit = "../../../../../../../../../../#";
+
+	if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+		document.getElementById("linkToTextAlign").href = sPathToDemoKitLocal + "/api/sap.ui.core.TextAlign";
+	} else {
+		document.getElementById("linkToTextAlign").href = sPathToDemoKit + "/api/sap.ui.core.TextAlign";
+
+	}
+</script>
 </body>
 </html>

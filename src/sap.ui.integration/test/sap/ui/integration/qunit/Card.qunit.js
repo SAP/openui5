@@ -763,7 +763,8 @@ sap.ui.define([
 							{
 								"title": "Status",
 								"value": "{status}",
-								"state": "{statusState}"
+								"state": "{statusState}",
+								"hAlign": "End"
 							},
 							{
 								"title": "Order ID",
@@ -2086,6 +2087,9 @@ sap.ui.define([
 				assert.ok(aCells[4].isA("sap.m.ProgressIndicator"), "Column with a 'progressIndicator' should be of type 'ProgressIndicator'");
 				assert.ok(aCells[5].isA("sap.f.Avatar"), "Column with an 'icon' should be of type 'Avatar'");
 				assert.ok(aCells[6].isA("sap.m.ObjectIdentifier"), "Column with 'identifier' as an object should be of type 'ObjectIdentifier'");
+
+				// Column properties
+				assert.equal(aColumns[2].getHAlign(), "End", "The status column is aligned at 'End'");
 
 				// Column values
 				assert.equal(aCells[0].getTitle(), oManifestData[0].salesOrder, "Should have correct identifier value.");
