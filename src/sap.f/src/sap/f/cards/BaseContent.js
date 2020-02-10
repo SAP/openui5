@@ -344,7 +344,13 @@ sap.ui.define([
 				oContent._sAppId = sAppId;
 				oContent.setServiceManager(oServiceManager);
 				oContent.setDataProviderFactory(oDataProviderFactory);
-				oContent.setConfiguration(BindingHelper.createBindingInfos(oConfiguration));
+
+				if (sType.toLowerCase() !== "adaptivecard") {
+					oContent.setConfiguration(BindingHelper.createBindingInfos(oConfiguration));
+				} else {
+					oContent.setConfiguration(oConfiguration);
+				}
+
 				resolve(oContent);
 			};
 

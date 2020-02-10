@@ -22,6 +22,18 @@
 	"sap.card": {
 		"type": "AdaptiveCard",
 		"content": {
+			"data": {
+				"json": {
+					"firstName": "Donna",
+					"lastName": "Moore",
+					"position": "Sales Executive",
+					"description": "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+					"company": {
+						"name": "Robert Brown Entertainment",
+						"address": "481 West Street, Anytown OH 45066, USA"
+					}
+				}
+			},
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 			"type": "AdaptiveCard",
 			"version": "1.0",
@@ -47,14 +59,14 @@
 							"items": [
 								{
 									"type": "TextBlock",
-									"text": "Donna Moore",
+									"text": "{firstName} {lastName}",
 									"weight": "bolder",
 									"wrap": true
 								},
 								{
 									"type": "TextBlock",
 									"spacing": "None",
-									"text": "Sales Executive",
+									"text": "{position}",
 									"isSubtle": true,
 									"wrap": true
 								}
@@ -64,7 +76,7 @@
 				},
 				{
 					"type": "TextBlock",
-					"text": "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+					"text": "{description}",
 					"wrap": true
 				},
 				{
@@ -72,19 +84,19 @@
 					"facts": [
 						{
 							"title": "First Name:",
-							"value": "Donna"
+							"value": "{firstName}"
 						},
 						{
 							"title": "Last Name:",
-							"value": "Moore"
+							"value": "{lastName}"
 						},
 						{
 							"title": "Company:",
-							"value": "Robert Brown Entertainment"
+							"value": "{company.name}"
 						},
 						{
 							"title": "Address:",
-							"value": "481 West Street, Anytown OH 45066, USA"
+							"value": "{company.address}"
 						}
 					]
 				}

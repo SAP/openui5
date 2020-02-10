@@ -1,0 +1,58 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adativecard.embedded",
+		"type": "card"
+	},
+	"sap.card": {
+		"header": {
+			"title": "Adaptive Card - Inline Templating",
+			"subTitle": "Templating using $data",
+			"icon": {
+				"src": "sap-icon://sap-ui5"
+			}
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"$data": {
+				"employee": {
+					"name": "Matt",
+					"manager": {
+						"name": "Thomas"
+					},
+					"peers": [
+						{
+							"name": "Andrew"
+						},
+						{
+							"name": "Lei"
+						},
+						{
+							"name": "Mary Anne"
+						},
+						{
+							"name": "Adam"
+						}
+					]
+				}
+			},
+			"body": [
+				{
+					"type": "TextBlock",
+					"text": "Hi {employee.name}! Here's a bit about your org..."
+				},
+				{
+					"type": "TextBlock",
+					"text": "Your manager is: {employee.manager.name}"
+				},
+				{
+					"type": "TextBlock",
+					"text": "3 of your peers are: {employee.peers[0].name}, {employee.peers[1].name}, {employee.peers[2].name}"
+				}
+			]
+		}
+	}
+}

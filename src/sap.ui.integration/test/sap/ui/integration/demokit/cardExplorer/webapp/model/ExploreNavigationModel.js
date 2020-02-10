@@ -34,6 +34,11 @@ sap.ui.define([
 								title: 'Form',
 								key: 'form',
 								manifestUrl: '/samples/adaptive/form.json'
+							},
+							{
+								title: 'Templating',
+								key: 'templating',
+								manifestUrl: '/samples/adaptive/templating.json'
 							}
 						]
 					},

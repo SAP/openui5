@@ -18,7 +18,7 @@
 		"type": "AdaptiveCard",
 		"content": {
 			"request": {
-				"url": "./adaptiveCard.json"
+				"url": "./adaptivecard-manifest-json.json"
 			}
 		}
 	}

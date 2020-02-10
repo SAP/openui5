@@ -7,6 +7,7 @@ sap.ui.define([
 		"sap/ui/dom/includeScript",
 		"sap/f/cards/BaseContent",
 		"sap/ui/integration/thirdparty/adaptivecards",
+		"sap/ui/integration/thirdparty/adaptivecards-templating",
 		"sap/f/cards/adaptivecards/elements/UI5InputText",
 		"sap/f/cards/adaptivecards/elements/UI5InputNumber",
 		"sap/f/cards/adaptivecards/elements/UI5InputChoiceSet",
@@ -18,7 +19,7 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/base/Log"
 	],
-	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig, JSONModel, Log) {
+	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, ACData, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig, JSONModel, Log) {
 		"use strict";
 
 		/**
@@ -64,7 +65,6 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {Object} oConfiguration Configuration object used to create the internal list.
-		 * @returns {sap.f.cards.AdaptiveContent} Pointer to the control instance to allow method chaining.
 		 */
 		AdaptiveContent.prototype.setConfiguration = function (oConfiguration) {
 			this._oCardConfig = oConfiguration;
@@ -75,7 +75,7 @@ sap.ui.define([
 				return;
 			}
 
-			this._renderMSCardContent();
+			this._setupMSCardContent();
 		};
 
 		/**
@@ -92,7 +92,7 @@ sap.ui.define([
 				.then(function () {
 					// set the data from the url as a card config
 					that._oCardConfig = oData.getData();
-					that._renderMSCardContent();
+					that._setupMSCardContent();
 				}).then(function () {
 					// destroy the data model, since it is not needed anymore
 					oData.destroy();
@@ -104,7 +104,7 @@ sap.ui.define([
 		};
 
 		AdaptiveContent.prototype.onAfterRendering = function () {
-			this._renderMSCardContent();
+			this._setupMSCardContent();
 		};
 
 		/**
@@ -218,14 +218,114 @@ sap.ui.define([
 		};
 
 		/**
-		 * Renders a Card
+		 * Setup of the card content.
 		 *
 		 * @private
 		 */
-		AdaptiveContent.prototype._renderMSCardContent = function () {
+		AdaptiveContent.prototype._setupMSCardContent = function () {
+			var oDom = this.$(),
+				oConfiguration = this._oCardConfig,
+				oTemplateData;
+
+			if (!this.adaptiveCardInstance || !oConfiguration || !(oDom && oDom.size())) {
+				return;
+			}
+
+			// check if a data object is present in the card content
+			oTemplateData = oConfiguration.$data || oConfiguration.data;
+
+			// if there is no templating, render the MS AdaptiveCard
+			if (!oTemplateData) {
+				this._renderMSCardContent(oConfiguration);
+				return;
+			}
+
+			// if the inline $data is present, adapt it in order to
+			// reuse the DataFactory logic of the Integration Card
+			if (oConfiguration.$data) {
+				oTemplateData = {
+					"json": oTemplateData
+				};
+			}
+
+			this._setData(oTemplateData);
+		};
+
+
+		/**
+		 * Requests data and passes it to the card template.
+		 *
+		 * The logic behind BaseContent.prototype._setData is changed in order to switch off
+		 * the UI5 binding inside the content and set the templating functionality of
+		 * the MS AdaptiveCard.
+		 *
+		 * @private
+		 * @param {Object} oDataSettings The data part of the configuration object
+		 */
+		BaseContent.prototype._setData = function (oDataSettings) {
+			var oCard, oModel, oData,
+				sPath = "";
+
+			if (oDataSettings && oDataSettings.path) {
+				sPath = oDataSettings.path;
+			}
+
+			if (this._oDataProvider) {
+				this._oDataProvider.destroy();
+			}
+
+			if (this._oDataProviderFactory) {
+				this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
+			}
+
+			if (this._oDataProvider) {
+				this.setBusy(true);
+
+				// If a data provider is created use an own model.
+				oModel = this.setModel(new JSONModel());
+
+				this._oDataProvider.attachDataChanged(function (oEvent) {
+					oData = oEvent.getParameter('data');
+					this._updateModel(oData);
+
+					// if a path is present, setup this part of the data
+					// as a data object for the card template.
+					if (sPath.length) {
+						oData = oModel.getProperty(sPath);
+					}
+
+					// attach the data with the card template
+					oCard = this._setTemplating(this._oCardConfig, oData);
+
+					// render the MS AdaptiveCard
+					oCard && this._renderMSCardContent(oCard);
+
+					this.setBusy(false);
+				}.bind(this));
+
+				this._oDataProvider.attachError(function (oEvent) {
+					this._handleError(oEvent.getParameter("message"));
+					this.setBusy(false);
+				}.bind(this));
+
+				this._oDataProvider.triggerDataUpdate().then(function () {
+					this.fireEvent("_dataReady");
+				}.bind(this));
+			} else {
+				this.fireEvent("_dataReady");
+			}
+		};
+
+		/**
+		 * Rendering of a MS AdaptiveCard.
+		 *
+		 * @param {Object} oCard The Card to be rendered
+		 * @private
+		 */
+		AdaptiveContent.prototype._renderMSCardContent = function (oCard) {
 			var oDom = this.$();
-			if (this.adaptiveCardInstance && this._oCardConfig && oDom && oDom.size()) {
-				this.adaptiveCardInstance.parse(this._oCardConfig);
+			if (this.adaptiveCardInstance && oCard && oDom && oDom.size()) {
+				this.adaptiveCardInstance.parse(oCard);
 				oDom.html(this.adaptiveCardInstance.render());
 
 				this._bAdaptiveCardElementsReady = true;
@@ -238,6 +338,24 @@ sap.ui.define([
 				this._bReady = true;
 				this.fireEvent("_ready");
 			}
+		};
+
+		/**
+		 * Connects the template object with the data.
+		 *
+		 * @param {Object} oTemplate The template object
+		 * @param {Object} oData The JSON object representing the data
+		 * @returns {Object} The Card to be rendered
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._setTemplating = function (oTemplate, oData) {
+			var oCardTemplate = new ACData.Template(oTemplate),
+				oContext = new ACData.EvaluationContext();
+
+			oContext.$root = oData;
+
+			return oCardTemplate.expand(oContext);
 		};
 
 		/**
