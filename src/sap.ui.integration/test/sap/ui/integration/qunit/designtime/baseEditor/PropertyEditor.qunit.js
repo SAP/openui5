@@ -3,11 +3,15 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	BaseEditor,
 	PropertyEditor,
+	PropertyEditorFactory,
+	StringEditor,
 	sinon
 ) {
 	"use strict";
@@ -894,6 +898,34 @@ function (
 				"path": "/baz",
 				"type": "string"
 			});
+		});
+
+		QUnit.test("When BaseEditor is destroyed during nested editor creation", function (assert) {
+			var fnDone = assert.async();
+			this.oBaseEditor.setConfig(Object.assign({}, mConfig, {properties: {}}));
+
+			var oCreationStub = sandbox.stub(PropertyEditorFactory, "create");
+			var oDeletionStub = sandbox.stub(StringEditor.prototype, "destroy");
+
+			var oEditorInCreation;
+			oCreationStub.callsFake(function () {
+				return PropertyEditorFactory.create.wrappedMethod.apply(this, arguments).then(function (oEditor) {
+					oEditorInCreation = oEditor;
+					return oEditor;
+				});
+			});
+			oDeletionStub.callsFake(function () {
+				StringEditor.prototype.destroy.wrappedMethod.apply(this, arguments);
+				assert.strictEqual(this.sId, oEditorInCreation.sId, "Then the created editor is cleaned up");
+				fnDone();
+			});
+
+			this.oPropertyEditor.setConfig({
+				"label": "Baz property",
+				"path": "/baz",
+				"type": "string"
+			});
+			this.oBaseEditor.destroy();
 		});
 	});
 

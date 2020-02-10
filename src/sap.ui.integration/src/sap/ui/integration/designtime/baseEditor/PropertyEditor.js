@@ -289,10 +289,14 @@ sap.ui.define([
 
 	PropertyEditor.prototype.destroy = function () {
 		if (this._fnCancelInit) {
-			this._fnCancelInit();
+			this._fnCancelInit().then(this._cleanupCancelledInit);
 		}
 		this._removePropertyEditor(this.getEditor());
 		Control.prototype.destroy.apply(this, arguments);
+	};
+
+	PropertyEditor.prototype._cleanupCancelledInit = function (oPropertyEditor) {
+		oPropertyEditor.destroy();
 	};
 
 	PropertyEditor.prototype._removePropertyEditor = function (oEditor) {
@@ -364,7 +368,7 @@ sap.ui.define([
 		) {
 			// Cancel previous async process if any
 			if (this._fnCancelInit) {
-				this._fnCancelInit();
+				this._fnCancelInit().then(this._cleanupCancelledInit);
 				delete this._fnCancelInit;
 			}
 
@@ -376,37 +380,31 @@ sap.ui.define([
 			}
 
 			var mPromise = createPromise(function (fnResolve, fnReject) {
-				PropertyEditorFactory.create(this._mConfig.type)
-					.then(function (oPropertyEditor) {
-						oPropertyEditor.setModel(this.getEditor().getModel("i18n"), "i18n");
-						oPropertyEditor.setConfig(_omit(_merge({}, this._mConfig), "__propertyName")); // deep clone to avoid editor modifications to influence the outer config
-
-						// TODO: remove after Form layout BLI
-						oPropertyEditor.addStyleClass("sapUiTinyMargin");
-
-						oPropertyEditor.attachBeforeValueChange(function (oEvent) {
-							this.fireBeforeValueChange(_omit(oEvent.getParameters(), "id"));
-						}, this);
-
-						oPropertyEditor.attachValueChange(function (oEvent) {
-							this.setValue(oEvent.getParameter("value"));
-							this.fireValueChange(_omit(oEvent.getParameters(), "id"));
-						}, this);
-
-						oPropertyEditor.setValue(this.getValue());
-
-						this._sCreatedBy = sCreatedBy;
-						delete this._fnCancelInit;
-
-						return oPropertyEditor;
-					}.bind(this))
-					.then(fnResolve)
-					.catch(fnReject);
+				PropertyEditorFactory.create(this._mConfig.type).then(fnResolve).catch(fnReject);
 			}.bind(this));
 
 			this._fnCancelInit = mPromise.cancel;
 
 			mPromise.promise.then(function (oPropertyEditor) {
+				oPropertyEditor.setModel(this.getEditor().getModel("i18n"), "i18n");
+				oPropertyEditor.setConfig(_omit(_merge({}, this._mConfig), "__propertyName")); // deep clone to avoid editor modifications to influence the outer config
+
+				// TODO: remove after Form layout BLI
+				oPropertyEditor.addStyleClass("sapUiTinyMargin");
+
+				oPropertyEditor.attachBeforeValueChange(function (oEvent) {
+					this.fireBeforeValueChange(_omit(oEvent.getParameters(), "id"));
+				}, this);
+
+				oPropertyEditor.attachValueChange(function (oEvent) {
+					this.setValue(oEvent.getParameter("value"));
+					this.fireValueChange(_omit(oEvent.getParameters(), "id"));
+				}, this);
+
+				oPropertyEditor.setValue(this.getValue());
+
+				this._sCreatedBy = sCreatedBy;
+
 				this.setAggregation("propertyEditor", oPropertyEditor);
 				var bRenderLabel = this.getRenderLabel();
 				if (bRenderLabel !== undefined) {
@@ -420,6 +418,7 @@ sap.ui.define([
 				this.firePropertyEditorChange({
 					propertyEditor: oPropertyEditor
 				});
+				delete this._fnCancelInit;
 			}.bind(this));
 		}
 	};

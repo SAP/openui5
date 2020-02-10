@@ -3,11 +3,15 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/integration/designtime/baseEditor/PropertyEditors",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	BaseEditor,
 	PropertyEditors,
+	PropertyEditorFactory,
+	StringEditor,
 	sinon
 ) {
 	"use strict";
@@ -919,6 +923,22 @@ function (
 			});
 			this.oBaseEditor.addContent(this.oPropertyEditors);
 			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("When a PropertyEditors wrapper has no nested editors", function (assert) {
+			this.oPropertyEditors = new PropertyEditors({
+				config: []
+			});
+			this.oBaseEditor.addContent(this.oPropertyEditors);
+			sap.ui.getCore().applyChanges();
+
+			return this.oPropertyEditors.ready().then(function () {
+				assert.strictEqual(
+					this.oPropertyEditors.isReady(),
+					true,
+					"The wrapper ready check is successful"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("When a PropertyEditors wrapper has nested editors", function (assert) {
