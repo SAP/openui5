@@ -12,6 +12,29 @@
             "reference": "1980478346"
           }
         ]
+      },
+      {
+        "id": "5d3165e2c0ae52177122614e79d1d1aa1e3eded8",
+        "type": "FEATURE",
+        "text": " sap.f.cards.AdaptiveContent: Load AC manifest from url",
+        "references": []
+      },
+      {
+        "id": "0e61b326bee6ce110aebe75ce3b738b87619bad1",
+        "type": "FEATURE",
+        "text": " sap.f.cards.Header: Fire press event on sapselect",
+        "references": []
+      },
+      {
+        "id": "0eb148e765ef580198618c02cc9052dc4ad83ba8",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: String concatenation works with complex bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080077452"
+          }
+        ]
       }
     ]
   }

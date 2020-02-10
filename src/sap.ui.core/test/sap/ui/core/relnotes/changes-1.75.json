@@ -35,6 +35,34 @@
         "type": "FEATURE",
         "text": " test recorder: add settings dialog with viewId option",
         "references": []
+      },
+      {
+        "id": "c923d5b35a3cc496650b1148512da190c1f3bd98",
+        "type": "FEATURE",
+        "text": " test recorder: add setting for formatting as po method",
+        "references": []
+      },
+      {
+        "id": "b3b9330d5a093bdfaccb675cbb57fbef91b0a8a6",
+        "type": "FIX",
+        "text": " ManagedObject.js: cloning single aggregation with alt type string",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680241716"
+          }
+        ]
+      },
+      {
+        "id": "c72ed04339905804fa9214c2f800a5e1fae52e52",
+        "type": "FIX",
+        "text": " core: Failing test for XmlTreeModifier",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080080863"
+          }
+        ]
       }
     ]
   }

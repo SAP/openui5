@@ -338,6 +338,68 @@
             "reference": "2080035052"
           }
         ]
+      },
+      {
+        "id": "ad24d21845eb46dcb332dc6432a282a8c6e65ec6",
+        "type": "FEATURE",
+        "text": " sap.m.Link: now supports Rename action in RTA",
+        "references": []
+      },
+      {
+        "id": "c6b46ac66398fece9758d3178312282dee580c1b",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar - new helper method getViewByKey is added",
+        "references": []
+      },
+      {
+        "id": "483a1d1bf644085bcb11deb6f55343188887e2e6",
+        "type": "FIX",
+        "text": " P13nDialog column alignment fix",
+        "references": []
+      },
+      {
+        "id": "bfa80191748981f5e315271cdc54ead8e3307102",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: valueFormat effect is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080051542"
+          }
+        ]
+      },
+      {
+        "id": "65cb1a98f2debc46a95efe5d4d2c27c0bc7410b5",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer : For Edge browser input control inside header container not editable.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005869932019"
+          }
+        ]
+      },
+      {
+        "id": "30e13cf319e820aa5353d4e1ec5f0763f58c94d0",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: no bottom padding when used along with IconTabBar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080086968"
+          }
+        ]
+      },
+      {
+        "id": "b397ed4a6e3e553dc9605dd0cf23971c900f19b7",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Row Navigation now fires startDateChange evnet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000696982020"
+          }
+        ]
       }
     ]
   }

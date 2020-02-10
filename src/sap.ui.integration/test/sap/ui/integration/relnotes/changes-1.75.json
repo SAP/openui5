@@ -1,0 +1,13 @@
+{
+  "1.75.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "5d3165e2c0ae52177122614e79d1d1aa1e3eded8",
+        "type": "FEATURE",
+        "text": " sap.f.cards.AdaptiveContent: Load AC manifest from url",
+        "references": []
+      }
+    ]
+  }
+}
