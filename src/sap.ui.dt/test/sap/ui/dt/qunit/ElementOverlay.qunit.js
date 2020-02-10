@@ -427,6 +427,23 @@ function (
 				this.oButton.setText(sText);
 			}, this);
 		});
+
+		QUnit.test("when the _domChangedCallback function is being called twice in a row", function(assert) {
+			var fnDone = assert.async();
+			var mParameters = { name: "parameter_name" };
+			var iCounter = 0;
+			this.oElementOverlay.attachApplyStylesRequired(function (oEvent) {
+				iCounter++;
+				window.requestAnimationFrame(function (mResultParameters) {
+					assert.strictEqual(iCounter, 1, "then the 'applyStylesRequired' event is called just once");
+					assert.strictEqual(mResultParameters.name, mParameters.name, "then the parameters map is passed through");
+					assert.strictEqual(mResultParameters.targetOverlay, this.oElementOverlay, "then the overlay is added to the parameters map");
+					fnDone();
+				}.bind(this, oEvent.mParameters));
+			}.bind(this));
+			this.oElementOverlay._domChangedCallback(mParameters);
+			this.oElementOverlay._domChangedCallback(mParameters);
+		});
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
