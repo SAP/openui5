@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/transport/Transports",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/core/BusyIndicator"
 ], function(
+	FlUtils,
 	LayerUtils,
 	Layer,
 	Transports,
@@ -50,6 +52,11 @@ sap.ui.define([
 	 * @public
 	 */
 	TransportSelection.prototype.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl, sStyleClass) {
+		//No transport selection unless Lrep connector is available
+		if (!FlUtils.getLrepUrl()) {
+			fOkay(this._createEventObject(oObjectInfo, {transportId: ""}));
+			return;
+		}
 		var retrieveTransportInfo = function(oObjectInfo, fOkay, fError, bCompactMode, sStyleClass, bATOActive) {
 			Transports.getTransports(oObjectInfo).then(function(oGetTransportsResult) {
 				if (this._checkDialog(oGetTransportsResult, bATOActive)) {

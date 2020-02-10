@@ -90,6 +90,22 @@ sap.ui.define([
 			this.oTransportSelection.selectTransport(oObject, fOkay, fError);
 		});
 
+		QUnit.test("sap.ui.fl.write._internal.transport.TransportSelection.selectTransport when LrepConnector is not available", function (assert) {
+			var done = assert.async();
+			var oObject = {name: "", type: "variant"};
+			sandbox.stub(FlUtils, "getLrepUrl").returns("");
+			var fOkay = function (oResult) {
+				assert.equal(oResult.getParameters().selectedTransport, "");
+				FlUtils.getLrepUrl.restore();
+				done();
+			};
+			var fError = function () {
+				done();
+			};
+
+			this.oTransportSelection.selectTransport(oObject, fOkay, fError);
+		});
+
 		QUnit.test("when preparing and checking changes for transport", function(assert) {
 			var oMockTransportInfo = {
 				packageName : "PackageName",

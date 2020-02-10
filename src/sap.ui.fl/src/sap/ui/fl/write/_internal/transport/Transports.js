@@ -16,7 +16,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var LREP_CONNECTOR_CONFIG_URL = "/sap/bc/lrep";
 	var ROUTES = {
 		ACTION_GET_TRANSPORTS: "/actions/gettransports/",
 		ACTION_MAKE_CHANGE_TRANSPORTABLE: "/actions/make_changes_transportable/",
@@ -55,7 +54,7 @@ sap.ui.define([
 			if (FlexUtils.getClient()) {
 				mParameters["sap-client"] = FlexUtils.getClient();
 			}
-			var sGetTransportsUrl = ApplyUtils.getUrl(ROUTES.ACTION_GET_TRANSPORTS, {url: LREP_CONNECTOR_CONFIG_URL}, mParameters);
+			var sGetTransportsUrl = ApplyUtils.getUrl(ROUTES.ACTION_GET_TRANSPORTS, {url: FlexUtils.getLrepUrl()}, mParameters);
 			//decode url before sending to ABAP back end which does not expect encoded special character such as "/" in the package name
 			sGetTransportsUrl = decodeURIComponent(sGetTransportsUrl);
 			return ApplyUtils.sendRequest(sGetTransportsUrl, "GET").then(function (oResponse) {
@@ -96,8 +95,8 @@ sap.ui.define([
 			}
 			var mUrlParams = FlexUtils.getClient() ? {"sap-client" : FlexUtils.getClient()} : {};
 
-			var sMakeChangesTransportableUrl = ApplyUtils.getUrl(ROUTES.ACTION_MAKE_CHANGE_TRANSPORTABLE, {url: LREP_CONNECTOR_CONFIG_URL}, mUrlParams);
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.ACTION_GET_TOKEN, {url: LREP_CONNECTOR_CONFIG_URL});
+			var sMakeChangesTransportableUrl = ApplyUtils.getUrl(ROUTES.ACTION_MAKE_CHANGE_TRANSPORTABLE, {url: FlexUtils.getLrepUrl()}, mUrlParams);
+			var sTokenUrl = ApplyUtils.getUrl(ROUTES.ACTION_GET_TOKEN, {url: FlexUtils.getLrepUrl()});
 			var oRequestOption = WriteUtils.getRequestOptions(
 				ApplyLrepConnector,
 				sTokenUrl,
