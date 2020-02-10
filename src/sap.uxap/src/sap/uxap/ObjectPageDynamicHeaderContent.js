@@ -110,6 +110,11 @@ sap.ui.define([
 			// implementation not supported
 		};
 
+		ObjectPageDynamicHeaderContent.prototype.setVisible = function (bVisible) {
+			this.getParent() && this.getParent().toggleStyleClass("sapUxAPObjectPageLayoutNoHeaderContent", !bVisible);
+			return this.setProperty("visible", bVisible);
+		};
+
 		return ObjectPageDynamicHeaderContent;
 
 	});
