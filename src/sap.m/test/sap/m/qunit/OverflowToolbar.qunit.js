@@ -2071,74 +2071,6 @@ sap.ui.define([
 		spyOTInvalidate.restore();
 	});
 
-	QUnit.test("Mark first/last visible child", function (assert) {
-		// Arrange
-		var aContent = getDefaultContent();
-
-			createOverflowToolbar({}, aContent);
-
-		// Assert
-		assert.ok(aContent[0].hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
-		assert.ok(aContent[aContent.length - 1].hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
-	});
-
-	QUnit.test("Mark first/last visible child when no invalidation props that triggers rerender of the item is changed", function (assert) {
-		// Arrange
-		var oCheckBox = new sap.m.CheckBox({text: "Test checkbox"});
-
-			createOverflowToolbar({}, oCheckBox);
-
-		// Assert
-		assert.ok(oCheckBox.hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
-		assert.ok(oCheckBox.hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
-
-		// Act
-		oCheckBox.setSelected(true);
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.ok(oCheckBox.hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
-		assert.ok(oCheckBox.hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
-	});
-
-	QUnit.test("Mark first/last visible child when there are not visible children", function (assert) {
-		assert.expect(4);
-		// Arrange
-		var aContent = getDefaultContent(),
-			oOverflowTB = createOverflowToolbar({}, aContent),
-			done = assert.async(),
-			iControlsWithFirstChildClass,
-			iControlsWithLastChildClass,
-			oDelegate = {
-				onAfterRendering: function () {
-					oOverflowTB.removeEventDelegate(oDelegate);
-
-					iControlsWithFirstChildClass = aContent.filter(function (oElement) {
-						return oElement.hasStyleClass("sapMBarFirstVisibleChild");
-					}).length;
-					iControlsWithLastChildClass = aContent.filter(function (oElement) {
-						return oElement.hasStyleClass("sapMBarLastVisibleChild");
-					}).length;
-
-					// assert
-					assert.strictEqual(iControlsWithFirstChildClass, 1, "Only 1 child with sapMBarFirstVisibleChild class.");
-					assert.strictEqual(iControlsWithLastChildClass, 1, "Only 1 child with sapMBarLastVisibleChild class.");
-					assert.ok(aContent[1].hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
-					assert.ok(aContent[aContent.length - 2].hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
-					done();
-
-					// Clean-up
-					oOverflowTB.destroy();
-				}
-			};
-
-		aContent[0].setVisible(false);
-		aContent[aContent.length - 1].setVisible(false);
-		oOverflowTB.addEventDelegate(oDelegate);
-
-		sap.ui.getCore().applyChanges();
-	});
-
 	QUnit.module("Resize handling");
 
 	QUnit.test("Handling of resizes that don't move elements around", function (assert) {
@@ -2610,13 +2542,14 @@ sap.ui.define([
 									minWidth: "50px"
 								})
 							}),
-			oOTB = createOverflowToolbar({}, [oTestButton]);
+			oOTB = createOverflowToolbar({}, [oTestButton]),
+			iRemInPx = DomUnitsRem.toPx("1rem");
 
 		oOTB.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 50,
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 50 + (0.25 * iRemInPx),
 			"Size is equal to minWidth + margins");
 	});
 
@@ -2653,13 +2586,14 @@ sap.ui.define([
 									minWidth: "50px"
 								})
 							}),
-			oOTB = createOverflowToolbar({}, [oTestButton]);
+			oOTB = createOverflowToolbar({}, [oTestButton]),
+			iRemInPx = DomUnitsRem.toPx("1rem");
 
 		oOTB.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200,
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200 + (0.25 * iRemInPx),
 			"Size is equal to outer width");
 	});
 
@@ -2688,11 +2622,12 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), (3 * iRemInPx) + (2 * 0.25 * iRemInPx),
-			"Size is equal to minWidth (3rem) + margins (2x0.25 rem)");
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), (3 * iRemInPx) + (0.25 * iRemInPx),
+			"Size is equal to minWidth (3rem) + left margin of first child");
 
-		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton2), (50 * 300) / 100 + (2 * 0.25 * iRemInPx),
-			"Size is equal to minWidth (150px) + margins (2x0.25 rem)");
+		// OFT has right padding, we deduct it
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton2), (50 * (300 - (0.25 * iRemInPx))) / 100 + (0.5 * iRemInPx),
+			"Size is equal to minWidth (148px) + left margin");
 	});
 
 	QUnit.module("Content size measurement");
