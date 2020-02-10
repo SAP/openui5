@@ -579,6 +579,7 @@ sap.ui.define([
 						only: ["sap/ui/rta/RuntimeAuthoring"]
 					},
 					ui5: {
+						"sap-ui-rta-xx-versioning": true,
 						resourceroots: {
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",

@@ -539,10 +539,17 @@ function(
 
 
 	RuntimeAuthoring.prototype._initVersioning = function() {
-		return FeaturesAPI.isVersioningEnabled(this.getLayer())
+		var oUriParameters = new UriParameters(window.location.href);
+		var sUseVersioning = oUriParameters.get("sap-ui-rta-xx-versioning");
+		if (!sUseVersioning) {
+			return FeaturesAPI.isVersioningEnabled(this.getLayer())
 			.then(function (bVersioningEnabled) {
 				this._bVersioningEnabled = bVersioningEnabled;
 			}.bind(this));
+		}
+
+		this._bVersioningEnabled = false;
+		return Promise.resolve();
 	};
 
 	/**
