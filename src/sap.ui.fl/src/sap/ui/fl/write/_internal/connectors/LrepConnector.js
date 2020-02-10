@@ -112,6 +112,8 @@ sap.ui.define([
 		var oTransportSelectionPromise;
 		if (mPropertyBag.transport) {
 			oTransportSelectionPromise = Promise.resolve({transport: mPropertyBag.transport});
+		} else if (mPropertyBag.isForSmartBusiness) {
+			return Promise.resolve();
 		} else {
 			var oChange = _prepareAppVariantSpecificChange(mPropertyBag.appVariant);
 			oTransportSelectionPromise = new TransportSelection().openTransportSelection(oChange);
@@ -448,6 +450,7 @@ sap.ui.define([
 				if (sTransport) {
 					mPropertyBag.transport = sTransport;
 				}
+				delete mPropertyBag.isForSmartBusiness;
 				mPropertyBag.method = "PUT";
 				mPropertyBag.isAppVariant = true;
 				return _doWrite(mPropertyBag);
@@ -459,6 +462,7 @@ sap.ui.define([
 				if (sTransport) {
 					mParameters.changelist = sTransport;
 				}
+				delete mPropertyBag.isForSmartBusiness;
 				var sDeleteUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
 				delete mPropertyBag.reference;
 				var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
