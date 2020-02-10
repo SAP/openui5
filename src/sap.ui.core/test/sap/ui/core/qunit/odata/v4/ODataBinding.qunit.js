@@ -70,6 +70,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 		assert.ok(oBinding.hasOwnProperty("oFetchCacheCallToken"));
 		assert.strictEqual(oBinding.oFetchCacheCallToken, undefined);
+		assert.ok(oBinding.hasOwnProperty("mLateQueryOptions"));
+		assert.strictEqual(oBinding.mLateQueryOptions, undefined);
 		assert.ok(oBinding.hasOwnProperty("sReducedPath"));
 		assert.strictEqual(oBinding.sReducedPath, undefined);
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
@@ -893,6 +895,7 @@ sap.ui.define([
 				oCache : null,
 				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
+				mLateQueryOptions : {},
 				oModel : {
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
@@ -916,6 +919,7 @@ sap.ui.define([
 		oBinding.fetchCache(oContext);
 
 		assert.strictEqual(oBinding.oCache, undefined);
+		assert.strictEqual(oBinding.mLateQueryOptions, undefined);
 		assert.ok(oBinding.oCachePromise.isPending());
 
 		return oBinding.oCachePromise.then(function () {
@@ -932,6 +936,7 @@ sap.ui.define([
 				oCache : null,
 				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
+				mLateQueryOptions : {},
 				oModel : {
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
@@ -966,6 +971,7 @@ sap.ui.define([
 		oBinding.fetchCache(oContext);
 
 		assert.strictEqual(oBinding.oCache, undefined);
+		assert.strictEqual(oBinding.mLateQueryOptions, undefined);
 		assert.ok(oBinding.oCachePromise.isPending());
 
 		return oBinding.oCachePromise.then(function () {
@@ -985,6 +991,7 @@ sap.ui.define([
 					oCache : null,
 					oCachePromise : SyncPromise.resolve(null),
 					doCreateCache : function () {},
+					mLateQueryOptions : {},
 					oModel : {
 						oRequestor : {
 							ready : function () { return SyncPromise.resolve(); }
@@ -1034,6 +1041,7 @@ sap.ui.define([
 
 			assert.strictEqual(oBinding.oCache,
 				!bQueryOptionsAsync && !bResourcePathAsync ? oCache : undefined);
+			assert.strictEqual(oBinding.mLateQueryOptions, undefined);
 			assert.strictEqual(oBinding.oCachePromise.isFulfilled(),
 				!bQueryOptionsAsync && !bResourcePathAsync);
 

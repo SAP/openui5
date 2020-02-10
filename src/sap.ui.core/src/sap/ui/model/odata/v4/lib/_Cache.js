@@ -101,7 +101,6 @@ sap.ui.define([
 		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
 		// the query options extended by $select for late properties
 		this.mLateQueryOptions = null;
-		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		// a promise with attached properties $count, $resolve existing while DELETEs or POSTs are
 		// being sent
@@ -110,10 +109,11 @@ sap.ui.define([
 		// map from resource path to request Promise for pending late property requests
 		this.mPropertyRequestByPath = {};
 		this.oRequestor = oRequestor;
-		this.sResourcePath = sResourcePath;
+		// whether a request has been sent and the query options are final
+		this.bSentRequest = false;
 		this.bSortExpandSelect = bSortExpandSelect;
-		this.bSentReadRequest = false;
 		this.oTypePromise = undefined;
+		this.setResourcePath(sResourcePath);
 		this.setQueryOptions(mQueryOptions);
 	}
 
@@ -648,17 +648,18 @@ sap.ui.define([
 		if (!this.mLateQueryOptions) {
 			return undefined;
 		}
-		mQueryOptions = _Helper.intersectQueryOptions(this.mLateQueryOptions,
-			// no need to convert sRequestedPropertyPath to a metapath, intersectQueryOptions will
-			// reject the resulting invalid path
-			[_Helper.buildPath(sResourceMetaPath, sRequestedPropertyPath)],
-			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, {}, "", false, true);
+
+		sFullResourceMetaPath = _Helper.buildPath(this.sMetaPath, sResourceMetaPath);
+		// sRequestedPropertyPath is also a metapath because the binding does not accept a path with
+		// a collection-valued navigation property for a late property
+		mQueryOptions = _Helper.intersectQueryOptions(
+			_Helper.getQueryOptionsForPath(this.mLateQueryOptions, sResourcePath),
+			[sRequestedPropertyPath], this.oRequestor.getModelInterface().fetchMetadata,
+			sFullResourceMetaPath, {});
 		if (!mQueryOptions) {
 			return undefined;
 		}
-		mQueryOptions = _Helper.getQueryOptionsForPath(mQueryOptions, sResourcePath);
 
-		sFullResourceMetaPath = _Helper.buildPath(this.sMetaPath, sResourceMetaPath);
 		visitQueryOptions(mQueryOptions);
 		sFullResourcePath = _Helper.buildPath(this.sResourcePath, sResourcePath);
 		sRequestPath = sFullResourcePath
@@ -795,18 +796,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns $select and $expand of the query options used for fetching late properties.
-	 *
-	 * @returns {object}
-	 *   The query options for late properties or <code>undefined</code>
-	 *
-	 * @public
-	 */
-	Cache.prototype.getLateQueryOptions = function () {
-		return this.mLateQueryOptions;
-	};
-
-	/**
 	 * Gets the <code>Promise</code> which resolves with a map of minimum and maximum values.
 	 *
 	 * @returns {Promise}
@@ -936,7 +925,7 @@ sap.ui.define([
 			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
 				that.bSortExpandSelect);
 
-			that.bSentReadRequest = true;
+			that.bSentRequest = true;
 			return SyncPromise.all([
 				that.oRequestor
 					.request("GET", sReadUrl, oGroupLock, undefined, undefined, fnDataRequested),
@@ -998,7 +987,7 @@ sap.ui.define([
 			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
 				that.bSortExpandSelect);
 
-			that.bSentReadRequest = true;
+			that.bSentRequest = true;
 			return that.oRequestor
 				.request("GET", sReadUrl, oGroupLock, undefined, undefined, fnDataRequested)
 				.then(function (oResult) {
@@ -1235,13 +1224,25 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.prototype.setQueryOptions = function (mQueryOptions) {
-		if (this.bSentReadRequest) {
-			throw new Error("Cannot set query options: Cache has already sent a read request");
+		if (this.bSentRequest) {
+			throw new Error("Cannot set query options: Cache has already sent a request");
 		}
 
 		this.mQueryOptions = mQueryOptions;
 		this.sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false,
 			this.bSortExpandSelect);
+	};
+
+	/**
+	 * Sets the given resource path and the corresponding meta path.
+	 *
+	 * @param {string} sResourcePath The new resource path
+	 *
+	 * @public
+	 */
+	Cache.prototype.setResourcePath = function (sResourcePath) {
+		this.sResourcePath = sResourcePath;
+		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
 	};
 
 	/**
@@ -2115,6 +2116,7 @@ sap.ui.define([
 			that = this;
 
 		this.aReadRequests.push(oReadRequest);
+		this.bSentRequest = true;
 		oPromise = SyncPromise.all([
 			this.oRequestor.request("GET", this.getResourcePath(iStart, iEnd), oGroupLock,
 				undefined, undefined, fnDataRequested),
@@ -2131,7 +2133,6 @@ sap.ui.define([
 			that.aReadRequests.splice(that.aReadRequests.indexOf(oReadRequest), 1);
 		});
 
-		this.bSentReadRequest = true;
 		// Note: oPromise MUST be a SyncPromise for performance reasons, see SyncPromise#all
 		this.fill(oPromise, iStart, iEnd);
 	};
@@ -2337,10 +2338,10 @@ sap.ui.define([
 		if (this.oPromise) {
 			oGroupLock.unlock();
 		} else {
+			this.bSentRequest = true;
 			this.oPromise = SyncPromise.resolve(this.oRequestor.request("GET",
 				this.sResourcePath + this.sQueryString, oGroupLock, undefined, undefined,
 				fnDataRequested, undefined, this.sMetaPath));
-			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
 			that.registerChange("", oListener);
@@ -2380,9 +2381,9 @@ sap.ui.define([
 	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
 	 *   is used instead
 	 * @param {boolean} [bPost]
-	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
-	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
-	 *   error.
+	 *   Whether the cache uses POST requests. If <code>true</code>, the initial request must be
+	 *   done via {@link #post}. {@link #fetchValue} expects to have cache data, but may trigger
+	 *   requests for late properties. If <code>false<code>, {@link #post} throws an error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
 	 * @param {boolean} [bFetchOperationReturnType]
@@ -2444,6 +2445,7 @@ sap.ui.define([
 			if (this.bPost) {
 				throw new Error("Cannot fetch a value before the POST request");
 			}
+			this.bSentRequest = true;
 			this.oPromise = SyncPromise.all([
 				this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
 					fnDataRequested, undefined, this.sMetaPath),
@@ -2453,7 +2455,6 @@ sap.ui.define([
 					that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
 				return aResult[0];
 			});
-			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
 			if (oResult["$ui5.deleted"]) {
@@ -2526,22 +2527,21 @@ sap.ui.define([
 				oData = undefined;
 			}
 		}
+
+		this.bPosting = true;
+		this.bSentRequest = true;
 		this.oPromise = SyncPromise.all([
 			this.oRequestor.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
 				{"If-Match" : oEntity}, oData),
 			this.fetchTypes()
 		]).then(function (aResult) {
-			that.bPosting = false;
 			that.visitResponse(aResult[0], aResult[1],
 				that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
 
 			return aResult[0];
-		}, function (oError) {
+		}).finally(function () {
 			that.bPosting = false;
-			throw oError;
 		});
-		this.bSentReadRequest = true;
-		this.bPosting = true;
 
 		return this.oPromise;
 	};
