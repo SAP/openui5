@@ -13,6 +13,8 @@ sap.ui.define([
 	function(EventProvider, ChangeReason, DataState, Log, each) {
 	"use strict";
 
+	var timeout;
+	var aDataStateCallbacks = [];
 
 	/**
 	 * Constructor for Binding class.
@@ -235,16 +237,6 @@ sap.ui.define([
 		if (!this.hasListeners("change")) {
 			this.oModel.removeBinding(this);
 		}
-	};
-
-	/**
-	 * Fires event {@link #event:DataStateChange DataStateChange} to attached listeners.
-	 * @param {object}
-	 *         oParameters Parameters to pass along with the event
-	 * @private
-	 */
-	Binding.prototype._fireDataStateChange = function(oParameters) {
-		this.fireEvent("DataStateChange", oParameters);
 	};
 
 	/**
@@ -622,6 +614,77 @@ sap.ui.define([
 		EventProvider.prototype.destroy.apply(this, arguments);
 		this.bIsBeingDestroyed = false;
 	};
+
+	/**
+	 * Checks whether an update of the data state of this binding is required.
+	 *
+	 * @param {map} mPaths A Map of paths to check if update needed
+	 * @private
+	 */
+	Binding.prototype.checkDataState = function(mPaths) {
+		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null;
+		this._checkDataState(sResolvedPath, mPaths);
+	};
+
+	/**
+	 * Checks whether an update of the data state of this binding is required with the given path.
+	 *
+	 * @param {string} sResolvedPath With help of the connected model resolved path
+	 * @param {map} mPaths A Map of paths to check if update needed
+	 * @private
+	 */
+	Binding.prototype._checkDataState = function(sResolvedPath, mPaths) {
+		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
+			var that = this;
+			var oDataState = this.getDataState();
+
+			var fireChange = function() {
+				that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
+				oDataState.changed(false);
+				that.bFiredAsync = false;
+			};
+
+			this._checkDataStateMessages(oDataState, sResolvedPath);
+
+			if (oDataState && oDataState.changed()) {
+				if (this.mEventRegistry["DataStateChange"]) {
+					this.fireEvent("DataStateChange", { dataState: oDataState });
+				}
+				if (this.bIsBeingDestroyed) {
+					fireChange();
+				} else if (this.mEventRegistry["AggregatedDataStateChange"] && !this.bFiredAsync) {
+					fireDataStateChangeAsync(fireChange);
+					this.bFiredAsync = true;
+				}
+			}
+		}
+	};
+
+	/**
+	 * Check for Messages and set them to the DataState.
+	 *
+	 * @param {sap.ui.model.DataState} oDataState The DataState of the binding.
+	 * @param {string} sResolvedPath The resolved binding path.
+	 */
+	Binding.prototype._checkDataStateMessages = function(oDataState, sResolvedPath) {
+		if (sResolvedPath) {
+			oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
+		}
+	};
+
+	function fireDataStateChangeAsync(callback) {
+		if (!timeout) {
+			timeout = setTimeout(function() {
+				timeout = undefined;
+				var aCallbacksCopy = aDataStateCallbacks;
+				aDataStateCallbacks = [];
+				aCallbacksCopy.forEach(function(cb) {
+					cb();
+				});
+			}, 0);
+		}
+		aDataStateCallbacks.push(callback);
+	}
 
 	return Binding;
 

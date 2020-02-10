@@ -222,37 +222,28 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-["deepPath", undefined].forEach(function (sDeepPath) {
-	QUnit.test("checkDataState: with model; deepPath: " + sDeepPath, function (assert) {
+["resolvedPath", undefined, null].forEach(function (sResolvedPath) {
+	QUnit.test("_checkDataStateMessages: with deepPath: " + sResolvedPath, function (assert) {
 		var oModel = {
 				getMessagesByPath : function () {}
 			},
 			oBinding = {
-				sDeepPath : sDeepPath,
-				oModel : oModel,
-				getDataState : function () {}
+				sDeepPath : "deepPath",
+				oModel : oModel
 			},
 			oDataState = {
 				setModelMessages : function () {}
 			},
-			aMessagesByPath = "aMessages",
-			mPaths = "mPaths";
+			aMessagesByPath = "aMessages";
 
-		this.mock(oBinding).expects("getDataState").withExactArgs().returns(oDataState);
-		this.mock(ListBinding.prototype).expects("checkDataState")
-			.on(oBinding).withExactArgs(mPaths);
-		this.mock(oModel).expects("getMessagesByPath").withExactArgs(sDeepPath, true)
-			.exactly(sDeepPath === "deepPath" ? 1 : 0)
+		this.mock(oModel).expects("getMessagesByPath").withExactArgs("deepPath", true)
+			.exactly(sResolvedPath === "resolvedPath" ? 1 : 0)
 			.returns(aMessagesByPath);
 		this.mock(oDataState).expects("setModelMessages").withExactArgs(aMessagesByPath)
-			.exactly(sDeepPath === "deepPath" ? 1 : 0);
-		this.mock(ListBinding.prototype).expects("_fireDateStateChange")
-			.on(oBinding).withExactArgs(oDataState)
-			.exactly(sDeepPath === "deepPath" ? 1 : 0);
+			.exactly(sResolvedPath === "resolvedPath" ? 1 : 0);
 
 		// code under test
-		ODataListBinding.prototype.checkDataState.call(oBinding, mPaths);
-
+		ODataListBinding.prototype._checkDataStateMessages.call(oBinding, oDataState, sResolvedPath);
 	});
 });
 });
