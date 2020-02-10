@@ -644,9 +644,9 @@ sap.ui.define([
 			 * which matches the given hash or <code>undefined</code>.
 			 *
 			 * @param {string} sHash The hash to be matched
-			 * @returns {object|undefined} An object containing the route <code>name</code> and the <code>arguments</code> or <code>undefined
+			 * @returns {object|undefined} An object containing the route <code>name</code> and the <code>arguments</code> or <code>undefined</code>
 			 * @public
-			 * @since 1.74
+			 * @since 1.75
 			 */
 			getRouteInfoByHash : function(sHash) {
 				var oRoute = this.getRouteByHash(sHash);
