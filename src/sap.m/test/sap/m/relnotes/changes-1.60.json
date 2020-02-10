@@ -3173,5 +3173,32 @@
         ]
       }
     ]
+  },
+  "1.60.24": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "053a559600f414085f62a36d92161571c8cc9af4",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Changing pages with fast clicks is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006800032019"
+          }
+        ]
+      },
+      {
+        "id": "d97cfe783963489800c426e6e75af2cbca92b0ac",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: pre-renders tiles in both directions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007904862019"
+          }
+        ]
+      }
+    ]
   }
 }

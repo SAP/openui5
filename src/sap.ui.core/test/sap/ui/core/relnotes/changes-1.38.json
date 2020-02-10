@@ -3601,5 +3601,32 @@
         ]
       }
     ]
+  },
+  "1.38.44": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "6cc3f844675fd48a880fbd383bf5969a58036ea9",
+        "type": "FIX",
+        "text": " jQuery: Make parseHTML work with domain relaxation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007453322019"
+          }
+        ]
+      },
+      {
+        "id": "168af5243f41148b075b35afcdf793caa2ad2756",
+        "type": "FIX",
+        "text": " v2.ODataModel: Normalize entity URL encoding and number values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970547623"
+          }
+        ]
+      }
+    ]
   }
 }
