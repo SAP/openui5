@@ -2,7 +2,7 @@
         xmlns="sap.m"
         xmlns:core="sap.ui.core" >
     <HBox
-            width="33.333%"
+            id="sapUiRta_toolbarIconAndDraftSection"
             class="sapUiRtaToolbarIconAndDraftSection" >
         <OverflowToolbar class="sapUiRta_iconAndDraftBar">
             <content>
@@ -36,8 +36,7 @@
     </HBox>
     <HBox
             id="sapUiRta_switcherSection"
-            class="sapUiRtaToolbarSwitcherSection"
-            width="33.333%" >
+            class="sapUiRtaToolbarSwitcherSection" >
         <OverflowToolbar>
             <content>
                 <ToolbarSpacer />
@@ -62,7 +61,10 @@
             </content>
         </OverflowToolbar>
     </HBox>
-    <HBox width="33.333%" justifyContent="End" >
+    <HBox
+            id="sapUiRta_toolbarActionsSection"
+            class="sapUiRtaToolbarActionsSection"
+            justifyContent="End" >
         <OverflowToolbar id="sapUiRta_actionsToolbar" >
             <content>
                 <ToolbarSpacer />
@@ -153,11 +155,11 @@
                     </layoutData>
                 </Button>
             </content>
-            <layoutData>
+            <!--layoutData>
                 <FlexItemData
                         growFactor="1"
                         minWidth="0" />
-            </layoutData>
+            </layoutData-->
         </OverflowToolbar>
         <Button
                 id="sapUiRta_exit"

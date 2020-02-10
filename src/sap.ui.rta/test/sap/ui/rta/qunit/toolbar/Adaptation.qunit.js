@@ -58,7 +58,7 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when a draft is visible and the toolbar gets initially shown in desktop mode (>= 900px) and then rerendered in the other 2 modes and back", function(assert) {
+		QUnit.test("when a draft is visible and the toolbar gets initially shown in desktop mode (>= 1200px) and then rerendered in the other 2 modes and back", function(assert) {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
 				draftVisible: true
@@ -81,7 +81,7 @@ function(
 				}.bind(this));
 		});
 
-		QUnit.test("when the toolbar gets initially shown in tablet mode (between 700px and 900px)", function(assert) {
+		QUnit.test("when the toolbar gets initially shown in tablet mode (between 900px and 1200px)", function(assert) {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
@@ -91,12 +91,12 @@ function(
 				.then(function() {
 					assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
 					assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
-					assert.ok(this.oToolbar.getControl('exit').getIcon(), "the exit button has an icon");
-					assert.notOk(this.oToolbar.getControl('exit').getText(), "the exit button has no text");
+					assert.notOk(this.oToolbar.getControl('exit').getIcon(), "the exit button has no icon");
+					assert.ok(this.oToolbar.getControl('exit').getText(), "the exit button has text");
 				}.bind(this));
 		});
 
-		QUnit.test("when the draft is set to visible and toolbar gets initially shown in tablet mode (between 700px and 900px)", function(assert) {
+		QUnit.test("when the draft is set to visible and toolbar gets initially shown in tablet mode (between 900px and 1200px)", function(assert) {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
 				draftVisible: true
@@ -107,12 +107,10 @@ function(
 				.then(function() {
 					assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
 					assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
-					assert.ok(this.oToolbar.getControl('exit').getIcon(), "the exit button has an icon");
-					assert.notOk(this.oToolbar.getControl('exit').getText(), "the exit button has no text");
 				}.bind(this));
 		});
 
-		QUnit.test("when the toolbar gets initially shown in mobile mode (< 700px)", function(assert) {
+		QUnit.test("when the toolbar gets initially shown in mobile mode (< 900px)", function(assert) {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
@@ -127,7 +125,7 @@ function(
 				}.bind(this));
 		});
 
-		QUnit.test("when the draft is set to visible and the toolbar gets initially shown in mobile mode (< 700px)", function(assert) {
+		QUnit.test("when the draft is set to visible and the toolbar gets initially shown in mobile mode (< 900px)", function(assert) {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
 				draftVisible: true
