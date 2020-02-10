@@ -47,11 +47,19 @@
 								text="Documentation"
 								width="100%"
 								textAlign="Left"/>
-							<Button
-								class="actionButton"
-								text="Download"
-								type="Emphasized"
-								press="onDownloadButtonPress"/>
+							<l:HorizontalLayout>
+								<Button
+										class="actionButton"
+										text="Download"
+										type="Emphasized"
+										press="onDownloadButtonPress"/>
+								<Button
+										class="actionButton sapUiSmallMarginBegin"
+										visible="{= ${versionData>/isOpenUI5}}"
+										text="GitHub"
+										type="Emphasized"
+										press="onGitHubButtonPress"/>
+							</l:HorizontalLayout>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
