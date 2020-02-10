@@ -568,7 +568,7 @@ function(
 	 */
 	Utils._showMessageBox = function(oMessageType, sTitleKey, sMessageKey, oError, sAction) {
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		var sMessage = oResourceBundle.getText(sMessageKey, oError ? [oError.message || oError] : undefined);
+		var sMessage = oResourceBundle.getText(sMessageKey, oError ? [oError.userMessage || oError.message || oError] : undefined);
 		var sTitle = oResourceBundle.getText(sTitleKey);
 		var vAction = sAction ? oResourceBundle.getText(sAction) : MessageBox.Action.OK;
 		return Utils._messageBoxPromise(oMessageType, sMessage, sTitle, vAction);

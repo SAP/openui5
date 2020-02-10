@@ -1114,19 +1114,10 @@ function(
 
 		[{
 			error: {
-				messages: [
-					{
-						severity: "Error",
-						text: "Error text 1"
-					},
-					{
-						severity: "Error",
-						text: "Error text 2"
-					}
-				]
+				userMessage: "Error text 1\nError text 2\n"
 			},
 			errorText: "Error text 1\nError text 2\n",
-			propertyName: "messages"
+			propertyName: "userMessage"
 		},
 		{
 			error: {
