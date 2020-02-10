@@ -113,6 +113,15 @@ sap.ui.define(function () {
 					'./BaseContent.qunit'
 				]
 			},
+			"designtime/baseEditor/integration/ReadyHandling": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/BaseEditor": {
 				group: "DesignTime Editor",
 				coverage: {
