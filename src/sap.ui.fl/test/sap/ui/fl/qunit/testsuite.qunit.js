@@ -76,6 +76,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary"]
 				}
 			},
+			"apply/_internal/changes/descriptor/Preprocessor": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor"]
+				}
+			},
 			"apply/_internal/changes/descriptor/Applier": {
 				group: "Apply Internal",
 				coverage: {
