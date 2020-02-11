@@ -3898,7 +3898,9 @@
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
-		}
+		},
+		"sap-standard": "#,##0.00 ¤",
+		"sap-accounting": "#,##0.00 ¤"
 	},
 	"miscPattern": {
 		"approximately": "~{0}",
@@ -4811,6 +4813,32 @@
 		"minusSign": "-‒⁻₋−➖﹣－",
 		"commaSign": ",،٫、︐︑﹐﹑，､",
 		"plusSign": "+⁺₊➕﬩﹢＋"
+	},
+	"currencyFormat-sap-short": {
+		"1000-one": "0",
+		"1000-other": "0",
+		"10000-one": "0",
+		"10000-other": "0",
+		"100000-one": "0",
+		"100000-other": "0",
+		"1000000-one": "0 Mio ¤",
+		"1000000-other": "0 Mio ¤",
+		"10000000-one": "00 Mio ¤",
+		"10000000-other": "00 Mio ¤",
+		"100000000-one": "000 Mio ¤",
+		"100000000-other": "000 Mio ¤",
+		"1000000000-one": "0 Mrd ¤",
+		"1000000000-other": "0 Mrd ¤",
+		"10000000000-one": "00 Mrd ¤",
+		"10000000000-other": "00 Mrd ¤",
+		"100000000000-one": "000 Mrd ¤",
+		"100000000000-other": "000 Mrd ¤",
+		"1000000000000-one": "0 Bln ¤",
+		"1000000000000-other": "0 Bln ¤",
+		"10000000000000-one": "00 Bln ¤",
+		"10000000000000-other": "00 Bln ¤",
+		"100000000000000-one": "000 Bln ¤",
+		"100000000000000-other": "000 Bln ¤"
 	},
 	"currencyDigits": {
 		"ADP": 0,

@@ -3638,7 +3638,9 @@
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
-		}
+		},
+		"sap-standard": "#,##0.00¤",
+		"sap-accounting": "#,##0.00¤;(#,##0.00¤)"
 	},
 	"miscPattern": {
 		"approximately": "~{0}",
@@ -4390,6 +4392,20 @@
 		"minusSign": "-‒⁻₋−➖﹣－",
 		"commaSign": ",،٫、︐︑﹐﹑，､",
 		"plusSign": "+⁺₊➕﬩﹢＋"
+	},
+	"currencyFormat-sap-short": {
+		"1000-other": "0K ¤",
+		"10000-other": "00K ¤",
+		"100000-other": "000K ¤",
+		"1000000-other": "0J ¤",
+		"10000000-other": "00J ¤",
+		"100000000-other": "000J ¤",
+		"1000000000-other": "0B ¤",
+		"10000000000-other": "00B ¤",
+		"100000000000-other": "000B ¤",
+		"1000000000000-other": "0T ¤",
+		"10000000000000-other": "00T ¤",
+		"100000000000000-other": "000T ¤"
 	},
 	"currencyDigits": {
 		"ADP": 0,

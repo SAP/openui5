@@ -34,7 +34,8 @@
     "karma:sap.ui.table": "npm run karma -- --lib=sap.ui.table",
     "karma:sap.ui.unified": "npm run karma -- --lib=sap.ui.unified",
     "karma:sap.ui.ux3": "npm run karma -- --lib=sap.ui.ux3",
-    "karma:sap.uxap": "npm run karma -- --lib=sap.uxap"
+    "karma:sap.uxap": "npm run karma -- --lib=sap.uxap",
+    "generate-cldr": "grunt cldr-download cldr-generate"
   },
   "keywords": [
     "openui5",

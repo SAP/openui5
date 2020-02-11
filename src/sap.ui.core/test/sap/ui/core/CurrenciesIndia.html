@@ -10,16 +10,27 @@
 		<script id='sap-ui-bootstrap'
 			src='../../../../resources/sap-ui-core.js'
 			data-sap-ui-theme='sap_belize'
-			data-sap-ui-libs='sap.m,sap.ui.table'
+			data-sap-ui-libs='sap.m,sap.ui.table,sap.ui.layout'
 			data-sap-ui-xx-bindingSyntax='complex'
 			data-sap-ui-language='en_IN'></script>
+
+		<style>
+			.sapUiVlt {
+				margin: 0.2rem 1rem;
+			}
+
+			.sapMTitle {
+				margin-top: 2rem;
+				margin-bottom: 0.5rem;
+			}
+		</style>
 
 		<script>
 			jQuery.sap.require("sap.ui.core.format.NumberFormat");
 
 			function getFormatter(sLocale, sCurrency, oFormatOptions) {
 				var oLocale = new sap.ui.core.Locale(sLocale),
-					oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(oFormatOptions, oLocale)
+					oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(oFormatOptions, oLocale);
 				return function(fValue) {
 					return oFormat.format(fValue, sCurrency);
 				}
@@ -58,7 +69,7 @@
 						template: new sap.m.Text({
 							text: {
 								path: "value",
-								formatter: getFormatter("en_IN", "INR", {style: "short", currencyCode: true})
+								formatter: getFormatter("en_IN", "INR", {style: "short", currencyCode: true, trailingCurrencyCode: false})
 							}
 						})
 					}),
@@ -85,7 +96,7 @@
 						template: new sap.m.Text({
 							text: {
 								path: "value",
-								formatter: getFormatter("en_IN", "USD", {style: "short", currencyCode: true})
+								formatter: getFormatter("en_IN", "USD", {style: "short", currencyCode: true, trailingCurrencyCode: false})
 							}
 						})
 					}),
@@ -106,12 +117,64 @@
 								formatter: getFormatter("en_IN", "USD", {currencyCode: false})
 							}
 						})
-					}),
+					})
 				],
 				rows: {
 					path: "/rows"
 				}
-			}).placeAt("content");
+			});
+
+			var oCurrencyCodeTableTrailing = new sap.ui.table.Table({
+				models: oModel,
+				selectionMode: "None",
+				visibleRowCount: oModel.getProperty("/rows").length,
+				columns: [
+					new sap.ui.table.Column({
+						label: new sap.m.Label({text: "INR short", textAlign: "Center"}),
+						template: new sap.m.Text({
+							text: {
+								path: "value",
+								formatter: getFormatter("en_IN", "INR", {style: "short", currencyCode: true})
+							}
+						})
+					}),
+					new sap.ui.table.Column({
+						label: new sap.m.Label({text: "INR", textAlign: "Center"}),
+						template: new sap.m.Text({
+							text: {
+								path: "value",
+								formatter: getFormatter("en_IN", "INR", {currencyCode: true})
+							}
+						})
+					}),
+					new sap.ui.table.Column({
+						label: new sap.m.Label({text: "USD short", textAlign: "Center"}),
+						template: new sap.m.Text({
+							text: {
+								path: "value",
+								formatter: getFormatter("en_IN", "USD", {style: "short", currencyCode: true})
+							}
+						})
+					}),
+					new sap.ui.table.Column({
+						label: new sap.m.Label({text: "USD", textAlign: "Center"}),
+						template: new sap.m.Text({
+							text: {
+								path: "value",
+								formatter: getFormatter("en_IN", "USD", {currencyCode: true})
+							}
+						})
+					})
+				],
+				rows: {
+					path: "/rows"
+				}
+			});
+
+			var oVerticalLayout = new sap.ui.layout.VerticalLayout({
+				content: [new sap.m.Title({text:"CLDR"}), oTable, new sap.m.Title({text:"Trailing"}), oCurrencyCodeTableTrailing]
+			});
+			oVerticalLayout.placeAt("content");
 		</script>
 
 	</head>

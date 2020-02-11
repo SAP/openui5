@@ -471,6 +471,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
 	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
+	 * @param {boolean} [oFormatOptions.trailingCurrencyCode] Overwrites global configuration {@link sap.ui.core.Configuration.FormatSettings#setNumberFormatTrailingCurrencyCode}
+	 *  This is ignored if <code>oFormatOptions.currencyCode</code> is set to false or if <code>oFormatOptions.pattern</code> is supplied
 	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the measure according to the format is shown in the formatted string
 	 * @param {boolean} [oFormatOptions.currencyCode=true] defines whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there is a symbol defined
 	 *  for the given currency code.
@@ -488,12 +490,32 @@ sap.ui.define([
 	 * @public
 	 */
 	NumberFormat.getCurrencyInstance = function(oFormatOptions, oLocale) {
-		var oFormat = this.createInstance(oFormatOptions, oLocale),
-			sContext = oFormatOptions && oFormatOptions.currencyContext,
-			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.CURRENCY, sContext);
+		var oFormat = this.createInstance(oFormatOptions, oLocale);
+		var sContext = oFormatOptions && oFormatOptions.currencyContext;
+
+		// currency code trailing
+		var bShowTrailingCurrencyCode = showTrailingCurrencyCode(oFormatOptions);
+
+
+		// prepend "sap-" to pattern params to load (context and short)
+		if (bShowTrailingCurrencyCode) {
+			sContext = sContext || this.oDefaultCurrencyFormat.style;
+			sContext = "sap-" + sContext;
+		}
+		var oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.CURRENCY, sContext);
 
 		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultCurrencyFormat, oLocaleFormatOptions, oFormatOptions);
 
+		// Trailing currency code option
+		//
+		// The format option "trailingCurrencyCode" is influenced by other options, such as pattern, currencyCode, global config
+		// Therefore set it manually without modifying the original oFormatOptions.
+		// E.g. the "pattern" option would overwrite this option, even if the "trailingCurrencyCode" option is set
+		// oFormatOptions.pattern = "###"
+		// oFormatOptions.trailingCurrencyCode = true
+		// ->
+		// oFormatOptions.trailingCurrencyCode = false
+		oFormat.oFormatOptions.trailingCurrencyCode = bShowTrailingCurrencyCode;
 		oFormat._defineCustomCurrencySymbols();
 
 		return oFormat;
@@ -1146,12 +1168,20 @@ sap.ui.define([
 			sPattern = oOptions.pattern;
 
 			if (oShortFormat && oShortFormat.formatString && oOptions.showScale) {
+				var sStyle;
+				// Currency formatting only supports short style (no long)
+				if (oOptions.trailingCurrencyCode) {
+					sStyle = "sap-short";
+				} else {
+					sStyle = "short";
+				}
+
 				// Get correct format string based on actual decimal/fraction digits
 				sPluralCategory = this.oLocaleData.getPluralCategory(sIntegerPart + "." + sFractionPart);
 				if (bIndianCurrency) {
-					sPattern = getIndianCurrencyFormat("short", oShortFormat.key, sPluralCategory);
+					sPattern = getIndianCurrencyFormat(sStyle, oShortFormat.key, sPluralCategory);
 				} else {
-					sPattern = this.oLocaleData.getCurrencyFormat("short", oShortFormat.key, sPluralCategory);
+					sPattern = this.oLocaleData.getCurrencyFormat(sStyle, oShortFormat.key, sPluralCategory);
 				}
 				//formatString may contain '.' (quoted to differentiate them decimal separator)
 				//which must be replaced with .
@@ -1701,6 +1731,9 @@ sap.ui.define([
 		// Use "other" format to find the right magnitude, the actual format will be retrieved later
 		// after the value has been calculated
 		if (oOptions.type === mNumberType.CURRENCY) {
+			if (oOptions.trailingCurrencyCode) {
+				sStyle = "sap-short";
+			}
 			if (bIndianCurrency) {
 				sCldrFormat = getIndianCurrencyFormat(sStyle, sKey, "other", true);
 			} else {
@@ -1834,9 +1867,36 @@ sap.ui.define([
 
 	}
 
+	/**
+	 * Based on the format options and the global config, determine whether to display a trailing currency code
+	 * @param oFormatOptions
+	 * @returns {boolean}
+	 */
+	function showTrailingCurrencyCode(oFormatOptions) {
+		var bShowTrailingCurrencyCodes = sap.ui.getCore().getConfiguration().getFormatSettings().getNumberFormatTrailingCurrencyCode();
+		if (oFormatOptions) {
+
+			// overwritten by instance configuration
+			if (oFormatOptions.trailingCurrencyCode !== undefined) {
+				bShowTrailingCurrencyCodes = oFormatOptions.trailingCurrencyCode;
+			}
+
+			// is false when custom pattern is used
+			if (oFormatOptions.pattern) {
+				bShowTrailingCurrencyCodes = false;
+			}
+
+			// is false when currencyCode is not used
+			if (oFormatOptions.currencyCode === false) {
+				bShowTrailingCurrencyCodes = false;
+			}
+		}
+		return bShowTrailingCurrencyCodes;
+	}
+
 	function getIndianCurrencyFormat(sStyle, sKey, sPlural, bDecimal) {
 		var sFormat,
-			oFormats = {
+			oCurrencyFormats = {
 				"short": {
 					"1000-one": "¤0000",
 					"1000-other": "¤0000",
@@ -1862,16 +1922,75 @@ sap.ui.define([
 					"10000000000000-other": "¤00 Lk Cr",
 					"100000000000000-one": "¤0 Cr Cr",
 					"100000000000000-other": "¤0 Cr Cr"
+				},
+				"sap-short": {
+					"1000-one": "0000 ¤",
+					"1000-other": "0000 ¤",
+					"10000-one": "00000 ¤",
+					"10000-other": "00000 ¤",
+					"100000-one": "0 Lk ¤",
+					"100000-other": "0 Lk ¤",
+					"1000000-one": "00 Lk ¤",
+					"1000000-other": "00 Lk ¤",
+					"10000000-one": "0 Cr ¤",
+					"10000000-other": "0 Cr ¤",
+					"100000000-one": "00 Cr ¤",
+					"100000000-other": "00 Cr ¤",
+					"1000000000-one": "000 Cr ¤",
+					"1000000000-other": "000 Cr ¤",
+					"10000000000-one": "0000 Cr ¤",
+					"10000000000-other": "0000 Cr ¤",
+					"100000000000-one": "00000 Cr ¤",
+					"100000000000-other": "00000 Cr ¤",
+					"1000000000000-one": "0 Lk Cr ¤",
+					"1000000000000-other": "0 Lk Cr ¤",
+					"10000000000000-one": "00 Lk Cr ¤",
+					"10000000000000-other": "00 Lk Cr ¤",
+					"100000000000000-one": "0 Cr Cr ¤",
+					"100000000000000-other": "0 Cr Cr ¤"
+				}
+			},
+			oDecimalFormats = {
+				"short": {
+					"1000-one": "0000",
+					"1000-other": "0000",
+					"10000-one": "00000",
+					"10000-other": "00000",
+					"100000-one": "0 Lk",
+					"100000-other": "0 Lk",
+					"1000000-one": "00 Lk",
+					"1000000-other": "00 Lk",
+					"10000000-one": "0 Cr",
+					"10000000-other": "0 Cr",
+					"100000000-one": "00 Cr",
+					"100000000-other": "00 Cr",
+					"1000000000-one": "000 Cr",
+					"1000000000-other": "000 Cr",
+					"10000000000-one": "0000 Cr",
+					"10000000000-other": "0000 Cr",
+					"100000000000-one": "00000 Cr",
+					"100000000000-other": "00000 Cr",
+					"1000000000000-one": "0 Lk Cr",
+					"1000000000000-other": "0 Lk Cr",
+					"10000000000000-one": "00 Lk Cr",
+					"10000000000000-other": "00 Lk Cr",
+					"100000000000000-one": "0 Cr Cr",
+					"100000000000000-other": "0 Cr Cr"
 				}
 			};
-		sStyle = "short";
+		// decimal format for short and sap-short is the same
+		oDecimalFormats["sap-short"] = oDecimalFormats["short"];
+
+		// use the appropriate format (either decimal or currency)
+		var oTargetFormat = bDecimal ? oDecimalFormats : oCurrencyFormats;
+		var oStyledFormat = oTargetFormat[sStyle];
+		if (!oStyledFormat) {
+			oStyledFormat = oTargetFormat["short"];
+		}
 		if (sPlural !== "one") {
 			sPlural = "other";
 		}
-		sFormat = oFormats[sStyle][sKey + "-" + sPlural];
-		if (sFormat && bDecimal) {
-			sFormat = sFormat.substr(1);
-		}
+		sFormat = oStyledFormat[sKey + "-" + sPlural];
 		return sFormat;
 	}
 

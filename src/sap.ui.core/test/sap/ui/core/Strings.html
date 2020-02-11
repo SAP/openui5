@@ -1,0 +1,252 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Strings</title>
+
+	<script id="sap-ui-bootstrap"
+	        type="text/javascript"
+	        src="../../../../resources/sap-ui-core.js"
+	        data-sap-ui-theme="sap_belize"
+	        data-sap-ui-libs='sap.m,sap.ui.table,sap.ui.layout'
+	        data-sap-ui-xx-bindingSyntax="complex"
+	>
+	</script>
+
+	<style>
+		.sapMTitle {
+			margin-top: 2rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.sapUiVlt {
+			margin: 0.2rem 1rem;
+		}
+
+		.large {
+			font-size: 2rem !important
+		}
+
+		.largeinput {
+			height: 3rem !important
+		}
+
+		.large .sapMInputBaseInner {
+			font-size: 2rem !important;
+			height: 2.5rem
+		}
+	</style>
+
+	<script type="text/javascript" src="FormatHelper.js"></script>
+
+	<script>
+		jQuery.sap.require("sap.ui.core.format.NumberFormat");
+
+
+		var oModel = new sap.ui.model.json.JSONModel({
+			string: "abc 123",
+			rtl: "LTR"
+		});
+
+		sap.ui.getCore().setModel(oModel);
+
+		var aChars = [
+			{custom: "LRE", code: "202a"},
+			{custom: "RLE", code: "202b"},
+			{custom: "LRO", code: "202d"},
+			{custom: "RLO", code: "202e"},
+			{custom: "PDF", code: "202c"},
+			{custom: "LRM", code: "200e"},
+			{custom: "RLM", code: "2004"},
+			{custom: "SPACE", code: "20"},
+			{custom: "SPACE1", code: "a0"},
+			{custom: "DQUOTE", code: "22"},
+			{custom: "CURRENCY", code: "a4"},
+		];
+		var mCodeToCustom = {};
+		var mCustomToCode = {};
+		aChars.forEach(function(oChar) {
+			mCodeToCustom[oChar.code] = oChar.custom;
+			mCustomToCode[oChar.custom] = oChar.code;
+		});
+
+		var codeToPrinted = function(input) {
+			return mCodeToCustom[input] || input;
+		};
+
+		var printedToCode = function(input) {
+			return mCustomToCode[input] || input;
+		};
+
+		var rtlFormatter = function(sString) {
+			return sString.split("").map(function(sChar) {
+				var sCharCode = sChar.charCodeAt(0).toString(16);
+				return codeToPrinted(sCharCode);
+			}).join(" ");
+		};
+
+		var oForm = new sap.ui.layout.form.SimpleForm({
+			layout: "ResponsiveGridLayout",
+			columnsL: 1,
+			width: "100%",
+			editable: true,
+			content: [
+				/**
+				 * OUTPUT
+				 */
+				new sap.ui.core.Title({
+					text: "Output"
+				}),
+				new sap.m.Label({
+					text: "Plain"
+				}),
+				new sap.m.Text({
+					textDirection: "{/rtl}",
+					text: "{/string}"
+				}),
+				new sap.m.Label({
+					text: "Character Codes (hex)"
+				}),
+				new sap.m.Text({
+					textDirection: "{/rtl}",
+					text: {
+						path: "/string",
+						formatter: function(sString) {
+							return sString.split("").map(function(sChar) {
+								return sChar.charCodeAt(0).toString(16);
+							}).join(" ");
+						}
+					}
+				}),
+				new sap.m.Label({
+					text: "Character Codes (hex + custom)"
+				}),
+				new sap.m.Text({
+					textDirection: "{/rtl}",
+					text: {
+						path: "/string",
+						formatter: rtlFormatter
+					}
+				}),
+				/**
+				 * INPUT
+				 */
+				new sap.ui.core.Title({
+					text: "Input"
+				}),
+				new sap.m.Switch("RTLSwitch", {
+					state: false,
+					customTextOn: "RTL",
+					customTextOff: "LTR",
+					change: function(oEvent) {
+						var bState = oEvent.getParameter("state");
+						sap.ui.getCore().getConfiguration().setRTL(bState);
+						if (bState) {
+							oModel.setProperty("/rtl", "RTL");
+						} else {
+							oModel.setProperty("/rtl", "LTR");
+						}
+					}
+				}),
+				new sap.m.Label({
+					text: "Plain"
+				}),
+				new sap.m.Input({
+					value: {
+						path: "/string"
+					}
+				}),
+				new sap.m.Label({
+					text: "Character Codes (hex)"
+				}),
+				new sap.m.Input({
+					value: {
+						path: "/string",
+						formatter: function(sString) {
+							return sString.split("").map(function(sChar) {
+								return sChar.charCodeAt(0).toString(16);
+							}).join(" ");
+						}
+					},
+					change: function(oEvent) {
+						var sValue = oEvent.getParameter("value");
+						sValue = sValue.trim();
+						var sResult = sValue.split(" ").map(function(sChar) {
+							return String.fromCharCode(parseInt(sChar, 16));
+						}).join("");
+						oModel.setProperty("/string", sResult);
+					}
+				}),
+				new sap.m.Label({
+					text: "Character Codes (hex + custom)"
+				}),
+				new sap.m.Input({
+					value: {
+						path: "/string",
+						formatter: rtlFormatter
+					},
+					change: function(oEvent) {
+						var sValue = oEvent.getParameter("value");
+						sValue = sValue.trim();
+						var sResult = sValue.split(" ").map(function(sChar) {
+							sChar = printedToCode(sChar);
+
+							return String.fromCharCode(parseInt(sChar, 16));
+						}).join("");
+						oModel.setProperty("/string", sResult);
+					}
+				})
+
+			]
+		});
+
+
+		var oModelSpecialChars = new sap.ui.model.json.JSONModel({
+			rows: aChars
+		});
+
+		var oTable = new sap.ui.table.Table({
+			models: oModelSpecialChars,
+			selectionMode: "None",
+			visibleRowCount: oModelSpecialChars.getProperty("/rows").length,
+			columns: [
+				new sap.ui.table.Column({
+					label: [
+						new sap.m.Label({text: "Custom"})
+					],
+					template: new sap.m.Text({
+						text: {
+							path: "custom"
+						}
+					})
+				}),
+				new sap.ui.table.Column({
+					label: [
+						new sap.m.Label({text: "Hex Code"})
+					],
+					template: new sap.m.Text({
+						text: {
+							path: "code"
+						}
+					})
+				})
+			],
+			rows: {
+				path: "/rows"
+			}
+		});
+		var oVerticalLayout = new sap.ui.layout.VerticalLayout({
+			content: [new sap.m.Title({text:"Strings"}), oForm, new sap.m.Title({text:"Special Characters"}), oTable]
+		});
+		oVerticalLayout.placeAt("content");
+
+	</script>
+
+</head>
+<body class="sapUiBody" role="application" id="content">
+
+</body>
+</html>

@@ -3858,7 +3858,9 @@
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
-		}
+		},
+		"sap-standard": "#,##0.00¤",
+		"sap-accounting": "#,##0.00¤;(#,##0.00¤)"
 	},
 	"miscPattern": {
 		"approximately": "~{0}",
@@ -4612,6 +4614,20 @@
 		"minusSign": "-‒⁻₋−➖﹣－",
 		"commaSign": ",،٫、︐︑﹐﹑，､",
 		"plusSign": "+⁺₊➕﬩﹢＋"
+	},
+	"currencyFormat-sap-short": {
+		"1000-other": "0천 ¤",
+		"10000-other": "0만 ¤",
+		"100000-other": "00만 ¤",
+		"1000000-other": "000만 ¤",
+		"10000000-other": "0000만 ¤",
+		"100000000-other": "0억 ¤",
+		"1000000000-other": "00억 ¤",
+		"10000000000-other": "000억 ¤",
+		"100000000000-other": "0000억 ¤",
+		"1000000000000-other": "0조 ¤",
+		"10000000000000-other": "00조 ¤",
+		"100000000000000-other": "000조 ¤"
 	},
 	"currencyDigits": {
 		"ADP": 0,

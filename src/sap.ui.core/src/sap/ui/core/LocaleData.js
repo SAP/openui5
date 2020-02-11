@@ -836,6 +836,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType
 		 * @public
 		 */
 		getCurrencyPattern: function(sContext) {
+			// Undocumented contexts for NumberFormat internal use: "sap-standard" and "sap-accounting"
 			return this._get("currencyFormat")[sContext] || this._get("currencyFormat").standard;
 		},
 
@@ -1365,12 +1366,14 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType
 		getCurrencyFormat: function(sStyle, sNumber, sPlural) {
 
 			var sFormat;
-			var oFormats;
+			var oFormats = this._get("currencyFormat-" + sStyle);
 
-			switch (sStyle) {
-			default: //short
+			// Defaults to "short" if not found
+			if (!oFormats) {
+				if (sStyle === "sap-short") {
+					throw new Error("Failed to get CLDR data for property \"currencyFormat-sap-short\"");
+				}
 				oFormats = this._get("currencyFormat-short");
-				break;
 			}
 
 			if (oFormats) {

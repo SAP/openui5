@@ -10,16 +10,27 @@
 		<script id='sap-ui-bootstrap'
 			src='../../../../resources/sap-ui-core.js'
 			data-sap-ui-theme='sap_belize'
-			data-sap-ui-libs='sap.m,sap.ui.table'
+			data-sap-ui-libs='sap.m,sap.ui.table,sap.ui.layout'
 			data-sap-ui-xx-bindingSyntax='complex'
 			data-sap-ui-rtl='true'></script>
+
+		<style>
+			.sapUiVlt {
+				margin: 0.2rem 1rem;
+			}
+
+			.sapMTitle {
+				margin-top: 2rem;
+				margin-bottom: 0.5rem;
+			}
+		</style>
 
 		<script>
 			jQuery.sap.require("sap.ui.core.format.NumberFormat");
 
 			function getFormatter(sLocale, sCurrency, oFormatOptions) {
 				var oLocale = new sap.ui.core.Locale(sLocale),
-					oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(oFormatOptions, oLocale)
+					oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(oFormatOptions, oLocale);
 				return function(fValue) {
 					return oFormat.format(fValue, sCurrency);
 				}
@@ -51,14 +62,14 @@
 				columns: [
 					new sap.ui.table.Column({
 						multiLabels: [
-							new sap.m.Label({text: "Saudi Arabia", textAlign: "Center", width: "100%"}),
+							new sap.m.Label({text: "Saudi Arabia (ar_SA)", textAlign: "Center", width: "100%"}),
 							new sap.m.Label({text: "SAR"})
 						],
 						headerSpan: [4, 1],
 						template: new sap.m.Text({
 							text: {
 								path: "value",
-								formatter: getFormatter("ar_SA", "SAR", {style: "short", currencyCode: true})
+								formatter: getFormatter("ar_SA", "SAR", {style: "short", currencyCode: true, trailingCurrencyCode: false})
 							}
 						})
 					}),
@@ -100,14 +111,14 @@
 					}),
 					new sap.ui.table.Column({
 						multiLabels: [
-							new sap.m.Label({text: "Iran", textAlign: "Center", width: "100%"}),
+							new sap.m.Label({text: "Iran (fa_IR)", textAlign: "Center", width: "100%"}),
 							new sap.m.Label({text: "IRR"})
 						],
 						headerSpan: [4, 1],
 						template: new sap.m.Text({
 							text: {
 								path: "value",
-								formatter: getFormatter("fa_IR", "IRR", {style: "short", currencyCode: true})
+								formatter: getFormatter("fa_IR", "IRR", {style: "short", currencyCode: true, trailingCurrencyCode: false})
 							}
 						})
 					}),
@@ -149,14 +160,14 @@
 					}),
 					new sap.ui.table.Column({
 						multiLabels: [
-							new sap.m.Label({text: "Israel", textAlign: "Center", width: "100%"}),
+							new sap.m.Label({text: "Israel (he_IL)", textAlign: "Center", width: "100%"}),
 							new sap.m.Label({text: "ILS"})
 						],
 						headerSpan: [4, 1],
 						template: new sap.m.Text({
 							text: {
 								path: "value",
-								formatter: getFormatter("he_IL", "ILS", {style: "short", currencyCode: true})
+								formatter: getFormatter("he_IL", "ILS", {style: "short", currencyCode: true, trailingCurrencyCode: false})
 							}
 						})
 					}),
@@ -200,7 +211,100 @@
 				rows: {
 					path: "/rows"
 				}
-			}).placeAt("content");
+			});
+
+
+			var oCurrencyCodeTableTrailing = new sap.ui.table.Table({
+				models: oModel,
+				selectionMode: "None",
+				visibleRowCount: oModel.getProperty("/rows").length,
+				columns: [
+					new sap.ui.table.Column({
+						multiLabels: [
+							new sap.m.Label({text: "Saudi Arabia (ar_SA)", textAlign: "Center", width: "100%"}),
+							new sap.m.Label({text: "SAR short"})
+						],
+						headerSpan: [2, 1],
+						template: new sap.m.Text({
+							text: {
+								path: "value",
+								formatter: getFormatter("ar_SA", "SAR", {style: "short", currencyCode: true})
+							}
+						})
+					}),
+					new sap.ui.table.Column({
+						multiLabels: [
+							new sap.m.Label(),
+							new sap.m.Label({text: "SAR"})
+						],
+						template: new sap.m.Text({
+							text: {
+								path: "value",
+								formatter: getFormatter("ar_SA", "SAR", {currencyCode: true})
+							}
+						})
+					}),
+					new sap.ui.table.Column({
+						multiLabels: [
+							new sap.m.Label({text: "Iran (fa_IR)", textAlign: "Center", width: "100%"}),
+							new sap.m.Label({text: "IRR short"})
+						],
+						headerSpan: [2, 1],
+						template: new sap.m.Text({
+							text: {
+								path: "value",
+								formatter: getFormatter("fa_IR", "IRR", {style: "short", currencyCode: true})
+							}
+						})
+					}),
+					new sap.ui.table.Column({
+						multiLabels: [
+							new sap.m.Label(),
+							new sap.m.Label({text: "IRR"})
+						],
+						template: new sap.m.Text({
+							text: {
+								path: "value",
+								formatter: getFormatter("fa_IR", "IRR", {currencyCode: true})
+							}
+						})
+					}),
+					new sap.ui.table.Column({
+						multiLabels: [
+							new sap.m.Label({text: "Israel (he_IL)", textAlign: "Center", width: "100%"}),
+							new sap.m.Label({text: "ILS short"})
+						],
+						headerSpan: [2, 1],
+						template: new sap.m.Text({
+							text: {
+								path: "value",
+								formatter: getFormatter("he_IL", "ILS", {style: "short", currencyCode: true})
+							}
+						})
+					}),
+					new sap.ui.table.Column({
+						multiLabels: [
+							new sap.m.Label(),
+							new sap.m.Label({text: "ILS"})
+						],
+						template: new sap.m.Text({
+							text: {
+								path: "value",
+								formatter: getFormatter("he_IL", "ILS", {currencyCode: true})
+							}
+						})
+					})
+				],
+				rows: {
+					path: "/rows"
+				}
+			});
+
+
+			var oVerticalLayout = new sap.ui.layout.VerticalLayout({
+				content: [new sap.m.Title({text:"CLDR"}), oTable, new sap.m.Title({text:"Trailing"}), oCurrencyCodeTableTrailing]
+			});
+			oVerticalLayout.placeAt("content");
 		</script>
 
 	</head>

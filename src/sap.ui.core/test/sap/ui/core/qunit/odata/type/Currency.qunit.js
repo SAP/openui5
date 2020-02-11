@@ -62,7 +62,7 @@ sap.ui.define([
 
 		// make customizing available on type instance so that it can be used in parseValue
 		assert.strictEqual(oType.formatValue([42, "EUR", mCustomizing], "string"),
-			"EUR\u00a042.00");
+			"42.00\u00a0EUR");
 
 		this.mock(BaseCurrency.prototype).expects("parseValue")
 			.withExactArgs("42 EUR", "string", sinon.match.same(aCurrentValues))
