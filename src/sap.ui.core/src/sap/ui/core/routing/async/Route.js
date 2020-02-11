@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], function(Device, Log, jQuery) {
+sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery", "sap/ui/core/Component"], function(Device, Log, jQuery, Component) {
 	"use strict";
 
 	/**
@@ -35,17 +35,27 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 				aAlignedTargets,
 				that = this;
 
+			oRouter._stopWaitingTitleChangedFromChild();
 			oRouter._oMatchedRoute = this;
 			oRouter._bMatchingProcessStarted = true;
 
 			oConfig = jQuery.extend({}, oRouter._oConfig, this._oConfig);
 
 			oTargets = oRouter.getTargets();
+			var sTitleName;
 			if (oTargets) {
-				if (oTargets._getTitleTargetName(oConfig.target, oConfig.titleTarget) && oRouter._oPreviousTitleChangedRoute !== this) {
-					oRouter._bCollectTitleChanged = true;
+				sTitleName = oTargets._getTitleTargetName(oConfig.target, oConfig.titleTarget);
+				if (sTitleName && oRouter._oPreviousTitleChangedRoute !== this) {
+					oRouter._bFireTitleChanged = true;
+					if ((oRouter._oOwner && oRouter._oOwner._bRoutingPropagateTitle)) {
+						var oParentComponent = Component.getOwnerComponentFor(oRouter._oOwner);
+						var oParentRouter = oParentComponent && oParentComponent.getRouter();
+						if (oParentRouter) {
+							oParentRouter._waitForTitleChangedOn(oRouter);
+						}
+					}
 				} else {
-					oRouter._bCollectTitleChanged = false;
+					oRouter._bFireTitleChanged = false;
 				}
 
 				if (this._oConfig.target) {

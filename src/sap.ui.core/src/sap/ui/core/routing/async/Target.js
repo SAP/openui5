@@ -62,6 +62,10 @@ sap.ui.define([
 		 * @private
 		 */
 		suspend: function() {
+			if (this._oParent) {
+				this._oParent.suspend();
+			}
+
 			if (this._isLoaded()) {
 				var oObject = this._get(),
 					oRouter;

@@ -20,6 +20,7 @@ sap.ui.define([
 				fireRouteMatched : function () {},
 				fireRoutePatternMatched : function () {},
 				fireBeforeRouteMatched : function () {},
+				_stopWaitingTitleChangedFromChild : function () {},
 				_oTargets: new Targets({
 					targets: {
 						async1: {
