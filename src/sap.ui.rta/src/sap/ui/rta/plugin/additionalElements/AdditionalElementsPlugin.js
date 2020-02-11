@@ -227,11 +227,8 @@ sap.ui.define([
 			if (aElementOverlays.length > 1) {
 				return false;
 			}
-			var aResponsibleElementOverlays = aElementOverlays.map(function(oElementOverlay) {
-				return this.getResponsibleElementOverlay(oElementOverlay);
-			}.bind(this));
 
-			var oOverlay = aResponsibleElementOverlays[0];
+			var oOverlay = this.getResponsibleElementOverlay(aElementOverlays[0]);
 			var oParentOverlay;
 			var bIsEnabled;
 			if (bOverlayIsSibling) {

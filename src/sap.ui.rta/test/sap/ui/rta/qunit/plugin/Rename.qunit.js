@@ -281,6 +281,14 @@ function (
 			sandbox.restore();
 		}
 	}, function () {
+		function _addResponsibleElement (oDesignTimeMetadata, oTargetElement, oResponsibleElement) {
+			oDesignTimeMetadata.getData().actions.getResponsibleElement = function (oElement) {
+				if (oElement === oTargetElement) {
+					return oResponsibleElement;
+				}
+			};
+		}
+
 		QUnit.test("when the Label gets renamed", function(assert) {
 			var fnDone = assert.async();
 			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
@@ -299,11 +307,7 @@ function (
 			var oMockAppComponent = new UIComponent("mockAppComponent");
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 
-			this.oLayoutOverlay.getDesignTimeMetadata().getData().actions.getResponsibleElement = function (oElement) {
-				if (oElement === this.oVerticalLayout) {
-					return this.oButton;
-				}
-			}.bind(this);
+			_addResponsibleElement(this.oLayoutOverlay.getDesignTimeMetadata(), this.oVerticalLayout, this.oButton);
 
 			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oLayoutOverlay) {
@@ -322,6 +326,61 @@ function (
 				}
 			}, this);
 			this.oRenamePlugin.startEdit(this.oLayoutOverlay);
+		});
+
+		QUnit.test("when retrieving the rename context menu item, with no action on the responsible element", function(assert) {
+			_addResponsibleElement(this.oLayoutOverlay.getDesignTimeMetadata(), this.oVerticalLayout, this.oButton);
+
+			var aMenuItems = this.oRenamePlugin.getMenuItems([this.oLayoutOverlay]);
+			assert.equal(aMenuItems[0].id, "CTX_RENAME", "then rename menu item was returned");
+
+			// simulate actions on all overlays, except the responsible element
+			sandbox.stub(this.oRenamePlugin, "getAction")
+				.returns(true)
+				.withArgs(this.oButtonOverlay)
+				.returns(false);
+
+			var bIsEnabled = aMenuItems[0].enabled([this.oLayoutOverlay]);
+			assert.equal(bIsEnabled, false, "then the menu item was disabled");
+		});
+
+		QUnit.test("when retrieving an enabled action on target overlay, with an enabled action on the responsible element", function(assert) {
+			var oLayoutDesignTimeMetadata = this.oLayoutOverlay.getDesignTimeMetadata();
+			_addResponsibleElement(oLayoutDesignTimeMetadata, this.oVerticalLayout, this.oButton);
+			oLayoutDesignTimeMetadata.getData().actions.rename.isEnabled = function() {return true;};
+			var oGetAssociatedDomRefSpy = sandbox.spy(oLayoutDesignTimeMetadata, "getAssociatedDomRef");
+
+			var aMenuItems = this.oRenamePlugin.getMenuItems([this.oLayoutOverlay]);
+			assert.equal(aMenuItems[0].id, "CTX_RENAME", "then rename menu item was returned");
+
+			var bIsEnabled = aMenuItems[0].enabled([this.oLayoutOverlay]);
+			assert.ok(oGetAssociatedDomRefSpy.calledWith(this.oVerticalLayout), "then the associated domRef was checked from the target overlay");
+			assert.equal(oGetAssociatedDomRefSpy.callCount, 1, "then domRef check was only done for the target overlay");
+			assert.equal(bIsEnabled, true, "then the menu item was enabled");
+		});
+
+		QUnit.test("when retrieving a disabled action on target overlay, with an enabled action on the responsible element", function(assert) {
+			var oLayoutDesignTimeMetadata = this.oLayoutOverlay.getDesignTimeMetadata();
+			_addResponsibleElement(oLayoutDesignTimeMetadata, this.oVerticalLayout, this.oButton);
+			oLayoutDesignTimeMetadata.getData().actions.rename.isEnabled = function() {return false;};
+
+			var aMenuItems = this.oRenamePlugin.getMenuItems([this.oLayoutOverlay]);
+			assert.equal(aMenuItems[0].id, "CTX_RENAME", "then rename menu item was returned");
+
+			var bIsEnabled = aMenuItems[0].enabled([this.oLayoutOverlay]);
+			assert.equal(bIsEnabled, false, "then the menu item was disabled");
+		});
+
+		QUnit.test("when retrieving an action on target overlay with an invalid dom ref, with an enabled action on the responsible element", function(assert) {
+			var oLayoutDesignTimeMetadata = this.oLayoutOverlay.getDesignTimeMetadata();
+			_addResponsibleElement(oLayoutDesignTimeMetadata, this.oVerticalLayout, this.oButton);
+			oLayoutDesignTimeMetadata.getData().actions.rename.domRef = undefined;
+
+			var aMenuItems = this.oRenamePlugin.getMenuItems([this.oLayoutOverlay]);
+			assert.equal(aMenuItems[0].id, "CTX_RENAME", "then rename menu item was returned");
+
+			var bIsEnabled = aMenuItems[0].enabled([this.oLayoutOverlay]);
+			assert.equal(bIsEnabled, false, "then the menu item was disabled");
 		});
 
 		QUnit.test("when the Label gets renamed and the new value is extremely long", function(assert) {
