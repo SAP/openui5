@@ -208,8 +208,14 @@ sap.ui.define([
 			this._toggleActiveGenericTag(true);
 		}
 
+		if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+			this._bShouldInterupt = this._bSpacePressed;
+		}
+
 		// Prevent browser scrolling in case of SPACE key
 		if (oEvent.which === KeyCodes.SPACE) {
+			this._bSpacePressed = true;
+
 			oEvent.preventDefault();
 		}
 
@@ -219,7 +225,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handle the key up event for SPACE and ENTER.
+	 * Handle the key up event for SPACE.
 	 * @param {jQuery.Event} oEvent - the keyboard event.
 	 * @private
 	 */
@@ -229,7 +235,11 @@ sap.ui.define([
 		}
 
 		if (oEvent.which === KeyCodes.SPACE) {
-			this.firePress(/* no parameters */);
+			if (!this._bShouldInterupt) {
+				this.firePress(/* no parameters */);
+			}
+			this._bShouldInterupt = false;
+			this._bSpacePressed = false;
 		}
 	};
 

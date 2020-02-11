@@ -147,6 +147,36 @@ sap.ui.define([
 		assert.strictEqual(this.onPressCallback.callCount, 1, "'press' event should be triggered.");
 	});
 
+	QUnit.test("GenericTag - action interupt", function(assert) {
+		testPressInterupt(assert, this.oGenericTag, this.onPressCallback, KeyCodes.SHIFT, "Shift");
+		testPressInterupt(assert, this.oGenericTag, this.onPressCallback, KeyCodes.ESCAPE, "Escape");
+	});
+
+	function testPressInterupt (assert, oGenericTag, oSpy, iInteruptKeyCode, sKey) {
+		//act
+		qutils.triggerKeydown(oGenericTag, KeyCodes.SPACE);
+
+		//assert
+		assert.ok(oSpy.notCalled, "Press event is not fired onkeydown");
+		assert.ok(oGenericTag._bSpacePressed, "Space key is marked as pressed");
+
+		//act
+		qutils.triggerKeydown(oGenericTag, iInteruptKeyCode);
+
+		//assert
+		assert.ok(oSpy.notCalled, "Press event is not fired onkeydown");
+		assert.ok(oGenericTag._bSpacePressed, "Space key is marked as pressed");
+		assert.ok(oGenericTag._bShouldInterupt, sKey + " key is marked as pressed");
+
+		//act
+		qutils.triggerKeyup(oGenericTag, KeyCodes.SPACE);
+
+		//assert
+		assert.ok(oSpy.notCalled, "Press event is not fired onkeyup");
+		assert.notOk(oGenericTag._bSpacePressed, "Space key is unmarked as pressed");
+		assert.notOk(oGenericTag._bShouldInterupt, sKey + " key is unmarked as pressed");
+	}
+
 	QUnit.test("GenericTag - onkeyup should not fire press event when not pressing space or enter", function(assert) {
 		//act
 		qutils.triggerEvent("keyup",this.oGenericTag, { which:KeyCodes.Q });
