@@ -75,6 +75,8 @@ sap.ui.define(['sap/ui/performance/trace/Passport'], function(Passport) {
 		assert.ok(spy.calledWith("SAP-PASSPORT"), "Request header should be set");
 
 		spy.restore();
+		oReq.abort();
+		oReq = null;
 	});
 
 });

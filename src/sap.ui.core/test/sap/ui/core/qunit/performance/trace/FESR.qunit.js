@@ -16,6 +16,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			var xhr = new XMLHttpRequest();
 			xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now() + "-" + (++requestCounter), false);
 			xhr.send();
+			return xhr;
 		}
 	});
 
@@ -65,13 +66,14 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		};
 
 		// trigger at least one request for header creation
-		this.dummyRequest();
+		var oXhrHandle = this.dummyRequest();
 
 		// first interaction ends with end
 		Interaction.end(true);
+		oXhrHandle.abort();
 
 		// trigger another request to send FESR
-		this.dummyRequest();
+		oXhrHandle = this.dummyRequest();
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
 			if (args[0] === "SAP-Perf-FESRec") {
@@ -95,6 +97,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		FESR.setActive(false);
 		FESR.onBeforeCreated = fnOnBeforeCreated;
 		oHeaderSpy.restore();
+		oXhrHandle.abort();
 	});
 
 	QUnit.test("Passport Integration - Passport Action in Client ID field", function(assert) {
@@ -106,15 +109,16 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		FESR.setActive(true);
 		Interaction.notifyStepStart("startup", true);
 		// trigger at least one request to enable header creation
-		this.dummyRequest();
+		var oXhrHandle = this.dummyRequest();
 		var sPassportAction = oPassportHeaderSpy.args[0][4];
 
 		oHeaderSpy.reset();
 		oPassportHeaderSpy.reset();
 		// first interaction ends with notifyStepStart - second interaction starts
 		Interaction.end(true);
+		oXhrHandle.abort();
 		// trigger initial FESR header creation (which should include the actual "action")
-		this.dummyRequest();
+		oXhrHandle = this.dummyRequest();
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
 			if (args[0] === "SAP-Perf-FESRec") {
@@ -137,6 +141,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		FESR.setActive(false);
 		oHeaderSpy.restore();
 		oPassportHeaderSpy.restore();
+		oXhrHandle.abort();
 	});
 
 	if (!Device.browser.msie) {
