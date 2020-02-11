@@ -385,6 +385,8 @@ function(
 				commandStack : this.oCommandStack,
 				showToolbars : true
 			});
+			sandbox.stub(this.oRta, "_initVersioning").resolves();
+			this.oRta._bVersioningEnabled = true;
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 		},
 		afterEach : function() {

@@ -541,7 +541,7 @@ function(
 	RuntimeAuthoring.prototype._initVersioning = function() {
 		var oUriParameters = new UriParameters(window.location.href);
 		var sUseVersioning = oUriParameters.get("sap-ui-rta-xx-versioning");
-		if (!sUseVersioning) {
+		if (sUseVersioning) {
 			return FeaturesAPI.isVersioningEnabled(this.getLayer())
 			.then(function (bVersioningEnabled) {
 				this._bVersioningEnabled = bVersioningEnabled;
