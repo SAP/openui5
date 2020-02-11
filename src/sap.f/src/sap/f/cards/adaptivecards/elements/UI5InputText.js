@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 			oTextArea.id = this.id;
 			oTextArea.placeholder = this.placeholder || "";
 			oTextArea.value = this.defaultValue || "";
-			oTextArea.maxLength = this.maxLength || null;
+			oTextArea.maxlength = this.maxLength || null;
 
 			oTextArea.addEventListener("change", function () {
 				this.valueChanged();

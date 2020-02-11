@@ -147,7 +147,9 @@
 									"type": "Input.Date",
 									"placeholder": "Due Date",
 									"id": "DateVal",
-									"value": "2017-09-20"
+									"value": "2019-09-20",
+									"min": "2019-01-01",
+									"max": "2020-01-01"
 								}
 							]
 						},
@@ -176,6 +178,7 @@
 				},
 				{
 					"type": "Column",
+					"width": "400px",
 					"items": [
 						{
 							"type": "Container",
@@ -280,7 +283,7 @@
 								},
 								{
 									"type": "Input.Toggle",
-									"title": "Unchecked toggle input with value 'Truethy value' when checked and 'Falsy value' when not",
+									"title": "Unchecked toggle input with value 'Truethy value' when checked and 'Falsy value' when not checked",
 									"id": "ValueOffValueOn",
 									"value": "true",
 									"wrap": true,

@@ -391,11 +391,16 @@ html[data-sap-ui-browser^="ie"] .sapFCard .sapFCardHeader.sapFCardNumericHeader:
 	}
 }
 
-.sapFCardAdaptiveContent .sapFCardAdaptiveContentChoiceSetWrapper {
-	display: flex;
-	flex-direction: column;
-	flex-wrap: nowrap;
-	justify-content: center;
-	align-items: flex-start;
-	height: fit-content;
+.sapFCardAdaptiveContent {
+	.sapFCardAdaptiveContentChoiceSetWrapper {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		justify-content: center;
+		align-items: flex-start;
+		height: fit-content;
+	}
+	.sapFTimeInput {
+		width: 13.125rem;
+	}
 }

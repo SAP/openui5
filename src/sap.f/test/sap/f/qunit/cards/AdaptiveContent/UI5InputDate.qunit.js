@@ -25,7 +25,9 @@ function (
 				"type": "Input.Date",
 				"id": "DateInputWithPlaceholder",
 				"placeholder": "Enter a date",
-				"value": "2020-01-01"
+				"value": "2020-01-01",
+				"min": "2017-01-01",
+				"max": "2022-01-01"
 			}
 		]
 	};
@@ -56,6 +58,8 @@ function (
 		assert.strictEqual(oDateInput.value, "", "The is no initial value set");
 		assert.strictEqual(oDateInput.formatPattern, "yyyy-MM-dd", "The correct date format is used");
 		assert.strictEqual(oDateInputWithPlaceholder.value, "2020-01-01", "The value is mapped correctly");
+		assert.strictEqual(oDateInputWithPlaceholder.minDate, "2017-01-01", "The minimum date available for selection is correct");
+		assert.strictEqual(oDateInputWithPlaceholder.maxDate, "2022-01-01", "The maximum date available for selection is correct");
 	});
 
 	QUnit.test("internalRender", function (assert) {
