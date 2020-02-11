@@ -882,7 +882,8 @@ function(
 				.then(function() {
 					this.fireStop();
 					if (sReload !== this._RESTART.NOT_NEEDED) {
-						this._removeParameters();
+						var mParsedHash = this._handleParametersOnExit();
+						this._triggerCrossAppNavigation(mParsedHash);
 						if (sReload === this._RESTART.RELOAD_PAGE) {
 							this._reloadPage();
 						}
@@ -1518,11 +1519,19 @@ function(
 		return Promise.resolve(true);
 	};
 
+	RuntimeAuthoring.prototype._triggerCrossAppNavigation = function(mParsedHash) {
+		if (FlexUtils.getUshellContainer() && this.getLayer() !== "USER") {
+			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
+			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
+		}
+	};
+
 	/**
-	 * Reload the app inside FLP removing the parameter to skip personalization changes
+	 * Reload the app inside FLP by removing max layer / draft parameter;
+	 *
 	 * @return {boolean} resolving to true if reload was triggered
 	 */
-	RuntimeAuthoring.prototype._removeParameters = function() {
+	RuntimeAuthoring.prototype._handleParametersOnExit = function() {
 		if (FlexUtils.getUshellContainer() && this.getLayer() !== "USER") {
 			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
 			var mParsedHash = FlexUtils.getParsedURLHash();
@@ -1532,9 +1541,14 @@ function(
 				}
 				if (this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
 					delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
+				} else if (this._isDraftAvailable()) {
+					/*
+					In case we entered RTA without a draft and created dirty changes,
+					we need to add sap-ui-fl-draft=false, to trigger the CrossAppNavigation on exit.
+					 */
+					mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = ["false"];
 				}
-				// triggers the navigation without leaving FLP; if parsedHash has changed.
-				oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
+				return mParsedHash;
 			}
 		}
 	};

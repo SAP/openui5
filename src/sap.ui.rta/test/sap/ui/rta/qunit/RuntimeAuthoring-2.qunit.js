@@ -78,6 +78,17 @@ sap.ui.define([
 		});
 	}
 
+	function givenDraftParameterIsSetTo(sDraftLayer, fnFLPToExternalStub) {
+		givenAnFLP.call(this, fnFLPToExternalStub, {
+			"sap-ui-fl-draft" : [sDraftLayer]
+		});
+	}
+
+	function givenNoParameterIsSet(fnFLPToExternalStub) {
+		givenAnFLP.call(this, fnFLPToExternalStub, {
+		});
+	}
+
 	function appDescriptorChanges(oRta, bExist) {
 		//we don't want to start RTA for these tests, so just setting the otherwise not set property,
 		//that sinon cannot stub until it was set.
@@ -118,6 +129,23 @@ sap.ui.define([
 		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
 		return !!mFLPArgs.params["sap-ui-fl-max-layer"];
 	}
+
+	function isReloadedWithDraftParameter(fnFLPToExternalStub) {
+		if (!fnFLPToExternalStub.lastCall) {
+			return false;
+		}
+		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
+		return !!mFLPArgs.params["sap-ui-fl-draft"];
+	}
+
+	function isReloadedWithDraftFalseParameter(fnFLPToExternalStub) {
+		if (!fnFLPToExternalStub.lastCall) {
+			return false;
+		}
+		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
+		return !mFLPArgs.params["sap-ui-fl-draft"]["false"];
+	}
+
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
 		sandbox.stub(RtaFlexUtils, "_showMessageBox").callsFake(
 			function(oMessageType, sTitleKey, sMessageKey) {
@@ -383,6 +411,70 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given that RTA gets started in FLP", {
+		beforeEach : function() {
+			this.oRta = new RuntimeAuthoring({
+				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
+				showToolbars : false
+			});
+			whenNoAppDescriptorChangesExist(this.oRta);
+
+			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
+			this.fnReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
+			this.fnHandleParametersOnExitSpy = sandbox.spy(this.oRta, "_handleParametersOnExit");
+			this.fnFLPToExternalStub = sandbox.spy();
+		},
+		afterEach : function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when draft changes are available, RTA is started and user exists", function(assert) {
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(true);
+			sandbox.stub(FlexUtils, "getUshellContainer").resolves(true);
+
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
+
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.VIA_HASH,
+					"then the correct reload reason is triggered");
+			}.bind(this));
+		});
+
+		QUnit.test("when draft changes already existed when entering and user exits RTA...", function(assert) {
+			givenDraftParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
+			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+
+			return this.oRta.stop().then(function() {
+				assert.strictEqual(this.fnHandleParametersOnExitSpy.callCount,
+					1,
+					"then crossAppNavigation was triggered");
+				assert.strictEqual(isReloadedWithDraftParameter(this.fnFLPToExternalStub),
+					false,
+					"then draft parameter is removed");
+			}.bind(this));
+		});
+
+		QUnit.test("when no draft was present and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
+			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub);
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
+			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+
+			return this.oRta.stop().then(function() {
+				assert.strictEqual(this.fnHandleParametersOnExitSpy.callCount,
+					1,
+					"then crossAppNavigation was triggered");
+				assert.strictEqual(isReloadedWithDraftFalseParameter(this.fnFLPToExternalStub),
+					true,
+					"then draft parameter is set to false");
+			}.bind(this));
+		});
+	});
+
 	QUnit.module("Given that RTA is started in FLP with sap-ui-fl-max-layer already in the URL", {
 		beforeEach : function() {
 			this.oRta = new RuntimeAuthoring({
@@ -563,8 +655,8 @@ sap.ui.define([
 			whenNoAppDescriptorChangesExist(this.oRta);
 
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
-			this.fnRemoveParametersSpy =
-				sandbox.spy(this.oRta, "_removeParameters");
+			this.fnHandleParametersOnExitSpy =
+				sandbox.spy(this.oRta, "_handleParametersOnExit");
 			this.fnReloadWithMaxLayerOrDraftParam =
 				sandbox.spy(this.oRta, "_reloadWithMaxLayerOrDraftParam");
 			this.fnReloadPageStub =
@@ -578,9 +670,9 @@ sap.ui.define([
 		QUnit.test("when the _determineReload() method is called", function(assert) {
 			return this.oRta._determineReload().then(function() {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
-				assert.strictEqual(this.fnRemoveParametersSpy.callCount,
+				assert.strictEqual(this.fnHandleParametersOnExitSpy.callCount,
 					0,
-					"then _removeParameters() is not called");
+					"then _handleParametersOnExit() is not called");
 			}.bind(this));
 		});
 
