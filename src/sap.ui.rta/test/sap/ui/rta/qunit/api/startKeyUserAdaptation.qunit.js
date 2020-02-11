@@ -44,31 +44,7 @@ sap.ui.define([
 		}
 	});
 
-	[Element, UIComponent].forEach(function(oRootControlType) {
-		QUnit.test("when called with " + oRootControlType.getMetadata().getName() + " instance as root control", function(assert) {
-			var done = assert.async();
-			setIsKeyUser(true);
-			var oRootControl = new oRootControlType("rootControl");
-			this.aObjectsToBeDestroyed.push(oRootControl);
-			return startKeyUserAdaptation({rootControl: oRootControl})
-				.then(function() {
-					var oRta = this.fnRtaStartStub.getCall(0).thisValue;
-					sandbox.stub(oRta, "destroy");
-					oRta.attachEventOnce("stop", function() {
-						assert.ok(oRta.destroy.calledOnce, "then destroy() was called when stop() was called");
-						done();
-					});
-					assert.strictEqual(oRta.getLayer(), "CUSTOMER", "then correct layer was passed");
-					assert.strictEqual(oRta.getValidateAppVersion(), true, "then validate app version check was enabled");
-					assert.strictEqual(oRta.getRootControl(), oRootControl.getId(), "then correct root control was set");
-					assert.strictEqual(oRta.getFlexSettings().developerMode, false, "then developer mode was set to false");
-					sandbox.stub(oRta, "_handleReloadOnExit").resolves();
-					oRta.stop(true);
-				}.bind(this));
-		});
-	});
-
-	QUnit.test("when called with 'adaptWholeApp' parameter set", function(assert) {
+	QUnit.test("when called", function(assert) {
 		var done = assert.async();
 		setIsKeyUser(true);
 		var oRootControl = new Element("rootControl");
@@ -79,7 +55,7 @@ sap.ui.define([
 			.returns(oAppComponent);
 		this.aObjectsToBeDestroyed.push(oRootControl, oAppComponent);
 
-		return startKeyUserAdaptation({rootControl: oRootControl, adaptWholeApp: true})
+		return startKeyUserAdaptation({rootControl: oRootControl})
 			.then(function() {
 				var oRta = this.fnRtaStartStub.getCall(0).thisValue;
 				sandbox.stub(oRta, "destroy");
