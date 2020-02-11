@@ -84,7 +84,8 @@ sap.ui.define([
 							"tags": ["content", "objectGroupItem"],
 							"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEM.EMAILSUBJECT}",
 							"type": "string",
-							"path": "emailSubject"
+							"path": "emailSubject",
+							"visible": "{= ${type} === 'email'}"
 						}
 					}
 				}

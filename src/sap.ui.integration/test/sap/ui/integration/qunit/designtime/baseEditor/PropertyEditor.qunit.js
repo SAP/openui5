@@ -13,6 +13,7 @@ function (
 	"use strict";
 
 	var mConfig = {
+		"context": "/",
 		"properties": {
 			"foo": {
 				"label": "Foo property",
@@ -83,7 +84,7 @@ function (
 			var oPropertyEditor = new PropertyEditor({
 				config: {
 					"label": "Baz property",
-					"path": "baz",
+					"path": "/baz",
 					"type": "string"
 				}
 			});
@@ -115,7 +116,7 @@ function (
 				propertyName: "foo",
 				config: {
 					"label": "Baz property",
-					"path": "baz",
+					"path": "/baz",
 					"type": "string"
 				}
 			});
@@ -234,7 +235,7 @@ function (
 
 			this.oPropertyEditor.setConfig({
 				"label": "Foo property",
-				"path": "foo",
+				"path": "/foo",
 				"type": "string"
 			});
 		});
@@ -258,14 +259,14 @@ function (
 
 				this.oPropertyEditor.setConfig({
 					"label": "Baz property",
-					"path": "baz",
+					"path": "/baz",
 					"type": "string"
 				});
 			}, this);
 
 			this.oPropertyEditor.setConfig({
 				"label": "Foo property",
-				"path": "foo",
+				"path": "/foo",
 				"type": "string"
 			});
 		});
@@ -281,32 +282,32 @@ function (
 
 			this.oPropertyEditor.setConfig({
 				"label": "Foo property",
-				"path": "foo",
+				"path": "/foo",
 				"type": "string"
 			});
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 			this.oPropertyEditor.setConfig({
 				"label": "Bar property",
-				"path": "bar",
+				"path": "/bar",
 				"type": "string"
 			});
 			this.oPropertyEditor.setConfig({
 				"label": "Foo property",
-				"path": "foo",
+				"path": "/foo",
 				"type": "string"
 			});
 			this.oPropertyEditor.setConfig({
 				"label": "Bar property",
-				"path": "bar",
+				"path": "/bar",
 				"type": "string"
 			});
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 		});
@@ -330,7 +331,7 @@ function (
 
 				this.oPropertyEditor.setConfig({
 					"label": "Baz property",
-					"path": "baz",
+					"path": "/baz",
 					"type": "string"
 				});
 			}, this);
@@ -359,7 +360,7 @@ function (
 
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 		});
@@ -385,7 +386,7 @@ function (
 
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 			this.oPropertyEditor.setPropertyName("foo");
@@ -413,7 +414,7 @@ function (
 
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 			this.oPropertyEditor.setPropertyName("foo");
@@ -431,7 +432,7 @@ function (
 						"properties": {
 							"foo": {
 								"label": "Foo2 property",
-								"path": "foo2",
+								"path": "/foo2",
 								"type": "string"
 							}
 						},
@@ -475,7 +476,7 @@ function (
 						"properties": {
 							"foo": {
 								"label": "Foo2 property",
-								"path": "foo2",
+								"path": "/foo2",
 								"type": "string"
 							}
 						},
@@ -544,17 +545,17 @@ function (
 			this.oPropertyEditor.attachConfigChange(oSpy);
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 
@@ -569,17 +570,17 @@ function (
 
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 
@@ -609,7 +610,7 @@ function (
 
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 		});
@@ -625,7 +626,7 @@ function (
 				this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
 					sap.ui.getCore().applyChanges();
 					assert.ok(!this.oPropertyEditor.getAggregation("propertyEditor"), "then internal editor is removed");
-					assert.ok(!oInternalPropertyEditor.bIsDestroyed, "then internal property editor is NOT destroyed");
+					assert.ok(oInternalPropertyEditor.bIsDestroyed, "then internal property editor is destroyed");
 					fnDone();
 				}, this);
 
@@ -646,7 +647,7 @@ function (
 				this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
 					sap.ui.getCore().applyChanges();
 					assert.ok(!this.oPropertyEditor.getAggregation("propertyEditor"), "then internal editor is removed");
-					assert.ok(!oInternalPropertyEditor.bIsDestroyed, "then internal property editor is NOT destroyed");
+					assert.ok(oInternalPropertyEditor.bIsDestroyed, "then internal property editor is destroyed");
 					fnDone();
 				}, this);
 
@@ -817,7 +818,7 @@ function (
 		QUnit.test("when the property name changes", function (assert) {
 			var fnDone = assert.async();
 			var oSpy = sandbox.spy();
-			var oFooEditor = this.oBaseEditor.getPropertyEditorSync("foo");
+			var oFooEditor = this.oBaseEditor.getPropertyEditorsByNameSync("foo")[0];
 
 			this.oPropertyEditor.attachReady(oSpy);
 
@@ -869,7 +870,7 @@ function (
 				var oInternalPropertyEditor = this.oPropertyEditor.getAggregation("propertyEditor");
 				assert.strictEqual(oInternalPropertyEditor.getValue(), "foo value", "then internal property editor has a correct value");
 				this.oPropertyEditor.destroy();
-				assert.ok(!oInternalPropertyEditor.bIsDestroyed, "then internal property editor is NOT destroyed");
+				assert.ok(oInternalPropertyEditor.bIsDestroyed, "then internal property editor is destroyed");
 				fnDone();
 			}, this);
 
@@ -890,7 +891,7 @@ function (
 
 			this.oPropertyEditor.setConfig({
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			});
 		});

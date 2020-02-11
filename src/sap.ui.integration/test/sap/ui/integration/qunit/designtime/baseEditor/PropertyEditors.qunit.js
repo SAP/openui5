@@ -17,25 +17,25 @@ function (
 			"foo1": {
 				"tags": ["foo"],
 				"label": "Foo1 property",
-				"path": "foo1",
+				"path": "/foo1",
 				"type": "string"
 			},
 			"foo2": {
 				"tags": ["foo"],
 				"label": "Foo2 property",
-				"path": "foo2",
+				"path": "/foo2",
 				"type": "string"
 			},
 			"bar1": {
 				"tags": ["bar"],
 				"label": "Bar1 property",
-				"path": "bar1",
+				"path": "/bar1",
 				"type": "string"
 			},
 			"bar2": {
 				"tags": ["bar"],
 				"label": "Bar2 property",
-				"path": "bar2",
+				"path": "/bar2",
 				"type": "string"
 			}
 		},
@@ -101,7 +101,7 @@ function (
 			var oPropertyEditors = new PropertyEditors({
 				config: [{
 					"label": "Baz property",
-					"path": "baz",
+					"path": "/baz",
 					"type": "string"
 				}]
 			});
@@ -131,7 +131,7 @@ function (
 				tags: "foo",
 				config: [{
 					"label": "Baz property",
-					"path": "baz",
+					"path": "/baz",
 					"type": "string"
 				}]
 			});
@@ -261,7 +261,7 @@ function (
 		QUnit.test("when config is set", function (assert) {
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 
@@ -285,7 +285,7 @@ function (
 		QUnit.test("when number of config items is changed", function (assert) {
 			this.oPropertyEditors.setConfig([{
 				"label": "Foo1 property",
-				"path": "foo1",
+				"path": "/foo1",
 				"type": "string"
 			}]);
 
@@ -295,12 +295,12 @@ function (
 				this.oPropertyEditors.setConfig([
 					{
 						"label": "Baz property",
-						"path": "baz",
+						"path": "/baz",
 						"type": "string"
 					},
 					{
 						"label": "Foo1 property",
-						"path": "foo1",
+						"path": "/foo1",
 						"type": "string"
 					}
 				]);
@@ -317,7 +317,7 @@ function (
 
 			this.oPropertyEditors.setConfig([{
 				"label": "Foo1 property",
-				"path": "foo1",
+				"path": "/foo1",
 				"type": "string"
 			}]);
 
@@ -331,7 +331,7 @@ function (
 				this.oPropertyEditors.setConfig([
 					{
 						"label": "Baz property",
-						"path": "baz",
+						"path": "/baz",
 						"type": "string"
 					}
 				]);
@@ -348,32 +348,32 @@ function (
 		QUnit.test("when config is set several times at once (test for async flow cancellation)", function (assert) {
 			this.oPropertyEditors.setConfig([{
 				"label": "Foo1 property",
-				"path": "foo1",
+				"path": "/foo1",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setConfig([{
 				"label": "Bar2 property",
-				"path": "bar2",
+				"path": "/bar2",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setConfig([{
 				"label": "Foo1 property",
-				"path": "foo1",
+				"path": "/foo1",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setConfig([{
 				"label": "Bar1 property",
-				"path": "bar1",
+				"path": "/bar1",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 
@@ -392,7 +392,7 @@ function (
 
 				this.oPropertyEditors.setConfig([{
 					"label": "Baz property",
-					"path": "baz",
+					"path": "/baz",
 					"type": "string"
 				}]);
 
@@ -408,7 +408,7 @@ function (
 
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 
@@ -435,7 +435,7 @@ function (
 
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setTags("foo");
@@ -460,7 +460,7 @@ function (
 		QUnit.test("when both config and tags are set, then config is unset", function (assert) {
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setTags("foo");
@@ -492,13 +492,13 @@ function (
 							"foo1": {
 								"tags": ["foo"],
 								"label": "Foo1_2 property",
-								"path": "foo1_2",
+								"path": "/foo1_2",
 								"type": "string"
 							},
 							"foo2": {
 								"tags": ["foo"],
 								"label": "Foo2_2 property",
-								"path": "foo2_2",
+								"path": "/foo2_2",
 								"type": "string"
 							}
 						},
@@ -546,13 +546,13 @@ function (
 							"foo1": {
 								"tags": ["foo"],
 								"label": "Foo1_2 property",
-								"path": "foo1_2",
+								"path": "/foo1_2",
 								"type": "string"
 							},
 							"foo2": {
 								"tags": ["foo"],
 								"label": "Foo2_2 property",
-								"path": "foo2_2",
+								"path": "/foo2_2",
 								"type": "string"
 							}
 						},
@@ -623,21 +623,24 @@ function (
 			this.oPropertyEditors.attachConfigChange(oSpy);
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 
-			assert.strictEqual(oSpy.callCount, 1);
+			// Avoid destroy before the editor is ready
+			return this.oPropertyEditors.ready().then(function () {
+				assert.strictEqual(oSpy.callCount, 1);
+			});
 		});
 
 		QUnit.test("when same config is set several times (check for re-rendering)", function (assert) {
@@ -648,17 +651,17 @@ function (
 
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 
@@ -671,7 +674,7 @@ function (
 		QUnit.test("when config is set and later unset", function (assert) {
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 
@@ -867,7 +870,7 @@ function (
 		QUnit.test("when config is set and object is destroyed", function (assert) {
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
-				"path": "baz",
+				"path": "/baz",
 				"type": "string"
 			}]);
 
@@ -925,6 +928,7 @@ function (
 				config: [
 					{
 						label: "foo",
+						path: "/foo",
 						type: "string",
 						value: "bar"
 					}

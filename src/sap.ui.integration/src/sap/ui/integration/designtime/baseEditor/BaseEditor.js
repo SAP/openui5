@@ -5,30 +5,50 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
+	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
+	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/merge",
+	"sap/base/util/each",
+	"sap/base/util/deepClone",
+	"sap/base/util/values",
 	"sap/base/util/isPlainObject",
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/includes",
 	"sap/base/util/restricted/_merge",
+	"sap/base/util/restricted/_omit",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/ResourceBundle",
+	"sap/ui/base/BindingParser",
 	"sap/base/Log"
 ], function (
 	createPromise,
 	PropertyEditorFactory,
 	PropertyEditor,
+	resolveBinding,
+	ObjectBinding,
 	Control,
 	ResourceModel,
 	ObjectPath,
 	merge,
+	each,
+	deepClone,
+	values,
 	isPlainObject,
+	isEmptyObject,
+	includes,
 	_merge,
+	_omit,
 	JSONModel,
 	ResourceBundle,
+	BindingParser,
 	Log
 ) {
 	"use strict";
+
+	var CUSTOM_PROPERTY_PREFIX = "customProperty--";
 
 	/**
 	 * @class
@@ -168,11 +188,21 @@ sap.ui.define([
 		},
 
 		constructor: function() {
+			this._mObservableConfig = {};
 			this._mPropertyEditors = {};
-			this._mEditorClasses = {};
 			this._aCancelHandlers = [];
+			this._oDataModel = this._createDataModel();
 
 			Control.prototype.constructor.apply(this, arguments);
+
+			this._oDataModel.setData(this.getJson());
+
+			this.attachJsonChange(function (oEvent) {
+				var oJson = oEvent.getParameter("json");
+
+				this._oDataModel.setData(oJson);
+				this._checkReady();
+			}, this);
 		},
 
 		renderer: function(oRm, oControl) {
@@ -197,30 +227,31 @@ sap.ui.define([
 
 	BaseEditor.prototype.exit = function () {
 		this._reset();
+		this._oDataModel.destroy();
 	};
 
 	BaseEditor.prototype.setJson = function (vJson) {
-		var mJson;
+		var oJson;
 
 		if (typeof vJson === "string") {
 			try {
-				mJson = JSON.parse(vJson);
+				oJson = JSON.parse(vJson);
 			} catch (e) {
 				Log.error("sap.ui.integration.designtime.baseEditor.BaseEditor: invalid JSON string is specified");
 			}
 		} else if (isPlainObject(vJson)) {
 			// to avoid that object is changed outside of the editor
-			mJson = _merge({}, vJson);
+			oJson = _merge({}, vJson);
 		} else {
 			Log.error("sap.ui.integration.designtime.baseEditor.BaseEditor: unsupported data type specified in setJson()");
 		}
 
-		if (mJson) {
-			this.setProperty("json", mJson, false);
-			this._initialize();
+		if (oJson) {
+			this.setProperty("json", oJson);
+			this.fireJsonChange({
+				json: oJson
+			});
 		}
-
-		return this;
 	};
 
 	/**
@@ -265,75 +296,96 @@ sap.ui.define([
 			this._oI18nModel.destroy();
 			delete this._oI18nModel;
 		}
-		if (this._oContextModel) {
-			this._oContextModel.destroy();
-			delete this._oContextModel;
+
+		if (this._oConfigObserver) {
+			this._oConfigObserver.destroy();
 		}
 
-
-		this._mEditorClasses = {};
-
-		Object.keys(this._mPropertyEditors).forEach(function (sPropertyName) {
-			this._mPropertyEditors[sPropertyName].destroy();
-		}, this);
-
-		this._mPropertyEditors = {};
+		each(this._mPropertyEditors, function (sPropertyName, aPropertyEditors) {
+			aPropertyEditors.forEach(function (oPropertyEditor) {
+				this.deregisterPropertyEditor(oPropertyEditor, sPropertyName);
+			}, this);
+		}.bind(this));
 
 		this.destroyAggregation("_propertyEditors");
 	};
 
 	BaseEditor.prototype._initialize = function () {
 		this._reset();
-		var mJson = this.getJson();
+
 		var mConfig = this.getConfig();
-		if (mJson && mConfig && mConfig.properties) {
-			this._oContextModel = this._createContextModel();
 
-			this._createI18nModel()
+		if (mConfig && mConfig.properties) {
+			this._oConfigObserver = new ObjectBinding();
+
+			this._loadI18nBundles(mConfig.i18n)
 				.then(function (aBundles) {
-					if (aBundles.length) {
-						if (!this._oI18nModel) {
-							this._oI18nModel = new ResourceModel({
-								bundle: aBundles.shift()
-							});
-							this.setModel(this._oI18nModel, "i18n");
-							this._oI18nModel.setDefaultBindingMode("OneWay");
-						}
+					this._oI18nModel = this._createI18nModel(aBundles);
+					this.setModel(this._oI18nModel, "i18n");
 
-						aBundles.forEach(function (oBundle) {
-							this._oI18nModel.enhance(oBundle);
-						}, this);
+					// Setup config observer
+					this._oConfigObserver.addToIgnore("template"); // Ignore array templates
+					this._oConfigObserver.setModel(this._oDataModel);
+					this._oConfigObserver.setModel(this._oI18nModel, "i18n");
+
+					var sContextPath = this._getContextPath();
+					if (sContextPath) {
+						this._oConfigObserver.setModel(this._oDataModel, "context");
+						this._oConfigObserver.setBindingContext(this._oDataModel.getContext(sContextPath), "context");
 					}
-				}.bind(this))
-				.then(this._createEditors.bind(this));
+
+					var mPropertiesConfig = resolveBinding(
+						mConfig.properties,
+						{
+							"i18n": this._oI18nModel
+						}
+					);
+
+					this._mObservableConfig = this._prepareConfig(mPropertiesConfig);
+					this._oConfigObserver.setObject(this._mObservableConfig);
+
+					this._oConfigObserver.attachChange(function (oEvent) {
+						var aPath = oEvent.getParameter("path").split("/");
+						var vValue = oEvent.getParameter("value");
+						var sPropertyKey = aPath.shift();
+						var aPropertyEditors = this.getPropertyEditorsByNameSync(sPropertyKey) || [];
+
+						aPropertyEditors.forEach(function (oPropertyEditor) {
+							if (aPath[0] === "value") {
+								oPropertyEditor.setValue(vValue);
+							} else {
+								var mProperties = oEvent.getSource().getObject();
+								var mPropertyConfig = _omit(deepClone(mProperties[sPropertyKey]), "value");
+
+								ObjectPath.set(aPath, vValue, mPropertyConfig);
+								oPropertyEditor.setConfig(mPropertyConfig);
+							}
+						});
+					}, this);
+
+					return this._createEditors(this._oConfigObserver.getObject());
+				}.bind(this));
 		}
 	};
 
-	BaseEditor.prototype._createContextModel = function () {
-		var mJson = this.getJson();
-		var mContext = mJson;
-		var mConfig = this.getConfig();
 
-		if (mConfig.context) {
-			mContext = ObjectPath.get(mConfig.context.split("/"), mJson);
-		}
-
-		var oModel = new JSONModel(mContext);
+	BaseEditor.prototype._createDataModel = function () {
+		var oModel = new JSONModel();
 		oModel.setDefaultBindingMode("OneWay");
-
 		return oModel;
 	};
 
 	/**
-	 * The I18n model is used as an interface (read-only) for property editors.
-	 * It is created from all i18n bundles in the merged configuration.
-	 * To separate properties from different bundles, namespacing should be used, e.g. i18n>BASE_EDITOR.PROPERTY
+	 * Loads i18n bundles.
+	 *
+	 * @param {string[]} aBundleList - List of paths to i18n bundles
+	 * @returns {Promise} Array of {@link sap.base.i18n.ResourceBundle i18n resource bundles}
+	 * @private
 	 */
-	BaseEditor.prototype._createI18nModel = function () {
+	BaseEditor.prototype._loadI18nBundles = function (aBundlePaths) {
 		return this._createPromise(function (fnResolve, fnRejected) {
-			var oConfig = this.getConfig();
 			Promise.all(
-				oConfig.i18n.map(function (sI18nPath) {
+				aBundlePaths.map(function (sI18nPath) {
 					return new Promise(function (fnResolve, fnReject) {
 						ResourceBundle.create({
 							url: sap.ui.require.toUrl(sI18nPath),
@@ -342,49 +394,172 @@ sap.ui.define([
 					});
 				})
 			).then(fnResolve, fnRejected);
-		}.bind(this));
+		});
 	};
 
 	/**
-	 * Requires all editor modules and creates editor instances for all configurable properties.
+	 * Creates an i18n model out of list of resource bundles.
+	 *
+	 * The i18n model is used as an interface (read-only) for property editors. It is created from all
+	 * i18n bundles in the merged configuration. To separate properties from different bundles,
+	 * namespacing should be used, e.g. <code>i18n>BASE_EDITOR.PROPERTY</code>
+	 *
+	 * @param {sap.base.i18n.ResourceBundle[]} aBundles - List of i18n resource bundles
+	 * @returns {sap.ui.model.resource.ResourceModel} I18n model of composed bundles
+	 * @private
 	 */
-	BaseEditor.prototype._createEditors = function () {
-		var oConfig = this.getConfig();
+	BaseEditor.prototype._createI18nModel = function (aBundles) {
+		var aBundlesList = aBundles.slice();
+		var oI18nModel = new ResourceModel({
+			bundle: aBundlesList.shift()
+		});
 
-		return Promise.all(
-			Object.keys(oConfig.properties).map(function(sPropertyName) {
-				var oPropertyConfig = this.getConfig().properties[sPropertyName];
-				return [
-					sPropertyName,
-					this._createPropertyEditor(oPropertyConfig)
-				];
-			}.bind(this))
-		).then(function (aPropertyEditors) {
-			return aPropertyEditors
-				.map(function (mPropertyEditor) {
-					var sPropertyName = mPropertyEditor[0];
-					var oPropertyEditor = mPropertyEditor[1];
+		oI18nModel.setDefaultBindingMode("OneWay");
 
-					if (oPropertyEditor) {
-						oPropertyEditor.attachValueChange(this._onValueChange.bind(this));
-						this._mPropertyEditors[sPropertyName] = oPropertyEditor;
-						this.addAggregation("_propertyEditors", oPropertyEditor);
-						return oPropertyEditor;
-					}
-				}, this)
-				.filter(function (oPropertyEditor) {
-					return !!oPropertyEditor;
-				});
-		}.bind(this))
-		.then(function (aPropertyEditors) {
-			return Promise.all(
-				aPropertyEditors.map(function (oPropertyEditor) {
-					return oPropertyEditor.ready();
-				})
+		aBundlesList.forEach(function (oBundle) {
+			oI18nModel.enhance(oBundle);
+		});
+
+		return oI18nModel;
+	};
+
+	BaseEditor.prototype._prepareConfig = function (mProperties) {
+		var mResult = {};
+
+		each(mProperties, function (sKey, mPropertyConfig) {
+			mResult[sKey] = Object.assign(
+				{},
+				this._preparePropertyConfig(mPropertyConfig),
+				{
+					__propertyName: sKey
+				}
 			);
-		})
-		.then(this._checkReady.bind(this));
+		}.bind(this));
 
+		return mResult;
+	};
+
+	BaseEditor.prototype._preparePropertyConfig = function (mPropertyConfig) {
+		var sContextPath = this._getContextPath();
+
+		if (sContextPath && !sContextPath.endsWith("/")) {
+			sContextPath = sContextPath + "/";
+		}
+
+		var sPath = mPropertyConfig.path;
+
+		if (!sPath.startsWith("/") && sContextPath) {
+			sPath = sContextPath + sPath;
+		}
+
+		return Object.assign({}, mPropertyConfig, {
+			path: sPath,
+			value: "{" + sPath + "}"
+		});
+	};
+
+	/**
+	 * Creates property editors wrappers for all configurable properties.
+	 */
+	BaseEditor.prototype._createEditors = function (mPropertiesConfig) {
+		each(mPropertiesConfig, function (sPropertyName, mPropertyConfig) {
+			var oPropertyEditor = this._createPropertyEditor(mPropertyConfig);
+			this.addAggregation("_propertyEditors", oPropertyEditor);
+		}.bind(this));
+
+		return (
+			Promise.all(
+				values(this._mPropertyEditors)
+					.reduce(function (aResult, aCurrent) {
+						return aResult.concat(aCurrent);
+					}, [])
+					.map(function (oPropertyEditor) {
+						return oPropertyEditor.ready();
+					})
+			)
+			.then(this._checkReady.bind(this))
+		);
+	};
+
+	BaseEditor.prototype._getRegistrationKey = function (oPropertyEditor, sKey) {
+		if (typeof sKey !== "string") {
+			if (
+				oPropertyEditor.isA("sap.ui.integration.designtime.baseEditor.PropertyEditor")
+				&& !oPropertyEditor.getConfig()
+				&& !oPropertyEditor.getBindingInfo("config")
+				&& oPropertyEditor.getPropertyName()
+			) {
+				sKey = oPropertyEditor.getPropertyName();
+			} else {
+				sKey = CUSTOM_PROPERTY_PREFIX + oPropertyEditor.getId();
+			}
+		}
+
+		return sKey;
+	};
+
+	BaseEditor.prototype._addCustomProperty = function (sKey, mConfig) {
+		var mObservableConfigNext = Object.assign({}, this._mObservableConfig);
+		mObservableConfigNext[sKey] = this._preparePropertyConfig(mConfig);
+		this._mObservableConfig = mObservableConfigNext;
+		this._oConfigObserver.setObject(mObservableConfigNext);
+	};
+
+	BaseEditor.prototype._removeCustomProperty = function (sKey) {
+		var mObservableConfigNext = _omit(this._mObservableConfig, sKey);
+		this._mObservableConfig = mObservableConfigNext;
+		this._oConfigObserver.setObject(mObservableConfigNext);
+	};
+
+	/**
+	 * Registers a property editor to get updates from and to send updates to.
+	 * @param {sap.ui.integration.designtime.baseEditor.PropertyEditor|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor} oPropertyEditor - Property editor instance
+	 * @param {string} [sKey] - Optional key. The property editor will be available in {@link #getPropertyEditorSync} under the specified key.
+	 */
+	BaseEditor.prototype.registerPropertyEditor = function (oPropertyEditor, sKey) {
+		sKey = this._getRegistrationKey(oPropertyEditor, sKey);
+		var aList = Array.isArray(this._mPropertyEditors[sKey]) ? this._mPropertyEditors[sKey] : [];
+
+		this._mPropertyEditors[sKey] = aList.concat(oPropertyEditor);
+
+		// Register config object in binding watcher
+		if (sKey.startsWith(CUSTOM_PROPERTY_PREFIX)) {
+			this._addCustomProperty(sKey, oPropertyEditor.getConfig());
+		}
+
+		// Getting back already resolved config!
+		var vValue = ObjectPath.get(sKey, this._oConfigObserver.getObject()).value;
+
+		oPropertyEditor.setValue(vValue);
+		oPropertyEditor.attachValueChange(this._onValueChange, this);
+		oPropertyEditor.attachReady(this._checkReady, this);
+	};
+
+	/**
+	 * Deregisters a property editor from the base editor
+	 * @param {sap.ui.integration.designtime.baseEditor.PropertyEditor|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor} oPropertyEditor - Property editor instance
+	 * @param {string} [sKey] - Optional key which was used for registration. See {@link #registerPropertyEditor}.
+	 */
+	BaseEditor.prototype.deregisterPropertyEditor = function (oPropertyEditor, sKey) {
+		sKey = this._getRegistrationKey(oPropertyEditor, sKey);
+		var aList = this._mPropertyEditors[sKey];
+
+		// Deregister config object from binding watcher
+		if (sKey.startsWith(CUSTOM_PROPERTY_PREFIX)) {
+			this._removeCustomProperty(sKey);
+		}
+
+		oPropertyEditor.detachValueChange(this._onValueChange, this);
+
+		if (Array.isArray(aList)) {
+			this._mPropertyEditors[sKey] = aList.filter(function (oItem) {
+				return oPropertyEditor !== oItem;
+			});
+
+			if (this._mPropertyEditors[sKey].length === 0) {
+				delete this._mPropertyEditors[sKey];
+			}
+		}
 	};
 
 	BaseEditor.prototype._checkReady = function () {
@@ -410,79 +585,177 @@ sap.ui.define([
 		return mPromise.promise.then(removeHandler, removeHandler);
 	};
 
-	BaseEditor.prototype.getPropertyConfig = function (sPropertyName) {
-		return this.getConfig().properties[sPropertyName];
+	/**
+	 * Returns resolved configuration by property name.
+	 * @param {string} sPropertyName - Property name in the editor configuration
+	 * @returns {object} Configuration object, e.g. <code>{ path: "/foo", label: "Foo", ... }</code>
+	 */
+	BaseEditor.prototype.getPropertyConfigByName = function (sPropertyName) {
+		return _omit(
+			ObjectPath.get(sPropertyName, this._oConfigObserver.getObject()),
+			"value"
+		);
 	};
 
 	BaseEditor.prototype._createPropertyEditor = function (oPropertyConfig) {
-		return new PropertyEditor({
-			config: oPropertyConfig,
+		var oBindingInfo = typeof oPropertyConfig.value === "string" && BindingParser.complexParser(oPropertyConfig.value);
+
+		// Avoid passing values containing binding string to constructor, otherwise
+		// there will be interpret by ManagedObject as bindings automatically.
+		// Candidate to move into escape parameter inside wrapper itself.
+		var oPropertyEditor = new PropertyEditor({
+			config: _omit(oPropertyConfig, "value"),
+			value: oBindingInfo ? undefined : oPropertyConfig.value,
 			editor: this
+		});
+
+		if (oBindingInfo) {
+			oPropertyEditor.setValue(oPropertyConfig.value);
+		}
+
+		return oPropertyEditor;
+	};
+
+	/**
+	 * Returns a list of property editors corresponding to a specified property name.
+	 * @param {string} sPropertyName - Property name
+	 * @returns {Promise<sap.ui.integration.designtime.baseEditor.PropertyEditor[]|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor[]|null>} List of property editors for the specified name
+	 */
+	BaseEditor.prototype.getPropertyEditorsByName = function (sPropertyName) {
+		return new Promise(function (fnResolve) {
+			if (!this._mPropertyEditors || Object.keys(this._mPropertyEditors).length === 0) {
+				this.attachEventOnce("propertyEditorsReady", fnResolve);
+			} else {
+				fnResolve();
+			}
+		}.bind(this))
+		.then(function () {
+			return this.getPropertyEditorsByNameSync(sPropertyName);
+		}.bind(this));
+	};
+
+	/**
+	 * Returns a list of property editors corresponding to a specified property name.
+	 * @param {string} sPropertyName - Property name
+	 * @returns {sap.ui.integration.designtime.baseEditor.PropertyEditor[]|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor[]|null} List of property editors for the specified name
+	 */
+	BaseEditor.prototype.getPropertyEditorsByNameSync = function (sPropertyName) {
+		var aList = this._mPropertyEditors[sPropertyName];
+		return Array.isArray(aList) && aList.slice() || null;
+	};
+
+	/**
+	 * Checks if the property editor configuration matches the specified list of tags
+	 * @param {object} mConfig - Property editor configuration
+	 * @param {string, string[]} vTag - Tags for validation
+	 * @returns {boolean} <code>true</code> is config fulfills specified tags
+	 */
+	function hasTag(mConfig, vTag) {
+		var aTags = [].concat(vTag);
+
+		return (
+			Array.isArray(mConfig.tags)
+			&& aTags.every(function (sTag) {
+				return includes(mConfig.tags, sTag);
+			})
+		);
+	}
+
+	/**
+	 * Returns a list of property editors corresponding to a specified list of tags.
+	 * @param {string|string[]} vTag - List of tags
+	 * @returns {Promise<sap.ui.integration.designtime.baseEditor.PropertyEditor[]|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor[]|null>} List of property editors for the specified tags
+	 */
+	BaseEditor.prototype.getPropertyEditorsByTag = function(vTag) {
+		return new Promise(function (fnResolve) {
+			if (!this._mPropertyEditors || Object.keys(this._mPropertyEditors).length === 0) {
+				this.attachEventOnce("propertyEditorsReady", fnResolve);
+			} else {
+				fnResolve();
+			}
+		}.bind(this))
+		.then(function () {
+			return this.getPropertyEditorsByTagSync(vTag);
+		}.bind(this));
+	};
+
+	/**
+	 * Returns a list of property editors corresponding to a specified list of tags.
+	 * @param {string|string[]} vTag - List of tags
+	 * @returns {sap.ui.integration.designtime.baseEditor.PropertyEditor[]|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor[]|null} List of property editors for the specified tags
+	 */
+	BaseEditor.prototype.getPropertyEditorsByTagSync = function (vTag) {
+		return this.getPropertyEditorsSync().filter(function(oPropertyEditor) {
+			return hasTag(oPropertyEditor.getConfig(), vTag);
 		});
 	};
 
-	BaseEditor.prototype.getPropertyEditor = function (sPropertyName) {
-		return new Promise(function (fnResolve) {
-			if (!this._mPropertyEditors || Object.keys(this._mPropertyEditors).length === 0) {
-				this.attachEventOnce("propertyEditorsReady", fnResolve);
-			} else {
-				fnResolve();
-			}
-		}.bind(this))
-		.then(function () {
-			return this.getPropertyEditorSync(sPropertyName);
-		}.bind(this));
+	/**
+	 * Returns a list of registered property editors.
+	 * @returns {sap.ui.integration.designtime.baseEditor.PropertyEditor[]|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor[]|null} List of property editors
+	 */
+	BaseEditor.prototype.getPropertyEditorsSync = function () {
+		return values(this._mPropertyEditors).reduce(function (aResult, aCurrent) {
+			return aResult.concat(aCurrent);
+		}, []);
 	};
 
-	BaseEditor.prototype.getPropertyEditorSync = function (sPropertyName) {
-		return this._mPropertyEditors[sPropertyName];
+	BaseEditor.prototype.getJson = function () {
+		return _merge({}, this._getJson()); // To avoid manipulations with the json outside of the editor
 	};
 
-	BaseEditor.prototype.getPropertyEditors = function(vTag) {
-		return new Promise(function (fnResolve) {
-			if (!this._mPropertyEditors || Object.keys(this._mPropertyEditors).length === 0) {
-				this.attachEventOnce("propertyEditorsReady", fnResolve);
-			} else {
-				fnResolve();
-			}
-		}.bind(this))
-		.then(function () {
-			return this.getPropertyEditorsSync(vTag);
-		}.bind(this));
+	BaseEditor.prototype._getJson = function () {
+		return this.getProperty("json");
 	};
 
-	BaseEditor.prototype.getPropertyEditorsSync = function (vTag) {
-		var hasTag = function(oPropertyEditor, sTag) {
-			return oPropertyEditor.getConfig().tags && (oPropertyEditor.getConfig().tags.indexOf(sTag) !== -1);
-		};
+	BaseEditor.prototype._getContextPath = function () {
+		var oConfig = this.getConfig();
+		var sContext = oConfig && oConfig.context || null;
 
-		if (!vTag) {
-			return this.getAggregation("_propertyEditors") || [];
-		} else if (typeof vTag === "string") {
-			return this.getPropertyEditorsSync().filter(function(oPropertyEditor) {
-				return hasTag(oPropertyEditor, vTag);
-			});
-		} else if (Array.isArray(vTag)) {
-			return this.getPropertyEditorsSync().filter(function(oPropertyEditor) {
-				return vTag.every(function(sTag) {
-					return hasTag(oPropertyEditor, sTag);
-				});
-			});
-		} else {
-			return [];
+		if (sContext && sContext[0] !== "/") {
+			sContext = "/" + sContext;
 		}
+
+		return sContext;
 	};
+
+	function unset(aParts, oObject) {
+		var mContainer = ObjectPath.get(aParts.slice(0, -1), oObject);
+		delete mContainer[aParts[aParts.length - 1]];
+
+		return (
+			Array.isArray(mContainer) && mContainer.length === 0
+			|| isPlainObject(mContainer) && isEmptyObject(mContainer)
+				? unset(aParts.slice(0, -1), oObject)
+				: oObject
+		);
+	}
 
 	BaseEditor.prototype._onValueChange = function (oEvent) {
 		var sPath = oEvent.getParameter("path");
+		var oJson = this._getJson();
+		var vValue = oEvent.getParameter("value");
+
+		if (sPath[0] === "/") {
+			sPath = sPath.substr(1);
+		} else {
+			throw new Error("BaseEditor._onValueChange: unknown relative path - '" + sPath + "'");
+		}
+
 		var aParts = sPath.split("/");
 
-		this._oContext = this._oContextModel.getData();
-		ObjectPath.set(aParts, oEvent.getParameter("value"), this._oContext);
-		this._oContextModel.checkUpdate();
-		this.fireJsonChange({
-			json: _merge({}, this.getJson()) // to avoid manipulations with the json outside of the editor
-		});
+		ObjectPath.set(
+			aParts,
+			vValue,
+			oJson
+		);
+
+		// Unset undefined values
+		if (typeof vValue === "undefined") {
+			unset(aParts, oJson);
+		}
+
+		this.setJson(oJson);
 	};
 
 	return BaseEditor;

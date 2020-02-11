@@ -61,7 +61,7 @@
 		<Button
 			icon="sap-icon://add"
 			tooltip="{i18n>BASE_EDITOR.ARRAY.ADD}"
-			enabled="{= !${maxItems} || (Array.isArray(${itemsModel>/}) &amp;&amp; ${itemsModel>/} || []).length &lt; ${maxItems} }"
+			enabled="{= !${config/maxItems} || (Array.isArray(${itemsModel>/}) &amp;&amp; ${itemsModel>/} || []).length &lt; ${config/maxItems} }"
 			press="_addItem"
 		/>
 	</VBox>

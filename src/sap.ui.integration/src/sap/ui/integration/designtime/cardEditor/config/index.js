@@ -33,7 +33,7 @@ sap.ui.define([
 						"Object",
 						"Table"
 					],
-					"default": "List",
+					"defaultValue": "List",
 					"path": "type"
 				},
 				"parameters": {

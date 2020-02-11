@@ -2,37 +2,38 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor"
-],
-	function (
-		BaseEditor
-	) {
-		"use strict";
+], function (
+	BaseEditor
+) {
+	"use strict";
 
-		QUnit.module("Given BaseEditor is created", {
-			beforeEach: function () {
-				this.oBaseEditor = new BaseEditor({
-					json: {
-						context: {
-							prop1: "value1",
-							prop2: "value2"
-						},
-						fooPath: {
-							foo1: "bar1"
-						}
+	QUnit.module("Given BaseEditor is created", {
+		beforeEach: function () {
+			this.oBaseEditor = new BaseEditor({
+				json: {
+					context: {
+						prop1: "value1",
+						prop2: "value2",
+						prop3: "value3",
+						prop4: "value4"
+					},
+					fooPath: {
+						foo1: "bar1"
 					}
-				});
-			},
-			afterEach: function () {
-				this.oBaseEditor.destroy();
-			}
-		});
-
+				}
+			});
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
 		QUnit.test("When config with 1 property is set", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.setConfig({
 				context: "context",
 				properties: {
 					"prop1": {
+						label: "Prop1",
 						path: "prop1",
 						type: "string"
 					}
@@ -41,10 +42,14 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			});
+
+			this.oBaseEditor.placeAt("qunit-fixture");
+
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+				sap.ui.getCore().applyChanges();
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
 				assert.strictEqual(
-					this.oBaseEditor.getPropertyEditorsSync()[0].getAggregation("propertyEditor").getValue(),
+					this.oBaseEditor.getPropertyEditorsSync()[0].getValue(),
 					"value1",
 					"Then value of the property is correctly set on the property editor"
 				);
@@ -62,7 +67,7 @@ sap.ui.define([
 						type: "string"
 					},
 					"prop2": {
-						path: "prop1",
+						path: "prop2",
 						type: "string"
 					}
 				},
@@ -73,16 +78,29 @@ sap.ui.define([
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
 				this.oBaseEditor.attachJsonChange(function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("json").context.prop1, "test", "Then the value is updated in JSON");
-					assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getAggregation("propertyEditor").getConfig().value, "test", "Then the value is updated in another editor interested in the same path");
 					done();
-				}.bind(this));
+				});
 
-				this.oBaseEditor.getPropertyEditorsSync()[0].getAggregation("propertyEditor").fireValueChange("test");
+				this.oBaseEditor.getPropertyEditorsSync()[0].setValue("test");
 			}.bind(this));
 		});
 
 		QUnit.test("When config contains properties with tags", function (assert) {
 			var done = assert.async();
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+				sap.ui.getCore().applyChanges();
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsByNameSync("prop2")[0].getValue(), "value2", "Then property editor getter works with property name");
+
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsByTagSync("commonTag").length, 2, "Then property editor getter works with one tag (1/3)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsByTagSync("commonTag")[0].getValue(), "value1", "Then property editor getter works with one tag (2/3)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsByTagSync("commonTag")[1].getValue(), "value2", "Then property editor getter works with one tag (3/3)");
+
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsByTagSync(["commonTag", "tag1"]).length, 1, "Then property editor getter works with multiple tags (1/2)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsByTagSync(["commonTag", "tag1"])[0].getValue(), "value1", "Then property editor getter works with multiple tags (2/2)");
+				done();
+			}, this);
+
 			this.oBaseEditor.setConfig({
 				context: "context",
 				properties: {
@@ -111,17 +129,12 @@ sap.ui.define([
 					"anotherString": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			});
-			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop2").getConfig().path, "prop2", "Then property editor getter works with property name");
 
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync("commonTag").length, 2, "Then property editor getter works with one tag (1/3)");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync("commonTag")[0].getConfig().path, "prop1", "Then property editor getter works with one tag (2/3)");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync("commonTag")[1].getConfig().path, "prop2", "Then property editor getter works with one tag (3/3)");
-
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync(["commonTag", "tag1"]).length, 1, "Then property editor getter works with multiple tags (1/2)");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync(["commonTag", "tag1"])[0].getConfig().path, "prop1", "Then property editor getter works with multiple tags (2/2)");
-				done();
-			}.bind(this));
+			this.oBaseEditor.placeAt("qunit-fixture");
 		});
-	}
-);
+	});
+
+	QUnit.done(function () {
+		document.getElementById("qunit-fixture").style.display = "none";
+	});
+});

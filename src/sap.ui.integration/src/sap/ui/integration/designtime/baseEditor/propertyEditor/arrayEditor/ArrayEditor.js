@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/base/util/ObjectPath",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/util/restricted/_merge"
+	"sap/base/util/restricted/_merge",
+	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding"
 ], function (
 	BasePropertyEditor,
 	deepClone,
 	ObjectPath,
 	JSONModel,
-	_merge
+	_merge,
+	resolveBinding
 ) {
 	"use strict";
 
@@ -50,45 +52,61 @@ sap.ui.define([
 		this._itemsModel = new JSONModel();
 		this._itemsModel.setDefaultBindingMode("OneWay");
 		this.setModel(this._itemsModel, "itemsModel");
+		this.attachValueChange(function (oEvent) {
+			var aValue = oEvent.getParameter("value");
+			var oConfig = this.getConfig();
+
+			if (oConfig.template) {
+				var aItems = [];
+				aValue.forEach(function(oValue, iIndex) {
+					var mItem = {
+						itemLabel: oConfig.itemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL"),
+						index: iIndex,
+						total: aValue.length,
+						properties: Object.keys(oConfig.template).map(function (sKey) {
+							var mTemplate = oConfig.template[sKey];
+							var sPath = iIndex + "/" + mTemplate.path;
+							return _merge({}, mTemplate, {
+								path: sPath,
+								value: ObjectPath.get(sPath.split("/"), aValue)
+							});
+						}, this)
+					};
+
+					var oProxyModel = new JSONModel(oValue);
+					mItem.properties = resolveBinding(
+						mItem.properties,
+						{
+							"": oProxyModel
+						},
+						{
+							"": oProxyModel.getContext("/")
+						},
+						["template", "value"]
+					);
+					oProxyModel.destroy();
+					aItems.push(mItem);
+				}, this);
+
+				this._itemsModel.setData(aItems);
+			}
+		}, this);
 	};
 
 	ArrayEditor.prototype.setValue = function (aValue) {
-		var oConfig = this.getConfig();
 		aValue = Array.isArray(aValue) ? aValue : [];
-
-		if (oConfig.template) {
-			var aItems = [];
-			aValue.forEach(function(oValue, iIndex) {
-				var mItem = {
-					itemLabel: oConfig.itemLabel || "{i18n>BASE_EDITOR.ARRAY.ITEM_LABEL}",
-					index: iIndex,
-					total: aValue.length,
-					properties: Object.keys(oConfig.template).map(function (sKey) {
-						var mTemplate = oConfig.template[sKey];
-						var sPath = iIndex + "/" + mTemplate.path;
-						return _merge({}, mTemplate, {
-							path: sPath,
-							value: ObjectPath.get(sPath.split("/"), aValue)
-						});
-					}, this)
-				};
-				aItems.push(mItem);
-			}, this);
-			this._itemsModel.setData(aItems);
-		}
-
 		BasePropertyEditor.prototype.setValue.call(this, aValue);
 	};
 
-	ArrayEditor.prototype.getExpectedWrapperCount = function (vValue) {
-		return vValue.length;
+	ArrayEditor.prototype.getExpectedWrapperCount = function (aValue) {
+		return aValue.length;
 	};
 
 	ArrayEditor.prototype._removeItem = function (oEvent) {
 		var iIndex = oEvent.getSource().data("index");
 		var aValue = (this.getValue() || []).slice();
 		aValue.splice(iIndex, 1);
-		this.fireValueChange(aValue);
+		this.setValue(aValue);
 	};
 
 	ArrayEditor.prototype._addItem = function () {
@@ -106,7 +124,7 @@ sap.ui.define([
 			}
 		});
 		aValue.push(oDefaultItem);
-		this.fireValueChange(aValue);
+		this.setValue(aValue);
 	};
 
 	ArrayEditor.prototype._moveUp = function (oEvent) {
@@ -115,7 +133,7 @@ sap.ui.define([
 			var aValue = this.getValue().slice();
 			var mRemovedItem = aValue.splice(iIndex, 1)[0];
 			aValue.splice(iIndex - 1, 0, mRemovedItem);
-			this.fireValueChange(aValue);
+			this.setValue(aValue);
 		}
 	};
 
@@ -126,7 +144,7 @@ sap.ui.define([
 		if (iIndex < aValue.length - 1) {
 			var mRemovedItem = aValue.splice(iIndex, 1)[0];
 			aValue.splice(iIndex + 1, 0, mRemovedItem);
-			this.fireValueChange(aValue);
+			this.setValue(aValue);
 		}
 	};
 
@@ -140,14 +158,20 @@ sap.ui.define([
 	};
 
 	ArrayEditor.prototype._onPropertyValueChange = function (oEvent) {
-		var aEditorValue = (this.getValue() || []).slice();
+		var aEditorValue = deepClone(this.getValue() || []);
 		var sPath = oEvent.getParameter("path");
 		var aParts = sPath.split("/");
 		var vValue = oEvent.getParameter("value");
 
 		ObjectPath.set(aParts, vValue, aEditorValue);
 
-		this.fireValueChange(aEditorValue);
+		// Unset undefined values
+		if (typeof vValue === "undefined") {
+			var mContainer = ObjectPath.get(aParts.slice(0, -1), aEditorValue);
+			delete mContainer[aParts[aParts.length - 1]];
+		}
+
+		this.setValue(aEditorValue);
 	};
 
 	return ArrayEditor;

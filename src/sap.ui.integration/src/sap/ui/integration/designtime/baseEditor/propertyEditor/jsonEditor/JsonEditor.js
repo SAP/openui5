@@ -39,7 +39,7 @@ sap.ui.define([
 				oInput.setValueStateText("Error: " + oJsonValue);
 			} else {
 				oInput.setValueState("None");
-				this.fireValueChange(oJsonValue);
+				this.setValue(oJsonValue);
 			}
 		},
 
@@ -122,7 +122,7 @@ sap.ui.define([
 		onSave: function () {
 			var oInput = this.getContent();
 			if (this._oCode) {
-				this.fireValueChange(this._oCode);
+				this.setValue(this._oCode);
 				oInput.setValueState("None");
 				// Explicitly set the value of the inline editor here because
 				// the model might not have changed if invalid (unsynchronized) changes

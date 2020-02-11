@@ -72,17 +72,17 @@ sap.ui.define([
 			mValue = isPlainObject(mValue) ? mValue : {};
 
 			var aItems = Object.keys(mValue).map(function (sKey) {
-				var oValue = this.formatInputValue(mValue[sKey]);
+				var vValue = this.formatInputValue(mValue[sKey]);
 				if (!this._mTypes[sKey]) {
 					// Initialize type based on value
-					this._mTypes[sKey] = isPlainObject(oValue) ? "json" : "string";
+					this._mTypes[sKey] = isPlainObject(vValue) ? "json" : "string";
 				}
 				return {
 					key: sKey,
 					value: [{
 						type: this._mTypes[sKey],
 						path: sKey,
-						value: oValue
+						value: vValue
 					}]
 				};
 			}, this);
@@ -106,15 +106,15 @@ sap.ui.define([
 
 		_onRemoveElement: function(oEvent) {
 			var sKeyToDelete = oEvent.getSource().getBindingContext("itemsModel").getObject().key;
-			var mParams = this.getConfig().value;
-			this.fireValueChange(_omit(mParams, sKeyToDelete));
+			var mValue = this.getValue();
+			this.setValue(_omit(mValue, sKeyToDelete));
 		},
 
 		_onAddElement: function() {
 			var mParams = _merge({}, this.getValue());
 			var sKey = this._getUniqueKey(mParams);
 			mParams[sKey] = "";
-			this.fireValueChange(mParams);
+			this.setValue(mParams);
 		},
 
 		_getUniqueKey: function(mParams) {
@@ -152,7 +152,7 @@ sap.ui.define([
 					aItems.forEach(function (oItem) {
 						oMap[oItem.key] = oItem.value[0].value;
 					});
-					this.fireValueChange(oMap);
+					this.setValue(oMap);
 				}
 			} else {
 				oInput.setValueState("Error");
@@ -184,7 +184,7 @@ sap.ui.define([
 
 			ObjectPath.set(aParts, vValue, oEditorValue);
 
-			this.fireValueChange(oEditorValue);
+			this.setValue(oEditorValue);
 		},
 
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render

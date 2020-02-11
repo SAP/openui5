@@ -33,7 +33,7 @@ sap.ui.define([
 			var mConfig = {
 				"properties": {
 					"sampleMap": {
-						"path": "sampleMap",
+						"path": "/sampleMap",
 						"type": "map"
 					}
 				},
@@ -58,9 +58,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oBaseEditor.getPropertyEditor("sampleMap").then(function (oPropertyEditor) {
-				this.oMapEditor = oPropertyEditor;
+			this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
 				sap.ui.getCore().applyChanges();
+				this.oMapEditor = aPropertyEditor[0];
 				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
 				this.oAddButton = oMapEditorContent.addButton;
 				this.aItems = oMapEditorContent.items;
@@ -77,7 +77,7 @@ sap.ui.define([
 			assert.ok(this.oMapEditor.getDomRef() && this.oMapEditor.getDomRef().offsetWidth > 0, "Then it is rendered correctly (3/3)");
 		});
 
-		QUnit.test("When a model is set", function (assert) {
+		QUnit.test("When a value is set", function (assert) {
 			assert.deepEqual(
 				this.aItems[0].value.getConfig(),
 				[{
@@ -262,5 +262,9 @@ sap.ui.define([
 			);
 			assert.strictEqual(oInput.getValueState(), "Error", "Then the error is displayed");
 		});
+	});
+
+	QUnit.done(function () {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });
