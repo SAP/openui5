@@ -2123,4 +2123,100 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel);
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: The ODataModel#create API is called with an object retrieved via
+	// ODataModel#getObject which may contain properties inside a __metadata property which are not
+	// specified by OData so that a request would fail on the server. The request payload is
+	// cleaned up before the request is sent.
+	// BCP: 002075129400000695502020
+	QUnit.test("create payload only contains cleaned up __metadata", function (assert) {
+		var oModel = createSalesOrdersModel({tokenHandling : false}),
+			sView = '\
+<FlexBox binding="{path : \'/SalesOrderSet(\\\'1\\\')\',\
+		parameters : {select : \'SalesOrderID,Note\', expand : \'ToLineItems\'}}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+	<Table id="table" items="{path : \'ToLineItems\',\
+			parameters : {select : \'ItemPosition,Note,SalesOrderID\'}}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="note::item" value="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('1')?$select=SalesOrderID%2cNote&$expand=ToLineItems", {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				Note : "Note",
+				SalesOrderID : "1",
+				ToLineItems : {
+					results : [{
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						},
+						ItemPosition : "10~0~",
+						Note : "ItemNote",
+						SalesOrderID : "1"
+					}]
+				}
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Note")
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectChange("itemPosition", ["10~0~"])
+			.expectChange("note::item", ["ItemNote"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// avoid MERGE on property change
+			oModel.setChangeGroups(
+				{"SalesOrderLineItem" : {groupId : "never"}},
+				{"*" : {groupId : "change"}}
+			);
+			oModel.setDeferredGroups(["change", "never"]);
+
+			that.expectChange("note::item", "ItemNote Changed", 0);
+
+			// code under test: leads to __metadata.deepPath being set in the item data
+			oModel.setProperty("/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')/Note",
+				"ItemNote Changed");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oData;
+
+			that.expectRequest({
+				created : true,
+				data : {
+					SalesOrderID : "1",
+					ToLineItems : [{
+						Note : "ItemNote Changed",
+						__metadata : {
+							uri: "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						}
+					}],
+					__metadata : {
+						uri: "SalesOrderSet('1')"
+						// Note: Payload must not contain deepPath
+					}
+				},
+				deepPath : "/SalesOrderSet",
+				entityTypes : {
+					"GWSAMPLE_BASIC.SalesOrder" : true
+				},
+				method : "POST",
+				requestUri : "SalesOrderSet"
+			});
+
+			// code under test
+			oData = oModel.getObject("/SalesOrderSet('1')", null,
+				{select : "SalesOrderID,ToLineItems/Note", expand : "ToLineItems"});
+			oModel.create("/SalesOrderSet", oData);
+			oModel.submitChanges({groupId : "change"});
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
