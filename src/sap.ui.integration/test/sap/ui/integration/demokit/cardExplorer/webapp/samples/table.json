@@ -113,7 +113,8 @@
 					},
 					{
 						"title": "Net Amount",
-						"value": "{netAmount}"
+						"value": "{netAmount}",
+						"hAlign": "End"
 					},
 					{
 						"title": "Status",

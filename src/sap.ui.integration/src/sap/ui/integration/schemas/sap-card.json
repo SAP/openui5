@@ -898,6 +898,13 @@
 					"description": "Defines the width of the column.",
 					"type": "string"
 				},
+				"hAlign": {
+					"description": "Defines the horizontal alignment of the column content.",
+					"oneOf": [
+						{ "$ref": "#/definitions/textAlign" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
 				"value": {
 					"description": "Represents the text value of the column.",
 					"type": "string"
@@ -1547,6 +1554,19 @@
 				"Information"
 			],
 			"default": "None"
+		},
+		"textAlign": {
+			"description": "Represents options for text alignments",
+			"type": "string",
+			"enum": [
+				"Begin",
+				"Center",
+				"End",
+				"Initial",
+				"Left",
+				"Right"
+			],
+			"default": "Begin"
 		},
 		"service": {
 			"description": "Represents service that will be used for an actions",
