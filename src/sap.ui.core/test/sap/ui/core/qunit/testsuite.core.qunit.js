@@ -261,6 +261,76 @@ sap.ui.define(function() {
 			ManagedObject_isPropertyInitial: {
 				title: "sap.ui.base.ManagedObject: isPropertyInitial"
 			},
+			Passport: {
+				title: "sap.ui.core: Passport",
+				qunit: {
+					reorder: false
+				},
+				loader: {
+					paths: {
+						performance: "test-resources/sap/ui/core/qunit/performance"
+					}
+				},
+				module: [
+					"testdata/core/performance/trace/Passport.qunit"
+				]
+			},
+			FESR: {
+				title: "sap.ui.core: FESR",
+				qunit: {
+					reorder: false
+				},
+				loader: {
+					paths: {
+						performance: "test-resources/sap/ui/core/qunit/performance"
+					}
+				},
+				module: [
+					"testdata/core/performance/trace/FESR.qunit"
+				]
+			},
+			Interaction: {
+				title: "sap.ui.core: Interaction",
+				qunit: {
+					reorder: false
+				},
+				loader: {
+					paths: {
+						performance: "test-resources/sap/ui/core/qunit/performance"
+					}
+				},
+				module: [
+					"testdata/core/performance/trace/Interaction.qunit"
+				]
+			},
+			BeaconRequest: {
+				title: "sap.ui.core: BeaconRequest",
+				qunit: {
+					reorder: false
+				},
+				loader: {
+					paths: {
+						performance: "test-resources/sap/ui/core/qunit/performance"
+					}
+				},
+				module: [
+					"testdata/core/performance/BeaconRequest.qunit"
+				]
+			},
+			XHRInterceptor: {
+				title: "sap.ui.core: XHRInterceptor",
+				qunit: {
+					reorder: false
+				},
+				loader: {
+					paths: {
+						performance: "test-resources/sap/ui/core/qunit/performance"
+					}
+				},
+				module: [
+					"testdata/core/performance/XHRInterceptor.qunit"
+				]
+			},
 			Modularization: {
 				title: "sap.ui.core: Modularization",
 				qunit: {
@@ -336,17 +406,6 @@ sap.ui.define(function() {
 					"testdata/core/dom/getComputedStyleFix.qunit",
 					"testdata/core/dom/includeScript.qunit",
 					"testdata/core/dom/includeStylesheet.qunit",
-
-					// sap/ui/performance/trace/*
-					// the Passport tests need to be executed first, as the Passport's module state
-					// is influenced by the FESR, Interaction and XHRInterceptor tests
-					"testdata/core/performance/trace/Passport.qunit",
-					"testdata/core/performance/trace/FESR.qunit",
-					"testdata/core/performance/trace/Interaction.qunit",
-
-					// sap/ui/performance/*
-					"testdata/core/performance/BeaconRequest.qunit",
-					"testdata/core/performance/XHRInterceptor.qunit",
 
 					// sap/ui/security/*
 					"testdata/core/security/FrameOptions.qunit",
