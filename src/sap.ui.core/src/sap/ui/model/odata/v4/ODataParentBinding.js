@@ -1014,6 +1014,53 @@ sap.ui.define([
 	/**
 	 * Resumes this binding. The binding can again fire change events and trigger data service
 	 * requests.
+	 *
+	 * @param {boolean} bAsPrerenderingTask
+	 *   Whether resume is done as a prerendering task
+	 * @throws {Error}
+	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
+	 *   operation binding or if it is not suspended
+	 *
+	 * @private
+	 * @see #suspend
+	 */
+	ODataParentBinding.prototype._resume = function (bAsPrerenderingTask) {
+		var that = this;
+
+		function doResume() {
+			that.bSuspended = false;
+			if (that.oResumePromise) {
+				that.resumeInternal(true);
+				that.oResumePromise.$resolve();
+				that.oResumePromise = undefined;
+			}
+		}
+
+		if (this.oOperation) {
+			throw new Error("Cannot resume an operation binding: " + this);
+		}
+		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
+			throw new Error("Cannot resume a relative binding: " + this);
+		}
+		if (!this.bSuspended) {
+			throw new Error("Cannot resume a not suspended binding: " + this);
+		}
+
+		if (bAsPrerenderingTask) {
+			// wait one additional prerendering because resume itself starts in a prerendering task
+			this.createReadGroupLock(this.getGroupId(), true, 1);
+			// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
+			// => must only resume in prerendering task
+			sap.ui.getCore().addPrerenderingTask(doResume);
+		 } else {
+			this.createReadGroupLock(this.getGroupId(), true);
+			doResume();
+		}
+	};
+
+	/**
+	 * Resumes this binding. The binding can then again fire change events and trigger data service
+	 * requests.
 	 * Before 1.53.0, this method was not supported and threw an error.
 	 *
 	 * @throws {Error}
@@ -1027,30 +1074,28 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#resume
 	ODataParentBinding.prototype.resume = function () {
-		var that = this;
+		this._resume(false);
+	};
 
-		if (this.oOperation) {
-			throw new Error("Cannot resume an operation binding: " + this);
-		}
-		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
-			throw new Error("Cannot resume a relative binding: " + this);
-		}
-		if (!this.bSuspended) {
-			throw new Error("Cannot resume a not suspended binding: " + this);
-		}
-
-		// wait one additional prerendering because resume itself only starts in a prerendering task
-		this.createReadGroupLock(this.getGroupId(), true, 1);
-		// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
-		// => must only resume in prerendering task
-		sap.ui.getCore().addPrerenderingTask(function () {
-			that.bSuspended = false;
-			if (that.oResumePromise) {
-				that.resumeInternal(true);
-				that.oResumePromise.$resolve();
-				that.oResumePromise = undefined;
-			}
-		});
+	/**
+	 * Resumes this binding asynchronously as soon as the next rendering starts.
+	 *
+	 * Note: Some API calls are not allowed as long as the binding is in suspended mode, hence the
+	 * returned promise can be used to get the point in time when these APIs can be called again.
+	 *
+	 * @returns {Promise} A promise which is resolved when the binding is resumed.
+	 * @throws {Error}
+	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
+	 *   operation binding or if it is not suspended
+	 *
+	 * @protected
+	 * @see #resume
+	 * @see #suspend
+	 * @since 1.75.0
+	 */
+	ODataParentBinding.prototype.resumeAsync = function () {
+		this._resume(true);
+		return Promise.resolve(this.oResumePromise);
 	};
 
 	/**

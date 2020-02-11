@@ -12237,9 +12237,11 @@ sap.ui.define([
 				if (bRefresh) {
 					oForm.getObjectBinding().refresh();
 				}
-				oForm.getObjectBinding().resume();
 
-				return that.waitForChanges(assert);
+				return Promise.all([
+					oForm.getObjectBinding().resumeAsync(),
+					that.waitForChanges(assert)
+				]);
 			});
 		});
 	});
@@ -12382,9 +12384,11 @@ sap.ui.define([
 				if (bRefresh) {
 					oOuterForm.getObjectBinding().refresh();
 				}
-				oOuterForm.getObjectBinding().resume();
 
-				return that.waitForChanges(assert);
+				return Promise.all([
+					oOuterForm.getObjectBinding().resumeAsync(),
+					that.waitForChanges(assert)
+				]);
 			});
 		});
 	});
@@ -12456,9 +12460,10 @@ sap.ui.define([
 				.expectChange("idName", ["Frederic Fall", "Jonathan Smith"])
 				.expectChange(sIdStatus, ["Available", "Occupied"]);
 
-			oForm.getObjectBinding().resume();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oForm.getObjectBinding().resumeAsync(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -12724,17 +12729,19 @@ sap.ui.define([
 					})
 					.expectChange(sIdManagerId, "1");
 
-				oForm.getObjectBinding().getRootBinding().resume();
-
-				return that.waitForChanges(assert);
+				return Promise.all([
+					oForm.getObjectBinding().getRootBinding().resumeAsync(),
+					that.waitForChanges(assert)
+				]);
 			});
 		});
 	});
 
 	//*********************************************************************************************
 	// Scenario: call filter, sort, changeParameters on a suspended ODLB
+	// JIRA: CPOUI5ODATAV4-102: call ODLB#create on a just resumed binding
 	QUnit.test("suspend/resume: call read APIs on a suspended ODLB", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "DoNotSend"}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
 	<ColumnListItem>\
@@ -12754,7 +12761,7 @@ sap.ui.define([
 
 			that.expectRequest("BusinessPartnerList?$filter=BusinessPartnerRole eq '01' "
 				+ "and (BusinessPartnerID gt '0100000001')&$orderby=CompanyName"
-				+ "&$select=BusinessPartnerID&$skip=0&$top=100", {
+				+ "&$select=BusinessPartnerID&$skip=0&$top=99", {
 					value : [{
 						BusinessPartnerID : "0100000002"
 					}, {
@@ -12762,6 +12769,7 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("id", [
+					"",
 					"0100000002",
 					"0100000003"
 				]);
@@ -12772,6 +12780,9 @@ sap.ui.define([
 
 			// code under test
 			oBinding.resume();
+
+			// code under test (CPOUI5ODATAV4-102)
+			oBinding.create();
 
 			return that.waitForChanges(assert);
 		});
@@ -23532,4 +23543,20 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: AnnotationHelper.format is called for an annotation that points to a property typed
+	// with an EDM type that is not mapped to a UI5 type
+	// BCP: 2080062941
+	testXMLTemplating("BCP: 2080062941",
+		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+	<template:repeat \
+		list="{meta>/special.cases.EntityWithUnsupportedEdmTypes/@com.sap.vocabularies.UI.v1.SelectionFields}" \
+		var="field">\
+			<Input value="{field>@@format}"/>\
+	</template:repeat>\
+</template:alias>','\
+<Input value="{Binary}"/>\
+<Input value="{Duration}"/>');
 });
