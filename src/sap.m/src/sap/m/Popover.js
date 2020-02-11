@@ -595,7 +595,11 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype.onBeforeRendering = function () {
-			var oNavContent, oPageContent;
+			var oNavContent, oPageContent,
+				bHorScrolling = this.getHorizontalScrolling(),
+				bVerScrolling = this.getVerticalScrolling(),
+				bHorScrollingNotApplied = !bHorScrolling || this.isPropertyInitial("horizontalScrolling"),
+				bVerScrollingNotApplied = !bVerScrolling || this.isPropertyInitial("verticalScrolling");
 
 			if (!this._initialWindowDimensions.width || !this._initialWindowDimensions.height) {
 				this._initialWindowDimensions = {
@@ -604,23 +608,17 @@ sap.ui.define([
 				};
 			}
 
-			var bHorScrolling = this.getHorizontalScrolling();
-			var bVerScrolling = this.getVerticalScrolling();
 			this._hasSingleScrollableContent();
-			/* Disable scroll enablement cases:
-				-- If both properties are false - we do not need scroll enablement for sure
-				-- When scrolling isn't set manually(to true) and content has scrolling, disable scrolling automatically
-			*/
-			switch (true) {
-				case !bHorScrolling && !bVerScrolling:
-					this._forceDisableScrolling = true;
-					break;
-				case (this.isPropertyInitial("horizontalScrolling")) &&
-				(this.isPropertyInitial("verticalScrolling")) && this._singleScrollableContent:
-					this._forceDisableScrolling = true;
-					break;
-				default:
-					this._forceDisableScrolling = false;
+
+			if (!bHorScrolling && !bVerScrolling) {
+				//  If both properties are false - we do not need scroll enablement for sure
+				this._forceDisableScrolling = true;
+			} else if (bHorScrollingNotApplied && bVerScrollingNotApplied && this._singleScrollableContent) {
+				// When scrolling isn't set manually and content has scrolling, disable scrolling automatically
+				this._forceDisableScrolling = true;
+				Log.info("VerticalScrolling and horizontalScrolling in sap.m.Popover with ID " + this.getId() + " has been disabled because there's scrollable content inside");
+			} else {
+				this._forceDisableScrolling = false;
 			}
 
 			if (!this._forceDisableScrolling) {
