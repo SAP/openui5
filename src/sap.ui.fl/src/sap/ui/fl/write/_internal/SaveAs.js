@@ -329,6 +329,34 @@ sap.ui.define([
 				});
 		},
 		deleteAppVariant: function(mPropertyBag) {
+			if (mPropertyBag.isForSmartBusiness) {
+				mPropertyBag.id = mPropertyBag.referenceAppId;
+				return DescriptorVariantFactory.createDummyVariant(mPropertyBag)
+					.then(function(oAppVariant) {
+						if (mPropertyBag.isForSmartBusiness) {
+							oAppVariant.setIsForSmartBusiness(mPropertyBag.isForSmartBusiness);
+						}
+						return oAppVariant.submit()
+							.catch(function(oError) {
+								if (oError === "cancel") {
+									return Promise.reject("cancel");
+								}
+								oError.messageKey = "MSG_DELETE_APP_VARIANT_FAILED";
+								throw oError;
+							});
+					})
+					.catch(function(oError) {
+						if (oError === "cancel") {
+							return Promise.reject("cancel");
+						}
+						Log.error("the app variant could not be deleted.", oError.message || oError);
+						throw oError;
+					});
+			}
+
+			return this._deleteAppVariantForKeyUser(mPropertyBag);
+		},
+		_deleteAppVariantForKeyUser: function(mPropertyBag) {
 			var oAppVariantClosure;
 
 			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, true)

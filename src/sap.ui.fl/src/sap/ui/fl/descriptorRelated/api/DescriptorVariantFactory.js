@@ -180,7 +180,7 @@ sap.ui.define([
 			mPropertyBag.isForSmartBusiness = this._isForSmartBusiness;
 		}
 
-		if (mMap.layer) {
+		if (mMap && mMap.layer) {
 			mPropertyBag.layer = mMap.layer;
 		}
 
@@ -200,7 +200,7 @@ sap.ui.define([
 				oBackendOperation = LrepConnector.appVariant.update(mPropertyBag);
 				break;
 			case 'DELETION':
-				mPropertyBag.reference = mMap.id;
+				mPropertyBag.reference = mMap && mMap.id ? mMap.id : this._id;
 				oBackendOperation = LrepConnector.appVariant.remove(mPropertyBag);
 				break;
 			default:
@@ -342,6 +342,10 @@ sap.ui.define([
 	 */
 	DescriptorVariantFactory.createNew = function(mParameters) {
 		return DescriptorVariantFactory.createAppVariant(mParameters);
+	};
+
+	DescriptorVariantFactory.createDummyVariant = function(mParameters) {
+		return Promise.resolve(new DescriptorVariant(mParameters, null, true));
 	};
 
 	/**
