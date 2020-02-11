@@ -31,12 +31,12 @@
 				>
 		</script>
 
-		<!-- configure redirect for "sap.ui.*" resources -->
-		<script src="_configureSapUiPath.js"></script>
-
-		<!-- correctly load the core -->
+		<!-- include the loader and let it determine the bootstrap URL -->
 		<script src="../../shared-config.js"></script>
-		<script	src="../../../../../../resources/sap-ui-core.js"></script>
+		<script	src="../../../../../../resources/ui5loader.js"></script>
+		<script	src="../../../../../../resources/ui5loader-autoconfig.js"></script>
+
+		<!-- check that all expectations are met -->
 		<script src="ResourceRoot.qunit.js" data-expected-root="/my-download-app/phx/"></script>
 
 	</head>
