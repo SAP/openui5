@@ -302,141 +302,167 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("cleanUpMetadata", function (assert) {
-		var oEntity = {
-				__metadata : {
-					"content_type" : "content_type",
-					created : "created",
-					"edit_media" : "edit_media",
-					etag : "etag",
-					id : "id",
-					"media_etag" : "media_etag",
-					"media_src" : "media_src",
-					nonStandard : "foo",
-					type : "type",
-					uri : "uri"
-				},
-				p : "p"
-			};
+	QUnit.test("removeInternalMetadata", function (assert) {
+		var oEntityData,
+			oModel = {},
+			oModelPrototypeMock = this.mock(ODataModel.prototype),
+			oResult;
 
 		// code under test
-		assert.strictEqual(ODataModel.cleanUpMetadata(oEntity), oEntity);
+		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel);
 
-		assert.deepEqual(oEntity, {
+		assert.deepEqual(oResult, {created : undefined, deepPath : undefined});
+
+		oEntityData = {};
+
+		// code under test
+		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, oEntityData);
+
+		assert.deepEqual(oEntityData, {});
+		assert.deepEqual(oResult, {created : undefined, deepPath : undefined});
+
+		oEntityData = {
+			p : "p",
 			__metadata : {
-				"content_type" : "content_type",
+				uri : "uri",
 				created : "created",
-				"edit_media" : "edit_media",
-				etag : "etag",
-				id : "id",
-				"media_etag" : "media_etag",
-				"media_src" : "media_src",
-				type : "type",
-				uri : "uri"
+				deepPath : "deepPath"
+			}
+		};
+
+		// code under test
+		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, oEntityData);
+
+		assert.deepEqual(oEntityData, {p : "p", __metadata : {uri : "uri"}});
+		assert.deepEqual(oResult, {created : "created", deepPath : "deepPath"});
+
+		oEntityData = {
+			p : "p",
+			__metadata : {
+				uri : "uri",
+				created : "created",
+				deepPath : "deepPath"
 			},
-			p : "p"
+			n : { // 0..1 navigation property
+				p2 : "p2",
+				__metadata : {
+					uri : "uri2",
+					created : "created2",
+					deepPath : "deepPath2"
+				}
+			}
+		};
+
+		oModelPrototypeMock.expects("removeInternalMetadata") // the "code under test" call
+			.withExactArgs(sinon.match.same(oEntityData))
+			.callThrough();
+		// recursive calls to removeInternalMetadata are only expected for non-scalar properties
+		oModelPrototypeMock.expects("removeInternalMetadata")
+			// do not use withExactArgs as this is called with index and array from forEach
+			.withArgs(sinon.match.same(oEntityData.__metadata))
+			.callThrough();
+		oModelPrototypeMock.expects("removeInternalMetadata")
+			.withArgs(sinon.match.same(oEntityData.n))
+			.callThrough();
+		oModelPrototypeMock.expects("removeInternalMetadata")
+			.withArgs(sinon.match.same(oEntityData.n.__metadata))
+			.callThrough();
+
+		// code under test
+		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, oEntityData);
+
+		assert.deepEqual(oEntityData, {
+			p : "p",
+			__metadata : {uri : "uri"},
+			n : {
+				p2 : "p2",
+				__metadata : {uri : "uri2"}
+			}
 		});
+		assert.deepEqual(oResult, {created : "created", deepPath : "deepPath"});
+
+		oEntityData = {
+			p : "p",
+			__metadata : {
+				uri : "uri",
+				created : "created",
+				deepPath : "deepPath"
+			},
+			n : [{ // 0..n navigation property
+					p2 : "p2",
+					__metadata : {
+						uri : "uri2",
+						created : "created2",
+						deepPath : "deepPath2"
+					}
+			}]
+		};
+
+		oModelPrototypeMock.expects("removeInternalMetadata") // the "code under test" call
+			.withExactArgs(sinon.match.same(oEntityData))
+			.callThrough();
+		// recursive calls to removeInternalMetadata are only expected for non-scalar properties
+		oModelPrototypeMock.expects("removeInternalMetadata")
+			// do not use withExactArgs as this is called with index and array from forEach
+			.withArgs(sinon.match.same(oEntityData.__metadata))
+			.callThrough();
+		oModelPrototypeMock.expects("removeInternalMetadata")
+			.withArgs(sinon.match.same(oEntityData.n[0]))
+			.callThrough();
+		oModelPrototypeMock.expects("removeInternalMetadata")
+			.withArgs(sinon.match.same(oEntityData.n[0].__metadata))
+			.callThrough();
 
 		// code under test
-		assert.strictEqual(ODataModel.cleanUpMetadata(), undefined);
+		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, oEntityData);
 
-		// code under test: object w/o __metadata
-		assert.deepEqual(ODataModel.cleanUpMetadata({p : "p"}), {p : "p"});
+		assert.deepEqual(oEntityData, {
+			p : "p",
+			__metadata : {uri : "uri"},
+			n : [{
+				p2 : "p2",
+				__metadata : {uri : "uri2"}
+			}]
+		});
+		assert.deepEqual(oResult, {created : "created", deepPath : "deepPath"});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getObject cleans up __metadata", function (assert) {
-		var oCleanUpMetadataCall,
-			oEntity = {
-				__metadata : {
-					uri : "uri" // required, as getObject otherwise returns the object directly
-				},
-				p : "p"
-			},
-			oModel = {
-				_getObject : function () {},
-				oMetadata : {
-					_getEntityTypeByPath : function () {}
-				},
-				resolve : function () {}
-			},
-			oModelMock = this.mock(oModel);
-
-		oModelMock.expects("resolve").withExactArgs("path", "context").returns("resolvedPath");
-		oModelMock.expects("_getObject").withExactArgs("resolvedPath").returns(oEntity);
-		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("resolvedPath")
-			.returns("entityType");
-		oCleanUpMetadataCall = this.mock(ODataModel).expects("cleanUpMetadata")
-			.withExactArgs({
-				__metadata : {
-					uri : "uri"
-				},
-				p : "p"
-			})
-			.returns("result");
-
-		// code under test
-		assert.strictEqual(ODataModel.prototype.getObject.call(oModel, "path", "context"),
-			"result");
-
-		assert.notStrictEqual(oCleanUpMetadataCall.firstCall.args[0], oEntity, "called with copy");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getObject with $expand, $select cleans up __metadata", function (assert) {
-		var oEntity = {
-				__metadata : {
-					uri : "uri" // required, as getObject otherwise returns the object directly
-				},
-				p0 : "p0",
-				p1 : "p1"
-			},
-			oEntityType = {
-				property : "property"
-			},
-			oModel = {
-				_filterOwnExpand : function () {},
-				_filterOwnSelect : function () {},
-				_getObject : function () {},
-				oMetadata : {
-					_getEntityTypeByPath : function () {}
-				},
-				resolve : function () {},
-				_splitEntries : function () {}
+	QUnit.test("_processRequestQueue: call #removeInternalMetadata, non-$batch", function (assert) {
+		var oModel = {
+				bUseBatch : false,
+				checkDataState : function () {},
+				getKey : function () {},
+				increaseLaundering : function () {},
+				mLaunderingState : "launderingState",
+				removeInternalMetadata : function () {},
+				_submitSingleRequest : function () {}
 			},
 			oModelMock = this.mock(oModel),
-			oResultEntity;
+			mRequests = {
+				undefined /*group id*/ : {
+					changes : {
+						undefined /*change set id*/ : [{
+							parts : [{
+								request : {}
+							}],
+							request : {
+								data : "payload"
+							}
+						}]
+					}
+				}
+			};
 
-		oModelMock.expects("resolve").withExactArgs("path", "context").returns("resolvedPath");
-		oModelMock.expects("_getObject").withExactArgs("resolvedPath").returns(oEntity);
-		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("resolvedPath")
-			.returns(oEntityType);
-		oModelMock.expects("_splitEntries").withExactArgs("p0").returns("aSelect");
-		oModelMock.expects("_filterOwnSelect").withExactArgs("aSelect", "property").returns(["p0"]);
-		this.mock(Object).expects("assign").withExactArgs({}, sinon.match.same(oEntity.__metadata))
-			.returns({uri : "uri"});
-		this.mock(ODataModel).expects("cleanUpMetadata")
-			.withExactArgs({
-				__metadata : {
-					uri : "uri"
-				},
-				p0 : "p0"
-			});
-		oModelMock.expects("_filterOwnExpand").withExactArgs([], "aSelect")
-			.returns([]);
-		oModelMock.expects("_filterOwnSelect").withExactArgs("aSelect", undefined /*no nav props*/)
-			.returns([]);
+		oModelMock.expects("getKey").withExactArgs("payload").returns("path");
+		oModelMock.expects("increaseLaundering").withExactArgs("/path", "payload").returns("path");
+		oModelMock.expects("removeInternalMetadata").withExactArgs("payload");
+		oModelMock.expects("_submitSingleRequest")
+			.withExactArgs(sinon.match.same(mRequests[undefined].changes[undefined][0]));
+		oModelMock.expects("checkDataState").withExactArgs("launderingState");
 
 		// code under test
-		oResultEntity = ODataModel.prototype.getObject.call(oModel, "path", "context",
-				{select : "p0"});
-
-		assert.deepEqual(oResultEntity, {
-				__metadata : {
-					uri : "uri"
-				},
-				p0 : "p0"
-			});
-		assert.notStrictEqual(oResultEntity.__metadata, oEntity.__metadata);
+		ODataModel.prototype._processRequestQueue.call(oModel, mRequests
+			/*, sGroupId, fnSuccess, fnError*/);
 	});
 });
