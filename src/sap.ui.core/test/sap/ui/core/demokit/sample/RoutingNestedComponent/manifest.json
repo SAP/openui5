@@ -132,8 +132,8 @@
 				"products": {
 					"type": "Component",
 					"usage": "productsComponent",
-					"title": "Product"
-
+					"title": "Product",
+					"id": "productRoot"
 				},
 				"notFound": {
 					"type": "View",
