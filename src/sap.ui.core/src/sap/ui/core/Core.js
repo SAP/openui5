@@ -999,7 +999,7 @@ sap.ui.define([
 
 	// this function is also used by "sap.ui.core.ThemeCheck" to load a fallback theme for a single library
 	Core.prototype._updateThemeUrl = function(oLink, sThemeName, bSuppressFOUC) {
-		var sLibName = oLink.id.slice(13), // length of "sap-ui-theme-"
+		var sLibName,
 		    iQueryIndex = oLink.href.search(/[?#]/),
 		    sLibFileName,
 		    sQuery,
@@ -1007,6 +1007,15 @@ sap.ui.define([
 		    sRTL = this.oConfiguration.getRTL() ? "-RTL" : "",
 		    sHref,
 		    pos;
+
+		// derive lib name from id via regex
+		var mLinkId = /^sap-ui-theme(?:skeleton)?-(.*)$/i.exec(oLink.id);
+		if (Array.isArray(mLinkId)) {
+			sLibName = mLinkId[1];
+		} else {
+			// fallback to legacy logic
+			sLibName = oLink.id.slice(13); // length of "sap-ui-theme-"
+		}
 
 		if (iQueryIndex > -1) {
 			// Split href on query and/or fragment to check for the standard lib file prefix
@@ -1051,11 +1060,12 @@ sap.ui.define([
 	// modify style sheet URLs to point to the given theme, using the current RTL mode
 	Core.prototype._updateThemeUrls = function(sThemeName, bSuppressFOUC) {
 		// select "our" stylesheets
-		var oQueryResult = document.querySelectorAll("link[id^=sap-ui-theme-]");
+		var oQueryResult = document.querySelectorAll("link[id^=sap-ui-theme-],link[id^=sap-ui-themeskeleton-]");
 
 		Array.prototype.forEach.call(oQueryResult, function(oHTMLElement) {
 			this._updateThemeUrl(oHTMLElement, sThemeName, bSuppressFOUC);
 		}.bind(this));
+
 	};
 
 	/**
@@ -2360,6 +2370,14 @@ sap.ui.define([
 
 	};
 
+	// helper to add the FOUC marker to the CSS for the given id
+	function fnAddFoucmarker(sLinkId) {
+		var oLink = document.getElementById(sLinkId);
+		if (oLink) {
+			oLink.dataset.sapUiFoucmarker = sLinkId;
+		}
+	}
+
 	/**
 	 * Includes a library theme into the current page (if a variant is specified it
 	 * will include the variant library theme)
@@ -2385,14 +2403,15 @@ sap.ui.define([
 				sVariant = "";
 			}
 
-			// determine RTL
+			// determine CSS Variables / RTL
+			var sCssVars = (/^(true|x)$/i.test(this.oConfiguration['xx-cssVariables']) ? "-skeleton" : "");
 			var sRtl = (this.oConfiguration.getRTL() ? "-RTL" : "");
 
 			// create the library file name
 			var sLibFileName,
 				sLibId = sLibName + (sVariant.length > 0 ? "-[" + sVariant + "]" : sVariant);
 			if (sLibName && sLibName.indexOf(":") == -1) {
-				sLibFileName = "library" + sVariant + sRtl;
+				sLibFileName = "library" + sVariant + sCssVars + sRtl;
 			} else {
 				sLibFileName = sLibName.substring(sLibName.indexOf(":") + 1) + sVariant;
 				sLibName = sLibName.substring(0, sLibName.indexOf(":"));
@@ -2401,14 +2420,22 @@ sap.ui.define([
 			// use the special FOUC handling for initially existing stylesheets
 			// to ensure that they are not just replaced when using the
 			// includeStyleSheet API and to be removed later
-			var sLinkId = "sap-ui-theme-" + sLibId,
-				oLink = document.getElementById(sLinkId);
-			if (oLink) {
-				oLink.dataset.sapUiFoucmarker = sLinkId;
+			var sLinkId = "sap-ui-theme-" + sLibId;
+			fnAddFoucmarker(sLinkId);
+
+			// include the css variables
+			var cssPathAndName;
+			if (/^(true|x|additional)$/i.test(this.oConfiguration['xx-cssVariables'])) {
+				cssPathAndName = this._getThemePath(sLibName, this.sTheme) + "css-variables.css" + (sQuery ? sQuery : "");
+				Log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
+				includeStylesheet(cssPathAndName, sLinkId);
+				// include the skeleton css next to the css variables
+				sLinkId = "sap-ui-themeskeleton-" + sLibId;
+				fnAddFoucmarker(sLinkId);
 			}
 
 			// log and include
-			var cssPathAndName = this._getThemePath(sLibName, this.sTheme) + sLibFileName + ".css" + (sQuery ? sQuery : "");
+			cssPathAndName = this._getThemePath(sLibName, this.sTheme) + sLibFileName + ".css" + (sQuery ? sQuery : "");
 			Log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
 			includeStylesheet(cssPathAndName, sLinkId);
 

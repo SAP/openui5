@@ -174,7 +174,7 @@ sap.ui.define([
 			// derive parameter file URL from CSS file URL
 			// $1: name of library (incl. variants)
 			// $2: additional parameters, e.g. for sap-ui-merged, version/sap-ui-dist-version
-			var sUrl = sStyleSheetUrl.replace(/\/library([^\/.]*)\.(?:css|less)($|[?#])/, function($0, $1, $2) {
+			var sUrl = sStyleSheetUrl.replace(/\/(?:css-variables|library)([^\/.]*)\.(?:css|less)($|[?#])/, function($0, $1, $2) {
 				return "/library-parameters.json" + ($2 ? $2 : "");
 			});
 
