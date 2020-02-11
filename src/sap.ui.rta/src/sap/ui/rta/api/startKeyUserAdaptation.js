@@ -32,7 +32,6 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Object with properties
 	 * @param {sap.ui.core.Element|sap.ui.core.UIComponent} mPropertyBag.rootControl - Control instance from where key user adaptation should be started
-	 * @param {boolean} [mPropertyBag.adaptWholeApp] - Indicates if adaptation should start from the passed control's application component
 	 *
 	 * @returns {Promise} Resolves when adaptation was successfully started
 	 * @public
@@ -47,13 +46,8 @@ sap.ui.define([
 					throw new Error("Key user rights have not been granted to the current user");
 				}
 
-				var oRootControl = mPropertyBag.rootControl;
-				if (mPropertyBag.adaptWholeApp) {
-					oRootControl = FlexUtils.getAppComponentForControl(mPropertyBag.rootControl);
-				}
-
 				var oRta = new RuntimeAuthoring({
-					rootControl: oRootControl,
+					rootControl: FlexUtils.getAppComponentForControl(mPropertyBag.rootControl),
 					flexSettings: {
 						developerMode: false,
 						layer: "CUSTOMER"
