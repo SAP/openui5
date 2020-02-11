@@ -151,6 +151,19 @@
 					}
 				});
 
+				var oButton8 = new Button("B8", {
+					text : "2 Months Gregorian calendar",
+					press : function() {
+						Core.getConfiguration().setLanguage("en-US");
+						oCalendar1 && oCalendar1.destroy();
+						oCalendar1 = fnCalendarFactory();
+						oCalendar1.destroySelectedDates();
+						oCalendar1.setMonths(2);
+						oPage.insertContent(oCalendar1, 0);
+						Core.applyChanges();
+					}
+				});
+
 				var oApp = new App("myApp").placeAt("body");
 
 				var oPage = new Page({
@@ -162,7 +175,8 @@
 						oButton4,
 						oButton5,
 						oButton6,
-						oButton7
+						oButton7,
+						oButton8
 					]
 				});
 
