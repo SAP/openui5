@@ -5,6 +5,10 @@
 
 @_sap_ui_table_Row_Color: @sapUiListTextColor;
 @_sap_ui_table_Row_ColorHovered: @_sap_ui_table_Row_Color;
+@_sap_ui_table_Row_AlternateBackground: darken(@sapUiListBackground, 2);
+@_sap_ui_table_Row_AlternateBackgroundHovered: darken(@sapUiListHoverBackground, 3);
+@_sap_ui_table_Row_AlternateBackgroundSelected: darken(@sapUiListSelectionBackgroundColor, 2);
+@_sap_ui_table_Row_AlternateBackgroundSelectedHovered: darken(@sapUiListSelectionHoverBackground, 2);
 
 .sapUiTableHeaderRow {
 	background-color: @sapUiListHeaderBackground;
@@ -15,7 +19,19 @@
 	background-color: @sapUiListBackground;
 
 	&.sapUiTableRowAlternate {
-		background-color: darken(@sapUiListBackground, 2);
+		background-color: @_sap_ui_table_Row_AlternateBackground;
+
+		&.sapUiTableRowHvr {
+			background-color: @_sap_ui_table_Row_AlternateBackgroundHovered;
+		}
+
+		&.sapUiTableRowSel {
+			background-color: @_sap_ui_table_Row_AlternateBackgroundSelected;
+
+			&.sapUiTableRowHvr {
+				background-color: @_sap_ui_table_Row_AlternateBackgroundSelectedHovered;
+			}
+		}
 	}
 
 	&.sapUiTableRowSel {
