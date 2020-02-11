@@ -23532,4 +23532,20 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: AnnotationHelper.format is called for an annotation that points to a property typed
+	// with an EDM type that is not mapped to a UI5 type
+	// BCP: 2080062941
+	testXMLTemplating("BCP: 2080062941",
+		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+	<template:repeat \
+		list="{meta>/special.cases.EntityWithUnsupportedEdmTypes/@com.sap.vocabularies.UI.v1.SelectionFields}" \
+		var="field">\
+			<Input value="{field>@@format}"/>\
+	</template:repeat>\
+</template:alias>','\
+<Input value="{Binary}"/>\
+<Input value="{Duration}"/>');
 });
