@@ -35,6 +35,14 @@
 	.sapMIBar {
 		height: 2.75rem;
 	}
+	.sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive) {
+		border-color: @sapUiShellHoverBackground;
+	}
+	.sapMToggleBtnPressed:not(.sapMBtnDisabled),
+	&.sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
+		background-color: @sapUiShellActiveBackground;
+		border-color: @sapUiShellActiveBackground;
+	}
 }
 
 // Resets of sizes for "Compact" mode - controls should remain in cozy mode
@@ -100,6 +108,10 @@
 				margin-top: 0.2rem;
 				margin-left: 0.2rem;
 			}
+
+			.sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost):not(.sapMBtnCritical):not(.sapMBtnNegative):not(.sapMBtnNeutral):not(.sapMBtnSuccess) {
+			border-color: transparent;
+		  }
 
 			// sap.m.MenuButton
 			.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
@@ -192,6 +204,11 @@
 				background: transparent;
 				color: @sapUiShellTextColor;
 			}
+			&:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnIconFirst.sapMBtnTransparent.sapMBtnActive,
+			&:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnIconLast.sapMBtnTransparent.sapMBtnActive {
+				background: @sapUiShellActiveBackground;
+				border-color: @sapUiShellActiveBackground;
+			}
 			&:hover:not(.sapMBtnDisabled) {
 				>span.sapMBtnInner.sapMBtnHoverable.sapMBtnTransparent:not(.sapMToggleBtnPressed) {
 					&:not(.sapMBtnActive) {
@@ -229,6 +246,12 @@
 
 			&:disabled {
 				opacity: 0.4;
+			}
+		}
+
+		.sapMBtnBase.sapMBtn.sapFShellBarItem.sapMBarChild:hover {
+			.sapMBtnInner.sapMBtnHoverable.sapMFocusable.sapMBtnIconFirst{
+				background: @sapUiShellHoverBackground;
 			}
 		}
 
@@ -320,4 +343,3 @@
 		}
 	}
 }
-
