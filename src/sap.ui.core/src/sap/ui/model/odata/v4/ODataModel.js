@@ -91,9 +91,9 @@ sap.ui.define([
 	 *   Supported since 1.41.0
 	 * @param {boolean} [mParameters.autoExpandSelect=false]
 	 *   Whether the OData model's bindings automatically generate $select and $expand system query
-	 *   options from the binding hierarchy.
-	 *   Note: Dynamic changes to the binding hierarchy are not supported.
-	 *   Supported since 1.47.0
+	 *   options from the binding hierarchy. Note: Dynamic changes to the binding hierarchy are not
+	 *   supported. This parameter is supported since 1.47.0, and since 1.75.0 it also enables
+	 *   property paths containing navigation properties in <code>$select</code>.
 	 * @param {boolean} [mParameters.earlyRequests=false]
 	 *   Whether the following is requested at the earliest convenience:
 	 *   <ul>
@@ -102,7 +102,7 @@ sap.ui.define([
 	 *   </ul>
 	 *   Note: The root $metadata document and annotation files are just requested but not yet
 	 *   converted from XML to JSON unless really needed.
-	 *   Supported since 1.53.0
+	 *   Supported since 1.53.0.
 	 *   <b>BEWARE:</b> The default value may change to <code>true</code> in later releases.
 	 * @param {string} [mParameters.groupId="$auto"]
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a

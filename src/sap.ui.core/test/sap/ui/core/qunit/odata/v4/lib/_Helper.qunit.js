@@ -3016,8 +3016,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchResolvedSelect", function (assert) {
-		var mChildQueryOptions = {},
-			fnFetchMetadata = {},
+		var fnFetchMetadata = {},
 			oHelperMock = this.mock(_Helper),
 			bProcessedBar = false,
 			bProcessedFoo = false,
@@ -3030,6 +3029,8 @@ sap.ui.define([
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/meta/path/foo")
 			.returns(Promise.resolve().then(function () {
+				var mChildQueryOptions = {};
+
 				oHelperMock.expects("wrapChildQueryOptions")
 					.withExactArgs("/meta/path", "foo", {}, sinon.match.same(fnFetchMetadata))
 					.returns(mChildQueryOptions);
@@ -3043,6 +3044,8 @@ sap.ui.define([
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/meta/path/bar")
 			.returns(Promise.resolve().then(function () {
+				var mChildQueryOptions = {};
+
 				oHelperMock.expects("wrapChildQueryOptions")
 					.withExactArgs("/meta/path", "bar", {}, sinon.match.same(fnFetchMetadata))
 					.returns(mChildQueryOptions);

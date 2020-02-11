@@ -360,6 +360,15 @@ sap.ui.define([
 		});
 
 		assert.strictEqual(Basics.resultToString({
+			constraints : {is : "ignored"},
+			formatOptions : {does : "not matter"},
+			ignoreTypeInPath : false,
+			result : "binding",
+			type : "Edm.Unsupported",
+			value : "foo"
+		}, false, true), "{foo}");
+
+		assert.strictEqual(Basics.resultToString({
 			result : "binding",
 			value : "foo",
 			type : "Edm.String",
