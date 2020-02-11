@@ -6,7 +6,7 @@ sap.ui.define([
     "sap/ui/test/selectors/_Selector",
     "sap/ui/base/ManagedObjectMetadata"
 ], function (_Selector, ManagedObjectMetadata) {
-	"use strict";
+    "use strict";
 
      /**
      * Selector generator for controls with extractable viewName and non-generated relative ID
@@ -25,29 +25,41 @@ sap.ui.define([
          */
         _generate: function (oControl) {
             var sControlId = oControl.getId();
-            var sViewName = this._getControlViewName(oControl);
+            var oView = this._getControlView(oControl);
+            var mResult;
 
-            if (!ManagedObjectMetadata.isGeneratedId(sControlId)) {
-                var sViewNameWithSeparator = sViewName + "--";
-                var iViewNameIndex = sControlId.indexOf(sViewNameWithSeparator);
+            if (oView) {
+                var sViewId = oView.getId();
+                var sViewName = oView.getViewName();
+                var sViewRelativeId;
+                var sValueWithSeparator = sViewId + "--";
+                var iIndex = sControlId.indexOf(sValueWithSeparator);
 
-                if (iViewNameIndex > -1) {
-                    var sViewRelativeId = sControlId.substring(iViewNameIndex + sViewNameWithSeparator.length);
+                if (iIndex > -1) {
+                    sViewRelativeId = sControlId.substring(iIndex + sValueWithSeparator.length);
 
-                    if (!sViewRelativeId.indexOf("-") > -1 && !sViewRelativeId.match(/[0-9]$/)) {
-                        this._oLogger.debug("Control with ID " + sControlId + " belongs to view with viewName " + sViewName +
-                        " and has relative ID " + sViewRelativeId);
+                    if (sViewRelativeId.indexOf("-") === -1 && !sViewRelativeId.match(/[0-9]$/)) {
+                        this._oLogger.debug("Control with ID " + sControlId + " has view-relative ID " + sViewRelativeId);
 
-                        return {
-                            viewName: sViewName,
+                        mResult = {
                             id: sViewRelativeId,
                             skipBasic: true
                         };
+
+                        if (ManagedObjectMetadata.isGeneratedId(sViewId)) {
+                            this._oLogger.debug("Control " + oControl + " has view with viewName " + sViewName);
+                            mResult.viewName = sViewName;
+                        } else {
+                            this._oLogger.debug("Control " + oControl + " has view with stable ID " + sViewId);
+                            mResult.viewId = sViewId;
+                        }
                     }
-                } else {
-                    this._oLogger.debug("Control " + oControl + " does not belong to a view");
                 }
+            } else {
+                this._oLogger.debug("Control " + oControl + " does not belong to a view");
             }
+
+            return mResult;
         }
     });
 

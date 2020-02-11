@@ -3,40 +3,61 @@
 	xmlns:core="sap.ui.core"
 	xmlns:baseEditor="sap.ui.integration.designtime.baseEditor"
 >
-	<Table
-		contextualWidth="Auto"
-		items="{itemsModel>/}"
-		noDataText="{i18n>BASE_EDITOR.MAP.EMPTY}"
-	>
-		<columns>
-			<Column>
-				<Text text="{i18n>BASE_EDITOR.MAP.KEY}" />
-			</Column>
-			<Column>
-				<Text text="{i18n>BASE_EDITOR.MAP.VALUE}" />
-			</Column>
-			<Column width="3rem" hAlign="Right">
-				<Button
-					tooltip="{i18n>BASE_EDITOR.MAP.ADD_PARAMETER}"
-					icon="sap-icon://add"
-					type="Transparent"
-					press="_onAddElement"
-				/>
-			</Column>
-		</columns>
-		<items>
-			<ColumnListItem>
-				<cells>
-					<Input value="{itemsModel>key}" liveChange="_onKeyChange" />
-					<baseEditor:PropertyEditors propertyEditorsChange="_propertyEditorsChange" renderLabels="false" config="{itemsModel>value}" />
-					<Button
-						tooltip="{i18n>BASE_EDITOR.MAP.REMOVE_PARAMETER}"
-						icon="sap-icon://less"
-						type="Transparent"
-						press="_onRemoveElement"
-					/>
-				</cells>
-			</ColumnListItem>
-		</items>
-	</Table>
+	<VBox>
+		<Table
+			contextualWidth="Auto"
+			items="{itemsModel>/}"
+			noDataText="{i18n>BASE_EDITOR.MAP.EMPTY}"
+		>
+			<columns>
+				<Column width="25%">
+					<Text text="{i18n>BASE_EDITOR.MAP.KEY}" />
+				</Column>
+				<Column width="20%">
+					<Text text="{i18n>BASE_EDITOR.MAP.TYPE}" />
+				</Column>
+				<Column>
+					<Text text="{i18n>BASE_EDITOR.MAP.VALUE}" />
+				</Column>
+				<Column width="3rem" hAlign="Right" />
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Input value="{itemsModel>key}" liveChange="_onKeyChange" />
+						<ComboBox
+							selectedKey="{itemsModel>value/0/type}"
+							width="100%"
+							selectionChange="._onTypeChange($event, ${itemsModel>key})"
+							items="{path: 'supportedTypes>/', templateShareable: false}"
+						>
+							<items>
+								<core:Item
+									key="{supportedTypes>key}"
+									text="{supportedTypes>label}"
+								/>
+							</items>
+						</ComboBox>
+						<baseEditor:PropertyEditors
+							init="wrapperInit"
+							propertyEditorsChange="_propertyEditorsChange"
+							renderLabels="false"
+							config="{itemsModel>value}"
+						/>
+						<Button
+							tooltip="{i18n>BASE_EDITOR.MAP.REMOVE_PARAMETER}"
+							icon="sap-icon://less"
+							type="Transparent"
+							press="_onRemoveElement"
+						/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<Button
+			text="{i18n>BASE_EDITOR.MAP.ADD_PARAMETER}"
+			type="Transparent"
+			press="_onAddElement"
+		/>
+	</VBox>
 </core:FragmentDefinition>

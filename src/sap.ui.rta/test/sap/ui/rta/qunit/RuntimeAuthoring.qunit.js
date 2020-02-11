@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/Feature",
@@ -46,6 +47,7 @@ function(
 	ChangeRegistry,
 	Change,
 	Utils,
+	FeaturesAPI,
 	RtaUtils,
 	AppVariantUtils,
 	RtaAppVariantFeature,
@@ -106,6 +108,9 @@ function(
 			assert.ok(this.oRootControlOverlay.$().css("z-index") < this.oRta.getToolbar().$().css("z-index"), "and the toolbar is in front of the root overlay");
 			assert.notOk(RuntimeAuthoring.needsRestart(), "restart is not needed initially");
 
+			assert.equal(this.oRta.getToolbar().getControl('draftLabel').getVisible(), false, "then the draft label is hidden");
+			assert.equal(this.oRta.getToolbar().getControl('activateDraft').getVisible(), false, "then the activate draft Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('discardDraft').getVisible(), false, "then the discard draft Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('exit').getVisible(), true, "then the exit Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('exit').getEnabled(), true, "then the exit Button is enabled");
 			assert.equal(this.oRta.getToolbar().getControl('modeSwitcher').getVisible(), true, "then the modeSwitcher Button is visible");
@@ -248,7 +253,7 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is not available", function(assert) {
-			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(false);
+			this.oRta._bVersiningEnabled = false;
 
 			return this.oRta._isDraftAvailable()
 			.then(function(bDraftAvailable) {
@@ -257,17 +262,22 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is available", function(assert) {
-			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
-			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
+			this.oRta._bVersioningEnabled = true;
+			var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
+			var oPropertyBag = {
+				selector: oCompCont.getComponentInstance(),
+				layer: "CUSTOMER"
+			};
 
 			return this.oRta._isDraftAvailable()
 			.then(function(bDraftAvailable) {
 				assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
+				assert.deepEqual(oDraftAvailableStub.lastCall.args[0], oPropertyBag, "and the property bag was set correctly");
 			});
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, no changes yet done", function(assert) {
-			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			this.oRta._bVersioningEnabled = true;
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
 			sandbox.stub(this.oRta, "canUndo").returns(false);
 
@@ -278,7 +288,7 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, there are unsaved changes", function(assert) {
-			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			this.oRta._bVersioningEnabled = true;
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
 			sandbox.stub(this.oRta, "canUndo").returns(true);
 
@@ -291,7 +301,7 @@ function(
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
 			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
 				publishAvailable: true,
-				publisAppVariantSupported: true,
+				publishAppVariantSupported: true,
 				draftAvailable : false
 			}));
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: false}));
@@ -311,7 +321,7 @@ function(
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
 			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
 				publishAvailable: true,
-				publisAppVariantSupported: true,
+				publishAppVariantSupported: true,
 				draftAvailable : false
 			 }));
 			sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
@@ -343,6 +353,105 @@ function(
 			return this.oRta._onGetAppVariantOverview(oEmptyEvent).then(function() {
 				assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once and the key user view will be shown");
 			});
+		});
+	});
+
+	QUnit.module("Given a CUSTOMER layer with versioning enabled", {
+		beforeEach : function() {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
+			this.oGroupElement = new GroupElement({id : oComp.createId("element")});
+			var oGroup = new Group({
+				id : oComp.createId("group"),
+				groupElements : [this.oGroupElement]
+			});
+			this.oSmartForm = new SmartForm({
+				id : oComp.createId("smartform"),
+				groups : [oGroup]
+			});
+			this.oSmartForm.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
+				data : {
+					actions : {
+						remove : {
+							changeType : "hideControl"
+						}
+					}
+				}
+			});
+			this.oCommandStack = new Stack();
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oSmartForm,
+				commandStack : this.oCommandStack,
+				showToolbars : true
+			});
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
+		},
+		afterEach : function() {
+			sandbox.restore();
+			this.oRta.destroy();
+			this.oSmartForm.destroy();
+			return RtaQunitUtils.clear();
+		}
+	}, function() {
+		QUnit.test("when RTA is started and no draft is available", function(assert) {
+			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
+
+			return this.oRta.start().then(function () {
+				assert.equal(this.oRta.getToolbar().getDraftVisible(), false, "then the draft buttons are hidden");
+			}.bind(this));
+		});
+		QUnit.test("when RTA is started and a draft is available", function(assert) {
+			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
+			return this.oRta.start().then(function () {
+				assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are visible");
+			}.bind(this));
+		});
+
+		QUnit.test("when RTA is started and no draft is available, and and the key user starts working", function(assert) {
+			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(false);
+
+			return this.oRta.start()
+				.then(function() {
+					return new CommandFactory().getCommandFor(this.oGroupElement, "Remove", {
+						removedElement : this.oGroupElement
+					}, this.oGroupElementDesignTimeMetadata);
+				}.bind(this))
+				.then(function(oRemoveCommand) {
+					return this.oCommandStack.pushAndExecute(oRemoveCommand);
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are visible");
+				}.bind(this))
+				.then(this.oRta.undo.bind(this.oRta))
+				.then(function() {
+					assert.equal(this.oRta.getToolbar().getDraftVisible(), false, "then the draft buttons are hidden");
+				}.bind(this));
+		});
+
+		QUnit.test("when RTA is started and a draft is available, and and the key user starts working", function(assert) {
+			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(true);
+
+			return this.oRta.start()
+				.then(function() {
+					return new CommandFactory().getCommandFor(this.oGroupElement, "Remove", {
+						removedElement : this.oGroupElement
+					}, this.oGroupElementDesignTimeMetadata);
+				}.bind(this))
+				.then(function(oRemoveCommand) {
+					return this.oCommandStack.pushAndExecute(oRemoveCommand);
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are visible");
+				}.bind(this))
+				.then(this.oRta.undo.bind(this.oRta))
+				.then(function() {
+					assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are still visible");
+				}.bind(this));
 		});
 	});
 
@@ -733,6 +842,8 @@ function(
 				commandStack : this.oCommandStack,
 				showToolbars : true
 			});
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(Promise.resolve(false));
+
 			return RtaQunitUtils.clear()
 			.then(this.oRta.start.bind(this.oRta))
 			.then(function() {
@@ -753,9 +864,9 @@ function(
 			}.bind(this));
 		},
 		afterEach : function() {
+			sandbox.restore();
 			this.oSmartForm.destroy();
 			this.oRta.destroy();
-			sandbox.restore();
 			return RtaQunitUtils.clear();
 		}
 	}, function() {
@@ -808,7 +919,7 @@ function(
 		});
 
 		QUnit.test("when stopping rta with saving changes and versioning is enabled", function(assert) {
-			sandbox.stub(this.oRta, "_isVersioningEnabled").resolves(true);
+			this.oRta._bVersioningEnabled = true;
 
 			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 
@@ -1003,19 +1114,10 @@ function(
 
 		[{
 			error: {
-				messages: [
-					{
-						severity: "Error",
-						text: "Error text 1"
-					},
-					{
-						severity: "Error",
-						text: "Error text 2"
-					}
-				]
+				userMessage: "Error text 1\nError text 2\n"
 			},
 			errorText: "Error text 1\nError text 2\n",
-			propertyName: "messages"
+			propertyName: "userMessage"
 		},
 		{
 			error: {
@@ -1297,14 +1399,11 @@ function(
 				namespace: "namespace"
 			});
 
-			assert.deepEqual(
-				this.oRta.getFlexSettings(),
-				{
-					layer: "USER",
-					developerMode: true,
-					namespace: "namespace"
-				}
-			);
+			assert.deepEqual(this.oRta.getFlexSettings(), {
+				layer: "USER",
+				developerMode: true,
+				namespace: "namespace"
+			});
 
 			this.oRta.setFlexSettings({
 				scenario: "scenario"
@@ -1320,6 +1419,57 @@ function(
 					scenario: "scenario"
 				}
 			);
+		});
+	});
+
+	QUnit.module("Given _onStackModified", {
+		beforeEach : function() {
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : true
+			});
+			return this.oRta.start();
+		},
+		afterEach : function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when versioning is not enabled", function(assert) {
+			this.oRta._bVersioningEnabled = false;
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], false, "to false");
+		});
+
+		QUnit.test("when versioning is enabled but no draft or undoable change is present", function(assert) {
+			this.oRta._bVersioningEnabled = true;
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], false, "to false");
+		});
+
+		QUnit.test("when versioning is enabled and a draft is present", function(assert) {
+			this.oRta._bVersioningEnabled = true;
+			this.oRta.bInitialDraftAvailable = true;
+			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], true, "to true");
+		});
+
+		QUnit.test("when versioning is enabled and a undoable change is present", function(assert) {
+			this.oRta._bVersioningEnabled = true;
+			sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
+			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], true, "to true");
 		});
 	});
 

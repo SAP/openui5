@@ -7,6 +7,7 @@ sap.ui.define([
 		"sap/ui/dom/includeScript",
 		"sap/f/cards/BaseContent",
 		"sap/ui/integration/thirdparty/adaptivecards",
+		"sap/ui/integration/thirdparty/adaptivecards-templating",
 		"sap/f/cards/adaptivecards/elements/UI5InputText",
 		"sap/f/cards/adaptivecards/elements/UI5InputNumber",
 		"sap/f/cards/adaptivecards/elements/UI5InputChoiceSet",
@@ -14,9 +15,11 @@ sap.ui.define([
 		"sap/f/cards/adaptivecards/elements/UI5InputDate",
 		"sap/f/cards/adaptivecards/elements/UI5InputToggle",
 		"sap/f/cards/adaptivecards/overwrites/ActionRender",
-		"sap/f/cards/adaptivecards/elements/hostConfig"
+		"sap/f/cards/adaptivecards/elements/hostConfig",
+		"sap/ui/model/json/JSONModel",
+		"sap/base/Log"
 	],
-	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig) {
+	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, ACData, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig, JSONModel, Log) {
 		"use strict";
 
 		/**
@@ -50,6 +53,9 @@ sap.ui.define([
 		});
 
 		AdaptiveContent.prototype.init = function () {
+			this._bComponentsReady = false;
+			this._bAdaptiveCardElementsReady = false;
+
 			this._setupAdaptiveCardDependency();
 			this._loadDependencies();
 		};
@@ -59,15 +65,46 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {Object} oConfiguration Configuration object used to create the internal list.
-		 * @returns {sap.f.cards.AdaptiveContent} Pointer to the control instance to allow method chaining.
 		 */
 		AdaptiveContent.prototype.setConfiguration = function (oConfiguration) {
 			this._oCardConfig = oConfiguration;
-			this._renderMSCardContent();
+
+			// if oConfiguration.request is present, load the adaptive card manifest from url
+			if (oConfiguration && oConfiguration.request && oConfiguration.request.url) {
+				this._loadManifestFromUrl(oConfiguration.request.url);
+				return;
+			}
+
+			this._setupMSCardContent();
+		};
+
+		/**
+		 * Loads the content of an Adaptive Card from a file.
+		 *
+		 * @param {string} sUrl Path to the MS Adaptive Card descriptor/manifest file.
+		 * @private
+		 */
+		AdaptiveContent.prototype._loadManifestFromUrl = function (sUrl) {
+			var oData = new JSONModel(),
+				that = this;
+
+			oData.loadData(sUrl)
+				.then(function () {
+					// set the data from the url as a card config
+					that._oCardConfig = oData.getData();
+					that._setupMSCardContent();
+				}).then(function () {
+					// destroy the data model, since it is not needed anymore
+					oData.destroy();
+					oData = null;
+				}).catch(function () {
+					// notify the user that the provided URL is not correct
+					Log.error("No JSON file found on this URL. Please provide a correct path to the JSON-serialized card object model file.");
+				});
 		};
 
 		AdaptiveContent.prototype.onAfterRendering = function () {
-			this._renderMSCardContent();
+			this._setupMSCardContent();
 		};
 
 		/**
@@ -121,7 +158,7 @@ sap.ui.define([
 		 */
 		AdaptiveContent.prototype._handleActions = function () {
 			this.adaptiveCardInstance.onExecuteAction = function (oAction) {
-				var sType, oPayload;
+				var sType, oPayload, oCard;
 
 				if (oAction instanceof AdaptiveCards.OpenUrlAction) {
 					oPayload = oAction.url;
@@ -135,11 +172,15 @@ sap.ui.define([
 					return;
 				}
 
-				this.fireEvent("action", {
-					actionSource: this,
-					manifestParameters: oPayload,
-					type: sType
-				});
+				oCard = this.getParent();
+
+				if (oCard) {
+					oCard.fireEvent("action", {
+						actionSource: this,
+						manifestParameters: oPayload,
+						type: sType
+					}, true);
+				}
 			}.bind(this);
 		};
 
@@ -177,16 +218,144 @@ sap.ui.define([
 		};
 
 		/**
-		 * Renders a Card
+		 * Setup of the card content.
 		 *
 		 * @private
 		 */
-		AdaptiveContent.prototype._renderMSCardContent = function () {
-			var oDom = this.$();
-			if (this.adaptiveCardInstance && this._oCardConfig && oDom && oDom.size()) {
-				this.adaptiveCardInstance.parse(this._oCardConfig);
-				oDom.html(this.adaptiveCardInstance.render());
+		AdaptiveContent.prototype._setupMSCardContent = function () {
+			var oDom = this.$(),
+				oConfiguration = this._oCardConfig,
+				oTemplateData;
+
+			if (!this.adaptiveCardInstance || !oConfiguration || !(oDom && oDom.size())) {
+				return;
 			}
+
+			// check if a data object is present in the card content
+			oTemplateData = oConfiguration.$data || oConfiguration.data;
+
+			// if there is no templating, render the MS AdaptiveCard
+			if (!oTemplateData) {
+				this._renderMSCardContent(oConfiguration);
+				return;
+			}
+
+			// if the inline $data is present, adapt it in order to
+			// reuse the DataFactory logic of the Integration Card
+			if (oConfiguration.$data) {
+				oTemplateData = {
+					"json": oTemplateData
+				};
+			}
+
+			this._setData(oTemplateData);
+		};
+
+
+		/**
+		 * Requests data and passes it to the card template.
+		 *
+		 * The logic behind BaseContent.prototype._setData is changed in order to switch off
+		 * the UI5 binding inside the content and set the templating functionality of
+		 * the MS AdaptiveCard.
+		 *
+		 * @private
+		 * @param {Object} oDataSettings The data part of the configuration object
+		 */
+		BaseContent.prototype._setData = function (oDataSettings) {
+			var oCard, oModel, oData,
+				sPath = "";
+
+			if (oDataSettings && oDataSettings.path) {
+				sPath = oDataSettings.path;
+			}
+
+			if (this._oDataProvider) {
+				this._oDataProvider.destroy();
+			}
+
+			if (this._oDataProviderFactory) {
+				this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
+			}
+
+			if (this._oDataProvider) {
+				this.setBusy(true);
+
+				// If a data provider is created use an own model.
+				oModel = this.setModel(new JSONModel());
+
+				this._oDataProvider.attachDataChanged(function (oEvent) {
+					oData = oEvent.getParameter('data');
+					this._updateModel(oData);
+
+					// if a path is present, setup this part of the data
+					// as a data object for the card template.
+					if (sPath.length) {
+						oData = oModel.getProperty(sPath);
+					}
+
+					// attach the data with the card template
+					oCard = this._setTemplating(this._oCardConfig, oData);
+
+					// render the MS AdaptiveCard
+					oCard && this._renderMSCardContent(oCard);
+
+					this.setBusy(false);
+				}.bind(this));
+
+				this._oDataProvider.attachError(function (oEvent) {
+					this._handleError(oEvent.getParameter("message"));
+					this.setBusy(false);
+				}.bind(this));
+
+				this._oDataProvider.triggerDataUpdate().then(function () {
+					this.fireEvent("_dataReady");
+				}.bind(this));
+			} else {
+				this.fireEvent("_dataReady");
+			}
+		};
+
+		/**
+		 * Rendering of a MS AdaptiveCard.
+		 *
+		 * @param {Object} oCard The Card to be rendered
+		 * @private
+		 */
+		AdaptiveContent.prototype._renderMSCardContent = function (oCard) {
+			var oDom = this.$();
+			if (this.adaptiveCardInstance && oCard && oDom && oDom.size()) {
+				this.adaptiveCardInstance.parse(oCard);
+				oDom.html(this.adaptiveCardInstance.render());
+
+				this._bAdaptiveCardElementsReady = true;
+				this._fireCardReadyEvent();
+			}
+		};
+
+		AdaptiveContent.prototype._fireCardReadyEvent = function () {
+			if (this._bAdaptiveCardElementsReady && this._bComponentsReady) {
+				this._bReady = true;
+				this.fireEvent("_ready");
+			}
+		};
+
+		/**
+		 * Connects the template object with the data.
+		 *
+		 * @param {Object} oTemplate The template object
+		 * @param {Object} oData The JSON object representing the data
+		 * @returns {Object} The Card to be rendered
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._setTemplating = function (oTemplate, oData) {
+			var oCardTemplate = new ACData.Template(oTemplate),
+				oContext = new ACData.EvaluationContext();
+
+			oContext.$root = oData;
+
+			return oCardTemplate.expand(oContext);
 		};
 
 		/**
@@ -201,6 +370,8 @@ sap.ui.define([
 		AdaptiveContent.prototype._loadDependencies = function () {
 			// Check weather the WebComponents are already loaded. We don't need to fetch the scripts again
 			if (document.querySelector("#webcomponents-loader")) {
+				this._bComponentsReady = true;
+				this._fireCardReadyEvent();
 				return;
 			}
 
@@ -222,7 +393,9 @@ sap.ui.define([
 					attributes: {nomodule: "nomodule"},
 					url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.es5.js")
 				});
-			});
+				this._bComponentsReady = true;
+				this._fireCardReadyEvent();
+			}.bind(this));
 		};
 
 		return AdaptiveContent;

@@ -52,10 +52,14 @@ sap.ui.define([
 
 						return View._legacyCreate(oOptions);
 					case "Component":
+						oOptions.settings = oOptions.settings || {};
+
+						// forward info, if parent component expects title propagation
+						oOptions.settings._propagateTitle = oTargetCreateInfo.propagateTitle;
+
 						// create the RouterHashChanger for the component which is going to be created
 						var oRouterHashChanger = that._createRouterHashChanger(oTargetCreateInfo.prefix);
 						if (oRouterHashChanger) {
-							oOptions.settings = oOptions.settings || {};
 							// put the RouterHashChanger as a private property to the Component constructor
 							oOptions.settings._routerHashChanger = oRouterHashChanger;
 						}

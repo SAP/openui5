@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Custom Elements for sap.ui.integration</title>
+		<script src="../../../resources/sap-ui-integration.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_fiori_3">
+		</script>
+		<script>
+			delete Document.prototype.adoptedStyleSheets;
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<ui-integration-card style="width: 40%" id="my-card" manifest="./adaptivecard-templating-manifest.json"></ui-integration-card>
+		<ui-integration-card style="width: 40%" id="my-card2" manifest="./adaptivecard-templating-manifest2.json"></ui-integration-card>
+	</body>
+</html>

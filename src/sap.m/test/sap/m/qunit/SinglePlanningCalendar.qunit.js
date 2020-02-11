@@ -143,6 +143,46 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("selectedView: Simulate PRESS on segmented button of a view", function(assert) {
+		var	oSPC = new SinglePlanningCalendar({
+				views: [
+					new SinglePlanningCalendarDayView({
+						key: "DayView",
+						title: "Day View"
+					}),
+					new SinglePlanningCalendarDayView({
+						key: "MonthView",
+						title: "Month View"
+					})
+				]
+			}),
+			oMonthViewSegmentedButtonItem = oSPC._getHeader()._getOrCreateViewSwitch().getItems()[1],
+			sMonthViewId = oSPC.getViews()[1].getId(),
+			oDayViewSegmentedButtonItem = oSPC._getHeader()._getOrCreateViewSwitch().getItems()[0],
+			sDayViewId = oSPC.getViews()[0].getId();
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMonthViewSegmentedButtonItem.oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oSPC.getSelectedView(), sMonthViewId, "The proper View Id is stored in selectedView association");
+
+		// Act
+		oDayViewSegmentedButtonItem.oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oSPC.getSelectedView(), sDayViewId, "The proper View Id is stored in selectedView association");
+
+		// cleanup
+		oSPC.removeAllViews();
+		oSPC = null;
+	});
+
 	QUnit.test("getSelectedAppointments", function (assert) {
 		var oAppointment1 = new CalendarAppointment({
 				title: "Appointment1",
@@ -248,6 +288,51 @@ sap.ui.define([
 		// cleanup
 		oSPC.destroy();
 	});
+
+	QUnit.test("getViewByKey: Return the view with matching key, or null if there is no match", function(assert) {
+
+		var oSPC = new SinglePlanningCalendar({
+				views: [
+					new SinglePlanningCalendarDayView({
+						key: "DayView",
+						title: "Day View"
+					}),
+					new SinglePlanningCalendarDayView({
+						key: "MonthView",
+						title: "Month View"
+					})
+				]
+			}),
+			oView;
+
+		// Act: try to find a view with "DayView" key
+		oView = oSPC.getViewByKey("DayView");
+
+		// assert
+		assert.equal(oSPC._isViewKeyExisting("DayView"), true, "View with key 'DayView' exists, dedicated method _isViewKeyExisting returns true");
+		assert.deepEqual(oSPC.getViews()[0], oView, "Returned View with key 'DayView' is correct");
+
+		// Act: try to find a view with "MonthView" key
+		oView = oSPC.getViewByKey("MonthView");
+
+		// assert
+		assert.equal(oSPC._isViewKeyExisting("MonthView"), true, "View with key 'MonthView' exists, dedicated method _isViewKeyExisting returns true");
+		assert.deepEqual(oSPC.getViews()[1], oView, "Returned View with key 'MonthView' is correct");
+
+		// Act: try to find a view with "WeekView" key
+		oView = oSPC.getViewByKey("WeekView");
+
+		// assert
+		assert.equal(oSPC._isViewKeyExisting("WeekView"), false, "View with key 'WeekView' is missing, dedicated method _isViewKeyExisting returns false");
+		assert.equal(oView, null, "View with key 'WeekView' is missing, null is returned");
+
+		// cleanup
+		oSPC.removeAllViews();
+		oSPC.destroy();
+		oSPC = null;
+
+	});
+
 
 	QUnit.module("Events");
 
@@ -432,19 +517,48 @@ sap.ui.define([
 	});
 
 	QUnit.test("viewChange", function (assert) {
-		var oSPC = new SinglePlanningCalendar({}),
+		var oSPC = new SinglePlanningCalendar({
+				views: [
+					new SinglePlanningCalendarDayView({
+						key: "DayView",
+						title: "Day View"
+					}),
+					new SinglePlanningCalendarDayView({
+						key: "MonthView",
+						title: "Month View"
+					})
+				]
+			}),
+			oMonthViewSegmentedButtonItem = oSPC._getHeader()._getOrCreateViewSwitch().getItems()[1],
+			sMonthViewId = oSPC.getViews()[1].getId(),
+			oDayViewSegmentedButtonItem = oSPC._getHeader()._getOrCreateViewSwitch().getItems()[0],
+			sDayViewId = oSPC.getViews()[0].getId(),
 			fnFireViewChange = this.spy(oSPC, "fireViewChange");
 
-		//act
-		oSPC._getHeader().fireViewChange();
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-		//assert
-		assert.ok(fnFireViewChange.calledOnce, "Event was fired");
+		// Act - simulate press on a Month View SegmentedButton
+		oMonthViewSegmentedButtonItem.oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		//assert - selected view must be Month View, and event must be called once
+		assert.equal(oSPC.getSelectedView(), sMonthViewId, "The proper View Id is stored in selectedView association");
+		assert.ok(fnFireViewChange.firstCall, "Event was fired");
+
+		// Act - simulate press on a Day View SegmentedButton
+		oDayViewSegmentedButtonItem.oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		//assert - selected view must be Day View, and event must be called once
+		assert.equal(oSPC.getSelectedView(), sDayViewId, "The proper View Id is stored in selectedView association");
+		assert.ok(fnFireViewChange.secondCall, "Event was fired");
 
 		//clean up
+		oSPC.removeAllViews();
 		oSPC.destroy();
+		oSPC = null;
 	});
-
 
 	QUnit.test("startDateChange: on next button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
@@ -1774,4 +1888,49 @@ sap.ui.define([
 		assert.deepEqual(newAppPos.startDate, oAppEndDate, "Start date hout is correct");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 2, 30, 0), "End date hour is correct");
 	});
+
+	QUnit.module("Helper private methods", {
+		beforeEach: function() {
+			this.oSPC = new SinglePlanningCalendar({
+				views: [
+					new SinglePlanningCalendarDayView({
+						key: "DayView",
+						title: "Day View"
+					}),
+					new SinglePlanningCalendarDayView({
+						key: "MonthView",
+						title: "Month View"
+					})
+				]
+			});
+		},
+		afterEach: function() {
+			this.oSPC.removeAllViews();
+			this.oSPC = null;
+		}
+	});
+
+	QUnit.test("_getViewByID: Return the view with matching ID, or null if there is no match", function(assert) {
+
+		var oView;
+
+		// Act: try to find a view with "view0" id
+		oView = this.oSPC._getViewById(this.oSPC.getViews()[0].getId());
+
+		// assert
+		assert.deepEqual(this.oSPC.getViews()[0], oView, "Returned View is correct");
+
+		// Act: try to find a view with "view1" key
+		oView = this.oSPC._getViewById(this.oSPC.getViews()[1].getId());
+
+		// assert
+		assert.deepEqual(this.oSPC.getViews()[1], oView, "Returned View is correct");
+
+		// Act: try to find a view with "WeekView" key
+		oView = this.oSPC._getViewById("myNonExistingId");
+
+		// assert
+		assert.equal(oView, null, "View with id 'myNonExistingId' is missing, null is returned");
+	});
+
 });

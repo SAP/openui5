@@ -1065,6 +1065,25 @@ sap.ui.define(
             },
 
             /**
+             * Creates a matcher that checks whether a control has the focus.
+             * @param {boolean} [bCheckChildren] set true to check additionally for the focus on any child element
+             * @returns {function} a matcher function
+             * @public
+             * @static
+             */
+            focused: function (bCheckChildren) {
+                return function (oControl) {
+                    var $element = oControl && oControl.isA("sap.ui.core.Element") && oControl.$();
+                    return $element &&
+                        (
+                            $element.is(":focus") || $element.hasClass("sapMFocus") || (
+                                bCheckChildren && $element.find(":focus").length > 0
+                            )
+                        ) || false;
+                };
+            },
+
+            /**
              * Creates a matcher that checks for at least one successful match from a group of matchers.
              *
              * @param [aMatchers=[{sap.ui.test.matchers.Matcher | function | Array | Object}]] aMatchers list of matchers were one must be met

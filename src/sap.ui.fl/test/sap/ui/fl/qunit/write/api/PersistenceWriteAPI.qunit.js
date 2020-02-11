@@ -162,156 +162,6 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update a published app variant in CUSTOMER_BASE layer", function(assert) {
-			var mPropertyBag = {
-				layer: "CUSTOMER_BASE"
-			};
-			mPropertyBag.selector = {
-				appId: "customer.reference.app.id"
-			};
-
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
-				})
-			);
-
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "CUSTOMER_BASE",
-					fileType: "fileType1",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
-
-			var oTransportResponse = {
-				response: {
-					errorCode: "",
-					localonly: false,
-					transports: []
-				}
-			};
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
-
-			return PersistenceWriteAPI.save(mPropertyBag)
-				.then(function() {
-					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "PUT"), "then the parameters are correct");
-				});
-		});
-
-		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update a local app variant in CUSTOMER_BASE layer", function(assert) {
-			var mPropertyBag = {
-				layer: "CUSTOMER_BASE"
-			};
-			mPropertyBag.selector = {
-				appId: "customer.reference.app.id"
-			};
-
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
-				})
-			);
-
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "CUSTOMER_BASE",
-					fileType: "fileType1",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
-
-			var oTransportResponse = {
-				response: {
-					errorCode: "",
-					localonly: true,
-					transports: []
-				}
-			};
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
-
-			return PersistenceWriteAPI.save(mPropertyBag)
-				.then(function() {
-					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "PUT"), "then the parameters are correct");
-				});
-		});
-
-		QUnit.test("(Smart Business - onPrem system) when save is called to update an app variant in CUSTOMER layer", function(assert) {
-			var mPropertyBag = {
-				layer: "CUSTOMER",
-				transport: "TRANSPORT123"
-			};
-			mPropertyBag.selector = {
-				appId: "customer.reference.app.id"
-			};
-
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
-				})
-			);
-
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "layer1",
-					fileType: "fileType1",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
-
-			return PersistenceWriteAPI.save(mPropertyBag)
-				.then(function() {
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "PUT"), "then the parameters are correct");
-				});
-		});
-
 		QUnit.test("when reset is called", function(assert) {
 			var mPropertyBag = {
 				layer: "customer",
@@ -595,6 +445,24 @@ sap.ui.define([
 				assert.ok(oBaseLogStub.calledOnce, "an error was logged");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
+			});
+		});
+
+		QUnit.test("get flex/info is not called for USER layer", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector,
+				layer: "USER"
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
+
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.callCount, 0, "flex/info never called");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
 			});
 		});
 

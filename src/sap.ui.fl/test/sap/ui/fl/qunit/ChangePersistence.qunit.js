@@ -2445,8 +2445,8 @@ function (
 				}
 			};
 
-			var oChange1View3 = {
-				fileName:"change2View2",
+			var oChange2View1 = {
+				fileName:"change2View1",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
@@ -2458,7 +2458,7 @@ function (
 
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: {
-					changes: [oChange1View1, oChange1View2, oChange2View2, oChange1View3]
+					changes: [oChange1View1, oChange1View2, oChange2View2, oChange2View1]
 				}
 			});
 
@@ -2469,10 +2469,11 @@ function (
 				component: oAppComponent
 			};
 
-			return this.oChangePersistence.getChangesForView("view1--view2", mPropertyBag)
+			return this.oChangePersistence.getChangesForView(mPropertyBag)
 				.then(function (aChanges) {
-					assert.strictEqual(aChanges.length, 1, "then only one change was returned");
-					assert.strictEqual(aChanges[0].getId(), "change1View1", "then only the change with the same view selector prefix and belonging to the passed component was returned");
+					assert.strictEqual(aChanges.length, 2, "then two changes were returned");
+					assert.strictEqual(aChanges[0].getId(), "change1View1", "then the change with the same view selector prefix and belonging to the passed component was returned");
+					assert.strictEqual(aChanges[1].getId(), "change2View1", "then the change with the same view selector prefix and belonging to the passed component was returned");
 				});
 		});
 
@@ -2513,10 +2514,123 @@ function (
 				component: oEmbeddedComponent
 			};
 
-			return this.oChangePersistence.getChangesForView("embeddedComponent---view1", mPropertyBag)
+			return this.oChangePersistence.getChangesForView(mPropertyBag)
 				.then(function (aChanges) {
 					assert.strictEqual(aChanges.length, 1, "then only one change is returned");
 					assert.strictEqual(aChanges[0].getId(), "change1View2", "then only the change belonging to the embedded component was returned");
+				});
+		});
+
+		QUnit.test("when getChangesForView is called with an extension point selector containing a view ID", function(assert) {
+			var oAppComponent = {
+				id :"appComponentReference"
+			};
+
+			var oChange1View1 = {
+				fileName:"change1View1",
+				fileType: "change",
+				reference: "appComponentReference",
+				selector:{
+					name: "Extension1",
+					viewSelector: {
+						id: "viewWithExtension",
+						idIsLocal: true
+					}
+				}
+			};
+
+			var oChange1View2 = {
+				fileName:"change1View2",
+				fileType: "change",
+				reference: "appComponentReference",
+				selector:{
+					name: "Extension1",
+					viewSelector: {
+						id: "viewWithoutExtension",
+						idIsLocal: true
+					}
+				}
+			};
+
+			var oChange2View2 = {
+				fileName:"change2View2",
+				fileType: "change",
+				reference: "appComponentReference",
+				selector: {
+					name: "Extension2",
+					viewSelector: {
+						id: "viewWithoutExtension",
+						idIsLocal: true
+					}
+				}
+			};
+
+			var oChange3View3 = {
+				fileName:"change3View3",
+				fileType: "change",
+				reference: "appComponentReference",
+				selector: {
+					name: "Extension3",
+					viewSelector: {
+						id: "viewWithAnotherExtension",
+						idIsLocal: true
+					}
+				}
+			};
+
+			var oChange4View3 = {
+				fileName:"change4View3",
+				fileType: "change",
+				reference: "appComponentReference",
+				selector: {
+					name: "Extension4",
+					viewSelector: {
+						id: "appComponentReference---viewWithAnotherExtension",
+						idIsLocal: false
+					}
+				}
+			};
+
+			var oChange4View1 = {
+				fileName:"change4View1",
+				fileType: "change",
+				reference: "appComponentReference",
+				selector: {
+					name: "Extension4",
+					viewSelector: {
+						id: "appComponentReference---viewWithExtension",
+						idIsLocal: false
+					}
+				}
+			};
+
+
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [oChange1View1, oChange1View2, oChange2View2, oChange3View3, oChange4View3, oChange4View1]
+				}
+			});
+
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+
+			var mPropertyBag = {
+				modifier: {
+					getControlIdBySelector: function(oSelector) {
+						if (oSelector.idIsLocal) {
+							return "appComponentReference---" + oSelector.id;
+						}
+						return oSelector.id;
+					}
+				},
+				viewId: "appComponentReference---viewWithExtension",
+				appComponent: oAppComponent
+			};
+
+			return this.oChangePersistence.getChangesForView(mPropertyBag)
+				.then(function (aChanges) {
+					assert.strictEqual(aChanges.length, 2, "then only two change were returned");
+					assert.strictEqual(aChanges[0].getId(), "change1View1", "then only the change with the correct viewId of the selector was returned");
+					assert.strictEqual(aChanges[1].getId(), "change4View1", "then only the change with the correct viewId of the selector was returned");
 				});
 		});
 

@@ -259,7 +259,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag Property bag
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
 		 * @param {string} mPropertyBag.reference Flex reference
-		 * @returns {Promise<>} Promise resolving after the draft is discarded;
+		 * @returns {Promise} Promise resolving after the draft is discarded;
 		 * rejects if an error occurs or the layer does not support draft handling
 		 */
 		discardDraft: function (mPropertyBag) {

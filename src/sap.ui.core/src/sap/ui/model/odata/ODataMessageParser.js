@@ -474,20 +474,27 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 
 
 /**
- * Creates an absolute target URL (relative to the service URL) from the given message-object and
- * the Response. It uses the service-URL to extract the base URI of the message from the response-
- * URI and appends the target if the target was not specified as absolute path (with leading "/")
+ * Determines the absolute target URL (relative to the service URL) from the given message object
+ * and from the given request info and updates the message object's <code>canonicalTarget</code> and
+ * <code>deepPath</code>.
+ * If the message object's target is not absolute, it uses the location header of the response (in
+ * case of a successful creation of an entity), the internal entity key (in case of a failed
+ * creation of an entity) or the request URL to determine the message object's
+ * <code>canonicalTarget</code> and <code>deepPath</code>.
+ * The <code>deepPath</code> is always reduced, that means all adjacent partner attributes have been
+ * removed from the target path.
  *
- * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {ODataMessageParser~RequestInfo} mRequestInfo - Map containing information about the current request
- * @return {string} The actual target string
+ * @param {ODataMessageParser~ServerError} oMessageObject
+ *   The object containing the message data
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   A map containing information about the current request
  * @private
  */
 ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo) {
 	var sTarget = oMessageObject.target;
 	var sDeepPath = "";
 
-	if (sTarget.substr(0, 1) !== "/") {
+	if (sTarget[0] !== "/") {
 		var sRequestTarget = "";
 
 		// special case for 201 POST requests which create a resource
@@ -536,7 +543,6 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		var iSlashPos = sRequestTarget.lastIndexOf("/");
 		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
 
-
 		if (!sDeepPath && mRequestInfo.request && mRequestInfo.request.deepPath){
 			sDeepPath = mRequestInfo.request.deepPath;
 		}
@@ -551,12 +557,10 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 			sTarget = sTarget ? sRequestTarget + "/" + sTarget : sRequestTarget;
 			sDeepPath = oMessageObject.target ? sDeepPath + "/" + oMessageObject.target : sDeepPath;
 		}
-
 	}
 
 	oMessageObject.canonicalTarget = sTarget;
 	if (this._processor){
-
 		var sCanonicalTarget = this._processor.resolve(sTarget, undefined, true);
 
 		// Multiple resolve steps are necessary for paths containing multiple navigation properties
@@ -567,8 +571,8 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		}
 
 		oMessageObject.canonicalTarget = sCanonicalTarget || sTarget;
-		oMessageObject.deepPath = sDeepPath || oMessageObject.canonicalTarget;
-
+		oMessageObject.deepPath
+			= this._metadata._getReducedPath(sDeepPath || oMessageObject.canonicalTarget);
 	}
 };
 

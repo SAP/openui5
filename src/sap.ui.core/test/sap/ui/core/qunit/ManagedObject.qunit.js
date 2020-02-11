@@ -42,7 +42,7 @@ sap.ui.define([
 				byValueArray: { type: "object[]", defaultValue: [], byValue: true}
 			},
 			aggregations : {
-				singleAggr : { type : "sap.ui.core.TestManagedObject", multiple : false },
+				singleAggr : { type : "sap.ui.core.TestManagedObject", altTypes : ["string"], multiple : false },
 				singleBindableAggr : { type : "sap.ui.core.TestManagedObject", multiple : false, bindable: "bindable" },
 				subObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "subObj"},
 				elements : { type : "sap.ui.core.Element", multiple : true, bindable: "bindable"},
@@ -1930,6 +1930,13 @@ sap.ui.define([
 			this.subObj.destroy();
 			this.obj.destroy();
 		}
+	});
+
+	QUnit.test("Clone Object - aggregation with alt type string", function(assert) {
+		this.obj.setAggregation("singleAggr", '#$$^*^(^(^(:"|"|"S|A"S|}W{E+@_#aaaaaaaas');
+		var oClone = this.obj.clone("clone");
+		assert.ok(oClone instanceof TestManagedObject, "clone of object created");
+		assert.equal(oClone.getId(), this.obj.getId() + "-clone", "id created with correct suffix");
 	});
 
 	QUnit.test("Clone Object", function(assert) {

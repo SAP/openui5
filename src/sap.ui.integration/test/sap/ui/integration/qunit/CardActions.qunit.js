@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+		"sap/f/library",
 		"sap/ui/integration/widgets/Card",
 		"sap/f/cards/ListContent",
 		"sap/f/cards/AnalyticalContent",
@@ -15,6 +16,7 @@ sap.ui.define([
 		"./services/SampleServices"
 	],
 	function (
+		library,
 		Card,
 		ListContent,
 		AnalyticalContent,
@@ -29,6 +31,8 @@ sap.ui.define([
 		SampleServices
 	) {
 		"use strict";
+
+		var ActionType = library.cards.ActionType;
 
 		var DOM_RENDER_LOCATION = "qunit-fixture",
 			LOG_MESSAGE = "Navigate successfully";
@@ -863,8 +867,8 @@ sap.ui.define([
 		function testNavigationServiceListContent(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {
 					Log.error(LOG_MESSAGE);
 				}),
 				oCard = new Card({
@@ -882,8 +886,8 @@ sap.ui.define([
 				var oCardListItems = oCard.getCardContent()._getList().getItems();
 
 				// Assert
-				assert.ok(oCardListItems[0].getType() === "Navigation", "Card list item is actionable");
-				assert.notOk(oCardListItems[1].getType() === "Navigation", "Card list item is NOT actionable");
+				assert.ok(oCardListItems[0].getType() === ActionType.Navigation, "Card list item is actionable");
+				assert.notOk(oCardListItems[1].getType() === ActionType.Navigation, "Card list item is NOT actionable");
 
 				//Act
 				oCardListItems[0].firePress();
@@ -903,8 +907,8 @@ sap.ui.define([
 		function testActionOnContentService(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {}),
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {}),
 				oCard = new Card({
 					width: "400px",
 					height: "600px",
@@ -918,7 +922,9 @@ sap.ui.define([
 				Core.applyChanges();
 				var oCardLContent = oCard.getCardContent();
 
-				oCard.attachAction(function () {
+				oCard.attachAction(function (oEvent) {
+
+					oEvent.preventDefault();
 
 					// Assert
 					assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
@@ -940,8 +946,8 @@ sap.ui.define([
 		function testActionOnContentUrl(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {}),
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {}),
 				oCard = new Card({
 					width: "400px",
 					height: "600px",
@@ -992,7 +998,7 @@ sap.ui.define([
 		QUnit.test("Service navigation", function (assert) {
 
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oLogSpy = sinon.spy(Log, "error");
 
 			// Act
@@ -1024,8 +1030,8 @@ sap.ui.define([
 
 		QUnit.test("Action URL should navigate", function (assert) {
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {
 					Log.error(LOG_MESSAGE);
 				});
 
@@ -1056,7 +1062,7 @@ sap.ui.define([
 
 		QUnit.test("Enabled property of actions is set to false", function (assert) {
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction");
+				oActionSpy = sinon.spy(CardActions, "fireAction");
 
 			// Act
 			this.oCard.setManifest(oManifest__Action_Disabled);
@@ -1085,7 +1091,7 @@ sap.ui.define([
 
 		QUnit.test("No actions available", function (assert) {
 			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachNavigationAction");
+				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_No_Actions);
@@ -1098,7 +1104,7 @@ sap.ui.define([
 
 				// Assert
 				assert.notOk(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header has not a clickable style is added");
-				assert.ok(oAttachNavigationSpy.callCount === 0, "_attachNavigationAction should not be called");
+				assert.ok(oAttachNavigationSpy.callCount === 0, "_attachAction should not be called");
 
 				//Clean up
 				oAttachNavigationSpy.restore();
@@ -1108,7 +1114,7 @@ sap.ui.define([
 
 		QUnit.test("No action type available", function (assert) {
 			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachNavigationAction");
+				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_Actions_Missing_Type);
@@ -1121,7 +1127,7 @@ sap.ui.define([
 
 				// Assert
 				assert.notOk(oCardHeader.hasStyleClass("sapFCardHeaderClickable"), "Card Header has not a clickable style is added");
-				assert.ok(oAttachNavigationSpy.callCount === 0, "_attachNavigationAction should not be called");
+				assert.ok(oAttachNavigationSpy.callCount === 0, "_attachAction should not be called");
 
 				//Clean up
 				oAttachNavigationSpy.restore();
@@ -1131,7 +1137,7 @@ sap.ui.define([
 
 		QUnit.test("Actions 'enabled' is set to false", function (assert) {
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction");
+				oActionSpy = sinon.spy(CardActions, "fireAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_CONTENT_ACTION);
@@ -1172,7 +1178,7 @@ sap.ui.define([
 		QUnit.test("No service URL in navigation actions", function (assert) {
 
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oLogSpy = sinon.spy(Log, "error"),
 				oCard = new Card({
 					manifest: oManifest_List_Bindend_Items,
@@ -1190,8 +1196,8 @@ sap.ui.define([
 
 				oCard.attachAction(function () {
 					// Assert
-					assert.ok(oCardListItems[0].getType() === "Navigation", "Card list item is actionable");
-					assert.notOk(oCardListItems[1].getType() === "Navigation" , "Card list item is NOT actionable");
+					assert.ok(oCardListItems[0].getType() === ActionType.Navigation, "Card list item is actionable");
+					assert.notOk(oCardListItems[1].getType() === ActionType.Navigation , "Card list item is NOT actionable");
 					assert.ok(oLogSpy.calledWith(LOG_MESSAGE), "Provided message should be logged to the console.");
 					assert.ok(oActionSpy.callCount, "Card List item is clicked");
 
@@ -1212,8 +1218,8 @@ sap.ui.define([
 		QUnit.test("Action enabled/disabled in template, no service", function (assert) {
 
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {
 					Log.error(LOG_MESSAGE);
 				}),
 				oCard = new Card({
@@ -1235,11 +1241,11 @@ sap.ui.define([
 				Core.applyChanges();
 
 				// Assert
-				assert.notOk(oCardListItems[0].getType() === "Navigation", "Card list item is NOT actionable");
-				assert.notOk(oCardListItems[1].getType() === "Navigation" , "Card list item is NOT actionable");
-				assert.notOk(oCardListItems[2].getType() === "Navigation", "Card list item is NOT actionable");
-				assert.ok(oCardListItems[3].getType() === "Navigation" , "Card list item is actionable");
-				assert.ok(oCardListItems[4].getType() === "Navigation" , "Card list item is actionable");
+				assert.notOk(oCardListItems[0].getType() === ActionType.Navigation, "Card list item is NOT actionable");
+				assert.notOk(oCardListItems[1].getType() === ActionType.Navigation , "Card list item is NOT actionable");
+				assert.notOk(oCardListItems[2].getType() === ActionType.Navigation, "Card list item is NOT actionable");
+				assert.ok(oCardListItems[3].getType() === ActionType.Navigation , "Card list item is actionable");
+				assert.ok(oCardListItems[4].getType() === ActionType.Navigation , "Card list item is actionable");
 
 				assert.ok(oActionSpy.callCount, "Card List item is clicked");
 
@@ -1254,7 +1260,7 @@ sap.ui.define([
 		QUnit.test("No actions available", function (assert) {
 
 			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachNavigationAction"),
+				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction"),
 				oCard = new Card({
 					manifest: oManifest_ListCard_No_Actions,
 					width: "400px",
@@ -1269,9 +1275,9 @@ sap.ui.define([
 				Core.applyChanges();
 				var oCardListItems = oCard.getCardContent()._getList().getItems();
 					// Assert
-					assert.notOk(oCardListItems[0].getType() === "Navigation", "Card list item is actionable");
-					assert.notOk(oCardListItems[1].getType() === "Navigation" , "Card list item is NOT actionable");
-					assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachNavigationAction should not be called");
+					assert.notOk(oCardListItems[0].getType() === ActionType.Navigation, "Card list item is actionable");
+					assert.notOk(oCardListItems[1].getType() === ActionType.Navigation , "Card list item is NOT actionable");
+					assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
 
 					//Clean up
 					oAttachNavigationSpy.restore();
@@ -1283,7 +1289,7 @@ sap.ui.define([
 		QUnit.test("No action type available", function (assert) {
 
 			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachNavigationAction"),
+				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction"),
 				oCard = new Card({
 					manifest: oManifest_ListCard_Actions_Missing_Type,
 					width: "400px",
@@ -1298,9 +1304,9 @@ sap.ui.define([
 				Core.applyChanges();
 				var oCardListItems = oCard.getCardContent()._getList().getItems();
 				// Assert
-				assert.notOk(oCardListItems[0].getType() === "Navigation", "Card list item is actionable");
-				assert.notOk(oCardListItems[1].getType() === "Navigation" , "Card list item is NOT actionable");
-				assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachNavigationAction should not be called");
+				assert.notOk(oCardListItems[0].getType() === ActionType.Navigation, "Card list item is actionable");
+				assert.notOk(oCardListItems[1].getType() === ActionType.Navigation , "Card list item is NOT actionable");
+				assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
 
 				//Clean up
 				oAttachNavigationSpy.restore();
@@ -1326,7 +1332,7 @@ sap.ui.define([
 		QUnit.test("List should be actionable ", function (assert) {
 
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction");
+				oActionSpy = sinon.spy(CardActions, "fireAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_No_Request);
@@ -1338,8 +1344,8 @@ sap.ui.define([
 				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 
 				// Assert
-				assert.ok(oCardListItems[0].getType() === "Navigation", "Card list item is actionable");
-				assert.notOk(oCardListItems[1].getType() === "Navigation", "Card list item is NOT actionable");
+				assert.ok(oCardListItems[0].getType() === ActionType.Navigation, "Card list item is actionable");
+				assert.notOk(oCardListItems[1].getType() === ActionType.Navigation, "Card list item is NOT actionable");
 
 				//Act
 				oCardListItems[0].firePress();
@@ -1381,8 +1387,8 @@ sap.ui.define([
 		QUnit.test("Analytical Card should be not actionable", function (assert) {
 			// Arrange
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {});
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {});
 
 			this.oCard.setManifest(oManifest_Analytical_No_Actions);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
@@ -1438,7 +1444,7 @@ sap.ui.define([
 
 		QUnit.test("On pressing link, action should not be fired", function (assert) {
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction");
+				oActionSpy = sinon.spy(CardActions, "fireAction");
 
 			this.oCard.setManifest(objectContent_service);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);

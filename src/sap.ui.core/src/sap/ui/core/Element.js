@@ -792,18 +792,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Element.prototype._refreshTooltipBaseDelegate = function (oTooltip) {
-		var TooltipBase = sap.ui.require('sap/ui/core/TooltipBase');
-		if ( TooltipBase ) {
-			var oOldTooltip = this.getTooltip();
-			// if the old tooltip was a Tooltip object, remove it as a delegate
-			if (oOldTooltip instanceof TooltipBase) {
-				this.removeDelegate(oOldTooltip);
-			}
-			// if the new tooltip is a Tooltip object, add it as a delegate
-			if (oTooltip instanceof TooltipBase) {
-				oTooltip._currentControl = this;
-				this.addDelegate(oTooltip);
-			}
+		var oOldTooltip = this.getTooltip();
+		// if the old tooltip was a Tooltip object, remove it as a delegate
+		if (BaseObject.isA(oOldTooltip, "sap.ui.core.TooltipBase")) {
+			this.removeDelegate(oOldTooltip);
+		}
+		// if the new tooltip is a Tooltip object, add it as a delegate
+		if (BaseObject.isA(oTooltip, "sap.ui.core.TooltipBase")) {
+			oTooltip._currentControl = this;
+			this.addDelegate(oTooltip);
 		}
 	};
 

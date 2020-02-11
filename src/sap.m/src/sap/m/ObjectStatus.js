@@ -76,7 +76,9 @@ sap.ui.define([
 			active : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * Defines the text value state.
+			 * Defines the text value state. The allowed values are from the enum type
+			 * <code>sap.ui.core.ValueState</code>. Since version 1.66 the <code>state</code> property also accepts
+			 * values from enum type <code>sap.ui.core.IndicationColor</code>.
 			 */
 			state : {type : "string", group : "Misc", defaultValue : ValueState.None},
 

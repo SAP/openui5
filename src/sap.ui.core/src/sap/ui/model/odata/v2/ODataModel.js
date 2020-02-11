@@ -79,6 +79,20 @@ sap.ui.define([
 
 	"use strict";
 
+	// allowed names of properties in the __metadata property in the JSON representation of an OData
+	// entity
+	var mMetadataPropertyNames = {
+			"content_type" : true,
+			created : true, //TODO remove when controls relying on this private property are fixed
+			"edit_media" : true,
+			etag : true,
+			// not spec'd in OData V2, but in OData V3 "for services using OData 2.0", see odata.org
+			id : true,
+			"media_etag" : true,
+			"media_src" : true,
+			type : true,
+			uri : true
+		};
 
 	/**
 	 * Constructor for a new ODataModel.
@@ -2573,6 +2587,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Cleans up the __metadata property of the given entity object in OData JSON format:
+	 * All properties of __metadata not specified in the OData JSON format for an entity are
+	 * removed from the given object.
+	 *
+	 * @param {object} [oEntity] The entity to be cleaned up
+	 * @returns {object} The given entity with cleaned up __metadata
+	 *
+	 * @private
+	 */
+	ODataModel.cleanUpMetadata = function (oEntity) {
+		var sProperty;
+
+		if (oEntity) {
+			for (sProperty in oEntity.__metadata) {
+				if (!mMetadataPropertyNames[sProperty]) {
+					delete oEntity.__metadata[sProperty];
+				}
+			}
+		}
+
+		return oEntity;
+	};
+
+	/**
 	 * Returns the JSON object for an entity with the given <code>sPath</code> and optional <code>oContext</code>.
 	 *
 	 * With the <code>mParameters.select</code> parameter it is possible to specify comma-separated property or navigation property
@@ -2623,7 +2661,7 @@ sap.ui.define([
 
 		// If no select/expand parameters are given, return a clone of the entity (for compatibility)
 		if (!mParameters || !(mParameters.select || mParameters.expand)) {
-			return merge({}, oValue);
+			return ODataModel.cleanUpMetadata(merge({}, oValue));
 		}
 
 		function getRequestedData(oEntityType, oValue, aSelect, aExpand) {
@@ -2656,7 +2694,8 @@ sap.ui.define([
 			}
 			// add metadata
 			if (oValue.__metadata) {
-				oResultValue.__metadata = oValue.__metadata;
+				oResultValue.__metadata = Object.assign({}, oValue.__metadata);
+				ODataModel.cleanUpMetadata(oResultValue);
 			}
 
 			// check expanded entities

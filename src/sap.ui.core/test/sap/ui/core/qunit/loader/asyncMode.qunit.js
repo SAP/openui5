@@ -585,13 +585,26 @@
 	// Async / Sync Conflict
 	// ========================================================================================
 
-	QUnit.module("Async/Sync Conflict");
+	QUnit.module("Async/Sync Conflict", {
+		beforeEach: function() {
+			this.logger = sap.ui.loader._.logger;
+			sinon.spy(this.logger, "warning");
+			sinon.spy(sap.ui.require, "load");
+			window.fixture = window.fixture || {};
+			window.fixture["async-sync-conflict"] = {
+				executions: 0,
+				EXPECTED_EXPORT: {}
+			};
+		},
+		afterEach: function() {
+			this.logger.warning.restore();
+			sap.ui.require.load.restore();
+			delete window.fixture["async-sync-conflict"];
+		}
+	});
 
 	QUnit.test("Warning Message", function(assert) {
 		var done = assert.async();
-		var logger = sap.ui.loader._.logger;
-
-		sinon.spy(logger, "warning");
 
 		// Act:
 		// first require async
@@ -603,12 +616,11 @@
 
 		// Assert:
 		assert.ok(
-			logger.warning.calledWith(
+			this.logger.warning.calledWith(
 				sinon.match(/sync request/i).and(sinon.match(/while async request was already pending/i))
 			),
 			"a warning with the expected text fragments should have been logged");
 
-		logger.warning.restore();
 	});
 
 	// this test only exists to prove that the module is executed twice in case of an async/sync conflict
@@ -651,6 +663,132 @@
 			delete window.aModuleExecutions;
 			document.head.appendChild.restore();
 		});
+
+	});
+
+	function testConflictScenario(assert, moduleName, moduleNameForSyncRequire, executions) {
+
+		moduleNameForSyncRequire = moduleNameForSyncRequire || moduleName;
+		executions = executions || 1;
+
+		// preconditions
+		assert.notOk(sap.ui.require(moduleName), "module must not have been loaded when the test starts");
+		assert.notOk(sap.ui.require(moduleNameForSyncRequire), "module must not have been loaded when the test starts");
+
+		// Act:
+		// async request for the module
+		var whenLoaded = new Promise(function(resolve, reject) {
+			sap.ui.require([moduleName], function(oModuleExport) {
+				assert.strictEqual(oModuleExport, window.fixture["async-sync-conflict"].EXPECTED_EXPORT, "async require should provide the expected module export");
+				resolve();
+			}, reject);
+		});
+
+		// conflicting sync request for the same class
+		var oModuleExportSync = sap.ui.requireSync(moduleNameForSyncRequire);
+
+		// Assert
+		assert.strictEqual(oModuleExportSync, window.fixture["async-sync-conflict"].EXPECTED_EXPORT, "sync require should return the expected module export");
+
+		return whenLoaded.then(function() {
+			assert.equal(window.fixture["async-sync-conflict"].executions, executions, "required module should have been executed only once");
+			assert.ok(
+				!sap.ui.require.load.calledWithMatch(sinon.match.any, moduleName + ".js"),
+				"module should not have been requested externally");
+			assert.notOk(window.fixture["async-sync-conflict"].externalModuleLoaded, "flag for external module must not have been set");
+		});
+
+	}
+
+
+	QUnit.test("Conflict for a preloaded module (sap.ui.define)", function(assert) {
+
+		// prepare
+		sap.ui.predefine("fixture/async-sync-conflict/SomeModuleUsingDefine", [], function() {
+			window.fixture["async-sync-conflict"].executions++;
+			return window.fixture["async-sync-conflict"].EXPECTED_EXPORT;
+		});
+
+		// Act and Assert
+		return testConflictScenario(assert, "fixture/async-sync-conflict/SomeModuleUsingDefine");
+	});
+
+	QUnit.test("Conflict for a preloaded module (sap.ui.define, no matching module definition)", function(assert) {
+
+		// prepare
+		sap.ui.require.preload({
+			"fixture/async-sync-conflict/SomeModuleUsingDefineNoMatch.js": function() {
+				sap.ui.define("fixture/async-sync-conflict/InconsistentName", [], function() {
+					window.fixture["async-sync-conflict"].executions++;
+					return window.fixture["async-sync-conflict"].EXPECTED_EXPORT;
+				});
+			}
+		});
+
+		// Act and Assert
+		return testConflictScenario(assert, "fixture/async-sync-conflict/SomeModuleUsingDefineNoMatch");
+	});
+
+	QUnit.test("Conflict for a preloaded module (jQuery.sap.declare)", function(assert) {
+
+		// prepare
+		// a substitute
+
+		sap.ui.require.preload({
+			"fixture/async-sync-conflict/SomeModuleUsingDeclare.js": function() {
+				function jQuerySapDeclare(module) {
+					module = module.replace(/\./g, "/") + ".js";
+					sap.ui.loader._.declareModule(module);
+				}
+				jQuerySapDeclare("fixture.async-sync-conflict.SomeModuleUsingDeclare");
+				window.fixture["async-sync-conflict"].executions++;
+				window.fixture["async-sync-conflict"].SomeModuleUsingDeclare = window.fixture["async-sync-conflict"].EXPECTED_EXPORT;
+			}
+		});
+
+		// Act and Assert
+		return testConflictScenario(assert, "fixture/async-sync-conflict/SomeModuleUsingDeclare");
+
+	});
+
+	QUnit.test("Conflict for a preloaded module (jQuery.sap.declare + cycle)", function(assert) {
+
+		// prepare
+		// a substitute
+
+		sap.ui.require.preload({
+			"fixture/async-sync-conflict/SomeModuleUsingDeclareWithCycle.js": function() {
+				function jQuerySapDeclare(module) {
+					module = module.replace(/\./g, "/") + ".js";
+					sap.ui.loader._.declareModule(module);
+				}
+				jQuerySapDeclare("fixture.async-sync-conflict.SomeModuleUsingDeclareWithCycle");
+				window.fixture["async-sync-conflict"].executions++;
+				window.fixture["async-sync-conflict"].SomeModuleUsingDeclareWithCycle = window.fixture["async-sync-conflict"].EXPECTED_EXPORT;
+				sap.ui.requireSync("fixture/async-sync-conflict/SomeModuleUsingDeclareWithCycle");
+			}
+		});
+
+		// Act and Assert
+		// Note: When the sync/async conflict is detected, we're in the middle of the first execution.
+		//       Together with the then necessary sync re-execution, we measure 2 executions.
+		//       Only the delayed execution of AMD modules can prevent this
+		return testConflictScenario(assert, "fixture/async-sync-conflict/SomeModuleUsingDeclareWithCycle", null, 2);
+
+	});
+
+	QUnit.test("Conflict for a preloaded module (global script)", function(assert) {
+
+		// prepare
+		sap.ui.require.preload({
+			"fixture/async-sync-conflict/SomeGlobalScript.js": function() {
+				window.fixture["async-sync-conflict"].executions++;
+				window.fixture["async-sync-conflict"].SomeGlobalScript = window.fixture["async-sync-conflict"].EXPECTED_EXPORT;
+			}
+		});
+
+		// Act and Assert
+		return testConflictScenario(assert, "fixture/async-sync-conflict/SomeGlobalScript");
 
 	});
 

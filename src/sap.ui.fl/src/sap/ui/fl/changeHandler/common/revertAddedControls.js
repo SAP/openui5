@@ -29,9 +29,16 @@ sap.ui.define([
 		var oView = mPropertyBag.view || Utils.getViewForControl(oControl);
 		var oAppComponent = mPropertyBag.appComponent;
 		var aRevertData = oChange.getRevertData() || [];
-		var aControlsToRemove = aRevertData.map(function(sId) {
+		var aControlsToRemove = aRevertData.map(function (vRevert) {
+			var sControlId;
+			if (typeof vRevert === "string") {
+				sControlId = vRevert;
+			} else {
+				sControlId = vRevert.id;
+				sAggregationName = sAggregationName || vRevert.aggregationName;
+			}
 			// when we apply the change in XML and revert in JS, the saved ID is not yet concatinated with the view
-			return oModifier.bySelector(sId, oAppComponent, oView) || oView && oView.createId && oModifier.bySelector(oView.createId(sId));
+			return oModifier.bySelector(sControlId, oAppComponent, oView) || oView && oView.createId && oModifier.bySelector(oView.createId(sControlId));
 		});
 
 		aControlsToRemove.forEach(function(oControlToRemove) {

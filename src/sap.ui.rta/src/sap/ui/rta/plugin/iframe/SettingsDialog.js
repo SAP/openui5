@@ -34,6 +34,7 @@ sap.ui.define([
 		sizeTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_TITLE"),
 		widthLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_WIDTH_LABEL"),
 		heightLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_HEIGHT_LABEL"),
+		percentUseLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_PERCENT_USED"),
 		urlTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_URL_TITLE"),
 		saveText: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_BUTTON_SAVE"),
 		cancelText: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_BUTTON_CANCEL"),

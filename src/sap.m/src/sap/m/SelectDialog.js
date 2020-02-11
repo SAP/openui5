@@ -316,8 +316,7 @@ function(
 	 */
 	SelectDialog.prototype.init = function () {
 		var that = this,
-			iLiveChangeTimer = 0,
-			fnDialogEscape = null;
+			iLiveChangeTimer = 0;
 
 		this._bAppendedToUIArea = false;
 		this._bInitBusy = false;
@@ -414,22 +413,16 @@ function(
 			leftButton: this._getCancelButton(),
 			initialFocus: (Device.system.desktop ? this._oSearchField : null),
 			draggable: this.getDraggable() && Device.system.desktop,
-			resizable: this.getResizable() && Device.system.desktop
-		}).addStyleClass("sapMSelectDialog", true);
+			resizable: this.getResizable() && Device.system.desktop,
+			escapeHandler: function (oPromiseWrapper) {
+				//CSN# 3863876/2013: ESC key should also cancel dialog, not only close it
+				that._onCancel();
+				oPromiseWrapper.resolve();
+			}
+		}).addStyleClass("sapMSelectDialog");
 		// for downward compatibility reasons
 		this._dialog = this._oDialog;
 		this.setAggregation("_dialog", this._oDialog);
-
-		//CSN# 3863876/2013: ESC key should also cancel dialog, not only close it
-		fnDialogEscape = this._oDialog.onsapescape;
-		this._oDialog.onsapescape = function (oEvent) {
-			// call original escape function of the dialog
-			if (fnDialogEscape) {
-				fnDialogEscape.call(that._oDialog, oEvent);
-			}
-			// execute cancel action
-			that._onCancel();
-		};
 
 		// internally set top and bottom margin of the dialog to 4rem respectively
 		// CSN# 333642/2014: in base theme the parameter sapUiFontSize is "medium", implement a fallback

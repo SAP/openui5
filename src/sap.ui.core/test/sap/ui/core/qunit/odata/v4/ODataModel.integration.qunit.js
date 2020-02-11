@@ -2059,9 +2059,145 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: relative ODLB without cache; late property does not attach, but requests the value
-	// itself.
-	// JIRA: CPOUI5UISERVICESV3-2021
+	// Scenario: Return value context with data in cache, multiple context bindings w/o cache below,
+	// multiple property bindings below these context bindings requesting their value late. One
+	// request for all properties must occur. (The scenario of the incident.)
+	// BCP: 2080093480
+	QUnit.test("BCP: 2080093480", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Text id="id1" text="{SalesOrderID}"/>\
+	<FlexBox id="action" binding="{' + sAction + '(...)}"/>\
+</FlexBox>\
+<FlexBox id="result">\
+	<Text id="id2" text="{SalesOrderID}"/>\
+	<FlexBox binding="{}">\
+		<Text id="note" text="{Note}"/>\
+		<Text id="language" text="{NoteLanguage}"/>\
+	</FlexBox>\
+	<FlexBox binding="{SO_2_BP}">\
+		<Text id="name" text="{CompanyName}"/>\
+		<Text id="legalForm" text="{LegalForm}"/>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID", {SalesOrderID : "1"})
+			.expectChange("id1", "1")
+			.expectChange("id2")
+			.expectChange("note")
+			.expectChange("language")
+			.expectChange("name")
+			.expectChange("legalForm");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+				method : "POST",
+				url : "SalesOrderList('1')/" + sAction,
+				payload : {}
+			}, {
+				SalesOrderID : "1"
+			});
+
+			return Promise.all([
+				that.oView.byId("action").getElementBinding().execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			var oReturnValueContext = aResults[0];
+
+			that.expectChange("id2", "1")
+				.expectRequest("SalesOrderList('1')?$select=Note,NoteLanguage,SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,LegalForm)", {
+					Note : "Note #1",
+					NoteLanguage : "en",
+					SalesOrderID : "1",
+					SO_2_BP : {
+						BusinessPartnerID : "2",
+						CompanyName : "TECUM",
+						LegalForm : "Ltd"
+					}
+				})
+				.expectChange("note", "Note #1")
+				.expectChange("language", "en")
+				.expectChange("name", "TECUM")
+				.expectChange("legalForm", "Ltd");
+
+			that.oView.byId("result").setBindingContext(oReturnValueContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: relative ODCB without cache; late property must be added to the parent cache.
+	// BCP: 2080093480
+	QUnit.test("ODCB w/o cache: late property", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="outer" binding="{/SalesOrderList(\'1\')}">\
+	<FlexBox id="inner" binding="{SO_2_BP}">\
+		<Text id="companyName" text="{CompanyName}"/>\
+	</FlexBox>\
+</FlexBox>\
+<Text id="legalForm" text="{LegalForm}" />',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+				SalesOrderID : "1",
+				SO_2_BP : {
+					BusinessPartnerID : "2",
+					CompanyName : "TECUM"
+				}
+			})
+			.expectChange("companyName", "TECUM")
+			.expectChange("legalForm");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_BP?$select=BusinessPartnerID,LegalForm", {
+					BusinessPartnerID : "2",
+					LegalForm : "Ltd"
+				})
+				.expectChange("legalForm", "Ltd");
+
+			// select an item
+			that.oView.byId("legalForm").setBindingContext(
+				that.oView.byId("inner").getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test - value must be in the parent cache
+			assert.strictEqual(
+				that.oView.byId("inner").getBindingContext().getProperty("LegalForm"),
+				"Ltd"
+			);
+
+			that.expectChange("legalForm", null);
+
+			// TODO this should remove the property from the query options again
+			that.oView.byId("legalForm").setBindingContext(null);
+
+			that.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,LegalForm)", {
+					SalesOrderID : "1",
+					SO_2_BP : {
+						BusinessPartnerID : "2",
+						CompanyName : "TECUM (refreshed)",
+						LegalForm : "Ltd"
+					}
+				})
+				.expectChange("companyName", "TECUM (refreshed)");
+
+			that.oView.byId("outer").getObjectBinding().refresh();
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: relative ODLB without cache; late property must be added to the parent cache.
+	// BCP: 2080093480
 	QUnit.test("ODLB w/o cache: late property", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -2085,10 +2221,12 @@ sap.ui.define([
 			.expectChange("quantity");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			// the late property does not attach, but requests the value itself
 			that.expectRequest(
-				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')/Quantity", {
-					value : "5"
+				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')?"
+				+ "$select=ItemPosition,Quantity,SalesOrderID", {
+					ItemPosition : "0010",
+					SalesOrderID : "1",
+					Quantity : "5"
 				})
 				.expectChange("quantity", "5.000");
 
@@ -2097,6 +2235,12 @@ sap.ui.define([
 				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(
+				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]
+					.getProperty("Quantity"),
+				"5"
+			);
 		});
 	});
 

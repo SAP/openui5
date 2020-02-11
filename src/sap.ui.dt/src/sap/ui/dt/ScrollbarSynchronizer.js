@@ -46,7 +46,8 @@ function(
 				}
 			},
 			events: {
-				synced: {}
+				synced: {},
+				destroyed: {}
 			}
 		},
 		_bSyncing: false,
@@ -172,6 +173,9 @@ function(
 		this.getTargets().forEach(function (oDomNode) {
 			this.removeTarget(oDomNode);
 		}, this);
+		window.cancelAnimationFrame(this.animationFrame);
+		this._bSyncing = false;
+		this.fireDestroyed();
 
 		ManagedObject.prototype.destroy.apply(this, arguments);
 	};

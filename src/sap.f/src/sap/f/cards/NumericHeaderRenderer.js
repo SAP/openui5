@@ -16,6 +16,9 @@ sap.ui.define([],
 		 * @param {sap.f.cards.NumericHeader} oControl An object representation of the control that should be rendered
 		 */
 		NumericHeaderRenderer.render = function (oRm, oControl) {
+			var oDetails = oControl.getAggregation("_details"),
+				oToolbar = oControl.getToolbar();
+
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapFCardHeader");
@@ -32,15 +35,34 @@ sap.ui.define([],
 			oRm.writeStyles();
 			oRm.write(">");
 
+
+			oRm.write("<div");
+			oRm.addClass("sapFCardHeaderContent");
+			oRm.writeClasses();
+			oRm.write(">");
+
 			NumericHeaderRenderer.renderHeaderText(oRm, oControl);
 
 			NumericHeaderRenderer.renderIndicators(oRm, oControl);
 
-			var oDetails = oControl.getAggregation("_details");
 			if (oDetails && oDetails.getText()) {
 				oDetails.addStyleClass("sapFCardHeaderDetails");
 				oRm.renderControl(oDetails);
 			}
+
+			oRm.write("</div>");
+
+			if (oToolbar) {
+				oRm.write("<div");
+				oRm.addClass("sapFCardHeaderToolbar");
+				oRm.writeClasses();
+				oRm.write(">");
+
+				oRm.renderControl(oToolbar);
+
+				oRm.write("</div>");
+			}
+
 
 			oRm.write("</div>");
 		};
@@ -75,6 +97,7 @@ sap.ui.define([],
 
 			if (sStatus) {
 				oRm.write("<span");
+				oRm.writeAttribute('id', oControl.getId() + '-status');
 				oRm.addClass("sapFCardStatus");
 				oRm.writeClasses();
 				oRm.write(">");

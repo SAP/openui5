@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/matchers/LabelFor",
 	"sap/ui/test/actions/Press",
 	"sap/ui/testrecorder/Dialects"
-], function(Opa5, Common, testTreeAPI, AggregationLengthEquals, Properties, Ancestor, Press, Dialects) {
+], function(Opa5, Common, testTreeAPI, AggregationLengthEquals, Properties, Ancestor, LabelFor, Press, Dialects) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -37,6 +38,55 @@ sap.ui.define([
 							});
 						},
 						errorMessage: "Cannot open the dialect dropdown items"
+					});
+				},
+				iOpenTheSettingsDialog: function () {
+					this.waitFor({
+						matchers: function () {
+							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+								controlType: "sap.ui.core.Icon",
+								matchers: new Properties({
+									src: "sap-icon://settings"
+								})
+							});
+						}.bind(this),
+						actions: new Press(),
+						errorMessage: "Cannot open the settings dialog"
+					});
+				},
+				iSelectViewIdPreference: function () {
+					return this.iSelectSettingCheckBox("Prefer view ID over global ID", "viewId");
+				},
+				iSelectPOMethodPreference: function () {
+					return this.iSelectSettingCheckBox("Show snippets in page object methods", "formatAsPoMethod");
+				},
+				iSelectSettingCheckBox: function (sLabel, sPreference) {
+					this.waitFor({
+						matchers: function () {
+							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+								controlType: "sap.m.CheckBox",
+								searchOpenDialogs: true,
+								matchers: new Properties({
+									text: sLabel
+								})
+							});
+						}.bind(this),
+						actions: new Press(),
+						success: function () {
+							return this.waitFor({
+								matchers: function () {
+									return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+										controlType: "sap.m.Button",
+										matchers: new Properties({
+											text: "Close"
+										})
+									});
+								}.bind(this),
+								actions: new Press(),
+								errorMessage: "Cannot press the close button"
+							});
+						},
+						errorMessage: "Cannot change the " + sPreference + " preference"
 					});
 				}
 			},

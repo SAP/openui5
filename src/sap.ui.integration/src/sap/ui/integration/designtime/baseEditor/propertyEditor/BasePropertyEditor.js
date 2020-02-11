@@ -3,18 +3,26 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"./../util/ObjectBinding",
+	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
+	"./../util/isAggregationTemplate",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Label",
 	"sap/ui/core/Fragment",
-	"sap/base/util/restricted/_merge"
+	"sap/base/util/restricted/_merge",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/integration/designtime/baseEditor/util/createPromise",
+	"sap/base/util/ObjectPath"
 ], function (
 	Control,
 	ObjectBinding,
+	isAggregationTemplate,
 	JSONModel,
 	Label,
 	Fragment,
-	_merge
+	_merge,
+	ManagedObjectObserver,
+	createPromise,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -60,11 +68,12 @@ sap.ui.define([
 				 */
 				valueChange: {
 					parameters: {
-						/**
-						 * Path in the context object where the change should happen
-						 */
-						path: {type: "string"},
-						value: {type: "any"}
+						path: {
+							type: "string"
+						},
+						value: {
+							type: "any"
+						}
 					}
 				},
 				/**
@@ -75,7 +84,7 @@ sap.ui.define([
 		},
 		/**
 		 * Path to the fragment xml that should be loaded for an editor
-		*/
+		 */
 		xmlFragment: null,
 
 		constructor: function() {
@@ -84,10 +93,180 @@ sap.ui.define([
 			this._oConfigModel.setDefaultBindingMode("OneWay");
 			this.setModel(this._oConfigModel);
 			this.setBindingContext(this._oConfigModel.getContext("/"));
+			this._setReady(false); // Ready state of the editor, will be evaluated when a value is set
+			this._aEditorWrappers = [];
 
+			this._bInitFinished = false; // Set to true after the fragment was loaded and asyncInit was executed
 			this._loadFragment()
 				.then(this.asyncInit.bind(this))
-				.then(this.fireReady.bind(this));
+				.then(function () {
+					this._bInitFinished = true;
+					// When the expected wrapper count was already set, initialization finished after the editor
+					// value was set and the ready check might already have been executed and failed
+					// Therefore execute the check again
+					if (typeof this._iExpectedWrapperCount !== "undefined") {
+						this._checkReadyState();
+					}
+				}.bind(this));
+		},
+
+		/**
+		 * Sets the editor value. If no value is provided, the default value provided
+		 * in the config will be used instead. This method triggers the ready check,
+		 * therefore it should also be called when overridden in complex editors.
+		 *
+		 * @param {*} [vValue] - Editor value that was already processed by a custom setValue implementation
+		 */
+		setValue: function (vValue) {
+			// FIXME: do not mutate existing JS object! Prefer this.getModel().getData() / this.getModel().setData()
+			var oConfig = this.getConfig();
+
+			if (typeof vValue === "undefined" && typeof oConfig.defaultValue !== "undefined") {
+				vValue = oConfig.defaultValue;
+			}
+
+			this._oConfigModel.setData(Object.assign(
+				{},
+				oConfig,
+				{
+					value: vValue
+				}
+			));
+			oConfig.value = vValue; // backward compatibility
+
+			this._iExpectedWrapperCount = this.getExpectedWrapperCount(vValue);
+			// If the value of the editor changes, its nested editors might have changed as well
+			// Therefore it must reevaluate the ready state
+			this._checkReadyState();
+		},
+
+		/**
+		 * Returns the number of wrappers that a complex editor should wait for.
+		 * Should be overridden by all complex editors which depend on children.
+		 * If the method is not overridden, it returns 0 which means that the editor is ready.
+		 * @param {*} vValue - Value of the editor
+		 * @returns {number} Number of wrappers to wait for, default is 0
+		 */
+		getExpectedWrapperCount: function (vValue) {
+			return 0;
+		},
+
+		_checkReadyState: function () {
+			if (this._mWrapperReadyCheck) {
+				// Cancel the old ready check as the nested wrappers have changed
+				this._mWrapperReadyCheck.cancel();
+			}
+			if (!this._bInitFinished) {
+				// The editor itself is not ready yet, no need to check nested editors
+				this._setReady(false);
+				return;
+			}
+			if (typeof this._iExpectedWrapperCount === "undefined") {
+				// Ready check was not initialized
+				// If the expected wrapper count is not set then BasePropertyEditor.setValue was not correctly
+				// called or the getExpectedWrapperCount calculation returns an invalid value
+				this._setReady(false);
+				throw new Error("Ready check was executed before setting the number of expected wrappers. Did you call BasePropertyEditor.prototype.setValue from your editor?");
+			} else if (this._iExpectedWrapperCount === 0) {
+				// If the editor is not complex and no nested editors are expected
+				// the ready check resolves immediately
+				this._setReady(true);
+				return;
+			}
+
+			// Wait for the expected number of wrappers to report to the editor via _wrapperInit
+			// If all wrappers are initialized, execute the ready check
+			if (this._iExpectedWrapperCount === this._aEditorWrappers.length) {
+				if (
+					this._aEditorWrappers.every(function (oWrapper) {
+						return oWrapper.isReady();
+					})
+				) {
+					// Editors haven't changed and are still ready
+					this._setReady(true);
+				} else {
+					this._setReady(false);
+					this._mWrapperReadyCheck = createPromise(function (resolve) {
+						Promise.all(this._aEditorWrappers.map(function (oWrapper) {
+							return oWrapper.ready(); // Check the ready state of each nested editor
+						})).then(resolve);
+					}.bind(this));
+					this._mWrapperReadyCheck.promise.then(function () {
+						// All nested editors are ready
+						this._setReady(true);
+						delete this._mWrapperReadyCheck;
+					}.bind(this));
+				}
+			} else {
+				this._setReady(false);
+			}
+		},
+
+		/**
+		 * Method to be passed to the nested editor wrapper as a callback for the ready event.
+		 * Registers the source of the <code>oEvent</code> on the editor as an element to consider
+		 * for the ready check.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - Init event of the nested editor
+		 */
+		wrapperInit: function (oEvent) {
+			var oWrapper = oEvent.getSource();
+			if (isAggregationTemplate(oWrapper)) {
+				// The element is part of the template of the aggregation binding
+				// and not a real wrapper
+				return;
+			}
+			this._aEditorWrappers.push(oWrapper);
+			oWrapper.attachReady(function () {
+				// If a nested editor got unready without a value change on the parent editor
+				// the ready state needs to be explicitly reevaluated to fire ready from the parent again
+				this._setReady(false);
+				this._checkReadyState();
+			}.bind(this));
+			// If the editor contains nested editors and setValue is called for the first time
+			// an observer is created to handle the destruction of nested wrappers
+			if (!this._oWrapperObserver) {
+				// Observe wrappers which are registered on the complex editor
+				// to remove them from the ready check list when they are destroyed
+				this._oWrapperObserver = new ManagedObjectObserver(function (mutation) {
+					this._aEditorWrappers = this._aEditorWrappers.filter(function (oEditorWrapper) {
+						return oEditorWrapper !== mutation.object;
+					});
+				}.bind(this));
+			}
+			this._oWrapperObserver.observe(oWrapper, {
+				destroy: true
+			});
+			// A new nested editor wrapper was registered, therefore the ready state must be reevaluated
+			this._checkReadyState();
+		},
+
+		_setReady: function (readyState) {
+			var bPreviousReadyState = this._bIsReady;
+			this._bIsReady = readyState;
+			if (bPreviousReadyState !== true && readyState === true) {
+				// If the editor was not ready before, fire the ready event
+				this.fireReady();
+			}
+		},
+
+		isReady: function () {
+			return !!this._bIsReady;
+		},
+
+		/**
+		 * Wait for the editor to be ready.
+		 * @returns {Promise} Promise which will resolve once the editor is ready. Resolves immediately if the editor is currently ready.
+		 */
+		ready: function () {
+			return new Promise(function (resolve) {
+				if (this.isReady()) {
+					// The editor is already ready, resolve immediately
+					resolve();
+				} else {
+					this.attachEventOnce("ready", resolve);
+				}
+			}.bind(this));
 		},
 
 		_loadFragment: function () {
@@ -122,6 +301,9 @@ sap.ui.define([
 			if (this._oConfigBinding) {
 				this._oConfigBinding.destroy();
 			}
+			if (this._oWrapperObserver) {
+				this._oWrapperObserver.destroy();
+			}
 		},
 
 		setConfig: function(oConfig) {
@@ -136,15 +318,6 @@ sap.ui.define([
 			return vReturn;
 		},
 
-		onValueChange: function(vValue) {
-			// FIXME: do not mutate existing JS object! Prefer this.getModel().getData() / this.getModel().setData()
-			var oConfig = this.getConfig();
-			if (typeof oConfig.value === "undefined" && oConfig.defaultValue) {
-				oConfig.value = oConfig.defaultValue;
-				this._oConfigModel.checkUpdate();
-			}
-		},
-
 		getValue: function () {
 			return this.getConfig().value;
 		},
@@ -154,7 +327,17 @@ sap.ui.define([
 			var oJsonModel = this.getModel("_context");
 			if (oJsonModel && oConfig) {
 				if (oConfig.path && !oConfig.value) {
-					oConfig.value = "{context>" + oConfig.path + "}";
+					oConfig = Object.assign(
+						{},
+						oConfig,
+						{
+							value: "{context>" + oConfig.path + "}"
+						}
+					);
+					// backward compatibility
+					this.getConfig().value = oConfig.value;
+				} else {
+					this.setValue(oConfig.value); // backwards compatibility
 				}
 				// resolve binding strings
 				if (!this._oConfigBinding) {
@@ -166,16 +349,19 @@ sap.ui.define([
 					this._oConfigBinding.attachChange(function(oEvent) {
 						this._oConfigModel.checkUpdate();
 						if (oEvent.getParameter("path") === "value") {
-							this.onValueChange(oEvent.getParameter("value"));
+							this.setValue(oEvent.getParameter("value"));
+						} else {
+							// backward compatibility
+							ObjectPath.set(
+								oEvent.getParameter("path").split("/"),
+								oEvent.getParameter("value"),
+								this.getConfig()
+							);
 						}
 					}.bind(this));
 				}
 
 				this._oConfigBinding.setObject(oConfig);
-				//
-				this._oConfigModel.setData(oConfig);
-				// this._oConfigModel.checkUpdate();
-				this.onValueChange(oConfig.value);
 			}
 		},
 
@@ -210,7 +396,7 @@ sap.ui.define([
 			oRm.close("div");
 		},
 
-		fireValueChange: function(vValue) {
+		fireValueChange: function (vValue) {
 			this.fireEvent("valueChange", {
 				path: this.getConfig().path,
 				value: vValue

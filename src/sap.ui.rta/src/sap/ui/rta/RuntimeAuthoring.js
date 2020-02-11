@@ -38,6 +38,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -94,6 +95,7 @@ function(
 	ElementUtil,
 	FlexUtils,
 	LayerUtils,
+	Layer,
 	FeaturesAPI,
 	VersionsAPI,
 	PersistenceWriteAPI,
@@ -282,7 +284,7 @@ function(
 		},
 		_RESTART : {
 			NOT_NEEDED : "no restart",
-			VIA_HASH : "without max layer",
+			VIA_HASH : "CrossAppNavigation",
 			RELOAD_PAGE : "reload"
 		}
 	});
@@ -392,13 +394,9 @@ function(
 			});
 
 			// Add IFrame
-			var oUriParams = UriParameters.fromQuery(window.location.search);
-			var sAddEnableIFrame = oUriParams.get("sap-ui-xx-rta-addiframe");
-			if (sAddEnableIFrame === "true") {
-				this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
-					commandFactory : oCommandFactory
-				});
-			}
+			this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
+				commandFactory : oCommandFactory
+			});
 
 			//ToolHooks
 			this._mDefaultPlugins["toolHooks"] = new ToolHooksPlugin();
@@ -539,6 +537,14 @@ function(
 		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	};
 
+
+	RuntimeAuthoring.prototype._initVersioning = function() {
+		return FeaturesAPI.isVersioningEnabled(this.getLayer())
+			.then(function (bVersioningEnabled) {
+				this._bVersioningEnabled = bVersioningEnabled;
+			}.bind(this));
+	};
+
 	/**
 	 * Start UI adaptation at runtime (RTA).
 	 * @return {Promise} Returns a Promise with the initialization of RTA
@@ -567,8 +573,12 @@ function(
 				return Promise.reject(vError);
 			}
 
-			//Check if the application has personalized changes and reload without them
-			return this._handleHigherLayerChangesOnStart()
+			return this._initVersioning()
+			/*
+			Check if the application has personalized changes and reload without them;
+			Also Check if the application has an available draft and if yes, reload with those changes.
+			 */
+			.then(this._determineReload.bind(this))
 			.then(function(bReloadTriggered) {
 				if (bReloadTriggered) {
 					// FLP Plugin reacts on this error string and doesn't pass the error on the UI
@@ -722,7 +732,7 @@ function(
 	/**
 	 * Checks the publish button, draft buttons(activate and delete) and app variant support (i.e. Save As and Overview of App Variants) availability
 	 * @private
-	 * @returns {Promise<map>} with publishAvailable, publisAppVariantSupported and draftAvailable values
+	 * @returns {Promise<map>} with publishAvailable, publishAppVariantSupported and draftAvailable values
 	 * @description The publish button shall not be available if the system is productive and if a merge error occurred during merging changes into the view on startup
 	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
@@ -730,49 +740,37 @@ function(
 	RuntimeAuthoring.prototype._getToolbarButtonsVisibility = function() {
 		return Promise.all([FeaturesAPI.isPublishAvailable(), this._isDraftAvailable()]).then(function(aArgs) {
 			var bIsPublishAvailable = aArgs[0];
-			var bIsDraftAvailable = aArgs[1];
+			this.bInitialDraftAvailable = aArgs[1];
 			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this.getRootControlInstance(), this.getLayer(), this._oSerializer);
-			var bPublisAppVariantSupported = bIsPublishAvailable && bIsAppVariantSupported;
+			var bPublishAppVariantSupported = bIsPublishAvailable && bIsAppVariantSupported;
 			return {
 				publishAvailable: bIsPublishAvailable,
-				publisAppVariantSupported: bPublisAppVariantSupported,
-				draftAvailable: bIsDraftAvailable
+				publishAppVariantSupported: bPublishAppVariantSupported,
+				draftAvailable: this.bInitialDraftAvailable
 			};
 		}.bind(this));
 	};
 
 	RuntimeAuthoring.prototype._isDraftAvailable = function() {
-		return this._isVersioningEnabled()
-		.then(function (bVersioningEnabled) {
-			if (bVersioningEnabled) {
-				return VersionsAPI.isDraftAvailable();
-			}
-		})
-		.then(function(bDraftAvailable) {
-			if (bDraftAvailable) {
-				return bDraftAvailable;
-			}
-			return this.canUndo();
-		}.bind(this));
+		if (this._bVersioningEnabled) {
+			return VersionsAPI.isDraftAvailable({
+				selector: this.getRootControlInstance(),
+				layer: this.getLayer()
+			})
+			.then(function(bDraftAvailable) {
+				if (bDraftAvailable) {
+					return bDraftAvailable;
+				}
+				return this.canUndo();
+			}.bind(this));
+		}
+
+		return Promise.resolve(false);
 	};
 
 	var fnShowTechnicalError = function(vError) {
 		BusyIndicator.hide();
-		var sErrorMessage = "";
-		if (vError.messages && Array.isArray(vError.messages) && vError.messages.length > 0) {
-			sErrorMessage = vError.messages.reduce(function(sConcatenatedMessage, oErrorResponse) {
-				return sConcatenatedMessage.concat(
-					oErrorResponse.severity === "Error"
-						? oErrorResponse.text + "\n"
-						: ""
-				);
-			}, sErrorMessage);
-		}
-		// when vError.messages doesn't contain valid error messages
-		// or messages are not set with correct severity
-		if (!sErrorMessage) {
-			sErrorMessage = vError.stack || vError.message || vError.status || vError;
-		}
+		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		Log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
 		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
@@ -837,6 +835,8 @@ function(
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
+			var bDraftVisible = this._bVersioningEnabled && (this.bInitialDraftAvailable || bCanUndo);
+			this.getToolbar().setDraftVisible(bDraftVisible);
 		}
 		this.fireUndoRedoStackModified();
 	};
@@ -875,7 +875,7 @@ function(
 				.then(function() {
 					this.fireStop();
 					if (sReload !== this._RESTART.NOT_NEEDED) {
-						this._removeMaxLayerParameter();
+						this._removeParameters();
 						if (sReload === this._RESTART.RELOAD_PAGE) {
 							this._reloadPage();
 						}
@@ -974,15 +974,8 @@ function(
 		window.onbeforeunload = this._oldUnloadHandler;
 	};
 
-	RuntimeAuthoring.prototype._isVersioningEnabled = function () {
-		//TODO: change to FeaturesAPI.isVersioningEnabled(this.getLayer());' as soon as the draft functionality is completed
-		return Promise.resolve(false);
-	};
-
 	RuntimeAuthoring.prototype._serializeAndSave = function() {
-		return this._isVersioningEnabled().then(function (bVersioningEnabled) {
-			return this._oSerializer.saveCommands(bVersioningEnabled);
-		}.bind(this));
+		return this._oSerializer.saveCommands(this._bVersioningEnabled);
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
@@ -1003,6 +996,27 @@ function(
 	RuntimeAuthoring.prototype._onRedo = function() {
 		this._handleStopCutPaste();
 		return this.getCommandStack().redo();
+	};
+
+	RuntimeAuthoring.prototype._onActivateDraft = function() {
+		return this._serializeAndSave()
+		.then(
+			VersionsAPI.activateDraft.bind(undefined, {
+				layer : this.getLayer(),
+				selector : this.getRootControlInstance()
+			})
+		).then(function () {
+			this.bInitialDraftAvailable = false;
+			this.getToolbar().setDraftVisible(false);
+			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
+		}.bind(this));
+	};
+
+	RuntimeAuthoring.prototype._onDiscardDraft = function() {
+		return VersionsAPI.discardDraft({
+			layer: this.getLayer(),
+			selector: this.getRootControlInstance()
+		});
 	};
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
@@ -1039,25 +1053,27 @@ function(
 					modeChange: this._onModeChange.bind(this),
 					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true, this.getLayer()),
 					appVariantOverview: this._onGetAppVariantOverview.bind(this),
-					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, true, true, this.getLayer(), null)
+					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, true, true, this.getLayer(), null),
+					activateDraft: this._onActivateDraft.bind(this),
+					discardDraft: this._onDiscardDraft.bind(this)
 				}), 'toolbar');
 			}
 
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
 
-			if (aButtonsVisibility.publisAppVariantSupported) {
+			if (aButtonsVisibility.publishAppVariantSupported) {
 				// Sets the visibility of 'Save As' button in RTA toolbar
-				this.getToolbar().getControl('saveAs').setVisible(aButtonsVisibility.publisAppVariantSupported);
+				this.getToolbar().getControl('saveAs').setVisible(aButtonsVisibility.publishAppVariantSupported);
 				// Flag which represents either the key user view or SAP developer view
 				var bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
 
 				if (bExtendedOverview) {
 					// Sets the visibility of 'i' menu button (App Variant Overview: SAP developer view) in RTA toolbar
-					this.getToolbar().getControl('appVariantOverview').setVisible(aButtonsVisibility.publisAppVariantSupported);
+					this.getToolbar().getControl('appVariantOverview').setVisible(aButtonsVisibility.publishAppVariantSupported);
 				} else {
 					// Sets the visibility of 'i' button (App Variant Overview: Key user view) in RTA toolbar
-					this.getToolbar().getControl('manageApps').setVisible(aButtonsVisibility.publisAppVariantSupported);
+					this.getToolbar().getControl('manageApps').setVisible(aButtonsVisibility.publishAppVariantSupported);
 				}
 
 				RtaAppVariantFeature.isManifestSupported().then(function(bResult) {
@@ -1140,7 +1156,7 @@ function(
 		return this._serializeToLrep().then(function () {
 			BusyIndicator.hide();
 			var bAppVariantRunning = FlexUtils.isApplicationVariant(this._oRootControl) && !FlexUtils.isVariantByStartupParameter(this._oRootControl);
-			return ((bAppVariantRunning) ? RtaAppVariantFeature.getAppVariantDescriptor(this._oRootControl, this.getLayer()) : Promise.resolve())
+			return ((bAppVariantRunning) ? RtaAppVariantFeature.getAppVariantDescriptor(this._oRootControl) : Promise.resolve())
 				.then(function(oAppVariantDescriptor) {
 					var aAppVariantDescriptor = [];
 					if (oAppVariantDescriptor) {
@@ -1342,7 +1358,8 @@ function(
 
 	/**
 	 * Function to automatically start the rename plugin on a container when it gets created
-	 * @param {object} vAction       The create action from designtime metadata
+	 *
+	 * @param {object} vAction The create action from designtime metadata
 	 * @param {string} sNewControlID The id of the newly created container
 	 */
 	RuntimeAuthoring.prototype._scheduleRenameOnCreatedContainer = function(vAction, sNewControlID) {
@@ -1430,6 +1447,7 @@ function(
 	/**
 	 * Build the navigation arguments object required to trigger the navigation
 	 * using the CrossApplicationNavigation ushell service.
+	 *
 	 * @param  {Object} mParsedHash Parsed URL hash
 	 * @return {Object} Returns argument map ("oArg" parameter of the "toExternal" function)
 	 */
@@ -1447,53 +1465,69 @@ function(
 	};
 
 	/**
-	 * Returns true if the max layer parameter is set to current layer
-	 * (skips personalization and other higher level changes)
+	 * Returns true if the max layer / draft parameter is set to current layer
+	 * (skips personalization and other higher level changes) / applies draft changes
 	 *
 	 * @param  {map} mParsedHash The parsed URL hash
+	 * @param  {string} sParameterName The parameter for which the layer should be checked
 	 * @return {boolean} True if the parameter is in the hash
 	 */
-	RuntimeAuthoring.prototype._hasMaxLayerParameter = function(mParsedHash) {
+	RuntimeAuthoring.prototype._hasParameter = function(mParsedHash, sParameterName) {
 		var sCurrentLayer = this.getLayer();
 		return mParsedHash.params &&
-			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] &&
-			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM][0] === sCurrentLayer;
+			mParsedHash.params[sParameterName] &&
+			mParsedHash.params[sParameterName][0] === sCurrentLayer;
 	};
 
 	/**
 	 * Reload the app inside FLP adding the parameter to skip personalization changes
-	 * @param  {map} mParsedHash URL parsed hash
-	 * @param  {sap.ushell.services.CrossApplicationNavigation} oCrossAppNav ushell service
-	 * @return {Promise} resolving to true if reload was triggered
+	 *
+	 * @param  {map} mParsedHash URL Parsed hash
+	 * @param  {sap.ushell.services.CrossApplicationNavigation} oCrossAppNav Ushell service
+	 * @param  {Object} oReloadInfo Contains the information needed to set the correct url parameters
+	 * @return {Promise} Resolving to true if reload was triggered
 	 */
-	RuntimeAuthoring.prototype._reloadWithoutHigherLayerChangesOnStart = function(mParsedHash, oCrossAppNav) {
-		var sCurrentLayer = this.getLayer();
-		if (!this._hasMaxLayerParameter(mParsedHash)) {
-			if (!mParsedHash.params) {
-				mParsedHash.params = {};
-			}
-			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] = [sCurrentLayer];
-			RuntimeAuthoring.enableRestart(sCurrentLayer);
-			// triggers the navigation without leaving FLP
-			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
-			return Promise.resolve(true);
+	RuntimeAuthoring.prototype._reloadWithMaxLayerOrDraftParam = function(mParsedHash, oCrossAppNav, oReloadInfo) {
+		if (!mParsedHash.params) {
+			mParsedHash.params = {};
 		}
+		if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.hasHigherLayerChanges) {
+			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] = [oReloadInfo.layer];
+		}
+
+		if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM) && oReloadInfo.hasDraftChanges) {
+			mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = [oReloadInfo.layer];
+
+			// clears FlexState and triggers reloading of the flex data without blocking
+			VersionsAPI.loadDraftForApplication({
+				selector: oReloadInfo.selector,
+				layer: oReloadInfo.layer
+			});
+		}
+
+		RuntimeAuthoring.enableRestart(oReloadInfo.layer);
+		// triggers the navigation without leaving FLP
+		oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
+		return Promise.resolve(true);
 	};
 
 	/**
 	 * Reload the app inside FLP removing the parameter to skip personalization changes
 	 * @return {boolean} resolving to true if reload was triggered
 	 */
-	RuntimeAuthoring.prototype._removeMaxLayerParameter = function() {
+	RuntimeAuthoring.prototype._removeParameters = function() {
 		if (FlexUtils.getUshellContainer() && this.getLayer() !== "USER") {
 			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
 			var mParsedHash = FlexUtils.getParsedURLHash();
 			if (oCrossAppNav.toExternal && mParsedHash) {
-				if (this._hasMaxLayerParameter(mParsedHash)) {
+				if (this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM)) {
 					delete mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM];
-					// triggers the navigation without leaving FLP
-					oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 				}
+				if (this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
+					delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
+				}
+				// triggers the navigation without leaving FLP; if parsedHash has changed.
+				oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 			}
 		}
 	};
@@ -1501,16 +1535,29 @@ function(
 	/**
 	 * Handler for the message box warning the user that personalization changes exist
 	 * and the app will be reloaded
+	 *
+	 * @param  {Object} oReloadInfo Information to determine which message to show
 	 * @return {Promise} Resolving when the user clicks on OK
 	 */
-	RuntimeAuthoring.prototype._handleReloadWithoutHigherLayerChangesMessageBoxOnStart = function() {
-		var sLayer = this.getLayer();
-		//Non key user get more technical message
-		var sReason = sLayer === "CUSTOMER" ? "MSG_PERSONALIZATION_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
-		return Utils._showMessageBox(
-			MessageBox.Icon.INFORMATION,
-			"HEADER_PERSONALIZATION_EXISTS",
-			sReason);
+	RuntimeAuthoring.prototype._handleReloadMessageBoxOnStart = function(oReloadInfo) {
+		var sReason;
+		var bIsCustomerLayer = oReloadInfo.layer === "CUSTOMER";
+
+		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.hasDraftChanges) {
+			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_AND_DRAFT_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_AND_DRAFT_EXISTS";
+		} else if (oReloadInfo.hasHigherLayerChanges) {
+			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
+		} else if (oReloadInfo.hasDraftChanges) {
+			sReason = "MSG_DRAFT_EXISTS";
+		}
+
+		if (sReason) {
+			return Utils._showMessageBox(
+				MessageBox.Icon.INFORMATION,
+				"HEADER_PERSONALIZATION_EXISTS",
+				sReason
+			);
+		}
 	};
 
 	/**
@@ -1529,28 +1576,56 @@ function(
 	};
 
 	/**
-	 * Check if there are e.g. personalization changes and restart the application without them
-	 * Warn the user that the application will be restarted without personalization
-	 * This is only valid when a UShell is present
-	 * @return {Promise} Resolving to false means that reload is not necessary
+	 * Check if there are personalization changes/draft changes and restart the application without/with them;
+	 * Warn the user that the application will be restarted without personalization / with draft changes;
+	 * This is only valid when a UShell is present;
+	 *
+	 * @return {Promise<boolean>} Resolving to false means that reload is not necessary
 	 */
-	RuntimeAuthoring.prototype._handleHigherLayerChangesOnStart = function() {
+	RuntimeAuthoring.prototype._determineReload = function() {
 		var oUshellContainer = FlexUtils.getUshellContainer();
-		if (oUshellContainer && this.getLayer() !== "USER") {
-			var mParsedHash = FlexUtils.getParsedURLHash();
-			return PersistenceWriteAPI.hasHigherLayerChanges({
+		if (oUshellContainer) {
+			var oReloadInfo = {
+				hasHigherLayerChanges: false,
+				hasDraftChanges: false,
+				layer: this.getLayer(),
 				selector: this.getRootControlInstance(),
-				ignoreMaxLayerParameter: false})
-				.then(function (bHasHigherLayerChanges) {
-					if (bHasHigherLayerChanges) {
-						return this._handleReloadWithoutHigherLayerChangesMessageBoxOnStart().then(function () {
-							var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
-							if (oCrossAppNav.toExternal && mParsedHash) {
-								return this._reloadWithoutHigherLayerChangesOnStart(mParsedHash, oCrossAppNav);
-							}
-						}.bind(this));
-					}
-				}.bind(this));
+				ignoreMaxLayerParameter: false
+			};
+			var oHigherLayerChangesValidationPromise;
+			var oDraftValidationPromise = false;
+			var mParsedHash = FlexUtils.getParsedURLHash();
+
+			if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.layer !== "USER") {
+				oHigherLayerChangesValidationPromise = PersistenceWriteAPI.hasHigherLayerChanges({
+					selector: oReloadInfo.selector,
+					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter
+				});
+			}
+			if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM) && this._bVersioningEnabled) {
+				oDraftValidationPromise = VersionsAPI.isDraftAvailable({
+					selector: oReloadInfo.selector,
+					layer: oReloadInfo.layer
+				});
+			}
+
+			return Promise.all([
+				oHigherLayerChangesValidationPromise,
+				oDraftValidationPromise
+			])
+			.then(function(aReloadInfo) {
+				oReloadInfo.hasHigherLayerChanges = aReloadInfo[0];
+				oReloadInfo.hasDraftChanges = aReloadInfo[1];
+
+				if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges) {
+					return this._handleReloadMessageBoxOnStart(oReloadInfo).then(function () {
+						var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
+						if (oCrossAppNav.toExternal && mParsedHash) {
+							return this._reloadWithMaxLayerOrDraftParam(mParsedHash, oCrossAppNav, oReloadInfo);
+						}
+					}.bind(this));
+				}
+			}.bind(this));
 		}
 		return Promise.resolve(false);
 	};
@@ -1567,19 +1642,27 @@ function(
 				Promise.resolve(this._bReloadNeeded),
 			// When working with RTA, the MaxLayer parameter will be present in the URL and must
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
-			PersistenceWriteAPI.hasHigherLayerChanges({selector: this.getRootControlInstance(), ignoreMaxLayerParameter: true})
+			PersistenceWriteAPI.hasHigherLayerChanges({selector: this.getRootControlInstance(), ignoreMaxLayerParameter: true}),
+			this._isDraftAvailable()
 		]).then(function (aArgs) {
 			var bChangesNeedRestart = aArgs[0];
 			var bHasHigherLayerChanges = aArgs[1];
-			if (bChangesNeedRestart || bHasHigherLayerChanges) {
+			var bIsDraftAvailable = aArgs[2];
+			if (bChangesNeedRestart || bHasHigherLayerChanges || bIsDraftAvailable) {
 				var sRestart = this._RESTART.RELOAD_PAGE;
 				var sRestartReason;
 				var oUshellContainer;
-				if (bHasHigherLayerChanges) {
+				if (bHasHigherLayerChanges || bIsDraftAvailable) {
 					//Loading the app with personalization means the visualization might change,
 					//therefore this message takes precedence
-					var sLayer = this.getLayer();
-					sRestartReason = sLayer === "CUSTOMER" ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
+					var bIsCustomerLayer = this.getLayer() === Layer.CUSTOMER;
+					if (bHasHigherLayerChanges && bIsDraftAvailable) {
+						sRestartReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT" : "MSG_RELOAD_WITH_ALL_CHANGES";
+					} else if (bHasHigherLayerChanges) {
+						sRestartReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
+					} else if (bIsDraftAvailable) {
+						sRestartReason = "MSG_RELOAD_WITHOUT_DRAFT";
+					}
 					oUshellContainer = FlexUtils.getUshellContainer();
 					if (!bChangesNeedRestart && oUshellContainer) {
 						//if changes need restart this method has precedence, but in this case

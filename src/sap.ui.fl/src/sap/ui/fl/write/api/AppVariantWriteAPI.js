@@ -43,12 +43,6 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
 		 * @param {string} mPropertyBag.id - App variant ID
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Current working layer
-		 * @param {string} [mPropertyBag.package] - Package info for the app variant - Smart Business must pass the package
-		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the transport
-		 * @param {string} [mPropertyBag.version] - Version of the app variant
-		 * @param {string} [mPropertyBag.isForSAPDelivery=false] - Determines whether app variant creation is intended for SAP delivery
-		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by only Smart Business
-		 *
 		 * @returns {Promise} Promise that resolves with the app variant save response
 		 *
 		 * @private
@@ -57,6 +51,9 @@ sap.ui.define([
 		saveAs: function(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
+			}
+			if (!mPropertyBag.id) {
+				return Promise.reject("App variant ID must be provided");
 			}
 			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
 			mPropertyBag.reference = oFlexController.getComponentName();
@@ -69,9 +66,6 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Connectors are now determined based on the layer - Smart Business must pass the layer
-		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the transport
-		 * @param {string} [mPropertyBag.isForSAPDelivery=false] - Determines whether app variant deletion is intended for SAP delivery
-		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by only Smart Business
 		 * @returns {Promise} Promise that resolves with the app variant deletion response
 		 *
 		 * @private
@@ -97,6 +91,9 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		listAllAppVariants: function(mPropertyBag) {
+			if (!mPropertyBag.layer) {
+				return Promise.reject("Layer must be provided");
+			}
 			return _callAppVariantFunction("list", mPropertyBag);
 		},
 		/**
@@ -113,11 +110,14 @@ sap.ui.define([
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
+			if (!mPropertyBag.appVarUrl) {
+				return Promise.reject("appVarUrl must be provided");
+			}
 			// Since this method is only called for Save As App Variant scenario on ABAP platform, the direct usage of write LrepConnector is triggered.
 			return LrepConnector.appVariant.getManifest(mPropertyBag);
 		},
 		/**
-		 * Assigns the same catalogs to app varriant as of reference application
+		 * Assigns the same catalogs to app variant as of reference application
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Connectors are now determined based on the layer
@@ -129,6 +129,15 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		assignCatalogs: function(mPropertyBag) {
+			if (!mPropertyBag.layer) {
+				return Promise.reject("Layer must be provided");
+			}
+			if (!mPropertyBag.assignFromAppId) {
+				return Promise.reject("assignFromAppId must be provided");
+			}
+			if (!mPropertyBag.action) {
+				return Promise.reject("action must be provided");
+			}
 			return _callAppVariantFunction("assignCatalogs", mPropertyBag);
 		},
 		/**
@@ -143,6 +152,12 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		unassignCatalogs: function(mPropertyBag) {
+			if (!mPropertyBag.layer) {
+				return Promise.reject("Layer must be provided");
+			}
+			if (!mPropertyBag.action) {
+				return Promise.reject("action must be provided");
+			}
 			return _callAppVariantFunction("unassignCatalogs", mPropertyBag);
 		}
 	};

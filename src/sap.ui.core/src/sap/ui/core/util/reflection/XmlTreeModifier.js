@@ -1,3 +1,5 @@
+// valid-jsdoc disabled because this check is validating just the params and return statement and those are all inherited from BaseTreeModifier.
+/* eslint-disable valid-jsdoc */
 /*!
  * ${copyright}
  */
@@ -73,7 +75,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		getStashed: function (oControl) {
-			return this.getProperty(oControl, "stashed");
+			return this.getProperty(oControl, "stashed") || !this.getProperty(oControl, "visible");
 		},
 
 		/**
@@ -490,6 +492,9 @@ sap.ui.define([
 			if (Array.isArray(aControlsInAggregation)) {
 				// to harmonize behavior with JSControlTree, where stashed controls are not added to the parent aggregation
 				aControlsInAggregation = aControlsInAggregation.filter(function(oControl) {
+					if (this._getControlTypeInXml(oControl) === "sap.ui.core.ExtensionPoint") {
+						return true;
+					}
 					return !this.getProperty(oControl, "stashed");
 				}.bind(this));
 
@@ -676,6 +681,30 @@ sap.ui.define([
 			if (oNode.hasAttribute(sAggregationName)) {
 				oNode.removeAttribute(sAggregationName);
 				this.removeAllAggregation(oNode, sAggregationName);
+			}
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		getExtensionPointInfo: function(sExtensionPointName, oView) {
+			if (oView && sExtensionPointName) {
+				var aExtensionPoints = Array.prototype.slice.call(oView.getElementsByTagNameNS("sap.ui.core", "ExtensionPoint"));
+				var aFilteredExtensionPoints = aExtensionPoints.filter(function(oExtPoint) {
+					return oExtPoint.getAttribute("name") === sExtensionPointName;
+				});
+				var oExtensionPoint = (aFilteredExtensionPoints.length === 1) ? aFilteredExtensionPoints[0] : undefined;
+				if (oExtensionPoint) {
+					var oParent = this.getParent(oExtensionPoint);
+					var oExtensionPointInfo = {
+						parent: oParent,
+						aggregation: this.getParentAggregationName(oExtensionPoint, oParent),
+						index: this.findIndexInParentAggregation(oExtensionPoint) + 1,
+						defaultContent: Array.prototype.slice.call(this._children(oExtensionPoint))
+					};
+
+					return oExtensionPointInfo;
+				}
 			}
 		}
 	};

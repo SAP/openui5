@@ -64,22 +64,25 @@ function(
 	};
 
 	TaskRunner.prototype._runTasksFromManager = function () {
-		var aTasks = this._oTaskManager.getList(this._sObservedTaskType);
+		var aTasks = this._oTaskManager.getQueuedTasks(this._sObservedTaskType);
 		if (aTasks.length) {
 			this._runTasks(aTasks);
 		}
 	};
 
 	TaskRunner.prototype._runTasks = function (aTasks) {
+		var aTaskPromises = [];
 		for (var i = 0, n = aTasks.length; i < n; i++) {
 			if (aTasks[i].callbackFn) {
 				try {
-					aTasks[i].callbackFn();
+					aTaskPromises.push(
+						aTasks[i].callbackFn()
+							.then(this._oTaskManager.complete.bind(this._oTaskManager, aTasks[i].id))
+					);
 				} catch (vError) {
 					BaseLog.error(DtUtil.errorToString(vError));
 				}
 			}
-			this._oTaskManager.complete(aTasks[i].id);
 		}
 	};
 

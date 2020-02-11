@@ -145,7 +145,8 @@ function (
 
 			// Place component in container and display
 			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent
+				component: this.oUiComponent,
+				height: '100%'
 			});
 			this.oUiComponentContainer.placeAt(mOptions.placeAt || "qunit-fixture");
 
@@ -164,64 +165,81 @@ function (
 		}
 
 		function buildCommand(assert) {
-			if (typeof mOptions.action.control === "function") {
-				this.oControl = mOptions.action.control(this.oView);
-			} else {
-				this.oControl = this.oView.byId(mOptions.action.controlId);
-			}
-			return this.oControl.getMetadata().loadDesignTime(this.oControl).then(function() {
+			return Promise.resolve().then(function() {
 				var mParameter;
-				if (mOptions.action.parameter) {
-					if (typeof mOptions.action.parameter === "function") {
-						mParameter = mOptions.action.parameter(this.oView);
-					} else {
-						mParameter = mOptions.action.parameter;
-					}
+				var oElementDesignTimeMetadata;
+				if (typeof mOptions.action.control === "function") {
+					this.oControl = mOptions.action.control(this.oView);
 				} else {
-					mParameter = {};
+					this.oControl = this.oView.byId(mOptions.action.controlId);
 				}
+				return this.oControl.getMetadata().loadDesignTime(this.oControl)
+					.then(function () {
+						if (mOptions.action.parameter) {
+							if (typeof mOptions.action.parameter === "function") {
+								mParameter = mOptions.action.parameter(this.oView);
+							} else {
+								mParameter = mOptions.action.parameter;
+							}
+						} else {
+							mParameter = {};
+						}
 
-				sap.ui.getCore().applyChanges();
+						sap.ui.getCore().applyChanges();
+						this.oDesignTime = new DesignTime({
+							rootElements: [
+								this.oView
+							]
+						});
+						return new Promise(function(resolve) {
+							this.oDesignTime.attachEventOnce("synced", function () {
+								this.oControlOverlay = OverlayRegistry.getOverlay(this.oControl);
+								oElementDesignTimeMetadata = this.oControlOverlay.getDesignTimeMetadata();
+								var oResponsibleElement = oElementDesignTimeMetadata.getAction("getResponsibleElement", this.oControl);
 
-				return new Promise(function(resolve) {
-					this.oDesignTime = new DesignTime({
-						rootElements: [
-							this.oView
-						]
-					});
+								if (mOptions.action.name === "move") {
+									var oElementOverlay = OverlayRegistry.getOverlay(mParameter.movedElements[0].element);
+									var oRelevantContainer = oElementOverlay.getRelevantContainer();
+									this.oControl = oRelevantContainer;
+									oElementDesignTimeMetadata = oElementOverlay.getParentAggregationOverlay().getDesignTimeMetadata();
+								} else if (mOptions.action.name === "addODataProperty") {
+									var aAddODataPropertyActions = oElementDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", this.oControl);
+									assert.equal(aAddODataPropertyActions.length, 1, "there should be only one aggregation with the possibility to do addODataProperty action");
+									var oAggregationOverlay = this.oControlOverlay.getAggregationOverlay(aAddODataPropertyActions[0].aggregation);
+									oElementDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
+								} else if (oResponsibleElement) {
+									if (mOptions.action.name === "reveal") {
+										this.oControl = mOptions.action.revealedElement(this.oView);
+										this.oControlOverlay = OverlayRegistry.getOverlay(mOptions.action.revealedElement(this.oView));
+										oElementDesignTimeMetadata = this.oControlOverlay.getDesignTimeMetadata();
+									} else {
+										this.oControl = oResponsibleElement;
+										this.oControlOverlay = OverlayRegistry.getOverlay(this.oControl);
+										oElementDesignTimeMetadata = this.oControlOverlay.getDesignTimeMetadata();
+										resolve(this.oControl.getMetadata().loadDesignTime(this.oControl));
+									}
+								}
 
-					this.oDesignTime.attachEventOnce("synced", function() {
-						this.oControlOverlay = OverlayRegistry.getOverlay(this.oControl);
+								resolve();
+							}.bind(this));
+						}.bind(this));
+					}.bind(this))
+					.then(function () {
 						var oCommandFactory = new CommandFactory({
-							flexSettings : {
-								layer : mOptions.layer || "CUSTOMER"
+							flexSettings: {
+								layer: mOptions.layer || "CUSTOMER"
 							}
 						});
-						var oElementDesignTimeMetadata = this.oControlOverlay.getDesignTimeMetadata();
-						if (mOptions.action.name === "move") {
-							var oElementOverlay = OverlayRegistry.getOverlay(mParameter.movedElements[0].element);
-							var oRelevantContainer = oElementOverlay.getRelevantContainer();
-
-							this.oControl = oRelevantContainer;
-							oElementDesignTimeMetadata = oElementOverlay.getParentAggregationOverlay().getDesignTimeMetadata();
-						} else if (mOptions.action.name === "addODataProperty") {
-							var aAddODataPropertyActions = oElementDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", this.oControl);
-							assert.equal(aAddODataPropertyActions.length, 1, "there should be only one aggregation with the possibility to do addODataProperty action");
-							var oAggregationOverlay = this.oControlOverlay.getAggregationOverlay(aAddODataPropertyActions[0].aggregation);
-							oElementDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
-						}
-						oCommandFactory.getCommandFor(this.oControl, mOptions.action.name, mParameter, oElementDesignTimeMetadata)
-						.then(function(oCommand) {
-							this.oCommand = oCommand;
-							assert.ok(oCommand, "then the registration for action to change type, the registration for change and control type to change handler is available and " + mOptions.action.name + " is a valid action");
-							resolve();
-						}.bind(this))
-						.catch(function(oMessage) {
-							throw new Error(oMessage);
-						});
+						return oCommandFactory.getCommandFor(this.oControl, mOptions.action.name, mParameter, oElementDesignTimeMetadata)
+							.then(function (oCommand) {
+								this.oCommand = oCommand;
+								assert.ok(oCommand, "then the registration for action to change type, the registration for change and control type to change handler is available and " + mOptions.action.name + " is a valid action");
+							}.bind(this));
 					}.bind(this));
-				}.bind(this));
-			}.bind(this));
+			}.bind(this))
+				.catch(function (oMessage) {
+					throw new Error(oMessage);
+				});
 		}
 
 		/**

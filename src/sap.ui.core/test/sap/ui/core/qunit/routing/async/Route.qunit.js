@@ -131,7 +131,7 @@ sap.ui.define([
 
 	QUnit.test("Should save the current route as last matched route in the router after _routeMatched is called", function(assert) {
 		this.oRoute1._routeMatched({}, Promise.resolve());
-		assert.strictEqual(this.oRouterStub._matchedRoute, this.oRoute1, "The matched route is saved as last matched route in the router");
+		assert.strictEqual(this.oRouterStub._oMatchedRoute, this.oRoute1, "The matched route is saved as last matched route in the router");
 	});
 
 	QUnit.test("Should fire a switched event", function(assert) {

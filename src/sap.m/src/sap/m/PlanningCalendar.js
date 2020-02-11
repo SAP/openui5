@@ -1629,6 +1629,10 @@ sap.ui.define([
 			return;
 		}
 
+		if (bOtherMonth) {
+			this.fireStartDateChange();
+		}
+
 		if (oRowInstance &&
 			!(oRowInstance.getMode && oRowInstance.getMode() < 2 && !bOtherMonth)) {
 			this.setStartDate(oStart);

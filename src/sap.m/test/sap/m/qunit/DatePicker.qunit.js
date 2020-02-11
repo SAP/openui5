@@ -225,6 +225,44 @@ sap.ui.define([
 		assert.equal(jQuery("#DP7").find("input").val(), "2/10/1437 AH", "DP7: defined islamic output format from binding used");
 	});
 
+	QUnit.test("display format", function(assert) {
+		// arrange
+		var oDatePicker = new DatePicker();
+
+		// act
+		oDatePicker.setDateValue(new Date("2014", "0", "04", "10", "55", "44"));
+		oDatePicker.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oDatePicker.getValue(), "1/4/14", "Default display format should be short");
+
+		// act
+		oDatePicker.setValueFormat("medium");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oDatePicker.getValue(), "Jan 4, 2014", "Display format should be medium");
+
+		// act
+		oDatePicker.setValueFormat("long");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oDatePicker.getValue(), "January 4, 2014", "Display format should be long");
+
+		// act
+		oDatePicker.setValueFormat("short");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oDatePicker.getValue(), "1/4/14", "Display format should be short");
+
+		// cleanup
+		oDatePicker.destroy();
+
+	});
+
 	QUnit.test("ValueHelp icon is not visible when DatePicker is not editable", function (assert) {
 		// arrange
 		var oDatePicker = new DatePicker({ editable: false }),

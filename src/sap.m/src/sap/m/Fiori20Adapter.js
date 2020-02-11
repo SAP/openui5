@@ -16,6 +16,7 @@ sap.ui.define([
 
 	var oEventProvider = new EventProvider(),
 		oInfoToMerge,
+		oChangeListeners,
 		sCurrentlyAdaptedTopNavigableViewId;
 
 
@@ -247,9 +248,10 @@ sap.ui.define([
 		oInfoToMerge = {
 			aViewTitles: {},
 			aViewSubTitles: {},
-			aViewBackButtons: {},
-			aChangeListeners: {}
+			aViewBackButtons: {}
 		};
+
+		oChangeListeners = {};
 		sCurrentlyAdaptedTopNavigableViewId = null;
 
 		this._doBFS([{
@@ -336,13 +338,13 @@ sap.ui.define([
 		this._attachNavigablePageChange(oControl, oAdaptOptions);
 
 		if (isInstanceOf(oControl, "sap/m/Page") || isInstanceOf(oControl, "sap/ui/core/mvc/XMLView")) {
-			this._attachModifyAggregation(oControl, "content", oAdaptOptions);
+			this._observeAddAggregation(oControl, "content", oAdaptOptions);
 		}
 
 		if ((oAdaptOptions.bLateAdaptation === true) && isInstanceOf(oControl, "sap/m/Bar")) {
-			this._attachModifyAggregation(oControl, "contentLeft", oAdaptOptions, oControl);
-			this._attachModifyAggregation(oControl, "contentMiddle", oAdaptOptions, oControl);
-			this._attachModifyAggregation(oControl, "contentRight", oAdaptOptions, oControl);
+			this._observeAddAggregation(oControl, "contentLeft", oAdaptOptions, oControl);
+			this._observeAddAggregation(oControl, "contentMiddle", oAdaptOptions, oControl);
+			this._observeAddAggregation(oControl, "contentRight", oAdaptOptions, oControl);
 		}
 
 		// special case
@@ -368,12 +370,18 @@ sap.ui.define([
 		}
 	};
 
-	Fiori20Adapter._checkHasListener = function(sKey) {
-		return oInfoToMerge.aChangeListeners[sKey];
+	Fiori20Adapter._checkHasListener = function(oControl, sEventType) {
+		var oControlListeners = oChangeListeners[oControl.getId()];
+		return oControlListeners && oControlListeners[sEventType];
 	};
 
-	Fiori20Adapter._setHasListener = function(sKey, oValue) {
-		oInfoToMerge.aChangeListeners[sKey] = oValue;
+	Fiori20Adapter._setHasListener = function(oControl, sEventType, fnListener) {
+		var oControlListeners = oChangeListeners[oControl.getId()];
+		if (!oControlListeners) {
+			oControlListeners = {};
+			oChangeListeners[oControl.getId()] = oControlListeners;
+		}
+		oControlListeners[sEventType] = fnListener;
 	};
 
 	// attaches listener for changes in the adaptable content
@@ -383,8 +391,7 @@ sap.ui.define([
 			return;
 		}
 
-		var sKey = oControl.getId() + "_adaptableContentChange";
-		if (this._checkHasListener(sKey)) {
+		if (this._checkHasListener(oControl, "_adaptableContentChange")) { // already attached
 			return;
 		}
 
@@ -403,7 +410,7 @@ sap.ui.define([
 
 		oControl.attachEvent("_adaptableContentChange", fnOnAdaptableContentChange);
 
-		this._setHasListener(sKey, fnOnAdaptableContentChange);
+		this._setHasListener(oControl, "_adaptableContentChange", fnOnAdaptableContentChange);
 	};
 
 	// attaches listener for changes in the nav container current page
@@ -413,8 +420,7 @@ sap.ui.define([
 			return;
 		}
 
-		var sKey = oControl.getId() + "navigate";
-		if (this._checkHasListener(sKey)) {
+		if (this._checkHasListener(oControl, "navigate")) {
 			return;
 		}
 
@@ -433,14 +439,12 @@ sap.ui.define([
 
 		oControl.attachNavigate(fnOnNavigate);
 
-		this._setHasListener(sKey, fnOnNavigate);
+		this._setHasListener(oControl, "navigate", fnOnNavigate);
 	};
 
-	Fiori20Adapter._attachModifyAggregation = function(oControl, sAggregationName, oAdaptOptions, oControlToRescan) {
+	Fiori20Adapter._observeAddAggregation = function(oControl, sAggregationName, oAdaptOptions, oControlToRescan) {
 
-		var sKey = oControl.getId() + sAggregationName;
-
-		if (this._checkHasListener(sKey)) {
+		if (this._checkHasListener(oControl, sAggregationName)) {
 			return;
 		}
 
@@ -467,7 +471,7 @@ sap.ui.define([
 			aggregations: [sAggregationName]
 		});
 
-		this._setHasListener(sKey, oObserver);
+		this._setHasListener(oControl, sAggregationName, oObserver);
 	};
 
 	Fiori20Adapter._getNodeChildren = function(oControl) {
@@ -699,8 +703,11 @@ sap.ui.define([
 
 		var oTitleInfo = aTitleInfoCache[sViewId]; //get the cached titleInfo for the given view
 
-		if (oTitleInfo && oTitleInfo.oControl && oTitleInfo.sChangeEventId && !oInfoToMerge.aChangeListeners[oTitleInfo.id]) {
+		if (oTitleInfo && oTitleInfo.oControl && oTitleInfo.sChangeEventId) {
 
+			if (this._checkHasListener(oTitleInfo.oControl, oTitleInfo.sChangeEventId)) {
+				return;
+			}
 			var fnChangeListener = function (oEvent) {
 				var oTitleInfo = aTitleInfoCache[sViewId];
 				if (oEvent.getParameter("name") !== oTitleInfo.sPropertyName) {
@@ -711,7 +718,7 @@ sap.ui.define([
 			}.bind(this);
 
 			oTitleInfo.oControl.attachEvent(oTitleInfo.sChangeEventId, fnChangeListener);
-			oInfoToMerge.aChangeListeners[oTitleInfo.id] = fnChangeListener;
+			this._setHasListener(oTitleInfo.oControl, oTitleInfo.sChangeEventId, fnChangeListener);
 		}
 	};
 
@@ -719,7 +726,11 @@ sap.ui.define([
 
 		var bVisible;
 
-		if (oControlInfo && oControlInfo.oControl && oControlInfo.sChangeEventId && !oInfoToMerge.aChangeListeners[oControlInfo.id]) {
+		if (oControlInfo && oControlInfo.oControl && oControlInfo.sChangeEventId) {
+
+			if (this._checkHasListener(oControlInfo.oControl, oControlInfo.sChangeEventId)) {
+				return;
+			}
 
 			var fnChangeListener = function (oEvent) {
 				if (oEvent.getParameter("name") !== oControlInfo.sPropertyName) {
@@ -742,7 +753,7 @@ sap.ui.define([
 			}.bind(this);
 
 			oControlInfo.oControl.attachEvent(oControlInfo.sChangeEventId, fnChangeListener);
-			oInfoToMerge.aChangeListeners[oControlInfo.id] = fnChangeListener;
+			this._setHasListener(oControlInfo.oControl, oControlInfo.sChangeEventId, fnChangeListener);
 		}
 	};
 

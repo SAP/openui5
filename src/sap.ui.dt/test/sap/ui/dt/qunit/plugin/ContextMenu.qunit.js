@@ -61,7 +61,7 @@ sap.ui.define([
 			QUnitUtils.triggerMouseEvent(oOverlay.getDomRef(), sEvent);
 			if (!bRestoreClock) {
 				// context menu has a debouncing of 50 ms
-				this.clock.tick(50);
+				this.clock.tick(52);
 			}
 		}.bind(this));
 	}

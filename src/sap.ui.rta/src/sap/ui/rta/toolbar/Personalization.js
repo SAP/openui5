@@ -48,22 +48,20 @@ function(
 
 	Personalization.prototype.buildControls = function() {
 		var aControls = [
-			new Button({
+			new Button("sapUiRta_restore", {
 				type: "Transparent",
-				text: this.getTextResources().getText("BTN_RESTORE"),
-				tooltip: this.getTextResources().getText("BTN_RESTORE"),
+				text: "{i18n>BTN_RESTORE}",
 				visible: true,
 				press: this.eventHandler.bind(this, 'Restore')
 			}).data('name', 'restore'),
-			new Button({
+			new Button("sapUiRta_exit", {
 				type:"Emphasized",
-				text: this.getTextResources().getText("BTN_DONE"),
-				tooltip: this.getTextResources().getText("BTN_DONE_TOOLTIP"),
+				text: "{i18n>BTN_DONE}",
 				press: this.eventHandler.bind(this, 'Exit')
 			}).data('name', 'exit')
 		];
 
-		return aControls;
+		return Promise.resolve(aControls);
 	};
 
 	Personalization.prototype.setUndoRedoEnabled = function() {

@@ -133,7 +133,12 @@
 		};
 
 		var fnOnItemSelected = function(oEvent) {
-			sap.m.MessageToast.show("Item selected: " + oEvent.getParameter("item").getName(), {duration: 500});
+		    var oItem = oEvent.getParameter("item");
+		    if (oItem) {
+                sap.m.MessageToast.show("Item selected: " + oEvent.getParameter("item").getName(), {duration: 500});
+            } else {
+                sap.m.MessageToast.show("No Items selected", {duration: 500});
+            }
 		};
 
 		var fnCloseItem = function(oEvent) {

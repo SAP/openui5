@@ -20,6 +20,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// Possible types that are supported by the map editor
+	var SUPPORTED_TYPES = {
+		"json": "BASE_EDITOR.MAP.TYPES.OBJECT",
+		"string": "BASE_EDITOR.MAP.TYPES.STRING",
+		"boolean": "BASE_EDITOR.MAP.TYPES.BOOLEAN",
+		"number": "BASE_EDITOR.MAP.TYPES.NUMBER"
+	};
+
 	/**
 	 * @class
 	 * Constructor for a new <code>MapEditor</code>.
@@ -43,23 +51,57 @@ sap.ui.define([
 			this._itemsModel = new JSONModel();
 			this._itemsModel.setDefaultBindingMode("OneWay");
 			this.setModel(this._itemsModel, "itemsModel");
+			this._supportedTypesModel = new JSONModel();
+			this._supportedTypesModel.setDefaultBindingMode("OneWay");
+			this.setModel(this._supportedTypesModel, "supportedTypes");
+			this.attachModelContextChange(function () {
+				if (this.getModel("i18n")) {
+					var oResourceBundle = this.getModel("i18n").getResourceBundle();
+					this._supportedTypesModel.setData(Object.keys(SUPPORTED_TYPES).map(function (sKey) {
+						return {
+							key: sKey,
+							label: oResourceBundle.getText(SUPPORTED_TYPES[sKey])
+						};
+					}));
+				}
+			}, this);
+			this._mTypes = {};
 		},
 
-		onValueChange: function() {
-			var oConfig = this.getConfig();
-			if (oConfig.value) {
-				var aItems = Object.keys(oConfig.value).map(function (sKey) {
-					return {
-						key: sKey,
-						value: [{
-							type: isPlainObject(oConfig.value[sKey]) ? "json" : "string",
-							path: sKey,
-							value: oConfig.value[sKey]
-						}]
-					};
-				});
-				this._itemsModel.setData(aItems);
-			}
+		setValue: function(mValue) {
+			mValue = isPlainObject(mValue) ? mValue : {};
+
+			var aItems = Object.keys(mValue).map(function (sKey) {
+				var oValue = this.formatInputValue(mValue[sKey]);
+				if (!this._mTypes[sKey]) {
+					// Initialize type based on value
+					this._mTypes[sKey] = isPlainObject(oValue) ? "json" : "string";
+				}
+				return {
+					key: sKey,
+					value: [{
+						type: this._mTypes[sKey],
+						path: sKey,
+						value: oValue
+					}]
+				};
+			}, this);
+
+			this._itemsModel.setData(aItems);
+			BasePropertyEditor.prototype.setValue.call(this, mValue);
+		},
+
+		getExpectedWrapperCount: function (mValue) {
+			return Object.keys(mValue).length;
+		},
+
+		/**
+		 * Hook which is called from <code>setValue</code> for every map item value. Can be overridden in order to format the value to fit the editor's requirements.
+		 * @param {object} oValue - Original map item value
+		 * @returns {object} Formatted map item value
+		 */
+		formatInputValue: function(oValue) {
+			return oValue;
 		},
 
 		_onRemoveElement: function(oEvent) {
@@ -116,6 +158,11 @@ sap.ui.define([
 				oInput.setValueState("Error");
 				oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.MAP.DUPLICATE_KEY"));
 			}
+		},
+
+		_onTypeChange: function (oEvent, sKey) {
+			this._mTypes[sKey] = oEvent.getParameter("selectedItem").getKey();
+			this.setValue(this.getValue());
 		},
 
 		_propertyEditorsChange: function (oEvent) {

@@ -12,10 +12,14 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/m/MessageToast",
+	"sap/m/Dialog",
+	"sap/m/CheckBox",
+	"sap/m/Button",
+	"sap/m/VBox",
 	"sap/ui/support/supportRules/ui/external/ElementTree",
 	"sap/ui/testrecorder/interaction/ContextMenu"
 ], function (Device, Storage, Controller, SharedModel, CommunicationBus, CommunicationChannels, JSONModel, ResourceModel,
-		MessageToast, ElementTree, ContextMenu) {
+		MessageToast, Dialog, CheckBox, Button, VBox, ElementTree, ContextMenu) {
 	"use strict";
 
 	return Controller.extend("sap.ui.testrecorder.ui.controllers.Main", {
@@ -99,16 +103,61 @@ sap.ui.define([
 				document.removeEventListener('copy', fnCopyToClipboard);
 			}
 		},
+		openSettingsDialog: function () {
+			if (!this.settingsDialog) {
+				this.settingsDialog = new Dialog({
+					title: this.getView().getModel("i18n").getProperty("TestRecorder.SettingsDialog.Title"),
+					content: [
+						new VBox({
+							items: [
+								new CheckBox({
+									text: this.getView().getModel("i18n").getProperty("TestRecorder.SettingsDialog.IDCheckBox.Text"),
+									name: "preferViewId",
+									selected: this.model.getProperty("/settings/preferViewId"),
+									select: this._onSelectCheckBox.bind(this)
+								}),
+								new CheckBox({
+									text: this.getView().getModel("i18n").getProperty("TestRecorder.SettingsDialog.POMethodCheckBox.Text"),
+									name: "formatAsPOMethod",
+									selected: this.model.getProperty("/settings/formatAsPOMethod"),
+									select: this._onSelectCheckBox.bind(this)
+								})
+							]
+						})
+					],
+					endButton: new Button({
+						text: this.getView().getModel("i18n").getProperty("TestRecorder.SettingsDialog.CloseButton.Text"),
+						press: this.closeSettingsDialog.bind(this)
+					})
+				});
+				this.getView().addDependent(this.settingsDialog);
+			}
+			this.settingsDialog.open();
+		},
+		closeSettingsDialog: function () {
+			if (this.settingsDialog) {
+				this.settingsDialog.close();
+			}
+		},
 		_setupModels: function () {
 			this.model = SharedModel;
 			this.getView().setModel(this.model);
 			this.model.setProperty("/isInIframe", !window.opener);
 
 			var sSelectedDialect = this._localStorage.get("dialect");
+			var bPreferViewId = this._localStorage.get("settings-preferViewId");
+			var bFormatAsPOMethod = this._localStorage.get("settings-formatAsPOMethod");
 			if (sSelectedDialect) {
 				this.model.setProperty("/selectedDialect", sSelectedDialect);
 				CommunicationBus.publish(CommunicationChannels.SET_DIALECT, sSelectedDialect);
 			}
+			if (bPreferViewId !== null && bPreferViewId !== "undefined") {
+				this.model.setProperty("/settings/preferViewId", bPreferViewId);
+			}
+			if (bFormatAsPOMethod !== null && bFormatAsPOMethod !== "undefined") {
+				this.model.setProperty("/settings/formatAsPOMethod", bFormatAsPOMethod);
+			}
+			CommunicationBus.publish(CommunicationChannels.UPDATE_SELECTOR_SETTINGS, this.model.getProperty("/settings"));
 
 			var binding = new sap.ui.model.Binding(SharedModel, "/selectedDialect", SharedModel.getContext("/"));
 			binding.attachChange(function() {
@@ -205,6 +254,15 @@ sap.ui.define([
 			this.getView().getModel("controls").setProperty("/properties", {});
 			this.getView().getModel("controls").setProperty("/bindings", {});
 			this.getView().getModel("controls").setProperty("/codeSnippet", "");
+		},
+		_onSelectCheckBox: function (oEvent) {
+			var bSelected = oEvent.getParameter("selected");
+			var sSetting = oEvent.getSource().getName();
+			var mSetting = {};
+			mSetting[sSetting] = bSelected;
+			this.model.setProperty("/settings/" + sSetting, bSelected);
+			this._localStorage.put("settings-" + sSetting, bSelected);
+			CommunicationBus.publish(CommunicationChannels.UPDATE_SELECTOR_SETTINGS, mSetting);
 		}
 	});
 });

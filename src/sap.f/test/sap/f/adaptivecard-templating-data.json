@@ -1,0 +1,22 @@
+{
+	"employee": {
+		"name": "Matt",
+		"manager": {
+			"name": "Thomas"
+		},
+		"peers": [
+			{
+				"name": "Andrew"
+			},
+			{
+				"name": "Lei"
+			},
+			{
+				"name": "Mary Anne"
+			},
+			{
+				"name": "Adam"
+			}
+		]
+	}
+}

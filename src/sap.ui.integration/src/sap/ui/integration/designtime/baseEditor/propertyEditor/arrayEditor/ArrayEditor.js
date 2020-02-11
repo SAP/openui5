@@ -52,22 +52,23 @@ sap.ui.define([
 		this.setModel(this._itemsModel, "itemsModel");
 	};
 
-	ArrayEditor.prototype.onValueChange = function () {
-		var vReturn = BasePropertyEditor.prototype.onValueChange.apply(this, arguments);
+	ArrayEditor.prototype.setValue = function (aValue) {
 		var oConfig = this.getConfig();
-		if (oConfig.value && oConfig.template) {
+		aValue = Array.isArray(aValue) ? aValue : [];
+
+		if (oConfig.template) {
 			var aItems = [];
-			oConfig.value.forEach(function(oValue, iIndex) {
+			aValue.forEach(function(oValue, iIndex) {
 				var mItem = {
 					itemLabel: oConfig.itemLabel || "{i18n>BASE_EDITOR.ARRAY.ITEM_LABEL}",
 					index: iIndex,
-					total: oConfig.value.length,
+					total: aValue.length,
 					properties: Object.keys(oConfig.template).map(function (sKey) {
 						var mTemplate = oConfig.template[sKey];
 						var sPath = iIndex + "/" + mTemplate.path;
 						return _merge({}, mTemplate, {
 							path: sPath,
-							value: ObjectPath.get(sPath.split("/"), this.getValue())
+							value: ObjectPath.get(sPath.split("/"), aValue)
 						});
 					}, this)
 				};
@@ -75,7 +76,12 @@ sap.ui.define([
 			}, this);
 			this._itemsModel.setData(aItems);
 		}
-		return vReturn;
+
+		BasePropertyEditor.prototype.setValue.call(this, aValue);
+	};
+
+	ArrayEditor.prototype.getExpectedWrapperCount = function (vValue) {
+		return vValue.length;
 	};
 
 	ArrayEditor.prototype._removeItem = function (oEvent) {

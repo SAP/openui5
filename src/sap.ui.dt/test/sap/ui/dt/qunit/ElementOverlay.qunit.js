@@ -135,16 +135,28 @@ function (
 			sWidth = fnGetWidth(this.oElementOverlay);
 			this.oButton.setText("Lorem ipsum dolor sit amet...");
 			sap.ui.getCore().applyChanges();
-			this.oElementOverlay.applyStyles();
-			assert.notStrictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay changes its width");
+			return this.oElementOverlay.applyStyles()
+				.then(function () {
+					assert.notStrictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay changes its width");
 
-			sWidth = fnGetWidth(this.oElementOverlay);
+					sWidth = fnGetWidth(this.oElementOverlay);
 
-			// Explicitly disable overlay
-			this.oElementOverlay.setVisible(false);
-			this.oButton.setText("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi...");
+					// Explicitly disable overlay
+					this.oElementOverlay.setVisible(false);
+					this.oButton.setText("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi...");
 
-			assert.strictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay didn't change its width");
+					assert.strictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay didn't change its width");
+				}.bind(this));
+		});
+
+		QUnit.test("when overlay is destroyed and applyStyles function is called", function (assert) {
+			var oApplySizesSpy = sandbox.spy(this.oElementOverlay, "_applySizes");
+			this.oElementOverlay.destroy();
+			return this.oElementOverlay.applyStyles()
+				.then(function () {
+					assert.ok(true, "then applyStyles is returning a promise");
+					assert.strictEqual(oApplySizesSpy.callCount, 0, "then private _applySizes function is not called");
+				});
 		});
 
 		QUnit.test("elementModified event — property change ('visible')", function (assert) {
@@ -396,8 +408,10 @@ function (
 		QUnit.test("when the overlay is being destroyed and applyStyles is triggered", function(assert) {
 			var oIsVisibleSpy = sinon.spy(this.oElementOverlay, "isVisible");
 			this.oElementOverlay.destroy();
-			this.oElementOverlay.applyStyles();
-			assert.equal(oIsVisibleSpy.callCount, 0, "the applyStyles function directly returned");
+			return this.oElementOverlay.applyStyles()
+				.then(function () {
+					assert.equal(oIsVisibleSpy.callCount, 0, "the applyStyles function directly returned");
+				});
 		});
 
 		QUnit.test("when the overlay is being renamed several times in a row", function(assert) {
@@ -412,6 +426,23 @@ function (
 			['text1', 'text2', 'text3'].forEach(function (sText) {
 				this.oButton.setText(sText);
 			}, this);
+		});
+
+		QUnit.test("when the _domChangedCallback function is being called twice in a row", function(assert) {
+			var fnDone = assert.async();
+			var mParameters = { name: "parameter_name" };
+			var iCounter = 0;
+			this.oElementOverlay.attachApplyStylesRequired(function (oEvent) {
+				iCounter++;
+				window.requestAnimationFrame(function (mResultParameters) {
+					assert.strictEqual(iCounter, 1, "then the 'applyStylesRequired' event is called just once");
+					assert.strictEqual(mResultParameters.name, mParameters.name, "then the parameters map is passed through");
+					assert.strictEqual(mResultParameters.targetOverlay, this.oElementOverlay, "then the overlay is added to the parameters map");
+					fnDone();
+				}.bind(this, oEvent.mParameters));
+			}.bind(this));
+			this.oElementOverlay._domChangedCallback(mParameters);
+			this.oElementOverlay._domChangedCallback(mParameters);
 		});
 	});
 
@@ -437,8 +468,10 @@ function (
 		QUnit.test("when the control's domRef is changed to visible...", function(assert) {
 			this.oLabel.setText("test");
 			sap.ui.getCore().applyChanges();
-			this.oOverlay.applyStyles();
-			assert.ok(DOMUtil.isVisible(this.oOverlay.getDomRef()), "the overlay is also visible in DOM");
+			return this.oOverlay.applyStyles()
+				.then(function () {
+					assert.ok(DOMUtil.isVisible(this.oOverlay.getDomRef()), "the overlay is also visible in DOM");
+				}.bind(this));
 		});
 	});
 
@@ -875,15 +908,18 @@ function (
 			}
 
 			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", function() {
+				var oPromise = Promise.resolve();
 				if (!Device.browser.msie) {
 					assert.equal(oApplyStylesSpy.callCount, 0, "then the applyStyles Method is not called");
 				} else {
-					this.oContent1Overlay.applyStyles();
+					oPromise = this.oContent1Overlay.applyStyles();
 				}
-				assert.equal(this.oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
-				assert.deepEqual(this.oContent1.$().offset(), this.oContent1Overlay.$().offset(), "Then the offset is still equal");
-				assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
-				done();
+				return oPromise.then(function () {
+					assert.equal(this.oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
+					assert.deepEqual(this.oContent1.$().offset(), this.oContent1Overlay.$().offset(), "Then the offset is still equal");
+					assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
+					done();
+				}.bind(this));
 			}, this);
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
 		});
@@ -900,15 +936,18 @@ function (
 			}
 
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scroll(function() {
+				var oPromise = Promise.resolve();
 				if (!Device.browser.msie) {
 					assert.equal(oApplyStylesSpy.callCount, 0, "then the applyStyles Method is not called");
 				} else {
-					this.oContent1Overlay.applyStyles();
+					oPromise = this.oContent1Overlay.applyStyles();
 				}
-				assert.equal(this.oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
-				assert.deepEqual(this.oContent1.$().offset(), this.oContent1Overlay.$().offset(), "Then the offset is still equal");
-				assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
-				done();
+				return oPromise.then(function () {
+					assert.equal(this.oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
+					assert.deepEqual(this.oContent1.$().offset(), this.oContent1Overlay.$().offset(), "Then the offset is still equal");
+					assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
+					done();
+				}.bind(this));
 			}.bind(this));
 			this.oSimpleScrollControlOverlay.getScrollContainerById(0).scrollTop(100);
 		});
@@ -1052,8 +1091,8 @@ function (
 			var iIndexHeaderContentOverlay = a$ScrollContainerChildren.index(this.oHeaderContentOverlay.getDomRef());
 			var iIndexSectionsOverlay = a$ScrollContainerChildren.index(this.oSectionsOverlay.getDomRef());
 
-			// FIXME: remove timeout when #1870203056 is implemented
-			setTimeout(function () {
+			var oScrollbarSynchronizer = this.oLayoutOverlay._oScrollbarSynchronizers.get($ScrollContainer[0]);
+			oScrollbarSynchronizer.attachEventOnce("synced", function () {
 				var a$Children = jQuery(this.oLayoutOverlay.getChildrenDomRef()).find(">");
 				var a$ScrollContainerChildren = $ScrollContainer.find(">");
 
@@ -1411,6 +1450,66 @@ function (
 					this.oScrollControl.setScrollcontainerEnabled(false);
 					sap.ui.getCore().applyChanges();
 				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("when applyStyles is running whith scrollcontainer exists and the synchroninzer is destroyed", function (assert) {
+			var fnDone = assert.async();
+			var oVerticalLayout = new VerticalLayout("layout", {
+				content: [
+					this.oScrollControl = new SimpleScrollControl({
+						id: "scrollControl",
+						height: "200px",
+						content1: [
+							this.oTextArea = new TextArea({
+								height: "500px",
+								width: "400px",
+								value: "foo"
+							})
+						],
+						content2: [
+							new TextArea({
+								height: "500px",
+								width: "400px",
+								value: "bar"
+							})
+						],
+						footer: [
+							new Button({
+								text: "Button"
+							})
+						]
+					})
+				]
+			});
+
+
+			oVerticalLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [oVerticalLayout]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
+				var oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
+				var $ScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0);
+				assert.strictEqual($ScrollContainerOverlayDomRef.css("display"), "block");
+				var oGeometryChangedSpy = sandbox.spy();
+				oTextAreaOverlay.attachEvent("geometryChanged", oGeometryChangedSpy);
+				this.oDesignTime.attachEventOnce("synced", function () {
+					assert.ok(true, "then the synched event is fired by the designtime");
+					assert.ok(oGeometryChangedSpy.called, "then the geometry change event is fired for the scroll control overlay");
+					this.oDesignTime.destroy();
+					oVerticalLayout.destroy();
+					fnDone();
+				}, this);
+				oTextAreaOverlay.fireApplyStylesRequired({ targetOverlay: this.oTextArea });
+				this.oScrollControlOverlay._oScrollbarSynchronizers.forEach(function (oSynchronizer) {
+					oSynchronizer.destroy();
+				});
+				sap.ui.getCore().applyChanges();
 			}.bind(this));
 		});
 	});

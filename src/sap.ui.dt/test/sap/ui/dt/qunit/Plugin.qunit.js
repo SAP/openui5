@@ -126,6 +126,19 @@ function(
 	QUnit.module("Given that a Plugin is initialized", {
 		beforeEach: function () {
 			this.oPlugin = new Plugin();
+			this.fnGetResponsibleElement = function () {};
+			this.fnGetAction = function () {};
+			this.oOverlay = {
+				getElement: function () {
+					return "dummyElement";
+				},
+				getDesignTimeMetadata: function () {
+					return {
+						getAction: this.fnGetAction,
+						getResponsibleElement: this.fnGetResponsibleElement
+					};
+				}.bind(this)
+			};
 		},
 		afterEach: function () {
 			this.oPlugin.destroy();
@@ -134,32 +147,23 @@ function(
 	}, function () {
 		QUnit.test("when using common methods of the plugin", function (assert) {
 			assert.expect(6);
-			this.oPlugin.getActionName = function() {
+			this.oPlugin.getActionName = function () {
 				return "dummyActionName";
 			};
-			var oOverlay = {
-				getElement: function() {
-					return "dummyElement";
-				},
-				getDesignTimeMetadata: function() {
-					return {
-						getAction: function(sActionName, oElement) {
-							assert.equal(sActionName, "dummyActionName", "getAction gets called with the plugin action name");
-							assert.equal(oElement, "dummyElement", "getAction gets called with the right element");
-						}
-					};
-				}
+			this.fnGetAction = function (sActionName, oElement) {
+				assert.equal(sActionName, "dummyActionName", "getAction gets called with the plugin action name");
+				assert.equal(oElement, "dummyElement", "getAction gets called with the right element");
 			};
-			this.oPlugin.getAction(oOverlay);
+			this.oPlugin.getAction(this.oOverlay);
 
 			assert.equal(this.oPlugin.isAvailable(), false, "by default the plugin returns false");
 			assert.equal(this.oPlugin.isEnabled(), false, "by default the plugin returns false");
 			assert.equal(this.oPlugin.isBusy(), false, "by default the plugin returns false");
 
 			sandbox.stub(this.oPlugin, "getDesignTime").returns({
-				getSelectionManager: function() {
+				getSelectionManager: function () {
 					return {
-						get: function() {
+						get: function () {
 							assert.ok(true, "the function was called");
 						}
 					};
@@ -168,103 +172,195 @@ function(
 			this.oPlugin.getSelectedOverlays();
 		});
 
-		QUnit.test("when calling _getMenuItems", function(assert) {
-			var oOverlay = {
-				getDesignTimeMetadata: function() {
-					return;
-				}
+		QUnit.test("when getResponsibleElementOverlay() is called for an element overlay, with no responsible element", function (assert) {
+			assert.deepEqual(this.oPlugin.getResponsibleElementOverlay(this.oOverlay, "dummyAction"), this.oOverlay, "then the menu item from the responsible element is returned");
+		});
+
+		QUnit.test("when getResponsibleElementOverlay() is called for an element overlay, with a responsible element and action derived from getActionName()", function (assert) {
+			assert.expect(2);
+			var oResponsibleElement = new Button("responsibleElement");
+			this.oPlugin.getActionName = function () {
+				return "dummyAction";
 			};
-			assert.equal(
-				this.oPlugin._getMenuItems([oOverlay]).length,
-				0,
-				"if the overlay has no DesignTime Metadata, the method returns an empty array"
-			);
-			oOverlay = {
-				getElement: function() {
-					return "dummyElement";
-				},
-				getDesignTimeMetadata: function() {
-					return {
-						getAction: function() {
-							return {
-								name: "dummyActionName"
-							};
-						},
-						getLibraryText: function(oElement, sName) {
-							return sName;
-						}
-					};
-				}
+			var oResponsibleElementOverlay = {type: "responsibleElementOverlay"};
+			sandbox.stub(OverlayRegistry, "getOverlay").withArgs(oResponsibleElement).returns(oResponsibleElementOverlay);
+
+			this.fnGetResponsibleElement = function (oElement) {
+				assert.equal(oElement, "dummyElement", "then getResponsibleElement() called to retrieve the responsible element with the correct action");
+				return oResponsibleElement;
+			};
+			assert.deepEqual(this.oPlugin.getResponsibleElementOverlay(this.oOverlay), oResponsibleElementOverlay, "then the menu item from the responsible element is returned");
+			oResponsibleElement.destroy();
+		});
+
+		QUnit.test("when getResponsibleElementOverlay() is called for an element overlay, with a responsible element and action derived from the passed parameter", function (assert) {
+			assert.expect(2);
+			var oResponsibleElement = new Button("responsibleElement");
+			var oResponsibleElementOverlay = {type: "responsibleElementOverlay"};
+			sandbox.stub(OverlayRegistry, "getOverlay").withArgs(oResponsibleElement).returns(oResponsibleElementOverlay);
+
+			this.fnGetResponsibleElement = function (oElement) {
+				assert.equal(oElement, "dummyElement", "then getResponsibleElement() called to retrieve the responsible element with the correct action");
+				return oResponsibleElement;
 			};
 
-			var bIsAvailable = true;
+			assert.deepEqual(this.oPlugin.getResponsibleElementOverlay(this.oOverlay, "dummyAction"), oResponsibleElementOverlay, "then the menu item from the responsible element is returned");
+			oResponsibleElement.destroy();
+		});
 
+		QUnit.test("when getResponsibleElementOverlay() is called for an element overlay, with no designTimeMetadata", function (assert) {
+			var oResponsibleElement = "responsibleElement";
+			var oResponsibleElementOverlay = {type: "responsibleElementOverlay"};
+			sandbox.stub(OverlayRegistry, "getOverlay").withArgs(oResponsibleElement).returns(oResponsibleElementOverlay);
+			assert.deepEqual(this.oPlugin.getResponsibleElementOverlay(this.oOverlay, "dummyAction"), this.oOverlay, "then the source overlay is returned");
+		});
+
+		QUnit.test("when getResponsibleElementOverlay() is called for an element overlay with an error while retrieving the responsible element", function (assert) {
+			sandbox.stub(OverlayRegistry, "getOverlay").throws();
+			this.fnGetResponsibleElement = function () {
+				return {};
+			};
+			assert.deepEqual(this.oPlugin.getResponsibleElementOverlay(this.oOverlay), this.oOverlay, "then the source overlay is returned");
+		});
+	});
+
+	QUnit.module("Given that _getMenuItems is called for an overlay", {
+		beforeEach: function () {
+			this.oPlugin = new Plugin();
 			this.oPlugin.handler = function () {
 				return true;
 			};
 			this.oPlugin.isAvailable = function () {
-				return bIsAvailable;
+				return true;
 			};
 			this.oPlugin.isEnabled = function () {
 				return true;
 			};
+			this.fnGetResponsibleElement = function () {};
+			this.fnGetAction = function () {};
+			this.fnGetLibraryText = function () {};
+			this.oOverlay = {
+				getElement: function () {
+					return "dummyElement";
+				},
+				getDesignTimeMetadata: function () {
+					return {
+						getAction: this.fnGetAction,
+						getResponsibleElement: this.fnGetResponsibleElement,
+						getLibraryText: this.fnGetLibraryText
+					};
+				}.bind(this)
+			};
+		},
+		afterEach: function () {
+			this.oPlugin.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("with no designTimeMetadata", function (assert) {
+			assert.equal(
+				this.oPlugin._getMenuItems([this.oOverlay]).length,
+				0,
+				"then an an empty array is returned"
+			);
+		});
 
-			var mMenuItem = this.oPlugin._getMenuItems([oOverlay], {pluginId : "dummyPluginId", rank: 10})[0];
+		QUnit.test("when there is a defined action name", function (assert) {
+			this.fnGetAction = function () {
+				return {
+					name: "dummyActionName"
+				};
+			};
+			this.fnGetLibraryText = function (oElement, sName) {
+				return sName;
+			};
+
+			var mMenuItem = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "dummyPluginId", rank: 10})[0];
 
 			assert.equal(mMenuItem.id, "dummyPluginId", "the method returns the right ID for the menu item");
 			assert.equal(mMenuItem.text, "dummyActionName", "the method returns the right text when it is defined in DT Metadata");
 			assert.equal(mMenuItem.rank, 10, "the method returns the right rank for the menu item");
 			assert.ok(mMenuItem.handler(), "handler function is properly returned");
 			assert.ok(mMenuItem.enabled(), "enabled function is properly returned");
+		});
 
-			oOverlay = {
-				getElement: function() {
-					return "dummyElement";
+		QUnit.test("when there is an undefined action name", function (assert) {
+			this.fnGetAction = function () {
+				return {};
+			};
+
+			assert.equal(
+				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"})[0].text,
+				sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				"then default text is returned in the menu item"
+			);
+		});
+
+		QUnit.test("when there is action name defined as a function", function (assert) {
+			this.fnGetAction = function () {
+				return {
+					name: function (oElement) {
+						return oElement + "name";
+					}
+				};
+			};
+
+			assert.equal(
+				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_DUMMY_ID"})[0].text,
+				"dummyElementname",
+				"then correct text is returned in the menu item"
+			);
+		});
+
+		QUnit.test("when the plugin is not available", function (assert) {
+			this.fnGetAction = function () {
+				return {};
+			};
+			this.oPlugin.isAvailable = function () {
+				return false;
+			};
+			assert.equal(
+				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_DUMMY_ID"}).length,
+				0,
+				"then no menu items are returned"
+			);
+		});
+
+		QUnit.test("when a responsible element is available", function (assert) {
+			assert.expect(2);
+			this.oPlugin.isAvailable = sandbox.stub();
+			var oResponsibleElement = new Button("responsibleElement");
+			var oResponsibleElementOverlay = {
+				getElement: function () {
+					return oResponsibleElement;
 				},
-				getDesignTimeMetadata: function() {
+				getDesignTimeMetadata: function () {
 					return {
-						getAction: function() {
+						getAction: function () {
 							return {};
 						}
 					};
 				}
 			};
+			sandbox.stub(OverlayRegistry, "getOverlay").withArgs(oResponsibleElement).returns(oResponsibleElementOverlay);
 
-			assert.equal(
-				this.oPlugin._getMenuItems([oOverlay], {pluginId : "CTX_RENAME"})[0].text,
-				sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
-				"the method returns default text when no text is defined in DT Metadata"
-			);
-
-			oOverlay = {
-				getElement: function() {
-					return "dummyElement";
-				},
-				getDesignTimeMetadata: function() {
-					return {
-						getAction: function() {
-							return {
-								name: function(oElement) {
-									return oElement + "name";
-								}
-							};
-						}
-					};
-				}
+			this.fnGetResponsibleElement = function (oElement) {
+				assert.equal(oElement, "dummyElement", "then getResponsibleElement() called to retrieve the responsible element");
+				return oResponsibleElement;
 			};
 
-			assert.equal(
-				this.oPlugin._getMenuItems([oOverlay], {pluginId : "CTX_DUMMY_ID"})[0].text,
-				"dummyElementname",
-				"the method returns the correct text when the name is defined as a function in DT Metadata"
-			);
+			// when action is not available on the source overlay
+			// but it is available on the responsible element overlay
+			this.oPlugin.isAvailable
+				.withArgs([this.oOverlay]).returns(false)
+				.withArgs([oResponsibleElementOverlay]).returns(true);
 
-			bIsAvailable = false;
 			assert.equal(
-				this.oPlugin._getMenuItems([oOverlay], {pluginId : "CTX_DUMMY_ID"}).length,
-				0,
-				"then if the plugin is not available no menu items are returned"
+				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"})[0].text,
+				sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				"then the menu item from the responsible element is returned"
 			);
+			oResponsibleElement.destroy();
 		});
 	});
 

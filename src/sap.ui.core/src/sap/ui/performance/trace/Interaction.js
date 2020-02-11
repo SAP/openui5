@@ -169,7 +169,9 @@ sap.ui.define([
 			if (Interaction.onInteractionFinished && oFinshedInteraction) {
 				Interaction.onInteractionFinished(oFinshedInteraction);
 			}
-			Log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length, "Interaction.js");
+			if (Log.isLoggable()) {
+				Log.debug("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length, "Interaction.js");
+			}
 			oPendingInteraction = null;
 		}
 	}
@@ -445,7 +447,9 @@ sap.ui.define([
 				console.time("INTERACTION: " + oPendingInteraction.trigger + " - " + oPendingInteraction.event);
 			}
 			/*eslint-enable no-console */
-			Log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event, "Interaction.js");
+			if (Log.isLoggable()) {
+				Log.debug("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event, "Interaction.js");
+			}
 		},
 
 		/**
@@ -464,7 +468,9 @@ sap.ui.define([
 					}
 					/*eslint-enable no-console */
 					finalizeInteraction(oPendingInteraction.preliminaryEnd || now());
-					Log.info("Interaction ended...");
+					if (Log.isLoggable()) {
+						Log.debug("Interaction ended...");
+					}
 				} else {
 					// set provisionary processing time from start to end and calculate later
 					oPendingInteraction.preliminaryEnd = now();
@@ -606,7 +612,9 @@ sap.ui.define([
 				iInteractionCounter++;
 				clearTimeout(iInteractionStepTimer);
 				bIdle = false;
-				Log.info("Interaction relevant step started - Number of pending steps: " + iInteractionCounter);
+				if (Log.isLoggable()) {
+					Log.debug("Interaction relevant step started - Number of pending steps: " + iInteractionCounter);
+				}
 			}
 		},
 
@@ -619,7 +627,9 @@ sap.ui.define([
 			if (oPendingInteraction && sId === oPendingInteraction.id) {
 				iInteractionCounter--;
 				Interaction.notifyStepEnd(true);
-				Log.info("Interaction relevant step stopped - Number of pending steps: " + iInteractionCounter);
+				if (Log.isLoggable()) {
+					Log.debug("Interaction relevant step stopped - Number of pending steps: " + iInteractionCounter);
+				}
 			}
 		},
 
@@ -634,7 +644,9 @@ sap.ui.define([
 				if (iInteractionCounter === 0 || !bCheckIdle) {
 					if (bIdle || !bCheckIdle) {
 						Interaction.end(true);
-						Log.info("Interaction stopped");
+						if (Log.isLoggable()) {
+							Log.debug("Interaction stopped");
+						}
 						bIdle = false;
 					} else {
 						Interaction.end(); //set preliminary end time
@@ -643,7 +655,9 @@ sap.ui.define([
 							clearTimeout(iInteractionStepTimer);
 						}
 						iInteractionStepTimer = setTimeout(Interaction.notifyStepEnd, 250);
-						Log.info("Interaction check for idle time - Number of pending steps: " + iInteractionCounter);
+						if (Log.isLoggable()) {
+							Log.debug("Interaction check for idle time - Number of pending steps: " + iInteractionCounter);
+						}
 					}
 				}
 			}

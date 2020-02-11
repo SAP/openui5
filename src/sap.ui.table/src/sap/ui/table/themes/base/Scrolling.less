@@ -111,7 +111,12 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVSbHeader {
 
 }
 
-._sapUiTableVScrWithActionsInnerMixin_CalcMarginRight(@ScrollbarSize, @RowActionWidth) {
+// workaround for the css minimization script implemented inside the build (0px is being converted to 0 which produces invalid css)
+._sapUiTableVScrWithActionsInnerMixin_CalcMarginRight(@ScrollbarSize, @RowActionWidth) when (@ScrollbarSize = 0px) {
+	// calc is needed for IE
+	margin-right: calc(@RowActionWidth);
+}
+._sapUiTableVScrWithActionsInnerMixin_CalcMarginRight(@ScrollbarSize, @RowActionWidth) when (default()) {
 	margin-right: calc(@ScrollbarSize ~"+" @RowActionWidth);
 }
 

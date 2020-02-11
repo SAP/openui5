@@ -5,10 +5,11 @@
 	<App id="myApp">
 		<Page id="mainPage">
 			<headerContent>
-				<Button id="firstButton" text="Button One" />
+				<Button text="Button One" />
+				<Button id="stableId" text="Button with ID" />
 			</headerContent>
-			<Input id="testInput" placeholder="Test"></Input>
-			<Button id="clear" text="Clear Selection" />
+			<Input placeholder="Test"></Input>
+			<Button text="Clear Selection" />
 		</Page>
 	</App>
 </mvc:View>

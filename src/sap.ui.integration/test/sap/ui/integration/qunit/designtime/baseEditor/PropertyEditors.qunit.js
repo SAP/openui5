@@ -73,7 +73,10 @@ function (
 				tags: "foo"
 			});
 
-			oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
+			this.oBaseEditor.addContent(oPropertyEditors);
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return oPropertyEditors.ready().then(function () {
 				sap.ui.getCore().applyChanges();
 				assert.ok(
 					oPropertyEditors.getDomRef() instanceof HTMLElement
@@ -84,7 +87,7 @@ function (
 				assert.ok(
 					oPropertyEditors.getAggregation("propertyEditors")
 					&& oPropertyEditors.getAggregation("propertyEditors").every(function (oPropertyEditor) {
-						return oPropertyEditor.isA("sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor");
+						return oPropertyEditor.isA("sap.ui.integration.designtime.baseEditor.PropertyEditor");
 					}),
 					"then internal property editors are created"
 				);
@@ -92,13 +95,9 @@ function (
 				assert.strictEqual(oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 				fnDone();
 			});
-
-			this.oBaseEditor.addContent(oPropertyEditors);
-			this.oBaseEditor.placeAt("qunit-fixture");
 		});
 
 		QUnit.test("when config is set", function (assert) {
-			var fnDone = assert.async();
 			var oPropertyEditors = new PropertyEditors({
 				config: [{
 					"label": "Baz property",
@@ -107,7 +106,10 @@ function (
 				}]
 			});
 
-			oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
+			this.oBaseEditor.addContent(oPropertyEditors);
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return oPropertyEditors.ready().then(function () {
 				sap.ui.getCore().applyChanges();
 				assert.ok(
 					oPropertyEditors.getDomRef() instanceof HTMLElement
@@ -117,19 +119,14 @@ function (
 				);
 				assert.ok(
 					oPropertyEditors.getAggregation("propertyEditors")
-					&& oPropertyEditors.getAggregation("propertyEditors")[0].isA("sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor"),
+					&& oPropertyEditors.getAggregation("propertyEditors")[0].isA("sap.ui.integration.designtime.baseEditor.PropertyEditor"),
 					"then internal property editor is created"
 				);
 				assert.strictEqual(oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
-				fnDone();
 			});
-
-			this.oBaseEditor.addContent(oPropertyEditors);
-			this.oBaseEditor.placeAt("qunit-fixture");
 		});
 
 		QUnit.test("when both tags & config are set", function (assert) {
-			var fnDone = assert.async();
 			var oPropertyEditors = new PropertyEditors({
 				tags: "foo",
 				config: [{
@@ -139,14 +136,13 @@ function (
 				}]
 			});
 
-			oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
-				assert.strictEqual(oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then priority is over config object");
-				fnDone();
-			});
-
 			this.oBaseEditor.addContent(oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return oPropertyEditors.ready().then(function () {
+				sap.ui.getCore().applyChanges();
+				assert.strictEqual(oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then priority is over config object");
+			});
 		});
 	});
 
@@ -170,9 +166,9 @@ function (
 		}
 	}, function () {
 		QUnit.test("when tags parameter is set", function (assert) {
-			var fnDone = assert.async();
+			this.oPropertyEditors.setTags("foo");
 
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
+			return this.oPropertyEditors.ready().then(function () {
 				sap.ui.getCore().applyChanges();
 				assert.ok(
 					this.oPropertyEditors.getDomRef() instanceof HTMLElement
@@ -183,16 +179,13 @@ function (
 				assert.ok(
 					this.oPropertyEditors.getAggregation("propertyEditors")
 					&& this.oPropertyEditors.getAggregation("propertyEditors").every(function (oPropertyEditor) {
-						return oPropertyEditor.isA("sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor");
+						return oPropertyEditor.isA("sap.ui.integration.designtime.baseEditor.PropertyEditor");
 					}),
 					"then internal property editor is created"
 				);
 				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "foo2 value", "then internal property editor has a correct value");
-				fnDone();
-			}, this);
-
-			this.oPropertyEditors.setTags("foo");
+			}.bind(this));
 		});
 
 		QUnit.test("when tags parameter is set, they have to be stored sorted", function (assert) {
@@ -266,9 +259,13 @@ function (
 		});
 
 		QUnit.test("when config is set", function (assert) {
-			var fnDone = assert.async();
+			this.oPropertyEditors.setConfig([{
+				"label": "Baz property",
+				"path": "baz",
+				"type": "string"
+			}]);
 
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
+			return this.oPropertyEditors.ready().then(function () {
 				sap.ui.getCore().applyChanges();
 				assert.ok(
 					this.oPropertyEditors.getDomRef() instanceof HTMLElement
@@ -278,36 +275,22 @@ function (
 				);
 				assert.ok(
 					this.oPropertyEditors.getAggregation("propertyEditors")
-					&& this.oPropertyEditors.getAggregation("propertyEditors")[0].isA("sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor"),
+					&& this.oPropertyEditors.getAggregation("propertyEditors")[0].isA("sap.ui.integration.designtime.baseEditor.PropertyEditor"),
 					"then internal property editor is created"
 				);
 				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
-				fnDone();
-			}, this);
-
-			this.oPropertyEditors.setConfig([{
-				"label": "Baz property",
-				"path": "baz",
-				"type": "string"
-			}]);
+			}.bind(this));
 		});
 
 		QUnit.test("when number of config items is changed", function (assert) {
-			var fnDone = assert.async();
+			this.oPropertyEditors.setConfig([{
+				"label": "Foo1 property",
+				"path": "foo1",
+				"type": "string"
+			}]);
 
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
+			return this.oPropertyEditors.ready().then(function () {
 				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1 value", "then internal property editor has a correct value");
-
-				this.oPropertyEditors.attachEvent(
-					"propertyEditorsChange",
-					sandbox.stub()
-						.onSecondCall().callsFake(function () {
-							sap.ui.getCore().applyChanges();
-							assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
-							fnDone();
-						}.bind(this))
-				);
 
 				this.oPropertyEditors.setConfig([
 					{
@@ -321,19 +304,24 @@ function (
 						"type": "string"
 					}
 				]);
-			}, this);
+
+				return this.oPropertyEditors.ready().then(function () {
+					assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
+				}.bind(this));
+
+			}.bind(this));
+		});
+
+		QUnit.test("when config is changed", function (assert) {
+			var fnDone = assert.async();
 
 			this.oPropertyEditors.setConfig([{
 				"label": "Foo1 property",
 				"path": "foo1",
 				"type": "string"
 			}]);
-		});
 
-		QUnit.test("when config is changed", function (assert) {
-			var fnDone = assert.async();
-
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
+			this.oPropertyEditors.ready().then(function () {
 				sap.ui.getCore().applyChanges();
 				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 
@@ -353,24 +341,11 @@ function (
 					assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
 					fnDone();
 				}.bind(this));
-			}, this);
+			}.bind(this));
 
-			this.oPropertyEditors.setConfig([{
-				"label": "Foo1 property",
-				"path": "foo1",
-				"type": "string"
-			}]);
 		});
 
 		QUnit.test("when config is set several times at once (test for async flow cancellation)", function (assert) {
-			var fnDone = assert.async();
-
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
-				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
-				fnDone();
-			}, this);
-
 			this.oPropertyEditors.setConfig([{
 				"label": "Foo1 property",
 				"path": "foo1",
@@ -401,40 +376,43 @@ function (
 				"path": "baz",
 				"type": "string"
 			}]);
+
+			return this.oPropertyEditors.ready().then(function () {
+				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
+			}.bind(this));
 		});
 
 		QUnit.test("when tags parameter is set, then config is set", function (assert) {
-			var fnDone = assert.async();
+			this.oPropertyEditors.setTags("foo");
 
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
+			return this.oPropertyEditors.ready().then(function () {
 				sap.ui.getCore().applyChanges();
 				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "foo2 value", "then internal property editor has a correct value");
-
-				this.oPropertyEditors.attachEvent(
-					"propertyEditorsChange",
-					sandbox.stub()
-						.onSecondCall().callsFake(function () {
-							sap.ui.getCore().applyChanges();
-							assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then priority is over config object");
-							fnDone();
-						}.bind(this))
-				);
 
 				this.oPropertyEditors.setConfig([{
 					"label": "Baz property",
 					"path": "baz",
 					"type": "string"
 				}]);
-			}, this);
 
-			this.oPropertyEditors.setTags("foo");
+				return this.oPropertyEditors.ready().then(function () {
+					assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then priority is over config object");
+				}.bind(this));
+			}.bind(this));
+
 		});
 
 		QUnit.test("when config is set, then tags parameter is set", function (assert) {
 			var fnDone = assert.async();
 
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
+			this.oPropertyEditors.setConfig([{
+				"label": "Baz property",
+				"path": "baz",
+				"type": "string"
+			}]);
+
+			this.oPropertyEditors.ready().then(function () {
 				sap.ui.getCore().applyChanges();
 				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
 
@@ -448,19 +426,21 @@ function (
 				}.bind(this), 16);
 
 				this.oPropertyEditors.setTags("foo");
-			}, this);
+			}.bind(this));
+
+		});
+
+		QUnit.test("when both config and tags are set, then tags parameter is unset", function (assert) {
+			var fnDone = assert.async();
 
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
 				"path": "baz",
 				"type": "string"
 			}]);
-		});
+			this.oPropertyEditors.setTags("foo");
 
-		QUnit.test("when both config and tags are set, then tags parameter is unset", function (assert) {
-			var fnDone = assert.async();
-
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
+			this.oPropertyEditors.ready().then(function () {
 				sap.ui.getCore().applyChanges();
 				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
 
@@ -474,43 +454,28 @@ function (
 				}.bind(this), 16);
 
 				this.oPropertyEditors.setTags(null);
-			}, this);
-
-			this.oPropertyEditors.setConfig([{
-				"label": "Baz property",
-				"path": "baz",
-				"type": "string"
-			}]);
-			this.oPropertyEditors.setTags("foo");
+			}.bind(this));
 		});
 
 		QUnit.test("when both config and tags are set, then config is unset", function (assert) {
-			var fnDone = assert.async();
-
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
-				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
-
-				this.oPropertyEditors.attachEvent(
-					"propertyEditorsChange",
-					sandbox.stub()
-						.onSecondCall().callsFake(function () {
-							sap.ui.getCore().applyChanges();
-							assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1 value", "then priority is over config object");
-							assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "foo2 value", "then priority is over config object");
-							fnDone();
-						}.bind(this))
-				);
-
-				this.oPropertyEditors.setConfig(null);
-			}, this);
-
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
 				"path": "baz",
 				"type": "string"
 			}]);
 			this.oPropertyEditors.setTags("foo");
+
+			return this.oPropertyEditors.ready().then(function () {
+				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "baz value", "then internal property editor has a correct value");
+
+				this.oPropertyEditors.setConfig(null);
+
+				return this.oPropertyEditors.ready().then(function () {
+					assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1 value", "then priority is over config object");
+					assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "foo2 value", "then priority is over config object");
+				}.bind(this));
+			}.bind(this));
+
 		});
 
 		QUnit.test("when editor is changed", function (assert) {
@@ -704,28 +669,24 @@ function (
 		});
 
 		QUnit.test("when config is set and later unset", function (assert) {
-			var fnDone = assert.async();
-
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
-				var aPropertyEditors = this.oPropertyEditors.getAggregation("propertyEditors");
-				assert.strictEqual(aPropertyEditors[0].getValue(), "baz value", "then internal property editor has a correct value");
-
-				this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-					sap.ui.getCore().applyChanges();
-					assert.ok(!this.oPropertyEditors.getAggregation("propertyEditors"), "then internal editor is removed");
-					assert.strictEqual(aPropertyEditors[0].bIsDestroyed, true, "then custom property editor is destroyed");
-					fnDone();
-				}, this);
-
-				this.oPropertyEditors.setConfig(null);
-			}, this);
-
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
 				"path": "baz",
 				"type": "string"
 			}]);
+
+			return this.oPropertyEditors.ready().then(function () {
+				var aPropertyEditors = this.oPropertyEditors.getAggregation("propertyEditors");
+				assert.strictEqual(aPropertyEditors[0].getValue(), "baz value", "then internal property editor has a correct value");
+
+				this.oPropertyEditors.setConfig(null);
+
+				return this.oPropertyEditors.ready().then(function () {
+					assert.ok(!this.oPropertyEditors.getAggregation("propertyEditors"), "then internal editor is removed");
+					assert.strictEqual(aPropertyEditors[0].bIsDestroyed, true, "then custom property editor is destroyed");
+				}.bind(this));
+			}.bind(this));
+
 		});
 
 		QUnit.test("when tags parameter is set and later unset", function (assert) {
@@ -904,10 +865,13 @@ function (
 		});
 
 		QUnit.test("when config is set and object is destroyed", function (assert) {
-			var fnDone = assert.async();
+			this.oPropertyEditors.setConfig([{
+				"label": "Baz property",
+				"path": "baz",
+				"type": "string"
+			}]);
 
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
+			return this.oPropertyEditors.ready().then(function () {
 				var aPropertyEditors = this.oPropertyEditors.getAggregation("propertyEditors");
 
 				assert.strictEqual(aPropertyEditors[0].getValue(), "baz value", "then internal property editor has a correct value");
@@ -915,15 +879,69 @@ function (
 				this.oPropertyEditors.destroy();
 
 				assert.strictEqual(aPropertyEditors[0].bIsDestroyed, true, "then custom property editor is destroyed");
+			}.bind(this));
+		});
+	});
 
+	QUnit.module("Ready handling", {
+		beforeEach: function () {
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+			if (this.oPropertyEditors) {
+				this.oPropertyEditors.destroy();
+			}
+		}
+	}, function () {
+		QUnit.test("When a PropertyEditors wrapper is created", function (assert) {
+			var fnDone = assert.async();
+
+			var fnRegisterWrapper = function (oEvent) {
+				assert.strictEqual(
+					oEvent.getSource(),
+					this.oPropertyEditors,
+					"Then the wrapper registers via the provided callback"
+				);
 				fnDone();
-			}, this);
+			};
 
-			this.oPropertyEditors.setConfig([{
-				"label": "Baz property",
-				"path": "baz",
-				"type": "string"
-			}]);
+			this.oPropertyEditors = new PropertyEditors({
+				init: fnRegisterWrapper.bind(this)
+			});
+			this.oBaseEditor.addContent(this.oPropertyEditors);
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("When a PropertyEditors wrapper has nested editors", function (assert) {
+			var fnDone = assert.async();
+
+			this.oPropertyEditors = new PropertyEditors({
+				config: [
+					{
+						label: "foo",
+						type: "string",
+						value: "bar"
+					}
+				]
+			});
+
+			this.oBaseEditor.addContent(this.oPropertyEditors);
+			sap.ui.getCore().applyChanges();
+
+			this.oPropertyEditors.ready().then(function () {
+				assert.strictEqual(
+					this.oPropertyEditors.getAggregation("propertyEditors")[0].isReady(),
+					true,
+					"Then it is ready when its nested editors are"
+				);
+				fnDone();
+			}.bind(this));
 		});
 	});
 

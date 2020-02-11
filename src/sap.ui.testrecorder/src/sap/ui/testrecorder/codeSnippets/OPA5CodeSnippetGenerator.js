@@ -17,6 +17,8 @@ sap.ui.define([
 	 * @param {object} mData data from which to generate a snippet
 	 * @param {string} mData.controlSelector control selector in string format
 	 * @param {string} mData.action name of the action to record for the control
+	 * @param {object} oOptions.settings preferences for the snippet e.g. formatting, method wrapping
+	 * @param {boolean} mData.settings.formatAsPOMethod true if selectors should be wrapped in a page object method. Default value is true.
 	 * @returns {string} a stringified code snippet
 	 */
 	OPA5CodeSnippetGenerator.prototype._generate = function (mData) {
@@ -32,7 +34,11 @@ sap.ui.define([
 		var sSelector = this._getSelectorAsString(mData.controlSelector);
 		var sSnippet = "this.waitFor(" + this._getSelectorWithAction(sSelector, sAction) + ");";
 
-		return sSnippet;
+		if (mData.settings && mData.settings.formatAsPOMethod) {
+			return this._asPOMethod(sSnippet);
+		} else {
+			return sSnippet;
+		}
 	};
 
 	OPA5CodeSnippetGenerator.prototype._getActionAsString = function (sAction, sIdSuffix) {

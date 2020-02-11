@@ -30,6 +30,30 @@ function(
 		'</form:SimpleForm>' +
 	'</mvc:View>';
 
+	var XML_VIEW2 =
+		'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+		'<HBox id="hbox1">' +
+			'<items>' +
+				'<Button id="button1" text="Button1" />' +
+				'<Button id="button2" text="Button2" />' +
+				'<Button id="button3" text="Button3" />' +
+				'<core:ExtensionPoint name="ExtensionPoint1" />' +
+				'<Label id="label1" text="TestLabel1" />' +
+			'</items>' +
+		'</HBox>' +
+		'<Panel id="panel">' +
+				'<core:ExtensionPoint name="ExtensionPoint2" />' +
+				'<Label id="label2" text="TestLabel2" />' +
+				'<core:ExtensionPoint name="ExtensionPoint3" />' +
+		'</Panel>' +
+		'<HBox id="hbox2">' +
+			'<Button id="button4" text="Button4" />' +
+			'<Button id="button5" text="Button5" />' +
+			'<core:ExtensionPoint name="ExtensionPoint3" />' +
+			'<Label id="label3" text="TestLabel3" />' +
+		'</HBox>' +
+	'</mvc:View>';
+
 	var fnMockNodeId = function(sToBeReplacedInId, sReplacementInId, oXmlNode) {
 		var sFormNodeId = oXmlNode.getAttribute("id").replace(sToBeReplacedInId, sReplacementInId);
 		oXmlNode.setAttribute("id", sFormNodeId);
@@ -44,6 +68,7 @@ function(
 
 			this.oDOMParser = new DOMParser();
 			this.oXmlView = this.oDOMParser.parseFromString(XML_VIEW, "application/xml").documentElement;
+			this.oXmlView2 = this.oDOMParser.parseFromString(XML_VIEW2, "application/xml").documentElement;
 			return this.oXmlView;
 		},
 		afterEach: function () {
@@ -77,6 +102,19 @@ function(
 			};
 
 			var oControl = XmlTreeModifier.bySelector(oSelector, this.oComponent, this.oXmlView);
+			assert.ok(oControl);
+		});
+
+		QUnit.test("can determine a targeted control for extension point changes with local IDs", function (assert) {
+			var oSelector = {
+				name: "ExtensionPoint1",
+				viewSelector: {
+					id: "myView",
+					idIsLocal: true
+				}
+			};
+
+			var oControl = XmlTreeModifier.bySelector(oSelector, this.oComponent, this.oXmlView2);
 			assert.ok(oControl);
 		});
 

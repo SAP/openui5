@@ -114,8 +114,20 @@ sap.ui.define([
 
 				vBindingInfo.formatter = fnFormatter;
 			} else if (typeof vValue === "object") { // create binding info with a 'formatter'
-				vBindingInfo = extend({}, vValue);
-				vBindingInfo.formatter = fnFormatter;
+			vBindingInfo = extend({}, vValue);
+
+				if (vValue.formatter) {
+
+					var fnInitialFormatter = vBindingInfo.formatter;
+
+					vBindingInfo.formatter = function () {
+						var sInitialFormatterResult = fnInitialFormatter.apply(this, arguments);
+						return fnFormatter(sInitialFormatterResult);
+					};
+				} else {
+					vBindingInfo.formatter = fnFormatter;
+				}
+
 			} else { // single string value - just apply the formatter on it
 				vBindingInfo = fnFormatter(vValue);
 			}

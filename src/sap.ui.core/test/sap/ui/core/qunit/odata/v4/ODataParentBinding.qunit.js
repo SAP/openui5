@@ -838,10 +838,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[true, false].forEach(function (bRejected, i) {
-		QUnit.test("fetchIfChildCanUseCache, immutable cache, " + i, function (assert) {
+[false, true].forEach(function (bReturnValueContext) {
+	[false, true].forEach(function (bRejected) {
+		var sTitle = "fetchIfChildCanUseCache: immutable cache, "
+				+ (bReturnValueContext ? "return value context, " : "")
+				+ "rejected=" + bRejected;
+
+		QUnit.test(sTitle, function (assert) {
 			var oCache = { // cache sent read request
-					bSentReadRequest : true,
+					bSentRequest : true,
 					setQueryOptions : function () {}
 				},
 				oCachePromise = bRejected
@@ -872,13 +877,15 @@ sap.ui.define([
 				}),
 				oBindingMock = this.mock(oBinding),
 				mChildLocalQueryOptions = {},
-				oContext = Context.create(this.oModel, oBinding, "/Set('2')"),
+				oContext = bReturnValueContext
+					? Context.createReturnValueContext(this.oModel, oBinding, "/Set('2')")
+					: Context.create(this.oModel, oBinding, "/Set('2')"),
 				oHelperMock = this.mock(_Helper),
 				oMetaModelMock = this.mock(oMetaModel),
 				oModelMock = this.mock(oBinding.oModel),
 				oPromise;
 
-			oModelMock.expects("resolve")
+			oModelMock.expects("resolve").exactly(bReturnValueContext ? 0 : 1)
 				.withExactArgs("/Set", sinon.match.same(oBinding.oContext))
 				.returns("/resolved/path");
 			oModelMock.expects("resolve")
@@ -901,7 +908,8 @@ sap.ui.define([
 				.withExactArgs("/resolved/child/path", "/base/path")
 				.returns("/reduced/child/path");
 			oHelperMock.expects("getRelativePath")
-				.withExactArgs("/reduced/child/path", "/resolved/path")
+				.withExactArgs("/reduced/child/path",
+					bReturnValueContext ? "/Set('2')" : "/resolved/path")
 				.returns("childPath");
 			oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path")
 				.returns("/reduced/child/metapath");
@@ -940,16 +948,142 @@ sap.ui.define([
 			});
 		});
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("fetchIfChildCanUseCache, mutable cache", function (assert) {
+[{
+	cache : false,
+	rejected : false,
+	title : "no cache"
+}, {
+	cache : false,
+	rejected : true,
+	title : "no cache, parent rejects"
+}, {
+	cache : true,
+	title : "immutable cache"
+}].forEach(function (oFixture) {
+	QUnit.test("fetchIfChildCanUseCache: late query options, " + oFixture.title, function (assert) {
 		var oMetaModel = {
 				fetchObject : function () {},
 				getMetaPath : function () {},
 				getReducedPath : function () {}
 			},
 			oCache = {
-				bSentReadRequest : false,
+				bSentRequest : true,
+				setLateQueryOptions : function () {},
+				setQueryOptions : function () {}
+			},
+			oCachePromise = SyncPromise.resolve(oFixture.cache ? oCache : null),
+			fnFetchMetadata = {/*function*/},
+			oBinding = new ODataParentBinding({
+				mAggregatedQueryOptions : {$select : "foo"},
+				bAggregatedQueryOptionsInitial : false,
+				oCache : oFixture.cache ? oCache : null,
+				oCachePromise : oCachePromise,
+				oContext : {
+					getBinding : function () {}
+				},
+				doFetchQueryOptions : function () {},
+				oModel : {
+					getMetaModel : function () { return oMetaModel; },
+					oInterface : {
+						fetchMetadata : fnFetchMetadata
+					},
+					resolve : function () {},
+					mUriParameters : {}
+				},
+				sPath : "navigation"
+			}),
+			oBindingMock = this.mock(oBinding),
+			mChildLocalQueryOptions = {},
+			oContext = Context.create(this.oModel, oBinding, "/Set('1')/navigation('2')"),
+			oHelperMock = this.mock(_Helper),
+			mLateQueryOptions = {},
+			oMetaModelMock = this.mock(oMetaModel),
+			oModelMock = this.mock(oBinding.oModel),
+			oParentBinding = new ODataParentBinding(),
+			oPromise;
+
+		oModelMock.expects("resolve")
+			.withExactArgs("navigation", sinon.match.same(oBinding.oContext))
+			.returns("/resolved/path");
+		oModelMock.expects("resolve")
+			.withExactArgs("childPath", sinon.match.same(oContext))
+			.returns("/resolved/child/path");
+		oMetaModelMock.expects("getMetaPath")
+			.withExactArgs("/Set('1')/navigation('2')")
+			.returns("/Set/navigation");
+		oMetaModelMock.expects("getMetaPath")
+			.withExactArgs("/resolved/child/path")
+			.returns("/resolved/child/metaPath");
+		oBindingMock.expects("doFetchQueryOptions")
+			.returns(SyncPromise.resolve({}));
+		this.mock(_Helper).expects("fetchPropertyAndType")
+			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
+			.returns(SyncPromise.resolve(Promise.resolve({$kind : "Property"})));
+		oBindingMock.expects("getBaseForPathReduction")
+			.withExactArgs().returns("/base/path");
+		oMetaModelMock.expects("getReducedPath")
+			.withExactArgs("/resolved/child/path", "/base/path")
+			.returns("/reduced/child/path");
+		oHelperMock.expects("getRelativePath")
+			.withExactArgs("/reduced/child/path", "/resolved/path")
+			.returns("childPath");
+		oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path")
+			.returns("/reduced/child/metapath");
+		oHelperMock.expects("getRelativePath")
+			.withExactArgs("/reduced/child/metapath", "/Set/navigation")
+			.returns("reducedChildMetaPath");
+		oHelperMock.expects("wrapChildQueryOptions")
+			.withExactArgs("/Set/navigation", "reducedChildMetaPath",
+				sinon.match.same(mChildLocalQueryOptions), sinon.match.same(fnFetchMetadata))
+			.returns({});
+		oBindingMock.expects("aggregateQueryOptions")
+			.withExactArgs({}, "/Set/navigation", /*bIsCacheImmutable*/true)
+			.callsFake(function () {
+				oBinding.mLateQueryOptions = mLateQueryOptions;
+				return true;
+			});
+		this.mock(oCache).expects("setLateQueryOptions").exactly(oFixture.cache ? 1 : 0)
+			.withExactArgs(sinon.match.same(mLateQueryOptions));
+		this.mock(oBinding.oContext).expects("getBinding").exactly(oFixture.cache ? 0 : 1)
+			.withExactArgs().returns(oParentBinding);
+		this.mock(oParentBinding).expects("fetchIfChildCanUseCache").exactly(oFixture.cache ? 0 : 1)
+			.withExactArgs(sinon.match.same(oBinding.oContext), "navigation",
+				sinon.match(function (p) {
+					return p.getResult() === mLateQueryOptions;
+				})
+			)
+			.returns(SyncPromise.resolve(oFixture.rejected ? undefined : "/some/path"));
+
+		// code under test
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
+			SyncPromise.resolve(mChildLocalQueryOptions));
+
+		assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
+		assert.notStrictEqual(oBinding.oCachePromise, oCachePromise);
+		return oBinding.oCachePromise.then(function (oCache0) {
+			var bUseCache = oPromise.getResult();
+
+			assert.strictEqual(bUseCache, oFixture.rejected ? undefined : "/reduced/child/path");
+			assert.strictEqual(oCache0, oFixture.cache ? oCache : null);
+		});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bOperation) {
+	var sTitle = "fetchIfChildCanUseCache, mutable cache, operation=" + bOperation;
+
+	QUnit.test(sTitle, function (assert) {
+		var oMetaModel = {
+				fetchObject : function () {},
+				getMetaPath : function () {},
+				getReducedPath : function () {}
+			},
+			oCache = {
+				bSentRequest : false,
 				setQueryOptions : function () {}
 			},
 			oCachePromise = SyncPromise.resolve(oCache),
@@ -979,6 +1113,9 @@ sap.ui.define([
 			mNewQueryOptions = {},
 			oPromise;
 
+		if (bOperation) {
+			oBinding.oOperation = {};
+		}
 		oModelMock.expects("resolve")
 			.withExactArgs("/Set", sinon.match.same(oBinding.oContext))
 			.returns("/resolved/path");
@@ -1016,11 +1153,12 @@ sap.ui.define([
 		oBindingMock.expects("aggregateQueryOptions")
 			.withExactArgs({}, "/Set", /*bIsCacheImmutable*/false)
 			.returns(false);
-		this.mock(_Helper).expects("merge")
+		this.mock(_Helper).expects("merge").exactly(bOperation ? 0 : 1)
 			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 				sinon.match.same(oBinding.mAggregatedQueryOptions))
 			.returns(mNewQueryOptions);
-		this.mock(oCache).expects("setQueryOptions").withExactArgs(mNewQueryOptions);
+		this.mock(oCache).expects("setQueryOptions").exactly(bOperation ? 0 : 1)
+			.withExactArgs(mNewQueryOptions);
 
 		// code under test
 		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
@@ -1035,6 +1173,7 @@ sap.ui.define([
 			assert.strictEqual(oCache0, oCache);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: empty child path", function (assert) {
@@ -1217,7 +1356,7 @@ sap.ui.define([
 				resolve : function () {}
 			},
 			oCache = {
-				bSentReadRequest : bImmutable,
+				bSentRequest : bImmutable,
 				setQueryOptions : function () {}
 			},
 			oBinding = new ODataParentBinding({
@@ -1367,7 +1506,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = {
-				bSentReadRequest : bImmutable,
+				bSentRequest : bImmutable,
 				setQueryOptions : function () {}
 			},
 			oMetaModel = {
@@ -1640,23 +1779,18 @@ sap.ui.define([
 			},
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : mAggregatedQueryOptions,
-				oCache : {
-					getLateQueryOptions : function () {},
-					setLateQueryOptions : function () {}
-				},
+				oCache : {},
+				mLateQueryOptions : {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; }
 				}
 			}),
 			oHelperMock = this.mock(_Helper),
-			mLateQueryOptions = {},
 			oMetaModelMock = this.mock(oMetaModel);
 
-		this.mock(oBinding.oCache).expects("getLateQueryOptions").withExactArgs()
-			.returns(mLateQueryOptions);
 		oHelperMock.expects("merge")
 			.withExactArgs({}, sinon.match.same(oBinding.mAggregatedQueryOptions),
-				sinon.match.same(mLateQueryOptions))
+				sinon.match.same(oBinding.mLateQueryOptions))
 			.returns(oFixture.aggregatedQueryOptions);
 		if (oFixture.metadata) {
 			Object.keys(oFixture.metadata).forEach(function (sMetaPath) {
@@ -1664,9 +1798,6 @@ sap.ui.define([
 					.returns(SyncPromise.resolve(oFixture.metadata[sMetaPath]));
 			});
 		}
-		this.mock(oBinding.oCache).expects("setLateQueryOptions")
-			.exactly(oFixture.lateQueryOptions ? 1 : 0)
-			.withExactArgs(oFixture.lateQueryOptions);
 
 		assert.strictEqual(
 			// code under test
@@ -1675,23 +1806,11 @@ sap.ui.define([
 		);
 		assert.strictEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {}, "mAggregatedQueryOptions unchanged");
+		if (oFixture.lateQueryOptions) {
+			assert.strictEqual(oBinding.mLateQueryOptions, oFixture.aggregatedQueryOptions);
+		}
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("aggregateQueryOptions: no cache", function (assert) {
-		var oBinding = new ODataParentBinding({
-				mAggregatedQueryOptions : {$select : ["foo"]},
-				oCache : null
-			}),
-			mChildQueryOptions = {$select : ["bar"]};
-
-		// code under test
-		assert.strictEqual(oBinding.aggregateQueryOptions(mChildQueryOptions, "", true), false);
-	});
-	// TODO instead of rejecting late properties if there is no cache, the binding should instead
-	//   aggregate the late query options (but not in mAggregatedQueryOptions) and bubble up to the
-	//   parent binding
 
 	//*********************************************************************************************
 	QUnit.test("deleteFromCache: binding w/ cache", function (assert) {

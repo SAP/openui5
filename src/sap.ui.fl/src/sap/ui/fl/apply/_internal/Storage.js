@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/apply/_internal/storageResultDisassemble"
 ], function(
 	StorageUtils,
 	FlUtils,
+	LayerUtils,
 	StorageResultMerger,
 	storageResultDisassemble
 ) {
@@ -43,7 +45,7 @@ sap.ui.define([
 				path: oConnectorConfig.url
 			});
 
-			var sDraftLayer = mPropertyBag.draftLayer || FlUtils.getUrlParameter("sap-ui-fl-draft") || "";
+			var sDraftLayer = mPropertyBag.draftLayer || FlUtils.getUrlParameter(LayerUtils.FL_DRAFT_PARAM) || "";
 			oConnectorSpecificPropertyBag = _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, sDraftLayer);
 
 			return oConnectorConfig.applyConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
@@ -70,23 +72,43 @@ sap.ui.define([
 		return aFlattenedResponses;
 	}
 
-
-	function _flattenInnerResponses(mResponseObject) {
-		mResponseObject.responses = _flattenResponses(mResponseObject.responses);
-		return mResponseObject;
-	}
-
 	function _disassembleVariantSectionsIfNecessary(aResponses) {
-		var aDisassembledResponses = aResponses.map(function (oResponse) {
+		return aResponses.map(function (oResponse) {
 			return oResponse.variantSection ? storageResultDisassemble(oResponse) : oResponse;
 		});
+	}
 
-		return {
-			responses: aDisassembledResponses
-		};
+	function _flattenAndMergeResultPromise(aResponses) {
+		return Promise.resolve(aResponses)
+			.then(_flattenResponses)
+			.then(_disassembleVariantSectionsIfNecessary)
+			.then(_flattenResponses)
+			.then(StorageResultMerger.merge);
+	}
+
+	function _loadFlexDataFromStaticFileConnector(mPropertyBag) {
+		return StorageUtils.getStaticFileConnector().then(_loadFlexDataFromConnectors.bind(this, mPropertyBag));
 	}
 
 	var Storage = {};
+
+	/**
+	 * Provides the flex bundle data for a given application based on the application reference and its version.
+	 *
+	 * @param {map} mPropertyBag properties needed by the connectors
+	 * @param {string} mPropertyBag.reference reference of the application for which the flex data is requested
+	 * @param {object} mPropertyBag.partialFlexData contains partial FlexState
+	 * @param {string} [mPropertyBag.componentName] componentName of the application which may differ from the reference in case of an app variant
+	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
+	 */
+	Storage.completeFlexData = function (mPropertyBag) {
+		if (!mPropertyBag || !mPropertyBag.reference) {
+			return Promise.reject("No reference was provided");
+		}
+
+		return Promise.all([_loadFlexDataFromStaticFileConnector(mPropertyBag), mPropertyBag.partialFlexData])
+			.then(_flattenAndMergeResultPromise);
+	};
 
 	/**
 	 * Provides the flex data for a given application based on the configured connectors, the application reference and its version.
@@ -106,10 +128,7 @@ sap.ui.define([
 
 		return StorageUtils.getApplyConnectors()
 			.then(_loadFlexDataFromConnectors.bind(this, mPropertyBag))
-			.then(_flattenResponses)
-			.then(_disassembleVariantSectionsIfNecessary)
-			.then(_flattenInnerResponses)
-			.then(StorageResultMerger.merge);
+			.then(_flattenAndMergeResultPromise);
 	};
 
 	return Storage;

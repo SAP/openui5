@@ -185,13 +185,25 @@ sap.ui.define([
 
 	QUnit.test("Phone view", function (assert) {
 		//display hierarchical select
-		this.oObjectPage.toggleStyleClass("sapUxAPObjectPageLayout-Std-Phone", true);
-		this.oObjectPage.invalidate();
+		this.oObjectPage.getDomRef().style.width = BREAK_POINTS.Phone + "px";
 
 		// allow for re-render
 		this.clock.tick(iRenderingDelay);
 
 		assert.ok(jQuery(ANCHORBAR_CLASS_SELECTOR).length > 0 && jQuery(HIERARCHICAL_CLASS_SELECTOR).is(":visible") == true, "display hierarchical select");
+	});
+
+	QUnit.test("HierarchicalSelect have both sapMBarFirstVisibleChild and sapMBarLastVisibleChild classes when in Phone", function (assert) {
+		this.oObjectPage.getDomRef().style.width = BREAK_POINTS.Phone + "px";
+
+		// allow for re-render
+		this.clock.tick(iRenderingDelay);
+
+		assert.ok(
+			jQuery(ANCHORBAR_CLASS_SELECTOR).length > 0
+			&& jQuery(HIERARCHICAL_CLASS_SELECTOR).is(".sapMBarFirstVisibleChild", ".sapMBarLastVisibleChild") === true,
+			"display hierarchical select");
+
 	});
 
 	QUnit.test("AnchorBar is correctly resized after resize of its parent ObjectPageLayout", function (assert) {

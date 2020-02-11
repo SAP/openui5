@@ -622,7 +622,7 @@ function(
 						assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename section is available");
 						assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "add section is enabled");
 						assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_REMOVE", "remove section is available");
-						assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "we cannot remove a section");
+						assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "we can remove a section");
 					} else {
 						assert.ok(false, sText);
 					}
@@ -678,8 +678,17 @@ function(
 				var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
 				return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
 					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-					assert.notOk(oContextMenuControl.isPopupOpen(true), "then the context menu (context menu) opens");
-					assert.notOk(oOverlay.isEditable(), "then the overlay is not editable");
+					assert.ok(oContextMenuControl.isPopupOpen(true), "then the context menu (context menu) opens");
+					assert.ok(oOverlay.isEditable(), "then the overlay is editable");
+					if (oContextMenuControl.getButtons().length === 2) {
+						assert.equal(oContextMenuControl.getButtons().length, 2, " and 2 Menu Buttons are available");
+						assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_CREATE_CHILD_IFRAME_SECTIONS", "add iframe to section is available");
+						assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "add iframe to section is enabled");
+						assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_CREATE_CHILD_IFRAME_HEADERCONTENT", "add iframe to header is available");
+						assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "add iframe to header is enabled");
+					} else {
+						assert.ok(false, "but shows the wrong number of menu buttons");
+					}
 				}.bind(this));
 			});
 		});

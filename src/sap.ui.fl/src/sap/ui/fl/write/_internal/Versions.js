@@ -22,9 +22,9 @@ sap.ui.define([
 
 	function _updateInstanceAfterDraftActivation(aVersions, oVersion) {
 		if (_doesDraftExist(aVersions)) {
-			aVersions.pop();
+			aVersions.shift();
 		}
-		aVersions.push(oVersion);
+		aVersions.splice(0, 0, oVersion);
 		return aVersions;
 	}
 
@@ -64,6 +64,20 @@ sap.ui.define([
 
 	Versions.clearInstances = function() {
 		_mInstances = {};
+	};
+
+	/**
+	 * Sets a draft in case it is not already present; This function must be called after a save operation to ensure a correct versions state in the session.
+	 *
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 */
+	Versions.ensureDraftVersionExists = function(mPropertyBag) {
+		var aVersions = _mInstances[mPropertyBag.reference][mPropertyBag.layer];
+		if (!_doesDraftExist(aVersions)) {
+			_mInstances[mPropertyBag.reference][mPropertyBag.layer].splice(0, 0, {versionNumber: 0});
+		}
 	};
 
 	/**
@@ -108,7 +122,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 * @param {boolean=false} mPropertyBag.updateState - Flag if the state should be updated
+	 * @param {boolean} [mPropertyBag.updateState=false] - Flag if the state should be updated
 	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
@@ -130,7 +144,7 @@ sap.ui.define([
 
 			return Storage.versions.discardDraft(mPropertyBag)
 				.then(function () {
-					aVersions.pop();
+					aVersions.shift();
 					return true;
 				});
 		});

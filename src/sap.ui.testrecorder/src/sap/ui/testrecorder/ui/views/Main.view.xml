@@ -29,6 +29,7 @@
 					</contentMiddle>
 					<contentRight>
 						<!-- <c:Icon src="sap-icon://sys-help" tooltip="{i18n>TestRecorder.TitleBar.Documentation.Tooltip}" /> -->
+						<c:Icon src="sap-icon://settings" press="openSettingsDialog" tooltip="{i18n>TestRecorder.TitleBar.Window.Settings.Tooltip}"/>
 						<c:Icon src="sap-icon://minimize" press="toggleHide" tooltip="{i18n>TestRecorder.TitleBar.Window.Minimize.Tooltip}" visible="{/isInIframe}"/>
 						<c:Icon src="sap-icon://minimize" press="dockFrame" tooltip="{i18n>TestRecorder.TitleBar.Window.Dock.Tooltip}" visible="{= !${/isInIframe} }"/>
 						<c:Icon src="sap-icon://down" press="resizeDown" visible="{/isInIframe}"/>

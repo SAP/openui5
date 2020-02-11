@@ -2070,4 +2070,21 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(bRequired, true, "adaptation is required");
 	});
+
+
+	QUnit.module("Listeners cache");
+
+	QUnit.test("_checkHasListener", function(assert) {
+		var oNavContainer = new sap.m.NavContainer();
+		Fiori20Adapter.traverse(oNavContainer, {});
+		Fiori20Adapter._setHasListener(oNavContainer, "_adaptableContentChange", function(){});
+		Fiori20Adapter._setHasListener(oNavContainer, "navigate", function(){});
+
+		// Assert
+		assert.ok(
+			Fiori20Adapter._checkHasListener(oNavContainer, "_adaptableContentChange"),
+			"listener is saved");
+		assert.ok(Fiori20Adapter._checkHasListener(oNavContainer, "navigate"),
+			"listener is saved");
+	});
 });

@@ -3,7 +3,9 @@
  */
 
 sap.ui.define([
+	"sap/base/util/extend"
 ], function(
+	extend
 ) {
 	"use strict";
 
@@ -40,6 +42,19 @@ sap.ui.define([
 	}
 
 	/**
+	 * Apply settings to the IFrame control.
+	 *
+	 * @param {object} oModifier Modifier for the controls
+	 * @param {sap.ui.fl.util.IFrame} oIFrame IFrame to set settings to
+	 * @param {object} mSettings Settings
+	 * @ui5-restricted sap.ui.fl
+	 */
+	function applySettings (oModifier, oIFrame, mSettings) {
+		var mFullSettings = extend({ _settings: mSettings }, mSettings);
+		oModifier.applySettings(oIFrame, mFullSettings);
+	}
+
+	/**
 	 * Update the IFrame control settings.
 	 *
 	 * @param {sap.ui.fl.Change} oChange Change object with instructions to be applied on the control map
@@ -58,7 +73,7 @@ sap.ui.define([
 		oChange.setRevertData({
 			originalSettings: getIFrameSettings(oModifier, oControl)
 		});
-		oModifier.applySettings(oControl, oChangeDefinition.settings);
+		applySettings(oModifier, oControl, oChangeDefinition.settings);
 	};
 
 	/**
@@ -73,7 +88,7 @@ sap.ui.define([
 	UpdateIFrame.revertChange = function(oChange, oControl, mPropertyBag) {
 		var mRevertData = oChange.getRevertData();
 		if (mRevertData) {
-			mPropertyBag.modifier.applySettings(oControl, mRevertData.originalSettings);
+			applySettings(mPropertyBag.modifier, oControl, mRevertData.originalSettings);
 			oChange.resetRevertData();
 		} else {
 			throw new Error("Attempt to revert an unapplied change.");

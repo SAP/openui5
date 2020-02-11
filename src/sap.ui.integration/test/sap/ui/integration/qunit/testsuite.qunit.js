@@ -38,6 +38,7 @@ sap.ui.define(function () {
 				]
 			},
 			"CalendarCard": {},
+			"AdaptiveCard": {},
 			"cardbundle/CardStaticResources": {},
 			"util/CardManifest": {
 				coverage: {
@@ -74,6 +75,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/ServiceManager",
 						"sap/ui/integration/customElements/",
 						"sap/f/cards/CalendarCard",
+						"sap/f/cards/AdaptiveCard",
 						"sap/f/cards/CardActions",
 						"sap/f/cards/AnalyticalContent",
 						"sap/f/cards/BindingHelper",
@@ -92,7 +94,8 @@ sap.ui.define(function () {
 						"sap/f/cards/RequestDataProvider",
 						"sap/f/cards/ServiceDataProvider",
 						"sap/f/cards/TableContent",
-						"sap/f/cards/IconFormatter"
+						"sap/f/cards/IconFormatter",
+						"sap/ui/integration/BaseContent"
 					]
 				},
 				module: [
@@ -106,14 +109,33 @@ sap.ui.define(function () {
 					'test-resources/sap/f/qunit/DataProvider.qunit',
 					'./CardActions.qunit',
 					'./cardbundle/CardStaticResources.qunit',
-					'./CardFormatters.qunit'
+					'./CardFormatters.qunit',
+					'./BaseContent.qunit'
 				]
+			},
+			"designtime/baseEditor/integration/ReadyHandling": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/"
+					]
+				},
+				sinon: false
 			},
 			"designtime/baseEditor/BaseEditor": {
 				group: "DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/BaseEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/BasePropertyEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/BasePropertyEditor"
 					]
 				},
 				sinon: false
@@ -222,6 +244,15 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/util/binding/resolveBinding": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding"
 					]
 				},
 				sinon: false

@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/EventHistory",
-	"sap/ui/fl/apply/_internal/changes/descriptor/Applier"
+	"sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor"
 ], function(
 	FlexControllerFactory,
 	Component,
@@ -20,7 +20,7 @@ sap.ui.define([
 	MvcController,
 	XMLView,
 	EventHistory,
-	Applier
+	Preprocessor
 ) {
 	"use strict";
 
@@ -66,7 +66,7 @@ sap.ui.define([
 	}
 
 	function _registerDescriptorChangeHandler() {
-		Component._fnPreprocessManifest = Applier.preprocessManifest;
+		Component._fnPreprocessManifest = Preprocessor.preprocessManifest;
 	}
 
 	/**

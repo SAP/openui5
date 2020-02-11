@@ -187,14 +187,13 @@ sap.ui.define([
 		/**
 		 * @param {object} oRootControl - Root control of an app (variant)
 		 * @returns {Promise} Resolved promise with an app variant descriptor
-		 * @param {string} sCurrentLayer - Current working layer
 		 * @description Getting here an app variant descriptor from the layered repository.
 		 */
-		getAppVariantDescriptor: function(oRootControl, sCurrentLayer) {
+		getAppVariantDescriptor: function(oRootControl) {
 			oRootControlRunningApp = oRootControl;
 			var oDescriptor = fnGetDescriptor();
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
-				return DescriptorVariantFactory.loadAppVariant(oDescriptor["sap.app"].id, false, sCurrentLayer);
+				return DescriptorVariantFactory.loadAppVariant(oDescriptor["sap.app"].id, false);
 			}
 			return Promise.resolve(false);
 		},
@@ -210,7 +209,6 @@ sap.ui.define([
 		 */
 		onSaveAs: function(bSaveAsFromRta, bCopyUnsavedChanges, sCurrentLayer, oSelectedAppVariant) {
 			var bIsS4HanaCloud;
-			var aAllInlineChanges = [];
 			var oAppVariantSaveClosure;
 			var oDescriptor = fnGetDescriptor();
 
@@ -231,8 +229,8 @@ sap.ui.define([
 				};
 
 				var fnAddChangesToPersistence = function(aChanges) {
-					aAllInlineChanges = aChanges.slice();
-					return AppVariantUtils.addChangesToPersistence(aChanges, oRootControlRunningApp);
+					var aAllInlineChanges = aChanges.slice();
+					return AppVariantUtils.addChangesToPersistence(aAllInlineChanges, oRootControlRunningApp);
 				};
 
 				var fnCreateAppVariant = function() {
@@ -245,10 +243,6 @@ sap.ui.define([
 								sMessageKey = "MSG_SAVE_APP_VARIANT_FAILED";
 							}
 
-							// Since the saving of app variant failed, the descriptor inline changes which were created internally specific to the app variant, will now be removed from persistence
-							if (oError.saveAsFailed) {
-								AppVariantUtils.removeChangesFromPersistence(aAllInlineChanges, oRootControlRunningApp);
-							}
 							return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
 						});
 				};

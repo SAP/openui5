@@ -52,13 +52,9 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	BindingSelectionPlugin.prototype.exit = function() {
-		SelectionPlugin.prototype.exit.apply(this, arguments);
-
-		var oBinding = this._getBinding();
-		if (oBinding) {
-			oBinding.detachChange(this._onBindingChange, this);
-		}
+	BindingSelectionPlugin.prototype.onDeactivate = function(oTable) {
+		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
+		detachFromBinding(this, this.getTableBinding());
 	};
 
 	/**
@@ -68,7 +64,7 @@ sap.ui.define([
 		return {
 			headerSelector: {
 				type: "toggle",
-				visible: TableUtils.hasSelectAll(this.getParent())
+				visible: TableUtils.hasSelectAll(this.getTable())
 			}
 		};
 	};
@@ -80,7 +76,7 @@ sap.ui.define([
 	 */
 	BindingSelectionPlugin.prototype.onHeaderSelectorPress = function() {
 		if (this.getRenderConfig().headerSelector.visible) {
-			this.getParent()._toggleSelectAll();
+			this.getTable()._toggleSelectAll();
 		}
 	};
 
@@ -92,7 +88,7 @@ sap.ui.define([
 	 */
 	BindingSelectionPlugin.prototype.onKeyboardShortcut = function(sType) {
 		if (sType === "toggle") {
-			this.getParent()._toggleSelectAll();
+			this.getTable()._toggleSelectAll();
 		} else if (sType === "clear") {
 			this.clearSelection();
 		}
@@ -107,7 +103,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.addSelectionInterval) {
 			if (this._getSelectionMode() === SelectionMode.Single) {
@@ -123,7 +119,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelectionPlugin.prototype.clearSelection = function() {
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.clearSelection) {
 			oBinding.clearSelection();
@@ -135,7 +131,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelectionPlugin.prototype.getSelectedIndex = function() {
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.findNode) {
 			return oBinding.getSelectedIndex();
@@ -149,7 +145,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelectionPlugin.prototype.getSelectedIndices = function() {
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.findNode && oBinding.getSelectedIndices) {
 			return oBinding.getSelectedIndices();
@@ -163,7 +159,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelectionPlugin.prototype.getSelectableCount = function() {
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 
 		if (!oBinding) {
 			return 0;
@@ -180,7 +176,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelectionPlugin.prototype.getSelectedCount = function() {
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.getSelectedNodesCount) {
 			return oBinding.getSelectedNodesCount();
@@ -194,7 +190,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelectionPlugin.prototype.isIndexSelectable = function(iIndex) {
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 		if (oBinding) {
 			return oBinding.isIndexSelectable(iIndex);
 		} else {
@@ -208,7 +204,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelectionPlugin.prototype.isIndexSelected = function(iIndex) {
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.isIndexSelected) {
 			return oBinding.isIndexSelected(iIndex);
@@ -222,7 +218,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelectionPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.findNode && oBinding.removeSelectionInterval) {
 			oBinding.removeSelectionInterval(iIndexFrom, iIndexTo);
@@ -238,7 +234,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.selectAll) {
 			oBinding.selectAll();
@@ -258,7 +254,7 @@ sap.ui.define([
 			// Index -1 means to clear the selection. The binding doesn't know that -1 means no selection.
 			this.clearSelection();
 		} else {
-			var oBinding = this._getBinding();
+			var oBinding = this.getTableBinding();
 
 			if (oBinding && oBinding.setSelectedIndex) {
 				oBinding.setSelectedIndex(iIndex);
@@ -275,7 +271,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this._getBinding();
+		var oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.setSelectionInterval) {
 			if (this._getSelectionMode() === SelectionMode.Single) {
@@ -307,21 +303,24 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	BindingSelectionPlugin.prototype._setBinding = function(oBinding) {
-		var oCurrentBinding = this._getBinding();
-		SelectionPlugin.prototype._setBinding.call(this, oBinding);
-
-		if (oCurrentBinding !== oBinding) {
-			if (oBinding) {
-				oBinding.attachChange(this._onBindingChange, this);
-				oBinding.attachSelectionChanged(this._onSelectionChange, this);
-			}
-			if (oCurrentBinding) {
-				oCurrentBinding.detachChange(this._onBindingChange, this);
-				oCurrentBinding.detachSelectionChanged(this._onSelectionChange, this);
-			}
-		}
+	BindingSelectionPlugin.prototype.onTableRowsBound = function(oBinding) {
+		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
+		attachToBinding(this, oBinding);
 	};
+
+	function attachToBinding(oPlugin, oBinding) {
+		if (oBinding) {
+			oBinding.attachChange(oPlugin._onBindingChange, oPlugin);
+			oBinding.attachSelectionChanged(oPlugin._onSelectionChange, oPlugin);
+		}
+	}
+
+	function detachFromBinding(oPlugin, oBinding) {
+		if (oBinding) {
+			oBinding.detachChange(oPlugin._onBindingChange, oPlugin);
+			oBinding.detachSelectionChanged(oPlugin._onSelectionChange, oPlugin);
+		}
+	}
 
 	/**
 	 *

@@ -151,6 +151,10 @@
 	.sapFCardHeaderText {
 		width: 100%;
 	}
+
+	.sapFCardHeaderToolbar .sapMTB {
+		margin: -1rem -1rem -1rem 0;
+	}
 }
 
 .sapFCard.sapFCardBottomHeader .sapFCardHeader {
@@ -159,7 +163,11 @@
 }
 
 .sapFCard .sapFCardHeader.sapFCardNumericHeader {
-	display: block;
+
+	.sapFCardHeaderContent {
+		min-width: 0; // fixes Chrome issue
+		flex: 1;
+	}
 
 	.sapFCardStatus {
 		min-width: fit-content;

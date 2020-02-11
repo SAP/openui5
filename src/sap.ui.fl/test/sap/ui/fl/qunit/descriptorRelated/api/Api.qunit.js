@@ -2319,7 +2319,8 @@ sap.ui.define([
 				id : "a.id",
 				reference: "a.reference",
 				layer: "CUSTOMER",
-				skipIam: true
+				skipIam: true,
+				transport: "ATO_NOTIFICATION"
 			}).then(function(oDescriptorVariant) {
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
@@ -2401,7 +2402,8 @@ sap.ui.define([
 				id : "a.id",
 				reference: "a.reference",
 				layer: "CUSTOMER",
-				skipIam: true
+				skipIam: true,
+				transport: "ATO_NOTIFICATION"
 			}).then(function(oDescriptorVariant) {
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {

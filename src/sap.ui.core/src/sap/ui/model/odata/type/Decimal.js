@@ -362,8 +362,11 @@ sap.ui.define([
 				throw new ValidateException(getText("EnterNumberPrecision", [iPrecision]));
 			}
 		} else if (iIntegerDigits > iPrecision - iScale) {
-			throw new ValidateException(getText("EnterNumberInteger",
-				[iPrecision - iScale]));
+			if (iScale) {
+				throw new ValidateException(getText("EnterNumberInteger", [iPrecision - iScale]));
+			} else {
+				throw new ValidateException(getText("EnterMaximumOfDigits", [iPrecision]));
+			}
 		}
 		if (sMinimum) {
 			bMinimumExclusive = this.oConstraints.minimumExclusive;

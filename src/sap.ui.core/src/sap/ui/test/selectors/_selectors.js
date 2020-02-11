@@ -28,21 +28,6 @@ sap.ui.define([
         }, {});
     }
 
-    function sort(aSelectors) {
-        return [
-            "globalID",
-            "viewID",
-            "labelFor",
-            "bindingPath",
-            "properties",
-            "dropdownItem",
-            "tableRowItem",
-            "controlType"
-        ].map(function (sName) {
-            return aSelectors[sName];
-        });
-    }
-
-    return sort(getSelectorInstances.apply(this, arguments));
+    return getSelectorInstances.apply(this, arguments);
 
 });

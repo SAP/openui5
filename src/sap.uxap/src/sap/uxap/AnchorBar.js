@@ -486,7 +486,7 @@ sap.ui.define([
 	AnchorBar.prototype._applyHierarchicalSelectMode = function () {
 
 		if (this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon) {
-			this.$().find(".sapUxAPAnchorBarScrollContainer").show();
+			this._bHideScrollContainer = false;
 
 			this._oSelect.setWidth("auto");
 			this._oSelect.setAutoAdjustWidth(true);
@@ -494,7 +494,7 @@ sap.ui.define([
 			this._computeBarSectionsInfo();
 
 		} else {
-			this.$().find(".sapUxAPAnchorBarScrollContainer").hide();
+			this._bHideScrollContainer = true;
 
 			this._oSelect.setWidth("100%");
 			this._oSelect.setAutoAdjustWidth(false);
@@ -502,6 +502,8 @@ sap.ui.define([
 		}
 
 		this.$().toggleClass("sapUxAPAnchorBarOverflow", this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon);
+
+		this.invalidate();
 	};
 
 	AnchorBar.prototype._adjustSize = function (oEvent) {
@@ -1023,6 +1025,11 @@ sap.ui.define([
 	AnchorBar.prototype._getWidth = function (oControl) {
 		var oDomReference = oControl.getDomRef();
 		return !(oControl instanceof Control) ? 0 : (oDomReference && oDomReference.offsetWidth) || 0;
+	};
+
+	AnchorBar.prototype.setVisible = function (bVisible) {
+		this.getParent() && this.getParent().toggleStyleClass("sapUxAPObjectPageLayoutNoAnchorBar", !bVisible);
+		return this.setProperty("visible", bVisible);
 	};
 
 	return AnchorBar;

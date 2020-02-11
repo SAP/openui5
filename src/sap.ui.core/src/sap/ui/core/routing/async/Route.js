@@ -32,18 +32,30 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 				bInitial,
 				oTargetData,
 				oCurrentPromise,
+				aAlignedTargets,
 				that = this;
 
-			oRouter._matchedRoute = this;
+			oRouter._oMatchedRoute = this;
 			oRouter._bMatchingProcessStarted = true;
 
 			oConfig = jQuery.extend({}, oRouter._oConfig, this._oConfig);
 
 			oTargets = oRouter.getTargets();
 			if (oTargets) {
-				if (oTargets._getTitleTargetName(oConfig.target, oConfig.titleTarget)) {
+				if (oTargets._getTitleTargetName(oConfig.target, oConfig.titleTarget) && oRouter._oPreviousTitleChangedRoute !== this) {
 					oRouter._bCollectTitleChanged = true;
+				} else {
+					oRouter._bCollectTitleChanged = false;
 				}
+
+				if (this._oConfig.target) {
+					aAlignedTargets = oTargets._alignTargetsInfo(this._oConfig.target);
+					aAlignedTargets.forEach(function(oTarget){
+						oTarget.propagateTitle = oTarget.hasOwnProperty("propagateTitle") ? oTarget.propagateTitle : oRouter._oConfig.propagateTitle;
+					});
+				}
+			} else {
+				aAlignedTargets = this._oConfig.target;
 			}
 
 			if (!oSequencePromise || oSequencePromise === true) {
@@ -106,7 +118,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 							// check whether the _oTargets still exists after the 0 timeout.
 							// It could be already cleared once the router is destroyed before the timeout.
 							if (oRouter._oTargets) {
-								var oDisplayPromise = oRouter._oTargets._display(that._oConfig.target, oTargetData, that._oConfig.titleTarget, oCurrentPromise);
+								var oDisplayPromise = oRouter._oTargets._display(aAlignedTargets, oTargetData, that._oConfig.titleTarget, oCurrentPromise);
 								oDisplayPromise.then(resolve, reject);
 							} else {
 								resolve();
@@ -114,7 +126,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 						}, 0);
 					});
 				} else {
-					oSequencePromise = oRouter._oTargets._display(this._oConfig.target, oTargetData, this._oConfig.titleTarget, oSequencePromise);
+					oSequencePromise = oRouter._oTargets._display(aAlignedTargets, oTargetData, this._oConfig.titleTarget, oSequencePromise);
 				}
 			}
 

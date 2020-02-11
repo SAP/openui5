@@ -31,13 +31,16 @@
       * @param {boolean} oOptions.shallow whether to do a shallow or deep search of the control tree to find a selector. Default value is false, enabling search through the tree.
       * @param {boolean} oOptions.multiple whether to return non-unique selectors as well. Default value is false, meaning that only unique selectors are returned.
       * @param {boolean} oOptions.includeAll whether to return all selectors, matching a unique control, or just the top one. Default value is false, meaning that at most one selector is returned.
+      * @param {object} oOptions.settings preferences for the selector e.g. which is the most prefered strategy
+      * @param {boolean} oOptions.settings.preferViewId true if selectors with view ID should have higher priority than selectors with global ID. Default value is false.
       * @returns {Promise<object|Array|Error>} a plain object representation of a control or Error if none can be generated
       * If multiple selectors are requested, an array is returned.
       * @private
       */
     _ControlSelectorGenerator._generate = function (oOptions) {
-        var oPlainGeneratorsPromise = oOptions.includeAll ? _ControlSelectorGenerator._executeAllPlainGenerators(selectors, oOptions)
-            : _ControlSelectorGenerator._executeTopPlainGenerator(selectors, oOptions);
+        var aPlainGenerators = _ControlSelectorGenerator._getOrderedGenerators(oOptions.settings);
+        var oPlainGeneratorsPromise = oOptions.includeAll ? _ControlSelectorGenerator._executeAllPlainGenerators(aPlainGenerators, oOptions)
+            : _ControlSelectorGenerator._executeTopPlainGenerator(aPlainGenerators, oOptions);
         return oPlainGeneratorsPromise
             .catch(function (oError) {
                 if (oOptions.shallow) {
@@ -416,6 +419,35 @@
 
         return aSelectors;
     };
+
+    /**
+     * Order plain selector generators in sap.ui.test.selectors._selectors by priority
+     * @param {object} mSettings preferences for the priority. use this to change the default order
+     * @param {object} mSettings.preferViewId true if selectors with view ID should have higher priority than selectors with global ID. Default value is false.
+     * @returns {array} an array of ordered generators
+     * @private
+     */
+    _ControlSelectorGenerator._getOrderedGenerators = function (mSettings) {
+        var aOrder = [
+            "globalID",
+            "viewID",
+            "labelFor",
+            "bindingPath",
+            "properties",
+            "dropdownItem",
+            "tableRowItem",
+            "controlType"
+        ];
+        if (mSettings && mSettings.preferViewId) {
+            var sSwap = aOrder[0];
+            aOrder[0] = aOrder[1];
+            aOrder[1] = sSwap;
+        }
+        return aOrder.map(function (sName) {
+            return selectors[sName];
+        });
+    };
+
 
 	return _ControlSelectorGenerator;
 });

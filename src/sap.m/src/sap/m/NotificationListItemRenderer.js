@@ -12,7 +12,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 	 * NotificationListItem renderer.
 	 * @namespace
 	 */
-	var NotificationListItemRenderer = {};
+	var NotificationListItemRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -34,7 +36,6 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			authorAvatar = control._getAuthorAvatar(),
 			priority = control.getPriority(),
 			isUnread = control.getUnread(),
-			priorityClass = '',
 			sControlId = control.getId(),
 			footerId = sControlId + '-invisibleFooterText',
 			sAriaLabelledBy = '';
@@ -49,165 +50,186 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		sAriaLabelledBy += ' ' + footerId;
 
-		rm.write('<li');
-		rm.writeControlData(control);
-		rm.addClass('sapMLIB');
-		rm.addClass('sapMNLIB');
-		rm.addClass('sapMNLI');
+		rm.openStart('li', control)
+			.class('sapMLIB')
+			.class('sapMNLIB')
+			.class('sapMNLI');
 
 		if (isUnread) {
-			rm.addClass('sapMNLIUnread');
+			rm.class('sapMNLIUnread');
 		}
 
 		if (!authorAvatar) {
-			rm.addClass('sapMNLINoAvatar');
+			rm.class('sapMNLINoAvatar');
 		}
 
-		rm.writeClasses();
-
-		rm.writeAttribute('tabindex', '0');
+		rm.attr('tabindex', '0');
 
 		// ARIA
-		rm.writeAccessibilityState(control, {
+		rm.accessibilityState(control, {
 			role: "option",
 			labelledby: {
 				value: sAriaLabelledBy
 			}
 		});
 
-		rm.write('>');
+		rm.openEnd();
 
 		// Processing Message
 		rm.renderControl(control.getProcessingMessage());
-		rm.write('<div class="sapMNLIMain">');
+
+		rm.openStart('div')
+			.class('sapMNLIMain')
+			.openEnd();
 
 		// actions and close
-		rm.write('<div aria-hidden="true" class="sapMNLIItem sapMNLIItemAC">');
+		rm.openStart('div')
+			.attr('aria-hidden', 'true')
+			.class('sapMNLIItem')
+			.class('sapMNLIItemAC')
+			.openEnd();
 
 		// actions
 		if (control._shouldRenderOverflowToolbar()) {
-			rm.write('<div class="sapMNLIItem sapMNLIActions">');
+			rm.openStart('div')
+				.class('sapMNLIItem')
+				.class('sapMNLIActions')
+				.openEnd();
+
 			rm.renderControl(control._getOverflowToolbar());
-			rm.write('</div>');
+			rm.close('div');
 		}
 
 		// close button
 		if (control._shouldRenderCloseButton()) {
-			rm.write('<div class="sapMNLIItem sapMNLICloseBtn">');
+
+			rm.openStart('div')
+				.class('sapMNLIItem')
+				.class('sapMNLICloseBtn')
+				.openEnd();
+
 			rm.renderControl(control._getCloseButton());
-			rm.write('</div>');
+			rm.close('div');
 		}
 
 		// end actions and close
-		rm.write('</div>');
+		rm.close('div');
 
 		// content
-		rm.write('<div class="sapMNLIContent">');
+		rm.openStart('div')
+			.class('sapMNLIContent')
+			.openEnd();
 
 		// content - title
-		rm.write('<div class="sapMNLITitle">');
+		rm.openStart('div')
+			.class('sapMNLITitle')
+			.openEnd();
 
 		// content - title - priority icon
 		if (priority !== Priority.None) {
-			rm.write('<div');
+			rm.openStart('div')
+				.class('sapMNLIBPriority')
+				.class('sapMNLIBPriority' + priority)
+				.openEnd();
 
-			rm.addClass("sapMNLIBPriority");
-
-			switch (priority) {
-				case Priority.High:
-					priorityClass = 'sapMNLIBPriorityHigh';
-					break;
-				case Priority.Medium:
-					priorityClass = 'sapMNLIBPriorityMedium';
-					break;
-				case Priority.Low:
-					priorityClass = 'sapMNLIBPriorityLow';
-					break;
-			}
-
-			rm.addClass(priorityClass);
-			rm.writeClasses();
-			rm.write('>');
 			rm.renderControl(control._getPriorityIcon());
-			rm.write('</div>');
+			rm.close('div');
 		}
 
-		rm.write('<div id=' + sControlId + '-title');
-		rm.addClass('sapMNLITitleText');
+		rm.openStart('div', sControlId + '-title')
+			.class('sapMNLITitleText');
+
 		if (truncate) {
-			rm.addClass('sapMNLIItemTextLineClamp');
+			rm.class('sapMNLIItemTextLineClamp');
 		}
-		rm.writeClasses();
-		rm.write('>');
-		rm.writeEscaped(control.getTitle());
-		rm.write('</div>');
+		rm.openEnd();
+		rm.text(control.getTitle());
+		rm.close('div');
 
 		// end content - title
-		rm.write('</div>');
+		rm.close('div');
 
 		// content- description
-		rm.write('<div id=' + sControlId + '-descr');
-		rm.addClass('sapMNLIDescription');
+		rm.openStart('div', sControlId + '-descr')
+			.class('sapMNLIDescription');
+
 		if (!control.getDescription()) {
-			rm.addClass('sapMNLIDescriptionNoText');
+			rm.class('sapMNLIDescriptionNoText');
 		}
 		if (truncate) {
-			rm.addClass('sapMNLIItemTextLineClamp');
+			rm.class('sapMNLIItemTextLineClamp');
 		}
-		rm.writeClasses();
-		rm.write('>');
-		rm.writeEscaped(control.getDescription());
-		rm.write('</div>');
+		rm.openEnd();
+		rm.text(control.getDescription());
+		rm.close('div');
 
 
 		// content - footer
-		rm.write('<div class="sapMNLIFooter">');
+		rm.openStart('div')
+			.class('sapMNLIFooter')
+			.openEnd();
 
 		// content - footer - author
-		rm.write('<div class="sapMNLIFooterItem">');
-		rm.writeEscaped(authorName);
-		rm.write('</div>');
+		rm.openStart('div')
+			.class('sapMNLIFooterItem')
+			.openEnd();
 
+		rm.text(authorName);
+		rm.close('div');
 
 		// content - footer - bullet
 		if (authorName && datetime) {
-			rm.write('<div class="sapMNLIFooterItem sapMNLIFooterBullet">');
-			rm.write('·');
-			rm.write('</div>');
+			rm.openStart('div')
+				.class('sapMNLIFooterItem')
+				.class('sapMNLIFooterBullet')
+				.openEnd();
+
+			rm.text('·');
+			rm.close('div');
 		}
 
 		// content - footer - date time
-		rm.write('<div class="sapMNLIFooterItem">');
-		rm.writeEscaped(datetime);
-		rm.write('</div>');
+		rm.openStart('div')
+			.class('sapMNLIFooterItem')
+			.openEnd();
+
+		rm.text(datetime);
+		rm.close('div');
 
 		// content - footer - show more
 		if (!control.getHideShowMoreButton()) {
 			// aria-hidden stop show more button to read out the whole notification, when in a group
-			rm.write('<div class="sapMNLIShowMore" aria-hidden="true">');
+			rm.openStart('div')
+				.class('sapMNLIShowMore')
+				.attr('aria-hidden', 'true')
+				.openEnd();
+
 			rm.renderControl(control._getShowMoreButton());
-			rm.write('</div>');
+			rm.close('div');
 		}
 
 
 		rm.renderControl(control._getFooterInvisibleText());
 		// end content - footer
-		rm.write('</div>');
+		rm.close('div');
 
 		// end content
-		rm.write('</div>');
+		rm.close('div');
 
 		// avatar
-		rm.write('<div class="sapMNLIImage">');
+		rm.openStart('div')
+			.class('sapMNLIImage')
+			.openEnd();
+
 		if (authorAvatar) {
 			rm.renderControl(authorAvatar);
 		}
-		rm.write('</div>');
+		rm.close('div');
 
 		// end main
-		rm.write('</div>');
+		rm.close('div');
 
-		rm.write('</li>');
+		rm.close('li');
 	};
 
 	return NotificationListItemRenderer;

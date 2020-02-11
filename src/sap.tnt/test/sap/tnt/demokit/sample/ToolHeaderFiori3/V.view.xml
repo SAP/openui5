@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt"
+	controllerName="sap.tnt.sample.ToolHeaderFiori3.C"
 	height="100%">
 	<tnt:ToolHeader>
 		<Button icon="sap-icon://menu2" type="Transparent" />
@@ -11,7 +12,7 @@
 		<Button icon="sap-icon://search" type="Transparent" />
 		<Button icon="sap-icon://task" type="Transparent" />
 		<Button icon="sap-icon://bell" type="Transparent" />
-		<Button icon="test-resources/sap/tnt/images/avatar.png" type="Transparent" />
+		<Avatar src="test-resources/sap/tnt/images/Woman_avatar_01.png" displaySize="XS" press=".onAvatarPressed" />
 		<Button icon="sap-icon://grid" type="Transparent" />
 	</tnt:ToolHeader>
 </mvc:View>

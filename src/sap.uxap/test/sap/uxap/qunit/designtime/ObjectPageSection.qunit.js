@@ -8,16 +8,16 @@ sap.ui.define([
 
 	"use strict";
 
-	var fnConfirmGroupelement1IsOn2ndPosition = function(oAppComponent, oViewAfterAction, assert) {
+	function fnConfirmGroupelement1IsOn2ndPosition(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual( oViewAfterAction.byId("subSection").getId(),       // Id of element at first position in original view
 			oViewAfterAction.byId("section").getSubSections() [1].getId(),   // Id of second element in group after change has been applied
 			"then the control has been moved to the right position");
-	};
-	var fnConfirmGroupelement1IsOn1stPosition = function(oAppComponent, oViewAfterAction, assert) {
+	}
+	function fnConfirmGroupelement1IsOn1stPosition(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual( oViewAfterAction.byId("subSection").getId(),       // Id of element at first position in original view
 			oViewAfterAction.byId("section").getSubSections() [0].getId(),   // Id of second element in group after change has been applied
 			"then the control has been moved to the previous position");
-	};
+	}
 
 	// Use elementActionTest to check if a control is ready for the move action of UI adaptation
 	elementActionTest("Checking the move action for a sap.uxap.ObjectPageSection control", {
@@ -74,7 +74,7 @@ sap.ui.define([
 	});
 
 	// Rename action
-	var fnConfirmSectionRenamedWithNewValue = function (oSection, oViewAfterAction, assert) {
+	var fnConfirmSectionRenamedWithNewValue = function (oUIComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("section").getTitle(),
 			"Title 2",
 			"then the control has been renamed to the new value (Title 2)");
@@ -120,50 +120,96 @@ sap.ui.define([
 		afterRedo: fnConfirmSectionRenamedWithNewValue
 	});
 
-		// Rename action of section with one subsection with NO title
-		elementActionTest("Checking the rename action for a Section, with one SubSection, without title ", {
-			xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+	// Rename section from anchor bar button
+	elementActionTest("Checking the rename action for a Section from the corresponding anchor bar button", {
+		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 			'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
-				'<uxap:ObjectPageLayout>' +
+				'<uxap:ObjectPageLayout id="layout">' +
 					'<uxap:sections>' +
 						'<uxap:ObjectPageSection id="section" title="Title 1">' +
 							'<uxap:subSections>' +
 								'<uxap:ObjectPageSubSection id="subSection1">' +
 									'<m:Button text="Subsection UI adaptation" />' +
 								'</uxap:ObjectPageSubSection>' +
+								'<uxap:ObjectPageSubSection id="subSection2">' +
+									'<m:Button text="Subsection UI adaptation" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+						'<uxap:ObjectPageSection id="section2">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection3" title="Subsection3 with button">' +
+									'<m:Button text="Button2" />' +
+								'</uxap:ObjectPageSubSection>' +
+								'<uxap:ObjectPageSubSection id="subSection4" title="Subsection4 empty">' +
+								'</uxap:ObjectPageSubSection>' +
 							'</uxap:subSections>' +
 						'</uxap:ObjectPageSection>' +
 					'</uxap:sections>' +
 				'</uxap:ObjectPageLayout>' +
 			'</mvc:View>'
-			,
-			action: {
-				name: "rename",
-				controlId: "section",
-				parameter: function (oView) {
-					return {
-						newValue: 'Title 2',
-						renamedElement: oView.byId("section")
-					};
-				}
+		,
+		action: {
+			name: "rename",
+			control : function(oView) {
+				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
 			},
-			afterAction: fnConfirmSectionRenamedWithNewValue,
-			afterUndo: fnConfirmSectionIsRenamedWithOldValue,
-			afterRedo: fnConfirmSectionRenamedWithNewValue
-		});
+			parameter: function (oView) {
+				return {
+					newValue: 'Title 2',
+					renamedElement: oView.byId("layout").getAggregation("_anchorBar").getContent()[0]
+				};
+			}
+		},
+		afterAction: fnConfirmSectionRenamedWithNewValue,
+		afterUndo: fnConfirmSectionIsRenamedWithOldValue,
+		afterRedo: fnConfirmSectionRenamedWithNewValue
+	});
+
+	// Rename action of section with one subsection with NO title
+	elementActionTest("Checking the rename action for a Section, with one SubSection, without title ", {
+		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+			'<uxap:ObjectPageLayout>' +
+				'<uxap:sections>' +
+					'<uxap:ObjectPageSection id="section" title="Title 1">' +
+						'<uxap:subSections>' +
+							'<uxap:ObjectPageSubSection id="subSection1">' +
+								'<m:Button text="Subsection UI adaptation" />' +
+							'</uxap:ObjectPageSubSection>' +
+						'</uxap:subSections>' +
+					'</uxap:ObjectPageSection>' +
+				'</uxap:sections>' +
+			'</uxap:ObjectPageLayout>' +
+		'</mvc:View>'
+		,
+		action: {
+			name: "rename",
+			controlId: "section",
+			parameter: function (oView) {
+				return {
+					newValue: 'Title 2',
+					renamedElement: oView.byId("section")
+				};
+			}
+		},
+		afterAction: fnConfirmSectionRenamedWithNewValue,
+		afterUndo: fnConfirmSectionIsRenamedWithOldValue,
+		afterRedo: fnConfirmSectionRenamedWithNewValue
+	});
 
 	// Rename section with one subsection with title
-	var fnConfirmSubSectionRenamedWithOneSectionNewValue = function (oSection, oViewAfterAction, assert) {
+	function fnConfirmSubSectionRenamedWithOneSectionNewValue(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("subSection").getTitle(),
 			"SubSectionTitle 2",
 			"then the SubSection control has been renamed to the new value (SubSectionTitle 2)");
-	};
+	}
 
-	var fnConfirmSubSectionRenamedWithOneSectionOldValue = function (oUiComponent, oViewAfterAction, assert) {
+	function fnConfirmSubSectionRenamedWithOneSectionOldValue(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("subSection").getTitle(),
 			"SubSectionTitle 1",
 			"then the SubSection control has been renamed to the old value (SubSectionTitle 1)");
-	};
+	}
 
 	elementActionTest("Checking the rename action for a Section with one SubSection with title", {
 		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
@@ -197,17 +243,135 @@ sap.ui.define([
 	});
 
 	// Rename action of section with one subsection with title and layout parameter subSectionLayout="TitleOnLeft"
-	var fnConfirmSubSectionRenamedLayoutParameterNewValue = function (oSection, oViewAfterAction, assert) {
+	function fnConfirmSubSectionRenamedLayoutParameterNewValue(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("section").getTitle(),
 			"Title 2",
 			"then the Section control has been renamed to the new value (Title 2)");
-	};
+	}
 
-	var fnConfirmSubSectionIsRenamedLayoutParameterOldValue = function (oUiComponent, oViewAfterAction, assert) {
+	function fnConfirmSubSectionIsRenamedLayoutParameterOldValue(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("section").getTitle(),
 			"Title 1",
 			"then the Section control has been renamed to the old value (Title 1)");
-	};
+	}
+
+	// Remove action from anchor bar button
+	function fnConfirmSectionIsNotVisible(oAppComponent, oView, assert) {
+		var aSections = oView.byId("layout").getSections();
+		var iSectionLength = aSections.length;
+		if (iSectionLength === 2) {
+			assert.equal(aSections[0].getId(), oView.createId("section2"));
+			assert.equal(aSections[1].getId(), oView.createId("section3"));
+		} else {
+			assert.equal(aSections[0].getId(), oView.createId("section"));
+			assert.equal(aSections[0].getVisible(), false);
+		}
+	}
+
+	function fnConfirmSectionIsVisible(oAppComponent, oView, assert) {
+		var aSections = oView.byId("layout").getSections();
+		var iSectionLength = aSections.length;
+		assert.equal(iSectionLength, 3);
+		aSections.forEach(function(oSection) {
+			assert.equal(oSection.getVisible(), true);
+		});
+	}
+
+	elementActionTest("Checking the stash action for a Section from the corresponding anchor bar button", {
+		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+			'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+				'<uxap:ObjectPageLayout id="layout">' +
+					'<uxap:sections>' +
+						'<uxap:ObjectPageSection id="section" title="Title 1">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection1">' +
+									'<m:Button text="Subsection UI adaptation" />' +
+								'</uxap:ObjectPageSubSection>' +
+								'<uxap:ObjectPageSubSection id="subSection2">' +
+									'<m:Button text="Subsection UI adaptation" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+						'<uxap:ObjectPageSection id="section2">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection3" title="Subsection3 with button">' +
+									'<m:Button text="Button1" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+						'<uxap:ObjectPageSection id="section3">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection4" title="Subsection4 with button">' +
+									'<m:Button text="Button2" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+					'</uxap:sections>' +
+				'</uxap:ObjectPageLayout>' +
+			'</mvc:View>'
+		,
+		action: {
+			name: "remove",
+			control : function(oView) {
+				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
+			},
+			parameter: function (oView) {
+				return {
+					removedElement: oView.byId("layout").getAggregation("_anchorBar").getContent()[0]
+				};
+			}
+		},
+		afterAction: fnConfirmSectionIsNotVisible,
+		afterUndo: fnConfirmSectionIsVisible,
+		afterRedo: fnConfirmSectionIsNotVisible
+	});
+
+	elementActionTest("Checking the unstash action for a Section from the corresponding anchor bar button", {
+		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+			'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+				'<uxap:ObjectPageLayout id="layout">' +
+					'<uxap:sections>' +
+						'<uxap:ObjectPageSection id="section" visible="false" title="Title 1">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection1">' +
+									'<m:Button text="Subsection UI adaptation1" />' +
+								'</uxap:ObjectPageSubSection>' +
+								'<uxap:ObjectPageSubSection id="subSection2">' +
+									'<m:Button text="Subsection UI adaptation2" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+						'<uxap:ObjectPageSection id="section2">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection3" title="Subsection3 with button">' +
+									'<m:Button text="Button1" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+						'<uxap:ObjectPageSection id="section3">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection4" title="Subsection4 with button">' +
+									'<m:Button text="Button2" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+					'</uxap:sections>' +
+				'</uxap:ObjectPageLayout>' +
+			'</mvc:View>'
+		,
+		action: {
+			revealedElement: function(oView) {
+				return oView.byId("section");
+			},
+			name: "reveal",
+			control : function(oView) {
+				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
+			}
+		},
+		afterAction: fnConfirmSectionIsVisible,
+		afterUndo: fnConfirmSectionIsNotVisible,
+		afterRedo: fnConfirmSectionIsVisible
+	});
 
 	elementActionTest("Checking the rename action for a Section with one SubSection with title, when subSectionLayout='TitleOnLeft' ", {
 		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +

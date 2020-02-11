@@ -3,12 +3,19 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 	function (FESR, Interaction, XHRInterceptor, Passport, Device) {
 	"use strict";
 
+	var requestCounter = 0;
+
 	QUnit.module("FESR", {
 		beforeEach: function(assert) {
 			assert.notOk(FESR.getActive(), "FESR is deactivated");
 		},
 		afterEach: function(assert) {
 			assert.notOk(FESR.getActive(), "FESR is deactivated");
+		},
+		dummyRequest: function() {
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now() + "-" + (++requestCounter), false);
+			xhr.send();
 		}
 	});
 
@@ -58,16 +65,13 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		};
 
 		// trigger at least one request for header creation
-		var xhr = new XMLHttpRequest();
-		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
-		xhr.send();
+		this.dummyRequest();
+
 		// first interaction ends with end
 		Interaction.end(true);
 
-		//trigger request to send FESR
-		xhr = new XMLHttpRequest();
-		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
-		xhr.send();
+		// trigger another request to send FESR
+		this.dummyRequest();
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
 			if (args[0] === "SAP-Perf-FESRec") {
@@ -87,7 +91,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		Interaction.end(true);
 		Interaction.clear();
-		FESR.onBeforeCreated =  fnOnBeforeCreated;
+		FESR.onBeforeCreated = fnOnBeforeCreated;
 		FESR.setActive(false);
 		FESR.onBeforeCreated = fnOnBeforeCreated;
 		oHeaderSpy.restore();
@@ -102,9 +106,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		FESR.setActive(true);
 		Interaction.notifyStepStart("startup", true);
 		// trigger at least one request to enable header creation
-		var xhr = new XMLHttpRequest();
-		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
-		xhr.send();
+		this.dummyRequest();
 		var sPassportAction = oPassportHeaderSpy.args[0][4];
 
 		oHeaderSpy.reset();
@@ -112,9 +114,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		// first interaction ends with notifyStepStart - second interaction starts
 		Interaction.end(true);
 		// trigger initial FESR header creation (which should include the actual "action")
-		xhr = new XMLHttpRequest();
-		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
-		xhr.send();
+		this.dummyRequest();
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
 			if (args[0] === "SAP-Perf-FESRec") {

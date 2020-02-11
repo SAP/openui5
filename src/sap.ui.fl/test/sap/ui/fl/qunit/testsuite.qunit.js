@@ -76,6 +76,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary"]
 				}
 			},
+			"apply/_internal/changes/descriptor/Preprocessor": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor"]
+				}
+			},
 			"apply/_internal/changes/descriptor/Applier": {
 				group: "Apply Internal",
 				coverage: {
@@ -126,7 +132,10 @@ sap.ui.define(function () {
 			"apply/_internal/connectors/LrepConnector": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/connectors/LrepConnector"]
+					only: [
+						"sap/ui/fl/apply/_internal/connectors/LrepConnector",
+						"sap/ui/fl/apply/_internal/connectors/Utils"
+					]
 				}
 			},
 			"apply/_internal/connectors/PersonalizationConnector": {
@@ -269,6 +278,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/api/AppVariantWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
 				}
 			},
+			"write/api/SmartBusinessWriteAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/SmartBusinessWriteAPI"]
+				}
+			},
 			"write/api/FeaturesAPI": {
 				group: "Write API",
 				coverage: {
@@ -373,7 +388,11 @@ sap.ui.define(function () {
 			"write/_internal/connectors/LrepConnector": {
 				group: "Write Internal",
 				coverage: {
-					only: ["sap/ui/fl/write/_internal/connectors/LrepConnector"]
+					only: [
+						"sap/ui/fl/write/_internal/connectors/LrepConnector",
+						"sap/ui/fl/write/_internal/connectors/Utils",
+						"sap/ui/fl/apply/_internal/connectors/Utils"
+					]
 				}
 			},
 			"write/_internal/connectors/KeyUserConnector": {
@@ -503,6 +522,28 @@ sap.ui.define(function () {
 				group: "ChangeHandler",
 				coverage: {
 					only: ["sap/ui/fl/changeHandler/AddXML"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
+				}
+			},
+			"changeHandler/AddXMLAtExtensionPoint": {
+				group: "ChangeHandler",
+				coverage: {
+					only: ["sap/ui/fl/changeHandler/AddXMLAtExtensionPoint"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
+				}
+			},
+			"changeHandler/BaseAddXml": {
+				group: "ChangeHandler",
+				coverage: {
+					only: ["sap/ui/fl/changeHandler/BaseAddXml"]
 				},
 				ui5: {
 					resourceroots: {

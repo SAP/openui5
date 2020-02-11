@@ -68,9 +68,8 @@
 			oRm.attr("disabled", "true");
 			// no need for aria-disabled if a "disabled" attribute is in the DOM
 			oAccAttributes.disabled = null;
-		} else {
-			oRm.attr("tabindex", oControl._getTabindex());
 		}
+		oRm.attr("tabindex", oControl._getTabindex());
 
 		if (oControl.getWrapping()) {
 			oRm.class("sapMLnkWrapping");

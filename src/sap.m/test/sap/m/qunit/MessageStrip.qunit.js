@@ -360,11 +360,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Role alert should be present", function (assert) {
+	QUnit.test("Role note should be present", function (assert) {
 		var msgStripDom = this.oMessageStrip.getDomRef(),
 			role = msgStripDom.getAttribute("role");
 
-		assert.strictEqual(role, "alert", "role=alert is present");
+		assert.strictEqual(role, "note", "role=note is present");
 	});
 
 	QUnit.test("Live region with aria-live should be present", function (assert) {

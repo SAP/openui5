@@ -274,6 +274,33 @@ sap.ui.define([
 		});
 	});
 
+
+	QUnit.module("Given all connector stubs", {
+		beforeEach: function () {
+			this.oGetStaticFileConnectorSpy = sandbox.spy(StorageUtils, "getStaticFileConnector");
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("completeFlexData with mocked partialFlexData", function (assert) {
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+
+			return Storage.completeFlexData({reference: "app.id", partialFlexData: StorageUtils.getEmptyFlexDataResponse()}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: null}));
+			});
+		});
+
+		QUnit.test("loadFlexData", function (assert) {
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: null}));
+			});
+		});
+	});
+
 	QUnit.module("Connector disassembles the variantSections", {
 		beforeEach: function () {
 		},
@@ -323,7 +350,10 @@ sap.ui.define([
 			var oResponse1 = {
 				changes: [],
 				variantSection: {},
-				ui2personalization: {}
+				ui2personalization: {
+					key1: "value1"
+				},
+				cacheKey: "key1"
 			};
 			oResponse1.variantSection = {
 				variantManagement1: {
@@ -345,7 +375,10 @@ sap.ui.define([
 			var oResponse2 = {
 				changes: [],
 				variantSection: {},
-				ui2personalization: {}
+				ui2personalization: {
+					key2: "value2"
+				},
+				cacheKey: "key2"
 			};
 			oResponse2.variantSection = {
 				variantManagement1: {
@@ -368,9 +401,13 @@ sap.ui.define([
 			var oExpectedResponse = Object.assign({}, StorageUtils.getEmptyFlexDataResponse(), {
 				variants: [oResponse1.variantSection.variantManagement1.variants[0].content, oResponse2.variantSection.variantManagement1.variants[0].content]
 			});
-
+			oExpectedResponse.ui2personalization = {
+				key1: "value1",
+				key2: "value2"
+			};
+			oExpectedResponse.cacheKey = "key1key2";
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, merge(oExpectedResponse, {cacheKey: null}), "then the expected result is returned");
+				assert.deepEqual(oResult, oExpectedResponse, "then the expected result is returned");
 			});
 		});
 

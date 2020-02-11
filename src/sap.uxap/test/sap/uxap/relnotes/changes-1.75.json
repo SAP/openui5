@@ -23,6 +23,28 @@
             "reference": "1970448827"
           }
         ]
+      },
+      {
+        "id": "732dface6efefc78c8514d6745a006d6990d4c9f",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Switch to HierarchicalSelect optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080019032"
+          }
+        ]
+      },
+      {
+        "id": "9c1c741aecc024db65338731e928733b6e8e297e",
+        "type": "FIX",
+        "text": " sap.uxap: Restrict adaptation of anchor bar to buttons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080094291"
+          }
+        ]
       }
     ]
   }

@@ -362,6 +362,17 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns whether the no columns text is currently shown or not
+		 * If true, also CSS class sapUiTableEmpty is set on the table root element.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the no columns text is shown.
+		 */
+		isNoColumnsVisible: function(oTable) {
+			return TableUtils.getVisibleColumnCount(oTable) === 0;
+		},
+
+        /**
 		 * Returns whether the no data text is currently shown or not
 		 * If true, also CSS class sapUiTableEmpty is set on the table root element.
 		 *
@@ -545,6 +556,16 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the text to be displayed as no visible columns message.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {string} The no columns text.
+		 */
+		getNoColumnsText: function(oTable) {
+			return TableUtils.getResourceText("TBL_NO_COLUMNS");
+		},
+
+        /**
 		 * Returns the text to be displayed as no data message.
 		 * If a custom noData control is set null is returned.
 		 *

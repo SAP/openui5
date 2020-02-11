@@ -187,8 +187,8 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions, sBaseMetaPath,
 			bCacheImmutable) {
-		var mAggregatedQueryOptionsClone = _Helper.merge({}, this.mAggregatedQueryOptions,
-				this.oCache && this.oCache.getLateQueryOptions()),
+		var mAggregatedQueryOptionsClone
+				= _Helper.merge({}, this.mAggregatedQueryOptions, this.mLateQueryOptions),
 			bChanged = false,
 			that = this;
 
@@ -277,10 +277,7 @@ sap.ui.define([
 			if (!bCacheImmutable) {
 				this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
 			} else if (bChanged) {
-				if (this.oCache === null) {
-					return false;
-				}
-				this.oCache.setLateQueryOptions(mAggregatedQueryOptionsClone);
+				this.mLateQueryOptions = mAggregatedQueryOptionsClone;
 			}
 			return true;
 		}
@@ -629,7 +626,9 @@ sap.ui.define([
 			oMetaModel = this.oModel.getMetaModel(),
 			aPromises,
 			sResolvedChildPath = this.oModel.resolve(sChildPath, oContext),
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sResolvedPath = oContext.iReturnValueContextId
+				? oContext.getPath()
+				: this.oModel.resolve(this.sPath, this.oContext),
 			// whether this binding is an operation or depends on one
 			bDependsOnOperation = sResolvedPath.indexOf("(...)") >= 0,
 			that = this;
@@ -662,7 +661,7 @@ sap.ui.define([
 		// become pending again
 		bCacheImmutable = this.oCachePromise.isRejected()
 			|| this.oCache === null
-			|| this.oCache && this.oCache.bSentReadRequest;
+			|| this.oCache && this.oCache.bSentRequest;
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
 		sFullMetaPath = oMetaModel.getMetaPath(sResolvedChildPath);
 		aPromises = [
@@ -729,13 +728,28 @@ sap.ui.define([
 					+ sFullMetaPath + "' does not point to a property",
 				JSON.stringify(oProperty), sClassName);
 			return undefined;
+		}).then(function (sReducedPath) {
+			if (that.mLateQueryOptions) {
+				if (that.oCache) {
+					that.oCache.setLateQueryOptions(that.mLateQueryOptions);
+				} else {
+					return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
+						that.sPath, SyncPromise.resolve(that.mLateQueryOptions))
+						.then(function (sPath) {
+							return sPath && sReducedPath;
+						});
+				}
+			}
+			return sReducedPath;
 		});
 		this.aChildCanUseCachePromises.push(oCanUseCachePromise);
 		this.oCachePromise = SyncPromise.all([this.oCachePromise, oCanUseCachePromise])
 			.then(function (aResult) {
 				var oCache = aResult[0];
 
-				if (oCache && !oCache.bSentReadRequest) {
+				// Note: in operation bindings mAggregatedQueryOptions misses the options from
+				// $$inheritExpandSelect
+				if (oCache && !oCache.bSentRequest && !that.oOperation) {
 					oCache.setQueryOptions(_Helper.merge({}, that.oModel.mUriParameters,
 						that.mAggregatedQueryOptions));
 				}

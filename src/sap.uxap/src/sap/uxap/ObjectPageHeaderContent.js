@@ -198,6 +198,12 @@ sap.ui.define([
 			}
 		};
 
+
+		ObjectPageHeaderContent.prototype.setVisible = function (bVisible) {
+			this.getParent() && this.getParent().toggleStyleClass("sapUxAPObjectPageLayoutNoHeaderContent", !bVisible);
+			return this.setProperty("visible", bVisible);
+		};
+
 		/**
 		 * Required by the {@link sap.uxap.IHeaderContent} interface.
 		 * @param aContent

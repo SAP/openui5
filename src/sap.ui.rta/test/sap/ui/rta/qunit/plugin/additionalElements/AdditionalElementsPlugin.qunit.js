@@ -712,6 +712,38 @@ sap.ui.define([
 				}.bind(this));
 		});
 
+		QUnit.test("when the control's dt metadata has a reveal action on a responsible element and we call showAvailableElements with an index", function (assert) {
+			var done = assert.async();
+			this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
+				var oCompositeCommand = oEvent.getParameter("command");
+				assert.equal(oCompositeCommand.getCommands().length, 1, "then one command is created");
+				assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
+				assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
+				done();
+			});
+
+			return createOverlayWithAggregationActions.call(this,
+				{
+					reveal : {
+						changeType : "unhideControl"
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent
+					}
+				},
+				ON_SIBLING
+			)
+				.then(function () {
+					return this.oPlugin.showAvailableElements(true, [this.oPseudoPublicParentOverlay], 0);
+				}.bind(this))
+				.then(function() {
+					assertDialogModelLength.call(this, assert, 2, "then all invisible elements are part of the dialog model");
+					assert.equal(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is the responsible element's sibling");
+					assert.equal(this.oPlugin.getDialog().getElements()[1].label, "Invisible2", "then the second element is the responsible element's sibling");
+				}.bind(this));
+		});
+
 		QUnit.test("when the control's dt metadata has addODataProperty, a reveal and a custom add actions", function(assert) {
 			var oOriginalRTATexts = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle;
@@ -1722,6 +1754,17 @@ sap.ui.define([
 				this.oParentOverlay = OverlayRegistry.getOverlay(this.oControl);
 				this.oSiblingOverlay = OverlayRegistry.getOverlay(this.oSibling);
 				this.oIrrelevantOverlay = OverlayRegistry.getOverlay(this.oIrrelevantChild);
+
+				if (mActions.responsibleElement) {
+					var oSourceElementOverlay = OverlayRegistry.getOverlay(mActions.responsibleElement.source);
+					oSourceElementOverlay.setDesignTimeMetadata({
+						actions: {
+							getResponsibleElement: function() {
+								return mActions.responsibleElement.target;
+							}
+						}
+					});
+				}
 				resolve();
 			}.bind(this));
 		}.bind(this))

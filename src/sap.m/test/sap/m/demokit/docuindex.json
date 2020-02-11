@@ -1403,7 +1403,8 @@
 		  "samples" : [
 			"sap.m.sample.Wizard",
 			"sap.m.sample.WizardBranching",
-			"sap.m.sample.WizardCurrentStep"
+			"sap.m.sample.WizardCurrentStep",
+			"sap.f.sample.DynamicPageWithWizard"
 		  ]
 		},
 		{
@@ -2842,6 +2843,11 @@
 		  "id": "sap.m.sample.PopoverNavCon",
 		  "name": "Popover With NavContainer",
 		  "description": "You can nest NavContainers in Popovers (and Dialogs) to navigate to further details in place."
+		},
+		{
+		  "id": "sap.m.sample.PopoverControllingCloseBehavior",
+		  "name": "Popover Controlling Closing Behavior",
+		  "description": "In some cases the closing behavior of the Popover can lead to drill down navigation. This sample demonstrates how you can control this. When the Popover is opened, add a style \"pointer-events: none\" to the area that should remain static and when the Popover is closed, remove it. Please note that, when having nested controls with \"pointer-events\" set, depending on the value of the property, internal controls may fire events, which will bubble up and trigger other events where applicable. The application needs to handle such cases."
 		},
 		{
 		  "id": "sap.m.sample.SelectDialog",

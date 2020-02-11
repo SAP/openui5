@@ -113,14 +113,10 @@ sap.ui.define([
 		this._bLimitDisabled = this.getLimit() === 0;
 		this.oInnerSelectionPlugin = null;
 		this.oDeselectAllIcon = oIcon;
+		this._oNotificationPopover = null;
 	};
 
 	MultiSelectionPlugin.prototype.exit = function() {
-		if (this.oInnerSelectionPlugin) {
-			this.oInnerSelectionPlugin.destroy();
-			this.oInnerSelectionPlugin = null;
-		}
-
 		if (this.oDeselectAllIcon) {
 			this.oDeselectAllIcon.destroy();
 			this.oDeselectAllIcon = null;
@@ -129,6 +125,34 @@ sap.ui.define([
 		if (this._oNotificationPopover) {
 			this._oNotificationPopover.destroy();
 			this._oNotificationPopover = null;
+		}
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	MultiSelectionPlugin.prototype.onActivate = function(oTable) {
+		SelectionPlugin.prototype.onActivate.apply(this, arguments);
+		this.oInnerSelectionPlugin = oTable._createLegacySelectionPlugin();
+		this.oInnerSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
+		oTable.addAggregation("_hiddenDependents", this.oInnerSelectionPlugin, true);
+		oTable.setProperty("selectionMode", this.getSelectionMode());
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	MultiSelectionPlugin.prototype.onDeactivate = function(oTable) {
+		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
+		oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
+
+		if (this._oNotificationPopover) {
+			this._oNotificationPopover.close();
+		}
+
+		if (this.oInnerSelectionPlugin) {
+			this.oInnerSelectionPlugin.destroy();
+			this.oInnerSelectionPlugin = null;
 		}
 	};
 
@@ -254,7 +278,7 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.selectAll = function() {
 		if (this._bLimitDisabled){
-			var iLastIndex = this._getBinding().getLength() - 1;
+			var iLastIndex = this.getTableBinding().getLength() - 1;
 			this.addSelectionInterval(0, iLastIndex);
 		}
 	};
@@ -272,7 +296,7 @@ sap.ui.define([
 	function prepareSelection(oMultiSelectionPlugin, iIndexFrom, iIndexTo, bAddSelection) {
 		var iLimit = oMultiSelectionPlugin.getLimit();
 		var bReverse = iIndexTo < iIndexFrom;
-		var oBinding = oMultiSelectionPlugin._getBinding();
+		var oBinding = oMultiSelectionPlugin.getTableBinding();
 		var iGetContextsStartIndex = bReverse ? iIndexTo : iIndexFrom;
 
 		// If the start index is already selected, the range starts from the next index.
@@ -611,35 +635,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
-	 * @inheritDoc
-	 */
-	MultiSelectionPlugin.prototype.setParent = function(oParent) {
-		var oTable = this.getParent();
-		if (oTable) {
-			oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
-		}
-
-		if (this._oNotificationPopover) {
-			this._oNotificationPopover.close();
-		}
-
-		var vReturn = SelectionPlugin.prototype.setParent.apply(this, arguments);
-
-		if (this.oInnerSelectionPlugin) {
-			this.oInnerSelectionPlugin.destroy();
-			this.oInnerSelectionPlugin = null;
-		}
-		if (oParent) {
-			this.oInnerSelectionPlugin = oParent._createLegacySelectionPlugin();
-			this.oInnerSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
-			oParent.setProperty("selectionMode", this.getSelectionMode());
-		}
-
-		return vReturn;
-	};
-
-	/**
 	 * Fires the _onSelectionChange event.
 	 *
 	 * @param oEvent
@@ -665,44 +660,6 @@ sap.ui.define([
 			return this.oInnerSelectionPlugin._getLastIndex();
 		}
 		return 0;
-	};
-
-	/**
-	 * Returns the binding of the associated table.
-	 *
-	 * @return {*}
-	 * @private
-	 */
-	MultiSelectionPlugin.prototype._getBinding = function() {
-		if (this.oInnerSelectionPlugin) {
-			return this.oInnerSelectionPlugin._getBinding();
-		}
-		return null;
-	};
-
-	/**
-	 * Sets the binding of the associated table.
-	 *
-	 * @override
-	 * @param {sap.ui.model.Binding} oBinding
-	 * @private
-	 */
-	MultiSelectionPlugin.prototype._setBinding = function(oBinding) {
-		if (this.oInnerSelectionPlugin) {
-			return this.oInnerSelectionPlugin._setBinding(oBinding);
-		}
-	};
-
-	/**
-	 * The event is fired when the binding of the table is changed.
-	 *
-	 * @param {sap.ui.base.Event} oEvent
-	 * @private
-	 */
-	MultiSelectionPlugin.prototype._onBindingChange = function(oEvent) {
-		if (this.oInnerSelectionPlugin) {
-			return this.oInnerSelectionPlugin._onBindingChange(oEvent);
-		}
 	};
 
 	MultiSelectionPlugin.prototype.onThemeChanged = function() {

@@ -1,114 +1,440 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/util/ObjectBinding",
+	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
 	"sap/ui/model/json/JSONModel"
 ],
-	function (
-		ObjectBinding,
-		JSONModel
-	) {
-		"use strict";
+function (
+	ObjectBinding,
+	JSONModel
+) {
+	"use strict";
 
-		QUnit.module("Given test JSON models, Object and ObjectBinding are created", {
-			beforeEach: function (assert) {
-				this.oObject = {
+	QUnit.module("Given test JSON models and ObjectBinding", {
+		beforeEach: function () {
+			this.oObjectBinding = new ObjectBinding();
+
+			this.oDefaultModel = new JSONModel({
+				root: "root",
+				context: {
+					value: "DefaultValue"
+				},
+				another: {
+					foo: "bar"
+				}
+			});
+
+			this.oTestModel = new JSONModel({
+				root: "testRoot",
+				context: {
+					value: "TestValue"
+				},
+				another: {
+					foo: "testBar"
+				}
+			});
+
+			this.oFooModel = new JSONModel({
+				root: "fooRoot",
+				context: {
+					bar: "TestValue"
+				},
+				another: {
+					foo: "fooBar"
+				}
+			});
+		},
+		afterEach: function () {
+			this.oObjectBinding.destroy();
+			this.oDefaultModel.destroy();
+			this.oTestModel.destroy();
+			this.oFooModel.destroy();
+		}
+	}, function () {
+		QUnit.test("simple binding — absolute binding", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				absoluteBinding: "{/root}"
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
 					noBinding: 1,
-					defaultModelContextBinding: "{value}",
-					defaultModelAbsoluteBinding: "{/root}",
-					modelWithRootContextBinding: "{foo>root}",
-					nonExistingModelBinding: "{i18n>test}",
+					absoluteBinding: "root"
+				}
+			);
+		});
+
+		QUnit.test("simple binding — relative binding", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				relativeBinding: "{value}"
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					relativeBinding: "DefaultValue"
+				}
+			);
+		});
+
+		QUnit.test("simple binding — incorrect binding string", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				incorrectBinding: "{nonExistentPath}"
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					incorrectBinding: undefined
+				}
+			);
+		});
+
+		QUnit.test("simple binding against non-default model", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				simpleBinding: "{test>/root}"
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oTestModel, "test");
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					simpleBinding: "testRoot"
+				}
+			);
+		});
+
+		QUnit.test("simple binding against unknown model", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				simpleBinding: "{someModel>/root}"
+			};
+
+			this.oObjectBinding.setObject(oJson);
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					simpleBinding: "{someModel>/root}"
+				}
+			);
+		});
+
+		QUnit.test("complex binding against default model with absolute and relative parts", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				complexBinding: "{= ${/root} + ' ' + ${value} }"
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					complexBinding: "root DefaultValue"
+				}
+			);
+		});
+
+		QUnit.test("complex binding against default model when one part is unknown", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				complexBinding: "{= ${/root} + ' ' + ${someProperty} }"
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					complexBinding: "root undefined" // `undefined` because "someProperty" is undefined in the source object
+				}
+			);
+		});
+
+		QUnit.test("complex binding against default model and some other model", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				complexBinding: "{= ${/root} + ' ' + ${test>value} }"
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+			this.oObjectBinding.setModel(this.oTestModel, "test");
+			this.oObjectBinding.setBindingContext(this.oTestModel.getContext("/context"), "test");
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					complexBinding: "root TestValue"
+				}
+			);
+		});
+
+		QUnit.test("complex binding against default model and unknown model", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				complexBinding: "{= ${/root} + ' ' + ${test>value} }"
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					complexBinding: "{= ${/root} + ' ' + ${test>value} }"
+				}
+			);
+		});
+
+		QUnit.test("nesting: simple binding", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				nestedProperties: {
+					simpleBinding: "{value}"
+				}
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
 					nestedProperties: {
-						anotherModelContextBinding: "{test>value}",
-						anotherModelExpressionBinding: "{= ${test>value} === 'TestValue' ? 'Success' : 'Failure' }",
-						multipleModelsExpression: "{= ${test>value} === ${foo>/context/bar} ? 'Yes' : 'No'}"
+						simpleBinding: "DefaultValue"
 					}
-				};
-
-				this.oDefaultModelData = {
-					root: "root",
-					context: {
-						value: "DefaultValue"
-					},
-					another: {
-						foo: "bar"
-					}
-				};
-				this.oTestModelData = {
-					test: "testRoot",
-					context: {
-						value: "TestValue"
-					},
-					another: {
-						foo: "testBar"
-					}
-				};
-				this.oFooModelData = {
-					root: "fooRoot",
-					context: {
-						bar: "TestValue"
-					},
-					another: {
-						foo: "fooBar"
-					}
-				};
-				this.oDefaultModel = new JSONModel(this.oDefaultModelData);
-				this.oTestModel = new JSONModel(this.oTestModelData);
-				this.oFooModel = new JSONModel(this.oFooModelData);
-				this.oObjectBinding = new ObjectBinding();
-				this.oObjectBinding.setObject(this.oObject);
-				this.oObjectBinding.setModel(this.oDefaultModel);
-				this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
-				this.oObjectBinding.setModel(this.oTestModel, "test");
-				this.oObjectBinding.setBindingContext(this.oTestModel.getContext("/context"), "test");
-				this.oObjectBinding.setModel(this.oFooModel, "foo");
-				this.oObjectBinding.setBindingContext(this.oFooModel.getContext("/"), "foo");
-			},
-			afterEach: function () {
-				this.oObjectBinding.destroy();
-				this.oDefaultModel.destroy();
-				this.oTestModel.destroy();
-				this.oFooModel.destroy();
-			}
-		});
-
-		QUnit.test("When bindings are resolved", function (assert) {
-			assert.deepEqual(this.oObject, {
-				noBinding: 1,
-				defaultModelContextBinding: "DefaultValue",
-				defaultModelAbsoluteBinding: "root",
-				modelWithRootContextBinding: "fooRoot",
-				nonExistingModelBinding: "{i18n>test}",
-				nestedProperties: {
-					anotherModelContextBinding: "TestValue",
-					anotherModelExpressionBinding: "Success",
-					multipleModelsExpression: "Yes"
 				}
-			}, "then object values are updated accordingly");
+			);
 		});
 
-		QUnit.test("When values in models are changed", function (assert) {
-			this.oDefaultModelData.root = "rootUpdated";
-			this.oDefaultModelData.context.value = "DefaultValueUpdated";
-			this.oTestModelData.context.value = "TestValueUpdated";
-			this.oFooModelData.root = "fooRootUpdated";
-			this.oFooModelData.context.bar = "TestValueUpdated";
-			this.oDefaultModel.checkUpdate();
-			this.oTestModel.checkUpdate();
-			this.oFooModel.checkUpdate();
-
-			assert.deepEqual(this.oObject, {
+		QUnit.test("nesting: complex binding", function (assert) {
+			var oJson = {
 				noBinding: 1,
-				defaultModelContextBinding: "DefaultValueUpdated",
-				defaultModelAbsoluteBinding: "rootUpdated",
-				modelWithRootContextBinding: "fooRootUpdated",
-				nonExistingModelBinding: "{i18n>test}",
 				nestedProperties: {
-					anotherModelContextBinding: "TestValueUpdated",
-					anotherModelExpressionBinding: "Failure",
-					multipleModelsExpression: "Yes"
+					complexBinding: "{= ${test>value} === 'TestValue' ? 'Success' : 'Failure' }"
 				}
-			}, "then object values are updated as well");
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oTestModel, "test");
+			this.oObjectBinding.setBindingContext(this.oTestModel.getContext("/context"), "test");
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					nestedProperties: {
+						complexBinding: "Success"
+					}
+				}
+			);
 		});
-	}
-);
+
+		QUnit.test("nesting: complex binding with multiple models", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				nestedProperties: {
+					complexBinding: "{= ${test>value} === ${foo>/context/bar} ? 'Yes' : 'No'}"
+				}
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oTestModel, "test");
+			this.oObjectBinding.setBindingContext(this.oTestModel.getContext("/context"), "test");
+			this.oObjectBinding.setModel(this.oFooModel, "foo");
+			this.oObjectBinding.setBindingContext(this.oFooModel.getContext("/context"), "foo");
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					nestedProperties: {
+						complexBinding: "Yes"
+					}
+				}
+			);
+		});
+
+		QUnit.test("avoid mutations in the JSON object", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				nestedProperties: {
+					simpleBinding: "{value}"
+				}
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+
+			assert.notStrictEqual(this.oObjectBinding.getObject(), oJson);
+			assert.notStrictEqual(this.oObjectBinding.getObject().nestedProperties, oJson.nestedProperties);
+		});
+
+		QUnit.test("model updates", function (assert) {
+			var fnDone = assert.async();
+			var oJson = {
+				noBinding: 1,
+				absoluteBinding: "{/root}"
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					absoluteBinding: "root"
+				}
+			);
+
+			this.oObjectBinding.attachChange(function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("path"), "absoluteBinding");
+				assert.strictEqual(oEvent.getParameter("value"), "foo");
+				assert.deepEqual(
+					this.oObjectBinding.getObject(),
+					{
+						noBinding: 1,
+						absoluteBinding: "foo"
+					}
+				);
+				fnDone();
+			}, this);
+
+			this.oDefaultModel.setData(Object.assign({}, this.oDefaultModel.getData(), {
+				root: "foo"
+			}));
+		});
+
+		QUnit.test("arrays support", function (assert) {
+			var oJson = [
+				{
+					simpleBinding: "{/root}",
+					noBinding: null
+				},
+				"{value}",
+				[
+					"{/root}",
+					"{value}"
+				]
+			];
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				[
+					{
+						simpleBinding: "root",
+						noBinding: null
+					},
+					"DefaultValue",
+					[
+						"root",
+						"DefaultValue"
+					]
+				]
+			);
+		});
+
+		QUnit.test("ignore properties", function (assert) {
+			var oJson = {
+				noBinding: 1,
+				simpleBinding1: "{/root}",
+				simpleBinding2: "{value}",
+				nestedProperties: {
+					simpleBinding: "{/another/foo}"
+				}
+			};
+
+			this.oObjectBinding.setObject(oJson);
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"));
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					simpleBinding1: "root",
+					simpleBinding2: "DefaultValue",
+					nestedProperties: {
+						simpleBinding: "bar"
+					}
+				}
+			);
+
+			this.oObjectBinding.addToIgnore("simpleBinding1");
+			this.oObjectBinding.addToIgnore("simpleBinding");
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					simpleBinding1: "{/root}",
+					simpleBinding2: "DefaultValue",
+					nestedProperties: {
+						simpleBinding: "{/another/foo}"
+					}
+				}
+			);
+
+			this.oObjectBinding.removeFromIgnore("simpleBinding1");
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					simpleBinding1: "root",
+					simpleBinding2: "DefaultValue",
+					nestedProperties: {
+						simpleBinding: "{/another/foo}"
+					}
+				}
+			);
+		});
+
+	});
+
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
+	});
+});

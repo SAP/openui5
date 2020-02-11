@@ -155,7 +155,7 @@ sap.ui.define([
 			 * @param {object} mPropertyBag Property bag
 			 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
 			 * @param {string} mPropertyBag.reference Flex reference
-			 * @returns {Promise<>} Resolves after the draft is discarded.
+			 * @returns {Promise} Resolves after the draft is discarded.
 			 */
 			discardDraft: function () {
 				return Promise.reject("versions.discardDraft is not implemented");

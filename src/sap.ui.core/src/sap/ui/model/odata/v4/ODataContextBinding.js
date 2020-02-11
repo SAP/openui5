@@ -312,6 +312,9 @@ sap.ui.define([
 						}
 						that.oReturnValueContext = Context.createReturnValueContext(that.oModel,
 							that, getReturnValueContextPath(sResolvedPath, sResponsePredicate));
+						// set the resource path for late property requests
+						that.oCache.setResourcePath(that.oReturnValueContext.getPath().slice(1));
+
 						return that.oReturnValueContext;
 					}
 				});

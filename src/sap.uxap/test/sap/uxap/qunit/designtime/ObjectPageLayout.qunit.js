@@ -295,6 +295,19 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.test("when DT is loaded and trying to move the section into the anchor bar...", function(assert) {
+		var oMovedAnchorBarButton = this.oObjectPageLayout.getAggregation("_anchorBar").getContent()[0];
+		var oMovedAnchorBarButtonOverlay = OverlayRegistry.getOverlay(oMovedAnchorBarButton);
+		var oAnchorBarAggregationOverlay = oMovedAnchorBarButtonOverlay.getParentAggregationOverlay();
+		var oMovedSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
+		this.oElementMover.setMovedOverlay(oMovedSectionOverlay);
+		return this.oElementMover.checkTargetZone(oAnchorBarAggregationOverlay)
+			.then(function(bTargetZone) {
+				assert.notOk(bTargetZone,
+					"then the _anchorBar aggregation is not a possible target zone");
+			});
+	});
+
 	QUnit.module("Given ObjectPageLayout with two Sections,", {
 		beforeEach : function(assert) {
 

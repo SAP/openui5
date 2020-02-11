@@ -527,6 +527,10 @@ function(
 				Math.floor(iWidth / WizardProgressNavigator.CONSTANTS.MIN_STEP_WIDTH_WITH_TITLE) :
 				Math.floor(iWidth / WizardProgressNavigator.CONSTANTS.MIN_STEP_WIDTH_NO_TITLE);
 
+		if (!this._aCachedSteps) {
+			return;
+		}
+
 		[].forEach.call(this._aCachedSteps, function (step) {
 			step.setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, false);
 			step.setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_PREV, false);

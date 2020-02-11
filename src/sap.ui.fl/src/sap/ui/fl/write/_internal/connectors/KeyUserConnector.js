@@ -7,18 +7,26 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/BackendConnector",
 	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/Layer"
 ], function(
 	merge,
 	BackendConnector,
 	ApplyConnector,
 	ApplyUtils,
+	WriteUtils,
 	Layer
 ) {
 	"use strict";
 
 	var PREFIX = "/flex/keyuser";
 	var API_VERSION = "/v1";
+
+	function _enhancePropertyBagWithTokenInfo(mPropertyBag) {
+		mPropertyBag.applyConnector = ApplyConnector;
+		mPropertyBag.xsrfToken = ApplyConnector.xsrfToken;
+		mPropertyBag.tokenUrl = KeyUserConnector.ROUTES.TOKEN;
+	}
 
 	/**
 	 * Connector for saving and deleting data from SAPUI5 Flexibility KeyUser service.
@@ -47,20 +55,23 @@ sap.ui.define([
 
 	KeyUserConnector.versions = {
 		load: function (mPropertyBag) {
+			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag);
-			return ApplyUtils.sendRequest(sVersionsUrl).then(function (oResult) {
+			return ApplyUtils.sendRequest(sVersionsUrl, "GET", mPropertyBag).then(function (oResult) {
 				return oResult.response;
 			});
 		},
 		activateDraft: function (mPropertyBag) {
+			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag);
-			return ApplyUtils.sendRequest(sVersionsUrl, "POST").then(function (oResult) {
+			return ApplyUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
 				return oResult.response;
 			});
 		},
 		discardDraft: function (mPropertyBag) {
+			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.DISCARD, mPropertyBag);
-			return ApplyUtils.sendRequest(sVersionsUrl, "DELETE");
+			return ApplyUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
 		}
 	};
 

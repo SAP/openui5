@@ -178,7 +178,7 @@ sap.ui.define([
 					highlight: oItem.highlight ? oItem.highlight : "None"
 				});
 
-				// Here can be called _attachNavigationAction so that navigation service can be used
+				// Here can be called _attachAction so that navigation service can be used
 				if (oItem.action) {
 					oListItem.setType("Navigation");
 

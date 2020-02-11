@@ -967,10 +967,33 @@ function(
 		beforeEach: function() {
 			this.oControl = new Control("existingId");
 			this.oChange = new Change(getLabelChangeContent("fileName", "labelId"));
+			this.oExtensionPointChange = new Change({
+				fileType: "change",
+				layer: "CUSTOMER",
+				fileName: "aName",
+				namespace: "a",
+				packageName: "b",
+				changeType: "addXMLAtExtensionPoint",
+				creation: "",
+				reference: "",
+				selector: {
+					name: "MyExtensionPoint",
+					viewSelector: {
+						id: "testComponent---myView",
+						idIsLocal: true
+					}
+				},
+				content: {
+					something: "fragmentpath"
+				}
+			});
 			var oDOMParser = new DOMParser();
 			var oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 					'<Label id="labelId" />' +
+					'<HBox id="hbox">' +
+						'<core:ExtensionPoint name="MyExtensionPoint" />' +
+					'</HBox>' +
 				'</mvc:View>';
 			var oView = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 			this.oXmlLabel = oView.childNodes[0];
@@ -990,6 +1013,15 @@ function(
 			this.oApplyChangeOnControlStub.resolves({success: true});
 
 			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange]).then(function(oResult) {
+				assert.equal(this.oApplyChangeOnControlStub.callCount, 1, "the change handler was called");
+				assert.deepEqual(oResult, this.mPropertyBag.view, "the view was returned");
+			}.bind(this));
+		});
+
+		QUnit.test("when change for an extension point can be applied", function(assert) {
+			this.oApplyChangeOnControlStub.resolves({success: true});
+
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oExtensionPointChange]).then(function(oResult) {
 				assert.equal(this.oApplyChangeOnControlStub.callCount, 1, "the change handler was called");
 				assert.deepEqual(oResult, this.mPropertyBag.view, "the view was returned");
 			}.bind(this));

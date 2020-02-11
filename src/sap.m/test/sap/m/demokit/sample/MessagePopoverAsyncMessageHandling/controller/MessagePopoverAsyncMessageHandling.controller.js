@@ -8,33 +8,7 @@ sap.ui.define([
 ], function (MessagePopover, MessageItem, MessageToast, Link, Controller, JSONModel) {
 	"use strict";
 
-	var oLink = new Link({
-		text: "Show more information",
-		href: "http://sap.com",
-		target: "_blank"
-	});
-
-	var oMessageTemplate = new MessageItem({
-		type: '{type}',
-		title: '{title}',
-		activeTitle: "{active}",
-		description: '{description}',
-		subtitle: '{subtitle}',
-		counter: '{counter}',
-		link: oLink,
-		markupDescription: true
-	});
-
-	var oMessagePopover = new MessagePopover({
-		items: {
-			path: '/',
-			template: oMessageTemplate
-		},
-		activeTitlePress: function () {
-			MessageToast.show('Active title is pressed');
-		}
-	});
-
+	var oMessagePopover;
 
 	return Controller.extend("sap.m.sample.MessagePopoverAsyncMessageHandling.controller.MessagePopoverAsyncMessageHandling", {
 		onInit: function () {
@@ -50,6 +24,33 @@ sap.ui.define([
 				"	<li>Ordered list item 1 <a href=\"#\">Relative URL that is allowed after validation.</a></li>" +
 				"	<li>Ordered list item 2</li>" +
 				"</ol>";
+
+			var oLink = new Link({
+				text: "Show more information",
+				href: "http://sap.com",
+				target: "_blank"
+			});
+
+			var oMessageTemplate = new MessageItem({
+				type: '{type}',
+				title: '{title}',
+				activeTitle: "{active}",
+				description: '{description}',
+				subtitle: '{subtitle}',
+				counter: '{counter}',
+				link: oLink,
+				markupDescription: true
+			});
+
+			oMessagePopover = new MessagePopover({
+				items: {
+					path: '/',
+					template: oMessageTemplate
+				},
+				activeTitlePress: function () {
+					MessageToast.show('Active title is pressed');
+				}
+			});
 
 			var aMockMessages = [{
 				type: 'Error',

@@ -112,6 +112,8 @@ sap.ui.define([
 		var oTransportSelectionPromise;
 		if (mPropertyBag.transport) {
 			oTransportSelectionPromise = Promise.resolve({transport: mPropertyBag.transport});
+		} else if (mPropertyBag.isForSmartBusiness) {
+			return Promise.resolve();
 		} else {
 			var oChange = _prepareAppVariantSpecificChange(mPropertyBag.appVariant);
 			oTransportSelectionPromise = new TransportSelection().openTransportSelection(oChange);
@@ -125,18 +127,6 @@ sap.ui.define([
 			}
 			return Promise.reject(new Error("Transport information could not be determined"));
 		});
-	};
-
-	var _handleSmartBusinessKPITileCreationCase = function(mPropertyBag) {
-		if (
-			!mPropertyBag.transport
-			&& mPropertyBag.settings.isAtoEnabled()
-			&& mPropertyBag.skipIam
-			&& LayerUtils.isCustomerDependentLayer(mPropertyBag.layer)
-		) {
-			// Smart Business created KPI tiles on S4 Cloud and the query parameter will be added to support their usecase
-			mPropertyBag.transport = "ATO_NOTIFICATION";
-		}
 	};
 
 	/**
@@ -415,7 +405,6 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sAppVariantUrl, "GET", oRequestOption);
 		},
 		create: function(mPropertyBag) {
-			_handleSmartBusinessKPITileCreationCase(mPropertyBag);
 			mPropertyBag.method = "POST";
 			mPropertyBag.isAppVariant = true;
 			return _doWrite(mPropertyBag);
@@ -461,6 +450,7 @@ sap.ui.define([
 				if (sTransport) {
 					mPropertyBag.transport = sTransport;
 				}
+				delete mPropertyBag.isForSmartBusiness;
 				mPropertyBag.method = "PUT";
 				mPropertyBag.isAppVariant = true;
 				return _doWrite(mPropertyBag);
@@ -472,6 +462,7 @@ sap.ui.define([
 				if (sTransport) {
 					mParameters.changelist = sTransport;
 				}
+				delete mPropertyBag.isForSmartBusiness;
 				var sDeleteUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
 				delete mPropertyBag.reference;
 				var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);

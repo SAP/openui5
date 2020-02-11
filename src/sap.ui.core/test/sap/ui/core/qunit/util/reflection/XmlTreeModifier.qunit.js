@@ -97,6 +97,31 @@ function(
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY + '" crossAppNavCallback="[\\{&quot;key&quot;:&quot;value&quot;\\}]" />' +
 				'</mvc:View>';
 			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
+
+			this.oXmlString2 =
+				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<HBox id="hbox1">' +
+					'<items>' +
+						'<Button id="button1" text="Button1" />' +
+						'<Button id="button2" text="Button2" />' +
+						'<Button id="button3" text="Button3" />' +
+						'<core:ExtensionPoint name="ExtensionPoint1" />' +
+						'<Label id="label1" text="TestLabel1" />' +
+					'</items>' +
+				'</HBox>' +
+				'<Panel id="panel">' +
+						'<core:ExtensionPoint name="ExtensionPoint2" />' +
+						'<Label id="label2" text="TestLabel2" />' +
+						'<core:ExtensionPoint name="ExtensionPoint3" />' +
+				'</Panel>' +
+				'<HBox id="hbox2">' +
+					'<Button id="button4" text="Button4" />' +
+					'<Button id="button5" text="Button5" />' +
+					'<core:ExtensionPoint name="ExtensionPoint3" />' +
+					'<Label id="label3" text="TestLabel3" />' +
+				'</HBox>' +
+			'</mvc:View>';
+			this.oXmlView2 = XMLHelper.parse(this.oXmlString2, "application/xml").documentElement;
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -579,6 +604,16 @@ function(
 			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oLastButton), 1, "The function returned the correct index.");
 		});
 
+		QUnit.test("findIndexInParentAggregation returns the correct value: case 8 - when extension point exists", function (assert) {
+			var oHBox1 = XmlTreeModifier._children(this.oXmlView2)[0];
+			var oPanel = XmlTreeModifier._children(this.oXmlView2)[1];
+			var oExtensionPoint1 = oHBox1.childNodes[0].childNodes[3];
+			var oExtensionPoint2 = oPanel.childNodes[0];
+
+			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oExtensionPoint1), 3, "The function returned the correct index.");
+			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oExtensionPoint2), 0, "The function returned the correct index.");
+		});
+
 		QUnit.test("getParentAggregationName returns the correct name: ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0],
 				oLabel = XmlTreeModifier._children(oVBox)[1];
@@ -658,6 +693,29 @@ function(
 			assert.equal(aControls.length, 1, "there is 1 control returned");
 			assert.equal(aControls[0].getAttribute("id"), "foo.button123", "the ID got prefixed");
 		});
+
+		QUnit.test("when getExtensionPointInfo is called", function (assert) {
+			var oExtensionPointInfo1 = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint1", this.oXmlView2);
+			assert.equal(oExtensionPointInfo1.parent.getAttribute("id"), "hbox1", "then the returned object contains the parent control");
+			assert.equal(oExtensionPointInfo1.aggregation, "items", "and the aggregation name");
+			assert.equal(oExtensionPointInfo1.index, 4, "and the index");
+
+			var oExtensionPointInfo2 = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint2", this.oXmlView2);
+			assert.equal(oExtensionPointInfo2.parent.getAttribute("id"), "panel", "then the returned object contains the parent control");
+			assert.equal(oExtensionPointInfo2.aggregation, "content", "and the aggregation name");
+			assert.equal(oExtensionPointInfo2.index, 1, "and the index");
+		});
+
+		QUnit.test("when getExtensionPointInfo is called with an extension point which is not on the view", function (assert) {
+			var oExtensionPointInfo = XmlTreeModifier.getExtensionPointInfo("notAvailableExtensionPoint", this.oXmlView2);
+			assert.notOk(oExtensionPointInfo, "then nothing is returned");
+		});
+
+		QUnit.test("when getExtensionPointInfo is called with an extension point which exists multiple times on the view", function (assert) {
+			var oExtensionPointInfo = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint3", this.oXmlView2);
+			assert.notOk(oExtensionPointInfo, "then nothing is returned");
+		});
+
 	});
 
 	QUnit.module("Events", {

@@ -1,0 +1,29 @@
+{
+  "1.75.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "80975b3ad1ee15ae726681549bb3a78030ce8e85",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Fixed when table with sticky header is used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080067320"
+          }
+        ]
+      },
+      {
+        "id": "7ab8e765a9e9f6c34a4d0be7e309020a5786157b",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: The _resize function is called only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080081726"
+          }
+        ]
+      }
+    ]
+  }
+}

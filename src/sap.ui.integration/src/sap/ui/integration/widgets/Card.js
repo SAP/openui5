@@ -12,6 +12,10 @@ sap.ui.define([
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/Header",
 	"sap/f/cards/BaseContent",
+	"sap/f/cards/IconFormatter",
+	"sap/f/cards/BindingHelper",
+	"sap/f/cards/CardActions",
+	"sap/f/cards/NumericSideIndicator",
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/ui/core/Icon",
@@ -22,7 +26,9 @@ sap.ui.define([
 	"sap/f/CardRenderer",
 	"sap/f/library",
 	"sap/ui/integration/library",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/base/strings/formatMessage",
+	"sap/ui/integration/controls/ActionsToolbar"
 ], function (
 	jQuery,
 	Core,
@@ -34,6 +40,10 @@ sap.ui.define([
 	NumericHeader,
 	Header,
 	BaseContent,
+	IconFormatter,
+	BindingHelper,
+	CardActions,
+	NumericSideIndicator,
 	HBox,
 	VBox,
 	Icon,
@@ -44,7 +54,9 @@ sap.ui.define([
 	CardRenderer,
 	fLibrary,
 	library,
-	InvisibleText
+	InvisibleText,
+	formatMessage,
+	ActionsToolbar
 ) {
 	"use strict";
 	/* global Map */
@@ -62,7 +74,47 @@ sap.ui.define([
 
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
 
+	var AreaType = fLibrary.cards.AreaType;
+
 	var CardDataMode = library.CardDataMode;
+
+	/**
+	 * Binds the statusText of a header to the provided format configuration.
+	 *
+	 * @private
+	 * @param {Object} mFormat The formatting configuration.
+	 * @param {sap.f.cards.IHeader} oHeader The header instance.
+	 */
+	function bindStatusText(mFormat, oHeader) {
+
+		if (mFormat.parts && mFormat.translationKey && mFormat.parts.length === 2) {
+			var oBindingInfo = {
+				parts: [
+					mFormat.translationKey,
+					mFormat.parts[0].toString(),
+					mFormat.parts[1].toString()
+				],
+				formatter: function (sText, vParam1, vParam2) {
+					var sParam1 = vParam1 || mFormat.parts[0];
+					var sParam2 = vParam2 || mFormat.parts[1];
+
+					if (Array.isArray(vParam1)) {
+						sParam1 = vParam1.length;
+					}
+					if (Array.isArray(vParam2)) {
+						sParam2 = vParam2.length;
+					}
+
+					var iParam1 = parseFloat(sParam1) || 0;
+					var iParam2 = parseFloat(sParam2) || 0;
+
+					return formatMessage(sText, [iParam1, iParam2]);
+				}
+			};
+
+			oHeader.bindProperty("statusText", oBindingInfo);
+		}
+	}
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -199,7 +251,7 @@ sap.ui.define([
 				_header: {
 					type: "sap.f.cards.IHeader",
 					multiple: false,
-					visibility : "hidden"
+					visibility: "hidden"
 				},
 
 				/**
@@ -208,7 +260,7 @@ sap.ui.define([
 				_content: {
 					type: "sap.ui.core.Control",
 					multiple: false,
-					visibility : "hidden"
+					visibility: "hidden"
 				}
 			},
 			events: {
@@ -219,6 +271,7 @@ sap.ui.define([
 				 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
 				action: {
+					allowPreventDefault: true,
 					parameters: {
 
 						/**
@@ -230,7 +283,7 @@ sap.ui.define([
 
 						/**
 						 * The manifest parameters related to the triggered action.
-						*/
+						 */
 						manifestParameters: {
 							type: "object"
 						},
@@ -249,8 +302,7 @@ sap.ui.define([
 				 * @experimental since 1.72
 				 */
 				manifestReady: {
-					parameters: {
-					}
+					parameters: {}
 				}
 			},
 			associations: {
@@ -258,7 +310,12 @@ sap.ui.define([
 				/**
 				 * The ID of the host configuration.
 				 */
-				hostConfigurationId: {}
+				hostConfigurationId: {},
+
+				/**
+				 * The host.
+				 */
+				host: {}
 			}
 		},
 		renderer: CardRenderer
@@ -632,23 +689,150 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._applyHeaderManifestSettings = function () {
-		var oManifestHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
+		var oManifestHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
+			oHeader,
+			oPreviousHeader,
+			oActionsToolbar;
 
 		if (!oManifestHeader) {
 			this.fireEvent("_headerReady");
 			return;
 		}
 
-		var oHeader = Header;
+		oHeader = this._createHeader(oManifestHeader);
 
-		if (oManifestHeader.type === "Numeric") {
-			oHeader = NumericHeader;
+		oActionsToolbar = this._createActionsToolbar();
+		if (oActionsToolbar) {
+			oHeader.setToolbar(oActionsToolbar);
 		}
 
-		this._setCardHeader(oHeader);
+		oPreviousHeader = this.getAggregation("_header");
+
+		if (oPreviousHeader) {
+			oPreviousHeader.destroy();
+		}
+
+		this.setAggregation("_header", oHeader);
+
+		if (oHeader.isReady()) {
+			this.fireEvent("_headerReady");
+		} else {
+			oHeader.attachEvent("_ready", function () {
+				this.fireEvent("_headerReady");
+			}.bind(this));
+		}
 	};
 
-	/**
+	Card.prototype._createHeader = function (mConfiguration) {
+
+		var oHeader,
+			oServiceManager = this._oServiceManager,
+			oDataProviderFactory = this._oDataProviderFactory,
+			sAppId = this._sAppId,
+			oActions = new CardActions({
+				card: this,
+				areaType: AreaType.Header
+			}),
+			mSettings = {
+				title: mConfiguration.title,
+				subtitle: mConfiguration.subTitle
+			};
+
+
+		if (mConfiguration.status && typeof mConfiguration.status.text === "string") {
+			mSettings.statusText = mConfiguration.status.text;
+		}
+
+		switch (mConfiguration.type) {
+			case "Numeric":
+
+				jQuery.extend(mSettings, {
+					unitOfMeasurement: mConfiguration.unitOfMeasurement,
+					details: mConfiguration.details,
+					sideIndicators: mConfiguration.sideIndicators
+				});
+
+				if (mConfiguration.mainIndicator) {
+					mSettings.number = mConfiguration.mainIndicator.number;
+					mSettings.scale = mConfiguration.mainIndicator.unit;
+					mSettings.trend = mConfiguration.mainIndicator.trend;
+					mSettings.state = mConfiguration.mainIndicator.state; // TODO convert ValueState to ValueColor
+				}
+
+				mSettings = BindingHelper.createBindingInfos(mSettings);
+
+				if (mConfiguration.sideIndicators) {
+					mSettings.sideIndicators = mSettings.sideIndicators.map(function (mIndicator) { // TODO validate that it is an array and with no more than 2 elements
+						return new NumericSideIndicator(mIndicator);
+					});
+				}
+
+				oHeader = new NumericHeader(mSettings);
+				break;
+			default:
+				if (mConfiguration.icon) {
+					mSettings.iconSrc = mConfiguration.icon.src;
+					mSettings.iconDisplayShape = mConfiguration.icon.shape;
+					mSettings.iconInitials = mConfiguration.icon.text;
+				}
+
+				mSettings = BindingHelper.createBindingInfos(mSettings);
+
+				if (mSettings.iconSrc) {
+					mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
+						return IconFormatter.formatSrc(sValue, sAppId);
+					});
+				}
+
+				oHeader = new Header(mSettings);
+				break;
+		}
+
+		if (mConfiguration.status && mConfiguration.status.text && mConfiguration.status.text.format) {
+			bindStatusText(mConfiguration.status.text.format, oHeader);
+		}
+
+		oHeader._sAppId = sAppId;
+		oHeader.setServiceManager(oServiceManager);
+		oHeader.setDataProviderFactory(oDataProviderFactory);
+		oHeader._setData(mConfiguration.data);
+		oHeader._setAccessibilityAttributes(mConfiguration);
+
+		oActions.attach(mConfiguration, oHeader);
+		oHeader._oActions = oActions;
+
+		return oHeader;
+	};
+
+	Card.prototype.getHostInstance = function () {
+		var sHost = this.getHost();
+		if (!sHost) {
+			return null;
+		}
+
+		return Core.byId(sHost);
+	};
+
+	Card.prototype._createActionsToolbar = function () {
+		var oHost = this.getHostInstance(),
+			oActionsToolbar,
+			bHasActions;
+
+		if (!oHost) {
+			return null;
+		}
+
+		oActionsToolbar = new ActionsToolbar();
+		bHasActions = oActionsToolbar.createToolbar(oHost, this);
+
+		if (bHasActions) {
+			return oActionsToolbar;
+		}
+
+		return null;
+	};
+
+		/**
 	 * Lazily load and create a specific type of card content based on sap.card/content part of the manifest
 	 *
 	 * @private
@@ -694,40 +878,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a header based on sap.card/header part of the manifest
-	 *
-	 * @private
-	 * @param {sap.f.cards.IHeader} CardHeader The header to be created
-	 */
-	Card.prototype._setCardHeader = function (CardHeader) {
-		var oSettings = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
-			oHeader = CardHeader.create(oSettings, this._oServiceManager, this._oDataProviderFactory, this._sAppId);
-
-		oHeader.attachEvent("action", function (oEvent) {
-			this.fireEvent("action", {
-				manifestParameters: oEvent.getParameter("manifestParameters"),
-				actionSource: oEvent.getParameter("actionSource"),
-				type: oEvent.getParameter("type")
-			});
-		}.bind(this));
-
-		var oPreviousHeader = this.getAggregation("_header");
-
-		if (oPreviousHeader) {
-			oPreviousHeader.destroy();
-		}
-
-		this.setAggregation("_header", oHeader);
-		if (oHeader.isReady()) {
-			this.fireEvent("_headerReady");
-		} else {
-			oHeader.attachEvent("_ready", function () {
-				this.fireEvent("_headerReady");
-			}.bind(this));
-		}
-	};
-
-	/**
 	 * Called on after rendering of the control.
 	 * @private
 	 */
@@ -749,13 +899,12 @@ sap.ui.define([
 	 * @param {sap.f.cards.BaseContent} oContent The card content instance to be configured.
 	 */
 	Card.prototype._setCardContent = function (oContent) {
-		oContent.attachEvent("action", function (oEvent) {
-			this.fireEvent("action", {
-				actionSource: oEvent.getParameter("actionSource"),
-				manifestParameters: oEvent.getParameter("manifestParameters"),
-				type: oEvent.getParameter("type")
-			});
-		}.bind(this));
+
+		var oCardAction = oContent.getActions();
+
+		if (oCardAction) {
+			oCardAction.setCard(this);
+		}
 
 		oContent.attachEvent("_error", function (oEvent) {
 			this._handleError(oEvent.getParameter("logMessage"), oEvent.getParameter("displayMessage"));
@@ -858,7 +1007,7 @@ sap.ui.define([
 
 					var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
 						oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-						sHeight = BaseContent.getMinHeight(sType, oContent);
+						sHeight = BaseContent.getMinHeight(sType, oContent, this._oTemporaryContent);
 
 					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 						this._oTemporaryContent.$().css({ "min-height": sHeight });

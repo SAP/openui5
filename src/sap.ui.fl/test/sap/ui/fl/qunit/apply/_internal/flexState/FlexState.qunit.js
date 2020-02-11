@@ -5,6 +5,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/LayerUtils",
 	"sap/base/Log",
 	"sap/base/util/deepClone",
@@ -14,6 +16,8 @@ sap.ui.define([
 	Utils,
 	FlexState,
 	Loader,
+	CompatibilityConnector,
+	Storage,
 	LayerUtils,
 	Log,
 	deepClone,
@@ -500,6 +504,89 @@ sap.ui.define([
 					assert.equal(this.oDeRegistrationHandlerStub.callCount, 2, "then the handler was de-registered for all existing references");
 					assert.ok(this.oDeRegistrationHandlerStub.alwaysCalledWith(sinon.match.func), "then de-registration always happens with a handler function");
 				}.bind(this));
+		});
+	});
+
+	QUnit.module("FlexState without stubs", {
+		beforeEach: function () {
+			this.oAppComponent = new UIComponent(sComponentId);
+
+			this.oLoaderSpy = sandbox.spy(Loader, "loadFlexData");
+			this.oCompatibilityConnectorSpy = sandbox.spy(CompatibilityConnector, "loadChanges");
+			this.oApplyStorageLoadFlexDataSpy = sandbox.spy(Storage, "loadFlexData");
+			this.oApplyStorageCompleteFlexDataSpy = sandbox.spy(Storage, "completeFlexData");
+		},
+		afterEach: function () {
+			FlexState.clearState();
+			this.oAppComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when initialize is called three times with the same reference and first call has partialFlexState", function(assert) {
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				partialFlexState: true
+			}).then(function() {
+				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
+				assert.equal(this.oCompatibilityConnectorSpy.callCount, 1, "compatibility connector is called once");
+				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
+				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
+			}.bind(this))
+			.then(FlexState.initialize.bind(null, {
+				reference: sReference,
+				componentId: sComponentId
+			}))
+			.then(function() {
+				assert.equal(this.oLoaderSpy.callCount, 2, "loader is called twice");
+				assert.equal(this.oCompatibilityConnectorSpy.callCount, 2, "compatibility connector is called twice");
+				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
+				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is called for the first time");
+			}.bind(this))
+			.then(FlexState.initialize.bind(null, {
+				reference: sReference,
+				componentId: sComponentId
+			}))
+			.then(function() {
+				assert.equal(this.oLoaderSpy.callCount, 2, "loader is not called again");
+				assert.equal(this.oCompatibilityConnectorSpy.callCount, 2, "compatibility connector is not called again");
+				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
+				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is not called again");
+			}.bind(this));
+		});
+
+		QUnit.test("when initialize is called three times with the same reference and first and second call has partialFlexState", function(assert) {
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				partialFlexState: true
+			}).then(function() {
+				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
+				assert.equal(this.oCompatibilityConnectorSpy.callCount, 1, "compatibility connector is called once");
+				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
+				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
+			}.bind(this))
+			.then(FlexState.initialize.bind(null, {
+				reference: sReference,
+				componentId: sComponentId,
+				partialFlexState: true
+			}))
+			.then(function() {
+				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called not called again");
+				assert.equal(this.oCompatibilityConnectorSpy.callCount, 1, "compatibility connector is not called again");
+				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
+				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
+			}.bind(this))
+			.then(FlexState.initialize.bind(null, {
+				reference: sReference,
+				componentId: sComponentId
+			}))
+			.then(function() {
+				assert.equal(this.oLoaderSpy.callCount, 2, "loader is not called again");
+				assert.equal(this.oCompatibilityConnectorSpy.callCount, 2, "compatibility connector is not called again");
+				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
+				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is called for the first time");
+			}.bind(this));
 		});
 	});
 

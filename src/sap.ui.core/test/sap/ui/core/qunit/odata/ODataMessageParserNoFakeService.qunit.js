@@ -478,4 +478,76 @@ sap.ui.define([
 		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_createTarget: call _getReducedPath with a canonical path", function (assert) {
+		var oMessageObject = {target : "/~target"},
+			oODataMessageParser = {
+				_metadata : {
+					_getReducedPath : function () {}
+				},
+				_processor : {
+					resolve : function () {}
+				}
+			},
+			mRequestInfo;
+
+		this.mock(oODataMessageParser._processor).expects("resolve")
+			.withExactArgs("/~target", undefined, true)
+			.returns("~canonicalTarget");
+		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
+			.withExactArgs("~canonicalTarget")
+			.returns("~reducedPath");
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
+			mRequestInfo);
+
+		assert.strictEqual(oMessageObject.canonicalTarget, "~canonicalTarget");
+		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_createTarget: call _getReducedPath with deep path", function (assert) {
+		var oMessageObject = {target : "~target"},
+			oODataMessageParser = {
+				_metadata : {
+					_getFunctionImportMetadata : function () {},
+					_getReducedPath : function () {},
+					_isCollection : function () {}
+				},
+				_parseUrl : function () {},
+				_processor : {
+					resolve : function () {}
+				}
+			},
+			mRequestInfo = {
+				request : {deepPath : "~deepPath"},
+				url : "~requestURL"
+			},
+			mUrlData = {url : "~parsedUrl"};
+
+		this.mock(oODataMessageParser).expects("_parseUrl")
+			.withExactArgs("~requestURL")
+			.returns(mUrlData);
+		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/~parsedUrl", "GET")
+			.returns(null);
+		this.mock(oODataMessageParser._metadata).expects("_isCollection")
+			.withExactArgs("/~parsedUrl")
+			.returns(false);
+		this.mock(oODataMessageParser._processor).expects("resolve")
+			.withExactArgs("/~parsedUrl/~target", undefined, true)
+			.returns("~canonicalTarget");
+		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
+			.withExactArgs("~deepPath/~target")
+			.returns("~reducedPath");
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
+			mRequestInfo);
+
+		assert.strictEqual(oMessageObject.canonicalTarget, "~canonicalTarget");
+		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
+	});
 });

@@ -62,7 +62,7 @@ sap.ui.define([
 			this._mode = 'FROM_EXISTING';
 		}
 		this._oSettings = oSettings;
-		this._sTransportRequest = null;
+		this._sTransportRequest = mParameters && mParameters.transport ? mParameters.transport : null;
 		this._content = [];
 	};
 
@@ -148,6 +148,10 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
+	DescriptorVariant.prototype.setIsForSmartBusiness = function(bIsForSmartBusiness) {
+		this._isForSmartBusiness = bIsForSmartBusiness;
+	};
+
 	/**
 	 * Submits the app variant to the backend
 	 * @return {Promise} resolving when submitting the app variant was successful
@@ -170,6 +174,10 @@ sap.ui.define([
 		}
 		if (this._skipIam) {
 			mPropertyBag.skipIam = this._skipIam;
+		}
+
+		if (this._isForSmartBusiness) {
+			mPropertyBag.isForSmartBusiness = this._isForSmartBusiness;
 		}
 
 		if (mMap.layer) {
@@ -370,6 +378,10 @@ sap.ui.define([
 			Utils.checkParameterAndType(mParameters, "skipIam", "boolean");
 		}
 
+		if (mParameters.transport) {
+			Utils.checkTransportRequest(mParameters.transport);
+		}
+
 		return Settings.getInstance().then(function(oSettings) {
 			return Promise.resolve(new DescriptorVariant(mParameters, null, false, oSettings));
 		});
@@ -428,25 +440,21 @@ sap.ui.define([
 	 * Loads an existing app variant from backend and prepare a map for either creation or deletion
 	 *
 	 * @param {string} sId the id of the app variant
-	 * @param {boolean} bDeletion required for deletion
-	 * @param {string} [sLayer] - Current layer (required to determine the connector later in Storage)
-	 * @param {string} [bIsForSapDelivery=false] - Determines whether app variant deletion is intended for SAP delivery
+	 * @param {boolean} [bDeletion] required for deletion
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
 	 * @private
 	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorVariantFactory.loadAppVariant = function(sId, bDeletion, sLayer, bIsForSapDelivery) {
+	DescriptorVariantFactory.loadAppVariant = function(sId, bDeletion) {
 		if (sId === undefined || typeof sId !== "string") {
 			throw new Error("Parameter \"sId\" must be provided of type string");
 		}
 
 		var _mResult;
 		return DescriptorVariantFactory._getDescriptorVariant({
-			reference: sId,
-			layer: sLayer,
-			isForSAPDelivery: bIsForSapDelivery
+			reference: sId
 		}).then(function(mResult) {
 			_mResult = mResult;
 			return Settings.getInstance();

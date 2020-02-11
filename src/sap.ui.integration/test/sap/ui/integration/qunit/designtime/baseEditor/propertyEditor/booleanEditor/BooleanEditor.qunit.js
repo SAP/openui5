@@ -40,10 +40,10 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			var fnReady = assert.async();
-			this.oEditor.attachReady(function () {
+			this.oEditor.ready().then(function () {
 				this.oEditorElement = this.oEditor.getContent();
 				fnReady();
-			}, this);
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oContextModel.destroy();
@@ -127,7 +127,7 @@ sap.ui.define([
 				QUnitUtils.triggerKeydown(this.oEditorElement.getDomRef(), KeyCodes.ENTER);
 
 				assert.strictEqual(this.oEditorElement.getValueState(), "Error", "Then the error is displayed");
-				assert.strictEqual(this.oEditor.getBindingContext().getObject().value, true, "Then the model is not updated");
+				assert.strictEqual(this.oEditor.getValue(), true, "Then the editor value is not updated");
 
 				fnDone();
 			}.bind(this));

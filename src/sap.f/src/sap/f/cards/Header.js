@@ -11,9 +11,6 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/HeaderRenderer",
 	"sap/f/cards/IconFormatter",
-	"sap/f/cards/CardActions",
-	"sap/base/strings/formatMessage",
-	"sap/f/cards/BindingHelper",
 	"sap/ui/core/Core"
 ], function (
 	mLibrary,
@@ -25,16 +22,11 @@ sap.ui.define([
 	JSONModel,
 	HeaderRenderer,
 	IconFormatter,
-	CardActions,
-	formatMessage,
-	BindingHelper,
 	Core
 ) {
 	"use strict";
 
 	var AvatarShape = mLibrary.AvatarShape;
-
-	var AreaType = library.cards.AreaType;
 
 	/**
 	 * Constructor for a new <code>Header</code>.
@@ -102,6 +94,13 @@ sap.ui.define([
 				iconInitials: { type: "string", defaultValue: "" }
 			},
 			aggregations: {
+
+				/**
+				 * Defines the toolbar.
+				 * @experimental Since 1.75
+				 * @since 1.75
+				 */
+				toolbar: { type: "sap.ui.core.Control", multiple: false },
 
 				/**
 				 * Defines the inner title control.
@@ -254,9 +253,10 @@ sap.ui.define([
 	Header.prototype._getHeaderAccessibility = function () {
 		var sTitleId = this._getTitle() ? this._getTitle().getId() : "",
 			sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
+			sStatusTextId = this.getStatusText() ? this.getId() + "-status" : "",
 			sAvatarId = this._getAvatar() ? this._getAvatar().getId() : "";
 
-		return sTitleId + " " + sSubtitleId + " " + sAvatarId;
+		return sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sAvatarId;
 	};
 
 	/**
@@ -277,103 +277,20 @@ sap.ui.define([
 	/**
 	 * Fires the <code>sap.f.cards.Header</code> press event.
 	 */
-	Header.prototype.ontap = function () {
+	Header.prototype.ontap = function (oEvent) {
+		var srcControl = oEvent.srcControl;
+		if (srcControl && srcControl.getId().indexOf('overflowButton') > -1) { // better way?
+			return;
+		}
+
 		this.firePress();
 	};
 
 	/**
-	 * Creates an instance of Header with the given options.
-	 *
-	 * @private
-	 * @static
-	 * @param {Object} mConfiguration A map containing the header configuration options, which are already parsed.
-	 * @param {Object} oServiceManager A service manager instance to handle services.
-	 * @param {Object} oDataProviderFactory A DataProviderFactory instance.
-	 * @param {string} sAppId The sap.app/id from the manifest.
-	 * @return {sap.f.cards.Header} The created Header.
+	 * Fires the <code>sap.f.cards.Header</code> press event.
 	 */
-	Header.create = function(mConfiguration, oServiceManager, oDataProviderFactory, sAppId) {
-		var mSettings = {
-			title: mConfiguration.title,
-			subtitle: mConfiguration.subTitle
-		};
-
-		if (mConfiguration.icon) {
-			mSettings.iconSrc = mConfiguration.icon.src;
-			mSettings.iconDisplayShape = mConfiguration.icon.shape;
-			mSettings.iconInitials = mConfiguration.icon.text;
-		}
-
-		if (mConfiguration.status && typeof mConfiguration.status.text === "string") {
-			mSettings.statusText = mConfiguration.status.text;
-		}
-
-		mSettings = BindingHelper.createBindingInfos(mSettings);
-
-		if (mSettings.iconSrc) {
-			mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
-				return IconFormatter.formatSrc(sValue, sAppId);
-			});
-		}
-
-		var oHeader = new Header(mSettings);
-
-		oHeader._sAppId = sAppId;
-		if (mConfiguration.status && mConfiguration.status.text && mConfiguration.status.text.format) {
-			Header._bindStatusText(mConfiguration.status.text.format, oHeader);
-		}
-		oHeader.setServiceManager(oServiceManager);
-		oHeader.setDataProviderFactory(oDataProviderFactory);
-		oHeader._setData(mConfiguration.data);
-		oHeader._setAccessibilityAttributes(mConfiguration);
-
-		var oActions = new CardActions({
-			areaType: AreaType.Header
-		});
-
-		oActions.attach(mConfiguration, oHeader);
-		oHeader._oActions = oActions;
-
-		return oHeader;
-	};
-
-	/**
-	 * Binds the statusText of a header to the provided format configuration.
-	 *
-	 * @private
-	 * @static
-	 * @param {Object} mFormat The formatting configuration.
-	 * @param {sap.f.cards.Header} oHeader The header instance.
-	 */
-	Header._bindStatusText = function (mFormat, oHeader) {
-
-		if (mFormat.parts && mFormat.translationKey && mFormat.parts.length === 2) {
-			var oBindingInfo = {
-				parts: [
-					mFormat.translationKey,
-					mFormat.parts[0].toString(),
-					mFormat.parts[1].toString()
-				],
-				formatter: function (sText, vParam1, vParam2) {
-					var sParam1 = vParam1 || mFormat.parts[0];
-					var sParam2 = vParam2 || mFormat.parts[1];
-
-					if (Array.isArray(vParam1)) {
-						sParam1 = vParam1.length;
-					}
-					if (Array.isArray(vParam2)) {
-						sParam2 = vParam2.length;
-					}
-
-					var iParam1 = parseFloat(sParam1) || 0;
-					var iParam2 = parseFloat(sParam2) || 0;
-
-					return formatMessage(sText, [iParam1, iParam2]);
-				}
-			};
-
-			oHeader.bindProperty("statusText", oBindingInfo);
-		}
+	Header.prototype.onsapselect = function () {
+		this.firePress();
 	};
 
 	Header.prototype.setServiceManager = function (oServiceManager) {

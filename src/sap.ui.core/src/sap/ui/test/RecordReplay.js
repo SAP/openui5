@@ -60,6 +60,9 @@ sap.ui.define([
 	 * The 'best' selector is the one with which it is most likely to uniquely identify a control with the least possible inspection of the control tree.
 	 * @param {object} oOptions Options to influence the generation of the selector
 	 * @param {Element} oOptions.domElement DOM element that was pointed out by the user
+	 * @param {object} oOptions.settings preferences for the selector e.g. which is the most prefered strategy
+	 * @param {boolean} oOptions.settings.preferViewId true if selectors with view ID should have higher priority than selectors with global ID. Default value is false.
+	 * If one selector is requested, and there are two valid selectors - with view ID and global ID, the one with view ID should be returned.
 	 * @returns {Promise<sap.ui.test.RecordReplay.ControlSelector|Error>} Promise for control selector or error
 	 * @public
 	 */
@@ -69,10 +72,10 @@ sap.ui.define([
 			if (!oControl) {
 					reject(new Error("Could not find control for DOM element " + oOptions.domElement.id));
 			}
-			_ControlSelectorGenerator._generate({
-				control: oControl,
-				domElement: oOptions.domElement
-			}).then(function (oSelector) {
+			var oOptionsForGenerator = Object.assign({
+				control: oControl
+			}, oOptions);
+			_ControlSelectorGenerator._generate(oOptionsForGenerator).then(function (oSelector) {
 				var sIDSuffix = _ControlFinder._getDomElementIDSuffix(oOptions.domElement, oControl);
 				if (sIDSuffix) {
 					oLogger.debug("DOM element ID suffix is " + sIDSuffix);

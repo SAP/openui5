@@ -24,6 +24,13 @@
 							press="backToSearch"
 							visible="false"/>
 					<m:Button
+							visible="{= ${versionData>/isOpenUI5}}"
+							icon="sap-icon://edit"
+							type="Transparent"
+							text="Edit on GitHub"
+							tooltip="Edit this page on GitHub"
+							press="onEditGitHubPress"/>
+					<m:Button
 							visible="{device>/system/desktop}"
 							icon="sap-icon://full-screen"
 							type="Transparent"

@@ -71,9 +71,14 @@ sap.ui.define([
 				}
 
 				// save the _routerHashChanger for the creation of Router
-				if (mSettings && mSettings._routerHashChanger) {
+				if (mSettings && mSettings.hasOwnProperty("_routerHashChanger")) {
 					this._oRouterHashChanger = mSettings._routerHashChanger;
 					delete mSettings._routerHashChanger;
+				}
+
+				if (mSettings && mSettings.hasOwnProperty("_propagateTitle")){
+					this._bRoutingPropagateTitle = mSettings._propagateTitle;
+					delete mSettings._propagateTitle;
 				}
 
 				Component.apply(this, arguments);

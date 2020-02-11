@@ -145,13 +145,12 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 }
 
 .sapMBarRight,
-.sapMBarRight > .sapMBarChild {
+.sapMBarRight > .sapMBarChild:not(.sapMTB) {
 	margin-top: 0;
 	margin-bottom: 0;
 	margin-right: 0;
 	vertical-align: middle;
 	display: inline-block;
-	line-height: 2.9rem;
 }
 
 .sapMBarRight > .sapMBarChild {
@@ -160,8 +159,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 
 .sapUiSizeCompact{
 	.sapMBarRight,
-	.sapMBarRight > .sapMBarChild {
-		margin-top: -0.5px;
+	.sapMBarRight > .sapMBarChild:not(.sapMTB) {
 		margin-bottom: 0;
 		margin-right: 0;
 		vertical-align: middle;

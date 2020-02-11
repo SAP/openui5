@@ -67,6 +67,9 @@
 			}
 			This way we will be able to get back to you in case we have follow-up questions."/>
 
+			<FormattedText class="sapMLabel sapUiFeedbackDialogNoteLabel sapUiTinyMarginBottom" visible="{= ${versionData>/isOpenUI5}}"
+						   htmlText="You can contribute directly to the &lt;a href=&quot;https://github.com/SAP/openui5-docs&quot; target=&quot;_blank&quot;&gt;OpenUI5 Documentation&lt;/a&gt; on GitHub."/>
+
 			<Link text="Show context Data" class="sapMFontMediumSize sapUiTinyMarginBottom" press="onShowHideContextData"/>
 
 			<TextArea id="contextData" width="100%" value="Details/ descriptive text..." visible="false" editable="false" rows="3" class="sapUiBaseText sapMFontMediumSize sapUiTinyMarginBottom sapUiNoMarginTop"/>

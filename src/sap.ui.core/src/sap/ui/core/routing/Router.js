@@ -286,17 +286,24 @@ sap.ui.define([
 
 				this._oRouter.bypassed.add(jQuery.proxy(this._onBypassed, this));
 
-				if (oRouterHashChanger) {
-					this.setHashChanger(oRouterHashChanger);
+				if (!oRouterHashChanger) {
+					oRouterHashChanger = HashChanger.getInstance().createRouterHashChanger();
 				}
+				this.setHashChanger(oRouterHashChanger);
 
-				var oParentComponent = Component.getOwnerComponentFor(this._oOwner);
+				var oParentComponent = this._oOwner && Component.getOwnerComponentFor(this._oOwner);
 				var oParentRouter = oParentComponent && oParentComponent.getRouter();
 
 				if (oParentRouter) {
 					// attach titleChanged event and forward event parameters to parent router
 					this.attachTitleChanged(function(oEvent) {
-						var mParameters = oEvent.getParameters();
+						if (this._oOwner && !this._oOwner._bRoutingPropagateTitle) {
+							return;
+						}
+
+						var mParameters = oEvent.getParameters(),
+							aNestedHistory,
+							mForwardParameters;
 
 						if (oParentRouter._bCollectTitleChanged) {
 							// when the parent router will fire its own titleChange event, it saves
@@ -304,17 +311,24 @@ sap.ui.define([
 							// titleChanged event
 							oParentRouter.nestedHistory = mParameters.nestedHistory;
 						} else {
-							// mark the event as propagated to avoid the self history modification
-							// in Router.prototype.fireTitleChanged
-							mParameters.propagated = true;
-
-							// add its own history to the nested history information
-							mParameters.nestedHistory.unshift({
+							// make a copy of the nested history to avoid changing the original value
+							aNestedHistory = mParameters.nestedHistory.slice();
+							aNestedHistory.unshift({
 								ownerComponentId: oParentRouter._oOwner.getId(),
 								history: oParentRouter.getTitleHistory()
 							});
 
-							oParentRouter.fireTitleChanged(mParameters);
+							mForwardParameters = {
+								// mark the event as propagated to avoid the self history modification
+								// in Router.prototype.fireTitleChanged
+								propagated: true,
+								title: mParameters.title,
+								history: mParameters.history,
+								// add its own history to the nested history information
+								nestedHistory: aNestedHistory
+							};
+
+							oParentRouter.fireTitleChanged(mForwardParameters);
 						}
 					});
 				}
@@ -364,10 +378,6 @@ sap.ui.define([
 			initialize : function (bIgnoreInitialHash) {
 				var that = this,
 					sHash;
-
-				if (!this.oHashChanger) {
-					this.oHashChanger = HashChanger.getInstance().createRouterHashChanger();
-				}
 
 				if (this._bIsInitialized) {
 					Log.warning("Router is already initialized.", this);
@@ -423,10 +433,14 @@ sap.ui.define([
 			},
 
 			_forwardTitleChanged: function(oEvent) {
-				var oEventParameters = oEvent.getParameters();
+				var oParameters = oEvent.getParameters();
+				// create a new parameter object for firing the titleChanged event on Router
+				var oEventParameters = {
+					title: oParameters.title
+				};
 				var oHomeRoute = this._oRoutes[this._oConfig.homeRoute];
 
-				if (oHomeRoute && isHomeRouteTarget(oEventParameters.name, oHomeRoute._oConfig.name)) {
+				if (oHomeRoute && isHomeRouteTarget(oParameters.name, oHomeRoute._oConfig.name)) {
 					oEventParameters.isHome = true;
 				}
 
@@ -460,9 +474,9 @@ sap.ui.define([
 					delete this._oTargets._sPreviousTitle;
 				}
 
-				if (this._matchedRoute) {
-					this._matchedRoute._routeSwitched();
-					this._matchedRoute = null;
+				if (this._oMatchedRoute) {
+					this._oMatchedRoute._routeSwitched();
+					this._oMatchedRoute = null;
 				}
 
 				this._bIsInitialized = false;
@@ -494,6 +508,19 @@ sap.ui.define([
 				return this._bIsInitialized === true;
 			},
 
+			/**
+			 * Returns the hash changer instance which is used in the router.
+			 *
+			 * This hash changer behaves differently than the hash changer that is returned by
+			 * {@link sap.ui.core.routing.HashChanger.getInstance}, especially when the router is created in a component
+			 * which is nested within another component. When this hash changer is used, the other hash parts which
+			 * belong to the parent components are kept in the browser hash, while the complete browser hash is changed
+			 * when it's changed by using the {@link sap.ui.core.routing.HashChanger.getInstance}.
+			 *
+			 * @returns {sap.ui.core.routing.RouterHashChanger} The hash changer
+			 * @public
+			 * @since 1.75
+			 */
 			getHashChanger: function() {
 				return this.oHashChanger;
 			},
@@ -617,9 +644,9 @@ sap.ui.define([
 			 * which matches the given hash or <code>undefined</code>.
 			 *
 			 * @param {string} sHash The hash to be matched
-			 * @returns {object|undefined} An object containing the route <code>name</code> and the <code>arguments</code> or <code>undefined
+			 * @returns {object|undefined} An object containing the route <code>name</code> and the <code>arguments</code> or <code>undefined</code>
 			 * @public
-			 * @since 1.74
+			 * @since 1.75
 			 */
 			getRouteInfoByHash : function(sHash) {
 				var oRoute = this.getRouteByHash(sHash);
@@ -722,10 +749,22 @@ sap.ui.define([
 			 * If the given route name can't be found, an error message is logged to the console and the hash will be
 			 * changed to the empty string.
 			 *
-			 * @param {string} sName
-			 *             Name of the route
-			 * @param {object} [oParameters]
-			 *             Parameters for the route
+			 * @param {string} sName The name of the route
+			 * @param {object} [oParameters] The parameters for the route.
+			 * 				As of Version 1.75 the recommendation is naming the query parameter with a leading "?" character,
+			 * 				which is identical to the definition in the route's pattern. The old syntax without a leading
+			 * 				"?" character is deprecated.
+			 * 				e.g. <b>Route:</b> <code>{parameterName1}/:parameterName2:/{?queryParameterName}</code>
+			 *				<b>Parameter:</b>
+			 *				<pre>
+			 *				{
+			 *					parameterName1: "parameterValue1",
+			 *					parameterName2: "parameterValue2",
+			 * 					"?queryParameterName": {
+			 * 						queryParameterName1: "queryParameterValue1"
+			 * 					}
+			 * 				}
+			 * 				</pre>
 			 * @param {object} [oComponentTargetInfo]
 			 *             Information for route name and parameters of the router in nested components. When any target
 			 *             of the route which is specified with the <code>sName</code> parameter loads a component and a
@@ -738,13 +777,14 @@ sap.ui.define([
 			 *  used in the Route which is specified by <code>sName</code>.
 			 * @param {string} [oComponentTargetInfo.anyName.route] The name of the route which should be matched after this
 			 *  navTo call.
-			 * @param {object} [oComponentTargetInfo.anyName.parameters] The parameters which are needed by the route.
+			 * @param {object} [oComponentTargetInfo.anyName.parameters] The parameters for the route. See the
+			 * 				documentation of the <code>oParameters</code>.
 			 * @param {object} [oComponentTargetInfo.anyName.componentTargetInfo] The information for the targets within a
 			 *  nested component. This shares the same structure with the <code>oComponentTargetInfo</code> parameter.
 			 * @param {boolean} [bReplace=false]
-			 *             If set to <code>true</code>, the hash is replaced, and there will be no entry in the browser
-			 *             history, if set to <code>false</code>, the hash is set and the entry is stored in the browser
-			 *             history.
+			*             If set to <code>true</code>, the hash is replaced, and there will be no entry in the browser
+			*             history. If set to <code>false</code>, the hash is set and the entry is stored in the browser
+			*             history.
 			 * @public
 			 * @returns {sap.ui.core.routing.Router} this for chaining.
 			 */
@@ -794,7 +834,7 @@ sap.ui.define([
 			 * @returns {string} The name of the last matched route
 			 */
 			_getLastMatchedRouteName: function() {
-				return this._matchedRoute && this._matchedRoute._oConfig.name;
+				return this._oMatchedRoute && this._oMatchedRoute._oConfig.name;
 			},
 
 			/**
@@ -1301,6 +1341,8 @@ sap.ui.define([
 			// private
 			fireTitleChanged : function(mParameters) {
 				if (!mParameters.propagated) {
+					mParameters.propagated = false;
+
 					var sDirection = History.getInstance().getDirection(),
 						sHash = this.getHashChanger().getHash(),
 						HistoryDirection = library.routing.HistoryDirection,
@@ -1360,6 +1402,8 @@ sap.ui.define([
 					this.nestedHistory = null;
 
 					this._bLastHashReplaced = false;
+
+					this._oPreviousTitleChangedRoute = this._oMatchedRoute;
 				}
 
 				this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mParameters);

@@ -117,8 +117,11 @@ sap.ui.define([
 		if (aElementOverlays.length > 1) {
 			return false;
 		}
+		var aResponsibleElementOverlays = aElementOverlays.map(function(oElementOverlay) {
+			return this.getResponsibleElementOverlay(oElementOverlay);
+		}.bind(this));
 
-		var oOverlay = aElementOverlays[0];
+		var oOverlay = aResponsibleElementOverlays[0];
 		var bIsEnabled = true;
 		var oAction = this.getAction(oOverlay);
 		if (!oAction) {
@@ -196,9 +199,10 @@ sap.ui.define([
 			return Promise.resolve(this._oEditedOverlay)
 
 			.then(function(oEditedOverlay) {
-				var oRenamedElement = oEditedOverlay.getElement();
-				var oDesignTimeMetadata = oEditedOverlay.getDesignTimeMetadata();
-				var sVariantManagementReference = this.getVariantManagementReference(oEditedOverlay);
+				var oResponsibleElementOverlay = this.getResponsibleElementOverlay(oEditedOverlay);
+				var oRenamedElement = oResponsibleElementOverlay.getElement();
+				var oDesignTimeMetadata = oResponsibleElementOverlay.getDesignTimeMetadata();
+				var sVariantManagementReference = this.getVariantManagementReference(oResponsibleElementOverlay);
 
 				return this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
 					renamedElement : oRenamedElement,

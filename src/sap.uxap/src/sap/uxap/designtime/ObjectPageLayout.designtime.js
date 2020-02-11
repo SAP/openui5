@@ -3,9 +3,20 @@
  */
 
 // Provides the Design Time Metadata for the sap.uxap.ObjectPageLayout control
-sap.ui.define(["sap/uxap/library"],
-	function(library) {
+sap.ui.define([
+	"sap/uxap/library",
+	"sap/ui/core/Core"
+],
+function(
+	library,
+	Core
+) {
 	"use strict";
+
+	function getSectionForAnchorBarButton (oAnchorButton) {
+		var sSectionId = oAnchorButton.data("sectionId");
+		return Core.byId(sSectionId);
+	}
 
 	return {
 		name : {
@@ -70,17 +81,24 @@ sap.ui.define(["sap/uxap/library"],
 										}
 									},
 									actions : {
-										move : {
-											changeType : "moveControls"
+										move : function(oElement){
+											if (oElement.isA("sap.m.Button") || oElement.isA("sap.m.MenuButton")) {
+												return "moveControls";
+											}
 										}
 									}
 								}
 							}
 						};
 					} else if (oElement.isA("sap.m.Button") || oElement.isA("sap.m.MenuButton")) {
-						//Until we can map other controls to public APIs, remove other actions from here
+						// getResponsibleElement() replaces with the responsible element, which is then asked for:
+						// the action in the context menu and the handler
 						return {
-							actions: null //still allows the move inside the relevant container
+							actions: {
+								getResponsibleElement: getSectionForAnchorBarButton,
+								combine: null,
+								split: null
+							}
 						};
 					} else {
 						//other internal controls will be disabled

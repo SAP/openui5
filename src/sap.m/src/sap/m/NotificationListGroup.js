@@ -164,47 +164,20 @@ function(
 		if (!collapseButton) {
 			collapseButton = new Button(this.getId() + '-collapseButton', {
 				type: ButtonType.Transparent,
-				icon: collapsed ? EXPAND_ICON : COLLAPSE_ICON,
-				tooltip: collapsed ? EXPAND_TEXT : COLLAPSE_TEXT,
 				press: function () {
-					this.setCollapsed(!this.getCollapsed());
+					var isCollapsed = !this.getCollapsed();
+					this.setCollapsed(isCollapsed);
+					this.fireOnCollapse({collapsed: isCollapsed});
 				}.bind(this)
 			});
 
 			this.setAggregation("_collapseButton", collapseButton, true);
 		}
 
+		collapseButton.setIcon(collapsed ? EXPAND_ICON : COLLAPSE_ICON);
+		collapseButton.setTooltip(collapsed ? EXPAND_TEXT : COLLAPSE_TEXT);
+
 		return collapseButton;
-	};
-
-	NotificationListGroup.prototype.setCollapsed = function (bCollapsed) {
-
-		var $that = this.$(),
-			collapseButton = this._getCollapseButton(),
-			display = "",
-			areActionButtonsVisible = !bCollapsed && this._shouldRenderOverflowToolbar();
-
-		$that.toggleClass('sapMNLGroupCollapsed', bCollapsed);
-		$that.attr('aria-expanded', !bCollapsed);
-
-		if (!Device.system.phone) {
-			areActionButtonsVisible ? display = "block" : display = "none";
-			$that.find(".sapMNLGroupHeader .sapMNLIActions").css("display", display);
-		}
-
-		collapseButton.setIcon(bCollapsed ? EXPAND_ICON : COLLAPSE_ICON);
-		collapseButton.setTooltip(bCollapsed ? EXPAND_TEXT : COLLAPSE_TEXT);
-
-		// Setter overwritten to suppress invalidation
-		this.setProperty('collapsed', bCollapsed, true);
-
-		if (Device.system.phone && this.getDomRef()) {
-			this._updatePhoneButtons();
-		}
-
-		this.fireOnCollapse({collapsed: bCollapsed});
-
-		return this;
 	};
 
 	/**

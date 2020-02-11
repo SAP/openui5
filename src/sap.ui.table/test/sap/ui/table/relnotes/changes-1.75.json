@@ -12,6 +12,17 @@
             "reference": "2080018556"
           }
         ]
+      },
+      {
+        "id": "9cee70a93254e66c3bb10d38a17c3cc3e51e1059",
+        "type": "FIX",
+        "text": " Table: Column resizing on mobile with invisible columns",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980516458"
+          }
+        ]
       }
     ]
   }

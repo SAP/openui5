@@ -23,6 +23,7 @@
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/largeList}" width="400px"/>
 				<w:Card class="sapUiMediumMargin" manifest="./cardsVisualTests/cardcontent/objectcontent/staticData.json" width="400px"/>
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/table}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/timeline}" width="400px"/>
 			</Panel>
 			<Panel id="panelInCompact" class="sapUiSizeCompact">
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/line}" width="400px"/>
@@ -34,6 +35,7 @@
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/largeList}" width="400px"/>
 				<w:Card class="sapUiMediumMargin" manifest="./cardsVisualTests/cardcontent/objectcontent/staticData.json" width="400px"/>
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/table}" width="400px"/>
+				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/timeline}" width="400px"/>
 			</Panel>
 		</content>
 	</Page>

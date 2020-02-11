@@ -128,7 +128,11 @@ sap.ui.define([
 							variantChanges: {}
 						}]
 					}
-				}
+				},
+				ui2personalization: {
+					key: "value"
+				},
+				cacheKey: "abc123"
 			};
 			// test
 			var aResponses = storageResultDisassemble(oResponse);
@@ -142,6 +146,8 @@ sap.ui.define([
 			assert.equal(0, oFlexDataResponse.variantChanges.length, "and the variantChanges array of the first response object is empty");
 			assert.equal(0, oFlexDataResponse.variantDependentControlChanges.length, "and the variantDependentControlChanges array of the first response object is empty");
 			assert.equal(0, oFlexDataResponse.variantManagementChanges.length, "and the variantManagementChanges array of the first response object is empty");
+			assert.equal("abc123", oFlexDataResponse.cacheKey, "the cacheKey is kept in the first response");
+			assert.deepEqual({key: "value"}, oFlexDataResponse.ui2personalization, "the ui2personalization is kept in the first response");
 			// CUSTOMER response object
 			oFlexDataResponse = aResponses[1];
 			assert.equal(2, oFlexDataResponse.variants.length, "and the second response object is for the CUSTOMER layer and contains the variants (but not the standard variant) sorted by creation timestamp in ascending order");

@@ -268,7 +268,12 @@ sap.ui.define(function () {
 					'./cards/AdaptiveContent/ActionRender.qunit'
 				]
 			},
-
+			"AdaptiveContentIntegration": {
+				title: "Opa test Page for sap.f.AdaptiveContent",
+				module: [
+					'./cards/AdaptiveContent/AdaptiveContentIntegration.opa.qunit'
+				]
+			},
 			// -------------------------------------------------------------------------------
 			// Designtime tests:
 			// -------------------------------------------------------------------------------

@@ -20,14 +20,39 @@ sap.ui.define([
 ], function (Log, uid, Device, SyncPromise, coreLibrary, Controller, View, CountMode, MessageScope,
 		ODataModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit*/
-	/*eslint-disable quote-props*/
+	/*eslint max-nested-callbacks: 0, quote-props: 0*/
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/},
 		// determine the row in which the entity is expected from the context path
-		rRowIndex = /~(\d+)~/;
+		rRowIndex = /~(\d+)~/,
+		/**
+		 * Maps back-end response severity values to the values defined in the enumeration
+		 * <code>sap.ui.core.MessageType</code>.
+		 */
+		mSeverityMap = {
+			"error" : MessageType.Error,
+			"warning" : MessageType.Warning,
+			"success" : MessageType.Success,
+			"info" : MessageType.Information
+		};
+
+	/**
+	 * Clones the given OData message object and replaces the target property of the clone by
+	 * the given target path.
+	 *
+	 * @param {object} oODataMessage
+	 *   An OData message object as returned by <code>createResponseMessage</code>
+	 * @param {string} sTarget
+	 *   The new target
+	 * @returns {object}
+	 *   The cloned OData message object with the replaced target
+	 */
+	function cloneODataMessage(oODataMessage, sTarget) {
+		return Object.assign({}, oODataMessage, {target : sTarget});
+	}
 
 	/**
 	 * Creates an error response object for a technical error (http status code = 4xx/5xx).
@@ -255,6 +280,8 @@ sap.ui.define([
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
 			// control with ID "id"
 			this.mChanges = {};
+			// counter for OData messages created during a test
+			this.iODataMessageCount = 0;
 			// {map<string, true>}
 			// If an ID is in this.mIgnoredChanges, change events with null are ignored
 			this.mIgnoredChanges = {};
@@ -441,6 +468,34 @@ sap.ui.define([
 					return oExpectedRequest;
 				}
 			}
+		},
+
+		/**
+		 * Creates an OData message object that can be passed as input parameter to
+		 * <code>getMessageHeader</code>.
+		 *
+		 * @param {string} [sTarget=""]
+		 *   The target
+		 * @param {string} [sMessage="message-~i~"]
+		 *   The message text; if not given, "message-~i~" is used, where ~i~ is a generated number
+		 * @param {string} [sSeverity="error"]
+		 *   The message severity; either "error", "warning", "success" or "info"
+		 * @returns {object}
+		 *   An OData message object with following properties: <code>code</code> with the value
+		 *   "code-~i~" (where ~i~ is a generated number), <code>message</code>,
+		 *   <code>severity</code> and <code>target</code>
+		 */
+		createResponseMessage : function (sTarget, sMessage, sSeverity) {
+			var i = this.iODataMessageCount;
+
+			this.iODataMessageCount += 1;
+
+			return {
+				code : "code-" + i,
+				message : sMessage || "message-" + i,
+				severity : sSeverity || "error",
+				target : sTarget || ""
+			};
 		},
 
 		/**
@@ -784,17 +839,73 @@ sap.ui.define([
 		},
 
 		/**
+		 * Adds a message to the array of expected messages for this test based on the given OData
+		 * message object, the target prefix and the full target prefix. If the given oODataMessage
+		 * is <code>null</code>, no message is added. That allows using the "?" operator in
+		 * <code>expectMessage</code> calls for messages that depend on the test fixture. No extra
+		 * <code>if</code> statement is needed.
+		 *
+		 * @param {object} oODataMessage
+		 *   An OData message object as returned by <code>createResponseMessage</code> or
+		 *   <code>null</code>
+		 * @param {string|object} vTargetPrefix
+		 *   The prefix for the target; if vTargetPrefix is not of type string the given object may
+		 *   have following properties: <code>path</code> and <code>isComplete</code>
+		 * @param {boolean} vTargetPrefix.isComplete
+		 *   Whether <code>vTargetPrefix.path</code> is the complete message target or
+		 *   <code>vTargetPrefix.path</code> is a prefix for the <code>oODataMessage.target</code>
+		 * @param {string} vTargetPrefix.path
+		 *   A path or a path prefix for the target
+		 * @param {string} [sFullTargetPrefix=vTargetPrefix]
+		 *   The prefix for the full target; if not given <code>vTargetPrefix</code> is also used as
+		 *   prefix for the <code>fullTarget</code>
+		 * @returns {object}
+		 *   The test instance for chaining
+		 */
+		expectMessage : function (oODataMessage, vTargetPrefix, sFullTargetPrefix) {
+			var sTarget, sTargetPrefix;
+
+			if (oODataMessage !== null) {
+				if (vTargetPrefix.isComplete) {
+					sTargetPrefix = "";
+					sTarget = vTargetPrefix.path;
+				} else {
+					sTargetPrefix = vTargetPrefix.path || vTargetPrefix;
+					sTarget = sTargetPrefix + oODataMessage.target;
+				}
+
+				this.aMessages.push({
+					code : oODataMessage.code,
+					descriptionUrl : "",
+					fullTarget : (sFullTargetPrefix || sTargetPrefix) + oODataMessage.target,
+					message : oODataMessage.message,
+					persistent : false,
+					target : sTarget,
+					technical : false,
+					type : mSeverityMap[oODataMessage.severity]
+				});
+			}
+
+			return this;
+		},
+
+		/**
 		 * The following code (either {@link #createView} or anything before
 		 * {@link #waitForChanges}) is expected to report exactly the given messages. All expected
 		 * messages should have a different message text.
 		 *
-		 * @param {object[]} aExpectedMessages The expected messages (with properties code, message,
+		 * @param {object|object[]} vExpectedMessages
+		 *   The expected message or an array of expected messages (with properties code, message,
 		 *   target, persistent, technical and type corresponding the getters of
 		 *   sap.ui.core.message.Message)
-		 * @returns {object} The test instance for chaining
+		 * @returns {object}
+		 *   The test instance for chaining
 		 */
-		expectMessages : function (aExpectedMessages) {
-			this.aMessages = aExpectedMessages.map(function (oMessage) {
+		expectMessages : function (vExpectedMessages) {
+			if (!Array.isArray(vExpectedMessages)) {
+				vExpectedMessages = [vExpectedMessages];
+			}
+			this.aMessages = vExpectedMessages.map(function (oMessage) {
 				oMessage.descriptionUrl = oMessage.descriptionUrl || "";
 				oMessage.technical = oMessage.technical || false;
 				return oMessage;
@@ -1091,6 +1202,7 @@ sap.ui.define([
 [false, true].forEach(function (bUseBatch) {
 	QUnit.test("Messages: empty target (useBatch=" + bUseBatch + ")", function (assert) {
 		var oModel = createSalesOrdersModel({useBatch : bUseBatch}),
+			oResponseMessage = this.createResponseMessage(),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
@@ -1100,23 +1212,11 @@ sap.ui.define([
 			this.expectHeadRequest();
 		}
 
-		this.expectRequest("SalesOrderSet('1')", {
-				SalesOrderID : "1"
-			}, {
-				"sap-message" : getMessageHeader({
-					code : "code", message : "Foo", severity : "error", target : ""
-				})
-			})
+		this.expectRequest("SalesOrderSet('1')", {SalesOrderID : "1"},
+				{"sap-message" : getMessageHeader(oResponseMessage)})
 			.expectChange("id", null)
 			.expectChange("id", "1")
-			.expectMessages([{
-				code : "code",
-				fullTarget : "/SalesOrderSet('1')",
-				message : "Foo",
-				persistent : false,
-				target : "/SalesOrderSet('1')",
-				type : MessageType.Error
-			}]);
+			.expectMessage(oResponseMessage, "/SalesOrderSet('1')");
 
 		// code under test
 		return this.createView(assert, sView, oModel);
@@ -1128,6 +1228,7 @@ sap.ui.define([
 	// JIRA: CPOUI5MODELS-35
 	QUnit.test("Messages: simple target with complex data type", function (assert) {
 		var oModel = createSalesOrdersModel(),
+			oResponseMessage = this.createResponseMessage("Address/City", "Foo"),
 			sView = '\
 <FlexBox binding="{/BusinessPartnerSet(\'1\')}">\
 	<Text id="CompanyName" text="{CompanyName}" />\
@@ -1140,26 +1241,12 @@ sap.ui.define([
 				Address : {
 					City : "Walldorf"
 				}
-			}, {
-				"sap-message" : getMessageHeader({
-					code : "A",
-					message : "Foo",
-					severity : "error",
-					target : "Address/City"
-				})
-			})
+			}, {"sap-message" : getMessageHeader(oResponseMessage)})
 			.expectChange("CompanyName", null)
 			.expectChange("CompanyName", "SAP SE")
 			.expectChange("City", null)
 			.expectChange("City", "Walldorf")
-			.expectMessages([{
-				code : "A",
-				fullTarget : "/BusinessPartnerSet('1')/Address/City",
-				message : "Foo",
-				persistent : false,
-				target : "/BusinessPartnerSet('1')/Address/City",
-				type : MessageType.Error
-			}]);
+			.expectMessage(oResponseMessage,"/BusinessPartnerSet('1')/");
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
@@ -1216,7 +1303,7 @@ sap.ui.define([
 </FlexBox>';
 
 		this.expectRequest("SalesOrderSet('1')", createErrorResponse(200))
-			.expectMessages([]);
+			.expectMessages([]); // clean all expected messages
 
 		// code under test
 		return this.createView(assert, sView, oModel);
@@ -1228,18 +1315,8 @@ sap.ui.define([
 	// JIRA: CPOUI5MODELS-103
 	QUnit.test("Messages: more than one navigation property", function (assert) {
 		var oModel = createSalesOrdersModel(),
-			oMsgProductName = {
-				code : "A",
-				message : "Msg1",
-				severity : "Error",
-				target : "Name"
-			},
-			oMsgSupplierAddress = {
-				code : "B",
-				message : "Msg2",
-				severity : "Warning",
-				target : "Address/City"
-			},
+			oMsgProductName = this.createResponseMessage("Name", "Foo"),
+			oMsgSupplierAddress = this.createResponseMessage("Address/City", "Bar", "warning"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderId" text="{SalesOrderID}" />\
@@ -1295,19 +1372,11 @@ sap.ui.define([
 					},
 					ProductID : "P1",
 					Name : "Product 1"
-				}, {
-					"sap-message" : getMessageHeader([oMsgProductName])
-				})
+				}, {"sap-message" : getMessageHeader(oMsgProductName)})
 				.expectChange("productName", "Product 1")
-				.expectMessages([{
-					code : "A",
-					fullTarget : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Name",
-					message : "Msg1",
-					persistent : false,
-					target : "/ProductSet('P1')/Name",
-					type : MessageType.Error
-				}]);
+				.expectMessage(oMsgProductName, "/ProductSet('P1')/",
+					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')"
+					+ "/ToProduct/");
 
 			// code under test
 			that.oView.byId("detailProduct").setBindingContext(
@@ -1330,28 +1399,11 @@ sap.ui.define([
 					Address : {
 						City : "Walldorf"
 					}
-				}, {
-					"sap-message" : getMessageHeader([oMsgSupplierAddress])
-				})
+				}, {"sap-message" : getMessageHeader(oMsgSupplierAddress)})
 				.expectChange("supplierAddress", "Walldorf")
-				.expectMessages([{
-					code : "A",
-					fullTarget : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Name",
-					message : "Msg1",
-					persistent : false,
-					target : "/ProductSet('P1')/Name",
-					type : MessageType.Error
-				}, {
-					code : "B",
-					fullTarget : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/ToSupplier"
-						+ "/Address/City",
-					message : "Msg2",
-					persistent : false,
-					target : "/BusinessPartnerSet('BP1')/Address/City",
-					type : MessageType.Warning
-				}]);
+				.expectMessage(oMsgSupplierAddress, "/BusinessPartnerSet('BP1')/",
+					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')"
+					+ "/ToProduct/ToSupplier/");
 
 			// code under test
 			that.oView.byId("detailSupplier").setBindingContext(
@@ -1361,8 +1413,8 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			return Promise.all([
-				that.checkValueState(assert, "productName", "Error", "Msg1"),
-				that.checkValueState(assert, "supplierAddress", "Warning", "Msg2")
+				that.checkValueState(assert, "productName", "Error", "Foo"),
+				that.checkValueState(assert, "supplierAddress", "Warning", "Bar")
 			]);
 		});
 	});
@@ -1371,13 +1423,8 @@ sap.ui.define([
 	// Scenario: Messages are visualized at controls that are bound against the messages' target.
 	QUnit.test("Messages: check value state", function (assert) {
 		var oModel = createSalesOrdersModel(),
-			oMsgGrossAmount = {
-				code : "B",
-				message : "Msg2",
-				severity : "Warning",
-				target : "GrossAmount"
-			},
-			oMsgNote = {code : "A", message : "Msg1", severity : "Error", target : "Note"},
+			oMsgGrossAmount = this.createResponseMessage("GrossAmount", "Foo", "warning"),
+			oMsgNote = this.createResponseMessage("Note", "Bar"),
 			that = this,
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
@@ -1390,36 +1437,21 @@ sap.ui.define([
 				GrossAmount : "GrossAmount A",
 				LifecycleStatusDescription : "LifecycleStatusDescription A",
 				Note : "Note A"
-			}, {
-				"sap-message" : getMessageHeader([oMsgNote, oMsgGrossAmount])
-			})
+			}, {"sap-message" : getMessageHeader([oMsgNote, oMsgGrossAmount])})
 			.expectChange("Note", null)
 			.expectChange("Note", "Note A")
 			.expectChange("GrossAmount", null)
 			.expectChange("GrossAmount", "GrossAmount A")
 			.expectChange("LifecycleStatusDescription", null)
 			.expectChange("LifecycleStatusDescription", "LifecycleStatusDescription A")
-			.expectMessages([{
-				code : "A",
-				fullTarget : "/SalesOrderSet('1')/Note",
-				message : "Msg1",
-				persistent : false,
-				target : "/SalesOrderSet('1')/Note",
-				type : MessageType.Error
-			}, {
-				code : "B",
-				fullTarget : "/SalesOrderSet('1')/GrossAmount",
-				message : "Msg2",
-				persistent : false,
-				target : "/SalesOrderSet('1')/GrossAmount",
-				type : MessageType.Warning
-			}]);
+			.expectMessage(oMsgNote, "/SalesOrderSet('1')/")
+			.expectMessage(oMsgGrossAmount, "/SalesOrderSet('1')/");
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
 			return Promise.all([
-				that.checkValueState(assert, "Note", "Error", "Msg1"),
-				that.checkValueState(assert, "GrossAmount", "Warning", "Msg2"),
+				that.checkValueState(assert, "Note", "Error", "Bar"),
+				that.checkValueState(assert, "GrossAmount", "Warning", "Foo"),
 				that.checkValueState(assert, "LifecycleStatusDescription", "None", "")
 			]);
 		});
@@ -1512,45 +1544,19 @@ sap.ui.define([
 	// BCP: 1970544211
 	QUnit.test("Messages: refresh model or binding", function (assert) {
 		var oModel = createSalesOrdersModelMessageScope(),
-			oMsgProductAViaSalesOrder = {
-				code : "A",
-				message : "MsgA",
-				severity : "warning",
-				target : "ToLineItems(SalesOrderID='1',ItemPosition='3')/ToProduct('A')/Name"
-			},
-			oMsgProductAViaSalesOrderItem = {
-				code : "A",
-				message : "MsgA",
-				severity : "warning",
-				target : "(SalesOrderID='1',ItemPosition='3')/ToProduct('A')/Name"
-			},
-			oMsgSalesOrder = {
-				code : "code", message : "Foo", severity : "error", target : ""
-			},
-			oMsgSalesOrderItem1 = {
-				code : "1",
-				message : "Msg1",
-				severity : "warning",
-				target : "(SalesOrderID='1',ItemPosition='1')/ItemPosition"
-			},
-			oMsgSalesOrderItem3 = {
-				code : "3",
-				message : "Msg3",
-				severity : "warning",
-				target : "(SalesOrderID='1',ItemPosition='3')/ItemPosition"
-			},
-			oMsgSalesOrderToLineItems1 = {
-				code : "1",
-				message : "Msg1",
-				severity : "warning",
-				target : "ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition"
-			},
-			oMsgSalesOrderToLineItems3 = {
-				code : "3",
-				message : "Msg3",
-				severity : "warning",
-				target : "ToLineItems(SalesOrderID='1',ItemPosition='3')/ItemPosition"
-			},
+			oMsgProductAViaSalesOrder = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='3')/ToProduct('A')/Name"),
+			oMsgProductAViaSalesOrderItem = cloneODataMessage(oMsgProductAViaSalesOrder,
+				"(SalesOrderID='1',ItemPosition='3')/ToProduct('A')/Name"),
+			oMsgSalesOrder = this.createResponseMessage(),
+			oMsgSalesOrderToLineItems1 = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition"),
+			oMsgSalesOrderToLineItems3 = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='3')/ItemPosition"),
+			oMsgSalesOrderItem1 = cloneODataMessage(oMsgSalesOrderToLineItems1,
+				"(SalesOrderID='1',ItemPosition='1')/ItemPosition"),
+			oMsgSalesOrderItem3 = cloneODataMessage(oMsgSalesOrderToLineItems3,
+				"(SalesOrderID='1',ItemPosition='3')/ItemPosition"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
@@ -1569,9 +1575,7 @@ sap.ui.define([
 				headers : {"sap-message-scope" : "BusinessObject"}
 			}, {
 				SalesOrderID : "1"
-			}, {
-				"sap-message" : getMessageHeader([oMsgSalesOrder, oMsgSalesOrderToLineItems1])
-			})
+			}, {"sap-message" : getMessageHeader([oMsgSalesOrder, oMsgSalesOrderToLineItems1])})
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				method : "GET",
@@ -1582,29 +1586,13 @@ sap.ui.define([
 					{SalesOrderID : "1", ItemPosition : "1"},
 					{SalesOrderID : "1", ItemPosition : "2"}
 				]
-			}, {
-				"sap-message" : getMessageHeader(oMsgSalesOrderItem1)
-			})
+			}, {"sap-message" : getMessageHeader(oMsgSalesOrderItem1)})
 			.expectChange("id", null)
 			.expectChange("id", "1")
 			.expectChange("itemPosition", ["1", "2"])
-			.expectMessages([{
-				code : "code",
-				fullTarget : "/SalesOrderSet('1')",
-				message : "Foo",
-				persistent : false,
-				target : "/SalesOrderSet('1')",
-				type : MessageType.Error
-			}, {
-				code : "1",
-				fullTarget : "/SalesOrderSet('1')"
-					+ "/ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition",
-				message : "Msg1",
-				persistent : false,
-				target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
-					+ "/ItemPosition",
-				type : MessageType.Warning
-			}]);
+			.expectMessage(oMsgSalesOrder, "/SalesOrderSet('1')")
+			.expectMessage(oMsgSalesOrderItem1, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems");
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -1644,31 +1632,13 @@ sap.ui.define([
 					])
 				})
 				.expectChange("itemPosition", ["2", "3"])
-				.expectMessages([{
-					code : "code",
-					fullTarget : "/SalesOrderSet('1')",
-					message : "Foo",
-					persistent : false,
-					target : "/SalesOrderSet('1')",
-					type : MessageType.Error
-				}, {
-					code : "3",
-					fullTarget : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='3')/ItemPosition",
-					message : "Msg3",
-					persistent : false,
-					target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='3')"
-						+ "/ItemPosition",
-					type : MessageType.Warning
-				}, {
-					code : "A",
-					fullTarget : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='3')/ToProduct('A')/Name",
-					message : "MsgA",
-					persistent : false,
-					target : "/ProductSet('A')/Name",
-					type : MessageType.Warning
-				}]);
+				.expectMessages([]) // clean all expected messages
+				.expectMessage(oMsgSalesOrder, "/SalesOrderSet('1')")
+				.expectMessage(oMsgSalesOrderItem3, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oMsgProductAViaSalesOrderItem,
+					{isComplete : true, path : "/ProductSet('A')/Name"},
+					"/SalesOrderSet('1')/ToLineItems");
 
 			// code under test
 			that.oModel.refresh();
@@ -1687,14 +1657,8 @@ sap.ui.define([
 					]
 				})
 				.expectChange("itemPosition", ["3", "4"])
-				.expectMessages([{
-					code : "code",
-					fullTarget : "/SalesOrderSet('1')",
-					message : "Foo",
-					persistent : false,
-					target : "/SalesOrderSet('1')",
-					type : MessageType.Error
-				}]);
+				.expectMessages([]) // clean all expected messages
+				.expectMessage(oMsgSalesOrder, "/SalesOrderSet('1')");
 
 			// code under test
 			that.oView.byId("table").getBinding("items").refresh();
@@ -1708,30 +1672,14 @@ sap.ui.define([
 	// BCP: 1970544211
 	QUnit.test("Messages: paging", function (assert) {
 		var oModel = createSalesOrdersModelMessageScope(),
-			oMsgProductA = {
-				code : "A",
-				message : "MsgA",
-				severity : "warning",
-				target : "(SalesOrderID='1',ItemPosition='1')/ToProduct/Name"
-			},
-			oMsgProductB = {
-				code : "B",
-				message : "MsgB",
-				severity : "warning",
-				target : "(SalesOrderID='1',ItemPosition='3')/ToProduct/Name"
-			},
-			oMsgSalesOrderItem1 = {
-				code : "1",
-				message : "Msg1",
-				severity : "warning",
-				target : "(SalesOrderID='1',ItemPosition='1')/ItemPosition"
-			},
-			oMsgSalesOrderItem3 = {
-				code : "3",
-				message : "Msg3",
-				severity : "warning",
-				target : "(SalesOrderID='1',ItemPosition='3')/ItemPosition"
-			},
+			oMsgProductA
+				= this.createResponseMessage("(SalesOrderID='1',ItemPosition='1')/ToProduct/Name"),
+			oMsgProductB
+				= this.createResponseMessage("(SalesOrderID='1',ItemPosition='3')/ToProduct/Name"),
+			oMsgSalesOrderItem1
+				= this.createResponseMessage("(SalesOrderID='1',ItemPosition='1')/ItemPosition"),
+			oMsgSalesOrderItem3
+				= this.createResponseMessage("(SalesOrderID='1',ItemPosition='3')/ItemPosition"),
 			sView = '\
 <Table growing="true" growingThreshold="2" id="table"\
 		items="{/SalesOrderSet(\'1\')/ToLineItems}">\
@@ -1760,24 +1708,10 @@ sap.ui.define([
 				])
 			})
 			.expectChange("itemPosition", ["1", "2"])
-			.expectMessages([{
-				code : "1",
-				fullTarget : "/SalesOrderSet('1')"
-					+ "/ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition",
-				message : "Msg1",
-				persistent : false,
-				target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
-					+ "/ItemPosition",
-				type : MessageType.Warning
-			}, {
-				code : "A",
-				fullTarget : "/SalesOrderSet('1')"
-					+ "/ToLineItems(SalesOrderID='1',ItemPosition='1')/ToProduct/Name",
-				message : "MsgA",
-				persistent : false,
-				target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')/ToProduct/Name",
-				type : MessageType.Warning
-			}]);
+			.expectMessage(oMsgSalesOrderItem1, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems")
+			.expectMessage(oMsgProductA, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems");
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -1802,43 +1736,10 @@ sap.ui.define([
 				})
 				.expectChange("itemPosition", ["3", "4"])
 				.expectChange("itemPosition", ["3", "4"]) // TODO: why twice?
-				.expectMessages([{
-					code : "1",
-					fullTarget : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition",
-					message : "Msg1",
-					persistent : false,
-					target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
-						+ "/ItemPosition",
-					type : MessageType.Warning
-				}, {
-					code : "3",
-					fullTarget : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='3')/ItemPosition",
-					message : "Msg3",
-					persistent : false,
-					target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='3')"
-						+ "/ItemPosition",
-					type : MessageType.Warning
-				}, {
-					code : "A",
-					fullTarget : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='1')/ToProduct/Name",
-					message : "MsgA",
-					persistent : false,
-					target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
-						+ "/ToProduct/Name",
-					type : MessageType.Warning
-				}, {
-					code : "B",
-					fullTarget : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='3')/ToProduct/Name",
-					message : "MsgB",
-					persistent : false,
-					target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='3')"
-						+ "/ToProduct/Name",
-					type : MessageType.Warning
-				}]);
+				.expectMessage(oMsgSalesOrderItem3, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oMsgProductB, "/SalesOrderLineItemSet",
+						"/SalesOrderSet('1')/ToLineItems");
 
 			// do paging
 			that.oView.byId("table-trigger").firePress();
@@ -1863,21 +1764,11 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oModel = createSalesOrdersModelMessageScope({refreshAfterChange : bRefreshAfterChange}),
-			oMsgSalesOrder = {
-				code : "0", message : "MsgSalesOrder", severity : "error", target : ""
-			},
-			oMsgSalesOrderCustomerID = {
-				code : "1",
-				message : "MsgSalesOrderCustomerID",
-				severity : "warning",
-				target : "CustomerID"
-			},
-			oMsgSalesOrderItem = {
-				code : "2",
-				message : "MsgSalesOrderItem",
-				severity : "warning",
-				target : "ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition"
-			},
+			oMsgSalesOrder = this.createResponseMessage("", "MsgSalesOrder"),
+			oMsgSalesOrderCustomerID = this.createResponseMessage("CustomerID",
+				"MsgSalesOrderCustomerID", "warning"),
+			oMsgSalesOrderItem = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Input id="customerID" value="{CustomerID}" />\
@@ -1892,48 +1783,22 @@ sap.ui.define([
 			}, {
 				CustomerID : "42"
 			}, {
-				"sap-message" : getMessageHeader([
-					oMsgSalesOrder,
-					oMsgSalesOrderCustomerID,
-					oMsgSalesOrderItem
-				])
+				"sap-message" : getMessageHeader([oMsgSalesOrder,oMsgSalesOrderCustomerID,
+					oMsgSalesOrderItem])
 			})
 			.expectChange("customerID", null)
 			.expectChange("customerID", "42")
-			.expectMessages([{
-				code : "0",
-				fullTarget : "/SalesOrderSet('1')",
-				message : "MsgSalesOrder",
-				persistent : false,
-				target : "/SalesOrderSet('1')",
-				type : MessageType.Error
-			}, {
-				code : "1",
-				fullTarget : "/SalesOrderSet('1')/CustomerID",
-				message : "MsgSalesOrderCustomerID",
-				persistent : false,
-				target : "/SalesOrderSet('1')/CustomerID",
-				type : MessageType.Warning
-			}, {
-				code : "2",
-				fullTarget : "/SalesOrderSet('1')"
-					+ "/ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition",
-				message : "MsgSalesOrderItem",
-				persistent : false,
-				target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
-					+ "/ItemPosition",
-				type : MessageType.Warning
-			}]);
+			.expectMessage(oMsgSalesOrder, "/SalesOrderSet('1')")
+			.expectMessage(oMsgSalesOrderCustomerID, "/SalesOrderSet('1')/")
+			.expectMessage(oMsgSalesOrderItem, {
+				isComplete : true,
+				path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')/ItemPosition"
+			}, "/SalesOrderSet('1')/");
 
 		oModel.setMessageScope(sMessageScope);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oNewMsgForCustomerID = {
-					code : "3",
-					message : "MsgSalesOrderCustomerID3",
-					severity : "warning",
-					target : "CustomerID"
-				};
+			var oNewMsgForCustomerID = that.createResponseMessage("CustomerID");
 
 			that.expectChange("customerID", "13")
 				.expectHeadRequest(bCleanupChildMessages
@@ -1941,7 +1806,7 @@ sap.ui.define([
 				.expectRequest({
 					data : {
 						CustomerID : "13",
-						"__metadata" : {"uri": "SalesOrderSet('1')"}
+						"__metadata" : {"uri" : "SalesOrderSet('1')"}
 					},
 					deepPath : "/SalesOrderSet('1')",
 					headers : bCleanupChildMessages
@@ -1953,7 +1818,7 @@ sap.ui.define([
 					method : "POST",
 					requestUri : "SalesOrderSet('1')"
 				}, NO_CONTENT, {
-					"sap-message" : getMessageHeader([oNewMsgForCustomerID])
+					"sap-message" : getMessageHeader(oNewMsgForCustomerID)
 				});
 			if (bRefreshAfterChange) {
 				that.expectRequest({
@@ -1965,37 +1830,17 @@ sap.ui.define([
 					}, {
 						CustomerID : "13"
 					}, {
-						"sap-message" : getMessageHeader([oNewMsgForCustomerID])
+						"sap-message" : getMessageHeader(oNewMsgForCustomerID)
 					});
 			}
-			if (bCleanupChildMessages) {
-				that.expectMessages([{
-					code : "3",
-					fullTarget : "/SalesOrderSet('1')/CustomerID",
-					message : "MsgSalesOrderCustomerID3",
-					persistent : false,
-					target : "/SalesOrderSet('1')/CustomerID",
-					type : MessageType.Warning
-				}]);
-			} else {
-				that.expectMessages([{ // child message is not removed
-					code : "2",
-					fullTarget : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition",
-					message : "MsgSalesOrderItem",
-					persistent : false,
-					target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
-						+ "/ItemPosition",
-					type : MessageType.Warning
-				}, {
-					code : "3",
-					fullTarget : "/SalesOrderSet('1')/CustomerID",
-					message : "MsgSalesOrderCustomerID3",
-					persistent : false,
-					target : "/SalesOrderSet('1')/CustomerID",
-					type : MessageType.Warning
-				}]);
+			that.expectMessages([]); // clean all expected messages
+			if (!bCleanupChildMessages) {
+				that.expectMessage(oMsgSalesOrderItem, {
+					isComplete : true,
+					path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')/ItemPosition"
+				}, "/SalesOrderSet('1')/");
 			}
+			that.expectMessage(oNewMsgForCustomerID, "/SalesOrderSet('1')/");
 
 			// code under test
 			// Scenario: updating customer id replaces messages for the sales order and its children
@@ -2031,7 +1876,7 @@ sap.ui.define([
 		<Text id="name0" text="{FullName}" />\
 	</FlexBox> \
 	<FlexBox binding="{to_LastChangedByUserContactCard}">\
-		 <Text id="name1" text="{FullName}" />\
+		<Text id="name1" text="{FullName}" />\
 	</FlexBox> \
 </FlexBox>',
 			that = this;
@@ -2088,4 +1933,194 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Use reduced paths for the messages' full target path.
+	// A modification of an item causes sideeffects on the header, so the item and the header data
+	// need to be updated via a GET request on the item, using $expand for the header data.
+	// The backend returns messages with a target relative to the item. So the targets for header
+	// messages will contain partner navigation properties that have to be removed.
+	// JIRA: CPOUI5MODELS-82
+	QUnit.test("Use reduced paths for the messages' full target path", function (assert) {
+		var oModel = createSalesOrdersModel({preliminaryContext : true}),
+			oSalesOrderGrossAmountError = this.createResponseMessage("GrossAmount"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="grossAmount" value="{GrossAmount}" />\
+	<Table id="table" items="{ToLineItems}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="grossAmount::item" value="{GrossAmount}" />\
+			<Input id="currencyCode" value="{CurrencyCode}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('1')", {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				GrossAmount : "0.00",
+				SalesOrderID : "1"
+			}, {"sap-message" : getMessageHeader(oSalesOrderGrossAmountError)})
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectChange("grossAmount", null)
+			.expectChange("grossAmount", "0.00")
+			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					CurrencyCode : "EUR",
+					GrossAmount : "0.00",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition", ["10~0~"])
+			.expectChange("grossAmount::item", ["0.00"])
+			.expectChange("currencyCode", ["EUR"])
+			.expectMessage(oSalesOrderGrossAmountError, "/SalesOrderSet('1')/");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext(),
+				oSalesOrderItemToHeaderGrossAmountError
+					= that.createResponseMessage("ToHeader/GrossAmount");
+
+			that.expectRequest({
+					"deepPath" : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')",
+					"headers" : {},
+					"method" : "GET",
+					"requestUri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						+ "?$expand=ToHeader"
+				}, {
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					SalesOrderID : "1",
+					ItemPosition : "10~0~",
+					GrossAmount : "1000.00",
+					ToHeader : {
+						"__metadata" : {
+							"uri" : "SalesOrderSet('1')"
+						},
+						SalesOrderID : "1",
+						GrossAmount : "1000.00"
+					}
+				}, {"sap-message" : getMessageHeader(oSalesOrderItemToHeaderGrossAmountError)})
+				.expectChange("grossAmount", "1000.00")
+				.expectChange("grossAmount::item", ["1000.00"])
+				.expectMessages([{
+					code : oSalesOrderItemToHeaderGrossAmountError.code,
+					fullTarget : "/SalesOrderSet('1')/GrossAmount",
+					message : oSalesOrderItemToHeaderGrossAmountError.message,
+					persistent : false,
+					target : "/SalesOrderSet('1')/GrossAmount",
+					type : mSeverityMap[oSalesOrderItemToHeaderGrossAmountError.severity]
+				}]);
+
+			// code under test
+			oModel.read("", {
+				context : oContext,
+				urlParameters : {"$expand" : "ToHeader"}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: On an object page a sales order with its sales order items is displayed. All the
+	// sales order items are returned with the initial request. Check the lifecycle of stateful
+	// OData messages.
+	// Expectation: All messages for the sales order and all messages for the sales order items are
+	// displayed. In case of message scope BusinessObject also messages for sub entities are
+	// displayed.
+	// JIRA: CPOUI5MODELS-111
+[true, false].forEach(function (bWithMessageScope) {
+	var sTitle = "Message lifecycle (1), "
+			+ (bWithMessageScope ? "MessageScope.Business" : "MessageScope.Request")
+			+ ": Object page with relative list (all items are displayed)";
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToBusinessPartnerAddress
+				= this.createResponseMessage("ToBusinessPartner/Address"),
+			oSalesOrderToItemNoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderToItemPositionError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ItemPosition"),
+			oSalesOrderItemNoteError = cloneODataMessage(oSalesOrderToItemNoteError,
+				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderItemPositionError = cloneODataMessage(oSalesOrderToItemPositionError,
+				"(SalesOrderID='1',ItemPosition='10~0~')/ItemPosition"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+	<Table id="table" items="{ToLineItems}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="note::item" value="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader(bWithMessageScope
+					? [oSalesOrderNoteError, oSalesOrderToBusinessPartnerAddress,
+						oSalesOrderToItemNoteError, oSalesOrderToItemPositionError]
+					: [oSalesOrderNoteError])
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo")
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					Note : "Bar",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}]
+			}, {
+				"sap-message" :
+					getMessageHeader([oSalesOrderItemNoteError,oSalesOrderItemPositionError])
+			})
+			.expectChange("itemPosition", ["10~0~"])
+			.expectChange("note::item", ["Bar"])
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/")
+			.expectMessage(oSalesOrderItemNoteError, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems")
+			.expectMessage(oSalesOrderItemPositionError, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems")
+			.expectMessage(bWithMessageScope ? oSalesOrderToBusinessPartnerAddress : null,
+				"/SalesOrderSet('1')/");
+
+		if (bWithMessageScope) {
+			oModel.setMessageScope(MessageScope.BusinessObject);
+		}
+
+		return this.createView(assert, sView, oModel);
+	});
+});
 });

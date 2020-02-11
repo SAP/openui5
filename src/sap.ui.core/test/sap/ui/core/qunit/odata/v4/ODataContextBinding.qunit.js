@@ -1424,7 +1424,11 @@ sap.ui.define([
 				+ "with return value context";
 
 		QUnit.test(sTitle, function (assert) {
-			var oContextMock = this.mock(Context),
+			var oCache = {
+					setResourcePath : function () {}
+				},
+				oCacheMock = this.mock(oCache),
+				oContextMock = this.mock(Context),
 				bDependentsRefreshed,
 				oError = {},
 				oGroupLock = {
@@ -1447,8 +1451,14 @@ sap.ui.define([
 				oModelMock = this.mock(this.oModel),
 				oParentEntity = {},
 				oResponseEntity = {},
-				oReturnValueContextFirstExecute = {destroy : function () {}},
-				oReturnValueContextSecondExecute = {destroy : function () {}},
+				oReturnValueContextFirstExecute = {
+					destroy : function () {},
+					getPath : function () { return "/TEAMS('77')"; }
+				},
+				oReturnValueContextSecondExecute = {
+					destroy : function () {},
+					getPath : function () { return "/TEAMS('77')"; }
+				},
 				that = this;
 
 			function asyncRefresh() {
@@ -1468,6 +1478,7 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
 			}
 			_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
+			oBinding.oCache = oCache; // "mock" createCacheAndRequest
 			oBindingMock.expects("createCacheAndRequest")
 				.withExactArgs(sinon.match.same(oGroupLock),
 					sParentContextPath + "/name.space.Operation(...)",
@@ -1490,6 +1501,8 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 					"/TEAMS('77')")
 				.returns(oReturnValueContextFirstExecute);
+			oCacheMock.expects("setResourcePath")
+				.withExactArgs("TEAMS('77')");
 
 			// code under test
 			return oBinding._execute(oGroupLock).then(function (oReturnValueContext0) {
@@ -1522,6 +1535,8 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
 						"/TEAMS('77')")
 					.returns(oReturnValueContextSecondExecute);
+				oCacheMock.expects("setResourcePath")
+					.withExactArgs("TEAMS('77')");
 
 				// code under test
 				return oBinding._execute(oGroupLock);
@@ -1584,6 +1599,9 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
 			_Helper.setPrivateAnnotation(oResponseEntity, "predicate",
 					"('" + oFixture.sId + "')");
+			oBinding.oCache = { // "mock" createCacheAndRequest
+				setResourcePath : function () {}
+			};
 			oBindingMock.expects("createCacheAndRequest")
 				.withExactArgs(sinon.match.same(oGroupLock),
 					"/TEAMS('42')/name.space.Operation(...)",

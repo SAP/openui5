@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>sap.ui.integration.Host Test</title>
+
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.f, sap.ui.integration"
+			data-sap-ui-resourceroots='{
+		"test" : "./"
+	}'></script>
+
+	<script>
+
+		function fnCardAction(event) {
+
+			var type = event.getParameter('type'),
+					actionSource = event.getParameter('actionSource'),
+					manifestParameters = event.getParameter('manifestParameters');
+
+			console.error("Card Action ", manifestParameters);
+		}
+
+		var host = new sap.ui.integration.Host({
+			actions: [
+				{
+					type: 'Navigation',
+					url: "http://www.sap.com",
+					target: "_blank",
+					text: 'AutoOpen - SAP website'
+				},
+				{
+					type: 'Navigation',
+					parameters: {
+						url: "http://www.sap.com",
+						target: "_blank"
+					},
+					text: 'Navigation - SAP website'
+				},
+				{
+					type: 'Custom',
+					icon: 'sap-icon://add',
+					text: 'Add',
+					tooltip: 'Add',
+					buttonType: 'Accept',
+					visible: function (card) {
+						return card.getId() !== 'card3';
+					},
+					enabled: function (card) {
+						return card.getId() !== 'card1';
+					},
+					action: function (card, button) {
+						alert('Card id = ' + card.getId() + ' Button = ' + button.getText());
+					}
+				},
+				{
+					type: 'Custom',
+					icon: 'sap-icon://delete',
+					text: 'Delete',
+					tooltip: 'Delete',
+					visible: function (card, button) {
+						return card.getId() !== 'card2' && card.getId() !== 'card3';
+					},
+					enabled: true,
+					action: function (card, button) {
+						alert('Card id = ' + card.getId() + ' Button = ' + button.getText());
+					}
+				}
+			],
+			onAction: function (event) {
+
+				var type = event.getParameter('type'),
+						actionSource = event.getParameter('actionSource'),
+						manifestParameters = event.getParameter('manifestParameters');
+
+				console.error("Host Action ", manifestParameters);
+			}
+		});
+
+		var card1 = new sap.ui.integration.widgets.Card({
+			id: 'card1',
+			manifest: "./widgets/cardmanifests/table.manifest.json",
+			host: host,
+			layoutData: new sap.f.GridContainerItemLayoutData({
+				columns: 4
+			}),
+			action: fnCardAction
+		});
+
+		var card11 = new sap.ui.integration.widgets.Card({
+			manifest: "./widgets/cardmanifests/table.manifest.json",
+			layoutData: new sap.f.GridContainerItemLayoutData({
+				columns: 4
+			}),
+			action: fnCardAction
+		});
+
+		var card2 = new sap.ui.integration.widgets.Card({
+			id: 'card2',
+			manifest: "./widgets/cardmanifests/list.actions.manifest.json",
+			host: host,
+			layoutData: new sap.f.GridContainerItemLayoutData({
+				columns: 4
+			}),
+			action: fnCardAction
+		});
+
+		var card21 = new sap.ui.integration.widgets.Card({
+			manifest: "./widgets/cardmanifests/list.actions.manifest.json",
+			layoutData: new sap.f.GridContainerItemLayoutData({
+				columns: 4
+			}),
+			action: fnCardAction
+		});
+
+		var card3 = new sap.ui.integration.widgets.Card({
+			id: 'card3',
+			manifest: "./widgets/cardmanifests/list.actions.manifest.json",
+			host: host,
+			layoutData: new sap.f.GridContainerItemLayoutData({
+				columns: 4
+			}),
+			action: fnCardAction
+		});
+
+		var card4 = new sap.ui.integration.widgets.Card({
+			id: 'card4',
+			manifest: "./widgets/cardmanifests/numeric.good.manifest.json",
+			host: host,
+			layoutData: new sap.f.GridContainerItemLayoutData({
+				columns: 4
+			}),
+			action: fnCardAction
+		});
+
+		var card5 = new sap.ui.integration.widgets.Card({
+			id: 'card5',
+			manifest: "./widgets/cardmanifests/numeric.good.action.manifest.json",
+			host: host,
+			layoutData: new sap.f.GridContainerItemLayoutData({
+				columns: 4
+			}),
+			action: fnCardAction
+		});
+
+		var cardContainer = new sap.f.GridContainer({
+			items: [
+				card4,
+				card1,
+				card21,
+				card3,
+				card5
+			]
+		});
+
+		cardContainer.placeAt("preview");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+
+<div id="preview">
+</div>
+
+</body>
+
+</html>

@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/Storage",
+	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
@@ -18,6 +19,7 @@ function(
 	XmlTreeModifier,
 	Component,
 	Storage,
+	StorageResultMerger,
 	XmlPreprocessorImpl,
 	CacheManager,
 	AddSimpleFormGroup,
@@ -34,7 +36,7 @@ function(
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
 		beforeEach: function() {
-			sandbox.stub(Storage, "loadFlexData").resolves({
+			sandbox.stub(StorageResultMerger, "merge").resolves({
 				changes : [{
 					fileName: "id_1504610195273_78_addSimpleFormGroup",
 					fileType: "change",

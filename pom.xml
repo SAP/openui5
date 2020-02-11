@@ -157,7 +157,7 @@
 						</goals>
 						<!-- we use the 'phase' as a substitute for the missing 'skip' property of the jar-plugin           -->
 						<!-- for non-library projects and for all builds other than the nightly build, it is set to 'never' --> 
-						<phase>never</phase>
+						<phase>${npm.package.phase}</phase>
 						<configuration>
 							<classesDirectory>${project.basedir}</classesDirectory>
 							<classifier>npm-resources</classifier>
@@ -324,27 +324,27 @@
 
 			</properties>
 
-			<build>
-				<plugins>
-					<!--  create the npm-resources jar only in the nightly.build -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>2.3.2</version>
-						<executions>
-							<execution>
-								<id>npm-resources</id>
-								<phase>${npm.package.phase}</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-
 		</profile>
 
 		<profile>
+			<id>fast.voter.build</id>
+			<properties>
+				<!-- fast.voter.build profile does not have to generate the npm-resources package
+					 (has to be kept in sync with sapui5.runtime poms)                    -->
+				<npm.package.phase>never</npm.package.phase>
+			</properties>
+		</profile>
 
+		<profile>
+			<id>documentation.build</id>
+			<properties>
+				<!-- documentation.build profile does not have to generate the npm-resources package
+					 (has to be kept in sync with sapui5.runtime poms)                    -->
+				<npm.package.phase>never</npm.package.phase>
+			</properties>
+		</profile>
+
+		<profile>
 			<id>testsuite.build</id>
 
 			<activation>
