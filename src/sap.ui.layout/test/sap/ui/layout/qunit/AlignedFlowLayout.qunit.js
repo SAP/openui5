@@ -448,28 +448,27 @@ sap.ui.require([
 		oButton.destroy();
 	});
 
-	QUnit.test("it should invoke the .disconnect() method of the resize observer object " +
-				"when the control is destroyed", function(assert) {
+	if (typeof ResizeObserver === "function") {
 
-		// system under test
-		var oAlignedFlowLayout = new AlignedFlowLayout();
+		QUnit.test("it should invoke the .disconnect() method of the resize observer object " +
+					"when the control is destroyed", function(assert) {
 
-		// arrange
-		oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
-		var oDisconnectSpy = this.spy(oAlignedFlowLayout.oResizeObserver, "disconnect");
+			// system under test
+			var oAlignedFlowLayout = new AlignedFlowLayout();
 
-		// act + cleanup
-		oAlignedFlowLayout.destroy();
+			// arrange
+			oAlignedFlowLayout.placeAt(CONTENT_ID);
+			Core.applyChanges();
+			var oDisconnectSpy = this.spy(oAlignedFlowLayout.oResizeObserver, "disconnect");
 
-		// assert
-		if (typeof ResizeObserver === "function") {
+			// act + cleanup
+			oAlignedFlowLayout.destroy();
+
+			// assert
 			assert.strictEqual(oDisconnectSpy.callCount, 1);
 			assert.ok(oAlignedFlowLayout.oResizeObserver === null, "the resize observer object should refer to null");
-		} else {
-			assert.ok(true);
-		}
-	});
+		});
+	}
 
 	QUnit.module("wrapping", {
 		beforeEach: function(assert) {
