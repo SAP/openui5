@@ -23,6 +23,7 @@ sap.ui.define([
 	"./library",
 	"./ObjectPageLayoutRenderer",
 	"sap/base/Log",
+	"sap/base/util/array/diff",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/base/assert",
 	"sap/base/util/merge",
@@ -48,6 +49,7 @@ sap.ui.define([
 	library,
 	ObjectPageLayoutRenderer,
 	Log,
+	diff,
 	getScrollbarSize,
 	assert,
 	merge,
@@ -560,6 +562,7 @@ sap.ui.define([
 		this._bIsFooterAanimationGoing = false; // Indicates if the animation of the floating footer is still going.
 		// anchorbar management
 		this._bInternalAnchorBarVisible = true;
+		this._oVisibleSubSections = 0;
 
 		this._$footerWrapper = [];                  //dom reference to the floating footer wrapper
 		this._$opWrapper = [];                      //dom reference to the header for Dark mode background image scrolling scenario
@@ -1093,6 +1096,7 @@ sap.ui.define([
 				// in iconTabBar mode, only the subSections of the current section are shown
 				// => update the <code>this._bAllContentFitsContainer</code> value
 				this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oSectionToSelect);
+				this._checkSubSectionVisibilityChange();
 			} else {
 				this.scrollToSection(sSectionToSelectID, 0);
 			}
@@ -1595,6 +1599,31 @@ sap.ui.define([
 				this._oFirstVisibleSubSection._setBorrowedTitleDomId(aContent[0].getId() + "-content");
 			}
 		}
+
+		this._checkSubSectionVisibilityChange();
+	};
+
+	ObjectPageLayout.prototype._checkSubSectionVisibilityChange = function () {
+		var bUseIconTabBar = this.getUseIconTabBar(),
+			oSelectedTabSection = bUseIconTabBar && sap.ui.getCore().byId(this.getSelectedSection()),
+			aSections = oSelectedTabSection ? [oSelectedTabSection] : this._getVisibleSections(),
+			oVisibleSubSections = {},
+			bIsVisibleSubSection;
+
+		aSections.forEach(function(oSection) {
+			oSection.getSubSections().forEach(function (oSubSection) {
+				bIsVisibleSubSection = oSubSection.getVisible() && oSubSection._getInternalVisible();
+
+				if (bIsVisibleSubSection) {
+					oVisibleSubSections[oSubSection.getId()] = oSubSection;
+				}
+			});
+		});
+
+		if (diff(Object.keys((this._oVisibleSubSections)), Object.keys(oVisibleSubSections)).length) {
+			this._oVisibleSubSections = oVisibleSubSections;
+			this.fireEvent("_subSectionVisibilityChange", {visibleSubSections: oVisibleSubSections});
+		}
 	};
 
 	/* IconTabBar management */
@@ -1935,6 +1964,7 @@ sap.ui.define([
 			this._setCurrentTabSection(oSection);
 			this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[oToSelect.getId()].buttonId);
 			this.setAssociation("selectedSection", oToSelect.getId(), true);
+			this._checkSubSectionVisibilityChange();
 		}
 
 		oTargetSubSection = oSection instanceof ObjectPageSubSection ? oSection : this._getFirstVisibleSubSection(oSection);

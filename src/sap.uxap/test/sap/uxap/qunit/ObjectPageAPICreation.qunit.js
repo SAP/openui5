@@ -3114,6 +3114,124 @@ function (
 		helpers.renderObject(this.oObjectPage);
 	});
 
+	QUnit.module("events", {
+		beforeEach: function () {
+			this.oObjectPage = oFactory.getObjectPage();
+			this.oObjectPage.addSection(oFactory.getSection(1, null, [
+				oFactory.getSubSection(1, [oFactory.getBlocks()], null),
+				oFactory.getSubSection(2, [oFactory.getBlocks()], null)
+			]));
+			this.oObjectPage.addSection(oFactory.getSection(1, null, [
+				oFactory.getSubSection(1, [oFactory.getBlocks()], null)]));
+
+			helpers.renderObject(this.oObjectPage);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("_subSectionVisibilityChange without IconTabBar and changing visibility", function (assert) {
+		// Arrange
+		var fnDone = assert.async();
+		this.oObjectPage.attachEventOnce("_subSectionVisibilityChange", function(oEvent) {
+			// Assert
+			var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
+			assert.strictEqual(Object.keys(oVisibleSubSections).length, 2,
+				"Two visible subSections are reported when visibility of one of the three subSections is changed to false");
+
+			fnDone();
+		});
+
+		assert.expect(1);
+
+		// Act
+		this.oObjectPage.getSections()[0].getSubSections()[0].setVisible(false);
+	});
+
+	QUnit.test("_subSectionVisibilityChange with IconTabBar and changing visibility", function (assert) {
+		// Arrange
+		var fnDone = assert.async();
+
+		this.oObjectPage.setUseIconTabBar(true);
+		this.oObjectPage.attachEventOnce("_subSectionVisibilityChange", function(oEvent) {
+			// Assert
+			var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
+			assert.strictEqual(Object.keys(oVisibleSubSections).length, 1,
+				"One visible subSection is reported when visibility of one of the two subSections in the first section is changed to false");
+
+			// Clean-up
+			fnDone();
+		});
+
+		assert.expect(1);
+
+		// Act
+		this.oObjectPage.getSections()[0].getSubSections()[0].setVisible(false);
+	});
+
+	QUnit.test("_subSectionVisibilityChange adding new SubSection and Section without IconTabBar", function (assert) {
+		// Arrange
+		var fnDone = assert.async();
+		this.oObjectPage.attachEventOnce("_subSectionVisibilityChange", function(oEvent) {
+			// Assert
+			var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
+			assert.strictEqual(Object.keys(oVisibleSubSections).length, 4,
+				"Four visible subSections are reported when new subSection is added");
+
+			//Act
+			this.oObjectPage.addSection(oFactory.getSection(4, null, [
+				oFactory.getSubSection(5, [oFactory.getBlocks()], null)
+			]));
+
+			this.oObjectPage.attachEventOnce("_subSectionVisibilityChange", function() {
+				// Assert
+				var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
+				assert.strictEqual(Object.keys(oVisibleSubSections).length, 5,
+					"Five visible subSections are reported when new Section with one subSection is added");
+
+				// Clean-up
+				fnDone();
+			});
+		}.bind(this));
+
+		assert.expect(2);
+
+		//Act
+		this.oObjectPage.getSections()[0].addSubSection(oFactory.getSubSection(3, [oFactory.getBlocks()], null));
+	});
+
+	QUnit.test("_subSectionVisibilityChange adding new SubSection and Section with IconTabBar", function (assert) {
+		// Arrange
+		var fnDone = assert.async(),
+			oSpy;
+
+		this.oObjectPage.setUseIconTabBar(true);
+		this.oObjectPage.attachEventOnce("_subSectionVisibilityChange", function(oEvent) {
+			// Assert
+			var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
+			assert.strictEqual(Object.keys(oVisibleSubSections).length, 3,
+				"Three visible subSectionс аре reported when new visible subSection is added to the selected section");
+
+			oSpy = sinon.spy(this.oObjectPage, "fireEvent");
+
+			// Act
+			this.oObjectPage.getSections()[1].addSubSection(oFactory.getSubSection(4, [oFactory.getBlocks()], null));
+			this.oObjectPage._checkSubSectionVisibilityChange();
+
+			// Assert
+			assert.ok(oSpy.notCalled, "sectionVisibilityChange event is not fired when new subsSection is added to not selected section");
+
+			// Clean-up
+			fnDone();
+		}.bind(this));
+
+		assert.expect(2);
+
+		// Act
+		this.oObjectPage.getSections()[0].addSubSection(oFactory.getSubSection(3, [oFactory.getBlocks()], null));
+	});
+
 	QUnit.module("ObjectPage landmarkInfo API");
 
 	QUnit.test("DynamicPage landmark info is set correctly", function (assert) {
