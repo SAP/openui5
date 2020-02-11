@@ -136,7 +136,7 @@ sap.ui.define([
 				index: 1
 			};
 			this.mChangeInfo = {
-				aggregation: this.oChangeSpecificContent.targetAggregation,
+				aggregationName: this.oChangeSpecificContent.targetAggregation,
 				index: this.oChangeSpecificContent.index
 			};
 
@@ -178,7 +178,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
-			this.mChangeInfo.aggregation = "invalidAggregation";
+			this.mChangeInfo.aggregationName = "invalidAggregation";
 			assert.throws(
 				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);},
 				Error(sWrongAggregationError),
@@ -255,7 +255,7 @@ sap.ui.define([
 				index: 1
 			};
 			this.mChangeInfo = {
-				aggregation: this.oChangeSpecificContent.targetAggregation,
+				aggregationName: this.oChangeSpecificContent.targetAggregation,
 				index: this.oChangeSpecificContent.index
 			};
 
@@ -309,7 +309,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {
-			this.mChangeInfo.aggregation = "invalidAggregation";
+			this.mChangeInfo.aggregationName = "invalidAggregation";
 			assert.throws(
 				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);},
 				Error(sWrongAggregationError),

@@ -133,7 +133,22 @@ sap.ui.define([
 			};
 			var fnPersistenceStub = getMethodStub(mPropertyBag.changeSpecificData, sReturnValue);
 
-			mockFlexController(mPropertyBag.selector, { createChange : fnPersistenceStub });
+			mockFlexController(mPropertyBag.selector, { createChangeWithControlSelector : fnPersistenceStub });
+
+			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
+		});
+
+		QUnit.test("when create is called with an extension point selector", function(assert) {
+			var mPropertyBag = {
+				changeSpecificData: {type: "changeSpecificData"},
+				selector: {
+					name: "extension point",
+					view: {type: "control"}
+				}
+			};
+			var fnPersistenceStub = getMethodStub(mPropertyBag.changeSpecificData, sReturnValue);
+
+			mockFlexController(mPropertyBag.selector, { createChangeWithExtensionPointSelector : fnPersistenceStub });
 
 			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
 		});

@@ -1202,7 +1202,7 @@ function (
 
 		QUnit.test("when change handler is not available", function (assert) {
 			assert.expect(1);
-			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").returns(undefined);
+			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").resolves(undefined);
 			this.oCommandStack.push(this.oFlexCommand);
 
 			return this.oCommandStack.execute()

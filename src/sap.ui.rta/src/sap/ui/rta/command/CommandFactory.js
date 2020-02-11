@@ -88,10 +88,10 @@ function(
 
 	function configureAddXmlCommand(oElement, mSettings, oDesignTimeMetadata) {
 		var oAction = {
-			changeType : "addXML"
+			changeType : mSettings.name
 		};
 		if (oDesignTimeMetadata) {
-			jQuery.extend(oAction, oDesignTimeMetadata.getAction("addXML", oElement));
+			jQuery.extend(oAction, oDesignTimeMetadata.getAction(mSettings.name, oElement));
 		}
 		return oAction;
 	}
@@ -266,6 +266,11 @@ function(
 		},
 		addXML : {
 			clazz : 'sap.ui.rta.command.AddXML',
+			configure : configureAddXmlCommand,
+			adjustForBinding : adjustSelectorForCommand
+		},
+		addXMLAtExtensionPoint : {
+			clazz : 'sap.ui.rta.command.AddXMLAtExtensionPoint',
 			configure : configureAddXmlCommand,
 			adjustForBinding : adjustSelectorForCommand
 		},

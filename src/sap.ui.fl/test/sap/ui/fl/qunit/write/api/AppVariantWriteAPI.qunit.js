@@ -243,7 +243,7 @@ sap.ui.define([
 
 			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").returns({
+			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
 				applyChange: function() {
@@ -329,7 +329,7 @@ sap.ui.define([
 
 			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").returns({
+			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
 				applyChange: function() {
@@ -412,7 +412,7 @@ sap.ui.define([
 
 			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").returns({
+			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
 				applyChange: function() {
@@ -505,7 +505,7 @@ sap.ui.define([
 
 			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").returns({
+			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
 				applyChange: function() {
