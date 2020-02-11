@@ -398,7 +398,7 @@ function (
 			}
 		}
 		//If clicked from toolbar or popup - autoClose is disabled
-		oPopup.setAutoCloseAreas(aAutoCloseAreas);
+		oPopup.setExtraContent(aAutoCloseAreas);
 
 		//cases when onAfterRendering is called after this function - app inside popup
 		if (!this.fnOriginalPopupOnAfterRendering) {
