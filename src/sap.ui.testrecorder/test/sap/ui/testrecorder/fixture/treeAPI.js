@@ -67,13 +67,17 @@ sap.ui.define([
 	};
 
 	function _asPOMethod (sSnippet) {
-		return "<iDoAction>: function () {\n" + sSnippet.replace(/^/gm, "    ") + "\n}";
+		sSnippet = sSnippet.split("\n\n").map(function (sPart) {
+			return sPart.replace(/^/gm, "    ");
+		}).join("\n\n");
+		return "<iDoAction>: function () {\n" + sSnippet + "\n}";
 	}
 
 	return {
 		DEFAULT_INPUT: DEFAULT_INPUT,
 		DEFAULT_OUTPUT: DEFAULT_OUTPUT,
 		getMockData: function (vInput) {
+			var sRawJson;
 			var sRaw;
 			switch (vInput) {
 				case "__button4-container-cart---welcomeView--row-1-img":
@@ -84,6 +88,12 @@ sap.ui.define([
 						'	properties: {\n' +
 						'		src: "sap-icon://action"\n' +
 						'	}';
+					sRawJson = '{\n' +
+					'	"controlType": "sap.ui.core.Icon",\n' +
+					'	"viewName": "sap.ui.demo.cart.view.Welcome",\n' +
+					'	"properties": {\n' +
+					'		"src": "sap-icon://action"\n' +
+					'	}';
 					return {
 						snippet: {
 							UIVERI5: {
@@ -92,9 +102,9 @@ sap.ui.define([
 								"Enter Text": _asPOMethod('element(by.control(" + sRaw + "\n})).sendKeys("test");')
 							},
 							RAW: {
-								Highlight: sRaw + "\n}",
-								Press: sRaw + "\n}",
-								"Enter Text": sRaw + "\n}"
+								Highlight: sRawJson + "\n}",
+								Press: sRawJson + "\n}",
+								"Enter Text": sRawJson + "\n}"
 							},
 							OPA5: {
 								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});"),
@@ -135,6 +145,12 @@ sap.ui.define([
 						'    properties: {\n' +
 						'        text: "Button One"\n' +
 						'    }';
+					sRawJson = '{\n' +
+						'    "controlType": "sap.m.Button",\n' +
+						'    "viewName": "appMock.view.Main",\n' +
+						'    "properties": {\n' +
+						'        "text": "Button One"\n' +
+						'    }';
 					return {
 						snippet: {
 							UIVERI5: {
@@ -143,9 +159,9 @@ sap.ui.define([
 								"Enter Text": _asPOMethod('element(by.control(' + sRaw + '\n})).sendKeys("test");')
 							},
 							RAW: {
-								Highlight: sRaw + "\n}",
-								Press: sRaw + "\n}",
-								"Enter Text": sRaw + "\n}"
+								Highlight: sRawJson + "\n}",
+								Press: sRawJson + "\n}",
+								"Enter Text": sRawJson + "\n}"
 							},
 							OPA5: {
 								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});"),

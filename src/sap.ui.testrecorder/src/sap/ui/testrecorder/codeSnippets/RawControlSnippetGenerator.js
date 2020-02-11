@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @returns {string} a stringified code snippet
 	 */
 	RawControlSnippetGenerator.prototype._generate = function (mData) {
-		return this._getSelectorAsString(mData.controlSelector);
+		return JSON.stringify(mData.controlSelector, undefined, 4);
 	};
 
 	return new RawControlSnippetGenerator();
