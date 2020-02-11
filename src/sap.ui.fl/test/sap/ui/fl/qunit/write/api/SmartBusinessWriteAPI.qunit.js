@@ -290,7 +290,7 @@ sap.ui.define([
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 
-			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "Package must be provided").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "Package must be provided or is valid").returns();
 
 			// Creates a descriptor change
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData1, appId: "reference.app"})
@@ -474,32 +474,12 @@ sap.ui.define([
 				appId: "customer.reference.app.id"
 			};
 
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "CUSTOMER",
-					fileType: "fileType1",
-					packageName: "ATO_PACKAGE",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
-
 			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
 				.then(function() {
 					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "DELETE"), "then the parameters are correct");
 				});
 		});
@@ -510,32 +490,13 @@ sap.ui.define([
 				appId: "customer.reference.app.id"
 			};
 
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "CUSTOMER",
-					fileType: "fileType1",
-					packageName: "$TMP",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
 
 			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
 				.then(function() {
 					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
 				});
 		});
@@ -546,32 +507,12 @@ sap.ui.define([
 				appId: "customer.reference.app.id"
 			};
 
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "CUSTOMER",
-					fileType: "fileType1",
-					packageName: "",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
-
 			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
 				.then(function() {
 					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
 				})
 				.catch(function() {
@@ -586,32 +527,12 @@ sap.ui.define([
 				appId: "customer.reference.app.id"
 			};
 
-			var mAppVariant = {
-				response: {
-					id: "customer.reference.app.id",
-					reference: "reference.app",
-					fileName: "fileName1",
-					namespace: "namespace1",
-					layer: "layer1",
-					fileType: "fileType1",
-					packageName: "$TMP",
-					content: [{
-						changeType: "changeType2",
-						content: {}
-					}]
-				}
-			};
-
 			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
-
-			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
-			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
 				.then(function() {
 					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
 				});
 		});
