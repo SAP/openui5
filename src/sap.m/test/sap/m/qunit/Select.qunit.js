@@ -7952,6 +7952,44 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("onsapescape - don't close the picker popup if SPACE is hold", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+				items: [
+					new Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new Item({
+						key: "1",
+						text: "item 1"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+			oSelect.focus();
+			oSelect.open();
+			var fnEscapeSpy = this.spy(oSelect, "onsapescape");
+			var fnCloseSpy = this.spy(oSelect, "close");
+
+			// act
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ESCAPE);
+
+			// assert
+			assert.strictEqual(fnEscapeSpy.callCount, 1, "onsapescape() method was called exactly once");
+			assert.ok(fnCloseSpy.notCalled, "close() method is not called");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+
 		QUnit.test("onsapescape - close the control's picker popup if it is open", function (assert) {
 
 			// system under test
@@ -8281,6 +8319,87 @@ sap.ui.define([
 
 			// cleanup
 			oSelect.destroy();
+		});
+
+		QUnit.module("Keyboard handling", {
+			beforeEach: function () {
+				// system under test
+				this.oSelect = new Select({
+					items: [
+						new Item(),
+						new Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				this.oSelect.placeAt("content");
+				Core.applyChanges();
+				this.oSelect.focus();
+			},
+			afterEach: function () {
+				// cleanup
+				this.oSelect.destroy();
+			}
+		});
+
+		QUnit.test("it should take action on SPACE key up", function (assert) {
+			//arrange
+			var oSpy = this.spy(this.oSelect, "toggleOpenState");
+
+			//act
+			qutils.triggerKeydown(this.oSelect.getDomRef(), KeyCodes.SPACE);
+
+			//assert
+			assert.ok(oSpy.notCalled, "Action not called on keydown");
+
+			//act
+			qutils.triggerKeyup(this.oSelect.getDomRef(), KeyCodes.SPACE);
+
+			//assert
+			assert.ok(oSpy.called, "Action called on keyup");
+		});
+
+		QUnit.test("it should not take action if SHIFT is pressed during space action", function (assert) {
+			//arrange
+			var oSpy = this.spy(this.oSelect, "toggleOpenState");
+
+			// act
+			qutils.triggerKeydown(this.oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeydown(this.oSelect.getDomRef(), KeyCodes.SHIFT);
+			qutils.triggerKeyup(this.oSelect.getDomRef(), KeyCodes.SHIFT);
+			qutils.triggerKeyup(this.oSelect.getDomRef(), KeyCodes.SPACE);
+
+			// assert
+			assert.ok(oSpy.notCalled);
+		});
+
+		QUnit.test("it should not take action if ESCAPE is pressed during space action", function (assert) {
+			//arrange
+			var oSpy = this.spy(this.oSelect, "toggleOpenState");
+
+			// act
+			qutils.triggerKeydown(this.oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeydown(this.oSelect.getDomRef(), KeyCodes.ESCAPE);
+			qutils.triggerKeyup(this.oSelect.getDomRef(), KeyCodes.ESCAPE);
+			qutils.triggerKeyup(this.oSelect.getDomRef(), KeyCodes.SPACE);
+
+			// assert
+			assert.ok(oSpy.notCalled);
+		});
+
+		QUnit.test("it should not take action if ESCAPE is hold during space action", function (assert) {
+			//arrange
+			var oSpy = this.spy(this.oSelect, "toggleOpenState");
+
+			// act
+			qutils.triggerKeydown(this.oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeydown(this.oSelect.getDomRef(), KeyCodes.ESCAPE);
+			qutils.triggerKeyup(this.oSelect.getDomRef(), KeyCodes.SPACE);
+
+			// assert
+			assert.ok(oSpy.notCalled);
 		});
 
 		QUnit.module("onfocusout");
