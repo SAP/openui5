@@ -1119,18 +1119,19 @@ sap.ui.define([
 		};
 
 		/**
-		 * Event handler for the keydown event.
+		 * Event handler for the keyup event.
 		 *
 		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
-		Popover.prototype.onkeydown = function (oEvent) {
+		Popover.prototype.onkeyup = function (oEvent) {
 			var oKC = KeyCodes,
 				iKC = oEvent.which || oEvent.keyCode,
 				bAlt = oEvent.altKey;
 
 			// Popover should be closed when ESCAPE key or ATL+F4 is pressed
-			if (iKC === oKC.ESCAPE || (bAlt && iKC === oKC.F4)) {
+			if ((!this._isSpacePressed && iKC === oKC.ESCAPE) ||
+				(bAlt && iKC === oKC.F4)) {
 				// if inner control has already handled the event, dialog doesn't process the event anymore
 				if (oEvent.originalEvent && oEvent.originalEvent._sapui_handledByControl) {
 					return;
@@ -1141,6 +1142,23 @@ sap.ui.define([
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
 			}
+
+			if (oKC.SPACE === iKC) {
+				this._isSpacePressed = false;
+			}
+		};
+
+		/**
+		 * Event handler for the onkeydown event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 * @private
+		 */
+		Popover.prototype.onkeydown = function (oEvent) {
+			var oKC = KeyCodes,
+				iKC = oEvent.which || oEvent.keyCode;
+
+			this._isSpacePressed = this._isSpacePressed || oKC.SPACE === iKC;
 		};
 
 		/**
