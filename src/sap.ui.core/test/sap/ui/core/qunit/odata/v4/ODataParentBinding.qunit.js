@@ -2378,39 +2378,43 @@ sap.ui.define([
 		oContext : undefined,
 		sPath : "/Employees",
 		bRelative : false,
-		sTitle : "resume: absolute binding"
+		sTitle : "_resume: absolute binding"
 	}, {
 		oContext : {/* sap.ui.model.Context */},
 		sPath : "SO_2_SCHEDULE",
 		bRelative : true,
-		sTitle : "resume: quasi-absolute binding"
+		sTitle : "_resume: quasi-absolute binding"
 	}].forEach(function (oFixture) {
-		QUnit.test(oFixture.sTitle, function (assert) {
-			var oBinding = new ODataParentBinding(jQuery.extend({
-					_fireChange : function () {},
-					resumeInternal : function () {},
-					toString : function () { return "~"; }
-				}, oFixture)),
-				oBindingMock = this.mock(oBinding),
-				oPromise;
+		var oBinding,
+			oBindingMock,
+			oResumePromise;
 
+		function prepareTest (assert, oTest) {
+			oBinding = new ODataParentBinding(Object.assign({
+				_fireChange : function () {},
+				resumeInternal : function () {},
+				toString : function () { return "~"; }
+			}, oFixture));
+			oBindingMock = oTest.mock(oBinding);
 			assert.strictEqual(oBinding.getResumePromise(), undefined, "initially");
 			oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
-
-			// code under test
 			oBinding.suspend();
-
+			oResumePromise = oBinding.getResumePromise();
 			oBindingMock.expects("_fireChange").never();
 			oBindingMock.expects("resumeInternal").never();
 			oBindingMock.expects("getGroupId").withExactArgs().returns("groupId");
+		}
+
+		QUnit.test(oFixture.sTitle + "(asynchron)", function (assert) {
+			var oPromise;
+
+			prepareTest(assert, this);
 			oBindingMock.expects("createReadGroupLock").withExactArgs("groupId", true, 1);
 			this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 				.withExactArgs(sinon.match.func)
 				.callsFake(function (fnCallback) {
 					// simulate async nature of prerendering task
 					oPromise = Promise.resolve().then(function () {
-						var oResumePromise = oBinding.getResumePromise();
-
 						assert.strictEqual(oBinding.bSuspended, true, "not yet!");
 						assert.strictEqual(oResumePromise.isPending(), true);
 
@@ -2432,31 +2436,55 @@ sap.ui.define([
 				});
 
 			// code under test
-			oBinding.resume();
+			oBinding._resume(true);
 
 			return oPromise.then(function () {
 				assert.throws(function () {
 					// code under test
-					oBinding.resume();
+					oBinding._resume(true);
 				}, new Error("Cannot resume a not suspended binding: ~"));
 			});
+		});
+
+		QUnit.test(oFixture.sTitle + "(synchron)", function (assert) {
+			prepareTest(assert, this);
+			oBindingMock.expects("createReadGroupLock").withExactArgs("groupId", true);
+			oBindingMock.expects("resumeInternal").withExactArgs(true)
+				.callsFake(function () {
+					// before we fire events to the world, suspend is over
+					assert.strictEqual(oBinding.bSuspended, false, "now!");
+					// must not resolve until resumeInternal() is over
+					assert.strictEqual(oResumePromise.isPending(), true);
+				});
+
+			// code under test
+			oBinding._resume(false);
+
+			assert.strictEqual(oResumePromise.isPending(), false);
+			assert.strictEqual(oResumePromise.getResult(), undefined);
+			assert.strictEqual(oBinding.getResumePromise(), undefined, "cleaned up");
+
+			assert.throws(function () {
+				// code under test
+				oBinding._resume(false);
+			}, new Error("Cannot resume a not suspended binding: ~"));
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resume: error on operation binding", function (assert) {
+	QUnit.test("_resume: error on operation binding", function (assert) {
 		assert.throws(function () {
 			// code under test
 			new ODataParentBinding({
 				oOperation : {},
 				sPath : "/operation",
 				toString : function () { return "~"; }
-			}).resume();
+			})._resume();
 		}, new Error("Cannot resume an operation binding: ~"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resume: destroyed in the meantime", function (assert) {
+	QUnit.test("_resume: async, destroyed in the meantime", function (assert) {
 		var oBinding = new ODataParentBinding({
 				toString : function () { return "~"; }
 			}),
@@ -2478,10 +2506,47 @@ sap.ui.define([
 				});
 			});
 
-		oBinding.resume();
+		oBinding._resume(true);
 		oBinding.destroy();
 
 		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resume", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		this.mock(oBinding).expects("_resume").withExactArgs(false);
+
+		// code under test
+		assert.strictEqual(oBinding.resume(), undefined);
+
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeAsync: ", function (assert) {
+		var oBinding = new ODataParentBinding(),
+			oError = new Error(),
+			fnReject,
+			oResult;
+
+		oBinding.oResumePromise = new SyncPromise(function (resolve, reject) {
+			fnReject = reject;
+		});
+		this.mock(oBinding).expects("_resume").withExactArgs(true);
+
+		// code under test
+		oResult = oBinding.resumeAsync();
+
+		assert.ok(oResult instanceof Promise);
+
+		fnReject(oError);
+
+		return oResult.then(function() {
+				assert.notOk(true);
+			}, function(oError0) {
+				assert.strictEqual(oError0, oError);
+			});
 	});
 
 	//*********************************************************************************************
@@ -2489,7 +2554,7 @@ sap.ui.define([
 		undefined, // unresolved
 		{/* sap.ui.model.odata.v4.Context */fetchValue : function () {}} // resolved
 	].forEach(function (oContext, i) {
-		QUnit.test("resume: error on relative binding, " + i, function (assert) {
+		QUnit.test("_resume: error on relative binding, " + i, function (assert) {
 			assert.throws(function () {
 				// code under test
 				new ODataParentBinding({
@@ -2497,7 +2562,7 @@ sap.ui.define([
 					sPath : "SO_2_SCHEDULE",
 					bRelative : true,
 					toString : function () { return "~"; }
-				}).resume();
+				})._resume();
 			}, new Error("Cannot resume a relative binding: ~"));
 		});
 	});
