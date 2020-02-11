@@ -362,29 +362,26 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns whether the no columns text is currently shown or not
-		 * If true, also CSS class sapUiTableEmpty is set on the table root element.
+		 * Returns whether the {@link sap.ui.table.Table} has visible columns or not.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {boolean} Whether the no columns text is shown.
+		 * @param {sap.ui.table.Table} oTable - Instance of the table
+		 * @returns {boolean} Table has visible columns
 		 */
 		isNoColumnsVisible: function(oTable) {
 			return TableUtils.getVisibleColumnCount(oTable) === 0;
 		},
 
         /**
-		 * Returns whether the no data text is currently shown or not
+		 * Returns whether the no data text is currently shown or not.
+		 * Independently from the <code>showNoData</code> property if the table has no visible
+		 * columns the no visible columns text will be shown.
 		 * If true, also CSS class sapUiTableEmpty is set on the table root element.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {boolean} Whether the no data text is shown.
+		 * @returns {boolean} Table has visible columns or whether the no data text is shown.
 		 */
 		isNoDataVisible: function(oTable) {
-			if (!oTable.getShowNoData()) {
-				return false;
-			}
-
-			return !TableUtils.hasData(oTable);
+			return oTable.getShowNoData() && !TableUtils.hasData(oTable) || TableUtils.isNoColumnsVisible(oTable);
 		},
 
 		/**
@@ -555,16 +552,6 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * Returns the text to be displayed as no visible columns message.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {string} The no columns text.
-		 */
-		getNoColumnsText: function(oTable) {
-			return TableUtils.getResourceText("TBL_NO_COLUMNS");
-		},
-
         /**
 		 * Returns the text to be displayed as no data message.
 		 * If a custom noData control is set null is returned.
@@ -573,6 +560,10 @@ sap.ui.define([
 		 * @returns {String | string | null} The no data text.
 		 */
 		getNoDataText: function(oTable) {
+			if (TableUtils.isNoColumnsVisible(oTable)) {
+				return TableUtils.getResourceText("TBL_NO_COLUMNS");
+			}
+
 			var oNoData = oTable.getNoData();
 			if (oNoData instanceof Control) {
 				return null;

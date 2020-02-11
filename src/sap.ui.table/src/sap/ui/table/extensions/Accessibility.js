@@ -1271,7 +1271,7 @@ sap.ui.define([
 			oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']").attr("aria-hidden", "true");
 		} else {
 			oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']").removeAttr("aria-hidden");
-			if (TableUtils.isNoColumnsVisible(oTable) || TableUtils.isNoDataVisible(oTable)) {
+			if (TableUtils.isNoDataVisible(oTable)) {
 				oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']").attr("aria-hidden", "true");
 			} else {
 				oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']").removeAttr("aria-hidden");

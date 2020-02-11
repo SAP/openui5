@@ -436,7 +436,7 @@ sap.ui.define([
 			if (containsOrEquals(oTable.getDomRef(), oPreviousFocusRef)) {
 				oTable.$("overlay").focus(); // Set focus on Overlay Container if it was somewhere in the table before
 			}
-		} else if (TableUtils.isNoColumnsVisible(oTable) || TableUtils.isNoDataVisible(oTable)) {
+		} else if (TableUtils.isNoDataVisible(oTable)) {
 			// The noData area is shown
 			if (containsOrEquals(oTable.getDomRef("sapUiTableCnt"), oPreviousFocusRef)) {
 				oTable.$("noDataCnt").focus(); // Set focus on NoData Container if it was on the content before

@@ -747,7 +747,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("isNoDataVisible / hasData", function(assert) {
-		function createFakeTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals) {
+		function createFakeTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals, aVisibleColumns) {
 			return {
 				getShowNoData: function() {
 					return bShowNoData;
@@ -766,36 +766,60 @@ sap.ui.define([
 						};
 					}
 					return oBinding;
+				},
+				_getVisibleColumns: function() {
+					return aVisibleColumns;
 				}
 			};
 		}
 
-		function testNoDataVisibility(bShowNoData, iBindingLength, bAnalytical, bHasTotals, bExpectedResult) {
-			var bResult = TableUtils.isNoDataVisible(createFakeTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals));
+		function testNoDataVisibility(bShowNoData, iBindingLength, bAnalytical, bHasTotals, bExpectedResult, aVisibleColumns) {
+			var bResult = TableUtils.isNoDataVisible(createFakeTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals, aVisibleColumns));
 			assert.equal(bResult, bExpectedResult,
-				"ShowNoData: " + bShowNoData + ", Binding Length: " + iBindingLength + ", Analytical: " + bAnalytical + ", Totals: " + bHasTotals);
+				"ShowNoData: " + bShowNoData + ", Binding Length: " + iBindingLength + ", Analytical: " + bAnalytical + ", Totals: " + bHasTotals + ", Visible columns: " + aVisibleColumns);
 		}
 
-		testNoDataVisibility(true, 2, false, false, false);
-		testNoDataVisibility(true, 1, false, false, false);
-		testNoDataVisibility(true, 0, false, false, true);
-		testNoDataVisibility(false, 2, false, false, false);
-		testNoDataVisibility(false, 1, false, false, false);
-		testNoDataVisibility(false, 0, false, false, false);
+		testNoDataVisibility(true, 2, false, false, false, [1]);
+		testNoDataVisibility(true, 1, false, false, false, [1]);
+		testNoDataVisibility(true, 0, false, false, true, [1]);
+		testNoDataVisibility(false, 2, false, false, false, [1]);
+		testNoDataVisibility(false, 1, false, false, false, [1]);
+		testNoDataVisibility(false, 0, false, false, false, [1]);
 
-		testNoDataVisibility(true, 2, true, false, false);
-		testNoDataVisibility(true, 1, true, false, false);
-		testNoDataVisibility(true, 0, true, false, true);
-		testNoDataVisibility(false, 2, true, false, false);
-		testNoDataVisibility(false, 1, true, false, false);
-		testNoDataVisibility(false, 0, true, false, false);
+		testNoDataVisibility(true, 2, true, false, false, [1]);
+		testNoDataVisibility(true, 1, true, false, false, [1]);
+		testNoDataVisibility(true, 0, true, false, true, [1]);
+		testNoDataVisibility(false, 2, true, false, false, [1]);
+		testNoDataVisibility(false, 1, true, false, false, [1]);
+		testNoDataVisibility(false, 0, true, false, false, [1]);
 
-		testNoDataVisibility(true, 2, true, true, false);
-		testNoDataVisibility(true, 1, true, true, true);
-		testNoDataVisibility(true, 0, true, true, true);
-		testNoDataVisibility(false, 2, true, true, false);
-		testNoDataVisibility(false, 1, true, true, false);
-		testNoDataVisibility(false, 0, true, true, false);
+		testNoDataVisibility(true, 2, true, true, false, [1]);
+		testNoDataVisibility(true, 1, true, true, true, [1]);
+		testNoDataVisibility(true, 0, true, true, true, [1]);
+		testNoDataVisibility(false, 2, true, true, false, [1]);
+		testNoDataVisibility(false, 1, true, true, false, [1]);
+		testNoDataVisibility(false, 0, true, true, false, [1]);
+
+		testNoDataVisibility(true, 2, false, false, true, []);
+		testNoDataVisibility(true, 1, false, false, true, []);
+		testNoDataVisibility(true, 0, false, false, true, []);
+		testNoDataVisibility(false, 2, false, false, true, []);
+		testNoDataVisibility(false, 1, false, false, true, []);
+		testNoDataVisibility(false, 0, false, false, true, []);
+
+		testNoDataVisibility(true, 2, true, false, true, []);
+		testNoDataVisibility(true, 1, true, false, true, []);
+		testNoDataVisibility(true, 0, true, false, true, []);
+		testNoDataVisibility(false, 2, true, false, true, []);
+		testNoDataVisibility(false, 1, true, false, true, []);
+		testNoDataVisibility(false, 0, true, false, true, []);
+
+		testNoDataVisibility(true, 2, true, true, true, []);
+		testNoDataVisibility(true, 1, true, true, true, []);
+		testNoDataVisibility(true, 0, true, true, true, []);
+		testNoDataVisibility(false, 2, true, true, true, []);
+		testNoDataVisibility(false, 1, true, true, true, []);
+		testNoDataVisibility(false, 0, true, true, true, []);
 	});
 
 	QUnit.test("isBusyIndicatorVisible", function(assert) {
