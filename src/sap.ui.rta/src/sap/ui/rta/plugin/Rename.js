@@ -117,28 +117,25 @@ sap.ui.define([
 		if (aElementOverlays.length > 1) {
 			return false;
 		}
-		var aResponsibleElementOverlays = aElementOverlays.map(function(oElementOverlay) {
-			return this.getResponsibleElementOverlay(oElementOverlay);
-		}.bind(this));
-
-		var oOverlay = aResponsibleElementOverlays[0];
+		var oTargetOverlay = aElementOverlays[0];
+		var oResponsibleElementOverlay = this.getResponsibleElementOverlay(oTargetOverlay);
 		var bIsEnabled = true;
-		var oAction = this.getAction(oOverlay);
-		if (!oAction) {
+		if (!this.getAction(oResponsibleElementOverlay)) {
 			bIsEnabled = false;
 		}
 
-		if (bIsEnabled && typeof oAction.isEnabled !== "undefined") {
-			if (typeof oAction.isEnabled === "function") {
-				bIsEnabled = oAction.isEnabled(oOverlay.getElement());
+		var oTargetOverlayAction = this.getAction(oTargetOverlay);
+		if (bIsEnabled && typeof oTargetOverlayAction.isEnabled !== "undefined") {
+			if (typeof oTargetOverlayAction.isEnabled === "function") {
+				bIsEnabled = oTargetOverlayAction.isEnabled(oTargetOverlay.getElement());
 			} else {
-				bIsEnabled = oAction.isEnabled;
+				bIsEnabled = oTargetOverlay.isEnabled;
 			}
 		}
 
 		if (bIsEnabled) {
-			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-			if (!oDesignTimeMetadata.getAssociatedDomRef(oOverlay.getElement(), oAction.domRef)) {
+			var oDesignTimeMetadata = oTargetOverlay.getDesignTimeMetadata();
+			if (!oDesignTimeMetadata.getAssociatedDomRef(oTargetOverlay.getElement(), oTargetOverlayAction.domRef)) {
 				bIsEnabled = false;
 			}
 		}
