@@ -11,23 +11,46 @@
 	}
 }
 
+.sapFAvatarInitialsHolder {
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapFAvatarIcon {
+	color: @sapUiContentContrastIconColor;
+}
+
 .sapFAvatarSquare {
-	border-radius: 0.25rem;
-	.sapMImg,
+	border-radius: @sapUiElementBorderCornerRadius;
+
 	.sapFAvatarImageHolder {
-		border-radius: 0.25rem;
-		-webkit-border-radius: 0.25rem;
+		border-radius: @sapUiElementBorderCornerRadius;
 	}
+}
+
+.sapFAvatarXL .sapFAvatarInitialsHolder {
+	font-size: 3rem;
 }
 
 .sapFAvatarL {
 	font-size: 2.25rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 2.25rem;
+	}
 }
 
 .sapFAvatarM {
 	font-size: 1.5rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 1.5rem;
+	}
 }
 
 .sapFAvatarS {
 	font-size: 1.125rem;
+}
+
+.sapFAvatarXS .sapFAvatarInitialsHolder {
+	font-size: 1rem;
 }
