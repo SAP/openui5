@@ -15,21 +15,25 @@ html.sap-desktop .sapMTBActive:focus {
 	background: @sapUiToolbarBackground;
 }
 
-/* Transparent Toolbar Context */
-.sapMTB-Transparent-CTX.sapMTB {
-	padding: 0 0.5rem 0 1rem;
-}
-
 /* Solid Toolbar Context */
 .sapMTB-Solid-CTX.sapMTB {
-	background: lighten(@sapUiListHeaderBackground, 2);
+	background: @sapUiBaseBG;
 }
 
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
-	height: 2rem;
-	background: @sapUiInfobarBackground;
-	border-bottom: none;
+	background: darken(@sapUiBaseColor, 10);
+
+	&.sapMTBActive {
+		background: @sapUiInfobarBackground;
+
+		&:hover {
+			background: @sapUiInfobarHoverBackground;
+		}
+		&:active {
+			background: @sapUiInfobarActiveBackground;
+		}
+	}
 }
 
 .sapMIBar.sapMTB .sapMBarChild {

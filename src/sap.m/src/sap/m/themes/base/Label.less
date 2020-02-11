@@ -253,11 +253,9 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-ch
 	color: @sapUiListActiveTextColor;
 }
 
-/* Info Toolbar Context */
-.sapMTB-Info-CTX .sapMLabel {
-	font-size: @sapMFontMediumSize;
-	font-family: @sapUiFontFamily;
-	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+/* Info Toolbar Context */ 
+.sapMTB-Info-CTX.sapMTBActive .sapMLabel {
+	color: @sapUiContentContrastTextColor;
 }
 
 .sapMTB-Info-CTX .sapMLabel.sapMLabelTBHeader {
