@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+ /* global Set */
+
 // Provides helper class sap.ui.core.Popup
 sap.ui.define([
 	'sap/ui/Device',
@@ -75,10 +77,10 @@ sap.ui.define([
 	 * In the case that the popup has no space to show itself in the view port
 	 * of the current window, it tries to open itself to the inverted direction.
 	 *
-	 * <strong>Since 1.12.3</strong>, it is possible to add further DOM-element-IDs that can get the focus
-	 * when <code>autoclose</code> is enabled. E.g. the <code>RichTextEditor</code> with running TinyMCE
-	 * uses this method to be able to focus the popups of the TinyMCE if the <code>RichTextEditor</code>
-	 * runs within a <code>Popup</code>/<code>Dialog</code> etc.
+	 * <strong>Since 1.12.3</strong>, it is possible to add further DOM-element-IDs that can get the focus when
+	 * <code>autoclose</code> or <code>modal</code> is enabled. E.g. the <code>RichTextEditor</code> with running
+	 * TinyMCE uses this method to be able to focus the popups of the TinyMCE if the <code>RichTextEditor</code> runs
+	 * within a <code>Popup</code>/<code>Dialog</code> etc.
 	 *
 	 * To provide an additional DOM element that can get the focus the following should be done:
 	 * <pre>
@@ -94,12 +96,23 @@ sap.ui.define([
 	 *   sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oObject);
 	 * </pre>
 	 *
+	 * <strong>Since 1.75</strong>, DOM elements which have the attribute
+	 * <code>data-ui5-integration-popup-content</code> are considered to be part of all opened popups. Those DOM
+	 * elements can get the focus without causing the autoclose popup to be closed or the modal popup to take the focus
+	 * back to itself. Additionally, a further DOM query selector can be provided by using
+	 * {@link sap.ui.core.Popup.addExternalContent} to make the DOM elements which match the selector be considered as
+	 * part of all opened popups.  Please be aware that the Popup implementation only checks if a DOM element is marked
+	 * with the attribute <code>data-ui5-integration-popup-content</code>. The actual attribute value is not checked. To
+	 * prevent a DOM element from matching, you must remove the attribute itself. Setting the attribute to a falsy value
+	 * is not enough in this case.
+	 *
 	 * @param {sap.ui.core.Control | sap.ui.core.Element | Element} oContent the content to render in the popup. In case of sap.ui.core.Element or DOMNode, the content must be present in the page (i.e. rendered). In case of sap.ui.core.Control, the Popup ensures rendering before opening.
 	 * @param {boolean} [bModal=false] whether the popup should be opened in a modal way (i.e. with blocking background). Setting this to "true" effectively blocks all attempts to focus content outside the modal popup. A modal popup also automatically sets the focus back to whatever was focused when the popup opened.
 	 * @param {boolean} [bShadow=true] whether the popup should be have a visual shadow underneath (shadow appearance depends on active theme and browser support)
 	 * @param {boolean} [bAutoClose=false] whether the popup should automatically close when the focus moves out of the popup
 	 *
 	 * @public
+	 * @class
 	 * @alias sap.ui.core.Popup
 	 * @extends sap.ui.base.ManagedObject
 	 */
@@ -212,7 +225,7 @@ sap.ui.define([
 			publicMethods : ["open", "close",
 							 "setContent", "getContent",
 							 "setPosition",
-							 "setShadow", "setModal", "getModal", "setAutoClose", "setAutoCloseAreas",
+							 "setShadow", "setModal", "getModal", "setAutoClose", "setAutoCloseAreas", "setExtraContent",
 							 "isOpen", "getAutoClose", "getOpenState", "setAnimations", "setDurations",
 							 "attachOpened", "attachClosed", "detachOpened", "detachClosed"],
 
@@ -990,6 +1003,7 @@ sap.ui.define([
 		}
 
 		var bContains = containsOrEquals(oPopupDomRef, oDomRef);
+
 		var aChildPopups;
 
 		if (!bContains) {
@@ -1011,6 +1025,12 @@ sap.ui.define([
 					bContains = oData.contains;
 				}
 				return bContains;
+			});
+		}
+
+		if (!bContains) {
+			oPopupExtraContentSelectorSet.forEach(function(sSelector) {
+				bContains = bContains || jQuery(oDomRef).closest(sSelector).length > 0;
 			});
 		}
 
@@ -1930,8 +1950,8 @@ sap.ui.define([
 	/**
 	 * Used to specify whether the Popup should close as soon as
 	 * - for non-touch environment: the focus leaves
-	 * - for touch environment: user clicks the area which is outside the popup itself, the DOM element which popup aligns to (except document),
-	 *  and one of the autoCloseAreas set by calling setAutoCloseAreas.
+	 * - for touch environment: user clicks the area which is outside the popup itself, the DOM element which the popup
+	 *   aligns to (except document), and any extra popup content set by calling setExtraContent.
 	 * @param {boolean} bAutoClose whether the Popup should close as soon as the focus leaves
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
@@ -1956,27 +1976,32 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the additional areas in the page that are considered part of the Popup when autoclose is enabled.
-	 * - non-touch environment: if the focus leaves the Popup but immediately enters one of these areas, the Popup does NOT close.
-	 * - touch environment: if user clicks one of these areas, the Popup does NOT close.
+	 * Sets additional content that are considered part of the Popup.
 	 *
-	 * @param {Element[]|sap.ui.core.Element[]|string[]} aAutoCloseAreas an array containing DOM elements, sap.ui.core.Element
-	 *  or an ID which are considered part of the Popup; a value of null removes all previous areas
+	 * A popup with autoclose {@link #setAutoClose} enabled allows the focus to be moved into the extra content without
+	 * closing itself.
+	 *
+	 * A popup with modal {@link #setModal} enabled allows the focus to be shifted into the extra content without taking it
+	 * back to the previous focused element in the popup.
+	 *
+	 * @param {Element[]|sap.ui.core.Element[]|string[]} aContent An array containing DOM elements, sap.ui.core.Element
+	 *  or an ID which are considered to be part of the Popup; a value of null removes all previous content
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
+	 * @since 1.75
 	 */
-	Popup.prototype.setAutoCloseAreas = function(aAutoCloseAreas) {
-		//TODO: also handle the case when 'aAutoCloseAreas' is set with null
-		assert(Array.isArray(aAutoCloseAreas), "aAutoCloseAreas must be an array which contains either sap.ui.core.Element, DOM Element or an ID");
+	Popup.prototype.setExtraContent = function(aContent) {
+		//TODO: also handle the case when 'aContent' is set with null
+		assert(Array.isArray(aContent), "Extra popup content must be an array which contains either sap.ui.core.Element, DOM Element or an ID");
 
-		if (!this._aAutoCloseAreas) {
-			this._aAutoCloseAreas = [];
+		if (!this._aExtraContent) {
+			this._aExtraContent = [];
 		}
 
-		var createDelegate = function (oAutoCloseArea) {
+		var createDelegate = function (oElement) {
 			return {
 				onBeforeRendering: function() {
-					var oDomRef = oAutocloseArea.getDomRef();
+					var oDomRef = oElement.getDomRef();
 					if (oDomRef && this.isOpen()) {
 						if (Device.browser.msie) {
 							jQuery(oDomRef).unbind("deactivate." + this._popupUID, this.fEventHandler);
@@ -1986,7 +2011,7 @@ sap.ui.define([
 					}
 				},
 				onAfterRendering: function() {
-					var oDomRef = oAutocloseArea.getDomRef();
+					var oDomRef = oElement.getDomRef();
 					if (oDomRef && this.isOpen()) {
 						if (Device.browser.msie) {
 							// 'deactivate' needs to be used for msie to achieve event handling in capturing phase
@@ -2000,42 +2025,48 @@ sap.ui.define([
 		};
 
 		var sId,
-			oAutocloseArea,
+			oExtraContent,
 			oDelegate,
-			oAreaRef;
+			oExtraContentRef;
 
-		for (var i = 0, l = aAutoCloseAreas.length; i < l; i++) {
-			oAutocloseArea = aAutoCloseAreas[i];
+		for (var i = 0, l = aContent.length; i < l; i++) {
+			oExtraContent = aContent[i];
 
-			if (oAutocloseArea instanceof Element) {
-				sId = oAutocloseArea.getId();
-			} else if (typeof oAutocloseArea === "object") {
-				sId = oAutocloseArea.id;
-			} else if (typeof oAutocloseArea === "string") {
-				sId = oAutocloseArea;
+			if (oExtraContent instanceof Element) {
+				sId = oExtraContent.getId();
+			} else if (typeof oExtraContent === "object") {
+				sId = oExtraContent.id;
+			} else if (typeof oExtraContent === "string") {
+				sId = oExtraContent;
 			}
 
 			if (this.getChildPopups().indexOf(sId) === -1) {
 				// when the autoclose area isn't registered, add it as a child popup and
-				// also to _aAutoCloseAreas
+				// also to _aExtraContent
 				this.addChildPopup(sId);
 
-				oAreaRef = {
+				oExtraContentRef = {
 					id: sId
 				};
 
-				if (oAutocloseArea instanceof Element) {
-					oDelegate = createDelegate(oAutocloseArea);
-					oAutocloseArea.addEventDelegate(oDelegate, this);
-					oAreaRef.delegate = oDelegate;
+				if (oExtraContent instanceof Element) {
+					oDelegate = createDelegate(oExtraContent);
+					oExtraContent.addEventDelegate(oDelegate, this);
+					oExtraContentRef.delegate = oDelegate;
 				}
 
-				this._aAutoCloseAreas.push(oAreaRef);
+				this._aExtraContent.push(oExtraContentRef);
 			}
 		}
 
 		return this;
 	};
+
+	/**
+	 * @public
+	 * @deprecated since 1.75, please use {@link #setExtraContent} instead.
+	 */
+	Popup.prototype.setAutoCloseAreas = Popup.prototype.setExtraContent;
 
 	/**
 	 * Sets the animation functions to use for opening and closing the Popup. Any null value will be ignored and not change the respective animation function.
@@ -2229,10 +2260,10 @@ sap.ui.define([
 			this._iBottomShieldRemoveTimer = null;
 		}
 
-		if (this._aAutoCloseAreas) {
+		if (this._aExtraContent) {
 			// remove registered delegate on autoclose areas
 			var oElement;
-			this._aAutoCloseAreas.forEach(function(oAreaRef) {
+			this._aExtraContent.forEach(function(oAreaRef) {
 				if (oAreaRef.delegate) {
 					oElement = jQuery(document.getElementById(oAreaRef.id)).control(0);
 					if (oElement) {
@@ -3100,6 +3131,58 @@ sap.ui.define([
 				return oControl ? oControl.getId() : oFocusDomRef.id;
 			}, 0);
 		}
+	};
+
+
+	var oPopupExtraContentSelectorSet = new Set(),
+		sDefaultSeletor = "[data-ui5-integration-popup-content]";
+
+	// always add the default selector
+	oPopupExtraContentSelectorSet.add(sDefaultSeletor);
+
+	/**
+	 * Adds a DOM query selector for determining additional external popup content.
+	 *
+	 * When the browser focus is switched from the main popup content (which is set by calling {@link #setContent}) to another
+	 * DOM element, this DOM element is tested against the selector to determine:
+	 *
+	 *  <ul>
+	 *  	<li>Autoclose popup: whether the popup should be kept open</li>
+	 *  	<li>Modal popup: whether the focus is allowed to be taken away</li>
+	 *  </ul>
+	 *
+	 * @param {string[]|string} vSelectors One query selector or an array of query selectors to be added
+	 * @public
+	 * @since 1.75
+	 */
+	Popup.addExternalContent = function(vSelectors) {
+		if (!Array.isArray(vSelectors)) {
+			vSelectors = [vSelectors];
+		}
+
+		vSelectors.forEach(Set.prototype.add.bind(oPopupExtraContentSelectorSet));
+	};
+
+	/**
+	 * Removes a DOM query selector which has been added by {@link sap.ui.core.Popup.addExternalContent}.
+	 *
+	 * The default query selector <code>[data-ui5-integration-popup-content]</code> can't be deleted.
+	 *
+	 * @param {string[]|string} vSelectors One query selector or an array of query selectors to be deleted
+	 * @public
+	 * @since 1.75
+	 */
+	Popup.removeExternalContent = function(vSelectors) {
+		if (!Array.isArray(vSelectors)) {
+			vSelectors = [vSelectors];
+		}
+
+		vSelectors.forEach(function(sSelector) {
+			// prevent the default selector from being deleted
+			if (sSelector !== sDefaultSeletor) {
+				oPopupExtraContentSelectorSet.delete(sSelector);
+			}
+		});
 	};
 
 	return Popup;

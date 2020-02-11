@@ -20,6 +20,16 @@
 	<button id="focusableElement">Focusable Button</button>
 	<input id="focusableElement2">
 
+	<button id="focusableElementWithAttribute" data-ui5-integration-popup-content>Focusable Button</button>
+	<div data-ui5-integration-popup-content>
+		<button id="focusableElementWithAttributeInParent">Focusable Button</button>
+	</div>
+
+	<button id="focusableElementWithCustomAttribute" data-custom-popup-content>Focusable Button</button>
+	<div data-custom-popup-content-2>
+		<button id="focusableElementWithCustomAttributeInParent">Focusable Button</button>
+	</div>
+
 	<div id="popup" tabindex="0">
 		This is a plain-HTML popup with two focusable child elements
 		<div id="popupcontent" tabindex="0">Child 1</div>
