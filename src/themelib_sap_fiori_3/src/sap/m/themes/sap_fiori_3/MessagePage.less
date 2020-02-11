@@ -12,18 +12,23 @@
 	}
 
 	.sapMMessagePageMainText {
-		font-size: @sapMFontHeader2Size;
-		color: @sapUiGroupTitleTextColor;
 		margin: 1rem 0;
 	}
 
 	.sapMMessagePageDescription {
-		font-size: @sapMFontHeader5Size;
 		margin-top: 0;
 		margin-bottom: 2rem;
+
+		&:empty {
+			margin-bottom: 0;
+		}
 
 		.sapMLnk {
 			font-size: @sapMFontHeader5Size;
 		}
+	}
+
+	.sapMMessagePageButtonsWrapper {
+		margin: 0;
 	}
 }
