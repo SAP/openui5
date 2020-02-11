@@ -1128,16 +1128,7 @@ function (
 		switch (oParams.type) {
 			case "addOrSetAggregation":
 			case "insertAggregation":
-				if (this.getStatus() === DesignTimeStatus.SYNCING) {
-					this.attachEventOnce("synced", oParams, function () {
-						// DesignTime instance at this point might be destroyed by third-parties on synced event
-						if (!this.bIsDestroyed) {
-							this._onAddAggregation(arguments[1].value, arguments[1].target, arguments[1].name);
-						}
-					}, this);
-				} else {
-					this._onAddAggregation(oParams.value, oParams.target, oParams.name);
-				}
+				this._onAddAggregation(oParams.value, oParams.target, oParams.name);
 				break;
 			case "setParent":
 				// timeout is needed because UI5 controls & apps can temporary "detach" controls from control tree
