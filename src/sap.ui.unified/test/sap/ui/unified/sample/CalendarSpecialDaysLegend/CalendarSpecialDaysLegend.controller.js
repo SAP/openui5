@@ -48,6 +48,30 @@ sap.ui.define([
 				}
 
 				oCal1.addSpecialDate(new DateTypeRange({
+					startDate : new Date(oRefDate.setDate(12)),
+					type : "Type11",
+					color: "#ff0000"
+				}));
+
+				oCal1.addSpecialDate(new DateTypeRange({
+					startDate : new Date(oRefDate.setDate(13)),
+					type : "Type11",
+					color: "#ff69b4"
+				}));
+
+				oCal2.addSpecialDate(new DateTypeRange({
+					startDate : new Date(oRefDate.setDate(12)),
+					type : "Type11",
+					color: "#ff0000"
+				}));
+
+				oCal2.addSpecialDate(new DateTypeRange({
+					startDate : new Date(oRefDate.setDate(13)),
+					type : "Type11",
+					color: "#add8e6"
+				}));
+
+				oCal1.addSpecialDate(new DateTypeRange({
 					startDate : new Date(oRefDate.setDate(11)),
 					endDate : new Date(oRefDate.setDate(21)),
 					type : CalendarDayType.NonWorking

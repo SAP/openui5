@@ -129,6 +129,17 @@ html.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus {
 	outline-offset: -3px;
 }
 
+html.sap-desktop .sapUiCalItem:focus > .sapUiCalItemText {
+	 position: absolute;
+	 left: 0;
+}
+
+html.sap-desktop .sapUiCalItem:focus > .sapUiCalItemText.sapUiCalItemTextCustomColor{
+	position: absolute;
+	left: 0;
+	box-shadow: none;
+}
+
 html.sap-desktop .sapUiCalMonthPicker .sapUiCalItem:focus,
 html.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus {
 	outline-offset: -4px;
@@ -198,6 +209,16 @@ html.sap-desktop .sapUiCalItemWeekEnd:focus {
 	line-height: 2.625rem;
 }
 
+.sapUiCalItem {
+	position: relative;
+	.sapUiCalSpecialDate {
+		position: absolute;
+		width: 100%;
+		height: 0.25rem;
+		bottom: 0;
+	}
+}
+
 .sapUiCalItemOtherMonth {
 	background-color: transparent;
 	color: @_sap_ui_unified_Calendar_ItemOtherMonthColor;
@@ -245,6 +266,21 @@ html.sap-desktop .sapUiCalItemSelBetween:focus {
 
 .sapUiCalItemNow.sapUiCalItemSel > .sapUiCalItemText{
 	box-shadow: inset 0.0625rem 0.0625rem 0 0 @_sap_ui_unified_Calendar_ItemBorderColor, inset -0.0625rem -0.0625rem 0 0 @_sap_ui_unified_Calendar_ItemBorderColor;
+}
+
+.sapUiCalItem .sapUiCalItemText.sapUiCalItemTextCustomColor{
+	box-shadow: none;
+}
+
+.sapUiCalItem.sapUiCalItemNow .sapUiCalSpecialDate{
+	position: absolute;
+	width: ~"calc(100% - 0.375rem)";
+	height: 0.1rem;
+	bottom: 0.1875rem;
+	left: 0.1875rem;
+}
+.sapUiCalItemText.sapUiCalItemTextCustomColor{
+	box-shadow: none;
 }
 
 .sapUiCalItemNow.sapUiCalItemSelBetween{

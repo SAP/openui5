@@ -474,6 +474,18 @@ sap.ui.define([
 							type: "Type08"
 						},
 						{
+							start: new Date("2017", "0", "21"),
+							end: new Date("2017", "0", "21", "23", "59"),
+							type: "Type05",
+							color: "#ff69b4"
+						},
+						{
+							start: new Date("2017", "0", "22"),
+							end: new Date("2017", "0", "22", "23", "59"),
+							type: "Type04",
+							color: "#add8e6"
+						},
+						{
 							start: new Date("2017", "6", "24"),
 							end: new Date("2017", "6", "24", "23", "59"),
 							type: "Type09"
@@ -492,6 +504,16 @@ sap.ui.define([
 						{
 							text: "Team building",
 							type: "Type08"
+						},
+						{
+							text: "Work from office 1",
+							type: "Type05",
+							color: "#ff69b4"
+						},
+						{
+							text: "Work from office 2",
+							type: "Type04",
+							color: "#add8e6"
 						}
 					],
 					legendAppointmentItems: [

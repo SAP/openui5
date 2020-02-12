@@ -36,6 +36,18 @@ function(Controller, JSONModel, unifiedLibrary) {
 							type: "Type08"
 						},
 						{
+							start: new Date("2018", "6", "11"),
+							end: new Date("2018", "6", "11", "23", "59"),
+							type: "Type11",
+							color: "#ff69b4"
+						},
+						{
+							start: new Date("2018", "6", "12"),
+							end: new Date("2018", "6", "12", "23", "59"),
+							type: "Type03",
+							color: "#add8e6"
+						},
+						{
 							start: new Date("2018", "6", "13"),
 							end: new Date("2018", "6", "13", "23", "59"),
 							type: "Type09"
@@ -264,6 +276,11 @@ function(Controller, JSONModel, unifiedLibrary) {
 					{
 						text: "Work from office 2",
 						type: "Type14"
+					},
+					{
+						text: "Home office",
+						type: "Type03",
+						color: "#add8e6"
 					}
 				],
 				legendAppointmentItems: [

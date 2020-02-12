@@ -492,12 +492,19 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		if (aDayTypes[0]){ //if there's a special date, render it
 			oRm.openStart("div");
 			oRm.class("sapUiCalSpecialDate");
+			if (aDayTypes[0].color) { // if there's a custom color, render it
+
+				oRm.style("background-color", aDayTypes[0].color);
+			}
 			oRm.openEnd(); // div
 			oRm.close("div");
 		}
 
 		oRm.openStart("span");
 		oRm.class("sapUiCalItemText");
+		if (!!aDayTypes[0] && aDayTypes[0].color) {
+			oRm.class("sapUiCalItemTextCustomColor");
+		}
 		oRm.openEnd(); // span
 
 		// Date text for days before 0001.01.01 should not be visible.
