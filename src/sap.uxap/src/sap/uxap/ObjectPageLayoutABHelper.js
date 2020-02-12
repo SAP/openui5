@@ -292,6 +292,7 @@ sap.ui.define([
 			oButton,
 			oAnchorBar = this._getAnchorBar(),
 			sId,
+			sSubId,
 			bHasSubMenu,
 			iVisibleSubSections,
 			aSubSections = oSectionBase.getAggregation("subSections"),
@@ -347,7 +348,8 @@ sap.ui.define([
 					}, this);
 					oButtonClone.attachPress(fnPressHandler);
 				} else {
-					oButtonClone = this._instantiateAnchorBarButton(false, oSectionBase);
+					sSubId = oAnchorBar.getId() + "-" + oSectionBase.getId() + "-sub-anchor";
+					oButtonClone = this._instantiateAnchorBarButton(false, oSectionBase, sSubId);
 				}
 
 				//has a ux rule been applied that we need to reflect here?
