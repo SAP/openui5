@@ -177,6 +177,9 @@ sap.ui.define([
 		assert.ok(!!describedById, "Described by ID is set");
 		assert.ok(bLabelsExist, "All descriptions are rendered in DOM");
 
+		assert.strictEqual(sf.$('reset').attr('aria-hidden'), "true", "reset button has aria-hidden='true'");
+		assert.strictEqual(sf.$('search').attr('aria-hidden'), "true", "search button has aria-hidden='true'");
+
 		// clean up
 		lbl.destroy();
 		sf.destroy();
