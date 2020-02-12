@@ -287,6 +287,13 @@ sap.ui.define([
 			CommunicationBus.publish(CommunicationChannels.UPDATE_SETTINGS, {
 				multipleSnippets: bState
 			});
+		},
+		_onCodeEditorChange: function (oEvent) {
+			var oCodeEditor = this.byId("codeEditor");
+			var iLineCount = oCodeEditor.getValue().split("\n").length;
+			if (iLineCount) {
+				oCodeEditor._oEditor.scrollToLine(iLineCount);
+			}
 		}
 	});
 });

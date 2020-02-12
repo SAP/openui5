@@ -76,7 +76,12 @@
 							</VBox>
 							<code:CodeEditor
 								id="codeEditor"
-								value="{controls>/codeSnippet}"
+								value="{
+									path: 'controls>/codeSnippet',
+									events: {
+										change: '._onCodeEditorChange'
+									}
+								}"
 								height="calc(100vh - 180px)"
 								width="100%"
 								type="javascript"
