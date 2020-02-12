@@ -40,6 +40,12 @@
             "reference": "2080069312"
           }
         ]
+      },
+      {
+        "id": "f3ae98d9c51953c8701a7005bc29fc47b6a85f2c",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: If two calendars are used - opens separate popover for each",
+        "references": []
       }
     ]
   }

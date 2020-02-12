@@ -63,6 +63,35 @@
             "reference": "2080080863"
           }
         ]
+      },
+      {
+        "id": "01d8536568c096a87af3f3ad909dec99533d420a",
+        "type": "FEATURE",
+        "text": " Theming: experimental CSS variables and skeleton build/usage",
+        "references": []
+      },
+      {
+        "id": "29969f4a09bfc889cb1e7eab198231a3ec1f4aa8",
+        "type": "FEATURE",
+        "text": " core.Popup: provide possibilities to add external popup content",
+        "references": []
+      },
+      {
+        "id": "429100145b67ec17e6f6cf871df686b126998a43",
+        "type": "FIX",
+        "text": " NumberFormat: Currency Format Trailing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970551159"
+          }
+        ]
+      },
+      {
+        "id": "a62aef9026f4b2d1489c184c958f46c95067efa4",
+        "type": "FIX",
+        "text": " chain titlechange event in case of binding information in a title",
+        "references": []
       }
     ]
   }

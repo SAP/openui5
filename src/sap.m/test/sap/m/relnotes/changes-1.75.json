@@ -400,6 +400,51 @@
             "reference": "002075129400000696982020"
           }
         ]
+      },
+      {
+        "id": "0c26cbcf5f9246451a8dddbabe994f36ac3c6a88",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: Improve ESC handling",
+        "references": []
+      },
+      {
+        "id": "87a9171e39961a408a706ffa08f5e54bec756a67",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: Implement new ACC Spec",
+        "references": []
+      },
+      {
+        "id": "cb659827acc9db9389637e935634de08b0bf9b4b",
+        "type": "FIX",
+        "text": " sap.m.NotificationListBase: Forwarding agg issue is now fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080106573"
+          }
+        ]
+      },
+      {
+        "id": "d6c8925295be41a20e2d6703a932738a468dd466",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: sap.m.IconTabBar align is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080090365"
+          }
+        ]
+      },
+      {
+        "id": "b87784c370b47bd2b310371e9dcf5ed9726bef99",
+        "type": "FIX",
+        "text": " sap.m.Popover: Issue with scrolling in child control fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080079397"
+          }
+        ]
       }
     ]
   }
