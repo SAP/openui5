@@ -1,4 +1,4 @@
-/*!
+	/*!
  * ${copyright}
  */
 sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (AdaptiveCards) {
@@ -27,6 +27,8 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 		this._dateInputElement.placeholder = this.placeholder;
 		this._dateInputElement.formatPattern = "yyyy-MM-dd";
 		this._dateInputElement.value = this.defaultValue || "";
+		this._dateInputElement.minDate = this.min || "";
+		this._dateInputElement.maxDate = this.max || "";
 
 		this._dateInputElement.addEventListener("change", function () {
 			this.valueChanged();

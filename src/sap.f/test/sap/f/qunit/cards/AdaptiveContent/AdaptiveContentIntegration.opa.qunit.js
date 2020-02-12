@@ -69,9 +69,7 @@ sap.ui.define([
 				},
 				success: function (oCard) {
 					var $oCard = oCard[0].$(),
-						aRadioButtons = $oCard.find('[name="SingleSelectVal"]'),
-						aCheckBoxes = $oCard.find('[name="MultiSelectVal"]'),
-						aChecked = [];
+						aRadioButtons = $oCard.find('[name="SingleSelectVal"]');
 
 					Opa5.assert.strictEqual($oCard.find("#SimpleVal").val(), oData["SimpleVal"], "The value is correct");
 					Opa5.assert.strictEqual($oCard.find("#UrlVal").val(), oData["UrlVal"], "The value is correct");
@@ -87,14 +85,6 @@ sap.ui.define([
 							Opa5.assert.strictEqual(aRadioButtons[i].value, oData["SingleSelectVal"], "The value is correct");
 						}
 					}
-
-					for (var j = 0; j < aCheckBoxes.length; j++) {
-						if (aCheckBoxes[j].checked) {
-							aChecked.push(aCheckBoxes[j].value);
-						}
-					}
-					Opa5.assert.strictEqual(aChecked.join(), oData["MultiSelectVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#CompactSelectVal")[0].selectedOption.value, oData["CompactSelectVal"], "The value is correct");
 				},
 				errorMessage: "The component does not exist or the value could not be changed"
 			});

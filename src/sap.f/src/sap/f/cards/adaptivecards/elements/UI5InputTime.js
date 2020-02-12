@@ -17,6 +17,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 		this._timeInputElement.classList.add("sapMInputBaseInner");
 		this._timeInputElement.classList.add("sapMInputBaseContentWrapper");
 		this._inputControlContainerElement.classList.add("sapMInputBase");
+		this._inputControlContainerElement.classList.add("sapFTimeInput");
 
 		return this._timeInputElement;
 	};
