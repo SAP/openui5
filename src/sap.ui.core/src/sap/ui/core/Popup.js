@@ -97,12 +97,12 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * <strong>Since 1.75</strong>, DOM elements which have the attribute
-	 * <code>data-ui5-integration-popup-content</code> are considered to be part of all opened popups. Those DOM
+	 * <code>data-sap-ui-integration-popup-content</code> are considered to be part of all opened popups. Those DOM
 	 * elements can get the focus without causing the autoclose popup to be closed or the modal popup to take the focus
 	 * back to itself. Additionally, a further DOM query selector can be provided by using
 	 * {@link sap.ui.core.Popup.addExternalContent} to make the DOM elements which match the selector be considered as
 	 * part of all opened popups.  Please be aware that the Popup implementation only checks if a DOM element is marked
-	 * with the attribute <code>data-ui5-integration-popup-content</code>. The actual attribute value is not checked. To
+	 * with the attribute <code>data-sap-ui-integration-popup-content</code>. The actual attribute value is not checked. To
 	 * prevent a DOM element from matching, you must remove the attribute itself. Setting the attribute to a falsy value
 	 * is not enough in this case.
 	 *
@@ -3135,10 +3135,10 @@ sap.ui.define([
 
 
 	var oPopupExtraContentSelectorSet = new Set(),
-		sDefaultSeletor = "[data-ui5-integration-popup-content]";
+		sDefaultSelector = "[data-sap-ui-integration-popup-content]";
 
 	// always add the default selector
-	oPopupExtraContentSelectorSet.add(sDefaultSeletor);
+	oPopupExtraContentSelectorSet.add(sDefaultSelector);
 
 	/**
 	 * Adds a DOM query selector for determining additional external popup content.
@@ -3166,7 +3166,7 @@ sap.ui.define([
 	/**
 	 * Removes a DOM query selector which has been added by {@link sap.ui.core.Popup.addExternalContent}.
 	 *
-	 * The default query selector <code>[data-ui5-integration-popup-content]</code> can't be deleted.
+	 * The default query selector <code>[data-sap-ui-integration-popup-content]</code> can't be deleted.
 	 *
 	 * @param {string[]|string} vSelectors One query selector or an array of query selectors to be deleted
 	 * @public
@@ -3179,7 +3179,7 @@ sap.ui.define([
 
 		vSelectors.forEach(function(sSelector) {
 			// prevent the default selector from being deleted
-			if (sSelector !== sDefaultSeletor) {
+			if (sSelector !== sDefaultSelector) {
 				oPopupExtraContentSelectorSet.delete(sSelector);
 			}
 		});
