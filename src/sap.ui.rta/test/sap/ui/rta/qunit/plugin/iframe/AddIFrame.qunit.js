@@ -133,21 +133,31 @@ function (
 
 	}, function() {
 		QUnit.test("when the designTimeMetadata has childNames for the container name (sections)", function(assert) {
-			assert.deepEqual(this.oAddIFrame.getCreateMenuItemText({
+			var sSectionName = sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
+			var sExpectedText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_ADDIFRAME", sSectionName);
+
+			var sMenuItemText = this.oAddIFrame.getCreateMenuItemText({
 				isSibling: false,
 				action: {
 					aggregation: "sections"
 				}
-			}, "CTX_ADDIFRAME", this.oObjectPageLayoutOverlay), "Add External Application to: Section", "then the correct menu item text is returned");
+			}, "CTX_ADDIFRAME", this.oObjectPageLayoutOverlay);
+
+			assert.deepEqual(sMenuItemText, sExpectedText, "then the correct menu item text is returned");
 		});
 
 		QUnit.test("when the designTimeMetadata has childNames for the container name (header)", function(assert) {
-			assert.deepEqual(this.oAddIFrame.getCreateMenuItemText({
+			var sHeaderName = sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("HEADER_CONTROL_NAME");
+			var sExpectedText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_ADDIFRAME", sHeaderName);
+
+			var sMenuItemText = this.oAddIFrame.getCreateMenuItemText({
 				isSibling: false,
 				action: {
 					aggregation: "headerContent"
 				}
-			}, "CTX_ADDIFRAME", this.oObjectPageLayoutOverlay), "Add External Application to: Header", "then the correct menu item text is returned");
+			}, "CTX_ADDIFRAME", this.oObjectPageLayoutOverlay);
+
+			assert.deepEqual(sMenuItemText, sExpectedText, "then the correct menu item text is returned");
 		});
 
 		QUnit.test("when an overlay has no addIFrame action designTime metadata", function(assert) {
