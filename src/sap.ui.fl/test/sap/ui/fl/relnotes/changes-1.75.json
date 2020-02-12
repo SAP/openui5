@@ -7,6 +7,17 @@
         "type": "FIX",
         "text": " Fixing the propagation of rejected promise to the caller",
         "references": []
+      },
+      {
+        "id": "d97fb07451b817adf886df5a62a329ee5afcfa9c",
+        "type": "FIX",
+        "text": " fl.VariantManagement: css adaptions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080090749"
+          }
+        ]
       }
     ]
   }

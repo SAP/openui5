@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": ": RTA - Rename Variants error issue",
         "references": []
+      },
+      {
+        "id": "29969f4a09bfc889cb1e7eab198231a3ec1f4aa8",
+        "type": "FEATURE",
+        "text": " core.Popup: provide possibilities to add external popup content",
+        "references": []
       }
     ]
   }

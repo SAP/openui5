@@ -12,6 +12,17 @@
             "reference": "0020751294 0000808684 2019"
           }
         ]
+      },
+      {
+        "id": "033575c3181ecc8348b818062e94028e4242ac33",
+        "type": "FIX",
+        "text": " sap.tnt.InfoLabel: Accessibility enhanced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080064821"
+          }
+        ]
       }
     ]
   }

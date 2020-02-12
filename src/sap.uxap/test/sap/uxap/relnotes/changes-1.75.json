@@ -45,6 +45,12 @@
             "reference": "2080094291"
           }
         ]
+      },
+      {
+        "id": "5e802ca89fe2f06fa1b41140b298e643aa849bcf",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Anchorbar now has relative shadows",
+        "references": []
       }
     ]
   }
