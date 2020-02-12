@@ -1484,7 +1484,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("External DOM element marked with data-ui5-integration-popup-content is part of the Popup", function(assert) {
+	QUnit.test("External DOM element marked with data-sap-ui-integration-popup-content is part of the Popup", function(assert) {
 		var oExternalPopupContent = document.getElementById("focusableElementWithAttribute");
 		var oFocusableElement = document.getElementById("focusableElement");
 
@@ -1492,7 +1492,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), true, "The element with the attribute is part of the popup");
 	});
 
-	QUnit.test("External DOM element whose parent is marked with data-ui5-integration-popup-content is part of the Popup", function(assert) {
+	QUnit.test("External DOM element whose parent is marked with data-sap-ui-integration-popup-content is part of the Popup", function(assert) {
 		var oExternalPopupContent = document.getElementById("focusableElementWithAttributeInParent");
 
 		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), true, "The element with the attribute in parent is part of the popup");
@@ -1530,7 +1530,7 @@ sap.ui.define([
 		var oExternalPopupContent = document.getElementById("focusableElementWithAttributeInParent");
 		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), true, "The element with the attribute in parent is part of the popup");
 
-		Popup.removeExternalContent("[data-ui5-integration-popup-content]");
+		Popup.removeExternalContent("[data-sap-ui-integration-popup-content]");
 		assert.strictEqual(this.oPopup._contains(oExternalPopupContent), true, "The element with the attribute in parent is still part of the popup");
 	});
 
