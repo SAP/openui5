@@ -10,7 +10,7 @@ sap.ui.define([
 ], function(
 	merge,
 	BaseConnector,
-	ApplyObjectPathConnector,
+	ApplyConnector,
 	LoaderExtensions
 ) {
 	"use strict";
@@ -25,10 +25,10 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
 	return merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.ObjectPathConnector */ {
-		layers: [],
+		layers: ApplyConnector.layers,
 
 		loadFeatures: function (mPropertyBag) {
-			var sPath = ApplyObjectPathConnector.jsonPath || mPropertyBag.path;
+			var sPath = ApplyConnector.jsonPath || mPropertyBag.path;
 			if (sPath) {
 				return LoaderExtensions.loadResource({
 					dataType: "json",

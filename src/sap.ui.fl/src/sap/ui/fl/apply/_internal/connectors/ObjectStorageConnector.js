@@ -38,6 +38,9 @@ sap.ui.define([
 		 * can be either window.sessionStorage or window.localStorage
 		 */
 		oStorage: undefined,
+		layers: [
+			"ALL"
+		],
 
 		/**
 		 * Provides the flex data stored in the session or local storage;

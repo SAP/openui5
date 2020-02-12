@@ -10,7 +10,6 @@ sap.ui.define([], function () {
 	 *
 	 * @enum {string}
 	 */
-
 	return {
 		USER: "USER",
 		CUSTOMER: "CUSTOMER",

@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector"
 ], function(
 	merge,
 	BaseConnector,
-	ObjectStorageUtils
+	ObjectStorageUtils,
+	ApplyConnector
 ) {
 	"use strict";
 
@@ -56,8 +58,7 @@ sap.ui.define([
 		 * can be either window.sessionStorage or window.localStorage or just a JS map
 		 */
 		oStorage: undefined,
-
-		layers: ["ALL"],
+		layers: ApplyConnector.layers,
 
 		/**
 		 * @inheritDoc

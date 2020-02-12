@@ -26,6 +26,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.apply._internal.Storage
 	 */
 	var ObjectPathConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.apply._internal.connectors.ObjectPathConnector */ {
+		layers: [],
+
 		setJsonPath: function (sInitialJsonPath) {
 			ObjectPathConnector.jsonPath = sInitialJsonPath;
 		},
