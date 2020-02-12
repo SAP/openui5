@@ -28,7 +28,13 @@
 				<Title text="{i18n>DeliveryStatus}"/>
 			</HBox>
 			<HBox>
-				<Text text="{/selectedPurchase/DeliveryStatus}" />
+				<ObjectStatus
+					class="sapMObjectStatusLarge"
+					text="{/selectedPurchase/DeliveryStatus}"
+					state="{
+						path: '/selectedPurchase/DeliveryStatus',
+						formatter: '.formatter.deliveryStatusState'
+					}"/>
 			</HBox>
 		</VBox>
 	</FlexBox>

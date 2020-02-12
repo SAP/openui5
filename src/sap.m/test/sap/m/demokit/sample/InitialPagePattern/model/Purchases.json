@@ -437,7 +437,7 @@
       "Category": "Computer Peripherals",
       "Sub-Category": "Monitors",
       "PaymentType": "Debit Card",
-      "DeliveryStatus": "In Progress",
+      "DeliveryStatus": "Shipped",
       "ProductCollection": [
         {
           "ProductId": "HT-1072",
