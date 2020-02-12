@@ -17,10 +17,43 @@
 	// border is 2px in this case because
 	// there is 1px border around the whole Panel
 	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
+<<<<<<< HEAD   (1ab9ac [INTERNAL] sap.m.Label: remove unstable qUnit test)
 }
 
 .sapMPanelExpandableIcon {
 	&:focus::after {
 		border-width: 2px;
 	}
+||||||| BASE
+}
+
+.sapMPanelExpandableIcon {
+	&:focus::after {
+		border-width: 2px;
+	}
+}
+
+html[data-sap-ui-animation='on'] {
+	.sapMPanelExpandableIcon {
+		-webkit-transition: none;
+		transition: none;
+	}
+
+	.sapMPanelExpandableIconExpanded {
+		-webkit-transition: none;
+		transition: none;
+	}
+}
+
+.sapMPanelExpandableIconExpanded {
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+
+	&:before {
+		display: block;
+		-webkit-transform: rotate(90deg);
+		transform: rotate(90deg);
+	}
+=======
+>>>>>>> CHANGE (4f027a [INTERNAL] sap.m.Panel: Expand/Collapse button changed)
 }

@@ -54,7 +54,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 			sHeaderClass;
 
 		if (bIsExpandable) {
-			// we need a wrapping div around icon and header
+			// we need a wrapping div around button and header
 			// otherwise the border needed for both do not exact align
 			oRm.write("<header");
 			if (oHeaderTBar) {
@@ -71,14 +71,11 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 			oRm.writeClasses();
 			oRm.write(">");
 
-			var oIcon = oControl._getIcon();
-			if (bIsExpanded) {
-				oIcon.addStyleClass("sapMPanelExpandableIconExpanded");
-			} else {
-				oIcon.removeStyleClass("sapMPanelExpandableIconExpanded");
-			}
+			var oButton = oControl._getButton();
 
-			oRm.renderControl(oIcon);
+			oControl._toggleButtonIcon(bIsExpanded);
+
+			oRm.renderControl(oButton);
 		}
 
 		// render header

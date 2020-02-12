@@ -50,6 +50,7 @@
 	clear: both;
 }
 
+<<<<<<< HEAD   (1ab9ac [INTERNAL] sap.m.Label: remove unstable qUnit test)
 .sapMPanelExpandableIcon {
 	position: absolute;
 	width: 1.5rem;
@@ -82,9 +83,55 @@ html[data-sap-ui-animation='on'] {
 	}
 }
 
+||||||| BASE
+.sapMPanelExpandableIcon {
+	position: absolute;
+	width: 1.5rem;
+	line-height: 1.5rem;
+	font-size: 1rem;
+	margin: 0 0.75rem;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	color: @sapUiContentIconColor;
+}
+
+.sapMPanelExpandableIconExpanded {
+	display: inline-block;
+	-webkit-transform: translateY(-50%) rotate(90deg);
+	transform: translateY(-50%) rotate(90deg);
+}
+
+html[data-sap-ui-animation='on'] {
+	.sapMPanelExpandableIcon {
+		/* 400ms is standard jQuery duration */
+		-webkit-transition: -webkit-transform 0.4s ease-out;
+		transition: transform 0.4s ease-out;
+	}
+
+	.sapMPanelExpandableIconExpanded {
+		/* 400ms is standard jQuery duration */
+		-webkit-transition: -webkit-transform 0.4s ease-out;
+		transition: transform 0.4s ease-out;
+	}
+}
+
+=======
+>>>>>>> CHANGE (4f027a [INTERNAL] sap.m.Panel: Expand/Collapse button changed)
 .sapMPanelWrappingDiv,
 .sapMPanelWrappingDivTb {
 	position: relative;
+<<<<<<< HEAD   (1ab9ac [INTERNAL] sap.m.Label: remove unstable qUnit test)
+||||||| BASE
+	background-color: @sapUiGroupTitleBackground;
+=======
+	background-color: @sapUiGroupTitleBackground;
+
+	> .sapMBtn {
+		position: absolute;
+		top: 0;
+	}
+>>>>>>> CHANGE (4f027a [INTERNAL] sap.m.Panel: Expand/Collapse button changed)
 }
 
 /* if Panel is expandable, we do not wish toolbar to come with own border */
