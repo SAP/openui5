@@ -701,7 +701,7 @@ function (
 	 * @private
 	 */
 
-	/**
+	 /**
 	 * Creates overlay and returns a Promise which is resolved when whole hierarchy is created. If creation
 	 * of an overlay is in a process, then same promise object will be returned as after first call.
 	 *
@@ -1055,6 +1055,7 @@ function (
 		var sElementId = oElementOverlay.getAssociation('element');
 		if (sElementId in this._mPendingOverlays) { // means that the overlay was destroyed during initialization process
 			this._removeOverlayFromSyncingBatch(oElementOverlay);
+			delete this._mPendingOverlays[sElementId];
 			return;
 		}
 
