@@ -1965,7 +1965,14 @@ sap.ui.define([
 
 		this._togglePrevNexYearPicker();
 		this._iMode = 2;
-		this._updateHeadersButtons();
+
+		// hide year button
+		if (this._isTwoMonthsInOneColumn()) {
+			this._updateActiveHeaderYearButtonVisibility();
+		} else {
+			this._updateHeadersButtons();
+		}
+
 		if (this._bIsSecondHeaderButtonAction && this.getAggregation("month")[1].getDate().getFullYear() > this._getFocusedDate().getYear()) {
 			var oSecondHeaderDate = oDate.toLocalJSDate();
 			oSecondHeaderDate.setFullYear(oSecondHeaderDate.getFullYear() + 1);
@@ -2212,12 +2219,21 @@ sap.ui.define([
 		var oFocusedDate = new CalendarDate(this._getFocusedDate(), this.getPrimaryCalendarType()),
 			oMonthPicker = this._getMonthPicker(),
 			iMonth = oMonthPicker._focusedMonth || oMonthPicker._focusedMonth === 0 ? oMonthPicker._focusedMonth : oMonthPicker.getMonth(),
-			oSecondDate = new CalendarDate(this._getFocusedDate()._oUDate.getFullYear(),iMonth - 1,1);
+			oSecondDate;
 
-			if (this._bIsSecondHeaderButtonAction && oSecondDate.getYear() > 0) {
+			if (!!oMonthPicker._iYear) {
+				oSecondDate = new CalendarDate(oMonthPicker._iYear, iMonth - 1, 1);
+			} else {
+				oSecondDate = new CalendarDate(this._getFocusedDate()._oUDate.getFullYear(),iMonth - 1,1);
+			}
+
+			if (this._bIsSecondHeaderButtonAction && oSecondDate.getYear() >= CalendarUtils._minDate().getYear()) {
 				oFocusedDate.setYear(oSecondDate.getYear());
 				oFocusedDate.setMonth(oSecondDate.getMonth());
 				iMonth = oFocusedDate.getMonth();
+			} else if (oFocusedDate.getYear() === CalendarUtils._maxDate().getYear() && iMonth === 11) {
+				iMonth -= 1;
+				oFocusedDate.setMonth(iMonth);
 			} else {
 				oFocusedDate.setMonth(iMonth);
 			}
@@ -2253,7 +2269,13 @@ sap.ui.define([
 		var oDate = CalendarDate.fromLocalJSDate(oYearPicker.getDate(), this.getPrimaryCalendarType());
 
 		// to keep day and month stable also for islamic date
-		oDate.setMonth(oFocusedDate.getMonth(), oFocusedDate.getDate());
+		if (!this._bIsSecondHeaderButtonAction){
+			oDate.setMonth(oFocusedDate.getMonth(), oFocusedDate.getDate());
+		} else {
+			oDate.setYear(oDate.getYear() - 1);
+			oDate.setMonth(oFocusedDate.getMonth(), oFocusedDate.getDate());
+		}
+
 		oFocusedDate = oDate;
 
 		this._focusDate(oFocusedDate, true);
@@ -2366,9 +2388,9 @@ sap.ui.define([
 		var oHeader = this._getActiveHeaderAggregation();
 		if (this._bIsSecondHeaderButtonAction) {
 			this._isTwoMonthsInOneColumn() ?
-				oHeader.setVisibleButton2(!oHeader.getVisibleButton2()) : oHeader._setVisibleButton4(!oHeader._getVisibleButton4());
+				oHeader.setVisibleButton1(!oHeader.getVisibleButton1()) : oHeader._setVisibleButton3(!oHeader._getVisibleButton3());
 		} else {
-			oHeader.setVisibleButton2(!oHeader.getVisibleButton2());
+			oHeader.setVisibleButton1(!oHeader.getVisibleButton1());
 		}
 		return this;
 	};
