@@ -3861,7 +3861,8 @@ sap.ui.define([
 			showSuggestion: true,
 			suggestionItemSelected: function () {},
 			suggestionColumns: [ new Column({ header: new Label({ text: "header" })}) ]
-		});
+		}),
+			oValueHelpRequestSpy = new sinon.spy(oInput, "fireValueHelpRequest");
 
 		var oTableItemTemplate = new ColumnListItem({
 			cells : [new Label({ text : "{name}" })]
@@ -3890,7 +3891,11 @@ sap.ui.define([
 		this.clock.tick(300);
 		oInput._getShowMoreButton().firePress();
 
+		assert.strictEqual(oValueHelpRequestSpy.callCount, 1, "fireValueHelpRequest was executed once.");
+		assert.strictEqual(oValueHelpRequestSpy.firstCall.args[0]._userInputValue, "p", "The typed in value was preserved and passed via the event.");
+
 		// clean up
+		oValueHelpRequestSpy.restore();
 		oInput.destroy();
 	});
 

@@ -2438,21 +2438,34 @@ function(
 	Input.prototype._getShowMoreButton = function() {
 		return this._oShowMoreButton || (this._oShowMoreButton = new Button({
 			text : this._oRb.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
-			press : function() {
-				if (this.getShowTableSuggestionValueHelp()) {
-
-					// request for value help interrupts autocomplete
-					if (this._oSuggPopover._sTypedInValue) {
-						this.updateDomValue(this._oSuggPopover._sTypedInValue);
-						this._oSuggPopover._resetTypeAhead();
-					}
-
-					this._fireValueHelpRequest(true);
-					this._oSuggPopover._iPopupListSelectedIndex = -1;
-					this._closeSuggestionPopup();
-				}
-			}.bind(this)
+			press : this._getShowMoreButtonPress.bind(this)
 		}));
+	};
+
+	/**
+	 * Show more button press handler.
+	 *
+	 * @private
+	 */
+	Input.prototype._getShowMoreButtonPress = function() {
+		var sTypedInValue;
+
+		if (this.getShowTableSuggestionValueHelp()) {
+
+			// request for value help interrupts autocomplete
+			if (this._oSuggPopover._sTypedInValue) {
+				sTypedInValue = this._oSuggPopover._sTypedInValue;
+				this.updateDomValue(sTypedInValue);
+				this._oSuggPopover._resetTypeAhead();
+				// Resetting the Suggestions popover clears the typed in value.
+				// However, we need to keep it in this case as the fireValueHelpRequest will need to pass this information.
+				this._oSuggPopover._sTypedInValue =  sTypedInValue;
+			}
+
+			this._fireValueHelpRequest(true);
+			this._oSuggPopover._iPopupListSelectedIndex = -1;
+			this._closeSuggestionPopup();
+		}
 	};
 
 	/**
