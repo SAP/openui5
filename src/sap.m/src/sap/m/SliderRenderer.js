@@ -49,6 +49,13 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 			}
 
 			oRm.openEnd();
+
+			if (oSlider.getEnableTickmarks()) {
+				this.renderTickmarks(oRm, oSlider);
+			} else {
+				this.renderLabels(oRm, oSlider);
+			}
+
 			oRm.openStart('div', oSlider.getId() + "-inner");
 			this.addInnerClass(oRm, oSlider);
 
@@ -64,12 +71,6 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 
 			this.renderHandles(oRm, oSlider, sSliderLabels);
 			oRm.close("div");
-
-			if (oSlider.getEnableTickmarks()) {
-				this.renderTickmarks(oRm, oSlider);
-			} else {
-				this.renderLabels(oRm, oSlider);
-			}
 
 			if (oSlider.getName()) {
 				this.renderInput(oRm, oSlider);
