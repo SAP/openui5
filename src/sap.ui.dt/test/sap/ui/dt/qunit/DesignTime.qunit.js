@@ -1506,6 +1506,29 @@ function(
 			});
 		});
 
+		QUnit.test("when a new control is added destroyed and another control with the same id is added again", function (assert) {
+			var sButtonId = "test-button";
+			var oButton1 = new Button(sButtonId);
+			var oButton2;
+			var sFirstOverlayId;
+			oButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			return this.oDesignTime.createOverlay(oButton1)
+				.then(function (oElementOverlay) {
+					sFirstOverlayId = oElementOverlay.getId();
+					oButton1.destroy();
+					oButton2 = new Button(sButtonId);
+					oButton2.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+					return this.oDesignTime.createOverlay(oButton2);
+				}.bind(this))
+				.then(function (oElementOverlay) {
+					assert.notOk(oElementOverlay._bIsBeingDestroyed, "then the second created overlay is not destroyed");
+					assert.notStrictEqual(oElementOverlay.getId(), sFirstOverlayId, "then the second created overlay is returned with a new overlay id");
+				});
+		});
+
 		QUnit.test("when called with params objects as an argument", function (assert) {
 			var oButton = new Button();
 			oButton.placeAt("qunit-fixture");

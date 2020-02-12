@@ -1055,6 +1055,7 @@ function (
 		var sElementId = oElementOverlay.getAssociation('element');
 		if (sElementId in this._mPendingOverlays) { // means that the overlay was destroyed during initialization process
 			this._removeOverlayFromSyncingBatch(oElementOverlay);
+			delete this._mPendingOverlays[sElementId];
 			return;
 		}
 
