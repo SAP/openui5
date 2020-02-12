@@ -109,8 +109,10 @@ sap.ui.define([
 	 *            first method parameter <code>serviceUrl</code> is omitted, but ignored otherwise
 	 * @param {boolean} [mParameters.json=true]
 	 *            If set to <code>true</code>, request payloads will be JSON, XML for <code>false</code>
-	 * @param {string} [mParameters.user] User for the service
-	 * @param {string} [mParameters.password] Password for service
+	 * @param {string} [mParameters.user] <b>Deprecated</b> for security reasons. Use strong server
+	 *            side authentication instead. UserID for the service.
+	 * @param {string} [mParameters.password] <b>Deprecated</b> for security reasons. Use strong
+	 *            server side authentication instead. Password for the service.
 	 * @param {Object<string,string>} [mParameters.headers]
 	 *            Map of custom headers (name/value pairs) like {"myHeader":"myHeaderValue",...}
 	 * @param {boolean} [mParameters.tokenHandling=true] Enable/disable XCSRF-Token handling

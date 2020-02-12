@@ -67,8 +67,10 @@ sap.ui.define([
 	 * 								can be passed with the mParameters object as well: [mParameters.serviceUrl] A serviceURl is required!
 	 * @param {object} [mParameters] (optional) a map which contains the following parameter properties:
 	 * @param {boolean} [mParameters.json] if set true request payloads will be JSON, XML for false (default = false),
-	 * @param {string} [mParameters.user] user for the service,
-	 * @param {string} [mParameters.password] password for service,
+	 * @param {string} [mParameters.user] <b>Deprecated</b> for security reasons. Use strong server
+	 *   side authentication instead. UserID for the service.
+	 * @param {string} [mParameters.password] <b>Deprecated</b> for security reasons. Use strong
+	 *   server side authentication instead. Password for the service.
 	 * @param {Object<string,string>} [mParameters.headers] a map of custom headers like {"myHeader":"myHeaderValue",...},
 	 * @param {boolean} [mParameters.tokenHandling] enable/disable XCSRF-Token handling (default = true),
 	 * @param {boolean} [mParameters.withCredentials] experimental - true when user credentials are to be included in a cross-origin request. Please note that this works only if all requests are asynchronous.
