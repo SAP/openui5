@@ -128,7 +128,7 @@ sap.ui.define([
 			 * The chosen files will be checked against an array of file types.
 			 *
 			 * If at least one file does not fit the file type restriction, the upload is prevented.
-			 * <b>Note:</b> This property is not supported by Edge.
+			 * <b>Note:</b> This property is not supported by Microsoft Edge.
 			 *
 			 * Example: <code>["jpg", "png", "bmp"]</code>.
 			 */
@@ -156,7 +156,7 @@ sap.ui.define([
 			 * The chosen files will be checked against an array of mime types.
 			 *
 			 * If at least one file does not fit the mime type restriction, the upload is prevented.
-			 * <b>Note:</b> This property is not supported by Internet Explorer & Edge.
+			 * <b>Note:</b> This property is not supported by Internet Explorer & Microsoft Edge.
 			 *
 			 * Example: <code>["image/png", "image/jpeg"]</code>.
 			 */
