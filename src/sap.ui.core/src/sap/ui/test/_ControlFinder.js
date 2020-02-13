@@ -102,7 +102,7 @@ sap.ui.define([
      * @private
      */
     _ControlFinder._getControlForElement = function (vElement) {
-        var vSelector = Object.prototype.toString.call(vElement) === "[object String]" ? document.getElementById(vElement) : vElement;
+        var vSelector = Object.prototype.toString.call(vElement) === "[object String]" ? "#" + vElement : vElement;
         var controls = _ControlFinder._getIdentifiedDOMElement(vSelector).control();
         return controls && controls[0];
     };
@@ -143,6 +143,9 @@ sap.ui.define([
      * @private
      */
     _ControlFinder._getIdentifiedDOMElement = function (vSelector) {
+        if (typeof vSelector === "string") {
+            vSelector = vSelector.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1");
+        }
         return $(vSelector).closest("[data-sap-ui]");
     };
 
