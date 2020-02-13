@@ -8562,6 +8562,58 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("Typeahead should be disabled on adroid devices", function (assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		this.stub(Device, "os", {
+			android: true
+		});
+
+		// system under test
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					text: "ipsum alorem"
+				})
+			]
+		});
+
+		// arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oComboBox.focus();
+
+		// act
+		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
+			which: KeyCodes.I,
+			srcControl: oComboBox.getFocusDomRef()
+		});
+
+		// assert
+		assert.notOk(oComboBox._bDoTypeAhead, '_bDoTypeAhead should be set to false');
+
+		oComboBox.open();
+		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
+		var oPickerTextField = oComboBox.getPickerTextField();
+		oPickerTextField.focus();
+		var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+
+		// act
+		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oPickerTextFieldDomRef, {
+			which: KeyCodes.L,
+			srcControl: oPickerTextField
+		});
+
+		assert.notOk(oPickerTextField._bDoTypeAhead, '_bDoTypeAhead should be set to false');
+
+		// cleanup
+		oComboBox.destroy();
+	});
+
 	QUnit.test("it should close the dropdown list when the text field is empty and it was opened by typing text", function (assert) {
 
 		// system under test

@@ -956,7 +956,8 @@ sap.ui.define([
 
 		this._oInputDelegate = {
 			onkeydown: function (oEvent) {
-				this._bDoTypeAhead = this._bAutocompleteEnabled && (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
+				// disable the typeahead feature for android devices due to an issue on android soft keyboard, which always returns keyCode 229
+				this._bDoTypeAhead = !Device.os.android && this._bAutocompleteEnabled && (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
 			},
 			oninput: this._handleTypeAhead
 		};
