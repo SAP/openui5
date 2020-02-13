@@ -388,6 +388,18 @@
 								var sMode = oEvent.getParameter("selectedItem").getKey();
 								oSPC.setStickyMode(sMode);
 							}
+						}),
+						new Select("size-mode-select", {
+							items: [
+								new ListItem({text: "Cozy"}),
+								new ListItem({text: "Compact"})
+							],
+							change: function (oEvent) {
+								var bCompactMode = oEvent.getParameter("selectedItem").getText() === "Compact";
+
+								oSPC.toggleStyleClass("sapUiSizeCompact", bCompactMode);
+								oSPC.rerender();
+							}
 						})
 					],
 					appointments: {

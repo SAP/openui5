@@ -1,4 +1,5 @@
-@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight: 3rem;
+@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight_Compact: 3rem;
+@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight: 2.75rem;
 @_sap_m_SinglePlanningCalendarGrid_HoursBackground: @sapUiListBackground;
 
 .sapMPCHead, .sapMSinglePCColumnHeader{
@@ -26,6 +27,15 @@
 		}
 	}
 }
+
+.sapUiSizeCompact {
+	.sapMSinglePCStickyNavBarAndColHeaders {
+		.sapMPCHead {
+			top: -@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight_Compact;
+		}
+	}
+}
+
 
 html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel):hover {
   background-color: darken(@sapUiContentForegroundColor,5);
