@@ -1151,7 +1151,7 @@ function(
 		});
 
 		QUnit.test("when the overlay for a root element cannot be created", function(assert) {
-			var fnDone = assert.async();
+			var fnDone = assert.async(2);
 			var sErrorMessage = "some error";
 			sandbox.stub(DesignTime.prototype, "createOverlay").callsFake(function() {
 				return Promise.reject(sErrorMessage);
@@ -1165,10 +1165,14 @@ function(
 					})
 				)
 				.callsFake(function () {
-					assert.ok(true);
+					assert.ok(true, "then error message is written to console");
 					fnDone();
 				});
 
+			this.oDesignTime.attachSyncFailed(function () {
+				assert.ok(true, "then 'syncFailed' event is fired");
+				fnDone();
+			});
 			this.oDesignTime.addRootElement(this.oLayout2);
 		});
 	});

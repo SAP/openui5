@@ -645,6 +645,9 @@ function (
 					);
 					Log.error(Util.errorToString(oError));
 					this._oTaskManager.cancel(iTaskId);
+					this.fireSyncFailed({
+						error: oError
+					});
 				}.bind(this)
 			);
 	};
@@ -785,11 +788,6 @@ function (
 				// If it crashes by any reason, we must always remove pending Promise, otherwise
 				// potential second attempt for creating overlay will not be possible
 				delete this._mPendingOverlays[sElementId];
-
-				// TODO: move away SyncFailed event from here
-				this.fireSyncFailed({
-					error: oError
-				});
 
 				this._oTaskManager.cancel(iTaskId);
 
