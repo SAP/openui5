@@ -55,6 +55,10 @@ sap.ui.define(function() {
 			ODataPropertyBinding: {
 				title: "sap.ui.model.odata.v2.ODataPropertyBinding - QUnit tests"
 			},
+			ODataPropertyBindingNoFakeService: {
+				title: "sap.ui.model.odata.ODataPropertyBinding"
+					+ " (ODataPropertyBindingNoFakeService.qunit)"
+			},
 			ODataV2Model: {
 				title: "sap.ui.model.odata.v2.ODataModel - Sinon QUnit tests"
 			},

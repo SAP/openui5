@@ -93,15 +93,19 @@ sap.ui.define([
 	 * Setter for context
 	 */
 	ODataPropertyBinding.prototype.setContext = function(oContext) {
+		var bForceUpdate,
+			oOldContext = this.oContext;
+
 		if (oContext && oContext.isPreliminary()) {
 			return;
 		}
 
 		if (Context.hasChanged(this.oContext, oContext)) {
-			sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
 			this.oContext = oContext;
 			if (this.isRelative()) {
-				this.checkUpdate();
+				bForceUpdate = !!(oOldContext !== oContext
+					&& this.getDataState().getControlMessages().length);
+				this.checkUpdate(bForceUpdate);
 			}
 		}
 	};
