@@ -2108,7 +2108,6 @@ sap.ui.define([
 			init: function(){
 				UIComponent.prototype.init.apply(this, arguments);
 				this.setModel(new JSONModel({}));
-				this.getRouter().initialize();
 			}
 		});
 
@@ -2118,54 +2117,60 @@ sap.ui.define([
 
 		this.oRouter = oComponent.getRouter();
 
+		var oHomeRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("home"), "_routeMatched");
 		var oSecondRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("second"), "_routeMatched");
-		this.oRouter.attachTitleChanged(oTitleChangedStub);
-		this.oRouter.navTo("second");
 
-		oSecondRouteMatchedSpy.getCall(0).returnValue.then(function () {
-			assert.strictEqual(oTitleChangedStub.callCount, 0, "The title change event shouldn't fired, as title isn't resolved");
+		this.oRouter.initialize();
 
-			oComponent.getModel().setProperty("/secondViewTitle", "Foo");
-			assert.strictEqual(oTitleChangedStub.callCount, 1, "The title change event should be fired the first time");
-			assert.strictEqual(oTitleChangedStub.getCall(0).args[0].getParameter("title"), "Foo", "The title 'Foo' should be correct");
+		oHomeRouteMatchedSpy.getCall(0).returnValue.then(function(){
+			this.oRouter.attachTitleChanged(oTitleChangedStub);
+			this.oRouter.navTo("second");
 
-			var oThirdRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("third"), "_routeMatched");
-			this.oRouter.navTo("third");
-			oThirdRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-				assert.strictEqual(oTitleChangedStub.callCount, 2, "The title change event should be fired the second time");
-				assert.strictEqual(oTitleChangedStub.getCall(1).args[0].getParameter("title"), "TitleView1", "The title 'TitleView1' should be correct");
+			oSecondRouteMatchedSpy.getCall(0).returnValue.then(function () {
+				assert.strictEqual(oTitleChangedStub.callCount, 0, "The title change event shouldn't fired, as title isn't resolved");
 
-				var oChildComponent = oObject.view.getComponentInstance();
-				var oChildRouter = oChildComponent.getRouter();
-				var oView1RouteMatchedSpy = sinon.spy(oChildRouter.getRoute("view2"), "_routeMatched");
+				oComponent.getModel().setProperty("/secondViewTitle", "Foo");
+				assert.strictEqual(oTitleChangedStub.callCount, 1, "The title change event should be fired the first time");
+				assert.strictEqual(oTitleChangedStub.getCall(0).args[0].getParameter("title"), "Foo", "The title 'Foo' should be correct");
 
-				oChildRouter.navTo("view2");
-				oView1RouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-					assert.strictEqual(oTitleChangedStub.callCount, 2, "The title change event shouldn't fired, as title isn't resolved");
+				var oThirdRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("third"), "_routeMatched");
+				this.oRouter.navTo("third");
+				oThirdRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
+					assert.strictEqual(oTitleChangedStub.callCount, 2, "The title change event should be fired the second time");
+					assert.strictEqual(oTitleChangedStub.getCall(1).args[0].getParameter("title"), "TitleView1", "The title 'TitleView1' should be correct");
 
-					var oGrandChildComponent = oObject.view.getComponentInstance();
+					var oChildComponent = oObject.view.getComponentInstance();
+					var oChildRouter = oChildComponent.getRouter();
+					var oView1RouteMatchedSpy = sinon.spy(oChildRouter.getRoute("view2"), "_routeMatched");
 
-					var oGrandChildRouter = oGrandChildComponent.getRouter();
-					var oGrandChildView2RouteMatchedSpy = sinon.spy(oGrandChildRouter.getRoute("view2"), "_routeMatched");
+					oChildRouter.navTo("view2");
+					oView1RouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
+						assert.strictEqual(oTitleChangedStub.callCount, 2, "The title change event shouldn't fired, as title isn't resolved");
 
-					oGrandChildRouter.navTo("view2");
-					oGrandChildView2RouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-						assert.strictEqual(oTitleChangedStub.callCount, 3, "The title change event should be the third time");
-						assert.strictEqual(oTitleChangedStub.getCall(2).args[0].getParameter("title"), "MyGrandChildView2Title", "The title 'MyGrandChildView2Title' should be correct");
+						var oGrandChildComponent = oObject.view.getComponentInstance();
 
-						oGrandChildComponent.getModel().setProperty("/GrandChildComponentViewTitle", "Bar");
-						setTimeout(function() {
-							assert.strictEqual(oTitleChangedStub.callCount, 3, "The title change event shouldn't be fired as Router has navigated to a different route");
+						var oGrandChildRouter = oGrandChildComponent.getRouter();
+						var oGrandChildView2RouteMatchedSpy = sinon.spy(oGrandChildRouter.getRoute("view2"), "_routeMatched");
 
-							oTitleChangedStub.reset();
-							oSecondRouteMatchedSpy.restore();
-							oComponent.destroy();
+						oGrandChildRouter.navTo("view2");
+						oGrandChildView2RouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
+							assert.strictEqual(oTitleChangedStub.callCount, 3, "The title change event should be the third time");
+							assert.strictEqual(oTitleChangedStub.getCall(2).args[0].getParameter("title"), "MyGrandChildView2Title", "The title 'MyGrandChildView2Title' should be correct");
 
-							done();
-						}, 0);
+							oGrandChildComponent.getModel().setProperty("/GrandChildComponentViewTitle", "Bar");
+							setTimeout(function() {
+								assert.strictEqual(oTitleChangedStub.callCount, 3, "The title change event shouldn't be fired as Router has navigated to a different route");
+
+								oTitleChangedStub.reset();
+								oSecondRouteMatchedSpy.restore();
+								oComponent.destroy();
+
+								done();
+							}, 0);
+						});
 					});
 				});
-			});
+			}.bind(this));
 		}.bind(this));
 	});
 
