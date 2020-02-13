@@ -3731,7 +3731,6 @@ sap.ui.define([
 			if (aSorters.length > 0) {
 				oBinding.sort(aSorters);
 			}
-			this.refreshRows();
 		}
 	};
 

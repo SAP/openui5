@@ -4431,7 +4431,7 @@ sap.ui.define([
 		oTable.bOutput = true;
 		oTable._mTimeouts.refreshRowsCreateRows = true;
 		oTable.refreshRows(oEvent);
-		assert.equal(oTable.getFirstVisibleRow(), 0, "refreshRows() executed with ChangeReason.Filter");
+		assert.equal(oTable.getFirstVisibleRow(), 0, "#refreshRows called with ChangeReason.Filter");
 	});
 
 	QUnit.test("Test for function that cannot be used programmatically", function(assert) {
@@ -4489,12 +4489,57 @@ sap.ui.define([
 		assert.ok(!oTable.getShowNoData());
 	});
 
-	QUnit.test("test _onPersoApplied", function(assert) {
+	QUnit.test("#_onPersoApplied", function(assert) {
 		var oColumn = oTable.getColumns()[0];
+		var oBinding = oTable.getBinding("rows");
+		var oBindingSort = sinon.spy(oBinding, "sort");
+		var iTimeout;
+
 		oColumn.setSorted(true);
 		oTable._onPersoApplied();
-		assert.equal(oColumn.getSortProperty(), "lastName", "Sorting is true");
-		assert.equal(oColumn.getSortOrder(), "Ascending", "Ascending order applied");
+
+		assert.ok(oBindingSort.calledOnce, "Binding#sort was called");
+
+		if (oBindingSort.called) {
+			var aSorters = oBindingSort.getCall(0).args[0];
+
+			assert.equal(aSorters.length, 1, "One sorter was passed to Binding#sort");
+			assert.strictEqual(aSorters[0].sPath, oColumn.getSortProperty(), "The sorter has the correct path");
+			assert.strictEqual(aSorters[0].bDescending, oColumn.getSortOrder() === SortOrder.Descending, "The sorter has the correct sort order");
+		}
+
+		return Promise.race([
+			new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					assert.ok(true, "_rowsUpdated event was fired");
+					clearTimeout(iTimeout);
+					resolve();
+				});
+			}), new Promise(function(resolve) {
+				iTimeout = setTimeout(function() {
+					assert.ok(false, "_rowsUpdated event should have been fired");
+					resolve();
+				}, 1000);
+			})
+		]).then(function() {
+			oColumn.setVisible(false);
+			oTable._onPersoApplied();
+
+			return Promise.race([
+				new Promise(function(resolve) {
+					oTable.attachEventOnce("_rowsUpdated", function() {
+						assert.ok(true, "_rowsUpdated event was fired");
+						clearTimeout(iTimeout);
+						resolve();
+					});
+				}), new Promise(function(resolve) {
+					iTimeout = setTimeout(function() {
+						assert.ok(false, "_rowsUpdated event should have been fired");
+						resolve();
+					}, 1000);
+				})
+			]);
+		});
 	});
 
 	QUnit.test("BusyIndicator handling", function(assert) {
@@ -4606,7 +4651,6 @@ sap.ui.define([
 	QUnit.test("NoData handling", function(assert) {
 		var sNoDataClassOfTable = "sapUiTableEmpty";
 		var oBinding = oTable.getBinding("rows");
-		var oBindingInfo = oTable.getBindingInfo("rows");
 		var oGetBindingLength = sinon.stub(oBinding, "getLength");
 		var oBindingIsA = sinon.stub(oBinding, "isA");
 		var oClock = sinon.useFakeTimers();
@@ -4674,11 +4718,6 @@ sap.ui.define([
 		oBindingIsA.restore();
 		oTable.unbindRows();
 		testUpdateTotalRowCount(true, "Binding removed");
-
-		// Calling refreshRows without reason after bindRows: NoData area will be hidden.
-		oTable.bindRows(oBindingInfo);
-		oTable.refreshRows();
-		testUpdateTotalRowCount(false, "Calling refreshRows without reason after bindRows");
 
 		// Cleanup
 		oClock.restore();
