@@ -47,7 +47,11 @@
 @sapContent_ForegroundBorderColor: lighten(@sapBaseColor, 30);
 @sapContent_ForegroundTextColor: @sapTextColor;
 @sapContent_BadgeBackground: @sapAccentColor3;
+@sapContent_BadgeTextColor: contrast(@sapContent_BadgeBackground, lighten(@sapTextColor, 2), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapContent_Selected_Hover_Background: darken(@sapContent_Selected_Background, 3);
 @sapContent_UnratedColor: lighten(@sapContent_ForegroundColor, 25);
+@sapContent_Illustrative_Color1: #427cac;
+@sapContent_Illustrative_Color2: #93b7d6;
 
 @sapShell_Background: lighten(saturate(@sapBaseColor, 4), 20.3);
 @sapShell_BackgroundImage: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 15), 24), lighten(saturate(@sapShell_Background, 24), 22.7));
@@ -62,6 +66,10 @@
 @sapButton_Emphasized_Background: lighten(saturate(@sapPrimary2, 10), 10);
 @sapButton_Emphasized_BorderColor: darken(@sapButton_Emphasized_Background, 5);
 @sapButton_Emphasized_TextColor: lighten(@sapTextColor, 2);
+@sapButton_Track_Selected_Background: @sapButton_Selected_Background;
+@sapButton_Track_Background: darken(@sapButton_Background, 2);
+@sapButton_TokenBackground: @sapButton_Background;
+@sapButton_TokenBorderColor: lighten(@sapButton_Background, 15);
 
 @sapField_Background: lighten(@sapBaseColor, 5);
 @sapField_BorderColor: lighten(@sapField_Background, 20);
@@ -83,6 +91,7 @@
 @sapList_SelectionBackgroundColor: lighten(saturate(@sapList_Background, 10), 10);
 @sapList_Background: @sapBaseColor;
 @sapList_Hover_Background: contrast(@sapList_Background, lighten(@sapList_Background, 3), darken(@sapList_Background, 3));
+@sapList_AlternatingBackground: lighten(@sapList_Background,2);
 @sapList_GroupHeaderBorderColor: lighten(@sapList_BorderColor, 13.1);
 @sapList_TableGroupHeaderBackground: darken(@sapList_Background, 2);
 @sapList_TableGroupHeaderBorderColor: @sapList_GroupHeaderBorderColor;
@@ -105,6 +114,7 @@
 @sapTile_TitleTextColor: @sapTextColor;
 @sapTile_TextColor: darken(@sapTile_TitleTextColor, 11.5);
 @sapTile_IconColor: darken(@sapContent_IconColor, 15);
+@sapTile_SeparatorColor: lighten(@sapTile_Background, 12);
 
 @sapChart_Bad: #f55556;
 @sapChart_Critical: #f4ac44;
@@ -114,6 +124,10 @@
 // =====================================
 // SAP legend colors
 // =====================================
+
+@sapLegend_WorkingBackground: lighten(@sapList_Background, 8);
+@sapLegend_NonWorkingBackground: lighten(@sapList_Background,2);
+
 @sapLegendColor1: #ffb914;
 @sapLegendColor2: #f58c4b;
 @sapLegendColor3:#d88b8b;
@@ -134,3 +148,24 @@
 @sapLegendColor18: #aabc78;
 @sapLegendColor19: #6aafcd;
 @sapLegendColor20: #a2c0f2;
+
+@sapLegendBackgroundColor1: #473200;
+@sapLegendBackgroundColor2: #552405;
+@sapLegendBackgroundColor3: #521c1c;
+@sapLegendBackgroundColor4: #56331D;
+@sapLegendBackgroundColor5: #400c35;
+@sapLegendBackgroundColor6: #003247;
+@sapLegendBackgroundColor7: #0b4141;
+@sapLegendBackgroundColor8: #29340c;
+@sapLegendBackgroundColor9: #1F252A;
+@sapLegendBackgroundColor10: #3c2a38;
+@sapLegendBackgroundColor11: #684e12;
+@sapLegendBackgroundColor12: #853808;
+@sapLegendBackgroundColor13: #704b4b;
+@sapLegendBackgroundColor14: #88502e;
+@sapLegendBackgroundColor15: #724168;
+@sapLegendBackgroundColor16: #546074;
+@sapLegendBackgroundColor17: #2c6868;
+@sapLegendBackgroundColor18: #576432;
+@sapLegendBackgroundColor19: #36677d;
+@sapLegendBackgroundColor20: #003895;
