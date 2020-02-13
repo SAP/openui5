@@ -148,7 +148,7 @@ sap.ui.define([
 		var oDraggedOverlay = this.getDraggedOverlay();
 		if (oTargetOverlay.getElement() !== oDraggedOverlay.getElement()
 				&& oTargetOverlay !== this._oPreviousTarget) {
-			this.getElementMover().repositionOn(oDraggedOverlay, oTargetOverlay, this.getInsertAfterElement());
+			this.getElementMover().repositionOn(oDraggedOverlay, oTargetOverlay);
 		}
 		this._oPreviousTarget = oTargetOverlay;
 	};
