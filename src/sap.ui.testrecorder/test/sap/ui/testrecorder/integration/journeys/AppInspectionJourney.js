@@ -167,8 +167,19 @@ sap.ui.define([
 		// reset setting to enabled
 		When.onTheIFrameInspectPage.iOpenTheSettingsDialog();
 		When.onTheIFrameInspectPage.iSelectPOMethodPreference();
+	});
+
+	opaTest("Should show multiple snippets", function (Given, When, Then) {
+		When.onTheIFrameInspectPage.iClearSnippets(); // clear values from with previous tests
+		When.onTheIFrameInspectPage.iSwitchMultiple();
+
+		When.onTheAppPage.iActOnControl(mItems[0].selector, "Highlight");
+		When.onTheAppPage.iActOnControl(mItems[2].selector.globalId, "Highlight");
+
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet("multi", Dialects.UIVERI5, "Highlight");
+
+		When.onTheIFrameInspectPage.iSwitchMultiple();
 
 		Then.iTeardownMyApp();
 	});
-
 });

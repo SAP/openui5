@@ -88,6 +88,31 @@ sap.ui.define([
 						},
 						errorMessage: "Cannot change the " + sPreference + " preference"
 					});
+				},
+				iClearSnippets: function () {
+					this.waitFor({
+						matchers: function () {
+							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+								controlType: "sap.m.Button",
+								properties: {
+									text: "Clear"
+								}
+							});
+						}.bind(this),
+						actions: new Press(),
+						errorMessage: "Cannot press the clear snippets button"
+					});
+				},
+				iSwitchMultiple: function () {
+					this.waitFor({
+						matchers: function () {
+							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+								controlType: "sap.m.Switch"
+							});
+						}.bind(this),
+						actions: new Press(),
+						errorMessage: "Cannot press the switch for multi snippets"
+					});
 				}
 			},
 			assertions: {

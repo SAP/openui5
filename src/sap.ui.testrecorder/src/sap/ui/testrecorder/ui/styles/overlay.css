@@ -116,8 +116,12 @@ body {
 	overflow: scroll !important;
 }
 
-.ttCommonInfoPanel .sapMITB {
-	top: 2.75rem;
+.ttCommonInfoPanel .sapMITHWrapper {
+	padding: 0 !important;
+}
+
+.ttCommonInfoPanel .sapMITB.sapUiResponsiveContentPadding > .sapMITBContainerContent > .sapMITBContent {
+	padding: 1rem 0 !important;
 }
 
 .sapMPanelContent:not(.sapMPanelBGTransparent) {

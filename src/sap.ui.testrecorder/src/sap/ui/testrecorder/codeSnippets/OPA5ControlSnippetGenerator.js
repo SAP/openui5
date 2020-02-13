@@ -3,25 +3,23 @@
  */
 
 sap.ui.define([
-	"sap/ui/testrecorder/codeSnippets/CodeSnippetGenerator",
+	"sap/ui/testrecorder/codeSnippets/ControlSnippetGenerator",
 	"sap/ui/testrecorder/interaction/Commands"
-], function (CodeSnippetGenerator, Commands) {
+], function (ControlSnippetGenerator, Commands) {
 	"use strict";
 
 	/**
 	 * @class  generates a code snippet relevant to OPA5
 	 */
-	var OPA5CodeSnippetGenerator = CodeSnippetGenerator.extend("sap.ui.testrecorder.codeSnippets.OPA5CodeSnippetGenerator", {});
+	var OPA5ControlSnippetGenerator = ControlSnippetGenerator.extend("sap.ui.testrecorder.codeSnippets.OPA5ControlSnippetGenerator", {});
 
 	/**
 	 * @param {object} mData data from which to generate a snippet
-	 * @param {string} mData.controlSelector control selector in string format
+	 * @param {object} mData.controlSelector control selector in string format
 	 * @param {string} mData.action name of the action to record for the control
-	 * @param {object} oOptions.settings preferences for the snippet e.g. formatting, method wrapping
-	 * @param {boolean} mData.settings.formatAsPOMethod true if selectors should be wrapped in a page object method. Default value is true.
 	 * @returns {string} a stringified code snippet
 	 */
-	OPA5CodeSnippetGenerator.prototype._generate = function (mData) {
+	OPA5ControlSnippetGenerator.prototype._generate = function (mData) {
 		var sIdSuffix = mData.controlSelector.interaction && mData.controlSelector.interaction.idSuffix;
 		var sAction = this._getActionAsString(mData.action, sIdSuffix);
 		if (sAction) {
@@ -32,16 +30,10 @@ sap.ui.define([
 		delete mData.controlSelector.interaction;
 
 		var sSelector = this._getSelectorAsString(mData.controlSelector);
-		var sSnippet = "this.waitFor(" + this._getSelectorWithAction(sSelector, sAction) + ");";
-
-		if (mData.settings && mData.settings.formatAsPOMethod) {
-			return this._asPOMethod(sSnippet);
-		} else {
-			return sSnippet;
-		}
+		return "this.waitFor(" + this._getSelectorWithAction(sSelector, sAction) + ");";
 	};
 
-	OPA5CodeSnippetGenerator.prototype._getActionAsString = function (sAction, sIdSuffix) {
+	OPA5ControlSnippetGenerator.prototype._getActionAsString = function (sAction, sIdSuffix) {
 		sIdSuffix = sIdSuffix ? 'idSuffix: "' + sIdSuffix + '"' : "";
 		var sParams;
 		switch (sAction) {
@@ -56,9 +48,9 @@ sap.ui.define([
 		}
 	};
 
-	OPA5CodeSnippetGenerator.prototype._getSelectorWithAction = function (sSelector, sAction) {
+	OPA5ControlSnippetGenerator.prototype._getSelectorWithAction = function (sSelector, sAction) {
 		return sSelector.replace('actions: []', 'actions: ' + sAction);
 	};
 
-	return new OPA5CodeSnippetGenerator();
+	return new OPA5ControlSnippetGenerator();
 });
