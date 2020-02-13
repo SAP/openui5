@@ -124,7 +124,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.oPanel.getExpandable(), true, "should set the expandable property to true");
-		assert.notStrictEqual(this.oPanel.oIconCollapsed, undefined, "should create an icon");
+		assert.notStrictEqual(this.oPanel.oButtonCollapsed, undefined, "should create an icon");
 	});
 
 	QUnit.test("Call to setExpanded() with null value", function (assert) {
@@ -237,7 +237,7 @@ sap.ui.define([
 
 		this.createPanel({ expanded: false });
 		this.oPanel.attachExpand(fnEventSpy);
-		this.oPanel._getIcon().firePress();
+		this.oPanel._getButton().firePress();
 
 		assert.ok(bPassedArg, "Event should be triggered by an user interaction");
 	});
@@ -363,30 +363,23 @@ sap.ui.define([
 		assert.strictEqual($panel.find(".sapMPanelInfoTB").length, 1, "should have a toolbar with sapMPanelInfoToolbar class");
 	});
 
-	QUnit.test("Expandable Panel when expanded", function(assert) {
+	QUnit.test("Expandable Panel expanded/collapsed", function(assert) {
+		// Act
 		this.oPanel.setExpandable(true);
 		this.oPanel.setExpanded(true);
-
 		sap.ui.getCore().applyChanges();
 
-		var $panel = this.oPanel.$();
+		var oButton = this.oPanel._getButton();
 
-		assert.strictEqual($panel.find(".sapMPanelExpandableIcon").length, 1, "should have sapMPanelExpandableIcon class present once");
-		assert.strictEqual($panel.find(".sapMPanelExpandableIconExpanded").length, 1, "should have sapMPanelExpandableIconExpanded class present once");
-		assert.strictEqual($panel.find(".sapMPanelWrappingDivExpanded").length, 1, "should have sapMPanelWrappingDivExpanded class present once");
-	});
+		// Assert
+		assert.strictEqual(oButton.getIcon(), "sap-icon://slim-arrow-down", "should have sapMPanelExpandableButton class present once");
 
-	QUnit.test("Expandable Panel when collapsed", function(assert) {
-		this.oPanel.setExpandable(true);
+		// Act
 		this.oPanel.setExpanded(false);
-
 		sap.ui.getCore().applyChanges();
 
-		var $panel = this.oPanel.$();
-
-		assert.strictEqual($panel.find(".sapMPanelExpandableIcon").length, 1, "should have sapMPanelExpandableIcon class present once");
-		assert.strictEqual($panel.find(".sapMPanelExpandableIconExpanded").length, 0, "should NOT have sapMPanelExpandableIconExpanded class present");
-		assert.strictEqual($panel.find(".sapMPanelWrappingDivExpanded").length, 0, "should NOT have sapMPanelWrappingDivExpanded class present");
+		// Assert
+		assert.strictEqual(oButton.getIcon(), "sap-icon://slim-arrow-right", "should have sapMPanelExpandableButton class present once");
 	});
 
 	QUnit.test("Panel with solid backgroundDesign", function(assert) {
@@ -699,14 +692,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(oPanel.$().attr("aria-labelledby"), sPanelHeaderId, "should have a labelledby reference to the header");
-		assert.strictEqual(oPanel.oIconCollapsed.$().attr("aria-labelledby"), sPanelHeaderId, "should have collapse button having a labelledby reference to the header");
+		assert.strictEqual(oPanel.oButtonCollapsed.$().attr("aria-labelledby"), sPanelHeaderId, "should have collapse button having a labelledby reference to the header");
 
 		oPanel.setAggregation("headerToolbar", this.createToolbar());
 		sap.ui.getCore().applyChanges();
 		sHeaderToolbarTitleId = oPanel.getHeaderToolbar().getTitleId();
 
 		assert.strictEqual(oPanel.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have a labelledby reference to the toolbar title");
-		assert.strictEqual(oPanel.oIconCollapsed.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the toolbar title");
+		assert.strictEqual(oPanel.oButtonCollapsed.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the toolbar title");
 
 		// Initialize new header toolbar
 		oPanel.setAggregation("headerToolbar", this.createToolbar());
@@ -715,7 +708,7 @@ sap.ui.define([
 
 		assert.notStrictEqual(sHeaderToolbarTitleId, sNewHeaderToolbarTitleId, "The new header toolbar should have different id than the initial one");
 		assert.strictEqual(oPanel.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have a labelledby reference to the new toolbar title");
-		assert.strictEqual(oPanel.oIconCollapsed.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the new toolbar title");
+		assert.strictEqual(oPanel.oButtonCollapsed.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the new toolbar title");
 
 		oPanel.destroy();
 	});
@@ -730,7 +723,7 @@ sap.ui.define([
 		var sHeaderToolbarTitleId = this.oPanel.getHeaderToolbar().getTitleId();
 
 		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have a labelledby reference to the toolbar title");
-		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
+		assert.strictEqual(this.oPanel.oButtonCollapsed.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
 	});
 
 	QUnit.test("Expandable panel with headerText and reinitialized header toolbar", function(assert) {
@@ -750,7 +743,7 @@ sap.ui.define([
 
 		assert.notStrictEqual(sHeaderToolbarTitleId, sNewHeaderToolbarTitleId, "The new header toolbar should have different id than the initial one");
 		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have a labelledby reference to the new toolbar title");
-		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
+		assert.strictEqual(this.oPanel.oButtonCollapsed.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
 	});
 
 	QUnit.test("Expandable panel with role Form", function(assert) {
@@ -763,7 +756,7 @@ sap.ui.define([
 		sHeaderToolbarTitleId = this.oPanel.getHeaderToolbar().getTitleId();
 
 		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have a labelledby reference to the new toolbar title");
-		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
+		assert.strictEqual(this.oPanel.oButtonCollapsed.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
 	});
 
 	QUnit.test("Expandable panel with aria-controls attribute", function(assert) {
@@ -773,7 +766,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		sContentId = this.oPanel.getDomRef("content").id;
-		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-controls"), sContentId,
+		assert.strictEqual(this.oPanel.oButtonCollapsed.$().attr("aria-controls"), sContentId,
 				"an aria-controls attribute with reference to the content should be added to the collapse button");
 	});
 
