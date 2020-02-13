@@ -602,6 +602,77 @@ sap.ui.define([
 			return this;
 		};
 
+		/*
+		 * Overrides the setter in order to propagate the value to the inner button instance.
+		 *
+		 * @param {string} sAriaLabelledBy the passed value
+		 * @override
+		 * @return {sap.m.MenuButton} This instance for chaining
+		 */
+		MenuButton.prototype.addAriaLabelledBy = function(sAriaLabelledBy) {
+			this.getAggregation("_button").addAssociation("ariaLabelledBy", sAriaLabelledBy);
+			return Control.prototype.addAssociation.call(this, "ariaLabelledBy", sAriaLabelledBy);
+		};
+
+		/*
+		 * Overrides the setter in order to propagate the value to the inner button instance.
+		 *
+		 * @param {string} sAriaDescribedBy the passed value
+		 * @override
+		 * @return {sap.m.MenuButton} This instance for chaining
+		 */
+		MenuButton.prototype.addAriaDescribedBy = function(sAriaDescribedBy) {
+			this.getAggregation("_button").addAssociation("ariaDescribedBy", sAriaDescribedBy);
+			return Control.prototype.addAssociation.call(this, "ariaDescribedBy", sAriaDescribedBy);
+		};
+
+		/*
+		 * Overrides the setter in order to propagate the value to the inner button instance.
+		 *
+		 * @param {string} sAriaLabelledBy the passed value
+		 * @override
+		 * @return {sap.m.MenuButton} This instance for chaining
+		 */
+		MenuButton.prototype.removeAriaLabelledBy = function(sAriaLabelledBy) {
+			this.getAggregation("_button").removeAssociation("ariaLabelledBy", sAriaLabelledBy);
+			return Control.prototype.removeAssociation.call(this, "ariaLabelledBy", sAriaLabelledBy);
+		};
+
+		/*
+		 * Overrides the setter in order to propagate the value to the inner button instance.
+		 *
+		 * @param {string} sAriaDescribedBy the passed value to be removed
+		 * @override
+		 * @return {sap.m.MenuButton} This instance for chaining
+		 */
+		MenuButton.prototype.removeAriaDescribedBy = function(sAriaDescribedBy) {
+			this.getAggregation("_button").removeAssociation("ariaDescribedBy", sAriaDescribedBy);
+			return Control.prototype.removeAssociation.call(this, "ariaDescribedBy", sAriaDescribedBy);
+		};
+
+		/*
+		 * Overrides the setter in order to propagate the value to the inner button instance.
+		 *
+		 * @param {string} sAriaLabelledBy the passed value to be removed
+		 * @override
+		 * @return {sap.m.MenuButton} This instance for chaining
+		 */
+		MenuButton.prototype.removeAllAriaLabelledBy = function(sAriaLabelledBy) {
+			this.getAggregation("_button").removeAllAssociation("ariaLabelledBy");
+			return Control.prototype.removeAllAssociation.call(this, "ariaLabelledBy");
+		};
+
+		/*
+		 * Overrides the setter in order to propagate the value to the inner button instance.
+		 *
+		 * @override
+		 * @return {sap.m.MenuButton} This instance for chaining
+		 */
+		MenuButton.prototype.removeAllAriaDescribedBy = function() {
+			this.getAggregation("_button").removeAllAssociation("ariaDescribedBy");
+			return Control.prototype.removeAllAssociation.call(this, "ariaDescribedBy");
+		};
+
 		MenuButton.prototype.getFocusDomRef = function() {
 			return this._getButtonControl().getDomRef();
 		};
