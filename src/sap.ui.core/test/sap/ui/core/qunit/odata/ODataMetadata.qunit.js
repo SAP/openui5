@@ -475,11 +475,15 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("_getEntityAssociationEnd", function (assert) {
-		var oMetadata = this.oMetadata;
+	QUnit.test("_getEntityAssociationEnd - metadata not loaded", function (assert) {
+		this.mock(this.oMetadata).expects("_checkMetadataLoaded").withExactArgs().returns(false);
 
-		// as long as metadata are not loaded _getEntityAssociationEnd() returns null
-		assert.strictEqual(oMetadata._getEntityAssociationEnd(), null);
+		// code under test
+		assert.strictEqual(this.oMetadata._getEntityAssociationEnd(), null);
+	});
+
+	QUnit.test("_getEntityAssociationEnd - metadata loaded", function (assert) {
+		var oMetadata = this.oMetadata;
 
 		return oMetadata.loaded().then(function () {
 			var oSalesOrderEntityType = oMetadata._getEntityTypeByName("GWSAMPLE_BASIC.SalesOrder"),
@@ -537,14 +541,17 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("_fillElementCaches", function (assert) {
-		var oMetadata = this.oMetadata;
+	QUnit.test("_fillElementCaches - metadata not loaded", function (assert) {
+		this.mock(this.oMetadata).expects("_checkMetadataLoaded").withExactArgs().returns(false);
 
 		// code under test
-		oMetadata._fillElementCaches();
+		this.oMetadata._fillElementCaches();
 
-		// as long as metadata is not loaded nothing is done
-		assert.strictEqual(oMetadata._entitySetMap, undefined);
+		assert.strictEqual(this.oMetadata._entitySetMap, undefined);
+	});
+
+	QUnit.test("_fillElementCaches - metadata loaded", function (assert) {
+		var oMetadata = this.oMetadata;
 
 		return oMetadata.loaded().then(function () {
 			var oEntitySetMap,
