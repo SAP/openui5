@@ -128,6 +128,7 @@ sap.ui.define([
 			 * The chosen files will be checked against an array of file types.
 			 *
 			 * If at least one file does not fit the file type restriction, the upload is prevented.
+			 * <b>Note:</b> This property is not supported by Edge.
 			 *
 			 * Example: <code>["jpg", "png", "bmp"]</code>.
 			 */
