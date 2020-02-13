@@ -3,6 +3,8 @@
 /* Base theme                   */
 /* ============================ */
 
+@_sap_m_Table_SelNavColWidth: 3rem;
+
 .sapMListTbl {
 	width: 100%;
 	border-collapse: separate;
@@ -254,7 +256,7 @@ html[data-sap-ui-browser='ie11'] .sapMListTblNavigatedCell > .sapMLIBNavigated {
 
 .sapMListTblSelCol,
 .sapMListTblHasNav .sapMListTblNavCol {
-	width: 3rem;
+	width: @_sap_m_Table_SelNavColWidth;
 }
 
 .sapMLIB.sapMListTblRow {
