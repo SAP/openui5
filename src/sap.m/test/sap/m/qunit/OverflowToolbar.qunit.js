@@ -2540,13 +2540,20 @@ sap.ui.define([
 	QUnit.test("Size of a visible control reported correctly", function (assert) {
 		// Arrange
 		var oTestButton = new Button({width: "200px"}),
-			oOTB = createOverflowToolbar({}, [oTestButton]);
+			oOTB = createOverflowToolbar({}, [oTestButton]),
+			oSpy = this.spy(OverflowToolbar, "_getControlWidth"),
+			oMathSpy = this.spy(Math, "round");
 
 		oTestButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200);
+		assert.ok(oSpy.called, "_getControlWidth is called for more precise measuring of control width");
+		assert.ok(oMathSpy.called, "Width value is rounded");
+
+		// Clean up
+		oSpy.restore();
 	});
 
 	QUnit.test("Size of an invisible control reported correctly", function (assert) {
@@ -2569,6 +2576,8 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton, 333), 333);
+		assert.ok(OverflowToolbar._getControlWidth(oTestButton) === null,
+			"_getControlWidth returns null if the controls does not have DOM reference");
 	});
 
 	QUnit.test("Size of a ToolbarSpacer with specified witdh is reported correctly", function (assert) {

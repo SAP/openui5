@@ -1401,13 +1401,13 @@ sap.ui.define([
 			iSpacerWidth = parseInt(oControl.$().css('width'));
 			// If spacer is already rendered and it has specified width, take it for calculations
 			iMinWidth = (oControl.getWidth() && iSpacerWidth) ? iSpacerWidth : 0;
-			iOptimalWidth = iMinWidth + (oControl.$().outerWidth(true) - oControl.$().outerWidth());
+			iOptimalWidth = OverflowToolbar._getOptimalWidthOfShrinkableControl(oControl, iMinWidth);
 		// For elements with LayoutData get minWidth + margins
 		} else if (bShrinkable && iMinWidth > 0 && bVisible) {
-			iOptimalWidth = iMinWidth + oControl.$().outerWidth(true) - oControl.$().outerWidth();
+			iOptimalWidth = OverflowToolbar._getOptimalWidthOfShrinkableControl(oControl, iMinWidth);
 		// For other elements, get the outer width
 		} else {
-			iOptimalWidth = bVisible ? oControl.$().outerWidth(true) : 0;
+			iOptimalWidth = bVisible ? OverflowToolbar._getControlWidth(oControl) : 0;
 		}
 
 		if (iOptimalWidth === null) {
@@ -1486,6 +1486,47 @@ sap.ui.define([
 		// 4. Default priority (High) as a fallback if nothing else was supplied
 		return OverflowToolbarPriority.High;
 	};
+
+	/**
+	 * Returns the sum of the left and right margins of a Control in pixels.
+	 * @static
+	 * @param oControl
+	 * @private
+	 */
+	OverflowToolbar._getControlMargins = function (oControl) {
+		return oControl.$().outerWidth(true) - oControl.$().outerWidth();
+	};
+
+	/**
+	 * Returns the optimal width of shrinkable controls, including the spacer,
+	 * which also adjusts its size, depending of the available width
+	 * @static
+	 * @param oControl
+	 * @param iMinWidth - min width of the Control
+	 * @private
+	 */
+	OverflowToolbar._getOptimalWidthOfShrinkableControl = function (oControl, iMinWidth) {
+		return iMinWidth + OverflowToolbar._getControlMargins(oControl);
+	};
+
+	/**
+	 * Returns ceiled width of a Control + margins
+	 * @static
+	 * @param oControl
+	 * @private
+	 */
+	OverflowToolbar._getControlWidth = function (oControl) {
+		var oDomRef = oControl && oControl.getDomRef();
+
+		if (oDomRef) {
+			// Getting the precise width of the control, as sometimes JQuery's .outerWidth() returns different values
+			// for the same element.
+			return Math.round(oDomRef.getBoundingClientRect().width + OverflowToolbar._getControlMargins(oControl));
+		}
+
+		return null;
+	};
+
 
 	/**
 	 * Returns the control group based on the layout data
