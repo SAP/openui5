@@ -64,6 +64,7 @@ sap.ui.define([
 		 * <li> Option list - the list of available options.</li>
 		 * </ul>
 		 * By setting the <code>showSecondaryValues</code> property, the combo box can display an additional value for each option (if there is one).
+		 * <b>Note:</b> The typeahead feature is not available on Android devices due to a OS specific issue.
 		 * <h3>Usage</h3>
 		 * <h4>When to use:</h4>
 		 * <ul>
@@ -1492,7 +1493,9 @@ sap.ui.define([
 			}
 
 			var mKeyCode = KeyCodes;
-			oControl._bDoTypeAhead = (oEvent.which !== mKeyCode.BACKSPACE) && (oEvent.which !== mKeyCode.DELETE);
+
+			// disable the typeahead feature for android devices due to an issue on android soft keyboard, which always returns keyCode 229
+			oControl._bDoTypeAhead = !Device.os.android && (oEvent.which !== mKeyCode.BACKSPACE) && (oEvent.which !== mKeyCode.DELETE);
 		};
 
 		/**
