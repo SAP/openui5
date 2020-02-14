@@ -40,6 +40,7 @@ sap.ui.define([
 				iPressTheCancelButton: function() {
 					return this.waitFor({
 						id: "cancel",
+						visible: false,
 						viewNamespace: "sap.ui.demo.toolpageapp.view.settings",
 						viewName: sViewName2,
 						actions: new Press(),
