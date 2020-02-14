@@ -1653,10 +1653,10 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.module("NumberFormat#getCurrencyInstance configuration");
 
 	QUnit.test("overwrite configuration config", function (assert) {
-		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberFormatTrailingCurrencyCode(false);
+		sap.ui.getCore().getConfiguration().getFormatSettings().setTrailingCurrencyCode(false);
 		assert.notOk(NumberFormat.getCurrencyInstance().oFormatOptions.trailingCurrencyCode, "taken from config");
 
-		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberFormatTrailingCurrencyCode(true);
+		sap.ui.getCore().getConfiguration().getFormatSettings().setTrailingCurrencyCode(true);
 		assert.notOk(NumberFormat.getCurrencyInstance({pattern:"0"}).oFormatOptions.trailingCurrencyCode, "overwritten by pattern");
 		assert.notOk(NumberFormat.getCurrencyInstance({currencyCode:false}).oFormatOptions.trailingCurrencyCode, "overwritten by currencyCode");
 		assert.notOk(NumberFormat.getCurrencyInstance({trailingCurrencyCode:false}).oFormatOptions.trailingCurrencyCode, "overwritten by trailingCurrencyCode");
