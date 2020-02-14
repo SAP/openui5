@@ -907,10 +907,13 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._showNavigationActionsInTopArea = function () {
-		var oNavigationBar = this._getNavigationActionsToolbar();
+		var oNavigationBar = this._getNavigationActionsToolbar(),
+			oLastFocusedElement;
 
 		if (this.$topNavigationActionsArea && this.$topNavigationActionsArea.length > 0) {
+			oLastFocusedElement = document.activeElement;
 			this.$topNavigationActionsArea.html(oNavigationBar.$());
+			oLastFocusedElement && oLastFocusedElement.focus();
 		}
 
 		this._bNavigationActionsInTopArea = true;
@@ -921,10 +924,13 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._showNavigationActionsInMainArea = function () {
-		var oNavigationBar = this._getNavigationActionsToolbar();
+		var oNavigationBar = this._getNavigationActionsToolbar(),
+			oLastFocusedElement;
 
 		if (this.$mainNavigationActionsArea && this.$mainNavigationActionsArea.length > 0) {
+			oLastFocusedElement = document.activeElement;
 			this.$mainNavigationActionsArea.html(oNavigationBar.$());
+			oLastFocusedElement && oLastFocusedElement.focus();
 		}
 
 		this._bNavigationActionsInTopArea = false;

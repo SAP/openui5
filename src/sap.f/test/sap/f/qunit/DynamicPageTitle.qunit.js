@@ -368,6 +368,31 @@ function (
 				"Top area should be visible when there is at least one visible navigation action");
 	});
 
+	QUnit.test("Move actions to top/main area preserves focus", function (assert) {
+		var oTitle = this.oDynamicPageStandardAndNavigationActions.getTitle(),
+			iTitleSmallWidth = 900,
+			iTitleBigWidth = 1500,
+			oActionToFocus = oTitle.getNavigationActions()[0].getDomRef(),
+			oSandbox = sinon.sandbox.create(),
+			oMoveToTopSpy = oSandbox.spy(oTitle, "_showNavigationActionsInTopArea"),
+			oMoveToMainSpy = oSandbox.spy(oTitle, "_showNavigationActionsInMainArea");
+
+		oActionToFocus.focus();
+
+		oTitle._onResize(iTitleBigWidth);
+
+		assert.strictEqual(oMoveToMainSpy.callCount, 1, "move actions to main is called");
+		assert.strictEqual(document.activeElement, oActionToFocus, "focus is preserved");
+
+		// Ensure the Title is smaller than 1280px, then navigationAction are in the Title`s top area.
+		oTitle._onResize(iTitleSmallWidth);
+
+		assert.strictEqual(oMoveToTopSpy.callCount, 1, "move actions to top is called");
+		assert.strictEqual(document.activeElement, oActionToFocus, "focus is preserved");
+
+		oSandbox.restore();
+	});
+
 	QUnit.module("DynamicPage - Rendering - Title heading, snappedHeading and expandedHeading");
 
 	QUnit.test("No heading at all", function (assert) {
