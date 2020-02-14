@@ -440,15 +440,44 @@ sap.ui.define([
 		this._registerManifestModulePath();
 
 		if (this._oCardManifest && this._oCardManifest.getResourceBundle()) {
-			var oResourceModel = new ResourceModel({
-				bundle: this._oCardManifest.getResourceBundle()
-			});
-			oResourceModel.enhance(Core.getLibraryResourceBundle("sap.ui.integration"));
-			this.setModel(oResourceModel, "i18n");
+			this._enhanceI18nModel(this._oCardManifest.getResourceBundle());
 		}
 
 		this._oCardManifest.processParameters(oParameters);
 		this._applyManifestSettings();
+	};
+
+	/**
+	 * Loads the messagebundle.properties for the integration library.
+	 * For performance only call this method when the translations will be needed.
+	 *
+	 * @private
+	 */
+	Card.prototype._loadDefaultTranslations = function () {
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+
+		this._enhanceI18nModel(oResourceBundle);
+	};
+
+	/**
+	 * Enhances or creates the i18n model for the card.
+	 *
+	 * @param {sap.base.i18n.ResourceBundle} oResourceBundle The resource bundle which will be used to create the model or will enhance it.
+	 * @private
+	 */
+	Card.prototype._enhanceI18nModel = function (oResourceBundle) {
+		var oResourceModel = this.getModel("i18n");
+
+		if (oResourceModel) {
+			oResourceModel.enhance(oResourceBundle);
+			return;
+		}
+
+		oResourceModel = new ResourceModel({
+			bundle: oResourceBundle
+		});
+
+		this.setModel(oResourceModel, "i18n");
 	};
 
 	/**
@@ -789,6 +818,10 @@ sap.ui.define([
 		}
 
 		if (mConfiguration.status && mConfiguration.status.text && mConfiguration.status.text.format) {
+			if (mConfiguration.status.text.format.translationKey) {
+				this._loadDefaultTranslations();
+			}
+
 			bindStatusText(mConfiguration.status.text.format, oHeader);
 		}
 
