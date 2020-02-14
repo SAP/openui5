@@ -105,7 +105,7 @@ sap.ui.define([
 					"language"              : { type : "Locale",   defaultValue : detectLanguage() },
 					"formatLocale"          : { type : "Locale",   defaultValue : null },
 					"calendarType"          : { type : "string",   defaultValue : null },
-					"numberFormatTrailingCurrencyCode": { type : "boolean",  defaultValue : true },
+					"trailingCurrencyCode"  : { type : "boolean",  defaultValue : true },
 					// "timezone"              : "UTC",
 					"accessibility"         : { type : "boolean",  defaultValue : true },
 					"autoAriaBodyRole"      : { type : "boolean",  defaultValue : true,      noUrl:true }, //whether the framework automatically adds automatically the ARIA role 'application' to the html body
@@ -2236,21 +2236,21 @@ sap.ui.define([
 		 * @since 1.75.0
 		 * @public
 		 */
-		setNumberFormatTrailingCurrencyCode : function(bTrailingCurrencyCode) {
+		setTrailingCurrencyCode : function(bTrailingCurrencyCode) {
 			check(typeof bTrailingCurrencyCode === "boolean", "bTrailingCurrencyCode must be a boolean");
-			this.oConfiguration.numberFormatTrailingCurrencyCode = bTrailingCurrencyCode;
+			this.oConfiguration.trailingCurrencyCode = bTrailingCurrencyCode;
 			return this;
 		},
 
 		/**
-		 * Returns current tailing-currency-code configuration for new NumberFormatter instances
+		 * Returns current trailingCurrencyCode configuration for new NumberFormatter instances
 		 *
 		 * @return {boolean} Whether currency codes shall always be placed after the numeric value
 		 * @since 1.75.0
 		 * @public
 		 */
-		getNumberFormatTrailingCurrencyCode : function() {
-			return this.oConfiguration.numberFormatTrailingCurrencyCode;
+		getTrailingCurrencyCode : function() {
+			return this.oConfiguration.trailingCurrencyCode;
 		},
 
 		/*
