@@ -55,7 +55,7 @@
 						"$format": "json",
 						"$top": "{{parameters.maxItems}}",
 						"$orderby": "Freight desc",
-						"$filter": "OrderDate ge datetime'{= format.dateTime(dateRange.start('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}' and OrderDate le datetime'{= format.dateTime(dateRange.end('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}'"
+						"$filter": "OrderDate ge datetime'{= format.dateTime(dateRange.start('{{parameters.periodInterval}}', '{{parameters.periodAge}}'), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}' and OrderDate le datetime'{= format.dateTime(dateRange.end('{{parameters.periodInterval}}', '{{parameters.periodAge}}'), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}'"
 					}
 				},
 				"path": "/value/"
