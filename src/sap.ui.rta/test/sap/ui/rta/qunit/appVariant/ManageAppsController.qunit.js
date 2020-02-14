@@ -342,10 +342,14 @@ sap.ui.define([
 			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_RUNNING"), "then tooltip text key is correct");
 
 			oManageAppsController.formatAdaptUIButtonTooltip(false, 'U');
-			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD"), "then tooltip text key is correct");
+			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR"), "then tooltip text key is correct");
 
 			oManageAppsController.formatAdaptUIButtonTooltip(false, 'E');
-			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_ERROR"), "then tooltip text key is correct");
+			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR"), "then tooltip text key is correct");
+
+			oManageAppsController.formatAdaptUIButtonTooltip(false, 'P');
+			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_PUBLISHED"), "then tooltip text key is correct");
+
 
 			assert.equal(oManageAppsController.formatAdaptUIButtonTooltip(false, 'bla'), undefined, "then no tooltip will be set");
 			assert.equal(oManageAppsController.formatAdaptUIButtonTooltip(true), undefined, "then no tooltip will be set");
