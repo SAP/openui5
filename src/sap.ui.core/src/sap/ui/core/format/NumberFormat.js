@@ -471,7 +471,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
 	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
-	 * @param {boolean} [oFormatOptions.trailingCurrencyCode] Overwrites global configuration {@link sap.ui.core.Configuration.FormatSettings#setNumberFormatTrailingCurrencyCode}
+	 * @param {boolean} [oFormatOptions.trailingCurrencyCode] Overrides the global configuration value {@link sap.ui.core.Configuration.FormatSettings#getTrailingCurrencyCode} whose default value is <code>true</>.
 	 *  This is ignored if <code>oFormatOptions.currencyCode</code> is set to false or if <code>oFormatOptions.pattern</code> is supplied
 	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the measure according to the format is shown in the formatted string
 	 * @param {boolean} [oFormatOptions.currencyCode=true] defines whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there is a symbol defined
@@ -1873,7 +1873,7 @@ sap.ui.define([
 	 * @returns {boolean}
 	 */
 	function showTrailingCurrencyCode(oFormatOptions) {
-		var bShowTrailingCurrencyCodes = sap.ui.getCore().getConfiguration().getFormatSettings().getNumberFormatTrailingCurrencyCode();
+		var bShowTrailingCurrencyCodes = sap.ui.getCore().getConfiguration().getFormatSettings().getTrailingCurrencyCode();
 		if (oFormatOptions) {
 
 			// overwritten by instance configuration
