@@ -63,6 +63,9 @@ sap.ui.define([
 		sButtonTypeTransparent = ButtonType.Transparent,
 		sButtonTypeUp = ButtonType.Up,
 		sButtonTypeUnstyled = ButtonType.Unstyled,
+		sButtonTypeCritical = ButtonType.Critical,
+		sButtonTypeNegative = ButtonType.Negative,
+		sButtonTypeSuccess = ButtonType.Success,
 		sWidth = "200px",
 		bEnabled = true,
 		bDisabled = false,
@@ -616,6 +619,54 @@ sap.ui.define([
 
 		sTextId = sap.m.ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeAccept);
 		sTooltipId = "B1-tooltip";
+		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
+
+		oButton.destroy();
+	});
+
+	QUnit.test("AriaDescribedBy when the Button has tooltip and special type", function(assert) {
+		var oButton = new Button("B1",{
+				type: sButtonTypeCritical,
+				tooltip: "tooltip"
+			}).placeAt("qunit-fixture"),
+			sTooltipId = "B1-tooltip",
+			sTextId;
+
+		sap.ui.getCore().applyChanges();
+
+		sTextId = sap.m.ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeCritical);
+		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
+
+		oButton.destroy();
+	});
+
+	QUnit.test("AriaDescribedBy when the Button has tooltip and special type", function(assert) {
+		var oButton = new Button("B1",{
+				type: sButtonTypeNegative,
+				tooltip: "tooltip"
+			}).placeAt("qunit-fixture"),
+			sTooltipId = "B1-tooltip",
+			sTextId;
+
+		sap.ui.getCore().applyChanges();
+
+		sTextId = sap.m.ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeNegative);
+		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
+
+		oButton.destroy();
+	});
+
+	QUnit.test("AriaDescribedBy when the Button has tooltip and special type", function(assert) {
+		var oButton = new Button("B1",{
+				type: sButtonTypeSuccess,
+				tooltip: "tooltip"
+			}).placeAt("qunit-fixture"),
+			sTooltipId = "B1-tooltip",
+			sTextId;
+
+		sap.ui.getCore().applyChanges();
+
+		sTextId = sap.m.ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeSuccess);
 		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
 
 		oButton.destroy();
