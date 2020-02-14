@@ -18,7 +18,8 @@ sap.ui.define(["./library", 'sap/ui/core/Renderer', './ToolbarRenderer', "sap/m/
 
 		OverflowToolbarRenderer.renderBarContent = function(rm, oToolbar) {
 
-			var bHasAlwaysOverflowVisibleContent  = false;
+			var bHasAlwaysOverflowVisibleContent  = false,
+				bHasAnyVisibleContent;
 
 			oToolbar._getVisibleContent().forEach(function(oControl) {
 				BarInPageEnabler.addChildClassTo(oControl, oToolbar);
@@ -34,7 +35,12 @@ sap.ui.define(["./library", 'sap/ui/core/Renderer', './ToolbarRenderer', "sap/m/
 				OverflowToolbarRenderer.renderOverflowButton(rm, oToolbar);
 			}
 
-			OverflowToolbarRenderer.renderOverflowButtonClone(rm, oToolbar);
+			bHasAnyVisibleContent = oToolbar.getContent().some(function (oControl) {
+				return oControl.getVisible();
+			});
+			if (bHasAnyVisibleContent) {
+				OverflowToolbarRenderer.renderOverflowButtonClone(rm, oToolbar);
+			}
 		};
 
 		OverflowToolbarRenderer.renderOverflowButton = function(rm, oToolbar) {
