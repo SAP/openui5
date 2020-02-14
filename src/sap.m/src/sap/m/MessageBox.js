@@ -246,10 +246,10 @@ sap.ui.define([
 				 * @param {object} [mOptions] Other options (optional)
 				 * @param {sap.m.MessageBox.Icon} [mOptions.icon] The icon to be displayed.
 				 * @param {string} [mOptions.title] The title of the message box.
-				 * @param {sap.m.MessageBox.Action|sap.m.MessageBox.Action[]|string|string[]} [mOptions.actions=sap.m.MessageBox.Action.OK] Either a single action, or an array of two actions.
-				 *      If no action(s) are given, the single action MessageBox.Action.OK is taken as a default for the parameter. From UI5 version 1.21, more than 2 actions are supported.
-				 *      For the former versions, if more than two actions are given, only the first two actions are taken. Custom action string(s) can be provided, and then the translation
-				 *      of custom action string(s) needs to be done by the application.
+				 * @param {sap.m.MessageBox.Action|sap.m.MessageBox.Action[]|string|string[]} [mOptions.actions=sap.m.MessageBox.Action.OK] Either a single action, or an array of actions.
+				 *      If no action(s) are given, the single action MessageBox.Action.OK is taken as a default for the parameter.
+				 *      Custom action(s) string or an array can be provided, and then the translation
+				 *      of custom actions needs to be done by the application.
 				 * @param {sap.m.MessageBox.Action|string} [mOptions.emphasizedAction=sap.m.MessageBox.Action.OK] Added since version 1.75.0. Specifies which action of the created dialog will be emphasized. EmphasizedAction will apply only if the property <code>actions</code> is provided.
 				 * @param {function} [mOptions.onClose] Function to be called when the user taps a button or closes the message box.
 				 * @param {string} [mOptions.id] ID to be used for the dialog. Intended for test scenarios, not recommended for productive apps
