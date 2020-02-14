@@ -862,10 +862,80 @@ sap.ui.require([
 			assert.strictEqual(oEndContendItemDomRef.offsetWidth, 215, "the end content item should have the specified width");
 			assert.strictEqual(iItemsComputedWidth, 791, "the computed width of the items should be equal to the container width");
 			assert.strictEqual(oAlignedFlowLayout.checkItemsWrapping(), false, "the items should fit into a single line (no wrapping onto multiple lines)");
-			assert.strictEqual(bOverlapX, false, "the last items two items should not overlap");
+			assert.strictEqual(bOverlapX, false, "the last two items should not overlap");
 
 			// cleanup
 			IntervalTrigger.removeListener(fnAfterResize, this);
+			oAlignedFlowLayout.destroy();
+			done();
+		}
+	});
+
+	// BCP: 2080119767
+	QUnit.test("the item in the end content area should not overlap other items when its size changes" +
+				" after the initial rendering", function(assert) {
+		var done = assert.async();
+
+		// system under test
+		var oAdaptFiltersButton;
+		var oAlignedFlowLayout = new AlignedFlowLayout({
+			minItemWidth: "192px", // default 12rem
+			maxItemWidth: "384px", // default 24rem
+			content: [
+				new Input({
+					width: "100%"
+				}),
+
+				new Input({
+					width: "100%"
+				}),
+
+				new Input({
+					width: "100%"
+				})
+			],
+			endContent: [
+				oAdaptFiltersButton = new Button({
+					text: "Adapt Filters",
+					width: "100px" // set a fixed width for reliable testing
+				}),
+
+				new Button({
+					text: "Go",
+					width: "34px" // set a fixed width for reliable testing
+				})
+			]
+		});
+
+		// arrange
+		// set the container's width of the AlignedFlowLayout control
+		this.oContentDomRef.style.width = "710px";
+
+		// puts the AlignFlowLayout control into the specified parent DOM element (container)
+		oAlignedFlowLayout.placeAt(CONTENT_ID);
+
+		// enforces a sync rendering of the AlignedFlowLayout control
+		Core.applyChanges();
+
+		// increase the width of the the item in the end content area
+		oAdaptFiltersButton.setText("Adapt Filters (1)");
+		oAdaptFiltersButton.setWidth("200px");
+
+		// enforces a sync rendering of the AlignedFlowLayout control
+		Core.applyChanges();
+
+		// wait some time until the browser layout finished
+		setTimeout(fnAfterReflow.bind(this), 200);
+
+		// assert
+		function fnAfterReflow() {
+
+			// - the available container width is 710px
+			// - the min item width is set to 192px (default) and there are 3 flexible item (192 * 3) = 576px
+			// - the the end content item width is set to 200px + 34px = 234px
+			assert.strictEqual(oAlignedFlowLayout.checkItemsWrapping(), true);
+
+			// cleanup
 			oAlignedFlowLayout.destroy();
 			done();
 		}

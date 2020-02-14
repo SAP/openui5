@@ -103,30 +103,31 @@ sap.ui.define([
 			if (typeof ResizeObserver === "function") {
 
 				this.oResizeObserver = new ResizeObserver(this.onResize.bind(this));
+
+			// resize handler fallback for old browsers (e.g. IE 11)
 			} else {
 
 				// registration ID used for de-registering the resize handler
-				this._sResizeListenerId = ResizeHandler.register(this, this.onResizeHandler.bind(this));
+				this._sResizeHandlerContainerListenerID = ResizeHandler.register(this, this.onResizeHandler.bind(this));
 			}
 		};
 
 		AlignedFlowLayout.prototype.exit = function() {
 
-			if (this._sResizeListenerId) {
-				ResizeHandler.deregister(this._sResizeListenerId);
-				this._sResizeListenerId = "";
-			}
+			// resize observer cleanup
+			this.disconnectResizeObserver();
+			this.oResizeObserver = null;
 
-			if (this.oResizeObserver) {
-				this.oResizeObserver.disconnect();
-				this.oResizeObserver = null;
-			}
+			// resize handler cleanup
+			this.disconnectResizeHandler();
+			this._sResizeHandlerContainerListenerID = "";
+			this._sResizeHandlerEndItemListenerID = "";
 		};
 
 		AlignedFlowLayout.prototype.onAfterRenderingOrThemeChanged = function() {
 			var oDomRef = this.getDomRef(),
 				oEndItemDomRef = this.getDomRef("endItem"),
-				bEndItemAndContent = !!(this.getContent().length && oDomRef && oEndItemDomRef);
+				bEndItemAndContent = !!(this.hasContent() && oDomRef && oEndItemDomRef);
 
 			if (bEndItemAndContent) {
 				var oLayoutComputedStyle = window.getComputedStyle(oDomRef, null),
@@ -147,22 +148,12 @@ sap.ui.define([
 		};
 
 		AlignedFlowLayout.prototype.onBeforeRendering = function() {
-
-			if (this.oResizeObserver) {
-				this.oResizeObserver.disconnect();
-			}
+			this.disconnectResizeObserver();
+			this.disconnectResizeHandlerForEndItem();
 		};
 
 		AlignedFlowLayout.prototype.onAfterRendering = function() {
-
-			if (this.oResizeObserver) {
-				var oDomRef = this.getDomRef();
-
-				if (oDomRef) {
-					this.oResizeObserver.observe(oDomRef);
-				}
-			}
-
+			this.observeSizeChangesIfRequired();
 			this.onAfterRenderingOrThemeChanged();
 		};
 
@@ -179,7 +170,9 @@ sap.ui.define([
 		};
 
 		AlignedFlowLayout.prototype.onResize = function(aEntries) {
-			window.requestAnimationFrame(this.reflow.bind(this));
+			window.requestAnimationFrame(function() {
+				this.reflow();
+			}.bind(this));
 		};
 
 		/**
@@ -405,6 +398,74 @@ sap.ui.define([
 			iSpacers = Math.max(1, iSpacers);
 			iSpacers = Math.floor(iSpacers);
 			return iSpacers;
+		};
+
+		AlignedFlowLayout.prototype.observeSizeChangesIfRequired = function() {
+			if (this.hasContent()) {
+				this.observeSizeChanges();
+			}
+		};
+
+		AlignedFlowLayout.prototype.observeSizeChanges = function() {
+
+			var oDomRef = this.getDomRef();
+
+			if (!oDomRef) {
+				return;
+			}
+
+			var oEndItemDomRef = this.getDomRef("endItem");
+
+			// resize observer
+			if (this.oResizeObserver) {
+
+				// detect size changes on the layout container
+				this.oResizeObserver.observe(oDomRef);
+
+				// Detect size changes of the item absolute positioned at the bottom on
+				// the right of the entire layout control (in the secondary content area
+				// `endContent` aggregation) to prevent the item to overlap with other
+				// items in the primary content area when its size changes after the
+				// initial rendering.
+				if (oEndItemDomRef) {
+					this.oResizeObserver.observe(oEndItemDomRef);
+				}
+
+				return;
+			}
+
+			// resize handler fallback for old browsers
+			if (oEndItemDomRef) {
+
+				// registration ID used for de-registering the resize handler
+				this._sResizeHandlerEndItemListenerID = ResizeHandler.register(oEndItemDomRef, this.onResizeHandler.bind(this));
+			}
+		};
+
+		AlignedFlowLayout.prototype.disconnectResizeObserver = function() {
+			if (this.oResizeObserver) {
+				this.oResizeObserver.disconnect();
+			}
+		};
+
+		AlignedFlowLayout.prototype.disconnectResizeHandler = function() {
+
+			if (this._sResizeHandlerContainerListenerID) {
+				ResizeHandler.deregister(this._sResizeHandlerContainerListenerID);
+			}
+
+			this.disconnectResizeHandlerForEndItem();
+		};
+
+		AlignedFlowLayout.prototype.disconnectResizeHandlerForEndItem = function() {
+
+			if (this._sResizeHandlerEndItemListenerID) {
+				ResizeHandler.deregister(this._sResizeHandlerEndItemListenerID);
+			}
+		};
+
+		AlignedFlowLayout.prototype.hasContent = function() {
+			return this.getContent().length > 0;
 		};
 
 		return AlignedFlowLayout;
