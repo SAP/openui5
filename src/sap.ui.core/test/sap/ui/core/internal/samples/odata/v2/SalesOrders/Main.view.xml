@@ -1,0 +1,143 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.internal.samples.odata.v2.SalesOrders.Main"
+	height="100%"
+	xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:t="sap.ui.table">
+<App>
+	<Page id="page" floatingFooter="true" showHeader="false">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<Toolbar design="Info">
+					<Label design="Bold" labelFor="salesOrderID" text="Sales Order">
+						<layoutData>
+							<ToolbarLayoutData shrinkable="false" />
+						</layoutData>
+					</Label>
+					<Input submit="onSelectSalesOrder" value="{ui>/salesOrderID}">
+						<layoutData>
+							<ToolbarLayoutData maxWidth="10em" shrinkable="true" />
+						</layoutData>
+					</Input>
+					<Button press="onSelectSalesOrder" text="Show Sales Order" type="Accept" />
+				</Toolbar>
+			</VBox>
+			<VBox class="sapUiSmallMargin" id="objectPage">
+				<form:SimpleForm ariaLabelledBy="objectPageTitle" backgroundDesign="Transparent"
+					editable="true" labelSpanM="2" layout="ResponsiveGridLayout">
+					<form:toolbar>
+						<Toolbar design="Transparent">
+							<Title id="objectPageTitle" text="Sales Order Details" level="H2" />
+						</Toolbar>
+					</form:toolbar>
+					<Toolbar design="Transparent">
+						<Title text="Sales Order" level="H2" />
+					</Toolbar>
+					<Label text="Sales Order ID" />
+					<Input value="{SalesOrderID}" editable="false" width="8em"/>
+					<Label text="Note" />
+					<Input value="{Note}" />
+				</form:SimpleForm>
+				<t:Table id="ToLineItems" rows="{ToLineItems}" visibleRowCount="7">
+					<t:extension>
+						<Toolbar>
+							<Title text="Sales Order Items" level="H2">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Title>
+						</Toolbar>
+					</t:extension>
+					<t:columns>
+						<t:Column width="8em">
+							<Label text="Sales Order ID" />
+							<t:template>
+								<Input editable="false" value="{SalesOrderID}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="8em">
+							<Label text="Item Position" />
+							<t:template>
+								<Input editable="false" value="{ItemPosition}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="8em">
+							<Label text="Product ID" />
+							<t:template>
+								<Input editable="false" value="{ProductID}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="8em">
+							<Label text="Quantity" />
+							<t:template>
+								<Input value="{
+										constraints : {precision : 13, scale : 3},
+										path : 'Quantity',
+										type : 'sap.ui.model.odata.type.Decimal'
+									}" textAlign="Right" />
+							</t:template>
+						</t:Column>
+						<t:Column width="5em">
+							<Label text="Unit" />
+							<t:template>
+								<Input value="{
+										constraints : {maxLength : 3},
+										path : 'QuantityUnit',
+										type : 'sap.ui.model.odata.type.String'
+									}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="10em">
+							<Label text="Gross Amount" />
+							<t:template>
+								<Input value="{
+										constraints : {precision : 16, scale : 3},
+										path : 'GrossAmount',
+										type : 'sap.ui.model.odata.type.Decimal'
+									}" textAlign="Right" />
+							</t:template>
+						</t:Column>
+						<t:Column width="6em">
+							<Label text="Currency" />
+							<t:template>
+								<Input value="{
+										constraints : {maxLength : 5},
+										path : 'CurrencyCode',
+										type : 'sap.ui.model.odata.type.String'
+									}" />
+							</t:template>
+						</t:Column>
+						<t:Column>
+							<Label text="Note" />
+							<t:template>
+								<Input value="{Note}" />
+							</t:template>
+						</t:Column>
+					</t:columns>
+				</t:Table>
+			</VBox>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<Button icon="sap-icon://message-popup" id="messagePopoverButton"
+					press="onMessagePopoverPress" text="{=${messages>/}.length}" type="Emphasized">
+					<dependents>
+						<MessagePopover activeTitlePress="onMessageSelected"
+							afterClose="onMessagePopoverClosed" id="messagePopover"
+							items="{messages>/}">
+							<MessageItem activeTitle="true" description="{messages>message}"
+								subtitle="{messages>additionalText}" title="{messages>message}"
+								type="{messages>type}" />
+						</MessagePopover>
+					</dependents>
+				</Button>
+				<ToolbarSpacer />
+				<Button press="onSaveSalesOrder" text="Save" type="Emphasized" />
+				<Button press="onResetChanges" text="Rest Changes" />
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</App>
+</mvc:View>
