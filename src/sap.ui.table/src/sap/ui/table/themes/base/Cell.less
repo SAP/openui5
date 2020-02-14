@@ -260,8 +260,11 @@
 
 	> .sapUiTableCellTouchMenu {
 		display: flex;
-		justify-content: space-between;
 		padding: @_sap_ui_table_Cell_Padding;
+
+		.sapUiTableColResizer {
+			margin-left: auto;
+		}
 
 		.sapUiTableColResizer,
 		.sapUiTableColDropDown {

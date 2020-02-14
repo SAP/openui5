@@ -160,7 +160,6 @@ sap.ui.define([
 				bTouch = oTable._isTouchEvent(oEvent);
 
 			oTable._$colResize = oTable.$("rsz");
-			oTable._iColumnResizeStart = ExtensionHelper._getEventPosition(oEvent, oTable).x;
 
 			$Document.bind((bTouch ? "touchend" : "mouseup") + ".sapUiTableColumnResize",
 				ColumnResizeHelper.exitColumnResizing.bind(oTable));
@@ -174,7 +173,14 @@ sap.ui.define([
 		 * Drops the previous dragged column resize bar and recalculates the new column width.
 		 */
 		exitColumnResizing: function(oEvent) {
-			ColumnResizeHelper._resizeColumn(this, this._iLastHoveredVisibleColumnIndex);
+			var iLocationX = ExtensionHelper._getEventPosition(oEvent, this).x;
+			var oColumn = this._getVisibleColumns()[this._iLastHoveredVisibleColumnIndex];
+			var iColumnWidth = oColumn.getDomRef().offsetWidth;
+			var iDeltaX = iLocationX - (oColumn.$().offset().left + iColumnWidth);
+			var iCalculatedColumnWidth = Math.round(iColumnWidth + iDeltaX * (this._bRtlMode ? -1 : 1));
+			var iNewColumnWidth = Math.max(iCalculatedColumnWidth, TableUtils.Column.getMinColumnWidth());
+
+			ColumnResizeHelper._resizeColumn(this, this._iLastHoveredVisibleColumnIndex, iNewColumnWidth);
 		},
 
 		/*
@@ -182,30 +188,16 @@ sap.ui.define([
 		 */
 		onMouseMoveWhileColumnResizing: function(oEvent) {
 			var iLocationX = ExtensionHelper._getEventPosition(oEvent, this).x;
+			var iRszOffsetLeft = this.$().find(".sapUiTableCnt").offset().left;
+			var iRszLeft = Math.floor(iLocationX - iRszOffsetLeft);
 
-			if (this._iColumnResizeStart && iLocationX < this._iColumnResizeStart + 3 && iLocationX > this._iColumnResizeStart - 3) {
-				return;
-			}
+			this._$colResize.css("left", iRszLeft + "px");
+			this._$colResize.toggleClass("sapUiTableColRszActive", true);
 
 			if (this._isTouchEvent(oEvent)) {
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
 			}
-
-			this._$colResize.toggleClass("sapUiTableColRszActive", true);
-
-			var oColumn = this._getVisibleColumns()[this._iLastHoveredVisibleColumnIndex];
-			var iDeltaX = iLocationX - this._iColumnResizeStart;
-			var iColWidth = this.$().find("th[data-sap-ui-colid=\"" + oColumn.getId() + "\"]").width();
-			var iWidth = Math.max(iColWidth + iDeltaX * (this._bRtlMode ? -1 : 1), TableUtils.Column.getMinColumnWidth());
-
-			// calculate and set the position of the resize handle
-			var iRszOffsetLeft = this.$().find(".sapUiTableCnt").offset().left;
-			var iRszLeft = Math.floor((iLocationX - iRszOffsetLeft) - (this._$colResize.width() / 2));
-			this._$colResize.css("left", iRszLeft + "px");
-
-			// store the width of the column to apply later
-			oColumn._iNewWidth = iWidth;
 		},
 
 		/*
@@ -216,7 +208,6 @@ sap.ui.define([
 				oTable._$colResize.toggleClass("sapUiTableColRszActive", false);
 				oTable._$colResize = null;
 			}
-			oTable._iColumnResizeStart = null;
 			oTable._bIsColumnResizerMoving = false;
 			oTable.$().toggleClass("sapUiTableResizing", false);
 			oTable._enableTextSelection();
@@ -231,16 +222,13 @@ sap.ui.define([
 		/*
 		 * Cleans up the state which is created while resize a column via drag&drop and recalculates the new column width.
 		 */
-		_resizeColumn: function(oTable, iColIndex) {
+		_resizeColumn: function(oTable, iColIndex, iNewWidth) {
 			var aVisibleColumns = oTable._getVisibleColumns();
 			var oColumn;
 
 			if (iColIndex >= 0 && iColIndex < aVisibleColumns.length) {
 				oColumn = aVisibleColumns[iColIndex];
-				if (oColumn._iNewWidth) {
-					TableUtils.Column.resizeColumn(oTable, oTable.indexOfColumn(oColumn), oColumn._iNewWidth);
-					delete oColumn._iNewWidth;
-				}
+				TableUtils.Column.resizeColumn(oTable, oTable.indexOfColumn(oColumn), iNewWidth);
 			}
 
 			ColumnResizeHelper._cleanupColumResizing(oTable);
@@ -264,8 +252,7 @@ sap.ui.define([
 
 				var iNewWidth = ColumnResizeHelper._calculateAutomaticColumnWidth.apply(oTable, [oColumn, iColIndex]);
 				if (iNewWidth) {
-					oColumn._iNewWidth = iNewWidth;
-					ColumnResizeHelper._resizeColumn(oTable, iColIndex);
+					ColumnResizeHelper._resizeColumn(oTable, iColIndex, iNewWidth);
 				}
 			}
 		},
