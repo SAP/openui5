@@ -441,13 +441,18 @@ sap.ui.define([
 	QUnit.test("Set to false via parameter", fnTestHeaderRequest(false, false));
 
 	QUnit.module("ODataMetadata: Nav property reference info", {
-		beforeEach: function() {
-			this.oServer = initServer(sServiceUri, "model/GWSAMPLE_BASIC.metadata.xml", sDataRootPath);
+		before : function () {
+			this.oServer = initServer(sServiceUri, "model/GWSAMPLE_BASIC.metadata.xml",
+				sDataRootPath);
+		},
+		beforeEach : function () {
 			this.oMetadata = new ODataMetadata(sServiceUri + "$metadata", {});
 		},
-		afterEach: function() {
-			this.oServer.destroy();
+		afterEach : function () {
 			this.oMetadata.destroy();
+		},
+		after : function () {
+			this.oServer.destroy();
 		}
 	});
 
