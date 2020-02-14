@@ -199,6 +199,13 @@ sap.ui.define([
 			}
 
 			if (Device.system.desktop) {
+				//invisible element for desktop keyboard navigation
+				oRm.openStart("span", oControl.getId() + "-middlefe")
+					.class("sapMPopoverHiddenFocusable")
+					.attr("tabindex", "-1")
+					.openEnd()
+					.close("span");
+
 				// invisible element for desktop keyboard navigation
 				oRm.openStart("span", oControl.getId() + "-lastfe")
 					.class("sapMPopoverHiddenFocusable")
