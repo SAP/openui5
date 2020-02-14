@@ -13,9 +13,10 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 
 	/**
 	 * Input renderer.
-	 * @namespace
 	 *
 	 * InputRenderer extends the InputBaseRenderer
+	 *
+	 * @namespace
 	 */
 	var InputRenderer = Renderer.extend(InputBaseRenderer);
 	InputRenderer.apiVersion = 2;
