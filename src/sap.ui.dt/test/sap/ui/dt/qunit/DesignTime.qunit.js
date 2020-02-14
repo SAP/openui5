@@ -985,28 +985,6 @@ function(
 
 			this.oInnerLayout.insertAggregation("content", oButton3, 2);
 		});
-
-		QUnit.test("when two elements gets inserted into aggregation", function (assert) {
-			var fnDone = assert.async();
-			var oButton5 = new Button("button5");
-			var oButton6 = new Button("button6");
-			var onSynched = function () {
-				var aInnerLayoutContent = this.oInnerLayout.getContent();
-				var bChildrenHaveRegisteredOverlays = _haveChildrenRegisteredOverlays(aInnerLayoutContent);
-				assert.strictEqual(this.oDesignTime.getStatus(), "synced", "then DesignTime status was 'synced'");
-				assert.strictEqual(aInnerLayoutContent.length, 4, "then 4 children are present in the internal layout");
-				assert.strictEqual(bChildrenHaveRegisteredOverlays, true, "then all inner layout children have registered overlays");
-				var oCreateOverlaySpy = sinon.spy(this.oDesignTime, "createOverlay");
-				setTimeout(function () {
-					assert.notOk(oCreateOverlaySpy.called, "then after 'sync' event is fired designtime should not create another ovelray for the second insertAggregation");
-					fnDone();
-				}, 0);
-			};
-
-			this.oDesignTime.attachEventOnce("synced", onSynched.bind(this));
-			this.oInnerLayout.insertAggregation("content", oButton5, 2);
-			this.oInnerLayout.insertAggregation("content", oButton6, 3);
-		});
 	});
 
 	QUnit.module("Given a layout and a button", {
