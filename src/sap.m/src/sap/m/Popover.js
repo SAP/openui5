@@ -1100,20 +1100,29 @@ sap.ui.define([
 		 */
 		Popover.prototype.onfocusin = function (oEvent) {
 			var oSourceDomRef = oEvent.target,
-				$this = this.$();
+				$this = this.$(),
+				sFirstFeId = this.getId() + "-firstfe",
+				sMiddleFeId = this.getId() + "-middlefe",
+				sLastFeId = this.getId() + "-lastfe";
 
 			//If the invisible FIRST focusable element (suffix '-firstfe') has got focus, move focus to the last focusable element inside
-			if (oSourceDomRef.id === this.getId() + "-firstfe") {
+			if (oSourceDomRef.id === sFirstFeId) {
 				// Search for anything focusable from bottom to top
 				var oLastFocusableDomref = $this.lastFocusableDomRef();
 				if (oLastFocusableDomref){
 					oLastFocusableDomref.focus();
+				} else {
+					//force the focus to stay in the popover when the content is not focusable.
+					document.getElementById(sMiddleFeId).focus();
 				}
-			} else if (oSourceDomRef.id === this.getId() + "-lastfe") {
+			} else if (oSourceDomRef.id === sLastFeId) {
 				// Search for anything focusable from top to bottom
 				var oFirstFocusableDomref = $this.firstFocusableDomRef();
 				if (oFirstFocusableDomref){
 					oFirstFocusableDomref.focus();
+				} else {
+					//force the focus to stay in the popover when the content is not focusable.
+					document.getElementById(sMiddleFeId).focus();
 				}
 			}
 		};
