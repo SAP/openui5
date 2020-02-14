@@ -135,7 +135,7 @@ sap.ui.define([
 		SelectionPlugin.prototype.onActivate.apply(this, arguments);
 		this.oInnerSelectionPlugin = oTable._createLegacySelectionPlugin();
 		this.oInnerSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
-		oTable.addAggregation("_hiddenDependents", this.oInnerSelectionPlugin, true);
+		oTable.addAggregation("_hiddenDependents", this.oInnerSelectionPlugin);
 		oTable.setProperty("selectionMode", this.getSelectionMode());
 	};
 
