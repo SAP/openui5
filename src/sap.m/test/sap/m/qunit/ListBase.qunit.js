@@ -980,7 +980,7 @@ sap.ui.define([
 					oList.destroy();
 					done();
 				}, 100);
-			});
+			}, 100); // it is not guaranteed that the observer event is queued before the timeout 0
 		});
 
 		QUnit.test("setBackgroundDesign", function(assert) {
