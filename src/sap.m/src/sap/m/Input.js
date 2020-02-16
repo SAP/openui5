@@ -2740,6 +2740,10 @@ function(
 
 					var oList = oSuggPopover._oList;
 
+					if (!oList) {
+						return;
+					}
+
 					// only destroy items in simple suggestion mode
 					if (oList instanceof Table) {
 						oList.removeSelections(true);
