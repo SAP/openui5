@@ -1,5 +1,9 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.global"], function(MockServer, jQuery) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/util/MockServer",
+	"jquery.sap.sjax" // provides jQuery.sap.sjax, jQuery.sap.syncPost
+], function(Log, MockServer, jQuery) {
 	"use strict";
 
 	QUnit.module("sap/ui/core/util/MockServer: given APF model and data in MockServer", {
@@ -10,15 +14,15 @@ sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.global"], function(Moc
 			this.oMockServer = new MockServer({
 				rootUri: this.rootUri
 			});
-			var stubMetadata = 'test-resources/sap/ui/core/qunit/testdata/apfapp/tMockApfMetadata.xml';
-			var stubData = 'test-resources/sap/ui/core/qunit/testdata/apfapp/';
+			var stubMetadata = 'test-resources/sap/ui/core/qunit/mockserver/testdata/apfapp/tMockApfMetadata.xml';
+			var stubData = 'test-resources/sap/ui/core/qunit/mockserver/testdata/apfapp/';
 			this.oMockServer.simulate(stubMetadata, stubData);
 			this.oMockServer.start();
 			this.log = function (text) {
-				var prevLevel = jQuery.sap.log.getLevel();
-				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
-				jQuery.sap.log.debug("  ##test: " + text);
-				jQuery.sap.log.setLevel(prevLevel);
+				var prevLevel = Log.getLevel();
+				Log.setLevel(Log.Level.DEBUG);
+				Log.debug("  ##test: " + text);
+				Log.setLevel(prevLevel);
 			};
 			this.post = function (object, sEntitySetName) {
 				var oSettings = JSON.stringify(object);

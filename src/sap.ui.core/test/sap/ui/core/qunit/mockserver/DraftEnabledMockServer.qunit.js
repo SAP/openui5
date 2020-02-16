@@ -1,10 +1,10 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/base/util/isEmptyObject",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/util/DraftEnabledMockServer",
-	"jquery.sap.global",
 	"jquery.sap.sjax"
-], function(MockServer, DraftEnabledMockServer, jQuery) {
+], function(isEmptyObject, MockServer, DraftEnabledMockServer, jQuery) {
 	"use strict";
 
 	QUnit.module("sap/ui/core/util/DraftEnabledMockServer");
@@ -13,7 +13,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/draft/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/draft/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 
@@ -38,7 +38,7 @@ sap.ui.define([
 			dataType: "json"
 		});
 		assert.ok(oResponse.success);
-		assert.ok(jQuery.isEmptyObject(oResponse.data.d));
+		assert.ok(isEmptyObject(oResponse.data.d));
 
 		// navigate to draft nodes
 		oResponse = jQuery.sap.sjax({
@@ -66,7 +66,7 @@ sap.ui.define([
 			dataType: "json"
 		});
 		assert.ok(oResponse.success);
-		assert.ok(jQuery.isEmptyObject(oResponse.data.d));
+		assert.ok(isEmptyObject(oResponse.data.d));
 
 		// All active documents - $filter=IsActiveEntity
 		oResponse = jQuery.sap.sjax({
@@ -118,7 +118,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/draft/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/draft/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 
@@ -202,7 +202,7 @@ sap.ui.define([
 			dataType: "json"
 		});
 		assert.ok(oResponse.success);
-		assert.ok(jQuery.isEmptyObject(oResponse.data.d));
+		assert.ok(isEmptyObject(oResponse.data.d));
 
 		oResponse = jQuery.sap.sjax({
 			url: "/myservice/SalesOrder?$filter=IsActiveEntity eq true and HasActiveEntity eq false",
@@ -251,9 +251,9 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/draft/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/draft/metadata.xml";
 		oMockServer.simulate(sMetadataUrl, {
-			sMockdataBaseUrl: "test-resources/sap/ui/core/qunit/testdata/draft",
+			sMockdataBaseUrl: "test-resources/sap/ui/core/qunit/mockserver/testdata/draft",
 			bGenerateMissingMockData: true
 		});
 		oMockServer.start();
@@ -279,14 +279,14 @@ sap.ui.define([
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "No DraftAdministrativeData for Active Entity");
-		assert.ok(jQuery.isEmptyObject(oResponse.data.d));
+		assert.ok(isEmptyObject(oResponse.data.d));
 
 		oResponse = jQuery.sap.sjax({
 			url: "/myservice/SalesOrder(ActiveSalesOrderID='ActiveSalesOrderID 2',SalesOrderDraftUUID=guid'00000000-0000-0000-0000-000000000000')?$expand=DraftAdministrativeData",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "No DraftAdministrativeData for Active Entity");
-		assert.ok(jQuery.isEmptyObject(oResponse.data.d.DraftAdministrativeData));
+		assert.ok(isEmptyObject(oResponse.data.d.DraftAdministrativeData));
 
 		var aSalesOrder = oMockServer.getEntitySetData("SalesOrder");
 		assert.equal(aSalesOrder[2].DraftAdministrativeData, null);

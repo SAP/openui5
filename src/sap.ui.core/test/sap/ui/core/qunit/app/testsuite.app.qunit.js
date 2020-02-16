@@ -10,30 +10,6 @@ sap.ui.define(function () {
 			MessageListBinding: {
 				title: "Tests for sap/ui/model/message/MessageListBinding"
 			},
-			MockServer: {
-				title: "Tests for sap/ui/core/util/MockServer",
-				sinon: 1, // because MockServer is used which has a hard dependency to sinon v1
-				ui5: {
-					libs: ["sap.ui.commons"]
-				},
-				loader: {
-					paths: {
-						"testdata": "test-resources/sap/ui/core/qunit/testdata/"
-					}
-				}
-			},
-			MockServerFeature: {
-				title: "Tests for sap/ui/core/util/Mockserver: given data and complex filter features",
-				sinon: 1 // because MockServer is used which has a hard dependency to sinon v1
-			},
-			MockServerAPF: {
-				title: "Tests for sap/ui/core/util/MockServer: APF model",
-				sinon: 1 // because MockServer is used which has a hard dependency to sinon v1
-			},
-			DraftEnabledMockServer: {
-				title: "Tests for sap/ui/core/util/DraftEnabledMockServer",
-				sinon: 1 // because MockServer is used which has a hard dependency to sinon v1
-			},
 			DesignMode: {
 				title: "Tests for sap/ui/core/Configuration: DesignMode",
 				ui5: {

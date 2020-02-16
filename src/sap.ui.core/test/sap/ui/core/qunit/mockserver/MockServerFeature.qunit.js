@@ -1,5 +1,9 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.global"], function(MockServer, jQuery) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/util/MockServer",
+	"jquery.sap.sjax" // provides jQuery.sap.sjax, jQuery.sap.syncPost
+], function(Log, MockServer, jQuery) {
 	"use strict";
 
 	QUnit.module("sap/ui/core/util/MockServer: given data and complex filter features in MockServer", {
@@ -7,16 +11,16 @@ sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.global"], function(Moc
 			this.oMockServer = new MockServer({
 				rootUri: "/myService/"
 			});
-			this.simpleXML = 'test-resources/sap/ui/core/qunit/testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
-			this.simpleJSON = 'test-resources/sap/ui/core/qunit/testdata/apfapp/';
+			this.simpleXML = 'test-resources/sap/ui/core/qunit/mockserver/testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
+			this.simpleJSON = 'test-resources/sap/ui/core/qunit/mockserver/testdata/apfapp/';
 			this.oMockServer.simulate(this.simpleXML, this.simpleJSON);
 			this.oMockServer.start();
 
 			this.log = function (text) {
-				var prevLevel = jQuery.sap.log.getLevel();
-				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
-				jQuery.sap.log.debug("  ##test: " + text);
-				jQuery.sap.log.setLevel(prevLevel);
+				var prevLevel = Log.getLevel();
+				Log.setLevel(Log.Level.DEBUG);
+				Log.debug("  ##test: " + text);
+				Log.setLevel(prevLevel);
 			};
 			this.post = function (object, type) {
 				var oSettings = JSON.stringify(object);
@@ -248,8 +252,8 @@ sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.global"], function(Moc
 	QUnit.module('MockServer URI ', {
 		beforeEach: function () {
 
-			this.simpleXML = 'test-resources/sap/ui/core/qunit/testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
-			this.simpleJSON = 'test-resources/sap/ui/core/qunit/testdata/apfapp/';
+			this.simpleXML = 'test-resources/sap/ui/core/qunit/mockserver/testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
+			this.simpleJSON = 'test-resources/sap/ui/core/qunit/mockserver/testdata/apfapp/';
 			this.localhost = "http://localhost:9999"; /* avoid running on the same host:port -> test will fail! */
 			this.path = "/mickeyMouse";
 			this.absUri = this.simpleXML;
@@ -311,9 +315,12 @@ sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.global"], function(Moc
 			this.oMockServer = new MockServer({
 				rootUri: "/myService/"
 			});
-			this.simpleXML = 'test-resources/sap/ui/core/qunit/testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
-			this.simpleJSON = 'test-resources/sap/ui/core/qunit/testdata/apfapp/';
-			this.oMockServer.simulate(this.simpleXML, this.simpleJSON);
+			this.simpleXML = 'test-resources/sap/ui/core/qunit/mockserver/testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
+			this.simpleJSON = 'test-resources/sap/ui/core/qunit/mockserver/testdata/apfapp/';
+			this.oMockServer.simulate(this.simpleXML, {
+				sMockdataBaseUrl: this.simpleJSON,
+				bHasIndexFile: true
+			});
 			this.oMockServer.start();
 		},
 		afterEach: function () {

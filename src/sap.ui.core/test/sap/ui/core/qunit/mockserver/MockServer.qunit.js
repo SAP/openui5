@@ -7,7 +7,8 @@ sap.ui.define([
     "jquery.sap.global",
     "sap/ui/Device",
     "sap/ui/model/odata/v2/ODataModel",
-    "sap/ui/commons/Label"
+    "sap/ui/commons/Label",
+	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
     MockServer,
 	Control,
@@ -16,9 +17,13 @@ sap.ui.define([
 	jQuery,
 	Device,
 	v2ODataModel,
-	Label
+	Label,
+	createAndAppendDiv
 ) {
 	"use strict";
+
+	// create UIArea divs
+	createAndAppendDiv(["target1", "target2"]);
 
 	// notepad control for list binding test
 	var MyListItem = Element.extend("MyListItem", {
@@ -138,8 +143,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/metadata-types.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/mockdata-types/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/boolean-key-property/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/boolean-key-property/";
 
 		oMockServer.simulate(sMetadataUrl, {
 			"sMockdataBaseUrl": sMockdataBaseUrl,
@@ -165,8 +170,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/metadata-types.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/mockdata-types/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/boolean-key-property/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/boolean-key-property/";
 
 		oMockServer.simulate(sMetadataUrl, {
 			"sMockdataBaseUrl": sMockdataBaseUrl,
@@ -193,8 +198,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/metadata-types.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/mockdata-types/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/boolean-key-property/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/boolean-key-property/";
 
 		oMockServer.simulate(sMetadataUrl, {
 			"sMockdataBaseUrl": sMockdataBaseUrl,
@@ -221,7 +226,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -691,13 +696,13 @@ sap.ui.define([
 				method: "GET",
 				path: "/projects/:id",
 				response: function (oXhr, id) {
-					oXhr.respondFile(200, null, 'test-resources/sap/ui/core/qunit/testdata/mockServerJSON.json');
+					oXhr.respondFile(200, null, 'test-resources/sap/ui/core/qunit/mockserver/testdata/respondFile/mockServerJSON.json');
 				}
 			}, {
 				method: "GET",
 				path: "/projects2/:id",
 				response: function (oXhr, id) {
-					oXhr.respondFile(200, null, 'test-resources/sap/ui/core/qunit/testdata/mockServerXML.xml');
+					oXhr.respondFile(200, null, 'test-resources/sap/ui/core/qunit/mockserver/testdata/respondFile/mockServerXML.xml');
 				}
 			}]
 		});
@@ -790,7 +795,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -840,7 +845,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -910,7 +915,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -961,7 +966,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1011,7 +1016,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1061,7 +1066,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1111,7 +1116,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1166,7 +1171,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1225,7 +1230,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1285,7 +1290,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1342,7 +1347,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1392,7 +1397,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1420,7 +1425,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1442,8 +1447,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1562,7 +1567,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1618,7 +1623,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 
 		oMockServer.start();
@@ -1638,7 +1643,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 
 		oMockServer.start();
@@ -1666,8 +1671,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
-		oMockServer.simulate(sMetadataUrl, "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/");
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl, "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/");
 
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1706,8 +1711,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
-		oMockServer.simulate(sMetadataUrl, "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/");
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl, "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/");
 
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1767,8 +1772,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1796,7 +1801,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1821,7 +1826,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/apfapp/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/apfapp/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -1840,8 +1845,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/";
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		// Check simulate with specifying specific aEntitySetsNames (entity sets to fetch)
 		oMockServer.simulate(sMetadataUrl, {
 			'sMockdataBaseUrl': sMockdataBaseUrl,
@@ -1973,8 +1978,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/patient/metadata.xml";
-		oMockServer.simulate(sMetadataUrl, "test-resources/sap/ui/core/qunit/testdata/patient/");
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/patient/metadata.xml";
+		oMockServer.simulate(sMetadataUrl, "test-resources/sap/ui/core/qunit/mockserver/testdata/patient/");
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
@@ -2009,7 +2014,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2055,7 +2060,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2114,7 +2119,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/draft/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/draft/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 
@@ -2133,7 +2138,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2193,7 +2198,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2274,8 +2279,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2332,8 +2337,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2411,8 +2416,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2657,7 +2662,7 @@ sap.ui.define([
 		oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 
@@ -2673,9 +2678,9 @@ sap.ui.define([
 		oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/northwind/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/northwind/metadata.xml";
 		oMockServer.simulate(sMetadataUrl, {
-			'sMockdataBaseUrl': "test-resources/sap/ui/core/qunit/testdata/northwind/",
+			'sMockdataBaseUrl': "test-resources/sap/ui/core/qunit/mockserver/testdata/northwind/",
 			'bGenerateMissingMockData': true
 		});
 		oMockServer.start();
@@ -2750,8 +2755,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2801,8 +2806,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/shopping/metadata.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/shopping/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/shopping/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/shopping/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2821,8 +2826,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2862,7 +2867,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2951,7 +2956,7 @@ sap.ui.define([
 		oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -2972,8 +2977,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3018,7 +3023,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/mockmultiselmeta/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/expand-multi-select/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3028,7 +3033,7 @@ sap.ui.define([
 			dataType: "json"
 		});
 		assert.ok(oResponse.success);
-		assert.equal(oResponse.data.d.results.length, 100, "Expand and select multi respone count");
+		assert.equal(oResponse.data.d.results.length, 100, "Expand and select multi response count");
 		assert.equal(oResponse.data.d.results[0].to_ListTypeGroupAssignment.results[0].ListTypeGroup, 'ListTypeGroup 1', "Expand and select multi value");
 		oMockServer.destroy();
 	});
@@ -3037,8 +3042,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3092,7 +3097,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl, null);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3109,7 +3114,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/Model10Entities.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/Model10Entities.xml";
 		oMockServer.simulate(sMetadataUrl, null);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3126,8 +3131,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3147,7 +3152,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3224,7 +3229,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3322,7 +3327,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/?sap-client=001"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3382,8 +3387,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sUri
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3449,8 +3454,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sUri
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3518,8 +3523,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sUri
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3599,8 +3604,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sUri
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3680,8 +3685,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sUri
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3727,8 +3732,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sUri
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3770,8 +3775,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sUri
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 
 		var oStatusList = {
 			"200": { statusCode: 200, statusText: "OK" },
@@ -3866,8 +3871,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sUri
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		var aRequests = oMockServer.getRequests();
@@ -3929,8 +3934,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataUrl = "test-resources/sap/ui/core/qunit/testdata/MockData.json";// JSON file which contains the mockdata
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/AllInOne.json";// JSON file which contains the mockdata
 		oMockServer.simulate(sMetadataUrl, sMockdataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -3969,7 +3974,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -4010,8 +4015,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -4049,7 +4054,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -4068,8 +4073,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/";// base url which contains the mockdata
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/";// base url which contains the mockdata
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -4096,8 +4101,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sURI
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 
@@ -4266,7 +4271,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sURI
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		var oModel = initModel(sURI, true);
@@ -4291,8 +4296,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/detection/metadata.xml";// url to the service metadata document
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/detection/";// base url which contains the mockdata
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/detection/metadata.xml";// url to the service metadata document
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/detection/";// base url which contains the mockdata
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -4317,7 +4322,7 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sURI
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		var oModel = initModel(sURI, true);
@@ -4348,8 +4353,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
@@ -4451,8 +4456,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("test stable Ids in GenerateMissingMockData", function (assert) {
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/northwind/metadata.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/northwind/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/northwind/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/northwind/";
 
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"
@@ -4559,8 +4564,8 @@ sap.ui.define([
 		var oMockServer = new MockServer({
 			rootUri: sUri
 		});
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
 
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		var aRequests = oMockServer.getRequests();
