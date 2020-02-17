@@ -3985,6 +3985,45 @@ sap.ui.define([
 
 	QUnit.module("Type-ahead");
 
+	QUnit.test("Typeahead should be disabled on adroid devices", function (assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		this.stub(Device, "os", {
+			android: true
+		});
+
+		// arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			filterSuggests: false,
+			suggestionItems: [
+				new Item({text: "Germany"}),
+				new Item({text: "Bulgaria"}),
+				new Item("UK", {key: "UK", text: "United Kingdom"}),
+				new Item({text: "Italy"})
+			]
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
+
+		// act
+		oInput._$input.focus().trigger(oFakeKeydown).val("G").trigger("input");
+		this.clock.tick(300);
+
+		// assert
+		assert.notOk(oInput._oSuggPopover._bDoTypeAhead, "_bDoTypeAhead should be set to false'");
+
+		// clean up
+		oInput.destroy();
+		oInput = null;
+	});
+
 	QUnit.test("Auto complete should not be allowed when it is set to false", function (assert) {
 		// arrange
 		var oInput = new Input({

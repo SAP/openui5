@@ -740,7 +740,7 @@ function(
 			this._iOldCursorPos = jQuery(this.getFocusDomRef()).cursorPos();
 		}
 
-		this._bDoTypeAhead = (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
+		this._bDoTypeAhead = !Device.os.android && (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
 	};
 
 	/**
