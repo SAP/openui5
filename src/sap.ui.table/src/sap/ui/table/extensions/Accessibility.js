@@ -762,6 +762,7 @@ sap.ui.define([
 
 				case AccExtension.ELEMENTTYPES.TABLEHEADER: //The table header area
 					mAttributes["role"] = "heading";
+					mAttributes["aria-level"] = "2"; // Level is mandatory for headings with ARIA 1.1 and the default is 2
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
