@@ -546,8 +546,7 @@ sap.ui.define([
 		 */
 		_getManifestFileAsJson: function () {
 			var aFiles,
-				oManifestFile,
-				oCardEditor = this.byId("cardEditor");
+				oManifestFile;
 
 			if (exploreSettingsModel.getProperty("/useExtendedFileEditor")) {
 				aFiles = this.getModel("extendedFileEditor").getProperty("/files");
@@ -557,7 +556,7 @@ sap.ui.define([
 
 				return JSON.parse(oManifestFile.content);
 			} else {
-				return oCardEditor.getJson();
+				return JSON.parse(this._editor.getValue());
 			}
 		},
 
