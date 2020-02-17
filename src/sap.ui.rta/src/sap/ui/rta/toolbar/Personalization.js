@@ -46,8 +46,8 @@ function(
 		}
 	});
 
-	Personalization.prototype.buildControls = function() {
-		var aControls = [
+	Personalization.prototype.buildContent = function() {
+		[
 			new Button("sapUiRta_restore", {
 				type: "Transparent",
 				text: "{i18n>BTN_RESTORE}",
@@ -59,9 +59,11 @@ function(
 				text: "{i18n>BTN_DONE}",
 				press: this.eventHandler.bind(this, 'Exit')
 			}).data('name', 'exit')
-		];
+		].forEach(function (oControl) {
+			this.addItem(oControl);
+		}.bind(this));
 
-		return Promise.resolve(aControls);
+		return Promise.resolve();
 	};
 
 	Personalization.prototype.setUndoRedoEnabled = function() {

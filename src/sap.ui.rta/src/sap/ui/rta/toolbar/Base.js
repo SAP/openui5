@@ -85,7 +85,7 @@ function(
 		HBox.prototype.init.apply(this, arguments);
 		// Assign the model object to the SAPUI5 core using the name "i18n"
 		this.setModel(this._oResourceModel, "i18n");
-		this.buildContent();
+		return this.buildContent();
 	};
 
 	/**
@@ -209,7 +209,8 @@ function(
 	Base.prototype.setUndoRedoEnabled = function () {};
 	Base.prototype.setPublishEnabled = function () {};
 	Base.prototype.setRestoreEnabled = function () {};
-	Base.prototype.setDraftVisible = function () {};
+	Base.prototype.setVersioningVisible = function () {};
+	Base.prototype.setDraftEnabled = function () {};
 
 	return Base;
 }, true);

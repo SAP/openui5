@@ -854,7 +854,7 @@ sap.ui.define([
 			var oActivateDraftStub;
 			var oShowMessageToastStub;
 			var oRemoveAllCommandsSpy;
-			var oToolbarSetDraftVisibleSpy;
+			var oToolbarSetDraftEnabledSpy;
 			var oRta = this.oRta;
 			var sVersionName = "aVersionName";
 			var oEvent = {
@@ -868,7 +868,7 @@ sap.ui.define([
 				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").returns(Promise.resolve(true));
 				oShowMessageToastStub = sandbox.stub(oRta, "_showMessageToast");
 				oRemoveAllCommandsSpy = sandbox.spy(oRta.getCommandStack(), "removeAllCommands");
-				oToolbarSetDraftVisibleSpy = sandbox.spy(oRta.getToolbar(), "setDraftVisible");
+				oToolbarSetDraftEnabledSpy = sandbox.spy(oRta.getToolbar(), "setDraftEnabled");
 			})
 			.then(oRta._onActivateDraft.bind(oRta, oEvent))
 			.then(function() {
@@ -879,8 +879,8 @@ sap.ui.define([
 				assert.equal(oActivationCallPropertyBag.versionName, sVersionName, "and version name");
 				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
 				assert.equal(oRta.bInitialDraftAvailable, false, "and the initialDraftAvailable is removed");
-				assert.equal(oToolbarSetDraftVisibleSpy.callCount, 2, "and the draft info is set twice");
-				assert.equal(oToolbarSetDraftVisibleSpy.getCall(1).args[0], false, "to false");
+				assert.equal(oToolbarSetDraftEnabledSpy.callCount, 2, "and the draft info is set twice");
+				assert.equal(oToolbarSetDraftEnabledSpy.getCall(1).args[0], false, "to false");
 				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
 			}.bind(this));
 		});

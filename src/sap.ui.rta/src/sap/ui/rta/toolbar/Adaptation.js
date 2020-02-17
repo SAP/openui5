@@ -5,35 +5,11 @@
 sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/Device",
-	"sap/m/ToolbarSpacer",
-	"sap/m/Label",
-	"sap/m/Button",
-	"sap/m/SegmentedButton",
-	"sap/m/SegmentedButtonItem",
-	"sap/m/MenuButton",
-	"sap/m/MenuItem",
-	"sap/m/Menu",
-	"sap/m/HBox",
-	"sap/m/OverflowToolbar",
-	"sap/m/OverflowToolbarLayoutData",
-	"sap/m/FlexItemData",
 	"./Base"
 ],
 function(
 	Fragment,
 	Device,
-	ToolbarSpacer,
-	Label,
-	Button,
-	SegmentedButton,
-	SegmentedButtonItem,
-	MenuButton,
-	MenuItem,
-	Menu,
-	HBox,
-	OverflowToolbar,
-	OverflowToolbarLayoutData,
-	FlexItemData,
 	Base
 ) {
 	"use strict";
@@ -81,8 +57,14 @@ function(
 					defaultValue: false
 				},
 
-				/** Determines whether draft buttons are visible */
-				draftVisible: {
+				/** Determines whether the version label and draft buttons are visible */
+				versioningVisible: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/** Determines whether draft buttons are enabled */
+				draftEnabled: {
 					type: "boolean",
 					defaultValue: false
 				},
@@ -109,13 +91,13 @@ function(
 		Base.prototype.init.apply(this, arguments);
 	};
 
-	Adaptation.prototype.onAfterRendering = function () {
+	Adaptation.prototype.onBeforeRendering = function () {
 		if (!Device.media.hasRangeSet(DEVICE_SET)) {
 			Device.media.initRangeSet(DEVICE_SET, [900, 1200], "px", [Adaptation.modes.MOBILE, Adaptation.modes.TABLET, Adaptation.modes.DESKTOP]);
 		}
 		this._onSizeChanged(Device.media.getCurrentRange(DEVICE_SET));
 
-		Base.prototype.onAfterRendering.apply(this, arguments);
+		Base.prototype.onBeforeRendering.apply(this, arguments);
 	};
 
 	Adaptation.prototype.exit = function() {
@@ -192,6 +174,7 @@ function(
 	Adaptation.prototype.buildControls = function () {
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.Adaptation",
+			id: this.getId() + "_fragment",
 			controller: {
 				activateDraft: this._openVersionNameDialog.bind(this),
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
@@ -221,6 +204,7 @@ function(
 	function _createDialog() {
 		return Fragment.load({
 			name : "sap.ui.rta.toolbar.VersionNameDialog",
+			id: this.getId() + "_fragment",
 			controller : {
 				onConfirmVersioningDialog: function () {
 					var sVersionName = this.getControl("versionNameInput").getValue();
@@ -240,6 +224,10 @@ function(
 			this.addDependent(this._oDialog);
 		}.bind(this));
 	}
+
+	Adaptation.prototype.getControl = function(sName) {
+		return sap.ui.getCore().byId(this.getId() + "_fragment--sapUiRta_" + sName);
+	};
 
 	Adaptation.prototype._openVersionNameDialog = function () {
 		var oDialogPromise;
@@ -269,16 +257,23 @@ function(
 	};
 
 	Adaptation.prototype._setDraftLabelVisibility = function () {
-		var bLabelVisible = this.getDraftVisible() && this.sMode === Adaptation.modes.DESKTOP;
+		var bLabelVisible = this.getVersioningVisible() && this.sMode === Adaptation.modes.DESKTOP;
 		this.getControl("draftLabel").setVisible(bLabelVisible);
 	};
 
-	Adaptation.prototype.setDraftVisible = function (bVisible) {
-		this.setProperty("draftVisible", bVisible, true);
+	Adaptation.prototype.setVersioningVisible = function (bVisible) {
+		this.setProperty("versioningVisible", bVisible, true);
 		this._setDraftLabelVisibility();
 		this.getControl("activateDraft").setVisible(bVisible);
 		this.getControl("discardDraft").setVisible(bVisible);
 		return bVisible;
+	};
+
+	Adaptation.prototype.setDraftEnabled = function (bEnabled) {
+		this.setProperty("draftEnabled", bEnabled, true);
+		this.getControl("activateDraft").setEnabled(bEnabled);
+		this.getControl("discardDraft").setEnabled(bEnabled);
+		return bEnabled;
 	};
 
 	/* Methods propagation */
