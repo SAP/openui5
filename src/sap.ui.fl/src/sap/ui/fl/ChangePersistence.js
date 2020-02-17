@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/core/Component",
+	"sap/ui/performance/Measurement",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge",
@@ -34,6 +35,7 @@ sap.ui.define([
 	Storage,
 	VariantController,
 	Component,
+	Measurement,
 	JSONModel,
 	jQuery,
 	merge,
@@ -667,12 +669,15 @@ sap.ui.define([
 		return this.getChangesForComponent({component: oAppComponent}).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {
+			Measurement.start("fl.createDependencyMap", "Measurement of creating initial dependency map");
 			//Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
 			this._mChanges = initializeChangesMap();
 
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oAppComponent));
 
 			this._mChangesInitial = merge({}, this._mChanges);
+
+			Measurement.end("fl.createDependencyMap", "Measurement of creating initial dependency map");
 
 			return this.getChangesMapForComponent.bind(this);
 		}
