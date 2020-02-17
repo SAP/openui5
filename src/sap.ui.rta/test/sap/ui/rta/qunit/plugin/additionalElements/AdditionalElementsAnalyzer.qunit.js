@@ -24,13 +24,48 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Given a test view",
-		{
-			afterEach: function() {
-				sandbox.restore();
-			}
-		},
-	function () {
+	renderComplexView();
+	var oGroup;
+	var mAddODataPropertyAction;
+	var oView;
+
+	function assertElementsEqual(mActualAdditionalElement, mExpected, msg, assert) {
+		assert.equal(mActualAdditionalElement.selected, mExpected.selected, msg + " -selected");
+		assert.equal(mActualAdditionalElement.label, mExpected.label, msg + " -label");
+		assert.equal(mActualAdditionalElement.tooltip, mExpected.tooltip, msg + " -tooltip");
+		assert.equal(mActualAdditionalElement.type, mExpected.type, msg + " -type");
+		assert.equal(mActualAdditionalElement.elementId, mExpected.elementId, msg + " -element id");
+		assert.deepEqual(mActualAdditionalElement.bindingPaths, mExpected.bindingPaths, msg + " -bindingPaths");
+	}
+
+	function isFieldPresent(oControl, oInvisibleElement) {
+		return oInvisibleElement.label === oControl.getLabelText();
+	}
+
+	function renderComplexView() {
+		return XMLView.create({
+			id: "idMain1",
+			viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
+		}).then(function(oViewInstance) {
+			oView = oViewInstance;
+			oViewInstance.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oViewInstance.getController().isDataReady().then(function () {
+				oGroup = oViewInstance.byId("GroupEntityType01");
+				return oGroup.getMetadata().loadDesignTime().then(function (oDesignTime) {
+					mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
+					QUnit.start();
+				});
+			});
+		});
+	}
+
+
+	QUnit.module("Given a test view", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function () {
 		QUnit.test("checks if navigation and absolute binding works", function(assert) {
 			var oGroupElement1 = oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
 			var oGroupElement2 = oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
@@ -42,25 +77,17 @@ function(
 				reveal : {
 					elements : [{
 						element : oGroupElement1,
-						action : {
-							//nothing relevant for the analyzer tests
-						}
+						action : {} //nothing relevant for the analyzer tests
 					}, {
 						element : oGroupElement2,
-						action : {
-							//nothing relevant for the analyzer tests
-						}
+						action : {} //nothing relevant for the analyzer tests
 					}, {
 						element : oGroupElement3,
-						action : {
-							//nothing relevant for the analyzer tests
-						}
+						action : {} //nothing relevant for the analyzer tests
 					}]
 				},
 				addODataProperty : {
-					action : {
-						//not relevant for test
-					}
+					action : {} //not relevant for test
 				}
 			};
 
@@ -83,20 +110,14 @@ function(
 					elements : [
 						{
 							element : oView.byId("idMain1--ObjectPageSectionInvisible"),
-							action : {
-								//nothing relevant for the analyzer tests
-							}
+							action : {} //not relevant for test
 						}, {
 							element : oView.byId("idMain1--ObjectPageSectionStashed1"),
-							action : {
-								//nothing relevant for the analyzer tests
-							}
+							action : {} //not relevant for test
 						},
 						{
 							element : oView.byId("idMain1--ObjectPageSectionStashed2"),
-							action : {
-								//nothing relevant for the analyzer tests
-							}
+							action : {} //not relevant for test
 						}
 					]
 				}
@@ -340,20 +361,14 @@ function(
 				reveal : {
 					elements : [{
 						element: oGroupElement1,
-						action : {
-							//nothing relevant for the analyzer test
-						}
+						action : {} //nothing relevant for the analyzer test
 					}, {
 						element: oGroupElement2,
-						action : {
-							//nothing relevant for the analyzer test
-						}
+						action : {} //nothing relevant for the analyzer test
 					}]
 				},
 				addODataProperty : {
-					action : {
-						//not relevant for test
-					}
+					action : {} //not relevant for test
 				}
 			};
 
@@ -380,24 +395,43 @@ function(
 				reveal : {
 					elements : [{
 						element: oGroupElement1,
-						action : {
-							//nothing relevant for the analyzer test
-						}
+						action : {} //not relevant for test
 					}]
 				},
 				addODataProperty : {
-					action : {
-						//not relevant for test
-					}
+					action : {} //not relevant for test
 				}
 			};
 
-			function fnIsFieldPresent(oElement) {
-				return oElement.label === oGroupElement1.getLabelText();
-			}
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+				assert.ok(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+			});
+		});
+
+		QUnit.test("when getting invisible elements of a bound group containing an invisible field with bindings inside belonging to the same context", function(assert) {
+			var oGroup = oView.byId("GroupEntityType01");
+			var oGroupElement1 = oView.byId("EntityType01.Prop9");
+			var oGroupElement2 = oView.byId("EntityType01.Prop10");
+
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal : {
+					elements : [{
+						element: oGroupElement1,
+						action : {} //not relevant for test
+					}, {
+						element: oGroupElement2,
+						action : {} //not relevant for test
+					}]
+				},
+				addODataProperty : {
+					action : {} //not relevant for test
+				}
+			};
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(fnIsFieldPresent), "then the field is available on the dialog");
+				assert.ok(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+				assert.notOk(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement2)), "then the field is available on the dialog");
 			});
 		});
 
@@ -412,25 +446,17 @@ function(
 				reveal : {
 					elements : [{
 						element: oGroupElement1,
-						action : {
-							//nothing relevant for the analyzer test
-						}
+						action : {} //not relevant for test
 					}]
 				}
 			};
 
-			sandbox.stub(oGroup, "getBindingContext")
-				.returns({ getPath: function() { return "/fake/binding/path/group"; }});
-			sandbox.stub(oGroupElement1, "getBindingContext")
-				.returns({ getPath: function() { return "/fake/binding/path/groupElement1"; }});
+			sandbox.stub(oGroup, "getBindingContext").returns({ getPath: function() { return "/fake/binding/path/group"; }});
+			sandbox.stub(oGroupElement1, "getBindingContext").returns({ getPath: function() { return "/fake/binding/path/groupElement1"; }});
 			sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
 
-			function fnIsFieldPresent(oElement) {
-				return oElement.label === oGroupElement1.getLabelText();
-			}
-
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(fnIsFieldPresent), "then the field is available on the dialog");
+				assert.ok(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
 			});
 		});
 
@@ -443,24 +469,16 @@ function(
 				reveal : {
 					elements : [{
 						element: oGroupElement1,
-						action : {
-							//nothing relevant for the analyzer test
-						}
+						action : {} //not relevant for test
 					}]
 				},
 				addODataProperty : {
-					action : {
-						//not relevant for test
-					}
+					action : {} //not relevant for test
 				}
 			};
 
-			function fnIsFieldPresent(oElement) {
-				return oElement.label === oGroupElement1.getLabelText();
-			}
-
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.notOk(aAdditionalElements.some(fnIsFieldPresent), "then the other field is not available on the dialog");
+				assert.notOk(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the other field is not available on the dialog");
 			});
 		});
 
@@ -480,20 +498,14 @@ function(
 				reveal : {
 					elements : [{
 						element: oGroupElement1,
-						action : {
-								//nothing relevant for the analyzer test
-						}
+						action : {} //not relevant for test
 					}, {
 						element: oGroupElement2,
-						action : {
-								//nothing relevant for the analyzer test
-						}
+						action : {} //not relevant for test
 					}]
 				},
 				addODataProperty : {
-					action : {
-							//not relevant for test
-					}
+					action : {} //not relevant for test
 				}
 			};
 
@@ -513,9 +525,7 @@ function(
 			}).map(function(oFormElement) {
 				return {
 					element : oFormElement,
-					action : {
-						//nothing relevant for the analyzer
-					}
+					action : {} //not relevant for test
 				};
 			});
 
@@ -525,9 +535,7 @@ function(
 					elements : aFormElements
 				},
 				addODataProperty : {
-					action : {
-						//not relevant for test
-					}
+					action : {} //not relevant for test
 				}
 			};
 
@@ -624,20 +632,14 @@ function(
 				reveal : {
 					elements : [{
 						element: oGroupElement1,
-						action : {
-							//nothing relevant for the analyzer test
-						}
+						action : {} //not relevant for test
 					}, {
 						element: oGroupElement2,
-						action : {
-							//nothing relevant for the analyzer test
-						}
+						action : {} //not relevant for test
 					}]
 				},
 				custom : {
-					action : {
-						//not relevant for test
-					},
+					action : {}, //not relevant for test
 					items: [{
 						label: sGroupElement1OriginalLabel,
 						tooltip: "Tooltip1",
@@ -828,38 +830,6 @@ function(
 		});
 	});
 
-
-	function assertElementsEqual(mActualAdditionalElement, mExpected, msg, assert) {
-		assert.equal(mActualAdditionalElement.selected, mExpected.selected, msg + " -selected");
-		assert.equal(mActualAdditionalElement.label, mExpected.label, msg + " -label");
-		assert.equal(mActualAdditionalElement.tooltip, mExpected.tooltip, msg + " -tooltip");
-		assert.equal(mActualAdditionalElement.type, mExpected.type, msg + " -type");
-		assert.equal(mActualAdditionalElement.elementId, mExpected.elementId, msg + " -element id");
-		assert.deepEqual(mActualAdditionalElement.bindingPaths, mExpected.bindingPaths, msg + " -bindingPaths");
-	}
-
-	renderComplexView();
-	var oGroup;
-	var mAddODataPropertyAction;
-	var oView;
-
-	function renderComplexView() {
-		return XMLView.create({
-			id: "idMain1",
-			viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
-		}).then(function(oViewInstance) {
-			oView = oViewInstance;
-			oViewInstance.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			oViewInstance.getController().isDataReady().then(function () {
-				oGroup = oViewInstance.byId("GroupEntityType01");
-				return oGroup.getMetadata().loadDesignTime().then(function (oDesignTime) {
-					mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
-					QUnit.start();
-				});
-			});
-		});
-	}
 
 	QUnit.done(function () {
 		oGroup.destroy();

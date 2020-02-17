@@ -53,6 +53,9 @@
 				<Property Name="Property08" Type="Edm.String"
 					Nullable="false" MaxLength="25" sap:quickinfo="Property without sap:label"
 					sap:creatable="false" sap:sortable="false" />
+				<Property Name="Property09" Type="Edm.String"
+					Nullable="false" MaxLength="25" sap:quickinfo="Property without sap:label and visible false"
+					sap:creatable="false" sap:sortable="false" sap:visible="false"/>
 				<Property Name="EntityType01_Complex" Type="AdditionalElementsTest.ComplexType03"
 					Nullable="false" />
 				<Property Name="CommonPropertyName" Type="Edm.String"

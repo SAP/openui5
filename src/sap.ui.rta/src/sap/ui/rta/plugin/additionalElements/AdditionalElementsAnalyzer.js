@@ -188,7 +188,6 @@ sap.ui.define([
 
 						mData.property = mODataEntity.property || [];
 						mData.property = _expandComplexProperties(mData.property, oMetaModel, mODataEntity);
-						mData.property = _filterInvisibleProperties(mData.property, oElement, sAggregationName);
 
 						if (mODataEntity.navigationProperty) {
 							mData.navigationProperty = mODataEntity.navigationProperty;
@@ -523,6 +522,7 @@ sap.ui.define([
 					return _getODataPropertiesOfModel(oElement, sAggregationName);
 				})
 				.then(function(mData) {
+					mData.property = _filterInvisibleProperties(mData.property, oElement, sAggregationName);
 					var aODataProperties = mData.property;
 					var aRelevantElements = _getRelevantElements(oElement, mAction.relevantContainer, sAggregationName);
 					var aBindings = [];
