@@ -892,9 +892,9 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, false);
 
-		assert.equal(this.oPanel.$().find("tr").find("span").length, 13); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 2 span/placeholders more for text and icon)
+		assert.equal(this.oPanel.$().find("tr").find("span").length, 15); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 2 span/placeholders more for text and icon)
 		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "B");
-		assert.equal(this.oPanel.$().find("tr").find("span")[8].textContent, "A");
+		assert.equal(this.oPanel.$().find("tr").find("span")[9].textContent, "A");
 
 		// act: Reset
 		this.oPanel.getModel().setProperty("/", this.oDataInitial);
@@ -913,9 +913,9 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, true);
 
-		assert.equal(this.oPanel.$().find("tr").find("span").length, 13); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 2 span/placeholders more for text and icon)
+		assert.equal(this.oPanel.$().find("tr").find("span").length, 15); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 2 span/placeholders more for text and icon)
 		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "A");
-		assert.equal(this.oPanel.$().find("tr").find("span")[8].textContent, "B");
+		assert.equal(this.oPanel.$().find("tr").find("span")[9].textContent, "B");
 	});
 
 	QUnit.test("Reset after 'Show Selected' clicked", function(assert) {
@@ -944,7 +944,7 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
 
-		assert.equal(this.oPanel.$().find("tr").find("span").length, 8); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 2 span/placeholders more for text and icon)
+		assert.equal(this.oPanel.$().find("tr").find("span").length, 9); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 2 span/placeholders more for text and icon)
 		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "B");
 
 		// act: Reset
@@ -964,9 +964,9 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, true);
 
-		assert.equal(this.oPanel.$().find("tr").find("span").length, 13); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 2 span/placeholders more for text and icon)
+		assert.equal(this.oPanel.$().find("tr").find("span").length, 15); // 3 header cells + 3 cells * 2 items (each item in sap.m.Select has 2 span/placeholders more for text and icon)
 		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "A");
-		assert.equal(this.oPanel.$().find("tr").find("span")[8].textContent, "B");
+		assert.equal(this.oPanel.$().find("tr").find("span")[9].textContent, "B");
 	});
 
 	QUnit.module("sap.m.P13nDimMeasurePanel: FIX 0020751294 0000593415 2018", {
@@ -1026,8 +1026,8 @@ sap.ui.define([
 
 	QUnit.test("Sorting of invisible dimensions and measures", function(assert) {
 		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "D");
-		assert.equal(this.oPanel.$().find("tr").find("span")[8].textContent, "E");
-		assert.equal(this.oPanel.$().find("tr").find("span")[13].textContent, "É");
-		assert.equal(this.oPanel.$().find("tr").find("span")[18].textContent, "F");
+		assert.equal(this.oPanel.$().find("tr").find("span")[9].textContent, "E");
+		assert.equal(this.oPanel.$().find("tr").find("span")[15].textContent, "É");
+		assert.equal(this.oPanel.$().find("tr").find("span")[21].textContent, "F");
 	});
 });
