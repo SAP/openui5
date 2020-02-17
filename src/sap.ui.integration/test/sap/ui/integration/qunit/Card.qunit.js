@@ -2783,6 +2783,27 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
+		QUnit.test("Formatting with self translation and no custom translation", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+
+				Core.applyChanges();
+
+				var oHeader = this.oCard.getCardHeader();
+
+				// Assert
+				assert.equal(oHeader.getStatusText(), "2 of 115", "Should have correctly formatted and translated counter.");
+
+				// Cleanup
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest3.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
 		QUnit.module("Events - 'manifestReady'", {
 			beforeEach: function () {
 				this.oCard = new Card();
