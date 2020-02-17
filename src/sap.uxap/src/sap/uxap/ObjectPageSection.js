@@ -316,8 +316,13 @@ sap.ui.define([
 	};
 
 	ObjectPageSection.prototype._updateShowHideState = function (bHide) {
+		if (this._getIsHidden() === bHide) {
+			return this;
+		}
+
 		this._updateShowHideButton(bHide);
 		this._getShowHideAllButton().setVisible(this._getShouldDisplayShowHideAllButton());
+
 		return ObjectPageSectionBase.prototype._updateShowHideState.call(this, bHide);
 	};
 

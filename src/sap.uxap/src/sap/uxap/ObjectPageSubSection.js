@@ -1019,6 +1019,10 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype._updateShowHideState = function (bHide) {
+		if (this._getIsHidden() === bHide) {
+			return this;
+		}
+
 		this.$().children(this._sMoreContainerSelector).toggle(!bHide);
 
 		return ObjectPageSectionBase.prototype._updateShowHideState.call(this, bHide);
