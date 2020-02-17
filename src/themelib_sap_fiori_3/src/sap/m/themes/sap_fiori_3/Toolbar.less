@@ -24,14 +24,27 @@ html.sap-desktop .sapMTBActive:focus {
 .sapMTB-Info-CTX.sapMTB {
 	background: darken(@sapUiBaseColor, 10);
 
+	> .sapUiIcon {
+		color: @sapUiBaseText;
+	}
+
 	&.sapMTBActive {
 		background: @sapUiInfobarBackground;
+		.generate-contrast-color-toolbar(@sapUiInfobarBackground);
+
+		&:active {
+			.generate-contrast-color-toolbar(@sapUiInfobarActiveBackground);
+		}
 
 		&:hover {
-			background: @sapUiInfobarHoverBackground;
+			.generate-contrast-color-toolbar(@sapUiInfobarHoverBackground);
 		}
-		&:active {
-			background: @sapUiInfobarActiveBackground;
+
+		.sapMText,
+		.sapMLabel,
+		> .sapMTitle,
+		> .sapUiIcon {
+			color: inherit;
 		}
 	}
 }
@@ -81,4 +94,8 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMTBActive:focus {
 	outline-style: dashed;
+}
+
+.generate-contrast-color-toolbar(@backgroundColor) {
+	color: contrast(@backgroundColor, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 }
