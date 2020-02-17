@@ -1,0 +1,28 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core" >
+    <Dialog
+            title="{i18n>TIT_VERSION_NAME_DIALOG}"
+            type="Message" >
+        <content>
+            <Input
+                    id="sapUiRta_versionNameInput"
+                    type="Text"
+                    liveChange=".onVersionNameLiveChange"
+                    placeholder="{i18n>TXT_VERSION_NAME_INPUT_PLACEHOLDER}" />
+        </content>
+        <beginButton>
+            <Button
+                id="sapUiRta_confirmVersionNameButton"
+                text="{i18n>BUT_VERSION_NAME_DIALOG_CONFIRM}"
+                type="Emphasized"
+                enabled="false"
+                press=".onConfirmVersioningDialog" />
+        </beginButton>
+        <endButton>
+            <Button
+                text="{i18n>BUT_VERSION_NAME_DIALOG_CANCEL}"
+                press=".onCancelVersioningDialog" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

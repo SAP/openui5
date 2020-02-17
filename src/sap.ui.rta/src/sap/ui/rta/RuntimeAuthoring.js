@@ -1006,12 +1006,13 @@ function(
 		return this.getCommandStack().redo();
 	};
 
-	RuntimeAuthoring.prototype._onActivateDraft = function() {
+	RuntimeAuthoring.prototype._onActivateDraft = function(oEvent) {
 		return this._serializeAndSave()
 		.then(
 			VersionsAPI.activateDraft.bind(undefined, {
 				layer : this.getLayer(),
-				selector : this.getRootControlInstance()
+				selector : this.getRootControlInstance(),
+				versionName: oEvent.getParameter("versionName")
 			})
 		).then(function () {
 			this.bInitialDraftAvailable = false;

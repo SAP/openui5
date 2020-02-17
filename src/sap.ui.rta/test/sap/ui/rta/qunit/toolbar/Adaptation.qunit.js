@@ -3,22 +3,16 @@
 sap.ui.define([
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/Device",
+	"sap/ui/core/Fragment",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	Adaptation,
 	Device,
+	Fragment,
 	sinon
 ) {
 	'use strict';
-
-	function destroyToolbar(oToolbar) {
-		// by default the dependent controls are handled by RuntimeAuthoring
-		oToolbar.getItems().forEach(function (oControl) {
-			oControl.destroy();
-		});
-		oToolbar.destroy(true);
-	}
 
 	var sandbox = sinon.sandbox.create();
 
@@ -27,7 +21,7 @@ function(
 			this.oGetCurrentRangeStub = sandbox.stub(Device.media, "getCurrentRange");
 		},
 		afterEach: function() {
-			destroyToolbar(this.oToolbar);
+			this.oToolbar.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -150,10 +144,10 @@ function(
 			this.oToolbar.sMode = Adaptation.modes.DESKTOP;
 		},
 		after: function() {
-			destroyToolbar(this.oToolbar);
+			this.oToolbar.destroy();
 		}
 	}, function() {
-		QUnit.test("setUndoRedoEnabled", function(assert) {
+		QUnit.test("setUndoRedoEnabled", function (assert) {
 			assert.notOk(this.oToolbar.getControl("redo").getEnabled(), "the undo button is disabled");
 			assert.notOk(this.oToolbar.getControl("redo").getEnabled(), "the undo button is disabled");
 
@@ -166,7 +160,7 @@ function(
 			assert.notOk(this.oToolbar.getControl("redo").getEnabled(), "the undo button is disabled");
 		});
 
-		QUnit.test("setPublishEnabled", function(assert) {
+		QUnit.test("setPublishEnabled", function (assert) {
 			assert.notOk(this.oToolbar.getControl("publish").getEnabled(), "the undo button is disabled");
 
 			this.oToolbar.setPublishEnabled(true);
@@ -176,7 +170,7 @@ function(
 			assert.notOk(this.oToolbar.getControl("publish").getEnabled(), "the undo button is disabled");
 		});
 
-		QUnit.test("setRestoreEnabled", function(assert) {
+		QUnit.test("setRestoreEnabled", function (assert) {
 			assert.notOk(this.oToolbar.getControl("restore").getEnabled(), "the undo button is disabled");
 
 			this.oToolbar.setRestoreEnabled(true);
@@ -186,7 +180,7 @@ function(
 			assert.notOk(this.oToolbar.getControl("restore").getEnabled(), "the undo button is disabled");
 		});
 
-		QUnit.test("setDraftVisible", function(assert) {
+		QUnit.test("setDraftVisible", function (assert) {
 			assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
 			assert.notOk(this.oToolbar.getControl("activateDraft").getVisible(), "the draft activate button is hidden");
 			assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "the draft discard button is hidden");
@@ -200,6 +194,47 @@ function(
 			assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
 			assert.notOk(this.oToolbar.getControl("activateDraft").getVisible(), "the draft activate button is hidden");
 			assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "the draft discard button is hidden");
+		});
+	});
+
+	QUnit.module("Activate Version Dialog", {
+		before: function() {
+			this.oToolbar = new Adaptation({
+				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			});
+		},
+		after: function() {
+			this.oToolbar.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given no dialog is created, when the activate version button is pressed and afterwards pressed a second time", function(assert) {
+			var oFragmentLoadSpy = sandbox.spy(Fragment, "load");
+			var oSetInputSpy;
+			var oConfirmButtonEnabledSpy;
+
+			return this.oToolbar._openVersionNameDialog().then(function () {
+				assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
+				// checking for the dialog instance wrapped into a promise
+
+				var oVersionNameInput = this.oToolbar.getControl("versionNameInput");
+				oSetInputSpy = sandbox.spy(oVersionNameInput, "setValue");
+				var oConfirmButton = this.oToolbar.getControl("confirmVersionNameButton");
+				oConfirmButtonEnabledSpy = sandbox.spy(oConfirmButton, "setEnabled");
+
+				return oFragmentLoadSpy.getCall(0).returnValue;
+			}.bind(this))
+			.then(function (oDialog) {
+				assert.equal(this.oToolbar._oDialog, oDialog, "and the dialog was assigned");
+			}.bind(this))
+			.then(this.oToolbar._openVersionNameDialog.bind(this.oToolbar))
+			.then(function () {
+				assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment not loaded again");
+				assert.equal(oSetInputSpy.callCount, 1, "and Input Value was set");
+				assert.equal(oSetInputSpy.getCall(0).args[0], "", "to an empty string");
+				assert.equal(oConfirmButtonEnabledSpy.callCount, 1, "and the confirm button was set");
+				assert.equal(oSetInputSpy.getCall(0).args[0], false, "to be disabled");
+			});
 		});
 	});
 
