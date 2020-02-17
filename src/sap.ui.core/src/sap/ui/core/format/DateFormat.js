@@ -637,6 +637,23 @@ sap.ui.define([
 
 				var iYear = parseInt(sPart);
 				// Find the right century for two-digit years
+				// https://tc39.es/ecma262/#sec-date.parse
+				// "The function first attempts to parse the String according to the format
+				// described in Date Time String Format (https://tc39.es/ecma262/#sec-date-time-string-format),
+				// including expanded years.
+				// If the String does not conform to that format the function may fall back to
+				// any implementation-specific heuristics or implementation-specific date formats."
+				//
+				// Since a two-digit year is not format conform, each JS implementations might differ.
+				// Therefore we provide an own implementation:
+
+				// current year: 1978
+				// 1978: 08 = 1908 (diff: -70)
+				// 1978: 07 = 2007 (diff: -71)
+
+				// current year: 2018
+				// 2018: 48 = 1948 (diff: 30)
+				// 2018: 47 = 2047 (diff: 29)
 				if (sCalendarType != CalendarType.Japanese && sPart.length <= 2) {
 					var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
 						iCurrentYear = oCurrentDate.getFullYear(),
