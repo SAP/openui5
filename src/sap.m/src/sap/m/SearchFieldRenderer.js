@@ -133,6 +133,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 			if (oSF.getEnabled()) {
 				// 2. Reset button
 				rm.write("<div");
+				rm.writeAttribute("aria-hidden", true);
 				rm.writeAttribute("id", oSF.getId() + "-reset");
 				sResetToolTipValue = sValue === "" ? this.oSearchFieldToolTips.SEARCH_BUTTON_TOOLTIP : this.oSearchFieldToolTips.RESET_BUTTON_TOOLTIP;
 				rm.writeAttributeEscaped("title", sResetToolTipValue); // initial rendering reset is search when no value is set
@@ -150,6 +151,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 				// 3. Search/Refresh button
 				if (bShowSearchBtn) {
 					rm.write("<div");
+					rm.writeAttribute("aria-hidden", true);
 					rm.writeAttribute("id", oSF.getId() + "-search");
 					rm.addClass("sapMSFS"); // search
 					rm.addClass("sapMSFB"); // button
