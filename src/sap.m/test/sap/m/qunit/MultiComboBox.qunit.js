@@ -6650,6 +6650,60 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Typeahead should be disabled on adroid devices", function (assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		this.stub(Device, "os", {
+			android: true
+		});
+
+		var oMultiComboBox = new MultiComboBox({
+			items: [
+				new Item({
+					key: "1",
+					text: "ipsum alorem"
+				})
+			]
+		});
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.focus();
+		oMultiComboBox.open();
+		this.clock.tick(500);
+		var oPickerTextField = oMultiComboBox.getPickerTextField();
+		oPickerTextField.focus();
+		var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+
+		// act
+		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oPickerTextFieldDomRef, {
+			which: KeyCodes.L,
+			srcControl: oPickerTextField
+		});
+
+		oMultiComboBox.close();
+		this.clock.tick(500);
+
+		// assert
+		assert.notOk(oPickerTextField._bDoTypeAhead, '_bDoTypeAhead should be set to false');
+
+		// act
+		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oMultiComboBox.getFocusDomRef(), {
+			which: KeyCodes.I,
+			srcControl: oMultiComboBox.getFocusDomRef()
+		});
+
+		// assert
+		assert.notOk(oMultiComboBox._bDoTypeAhead, '_bDoTypeAhead should be set to false');
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Two Column Layout", {
 		beforeEach: function(){
 			this.oMultiComboBox = new MultiComboBox({
@@ -6833,6 +6887,8 @@ sap.ui.define([
 		this.multiComboBox.destroy();
 		this.multiComboBox = null;
 	});
+
+
 
 	QUnit.module("Value State Error", {
 		beforeEach : function() {

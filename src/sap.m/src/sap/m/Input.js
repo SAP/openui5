@@ -249,6 +249,7 @@ function(
 			/**
 			 * Specifies whether autocomplete is enabled.
 			 * Works only if "showSuggestion" property is set to true.
+			 * <b>Note:</b> The autocomplete feature is disabled on Android devices due to a OS specific issue.
 			 * @since 1.61
 			 */
 			autocomplete: {type: "boolean", group: "Behavior", defaultValue: true}
