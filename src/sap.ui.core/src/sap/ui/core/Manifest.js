@@ -150,6 +150,14 @@ sap.ui.define([
 	 * @param {boolean}
 	 *            [mOptions.process=true] (optional) Flag whether the manifest object should be processed or not
 	 *            which means that the placeholders will be replaced with resource bundle values
+	 * @param {string[]}
+	 *            [mOptions.activeTerminologies] (optional) A list of active terminologies. If the <code>mOptions.process</code>
+	 *            flag is set to <code>true</code>, the given terminologies will be respected when replacing placeholders with resource
+	 *            bundle values.
+	 *            To use active terminologies, the <code>sap.app.i18n</code> section in the manifest
+	 *            must be defined in object syntax as described here: {@link topic:CPOUI5FRAMEWORK-57_Docu_Chapter Text Verticalization}.
+	 *            The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
+	 *            documentation describes the processing behavior in more detail.
 	 *
 	 *
 	 * @public
@@ -180,6 +188,7 @@ sap.ui.define([
 			this._oRawManifest = oManifest;
 			this._bProcess = !(mOptions && mOptions.process === false);
 			this._bAsync = !(mOptions && mOptions.async === false);
+			this._activeTerminologies = mOptions && mOptions.activeTerminologies;
 
 			// component name is passed via options (overrides the one defined in manifest)
 			this._sComponentName = mOptions && mOptions.componentName;
@@ -270,18 +279,39 @@ sap.ui.define([
 		 * @private
 		 */
 		_loadI18n: function(bAsync) {
-
 			// extract the i18n URI from the manifest
 			var oManifest = this._oRawManifest,
-				sI18n = (oManifest["sap.app"] && oManifest["sap.app"]["i18n"]) || "i18n/i18n.properties",
-				oI18nURI = new URI(sI18n);
+				oI18nURI,
+				// a bundle url given in the "sap.app.i18n" section is by default always resolved relative to the manifest
+				// when using the object syntax for the "sap.app.i18n" section a "bundleRelativeTo" property can be given to change the default
+				sBaseBundleUrlRelativeTo = "manifest",
+				vI18n = (oManifest["sap.app"] && oManifest["sap.app"]["i18n"]) || "i18n/i18n.properties";
 
-			// load the ResourceBundle relative to the manifest
-			return ResourceBundle.create({
-				url: this._resolveUri(oI18nURI, "manifest").toString(),
-				async: bAsync
-			});
+			if (typeof vI18n === "string") {
+				oI18nURI = new URI(vI18n);
 
+				// load the ResourceBundle relative to the manifest
+				return ResourceBundle.create({
+					url: this.resolveUri(oI18nURI, sBaseBundleUrlRelativeTo),
+					async: bAsync
+				});
+
+			} else if (typeof vI18n === "object") {
+				// make a copy as manifest is frozen
+				vI18n = JSON.parse(JSON.stringify(vI18n));
+				sBaseBundleUrlRelativeTo = vI18n.bundleUrlRelativeTo || sBaseBundleUrlRelativeTo;
+
+				// resolve bundleUrls of terminologies
+				this._processResourceConfiguration(vI18n, sBaseBundleUrlRelativeTo);
+
+				// merge activeTerminologies and settings object into mParams
+				var mParams = Object.assign({
+					activeTerminologies: this._activeTerminologies,
+					async: bAsync
+				}, vI18n);
+
+				return ResourceBundle.create(mParams);
+			}
 		},
 
 
@@ -746,6 +776,48 @@ sap.ui.define([
 		return oUri.absoluteTo(oBase).relativeTo(oPageBase);
 	};
 
+	/**
+	 * Function that loops through the model config and resolves the bundle urls
+	 * of terminologies relative to the component or relative to the manifest
+	 *
+	 * @example
+	 * {
+	 *   "oil": {
+	 *     "bundleUrl": "i18n/terminologies/oil.i18n.properties"
+	 *   },
+	 *   "retail": {
+	 *     "bundleName": "i18n.terminologies.retail.i18n.properties"
+	 *   }
+	 * }
+	 *
+	 * @param mSettings Map with model config settings
+	 * @param sBaseBundleUrlRelativeTo BundleUrlRelativeTo info from base config
+	 * @param bAlreadyResolvedOnRoot Whether the bundleUrl was already resolved (usually by the sap.ui.core.Component)
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core.Component
+	 */
+	Manifest.prototype._processResourceConfiguration = function (mSettings, sBaseBundleUrlRelativeTo, bAlreadyResolvedOnRoot) {
+		var that = this;
+		Object.keys(mSettings).forEach(function(sKey) {
+			if (sKey === "bundleUrl" && !bAlreadyResolvedOnRoot) {
+				var sBundleUrl = mSettings[sKey];
+				mSettings[sKey] = that.resolveUri(sBundleUrl, mSettings["bundleUrlRelativeTo"] || sBaseBundleUrlRelativeTo);
+			}
+			if (sKey === "terminologies") {
+				var mTerminologies = mSettings[sKey];
+				for (var sTerminology in mSettings[sKey]) {
+					that._processResourceConfiguration(mTerminologies[sTerminology], sBaseBundleUrlRelativeTo);
+				}
+			}
+			if (sKey === "enhanceWith") {
+				var aEnhanceWith = mSettings[sKey];
+				for (var i = 0; i < aEnhanceWith.length; i++) {
+					that._processResourceConfiguration(aEnhanceWith[i], sBaseBundleUrlRelativeTo);
+				}
+			}
+		});
+	};
 
 	/**
 	 * Function to load the manifest by URL
@@ -811,6 +883,10 @@ sap.ui.define([
 			url: sManifestUrl,
 			process: false
 		};
+
+		if (mOptions.activeTerminologies) {
+			mSettings["activeTerminologies"] = mOptions.activeTerminologies;
+		}
 
 		if (bAsync) {
 			return oManifestJSON.then(function(oManifestJSON) {

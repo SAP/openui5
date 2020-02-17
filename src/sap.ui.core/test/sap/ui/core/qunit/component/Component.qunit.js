@@ -10,8 +10,9 @@ sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'sap/ui/base/ManagedObjectRegistry',
 	'sap/base/Log',
-	'sap/ui/core/Manifest'
-], function(jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry, Log, Manifest) {
+	'sap/ui/core/Manifest',
+	'sap/base/i18n/ResourceBundle'
+], function (jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry, Log, Manifest, ResourceBundle) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -1728,6 +1729,7 @@ sap.ui.define([
 			assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "test-resources/sap/ui/core/samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
 			oComponent.destroy();
+			oModelConfigSpy.restore();
 		});
 	});
 
@@ -2326,5 +2328,418 @@ sap.ui.define([
 			assert.ok(oComponent.getModel("$cmd"), "$cmd model created successfully");
 			done();
 		});
+	});
+
+    QUnit.module("Text Verticalization", {
+        beforeEach: function() {
+        },
+        afterEach: function() {
+            this.oComponent.destroy();
+        }
+    });
+
+	QUnit.test("Component0 with Terminologies defined in Component Metadata", function (assert) {
+		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
+
+        return Component.create({
+            name: "testdata.terminologies",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+        }).then(function (oComponent) {
+            this.oComponent = oComponent;
+
+            var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
+            assert.equal(oCreateManifestModelsSpy.callCount, 1, "_createManifestModels should be called for the i18n model");
+            assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+            assert.equal(oSettings.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oSettings.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.ok(oSettings.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oSettings.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			// resolve bundle urls
+			var oEnhanceWith0 = oSettings.enhanceWith[0];
+            assert.equal(oEnhanceWith0.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+            assert.equal(oEnhanceWith0.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oEnhanceWith0.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.ok(oEnhanceWith0.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oEnhanceWith0.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			// bundle names shouldn't be resolved
+			var oEnhanceWith1 = oSettings.enhanceWith[1];
+			assert.equal(oEnhanceWith1.bundleName, "appvar2.i18n.i18n.properties", "The bundleName should be correct");
+			assert.equal(oEnhanceWith1.terminologies.oil.bundleName, "appvar2.i18n.terminologies.oil.i18n", "The bundleName should be correct");
+			assert.equal(oEnhanceWith1.terminologies.retail.bundleName, "appvar2.i18n.terminologies.retail.i18n", "The bundleName should be correct");
+			assert.ok(oEnhanceWith1.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oEnhanceWith1.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			assert.deepEqual(this.oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
+
+			oCreateManifestModelsSpy.restore();
+        }.bind(this));
+	});
+
+	QUnit.test("Component0 - Propagate Terminologies via owner component", function (assert) {
+		return Component.create({
+			name: "testdata.terminologies",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			assert.ok(this.oComponent.getActiveTerminologies(), "Active terminologies should be available");
+
+			return this.oComponent.createComponent("myReusedTerminologies").then(function (oReuseComponent) {
+				assert.ok(oReuseComponent, "Component should be loaded");
+				assert.ok(oReuseComponent.getActiveTerminologies(), "The list of terminologies should be available on the reuse component");
+				assert.deepEqual(oReuseComponent.getActiveTerminologies(), this.oComponent.getActiveTerminologies(), "The list of terminologies should be correct");
+				return oReuseComponent;
+			}.bind(this)).then(function (oReuseComponent) {
+				oReuseComponent.destroy();
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("Component0 - Propagate Terminologies via Configuration", function (assert) {
+		return Component.create({
+			name: "testdata.terminologies",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			var oUsage = {
+				usage: "myReusedTerminologies"
+			};
+
+			return this.oComponent.createComponent(oUsage).then(function (oReuseComponent) {
+				assert.ok(oReuseComponent, "Component should be loaded");
+				assert.ok(oReuseComponent.getActiveTerminologies(), "The list of terminologies should be available on the reuse component");
+				assert.deepEqual(oReuseComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
+				return oReuseComponent;
+			}).then(function (oReuseComponent) {
+				oReuseComponent.destroy();
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("Component0 - Propagate Terminologies via API with ignoring the usage parameters", function (assert) {
+		return Component.create({
+			name: "testdata.terminologies",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			var oUsage = {
+				usage: "myReusedTerminologies",
+				activeTerminologies: ["fashion"]
+			};
+			return this.oComponent.createComponent(oUsage).then(function(oComponent) {
+				assert.ok(oComponent, "Component should be loaded");
+				assert.deepEqual(oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
+				oComponent.destroy();
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("Component0 - Check if activeTerminologies are defined in the manifest in component usage", function (assert) {
+		return Component.create({
+			name: "testdata.terminologies",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			var oUsage = {
+				usage: "myReusedTerminologies2"
+			};
+
+			assert.throws(function() {
+				this.oComponent.createComponent(oUsage);
+			}, new Error("Terminologies vector can't be used in component usages"), "Error should be thrown");
+		}.bind(this));
+	});
+
+	QUnit.test("Component1 with Terminologies defined in manifest.json file", function (assert) {
+		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
+
+		return Component.create({
+			name: "testdata.terminologies.component1",
+			manifest: true,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
+			assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oSettings.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oSettings.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.ok(oSettings.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oSettings.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+
+			// resolve bundle urls
+			var oEnhanceWith0 = oSettings.enhanceWith[0];
+			assert.equal(oEnhanceWith0.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oEnhanceWith0.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oEnhanceWith0.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.ok(oEnhanceWith0.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oEnhanceWith0.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			// bundle names shouldn't be resolved
+			var oEnhanceWith1 = oSettings.enhanceWith[1];
+			assert.equal(oEnhanceWith1.bundleName, "appvar2.i18n.i18n.properties", "The bundleName should be correct");
+			assert.equal(oEnhanceWith1.terminologies.oil.bundleName, "appvar2.i18n.terminologies.oil.i18n", "The bundleName should be correct");
+			assert.equal(oEnhanceWith1.terminologies.retail.bundleName, "appvar2.i18n.terminologies.retail.i18n", "The bundleName should be correct");
+			assert.ok(oEnhanceWith1.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oEnhanceWith1.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			assert.deepEqual(this.oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
+
+			oCreateManifestModelsSpy.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("Component2 - Pass Terminologies from 'sap.app.i18n' via ComponentMetadata to ResourceBundle", function (assert) {
+		var oExpected = {
+			bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component2/i18n/i18n.properties",
+			async: true,
+			activeTerminologies: ["oil", "retail"],
+			supportedLocales: ["en", "de"],
+			fallbackLocale: "es",
+			terminologies: {
+				oil: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component2/i18n/terminologies.oil.i18n.properties",
+					supportedLocales: ["en"]
+				},
+				retail: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component2/i18n/terminologies.retail.i18n.properties",
+					supportedLocales: ["de"]
+				}
+			},
+			enhanceWith: [
+				{
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n/i18n.properties",
+					bundleUrlRelativeTo: "manifest",
+					supportedLocales: ["en", "de"],
+					fallbackLocale: "es",
+					terminologies: {
+						oil: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.oil.i18n.properties",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.retail.i18n.properties",
+							supportedLocales: ["de"],
+							bundleUrlRelativeTo: "manifest"
+						}
+					}
+				},
+				{
+					bundleName: "appvar2.i18n.i18n.properties",
+					supportedLocales: ["en", "de"],
+					fallbackLocale: "es",
+					terminologies: {
+						oil: {
+							bundleName: "appvar2.i18n.terminologies.oil.i18n",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleName: "appvar2.i18n.terminologies.retail.i18n",
+							supportedLocales: ["de"]
+						}
+					}
+				}
+			]
+		};
+		var oResourceBundleCreateStub = sinon.stub(ResourceBundle, "create").callsFake(function (mParams) {
+			if (mParams.async) {
+				assert.deepEqual(mParams, oExpected, "ResourceBundle.create should be called with the correct arguments");
+				return Promise.resolve({
+					getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+				});
+			}
+			return {
+				getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+			};
+		});
+		return Component.create({
+			name: "testdata.terminologies.component2",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+			assert.ok(true, "assertions have been successful");
+			oResourceBundleCreateStub.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("Component3 - Pass Terminologies from 'sap.app.i18n' to ResourceBundle (with manifest.json)", function (assert) {
+		var oExpected = {
+			bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component3/i18n/i18n.properties",
+			async: true,
+			activeTerminologies: ["oil", "retail"],
+			supportedLocales: ["en", "de"],
+			terminologies: {
+				oil: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component3/i18n/terminologies.oil.i18n.properties",
+					supportedLocales: ["en"]
+				},
+				retail: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component3/i18n/terminologies.retail.i18n.properties",
+					supportedLocales: ["de"]
+				}
+			},
+			enhanceWith: [
+				{
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n/i18n.properties",
+					bundleUrlRelativeTo: "manifest",
+					supportedLocales: ["en", "de"],
+					terminologies: {
+						oil: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.oil.i18n.properties",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.retail.i18n.properties",
+							supportedLocales: ["de"],
+							bundleUrlRelativeTo: "manifest"
+						}
+					}
+				},
+				{
+					bundleName: "appvar2.i18n.i18n.properties",
+					supportedLocales: ["en", "de"],
+					terminologies: {
+						oil: {
+							bundleName: "appvar2.i18n.terminologies.oil.i18n",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleName: "appvar2.i18n.terminologies.retail.i18n",
+							supportedLocales: ["de"]
+						}
+					}
+				}
+			]
+		};
+		var oResourceBundleCreateStub = sinon.stub(ResourceBundle, "create").callsFake(function (mParams) {
+			if (mParams.async) {
+				assert.deepEqual(mParams, oExpected, "ResourceBundle.create should be called with the correct arguments");
+				return Promise.resolve({
+					getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+				});
+			}
+			return {
+				getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+			};
+		});
+		return Component.create({
+			name: "testdata.terminologies.component3",
+			activeTerminologies: ["oil", "retail"],
+			manifest: false
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+			assert.ok(true, "assertions have been successful");
+			oResourceBundleCreateStub.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("Component4 - Pass Terminologies from 'sap.app.i18n' to ResourceBundle (with manifest.json from a different location)", function (assert) {
+		var oExpected = {
+			bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/i18n.properties",
+			async: true,
+			activeTerminologies: ["oil", "retail"],
+			supportedLocales: ["en", "de"],
+			fallbackLocale: "es",
+			terminologies: {
+				oil: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.oil.i18n.properties",
+					supportedLocales: ["en"]
+				},
+				retail: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.retail.i18n.properties",
+					supportedLocales: ["de"]
+				}
+			},
+			enhanceWith: [
+				{
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties",
+					supportedLocales: ["en", "de"],
+					fallbackLocale: "es",
+					terminologies: {
+						oil: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.retail.i18n.properties",
+							supportedLocales: ["de"]
+						}
+					}
+				},
+				{
+					bundleName: "appvar2.i18n.i18n.properties",
+					supportedLocales: ["en", "de"],
+					fallbackLocale: "es",
+					terminologies: {
+						oil: {
+							bundleName: "appvar2.i18n.terminologies.oil.i18n",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleName: "appvar2.i18n.terminologies.retail.i18n",
+							supportedLocales: ["de"]
+						}
+					}
+				}
+			]
+		};
+		var oResourceBundleCreateStub = sinon.stub(ResourceBundle, "create").callsFake(function (mParams) {
+			if (mParams.async) {
+				assert.deepEqual(mParams, oExpected, "ResourceBundle.create should be called with the correct arguments");
+				return Promise.resolve({
+					getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+				});
+			}
+			return {
+				getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+			};
+		});
+		return Component.create({
+			name: "testdata.terminologies.component4",
+			manifest: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/manifest.json",
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+			assert.ok(true, "assertions have been successful");
+			oResourceBundleCreateStub.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("Component5 - Map i18n.uri to i18n.settings.bundleUrl and pass correctly", function (assert) {
+		// Example: uri defined instead of bundleUrl
+		//
+		// "models": {
+		// 	"i18n": {
+		// 		"type": "sap.ui.model.resource.ResourceModel",
+		//		"uri": "i18n/i18n.properties",
+		//			"settings": {
+		// 				[...]
+		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
+
+		return Component.create({
+			name: "testdata.terminologies.component5",
+			manifest: true,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
+			assert.ok(oSettings.hasOwnProperty("bundleUrl"), "Property 'bundleUrl' should be avaialble");
+			assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component5/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+
+			oCreateManifestModelsSpy.restore();
+		}.bind(this));
 	});
 });

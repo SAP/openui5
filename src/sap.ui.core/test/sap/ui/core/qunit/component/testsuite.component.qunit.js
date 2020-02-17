@@ -123,6 +123,13 @@ sap.ui.define(function() {
 					preload: "async" // enforce preloads in dev mode
 				}
 			},
+			TerminologiesBootstrap: {
+				title: "QUnit test: TerminologiesBootstrap",
+				ui5: {
+					activeTerminologies: ["oil", "retail"],
+					preload: "async"
+				}
+			},
 			UIComponent: {
 				title: "QUnit test: UIComponent",
 				ui5: {

@@ -276,6 +276,11 @@ sap.ui.define([
 				delete mSettings._cacheTokens;
 			}
 
+			if (mSettings && Array.isArray(mSettings._activeTerminologies)) {
+				this._aActiveTerminologies = mSettings._activeTerminologies;
+				delete mSettings._activeTerminologies;
+			}
+
 			// registry of models from manifest
 			if (mSettings && typeof mSettings._manifestModels === "object") {
 				// use already created models from sap.ui.component.load if available
@@ -790,7 +795,8 @@ sap.ui.define([
 			dataSources: mDataSources,
 			component: this,
 			mergeParent: true,
-			cacheTokens: mCacheTokens
+			cacheTokens: mCacheTokens,
+			activeTerminologies: this.getActiveTerminologies()
 		});
 
 		if (!mAllModelConfigurations) {
@@ -1082,8 +1088,24 @@ sap.ui.define([
 		if (!mUsageConfig) {
 			throw new Error("Component usage \"" + sUsageId + "\" not declared in Component \"" + this.getManifestObject().getComponentName() + "\"!");
 		}
+		if (mUsageConfig.activeTerminologies) {
+			throw new Error("Terminologies vector can't be used in component usages");
+		}
 		// mix in the component configuration on top of the usage configuration
 		return jQuery.extend(true, mUsageConfig, mConfig);
+	};
+
+	/**
+	 * Returns the list of active terminologies.
+	 * See the {@link sap.ui.core.Component.create Component.create} factory API documentation for more detail.
+	 *
+	 * @return {string[]|undefined} List of active terminologies
+	 *
+	 * @public
+	 * @since 1.76
+	 */
+	Component.prototype.getActiveTerminologies = function(){
+		return this._aActiveTerminologies ? this._aActiveTerminologies.slice() : undefined;
 	};
 
 	/**
@@ -1215,6 +1237,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Manifest} [mOptions.manifest] Component manifest instance (defaults to component's manifest if not set)
 	 * @param {boolean} [mOptions.mergeParent=false] Whether the component's parent configuration should be taken into account (only relevant when component is set)
 	 * @param {object} [mOptions.componentData] componentData object which should be used to create the configurations (only relevant when component is not set, defaults to componentData of provided component)
+	 * @param {string[]} [mOptions.activeTerminologies] optional list of active terminologies.
 	 * @return {object} key-value map with model name as key and model configuration as value
 	 * @private
 	 */
@@ -1225,6 +1248,7 @@ sap.ui.define([
 		var mCacheTokens = mOptions.cacheTokens || {};
 		var sLogComponentName = oComponent ? oComponent.toString() : oManifest.getComponentName();
 		var oConfig = sap.ui.getCore().getConfiguration();
+		var aActiveTerminologies = mOptions.activeTerminologies;
 
 		if (!mOptions.models) {
 			// skipping model creation because of missing sap.ui5 models manifest entry
@@ -1264,7 +1288,6 @@ sap.ui.define([
 		}
 
 		var mModelConfigurations = {};
-
 		// create a model for each ["sap.ui5"]["models"] entry
 		for (var sModelName in mConfig.models) {
 
@@ -1460,6 +1483,21 @@ sap.ui.define([
 
 					oModelConfig.settings = oModelConfig.settings || {};
 					oModelConfig.settings.json = true;
+			}
+
+			// Check resource models for bundleUrl configuration
+			if (oModelConfig.type === "sap.ui.model.resource.ResourceModel") {
+				if (oModelConfig.uri && oModelConfig.settings && oModelConfig.settings.bundleUrl) {
+					Log.warning("Defining both model uri and bundleUrl is not supported. Only model uri will be resolved.");
+				}
+
+				// in case of terminologies and the bundleUrl is defined, map bundleUrl to uri
+				if (!oModelConfig.uri && oModelConfig.settings && oModelConfig.settings.terminologies) {
+					if (oModelConfig.bundleUrl || oModelConfig.settings.bundleUrl) {
+						oModelConfig.uri = oModelConfig.bundleUrl || oModelConfig.settings.bundleUrl;
+						delete oModelConfig.settings.bundleUrl;
+					}
+				}
 			}
 
 			// adopt model uri
@@ -1674,16 +1712,11 @@ sap.ui.define([
 			// resolve the bundleUrl of the enhancing resource bundle relative to
 			// the component (default) or relative to manifest, e.g.:
 			// bundleUrlRelativeTo: 'component|manifest'
-			if (oModelConfig.type === 'sap.ui.model.resource.ResourceModel' &&
-				oModelConfig.settings &&
-				Array.isArray(oModelConfig.settings.enhanceWith)) {
-				/* eslint-disable no-loop-func */
-				oModelConfig.settings.enhanceWith.forEach(function(mBundle) {
-					if (mBundle.bundleUrl) {
-						mBundle.bundleUrl = oManifest.resolveUri(mBundle.bundleUrl, mBundle.bundleUrlRelativeTo);
-					}
-				});
-				/* eslint-enable no-loop-func */
+			if (oModelConfig.type === 'sap.ui.model.resource.ResourceModel' && oModelConfig.settings) {
+				if (aActiveTerminologies) {
+					oModelConfig.settings.activeTerminologies = aActiveTerminologies;
+				}
+				oManifest._processResourceConfiguration(oModelConfig.settings, /*bundleUrlRelativeTo=*/undefined, /*alreadyResolvedOnRoot=*/true);
 			}
 
 			// normalize settings object to array
@@ -1770,9 +1803,10 @@ sap.ui.define([
 	 * @param {sap.ui.core.Manifest} oManifest Manifest instance
 	 * @param {object} [oComponentData] optional component data object
 	 * @param {object} [mCacheTokens] optional cache tokens for OData models
+	 * @param {string[]} [aActiveTerminologies] optional list of active terminologies
 	 * @returns {object} object with two maps, see above
 	 */
-	function getPreloadModelConfigsFromManifest(oManifest, oComponentData, mCacheTokens) {
+	function getPreloadModelConfigsFromManifest(oManifest, oComponentData, mCacheTokens, aActiveTerminologies) {
 		var mModelConfigs = {
 			afterManifest: {},
 			afterPreload: {}
@@ -1787,7 +1821,8 @@ sap.ui.define([
 			dataSources: oManifestDataSources,
 			manifest: oManifest,
 			componentData: oComponentData,
-			cacheTokens: mCacheTokens
+			cacheTokens: mCacheTokens,
+			activeTerminologies: aActiveTerminologies
 		});
 
 		// Read internal URI parameter to enable model preload for testing purposes
@@ -2017,6 +2052,10 @@ sap.ui.define([
 	 *     manifest, otherwise it specifies the location of the component defined via its name <code>mOptions.name</code>.
 	 * @param {object} [mOptions.componentData] Initial data of the Component, see {@link sap.ui.core.Component#getComponentData}.
 	 * @param {sap.ui.core.ID} [mOptions.id] ID of the new Component
+	 * @param {string[]} [mOptions.activeTerminologies] List of active terminologies.
+	 *              The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
+	 *              documentation describes the processing behavior in more detail.
+	 *              Please have a look at this dev-guide chapter for general usage instructions: {@link topic:CPOUI5FRAMEWORK-57_Docu_Chapter Text Verticalization}.
 	 * @param {object} [mOptions.settings] Settings of the new Component
 	 * @param {boolean|string|object} [mOptions.manifest=true] Whether and from where to load the manifest.json for the Component.
 	 *     When set to any truthy value, the manifest will be loaded and evaluated before the Component controller.
@@ -2105,6 +2144,10 @@ sap.ui.define([
 	 * @param {object} [vConfig.componentData] Initial data of the Component (@see sap.ui.core.Component#getComponentData)
 	 * @param {string} [vConfig.id] sId of the new Component
 	 * @param {object} [vConfig.settings] Settings of the new Component
+	 * @param {string[]} [vConfig.activeTerminologies] List of active terminologies.
+	 *              The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
+	 *              documentation describes the processing behavior in more detail.
+	 *              Please also have a look at this dev-guide chapter for general usage instructions: {@link topic:CPOUI5FRAMEWORK-57_Docu_Chapter Text Verticalization}.
 	 * @param {boolean} [vConfig.async] Indicates whether the Component creation should be done asynchronously; defaults to true when using the manifest property with a truthy value otherwise the default is false (experimental setting)
 	 * @param {object} [vConfig.asyncHints] Hints for the asynchronous loading (experimental setting)
 	 * @param {string[]} [vConfig.asyncHints.libs] Libraries that should be (pre-)loaded before the Component (experimental setting)
@@ -2172,10 +2215,12 @@ sap.ui.define([
 	 * Part of the old sap.ui.component implementation than can be re-used by the new factory
 	 */
 	function componentFactory(vConfig) {
+		var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
+		// get terminologies information: API -> Owner Component -> Configuration
+		var aActiveTerminologies = vConfig.activeTerminologies || (oOwnerComponent && oOwnerComponent.getActiveTerminologies()) || sap.ui.getCore().getConfiguration().getActiveTerminologies();
 
 		// Inherit cacheTokens from owner component if not defined in asyncHints
 		if (!vConfig.asyncHints || !vConfig.asyncHints.cacheTokens) {
-			var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
 			var mCacheTokens = oOwnerComponent && oOwnerComponent._mCacheTokens;
 			if (typeof mCacheTokens === "object") {
 				vConfig.asyncHints = vConfig.asyncHints || {};
@@ -2210,7 +2255,8 @@ sap.ui.define([
 			var oInstance = new oClass(jQuery.extend({}, mSettings, {
 				id: sId,
 				componentData: oComponentData,
-				_cacheTokens: vConfig.asyncHints && vConfig.asyncHints.cacheTokens
+				_cacheTokens: vConfig.asyncHints && vConfig.asyncHints.cacheTokens,
+				_activeTerminologies: aActiveTerminologies
 			}));
 			assert(oInstance instanceof Component, "The specified component \"" + sController + "\" must be an instance of sap.ui.core.Component!");
 			Log.info("Component instance Id = " + oInstance.getId());
@@ -2252,7 +2298,8 @@ sap.ui.define([
 		var vClassOrPromise = loadComponent(vConfig, {
 			failOnError: true,
 			createModels: true,
-			waitFor: vConfig.asyncHints && vConfig.asyncHints.waitFor
+			waitFor: vConfig.asyncHints && vConfig.asyncHints.waitFor,
+			activeTerminologies: aActiveTerminologies
 		});
 		if ( vConfig.async ) {
 			// async: instantiate component after Promise has been fulfilled with component
@@ -2435,6 +2482,8 @@ sap.ui.define([
 	 *
 	 * @param {object} oConfig see <code>sap.ui.component</code> / <code>sap.ui.component.load</code>
 	 * @param {object} mOptions internal loading configurations
+	 * @param {string[]} mOptions.activeTerminologies list of active terminologies.
+	 *                   See the public API documentation for more detail: {@link sap.ui.core.Component.create Component.create}
 	 * @param {boolean} mOptions.failOnError see <code>sap.ui.component.load</code>
 	 * @param {boolean} mOptions.createModels whether models from manifest should be created during
 	 *                                        component preload (should only be set via <code>sap.ui.component</code>)
@@ -2445,8 +2494,8 @@ sap.ui.define([
 	 * @private
 	*/
 	function loadComponent(oConfig, mOptions) {
-
-		var sName = oConfig.name,
+		var aActiveTerminologies = mOptions.activeTerminologies,
+			sName = oConfig.name,
 			sUrl = oConfig.url,
 			oConfiguration = sap.ui.getCore().getConfiguration(),
 			bComponentPreload = /^(sync|async)$/.test(oConfiguration.getComponentPreload()),
@@ -2515,13 +2564,14 @@ sap.ui.define([
 			// determine the semantic of the manifest property
 			bManifestFirst = !!vManifest;
 			sManifestUrl = vManifest && typeof vManifest === 'string' ? vManifest : undefined;
-			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest, {url: oConfig && oConfig.altManifestUrl}) : undefined;
+			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest, {url: oConfig && oConfig.altManifestUrl, activeTerminologies: aActiveTerminologies}) : undefined;
 		}
 
 		// if we find a manifest URL in the configuration
 		// we will load the manifest from the specified URL (sync or async)
 		if (!oManifest && sManifestUrl) {
 			oManifest = Manifest.load({
+				activeTerminologies: aActiveTerminologies,
 				manifestUrl: sManifestUrl,
 				componentName: sName,
 				processJson: preprocessManifestJSON,
@@ -2564,6 +2614,7 @@ sap.ui.define([
 		// the Components' modules namespace
 		if (bManifestFirst && !oManifest) {
 			oManifest = Manifest.load({
+				activeTerminologies: aActiveTerminologies,
 				manifestUrl: getManifestUrl(sName),
 				componentName: sName,
 				async: oConfig.async,
@@ -2799,7 +2850,7 @@ sap.ui.define([
 			if (oManifest && mOptions.createModels) {
 				collect(oManifest.then(function(oManifest) {
 					// Calculate configurations of preloaded models once the manifest is available
-					mModelConfigs = getPreloadModelConfigsFromManifest(oManifest, oConfig.componentData, hints.cacheTokens);
+					mModelConfigs = getPreloadModelConfigsFromManifest(oManifest, oConfig.componentData, hints.cacheTokens, aActiveTerminologies);
 
 					return oManifest;
 				}).then(function(oManifest) {
@@ -3017,8 +3068,21 @@ sap.ui.define([
 					pLoaded = loadManifests(oMetadata);
 
 					return pLoaded.then(function() {
+
+						// if manifest was defined in the component metadata
+						// we need to trigger the sap.app.i18n processing based on terminologies
+						// for this specific component instance
+						var pProcessI18n = Promise.resolve();
+						if (mOptions.activeTerminologies) {
+							oManifest = new Manifest(oMetadata.getManifestObject().getRawJson(), {
+								process: false,
+								activeTerminologies: aActiveTerminologies
+							});
+							pProcessI18n = oManifest._processI18n(true);
+						}
+
 						// prepare the loaded class and resolve with it
-						return prepareControllerClass(oClass);
+						return pProcessI18n.then(prepareControllerClass.bind(undefined, oClass));
 					});
 				});
 			}).then(function(oControllerClass) {
@@ -3060,7 +3124,8 @@ sap.ui.define([
 					models: mManifestModels,
 					dataSources: mManifestDataSources,
 					manifest: oManifest,
-					cacheTokens: hints.cacheTokens
+					cacheTokens: hints.cacheTokens,
+					activeTerminologies: aActiveTerminologies
 				});
 				for (var mModelName in mAllModelConfigurations) {
 					if (!mAllModelConfigurations.hasOwnProperty(mModelName)) {
