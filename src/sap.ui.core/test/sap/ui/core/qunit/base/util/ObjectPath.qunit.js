@@ -208,4 +208,22 @@ sap.ui.define(["sap/base/util/ObjectPath"], function(ObjectPath) {
 		ObjectPath.set(["my", "pack", "et2"], 1, oBase);
 		assert.strictEqual(oBase.my.pack.et2, 1, "should exist");
 	});
+
+	QUnit.test("set property should not mutate parts array", function(assert) {
+		var oBase = {
+			"my": {
+				"pack": {
+					"age": {}
+				}
+			}
+		};
+
+		var oObject = {};
+		var aParts = ["my", "pack", "object"];
+		var aPartsCopy = aParts.slice();
+
+		ObjectPath.set(aParts, oObject, oBase);
+		assert.strictEqual(oBase.my.pack.object, oObject, "should exist");
+		assert.deepEqual(aParts, aPartsCopy, "parts array is the same");
+	});
 });

@@ -34,7 +34,7 @@ sap.ui.define([], function() {
 	 * @returns {string[]} The path as an array
 	 */
 	function getObjectPathArray(vObjectPath) {
-		return Array.isArray(vObjectPath) ? vObjectPath : vObjectPath.split(".");
+		return Array.isArray(vObjectPath) ? vObjectPath.slice() : vObjectPath.split(".");
 	}
 
 	/**
