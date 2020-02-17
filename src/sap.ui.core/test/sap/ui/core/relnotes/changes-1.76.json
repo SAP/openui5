@@ -1,0 +1,30 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "d865b5e56cb41ba2145f26ccd688563bb8d272b8",
+        "type": "FEATURE",
+        "text": " test recorder: show multiple snippets",
+        "references": []
+      },
+      {
+        "id": "24cf499fd6197e2bb95c63c839d3554760987ace",
+        "type": "FIX",
+        "text": " Opa: handle IDs with special characters in control finder",
+        "references": []
+      },
+      {
+        "id": "3f503ed7089f5389fc4687c607a2e1da9d00abe5",
+        "type": "FIX",
+        "text": " test routing for IE11 and MS edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080124283"
+          }
+        ]
+      }
+    ]
+  }
+}

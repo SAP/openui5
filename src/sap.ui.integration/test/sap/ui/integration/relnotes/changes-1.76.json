@@ -1,0 +1,18 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "b19915d4146415e9e7f7b04595408bf7a65cc505",
+        "type": "FIX",
+        "text": " sap.f.cards.AdaptiveContent: Web Components bundle corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080126615"
+          }
+        ]
+      }
+    ]
+  }
+}

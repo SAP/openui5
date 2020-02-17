@@ -1,0 +1,62 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "75721a468697e1e00822b19ae74709231d89e4f9",
+        "type": "FIX",
+        "text": " sap.m.ComboBox, sap.m.MultiComboBox, sap.m.Input: Disable autocomplete on android",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040084988"
+          }
+        ]
+      },
+      {
+        "id": "3402e06b36e2b8949ef9b6c111103d31ee2cb225",
+        "type": "FIX",
+        "text": " sap.m.Input: Fix JSDoc parser issues",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080077508"
+          }
+        ]
+      },
+      {
+        "id": "533f87347e98645b382d7ecba6c35a48d8288f29",
+        "type": "FIX",
+        "text": " sap.m.Link: uses aria-disabled instead of disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080064133"
+          }
+        ]
+      },
+      {
+        "id": "a3cd3129178cb4c5e6ee286f5a3318092b38ceed",
+        "type": "FIX",
+        "text": " sap.m.Popover: Popover closing prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970226071"
+          }
+        ]
+      },
+      {
+        "id": "df0c128bdacaada4222eb7e2c76c3b2c51988424",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: skicky modes fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080055756"
+          }
+        ]
+      }
+    ]
+  }
+}

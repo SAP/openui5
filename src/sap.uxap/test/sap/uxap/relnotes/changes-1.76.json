@@ -1,0 +1,29 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "e3e12cc21af6c7280e665aeb2870d09f5358e3c8",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Removed unstable ids",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080120183"
+          }
+        ]
+      },
+      {
+        "id": "e3147ec2fab945c105e9889ce6105e2227f39d52",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected section focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000676252020"
+          }
+        ]
+      }
+    ]
+  }
+}

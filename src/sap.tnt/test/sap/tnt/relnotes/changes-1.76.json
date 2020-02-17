@@ -1,0 +1,18 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "fe204e65799743fae7ff36f123a53827bebf2e64",
+        "type": "FIX",
+        "text": " sap-icons-tnt: Incorrect codepoints are now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008086842019"
+          }
+        ]
+      }
+    ]
+  }
+}

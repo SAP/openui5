@@ -1,0 +1,18 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "2b7eb90bf8aceaff905f711c6cb3cb8a7f6f62b6",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: documentation adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080105979"
+          }
+        ]
+      }
+    ]
+  }
+}

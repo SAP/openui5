@@ -1,0 +1,18 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "efed875d9511e0f62d970b54f8745cabd2eb444b",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Detect size changes in the secondary content area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080119767"
+          }
+        ]
+      }
+    ]
+  }
+}
