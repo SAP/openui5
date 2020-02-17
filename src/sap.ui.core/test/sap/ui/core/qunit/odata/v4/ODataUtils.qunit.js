@@ -2,14 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, Log, CalendarType, DateFormat, BaseODataUtils, ODataUtils, _Helper) {
+], function (Log, CalendarType, DateFormat, BaseODataUtils, ODataUtils, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";

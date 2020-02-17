@@ -4,10 +4,11 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/test/TestUtils",
 	"sap/ui/util/XMLHelper"
-], function (jQuery, Log, _V2MetadataConverter, TestUtils, XMLHelper) {
+], function (jQuery, Log, _Helper, _V2MetadataConverter, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1485,7 +1486,7 @@ sap.ui.define([
 		var sTitle = "convert: V2 annotation at EntitySet: " + oFixture.annotationsV2;
 
 		QUnit.test(sTitle, function (assert) {
-			var mAnnotations = jQuery.extend({
+			var mAnnotations = Object.assign({
 					'@Org.OData.Capabilities.V1.SearchRestrictions' : {
 						"Searchable" : false
 					}
@@ -2043,7 +2044,7 @@ sap.ui.define([
 			oExpectedResult = {
 				"GWSAMPLE_BASIC.0001." : {
 					"$Annotations" : {
-						"GWSAMPLE_BASIC.0001.Container/Customers" : jQuery.extend(true, {
+						"GWSAMPLE_BASIC.0001.Container/Customers" : _Helper.merge({
 							// converted from V2 annotations at EntitySet itself
 							"@Org.OData.Capabilities.V1.InsertRestrictions" : {
 								"Insertable" : false

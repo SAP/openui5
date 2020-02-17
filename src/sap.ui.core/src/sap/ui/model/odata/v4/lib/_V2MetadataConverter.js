@@ -6,9 +6,8 @@
 sap.ui.define([
 	"./_Helper",
 	"./_MetadataConverter",
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
-], function (_Helper, _MetadataConverter, Log, jQuery) {
+	"sap/base/Log"
+], function (_Helper, _MetadataConverter, Log) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
@@ -653,7 +652,7 @@ sap.ui.define([
 
 		for (sAnnotatablePath in mConvertedV2Annotations) {
 			if (sAnnotatablePath in mV4Annotations) {
-				mV4Annotations[sAnnotatablePath] = jQuery.extend(
+				mV4Annotations[sAnnotatablePath] = Object.assign(
 					mConvertedV2Annotations[sAnnotatablePath],
 					mV4Annotations[sAnnotatablePath]);
 			} else {
@@ -685,8 +684,7 @@ sap.ui.define([
 					continue;
 				}
 				sTarget = sEntityContainerName + "/" + sEntitySetName;
-				mAnnotations = jQuery.extend(true,
-					this.convertedV2Annotations[sTarget] || {},
+				mAnnotations = _Helper.merge(this.convertedV2Annotations[sTarget] || {},
 					this.mEntityType2EntitySetAnnotation[oEntitySet.$Type]);
 				if (Object.keys(mAnnotations).length) {
 					this.convertedV2Annotations[sTarget] = mAnnotations;
