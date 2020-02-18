@@ -70,10 +70,8 @@ sap.ui.define([
 
 				// iframe examples have a separate index file and a component file to describe it
 				if (!oData.iframe) {
-					oData.files.forEach(function (oFile) {
-						bHasManifest = oFile.name === "manifest.json";
-
-						return;
+					bHasManifest = oData.files.some(function (oFile) {
+						return oFile.name === "manifest.json";
 					});
 
 					oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
