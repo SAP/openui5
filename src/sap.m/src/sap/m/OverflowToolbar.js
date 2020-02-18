@@ -1520,10 +1520,8 @@ sap.ui.define([
 
 		if (oDomRef) {
 			// Getting the precise width of the control, as sometimes JQuery's .outerWidth() returns different values
-			// for the same element. Ceil the value, because it's always better to allocate more space for a control
-			// than less, in order to be sure that we won't have a situation when the browser ceils the value,
-			// but we floor it, and there is not enough space for the control, which will trigger new calculations.
-			return Math.ceil(oDomRef.getBoundingClientRect().width + OverflowToolbar._getControlMargins(oControl));
+			// for the same element.
+			return Math.round(oDomRef.getBoundingClientRect().width + OverflowToolbar._getControlMargins(oControl));
 		}
 
 		return null;

@@ -2541,7 +2541,8 @@ sap.ui.define([
 		// Arrange
 		var oTestButton = new Button({width: "200px"}),
 			oOTB = createOverflowToolbar({}, [oTestButton]),
-			oSpy = this.spy(OverflowToolbar, "_getControlWidth");
+			oSpy = this.spy(OverflowToolbar, "_getControlWidth"),
+			oMathSpy = this.spy(Math, "round");
 
 		oTestButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -2549,6 +2550,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200);
 		assert.ok(oSpy.called, "_getControlWidth is called for more precise measuring of control width");
+		assert.ok(oMathSpy.called, "Width value is rounded");
 
 		// Clean up
 		oSpy.restore();
