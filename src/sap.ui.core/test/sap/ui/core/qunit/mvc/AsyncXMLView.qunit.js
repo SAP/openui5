@@ -184,10 +184,15 @@ sap.ui.define([
 				}]
 			}));
 
-			function getKeyParts(aKeys, sManifest) {
+			function getKeyParts(aKeys, sManifest, aUsedTerminologies) {
+				var sUsedTerminologies = aUsedTerminologies ? aUsedTerminologies.join("_") + "_" : "";
 				var sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
 					sHashCode = jQuery.sap.hashCode(sManifest || "");
-				return "_" + sLanguageTag + "_" + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + sHashCode + ")";
+				return "_" + sLanguageTag + "_" + sUsedTerminologies + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + sHashCode + ")";
+			}
+
+			function calculateCacheKey(oComponent, oView, aKeys, aUsedTerminologies){
+				return oComponent.getMetadata().getName() +  "_" + oView.getId() + getKeyParts(aKeys, JSON.stringify(oComponent.getManifest()), aUsedTerminologies);
 			}
 
 			QUnit.module("Cache API", {
@@ -391,6 +396,43 @@ sap.ui.define([
 						oView.destroy();
 					});
 				});
+			});
+
+			QUnit.module("Cache integration with terminologies", {
+				beforeEach: function() {
+					this.oSetCacheSpy = sinon.spy(Cache, "set");
+				},
+				afterEach: function() {
+					this.oSetCacheSpy.resetHistory();
+					this.oComponent.destroy();
+				},
+				after: function(){
+					this.oSetCacheSpy.restore();
+					Cache.reset();
+				}
+			});
+
+			QUnit.test("read from cache with terminologies", function(assert) {
+				var done = assert.async();
+				assert.expect(2);
+				var sKey = "key1";
+				var aUsedTerminologies = ["oil", "gas"];
+				return Component.create({
+					name: "testdata.mvc.terminologies",
+					id: "terminologyComponent",
+					activeTerminologies: aUsedTerminologies,
+					manifest: false
+				}).then(function (oComponent) {
+					this.oComponent = oComponent;
+					oComponent.getRootControl().loaded().then(function (oView) {
+						assert.strictEqual(this.oSetCacheSpy.callCount, 1, "The Cache.set function should be called once");
+						var sExpectedCacheKey = calculateCacheKey(oComponent, oView, [sKey], aUsedTerminologies);
+						this.oSetCacheSpy.getCall(0).returnValue.then(function(){
+							assert.strictEqual(this.oSetCacheSpy.getCall(0).args[0], sExpectedCacheKey, "The Cache.set should be called with the correct view cache key");
+							done();
+						}.bind(this));
+					}.bind(this));
+				}.bind(this));
 			});
 
 		});
