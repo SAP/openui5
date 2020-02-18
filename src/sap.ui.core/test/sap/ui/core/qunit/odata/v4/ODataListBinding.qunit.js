@@ -1845,8 +1845,7 @@ sap.ui.define([
 				oBinding.resolveRefreshPromise(oReadPromise);
 			}
 		});
-		this.mock(this.oModel).expects("getDependentBindings").exactly(iNoOfCalls)
-			.withExactArgs(sinon.match.same(oBinding))
+		this.mock(oBinding).expects("getDependentBindings").exactly(iNoOfCalls).withExactArgs()
 			.returns([oDependentBinding]);
 		this.mock(oDependentBinding).expects("refreshInternal").exactly(iNoOfCalls)
 			.withExactArgs("", "myGroup", false, bKeepCacheOnError)
@@ -1980,8 +1979,7 @@ sap.ui.define([
 				.withExactArgs("myGroup", true);
 			this.mock(oBinding).expects("reset").exactly(bSuspended ? 0 : 1)
 				.withExactArgs(ChangeReason.Refresh);
-			this.mock(this.oModel).expects("getDependentBindings")
-				.withExactArgs(sinon.match.same(oBinding))
+			this.mock(oBinding).expects("getDependentBindings").withExactArgs()
 				.returns([oChild0, oChild1, oChild2]);
 			this.mock(oChild0).expects("refreshInternal")
 				.withExactArgs(sResourcePathPrefix, "myGroup", false, undefined)
