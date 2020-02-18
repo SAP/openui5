@@ -25,14 +25,12 @@ describe("sap.m.ComboBox", function() {
 		defaultArrow.click();
 		browser.actions().sendKeys("B").perform();
 		expect(takeScreenshot()).toLookAs("combobox-filtering");
-
+		defaultArrow.click();
 	});
 
    // check ComboBox - Two column layout
 	it("should open second ComboBox - Two column layout", function() {
 		var twoColumnArrow = element(by.id("box_two_column-arrow"));
-		twoColumnArrow.click();
-		element.all(by.css('.sapMComboBoxBasePicker[style*="display: block"] li.sapMLIB')).get(8).click();
 		twoColumnArrow.click();
 		expect(takeScreenshot()).toLookAs("two_column_fullscreen");
 		twoColumnArrow.click();
