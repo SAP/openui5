@@ -1918,27 +1918,28 @@ sap.ui.define([
 			bCheckUpdate, bKeepCacheOnError) {
 		var that = this;
 
-		// calls refreshInternal on all dependent bindings and returns an array of promises
-		function refreshDependentBindings() {
-			return that.oModel.getDependentBindings(that).map(function (oDependentBinding) {
+		// calls refreshInternal on all given bindings and returns an array of promises
+		function refreshAll(aBindings) {
+			return aBindings.map(function (oBinding) {
 				// Call refreshInternal with bCheckUpdate = false because property bindings
 				// should not check for updates yet, otherwise they will cause a "Failed to
 				// drill down..." when the row is no longer part of the collection. They get
 				// another update request in createContexts, when the context for the row is
 				// reused.
-				return oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, false,
+				return oBinding.refreshInternal(sResourcePathPrefix, sGroupId, false,
 					bKeepCacheOnError);
 			});
 		}
 
 		if (this.isRootBindingSuspended()) {
 			this.refreshSuspended(sGroupId);
-			return SyncPromise.all(refreshDependentBindings());
+			return SyncPromise.all(refreshAll(that.getDependentBindings()));
 		}
 
 		this.createReadGroupLock(sGroupId, this.isRoot());
 		return this.oCachePromise.then(function (oCache) {
-			var oPromise = that.oRefreshPromise;
+			var aDependentBindings,
+				oPromise = that.oRefreshPromise;
 
 			if (oCache && !oPromise) { // do not refresh twice
 				that.removeCachesAndMessages(sResourcePathPrefix);
@@ -1958,8 +1959,10 @@ sap.ui.define([
 					});
 				}
 			}
+			// Note: after reset the dependent bindings cannot be found any more
+			aDependentBindings = that.getDependentBindings();
 			that.reset(ChangeReason.Refresh); // this may reset that.oRefreshPromise
-			return SyncPromise.all(refreshDependentBindings().concat(oPromise));
+			return SyncPromise.all(refreshAll(aDependentBindings).concat(oPromise));
 		});
 	};
 
