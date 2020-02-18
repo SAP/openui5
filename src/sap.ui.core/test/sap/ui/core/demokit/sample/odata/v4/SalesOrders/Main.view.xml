@@ -162,10 +162,12 @@
 										id="SimulateDiscountForm" layout="ResponsiveGridLayout">
 									<Label text="Sales Order" />
 									<Text id="SimulateDiscountForm::SalesOrderID"
-										text="{SalesOrderID}" />
+										  text="{parameterContext>SalesOrder/SalesOrderID}"
+										  tooltip="SalesOrderID (via parameter context)"/>
 									<Label text="Gross Amount" />
 									<Text id="SimulateDiscountForm::GrossAmount"
-										text="{GrossAmount}" />
+										text="{GrossAmount}"
+										tooltip="GrossAmount (via parent context)"/>
 									<Label text="Reduction in %" />
 									<StepInput id="SimulateDiscountForm::Discount" min="0" max="100"
 										step="5" value="{parameterContext>Discount}"/>
