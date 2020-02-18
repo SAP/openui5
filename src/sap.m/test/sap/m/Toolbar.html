@@ -205,23 +205,26 @@
 				design : sap.m.ToolbarDesign.Info,
 				tooltip : "This is a info bar",
 				content : [
-					new sap.m.Label({
-						text : "Plain old infobar"
-					}),
-					new sap.m.Label({text: "Text"}),
-					new sap.m.Label({text: "Text"}),
-					new sap.m.ToolbarSpacer(),
-					new sap.m.Label({text: "Text"}),
-					new sap.m.Label({text: "Text"}),
-					new sap.ui.core.Icon({
-						src : "sap-icon://collaborate",
-						width : "2rem"
-					})
+					new sap.m.Label({text : "Label"}),
+					new sap.m.Text({text: "Text"}),
+					new sap.m.Title({text: "Title"}),
+					new sap.ui.core.Icon({src : "sap-icon://collaborate"})
 				]
 			}).attachPress(function(oEvent) {
 				sap.m.MessageToast.show("InfoBar Pressed! Sorce: " + oEvent.getParameter("srcControl").getId(), {
 					duration: iMessageToastDuration
 				});
+			}),
+			new sap.m.Toolbar("info_bar2", {
+				active : false,
+				design : sap.m.ToolbarDesign.Info,
+				tooltip : "This is a info bar",
+				content : [
+					new sap.m.Label({text : "Label"}),
+					new sap.m.Text({text: "Text"}),
+					new sap.m.Title({text: "Title"}),
+					new sap.ui.core.Icon({src : "sap-icon://collaborate"})
+				]
 			}),
 			new sap.m.Toolbar({
 				design : sap.m.ToolbarDesign.Solid,

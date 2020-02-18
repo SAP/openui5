@@ -116,14 +116,27 @@
 .sapMTB-Info-CTX.sapMTB {
 	background: @sapUiInfobarBackground;
 	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
-}
 
-.sapMTB-Info-CTX.sapMTBActive:hover {
-	background: @sapUiInfobarHoverBackground;
-}
+	.sapMText {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 
-.sapMTB-Info-CTX.sapMTBActive:active {
-	background: @sapUiInfobarActiveBackground;
+	> .sapMTitle {
+		font-size: @sapMFontHeader6Size;
+		text-shadow: none;
+	}
+
+	&.sapMTBActive {
+		&:hover {
+			background: @sapUiInfobarHoverBackground;
+		}
+
+		&:active {
+			background: @sapUiInfobarActiveBackground;
+		}
+	}
 }
 
 /********** COMPACT DESIGN ************/
