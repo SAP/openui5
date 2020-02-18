@@ -30,5 +30,21 @@
         ]
       }
     ]
+  },
+  "1.60.24": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "39a49927b30d2a612c52d4073705d7aeddaf9490",
+        "type": "FIX",
+        "text": " sap-icons-tnt: Restored backward compatibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008086842019"
+          }
+        ]
+      }
+    ]
   }
 }

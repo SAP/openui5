@@ -376,5 +376,21 @@
         ]
       }
     ]
+  },
+  "1.60.24": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "4efcceb787286b568199a655f7c55f0f51a66281",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Aligned to accessibility specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000277352020"
+          }
+        ]
+      }
+    ]
   }
 }

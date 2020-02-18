@@ -1287,5 +1287,32 @@
         ]
       }
     ]
+  },
+  "1.71.11": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "e108faead3db6c211ad0f0903bdbded428575cab",
+        "type": "FIX",
+        "text": " sap.m.ComboBox, sap.m.MultiComboBox, sap.m.Input: Disable autocomplete on android",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000849882020"
+          }
+        ]
+      },
+      {
+        "id": "e914eb631324836f9e87abb0659c7c4ff76ca1f1",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: load not density aware image by default",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007126932019"
+          }
+        ]
+      }
+    ]
   }
 }
