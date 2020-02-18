@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/core/InvisibleText",
 	"sap/base/strings/formatMessage",
-	"sap/ui/integration/controls/ActionsToolbar"
+	"sap/ui/integration/controls/ActionsToolbar",
+	"sap/ui/integration/util/Destinations"
 ], function (
 	jQuery,
 	Core,
@@ -56,7 +57,8 @@ sap.ui.define([
 	library,
 	InvisibleText,
 	formatMessage,
-	ActionsToolbar
+	ActionsToolbar,
+	Destinations
 ) {
 	"use strict";
 	/* global Map */
@@ -405,6 +407,16 @@ sap.ui.define([
 		return this;
 	};
 
+	Card.prototype.setHost = function (vHost) {
+		this.setAssociation("host", vHost);
+
+		if (this._oDestinations) {
+			this._oDestinations.setHost(this.getHostInstance());
+		}
+
+		return this;
+	};
+
 	/**
 	 * Instantiates a Card Manifest and applies it.
 	 *
@@ -550,6 +562,11 @@ sap.ui.define([
 			this._oDataProvider = null;
 		}
 
+		if (this._oDestinations) {
+			this._oDestinations.destroy();
+			this._oDestinations = null;
+		}
+
 		if (this._oTemporaryContent) {
 			this._oTemporaryContent.destroy();
 			this._oTemporaryContent = null;
@@ -623,7 +640,8 @@ sap.ui.define([
 			this._oDataProviderFactory.destroy();
 		}
 
-		this._oDataProviderFactory = new DataProviderFactory();
+		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest);
+		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations);
 
 		this._applyServiceManifestSettings();
 		this._applyDataManifestSettings();

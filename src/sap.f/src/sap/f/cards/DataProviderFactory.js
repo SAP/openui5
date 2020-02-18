@@ -23,8 +23,9 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 	 * @alias sap.f.cards.DataProviderFactory
 	 */
 	var DataProviderFactory = BaseObject.extend("sap.f.cards.DataProviderFactory", {
-		constructor: function () {
+		constructor: function (oDestinations) {
 			BaseObject.call(this);
+			this._oDestinations = oDestinations;
 			this._aDataProviders = [];
 		}
 	});
@@ -67,6 +68,7 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 			return null;
 		}
 
+		oDataProvider.setDestinations(this._oDestinations);
 		oDataProvider.setSettings(oDataSettings);
 
 		if (oDataProvider.isA("sap.f.cards.IServiceDataProvider")) {

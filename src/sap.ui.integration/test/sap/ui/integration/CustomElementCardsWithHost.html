@@ -17,14 +17,6 @@
 		"test" : "./"
 	}'></script>
 
-
-
-
-	<script>
-
-
-	</script>
-
 	<script>
 		customElements.whenDefined("ui-integration-card").then(function () {
 			var mobileCards = [],
@@ -92,11 +84,18 @@
 							manifestParameters = event.getParameter('manifestParameters');
 
 					console.error("Host Action ", manifestParameters);
+				},
+				resolveDestination: function(sDestinationName) {
+					if (sDestinationName == "Northwind") {
+						return "https://services.odata.org/V3/Northwind/Northwind.svc";
+
+						// or with promise
+						//return Promise.resolve("https://services.odata.org/V3/Northwind/Northwind.svc");
+					}
 				}
 			});
 
 			document.getElementById('cardWithActions1').setAttribute('host', 'host1');
-
 		});
 	</script>
 </head>
@@ -116,6 +115,13 @@
 <ui-integration-card
 		id="cardWithActions1"
 		manifest="./widgets/cardmanifests/list.actions.manifest.json"
+		data-mode="Active">
+</ui-integration-card>
+
+<ui-integration-card
+		id="cardWithDestinations"
+		manifest="./widgets/cardmanifests/destinations.json"
+		host="host1"
 		data-mode="Active">
 </ui-integration-card>
 

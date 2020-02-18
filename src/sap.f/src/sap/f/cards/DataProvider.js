@@ -62,6 +62,15 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 	});
 
 	/**
+	 * Sets the destinations resolver
+	 *
+	 * @param {sap.ui.integration.util.Destinations} oDestinations The destinations resolver.
+	 */
+	DataProvider.prototype.setDestinations = function (oDestinations) {
+		this._oDestinations = oDestinations;
+	};
+
+	/**
 	 * Sets the data settings for the <code>DataProvider</code>
 	 *
 	 * @param {Object} oSettings The data settings.

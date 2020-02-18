@@ -36,7 +36,14 @@ sap.ui.define([
 	 * @returns {Promise} A promise resolved when the data is available and rejected in case of an error.
 	 */
 	RequestDataProvider.prototype.getData = function () {
-		return this._fetch(this.getSettings().request);
+		var oRequestConfig = this.getSettings().request;
+
+		if (this._oDestinations) {
+			return this._oDestinations.process(oRequestConfig)
+				.then(this._fetch.bind(this));
+		}
+
+		return this._fetch(oRequestConfig);
 	};
 
 	RequestDataProvider.prototype._isValidRequest = function (oRequest) {
