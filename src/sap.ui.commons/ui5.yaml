@@ -1,7 +1,8 @@
 ---
-specVersion: "0.1"
+specVersion: "1.1"
 type: library
 metadata:
+  deprecated: true
   name: sap.ui.commons
   copyright: |-
    OpenUI5
