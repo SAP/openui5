@@ -158,12 +158,10 @@ sap.ui.define([
 						oModelData.files = [];
 						for (var i = 0; i < oSampleConfig.files.length; i++) {
 							var sFile = oSampleConfig.files[i];
-							var sContent = this.fetchSourceFile(sRef, sFile);
-
 							oModelData.files.push({
-								name : sFile,
-								raw : sContent
+								name : sFile
 							});
+							this._updateFileContent(sRef, sFile);
 						}
 					}
 
@@ -199,6 +197,19 @@ sap.ui.define([
 					oPage.setBusy(false);
 				}, 0);
 
+			},
+
+			_updateFileContent: function(sRef, sFile) {
+				this.fetchSourceFile(sRef + "/" + sFile).then(function(vContent) {
+					var aFiles = this.oModel.getProperty("/files");
+					aFiles.some(function(oFile) {
+						if (oFile.name === sFile) {
+							oFile.raw = vContent;
+							return true;
+						}
+					});
+					this.oModel.setProperty("/files", aFiles);
+				}.bind(this));
 			},
 
 			onAPIRefPress: function () {
