@@ -1332,6 +1332,7 @@ sap.ui.define([
 	QUnit.test("ARIA Attributes of Table Header", function(assert) {
 		var $Elem = oTable.$().find(".sapUiTableHdr");
 		assert.strictEqual($Elem.attr("role"), "heading", "role");
+		assert.strictEqual($Elem.attr("aria-level"), "2", "aria-level");
 	});
 
 	QUnit.test("ARIA Attributes of Table Elements", function(assert) {
