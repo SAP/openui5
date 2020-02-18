@@ -1,13 +1,17 @@
-/*global QUnit*/
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Control",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/Sorter"
 ], function(
 	Element,
 	Control,
+	ChangeReason,
 	JSONModel,
+	JSONListBinding,
 	Sorter
 ) {
 	"use strict";
@@ -240,4 +244,65 @@ sap.ui.define([
 		oSorter = new Sorter("myProperty", false, true);
 		assert.equal(typeof oSorter.getGroupFunction(), 'function', "sorter with group configuration 'true' should return a group function");
 	});
+
+	QUnit.module("detailedReason in change event", {
+		beforeEach: function() {
+			this.oList = new MyList({
+				items: {
+					path: '/data',
+					template: new MyListItem()
+				},
+				models: new JSONModel({
+					data: [
+						{ id: "1" }
+					]
+				})
+			});
+		},
+		afterEach: function() {
+			this.oList.destroy();
+		}
+	});
+
+	QUnit.test("with generic update method", function(assert) {
+		// setup
+		var oList = this.oList,
+			oBinding = oList.getBinding("items");
+
+		this.spy(oList, "updateAggregation");
+
+		// act
+		oBinding._fireChange({
+			reason: ChangeReason.Change,
+			detailedReason: "RemoveVirtualContext"
+		});
+
+		// assert
+		assert.ok(oList.updateAggregation.calledWith(
+				sinon.match.any,
+				ChangeReason.Change,
+				sinon.match({detailedReason: "RemoveVirtualContext"})),
+				"generic 'updateAggregation' method was called with detailed change reason");
+	});
+
+	QUnit.test("with named update method", function(assert) {
+		// setup
+		var oList = this.oList,
+			oBinding = oList.getBinding("items");
+
+		oList.updateItems = this.stub();
+
+		// act
+		oBinding._fireChange({
+			reason: ChangeReason.Change,
+			detailedReason: "RemoveVirtualContext"
+		});
+
+		// assert
+		assert.ok(oList.updateItems.calledWith(
+				ChangeReason.Change,
+				sinon.match({detailedReason: "RemoveVirtualContext"})),
+				"named 'updateItems' method was called with detailed change reason");
+	});
+
 });
