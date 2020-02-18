@@ -372,6 +372,142 @@ sap.ui.define([
 		assert.ok(oInnerButton.$().children().hasClass("sapMSBInnerDisabled"), "The inner split button has disabled class");
 	});
 
+	QUnit.test("When ariaLabelledBy is added to the MenuButton, it gets propagated to the inner Button", function(assert) {
+		// Act
+		this.sut.addAriaLabelledBy("test");
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaLabelledBy(), "test", "The ariaLabelledBy is propagated.");
+	});
+
+	QUnit.test("When ariaLabelledBy is added to the MenuButton, it gets propagated to the inner SplitButton", function(assert) {
+		// Arrange
+		this.sut.setButtonMode(MenuButtonMode.Split);
+
+		// Act
+		this.sut.addAriaLabelledBy("test");
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaLabelledBy(), "test", "The ariaLabelledBy is propagated.");
+	});
+
+	QUnit.test("When ariaDescribedBy is added to the MenuButton, it gets propagated to the inner Button", function(assert) {
+		// Act
+		this.sut.addAriaDescribedBy("test");
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaDescribedBy(), "test", "The ariaDescribedBy is propagated.");
+	});
+
+	QUnit.test("When ariaDescribedBy is added to the MenuButton, it gets propagated to the inner SplitButton", function(assert) {
+		// Arrange
+		this.sut.setButtonMode(MenuButtonMode.Split);
+
+		// Act
+		this.sut.addAriaDescribedBy("test");
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaDescribedBy(), "test", "The ariaDescribedBy is propagated.");
+	});
+
+	QUnit.test("When ariaLabelledBy is removed from the MenuButton, it gets propagated to the inner Button", function(assert) {
+		// Arrange
+		this.sut.addAriaLabelledBy("test");
+
+		// Act
+		this.sut.removeAriaLabelledBy("test");
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaLabelledBy().length, 0, "The ariaLabelledBy is propagated.");
+	});
+
+	QUnit.test("When ariaLabelledBy is removed from the MenuButton, it gets propagated to the inner SplitButton", function(assert) {
+		// Arrange
+		this.sut.setButtonMode(MenuButtonMode.Split);
+		this.sut.addAriaLabelledBy("test");
+
+		// Act
+		this.sut.removeAriaLabelledBy("test");
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaLabelledBy().length, 0, "The ariaLabelledBy is propagated.");
+	});
+
+	QUnit.test("When ariaDescribedBy is removed from the MenuButton, it gets propagated to the inner Button", function(assert) {
+		// Arrange
+		this.sut.addAriaDescribedBy("test");
+
+		// Act
+		this.sut.removeAriaDescribedBy("test");
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaDescribedBy().length, 0, "The ariaDescribedBy is propagated.");
+	});
+
+	QUnit.test("When ariaDescribedBy is removed from the MenuButton, it gets propagated to the inner SplitButton", function(assert) {
+		// Arrange
+		this.sut.setButtonMode(MenuButtonMode.Split);
+		this.sut.addAriaDescribedBy("test");
+
+		// Act
+		this.sut.removeAriaDescribedBy("test");
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaDescribedBy().length, 0, "The ariaDescribedBy is propagated.");
+	});
+
+
+
+	QUnit.test("When all ariaLabelledBy strings are removed from the MenuButton, they get propagated to the inner Button", function(assert) {
+		// Arrange
+		this.sut.addAriaLabelledBy("test");
+		this.sut.addAriaLabelledBy("test2");
+
+		// Act
+		this.sut.removeAllAriaLabelledBy();
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaLabelledBy().length, 0, "The ariaLabelledBy is propagated.");
+	});
+
+	QUnit.test("When all ariaLabelledBy strings are removed from the MenuButton, they get propagated to the inner SplitButton", function(assert) {
+		// Arrange
+		this.sut.setButtonMode(MenuButtonMode.Split);
+		this.sut.addAriaLabelledBy("test");
+		this.sut.addAriaLabelledBy("test2");
+
+		// Act
+		this.sut.removeAllAriaLabelledBy();
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaLabelledBy().length, 0, "The ariaLabelledBy is propagated.");
+	});
+
+	QUnit.test("When all ariaDescribedBy strings are removed from the MenuButton, they get propagated to the inner Button", function(assert) {
+		// Arrange
+		this.sut.addAriaDescribedBy("test");
+		this.sut.addAriaDescribedBy("test2");
+
+		// Act
+		this.sut.removeAllAriaDescribedBy();
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaDescribedBy().length, 0, "The ariaDescribedBy is propagated.");
+	});
+
+	QUnit.test("When all ariaDescribedBy strings are removed from the MenuButton, they get propagated to the inner SplitButton", function(assert) {
+		// Arrange
+		this.sut.setButtonMode(MenuButtonMode.Split);
+		this.sut.addAriaDescribedBy("test");
+		this.sut.addAriaDescribedBy("test2");
+
+		// Act
+		this.sut.removeAllAriaDescribedBy();
+
+		// Assert
+		assert.equal(this.sut.getAggregation("_button").getAriaDescribedBy().length, 0, "The ariaDescribedBy is propagated.");
+	});
+
 	QUnit.module("Accessibility (Labelling)", {
 		beforeEach: function () {
 			this.oLabel = new sap.m.Label("initialLabel", {
