@@ -6811,6 +6811,8 @@ forEach({
 	QUnit.test("getReducedPath: invalid binding parameter", function (assert) {
 		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
 			.returns(SyncPromise.resolve(mReducedPathScope));
+		this.oLogMock.expects("isLoggable")
+					.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(true);
 		this.oLogMock.expects("warning").withExactArgs("Expected a single overload, but found 0",
 			"/As/AtoC/reduce.path.Action/$Parameter/_it", sODataMetaModel);
 
@@ -6825,6 +6827,8 @@ forEach({
 	QUnit.test("getReducedPath: multiple overloads", function (assert) {
 		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
 			.returns(SyncPromise.resolve(mReducedPathScope));
+		this.oLogMock.expects("isLoggable")
+					.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(true);
 		this.oLogMock.expects("warning").withExactArgs("Expected a single overload, but found 2",
 			"/Ds/reduce.path.Function/$Parameter/_it", sODataMetaModel);
 
