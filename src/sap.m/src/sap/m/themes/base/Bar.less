@@ -144,13 +144,15 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 }
 
-.sapMBarRight,
+.sapMBarRight{
+	display: inline-flex;
+	align-items: center;
+}
+
 .sapMBarRight > .sapMBarChild:not(.sapMTB) {
 	margin-top: 0;
 	margin-bottom: 0;
 	margin-right: 0;
-	vertical-align: middle;
-	display: inline-block;
 }
 
 .sapMBarRight > .sapMBarChild {
@@ -158,17 +160,14 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 }
 
 .sapUiSizeCompact{
-	.sapMBarRight,
+	.sapMBarRight{
+		display: inline-flex;
+		align-items: center;
+	}
+
 	.sapMBarRight > .sapMBarChild:not(.sapMTB) {
 		margin-bottom: 0;
 		margin-right: 0;
-		vertical-align: middle;
-		display: inline-block;
-	}
-
-	.sapMBarRight > .sapMBarChild {
-		line-height: initial;
-		margin-top: -0.3px;
 	}
 }
 
