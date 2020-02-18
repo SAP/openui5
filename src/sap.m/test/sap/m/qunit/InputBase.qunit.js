@@ -1601,7 +1601,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("input event delegate should be fired in IE9 when CUT / DELETE / BACKSPACE is hit", function(assert) {// TODO remove after 1.62 version
+	QUnit.test("input event delegate should be fired in IE9 when CUT / DELETE / BACKSPACE is hit", function(assert) {// TODO remove after the end of support for Internet Explorer
 
 		// system under test
 		var oInput = new InputBase({
@@ -2109,7 +2109,7 @@ sap.ui.define([
 
 
 	QUnit.module("invalid input event");
-	QUnit.test("iE10+ should mark event invalid when an input field with a native placeholder is focused", function(assert) {// TODO remove after 1.62 version
+	QUnit.test("iE10+ should mark event invalid when an input field with a native placeholder is focused", function(assert) {// TODO remove after the end of support for Internet Explorer
 		this.stub(InputBase.prototype, "bShowLabelAsPlaceholder", false);
 		var fnOnInputSpy = this.spy(InputBase.prototype, "oninput");
 		this.stub(Device, "browser", {
@@ -2135,7 +2135,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("iE11 should mark event invalid when an readonly input field fires input event", function(assert) {// TODO remove after 1.62 version
+	QUnit.test("iE11 should mark event invalid when an readonly input field fires input event", function(assert) {// TODO remove after the end of support for Internet Explorer
 		var fnOnInputSpy = this.spy(InputBase.prototype, "oninput");
 		this.stub(Device, "browser", {
 			msie: true,
@@ -2158,7 +2158,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("IE should mark event invalid when is fired with the same value", function (assert) {// TODO remove after 1.62 version
+	QUnit.test("IE should mark event invalid when is fired with the same value", function (assert) {// TODO remove after the end of support for Internet Explorer
 		this.stub(Device, "browser", {
 			msie: true,
 			version: 11
@@ -2202,7 +2202,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when it is rendered", function (assert) {// TODO remove after 1.62 version
+	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when it is rendered", function (assert) {// TODO remove after the end of support for Internet Explorer
 
 		var done = assert.async();
 		var callCount = 0;
@@ -2242,7 +2242,7 @@ sap.ui.define([
 		}, 100);
 	});
 
-	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when it is invalidated", function (assert) {// TODO remove after 1.62 version
+	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when it is invalidated", function (assert) {// TODO remove after the end of support for Internet Explorer
 
 		var done = assert.async();
 		var callCount = 0;
@@ -2288,7 +2288,7 @@ sap.ui.define([
 		}, 100);
 	});
 
-	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when its parent is invalidated", function (assert) {// TODO remove after 1.62 version
+	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when its parent is invalidated", function (assert) {// TODO remove after the end of support for Internet Explorer
 
 		var done = assert.async();
 		var callCount = 0;

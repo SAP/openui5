@@ -455,7 +455,7 @@ sap.ui.define([
 
 	// scrolling tests only for non-IE8 browsers
 	if (Device.browser.mozilla || Device.browser.safari || Device.browser.chrome
-			|| (Device.browser.msie && Device.browser.version >= 9) /* TODO remove after 1.62 version */) {
+			|| (Device.browser.msie && Device.browser.version >= 9) /* TODO remove after the end of support for Internet Explorer */) {
 
 		QUnit.module("Scrolling");
 
@@ -468,7 +468,7 @@ sap.ui.define([
 					fScrollLeft = $Scroll.css("-moz-transform").split(" ")[5]; // "matrix(1, 0, 0, 1, 0, -99.9999)" => "99.9999)"
 				} else if (Device.browser.safari || Device.browser.chrome) {
 					fScrollLeft = $Scroll.css("-webkit-transform").split(" ")[5];
-				} else if (Device.browser.msie && Device.browser.version >= 9) { /* TODO remove after 1.62 version */
+				} else if (Device.browser.msie && Device.browser.version >= 9) { /* TODO remove after the end of support for Internet Explorer */
 					fScrollLeft = $Scroll.css("left");
 				}
 				return Math.round(parseFloat(s));

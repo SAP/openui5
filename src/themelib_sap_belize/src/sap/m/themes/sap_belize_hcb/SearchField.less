@@ -11,7 +11,7 @@
 	-webkit-text-fill-color: @sapUiContentDisabledTextColor;
 }
 
-/* fix for IE focus outline */// TODO remove after 1.62 version
+/* fix for IE focus outline */// TODO remove after the end of support for Internet Explorer
 html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
 	outline: none;
 
@@ -60,7 +60,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 /* button highlight on hover/press */
 html.sap-desktop .sapMSFB:hover,
 .sapMSFB:active {
-	/* Needs repeating statements because of IE interpretation of :focus */// TODO remove after 1.62 version
+	/* Needs repeating statements because of IE interpretation of :focus */// TODO remove after the end of support for Internet Explorer
 	border-width: 0 0 0 1px;
 	background-color: @sapUiButtonHoverBackground;
 	border-left-color: @sapUiButtonHoverBorderColor;
@@ -105,7 +105,7 @@ html.sap-desktop .sapMSFB:hover,
 
 /* custom placeholder if not natively supported (IE9) */
 /* IE9/IE10 cleanup comment: there are still issues with IE11 and placeholders */
-/* TODO remove after 1.62 version */
+/* TODO remove after the end of support for Internet Explorer */
 .sapMSF>.sapMSFF>.sapMSFPlaceholder {
 	font-style: normal;
 }

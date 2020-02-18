@@ -86,7 +86,7 @@ sap.ui.define(['./FlexBoxCssPropertyMap', 'sap/ui/Device'],
 	 * @param {string} sValue value of the property
 	 */
 	FlexBoxStylingHelper.writeStyle = function(oRm, oLayoutData, sProperty, sValue) {
-		// IE 10-11 miscalculate the width of the flex items when box-sizing: border-box // TODO remove after 1.62 version
+		// IE 10-11 miscalculate the width of the flex items when box-sizing: border-box // TODO remove after the end of support for Internet Explorer
 		// Instead of using flex-basis, we use an explicit width/height
 		// @see https://github.com/philipwalton/flexbugs#7-flex-basis-doesnt-account-for-box-sizingborder-box
 		if (Device.browser.internet_explorer && (sProperty === "flex-basis" || sProperty === "flex-preferred-size")) {

@@ -338,7 +338,7 @@ sap.ui.define([
 				});
 			}
 		} else if (window.PointerEvent) {
-			// IE Mobile sets active element to the reset button, save the previous reference// TODO remove after 1.62 version
+			// IE Mobile sets active element to the reset button, save the previous reference// TODO remove after the end of support for Internet Explorer
 			jQuery(this._resetElement).on("touchstart", function(){
 				this._active = document.activeElement;
 			}.bind(this));
@@ -446,7 +446,7 @@ sap.ui.define([
 			var active = document.activeElement;
 			if (((Device.system.desktop
 				|| bEmpty
-				|| /(INPUT|TEXTAREA)/i.test(active.tagName) || active ===  this._resetElement && this._active === oInputElement) // IE Mobile// TODO remove after 1.62 version
+				|| /(INPUT|TEXTAREA)/i.test(active.tagName) || active ===  this._resetElement && this._active === oInputElement) // IE Mobile// TODO remove after the end of support for Internet Explorer
 				) && (active !== oInputElement)) {
 				oInputElement.focus();
 			}
@@ -544,7 +544,7 @@ sap.ui.define([
 	SearchField.prototype.onInput = function(oEvent) {
 		var value = this.getInputElement().value;
 
-		// IE fires an input event when an empty input with a placeholder is focused or loses focus.// TODO remove after 1.62 version
+		// IE fires an input event when an empty input with a placeholder is focused or loses focus.// TODO remove after the end of support for Internet Explorer
 		// Check if the value has changed, before firing the liveChange event.
 		if (value != this.getValue()) {
 			this.setValue(value);
@@ -650,8 +650,8 @@ sap.ui.define([
 	 */
 	SearchField.prototype.onFocus = function(oEvent) {
 
-		// IE does not really focuses inputs and does not blur them if the document itself is not focused// TODO remove after 1.62 version
-		if (Device.browser.internet_explorer && !document.hasFocus()) {// TODO remove after 1.62 version
+		// IE does not really focuses inputs and does not blur them if the document itself is not focused// TODO remove after the end of support for Internet Explorer
+		if (Device.browser.internet_explorer && !document.hasFocus()) {// TODO remove after the end of support for Internet Explorer
 			return;
 		}
 

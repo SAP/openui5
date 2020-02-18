@@ -52,7 +52,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 					this._isOpen = false;
 					this.attachEvent(mEvents.TEAR_DOWN, function(oEvent){
 						that._isOpen = false;
-						if ( Device.browser.msie ) {// TODO remove after 1.62 version
+						if ( Device.browser.msie ) {// TODO remove after the end of support for Internet Explorer
 							jQuery(document.getElementById(ID_SUPPORT_AREA + "-frame")).remove();
 						} else {
 							close(that._oRemoteWindow);
@@ -115,7 +115,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 
 	var mTypes = {
 		APPLICATION: "APPLICATION", //Application stub -> the "standard one"
-		IFRAME: "IFRAME", //Used by the Internet Explorer iFrame bridge only// TODO remove after 1.62 version
+		IFRAME: "IFRAME", //Used by the Internet Explorer iFrame bridge only// TODO remove after the end of support for Internet Explorer
 		TOOL: "TOOL" //Used by the support tool only
 	};
 
@@ -296,11 +296,11 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 
 		mParams = mParams ? mParams : {};
 
-		if ( Device.browser.msie && this._sType === mTypes.TOOL ) {// TODO remove after 1.62 version
+		if ( Device.browser.msie && this._sType === mTypes.TOOL ) {// TODO remove after the end of support for Internet Explorer
 			this._oRemoteWindow.sap.ui.core.support.Support.getStub(mTypes.IFRAME).sendEvent(sEventId, mParams);
 		} else {
 			var mParamsLocal = mParams;
-			if ( Device.browser.msie ) {// TODO remove after 1.62 version
+			if ( Device.browser.msie ) {// TODO remove after the end of support for Internet Explorer
 				//Attention mParams comes from an other window
 				//-> (mParams instanceof Object == false)!
 				mParamsLocal = {};
@@ -351,7 +351,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 
 		if (this._sType === mTypes.APPLICATION) {
 			if (!this._isOpen) {
-				if ( Device.browser.msie ) {// TODO remove after 1.62 version
+				if ( Device.browser.msie ) {// TODO remove after the end of support for Internet Explorer
 					var sIFrameUrl = sap.ui.require.toUrl("sap/ui/core/support/msiebridge.html");
 					getSupportArea().html("").append(getSupportFrame(sIFrameUrl, sParams));
 					this._sRemoteOrigin = checkLocalUrl(sIFrameUrl) ? this._sLocalOrigin : sIFrameUrl;
@@ -368,7 +368,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 		}
 	};
 
-	// TODO remove after 1.62 version
+	// TODO remove after the end of support for Internet Explorer
 	/**
 	 * Event Handler which is bound to the onload event of the Internet Explorer iFrame bridge.
 	 *

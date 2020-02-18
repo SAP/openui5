@@ -3696,7 +3696,7 @@ sap.ui.define([
 		oErrorComboBox.close();
 		this.clock.tick(1000);
 
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		// workaround to fix failing test in IE9-11
 		if (Device.browser.msie) {
 			oErrorComboBox.focus();

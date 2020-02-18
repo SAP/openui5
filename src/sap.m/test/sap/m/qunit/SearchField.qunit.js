@@ -136,7 +136,7 @@ sap.ui.define([
 		} else {
 			// IE9
 			// IE9/IE10 cleanup comment: there are still issues with IE11 and placeholders
-			// TODO remove after 1.62 version
+			// TODO remove after the end of support for Internet Explorer
 			assert.equal(sf2.$("P").text(), sPlaceholder, "Placeholder in IE9");
 		}
 		assert.equal(sf2.getEnabled(), false, "Enabled property, UI5");
@@ -350,7 +350,7 @@ sap.ui.define([
 		// arrange
 		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP"), "Refresh button should be with 'Refresh' tooltip");
 		//act
-		//IE does not apply focus correctly, this way works for all browsers// TODO remove after 1.62 version
+		//IE does not apply focus correctly, this way works for all browsers// TODO remove after the end of support for Internet Explorer
 		this.oSearchField.onFocus(this.oMockEvent);
 
 		// assert
@@ -366,7 +366,7 @@ sap.ui.define([
 		//act
 		this.oSearchField.setValue("Test");
 		this.oSearchField.rerender();
-		//IE does not apply focus correctly, this way works for all browsers// TODO remove after 1.62 version
+		//IE does not apply focus correctly, this way works for all browsers// TODO remove after the end of support for Internet Explorer
 		this.oSearchField.onFocus(this.oMockEvent);
 
 		// assert

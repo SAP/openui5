@@ -362,7 +362,7 @@ function(
 
 	InputBase.prototype.onBeforeRendering = function() {
 		// Ignore the input event which is raised by MS Internet Explorer when it has a non-ASCII character
-		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(this.getValue())){// TODO remove after 1.62 version
+		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(this.getValue())){// TODO remove after the end of support for Internet Explorer
 			this._bIgnoreNextInputNonASCII = true;
 			this._oDomRefBeforeRendering = this.getDomRef();
 		}
@@ -434,7 +434,7 @@ function(
 	 * @private
 	 */
 	InputBase.prototype.onfocusin = function(oEvent) {
-		// iE10+ fires the input event when an input field with a native placeholder is focused// TODO remove after 1.62 version
+		// iE10+ fires the input event when an input field with a native placeholder is focused// TODO remove after the end of support for Internet Explorer
 		this._bIgnoreNextInput = !this.bShowLabelAsPlaceholder &&
 			Device.browser.msie &&
 			Device.browser.version > 9 &&
@@ -641,7 +641,7 @@ function(
 		}
 	};
 
-	// TODO remove after 1.62 version
+	// TODO remove after the end of support for Internet Explorer
 	/**
 	 * Handle DOM input event.
 	 *
@@ -669,7 +669,7 @@ function(
 	 */
 	InputBase.prototype.onkeydown = function(oEvent) {
 
-		// Prevents browser back to previous page in IE // TODO remove after 1.62 version
+		// Prevents browser back to previous page in IE // TODO remove after the end of support for Internet Explorer
 		if (this.getDomRef("inner").getAttribute("readonly") && oEvent.keyCode == KeyCodes.BACKSPACE) {
 			oEvent.preventDefault();
 		}

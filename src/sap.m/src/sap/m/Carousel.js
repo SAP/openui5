@@ -521,7 +521,7 @@ function(
 
 		this._sResizeListenerId = ResizeHandler.register(this._$InnerDiv, this._fnAdjustAfterResize);
 
-		// Fixes wrong focusing in IE// TODO remove after 1.62 version
+		// Fixes wrong focusing in IE// TODO remove after the end of support for Internet Explorer
 		// BCP: 1670008915
 		this.$().find('.sapMCrslItemTableCell').focus(function(e) {
 
@@ -1396,7 +1396,7 @@ function(
 	Carousel.prototype._handleF7Key = function (oEvent) {
 		var oActivePageLastFocusedElement;
 
-		// Needed for IE// TODO remove after 1.62 version
+		// Needed for IE// TODO remove after the end of support for Internet Explorer
 		oEvent.preventDefault();
 
 		oActivePageLastFocusedElement = this._getActivePageLastFocusedElement();

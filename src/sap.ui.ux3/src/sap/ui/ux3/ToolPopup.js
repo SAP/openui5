@@ -574,7 +574,7 @@ sap.ui.define([
                     // Compare the initial focus id with the current focus that is
                     // stored in the FocusHandler in the core.
                     // If the initial focus was set properly already by the Popup
-                    // don't focus twice. Because Internet Explorer will be confused with// TODO remove after 1.62 version
+                    // don't focus twice. Because Internet Explorer will be confused with// TODO remove after the end of support for Internet Explorer
                     // two focusin and focusout events
                     if (sInitFocusId !== sap.ui.getCore().getCurrentFocusedControlId()) {
                         var oControl = jQuery(document.getElementById(sInitFocusId));

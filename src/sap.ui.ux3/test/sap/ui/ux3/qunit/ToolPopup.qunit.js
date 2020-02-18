@@ -800,7 +800,7 @@ sap.ui.define([
 			// jQuery Plugin "rect"
 			oTPRect = oTPMaxHeight.$().rect();
 
-			// IE10, 11 are adding some fractions to the calculation in some cases// TODO remove after 1.62 version
+			// IE10, 11 are adding some fractions to the calculation in some cases// TODO remove after the end of support for Internet Explorer
 			bTest = Math.round(oTPRect.width) <= 120;
 			assert.ok(bTest, "ToolPopup's width of 120px");
 			done();

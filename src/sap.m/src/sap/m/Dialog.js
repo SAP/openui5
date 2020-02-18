@@ -1002,7 +1002,7 @@ function(
 				sContentWidth = this.getContentWidth(),
 				iDialogHeight,
 				maxDialogWidth =  Math.floor(window.innerWidth * 0.9), //90% of the max screen size
-				BORDER_THICKNESS = 2, // solves Scrollbar issue in IE when Table is in Dialog// TODO remove after 1.62 version
+				BORDER_THICKNESS = 2, // solves Scrollbar issue in IE when Table is in Dialog// TODO remove after the end of support for Internet Explorer
 				oBrowser = Device.browser,
 				iTotalChildrenHeight = 0;
 
@@ -1462,7 +1462,7 @@ function(
 			var _$srollSontent = this.$("scroll");
 
 			//The content have to have explicit size so the scroll will work when the user's content is larger than the available space.
-			//This can be removed and the layout change to flex when the support for IE9 is dropped// TODO remove after 1.62 version
+			//This can be removed and the layout change to flex when the support for IE9 is dropped// TODO remove after the end of support for Internet Explorer
 			this._resizeListenerId = ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
 			Device.resize.attachHandler(this._onResize, this);
 

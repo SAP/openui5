@@ -30,7 +30,7 @@
 	box-sizing: border-box;
 	border: 1px solid transparent;
 
-	/* IE Windows 8 */// TODO remove after 1.62 version
+	/* IE Windows 8 */// TODO remove after the end of support for Internet Explorer
 	/* This element receives events when not panning in vertical direction */
 	touch-action: pan-y;
 	-ms-touch-action: pan-y;
@@ -91,13 +91,13 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
  }
 
 
-/* special handling for IE / Edge, as it does not support text-align: end */// TODO remove after 1.62 version
-html[data-sap-ui-browser^="ie"] .sapMCrslInner,// TODO remove after 1.62 version
+/* special handling for IE / Edge, as it does not support text-align: end */// TODO remove after the end of support for Internet Explorer
+html[data-sap-ui-browser^="ie"] .sapMCrslInner,// TODO remove after the end of support for Internet Explorer
 html[data-sap-ui-browser^="ed"] .sapMCrslInner {
  	text-align: left;
 }
 
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapMCrslInner,// TODO remove after 1.62 version
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapMCrslInner,// TODO remove after the end of support for Internet Explorer
 html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 	text-align: right;
 

@@ -326,7 +326,7 @@ sap.ui.define([
 					ariaLabelledBy: this.getPopupHiddenLabelId() || undefined
 				}).addStyleClass("sapMActionSheetPopover");
 
-				/* TODO remove after 1.62 version */
+				/* TODO remove after the end of support for Internet Explorer */
 				if (Device.browser.internet_explorer) {
 					this._parent._fnAdjustPositionAndArrow = jQuery.proxy(function() {
 						Popover.prototype._adjustPositionAndArrow.apply(this);

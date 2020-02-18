@@ -116,7 +116,7 @@ sap.ui.define([
 		//IE handles rtl in a transparent way (positions positives, scroll starts at the end)
 		//while firefox, safari and chrome have a special management (scroll at the beginning and negative positioning)
 		//therefore we will apply some specific actions only if are in rtl and not in IE.
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		this._bRtlScenario = this._bRtl && !Device.browser.msie;
 
 		//there are 2 different uses cases:

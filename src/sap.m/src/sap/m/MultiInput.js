@@ -717,7 +717,7 @@ function(
 
 		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
 		if (window.clipboardData) {
-			/* TODO remove after 1.62 version */
+			/* TODO remove after the end of support for Internet Explorer */
 			//IE
 			sOriginalText = window.clipboardData.getData("Text");
 		} else {

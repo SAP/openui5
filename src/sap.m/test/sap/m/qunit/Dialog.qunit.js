@@ -78,7 +78,7 @@ sap.ui.define([
 		return (Math.abs(value1 - value2)) < _margin;
 	}
 
-	function overwriteAnimationIE(oDialog) {// TODO remove after 1.62 version
+	function overwriteAnimationIE(oDialog) {// TODO remove after the end of support for Internet Explorer
 		if (Device.browser.msie) {
 			// Sinon fake timer doesn't work correctly with jQuery fadeIn. The fadeIn Animation which is used in IE9
 			// can't be controlled by the sinon fake timer. Therefore the animation has to be overwritten with no

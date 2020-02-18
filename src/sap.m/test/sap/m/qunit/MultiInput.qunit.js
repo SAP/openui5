@@ -1401,7 +1401,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("token update event", function(assert) {
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		if (!Device.browser.internet_explorer) {
 			//arrange
 			var sPastedString = "a\nb\nc\nd\ne\nf\n\a",
@@ -1819,7 +1819,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Paste (with suggestions)", function(assert) {
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		if (!Device.browser.internet_explorer) {
 			//arrange
 			var sPastedString = "a\nb";

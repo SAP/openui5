@@ -349,7 +349,7 @@ sap.ui.define([
 		this._headerBiggerThanAllowedHeight = false;
 		this._oStickySubheader = null;
 		this._bStickySubheaderInTitleArea = false;
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		this._bMSBrowser = Device.browser.internet_explorer || Device.browser.edge || false;
 		this._oScrollHelper = new ScrollEnablement(this, this.getId() + "-content", {
 			horizontal: false,
