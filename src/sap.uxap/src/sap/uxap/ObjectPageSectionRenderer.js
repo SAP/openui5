@@ -40,29 +40,30 @@ sap.ui.define(function () {
 
 		oRm.openEnd();
 
+		oRm.openStart("div", oControl.getId() + "-header")
+			.attr("role", "heading")
+			.attr("aria-level", oControl._getARIALevel())
+			.class("sapUxAPObjectPageSectionHeader")
+			.class(bTitleVisible ? "" : "sapUxAPObjectPageSectionHeaderHidden")
+			.openEnd();
+
+		oRm.openStart("div", oControl.getId() + "-title")
+			.class("sapUxAPObjectPageSectionTitle");
+
+		if (oControl.getTitleUppercase()) {
+			oRm.class("sapUxAPObjectPageSectionTitleUppercase");
+		}
+
+		oRm.openEnd();
+		oRm.text(sTitle);
+		oRm.close("div");
+
 		if (bTitleVisible) {
-			oRm.openStart("div", oControl.getId() + "-header")
-				.attr("role", "heading")
-				.attr("aria-level", oControl._getARIALevel())
-				.class("sapUxAPObjectPageSectionHeader")
-				.openEnd();
-
-			oRm.openStart("div", oControl.getId() + "-title")
-				.class("sapUxAPObjectPageSectionTitle");
-
-			if (oControl.getTitleUppercase()) {
-				oRm.class("sapUxAPObjectPageSectionTitleUppercase");
-			}
-
-			oRm.openEnd();
-			oRm.text(sTitle);
-			oRm.close("div");
-
 			oRm.renderControl(oControl._getShowHideAllButton());
 			oRm.renderControl(oControl._getShowHideButton());
-
-			oRm.close("div");
 		}
+		oRm.close("div");
+
 
 		oRm.openStart("div")
 			.class("sapUxAPObjectPageSectionContainer");
