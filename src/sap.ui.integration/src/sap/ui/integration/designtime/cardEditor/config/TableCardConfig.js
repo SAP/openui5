@@ -62,7 +62,7 @@ sap.ui.define([
 						"None",
 						"Information"
 					],
-					"default": "None",
+					"defaultValue": "None",
 					"path": "state"
 				},
 				"url": {
@@ -79,14 +79,15 @@ sap.ui.define([
 						"_blank",
 						"_self"
 					],
-					"default": "_blank",
-					"path": "target"
+					"defaultValue": "_blank",
+					"path": "target",
+					"visible": "{= !!${url}}"
 				},
 				"identifier": {
 					"tags": ["content", "tableRowColumn"],
 					"label": "{i18n>CARD_EDITOR.TABLE.ROW.COLUMN.IDENTIFIER}",
 					"type": "boolean",
-					"default": false,
+					"defaultValue": false,
 					"path": "identifier"
 				},
 				"progressIndicatorState": {
@@ -100,7 +101,7 @@ sap.ui.define([
 						"None",
 						"Information"
 					],
-					"default": "None",
+					"defaultValue": "None",
 					"path": "progressIndicator/state"
 				},
 				"progressIndicatorPercent": {

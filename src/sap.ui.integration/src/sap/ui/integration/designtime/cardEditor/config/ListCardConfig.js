@@ -54,7 +54,7 @@ sap.ui.define([
 				"None",
 				"Information"
 			],
-			"default": "None",
+			"defaultValue": "None",
 			"path": "content/item/info/state",
 			"visible": "{= ${context>type} === 'List' }"
 		},

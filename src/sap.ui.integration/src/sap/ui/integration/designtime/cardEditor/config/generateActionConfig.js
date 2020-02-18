@@ -38,7 +38,8 @@ sap.ui.define([
 					"type": "enum",
 					"enum": ["Navigation"],
 					"defaultValue": "Navigation",
-					"path": "type"
+					"path": "type",
+					"visible": "{= !!${enabled}}"
 				},
 				"service": {
 					"label": "{i18n>CARD_EDITOR.ACTION.SERVICE}",
@@ -49,7 +50,14 @@ sap.ui.define([
 				"parameters": {
 					"label": "{i18n>CARD_EDITOR.ACTION.PARAMETERS}",
 					"type": "map",
-					"path": "parameters"
+					"path": "parameters",
+					"visible": "{= !!${enabled}}"
+				},
+				"url": {
+					"label": "{i18n>CARD_EDITOR.ACTION.URL}",
+					"type": "string",
+					"path": "url",
+					"visible": "{= !!${enabled} && ${type} === 'Navigation'}"
 				},
 				"target": {
 					"label": "{i18n>CARD_EDITOR.ACTION.TARGET}",
@@ -59,12 +67,8 @@ sap.ui.define([
 						"_self"
 					],
 					"defaultValue": "_blank",
-					"path": "target"
-				},
-				"url": {
-					"label": "{i18n>CARD_EDITOR.ACTION.URL}",
-					"type": "string",
-					"path": "url"
+					"path": "target",
+					"visible": "{= !!${enabled} && ${type} === 'Navigation' && !!${url}}"
 				}
 			}
 		}, oCustomConfig);
