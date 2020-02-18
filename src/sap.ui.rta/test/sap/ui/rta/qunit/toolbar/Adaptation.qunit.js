@@ -55,7 +55,7 @@ function(
 		QUnit.test("when a draft is visible and the toolbar gets initially shown in desktop mode (>= 1200px) and then rerendered in the other 2 modes and back", function(assert) {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
-				draftVisible: true
+				versioningVisible: true
 			});
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.DESKTOP});
 			this.oToolbar.animation = false;
@@ -93,7 +93,7 @@ function(
 		QUnit.test("when the draft is set to visible and toolbar gets initially shown in tablet mode (between 900px and 1200px)", function(assert) {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
-				draftVisible: true
+				draftEnabled: true
 			});
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.TABLET});
 			this.oToolbar.animation = false;
@@ -122,7 +122,7 @@ function(
 		QUnit.test("when the draft is set to visible and the toolbar gets initially shown in mobile mode (< 900px)", function(assert) {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
-				draftVisible: true
+				draftEnabled: true
 			});
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.MOBILE});
 			this.oToolbar.animation = false;
@@ -147,7 +147,7 @@ function(
 			this.oToolbar.destroy();
 		}
 	}, function() {
-		QUnit.test("setUndoRedoEnabled", function (assert) {
+		QUnit.test("setUndoRedoEnabled", function(assert) {
 			assert.notOk(this.oToolbar.getControl("redo").getEnabled(), "the undo button is disabled");
 			assert.notOk(this.oToolbar.getControl("redo").getEnabled(), "the undo button is disabled");
 
@@ -160,7 +160,7 @@ function(
 			assert.notOk(this.oToolbar.getControl("redo").getEnabled(), "the undo button is disabled");
 		});
 
-		QUnit.test("setPublishEnabled", function (assert) {
+		QUnit.test("setPublishEnabled", function(assert) {
 			assert.notOk(this.oToolbar.getControl("publish").getEnabled(), "the undo button is disabled");
 
 			this.oToolbar.setPublishEnabled(true);
@@ -170,7 +170,7 @@ function(
 			assert.notOk(this.oToolbar.getControl("publish").getEnabled(), "the undo button is disabled");
 		});
 
-		QUnit.test("setRestoreEnabled", function (assert) {
+		QUnit.test("setRestoreEnabled", function(assert) {
 			assert.notOk(this.oToolbar.getControl("restore").getEnabled(), "the undo button is disabled");
 
 			this.oToolbar.setRestoreEnabled(true);
@@ -180,25 +180,38 @@ function(
 			assert.notOk(this.oToolbar.getControl("restore").getEnabled(), "the undo button is disabled");
 		});
 
-		QUnit.test("setDraftVisible", function (assert) {
+		QUnit.test("setVersioningVisible", function(assert) {
 			assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
 			assert.notOk(this.oToolbar.getControl("activateDraft").getVisible(), "the draft activate button is hidden");
 			assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "the draft discard button is hidden");
 
-			this.oToolbar.setDraftVisible(true);
+			this.oToolbar.setVersioningVisible(true);
 			assert.ok(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is visible");
 			assert.ok(this.oToolbar.getControl("activateDraft").getVisible(), "the draft activate button is visible");
 			assert.ok(this.oToolbar.getControl("discardDraft").getVisible(), "the draft discard button is visible");
 
-			this.oToolbar.setDraftVisible(false);
+			this.oToolbar.setVersioningVisible(false);
 			assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
 			assert.notOk(this.oToolbar.getControl("activateDraft").getVisible(), "the draft activate button is hidden");
 			assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "the draft discard button is hidden");
 		});
+
+		QUnit.test("setDraftEnabled", function(assert) {
+			assert.notOk(this.oToolbar.getControl("activateDraft").getEnabled(), "the draft activate button is disabled");
+			assert.notOk(this.oToolbar.getControl("discardDraft").getEnabled(), "the draft discard button is disabled");
+
+			this.oToolbar.setDraftEnabled(false);
+			assert.notOk(this.oToolbar.getControl("activateDraft").getEnabled(), "the draft activate button is enabled");
+			assert.notOk(this.oToolbar.getControl("discardDraft").getEnabled(), "the draft discard button is enabled");
+
+			this.oToolbar.setDraftEnabled(true);
+			assert.ok(this.oToolbar.getControl("activateDraft").getEnabled(), "the draft activate button is disabled");
+			assert.ok(this.oToolbar.getControl("discardDraft").getEnabled(), "the draft discard button is disabled");
+		});
 	});
 
 	QUnit.module("Activate Version Dialog", {
-		before: function() {
+		before: function () {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
@@ -212,8 +225,8 @@ function(
 			var oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 			var oSetInputSpy;
 			var oConfirmButtonEnabledSpy;
-
-			return this.oToolbar._openVersionNameDialog().then(function () {
+			return this.oToolbar._openVersionNameDialog()
+			.then(function () {
 				assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
 				// checking for the dialog instance wrapped into a promise
 

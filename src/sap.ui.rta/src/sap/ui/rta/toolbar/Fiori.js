@@ -75,7 +75,7 @@ function(
 
 				// first control is the left HBox
 				this.getControl("iconBox").addItem(
-					new Image("sapUiRta_icon", {
+					new Image(this.getId() + "_fragment--sapUiRta_icon", {
 						src: sLogoPath,
 						width: iWidth ? iWidth + 'px' : iWidth,
 						height: iHeight ? iHeight + 'px' : iHeight

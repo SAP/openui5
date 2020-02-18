@@ -401,14 +401,15 @@ function(
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
 
 			return this.oRta.start().then(function () {
-				assert.equal(this.oRta.getToolbar().getDraftVisible(), false, "then the draft buttons are hidden");
+				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are shown");
+				assert.equal(this.oRta.getToolbar().getDraftEnabled(), false, "then the draft buttons are disabled");
 			}.bind(this));
 		});
 		QUnit.test("when RTA is started and a draft is available", function(assert) {
 			this.oRta.setFlexSettings({layer: "CUSTOMER"});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
 			return this.oRta.start().then(function () {
-				assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are visible");
+				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
 			}.bind(this));
 		});
 
@@ -426,11 +427,13 @@ function(
 					return this.oCommandStack.pushAndExecute(oRemoveCommand);
 				}.bind(this))
 				.then(function() {
-					assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are visible");
+					assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
+					assert.equal(this.oRta.getToolbar().getDraftEnabled(), true, "then the draft buttons are enabled");
 				}.bind(this))
 				.then(this.oRta.undo.bind(this.oRta))
 				.then(function() {
-					assert.equal(this.oRta.getToolbar().getDraftVisible(), false, "then the draft buttons are hidden");
+					assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are stil shwon");
+					assert.equal(this.oRta.getToolbar().getDraftEnabled(), false, "then the draft buttons are disabled");
 				}.bind(this));
 		});
 
@@ -448,11 +451,11 @@ function(
 					return this.oCommandStack.pushAndExecute(oRemoveCommand);
 				}.bind(this))
 				.then(function() {
-					assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are visible");
+					assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
 				}.bind(this))
 				.then(this.oRta.undo.bind(this.oRta))
 				.then(function() {
-					assert.equal(this.oRta.getToolbar().getDraftVisible(), true, "then the draft buttons are still visible");
+					assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are still visible");
 				}.bind(this));
 		});
 	});
@@ -1441,37 +1444,37 @@ function(
 		QUnit.test("when versioning is not enabled", function(assert) {
 			this.oRta._bVersioningEnabled = false;
 			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			var oSetDraftEnabledSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftEnabled");
 			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
-			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], false, "to false");
+			assert.equal(oSetDraftEnabledSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftEnabledSpy.getCall(0).args[0], false, "to false");
 		});
 
 		QUnit.test("when versioning is enabled but no draft or undoable change is present", function(assert) {
 			this.oRta._bVersioningEnabled = true;
 			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			var oSetDraftEnabledSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftEnabled");
 			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
-			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], false, "to false");
+			assert.equal(oSetDraftEnabledSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftEnabledSpy.getCall(0).args[0], false, "to false");
 		});
 
 		QUnit.test("when versioning is enabled and a draft is present", function(assert) {
 			this.oRta._bVersioningEnabled = true;
 			this.oRta.bInitialDraftAvailable = true;
-			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			var oSetDraftEnabledSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftEnabled");
 			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
-			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], true, "to true");
+			assert.equal(oSetDraftEnabledSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftEnabledSpy.getCall(0).args[0], true, "to true");
 		});
 
 		QUnit.test("when versioning is enabled and a undoable change is present", function(assert) {
 			this.oRta._bVersioningEnabled = true;
 			sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
-			var oSetDraftVisibleSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftVisible");
+			var oSetDraftEnabledSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftEnabled");
 			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			assert.equal(oSetDraftVisibleSpy.callCount, 1, "the draft visibility was set");
-			assert.equal(oSetDraftVisibleSpy.getCall(0).args[0], true, "to true");
+			assert.equal(oSetDraftEnabledSpy.callCount, 1, "the draft visibility was set");
+			assert.equal(oSetDraftEnabledSpy.getCall(0).args[0], true, "to true");
 		});
 	});
 

@@ -22,6 +22,7 @@
                         icon="sap-icon://activate"
                         press=".activateDraft"
                         visible="false"
+                        enabled="false"
                         type="Transparent"
                         tooltip="{i18n>TOL_ACTIVATE_DRAFT}" />
                 <Button
@@ -29,6 +30,7 @@
                         icon="sap-icon://delete"
                         press=".discardDraft"
                         visible="false"
+                        enabled="false"
                         type="Transparent"
                         tooltip="{i18n>TOL_DISCARD_DRAFT}" />
             </content>

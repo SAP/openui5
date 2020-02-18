@@ -842,8 +842,8 @@ function(
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
-			var bDraftVisible = this._bVersioningEnabled && (this.bInitialDraftAvailable || bCanUndo);
-			this.getToolbar().setDraftVisible(bDraftVisible);
+			var bDraftEnabled = this._bVersioningEnabled && (this.bInitialDraftAvailable || bCanUndo);
+			this.getToolbar().setDraftEnabled(bDraftEnabled);
 		}
 		this.fireUndoRedoStackModified();
 	};
@@ -1016,7 +1016,7 @@ function(
 			})
 		).then(function () {
 			this.bInitialDraftAvailable = false;
-			this.getToolbar().setDraftVisible(false);
+			this.getToolbar().setDraftEnabled(false);
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
 		}.bind(this));
 	};
@@ -1052,7 +1052,8 @@ function(
 					modeSwitcher: this.getMode(),
 					publishVisible: aButtonsVisibility.publishAvailable,
 					textResources: this._getTextResources(),
-					draftVisible: aButtonsVisibility.draftAvailable,
+					versioningVisible: this._bVersioningEnabled,
+					draftEnabled: aButtonsVisibility.draftAvailable,
 					//events
 					exit: this.stop.bind(this, false, false),
 					transport: this._onTransport.bind(this),
