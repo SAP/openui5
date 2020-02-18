@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -17,8 +18,8 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper'
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Device, SyncPromise, coreLibrary, Controller, View, CountMode, MessageScope,
-		ODataModel, TestUtils, datajs, XMLHelper) {
+], function (Log, uid, Device, SyncPromise, coreLibrary, Controller, View, BindingMode, CountMode,
+		MessageScope, ODataModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit*/
 	/*eslint max-nested-callbacks: 0, quote-props: 0*/
 	"use strict";
@@ -906,7 +907,9 @@ sap.ui.define([
 				vExpectedMessages = [vExpectedMessages];
 			}
 			this.aMessages = vExpectedMessages.map(function (oMessage) {
-				oMessage.descriptionUrl = oMessage.descriptionUrl || "";
+				oMessage.descriptionUrl = oMessage.hasOwnProperty("descriptionUrl")
+					?  oMessage.descriptionUrl
+					: "";
 				oMessage.technical = oMessage.technical || false;
 				return oMessage;
 			});
@@ -2215,6 +2218,104 @@ sap.ui.define([
 				{select : "SalesOrderID,ToLineItems/Note", expand : "ToLineItems"});
 			oModel.create("/SalesOrderSet", oData);
 			oModel.submitChanges({groupId : "change"});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Keep user input and validation error after updating an entity if entity data is
+	// invalidated via <code>sap.ui.model.odata.v2.ODataModel#invalidateEntry</code> by the
+	// application.
+	// BCP: 2080018339
+	QUnit.test("Keep user input and validation error after updating an entity", function (assert) {
+		var oModel = createSalesOrdersModel({
+				defaultBindingMode : BindingMode.TwoWay,
+				preliminaryContext : true,
+				refreshAfterChange : true
+			}),
+			oNoteInput,
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{\
+			path : \'Note\',\
+			type : \'sap.ui.model.odata.type.String\',\
+			constraints : {maxLength : 3}\
+		}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('1')", {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				Note : "Bar",
+				SalesOrderID : "1"
+			})
+			// Do not expect changes for "note" because setting the value of the "note" input field
+			// via control is not possible if "expectChange" is used.
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oNoteInput = that.oView.byId("note");
+
+			assert.strictEqual(oNoteInput.getValue(), "Bar");
+
+			that.expectMessages([{
+					"code": undefined,
+					"descriptionUrl": undefined,
+					"fullTarget": "",
+					"message": "Enter a text with a maximum of 3 characters and spaces",
+					"persistent": false,
+					"target": oNoteInput.getId() + "/value",
+					"technical": false,
+					"type": "Error"
+				}]);
+
+			// code under test - produce a validation error
+			oNoteInput.setValue("abcd");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oElementBinding = that.oView.byId("form").getElementBinding();
+
+			that.expectRequest("SalesOrderSet('1')", {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					Note : "Bar",
+					SalesOrderID : "1"
+				});
+
+			// code under test
+			oModel.invalidateEntry(oElementBinding.getBoundContext());
+			oElementBinding.refresh(true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// check validation error and current value on the UI
+			that.checkValueState(assert, oNoteInput, "Error",
+				"Enter a text with a maximum of 3 characters and spaces");
+			assert.strictEqual(oNoteInput.getValue(), "abcd");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet('2')", {
+					"__metadata" : {"uri" : "SalesOrderSet('2')"},
+					// model value is not changed -> no change event is triggered for that property
+					Note : "Bar",
+					SalesOrderID : "2"
+				})
+				.expectChange("salesOrderID", "2")
+				.expectMessages([]);
+
+			// code under test - rebinding the form causes cleanup of the validation error and the
+			// user input
+			that.oView.byId("form").bindObject("/SalesOrderSet('2')");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test - check validation error and current value on the UI reverted
+			that.checkValueState(assert, oNoteInput, "None", "");
+			assert.strictEqual(oNoteInput.getValue(), "Bar");
 
 			return that.waitForChanges(assert);
 		});

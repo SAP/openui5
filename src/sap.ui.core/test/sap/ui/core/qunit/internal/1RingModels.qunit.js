@@ -125,6 +125,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/v2/ODataListBindingNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModelNoFakeService.qunit",
+		"sap/ui/core/qunit/odata/v2/ODataPropertyBindingNoFakeService.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
 		// "sap/ui/core/qunit/odata/v2/ODataPropertyBinding.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
