@@ -27,6 +27,7 @@ function(Device, UIArea, jQuery) {
 		aValidDragInfos = [],		// valid DragInfos configured for the currently dragged source
 		aValidDropInfos = [],		// valid DropInfos configured for the current drop target
 		oDragSession = null,		// stores active drag session throughout a drag activity
+		$DropIndicatorWrapper,		// drop position indicator wrapper
 		$DropIndicator,				// drop position indicator
 		$GhostContainer,			// container to place custom ghosts
 		sCalculatedDropPosition,	// calculated position of the drop action relative to the valid dropped control.
@@ -292,8 +293,11 @@ function(Device, UIArea, jQuery) {
 			return $DropIndicator;
 		}
 
+		// $DropIndicatorWrapper prevent additional scrollbar on the body element
+		$DropIndicatorWrapper = jQuery("<div class='sapUiDnDIndicatorWrapper'></div>");
 		$DropIndicator = jQuery("<div class='sapUiDnDIndicator'></div>");
-		jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicator);
+		jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicatorWrapper);
+		$DropIndicator.appendTo($DropIndicatorWrapper);
 		return $DropIndicator;
 	}
 
