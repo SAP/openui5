@@ -448,7 +448,8 @@ sap.ui.define([
 
 			if (!priorityIcon) {
 				priorityIcon = new Icon({
-					src: 'sap-icon://message-error'
+					src: 'sap-icon://message-error',
+					useIconTooltip: false
 				});
 
 				this.setAggregation("_priorityIcon", priorityIcon, true);

@@ -39,7 +39,6 @@ sap.ui.define([
 	var OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
 
 	var  oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-	var  oResourceBundleCore = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
 	var RENDER_LOCATION = 'qunit-fixture';
 
@@ -124,7 +123,8 @@ sap.ui.define([
 		assert.ok($item.hasClass('sapMNLIUnread'), 'unread class is set');
 		assert.strictEqual($item.find('.sapMNLITitle .sapMNLITitleText').text(), 'Notification List Item Title Title Title' , 'title is rendered');
 
-		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority is rendered');
+		assert.notOk($item.find('.sapMNLIBPriorityHigh span').attr('title') , 'no tooltip is rendered');
+		assert.ok($item.find('.sapMNLIBPriorityHigh span'), 'priority High icon is rendered');
 
 		assert.strictEqual($item.find('.sapMNLIItem:last-child button').attr('title'), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_CLOSE"), 'close button is rendered');
 		assert.ok(this.notificationListItem.$('overflowToolbar'), 'overflow toolbar is rendered');
