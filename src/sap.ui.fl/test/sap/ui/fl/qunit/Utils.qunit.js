@@ -1855,6 +1855,31 @@ function(
 		});
 	});
 
+	QUnit.module("Utils.normalizeReference", {
+		beforeEach: function() {},
+		afterEach: function() {}
+	}, function () {
+		QUnit.test("when called with an empty reference", function(assert) {
+			assert.equal(Utils.normalizeReference(""), "", "then return empty string");
+		});
+
+		QUnit.test("when called reference without .Component", function(assert) {
+			assert.equal(Utils.normalizeReference("reference"), "reference", "then return same string");
+		});
+
+		QUnit.test("when called reference with .Component", function(assert) {
+			assert.equal(Utils.normalizeReference("reference.Component"), "reference", "then return string without .Component");
+		});
+
+		QUnit.test("when called reference with ONLY .Component in the middel", function(assert) {
+			assert.equal(Utils.normalizeReference("reference.Component.x"), "reference.Component.x", "then the string is returned");
+		});
+
+		QUnit.test("when called reference with .Component in the middel", function(assert) {
+			assert.equal(Utils.normalizeReference("test.Component.reference.Component"), "test.Component.reference", "then return string without .Component at the end");
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

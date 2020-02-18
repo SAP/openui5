@@ -273,6 +273,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when clearAndInitialize is called for different variant map names for two component references", function(assert) {
+			var sReferenceComponent2 = "second.reference.Component";
 			var sReference2 = "second.reference";
 			sandbox.spy(FlexState, "clearState");
 			this.oLoadFlexDataStub.resolves(mResponse);
@@ -300,13 +301,14 @@ sap.ui.define([
 				componentId: sComponentId
 			}))
 			.then(FlexState.clearAndInitialize.bind(null, {
-				reference: sReference2,
+				reference: sReferenceComponent2,
 				componentId: sComponentId
 			}))
 			.then(function() {
+				assert.ok(FlexState.clearState.calledWith(sReferenceComponent2), "then state was cleared for reference2.Component");
 				assert.ok(FlexState.clearState.calledWith(sReference2), "then state was cleared for reference2");
-				//assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "then variants maps was not prepared implicitly");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "then variants maps was prepared implicitly");
+				assert.deepEqual(FlexState.getVariantsState(sReferenceComponent2), _mockPrepareFunctions("variantsMap"), "then the correct map result was returned");
 				assert.deepEqual(FlexState.getVariantsState(sReference2), _mockPrepareFunctions("variantsMap"), "then the correct map result was returned");
 			}.bind(this));
 		});
