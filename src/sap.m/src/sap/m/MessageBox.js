@@ -60,20 +60,20 @@ sap.ui.define([
 			 * Only the recommended options are documented for those functions.
 			 * </ul>
 			 *
-			 * <b>NOTE:</b> All options of show() are available for the other template functions as well, but it is recommended to use show() only in more specific scenarios.
-			 * <b>NOTE:</b> Due to the static nature of the <code>MessageBox</code> class, you cannot expect data binding support from its helper functions. If this is required you can use the <code>sap.m.Dialog</code> instead.
+			 * <b>NOTE:</b> All options of show() are available for the other template functions as well, but it is recommended to use show() only in more specific scenarios.<br />
+			 * <b>NOTE:</b> Due to the static nature of the <code>MessageBox</code> class, you cannot expect data binding support from its helper functions. If this is required you can use the <code>sap.m.Dialog</code> instead.<br />
 			 * <b>NOTE:</b> When using the <code>MessageBox.Error</code> method, there is no emphasized action by design.
 			 *
 			 * Example:
 			 * <pre>
-			 *	sap.ui.define(["sap/m/MessageBox"], function(MessageBox) {
+			 *	sap.ui.define(["sap/m/MessageBox"], function (MessageBox) {
 			 *		MessageBox.show(
 			 *			"This message should appear in the message box.", {
 			 *				icon: MessageBox.Icon.INFORMATION,
 			 *				title: "My message box title",
 			 *				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 			 *				emphasizedAction: MessageBox.Action.YES,
-			 *				onClose: function(oAction) { / * do something * / }
+			 *				onClose: function (oAction) { / * do something * / }
 			 *			}
 			 *		);
 			 *	});
@@ -508,6 +508,8 @@ sap.ui.define([
 				 *     title: "Alert",                                      // default
 				 *     onClose: null,                                       // default
 				 *     styleClass: "",                                      // default
+				 *     actions: sap.m.MessageBox.Action.OK,                 // default
+				 *     emphasizedAction: sap.m.MessageBox.Action.OK,        // default
 				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
@@ -584,6 +586,9 @@ sap.ui.define([
 				 *     title: "Confirm",                                    // default
 				 *     onClose: null,                                       // default
 				 *     styleClass: "",                                      // default
+				 *     actions: [ sap.m.MessageBox.Action.OK,
+				 *                sap.m.MessageBox.Action.Cancel ]          // default
+				 *     emphasizedAction: sap.m.MessageBox.Action.OK,        // default
 				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
@@ -661,6 +666,8 @@ sap.ui.define([
 				 *     title: "Error",                                      // default
 				 *     onClose: null,                                       // default
 				 *     styleClass: "",                                      // default
+				 *     actions: sap.m.MessageBox.Action.Close,              // default
+				 *     emphasizedAction: null,                              // default
 				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
@@ -720,6 +727,8 @@ sap.ui.define([
 				 *     title: "Information",                                // default
 				 *     onClose: null,                                       // default
 				 *     styleClass: "",                                      // default
+				 *     actions: sap.m.MessageBox.Action.OK,                 // default
+				 *     emphasizedAction: sap.m.MessageBox.Action.OK,        // default
 				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
@@ -778,6 +787,8 @@ sap.ui.define([
 				 *     title: "Warning",                                    // default
 				 *     onClose: null,                                       // default
 				 *     styleClass: "",                                      // default
+				 *     actions: sap.m.MessageBox.Action.OK,                 // default
+				 *     emphasizedAction: sap.m.MessageBox.Action.OK,        // default
 				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
@@ -836,6 +847,8 @@ sap.ui.define([
 				 *     title: "Success",                                    // default
 				 *     onClose: null,                                       // default
 				 *     styleClass: "",                                      // default
+				 *     actions: sap.m.MessageBox.Action.OK,                 // default
+				 *     emphasizedAction: sap.m.MessageBox.Action.OK,        // default
 				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
