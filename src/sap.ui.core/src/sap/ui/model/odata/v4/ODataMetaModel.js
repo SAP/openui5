@@ -449,7 +449,7 @@ sap.ui.define([
 			if (!sResolvedPath) {
 				return SyncPromise.resolve([]);
 			}
-			bIterateAnnotations = sResolvedPath.slice(-1) === "@";
+			bIterateAnnotations = sResolvedPath.endsWith("@");
 			if (!bIterateAnnotations && !sResolvedPath.endsWith("/")) {
 				sResolvedPath += "/";
 			}
@@ -974,11 +974,24 @@ sap.ui.define([
 			 */
 			function annotationAtOperationOrParameter(sSegment, sTerm, sSuffix) {
 				var mAnnotationsXAllOverloads,
+					iIndexOfAtAt,
 					sIndividualOverloadTarget,
 					aOverloads,
 					sSignature = "";
 
-				sTerm = sTerm || sSegment;
+				if (sTerm) {
+					// split trailing computed annotation
+					iIndexOfAtAt = sTerm.indexOf("@@");
+					if (iIndexOfAtAt > 0) {
+						sTerm = sTerm.slice(0, iIndexOfAtAt);
+					}
+					// Note: The case that sTerm includes @sapui.name need not be handled here.
+					// sTerm is used below only to determine the correct annotation target, but that
+					// does not matter because the term's name can be determined nevertheless.
+				} else {
+					sTerm = sSegment;
+				}
+
 				sSuffix = sSuffix || "";
 				if (vBindingParameterType) {
 					oSchemaChild = aOverloads = vResult.filter(isRightOverload);
@@ -1221,7 +1234,7 @@ sap.ui.define([
 					// split trailing computed annotation, @sapui.name, or annotation
 					iIndexOfAt = sSegment.indexOf("@@");
 					if (iIndexOfAt < 0) {
-						if (sSegment.length > 11 && sSegment.slice(-11) === "@sapui.name") {
+						if (sSegment.endsWith("@sapui.name")) {
 							iIndexOfAt = sSegment.length - 11;
 						} else {
 							iIndexOfAt = sSegment.indexOf("@");
@@ -3024,7 +3037,7 @@ sap.ui.define([
 			sPath = sPath.slice(2); // BEWARE: sPathFirst !== sPath[0] intentionally now
 		}
 		sContextPath = oContext.getPath();
-		return sPathFirst === "@" || sContextPath.slice(-1) === "/"
+		return sPathFirst === "@" || sContextPath.endsWith("/")
 			? sContextPath + sPath
 			: sContextPath + "/" + sPath;
 	};
