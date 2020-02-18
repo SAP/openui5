@@ -2,11 +2,11 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/unified/CalendarLegendItem',
 		'sap/ui/unified/DateTypeRange',
-		'sap/ui/core/library'
-	], function(Controller, CalendarLegendItem, DateTypeRange, coreLibrary) {
+		'sap/ui/unified/library'
+	], function(Controller, CalendarLegendItem, DateTypeRange, unifiedLibrary) {
 	"use strict";
 
-	var CalendarDayType = 	coreLibrary.CalendarDayType;
+	var CalendarDayType = unifiedLibrary.CalendarDayType;
 
 	return Controller.extend("sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend", {
 
