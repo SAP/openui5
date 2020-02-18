@@ -7,8 +7,10 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/Interactable"
-], function (Log, Opa5, EnterText, Press, Interactable) {
+	"sap/ui/test/matchers/Interactable",
+	"sap/ui/test/TestUtils"
+], function (Log, Opa5, EnterText, Press, Interactable, TestUtils) {
+	/*global QUnit */
 	"use strict";
 	var Helper;
 
@@ -295,6 +297,36 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 					Opa5.assert.ok(true, "Button pressed: " + sText);
 				},
 				viewName : sViewName
+			});
+		},
+
+		/**
+		 * Executes QUnit.module() with the given <code>sName</code>.
+		 * Sets the language fix to "en-US" and restores back to the language before.
+		 * For a given <code>iTestTimeout</code) and TestUtils.isRealOData() === true
+		 * the QUnit.config.testTimeout for a single QUnit.test within this module is set to
+		 * <code>iTestTimeOut * 1000</code>.
+		 *
+		 * @param {string} sName
+		 *  The QUnit module name
+		 * @param {number} [iTestTimeout]
+		 *  The desired timeout in seconds for one QUnit.test() within the current QUnit module.
+		 */
+		qUnitModule : function (sText, iTestTimeout) {
+			var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+				iTimeoutBefore = QUnit.config.testTimeout;
+
+			iTestTimeout = TestUtils.isRealOData() && iTestTimeout || QUnit.config.testTimeout;
+
+			QUnit.module(sText, {
+				before : function () {
+					sap.ui.getCore().getConfiguration().setLanguage("en-US");
+					QUnit.config.testTimeout = iTestTimeout * 1000;
+				},
+				after : function () {
+					sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+					QUnit.config.testTimeout = iTimeoutBefore;
+				}
 			});
 		}
 	};
