@@ -39,6 +39,8 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
+				SampleBaseController.prototype.onInit.call(this);
+
 				this.getRouter().getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
 
 				this.oModel = new JSONModel({
@@ -48,7 +50,6 @@ sap.ui.define([
 
 				this._sId = null; // Used to hold sample ID
 				this._sEntityId = null; // Used to hold entity ID for the sample currently shown
-				this._codeCache = {};
 
 				// Load runtime authoring asynchronously
 				Promise.all([

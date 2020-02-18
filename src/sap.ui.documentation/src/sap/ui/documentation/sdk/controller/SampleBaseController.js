@@ -12,6 +12,10 @@ sap.ui.define([
 	return BaseController.extend("sap.ui.documentation.sdk.controller.SampleBaseController", {
 		_aMockFiles: ["products.json", "supplier.json", "img.json"],
 
+		onInit: function() {
+			this._codeCache = {};
+		},
+
 		fetchSourceFile: function (sRef, sFile) {
 			var that = this,
 				sUrl = sRef + "/" + sFile,
