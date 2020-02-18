@@ -6,6 +6,8 @@
 
 	<title>sap.ui.integration.Host Test</title>
 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 	<script src="../../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m, sap.f, sap.ui.integration"
@@ -14,6 +16,9 @@
 	}'></script>
 
 	<script>
+
+		var mobileCards = [],
+			timeout = 100;
 
 		function fnCardAction(event) {
 
@@ -30,7 +35,10 @@
 					type: 'Navigation',
 					url: "http://www.sap.com",
 					target: "_blank",
-					text: 'AutoOpen - SAP website'
+					text: 'AutoOpen - SAP website',
+					visible: function (card) {
+						return card.getId() !== 'card4';
+					}
 				},
 				{
 					type: 'Navigation',
@@ -38,35 +46,62 @@
 						url: "http://www.sap.com",
 						target: "_blank"
 					},
-					text: 'Navigation - SAP website'
+					text: 'Navigation - SAP website',
+					visible: function (card) {
+						return card.getId() !== 'card4';
+					}
 				},
 				{
 					type: 'Custom',
 					icon: 'sap-icon://add',
-					text: 'Add',
+					text: 'Add to mobile',
 					tooltip: 'Add',
 					buttonType: 'Accept',
+//					visible: function (card) {
+//						return card.getId() !== 'card3';
+//					},
 					visible: function (card) {
-						return card.getId() !== 'card3';
-					},
-					enabled: function (card) {
-						return card.getId() !== 'card1';
+						return new Promise(function (resolve) {
+							setTimeout(function () {
+								resolve(mobileCards.indexOf(card) === -1);
+
+							}, timeout);
+						})
 					},
 					action: function (card, button) {
-						alert('Card id = ' + card.getId() + ' Button = ' + button.getText());
+
+						setTimeout(function () {
+							if (mobileCards.indexOf(card) === -1) {
+								mobileCards.push(card);
+							}
+						}, timeout);
+
+						// alert('Card id = ' + card.getId() + ' Button = ' + button.getText());
 					}
 				},
 				{
 					type: 'Custom',
 					icon: 'sap-icon://delete',
-					text: 'Delete',
+					text: 'Remove from mobile',
 					tooltip: 'Delete',
-					visible: function (card, button) {
-						return card.getId() !== 'card2' && card.getId() !== 'card3';
+//					visible: function (card, button) {
+//						return card.getId() !== 'card2' && card.getId() !== 'card3';
+//					},
+					visible: function (card) {
+						return new Promise(function (resolve) {
+							setTimeout(function () {
+								resolve(mobileCards.indexOf(card) > -1);
+
+							}, timeout);
+						})
 					},
-					enabled: true,
 					action: function (card, button) {
-						alert('Card id = ' + card.getId() + ' Button = ' + button.getText());
+						setTimeout(function () {
+							var index = mobileCards.indexOf(card);
+							if (index > -1) {
+								mobileCards.splice(index, 1);
+							}
+						}, timeout);
 					}
 				}
 			],

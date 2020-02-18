@@ -5,28 +5,49 @@
 // Provides control sap.ui.integration.controls.ActionsToolbar
 sap.ui.define([
 		"sap/ui/thirdparty/jquery",
-		"sap/m/library",
 		"sap/ui/core/Core",
 		'sap/ui/core/Control',
 		"sap/m/Button",
-		"sap/m/OverflowToolbar",
-		"sap/m/OverflowToolbarLayoutData",
+		"sap/m/ActionSheet",
 		"sap/f/cards/CardActions",
 		"./ActionsToolbarRenderer"
 	],
 	function(jQuery,
-			 mLibrary,
 			 Core,
 			 Control,
 			 Button,
-			 OverflowToolbar,
-			 OverflowToolbarLayoutData,
+			 ActionSheet,
 			 CardActions) {
 		"use strict";
 
-		// shortcut for sap.m.OverflowToolbarPriority
-		var OverflowToolbarPriority = mLibrary.OverflowToolbarPriority,
-			ToolbarStyle = mLibrary.ToolbarStyle;
+		function setButtonProperty(oButton, sPropertyName, oValue, oCard) {
+
+			return new Promise(function (resolve) {
+
+				var oResolvedValue;
+
+				if (jQuery.isFunction(oValue)) {
+
+					oResolvedValue = oValue(oCard);
+
+					if (oResolvedValue instanceof Promise) {
+
+						oResolvedValue.then(function (oResult) {
+							oButton.setProperty(sPropertyName, oResult);
+							resolve();
+						});
+
+						return;
+					}
+
+				} else {
+					oResolvedValue = oValue;
+				}
+
+				oButton.setProperty(sPropertyName, oResolvedValue);
+				resolve();
+			});
+		}
 
 		/**
 		 * Constructor for a new ActionsToolbar.
@@ -65,33 +86,21 @@ sap.ui.define([
 			}
 		});
 
+		ActionsToolbar.prototype._open = function () {
+			this._refreshButtons().then(function () {
+
+				this._oActionSheet.openBy(this._getToolbar());
+
+			}.bind(this));
+		};
+
 		ActionsToolbar.prototype._createActionButton = function (oHost, oCard, mActionConfig) {
-			var bVisible = true,
-				bEnabled = true;
-
-			if (mActionConfig.visible) {
-				if (jQuery.isFunction(mActionConfig.visible)) {
-					bVisible = mActionConfig.visible(oCard);
-				} else {
-					bVisible = mActionConfig.visible;
-				}
-			}
-
-			if (mActionConfig.enabled) {
-				if (jQuery.isFunction(mActionConfig.enabled)) {
-					bEnabled = mActionConfig.enabled(oCard);
-				} else {
-					bEnabled = mActionConfig.enabled;
-				}
-			}
 
 			return new Button({
 				icon: mActionConfig.icon,
 				text: mActionConfig.text,
 				tooltip: mActionConfig.tooltip,
 				type: mActionConfig.buttonType,
-				enabled: bEnabled,
-				visible: bVisible,
 				press: function (oEvent) {
 					CardActions.fireAction({
 						card: oCard,
@@ -101,45 +110,87 @@ sap.ui.define([
 						source: oEvent.getSource(),
 						url: mActionConfig.url
 					});
-				},
-				layoutData: new OverflowToolbarLayoutData({
-					priority: OverflowToolbarPriority.AlwaysOverflow
-				})
+				}
 			});
 		};
 
-		ActionsToolbar.prototype.createToolbar = function (oHost, oCard) {
-			var that = this,
-				bHasVisibleButton = false,
-				oActionButton,
-				aActions,
-				oToolbar;
 
-			this.destroyAggregation('_toolbar');
+		ActionsToolbar.prototype._getToolbar = function () {
+			var oToolbar = this.getAggregation('_toolbar');
+			if (!oToolbar) {
+				oToolbar = new Button({
+					icon: 'sap-icon://overflow',
+					press: function (oEvent) {
+						this._open();
+					}.bind(this)
+				});
 
-			aActions = oHost.getActions();
-			if (!aActions || !aActions.length) {
-				return;
-			}
-
-			oToolbar = new OverflowToolbar({
-				style: ToolbarStyle.Clear
-			});
-
-			aActions.forEach(function (actionConfig) {
-				oActionButton = that._createActionButton(oHost, oCard, actionConfig);
-				oToolbar.addContent(oActionButton);
-
-				if (oActionButton.getVisible()) {
-					bHasVisibleButton = true;
-				}
-			});
-
-			if (bHasVisibleButton) {
 				this.setAggregation('_toolbar', oToolbar);
 			}
 
-			return bHasVisibleButton;
+			return oToolbar;
+		};
+
+
+		ActionsToolbar.prototype.initializeContent = function (oHost, oCard) {
+
+			var that = this,
+				oActionButton,
+				aButtons = [],
+				aActions;
+
+			this._oCard = oCard;
+
+			this._aActions = aActions = oHost.getActions();
+			if (!aActions || !aActions.length) {
+				return false;
+			}
+
+			aActions.forEach(function (actionConfig) {
+				oActionButton = that._createActionButton(oHost, oCard, actionConfig);
+				aButtons.push(oActionButton);
+			});
+
+			if (this._oActionSheet) {
+				this._oActionSheet.destroy();
+			}
+
+			this._oActionSheet = new ActionSheet({
+				buttons: aButtons
+			});
+
+			return true;
+		};
+
+		ActionsToolbar.prototype._refreshButtons = function () {
+			var aActions = this._aActions,
+				oCard = this._oCard,
+				aButtons = this._oActionSheet.getButtons(),
+				mAction,
+				oButton,
+				i,
+				aPromises = [];
+
+			for (i = 0; i < aActions.length; i++) {
+				mAction = aActions[i];
+				oButton = aButtons[i];
+
+				aPromises.push(setButtonProperty(oButton, 'enabled', mAction.enabled, oCard));
+				aPromises.push(setButtonProperty(oButton, 'visible', mAction.visible, oCard));
+			}
+
+			return Promise.all(aPromises);
+		};
+
+		ActionsToolbar.prototype.exit = function () {
+
+			this._oCard = null;
+			this._aActions = null;
+
+			if (this._oActionSheet) {
+				this._oActionSheet.destroy();
+				this._oActionSheet = null;
+			}
 		};
 
 		return ActionsToolbar;

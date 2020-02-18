@@ -874,7 +874,7 @@ sap.ui.define([
 		}
 
 		oActionsToolbar = new ActionsToolbar();
-		bHasActions = oActionsToolbar.createToolbar(oHost, this);
+		bHasActions = oActionsToolbar.initializeContent(oHost, this);
 
 		if (bHasActions) {
 			return oActionsToolbar;
