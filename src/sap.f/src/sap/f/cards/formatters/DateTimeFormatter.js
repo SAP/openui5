@@ -30,10 +30,11 @@ sap.ui.define([
 		dateTime: function (vDate, oFormatOptions, sLocale) {
 
 			var oArguments = Utils.processFormatArguments(oFormatOptions, sLocale),
-				oDateFormat = DateFormat.getDateTimeInstance(oArguments.formatOptions, oArguments.locale);
+				oDateFormat = DateFormat.getDateTimeInstance(oArguments.formatOptions, oArguments.locale),
+				oParsedDate = Utils.parseJsonDateTime(vDate);
 
 			// Calendar is determined base on sap.ui.getCore().getConfiguration().getCalendarType()
-			var oUniversalDate = new UniversalDate(vDate);
+			var oUniversalDate = new UniversalDate(oParsedDate);
 			var sFormattedDate = oDateFormat.format(oUniversalDate);
 
 			return sFormattedDate;
@@ -48,7 +49,7 @@ sap.ui.define([
 		 * @deprecated Since version 1.74
 		 * Use dateTime instead
 		 */
-		date: function(vDate, oFormatOptions, sLocale){
+		date: function (vDate, oFormatOptions, sLocale) {
 			return oDateTimeFormatters.dateTime.apply(this, arguments);
 		}
 	};
