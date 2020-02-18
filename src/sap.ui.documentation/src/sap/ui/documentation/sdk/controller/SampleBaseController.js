@@ -9,6 +9,9 @@ sap.ui.define([
 ], function (BaseController, URI) {
 	"use strict";
 
+		var TMPL_REF = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
+			MOCK_DATA_REF = sap.ui.require.toUrl("sap/ui/demo/mock");
+
 	return BaseController.extend("sap.ui.documentation.sdk.controller.SampleBaseController", {
 		_aMockFiles: ["products.json", "supplier.json", "img.json"],
 
@@ -90,8 +93,8 @@ sap.ui.define([
 				});
 
 				// add generic license and notice file
-				oZipFile.file("LICENSE.txt", this.fetchSourceFile(sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl/"), "LICENSE.txt"));
-				oZipFile.file("NOTICE.txt", this.fetchSourceFile(sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl/"), "NOTICE.txt"));
+				oZipFile.file("LICENSE.txt", this.fetchSourceFile(TMPL_REF, "LICENSE.txt"));
+				oZipFile.file("NOTICE.txt", this.fetchSourceFile(TMPL_REF, "NOTICE.txt"));
 
 				var oContent = oZipFile.generate({ type: "blob" });
 
@@ -101,10 +104,7 @@ sap.ui.define([
 		},
 
 		_createIndexHtmlFile: function (oData, bHasManifest) {
-			var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
-				sFile;
-
-			sFile = this.fetchSourceFile(sRef, bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl");
+			var sFile = this.fetchSourceFile(TMPL_REF, bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl");
 
 			sFile = sFile.replace(/{{TITLE}}/g, oData.name)
 				.replace(/{{SAMPLE_ID}}/g, oData.id);
@@ -113,8 +113,7 @@ sap.ui.define([
 		},
 
 		_createIndexJsFile: function (oData) {
-			var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
-				sFile = this.fetchSourceFile(sRef, "index.js.tmpl");
+			var sFile = this.fetchSourceFile(TMPL_REF, "index.js.tmpl");
 
 			sFile = sFile.replace(/{{TITLE}}/g, oData.name)
 				.replace(/{{SAMPLE_ID}}/g, oData.id)
@@ -125,11 +124,10 @@ sap.ui.define([
 		},
 
 		downloadMockFile: function (sFile) {
-			var sRef = sap.ui.require.toUrl("sap/ui/demo/mock"),
-				sWrongPath = "test-resources/sap/ui/documentation/sdk/images/",
+			var sWrongPath = "test-resources/sap/ui/documentation/sdk/images/",
 				sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/documentation/sdk/images/",
 				oRegExp = new RegExp(sWrongPath, "g"),
-				sMockData = this.fetchSourceFile(sRef, sFile);
+				sMockData = this.fetchSourceFile(MOCK_DATA_REF, sFile);
 
 			if (sMockData) {
 				sMockData = sMockData.replace(oRegExp, sCorrectPath);
