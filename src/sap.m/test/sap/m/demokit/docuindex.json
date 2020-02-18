@@ -415,7 +415,8 @@
 		  "formFactors": "L",
 		  "samples": [
 			"sap.m.sample.FacetFilterLight",
-			"sap.m.sample.FacetFilterSimple"
+			"sap.m.sample.FacetFilterSimple",
+			"sap.m.sample.FacetFilterCustomFilters"
 		  ]
 		},
 		{
@@ -2428,6 +2429,11 @@
 		  "id": "sap.m.sample.FacetFilterLight",
 		  "name": "Facet Filter - Light",
 		  "description": "This is a 'Light' version of the Facet Filter. It is for small displays where only a selectable summary bar is shown, and a dialog is shown for setting the facet values."
+		},
+		{
+			"id": "sap.m.sample.FacetFilterCustomFilters",
+			"name": "Facet Filter - Custom Filters",
+			"description": "With the FacetFilter you can define custom filtering criteria to be applied when searching in the FacetFilterList instead of the default filtering criteria of the control in order to assist the user in narrowing down the data in, say, a table."
 		},
 		{
 		  "id": "sap.m.sample.InputTypes",
