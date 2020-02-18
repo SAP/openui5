@@ -6,7 +6,7 @@
 		selectedKey="{value}"
 		width="100%"
 		change="_onChange"
-		items="{enum}"
+		items="{config/enum}"
 	>
 		<items>
 			<core:Item key="{}" text="{}"/>

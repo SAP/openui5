@@ -36,7 +36,7 @@ sap.ui.define([
 		_onChange: function() {
 			var oCombo = this.getContent();
 			if (this._validate()) {
-				this.fireValueChange(oCombo.getSelectedKey() || oCombo.getValue());
+				this.setValue(oCombo.getSelectedKey() || oCombo.getValue());
 			}
 		},
 

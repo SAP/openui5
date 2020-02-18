@@ -29,7 +29,7 @@ sap.ui.define([
 			var mConfig = {
 				"properties": {
 					"sampleParams": {
-						"path": "sampleParams",
+						"path": "/sampleParams",
 						"type": "parameters"
 					}
 				},
@@ -52,8 +52,8 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oBaseEditor.getPropertyEditor("sampleParams").then(function (oPropertyEditor) {
-				this.oEditor = oPropertyEditor;
+			this.oBaseEditor.getPropertyEditorsByName("sampleParams").then(function (aPropertyEditor) {
+				this.oEditor = aPropertyEditor[0];
 				sap.ui.getCore().applyChanges();
 				var oEditorContent = getParameterEditorContent(this.oEditor);
 				this.oAddButton = oEditorContent.addButton;
@@ -71,7 +71,7 @@ sap.ui.define([
 			assert.ok(this.oEditor.getDomRef() && this.oEditor.getDomRef().offsetWidth > 0, "Then it is rendered correctly (3/3)");
 		});
 
-		QUnit.test("When a model is set", function (assert) {
+		QUnit.test("When a value is set", function (assert) {
 			assert.deepEqual(
 				this.aItems[0].value.getConfig(),
 				[{
@@ -101,5 +101,9 @@ sap.ui.define([
 			this.aItems[0].key.setValue("foo2");
 			QUnitUtils.triggerEvent("input", this.aItems[0].key.getDomRef());
 		});
+	});
+
+	QUnit.done(function () {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

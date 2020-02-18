@@ -6,17 +6,19 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/ui/integration/designtime/baseEditor/util/escapeParameter",
-	"sap/base/util/isPlainObject",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
-	"sap/base/util/restricted/_merge"
+	"sap/base/util/restricted/_merge",
+	"sap/base/util/restricted/_omit",
+	"sap/base/util/deepEqual"
 ], function (
 	Control,
 	findClosestInstance,
 	createPromise,
 	escapeParameter,
-	isPlainObject,
 	PropertyEditorFactory,
-	_merge
+	_merge,
+	_omit,
+	deepEqual
 ) {
 	"use strict";
 
@@ -51,6 +53,13 @@ sap.ui.define([
 				 */
 				renderLabel: {
 					type: "boolean"
+				},
+
+				/**
+				 * Nested editor value
+				 */
+				value: {
+					type: "any"
 				},
 
 				/**
@@ -151,14 +160,37 @@ sap.ui.define([
 				ready: {},
 
 				/**
-				 * Fires when the value of the internal property editor changes
+				 * Fires before the value of the nested property editor changes
+				 */
+				beforeValueChange: {
+					parameters: {
+						path: {
+							type: "string"
+						},
+						value: {
+							type: "any"
+						},
+						nextValue: {
+							type: "any"
+						}
+					}
+				},
+
+				/**
+				 * Fires when the value of the nested property editor changes
 				 */
 				valueChange: {
-					/**
-					 * Path in the context object where the change should happen
-					 */
-					path: {type: "string"},
-					value: {type: "any"}
+					parameters: {
+						path: {
+							type: "string"
+						},
+						value: {
+							type: "any"
+						},
+						previousValue: {
+							type: "any"
+						}
+					}
 				}
 			}
 		},
@@ -177,20 +209,20 @@ sap.ui.define([
 
 			this._propagationListener = this._propagationListener.bind(this);
 
-			this.attachEditorChange(function () {
+			this.attachEditorChange(function (oEvent) {
 				// FIXME: As soon as the context model is not used inside the wrapper anymore,
 				// we should only update the property editor if it was created via a property name
 				// and the config has changed
 
 				if (this._sCreatedBy) {
-					this._removePropertyEditor();
+					this._removePropertyEditor(oEvent.getParameter("previousEditor"));
 				}
 				this._initPropertyEditor();
 			});
 
 			this.attachConfigChange(function () {
 				if (this._sCreatedBy) {
-					this._removePropertyEditor();
+					this._removePropertyEditor(this.getEditor());
 				}
 
 				this._initPropertyEditor();
@@ -198,7 +230,7 @@ sap.ui.define([
 
 			this.attachPropertyNameChange(function () {
 				if (this._sCreatedBy === CREATED_BY_PROPERTY_NAME) {
-					this._removePropertyEditor();
+					this._removePropertyEditor(this.getEditor());
 				}
 				if (this._sCreatedBy !== CREATED_BY_CONFIG) {
 					this._initPropertyEditor();
@@ -225,14 +257,7 @@ sap.ui.define([
 
 	PropertyEditor.prototype.setConfig = function (mConfig) {
 		var mPreviousConfig = this.getConfig();
-		if (
-			mPreviousConfig !== mConfig
-			&& (
-				!isPlainObject(mPreviousConfig)
-				|| !isPlainObject(mConfig)
-				|| JSON.stringify(mPreviousConfig) !== JSON.stringify(mConfig)
-			)
-		) {
+		if (!deepEqual(mPreviousConfig, mConfig)) {
 			this.setProperty("config", mConfig);
 			this.fireConfigChange({
 				previousConfig: mPreviousConfig,
@@ -269,26 +294,25 @@ sap.ui.define([
 		if (this._fnCancelInit) {
 			this._fnCancelInit();
 		}
-		this._removePropertyEditor();
+		this._removePropertyEditor(this.getEditor());
 		Control.prototype.destroy.apply(this, arguments);
 	};
 
-	PropertyEditor.prototype._removePropertyEditor = function () {
+	PropertyEditor.prototype._removePropertyEditor = function (oEditor) {
 		var oPropertyEditor = this.getAggregation("propertyEditor");
+
 
 		if (oPropertyEditor) {
 			this.setAggregation("propertyEditor", null);
 			oPropertyEditor.detachReady(this._onPropertyEditorReady, this);
-			switch (this._sCreatedBy) {
-				case CREATED_BY_CONFIG:
-					oPropertyEditor.destroy();
-					break;
-				case CREATED_BY_PROPERTY_NAME:
-					// Need to manually as there is a bug in removeAllAggregation()
-					// when aggregation marked as "multiple: false"
-					oPropertyEditor.setParent(null);
-					break;
+
+			// Editor can be undefined only in case of BaseEditor destroy before PropertyEditor destroy
+			if (oEditor && this._isAbsolutePath(this._mConfig.path)) {
+				oEditor.deregisterPropertyEditor(this, this._mConfig.__propertyName);
 			}
+
+			this.setValue(undefined);
+			oPropertyEditor.destroy();
 			this._sCreatedBy = null;
 			this.firePropertyEditorChange({
 				propertyEditor: null
@@ -348,21 +372,30 @@ sap.ui.define([
 				delete this._fnCancelInit;
 			}
 
-			var mPromise = createPromise(function (fnResolve, fnReject) {
-				var mConfig = this.getConfig() || this.getEditor().getPropertyConfig(this.getPropertyName());
-				var sCreatedBy = this.getConfig() ? CREATED_BY_CONFIG : CREATED_BY_PROPERTY_NAME;
+			this._mConfig = this.getConfig() || this.getEditor().getPropertyConfigByName(this.getPropertyName());
+			var sCreatedBy = this.getConfig() ? CREATED_BY_CONFIG : CREATED_BY_PROPERTY_NAME;
 
-				PropertyEditorFactory.create(mConfig.type)
+			if (this._isAbsolutePath(this._mConfig.path)) {
+				this.getEditor().registerPropertyEditor(this, this._mConfig.__propertyName);
+			}
+
+			var mPromise = createPromise(function (fnResolve, fnReject) {
+				PropertyEditorFactory.create(this._mConfig.type)
 					.then(function (oPropertyEditor) {
-						oPropertyEditor.setModel(this.getEditor()._oContextModel, "_context");
 						oPropertyEditor.setModel(this.getEditor().getModel("i18n"), "i18n");
-						oPropertyEditor.setConfig(_merge({}, mConfig)); // deep clone to avoid editor modifications to influence the outer config
+						oPropertyEditor.setConfig(_omit(_merge({}, this._mConfig), "__propertyName")); // deep clone to avoid editor modifications to influence the outer config
+						oPropertyEditor.setValue(this.getValue());
 
 						// TODO: remove after Form layout BLI
 						oPropertyEditor.addStyleClass("sapUiTinyMargin");
 
+						oPropertyEditor.attachBeforeValueChange(function (oEvent) {
+							this.fireBeforeValueChange(_omit(oEvent.getParameters(), "id"));
+						}, this);
+
 						oPropertyEditor.attachValueChange(function (oEvent) {
-							this.fireValueChange(oEvent.getParameters());
+							this.setValue(oEvent.getParameter("value"));
+							this.fireValueChange(_omit(oEvent.getParameters(), "id"));
 						}, this);
 
 						this._sCreatedBy = sCreatedBy;
@@ -386,11 +419,16 @@ sap.ui.define([
 				if (oPropertyEditor.isReady()) { // in case it's already ready
 					this.fireReady();
 				}
+
 				this.firePropertyEditorChange({
 					propertyEditor: oPropertyEditor
 				});
 			}.bind(this));
 		}
+	};
+
+	PropertyEditor.prototype._isAbsolutePath = function (sPath) {
+		return sPath.startsWith("/");
 	};
 
 	PropertyEditor.prototype._propagationListener = function () {
@@ -428,9 +466,13 @@ sap.ui.define([
 		return oNestedEditor && oNestedEditor.getContent();
 	};
 
-	PropertyEditor.prototype.getValue = function () {
+	PropertyEditor.prototype.setValue = function (vValue) {
+		this.setProperty("value", vValue);
+
 		var oNestedEditor = this.getAggregation("propertyEditor");
-		return oNestedEditor && oNestedEditor.getValue();
+		if (oNestedEditor) {
+			oNestedEditor.setValue(vValue);
+		}
 	};
 
 	return PropertyEditor;

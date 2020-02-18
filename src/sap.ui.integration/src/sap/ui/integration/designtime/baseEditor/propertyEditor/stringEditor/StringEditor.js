@@ -33,7 +33,7 @@ sap.ui.define([
 		_onLiveChange: function() {
 			var oInput = this.getContent();
 			if (this._validate()) {
-				this.fireValueChange(oInput.getValue());
+				this.setValue(oInput.getValue());
 			}
 		},
 		_validate: function() {

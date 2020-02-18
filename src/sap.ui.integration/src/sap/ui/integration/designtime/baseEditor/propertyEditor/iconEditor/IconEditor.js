@@ -73,12 +73,12 @@ sap.ui.define([
 	IconEditor.prototype._onLiveChange = function(oEvent) {
 		var sIconInput = oEvent.getParameter("value");
 		if (this._isValid(sIconInput)) {
-			this.fireValueChange(sIconInput);
+			this.setValue(sIconInput);
 		}
 	};
 
 	IconEditor.prototype._onSuggestionItemSelected = function(oEvent) {
-		this.fireValueChange(oEvent.getParameter("selectedItem").getText());
+		this.setValue(oEvent.getParameter("selectedItem").getText());
 	};
 
 	IconEditor.prototype._isValid = function (sSelectedIcon) {
@@ -144,7 +144,7 @@ sap.ui.define([
 	IconEditor.prototype.handleClose = function(oEvent) {
 		var oSelectedItem = oEvent.getParameter("selectedItem");
 		if (oSelectedItem) {
-			this.fireValueChange(oSelectedItem.getIcon());
+			this.setValue(oSelectedItem.getIcon());
 		}
 		oEvent.getSource().getBinding("items").filter([]);
 	};

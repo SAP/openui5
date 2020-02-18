@@ -37,7 +37,7 @@ sap.ui.define([
 			var oInput = this.getContent();
 			var sInput = this._validate(oInput.getValue());
 			if (sInput !== null) {
-				this.fireValueChange(sInput);
+				this.setValue(sInput);
 			}
 		},
 		_validate: function(sValue) {

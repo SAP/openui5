@@ -15,7 +15,7 @@ sap.ui.define([
 			var mConfig = {
 				"properties": {
 					"arrayLevel1": {
-						"path": "arrayLevel1",
+						"path": "/arrayLevel1",
 						"type": "array",
 						"template": {
 							"arrayLevel2": {
@@ -61,7 +61,7 @@ sap.ui.define([
 		QUnit.test("When a nested complex editor changes", function (assert) {
 			var fnDone = assert.async();
 
-			var oArrayLevel1 = this.oBaseEditor.getPropertyEditorSync("arrayLevel1");
+			var oArrayLevel1 = this.oBaseEditor.getPropertyEditorsByNameSync("arrayLevel1")[0];
 			oArrayLevel1.attachEventOnce("ready", function () {
 				assert.ok(true, "Then the ready event bubbles to the outer array editor");
 				assert.deepEqual(
@@ -83,5 +83,9 @@ sap.ui.define([
 			var oAddButton = oArrayLevel2.getAggregation("propertyEditor").getContent().getItems()[1];
 			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
 		});
+	});
+
+	QUnit.done(function () {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

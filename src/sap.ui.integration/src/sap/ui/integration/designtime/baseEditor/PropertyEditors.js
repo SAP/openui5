@@ -4,11 +4,15 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance",
-	"sap/ui/integration/designtime/baseEditor/util/createPromise"
+	"sap/ui/integration/designtime/baseEditor/util/createPromise",
+	"sap/base/util/restricted/_intersection",
+	"sap/base/util/restricted/_omit"
 ], function (
 	Control,
 	findClosestInstance,
-	createPromise
+	createPromise,
+	_intersection,
+	_omit
 ) {
 	"use strict";
 
@@ -38,7 +42,7 @@ sap.ui.define([
 				 * List of tags to render, e.g. <code>"header,content"</code>. Only the properties that contain both tags will be rendered.
 				 */
 				tags: {
-					type: "any"
+					type: "string"
 				},
 
 				/**
@@ -200,7 +204,10 @@ sap.ui.define([
 					var aPropertyEditors = this.getAggregation("propertyEditors");
 					aConfig.forEach(function (mConfig, iIndex) {
 						// workaround until PropertyEditor supports smart rendering
-						aPropertyEditors[iIndex].getAggregation("propertyEditor").setConfig(mConfig);
+						aPropertyEditors[iIndex].setConfig(_omit(mConfig, "value"));
+						if (!mConfig.path.startsWith("/")) {
+							aPropertyEditors[iIndex].setValue(mConfig.value);
+						}
 					});
 				}
 			});
@@ -218,12 +225,6 @@ sap.ui.define([
 			this._initPropertyEditors();
 		},
 
-		init: function () {
-			Promise.resolve().then(function () {
-				this.fireInit();
-			}.bind(this));
-		},
-
 		renderer: function (oRm, oControl) {
 			var aPropertyEditors = oControl.getAggregation("propertyEditors");
 			oRm.openStart("div", oControl);
@@ -236,6 +237,12 @@ sap.ui.define([
 			oRm.close("div");
 		}
 	});
+
+	PropertyEditors.prototype.init = function () {
+		Promise.resolve().then(function () {
+			this.fireInit();
+		}.bind(this));
+	};
 
 	PropertyEditors.prototype.getEditor = function () {
 		return sap.ui.getCore().byId(this.getAssociation("editor"));
@@ -322,9 +329,12 @@ sap.ui.define([
 
 	PropertyEditors.prototype.isReady = function () {
 		// The wrapper is ready when the initialization was executed and all nested editors are ready
-		return this._sState === STATUS_READY && this.getAggregation("propertyEditors").every(function (oNestedEditor) {
-			return oNestedEditor.isReady();
-		});
+		return (
+			this._sState === STATUS_READY
+			&& (this.getAggregation("propertyEditors") || []).every(function (oNestedEditor) {
+				return oNestedEditor.isReady();
+			})
+		);
 	};
 
 	PropertyEditors.prototype._onPropertyEditorReady = function () {
@@ -384,13 +394,14 @@ sap.ui.define([
 				if (this.getConfig()) {
 					oPromise = Promise.all(
 						this.getConfig().map(function (mItemConfig) {
-							return oEditor._createPropertyEditor(mItemConfig);
+							var oPropertyEditor = oEditor._createPropertyEditor(mItemConfig);
+							return oPropertyEditor;
 						})
 					);
 					sCreatedBy = CREATED_BY_CONFIG;
 				} else {
 					var aTags = this.getTags().split(",");
-					oPromise = oEditor.getPropertyEditors(aTags);
+					oPromise = oEditor.getPropertyEditorsByTag(aTags);
 					sCreatedBy = CREATED_BY_TAGS;
 				}
 

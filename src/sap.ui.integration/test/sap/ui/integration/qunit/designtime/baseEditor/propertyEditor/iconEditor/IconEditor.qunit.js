@@ -17,7 +17,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oSandbox = sinon.createSandbox();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Icon Editor: Given an editor config", {
 		before: function () {
@@ -28,29 +28,21 @@ sap.ui.define([
 				path: "content"
 			};
 		},
-		beforeEach: function (assert) {
-			this.oContextModel = new JSONModel({
-				content: "sap-icon://target-group"
-			});
-			this.oContextModel.setDefaultBindingMode("OneWay");
-
-			oSandbox.spy(IconEditor.prototype, "_handleValueHelp");
+		beforeEach: function () {
+			sandbox.spy(IconEditor.prototype, "_handleValueHelp");
 			this.oEditor = new IconEditor();
-			this.oEditor.setModel(this.oContextModel, "_context");
 			this.oEditor.setConfig(this.oPropertyConfig);
+			this.oEditor.setValue("sap-icon://target-group");
 			this.oEditor.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var fnReady = assert.async();
-			this.oEditor.ready().then(function () {
+			return this.oEditor.ready().then(function () {
 				this.oEditorElement = this.oEditor.getContent();
-				fnReady();
 			}.bind(this));
 		},
 		afterEach: function () {
-			this.oContextModel.destroy();
 			this.oEditor.destroy();
-			oSandbox.restore();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("When an IconEditor is created", function (assert) {
@@ -74,18 +66,16 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("click", this.oEditorElement.$("vhi"));
 		});
 
-		QUnit.test("When a model is set", function (assert) {
+		QUnit.test("When a value is set", function (assert) {
 			assert.strictEqual(this.oEditorElement.getValue(), "sap-icon://target-group", "Then the editor has the correct value");
 		});
 
-		QUnit.test("When a value is changed in the model", function (assert) {
-			this.oContextModel.setData({
-				content: "sap-icon://complete"
-			});
+		QUnit.test("When a value is changed in the editor", function (assert) {
+			this.oEditor.setValue("sap-icon://complete");
 			assert.strictEqual(this.oEditorElement.getValue(), "sap-icon://complete", "Then the editor value is updated");
 		});
 
-		QUnit.test("When a value is changed in the editor", function (assert) {
+		QUnit.test("When a value is changed in the internal field", function (assert) {
 			var fnDone = assert.async();
 
 			this.oEditor.attachValueChange(function (oEvent) {
@@ -110,10 +100,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
-			var fnDone = assert.async();
-
 			// Load the i18n model for the value state text on error
-			ResourceBundle.create({
+			return ResourceBundle.create({
 				url: sap.ui.require.toUrl("sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"),
 				async: true
 			}).then(function (oI18nBundle) {
@@ -129,8 +117,6 @@ sap.ui.define([
 
 				assert.strictEqual(this.oEditorElement.getValueState(), "Error", "Then the error is displayed");
 				assert.strictEqual(this.oEditor.getValue(), "sap-icon://target-group", "Then the editor value is not updated");
-
-				fnDone();
 			}.bind(this));
 		});
 
@@ -187,5 +173,9 @@ sap.ui.define([
 
 			QUnitUtils.triggerEvent("click", this.oEditorElement.$("vhi"));
 		});
+	});
+
+	QUnit.done(function () {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

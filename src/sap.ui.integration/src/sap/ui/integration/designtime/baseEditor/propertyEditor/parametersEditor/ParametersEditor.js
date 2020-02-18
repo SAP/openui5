@@ -22,15 +22,12 @@ sap.ui.define([
 			return (oValue || {}).value;
 		},
 
-		fireValueChange: function(mParams) {
+		setValue: function (mValue) {
 			var mFormattedParams = {};
-			Object.keys(mParams).forEach(function (sKey) {
-				mFormattedParams[sKey] = this._formatOutputValue(deepClone(mParams[sKey]));
-			}.bind(this));
-			this.fireEvent("valueChange", {
-				path: this.getConfig().path,
-				value: mFormattedParams
-			});
+			Object.keys(mValue || {}).forEach(function (sKey) {
+				mFormattedParams[sKey] = this._formatOutputValue(deepClone(mValue[sKey]));
+			}, this);
+			MapEditor.prototype.setValue.call(this, mFormattedParams);
 		},
 
 		_formatOutputValue: function(oValue) {
