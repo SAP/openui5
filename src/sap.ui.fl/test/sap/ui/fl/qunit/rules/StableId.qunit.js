@@ -97,23 +97,21 @@ sap.ui.define([
 				this.oDialog = new Dialog({
 					id: this.oComponent.createId("DialogWithComponent"),
 					showHeader: false,
-					content: [new Button({text: "button inside dialog with unstable id"})],
+					content: [this.oButton0 = new Button({text: "button inside dialog with unstable id"})],
 					contentHeight: "800px",
-					contentWidth: "1000px"
+					contentWidth: "600px"
 				});
 				this.oPopover = new Popover({
 					content: [new Button({text: "button inside popover with unstable id"})],
 					showHeader: false,
-					contentMinWidth: "250px",
-					contentWidth: "20%"
+					contentWidth: "270px"
 				});
 				// popup with adaptation disabled
 				this.oPopoverAdaptationDisabled = new Popover({
 					id: this.oComponent.createId("PopoverAdaptationDisabled"),
 					content: [new Button({text: "button inside popover with unstable id"})],
 					showHeader: false,
-					contentMinWidth: "250px",
-					contentWidth: "20%"
+					contentWidth: "270px"
 				});
 				this.oPopoverAdaptationDisabled.isPopupAdaptationAllowed = function () {
 					return false;
@@ -126,9 +124,9 @@ sap.ui.define([
 			// popup without component
 			this.oDialogWithoutComponent = new Dialog({
 				showHeader: false,
-				content: [new Button({text: "button inside dialog with unstable id"})],
+				content: [this.oButton1 = new Button({text: "button inside dialog with unstable id"})],
 				contentHeight: "800px",
-				contentWidth: "1000px"
+				contentWidth: "600px"
 			});
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
@@ -148,11 +146,11 @@ sap.ui.define([
 								onReady: fnDone
 							});
 						});
-						this.oPopoverAdaptationDisabled.openBy(this.oDialog);
+						this.oPopoverAdaptationDisabled.openBy(this.oButton1);
 					}.bind(this));
 					this.oDialogWithoutComponent.open();
 				}.bind(this));
-				this.oPopover.openBy(this.oDialog);
+				this.oPopover.openBy(this.oButton0);
 			}.bind(this));
 			this.oDialog.open();
 		},
