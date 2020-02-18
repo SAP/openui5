@@ -4,18 +4,22 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
 	'sap/ui/model/json/JSONModel',
-	'sap/ui/model/resource/ResourceModel'
+	'sap/ui/model/resource/ResourceModel',
+	'../model/formatter'
 ], function(
 	Fragment,
 	Controller,
 	Filter,
 	FilterOperator,
 	JSONModel,
-	ResourceModel
+	ResourceModel,
+	formatter
 ) {
 	'use strict';
 
 	return Controller.extend('sap.m.sample.InitialPagePattern.controller.App', {
+
+		formatter: formatter,
 
 		onInit: function () {
 			var oView = this.getView();

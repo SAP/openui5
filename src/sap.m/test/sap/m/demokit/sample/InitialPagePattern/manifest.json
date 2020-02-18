@@ -24,6 +24,7 @@
 					"view/fragments/sections/ProductsTable.fragment.xml",
 					"view/fragments/sections/SupplierDetails.fragment.xml",
 					"controller/App.controller.js",
+					"model/formatter.js",
 					"model/Purchases.json",
 					"i18n/i18n.properties",
 					"manifest.json"
