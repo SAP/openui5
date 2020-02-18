@@ -110,7 +110,7 @@ sap.ui.define([
 				process: false
 			});
 
-			// deep clone is needed as the mainfest only returns a read-only copy (freezed object)
+			// deep clone is needed as manifest only returns a read-only copy (frozen object)
 			var oManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
 			var oManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
 
