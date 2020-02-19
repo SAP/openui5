@@ -60,14 +60,15 @@ sap.ui.define([
 								"link",
 								"text"
 							],
-							"default": "text",
+							"defaultValue": "text",
 							"path": "type"
 						},
 						"url": {
 							"tags": ["content", "objectGroupItem"],
 							"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEM.URL}",
 							"type": "string",
-							"path": "url"
+							"path": "url",
+							"visible": "{= ${type} === 'link'}"
 						},
 						"target": {
 							"tags": ["content", "objectGroupItem"],
@@ -77,8 +78,9 @@ sap.ui.define([
 								"_blank",
 								"_self"
 							],
-							"default": "_blank",
-							"path": "target"
+							"defaultValue": "_blank",
+							"path": "target",
+							"visible": "{= ${type} === 'link' && !!${url}}"
 						},
 						"emailSubject": {
 							"tags": ["content", "objectGroupItem"],

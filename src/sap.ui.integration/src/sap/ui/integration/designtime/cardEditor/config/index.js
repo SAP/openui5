@@ -30,10 +30,14 @@ sap.ui.define([
 					"type": "enum",
 					"enum": [
 						"List",
+						"Analytical",
+						"Table",
 						"Object",
-						"Table"
+						"Timeline",
+						"Component",
+						"Calendar",
+						"AdaptiveCard"
 					],
-					"defaultValue": "List",
 					"path": "type"
 				},
 				"parameters": {
