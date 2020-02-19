@@ -503,7 +503,7 @@ sap.ui.define([
 	}
 
 	function f(sPath) {
-		return new Filter(sPath);
+		return new Filter(sPath, FilterOperator.EQ, 'foo');
 	}
 
 	function or() {
