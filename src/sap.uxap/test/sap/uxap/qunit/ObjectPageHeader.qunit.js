@@ -631,6 +631,38 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		assert.ok(oInvalidateSpy.called, "ObjectPageHeader was invalidated");
 	});
 
+	QUnit.test("_adaptLayoutForDomElement is not called for each action visibility change", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oHeader = this.myView.byId("applicationHeader"),
+			oAdaptLayoutSpy = sinon.spy(oHeader, "_adaptLayoutForDomElement"),
+			oActionTestButton = this.myView.byId("testButton2"),
+			oActionInstallButton = this.myView.byId("installButton"),
+			oActionCheckBox = this.myView.byId("testCheckBox"),
+			oDelegate = {
+			onAfterRendering: function() {
+				oHeader.removeEventDelegate(oDelegate);
+
+				// Assert
+				// "_adaptLayoutForDomElement" is called two times: once from ObjectPageHeader's onAfterRendering function,
+				// and once from ObjectPageLayout's _appendTitleCloneToDOM function.
+				assert.strictEqual(oAdaptLayoutSpy.callCount, 2,
+					"The layout re-calculations are not triggered for each button visiblity change");
+
+				// Clean up
+				done();
+			}
+		};
+
+		oHeader.addEventDelegate(oDelegate);
+		assert.expect(1);
+
+		// Act
+		oActionTestButton.setVisible(false);
+		oActionInstallButton.setVisible(false);
+		oActionCheckBox.setVisible(false);
+	});
+
 	QUnit.test("_adaptLayoutForDomElement skips calculations if 0 width", function (assert) {
 
 		var oHeader = this.myView.byId("applicationHeader"),
