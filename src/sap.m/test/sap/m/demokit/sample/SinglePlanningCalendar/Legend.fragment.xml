@@ -3,8 +3,9 @@
 		xmlns:core="sap.ui.core"
 		xmlns:u="sap.ui.unified">
 	<ResponsivePopover
+			title="Legend"
 			placement="Bottom"
-			showHeader="false">
+			showHeader="true">
 		<PlanningCalendarLegend
 				appointmentItems="{
 					path : '/supportedAppointmentItems',
