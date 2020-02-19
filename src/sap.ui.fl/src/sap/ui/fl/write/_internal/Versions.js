@@ -76,9 +76,10 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 */
 	Versions.ensureDraftVersionExists = function(mPropertyBag) {
-		var aVersions = _mInstances[mPropertyBag.reference][mPropertyBag.layer];
+		var sReference = Utils.normalizeReference(mPropertyBag.reference);
+		var aVersions = _mInstances[sReference][mPropertyBag.layer];
 		if (!_doesDraftExist(aVersions)) {
-			_mInstances[mPropertyBag.reference][mPropertyBag.layer].splice(0, 0, {versionNumber: 0});
+			_mInstances[sReference][mPropertyBag.layer].splice(0, 0, {versionNumber: 0});
 		}
 	};
 
