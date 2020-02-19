@@ -6699,6 +6699,8 @@ sap.ui.define([
 					return;
 				}
 
+				assert.ok(oSelect.$("label").is("span"), "The HTML element of the Select's label is with span tag.");
+
 				if (oSelect.getType() === SelectType.Default) {
 					assert.ok(oSelect.$().length, "The HTML div container html element exists");
 					assert.ok(oSelect.$("label").length, "The HTML label first-child element exists");

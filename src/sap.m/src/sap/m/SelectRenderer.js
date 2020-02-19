@@ -158,8 +158,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir),
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
-			oRm.openStart("label", oSelect.getId() + "-label");
-			oRm.attr("for", oSelect.getId());
+			oRm.openStart("span", oSelect.getId() + "-label");
 			oRm.attr("aria-live", "polite");
 			oRm.class(CSS_CLASS + "Label");
 
@@ -193,7 +192,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 				oRm.close("span");
 			}
-			oRm.close("label");
+			oRm.close("span");
 		};
 
 		/**
