@@ -165,9 +165,11 @@ sap.ui.define([
 						// For S4/Hana Cloud systems
 						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_RUNNING");
 					case 'U':
-						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD");
+						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR");
 					case 'E':
-						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_ERROR");
+						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR");
+					case 'P':
+						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_PUBLISHED");
 					case undefined:
 						// For S4/Hana onPrem systems
 						return oI18n.getText("TOOLTIP_ADAPTUI_ON_PREMISE");

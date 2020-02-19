@@ -408,8 +408,9 @@ function(
 		return { text: sMessage	};
 	};
 
-	AppVariantUtils.buildDeleteSuccessMessage = function(sAppVariantId) {
-		var sMessage = AppVariantUtils.getText("DELETE_APP_VARIANT_SUCCESS_MESSAGE", sAppVariantId);
+	AppVariantUtils.buildDeleteSuccessMessage = function(sAppVariantId, bIsS4HanaCloud) {
+		var sMessageTitle = bIsS4HanaCloud ? "DELETE_APP_VARIANT_SUCCESS_MESSAGE_CLOUD" : "DELETE_APP_VARIANT_SUCCESS_MESSAGE";
+		var sMessage = AppVariantUtils.getText(sMessageTitle, sAppVariantId);
 		return { text: sMessage	};
 	};
 

@@ -891,10 +891,16 @@ sap.ui.define([
 			assert.equal(oGetText.callCount, 1, "then the getText() method is called once");
 		});
 
-		QUnit.test("When buildDeleteSuccessMessage() method is called for S/4HANA Cloud after catalog unassignment finished succesfully", function(assert) {
+		QUnit.test("When buildDeleteSuccessMessage() method is called for S/4HANA onPremise after deletion finished succesfully", function(assert) {
 			var oGetText = sandbox.stub(AppVariantUtils, "getText");
-			AppVariantUtils.buildDeleteSuccessMessage("APP_VAR_ID");
+			AppVariantUtils.buildDeleteSuccessMessage("APP_VAR_ID", false);
 			assert.ok(oGetText.calledWithExactly("DELETE_APP_VARIANT_SUCCESS_MESSAGE", "APP_VAR_ID"), "then the getText() method is called with correct parameters");
+		});
+
+		QUnit.test("When buildDeleteSuccessMessage() method is called for S/4HANA Cloud after deletion finished succesfully", function(assert) {
+			var oGetText = sandbox.stub(AppVariantUtils, "getText");
+			AppVariantUtils.buildDeleteSuccessMessage("APP_VAR_ID", true);
+			assert.ok(oGetText.calledWithExactly("DELETE_APP_VARIANT_SUCCESS_MESSAGE_CLOUD", "APP_VAR_ID"), "then the getText() method is called with correct parameters");
 		});
 	});
 

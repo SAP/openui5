@@ -370,7 +370,7 @@ sap.ui.define([
 
 					var fnDeleteSuccessMessage = function() {
 						AppVariantUtils.closeOverviewDialog();
-						var oSuccessInfo = AppVariantUtils.buildDeleteSuccessMessage(sAppVariantId);
+						var oSuccessInfo = AppVariantUtils.buildDeleteSuccessMessage(sAppVariantId, bIsS4HanaCloud);
 						return oAppVariantManager.showSuccessMessage(oSuccessInfo);
 					};
 
