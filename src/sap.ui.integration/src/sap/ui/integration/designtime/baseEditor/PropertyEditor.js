@@ -221,10 +221,7 @@ sap.ui.define([
 			});
 
 			this.attachConfigChange(function () {
-				if (this._sCreatedBy) {
-					this._removePropertyEditor(this.getEditor());
-				}
-
+				this._removePropertyEditor(this.getEditor());
 				this._initPropertyEditor();
 			});
 
@@ -305,18 +302,17 @@ sap.ui.define([
 		if (oPropertyEditor) {
 			this.setAggregation("propertyEditor", null);
 			oPropertyEditor.detachReady(this._onPropertyEditorReady, this);
-
-			// Editor can be undefined only in case of BaseEditor destroy before PropertyEditor destroy
-			if (oEditor && this._isAbsolutePath(this._mConfig.path)) {
-				oEditor.deregisterPropertyEditor(this, this._mConfig.__propertyName);
-			}
-
-			this.setValue(undefined);
 			oPropertyEditor.destroy();
 			this._sCreatedBy = null;
+			this.setValue(undefined);
 			this.firePropertyEditorChange({
 				propertyEditor: null
 			});
+		}
+
+		// Editor can be undefined only in case of BaseEditor destroy before PropertyEditor destroy
+		if (oEditor && this._mConfig && this._isAbsolutePath(this._mConfig.path)) {
+			oEditor.deregisterPropertyEditor(this, this._mConfig.__propertyName);
 		}
 	};
 
@@ -384,7 +380,6 @@ sap.ui.define([
 					.then(function (oPropertyEditor) {
 						oPropertyEditor.setModel(this.getEditor().getModel("i18n"), "i18n");
 						oPropertyEditor.setConfig(_omit(_merge({}, this._mConfig), "__propertyName")); // deep clone to avoid editor modifications to influence the outer config
-						oPropertyEditor.setValue(this.getValue());
 
 						// TODO: remove after Form layout BLI
 						oPropertyEditor.addStyleClass("sapUiTinyMargin");
@@ -397,6 +392,8 @@ sap.ui.define([
 							this.setValue(oEvent.getParameter("value"));
 							this.fireValueChange(_omit(oEvent.getParameters(), "id"));
 						}, this);
+
+						oPropertyEditor.setValue(this.getValue());
 
 						this._sCreatedBy = sCreatedBy;
 						delete this._fnCancelInit;
@@ -473,6 +470,10 @@ sap.ui.define([
 		if (oNestedEditor) {
 			oNestedEditor.setValue(vValue);
 		}
+	};
+
+	PropertyEditor.prototype.getRuntimeConfig = function () {
+		return this._mConfig;
 	};
 
 	return PropertyEditor;

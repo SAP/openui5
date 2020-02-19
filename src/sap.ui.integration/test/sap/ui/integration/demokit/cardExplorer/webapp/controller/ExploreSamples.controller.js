@@ -101,7 +101,7 @@ sap.ui.define([
 				this._sEditSource = "codeEditor";
 			}
 			var oCardEditor = this.byId("cardEditor");
-			oCardEditor.setJson(sValue);
+				oCardEditor.setJson(sValue);
 			this._sEditSource = null;
 
 			if (exploreSettingsModel.getProperty("/schemaValidation")) {

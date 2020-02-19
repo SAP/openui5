@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/base/util/deepClone",
+	"sap/base/util/deepEqual",
 	"sap/base/util/ObjectPath",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/restricted/_merge",
@@ -11,6 +12,7 @@ sap.ui.define([
 ], function (
 	BasePropertyEditor,
 	deepClone,
+	deepEqual,
 	ObjectPath,
 	JSONModel,
 	_merge,
@@ -59,6 +61,7 @@ sap.ui.define([
 			if (oConfig.template) {
 				var aItems = [];
 				aValue.forEach(function(oValue, iIndex) {
+					var oValueCopy = deepClone(oValue);
 					var mItem = {
 						itemLabel: oConfig.itemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL"),
 						index: iIndex,
@@ -66,14 +69,20 @@ sap.ui.define([
 						properties: Object.keys(oConfig.template).map(function (sKey) {
 							var mTemplate = oConfig.template[sKey];
 							var sPath = iIndex + "/" + mTemplate.path;
+							var vValue = ObjectPath.get(sPath.split("/"), aValue);
+
+							if (typeof vValue === "undefined") {
+								ObjectPath.set(mTemplate.path.split('/'), deepClone(mTemplate.defaultValue), oValueCopy);
+							}
+
 							return _merge({}, mTemplate, {
 								path: sPath,
-								value: ObjectPath.get(sPath.split("/"), aValue)
+								value: vValue
 							});
 						}, this)
 					};
 
-					var oProxyModel = new JSONModel(oValue);
+					var oProxyModel = new JSONModel(oValueCopy);
 					mItem.properties = resolveBinding(
 						mItem.properties,
 						{
@@ -116,10 +125,7 @@ sap.ui.define([
 		var oDefaultItem = {};
 		Object.keys(oConfig.template).forEach(function (sKey) {
 			var mPropertyConfig = oConfig.template[sKey];
-			if (mPropertyConfig.hasOwnProperty("defaultValue")) {
-				var defaultValue = mPropertyConfig.defaultValue;
-				oDefaultItem[sKey] = deepClone(defaultValue);
-			} else if (mPropertyConfig.type === "array") {
+			if (mPropertyConfig.type === "array") {
 				oDefaultItem[sKey] = [];
 			}
 		});
@@ -158,6 +164,7 @@ sap.ui.define([
 	};
 
 	ArrayEditor.prototype._onPropertyValueChange = function (oEvent) {
+		var oPropertyEditor = oEvent.getSource();
 		var aEditorValue = deepClone(this.getValue() || []);
 		var sPath = oEvent.getParameter("path");
 		var aParts = sPath.split("/");
@@ -166,7 +173,10 @@ sap.ui.define([
 		ObjectPath.set(aParts, vValue, aEditorValue);
 
 		// Unset undefined values
-		if (typeof vValue === "undefined") {
+		if (
+			typeof vValue === "undefined"
+			|| deepEqual(vValue, oPropertyEditor.getConfig().defaultValue)
+		) {
 			var mContainer = ObjectPath.get(aParts.slice(0, -1), aEditorValue);
 			delete mContainer[aParts[aParts.length - 1]];
 		}

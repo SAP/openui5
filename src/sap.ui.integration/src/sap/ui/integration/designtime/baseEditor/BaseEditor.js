@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/each",
 	"sap/base/util/deepClone",
+	"sap/base/util/deepEqual",
 	"sap/base/util/values",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/isEmptyObject",
@@ -35,6 +36,7 @@ sap.ui.define([
 	merge,
 	each,
 	deepClone,
+	deepEqual,
 	values,
 	isPlainObject,
 	isEmptyObject,
@@ -195,12 +197,11 @@ sap.ui.define([
 
 			Control.prototype.constructor.apply(this, arguments);
 
-			this._oDataModel.setData(this.getJson());
+			this._oDataModel.setData(this._prepareData(this.getJson()));
 
 			this.attachJsonChange(function (oEvent) {
 				var oJson = oEvent.getParameter("json");
-
-				this._oDataModel.setData(oJson);
+				this._oDataModel.setData(this._prepareData(oJson));
 				this._checkReady();
 			}, this);
 		},
@@ -228,6 +229,29 @@ sap.ui.define([
 	BaseEditor.prototype.exit = function () {
 		this._reset();
 		this._oDataModel.destroy();
+	};
+
+	BaseEditor.prototype._prepareData = function (oJson) {
+		var oJsonCopy = deepClone(oJson);
+
+		each(this._mObservableConfig, function (sPropertyName, mPropertyConfig) {
+			var sPath = mPropertyConfig.path;
+			if (sPath[0] === "/") {
+				sPath = sPath.substr(1);
+			}
+			if (
+				typeof ObjectPath.get(sPath.split("/"), oJsonCopy) === "undefined"
+				&& typeof mPropertyConfig.defaultValue !== "undefined"
+			) {
+				ObjectPath.set(
+					sPath.split("/"),
+					deepClone(mPropertyConfig.defaultValue),
+					oJsonCopy
+				);
+			}
+		});
+
+		return oJsonCopy;
 	};
 
 	BaseEditor.prototype.setJson = function (vJson) {
@@ -695,9 +719,13 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.designtime.baseEditor.PropertyEditor[]|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor[]|null} List of property editors
 	 */
 	BaseEditor.prototype.getPropertyEditorsSync = function () {
-		return values(this._mPropertyEditors).reduce(function (aResult, aCurrent) {
-			return aResult.concat(aCurrent);
-		}, []);
+		return values(this._mPropertyEditors)
+			.reduce(function (aResult, aCurrent) {
+				return aResult.concat(aCurrent);
+			}, [])
+			.sort(function (oPropertyEditor1, oPropertyEditor2) {
+				return parseInt(oPropertyEditor1.getId().match(/\d+$/)) - parseInt(oPropertyEditor2.getId().match(/\d+$/));
+			});
 	};
 
 	BaseEditor.prototype.getJson = function () {
@@ -721,19 +749,22 @@ sap.ui.define([
 
 	function unset(aParts, oObject) {
 		var mContainer = ObjectPath.get(aParts.slice(0, -1), oObject);
-		delete mContainer[aParts[aParts.length - 1]];
+		if (mContainer) {
+			delete mContainer[aParts[aParts.length - 1]];
 
-		return (
-			Array.isArray(mContainer) && mContainer.length === 0
-			|| isPlainObject(mContainer) && isEmptyObject(mContainer)
-				? unset(aParts.slice(0, -1), oObject)
-				: oObject
-		);
+			return (
+				Array.isArray(mContainer) && mContainer.length === 0
+				|| isPlainObject(mContainer) && isEmptyObject(mContainer)
+					? unset(aParts.slice(0, -1), oObject)
+					: oObject
+			);
+		}
 	}
 
 	BaseEditor.prototype._onValueChange = function (oEvent) {
+		var oPropertyEditor = oEvent.getSource();
 		var sPath = oEvent.getParameter("path");
-		var oJson = this._getJson();
+		var oJson = this._getJson() || {};
 		var vValue = oEvent.getParameter("value");
 
 		if (sPath[0] === "/") {
@@ -750,8 +781,12 @@ sap.ui.define([
 			oJson
 		);
 
-		// Unset undefined values
-		if (typeof vValue === "undefined") {
+		if (
+			typeof vValue === "undefined"
+			|| deepEqual(vValue, oPropertyEditor.getRuntimeConfig().defaultValue)
+			|| Array.isArray(vValue) && vValue.length === 0
+			|| isPlainObject(vValue) && isEmptyObject(vValue)
+		) {
 			unset(aParts, oJson);
 		}
 

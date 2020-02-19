@@ -60,7 +60,7 @@ sap.ui.define([
 					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/enumStringEditor"
+					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			};
 			var mJson = {
@@ -174,13 +174,7 @@ sap.ui.define([
 			this.oArrayEditor.attachValueChange(function (oEvent) {
 				assert.deepEqual(
 					oEvent.getParameter("value")[2],
-					{
-						number: {
-							unit: undefined,
-							val: 1
-						},
-						title: undefined
-					},
+					{},
 					"Then new items have the proper values"
 				);
 				assert.ok(oEvent.getParameter("value")[2].number !== oConfig.template.number.defaultValue, "Then the default value is cloned");
@@ -195,7 +189,7 @@ sap.ui.define([
 
 			this.oArrayEditor.attachValueChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 3, "Then there are three side indicators");
-				assert.deepEqual(oEvent.getParameter("value")[2], {title: "Side Indicator"}, "Then the new item is created with proper default values");
+				assert.deepEqual(oEvent.getParameter("value")[2], {}, "Then the new item is created with proper default values");
 				done();
 			});
 			var oAddButton = this.oArrayEditorElement.getItems()[1];
@@ -228,7 +222,6 @@ sap.ui.define([
 						title: "Deviation",
 						unit: "%"
 					},{
-						title: "Side Indicator"
 					}],
 					"Then the new item is added to the array"
 				);
@@ -241,7 +234,6 @@ sap.ui.define([
 							number: 250,
 							unit: "K"
 						},{
-							title: "Side Indicator"
 						}],
 						"Then the remaining items still have the correct value"
 					);
@@ -280,7 +272,7 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				this.oArrayEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is one item");
-					assert.deepEqual(oEvent.getParameter("value")[0], {title: "Default Title"}, "Then the new item is created with proper default values");
+					assert.deepEqual(oEvent.getParameter("value")[0], {}, "Then the new item is created with proper default values");
 					done();
 				});
 				var oAddButton = this.oArrayEditor.getContent().getItems()[1];
@@ -345,6 +337,106 @@ sap.ui.define([
 			assert.strictEqual(this.oArrayEditor.getValue()[0].title, "Target", "then Target is on the first place in array editor");
 			assert.strictEqual(this.oArrayEditor.getValue()[1].title, "Deviation", "then Deviation is on the second place in array editor");
 			QUnitUtils.triggerEvent("tap", oMoveUpButton.getDomRef());
+		});
+
+		QUnit.test("when a property in an array item has a visibility binding against another property in the item", function (assert) {
+			var fnDone = assert.async();
+
+			var oConfig = {
+				"label": "Array Editor",
+				"path": "/foo",
+				"type": "array",
+				"template": {
+					"prop1": {
+						"label": "Prop1",
+						"type": "enum",
+						"path": "prop1",
+						"enum": [
+							"Value1",
+							"Value2",
+							"Value3"
+						]
+					},
+					"prop2": {
+						"label": "Prop2",
+						"type": "string",
+						"path": "prop2",
+						"visible": "{= ${prop1} === 'Value2'}"
+					}
+				}
+			};
+
+			this.oBaseEditor.setJson({
+				foo: [
+					{
+						prop1: "Value1",
+						prop2: ""
+					},
+					{
+						prop1: "Value2",
+						prop2: ""
+					}
+				]
+			});
+
+			this.oArrayEditor.ready().then(function () {
+				var aArrayElements = _getArrayEditorElements(this.oArrayEditor);
+				assert.strictEqual(aArrayElements[0].getItems()[1].getConfig()[1].visible, false, "then prop2 is invisible for 1st array item");
+				assert.strictEqual(aArrayElements[1].getItems()[1].getConfig()[1].visible, true, "then prop2 is visible for 2nd array item");
+				fnDone();
+			}.bind(this));
+
+			this.oArrayEditor.setConfig(oConfig);
+		});
+
+		QUnit.test("when a property in an array item has a visibility binding against another property in the item (defaultValue usecase)", function (assert) {
+			var fnDone = assert.async();
+
+			var oConfig = {
+				"label": "Array Editor",
+				"path": "/foo",
+				"type": "array",
+				"template": {
+					"prop1": {
+						"label": "Prop1",
+						"type": "enum",
+						"path": "prop1",
+						"enum": [
+							"Value1",
+							"Value2",
+							"Value3"
+						],
+						defaultValue: "Value2"
+					},
+					"prop2": {
+						"label": "Prop2",
+						"type": "string",
+						"path": "prop2",
+						"visible": "{= ${prop1} === 'Value2'}"
+					}
+				}
+			};
+
+			this.oBaseEditor.setJson({
+				foo: [
+					{
+						prop2: ""
+					},
+					{
+						prop1: "Value2",
+						prop2: ""
+					}
+				]
+			});
+
+			this.oArrayEditor.ready().then(function () {
+				var aArrayElements = _getArrayEditorElements(this.oArrayEditor);
+				assert.strictEqual(aArrayElements[0].getItems()[1].getConfig()[1].visible, true, "then prop2 is visible for 1st array item");
+				assert.strictEqual(aArrayElements[1].getItems()[1].getConfig()[1].visible, true, "then prop2 is visible for 2nd array item");
+				fnDone();
+			}.bind(this));
+
+			this.oArrayEditor.setConfig(oConfig);
 		});
 	});
 

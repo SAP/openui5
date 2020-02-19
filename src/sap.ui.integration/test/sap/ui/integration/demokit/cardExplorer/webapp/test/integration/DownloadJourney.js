@@ -21,9 +21,7 @@ sap.ui.define([
 	opaTest("Should be able to download manifest file.", function (Given, When, Then) {
 		var sNewValue = JSON.stringify({
 			"sap.card": {
-				"type": "Table",
-				"header": {},
-				"content": {}
+				"type": "Table"
 			}
 		}, null, "\t");
 
