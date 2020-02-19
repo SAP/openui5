@@ -630,9 +630,9 @@ sap.ui.define([
 				delete oActualRequest["async"];
 				delete oActualRequest["deferred"];
 				delete oActualRequest["eventInfo"];
-				delete oActualRequest["refresh"];
 				delete oActualRequest["password"];
 				delete oActualRequest["requestID"];
+				delete oActualRequest["updateAggregatedMessages"];
 				delete oActualRequest["user"];
 				if (oExpectedRequest) {
 					if (oExpectedRequest.response === NO_CONTENT) {

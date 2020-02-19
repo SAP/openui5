@@ -3,6 +3,7 @@
 sap.ui.define([
 		"sap/base/Log",
 		"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
+		"sap/ui/model/odata/MessageScope",
 		"sap/ui/model/odata/ODataUtils",
 		"sap/ui/model/odata/v2/ODataModel",
 		"sap/ui/model/ChangeReason",
@@ -27,6 +28,7 @@ sap.ui.define([
 	function(
 		Log,
 		fakeService,
+		MessageScope,
 		ODataUtils,
 		ODataModel,
 		ChangeReason,
@@ -304,6 +306,9 @@ sap.ui.define([
 			persistent: false,
 			processor: oModel
 		});
+
+		assert.strictEqual(oModel.getMessageScope(), MessageScope.RequestedObjects,
+			"Initial message scope is: RequestedObjects");
 
 		sap.ui.getCore().getMessageManager().registerMessageProcessor(oModel);
 		oModel.metadataLoaded().then(function() {

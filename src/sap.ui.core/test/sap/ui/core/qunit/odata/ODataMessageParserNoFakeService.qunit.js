@@ -157,19 +157,8 @@ sap.ui.define([
 
 	]
 }].forEach(function (oFixture, i) {
-	// deep path match is only done if message scope is business object and the request was
-	// triggered by a refresh
-	[{
-		bRefresh : true,
-		oRequestHeaders : undefined
-	}, {
-		bRefresh : true,
-		oRequestHeaders : {}
-	}, {
-		bRefresh : false,
-		oRequestHeaders : {"sap-message-scope" : MessageScope.BusinessObject}
-	}].forEach(function (oRequest, j) {
-	QUnit.test("_propagateMessages: MessageScope.Request " + i + "/" + j, function (assert) {
+	// deep path match is only done if updateAggregatedMessages is true
+	QUnit.test("_propagateMessages: updateAggregatedMessages=false: " + i, function (assert) {
 		var mChangeEntities = "{object} mChangeEntities",
 			aExpectedMessagesToBeKept = [],
 			aExpectedMessagesToBeRemoved = [],
@@ -199,8 +188,7 @@ sap.ui.define([
 			mRequestInfo = {
 				request : {
 					deepPath : "/" + oFixture.sUrl,
-					headers : oRequest.oRequestHeaders,
-					refresh : oRequest.refresh,
+					updateAggregatedMessages : false,
 					url : oFixture.sUrl
 				},
 				response : {
@@ -235,7 +223,6 @@ sap.ui.define([
 			mRequestInfo, mGetEntities, mChangeEntities, oFixture.bSimpleMessageLifecycle);
 
 		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
-	});
 	});
 });
 
@@ -410,7 +397,7 @@ sap.ui.define([
 		})
 	]
 }].forEach(function (oFixture, i) {
-	QUnit.test("_propagateMessages: deepPath matching " + i, function (assert) {
+	QUnit.test("_propagateMessages: updateAggregatedMessages=true: " + i, function (assert) {
 		var mChangeEntities = "{object} mChangeEntities",
 			aExpectedMessagesToBeKept = [],
 			aExpectedMessagesToBeRemoved = [],
@@ -441,7 +428,7 @@ sap.ui.define([
 				request : {
 					deepPath : "/C(2)/ToAs(1)",
 					headers : {"sap-message-scope" : MessageScope.BusinessObject},
-					refresh : true,
+					updateAggregatedMessages : true,
 					url : oFixture.sUrl
 				},
 				response : {

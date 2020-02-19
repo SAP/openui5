@@ -1030,7 +1030,10 @@ sap.ui.define([
 			var fnRequestCompleted = function (oEvent) {
 				that.oModel.detachRequestCompleted(fnRequestCompleted);
 				var mHeaders = oEvent.getParameter("headers");
-				assert.ok(mHeaders["sap-message-scope"], "Message scope set to 'BusinessObject': scope header set");
+				// if service does not support MessageScope.BusinessObject fall back to the default
+				// MessageScope.RequestedObjects
+				assert.notOk(mHeaders["sap-message-scope"],
+					"Message scope 'BusinessObject' not set");
 				that.oModel.messageScopeSupported()
 					.then(function (bSupported) {
 						assert.ok(!bSupported);

@@ -24,7 +24,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("loadData: calls ODataModel.read with refresh parameter", function (assert) {
+	QUnit.test("loadData: calls ODataModel.read with updateAggregatedMessages parameter set to the"
+			+ " bindings refresh state", function (assert) {
 		var oBinding,
 			oContext = {},
 			oModel = {
@@ -50,12 +51,12 @@ sap.ui.define([
 		oBinding.bRefresh = bRefresh;
 
 		this.mock(oModel).expects("read").withExactArgs("path", {
-				_refresh : bRefresh,
 				canonicalRequest : undefined,
 				context : sinon.match.same(oContext),
 				error : sinon.match.func,
 				groupId : undefined,
 				success : sinon.match.func,
+				updateAggregatedMessages : bRefresh,
 				urlParameters : ["~custom"]
 			})
 			.returns();

@@ -4285,20 +4285,22 @@ sap.ui.define([
 	 * Creation of a request object
 	 *
 	 * @param {string} sUrl The request URL
+	 * @param {string} sDeepPath The deep path
 	 * @param {string} sMethod The request method
 	 * @param {map} [mHeaders] A map of headers
 	 * @param {object} [oData] The data for this request
 	 * @param {string} [sETag] The ETag
 	 * @param {boolean} [bAsync] Async request
-	 * @param {boolean} [bRefresh]
-	 *   Whether the read request is triggered while refreshing a binding. If message scope is
-	 *   <code>sap.ui.model.odata.MessageScope.BusinessObject</code>, all non-persistent messages
-	 *   for the requested resources and its child resources are removed.
+	 * @param {boolean} [bUpdateAggregatedMessages]
+	 *   Whether messages for child entities belonging to the same business object as the requested
+	 *   or changed resources are updated. It is considered only if
+	 *   {@link sap.ui.model.odata.MessageScope.BusinessObject} is set and if the OData service
+	 *   supports message scope.
 	 * @return {object} Request object
 	 * @private
 	 */
 	ODataModel.prototype._createRequest = function(sUrl, sDeepPath, sMethod, mHeaders, oData, sETag,
-			bAsync, bRefresh) {
+			bAsync, bUpdateAggregatedMessages) {
 		bAsync = bAsync !== false;
 
 		if (sETag && sMethod !== "GET") {
@@ -4329,19 +4331,28 @@ sap.ui.define([
 
 		// deep path handling
 		if (this.sMessageScope === MessageScope.BusinessObject) {
-			assert(this.bIsMessageScopeSupported, "MessageScope 'BusinessObject' is not supported by the service");
-			mHeaders["sap-message-scope"] = this.sMessageScope;
+			if (this.bIsMessageScopeSupported) {
+				mHeaders["sap-message-scope"] = this.sMessageScope;
+			} else {
+				Log.error("Message scope 'sap.ui.model.odata.MessageScope.BusinessObject' is not"
+					+ " supported by the service: " + this.sServiceUrl, undefined,
+					"sap.ui.model.odata.v2.ODataModel");
+			}
 		}
+
+		bUpdateAggregatedMessages = bUpdateAggregatedMessages
+			&& this.sMessageScope === MessageScope.BusinessObject
+			&& this.bIsMessageScopeSupported;
 
 		var oRequest = {
 			headers : mHeaders,
 			requestUri : sUrl,
 			method : sMethod,
-			user: this.sUser,
-			password: this.sPassword,
-			async: bAsync,
-			deepPath: sDeepPath,
-			refresh: bRefresh
+			user : this.sUser,
+			password : this.sPassword,
+			async : bAsync,
+			deepPath : sDeepPath,
+			updateAggregatedMessages : bUpdateAggregatedMessages
 		};
 
 		if (oData) {
@@ -4858,8 +4869,11 @@ sap.ui.define([
 	 * 		failed. The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
-	 * @param {boolean} [mParameters._refresh] Private parameter for internal usage
-	 *
+	 * @param {boolean} [mParameters.updateAggregatedMessages]
+	 *   Whether messages for child entities belonging to the same business object as the requested
+	 *   or changed resources are updated. It is considered only if
+	 *   {@link sap.ui.model.odata.MessageScope.BusinessObject} is set using
+	 *   {@link #setMessageScope} and if the OData service supports message scope.
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
@@ -4867,18 +4881,12 @@ sap.ui.define([
 	ODataModel.prototype.read = function(sPath, mParameters) {
 		var sDeepPath, oEntityType, sETag, oFilter, sFilterParams, sMethod, sNormalizedPath,
 			sNormalizedTempPath, oRequest, mRequests, sSorterParams, sUrl, aUrlParams,
-			bCanonical, oContext, fnError, aFilters, sGroupId, mHeaders, bRefresh, aSorters,
-			fnSuccess, mUrlParams,
+			bCanonical, oContext, fnError, aFilters, sGroupId, mHeaders, aSorters, fnSuccess,
+			bUpdateAggregatedMessages, mUrlParams,
 			that = this;
 
 
 		if (mParameters) {
-			/* Whether the read request is triggered while refreshing a binding. If message scope is
-			 * <code>sap.ui.model.odata.MessageScope.BusinessObject</code>, then all non-persistent
-			 * messages for the requested resources and its child resources are removed. See
-			 * {@link sap.ui.model.odata.ODataMessageParser#_propagateMessages}
-			 */
-			bRefresh = mParameters._refresh;
 			bCanonical = mParameters.canonicalRequest;
 			oContext = mParameters.context;
 			fnError = mParameters.error;
@@ -4887,6 +4895,7 @@ sap.ui.define([
 			mHeaders = mParameters.headers;
 			aSorters = mParameters.sorters;
 			fnSuccess = mParameters.success;
+			bUpdateAggregatedMessages = mParameters.updateAggregatedMessages;
 			mUrlParams = mParameters.urlParameters;
 		}
 		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
@@ -4940,7 +4949,7 @@ sap.ui.define([
 
 			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, sETag,
-				undefined, bRefresh);
+				undefined, bUpdateAggregatedMessages);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -6769,25 +6778,53 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the MessageScope
-	 * @param {sap.ui.model.odata.MessageScope} sMessageScope The MessageScope
-	 * @private
-	 * @ui5-restricted sap.suite.ui.generic
+	 * Returns this model's message scope.
+	 *
+	 * @returns {sap.ui.model.odata.MessageScope} The message scope
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.MessageScope
+	 * @since 1.76.0
 	 */
-	ODataModel.prototype.setMessageScope = function(sMessageScope) {
+	ODataModel.prototype.getMessageScope = function () {
+		return this.sMessageScope;
+	};
+
+	/**
+	 * Sets this model's message scope.
+	 *
+	 * @param {sap.ui.model.odata.MessageScope} sMessageScope The message scope
+	 * @throws {Error} If an unsupported message scope is provided
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.MessageScope
+	 * @since 1.76.0
+	 */
+	ODataModel.prototype.setMessageScope = function (sMessageScope) {
+		if (sMessageScope !== MessageScope.RequestedObjects
+				&& sMessageScope !== MessageScope.BusinessObject) {
+			throw new Error("Unsupported message scope: " + sMessageScope);
+		}
 		this.sMessageScope = sMessageScope;
 	};
 
 	/**
-	 * Check whether the MessageScope is supported.
-	 * @private
-	 * @ui5-restricted sap.suite.ui.generic
-	 * @returns {Promise}
+	 * Checks whether the service has set the OData V2 annotation "message-scope-supported" on the
+	 * <code>EntityContainer</code> with the value <code>true</code>. This is a a precondition for
+	 * the setting of {@link sap.ui.model.odata.MessageScope.BusinessObject} via
+	 * {@link #setMessageScope}.
+	 *
+	 * @returns {Promise} A promise resolving with <code>true</code> if the OData V2 annotation
+	 *   "message-scope-supported" on the <code>EntityContainer</code> is set to <code>true</code>
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.MessageScope
+	 * @since 1.76.0
 	 */
-	ODataModel.prototype.messageScopeSupported = function() {
+	ODataModel.prototype.messageScopeSupported = function () {
 		var that = this;
-		return this.metadataLoaded()
-			.then(function() {
+
+		return this.metadataLoaded().then(function() {
 				return that.bIsMessageScopeSupported;
 			});
 	};

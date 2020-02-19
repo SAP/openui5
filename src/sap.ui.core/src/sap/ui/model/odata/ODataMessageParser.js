@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/URI",
@@ -12,7 +11,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(MessageScope, ODataUtils, coreLibrary, URI, MessageParser, Message, Log, jQuery) {
+	function(ODataUtils, coreLibrary, URI, MessageParser, Message, Log, jQuery) {
 	"use strict";
 
 // shortcuts for enums
@@ -268,9 +267,9 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, mRequestI
  * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
  * @param {ODataMessageParser~RequestInfo} mRequestInfo
  *   Info object about the request URL. If the "request" property of "mRequestInfo" is flagged with
- *   "bRefresh=true" and if the message scope is
- *    <code>sap.ui.model.odata.MessageScope.BusinessObject</code>, all non-persistent messages for
- *    the requested resources and its child resources are removed.
+ *   "updateAggregatedMessages=true", all aggregated messages for the entities in the response are
+ *   updated. Aggregated messages are messages of child entities of these entities which belong to
+ *   the same business object.
  * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @param {boolean} bSimpleMessageLifecycle - This flag is set to false, if the used OData Model v2 supports message scopes
@@ -280,10 +279,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 			mChangeEntities),
 		sDeepPath = mRequestInfo.request.deepPath,
 		aKeptMessages = [],
-		bPrefixMatch = sDeepPath
-			&& mRequestInfo.request.refresh
-			&& mRequestInfo.request.headers
-			&& mRequestInfo.request.headers["sap-message-scope"] === MessageScope.BusinessObject,
+		bPrefixMatch = sDeepPath && mRequestInfo.request.updateAggregatedMessages,
 		aRemovedMessages = [],
 		iStatusCode = mRequestInfo.response.statusCode,
 		bSuccess = (iStatusCode >= 200 && iStatusCode < 300),
