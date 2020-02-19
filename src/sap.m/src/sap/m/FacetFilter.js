@@ -397,24 +397,9 @@ sap.ui.define([
 
 
 	function _listItemsChangeHandler(oEvent) {
-		var oList = oEvent.getSource(),
-			oPopover = this.getAggregation("popover"),
-			oDialog = this.getAggregation("dialog"),
-			oNavCont, oAllCheckBoxBar;
-
-		if (oPopover) {
-			oAllCheckBoxBar = oPopover.getSubHeader();
-			if (oAllCheckBoxBar) {
-				oAllCheckBoxBar.setVisible(Boolean(oList.getItems(true).length));
-			}
-		}
-
-		if (oDialog) {
-			oNavCont = oDialog.getContent()[0];
-			if (oNavCont) {
-				oAllCheckBoxBar = oNavCont.getPages()[1].getContent()[0];
-				oAllCheckBoxBar.setVisible(Boolean(oList.getItems(true).length));
-			}
+		var oList = oEvent.getSource();
+		if (this._oAllCheckBoxBar) {
+			this._oAllCheckBoxBar.setVisible(Boolean(oList.getItems(true).length));
 		}
 	}
 
@@ -550,6 +535,10 @@ sap.ui.define([
 				}
 			});
 			this._aOwnedLabels = null;
+		}
+
+		if (this._oAllCheckBoxBar) {
+			this._oAllCheckBoxBar = undefined;
 		}
 	};
 
@@ -1766,6 +1755,8 @@ sap.ui.define([
 
 		oBar.addContentLeft(oCheckbox);
 		oBar.addStyleClass("sapMFFCheckbar");
+
+		this._oAllCheckBoxBar = oBar;
 
 		return oBar;
 	};
