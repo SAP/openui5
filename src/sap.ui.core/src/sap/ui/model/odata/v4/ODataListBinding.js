@@ -565,6 +565,9 @@ sap.ui.define([
 	 * this list binding's $expand is available; to skip this refresh, set <code>bSkipRefresh</code>
 	 * to <code>true</code>.
 	 *
+	 * Note: A deep create is not supported. The dependent entity has to be created using a second
+	 * list binding. Note that it is not supported to bind relative to a transient context.
+	 *
 	 * Note: The binding must have the parameter <code>$count : true</code> when creating an entity
 	 * at the end. Otherwise the collection length may be unknown and there is no clear position to
 	 * place this entity at.
