@@ -4,43 +4,57 @@
 /* =================================== */
 
 .sapMMsgStrip {
+	border-radius: @sapUiElementBorderCornerRadius;
 	border-width: 0.125rem;
-	color: @sapUiBaseText;
-	padding: 0.375rem 1rem;
-}
-
-.sapMMsgStripIcon {
-	color: @sapUiContentIconColor;
-	top: 0.3125rem;
 }
 
 .sapMMsgStripCloseButton {
-	opacity: 1;
-	height: 1.375rem;
-	border: 1px solid @sapUiButtonBorderColor;
-	border-radius: 0.25rem;
-
 	/* TODO remove after the end of support for Internet Explorer */
 	// centering the content of the ::after element
 	// does not work in IE if directly set on ::after
-	// 1.5rem - 6px (1px on the button and 2px on the ::after per side)
-	line-height: 1rem;
-
-	&:hover {
-		background-color: @sapUiButtonHoverBackground;
-	}
+	// 1.75rem - 4px (1px border and 1px offset per side)
+	line-height: 1.35rem;
+	border-radius: @sapUiElementBorderCornerRadius;
+	background-color: @sapUiButtonLiteBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
+	color: @sapUiButtonLiteTextColor;
 
 	&:focus::after {
-		border: 2px dotted @sapUiContentFocusColor;
+		border-color: @sapUiContentFocusColor;
 	}
 
 	&::after {
-		// 0 positions the element inside
-		// the border of the parent element
-		top: 0;
-		left: 0;
-		bottom: 0;
-		right: 0;
-		border: 2px dotted transparent;
+		top: 1px;
+		left: 1px;
+		bottom: 1px;
+		right: 1px;
+		border: @sapUiButtonBorderWidth dotted transparent;
+	}
+
+	&:hover {
+		background-color: @sapUiButtonLiteHoverBackground;
+		border-color: @sapUiButtonLiteHoverBorderColor;
+	}
+
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+		border-color: @sapUiButtonLiteActiveBorderColor;
+		color: @sapUiButtonActiveTextColor;
+	}
+
+	&:focus:active::after {
+		// we need white color in both light and
+		// dark versions when close button is active
+		border-color: @sapUiContentContrastFocusColor;
+	}
+}
+
+.sapMMsgStripInformation {
+	background-color: @sapInformationBackground;
+	border-color: @sapInformationBorderColor;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapInformativeElementColor;
 	}
 }
