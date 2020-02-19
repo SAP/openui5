@@ -165,19 +165,18 @@ sap.ui.define([
 	}
 
 	/**
-	 * @param {function} [fnCallback]
-	 *   A callback function
+	 * @param {any|function} [vValue]
+	 *   The value to be returned later or a callback function delivering it
 	 * @param {number} [iDelay=5]
 	 *   A delay in milliseconds
 	 * @returns {Promise}
-	 *   A promise which resolves with the result of the given callback or undefined after the given
-	 *   delay
+	 *   A promise which resolves with the given value after the given delay
 	 */
-	function resolveLater(fnCallback, iDelay) {
+	function resolveLater(vValue, iDelay) {
 		return new Promise(function (resolve) {
 			setTimeout(function () {
-				resolve(fnCallback && fnCallback());
-			}, iDelay || 5);
+				resolve(typeof vValue === "function" ? vValue() : vValue);
+			}, iDelay === undefined ? 5 : iDelay);
 		});
 	}
 
@@ -4456,6 +4455,80 @@ sap.ui.define([
 
 			return Promise.all([
 				oDeletePromise,
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A relative list binding's context is changed. Additionally a refresh (via
+	// requestSideEffects) is triggered after the binding has recreated its cache, but before the
+	// dependent property bindings have been destroyed. In the incident, the master table contains
+	// the items and the detail table the schedules (with 1:n, which we don't have here).
+	// BCP: 2080123400
+	QUnit.test("BCP: 2080123400", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="master" items="{/SalesOrderList}">\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}"/>\
+	</ColumnListItem>\
+</Table>\
+<Table id="detail" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}" \
+		growing="true"> <!-- ensures that the rows and child bindings are kept alive -->\
+	<ColumnListItem>\
+		<Text id="note" text="{Note}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("id", ["1", "2"])
+			.expectChange("note", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20", {
+					value : [
+						{ItemPosition : "10", Note : "Note 1", SalesOrderID : "1"}
+					]
+				})
+				.expectChange("note", ["Note 1"]);
+
+			that.oView.byId("detail").setBindingContext(
+				that.oView.byId("master").getItems()[0].getBindingContext()
+			);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oRowContext = that.oView.byId("master").getItems()[1].getBindingContext();
+
+			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20",
+					resolveLater({ // must not respond before requestSideEffects
+						value : [
+							{ItemPosition : "10", Note : "Note 2", SalesOrderID : "2"}
+						]
+					}))
+				.expectChange("note", ["Note 2"])
+				.expectRequest("SalesOrderList('2')/SO_2_SOITEM?"
+					+ "$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20", {
+						value : [
+							{ItemPosition : "10", Note : "Note 2", SalesOrderID : "2"}
+						]
+					});
+
+			return Promise.all([
+				resolveLater(function () {
+					return oRowContext.requestSideEffects(
+						[{$NavigationPropertyPath : "SO_2_SOITEM"}]);
+				}, 0),
+				that.oView.byId("detail").setBindingContext(oRowContext),
 				that.waitForChanges(assert)
 			]);
 		});
