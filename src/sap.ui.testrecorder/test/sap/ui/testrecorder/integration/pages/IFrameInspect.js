@@ -55,10 +55,10 @@ sap.ui.define([
 					});
 				},
 				iSelectViewIdPreference: function () {
-					return this.iSelectSettingCheckBox("Prefer view ID over global ID", "viewId");
+					return this.iSelectSettingCheckBox("Prefer View ID over Global ID", "viewId");
 				},
 				iSelectPOMethodPreference: function () {
-					return this.iSelectSettingCheckBox("Show snippets in page object methods", "formatAsPoMethod");
+					return this.iSelectSettingCheckBox("Show Snippets in Page Object Methods", "formatAsPoMethod");
 				},
 				iSelectSettingCheckBox: function (sLabel, sPreference) {
 					this.waitFor({

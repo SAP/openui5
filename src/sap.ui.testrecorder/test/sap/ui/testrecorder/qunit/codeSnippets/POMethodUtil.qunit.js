@@ -38,12 +38,4 @@ sap.ui.define([
 		});
 		assert.ok(sResult.startsWith("element(by.control({\n"), "Should not include method call");
 	});
-
-	QUnit.test("Should not do anything in Raw dialect", function (assert) {
-		DialectRegistry.setActiveDialect(Dialects.RAW);
-		var sResult = POMethodUtil.getPOMethod(this.aSnippets, {
-			formatAsPOMethod: false
-		});
-		assert.ok(sResult.startsWith("element(by.control({\n"), "Should not include method call");
-	});
 });

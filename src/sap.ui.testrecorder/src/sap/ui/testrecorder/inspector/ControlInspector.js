@@ -14,12 +14,14 @@ sap.ui.define([
 	"sap/ui/testrecorder/inspector/ControlInspectorRepo",
 	"sap/ui/testrecorder/Constants",
 	"sap/ui/testrecorder/DialectRegistry",
+	"sap/ui/testrecorder/Dialects",
 	"sap/ui/testrecorder/controlSelectors/ControlSelectorGenerator",
 	"sap/ui/testrecorder/codeSnippets/POMethodUtil",
+	"sap/ui/testrecorder/codeSnippets/RawSnippetUtil",
 	"sap/ui/testrecorder/codeSnippets/CodeSnippetProvider",
 	"sap/ui/testrecorder/ui/models/SharedModel"
 ], function (BaseObject, $, CommunicationBus, CommunicationChannels, DOMMutation, Highlighter, _ControlFinder, ControlAPI, ControlInspectorRepo, constants,
-	DialectRegistry, ControlSelectorGenerator, POMethodUtil, CodeSnippetProvider, SharedModel) {
+	DialectRegistry, Dialects, ControlSelectorGenerator, POMethodUtil, RawSnippetUtil, CodeSnippetProvider, SharedModel) {
 	"use strict";
 
 	var oControlInspector = null;
@@ -111,7 +113,11 @@ sap.ui.define([
 			// that have been selected since the multi-snippet setting was enabled.
 			var aSnippets = mSelectorSettings.multipleSnippets ? ControlInspectorRepo.getSnippets() : [sSnippet];
 			// format all snippets and pass them to the test recorder frame as one whole snippet
-			return POMethodUtil.getPOMethod(aSnippets, mSelectorSettings);
+			if (DialectRegistry.getActiveDialect() === Dialects.RAW) {
+				return RawSnippetUtil.getJSON(aSnippets, mSelectorSettings);
+			} else {
+				return POMethodUtil.getPOMethod(aSnippets, mSelectorSettings);
+			}
 		}).then(function (sSnippet) {
 			// here sSnippet contains the snippets for one or multiple controls
 			CommunicationBus.publish(CommunicationChannels.RECEIVE_CODE_SNIPPET, {

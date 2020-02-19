@@ -103,6 +103,36 @@ sap.ui.define([
 		}.bind(this)).finally(fnDone);
 	});
 
+	QUnit.test("Should combine multiple raw snippets in a valid json", function (assert) {
+		var fnDone = assert.async();
+		var mPrevSnippet = {
+			id: "previous-snippet"
+		};
+		var mCurrentSnippet = {
+			id: "container-cart---homeView--searchField"
+		};
+		this.fnGetSnippets.returns([
+			JSON.stringify(mPrevSnippet, undefined, 4),
+			JSON.stringify(mCurrentSnippet, undefined, 4)
+		]);
+
+		ControlInspector.updateSettings({multipleSnippets: true});
+		ControlInspector.setDialect(Dialects.RAW);
+
+		ControlInspector.getCodeSnippet({
+			domElementId: "searchField"
+		}).then(function () {
+			var sResult = this.fnPublish.getCalls()[4].args[1].codeSnippet; // skip calls made by settings/dialect change
+			var sExpected = {
+				selectors: [mPrevSnippet, mCurrentSnippet]
+			};
+			assert.equal(sResult, JSON.stringify(sExpected, undefined, 4));
+			assert.ok(this.fnFindSelector.calledOnce, "Should use cached selector");
+			assert.ok(this.fnGenerateSelector.notCalled, "Should not generate selector");
+			assert.ok(this.fnGetSnippets.calledOnce, "Should collect previous snippets");
+		}.bind(this)).finally(fnDone);
+	});
+
 	QUnit.test("Should refresh snippets when dialect is changed", function (assert) {
 		var fnStub = sinon.stub(ControlInspector, "getCodeSnippet");
 		this.fnGetRequests.returns([{
