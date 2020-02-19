@@ -380,4 +380,38 @@ sap.ui.define([
 
 		}.bind(this), 500);
 	});
+
+	QUnit.test('Selected key removed from fixed items list if flexible item is selected', function (assert) {
+		this.sideNavigation.getFixedItem().getItems()[0]._selectItem();
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(this.sideNavigation.getFixedItem().getSelectedKey(), 'fixed1', 'Item is selected from the fixed items list');
+
+
+		this.sideNavigation.getItem().getItems()[0]._selectItem();
+		sap.ui.getCore().applyChanges();
+
+		this.sideNavigation.setExpanded(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.sideNavigation.getItem().getSelectedKey(), 'root', 'Flexible list item is selected');
+		assert.strictEqual(this.sideNavigation.getFixedItem().getSelectedKey(), undefined, 'No selected items in the fixed items list');
+
+	});
+
+	QUnit.test('Selected key removed from flexible items list if fixed item is selected', function (assert) {
+
+		this.sideNavigation.getItem().getItems()[0]._selectItem();
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(this.sideNavigation.getItem().getSelectedKey(), 'root', 'Item is selected from the flexible items list');
+
+		this.sideNavigation.getFixedItem().getItems()[0]._selectItem();
+		sap.ui.getCore().applyChanges();
+
+		this.sideNavigation.setExpanded(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.sideNavigation.getFixedItem().getSelectedKey(), 'fixed1', 'Fixed list item is selected');
+		assert.strictEqual(this.sideNavigation.getItem().getSelectedKey(), undefined, 'No selected items in the flexible items list');
+
+	});
 });

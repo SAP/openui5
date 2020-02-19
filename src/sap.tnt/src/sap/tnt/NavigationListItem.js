@@ -505,7 +505,6 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				expandIconControl.setVisible(this.getItems().length > 0 && this.getHasExpander());
 				expandIconControl.setSrc(this.getExpanded() ? NavigationListItem.collapseIcon : NavigationListItem.expandIcon);
 				expandIconControl.setTooltip(this._getExpandIconTooltip(!this.getExpanded()));
-
 				this._renderText(rm);
 				rm.renderControl(expandIconControl);
 			}
@@ -667,7 +666,6 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		 * @private
 		 */
 		NavigationListItem.prototype._unselect = function() {
-
 			var $this = this.$(),
 				navList = this.getNavigationList();
 
@@ -740,7 +738,6 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 			if (this.getExpanded()) {
 				var subItems = $this.find('.sapTntNavLIGroupItem');
-
 				for (var i = 0; i < subItems.length; i++) {
 					domRefs.push(subItems[i]);
 				}
