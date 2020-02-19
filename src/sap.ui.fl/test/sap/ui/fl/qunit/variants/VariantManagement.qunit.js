@@ -463,6 +463,7 @@ sap.ui.define([
 			sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
 
 			this.oVariantManagement._openSaveAsDialog();
+			assert.equal(this.oVariantManagement.oInputName.getValueState(), "Error");
 
 			var aItems = this.oVariantManagement._getItems();
 			assert.ok(aItems);
@@ -471,7 +472,6 @@ sap.ui.define([
 			this.oVariantManagement._handleVariantSaveAs("1");
 			assert.ok(bCalled);
 			assert.ok(oModel._handleSave.calledOnce);
-			assert.equal(this.oVariantManagement.oInputName.getValueState(), "None");
 
 			this.oVariantManagement._handleVariantSaveAs(" ");
 			assert.equal(this.oVariantManagement.oInputName.getValueState(), "Error");

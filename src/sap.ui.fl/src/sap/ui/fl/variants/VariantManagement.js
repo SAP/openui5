@@ -948,6 +948,7 @@ sap.ui.define([
 				path: "/popoverTitle",
 				model: VariantManagement.INNER_MODEL_NAME
 			},
+			titleAlignment: "Center",
 			contentWidth: "400px",
 			placement: PlacementType.VerticalPreferredBottom,
 			content: [
@@ -1058,10 +1059,10 @@ sap.ui.define([
 			});
 
 			var oLabelName = new Label(this.getId() + "-namelabel", {
-				text: this._oRb.getText("VARIANT_MANAGEMENT_NAME"),
-				required: true
+				text: this._oRb.getText("VARIANT_MANAGEMENT_NAME")
 			});
 			oLabelName.setLabelFor(this.oInputName);
+			oLabelName.addStyleClass("sapUiFlVarMngmtSaveDialogLabel");
 
 			this.oDefault = new CheckBox(this.getId() + "-default", {
 				text: this._oRb.getText("VARIANT_MANAGEMENT_SETASDEFAULT"),
@@ -1148,6 +1149,9 @@ sap.ui.define([
 		this.oInputName.setEnabled(true);
 		this.oInputName.setValueState(ValueState.None);
 		this.oInputName.setValueStateText(null);
+
+		this._checkVariantNameConstraints(this.oInputName, this.oSaveSave);
+
 		this.oDefault.setSelected(false);
 		this.oExecuteOnSelect.setSelected(false);
 
@@ -1301,7 +1305,8 @@ sap.ui.define([
 						width: "14rem"
 					}), new Column({
 						header: new Text({
-							text: this._oRb.getText("VARIANT_MANAGEMENT_DEFAULT")
+							text: this._oRb.getText("VARIANT_MANAGEMENT_DEFAULT"),
+							wrappingType: "Hyphenated"
 						}),
 						width: "4rem",
 						demandPopin: true,
@@ -1313,7 +1318,8 @@ sap.ui.define([
 						}
 					}), new Column({
 						header: new Text({
-							text: this._oRb.getText("VARIANT_MANAGEMENT_EXECUTEONSELECT")
+							text: this._oRb.getText("VARIANT_MANAGEMENT_EXECUTEONSELECT"),
+							wrappingType: "Hyphenated"
 						}),
 						width: "6rem",
 						hAlign: TextAlign.Center,
@@ -1388,7 +1394,7 @@ sap.ui.define([
 			}.bind(this));
 
 			var oSubHeader = new Bar(this.getId() + "-mgmHeaderSearch", {
-				contentRight: [
+				contentMiddle: [
 					this._oSearchFieldOnMgmtDialog
 				]
 			});
