@@ -201,6 +201,10 @@ sap.ui.define([
 							var sHash = oRouter.getHashChanger().getHash();
 							var oRoute = oRouter.getRouteByHash(sHash);
 
+							if (!oRouter._oConfig.async){
+								throw new Error("The router of component '" + oObject.getId() + "' which is loaded via the target '" + oRoute.name + "' is defined as synchronous which is not supported using as a nested component.");
+							}
+
 							if (oRouter._oOwner) {
 								// update the flag once the component is displayed again after it's already loaded
 								oRouter._oOwner._bRoutingPropagateTitle = oTargetCreateInfo.propagateTitle;
