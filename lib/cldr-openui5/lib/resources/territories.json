@@ -1,0 +1,367 @@
+{
+	"ar": {
+		"TW": "تايوان، الصين",
+		"HK": "هونج كونج، الصين",
+		"MO": "ماكاو، الصين"
+	},
+	"ar_EG": {
+		"TW": "تايوان، الصين",
+		"HK": "هونج كونج، الصين",
+		"MO": "ماكاو، الصين"
+	},
+	"ar_SA": {
+		"TW": "تايوان، الصين",
+		"HK": "هونج كونج، الصين",
+		"MO": "ماكاو، الصين"
+	},
+	"bg": {
+		"TW": "Тайван, Китай",
+		"HK": "Хонконг, Китай",
+		"MO": "Макао, Китай"
+	},
+	"ca": {
+		"TW": "Taiwan, Xina",
+		"HK": "Hong Kong, Xina",
+		"MO": "Macau, Xina"
+	},
+	"cs": {
+		"TW": "Tchaj-wan, Čína",
+		"HK": "Hongkong, Čína",
+		"MO": "Macao, Čína"
+	},
+	"da": {
+		"TW": "Taiwan, Kina",
+		"HK": "Hongkong, Kina",
+		"MO": "Macao, Kina"
+	},
+	"de": {
+		"TW": "Taiwan, China",
+		"HK": "Hongkong, China",
+		"MO": "Macau, China"
+	},
+	"de_AT": {
+		"TW": "Taiwan, China",
+		"HK": "Hongkong, China",
+		"MO": "Macau, China"
+	},
+	"de_CH": {
+		"TW": "Taiwan, China",
+		"HK": "Hongkong, China",
+		"MO": "Macau, China"
+	},
+	"el": {
+		"TW": "Ταϊβάν, Κίνα",
+		"HK": "Χονγκ Κονγκ, Κίνα",
+		"MO": "Μακάο, Κίνα"
+	},
+	"el_CY": {
+		"TW": "Ταϊβάν, Κίνα",
+		"HK": "Χονγκ Κονγκ, Κίνα",
+		"MO": "Μακάο, Κίνα"
+	},
+	"en": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"en_AU": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"en_GB": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"en_HK": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"en_IE": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"en_IN": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"en_NZ": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"en_PG": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"en_SG": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"en_ZA": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"es": {
+		"TW": "Taiwán, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"es_AR": {
+		"TW": "Taiwán, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"es_BO": {
+		"TW": "Taiwán, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"es_CL": {
+		"TW": "Taiwán, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"es_CO": {
+		"TW": "Taiwán, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"es_MX": {
+		"TW": "Taiwán, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"es_PE": {
+		"TW": "Taiwán, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"es_UY": {
+		"TW": "Taiwán, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"es_VE": {
+		"TW": "Taiwán, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"et": {
+		"TW": "Taiwan, Hiina",
+		"HK": "Hongkong, Hiina",
+		"MO": "Macau, Hiina"
+	},
+	"fa": {
+		"TW": "تایوان، چین",
+		"HK": "هنگ‌کنگ، چین",
+		"MO": "ماکائو، چین"
+	},
+	"fi": {
+		"TW": "Taiwan, Kiina",
+		"HK": "Hongkong, Kiina",
+		"MO": "Macao, Kiina"
+	},
+	"fr": {
+		"TW": "Taïwan, Chine",
+		"HK": "Hong Kong, Chine",
+		"MO": "Macao, Chine"
+	},
+	"fr_BE": {
+		"TW": "Taïwan, Chine",
+		"HK": "Hong Kong, Chine",
+		"MO": "Macao, Chine"
+	},
+	"fr_CA": {
+		"TW": "Taïwan, Chine",
+		"HK": "Hong Kong, Chine",
+		"MO": "Macao, Chine"
+	},
+	"fr_CH": {
+		"TW": "Taïwan, Chine",
+		"HK": "Hong Kong, Chine",
+		"MO": "Macao, Chine"
+	},
+	"fr_LU": {
+		"TW": "Taïwan, Chine",
+		"HK": "Hong Kong, Chine",
+		"MO": "Macao, Chine"
+	},
+	"he": {
+		"TW": "טייוואן, סין",
+		"HK": "הונג קונג, סין",
+		"MO": "מקאו, סין"
+	},
+	"hi": {
+		"TW": "ताईवान, चीन",
+		"HK": "हांग कांग, चीन",
+		"MO": "मकाओ, चीन"
+	},
+	"hr": {
+		"TW": "Tajvan, Kina",
+		"HK": "Hong Kong, Kina",
+		"MO": "Makao, Kina"
+	},
+	"hu": {
+		"TW": "Tajvan, Kína",
+		"HK": "Hongkong, Kína",
+		"MO": "Makaó, Kína"
+	},
+	"id": {
+		"TW": "Taiwan, Tiongkok",
+		"HK": "Hong Kong, Tiongkok",
+		"MO": "Makau, Tiongkok"
+	},
+	"it": {
+		"TW": "Taiwan, Cina",
+		"HK": "Hong Kong, Cina",
+		"MO": "Macao, Cina"
+	},
+	"it_CH": {
+		"TW": "Taiwan, Cina",
+		"HK": "Hong Kong, Cina",
+		"MO": "Macao, Cina"
+	},
+	"ja": {
+		"TW": "台湾 (中国)",
+		"HK": "香港 (中国)",
+		"MO": "マカオ (中国)"
+	},
+	"kk": {
+		"TW": "Тайвань, Қытай",
+		"HK": "Сянган, Қытай",
+		"MO": "Макао, Қытай"
+	},
+	"ko": {
+		"TW": "중국 대만",
+		"HK": "중국 홍콩",
+		"MO": "중국 마카오"
+	},
+	"lt": {
+		"TW": "Taivanas, Kinija",
+		"HK": "Honkongas, Kinija",
+		"MO": "Makao, Kinija"
+	},
+	"lv": {
+		"TW": "Taivāna, Ķīna",
+		"HK": "Honkonga, Ķīna",
+		"MO": "Makao, Ķīna"
+	},
+	"ms": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macau, China"
+	},
+	"nb": {
+		"TW": "Taiwan, Kina",
+		"HK": "Hongkong, Kina",
+		"MO": "Macao, Kina"
+	},
+	"nl": {
+		"TW": "Taiwan, China",
+		"HK": "Hongkong, China",
+		"MO": "Macau, China"
+	},
+	"nl_BE": {
+		"TW": "Taiwan, China",
+		"HK": "Hongkong, China",
+		"MO": "Macau, China"
+	},
+	"pl": {
+		"TW": "Tajwan, Chiny",
+		"HK": "Hongkong, Chiny",
+		"MO": "Makao, Chiny"
+	},
+	"pt": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macau, China"
+	},
+	"pt_PT": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macau, China"
+	},
+	"ro": {
+		"TW": "Taiwan, China",
+		"HK": "Hong Kong, China",
+		"MO": "Macao, China"
+	},
+	"ru": {
+		"TW": "Тайвань, Китай",
+		"HK": "Гонконг, Китай",
+		"MO": "Макао, Китай"
+	},
+	"ru_UA": {
+		"TW": "Тайвань, Китай",
+		"HK": "Гонконг, Китай",
+		"MO": "Макао, Китай"
+	},
+	"sk": {
+		"TW": "Taiwan, Čína",
+		"HK": "Hongkong, Čína",
+		"MO": "Macao, Čína"
+	},
+	"sl": {
+		"TW": "Tajvan, Kitajska",
+		"HK": "Hongkong, Kitajska",
+		"MO": "Macao, Kitajska"
+	},
+	"sr": {
+		"TW": "Тајван, Кина",
+		"HK": "Хонгконг, Кина",
+		"MO": "Макао, Кина"
+	},
+	"sv": {
+		"TW": "Taiwan, Kina",
+		"HK": "Hongkong, Kina",
+		"MO": "Macao, Kina"
+	},
+	"th": {
+		"TW": "ไต้หวัน ประเทศจีน",
+		"HK": "ฮ่องกง ประเทศจีน",
+		"MO": "มาเก๊า ประเทศจีน"
+	},
+	"tr": {
+		"TW": "Tayvan, Çin",
+		"HK": "Hong Kong, Çin",
+		"MO": "Makao, Çin"
+	},
+	"uk": {
+		"TW": "Тайвань, Китай",
+		"HK": "Гонконг, Китай",
+		"MO": "Макао, Китай"
+	},
+	"vi": {
+		"TW": "Đài Loan, Trung Quốc",
+		"HK": "Hồng Kông, Trung Quốc",
+		"MO": "Macao, Trung Quốc"
+	},
+	"zh_CN": {
+		"TW": "中国台湾",
+		"HK": "中国香港",
+		"MO": "中国澳门"
+	},
+	"zh_HK": {
+		"TW": "中国台湾",
+		"HK": "中国香港",
+		"MO": "中国澳门"
+	},
+	"zh_SG": {
+		"TW": "中国台湾",
+		"HK": "中国香港",
+		"MO": "中国澳门"
+	},
+	"zh_TW": {
+		"TW": "中國台灣",
+		"HK": "中國香港",
+		"MO": "中國澳門"
+	}
+}
