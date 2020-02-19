@@ -93,7 +93,7 @@ html.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel {
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMPanel", ~"> .sapMPanelContent");
 
-/* TODO remove after 1.62 version */
+/* TODO remove after the end of support for Internet Explorer */
 /* workaround for drawing issue in IE - ensures that the content will be redrawn */
 html[data-sap-ui-animation='on'][data-sap-ui-browser^="ie"] .sapMPanelContent {
 	transform: translate(0, 0);

@@ -103,7 +103,7 @@ sap.ui.define([
 				initiatorType: "xmlhttprequest",
 				startTime: 10,
 				requestStart: 11,
-				responseEnd: 12 // undefined properties (Edge, IE, Safari...)// TODO remove after 1.62 version
+				responseEnd: 12 // undefined properties (Edge, IE, Safari...)// TODO remove after the end of support for Internet Explorer
 			}];
 
 			// stub the foreign API call

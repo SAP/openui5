@@ -624,7 +624,7 @@ function(
 		}
 		Device.resize.attachHandler(this._fnResize);
 
-		if (Device.os.windows && Device.browser.internet_explorer) { // not for windows_phone// TODO remove after 1.62 version
+		if (Device.os.windows && Device.browser.internet_explorer) { // not for windows_phone// TODO remove after the end of support for Internet Explorer
 			this._oMasterNav.$().append('<iframe class="sapMSplitContainerMasterBlindLayer" src="about:blank"></iframe>');
 		}
 

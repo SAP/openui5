@@ -88,7 +88,7 @@ sap.ui.define([
 			 *
 			 * On Android, these icons may or may not be used by the device. Chances can be improved by adding glare effect, rounded corners, setting the file name to end with "-precomposed.png", and setting the homeIconPrecomposed property to true.
 			 */
-			homeIcon : {type : "any", group : "Misc", defaultValue : null} // TODO remove after 1.62 version
+			homeIcon : {type : "any", group : "Misc", defaultValue : null} // TODO remove after the end of support for Internet Explorer
 		},
 		events : {
 

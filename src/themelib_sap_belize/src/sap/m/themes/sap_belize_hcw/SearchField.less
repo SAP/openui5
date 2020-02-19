@@ -42,7 +42,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 /* button highlight on hover/press */
 html.sap-desktop .sapMSFB:hover,
 .sapMSFB:active {
-	/* Needs repeating statements because of IE interpretation of :focus */// TODO remove after 1.62 version
+	/* Needs repeating statements because of IE interpretation of :focus */// TODO remove after the end of support for Internet Explorer
 	border-width: 0 0 0 1px;
 	background-color: @sapUiButtonHoverBackground;
 	border-left-color: @sapUiButtonHoverBorderColor;
@@ -85,7 +85,7 @@ html.sap-desktop .sapMSFB:hover,
 	font-style:	   normal;
 }
 
-/* custom placeholder if not natively supported (IE9) */// TODO remove after 1.62 version
+/* custom placeholder if not natively supported (IE9) */// TODO remove after the end of support for Internet Explorer
 .sapMSF>.sapMSFF>.sapMSFPlaceholder {
 	font-style: normal;
 }

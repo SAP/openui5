@@ -37,7 +37,7 @@ sap.ui.define([
 ], function(Core, Control, Device, ResizeHandler, jQuery, ace) {
 	"use strict";
 
-	// TODO remove after 1.62 version
+	// TODO remove after the end of support for Internet Explorer
 	/**
 	 * Constructor for a new CodeEditor.
 	 *

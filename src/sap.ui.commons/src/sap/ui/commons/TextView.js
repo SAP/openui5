@@ -132,7 +132,7 @@ sap.ui.define([
 			oDomRef.innerHTML = encodeXML(sText).replace(/&#xa;/g, "<br>");
 			// when no tooltip is applied use the text as tooltip
 			if (!this.getTooltip_AsString()) {
-				oDomRef.title = sText; // IE8 doesn't like HTML encoded attribute values// TODO remove after 1.62 version
+				oDomRef.title = sText; // IE8 doesn't like HTML encoded attribute values// TODO remove after the end of support for Internet Explorer
 			}
 		}
 

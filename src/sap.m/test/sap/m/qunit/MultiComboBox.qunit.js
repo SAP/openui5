@@ -2925,7 +2925,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' ", function(assert) {
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		// IE has security settings
 		// which prompt the user if he wants to let the page access the clipboard.
 		if (!Device.browser.internet_explorer) {
@@ -3023,7 +3023,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", function(assert) {
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		// IE has security settings
 		// which prompt the user if he wants to let the page access the clipboard.
 		if (!Device.browser.internet_explorer) {

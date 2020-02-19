@@ -64,11 +64,11 @@
 	text-align: start;
 }
 
-/* special handling for IE, as it does not support text-align: start */ // TODO remove after 1.62 version
+/* special handling for IE, as it does not support text-align: start */ // TODO remove after the end of support for Internet Explorer
 html[data-sap-ui-browser^="ie"] .sapUiAcdSectionHdr {
 	text-align: left;
 }
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiAcdSectionHdr {// TODO remove after 1.62 version
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiAcdSectionHdr {// TODO remove after the end of support for Internet Explorer
 	text-align: right;
 }
 
@@ -101,7 +101,7 @@ html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiAcdSectionHdr {// TODO remove aft
 .sapUiAcdSectionCont {
 	/* 'position' will be set by the renderer if required. Do not set any positioning here! */
 	/* It will be set to 'absolute' if sizes are set, in order to extend the content to fully use the available space.
-	Otherwise to 'relative', to fix an IE7 bug which would leave overflowing content with 'position relative' visible. */// TODO remove after 1.62 version
+	Otherwise to 'relative', to fix an IE7 bug which would leave overflowing content with 'position relative' visible. */// TODO remove after the end of support for Internet Explorer
 	margin-bottom: 0px; /* will be overwritten in the sapUiAcdSectionFlexHeight case */
 	border: 0;
 	border-bottom: 10px solid @sapUiWhiteBorder;

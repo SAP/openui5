@@ -287,17 +287,17 @@ sap.ui.define([
 		assert.ok(window.document.getElementById("I1"), "Field1 is rendered");
 		assert.equal(jQuery("#I1").get(0).style.width, "100%", "Field1 rendered width = 100%");
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "13", "Field1 rendered using 13 grid cells");
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		assert.ok(!jQuery("#I1").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#I1").parent().attr("rowspan") == "1"), "Field1 no rowspan");
 		assert.ok(window.document.getElementById("L2"), "Label2 is rendered");
 		assert.equal(jQuery("#L2").parent().attr("colspan"), "3", "Label2 rendered using 3 grid cells");
 		assert.equal(jQuery("#I2").get(0).style.width, "100%", "Field2 rendered width = 100%");
 		assert.equal(jQuery("#I2").parent().attr("colspan"), "6", "Field2 rendered using 6 grid cells");
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		assert.ok(!jQuery("#I2").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#I2").parent().attr("rowspan") == "1"), "Field2 no rowspan");
 		assert.equal(jQuery("#I3").get(0).style.width, "100%", "Field3 rendered width = 100%");
 		assert.equal(jQuery("#I3").parent().attr("colspan"), "7", "Field3 rendered using 7 grid cells");
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		assert.ok(!jQuery("#I3").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#I3").parent().attr("rowspan") == "1"), "Field3 no rowspan");
 	});
 
@@ -423,7 +423,7 @@ sap.ui.define([
 		// full size field no rows
 		oGED1.setHCells("full");
 		sap.ui.getCore().applyChanges();
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		assert.ok(!jQuery("#I1").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#I1").parent().attr("rowspan") == "1"), "Field1 no rowspan");
 
 		oGED1.setHCells("3");
@@ -464,17 +464,17 @@ sap.ui.define([
 		assert.equal(jQuery("#TA1").parent().attr("colspan"), "5", "Element3: Field1 rendered over 5 grid cells");
 		assert.equal(jQuery("#TA2").parent().attr("rowspan"), "2", "Element3: Field2 (with vCells=2) rendered with rowspan 3");
 		assert.equal(jQuery("#TA2").parent().attr("colspan"), "3", "Element3: Field2  (with hCells=3) rendered over 3 grid cells");
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		assert.ok(!jQuery("#TA3").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#TA3").parent().attr("rowspan") == "1"), "Element3: Field3 (with vCells=1) rendered without rowspan");
 		assert.equal(jQuery("#TA3").parent().attr("colspan"), "5", "Element3: Field3 rendered over 5 grid cells");
 		assert.equal(jQuery(jQuery("#TA4").parent().parent().children()[0]).attr("colspan"), "3", "Element4: label cell rendered");
 		assert.ok(!jQuery(jQuery("#TA4").parent().parent().children()[0]).children().get(0), "Element4: no label rendered");
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		assert.ok(!jQuery("#TA4").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#TA4").parent().attr("rowspan") == "1"), "Element4: Field1 (with vCells=1) rendered without rowspan");
 		assert.equal(jQuery("#TA4").parent().attr("colspan"), "2", "Element4: Field1 rendered over 2 grid cells");
 		assert.equal(jQuery("#TA5").parent().attr("rowspan"), "2", "Element4: Field2 (with vCells=3) rendered with rowspan 3");
 		assert.equal(jQuery("#TA5").parent().attr("colspan"), "3", "Element4: Field1 rendered over 3 grid cells");
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		assert.ok(!jQuery("#TA6").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#TA6").parent().attr("rowspan") == "1"), "Element5: Field1 (with vCells=1) rendered without rowspan");
 		assert.equal(jQuery("#TA6").parent().attr("colspan"), "5", "Element5: Field1 rendered over 5 grid cells");
 		assert.equal(jQuery("#TA7").parent().attr("rowspan"), "2", "Element6: Field1 (with vCells=2) rendered with rowspan 2");
@@ -541,17 +541,17 @@ sap.ui.define([
 		assert.ok(window.document.getElementById("I1"), "Field1 is rendered");
 		assert.equal(jQuery("#I1").get(0).style.width, "100%", "Field1 rendered width = 100%");
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "5", "Field1 rendered using 5 grid cells");
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		assert.ok(!jQuery("#I1").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#I1").parent().attr("rowspan") == "1"), "Field1 no rowspan");
 		assert.ok(window.document.getElementById("L2"), "Label2 is rendered");
 		assert.equal(jQuery("#L2").parent().attr("colspan"), "3", "Label2 rendered using 3 grid cells");
 		assert.equal(jQuery("#I2").get(0).style.width, "100%", "Field2 rendered width = 100%");
 		assert.equal(jQuery("#I2").parent().attr("colspan"), "2", "Field2 rendered using 2 grid cells");
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		assert.ok(!jQuery("#I2").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#I2").parent().attr("rowspan") == "1"), "Field2 no rowspan");
 		assert.equal(jQuery("#I3").get(0).style.width, "100%", "Field3 rendered width = 100%");
 		assert.equal(jQuery("#I3").parent().attr("colspan"), "3", "Field3 rendered using 3 grid cells");
-		/* TODO remove after 1.62 version */
+		/* TODO remove after the end of support for Internet Explorer */
 		assert.ok(!jQuery("#I3").parent().attr("rowspan") || (Device.browser.internet_explorer && jQuery("#I3").parent().attr("rowspan") == "1"), "Field3 no rowspan");
 		assert.equal(jQuery("#I4").parent().attr("colspan"), "8", "Field4 rendered using 8 grid cells");
 		assert.equal(jQuery("#I5").parent().attr("colspan"), "2", "Field3 rendered using 2 grid cells");
