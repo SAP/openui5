@@ -3,89 +3,60 @@
 /* Quartz High Contrast White theme   */
 /* ================================== */
 
-.sapMSFDisabled > .sapMSFF {
-	background: @sapUiHcReducedBackground;
-	border-color: @sapUiHcReducedForeground;
-	color: @sapUiContentDisabledTextColor;
-	font-weight: normal;
-	-webkit-text-fill-color: @sapUiContentDisabledTextColor;
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_m_SearchField_Height: 2.75rem;
+@_sap_m_SearchField_FormHeight: 2.25rem;
+@_sap_m_SearchField_InputHeight: 2.125rem;
+@_sap_m_SearchField_ButtonSize: 2.125rem;
+@_sap_m_SearchField_ButtonFontSize: 1rem;
+@_sap_m_SearchField_NoSearchButtonPadding: 2.25rem;
+@_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
+@_sap_m_SearchField_ResetIcon: "\e03e";
+
+.sapMSFF {
+	border-radius: 0.125rem;
 }
 
-.sapMHeader-CTX .sapMBarChild > .sapMSFF {
-	border-color: @sapUiFieldBorderColor;
+.sapMSFDisabled {
+	opacity: 0.5;
 }
 
 /* custom buttons */
-.sapMSFB {
-	box-sizing: border-box;
-	vertical-align: middle;
-	border-width: 1px;
-	border-left: 1px solid transparent;
-	cursor: pointer;
+.sapMSFB:focus {
+	outline: none;
+}
+
+.sapMBarChild > .sapMSFF > .sapMSFB {
+	text-shadow: none;
 }
 
 .sapMFocus>.sapMSFF>.sapMSFB {
-	color: @sapUiContentIconColor;
+	color: @sapUiContentContrastIconColor; // contrast themes specific
 }
 
-html.sap-desktop .sapMFocus > .sapMSFF::before {
-	border: 0.125rem dotted @sapUiContentFocusColor;
+.sapMSFB:hover {
+	background-color: @sapUiButtonLiteHoverBackground;
+	border-left: 1px solid @sapUiListSelectionBorderColor; // contrast themes specific
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMFocus > .sapMSFF::before  {
-		border: 0.125rem dashed @sapUiContentFocusColor;
-	}
-}
-
-/* button highlight on hover/press */
-html.sap-desktop .sapMSFB:hover,
-.sapMSFB:active {
-	/* Needs repeating statements because of IE interpretation of :focus */// TODO remove after the end of support for Internet Explorer
-	border-width: 0 0 0 1px;
-	background-color: @sapUiButtonHoverBackground;
-	border-left-color: @sapUiButtonHoverBorderColor;
-	border-left-style: solid;
-}
-
-.sapMFocus>.sapMSFF>.sapMSFB.sapMSFBA {
-	background-color: @sapUiButtonActiveBackground;
-	color: @sapUiContentIconColor;
-	border-left: 1px solid @sapUiButtonActiveBorderColor;
-}
-
-.sapMSFR {
-	border-right: 1px solid transparent;
-}
-
-.sapMFocus>.sapMSFF>.sapMSFR:active,
-.sapMSFR:active,
 .sapMSFB.sapMSFR:hover {
-	border-right: 1px solid @sapUiButtonActiveBorderColor;
-	border-left: 1px solid @sapUiButtonActiveBorderColor;
-	background-color: @sapUiButtonActiveBackground;
+	box-sizing: border-box; // contrast themes specific
 }
 
-/* active state colors */
-.sapMSFI:focus {
-	color: @sapUiFieldTextColor;
+.sapMSFB.sapMSFR:last-child:hover {
+	box-sizing: initial; // contrast themes specific
 }
 
-/*grouping is not allowed here*/
-.sapMSFI::-webkit-input-placeholder {
-	font-style:	   normal;
+
+.sapMSFB.sapMSFR:not(:last-child):hover { // if there is no search button the right border is not needed
+	border-right: 1px solid @sapUiListSelectionBorderColor; // contrast themes specific
 }
 
-.sapMSFI:-ms-input-placeholder {
-	font-style:	   normal;
-}
-
-.sapMSFI::-moz-placeholder {
-	font-style:	   normal;
-}
-
-/* custom placeholder if not natively supported (IE9) */// TODO remove after the end of support for Internet Explorer
-.sapMSF>.sapMSFF>.sapMSFPlaceholder {
-	font-style: normal;
+.sapMSFF>.sapMSFB:not(.sapMSFBF):active,
+.sapMSFF>.sapMSFB.sapMSFBA {
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiContentContrastIconColor;
 }
