@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
@@ -24,7 +23,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, ManagedObject, SyncPromise, ChangeReason, Filter, FilterOperator,
+], function (Log, ManagedObject, SyncPromise, ChangeReason, Filter, FilterOperator,
 		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode, Context, ODataListBinding,
 		ODataModel, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock,
 		_Helper, TestUtils) {
@@ -186,7 +185,6 @@ sap.ui.define([
 		var oParentBindingSpy = this.spy(asODataParentBinding, "call"),
 			oBinding = this.bindList("/EMPLOYEES");
 
-		assert.ok(oBinding.hasOwnProperty("oAggregation"));
 		assert.ok(oBinding.hasOwnProperty("aApplicationFilters"));
 		assert.ok(oBinding.hasOwnProperty("bCreatedAtEnd"));
 		assert.ok(oBinding.hasOwnProperty("sChangeReason"));
@@ -299,18 +297,21 @@ sap.ui.define([
 			vFilters = {},
 			oHelperMock = this.mock(_Helper),
 			oODataListBindingMock = this.mock(ODataListBinding.prototype),
-			mParameters = {
-				$filter : "foo"
+			mParameters = {/*see clone below for actual content*/},
+			mParametersClone = {
+				$$groupId : "group",
+				$$operationMode : OperationMode.Server,
+				$$updateGroupId : "update group"
 			},
-			mParametersClone = {},
 			aSorters = [],
 			vSorters = {};
 
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(vFilters)).returns(aFilters);
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(vSorters)).returns(aSorters);
-		this.mock(jQuery).expects("extend")
-			.withExactArgs(true, {}, sinon.match.same(mParameters))
+		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mParameters))
 			.returns(mParametersClone);
+		oODataListBindingMock.expects("checkBindingParameters")
+			.withExactArgs(sinon.match.same(mParametersClone), aAllowedBindingParameters);
 		oODataListBindingMock.expects("applyParameters")
 			.withExactArgs(sinon.match.same(mParametersClone));
 		oODataListBindingMock.expects("setContext").withExactArgs(sinon.match.same(oContext));
@@ -323,10 +324,15 @@ sap.ui.define([
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.deepEqual(oBinding.aFilters, []);
+		assert.strictEqual(oBinding.sGroupId, "group");
+		assert.strictEqual(oBinding.bHasAnalyticalInfo, false);
+		assert.deepEqual(oBinding.getHeaderContext(),
+			Context.create(this.oModel, oBinding, "/EMPLOYEES"));
+		assert.strictEqual(oBinding.sOperationMode, OperationMode.Server);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		assert.deepEqual(oBinding.aPreviousData, []);
-		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
 		assert.strictEqual(oBinding.aSorters, aSorters);
+		assert.strictEqual(oBinding.sUpdateGroupId, "update group");
 	});
 
 	//*********************************************************************************************
@@ -345,53 +351,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bSuspended) {
-		QUnit.test("setAggregation: bSuspended=" + bSuspended, function (assert) {
-			var oAggregation = {},
-				oAggregationCloned = {},
-				sApply = "A.P.P.L.E.",
-				oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
-					{$$aggregation : {}}),
-				mQueryOptions = oBinding.mQueryOptions;
-
-			oBinding.oContext = {}; // simulate ODLB#setContext
-			this.mock(oBinding).expects("checkSuspended").never();
-			this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(oAggregation))
-				.returns(oAggregationCloned);
-			this.mock(_AggregationHelper).expects("buildApply")
-				.withExactArgs(sinon.match.same(oAggregationCloned))
-				.returns({$apply : sApply});
-			this.mock(oBinding).expects("isRootBindingSuspended")
-				.withExactArgs().returns(bSuspended);
-			this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
-				.withExactArgs(ChangeReason.Change);
-			this.mock(oBinding).expects("removeCachesAndMessages").exactly(bSuspended ? 0 : 1)
-				.withExactArgs("");
-			this.mock(oBinding).expects("fetchCache").exactly(bSuspended ? 0 : 1)
-				.withExactArgs(sinon.match.same(oBinding.oContext));
-			this.mock(oBinding).expects("reset").exactly(bSuspended ? 0 : 1)
-				.withExactArgs(ChangeReason.Change);
-
-			// code under test
-			oBinding.setAggregation(oAggregation);
-
-			assert.strictEqual(oBinding.mQueryOptions.$apply, sApply, "$apply has changed");
-			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "object itself is the same");
-			assert.strictEqual(oBinding.oAggregation, oAggregationCloned, "$$aggregation");
-		});
-	});
-	//TODO allow oBinding.setAggregation(); to remove aggregation and "free" $apply?!
-	//TODO prevent "change" event in case nothing has really changed
-
-	//*********************************************************************************************
-	QUnit.test("setAggregation: Cannot override existing $apply", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
-				{$apply : "groupby()"});
-
+	QUnit.test("c'tor: error case", function (assert) {
 		assert.throws(function () {
 			// code under test
-			oBinding.setAggregation({});
-		}, new Error("Cannot override existing $apply : 'groupby()'"));
+			this.bindList("/EMPLOYEES", undefined, new Sorter("ID"));
+		}, new Error("Unsupported operation mode: undefined"));
 	});
 
 	//*********************************************************************************************
@@ -407,70 +371,119 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("applyParameters: simulate call from c'tor", function (assert) {
-		var oAggregation = {},
-			oAggregationCloned = {},
-			sApply = "A.P.P.L.E.",
-			oExpectation,
-			sGroupId = "foo",
-			oModelMock = this.mock(this.oModel),
-			oBinding = this.bindList("/EMPLOYEES"),
-			oBindingMock = this.mock(oBinding),
-			mParameters = {
+[null, {group : {dimension : {}}}].forEach(function (oAggregation, i) {
+	QUnit.test("setAggregation, " + i, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+				$$aggregation : {aggregate : {"n/a" : {}}},
+				$$groupId : "foo",
+				$filter : "bar",
+				custom : "baz"
+			});
+
+		// idea: #setAggregation(o) is like #changeParameters({$$aggregation : o})
+		this.mock(oBinding).expects("applyParameters").withExactArgs({
 				$$aggregation : oAggregation,
 				$$groupId : "foo",
-				$$operationMode : OperationMode.Server,
-				$$updateGroupId : "update foo",
+				$filter : "bar",
+				custom : "baz"
+			}, "");
+
+		// code under test
+		oBinding.setAggregation(oAggregation);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setAggregation: undefined", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+				$$aggregation : {aggregate : {"n/a" : {}}},
+				$$groupId : "foo",
+				$filter : "bar",
+				custom : "baz"
+			});
+
+		// idea: #setAggregation(o) is like #changeParameters({$$aggregation : o})
+		this.mock(oBinding).expects("applyParameters").withExactArgs({
+				$$groupId : "foo",
+				$filter : "bar",
+				custom : "baz"
+			}, "");
+
+		// code under test
+		oBinding.setAggregation();
+	});
+
+	//*********************************************************************************************
+[undefined, {group : {dimension : {}}}].forEach(function (oAggregation) {
+	QUnit.test("setAggregation: applyParameters fails", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+				$$aggregation : {aggregate : {"n/a" : {}}},
+				$$groupId : "foo",
+				$filter : "bar",
+				custom : "baz"
+			}),
+			oError = new Error("This call intentionally failed"),
+			mExpectedParameters = {
+				$$groupId : "foo",
+				$filter : "bar",
+				custom : "baz"
+			},
+			sOldValue = JSON.stringify(oBinding.mParameters.$$aggregation);
+
+		// idea: #setAggregation(o) is like #changeParameters({$$aggregation : o})
+		if (oAggregation) {
+			mExpectedParameters.$$aggregation = oAggregation;
+		}
+		this.mock(oBinding).expects("applyParameters").withExactArgs(mExpectedParameters, "")
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.setAggregation(oAggregation);
+		}, oError);
+
+		assert.strictEqual(JSON.stringify(oBinding.mParameters.$$aggregation), sOldValue,
+			"old value unchanged");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: simulate call from c'tor", function (assert) {
+		var oAggregation = {},
+			sApply = "A.P.P.L.E.",
+			oBinding = this.bindList("/EMPLOYEES"),
+			oExpectation,
+			oModelMock = this.mock(this.oModel),
+			mParameters = {
+				$$aggregation : oAggregation,
 				$filter : "bar"
 			};
 
-		assert.strictEqual(oBinding.oAggregation, null, "initial value");
+		assert.strictEqual(oBinding.mParameters.$$aggregation, undefined, "initial value");
 
-		oBindingMock.expects("checkBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
 			.returns({$filter : "bar"});
-		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(oAggregation))
-			.returns(oAggregationCloned);
 		this.mock(_AggregationHelper).expects("buildApply")
-			.withExactArgs(sinon.match.same(oAggregationCloned))
-			.returns({$apply : sApply});
+			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		oBinding.mCacheByResourcePath = {
 			"/Products" : {}
 		};
-		oExpectation = oBindingMock.expects("removeCachesAndMessages").withExactArgs("");
-		oBindingMock.expects("fetchCache").callsFake(function () {
+		oExpectation = this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
+		this.mock(oBinding).expects("fetchCache").callsFake(function () {
 			// test if #removeCachesAndMessages is called before #fetchCache
 			assert.ok(oExpectation.called);
 		});
-		oBindingMock.expects("reset").withExactArgs(undefined);
+		this.mock(oBinding).expects("reset").withExactArgs(undefined);
 
-		//code under test
+		// code under test
 		oBinding.applyParameters(mParameters);
 
-		assert.strictEqual(oBinding.sOperationMode, "Server", "sOperationMode");
-		assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
-		assert.strictEqual(oBinding.sUpdateGroupId, "update foo", "sUpdateGroupId");
 		assert.deepEqual(oBinding.mQueryOptions, {
 			$apply : sApply,
 			$filter : "bar"
 		}, "mQueryOptions");
 		assert.deepEqual(oBinding.mParameters, mParameters);
-		assert.strictEqual(oBinding.oAggregation, oAggregationCloned, "$$aggregation");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("applyParameters: simulate call from c'tor - error case", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES", undefined, new Sorter("ID"), undefined, {
-				$$operationMode : OperationMode.Server}),
-			sOperationMode = oBinding.sOperationMode;
-
-		assert.throws(function () {
-			//code under test
-			//c'tor called without mParameters but vSorters is set
-			oBinding.applyParameters({});
-		}, new Error("Unsupported operation mode: undefined"));
-		assert.strictEqual(oBinding.sOperationMode, sOperationMode, "sOperationMode not changed");
+		assert.strictEqual(oBinding.mParameters.$$aggregation, oAggregation, "$$aggregation");
 	});
 
 	//*********************************************************************************************
@@ -478,13 +491,13 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES");
 
 		assert.throws(function () {
-			//code under test
+			// code under test
 			// Note: this is the same, no matter if both are supplied to c'tor or $apply is added
 			// later via #changeParameters
 			oBinding.applyParameters({$$aggregation : {}, $apply : ""});
 		}, new Error("Cannot combine $$aggregation and $apply"));
+		assert.notOk("$apply" in oBinding.mQueryOptions);
 	});
-	//TODO do we care that $apply is stored already before throwing?
 
 	//*********************************************************************************************
 	QUnit.test("applyParameters: buildApply fails", function (assert) {
@@ -492,48 +505,133 @@ sap.ui.define([
 			oBinding = this.bindList("/EMPLOYEES"),
 			oError = new Error("This call intentionally failed");
 
-		oBinding.oAggregation = oAggregation;
+		oBinding.mParameters.$$aggregation = oAggregation;
+		oBinding.mQueryOptions = {$apply : "A.P.P.L.E."};
 		this.mock(_AggregationHelper).expects("buildApply").throws(oError);
 
 		assert.throws(function () {
-			//code under test
-			oBinding.applyParameters({$$aggregation : {}});
+			// code under test
+			oBinding.applyParameters({$$aggregation : {/*unsupported content here*/}});
 		}, oError);
-		assert.strictEqual(oBinding.oAggregation, oAggregation, "unchanged");
+		assert.strictEqual(oBinding.mParameters.$$aggregation, oAggregation, "unchanged");
+		assert.deepEqual(oBinding.mQueryOptions, {$apply : "A.P.P.L.E."}, "unchanged");
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bSuspended) {
-		QUnit.test("applyParameters: call from changeParameters, " + bSuspended, function (assert) {
-			var oContext = Context.create(this.oModel, {}, "/TEAMS"),
-				oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
-				oBindingMock = this.mock(oBinding),
-				oModelMock = this.mock(this.oModel),
-				mParameters = {
-					$$operationMode : OperationMode.Server,
-					$filter : "bar"
-				},
-				mQueryOptions = {
-					$filter : "bar"
-				};
+	QUnit.test("applyParameters: buildQueryOptions fails", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oError = new Error("This call intentionally failed"),
+			mParameters = {"sap-*" : "not allowed"};
 
-			oBindingMock.expects("checkBindingParameters")
-				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
-			oModelMock.expects("buildQueryOptions")
-				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
-			oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
-			oBindingMock.expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
-				.withExactArgs(ChangeReason.Change);
-			oBindingMock.expects("removeCachesAndMessages").exactly(bSuspended ? 0 : 1)
-				.withExactArgs("");
-			oBindingMock.expects("fetchCache").exactly(bSuspended ? 0 : 1)
-				.withExactArgs(sinon.match.same(oBinding.oContext));
-			oBindingMock.expects("reset").exactly(bSuspended ? 0 : 1)
-				.withExactArgs(ChangeReason.Change);
+		this.mock(oBinding.oModel).expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(mParameters), true)
+			.throws(oError);
 
-			//code under test
-			oBinding.applyParameters(mParameters, ChangeReason.Change);
-		});
+		assert.throws(function () {
+			// code under test
+			oBinding.applyParameters(mParameters);
+		}, oError);
+		assert.deepEqual(oBinding.mParameters, {}, "unchanged");
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bSuspended) {
+	var iCallCount = bSuspended ? 0 : 1;
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: call from changeParameters, " + bSuspended, function (assert) {
+		var oBinding = this.bindList("TEAM_2_EMPLOYEES", Context.create(this.oModel, {}, "/TEAMS")),
+			oModelMock = this.mock(this.oModel),
+			mParameters = {
+				$$operationMode : OperationMode.Server,
+				$filter : "bar"
+			};
+
+		oModelMock.expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
+		this.mock(_AggregationHelper).expects("buildApply").never();
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
+			.withExactArgs(ChangeReason.Change);
+		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
+			.withExactArgs("");
+		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
+			.withExactArgs(sinon.match.same(oBinding.oContext));
+		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
+
+		// code under test
+		oBinding.applyParameters(mParameters, ChangeReason.Change);
+
+		assert.deepEqual(oBinding.mQueryOptions, {$filter : "bar"});
+		assert.deepEqual(oBinding.mParameters, mParameters);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: with change in $apply, " + bSuspended, function (assert) {
+		var oAggregation = {},
+			sApply = "A.P.P.L.E.",
+			oBinding = this.bindList("/EMPLOYEES"),
+			mParameters = {
+				$$aggregation : oAggregation,
+				$filter : "bar"
+			};
+
+		oBinding.mQueryOptions.$apply = "old $apply";
+		this.mock(this.oModel).expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
+			.withExactArgs(ChangeReason.Change);
+		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
+			.withExactArgs("");
+		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
+			.withExactArgs(sinon.match.same(oBinding.oContext));
+		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
+
+		// code under test - simulate call from setAggregation
+		oBinding.applyParameters(mParameters, "");
+
+		assert.deepEqual(oBinding.mQueryOptions, {
+			$apply : sApply,
+			$filter : "bar"
+		}, "mQueryOptions");
+		assert.deepEqual(oBinding.mParameters, mParameters);
+		assert.strictEqual(oBinding.mParameters.$$aggregation, oAggregation, "$$aggregation");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: no change in $apply", function (assert) {
+		var oAggregation = {},
+			sApply = "A.P.P.L.E.",
+			oBinding = this.bindList("/EMPLOYEES"),
+			mParameters = {
+				$$aggregation : oAggregation,
+				$filter : "bar"
+			};
+
+		oBinding.mQueryOptions.$apply = sApply;
+		this.mock(this.oModel).expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
+		this.mock(oBinding).expects("isRootBindingSuspended").never();
+		this.mock(oBinding).expects("setResumeChangeReason").never();
+		this.mock(oBinding).expects("removeCachesAndMessages").never();
+		this.mock(oBinding).expects("fetchCache").never();
+		this.mock(oBinding).expects("reset").never();
+
+		// code under test - simulate call from setAggregation
+		oBinding.applyParameters(mParameters, "");
+
+		assert.deepEqual(oBinding.mQueryOptions, {
+			$apply : sApply,
+			$filter : "bar"
+		}, "mQueryOptions");
+		assert.deepEqual(oBinding.mParameters, mParameters);
+		assert.strictEqual(oBinding.mParameters.$$aggregation, oAggregation, "$$aggregation");
 	});
 
 	//*********************************************************************************************
@@ -1735,7 +1833,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
 		this.mock(oBinding).expects("createRefreshPromise").withExactArgs();
 
-		//code under test
+		// code under test
 		return oBinding.refreshInternal("", "myGroup", false);
 	});
 
@@ -1775,7 +1873,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("createRefreshPromise").withExactArgs().callThrough();
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 
-		//code under test
+		// code under test
 		oRefreshResult = oBinding.refreshInternal(sPath, "myGroup", false);
 		// simulate getContexts
 		oBinding.resolveRefreshPromise(bSuccess || Promise.reject(oError));
@@ -1952,7 +2050,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("createRefreshPromise").never();
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 
-		//code under test
+		// code under test
 		assert.ok(oBinding.refreshInternal("", "myGroup").isFulfilled());
 	});
 
@@ -2008,7 +2106,7 @@ sap.ui.define([
 					});
 				}));
 
-			//code under test
+			// code under test
 			oRefreshResult = oBinding.refreshInternal(sResourcePathPrefix, "myGroup", false);
 			if (!bSuspended) {
 				oBinding.resolveRefreshPromise(); // simulate getContexts
@@ -2165,54 +2263,6 @@ sap.ui.define([
 				oBinding.attachEvent(sEvent);
 			}, new Error("Unsupported event '" + sEvent + "': v4.ODataListBinding#attachEvent"));
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("$$groupId, $$updateGroupId, $$operationMode", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			oModelMock = this.mock(this.oModel),
-			oPrototypeMock;
-
-		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
-		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
-
-		// code under test
-		oBinding.applyParameters({
-			$$groupId : "foo",
-			$$operationMode : "Server",
-			$$updateGroupId : "bar"
-		});
-		assert.strictEqual(oBinding.getGroupId(), "foo");
-		assert.strictEqual(oBinding.sOperationMode, "Server");
-		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
-
-		// code under test
-		oBinding.applyParameters({
-			$$groupId : "foo"
-		});
-		assert.strictEqual(oBinding.getGroupId(), "foo");
-		assert.strictEqual(oBinding.sOperationMode, undefined);
-		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
-
-		// code under test
-		oBinding.applyParameters({});
-		assert.strictEqual(oBinding.getGroupId(), "baz");
-		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
-
-		// checkBindingParameters also called for relative binding
-		oPrototypeMock = this.mock(ODataListBinding.prototype);
-		oPrototypeMock.expects("applyParameters").withExactArgs({}); // called by c'tor
-		oBinding = this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS");
-		oPrototypeMock.restore();
-		// code under test
-		oBinding.applyParameters({
-			$$groupId : "foo",
-			$$operationMode : "Server",
-			$$updateGroupId : "bar"
-		});
-		assert.strictEqual(oBinding.getGroupId(), "foo");
-		assert.strictEqual(oBinding.sOperationMode, "Server");
-		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 	});
 
 	//*********************************************************************************************
@@ -2426,7 +2476,6 @@ sap.ui.define([
 		// code under test
 		oBinding.destroy();
 
-		assert.strictEqual(oBinding.oAggregation, undefined);
 		assert.strictEqual(oBinding.aApplicationFilters, undefined);
 		assert.strictEqual(oBinding.aContexts, undefined);
 		assert.strictEqual(oBinding.oDiff, undefined);
@@ -3471,7 +3520,7 @@ sap.ui.define([
 	QUnit.test("create: relative binding not yet resolved", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES");
 
-		//code under test
+		// code under test
 		assert.throws(function () {
 			oBinding.create();
 		}, new Error("Binding is not yet resolved: " + oBinding.toString()));
@@ -4391,16 +4440,17 @@ sap.ui.define([
 	result : ["a gt 42", "b eq 'before'"]
 }].forEach(function (oFixture, i) {
 	QUnit.test("fetchFilter:  list binding aggregates data " + i, function (assert) {
-		var oBinding = this.bindList("Set"),
+		var oAggregation = {},
+			oBinding = this.bindList("Set"),
 			oContext = {},
 			oFilter = {/*any filter*/},
 			oMetaModelMock = this.mock(this.oModel.oMetaModel);
 
-		oBinding.oAggregation = {};
+		oBinding.mParameters.$$aggregation = oAggregation;
 
 		this.mock(FilterProcessor).expects("combineFilters").returns(oFilter);
 		this.mock(_AggregationHelper).expects("splitFilter")
-			.withExactArgs(sinon.match.same(oFilter), sinon.match.same(oBinding.oAggregation))
+			.withExactArgs(sinon.match.same(oFilter), sinon.match.same(oAggregation))
 			.returns(oFixture.split);
 		this.mock(this.oModel).expects("resolve").withExactArgs("Set", sinon.match.same(oContext))
 			.returns("~");
@@ -4445,25 +4495,6 @@ sap.ui.define([
 			oBinding.getOrderby();
 		}, new Error("Unsupported sorter: foo - "
 			+ "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("changeParameters: relative w/o initial mParameters", function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/TEAMS", 0),
-			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext);
-
-		assert.strictEqual(oBinding.oCachePromise.getResult(), null, "noCache");
-
-		this.mock(oBinding).expects("checkSuspended").never();
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
-		this.mock(oBinding).expects("getGroupId").returns("$auto");
-		this.mock(oBinding).expects("isRootBindingSuspended").returns(false);
-
-		// code under test;
-		oBinding.changeParameters({$filter : "bar"});
-
-		assert.ok(oBinding.oCachePromise.getResult() !== null,
-			"Binding gets cache after changeParameters");
 	});
 
 	//*********************************************************************************************
@@ -4577,7 +4608,8 @@ sap.ui.define([
 				.returns(mMergedQueryOptions);
 			this.mock(_AggregationCache).expects("create")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-					sinon.match.same(oBinding.oAggregation), sinon.match.same(mMergedQueryOptions))
+					sinon.match.same(oBinding.mParameters.$$aggregation),
+					sinon.match.same(mMergedQueryOptions))
 				.returns(oCache);
 
 			// code under test
@@ -4791,7 +4823,6 @@ sap.ui.define([
 				visible : false
 			}],
 			sAggregation = JSON.stringify(aAggregation),
-			sApply = "A.P.P.L.E.",
 			oBinding = this.bindList("/EMPLOYEES"),
 			oTransformedAggregation = {
 				aggregate : {
@@ -4805,15 +4836,12 @@ sap.ui.define([
 				}
 			};
 
-		this.mock(_AggregationHelper).expects("buildApply").withExactArgs(oTransformedAggregation)
-			.returns({$apply : sApply});
-		this.mock(oBinding).expects("changeParameters").withExactArgs({$apply : sApply});
+		this.mock(oBinding).expects("setAggregation").withExactArgs(oTransformedAggregation);
 
 		// code under test
 		assert.strictEqual(oBinding.updateAnalyticalInfo(aAggregation), undefined);
 
 		assert.strictEqual(JSON.stringify(aAggregation), sAggregation, "unchanged");
-		assert.deepEqual(oBinding.oAggregation, oTransformedAggregation);
 
 		this.mock(this.oModel).expects("bindingDestroyed")
 			.withExactArgs(sinon.match.same(oBinding));
@@ -4891,22 +4919,18 @@ sap.ui.define([
 
 			QUnit.test(sTitle, function (assert) {
 				var sAggregation = JSON.stringify(oFixture.aAggregation),
-					sApply = "A.P.P.L.E.",
 					oBinding = this.bindList("/EMPLOYEES"),
-					oChangeParametersExpectation,
 					mMeasureRange = {},
 					oNewCache = {getMeasureRangePromise : function () {}},
-					oResult;
+					oResult,
+					oSetAggregationExpectation;
 
-				this.mock(_AggregationHelper).expects("buildApply")
-					.withExactArgs(oFixture.oTransformedAggregation)
-					.returns({$apply : sApply});
-				oChangeParametersExpectation = this.mock(oBinding).expects("changeParameters")
-					.withExactArgs({$apply : sApply});
+				oSetAggregationExpectation = this.mock(oBinding).expects("setAggregation")
+					.withExactArgs(oFixture.oTransformedAggregation);
 				this.mock(oBinding).expects("getRootBindingResumePromise").withExactArgs()
 					.callsFake(function () {
-						assert.ok(oChangeParametersExpectation.called,
-							"changeParameters called before");
+						assert.ok(oSetAggregationExpectation.called,
+							"setAggregation called before");
 						oBinding.oCache = oNewCache;
 						oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 						return SyncPromise.resolve();
@@ -4921,7 +4945,6 @@ sap.ui.define([
 
 				assert.strictEqual(JSON.stringify(oFixture.aAggregation), sAggregation,
 					"unchanged");
-				assert.deepEqual(oBinding.oAggregation, oFixture.oTransformedAggregation);
 				assert.ok(oResult.measureRangePromise instanceof Promise);
 
 				return oResult.measureRangePromise.then(function (mMeasureRange0) {

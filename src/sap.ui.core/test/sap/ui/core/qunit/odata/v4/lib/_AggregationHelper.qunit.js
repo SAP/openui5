@@ -22,9 +22,6 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		oAggregation : {},
-		sApply : ""
-	}, {
 		oAggregation : {
 			group : {
 				BillToParty : {}
@@ -386,6 +383,11 @@ sap.ui.define([
 			}),
 			{$apply : "groupby((BillToParty),aggregate(Amount))"
 				+ "/concat(aggregate(Amount with max as UI5max__Amount),identity)"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply: no $apply needed", function (assert) {
+		assert.deepEqual(_AggregationHelper.buildApply({}), {});
 	});
 
 	//*********************************************************************************************
