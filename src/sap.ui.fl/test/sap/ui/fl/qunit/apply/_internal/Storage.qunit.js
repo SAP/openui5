@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
@@ -13,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
+	"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/base/util/merge"
 ], function (
@@ -20,7 +20,6 @@ sap.ui.define([
 	Storage,
 	Change,
 	Variant,
-	StorageResultMerger,
 	StorageUtils,
 	FlUtils,
 	StaticFileConnector,
@@ -28,6 +27,7 @@ sap.ui.define([
 	JsObjectConnector,
 	KeyUserConnector,
 	PersonalizationConnector,
+	ObjectPathConnector,
 	ObjectStorageUtils,
 	merge
 ) {
@@ -54,8 +54,6 @@ sap.ui.define([
 
 
 	QUnit.module("Storage merges results from different connectors", {
-		beforeEach: function () {
-		},
 		afterEach: function () {
 			sandbox.restore();
 			JsObjectConnector.oStorage.clear();
@@ -81,6 +79,21 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: "abc123"}));
+				sap.ui.getCore().getConfiguration().getFlexibilityServices.restore();
+			});
+		});
+
+		QUnit.test("Given 2 connectors provide url and path properties", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "ObjectPathConnector", path: "path/to/data"},
+				{connector: "PersonalizationConnector", url: "url/to/something"}
+			]);
+			var oObjectStorageStub = sandbox.stub(ObjectPathConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			var oPersoStub = sandbox.stub(PersonalizationConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+
+			return Storage.loadFlexData({reference: "app.id"}).then(function () {
+				assert.equal(oObjectStorageStub.lastCall.args[0].path, "path/to/data", "the path parameter was passed");
+				assert.equal(oPersoStub.lastCall.args[0].url, "url/to/something", "the url parameter was passed");
 				sap.ui.getCore().getConfiguration().getFlexibilityServices.restore();
 			});
 		});
@@ -273,7 +286,6 @@ sap.ui.define([
 			});
 		});
 	});
-
 
 	QUnit.module("Given all connector stubs", {
 		beforeEach: function () {
@@ -499,6 +511,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery('#qunit-fixture').hide();
+		jQuery("#qunit-fixture").hide();
 	});
 });

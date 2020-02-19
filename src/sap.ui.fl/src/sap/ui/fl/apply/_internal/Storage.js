@@ -42,7 +42,7 @@ sap.ui.define([
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
 			var oConnectorSpecificPropertyBag = Object.assign({}, mPropertyBag, {
 				url: oConnectorConfig.url,
-				path: oConnectorConfig.url
+				path: oConnectorConfig.path
 			});
 
 			var sDraftLayer = mPropertyBag.draftLayer || FlUtils.getUrlParameter(LayerUtils.FL_DRAFT_PARAM) || "";
