@@ -86,8 +86,12 @@ sap.ui.define([
 		if (this._mAllProperties[sCamelizedAttributeName]) {
 			this._mAllProperties[sCamelizedAttributeName].set(this._oControlInstance, vNewValue);
 		} else if (this._mAllAssociations[sCamelizedAttributeName]) {
-			var vValue = document.getElementById(vNewValue)._getControl();
-			this._mAllAssociations[sCamelizedAttributeName].set(this._oControlInstance, vValue);
+			var element = document.getElementById(vNewValue);
+			if (element instanceof CustomElementBase) {
+				vNewValue =  document.getElementById(vNewValue)._getControl();
+			}
+
+			this._mAllAssociations[sCamelizedAttributeName].set(this._oControlInstance, vNewValue);
 		}
 	};
 

@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>sap.ui.integration.Host Test</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+	<script src="../../../../resources/sap-ui-integration.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_fiori_3"
+			data-sap-ui-libs="sap.m, sap.f, sap.ui.integration"
+			data-sap-ui-resourceroots='{
+		"test" : "./"
+	}'></script>
+
+
+
+
+	<script>
+
+
+	</script>
+
+	<script>
+		customElements.whenDefined("ui-integration-card").then(function () {
+			var mobileCards = [],
+					timeout = 100;
+
+			function fnCardAction(event) {
+
+				var type = event.getParameter('type'),
+						actionSource = event.getParameter('actionSource'),
+						manifestParameters = event.getParameter('manifestParameters');
+
+				console.error("Card Action ", manifestParameters);
+			}
+
+			var host = new sap.ui.integration.Host('host1', {
+				actions: [
+					{
+						type: 'Navigation',
+						url: "http://www.sap.com",
+						target: "_blank",
+						text: 'AutoOpen - SAP website'
+					},
+					{
+						type: 'Navigation',
+						parameters: {
+							url: "http://www.sap.com",
+							target: "_blank"
+						},
+						text: 'Navigation - SAP website'
+					},
+					{
+						type: 'Custom',
+						icon: 'sap-icon://add',
+						text: 'Add',
+						tooltip: 'Add',
+						buttonType: 'Accept',
+						visible: function (card) {
+							return card.getId() !== 'card3';
+						},
+						enabled: function (card) {
+							return card.getId() !== 'card1';
+						},
+						action: function (card, button) {
+							alert('Card id = ' + card.getId() + ' Button = ' + button.getText());
+						}
+					},
+					{
+						type: 'Custom',
+						icon: 'sap-icon://delete',
+						text: 'Delete',
+						tooltip: 'Delete',
+						visible: function (card, button) {
+							return card.getId() !== 'card2' && card.getId() !== 'card3';
+						},
+						enabled: true,
+						action: function (card, button) {
+							alert('Card id = ' + card.getId() + ' Button = ' + button.getText());
+						}
+					}
+				],
+				onAction: function (event) {
+
+					var type = event.getParameter('type'),
+							actionSource = event.getParameter('actionSource'),
+							manifestParameters = event.getParameter('manifestParameters');
+
+					console.error("Host Action ", manifestParameters);
+				}
+			});
+
+			document.getElementById('cardWithActions1').setAttribute('host', 'host1');
+
+		});
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+
+<div id="preview">
+</div>
+
+<ui-integration-card
+		id="cardWithActions"
+		host="host1"
+		manifest="./widgets/cardmanifests/list.actions.manifest.json"
+		data-mode="Active">
+</ui-integration-card>
+
+<ui-integration-card
+		id="cardWithActions1"
+		manifest="./widgets/cardmanifests/list.actions.manifest.json"
+		data-mode="Active">
+</ui-integration-card>
+
+</body>
+
+</html>
