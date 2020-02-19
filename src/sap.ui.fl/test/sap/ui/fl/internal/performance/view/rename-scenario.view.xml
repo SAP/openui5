@@ -1,14 +1,14 @@
 <mvc:View
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:l="sap.ui.layout"
-    xmlns:core="sap.ui.core">
-    <l:HorizontalLayout id="HorizontalLayout">
-        <l:VerticalLayout id="ContainerLayout">
-            <Label id="ContainerLabel" text="ContainerLayout" />
-            <l:VerticalLayout id="Layout">
-                <Label id="initialLabel" text="initialLabel" />
-            </l:VerticalLayout>
-        </l:VerticalLayout>
-    </l:HorizontalLayout>
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<l:HorizontalLayout id="HorizontalLayout">
+		<l:VerticalLayout id="ContainerLayout">
+			<Label id="ContainerLabel" text="ContainerLayout" />
+			<l:VerticalLayout id="Layout">
+				<Label id="initialLabel" text="initialLabel" />
+			</l:VerticalLayout>
+		</l:VerticalLayout>
+	</l:HorizontalLayout>
 </mvc:View>

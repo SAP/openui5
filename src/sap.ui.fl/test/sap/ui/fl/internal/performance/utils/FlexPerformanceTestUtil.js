@@ -1,5 +1,6 @@
 sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/m/Button",
@@ -8,11 +9,11 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/m/RatingIndicator",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/layout/HorizontalLayout",
 	"sap/m/VBox",
 	"sap/base/Log"
-], function (
+], function(
 	FlexRuntimeInfoAPI,
+	PersistenceWriteAPI,
 	FlexControllerFactory,
 	FlUtils,
 	Button,
@@ -21,17 +22,20 @@ sap.ui.define([
 	Slider,
 	RatingIndicator,
 	VerticalLayout,
-	HorizontalLayout,
 	VBox,
-	BaseLog
+	Log
 ) {
 	"use strict";
 	var sMassiveLabel = "applyChangesMassive";
 	var sIdForStatus = "__duration";
 
-	function _writeData (oLayout, sControlId, sMeasure) {
-		var sDurationText = sMeasure + " = " + window.wpp.customMetrics[sMeasure] + " ms";
-		BaseLog.info(sDurationText);
+	var FlexPerformanceTestUtil = {};
+
+	function _writeData (sControlId) {
+		sControlId = sControlId || sIdForStatus;
+		var oLayout = sap.ui.getCore().byId("idMain1--Layout");
+		var sDurationText = sMassiveLabel + " = " + window.wpp.customMetrics[sMassiveLabel] + " ms";
+		Log.info(sDurationText);
 		_addLabel(oLayout, sControlId, sDurationText);
 		window.performance.clearMarks();
 		window.performance.clearMeasures();
@@ -44,48 +48,31 @@ sap.ui.define([
 		oLayout.addContent(oControl);
 	}
 
-	function _startApplyScenario(sControlId, sMeasure, oLayout, fnAddControls) {
-		var oPromise = Promise.resolve()
-			.then(function() {
-				// start performance measurement
-				Util.startMeasurement(sMeasure);
-				var oControlToBeChanged = fnAddControls(sControlId);
-				return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged});
-			})
-			.then(function() {
-				Util.stopMeasurement(sMeasure);
-				_writeData(oLayout, sIdForStatus, sMeasure);
-				sap.ui.getCore().applyChanges();
-			});
-
-		return oPromise
-			.catch(function (vError) {
-				BaseLog.error(vError);
-			});
+	function _startApplyScenario(sControlId, fnAddControls) {
+		FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
+		var oControlToBeChanged = fnAddControls(sControlId);
+		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
+		.then(function() {
+			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
+			_writeData();
+			sap.ui.getCore().applyChanges();
+		})
+		.catch(function (vError) {
+			Log.error(vError);
+		});
 	}
-
 
 	/*
 	 *	ContainerLayout (verticalLayout)
 	 *		containerLabel (label)
 	 *		Layout (verticalLayout)
 	 *			initialLabel (label) -- will be added as selector to apply rename changes
-	 *			initialLabel1 (label) -- will be added as selector to apply rename changes
-	 *			initialLabel2 (label) -- will be added as selector to apply rename changes
-	 *			initialLabel3 (label) -- will be added as selector to apply rename changes
 	 */
-	function _startRenameScenario() {
+	function _createControlsForRename(sControlId) {
 		var oLayout = sap.ui.getCore().byId("idMain1--Layout");
-		return _startApplyScenario(
-			"idMain1--initialLabel",
-			sMassiveLabel,
-			oLayout,
-			function (sControlId) {
-				var oControl = new Label(sControlId, {text: sControlId});
-				oLayout.addContent(oControl);
-				return oControl;
-			}
-		);
+		var oControl = new Label(sControlId, {text: sControlId});
+		oLayout.addContent(oControl);
+		return oControl;
 	}
 
 	/*
@@ -101,104 +88,140 @@ sap.ui.define([
 	 *					.ratingIndicator (ratingIndicator) -- will be added as selector to apply changes
 	 *					.button (button) -- will be added as selector to apply changes
 	 */
-	function _startDiverseScenario() {
+	function _createControlsForDiverse(sControlId) {
 		var oLayout = sap.ui.getCore().byId("idMain1--Layout");
-		return _startApplyScenario(
-			"idMain1--dependencyScenarioControl",
-			sMassiveLabel,
-			oLayout,
-			function (sControlId) {
-				var oInnerLayout = new VerticalLayout({
-					id : sControlId + ".layout",
-					content :  [
-						new Label(sControlId + ".title", {text: sControlId + ".title"}),
-						new VBox(sControlId + ".vbox", {
-							items: [
-								new Label(sControlId + ".label", {text: sControlId + ".label"}),
-								new DatePicker(sControlId + ".datePicker"),
-								new Slider(sControlId + ".slider"),
-								new RatingIndicator(sControlId + ".ratingIndicator"),
-								new Button(sControlId + ".button", {text: sControlId + ".button"})
-							]
-						})
+		var oInnerLayout = new VerticalLayout({
+			id : sControlId + ".layout",
+			content :  [
+				new Label(sControlId + ".title", {text: sControlId + ".title"}),
+				new VBox(sControlId + ".vbox", {
+					items: [
+						new Label(sControlId + ".label", {text: sControlId + ".label"}),
+						new DatePicker(sControlId + ".datePicker"),
+						new Slider(sControlId + ".slider"),
+						new RatingIndicator(sControlId + ".ratingIndicator"),
+						new Button(sControlId + ".button", {text: sControlId + ".button"})
 					]
-				});
-				oLayout.addContent(oInnerLayout);
-				return oLayout;
-			}
-		);
+				})
+			]
+		});
+		oLayout.addContent(oInnerLayout);
+		return oLayout;
 	}
 
-	var Util = {
-		stopMeasurement: function (sMeasure) {
-			sMeasure = sMeasure || sMassiveLabel;
-			window.performance.measure(sMeasure, sMeasure + ".start");
-			window.wpp.customMetrics[sMeasure] = window.performance.getEntriesByName(sMeasure)[0].duration;
-		},
+	function _startRenameScenario() {
+		return _startApplyScenario("idMain1--initialLabel", _createControlsForRename);
+	}
 
-		startMeasurement: function (sMeasure) {
-			sMeasure = sMeasure || sMassiveLabel;
-			window.performance.mark(sMeasure + ".start");
-		},
+	function _startDiverseScenario() {
+		return _startApplyScenario("idMain1--dependencyScenarioControl", _createControlsForDiverse);
+	}
 
-		startMeasurementForXmlPreprocessing: function (oComponent) {
-			// Monkey patching of FlexController.processXmlView function
-			var oFlexController = FlexControllerFactory.createForControl(oComponent);
-			var fnOriginalProcessXmlView = oFlexController.processXmlView.bind(oFlexController);
-			oFlexController.processXmlView = function () {
-				Util.startMeasurement(sMassiveLabel);
-				return fnOriginalProcessXmlView.apply(this, arguments)
-					.then(function (vReturn) {
-						Util.stopMeasurement(sMassiveLabel);
-						return vReturn;
-					});
-			};
-		},
+	function _startVariantsScenario() {
+		_createControlsForDiverse("idMain1--dependencyScenarioControl");
+		var oComponent = FlUtils.getAppComponentForControl(sap.ui.getCore().byId("idMain1--Layout"));
+		var oControlToBeChanged = sap.ui.getCore().byId("idMain1--dependencyScenarioControl.vbox");
 
-		waitForChangesAndWriteData: function (oControlToBeChanged) {
-			var oLayout = sap.ui.getCore().byId("idMain1--Layout");
-			return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
-				.then(function() {
-					_writeData(oLayout, sIdForStatus, sMassiveLabel);
-				});
-		},
+		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
+		.then(function() {
+			FlexPerformanceTestUtil.startMeasurement();
+			return FlexPerformanceTestUtil.updateVariant(oComponent);
+		})
+		.then(FlexPerformanceTestUtil.stopMeasurement)
+		.then(FlexPerformanceTestUtil.showMeasurementData);
+	}
 
-		runPerformanceTests: function () {
-			switch (FlUtils.getUrlParameter("sap-ui-fl-test-case")) {
-				case "rename":
-					return _startRenameScenario();
-				case "diverse":
-				default:
-					return _startDiverseScenario();
+	function _startSaveAsScenario() {
+		_createControlsForDiverse("idMain1--dependencyScenarioControl");
+		var oVMControl = sap.ui.getCore().byId("idMain1--variantManagementOrdersTable");
+		var oControlToBeChanged = sap.ui.getCore().byId("idMain1--dependencyScenarioControl.vbox");
 
-			}
-		},
-
-		createContent: function () {
-			//create Vertical Layout
-			var oLayout = new VerticalLayout(this.createId("Layout"));
-			var oContainerLayout = new VerticalLayout({
-				id : this.createId("ContainerLayout"),
-				content :  [
-					new Label(this.createId("containerLabel"), {
-						text : "ContainerLayout"
-					}),
-					oLayout
-				]
-			});
-			var oHorizontalLayout = new HorizontalLayout(this.createId("HorizontalLayout"), {
-				content : [oContainerLayout]
-			});
-			return oHorizontalLayout;
-		},
-
-		updateVariant: function (oComponent) {
+		// wait for the initial changes to be applied
+		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
+		.then(function() {
+			var oComponent = FlUtils.getAppComponentForControl(oControlToBeChanged);
 			var oVariantModel = oComponent.getModel(FlUtils.VARIANT_MODEL_NAME);
-			return oVariantModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "id_1570801327284_11", oComponent);
+			// enable CUSTOMER changes
+			oVariantModel.setModelPropertiesForControl("idMain1--variantManagementOrdersTable", true, oVMControl);
+			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
+			oVMControl.fireSave({
+				def: false,
+				overwrite: false,
+				name: "newVariant"
+			});
+			return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged});
+		})
+		.then(function() {
+			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
+			_writeData();
+			return PersistenceWriteAPI.reset({
+				selector: oControlToBeChanged,
+				layer: "CUSTOMER",
+				generator: "Change.createInitialFileContent"
+			});
+		})
+		.then(PersistenceWriteAPI.reset.bind(null, {
+			selector: oControlToBeChanged,
+			layer: "USER",
+			generator: "Change.createInitialFileContent"
+		}));
+	}
+
+	FlexPerformanceTestUtil.stopMeasurement = function (sMeasure) {
+		sMeasure = sMeasure || sMassiveLabel;
+		window.performance.measure(sMeasure, sMeasure + ".start");
+		window.wpp.customMetrics[sMeasure] = window.performance.getEntriesByName(sMeasure)[0].duration;
+	};
+
+	FlexPerformanceTestUtil.startMeasurement = function (sMeasure) {
+		sMeasure = sMeasure || sMassiveLabel;
+		window.performance.mark(sMeasure + ".start");
+	};
+
+	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function (oComponent) {
+		// Monkey patching of FlexController.processXmlView function
+		var oFlexController = FlexControllerFactory.createForControl(oComponent);
+		var fnOriginalProcessXmlView = oFlexController.processXmlView.bind(oFlexController);
+		oFlexController.processXmlView = function () {
+			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
+			return fnOriginalProcessXmlView.apply(this, arguments)
+				.then(function (vReturn) {
+					FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
+					return vReturn;
+				});
+		};
+	};
+
+	FlexPerformanceTestUtil.waitForChangesAndWriteData = function (oControlToBeChanged) {
+		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged}).then(function() {
+			_writeData();
+		});
+	};
+
+	FlexPerformanceTestUtil.showMeasurementData = function() {
+		_writeData();
+	};
+
+	FlexPerformanceTestUtil.runPerformanceTests = function () {
+		switch (FlUtils.getUrlParameter("sap-ui-fl-test-case")) {
+			case "diverse":
+				return _startDiverseScenario();
+			case "variants":
+				return _startVariantsScenario();
+			case "saveas":
+				return _startSaveAsScenario();
+			case "rename":
+			default:
+				return _startRenameScenario();
 		}
 	};
 
-	window.runPerformanceTests = Util.runPerformanceTests;
+	FlexPerformanceTestUtil.updateVariant = function (oComponent) {
+		var oVariantModel = oComponent.getModel(FlUtils.VARIANT_MODEL_NAME);
+		return oVariantModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "id_1570801327284_11", oComponent);
+	};
 
-	return Util;
+	window.runPerformanceTests = FlexPerformanceTestUtil.runPerformanceTests;
+
+	return FlexPerformanceTestUtil;
 }, true);
