@@ -455,18 +455,20 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				ariaProps = {
 					level: '1'
 				};
-
 				//checking if there are items level 2 in the NavigationListItem
 				//of yes - there is need of aria-expanded property
 				if (isListExpanded && this.getItems().length !== 0) {
 					ariaProps.expanded = isNavListItemExpanded;
 				}
 
+
 			rm.openStart("div");
 
 			rm.class("sapTntNavLIItem");
 			rm.class("sapTntNavLIGroup");
-
+			if (isNavListItemExpanded && this.getItems().length !== 0) {
+				rm.class("sapTntNavLIGroupExpandedItems");
+			}
 			if (!this.getEnabled()) {
 				rm.class("sapTntNavLIItemDisabled");
 			} else {
