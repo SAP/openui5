@@ -270,7 +270,10 @@ sap.ui.define([
 			Log.error("sap.ui.integration.designtime.baseEditor.BaseEditor: unsupported data type specified in setJson()");
 		}
 
-		if (oJson) {
+		if (
+			oJson
+			&& JSON.stringify(this.getProperty("json")) !== JSON.stringify(oJson)
+		) {
 			this.setProperty("json", oJson);
 			this.fireJsonChange({
 				json: oJson
@@ -729,11 +732,7 @@ sap.ui.define([
 	};
 
 	BaseEditor.prototype.getJson = function () {
-		return _merge({}, this._getJson()); // To avoid manipulations with the json outside of the editor
-	};
-
-	BaseEditor.prototype._getJson = function () {
-		return this.getProperty("json");
+		return _merge({}, this.getProperty("json")); // To avoid manipulations with the json outside of the editor
 	};
 
 	BaseEditor.prototype._getContextPath = function () {
@@ -764,7 +763,7 @@ sap.ui.define([
 	BaseEditor.prototype._onValueChange = function (oEvent) {
 		var oPropertyEditor = oEvent.getSource();
 		var sPath = oEvent.getParameter("path");
-		var oJson = this._getJson() || {};
+		var oJson = this.getJson() || {};
 		var vValue = oEvent.getParameter("value");
 
 		if (sPath[0] === "/") {
