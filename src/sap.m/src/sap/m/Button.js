@@ -283,6 +283,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.ontouchend = function(oEvent) {
+		var sEndingTagId;
+
 		this._buttonPressed = oEvent.originalEvent && oEvent.originalEvent.buttons & 1;
 
 		// set inactive button state
@@ -290,13 +292,20 @@ sap.ui.define([
 
 		if (this._bRenderActive) {
 			delete this._bRenderActive;
+			if (oEvent.originalEvent && oEvent.originalEvent.type in { mouseup: 1, touchend: 1 }) {
+				this.ontap(oEvent);
+			}
 		}
 
 		if (!sap.ui.Device.browser.msie) {
 			// get the tag ID where the touch event ended
-			this._sEndingTagId = oEvent.target.id.replace(this.getId(), '');
+			sEndingTagId = oEvent.target.id.replace(this.getId(), '');
 			// there are some cases when tap event won't come. Simulate it:
-			if (this._buttonPressed === 0 && ((this._sTouchStartTargetId === "-BDI-content" && (this._sEndingTagId === '-content' || this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sTouchStartTargetId === "-content" && (this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sTouchStartTargetId === '-img' && this._sEndingTagId !== '-img'))) {
+			if (this._buttonPressed === 0
+				&& ((this._sTouchStartTargetId === "-BDI-content"
+						&& (sEndingTagId === '-content' || sEndingTagId === '-inner' || sEndingTagId === '-img'))
+					|| (this._sTouchStartTargetId === "-content" && (sEndingTagId === '-inner' || sEndingTagId === '-img'))
+					|| (this._sTouchStartTargetId === '-img' && sEndingTagId !== '-img'))) {
 				this.ontap(oEvent);
 			}
 		}
@@ -324,6 +333,7 @@ sap.ui.define([
 	Button.prototype.ontap = function(oEvent) {
 		// mark the event for components that needs to know if the event was handled by the button
 		oEvent.setMarked();
+		delete this._bRenderActive;
 
 		// fire tap event
 		if (this.getEnabled() && this.getVisible()) {
