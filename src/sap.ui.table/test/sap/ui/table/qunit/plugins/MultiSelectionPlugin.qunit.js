@@ -209,77 +209,159 @@ sap.ui.define([
 		assert.equal(this.oTable.getSelectionMode(), SelectionMode.MultiToggle, "The SelectionMode is properly set in the Table");
 	});
 
-	QUnit.test("Selection using addSelectionInterval: number of items in range below limit", function(assert) {
+	QUnit.test("Selection using addSelectionInterval: Selection not possible", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var oSelectionChangeSpy = sinon.spy();
+		var iSelectableCount = oSelectionPlugin.getSelectableCount();
 
-		oSelectionPlugin.setLimit(5);
-		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
+		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 
-		return new Promise(function(resolve) {
-			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-				assert.ok(fnGetContexts.calledWithExactly(0, 5), "getContexts is called with the correct parameters");
-				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
-				assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4], "rowIndices parameter is correct");
-				assert.notOk(oEvent.getParameters().limitReached, "limitReached parameter is correct");
-				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4],
-					"Range selection is possible for number of items below limit");
-				resolve();
+		return oSelectionPlugin.addSelectionInterval(-1, -2).then(function() {
+			assert.ok(false, "The promise should have been rejected because the indices are out of range");
+		}).catch(function(oError) {
+			assert.deepEqual(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
+			assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+			assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+			assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+
+		}).then(function() {
+			sinon.stub(oSelectionPlugin, "getSelectableCount").returns(0);
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.addSelectionInterval(0, 0).then(function() {
+				assert.ok(false, "The promise should have been rejected because the indices are out of range");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+				oSelectionPlugin.getSelectableCount.restore();
 			});
 
-			oSelectionPlugin.addSelectionInterval(0, 4);
 		}).then(function() {
-			return new Promise(function(resolve) {
-				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-					assert.ok(fnGetContexts.calledWithExactly(1, 5), "getContexts is called with the correct parameters");
-					assert.ok(fnGetContexts.calledOnce, "getContexts called once");
-					assert.deepEqual(oEvent.getParameters().rowIndices, [5], "rowIndices parameter is correct");
-					assert.notOk(oEvent.getParameters().limitReached, "limitReached parameter is correct");
-					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
-						"Multiple selections are possible. When indexFrom is already selected, the selection starts from the next index");
-					resolve();
-				});
-
-				fnGetContexts.reset();
-				oSelectionPlugin.addSelectionInterval(0, 5);
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.addSelectionInterval(iSelectableCount, iSelectableCount).then(function() {
+				assert.ok(false, "The promise should have been rejected because the indices are out of range");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
 			});
+
 		}).then(function() {
-			return new Promise(function(resolve) {
-				var oSelectionChangeSpy = sinon.spy();
-				oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
-				oSelectionPlugin.addSelectionInterval(5, 5);
-				setTimeout(function () {
-					assert.ok(oSelectionChangeSpy.notCalled, "The selection is not changed because the index was already selected");
-					resolve();
-				}, 100);
+			oSelectionPlugin.setSelectionMode(SelectionMode.None);
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			oSelectionPlugin.addSelectionInterval(6, 7).then(function() {
+				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
+			}).catch(function(oError){
+				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
 			});
 		});
 	});
 
-	QUnit.test("Reverse selection using addSelectionInterval: number of items in range below limit", function(assert) {
+	QUnit.test("Selection using addSelectionInterval: Number of items in range below limit", function(assert) {
+		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var oSelectionChangeSpy = sinon.spy();
+		var iSelectableCount = oSelectionPlugin.getSelectableCount();
+
+		oSelectionPlugin.setLimit(5);
+		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
+
+		oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+			assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4], "selectionChange event: \"rowIndices\" parameter is correct");
+			assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
+		});
+		return oSelectionPlugin.addSelectionInterval(0, 4).then(function() {
+			assert.ok(fnGetContexts.calledWithExactly(0, 5), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4],
+				"Range selection is possible for number of items below limit");
+			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+
+		}).then(function() {
+			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+				assert.deepEqual(oEvent.getParameters().rowIndices, [5], "selectionChange event: \"rowIndices\" parameter is correct");
+				assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
+			});
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.addSelectionInterval(-1, 5).then(function() {
+				assert.ok(fnGetContexts.calledWithExactly(1, 5), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
+					"Multiple selections are possible. When indexFrom is already selected, the selection starts from the next index");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+			});
+
+		}).then(function() {
+			return new Promise(function(resolve) {
+				fnGetContexts.reset();
+				oSelectionChangeSpy.reset();
+				oSelectionPlugin.addSelectionInterval(5, 5);
+				setTimeout(function () {
+					assert.ok(fnGetContexts.calledWithExactly(5, 1), "getContexts was called with the correct parameters");
+					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
+						"The selection is not changed because the index was already selected");
+					assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+					resolve();
+				}, 100);
+			});
+
+		}).then(function() {
+			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+				assert.deepEqual(oEvent.getParameters().rowIndices, [iSelectableCount - 1],
+					"selectionChange event: \"rowIndices\" parameter is correct");
+				assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
+			});
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.addSelectionInterval(iSelectableCount - 1, iSelectableCount + 100).then(function() {
+				assert.ok(fnGetContexts.calledWithExactly(iSelectableCount - 1, 1), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5, iSelectableCount - 1],
+					"Range selection is possible for number of items below limit");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+			});
+
+		}).then(function() {
+			return oSelectionPlugin.addSelectionInterval(-1, -1).catch(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5, iSelectableCount - 1], "The selection did not change");
+			});
+		});
+	});
+
+	QUnit.test("Reverse selection using addSelectionInterval: Number of items in range below limit", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
 
 		oSelectionPlugin.setLimit(5);
-		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
 
 		return new Promise(function(resolve) {
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-				assert.ok(fnGetContexts.calledWithExactly(5, 5), "getContexts is called with the correct parameters");
-				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
+				assert.ok(fnGetContexts.calledWithExactly(5, 5), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [5, 6, 7, 8, 9], "rowIndices parameter is correct");
 				assert.notOk(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9],
 					"Reverse range selection is possible for number of items below limit");
 				resolve();
 			});
-
 			oSelectionPlugin.addSelectionInterval(9, 5);
+
 		}).then(function() {
 			return new Promise(function(resolve) {
 				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-					assert.ok(fnGetContexts.calledWithExactly(4, 5), "getContexts is called with the correct parameters");
-					assert.ok(fnGetContexts.calledOnce, "getContexts called once");
+					assert.ok(fnGetContexts.calledWithExactly(4, 5), "getContexts was called with the correct parameters");
+					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 					assert.deepEqual(oEvent.getParameters().rowIndices, [4], "rowIndices parameter is correct");
 					assert.notOk(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [4, 5, 6, 7, 8, 9],
@@ -293,38 +375,133 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Selection using addSelectionInterval: number of items in range above limit", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+	QUnit.test("Selection using addSelectionInterval: Number of items in range above limit", function(assert) {
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable._getSelectionPlugin();
+		var fnGetContexts = sinon.spy(oTable.getBinding("rows"), "getContexts");
+		var oSelectionChangeSpy = sinon.spy();
+		var oFirstVisibleRowChangedSpy = sinon.spy();
+		var oRowsUpdatedSpy = sinon.spy();
 
+		oTable.setVisibleRowCount(3);
 		oSelectionPlugin.setLimit(5);
-		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
+		sap.ui.getCore().applyChanges();
+
+		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
+		oTable.attachFirstVisibleRowChanged(oFirstVisibleRowChangedSpy);
+		oTable.attachEvent("_rowsUpdated", oRowsUpdatedSpy);
 
 		return new Promise(function(resolve) {
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-				assert.ok(fnGetContexts.calledWithExactly(0, 1), "getContexts is called with the correct parameters");
-				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
+				assert.ok(fnGetContexts.calledWithExactly(0, 1), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0], "First row is selected");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [0], "rowIndices parameter is correct");
 				assert.notOk(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				resolve();
 			});
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			oFirstVisibleRowChangedSpy.reset();
+			oRowsUpdatedSpy.reset();
+			oSelectionPlugin.addSelectionInterval(0, 0);
 
-			oSelectionPlugin.setSelectedIndex(0);
 		}).then(function() {
-			return new Promise(function(resolve) {
-				oSelectionPlugin.attachSelectionChange(function (oEvent) {
-					assert.ok(fnGetContexts.calledWithExactly(1, 6), "getContexts is called with the correct parameters");
-					assert.ok(fnGetContexts.calledOnce, "getContexts called once");
-					assert.deepEqual(oEvent.getParameters().rowIndices, [1, 2, 3, 4, 5], "rowIndices parameter is correct");
-					assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
-					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
-						"Selection is cut down to the possible limit. The first index was already selected, 5 new indices are added to the selection.");
-					resolve();
-				});
+			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+				assert.deepEqual(oEvent.getParameters().rowIndices, [1, 2, 3, 4, 5], "rowIndices parameter is correct");
+				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
+				assert.ok(fnGetContexts.calledWithExactly(1, 6), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+			});
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			oFirstVisibleRowChangedSpy.reset();
+			oRowsUpdatedSpy.reset();
+			return oSelectionPlugin.addSelectionInterval(0, 10).then(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
+					"Selection is cut down to the possible limit. The first index was already selected, 5 new indices are added to the selection.");
+				assert.equal(oTable.getFirstVisibleRow(), 4, "The firstVisibleRow is correct");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+				assert.ok(oFirstVisibleRowChangedSpy.calledOnce, "The \"firstVisibleRowChanged\" event was fired");
+				assert.ok(oRowsUpdatedSpy.calledOnce, "The \"_rowsUpdated\" event was fired");
+			});
 
-				fnGetContexts.reset();
-				oSelectionPlugin.addSelectionInterval(0, 10);
+		}).then(function() {
+			oSelectionPlugin.setEnableNotification(true);
+			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+				assert.deepEqual(oEvent.getParameters().rowIndices, [6, 7, 8, 9, 10], "rowIndices parameter is correct");
+				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
+				assert.ok(fnGetContexts.calledWithExactly(6, 6), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+			});
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			oFirstVisibleRowChangedSpy.reset();
+			oRowsUpdatedSpy.reset();
+			return oSelectionPlugin.addSelectionInterval(6, 15).then(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+					"Selection is cut down to the possible limit. The first index was already selected, 5 new indices are added to the selection.");
+				assert.equal(oTable.getFirstVisibleRow(), 9, "The firstVisibleRow is correct");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+				assert.ok(oFirstVisibleRowChangedSpy.calledOnce, "The \"firstVisibleRowChanged\" event was fired");
+				assert.ok(oRowsUpdatedSpy.calledOnce, "The \"_rowsUpdated\" event was fired");
+			});
+		});
+	});
+
+	QUnit.test("Selection using setSelectionInterval: Selection not possible", function(assert) {
+		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var oSelectionChangeSpy = sinon.spy();
+		var iSelectableCount = oSelectionPlugin.getSelectableCount();
+
+		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
+
+		return oSelectionPlugin.setSelectionInterval(-1, -2).then(function() {
+			assert.ok(false, "The promise should have been rejected because the indices are out of range");
+		}).catch(function(oError) {
+			assert.deepEqual(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
+			assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+			assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+			assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+
+		}).then(function() {
+			sinon.stub(oSelectionPlugin, "getSelectableCount").returns(0);
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.setSelectionInterval(0, 0).then(function() {
+				assert.ok(false, "The promise should have been rejected because the indices are out of range");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+				oSelectionPlugin.getSelectableCount.restore();
+			});
+
+		}).then(function() {
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.setSelectionInterval(iSelectableCount, iSelectableCount).then(function() {
+				assert.ok(false, "The promise should have been rejected because the indices are out of range");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+			});
+
+		}).then(function() {
+			oSelectionPlugin.setSelectionMode(SelectionMode.None);
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			oSelectionPlugin.setSelectionInterval(6, 7).then(function() {
+				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
+			}).catch(function(oError){
+				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
 			});
 		});
 	});
@@ -332,75 +509,217 @@ sap.ui.define([
 	QUnit.test("Selection using setSelectionInterval", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var oSelectionChangeSpy = sinon.spy();
+		var iSelectableCount = oSelectionPlugin.getSelectableCount();
 
 		oSelectionPlugin.setLimit(5);
-		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
+		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 
-		return new Promise(function(resolve) {
+		oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+			assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4], "selectionChange event: \"rowIndices\" parameter is correct");
+			assert.ok(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
+		});
+		fnGetContexts.reset();
+		oSelectionChangeSpy.reset();
+		return oSelectionPlugin.setSelectionInterval(-1, 10).then(function() {
+			assert.ok(fnGetContexts.calledWithExactly(0, 6), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4], "Selection is cut down to the possible limit");
+			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+
+		}).then(function() {
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-				assert.ok(fnGetContexts.calledWithExactly(0, 6), "getContexts is called with the correct parameters");
-				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
-				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4], "Selection is cut down to the possible limit");
-				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
-				resolve();
+				assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+					"selectionChange event: \"rowIndices\" parameter is correct");
+				assert.ok(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
+			});
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.setSelectionInterval(5, 15).then(function() {
+				assert.ok(fnGetContexts.calledWithExactly(5, 6), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "Selection is cut down to the possible limit");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
 			});
 
-			oSelectionPlugin.setSelectionInterval(0, 10);
 		}).then(function() {
 			return new Promise(function(resolve) {
-				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-					assert.ok(fnGetContexts.calledWithExactly(5, 6), "getContexts is called with the correct parameters");
-					assert.ok(fnGetContexts.calledOnce, "getContexts called once");
-					assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "rowIndices parameter is correct");
-					assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
-					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "Selection is cut down to the possible limit");
-					resolve();
-				});
-
 				fnGetContexts.reset();
-				oSelectionPlugin.setSelectionInterval(5, 15);
-			});
-		}).then(function() {
-			var oSelectionChangeSpy = sinon.spy();
-
-			oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
-			fnGetContexts.reset();
-			oSelectionPlugin.setSelectionInterval(5, 10); // Limit reached
-
-			return new Promise(function(resolve) {
-				setTimeout(function() {
-					assert.ok(fnGetContexts.calledWithExactly(5, 6), "getContexts is called with the correct parameters");
-					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
-					assert.ok(oSelectionChangeSpy.notCalled, "The selectionChange event is not fired");
-					resolve();
-				}, 100);
-			});
-		}).then(function() {
-			var oSelectionChangeSpy = sinon.spy();
-
-			oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
-			fnGetContexts.reset();
-			oSelectionPlugin.setSelectionInterval(5, 9); // Limit not reached
-
-			return new Promise(function(resolve) {
-				setTimeout(function() {
-					assert.ok(fnGetContexts.calledWithExactly(5, 5), "getContexts is called with the correct parameters");
-					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
-					assert.ok(oSelectionChangeSpy.notCalled, "The selectionChange event is not fired");
-					resolve();
-				}, 100);
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				var oSelectionChangeSpy = sinon.spy();
-				oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
-				oSelectionPlugin.setSelectionInterval(9, 9);
+				oSelectionChangeSpy.reset();
+				oSelectionPlugin.setSelectionInterval(5, 10); // Limit reached
 				setTimeout(function () {
-					assert.ok(fnGetContexts.calledWithExactly(9, 1), "getContexts is called with the correct parameters");
-					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [9], "The correct index is selected");
-					assert.ok(oSelectionChangeSpy.calledOnce, "The selectionChange event is fired once");
+					assert.ok(fnGetContexts.calledWithExactly(5, 6), "getContexts was called with the correct parameters");
+					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
+					assert.ok(oSelectionChangeSpy.notCalled, "The selectionChange event was not fired");
 					resolve();
 				}, 100);
+			});
+
+		}).then(function() {
+			return new Promise(function(resolve) {
+				fnGetContexts.reset();
+				oSelectionChangeSpy.reset();
+				oSelectionPlugin.setSelectionInterval(5, 9); // Limit not reached
+				setTimeout(function () {
+					assert.ok(fnGetContexts.calledWithExactly(5, 5), "getContexts was called with the correct parameters");
+					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
+					assert.ok(oSelectionChangeSpy.notCalled, "The selectionChange event was not fired");
+					resolve();
+				}, 100);
+			});
+
+		}).then(function() {
+			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+				assert.deepEqual(oEvent.getParameters().rowIndices, [5, 6, 7, 8, 9, iSelectableCount - 1],
+					"selectionChange event: \"rowIndices\" parameter is correct");
+				assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
+			});
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.setSelectionInterval(iSelectableCount - 1, iSelectableCount + 100).then(function() {
+				assert.ok(fnGetContexts.calledWithExactly(iSelectableCount - 1, 1), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [iSelectableCount - 1], "The correct index is selected");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+			});
+
+		}).then(function() {
+			return oSelectionPlugin.setSelectionInterval(-1, -1).catch(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [iSelectableCount - 1], "The selection did not change");
+			});
+		});
+	});
+
+	QUnit.test("Selection using setSelectedIndex: Selection not possible", function(assert) {
+		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var oSelectionChangeSpy = sinon.spy();
+		var iSelectableCount = oSelectionPlugin.getSelectableCount();
+
+		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
+
+		return oSelectionPlugin.setSelectedIndex(-1).then(function() {
+			assert.ok(false, "The promise should have been rejected because the indices are out of range");
+		}).catch(function(oError) {
+			assert.deepEqual(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
+			assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+			assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+			assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+
+		}).then(function() {
+			sinon.stub(oSelectionPlugin, "getSelectableCount").returns(0);
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.setSelectedIndex(0).then(function() {
+				assert.ok(false, "The promise should have been rejected because the indices are out of range");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+				oSelectionPlugin.getSelectableCount.restore();
+			});
+
+		}).then(function() {
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.setSelectedIndex(iSelectableCount).then(function() {
+				assert.ok(false, "The promise should have been rejected because the indices are out of range");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+			});
+
+		}).then(function() {
+			oSelectionPlugin.setSelectionMode(SelectionMode.None);
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			oSelectionPlugin.setSelectedIndex(1).then(function() {
+				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
+			}).catch(function(oError){
+				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+			});
+		});
+	});
+
+	QUnit.test("Selection using setSelectedIndex", function(assert) {
+		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var oSelectionChangeSpy = sinon.spy();
+
+		oSelectionPlugin.setLimit(5);
+		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
+
+		oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+			assert.deepEqual(oEvent.getParameters().rowIndices, [3], "selectionChange event: \"rowIndices\" parameter is correct");
+			assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
+		});
+		return oSelectionPlugin.setSelectedIndex(3).then(function() {
+			assert.ok(fnGetContexts.calledWithExactly(3, 1), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [3], "The selection is correct");
+			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+
+		}).then(function() {
+			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+				assert.deepEqual(oEvent.getParameters().rowIndices, [3, 5], "selectionChange event: \"rowIndices\" parameter is correct");
+				assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
+			});
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.setSelectedIndex(5).then(function() {
+				assert.ok(fnGetContexts.calledWithExactly(5, 1), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5], "The selection is correct");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+			});
+
+		}).then(function() {
+			return oSelectionPlugin.setSelectedIndex(-1).catch(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5], "The selection did not change");
+			});
+		});
+	});
+
+	QUnit.test("selectionChange event: custom payload", function(assert) {
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable._getSelectionPlugin();
+
+		oSelectionPlugin.setLimit(0);
+
+		return oSelectionPlugin.setSelectionInterval(0, 1).then(function() {
+			var aPromises = [];
+
+			oSelectionPlugin.attachSelectionChange(function(oEvent) {
+				var oCustomPayload = oEvent.getParameter("customPayload");
+				assert.step(oCustomPayload ? oCustomPayload.d : "" + oCustomPayload);
+			});
+
+			aPromises.push(oSelectionPlugin.addSelectionInterval(0, 0, {d: "addSelectionInterval"}));
+			oSelectionPlugin.removeSelectionInterval(0, 0, {d: "removeSelectionInterval"});
+			aPromises.push(oSelectionPlugin.setSelectionInterval(0, 2, {d: "setSelectionInterval"}));
+			aPromises.push(oSelectionPlugin.setSelectionInterval(3, 3, "not an object"));
+			oSelectionPlugin.clearSelection({d: "clearSelection"});
+			aPromises.push(oSelectionPlugin.setSelectedIndex(4, {d: "setSelectedIndex"}));
+			aPromises.push(oSelectionPlugin.selectAll({d: "selectAll"}));
+
+			return Promise.all(aPromises).then(function() {
+				assert.verifySteps([
+					"removeSelectionInterval",
+					"clearSelection",
+					"addSelectionInterval",
+					"setSelectionInterval",
+					"null", // not an object
+					"setSelectedIndex",
+					"selectAll"
+				], "The custom event payload is correctly transported to the event listener");
 			});
 		});
 	});
@@ -536,46 +855,85 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Select All", function(assert) {
-		var done = assert.async();
-		var that = this;
+	QUnit.test("Selection using SelectAll: Selection not possible", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnSelectAll = sinon.spy(oSelectionPlugin, "addSelectionInterval");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var oSelectionChangeSpy = sinon.spy();
+
+		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
+		sinon.stub(oSelectionPlugin, "getSelectableCount").returns(0);
+
+		return oSelectionPlugin.selectAll().then(function() {
+			assert.ok(false, "The promise should have been rejected because the limit is enabled");
+		}).catch(function(oError) {
+			assert.deepEqual(oError.toString(), "Error: Not possible if the limit is enabled",
+				"Promise rejected with Error: Not possible if the limit is enabled");
+			assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+			assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+			assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+
+		}).then(function() {
+			oSelectionPlugin.setLimit(0);
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			return oSelectionPlugin.selectAll().then(function() {
+				assert.ok(false, "The promise should have been rejected because there is nothing to select");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Nothing to select", "Promise rejected with Error: Nothing to select");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+				oSelectionPlugin.getSelectableCount.restore();
+			});
+
+		}).then(function() {
+			oSelectionPlugin.setSelectionMode(SelectionMode.None);
+			fnGetContexts.reset();
+			oSelectionChangeSpy.reset();
+			oSelectionPlugin.selectAll().then(function() {
+				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
+			}).catch(function(oError){
+				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+			});
+		});
+	});
+
+	QUnit.test("Select All", function(assert) {
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable._getSelectionPlugin();
+		var fnGetContexts = sinon.spy(oTable.getBinding("rows"), "getContexts");
+		var oSelectionChangeSpy = sinon.spy();
+		var iSelectableCount = oSelectionPlugin.getSelectableCount();
 
 		assert.equal(oSelectionPlugin.getRenderConfig().headerSelector.type, "clear", "The headerSelector type is clear");
 
-		oSelectionPlugin.selectAll();
-		assert.ok(!fnSelectAll.calledOnce, "If the limit is not disabled, the SelectAll function does nothing.");
-
 		oSelectionPlugin.setLimit(0);
+		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oSelectionPlugin.getRenderConfig().headerSelector.type, "toggle", "The headerSelector type is toggle");
-		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
 
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
-		oSelectionPlugin.attachEventOnce("selectionChange", function() {
-			assert.ok(fnGetContexts.calledWithExactly(0, that.oTable.getBinding("rows").getLength()),
-				"getContexts is called with the correct parameters");
-			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
-			assert.deepEqual(oSelectionPlugin.getSelectedIndices().length, 16, "The correct indices are selected");
-
-			done();
+		fnGetContexts.reset();
+		oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+			assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+				"selectionChange event: \"rowIndices\" parameter is correct");
+			assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 		});
-		oSelectionPlugin.selectAll();
-	});
+		return oSelectionPlugin.selectAll().then(function() {
+			assert.ok(fnGetContexts.calledWithExactly(0, iSelectableCount), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
+			assert.deepEqual(oSelectionPlugin.getSelectedIndices().length, iSelectableCount, "The correct indices are selected");
+			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
 
-	QUnit.test("showHeaderSelector is false", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-
-		oSelectionPlugin.setShowHeaderSelector(false);
-		sap.ui.getCore().applyChanges();
-
-		var oCell = this.oTable.getDomRef("selall");
-
-		assert.ok(!oCell.hasAttribute("role"), "role is not set");
-		assert.ok(!oCell.hasAttribute("title"), "title is not set");
-		assert.ok(!oCell.hasChildNodes(), "No icon");
+		}).then(function() {
+			oSelectionPlugin.setLimit(5);
+			return oSelectionPlugin.selectAll().catch(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices().length, iSelectableCount, "The selection did not change");
+			});
+		});
 	});
 
 	QUnit.test("Scroll position", function(assert) {
@@ -681,13 +1039,13 @@ sap.ui.define([
 		assert.ok(!oCell.hasChildNodes(), "No DeselectAll icon");
 
 		oSelectionPlugin.attachEventOnce("selectionChange", function() {
-			assert.ok(fnGetContexts.calledWithExactly(9, 1), "getContexts is called with the correct parameters");
-			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
+			assert.ok(fnGetContexts.calledWithExactly(9, 1), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [9], "Only one item is selected (iIndexTo)");
 
 			oSelectionPlugin.attachEventOnce("selectionChange", function() {
-				assert.ok(fnGetContexts.calledWithExactly(4, 1), "getContexts is called with the correct parameters");
-				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
+				assert.ok(fnGetContexts.calledWithExactly(4, 1), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [4], "Only one item is selected (iIndexTo)");
 
 				qutils.triggerEvent("click", oCell);
@@ -721,12 +1079,12 @@ sap.ui.define([
 		oSelectionPlugin.setSelectedIndex(0);
 		oSelectionPlugin.selectAll();
 
-		assert.ok(fnGetContexts.notCalled, "getContexts is called with the correct parameters");
+		assert.ok(fnGetContexts.notCalled, "getContexts is not called");
 		assert.deepEqual(oSelectionPlugin.getSelectedCount(), 0, "Nothing is selected");
 
 		return new Promise(function(resolve) {
 			setTimeout(function() {
-				assert.ok(fnGetContexts.notCalled, "getContexts is called with the correct parameters");
+				assert.ok(fnGetContexts.notCalled, "getContexts is not called");
 				assert.deepEqual(oSelectionPlugin.getSelectedCount(), 0, "Nothing is selected");
 				resolve();
 			}, 100);
@@ -741,8 +1099,10 @@ sap.ui.define([
 
 		assert.notOk(oSelectionPlugin._oNotificationPopover, "Notification popover does not exist");
 
+		oSelectionPlugin.setEnableNotification(true);
+
 		// Ensures that the Popover control is loaded and initialized
-		this.oTable._oSelectionPlugin.showNotificationPopoverAtIndex(0).then(function() {
+		this.oTable._oSelectionPlugin._showNotificationPopoverAtIndex(0).then(function() {
 			var oPopover = oSelectionPlugin._oNotificationPopover;
 
 			assert.ok(oPopover, "Notification popover was created");
