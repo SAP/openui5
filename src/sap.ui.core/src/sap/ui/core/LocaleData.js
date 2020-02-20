@@ -28,6 +28,10 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 			this.mData = getData(oLocale);
 		},
 
+		/**
+		 * @private
+		 * @ui5-restricted UI5 Web Components
+		 */
 		_get: function() {
 			return this._getDeep(this.mData, arguments);
 		},
