@@ -196,9 +196,9 @@ sap.ui.define([
 			oSettings = oSettings || {};
 			var oDomRef = oSettings.domRef || this.getDomRef();
 
-			// skip unnecessary style recalculations if the control root DOM element has been removed from the DOM OR
-			// any ancestor is hidden (the "display" style property is set to "none")
-			if (!oDomRef || !oDomRef.offsetParent) {
+			// skip unnecessary style recalculations if the control root DOM element has been removed
+			// from the DOM
+			if (!oDomRef) {
 				return;
 			}
 
@@ -216,6 +216,12 @@ sap.ui.define([
 				mLastSpacerStyle.height = "";
 				mLastSpacerStyle.display = "";
 				oDomRef.classList.remove(CSS_CLASS_ONE_LINE);
+
+				// skip unnecessary style recalculations if the any ancestor is hidden
+				// (the "display" style property is set to "none")
+				if (!oDomRef.offsetParent) {
+					return;
+				}
 
 				var iEndItemHeight = oEndItemDomRef.offsetHeight,
 					iEndItemWidth = oEndItemDomRef.offsetWidth,
@@ -289,6 +295,11 @@ sap.ui.define([
 				var sEndItemWidth = iEndItemWidth + "px";
 				mLastSpacerStyle.width = sEndItemWidth;
 				mLastSpacerStyle.minWidth = sEndItemWidth;
+
+			// skip unnecessary style recalculations if the any ancestor is hidden
+			// (the "display" style property is set to "none")
+			} else if (!oDomRef.offsetParent) {
+				return;
 			}
 
 			// if the items fit into a single line, add a CSS class to turn off the display of the spacer elements
