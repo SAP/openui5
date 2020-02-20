@@ -301,14 +301,19 @@ sap.ui.define([
 			oParentTile._setupResizeClassHandler();
 		}
 
-		var $icon = this.$("icon-image"),
-			$value = this.$("value-inner"),
-			$wrapper = this.$("value-scr");
+		var oIcon = this.getDomRef("icon-image");
+		if (oIcon) {
+			var oValue = this.getDomRef("value-inner"),
+				oIndScale = this.getDomRef("indicator"),
+				oWrapper = this.getDomRef("value");
 
-		var iSize = $icon.outerWidth() + $value.width(),
-			iWrapperSize = $wrapper.width();
+			var fIconWidth = oIcon ? oIcon.getBoundingClientRect().width : 0,
+				fValueWidth = oValue ? oValue.getBoundingClientRect().width : 0,
+				fIndScaleWidth = oIndScale ? oIndScale.getBoundingClientRect().width : 0,
+				fWrapperWidth = oWrapper.getBoundingClientRect().width;
 
-		iSize > iWrapperSize ? $icon.hide() : $icon.show();
+			oIcon.style.display = (fIconWidth + fValueWidth + fIndScaleWidth) > fWrapperWidth ? "none" : "";
+		}
 	};
 
 	/**
@@ -322,6 +327,9 @@ sap.ui.define([
 	NumericContent.prototype.exit = function () {
 		if (this._oIcon) {
 			this._oIcon.destroy();
+		}
+		if (this._oIndicatorIcon) {
+			this._oIndicatorIcon.destroy();
 		}
 	};
 
@@ -392,6 +400,21 @@ sap.ui.define([
 		}
 		this._setPointerOnIcon();
 		return this.setProperty("icon", uri);
+	};
+
+	NumericContent.prototype.setIndicator = function (sDeviationIndicator) {
+		var sSrc = "sap-icon://" + (sDeviationIndicator ? sDeviationIndicator.toLowerCase() : "none");
+		if (this._oIndicatorIcon) {
+			this._oIndicatorIcon.setSrc(sSrc);
+		} else {
+			this._oIndicatorIcon = IconPool.createControlByURI({
+				id: this.getId() + "-icon-indicator",
+				size: "0.875rem",
+				src: sSrc
+			}, Image);
+			this._oIndicatorIcon.addStyleClass("sapMNCIndIcon");
+		}
+		return this.setProperty("indicator", sDeviationIndicator);
 	};
 
 	/**

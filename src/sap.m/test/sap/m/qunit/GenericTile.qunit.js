@@ -1460,33 +1460,35 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile in Failed state rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("generic-tile-failed"), "Generic tile was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-content"), "Generic tile content was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-icon"), "Generic tile icone was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-text"), "Generic tile icone text was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-txt"), "Generic tile text rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-txt-inner"), "Generic tile text inner was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-ftr"), "Generic tile footer was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-hdr-text"), "Generic tile header was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-subHdr-text"), "Generic tile subheader was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-title"), "Generic tile title subheader was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-title-inner"), "Generic tile title inner subheader was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-warn-icon"), "Generic tile warning icone subheader was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-icon-image"), "Generic tile icon was rendered successfully");
-		assert.ok(jQuery.sap.domById("generic-tile-failed-overlay"), "Generic tile icon was rendered successfully");
-		assert.ok(jQuery.sap.domById("tile-cont-failed"), "TileContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("tile-cont-failed-content"), "TileContent content was rendered successfully");
-		assert.ok(!jQuery.sap.domById("tile-cont-failed-footer-text"), "TileContent footer text was not rendered");
-		assert.ok(jQuery.sap.domById("numeric-cnt-failed"), "NumericContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-failed-indicator"), "Indicator was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-failed-value"), "Value was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-failed-value-scr"), "Value was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-failed-scale"), "Scale was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-failed-icon-image"), "Icon was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed"), "Generic tile was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-content"), "Generic tile content was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-failed-icon"), "Generic tile icone was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-failed-text"), "Generic tile icone text was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-failed-txt"), "Generic tile text rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-failed-txt-inner"), "Generic tile text inner was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-failed-ftr"), "Generic tile footer was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-hdr-text"), "Generic tile header was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-subHdr-text"), "Generic tile subheader was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-title"), "Generic tile title subheader was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-title-inner"), "Generic tile title inner subheader was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-warn-icon"), "Generic tile warning icone subheader was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-icon-image"), "Generic tile icon was rendered successfully");
+		assert.ok(document.getElementById("generic-tile-failed-overlay"), "Generic tile icon was rendered successfully");
+		assert.ok(document.getElementById("tile-cont-failed"), "TileContent was rendered successfully");
+		assert.ok(document.getElementById("tile-cont-failed-content"), "TileContent content was rendered successfully");
+		assert.ok(!document.getElementById("tile-cont-failed-footer-text"), "TileContent footer text was not rendered");
+		assert.ok(document.getElementById("numeric-cnt-failed"), "NumericContent was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-failed-indicator"), "Indicator was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-failed-value"), "Value was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-failed-value-inner"), "Value-inner was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-failed-indicator"), "Indicator was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-failed-scale"), "Scale was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-failed-icon-indicator"), "Indicator icon was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-failed-icon-image"), "Icon was rendered successfully");
 
 		this.oGenericTile.setState("Loaded");
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("tile-cont-failed-footer-text"), "TileContent footer text was rendered successfully");
+		assert.ok(document.getElementById("tile-cont-failed-footer-text"), "TileContent footer text was rendered successfully");
 	});
 
 	QUnit.test("GenericTile is setting protected property only in Failed state", function(assert) {

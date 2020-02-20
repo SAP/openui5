@@ -47,7 +47,7 @@ sap.ui.define([
 		// Act
 		this.oNumericContent.attachPress(function () {});
 		// Assert
-		assert.equal(oSpy.callCount, 1, "setPointerOnIcon was called.");
+		assert.strictEqual(oSpy.callCount, 1, "setPointerOnIcon was called.");
 		assert.ok(this.oNumericContent._oIcon.hasStyleClass("sapMPointer"), "sapMPointer class was added");
 	});
 
@@ -59,7 +59,7 @@ sap.ui.define([
 		this.oNumericContent.attachPress(onPress);
 		this.oNumericContent.detachPress(onPress);
 		// Assert
-		assert.equal(oSpy.callCount, 2, "setPointerOnIcon was called.");
+		assert.strictEqual(oSpy.callCount, 2, "setPointerOnIcon was called.");
 		assert.ok(!this.oNumericContent._oIcon.hasStyleClass("sapMPointer"), "sapMPointer class not present");
 	});
 
@@ -69,7 +69,33 @@ sap.ui.define([
 		// Act
 		this.oNumericContent.setIcon();
 		// Assert
-		assert.equal(oSpy.callCount, 1, "setPointerOnIcon was called.");
+		assert.strictEqual(oSpy.callCount, 1, "setPointerOnIcon was called.");
+	});
+
+	QUnit.test("setIndicator function", function (assert) {
+		var fnAssert = function (sExpectedIcon, sExpectedIndicator) {
+			assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSrc(), sExpectedIcon, "Indicator icon src should be correct.");
+			assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSize(), "0.875rem", "Indicator icon size should be correct.");
+			assert.ok(this.oNumericContent._oIndicatorIcon.hasStyleClass("sapMNCIndIcon"), "Indicator icon size should have correct style class.");
+			assert.strictEqual(this.oNumericContent.getIndicator(), sExpectedIndicator, "Indicator property should be set correctly.");
+		}.bind(this);
+
+		// Act
+		this.oNumericContent.setIndicator(DeviationIndicator.Down);
+		// Assert
+		fnAssert("sap-icon://down", DeviationIndicator.Down);
+		// Act
+		this.oNumericContent.setIndicator(DeviationIndicator.None);
+		// Assert
+		fnAssert("sap-icon://none", DeviationIndicator.None);
+		// Act
+		this.oNumericContent.setIndicator(DeviationIndicator.Up);
+		// Assert
+		fnAssert("sap-icon://up", DeviationIndicator.Up);
+		// Act
+		this.oNumericContent.setIndicator();
+		// Assert
+		fnAssert("sap-icon://none", DeviationIndicator.None);
 	});
 
 	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.GenericTile");
@@ -90,7 +116,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.ok(jQuery.sap.domById("generic-tile"), "GenericTile (wrapper of NumericContent) was rendered successfully");
+		assert.ok(document.getElementById("generic-tile"), "GenericTile (wrapper of NumericContent) was rendered successfully");
 		fnAssertNumericContentHasRendered(assert);
 
 		// Cleanup
@@ -115,9 +141,9 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.equal(oSpyRegister.callCount, 1, "ResizeHandler.register was called.");
+		assert.strictEqual(oSpyRegister.callCount, 1, "ResizeHandler.register was called.");
 		this.oGenericTile.destroy();
-		assert.equal(oSpyDeregister.callCount, 1, "ResizeHandler.deregister was called.");
+		assert.strictEqual(oSpyDeregister.callCount, 1, "ResizeHandler.deregister was called.");
 
 		// Cleanup
 		this.oGenericTile = null;
@@ -141,18 +167,18 @@ sap.ui.define([
 		this.oNumericContent.setValue("68Mio.");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "68Mi", "Value was rendered successfully with formatter switched off");
-		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "M", "Scale was rendered successfully with formatter switched off");
+		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "68Mi", "Value was rendered successfully with formatter switched off");
+		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "M", "Scale was rendered successfully with formatter switched off");
 		this.oNumericContent.setFormatterValue(true);
 		this.oNumericContent.setValue("68 Mio");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "68", "Value was rendered successfully with formatter switched on");
-		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "Mio", "Scale was rendered successfully with formatter switched on");
+		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "68", "Value was rendered successfully with formatter switched on");
+		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "Mio", "Scale was rendered successfully with formatter switched on");
 		this.oNumericContent.setValue(undefined);
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "0", "Value cleaned successfully with formatter switched on");
-		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "", "Scale cleaned successfully with formatter switched on");
+		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "0", "Value cleaned successfully with formatter switched on");
+		assert.strictEqual(this.oNumericContent.getDomRef("scale"), null, "Scale cleaned successfully with formatter switched on");
 	});
 
 	QUnit.test("Test processing of formatter value with RTL and LTR mark", function (assert) {
@@ -161,15 +187,15 @@ sap.ui.define([
 		this.oNumericContent.setValue(sFormattedValue);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "58,7", "Value was rendered successfully with formatter switched on");
-		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "Mio", "Scale was rendered successfully with formatter switched on");
+		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "58,7", "Value was rendered successfully with formatter switched on");
+		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "Mio", "Scale was rendered successfully with formatter switched on");
 	});
 
 	QUnit.test("Test nullify parameter", function (assert) {
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "0", "Value was nullified successfully");
+		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "0", "Value was nullified successfully");
 		this.oNumericContent.setNullifyValue(false);
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "", "Value was not nullified");
+		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "", "Value was not nullified");
 	});
 
 	QUnit.test("Test tooltip text", function (assert) {
@@ -198,21 +224,21 @@ sap.ui.define([
 		//Act
 		var sAltText = this.oNumericContent.getAltText();
 		//Assert
-		assert.equal(sAltText, "0\nAscending\nGood", "Alternative text is correct");
+		assert.strictEqual(sAltText, "0\nAscending\nGood", "Alternative text is correct");
 
 		//Arrange
 		this.oNumericContent.setIconDescription("Icon description");
 		//Act
 		sAltText = this.oNumericContent.getAltText();
 		//Assert
-		assert.equal(sAltText, "Icon description\n0\nAscending\nGood", "Alternative text is correct with icon description");
+		assert.strictEqual(sAltText, "Icon description\n0\nAscending\nGood", "Alternative text is correct with icon description");
 
 		//Arrange
 		this.oNumericContent.setNullifyValue(false);
 		//Act
 		sAltText = this.oNumericContent.getAltText();
 		//Assert
-		assert.equal(sAltText, "Icon description\n\nAscending\nGood", "Alternative text is correct with nullify value set to false");
+		assert.strictEqual(sAltText, "Icon description\n\nAscending\nGood", "Alternative text is correct with nullify value set to false");
 
 		//Arrange
 		this.oNumericContent.setNullifyValue(true);
@@ -221,7 +247,7 @@ sap.ui.define([
 		this.oNumericContent.setScale("$");
 		sAltText = this.oNumericContent.getAltText();
 		//Assert
-		assert.equal(this.oNumericContent.getAltText(), "Icon description\n10$\nAscending\nGood", "Alternative text is correct with a value and scale set up");
+		assert.strictEqual(this.oNumericContent.getAltText(), "Icon description\n10$\nAscending\nGood", "Alternative text is correct with a value and scale set up");
 	});
 
 	QUnit.test("Test _getMaxDigitsData language", function (assert) {
@@ -302,7 +328,7 @@ sap.ui.define([
 		assert.ok(this.oNumericContent.$().hasClass("WithoutMargin"), "'withoutMargin' CSS class expected.");
 		assert.ok(jQuery(this.oNumericContent.$().children()[0]).hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the inner div container.");
 		assert.ok(this.oNumericContent.$("value").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the parent value container.");
-		assert.ok(this.oNumericContent.$("value-scr").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the value container.");
+		assert.strictEqual(this.oNumericContent.$("value").css("justify-content"), "flex-start", "'flex-start' CSS style expected within the parent value container.");
 		assert.ok(this.oNumericContent.$().find(".sapMNCIndScale").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the indicator and scale container.");
 	});
 
@@ -324,8 +350,8 @@ sap.ui.define([
 		var oNumericContent = this.oNumericContent.attachEvent("hover", fnHoverHandler, this.oNumericContent);
 		//Assert
 		assert.deepEqual(oNumericContent, this.oNumericContent, "NumericContent returned is equal to initial one");
-		assert.equal(hasAttribute("tabindex", this.oNumericContent), false, "Attribute has not been added successfully since press handler was not available");
-		assert.equal(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has not been added successfully since press handler was not available");
+		assert.strictEqual(hasAttribute("tabindex", this.oNumericContent), false, "Attribute has not been added successfully since press handler was not available");
+		assert.strictEqual(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has not been added successfully since press handler was not available");
 
 		//Arrange
 		//Act
@@ -341,8 +367,8 @@ sap.ui.define([
 		var oNumericContent = this.oNumericContent.detachEvent("press", fnPressHandler, this.oNumericContent);
 		//Assert
 		assert.deepEqual(oNumericContent, this.oNumericContent, "NumericContentreturned is equal to initial one");
-		assert.equal(hasAttribute("tabindex", this.oNumericContent), false, "Attribute not available since press was not defined");
-		assert.equal(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class not available since press was not defined");
+		assert.strictEqual(hasAttribute("tabindex", this.oNumericContent), false, "Attribute not available since press was not defined");
+		assert.strictEqual(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class not available since press was not defined");
 
 		//Arrange
 		oNumericContent = this.oNumericContent.attachEvent("press", fnPressHandler, this.oNumericContent);
@@ -357,8 +383,8 @@ sap.ui.define([
 		//Act
 		oNumericContent = this.oNumericContent.detachEvent("press", fnPressHandler, this.oNumericContent);
 		//Assert
-		assert.equal(hasAttribute("tabindex", this.oNumericContent), false, "Attribute has been removed successfully");
-		assert.equal(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
+		assert.strictEqual(hasAttribute("tabindex", this.oNumericContent), false, "Attribute has been removed successfully");
+		assert.strictEqual(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
 	});
 
 	QUnit.module("Adaptive font size", {
@@ -366,80 +392,103 @@ sap.ui.define([
 			this.oNumericContent = new NumericContent("numeric-cnt", {
 				indicator: DeviationIndicator.Up,
 				value: "12345678",
-				animateTextChange: false
+				animateTextChange: false,
+				icon:  "sap-icon://line-charts"
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
 			this.oNumericContent = null;
+		},
+		fnAssertFontSizeClassesForLanguage: function (assert, sExpectedFontSizeClass, sCurrentLanguageCode, sWhenCondition, sWhenValue, bNegativeAssert) {
+			sWhenCondition = sWhenCondition || "When the language is set to";
+			sWhenValue = sWhenValue || sCurrentLanguageCode;
+			var sWhenMessagePart = sWhenCondition + " '" + sWhenValue + "' ",
+				sOptionalNot = bNegativeAssert ? "NOT" : "",
+				fnAssert = bNegativeAssert ? assert.notOk.bind(assert) : assert.ok.bind(assert);
+
+			fnAssert(
+				this.oNumericContent.$("icon-image").hasClass(sExpectedFontSizeClass),
+				sWhenMessagePart + "the icon image should " + sOptionalNot + " have class " + sExpectedFontSizeClass + "."
+			);
+			fnAssert(
+				this.oNumericContent.$("value-inner").hasClass(sExpectedFontSizeClass),
+				sWhenMessagePart + "the inner value should " + sOptionalNot + " have class " + sExpectedFontSizeClass + "."
+			);
+			fnAssert(
+				this.oNumericContent.$("indicator").hasClass(sExpectedFontSizeClass),
+				sWhenMessagePart + "the indicator should " + sOptionalNot + " have class " + sExpectedFontSizeClass + "."
+			);
 		}
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - small", function(assert){
+	QUnit.test("Test the adaptive font size change based on language - small", function (assert) {
 		// Arrange
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-		sap.ui.getCore().getConfiguration().setLanguage("de");
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+			sNewLanguage = "de";
+		sap.ui.getCore().getConfiguration().setLanguage(sNewLanguage);
 		this.oNumericContent.invalidate();
 		sap.ui.getCore().applyChanges();
 		// Assert
-		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCSmallFontSize"),"When the language is set to 'de' the font should be smaller");
-		// Arrange
-		this.oNumericContent.setAdaptiveFontSize(false);
-		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
-		// Assert
-		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCLargeFontSize"),"When the language is set to 'de' and adaptiveFontSize is set to false the font should be larger");
-		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-
-	});
-	QUnit.test("Test the adaptive font size change based on language - medium", function(assert){
-		// Arrange
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-		sap.ui.getCore().getConfiguration().setLanguage("es");
-		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
-		// Assert
-		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCMediumFontSize"),"When the language is set to 'es' the font should be smaller");
+		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCSmallFontSize", sNewLanguage);
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
 		this.oNumericContent.invalidate();
 		sap.ui.getCore().applyChanges();
 		// Assert
-		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCLargeFontSize"),"When the language is set to 'es' and adaptiveFontSize is set to false the font should be larger");
-		this.oNumericContent.setAdaptiveFontSize(true);
+		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
 		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-
-	});
-	QUnit.test("Test the adaptive font size change based on language - large", function(assert){
-		// Arrange
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-		sap.ui.getCore().getConfiguration().setLanguage("bg");
-		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
-		// Assert
-		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCLargeFontSize"),"When the language is set to 'bg' the font should be smaller");
-		// Arrange
-		this.oNumericContent.setAdaptiveFontSize(false);
-		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
-		// Assert
-		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCLargeFontSize"),"When the language is set to 'bg' and adaptiveFontSize is set to false the font should stay the same");
-		this.oNumericContent.setAdaptiveFontSize(true);
-		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - adaptiveFontSize: false", function(assert){
+	QUnit.test("Test the adaptive font size change based on language - medium", function (assert) {
+		// Arrange
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+			sNewLanguage = "es";
+		sap.ui.getCore().getConfiguration().setLanguage(sNewLanguage);
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCMediumFontSize", sNewLanguage);
+		// Arrange
+		this.oNumericContent.setAdaptiveFontSize(false);
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
+		this.oNumericContent.setAdaptiveFontSize(true);
+		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+	});
+
+	QUnit.test("Test the adaptive font size change based on language - large", function (assert) {
+		// Arrange
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+			sNewLanguage = "bg";
+		sap.ui.getCore().getConfiguration().setLanguage(sNewLanguage);
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
+		// Arrange
+		this.oNumericContent.setAdaptiveFontSize(false);
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
+		this.oNumericContent.setAdaptiveFontSize(true);
+		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+	});
+
+	QUnit.test("Test the adaptive font size change based on language - adaptiveFontSize: false", function (assert) {
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
 
 		// Assert
-		assert.notOk(this.oNumericContent.$("value-scr").hasClass("sapMNCSmallFontSize") || this.oNumericContent.$("value-scr").hasClass("sapMNCMediumFontSize"),"When adaptiveFontSize is set to false the font size class should not change");
-		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCLargeFontSize"), "When adaptiveFontSize is set to false the font size class should be the default one");
+		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", null, "When adaptiveFontSize is set to", "false");
+		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCSmallFontSize", null, "When adaptiveFontSize is set to", "false", true);
+		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCMediumFontSize", null, "When adaptiveFontSize is set to", "false", true);
 
 		this.oNumericContent.setAdaptiveFontSize(true);
-
 	});
 
 	QUnit.module("Truncate value to", {
@@ -514,11 +563,13 @@ sap.ui.define([
 	/* --- Helpers --- */
 
 	function fnAssertNumericContentHasRendered (assert) {
-		assert.ok(jQuery.sap.domById("numeric-cnt"), "NumericContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-indicator"), "Indicator was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-value"), "Value was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-scale"), "Scale was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt"), "NumericContent was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-value"), "Value was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-value-inner"), "Inner value was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-indicator"), "Indicator was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-icon-indicator"), "Icon indicator was rendered successfully");
+		assert.ok(document.getElementById("numeric-cnt-scale"), "Scale was rendered successfully");
 	}
 
 	function fnCreateExampleNumericContent () {
