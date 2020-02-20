@@ -37,7 +37,6 @@ sap.ui.define([
 					"label": "{i18n>CARD_EDITOR.ACTION.TYPE}",
 					"type": "enum",
 					"enum": ["Navigation"],
-					"defaultValue": "Navigation",
 					"path": "type",
 					"visible": "{= !!${enabled}}"
 				},
