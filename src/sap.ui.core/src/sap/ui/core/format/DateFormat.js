@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/util/extend"
 ],
 	function(
 		CalendarType,
@@ -21,7 +21,7 @@ sap.ui.define([
 		deepEqual,
 		formatMessage,
 		Log,
-		jQuery
+		extend
 	) {
 	"use strict";
 
@@ -256,7 +256,7 @@ sap.ui.define([
 
 		// Extend the default format options with custom format options and retrieve the pattern
 		// from the LocaleData, in case it is not defined yet
-		oFormat.oFormatOptions = jQuery.extend(false, {}, oInfo.oDefaultFormatOptions, oFormatOptions);
+		oFormat.oFormatOptions = extend({}, oInfo.oDefaultFormatOptions, oFormatOptions);
 
 		if (!oFormat.oFormatOptions.calendarType) {
 			oFormat.oFormatOptions.calendarType = sap.ui.getCore().getConfiguration().getCalendarType();
@@ -1619,7 +1619,7 @@ sap.ui.define([
 
 			oResult = this.oSymbols[oPart.symbol || ""].parse(sSubValue, oPart, this, oParseConf) || {} ;
 
-			oDateValue = jQuery.extend(oDateValue, oResult);
+			oDateValue = extend(oDateValue, oResult);
 
 			if (oResult.valid === false) {
 				break;
@@ -1833,7 +1833,7 @@ sap.ui.define([
 	 * @public
 	 */
 	DateFormat.prototype.parse = function(sValue, bUTC, bStrict) {
-		sValue = jQuery.trim(sValue);
+		sValue = sValue == null ? "" : String(sValue).trim();
 
 		var oDateValue;
 		var sCalendarType = this.oFormatOptions.calendarType;

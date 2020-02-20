@@ -3,8 +3,8 @@
  */
 
 //Provides the locale object sap.ui.core.LocaleData
-sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType', './Locale', 'sap/base/assert', 'sap/base/util/LoaderExtensions'],
-	function(jQuery, BaseObject, CalendarType, Locale, assert, LoaderExtensions) {
+sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', './Locale', 'sap/base/assert', 'sap/base/util/LoaderExtensions'],
+	function(extend, BaseObject, CalendarType, Locale, assert, LoaderExtensions) {
 	"use strict";
 
 	/**
@@ -3365,7 +3365,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType
 			var mData = this._getDeep(this.mData, arguments);
 			var mCustomData = this._getDeep(this.mCustomData, arguments);
 
-			return jQuery.extend({}, mData, mCustomData);
+			return extend({}, mData, mCustomData);
 		}
 	});
 
