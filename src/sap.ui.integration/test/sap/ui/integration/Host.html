@@ -77,6 +77,14 @@
 						manifestParameters = event.getParameter('manifestParameters');
 
 				console.error("Host Action ", manifestParameters);
+			},
+			resolveDestination: function(sDestinationName) {
+				if (sDestinationName == "Northwind") {
+					return "https://services.odata.org/V3/Northwind/Northwind.svc";
+
+					// or with promise
+					//return Promise.resolve("https://services.odata.org/V3/Northwind/Northwind.svc");
+				}
 			}
 		});
 
@@ -146,13 +154,23 @@
 			action: fnCardAction
 		});
 
+		var card6 = new sap.ui.integration.widgets.Card({
+			id: 'card6',
+			manifest: "./widgets/cardmanifests/destinations.json",
+			host: host,
+			layoutData: new sap.f.GridContainerItemLayoutData({
+				columns: 4
+			})
+		});
+
 		var cardContainer = new sap.f.GridContainer({
 			items: [
 				card4,
 				card1,
 				card21,
 				card3,
-				card5
+				card5,
+				card6
 			]
 		});
 
