@@ -188,6 +188,39 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(sResult, "2000 years ago", "The date should be formatted correctly");
 		});
 
+		QUnit.module("DateFormat#parse (anno 1978)", {
+			beforeEach: function () {
+				// 2 digit years require the current year to be fixed
+				// e.g. for pattern: "yyyy-MM-dd" with input "04-03-12" the result depends on the current year
+				this.clock = sinon.useFakeTimers(270909420000); // Wed Aug 02 1978 13:37:00 GMT+0100
+			},
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
+		QUnit.test("parse date two digit year", function (assert) {
+			var oFormat = DateFormat.getDateInstance({pattern: "yyyy-MM-dd"});
+
+			// current year is 1978
+			var twoDigitMinus70 = "08"; // 1978 - 70
+			var twoDigitMinus71 = "07"; // 1978 - 71
+			assert.equal(oFormat.parse(twoDigitMinus70 + "-01-01").getFullYear(), 1908, "Year 1908");
+			assert.equal(oFormat.parse(twoDigitMinus71 + "-01-01").getFullYear(), 2007, "Year 2007");
+		});
+
+
+		QUnit.module("DateFormat#parse (anno 2018)", {
+			beforeEach: function () {
+				// 2 digit years require the current year to be fixed
+				// e.g. for pattern: "yyyy-MM-dd" with input "04-03-12" the result depends on the current year
+				this.clock = sinon.useFakeTimers(1533209820000); // Thu Aug 02 2018 13:37:00 GMT+0200
+			},
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
 		QUnit.test("parse date relative", function (assert) {
 			doTestRelative(assert, false, { pattern: "yyyy-MM-dd" }, "en", "yyyy-MM-dd, default range, en");
 			doTestRelative(assert, false, { pattern: "yyyy-MM-dd" }, "de", "yyyy-MM-dd, default range, de");
@@ -219,6 +252,13 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 		QUnit.test("parse date two digit year", function (assert) {
 			var oFormat = DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" }),
 				oDate;
+
+			// current year is 2018
+			var twoDigitPlus30 = "48"; // 2018 + 30
+			var twoDigitPlus29 = "47"; // 2018 + 29
+			assert.equal(oFormat.parse(twoDigitPlus30 + "-01-01").getFullYear(), 1948, "Year 1948");
+			assert.equal(oFormat.parse(twoDigitPlus29 + "-01-01").getFullYear(), 2047, "Year 2047");
+
 			oDate = oFormat.parse("2014-03-12");
 			assert.equal(oDate.getFullYear(), 2014, "Year 2014");
 			oDate = oFormat.parse("0014-03-12");
