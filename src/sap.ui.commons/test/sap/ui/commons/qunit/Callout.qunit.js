@@ -123,7 +123,7 @@ sap.ui.define([
 	QUnit.test("Opened and closed events", function(assert) {
 		var done = assert.async();
 		// Randomize number of attempts
-		var iRepetitions = 2 + Math.round(Math.random() * 3);
+		var iRepetitions = 2;
 		// Delay must be >= 700 (Tooltipbase open delay (500) + animation duration (200)).
 		var iDelay = 700;
 
@@ -186,7 +186,7 @@ sap.ui.define([
 						"Closed event fired as often as close occurred. (" + mCounter.close + "/" + mCounter.closed + ")"
 					);
 					done();
-				}, iDelay + 10);
+				}, iDelay + 50);
 			}
 		};
 
