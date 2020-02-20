@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/core/util/MockServer"
 ],
 function (
@@ -12,6 +13,7 @@ function (
 	BaseEditor,
 	BasePropertyEditor,
 	StringEditor,
+	PropertyEditor,
 	MockServer
 ) {
 	"use strict";
@@ -65,6 +67,39 @@ function (
 				done();
 			});
 			oFooEditor.setValue("baz");
+		});
+
+		QUnit.test("When an i18n property is requested before the BaseEditor i18n model was loaded", function (assert) {
+			var oLoadI18nStub = sandbox.stub(BaseEditor.prototype, "_loadI18nBundles");
+			oLoadI18nStub.callsFake(function () {
+				return new Promise(function () {});
+			});
+
+			var oPropertyEditor = new PropertyEditor({
+				config: {
+					value: 'Test',
+					type: 'string'
+				}
+			});
+
+			// Create a new editor, otherwise the old, destroyed i18n model might still exist
+			var oBaseEditor = new BaseEditor({
+				config: {
+					properties: {},
+					propertyEditors: {
+						string: "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					}
+				}
+			});
+			oBaseEditor.addContent(oPropertyEditor);
+
+			return oPropertyEditor.ready().then(function () {
+				assert.strictEqual(
+					oPropertyEditor.getAggregation("propertyEditor").getI18nProperty('SOME_I18N_PROPERTY'),
+					'SOME_I18N_PROPERTY',
+					'Then the i18n property key is returned as a fallback'
+				);
+			});
 		});
 	});
 

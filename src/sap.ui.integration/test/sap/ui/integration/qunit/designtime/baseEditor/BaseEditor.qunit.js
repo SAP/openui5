@@ -3,13 +3,21 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/base/util/restricted/_omit",
+	"sap/base/util/restricted/_merge",
+	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	BaseEditor,
 	_omit,
+	_merge,
+	PropertyEditor,
+	StringEditor,
 	sinon
 ) {
 	"use strict";
+
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given BaseEditor is created", {
 		beforeEach: function () {
@@ -29,6 +37,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("When config with 1 property is set", function (assert) {
@@ -59,6 +68,75 @@ sap.ui.define([
 				);
 				done();
 			}.bind(this));
+		});
+
+		QUnit.test("When config has no context", function (assert) {
+			var done = assert.async();
+			this.oBaseEditor.setConfig({
+				properties: {
+					"prop1": {
+						label: "Prop1",
+						path: "/fooPath/foo1",
+						type: "string"
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+				sap.ui.getCore().applyChanges();
+				assert.strictEqual(
+					this.oBaseEditor.getPropertyEditorsSync()[0].getValue(),
+					"bar1",
+					"Then absolute paths are properly resolved"
+				);
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("When config has a root context", function (assert) {
+			var done = assert.async();
+			this.oBaseEditor.setConfig({
+				context: "/",
+				properties: {
+					"prop1": {
+						label: "Prop1",
+						path: "fooPath/foo1",
+						type: "string"
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+				sap.ui.getCore().applyChanges();
+				assert.strictEqual(
+					this.oBaseEditor.getPropertyEditorsSync()[0].getValue(),
+					"bar1",
+					"Then bindings are properly resolved"
+				);
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("When setJson is called with an object", function (assert) {
+			var done = assert.async();
+			var oJson = {
+				foo: "bar"
+			};
+			this.oBaseEditor.attachJsonChange(function (oEvent) {
+				assert.notEqual(oJson, oEvent.getParameter("json"), "Then the json value is cloned");
+				done();
+			});
+			this.oBaseEditor.setJson(oJson);
 		});
 
 		QUnit.test("When property editor changes value", function (assert) {
@@ -441,7 +519,205 @@ sap.ui.define([
 			this.oBaseEditor.addConfig(mConfig);
 		});
 
+		QUnit.test("When an editor is registered", function (assert) {
+			var done = assert.async();
+			this.oBaseEditor.setConfig({
+				properties: {},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
 
+			var oStringEditor = new PropertyEditor({
+				config: {
+					path: "/fooPath/foo1",
+					type: "string"
+				}
+			});
+
+			this.oBaseEditor.addContent(oStringEditor);
+			sap.ui.getCore().applyChanges();
+
+			this.oBaseEditor.ready().then(function() {
+				this.oBaseEditor.attachEventOnce("jsonChange", function (oEvent) {
+					var oJson = _merge({}, oEvent.getParameter("json"));
+
+					assert.strictEqual(
+						oJson.fooPath.foo1,
+						"Hello World",
+						"Then the base editor is informed about the property editor value change"
+					);
+
+					oJson.fooPath.foo1 = "Foofoo";
+
+					oStringEditor.attachEventOnce("valueChange", function (oEvent) {
+						assert.strictEqual(
+							oStringEditor.getValue(),
+							"Foofoo",
+							"Then the property editor is updated by the base editor"
+						);
+						done();
+					});
+
+					this.oBaseEditor.setJson(oJson);
+				}, this);
+				oStringEditor.setValue("Hello World");
+			}.bind(this));
+		});
+
+		QUnit.test("When an editor is deregistered", function (assert) {
+			this.oBaseEditor.setConfig({
+				properties: {},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			var oStringEditor = new PropertyEditor({
+				config: {
+					path: "/fooPath/foo1",
+					type: "string"
+				}
+			});
+
+			this.oBaseEditor.addContent(oStringEditor);
+			sap.ui.getCore().applyChanges();
+
+			// Changing the path to a relative path should deregister the editor
+			oStringEditor.setConfig({
+				path: "someRelativePath",
+				type: "string"
+			});
+
+			var oSpy = sandbox.spy();
+			this.oBaseEditor.attachEventOnce("jsonChange", oSpy);
+
+			return oStringEditor.ready().then(function () {
+				oStringEditor.setValue("Hello World");
+				assert.strictEqual(oSpy.callCount, 0, "It does't sync with the BaseEditor anymore");
+			});
+		});
+
+		QUnit.test("When an editor is created (Ready handling check)", function (assert) {
+			var oReadySpy = sandbox.spy();
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", oReadySpy);
+
+			var fnResolveStringEditorCreation;
+			var oCreationPromise = new Promise(function (resolve) {
+				fnResolveStringEditorCreation = resolve;
+			});
+			var oStringEditorStub = sandbox.stub(StringEditor.prototype, "asyncInit");
+			oStringEditorStub.callsFake(function () {
+				return Promise.all([
+					StringEditor.prototype.asyncInit.wrappedMethod.apply(this, arguments),
+					oCreationPromise
+				]);
+			});
+
+			this.oBaseEditor.addConfig({
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+				}
+			});
+
+			// Creation will be artifically delayed by oStringEditorStub
+			var oStringEditor = new PropertyEditor({
+				config: {
+					path: '/pathToAString',
+					type: 'string'
+				}
+			});
+			this.oBaseEditor.addContent(oStringEditor);
+
+			var oNumberEditor = new PropertyEditor({
+				config: {
+					path: "/pathToANumber",
+					type: "number"
+				}
+			});
+			this.oBaseEditor.addContent(oNumberEditor);
+			sap.ui.getCore().applyChanges();
+
+			oNumberEditor.ready().then(function () {
+				assert.strictEqual(oReadySpy.callCount, 0, "Then the BaseEditor doesn't fire ready before its initialization isn't finished");
+				assert.notOk(this.oBaseEditor.isReady(), "Then the BaseEditor is initially not ready");
+				fnResolveStringEditorCreation();
+			}.bind(this));
+
+			return this.oBaseEditor.ready().then(function() {
+				assert.ok(this.oBaseEditor.isReady(), "Then the BaseEditor gets ready");
+				var aNestedEditors = this.oBaseEditor.getPropertyEditorsSync();
+				assert.strictEqual(
+					aNestedEditors.length,
+					2,
+					"Then both editors are registered on the BaseEditor"
+				);
+				assert.ok(
+					aNestedEditors.every(function (oNestedEditor) {
+						return oNestedEditor.isReady();
+					}),
+					"Then all nested editors are ready"
+				);
+				assert.strictEqual(oReadySpy.callCount, 1, "Then the ready event is fired");
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Given BaseEditor is created and configured", {
+		beforeEach: function () {
+			this.oBaseEditor = new BaseEditor({
+				json: {
+					context: {
+						foo: "bar",
+						foo2: "baz"
+					}
+				},
+				config: {
+					context: "context",
+					properties: {
+						"foo": {
+							path: "foo",
+							type: "string"
+						}
+					},
+					propertyEditors: {
+						"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					}
+				}
+			});
+			return this.oBaseEditor.ready();
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("When the config is changed", function (assert) {
+			var done = assert.async();
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+				assert.strictEqual(
+					this.oBaseEditor.getPropertyEditorsSync()[0].getValue(),
+					"baz",
+					"Then bindings are properly resolved"
+				);
+				done();
+			}, this);
+
+			this.oBaseEditor.setConfig({
+				context: "context",
+				properties: {
+					"foo": {
+						path: "foo2",
+						type: "string"
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+		});
 	});
 
 	QUnit.done(function () {

@@ -141,21 +141,19 @@ sap.ui.define([
 
 		QUnit.test("When an element is added to an empty map", function (assert) {
 			var fnDone = assert.async();
+			this.oBaseEditor.setJson({sampleMap: {}});
 
-			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function (oEvent) {
-				this.oMapEditor = oEvent.getParameter("propertyEditors")[0];
-				sap.ui.getCore().applyChanges();
-				this.oAddButton = getMapEditorContent(this.oMapEditor).addButton;
+			this.oBaseEditor.ready().then(function () {
+				var oMapEditor = this.oBaseEditor.getPropertyEditorsByNameSync("sampleMap")[0].getAggregation("propertyEditor");
+				var oAddButton = getMapEditorContent(oMapEditor).addButton;
 
-				this.oMapEditor.attachValueChange(function (oEvent) {
+				oMapEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 1, "Then editor contains one key");
 					fnDone();
 				});
 
-				QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
-			}, this);
-
-			this.oBaseEditor.setJson({sampleMap: {}});
+				QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+			}.bind(this));
 		});
 
 		QUnit.test("When an element key is changed to an unique value", function (assert) {
