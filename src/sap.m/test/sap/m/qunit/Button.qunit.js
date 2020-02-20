@@ -525,6 +525,7 @@ sap.ui.define([
 
 		// act
 		oButton.ontouchend(oTouchEndEvent);
+		oButton.ontap(oTapEvent);
 
 		// assert
 		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");

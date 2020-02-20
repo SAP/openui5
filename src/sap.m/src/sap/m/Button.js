@@ -292,9 +292,7 @@ sap.ui.define([
 
 		if (this._bRenderActive) {
 			delete this._bRenderActive;
-			if (oEvent.originalEvent && oEvent.originalEvent.type in { mouseup: 1, touchend: 1 }) {
-				this.ontap(oEvent);
-			}
+			this.ontap(oEvent, true);
 		}
 
 		if (!sap.ui.Device.browser.msie) {
@@ -306,7 +304,7 @@ sap.ui.define([
 						&& (sEndingTagId === '-content' || sEndingTagId === '-inner' || sEndingTagId === '-img'))
 					|| (this._sTouchStartTargetId === "-content" && (sEndingTagId === '-inner' || sEndingTagId === '-img'))
 					|| (this._sTouchStartTargetId === '-img' && sEndingTagId !== '-img'))) {
-				this.ontap(oEvent);
+				this.ontap(oEvent, true);
 			}
 		}
 
@@ -330,10 +328,14 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
-	Button.prototype.ontap = function(oEvent) {
+	Button.prototype.ontap = function(oEvent, bFromTouchEnd) {
 		// mark the event for components that needs to know if the event was handled by the button
 		oEvent.setMarked();
 		delete this._bRenderActive;
+
+		if (this.bFromTouchEnd) {
+			return;
+		}
 
 		// fire tap event
 		if (this.getEnabled() && this.getVisible()) {
@@ -343,7 +345,15 @@ sap.ui.define([
 			}
 
 			this.fireTap({/* no parameters */}); // (This event is deprecated, use the "press" event instead)
-			this.firePress({/* no parameters */});
+			this.firePress({/* no parameters */ });
+		}
+
+		this.bFromTouchEnd = bFromTouchEnd;
+
+		if (this.bFromTouchEnd) {
+			setTimeout(function() {
+				delete this.bFromTouchEnd;
+			}.bind(this), 0);
 		}
 	};
 
