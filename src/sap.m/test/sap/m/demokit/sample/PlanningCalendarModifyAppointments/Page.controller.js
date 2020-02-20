@@ -620,6 +620,7 @@ sap.ui.define([
 					Log.error("Wrong dialog type.");
 				}
 
+				this.updateButtonEnabledState();
 				this._oNewAppointmentDialog.setTitle(sTempTitle);
 				this._oNewAppointmentDialog.open();
 			},
@@ -734,8 +735,6 @@ sap.ui.define([
 				oTitleInput.setValue("");
 				oMoreInfoInput.setValue("");
 				oAppointmentType.setSelected(false);
-
-				this.updateButtonEnabledState();
 			},
 
 			_setCreateWithContextAppointmentDialogContent: function(){
@@ -773,7 +772,6 @@ sap.ui.define([
 				oDateTimePickerStart.setValueState("None");
 				oDateTimePickerEnd.setValueState("None");
 
-				this.updateButtonEnabledState();
 				delete this.oClickEventParameters;
 			},
 
