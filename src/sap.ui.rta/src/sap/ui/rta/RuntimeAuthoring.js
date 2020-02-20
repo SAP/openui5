@@ -1263,10 +1263,13 @@ function(
 	 *
 	 * @public
 	 * @static
-	 * @param {string} sLayer The active layer
+	 * @param {string} sLayer - The active layer
+	 * @param {sap.ui.core.Control} oRootControl - root control for which RTA was started
 	 */
-	RuntimeAuthoring.enableRestart = function(sLayer) {
-		window.sessionStorage.setItem("sap.ui.rta.restart." + sLayer, true);
+	RuntimeAuthoring.enableRestart = function(sLayer, oRootControl) {
+		var sFlexReference = FlexUtils.getComponentClassName(oRootControl);
+		var vParameter = sFlexReference || true;
+		window.sessionStorage.setItem("sap.ui.rta.restart." + sLayer, vParameter);
 	};
 
 	/**
@@ -1297,7 +1300,7 @@ function(
 
 		var fnConfirmDiscardAllChanges = function (sAction) {
 			if (sAction === "OK") {
-				RuntimeAuthoring.enableRestart(this.getLayer());
+				RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 				this._deleteChanges();
 				this.getCommandStack().removeAllCommands();
 			}
@@ -1515,7 +1518,7 @@ function(
 			});
 		}
 
-		RuntimeAuthoring.enableRestart(oReloadInfo.layer);
+		RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance().getId());
 		// triggers the navigation without leaving FLP
 		oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 		return Promise.resolve(true);

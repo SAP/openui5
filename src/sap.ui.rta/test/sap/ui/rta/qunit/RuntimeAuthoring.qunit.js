@@ -1340,10 +1340,23 @@ function(
 		});
 
 		QUnit.test("when enabling restart", function(assert) {
+			var sComponentId = "restartingComponent";
+			var oComponent = {
+				getManifestEntry: function () {},
+				getMetadata: function () {
+					return {
+						getName: function () {
+							return sComponentId;
+						}
+					};
+				}
+			};
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var sLayer = "LAYER";
-			RuntimeAuthoring.enableRestart(sLayer);
-
+			RuntimeAuthoring.enableRestart(sLayer, {});
+			var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
 			assert.ok(RuntimeAuthoring.needsRestart(sLayer), "then restart is needed");
+			assert.equal(sRestartingComponent, sComponentId + ".Component", "and the component ID is set with an added .Component");
 		});
 
 		QUnit.test("when enabling and disabling restart", function(assert) {
