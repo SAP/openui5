@@ -1,0 +1,64 @@
+{
+	"_version" : "1.17.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR-MOD",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Example for OData V2 Sales Orders (UI5 GWSAMPLE_BASIC)",
+		"dataSources" : {
+			"default" : {
+				"uri" : "/testsuite/proxy/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?sap-client=120",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "2.0"
+				}
+			}
+		},
+		"id" : "sap.ui.core.internal.samples.odata.v2.SalesOrders",
+		"title" : "V2 Sales Orders (UI5 GWSAMPLE_BASIC)",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.71",
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : false,
+				"settings" : {
+					"canonicalRequests" : true,
+					"defaultBindingMode" : "TwoWay",
+					"defaultCountMode" : "None",
+					"useBatch" : false
+				},
+				"type" : "sap.ui.model.odata.v2.ODataModel"
+			}
+		},
+		"rootView": {
+			"viewName": "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main",
+			"type": "XML",
+			"async": true,
+			"id": "SalesOrdersMain"
+		}
+	}
+}
