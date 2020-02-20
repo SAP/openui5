@@ -1350,6 +1350,11 @@ sap.ui.define([
 		$Elem = oTreeTable.$("sapUiTableGridCnt");
 		assert.strictEqual($Elem.attr("role"), "treegrid", "role");
 		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
+
+		oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
+		sap.ui.getCore().applyChanges();
+		$Elem = oTable.$("sapUiTableGridCnt");
+		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
 	});
 
 	QUnit.test("ARIA Attributes of TH Elements", function(assert) {
@@ -1401,6 +1406,9 @@ sap.ui.define([
 		$OverlayCoveredElements.each(function() {
 			assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
 		});
+		var $Elem = jQuery(document.getElementById(oTable.getId() + "-overlay"));
+		assert.strictEqual($Elem.attr("aria-labelledby"),
+			oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId() + " " + oTable.getId() + "-ariainvalid", "aria-labelledby");
 		oTable.rerender();
 		$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
 		$OverlayCoveredElements.each(function() {
@@ -1411,6 +1419,12 @@ sap.ui.define([
 		$OverlayCoveredElements.each(function() {
 			assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
 		});
+
+		oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
+		sap.ui.getCore().applyChanges();
+		$Elem = jQuery(document.getElementById(oTable.getId() + "-overlay"));
+		assert.strictEqual($Elem.attr("aria-labelledby"),
+			oTable.getTitle().getId() + " " + oTable.getId() + "-ariainvalid", "aria-labelledby when ariaLabelledBy association is empty array");
 	});
 
 	QUnit.test("ARIA for NoData", function(assert) {
