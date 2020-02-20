@@ -29,6 +29,7 @@
 			new sap.m.Button({text : "Test"}),
 			new sap.m.Label({
 				text: "Choose:",
+				tooltip: "Choose:",
 				labelFor: sSelId
 			}),
 			new sap.m.Select(sSelId, {
@@ -89,10 +90,11 @@
 				]
 			}),
 			new sap.m.ToolbarSpacer(),
-			new sap.m.Label({ text : sText }),
+			new sap.m.Label({ text : sText, tooltip : sText }),
 			new sap.m.ToolbarSpacer(),
 			new sap.m.Label({
 				text: "Choose:",
+				tooltip: "Choose:",
 				labelFor: sSelId + 'innerSelect'
 			}),
 			new sap.m.Select(sSelId + 'innerSelect', {
@@ -113,7 +115,8 @@
 	function getInputToolbarContent () {
 		return [
 			new sap.m.Label({
-				text : "Input controls"
+				text : "Input controls",
+				tooltip : "Input controls"
 			}),
 			new sap.m.ToolbarSpacer(),
 			new sap.m.ToggleButton({
@@ -161,7 +164,8 @@
 				headerToolbar : new sap.m.Toolbar({
 					content : [
 						new sap.m.Label({
-							text : "This is a header"
+							text : "This is a header",
+							tooltip : "This is a header"
 						}),
 						new sap.m.ToolbarSpacer(),
 						new sap.m.Button({
@@ -205,7 +209,7 @@
 				design : sap.m.ToolbarDesign.Info,
 				tooltip : "This is a info bar",
 				content : [
-					new sap.m.Label({text : "Label"}),
+					new sap.m.Label({text : "Label", tooltip: "Label"}),
 					new sap.m.Text({text: "Text"}),
 					new sap.m.Title({text: "Title"}),
 					new sap.ui.core.Icon({src : "sap-icon://collaborate"})
@@ -220,7 +224,7 @@
 				design : sap.m.ToolbarDesign.Info,
 				tooltip : "This is a info bar",
 				content : [
-					new sap.m.Label({text : "Label"}),
+					new sap.m.Label({text : "Label", tooltip: "Label"}),
 					new sap.m.Text({text: "Text"}),
 					new sap.m.Title({text: "Title"}),
 					new sap.ui.core.Icon({src : "sap-icon://collaborate"})
@@ -232,6 +236,7 @@
 				content : [
 					new sap.m.Label({
 						text : "This text should never get shrink.",
+						tooltip : "This text should never get shrink.",
 						layoutData : new sap.m.ToolbarLayoutData({
 							shrinkable : false
 						})
@@ -258,6 +263,7 @@
 				content : [
 					new sap.m.Label({
 						text : "Percent Width Controls",
+						tooltip : "Percent Width Controls",
 						labelFor: "searchField",
 						width: "15%"
 					}),
@@ -272,7 +278,8 @@
 				design : sap.m.ToolbarDesign.Transparent,
 				content : [
 					new sap.m.Label({
-						text : "Segmented Button"
+						text : "Segmented Button",
+						tooltip : "Segmented Button"
 					}),
 					new sap.m.ToolbarSpacer(),
 					new sap.m.SegmentedButton({
@@ -296,7 +303,8 @@
 				design : sap.m.ToolbarDesign.Transparent,
 				content : [
 					new sap.m.Label({
-						text : "Lots of Buttons"
+						text : "Lots of Buttons",
+						tooltip : "Lots of Buttons"
 					}),
 					new sap.m.ToolbarSpacer(),
 					new sap.m.Button({
@@ -349,6 +357,7 @@
 				content : [
 					new sap.m.Label({
 						text : "This text should never get shrink This text should never get shrink",
+						tooltip : "This text should never get shrink This text should never get shrink",
 						layoutData : new sap.m.ToolbarLayoutData({
 							shrinkable : false
 						})
