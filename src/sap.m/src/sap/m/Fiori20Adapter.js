@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Object, EventProvider, ManagedObjectObserver, Device, Log, jQuery) {
+	function(BaseObject, EventProvider, ManagedObjectObserver, Device, Log, jQuery) {
 	"use strict";
 
 	var oEventProvider = new EventProvider(),
@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @since 1.38
 	 * @alias HeaderAdapter
 	 */
-	var HeaderAdapter = Object.extend("HeaderAdapter", {
+	var HeaderAdapter = BaseObject.extend("HeaderAdapter", {
 
 		constructor : function(oHeader, oAdaptOptions) {
 
@@ -230,7 +230,7 @@ sap.ui.define([
 	 * @since 1.38
 	 * @alias sap.m.Fiori20Adapter
 	 */
-	var Fiori20Adapter =  Object.extend("sap.m.Fiori20Adapter", {});
+	var Fiori20Adapter =  BaseObject.extend("sap.m.Fiori20Adapter", {});
 
 	Fiori20Adapter.attachViewChange = function(fnListener, oListener) {
 		oEventProvider.attachEvent("adaptedViewChange", fnListener, oListener);
@@ -339,6 +339,10 @@ sap.ui.define([
 
 		if (isInstanceOf(oControl, "sap/m/Page") || isInstanceOf(oControl, "sap/ui/core/mvc/XMLView")) {
 			this._observeAddAggregation(oControl, "content", oAdaptOptions);
+		}
+
+		if (isInstanceOf(oControl, "sap/m/NavContainer")) {
+			this._observeRemoveAggregation(oControl, "pages", oAdaptOptions);
 		}
 
 		if ((oAdaptOptions.bLateAdaptation === true) && isInstanceOf(oControl, "sap/m/Bar")) {
@@ -472,6 +476,62 @@ sap.ui.define([
 		});
 
 		this._setHasListener(oControl, sAggregationName, oObserver);
+	};
+
+	Fiori20Adapter._observeRemoveAggregation = function(oControl, sAggregationName, oAdaptOptions) {
+
+		if (this._checkHasListener(oControl, sAggregationName)) {
+			return;
+		}
+
+		var oObserver = new ManagedObjectObserver(this._onRemoveAggregation.bind(this));
+
+		oObserver.observe(oControl, {
+			aggregations: [sAggregationName]
+		});
+
+		this._setHasListener(oControl, sAggregationName, oObserver);
+	};
+
+	Fiori20Adapter._removeFromMergeInfo = function(oMergeInfo, oControl) {
+		Object.keys(oMergeInfo).forEach(function(sKey) {
+			var oControlInfo = oMergeInfo[sKey];
+			if ((oControlInfo.oControl === oControl)
+				|| isChildOf(oControlInfo.oControl, oControl)) {
+				this._detachAllListeners(oControlInfo.oControl);
+				delete oMergeInfo[sKey];
+			}
+		}, this);
+	};
+
+	Fiori20Adapter._detachAllListeners = function(oControl) {
+		var oControlListeners = oChangeListeners[oControl.getId()];
+		if (!oControlListeners) {
+			return;
+		}
+		Object.keys(oControlListeners).forEach(function(sEventType) {
+			var fnListener = oControlListeners[sEventType];
+			if (fnListener instanceof  ManagedObjectObserver) {
+				fnListener.disconnect();
+			} else {
+				oControl.detachEvent(sEventType, fnListener);
+			}
+			delete oControlListeners[sEventType];
+		});
+	};
+
+	Fiori20Adapter._onRemoveAggregation = function(oChanges) {
+		var sMutation = oChanges.mutation,
+			oRemovedControl;
+
+		if (sMutation === "remove") {
+			oRemovedControl = oChanges.child;
+
+			this._detachAllListeners(oRemovedControl);
+			this._removeFromMergeInfo(oInfoToMerge.aViewTitles, oRemovedControl);
+			this._removeFromMergeInfo(oInfoToMerge.aViewSubTitles, oRemovedControl);
+			this._removeFromMergeInfo(oInfoToMerge.aViewBackButtons, oRemovedControl);
+		}
 	};
 
 	Fiori20Adapter._getNodeChildren = function(oControl) {
@@ -814,6 +874,16 @@ sap.ui.define([
 		return oObject && (typeof oObject.getVisible === "function") && (oObject.getVisible() === false);
 	}
 
+	function isChildOf(oControl, oRoot) {
+		var oParent = oControl && oControl.getParent();
+		while (oParent) {
+			if (oParent === oRoot) {
+				return true;
+			}
+			oParent = oParent.getParent();
+		}
+		return false;
+	}
 	return Fiori20Adapter;
 
 });

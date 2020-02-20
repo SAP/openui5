@@ -932,6 +932,53 @@ sap.ui.define([
 		Fiori20Adapter.detachViewChange(oSpy);
 	});
 
+	QUnit.test("Update adapt options on context switch", function(assert) {
+		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true},
+			sTitleId,
+			oBackButton,
+			oInitPage = this.oNavContainer.getCurrentPage(),
+			onViewChange = function(oEvent) {
+				var oTitleInfo = oEvent.getParameter("oTitleInfo");
+				sTitleId = oTitleInfo ? oTitleInfo.id : null;
+				oBackButton = oEvent.getParameter("oBackButton");
+			},
+			oNestedNavContainer = new sap.m.NavContainer({pages: oInitPage}),
+			oNestedSplitContainer = new SplitContainer(),
+			oSpy = sinon.spy(onViewChange);
+
+		//setup
+		Fiori20Adapter.attachViewChange(oSpy);
+		this.oNavContainer.addPage(oNestedNavContainer);
+		this.oNavContainer.addPage(oNestedSplitContainer);
+
+		// adapt the init view
+		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
+		assert.strictEqual(sTitleId, "page1-title", "title is found");
+		assert.ok(oBackButton, "button is found");
+
+		// move the init view to another container where title should not be adapted
+		oNestedSplitContainer.addPage(oInitPage);
+		this.oNavContainer.to(oNestedSplitContainer);
+		assert.strictEqual(sTitleId, null, "title is ignored");
+
+		oSpy.reset();
+		oInitPage.setTitle("Changed");
+		assert.strictEqual(oSpy.callCount, 0, "title update is ignored");
+
+
+		oSpy.reset();
+		oInitPage.setShowNavButton(false);
+		assert.strictEqual(oSpy.callCount, 0, "button update is ignored");
+
+
+		// move the view pack to where its title should be adapted
+		oNestedNavContainer.addPage(oInitPage);
+		this.oNavContainer.to(oNestedNavContainer);
+		assert.strictEqual(sTitleId, "page1-title", "title is found");
+
+		Fiori20Adapter.detachViewChange(oSpy);
+	});
+
 
 	QUnit.module("Fiori2 adaptation of navContainer first page", {
 		beforeEach: function () {
