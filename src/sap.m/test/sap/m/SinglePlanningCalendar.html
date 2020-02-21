@@ -542,8 +542,8 @@
 								change: function (oEvent) {
 									var bCompactMode = oEvent.getParameter("selectedItem").getText() === "Compact";
 
-									oSPC.toggleStyleClass("sapUiSizeCompact", bCompactMode);
-									oSPC.rerender();
+									oPage.toggleStyleClass("sapUiSizeCompact", bCompactMode);
+									oPage.rerender();
 								}
 							})
 						],
@@ -668,12 +668,14 @@
 							MessageToast.show("Date of more link '" + oDate + "'.");
 						}
 					});
+
+					var oPage = new Page({
+                        title: "SinglePlanningCalendar test page",
+                        content: oSPC,
+                        footer: new sap.m.Bar()
+                    });
 					new App({
-						pages: new Page({
-							title: "SinglePlanningCalendar test page",
-							content: oSPC,
-							footer: new sap.m.Bar()
-						})
+						pages: oPage
 					}).placeAt("body");
 				});
 		});
