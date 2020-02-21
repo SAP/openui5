@@ -123,16 +123,14 @@ function (
 
 				this.oTable = _createTable();
 				this.oColumn = this.oTable.getColumns()[0];
+				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
 					rootElements : [this.oTable]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
-					sap.ui.getCore().applyChanges();
-
-					// TODO: Temporal solution. Remove when synced in DesignTime event wait for all async processes to be done.
-					requestAnimationFrame(done);
+					done();
 				});
 			},
 			afterEach : function() {
