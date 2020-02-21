@@ -154,9 +154,9 @@ sap.ui.define([
 			var fnHandler3 = function() {
 				oBinding.detachChange(fnHandler3);
 				assert.equal(oBinding.getLength(), 91, "length of items");
-				assert.equal(Object.keys(oBinding.aKeys).length, 42);
-				assert.ok(oBinding.aKeys[62]);
-				assert.notOk(oBinding.aKeys[63]);
+				assert.equal(Object.keys(oBinding.aKeys).length, 56);
+				assert.ok(oBinding.aKeys[76]);
+				assert.notOk(oBinding.aKeys[77]);
 				done();
 			};
 
