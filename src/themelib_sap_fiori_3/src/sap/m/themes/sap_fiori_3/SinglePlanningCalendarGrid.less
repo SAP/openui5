@@ -110,6 +110,27 @@
 	}
 }
 
+.sapUiSizeCompact .sapMSinglePC {
+	.sapMSinglePCColumnHeader {
+	.sapUiCalItem.sapUiCalItemNow {
+		&.sapUiCalItemSel {
+			background-color: @sapUiActive;
+		}
+		.sapUiCalItemText,
+		.sapUiCalItemSel.sapUiItemText {
+			border: none;
+			box-shadow: none;
+		}
+	}
+	}
+	.sapMSinglePCColumnHeader {
+		.sapUiCalItem.sapUiCalItemNow:focus {
+			outline: 0.0625rem solid white;
+			box-shadow: inset white;
+		}
+	}
+}
+
 .calendarRowTypeColorMixIn(sapUiCalendarAppType01, sapUiCalItemType01, @sapLegendColor1, fade(lighten(@sapLegendColor1,49), 90%));
 .calendarRowTypeColorMixIn(sapUiCalendarAppType02, sapUiCalItemType02, @sapLegendColor2, fade(lighten(@sapLegendColor2, 34), 90%));
 .calendarRowTypeColorMixIn(sapUiCalendarAppType03, sapUiCalItemType03, @sapLegendColor3, fade(lighten(@sapLegendColor3,46), 90%));
