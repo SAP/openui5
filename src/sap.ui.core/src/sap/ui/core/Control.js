@@ -195,21 +195,22 @@ sap.ui.define([
 	 *
 	 * Example:
 	 * <pre>
-	 * Control.extend('sap.mylib.MyControl', {
+	 * Control.extend("sap.mylib.MyControl", {
 	 *   metadata : {
-	 *     library : 'sap.mylib',
+	 *     library : "sap.mylib",
 	 *     properties : {
-	 *       text : 'string',
-	 *       width : 'sap.ui.core.CSSSize'
-	 *     },
-	 *     renderer: {
-	 *       render: function(oRM, oControl) {
-	 *         oRM.openTag("div", oControl);
-	 *         oRM.style("width", oControl.getWidth());
-	 *         oRM.openEnd();
-	 *         oRM.text(oControl.getText());
-	 *         oRM.closeTag("div");
-	 *       }
+	 *       text : "string",
+	 *       width : "sap.ui.core.CSSSize"
+	 *     }
+	 *   },
+	 *   renderer: {
+	 *     apiVersion: 2,
+	 *     render: function(oRM, oControl) {
+	 *       oRM.openStart("div", oControl);
+	 *       oRM.style("width", oControl.getWidth());
+	 *       oRM.openEnd();
+	 *       oRM.text(oControl.getText());
+	 *       oRM.close("div");
 	 *     }
 	 *   }
 	 * });
@@ -241,6 +242,9 @@ sap.ui.define([
 	 *
 	 * If the resulting renderer is incomplete (has no <code>render</code> function) or if it cannot be found at all,
 	 * rendering of the control will be skipped.
+	 *
+	 * The <code>apiVersion: 2</code> flag is required to enable in-place rendering technology.
+	 * For more information, refer to {@link sap.ui.core.RenderManager RenderManager}.
 	 *
 	 * @param {string} sClassName fully qualified name of the class that is described by this metadata object
 	 * @param {object} oStaticInfo static info to construct the metadata from
