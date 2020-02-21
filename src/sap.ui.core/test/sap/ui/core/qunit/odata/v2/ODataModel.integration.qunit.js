@@ -10,6 +10,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -18,8 +21,8 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper'
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Device, SyncPromise, coreLibrary, Controller, View, BindingMode, CountMode,
-		MessageScope, ODataModel, TestUtils, datajs, XMLHelper) {
+], function (Log, uid, Device, SyncPromise, coreLibrary, Controller, View, BindingMode, Filter,
+		FilterOperator, Sorter, CountMode, MessageScope, ODataModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit*/
 	/*eslint max-nested-callbacks: 0, quote-props: 0*/
 	"use strict";
@@ -1752,111 +1755,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Cleanup messages of the entity and its child entities after updating the root
-	// entity if message scope is "BusinessObject".
-	// BCP: 1980510782
-[
-	MessageScope.BusinessObject,
-	MessageScope.RequestedObjects
-].forEach(function (sMessageScope) {
-	[true, false].forEach(function (bRefreshAfterChange) {
-	var bCleanupChildMessages = sMessageScope === MessageScope.BusinessObject,
-		sTitle = "Messages: Changing a value removes obsolete child messages only if message scope"
-			+ " is BusinessObject; message scope is '" + sMessageScope + "'; refresh after change: "
-			+ bRefreshAfterChange;
-
-	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({refreshAfterChange : bRefreshAfterChange}),
-			oMsgSalesOrder = this.createResponseMessage("", "MsgSalesOrder"),
-			oMsgSalesOrderCustomerID = this.createResponseMessage("CustomerID",
-				"MsgSalesOrderCustomerID", "warning"),
-			oMsgSalesOrderItem = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition"),
-			sView = '\
-<FlexBox binding="{/SalesOrderSet(\'1\')}">\
-	<Input id="customerID" value="{CustomerID}" />\
-</FlexBox>',
-			that = this;
-
-		this.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
-				method : "GET",
-				requestUri : "SalesOrderSet('1')",
-				headers : bCleanupChildMessages ? {"sap-message-scope" : "BusinessObject"} : {}
-			}, {
-				CustomerID : "42"
-			}, {
-				"sap-message" : getMessageHeader([oMsgSalesOrder,oMsgSalesOrderCustomerID,
-					oMsgSalesOrderItem])
-			})
-			.expectChange("customerID", null)
-			.expectChange("customerID", "42")
-			.expectMessage(oMsgSalesOrder, "/SalesOrderSet('1')")
-			.expectMessage(oMsgSalesOrderCustomerID, "/SalesOrderSet('1')/")
-			.expectMessage(oMsgSalesOrderItem, {
-				isComplete : true,
-				path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')/ItemPosition"
-			}, "/SalesOrderSet('1')/");
-
-		oModel.setMessageScope(sMessageScope);
-
-		return this.createView(assert, sView, oModel).then(function () {
-			var oNewMsgForCustomerID = that.createResponseMessage("CustomerID");
-
-			that.expectChange("customerID", "13")
-				.expectHeadRequest(bCleanupChildMessages
-					? {"sap-message-scope" : "BusinessObject"} : {})
-				.expectRequest({
-					data : {
-						CustomerID : "13",
-						"__metadata" : {"uri" : "SalesOrderSet('1')"}
-					},
-					deepPath : "/SalesOrderSet('1')",
-					headers : bCleanupChildMessages
-						? {
-							"sap-message-scope" : "BusinessObject",
-							"x-http-method" : "MERGE"
-						} : {"x-http-method" : "MERGE"},
-					key : "SalesOrderSet('1')",
-					method : "POST",
-					requestUri : "SalesOrderSet('1')"
-				}, NO_CONTENT, {
-					"sap-message" : getMessageHeader(oNewMsgForCustomerID)
-				});
-			if (bRefreshAfterChange) {
-				that.expectRequest({
-						deepPath : "/SalesOrderSet('1')",
-						method : "GET",
-						requestUri : "SalesOrderSet('1')",
-						headers : bCleanupChildMessages
-						? {"sap-message-scope" : "BusinessObject"} : {}
-					}, {
-						CustomerID : "13"
-					}, {
-						"sap-message" : getMessageHeader(oNewMsgForCustomerID)
-					});
-			}
-			that.expectMessages([]); // clean all expected messages
-			if (!bCleanupChildMessages) {
-				that.expectMessage(oMsgSalesOrderItem, {
-					isComplete : true,
-					path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')/ItemPosition"
-				}, "/SalesOrderSet('1')/");
-			}
-			that.expectMessage(oNewMsgForCustomerID, "/SalesOrderSet('1')/");
-
-			// code under test
-			// Scenario: updating customer id replaces messages for the sales order and its children
-			oModel.setProperty("/SalesOrderSet('1')/CustomerID", "13");
-			oModel.submitChanges();
-
-			return that.waitForChanges(assert);
-		});
-	});
-	});
-});
-
-	//*********************************************************************************************
 	// Scenario: Refresh of navigation properties previously pointing to the *same* entity responds
 	// with a different entity for one of the navigation properties. Both navigation properties show
 	// correct data on the UI; bug was: the unchanged navigation property is updated with data
@@ -2035,99 +1933,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: On an object page a sales order with its sales order items is displayed. All the
-	// sales order items are returned with the initial request. Check the lifecycle of stateful
-	// OData messages.
-	// Expectation: All messages for the sales order and all messages for the sales order items are
-	// displayed. In case of message scope BusinessObject also messages for sub entities are
-	// displayed.
-	// JIRA: CPOUI5MODELS-111
-[true, false].forEach(function (bWithMessageScope) {
-	var sTitle = "Message lifecycle (1), "
-			+ (bWithMessageScope ? "MessageScope.Business" : "MessageScope.Request")
-			+ ": Object page with relative list (all items are displayed)";
-
-	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
-			oSalesOrderNoteError = this.createResponseMessage("Note"),
-			oSalesOrderToBusinessPartnerAddress
-				= this.createResponseMessage("ToBusinessPartner/Address"),
-			oSalesOrderToItemNoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
-			oSalesOrderToItemPositionError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ItemPosition"),
-			oSalesOrderItemNoteError = cloneODataMessage(oSalesOrderToItemNoteError,
-				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
-			oSalesOrderItemPositionError = cloneODataMessage(oSalesOrderToItemPositionError,
-				"(SalesOrderID='1',ItemPosition='10~0~')/ItemPosition"),
-			sView = '\
-<FlexBox binding="{/SalesOrderSet(\'1\')}">\
-	<Text id="salesOrderID" text="{SalesOrderID}" />\
-	<Input id="note" value="{Note}" />\
-	<Table id="table" items="{ToLineItems}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
-	</Table>\
-</FlexBox>';
-
-		this.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
-				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
-				requestUri : "SalesOrderSet('1')"
-			}, {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
-				Note : "Foo",
-				SalesOrderID : "1"
-			}, {
-				"sap-message" : getMessageHeader(bWithMessageScope
-					? [oSalesOrderNoteError, oSalesOrderToBusinessPartnerAddress,
-						oSalesOrderToItemNoteError, oSalesOrderToItemPositionError]
-					: [oSalesOrderNoteError])
-			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo")
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
-			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
-				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
-				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
-			}, {
-				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
-					},
-					Note : "Bar",
-					ItemPosition : "10~0~",
-					SalesOrderID : "1"
-				}]
-			}, {
-				"sap-message" :
-					getMessageHeader([oSalesOrderItemNoteError,oSalesOrderItemPositionError])
-			})
-			.expectChange("itemPosition", ["10~0~"])
-			.expectChange("note::item", ["Bar"])
-			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/")
-			.expectMessage(oSalesOrderItemNoteError, "/SalesOrderLineItemSet",
-				"/SalesOrderSet('1')/ToLineItems")
-			.expectMessage(oSalesOrderItemPositionError, "/SalesOrderLineItemSet",
-				"/SalesOrderSet('1')/ToLineItems")
-			.expectMessage(bWithMessageScope ? oSalesOrderToBusinessPartnerAddress : null,
-				"/SalesOrderSet('1')/");
-
-		if (bWithMessageScope) {
-			oModel.setMessageScope(MessageScope.BusinessObject);
-		}
-
-		return this.createView(assert, sView, oModel);
-	});
-});
-
-	//*********************************************************************************************
 	// Scenario: The ODataModel#create API is called with an object retrieved via
 	// ODataModel#getObject which may contain properties inside a __metadata property which are not
 	// specified by OData so that a request would fail on the server. The request payload is
@@ -2262,14 +2067,14 @@ sap.ui.define([
 			assert.strictEqual(oNoteInput.getValue(), "Bar");
 
 			that.expectMessages([{
-					"code": undefined,
-					"descriptionUrl": undefined,
-					"fullTarget": "",
-					"message": "Enter a text with a maximum of 3 characters and spaces",
-					"persistent": false,
-					"target": oNoteInput.getId() + "/value",
-					"technical": false,
-					"type": "Error"
+					"code" : undefined,
+					"descriptionUrl" : undefined,
+					"fullTarget" : "",
+					"message" : "Enter a text with a maximum of 3 characters and spaces",
+					"persistent" : false,
+					"target" : oNoteInput.getId() + "/value",
+					"technical" : false,
+					"type" : "Error"
 				}]);
 
 			// code under test - produce a validation error
@@ -2320,4 +2125,1194 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: On an object page a sales order with its sales order items is displayed. All the
+	// sales order items are returned with the initial request. Check the lifecycle of stateful
+	// OData messages.
+	// Expectation: All messages for the sales order and all messages for the sales order items are
+	// displayed. In case of message scope BusinessObject also messages for child entities are
+	// displayed.
+	// JIRA: CPOUI5MODELS-111
+[MessageScope.BusinessObject, MessageScope.RequestedObjects].forEach(function (sMessageScope) {
+	QUnit.test("Message lifecycle (1), scope: " + sMessageScope, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToBusinessPartnerAddress
+				= this.createResponseMessage("ToBusinessPartner/Address"),
+			oSalesOrderToItemNoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderToItemPositionError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ItemPosition"),
+			oSalesOrderItemNoteError = cloneODataMessage(oSalesOrderToItemNoteError,
+				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderItemPositionError = cloneODataMessage(oSalesOrderToItemPositionError,
+				"(SalesOrderID='1',ItemPosition='10~0~')/ItemPosition"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+	<Table id="table" items="{\
+			path : \'ToLineItems\',\
+			parameters : {transitionMessagesOnly : true}\
+		}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="note::item" value="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			bWithMessageScope = sMessageScope === MessageScope.BusinessObject;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader(bWithMessageScope
+					? [oSalesOrderNoteError, oSalesOrderToBusinessPartnerAddress,
+						oSalesOrderToItemNoteError, oSalesOrderToItemPositionError]
+					: [oSalesOrderNoteError])
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo")
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+					: {"sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					Note : "Bar",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition", ["10~0~"])
+			.expectChange("note::item", ["Bar"])
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
+
+		if (bWithMessageScope) {
+			this.expectMessage(oSalesOrderItemNoteError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItemPositionError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderToBusinessPartnerAddress, "/SalesOrderSet('1')/");
+		}
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel);
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: On an object page a sales order with its sales order items is displayed. Only a
+	// part of the sales order items is displayed after the initial load. After initial load trigger
+	// paging to get more sales order items. Check the lifecycle of stateful OData messages.
+	// Expectation: In case of message scope BusinessObject all messages for the sales order and all
+	// messages for the sales order items are displayed. Also all messages for child entities are
+	// displayed. In case of message scope RequestedObjects only the messages for the sales order
+	// and the messages for the requested sales order items are displayed.
+	// Paging must not remove messages of items that are already on the client. New messages for the
+	// sales order items are added, if they are not yet contained in the message model.
+	// JIRA: CPOUI5MODELS-111, CPOUI5MODELS-112
+[MessageScope.BusinessObject, MessageScope.RequestedObjects].forEach(function (sMessageScope) {
+	QUnit.test("Message lifecycle (2) + (3), scope: " + sMessageScope, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToBusinessPartnerAddress
+				= this.createResponseMessage("ToBusinessPartner/Address"),
+			oSalesOrderToItem10NoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderToItem30NoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='30~2~')/Note"),
+			oSalesOrderItem10NoteError = cloneODataMessage(oSalesOrderToItem10NoteError,
+				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderItem30NoteError = cloneODataMessage(oSalesOrderToItem30NoteError,
+				"(SalesOrderID='1',ItemPosition='30~2~')/Note"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+	<Table growing="true" growingThreshold="2" id="table" items="{\
+			path : \'ToLineItems\',\
+			parameters : {transitionMessagesOnly : true}\
+		}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="note::item" value="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader(bWithMessageScope
+					? [oSalesOrderNoteError, oSalesOrderToBusinessPartnerAddress,
+						oSalesOrderToItem10NoteError, oSalesOrderToItem30NoteError]
+					: oSalesOrderNoteError)
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo")
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+					: {"sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					Note : "Bar",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}, {
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					},
+					Note : "Baz",
+					ItemPosition : "20~1~",
+					SalesOrderID : "1"
+				}]
+			}/*, { // message is not sent because of transitionMessagesOnly
+				"sap-message" : getMessageHeader(oSalesOrderItem10NoteError)
+			}*/)
+			.expectChange("itemPosition", ["10~0~", "20~1~"])
+			.expectChange("note::item", ["Bar", "Baz"])
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
+
+		if (bWithMessageScope) {
+			this.expectMessage(oSalesOrderToBusinessPartnerAddress, "/SalesOrderSet('1')/")
+				.expectMessage(oSalesOrderItem10NoteError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItem30NoteError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems");
+		}
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+					: {"sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=2&$top=2"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~2~')"
+					},
+					Note : "Qux",
+					ItemPosition : "30~2~",
+					SalesOrderID : "1"
+				}, {
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='40~3~')"
+					},
+					Note : "Quux",
+					ItemPosition : "40~3~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition", "30~2~", 2)
+			.expectChange("itemPosition", "40~3~", 3)
+			.expectChange("note::item", "Qux", 2)
+			.expectChange("note::item", "Quux", 3);
+
+			// do paging
+			that.oView.byId("table-trigger").firePress();
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: On an object page a sales order with its sales order items is displayed. Only a
+	// part of the sales order items is displayed after the initial load. After initial load
+	// user filters the list, that some entries are filtered out and some additional are displayed.
+	// Check the lifecycle of stateful OData messages.
+	// Expectation: In case of message scope "BusinessObject", the filter request must not delete
+	// messages for entities that have been filtered out because the list is embedded into an
+	// object page. The topmost entity is responsible for the message handling.
+	// In case of message scope "Request", old messages are untouched, new messages are added.
+	// JIRA: CPOUI5MODELS-111, CPOUI5MODELS-112
+[MessageScope.BusinessObject, MessageScope.RequestedObjects].forEach(function (sMessageScope) {
+	QUnit.test("Message lifecycle (4), scope: " + sMessageScope, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToBusinessPartnerAddress
+				= this.createResponseMessage("ToBusinessPartner/Address"),
+			oSalesOrderToItem10GrossAmountError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/GrossAmount"),
+			oSalesOrderToItem20GrossAmountError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='20~1~')/GrossAmount"),
+			oSalesOrderToItem30GrossAmountError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='30~1~')/GrossAmount"),
+			oSalesOrderItem10GrossAmountError
+				= cloneODataMessage(oSalesOrderToItem10GrossAmountError,
+					"(SalesOrderID='1',ItemPosition='10~0~')/GrossAmount"),
+			oSalesOrderItem20GrossAmountError
+				= cloneODataMessage(oSalesOrderToItem20GrossAmountError,
+					"(SalesOrderID='1',ItemPosition='20~1~')/GrossAmount"),
+			oSalesOrderItem30GrossAmountError
+				= cloneODataMessage(oSalesOrderToItem30GrossAmountError,
+					"(SalesOrderID='1',ItemPosition='30~1~')/GrossAmount"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+	<Table growing="true" growingThreshold="2" id="table" items="{\
+			path : \'ToLineItems\',\
+			parameters : {transitionMessagesOnly : true}\
+		}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="grossAmount" value="{GrossAmount}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader(bWithMessageScope
+					? [oSalesOrderNoteError, oSalesOrderToBusinessPartnerAddress,
+						oSalesOrderToItem10GrossAmountError, oSalesOrderToItem20GrossAmountError,
+						oSalesOrderToItem30GrossAmountError]
+					: oSalesOrderNoteError)
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo")
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+					: {"sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					GrossAmount : "111.0",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}, {
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					},
+					GrossAmount : "42.0",
+					ItemPosition : "20~1~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition", ["10~0~", "20~1~"])
+			.expectChange("grossAmount", ["111.0", "42.0"])
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
+
+		if (bWithMessageScope) {
+			this.expectMessage(oSalesOrderToBusinessPartnerAddress, "/SalesOrderSet('1')/")
+				.expectMessage(oSalesOrderItem10GrossAmountError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItem20GrossAmountError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItem30GrossAmountError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems");
+
+		}
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel).then(function() {
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')/ToLineItems",
+					headers : bWithMessageScope
+						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+						: {"sap-messages" : "transientOnly"},
+					method : "GET",
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
+						+ "&$filter=GrossAmount gt 100.0m"
+				}, {
+					results : [{
+						"__metadata" : {
+							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						},
+						GrossAmount : "111.0",
+						ItemPosition : "10~0~",
+						SalesOrderID : "1"
+					}, {
+						"__metadata" : {
+							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~1~')"
+						},
+						GrossAmount : "222.0",
+						ItemPosition : "30~1~",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("itemPosition", "30~1~", 1)
+				.expectChange("grossAmount", "222.0", 1);
+
+			// Code under test
+			that.oView.byId("table").getBinding("items").filter([new Filter({
+				path : 'GrossAmount',
+				operator : FilterOperator.GT,
+				value1 : "100.0"
+			})]);
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: On an object page a sales order with its sales order items is displayed. There are
+	// two lists for the sales order items with different filter values. After data is loaded user
+	// refreshs one list and gets different data / messages. Check the lifecycle of stateful OData
+	// messages.
+	// Expectation: In case of message scope "BusinessObjects" all messages for the sales order
+	// add all messages for the child entities of the sales order are displayed. Refreshing a list
+	// must not remove messages for the other list. Refreshing the messages has to be triggered via
+	// root entity of the object page.
+	// In case of message scope "Request" only the messages for the sales order and all messages for
+	// both item list are displayed.
+	// JIRA: CPOUI5MODELS-111, CPOUI5MODELS-112
+[MessageScope.BusinessObject, MessageScope.RequestedObjects].forEach(function (sMessageScope) {
+	QUnit.test("Message lifecycle (5) + (6), scope: " + sMessageScope, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToBusinessPartnerAddress
+				= this.createResponseMessage("ToBusinessPartner/Address"),
+			oSalesOrderToItem10GrossAmountError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/GrossAmount"),
+			oSalesOrderToItem20GrossAmountError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='20~0~')/GrossAmount"),
+			oSalesOrderToItem30GrossAmountError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='30~0~')/GrossAmount"),
+			oSalesOrderItem10GrossAmountError
+				= cloneODataMessage(oSalesOrderToItem10GrossAmountError,
+					"(SalesOrderID='1',ItemPosition='10~0~')/GrossAmount"),
+			oSalesOrderItem20GrossAmountError
+				= cloneODataMessage(oSalesOrderToItem20GrossAmountError,
+					"(SalesOrderID='1',ItemPosition='20~0~')/GrossAmount"),
+			oSalesOrderItem30GrossAmountError
+				= cloneODataMessage(oSalesOrderToItem30GrossAmountError,
+					"(SalesOrderID='1',ItemPosition='30~0~')/GrossAmount"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+	<Table id="table1" items="{path : \'ToLineItems\', \
+		parameters : {transitionMessagesOnly : true},\
+		filters : {path : \'GrossAmount\', operator : \'GT\', value1 : \'100.0\'}\
+	}">\
+		<ColumnListItem>\
+			<Text id="itemPosition1" text="{ItemPosition}" />\
+			<Input id="grossAmount1" value="{GrossAmount}" />\
+		</ColumnListItem>\
+	</Table>\
+	<Table id="table2" items="{path : \'ToLineItems\', \
+		parameters : {transitionMessagesOnly : true},\
+		filters : {path : \'GrossAmount\', operator : \'LE\', value1 : \'100.0\'}\
+	}">\
+		<ColumnListItem>\
+			<Text id="itemPosition2" text="{ItemPosition}" />\
+			<Input id="grossAmount2" value="{GrossAmount}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader(bWithMessageScope
+					? [oSalesOrderNoteError, oSalesOrderToBusinessPartnerAddress,
+						oSalesOrderToItem10GrossAmountError, oSalesOrderToItem20GrossAmountError,
+						oSalesOrderToItem30GrossAmountError]
+					: oSalesOrderNoteError)
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo")
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+					: {"sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100&"
+					+ "$filter=GrossAmount gt 100.0m"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					GrossAmount : "111.0",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition1", ["10~0~"])
+			.expectChange("grossAmount1", ["111.0"])
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+					: {"sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100&"
+					+ "$filter=GrossAmount le 100.0m"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~0~')"
+					},
+					GrossAmount : "42.0",
+					ItemPosition : "20~0~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition2", ["20~0~"])
+			.expectChange("grossAmount2", ["42.0"])
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
+
+		if (bWithMessageScope) {
+			this.expectMessage(oSalesOrderToBusinessPartnerAddress, "/SalesOrderSet('1')/")
+				.expectMessage(oSalesOrderItem10GrossAmountError, {
+					isComplete : true,
+					path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						+ "/GrossAmount"
+				}, "/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItem20GrossAmountError, {
+					isComplete : true,
+					path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~0~')"
+						+ "/GrossAmount"
+				}, "/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItem30GrossAmountError, {
+					isComplete : true,
+					path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~0~')"
+						+ "/GrossAmount"
+				}, "/SalesOrderSet('1')/ToLineItems");
+		}
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// assume a sideeffect removed entity (SalesOrderID='1',ItemPosition='10~0~')
+			// with refresh only the data and the messages for that data is updated
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')/ToLineItems",
+					headers : bWithMessageScope
+						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+						: {"sap-messages" : "transientOnly"},
+					method : "GET",
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100&"
+						+ "$filter=GrossAmount gt 100.0m"
+				}, {
+					results : [{
+						"__metadata" : {
+							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~0~')"
+						},
+						GrossAmount : "123.0",
+						ItemPosition : "30~0~",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("itemPosition1", ["30~0~"])
+				.expectChange("grossAmount1", ["123.0"]);
+
+			// Code under test
+			that.oView.byId("table1").getBinding("items").refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// to update also the messages, the messages need to be read again via the root entity
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')",
+					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+					method : "GET",
+					requestUri : "SalesOrderSet('1')?$select=SalesOrderID"
+				}, {
+					"__metadata" : {"uri" : "SalesOrderSet('1')"},
+					SalesOrderID : "1"
+				}, {
+					"sap-message" : getMessageHeader(bWithMessageScope
+						? [oSalesOrderNoteError, oSalesOrderToBusinessPartnerAddress,
+							oSalesOrderToItem20GrossAmountError,
+							oSalesOrderToItem30GrossAmountError]
+						: oSalesOrderNoteError)
+				})
+				.expectMessages([]) // clean all expected messages
+				.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
+
+			if (bWithMessageScope) {
+				that.expectMessage(oSalesOrderToBusinessPartnerAddress, "/SalesOrderSet('1')/")
+					.expectMessage(oSalesOrderItem20GrossAmountError, {
+						isComplete : true,
+						path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~0~')"
+							+ "/GrossAmount"
+					}, "/SalesOrderSet('1')/ToLineItems")
+					.expectMessage(oSalesOrderToItem30GrossAmountError, {
+							isComplete : true,
+							path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~0~')"
+								+ "/GrossAmount"
+						}, "/SalesOrderSet('1')/");
+			}
+
+			// code under test
+			oModel.read("/SalesOrderSet('1')", {
+				updateAggregatedMessages : true,
+				urlParameters : {
+					$select : "SalesOrderID"
+				}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: On an object page a sales order with its sales order items is displayed. Only a
+	// part of the sales order items is displayed after the initial load. After initial load
+	// sort the list and get other sales order items. Check the lifecycle of stateful OData
+	// messages.
+	// Expectation: In case of message scope BusinessObject all messages for the sales order and all
+	// messages for the sales order items are displayed. Also all messages for child entities are
+	// displayed. In case of message scope RequestedObjects only the messages for the sales order
+	// and the messages for the requested sales order items are displayed.
+	// Sorting must not remove messages of items, new messages for the sales order items are added,
+	// if they are not yet contained in the message model.
+	// JIRA: CPOUI5MODELS-111, CPOUI5MODELS-112
+[MessageScope.BusinessObject, MessageScope.RequestedObjects].forEach(function (sMessageScope) {
+	QUnit.test("Message lifecycle (2) + (7), scope: " + sMessageScope, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToBusinessPartnerAddress
+				= this.createResponseMessage("ToBusinessPartner/Address"),
+			oSalesOrderToItem10NoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderToItem30NoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='30~0~')/Note"),
+			oSalesOrderItem10NoteError = cloneODataMessage(oSalesOrderToItem10NoteError,
+				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderItem30NoteError = cloneODataMessage(oSalesOrderToItem30NoteError,
+				"(SalesOrderID='1',ItemPosition='30~0~')/Note"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+	<Table growing="true" growingThreshold="2" id="table" items="{\
+			path : \'ToLineItems\',\
+			parameters : {transitionMessagesOnly : true}\
+		}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="note::item" value="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader(bWithMessageScope
+					? [oSalesOrderNoteError, oSalesOrderToBusinessPartnerAddress,
+						oSalesOrderToItem10NoteError, oSalesOrderToItem30NoteError]
+					: oSalesOrderNoteError)
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo")
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+					: {"sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					Note : "Bar",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}, {
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					},
+					Note : "Baz",
+					ItemPosition : "20~1~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition", ["10~0~", "20~1~"])
+			.expectChange("note::item", ["Bar", "Baz"])
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
+
+		if (bWithMessageScope) {
+			this.expectMessage(oSalesOrderToBusinessPartnerAddress, "/SalesOrderSet('1')/")
+				.expectMessage(oSalesOrderItem10NoteError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItem30NoteError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems");
+
+		}
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')/ToLineItems",
+					headers : bWithMessageScope
+						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+						: {"sap-messages" : "transientOnly"},
+					method : "GET",
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
+						+ "&$orderby=GrossAmount asc"
+				}, {
+					results : [{
+						"__metadata" : {
+							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~0~')"
+						},
+						Note : "Qux",
+						ItemPosition : "30~0~",
+						SalesOrderID : "1"
+					}, {
+						"__metadata" : {
+							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='40~1~')"
+						},
+						Note : "Quux",
+						ItemPosition : "40~1~",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("itemPosition", ["30~0~", "40~1~"])
+				.expectChange("note::item", ["Qux", "Quux"]);
+
+			// Code under test
+			that.oView.byId("table").getBinding("items").sort(new Sorter("GrossAmount"));
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: On an object page a sales order with its sales order items is displayed. Only a
+	// part of the sales order items is displayed after the initial load. After initial load
+	// modify first a sales order item and later the sales order itself to get rid of messages.
+	// Check the lifecycle of stateful OData messages.
+	// Expectation: In case of message scope BusinessObject all messages for the sales order and all
+	// messages for the sales order items are displayed. Also all messages for child entities are
+	// displayed. After modifying the entities the corresponding messages are removed.
+	// In case of message scope RequestedObjects only the messages for the sales order and the
+	// messages for the requested sales order items are displayed. After modifying the entities the
+	// corresponding messages are removed.
+	// JIRA: CPOUI5MODELS-111, CPOUI5MODELS-112
+	// BCP: 1980510782
+[MessageScope.BusinessObject, MessageScope.RequestedObjects].forEach(function (sMessageScope) {
+	QUnit.test("Message lifecycle (8), scope: " + sMessageScope, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({
+				canonicalRequests : true,
+				preliminaryContext : true,
+				refreshAfterChange : false
+			}),
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToBusinessPartnerAddress
+				= this.createResponseMessage("ToBusinessPartner/Address"),
+			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+			oSalesOrderToItem10NoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderToItem30NoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='30~0~')/Note"),
+			oSalesOrderItem10NoteError = cloneODataMessage(oSalesOrderToItem10NoteError,
+				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderItem30NoteError = cloneODataMessage(oSalesOrderToItem30NoteError,
+				"(SalesOrderID='1',ItemPosition='30~0~')/Note"),
+			oSalesOrderItem10ToProductPriceError
+				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
+					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+	<Table growing="true" growingThreshold="2" id="table" items="{\
+			path : \'ToLineItems\',\
+			parameters : {transitionMessagesOnly : true}\
+		}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="note::item" value="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader(bWithMessageScope
+					? [oSalesOrderNoteError, oSalesOrderToBusinessPartnerAddress,
+						oSalesOrderToItem10NoteError, oSalesOrderToItem10ToProductPriceError,
+						oSalesOrderToItem30NoteError]
+					: oSalesOrderNoteError)
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo")
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+					: {"sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					Note : "Bar",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}, {
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					},
+					Note : "Baz",
+					ItemPosition : "20~1~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition", ["10~0~", "20~1~"])
+			.expectChange("note::item", ["Bar", "Baz"])
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
+
+		if (bWithMessageScope) {
+			this.expectMessage(oSalesOrderToBusinessPartnerAddress, "/SalesOrderSet('1')/")
+				.expectMessage(oSalesOrderItem10NoteError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItem30NoteError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItem10ToProductPriceError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems");
+		}
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oItem10ToProductPriceError = cloneODataMessage(oSalesOrderItem10ToProductPriceError,
+					"ToProduct/Price");
+
+			that.expectChange("note::item", "Qux", 0)
+				.expectHeadRequest(bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject"}
+					: {})
+				.expectRequest({
+					data : {
+						Note : "Qux",
+						"__metadata" : {
+							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						}
+					},
+					deepPath :
+						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')",
+					headers : bWithMessageScope
+						? {"sap-message-scope" : "BusinessObject", "x-http-method" : "MERGE"}
+						: {"x-http-method" : "MERGE"},
+					key : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')",
+					method : "POST",
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+				}, NO_CONTENT, bWithMessageScope
+					? {"sap-message" : getMessageHeader(oItem10ToProductPriceError)}
+					: undefined
+				)
+				.expectMessages([]) // clean all expected messages
+				.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
+
+			if (bWithMessageScope) {
+				that.expectMessage(oSalesOrderToBusinessPartnerAddress, "/SalesOrderSet('1')/")
+					.expectMessage(oItem10ToProductPriceError,
+						"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')/",
+						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/")
+					.expectMessage(oSalesOrderItem30NoteError,
+						"/SalesOrderLineItemSet", "/SalesOrderSet('1')/ToLineItems");
+			}
+
+			// code under test - modify a sales order item
+			oModel.setProperty(
+				"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note",
+				"Qux");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note", "Quxx")
+				.expectRequest({
+					data : {
+						Note : "Quxx",
+						"__metadata" : {"uri" : "SalesOrderSet('1')"}
+					},
+					deepPath :
+						"/SalesOrderSet('1')",
+					headers : bWithMessageScope
+						? {"sap-message-scope" : "BusinessObject", "x-http-method" : "MERGE"}
+						: {"x-http-method" : "MERGE"},
+					key : "SalesOrderSet('1')",
+					method : "POST",
+					requestUri : "SalesOrderSet('1')"
+				}, NO_CONTENT, bWithMessageScope
+					? {"sap-message" : getMessageHeader(oSalesOrderToItem30NoteError)}
+					: undefined
+				)
+				.expectMessages([]) // clean all expected messages
+				.expectMessage(bWithMessageScope ? oSalesOrderItem30NoteError : null,
+					"/SalesOrderLineItemSet", "/SalesOrderSet('1')/ToLineItems");
+
+			// code under test - modify the sales order
+			oModel.setProperty("/SalesOrderSet('1')/Note", "Quxx");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: On an object page a sales order with its sales order items is displayed. Only a
+	// part of the sales order items is displayed after the initial load. After initial load
+	// delete one entry from the list. Check the lifecycle of stateful OData messages.
+	// Expectation: In case of message scope BusinessObject all messages for the sales order and all
+	// messages for the sales order items are displayed. Also all messages for child entities are
+	// displayed. After the deletion of an entity all messages for that entity and all its child
+	// entities are removed.
+	// In case of message scope RequestedObjects only the messages for the sales order and the
+	// messages for the requested sales order items are displayed. After the deletion only the
+	// messages for the deleted entity are removed.
+	// JIRA: CPOUI5MODELS-111, CPOUI5MODELS-112
+[MessageScope.BusinessObject, MessageScope.RequestedObjects].forEach(function (sMessageScope) {
+	QUnit.test("Message lifecycle (10), scope: " + sMessageScope, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToBusinessPartnerAddress
+				= this.createResponseMessage("ToBusinessPartner/Address"),
+			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+			oSalesOrderToItem10NoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderToItem20NoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='20~1~')/Note"),
+			oSalesOrderItem10NoteError = cloneODataMessage(oSalesOrderToItem10NoteError,
+				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderItem10ToProductPriceError
+				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
+					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+			oSalesOrderItem20NoteError = cloneODataMessage(oSalesOrderToItem20NoteError,
+				"(SalesOrderID='1',ItemPosition='20~1~')/Note"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+	<Table growing="true" growingThreshold="2" id="table" items="{\
+			path : \'ToLineItems\',\
+			parameters : {transitionMessagesOnly : true}\
+		}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="note::item" value="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader(bWithMessageScope
+					? [oSalesOrderNoteError, oSalesOrderToBusinessPartnerAddress,
+						oSalesOrderToItem10NoteError, oSalesOrderToItem10ToProductPriceError,
+						oSalesOrderToItem20NoteError]
+					: oSalesOrderNoteError)
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo")
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+					: {"sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					Note : "Bar",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}, {
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					},
+					Note : "Baz",
+					ItemPosition : "20~1~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition", ["10~0~", "20~1~"])
+			.expectChange("note::item", ["Bar", "Baz"])
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
+
+		if (bWithMessageScope) {
+			this.expectMessage(oSalesOrderToBusinessPartnerAddress, "/SalesOrderSet('1')/")
+				.expectMessage(oSalesOrderItem10NoteError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItem10ToProductPriceError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectMessage(oSalesOrderItem20NoteError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems");
+		}
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectHeadRequest(bWithMessageScope
+					? {"sap-message-scope" : "BusinessObject"}
+					: {})
+				.expectRequest({
+					deepPath :
+						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')",
+					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+					method : "DELETE",
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+				}, NO_CONTENT)
+				// ODataModel#remove does not remove the item from the list. A refresh needs to be
+				// triggered or refreshAfterChange has to be true to trigger refresh automatically
+				.expectChange("itemPosition", undefined, 0)
+				.expectChange("note::item", undefined, 0)
+				.expectMessages([]) // clean all expected messages
+				.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/")
+				.expectMessage(bWithMessageScope ? oSalesOrderToBusinessPartnerAddress : null,
+					"/SalesOrderSet('1')/")
+				.expectMessage(bWithMessageScope ? oSalesOrderItem20NoteError : null,
+					"/SalesOrderLineItemSet", "/SalesOrderSet('1')/ToLineItems");
+
+			// code under test
+			oModel.remove("", {
+				context : that.oView.byId("table").getItems()[0].getBindingContext(),
+				refreshAfterChange : false
+			});
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: On a list report page a list of sales orders is displayed. Only a part of the sales
+	// orders is displayed after the initial load. After the data is displayed trigger a refresh or
+	// filter the list. Check the lifecycle of stateful OData messages.
+	// Expectation: In case of message scope BusinessObject all messages for the sales orders and
+	// all messages for their child entities are displayed. After the refresh/filtering all messages
+	// for all sales orders and all their child entities are removed and replaced by the messages
+	// contained in the response of the refresh/filter request.
+	// In case of message scope RequestedObjects only the messages for the requested sales orders
+	// are displayed. A refresh/filtering does not cause a deletion of messages for entities that
+	// are not returned any more.
+	// JIRA: CPOUI5MODELS-111, CPOUI5MODELS-112
+[MessageScope.BusinessObject, MessageScope.RequestedObjects].forEach(function (sMessageScope) {
+	[true, false].forEach(function (bFilter) {
+	var sTitle = "Message lifecycle (11), scope: " + sMessageScope + ", bFilter: " + bFilter;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
+			oSalesOrder1NoteError = this.createResponseMessage("('1~0~')/Note"),
+			oSalesOrder1ToBusinessPartnerAddress
+				= this.createResponseMessage("('1~0~')/ToBusinessPartner/Address"),
+			oSalesOrder2NoteError = this.createResponseMessage("('2~1~')/Note"),
+			oSalesOrder2ToBusinessPartnerAddress
+				= this.createResponseMessage("('2~1~')/ToBusinessPartner/Address"),
+			sView = '\
+<Table growing="true" growingThreshold="2" id="table" items="{/SalesOrderSet}">\
+	<ColumnListItem>\
+		<Input id="note" value="{Note}" />\
+	</ColumnListItem>\
+</Table>',
+			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet?$skip=0&$top=2"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderSet('1~0~')"
+					},
+					Note : "Foo",
+					SalesOrderID : "1~0~"
+				}, {
+					"__metadata" : {
+						"uri" : "SalesOrderSet('2~1~')"
+					},
+					Note : "Bar",
+					SalesOrderID : "2~1~"
+				}]
+			}, {
+				"sap-message" : getMessageHeader(bWithMessageScope
+					? [oSalesOrder1NoteError, oSalesOrder1ToBusinessPartnerAddress,
+						oSalesOrder2NoteError, oSalesOrder2ToBusinessPartnerAddress]
+					: [oSalesOrder1NoteError, oSalesOrder2NoteError])
+			})
+			.expectChange("note", ["Foo", "Bar"])
+			.expectMessage(oSalesOrder1NoteError, "/SalesOrderSet")
+			.expectMessage(bWithMessageScope ? oSalesOrder1ToBusinessPartnerAddress : null,
+				"/SalesOrderSet")
+			.expectMessage(oSalesOrder2NoteError, "/SalesOrderSet")
+			.expectMessage(bWithMessageScope ? oSalesOrder2ToBusinessPartnerAddress : null,
+				"/SalesOrderSet");
+
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oSalesOrder3NoteError = that.createResponseMessage("('3~1~')/Note");
+
+			that.expectRequest({
+					deepPath : "/SalesOrderSet",
+					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+					method : "GET",
+					requestUri : "SalesOrderSet?$skip=0&$top=2"
+						+ (bFilter ? "&$filter=GrossAmount gt 100.0m" : "")
+				}, {
+					results : [{
+						"__metadata" : {
+							"uri" : "SalesOrderSet('1~0~')"
+						},
+						Note : "Foo",
+						SalesOrderID : "1~0~"
+					},
+					// "SalesOrderSet('2~1~')" has been filtered out, or in case of a refresh the
+					// entity has been removed in meantime
+					{
+						"__metadata" : {
+							"uri" : "SalesOrderSet('3~1~')"
+						},
+						Note : "Baz",
+						SalesOrderID : "3~1~"
+					}]
+				}, {
+					"sap-message" : getMessageHeader(bWithMessageScope
+						? [oSalesOrder1NoteError, oSalesOrder1ToBusinessPartnerAddress,
+							oSalesOrder3NoteError]
+						: [oSalesOrder1NoteError, oSalesOrder3NoteError])
+				})
+				.expectChange("note", "Baz", 1)
+				.expectMessages([]) // clean all expected messages
+				.expectMessage(oSalesOrder1NoteError, "/SalesOrderSet")
+				.expectMessage(bWithMessageScope ? oSalesOrder1ToBusinessPartnerAddress : null,
+					"/SalesOrderSet")
+				//TODO: MessageScope.RequestedObjects: how to get rid of messages of entities that
+				// are removed from the list?
+				.expectMessage(!bWithMessageScope ? oSalesOrder2NoteError : null, "/SalesOrderSet")
+				.expectMessage(oSalesOrder3NoteError, "/SalesOrderSet");
+
+			if (bFilter) {
+				// code under test
+				that.oView.byId("table").getBinding("items").filter([new Filter({
+					path : 'GrossAmount',
+					operator : FilterOperator.GT,
+					value1 : "100.0"
+				})]);
+			} else {
+				// code under test - somehow the data changed - refresh to get current data
+				that.oView.byId("table").getBinding("items").refresh();
+			}
+
+			return that.waitForChanges(assert);
+		});
+	});
+	});
+});
 });

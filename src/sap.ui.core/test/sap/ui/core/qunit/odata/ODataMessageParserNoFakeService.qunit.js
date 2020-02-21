@@ -537,4 +537,64 @@ sap.ui.define([
 		assert.strictEqual(oMessageObject.canonicalTarget, "~canonicalTarget");
 		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
 	});
+
+	//*********************************************************************************************
+[{
+	oMessage : undefined,
+	bExpectError : false
+}, {
+	oMessage : new Message({message : "new", persistent : true}),
+	bExpectError : false
+}, {
+	oMessage : new Message({message : "new", persistent : false}),
+	bExpectError : true
+}].forEach(function (oFixture, i) {
+	QUnit.test("_propagateMessages: sap-messages=transientOnly, " + i, function (assert) {
+		var oLastMessage = new Message({message : "keep"}),
+			oMessageProcessor = {
+				fireMessageChange : function () {}
+			},
+			aMessages = oFixture.oMessage ? [oFixture.oMessage] : [],
+			aNewLastMessages = [oLastMessage],
+			oODataMessageParser = {
+				_getAffectedTargets : function () {},
+				getProcessor : function () {},
+				// members
+				_lastMessages : [oLastMessage]
+			},
+			mRequestInfo = {
+				request : {
+					headers : {
+						"sap-messages" : "transientOnly"
+					}
+				}
+			};
+
+		if (oFixture.oMessage) {
+			aNewLastMessages.push(oFixture.oMessage);
+		}
+
+		if (oFixture.bExpectError) {
+			this.oLogMock.expects("error").withExactArgs("Unexpected non-persistent message in "
+				+ "response, but requested only transition messages", undefined,
+				"sap.ui.model.odata.ODataMessageParser");
+		}
+		this.mock(oODataMessageParser).expects("_getAffectedTargets").never();
+		this.mock(oODataMessageParser).expects("getProcessor").withExactArgs()
+			.returns(oMessageProcessor);
+		this.mock(oMessageProcessor).expects("fireMessageChange")
+			.withExactArgs(sinon.match({
+				oldMessages : [],
+				newMessages : sinon.match.same(aMessages)
+			}))
+			.returns(oMessageProcessor);
+
+		// code under test
+		ODataMessageParser.prototype._propagateMessages.call(oODataMessageParser,
+			aMessages, mRequestInfo/* , mGetEntities,
+			mChangeEntities, bSimpleMessageLifecycle*/);
+
+		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
+	});
+});
 });
