@@ -143,7 +143,8 @@ sap.ui.define([
 			 * @param {object} mPropertyBag Property bag
 			 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
 			 * @param {string} mPropertyBag.reference Flex reference
-			 * @returns {Promise<sap.ui.fl.Version[]>} Resolves with list of versions after the activation took place.
+			 * @param {string} mPropertyBag.title Title of the to be activated version
+			 * @returns {Promise<sap.ui.fl.Version>} Resolves with list of versions after the activation took place.
 			 */
 			activateDraft: function () {
 				return Promise.reject("versions.activateDraft is not implemented");

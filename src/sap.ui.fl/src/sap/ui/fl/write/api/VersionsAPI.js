@@ -111,10 +111,11 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 * @param {string} mPropertyBag.title - Title of the to be activated version
 	 *
 	 * @ui5-restricted sap.ui.rta
 	 *
-	 * @returns {Promise<sap.ui.fl.Version[]>} Promise resolving with the updated list of versions for the application
+	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated list of versions for the application
 	 * when the version was activated;
 	 * rejects if an error occurs or the layer does not support draft handling or there is no draft to activate
 	 */
@@ -124,6 +125,9 @@ sap.ui.define([
 		}
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
+		}
+		if (!mPropertyBag.title) {
+			return Promise.reject("No version title was provided");
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
@@ -135,7 +139,8 @@ sap.ui.define([
 
 		return Versions.activateDraft({
 			reference: sReference,
-			layer: mPropertyBag.layer
+			layer: mPropertyBag.layer,
+			title: mPropertyBag.title
 		});
 	};
 

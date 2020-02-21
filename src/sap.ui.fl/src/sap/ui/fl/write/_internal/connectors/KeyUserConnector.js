@@ -28,6 +28,14 @@ sap.ui.define([
 		mPropertyBag.tokenUrl = KeyUserConnector.ROUTES.TOKEN;
 	}
 
+	function _enhancePropertyBagWithPayloadInfo(mPropertyBag) {
+		var oPayload = {
+			title: mPropertyBag.title
+		};
+		mPropertyBag.payload = JSON.stringify(oPayload);
+		mPropertyBag.dataType = "json";
+		mPropertyBag.contentType = "application/json; charset=utf-8";
+	}
 	/**
 	 * Connector for saving and deleting data from SAPUI5 Flexibility KeyUser service.
 	 *
@@ -63,6 +71,7 @@ sap.ui.define([
 		},
 		activateDraft: function (mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
+			_enhancePropertyBagWithPayloadInfo(mPropertyBag);
 			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag);
 			return ApplyUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
 				return oResult.response;
