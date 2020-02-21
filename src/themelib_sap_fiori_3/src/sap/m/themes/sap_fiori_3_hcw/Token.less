@@ -3,16 +3,96 @@
 /* Quartz High Contrast White theme  */
 /* ================================= */
 
+@_sap_m_Token_Sys_Cancel_Icon: false;
+@_sap_m_Token_TokenPadding: 0.5rem;
+@_sap_m_Token_TokenCompactPadding: 0.25rem;
+@_sap_m_Token_LeftPadding: 0.3125rem;
+@_sap_m_Token_BorderColor: darken(@sapUiButtonBackground, 24);
+@_sap_m_Token_HoverBorderColor: lighten(@sapUiButtonHoverBorderColor, 30);
+@_sap_m_Token_HoverBackgroundColor: @sapUiButtonHoverBackground;
+@_sap_m_Token_BackgroundColor: darken(@sapUiButtonBackground, 2);
+@_sap_m_Token_LeftPadding: 0.3125rem;
+@_sap_m_Token_TokenSize: @sapMFontSmallSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
+@_sap_m_Token_TokenCompactSize: @sapMFontSmallSize  + @_sap_m_Token_TokenCompactPadding;
+
+.sapMToken {
+	border: @sapUiButtonBorderWidth solid @sapUiButtonBorderColor;
+	background: @_sap_m_Token_BackgroundColor;
+	font-size: @sapMFontMediumSize;
+	border-radius: 0.25rem;
+	padding-left: 0.3125rem;
+	color: @sapUiBaseText;
+}
+
+.sapMTokenText {
+	max-width: calc(~"100% - " @_sap_m_Token_TokenSize);
+}
+
+.sapMTokenSelected {
+	color: @sapUiButtonSelectedTextColor;
+	background: @sapUiButtonSelectedBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedBorderColor;
+	border-radius: 0.25rem;
+}
+
+.sapMTokenSelected .sapMTokenIcon,
+.sapMTokenSelected .sapMTokenText {
+	color: @sapUiButtonSelectedTextColor;
+}
+
+html.sap-desktop .sapMToken:hover {
+	border: @sapUiButtonBorderWidth solid @_sap_m_Token_HoverBorderColor;
+	background: @_sap_m_Token_HoverBackgroundColor;
+	border-radius: 0.25rem;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:hover {
+	background: @sapUiButtonSelectedHoverBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedHoverBorderColor;
+	border-radius: 0.25rem;
+}
+
+.sapMTokenIcon {
+	font-size: @sapMFontSmallSize;
+	color: @sapUiContentIconColor;
+	line-height: 1.5625rem;
+}
+
+html.sap-desktop .sapMToken {
+	&.sapMTokenReadOnly,
+	&.sapMTokenReadOnly:hover,
+	&.sapMTokenReadOnly.sapMTokenSelected,
+	&.sapMTokenReadOnly.sapMTokenSelected:hover {
+		color: @sapUiContentLabelColor;
+		background: @sapUiFieldReadOnlyBackground;
+		border: @sapUiButtonBorderWidth solid @sapUiFieldReadOnlyBorderColor;
+	}
+}
+
 html.sap-desktop .sapMToken:focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -3px;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:focus {
+	outline: 1px dotted @sapUiContentContrastFocusColor;
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop, /* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMToken:focus {
 		.sapMTokenText:before {
-			border: 0.125rem dashed @sapUiContentFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
+			border: 1px dashed @sapUiContentFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
 		}
 	}
+
+	.sapMToken.sapMTokenSelected:focus {
+		.sapMTokenText:before {
+			border: 1px dashed @sapUiContentContrastFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
+		}
+	}
+}
+
+.sapUiSizeCompact .sapMTokenIcon {
+	line-height: 1.1875rem;
 }
