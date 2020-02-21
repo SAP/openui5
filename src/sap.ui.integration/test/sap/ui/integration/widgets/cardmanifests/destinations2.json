@@ -1,0 +1,60 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "card.explorer.features.dateRange",
+		"type": "card",
+		"title": "Sample of destinations",
+		"subTitle": "Sample of destinations",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Destinations",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind"
+				}
+			},
+			"parameters": {
+				"maxItems": {
+					"value": "5"
+				}
+			}
+		},
+		"header": {
+			"title": "Destinations sample 2",
+			"subTitle": "Data in body",
+			"status": {
+			    "text": "top {{parameters.maxItems}}"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "{{destinations.myDestination}}/Products",
+					"parameters": {
+						"$format": "json",
+						"$top": "{{parameters.maxItems}}"
+					}
+				},
+				"path": "/value/"
+			},
+			"maxItems": "{{parameters.maxItems}}",
+			"item": {
+				"title": "{ProductName}"
+			}
+		}
+	}
+}

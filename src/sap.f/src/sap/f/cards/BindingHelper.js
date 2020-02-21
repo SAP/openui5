@@ -17,6 +17,18 @@ sap.ui.define([
 		"use strict";
 
 		/**
+		 * Matches cards placeholders like "{{parameters.param1}}". It checks for two opening braces and two closing braces.
+		 * Does not match the framework's binding syntax: "{= ${url}}".
+		 *
+		 * \{\{ - two opening braces
+		 * ([^}]+) - everything which is not a closing brace
+		 * \}\} - two closing braces
+		 *
+		 * @type {RegExp}
+		 */
+		var rCardPlaceholderPattern = /\{\{([^}]+)\}\}/g;
+
+		/**
 		 * Helper class for working with bindings.
 		 *
 		 * @author SAP SE
@@ -54,6 +66,9 @@ sap.ui.define([
 		BindingHelper.extractBindingInfo = function (sValue) {
 			// TO DO: Check if "bindingSyntax" is "complex"
 			// ManagedObject.bindingParser == BindingParser.complexParser
+
+			sValue = BindingHelper.escapeCardPlaceholders(sValue);
+
 			return ManagedObject.bindingParser(
 				sValue,
 				undefined, // oContext
@@ -133,6 +148,21 @@ sap.ui.define([
 			}
 
 			return vBindingInfo;
+		};
+
+		/**
+		 * Escapes the cards placeholders with double braces, so that the binding parser does not consider it as a binding.
+		 * The string "{{destinations.myDestination}}" will become "\\{\\{destinations.myDestination\\}\\}".
+		 *
+		 * @param {string} sValue The value to escape.
+		 * @returns {string} The escaped value.
+		 */
+		BindingHelper.escapeCardPlaceholders = function (sValue) {
+			if (typeof sValue !== "string") {
+				return sValue;
+			}
+
+			return sValue.replace(rCardPlaceholderPattern, "\\{\\{$1\\}\\}");
 		};
 
 		return BindingHelper;
