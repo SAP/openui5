@@ -348,12 +348,28 @@ sap.ui.define([
 			module: "./opa5/component.qunit"
 		},
 		"opa5/iFrame": {
-			title: "QUnit Page for sap.ui.test.Opa5 - iFrame",
+			title: "QUnit Page for sap.ui.test.Opa5 - iFrame common tests",
 			sinon: {
 				version: 1,
 				qunitBridge: true
 			},
 			module: "./opa5/iFrame.qunit"
+		},
+		"opa5/iFrameLogging": {
+			title: "QUnit Page for sap.ui.test.Opa5 - iFrame logging",
+			sinon: {
+				version: 1,
+				qunitBridge: true
+			},
+			module: "./opa5/iFrameLogging.qunit"
+		},
+		"opa5/matchersInFrame": {
+			title: "QUnit Page for sap.ui.test.Opa5 - matchers in iFrame",
+			sinon: {
+				version: 1,
+				qunitBridge: true
+			},
+			module: "./opa5/matchersInFrame.qunit"
 		},
 		"opa5/launchers": {
 			title: "QUnit Page for sap.ui.test.Opa5 - Launchers",
