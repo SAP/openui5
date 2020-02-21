@@ -20,7 +20,7 @@
 					oTestModule.iExpectedMaxSyncCalls = 4;
 
 					// the Normalize Polyfill is optionally required sync by the FilterProcessor
-					if (!String.prototype.normalize && !Device.browser.mobile) {
+					if (!String.prototype.normalize && Device.system.desktop) {
 						oTestModule.iExpectedMaxSyncCalls = 5;
 					}
 
