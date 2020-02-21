@@ -1442,6 +1442,7 @@ sap.ui.define([
 
 				} else {
 					Log.error("Component Manifest: dataSource \"" + oModelConfig.dataSource + "\" for model \"" + sModelName + "\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"" + oModelConfig.dataSource + "\"]", sLogComponentName);
+					continue;
 				}
 			}
 
