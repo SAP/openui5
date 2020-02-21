@@ -835,6 +835,20 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		/**
 		 * Get currency format pattern.
 		 *
+		 * CLDR format pattern:
+		 *
+		 * @example standard with currency symbol in front of the number
+		 * ¤#,##0.00
+		 * $100,000.00
+		 * $-100,000.00
+		 *
+		 * @example accounting with negative number pattern after the semicolon
+		 * ¤#,##0.00;(¤#,##0.00)
+		 * $100,000.00
+		 * ($100,000.00)
+		 *
+		 * @see http://cldr.unicode.org/translation/numbers-currency/number-patterns
+		 *
 		 * @param {string} sContext the context of the currency pattern (standard or accounting)
 		 * @returns {string} The pattern
 		 * @public
