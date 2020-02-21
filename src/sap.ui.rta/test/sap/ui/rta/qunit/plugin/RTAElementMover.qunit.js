@@ -382,7 +382,7 @@ sap.ui.define([
 
 		QUnit.test("when DT is loaded and moving the movedButton inside the layout but without changeHandler...", function(assert) {
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			sandbox.stub(oChangeRegistry, "getRegistryItems").resolves(undefined);
+			sandbox.stub(oChangeRegistry, "getChangeHandler").rejects(undefined);
 			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 			return this.oElementMover.checkTargetZone(this.oLayoutAggregationOverlay)
 				.then(function(bCheckTargetZone) {

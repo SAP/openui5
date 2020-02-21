@@ -101,8 +101,9 @@ sap.ui.define([
 			assert.ok(this.oChangeHandler.revertChange, "then revertChange function exists");
 			assert.ok(this.oChangeHandler.completeChangeContent, "then completeChangeContent function exists");
 			var oChangeRegistryInstance = ChangeRegistry.getInstance();
+			var sLayer = "VENDOR";
 			oChangeRegistryInstance.initSettings();
-			return oChangeRegistryInstance.getChangeHandler("addXMLAtExtensionPoint", "sap.ui.core.mvc.View", undefined, XmlTreeModifier).then(function(oChangeHandler) {
+			return oChangeRegistryInstance.getChangeHandler("addXMLAtExtensionPoint", "sap.ui.core.mvc.View", undefined, XmlTreeModifier, sLayer).then(function(oChangeHandler) {
 				assert.deepEqual(oChangeHandler, AddXMLAtExtensionPoint, "then changehandler is registered");
 			});
 		});
