@@ -93,13 +93,23 @@ sap.ui.define([
 	 *
 	 * </pre>
 	 *
-	 * By default, when the control is invalidated (e.g. a property is changed, an aggregation is removed, or an association is added), it will be registered for re-rendering.
-	 * During the (re)rendering, the <code>render</code> method of the control renderer is executed via a specified <code>RenderManager</code> interface and the control instance.
-	 * Traditional string-based rendering creates a new HTML structure of the control in every rendering cycle and removes the existing control DOM structure from the DOM tree.
-	 * The set of new semantic <code>RenderManager</code> APIs lets us understand the structure of the DOM, walk along the live DOM tree, and figure out changes as new APIs are called.
-	 * If there is a change, then <code>RenderManager</code> patches only the required parts of the live DOM tree. This allows control developers to remove their DOM-related custom setters.
+	 * By default, when the control is invalidated (e.g. a property is changed, an aggregation is removed, or an
+	 * association is added), it will be registered for re-rendering. During the (re)rendering, the <code>render</code>
+	 * method of the control renderer is executed via a specified <code>RenderManager</code> interface and the control
+	 * instance.
 	 *
-	 * <b>Note:</b> To enable the new in-place rendering technology, the <code>apiVersion</code> property of the control renderer must be set to <code>2</code>.
+	 * Traditional string-based rendering creates a new HTML structure of the control in every rendering cycle and removes
+	 * the existing control DOM structure from the DOM tree.
+	 *
+	 * The set of new semantic <code>RenderManager</code> APIs lets us understand the structure of the DOM, walk along the
+	 * live DOM tree, and figure out changes as new APIs are called. If there is a change, then <code>RenderManager</code>
+	 * patches only the required parts of the live DOM tree. This allows control developers to remove their DOM-related
+	 * custom setters.
+	 *
+	 * <b>Note:</b> To enable the new in-place rendering technology, the <code>apiVersion</code> property of the control
+	 * renderer must be set to <code>2</code>. This property is not inherited by subclass renderers. It has to be set
+	 * anew by each subclass to assure that the extended contract between framework and renderer is fulfilled (see next
+	 * paragraph).
 	 *
 	 * <pre>
 	 *
@@ -118,8 +128,9 @@ sap.ui.define([
 	 *
 	 * </pre>
 	 *
-	 * <h3>Renderer.apiVersion contract</h3>
-	 * To allow a more efficient in-place DOM patching and to ensure the compatibility of the control, the following prerequisites must be fulfilled for the controls using the new rendering technology:
+	 * <h3>Contract for Renderer.apiVersion 2</h3>
+	 * To allow a more efficient in-place DOM patching and to ensure the compatibility of the control, the following
+	 * prerequisites must be fulfilled for the controls using the new rendering technology:
 	 *
 	 * <ul>
 	 * <li>Legacy control renderers must be migrated to the new semantic renderer API:
@@ -137,12 +148,23 @@ sap.ui.define([
 	 *     {@link sap.ui.core.RenderManager#renderControl renderControl},
 	 *     {@link sap.ui.core.RenderManager#cleanupControlWithoutRendering cleanupControlWithoutRendering}
 	 * </li>
-	 * <li>During the migration, restrictions that are defined in the API documentation must be taken into account, e.g. tag and attribute names must be set in their canonical form.</li>
-	 * <li>Fault tolerance of HTML5 markups is not applicable for the new semantic rendering API, e.g. except void tags, all tags must be closed; duplicate attributes within one HTML element must not exist.</li>
-	 * <li>Existing control DOM structure will not be removed from the DOM tree; therefore all custom events, including the ones that are registered with jQuery, must be deregistered correctly at the <code>onBeforeRendering</code> and <code>exit</code> hooks.</li>
-	 * <li>Classes and attribute names must not be escaped. Styles should be validated via types but this might not be sufficient in all cases, e.g. validated URL values can contain harmful content; in this case {@link module:sap/base/security/encodeCSS encodeCSS} can be used.</li>
-	 * <li>To allow a more efficient DOM update, second parameter of the {@link sap.ui.core.RenderManager#openStart openStart} or {@link sap.ui.core.RenderManager#voidStart voidStart} methods must be used to identify elements, e.g. use <code>rm.openStart("div", oControl.getId() + "-suffix");</code> instead of <code>rm.openStart("div").attr("id", oControl.getId() + "-suffix");</code></li>
-	 * <li>Controls that listen to the <code>focusin</code> event must double check their focus handling. Since DOM nodes are not removed and only reused, the <code>focusin</code> event might not be fired because of re-rendering.</li>
+	 * <li>During the migration, restrictions that are defined in the API documentation of those methods must be taken
+	 *     into account, e.g. tag and attribute names must be set in their canonical form.</li>
+	 * <li>Fault tolerance of HTML5 markup is not applicable for the new semantic rendering API, e.g. except void tags,
+	 *     all tags must be closed; duplicate attributes within one HTML element must not exist.</li>
+	 * <li>Existing control DOM structure will not be removed from the DOM tree; therefore all custom events, including
+	 *     the ones that are registered with jQuery, must be de-registered correctly at the <code>onBeforeRendering</code>
+	 *     and <code>exit</code> hooks.</li>
+	 * <li>Classes and attribute names must not be escaped.</li>
+	 * <li>Styles should be validated via types (e.g. <code>sap.ui.core.CSSSize</code>). But this might not be sufficient
+	 *     in all cases, e.g. validated URL values can contain harmful content; in this case
+	 *     {@link module:sap/base/security/encodeCSS encodeCSS} can be used.</li>
+	 * <li>To allow a more efficient DOM update, second parameter of the {@link sap.ui.core.RenderManager#openStart openStart}
+	 *     or {@link sap.ui.core.RenderManager#voidStart voidStart} methods must be used to identify elements, e.g. use
+	 *     <code>rm.openStart("div", oControl.getId() + "-suffix");</code> instead of
+	 *     <code>rm.openStart("div").attr("id", oControl.getId() + "-suffix");</code></li>
+	 * <li>Controls that listen to the <code>focusin</code> event must double check their focus handling. Since DOM nodes
+	 *     are not removed and only reused, the <code>focusin</code> event might not be fired during re-rendering.</li>
 	 * </ul>
 	 *
 	 *
