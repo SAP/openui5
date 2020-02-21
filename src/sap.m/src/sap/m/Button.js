@@ -283,6 +283,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.ontouchend = function(oEvent) {
+		var sEndingTagId;
+
 		this._buttonPressed = oEvent.originalEvent && oEvent.originalEvent.buttons & 1;
 
 		// set inactive button state
@@ -290,14 +292,19 @@ sap.ui.define([
 
 		if (this._bRenderActive) {
 			delete this._bRenderActive;
+			this.ontap(oEvent, true);
 		}
 
 		if (!sap.ui.Device.browser.msie) {
 			// get the tag ID where the touch event ended
-			this._sEndingTagId = oEvent.target.id.replace(this.getId(), '');
+			sEndingTagId = oEvent.target.id.replace(this.getId(), '');
 			// there are some cases when tap event won't come. Simulate it:
-			if (this._buttonPressed === 0 && ((this._sTouchStartTargetId === "-BDI-content" && (this._sEndingTagId === '-content' || this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sTouchStartTargetId === "-content" && (this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sTouchStartTargetId === '-img' && this._sEndingTagId !== '-img'))) {
-				this.ontap(oEvent);
+			if (this._buttonPressed === 0
+				&& ((this._sTouchStartTargetId === "-BDI-content"
+					&& (sEndingTagId === '-content' || sEndingTagId === '-inner' || sEndingTagId === '-img'))
+					|| (this._sTouchStartTargetId === "-content" && (sEndingTagId === '-inner' || sEndingTagId === '-img'))
+					|| (this._sTouchStartTargetId === '-img' && sEndingTagId !== '-img'))) {
+				this.ontap(oEvent, true);
 			}
 		}
 
@@ -321,19 +328,32 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
-	Button.prototype.ontap = function(oEvent) {
+	Button.prototype.ontap = function(oEvent, bFromTouchEnd) {
 		// mark the event for components that needs to know if the event was handled by the button
 		oEvent.setMarked();
+		delete this._bRenderActive;
+
+		if (this.bFromTouchEnd) {
+			return;
+		}
 
 		// fire tap event
 		if (this.getEnabled() && this.getVisible()) {
 			// note: on mobile, the press event should be fired after the focus is on the button
 			if ((oEvent.originalEvent && oEvent.originalEvent.type === "touchend")) {
-					this.focus();
+				this.focus();
 			}
 
-			this.fireTap({/* no parameters */}); // (This event is deprecated, use the "press" event instead)
-			this.firePress({/* no parameters */});
+			this.fireTap({/* no parameters */ }); // (This event is deprecated, use the "press" event instead)
+			this.firePress({/* no parameters */ });
+		}
+
+		this.bFromTouchEnd = bFromTouchEnd;
+
+		if (this.bFromTouchEnd) {
+			setTimeout(function() {
+				delete this.bFromTouchEnd;
+			}.bind(this), 0);
 		}
 	};
 
