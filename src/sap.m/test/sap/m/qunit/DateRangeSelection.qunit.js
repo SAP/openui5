@@ -496,7 +496,7 @@ sap.ui.define([
 				},
 				preventDefault: function() {}
 			};
-			this.fnIncreaseDateRangeSpy = sinon.spy(this.oDRS, "_increaseDateRange");
+			this.fnIncreaseDateSpy = sinon.spy(this.oDRS, "_increaseDate");
 			this.fnFireChangeEventSpy = sinon.spy(this.oDRS, "fireChangeEvent");
 
 			this.oDRS.placeAt("qunit-fixture");
@@ -544,8 +544,8 @@ sap.ui.define([
 		this.oDRS.onsappageup(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "day"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(1, "day"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/17 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -565,8 +565,8 @@ sap.ui.define([
 		this.oDRS.onsappagedown(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "day"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(-1, "day"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/15 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -587,8 +587,8 @@ sap.ui.define([
 		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "month"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(1, "month"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/04/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -609,8 +609,8 @@ sap.ui.define([
 		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "month"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(-1, "month"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/02/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -632,8 +632,8 @@ sap.ui.define([
 		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "year"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(1, "year"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2015/03/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -655,8 +655,8 @@ sap.ui.define([
 		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "year"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(-1, "year"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2013/03/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -676,8 +676,8 @@ sap.ui.define([
 		this.oDRS.onsappageup(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "day"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(1, "day"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/03/28", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -697,8 +697,8 @@ sap.ui.define([
 		this.oDRS.onsappagedown(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "day"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(-1, "day"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/03/26", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -719,8 +719,8 @@ sap.ui.define([
 		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "month"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(1, "month"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/04/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -741,8 +741,8 @@ sap.ui.define([
 		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "month"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(-1, "month"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/02/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -764,8 +764,8 @@ sap.ui.define([
 		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "year"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(1, "year"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2015/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -787,8 +787,8 @@ sap.ui.define([
 		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "year"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(-1, "year"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2013/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -810,8 +810,8 @@ sap.ui.define([
 		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "month"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(1, "month"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/02/28 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
@@ -835,8 +835,8 @@ sap.ui.define([
 		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
 
 		// assert
-		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
-		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "year"), "_increaseDateRange called with correct parameters");
+		assert.ok(this.fnIncreaseDateSpy.calledOnce, "_increaseDate was called once");
+		assert.ok(this.fnIncreaseDateSpy.calledWithExactly(-1, "year"), "_increaseDate called with correct parameters");
 
 		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2019/02/28 @ 2020/03/27", {valid: true}), "fireChangeEvent called with correct parameters");

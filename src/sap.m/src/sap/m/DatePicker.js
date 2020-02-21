@@ -462,49 +462,65 @@ sap.ui.define([
 	DatePicker.prototype.onsaphide = DatePicker.prototype.onsapshow;
 
 	DatePicker.prototype.onsappageup = function(oEvent){
+		var sConstructorName = this._getCalendarConstructor().getMetadata().getName();
+
+		oEvent.preventDefault(); // prevent scrolling
+
+		if (sConstructorName != "sap.ui.unified.Calendar") {
+			return;
+		}
 
 		//increase by one day
-		_increaseDate.call(this, 1, "day");
-
-		oEvent.preventDefault(); // do not move cursor
-
+		this._increaseDate(1, "day");
 	};
 
 	DatePicker.prototype.onsappageupmodifiers = function(oEvent){
+		var sConstructorName = this._getCalendarConstructor().getMetadata().getName();
+
+		oEvent.preventDefault(); // prevent scrolling
 
 		if (!oEvent.ctrlKey && oEvent.shiftKey) {
+			if (sConstructorName == "sap.ui.unified.internal.CustomYearPicker") {
+				return;
+			}
+
 			// increase by one month
-			_increaseDate.call(this, 1, "month");
+			this._increaseDate(1, "month");
 		} else {
 			// increase by one year
-			_increaseDate.call(this, 1, "year");
+			this._increaseDate(1, "year");
 		}
-
-		oEvent.preventDefault(); // do not move cursor
-
 	};
 
 	DatePicker.prototype.onsappagedown = function(oEvent){
+		var sConstructorName = this._getCalendarConstructor().getMetadata().getName();
+
+		oEvent.preventDefault(); // prevent scrolling
+
+		if (sConstructorName != "sap.ui.unified.Calendar") {
+			return;
+		}
 
 		//decrease by one day
-		_increaseDate.call(this, -1, "day");
-
-		oEvent.preventDefault(); // do not move cursor
-
+		this._increaseDate(-1, "day");
 	};
 
 	DatePicker.prototype.onsappagedownmodifiers = function(oEvent){
+		var sConstructorName = this._getCalendarConstructor().getMetadata().getName();
+
+		oEvent.preventDefault(); // prevent scrolling
 
 		if (!oEvent.ctrlKey && oEvent.shiftKey) {
+			if (sConstructorName == "sap.ui.unified.internal.CustomYearPicker") {
+				return;
+			}
+
 			// decrease by one month
-			_increaseDate.call(this, -1, "month");
+			this._increaseDate(-1, "month");
 		} else {
 			// decrease by one year
-			_increaseDate.call(this, -1, "year");
+			this._increaseDate(-1, "year");
 		}
-
-		oEvent.preventDefault(); // do not move cursor
-
 	};
 
 	DatePicker.prototype.onkeypress = function(oEvent){
@@ -1129,31 +1145,14 @@ sap.ui.define([
 		});
 	};
 
-	// to be overwritten by DateTimePicker
+	/**
+	 * Creates the sap.ui.unified.Calendar instance with defined properties and attached events
+	 */
 	DatePicker.prototype._createPopupContent = function(){
 
-		var aPatternSymbolTypes = this._getFormatter(true)
-			.aFormatArray
-			.map(function(oPatternSymbolSettings) {
-				return oPatternSymbolSettings.type.toLowerCase();
-			}),
-			bDay = aPatternSymbolTypes.indexOf("day") >= 0,
-			bMonth = aPatternSymbolTypes.indexOf("month") >= 0,
-			bYear =  aPatternSymbolTypes.indexOf("year") >= 0,
-			CalendarConstructor;
+		var CalendarConstructor = this._getCalendarConstructor();
 
 		if (!this._getCalendar()) {
-
-			if (bDay && bMonth && bYear) {
-				CalendarConstructor = Calendar;
-			} else if (bMonth && bYear) {
-				CalendarConstructor = CustomMonthPicker;
-			} else if (bYear) {
-				CalendarConstructor = CustomYearPicker;
-			} else {
-				CalendarConstructor = Calendar;
-				Log.warning("Not valid date pattern! Openning default Calendar", this);
-			}
 
 			this._oCalendar = new CalendarConstructor(this.getId() + "-cal", {
 				intervalSelection: this._bIntervalSelection,
@@ -1191,6 +1190,34 @@ sap.ui.define([
 					this._oPopup.getBeginButton().setEnabled(false);
 				}
 			}
+		}
+	};
+
+	/**
+	 * Gets the sap.ui.unified.Calendar constructor function depending on the displayFormat property
+	 *
+	 * @returns {Object} JS function Object
+	 * @private
+	 */
+	DatePicker.prototype._getCalendarConstructor = function() {
+		var aPatternSymbolTypes = this._getFormatter(true)
+			.aFormatArray
+			.map(function(oPatternSymbolSettings) {
+				return oPatternSymbolSettings.type.toLowerCase();
+			}),
+			bDay = aPatternSymbolTypes.indexOf("day") >= 0,
+			bMonth = aPatternSymbolTypes.indexOf("month") >= 0,
+			bYear =  aPatternSymbolTypes.indexOf("year") >= 0;
+
+		if (bDay && bMonth && bYear) {
+			return Calendar;
+		} else if (bMonth && bYear) {
+			return CustomMonthPicker;
+		} else if (bYear) {
+			return CustomYearPicker;
+		} else {
+			Log.warning("Not valid date pattern! Default Calendar constructor function is returned", this);
+			return Calendar;
 		}
 	};
 
@@ -1345,7 +1372,13 @@ sap.ui.define([
 
 	}
 
-	function _increaseDate(iNumber, sUnit) {
+	/**
+	 * Adds or extracts a given number of measuring units from the "dateValue" property value
+	 *
+	 * @param {int} iNumber to use for increasing the dateValue
+	 * @param {string} sUnit for day, month or year
+	 */
+	DatePicker.prototype._increaseDate = function(iNumber, sUnit) {
 
 		var oOldDate = this.getDateValue();
 		var iCurpos = this._$input.cursorPos();
@@ -1412,7 +1445,7 @@ sap.ui.define([
 			}
 		}
 
-	}
+	};
 
 	function _handleOpen() {
 		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);

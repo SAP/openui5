@@ -2598,5 +2598,78 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Keyboard Interaction", {
+		beforeEach: function() {
+			this.oDRS = new DatePicker({
+				dateValue: new Date(2014, 2, 16),
+				displayFormat: "yyyy/MM"
+			});
+			this.oFakeEvent = {
+				target: {
+					id: this.oDRS.getId() + "-inner",
+					which: jQuery.sap.KeyCodes.PAGE_UP
+				},
+				defaultPrevented: false,
+				preventDefault: function() {
+					this.defaultPrevented = true;
+				}
+			};
+
+			this.fnIncreaseDateSpy = sinon.spy(this.oDRS, "_increaseDate");
+
+			this.oDRS.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oDRS.destroy();
+			this.oDRS = null;
+			this.fnIncreaseDateSpy.restore();
+		}
+	});
+
+	QUnit.test("DateValue property won't change when displayFormat property is 'yyyy/MM'and page up key is used", function(assert) {
+		// act
+		this.oDRS.onsappageup(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.oFakeEvent.defaultPrevented, "Default event is prevented");
+		assert.ok(this.fnIncreaseDateSpy.notCalled, "_increaseDate was not called");
+	});
+
+	QUnit.test("DateValue property won't change when displayFormat property is 'yyyy/MM'and page down key is used", function(assert) {
+		// act
+		this.oDRS.onsappagedown(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.oFakeEvent.defaultPrevented, "Default event is prevented");
+		assert.ok(this.fnIncreaseDateSpy.notCalled, "_increaseDate was not called");
+	});
+
+	QUnit.test("DateValue property won't change when displayFormat property is 'yyyy' and page up + shift keys are used", function(assert) {
+		// prepare
+		this.oDRS.setDisplayFormat("yyyy");
+		this.oFakeEvent.shiftKey = true;
+
+		// act
+		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.oFakeEvent.defaultPrevented, "Default event is prevented");
+		assert.ok(this.fnIncreaseDateSpy.notCalled, "_increaseDate was not called");
+	});
+
+	QUnit.test("DateValue property won't change when displayFormat property is 'yyyy' and page down + shift keys are used", function(assert) {
+		// prepare
+		this.oDRS.setDisplayFormat("yyyy");
+		this.oFakeEvent.shiftKey = true;
+
+		// act
+		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.oFakeEvent.defaultPrevented, "Default event is prevented");
+		assert.ok(this.fnIncreaseDateSpy.notCalled, "_increaseDate was not called");
+	});
+
 
 });

@@ -184,6 +184,10 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Override DatePicker's '_createPopupContent' in order to add support for months and years range selection
+	 * @override
+	 */
 	DateRangeSelection.prototype._createPopupContent = function() {
 		DatePicker.prototype._createPopupContent.apply(this, arguments);
 
@@ -789,47 +793,6 @@ sap.ui.define([
 		return this;
 	};
 
-	DateRangeSelection.prototype.onsappageup = function(oEvent){
-		// increase by one day
-		this._increaseDateRange(1, "day");
-
-		// prevent scrolling
-		oEvent.preventDefault();
-	};
-
-	DateRangeSelection.prototype.onsappageupmodifiers = function(oEvent){
-
-		if (oEvent.shiftKey && !oEvent.ctrlKey) {
-			// increase by one month
-			this._increaseDateRange(1, "month");
-		} else if (oEvent.shiftKey && oEvent.ctrlKey) {
-			// increase by one year
-			this._increaseDateRange(1, "year");
-		}
-		// prevent scrolling
-		oEvent.preventDefault();
-	};
-
-	DateRangeSelection.prototype.onsappagedown = function(oEvent){
-		//decrease by one day
-		this._increaseDateRange(-1, "day");
-
-		// prevent scrolling
-		oEvent.preventDefault();
-	};
-	DateRangeSelection.prototype.onsappagedownmodifiers = function(oEvent){
-
-		if (oEvent.shiftKey && !oEvent.ctrlKey) {
-			// increase by one month
-			this._increaseDateRange(-1, "month");
-		} else if (oEvent.shiftKey && oEvent.ctrlKey) {
-			// increase by one year
-			this._increaseDateRange(-1, "year");
-		}
-		// prevent scrolling
-		oEvent.preventDefault();
-	};
-
 	//Support of two date range version of Calendar added into original DatePicker's version
 	DateRangeSelection.prototype._fillDateRange = function(){
 
@@ -997,7 +960,14 @@ sap.ui.define([
 
 	}
 
-	DateRangeSelection.prototype._increaseDateRange = function (iNumber, sUnit) {
+	/**
+	 * Override DatePicker.protototype._increaseDate method
+	 * @override
+	 *
+	 * @param {int} iNumber to use for increasing the dateValue
+	 * @param {string} sUnit for day, month or year
+	 */
+	DateRangeSelection.prototype._increaseDate = function (iNumber, sUnit) {
 		var sValue = this._$input.val(),
 			aDates = this._parseValue(sValue),
 			oFirstOldDate = aDates[0],
