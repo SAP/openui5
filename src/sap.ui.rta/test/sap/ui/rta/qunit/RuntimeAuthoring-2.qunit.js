@@ -143,7 +143,7 @@ sap.ui.define([
 			return false;
 		}
 		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
-		return !mFLPArgs.params["sap-ui-fl-draft"]["false"];
+		return mFLPArgs.params["sap-ui-fl-draft"][0] === "false";
 	}
 
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
@@ -200,7 +200,7 @@ sap.ui.define([
 			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
 
 			return RtaQunitUtils.clear()
-				.then(this.oRta.start.bind(this.oRta));
+			.then(this.oRta.start.bind(this.oRta));
 		},
 		afterEach : function() {
 			this.oContextMenuPlugin.destroy();
@@ -239,7 +239,7 @@ sap.ui.define([
 			this.oRta.setPlugins(mPlugins);
 
 			return RtaQunitUtils.clear()
-				.then(this.oRta.start.bind(this.oRta))
+			.then(this.oRta.start.bind(this.oRta))
 			.then(function() {
 				assert.throws(function () {
 					this.oRta.setPlugins(mPlugins);
@@ -459,18 +459,32 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when no draft was present and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
-			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub);
-			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
+		QUnit.test("when draft changes already existed and the draft was activated and user exits RTA...", function(assert) {
+			givenDraftParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.NOT_NEEDED);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 
 			return this.oRta.stop().then(function() {
 				assert.strictEqual(this.fnHandleParametersOnExitSpy.callCount,
 					1,
 					"then crossAppNavigation was triggered");
+				assert.strictEqual(isReloadedWithDraftParameter(this.fnFLPToExternalStub),
+					false,
+					"then draft parameter is removed");
+			}.bind(this));
+		});
+
+		QUnit.test("when no draft was present and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
+			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub);
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
+			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(true);
+
+			return this.oRta.stop().then(function() {
+				assert.strictEqual(this.fnHandleParametersOnExitSpy.callCount,
+					1, "then crossAppNavigation was triggered");
 				assert.strictEqual(isReloadedWithDraftFalseParameter(this.fnFLPToExternalStub),
-					true,
-					"then draft parameter is set to false");
+					true, "then draft parameter is set to false");
 			}.bind(this));
 		});
 	});
@@ -553,15 +567,15 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
 
 			return this.oRta._serializeToLrep()
-				.then(this.oRta._handleReloadOnExit.bind(this.oRta))
-				.then(function(sShouldReload) {
-					assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
-						"then RTA restart will not be enabled");
-					assert.strictEqual(fnNeedsReloadStub.callCount, 2,
-						"then the reload check is called once");
-					assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
-						"then the reload page is triggered to update the flp cache");
-				}.bind(this));
+			.then(this.oRta._handleReloadOnExit.bind(this.oRta))
+			.then(function(sShouldReload) {
+				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(fnNeedsReloadStub.callCount, 2,
+					"then the reload check is called once");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+					"then the reload page is triggered to update the flp cache");
+			}.bind(this));
 		});
 
 		QUnit.test("when app descriptor changes exist and user publishes and afterwards exits ...", function(assert) {
@@ -572,15 +586,15 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
 
 			return this.oRta._serializeToLrep()
-				.then(this.oRta._handleReloadOnExit.bind(this.oRta))
-				.then(function(sShouldReload) {
-					assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
-						"then RTA restart will not be enabled");
-					assert.strictEqual(fnNeedsReloadSpy.callCount, 1,
-						"then the reload check is called once");
-					assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
-						"then the reload page is triggered to update the flp cache");
-				}.bind(this));
+			.then(this.oRta._handleReloadOnExit.bind(this.oRta))
+			.then(function(sShouldReload) {
+				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(fnNeedsReloadSpy.callCount, 1,
+					"then the reload check is called once");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+					"then the reload page is triggered to update the flp cache");
+			}.bind(this));
 		});
 
 		QUnit.test("when app descriptor changes exist and user exits ...", function(assert) {
@@ -591,14 +605,14 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
 
 			return this.oRta._handleReloadOnExit()
-				.then(function(sShouldReload) {
-					assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
-						"then RTA restart will not be enabled");
-					assert.strictEqual(fnNeedsReloadSpy.callCount, 1,
-						"then the reload check is called once");
-					assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
-						"then the reload page is triggered to update the flp cache");
-				}.bind(this));
+			.then(function(sShouldReload) {
+				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(fnNeedsReloadSpy.callCount, 1,
+					"then the reload check is called once");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+					"then the reload page is triggered to update the flp cache");
+			}.bind(this));
 		});
 
 		QUnit.test("when there are no personalized and appDescriptor changes and _handleReloadOnExit() is called", function(assert) {
@@ -626,7 +640,7 @@ sap.ui.define([
 					0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
-						"then the reload page is triggered to update the flp cache");
+					"then the reload page is triggered to update the flp cache");
 			}.bind(this));
 		});
 
@@ -899,9 +913,9 @@ sap.ui.define([
 		sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(bIsDraftAvailable);
 		sandbox.stub(oRta, "canUndo").returns(bCanUndo);
 		return oRta._isDraftAvailable()
-			.then(function (bResult) {
-				assert.equal(bResult, bExpectedResult);
-			});
+		.then(function (bResult) {
+			assert.equal(bResult, bExpectedResult);
+		});
 	}
 
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a draft is available", {

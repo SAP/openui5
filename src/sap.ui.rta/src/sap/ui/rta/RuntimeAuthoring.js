@@ -881,12 +881,10 @@ function(
 				.then(this._closeToolbar.bind(this))
 				.then(function() {
 					this.fireStop();
-					if (sReload !== this._RESTART.NOT_NEEDED) {
-						var mParsedHash = this._handleParametersOnExit();
-						this._triggerCrossAppNavigation(mParsedHash);
-						if (sReload === this._RESTART.RELOAD_PAGE) {
-							this._reloadPage();
-						}
+					var mParsedHash = this._handleParametersOnExit();
+					this._triggerCrossAppNavigation(mParsedHash);
+					if (sReload === this._RESTART.RELOAD_PAGE) {
+						this._reloadPage();
 					}
 				}.bind(this));
 			}.bind(this))
@@ -1584,21 +1582,6 @@ function(
 	};
 
 	/**
-	 * Handler for the message box warning the user that personalization changes exist
-	 * and the app will be reloaded
-	 * @return {Promise} Resolving when the user clicks on OK
-	 */
-	RuntimeAuthoring.prototype._handleReloadMessageBox = function(sReason) {
-		return Utils._showMessageBox(
-			MessageBox.Icon.INFORMATION,
-			"HEADER_RELOAD_NEEDED",
-			sReason,
-			undefined,
-			"BUTTON_RELOAD_NEEDED"
-		);
-	};
-
-	/**
 	 * Check if there are personalization changes/draft changes and restart the application without/with them;
 	 * Warn the user that the application will be restarted without personalization / with draft changes;
 	 * This is only valid when a UShell is present;
@@ -1654,6 +1637,36 @@ function(
 	};
 
 	/**
+	 * Handler for the message box warning the user that personalization changes exist
+	 * and the app will be reloaded
+	 *
+	 * @param  {Object} oReloadInfo - Information to determine which message to show
+	 * @return {Promise} Resolving when the user clicks on OK
+	 */
+	RuntimeAuthoring.prototype._handleReloadMessageBoxOnExit = function(oReloadInfo) {
+		var sReason;
+
+		var bIsCustomerLayer = this.getLayer() === Layer.CUSTOMER;
+		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.hasDraftChanges) {
+			sReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT" : "MSG_RELOAD_WITH_ALL_CHANGES";
+		} else if (oReloadInfo.hasHigherLayerChanges) {
+			sReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
+		} else if (oReloadInfo.hasDraftChanges) {
+			sReason = "MSG_RELOAD_WITHOUT_DRAFT";
+		} else if (oReloadInfo.changesNeedReload) {
+			sReason = "MSG_RELOAD_NEEDED";
+		}
+
+		return Utils._showMessageBox(
+			MessageBox.Icon.INFORMATION,
+			"HEADER_RELOAD_NEEDED",
+			sReason,
+			undefined,
+			"BUTTON_RELOAD_NEEDED"
+		);
+	};
+
+	/**
 	 * When exiting RTA and personalization changes exist, the user can choose to
 	 * reload the app with personalization or stay in the app without the personalization
 	 * @return {Promise} Resolving to RESTART enum indicating if reload is necessary
@@ -1668,38 +1681,21 @@ function(
 			PersistenceWriteAPI.hasHigherLayerChanges({selector: this.getRootControlInstance(), ignoreMaxLayerParameter: true}),
 			this._isDraftAvailable()
 		]).then(function (aArgs) {
-			var bChangesNeedRestart = aArgs[0];
-			var bHasHigherLayerChanges = aArgs[1];
-			var bIsDraftAvailable = aArgs[2];
-			if (bChangesNeedRestart || bHasHigherLayerChanges || bIsDraftAvailable) {
+			var oReloadInfo = {
+				changesNeedReload: aArgs[0],
+				hasHigherLayerChanges: aArgs[1],
+				hasDraftChanges: aArgs[2]
+			};
+			if (oReloadInfo.changesNeedReload || oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges) {
 				var sRestart = this._RESTART.RELOAD_PAGE;
-				var sRestartReason;
-				var oUshellContainer;
-				if (bHasHigherLayerChanges || bIsDraftAvailable) {
-					//Loading the app with personalization means the visualization might change,
-					//therefore this message takes precedence
-					var bIsCustomerLayer = this.getLayer() === Layer.CUSTOMER;
-					if (bHasHigherLayerChanges && bIsDraftAvailable) {
-						sRestartReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT" : "MSG_RELOAD_WITH_ALL_CHANGES";
-					} else if (bHasHigherLayerChanges) {
-						sRestartReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
-					} else if (bIsDraftAvailable) {
-						sRestartReason = "MSG_RELOAD_WITHOUT_DRAFT";
-					}
-					oUshellContainer = FlexUtils.getUshellContainer();
-					if (!bChangesNeedRestart && oUshellContainer) {
-						//if changes need restart this method has precedence, but in this case
-						//the faster cross app navigation to the same app (restart via hash) is possible
-						sRestart = this._RESTART.VIA_HASH;
-					}
-				} else if (bChangesNeedRestart) {
-					sRestartReason = "MSG_RELOAD_NEEDED";
+				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes (changesNeedReload = true)
+				if (!oReloadInfo.changesNeedReload && FlexUtils.getUshellContainer()) {
+					sRestart = this._RESTART.VIA_HASH;
 				}
-				return this._handleReloadMessageBox(sRestartReason).then(function() {
+				return this._handleReloadMessageBoxOnExit(oReloadInfo).then(function() {
 					return sRestart;
 				});
 			}
-			//no reload needed
 			return this._RESTART.NOT_NEEDED;
 		}.bind(this));
 	};
