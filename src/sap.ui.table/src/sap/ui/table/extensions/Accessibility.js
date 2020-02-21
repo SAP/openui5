@@ -524,8 +524,6 @@ sap.ui.define([
 			var $Cell = oCellInfo.cell;
 			var bEnabled = $Cell.hasClass("sapUiTableSelAllVisible");
 
-			oTable.$("sapUiTableGridCnt").removeAttr("role");
-
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(
 				this, AccExtension.ELEMENTTYPES.COLUMNROWHEADER,
 				{enabled: bEnabled, checked: bEnabled && !oTable.$().hasClass("sapUiTableSelAll")}
@@ -719,7 +717,7 @@ sap.ui.define([
 				case AccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 					mAttributes["role"] = TableUtils.Grouping.isGroupMode(oTable) || TableUtils.Grouping.isTreeMode(oTable) ? "treegrid" : "grid";
 
-					mAttributes["aria-labelledby"] = oTable.getAriaLabelledBy();
+					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
 					if (oTable.getTitle()) {
 						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
 					}
@@ -846,7 +844,7 @@ sap.ui.define([
 
 				case AccExtension.ELEMENTTYPES.OVERLAY: //The overlay container
 					mAttributes["role"] = "region";
-					mAttributes["aria-labelledby"] = oTable.getAriaLabelledBy();
+					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
 					if (oTable.getTitle()) {
 						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
 					}
@@ -966,7 +964,7 @@ sap.ui.define([
 			if (!oTable) {
 				return;
 			}
-			oTable.$("sapUiTableGridCnt").attr("role", ExtensionHelper.getAriaAttributesFor(this, "CONTENT", {}).role);
+
 			oTable._mTimeouts._cleanupACCExtension = setTimeout(function() {
 				var oTable = this.getTable();
 				if (!oTable) {
