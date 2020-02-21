@@ -45,20 +45,13 @@ sap.ui.define([
 		return oControl;
 	};
 
-	RenameObjectPageSection._getSetterMethodName = function (sValue, sPropertyName, oModifier) {
-		// The value can be a binding - e.g. for translatable values in WebIde
-		return Utils.isBinding(sValue)
-			? "setPropertyBinding"
-			: "setProperty";
-	};
-
 	RenameObjectPageSection.applyChange = function (oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var sPropertyName = mRenameSettings.propertyName;
-		var oChangeDefinition = oChange.getDefinition();
-		var sText = oChangeDefinition.texts[mRenameSettings.changePropertyName];
-		var sValue = sText.value;
-		var oControlToBeRenamed = RenameObjectPageSection._getControlForRename(oControl, oModifier);
+		var oModifier = mPropertyBag.modifier,
+			sPropertyName = mRenameSettings.propertyName,
+			oChangeDefinition = oChange.getDefinition(),
+			sText = oChangeDefinition.texts[mRenameSettings.changePropertyName],
+			sValue = sText.value,
+			oControlToBeRenamed = RenameObjectPageSection._getControlForRename(oControl, oModifier);
 
 		if (typeof sValue === "string" && sValue.trim() === "") {
 			throw new Error("Change cannot be applied as ObjectPageSubSection's title cannot be empty: ["
@@ -66,9 +59,9 @@ sap.ui.define([
 		}
 
 		if (oChangeDefinition.texts && sText && typeof (sValue) === "string") {
-			oChange.setRevertData(oModifier.getProperty(oControlToBeRenamed, sPropertyName));
-			var sMethodName = RenameObjectPageSection._getSetterMethodName(sValue);
-			oModifier[sMethodName](oControlToBeRenamed, sPropertyName, sValue);
+			oChange.setRevertData(oModifier.getPropertyBindingOrProperty(oControlToBeRenamed, sPropertyName));
+			oModifier.setPropertyBindingOrProperty(oControlToBeRenamed, sPropertyName, sValue);
+
 			return true;
 		} else {
 			Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
@@ -77,16 +70,15 @@ sap.ui.define([
 	};
 
 	RenameObjectPageSection.revertChange = function (oChange, oControl, mPropertyBag) {
-		var sOldText = oChange.getRevertData();
+		var vOldText = oChange.getRevertData(),
+			oModifier = mPropertyBag.modifier,
+			oControlToBeReverted = RenameObjectPageSection._getControlForRename(oControl, oModifier),
+			sPropertyName = mRenameSettings.propertyName;
 
-		if (typeof (sOldText) === "string") {
-			var oModifier = mPropertyBag.modifier;
-			var oControlToBeReverted = RenameObjectPageSection._getControlForRename(oControl, oModifier);
-			var sPropertyName = mRenameSettings.propertyName;
-			var sMethodName = RenameObjectPageSection._getSetterMethodName(sOldText);
-			oModifier[sMethodName](oControlToBeReverted, sPropertyName, sOldText);
-
+		if (vOldText || vOldText === "") {
+			oModifier.setPropertyBindingOrProperty(oControlToBeReverted, sPropertyName, vOldText);
 			oChange.resetRevertData();
+
 			return true;
 		} else {
 			Log.error("Change doesn't contain sufficient information to be reverted. Most Likely the Change didn't go through applyChange.");
