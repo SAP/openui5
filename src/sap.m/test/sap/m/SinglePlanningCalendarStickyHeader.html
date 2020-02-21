@@ -26,6 +26,7 @@
 				'sap/ui/model/json/JSONModel',
 				'sap/ui/core/ListItem',
 				'sap/m/SinglePlanningCalendar',
+				'sap/m/SinglePlanningCalendarGridRenderer',
 				'sap/m/SinglePlanningCalendarDayView',
 				'sap/m/SinglePlanningCalendarWorkWeekView',
 				'sap/m/SinglePlanningCalendarWeekView',
@@ -42,6 +43,7 @@
 					JSONModel,
 					ListItem,
 					SinglePlanningCalendar,
+                    SinglePlanningCalendarGridRenderer,
 					SinglePlanningCalendarDayView,
 					SinglePlanningCalendarWorkWeekView,
 					SinglePlanningCalendarWeekView,
@@ -337,26 +339,14 @@
 							key: "WeekView",
 							title: "Full Week"
 						});
+
+                SinglePlanningCalendar.prototype._updateRowHeaderAndNowMarker = function () {};
+                SinglePlanningCalendarGridRenderer.renderNowMarker = function () {};
 				oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 					title: "SinglePlanningCalendar with sticky header",
 					startDate: new Date(2018, 6, 9),
 					views: [oDayView, oWorkWeekView, oWeekView],
 					actions: [
-						new ToolbarSeparator(),
-						new Button("overrideTime", {
-							text: "Override time",
-							press: function () {
-								var oGrid = sap.ui.getCore().byId("SinglePlanningCalendar").getAggregation("_grid");
-
-								oGrid._updateRowHeaderAndNowMarker = function () {
-									var oCurrentDate = new Date(2018, 6, 8, 0, 30, 0, 0);
-
-									this._updateNowMarker(oCurrentDate);
-									this._updateRowHeaders(oCurrentDate);
-								};
-								oGrid._updateRowHeaderAndNowMarker();
-							}
-						}),
 						new ToolbarSeparator(),
 						new Label({
 							text: "Sticky mode: ",
@@ -389,6 +379,7 @@
 								oSPC.setStickyMode(sMode);
 							}
 						}),
+                        new ToolbarSeparator(),
 						new Select("size-mode-select", {
 							items: [
 								new ListItem({text: "Cozy"}),
@@ -417,8 +408,15 @@
 					},
 					appointmentSelect: function (oEvent) {
 						var oAppointment = oEvent.getParameter("appointment"),
-							sAppointmentKey = oAppointment.getKey(),
-							oPage = sap.ui.getCore().byId("test-page");
+							sAppointmentKey,
+							oPage;
+
+						if (!oAppointment) {
+						    return;
+                        }
+
+                        sAppointmentKey = oAppointment.getKey();
+                        oPage = sap.ui.getCore().byId("test-page");
 
 						if (sAppointmentKey === "scroll-to-bottom") {
 							oPage.scrollTo(10000, 0);
