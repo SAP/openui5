@@ -53,11 +53,12 @@ function (
 
 	var TitleLevel = coreLib.TitleLevel;
 	var oFactory = {
-			getSection: function (iNumber, sTitleLevel, aSubSections) {
+			getSection: function (iNumber, sTitleLevel, aSubSections, visibility) {
 				return new ObjectPageSection({
 					title: "Section" + iNumber,
 					titleLevel: sTitleLevel,
-					subSections: aSubSections || []
+					subSections: aSubSections || [],
+					visible: visibility
 				});
 			},
 			getSubSection: function (iNumber, aBlocks, sTitleLevel) {
@@ -106,6 +107,18 @@ function (
 							oFactory.getSubSection(4, [oFactory.getBlocks(), oFactory.getBlocks()], null)
 						])
 
+				});
+			},
+			getObjectPageLayoutWithOneVisibleSection: function () {
+				return new ObjectPageLayout({
+					sections: [
+						oFactory.getSection(1, null, [
+							oFactory.getSubSection(1, [oFactory.getBlocks(), oFactory.getBlocks()], null)
+						]),
+						oFactory.getSection(2, null, [
+							oFactory.getSubSection(2, [oFactory.getBlocks(), oFactory.getBlocks()], null)
+						], false)
+					]
 				});
 			}
 	},
@@ -268,6 +281,27 @@ function (
 		assert.ok(this.oObjectPage.getUseIconTabBar(), true);
 	});
 
+	QUnit.module("IconTabBar enabled with one visible section", {
+		beforeEach: function () {
+			this.oObjectPage = oFactory.getObjectPageLayoutWithOneVisibleSection();
+			this.oObjectPage.setUseIconTabBar(true);
+			helpers.renderObject(this.oObjectPage);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("Object Page shows first section title when only one section is visible", function (assert) {
+		//Arrange
+		var oFirstSection = this.oObjectPage.getSections()[0];
+		oFirstSection.setShowTitle(true);
+
+		//Assert
+		assert.ok(oFirstSection.$().find(".sapUxAPObjectPageSectionTitle").length > 0, "Title container is visible in the DOM");
+		assert.ok(oFirstSection.$().hasClass("sapUxAPObjectPageSectionNoTitle") === false, "CSS class for no title shown is missing");
+
+	});
 
 	QUnit.module("test scrollToSection API", {
 		beforeEach: function () {
