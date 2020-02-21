@@ -21,14 +21,6 @@
 	 }
 }
 
-.sapMActionSelectPicker .sapMBtnDisabled {
-	opacity: 1;
-}
-
-.sapMActionSelectPicker .sapMBtnDisabled .sapMBtnContent {
-	opacity: 0.4;
-}
-
 .sapMActionSelectPicker .sapMBtn .sapMBtnInner {
 	border-radius: 0;
 }
@@ -48,7 +40,7 @@
 	border-color: @sapUiButtonActionSelectBorderColor;
 }
 
-html.sap-desktop .sapMActionSelectPicker .sapMBtnDefault:not(.sapMBtnActive):hover {
+html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled) .sapMBtnDefault:not(.sapMBtnActive):hover {
 	background: @sapUiButtonLiteActionSelectHoverBackground;
 }
 
