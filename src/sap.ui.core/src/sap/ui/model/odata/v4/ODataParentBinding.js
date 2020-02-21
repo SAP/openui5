@@ -809,7 +809,7 @@ sap.ui.define([
 	ODataParentBinding.prototype.getQueryOptionsForPath = function (sPath, oContext) {
 		if (Object.keys(this.mParameters).length) {
 			// binding has parameters -> all query options need to be defined at the binding
-			return _Helper.getQueryOptionsForPath(this.mQueryOptions, sPath);
+			return _Helper.getQueryOptionsForPath(this.getQueryOptionsFromParameters(), sPath);
 		}
 
 		oContext = oContext || this.oContext;
@@ -821,6 +821,23 @@ sap.ui.define([
 		}
 		return oContext.getQueryOptionsForPath(_Helper.buildPath(this.sPath, sPath));
 	};
+
+	/**
+	 * Returns the query options resulting from mParameters. For operation bindings this includes
+	 * $expand and $select from the parent context if the parameter $$inheritExpandSelect is set.
+	 *
+	 * Operation bindings directly use these options for the cache. With autoExpandSelect, other
+	 * bindings may later extend these options to support child bindings that are allowed to
+	 * participate in this binding's cache.
+	 *
+	 * @returns {object} The query options
+	 *
+	 * @abstract
+	 * @name sap.ui.model.odata.v4.ODataParentBinding.getQueryOptionsFromParameters
+	 * @private
+	 * @see sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 */
 
 	/**
 	 * @override

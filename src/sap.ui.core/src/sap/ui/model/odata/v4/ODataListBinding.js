@@ -1826,6 +1826,14 @@ sap.ui.define([
 
 	/**
 	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#getQueryOptionsFromParameters
+	 */
+	ODataListBinding.prototype.getQueryOptionsFromParameters = function () {
+		return this.mQueryOptions;
+	};
+
+	/**
+	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesForPath
 	 */
 	ODataListBinding.prototype.hasPendingChangesForPath = function (sPath) {
@@ -1841,7 +1849,8 @@ sap.ui.define([
 	 * Enhance the inherited query options by the given query options if this binding does not have
 	 * any binding parameters. If both have a '$orderby', the resulting '$orderby' is the
 	 * concatenation of both '$orderby' with the given one first. If both have a '$filter', the
-	 * resulting '$filter' is the conjunction of both '$filter'.
+	 * resulting '$filter' is the conjunction of both '$filter'. '$select' and '$expand' are merged
+	 * because the binding may have acquired them via autoExpandSelect.
 	 *
 	 * @param {object} mQueryOptions
 	 *   The query options
@@ -1855,7 +1864,6 @@ sap.ui.define([
 		var mInheritedQueryOptions;
 
 		if (!Object.keys(this.mParameters).length) {
-			// mQueryOptions can contain only dynamic filter and sorter AND model options;
 			// mix-in inherited static query options
 			mInheritedQueryOptions = this.getQueryOptionsForPath("", oContext);
 			if (mQueryOptions.$orderby && mInheritedQueryOptions.$orderby) {
@@ -1866,6 +1874,8 @@ sap.ui.define([
 					+ mInheritedQueryOptions.$filter + ")";
 			}
 			mQueryOptions = Object.assign({}, mInheritedQueryOptions, mQueryOptions);
+			// mix-in $select and $expand
+			_Helper.aggregateQueryOptions(mQueryOptions, mInheritedQueryOptions);
 		}
 
 		return mQueryOptions;

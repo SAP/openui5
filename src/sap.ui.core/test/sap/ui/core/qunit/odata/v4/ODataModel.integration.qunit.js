@@ -2245,17 +2245,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Messages are $selected in the binding of the binding parameter and transported to
-	// the binding of the return value via $$inheritExpandSelect. A late property is added to the
-	// return value binding. See that requestSideEffects and Context#refresh request the messages.
+	// Scenario: Messages in $select of the binding parameter are transported to the binding of the
+	// return value via $$inheritExpandSelect. A late property is added to the return value binding.
+	// See that Context#requestSideEffects, Context#refresh and a dependent list binding creating
+	// its own cache request the messages.
 	// BCP: 2070011343
 	QUnit.test("BCP: 2070011343", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/SalesOrderList(\\\'1\\\')\',\
-		parameters : {$select : \'Messages\'}}">\
+		parameters : {$select : \'Messages,SO_2_SOITEM/Messages\'}}">\
 	<Text id="id1" text="{SalesOrderID}"/>\
+	<Table items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Text text="{ItemPosition}"/>\
+		</ColumnListItem>\
+	</Table>\
 	<FlexBox id="action" binding="{\
 			path : \'' + sAction + '(...)\',\
 			parameters : {$$inheritExpandSelect : true}\
@@ -2264,11 +2270,20 @@ sap.ui.define([
 <FlexBox id="returnValue">\
 	<Text id="id2" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}" />\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Text text="{ItemPosition}"/>\
+		</ColumnListItem>\
+	</Table>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderList('1')?$select=Messages,SalesOrderID",
-				{SalesOrderID : "1"})
+		this.expectRequest("SalesOrderList('1')?$select=Messages,SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,Messages,SalesOrderID)", {
+				SalesOrderID : "1",
+				SO_2_SOITEM : [
+					{ItemPosition : "10", SalesOrderID : "1"}
+				]})
 			.expectChange("id1", "1")
 			.expectChange("id2")
 			.expectChange("note");
@@ -2276,16 +2291,23 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
 					method : "POST",
-					url : "SalesOrderList('1')/" + sAction + "?$select=Messages,SalesOrderID",
+					url : "SalesOrderList('1')/" + sAction + "?$select=Messages,SalesOrderID"
+						+ "&$expand=SO_2_SOITEM($select=ItemPosition,Messages,SalesOrderID)",
 					payload : {}
-				}, {SalesOrderID : "1"});
+				}, {
+					SalesOrderID : "1",
+					SO_2_SOITEM : [
+						{ItemPosition : "10", SalesOrderID : "1"}
+					]
+				});
 
 			return Promise.all([
 				that.oView.byId("action").getElementBinding().execute(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
-			that.expectChange("id2", "1")
+			that.expectChange("id2", "1") // from setBindingContext
+				// late property request
 				.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID",
 					{Note : "Note #1", SalesOrderID : "1"})
 				.expectChange("note", "Note #1");
@@ -2302,8 +2324,34 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList('1')?$select=Messages,SalesOrderID",
-				{Note : "Note #1", SalesOrderID : "1"});
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Messages,"
+					+ "SalesOrderID&$orderby=ItemPosition&$skip=0&$top=100", {
+					value : [
+						{ItemPosition : "10", SalesOrderID : "1"}
+					]
+				});
+
+			// code under test
+			that.oView.byId("table").getBinding("items").sort(new Sorter("ItemPosition"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=Messages,SalesOrderID"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Messages,SalesOrderID)", {
+					SalesOrderID : "1",
+					SO_2_SOITEM : [
+						{ItemPosition : "10", SalesOrderID : "1"}
+					]
+				})
+				.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Messages,"
+					+ "SalesOrderID&$orderby=ItemPosition&$skip=0&$top=100", {
+					value : [
+						{ItemPosition : "10", SalesOrderID : "1"}
+					]
+				})
+				// late property request
+				.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID",
+					{Note : "Note #1", SalesOrderID : "1"});
 
 			// code under test
 			that.oView.byId("returnValue").getBindingContext().refresh();

@@ -4617,6 +4617,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getQueryOptionsFromParameters", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		// code under test
+		assert.strictEqual(oBinding.getQueryOptionsFromParameters(), oBinding.mQueryOptions);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("inheritQueryOptions - binding with parameters", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
 				{$$operationMode : OperationMode.Server}),
@@ -4634,69 +4642,49 @@ sap.ui.define([
 			$filter : "Age lt 60",
 			$orderby : "Name asc"
 		},
-		mInheritedQueryOptions : {
-			$select : "ID,Name,Age"
-		},
+		mInheritedQueryOptions : {},
 		mExpectedQueryOptions : {
 			$filter : "Age lt 60",
-			$orderby : "Name asc",
-			$select : "ID,Name,Age"
+			$orderby : "Name asc"
 		}
 	}, { // no filter or sort in dynamic query options
-		mDynamicQueryOptionsWithModelOptions : {
-			"sap-client" : "111"
-		},
+		mDynamicQueryOptionsWithModelOptions : {},
 		mInheritedQueryOptions : {
 			$filter : "Age lt 60",
-			$orderby : "Name asc",
-			$select : "ID,Name,Age"
+			$orderby : "Name asc"
 		},
-		mExpectedQueryOptions : {
-			$filter : "Age lt 60",
-			$orderby : "Name asc",
-			"sap-client" : "111",
-			$select : "ID,Name,Age"
-		}
+		mExpectedQueryOptions : {}
 	}, { // filter and sort in both dynamic and inherited query options
 		mDynamicQueryOptionsWithModelOptions : {
 			$filter : "Age lt 60",
-			$orderby : "Name asc",
-			"sap-client" : "111"
+			$orderby : "Name asc"
 		},
 		mInheritedQueryOptions : {
-			$expand : {
-				"EQUIPMENT" : {
-					$select : "Category"
-				}
-			},
 			$filter : "Age gt 20",
-			$orderby : "Name desc",
-			$select : "ID,Name,Age"
+			$orderby : "Name desc"
 		},
 		mExpectedQueryOptions : {
-			$expand : {
-				"EQUIPMENT" : {
-					$select : "Category"
-				}
-			},
 			$filter : "(Age lt 60) and (Age gt 20)",
-			$orderby : "Name asc,Name desc",
-			"sap-client" : "111",
-			$select : "ID,Name,Age"
+			$orderby : "Name asc,Name desc"
 		}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("inheritQueryOptions: Test " + i, function (assert) {
 			var oBinding = this.bindList("TEAM_2_EMPLOYEES"),
-				oContext = {};
+				oContext = {},
+				mQueryOptions = {};
 
 			this.mock(oBinding).expects("getQueryOptionsForPath")
 				.withExactArgs("", sinon.match.same(oContext))
 				.returns(oFixture.mInheritedQueryOptions);
+			this.mock(Object).expects("assign")
+				.withExactArgs({}, sinon.match.same(oFixture.mInheritedQueryOptions),
+					oFixture.mExpectedQueryOptions)
+				.returns(mQueryOptions);
 
 			// code under test
-			assert.deepEqual(oBinding.inheritQueryOptions(
+			assert.strictEqual(oBinding.inheritQueryOptions(
 					oFixture.mDynamicQueryOptionsWithModelOptions, oContext),
-				oFixture.mExpectedQueryOptions);
+				mQueryOptions);
 		});
 	});
 
@@ -5979,4 +5967,5 @@ sap.ui.define([
 
 //TODO integration: 2 entity sets with same $expand, but different $select
 //TODO extended change detection:
-//     Wir sollten auch dafür sorgen, dass die Antwort auf diesen "change"-Event dann keinen Diff enthält. So macht es v2, und das haben wir letzte Woche erst richtig verstanden.
+//     Wir sollten auch dafür sorgen, dass die Antwort auf diesen "change"-Event dann keinen Diff
+//     enthält. So macht es v2, und das haben wir letzte Woche erst richtig verstanden.
