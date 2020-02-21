@@ -1919,7 +1919,6 @@ sap.ui.define([
 			oBinding = this.bindContext("n/a(...)"),
 			oExpectation,
 			oGroupLock = {},
-			oJQueryMock = this.mock(jQuery),
 			oOperationMetadata = {$kind : "Function", $ReturnType : {$Type : "Edm.String"}},
 			mParameters = {},
 			sPath = "/FunctionImport(...)",
@@ -1931,12 +1930,10 @@ sap.ui.define([
 			};
 
 		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
-		oJQueryMock.expects("extend")
+		this.mock(jQuery).expects("extend")
 			.withExactArgs({}, sinon.match.same(oBinding.oOperation.mParameters))
 			.returns(mParameters);
-		oJQueryMock.expects("extend")
-			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
-				sinon.match.same(oBinding.mQueryOptions))
+		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
 			.returns(mQueryOptions);
 		this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions")
 			.withExactArgs(sPath, sinon.match.same(oOperationMetadata),
@@ -1969,7 +1966,6 @@ sap.ui.define([
 			oExpectation,
 			fnGetEntity = {}, // do not call!
 			oGroupLock = {},
-			oJQueryMock = this.mock(jQuery),
 			oOperationMetadata = {$kind : "Function", $ReturnType : {$Type : "name.space.Type"}},
 			mParameters = {},
 			sPath = "/Entity('1')/navigation/bound.Function(...)",
@@ -1981,12 +1977,10 @@ sap.ui.define([
 			};
 
 		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
-		oJQueryMock.expects("extend").withExactArgs({},
+		this.mock(jQuery).expects("extend").withExactArgs({},
 				sinon.match.same(oBinding.oOperation.mParameters))
 			.returns(mParameters);
-		oJQueryMock.expects("extend").withExactArgs({},
-				sinon.match.same(oBinding.oModel.mUriParameters),
-				sinon.match.same(oBinding.mQueryOptions))
+		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
 			.returns(mQueryOptions);
 		this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions").withExactArgs(sPath,
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
@@ -2019,7 +2013,6 @@ sap.ui.define([
 			oBinding = this.bindContext("n/a(...)"),
 			oExpectation,
 			oGroupLock = {},
-			oJQueryMock = this.mock(jQuery),
 			oOperationMetadata = {$kind : "Action" /*no $ReturnType*/},
 			mParameters = {},
 			sPath = "/ActionImport(...)",
@@ -2031,12 +2024,10 @@ sap.ui.define([
 			};
 
 		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
-		oJQueryMock.expects("extend").withExactArgs({},
+		this.mock(jQuery).expects("extend").withExactArgs({},
 				sinon.match.same(oBinding.oOperation.mParameters))
 			.returns(mParameters);
-		oJQueryMock.expects("extend").withExactArgs({},
-				sinon.match.same(oBinding.oModel.mUriParameters),
-				sinon.match.same(oBinding.mQueryOptions))
+		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
 			.returns(mQueryOptions);
 		this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions").withExactArgs(sPath,
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
@@ -2076,7 +2067,6 @@ sap.ui.define([
 				fnGetOriginalResourcePath,
 				oGroupLock = {},
 				oHelperMock = this.mock(_Helper),
-				oJQueryMock = this.mock(jQuery),
 				oOperationMetadata = {
 					$kind : "Action",
 					$ReturnType : {$Type : "name.space.Type"}
@@ -2092,12 +2082,10 @@ sap.ui.define([
 				};
 
 			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
-			oJQueryMock.expects("extend")
+			this.mock(jQuery).expects("extend")
 				.withExactArgs({}, sinon.match.same(oBinding.oOperation.mParameters))
 				.returns(mParameters);
-			oJQueryMock.expects("extend").
-				withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
-					sinon.match.same(oBinding.mQueryOptions))
+			this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
 				.returns(mQueryOptions);
 			this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions")
 				.withExactArgs(sPath, sinon.match.same(oOperationMetadata),
@@ -2998,16 +2986,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doFetchQueryOptions", function (assert) {
+	QUnit.test("getQueryOptions: no $$inheritExpandSelect", function (assert) {
 		var oBinding = this.bindContext("foo");
 
 		// code under test
-		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {});
+		assert.deepEqual(oBinding.getQueryOptions(), {});
 
 		oBinding = this.bindContext("foo", undefined, {"$expand" : "bar"});
 
 		// code under test
-		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {"$expand" : {"bar" : {}}});
+		assert.deepEqual(oBinding.getQueryOptions(), {"$expand" : {"bar" : {}}});
+	});
+
+	//*********************************************************************************************
+[
+	{$select : ["prop"], $expand : {"Nav" : {}}},
+	{$select : ["prop"]},
+	{$expand : {"Nav" : {}}}
+].forEach(function (mParentQueryOptions, i) {
+	QUnit.test("getQueryOptions: $$inheritExpandSelect #" + i, function (assert) {
+		var oContext = Context.create(this.oModel, {
+				mCacheQueryOptions : mParentQueryOptions
+			}, "/SalesOrderList('4711')"),
+			oBinding = this.bindContext("bound.Operation(...)", oContext,
+				{foo : "bar", $$inheritExpandSelect : true}),
+			mQueryOptions = {};
+
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oBinding.mQueryOptions))
+			.returns(mQueryOptions);
+
+		// code under test
+		assert.strictEqual(oBinding.getQueryOptions(), mQueryOptions);
+
+		// ensure that $select is before $expand, too
+		assert.deepEqual(JSON.stringify(mQueryOptions), JSON.stringify(mParentQueryOptions));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("doFetchQueryOptions", function (assert) {
+		var oBinding = this.bindContext("foo"),
+			mQueryOptions = {};
+
+		this.mock(oBinding).expects("getQueryOptions").withExactArgs().returns(mQueryOptions);
+
+		// code under test
+		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), mQueryOptions);
 	});
 
 	//*********************************************************************************************
@@ -3400,34 +3425,19 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	[{
-		parent : {$expand : {"Nav" : {}}, $select : ["prop"], $filter : "~"},
-		expected : {$expand : {"Nav" : {}}, $select : ["prop"], "sap-client" : "111", foo : "bar"}
-	}, {
-		parent : {$expand : {"Nav" : {}}},
-		expected : {$expand : {"Nav" : {}}, "sap-client" : "111", foo : "bar"}
-	}, {
-		parent : {$select : ["prop"]},
-		expected : {$select : ["prop"], "sap-client" : "111", foo : "bar"}
-	}].forEach(function (oFixture, i) {
-		[false, true].forEach(function (bInherit) {
-			QUnit.test("computeOperationQueryOptions, " + i + "," + bInherit, function (assert) {
-				var oContext = Context.create(this.oModel, {
-						mCacheQueryOptions : oFixture.parent
-					}, "/SalesOrderList('4711')"),
-					oBinding = this.bindContext("bound.Operation(...)", oContext,
-						{foo : "bar", $$inheritExpandSelect : bInherit});
+	QUnit.test("computeOperationQueryOptions", function (assert) {
+		var oBinding = this.bindContext("bound.Operation(...)"),
+			mMergedQueryOptions = {},
+			mQueryOptions = {};
 
-				this.mock(jQuery).expects("extend").withExactArgs({},
-					sinon.match.same(oBinding.oModel.mUriParameters),
-					sinon.match.same(oBinding.mQueryOptions))
-					.returns({"sap-client" : "111", foo : "bar"});
+		this.mock(oBinding).expects("getQueryOptions").withExactArgs().returns(mQueryOptions);
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(mQueryOptions))
+			.returns(mMergedQueryOptions);
 
-				// code under test
-				assert.deepEqual(oBinding.computeOperationQueryOptions(),
-					bInherit ? oFixture.expected : {"sap-client" : "111", foo : "bar"});
-			});
-		});
+		// code under test
+		assert.strictEqual(oBinding.computeOperationQueryOptions(), mMergedQueryOptions);
 	});
 
 	//*********************************************************************************************

@@ -578,20 +578,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.computeOperationQueryOptions = function () {
-		var oParentQueryOptions,
-			mQueryOptions = jQuery.extend({}, this.oModel.mUriParameters, this.mQueryOptions);
-
-		if (this.bInheritExpandSelect) {
-			oParentQueryOptions = this.oContext.getBinding().mCacheQueryOptions;
-			if ("$select" in oParentQueryOptions) {
-				mQueryOptions.$select = oParentQueryOptions.$select;
-			}
-			if ("$expand" in oParentQueryOptions) {
-				mQueryOptions.$expand = oParentQueryOptions.$expand;
-			}
-		}
-
-		return mQueryOptions;
+		return Object.assign({}, this.oModel.mUriParameters, this.getQueryOptions());
 	};
 
 	/**
@@ -740,7 +727,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.doFetchQueryOptions = function () {
-		return SyncPromise.resolve(this.mQueryOptions);
+		return SyncPromise.resolve(this.getQueryOptions());
 	};
 
 	/**
@@ -952,6 +939,37 @@ sap.ui.define([
 			throw new Error("Not a deferred operation binding: " + this);
 		}
 		return this.oParameterContext;
+	};
+
+	/**
+	 * Returns the query options resulting from mParameters and $$inheritExpandSelect. Operation
+	 * bindings directly use these options for the cache. With autoExpandSelect, other bindings may
+	 * later extend these options to support child bindings that are allowed to participate in this
+	 * binding's cache.
+	 *
+	 * @returns {object} The query options
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 */
+	ODataContextBinding.prototype.getQueryOptions = function () {
+		var mParentQueryOptions, mQueryOptions;
+
+		if (!this.bInheritExpandSelect) {
+			return this.mQueryOptions;
+		}
+
+		mParentQueryOptions = this.oContext.getBinding().mCacheQueryOptions;
+		mQueryOptions = Object.assign({}, this.mQueryOptions);
+		if ("$select" in mParentQueryOptions) {
+			mQueryOptions.$select = mParentQueryOptions.$select;
+		}
+		if ("$expand" in mParentQueryOptions) {
+			mQueryOptions.$expand = mParentQueryOptions.$expand;
+		}
+
+		return mQueryOptions;
 	};
 
 	/**

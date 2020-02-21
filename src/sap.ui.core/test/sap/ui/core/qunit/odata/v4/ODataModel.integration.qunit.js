@@ -2245,6 +2245,74 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Messages are $selected in the binding of the binding parameter and transported to
+	// the binding of the return value via $$inheritExpandSelect. A late property is added to the
+	// return value binding. See that requestSideEffects and Context#refresh request the messages.
+	// BCP: 2070011343
+	QUnit.test("BCP: 2070011343", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{path : \'/SalesOrderList(\\\'1\\\')\',\
+		parameters : {$select : \'Messages\'}}">\
+	<Text id="id1" text="{SalesOrderID}"/>\
+	<FlexBox id="action" binding="{\
+			path : \'' + sAction + '(...)\',\
+			parameters : {$$inheritExpandSelect : true}\
+		}"/>\
+</FlexBox>\
+<FlexBox id="returnValue">\
+	<Text id="id2" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=Messages,SalesOrderID",
+				{SalesOrderID : "1"})
+			.expectChange("id1", "1")
+			.expectChange("id2")
+			.expectChange("note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('1')/" + sAction + "?$select=Messages,SalesOrderID",
+					payload : {}
+				}, {SalesOrderID : "1"});
+
+			return Promise.all([
+				that.oView.byId("action").getElementBinding().execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			that.expectChange("id2", "1")
+				.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID",
+					{Note : "Note #1", SalesOrderID : "1"})
+				.expectChange("note", "Note #1");
+
+			that.oView.byId("returnValue").setBindingContext(aResults[0]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=Messages,Note", {});
+
+			// code under test
+			that.oView.byId("returnValue").getBindingContext()
+				.requestSideEffects([{$PropertyPath : "Messages"}, {$PropertyPath : "Note"}]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=Messages,SalesOrderID",
+				{Note : "Note #1", SalesOrderID : "1"});
+
+			// code under test
+			that.oView.byId("returnValue").getBindingContext().refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODLB, late property. See that it is requested only once, even when bound twice. See
 	// that it is updated via requestSideEffects called at the parent binding (all visible rows).
 	// JIRA: CPOUI5UISERVICESV3-1878
