@@ -231,27 +231,9 @@ sap.ui.define([
 		if (oResult.changeHandler === "default") {
 			oResult.changeHandler = this._oDefaultChangeHandlers[sChangeType];
 		} else if (aDeveloperModeChangeHandlers.indexOf(sChangeType) > -1) {
-			throw new Error("You can't use a custom change handler for the following Developer Mode change types: " + aDeveloperModeChangeHandlers.toString() + ". Please use 'default' instead.");
+			throw Error("You can't use a custom change handler for the following Developer Mode change types: " + aDeveloperModeChangeHandlers.toString() + ". Please use 'default' instead.");
 		}
 		return oResult;
-	};
-
-	ChangeRegistry.prototype._getChangeRegistryItem = function (sChangeType, sControlType, sLayer) {
-		if (!sChangeType) {
-			return undefined;
-		}
-		var oRegistryItem = this._getRegistryItem(sControlType, sChangeType);
-		if (oRegistryItem && !this._isRegistryItemValidForLayer(oRegistryItem, sLayer)) {
-			throw new Error("Change type " + sChangeType + " not enabled for layer " + sLayer);
-		}
-		return oRegistryItem;
-	};
-
-	ChangeRegistry.prototype._extractChangeHandlerFromRegistryItem = function (oRegistryItem) {
-		if (oRegistryItem && oRegistryItem.getChangeTypeMetadata) {
-			return oRegistryItem.getChangeTypeMetadata().getChangeHandler();
-		}
-		throw Error("No Change handler registered for the Control and Change type");
 	};
 
 	/**
@@ -266,8 +248,16 @@ sap.ui.define([
 	ChangeRegistry.prototype.getChangeHandler = function (sChangeType, sControlType, oControl, oModifier, sLayer) {
 		return this._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, oModifier)
 		.then(function(oSpecificChangeRegistryItem) {
-			var oChangeRegistryItem = oSpecificChangeRegistryItem || this._getChangeRegistryItem(sChangeType, sControlType, sLayer);
-			return this._extractChangeHandlerFromRegistryItem(oChangeRegistryItem);
+			var oChangeRegistryItem = oSpecificChangeRegistryItem || this._getRegistryItem(sControlType, sChangeType);
+
+			if (!oChangeRegistryItem) {
+				throw Error("No Change handler registered for the Control and Change type");
+			}
+
+			if (!this._isRegistryItemValidForLayer(oChangeRegistryItem, sLayer)) {
+				throw Error("Change type " + sChangeType + " not enabled for layer " + sLayer);
+			}
+			return oChangeRegistryItem.getChangeTypeMetadata().getChangeHandler();
 		}.bind(this));
 	};
 
@@ -314,7 +304,7 @@ sap.ui.define([
 		if (oLayers) {
 			Object.keys(oLayers).forEach(function (sLayer) {
 				if (mLayerPermissions[sLayer] === undefined) {
-					throw new Error("The Layer '" + sLayer + "' is not supported. Please only use supported layers");
+					throw Error("The Layer '" + sLayer + "' is not supported. Please only use supported layers");
 				}
 				mLayerPermissions[sLayer] = oLayers[sLayer];
 			});
@@ -424,11 +414,8 @@ sap.ui.define([
 	};
 
 	ChangeRegistry.prototype._isRegistryItemValidForLayer = function (oRegistryItem, sLayer) {
-		if (oRegistryItem && sLayer) {
-			var oLayers = oRegistryItem.getChangeTypeMetadata().getLayers();
-			return !!oLayers[sLayer];
-		}
-		return false;
+		var oLayers = oRegistryItem.getChangeTypeMetadata().getLayers();
+		return !!oLayers[sLayer];
 	};
 
 	ChangeRegistry.prototype.getDragInfo = function(sControlType) {
