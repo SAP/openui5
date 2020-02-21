@@ -286,9 +286,4 @@ sap.ui.define([
 			assert.strictEqual(sControlRelativeID, sSuffix, "Should get control relative ID suffix " + sSuffix);
 		});
 	});
-
-	QUnit.test("Should not return unstable element ID suffix", function (assert) {
-		var sControlRelativeID = _ControlFinder._getDomElementIDSuffix(document.querySelector("#myList li"));
-		assert.ok(!sControlRelativeID, "Should not use unstable relative ID suffix");
-	});
 });
