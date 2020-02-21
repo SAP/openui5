@@ -1122,16 +1122,7 @@ function (
 		switch (oParams.type) {
 			case "addOrSetAggregation":
 			case "insertAggregation":
-				if (this.getStatus() === DesignTimeStatus.SYNCING) {
-					this.attachEventOnce("synced", oParams, function () {
-						// DesignTime instance at this point might be destroyed by third-parties on synced event
-						if (!this.bIsDestroyed) {
-							this._onAddAggregation(arguments[1].value, arguments[1].target, arguments[1].name);
-						}
-					}, this);
-				} else {
-					this._onAddAggregation(oParams.value, oParams.target, oParams.name);
-				}
+				this._onAddAggregation(oParams.value, oParams.target, oParams.name);
 				break;
 			case "setParent":
 				// timeout is needed because UI5 controls & apps can temporary "detach" controls from control tree
@@ -1187,99 +1178,130 @@ function (
 	DesignTime.prototype._onAddAggregation = function(oElement, oParent, sAggregationName) {
 		if (ElementUtil.isElementValid(oElement)) {
 			var oParentOverlay = OverlayRegistry.getOverlay(oParent);
-			var oParentAggregationOverlay = oParentOverlay.getAggregationOverlay(sAggregationName);
-			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
-
-			if (
-				!oElementOverlay
-				&& oParentAggregationOverlay
-				&& oParentAggregationOverlay.getElement()
-			) {
-				var iTaskId = this._oTaskManager.add({
-					type: 'createChildOverlay',
-					element: oElement
-				});
-				this.createOverlay({
-					element: oElement,
-					root: false,
-					parentMetadata: oParentAggregationOverlay.getDesignTimeMetadata().getData()
-				})
-					.then(function (oElementOverlay) {
-						var vInsertChildReply = oParentAggregationOverlay.insertChild(null, oElementOverlay);
-						if (vInsertChildReply === true) {
-							this._oTaskManager.add({
-								type: "applyStyles",
-								callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
-								overlayId: oElementOverlay.getId()
-							}, "overlayId");
-
-							var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay);
-
-							// `ElementOverlayAdded` event should be emitted only when overlays are ready to prevent
-							// an access to still syncing overlays (e.g. the overlay is still not available in overlay registry
-							// at this point and not registered in the plugins).
-							this.attachEventOnce("synced", oElementOverlay, function() {
-								if (!oElementOverlay.bIsDestroyed) {
-									this.fireElementOverlayAdded({
-										id: oElementOverlay.getId(),
-										targetIndex: iOverlayPosition,
-										targetId: oParentAggregationOverlay.getId(),
-										targetAggregation: oParentAggregationOverlay.getAggregationName()
-									});
-								}
-							}, this);
-						}
-						this._oTaskManager.complete(iTaskId);
-					}.bind(this))
-					.catch(function (sElementId, sAggregationOverlayId, vError) {
-						// In case of any crash or rejection the task has to be canceled
-						this._oTaskManager.cancel(iTaskId);
-
-						var oError = Util.propagateError(
-							vError,
-							"DesignTime#_onAddAggregation",
-							Util.printf(
-								"Failed to add new element overlay (elementId='{0}') into aggregation overlay (id='{1}')",
-								sElementId,
-								sAggregationOverlayId
-							)
-						);
-
-						// Omit error message if the element was destroyed during overlay initialisation
-						// (e.g. SimpleForm case when multi-removal takes place)
-						if (!oElement.bIsDestroyed && !oParentAggregationOverlay.bIsDestroyed) {
-							Log.error(Util.errorToString(oError));
-						}
-					}.bind(this, oElement.getId(), oParentAggregationOverlay.getId()));
+			var oParentAggregationOverlay = oParentOverlay && oParentOverlay.getAggregationOverlay(sAggregationName);
+			if (!oParentAggregationOverlay) {
+				var onSynced;
+				var onElementOverlayCreated = function (oEvent) {
+					var oElementOverlay = oEvent.getParameter('elementOverlay');
+					if (oElementOverlay.getElement().getId() === oParent.getId()) {
+						var oParentAggregationOverlay = oElementOverlay.getAggregationOverlay(sAggregationName);
+						this.detachSynced(onSynced, this);
+						this.detachElementOverlayCreated(onElementOverlayCreated, this);
+						this._addAggregation(oElement, oParentAggregationOverlay);
+					}
+				};
+				onSynced = function () {
+					var oParentOverlay = OverlayRegistry.getOverlay(oParent);
+					var oParentAggregationOverlay = oParentOverlay && oParentOverlay.getAggregationOverlay(sAggregationName);
+					this.detachSynced(onSynced, this);
+					this.detachElementOverlayCreated(onElementOverlayCreated, this);
+					this._addAggregation(oElement, oParentAggregationOverlay);
+				};
+				this.attachElementOverlayCreated(onElementOverlayCreated, this);
+				this.attachSynced(onSynced, this);
 			} else {
-				// This is necessary when ElementOverlay was created for an Element which is not inside RootElement
-				// and which is added to the RootElement later on (LayoutEditor use case). Thus, this ElementOverlay
-				// has to be marked as non-root anymore.
-				if (
-					oElementOverlay
-					&& !this._isElementInRootElements(oElementOverlay)
-					&& oElementOverlay.isRoot()
-				) {
-					oElementOverlay.setIsRoot(false);
-				}
-
-				oParentAggregationOverlay.insertChild(null, oElementOverlay);
-
-				oElementOverlay.setDesignTimeMetadata(
-					MetadataPropagationUtil.propagateMetadataToElementOverlay(
-						oElementOverlay._mMetadataOriginal,
-						oParentAggregationOverlay.getDesignTimeMetadata().getData(),
-						oElement
-					)
-				);
-
-				this.fireElementOverlayMoved({
-					id: oElementOverlay.getId(),
-					targetIndex: oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay),
-					targetId: oParentAggregationOverlay.getId(),
-					targetAggregation: oParentAggregationOverlay.getAggregationName()
-				});
+				return this._addAggregation(oElement, oParentAggregationOverlay);
 			}
+		}
+	};
+
+	DesignTime.prototype._addAggregation = function (oElement, oParentAggregationOverlay) {
+		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
+
+		if (
+			!oElementOverlay
+			&& oParentAggregationOverlay
+			&& oParentAggregationOverlay.getElement()
+		) {
+			var iTaskId = this._oTaskManager.add({
+				type: 'createChildOverlay',
+				element: oElement
+			});
+			this.createOverlay({
+				element: oElement,
+				root: false,
+				parentMetadata: oParentAggregationOverlay.getDesignTimeMetadata().getData()
+			})
+				.then(function (oElementOverlay) {
+					var vInsertChildReply = oParentAggregationOverlay.insertChild(null, oElementOverlay);
+					if (vInsertChildReply === true) {
+						this._oTaskManager.add({
+							type: "applyStyles",
+							callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
+							overlayId: oElementOverlay.getId()
+						}, "overlayId");
+
+						var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay);
+
+						// `ElementOverlayAdded` event should be emitted only when overlays are ready to prevent
+						// an access to still syncing overlays (e.g. the overlay is still not available in overlay registry
+						// at this point and not registered in the plugins).
+						this.attachEventOnce("synced", oElementOverlay, function() {
+							if (!oElementOverlay.bIsDestroyed) {
+								this.fireElementOverlayAdded({
+									id: oElementOverlay.getId(),
+									targetIndex: iOverlayPosition,
+									targetId: oParentAggregationOverlay.getId(),
+									targetAggregation: oParentAggregationOverlay.getAggregationName()
+								});
+							}
+						}, this);
+					}
+					this._oTaskManager.complete(iTaskId);
+				}.bind(this))
+				.catch(function (sElementId, sAggregationOverlayId, vError) {
+					// In case of any crash or rejection the task has to be canceled
+					this._oTaskManager.cancel(iTaskId);
+
+					var oError = Util.propagateError(
+						vError,
+						"DesignTime#_onAddAggregation",
+						Util.printf(
+							"Failed to add new element overlay (elementId='{0}') into aggregation overlay (id='{1}')",
+							sElementId,
+							sAggregationOverlayId
+						)
+					);
+
+					// Omit error message if the element was destroyed during overlay initialisation
+					// (e.g. SimpleForm case when multi-removal takes place)
+					if (!oElement.bIsDestroyed && !oParentAggregationOverlay.bIsDestroyed) {
+						Log.error(Util.errorToString(oError));
+					}
+				}.bind(this, oElement.getId(), oParentAggregationOverlay.getId()));
+		} else {
+			// This is necessary when ElementOverlay was created for an Element which is not inside RootElement
+			// and which is added to the RootElement later on (LayoutEditor use case). Thus, this ElementOverlay
+			// has to be marked as non-root anymore.
+			if (
+				oElementOverlay
+				&& !this._isElementInRootElements(oElementOverlay)
+				&& oElementOverlay.isRoot()
+			) {
+				oElementOverlay.setIsRoot(false);
+			}
+
+			if (oParentAggregationOverlay) {
+				oParentAggregationOverlay.insertChild(null, oElementOverlay);
+			} else {
+				Log.error("No parentAggregationOverlay exists during addAggregation");
+				return;
+			}
+
+			oElementOverlay.setDesignTimeMetadata(
+				MetadataPropagationUtil.propagateMetadataToElementOverlay(
+					oElementOverlay._mMetadataOriginal,
+					oParentAggregationOverlay.getDesignTimeMetadata().getData(),
+					oElement
+				)
+			);
+
+			this.fireElementOverlayMoved({
+				id: oElementOverlay.getId(),
+				targetIndex: oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay),
+				targetId: oParentAggregationOverlay.getId(),
+				targetAggregation: oParentAggregationOverlay.getAggregationName()
+			});
 		}
 	};
 
