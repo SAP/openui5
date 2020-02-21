@@ -39,7 +39,6 @@
 	</style>
 
 	<script>
-		jQuery.sap.initMobile();
 		var radioBtnPage = new sap.m.Page("radioBtnPage", {
 			title: "Radio Button",
 			footer: new sap.m.Bar({
@@ -515,7 +514,18 @@
 			]
 		});
 
+		var oToggleBtnCompact = new sap.m.ToggleButton("toggleCompact", {
+			text: "Compact Mode",
+			pressed: !sap.ui.Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
+			press: function () {
+				jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
+				jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
+			}
+		});
+
 		bindListData(data, oItemTemplate, oList2);
+
+		radioBtnPage.addContent(oToggleBtnCompact);
 		radioBtnPage.addContent(vboxStates);
 		radioBtnPage.addContent(oFBox2);
 		radioBtnPage.addContent(oList2);
@@ -529,7 +539,10 @@
 		}));
 		radioBtnPage.addContent(RTLSimpleForm);
 
-		radioBtnPage.placeAt('body');
+		var app = new sap.m.App("myApp", {initialPage:"radioBtnPage"});
+		app.addPage(radioBtnPage);
+		app.placeAt("body");
+
 	</script>
 
 </head>
