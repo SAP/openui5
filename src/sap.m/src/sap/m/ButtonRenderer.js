@@ -283,7 +283,10 @@ sap.ui.define([
 	var mARIATextKeys = {
 		Accept: "BUTTON_ARIA_TYPE_ACCEPT",
 		Reject: "BUTTON_ARIA_TYPE_REJECT",
-		Emphasized: "BUTTON_ARIA_TYPE_EMPHASIZED"
+		Emphasized: "BUTTON_ARIA_TYPE_EMPHASIZED",
+		Critical: "BUTTON_ARIA_TYPE_CRITICAL",
+		Negative: "BUTTON_ARIA_TYPE_NEGATIVE",
+		Success: "BUTTON_ARIA_TYPE_SUCCESS"
 	};
 
 	ButtonRenderer.getButtonTypeAriaLabelId = function(sType) {

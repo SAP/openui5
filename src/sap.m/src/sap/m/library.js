@@ -730,6 +730,11 @@ sap.ui.define([
 
 		/**
 		 * Critical type
+		 *
+		 * <b>Note:</b> To be used only in controls of type <code>sap.m.Button</code>. When the
+		 * button opens a <code>sap.m.MessagePopover</code> list, use this <code>ButtonType</code>
+		 * if the message with the highest severity is <code>Warning</code> type.
+		 *
 		 * @public
 		 * @since 1.73
 		 */
@@ -737,6 +742,11 @@ sap.ui.define([
 
 		/**
 		 * Negative type
+		 *
+		 * <b>Note:</b> To be used only in controls of type <code>sap.m.Button</code>. When the
+		 * button opens a <code>sap.m.MessagePopover</code> list, use this <code>ButtonType</code>
+		 * if the message with the highest severity is <code>Error</code> type.
+		 *
 		 * @public
 		 * @since 1.73
 		 */
@@ -744,6 +754,11 @@ sap.ui.define([
 
 		/**
 		 * Success type
+		 *
+		 * <b>Note:</b> To be used only in controls of type <code>sap.m.Button</code>. When the
+		 * button opens a <code>sap.m.MessagePopover</code> list, use this <code>ButtonType</code>
+		 * if the message with the highest severity is <code>Success</code> type.
+		 *
 		 * @public
 		 * @since 1.73
 		 */
@@ -751,6 +766,11 @@ sap.ui.define([
 
 		/**
 		 * Neutral type
+		 *
+		 * <b>Note:</b> To be used only in controls of type <code>sap.m.Button</code>. When the
+		 * button opens a <code>sap.m.MessagePopover</code> list, use this <code>ButtonType</code>
+		 * if the message with the highest severity is <code>Information</code> type.
+		 *
 		 * @public
 		 * @since 1.73
 		 */

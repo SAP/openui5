@@ -77,6 +77,9 @@ sap.ui.define([
 
 				/**
 				 * Defines the type of the <code>MenuButton</code> (for example, Default, Accept, Reject, Back, etc.)
+				 *
+				 * <b>Note:</b> Not all existing types are valid for the control. See {@link sap.m.ButtonType}
+				 * documentation.
 				 */
 				type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : ButtonType.Default},
 
