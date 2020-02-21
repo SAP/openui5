@@ -16,6 +16,8 @@ sap.ui.define(["./library", 'sap/ui/core/Renderer', './ToolbarRenderer', "sap/m/
 		 */
 		var OverflowToolbarRenderer = Renderer.extend(ToolbarRenderer);
 
+		OverflowToolbarRenderer.apiVersion = 2;
+
 		OverflowToolbarRenderer.renderBarContent = function(rm, oToolbar) {
 
 			var bHasAlwaysOverflowVisibleContent  = false;
