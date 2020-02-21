@@ -67,7 +67,8 @@ sap.ui.define(function () {
 				"tags": aTags.concat(["data"]),
 				"label": "{i18n>CARD_EDITOR.DATA.JSON}",
 				"type": "json",
-				"path": sRelativePath + "data/json"
+				"path": sRelativePath + "data/json",
+				"visible": "{= !${context>" + sRelativePath + "data/request/url} }"
 			},
 			"DataPath": {
 				"tags": aTags.concat(["data"]),
