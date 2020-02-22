@@ -136,7 +136,7 @@ sap.ui.define(['./library'],
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 		 */
 		AlignedFlowLayoutRenderer.renderSpacers = function(oRm, oControl) {
-			var iSpacers = oControl.getNumberOfSpacers(),
+			var iSpacers = oControl.computeNumberOfSpacers(),
 				sMinItemWidth = oControl.getMinItemWidth(),
 				sMaxItemWidth = oControl.getMaxItemWidth(),
 				CSS_CLASS = AlignedFlowLayoutRenderer.CSS_CLASS,

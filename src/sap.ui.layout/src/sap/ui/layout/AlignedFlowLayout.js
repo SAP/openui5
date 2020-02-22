@@ -202,112 +202,120 @@ sap.ui.define([
 				return;
 			}
 
-			var CSS_CLASS_ONE_LINE = this.getRenderer().CSS_CLASS + "OneLine",
-				bEnoughSpaceForEndItem = true;
-
 			var oEndItemDomRef = oSettings.endItemDomRef || this.getDomRef("endItem"),
 				oLastItemDomRef = this.getLastItemDomRef();
 
-			if (oEndItemDomRef && oLastItemDomRef) {
-				var oLastSpacerDomRef = oDomRef.lastElementChild,
-					mLastSpacerStyle = oLastSpacerDomRef.style;
+			if (!oEndItemDomRef || !oLastItemDomRef) {
 
-				mLastSpacerStyle.width = "";
-				mLastSpacerStyle.height = "";
-				mLastSpacerStyle.display = "";
-				oDomRef.classList.remove(CSS_CLASS_ONE_LINE);
-
-				// skip unnecessary style recalculations if the any ancestor is hidden
-				// (the "display" style property is set to "none")
+				// skip unnecessary style recalculations if the any ancestor
+				// is hidden (the "display" style property is set to "none")
 				if (!oDomRef.offsetParent) {
 					return;
 				}
 
-				var iEndItemHeight = oEndItemDomRef.offsetHeight,
-					iEndItemWidth = oEndItemDomRef.offsetWidth,
-					iLastItemOffsetTop = oLastItemDomRef.offsetTop,
-					iLastItemOffsetLeft = oLastItemDomRef.offsetLeft,
-					iEndItemOffsetLeft,
-					iAvailableWidthForEndItem;
-
-				if (Core.getConfiguration().getRTL()) {
-					iAvailableWidthForEndItem = iLastItemOffsetLeft;
-				} else {
-					var iLastItemMarginRight = Number.parseFloat(window.getComputedStyle(oLastItemDomRef).marginRight);
-					var iRightBorderOfLastItem = iLastItemOffsetLeft + oLastItemDomRef.offsetWidth + iLastItemMarginRight;
-					iAvailableWidthForEndItem = oDomRef.offsetWidth - iRightBorderOfLastItem;
-				}
-
-				bEnoughSpaceForEndItem = iAvailableWidthForEndItem >= iEndItemWidth;
-
-				// if the end item fits into the line
-				if (bEnoughSpaceForEndItem) {
-
-					if (this.checkItemsWrapping(oDomRef)) { // if multiple lines mode
-
-						// if the end item overlaps the items on the first line,
-						// this usually occurs when the end item is higher than the other items
-						if (oEndItemDomRef.offsetTop < iLastItemOffsetTop) {
-							mLastSpacerStyle.height = Math.max(0, iEndItemHeight - iLastItemOffsetTop) + "px";
-
-							// Detect collision of the last two items after increasing the height
-							// of the last spacer.
-							// Increasing the height of the last spacer may cause the vertical
-							// scrollbar to be visible, which would decrease the available width
-							// and possibly causing a collision of the last two items.
-							if (oLastItemDomRef.offsetTop >= oEndItemDomRef.offsetTop) {
-								iEndItemOffsetLeft = oEndItemDomRef.offsetLeft;
-								iLastItemOffsetLeft = oLastItemDomRef.offsetLeft;
-
-								if (
-									(iEndItemOffsetLeft >= iLastItemOffsetLeft) &&
-									(iEndItemOffsetLeft <= (iLastItemOffsetLeft + oLastItemDomRef.offsetWidth))
-								) {
-									mLastSpacerStyle.height = iEndItemHeight + "px";
-								}
-							}
-
-							mLastSpacerStyle.display = "block";
-
-						} else {
-							mLastSpacerStyle.height = "0";
-							mLastSpacerStyle.display = "";
-						}
-
-					} else { // first line mode and the end item fits into the line
-
-						// if the height of the end item is higher than the other items on the first line,
-						// the end item goes up and overflow its container
-						if (oEndItemDomRef.offsetTop < iLastItemOffsetTop) {
-
-							// increase the height of the last spacer item to make the end item go down
-							mLastSpacerStyle.height = iEndItemHeight + "px";
-						}
-
-						mLastSpacerStyle.display = "block";
-					}
-
-				} else { // not enough space, increase the height of the last spacer item to make the endContent go down
-					mLastSpacerStyle.height = iEndItemHeight + "px";
-					mLastSpacerStyle.display = "block";
-				}
-
-				var sEndItemWidth = iEndItemWidth + "px";
-				mLastSpacerStyle.width = sEndItemWidth;
-				mLastSpacerStyle.minWidth = sEndItemWidth;
-
-			// skip unnecessary style recalculations if the any ancestor is hidden
-			// (the "display" style property is set to "none")
-			} else if (!oDomRef.offsetParent) {
+				this.toggleDisplayOfSpacers(oDomRef);
 				return;
 			}
 
-			// if the items fit into a single line, add a CSS class to turn off the display of the spacer elements
-			var bExcludeEndItem = true;
+			var oLastSpacerDomRef = oDomRef.lastElementChild,
+				mLastSpacerStyle = oLastSpacerDomRef.style;
+
+			mLastSpacerStyle.width = "";
+			mLastSpacerStyle.height = "";
+			mLastSpacerStyle.display = "";
+			oDomRef.classList.remove(this.getRenderer().CSS_CLASS + "OneLine");
+
+			// skip unnecessary style recalculations if the any ancestor is hidden
+			// (the "display" style property is set to "none")
+			if (!oDomRef.offsetParent) {
+				return;
+			}
+
+			var iEndItemHeight = oEndItemDomRef.offsetHeight,
+				iEndItemWidth = oEndItemDomRef.offsetWidth,
+				iLastItemOffsetTop = oLastItemDomRef.offsetTop,
+				iLastItemOffsetLeft = oLastItemDomRef.offsetLeft,
+				iEndItemOffsetLeft,
+				iAvailableWidthForEndItem;
+
+			if (Core.getConfiguration().getRTL()) {
+				iAvailableWidthForEndItem = iLastItemOffsetLeft;
+			} else {
+				var iLastItemMarginRight = Number.parseFloat(window.getComputedStyle(oLastItemDomRef).marginRight);
+				var iRightBorderOfLastItem = iLastItemOffsetLeft + oLastItemDomRef.offsetWidth + iLastItemMarginRight;
+				iAvailableWidthForEndItem = oDomRef.offsetWidth - iRightBorderOfLastItem;
+			}
+
+			var bEnoughSpaceForEndItem = iAvailableWidthForEndItem >= iEndItemWidth;
+
+			// if the end item fits into the line
+			if (bEnoughSpaceForEndItem) {
+
+				if (this.checkItemsWrapping(oDomRef)) { // if multiple lines mode
+
+					// if the end item overlaps the items on the first line,
+					// this usually occurs when the end item is higher than the other items
+					if (oEndItemDomRef.offsetTop < iLastItemOffsetTop) {
+						mLastSpacerStyle.height = Math.max(0, iEndItemHeight - iLastItemOffsetTop) + "px";
+
+						// Detect collision of the last two items after increasing the height
+						// of the last spacer.
+						// Increasing the height of the last spacer may cause the vertical
+						// scrollbar to be visible, which would decrease the available width
+						// and possibly causing a collision of the last two items.
+						if (oLastItemDomRef.offsetTop >= oEndItemDomRef.offsetTop) {
+							iEndItemOffsetLeft = oEndItemDomRef.offsetLeft;
+							iLastItemOffsetLeft = oLastItemDomRef.offsetLeft;
+
+							if (
+								(iEndItemOffsetLeft >= iLastItemOffsetLeft) &&
+								(iEndItemOffsetLeft <= (iLastItemOffsetLeft + oLastItemDomRef.offsetWidth))
+							) {
+								mLastSpacerStyle.height = iEndItemHeight + "px";
+							}
+						}
+
+						mLastSpacerStyle.display = "block";
+
+					} else {
+						mLastSpacerStyle.height = "0";
+						mLastSpacerStyle.display = "";
+					}
+
+				} else { // first line mode and the end item fits into the line
+
+					// if the height of the end item is higher than the other items on the first line,
+					// the end item goes up and overflow its container
+					if (oEndItemDomRef.offsetTop < iLastItemOffsetTop) {
+
+						// increase the height of the last spacer item to make the end item go down
+						mLastSpacerStyle.height = iEndItemHeight + "px";
+					}
+
+					mLastSpacerStyle.display = "block";
+				}
+
+			} else { // not enough space, increase the height of the last spacer item to make the endContent go down
+				mLastSpacerStyle.height = iEndItemHeight + "px";
+				mLastSpacerStyle.display = "block";
+			}
+
+			var sEndItemWidth = iEndItemWidth + "px";
+			mLastSpacerStyle.width = sEndItemWidth;
+			mLastSpacerStyle.minWidth = sEndItemWidth;
+			this.toggleDisplayOfSpacers(oDomRef);
+		};
+
+		AlignedFlowLayout.prototype.toggleDisplayOfSpacers = function(oDomRef) {
+			var CSS_CLASS_ONE_LINE = this.getRenderer().CSS_CLASS + "OneLine",
+				bExcludeEndItem = true;
 
 			if (this.checkItemsWrapping(oDomRef, bExcludeEndItem)) {
 				oDomRef.classList.remove(CSS_CLASS_ONE_LINE);
 			} else {
+
+				// if the items fit into a single line, add a CSS class to turn off
+				// the display of the spacer elements
 				oDomRef.classList.add(CSS_CLASS_ONE_LINE);
 			}
 		};
@@ -372,7 +380,7 @@ sap.ui.define([
 			return this.getDomRef("endItem") || this.getLastItemDomRef();
 		};
 
-		AlignedFlowLayout.prototype.getNumberOfSpacers = function() {
+		AlignedFlowLayout.prototype.computeNumberOfSpacers = function() {
 			var iContentLength = this.getContent().length;
 
 			// spacers are only needed when some content is rendered
