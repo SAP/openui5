@@ -300,9 +300,9 @@ sap.ui.define(['sap/base/Log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 			var iTime = now();
 
 			var oMeasurement = mMeasurements[sId];
-			Log.info("Performance measurement end: " + sId + " on " + iTime);
 
 			if (oMeasurement && !oMeasurement.end) {
+				Log.info("Performance measurement end: " + sId + " on " + iTime);
 				oMeasurement.end = iTime;
 				if (oMeasurement.end >= oMeasurement.resume && oMeasurement.resume > 0) {
 					oMeasurement.duration = oMeasurement.duration + oMeasurement.end - oMeasurement.resume;
