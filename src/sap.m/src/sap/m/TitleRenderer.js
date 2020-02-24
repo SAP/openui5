@@ -63,6 +63,7 @@ sap.ui.define(["sap/ui/core/library", "sap/m/HyphenationSupport"],
 
 		if (bAutoLevel) {
 			oRm.writeAttribute("role", "heading");
+			oRm.writeAttribute("aria-level", oTitle._getAriaLevel());
 		}
 
 		HyphenationSupport.writeHyphenationClass(oRm, oTitle);

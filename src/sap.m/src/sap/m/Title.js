@@ -284,6 +284,22 @@ sap.ui.define([
 		return oDomRefs;
 	};
 
+	/**
+	 * Turns property <code>titleStyle</code> to aria level. If it is not set, the default level is 2.
+	 * @private
+	 * @returns {int} The aria level.
+	 */
+	Title.prototype._getAriaLevel = function () {
+		var iLevel = 2,
+			LEVEL_POSITION = 1;
+
+		if (this.getTitleStyle() !== TitleLevel.Auto) {
+			iLevel = parseInt(this.getTitleStyle()[LEVEL_POSITION], 10);
+		}
+
+		return iLevel;
+	};
+
 	// Add hyphenation to Title functionality
 	HyphenationSupport.mixInto(Title.prototype);
 
