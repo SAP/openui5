@@ -182,7 +182,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("IE - Text input elements", function(assert) {
-
 		var oBrowserStub = sinon.stub(Device, "browser").value({msie: true});
 
 		this.oControl.addTopItem(new DivControl({elementTag: "input"}));
@@ -383,24 +382,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Simulated longdragover", function(assert) {
-		var done = assert.async();
 		var oEventTarget;
-		var oControlADomRef = this.oControl.getTopItems()[0].getDomRef();
-		var oControlBDomRef = this.oControl.getTopItems()[1].getDomRef();
 		var oOnLongDragOverSpy = sinon.spy(function(oEvent) {
 			oOnLongDragOverSpy._oEventTarget = oEvent.target;
 		});
 		var iLastLongDragoverCount = 0;
 		var oEvent;
-
-		function executeDelayed(iDelayInMs, fn) {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					fn();
-					resolve();
-				}, iDelayInMs);
-			});
-		}
+		var oDateNowStub = sinon.stub(Date, "now");
 
 		function assertLongdragover(iMsSinceDragEnter) {
 			var iCallCount = Math.floor(iMsSinceDragEnter / 1000);
@@ -421,59 +409,32 @@ sap.ui.define([
 		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent); // Create drag session.
 
-		oEventTarget = oControlADomRef;
-		oEventTarget.focus();
+		function setTime(iTimeInMs) {
+			oDateNowStub.returns(iTimeInMs);
+		}
+
+		setTime(0);
+		oEventTarget = this.oControl.getTopItems()[0].getDomRef();
 		oEventTarget.dispatchEvent(createNativeDragEventDummy("dragenter"));
 		assertLongdragover(0);
-		executeDelayed(500, function() {
-			assertLongdragover(500);
-		}).then(executeDelayed.bind(this, 600, function() {
-			assertLongdragover(1100);
-		})).then(executeDelayed.bind(this, 400, function() {
-			assertLongdragover(1500);
-		})).then(executeDelayed.bind(this, 600, function() {
-			assertLongdragover(2100);
-		})).then(executeDelayed.bind(this, 400, function() {
-			assertLongdragover(2500);
-		})).then(executeDelayed.bind(this, 1, function() {
-			oEventTarget = oControlBDomRef;
-			oEventTarget.dispatchEvent(createNativeDragEventDummy("dragenter"));
-			oOnLongDragOverSpy.reset();
-		})).then(executeDelayed.bind(this, 600, function() {
-			assertLongdragover(600);
-		})).then(executeDelayed.bind(this, 500, function() {
-			assertLongdragover(1100);
-		})).then(done);
-
-		// PhantomJS does not allow this. Keep it in case PhantomJS will be replaced someday, it is a lot faster.
-		//var oDateNowStub = sinon.stub(Date, "now");
-		//
-		//function setTime(iTimeInMs) {
-		//	oDateNowStub.returns(iTimeInMs);
-		//}
-		//
-		//setTime(0);
-		//oEventTarget = oControlADomRef;
-		//oEventTarget.dispatchEvent(createNativeDragEventDummy("dragenter"));
-		//assertLongdragover(0);
-		//setTime(999);
-		//assertLongdragover(999);
-		//setTime(1000);
-		//assertLongdragover(1000);
-		//setTime(1999);
-		//assertLongdragover(1999);
-		//setTime(2000);
-		//assertLongdragover(2000);
-		//oEventTarget = oControlBDomRef;
-		//setTime(2999);
-		//oEventTarget.dispatchEvent(createNativeDragEventDummy("dragenter"));
-		//oOnLongDragOverSpy.reset();
-		//assertLongdragover(0);
-		//setTime(3000);
-		//assertLongdragover(1);
-		//setTime(3999);
-		//assertLongdragover(1000);
-		//oDateNowStub.restore();
+		setTime(999);
+		assertLongdragover(999);
+		setTime(1000);
+		assertLongdragover(1000);
+		setTime(1999);
+		assertLongdragover(1999);
+		setTime(2000);
+		assertLongdragover(2000);
+		oEventTarget = this.oControl.getTopItems()[1].getDomRef();
+		setTime(2999);
+		oEventTarget.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		oOnLongDragOverSpy.reset();
+		assertLongdragover(0);
+		setTime(3000);
+		assertLongdragover(1);
+		setTime(3999);
+		assertLongdragover(1000);
+		oDateNowStub.restore();
 	});
 
 	QUnit.module("Between Indicator", {
