@@ -3063,7 +3063,23 @@ function (
 		helpers.renderObject(oObjectPage);
 	});
 
-	QUnit.module("Header DOM changes", {
+    QUnit.test("ObjectPage _updateMedia: Call with falsy value should not take action", function (assert) {
+        // setup
+        var oObjectPage = new ObjectPageLayout({}),
+            oToggleStyleClassSpy = sinon.spy(oObjectPage, "toggleStyleClass");
+
+        // act
+        oObjectPage._updateMedia(0);
+
+        // assert
+        assert.ok(oToggleStyleClassSpy.notCalled, "Media styles were not changed");
+
+        // clean up
+        oObjectPage.destroy();
+    });
+
+
+    QUnit.module("Header DOM changes", {
 		beforeEach: function () {
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5);
 			this.oObjectPage.addHeaderContent(oFactory.getHeaderContent());
