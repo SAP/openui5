@@ -1,0 +1,18 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "150ad4dbc97b34e86f8d8fc0e92eddf45c14aaef",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed visual misalignments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080121060"
+          }
+        ]
+      }
+    ]
+  }
+}

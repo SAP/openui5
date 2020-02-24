@@ -56,6 +56,166 @@
             "reference": "2080055756"
           }
         ]
+      },
+      {
+        "id": "8a83820dac04920b385f9aaf298b0d1b672b055a",
+        "type": "FEATURE",
+        "text": " sap.m.FacetFilter: initial data service query optimization option now added",
+        "references": []
+      },
+      {
+        "id": "b0ee3936e95b4d38b6f0f5c7813c3123df2a75dc",
+        "type": "FIX",
+        "text": " Button: Press event not fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080074544"
+          }
+        ]
+      },
+      {
+        "id": "95ad45c8fab87ba109c6d4b9f6dc570e01acaf23",
+        "type": "FIX",
+        "text": " Notifications: Wrong Priority Icon tooltip is removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080063280"
+          }
+        ]
+      },
+      {
+        "id": "915ff9b4bb77547e68ea2f9a3f08415ad59d3c06",
+        "type": "FIX",
+        "text": " sap.m.Bar: overrides styles of the last child element fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080116645"
+          }
+        ]
+      },
+      {
+        "id": "1060ee80f3d7bd7d35abf09854ab1910cbcfb39b",
+        "type": "FIX",
+        "text": " sap.m.Button: Press event is fired in all cases and only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070012440"
+          }
+        ]
+      },
+      {
+        "id": "6a7c75ade630740c8dce28b374310d415732ab3c",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: sap.m.FacetFilterList instance is now visible at all times",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070010203"
+          }
+        ]
+      },
+      {
+        "id": "c499002ecf123ac53c57b433e58dcbf27295f02f",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: does not apply some of the types inherited from the Button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080064375"
+          }
+        ]
+      },
+      {
+        "id": "5b3961b2fd587a72156fa496c553ba513b22adda",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: propagates ariaLabelledby and ariaDescribedBy to the inner controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080064131"
+          }
+        ]
+      },
+      {
+        "id": "0a62a9e813de316cb716294967890038b2308506",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Issue with infinite rerendering is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080039488"
+          }
+        ]
+      },
+      {
+        "id": "35dbb34729e52e4b3be37388015de967f2b1aebd",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Rounding width value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070005863"
+          }
+        ]
+      },
+      {
+        "id": "62298970331799cc2ba4d05994b6eb9e3ce2948f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Demokit sample fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070010054"
+          }
+        ]
+      },
+      {
+        "id": "025e766bc9407cbc1987dc5eb4e277583f9b9b1f",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Demokit sample fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070009928"
+          }
+        ]
+      },
+      {
+        "id": "814224b06cf69bbd731d64f413b392c58be9d8e3",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: today indicator visually fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070003473"
+          }
+        ]
+      },
+      {
+        "id": "150ad4dbc97b34e86f8d8fc0e92eddf45c14aaef",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed visual misalignments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080121060"
+          }
+        ]
+      },
+      {
+        "id": "4e70903f17af7c43c7aa594db586208abaf76eb2",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: today number aligned with the rest days",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070002228"
+          }
+        ]
       }
     ]
   }

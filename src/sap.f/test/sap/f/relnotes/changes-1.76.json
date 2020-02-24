@@ -1,0 +1,24 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "ac97667114cfd8e77112c34406937de2b48e117b",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Add destinations processing",
+        "references": []
+      },
+      {
+        "id": "70310751de6ffe746ca14aadf6ad3fbb3860dc28",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Prevented focus loss",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080087852"
+          }
+        ]
+      }
+    ]
+  }
+}

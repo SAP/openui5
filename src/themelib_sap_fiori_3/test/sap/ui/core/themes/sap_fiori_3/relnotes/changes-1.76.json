@@ -1,0 +1,52 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "7d99e1b15881229bdbd455c40443a1b1bfdd2760",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Quartz HC Themes Specification Update",
+        "references": []
+      },
+      {
+        "id": "6bb18a09bd2d4f02fa48804d9cc250169cbf781c",
+        "type": "FEATURE",
+        "text": " sap.m.SegmentedButton: Quartz HC Themes Specification Update",
+        "references": []
+      },
+      {
+        "id": "814224b06cf69bbd731d64f413b392c58be9d8e3",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: today indicator visually fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070003473"
+          }
+        ]
+      },
+      {
+        "id": "150ad4dbc97b34e86f8d8fc0e92eddf45c14aaef",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed visual misalignments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080121060"
+          }
+        ]
+      },
+      {
+        "id": "4e70903f17af7c43c7aa594db586208abaf76eb2",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: today number aligned with the rest days",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070002228"
+          }
+        ]
+      }
+    ]
+  }
+}

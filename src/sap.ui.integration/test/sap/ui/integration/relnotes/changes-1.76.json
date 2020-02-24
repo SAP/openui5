@@ -12,6 +12,23 @@
             "reference": "2080126615"
           }
         ]
+      },
+      {
+        "id": "ac97667114cfd8e77112c34406937de2b48e117b",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Add destinations processing",
+        "references": []
+      },
+      {
+        "id": "8de383be86b1475aa0c23cd40a162a3f261e1d96",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Fix default translations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080128117"
+          }
+        ]
       }
     ]
   }

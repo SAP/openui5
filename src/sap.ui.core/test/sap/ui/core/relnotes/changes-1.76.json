@@ -24,6 +24,28 @@
             "reference": "2080124283"
           }
         ]
+      },
+      {
+        "id": "48c6564d1db5d8d641f0006e17adb2f2374b0a55",
+        "type": "FIX",
+        "text": " Component Models: Don\u0027t create model when dataSource is missing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000064446 2020"
+          }
+        ]
+      },
+      {
+        "id": "baf479b88abb40cbed137d8b65a9fdc8523c435a",
+        "type": "FIX",
+        "text": " Drag\u0026Drop: prevent D\u0026D indicator from making the body scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000009139 2020"
+          }
+        ]
       }
     ]
   }
