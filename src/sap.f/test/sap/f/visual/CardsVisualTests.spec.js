@@ -152,10 +152,17 @@ describe("sap.f.CardsVisualTests", function () {
 
 		getListItem("Min Height").click();
 
-		browser.executeScript('document.getElementById("container-cardsVisualTests---minHeight--panelInCozy").scrollIntoView()');
-		expect(takeScreenshot()).toLookAs("7_Min_Height_Cozy");
+		// Takes screenshot of each card on the page. The first 10 are in cozy mode, the second 10 are in compact mode.
+		var aCards = element.all(by.control({
+			controlType: "sap.ui.integration.widgets.Card",
+			viewName: "MinHeight",
+			viewNamespace: "sap.f.cardsVisualTests.view."
+		}));
 
-		browser.executeScript('document.getElementById("container-cardsVisualTests---minHeight--panelInCompact").scrollIntoView()');
-		expect(takeScreenshot()).toLookAs("7_Min_Height_Compact");
+		aCards.each(function (oCard, iIndex) {
+			browser.executeScript('arguments[0].scrollIntoView()', oCard).then(function() {
+				expect(takeScreenshot(oCard)).toLookAs("7_Min_Height_Card_" + iIndex);
+			});
+		});
 	});
 });

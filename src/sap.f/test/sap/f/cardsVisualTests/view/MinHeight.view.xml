@@ -13,7 +13,7 @@
 			</Toolbar>
 		</subHeader>
 		<content>
-			<Panel id="panelInCozy">
+			<Panel id="panelInCozy" headerText="Cozy mode">
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/line}" width="400px"/>
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/stackedColumn}" width="400px"/>
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/stackedBar}" width="400px"/>
@@ -25,7 +25,7 @@
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/table}" width="400px"/>
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/timeline}" width="400px"/>
 			</Panel>
-			<Panel id="panelInCompact" class="sapUiSizeCompact">
+			<Panel id="panelInCompact" class="sapUiSizeCompact" headerText="Compact mode">
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/line}" width="400px"/>
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/stackedColumn}" width="400px"/>
 				<w:Card class="sapUiMediumMargin" manifest="{manifests>/minHeight/stackedBar}" width="400px"/>
