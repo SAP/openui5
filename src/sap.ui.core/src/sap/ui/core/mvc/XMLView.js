@@ -305,7 +305,7 @@ sap.ui.define([
 				// if ResourceBundle was created with async flag vBundle will be a Promise
 				if (vBundle instanceof Promise) {
 					return vBundle.then(function() {
-						oView.setModel(oModel, mSettings.resourceBundleAlias);
+						oView.setModel(oModel, oView._resourceBundleAlias);
 					});
 				}
 				oView.setModel(oModel, oView._resourceBundleAlias);

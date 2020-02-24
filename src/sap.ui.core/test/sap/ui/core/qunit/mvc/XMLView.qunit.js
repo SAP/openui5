@@ -6,12 +6,13 @@ sap.ui.define([
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/RenderManager',
 	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/commons/Button',
 	'sap/ui/commons/Panel',
 	'./AnyView.qunit',
 	'jquery.sap.sjax'
-], function(ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, VerticalLayout, Button, Panel, testsuite) {
+], function(ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, Button, Panel, testsuite) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -131,6 +132,7 @@ sap.ui.define([
 			var oCreateCall = oResourceBundleCreateSpy.getCall(0);
 			assert.ok(oCreateCall.args[0].async, "async call");
 			oResourceBundleCreateSpy.restore();
+			assert.ok(oView.getModel("i18n") instanceof ResourceModel, "has model with the expected alias");
 			oView.destroy();
 		});
 	});
