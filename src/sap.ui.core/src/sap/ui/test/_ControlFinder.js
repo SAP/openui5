@@ -121,7 +121,7 @@ sap.ui.define([
     };
 
      /**
-     * Retrieves the ID suffix of the DOM element, if it is stable
+     * Retrieves the ID suffix of a DOM element
      * @param {object} oElement DOM element
      * @returns {string} ID suffix or undefined
      * @private
@@ -129,11 +129,8 @@ sap.ui.define([
     _ControlFinder._getDomElementIDSuffix = function (oElement, oControl) {
         var sElementId = oElement.id;
         var sDelimiter = "-";
-
-        if (!ManagedObjectMetadata.isGeneratedId(sElementId)) {
-            var iSuffixStart = oControl.getId().length;
-            return sElementId.charAt(iSuffixStart) === sDelimiter && sElementId.substring(iSuffixStart + 1);
-        }
+        var iSuffixStart = oControl.getId().length;
+        return sElementId.charAt(iSuffixStart) === sDelimiter && sElementId.substring(iSuffixStart + 1);
     };
 
     /**
