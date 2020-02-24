@@ -3516,11 +3516,13 @@ sap.ui.define([
 			oBinding = oBindingInfo.binding;
 			if (oBinding) {
 				oBinding.detachChange(oBindingInfo.modelChangeHandler);
+				oBinding.detachEvents(oBindingInfo.events);
+				oBinding.destroy();
+				/* to reset messages on a control we need to detach the datastate handler after destroy,
+				   as binding destroy clears up validation messages */
 				if (this.refreshDataState) {
 					oBinding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
 				}
-				oBinding.detachEvents(oBindingInfo.events);
-				oBinding.destroy();
 			}
 
 			if (this._observer) {
