@@ -47,8 +47,6 @@ function(
 					id: "control1",
 					idIsLocal: true
 				},
-				conditions: {},
-				context: [],
 				content: {something: "createNewVariant"},
 				texts: {
 					variantName: {
@@ -328,11 +326,6 @@ function(
 			assert.equal(oInstance.getPendingAction(), "UPDATE");
 		});
 
-		QUnit.test("Change.getContext", function(assert) {
-			var oInstance = new Change(this.oChangeDef);
-			assert.ok(oInstance.getContext());
-		});
-
 		QUnit.test("Change.getText", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			assert.equal(oInstance.getText('variantName'), 'myVariantName');
@@ -575,6 +568,8 @@ function(
 				content: {something: "createNewVariant"},
 				selector: {id: "control1"},
 				layer: "VENDOR",
+				conditions: {}, // obsolete property (should still be checked if these exists already in the stored object)
+				context: "", // obsolete property (should still be checked if these exists already in the stored object)
 				texts: {
 					variantName: {
 						value: "myVariantName",
@@ -584,7 +579,6 @@ function(
 				namespace: "localchange1/",
 				creation: "2014-10-30T13:52:40.4754350Z",
 				originalLanguage: "DE",
-				conditions: {},
 				support: {
 					generator: "Dallas beta 1",
 					user: this.sUserId

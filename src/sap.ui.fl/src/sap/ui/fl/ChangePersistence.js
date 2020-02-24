@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/_internal/changes/Applier",
-	"sap/ui/fl/context/ContextManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/core/Component",
@@ -31,7 +30,6 @@ sap.ui.define([
 	CompatibilityConnector,
 	Cache,
 	Applier,
-	ContextManager,
 	Storage,
 	VariantController,
 	Component,
@@ -148,19 +146,17 @@ sap.ui.define([
 	 * Verifies whether a change fulfils the preconditions.
 	 *
 	 * All changes need to have a fileName;
-	 * changes need to be matched with current active contexts;
 	 * only changes whose <code>fileType</code> is 'change' and whose <code>changeType</code> is different from 'defaultVariant' are valid;
 	 * if <code>bIncludeVariants</code> parameter is true, the changes with 'variant' <code>fileType</code> or 'defaultVariant' <code>changeType</code> are also valid
 	 * if it has a selector <code>persistencyKey</code>.
 	 *
-	 * @param {sap.ui.fl.context.Context[]} aActiveContexts Array of current active contexts
 	 * @param {boolean} [bIncludeVariants] Indicates that smart variants shall be included
 	 * @param {object} oChangeOrChangeContent Change instance or content of the change
 	 *
 	 * @returns {boolean} <code>true</code> if all the preconditions are fulfilled
 	 * @public
 	 */
-	ChangePersistence.prototype._preconditionsFulfilled = function(aActiveContexts, bIncludeVariants, oChangeOrChangeContent) {
+	ChangePersistence.prototype._preconditionsFulfilled = function(bIncludeVariants, oChangeOrChangeContent) {
 		var oChangeContent = oChangeOrChangeContent instanceof Change ? oChangeOrChangeContent.getDefinition() : oChangeOrChangeContent;
 		if (!oChangeContent.fileName) {
 			Log.warning("A change without fileName is detected and excluded from component: " + this._mComponent.name);
@@ -183,17 +179,13 @@ sap.ui.define([
 			return true;
 		}
 
-		function _isValidContext () {
-			return ContextManager.doesContextMatch(oChangeContent, aActiveContexts);
-		}
-
 		function _isControlVariantChange () {
 			if ((oChangeContent.fileType === "ctrl_variant") || (oChangeContent.fileType === "ctrl_variant_change") || (oChangeContent.fileType === "ctrl_variant_management_change")) {
 				return oChangeContent.variantManagementReference || oChangeContent.variantReference || (oChangeContent.selector && oChangeContent.selector.id);
 			}
 		}
 
-		if ((_isValidFileType() && _isValidSelector() && _isValidContext()) || _isControlVariantChange()) {
+		if (_isValidFileType() && _isValidSelector() || _isControlVariantChange()) {
 			return true;
 		}
 		return false;
@@ -291,15 +283,9 @@ sap.ui.define([
 
 			var bIncludeVariants = mPropertyBag && mPropertyBag.includeVariants;
 
-			var aContextObjects = oChangeFileContent.changes.contexts || [];
-			return new Promise(function (resolve) {
-				ContextManager.getActiveContexts(aContextObjects).then(function (aActiveContexts) {
-					resolve(aChanges
-						.filter(this._preconditionsFulfilled.bind(this, aActiveContexts, bIncludeVariants))
-						.map(getChangeInstance.bind(this, oChangeFileContent))
-					);
-				}.bind(this));
-			}.bind(this));
+			return aChanges
+				.filter(this._preconditionsFulfilled.bind(this, bIncludeVariants))
+				.map(getChangeInstance.bind(this, oChangeFileContent));
 		}.bind(this));
 
 		function findVariant(mVariantControllerContent, oChange) {

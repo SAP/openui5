@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/context/ContextManager",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
 	"sap/m/List",
@@ -39,7 +38,6 @@ function (
 	HideControl,
 	ChangePersistenceFactory,
 	JsControlTreeModifier,
-	ContextManager,
 	Manifest,
 	UIComponent,
 	List,
@@ -795,54 +793,6 @@ function (
 				});
 		});
 
-		QUnit.test("adds context to the change if provided by the context manager", function (assert) {
-			var oControl = new Control("mockControl3");
-			var sProvidedContext = "ctx001";
-			var aProvidedContext = [sProvidedContext];
-			sandbox.stub(ContextManager, "_getContextIdsFromUrl").returns(aProvidedContext);
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-
-			var oDummyChangeHandler = {
-				completeChangeContent: function () {}
-			};
-			var getChangeHandlerStub = sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(oDummyChangeHandler);
-			sandbox.stub(Utils, "getAppDescriptor").returns({
-				"sap.app":{
-					id: "myComponent",
-					applicationVersion: {
-						version: "1.0.0"
-					}
-				}
-			});
-
-			return this.oFlexController.createChange({}, oControl)
-				.then(function() {
-					sinon.assert.called(getChangeHandlerStub);
-					assert.equal(getChangeHandlerStub.callCount, 1);
-					var oGetChangesHandlerCall = getChangeHandlerStub.getCall(0);
-					var oChange = oGetChangesHandlerCall.args[0];
-					assert.equal(oChange.getContext(), sProvidedContext);
-					oControl.destroy();
-				});
-		});
-
-		QUnit.test("throws an error if a change is written with more than one design time context active", function (assert) {
-			var oControl = new Control("mockControl4");
-			var aProvidedContext = ["aCtxId", "anotherCtxId"];
-			sandbox.stub(ContextManager, "_getContextIdsFromUrl").returns(aProvidedContext);
-
-			var oDummyChangeHandler = {
-				completeChangeContent: function () {}
-			};
-			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(oDummyChangeHandler);
-
-			return this.oFlexController.createChange({}, oControl)
-				.catch(function() {
-					assert.ok(true, "then an exception is thrown.");
-					oControl.destroy();
-				});
-		});
-
 		QUnit.test("creates a change for controls with a stable ID which doesn't have the app component's ID as a prefix", function (assert) {
 			var oControl = new Control("mockControl5");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
@@ -1004,14 +954,6 @@ function (
 			assert.equal(mPropertyBag.appVersion, this.sAppVersion, "the app version was passed correctly");
 			assert.equal(mPropertyBag.developerMode, bDeveloperModeMode, "the developer mode flag was passed correctly");
 			assert.equal(mPropertyBag.scenario, sScenario, "the scenario was passed correctly");
-		});
-
-		QUnit.test("calling createBaseChange with multiple contexts should throw an Error", function(assert) {
-			sandbox.stub(ContextManager, "_getContextIdsFromUrl").returns([0, 1]);
-
-			assert.throws(function() {
-				this.oFlexController.createBaseChange({}, {});
-			}, Error, "an Error is thrown");
 		});
 
 		QUnit.test("calling createBaseChange without appComponent should throw an Error", function(assert) {

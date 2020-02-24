@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/context/ContextManager",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	LrepConnector,
 	Change,
 	Utils,
-	ContextManager,
 	sinon,
 	jQuery
 ) {
@@ -22,9 +20,6 @@ sap.ui.define([
 	QUnit.module("LrepConnector", {
 		beforeEach: function () {
 			this.oLrepConnector = LrepConnector.createConnector();
-			sandbox.stub(ContextManager, "getActiveContexts").callsFake(function () {
-				return [];
-			});
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -576,7 +571,6 @@ sap.ui.define([
 	QUnit.module("loadChanges", {
 		beforeEach: function () {
 			this.oLrepConnector = LrepConnector.createConnector();
-			sandbox.stub(ContextManager, "getActiveContexts").returns([]);
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -771,7 +765,6 @@ sap.ui.define([
 				response: {
 					loadModules: false,
 					changes: Array(20),
-					contexts: Array(0),
 					variantSection: {},
 					ui2personalization: {}
 				},
@@ -856,7 +849,6 @@ sap.ui.define([
 	QUnit.module("loadChanges", {
 		beforeEach: function () {
 			this.oLrepConnector = LrepConnector.createConnector();
-			sandbox.stub(ContextManager, "getActiveContexts").returns([]);
 		},
 		afterEach: function () {
 			sandbox.restore();

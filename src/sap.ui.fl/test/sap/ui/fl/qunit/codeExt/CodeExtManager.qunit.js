@@ -180,7 +180,6 @@ sap.ui.define([
 					changeType : "codeExt",
 					namespace : "",
 					componentName : "component",
-					context : "context",
 					reference : sReference,
 					selector : {
 						id : sControllerName1
@@ -190,7 +189,6 @@ sap.ui.define([
 					changeType : "codeExt",
 					namespace : "",
 					componentName : "component",
-					context : "context",
 					reference : sReference,
 					selector : {
 						id : sControllerName2
@@ -224,8 +222,6 @@ sap.ui.define([
 					projectId : "component",
 					creation: "",
 					originalLanguage: sLanguage,
-					conditions: {},
-					context: "context",
 					support: {
 						generator: "Change.createInitialFileContent",
 						service: "",
@@ -260,8 +256,6 @@ sap.ui.define([
 					projectId : "component",
 					creation: "",
 					originalLanguage: sLanguage,
-					conditions: {},
-					context: "context",
 					support: {
 						generator: "Change.createInitialFileContent",
 						service: "",
