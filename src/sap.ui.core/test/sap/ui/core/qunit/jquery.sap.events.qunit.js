@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Control",
@@ -980,6 +980,61 @@ sap.ui.define([
 
 				oElement.trigger("taphold");
 			});
+		});
+	}
+
+	if (!Device.support.touch) {
+		QUnit.module("mouse to touch event simluation", {
+			beforeEach: function() {
+				this.triggerEvent = function(sEventName, oDomRef) {
+					return qutils.triggerEvent(sEventName, oDomRef, {
+						target: oDomRef
+					});
+				};
+				this.oControl = new MobileEventTest("mytest1");
+				this.oChildControl = new MobileEventTest("mytest2");
+
+				this.oControl.setChild(this.oChildControl);
+				this.oControl.placeAt("uiArea");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oControl.destroy();
+			}
+		});
+
+		QUnit.test("touchmove should be fired when touchstart is triggered on the same control", function(assert) {
+			var oControlDelegate = sinon.stub({
+				ontouchstart: function() {},
+				ontouchmove: function() {}
+			});
+
+			this.oControl.addEventDelegate(oControlDelegate);
+
+			this.triggerEvent("mousedown", this.oControl.getDomRef());
+			assert.equal(oControlDelegate.ontouchstart.callCount, 1, "The simulated touchstart event is fired on the control");
+
+			this.triggerEvent("mousemove", this.oControl.getDomRef());
+			assert.equal(oControlDelegate.ontouchmove.callCount, 1, "The simulated touchmove event is fired on the control");
+		});
+
+		QUnit.test("touchmove shouldn't be fired when touchstart is triggered on another control", function(assert) {
+			var oControlDelegate = sinon.stub({
+				ontouchstart: function() {}
+			});
+
+			var oChildControlDelegate = sinon.stub({
+				ontouchmove: function() {}
+			});
+
+			this.oControl.addEventDelegate(oControlDelegate);
+			this.oChildControl.addEventDelegate(oChildControlDelegate);
+
+			this.triggerEvent("mousedown", this.oControl.getDomRef());
+			assert.equal(oControlDelegate.ontouchstart.callCount, 1, "The simulated touchstart event is fired on the control");
+
+			this.triggerEvent("mousemove", this.oChildControl.getDomRef());
+			assert.equal(oChildControlDelegate.ontouchmove.callCount, 0, "The simulated touchmove event isn't fired on the control");
 		});
 	}
 
