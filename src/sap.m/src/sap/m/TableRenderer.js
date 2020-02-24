@@ -13,9 +13,10 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 
 	/**
 	 * Table renderer.
-	 * @namespace
 	 *
 	 * TableRenderer extends the ListBaseRenderer
+	 *
+	 * @namespace
 	 */
 	var TableRenderer = Renderer.extend(ListBaseRenderer);
 	TableRenderer.apiVersion = 2;
