@@ -135,7 +135,14 @@ sap.ui.define([
 				 * Specifies the background color of the content. The visualization of the different options depends on the used theme.
 				 * @since 1.54
 				 */
-				backgroundDesign: {type: "sap.m.BackgroundDesign",  group: "Appearance", defaultValue: mobileLibrary.BackgroundDesign.Transparent}
+				backgroundDesign: {type: "sap.m.BackgroundDesign",  group: "Appearance", defaultValue: mobileLibrary.BackgroundDesign.Transparent},
+
+				/**
+				 * Determines whether the focus is restored to the last known when navigating back to a prevously
+				 * opened column, for example, upon closing of the end column and being transfered back to the mid column.
+				 * @since 1.77
+				 */
+				restoreFocusOnBackNavigation: {type: "boolean",  group: "Behavior", defaultValue: false}
 			},
 			aggregations: {
 				/**
@@ -622,6 +629,7 @@ sap.ui.define([
 
 	FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION = 560; // ms
 	FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME = "sapFFCLPinnedColumn";
+	FlexibleColumnLayout.COLUMN_ORDER = ["begin", "mid", "end"]; // natural order of the columns in FCL
 	FlexibleColumnLayout.prototype.init = function () {
 		this._iWidth = 0;
 
@@ -645,6 +653,14 @@ sap.ui.define([
 			midColumn: 0,
 			endColumn: 0
 		};
+
+		// Used to store the last focused DOM element of any of the columns
+		this._oColumnFocusInfo = {
+			beginColumn: {},
+			midColumn: {},
+			endColumn: {}
+		};
+
 	};
 
 	/**
@@ -685,6 +701,12 @@ sap.ui.define([
 
 		oNavContainer.addDelegate({"onAfterRendering": this._onNavContainerRendered}, this);
 
+		oNavContainer.addEventDelegate({
+			onfocusout: function(oEvent) {
+				this._oColumnFocusInfo[sColumn  + "Column"] = oEvent.target;
+			}
+		}, this);
+
 		return oNavContainer;
 	};
 
@@ -708,6 +730,22 @@ sap.ui.define([
 		bContinue = this.fireEvent(sEventName, oEvent.mParameters, true);
 		if (!bContinue) {
 			oEvent.preventDefault();
+		}
+	};
+
+	/**
+	 * Getter for a Column by its string name
+	 * @param {string} sColumnName
+	 * @returns {object} oColumn
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getColumnByStringName = function (sColumnName) {
+		if (sColumnName === 'end') {
+			return this._getEndColumn();
+		} else if (sColumnName === 'mid') {
+			return this._getMidColumn();
+		} else {
+			return this._getBeginColumn();
 		}
 	};
 
@@ -806,6 +844,35 @@ sap.ui.define([
 		this._fireStateChange(false, false);
 	};
 
+	/**
+	 * Restores the focus to the last known focused element of the current column.
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._restoreFocusToColumn = function (sCurrentColumn) {
+		jQuery(this._oColumnFocusInfo[sCurrentColumn]).focus();
+	};
+
+	/**
+	 * Checks whether or not the focus is in some columns that are previous to the current
+	 * column. For example, if the current is "end", checks if the focus is
+	 * in "mid" or "begin" columns.
+	 * @returns {boolean} whether or not the focus is in columns that are previous to the current column
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._isFocusInSomeOfThePreviousColumns = function () {
+		var iIndex = FlexibleColumnLayout.COLUMN_ORDER.indexOf(this._sPreviuosLastVisibleColumn) - 1,
+			oCurrentColumn;
+
+		for (; iIndex >= 0; iIndex--) {
+			oCurrentColumn = this._getColumnByStringName(FlexibleColumnLayout.COLUMN_ORDER[iIndex]);
+			if (oCurrentColumn && oCurrentColumn._isFocusInControl(oCurrentColumn)) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
 	FlexibleColumnLayout.prototype._getControlWidth = function () {
 		// There is a case when we are still in app initialization phase and some containers
 		// are changing their visibility, at this point we need to obtain the width directly
@@ -827,6 +894,7 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype.exit = function () {
 		this._oRenderedColumnPagesBoolMap = null;
+		this._oColumnFocusInfo = null;
 		this._deregisterResizeHandler();
 		this._handleEvent(jQuery.Event("Destroy"));
 	};
@@ -935,7 +1003,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._getVisibleColumnsCount = function () {
-		return ["begin", "mid", "end"].filter(function (sColumn) {
+		return FlexibleColumnLayout.COLUMN_ORDER.filter(function (sColumn) {
 			return this._getColumnSize(sColumn) > 0;
 		}, this).length;
 	};
@@ -978,7 +1046,7 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._resizeColumns = function () {
 		var iPercentWidth,
 			iAvailableWidth,
-			aColumns = ["begin", "mid", "end"],
+			aColumns = FlexibleColumnLayout.COLUMN_ORDER.slice(),
 			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 			sAnimationMode = sap.ui.getCore().getConfiguration().getAnimationMode(),
 			bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal,
@@ -987,7 +1055,8 @@ sap.ui.define([
 			iDefaultVisibleColumnsCount,
 			sLayout,
 			sLastVisibleColumn,
-			bInsetMidColumn;
+			bInsetMidColumn,
+			bRestoreFocusOnBackNavigation;
 
 		// Stop here if the control isn't rendered yet
 		if (!this.isActive()) {
@@ -1004,6 +1073,10 @@ sap.ui.define([
 		iDefaultVisibleColumnsCount = this._getMaxColumnsCountForLayout(sLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT);
 
 		sLastVisibleColumn = aColumns[iDefaultVisibleColumnsCount - 1];
+
+		bRestoreFocusOnBackNavigation = this.getRestoreFocusOnBackNavigation() &&
+			this._isNavigatingBackward(sLastVisibleColumn) &&
+			!this._isFocusInSomeOfThePreviousColumns();
 
 		bInsetMidColumn = (iVisibleColumnsCount === 3) && (sLayout === LT.ThreeColumnsEndExpanded);
 		// Calculate the width available for the columns
@@ -1027,10 +1100,12 @@ sap.ui.define([
 			var oColumn = this._$columns[sColumn],
 				iNewWidth,
 				sNewWidth,
-				bShouldConcealColumn;
+				bShouldConcealColumn,
+				bShouldRestoreFocus;
 
 			iPercentWidth = this._getColumnSize(sColumn);
 			bShouldConcealColumn = bHasAnimations && this._shouldConcealColumn(iDefaultVisibleColumnsCount, sColumn);
+			bShouldRestoreFocus = bRestoreFocusOnBackNavigation && (sColumn === sLastVisibleColumn);
 
 			if (!bShouldConcealColumn) {
 				// Add the active class to the column if it shows something
@@ -1068,10 +1143,10 @@ sap.ui.define([
 
 				// Schedule resume of ResizeHandler
 				oColumn._iResumeResizeHandlerTimeout = setTimeout(this._adjustColumnAfterAnimation.bind(this,
-					bShouldConcealColumn, sNewWidth, iNewWidth, oColumn, oColumnDomRef),
+					bShouldConcealColumn, sNewWidth, iNewWidth, oColumn, oColumnDomRef, bShouldRestoreFocus),
 					FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION);
 			} else {
-				this._adjustColumnDisplay(oColumn, iNewWidth);
+				this._adjustColumnDisplay(oColumn, iNewWidth, bShouldRestoreFocus);
 			}
 
 			//If the current column is concealed we don't want to apply the new width at this iteration.
@@ -1119,7 +1194,7 @@ sap.ui.define([
 	 *	@param oColumnDomRef
 	 *	@private
 	*/
-	FlexibleColumnLayout.prototype._adjustColumnAfterAnimation = function (bShouldConcealColumn, sNewWidth, iNewWidth, oColumn, oColumnDomRef) {
+	FlexibleColumnLayout.prototype._adjustColumnAfterAnimation = function (bShouldConcealColumn, sNewWidth, iNewWidth, oColumn, oColumnDomRef, bShouldRestoreFocus) {
 		// If the column is concealed we must apply the width after the animations are over.
 		if (bShouldConcealColumn) {
 			oColumn.width(sNewWidth);
@@ -1129,7 +1204,7 @@ sap.ui.define([
 
 		// Clear pinning after transitions are finished
 		oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
-		this._adjustColumnDisplay(oColumn, iNewWidth);
+		this._adjustColumnDisplay(oColumn, iNewWidth, bShouldRestoreFocus);
 
 		this._resumeResizeHandler(oColumn, oColumnDomRef);
 	};
@@ -1154,7 +1229,7 @@ sap.ui.define([
 	 *	@param iNewWidth
 	 *	@private
 	*/
-	FlexibleColumnLayout.prototype._adjustColumnDisplay = function(oColumn, iNewWidth) {
+	FlexibleColumnLayout.prototype._adjustColumnDisplay = function(oColumn, iNewWidth, bShouldRestoreFocus) {
 		var oColumnInfo = {
 				beginColumn: oColumn.hasClass("sapFFCLColumnBegin"),
 				midColumn: oColumn.hasClass("sapFFCLColumnMid"),
@@ -1171,6 +1246,9 @@ sap.ui.define([
 
 		if (this._oColumnWidthInfo[sCurrentColumn] !== iNewWidth) {
 			this.fireColumnResize(oColumnInfo);
+			if (bShouldRestoreFocus) {
+				this._restoreFocusToColumn(sCurrentColumn);
+			}
 		}
 
 		this._oColumnWidthInfo[sCurrentColumn] = iNewWidth;
@@ -1189,6 +1267,12 @@ sap.ui.define([
 		this._iPreviousVisibleColumnsCount = iVisibleColumnsCount;
 		this._bWasFullScreen = oCurrentLayout === LT.MidColumnFullScreen || oCurrentLayout === LT.EndColumnFullScreen;
 		this._sPreviuosLastVisibleColumn = sLastVisibleColumn;
+	};
+
+	FlexibleColumnLayout.prototype._isNavigatingBackward = function (sLastVisibleColumn) {
+		return this._bWasFullScreen ||
+				FlexibleColumnLayout.COLUMN_ORDER.indexOf(this._sPreviuosLastVisibleColumn) >
+				FlexibleColumnLayout.COLUMN_ORDER.indexOf(sLastVisibleColumn);
 	};
 
 	/**
