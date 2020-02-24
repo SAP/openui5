@@ -180,7 +180,7 @@ sap.ui.define([
 							//apply lifecycle hooks even if they don't exist on controller
 							ControllerExtension.overrideMethod(sOverrideMember, oController, oOverrides, oExtension, oControllerMetadata.getOverrideExecution(sOverrideMember));
 						} else {
-							Log.error("Method '" + sExtensionOverride + "' of extension '" + oOrigExtensionInfo.namespace + " does not exist in controller " + oController.getMetadata().getName() + " and cannot be overridden");
+							Log.error("Method '" + sOverrideMember + "' does not exist in controller " + oController.getMetadata().getName() + " and cannot be overridden");
 						}
 					}
 					//handle non member extension overrides
