@@ -23,6 +23,54 @@
             "reference": "002075129500000676252020"
           }
         ]
+      },
+      {
+        "id": "889cf02734fbbc98505b37977ffdb5a447c033bc",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Ensure snap with scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970448827"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970589680"
+          }
+        ]
+      },
+      {
+        "id": "e4b902c42d6689e4ec6c2741934106bdd43b12b4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: IconTabBar only visible section show title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080090841"
+          }
+        ]
+      },
+      {
+        "id": "ae768510b1246f58d73c7ff186fe7b58a60b3197",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Improved accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000277352020"
+          }
+        ]
+      },
+      {
+        "id": "845290914e0b782df3a7424f4464fb5733429745",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Renaming section with new VM is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970518207"
+          }
+        ]
       }
     ]
   }

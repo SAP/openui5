@@ -12,6 +12,28 @@
             "reference": "2080105979"
           }
         ]
+      },
+      {
+        "id": "246ca635aea1204654f13876a4611d271726d2fe",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: If two calendars are used - is not possible to select month in next year",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070005591"
+          }
+        ]
+      },
+      {
+        "id": "4e70903f17af7c43c7aa594db586208abaf76eb2",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: today number aligned with the rest days",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070002228"
+          }
+        ]
       }
     ]
   }
