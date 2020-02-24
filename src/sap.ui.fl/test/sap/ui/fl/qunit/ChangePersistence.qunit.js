@@ -14,12 +14,14 @@ sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/core/Component",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"
 ],
 function (
 	FlexState,
@@ -33,12 +35,14 @@ function (
 	Cache,
 	Settings,
 	Storage,
+	StorageUtils,
 	Component,
 	Log,
 	jQuery,
 	URLHandler,
 	sinon,
-	merge
+	merge,
+	VariantManagementState
 ) {
 	"use strict";
 
@@ -300,7 +304,7 @@ function (
 
 			sandbox.stub(this.oChangePersistence._oVariantController, "_applyChangesOnVariantManagement");
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			sandbox.stub(Cache, "setVariantManagementSection");
+			sandbox.stub(VariantManagementState, "updateVariantsState");
 
 			function getChangesForComponentAssertions(aChanges, assert) {
 				assert.ok(true, "then after getChangesForComponent call");
@@ -507,7 +511,7 @@ function (
 				}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oWrappedContent));
-			sandbox.stub(Cache, "setVariantManagementSection");
+			sandbox.stub(VariantManagementState, "updateVariantsState");
 			return this.oChangePersistence.getChangesForComponent().then(function (aChanges) {
 				var mVariantControllerContent = this.oChangePersistence._oVariantController.getChangeFileContent();
 				assert.equal(aChanges[0].getId(), oWrappedContent.changes.changes[0].fileName, "then global control change is received");
@@ -979,14 +983,17 @@ function (
 			};
 
 			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
-			sandbox.stub(Cache, "setVariantManagementSection");
+			sandbox.stub(VariantManagementState, "updateVariantsState");
 			return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true}).then(function(aChanges) {
 				var mVariantControllerMap = this.oChangePersistence._oVariantController.getChangeFileContent();
 				var sChangeInstanceId = aChanges[0].sId;
 				assert.strictEqual(aChanges.length, 1, "then one change was returned");
 				assert.ok(aChanges[0] instanceof Change, "then a change instance was returned");
 				assert.strictEqual(mVariantControllerMap["variantManagementId"].variants[0].controlChanges[0].getId(), aChanges[0].getId(), "then variant change content was replaced with a change instance");
-				assert.ok(Cache.setVariantManagementSection.calledWith(this._mComponentProperties, mVariantControllerMap), "then Cache.setVariantManagementSection was called to sync the variant section");
+				assert.ok(VariantManagementState.updateVariantsState.calledWith({
+					reference: this._mComponentProperties.name,
+					content: mVariantControllerMap
+				}), "then VariantManagementState.updateVariantsState was called to sync the variant section");
 				return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true}).then(function(aChanges) {
 					assert.strictEqual(aChanges.length, 1, "then one change was returned");
 					assert.strictEqual(aChanges[0].sId, sChangeInstanceId, "then the existing change instance was returned");
@@ -1140,7 +1147,7 @@ function (
 			];
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			sandbox.stub(Cache, "setVariantManagementSection");
+			sandbox.stub(VariantManagementState, "updateVariantsState");
 			return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true, includeVariants: true}).then(function(aChanges) {
 				var aFilteredChanges = aChanges.filter(function (oChange) {
 					return aInvisibleChangeFileNames.indexOf(oChange.getId()) > -1;
@@ -2620,7 +2627,8 @@ function (
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
 		beforeEach: function () {
 			sandbox.stub(FlexState, "initialize").resolves();
-			this.oLoadChangeStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns({changes: []});
+			var oBackendResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
+			this.oLoadChangeStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oBackendResponse.changes);
 			this._mComponentProperties = {
 				name : "saveChangeScenario",
 				appVersion : "1.2.3"
@@ -2631,7 +2639,7 @@ function (
 
 			this.oCreateStub = sandbox.stub(CompatibilityConnector, "create").resolves();
 			this.oDeleteChangeStub = sandbox.stub(CompatibilityConnector, "deleteChange").resolves();
-			this.oLoadChangeStub = sandbox.stub(CompatibilityConnector, "loadChanges").resolves({changes: {changes: []}});
+			this.oLoadChangeStub = sandbox.stub(CompatibilityConnector, "loadChanges").resolves(oBackendResponse);
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 
 			this.oServer = sinon.fakeServer.create();
@@ -2861,11 +2869,11 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("Shall not add a variant related change to the cache", function (assert) {
-			sandbox.stub(Cache, "setVariantManagementSection");
-			var oChangeContent;
+		QUnit.test("Shall add and remove changes to the cache depending upon change category", function (assert) {
+			var aSavedChanges = [];
+			sandbox.stub(VariantManagementState, "updateVariantsState");
 
-			oChangeContent = {
+			var oChangeContent1 = {
 				content : {
 					title: "variant 0"
 				},
@@ -2873,9 +2881,8 @@ function (
 				fileType: "ctrl_variant",
 				variantManagementReference: "variantManagementId"
 			};
-			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-			oChangeContent = {
+			var oChangeContent2 = {
 				variantReference:"variant0",
 				fileName:"controlChange0",
 				fileType:"change",
@@ -2884,17 +2891,15 @@ function (
 					id:"selectorId"
 				}
 			};
-			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-			oChangeContent = {
+			var oChangeContent3 = {
 				fileType: "ctrl_variant_change",
 				selector: {
 					id : "variant0"
 				}
 			};
-			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-			oChangeContent = {
+			var oChangeContent4 = {
 				fileName: "setDefault",
 				fileType: "ctrl_variant_management_change",
 				content: {
@@ -2904,9 +2909,8 @@ function (
 					id: "variantManagementId"
 				}
 			};
-			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-			oChangeContent = {
+			var oChangeContent5 = {
 				fileName: "Gizorillus",
 				layer: "VENDOR",
 				fileType: "change",
@@ -2915,12 +2919,41 @@ function (
 				content: { },
 				originalLanguage: "DE"
 			};
-			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+			aSavedChanges.push(
+				this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance),
+				this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance),
+				this.oChangePersistence.addChange(oChangeContent3, this._oComponentInstance),
+				this.oChangePersistence.addChange(oChangeContent4, this._oComponentInstance),
+				this.oChangePersistence.addChange(oChangeContent5, this._oComponentInstance)
+			);
 
 			var oAddChangeSpy = sandbox.spy(Cache, "addChange");
+			var oDeleteChangeSpy = sandbox.spy(Cache, "deleteChange");
+			var mPropertyBag = {
+				reference: this.oChangePersistence._mComponent.name,
+				content: this.oChangePersistence._oVariantController.getChangeFileContent()
+			};
+
+			function _checkVariantSyncCall() {
+				aSavedChanges.forEach(function (oSavedChange, iIndex) {
+					if (iIndex < 4) { // only first 4 changes are variant related
+						assert.ok(VariantManagementState.updateVariantsState.getCall(iIndex).calledWith(Object.assign(mPropertyBag, {changeToBeAddedOrDeleted: oSavedChange})), "then variant controller content was synced with the FlexState");
+					}
+				});
+			}
+
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
-				assert.ok(Cache.setVariantManagementSection.calledWith(this.oChangePersistence._mComponent, this.oChangePersistence._oVariantController.getChangeFileContent()), "then variant controller content was synced with the Cache");
-				assert.equal(oAddChangeSpy.callCount, 1, "then addChange was only called for the change not related to variants");
+				_checkVariantSyncCall();
+				assert.equal(oAddChangeSpy.callCount, 1, "then addChange was called for only non-variant related change");
+				assert.ok(oAddChangeSpy.calledWith(this._mComponentProperties, oChangeContent5));
+				aSavedChanges.forEach(function(oSavedChange) {
+					this.oChangePersistence.deleteChange(oSavedChange);
+				}.bind(this));
+				return this.oChangePersistence.saveDirtyChanges().then(function() {
+					_checkVariantSyncCall();
+					assert.ok(oDeleteChangeSpy.calledWith(this._mComponentProperties, aSavedChanges[4].getDefinition()));
+				}.bind(this));
 			}.bind(this));
 		});
 
@@ -2984,7 +3017,6 @@ function (
 			};
 
 			var oChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
-
 			this.oChangePersistence.deleteChange(oChange);
 
 			var aDirtyChanges = this.oChangePersistence.getDirtyChanges();

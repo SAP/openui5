@@ -87,28 +87,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("setVariantManagementSection", {
-		beforeEach: function() {
-			this.oEntry = _createEntryMap();
-			this.oGetStorageResponseStub = sandbox.stub(FlexState, "getStorageResponse").resolves(this.oEntry);
-			this.oGetFlexObjectsStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(this.oEntry.changes);
-		},
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when setVariantManagementSection is called with a variant controller file content", function(assert) {
-			var oVariantSectionContent = {
-				variantManagement: {
-					variants: ["variant1"]
-				}
-			};
-
-			Cache.setVariantManagementSection({name: sComponentName}, oVariantSectionContent);
-			assert.deepEqual(this.oEntry.changes.variantSection, oVariantSectionContent, "then the passed variant controller file content was set in the cache entry");
-		});
-	});
-
 	QUnit.module("getCacheKey", {
 		beforeEach: function() {
 			this.oGetStorageResponseStub = sandbox.stub(FlexState, "getStorageResponse").resolves(this.oEntry);
