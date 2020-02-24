@@ -8,22 +8,35 @@
 /* ------------------------------ */
 
 .sapMSliderTooltip {
-	background: @sapUiGroupContentBackground;
-	border-color: @sapUiFieldBorderColor;
+	background: @sapUiFieldBackground;
+	border-radius: @sapUiElementBorderCornerRadius;
+	border: 1px solid @sapUiFieldBorderColor;
+	box-shadow: none;
+	height: 1.375rem;
+	min-width: 2rem;
+	padding: 0.25rem;
+	font-size: @sapMFontSmallSize;
 }
 
 .sapMSliderTooltipInput {
+	background-color: @sapUiFieldBackground;
+	font-size: @sapMFontMediumSize;
 	color: @sapUiFieldTextColor;
-	background: @sapUiFieldBackground;
 }
 
 .sapMSliderTooltipErrorState {
 	background: @sapUiFieldInvalidBackground;
-	border-color: @sapUiFieldInvalidColor;
+	border-color: @sapUiFieldInvalidColor
 }
 
 .sapMSliderTooltipErrorState .sapMSliderTooltipInput {
 	background: @sapUiFieldInvalidBackground;
-	font-style: italic;
-	font-weight: bold;
+}
+
+.sapMSliderTooltip.sapMSliderTooltipNonEditableWrapper {
+	border-radius: 0.25rem;
+	height: 0.875rem;
+	padding: 0.25rem;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiContentLabelColor;
 }
