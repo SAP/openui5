@@ -483,4 +483,21 @@ sap.ui.define([
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		oControl.destroy();
 	});
+
+	QUnit.test("drag and drop", function(assert) {
+		var oLink = new Link({
+			dragDropConfig: new sap.ui.core.dnd.DragInfo({
+				enabled: false
+			})
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oLink.$().attr('draggable'), "false", "The draggable attribute should be rendered with value false");
+
+		oLink.getDragDropConfig()[0].setEnabled(true);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oLink.$().attr('draggable'), "true", "The draggable attribute should be rendered with value true");
+
+		oLink.destroy();
+	});
 });
