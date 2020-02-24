@@ -8,26 +8,34 @@
 	border-width: 2px;
 }
 
-/* pointing upward arrow */
-.sapMPopoverArrUp {
-	top: -0.5625rem;
-	&:after {
-		margin: 0.23rem 0 0 0.04rem;
-	}
+.sapMPopoverWithBar > .sapMPopoverArr.sapMPopoverArrUp:after {
+	background-color: @sapUiPageHeaderBackground;
 }
 
-/* pointing right arrow */
-.sapMPopoverArrRight {
-	&:after {
-		margin: 0 0 0 -0.55rem;
-	}
-}
+.sapUiSizeCompact {
+	.sapMPopoverFooter, .sapMPopoverHeader {
+		.sapMIBar, .sapMBar {
+			height: 2.5rem;
 
-/* pointing downward arrow */
-.sapMPopoverArrDown {
-	bottom: -0.5625rem;
-	&:after {
-		margin: -0.5625rem  0 0 0.03rem;
+			& > .sapMBarLeft,
+			& > .sapMBarRight {
+				height: 2.5rem;
+				line-height: 2.5rem;
+
+				.sapMBtn {
+					vertical-align: middle;
+				}
+			}
+
+			& > .sapMBarMiddle .sapMBarPH {
+				height: 2.5rem;
+				line-height: 2.5rem;
+
+				.sapMBtn {
+					vertical-align: middle;
+				}
+			}
+		}
 	}
 }
 
@@ -57,4 +65,29 @@
 			}
 		}
 	}
+}
+
+.sapMPopoverHeader, .sapMPopoverSubHeader {
+	position: relative;
+	z-index: 2;
+}
+
+.sapMPopoverWithoutSubHeader .sapMPopoverHeader, .sapMPopoverSubHeader {
+	&:after {
+		content: "";
+		position: absolute;
+		height: 1px;
+		bottom: 0px;
+		width: 100%;
+		box-shadow: @sapUiShadowHeader;
+		z-index: 1;
+	}
+
+	.sapMIBar-CTX {
+		z-index: 2;
+	}
+}
+
+.sapMPopoverWithSubHeader .sapMPopoverHeader .sapMIBar-CTX {
+	box-shadow: none;
 }
