@@ -14,10 +14,12 @@ sap.ui.define([
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/variants/VariantController",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/ui/performance/Measurement",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/performance/Measurement",
 	"sap/ui/thirdparty/jquery",
+	"sap/base/util/includes",
 	"sap/base/util/merge",
 	"sap/base/util/isEmptyObject",
 	"sap/base/Log",
@@ -34,10 +36,12 @@ sap.ui.define([
 	ContextManager,
 	Storage,
 	VariantController,
+	JsControlTreeModifier,
 	Component,
-	Measurement,
 	JSONModel,
+	Measurement,
 	jQuery,
+	includes,
 	merge,
 	isEmptyObject,
 	Log,
@@ -58,40 +62,8 @@ sap.ui.define([
 	 */
 	var ChangePersistence = function(mComponent) {
 		this._mComponent = mComponent;
-		/**
-		_mChanges contains:
-			- mChanges: map of changes (selector id)
-			- mDependencies: map of changes (change key) and controls (selectors) that need to be applied before any change. Used to check if a change can be applied.
-				Format:
-				mDependencies: {
-					"fileNameChange2USERnamespace": {
-						"changeObject": oChange2,
-						"dependencies": ["fileNameChange1USERnamespace"],
-						"controlsDependencies": [<selector of other control>]
-					},
-					"fileNameChange3USERnamespace": {
-						"changeObject": oChange3,
-						"dependencies": ["fileNameChange2USERnamespace"],
-						"controlsDependencies": [<selector of other control>]
-					}
-				}
-			- mDependentChangesOnMe: map of changes (change key) that cannot be applied before the change. Used to remove dependencies faster. Format:
-				mDependentChangesOnMe: {
-					"fileNameChange1USERnamespace": [oChange2],
-					"fileNameChange2USERnamespace": [oChange3]
-				}
-			- mControlsWithDependencies: map of controls IDs for which a change has a dependency on (excluding selectors).
-				All IDs that are listed in the controlsDependencies in any dependency will be saved here for faster processing.
-				Because of the way changes are applied the selectors are currently not needed, only the additional dependencies to controls.
-					Format:
-					mControlsWithDependencies: {
-						<controlId>: true
-					}
-			- aChanges: array of changes ordered by layer and creation time
-				aChanges: [oChange1, oChange2, oChange3]
-		*/
 
-		this._mChanges = initializeChangesMap();
+		this._mChanges = DependencyHandler.createEmptyDependencyMap();
 
 		//_mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
 		this._mChangesInitial = merge({}, this._mChanges);
@@ -110,16 +82,6 @@ sap.ui.define([
 		this._bHasChangesOverMaxLayer = false;
 		this.HIGHER_LAYER_CHANGES_EXIST = "higher_layer_changes_exist";
 	};
-
-	function initializeChangesMap () {
-		return {
-			mChanges: {},
-			mDependencies: {},
-			mDependentChangesOnMe: {},
-			mControlsWithDependencies: {},
-			aChanges: []
-		};
-	}
 
 	/**
 	 * Return the name of the SAPUI5 component. All changes are assigned to 1 SAPUI5 component. The SAPUI5 component also serves as authorization
@@ -653,10 +615,6 @@ sap.ui.define([
 		return Promise.all(aPromises);
 	};
 
-	function _getCompleteIdFromSelector(oSelector, oAppComponent) {
-		return oSelector.idIsLocal ? oAppComponent.createId(oSelector.id) : oSelector.id;
-	}
-
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
@@ -671,7 +629,7 @@ sap.ui.define([
 		function createChangeMap(aChanges) {
 			Measurement.start("fl.createDependencyMap", "Measurement of creating initial dependency map");
 			//Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
-			this._mChanges = initializeChangesMap();
+			this._mChanges = DependencyHandler.createEmptyDependencyMap();
 
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oAppComponent));
 
@@ -724,11 +682,25 @@ sap.ui.define([
 				}
 			}.bind(this));
 
-			oChange.getDependentControlSelectorList().forEach(function(oSelector) {
-				this._mChanges.mControlsWithDependencies[_getCompleteIdFromSelector(oSelector, oAppComponent)] = true;
+			var sControlId;
+			var aNewValidControlDependencies = [];
+			oInitialDependency.controlsDependencies.forEach(function(oDependentControlSelector) {
+				// if the control is already available we don't need to add a dependency to it
+				if (!JsControlTreeModifier.bySelector(oDependentControlSelector, oAppComponent)) {
+					sControlId = JsControlTreeModifier.getControlIdBySelector(oDependentControlSelector, oAppComponent);
+					aNewValidControlDependencies.push(oDependentControlSelector);
+					this._mChanges.mControlsWithDependencies[sControlId] = this._mChanges.mControlsWithDependencies[sControlId] || [];
+					if (!includes(this._mChanges.mControlsWithDependencies[sControlId], oChange.getId())) {
+						this._mChanges.mControlsWithDependencies[sControlId].push(oChange.getId());
+					}
+				}
 			}.bind(this));
+
 			oInitialDependency.dependencies = aNewValidDependencies;
-			this._mChanges.mDependencies[oChange.getId()] = oInitialDependency;
+			oInitialDependency.controlsDependencies = aNewValidControlDependencies;
+			if (aNewValidDependencies.length || aNewValidControlDependencies.length) {
+				this._mChanges.mDependencies[oChange.getId()] = oInitialDependency;
+			}
 		}
 		return this._mChanges;
 	};
