@@ -234,13 +234,15 @@
 				title: "Small Simple Form",
 				content:[
 					new sap.m.Label("requiredTruncated2", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true}),
-					new sap.m.Input,
+					new sap.m.Input(),
 					new sap.m.Label("truncated2", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label"}),
-					new sap.m.Input,
+					new sap.m.Input(),
 					new sap.m.Label("requiredOnly2",  {text:"Simple Label", required: true}),
-					new sap.m.Input,
+					new sap.m.Input(),
 					new sap.m.Label("requiredTruncatedNoWrap2", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: "{/globalRequired}", wrapping: false}),
-					new sap.m.Input
+					new sap.m.Input(),
+					new sap.m.Label({text:"'*' and ':' should NOT go on new line alone", required: true}),
+					new sap.m.Input()
 				]
 			});
 
