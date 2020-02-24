@@ -83,6 +83,13 @@ sap.ui.define([
 		this._sLibraryName = sLibraryName;
 		this._aExcludes = aExcludes || [];
 		this._iTimeout = 200;
+		this._iModulus = 1;
+		this._iRemainder = 0;
+
+		if ( window["sap-ui-config"] && Array.isArray(window["sap-ui-config"].modulus) ) {
+			this._iModulus = window["sap-ui-config"].modulus[1];
+			this._iRemainder = window["sap-ui-config"].modulus[0];
+		}
 
 		this._oApp = new App({
 			initialPage: "page",
@@ -280,14 +287,20 @@ sap.ui.define([
 
 		var aSamples = oExploredIndex && oExploredIndex.samples;
 
-		var nTests;
+		var nTestable, nTests;
 		if (aSamples) {
+			nTestable = 0;
 			nTests = 0;
-			for (var i = 0; i < aSamples.length; i++ ) {
+			for (var i = 0; i < aSamples.length; i++) {
 				if ( this._aExcludes.indexOf(aSamples[i].id) < 0 ) {
-					oLog.info("adding test for sample '" + aSamples[i].name + "'");
-					makeTest(aSamples[i]);
-					nTests++;
+					if ( nTestable % this._iModulus === this._iRemainder ) {
+						oLog.info("adding test for sample '" + aSamples[i].name + "'");
+						makeTest(aSamples[i]);
+						nTests++;
+					} else {
+						oLog.info("skipping test for sample '" + aSamples[i].name + "'");
+					}
+					nTestable++;
 				} else {
 					oLog.info("ignoring sample '" + aSamples[i].name + "'");
 				}
@@ -296,7 +309,11 @@ sap.ui.define([
 		}
 
 		if (nTests === 0) {
-			oLog.info("no samples found, adding dummy test");
+			if ( nTestable === 0 ) {
+				oLog.info("no samples found, adding dummy test");
+			} else {
+				oLog.info("no samples executed, adding dummy test");
+			}
 			QUnit.test("Dummy", function(assert) {
 				assert.ok(true);
 			});
