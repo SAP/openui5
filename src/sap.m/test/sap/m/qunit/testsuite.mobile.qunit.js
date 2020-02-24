@@ -427,6 +427,12 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			IconTabHeader: {
+				title: "QUnit Page for sap.m.IconTabHeader",
+				sinon: {
+					useFakeTimers: true
+				}
+			},
 			Image: {
 				title: "Image - sap.m - QUnit test",
 				_alternativeTitle: "QUnit Page for sap.m.Image"
