@@ -259,7 +259,12 @@ function(
 
 			/**
 			 * User can swipe to bring in this control on the right hand side of an item.
-			 * <b>Note:</b> For non-touch devices, this functionality is ignored.
+			 * <b>Note:</b>
+			 * <ul>
+			 * <li>For non-touch screen devices, this functionality is ignored.</li>
+			 * <li>There is no accessible alternative provided by the control for swiping.
+			 * Applications that use this functionality must provide an accessible alternative UI to perform the same action.</li>
+			 * <ul>
 			 */
 			swipeContent : {type : "sap.ui.core.Control", multiple : false},
 
@@ -359,6 +364,9 @@ function(
 			/**
 			 * Fires after user's swipe action and before the <code>swipeContent</code> is shown. On the <code>swipe</code> event handler, <code>swipeContent</code> can be changed according to the swiped item.
 			 * Calling the <code>preventDefault</code> method of the event cancels the swipe action.
+			 *
+			 * <b>Note:</b> There is no accessible alternative provided by the control for swiping.
+			 * Applications that use this functionality must provide an accessible alternative UI to perform the same action.
 			 */
 			swipe : {allowPreventDefault : true,
 				parameters : {
