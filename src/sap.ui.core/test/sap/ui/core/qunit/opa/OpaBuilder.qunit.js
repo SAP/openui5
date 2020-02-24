@@ -578,6 +578,11 @@ sap.ui.define(
             assert.strictEqual(OpaBuilder.Matchers.FALSE(), false);
         });
 
+        QUnit.test("'not' should return a function that negates result of provided matcher", function(assert) {
+            assert.strictEqual(OpaBuilder.Matchers.not(OpaBuilder.Matchers.TRUE)({ dummyControl: true }), false);
+            assert.strictEqual(OpaBuilder.Matchers.not(OpaBuilder.Matchers.FALSE)({ dummyControl: true }), true);
+        });
+
         QUnit.test("'ancestor' should return a corresponding declarative definition of sap.ui.test.matchers.Ancestor", function(assert) {
             assert.deepEqual(OpaBuilder.Matchers.ancestor("my.ancestor"), { ancestor: [["my.ancestor", undefined]] });
             assert.deepEqual(OpaBuilder.Matchers.ancestor("my.ancestor", true), { ancestor: [["my.ancestor", true]] });
