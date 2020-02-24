@@ -442,13 +442,13 @@ sap.ui.define([
 	BaseContent._getMinListHeight = function (oConfiguration, isCompact) {
 		var iCount = parseInt(oConfiguration.maxItems) || 0,
 			oTemplate = oConfiguration.item,
-			iItemHeight = isCompact ? 2 : 3; // list item height in "rem"
+			iItemHeight = isCompact ? 2 : 2.75; // list item height in "rem"
 
 		if (!oTemplate) {
 			return 0;
 		}
 
-		if (oTemplate.icon || oTemplate.description) {
+		if (oTemplate.description) {
 			iItemHeight = isCompact ? 3 : 4; // list item height with icon in "rem"
 		}
 
@@ -457,8 +457,8 @@ sap.ui.define([
 
 	BaseContent._getMinTableHeight = function (oConfiguration, isCompact) {
 		var iCount = parseInt(oConfiguration.maxItems) || 0,
-			iRowHeight = isCompact ? 2 : 3, // table row height in "rem"
-			iTableHeaderHeight = isCompact ? 2 : 3; // table header height in "rem"
+			iRowHeight = isCompact ? 2 : 2.75, // table row height in "rem"
+			iTableHeaderHeight = isCompact ? 2 : 2.75; // table header height in "rem"
 
 		return iCount * iRowHeight + iTableHeaderHeight;
 	};

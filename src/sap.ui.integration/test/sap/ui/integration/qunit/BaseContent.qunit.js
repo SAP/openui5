@@ -40,7 +40,7 @@ sap.ui.define([
 				}};
 
 			//Assert
-			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "21rem", "Min height in compact must be 21rem" );
+			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "14rem", "Min height in compact must be 14rem" );
 
 		});
 
@@ -108,7 +108,7 @@ sap.ui.define([
 				}};
 
 			//Assert
-			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "28rem", "Min height in cozy must be 28rem" );
+			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "19.25rem", "Min height in cozy must be 19.25rem" );
 
 		});
 
@@ -119,7 +119,7 @@ sap.ui.define([
 				oConfiguration = {maxItems: 7, item: {}};
 
 			//Assert
-			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "21rem", "Min height in cozy must be 21rem" );
+			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "19.25rem", "Min height in cozy must be 19.25rem" );
 
 		});
 
@@ -130,7 +130,7 @@ sap.ui.define([
 				oConfiguration = {maxItems: 7, item: {}};
 
 			//Assert
-			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "24rem", "Min height in cozy must be 24rem" );
+			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "22rem", "Min height in cozy must be 22rem" );
 
 		});
 
