@@ -3,26 +3,78 @@
 /* Quartz High Contrast Black theme   */
 /* ================================== */
 
-// style links in the description as Link control
-.sapMMsgViewDescriptionText a {
-	color: @sapUiLinkActive;
-	text-decoration: underline;
-	&:hover {
-		text-decoration: none;
+.sapMMsgView {
+	.sapMMsgViewItem {
+		padding-left: 0;
+
+		&.sapMSLIWithDescription {
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+		}
 	}
-	&:focus {
-		outline: 0.125rem dotted @sapUiContentFocusColor;
-		text-decoration: none;
+
+	.sapMLIBActive .sapMLIBImgNav {
+		background: none;
+	}
+
+	.sapMSLITitleOnly {
+		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
+	}
+
+	.sapMSLITitle {
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	.sapMSLIDescription {
+		color: @sapUiContentLabelColor;
+	}
+
+	.sapMMsgViewDescriptionText {
+		padding-bottom: 0;
+		margin: 0 1rem 1rem 3rem;
+		line-height: 1.4;
+		font-family: @sapUiFontFamily;
+		color: @sapUiBaseText;
+	}
+
+	.sapMMsgViewTitleText:not(.sapMLnk) {
+		margin: 1rem 1rem 1rem 3rem;
+	}
+
+	.sapMMsgViewDescriptionLink {
+		margin: 0 1rem 1rem 3rem;
+		font-family: @sapUiFontFamily;
+		font-size: @sapMFontMediumSize;
+		font-weight: normal;
+		color: @sapUiLink;
+	}
+
+	.sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv > .sapMSLIDescription {
+		margin-top: 0.25rem;
 	}
 }
 
-.sapMMsgViewItem:hover .sapMSLIImgIcon {
-	color: @sapUiContentIconColor;
+.sapMMsgView .sapMIBar.sapMHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
 }
 
-.sapMMsgViewBtnError.sapMSegBBtnFocusable.sapMSegBBtn:hover .sapUiIcon,
-.sapMMsgViewBtnInformation.sapMSegBBtnFocusable.sapMSegBBtn:hover .sapUiIcon,
-.sapMMsgViewBtnWarning.sapMSegBBtnFocusable.sapMSegBBtn:hover .sapUiIcon,
-.sapMMsgViewBtnSuccess.sapMSegBBtnFocusable.sapMSegBBtn:hover .sapUiIcon  {
-	color: @sapUiSegmentedButtonIconColor;
+.sapMMsgViewDescIcon {
+	font-size: 1rem;
+	top: 1.125rem;
+}
+
+.sapMMsgViewItem .sapMSLIImgIcon {
+	font-size: 1rem;
+}
+
+.sapMMsgView .sapMSegBBtn .sapMBtnCustomIcon {
+	font-size: 1rem;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMMsgView {
+	.sapMBtnIcon {
+		margin-right: 0.5rem;
+	}
 }
