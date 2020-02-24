@@ -283,6 +283,7 @@ sap.ui.define([
 			this.title = null;
 		}
 	});
+
 	QUnit.test("getAccessibilityInfo", function(assert){
 		var oTitle = new Title({text: "Text"});
 		assert.ok(!!oTitle.getAccessibilityInfo, "Title has a getAccessibilityInfo function");
@@ -303,6 +304,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Aria-level should be set", function(assert){
-		assert.strictEqual(this.title.$().attr("aria-level"), "2", "The aria-level of a non semantically states title should be 2");
+		assert.strictEqual(this.title.$().attr("aria-level"), "2", "The aria-level of a non semantically states title should be 2 by default");
+
+		this.title.setTitleStyle(TitleLevel.H5);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(this.title.$().attr("aria-level"), "5", "The aria-level should be '5' when 'titleStyle' is set to 'H5'");
 	});
 });
