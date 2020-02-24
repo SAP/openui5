@@ -31,7 +31,7 @@ sap.ui.define([
 		rm.class("sapUIActionsToolbar");
 		rm.openEnd();
 
-		rm.renderControl(control.getAggregation("_toolbar"));
+		rm.renderControl(control._getToolbar());
 
 		rm.close("div");
 	};
