@@ -799,6 +799,33 @@ sap.ui.define(
             },
 
             /**
+             * Creates a matcher function which is negating the result of provided matchers.
+             * The matcher function returns a boolean value but never a control.
+             *
+             * Example usage for only matching controls without a certain text:
+             * <code>
+             *     <pre>new OpaBuilder().hasType("sap.m.Text").has(
+             *              OpaBuilder.Matchers.not(
+             *                  OpaBuilder.Matchers.properties({ text: "Ignore controls with this text"})
+             *             )
+             *         );
+             *     </pre>
+             * </code>
+             *
+             * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+             *                [vMatchers] the matchers that will actually be executed
+             * @returns {function} the matcher function returns the negated result of the matcher chain
+             * @public
+             * @static
+             */
+            not: function (vMatchers) {
+                var fnMatch = OpaBuilder.Matchers.match(vMatchers);
+                return function (oControl) {
+                    return !fnMatch(oControl);
+                };
+            },
+
+            /**
              * Creates a declarative matcher definition for {@link sap.ui.test.matchers.Ancestor}.
              * @param {object | string} vAncestor the ancestor control to check, if undefined, validates every control to true. Can be a control or a control ID
              * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
