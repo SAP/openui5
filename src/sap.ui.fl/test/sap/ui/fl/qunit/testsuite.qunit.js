@@ -648,37 +648,6 @@ sap.ui.define(function () {
 				}
 			},
 
-			// Context tests:
-			"context/Context": {
-				group: "Context",
-				coverage: {
-					only: ["sap/ui/fl/context/Context"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap.ui.fl.qunit.context": "test-resources/sap/ui/fl/qunit/context"
-					}
-				}
-			},
-			"context/ContextManager": {
-				group: "Context",
-				coverage: {
-					only: ["sap/ui/fl/context/ContextManager"]
-				}
-			},
-			"context/DeviceContextProvider": {
-				group: "Context",
-				coverage: {
-					only: ["sap/ui/fl/context/DeviceContextProvider"]
-				}
-			},
-			"context/SwitchContextProvider": {
-				group: "Context",
-				coverage: {
-					only: ["sap/ui/fl/context/SwitchContextProvider"]
-				}
-			},
-
 			// Variant tests:
 			"variants/VariantController": {
 				group: "Variants",

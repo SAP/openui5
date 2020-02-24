@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/context/ContextManager",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
@@ -26,7 +25,6 @@ sap.ui.define([
 	Change,
 	Variant,
 	ChangePersistenceFactory,
-	ContextManager,
 	Versions,
 	Applier,
 	Reverter,
@@ -142,19 +140,12 @@ sap.ui.define([
 		var oChangeFileContent;
 		var oChange;
 
-		var aCurrentDesignTimeContext = ContextManager._getContextIdsFromUrl();
-
-		if (aCurrentDesignTimeContext.length > 1) {
-			throw new Error("More than one DesignTime Context is currently active.");
-		}
-
 		if (!oAppComponent) {
 			throw new Error("No application component found. To offer flexibility a valid relation to its owning component must be present.");
 		}
 
 		oChangeSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
 		oChangeSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
-		oChangeSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
 
 		// fallback in case no application descriptor is available (e.g. during unit testing)
 		oChangeSpecificData.validAppVersions = Utils.getValidAppVersions({

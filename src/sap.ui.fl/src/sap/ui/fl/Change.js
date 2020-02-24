@@ -335,23 +335,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the context in which the change should be applied.
-	 *
-	 * @returns {Object[]} context - List of objects to determine the context
-	 * @returns {string} selector  - Key of the context
-	 * @returns {string} operator - Instructions on how the values should be compared
-	 * @returns {Object} value - Values given for comparison
-	 *
-	 * @public
-	 */
-	Change.prototype.getContext = function () {
-		if (this._oDefinition && this._oDefinition.context) {
-			return this._oDefinition.context;
-		}
-		return "";
-	};
-
-	/**
 	 * Returns the ABAP package name.
 	 * @returns {string} ABAP package that the change is assigned to
 	 *
@@ -1010,7 +993,6 @@ sap.ui.define([
 	 * @param {String}  [oPropertyBag.id] - Name/ID of the file; if it's not set, it's created implicitly
 	 * @param {Boolean} [oPropertyBag.isVariant] - Name of the component
 	 * @param {Boolean} [oPropertyBag.isUserDependent] - <code>true</code> in case of end user changes
-	 * @param {String}  [oPropertyBag.context] - ID of the context
 	 * @param {Object}  [oPropertyBag.dependentSelector] - List of selectors saved under an alias for creating the dependencies between changes
 	 * @param {Object}  [oPropertyBag.validAppVersions] - Application versions where the change is active
 	 * @param {String}  [oPropertyBag.reference] - Application component name
@@ -1059,8 +1041,6 @@ sap.ui.define([
 			projectId: oPropertyBag.projectId || (oPropertyBag.reference && oPropertyBag.reference.replace(".Component", "")) || "",
 			creation: "",
 			originalLanguage: Utils.getCurrentLanguage(),
-			conditions: {},
-			context: oPropertyBag.context || "",
 			support: {
 				generator: oPropertyBag.generator || "Change.createInitialFileContent",
 				service: oPropertyBag.service || "",
