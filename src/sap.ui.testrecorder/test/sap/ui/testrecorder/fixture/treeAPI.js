@@ -141,13 +141,13 @@ sap.ui.define([
 					// as derived from appMock
 					sRaw = '{\n' +
 						'    controlType: "sap.m.Button",\n' +
-						'    viewName: "appMock.view.Main",\n' +
+						'    viewName: "sap.ui.testrecorder.appMock.view.Main",\n' +
 						'    properties: {\n' +
 						'        text: "Button One"\n' +
 						'    }';
 					sRawJson = '{\n' +
 						'    "controlType": "sap.m.Button",\n' +
-						'    "viewName": "appMock.view.Main",\n' +
+						'    "viewName": "sap.ui.testrecorder.appMock.view.Main",\n' +
 						'    "properties": {\n' +
 						'        "text": "Button One"\n' +
 						'    }';
@@ -231,7 +231,7 @@ sap.ui.define([
 								Highlight: _asPOMethod(
 									'element(by.control({\n' +
 									'    controlType: "sap.m.Button",\n' +
-									'    viewName: "appMock.view.Main",\n' +
+									'    viewName: "sap.ui.testrecorder.appMock.view.Main",\n' +
 									'    properties: {\n' +
 									'        text: "Button One"\n' +
 									'    }\n' +
