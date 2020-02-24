@@ -3251,6 +3251,27 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("setSelectionItem should not try closing the suggestions popover when there is no suggestions popup opened", function(assert) {
+		var oInput = new Input(),
+			oItem = new SuggestionItem({key: "key", text: "text"}),
+			oSpy;
+
+		// Arrange
+		oInput.setShowSuggestion(true);
+		oSpy = sinon.spy(oInput._oSuggPopover._oPopover, "close");
+
+		// act
+		oInput.setSelectionItem(oItem, false);
+
+		// assert
+		assert.strictEqual(oSpy.callCount, 0, "The close method of the suggestions popover was not called");
+
+		// clean
+		oSpy.restore();
+		oItem.destroy();
+		oInput.destroy();
+	});
+
 	QUnit.test("Tabular suggestions - Set selection should stop if input is destroyed after firing change event", function (assert) {
 		// Arrange
 		var oInput = createInputWithTabularSuggestions(),
