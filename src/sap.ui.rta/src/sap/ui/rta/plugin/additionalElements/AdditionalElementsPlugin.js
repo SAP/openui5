@@ -579,7 +579,7 @@ sap.ui.define([
 		showAvailableElements: function(bOverlayIsSibling, aElementOverlays, iIndex, sControlName) {
 			var oElementOverlay = aElementOverlays[0];
 			var mParents = _getParents(bOverlayIsSibling, oElementOverlay, this);
-			var oSiblingElement = bOverlayIsSibling && oElementOverlay.getElement();
+			var oSiblingElement = bOverlayIsSibling && this.getResponsibleElementOverlay(oElementOverlay).getElement();
 			var mActions;
 
 			return this._getActions(bOverlayIsSibling, mParents.responsibleElementOverlay)

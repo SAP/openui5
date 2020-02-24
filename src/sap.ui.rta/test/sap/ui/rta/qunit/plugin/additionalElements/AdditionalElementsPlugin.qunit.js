@@ -676,22 +676,16 @@ sap.ui.define([
 			var done = assert.async();
 			this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
 				var oCompositeCommand = oEvent.getParameter("command");
-				assert.equal(oCompositeCommand.getCommands().length, 3, "then for the one selected to be revealed element reveal and move command is created as target position differs");
-				assert.equal(oCompositeCommand.getCommands()[0].getName(), "addODataProperty", "then one reveal command is created");
-				assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "addFields", "then the reveal command has the right changeType");
-				assert.equal(oCompositeCommand.getCommands()[0].getIndex(), 0, "then the move command goes to the right position");
-				assert.equal(oCompositeCommand.getCommands()[1].getName(), "reveal", "then one reveal command is created");
-				assert.equal(oCompositeCommand.getCommands()[1].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
-				assert.equal(oCompositeCommand.getCommands()[2].getName(), "move", "then one move command is created");
-				assert.equal(oCompositeCommand.getCommands()[2].getMovedElements()[0].targetIndex, 0, "then the move command goes to the right position");
+				assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element reveal and move command is created as target position differs");
+				assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
+				assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
+				assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
+				assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 0, "then the move command goes to the right position");
 				done();
 			});
 
 			return createOverlayWithAggregationActions.call(this,
 				{
-					addODataProperty : {
-						changeType : "addFields"
-					},
 					reveal : {
 						changeType : "unhideControl"
 					},
@@ -705,20 +699,22 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function() {
-					assert.ok(this.fnEnhanceInvisibleElementsStub.calledOnce, "then the analyzer is called to return the invisible elements");
-					assert.ok(this.fnGetUnboundODataPropertiesStub.calledOnce, "then the analyzer is NOT called to return the unbound odata properties");
-					assertDialogModelLength.call(this, assert, 5, "then all invisible elements and odata properties are part of the dialog model, excluding the duplicate properties");
+					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 1, "then the analyzer is called to return the invisible elements");
+					assert.equal(this.fnGetUnboundODataPropertiesStub.callCount, 0, "then the analyzer is NOT called to return the unbound odata properties");
+					assertDialogModelLength.call(this, assert, 2, "then all invisible elements and odata properties are part of the dialog model, excluding the duplicate properties");
 					assert.equal(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is an invisible property");
 				}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has a reveal action on a responsible element and we call showAvailableElements with an index", function (assert) {
+		QUnit.test("when the control's dt metadata has a reveal and move action on a responsible element and we call showAvailableElements", function (assert) {
 			var done = assert.async();
 			this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
 				var oCompositeCommand = oEvent.getParameter("command");
-				assert.equal(oCompositeCommand.getCommands().length, 1, "then one command is created");
+				assert.equal(oCompositeCommand.getCommands().length, 2, "then one command is created");
 				assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
 				assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
+				assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
+				assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 1, "then the move command goes to the right position");
 				done();
 			});
 
@@ -730,12 +726,13 @@ sap.ui.define([
 					responsibleElement: {
 						target: this.oSibling,
 						source: this.oPseudoPublicParent
-					}
+					},
+					move : "moveControls"
 				},
 				ON_SIBLING
 			)
 				.then(function () {
-					return this.oPlugin.showAvailableElements(true, [this.oPseudoPublicParentOverlay], 0);
+					return this.oPlugin.showAvailableElements(true, [this.oPseudoPublicParentOverlay]);
 				}.bind(this))
 				.then(function() {
 					assertDialogModelLength.call(this, assert, 2, "then all invisible elements are part of the dialog model");
@@ -1769,15 +1766,15 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this))
 
-			.then(function() {
-				sap.ui.getCore().applyChanges();
-				switch (sOverlayType) {
-					case ON_SIBLING : return this.oSiblingOverlay;
-					case ON_CHILD : return this.oParentOverlay;
-					case ON_IRRELEVANT : return this.oIrrelevantOverlay;
-					default : return undefined;
-				}
-			}.bind(this));
+		.then(function() {
+			sap.ui.getCore().applyChanges();
+			switch (sOverlayType) {
+				case ON_SIBLING : return this.oSiblingOverlay;
+				case ON_CHILD : return this.oParentOverlay;
+				case ON_IRRELEVANT : return this.oIrrelevantOverlay;
+				default : return undefined;
+			}
+		}.bind(this));
 	}
 
 	function createOverlayWithoutDesignTimeMetadata(mActions, bOnSibling) {
