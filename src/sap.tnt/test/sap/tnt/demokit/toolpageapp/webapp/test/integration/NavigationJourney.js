@@ -63,7 +63,7 @@ sap.ui.define([
 		Then.onTheSettingsPage.iShouldSeeMessageToast();
 	});
 
-	opaTest("should press the cancel button  and see a toast message", function (Given, When, Then) {
+	opaTest("should press the cancel button and see a toast message", function (Given, When, Then) {
 		//Actions
 		When.onTheSettingsPage.iPressTheCancelButton();
 
