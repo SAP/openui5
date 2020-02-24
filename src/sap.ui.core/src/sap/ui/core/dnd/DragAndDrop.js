@@ -28,6 +28,7 @@ function(Device, UIArea, jQuery) {
 		aValidDropInfos = [],		// valid DropInfos configured for the current drop target
 		oDragSession = null,		// stores active drag session throughout a drag activity
 		$DropIndicator,				// drop position indicator
+		$DropIndicatorWrapper,		//  drop position indicator wrapper
 		$GhostContainer,			// container to place custom ghosts
 		sCalculatedDropPosition,	// calculated position of the drop action relative to the valid dropped control.
 		iTargetEnteringTime,		// timestamp of drag enter
@@ -285,8 +286,19 @@ function(Device, UIArea, jQuery) {
 			return $DropIndicator;
 		}
 
+		// not adding the div wrapper around DndIndicator as it prevents IE from scrolling
+		if (!Device.browser.msie) {
+			$DropIndicatorWrapper = jQuery("<div class='sapUiDnDIndicatorWrapper'></div>");
+		}
+
 		$DropIndicator = jQuery("<div class='sapUiDnDIndicator'></div>");
-		jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicator);
+
+		if (!$DropIndicatorWrapper) {
+			jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicator);
+		} else {
+			jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicatorWrapper);
+			$DropIndicator.appendTo($DropIndicatorWrapper);
+		}
 		return $DropIndicator;
 	}
 
