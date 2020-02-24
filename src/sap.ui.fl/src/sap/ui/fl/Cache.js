@@ -28,8 +28,8 @@ function(
 	 */
 	var Cache = function () {};
 
-	function _getChangeArray(sComponentName) {
-		return FlexState.getFlexObjectsFromStorageResponse(sComponentName).changes;
+	function _getChangeArray(sComponentName, sChangeCategory) {
+		return FlexState.getFlexObjectsFromStorageResponse(sComponentName)[sChangeCategory];
 	}
 
 	function _concatControlVariantIdWithCacheKey(sCacheKey, sControlVariantIds) {
@@ -126,10 +126,11 @@ function(
 	 * @param {string} oComponent.name - Name of the component
 	 * @param {string} oComponent.appVersion - Current running version of application
 	 * @param {object} oChange - The change in JSON format
+	 * @param {string} sChangeCategory - Change category
 	 * @public
 	 */
-	Cache.addChange = function (oComponent, oChange) {
-		var aChanges = _getChangeArray(oComponent.name);
+	Cache.addChange = function (oComponent, oChange, sChangeCategory) {
+		var aChanges = _getChangeArray(oComponent.name, sChangeCategory);
 
 		if (!aChanges) {
 			return;
@@ -164,7 +165,7 @@ function(
 	 * @public
 	 */
 	Cache.updateChange = function (oComponent, oChange) {
-		var aChanges = _getChangeArray(oComponent.name);
+		var aChanges = _getChangeArray(oComponent.name, "changes");
 
 		if (!aChanges) {
 			return;
@@ -185,10 +186,11 @@ function(
 	 * @param {string} oComponent.name - Name of the component
 	 * @param {string} oComponent.appVersion - Current running version of application
 	 * @param {object} oChangeDefinition - The change in JSON format
+	 * @param {string} sChangeCategory - Change category
 	 * @public
 	 */
-	Cache.deleteChange = function (oComponent, oChangeDefinition) {
-		var aChanges = _getChangeArray(oComponent.name);
+	Cache.deleteChange = function (oComponent, oChangeDefinition, sChangeCategory) {
+		var aChanges = _getChangeArray(oComponent.name, sChangeCategory);
 
 		if (!aChanges) {
 			return;

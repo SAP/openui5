@@ -44,7 +44,7 @@ sap.ui.define([
 
 			return Cache.getChangesFillingCache({name: sComponentName}).then(function(oFirstChanges) {
 				oChangesFromFirstCall = oFirstChanges;
-				Cache.addChange({name: sComponentName}, oAddedEntry);
+				Cache.addChange({name: sComponentName}, oAddedEntry, "changes");
 				return Cache.getChangesFillingCache({name: sComponentName});
 			}).then(function(oSecondChanges) {
 				assert.strictEqual(oChangesFromFirstCall, oSecondChanges);
@@ -79,7 +79,7 @@ sap.ui.define([
 			return Cache.getChangesFillingCache({name: sComponentName}).then(function(oFirstChanges) {
 				assert.strictEqual(oFirstChanges.changes.changes.length, 1);
 
-				Cache.deleteChange({name: sComponentName}, oAddedEntry);
+				Cache.deleteChange({name: sComponentName}, oAddedEntry, "changes");
 				return Cache.getChangesFillingCache({name: sComponentName});
 			}).then(function(changes) {
 				assert.strictEqual(changes.changes.changes.length, 0);
