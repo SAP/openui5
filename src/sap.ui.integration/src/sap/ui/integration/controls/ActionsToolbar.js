@@ -7,6 +7,7 @@ sap.ui.define([
 		"sap/ui/thirdparty/jquery",
 		"sap/ui/core/Core",
 		'sap/ui/core/Control',
+		"sap/m/library",
 		"sap/m/Button",
 		"sap/m/ActionSheet",
 		"sap/f/cards/CardActions",
@@ -15,10 +16,13 @@ sap.ui.define([
 	function(jQuery,
 			 Core,
 			 Control,
+			 library,
 			 Button,
 			 ActionSheet,
 			 CardActions) {
 		"use strict";
+
+		var ButtonType = library.ButtonType;
 
 		function setButtonProperty(oButton, sPropertyName, oValue, oCard) {
 
@@ -120,6 +124,7 @@ sap.ui.define([
 			if (!oToolbar) {
 				oToolbar = new Button({
 					icon: 'sap-icon://overflow',
+					type: ButtonType.Transparent,
 					press: function (oEvent) {
 						this._open();
 					}.bind(this)
