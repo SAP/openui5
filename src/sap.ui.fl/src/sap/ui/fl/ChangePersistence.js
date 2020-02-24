@@ -119,6 +119,21 @@ sap.ui.define([
 		};
 	}
 
+	function _getVariantChangeCategory (oDirtyChange) {
+		if (oDirtyChange) {
+			switch (oDirtyChange.getFileType()) {
+				case "change":
+					return "variantDependentControlChanges";
+				case "ctrl_variant":
+					return "variants";
+				case "ctrl_variant_change":
+					return "variantChanges";
+				case "ctrl_variant_management_change":
+					return "variantManagementChanges";
+			}
+		}
+	}
+
 	/**
 	 * Return the name of the SAPUI5 component. All changes are assigned to 1 SAPUI5 component. The SAPUI5 component also serves as authorization
 	 * object.
@@ -936,15 +951,20 @@ sap.ui.define([
 	 * therefore, the cache update of the current app is skipped
 	 */
 	ChangePersistence.prototype._updateCacheAndDirtyState = function (oDirtyChange, bSkipUpdateCache) {
+		var sChangeCategory = "changes";
 		if (!bSkipUpdateCache) {
 			if (oDirtyChange.getPendingAction() === "NEW") {
-				Utils.isChangeRelatedToVariants(oDirtyChange)
-					? Cache.setVariantManagementSection(this._mComponent, merge({}, this._oVariantController.getChangeFileContent()))
-					: Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
+				if (Utils.isChangeRelatedToVariants(oDirtyChange)) {
+					sChangeCategory = _getVariantChangeCategory(oDirtyChange);
+					Cache.setVariantManagementSection(this._mComponent, merge({}, this._oVariantController.getChangeFileContent()), oDirtyChange);
+				}
+				Cache.addChange(this._mComponent, oDirtyChange.getDefinition(), sChangeCategory);
 			} else if (oDirtyChange.getPendingAction() === "DELETE") {
-				Utils.isChangeRelatedToVariants(oDirtyChange)
-					? Cache.setVariantManagementSection(this._mComponent, merge({}, this._oVariantController.getChangeFileContent()))
-					: Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
+				if (Utils.isChangeRelatedToVariants(oDirtyChange)) {
+					sChangeCategory = _getVariantChangeCategory(oDirtyChange);
+					Cache.setVariantManagementSection(this._mComponent, merge({}, this._oVariantController.getChangeFileContent()), oDirtyChange);
+				}
+				Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition(), sChangeCategory);
 			}
 		}
 
