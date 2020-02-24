@@ -149,6 +149,14 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("No Overflow Button clone if no visible content", function (assert) {
+		var oOverflowTB = createOverflowToolbar({}, [new Button({visible: false})]);
+
+		assert.strictEqual(oOverflowTB._getOverflowButtonClone().$().length, 0, "Overflow Button clone is not in DOM");
+
+		oOverflowTB.destroy();
+	});
+
 
 	QUnit.module("Calculations");
 
@@ -2713,7 +2721,7 @@ sap.ui.define([
 
 	QUnit.test("Recalculation is not triggered after caching overflow button size", function (assert) {
 		// Arrange
-		var oOverflowTB = new OverflowToolbar(),
+		var oOverflowTB = new OverflowToolbar({content: [new sap.m.Button({ text: "test button"})]}),
 			oOverflowBtnClonedSpy = this.spy(oOverflowTB._getOverflowButtonClone(), "$");
 
 		oOverflowTB.placeAt("qunit-fixture");
