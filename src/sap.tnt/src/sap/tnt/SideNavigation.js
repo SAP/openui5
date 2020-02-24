@@ -321,14 +321,14 @@ sap.ui.define([
 			if (selectedInFlexibleList) {
 				navigationList.setSelectedItem(listItemToSelect);
 				if (fixedNavigationList) {
-					fixedNavigationList.setSelectedItem(null);
+					fixedNavigationList.setSelectedKey(null);
 				}
 			}
 
 			if (selectedInFixedList) {
 				fixedNavigationList.setSelectedItem(listItemToSelect);
 				if (navigationList) {
-					navigationList.setSelectedItem(null);
+					navigationList.setSelectedKey(null);
 				}
 			}
 
