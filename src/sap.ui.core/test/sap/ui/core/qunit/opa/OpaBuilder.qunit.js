@@ -630,6 +630,29 @@ sap.ui.define(
             });
         });
 
+        QUnit.test("'aggregation' should return a matcher that returns an array of aggregation items filtered by given matchers", function(assert) {
+            var fnAggregationMatcher = OpaBuilder.Matchers.aggregation("items", function(vItem) {
+                return vItem % 2 === 0;
+            });
+            assert.deepEqual(
+                fnAggregationMatcher({
+                    getItems: function() {
+                        return ["test", 1];
+                    }
+                }),
+                []
+            );
+
+            assert.deepEqual(
+                fnAggregationMatcher({
+                    getItems: function() {
+                        return [2, "test", 1, 42];
+                    }
+                }),
+                [2, 42]
+            );
+        });
+
         QUnit.test("'aggregationMatcher' should return a matcher that apply given matcher to given aggregation items", function(assert) {
             var fnAggregationMatcher = OpaBuilder.Matchers.aggregationMatcher("items", function(vItem) {
                 return vItem % 2 === 0;

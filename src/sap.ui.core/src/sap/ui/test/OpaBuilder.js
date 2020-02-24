@@ -964,6 +964,24 @@ sap.ui.define(
             },
 
             /**
+             * Creates a matcher function that returns all aggregation items fulfilling given matcher(s).
+             * The result will always be an array, even if it is a non-multiple aggregation.
+             *
+             * @param {string} sAggregationName the aggregation name
+             * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+             *                [vMatchers] the matchers to filter aggregation items
+             * @returns {function} matcher function returning all matching aggregation items
+             * @public
+             * @static
+             */
+            aggregation: function (sAggregationName, vMatchers) {
+                var fnFilter = OpaBuilder.Matchers.filter(vMatchers);
+                return function (oControl) {
+                    return fnFilter(_getAggregation(oControl, sAggregationName));
+                };
+            },
+
+            /**
              * Checks whether at least one aggregation item fulfills given matcher(s).
              *
              * @param {string} sAggregationName the aggregation name
@@ -974,9 +992,9 @@ sap.ui.define(
              * @static
              */
             aggregationMatcher: function (sAggregationName, vMatchers) {
-                var fnFilter = OpaBuilder.Matchers.filter(vMatchers);
+                var fnAggregation = OpaBuilder.Matchers.aggregation(sAggregationName, vMatchers);
                 return function (oControl) {
-                    return fnFilter(_getAggregation(oControl, sAggregationName)).length > 0;
+                    return fnAggregation(oControl).length > 0;
                 };
             },
 
