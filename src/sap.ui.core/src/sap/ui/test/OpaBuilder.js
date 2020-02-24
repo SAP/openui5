@@ -82,7 +82,7 @@ sap.ui.define(
             }, []);
         }
 
-        function _pushToArray(vElement, vTarget) {
+        function _pushToArray(vElement, vTarget, bAtTheBeginning) {
             if (vTarget === undefined) {
                 vTarget = [];
             } else if (!Array.isArray(vTarget)) {
@@ -92,9 +92,13 @@ sap.ui.define(
             }
 
             if (Array.isArray(vElement)) {
-                vTarget = vTarget.concat(vElement);
+                vTarget = bAtTheBeginning ? vElement.slice(0).concat(vTarget) : vTarget.concat(vElement);
             } else if (vElement !== undefined) {
-                vTarget.push(vElement);
+                if (bAtTheBeginning) {
+                    vTarget.unshift(vElement);
+                } else {
+                    vTarget.push(vElement);
+                }
             }
             return vTarget;
         }
@@ -671,7 +675,7 @@ sap.ui.define(
                     var oParentOptions = this.build(),
                         oChildOptions = vChildBuilder.build();
                     oChildOptions.searchOpenDialogs = oParentOptions.searchOpenDialogs;
-                    oChildOptions.matchers = _pushToArray(OpaBuilder.Matchers.ancestor(oControl, bDirect), oChildOptions.matchers);
+                    oChildOptions.matchers = _pushToArray(OpaBuilder.Matchers.ancestor(oControl, bDirect), oChildOptions.matchers, true);
                     return vChildBuilder._getOpaInstance().waitFor(oChildOptions);
                 }.bind(this)
             );
