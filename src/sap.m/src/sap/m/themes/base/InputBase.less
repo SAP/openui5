@@ -13,6 +13,8 @@
 @_sap_m_InputBase_IconMinWidth: 2.375rem;
 @_sap_m_InputBaseWrapper_Sum_Border: 0.125rem;
 @_sap_m_InputBase_InnerMinWidth_Compact: 2rem;
+@_sap_m_InputBase_Compact_InnerPadding: 0 0.5rem;
+@_sap_m_InputBase_Compact_Height: 1.625rem;
 
 /*MIN-WIDTH variables*/
 /* rounding values to 2 symbols, because of IE and Edge */
@@ -320,15 +322,15 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 .sapUiSizeCompact {
 	.sapMInputBase {
 		line-height: 1rem;
-		height: 1.625rem;
+		height: @_sap_m_InputBase_Compact_Height;
 	}
 
 	.sapMInputBaseContentWrapper {
-		height: 1.625rem;
+		height: @_sap_m_InputBase_Compact_Height;
 	}
 
 	.sapMInputBaseInner {
-		padding: 0 0.5rem;
+		padding: @_sap_m_InputBase_Compact_InnerPadding;
 		min-width: @_sap_m_InputBase_InnerMinWidth_Compact;
 	}
 
