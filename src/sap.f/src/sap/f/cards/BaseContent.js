@@ -4,13 +4,9 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/Log",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/Core",
-	"sap/f/cards/CardActions",
-	"./BindingHelper",
 	"sap/f/cards/loading/LoadingProvider"
-], function (Control, JSONModel, Log, ManagedObjectObserver, Core, CardActions, BindingHelper, LoadingProvider) {
+], function (Control, JSONModel, ManagedObjectObserver, LoadingProvider) {
 	"use strict";
 
 	/**
@@ -104,7 +100,6 @@ sap.ui.define([
 			this.fireEvent("_ready");
 		}.bind(this));
 
-		this._oActions = new CardActions();
 		this._oLoadingProvider = new LoadingProvider();
 	};
 
@@ -142,6 +137,10 @@ sap.ui.define([
 
 	BaseContent.prototype.getActions = function () {
 		return this._oActions;
+	};
+
+	BaseContent.prototype.setActions = function (oActions) {
+		this._oActions = oActions;
 	};
 
 	/**
@@ -353,77 +352,6 @@ sap.ui.define([
 	BaseContent.prototype.setDataProviderFactory = function (oDataProviderFactory) {
 		this._oDataProviderFactory = oDataProviderFactory;
 		return this;
-	};
-
-	BaseContent.create = function (sType, oConfiguration, oServiceManager, oDataProviderFactory, sAppId) {
-		return new Promise(function (resolve, reject) {
-			var fnCreateContentInstance = function (Content) {
-				var oContent = new Content();
-				oContent._sAppId = sAppId;
-				oContent.setServiceManager(oServiceManager);
-				oContent.setDataProviderFactory(oDataProviderFactory);
-
-				if (sType.toLowerCase() !== "adaptivecard") {
-					oContent.setConfiguration(BindingHelper.createBindingInfos(oConfiguration), sType);
-				} else {
-					oContent.setConfiguration(oConfiguration);
-				}
-
-				resolve(oContent);
-			};
-
-			try {
-				switch (sType.toLowerCase()) {
-					case "list":
-						sap.ui.require(["sap/f/cards/ListContent"], fnCreateContentInstance);
-						break;
-					case "calendar":
-						sap.ui.require(["sap/f/cards/CalendarContent"], fnCreateContentInstance);
-						break;
-					case "table":
-						sap.ui.require(["sap/f/cards/TableContent"], fnCreateContentInstance);
-						break;
-					case "object":
-						sap.ui.require(["sap/f/cards/ObjectContent"], fnCreateContentInstance);
-						break;
-					case "analytical":
-						Core.loadLibrary("sap.viz", {
-								async: true
-							})
-							.then(function () {
-								sap.ui.require(["sap/f/cards/AnalyticalContent"], fnCreateContentInstance);
-							})
-							.catch(function () {
-								reject("Analytical content type is not available with this distribution.");
-							});
-						break;
-					case "analyticscloud":
-						sap.ui.require(["sap/f/cards/AnalyticsCloudContent"], fnCreateContentInstance);
-						break;
-					case "timeline":
-						Core.loadLibrary("sap.suite.ui.commons", {
-								async: true
-							})
-							.then(function() {
-								sap.ui.require(["sap/f/cards/TimelineContent"], fnCreateContentInstance);
-							})
-							.catch(function () {
-								reject("Timeline content type is not available with this distribution.");
-							});
-						break;
-					case "component":
-						sap.ui.require(["sap/f/cards/ComponentContent"], fnCreateContentInstance);
-						break;
-					case "adaptivecard":
-						sap.ui.require(["sap/f/cards/AdaptiveContent"], fnCreateContentInstance);
-						break;
-					default:
-						reject(sType.toUpperCase() + " content type is not supported.");
-				}
-			} catch (sError) {
-				reject(sError);
-			}
-		});
 	};
 
 	BaseContent.getMinHeight = function (sType, oConfiguration, oContent) {

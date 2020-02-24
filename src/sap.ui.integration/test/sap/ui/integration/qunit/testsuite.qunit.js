@@ -153,12 +153,12 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/util/CardActions",
 						"sap/ui/integration/util/CardManifest",
 						"sap/ui/integration/util/ServiceManager",
 						"sap/ui/integration/customElements/",
 						"sap/f/cards/CalendarCard",
 						"sap/f/cards/AdaptiveCard",
-						"sap/f/cards/CardActions",
 						"sap/f/cards/AnalyticalContent",
 						"sap/f/cards/BindingHelper",
 						"sap/f/cards/BindingResolver",
