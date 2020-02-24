@@ -253,7 +253,7 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
-			ExploredSamples: {
+			ExploredSamples1: {
 				title: "Test Page for 'Explored' samples from sap.m",
 				loader: {
 					map: {
@@ -275,8 +275,94 @@ sap.ui.define([
 				},
 				ui5: {
 					libs: "sap.ui.layout,sap.m,sap.ui.documentation",
-					"xx-componentPreload": "off"
+					"xx-componentPreload": "off",
+					modulus: [0,4]
 				},
+				module: "./ExploredSamples.qunit",
+				autostart: false
+			},
+			ExploredSamples2: {
+				title: "Test Page for 'Explored' samples from sap.m",
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					},
+					paths: {
+						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+					}
+				},
+				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				ui5: {
+					libs: "sap.ui.layout,sap.m,sap.ui.documentation",
+					"xx-componentPreload": "off",
+					modulus: [1, 4]
+				},
+				module: "./ExploredSamples.qunit",
+				autostart: false
+			},
+			ExploredSamples3: {
+				title: "Test Page for 'Explored' samples from sap.m",
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					},
+					paths: {
+						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+					}
+				},
+				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				ui5: {
+					libs: "sap.ui.layout,sap.m,sap.ui.documentation",
+					"xx-componentPreload": "off",
+					modulus: [2, 4]
+				},
+				module: "./ExploredSamples.qunit",
+				autostart: false
+			},
+			ExploredSamples4: {
+				title: "Test Page for 'Explored' samples from sap.m",
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					},
+					paths: {
+						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+					}
+				},
+				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				ui5: {
+					libs: "sap.ui.layout,sap.m,sap.ui.documentation",
+					"xx-componentPreload": "off",
+					modulus: [3, 4]
+				},
+				module: "./ExploredSamples.qunit",
 				autostart: false
 			},
 			FacetFilter: {
