@@ -77,7 +77,6 @@ sap.ui.define([
 					idIsLocal: false
 				}
 			});
-
 			this.mChangesMap = getInitialChangesMap({
 				mChanges: {
 					controlId1: [this.oChange1, this.oChange2, this.oChange3, this.oChange4]
@@ -202,6 +201,98 @@ sap.ui.define([
 
 			DependencyHandler.addChangeAndUpdateDependencies(this.oChange4, this.oAppComponent, mChangesMap);
 			assert.deepEqual(mChangesMap, this.mChangesMap, "the map was updated correctly");
+		});
+
+		QUnit.test("addChangeAndUpdateDependencies with some changes without selector id: when the changes are added to the map", function(assert) {
+			var mChangesMap = getInitialChangesMap();
+			var mExpectedChangesMap = getInitialChangesMap({
+				mChanges: {
+					controlId1: [this.oChange1]
+				},
+				aChanges: [this.oChange1],
+				mDependencies: {
+					fileNameChange1: {
+						changeObject: this.oChange1,
+						dependencies: [],
+						dependentIds: [],
+						controlsDependencies: ["controlId1", "controlId2"]
+					}
+				},
+				mControlsWithDependencies: {
+					controlId1: ["fileNameChange1"],
+					controlId2: ["fileNameChange1"]
+				}
+			});
+			//Remove selector id from change2 and change4
+			this.oChange2.setSelector({});
+			this.oChange4.setSelector({});
+			DependencyHandler.addChangeAndUpdateDependencies(this.oChange1, this.oAppComponent, mChangesMap);
+			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the map was updated correctly");
+
+			DependencyHandler.addChangeAndUpdateDependencies(this.oChange2, this.oAppComponent, mChangesMap);
+			// change2 is only added into aChanges
+			mExpectedChangesMap.aChanges.push(this.oChange2);
+			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the map was updated correctly");
+
+			DependencyHandler.addChangeAndUpdateDependencies(this.oChange3, this.oAppComponent, mChangesMap);
+			mExpectedChangesMap.mChanges.controlId1.push(this.oChange3);
+			mExpectedChangesMap.aChanges.push(this.oChange3);
+			mExpectedChangesMap.mDependencies.fileNameChange3 = {
+				changeObject: this.oChange3,
+				controlsDependencies: ["controlId1", "controlId2", "controlId3"],
+				dependencies: ["fileNameChange1"],
+				dependentIds: ["controlId1"]
+			};
+			mExpectedChangesMap.mDependentChangesOnMe.fileNameChange1 = ["fileNameChange3"];
+			mExpectedChangesMap.mControlsWithDependencies.controlId2.push("fileNameChange3");
+			mExpectedChangesMap.mControlsWithDependencies.controlId1.push("fileNameChange3");
+			mExpectedChangesMap.mControlsWithDependencies.controlId3 = ["fileNameChange3"];
+			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the map was updated correctly");
+
+			DependencyHandler.addChangeAndUpdateDependencies(this.oChange4, this.oAppComponent, mChangesMap);
+			// change4 is only added into aChanges
+			mExpectedChangesMap.aChanges.push(this.oChange4);
+			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the map was updated correctly");
+
+			//Add selector id to change4 and update dependencies
+			this.oChange4.setSelector({
+				id: "controlId1",
+				idIsLocal: false
+			});
+			DependencyHandler.addChangeAndUpdateDependencies(this.oChange4, this.oAppComponent, mChangesMap);
+			mExpectedChangesMap.mChanges.controlId1.push(this.oChange4); //Only now change4 is added to selector list
+			//And its dependencies created
+			mExpectedChangesMap.mDependencies.fileNameChange4 = {
+				changeObject: this.oChange4,
+				controlsDependencies: ["controlId1"],
+				dependencies: ["fileNameChange3"],
+				dependentIds: ["controlId1"]
+			};
+			mExpectedChangesMap.mDependentChangesOnMe.fileNameChange3 = ["fileNameChange4"];
+			mExpectedChangesMap.mControlsWithDependencies.controlId1.push("fileNameChange4");
+			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the map was updated correctly");
+
+			//Add selector id to change2 and update dependencies
+			this.oChange2.setSelector({
+				id: "controlId1",
+				idIsLocal: false
+			});
+			DependencyHandler.addChangeAndUpdateDependencies(this.oChange2, this.oAppComponent, mChangesMap);
+			mExpectedChangesMap.mChanges.controlId1.push(this.oChange2); //Only now change2 is added to selector list
+			//And its dependencies created
+			mExpectedChangesMap.mDependencies.fileNameChange2 = {
+				changeObject: this.oChange2,
+				controlsDependencies: ["controlId1"],
+				dependencies: ["fileNameChange1"],
+				dependentIds: ["controlId1"]
+			};
+			mExpectedChangesMap.mDependencies.fileNameChange3.dependencies.push("fileNameChange2");
+			mExpectedChangesMap.mDependencies.fileNameChange4.dependencies.push("fileNameChange2");
+
+			mExpectedChangesMap.mDependentChangesOnMe.fileNameChange1.push("fileNameChange2");
+			mExpectedChangesMap.mDependentChangesOnMe.fileNameChange2 = ["fileNameChange4", "fileNameChange3"];
+			mExpectedChangesMap.mControlsWithDependencies.controlId1.push("fileNameChange2");
+			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the map was updated correctly");
 		});
 
 		QUnit.test("addChangeAndUpdateDependencies: selectors with idIsLocal missing", function(assert) {
