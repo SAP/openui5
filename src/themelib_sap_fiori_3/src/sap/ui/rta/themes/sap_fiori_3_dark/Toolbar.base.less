@@ -1,41 +1,32 @@
 /******************************************************************
 	Style of the RTA Toolbar (all types) - sap_fiori_3_dark Theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG : lighten(saturate(@sapPrimary2, 40%), 42%);	//#CAE4FB
-@_sap_ui_rta_Toolbar_Base_TextColor : @sapUiWhite;										// #fff
-@_sap_ui_rta_Toolbar_Base_BaseColor : @sapPrimary1;										//#3f5161;
-@_sap_ui_rta_Toolbar_Base_BtnHover : fade(lighten(@sapPrimary1, 18%), 50%);				//rgba(99, 127, 153, 0.5)
+@_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG:  @sapUiSelected;
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiWhite; //#fff
+@_sap_ui_rta_Toolbar_Base_BaseColor: @sapPrimary1; //#3f5161;
+@_sap_ui_rta_Toolbar_Base_BtnHover: fade(lighten(@sapPrimary1, 18%), 50%); //rgba(99, 127, 153, 0.5)
 
-.sapUiRtaToolbar {
-	height: 44px;
-	background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
-	.sapMBtn {
-		&.sapMBtnDisabled .sapMBtnInner{
-			opacity: 1.0;
+.sapUiRtaMode {
+
+	.sapUiRtaToolbar {
+		.sapMBtn {
+			&.sapMBtnDisabled .sapMBtnInner {
+				opacity: 1.0;
+			}
 		}
-		&:hover > .sapMBtnTransparent.sapMBtnHoverable{
-			background-color: @_sap_ui_rta_Toolbar_Base_BtnHover;
-			border-color: @_sap_ui_rta_Toolbar_Base_BtnHover;
+
+		.sapMSegBBtn.sapMSegBBtnFocusable {
+			&:hover .sapMSegBBtnInner,
+			&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
+				color: @_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG;
+				&:after {
+					border-bottom: 0.125rem solid @_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG; //2px
+				}
+			}
 		}
 	}
-
-	.sapMSegBBtn.sapMSegBBtnFocusable {
-		&:hover .sapMSegBBtnInner,
-		&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
-			background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
-		}
-	}
-}
-
-html.sap-desktop .sapUiRtaToolbar .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover .sapMSegBBtnInner,
-html.sap-desktop .sapUiRtaToolbar .sapMSegBBtnFocusable.sapMBtnActive:hover .sapMSegBBtnInner {
-	background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
-}
-
-html.sap-desktop .sapUiRtaToolbar .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner {
-	outline-offset: -1px;
 }
 
 .sapUiSizeCozy .sapUiRtaToolbar .sapMSegB .sapMSegBBtn .sapMSegBBtnInner {
-	line-height: 2rem;
+	line-height: 2rem; //32px
 }

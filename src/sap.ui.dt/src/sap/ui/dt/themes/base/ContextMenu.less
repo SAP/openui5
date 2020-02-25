@@ -1,8 +1,8 @@
 /******************************************************************
 	Style of the DT Contextmenu - base Theme
 *******************************************************************/
-@_sap_ui_dt_ContextMenu_BoxShadow: @sapUiUx3ToolPopupShadow;			// 0px 6px 12px 0px fade(black, 30);
-@_sap_ui_dt_ContextMenu_FocusColor: @sapUiWhite;						// #fff
+@_sap_ui_dt_ContextMenu_BoxShadow: @sapUiUx3ToolPopupShadow; //0px 6px 12px 0px fade(black, 30);
+@_sap_ui_dt_ContextMenu_FocusColor: @sapUiContentFocusColor; //#000
 
 .sapUiDtContextMenu {
 
@@ -12,6 +12,21 @@
 
 	.sapMBtnInner {
 		text-align: left;
+		text-shadow: none;
+	}
+	.sapMBtn {
+		padding-left: 0.0625rem; //1px
+		padding-right: 0.0625rem; //1px
+	}
+
+	.sapMBtn:focus > .sapMFocusable,
+	&.sapMBtn:focus > .sapMFocusable {
+		border: 0.0625rem dotted @_sap_ui_dt_ContextMenu_FocusColor; //1px
+		outline: none;
+	}
+
+	.sapMBtn.sapMBtnDisabled {
+		opacity: 0.5;
 	}
 
 	&.sapMPopover, .sapMPopover {
@@ -19,7 +34,7 @@
 		min-width: 0;
 		transition: box-shadow .25s;
 		box-shadow: @_sap_ui_dt_ContextMenu_BoxShadow;
-		padding: 0.2rem;
+		padding: 0.1875rem; //3px
 
 		&.sapUiDtContextMenuVisible {
 			opacity: 1;
@@ -27,47 +42,51 @@
 	}
 
 	&.sapMPopoverArr, .sapMPopoverArr {
-		bottom: -9px;
-		left: 13px!important;
+		bottom: -0.5rem; //8px
+		left: 0.75rem !important; //12px
 
 		&:after {
 			box-shadow: none;
-			width: 0.7rem;
-			height: 0.7rem;
+			width: 0.75rem; //12px
+			height: 0.75rem; //12px
 		}
 
 		&.sapMPopoverArrUp {
-			top: -9px;
+			top: -0.5rem; //8px
 		}
 	}
-	&.sapUiDtContextMenuRightArrow{
+
+	&.sapUiDtContextMenuRightArrow {
 		&.sapMPopoverArr, .sapMPopoverArr {
-			left: unset!important;
-			right: 13px!important;
+			left: unset !important;
+			right: 0.75rem !important; //12px
 		}
 	}
 }
 
-.sapUiSizeCozy .sapUiDtContextMenu.sapUiDtContextMenuRightArrow{
-	&.sapMPopoverArr, .sapMPopoverArr {
-		left: unset!important;
-		right: 16px!important;
+.sapUiSizeCozy {
+
+	.sapUiDtContextMenu {
+
+		&.sapMPopoverArr, .sapMPopoverArr {
+			left: 1.375rem !important; //16px
+		}
+		.sapMBtn {
+			margin-left: 0.125rem; //2px
+			margin-right: 0.125rem; //2px
+		}
+		&.sapUiDtContextMenuRightArrow {
+			&.sapMPopoverArr, .sapMPopoverArr {
+				left: unset !important;
+				right: 1.375rem !important; //16px
+			}
+		}
 	}
+
 }
 
-.sapUiSizeCozy .sapUiDtContextMenu{
-	&.sapMPopoverArr, .sapMPopoverArr {
-		left: 16px !important;
-	}
-}
-
-html.sap-desktop .sapUiDtContextMenu .sapMBtn:focus > .sapMFocusable,
-html.sap-desktop .sapUiDtContextMenu.sapMBtn:focus > .sapMFocusable {
-	border: 1px dotted @_sap_ui_dt_ContextMenu_FocusColor;
-	outline: none;
-}
-
-.sapUiSizeCompact .sapUiDtContextMenu .sapMBtn {
-	padding-left: 1px;
-	padding-right: 1px;
+// Special handling for IE and EDGE Browsers
+html[data-sap-ui-browser^="ie"] .sapUiDtContextMenu .sapMBtn:focus .sapMBtnFocusDiv,
+html[data-sap-ui-browser^="ed"] .sapUiDtContextMenu .sapMBtn:focus .sapMBtnFocusDiv {
+	border: none;
 }

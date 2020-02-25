@@ -1,44 +1,45 @@
 /******************************************************************
 	Style of the RTA Toolbar (type: adaptation) - base Theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Adaptation_BaseColor : darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%); //435060
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%); //435060
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiWhite; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_VersionLabelColor: @sapAccentColor1; //#5f5800
+.sapUiRtaMode {
 
-.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
-	.sapMFlexBox {
-		margin-left: 0;
-		margin-right: 0;
-		height: inherit;
-		background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
-	}
+	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+		border: 0.125rem solid @_sap_ui_rta_Toolbar_Adaptation_TextColor; //2px
+		border-image: repeating-linear-gradient(-45deg, @_sap_ui_rta_Toolbar_Adaptation_BaseColor, @_sap_ui_rta_Toolbar_Adaptation_BaseColor 4px, @_sap_ui_rta_Toolbar_Adaptation_TextColor 4px, @_sap_ui_rta_Toolbar_Adaptation_TextColor 6px) 4;
+		box-shadow: 0 10px 20px fade(black, 19), 0 6px 6px fade(black, 23), 0 0 0 1px fade(white, 20), 0 1px 0 0 fade(white, 20);
+		.sapMFlexBox {
+			margin-left: 0;
+			margin-right: 0;
+			height: 2.5rem; //40px
+			background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+		}
 
-	.sapMHBox.sapMFlexBox:first-child.sapMTBShrinkItem {
-		min-width: 0; /* Overrider '.sapMTBShrinkItem' */
-	}
+		.sapMHBox.sapMFlexBox:first-child.sapMTBShrinkItem {
+			min-width: 0; /* Overrider '.sapMTBShrinkItem' */
+		}
 
-	.sapMHBox.sapMFlexBox:last-child {
-		.sapMFlexItem:first-child {
-			.sapMTB {
-				border-bottom: none;
-				height: 48px;
-				background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
-			}
-
-			.sapMSegB {
-				margin-left: 0;
+		.sapMHBox.sapMFlexBox:last-child {
+			.sapMFlexItem:first-child {
+				.sapMSegB {
+					margin-left: 0;
+				}
 			}
 		}
-	}
 
-	// Disable the right margin for Exit button
-	>.sapMFlexItem:last-child {
-		>.sapMFlexItem:last-child {
-			.sapMBtn:last-child {
-				margin-right: 0;
+		// Disable the right margin for Exit button
+		> .sapMFlexItem:last-child {
+			> .sapMFlexItem:last-child {
+				.sapMBtn:last-child {
+					margin-right: 0;
+				}
 			}
 		}
 	}
 }
-
+.sapUiRtaToolbarSwitcherSection .sapMSegBBtn.sapMSegBBtnSel .sapMSegBBtnInner .sapUiIcon,
 .sapUiRtaToolbarSwitcherSection .sapMSegBBtn .sapUiIcon {
 	color: @_sap_ui_rta_Toolbar_Base_TextColor;
 }
@@ -48,7 +49,7 @@
 }
 
 .sapUiRtaVersionLabel.sapUiRtaVersionAccent1 {
-	color: @sapUiAccent1;
+	color: @_sap_ui_rta_Toolbar_Adaptation_VersionLabelColor;
 }
 
 .sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaVersionLabel,

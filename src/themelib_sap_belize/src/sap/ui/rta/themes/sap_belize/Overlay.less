@@ -1,24 +1,10 @@
 /******************************************************************
 	Style of the RTA Overlays - sap_belize Theme
 *******************************************************************/
-@_sap_ui_rta_Overlay_BaseBG : @sapBackgroundColor;			//#fafafa
-@_sap_ui_rta_Overlay_BaseColor : darken(@sapPrimary1,8);	//#2F3C48
-@_sap_ui_rta_Overlay_Base_PlaceholderBG : @sapPrimary3;		//#eff4f9
+@_sap_ui_rta_Overlay_BaseBG: @sapBackgroundColor; //#fafafa
+@_sap_ui_rta_Overlay_BaseColor: darken(@sapPrimary1,8); //#2F3C48
+@_sap_ui_rta_Overlay_Base_PlaceholderBG: @sapPrimary3; //#eff4f9
 
-.sapUiRta {
-	.sapUiDtOverlayDropZone {
-		> .sapUiDtOverlayChildren {
-			> .sapUiDtOverlayMovable {
-				background: inherit;
-			}
-
-			> .sapUiRtaOverlayPlaceholder {
-				background: @_sap_ui_rta_Overlay_Base_PlaceholderBG !important;
-				// all descendants
-				* {
-					background: @_sap_ui_rta_Overlay_Base_PlaceholderBG;
-				}
-			}
-		}
-	}
+.sapUiRta .sapUiDtOverlayDropZone>.sapUiDtOverlayChildren>.sapUiDtOverlayMovable {
+	background: inherit;
 }

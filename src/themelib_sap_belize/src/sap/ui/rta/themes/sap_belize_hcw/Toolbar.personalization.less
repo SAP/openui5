@@ -1,8 +1,14 @@
 /****************************************************************************
 	Style of the RTA Toolbar (type: personalization) - sap_belize_hcw Theme
 *****************************************************************************/
-@_sap_ui_rta_Toolbar_Personalization_BaseColor: @sapUiWhite;	// #ffffff
+@_sap_ui_rta_Toolbar_Personalization_BaseColor: @sapUiWhite; //#ffffff
+@_sap_ui_rta_Toolbar_Personalization_TextColor: @sapUiBlackBG; //#000
 
 .sapUiRtaToolbar.type_personalization {
-	border-top: @sapHC_StandardForeground 1px solid;
+	border-top: @sapHC_StandardForeground 0.0625rem solid; //1px
+	.sapMBtn .sapMBtnTransparent.sapMBtnInner .sapMBtnContent {
+		color: @_sap_ui_rta_Toolbar_Personalization_TextColor;
+		font-weight: bold;
+		text-shadow: none;
+	}
 }

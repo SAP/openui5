@@ -1,93 +1,95 @@
 /******************************************************************
-	Style of the RTA FieldRepository  - base Theme
+	Style of the RTA Add Fields Dialog  - base Theme
 *******************************************************************/
+@sap_ui_rta_FieldRepository_ButtonHover: @sapUiBlackBG;	//#000000
+@sap_ui_rta_FieldRepository_ListSelect: darken(@sapList_Active_TextColor, 10%); //#e6e6e6
+@sap_ui_rta_FieldRepository_ListHoverBG: @sapUiListSelectionHoverBackground; //#dde8f1
+@sap_ui_rta_FieldRepository_ListHoverText: @sapList_TextColor; //#333333
+@sap_ui_rta_FieldRepository_BC_Container_Border: @sapUiGroupTitleBorderColor; //#000000
 
 .sap-desktop.sapUiBLyBackOverride {
-	overflow: auto!important;
+	overflow: auto !important;
 }
 
-.sapUIRtaFieldRepositoryDialog .sapMDialogTitle {
-	font-size: 16px;
-	font-weight: normal;
+.sapUIRtaFieldRepositoryDialog {
+
+	&.sapMDialog > header.sapMDialogTitle .sapMTitle {
+		color: @sap_ui_rta_FieldRepository_ButtonHover;
+	}
+
+	.sapMDialogTitle {
+		font-size: 16px;
+		font-weight: normal;
+	}
+
+	.sapMBtn {
+		> .sapMBtnInner {
+			/* Sort Button */
+			border: none;
+		}
+		&:focus {
+			> .sapMBtnInner {
+				outline: 0.0625rem dotted @sap_ui_rta_FieldRepository_ButtonHover; //1px
+			}
+		}
+	}
+
+	.sapMList {
+		.sapMListUl {
+			.sapMCLI {
+				padding-left: 0.625rem; //10px
+			}
+		}
+	}
+
+	.sapUIRtaListItem {
+		font-size: 0;
+
+		> .sapMLIBSelectM {
+			width: 2rem; //32px
+			margin-right: 0.3125rem; //5px
+		}
+	}
+
+	.sapUIRtaBusinessContextContainer {
+		width: 100%;
+		margin-top: 0.25rem; //4px
+		padding-bottom: 0.25rem; //4px
+		border-bottom: 0.0625rem solid @sap_ui_rta_FieldRepository_BC_Container_Border; //1px
+
+		> div:not(:first-child) {
+			padding-left: 2.125rem; //34px
+			padding-right: 0.625rem; //10px
+		}
+
+		> div {
+			padding-left: 0.625rem; //10px
+		}
+	}
+
+	.sapUIRtaCCDialogScrollContainer {
+		height: 400px !important;
+		width: 100% !important;
+	}
+
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus {
+		> .sapMCbBg {
+			outline: none;
+		}
+	}
+
+	.sapMLIBHoverable {
+		&.sapMLIBSelected:hover {
+			background: @sap_ui_rta_FieldRepository_ListHoverBG;
+			color: @sap_ui_rta_FieldRepository_ListHoverText;
+		}
+	}
+
+	.sapMLIB.sapMLIBSelected {
+		border-color: transparent;
+	}
 }
 
-.sapUIRtaFieldRepositoryDialog .sapUiTable > div.sapUiTableCnt {
-	border-left: 0px;
-	border-right: 0px;
-}
-.sapUIRtaFieldRepositoryDialog .sapUiDlgFooter {
-	height: 60px;
-}
-
-/* Sort Button */
-.sapUIRtaFieldRepositoryDialog .sapMBtn>.sapMBtnInner{
-	border: none;
-}
-
-/* Footer Button */
-.sapUIRtaFieldRepositoryDialog .sapUiDlgFooter .sapMBtnInner {
-	background-color: transparent;
-	background: none;
-	border: none;
-	text-shadow: none;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUiTableColHdrTr > td, .sapUIRtaFieldRepositoryDialog .sapUiTableTr > td {
-	border: none;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUiTableColHdrTr > td, .sapUIRtaFieldRepositoryDialog .sapUiTableTr > td {
-	border: none;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUiLblIco {
-	font-size: 1.2rem;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUIRtaValueCell {
-	height: 18px;
-	width: 300px;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUIRtaCCDialogScrollContainer{
-	height: 400px !important;
-	width: 100% !important;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapMList .sapMListUl .sapMCLI {
-	padding-left: 10px;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUIRtaListItem > .sapMLIBSelectM {
-	width: 2rem;
-	margin-right: 5px;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUIRtaBusinessContextContainer{
-	width: 100%;
-	margin-top: 4px;
-	padding-bottom: 4px;
-	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUIRtaListItem {
-	font-size: 0;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUIRtaBusinessContextContainer > div:not(:first-child) {
-	padding-left: 35px;
-	padding-right: 10px;
-}
-.sapUIRtaFieldRepositoryDialog .sapUIRtaBusinessContextContainer > div {
-	padding-left: 10px;
-}
-
-html.sap-desktop .sapUIRtaFieldRepositoryDialog .sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
-	outline: none;
-}
-
-// Special handling for IE Browsers
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUIRtaFieldRepositoryDialog .sapMBtn {
-	padding-right: 1px;
-	padding-left: 1px;
+.sapUiRtaMode .sapUIRtaFieldRepositoryDialog .sapMBtn:hover>.sapMBtnHoverable {
+	outline: 0.0625rem solid @sap_ui_rta_FieldRepository_ButtonHover //1px
 }

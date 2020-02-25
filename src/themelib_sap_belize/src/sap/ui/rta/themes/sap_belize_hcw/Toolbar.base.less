@@ -1,58 +1,72 @@
 /******************************************************************
 	Style of the RTA Toolbar (all types) - belize_hcw Theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Base_BaseColor : @sapUiWhite;	// #ffffff
-@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiBlackBG;	// #000000
+@_sap_ui_rta_Toolbar_Base_BaseColor: @sapUiWhite; //#ffffff
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiBlackBG; //#000000
 
+.sapUiRtaMode {
 
-.sapUiRtaToolbar {
-
-	.sapMSegBBtn.sapMSegBBtnFocusable {
-
-		&:hover .sapMSegBBtnInner,
-		&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
-			background-color: @sapHC_HighlightBackground;
-			color: @_sap_ui_rta_Toolbar_Base_TextColor;
-		}
-
-		&.sapMSegBBtnSel:hover .sapMSegBBtnInner::after{
-			border-bottom: 2px solid @_sap_ui_rta_Toolbar_Base_TextColor;
-		}
-		&:focus .sapMSegBBtnInner{
-			outline: 2px dotted @_sap_ui_rta_Toolbar_Base_TextColor;
-			outline-offset: -1px;
-		}
-	}
-
-	.sapMSegBBtnFocusable.sapMBtnActive:hover {
-		.sapMSegBBtnInner {
-			background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
-		}
-		& .sapMSegBBtnInner::after {
-			border-bottom: 2px solid @_sap_ui_rta_Toolbar_Base_TextColor;
-		}
-	}
-
-	.sapMSegB .sapMSegBBtn.sapMSegBtnLastVisibleButton:not(.sapMSegBBtnDis) .sapMSegBBtnInner {
-		border-right: none;
-	}
-
-	.sapMSegBBtnFocusable:active + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner,
-	.sapMSegBBtnFocusable:focus + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner {
-		border-left: none;
-	}
-}
-
-.sapUiSizeCozy {
 	.sapUiRtaToolbar {
+
 		.sapMSegBBtn.sapMSegBBtnFocusable {
+
+			&:hover .sapMSegBBtnInner,
+			&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
+				background-color: @sapHC_HighlightBackground;
+				color: @_sap_ui_rta_Toolbar_Base_TextColor;
+			}
+
+			&.sapMSegBBtnSel:hover .sapMSegBBtnInner::after {
+				border-bottom: 0.125rem solid @_sap_ui_rta_Toolbar_Base_TextColor; //2px
+			}
+
 			&:focus .sapMSegBBtnInner {
-				outline-offset: -2px;
+				outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Base_TextColor; //2px
+				outline-offset: -0.0625rem; //1px
+			}
+		}
+
+		.sapMSegBBtnFocusable.sapMBtnActive:hover {
+			.sapMSegBBtnInner {
+				background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
+			}
+
+			& .sapMSegBBtnInner::after {
+				border-bottom: 0.125rem solid @_sap_ui_rta_Toolbar_Base_TextColor; //2px
+			}
+		}
+
+		.sapMSegB .sapMSegBBtn.sapMSegBtnLastVisibleButton:not(.sapMSegBBtnDis) .sapMSegBBtnInner {
+			border-right: none;
+		}
+
+		.sapMSegBBtnFocusable:active + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner,
+		.sapMSegBBtnFocusable:focus + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner {
+			border-left: none;
+		}
+		.sapMBtn:focus > .sapMFocusable {
+			outline: 0.125rem dotted @sapUiBlackBG; //2px
+			border-color: transparent;
+		}
+		.sapUiRtaToolbarSwitcherSection {
+			.sapMSegBBtn:hover {
+				.sapUiIcon,
+				&.sapMSegBBtnSel .sapMSegBBtnInner .sapUiIcon {
+					color: @_sap_ui_rta_Toolbar_Base_TextColor;
+				}
 			}
 		}
 	}
 }
 
-html.sap-desktop .sapUiRtaMode .sapUiRtaToolbar .sapMBtn:focus > .sapMFocusable {
-	outline: 0.125rem dotted @sapUiBlackBG;
+.sapUiSizeCozy{
+	.sapUiRtaToolbar {
+		.sapMSegBBtn.sapMSegBBtnFocusable {
+			&:focus {
+				.sapMSegBBtnInner {
+					outline-offset: -0.25rem; //4px
+				}
+			}
+		}
+	}
 }

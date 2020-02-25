@@ -1,10 +1,10 @@
 /******************************************************************
 	Style of the DT Overlays - base Theme
 *******************************************************************/
-@_sap_ui_dt_Overlay_FocusColor : @sapUiContentFocusColor;		//#000
-@_sap_ui_dt_Overlay_TargetZoneColor : @sapUiSelected;			//#2e9cea
-@_sap_ui_dt_Overlay_SelectionColor : lighten(@sapUiBlue,10);	//#3333ff
-@_sap_ui_dt_Overlay_CuttedColor : @sapUiWhite;					//#fff
+@_sap_ui_dt_Overlay_FocusColor : @sapUiContentFocusColor; //#000
+@_sap_ui_dt_Overlay_TargetZoneColor : @sapUiSelected; //#2e9cea
+@_sap_ui_dt_Overlay_SelectionColor : lighten(@sapUiBlue,10); //#3333ff
+@_sap_ui_dt_Overlay_CuttedColor : @sapUiWhite; //#fff
 
 #overlay-container {
 	position: absolute;
@@ -39,7 +39,7 @@
 	&:focus {
 		&:before {
 			content: " ";
-			border: 1px dotted @_sap_ui_dt_Overlay_FocusColor;
+			border: 0.0625rem dotted @_sap_ui_dt_Overlay_FocusColor; //1px
 		}
 	}
 }
@@ -58,16 +58,16 @@
 .sapUiDtOverlayTargetZone {
 	&:after {
 		content: " ";
-		outline: 2px dashed @_sap_ui_dt_Overlay_TargetZoneColor;
-		outline-offset: -2px;
+		outline: 0.125rem dashed @_sap_ui_dt_Overlay_TargetZoneColor; //2px
+		outline-offset: -0.125rem; //2px
 	}
 }
 
 .sapUiDtOverlaySelected {
 	&:after {
 		content: " ";
-		outline: 2px dashed @_sap_ui_dt_Overlay_SelectionColor;
-		outline-offset: -2px;
+		outline: 0.125rem dashed @_sap_ui_dt_Overlay_SelectionColor; //2px
+		outline-offset: -0.125rem; //2px
 	}
 }
 

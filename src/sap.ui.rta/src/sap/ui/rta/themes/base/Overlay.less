@@ -1,13 +1,14 @@
 /******************************************************************
 	Style of the RTA Overlays - base Theme
 *******************************************************************/
-@_sap_ui_rta_Overlay_ActiveBG : fade(@sapUiSelected, 10%);									//rgba(46, 156, 234, 0.1);
-@_sap_ui_rta_Overlay_BaseBG : @sapUiWhite;													//#fff
-@_sap_ui_rta_Overlay_Border: @sapUiSelected;												//#2e9cea
-@_sap_ui_rta_Overlay_ErrorBorder : @sapUiErrorBorder;										//#ee0000
-@_sap_ui_rta_Overlay_BoxShadow: @sapUiUx3ToolPopupShadow;									// 0px 6px 12px 0px fade(black, 30);
-@_sap_ui_rta_Overlay_HoverBorder : @sapContent_ForegroundColor;								// #e5e5e5;
-@_sap_ui_rta_Overlay_BaseColor : darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%);	//435060
+@_sap_ui_rta_Overlay_ActiveBG: fade(@sapUiSelected, 10%); //rgba(46, 156, 234, 0.1);
+@_sap_ui_rta_Overlay_BaseBG: @sapUiWhite; //#fff
+@_sap_ui_rta_Overlay_Border: @sapUiSelected; //#2e9cea
+@_sap_ui_rta_Overlay_ErrorBorder: @sapUiErrorBorder; //#ee0000
+@_sap_ui_rta_Overlay_BoxShadow: @sapUiUx3ToolPopupShadow; //0px 6px 12px 0px fade(black, 30);
+@_sap_ui_rta_Overlay_HoverBorder: @sapContent_ForegroundColor; //#e5e5e5;
+@_sap_ui_rta_Overlay_BaseColor: darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%); //435060
+@_sap_ui_rta_Overlay_Base_PlaceholderBG: @_sap_ui_rta_Overlay_BaseBG; //#fff
 
 .sapUiRtaRoot {
 	.sapUiRtaMarginBottom {
@@ -36,24 +37,24 @@
 						top: 10px;
 						right: 10px;
 						position: absolute;
-						height: 1.5rem;
+						height: 1.5rem; //24px
 						padding: 0;
 
 						.sapMBtnInner {
 							border-radius: 50%;
-							width: 1.5rem;
-							height: 1.5rem;
+							width: 1.5rem; //24px
+							height: 1.5rem; //24px
 							min-width: 0;
 							background-color: @_sap_ui_rta_Overlay_Border;
-							box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+							box-shadow: 0 0 4px rgba(0,0,0,0.2);
 							cursor: pointer;
-							border: 0.125rem solid @_sap_ui_rta_Overlay_BaseBG;
+							border: 0.125rem solid @_sap_ui_rta_Overlay_BaseBG; //2px
 
 							.sapUiIcon {
 								color: @_sap_ui_rta_Overlay_BaseBG;
-								font-size: 0.69rem;
-								line-height: 1.25rem;
-								width: 20px;
+								font-size: 0.69rem; //11px
+								line-height: 1.25rem; //20px
+								width: 1rem; //16px
 								text-shadow: none;
 								margin: 0;
 							}
@@ -73,7 +74,7 @@
 				position: absolute;
 				text-align: center;
 				width: 100%;
-				height: 40px;
+				height: 2.5rem; // 40px
 				cursor: default;
 
 				&:focus {
@@ -98,7 +99,7 @@
 						}
 
 						.sapMBtnIcon {
-							font-size: 1rem;
+							font-size: 1rem; //16px
 						}
 					}
 				}
@@ -107,7 +108,7 @@
 		}
 		.sapUiRtaPersAdd {
 			> .sapUiRtaPersAddIconOuter {
-				bottom: -40px;
+				bottom: -2.5rem; //40px
 				top: auto;
 			}
 		}
@@ -121,35 +122,17 @@
 
 		&:after {
 			content: " ";
-			border: 1px solid @_sap_ui_rta_Overlay_HoverBorder;
+			border: 0.0625rem solid @_sap_ui_rta_Overlay_HoverBorder; //1px
 			transition: box-shadow .25s;
 			box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
-			outline: 1px solid @_sap_ui_rta_Overlay_Border;
-			outline-offset: -1px;
-		}
-	}
-
-	.sapUiDtOverlayFocusable {
-		&:focus {
-			&:before {
-				right: 0;
-				top: 0;
-				left: 0;
-				bottom: 0;
-				// IE doesn't support width/height: 'initial'.// TODO remove after the end of support for Internet Explorer
-				// With the property 'auto' the same effect is achieved.
-				// When initial is supported, auto is ignored.
-				width: auto;
-				width: initial;
-				height: auto;
-				height: initial;
-			}
+			outline: 0.0625rem solid @_sap_ui_rta_Overlay_Border; //1px
+			outline-offset: -0.0625rem; //1px
 		}
 	}
 
 	.sapUiDtOverlaySelected {
 		transition: box-shadow .25s;
-		box-shadow: @sapUiUx3ToolPopupShadow;
+		box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
 		&.sapUiDtOverlayWithScrollBar:after {
 			bottom: 0;
 			right: 0;
@@ -165,24 +148,23 @@
 		}
 
 		&:after {
-			outline: 2px solid @_sap_ui_rta_Overlay_Border;
-			outline-offset: -2px;
+			outline: 0.125rem solid @_sap_ui_rta_Overlay_Border; //2px
 			border:	none
 		}
 
 		&.sapUiRtaErrorBg:after {
-			outline: 2px solid @_sap_ui_rta_Overlay_ErrorBorder;
-			outline-offset: -2px;
+			outline: 0.125rem solid @_sap_ui_rta_Overlay_ErrorBorder; //2px
+			outline-offset: -0.125rem; //2px
 			border:	none
 		}
 
 		&.sapUiDtOverlayFocusable {
 			&:focus {
 				&:before {
-					top: 2px;
-					left: 2px;
-					bottom: 2px;
-					right: 2px;
+					top: 0.125rem; //2px
+					left: 0.125rem; //2px
+					bottom: 0.125rem; //2px
+					right: 0.125rem; //2px
 					// IE doesn't support width/height: 'initial'.// TODO remove after the end of support for Internet Explorer
 					// With the property 'auto' the same effect is achieved.
 					// When initial is supported, auto is ignored.
@@ -197,8 +179,7 @@
 
 	.sapUiDtOverlayTargetZone {
 		&:after {
-			outline: 2px dashed @_sap_ui_rta_Overlay_Border;
-			outline-offset: -2px;
+			outline-color: @_sap_ui_rta_Overlay_Border;
 			transition: box-shadow .25s;
 			box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
 		}
@@ -224,7 +205,7 @@
 			}
 
 			>.sapUiRtaOverlayPlaceholder {
-				background: @_sap_ui_rta_Overlay_BaseBG!important;
+				background: @_sap_ui_rta_Overlay_Base_PlaceholderBG !important;
 				// no "border"
 				&:after {
 					content: none;
@@ -238,7 +219,7 @@
 
 				// all descendants
 				* {
-					background: @_sap_ui_rta_Overlay_BaseBG;
+					background: @_sap_ui_rta_Overlay_Base_PlaceholderBG;
 					// no "border"
 					&:after {
 						content: none;
@@ -272,16 +253,16 @@
 	}
 }
 
-.sapUiRtaMode #shell-shapes{
+.sapUiRtaMode #shell-shapes {
 	display: none;
 }
 
-.sapUiRtaMode .sapUiShellBackgroundImage.sapUiGlobalBackgroundImageForce.sapUshellShellBG{
+.sapUiRtaMode .sapUiShellBackgroundImage.sapUiGlobalBackgroundImageForce.sapUshellShellBG {
 	background-color: @_sap_ui_rta_Overlay_BaseColor;
 	background-image:  none;
 }
 
 .sapUiRtaMode .sapUshellViewPortCenter,
-.sapUiRtaMode .sapMShellBG{
+.sapUiRtaMode .sapMShellBG {
 	background: @_sap_ui_rta_Overlay_BaseColor;
 }
