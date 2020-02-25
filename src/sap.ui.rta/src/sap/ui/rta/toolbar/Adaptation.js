@@ -176,7 +176,7 @@ function(
 			name: "sap.ui.rta.toolbar.Adaptation",
 			id: this.getId() + "_fragment",
 			controller: {
-				activateDraft: this._openVersionNameDialog.bind(this),
+				activateDraft: this._openVersionTitleDialog.bind(this),
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
 				undo: this.eventHandler.bind(this, "Undo"),
@@ -196,27 +196,27 @@ function(
 	};
 
 	function _resetDialog() {
-		this.getControl("versionNameInput").setValue("");
-		this.getControl("confirmVersionNameButton").setEnabled(false);
+		this.getControl("versionTitleInput").setValue("");
+		this.getControl("confirmVersionTitleButton").setEnabled(false);
 		return Promise.resolve(this._oDialog);
 	}
 
 	function _createDialog() {
 		return Fragment.load({
-			name : "sap.ui.rta.toolbar.VersionNameDialog",
+			name : "sap.ui.rta.toolbar.VersionTitleDialog",
 			id: this.getId() + "_fragment",
 			controller : {
 				onConfirmVersioningDialog: function () {
-					var sVersionName = this.getControl("versionNameInput").getValue();
-					this.fireEvent("activateDraft", {versionName : sVersionName});
+					var sVersionTitle = this.getControl("versionTitleInput").getValue();
+					this.fireEvent("activateDraft", {versionTitle : sVersionTitle});
 					this._oDialog.close();
 				}.bind(this),
 				onCancelVersioningDialog: function () {
 					this._oDialog.close();
 				}.bind(this),
-				onVersionNameLiveChange: function (oEvent) {
+				onVersionTitleLiveChange: function (oEvent) {
 					var sValue = oEvent.getParameter("value");
-					this.getControl("confirmVersionNameButton").setEnabled(!!sValue);
+					this.getControl("confirmVersionTitleButton").setEnabled(!!sValue);
 				}.bind(this)
 			}
 		}).then(function (oDialog) {
@@ -229,7 +229,7 @@ function(
 		return sap.ui.getCore().byId(this.getId() + "_fragment--sapUiRta_" + sName);
 	};
 
-	Adaptation.prototype._openVersionNameDialog = function () {
+	Adaptation.prototype._openVersionTitleDialog = function () {
 		var oDialogPromise;
 
 		if (this._oDialog) {

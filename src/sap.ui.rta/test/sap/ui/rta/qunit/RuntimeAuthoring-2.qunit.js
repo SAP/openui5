@@ -870,10 +870,10 @@ sap.ui.define([
 			var oRemoveAllCommandsSpy;
 			var oToolbarSetDraftEnabledSpy;
 			var oRta = this.oRta;
-			var sVersionName = "aVersionName";
+			var sVersionTitle = "aVersionTitle";
 			var oEvent = {
 				getParameter: function() {
-					return sVersionName;
+					return sVersionTitle;
 				}
 			};
 
@@ -890,7 +890,7 @@ sap.ui.define([
 				var oActivationCallPropertyBag = oActivateDraftStub.getCall(0).args[0];
 				assert.equal(oActivationCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
 				assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
-				assert.equal(oActivationCallPropertyBag.versionName, sVersionName, "and version name");
+				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
 				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
 				assert.equal(oRta.bInitialDraftAvailable, false, "and the initialDraftAvailable is removed");
 				assert.equal(oToolbarSetDraftEnabledSpy.callCount, 2, "and the draft info is set twice");
