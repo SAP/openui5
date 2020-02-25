@@ -228,6 +228,7 @@ sap.ui.define([
 				assert.equal(sErrorMessage, "No selector was provided", "then an Error is thrown");
 			});
 		});
+
 		QUnit.test("when no layer is provided", function (assert) {
 			var mPropertyBag = {
 				selector: new Control()
@@ -238,10 +239,22 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
+		QUnit.test("when no version title is provided", function (assert) {
 			var mPropertyBag = {
 				layer: "CUSTOMER",
 				selector: new Control()
+			};
+
+			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No version title was provided", "then an Error is thrown");
+			});
+		});
+
+		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				selector: new Control(),
+				title: "new Title"
 			};
 
 			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
@@ -252,7 +265,8 @@ sap.ui.define([
 		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function(assert) {
 			var mPropertyBag = {
 				layer: "CUSTOMER",
-				selector: new Control()
+				selector: new Control(),
+				title: "new Title"
 			};
 
 			sandbox.stub(Utils, "getComponentClassName").returns("com.sap.app");
@@ -276,7 +290,7 @@ sap.ui.define([
 				layer: "CUSTOMER"
 			};
 
-			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+			return VersionsAPI.discardDraft(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "No selector was provided", "then an Error is thrown");
 			});
 		});
@@ -285,7 +299,7 @@ sap.ui.define([
 				selector: new Control()
 			};
 
-			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+			return VersionsAPI.discardDraft(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
 			});
 		});
@@ -296,7 +310,7 @@ sap.ui.define([
 				selector: new Control()
 			};
 
-			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
+			return VersionsAPI.discardDraft(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "The application ID could not be determined", "then an Error is thrown");
 			});
 		});

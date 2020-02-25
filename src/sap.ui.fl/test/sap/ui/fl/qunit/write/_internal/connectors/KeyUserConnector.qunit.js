@@ -230,14 +230,18 @@ sap.ui.define([
 		QUnit.test("activate draft", function (assert) {
 			var mPropertyBag = {
 				url : "/flexKeyuser",
-				reference: "com.sap.test.app"
+				reference: "com.sap.test.app",
+				title: "new Title"
 			};
 			var mExpectedPropertyBag = Object.assign({
 				xsrfToken: undefined,
 				applyConnector: ApplyConnector,
-				tokenUrl: KeyUserConnector.ROUTES.TOKEN
+				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				payload: "{\"title\":\"new Title\"}"
 			}, mPropertyBag);
-			var oActivatedVersion = [];
+			var oActivatedVersion = {};
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : oActivatedVersion});
 			return KeyUserConnector.versions.activateDraft(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, oActivatedVersion, "the activated version is returned correctly");

@@ -245,6 +245,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag Property bag
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
 		 * @param {string} mPropertyBag.reference Flex reference
+		 * @param {string} mPropertyBag.title Title of the to be activated version
 		 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the activated version;
 		 * rejects if an error occurs or the layer does not support draft handling
 		 */

@@ -86,7 +86,8 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 * @returns {Promise<sap.ui.fl.Version[]>} Promise resolving with the updated list of versions for the application
+	 * @param {string} mPropertyBag.title - Title of the to be activated version
+	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated list of versions for the application
 	 * when the version was activated;
 	 * rejects if an error occurs or the layer does not support draft handling or there is no draft to activate
 	 */
