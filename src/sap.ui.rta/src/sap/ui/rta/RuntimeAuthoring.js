@@ -1516,7 +1516,7 @@ function(
 			});
 		}
 
-		RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance().getId());
+		RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance());
 		// triggers the navigation without leaving FLP
 		oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 		return Promise.resolve(true);

@@ -1066,10 +1066,13 @@ sap.ui.define([
 			};
 
 			var oLoadForApplicationStub = sandbox.stub(VersionsAPI, "loadDraftForApplication");
+			var fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 
 			return this.oRta._reloadWithMaxLayerOrDraftParam(mParsedHash, this.oCrossAppNav, this.oReloadInfo).then(function () {
 				assert.equal(oLoadForApplicationStub.callCount, 0, "then loadDraftForApplication is not called");
-			});
+				assert.equal(fnEnableRestartSpy.callCount, 1, "the enableRestart was callCount");
+				assert.equal(fnEnableRestartSpy.getCall(0).args[1], this.oRta.getRootControlInstance(), "the root control was passed");
+			}.bind(this));
 		});
 
 		QUnit.test("and the url parameter for draft is not present in the parsed hash", function(assert) {
