@@ -9,6 +9,8 @@
 @_sap_m_Dialog_SubHeaderHeight: 3rem;
 @_sap_m_Dialog_SubHeaderCompactHeight: 2rem;
 @_sap_m_Dialog_InfoDesignBarHeight: 2rem;
+@_sap_m_Dialog_InfoDesignBarCompactHeight: 2rem;
+
 @_sap_m_Dialog_Padding: 1rem;
 @_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.125rem @sapUiSuccessBorder;
 @_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.125rem @sapUiErrorBorder;
@@ -338,10 +340,10 @@ html.sap-desktop .sapMDialog {
 			padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_SubHeaderCompactHeight;
 
 			&.sapMDialogSubHeaderInfoBar {
-				padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_InfoDesignBarHeight;
+				padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_InfoDesignBarCompactHeight;
 
 				.sapMDialogSubHeader {
-					height: @_sap_m_Dialog_InfoDesignBarHeight;
+					height: @_sap_m_Dialog_InfoDesignBarCompactHeight;
 				}
 			}
 
