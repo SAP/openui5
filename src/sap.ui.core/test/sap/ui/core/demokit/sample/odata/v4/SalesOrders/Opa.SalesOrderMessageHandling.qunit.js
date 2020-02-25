@@ -2,22 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/MessageHandling",
 	"sap/ui/test/opaQunit"
-], function (MessageHandling, opaTest) {
-	/*global QUnit */
+], function (Helper, MessageHandling, opaTest) {
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders - Message Handling", {
-		before : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
-		},
-		after : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-		}
-	});
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrders - Message Handling");
 
 	//*****************************************************************************
 	opaTest("Message Handling", function (Given, When, Then) {

@@ -12,10 +12,9 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
-	"sap/ui/model/ContextBinding",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/model/ContextBinding"
 ], function (Context, asODataParentBinding, _Cache, _GroupLock, _Helper, SyncPromise, Binding,
-		ChangeReason, ContextBinding, jQuery) {
+		ChangeReason, ContextBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding",
@@ -134,14 +133,9 @@ sap.ui.define([
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-
-				this.sGroupId = undefined;
-				this.bInheritExpandSelect = false;
 				this.oOperation = undefined;
 				this.oParameterContext = null;
 				this.oReturnValueContext = null;
-				this.sUpdateGroupId = undefined;
-
 				if (iPos >= 0) { // deferred operation binding
 					if (iPos !== this.sPath.length - /*"(...)".length*/5) {
 						throw new Error(
@@ -160,7 +154,16 @@ sap.ui.define([
 					}
 				}
 
-				this.applyParameters(jQuery.extend(true, {}, mParameters));
+				mParameters = _Helper.clone(mParameters) || {};
+				// Note: needs this.oOperation
+				this.checkBindingParameters(mParameters, ["$$canonicalPath", "$$groupId",
+					"$$inheritExpandSelect", "$$ownRequest", "$$patchWithoutSideEffects",
+					"$$updateGroupId"]);
+				this.sGroupId = mParameters.$$groupId;
+				this.bInheritExpandSelect = mParameters.$$inheritExpandSelect;
+				this.sUpdateGroupId = mParameters.$$updateGroupId;
+
+				this.applyParameters(mParameters);
 				this.oElementContext = this.bRelative
 					? null
 					: Context.create(this.oModel, this, sPath);
@@ -421,20 +424,10 @@ sap.ui.define([
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason, used to distinguish calls by {@link #constructor} from calls by
 	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#changeParameters}
-	 * @throws {Error} If the binding parameter $$inheritExpandSelect is set to <code>true</code>
-	 *   and the binding is no operation binding or the binding has one of the parameters $expand or
-	 *   $select.
 	 *
 	 * @private
 	 */
 	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
-		this.checkBindingParameters(mParameters, ["$$canonicalPath", "$$groupId",
-				"$$inheritExpandSelect", "$$ownRequest", "$$patchWithoutSideEffects",
-				"$$updateGroupId"]);
-
-		this.sGroupId = mParameters.$$groupId;
-		this.sUpdateGroupId = mParameters.$$updateGroupId;
-		this.bInheritExpandSelect = mParameters.$$inheritExpandSelect;
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
 
@@ -610,7 +603,7 @@ sap.ui.define([
 			oModel = this.oModel,
 			sMetaPath = oModel.getMetaModel().getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
 			sOriginalResourcePath = sPath.slice(1),
-			mParameters = jQuery.extend({}, this.oOperation.mParameters),
+			mParameters = Object.assign({}, this.oOperation.mParameters),
 			oRequestor = oModel.oRequestor,
 			that = this;
 
@@ -853,6 +846,10 @@ sap.ui.define([
 				vValue;
 
 			if (that.oOperation) {
+				if (sRelativePath === undefined) {
+					// a reduced path to a property of the binding parameter
+					return that.oContext.fetchValue(sPath, oListener, bCached);
+				}
 				aSegments = sRelativePath.split("/");
 				if (aSegments[0] === "$Parameter") {
 					if (aSegments.length === 1) {

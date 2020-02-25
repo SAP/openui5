@@ -22,9 +22,6 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		oAggregation : {},
-		sApply : ""
-	}, {
 		oAggregation : {
 			group : {
 				BillToParty : {}
@@ -389,6 +386,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("buildApply: no $apply needed", function (assert) {
+		assert.deepEqual(_AggregationHelper.buildApply({}), {});
+	});
+
+	//*********************************************************************************************
 	[{
 		oAggregation : {
 			aggregate : {},
@@ -503,7 +505,7 @@ sap.ui.define([
 	}
 
 	function f(sPath) {
-		return new Filter(sPath);
+		return new Filter(sPath, FilterOperator.EQ, 'foo');
 	}
 
 	function or() {
