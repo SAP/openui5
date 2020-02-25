@@ -18,6 +18,8 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit : function () {
+				SampleBaseController.prototype.onInit.call(this);
+
 				this.oModel = new JSONModel();
 				this.getView().setModel(this.oModel);
 
@@ -25,7 +27,6 @@ sap.ui.define([
 				this.router.getRoute("code").attachPatternMatched(this.onRouteMatched, this);
 				this.router.getRoute("codeFile").attachPatternMatched(this.onRouteMatched, this);
 
-				this._codeCache = {};
 				this._aFilesAvailable = [];
 
 				this._bFirstLoad = true;
