@@ -262,7 +262,9 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, mRequestI
 
 /**
  * This method calculates the message delta and gives it to the MessageProcessor (fires the
- * messageChange-event) based on the entities belonging to this request.
+ * messageChange-event) based on the entities belonging to this request. By using the request header
+ * "sap-messages" with the value <code>transientOnly</code> all existing messages are kept with the
+ * expectation to only receive transition messages from the back end.
  *
  * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
  * @param {ODataMessageParser~RequestInfo} mRequestInfo
@@ -275,14 +277,16 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, mRequestI
  * @param {boolean} bSimpleMessageLifecycle - This flag is set to false, if the used OData Model v2 supports message scopes
  */
 ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities, bSimpleMessageLifecycle) {
-	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities,
-			mChangeEntities),
+	var mAffectedTargets,
 		sDeepPath = mRequestInfo.request.deepPath,
 		aKeptMessages = [],
 		bPrefixMatch = sDeepPath && mRequestInfo.request.updateAggregatedMessages,
+		bTransitionMessagesOnly = mRequestInfo.request.headers
+			&& mRequestInfo.request.headers["sap-messages"] === "transientOnly",
 		aRemovedMessages = [],
-		iStatusCode = mRequestInfo.response.statusCode,
-		bSuccess = (iStatusCode >= 200 && iStatusCode < 300),
+		bStateMessages,
+		iStatusCode,
+		bSuccess,
 		sTarget;
 
 	function isTargetMatching(oMessage, sTarget) {
@@ -290,31 +294,47 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 			|| bPrefixMatch && oMessage.fullTarget.startsWith(sDeepPath);
 	}
 
-	this._lastMessages.forEach(function (oCurrentMessage) {
-		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must
-		// be trimmed here
-		sTarget = oCurrentMessage.getTarget().replace(/^\/+|\/$/g, "");
-
-		// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
-		var iPropertyPos = sTarget.lastIndexOf(")/");
-		if (iPropertyPos > 0) {
-			sTarget = sTarget.substr(0, iPropertyPos + 1);
+	if (bTransitionMessagesOnly) {
+		aKeptMessages = this._lastMessages;
+		bStateMessages = aMessages.some(function (oMessage) {
+			return !oMessage.getPersistent();
+		});
+		if (bStateMessages) {
+			Log.error("Unexpected non-persistent message in response, but requested only "
+				+ "transition messages", undefined, "sap.ui.model.odata.ODataMessageParser");
 		}
+	} else {
+		mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities,
+			mChangeEntities);
+		iStatusCode = mRequestInfo.response.statusCode;
+		bSuccess = (iStatusCode >= 200 && iStatusCode < 300);
+		this._lastMessages.forEach(function (oCurrentMessage) {
+			// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing
+			// "/", so all targets must be trimmed here
+			sTarget = oCurrentMessage.getTarget().replace(/^\/+|\/$/g, "");
 
-		if (bSuccess || bSimpleMessageLifecycle){
-			if (!oCurrentMessage.getPersistent()
+			// Get entity for given target (properties are not affected targets as all messages must
+			// be sent for affected entity)
+			var iPropertyPos = sTarget.lastIndexOf(")/");
+			if (iPropertyPos > 0) {
+				sTarget = sTarget.substr(0, iPropertyPos + 1);
+			}
+
+			if (bSuccess || bSimpleMessageLifecycle){
+				if (!oCurrentMessage.getPersistent()
+						&& isTargetMatching(oCurrentMessage, sTarget)) {
+					aRemovedMessages.push(oCurrentMessage);
+				} else {
+					aKeptMessages.push(oCurrentMessage);
+				}
+			} else if (!oCurrentMessage.getPersistent() && oCurrentMessage.getTechnical()
 					&& isTargetMatching(oCurrentMessage, sTarget)) {
 				aRemovedMessages.push(oCurrentMessage);
 			} else {
 				aKeptMessages.push(oCurrentMessage);
 			}
-		} else if (!oCurrentMessage.getPersistent() && oCurrentMessage.getTechnical()
-				&& isTargetMatching(oCurrentMessage, sTarget)) {
-			aRemovedMessages.push(oCurrentMessage);
-		} else {
-			aKeptMessages.push(oCurrentMessage);
-		}
-	});
+		});
+	}
 	this.getProcessor().fireMessageChange({
 		oldMessages: aRemovedMessages,
 		newMessages: aMessages

@@ -24,8 +24,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("loadData: calls ODataModel.read with updateAggregatedMessages parameter set to the"
-			+ " bindings refresh state", function (assert) {
+[
+	{transitionMessagesOnly : true, headers : {"sap-messages" : "transientOnly"}},
+	{transitionMessagesOnly : false, headers : undefined}
+].forEach(function (oFixture, i) {
+	QUnit.test("loadData calls read w/ parameters refresh, headers, " + i, function (assert) {
 		var oBinding,
 			oContext = {},
 			oModel = {
@@ -49,8 +52,10 @@ sap.ui.define([
 			.returns("~path");
 		oBinding.bSkipDataEvents = true;
 		oBinding.bRefresh = bRefresh;
+		oBinding.bTransitionMessagesOnly = oFixture.transitionMessagesOnly;
 
 		this.mock(oModel).expects("read").withExactArgs("path", {
+				headers : oFixture.headers,
 				canonicalRequest : undefined,
 				context : sinon.match.same(oContext),
 				error : sinon.match.func,
@@ -64,4 +69,41 @@ sap.ui.define([
 		// code under test
 		oBinding.loadData();
 	});
+});
+
+	//*********************************************************************************************
+[
+	{parameters : undefined, expected : false},
+	{parameters : {}, expected : false},
+	{parameters : {foo : "bar"}, expected : false},
+	{parameters : {transitionMessagesOnly : false}, expected : false},
+	{parameters : {transitionMessagesOnly : 0}, expected : false},
+	{parameters : {transitionMessagesOnly : true}, expected : true},
+	{parameters : {transitionMessagesOnly : {}}, expected : true}
+].forEach(function (oFixture, i) {
+	QUnit.test("constructor: parameter transitionMessagesOnly, " + i, function (assert) {
+		var oBinding,
+			oModel = {
+				read : function () {},
+				checkFilterOperation : function () {},
+				createCustomParams : function () {},
+				resolve : function () {},
+				resolveDeep : function () {}
+			};
+
+		this.mock(oModel).expects("createCustomParams")
+			.withExactArgs(sinon.match.same(oFixture.parameters))
+			.returns("~custom");
+		this.mock(oModel).expects("resolveDeep").withExactArgs("path", "context").returns("~deep");
+		this.mock(oModel).expects("checkFilterOperation").withExactArgs([]);
+		this.mock(ODataListBinding.prototype).expects("checkExpandedList").withExactArgs()
+			.returns(true);
+
+		// code under test
+		oBinding = new ODataListBinding(oModel, "path", "context", undefined /*aSorters*/,
+			undefined /*aFilters*/, oFixture.parameters);
+
+		assert.strictEqual(oBinding.bTransitionMessagesOnly, oFixture.expected);
+	});
+});
 });
