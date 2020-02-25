@@ -1,9 +1,18 @@
 {
 	"header": {
-		"title": "Sales Orders for Key Accounts",
-		"mainIndicator": {
-			"number": 70
-		}
+		"number": "65.34",
+		"unit": "K",
+		"trend": "Down",
+		"state": "Error",
+		"target": {
+		  "number": 100,
+		  "unit": "K"
+		},
+		"deviation": {
+		  "number": 34.7
+		},
+		"details": "Q1, 2018",
+		"revenue": "Revenue"
 	},
 	"content": [
 		{

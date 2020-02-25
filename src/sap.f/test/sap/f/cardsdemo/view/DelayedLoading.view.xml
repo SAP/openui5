@@ -39,9 +39,34 @@
 						<f:GridContainerItemLayoutData columns="6"/>
 					</w:layoutData>
 				</w:Card>
+				<w:Card id="listError">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="6"/>
+					</w:layoutData>
+				</w:Card>
 				<w:Card id="listCard2">
 					<w:layoutData>
 							<f:GridContainerItemLayoutData columns="5"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="listCard3">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="listCard4">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="listCard5">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="2"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="listCard6">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4"/>
 					</w:layoutData>
 				</w:Card>
 				<w:Card id="tableCard1">
@@ -49,22 +74,17 @@
 						<f:GridContainerItemLayoutData columns="6"/>
 					</w:layoutData>
 				</w:Card>
-				<w:Card id="tableCard2">
+				<w:Card id="analyticalCard">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="6"/>
 					</w:layoutData>
 				</w:Card>
-				<w:Card id="donutCard">
+				<w:Card id="calendarCard">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="5"/>
 					</w:layoutData>
 				</w:Card>
 				<w:Card id="objectCard1">
-					<w:layoutData>
-						<f:GridContainerItemLayoutData columns="5"/>
-					</w:layoutData>
-				</w:Card>
-				<w:Card id="timelineCard">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="5"/>
 					</w:layoutData>

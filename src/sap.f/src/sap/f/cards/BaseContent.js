@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Core",
 	"sap/f/cards/CardActions",
-	"./BindingHelper"
-], function (Control, JSONModel, Log, ManagedObjectObserver, Core, CardActions, BindingHelper) {
+	"./BindingHelper",
+	"sap/f/cards/loading/LoadingProvider"
+], function (Control, JSONModel, Log, ManagedObjectObserver, Core, CardActions, BindingHelper, LoadingProvider) {
 	"use strict";
 
 	/**
@@ -59,7 +60,7 @@ sap.ui.define([
 			var sLibrary = oCardContent.getMetadata().getLibraryName();
 			var sName = oCardContent.getMetadata().getName();
 			var sType = sName.slice(sLibrary.length + 1, sName.length);
-			var sHeight;
+			var sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration(), oCardContent);
 			var oCard = oCardContent.getParent();
 			sClass += sType;
 
@@ -76,7 +77,9 @@ sap.ui.define([
 
 			oRm.writeStyles();
 			oRm.write(">");
-
+			if (sType !== 'AdaptiveContent' && oCardContent.isLoading()) {
+				oRm.renderControl(oCardContent._oLoadingPlaceholder);
+			}
 			oRm.renderControl(oCardContent.getAggregation("_content"));
 
 			oRm.write("</div>");
@@ -101,9 +104,8 @@ sap.ui.define([
 			this.fireEvent("_ready");
 		}.bind(this));
 
-		this.setBusyIndicatorDelay(0);
-
 		this._oActions = new CardActions();
+		this._oLoadingProvider = new LoadingProvider();
 	};
 
 	/**
@@ -120,6 +122,7 @@ sap.ui.define([
 	BaseContent.prototype.exit = function () {
 		this._oServiceManager = null;
 		this._oDataProviderFactory = null;
+		this.destroyPlaceholder();
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
@@ -129,6 +132,11 @@ sap.ui.define([
 		if (this._oActions) {
 			this._oActions.destroy();
 			this._oActions = null;
+		}
+
+		if (this._oLoadingProvider) {
+			this._oLoadingProvider.destroy();
+			this._oLoadingProvider = null;
 		}
 	};
 
@@ -163,7 +171,7 @@ sap.ui.define([
 		return Control.prototype.destroy.apply(this, arguments);
 	};
 
-	BaseContent.prototype.setConfiguration = function (oConfiguration) {
+	BaseContent.prototype.setConfiguration = function (oConfiguration, sType) {
 
 		this._oConfiguration = oConfiguration;
 
@@ -179,6 +187,8 @@ sap.ui.define([
 			oList.setGrowingThreshold(parseInt(maxItems));
 			oList.addStyleClass("sapFCardMaxItems");
 		}
+
+		this._oLoadingPlaceholder = this._oLoadingProvider.createContentPlaceholder(oConfiguration, sType);
 
 		this._setData(oConfiguration.data);
 
@@ -220,27 +230,35 @@ sap.ui.define([
 		if (this._oDataProviderFactory) {
 			this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 		}
+
+		this._oLoadingProvider.createLoadingState(this._oDataProvider);
+
 		if (this._oDataProvider) {
-			this.setBusy(true);
 
 			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
 			this.setModel(new JSONModel());
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				this._updateModel(oEvent.getParameter("data"));
-				this.setBusy(false);
 			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError(oEvent.getParameter("message"));
-				this.setBusy(false);
 			}.bind(this));
 
 			this._oDataProvider.triggerDataUpdate().then(function () {
 				this.fireEvent("_dataReady");
+				this.destroyPlaceholder();
 			}.bind(this));
 		} else {
 			this.fireEvent("_dataReady");
+		}
+	};
+
+	BaseContent.prototype.destroyPlaceholder = function () {
+		if (this._oLoadingPlaceholder) {
+            this._oLoadingPlaceholder.destroy();
+            this._oLoadingPlaceholder = null;
 		}
 	};
 
@@ -346,7 +364,7 @@ sap.ui.define([
 				oContent.setDataProviderFactory(oDataProviderFactory);
 
 				if (sType.toLowerCase() !== "adaptivecard") {
-					oContent.setConfiguration(BindingHelper.createBindingInfos(oConfiguration));
+					oContent.setConfiguration(BindingHelper.createBindingInfos(oConfiguration), sType);
 				} else {
 					oContent.setConfiguration(oConfiguration);
 				}
@@ -470,5 +488,13 @@ sap.ui.define([
 		return iCount * iItemHeight;
 	};
 
+	BaseContent.prototype.isLoading  = function () {
+	   var oLoadingProvider,
+           oCard = this.getParent();
+
+	   oLoadingProvider = this._oLoadingProvider;
+
+	   return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || oCard.isLoading());
+	};
 	return BaseContent;
 });

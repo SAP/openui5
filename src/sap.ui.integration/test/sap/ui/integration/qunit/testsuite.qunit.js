@@ -54,6 +54,26 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"CardLoading": {
+				ui5: {
+					libs: ["sap.ui.integration"]
+				},
+				coverage: {
+					only: [
+						"sap/f/cards/Header",
+						"sap/f/cards/HeaderRenderer",
+						"sap/f/cards/NumericHeader",
+						"sap/f/cards/NumericHeaderRenderer",
+						"sap/f/cards/NumericSideIndicator",
+						"sap/f/cards/NumericSideIndicatorRenderer",
+						"sap/f/cards/BaseContent",
+						"sap/f/cards/loading/LoadingProvider"
+					]
+				},
+				module: [
+					'./loading/CardLoading.qunit'
+				]
+			},
 			"customElements/CustomElements": {
 				ui5: {
 					libs: ["sap.ui.integration"]

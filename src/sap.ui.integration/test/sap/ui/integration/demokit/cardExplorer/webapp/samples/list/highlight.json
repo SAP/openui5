@@ -29,15 +29,15 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "List Card with Top 5 Products",
-			"subTitle": "These are the top sellers this month",
-			"icon": {
-				"src": "sap-icon://desktop-mobile"
-			},
-			"status": {
-				"text": "5 of 20"
-			}
+		"title": "List Card with Top 5 Products",
+		"subTitle": "These are the top sellers this month",
+		"icon": {
+		  "src": "sap-icon://desktop-mobile"
 		},
+		"status": {
+		  "text": "5 of 20"
+		}
+	  },
 		"content": {
 			"data": {
 				"json": [{

@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/NumericSideIndicator",
 	"sap/f/cards/NumericHeaderRenderer",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/f/cards/loading/LoadingProvider"
 ], function (
 		Control,
 		NumericContent,
@@ -16,7 +17,8 @@ sap.ui.define([
 		JSONModel,
 		NumericSideIndicator,
 		NumericHeaderRenderer,
-		Core
+		Core,
+		LoadingProvider
 	) {
 		"use strict";
 
@@ -173,7 +175,7 @@ sap.ui.define([
 			this.fireEvent("_ready");
 		}.bind(this));
 
-		this.setBusyIndicatorDelay(0);
+		this._oLoadingProvider = new LoadingProvider();
 	};
 
 	NumericHeader.prototype.exit = function () {
@@ -189,6 +191,11 @@ sap.ui.define([
 		if (this._oActions) {
 			this._oActions.destroy();
 			this._oActions = null;
+		}
+
+		if (this._oLoadingProvider) {
+			this._oLoadingProvider.destroy();
+			this._oLoadingProvider = null;
 		}
 	};
 
@@ -462,34 +469,33 @@ sap.ui.define([
 		var sPath = "/";
 		if (oDataSettings && oDataSettings.path) {
 			sPath = oDataSettings.path;
-		}
 
+		}
 		this.bindObject(sPath);
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
 		}
 
+
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
+		this._oLoadingProvider.createLoadingState(this._oDataProvider);
 		if (this._oDataProvider) {
-			this.setBusy(true);
-
 			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
 			this.setModel(new JSONModel());
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				this._updateModel(oEvent.getParameter("data"));
-				this.setBusy(false);
 			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError(oEvent.getParameter("message"));
-				this.setBusy(false);
 			}.bind(this));
-
 			this._oDataProvider.triggerDataUpdate().then(function () {
 				this.fireEvent("_dataReady");
+				this._oLoadingProvider.setLoading(false);
+				this._oLoadingProvider.removeHeaderPlaceholder(this);
 			}.bind(this));
 		} else {
 			this.fireEvent("_dataReady");
@@ -553,6 +559,14 @@ sap.ui.define([
 		});
 
 		return sSideIndicatorIds;
+	};
+
+	NumericHeader.prototype.isLoading = function () {
+		var oLoadingProvider = this._oLoadingProvider,
+            oCard = this.getParent(),
+		    cardLoading = oCard.getMetadata()._sClassName === 'sap.ui.integration.widgets.Card' ? oCard.isLoading() : false;
+
+		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || cardLoading);
 	};
 
 	return NumericHeader;

@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/base/strings/formatMessage",
 	"sap/ui/integration/controls/ActionsToolbar",
-	"sap/ui/integration/util/Destinations"
+	"sap/ui/integration/util/Destinations",
+	"sap/f/cards/loading/LoadingProvider"
 ], function (
 	jQuery,
 	Core,
@@ -58,7 +59,8 @@ sap.ui.define([
 	InvisibleText,
 	formatMessage,
 	ActionsToolbar,
-	Destinations
+    Destinations,
+    LoadingProvider
 ) {
 	"use strict";
 	/* global Map */
@@ -331,7 +333,6 @@ sap.ui.define([
 		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
 		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this.setModel(new JSONModel(), "parameters");
-		this.setBusyIndicatorDelay(0);
 		this._busyStates = new Map();
 	};
 
@@ -432,7 +433,7 @@ sap.ui.define([
 			vManifest = null;
 		}
 
-		this._startBusyState("applyManifest");
+		// this._startBusyState("applyManifest");
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl);
 		return this._oCardManifest
 			.load(mOptions)
@@ -562,14 +563,18 @@ sap.ui.define([
 			this._oDataProvider = null;
 		}
 
+		if (this._oLoadingProvider) {
+			this._oLoadingProvider.destroy();
+			this._oLoadingProvider = null;
+		}
+
+        if (this._oTemporaryContent) {
+            this._oTemporaryContent.destroy();
+            this._oTemporaryContent = null;
+        }
 		if (this._oDestinations) {
 			this._oDestinations.destroy();
 			this._oDestinations = null;
-		}
-
-		if (this._oTemporaryContent) {
-			this._oTemporaryContent.destroy();
-			this._oTemporaryContent = null;
 		}
 
 		this.destroyAggregation("_header");
@@ -642,6 +647,7 @@ sap.ui.define([
 
 		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest);
 		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations);
+		this._oLoadingProvider = new LoadingProvider();
 
 		this._applyServiceManifestSettings();
 		this._applyDataManifestSettings();
@@ -661,9 +667,9 @@ sap.ui.define([
 		}
 
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
+		this._oLoadingProvider.createLoadingState(this._oDataProvider);
 
 		if (this._oDataProvider) {
-			this._startBusyState("data");
 			this.setModel(new JSONModel());
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
@@ -676,9 +682,27 @@ sap.ui.define([
 
 			this._oDataProvider.triggerDataUpdate().then(function () {
 				this.fireEvent("_cardReady");
-				this._endBusyState("data");
+				this._handleCardLoading();
 			}.bind(this));
 		}
+	};
+
+
+	/**
+	 * Handles card loading.
+	 *
+	 * @private
+	 */
+	Card.prototype._handleCardLoading = function () {
+		var oContent = this.getCardContent();
+		if (oContent && !oContent.hasStyleClass("sapFCardErrorContent") && oContent._oLoadingPlaceholder) {
+            oContent._oLoadingPlaceholder.destroy();
+		}
+
+		if (this._oLoadingProvider) {
+			this._oLoadingProvider.removeHeaderPlaceholder(this.getCardHeader());
+		}
+		this._oLoadingProvider.setLoading(false);
 	};
 
 	/**
@@ -904,7 +928,6 @@ sap.ui.define([
 		}
 
 		if (!bHasContent && !bIsComponent) {
-			this._endBusyState("applyManifest");
 			this.fireEvent("_contentReady");
 			return;
 		}
@@ -913,8 +936,7 @@ sap.ui.define([
 			oManifestContent = this._oCardManifest.getJson();
 		}
 
-		this._setTemporaryContent();
-
+        this._setTemporaryContent(sCardType, oManifestContent);
 		BaseContent
 			.create(sCardType, oManifestContent, this._oServiceManager, this._oDataProviderFactory, this._sAppId)
 			.then(function (oContent) {
@@ -922,9 +944,6 @@ sap.ui.define([
 			}.bind(this))
 			.catch(function (sError) {
 				this._handleError(sError);
-			}.bind(this))
-			.finally(function () {
-				this._endBusyState("applyManifest");
 			}.bind(this));
 	};
 
@@ -961,8 +980,6 @@ sap.ui.define([
 			this._handleError(oEvent.getParameter("logMessage"), oEvent.getParameter("displayMessage"));
 		}.bind(this));
 
-		oContent.setBusyIndicatorDelay(0);
-
 		var oPreviousContent = this.getAggregation("_content");
 
 		// only destroy previous content of type BaseContent
@@ -984,128 +1001,97 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Sets a temporary content that will show a busy indicator while the actual content is loading.
-	 */
-	Card.prototype._setTemporaryContent = function () {
 
-		var oTemporaryContent = this._getTemporaryContent(),
-			oPreviousContent = this.getAggregation("_content");
+    /**
+     * Sets a temporary content that will show a busy indicator while the actual content is loading.
+     */
+    Card.prototype._setTemporaryContent = function (sCardType, oManifestContent) {
 
-		// only destroy previous content of type BaseContent
-		if (oPreviousContent && oPreviousContent !== oTemporaryContent) {
-			oPreviousContent.destroy();
-		}
+        var oTemporaryContent = this._getTemporaryContent(sCardType, oManifestContent),
+            oPreviousContent = this.getAggregation("_content");
 
-		this.setAggregation("_content", oTemporaryContent);
-	};
+        // only destroy previous content of type BaseContent
+        if (oPreviousContent && oPreviousContent !== oTemporaryContent) {
+            oPreviousContent.destroy();
+        }
 
-	/**
-	 * Handler for error states
-	 *
-	 * @param {string} sLogMessage Message that will be logged.
-	 * @param {string} [sDisplayMessage] Message that will be displayed in the card's content. If not provided, a default message is displayed.
-	 * @private
-	 */
-	Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
-		Log.error(sLogMessage);
-		this._endBusyStateAll();
+        this.setAggregation("_content", oTemporaryContent);
+    };
 
-		this.fireEvent("_error", {message:sLogMessage});
+    /**
+     * Handler for error states
+     *
+     * @param {string} sLogMessage Message that will be logged.
+     * @param {string} [sDisplayMessage] Message that will be displayed in the card's content. If not provided, a default message is displayed.
+     * @private
+     */
+    Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
+        Log.error(sLogMessage);
 
-		var sDefaultDisplayMessage = "Unable to load the data.",
-			sErrorMessage = sDisplayMessage || sDefaultDisplayMessage,
-			oTemporaryContent = this._getTemporaryContent(),
-			oPreviousContent = this.getAggregation("_content");
+        this.fireEvent("_error", {message:sLogMessage});
 
-		var oError = new VBox({
-			justifyContent: "Center",
-			alignItems: "Center",
-			items: [
-				new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
-				new Text({ text: sErrorMessage })
-			]
-		});
+        var sDefaultDisplayMessage = "Unable to load the data.",
+            sErrorMessage = sDisplayMessage || sDefaultDisplayMessage,
+            oPreviousContent = this.getAggregation("_content");
 
-		// only destroy previous content of type BaseContent
-		if (oPreviousContent && oPreviousContent !== oTemporaryContent) {
-			oPreviousContent.destroy();
-			this.fireEvent("_contentReady"); // content won't show up so mark it as ready
-		}
+        var oError = new HBox({
+            justifyContent: "Center",
+            alignItems: "Center",
+            items: [
+                new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
+                new Text({ text: sErrorMessage })
+            ]
+        }).addStyleClass("sapFCardErrorContent");
 
-		oTemporaryContent.setBusy(false);
-		oTemporaryContent.addItem(oError);
+        // only destroy previous content of type BaseContent
+        if (oPreviousContent && !oPreviousContent.hasStyleClass("sapFCardErrorContent")) {
+            oPreviousContent.destroy();
+            this.fireEvent("_contentReady"); // content won't show up so mark it as ready
+        }
 
-		this.setAggregation("_content", oTemporaryContent);
-	};
+        //keep the min height
+        oError.addEventDelegate({
+            onAfterRendering: function () {
+                if (!this._oCardManifest) {
+                    return;
+                }
+                var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
+                    oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+                    sHeight = BaseContent.getMinHeight(sType, oContent, oError);
 
-	Card.prototype._getTemporaryContent = function () {
+                if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+                    oError.$().css({ "min-height": sHeight });
+                }
+            }
+        }, this);
 
-		if (!this._oTemporaryContent) {
-			this._oTemporaryContent = new HBox({
-				justifyContent: "Center",
-				busyIndicatorDelay: 0,
-				busy: true
-			});
+        this.setAggregation("_content", oError);
+    };
 
-			this._oTemporaryContent.addStyleClass("sapFCardTemporaryContent");
+    Card.prototype._getTemporaryContent = function (sCardType, oManifestContent) {
 
-			this._oTemporaryContent.addEventDelegate({
-				onAfterRendering: function () {
-					if (!this._oCardManifest) {
-						return;
-					}
+        if (!this._oTemporaryContent && this._oLoadingProvider) {
+            this._oTemporaryContent = this._oLoadingProvider.createContentPlaceholder(oManifestContent, sCardType);
 
-					var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
-						oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-						sHeight = BaseContent.getMinHeight(sType, oContent, this._oTemporaryContent);
+            this._oTemporaryContent.addEventDelegate({
+                onAfterRendering: function () {
+                    if (!this._oCardManifest) {
+                        return;
+                    }
 
-					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-						this._oTemporaryContent.$().css({ "min-height": sHeight });
-					}
-				}
-			}, this);
-		}
+                    var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
+                        oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+                        sHeight = BaseContent.getMinHeight(sType, oContent, this._oTemporaryContent);
 
-		this._oTemporaryContent.destroyItems();
+                    if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+                        this._oTemporaryContent.$().css({ "min-height": sHeight });
+                    }
+                }
+            }, this);
+        }
 
-		return this._oTemporaryContent;
-	};
-
-	/**
-	 * Starts busy loading for the card and writes down the reason for it being busy in a queue.
-	 *
-	 * @private
-	 * @param {string} sState The reason to go in busy mode
-	 */
-	Card.prototype._startBusyState = function (sState) {
-		this._busyStates.set(sState, true);
-		this.setBusy(true);
-	};
-
-	/**
-	 * Removes one reason for the card to be busy. If there is no other reasons for being busy - remove the busy state.
-	 *
-	 * @private
-	 * @param {string} sState The reason to go in busy mode
-	 */
-	Card.prototype._endBusyState = function (sState) {
-		this._busyStates.delete(sState);
-
-		if (!this._busyStates.size) {
-			this.setBusy(false);
-		}
-	};
-
-	/**
-	 * Force the card to stop being busy.
-	 *
-	 * @private
-	 */
-	Card.prototype._endBusyStateAll = function () {
-		this._busyStates.clear();
-		this.setBusy(false);
-	};
+        return this._oTemporaryContent;
+    };
 
 	/**
 	 * Sets a new value for the <code>dataMode</code> property.
@@ -1185,6 +1171,15 @@ sap.ui.define([
 			}
 		}.bind(this));
 	};
+
+    /**
+     * Decides if the card needs a loading placeholder based on card level data provider
+     *
+     * @returns {Boolean} Should card has a loading placeholder based on card level data provider.
+     */
+	Card.prototype.isLoading = function () {
+	    return this._oLoadingProvider ? this._oLoadingProvider.getLoadingState() : false;
+    };
 
 	return Card;
 });

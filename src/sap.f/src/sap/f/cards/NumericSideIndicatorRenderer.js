@@ -5,9 +5,9 @@
 // Provides default renderer for control sap.f.cards.NumericSideIndicatorRenderer
 sap.ui.define([],
 	function () {
-        "use strict";
+		"use strict";
 
-        var NumericSideIndicatorRenderer = {};
+		var NumericSideIndicatorRenderer = {};
 
 		/**
 		 * Render a numeric header side indicator.
@@ -16,9 +16,14 @@ sap.ui.define([],
 		 * @param {sap.f.cards.NumericHeader} oControl An object representation of the control that should be rendered
 		 */
 		NumericSideIndicatorRenderer.render = function (oRm, oControl) {
+			var oBindingInfos = oControl.mBindingInfos;
+
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapFCardHeaderSideIndicator");
+			if (oBindingInfos.title || oBindingInfos.number || oBindingInfos.unit) {
+				oRm.addClass("sapFCardHeaderItemBinded");
+			}
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
@@ -30,6 +35,9 @@ sap.ui.define([],
 			}
 			oRm.write("<div");
 			oRm.addClass("sapFCardHeaderSINumber");
+			if (oBindingInfos.title || oBindingInfos.number || oBindingInfos.unit) {
+				oRm.addClass("sapFCardHeaderItemBinded");
+			}
 			oRm.writeClasses();
 			oRm.write(">");
 

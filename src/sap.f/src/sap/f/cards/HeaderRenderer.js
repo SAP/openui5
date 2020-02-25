@@ -16,12 +16,20 @@ sap.ui.define([], function () {
 	HeaderRenderer.render = function (oRm, oControl) {
 
 		var sStatus = oControl.getStatusText(),
+			oTitle = oControl.getAggregation("_title"),
+			oSubtitle = oControl.getAggregation("_subtitle"),
+			oAvatar = oControl.getAggregation("_avatar"),
+			bLoading = oControl.isLoading(),
+			oBindingInfos = oControl.mBindingInfos,
 			oToolbar = oControl.getToolbar();
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.writeAttribute("tabindex", "0");
 		oRm.addClass("sapFCardHeader");
+		if (bLoading) {
+			oRm.addClass("sapFCardHeaderLoading");
+		}
 		//Accessibility state
 		oRm.writeAccessibilityState(oControl, {
 			role: oControl._sAriaRole,
@@ -32,11 +40,19 @@ sap.ui.define([], function () {
 		oRm.writeClasses();
 		oRm.write(">");
 
-		if (oControl.getIconSrc() || oControl.getIconInitials()) {
-			oRm.renderControl(oControl._getAvatar());
+		if (oControl.getIconSrc() || oControl.getIconInitials() || oBindingInfos.iconSrc) {
+			oRm.write("<div");
+			oRm.addClass("sapFCardHeaderImage");
+			oRm.writeClasses();
+			oRm.write(">");
+			if (oBindingInfos.iconSrc) {
+				oAvatar.addStyleClass("sapFCardHeaderItemBinded");
+			}
+			oRm.renderControl(oAvatar);
+			oRm.write("</div>");
 		}
 
-		if (oControl.getTitle()) {
+		if (oControl.getTitle() || oBindingInfos.title) {
 
 			oRm.write("<div");
 			oRm.addClass("sapFCardHeaderText");
@@ -48,18 +64,19 @@ sap.ui.define([], function () {
 			oRm.writeClasses();
 			oRm.write(">");
 
-			oRm.write("<div");
-			oRm.addClass("sapFCardHeaderTitle");
+			if (oBindingInfos.title) {
+				oTitle.addStyleClass("sapFCardHeaderItemBinded");
+			}
 			oRm.writeClasses();
-			oRm.write(">");
-			oRm.renderControl(oControl._getTitle());
+			oRm.renderControl(oTitle);
 
-			oRm.write("</div>");
-
-			if (sStatus) {
+			if (sStatus !== undefined) {
 				oRm.write("<span");
 				oRm.writeAttribute('id', oControl.getId() + '-status');
 				oRm.addClass("sapFCardStatus");
+				if (oBindingInfos.statusText) {
+					oRm.addClass("sapFCardHeaderItemBinded");
+				}
 				oRm.writeClasses();
 				oRm.write(">");
 				oRm.writeEscaped(sStatus);
@@ -68,8 +85,11 @@ sap.ui.define([], function () {
 
 			oRm.write("</div>");
 
-			if (oControl.getSubtitle()) {
-				oRm.renderControl(oControl._getSubtitle());
+			if (oControl.getSubtitle() || oBindingInfos.subtitle) {
+				if (oBindingInfos.subtitle) {
+					oSubtitle.addStyleClass("sapFCardHeaderItemBinded");
+				}
+				oRm.renderControl(oSubtitle);
 			}
 
 			oRm.write("</div>");

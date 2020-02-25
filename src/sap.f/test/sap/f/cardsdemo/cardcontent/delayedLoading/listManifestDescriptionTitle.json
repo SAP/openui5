@@ -1,0 +1,42 @@
+{
+  "sap.app": {
+    "type": "card"
+  },
+  "sap.card": {
+    "type": "List",
+    "header": {
+      "data": {
+        "request": {
+          "url": "./cardcontent/delayedLoading/listData2.json"
+        },
+        "path": "/header"
+      },
+      "title": "{title}",
+      "subTitle": "Subtitle",
+      "status": {
+		"text": "2 of {count}"
+	  },
+      "icon": {
+        "src": "{src}"
+      }
+
+    },
+    "content": {
+      "maxItems": 8,
+      "data": {
+        "request": {
+          "url": "./cardcontent/someitems.json"
+        }
+      },
+      "item": {
+        "title": {
+          "label": "{{title_label}}",
+          "value": "{Name}"
+        },
+        "description": {
+          "value": "{Name}"
+        }
+      }
+    }
+  }
+}

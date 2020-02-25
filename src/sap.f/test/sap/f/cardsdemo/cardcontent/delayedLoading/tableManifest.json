@@ -3,25 +3,43 @@
 		"type": "card"
 	},
 	"sap.card": {
+	  "data": {
+		"request": {
+		  "url": "./cardcontent/delayedLoading/tableData.json"
+		}
+	  },
 		"type": "Table",
-		"header": {
-			"type": "Numeric",
-			"data": {
-				"request": {
-					"url": "./cardcontent/delayedLoading/tableData.json"
-				},
-				"path": "/header"
-			},
-			"title": "{title}",
-			"mainIndicator": {
-				"number": "{mainIndicator/number}"
-			}
+	  "header": {
+		"type": "Numeric",
+		"data": {
+		  "path": "/header"
 		},
+		"title": "Table Card ",
+		"subTitle": "{revenue}",
+		"unitOfMeasurement": "EUR",
+		"mainIndicator": {
+		  "number": "{number}",
+		  "unit": "{unit}",
+		  "trend": "{trend}",
+		  "state": "{state}"
+		},
+		"details": "{details}",
+		"sideIndicators": [
+		  {
+			"title": "Target",
+			"number": "{target/number}",
+			"unit": "{target/unit}"
+		  },
+		  {
+			"title": "Deviation",
+			"number": "{deviation/number}",
+			"unit": "%"
+		  }
+		]
+	  },
 		"content": {
 			"data": {
-				"request": {
-					"url": "./cardcontent/delayedLoading/tableData.json"
-				},
+
 				"path": "/content"
 			},
 			"maxItems": 9,

@@ -32,11 +32,6 @@
 				"title": {
 					"label": "{{title_label}}",
 					"value": "{Name}"
-				},
-				"highlight": "{state}",
-				"info": {
-					"value": "{info}",
-					"state": "{infoState}"
 				}
 			}
 		}
