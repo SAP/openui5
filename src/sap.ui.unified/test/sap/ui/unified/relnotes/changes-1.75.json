@@ -46,6 +46,51 @@
         "type": "FEATURE",
         "text": " sap.ui.unified.Calendar: If two calendars are used - opens separate popover for each",
         "references": []
+      },
+      {
+        "id": "f3ae98d9c51953c8701a7005bc29fc47b6a85f2c",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: If two calendars are used - opens separate popover for each",
+        "references": []
+      },
+      {
+        "id": "dcb554bb9676596022bc2c7d40d17de4cdd434f4",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Unnecessary readings now prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007710282019"
+          }
+        ]
+      },
+      {
+        "id": "d5a235bcafd390085b530887049b38f738ce8187",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Semantic rendering issues fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080069312"
+          }
+        ]
+      },
+      {
+        "id": "7659beb355bd6f4622a31a58cea143fcd0efed95",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: ariaLabelledBy/ariaDescribedBy are now read by Jaws",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080016342"
+          }
+        ]
+      },
+      {
+        "id": "328e178d258b8b35ac7048d42561708b2988a585",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Vertical alignment Icon to text",
+        "references": []
       }
     ]
   }

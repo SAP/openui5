@@ -23,6 +23,28 @@
             "reference": "1980516458"
           }
         ]
+      },
+      {
+        "id": "9cee70a93254e66c3bb10d38a17c3cc3e51e1059",
+        "type": "FIX",
+        "text": " Table: Column resizing on mobile with invisible columns",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980516458"
+          }
+        ]
+      },
+      {
+        "id": "b4d0fbf7dc734b0d3d05557075272e5f9ddbd505",
+        "type": "FIX",
+        "text": " Table: Scrolling when inside a ValueHelpDialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080018556"
+          }
+        ]
       }
     ]
   }

@@ -73,7 +73,7 @@
       {
         "id": "4b41e0c991850f4bd799273a6926462863b6e684",
         "type": "FIX",
-        "text": "sap.m.DateRangeSelection: including invalid value doesn't make the control throw an error",
+        "text": "sap.m.DateRangeSelection: including invalid value doesn\u0027t make the control throw an error",
         "references": [
           {
             "type": "BCP",
@@ -95,7 +95,7 @@
       {
         "id": "4c1ab7ca7e0bf9a7a32b5e0092211fc6a3cbe872",
         "type": "FIX",
-        "text": "sap.m.GrowingEnablement: CountMode=None should not jump to the first item after more button is pressed",
+        "text": "sap.m.GrowingEnablement: CountMode\u003dNone should not jump to the first item after more button is pressed",
         "references": [
           {
             "type": "BCP",
@@ -285,106 +285,62 @@
       {
         "id": "db6bf3db94b2b9e4c8f02401bf761bbef507358d",
         "type": "FEATURE",
-        "text": "sap.m.DateRangeSelection: Change date range with keyboard handling is added",
+        "text": " sap.m.DateRangeSelection: Change date range with keyboard handling is added",
         "references": []
       },
       {
         "id": "d01ea07aa8d57842d84d7aaef8ce06168d052cf4",
         "type": "FEATURE",
-        "text": "sap.m.ObjectStatus: now supports inverted state and indication colors",
+        "text": " sap.m.ObjectStatus: now supports inverted state and indication colors",
         "references": []
       },
       {
         "id": "3672a9e854d7a5037f6990a9cc3102b594ed9d23",
         "type": "FIX",
-        "text": "sap.m.Carousel: Next/Previous buttons now have tooltips",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980211008"
-          }
-        ]
+        "text": " sap.m.Carousel: Next/Previous buttons now have tooltips",
+        "references": []
       },
       {
         "id": "960a75e8dd04177da1016c9c0f78739452cee0e9",
         "type": "FIX",
-        "text": "sap.m.ComboBox: Input now selected on arrow down",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980153441"
-          }
-        ]
+        "text": " sap.m.ComboBox: Input now selected on arrow down",
+        "references": []
       },
       {
         "id": "8d0d2692436596906838de417dbf7167c0ec9993",
         "type": "FIX",
-        "text": "sap.m.GenericTag: Fixed tooltip rendering",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980210776"
-          }
-        ]
+        "text": " sap.m.GenericTag: Fixed tooltip rendering",
+        "references": []
       },
       {
         "id": "46acc2b9b208af8fb3058bfa863196ed37b8f7bd",
         "type": "FIX",
-        "text": "sap.m.IconTabHeader: Do not trigger scroll when space is pressed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980197050"
-          }
-        ]
+        "text": " sap.m.IconTabHeader: Do not trigger scroll when space is pressed",
+        "references": []
       },
       {
         "id": "b22f9d8e00da67ec93d8d0574672bb024f9312bb",
         "type": "FIX",
-        "text": "sap.m.Input: Description is now read by JAWS",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980211096"
-          }
-        ]
+        "text": " sap.m.Input: Description is now read by JAWS",
+        "references": []
       },
       {
         "id": "88b1e6f8dc3f1d5c34a4983ca61dbd465d169f26",
         "type": "FIX",
-        "text": "sap.m.MultiComboBox: Cleans side effects of lazy list instantiation",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980207494"
-          },
-          {
-            "type": "BCP",
-            "reference": "1980198372"
-          }
-        ]
+        "text": " sap.m.MultiComboBox: Cleans side effects of lazy list instantiation",
+        "references": []
       },
       {
         "id": "6c9b4225f7f23c6868d4ba7dafa9e1a595d21b3c",
         "type": "FIX",
-        "text": "sap.m.MultiInput: Refresh N-more list on token deletion",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970156490"
-          }
-        ]
+        "text": " sap.m.MultiInput: Refresh N-more list on token deletion",
+        "references": []
       },
       {
         "id": "7fcb48c7f2ebb620002e7730e5bbce1439d4c538",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: unbindAggregation clears calendar rows now",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980098410"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: unbindAggregation clears calendar rows now",
+        "references": []
       }
     ]
   }

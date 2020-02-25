@@ -1,238 +1,202 @@
 {
-	"1.40.0": {
-		"date": "June 2016",
-		"notes": [
-			{
-				"id": "2f8e07b1aade5941660e9898643cfbd514e32e02",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: When there's a table inside, the shell is displaying scrollbar consistently accross browsers\"",
-				"references": []
-			},
-			{
-				"id": "5f644e4b93acf21248bf2703ebb131c97a05a053",
-				"type": "FEATURE",
-				"text": "ux3.NavigationBar - allow the items in the overflow to be uppercase",
-				"references": []
-			},
-			{
-				"id": "2ac227ffa8729e119821d8ac327acf7e5cfffd68",
-				"type": "FIX",
-				"text": "NavigationBar - navigation was moving when adding new items",
-				"references": []
-			},
-			{
-				"id": "e6066550d225e52d6b93a742c4a446b7b93cc929",
-				"type": "FIX",
-				"text": "NavigationBar arrows were missing in HCB",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680008669"
-					}
-				]
-			},
-			{
-				"id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
-				"type": "FIX",
-				"text": "Respect \"themeroots\" when resolving img URLs in Controls",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100003930322015"
-					}
-				]
-			},
-			{
-				"id": "2629b588f28d1b58e708fa96823308a84794225d",
-				"type": "FIX",
-				"text": "[m/commons].Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670100799"
-					}
-				]
-			},
-			{
-				"id": "8bab239018250b75a084000a61851384e7a097d5",
-				"type": "FIX",
-				"text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670033924"
-					}
-				]
-			},
-			{
-				"id": "f55f113a6baf14d6c671cb8657eabd3eca31a3c7",
-				"type": "FIX",
-				"text": "sap.m.ActionBar: Aligned updatePost arrow position",
-				"references": []
-			},
-			{
-				"id": "93fccb5f22a8cf3bf679297a83f652c9b3814820",
-				"type": "FIX",
-				"text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680010754"
-					}
-				]
-			},
-			{
-				"id": "9fb664e46a040f213f01d5d95caaba7e7517bf68",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ActionBar: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "5f6a679b96d7f349c89dc48fa89b5129b6db5a45",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ExactList: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "a87da8f0b3d4279918e7160f8c84947165c84f5a",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Feeder: support edge browser",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670071390"
-					}
-				]
-			},
-			{
-				"id": "c14e2877d8f1c8f81ee639e53b9ce1d4bb178e17",
-				"type": "FIX",
-				"text": "sap.ui.ux3.NavigationBar - late style application would cause a bug in the ux3.Shell",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570784137"
-					}
-				]
-			},
-			{
-				"id": "e8c780cfd29a6778dc6ac9cf01d0039418635b2b",
-				"type": "FIX",
-				"text": "sap.ui.ux3.NotificationBar: Calculation of NotifierView when more than 5 items are showed fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570740477"
-					}
-				]
-			},
-			{
-				"id": "be71e7100b3c13dd7f47184b3fffdb9cea6a6cec",
-				"type": "FIX",
-				"text": "sap.ui.ux3.NotificationBar: Minimized bar hovering is now consistent across all desktop browsers",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570896877"
-					}
-				]
-			},
-			{
-				"id": "cf1f4cd39fc52306f798e2e031ac1c2a24c49e8a",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100001917542016"
-					}
-				]
-			},
-			{
-				"id": "768900d197d32a5535c39a48985ac227e231a0af",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: When there's a table inside, the shell is displaying scrollbar consistently accross browsers",
-				"references": []
-			},
-			{
-				"id": "d1d5fec0824b8034d9cbe5ccfbdfe668d7f7eaea",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "34ca1fb2d52a6db6c9131da3667434de1046646d",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: Content focus issue solved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580190288"
-					}
-				]
-			},
-			{
-				"id": "60be951e90fa8156435137027455cecfb16903dd",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: Control is now properly sized in sap_goldreflection theme",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580068341"
-					}
-				]
-			},
-			{
-				"id": "28a0c6da31d14b930bbcfd309f1f6e7fe3b79870",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "d42ebff914fe1a1a4f1f508512196d7043e6fd1e",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: fix css img urls (again)",
-				"references": []
-			},
-			{
-				"id": "13c7984133df50698ee017bdeb8ff19057eb3f21",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Toolpoup: Arrow in HCB theme is positioned properly",
-				"references": []
-			},
-			{
-				"id": "6673fb0b39d27ffb8fcf71460bed18611656b07e",
-				"type": "FIX",
-				"text": "ux3.NavigationBar was announcing its navigation arrows",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670066798"
-					}
-				]
-			},
-			{
-				"id": "dfe4189c804fa45bcd29effea3e0545105cc2d53",
-				"type": "FIX",
-				"text": "ux3.NavigationBar: Explicitly define focus outline in HCB theme",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580085080"
-					}
-				]
-			},
-			{
-				"id": "2f71510bb09973df6129fb9b75269e45745b96f2",
-				"type": "FIX",
-				"text": "ux3.Shell: Left and right part of the header do not overlap",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580210084"
-					}
-				]
-			}
-		]
-	}
+  "1.40.0": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "2f8e07b1aade5941660e9898643cfbd514e32e02",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: When there\u0027s a table inside, the shell is displaying scrollbar consistently accross browsers\"",
+        "references": []
+      },
+      {
+        "id": "5f644e4b93acf21248bf2703ebb131c97a05a053",
+        "type": "FEATURE",
+        "text": "ux3.NavigationBar - allow the items in the overflow to be uppercase",
+        "references": []
+      },
+      {
+        "id": "2ac227ffa8729e119821d8ac327acf7e5cfffd68",
+        "type": "FIX",
+        "text": "NavigationBar - navigation was moving when adding new items",
+        "references": []
+      },
+      {
+        "id": "e6066550d225e52d6b93a742c4a446b7b93cc929",
+        "type": "FIX",
+        "text": "NavigationBar arrows were missing in HCB",
+        "references": []
+      },
+      {
+        "id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "2629b588f28d1b58e708fa96823308a84794225d",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      },
+      {
+        "id": "8bab239018250b75a084000a61851384e7a097d5",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      },
+      {
+        "id": "f55f113a6baf14d6c671cb8657eabd3eca31a3c7",
+        "type": "FIX",
+        "text": "sap.m.ActionBar: Aligned updatePost arrow position",
+        "references": []
+      },
+      {
+        "id": "93fccb5f22a8cf3bf679297a83f652c9b3814820",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": []
+      },
+      {
+        "id": "9fb664e46a040f213f01d5d95caaba7e7517bf68",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ActionBar: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "5f6a679b96d7f349c89dc48fa89b5129b6db5a45",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ExactList: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "a87da8f0b3d4279918e7160f8c84947165c84f5a",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Feeder: support edge browser",
+        "references": []
+      },
+      {
+        "id": "c14e2877d8f1c8f81ee639e53b9ce1d4bb178e17",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NavigationBar - late style application would cause a bug in the ux3.Shell",
+        "references": []
+      },
+      {
+        "id": "e8c780cfd29a6778dc6ac9cf01d0039418635b2b",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NotificationBar: Calculation of NotifierView when more than 5 items are showed fixed",
+        "references": []
+      },
+      {
+        "id": "be71e7100b3c13dd7f47184b3fffdb9cea6a6cec",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NotificationBar: Minimized bar hovering is now consistent across all desktop browsers",
+        "references": []
+      },
+      {
+        "id": "cf1f4cd39fc52306f798e2e031ac1c2a24c49e8a",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
+        "references": []
+      },
+      {
+        "id": "768900d197d32a5535c39a48985ac227e231a0af",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: When there\u0027s a table inside, the shell is displaying scrollbar consistently accross browsers",
+        "references": []
+      },
+      {
+        "id": "d1d5fec0824b8034d9cbe5ccfbdfe668d7f7eaea",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "34ca1fb2d52a6db6c9131da3667434de1046646d",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Content focus issue solved",
+        "references": []
+      },
+      {
+        "id": "60be951e90fa8156435137027455cecfb16903dd",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Control is now properly sized in sap_goldreflection theme",
+        "references": []
+      },
+      {
+        "id": "28a0c6da31d14b930bbcfd309f1f6e7fe3b79870",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "d42ebff914fe1a1a4f1f508512196d7043e6fd1e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: fix css img urls (again)",
+        "references": []
+      },
+      {
+        "id": "13c7984133df50698ee017bdeb8ff19057eb3f21",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Toolpoup: Arrow in HCB theme is positioned properly",
+        "references": []
+      },
+      {
+        "id": "6673fb0b39d27ffb8fcf71460bed18611656b07e",
+        "type": "FIX",
+        "text": "ux3.NavigationBar was announcing its navigation arrows",
+        "references": []
+      },
+      {
+        "id": "dfe4189c804fa45bcd29effea3e0545105cc2d53",
+        "type": "FIX",
+        "text": "ux3.NavigationBar: Explicitly define focus outline in HCB theme",
+        "references": []
+      },
+      {
+        "id": "2f71510bb09973df6129fb9b75269e45745b96f2",
+        "type": "FIX",
+        "text": "ux3.Shell: Left and right part of the header do not overlap",
+        "references": []
+      }
+    ]
+  },
+  "1.40.10": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "d3b201e4ffb82cac7ebcd1027c59eb2de34d15b5",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": []
+      },
+      {
+        "id": "dce56cb11d98b0587c527a86dc6f4cd0e1d52a67",
+        "type": "FIX",
+        "text": "sap.ui.ux3.DataSetSimpleView: correctly destroy items",
+        "references": []
+      }
+    ]
+  },
+  "1.40.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "9f8c07ad55af067639deb8dbcaf87b53b70dbff4",
+        "type": "FIX",
+        "text": " sap.ui.ux3.FeedChunk: tools button icon missing",
+        "references": []
+      }
+    ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "a5cad27cb2b8ccf8d5909a68b9097db193b03e0d",
+        "type": "FIX",
+        "text": " sap.ui.ux3.OverlayDialog: Corrected positioning values",
+        "references": []
+      }
+    ]
+  }
 }

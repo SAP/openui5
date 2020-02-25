@@ -445,6 +445,494 @@
             "reference": "2080079397"
           }
         ]
+      },
+      {
+        "id": "0c26cbcf5f9246451a8dddbabe994f36ac3c6a88",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: Improve ESC handling",
+        "references": []
+      },
+      {
+        "id": "0067583035c2b11683afe87022df3fd3e6d8c3b6",
+        "type": "FEATURE",
+        "text": " sap.m.InitialPagePattern: New sample added",
+        "references": []
+      },
+      {
+        "id": "ad24d21845eb46dcb332dc6432a282a8c6e65ec6",
+        "type": "FEATURE",
+        "text": " sap.m.Link: now supports Rename action in RTA",
+        "references": []
+      },
+      {
+        "id": "3de1f89f297443a479ec16c4bf66de7b074ce447",
+        "type": "FEATURE",
+        "text": " sap.m.MessageBox: Introduced emphasizedAction property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080022399"
+          }
+        ]
+      },
+      {
+        "id": "c2f98a4b369f005356ca76d89c80398b48ed827f",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Enhancing the indication color palette",
+        "references": []
+      },
+      {
+        "id": "87a9171e39961a408a706ffa08f5e54bec756a67",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: Implement new ACC Spec",
+        "references": []
+      },
+      {
+        "id": "c6b46ac66398fece9758d3178312282dee580c1b",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar - new helper method getViewByKey is added",
+        "references": []
+      },
+      {
+        "id": "f8bb46a9223a2480208799346ff0e2dd8694bdba",
+        "type": "FEATURE",
+        "text": " sap.m.UploadCollection",
+        "references": []
+      },
+      {
+        "id": "d8d43c3194f5cb59bc304bbeafb1384f0490618b",
+        "type": "FIX",
+        "text": " - sap.m.UploadCollection",
+        "references": []
+      },
+      {
+        "id": "5ee08eacee1b388b5114f2e913a8be28b770759d",
+        "type": "FIX",
+        "text": " Header Container: Text can be selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080012176"
+          }
+        ]
+      },
+      {
+        "id": "483a1d1bf644085bcb11deb6f55343188887e2e6",
+        "type": "FIX",
+        "text": " P13nDialog column alignment fix",
+        "references": []
+      },
+      {
+        "id": "9c5601d95cce41c67ecd0562f39fd573219a8a5f",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Control is now rendered correctly on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080072543"
+          }
+        ]
+      },
+      {
+        "id": "e0b2c6c0af488c96f97818229579e82dc1db06bd",
+        "type": "FIX",
+        "text": " sap.m.Button: Press event is fired in all cases and only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070012440"
+          }
+        ]
+      },
+      {
+        "id": "81673ea4c3aec9ee682443589e747a108d10cbef",
+        "type": "FIX",
+        "text": " sap.m.ComboBox, sap.m.MultiComboBox, sap.m.Input: Disable autocomplete on android",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000849882020"
+          }
+        ]
+      },
+      {
+        "id": "bfa80191748981f5e315271cdc54ead8e3307102",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: valueFormat effect is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080051542"
+          }
+        ]
+      },
+      {
+        "id": "fd90297ba4983a83bc491ef633b59ab5b00133d2",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Clean up mouse event listeners properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980520903"
+          }
+        ]
+      },
+      {
+        "id": "70aa7e7d17e5d2aeaf12333730e18ab76562518d",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Texts are no longer blurred in Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004104102019"
+          }
+        ]
+      },
+      {
+        "id": "65cb1a98f2debc46a95efe5d4d2c27c0bc7410b5",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer : For Edge browser input control inside header container not editable.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005869932019"
+          }
+        ]
+      },
+      {
+        "id": "e30d59b0c3643a5a294e2e7fa0963427f0d5bf4f",
+        "type": "FIX",
+        "text": " sap.m.Input: CSS Reset line-height in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970561151"
+          }
+        ]
+      },
+      {
+        "id": "9360982ad6b6c42a01e9a00472dce7dcb39e5ff2",
+        "type": "FIX",
+        "text": " sap.m.Input: Return back setShowTableSuggestionValueHelp custom setter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080022792"
+          }
+        ]
+      },
+      {
+        "id": "f34488fb152373135ad08da9b8f2557a924f3802",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Arrow background on iPad fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980550812"
+          }
+        ]
+      },
+      {
+        "id": "17b84e2103dea6b18540eb3741ff3ed8d61b5bfb",
+        "type": "FIX",
+        "text": " sap.m.Label: Fixed alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080044780"
+          }
+        ]
+      },
+      {
+        "id": "74a7753b3e79f82450428cd832e2c5bc6549b17f",
+        "type": "FIX",
+        "text": " sap.m.Label: Fixed initial line-height",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080007278"
+          }
+        ]
+      },
+      {
+        "id": "643158dc90c7f880ff1bf70c8109b889c0280063",
+        "type": "FIX",
+        "text": " sap.m.Link: when disabled has tabindex -1",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080064134"
+          }
+        ]
+      },
+      {
+        "id": "0f13eb28b37df55a691e0ad37fe8da78d776488a",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Properly remove Token on List item deletion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980538132"
+          }
+        ]
+      },
+      {
+        "id": "7fa3a819e6fe473d9014a74dee456608bfdeec09",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Token expansion prevented on Icon click",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970628555"
+          }
+        ]
+      },
+      {
+        "id": "ae25c7690734635b33adcc814b1fbd0da9dde29d",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: _calculateSpaceForTokenizer validation for missing DOM",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080045558"
+          }
+        ]
+      },
+      {
+        "id": "cb659827acc9db9389637e935634de08b0bf9b4b",
+        "type": "FIX",
+        "text": " sap.m.NotificationListBase: Forwarding agg issue is now fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080106573"
+          }
+        ]
+      },
+      {
+        "id": "150b229d7720b9c26ddf740dc48b4d4c44b11028",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Avatar is optional now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080012698"
+          }
+        ]
+      },
+      {
+        "id": "30e13cf319e820aa5353d4e1ec5f0763f58c94d0",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: no bottom padding when used along with IconTabBar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080086968"
+          }
+        ]
+      },
+      {
+        "id": "d320500aef8af23ffc61d03eb903f3fbcaf45d56",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: qunit tests are passing now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080064781"
+          }
+        ]
+      },
+      {
+        "id": "8b836e6a607df75e473ebcd8790f8416e13ccfb5",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: sample works without errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080047727"
+          }
+        ]
+      },
+      {
+        "id": "d6c8925295be41a20e2d6703a932738a468dd466",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: sap.m.IconTabBar align is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080090365"
+          }
+        ]
+      },
+      {
+        "id": "6340a9d7fc41e0727b15757ed51659478f1dbdfc",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080053598"
+          }
+        ]
+      },
+      {
+        "id": "250273fefebe08089cd7aa88a2f39ebd17287dc9",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: documentation update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080074464"
+          }
+        ]
+      },
+      {
+        "id": "0d3d286c8038f3cda4e7c6e878f623758e0067ca",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Issue with infinite rerendering is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080039488"
+          }
+        ]
+      },
+      {
+        "id": "daa6ba7543f82592486f1c90588ea786664762b1",
+        "type": "FIX",
+        "text": " sap.m.Page: Content section tabindex fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080023882"
+          }
+        ]
+      },
+      {
+        "id": "2d2067c2abb95582d066ce078952f5b34d129b37",
+        "type": "FIX",
+        "text": " sap.m.Panel: Update accordingly aria-labelledby",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080041226"
+          }
+        ]
+      },
+      {
+        "id": "b397ed4a6e3e553dc9605dd0cf23971c900f19b7",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Row Navigation now fires startDateChange evnet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000696982020"
+          }
+        ]
+      },
+      {
+        "id": "bf174b4319036128ef703a9a9e9ed515a56366d1",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: error is not thrown now and control is rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080033050"
+          }
+        ]
+      },
+      {
+        "id": "b87784c370b47bd2b310371e9dcf5ed9726bef99",
+        "type": "FIX",
+        "text": " sap.m.Popover: Issue with scrolling in child control fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080079397"
+          }
+        ]
+      },
+      {
+        "id": "cb51110fdcbc338098cc10a3a193efbfa26374ea",
+        "type": "FIX",
+        "text": " sap.m.ScrollBar: Racing condition issue with setContentSize fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980348279"
+          }
+        ]
+      },
+      {
+        "id": "ff00d7cd15b57203459340a3c6a70febcede19fe",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Global Search is displayed properly in the sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080050918"
+          }
+        ]
+      },
+      {
+        "id": "3514c325036a8b7bafeef54cee35f51ae80b8e16",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog, sap.m.TableSelectDialog: Fixed too general selectors for responsive padding",
+        "references": []
+      },
+      {
+        "id": "0dc6a18a9d7f99ccd9c11325c492cb8fc770c2e4",
+        "type": "FIX",
+        "text": " sap.m.StepInput - numeric pad doesn\u0027t appear after use of inc/dec buttons",
+        "references": []
+      },
+      {
+        "id": "411570a3efc20730736ecf7418de3ebbf7e358d2",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Value State handled correctly + improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980328638"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970276948"
+          }
+        ]
+      },
+      {
+        "id": "7fa70447fe0f201eb56f1abd7a838d64dac6f245",
+        "type": "FIX",
+        "text": " sap.m.TabCntainer: dev sample fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080047905"
+          }
+        ]
+      },
+      {
+        "id": "27a11559541fa9a7df01604d51a500d0a7a9c414",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: modified property mutator renders correctly the item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080035052"
+          }
+        ]
+      },
+      {
+        "id": "12d325a79bea6165222296978b79e4b8aab292ee",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed visual misalignments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080121060"
+          }
+        ]
       }
     ]
   }

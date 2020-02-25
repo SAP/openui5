@@ -123,5 +123,64 @@
         "references": []
       }
     ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "36af3654fb11cd531fa3a2706ec5ea1ffabcbd5d",
+        "type": "FIX",
+        "text": "sap.ui.fl - Change for VariantManagement stored as instance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880695871"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "dd9a880393ce78dc54b0d70f16166138d618f4cb",
+        "type": "FIX",
+        "text": "sap.ui.fl - attache ctrl variant id to viewcache",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880695871"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "3f6b5be82d0544ef9cfa3643dc30bba1dd3e38e5",
+        "type": "FIX",
+        "text": "Performance Violation: Stopping fetching XSRF tokens roundtrips",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880731777"
+          }
+        ]
+      },
+      {
+        "id": "ca13d58c918f7be79f047b58e15a4a76d15405a3",
+        "type": "FIX",
+        "text": "sap.ui.fl - fixed getCacheKey with ctrl variant id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880695871"
+          }
+        ]
+      }
+    ]
   }
 }

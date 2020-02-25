@@ -5,31 +5,31 @@
       {
         "id": "73f1bee881fadbe9694272c004b8496f276f7189",
         "type": "FIX",
-        "text": "sap.ui.fl: checkTargetAndApplyChange small fix on applied changes",
+        "text": " sap.ui.fl: checkTargetAndApplyChange small fix on applied changes",
         "references": []
       },
       {
         "id": "bbd4ecb2110dd6f137a110e98ff56e0fd169afa8",
         "type": "FIX",
-        "text": "Fix several issues in Variant Management Control",
+        "text": " Fix several issues in Variant Management Control",
         "references": []
       },
       {
         "id": "9559d164e0066ec333a55c8d774b49e5102a528f",
         "type": "FIX",
-        "text": "Opening file in LREP browser lasts long",
+        "text": " Opening file in LREP browser lasts long",
         "references": []
       },
       {
         "id": "dc38f0cac1a88ff67f9735d3b64c368d144aeb5a",
         "type": "FEATURE",
-        "text": "fl.VariantManagement: prohibit the deletion of the last entry",
+        "text": " fl.VariantManagement: prohibit the deletion of the last entry",
         "references": []
       },
       {
         "id": "a02a75d0e36c66b795e3a6073c9d611492dae8c9",
         "type": "FIX",
-        "text": "Fix control variant issues",
+        "text": " Fix control variant issues",
         "references": []
       },
       {
@@ -47,60 +47,112 @@
       {
         "id": "ca5b37dada47aa8e9e4b9d01491d4649253217d9",
         "type": "FIX",
-        "text": "Copy of variants doesn't copy name",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780482522"
-          }
-        ]
+        "text": " Copy of variants doesn\u0027t copy name",
+        "references": []
       },
       {
         "id": "c0342407fe532b52da845670c2a969ff879a5733",
         "type": "FIX",
-        "text": "Bug fixes for Delta Variants",
+        "text": " Bug fixes for Delta Variants",
         "references": []
       },
       {
         "id": "ab822c93bbf93598bba946d730a79cc800c49dfe",
         "type": "FIX",
-        "text": "Revise VariantController unit test for sorting",
+        "text": " Revise VariantController unit test for sorting",
         "references": []
       },
       {
         "id": "b548cbe1666b1cc3441484aebd3cee7677db85a1",
         "type": "FIX",
-        "text": "Control Variants duplicate fileName length exceeding 64",
+        "text": " Control Variants duplicate fileName length exceeding 64",
         "references": []
       },
       {
         "id": "aaf90380008550c18ddf8a838f6f20fc8955fc37",
         "type": "FIX",
-        "text": "sap.ui.fl - controlDependencies check bugfix",
+        "text": " sap.ui.fl - controlDependencies check bugfix",
         "references": []
       },
       {
         "id": "839fe13ca5a455c6365174dffa661d6ab671427f",
         "type": "FIX",
-        "text": "Fix bug in Sorting and support deletion of variants",
+        "text": " Fix bug in Sorting and support deletion of variants",
         "references": []
       },
       {
         "id": "31e730cb5093bbadebe8818df063076adce39e5d",
         "type": "FIX",
-        "text": "Move variant title property to content of content of variant",
+        "text": " Move variant title property to content of content of variant",
         "references": []
       },
       {
         "id": "5946582fe6b2d90bc1ad828e0c8ba40a6a1139ea",
         "type": "FIX",
-        "text": "Fix bug in sorting of variants after reload",
+        "text": " Fix bug in sorting of variants after reload",
         "references": []
       },
       {
         "id": "fa513022b2647b43e2eed9c88ee13b8a60b70323",
         "type": "FEATURE",
-        "text": "sap.ui.rta: Refactoring the unsaved changes which are booked",
+        "text": " sap.ui.rta: Refactoring the unsaved changes which are booked",
+        "references": []
+      }
+    ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "cd7876f03d42cf2c186c077a149d7a04a6895398",
+        "type": "FIX",
+        "text": " Always return a Promise for ControllerExtensions",
+        "references": []
+      },
+      {
+        "id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "0e864484cf4a9edaaa857b68120fd51d7446d674",
+        "type": "FIX",
+        "text": " Fix several issues in variant management control",
+        "references": []
+      },
+      {
+        "id": "14313fb06d2d9b933f23c82a32535b70d9a717c3",
+        "type": "FIX",
+        "text": " sap.ui.fl: MoveControls now reverts to the correct position",
+        "references": []
+      }
+    ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "c6c8c95b564e9e9ecfb807e5f5e031323bda6a4b",
+        "type": "FIX",
+        "text": " Add getPreparedChange to ctrl variant commands",
+        "references": []
+      },
+      {
+        "id": "2d8a8bb3786c7956ade92abf2d0efaa293480598",
+        "type": "FIX",
+        "text": " Fix open issues",
+        "references": []
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "0341c611eb8263a158dd653cc319a4d69b93f355",
+        "type": "FIX",
+        "text": " sap.ui.fl: Variant selection in URL should not change history",
         "references": []
       }
     ]

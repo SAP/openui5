@@ -29,6 +29,45 @@
             "reference": "0020751295 0000592469 2019"
           }
         ]
+      },
+      {
+        "id": "c2f98a4b369f005356ca76d89c80398b48ed827f",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Enhancing the indication color palette",
+        "references": []
+      },
+      {
+        "id": "12d325a79bea6165222296978b79e4b8aab292ee",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed visual misalignments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080121060"
+          }
+        ]
+      },
+      {
+        "id": "ce901297ad5dc6f83d936dcece4ec3856973ff4e",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Styled pressed state properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980551878"
+          }
+        ]
+      },
+      {
+        "id": "19cea402ae2f5c3cb5b51d1dfa77c52b880a98ee",
+        "type": "FIX",
+        "text": " user-select text when contenteditable\u003dtrue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000592469 2019"
+          }
+        ]
       }
     ]
   }

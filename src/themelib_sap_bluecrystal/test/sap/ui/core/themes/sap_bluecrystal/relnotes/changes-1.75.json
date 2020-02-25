@@ -12,6 +12,17 @@
             "reference": "0020751295 0000592469 2019"
           }
         ]
+      },
+      {
+        "id": "19cea402ae2f5c3cb5b51d1dfa77c52b880a98ee",
+        "type": "FIX",
+        "text": " user-select text when contenteditable\u003dtrue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000592469 2019"
+          }
+        ]
       }
     ]
   }

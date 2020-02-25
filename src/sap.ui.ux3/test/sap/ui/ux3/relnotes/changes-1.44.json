@@ -31,5 +31,48 @@
         ]
       }
     ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "1662497edb48ac4fa8a8a1549ddce8b8141eb397",
+        "type": "FIX",
+        "text": "sap.ui.ux3.FeedChunk: tools button icon missing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680314587"
+          }
+        ]
+      },
+      {
+        "id": "de971610cc44ebbe05c12abcee9fbc2aae97d3b4",
+        "type": "FIX",
+        "text": "sap.ui.ux3.OverlayDialog: Corrected positioning values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680283946"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.33": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "57e14e34f23c23a102187cf60cb7acff6b3e699a",
+        "type": "FIX",
+        "text": "sap.ui.ux3.DataSetSimpleView: fix failing unit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770507954"
+          }
+        ]
+      }
+    ]
   }
 }

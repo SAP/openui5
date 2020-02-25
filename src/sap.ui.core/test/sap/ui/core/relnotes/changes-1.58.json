@@ -752,5 +752,317 @@
         ]
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "2f84ecfb5721266ff1ec54c404721ab15cb95905",
+        "type": "FEATURE",
+        "text": "Fragment: Fragment.load API",
+        "references": []
+      },
+      {
+        "id": "ef4b00c404722951e9f831e552941f2bf7669687",
+        "type": "FIX",
+        "text": "Manifest: Manifest.load should keep manifest URL in async case",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880503434"
+          }
+        ]
+      },
+      {
+        "id": "3fd22ea85562a6695638f1880fc3d19cef6b6acd",
+        "type": "FIX",
+        "text": "Manifest: set component base URL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880503434"
+          }
+        ]
+      },
+      {
+        "id": "cb337617f9c2d8492a63f572c6b27d42e6a84a4e",
+        "type": "FIX",
+        "text": "Register ui5loader modules synchronously",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880536215"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880536782"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880535979"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880534003"
+          }
+        ]
+      },
+      {
+        "id": "12f790132873915bd2b76fde3fa5d128221da809",
+        "type": "FIX",
+        "text": "v2.ODataAnnotations: don't cache invalid annotations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880485001"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "7311df0405915e1177f9180f1ec6d61c7ccc5cd7",
+        "type": "FIX",
+        "text": "Controller: controllerFactory resolves wrong controller class",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870341066"
+          }
+        ]
+      },
+      {
+        "id": "b875db6fa052ee68663e0e1c3608973e64a5deb0",
+        "type": "FIX",
+        "text": "core/routing/Target: _updateOptions should not overwrite _name",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870335099"
+          }
+        ]
+      },
+      {
+        "id": "8953e7b919bec59e4317a32c7be6d7ce43f76c92",
+        "type": "FIX",
+        "text": "model/ODataUtils: Fix brackets for MultiFilter objects",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870350543"
+          }
+        ]
+      },
+      {
+        "id": "998ffad82418cb6d35e4c317a770cc427c94030a",
+        "type": "FIX",
+        "text": "performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003553622018"
+          }
+        ]
+      },
+      {
+        "id": "c6aa08a28f3fb8d80df5b7ce258bd8f7055457eb",
+        "type": "FIX",
+        "text": "core.routing: convert route config for internal target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870335099"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "c1535ff852c12efb8833fe5ef21fc750a104f292",
+        "type": "FIX",
+        "text": "Element: Experimental note added to drag-and-drop metadata",
+        "references": []
+      },
+      {
+        "id": "da0cec1c943541f930c89c748212bcfb339ff707",
+        "type": "FIX",
+        "text": "Fragment: remove new property names before calling legacy API",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2193"
+          }
+        ]
+      },
+      {
+        "id": "7d03b036b3ed9b4d277dc5deca14a95ff2a7d84d",
+        "type": "FIX",
+        "text": "Manifest: always process entries with placeholders",
+        "references": []
+      },
+      {
+        "id": "564e76cddde746bc2ac8fd11bc1153cbf95ecd44",
+        "type": "FIX",
+        "text": "TableUtils: Update OpenSource usage documentation",
+        "references": []
+      },
+      {
+        "id": "528eaa1cc80c0dd044d2c80d497d7eba15c16842",
+        "type": "FIX",
+        "text": "XMLView: fix re-rendering of directly nested XMLViews",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880410030"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880495226"
+          }
+        ]
+      },
+      {
+        "id": "1d803795324c6c18b7593aab72f05430e672ac7a",
+        "type": "FIX",
+        "text": "format/DateFormat: Multiple instances shouldn't share fallback formats",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870290668"
+          }
+        ]
+      },
+      {
+        "id": "982d7472bae574a147954750d39acea54bd4354e",
+        "type": "FIX",
+        "text": "types/NumberFormat: Currency with RTL locale format/parse",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870355235"
+          }
+        ]
+      },
+      {
+        "id": "089aa9e58031cc6f756c4d9dddda46ca93858072",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: 0 count in result now correctly processed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870370604"
+          }
+        ]
+      },
+      {
+        "id": "0e3fcca7d903a9bc050a7efd0aa8762f8c35a51c",
+        "type": "FIX",
+        "text": "v2/ODataListBinding: Set oCombinedFilters before applyFilter() is called",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870341629"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.4": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "878d64eba17508e48f1e04c03f6c9f404ddedb89",
+        "type": "FIX",
+        "text": "m/TextArea: do not trigger FieldGroupValidation on enter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870406549"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "816deea98c87aa26ec947270476af6c06c343eeb",
+        "type": "FIX",
+        "text": "ODataUtils: Use gregorian calendar for filter values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880584846"
+          }
+        ]
+      },
+      {
+        "id": "a4f05a263a987c8317ae90e78cb6e620d7e3d491",
+        "type": "FIX",
+        "text": "performance/trace/Interaction: bind context for XHR handler",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004272782018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "7922ae31658a527185e3006164f116861da52161",
+        "type": "FIX",
+        "text": "Fix testsuite issues in 1.58",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880639069"
+          }
+        ]
+      },
+      {
+        "id": "3abc3d3480226c0072264d3088bf52c7afdbc214",
+        "type": "FIX",
+        "text": "core/Control: corrected visibility of blocked property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880574071"
+          }
+        ]
+      },
+      {
+        "id": "5f8a278ac2422c9d9f4d3c452ce838a3eb6283ca",
+        "type": "FIX",
+        "text": "performance/trace/FESR: deal with unsupported window.Performance API",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870446987"
+          }
+        ]
+      },
+      {
+        "id": "b2d302137f58bf7e3048c575f972be9386c42691",
+        "type": "FIX",
+        "text": "sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880577456"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -96,6 +96,112 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageHeader: Anchorbar now has relative shadows",
         "references": []
+      },
+      {
+        "id": "3de1f89f297443a479ec16c4bf66de7b074ce447",
+        "type": "FEATURE",
+        "text": " sap.m.MessageBox: Introduced emphasizedAction property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080022399"
+          }
+        ]
+      },
+      {
+        "id": "c2f98a4b369f005356ca76d89c80398b48ed827f",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Enhancing the indication color palette",
+        "references": []
+      },
+      {
+        "id": "37723fbc862e6be88808d7d1544a700794ff83cf",
+        "type": "FIX",
+        "text": " GenericTile content background color in action mode and hover/active state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080040235"
+          }
+        ]
+      },
+      {
+        "id": "fca3fa02fc1e67e869338d2ce6479a808238bb8e",
+        "type": "FIX",
+        "text": " sap.m.ColorPicker: slider handles have correct hight in Quartz theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080060281"
+          }
+        ]
+      },
+      {
+        "id": "d6c8925295be41a20e2d6703a932738a468dd466",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: sap.m.IconTabBar align is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080090365"
+          }
+        ]
+      },
+      {
+        "id": "2f593e9eb12f452d2ad5a9d43cca38bdf4a0d4a3",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: special dates for today correctly rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080069019"
+          }
+        ]
+      },
+      {
+        "id": "3514c325036a8b7bafeef54cee35f51ae80b8e16",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog, sap.m.TableSelectDialog: Fixed too general selectors for responsive padding",
+        "references": []
+      },
+      {
+        "id": "12d325a79bea6165222296978b79e4b8aab292ee",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed visual misalignments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080121060"
+          }
+        ]
+      },
+      {
+        "id": "ce901297ad5dc6f83d936dcece4ec3856973ff4e",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Styled pressed state properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980551878"
+          }
+        ]
+      },
+      {
+        "id": "5e802ca89fe2f06fa1b41140b298e643aa849bcf",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Anchorbar now has relative shadows",
+        "references": []
+      },
+      {
+        "id": "19cea402ae2f5c3cb5b51d1dfa77c52b880a98ee",
+        "type": "FIX",
+        "text": " user-select text when contenteditable\u003dtrue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000592469 2019"
+          }
+        ]
       }
     ]
   }

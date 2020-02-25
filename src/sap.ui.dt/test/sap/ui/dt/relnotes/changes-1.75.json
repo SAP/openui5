@@ -18,6 +18,23 @@
             "reference": "2080084573"
           }
         ]
+      },
+      {
+        "id": "87a9171e39961a408a706ffa08f5e54bec756a67",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: Implement new ACC Spec",
+        "references": []
+      },
+      {
+        "id": "587ac50ee68b1978909fd5e005b547a57d1ce3c4",
+        "type": "FIX",
+        "text": " sap.ui.dt - DesignTime improvement on insertAggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080084573"
+          }
+        ]
       }
     ]
   }

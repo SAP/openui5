@@ -5,13 +5,52 @@
       {
         "id": "ff75969dbd03279d90a0b5b263fa1e74ec2cb903",
         "type": "FIX",
-        "text": "sap.m.Dialog: correct padding of the subheader when Toolbar is used",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880134146"
-          }
-        ]
+        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "0d4c2b4c59d03f6cb1f69f361a780c90d98d73ec",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "121f122b502c8e201b24510dd8808a9ba6d96b1a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Items\u0027 loading indicator returned back",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "fe8d2122698444bef6af6aa8c6ed940b2f98e105",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      }
+    ]
+  },
+  "1.56.14": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "cfe1ed40d3fa7c921bd3b9699bb6705bd7a83414",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: hover on selected non-working date is correct now",
+        "references": []
       }
     ]
   }

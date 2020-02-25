@@ -25,5 +25,48 @@
         ]
       }
     ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "724e59466302abb51b3c20797edfeba7b9d80ac1",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: hover on selected non-working date is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880630530"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "b820fbb6427109ad7f4dcd16b60a11963c3510be",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
+        "references": []
+      }
+    ]
+  },
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "d6cff3038530a6c64308982eef91942d45c848a1",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: duplicated focus outline, spec implemented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880494664"
+          }
+        ]
+      }
+    ]
   }
 }

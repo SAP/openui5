@@ -18,6 +18,23 @@
             "reference": "2080090749"
           }
         ]
+      },
+      {
+        "id": "5a55615bc830e43d4dd06386c41503affddd29fb",
+        "type": "FIX",
+        "text": " Fixing the propagation of rejected promise to the caller",
+        "references": []
+      },
+      {
+        "id": "d97fb07451b817adf886df5a62a329ee5afcfa9c",
+        "type": "FIX",
+        "text": " fl.VariantManagement: css adaptions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080090749"
+          }
+        ]
       }
     ]
   }

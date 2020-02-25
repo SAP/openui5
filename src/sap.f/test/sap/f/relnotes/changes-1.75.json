@@ -69,6 +69,74 @@
             "reference": "2080040770"
           }
         ]
+      },
+      {
+        "id": "5d3165e2c0ae52177122614e79d1d1aa1e3eded8",
+        "type": "FEATURE",
+        "text": " sap.f.cards.AdaptiveContent: Load AC manifest from url",
+        "references": []
+      },
+      {
+        "id": "bc8e9bffb5008f48d1ed00ed800463f1376dc70b",
+        "type": "FEATURE",
+        "text": " sap.f.cards.AdaptiveContent: Support for templating implemented",
+        "references": []
+      },
+      {
+        "id": "0e61b326bee6ce110aebe75ce3b738b87619bad1",
+        "type": "FEATURE",
+        "text": " sap.f.cards.Header: Fire press event on sapselect",
+        "references": []
+      },
+      {
+        "id": "4adae2b59ad033233b51540995ab2605f3e83fe5",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Add hAlign for table columns",
+        "references": []
+      },
+      {
+        "id": "fd657bb063ada7ec1e4e904b0305154dec3f69cd",
+        "type": "FIX",
+        "text": " sap.f.Header: Status text is now read by JAWS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080064140"
+          }
+        ]
+      },
+      {
+        "id": "803f9ab6cb236d82bf517285a3fa68e2318e59b8",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Popover not opening on phone is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080040770"
+          }
+        ]
+      },
+      {
+        "id": "239bdbf606d16ed6e6913ad67d745e4dd6da081a",
+        "type": "FIX",
+        "text": " sap.f.Shellbar: Mega Menu Title doesn`t truncate incorrectly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980478346"
+          }
+        ]
+      },
+      {
+        "id": "0eb148e765ef580198618c02cc9052dc4ad83ba8",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: String concatenation works with complex bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080077452"
+          }
+        ]
       }
     ]
   }

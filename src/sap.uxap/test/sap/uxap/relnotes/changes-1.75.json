@@ -51,6 +51,67 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageHeader: Anchorbar now has relative shadows",
         "references": []
+      },
+      {
+        "id": "ca450a12f992ae4dfaf193c4f13a700b28fa5537",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Removed unstable ids",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080120183"
+          }
+        ]
+      },
+      {
+        "id": "732dface6efefc78c8514d6745a006d6990d4c9f",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Switch to HierarchicalSelect optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080019032"
+          }
+        ]
+      },
+      {
+        "id": "5e802ca89fe2f06fa1b41140b298e643aa849bcf",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Anchorbar now has relative shadows",
+        "references": []
+      },
+      {
+        "id": "2b1215a4c1b0184e4df6d43b37c36ea9ff5d30ef",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Detect auto-scroll on resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970593988"
+          }
+        ]
+      },
+      {
+        "id": "8f98bc34ca43c962c0b706d701fd3389cbdbf1a1",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent unwanted snap on scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970448827"
+          }
+        ]
+      },
+      {
+        "id": "9c1c741aecc024db65338731e928733b6e8e297e",
+        "type": "FIX",
+        "text": " sap.uxap: Restrict adaptation of anchor bar to buttons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080094291"
+          }
+        ]
       }
     ]
   }
