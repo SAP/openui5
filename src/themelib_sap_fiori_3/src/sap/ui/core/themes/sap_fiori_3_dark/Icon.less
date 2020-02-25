@@ -1,0 +1,55 @@
+/* ================================= */
+/* CSS for control sap.ui.core/Icon  */
+/* Quartz Dark theme                 */
+/* ================================= */
+
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiIcon:focus {
+	outline-color: @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiIcon:focus::after,
+html[data-sap-ui-browser^="ed"] .sapUiIcon:focus::after {
+	border-color: @sapUiContentFocusColor;
+}
+
+.sapMTB-Info-CTX > .sapUiIcon {
+	width: 1rem;
+	font-size: 1rem;
+	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+}
+
+.sapUiIconColorNeutral {
+	color: @sapUiNeutralElement;
+}
+
+.sapUiIconColorCritical {
+	color: @sapUiCriticalElement;
+}
+
+.sapUiIconColorPositive {
+	color: @sapUiPositiveElement;
+}
+
+.sapUiIconColorNegative {
+	color: @sapUiNegativeElement;
+}
+
+.sapUiIconBGColorNeutral {
+	background-color: @sapUiNeutralElement;
+}
+
+.sapUiIconBGColorCritical {
+	background-color: @sapUiCriticalElement;
+}
+
+.sapUiIconBGColorPositive {
+	background-color: @sapUiPositiveElement;
+}
+
+.sapUiIconBGColorNegative {
+	background-color: @sapUiNegativeElement;
+}
+
+.sapUiIconBGColorContrast {
+	background-color: lighten(@sapUiHighlight, 10);
+}

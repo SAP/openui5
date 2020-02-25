@@ -1,0 +1,77 @@
+/* ============================= */
+/* CSS for control sap.m/Dialog  */
+/* Quartz Dark theme             */
+/* ============================= */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_m_Dialog_MarginHeight: 6%;
+@_sap_m_Dialog_BarHeight: 2.75rem;
+@_sap_m_Dialog_SubHeaderCompactHeight: 2rem;
+
+// ==========================================================================
+// Variables
+// ==========================================================================
+
+@_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
+
+.sapMDialog.sapMPopup-CTX > header .sapMHeader-CTX,
+.sapMDialog.sapMPopup-CTX > header .sapMSubHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMDialog.sapMDialogWithSubHeader > header > .sapMIBar,
+.sapMDialog > header > .sapMIBar {
+	box-shadow: none;
+}
+
+.sapMDialog:not(.sapMDialogWithSubHeader) > header > .sapMIBar,
+.sapMDialog > header:last-of-type .sapMIBar {
+	box-shadow: 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiPageHeaderBorderColor;
+}
+
+.sapMDialog.sapMMessageDialog > .sapMDialogTitle .sapMIBar {
+	box-shadow: inset 0 -0.125rem @_sap_m_Dialog_HeaderShadowColor;
+}
+
+.sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
+	font-size: 1rem;
+}
+
+.sapMDialogResizeHandler::before {
+	content: attr(data-sap-ui-icon-content);
+	color: @sapUiButtonLiteTextColor;
+}
+
+.sapMDialogBeginButton, .sapMDialogEndButton {
+	min-width: 4rem;
+}
+
+// ==========================================================================
+// header, sub-header, footer
+// ==========================================================================
+
+.sapMDialog {
+	header .sapMBarLeft,
+	header .sapMBarPH {
+		padding-left: 1rem;
+	}
+
+	header .sapMBarRight,
+	header .sapMBarPH {
+		padding-right: 1rem;
+	}
+
+	footer .sapMTB {
+		padding: 0 1rem;
+	}
+}
+
+// buttons on phone must be to the right side (in LTR mode)
+html.sap-phone .sapMDialog {
+	& > footer .sapMFooter-CTX {
+		justify-content: flex-end;
+	}
+}

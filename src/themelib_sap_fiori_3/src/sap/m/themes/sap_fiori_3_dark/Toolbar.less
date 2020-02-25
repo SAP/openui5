@@ -1,0 +1,83 @@
+/* ============================== */
+/* CSS for control sap.m/Toolbar  */
+/* Quartz Dark theme              */
+/* ============================== */
+@_sap_m_Toolbar_MarginRight: 0;
+
+html.sap-desktop .sapMTBActive:focus {
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+.sapMTB {
+	height: 2.75rem;
+	padding: 0 0.5rem;
+	background: @sapUiToolbarBackground;
+}
+
+/* Transparent Toolbar Context */
+.sapMTB-Transparent-CTX.sapMTB {
+	padding: 0 0.5rem 0 1rem;
+}
+
+/* Solid Toolbar Context */
+.sapMTB-Solid-CTX.sapMTB {
+	background: darken(@sapUiListHeaderBackground, 2);
+}
+
+/* Info Toolbar Context */
+.sapMTB-Info-CTX.sapMTB {
+	height: 2rem;
+	background: @sapUiInfobarBackground;
+	border-bottom: none;
+}
+
+.sapMIBar.sapMTB {
+
+	.sapMBarChild {
+		margin: 0 0.25rem;
+	}
+
+	.sapMBarChild:first-child {
+		margin: 0 0.25rem 0 0;
+	}
+
+	.sapMBarChild:last-child {
+		margin: 0 @_sap_m_Toolbar_MarginRight 0 0.25rem;
+	}
+
+	.sapMBarChild:only-child {
+		margin: 0;
+	}
+}
+
+html.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+/* TODO remove after 1.62 version */
+html[data-sap-ui-browser^="ie"].sap-desktop {
+	.sapMTBActive:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapMTBActive:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: calc(~'100% - 0.0625rem');
+		height: calc(~'100% - 0.0625rem');
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.0625rem dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+	.sapMTB-Info-CTX.sapMTBActive:focus:before {
+		border-color: @sapUiContentContrastFocusColor;
+	}
+}
+
+html[data-sap-ui-browser^="ed"].sap-desktop .sapMTBActive:focus {
+	outline-style: dashed;
+}

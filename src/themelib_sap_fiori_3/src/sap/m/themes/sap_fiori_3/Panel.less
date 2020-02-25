@@ -39,11 +39,47 @@
 	color: @sapUiGroupTitleTextColor;
 }
 
+.sapUiSizeCompact {
+  .sapMPanelExpandableIcon {
+    margin: 0 0.375rem;
+    width: 2rem;
+    line-height: 1.625rem;
+  }
+}
+
 .sapMPanelExpandableIcon {
-	margin: 0;
-	width: 2.75rem;
-	line-height: 2.75rem;
-	color: @sapUiButtonLiteTextColor;
+  margin: 0 0.25rem;
+  width: 2.25rem;
+  line-height: 2.25rem;
+  border-radius: @sapUiButtonBorderCornerRadius;
+  background-color: @sapUiButtonLiteBackground;
+  border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
+  color: @sapUiButtonLiteTextColor;
+
+  &:focus::after {
+    border-color: @sapUiContentFocusColor;
+  }
+
+  &::after {
+    border-color: transparent;
+  }
+
+  &:hover {
+    background-color: @sapUiButtonLiteHoverBackground;
+    border-color: @sapUiButtonLiteHoverBorderColor;
+  }
+
+  &:active {
+    background-color: @sapUiButtonLiteActiveBackground;
+    border-color: @sapUiButtonLiteActiveBorderColor;
+    color: @sapUiButtonActiveTextColor;
+  }
+
+  &:focus:active::after {
+    // we need white color in both light and
+    // dark versions when close button is active
+    border-color: @sapUiContentContrastFocusColor;
+  }
 }
 
 .sapMPanel .sapMPanelWrappingDiv .sapMPanelHdr,

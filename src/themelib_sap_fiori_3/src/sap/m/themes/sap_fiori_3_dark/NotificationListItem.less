@@ -1,0 +1,46 @@
+/* =========================================== */
+/* CSS for control sap.m/NotificationListItem  */
+/* Quartz Dark theme                           */
+/* =========================================== */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+@_sap_m_NotificationListItem_ContainerPaddingLeft: 1.25rem;
+
+.sapMNLI-UnreadStatus {
+	background: @sapUiAccent5;
+}
+
+.sapMNLI-CloseButton {
+	border: none;
+}
+
+.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
+	border: none;
+}
+
+.sapMNLI-Body {
+	margin-top: 0.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.sapMNLI-Header > .sapMText {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: @sapMFontHeader6Size;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiGroupTitleTextColor;
+	margin-bottom: 0;
+}
+
+.sapMNLI-Header {
+	box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor;
+}
+
+.sapMNLG-Body .sapMNLI-Header {
+	box-shadow: none;
+}
+
+.sapMNLB-Header .sapMText {
+	vertical-align: bottom;
+}

@@ -1,0 +1,58 @@
+/* =========================================== */
+/* CSS for control sap.m/NotificationListBase  */
+/* Quartz Dark theme                           */
+/* =========================================== */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+@_sap_m_NotificationListBase_ItemGroupedBackground: lighten(@sapUiListBackground, 2);
+@_sap_m_NotificationListBase_ContainerPaddingLeft: 1.25rem;
+@_sap_m_NotificationListBase_SubHeaderAndFooterPadding: 0.25rem 0 0.25rem 1rem;
+@_sap_m_NotificationListBase_CloseButtonCozyPosition: 0.5rem;
+
+//Special case for visual specification of sap.m.NotificationListGroup
+.sapContrastPlus .sapContrast,
+.sapContrast .sapContrastPlus,
+.sapContrastPlus.sapContrast {
+
+	.sapMNLI {
+		background: fade(@sapUiListBackground, 60);
+	}
+	.sapMNLG-GroupHeader {
+		background: fade(@sapUiListBackground, 60);
+	}
+
+	.sapMNLG-Body {
+		.sapMNLI {
+			background: fade(lighten(@sapUiListBackground, 5), 60);
+		}
+	}
+}
+.sapMNLB-Footer {
+	padding-top: 0;
+	padding-bottom:  0.25rem;
+	min-height: 0.25rem;
+}
+
+html.sap-phone .sapMNLB-Footer {
+	padding-bottom: 0.125rem;
+}
+
+/* Close button */
+
+.sapMNLB-CloseButton {
+	top: 0.25rem;
+
+	.sapMBtnIcon {
+		display: inline;
+		font-size: @sapMFontMediumSize; // Button specification
+	}
+}
+
+.sapUiSizeCompact .sapMNLB-CloseButton .sapMBtnIcon {
+	font-size: @sapMFontMediumSize; // Button specification
+}
+.sapMNLB-Header, .sapMNLB-SubHeader {
+	padding-bottom: 1rem;
+}

@@ -1,0 +1,55 @@
+/******************************************************************
+	Style of the RTA FieldRepository  - sap_fiori_3_dark Theme
+*******************************************************************/
+@sap_ui_rta_FieldRepository_ListSelect: lighten(@sapList_Active_TextColor, 10%); //#e6e6e6
+@sap_ui_rta_FieldRepository_ListHoverText: @sapPrimary6; // #32363a
+@sap_ui_rta_FieldRepository_ListHoverBG: @sapUiListSelectionHoverBackground; // #dde8f1
+@sap_ui_rta_FieldRepository_ButtonEmphasizedBG: @sapUiButtonEmphasizedBackground; // #0a6ed1
+@sap_ui_rta_FieldRepository_ButtonEmphasizedText: @sapUiButtonEmphasizedTextColor; // #ffffff
+@sap_ui_rta_FieldRepository_ButtonEmphasizedHoverBG: @sapUiButtonHoverBackground; // #ebf5fe
+@sap_ui_rta_FieldRepository_FocusColor: @sapContent_FocusColor; // #000000
+
+.sapUiRtaMode {
+
+	.sapUIRtaFieldRepositoryDialog {
+		.sapMBtn {
+			.sapMBtnEmphasized {
+				background-color: @sap_ui_rta_FieldRepository_ButtonEmphasizedBG;
+				border-color:     @sap_ui_rta_FieldRepository_ButtonEmphasizedBG;
+				color:            @sap_ui_rta_FieldRepository_ButtonEmphasizedText;
+			}
+			&:hover{
+				.sapMBtnInner {
+					border: 1px solid @sap_ui_rta_FieldRepository_ButtonEmphasizedBG;
+					background: @sap_ui_rta_FieldRepository_ButtonEmphasizedHoverBG;
+				}
+			}
+			> .sapMBtnInner {
+				border: 1px solid @sap_ui_rta_FieldRepository_ButtonEmphasizedText;
+			}
+		}
+		.sapMLIBHoverable {
+			&:hover {
+				background: @sap_ui_rta_FieldRepository_ListSelect;
+				color: @sap_ui_rta_FieldRepository_ListHoverText;
+			}
+			&.sapMLIBSelected:hover {
+				background: @sap_ui_rta_FieldRepository_ListHoverBG;
+				color: @sap_ui_rta_FieldRepository_ListHoverText;
+			}
+		}
+		.sapMLIB.sapMLIBSelected {
+			border-color: transparent;
+		}
+	}
+}
+
+html.sap-desktop .sapUiRtaMode .sapMBtn:focus {
+	> .sapMBtnEmphasized.sapMFocusable {
+		outline-color: @sap_ui_rta_FieldRepository_FocusColor;
+	}
+	> .sapMFocusable {
+		outline: 0.0625rem dotted @sap_ui_rta_FieldRepository_FocusColor;
+		outline-offset: -0.0625rem;
+	}
+}

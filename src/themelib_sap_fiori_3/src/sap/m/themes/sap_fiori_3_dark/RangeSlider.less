@@ -1,0 +1,29 @@
+/* ================================== */
+/* CSS for control sap.m/RangeSlider  */
+/* Quartz Dark theme                  */
+/* ================================== */
+
+/* overlap */
+.sapMSliderHandle.sapMSliderHandleOverlap {
+	border: 0.125rem solid lighten(@sapUiFieldActiveBorderColor, 5);
+}
+
+.sapMRangeSlider.sapMSlider {
+	.sapMSliderInner {
+		& >.sapMSliderHandle {
+			 background: fade(@sapUiButtonBackground, 25);
+		}
+		&:hover > .sapMSliderHandle {
+			background: fade(@sapUiButtonBackground, 25);
+		}
+	}
+	.sapMSliderInner > .sapMSliderHandle {
+		&:hover {
+			background-color: fade(@sapUiButtonHoverBackground, 25);
+			border-color: @sapUiActive;
+		}
+		&.sapMSliderHandlePressed {
+			background: fade(@sapUiActive, 25);
+		}
+	}
+}

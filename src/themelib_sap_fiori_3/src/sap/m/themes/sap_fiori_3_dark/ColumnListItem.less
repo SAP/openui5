@@ -1,0 +1,12 @@
+/* ==================================== */
+/* CSS for control sap.m/ColumnListItem */
+/* Quartz Dark theme                    */
+/* ==================================== */
+
+/* selection border indicator */
+/* note: adding border-bottom to the td, increased the size of the table, hence not adding border-bottom */
+/* note: adding border-top to the sibling row is not suitable as the sibling row can be hidden and in such case the selection border is lost */
+.sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected,
+.sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow {
+	box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
+}

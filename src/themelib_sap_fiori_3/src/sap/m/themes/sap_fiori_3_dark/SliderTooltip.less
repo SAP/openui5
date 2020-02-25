@@ -1,0 +1,40 @@
+/* ==================================== */
+/* CSS for control sap.m/SliderTooltip  */
+/* Quartz Dark theme                    */
+/* ==================================== */
+
+/* ------------------------------ */
+/* Slider Tooltip styles          */
+/* ------------------------------ */
+
+.sapMSliderTooltip {
+	background: @sapUiFieldBackground;
+	border-radius: 0.125rem;
+	border: 1px solid @sapUiFieldBorderColor;
+	box-shadow: none;
+	height: 1.5rem;
+}
+
+.sapMSliderTooltipInput {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiFieldTextColor;
+	background: @sapUiFieldBackground;
+}
+
+.sapMSliderTooltipErrorState {
+	background: @sapUiFieldInvalidBackground;
+	border-color: @sapUiFieldInvalidColor
+}
+
+.sapMSliderTooltipErrorState .sapMSliderTooltipInput {
+	background: @sapUiFieldInvalidBackground;
+}
+
+.sapMSliderTooltip.sapMSliderTooltipNonEditableWrapper {
+	border-radius: 0.25rem;
+	height: 0.875rem;
+	padding: 0.25rem;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiContentLabelColor;
+	background: @sapUiFieldBackground;
+}

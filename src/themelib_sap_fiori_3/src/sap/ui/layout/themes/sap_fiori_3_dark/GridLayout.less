@@ -1,0 +1,25 @@
+/* ========================================= */
+/* CSS for control sap.ui.layout/GridLayout  */
+/* Quartz Dark theme                         */
+/* ========================================= */
+
+.sapUiGrid {
+	font-family: @sapUiDesktopFontFamily;
+}
+
+.sapUiGrid.sapUiFormBackgrTranslucent > tbody > tr {
+	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiGrid.sapUiFormBackgrSolid > tbody > tr {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapUiGrid > tbody > tr.sapUiGridTitle {
+	background-color: transparent;
+}
+
+/* Title */
+.sapUiGridHeader > .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite {
+	bottom: 0.3125rem;
+}

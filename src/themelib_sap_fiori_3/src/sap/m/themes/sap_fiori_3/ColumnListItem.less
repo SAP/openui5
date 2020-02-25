@@ -10,3 +10,10 @@
 .sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow {
 	box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
 }
+
+/* selection border indicator was not visible on the last row as the td elements within the last row have a bottom border */
+/* hence applying -0.125rem so that the selection border is visible */
+.sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected:last-child,
+.sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow:last-child {
+  box-shadow: inset 0px -0.125rem @sapUiListSelectionBorderColor;
+}

@@ -116,9 +116,16 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog .sapMBar.sapMHeade
 	max-height: calc(~"100% - 0.5rem");
 }
 
-.sapUiSizeCompact .sapMActionSheetPopover.sapMPopover  .sapMPopoverCont {
+.sapUiSizeCompact {
+  .sapMActionSheetPopover.sapMPopover  .sapMPopoverCont {
 	padding: 0.1875rem 0.375rem;
 	max-height: calc(~"100% - 0.375rem");
+  }
+
+  // margin is applied insted of icon, when icon is not used
+  .sapMActionSheetMixedButtons .sapMActionSheetButtonNoIcon .sapMBtnContent {
+	margin-left: 1.4375rem;
+  }
 }
 
 /* ====== END ====== */
