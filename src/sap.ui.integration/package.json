@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.ui.integration",
-  "version": "1.75.0-SNAPSHOT",
+  "version": "1.75.0",
   "description": "OpenUI5 UI Library sap.ui.integration",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -14,7 +14,7 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "dependencies": {
-    "@openui5/sap.ui.core": "1.75.0-SNAPSHOT",
-    "@openui5/sap.f": "1.75.0-SNAPSHOT"
+    "@openui5/sap.ui.core": "1.75.0",
+    "@openui5/sap.f": "1.75.0"
   }
 }
