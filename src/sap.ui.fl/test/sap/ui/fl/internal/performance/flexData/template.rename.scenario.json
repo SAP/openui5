@@ -23,8 +23,6 @@
 			"namespace": "apps/MyComponent/changes/",
 			"creation": "2017-09-06T11:54:55.238Z",
 			"originalLanguage": "EN",
-			"conditions": {},
-			"context": "",
 			"support": {
 				"generator": "Change.createInitialFileContent",
 				"service": "",

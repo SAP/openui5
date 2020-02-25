@@ -1,0 +1,669 @@
+{
+	"variantSection": {
+		"idMain1--variantManagementOrdersTable": {
+			"variants": [
+				{
+					"content": {
+						"fileName": "idMain1--variantManagementOrdersTable",
+						"fileType": "ctrl_variant",
+						"variantManagementReference": "idMain1--variantManagementOrdersTable",
+						"variantReference": "",
+						"content": {
+							"title": "Standard"
+						}
+					},
+					"controlChanges": [
+						{
+							"fileName": "id_1571052840333_13_rename",
+							"fileType": "change",
+							"changeType": "rename",
+							"moduleName": "",
+							"reference": "fl.performance.flexApplyChanges.Component",
+							"packageName": "$TMP",
+							"content": {
+								"originalControlType": "sap.m.Button"
+							},
+							"selector": {
+								"id": "idMain1--dependencyScenarioControl.button",
+								"idIsLocal": false
+							},
+							"layer": "USER",
+							"texts": {
+								"newText": {
+									"value": "new value",
+									"type": "XBUT"
+								}
+							},
+							"namespace": "apps/fl.performance.flexApplyChanges/changes/",
+							"projectId": "fl.performance.flexApplyChanges",
+							"creation": "2019-10-14T11:07:54.831Z",
+							"originalLanguage": "EN",
+							"support": {
+								"generator": "Change.createInitialFileContent",
+								"service": "",
+								"user": "",
+								"sapui5Version": "1.72.0-SNAPSHOT",
+								"sourceChangeFileName": "",
+								"compositeCommand": ""
+							},
+							"oDataInformation": {},
+							"dependentSelector": {},
+							"validAppVersions": {
+								"creation": "1.0.0",
+								"from": "1.0.0"
+							},
+							"jsOnly": false,
+							"variantReference": "idMain1--variantManagementOrdersTable",
+							"appDescriptorChange": false
+						},
+						{
+							"fileName": "id_1571052876064_15_moveControls",
+							"fileType": "change",
+							"changeType": "moveControls",
+							"moduleName": "",
+							"reference": "fl.performance.flexApplyChanges.Component",
+							"packageName": "$TMP",
+							"content": {
+								"movedElements": [
+									{
+										"selector": {
+											"id": "idMain1--dependencyScenarioControl.title",
+											"idIsLocal": false
+										},
+										"sourceIndex": 0,
+										"targetIndex": 1
+									}
+								],
+								"source": {
+									"selector": {
+										"aggregation": "content",
+										"type": "sap.ui.layout.VerticalLayout",
+										"id": "idMain1--dependencyScenarioControl.layout",
+										"idIsLocal": false
+									}
+								},
+								"target": {
+									"selector": {
+										"aggregation": "content",
+										"type": "sap.ui.layout.VerticalLayout",
+										"id": "idMain1--dependencyScenarioControl.layout",
+										"idIsLocal": false
+									}
+								}
+							},
+							"selector": {
+								"id": "idMain1--dependencyScenarioControl.layout",
+								"idIsLocal": false
+							},
+							"layer": "USER",
+							"texts": {},
+							"namespace": "apps/fl.performance.flexApplyChanges/changes/",
+							"projectId": "fl.performance.flexApplyChanges",
+							"creation": "2019-10-14T11:17:54.834Z",
+							"originalLanguage": "EN",
+							"support": {
+								"generator": "Change.createInitialFileContent",
+								"service": "",
+								"user": "",
+								"sapui5Version": "1.72.0-SNAPSHOT",
+								"sourceChangeFileName": "",
+								"compositeCommand": ""
+							},
+							"oDataInformation": {},
+							"dependentSelector": {
+								"source": {
+									"id": "idMain1--dependencyScenarioControl.layout",
+									"idIsLocal": false
+								},
+								"target": {
+									"id": "idMain1--dependencyScenarioControl.layout",
+									"idIsLocal": false
+								},
+								"movedElements": [
+									{
+										"id": "idMain1--dependencyScenarioControl.title",
+										"idIsLocal": false
+									}
+								]
+							},
+							"validAppVersions": {
+								"creation": "1.0.0",
+								"from": "1.0.0"
+							},
+							"jsOnly": false,
+							"variantReference": "idMain1--variantManagementOrdersTable",
+							"appDescriptorChange": false
+						},
+						{
+							"fileName": "id_1571053489161_20_moveControls",
+							"fileType": "change",
+							"changeType": "moveControls",
+							"moduleName": "",
+							"reference": "fl.performance.flexApplyChanges.Component",
+							"packageName": "$TMP",
+							"content": {
+								"movedElements": [
+									{
+										"selector": {
+											"id": "idMain1--dependencyScenarioControl.button",
+											"idIsLocal": false
+										},
+										"sourceIndex": 4,
+										"targetIndex": 3
+									}
+								],
+								"source": {
+									"selector": {
+										"aggregation": "items",
+										"type": "sap.m.VBox",
+										"id": "idMain1--dependencyScenarioControl.vbox",
+										"idIsLocal": false
+									}
+								},
+								"target": {
+									"selector": {
+										"aggregation": "items",
+										"type": "sap.m.VBox",
+										"id": "idMain1--dependencyScenarioControl.vbox",
+										"idIsLocal": false
+									}
+								}
+							},
+							"selector": {
+								"id": "idMain1--dependencyScenarioControl.vbox",
+								"idIsLocal": false
+							},
+							"layer": "USER",
+							"texts": {},
+							"namespace": "apps/fl.performance.flexApplyChanges/changes/",
+							"projectId": "fl.performance.flexApplyChanges",
+							"creation": "2019-10-14T11:27:57.001Z",
+							"originalLanguage": "EN",
+							"support": {
+								"generator": "Change.createInitialFileContent",
+								"service": "",
+								"user": "",
+								"sapui5Version": "1.72.0-SNAPSHOT",
+								"sourceChangeFileName": "",
+								"compositeCommand": ""
+							},
+							"oDataInformation": {},
+							"dependentSelector": {
+								"source": {
+									"id": "idMain1--dependencyScenarioControl.vbox",
+									"idIsLocal": false
+								},
+								"target": {
+									"id": "idMain1--dependencyScenarioControl.vbox",
+									"idIsLocal": false
+								},
+								"movedElements": [
+									{
+										"id": "idMain1--dependencyScenarioControl.button",
+										"idIsLocal": false
+									}
+								]
+							},
+							"validAppVersions": {
+								"creation": "1.0.0",
+								"from": "1.0.0"
+							},
+							"jsOnly": false,
+							"variantReference": "idMain1--variantManagementOrdersTable",
+							"appDescriptorChange": false
+						},
+						{
+							"fileName": "id_1571053489162_20_moveControls",
+							"fileType": "change",
+							"changeType": "moveControls",
+							"moduleName": "",
+							"reference": "fl.performance.flexApplyChanges.Component",
+							"packageName": "$TMP",
+							"content": {
+								"movedElements": [
+									{
+										"selector": {
+											"id": "idMain1--dependencyScenarioControl.button",
+											"idIsLocal": false
+										},
+										"sourceIndex": 3,
+										"targetIndex": 2
+									}
+								],
+								"source": {
+									"selector": {
+										"aggregation": "items",
+										"type": "sap.m.VBox",
+										"id": "idMain1--dependencyScenarioControl.vbox",
+										"idIsLocal": false
+									}
+								},
+								"target": {
+									"selector": {
+										"aggregation": "items",
+										"type": "sap.m.VBox",
+										"id": "idMain1--dependencyScenarioControl.vbox",
+										"idIsLocal": false
+									}
+								}
+							},
+							"selector": {
+								"id": "idMain1--dependencyScenarioControl.vbox",
+								"idIsLocal": false
+							},
+							"layer": "USER",
+							"texts": {},
+							"namespace": "apps/fl.performance.flexApplyChanges/changes/",
+							"projectId": "fl.performance.flexApplyChanges",
+							"creation": "2019-10-14T11:37:57.001Z",
+							"originalLanguage": "EN",
+							"support": {
+								"generator": "Change.createInitialFileContent",
+								"service": "",
+								"user": "",
+								"sapui5Version": "1.72.0-SNAPSHOT",
+								"sourceChangeFileName": "",
+								"compositeCommand": ""
+							},
+							"oDataInformation": {},
+							"dependentSelector": {
+								"source": {
+									"id": "idMain1--dependencyScenarioControl.vbox",
+									"idIsLocal": false
+								},
+								"target": {
+									"id": "idMain1--dependencyScenarioControl.vbox",
+									"idIsLocal": false
+								},
+								"movedElements": [
+									{
+										"id": "idMain1--dependencyScenarioControl.button",
+										"idIsLocal": false
+									}
+								]
+							},
+							"validAppVersions": {
+								"creation": "1.0.0",
+								"from": "1.0.0"
+							},
+							"jsOnly": false,
+							"variantReference": "idMain1--variantManagementOrdersTable",
+							"appDescriptorChange": false
+						},
+						{
+							"fileName": "id_1571053489163_20_moveControls",
+							"fileType": "change",
+							"changeType": "moveControls",
+							"moduleName": "",
+							"reference": "fl.performance.flexApplyChanges.Component",
+							"packageName": "$TMP",
+							"content": {
+								"movedElements": [
+									{
+										"selector": {
+											"id": "idMain1--dependencyScenarioControl.button",
+											"idIsLocal": false
+										},
+										"sourceIndex": 2,
+										"targetIndex": 3
+									}
+								],
+								"source": {
+									"selector": {
+										"aggregation": "items",
+										"type": "sap.m.VBox",
+										"id": "idMain1--dependencyScenarioControl.vbox",
+										"idIsLocal": false
+									}
+								},
+								"target": {
+									"selector": {
+										"aggregation": "items",
+										"type": "sap.m.VBox",
+										"id": "idMain1--dependencyScenarioControl.vbox",
+										"idIsLocal": false
+									}
+								}
+							},
+							"selector": {
+								"id": "idMain1--dependencyScenarioControl.vbox",
+								"idIsLocal": false
+							},
+							"layer": "USER",
+							"texts": {},
+							"namespace": "apps/fl.performance.flexApplyChanges/changes/",
+							"projectId": "fl.performance.flexApplyChanges",
+							"creation": "2019-10-14T11:47:57.001Z",
+							"originalLanguage": "EN",
+							"support": {
+								"generator": "Change.createInitialFileContent",
+								"service": "",
+								"user": "",
+								"sapui5Version": "1.72.0-SNAPSHOT",
+								"sourceChangeFileName": "",
+								"compositeCommand": ""
+							},
+							"oDataInformation": {},
+							"dependentSelector": {
+								"source": {
+									"id": "idMain1--dependencyScenarioControl.vbox",
+									"idIsLocal": false
+								},
+								"target": {
+									"id": "idMain1--dependencyScenarioControl.vbox",
+									"idIsLocal": false
+								},
+								"movedElements": [
+									{
+										"id": "idMain1--dependencyScenarioControl.button",
+										"idIsLocal": false
+									}
+								]
+							},
+							"validAppVersions": {
+								"creation": "1.0.0",
+								"from": "1.0.0"
+							},
+							"jsOnly": false,
+							"variantReference": "idMain1--variantManagementOrdersTable",
+							"appDescriptorChange": false
+						},
+						{
+							"fileName": "id_1571053489164_20_moveControls",
+							"fileType": "change",
+							"changeType": "moveControls",
+							"moduleName": "",
+							"reference": "fl.performance.flexApplyChanges.Component",
+							"packageName": "$TMP",
+							"content": {
+								"movedElements": [
+									{
+										"selector": {
+											"id": "idMain1--dependencyScenarioControl.button",
+											"idIsLocal": false
+										},
+										"sourceIndex": 3,
+										"targetIndex": 4
+									}
+								],
+								"source": {
+									"selector": {
+										"aggregation": "items",
+										"type": "sap.m.VBox",
+										"id": "idMain1--dependencyScenarioControl.vbox",
+										"idIsLocal": false
+									}
+								},
+								"target": {
+									"selector": {
+										"aggregation": "items",
+										"type": "sap.m.VBox",
+										"id": "idMain1--dependencyScenarioControl.vbox",
+										"idIsLocal": false
+									}
+								}
+							},
+							"selector": {
+								"id": "idMain1--dependencyScenarioControl.vbox",
+								"idIsLocal": false
+							},
+							"layer": "USER",
+							"texts": {},
+							"namespace": "apps/fl.performance.flexApplyChanges/changes/",
+							"projectId": "fl.performance.flexApplyChanges",
+							"creation": "2019-10-14T11:57:57.001Z",
+							"originalLanguage": "EN",
+							"support": {
+								"generator": "Change.createInitialFileContent",
+								"service": "",
+								"user": "",
+								"sapui5Version": "1.72.0-SNAPSHOT",
+								"sourceChangeFileName": "",
+								"compositeCommand": ""
+							},
+							"oDataInformation": {},
+							"dependentSelector": {
+								"source": {
+									"id": "idMain1--dependencyScenarioControl.vbox",
+									"idIsLocal": false
+								},
+								"target": {
+									"id": "idMain1--dependencyScenarioControl.vbox",
+									"idIsLocal": false
+								},
+								"movedElements": [
+									{
+										"id": "idMain1--dependencyScenarioControl.button",
+										"idIsLocal": false
+									}
+								]
+							},
+							"validAppVersions": {
+								"creation": "1.0.0",
+								"from": "1.0.0"
+							},
+							"jsOnly": false,
+							"variantReference": "idMain1--variantManagementOrdersTable",
+							"appDescriptorChange": false
+						},
+						{
+							"fileName": "id_1571052876074_15_moveControls",
+							"fileType": "change",
+							"changeType": "moveControls",
+							"moduleName": "",
+							"reference": "fl.performance.flexApplyChanges.Component",
+							"packageName": "$TMP",
+							"content": {
+								"movedElements": [
+									{
+										"selector": {
+											"id": "idMain1--dependencyScenarioControl.title",
+											"idIsLocal": false
+										},
+										"sourceIndex": 1,
+										"targetIndex": 0
+									}
+								],
+								"source": {
+									"selector": {
+										"aggregation": "content",
+										"type": "sap.ui.layout.VerticalLayout",
+										"id": "idMain1--dependencyScenarioControl.layout",
+										"idIsLocal": false
+									}
+								},
+								"target": {
+									"selector": {
+										"aggregation": "content",
+										"type": "sap.ui.layout.VerticalLayout",
+										"id": "idMain1--dependencyScenarioControl.layout",
+										"idIsLocal": false
+									}
+								}
+							},
+							"selector": {
+								"id": "idMain1--dependencyScenarioControl.layout",
+								"idIsLocal": false
+							},
+							"layer": "USER",
+							"texts": {},
+							"namespace": "apps/fl.performance.flexApplyChanges/changes/",
+							"projectId": "fl.performance.flexApplyChanges",
+							"creation": "2019-10-14T12:07:54.834Z",
+							"originalLanguage": "EN",
+							"support": {
+								"generator": "Change.createInitialFileContent",
+								"service": "",
+								"user": "",
+								"sapui5Version": "1.72.0-SNAPSHOT",
+								"sourceChangeFileName": "",
+								"compositeCommand": ""
+							},
+							"oDataInformation": {},
+							"dependentSelector": {
+								"source": {
+									"id": "idMain1--dependencyScenarioControl.layout",
+									"idIsLocal": false
+								},
+								"target": {
+									"id": "idMain1--dependencyScenarioControl.layout",
+									"idIsLocal": false
+								},
+								"movedElements": [
+									{
+										"id": "idMain1--dependencyScenarioControl.title",
+										"idIsLocal": false
+									}
+								]
+							},
+							"validAppVersions": {
+								"creation": "1.0.0",
+								"from": "1.0.0"
+							},
+							"jsOnly": false,
+							"variantReference": "idMain1--variantManagementOrdersTable",
+							"appDescriptorChange": false
+						},
+						{
+							"fileName": "id_1571052840999_13_rename",
+							"fileType": "change",
+							"changeType": "rename",
+							"moduleName": "",
+							"reference": "fl.performance.flexApplyChanges.Component",
+							"packageName": "$TMP",
+							"content": {
+								"originalControlType": "sap.m.Button"
+							},
+							"selector": {
+								"id": "idMain1--dependencyScenarioControl.button",
+								"idIsLocal": false
+							},
+							"layer": "USER",
+							"texts": {
+								"newText": {
+									"value": "new value 2",
+									"type": "XBUT"
+								}
+							},
+							"namespace": "apps/fl.performance.flexApplyChanges/changes/",
+							"projectId": "fl.performance.flexApplyChanges",
+							"creation": "2019-10-14T12:27:54.831Z",
+							"originalLanguage": "EN",
+							"support": {
+								"generator": "Change.createInitialFileContent",
+								"service": "",
+								"user": "",
+								"sapui5Version": "1.72.0-SNAPSHOT",
+								"sourceChangeFileName": "",
+								"compositeCommand": ""
+							},
+							"oDataInformation": {},
+							"dependentSelector": {},
+							"validAppVersions": {
+								"creation": "1.0.0",
+								"from": "1.0.0"
+							},
+							"jsOnly": false,
+							"variantReference": "idMain1--variantManagementOrdersTable",
+							"appDescriptorChange": false
+						},
+						{
+							"fileName": "id_1571052840999_13_rename",
+							"fileType": "change",
+							"changeType": "rename",
+							"moduleName": "",
+							"reference": "fl.performance.flexApplyChanges.Component",
+							"packageName": "$TMP",
+							"content": {
+								"originalControlType": "sap.m.Button"
+							},
+							"selector": {
+								"id": "idMain1--dependencyScenarioControl.button",
+								"idIsLocal": false
+							},
+							"layer": "USER",
+							"texts": {
+								"newText": {
+									"value": "new value 3",
+									"type": "XBUT"
+								}
+							},
+							"namespace": "apps/fl.performance.flexApplyChanges/changes/",
+							"projectId": "fl.performance.flexApplyChanges",
+							"creation": "2019-10-14T12:37:54.831Z",
+							"originalLanguage": "EN",
+							"support": {
+								"generator": "Change.createInitialFileContent",
+								"service": "",
+								"user": "",
+								"sapui5Version": "1.72.0-SNAPSHOT",
+								"sourceChangeFileName": "",
+								"compositeCommand": ""
+							},
+							"oDataInformation": {},
+							"dependentSelector": {},
+							"validAppVersions": {
+								"creation": "1.0.0",
+								"from": "1.0.0"
+							},
+							"jsOnly": false,
+							"variantReference": "idMain1--variantManagementOrdersTable",
+							"appDescriptorChange": false
+						},
+						{
+							"fileName": "id_1571052840999_13_rename",
+							"fileType": "change",
+							"changeType": "rename",
+							"moduleName": "",
+							"reference": "fl.performance.flexApplyChanges.Component",
+							"packageName": "$TMP",
+							"content": {
+								"originalControlType": "sap.m.Button"
+							},
+							"selector": {
+								"id": "idMain1--dependencyScenarioControl.button",
+								"idIsLocal": false
+							},
+							"layer": "USER",
+							"texts": {
+								"newText": {
+									"value": "dependencyScenarioControl.button",
+									"type": "XBUT"
+								}
+							},
+							"namespace": "apps/fl.performance.flexApplyChanges/changes/",
+							"projectId": "fl.performance.flexApplyChanges",
+							"creation": "2019-10-14T12:47:54.831Z",
+							"originalLanguage": "EN",
+							"support": {
+								"generator": "Change.createInitialFileContent",
+								"service": "",
+								"user": "",
+								"sapui5Version": "1.72.0-SNAPSHOT",
+								"sourceChangeFileName": "",
+								"compositeCommand": ""
+							},
+							"oDataInformation": {},
+							"dependentSelector": {},
+							"validAppVersions": {
+								"creation": "1.0.0",
+								"from": "1.0.0"
+							},
+							"jsOnly": false,
+							"variantReference": "idMain1--variantManagementOrdersTable",
+							"appDescriptorChange": false
+						}
+					],
+					"variantChanges": {}
+				}
+			],
+			"variantManagementChanges": {}
+		}
+	},
+	"changes": [],
+	"settings": {
+		"isKeyUser": true,
+		"isAtoAvailable": false,
+		"isProductiveSystem": false
+	}
+}

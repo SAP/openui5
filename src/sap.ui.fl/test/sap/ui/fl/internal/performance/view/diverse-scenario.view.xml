@@ -1,25 +1,25 @@
 <mvc:View
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:l="sap.ui.layout"
-    xmlns:core="sap.ui.core">
-    <l:HorizontalLayout id="HorizontalLayout">
-        <l:VerticalLayout id="ContainerLayout">
-            <Label id="ContainerLabel" text="Diverse scenario" />
-            <l:VerticalLayout id="Layout">
-                <l:VerticalLayout id="dependencyScenarioControl.layout">
-                    <Label id="dependencyScenarioControl.title" text="dependencyScenarioControl.title" />
-                    <VBox id="dependencyScenarioControl.vbox">
-                        <items>
-                            <Label id="dependencyScenarioControl.label" text="dependencyScenarioControl.label" />
-                            <DatePicker id="dependencyScenarioControl.datePicker" />
-                            <Slider id="dependencyScenarioControl.slider" />
-                            <RatingIndicator id="dependencyScenarioControl.ratingIndicator" />
-                            <Button id="dependencyScenarioControl.button" text="dependencyScenarioControl.button" />
-                        </items>
-                    </VBox>
-                </l:VerticalLayout>
-            </l:VerticalLayout>
-        </l:VerticalLayout>
-    </l:HorizontalLayout>
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<l:HorizontalLayout id="HorizontalLayout">
+		<l:VerticalLayout id="ContainerLayout">
+			<Label id="ContainerLabel" text="Diverse scenario" />
+			<l:VerticalLayout id="Layout">
+				<l:VerticalLayout id="dependencyScenarioControl.layout">
+					<Label id="dependencyScenarioControl.title" text="dependencyScenarioControl.title" />
+					<VBox id="dependencyScenarioControl.vbox">
+						<items>
+							<Label id="dependencyScenarioControl.label" text="dependencyScenarioControl.label" />
+							<DatePicker id="dependencyScenarioControl.datePicker" />
+							<Slider id="dependencyScenarioControl.slider" />
+							<RatingIndicator id="dependencyScenarioControl.ratingIndicator" />
+							<Button id="dependencyScenarioControl.button" text="dependencyScenarioControl.button" />
+						</items>
+					</VBox>
+				</l:VerticalLayout>
+			</l:VerticalLayout>
+		</l:VerticalLayout>
+	</l:HorizontalLayout>
 </mvc:View>
