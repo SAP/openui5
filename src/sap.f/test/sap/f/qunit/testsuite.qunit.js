@@ -220,60 +220,7 @@ sap.ui.define(function () {
 					language: "en"
 				}
 			},
-			"UI5InputText": {
-				coverage: {
-					only: ["sap/f/cards/adaptivecards/elements/UI5InputText"]
-				},
-				module: [
-					'./cards/AdaptiveContent/UI5InputText.qunit'
-				]
-			},
-			"UI5InputNumber": {
-				coverage: {
-					only: ["sap/f/cards/adaptivecards/elements/UI5InputNumber"]
-				},
-				module: [
-					'./cards/AdaptiveContent/UI5InputNumber.qunit'
-				]
-			},
-			"UI5InputToggle": {
-				coverage: {
-					only: ["sap/f/cards/adaptivecards/elements/UI5InputToggle"]
-				},
-				module: [
-					'./cards/AdaptiveContent/UI5InputToggle.qunit'
-				]
-			},
-			"UI5InputDate": {
-				coverage: {
-					only: ["sap/f/cards/adaptivecards/elements/UI5InputDate"]
-				},
-				module: [
-					'./cards/AdaptiveContent/UI5InputDate.qunit'
-				]
-			},
-			"UI5InputChoiceSet": {
-				coverage: {
-					only: ["sap/f/cards/adaptivecards/elements/UI5InputChoiceSet"]
-				},
-				module: [
-					'./cards/AdaptiveContent/UI5InputChoiceSet.qunit'
-				]
-			},
-			"ActionRender": {
-				coverage: {
-					only: ["sap/f/cards/adaptivecards/overwrites/ActionRender"]
-				},
-				module: [
-					'./cards/AdaptiveContent/ActionRender.qunit'
-				]
-			},
-			"AdaptiveContentIntegration": {
-				title: "Opa test Page for sap.f.AdaptiveContent",
-				module: [
-					'./cards/AdaptiveContent/AdaptiveContentIntegration.opa.qunit'
-				]
-			},
+
 			// -------------------------------------------------------------------------------
 			// Designtime tests:
 			// -------------------------------------------------------------------------------
