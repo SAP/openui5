@@ -1,5 +1,3 @@
-/*global QUnit*/
-
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -8,6 +6,8 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/rta/api/startKeyUserAdaptation",
+	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -19,6 +19,8 @@ function (
 	ChangePersistence,
 	Utils,
 	VariantModel,
+	startKeyUserAdaptation,
+	Log,
 	jQuery,
 	sinon
 ) {
@@ -69,19 +71,19 @@ function (
 
 			var oAddPropagationListenerStub = sandbox.stub(oComponent, "addPropagationListener");
 			sandbox.stub(Utils, "getComponentClassName")
-			.callThrough()
-			.withArgs(oComponent)
-			.returns("mockName");
+				.callThrough()
+				.withArgs(oComponent)
+				.returns("mockName");
 
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {asyncHints: true})
-			.then(function () {
-				assert.equal(oAddPropagationListenerStub.callCount, 1, "propagation was triggered");
-				assert.equal(this.oInitializeStub.callCount, 1, "FlexState was initialized");
-				assert.ok(this.oInitializeStub.calledWith({
-					componentId: oComponent.getId(),
-					asyncHints: true
-				}), "FlexState was initialized with the correct parameters");
-			}.bind(this));
+				.then(function () {
+					assert.equal(oAddPropagationListenerStub.callCount, 1, "propagation was triggered");
+					assert.equal(this.oInitializeStub.callCount, 1, "FlexState was initialized");
+					assert.ok(this.oInitializeStub.calledWith({
+						componentId: oComponent.getId(),
+						asyncHints: true
+					}), "FlexState was initialized with the correct parameters");
+				}.bind(this));
 		});
 
 		QUnit.test("does propagate if there are changes for the component", function (assert) {
@@ -106,9 +108,9 @@ function (
 			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").returns(Promise.resolve(function() {return mDeterminedChanges;}));
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 			sandbox.stub(Utils, "getComponentClassName")
-			.callThrough()
-			.withArgs(oComponent)
-			.returns("mockName");
+				.callThrough()
+				.withArgs(oComponent)
+				.returns("mockName");
 
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {});
 		});
@@ -179,9 +181,9 @@ function (
 			assert.notOk(oAppComponent.getModel(Utils.VARIANT_MODEL_NAME), "then initially no variant model exists for the app component");
 
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {})
-			.then(function () {
-				oAppComponent.destroy();
-			});
+				.then(function () {
+					oAppComponent.destroy();
+				});
 		});
 
 		QUnit.test("when createForControl() is called for a non application type component", function (assert) {
@@ -201,12 +203,12 @@ function (
 
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oMockControl).returns(oAppComponent);
 			sandbox.stub(Utils, "getComponentClassName")
-			.withArgs(oAppComponent)
-			.returns(sMockComponentName);
+				.withArgs(oAppComponent)
+				.returns(sMockComponentName);
 
 			sandbox.stub(Utils, "getAppVersionFromManifest")
-			.withArgs(oMockManifest)
-			.returns(sMockComponentAppVersion);
+				.withArgs(oMockManifest)
+				.returns(sMockComponentAppVersion);
 
 			sandbox.stub(FlexControllerFactory, "create");
 
@@ -216,7 +218,107 @@ function (
 		});
 	});
 
+	QUnit.module("Given a FlexControllerFactory", {
+		beforeEach: function () {
+			var sMockComponentName = "MockCompName";
+			var oMockManifest = {
+				id: sMockComponentName
+			};
+			this.oAppComponent = {
+				getId: function () {
+					return sMockComponentName;
+				},
+				getManifestEntry: function () {
+					return {
+						id: sMockComponentName
+					};
+				},
+				getManifest: function () {
+					return oMockManifest;
+				},
+				getManifestObject: function () {
+					return {};
+				},
+				addPropagationListener: function () {},
+				setModel: function () {}
+			};
+			var sMockComponentAppVersion = "1.23";
+
+			sandbox.stub(FlexState, "initialize").resolves();
+			sandbox.stub(Utils, "isApplicationComponent").returns(true);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(Utils, "getComponentClassName")
+				.returns(sMockComponentName);
+			sandbox.stub(Utils, "getAppVersionFromManifest")
+				.returns(sMockComponentAppVersion);
+			FlexControllerFactory._instanceCache[sMockComponentName] = {
+				_oChangePersistence: {
+					loadChangesMapForComponent: Promise.resolve()
+				}
+			};
+
+			this.oLoadLibStub = sandbox.stub(sap.ui.getCore(), "loadLibrary").resolves();
+		},
+		afterEach: function () {
+			window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when no restart from rta should be triggered and no draft is requested", function (assert) {
+			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
+				.then(function () {
+					assert.equal(this.oLoadLibStub.callCount, 0, "then no rta functionality is requested");
+				}.bind(this));
+		});
+
+		QUnit.test("when a rta restart was triggered for the VENDOR layer", function (assert) {
+			// since the startKeyUserAdaptation is used, other layers should not use this API
+			sandbox.stub(Utils, "getUrlParameter").returns("VENDOR");
+			window.sessionStorage.setItem("sap.ui.rta.restart.VENDOR", "MockCompName");
+			var oRemoveItemSpy = sandbox.spy(window.sessionStorage, "removeItem");
+
+			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
+				.then(function () {
+					assert.equal(this.oLoadLibStub.callCount, 0, "rta functionality is not requested");
+					assert.equal(oRemoveItemSpy.callCount, 0, "and the restart parameter was removed from the sessionStorage");
+				}.bind(this));
+		});
+
+		QUnit.test("when a rta restart was triggered for the CUSTOMER layer", function (assert) {
+			sandbox.stub(Utils, "getUrlParameter").returns("CUSTOMER");
+			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", "MockCompName");
+			var oRemoveItemSpy = sandbox.spy(window.sessionStorage, "removeItem");
+			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
+			var oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function (aModules, fnCallback) {
+				fnCallback(fnStartRtaSpy);
+			});
+
+			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
+				.then(function () {
+					assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
+					assert.equal(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 1, "rta functionality is requested");
+					assert.equal(fnStartRtaSpy.callCount, 1, "and rta is started");
+					assert.equal(fnStartRtaSpy.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
+					assert.equal(oRemoveItemSpy.callCount, 1, "and the restart parameter was removed from the sessionStorage");
+				}.bind(this));
+		});
+
+		QUnit.test("when a rta restart was triggered for the CUSTOMER layer, but for a different component", function (assert) {
+			sandbox.stub(Utils, "getUrlParameter").returns("CUSTOMER");
+			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", "anotherComponent");
+			var fnLogSpy = sandbox.spy(Log, "error");
+
+			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
+				.then(function () {
+					assert.equal(this.oLoadLibStub.callCount, 0, "rta library is requested");
+					assert.equal(fnLogSpy.callCount, 1, "and an error was logged");
+				}.bind(this));
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });
+
+/*global QUnit*/

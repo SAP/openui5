@@ -5,6 +5,8 @@
 sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/variants/VariantModel",
@@ -13,6 +15,8 @@ sap.ui.define([
 ], function(
 	FlexController,
 	Utils,
+	Layer,
+	LayerUtils,
 	Applier,
 	FlexState,
 	VariantModel,
@@ -80,6 +84,45 @@ sap.ui.define([
 	};
 
 	/**
+	 * The fl library must ensure a proper rta startup by a lazy loading of the rta library and starting RTA accordingly.
+	 * This is needed in the stand alone scenario; ATTENTION: if also the ushell-plugin of rta runs, the first one will
+	 * actually trigger the reload and clear the flag for the second.
+	 *
+	 * @param {object} oResult - The result which will be passed after the rta startup was checked and triggered if needed
+	 * @param {object} oComponent - Application component about to be started
+	 * @return {Promise} Promise resolving with the initially passed result
+	 */
+	function checkForRtaStartOnDraftAndReturnResult(oResult, oComponent) {
+		var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + Layer.CUSTOMER);
+		if (sRestartingComponent) {
+			var sComponentId = Utils.getComponentClassName(oComponent);
+			if (sRestartingComponent !== sComponentId) {
+				Log.error("an application component was started " +
+					"which does not match the component for which the restart was triggered:\n" +
+					"Triggering component: " + sRestartingComponent + "\n" +
+					"Started component: " + sComponentId);
+
+				return Promise.resolve(oResult);
+			}
+
+			window.sessionStorage.removeItem("sap.ui.rta.restart." + Layer.CUSTOMER);
+			return new Promise(function (resolve) {
+				sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
+				.then(function() {
+					sap.ui.require(["sap/ui/rta/api/startKeyUserAdaptation"], function (startKeyUserAdaptation) {
+						startKeyUserAdaptation({
+							rootControl: oComponent
+						});
+						resolve(oResult);
+					});
+				});
+			});
+		}
+
+		return Promise.resolve(oResult);
+	}
+
+	/**
 	 * Gets the changes and in case of existing changes, prepare the applyChanges function already with the changes.
 	 *
 	 * @param {object} oComponent - Component instance that is currently loading
@@ -124,7 +167,6 @@ sap.ui.define([
 	 * @see sap.ui.fl.variant.VariantModel
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - App component instance
-	 * @param {object} vConfig - Configuration of app component
 	 * @return {Promise} Promise which resolves to the created variant model,
 	 * after all propagation changes and listeners have been set.
 	 * @private
@@ -144,6 +186,8 @@ sap.ui.define([
 			oAppComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
 			Measurement.end("flexProcessing");
 			return oVariantModel;
+		}).then(function (oResult) {
+			return checkForRtaStartOnDraftAndReturnResult(oResult, oAppComponent);
 		});
 	}
 
