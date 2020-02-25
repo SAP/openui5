@@ -866,6 +866,13 @@ sap.ui.define([
 	 * The block-layer code is able to recognize that a new block-layer is not needed.
 	 */
 	function fnAddStandaloneBusyIndicator () {
+		// if there's already a busy block state, remove it first before creating a new one
+		// the existing busy block state can't be reused, because the block layer DOM is removed by the renderer. A new
+		// block layer needs to be created
+		if (this._oBusyBlockState) {
+			BlockLayerUtils.unblock(this._oBusyBlockState);
+		}
+
 		this._oBusyBlockState = BlockLayerUtils.block(this, this.getId() + "-busyIndicator", this._sBusySection);
 		BusyIndicatorUtils.addHTML(this._oBusyBlockState, this.getBusyIndicatorSize());
 	}

@@ -642,6 +642,53 @@ sap.ui.define([
 		}.bind(this), 50);
 	});
 
+	QUnit.module("setBusy with rendering delegate", {
+		beforeEach: function() {
+			this.oButton = new Button({
+				text: "Rendering Delegate"
+			});
+
+			this.oButton.setBusyIndicatorDelay(0);
+
+			this.testClickEventOn = function (oControl, assert) {
+				var oDomRef = oControl.getDomRef(),
+					fnEventListener = sinon.spy();
+
+				if (oDomRef) {
+					oDomRef.addEventListener("click", fnEventListener);
+					qutils.triggerEvent("click", oDomRef);
+					assert.equal(fnEventListener.callCount, 1, "click event can be triggered correctly");
+					oDomRef.removeEventListener("click", fnEventListener);
+				} else {
+					assert.ok(false, "The given control doesn't have DOM reference");
+				}
+			};
+		},
+		afterEach: function() {
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("on control which is migrated with the new renderer mechanism", function(assert) {
+		// add one event delegate which set the busy state before the control is rerendered
+		this.oButton.addEventDelegate({
+			onBeforeRendering: function() {
+				this.setBusy(true);
+			}
+		}, this.oButton);
+
+		this.oButton.placeAt("target1");
+		sap.ui.getCore().applyChanges();
+		this.oButton.setBusy(false);
+		// after reset the busy state, the control should be able to react to click event
+		this.testClickEventOn(this.oButton, assert);
+
+		// rerender the control to activate the busy state
+		this.oButton.rerender();
+		this.oButton.setBusy(false);
+		// after reset the busy state, the control should be able to react to click event
+		this.testClickEventOn(this.oButton, assert);
+	});
 
 
 	QUnit.module("Legacy", {
