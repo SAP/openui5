@@ -39,10 +39,9 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		load: function(mPropertyBag) {
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 
 			mPropertyBag.reference = oFlexController.getComponentName();
-			mPropertyBag.appVersion = oFlexController.getAppVersion();
 
 			if (
 				!mPropertyBag.reference
@@ -52,9 +51,8 @@ sap.ui.define([
 			}
 
 			return FlexState.initialize({
-				componentId: mPropertyBag.reference
-			})
-			.then(function() {
+				componentId: mPropertyBag.selector.getId()
+			}).then(function() {
 				return UI2PersonalizationState.getPersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
 			});
 		}

@@ -71,10 +71,10 @@ sap.ui.define([
 			return Promise.reject("not all mandatory properties were provided for the storage of the personalization");
 		}
 
-		return LrepConnector.createConnector().send("/sap/bc/lrep/ui2personalization/", "PUT", oPersonalization, {}).then(function(oPersonalization) {
-			var oPersonalizationSubsection = FlexState.getUI2Personalization(oPersonalization.reference);
-			oPersonalizationSubsection[oPersonalization.containerKey] = oPersonalizationSubsection[oPersonalization.containerKey] || [];
-			oPersonalizationSubsection[oPersonalization.containerKey].push(oPersonalization);
+		return LrepConnector.createConnector().send("/sap/bc/lrep/ui2personalization/", "PUT", oPersonalization, {}).then(function(oPersonalizationResult) {
+			var oPersonalizationSubsection = FlexState.getUI2Personalization(oPersonalizationResult.response.reference);
+			oPersonalizationSubsection[oPersonalizationResult.response.containerKey] = oPersonalizationSubsection[oPersonalizationResult.response.containerKey] || [];
+			oPersonalizationSubsection[oPersonalizationResult.response.containerKey].push(oPersonalizationResult.response);
 		});
 	};
 
