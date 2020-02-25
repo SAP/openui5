@@ -69,6 +69,15 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+			ExtensionPoint: {
+				title: "ExtensionPoints with nProvider",
+				qunit: {
+					reorder: false
+				},
+				module: [
+					"./ExtensionPoint.qunit"
+				]
+			},
 			Customizing_debug: {
 				page: "resources/sap/ui/test/starter/Test.qunit.html?testsuite={suite}&test={name}&sap-ui-xx-debugCustomizing",
 				title: "CustomizingConfiguration and Customizing in general - sap.ui.core",
