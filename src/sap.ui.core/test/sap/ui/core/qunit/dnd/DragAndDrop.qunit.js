@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIArea",
-	"sap/ui/core/Core"
-], function(DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, Element, UIArea, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/Device"
+], function(DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, Element, UIArea, Core, Device) {
 	"use strict";
 
 	var DivControl = Control.extend("sap.ui.core.dnd.test.DivControl", {
@@ -827,4 +828,77 @@ sap.ui.define([
 		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
 		assert.ok(this.fnDropSpy.calledOnce, "drop event is called once.");
 	});
+
+	QUnit.module("DropIndicator DOM wrapper", {
+		beforeEach: function() {
+			this.oControl = new DragAndDropControl({
+				topItems: [new DivControl(), new DivControl()],
+				dragDropConfig: [
+					new DragDropInfo({
+						sourceAggregation: "topItems",
+						targetAggregation: "topItems"
+					})
+				]
+			});
+			this.oControl.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oControl.destroy();
+		}
+	});
+
+	if (Device.browser.msie) {
+		QUnit.test("Drop Indicator DOM wrapper structure for IE browser", function(assert) {
+			var oEvent, $Indicator;
+			var oDiv1 = this.oControl.getTopItems()[0];
+			var oDiv2 = this.oControl.getTopItems()[1];
+
+			// init drag session
+			oEvent = createjQueryDragEventDummy("dragstart", oDiv1);
+			oEvent.target.focus();
+			DragAndDrop.preprocessEvent(oEvent);
+
+			// validation
+			oEvent = createjQueryDragEventDummy("dragenter", oDiv2);
+			oEvent.target.focus();
+			DragAndDrop.preprocessEvent(oEvent);
+			oDiv2.$().trigger(oEvent);
+			$Indicator = jQuery(oEvent.dragSession.getIndicator());
+
+			assert.notOk($Indicator.parent().hasClass("sapUiDnDIndicatorWrapper"), "sapUiDnDIndicatorWrapper div wrapper not created for IE browser");
+
+			// cleanup
+			// drop
+			oDiv2.$().trigger("drop");
+			// dragend
+			oDiv2.$().trigger("dragend");
+		});
+	} else {
+		QUnit.test("Drop Indicator DOM wrapper structure for non IE browsers", function(assert) {
+			var oEvent, $Indicator;
+			var oDiv1 = this.oControl.getTopItems()[0];
+			var oDiv2 = this.oControl.getTopItems()[1];
+
+			// init drag session
+			oEvent = createjQueryDragEventDummy("dragstart", oDiv1);
+			oEvent.target.focus();
+			DragAndDrop.preprocessEvent(oEvent);
+
+			// validation
+			oEvent = createjQueryDragEventDummy("dragenter", oDiv2);
+			oEvent.target.focus();
+			DragAndDrop.preprocessEvent(oEvent);
+			oDiv2.$().trigger(oEvent);
+			$Indicator = jQuery(oEvent.dragSession.getIndicator());
+
+			assert.ok($Indicator.parent().hasClass("sapUiDnDIndicatorWrapper"), "sapUiDnDIndicatorWrapper div wrapper created for non IE browsers");
+
+			// cleanup
+			// drop
+			oDiv2.$().trigger("drop");
+			// dragend
+			oDiv2.$().trigger("dragend");
+		});
+	}
 });
