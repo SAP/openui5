@@ -433,6 +433,7 @@ sap.ui.define([
 		//Assert
 		assert.equal(this.stepInput.getValueState(), "Error", "..should be set to 'Error'");
 	});
+
 	QUnit.module("Operations", {
 		beforeEach: function () {
 			this.stepInput = new StepInput({
@@ -1631,7 +1632,7 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("name"), 'useful name', "Internal input's 'name' attribute has correct value");
 		assert.ok($Input.is("[placeholder]"), "Internal Input has 'placeholder' attribute");
 		assert.strictEqual($Input.attr("placeholder"), 'useful placeholder', "Internal input's 'placeholder' attribute has correct value");
-		assert.notOk($Input.is("[aria-invalid]"), "Internal Input has 'aria-invalid' attribute");
+		assert.ok($Input.is("[aria-invalid]"), "Internal Input has 'aria-invalid' attribute");
 		assert.ok($Input.is("[aria-readonly]"), "Internal Input has 'aria-readonly' attribute");
 		assert.strictEqual($Input.attr("aria-readonly"), 'true', "Internal input's 'aria-readonly' attribute has correct value");
 		assert.ok($Input.is("[aria-disabled]"), "Internal Input has 'aria-disabled' attribute");
@@ -1821,6 +1822,18 @@ sap.ui.define([
 				this.stepInput.destroy();
 			}
 		}
+	});
+
+	QUnit.test("Setting value to a disabled StepInput", function (assert) {
+		// Prepare
+		this.stepInput.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		this.stepInput._applyValue(123);
+
+		// Assert
+		assert.equal(this.stepInput._getInput().$("inner").val(), 123, "The value is set");
 	});
 
 	QUnit.test("When value set via binding is undefined", function (assert) {

@@ -1187,10 +1187,6 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._applyValue = function (fNewValue) {
-			if (!this.getEditable() || !this.getEnabled()) {
-				return;
-			}
-
 			// the property Value is not changing because this is a live change where the final value is not yet confirmed by the user
 			this._getInput().setValue(this._getFormattedValue(fNewValue));
 		};
