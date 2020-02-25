@@ -96,7 +96,7 @@ sap.ui.define([
 		var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + Layer.CUSTOMER);
 		if (sRestartingComponent) {
 			var sComponentId = Utils.getComponentClassName(oComponent);
-			if (sRestartingComponent !== sComponentId) {
+			if (sRestartingComponent !== sComponentId && sRestartingComponent !== "true") {
 				Log.error("an application component was started " +
 					"which does not match the component for which the restart was triggered:\n" +
 					"Triggering component: " + sRestartingComponent + "\n" +

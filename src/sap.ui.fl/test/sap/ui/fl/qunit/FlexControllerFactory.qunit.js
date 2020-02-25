@@ -303,6 +303,25 @@ function (
 				}.bind(this));
 		});
 
+		QUnit.test("when a rta restart was triggered for the CUSTOMER layer via a boolean flag", function (assert) {
+			sandbox.stub(Utils, "getUrlParameter").returns("CUSTOMER");
+			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
+			var oRemoveItemSpy = sandbox.spy(window.sessionStorage, "removeItem");
+			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
+			var oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function (aModules, fnCallback) {
+				fnCallback(fnStartRtaSpy);
+			});
+
+			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
+				.then(function () {
+					assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
+					assert.equal(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 1, "rta functionality is requested");
+					assert.equal(fnStartRtaSpy.callCount, 1, "and rta is started");
+					assert.equal(fnStartRtaSpy.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
+					assert.equal(oRemoveItemSpy.callCount, 1, "and the restart parameter was removed from the sessionStorage");
+				}.bind(this));
+		});
+
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer, but for a different component", function (assert) {
 			sandbox.stub(Utils, "getUrlParameter").returns("CUSTOMER");
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", "anotherComponent");
