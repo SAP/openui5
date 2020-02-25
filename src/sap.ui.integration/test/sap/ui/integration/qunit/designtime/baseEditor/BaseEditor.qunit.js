@@ -132,6 +132,60 @@ sap.ui.define([
 
 			this.oBaseEditor.placeAt("qunit-fixture");
 		});
+
+		QUnit.test("When a new BaseEditor is configured with default values before setting the manifest", function (assert) {
+			var done = assert.async();
+			this.oBaseEditor = new BaseEditor();
+
+			var oJson = {
+				context: {
+					prop1: "value1",
+					prop2: "value2",
+					prop3: "value3",
+					prop4: "value4"
+				},
+				fooPath: {
+					foo1: "bar1"
+				}
+			};
+
+			this.oBaseEditor.attachEventOnce("jsonChange", function (oEvent) {
+				assert.deepEqual(
+					oEvent.getParameter("json"),
+					oJson,
+					"Then the base editor fires the first JsonChange Event with the correct manifest"
+				);
+				done();
+			});
+
+			this.oBaseEditor.setConfig({
+				context: "context",
+				properties: {
+					"prop1": {
+						path: "prop1",
+						type: "string",
+						defaultValue: "Default Value"
+					},
+					"prop2": {
+						path: "prop2",
+						type: "string"
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			// The timeout of 300ms is required to make sure that editors could be
+			// created before setJson is called with the initial manifest.
+			// Therefore this test makes sure that default values do not override
+			// the actual manifest.
+			// While the editor creation is currently aborted immediately, this blackbox test
+			// should avoid regressions in future refactorings where editors might be created.
+			setTimeout(function () {
+				this.oBaseEditor.setJson(oJson);
+			}.bind(this), 300);
+		});
 	});
 
 	QUnit.done(function () {
