@@ -225,14 +225,14 @@ function(
 			var oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 			var oSetInputSpy;
 			var oConfirmButtonEnabledSpy;
-			return this.oToolbar._openVersionNameDialog()
+			return this.oToolbar._openVersionTitleDialog()
 			.then(function () {
 				assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
 				// checking for the dialog instance wrapped into a promise
 
-				var oVersionNameInput = this.oToolbar.getControl("versionNameInput");
-				oSetInputSpy = sandbox.spy(oVersionNameInput, "setValue");
-				var oConfirmButton = this.oToolbar.getControl("confirmVersionNameButton");
+				var oVersionTitleInput = this.oToolbar.getControl("versionTitleInput");
+				oSetInputSpy = sandbox.spy(oVersionTitleInput, "setValue");
+				var oConfirmButton = this.oToolbar.getControl("confirmVersionTitleButton");
 				oConfirmButtonEnabledSpy = sandbox.spy(oConfirmButton, "setEnabled");
 
 				return oFragmentLoadSpy.getCall(0).returnValue;
@@ -240,7 +240,7 @@ function(
 			.then(function (oDialog) {
 				assert.equal(this.oToolbar._oDialog, oDialog, "and the dialog was assigned");
 			}.bind(this))
-			.then(this.oToolbar._openVersionNameDialog.bind(this.oToolbar))
+			.then(this.oToolbar._openVersionTitleDialog.bind(this.oToolbar))
 			.then(function () {
 				assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment not loaded again");
 				assert.equal(oSetInputSpy.callCount, 1, "and Input Value was set");

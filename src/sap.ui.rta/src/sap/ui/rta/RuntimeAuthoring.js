@@ -1010,7 +1010,7 @@ function(
 			VersionsAPI.activateDraft.bind(undefined, {
 				layer : this.getLayer(),
 				selector : this.getRootControlInstance(),
-				versionName: oEvent.getParameter("versionName")
+				title: oEvent.getParameter("versionTitle")
 			})
 		).then(function () {
 			this.bInitialDraftAvailable = false;

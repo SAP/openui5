@@ -1509,15 +1509,15 @@ function(
 	}, function() {
 		QUnit.test("when the draft is activated", function (assert) {
 			var done = assert.async();
-			var sVersionName = "VersionName";
+			var sVersionTitle = "VersionTitle";
 			var oEvent = {
-				versionName: sVersionName
+				versionTitle: sVersionTitle
 			};
 			sandbox.stub(VersionsAPI, "activateDraft").callsFake(function (mPropertyBag) {
 				assert.equal(Object.keys(mPropertyBag).length, 3, "three parameters were passed");
 				assert.equal(mPropertyBag.selector, this.oRootControl, "the selector was passed correctly");
 				assert.equal(mPropertyBag.layer, "CUSTOMER", "the layer was passed correctly");
-				assert.equal(mPropertyBag.versionName, sVersionName, "the versionName was passed correctly");
+				assert.equal(mPropertyBag.title, sVersionTitle, "the title was passed correctly");
 
 				done();
 			}.bind(this));
