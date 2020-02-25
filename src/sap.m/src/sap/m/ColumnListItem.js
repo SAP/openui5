@@ -85,6 +85,28 @@ sap.ui.define([
 			if (oEvent.srcControl === this || !jQuery(oEvent.target).is(":sapFocusable")) {
 				this.getParent().focus();
 			}
+		},
+
+		_onMouseEnter: function() {
+			var $this = jQuery(this),
+				$parent = $this.prev();
+
+			if (!$parent.length || !$parent.hasClass("sapMLIBHoverable") || $parent.hasClass("sapMPopinHovered")) {
+				return;
+			}
+
+			$parent.addClass("sapMPopinHovered");
+		},
+
+		_onMouseLeave: function() {
+			var $this = jQuery(this),
+				$parent = $this.prev();
+
+			if (!$parent.length || !$parent.hasClass("sapMLIBHoverable") || !$parent.hasClass("sapMPopinHovered")) {
+				return;
+			}
+
+			$parent.removeClass("sapMPopinHovered");
 		}
 	});
 
@@ -100,6 +122,11 @@ sap.ui.define([
 	ColumnListItem.prototype.onAfterRendering = function() {
 		ListItemBase.prototype.onAfterRendering.call(this);
 		this._checkTypeColumn();
+
+		var oPopin = this.hasPopin();
+		if (oPopin) {
+			this.$Popin().hover(oPopin._onMouseEnter, oPopin._onMouseLeave);
+		}
 	};
 
 	ColumnListItem.prototype.exit = function() {

@@ -206,6 +206,32 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("TablePopin hover test", function(assert) {
+		var sut = createSUT("popinHoverTest", true, false, "SingleSelectMaster");
+		var oColumn = sut.getColumns()[1];
+		oColumn.setDemandPopin(true);
+		oColumn.setMinScreenWidth("48000px");
+		sut.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oItem = sut.getItems()[0];
+		var oItemPopin = oItem.hasPopin();
+
+		assert.ok(oItem.getDomRef().classList.contains("sapMLIBHoverable"), "Item is hoverable");
+		assert.ok(oItemPopin, "Table contains popin");
+
+		assert.notOk(oItem.getDomRef().classList.contains("sapMPopinHovered"), "sapMPopinHovered class not added to the item yet as there is no mouseover");
+		oItemPopin.$().trigger("mouseenter");
+		sap.ui.getCore().applyChanges();
+		assert.ok(oItem.getDomRef().classList.contains("sapMPopinHovered"), "sapMPopinHovered class added to the ItemDomRef as popin is hovered");
+
+		oItemPopin.$().trigger("mouseleave");
+		sap.ui.getCore().applyChanges();
+		assert.notOk(oItem.getDomRef().classList.contains("sapMPopinHovered"), "sapMPopinHovered class removed as mouse is out of the popin");
+
+		sut.destroy();
+	});
+
 	QUnit.module("Modes");
 
 	QUnit.test("MultiSelect", function(assert) {
