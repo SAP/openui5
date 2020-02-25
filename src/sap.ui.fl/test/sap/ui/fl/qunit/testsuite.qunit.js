@@ -429,6 +429,15 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"write/_internal/appVariant/AppVariantFactory": {
+				group: "Internal app variant related APIs",
+				coverage: {
+					only: [
+						"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
+						"sap/ui/fl/write/_internal/appVariant/AppVariant"
+					]
+				}
+			},
 			"descriptorRelated/internal/Utils": {
 				group: "Descriptor related Utils",
 				coverage: {

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/base/Log",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -20,7 +20,7 @@ sap.ui.define([
 	Layer,
 	FlUtils,
 	WriteUtils,
-	DescriptorVariantFactory,
+	AppVariantFactory,
 	Log,
 	Manifest,
 	ChangesWriteAPI,
@@ -527,16 +527,16 @@ sap.ui.define([
 		QUnit.test("When onTransportInDialogSelected() method is called and rejected", function (assert) {
 			var oTransportInfo;
 
-			return DescriptorVariantFactory.createNew({
+			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			})
-			.then(function(oDescriptorVariant) {
-				return AppVariantUtils.onTransportInDialogSelected(oDescriptorVariant, oTransportInfo);
-			})
-			.catch(function() {
-				assert.ok("Operation cancelled successfully");
-			});
+				.then(function(oDescriptorVariant) {
+					return AppVariantUtils.onTransportInDialogSelected(oDescriptorVariant, oTransportInfo);
+				})
+				.catch(function() {
+					assert.ok("Operation cancelled successfully");
+				});
 		});
 
 		QUnit.test("When createAppVariant() method is called", function (assert) {
@@ -842,17 +842,17 @@ sap.ui.define([
 			);
 			var oGetText = sandbox.stub(AppVariantUtils, "getText");
 
-			return DescriptorVariantFactory.createNew({
+			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			})
-			.then(function(oAppVariant) {
-				return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, false);
-			}).then(function(oInfo) {
-				assert.equal(oGetText.callCount, 2, "then the getText() method is called twice");
-				assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
-				assert.strictEqual(oInfo.copyId, true, "then the copyID value is as expected");
-			});
+				.then(function(oAppVariant) {
+					return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, false);
+				}).then(function(oInfo) {
+					assert.equal(oGetText.callCount, 2, "then the getText() method is called twice");
+					assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
+					assert.strictEqual(oInfo.copyId, true, "then the copyID value is as expected");
+				});
 		});
 
 		QUnit.test("When buildSuccessInfo() method is called for S/4HANA Cloud", function(assert) {
@@ -866,17 +866,17 @@ sap.ui.define([
 			);
 			var oGetText = sandbox.stub(AppVariantUtils, "getText");
 
-			return DescriptorVariantFactory.createNew({
+			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			})
-			.then(function(oAppVariant) {
-				return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, true);
-			}).then(function(oInfo) {
-				assert.equal(oGetText.callCount, 2, "then the getText() method is called twice");
-				assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
-				assert.strictEqual(oInfo.copyId, false, "then the copyID value is as expected");
-			});
+				.then(function(oAppVariant) {
+					return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, true);
+				}).then(function(oInfo) {
+					assert.equal(oGetText.callCount, 2, "then the getText() method is called twice");
+					assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
+					assert.strictEqual(oInfo.copyId, false, "then the copyID value is as expected");
+				});
 		});
 
 		QUnit.test("When buildFinalSuccessInfoS4HANACloud() method is called for S/4HANA Cloud after catalog assignment finished succesfully", function(assert) {
