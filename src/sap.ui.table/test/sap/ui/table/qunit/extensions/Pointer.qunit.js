@@ -170,10 +170,8 @@ sap.ui.define([
 		}
 
 		var oColumn = this.oColumn;
-		assert.ok(!oColumn.getAutoResizable(), "Column is not yet autoresizable");
-		assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
-
 		var iWidth = oColumn.$().width();
+
 		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
 		triggerDoubleClick(false, 0);
 
@@ -213,10 +211,8 @@ sap.ui.define([
 	QUnit.test("Automatic Column Resize via API", function(assert) {
 		var done = assert.async();
 		var oColumn = this.oColumn;
-		assert.ok(!oColumn.getAutoResizable(), "Column is not yet autoresizable");
-		assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
-
 		var iWidth = oColumn.$().width();
+
 		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
 		oTable.autoResizeColumn(1);
 
@@ -246,7 +242,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Resize via Drag&Drop", function(assert) {
-		var done = assert.async();
 		var oColumn = this.oColumn;
 		var $Resizer = oTable.$("rsz");
 
@@ -256,9 +251,6 @@ sap.ui.define([
 			nLeft = Math.round(nLeft);
 		}
 		assert.equal(nLeft, "-5", "Resizer is at the correct initial position");
-
-		assert.ok(!oColumn.getAutoResizable(), "Column is not yet autoresizable");
-		assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
 
 		var iWidth = oColumn.$().width();
 		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
@@ -272,20 +264,26 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		moveResizer(oColumn, assert, true, 1);
 
-		// drag resizer to resize column
-		$Resizer = oTable.$("rsz");
-		var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
-		var iResizeHandlerLeft = $Resizer.position().left;
-		qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
-		qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 90, iResizeHandlerTop, 0);
-		qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 90 + 40, iResizeHandlerTop, 0);
-		qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 90 + 40, iResizeHandlerTop, 0);
+		return new Promise(function(resolve) {
+			oTable.attachEventOnce("_rowsUpdated", resolve);
+		}).then(function() {
+			// drag resizer to resize column
+			$Resizer = oTable.$("rsz");
+			var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
+			var iResizeHandlerLeft = $Resizer.offset().left;
 
-		setTimeout(function() {
-			var iNewWidth = oColumn.$().width();
+			qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 90, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 90 + 40, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 90 + 40, iResizeHandlerTop, 0);
+
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
+		}).then(function() {
+			var iNewWidth = oColumn.getDomRef().offsetWidth;
 			assert.ok(Math.abs(iNewWidth - iWidth - 90 - 40) < 5, "check column width after resize: " + iNewWidth);
-			done();
-		}, 50);
+		});
 	});
 
 	QUnit.test("Resize via Resize Button", function(assert) {
@@ -294,12 +292,17 @@ sap.ui.define([
 
 		function resize() {
 			var $Resizer = oTable.$("rsz");
-			var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
+			var oColumnDomRef = oColumn.getDomRef();
+			var $Column = oColumn.$();
 
-			iWidthBeforeResize = oColumn.$().width();
-			TableUtils.Menu.openContextMenu(oTable, oColumn.getDomRef());
-			var $ResizeButton = oColumn.$().find(".sapUiTableColResizer");
-			var iResizeButtonLeft = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 100);
+			iWidthBeforeResize = oColumnDomRef.offsetWidth;
+			TableUtils.Menu.openContextMenu(oTable, oColumnDomRef);
+
+			var $ResizeButton = $Column.find(".sapUiTableColResizer");
+			var $ResizeButtonOffset = $ResizeButton.offset();
+			var oResizeButton = $ResizeButton[0];
+			var iResizeHandlerTop = Math.floor($ResizeButtonOffset.top + (oResizeButton.offsetHeight / 2));
+			var iResizeButtonLeft = Math.floor($ResizeButtonOffset.left + (oResizeButton.offsetWidth / 2));
 
 			qutils.triggerMouseEvent($ResizeButton, "mousedown", 1, 1, iResizeButtonLeft, iResizeHandlerTop, 0);
 			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeButtonLeft + 90, iResizeHandlerTop, 0);
@@ -318,8 +321,9 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			oTable.attachEventOnce("_rowsUpdated", resolve);
 		}).then(resize).then(function() {
-			var iExpectedWidth = iWidthBeforeResize + 130;
-			assert.ok(Math.abs(oColumn.$().width() - iExpectedWidth) < 5, "The column was resized to the correct width: " + iExpectedWidth);
+			var iExpectedWidth = iWidthBeforeResize + 110;
+			assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
+				"The column was resized to the correct width: " + iExpectedWidth);
 		}).then(function() {
 			oTable.getColumns()[0].setVisible(false);
 			sap.ui.getCore().applyChanges();
@@ -328,8 +332,8 @@ sap.ui.define([
 				oTable.attachEventOnce("_rowsUpdated", resolve);
 			});
 		}).then(resize).then(function() {
-			var iExpectedWidth = iWidthBeforeResize + 130;
-			assert.ok(Math.abs(oColumn.$().width() - iExpectedWidth) < 5,
+			var iExpectedWidth = iWidthBeforeResize + 110;
+			assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
 				"With invisible columns - The column was resized to the correct width: " + iExpectedWidth);
 		});
 	});
