@@ -8,7 +8,8 @@ sap.ui.define(function() {
 
 
 	/**
-	 * Different scopes for retrieving messages from a service.
+	 * Different scopes for retrieving messages from a service consumed via a
+	 * {@link sap.ui.model.odata.v2.ODataModel}.
 	 *
 	 * @enum {string}
 	 * @public
@@ -17,14 +18,17 @@ sap.ui.define(function() {
 	 */
 	var MessageScope = {
 		/**
-		 * Retrieve messages only for the requested/changed entities.
+		 * Retrieve messages only for the requested or changed entities.
 		 * @public
 		 */
 		RequestedObjects: "RequestedObjects",
 
 		/**
-		 * Retrieve messages for the whole business object. If the service does
-		 * not support this option it fallbacks to requested.
+		 * Retrieve messages for the requested or changed entities and for all their child entities
+		 * that belong to the same business object. The service needs to set the OData V2 annotation
+		 * "message-scope-supported" at the <code>EntityContainer</code> to <code>true</code>. If
+		 * the service does set this OData V2 annotation, the OData model falls back to
+		 * <code>sap.ui.model.odata.MessageScope.RequestedObjects</code>.
 		 * @public
 		 */
 		BusinessObject: "BusinessObject"

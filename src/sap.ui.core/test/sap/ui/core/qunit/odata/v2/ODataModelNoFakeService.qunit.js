@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/test/TestUtils"
 ], function (Log, FilterProcessor, MessageScope, ODataUtils, ODataModel, TestUtils) {
 	/*global QUnit,sinon*/
-	/*eslint no-warning-comments: 0*/
+	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
 
 	//*********************************************************************************************
@@ -27,7 +27,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: _refresh passed to _createRequest", function (assert) {
+	QUnit.test("read: updateAggregatedMessages passed to _createRequest", function (assert) {
 		var bCanonicalRequest = "{boolean} bCanonicalRequest",
 			oContext = "{sap.ui.model.Context} oContext",
 			sDeepPath = "~deepPath",
@@ -63,12 +63,11 @@ sap.ui.define([
 			sNormalizedPath = "~normalizedPath",
 			sNormalizedTempPath = "~normalizedTempPath",
 			oODataUtilsMock = this.mock(ODataUtils),
-			bRefresh = "{boolean} bRefresh",
 			aSorters = "{sap.ui.model.Sorter[]} aSorters",
 			fnSuccess = "{function} fnSuccess",
+			bUpdateAggregatedMessages = "{boolean} bUpdateAggregatedMessages",
 			mUrlParams = "{object} mUrlParams",
 			mParameters = {
-				_refresh : bRefresh,
 				canonicalRequest : bCanonicalRequest,
 				context : oContext,
 				error : fnError,
@@ -77,6 +76,7 @@ sap.ui.define([
 				headers : mHeaders,
 				sorters : aSorters,
 				success : fnSuccess,
+				updateAggregatedMessages : bUpdateAggregatedMessages,
 				urlParameters : mUrlParams
 			},
 			sPath = "~path/$count",
@@ -114,7 +114,8 @@ sap.ui.define([
 				/*bUseBatch*/true)
 			.returns(sUrl);
 		oModelMock.expects("_createRequest")
-			.withExactArgs(sUrl, sDeepPath, "GET", mGetHeaders, null, sETag, undefined, bRefresh)
+			.withExactArgs(sUrl, sDeepPath, "GET", mGetHeaders, null, sETag, undefined,
+				bUpdateAggregatedMessages)
 			.returns(oRequest);
 		oModelMock.expects("_pushToRequestQueue")
 			.withExactArgs(oModel.mRequests, sGroupId, null, sinon.match.same(oRequest),
@@ -138,6 +139,7 @@ sap.ui.define([
 	oExpected : {
 		bAsync : true,
 		sMethod : "GET",
+		bUpdateAggregatedMessages : false,
 		bUseOData : true
 	}
 }, {
@@ -154,6 +156,7 @@ sap.ui.define([
 		},
 		bAsync : true,
 		sMethod : "MERGE",
+		bUpdateAggregatedMessages : true,
 		bUseCredentials : true
 	}
 }, {
@@ -172,6 +175,7 @@ sap.ui.define([
 		},
 		bAsync : true,
 		sMethod : "POST",
+		bUpdateAggregatedMessages : true,
 		bUseCredentials : true
 	}
 }, {
@@ -187,7 +191,8 @@ sap.ui.define([
 			"If-Match" : "~etag"
 		},
 		bAsync : false,
-		sMethod : "~method"
+		sMethod : "~method",
+		bUpdateAggregatedMessages : false
 	}
 }, {
 	bAsync : false,
@@ -200,23 +205,31 @@ sap.ui.define([
 			"If-Match" : "~etag"
 		},
 		bAsync : false,
-		sMethod : "DELETE"
+		sMethod : "DELETE",
+		bUpdateAggregatedMessages : false
 	}
 }].forEach(function (oFixture, i) {
-	QUnit.test("_createRequest: " + i, function (assert) {
+	[true, false].forEach(function (bUpdateAggregatedMessages) {
+		[true, false].forEach(function (bIsMessageScopeSupported) {
+	var sTitle = "_createRequest: " + i
+			+ ", bIsMessageScopeSupported: " + bIsMessageScopeSupported
+			+ ", bUpdateAggregatedMessages: " + bUpdateAggregatedMessages;
+
+	QUnit.test(sTitle, function (assert) {
 		var mExpectedHeaders = Object.assign({}, oFixture.mHeaders,
 				oFixture.oExpected.mAdditionalHeaders),
 			oModel = {
 				_createRequestID : function () {},
 				// members
+				bIsMessageScopeSupported : bIsMessageScopeSupported,
 				bJSON : oFixture.bJSON,
 				sMessageScope : oFixture.sMessageScope,
 				sPassword : "~password",
+				sServiceUrl : "~serviceUrl",
 				bUseBatch : oFixture.bUseBatch,
 				sUser : "~user",
 				bWithCredentials : oFixture.bWithCredentials
 			},
-			bRefresh = "{boolean} bRefresh",
 			oRequest,
 			sRequestID = "~uid",
 			oExpectedResult = {
@@ -225,12 +238,20 @@ sap.ui.define([
 				headers : mExpectedHeaders,
 				method : oFixture.oExpected.sMethod,
 				password : "~password",
-				refresh : bRefresh,
 				requestID : sRequestID,
 				requestUri : oFixture.sUrl,
+				updateAggregatedMessages : bUpdateAggregatedMessages && bIsMessageScopeSupported
+					? oFixture.oExpected.bUpdateAggregatedMessages
+					: false,
 				user : "~user"
 			};
 
+		if (oFixture.sMessageScope === MessageScope.BusinessObject && !bIsMessageScopeSupported) {
+			this.oLogMock.expects("error")
+				.withExactArgs("Message scope 'sap.ui.model.odata.MessageScope.BusinessObject' is"
+					+ " not supported by the service: ~serviceUrl", undefined,
+					"sap.ui.model.odata.v2.ODataModel");
+		}
 		this.mock(oModel).expects("_createRequestID").withExactArgs().returns(sRequestID);
 		if (oFixture.oExpected.bUseOData) {
 			oExpectedResult.data = oFixture.oData;
@@ -242,9 +263,11 @@ sap.ui.define([
 		// code under test
 		oRequest = ODataModel.prototype._createRequest.call(oModel, oFixture.sUrl, "~deepPath",
 			oFixture.sMethod, oFixture.mHeaders, oFixture.oData, oFixture.sETag, oFixture.bAsync,
-			bRefresh);
+			bUpdateAggregatedMessages);
 
 		assert.deepEqual(oRequest, oExpectedResult);
+	});
+		});
 	});
 });
 
@@ -635,5 +658,29 @@ sap.ui.define([
 		// code under test
 		ODataModel.prototype._processRequestQueue.call(oModel, mRequests
 			/*, sGroupId, fnSuccess, fnError*/);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMessageScope/setMessageScope", function (assert) {
+		var oModel = {};
+
+		// code under test
+		ODataModel.prototype.setMessageScope.call(oModel, MessageScope.RequestedObjects);
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.getMessageScope.call(oModel),
+			MessageScope.RequestedObjects);
+
+		// code under test
+		ODataModel.prototype.setMessageScope.call(oModel, MessageScope.BusinessObject);
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.getMessageScope.call(oModel),
+			MessageScope.BusinessObject);
+
+		// code under test
+		assert.throws(function () {
+			ODataModel.prototype.setMessageScope.call(oModel, "Foo");
+		}, new Error("Unsupported message scope: Foo"));
 	});
 });
