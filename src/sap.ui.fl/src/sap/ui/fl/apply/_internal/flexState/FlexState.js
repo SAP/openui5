@@ -232,14 +232,14 @@ sap.ui.define([
 
 			return loadFlexData(mPropertyBag);
 		}.bind(null, mPropertyBag))
-		.then(function(mPropertyBag, mResponse) {
-			// filtering should only be done once; can be reset via function
-			if (!_mInstances[mPropertyBag.reference].storageResponse) {
-				_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
-			}
-			//for the time being ensure variantSection is available, remove once everyone is asking for getVariantState
-			FlexState.getVariantsState(mPropertyBag.reference);
-		}.bind(null, mPropertyBag));
+			.then(function(mPropertyBag, mResponse) {
+				// filtering should only be done once; can be reset via function
+				if (!_mInstances[mPropertyBag.reference].storageResponse) {
+					_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
+				}
+				//for the time being ensure variantSection is available, remove once everyone is asking for getVariantState
+				FlexState.getVariantsState(mPropertyBag.reference);
+			}.bind(null, mPropertyBag));
 	};
 
 	/**

@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/ChangesController"
+	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/base/util/restricted/_omit"
 ], function(
 	UI2PersonalizationState,
 	FlexState,
-	ChangesController
+	ChangesController,
+	_omit
 ) {
 	"use strict";
 
@@ -31,6 +33,9 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.containerKey The key of the container in which the personalization should stored
 		 * @param {string} mPropertyBag.itemName The name under which the personalization should be stored
 		 * @param {string} mPropertyBag.content The personalization content to be stored
+		 * @param {string} mPropertyBag.category The item category with which the personalization should be stored
+		 * @param {string} mPropertyBag.containerCategory The container category with which the personalization should be stored
+		 * @param {string} mPropertyBag.content The personalization content to be stored
 		 * @returns {Promise} Promise resolving with the object stored under the passed container key and item name,
 		 * or undefined in case no entry was stored for these
 		 *
@@ -38,7 +43,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		create: function (mPropertyBag) {
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 			mPropertyBag.reference = oFlexController.getComponentName();
 
 			if (
@@ -46,20 +51,16 @@ sap.ui.define([
 				|| !mPropertyBag.containerKey
 				|| !mPropertyBag.itemName
 				|| !mPropertyBag.content
+				|| !mPropertyBag.category
+				|| !mPropertyBag.containerCategory
 			) {
 				return Promise.reject(new Error("not all mandatory properties were provided for the storage of the personalization"));
 			}
 
 			return FlexState.initialize({
-				componentId: mPropertyBag.reference
-			})
-			.then(function() {
-				return UI2PersonalizationState.setPersonalization({
-					reference: mPropertyBag.reference,
-					containerKey: mPropertyBag.containerKey,
-					itemName: mPropertyBag.itemName,
-					content: mPropertyBag.content
-				});
+				componentId: mPropertyBag.selector.getId()
+			}).then(function() {
+				return UI2PersonalizationState.setPersonalization(_omit(mPropertyBag, ["selector"]));
 			});
 		},
 
@@ -77,7 +78,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		deletePersonalization: function(mPropertyBag) {
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 			mPropertyBag.reference = oFlexController.getComponentName();
 
 			if (
@@ -89,9 +90,8 @@ sap.ui.define([
 			}
 
 			return FlexState.initialize({
-				componentId: mPropertyBag.reference
-			})
-			.then(function() {
+				componentId: mPropertyBag.selector.getId()
+			}).then(function() {
 				return UI2PersonalizationState.deletePersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
 			});
 		}

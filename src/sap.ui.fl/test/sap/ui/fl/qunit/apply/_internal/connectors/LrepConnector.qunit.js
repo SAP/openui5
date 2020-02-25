@@ -35,7 +35,7 @@ sap.ui.define([
 			fnReturnData(JSON.stringify({changes: [], loadModules: false}));
 
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function (oServer, oResult) {
-				assert.deepEqual(oResult, {changes: [], loadModules: false}, "the default response resolves the request Promise");
+				assert.deepEqual(oResult, {changes: [], loadModules: false, ui2personalization: {}}, "the default response resolves the request Promise");
 			}.bind(undefined, sandbox.server));
 		});
 
@@ -53,7 +53,7 @@ sap.ui.define([
 			fnReturnData(JSON.stringify({changes: [], loadModules: false}), "cacheKey");
 
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function (oServer, oResult) {
-				assert.deepEqual(oResult, {changes: [], loadModules: false, cacheKey: "cacheKey"}, "/sap/bc/lrep/flex/data/reference?appVersion=1.0.0", "cacheKey is set in the result");
+				assert.deepEqual(oResult, {changes: [], loadModules: false, ui2personalization: {}, cacheKey: "cacheKey"}, "/sap/bc/lrep/flex/data/reference?appVersion=1.0.0", "cacheKey is set in the result");
 			}.bind(undefined, sandbox.server));
 		});
 
@@ -89,7 +89,7 @@ sap.ui.define([
 				assert.equal(oServer.requestCount, 1, "then there is one request to load data");
 				assert.equal(oServer.getRequest(0).url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "and the URL was correct");
 				assert.ok(oStubLoadModule.calledOnce, "loadModule triggered");
-				assert.deepEqual(oResult, {changes: [], loadModules: true, cacheKey: "abc123"}, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "and the flex_data response resolves the promise");
+				assert.deepEqual(oResult, {changes: [], loadModules: true, ui2personalization: {}, cacheKey: "abc123"}, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "and the flex_data response resolves the promise");
 			}.bind(undefined, sandbox.server));
 		});
 
