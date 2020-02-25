@@ -2,8 +2,9 @@
  * @copyright@
  */
 
-sap.ui.define([ './library' ],
-	function(library) {
+sap.ui.define([
+	"sap/m/library"
+], function (library) {
 	"use strict";
 
 	/**
@@ -19,24 +20,9 @@ sap.ui.define([ './library' ],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	NumericContentRenderer.render = function(oRm, oControl) {
-		var sValue = oControl.getValue();
-		var sIndicator = oControl.getIndicator();
-		var sScale = oControl.getScale();
 		var sState = oControl.getState();
-		var bIndicator = library.DeviationIndicator.None !== sIndicator && sValue !== "";
 		var bWithMargin = oControl.getWithMargin();
-		var sWithoutMargin;
-		if (bWithMargin) {
-			sWithoutMargin = "";
-		} else {
-			sWithoutMargin = "WithoutMargin";
-		}
-		if (oControl.getFormatterValue()) {
-			var oFormattedValue = oControl._parseFormattedValue(sValue);
-			sScale = oFormattedValue.scale;
-			sValue = oFormattedValue.value;
-		}
-		var bScale = sScale && sValue;
+		var sWithoutMargin = bWithMargin ? "" : "WithoutMargin";
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		var sTooltip = oControl.getTooltip_AsString();
@@ -47,7 +33,7 @@ sap.ui.define([ './library' ],
 		oRm.writeAttributeEscaped("aria-label", sTooltip);
 		oRm.writeAttribute("role", "img");
 
-		if (sState == library.LoadState.Failed || sState == library.LoadState.Loading) {
+		if (sState === library.LoadState.Failed || sState === library.LoadState.Loading) {
 			oRm.writeAttribute("aria-disabled", "true");
 		}
 		if (oControl.getAnimateTextChange()) {
@@ -71,13 +57,7 @@ sap.ui.define([ './library' ],
 		oRm.addClass(sWithoutMargin);
 		oRm.writeClasses();
 		oRm.write(">");
-		if (bWithMargin) {
-			this._renderScaleAndIndicator(oRm, oControl, bIndicator, bScale, sWithoutMargin, sIndicator, sScale);
-			this._renderValue(oRm, oControl, sWithoutMargin, sValue);
-		} else {
-			this._renderValue(oRm, oControl, sWithoutMargin, sValue);
-			this._renderScaleAndIndicator(oRm, oControl, bIndicator, bScale, sWithoutMargin, sIndicator, sScale);
-		}
+		this._renderValue(oRm, oControl, sWithoutMargin);
 		oRm.write("</div>");
 
 		oRm.write("</div>");
@@ -109,14 +89,17 @@ sap.ui.define([ './library' ],
 			}
 
 			oIcon.addStyleClass("sapMNCIconImage");
-			//adjust top margin depending on the NumericContent font size
-			oIcon.removeStyleClass("sapMNCIconImageMediumTopMargin");
-			oIcon.removeStyleClass("sapMNCIconImageSmallTopMargin");
-			if (sNumericContentFontClass === "sapMNCMediumFontSize") {
-				oIcon.addStyleClass("sapMNCIconImageMediumTopMargin");
-			} else if (sNumericContentFontClass === "sapMNCSmallFontSize") {
-				oIcon.addStyleClass("sapMNCIconImageSmallTopMargin");
-			}
+
+			var mSizeClasses = {
+				sapMNCLargeFontSize: false,
+				sapMNCMediumFontSize: false,
+				sapMNCSmallFontSize: false
+			};
+			mSizeClasses[sNumericContentFontClass] = true;
+			Object.keys(mSizeClasses).forEach(function (sKey) {
+				oIcon.toggleStyleClass(sKey, mSizeClasses[sKey]);
+			});
+
 			oRm.renderControl(oIcon);
 		}
 	};
@@ -127,33 +110,32 @@ sap.ui.define([ './library' ],
 	 * @private
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control whose title should be rendered
-	 * @param {boolean} isIndicator
-	 * @param {boolean} isScale
-	 * @param {String} withoutMargin
-	 * @param {String} textIndicator
-	 * @param {String} textScale
+	 * @param {String} sWithoutMargin
+	 * @param {String} sValue
+	 * @param {String} sScale
+	 * @param {String} sNumericContentFontClass font class of related NumericContent
 	 */
-	NumericContentRenderer._renderScaleAndIndicator = function(oRm, oControl, isIndicator, isScale, withoutMargin, textIndicator, textScale) {
-		if (isIndicator || isScale) {
+	NumericContentRenderer._renderScaleAndIndicator = function(oRm, oControl, sWithoutMargin, sValue, sScale, sNumericContentFontClass) {
+		var bIndicator = library.DeviationIndicator.None !== oControl.getIndicator() && sValue !== "";
+		var bScale = sScale && sValue;
+		if (bIndicator || bScale) {
 			var sState = oControl.getState();
 			var sColor = oControl.getValueColor();
 			oRm.write("<div");
+			oRm.writeAttribute("id", oControl.getId() + "-indicator");
 			oRm.addClass("sapMNCIndScale");
-			oRm.addClass(withoutMargin);
+			oRm.addClass(sWithoutMargin);
+			oRm.addClass(sColor);
 			oRm.addClass(sState);
+			if (sNumericContentFontClass) {
+				oRm.addClass(sNumericContentFontClass);
+			}
 			oRm.writeClasses();
 			oRm.write(">");
 
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-indicator");
-			oRm.addClass("sapMNCIndicator");
-			oRm.addClass(textIndicator);
-			oRm.addClass(sState);
-			oRm.addClass(sColor);
-			oRm.writeClasses();
-			oRm.write("></div>");
+			oRm.renderControl(oControl._oIndicatorIcon);
 
-			if (isScale) {
+			if (bScale) {
 				oRm.write("<div");
 				oRm.writeAttribute("id", oControl.getId() + "-scale");
 				oRm.addClass("sapMNCScale");
@@ -161,7 +143,7 @@ sap.ui.define([ './library' ],
 				oRm.addClass(sColor);
 				oRm.writeClasses();
 				oRm.write(">");
-				oRm.writeEscaped(textScale);
+				oRm.writeEscaped(sScale);
 
 				oRm.write("</div>");
 			}
@@ -176,51 +158,48 @@ sap.ui.define([ './library' ],
 	 * @private
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control whose title should be rendered
-	 * @param {String} withoutMargin
-	 * @param {String} value
+	 * @param {String} sWithoutMargin
 	 */
-	NumericContentRenderer._renderValue = function(oRm, oControl, withoutMargin, value) {
-		var sEmptyValue;
-		if (oControl.getNullifyValue()) {
-			sEmptyValue = "0";
-		} else {
-			sEmptyValue = "";
+	NumericContentRenderer._renderValue = function(oRm, oControl, sWithoutMargin) {
+		var sValue = oControl.getValue();
+		var sScale = oControl.getScale();
+		if (oControl.getFormatterValue()) {
+			var oFormattedValue = oControl._parseFormattedValue(sValue);
+			sScale = oFormattedValue.scale;
+			sValue = oFormattedValue.value;
 		}
+		var sEmptyValue = oControl.getNullifyValue() ? "0" : "";
 		oRm.write("<div");
 		oRm.writeAttribute("id", oControl.getId() + "-value");
 		oRm.addClass("sapMNCValue");
-		oRm.addClass(withoutMargin);
+		oRm.addClass(sWithoutMargin);
 		oRm.addClass(oControl.getValueColor());
 		oRm.addClass(oControl.getState());
 		oRm.writeClasses();
 		oRm.write(">");
 
 		var oMaxDigitsData = oControl._getMaxDigitsData();
+		this._prepareAndRenderIcon(oRm, oControl, oControl._oIcon, oMaxDigitsData.fontClass);
 
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-value-scr");
-		oRm.addClass("sapMNCValueScr");
-		oRm.addClass(withoutMargin);
+		var iChar = oControl.getTruncateValueTo() || oMaxDigitsData.maxLength;
+		oRm.write("<span id=\"" + oControl.getId() + "-value-inner\"");
 		if (oMaxDigitsData.fontClass) {
 			oRm.addClass(oMaxDigitsData.fontClass);
 		}
 		oRm.writeClasses();
 		oRm.write(">");
 
-		this._prepareAndRenderIcon(oRm, oControl, oControl._oIcon, oMaxDigitsData.fontClass);
-
-		var iChar = oControl.getTruncateValueTo() || oMaxDigitsData.maxLength;
-		oRm.write("<span id=\"" + oControl.getId() + "-value-inner\">");
 		//Control shows only iChar characters. If the last shown character is decimal separator - show only first N-1 characters. So "144.5" is shown like "144" and not like "144.".
-		if (value.length >= iChar && (value[iChar - 1] === "." || value[iChar - 1] === ",")) {
-			oRm.writeEscaped(value.substring(0, iChar - 1));
+		if (sValue.length >= iChar && (sValue[iChar - 1] === "." || sValue[iChar - 1] === ",")) {
+			oRm.writeEscaped(sValue.substring(0, iChar - 1));
 		} else {
-			oRm.writeEscaped(value ? value.substring(0, iChar) : sEmptyValue);
+			oRm.writeEscaped(sValue ? sValue.substring(0, iChar) : sEmptyValue);
 		}
 
 		oRm.write("</span>");
 
-		oRm.write("</div>");
+		this._renderScaleAndIndicator(oRm, oControl, sWithoutMargin, sValue, sScale, oMaxDigitsData.fontClass);
+
 		oRm.write("</div>");
 	};
 
