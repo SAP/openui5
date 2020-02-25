@@ -136,6 +136,33 @@ sap.ui.require([
 		});
 	});
 
+	opaTest("Should enter text with enter key", function (Given, When, Then) {
+		When.waitFor({
+			controlType: "sap.m.Button",
+			matchers: new Properties({
+				text: "Press here to open a popover"
+			}),
+			actions: new Press()
+		});
+
+		When.waitFor({
+			controlType: "sap.m.Input",
+			searchOpenDialogs: true,
+			actions: new EnterText({
+				text: "test",
+				pressEnterKey: true
+			})
+		});
+
+		Then.waitFor({
+			controlType: "sap.m.Popover",
+			searchOpenDialogs: true,
+			success: function (aPopover) {
+				Opa5.assert.ok(aPopover[0].isOpen(), "Popover should remain open on any browser");
+			}
+		});
+	});
+
 	QUnit.module("Select using the press action");
 
 	opaTest("Should select an item in a Select", function(Given, When, Then) {

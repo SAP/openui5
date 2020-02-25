@@ -104,7 +104,8 @@
 					<core:Item text="USA" key="USA"/>
 				</Select>
 			</form:SimpleForm>
-			<Button text="Press here to trigger a press on the page" press="onPress"/>
+			<Button text="Press here to trigger a press on the page" press="onPressPage"/>
+			<Button text="Press here to open a popover" press="onPressOpenPopover"/>
 		</Page>
 	</App>
 </mvc:View>

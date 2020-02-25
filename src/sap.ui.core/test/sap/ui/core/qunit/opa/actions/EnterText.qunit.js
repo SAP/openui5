@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/ui/core/ListItem",
 	"sap/m/StepInput",
+	"sap/m/Popover",
+	"sap/m/Button",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/m/library",
@@ -19,6 +21,8 @@ sap.ui.define([
 		TextArea,
 		ListItem,
 		StepInput,
+		Popover,
+		Button,
 		Opa5,
 		opaTest,
 		mobileLibrary,
@@ -336,6 +340,64 @@ sap.ui.define([
 
 		// Act
 		oEnterText.executeOn(this.oStepInput);
+	});
+
+	QUnit.module("EnterText - input in popup", {
+		beforeEach: function() {
+			this.target = new Button({
+				id: "open"
+			});
+			this.input1 = new Input({
+				id: "test1"
+			});
+			this.input2 = new Input({
+				id: "test2"
+			});
+			this.popover = new Popover({
+				content: [
+					this.input1,
+					this.input2
+				]
+			});
+			$("#qunit-fixture").css("position", "static");
+			this.target.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.target.destroy();
+			this.popover.destroy();
+		}
+	});
+
+	QUnit.test("Should enter text in popup - popup should remain open", function (assert) {
+		// test for BCP: 1980144873: problem in FF and IE11, where the popover was closed right after the text is entered
+		var done = assert.async();
+		this.popover.openBy(this.target);
+		this.popover.$().css("display", "block");
+		var enterText = new EnterText({
+			text: "value",
+			pressEnterKey: true
+		});
+
+		this.input1.attachEvent("change", function (oEvent) {
+			assert.strictEqual(this.input1.getValue(), "value");
+			assert.ok(this.popover.isOpen());
+
+			setTimeout(function () {
+				this.input2.attachEvent("change", function (oEvent) {
+					assert.strictEqual(this.input2.getValue(), "value");
+					assert.ok(this.popover.isOpen());
+
+					setTimeout(function () {
+						done();
+					}, 100);
+				}.bind(this));
+
+				enterText.executeOn(this.input2);
+			}.bind(this), 100);
+		}.bind(this));
+
+		enterText.executeOn(this.input1);
 	});
 
 });
