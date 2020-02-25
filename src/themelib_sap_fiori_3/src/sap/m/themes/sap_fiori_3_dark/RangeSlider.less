@@ -18,22 +18,30 @@
 			color: @sapUiContentLabelColor;
 		}
 	}
-	.sapMSliderInner {
-		& > .sapMSliderHandle {
-			background: fade(@sapUiButtonBackground, 25);
-			border: solid 0.125rem @sapUiActive;
-			&:hover {
-				background-color: fade(@sapUiButtonHoverBackground, 25);
-			}
-			&:active {
-				background: fade(@sapUiActive, 25);
-			}
-			&.sapMSliderHandlePressed {
-				background: fade(@sapUiActive, 25);
-			}
+
+	.sapMSliderInner .sapMSliderHandle {
+		background: fade(@sapUiButtonBackground, 25);
+	}
+
+	.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
+		&:hover {
+			background-color: fade(@sapUiButtonHoverBackground, 25);
+			border-color: @sapUiButtonHoverBorderColor;
 		}
-		&:hover > .sapMSliderHandle {
-			background: fade(@sapUiButtonHoverBackground, 25);
+
+		&:active {
+			background: fade(@sapUiButtonActiveBackground, 25);
+			border-color: @sapUiButtonActiveBorderColor;
 		}
+
+		&.sapMSliderHandlePressed {
+			background: fade(@sapUiButtonActiveBackground, 25);
+			border-color: @sapUiButtonActiveBorderColor;
+		}
+	}
+
+	.sapMSliderInner:not(.sapMSliderInnerDisabled):hover > .sapMSliderHandle {
+		background-color: fade(@sapUiButtonHoverBackground, 25);
+		border-color: @sapUiButtonHoverBorderColor;
 	}
 }

@@ -6,6 +6,9 @@
 /* slider */
 .sapMSliderInner {
 	background: @sapUiFieldBorderColor;
+	height: 0.25rem;
+	min-width: 4rem;
+	border-radius: 0.25rem;
 }
 
 .sapMSliderProgress {
@@ -14,35 +17,30 @@
 	border-radius: 0.25rem;
 }
 
-.sapMSliderInner {
-	height: 0.25rem;
-	min-width: 4rem;
-	border-radius: 0.25rem;
-}
-
-.sapMSliderInner:hover > .sapMSliderHandle {
-	background: @sapUiButtonBackground;
-	border: 0.125rem solid @sapUiFieldBorderColor;
+.sapMSliderInner:not(.sapMSliderInnerDisabled):hover > .sapMSliderHandle {
+	background: @sapUiButtonHoverBackground;
+	border-color: @sapUiButtonHoverBorderColor;
 }
 
 /* slider handle */
-.sapMSliderHandle {
+.sapMSliderInner .sapMSliderHandle {
 	background: @sapUiButtonBackground;
 	border: solid 0.125rem @sapUiFieldBorderColor;
-	width: 1.225rem;
-	height: 1.225rem;
-	top: -0.66rem;
-	&:hover {
-		background: @sapUiButtonHoverBackground;
-	}
-	&:active {
-		background: @sapUiActive;
-	}
+	width: 1.625rem;
+	height: 1.625rem;
+	top: -0.75rem;
 }
 
-.sapMSliderInner .sapMSliderHandle:hover {
-	background-color: @sapUiButtonHoverBackground;
-	border-color: @sapUiActive;
+.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
+	&:hover {
+		background: @sapUiButtonHoverBackground;
+		border-color: @sapUiButtonHoverBorderColor;
+	}
+
+	&:active {
+		background: @sapUiButtonActiveBackground;
+		border-color: @sapUiButtonActiveBorderColor;
+	}
 }
 
 .sapMSliderTickLabel .sapMSliderLabel {
@@ -64,6 +62,7 @@
 
 .sapMSliderLabels {
 	height: 1rem;
+
 	.sapMSliderRangeLabel {
 		width: 2rem;
 		font-size: @sapMFontSmallSize;
@@ -79,16 +78,17 @@
 /* pressed */
 .sapMSliderPressed:not(.sapMSliderInnerDisabled) > .sapMSliderHandle,
 .sapMSlider .sapMSliderInner > .sapMSliderHandle.sapMSliderHandlePressed {
-	background-color: @sapUiActive;
-	border: 0.125rem solid @sapUiActive;
+	background-color: @sapUiButtonActiveBackground;
+	border: 0.125rem solid @sapUiButtonActiveBorderColor;
 }
 
 .sapUiSizeCompact {
 	.sapMSliderHandle {
 		width: 1.25rem;
 		height: 1.25rem;
-		top: -0.6rem;
+		top: -0.625rem;
 	}
+
 	.sapMSliderTickLabel .sapMSliderLabel {
 		padding-top: 0.375rem;
 	}
