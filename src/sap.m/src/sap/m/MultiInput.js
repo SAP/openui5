@@ -1174,7 +1174,8 @@ function(
 
 	MultiInput.prototype.setEditable = function (bEditable) {
 		bEditable = this.validateProperty("editable", bEditable);
-		var oTokensList = this._getTokensList();
+
+		var oTokensList = this._getTokensList(true);
 
 		if (bEditable === this.getEditable()) {
 			return this;
@@ -1601,10 +1602,16 @@ function(
 	/**
 	 * Getter for the list containing tokens
 	 *
+	 * @param {boolean} bRefresh If true, the tokens list should be recreated
 	 * @returns {sap.m.List} The list
 	 * @private
 	 */
-	MultiInput.prototype._getTokensList = function() {
+	MultiInput.prototype._getTokensList = function(bRefresh) {
+		if (bRefresh && this._oSelectedItemsList) {
+			this._oSelectedItemsList.destroy();
+			this._oSelectedItemsList = null;
+		}
+
 		if (!this._oSelectedItemsList) {
 			this._oSelectedItemsList = this._createTokensList();
 		}

@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Column",
 	"sap/m/Table",
+	"sap/m/List",
 	"sap/ui/core/Item",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/events/jquery/EventExtension",
@@ -35,6 +36,7 @@ sap.ui.define([
 	Label,
 	Column,
 	Table,
+	List,
 	Item,
 	KeyCodes,
 	EventExtension,
@@ -2346,6 +2348,69 @@ sap.ui.define([
 		oPicker = this.multiInput._getReadOnlyPopover();
 
 		assert.equal(oPicker.isOpen(), true, "The readonly popover is opened on click on N-more");
+	});
+
+	QUnit.test("Read-only popover list should be destroyed, when MultiInput is set to editable", function(assert){
+		var oPicker;
+		this.multiInput.setWidth("200px");
+		this.multiInput.setEditable(false);
+		this.multiInput.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		if (Device.browser.msie) {
+			this.multiInput._tokenizer.$().click();
+		} else {
+			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		}
+
+		oPicker = this.multiInput._getReadOnlyPopover();
+
+		// assert
+		assert.ok(oPicker.isOpen(), "The readonly popover is opened on click on N-more");
+
+		// act
+		var oListDestroySpy = this.spy(List.prototype, "destroy");
+		oPicker.close();
+		this.multiInput.setEditable(true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oListDestroySpy.calledOnce, "The destroy of the list is called");
+
+		// act
+		if (Device.browser.msie) {
+			this.multiInput._tokenizer.$().click();
+		} else {
+			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		}
+
+		sap.ui.getCore().applyChanges();
+
+
+		var oEvent = {
+			getParameter: function () {
+				return this.multiInput._oSelectedItemPicker.getContent()[0].getItems()[0];
+			}.bind(this)
+		};
+
+		this.multiInput._handleNMoreItemDelete(oEvent);
+		sap.ui.getCore().applyChanges();
+
+		var aTokens = this.multiInput._tokenizer.getTokens();
+		var aItems = this.multiInput._oSelectedItemPicker.getDomRef().querySelectorAll('.sapMLIB');
+
+		// assert
+		assert.strictEqual(document.querySelectorAll("#" + this.multiInput._getTokensList().getId()).length, 1, "There should be only 1 instance of the tokens list");
+		assert.strictEqual(aItems.length, aTokens.length, "List items and tokens should be equal:" + aItems.length);
+
+		oListDestroySpy.restore();
 	});
 
 	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function(assert) {
