@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
@@ -13,7 +12,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataParentBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, ODataModel,
+], function (Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, ODataModel,
 		asODataParentBinding, SubmitMode, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
@@ -255,17 +254,12 @@ sap.ui.define([
 					},
 					sPath : "/ProductList",
 					applyParameters : function () {}
-				}),
-				oBindingMock = this.mock(oBinding),
-				sGroupId = "myGroup";
+				});
 
-			oBindingMock.expects("checkSuspended").never();
-			oBindingMock.expects("hasPendingChanges").returns(false);
-			oBindingMock.expects("getGroupId").withExactArgs().returns(sGroupId);
-			oBindingMock.expects("createReadGroupLock").withExactArgs(sGroupId, true);
-			oBindingMock.expects("applyParameters")
-				.withExactArgs(oFixture.mExpectedParameters,
-					oFixture.sChangeReason || ChangeReason.Change);
+			this.mock(oBinding).expects("checkSuspended").never();
+			this.mock(oBinding).expects("hasPendingChanges").returns(false);
+			this.mock(oBinding).expects("applyParameters").withExactArgs(
+				oFixture.mExpectedParameters, oFixture.sChangeReason || ChangeReason.Change);
 
 			// code under test
 			oBinding.changeParameters(oFixture.mParameters);
@@ -360,7 +354,6 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		// refreshing the binding is unnecessary, if the binding parameters are unchanged
-		this.mock(oBinding).expects("createReadGroupLock").never();
 		this.mock(oBinding).expects("applyParameters").never();
 
 		// code under test
@@ -411,7 +404,6 @@ sap.ui.define([
 			};
 
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
-		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
 
 		// code under test
 		oBinding.changeParameters(mParameters);
@@ -683,7 +675,7 @@ sap.ui.define([
 			var oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : oFixture.aggregatedQueryOptions
 				}),
-				mOriginalQueryOptions = jQuery.extend(true, {}, oFixture.aggregatedQueryOptions),
+				mOriginalQueryOptions = _Helper.clone(oFixture.aggregatedQueryOptions),
 				bMergeSuccess;
 
 			// code under test
@@ -803,9 +795,8 @@ sap.ui.define([
 					oHelperMock.expects("getRelativePath")
 						.withExactArgs("/reduced/child/metapath", "/Set")
 						.returns("reducedChildMetaPath");
-					this.mock(jQuery).expects("extend")
-						.exactly(oFixture.initial ? 1 : 0)
-						.withExactArgs(true, {}, sinon.match.same(mLocalQueryOptions))
+					this.mock(_Helper).expects("clone").exactly(oFixture.initial ? 1 : 0)
+						.withExactArgs(sinon.match.same(mLocalQueryOptions))
 						.returns(mExtendResult);
 					oHelperMock.expects("wrapChildQueryOptions")
 						.withExactArgs("/Set", "reducedChildMetaPath",
@@ -1498,6 +1489,85 @@ sap.ui.define([
 			oBinding.fetchIfChildCanUseCache(oContext, "childPath").getResult(),
 			"/resolved/child/path");
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bReduced, i) {
+	QUnit.test("fetchIfChildCanUseCache, operation parameter #" + i, function (assert) {
+		var oMetaModel = {
+				fetchObject : function () {},
+				getMetaPath : function () {},
+				getReducedPath : function () {}
+			},
+			fnFetchMetadata = function () {},
+			oModel = {
+				getMetaModel : function () { return oMetaModel; },
+				oInterface : {
+					fetchMetadata : fnFetchMetadata
+				},
+				resolve : function () {}
+			},
+			oParentBinding = {
+				fetchIfChildCanUseCache : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oContext : {
+					getBinding : function () { return oParentBinding; },
+					getPath : function () { return "/Set('2')"; }
+				},
+				doFetchQueryOptions : function () {
+					return SyncPromise.resolve({});
+				},
+				oModel : oModel,
+				sPath : "operation(...)"
+			}),
+			oChildQueryOptionsPromise = {},
+			oContext = Context.create(oModel, oBinding, "/Set('2')/operation(...)/$Parameter"),
+			oHelperMock = this.mock(_Helper),
+			oMetaModelMock = this.mock(oMetaModel),
+			oModelMock = this.mock(oBinding.oModel),
+			sPath = "foo/bar",
+			oPromise;
+
+		this.mock(oBinding).expects("getBaseForPathReduction")
+			.withExactArgs().returns("/base/path");
+		oModelMock.expects("resolve")
+			.withExactArgs("operation(...)", sinon.match.same(oBinding.oContext))
+			.returns("/Set('2')/operation(...)");
+		oModelMock.expects("resolve")
+			.withExactArgs(sPath, sinon.match.same(oContext))
+			.returns("/Set('2')/operation(...)/$Parameter/foo/bar");
+		oMetaModelMock.expects("getMetaPath")
+			.withExactArgs("/Set('2')/operation(...)/$Parameter")
+			.returns("/Set/operation/$Parameter");
+		oMetaModelMock.expects("getMetaPath")
+			.withExactArgs("/Set('2')/operation(...)/$Parameter/foo/bar")
+			.returns("/Set/operation/$Parameter/foo/bar");
+		this.mock(_Helper).expects("fetchPropertyAndType")
+			.withExactArgs(sinon.match.same(fnFetchMetadata), "/Set/operation/$Parameter/foo/bar")
+			.returns(SyncPromise.resolve());
+		oMetaModelMock.expects("getReducedPath")
+			.withExactArgs("/Set('2')/operation(...)/$Parameter/foo/bar", "/base/path")
+			.returns("/reduced/child/path");
+		oHelperMock.expects("getRelativePath")
+			.withExactArgs("/reduced/child/path", "/Set('2')/operation(...)")
+			.returns(bReduced ? undefined : "childPath");
+		oHelperMock.expects("getRelativePath").exactly(bReduced ? 1 : 0)
+			.withExactArgs("/Set('2')/operation(...)/$Parameter/foo/bar", "/Set('2')")
+			.returns("operation(...)/$Parameter/foo/bar");
+		this.mock(oParentBinding).expects("fetchIfChildCanUseCache").exactly(bReduced ? 1 : 0)
+			.withExactArgs(sinon.match.same(oBinding.oContext), "operation(...)/$Parameter/foo/bar",
+				sinon.match.same(oChildQueryOptionsPromise))
+			.returns("/reduced/child/path");
+		this.mock(oBinding).expects("aggregateQueryOptions").never();
+
+		// code under test
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sPath, oChildQueryOptionsPromise);
+
+		return oPromise.then(function (sReducedPath) {
+			assert.strictEqual(sReducedPath, "/reduced/child/path");
+		});
+	});
+});
 
 	//*********************************************************************************************
 [undefined, true].forEach(function (bImmutable) {

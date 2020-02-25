@@ -2,22 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/TypeDeterminationAndDelete",
 	"sap/ui/test/opaQunit"
-], function (TypeDeterminationAndDeleteTest, opaTest) {
-	/*global QUnit */
+], function (Helper, TypeDeterminationAndDeleteTest, opaTest) {
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Type Determination and Delete", {
-		before : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
-		},
-		after : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-		}
-	});
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrdersRTATest " +
+		"- Type Determination and Delete");
 
 	//*****************************************************************************
 	opaTest("Type Determination, Delete Sales Orders", function (Given, When, Then) {

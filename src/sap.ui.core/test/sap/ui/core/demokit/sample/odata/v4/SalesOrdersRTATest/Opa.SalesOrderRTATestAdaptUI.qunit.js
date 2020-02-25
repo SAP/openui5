@@ -2,22 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/odata/v4/SalesOrdersRTATest/tests/AdaptSalesOrdersTable",
 	"sap/ui/test/opaQunit"
-], function (AdaptSalesOrdersTable, opaTest) {
-	/*global QUnit */
+], function (Helper, AdaptSalesOrdersTable, opaTest) {
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Adapt UI SalesOrdersTable", {
-		before : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
-		},
-		after : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-		}
-	});
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrdersRTATest " +
+		"- Adapt UI SalesOrdersTable");
 
 	//*****************************************************************************
 	opaTest("Adapt UI SalesOrdersTable", function (Given, When, Then) {

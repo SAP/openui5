@@ -879,6 +879,44 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("format: for annotation on parameters of bound operations", function (assert) {
+		var oMetaModel = {},
+			sPath = "/T€AMS/name.space.OverloadedAction/$Parameter/p1@UI.Hidden",
+			oContext = new BaseContext(oMetaModel, sPath),
+			vRawValue = {},
+			vResult = {/*string or Promise*/};
+
+		this.mock(Expression).expects("getExpression")
+			.withExactArgs({
+				asExpression : false,
+				complexBinding : true,
+				ignoreAsPrefix : "", // do not remove binding parameter name
+				model : sinon.match.same(oMetaModel),
+				path : sPath,
+				prefix : "",
+				value : sinon.match.same(vRawValue),
+				$$valueAsPromise : true
+			})
+			.returns(vResult);
+
+		assert.strictEqual(
+			// code under test
+			AnnotationHelper.format(vRawValue, {
+				context : oContext,
+				overload : {
+					$IsBound : true,
+					$Parameter : [{
+						$Name : "_it"
+					}, {
+						$Name : "p1"
+					}]
+				}
+			}),
+			vResult
+		);
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bIsBound) {
 	QUnit.test("value: overload; $IsBound : " + bIsBound, function (assert) {
 		var oMetaModel = {},
@@ -916,6 +954,46 @@ sap.ui.define([
 		);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("value: for parameters of bound operations", function (assert) {
+		var oMetaModel = {},
+			sPath = "/T€AMS/name.space.OverloadedAction/$Parameter/p1@UI.Hidden",
+			oContext = new BaseContext(oMetaModel, sPath),
+			vRawValue = {},
+			vResult = {/*string or Promise*/},
+			oValueAsPromise = {/*boolean*/};
+
+		this.mock(Expression).expects("getExpression")
+			.withExactArgs({
+				asExpression : false,
+				complexBinding : false,
+				ignoreAsPrefix : "", // do not remove binding parameter name
+				model : sinon.match.same(oMetaModel),
+				path : sPath,
+				prefix : "",
+				value : sinon.match.same(vRawValue),
+				$$valueAsPromise : sinon.match.same(oValueAsPromise)
+			})
+			.returns(vResult);
+
+		assert.strictEqual(
+			// code under test
+			AnnotationHelper.value(vRawValue, {
+				context : oContext,
+				overload : {
+					$IsBound : true,
+					$Parameter : [{
+						$Name : "_it"
+					}, {
+						$Name : "p1"
+					}]
+				},
+				$$valueAsPromise : oValueAsPromise
+			}),
+			vResult
+		);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("resolve$Path: no $Path, just $P...", function (assert) {

@@ -167,7 +167,8 @@ sap.ui.define([
 		 *   <code>mAlias2MeasureAndMethod</code> is ignored
 		 * @returns {object}
 		 *   A map of key-value pairs representing the query string, including a value for the
-		 *   "$apply" system query option; it is a modified copy of <code>mQueryOptions</code>
+		 *   "$apply" system query option if needed; it is a modified copy of
+		 *   <code>mQueryOptions</code>
 		 * @throws {Error}
 		 *   If the given data aggregation object is unsupported
 		 *
@@ -341,7 +342,9 @@ sap.ui.define([
 			} else if (sSkipTop) {
 				sApply += "/" + sSkipTop;
 			}
-			mQueryOptions.$apply = sApply;
+			if (sApply) {
+				mQueryOptions.$apply = sApply;
+			}
 
 			return mQueryOptions;
 		},

@@ -21,11 +21,10 @@ sap.ui.define([
 	"sap/ui/model/FilterType",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Sorter",
-	"sap/ui/model/odata/OperationMode",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/model/odata/OperationMode"
 ], function (Context, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache,
 		_GroupLock, _Helper, Log, uid, SyncPromise, Binding, ChangeReason, FilterOperator,
-		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode, jQuery) {
+		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -98,21 +97,34 @@ sap.ui.define([
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-				this.oAggregation = null;
-				this.aApplicationFilters = _Helper.toArray(vFilters);
 
+				mParameters = _Helper.clone(mParameters) || {};
+				this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
+					"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
+					"$$updateGroupId"]);
+				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
 				this.oDiff = undefined;
 				this.aFilters = [];
+				this.sGroupId = mParameters.$$groupId;
 				this.bHasAnalyticalInfo = false;
+				this.oHeaderContext = this.bRelative
+					? null
+					: Context.create(oModel, this, sPath);
+				this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
 				this.aSorters = _Helper.toArray(vSorters);
+				this.sUpdateGroupId = mParameters.$$updateGroupId;
+				// Note: $$operationMode is validated before, oModel.sOperationMode also
+				// Just check for the case that no mode was specified, but sort/filter takes place
+				if (!this.sOperationMode
+						&& (this.aSorters.length || this.aApplicationFilters.length)) {
+					throw new Error("Unsupported operation mode: " + this.sOperationMode);
+				}
 
-				this.applyParameters(jQuery.extend(true, {}, mParameters)); // calls #reset
-				this.oHeaderContext = this.bRelative
-					? null
-					: Context.create(this.oModel, this, sPath);
+				// Note: clone() dropped $$aggregation : undefined, which is good
+				this.applyParameters(mParameters); // calls #reset
 				if (!this.bRelative || oContext && !oContext.fetchValue) {
 					this.createReadGroupLock(this.getGroupId(), true);
 				}
@@ -293,40 +305,33 @@ sap.ui.define([
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason for {@link #reset}
 	 * @throws {Error}
-	 *   If disallowed binding parameters are provided or an unsupported operation mode is used
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
-		var oAggregation,
-			sOperationMode;
+		var sApply,
+			sOldApply = this.mQueryOptions && this.mQueryOptions.$apply;
 
-		this.checkBindingParameters(mParameters,
-			["$$aggregation", "$$canonicalPath", "$$groupId", "$$operationMode", "$$ownRequest",
-				"$$patchWithoutSideEffects", "$$updateGroupId"]);
-
-		sOperationMode = mParameters.$$operationMode || this.oModel.sOperationMode;
-		// Note: $$operationMode is validated before, this.oModel.sOperationMode also
-		// Just check for the case that no mode was specified, but sort/filter takes place
-		if (!sOperationMode && (this.aSorters.length || this.aApplicationFilters.length)) {
-			throw new Error("Unsupported operation mode: " + sOperationMode);
-		}
-		this.sOperationMode = sOperationMode;
-		this.sGroupId = mParameters.$$groupId;
-		this.sUpdateGroupId = mParameters.$$updateGroupId;
-		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
-		this.mParameters = mParameters; // store mParameters at binding after validation
 		if ("$$aggregation" in mParameters) {
-			// Note: this.mQueryOptions has been recreated from mParameters which does not contain
-			// our "implicit" $apply
-			if ("$apply" in this.mQueryOptions) {
+			if ("$apply" in mParameters) {
 				throw new Error("Cannot combine $$aggregation and $apply");
 			}
-			oAggregation = _Helper.clone(mParameters.$$aggregation);
-			this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation).$apply;
-			this.oAggregation = oAggregation;
+			// Note: this validates mParameters.$$aggregation!
+			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
+			if (sChangeReason === "" && sApply !== sOldApply) {
+				sChangeReason = ChangeReason.Change;
+			}
+		}
+		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
+		this.mParameters = mParameters; // store mParameters at binding after validation
+		if (sApply) {
+			this.mQueryOptions.$apply = sApply;
 		}
 
+		if (sChangeReason === "") { // unchanged $apply derived from $$aggregation
+			return;
+		}
 		if (this.isRootBindingSuspended()) {
 			this.setResumeChangeReason(sChangeReason);
 			return;
@@ -565,6 +570,9 @@ sap.ui.define([
 	 * this list binding's $expand is available; to skip this refresh, set <code>bSkipRefresh</code>
 	 * to <code>true</code>.
 	 *
+	 * Note: A deep create is not supported. The dependent entity has to be created using a second
+	 * list binding. Note that it is not supported to bind relative to a transient context.
+	 *
 	 * Note: The binding must have the parameter <code>$count : true</code> when creating an entity
 	 * at the end. Otherwise the collection length may be unknown and there is no clear position to
 	 * place this entity at.
@@ -789,7 +797,6 @@ sap.ui.define([
 			this.oHeaderContext.destroy();
 		}
 		this.oModel.bindingDestroyed(this);
-		this.oAggregation = undefined;
 		this.aApplicationFilters = undefined;
 		this.aContexts = undefined;
 		this.oDiff = undefined;
@@ -862,9 +869,10 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
 			sDeepResourcePath) {
-		var bAggregate = this.oAggregation && (this.oAggregation.groupLevels.length
-				|| _AggregationHelper.hasMinOrMax(this.oAggregation.aggregate)
-				|| _AggregationHelper.hasGrandTotal(this.oAggregation.aggregate));
+		var oAggregation = this.mParameters.$$aggregation,
+			bAggregate = oAggregation && (oAggregation.groupLevels.length
+				|| _AggregationHelper.hasMinOrMax(oAggregation.aggregate)
+				|| _AggregationHelper.hasGrandTotal(oAggregation.aggregate));
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
 
@@ -875,7 +883,7 @@ sap.ui.define([
 		}
 		// w/o grouping or min/max, $apply is sufficient; else _AggregationCache is needed
 		return bAggregate
-			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.oAggregation,
+			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, oAggregation,
 				mQueryOptions)
 			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
 				this.oModel.bAutoExpandSelect, sDeepResourcePath);
@@ -1220,7 +1228,7 @@ sap.ui.define([
 		if (!oCombinedFilter) {
 			return SyncPromise.resolve([sStaticFilter]);
 		}
-		aFilters = _AggregationHelper.splitFilter(oCombinedFilter, this.oAggregation);
+		aFilters = _AggregationHelper.splitFilter(oCombinedFilter, this.mParameters.$$aggregation);
 		oMetaModel = this.oModel.getMetaModel();
 		oMetaContext = oMetaModel.getMetaContext(this.oModel.resolve(this.sPath, oContext));
 
@@ -1306,8 +1314,6 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.filter = function (vFilters, sFilterType) {
-		var aFilters = _Helper.toArray(vFilters);
-
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
@@ -1316,9 +1322,9 @@ sap.ui.define([
 		}
 
 		if (sFilterType === FilterType.Control) {
-			this.aFilters = aFilters;
+			this.aFilters = _Helper.toArray(vFilters);
 		} else {
-			this.aApplicationFilters = aFilters;
+			this.aApplicationFilters = _Helper.toArray(vFilters);
 		}
 
 		if (this.isRootBindingSuspended()) {
@@ -1859,7 +1865,7 @@ sap.ui.define([
 				mQueryOptions.$filter = "(" + mQueryOptions.$filter + ") and ("
 					+ mInheritedQueryOptions.$filter + ")";
 			}
-			mQueryOptions = jQuery.extend({}, mInheritedQueryOptions, mQueryOptions);
+			mQueryOptions = Object.assign({}, mInheritedQueryOptions, mQueryOptions);
 		}
 
 		return mQueryOptions;
@@ -2299,10 +2305,12 @@ sap.ui.define([
 	 * Sets a new data aggregation object and derives the system query option <code>$apply</code>
 	 * implicitly from it.
 	 *
-	 * @param {object} oAggregation
+	 * @param {object} [oAggregation]
 	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>.
+	 *   Extension for Data Aggregation Version 4.0</a>. Since 1.76.0, <code>undefined</code> can be
+	 *   used to remove the data aggregation object, which allows to set <code>$apply</code>
+	 *   explicitly afterwards. <code>null</code> is not supported.
 	 * @param {object} [oAggregation.aggregate]
 	 *   A map from aggregatable property names or aliases to objects containing the following
 	 *   details:
@@ -2351,25 +2359,19 @@ sap.ui.define([
 	 * @since 1.55.0
 	 */
 	ODataListBinding.prototype.setAggregation = function (oAggregation) {
+		var mParameters;
+
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot set $$aggregation due to pending changes");
 		}
-		if (!this.oAggregation && "$apply" in this.mQueryOptions) {
-			throw new Error("Cannot override existing $apply : '" + this.mQueryOptions.$apply
-				+ "'");
-		}
-		oAggregation = _Helper.clone(oAggregation);
-		this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation).$apply;
-		this.oAggregation = oAggregation;
 
-		if (this.isRootBindingSuspended()) {
-			this.setResumeChangeReason(ChangeReason.Change);
-			return;
+		mParameters = Object.assign({}, this.mParameters);
+		if (oAggregation === undefined) {
+			delete mParameters.$$aggregation;
+		} else {
+			mParameters.$$aggregation = _Helper.clone(oAggregation);
 		}
-
-		this.removeCachesAndMessages("");
-		this.fetchCache(this.oContext);
-		this.reset(ChangeReason.Change);
+		this.applyParameters(mParameters, "");
 	};
 
 	/**
@@ -2454,7 +2456,6 @@ sap.ui.define([
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
-
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot sort due to pending changes");
 		}
@@ -2466,8 +2467,8 @@ sap.ui.define([
 			return this;
 		}
 
-		this.removeCachesAndMessages("");
 		this.createReadGroupLock(this.getGroupId(), true);
+		this.removeCachesAndMessages("");
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);
 
@@ -2567,8 +2568,7 @@ sap.ui.define([
 				oAggregation.group[oColumn.name] = oDetails;
 			}
 		});
-		this.oAggregation = oAggregation; // Note: needed by #doCreateCache!
-		this.changeParameters(_AggregationHelper.buildApply(oAggregation));
+		this.setAggregation(oAggregation);
 		this.bHasAnalyticalInfo = true;
 		if (bHasMinMax) {
 			return {
