@@ -339,18 +339,18 @@ function(
 			liveChange : {
 				parameters : {
 					/**
-					 * The new value of the input.
+					 * The current value of the input, after a live change event.
 					 */
 					value : {type : "string"},
 
 					/**
-					 * Indicate that ESC key triggered the event.
+					 * Indicates if ESC key triggered the event.
 					 * @since 1.48
 					 */
 					escPressed : {type : "boolean"},
 
 					/**
-					 * The value of the input before pressing ESC key.
+					 * The old value of the input, before pressing ESC key.
 					 * @since 1.48
 					 */
 					previousValue : {type : "string"}
