@@ -1214,10 +1214,14 @@ sap.ui.define([
 		var done = assert.async();
 		var sId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
+
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
 			sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel"
 			+ this._sAdditionalLabeling, "aria-labelledby of select all");
-		getRowHeader(0, true, assert); //set row header somewhere else on the table
+
+		$Cell = getCell(1, 1, true, assert); //set focus somewhere else on the table
+		testAriaLabelsForFocusedDataCell($Cell, 1, 1, assert, {firstTime: false, rowChange: true, colChange: true});
+
 		$Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
 			sId + "-ariacolrowheaderlabel" + this._sAdditionalLabeling, "aria-labelledby of select all");
@@ -1339,6 +1343,13 @@ sap.ui.define([
 		var $Elem = oTable.$().find("table");
 		$Elem.each(function() {
 			assert.strictEqual(jQuery(this).attr("role"), "presentation", "role");
+		});
+	});
+
+	QUnit.test("ARIA Attributes of Container Element", function(assert) {
+		var $Elem = oTable.$("sapUiTableCnt");
+		$Elem.each(function() {
+			assert.strictEqual(jQuery(this).attr("role"), "application", "role");
 		});
 	});
 
