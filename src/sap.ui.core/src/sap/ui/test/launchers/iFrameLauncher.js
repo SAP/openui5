@@ -346,7 +346,9 @@ sap.ui.define([
 			//invalidate the cache
 			$Frame = jQueryDOM("#" + options.frameId);
 
-			if (!$Frame.length) {
+			if ($Frame.length) {
+				$FrameContainer = jQueryDOM(".opaFrameContainer");
+			} else {
 				if (!options.source) {
 					Log.error("No source was given to launch the IFrame", this);
 				}
