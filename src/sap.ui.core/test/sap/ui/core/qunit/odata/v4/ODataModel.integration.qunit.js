@@ -24452,4 +24452,67 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Get a property value from an ODataListBinding bound to a sap.m.Table while the
+	// table is reading data to grow. W/o autoExpandSelect, we just drop the key property from the
+	// response in order to use indices instead of key predicates in context paths.
+	// JIRA: CPOUI5ODATAV4-115
+[false, true].forEach(function (bAutoExpandSelect) {
+	var oSalesOrder = bAutoExpandSelect
+			? {SalesOrderID : "01", Note : "Note 1"}
+			: {Note : "Note 1"},
+		sSelect = bAutoExpandSelect ? "$select=Note,SalesOrderID&" : "",
+		sTitle = "Context#getProperty while table is reading, autoExpandSelect = "
+			+ bAutoExpandSelect,
+		sView = '\
+<Table id="table" growing="true" growingThreshold="1"\
+		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
+	<ColumnListItem>\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+</Table>';
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect}),
+			that = this;
+
+		this.expectRequest("SalesOrderList?$count=true&" + sSelect + "$skip=0&$top=1", {
+				"@odata.count" : "42",
+				value : [oSalesOrder]
+			})
+			.expectChange("note", ["Note 1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table");
+
+			that.expectRequest("SalesOrderList?$count=true&" + sSelect + "$skip=1&$top=1", {
+					"@odata.count" : "23",
+					value : [{Note : "Note 2"}]
+				})
+				.expectChange("note", [, "Note 2"]);
+
+			that.oView.byId("table-trigger").firePress(); // show more items
+
+			assert.strictEqual(
+				// code under test
+				oTable.getItems()[0].getBindingContext().getProperty("Note"),
+				"Note 1");
+			assert.strictEqual(
+				// code under test
+				oTable.getBinding("items").getHeaderContext().getProperty("$count"),
+				42);
+
+			return Promise.all([
+					// code under test
+					oTable.getBinding("items").getHeaderContext().requestProperty("1/Note"),
+					oTable.getBinding("items").getHeaderContext().requestProperty("$count"),
+					that.waitForChanges(assert)
+				]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], "Note 2");
+			assert.strictEqual(aResults[1], 23);
+		});
+	});
+});
 });
