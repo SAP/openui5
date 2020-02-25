@@ -1061,7 +1061,7 @@ sap.ui.define([
 		if (this) {
 			ODataBinding.apply(this, arguments);
 		} else {
-			jQuery.extend(oPrototype, ODataBinding.prototype);
+			Object.assign(oPrototype, ODataBinding.prototype);
 		}
 	}
 

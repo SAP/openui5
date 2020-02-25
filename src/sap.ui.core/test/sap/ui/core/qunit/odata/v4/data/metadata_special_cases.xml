@@ -12,6 +12,9 @@
 				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
 				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
 				<Property Name="Messages" Type="Collection(special.cases.Message)" />
+				<Property Name="defaultChannel" Type="Edm.String" />
+				<Property Name="lastUsedChannel" Type="Edm.String" />
+				<Property Name="sendsAutographs" Type="Edm.Boolean" />
 				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
 				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
 				<NavigationProperty Name="BestPublication" Type="special.cases.PublicationsType" />
@@ -114,6 +117,10 @@
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
 			</Action>
+			<Action Name="SendAutograph" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<Parameter Name="Channel" Type="Edm.String" Nullable="false"/>
+			</Action>
 			<Action Name="EditAction" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
@@ -207,6 +214,25 @@
 					<Collection>
 						<String>../Price/$metadata</String>
 					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.SendAutograph(special.cases.ArtistsType)">
+				<Annotation Term="Org.OData.Core.V1.OperationAvailable" Path="_it/sendsAutographs"/>
+			</Annotations>
+			<Annotations Target="special.cases.SendAutograph(special.cases.ArtistsType)/Channel">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="_it/defaultChannel"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListMapping">
+					<Record>
+						<!-- PropertyValue Property="CollectionPath" String="VH_Channels"/ -->
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="_it/lastUsedChannel"/>
+									<!-- PropertyValue Property="ValueListProperty" String="ChannelID"/ -->
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
 				</Annotation>
 			</Annotations>
 		</Schema>

@@ -2,22 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/CreateRelative",
 	"sap/ui/test/opaQunit"
-], function (CreateRelativeTest, opaTest) {
-	/*global QUnit */
+], function (Helper, CreateRelativeTest, opaTest) {
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Create Relative", {
-		before : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
-		},
-		after : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-		}
-	});
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Create Relative", 180);
 
 	//*****************************************************************************
 	opaTest("Create, modify and delete within relative listbinding", function (Given, When, Then) {

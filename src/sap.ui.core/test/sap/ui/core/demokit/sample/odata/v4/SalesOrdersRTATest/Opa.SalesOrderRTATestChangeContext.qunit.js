@@ -2,23 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/ChangeContext",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
-], function (ChangeContextTest, opaTest, TestUtils) {
+], function (Helper, ChangeContextTest, opaTest, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Change Context", {
-		before : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
-		},
-		after : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-		}
-	});
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Change Context");
 
 	//*****************************************************************************
 	if (TestUtils.isRealOData()) {

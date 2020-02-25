@@ -125,6 +125,9 @@ sap.ui.define([
 				},
 				"name.space.OverloadedAction(tea_busi.TEAM)/parameter1" : {
 					"@Common.Label" : "My 1st label",
+					"@Common.Text" : {
+						"$Path" : "_it/Name"
+					},
 					"@Core.OperationAvailable" : {
 						"$Path" : "_it/TEAM_2_CONTAINED_S/Id"
 					}
@@ -846,6 +849,56 @@ sap.ui.define([
 					"$Type" : "reduce.path.C"
 				}
 			},
+			"reduce.path.Action" : [{
+				"$kind" : "Action",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Type" : "reduce.path.A"
+				}, {
+					"$Name" : "foo",
+					"$Type" : "Edm.String"
+				}]
+			}, {
+				"$kind" : "Action",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$Name" : "Value",
+					"$Type" : "reduce.path.D"
+				}]
+			}, {
+				"$kind" : "Action",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$isCollection" : true,
+					"$Name" : "_it",
+					"$Type" : "reduce.path.B"
+				}]
+			}],
+			"reduce.path.Function" : [{
+				"$kind" : "Function",
+				"$Parameter" : [{
+					"$Name" : "foo",
+					"$Type" : "reduce.path.A"
+				}]
+			}, {
+				"$kind" : "Function",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Type" : "reduce.path.D"
+				}]
+			}, {
+				"$kind" : "Function",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Type" : "reduce.path.D"
+				}, {
+					"$Name" : "Value",
+					"$Type" : "Edm.Int"
+				}]
+			}],
 			"reduce.path.DefaultContainer" : {
 				"$kind" : "EntityContainer",
 				"As" : {
@@ -855,6 +908,10 @@ sap.ui.define([
 				"Ds" : {
 					"$kind" : "EntitySet",
 					"$Type" : "reduce.path.D"
+				},
+				"FunctionImport" : {
+					"$kind" : "FunctionImport",
+					"$Function" : "reduce.path.Function"
 				}
 			}
 		},
@@ -1645,6 +1702,8 @@ sap.ui.define([
 		"/T€AMS@/@T€AMS/@sapui.name" : "@T€AMS", // dito
 		"/T€AMS/@UI.LineItem/0/@UI.Importance/@sapui.name" : "@UI.Importance", // in "JSON" mode
 		"/T€AMS/Team_Id@/@Common.Label@sapui.name" : "@Common.Label", // avoid indirection here!
+		"/T€AMS/name.space.OverloadedAction/$Parameter/parameter1@Common.Label@sapui.name"
+			: "@Common.Label",
 		"/T€AMS/tea_busi.NewAction/@sapui.name" : "tea_busi.TEAM", // due to $ReturnType insertion
 		"/T€AMS/tea_busi.NewAction/Name@sapui.name" : "Name", // property at return type
 		"/T€AMS/tea_busi.NewAction//Name@sapui.name" : "Name", // property at return type
@@ -2032,7 +2091,9 @@ sap.ui.define([
 	["@@computedAnnotation", "@@.computedAnnotation"].forEach(function (sSuffix) {
 		var mPathPrefix2Overload = {
 				"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable" : aOverloadedAction[1],
-				"/T€AMS/name.space.OverloadedAction/_it@Common.Label" : aOverloadedAction[1]
+				"/T€AMS/name.space.OverloadedAction/_it@Common.Label" : aOverloadedAction[1],
+				"/T€AMS/name.space.OverloadedAction/parameter1@Common.Text" : aOverloadedAction[1],
+				"/T€AMS/name.space.OverloadedAction/parameter1@Common.Text/" : aOverloadedAction[1]
 //TODO check if "/T€AMS/name.space.OverloadedAction/parameter1" : aOverloadedAction[1] should also
 // be expected for parameters and not only for annotations
 			},
@@ -2046,6 +2107,11 @@ sap.ui.define([
 				"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
 					: "name.space.OverloadedAction",
 				"/T€AMS/name.space.OverloadedAction/_it@Common.Label"
+					: "name.space.OverloadedAction",
+				// Note: because @Common.Label has a string value, a slash must not be appended!
+				"/T€AMS/name.space.OverloadedAction/parameter1@Common.Text"
+					: "name.space.OverloadedAction",
+				"/T€AMS/name.space.OverloadedAction/parameter1@Common.Text/"
 					: "name.space.OverloadedAction",
 				"/T€AMS/name.space.OverloadedAction/parameter1" : "name.space.OverloadedAction"
 			};
@@ -2069,6 +2135,8 @@ sap.ui.define([
 				this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1) // see oInput
 					.returns(SyncPromise.resolve(mScope));
 				oInput = this.oMetaModel.getObject(sPathPrefix);
+				// self-guard to avoid that a complex path evaluates to undefined
+				assert.notStrictEqual(oInput, undefined, "use this test for defined results only!");
 				fnComputedAnnotation = this.mock(oScope).expects("computedAnnotation");
 				fnComputedAnnotation
 					.withExactArgs(oInput, sinon.match({
@@ -6729,7 +6797,21 @@ forEach({
 	// annotation at navigation property DtoA
 	"/As(1)|AtoDs(42)/DtoA@Common.Label" : "/As(1)/AtoDs(42)/DtoA@Common.Label",
 	// UI5 runtime annotation at type A
-	"/As(1)|AtoDs(42)/DtoA/@$ui5._/predicate" : "/As(1)/@$ui5._/predicate"
+	"/As(1)|AtoDs(42)/DtoA/@$ui5._/predicate" : "/As(1)/@$ui5._/predicate",
+	// property of binding parameter at 1st overloaded bound action
+	"/As(1)|reduce.path.Action(...)/$Parameter/_it/Value" : "/As(1)/Value",
+	// property of binding parameter at 2nd overloaded bound action
+	"/Ds(1)|reduce.path.Action(...)/$Parameter/Value/Value" : "/Ds(1)/Value",
+	// property of binding parameter at 2nd overloaded bound action, without "$Parameter"
+	"/Ds(1)|reduce.path.Action(...)/Value/Value" : "/Ds(1)/reduce.path.Action(...)/Value/Value",
+	// property of other parameter at bound action
+	"/As(1)|reduce.path.Action(...)/$Parameter/foo" :
+		"/As(1)/reduce.path.Action(...)/$Parameter/foo",
+	// operation import
+	"/FunctionImport(...)|$Parameter/foo" : "/FunctionImport(...)/$Parameter/foo",
+	// binding parameter is collection (the URL is invalid)
+	"/Ds(1)|DtoBs/reduce.path.Action/$Parameter/_it/Value" :
+		"/Ds(1)/DtoBs/reduce.path.Action/$Parameter/_it/Value"
 }, function (sPath, sReducedPath, sRootPath) {
 	QUnit.test("getReducedPath: " + sPath, function (assert) {
 		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
@@ -6738,6 +6820,38 @@ forEach({
 		assert.strictEqual(this.oMetaModel.getReducedPath(sPath, sRootPath), sReducedPath);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getReducedPath: invalid binding parameter", function (assert) {
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
+			.returns(SyncPromise.resolve(mReducedPathScope));
+		this.oLogMock.expects("isLoggable")
+					.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(true);
+		this.oLogMock.expects("warning").withExactArgs("Expected a single overload, but found 0",
+			"/As/AtoC/reduce.path.Action/$Parameter/_it", sODataMetaModel);
+
+		// checks that it runs through without an error
+		assert.strictEqual(
+			this.oMetaModel.getReducedPath("/As(1)/AtoC/reduce.path.Action(...)/$Parameter/_it",
+					"/As(1)"),
+			"/As(1)/AtoC/reduce.path.Action(...)/$Parameter/_it");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getReducedPath: multiple overloads", function (assert) {
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
+			.returns(SyncPromise.resolve(mReducedPathScope));
+		this.oLogMock.expects("isLoggable")
+					.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(true);
+		this.oLogMock.expects("warning").withExactArgs("Expected a single overload, but found 2",
+			"/Ds/reduce.path.Function/$Parameter/_it", sODataMetaModel);
+
+		// checks that it runs through without an error
+		assert.strictEqual(
+			this.oMetaModel.getReducedPath("/Ds(1)/reduce.path.Function(...)/$Parameter/_it",
+				"/Ds(1)"),
+			"/Ds(1)/reduce.path.Function(...)/$Parameter/_it");
+	});
 
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
