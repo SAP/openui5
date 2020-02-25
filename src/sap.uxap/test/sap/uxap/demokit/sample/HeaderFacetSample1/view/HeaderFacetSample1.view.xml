@@ -1,0 +1,71 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout"
+	height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout"
+		subSectionLayout="TitleOnLeft">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<expandedHeading>
+					<m:Title text="Header Facet Sample 1" wrapping="true" />
+				</expandedHeading>
+
+				<snappedHeading>
+						<m:FlexBox fitContainer="true" alignItems="Center" >
+							<m:Avatar class="sapUiTinyMarginEnd" displayShape="Square" initials="HF"/>
+							<m:Title text="Header Facet Sample 1" wrapping="true"/>
+						</m:FlexBox>
+				</snappedHeading>
+
+				<expandedContent>
+					<m:Text text="Example of an ObjectPage with header facet."/>
+				</expandedContent>
+
+				<snappedContent>
+					<m:Text text="Example of an ObjectPage with header facet."/>
+				</snappedContent>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Header Title On Phone"/>
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:OverflowToolbarButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
+					<m:OverflowToolbarButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+		<layout:VerticalLayout>
+			<m:FlexBox wrap="Wrap" fitContainer="true">
+				<m:Avatar class="sapUiLargeMarginEnd" displayShape="Square" initials="HF" displaySize="L"/>
+
+				 <m:VBox width="300px" class="sapUiLargeMarginEnd sapUiTinyMarginBottom">
+                    <m:Title text="Product Description"/>
+                    <m:Text text="Top-design high-quality coffee mug - ideal for a comforting moment; Pack: 6; material: Porcelain - durable dishwasher and microwave-safe porcelain that cleans easily and is ideal for everyday service. Comes in two bright colors."/>
+                </m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiTinyMarginBottom">
+                    <m:Title text="Profile"/>
+                    <m:Label text="Personal Information"/>
+                    <m:ProgressIndicator displayValue="42%" percentValue="42%"  state="Information"/>
+                </m:VBox>
+
+                 <m:VBox>
+                    <m:Title text="Reliability"/>
+                    <m:Label text="Based on fulfiled contracts"/>
+                    <m:RatingIndicator value="4" iconSize="32px"/>
+                </m:VBox>
+			</m:FlexBox>
+			</layout:VerticalLayout>
+		</headerContent>
+
+        <sections>
+			<core:Fragment fragmentName="sap.uxap.sample.HeaderFacetSample1.view.fragments.SupplierDetails" type="XML"/>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>
