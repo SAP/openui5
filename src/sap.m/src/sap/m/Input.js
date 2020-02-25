@@ -2062,7 +2062,7 @@ function(
 		 */
 		Input.prototype._closeSuggestionPopup = function() {
 
-			if (this._oSuggPopover) {
+			if (this._oSuggPopover && this._oSuggPopover.isOpen()) {
 				this._bShouldRefreshListItems = false;
 				this.cancelPendingSuggest();
 				this._oSuggPopover._oPopover.close();
