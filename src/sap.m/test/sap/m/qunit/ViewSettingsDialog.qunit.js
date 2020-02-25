@@ -389,7 +389,7 @@ sap.ui.define([
 				this.oVSD.exit();
 				done();
 			}.bind(this), 1000);
-		}.bind(this), 1000);
+		}.bind(this), 10);
 	});
 
 	QUnit.module("getter/setter", {
@@ -668,7 +668,7 @@ sap.ui.define([
 		setTimeout(function () {
 			assert.equal(this.oVSD._navContainer.getCurrentPage().getId(), this.oVSD._getPage1().getId(), "NavContainer should be on the first page");
 			done();
-		}.bind(this), 1500);
+		}.bind(this), 1000);
 	});
 	QUnit.module("Events", {
 		beforeEach : function () {
@@ -896,7 +896,7 @@ sap.ui.define([
 		setTimeout(function() {
 			assert.strictEqual(fnFireItemPressSpy.calledOnce, true, "filterDetailPageOpened event is fired when filter detial page is opened");
 			done();
-		}, 1500);
+		}, 10);
 	});
 
 	QUnit.test("Grouping items selection", function (assert) {
@@ -1085,7 +1085,7 @@ sap.ui.define([
 			assert.strictEqual(that.oVSD._dialog, null, "dialog is null");
 			assert.strictEqual(that.oVSD._subHeader, null, "subHeader is null");
 			done();
-		}, 1000);
+		}, 10);
 	});
 
 	QUnit.test("Destroy ViewSettingsDialog that has never been opened/rendered", function (assert) {
@@ -1353,7 +1353,7 @@ sap.ui.define([
 			assert.ok(jQuery.sap.domById(that.oVSD.getId() + "-detailresetbutton"), "Filter detail reset button should be rendered");
 			assert.ok(jQuery.sap.domById(that.oVSD.getId() + "-backbutton"), "Back button should be rendered");
 			done();
-		}, 1000);
+		}, 10);
 
 	});
 
@@ -1420,8 +1420,8 @@ sap.ui.define([
 			setTimeout(function () {
 					assert.strictEqual(that.oVSD._filterDetailList.getItems()[0].getSelected(), false, 'The first item is not selected');
 					done();
-			}, 1000);
-		}.bind(this), 1000);
+			}, 10);
+		}.bind(this), 10);
 	});
 
 	QUnit.test("Show Only Selected button toggled on displays only selected items", function (assert) {
@@ -1563,7 +1563,7 @@ sap.ui.define([
 			assert.ok(bNoItemsSelected, "After uncheck select all - no items are selected");
 
 			done();
-		}, 1000);
+		}, 10);
 	});
 
 	QUnit.test("Query filter search field works correctly", function (assert) {
@@ -1658,7 +1658,7 @@ sap.ui.define([
 			assert.equal(that.oVSD._selectAllCheckBox.getSelected(), false, "Select all not checked");
 
 			done();
-		}, 1000);
+		}, 10);
 	});
 
 	QUnit.test("Query filter search field works correctly when the FilterItem has multiSelect set to false", function (assert) {
@@ -1680,7 +1680,7 @@ sap.ui.define([
 			assert.ok(oSearchField, "There is a search field when multiSelect is set to false");
 
 			done();
-		}, 1000);
+		}, 10);
 	});
 
 	QUnit.test("StringFilter", function (assert) {
@@ -1737,7 +1737,7 @@ sap.ui.define([
 			assert.equal(oCallbackSpy.args[0][1], this.oVSD.getFilterItems()[0].getItems()[0].getText(), "filter function is called with the right second argument");
 
 			done();
-		}.bind(this), 1000);
+		}.bind(this), 10);
 	});
 
 	QUnit.test("Query filter search field updates the select all checkbox", function (assert){
@@ -1764,7 +1764,7 @@ sap.ui.define([
 			assert.ok(oSelectAllCheckbox.getSelected(), "After filter search with selected results only, the select all checkbox is also selected.");
 
 			done();
-		}, 1000);
+		}, 10);
 	});
 
 	QUnit.test("Select All checkbox updates only the filtered items", function (assert) {
@@ -1804,7 +1804,7 @@ sap.ui.define([
 			assert.equal(aSelectedItems.length, 3, "After deselecting select all checkbox, on a filtered list with 1 selected result, the selected items are only decreased by 1.");
 
 			done();
-		}, 1000);
+		}, 10);
 	});
 
 	QUnit.test("Select All checkbox is disabled when no items matched the search query", function (assert) {
@@ -1859,7 +1859,7 @@ sap.ui.define([
 			assert.equal(bAllEnabled, true, "Now the Select all checkbox is enabled again.");
 
 			done();
-		}, 1000);
+		}, 10);
 	});
 
 	QUnit.test("Select All checkbox is disabled when there are no detail items", function (assert) {
@@ -2004,7 +2004,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test for re-rendering after changing selections", function (assert) {
-		var delay = 1000,
+		var delay = 10,
 				done1 = assert.async(),
 				that = this;
 
@@ -2144,7 +2144,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reopening filter detail page of a removed detail", function (assert) {
-		var delay = 1000,
+		var delay = 10,
 			done = assert.async(),
 			that = this;
 
@@ -2184,7 +2184,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reopening filter detail page after all filters are removed", function (assert) {
-		var delay = 1000,
+		var delay = 10,
 			done = assert.async(),
 			that = this;
 
@@ -2224,7 +2224,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reopening filter detail page of a removed detail with model change - remove single filter", function (assert) {
-		var delay = 1000,
+		var delay = 10,
 			done = assert.async(),
 			that = this;
 
@@ -2259,7 +2259,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reopening filter detail page of a removed detail with model change - remove all filters", function (assert) {
-		var delay = 1000,
+		var delay = 10,
 			done = assert.async(),
 			that = this;
 
@@ -2758,11 +2758,11 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.strictEqual(jQuery(sTitleSelector).length, 5, 'Item was successfully inserted.');
 						done();
-					}, 1000);
-				}.bind(this), 1000);
-			}.bind(this), 1000);
+					}, 10);
+				}.bind(this), 10);
+			}.bind(this), 10);
 
-		}.bind(this), 1000);
+		}.bind(this), 10);
 	});
 
 
@@ -2810,11 +2810,11 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.strictEqual(jQuery(sTitleSelector).length, 3, 'Item was successfully inserted.');
 						done();
-					}, 1000);
-				}.bind(this), 1000);
-			}.bind(this), 1000);
+					}, 10);
+				}.bind(this), 10);
+			}.bind(this), 10);
 
-		}.bind(this), 1000);
+		}.bind(this), 10);
 	});
 
 
@@ -2871,10 +2871,10 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.strictEqual(jQuery(sTitleSelector).length, 3, 'Item was successfully inserted.');
 						done();
-					}, 1000);
-				}.bind(this), 1000);
-			}.bind(this), 1000);
-		}.bind(this), 1000);
+					}, 10);
+				}.bind(this), 10);
+			}.bind(this), 10);
+		}.bind(this), 10);
 	});
 
 	QUnit.test("Change filter detail items in the model when user is at filter page", function (assert) {
@@ -2951,10 +2951,10 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.strictEqual(jQuery(sTitleSelector).length, 6, 'Item was successfully inserted.');
 						done();
-					}, 1000);
-				}.bind(this), 1000);
-			}.bind(this), 1000);
-		}.bind(this), 1000);
+					}, 10);
+				}.bind(this), 10);
+			}.bind(this), 10);
+		}.bind(this), 10);
 	});
 
 

@@ -367,7 +367,14 @@ sap.ui.define([
 			},
 			FacetFilter: {
 				title: "FacetFilter - sap.m",
-				_alternativeTitle: "QUnit Page for sap.m.FacetFilter",
+				_alternativeTitle: "QUnit Page for sap.m.FacetFilter, part 1",
+				ui5: {
+					language: "en_US"
+				}
+			},
+			FacetFilter2: {
+				title: "FacetFilter 2 - sap.m",
+				_alternativeTitle: "QUnit Page for sap.m.FacetFilter, part 2",
 				ui5: {
 					language: "en_US"
 				}
@@ -943,7 +950,15 @@ sap.ui.define([
 			},
 			PlanningCalendar: {
 				title: "PlanningCalendar - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.PlanningCalendar",
+				_alternativeTitle: "QUnit tests: sap.m.PlanningCalendar, part 1",
+				ui5: {
+					libs: "sap.m, sap.ui.unified",
+					language: "en_GB"
+				}
+			},
+			PlanningCalendar2: {
+				title: "PlanningCalendar 2 - sap.m",
+				_alternativeTitle: "QUnit tests: sap.m.PlanningCalendar, part 2",
 				ui5: {
 					libs: "sap.m, sap.ui.unified",
 					language: "en_GB"
@@ -1601,6 +1616,24 @@ sap.ui.define([
 				 *  - Script Include of QUnitUtils
 				 */
 				page: "test-resources/sap/m/qunit/colorpalette/test/integration/opaTest.qunit.html",
+				title: "Opa tests for sap.m.ColorPalettePopover",
+				loader: {
+					paths: {
+						"cp/opa/test/app": "test-resources/sap/m/qunit/colorpalette/",
+						"cp/opa/test/env": "test-resources/sap/m/qunit/colorpalette/test/"
+					}
+				},
+				qunit: {
+					version: 2
+				}
+			},
+			"colorpalette/test/integration/opaTest2": {
+				/*
+				 * Page kept because of
+				 *  - non-trivial inline script
+				 *  - Script Include of QUnitUtils
+				 */
+				page: "test-resources/sap/m/qunit/colorpalette/test/integration/opaTest2.qunit.html",
 				title: "Opa tests for sap.m.ColorPalettePopover",
 				loader: {
 					paths: {

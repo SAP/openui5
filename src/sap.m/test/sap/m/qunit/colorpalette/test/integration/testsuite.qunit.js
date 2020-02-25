@@ -22,7 +22,23 @@ sap.ui.define(function() {
 			autostart: false					// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
-			AllJourneys: {
+			ComplexJourney: {
+				ui5: {
+					resourceroots: {
+						"cp.opa.test.app": "test-resources/sap/m/qunit/colorpalette/",
+						"cp.opa.test.env": "test-resources/sap/m/qunit/colorpalette/test/",
+						"cp.opa.test": "resources/sap/ui/"
+					},
+					frameOptions: "trusted"
+				},
+				coverage: {
+					only: [
+						"test-resources/sap/m/qunit/colorpalette/test/integration/ColorPalette",
+						"test-resources/sap/m/qunit/colorpalette/test/integration/ColorPalettePopover"
+					]
+				}
+			},
+			ComplexJourney2: {
 				ui5: {
 					resourceroots: {
 						"cp.opa.test.app": "test-resources/sap/m/qunit/colorpalette/",
