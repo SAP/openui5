@@ -1242,6 +1242,15 @@ function(
 					fnReject(oError);
 				});
 			});
+		},
+
+		/**
+		 * Normalize reference, delete .Component at the end of the incoming string.
+		 * @param {string} reference
+		 * @returns {string} Returns reference without .Component
+		 */
+		normalizeReference: function(sReference) {
+			return sReference.replace(/(.Component)$/g, "");
 		}
 	};
 	return Utils;

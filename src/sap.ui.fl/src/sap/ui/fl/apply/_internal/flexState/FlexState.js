@@ -258,6 +258,7 @@ sap.ui.define([
 		var bVariantsMapExists = !!ObjectPath.get(["preparedMaps", "variantsMap"], _mInstances[mPropertyBag.reference]);
 
 		FlexState.clearState(mPropertyBag.reference);
+		FlexState.clearState(Utils.normalizeReference(mPropertyBag.reference));
 
 		return FlexState.initialize(mPropertyBag)
 			.then(function(bVariantsMapExists, sReference) {
