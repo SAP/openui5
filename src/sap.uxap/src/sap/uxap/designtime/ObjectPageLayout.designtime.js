@@ -51,7 +51,22 @@ function(
 				actions : {
 					move : "moveControls",
 					addIFrame: {
-						changeType: "addIFrame"
+						changeType: "addIFrame",
+						getCreatedContainerId : function(sNewControlID) {
+							var oObjectPageSection = sap.ui.getCore().byId(sNewControlID);
+							var oObjectPageLayout = oObjectPageSection.getParent();
+							var oAnchorBar = oObjectPageLayout.getAggregation("_anchorBar");
+							var oSectionButton;
+							if (oAnchorBar) {
+								oSectionButton = oAnchorBar.getContent().filter(function (oButton) {
+									return oButton.data("sectionId") === sNewControlID;
+								})[0];
+							}
+							if (oSectionButton) {
+								return oSectionButton.getId();
+							}
+							return sNewControlID;
+						}
 					}
 				},
 				beforeMove : function (ObjectPageLayout) {
