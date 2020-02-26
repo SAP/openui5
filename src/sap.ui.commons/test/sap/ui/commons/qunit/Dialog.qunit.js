@@ -146,7 +146,7 @@ sap.ui.define([
 	QUnit.test("Change Title (Width) During Opening", function(assert) {
 		var done = assert.async();
 		var that = this;
-		var iWinWidth = window.innerWidth;
+		var iWinWidth = document.getElementsByClassName("sapUiBody")[0].offsetWidth; // the width of the window without the scroll bar
 		var iWinMiddle = parseInt(iWinWidth / 2);
 
 		var sTitle = "Lorem Ipsum dolor sit amet";
