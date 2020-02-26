@@ -1,5 +1,6 @@
 /*global sinon, QUnit */
 sap.ui.define([
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/CommandExecution",
 	"sap/ui/core/Component",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Panel"
 ], function(
+	XMLView,
 	ManagedObject,
 	CommandExecution,
 	Component,
@@ -26,15 +28,31 @@ sap.ui.define([
 
 	var oPanel, oInnerPanel, oControl, oInnerControl, oCE, oFakeCommand, oOwnerComponentFake, oStub;
 
+	var sServiceUri = "http://services.odata.org/V3/Northwind/Northwind.svc/";
+	sServiceUri = "/proxy/http/" + sServiceUri.replace("http://","");
+
 	sap.ui.define("my/command/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 		return UIComponent.extend("my.command.Component", {
 			metadata: {
 				manifest: {
 					"sap.app" : {
-						"id" : "my.command.constructor"
+						"id" : "my.command.constructor",
+						"dataSources": {
+							"mainService": {
+								"uri": sServiceUri,
+								"type": "OData"
+							}
+						}
 					},
 					"sap.ui5": {
 						"models": {
+							"odata":{
+								"type": "sap.ui.model.odata.v2.ODataModel",
+								"dataSource": "mainService",
+								"settings": {
+									"warmupUrl":"test-resources/sap/ui/core/qunit/odata/v2/data/warmup.xml"
+								}
+							},
 							"test": {
 								"type": "sap.ui.model.json.JSONModel"
 							}
@@ -77,6 +95,70 @@ sap.ui.define([
 		});
 	});
 
+	sap.ui.define("my/command2/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.command2.Component", {
+			metadata: {
+				manifest: {
+					"sap.app" : {
+						"id" : "my.command2.constructor",
+						"dataSources": {
+							"mainService": {
+								"uri": sServiceUri,
+								"type": "OData"
+							}
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"odata":{
+								"type": "sap.ui.model.odata.v2.ODataModel",
+								"dataSource": "mainService",
+								"settings": {
+									"warmupUrl":"test-resources/sap/ui/core/qunit/odata/v2/data/warmup.xml"
+								}
+							},
+							"test": {
+								"type": "sap.ui.model.json.JSONModel"
+							}
+						},
+						"dependencies": {
+							"libs": {
+								"sap.ui.core": {},
+								"sap.m": {}
+							}
+						},
+						"commands": {
+							"Save": {
+								"shortcut": "Ctrl+S"
+							},
+							"Create": {
+								"shortcut": "Ctrl+D"
+							},
+							"Exit": {
+								"shortcut": "Ctrl+E"
+							}
+						},
+						"config": {
+							"sample": {
+								"files": [
+									"Component.js",
+									"Commands.view.xml",
+									"Commands.controller.js",
+									"manifest.json"
+								]
+							}
+						},
+						"rootView": {
+							"viewName": "my.command.Command2",
+							"type": "XML",
+							"async": true
+						}
+					}
+				}
+			}
+		});
+	});
+
 	sap.ui.define("my/command/Command.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
 		return Controller.extend("my.command.Command", {
 			onSave: function() {
@@ -90,8 +172,9 @@ sap.ui.define([
 
 
 	var sView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">'
-	+  	'<App id="commands">'
-	+  	'<Page id="page" title="Commands">'
+	+  '<App id="commands">'
+	+  '<Page id="page" title="Commands" '
+	+  'binding="{odata>/}" >'
 	+  '<dependents>'
 	+  '<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />'
 	+  '<core:CommandExecution id="CE_EXIT" command="Exit" enabled="true" execute=".onExit" />'
@@ -153,9 +236,23 @@ sap.ui.define([
 	+  '</App>'
 	+  '</mvc:View>';
 
+	var sView2 = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">'
+	+  '<core:ComponentContainer id="CC" '
+	+  'binding="{odata>/}" >'
+	+  '<core:dependents>'
+	+  '<core:CommandExecution id="CE_SAVE_ITEM" command="Save" enabled="true" execute=".onSave" />'
+	+  '<core:CommandExecution id="CE_EXIT_ITEM" command="Exit" enabled="true" execute=".onExit" />'
+	+  '</core:dependents>'
+	+  '</core:ComponentContainer>'
+	+  '</mvc:View>';
+
 	sap.ui.require.preload({
 		"my/command/Command.view.xml": sView
 	},"my/command/Command-preload");
+
+	sap.ui.require.preload({
+		"my/command/Command2.view.xml": sView2
+	},"my/command/Command2-preload");
 
 	function fnInitControlTree() {
 		oPanel = new Panel();
@@ -285,6 +382,28 @@ sap.ui.define([
 	});
 
 	QUnit.module("CommandExecution integration:");
+
+	QUnit.test("ComponentContainer without Component", function(assert) {
+		var oComponent;
+		var oModel;
+		return Component.create({
+			name: "my.command2",
+			manifest: false
+		}).then(function(myComponent) {
+			oComponent = myComponent;
+			return oComponent.getRootControl().loaded();
+		}).then(function(oView) {
+			oModel = oView.getModel("odata");
+			return oView.getModel("odata").metadataLoaded();
+		}).then(function() {
+			var oPanel = new Panel();
+			var oCompCont = new ComponentContainer({component: oComponent});
+			oPanel.setModel(oModel, "odata");
+			oPanel.setModel(new JSONModel(), "$cmd");
+			oPanel.addContent(oCompCont);
+			assert.ok(true, "should not fail");
+		});
+	});
 
 	QUnit.test("enabled $cmd model", function(assert) {
 		assert.expect(10);
