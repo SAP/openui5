@@ -4,30 +4,26 @@
 
 sap.ui.define([
 	"sap/base/util/UriParameters",
-	"sap/ui/thirdparty/hasher"
+	"sap/ui/thirdparty/hasher",
+	"sap/ui/fl/Layer"
 ],
 function(
 	UriParameters,
-	hasher
+	hasher,
+	Layer
 ) {
 	"use strict";
-	var LAYER = {
-		BASE: "BASE",
-		VENDOR: "VENDOR",
-		PARTNER: "PARTNER",
-		CUSTOMER_BASE: "CUSTOMER_BASE",
-		CUSTOMER: "CUSTOMER",
-		USER: "USER"
-	};
+
 	//Stack of layers in the layered repository
 	var aLayers = [
-		LAYER.BASE,
-		LAYER.VENDOR,
-		LAYER.PARTNER,
-		LAYER.CUSTOMER_BASE,
-		LAYER.CUSTOMER,
-		LAYER.USER
+		Layer.BASE,
+		Layer.VENDOR,
+		Layer.PARTNER,
+		Layer.CUSTOMER_BASE,
+		Layer.CUSTOMER,
+		Layer.USER
 	];
+
 	//Precalculates index of layers
 	var mLayersIndex = {};
 	aLayers.forEach(function(sLayer, iIndex) {
@@ -54,7 +50,7 @@ function(
 		 * @public
 		 */
 		isVendorLayer: function () {
-			return this.getCurrentLayer(false) === LAYER.VENDOR;
+			return this.getCurrentLayer(false) === Layer.VENDOR;
 		},
 
 		/**
@@ -65,7 +61,7 @@ function(
 		 * @public
 		 */
 		isCustomerDependentLayer : function(sLayerName) {
-			return ([LAYER.CUSTOMER, LAYER.CUSTOMER_BASE].indexOf(sLayerName) > -1);
+			return ([Layer.CUSTOMER, Layer.CUSTOMER_BASE].indexOf(sLayerName) > -1);
 		},
 
 		/**
@@ -78,7 +74,7 @@ function(
 		 */
 		doesCurrentLayerRequirePackage: function () {
 			var sCurrentLayer = this.getCurrentLayer(false);
-			return (sCurrentLayer === LAYER.VENDOR) || (sCurrentLayer === LAYER.PARTNER) || (sCurrentLayer === LAYER.CUSTOMER_BASE);
+			return (sCurrentLayer === Layer.VENDOR) || (sCurrentLayer === Layer.PARTNER) || (sCurrentLayer === Layer.CUSTOMER_BASE);
 		},
 
 		/**
@@ -152,12 +148,12 @@ function(
 		 */
 		getCurrentLayer: function (bIsEndUser) {
 			if (bIsEndUser) {
-				return LAYER.USER;
+				return Layer.USER;
 			}
 
 			var sLayer = this.getUrlParameter("sap-ui-layer") || "";
 			sLayer = sLayer.toUpperCase();
-			return sLayer || LAYER.CUSTOMER;
+			return sLayer || Layer.CUSTOMER;
 		},
 
 		/**

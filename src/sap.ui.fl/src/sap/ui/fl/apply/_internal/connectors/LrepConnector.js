@@ -35,6 +35,9 @@ sap.ui.define([
 	 */
 	var LrepConnector = merge({}, BaseConnector,  /** @lends sap.ui.fl.apply._internal.connectors.LrepConnector */ {
 
+		layers: [
+			"ALL"
+		],
 		xsrfToken: undefined,
 		settings: undefined,
 

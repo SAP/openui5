@@ -50,7 +50,7 @@ sap.ui.define([
 
 			return oConnectorConfig.applyConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
 				.then(function (oResponse) {
-					// ensure an object with the corresponding propeties
+					// ensure an object with the corresponding properties
 					return oResponse || StorageUtils.getEmptyFlexDataResponse();
 				})
 				.catch(StorageUtils.logAndResolveDefault.bind(undefined, StorageUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));

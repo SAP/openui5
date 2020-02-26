@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/_internal/connectors/BackendConnector",
-	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
-	"sap/ui/fl/Layer"
+	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector"
 ], function(
 	merge,
 	BackendConnector,
-	ApplyConnector,
-	Layer
+	ApplyConnector
 ) {
 	"use strict";
 
@@ -32,9 +30,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
 	var PersonalizationConnector = merge({}, BackendConnector, {  /** @lends sap.ui.fl.write._internal.connectors.PersonalizationConnector */
-		layers: [
-			Layer.USER
-		],
+		layers: ApplyConnector.layers,
+
 		ROUTES: {
 			CHANGES: PREFIX + API_VERSION + "/changes/",
 			TOKEN: PREFIX + API_VERSION + "/actions/getcsrftoken"
