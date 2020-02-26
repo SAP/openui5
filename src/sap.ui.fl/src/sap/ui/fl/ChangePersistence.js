@@ -726,7 +726,6 @@ sap.ui.define([
 		}
 		var sSelectorId = oSelector.id;
 		if (sSelectorId) {
-			var sSelectorIdViewPrefix = sSelectorId.slice(0, sSelectorId.lastIndexOf("--"));
 			var sViewId;
 			if (oChange.getSelector().idIsLocal) {
 				if (oAppComponent) {
@@ -735,6 +734,14 @@ sap.ui.define([
 			} else {
 				sViewId = mPropertyBag.viewId;
 			}
+			var iIndex = 0;
+			var sSelectorIdViewPrefix;
+			do {
+				iIndex = sSelectorId.indexOf("--", iIndex);
+				sSelectorIdViewPrefix = sSelectorId.slice(0, iIndex);
+				iIndex++;
+			} while (sSelectorIdViewPrefix !== sViewId && iIndex > 0);
+
 			return sSelectorIdViewPrefix === sViewId;
 		}
 		return false;
