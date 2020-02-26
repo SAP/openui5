@@ -1,0 +1,51 @@
+<mvc:View
+	controllerName="teamCalendar.controller.SinglePlanningCalendar"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<Page
+		title="Team Member Calendar - {calendar>name}"
+		showSubHeader="true"
+		showNavButton="true"
+		navButtonPress=".onNavBack">
+		<content>
+			<VBox>
+				<SinglePlanningCalendar
+					id="SPC"
+					class="sapUiSmallMarginTop"
+					title="{calendar>name}"
+					enableAppointmentsDragAndDrop="false"
+					enableAppointmentsResize="false"
+					enableAppointmentsCreate="false"
+					startDateChange=".startDateChangeHandler"
+ 					viewChange=".viewChangeHandler"
+					appointments="{path: 'calendar>appointments'}">
+					<actions>
+						<Button id="addNewAppointment" icon="sap-icon://add" press=".appointmentCreate" tooltip="Add new appointment" />
+						<Button id="legendButton" icon="sap-icon://legend" press=".openLegend" tooltip="Open Single Planning Calendar legend" />
+						<Button id="teamButton" icon="sap-icon://group" press=".onNavBack" tooltip="Go to Team Calendar" />
+					</actions>
+					<views>
+						<SinglePlanningCalendarDayView key="Day" title="Day"/>
+						<SinglePlanningCalendarWorkWeekView key="WorkWeek" title="Work Week" />
+						<SinglePlanningCalendarWeekView key="Week" title="Week" />
+						<SinglePlanningCalendarMonthView key="OneMonth" title="Month" />
+					</views>
+					<appointments>
+						<unified:CalendarAppointment
+							title="{calendar>title}"
+							text="{calendar>text}"
+							type="{calendar>type}"
+							icon="{ path: 'calendar>icon', formatter: '.myformatter.fixImagePath' }"
+							startDate="{ path: 'calendar>start', formatter: '.myformatter.utcToLocalDateTime' }"
+							endDate="{ path: 'calendar>end', formatter: '.myformatter.utcToLocalDateTime' }">
+						</unified:CalendarAppointment>
+					</appointments>
+				</SinglePlanningCalendar>
+
+			</VBox>
+		</content>
+	</Page>
+
+</mvc:View>

@@ -1,0 +1,112 @@
+<mvc:View
+	controllerName="teamCalendar.controller.PlanningCalendar"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<Page
+		title="Team Calendar - Overview"
+		showNavButton="false"
+		showSubHeader="true">
+		<content>
+			<VBox>
+				<PlanningCalendar
+					id="PC"
+					startDate="{path: 'calendar>/startDate', formatter: '.myformatter.utcToLocalDateTime'}"
+					viewKey="Day"
+					rows="{calendar>/team}"
+					appointmentsVisualization="Filled"
+					showIntervalHeaders="true"
+					showEmptyIntervalHeaders="false"
+					showWeekNumbers="true"
+					singleSelection="true"
+					rowSelectionChange=".rowSelectionHandler"
+					startDateChange=".startDateChangeHandler"
+					viewChange=".viewChangeHandler">
+					<toolbarContent>
+						<Select id="teamSelector"
+							enabled="true"
+							editable="true"
+							forceSelection="true"
+							selectedKey="Team"
+							change=".teamMemberSelectedHandler">
+							<core:Item key="Team" text="Team" />
+						</Select>
+						<Button
+							id="legendButton"
+							icon="sap-icon://legend"
+							press=".openLegend"
+							tooltip="Open Planning Calendar legend" />
+					</toolbarContent>
+					<views>
+						<PlanningCalendarView
+							key="Day"
+							intervalType="Hour"
+							description="Day"
+							intervalsS="3"
+							intervalsM="6"
+							intervalsL="12"
+							showSubIntervals="true">
+						</PlanningCalendarView>
+						<PlanningCalendarView
+							key="WorkWeek"
+							intervalType="Week"
+							description="Work Week"
+							intervalsS="1"
+							intervalsM="2"
+							intervalsL="7"
+							showSubIntervals="true">
+						</PlanningCalendarView>
+						<PlanningCalendarView
+							key="Week"
+							intervalType="Week"
+							description="Week"
+							intervalsS="1"
+							intervalsM="2"
+							intervalsL="7"
+							showSubIntervals="true">
+						</PlanningCalendarView>
+						<PlanningCalendarView
+							key="OneMonth"
+							intervalType="Week"
+							description="Month"
+							intervalsS="7"
+							intervalsM="14"
+							intervalsL="31">
+						</PlanningCalendarView>
+					</views>
+					<rows>
+						<PlanningCalendarRow
+							icon="{ path: 'calendar>pic', formatter: '.myformatter.fixImagePath' }"
+							title="{calendar>name}"
+							text="{calendar>role}"
+							appointments="{path : 'calendar>appointments', templateShareable: true}"
+							intervalHeaders="{path: 'calendar>headers', templateShareable: true}">
+							<appointments>
+								<unified:CalendarAppointment
+									startDate="{ path: 'calendar>start', formatter: '.myformatter.utcToLocalDateTime' }"
+									endDate="{ path: 'calendar>end', formatter: '.myformatter.utcToLocalDateTime' }"
+									icon="{ path: 'calendar>pic', formatter: '.myformatter.fixImagePath' }"
+									title="{calendar>title}"
+									text="{calendar>info}"
+									type="{calendar>type}"
+									tentative="{calendar>tentative}">
+								</unified:CalendarAppointment>
+							</appointments>
+							<intervalHeaders>
+								<unified:CalendarAppointment
+									startDate="{ path: 'calendar>start', formatter: '.myformatter.utcToLocalDateTime' }"
+									endDate="{ path: 'calendar>end', formatter: '.myformatter.utcToLocalDateTime' }"
+									icon="{ path: 'calendar>pic', formatter: '.myformatter.fixImagePath' }"
+									title="{calendar>title}"
+									type="{calendar>type}">
+								</unified:CalendarAppointment>
+							</intervalHeaders>
+						</PlanningCalendarRow>
+					</rows>
+				</PlanningCalendar>
+			</VBox>
+		</content>
+	</Page>
+
+</mvc:View>
