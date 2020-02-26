@@ -13,7 +13,6 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Popup',
 	'sap/ui/core/LabelEnablement',
-	'sap/m/Menu',
 	"./MenuButtonRenderer"
 ], function(
 	library,
@@ -25,7 +24,6 @@ sap.ui.define([
 	coreLibrary,
 	Popup,
 	LabelEnablement,
-	Menu,
 	MenuButtonRenderer
 ) {
 		"use strict";
@@ -449,7 +447,8 @@ sap.ui.define([
 					aParam.push(Dock.BeginTop, Dock.BeginBottom, oOffset.minus2_right);
 					break;
 			}
-			Menu.prototype.openBy.apply(oMenu, aParam);
+
+			oMenu.openBy.apply(oMenu, aParam);
 
 			this._writeAriaAttributes();
 
