@@ -52,7 +52,13 @@
 	}
 }
 
-.sapMLIBHoverable:hover + .sapMListTblSubRow {
+.sapMLIBHoverable:hover + .sapMListTblSubRow,
+.sapMLIBHoverable.sapMPopinHovered {
+	background : @sapUiListHoverBackground;
+}
+
+.sapMLIBHoverable + .sapMListTblSubRow:hover {
+	cursor: pointer;
 	background : @sapUiListHoverBackground;
 }
 
