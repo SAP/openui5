@@ -101,6 +101,14 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"util/CardMerger": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/CardMerger"
+					]
+				},
+				sinon: false
+			},
 			"util/ServiceManager": {
 				coverage: {
 					only: [
@@ -363,6 +371,15 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/util/findClosestInstance"
+					]
+				},
+				sinon: false
+			},
+			"designtime/cardEditor/CardEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/cardEditor/CardEditor"
 					]
 				},
 				sinon: false

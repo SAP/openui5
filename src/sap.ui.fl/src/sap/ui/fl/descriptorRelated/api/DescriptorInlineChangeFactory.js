@@ -94,7 +94,7 @@ sap.ui.define([
 				"appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_app_addCdsViews", "appdescr_app_removeCdsViews", "appdescr_flp_setConfig",
 				"appdescr_ui5_addNewModel", "appdescr_ui5_addNewModelEnhanceWith", "appdescr_ui5_removeModel", "appdescr_ui5_replaceComponentUsage", "appdescr_ui5_setMinUI5Version",
 				"appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon", "appdescr_ui_setDeviceTypes",
-				"appdescr_ui5_addLibraries", "appdescr_url_setUri", "appdescr_fiori_setRegistrationIds"];
+				"appdescr_ui5_addLibraries", "appdescr_url_setUri", "appdescr_fiori_setRegistrationIds", "appdescr_card"];
 	};
 
 	/**
