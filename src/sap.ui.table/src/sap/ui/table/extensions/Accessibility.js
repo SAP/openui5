@@ -256,7 +256,7 @@ sap.ui.define([
 				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber
 																			 && oExtension._iLastColumnNumber == iColumnNumber);
 				bIsColChanged = oExtension._iLastColumnNumber != iColumnNumber;
-				bIsInitial = !oExtension._iLastRowNumber && !oExtension._iLastColumnNumber;
+				bIsInitial = oExtension._iLastRowNumber == null && oExtension._iLastColumnNumber == null;
 
 				oTable.$("rownumberofrows").text(bIsRowChanged ? TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [iRowNumber, iRowCount]) : " ");
 				oTable.$("colnumberofcols").text(bIsColChanged ? TableUtils.getResourceText("TBL_COL_COLCOUNT", [iColumnNumber, iColCount]) : " ");
@@ -714,6 +714,10 @@ sap.ui.define([
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, true);
 					break;
 
+				case AccExtension.ELEMENTTYPES.CONTAINER: //The table container
+					mAttributes["role"] = "application";
+					break;
+
 				case AccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 					mAttributes["role"] = TableUtils.Grouping.isGroupMode(oTable) || TableUtils.Grouping.isTreeMode(oTable) ? "treegrid" : "grid";
 
@@ -995,6 +999,7 @@ sap.ui.define([
 		ROWACTION: "ROWACTION", 				// Row action (standard, group or sum)
 		COLUMNROWHEADER: "COLUMNROWHEADER",		// Select all row selector (top left cell)
 		ROOT: "ROOT",							// The tables root dom element
+		CONTAINER: "CONTAINER",					// The table container
 		CONTENT: "CONTENT",						// The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 		TABLE: "TABLE",							// The "real" table element(s)
 		TABLEHEADER: "TABLEHEADER", 			// The table header area
