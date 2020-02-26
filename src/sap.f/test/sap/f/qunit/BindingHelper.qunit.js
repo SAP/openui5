@@ -167,4 +167,58 @@ function (
 		// assert
 		assert.strictEqual(formattedProperty, bindingHelperFormattedProperty,"The formatter should be the passed formatter.");
 	});
+
+	QUnit.module("Static method #escapeCardSyntax");
+
+	QUnit.test("Call #escapeCardSyntax with different values", function (assert) {
+		// arrange
+		var oTestObject = {key: "property"},
+			aValuesList = [
+			// input, expected output
+			[undefined, undefined],
+			[null, null],
+			[oTestObject, oTestObject],
+			["", ""],
+			["{property}", "{property}"],
+			["{= ${property}}", "{= ${property}}"],
+
+			// the following should be escaped
+			["{{parameters.something}}", "\\{\\{parameters.something\\}\\}"],
+			["{{dataSources.something}}", "\\{\\{dataSources.something\\}\\}"],
+			["{{destinations.something}}", "\\{\\{destinations.something\\}\\}"],
+			["text {{parameters.something}} text {property} text", "text \\{\\{parameters.something\\}\\} text {property} text"],
+			["text {{parameters.something}} text {{parameters.somethingelse}} text", "text \\{\\{parameters.something\\}\\} text \\{\\{parameters.somethingelse\\}\\} text"],
+			["{{destination.myDestination}}/{property}/{{parameters.something}}", "\\{\\{destination.myDestination\\}\\}/{property}/\\{\\{parameters.something\\}\\}"]
+		];
+
+		aValuesList.forEach(function (aValue) {
+			var vInput = aValue[0],
+				vExpectedOutput = aValue[1];
+
+			// assert
+			assert.strictEqual(BindingHelper.escapeCardPlaceholders(vInput), vExpectedOutput, "Escaping is correct for '" + vInput + "'.");
+		});
+	});
+
+	QUnit.test("Call #extractBindingInfo with string which contains a placeholder", function (assert) {
+		// arrange
+		var vInput = "{{parameters.something}}",
+			vExpectedOutput = "{{parameters.something}}";
+
+		// assert
+		assert.strictEqual(BindingHelper.extractBindingInfo(vInput), vExpectedOutput, "Binding info is correct for '" + vInput + "'.");
+	});
+
+	QUnit.test("Call #extractBindingInfo with a placeholder and a binding", function (assert) {
+		// arrange
+		var vInput = "{{parameters.something}}/{boundProperty}",
+			vOutput;
+
+		// act
+		vOutput = BindingHelper.extractBindingInfo(vInput);
+
+		// assert
+		assert.ok(vOutput.parts, "The output is binding info.");
+		assert.strictEqual(vOutput.formatter.textFragments.join(""), "{{parameters.something}}/0", "The card placeholder is unchanged.");
+	});
 });
