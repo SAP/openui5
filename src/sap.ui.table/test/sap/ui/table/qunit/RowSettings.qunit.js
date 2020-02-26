@@ -19,7 +19,7 @@ sap.ui.define([
 	var MessageType = CoreLibrary.MessageType;
 	var IndicationColor = CoreLibrary.IndicationColor;
 
-	var iRowsWithHighlight = 10;
+	var iRowsWithHighlight = 13;
 
 	/**
 	 * Sets up the row settings template in the table.
@@ -56,6 +56,12 @@ sap.ui.define([
 							return IndicationColor.Indication04;
 						} else if (iIndex === 9) {
 							return IndicationColor.Indication05;
+						} else if (iIndex === 10) {
+							return IndicationColor.Indication06;
+						} else if (iIndex === 11) {
+							return IndicationColor.Indication07;
+						} else if (iIndex === 12) {
+							return IndicationColor.Indication08;
 						}
 					}
 
@@ -163,6 +169,15 @@ sap.ui.define([
 							break;
 						case IndicationColor.Indication05:
 							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication5"));
+							break;
+						case IndicationColor.Indication06:
+							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication6"));
+							break;
+						case IndicationColor.Indication07:
+							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication7"));
+							break;
+						case IndicationColor.Indication08:
+							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication8"));
 							break;
 						default:
 							sRGBBackgroundColor = "transparent"; // transparent
@@ -313,6 +328,12 @@ sap.ui.define([
 				sCSSClassName += "Indication04";
 			} else if (iRowIndex === 9) {
 				sCSSClassName += "Indication05";
+			} else if (iRowIndex === 10) {
+				sCSSClassName += "Indication06";
+			} else if (iRowIndex === 11) {
+				sCSSClassName += "Indication07";
+			} else if (iRowIndex === 12) {
+				sCSSClassName += "Indication08";
 			}
 
 			assert.strictEqual(oRowSettings._getHighlightCSSClassName(), sCSSClassName,
