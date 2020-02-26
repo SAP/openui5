@@ -57,6 +57,9 @@ function (RuleSerializer, constants) {
 		return decodeURIComponent(escape(window.atob(sData)));
 	}
 
+	var _storage = localStorage,
+		_cookie = document.cookie;
+
 	return {
 
 		/**
@@ -71,7 +74,7 @@ function (RuleSerializer, constants) {
 				rawLSData;
 
 			try {
-				rawLSData = localStorage.getItem(constants.LOCAL_STORAGE_TEMP_RULES_KEY);
+				rawLSData = _storage.getItem(constants.LOCAL_STORAGE_TEMP_RULES_KEY);
 
 				if (!rawLSData) {
 					return null;
@@ -98,7 +101,7 @@ function (RuleSerializer, constants) {
 		 */
 		setRules: function (rules) {
 			var stringifyRules = encode(JSON.stringify(rules));
-			localStorage.setItem(constants.LOCAL_STORAGE_TEMP_RULES_KEY, stringifyRules);
+			_storage.setItem(constants.LOCAL_STORAGE_TEMP_RULES_KEY, stringifyRules);
 		},
 
 		/**
@@ -109,7 +112,7 @@ function (RuleSerializer, constants) {
 		 * @returns {object[]} All selected rules that are stored in the LocalStorage persistence layer.
 		 */
 		getSelectedRules: function () {
-			var rawLSData = localStorage.getItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY);
+			var rawLSData = _storage.getItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY);
 
 			if (!rawLSData) {
 				return null;
@@ -126,7 +129,7 @@ function (RuleSerializer, constants) {
 		 * @param {object[]} aSelectedRules The data for the libraries and their rules.
 		 */
 		setSelectedRules: function (aSelectedRules) {
-			localStorage.setItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY, JSON.stringify(aSelectedRules));
+			_storage.setItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY, JSON.stringify(aSelectedRules));
 		},
 
 		/**
@@ -137,7 +140,7 @@ function (RuleSerializer, constants) {
 		 * @param {object} selectedContext Object containing the <code>analyzeContext</code> and <code>subtreeExecutionContextId</code>.
 		 */
 		setSelectedContext: function(selectedContext) {
-			localStorage.setItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_KEY, JSON.stringify(selectedContext));
+			_storage.setItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_KEY, JSON.stringify(selectedContext));
 		},
 
 		/**
@@ -148,7 +151,7 @@ function (RuleSerializer, constants) {
 		 * @returns {string} Parsed value of the <code>selectedContext</code> key in the LocalStorage persistence layer.
 		 */
 		getSelectedContext: function() {
-			return JSON.parse(localStorage.getItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_KEY));
+			return JSON.parse(_storage.getItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_KEY));
 		},
 
 		/**
@@ -159,7 +162,7 @@ function (RuleSerializer, constants) {
 		 * @param {object} contextComponent Component that's stored in the LocalStorage.
 		 */
 		setSelectedScopeComponents: function(contextComponent)  {
-			localStorage.setItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY, JSON.stringify(contextComponent));
+			_storage.setItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY, JSON.stringify(contextComponent));
 		},
 
 		/**
@@ -170,7 +173,7 @@ function (RuleSerializer, constants) {
 		 * @returns {string} componentContext The selected components within a given scope.
 		 */
 		getSelectedScopeComponents: function() {
-			var componentContext = localStorage.getItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY);
+			var componentContext = _storage.getItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY);
 			return JSON.parse(componentContext);
 		},
 
@@ -192,7 +195,7 @@ function (RuleSerializer, constants) {
 		 * @param {string[]} aVisibleColumns visible columns ids
 		 */
 		setVisibleColumns: function(aVisibleColumns)  {
-			localStorage.setItem(constants.LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY, JSON.stringify(aVisibleColumns));
+			_storage.setItem(constants.LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY, JSON.stringify(aVisibleColumns));
 		},
 
 		/**
@@ -202,7 +205,7 @@ function (RuleSerializer, constants) {
 		 * @returns {string[]} ids of visible columns.
 		 */
 		getVisibleColumns: function()  {
-			return JSON.parse(localStorage.getItem(constants.LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY));
+			return JSON.parse(_storage.getItem(constants.LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY));
 		},
 
 		/**
@@ -213,7 +216,7 @@ function (RuleSerializer, constants) {
 		 * @returns {Object[]} The list of selection presets
 		 */
 		getSelectionPresets: function() {
-			return JSON.parse(localStorage.getItem(constants.LOCAL_STORAGE_SELECTION_PRESETS_KEY));
+			return JSON.parse(_storage.getItem(constants.LOCAL_STORAGE_SELECTION_PRESETS_KEY));
 		},
 
 		/**
@@ -224,7 +227,7 @@ function (RuleSerializer, constants) {
 		 * @returns {Object[]} The list of custom presets
 		 */
 		getCustomPresets: function() {
-			return JSON.parse(localStorage.getItem(constants.LOCAL_STORAGE_CUSTOM_PRESETS_KEY));
+			return JSON.parse(_storage.getItem(constants.LOCAL_STORAGE_CUSTOM_PRESETS_KEY));
 		},
 
 		/**
@@ -235,7 +238,7 @@ function (RuleSerializer, constants) {
 		 * @param {Object[]} selectionPresets The list of selection presets
 		 */
 		setSelectionPresets: function(selectionPresets)  {
-			localStorage.setItem(constants.LOCAL_STORAGE_SELECTION_PRESETS_KEY, JSON.stringify(selectionPresets));
+			_storage.setItem(constants.LOCAL_STORAGE_SELECTION_PRESETS_KEY, JSON.stringify(selectionPresets));
 		},
 
 		/**
@@ -246,7 +249,7 @@ function (RuleSerializer, constants) {
 		 * @param {Object[]} customPresets The list of custom presets
 		 */
 		setCustomPresets: function(customPresets)  {
-			localStorage.setItem(constants.LOCAL_STORAGE_CUSTOM_PRESETS_KEY, JSON.stringify(customPresets));
+			_storage.setItem(constants.LOCAL_STORAGE_CUSTOM_PRESETS_KEY, JSON.stringify(customPresets));
 		},
 
 		/**
@@ -256,13 +259,13 @@ function (RuleSerializer, constants) {
 		 * @name sap.ui.support.Storage.removeAllData
 		 */
 		removeAllData: function() {
-			localStorage.removeItem(constants.LOCAL_STORAGE_TEMP_RULES_KEY);
-			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY);
-			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_KEY);
-			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY);
-			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY);
-			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTION_PRESETS_KEY);
-			localStorage.removeItem(constants.LOCAL_STORAGE_CUSTOM_PRESETS_KEY);
+			_storage.removeItem(constants.LOCAL_STORAGE_TEMP_RULES_KEY);
+			_storage.removeItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY);
+			_storage.removeItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_KEY);
+			_storage.removeItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY);
+			_storage.removeItem(constants.LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY);
+			_storage.removeItem(constants.LOCAL_STORAGE_SELECTION_PRESETS_KEY);
+			_storage.removeItem(constants.LOCAL_STORAGE_CUSTOM_PRESETS_KEY);
 		},
 
 		/**
@@ -275,7 +278,7 @@ function (RuleSerializer, constants) {
 		 * @returns {void}
 		 */
 		createPersistenceCookie: function(sCookieName, sCookieValue) {
-			document.cookie = sCookieName + "=" + sCookieValue;
+			_cookie = sCookieName + "=" + sCookieValue;
 		},
 
 		/**
@@ -290,7 +293,7 @@ function (RuleSerializer, constants) {
 		readPersistenceCookie: function(sCookieName) {
 
 			var name = sCookieName + "=",
-				decodedCookie = decodeURIComponent(document.cookie),
+				decodedCookie = decodeURIComponent(_cookie),
 				ca = decodedCookie.split(';'),
 				sOutput = "";
 			for (var i = 0; i < ca.length; i++) {
@@ -317,8 +320,24 @@ function (RuleSerializer, constants) {
 		 * @returns {void}
 		 */
 		deletePersistenceCookie: function(sCookieName) {
-			document.cookie = sCookieName + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-		}
+			_cookie = sCookieName + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+		},
 
+		_setStorage: function (oStorage) {
+			_storage = oStorage;
+		},
+
+		_getStorage: function (oStorage) {
+			return _storage;
+		},
+
+		_setCookie: function (oCookie) {
+			_cookie = oCookie;
+		},
+
+		_getCookie: function (oCookie) {
+			return _cookie;
+		}
 	};
+
 }, true);
