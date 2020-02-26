@@ -108,7 +108,7 @@ function(
 			assert.ok(this.oRootControlOverlay.$().css("z-index") < this.oRta.getToolbar().$().css("z-index"), "and the toolbar is in front of the root overlay");
 			assert.notOk(RuntimeAuthoring.needsRestart(), "restart is not needed initially");
 
-			assert.equal(this.oRta.getToolbar().getControl('draftLabel').getVisible(), false, "then the draft label is hidden");
+			assert.equal(this.oRta.getToolbar().getControl('versionLabel').getVisible(), false, "then the version label is hidden");
 			assert.equal(this.oRta.getToolbar().getControl('activateDraft').getVisible(), false, "then the activate draft Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('discardDraft').getVisible(), false, "then the discard draft Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('exit').getVisible(), true, "then the exit Button is visible");

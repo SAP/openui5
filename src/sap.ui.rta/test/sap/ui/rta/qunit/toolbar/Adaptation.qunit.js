@@ -37,18 +37,18 @@ function(
 				assert.notOk(this.oToolbar.getControl('exit').getIcon(), "the exit button has no icon");
 				assert.ok(this.oToolbar.getControl('exit').getText(), "the exit button has text");
 				assert.equal(this.oToolbar.getControl('restore').getLayoutData().getPriority(), "High", "the layout data priority is correct");
-				assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+				assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 
 				this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
-				assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+				assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 
 				this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
-				assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+				assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 
 				this.oToolbar._onSizeChanged({name: Adaptation.modes.DESKTOP});
-				assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+				assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 			}.bind(this));
 		});
 
@@ -62,16 +62,16 @@ function(
 
 			return this.oToolbar.show()
 				.then(function() {
-					assert.ok(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is shown");
+					assert.ok(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is visible");
 
 					this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
-					assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+					assert.ok(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is visible");
 
 					this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
-					assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+					assert.ok(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is visible");
 
 					this.oToolbar._onSizeChanged({name: Adaptation.modes.DESKTOP});
-					assert.ok(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is shown");
+					assert.ok(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is visible");
 				}.bind(this));
 		});
 
@@ -83,7 +83,7 @@ function(
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
 				.then(function() {
-					assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+					assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 					assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
 					assert.notOk(this.oToolbar.getControl('exit').getIcon(), "the exit button has no icon");
 					assert.ok(this.oToolbar.getControl('exit').getText(), "the exit button has text");
@@ -99,7 +99,7 @@ function(
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
 				.then(function() {
-					assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+					assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 					assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
 				}.bind(this));
 		});
@@ -112,7 +112,7 @@ function(
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
 				.then(function() {
-					assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+					assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 					assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
 					assert.ok(this.oToolbar.getControl('exit').getIcon(), "the exit button has an icon");
 					assert.notOk(this.oToolbar.getControl('exit').getText(), "the exit button has no text");
@@ -122,13 +122,14 @@ function(
 		QUnit.test("when the draft is set to visible and the toolbar gets initially shown in mobile mode (< 900px)", function(assert) {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
-				draftEnabled: true
+				draftEnabled: true,
+				versioningVisible: true
 			});
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.MOBILE});
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
 				.then(function() {
-					assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+					assert.ok(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is visible");
 					assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
 					assert.ok(this.oToolbar.getControl('exit').getIcon(), "the exit button has an icon");
 					assert.notOk(this.oToolbar.getControl('exit').getText(), "the exit button has no text");
@@ -181,17 +182,18 @@ function(
 		});
 
 		QUnit.test("setVersioningVisible", function(assert) {
-			assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+			this.oToolbar.setVersioningVisible(false);
+			assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 			assert.notOk(this.oToolbar.getControl("activateDraft").getVisible(), "the draft activate button is hidden");
 			assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "the draft discard button is hidden");
 
 			this.oToolbar.setVersioningVisible(true);
-			assert.ok(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is visible");
+			assert.ok(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is visible");
 			assert.ok(this.oToolbar.getControl("activateDraft").getVisible(), "the draft activate button is visible");
 			assert.ok(this.oToolbar.getControl("discardDraft").getVisible(), "the draft discard button is visible");
 
 			this.oToolbar.setVersioningVisible(false);
-			assert.notOk(this.oToolbar.getControl("draftLabel").getVisible(), "the draft label is hidden");
+			assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 			assert.notOk(this.oToolbar.getControl("activateDraft").getVisible(), "the draft activate button is hidden");
 			assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "the draft discard button is hidden");
 		});
@@ -207,6 +209,26 @@ function(
 			this.oToolbar.setDraftEnabled(true);
 			assert.ok(this.oToolbar.getControl("activateDraft").getEnabled(), "the draft activate button is disabled");
 			assert.ok(this.oToolbar.getControl("discardDraft").getEnabled(), "the draft discard button is disabled");
+		});
+
+		QUnit.test("setversionLabelText", function(assert) {
+			this.oToolbar.setVersioningVisible(true);
+			var sDraftTitle = "draft title";
+			var sDraftTitleNew = "new draft titel";
+
+			assert.equal(this.oToolbar.getControl("versionLabel").getText(), "", "the draft title is empty");
+
+			this.oToolbar.setVersionLabel(sDraftTitle);
+			assert.equal(this.oToolbar.getControl("versionLabel").getText(), sDraftTitle, "the draft title is equal");
+
+			this.oToolbar.setVersionLabel(sDraftTitleNew);
+			assert.equal(this.oToolbar.getControl("versionLabel").getText(), sDraftTitleNew, "the new draft title is equal");
+
+			this.oToolbar.setDraftEnabled(false);
+			assert.ok(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is visible");
+
+			this.oToolbar.setVersioningVisible(false);
+			assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 		});
 	});
 
