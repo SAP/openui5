@@ -344,13 +344,13 @@ function(
 					value : {type : "string"},
 
 					/**
-					 * Indicates if ESC key triggered the event.
+					 * Indicates that ESC key triggered the event. <b>Note:</b> This parameter will not be sent unless the ESC key is pressed.
 					 * @since 1.48
 					 */
 					escPressed : {type : "boolean"},
 
 					/**
-					 * The old value of the input, before pressing ESC key.
+					 * The value of the input before pressing ESC key. <b>Note:</b> This parameter will not be sent unless the ESC key is pressed.
 					 * @since 1.48
 					 */
 					previousValue : {type : "string"}
