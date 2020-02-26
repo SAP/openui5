@@ -420,8 +420,8 @@ sap.ui.define([
 		var oComponent = this.getComponentInstance();
 		if (oComponent && this.getPropagateModel()) {
 			this._propagateProperties(vName, oComponent);
-			Control.prototype.propagateProperties.apply(this, arguments);
 		}
+		Control.prototype.propagateProperties.apply(this, arguments);
 	};
 
 	/*
