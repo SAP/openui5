@@ -901,13 +901,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.doFetchQueryOptions = function (oContext) {
-		var sOrderby = this.getOrderby(this.mQueryOptions.$orderby),
-			that = this;
+		var that = this;
 
-		return this.fetchFilter(oContext, this.mQueryOptions.$filter)
-			.then(function (aFilters) {
-				return _Helper.mergeQueryOptions(that.mQueryOptions, sOrderby, aFilters);
+		return this.fetchResolvedQueryOptions(oContext).then(function (mQueryOptions) {
+			return that.fetchFilter(oContext, mQueryOptions.$filter).then(function (aFilters) {
+				return _Helper.mergeQueryOptions(mQueryOptions,
+					that.getOrderby(mQueryOptions.$orderby), aFilters);
 			});
+		});
 	};
 
 	/**

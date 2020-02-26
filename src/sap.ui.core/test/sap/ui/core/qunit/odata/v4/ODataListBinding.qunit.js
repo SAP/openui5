@@ -4497,33 +4497,26 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("doFetchQueryOptions", function (assert) {
-		var aApplicationFilters = [],
-			aSorters = [],
-			oContext = Context.create(this.oModel, {}, "/TEAMS", 0),
-			oBinding,
-			oBindingMock,
-			mQueryOptions = {};
+		var oBinding = this.bindList("TEAM_2_EMPLOYEES"),
+			oContext = {},
+			mMergedQueryOptions = {},
+			mResolvedQueryOptions = {"$filter" : "staticFilter", "$orderby" : "staticSorter"};
 
-		this.mock(ODataListBinding.prototype).expects("fetchCache").atLeast(1)
-			.callsFake(function () {
-				this.oCache = null;
-				this.oCachePromise = SyncPromise.resolve(null);
-			});
-		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, aSorters, aApplicationFilters,
-			{"$filter" : "staticFilter", "$orderby" : "staticSorter"});
-		oBindingMock = this.mock(oBinding);
-		oBindingMock.expects("getOrderby").withExactArgs("staticSorter")
-			.returns("resolvedOrderby");
-		oBindingMock.expects("fetchFilter")
+		this.mock(oBinding).expects("fetchResolvedQueryOptions")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns(SyncPromise.resolve(mResolvedQueryOptions));
+		this.mock(oBinding).expects("fetchFilter")
 			.withExactArgs(sinon.match.same(oContext), "staticFilter")
 			.returns(SyncPromise.resolve("resolvedFilter"));
+		this.mock(oBinding).expects("getOrderby").withExactArgs("staticSorter")
+			.returns("resolvedOrderby");
 		this.mock(_Helper).expects("mergeQueryOptions")
-			.withExactArgs(sinon.match.same(oBinding.mQueryOptions), "resolvedOrderby",
+			.withExactArgs(sinon.match.same(mResolvedQueryOptions), "resolvedOrderby",
 				"resolvedFilter")
-			.returns(mQueryOptions);
+			.returns(mMergedQueryOptions);
 
 		// code under test
-		assert.strictEqual(oBinding.doFetchQueryOptions(oContext).getResult(), mQueryOptions);
+		assert.strictEqual(oBinding.doFetchQueryOptions(oContext).getResult(), mMergedQueryOptions);
 	});
 
 	//*********************************************************************************************

@@ -2974,13 +2974,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("doFetchQueryOptions", function (assert) {
 		var oBinding = this.bindContext("foo"),
-			mQueryOptions = {};
+			oContext = {},
+			oPromise = {};
 
-		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
-			.returns(mQueryOptions);
+		this.mock(oBinding).expects("fetchResolvedQueryOptions")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns(oPromise);
 
 		// code under test
-		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), mQueryOptions);
+		assert.strictEqual(oBinding.doFetchQueryOptions(oContext), oPromise);
 	});
 
 	//*********************************************************************************************

@@ -698,7 +698,6 @@ sap.ui.define([
 					bRelative : true,
 					updateAggregatedQueryOptions : function () {} // binding is a parent binding
 				}),
-				mConvertedBindingQueryOptions = {},
 				mCurrentBindingQueryOptions = {},
 				oExpectation,
 				oParentBinding = {
@@ -713,15 +712,8 @@ sap.ui.define([
 			this.mock(oBinding).expects("doFetchQueryOptions")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(SyncPromise.resolve(mCurrentBindingQueryOptions));
-			this.mock(_Helper).expects("getMetaPath")
-				.withExactArgs("/resolved/path")
-				.returns("/resolved/metaPath");
-			this.mock(_Helper).expects("fetchResolvedSelect")
-				.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/metaPath",
-					mCurrentBindingQueryOptions)
-				.returns(SyncPromise.resolve(mConvertedBindingQueryOptions));
 			this.mock(oBinding).expects("updateAggregatedQueryOptions")
-				.withExactArgs(sinon.match.same(mConvertedBindingQueryOptions));
+				.withExactArgs(sinon.match.same(mCurrentBindingQueryOptions));
 			oExpectation = this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
 				.withArgs(sinon.match.same(oContext), "relative")
 				.returns(SyncPromise.resolve("/reduced/path"));
@@ -760,7 +752,6 @@ sap.ui.define([
 					bRelative : true,
 					updateAggregatedQueryOptions : function () {} // binding is a parent binding
 				}),
-				mConvertedBindingQueryOptions = {},
 				mCurrentBindingQueryOptions = {},
 				aChildCanUseCachePromises,
 				oParentBinding = {
@@ -775,15 +766,8 @@ sap.ui.define([
 			this.mock(oBinding).expects("doFetchQueryOptions")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(SyncPromise.resolve(mCurrentBindingQueryOptions));
-			this.mock(_Helper).expects("getMetaPath")
-				.withExactArgs("/resolved/path")
-				.returns("/resolved/metaPath");
-			this.mock(_Helper).expects("fetchResolvedSelect")
-				.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/metaPath",
-					mCurrentBindingQueryOptions)
-				.returns(SyncPromise.resolve(mConvertedBindingQueryOptions));
 			this.mock(oBinding).expects("updateAggregatedQueryOptions")
-				.withExactArgs(sinon.match.same(mConvertedBindingQueryOptions));
+				.withExactArgs(sinon.match.same(mCurrentBindingQueryOptions));
 			this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
 				.withArgs(sinon.match.same(oContext), "relative")
 				.returns(SyncPromise.resolve(undefined));
