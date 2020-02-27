@@ -6,8 +6,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	BaseEditor,
 	PropertyEditors,
 	PropertyEditorFactory,
@@ -44,7 +43,8 @@ function (
 			}
 		},
 		"propertyEditors": {
-			"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+			"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+			"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
 		}
 	};
 
@@ -882,6 +882,91 @@ function (
 
 				assert.strictEqual(aPropertyEditors[0].bIsDestroyed, true, "then custom property editor is destroyed");
 			}.bind(this));
+		});
+
+		QUnit.test("When setConfig is called again before the nested editors were created", function (assert) {
+			var fnDone = assert.async();
+
+			var oCreationStub = sandbox.stub(PropertyEditorFactory, "create");
+			var oDeletionStub = sandbox.stub(StringEditor.prototype, "destroy");
+
+			// Fallback if creation of editor 1 is never triggered
+			var iCreationTimeout = setTimeout(function() {
+				assert.strictEqual(oCreationStub.callCount, 1, "Then only one editor was created");
+				fnDone();
+			}, 100);
+
+			var oEditorInCreation;
+			oCreationStub.onFirstCall().callsFake(function (sType) {
+				var bIsStringEditor = sType === "string";
+				if (bIsStringEditor) {
+					clearTimeout(iCreationTimeout);
+				}
+				return PropertyEditorFactory.create.wrappedMethod.apply(this, arguments).then(function (oEditor) {
+					if (bIsStringEditor) {
+						oEditorInCreation = oEditor;
+					}
+					return oEditor;
+				});
+			});
+			oCreationStub.callThrough();
+			oDeletionStub.callsFake(function () {
+				StringEditor.prototype.destroy.wrappedMethod.apply(this, arguments);
+				if (oEditorInCreation && this.sId === oEditorInCreation.sId) {
+					assert.ok(true, "Then the created editor is cleaned up");
+					fnDone();
+				}
+			});
+
+			// Editor 1 - Should be cleaned up
+			this.oPropertyEditors.setConfig([{
+				"label": "Baz property",
+				"path": "/baz",
+				"type": "string"
+			}]);
+
+			// Editor 2
+			this.oPropertyEditors.setConfig([{
+				"label": "FooBar property",
+				"path": "/foobar",
+				"type": "number"
+			}]);
+		});
+
+		QUnit.test("When PropertyEditors is destroyed before the nested editors were created", function (assert) {
+			var fnDone = assert.async();
+
+			var oCreationStub = sandbox.stub(PropertyEditorFactory, "create");
+			var oDeletionStub = sandbox.stub(StringEditor.prototype, "destroy");
+
+			// Fallback if creation of editor is never triggered
+			var iCreationTimeout = setTimeout(function() {
+				assert.strictEqual(oCreationStub.callCount, 0, "Then no editor was created");
+				fnDone();
+			}, 100);
+
+			var oEditorInCreation;
+			oCreationStub.callsFake(function () {
+				clearTimeout(iCreationTimeout);
+				return PropertyEditorFactory.create.wrappedMethod.apply(this, arguments).then(function (oEditor) {
+					oEditorInCreation = oEditor;
+					return oEditor;
+				});
+			});
+			oDeletionStub.callsFake(function () {
+				StringEditor.prototype.destroy.wrappedMethod.apply(this, arguments);
+				if (oEditorInCreation && this.sId === oEditorInCreation.sId) {
+					assert.ok(true, "Then the created editor is cleaned up");
+					fnDone();
+				}
+			});
+
+			this.oPropertyEditors.setConfig([{
+				label: "Baz property",
+				path: "baz",
+				type: "string"
+			}]);
+			this.oBaseEditor.destroy();
 		});
 	});
 
