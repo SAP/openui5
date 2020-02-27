@@ -21,8 +21,7 @@ sap.ui.define(function () {
 		} else {
 			var sClassShortName = oControl.getMetadata().getName().split(".").pop();
 
-			oRm.addClass('sapUxAPBlockBaseDefaultSize');
-			oRm.addClass('sapUxAPBlockBaseDefaultSize' + sClassShortName + oControl.getMode());
+			oRm.addClass(sClassShortName + oControl.getMode());
 		}
 		oRm.writeClasses();
 		oRm.write(">");
