@@ -29,7 +29,7 @@
 			console.error("Card Action ", parameters);
 		}
 
-		var host = new sap.ui.integration.Host({
+		var oHost = new sap.ui.integration.Host({
 			actions: [
 				{
 					type: 'Navigation',
@@ -105,11 +105,8 @@
 					}
 				}
 			],
-			onAction: function (event) {
-
-				var type = event.getParameter('type'),
-						actionSource = event.getParameter('actionSource'),
-						parameters = event.getParameter('parameters');
+			action: function (oEvent) {
+				var parameters = oEvent.getParameter('parameters');
 
 				console.error("Host Action ", parameters);
 			},
@@ -126,7 +123,7 @@
 		var card1 = new sap.ui.integration.widgets.Card({
 			id: 'card1',
 			manifest: "./widgets/cardmanifests/table.manifest.json",
-			host: host,
+			host: oHost,
 			layoutData: new sap.f.GridContainerItemLayoutData({
 				columns: 4
 			}),
@@ -144,7 +141,7 @@
 		var card2 = new sap.ui.integration.widgets.Card({
 			id: 'card2',
 			manifest: "./widgets/cardmanifests/list.actions.manifest.json",
-			host: host,
+			host: oHost,
 			layoutData: new sap.f.GridContainerItemLayoutData({
 				columns: 4
 			}),
@@ -162,7 +159,7 @@
 		var card3 = new sap.ui.integration.widgets.Card({
 			id: 'card3',
 			manifest: "./widgets/cardmanifests/list.actions.manifest.json",
-			host: host,
+			host: oHost,
 			layoutData: new sap.f.GridContainerItemLayoutData({
 				columns: 4
 			}),
@@ -172,7 +169,7 @@
 		var card4 = new sap.ui.integration.widgets.Card({
 			id: 'card4',
 			manifest: "./widgets/cardmanifests/numeric.good.manifest.json",
-			host: host,
+			host: oHost,
 			layoutData: new sap.f.GridContainerItemLayoutData({
 				columns: 4
 			}),
@@ -182,7 +179,7 @@
 		var card5 = new sap.ui.integration.widgets.Card({
 			id: 'card5',
 			manifest: "./widgets/cardmanifests/numeric.good.action.manifest.json",
-			host: host,
+			host: oHost,
 			layoutData: new sap.f.GridContainerItemLayoutData({
 				columns: 4
 			}),
@@ -192,7 +189,7 @@
 		var card6 = new sap.ui.integration.widgets.Card({
 			id: 'card6',
 			manifest: "./widgets/cardmanifests/destinations.json",
-			host: host,
+			host: oHost,
 			layoutData: new sap.f.GridContainerItemLayoutData({
 				columns: 4
 			})
@@ -201,7 +198,7 @@
 		var card7 = new sap.ui.integration.widgets.Card({
 			id: 'card7',
 			manifest: "./widgets/cardmanifests/destinations2.json",
-			host: host,
+			host: oHost,
 			layoutData: new sap.f.GridContainerItemLayoutData({
 				columns: 4
 			})

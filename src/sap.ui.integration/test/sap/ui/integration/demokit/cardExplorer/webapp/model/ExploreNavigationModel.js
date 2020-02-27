@@ -187,13 +187,13 @@ sap.ui.define([
 				hasExpander: false,
 				items: [
 					{
-						key: 'actions',
+						key: 'cardActions',
 						target: 'exploreSamples',
-						title: 'Actions',
+						title: 'Card Actions',
 						settings: {
 							columns: 3
 						},
-						manifestUrl: '/samples/actions.json'
+						manifestUrl: '/samples/cardActions.json'
 					},
 					{
 						key: 'htmlConsumption',
@@ -280,6 +280,49 @@ sap.ui.define([
 						target: 'exploreSamples',
 						title: 'Dynamic Counter',
 						manifestUrl: '/samples/dynamicCounter/manifest.json'
+					},
+					{
+						key: 'hostActions',
+						target: 'exploreSamples',
+						title: 'Host Actions',
+						files: [
+							{
+								url: '/samples/hostActions/index.html',
+								name: 'index.html',
+								key: 'index.html',
+								content: ''
+							},
+							{
+								url: '/samples/hostActions/cardManifest.json',
+								name: 'cardManifest.json',
+								key: 'cardManifest.json',
+								content: ''
+							},
+							{
+								url: '/samples/hostActions/HostActions.view.xml',
+								name: 'HostActions.view.xml',
+								key: 'HostActions.view.xml',
+								content: ''
+							},
+							{
+								url: '/samples/hostActions/HostActions.controller.js',
+								name: 'HostActions.controller.js',
+								key: 'HostActions.controller.js',
+								content: ''
+							},
+							{
+								url: '/samples/hostActions/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								content: ''
+							},
+							{
+								url: '/samples/hostActions/Component.js',
+								name: 'Component.js',
+								key: 'Component.js',
+								content: ''
+							}
+						]
 					},
 					{
 						key: 'parameters',

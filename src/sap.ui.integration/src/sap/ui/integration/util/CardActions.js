@@ -45,7 +45,7 @@ sap.ui.define([
 		 * @constructor
 		 * @private
 		 * @since 1.65
-		 * @alias sap.f.cards.CardActions
+		 * @alias sap.ui.integration.util.CardActions
 		 */
 		var CardActions = ManagedObject.extend("sap.ui.integration.util.CardActions", {
 			metadata: {
@@ -368,7 +368,7 @@ sap.ui.define([
 			}
 
 			if (oHost) {
-				bActionResult = oHost.fireOnAction(mActionParams);
+				bActionResult = oHost.fireAction(mActionParams);
 			}
 
 			if (bActionResult) {
