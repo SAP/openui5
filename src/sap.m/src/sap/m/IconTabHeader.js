@@ -1320,52 +1320,44 @@ function(
 		}
 	};
 
-	/*
+	/**
 	 * Scrolls to the item passed as parameter if it is not (fully) visible.
 	 * If the item is to the left of the viewport it will be put leftmost.
 	 * If the item is to the right of the viewport it will be put rightmost.
 	 * @param {sap.m.IconTabFilter} oItem The item to be scrolled into view
 	 * @param {int} iDuration The duration of the animation effect
 	 * @private
-	 * @return {sap.m.IconTabHeader} this pointer for chaining
 	 */
 	IconTabHeader.prototype._scrollIntoView = function(oItem, iDuration) {
-		if (this.bIsDestroyed) {
+		if (this.bIsDestroyed || !oItem.$().length) {
 			return;
 		}
 
 		var $item = oItem.$(),
-			iScrollLeft,
-			iNewScrollLeft,
-			iContainerWidth;
+			iScrollLeft = this._oScroller.getScrollLeft(),
+			iContainerWidth = this.$("scrollContainerInner").width(),
+			iItemWidth = $item.outerWidth(true),
+			iItemPosLeft = $item.position().left,
+			iLeftArrowWidth = this._bPreviousScrollBack ? this._getScrollButton(this._ARROWS.Left).$().width() : 0,
+			iOverflowButtonWidth = this.getShowOverflowSelectList() ? this._getOverflowButton().$().width() : 0,
+			iNewScrollLeft;
 
-		if ($item.length > 0) {
-			var iItemWidth = $item.outerWidth(true);
-			var iItemPosLeft = $item.position().left;
-
-			iScrollLeft = this._oScroller.getScrollLeft();
-			iContainerWidth = this.$("scrollContainerInner").width() - 100;
-			iNewScrollLeft = -50;
-
-			// check if item is outside of viewport
-			if (iItemPosLeft - iScrollLeft < 0 || iItemPosLeft - iScrollLeft > iContainerWidth - iItemWidth) {
-				if (iItemPosLeft - iScrollLeft < 0) { // left side: make this the first item
-					iNewScrollLeft += iItemPosLeft;
-				} else { // right side: make this the last item
-					iNewScrollLeft += Math.min(iItemPosLeft, iItemPosLeft + iItemWidth - iContainerWidth);
-					iNewScrollLeft = Math.round(iNewScrollLeft);
-				}
-
-				// execute manual scrolling with scrollTo method (delayedCall 0 is needed for positioning glitch)
-				this._scrollPreparation();
-				// store current scroll state to set it after rerendering
-				this._iCurrentScrollLeft = iNewScrollLeft;
-				setTimeout(this._oScroller["scrollTo"].bind(this._oScroller, iNewScrollLeft, 0, iDuration), 0);
-				setTimeout(this["_afterIscroll"].bind(this), iDuration);
+		// check if item is outside of viewport
+		if (iItemPosLeft - iScrollLeft < 0 || iItemPosLeft - iScrollLeft > iContainerWidth - iItemWidth) {
+			if (iItemPosLeft - iScrollLeft < 0) { // left side: make this the first item
+				iNewScrollLeft = iItemPosLeft - iLeftArrowWidth;
+			} else { // right side: make this the last item
+				iNewScrollLeft = Math.min(iItemPosLeft, iItemPosLeft + iItemWidth - iContainerWidth + iOverflowButtonWidth);
+				iNewScrollLeft = Math.round(iNewScrollLeft);
 			}
-		}
 
-		return this;
+			// execute manual scrolling with scrollTo method (delayedCall 0 is needed for positioning glitch)
+			this._scrollPreparation();
+			// store current scroll state to set it after re-rendering
+			this._iCurrentScrollLeft = iNewScrollLeft;
+			setTimeout(this._oScroller["scrollTo"].bind(this._oScroller, iNewScrollLeft, 0, iDuration), 0);
+			setTimeout(this["_afterIscroll"].bind(this), iDuration);
+		}
 	};
 
 	/*
