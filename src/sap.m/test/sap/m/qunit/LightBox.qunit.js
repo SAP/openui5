@@ -1,10 +1,22 @@
 /*global QUnit*/
 
-sap.ui.define(
-	["sap/m/LightBox", "sap/m/LightBoxItem", "sap/ui/qunit/QUnitUtils"],
-	function(LightBox, LightBoxItem, qutils) {
+sap.ui.define([
+	"sap/m/LightBox",
+	"sap/m/LightBoxItem",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
+	"sap/m/library"
+], function(
+	LightBox,
+	LightBoxItem,
+	qutils,
+	KeyCodes,
+	library
+) {
 		'use strict';
 
+		// shortcut for sap.m.LightBoxLoadingStates
+		var LightBoxLoadingStates = library.LightBoxLoadingStates;
 
 		var IMAGE_PATH = 'test-resources/sap/m/images/';
 		var LIGHTBOX_OPEN_TIME = 300;
@@ -150,33 +162,28 @@ sap.ui.define(
 		QUnit.test('Opening a lightbox with image source', function(assert) {
 
 			// arrange
-			var done = assert.async();
-			var oImageContent = this.LightBox.getImageContent()[0],
+			var done = assert.async(),
+				oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
 				oNativeImage = oImageContent._getNativeImage(),
 				fnOnload = oNativeImage.onload,
-				oLightBoxPopup = this.LightBox._oPopup,
-				iOnloadCount = 0;
+				oLightBoxPopup = this.LightBox._oPopup;
 
 			oImageContent.setImageSrc(sImageSource);
 			sap.ui.getCore().applyChanges();
 
 			oNativeImage.onload = function () {
 				fnOnload.apply(oNativeImage, arguments);
-				iOnloadCount++;
-			};
-
-
-			//act
-			this.LightBox.open();
-
-			setTimeout(function () {
 				// Assert
 				assert.strictEqual(this.LightBox.isOpen(), true, 'The lightbox should be open');
 				assert.strictEqual(oLightBoxPopup.isOpen(), true, 'The lightbox should be open');
-				assert.strictEqual(iOnloadCount, 1, "image is loaded just once");
 				done();
-			}.bind(this), 600);
+			}.bind(this);
+
+			assert.expect(2);
+
+			//act
+			this.LightBox.open();
 		});
 
 		QUnit.test('Closing a lightbox', function(assert) {
@@ -288,18 +295,12 @@ sap.ui.define(
 		});
 
 		QUnit.test('ACC error state', function(assert) {
-			var oImageContent = this.LightBox.getImageContent()[0],
-				done = assert.async();
+			var oImageContent = this.LightBox.getImageContent()[0];
 
-			oImageContent.setImageSrc("/");
+			oImageContent._setImageState(LightBoxLoadingStates.Error);
+			this.LightBox.onBeforeRendering();
 
-			sap.ui.getCore().applyChanges();
-			this.LightBox.open();
-
-			setTimeout(function () {
-				assert.ok(this.LightBox.getAggregation("_invisiblePopupText").getText().indexOf(this._oRB.getText('LIGHTBOX_IMAGE_ERROR_DETAILS')) > 0, "Error message is added to ACC info.");
-				done();
-			}.bind(this), 600);
+			assert.ok(this.LightBox.getAggregation("_invisiblePopupText").getText().indexOf(this._oRB.getText('LIGHTBOX_IMAGE_ERROR_DETAILS')) > 0, "Error message is added to ACC info.");
 		});
 
 		QUnit.test('ESC should close LightBox', function(assert) {
@@ -315,14 +316,13 @@ sap.ui.define(
 			this.LightBox.open();
 			setTimeout(function () {
 				// Assert
-				qutils.triggerKeydown(this.LightBox.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				qutils.triggerKeydown(this.LightBox.getDomRef(), KeyCodes.ESCAPE);
+				setTimeout(function () {
+					// Assert
+					assert.strictEqual(this.LightBox.isOpen(), false, 'Dialog should be closed.');
+					done();
+				}.bind(this), 500);
 			}.bind(this), 500);
-
-			setTimeout(function () {
-				// Assert
-				assert.strictEqual(this.LightBox.isOpen(), false, 'Dialog should be closed.');
-				done();
-			}.bind(this), 1000);
 		});
 
 		QUnit.test('InvisibleText of LightBox', function(assert) {
