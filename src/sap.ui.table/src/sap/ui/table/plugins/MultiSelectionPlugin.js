@@ -466,7 +466,7 @@ sap.ui.define([
 		if (iIndex < iFirstVisibleRow || iIndex > iLastVisibleRow) {
 			var iNewIndex = bReverse ? iIndex - mRowCounts.fixedTop - 1 : iIndex - mRowCounts.scrollable - mRowCounts.fixedTop + 2;
 
-			bExpectRowsUpdatedEvent = oTable.setFirstVisibleRowIndex(Math.max(0, iNewIndex));
+			bExpectRowsUpdatedEvent = oTable._setFirstVisibleRowIndex(Math.max(0, iNewIndex));
 		}
 
 		this._showNotificationPopoverAtIndex(iIndex);

@@ -840,7 +840,7 @@ sap.ui.define([
 			// VerticalScrollingHelper.adjustFirstVisibleRowToScrollPositionInBuffer.
 			log("VerticalScrollingHelper.adjustFirstVisibleRowToScrollPosition:"
 				+ " Set \"firstVisibleRow\" from " + iOldIndex + " to " + iNewIndex, oTable);
-			var bExpectRowsUpdatedEvent = oTable.setFirstVisibleRowIndex(iNewIndex, true, bSuppressFirstVisibleRowChangedEvent, bSuppressRendering);
+			var bExpectRowsUpdatedEvent = oTable._setFirstVisibleRowIndex(iNewIndex, true, bSuppressFirstVisibleRowChangedEvent, bSuppressRendering);
 
 			if (!bExpectRowsUpdatedEvent) {
 				if (bNewIndexIsInBuffer) {
@@ -948,7 +948,7 @@ sap.ui.define([
 			if (iIndex !== iNewIndex || bForceFirstVisibleRowChangedEvent) {
 				log("VerticalScrollingHelper.adjustFirstVisibleRowToScrollPositionInBuffer:"
 					+ " Set \"firstVisibleRow\" to " + iNewIndex, oTable);
-				oTable.setFirstVisibleRowIndex(iNewIndex, true, null, bSuppressRendering);
+				oTable._setFirstVisibleRowIndex(iNewIndex, true, null, bSuppressRendering);
 			}
 
 			return Promise.resolve();
@@ -1125,7 +1125,7 @@ sap.ui.define([
 				// position should be reset.
 
 				log("VerticalScrollingHelper.scrollViewport: No overflow in viewport - Scroll to 0", oTable);
-				oTable.setFirstVisibleRowIndex(0, true);
+				oTable._setFirstVisibleRowIndex(0, true);
 				oScrollPosition.setPosition(0);
 				oViewport.scrollTop = 0;
 
