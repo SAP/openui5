@@ -202,13 +202,15 @@ sap.ui.define([
 					this._initPropertyEditors();
 				} else if (this._sCreatedBy) {
 					var aPropertyEditors = this.getAggregation("propertyEditors");
-					aConfig.forEach(function (mConfig, iIndex) {
-						// workaround until PropertyEditor supports smart rendering
-						aPropertyEditors[iIndex].setConfig(_omit(mConfig, "value"));
-						if (!mConfig.path.startsWith("/")) {
-							aPropertyEditors[iIndex].setValue(mConfig.value);
-						}
-					});
+					if (aPropertyEditors && aPropertyEditors.length > 0) {
+						aConfig.forEach(function (mConfig, iIndex) {
+							// workaround until PropertyEditor supports smart rendering
+							aPropertyEditors[iIndex].setConfig(_omit(mConfig, "value"));
+							if (!mConfig.path.startsWith("/")) {
+								aPropertyEditors[iIndex].setValue(mConfig.value);
+							}
+						});
+					}
 				}
 			});
 
@@ -297,8 +299,19 @@ sap.ui.define([
 	};
 
 	PropertyEditors.prototype.destroy = function () {
+		if (this._fnCancelInit) {
+			this._fnCancelInit().then(this._removeEditorsInCreation.bind(this));
+		}
 		this._removePropertyEditors();
 		Control.prototype.destroy.apply(this, arguments);
+	};
+
+	PropertyEditors.prototype._removeEditorsInCreation = function (aEditors) {
+		if (this._sCreatedBy === CREATED_BY_CONFIG) {
+			aEditors.forEach(function (oEditorInCreation) {
+				oEditorInCreation.destroy();
+			});
+		}
 	};
 
 	PropertyEditors.prototype._removePropertyEditors = function () {
@@ -383,46 +396,33 @@ sap.ui.define([
 			var oEditor = this.getEditor();
 			// Cancel previous async process if any
 			if (this._fnCancelInit) {
-				this._fnCancelInit();
+				this._fnCancelInit().then(this._removeEditorsInCreation.bind(this));
 				delete this._fnCancelInit;
 			}
 
 			var mPromise = createPromise(function (fnResolve, fnReject) {
-				var oPromise;
-				var sCreatedBy;
-
 				if (this.getConfig()) {
-					oPromise = Promise.all(
-						this.getConfig().map(function (mItemConfig) {
-							var oPropertyEditor = oEditor._createPropertyEditor(mItemConfig);
-							return oPropertyEditor;
-						})
-					);
-					sCreatedBy = CREATED_BY_CONFIG;
+					Promise.all(this.getConfig().map(function (mItemConfig) {
+						var oPropertyEditor = oEditor._createPropertyEditor(mItemConfig);
+						return oPropertyEditor;
+					})).then(fnResolve).catch(fnReject);
+					this._sCreatedBy = CREATED_BY_CONFIG;
 				} else {
 					var aTags = this.getTags().split(",");
-					oPromise = oEditor.getPropertyEditorsByTag(aTags);
-					sCreatedBy = CREATED_BY_TAGS;
+					oEditor.getPropertyEditorsByTag(aTags).then(fnResolve).catch(fnReject);
+					this._sCreatedBy = CREATED_BY_TAGS;
 				}
-
-				oPromise
-					.then(function (aPropertyEditors) {
-						var bRenderLabels = this.getRenderLabels();
-						if (bRenderLabels !== undefined) {
-							aPropertyEditors.forEach(function (oPropertyEditor) {
-								oPropertyEditor.setRenderLabel(bRenderLabels);
-							});
-						}
-						this._sCreatedBy = sCreatedBy;
-						delete this._fnCancelInit;
-						fnResolve(aPropertyEditors);
-					}.bind(this))
-					.catch(fnReject);
 			}.bind(this));
-
 			this._fnCancelInit = mPromise.cancel;
 
 			mPromise.promise.then(function (aPropertyEditors) {
+				var bRenderLabels = this.getRenderLabels();
+				if (bRenderLabels !== undefined) {
+					aPropertyEditors.forEach(function (oPropertyEditor) {
+						oPropertyEditor.setRenderLabel(bRenderLabels);
+					});
+				}
+
 				var aPreviousPropertyEditors = (this.getAggregation("propertyEditors") || []).slice();
 
 				aPropertyEditors.forEach(function (oPropertyEditor) {
@@ -439,6 +439,7 @@ sap.ui.define([
 					previousPropertyEditors: aPreviousPropertyEditors,
 					propertyEditors: (this.getAggregation("propertyEditors") || []).slice()
 				});
+				delete this._fnCancelInit;
 			}.bind(this));
 		}
 	};
