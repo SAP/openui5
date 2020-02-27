@@ -2933,25 +2933,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptions: no $$inheritExpandSelect", function (assert) {
+	QUnit.test("getQueryOptionsFromParameters: no $$inheritExpandSelect", function (assert) {
 		var oBinding = this.bindContext("foo");
 
 		// code under test
-		assert.deepEqual(oBinding.getQueryOptions(), {});
+		assert.deepEqual(oBinding.getQueryOptionsFromParameters(), {});
 
 		oBinding = this.bindContext("foo", undefined, {"$expand" : "bar"});
 
 		// code under test
-		assert.deepEqual(oBinding.getQueryOptions(), {"$expand" : {"bar" : {}}});
+		assert.deepEqual(oBinding.getQueryOptionsFromParameters(), {"$expand" : {"bar" : {}}});
 	});
 
 	//*********************************************************************************************
 [
-	{$select : ["prop"], $expand : {"Nav" : {}}},
+	{$select : ["prop"], $expand : {Nav : {}}},
 	{$select : ["prop"]},
-	{$expand : {"Nav" : {}}}
+	{$expand : {Nav : {}}}
 ].forEach(function (mParentQueryOptions, i) {
-	QUnit.test("getQueryOptions: $$inheritExpandSelect #" + i, function (assert) {
+	QUnit.test("getQueryOptionsFromParameters: $$inheritExpandSelect #" + i, function (assert) {
 		var oContext = Context.create(this.oModel, {
 				mCacheQueryOptions : mParentQueryOptions
 			}, "/SalesOrderList('4711')"),
@@ -2964,7 +2964,7 @@ sap.ui.define([
 			.returns(mQueryOptions);
 
 		// code under test
-		assert.strictEqual(oBinding.getQueryOptions(), mQueryOptions);
+		assert.strictEqual(oBinding.getQueryOptionsFromParameters(), mQueryOptions);
 
 		// ensure that $select is before $expand, too
 		assert.deepEqual(JSON.stringify(mQueryOptions), JSON.stringify(mParentQueryOptions));
@@ -2976,7 +2976,8 @@ sap.ui.define([
 		var oBinding = this.bindContext("foo"),
 			mQueryOptions = {};
 
-		this.mock(oBinding).expects("getQueryOptions").withExactArgs().returns(mQueryOptions);
+		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
+			.returns(mQueryOptions);
 
 		// code under test
 		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), mQueryOptions);
@@ -3377,7 +3378,8 @@ sap.ui.define([
 			mMergedQueryOptions = {},
 			mQueryOptions = {};
 
-		this.mock(oBinding).expects("getQueryOptions").withExactArgs().returns(mQueryOptions);
+		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
+			.returns(mQueryOptions);
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 				sinon.match.same(mQueryOptions))

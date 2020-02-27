@@ -78,14 +78,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getQueryOptionsForPath: binding with mParameters", function (assert) {
-		var mQueryOptions = {},
-			oBinding = new ODataParentBinding({
+		var oBinding = new ODataParentBinding({
+				getQueryOptionsFromParameters : function () {},
 				mParameters : {$$groupId : "group"},
-				mQueryOptions : mQueryOptions,
 				bRelative : true
 			}),
+			mQueryOptions = {},
 			mResult = {};
 
+		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
+			.returns(mQueryOptions);
 		this.mock(_Helper).expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(mQueryOptions), "foo")
 			.returns(mResult);
