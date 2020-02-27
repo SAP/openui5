@@ -758,6 +758,38 @@ function(
 		}.bind(this));
 	};
 
+	RuntimeAuthoring.prototype._handleVersionToolbar = function(bCanUndo) {
+		var bDraftEnabled = this.bInitialDraftAvailable || bCanUndo;
+		this.getToolbar().setDraftEnabled(bDraftEnabled);
+		return this._setVersionLabel(bDraftEnabled);
+	};
+
+	RuntimeAuthoring.prototype._setVersionLabel = function(bDraftEnabled) {
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		if (bDraftEnabled) {
+			return this.getToolbar().setVersionLabel(oTextResources.getText("LBL_DRAFT"));
+		}
+		return VersionsAPI.getVersions({
+			selector: this.getRootControlInstance(),
+			layer: this.getLayer()
+		})
+		.then(function(aVersions) {
+			if (aVersions.length === 0) {
+				return oTextResources.getText("LBL_ORIGNINAL_APP");
+			}
+			if (aVersions[0].title) {
+				return aVersions[0].title;
+			}
+			if (aVersions[0].versionNumber === 0) {
+				return oTextResources.getText("LBL_DRAFT");
+			}
+			return oTextResources.getText("LBL_VERSION_1");
+		})
+		.then(function(sLabel) {
+			return this.getToolbar().setVersionLabel(sLabel);
+		}.bind(this));
+	};
+
 	RuntimeAuthoring.prototype._isDraftAvailable = function() {
 		if (this._bVersioningEnabled) {
 			return VersionsAPI.isDraftAvailable({
@@ -842,8 +874,9 @@ function(
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
-			var bDraftEnabled = this._bVersioningEnabled && (this.bInitialDraftAvailable || bCanUndo);
-			this.getToolbar().setDraftEnabled(bDraftEnabled);
+			if (this._bVersioningEnabled) {
+				this._handleVersionToolbar(bCanUndo);
+			}
 		}
 		this.fireUndoRedoStackModified();
 	};
@@ -1014,9 +1047,9 @@ function(
 				title: oEvent.getParameter("versionTitle")
 			})
 		).then(function () {
-			this.bInitialDraftAvailable = false;
-			this.getToolbar().setDraftEnabled(false);
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
+			this.bInitialDraftAvailable = false;
+			return this._handleVersionToolbar(false);
 		}.bind(this));
 	};
 
