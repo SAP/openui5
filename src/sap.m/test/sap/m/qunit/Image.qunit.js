@@ -1068,5 +1068,36 @@ sap.ui.define([
 
 		//assert
 		assert.ok(oSpy.calledOnce, "preventDefault is called on SPACE key");
+
+		oImage.destroy();
+	});
+
+	// This unit test is meant to cover the current logic of
+	// Image control where it fires load event after each
+	// re-rendering cycle
+	QUnit.test("Load is called on rerender", function (assert) {
+		var done = assert.async();
+		var callCount = 0;
+		var callLimit = 10;
+
+		assert.expect(1);
+
+		//setup
+		var oImage = createImage({
+			src: sSrc,
+			load: function () {
+				if (callCount < callLimit) {
+					callCount++;
+					oImage.invalidate();
+				} else {
+					assert.ok(true, 'Load after rerendering called ' + callCount + ' times');
+					done();
+					oImage.destroy();
+				}
+			}
+		});
+
+		oImage.placeAt("qunit-fixture");
+		Core.applyChanges();
 	});
 });

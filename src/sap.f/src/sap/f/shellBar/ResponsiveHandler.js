@@ -168,6 +168,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveHandler.prototype._updateHomeIconWidth = function () {
+		this._iCurrentWidth = this._oControl._oHomeIcon.$().width();
+
+		if (this._iCurrentWidth === this._iLastWidth) {
+			return;
+		}
+
+		this._iLastWidth = this._iCurrentWidth;
+
 		this._initResize();
 		this._fnResize();
 	};
