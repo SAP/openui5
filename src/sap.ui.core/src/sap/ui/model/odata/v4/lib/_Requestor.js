@@ -1575,6 +1575,7 @@ sap.ui.define([
 				var sOldCsrfToken = that.mHeaders["X-CSRF-Token"];
 
 				return jQuery.ajax(sRequestUrl, {
+					contentType : mHeaders && mHeaders["Content-Type"],
 					data : sPayload,
 					headers : Object.assign({},
 						that.mPredefinedRequestHeaders,
