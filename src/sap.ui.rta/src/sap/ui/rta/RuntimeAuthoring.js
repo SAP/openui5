@@ -881,7 +881,7 @@ function(
 				.then(this._closeToolbar.bind(this))
 				.then(function() {
 					this.fireStop();
-					var mParsedHash = this._handleParametersOnExit();
+					var mParsedHash = this._handleParametersOnExit(true);
 					this._triggerCrossAppNavigation(mParsedHash);
 					if (sReload === this._RESTART.RELOAD_PAGE) {
 						this._reloadPage();
@@ -1214,6 +1214,8 @@ function(
 			generator: "Change.createInitialFileContent"
 		})
 			.then(function () {
+				var mParsedHash = this._handleParametersOnExit(false);
+				this._triggerCrossAppNavigation(mParsedHash);
 				this._reloadPage();
 			}.bind(this))
 			.catch(function (oError) {
@@ -1534,12 +1536,12 @@ function(
 	 *
 	 * @return {boolean} resolving to true if reload was triggered
 	 */
-	RuntimeAuthoring.prototype._handleParametersOnExit = function() {
+	RuntimeAuthoring.prototype._handleParametersOnExit = function(bDeleteMaxLayer) {
 		if (FlexUtils.getUshellContainer() && this.getLayer() !== "USER") {
 			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
 			var mParsedHash = FlexUtils.getParsedURLHash();
 			if (oCrossAppNav.toExternal && mParsedHash) {
-				if (this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM)) {
+				if (bDeleteMaxLayer && this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM)) {
 					delete mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM];
 				}
 				if (this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {

@@ -1048,6 +1048,7 @@ function(
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
 			this.oDeleteChangesStub = sandbox.stub(this.oRta, "_deleteChanges");
 			this.oEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
+			this.oHandleParametersOnExitSpy = sandbox.spy(this.oRta, "_handleParametersOnExit");
 			this.oReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
 		},
 		afterEach : function() {
@@ -1231,7 +1232,7 @@ function(
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully", function(assert) {
-			assert.expect(2);
+			assert.expect(3);
 			this.oDeleteChangesStub.restore();
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
@@ -1243,12 +1244,13 @@ function(
 			});
 
 			return this.oRta._deleteChanges().then(function() {
+				assert.equal(this.oHandleParametersOnExitSpy.callCount, 1, "then delete draft url parameter");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
 			}.bind(this));
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully in AppVariant", function(assert) {
-			assert.expect(2);
+			assert.expect(3);
 			this.oDeleteChangesStub.restore();
 			sandbox.stub(Utils, "isApplicationVariant").returns(true);
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
@@ -1261,6 +1263,7 @@ function(
 			});
 
 			return this.oRta._deleteChanges().then(function() {
+				assert.equal(this.oHandleParametersOnExitSpy.callCount, 1, "then delete draft url parameter");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
 			}.bind(this));
 		});
