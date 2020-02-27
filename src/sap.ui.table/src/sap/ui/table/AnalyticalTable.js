@@ -88,7 +88,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>sumOnTop</code> instead.
+			 * @deprecated As of 1.44. Use the binding parameter <code>sumOnTop</code> instead.
 			 */
 			sumOnTop : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
@@ -108,7 +108,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>numberOfExpandedLevels</code> instead.
+			 * @deprecated As of 1.44. Use the binding parameter <code>numberOfExpandedLevels</code> instead.
 			 */
 			numberOfExpandedLevels : {type : "int", group : "Misc", defaultValue : 0, deprecated: true},
 
@@ -129,7 +129,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>autoExpandMode</code> instead.
+			 * @deprecated As of 1.44. Use the binding parameter <code>autoExpandMode</code> instead.
 			 */
 			autoExpandMode: {type: "string", group: "Misc", defaultValue: "Bundled", deprecated: true},
 
@@ -144,6 +144,18 @@ sap.ui.define([
 			 *
 			 * Calling the setter of this property only has an effect when the tables <code>rows</code> aggregation is already bound and
 			 * the binding supports this feature.
+			 *
+			 * Example:
+			 * <pre>
+			 *   oTable.bindRows({
+			 *     path: "...",
+			 *     parameters: {
+			 *       collapseRecursive: true
+			 *     }
+			 *   });
+			 * </pre>
+			 *
+			 * @deprecated As of 1.76. Use the binding parameter <code>collapseRecursive</code> instead.
 			 */
 			collapseRecursive : {type: "boolean", defaultValue: true},
 

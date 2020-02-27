@@ -138,13 +138,17 @@ sap.ui.define([
 					that.table.unbindRows().bindRows({
 						path: "/root",
 						parameters: {
-							numberOfExpandedLevels: 0
+							numberOfExpandedLevels: 0,
+							rootLevel: 1,
+							collapseRecursive: false
 						}
 					});
 				},
 				test: function() {
 					assert.equal(that.table._getTotalRowCount(), 3, "ExpandFirstLevel=true and numberOfExpandedLevels=0: Row count is correct");
 					assert.equal(that.table.isExpanded(0), false, "Expanded state is correct");
+					assert.equal(that.table.getBindingInfo("rows").parameters.rootLevel, 1, "rootLevel is correct");
+					assert.equal(that.table.getBindingInfo("rows").parameters.collapseRecursive, false, "collapseRecursive is correct");
 					done();
 				}
 			});
