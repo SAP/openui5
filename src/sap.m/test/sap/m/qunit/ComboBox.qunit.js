@@ -10925,15 +10925,19 @@ sap.ui.define([
 				items: [
 					new ListItem({
 						text: "Hong Kong",
-						additionalText: "China"
+						additionalText: "China",
+						key: "key1"
 					}),
 					new ListItem({
 						text: "Baragoi",
-						additionalText: "Kenya"
+						additionalText: "Kenya",
+						key: "key2"
+
 					}),
 					new ListItem({
 						text: "Haskovo",
-						additionalText: "Bulgaria"
+						additionalText: "Bulgaria",
+						key: "key3"
 					})
 				]
 			});
@@ -11020,6 +11024,25 @@ sap.ui.define([
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef);
 
 		assert.ok(true, "No exception should be thrown");
+	});
+
+	QUnit.test("Filtering should clear the key if the selected item is no longer amongs the visible in the list ", function (assert) {
+		var oFakeEvent = {
+			target: {
+				value: "k"
+			},
+			srcControl: this.oComboBox
+		};
+
+		// Arrange
+		this.oComboBox.setSelectedItem(this.oComboBox.getItems()[2]);
+		assert.strictEqual(this.oComboBox.getSelectedKey(), "key3", "Initially a key is selected");
+
+		// Act
+		this.oComboBox.handleInputValidation(oFakeEvent, false);
+
+		// Assert
+		assert.strictEqual(this.oComboBox.getSelectedKey(), "", "Selected key should be reset");
 	});
 
 	QUnit.module("Input Text Selecting without data binding", {
