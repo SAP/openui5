@@ -108,14 +108,14 @@ sap.ui.define([
 		return [
 			format(ROOT_ID, 32), // root_context_id
 			format(sFESRTransactionId, 32), // transaction_id
-			format(oInteraction.navigation, 16), // client_navigation_time
-			format(oInteraction.roundtrip, 16), // client_round_trip_time
-			format(oFESRHandle.timeToInteractive, 16), // end_to_end_time
-			format(oInteraction.completeRoundtrips, 8), // completed network_round_trips
+			formatInt(oInteraction.navigation, 4), // client_navigation_time
+			formatInt(oInteraction.roundtrip, 4), // client_round_trip_time
+			formatInt(oFESRHandle.timeToInteractive, 4), // end_to_end_time
+			formatInt(oInteraction.completeRoundtrips, 2), // completed network_round_trips
 			format(sPassportAction, 40, true), // passport_action
-			format(oInteraction.networkTime, 16), // network_time
-			format(oInteraction.requestTime, 16), // request_time
-			format(CLIENT_OS, 20), // client_os
+			formatInt(oInteraction.networkTime, 4), // network_time
+			formatInt(oInteraction.requestTime, 4), // request_time
+			format(CLIENT_OS, 10), // client_os
 			"SAP_UI5" // client_type
 		].join(",");
 	}
@@ -127,17 +127,17 @@ sap.ui.define([
 			format(oFESRHandle.stepName, 20, true), // step_name
 			"", // not assigned
 			format(CLIENT_MODEL, 20), // client_model
-			format(oInteraction.bytesSent, 16), // client_data_sent
-			format(oInteraction.bytesReceived, 16), // client_data_received
+			formatInt(oInteraction.bytesSent, 4), // client_data_sent
+			formatInt(oInteraction.bytesReceived, 4), // client_data_received
 			"", // network_protocol
 			"", // network_provider
-			format(oInteraction.processing, 16), // client_processing_time
+			formatInt(oInteraction.processing, 4), // client_processing_time
 			oInteraction.requestCompression ? "X" : "", // compressed - empty if not compressed
 			"", // not assigned
 			"", // persistency_accesses
 			"", // persistency_time
 			"", // persistency_data_transferred
-			format(oInteraction.busyDuration, 16), // extension_1 - busy duration
+			formatInt(oInteraction.busyDuration, 4), // extension_1 - busy duration
 			"", // extension_2
 			format(CLIENT_DEVICE, 1), // extension_3 - client device
 			"", // extension_4
@@ -162,6 +162,21 @@ sap.ui.define([
 			vField = bCutFromFront ? vField.substr(-iLength, iLength) : vField.substr(0, iLength);
 		}
 		return vField;
+	}
+
+	/* Format a int number to fesr compliant specs
+	 * If given number is negative or not compliant we format to -1.
+	 * Supports int1/2/4.
+	 */
+	function formatInt(number, bytes) {
+		if (typeof number !== "number") {
+			number = "";
+		} else {
+			var max = Math.pow(256, bytes) / 2 - 1;
+			number = Math.round(number);
+			number = number >= 0 && number <= max ? number.toString() : "-1";
+		}
+		return number;
 	}
 
 	function formatVersion(sVersion) {
