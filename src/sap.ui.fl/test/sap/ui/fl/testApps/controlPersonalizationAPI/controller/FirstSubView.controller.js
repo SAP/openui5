@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"test/sap/ui/fl/testApps/controlPersonalizationAPIChanges/Helper"
-], function (Controller, Utils, Helper) {
+], function (Layer, Controller, Utils, Helper) {
 	"use strict";
 
 	return Controller.extend("test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.controller.FirstSubView", {
@@ -34,7 +35,7 @@ sap.ui.define([
 		createPersonalizationForLabel: function () {
 			var mChangeData = {
 				changeType: "changeLabel",
-				layer: "USER"
+				layer: Layer.USER
 			};
 			this.oAppComponent.createChangesAndSave(mChangeData, this.oLabel);
 		},
@@ -46,7 +47,7 @@ sap.ui.define([
 		createPersonalizationForVariantLabel: function () {
 			var mChangeData = {
 				changeType: "changeLabel",
-				layer: "USER"
+				layer: Layer.USER
 			};
 			this.oAppComponent.createChangesAndSave(mChangeData, this.oVariantLabel);
 		},

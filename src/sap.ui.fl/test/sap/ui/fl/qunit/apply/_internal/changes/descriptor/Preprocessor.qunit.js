@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
+	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -19,6 +20,7 @@ function (
 	Storage,
 	LrepConnector,
 	StaticFileConnector,
+	Layer,
 	jQuery,
 	sinon
 ) {
@@ -186,7 +188,7 @@ function (
 							type: "sap.m.Button",
 							idIsLocal: false
 						},
-						layer: "VENDOR",
+						layer: Layer.VENDOR,
 						namespace: "applier/test/reference/changes/",
 						creation: "2020-02-07T09:57:43.523Z",
 						validAppVersions: {creation: "1.0.0", from: "1.0.0", to: "1.0.0"},

@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/controller/Layers.controller",
+	"sap/ui/fl/Layer",
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	Layers,
+	Layer,
 	Router,
 	UIComponent,
 	ErrorUtils,
@@ -48,7 +50,7 @@ sap.ui.define([
 						getData: function () {
 							return {
 								layer : {
-									name : "VENDOR"
+									name : Layer.VENDOR
 								}
 							};
 						}
@@ -64,7 +66,7 @@ sap.ui.define([
 			assert.ok(oStubbedGetRouterFor.calledOnce, "then call for get a router");
 			assert.ok(oStubbedNavTo.calledOnce, "then navigation is triggered");
 			assert.equal(oStubbedNavTo.getCall(0).args[0], "LayerContentMaster", "with correct target");
-			assert.equal(oStubbedNavTo.getCall(0).args[1].layer, "VENDOR", "with correct layer");
+			assert.equal(oStubbedNavTo.getCall(0).args[1].layer, Layer.VENDOR, "with correct layer");
 		});
 
 		QUnit.test("when MessagePopover is press", function (assert) {

@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
@@ -26,6 +27,7 @@ sap.ui.define([
 ], function(
 	DependencyHandler,
 	Change,
+	Layer,
 	Variant,
 	Utils,
 	LayerUtils,
@@ -197,7 +199,7 @@ sap.ui.define([
 			if (!this._oMessagebundle && oChangeFileContent.messagebundle && oAppComponent) {
 				if (!oAppComponent.getModel("i18nFlexVendor")) {
 					if (aChanges.some(function(oChange) {
-						return oChange.layer === "VENDOR";
+						return oChange.layer === Layer.VENDOR;
 					})) {
 						this._oMessagebundle = oChangeFileContent.messagebundle;
 						var oModel = new JSONModel(this._oMessagebundle);

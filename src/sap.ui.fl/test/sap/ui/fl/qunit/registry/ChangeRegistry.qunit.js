@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/fl/changeHandler/UnhideControl",
 	"sap/ui/fl/changeHandler/HideControl",
+	"sap/ui/fl/Layer",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -23,6 +24,7 @@ function(
 	AddXMLChangeHandler,
 	UnhideControlChangeHandler,
 	HideControlChangeHandler,
+	Layer,
 	Log,
 	sinon
 ) {
@@ -267,7 +269,7 @@ function(
 		});
 
 		QUnit.test("registerControlsForChanges shall add a map of controls and changes to the registry", function (assert) {
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			return this.oChangeRegistry.registerControlsForChanges({
 				controlA: [SimpleChanges.unhideControl, SimpleChanges.hideControl],
 				controlB: [SimpleChanges.unhideControl, SimpleChanges.hideControl]
@@ -322,7 +324,7 @@ function(
 		});
 
 		QUnit.test("registerControlForSimpleChange shall add a new registry item", function (assert) {
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			this.oChangeRegistry.registerControlForSimpleChange("ganttChart", SimpleChanges.unhideControl);
 
 			return this.oChangeRegistry.getChangeHandler("unhideControl", "ganttChart", undefined, JsControlTreeModifier, sLayer)
@@ -607,7 +609,7 @@ function(
 			var oControl = {};
 			var sChangeType = "moveControls";
 			var sControlType = "VerticalLayout";
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var oErrorLoggingStub;
 			var oGetChangeHandlerModuleStub;
 			return this.oChangeRegistry.registerControlsForChanges({
@@ -633,7 +635,7 @@ function(
 			var oControl = {};
 			var sChangeType = "doSomething";
 			var sControlType = "VerticalLayout";
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
 			return this.oChangeRegistry.registerControlsForChanges({
@@ -653,7 +655,7 @@ function(
 			var oControl = {};
 			var sChangeType = "doSomething";
 			var sControlType = "VerticalLayout";
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlersUserLayer.flexibility");
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
 			return this.oChangeRegistry.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer)
@@ -666,7 +668,7 @@ function(
 			var oControl = {};
 			var sChangeType = "moveControls";
 			var sControlType = "VerticalLayout";
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
 			return this.oChangeRegistry.registerControlsForChanges({
@@ -686,7 +688,7 @@ function(
 			var oControl = {};
 			var sChangeType = "moveControls";
 			var sControlType = "VerticalLayout";
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
 
 			return this.oChangeRegistry.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer)
@@ -703,7 +705,7 @@ function(
 			var oControl = {};
 			var sChangeType = "addXML";
 			var sControlType;
-			var sLayer = "VENDOR";
+			var sLayer = Layer.VENDOR;
 
 			return this.oChangeRegistry.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer)
 			.then(function(oChangeHandler) {

@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
+	"sap/ui/fl/Layer",
 	"sap/base/util/values",
 	"sap/base/util/restricted/_uniq"
 ], function(
@@ -15,9 +15,9 @@ sap.ui.define([
 	sinon,
 	ObjectStorageConnector,
 	SessionStorageWriteConnector,
-	LocalStorageWriteConnector,
 	JsObjectConnector,
 	ObjectStorageUtils,
+	Layer,
 	values,
 	_uniq
 ) {
@@ -30,7 +30,7 @@ sap.ui.define([
 			fileName: "oChange1",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "CUSTOMER",
+			layer: Layer.CUSTOMER,
 			selector: {
 				id: "selector1"
 			},
@@ -40,7 +40,7 @@ sap.ui.define([
 			fileName: "oChange2",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "CUSTOMER",
+			layer: Layer.CUSTOMER,
 			selector: {
 				id: "selector2"
 			},
@@ -50,7 +50,7 @@ sap.ui.define([
 			fileName: "oChange3",
 			fileType: "change",
 			reference: "sap.ui.fl.test.1",
-			layer: "USER",
+			layer: Layer.USER,
 			selector: {
 				id: "selector2"
 			},
@@ -60,7 +60,7 @@ sap.ui.define([
 			fileName: "oChange4",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "CUSTOMER",
+			layer: Layer.CUSTOMER,
 			changeType: "type1"
 		},
 		oVariant1: {
@@ -221,7 +221,7 @@ sap.ui.define([
 				.then(function() {
 					return oConnector.reset({
 						reference : "sap.ui.fl.test.1",
-						layer : "USER"
+						layer : Layer.USER
 					});
 				})
 				.then(
@@ -240,7 +240,7 @@ sap.ui.define([
 				.then(function() {
 					return oConnector.reset({
 						reference : "sap.ui.fl.test",
-						layer : "CUSTOMER",
+						layer : Layer.CUSTOMER,
 						selectorIds : ["selector1"]
 					});
 				})
@@ -260,7 +260,7 @@ sap.ui.define([
 				.then(function() {
 					return oConnector.reset({
 						reference : "sap.ui.fl.test",
-						layer : "CUSTOMER",
+						layer : Layer.CUSTOMER,
 						changeTypes : ["type1"]
 					});
 				})
@@ -278,7 +278,7 @@ sap.ui.define([
 				.then(function() {
 					return oConnector.reset({
 						reference: "sap.ui.fl.test",
-						layer: "CUSTOMER",
+						layer: Layer.CUSTOMER,
 						changeTypes: ["type1"],
 						selectorIds: ["selector2"]
 					});

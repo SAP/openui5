@@ -3,15 +3,15 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Component",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI"
 ],
 function (
 	jQuery,
 	Component,
+	Layer,
 	Utils,
-	LrepConnector,
 	FlexRuntimeInfoAPI
 ) {
 	"use strict";
@@ -48,7 +48,7 @@ function (
 
 			var oChangeContent = {
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "a",
 				namespace: "b",
 				packageName: "c",

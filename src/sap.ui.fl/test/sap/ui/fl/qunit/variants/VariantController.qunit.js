@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/variants/VariantController",
@@ -21,6 +22,7 @@ sap.ui.define([
 	FakeLrepConnectorLocalStorage,
 	Cache,
 	Change,
+	Layer,
 	Variant,
 	ChangePersistence,
 	VariantController,
@@ -38,7 +40,7 @@ sap.ui.define([
 	"use strict";
 	var sandbox = sinon.sandbox.create();
 
-	sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
+	sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 
 	FakeLrepConnectorLocalStorage.enableFakeConnector("Dummy path");
 
@@ -233,7 +235,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'getChangesForVariantSwitch' of the VariantController", function(assert) {
-			var oChangeContent0 = {fileName:"change0", variantReference:"variant0", layer: "VENDOR"};
+			var oChangeContent0 = {fileName:"change0", variantReference:"variant0", layer: Layer.VENDOR};
 			var oChangeContent1 = {fileName:"change1", variantReference:"variant0"};
 			var oChangeContent2 = {fileName:"change2", variantReference:"variant0"};
 			var oChangeContent3 = {fileName:"change3", variantReference:"variant1"};
@@ -297,7 +299,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'getChangesForVariantSwitch' with a wrongly sorted map of changes", function(assert) {
-			var oChangeContent0 = {fileName:"change0", variantReference:"variant0", layer: "VENDOR"};
+			var oChangeContent0 = {fileName:"change0", variantReference:"variant0", layer: Layer.VENDOR};
 			var oChangeContent1 = {fileName:"change1", variantReference:"variant0"};
 			var oChangeContent2 = {fileName:"change2", variantReference:"variant0"};
 			var oChangeContent3 = {fileName:"change3", variantReference:"variant1"};
@@ -482,7 +484,7 @@ sap.ui.define([
 								{
 									content: {
 										fileName:"variant0",
-										layer:"CUSTOMER",
+										layer:Layer.CUSTOMER,
 										support:{
 											user:"Me"
 										},
@@ -532,7 +534,7 @@ sap.ui.define([
 								{
 									content: {
 										fileName:"variant0",
-										layer:"CUSTOMER",
+										layer:Layer.CUSTOMER,
 										support: {
 											user:"Me"
 										},
@@ -555,7 +557,7 @@ sap.ui.define([
 								{
 									content: {
 										fileName:"variant1",
-										layer:"CUSTOMER",
+										layer:Layer.CUSTOMER,
 										support:{
 											user:"Me"
 										},
@@ -628,7 +630,7 @@ sap.ui.define([
 							favorite: true,
 							visible: true,
 							key: "variant0",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							title: "variant A"
 						},
 						{
@@ -636,7 +638,7 @@ sap.ui.define([
 							favorite: true,
 							visible: true,
 							key: "variant1",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							title: "variant B"
 						}]
 				}
@@ -661,7 +663,7 @@ sap.ui.define([
 								{
 									content: {
 										fileName:"variant0",
-										layer:"CUSTOMER",
+										layer:Layer.CUSTOMER,
 										support:{
 											user:"Me"
 										},
@@ -704,7 +706,7 @@ sap.ui.define([
 							favorite: true,
 							visible: true,
 							key: "variant0",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							title: "variant A"
 						}]
 				}
@@ -737,7 +739,7 @@ sap.ui.define([
 								{
 									content: {
 										fileName:"variant0",
-										layer:"CUSTOMER",
+										layer:Layer.CUSTOMER,
 										support:{
 											user:"Me"
 										},
@@ -959,7 +961,7 @@ sap.ui.define([
 				content : {
 					fileName: "newVariant1",
 					variantReference: "variant0",
-					layer: "USER",
+					layer: Layer.USER,
 					content: {
 						title: "AA"
 					}

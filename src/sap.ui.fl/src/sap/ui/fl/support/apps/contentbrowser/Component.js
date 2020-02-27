@@ -2,7 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
+sap.ui.define([
+	"sap/ui/core/UIComponent",
+	"sap/ui/fl/Layer"
+], function (
+	UIComponent,
+	Layer
+) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.fl.support.apps.contentbrowser.Component", {
@@ -35,7 +41,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 					icon: "sap-icon://world"
 				},
 				{
-					name: "VENDOR",
+					name: Layer.VENDOR,
 					icon: "sap-icon://sap-logo-shape"
 				},
 				{
@@ -43,15 +49,15 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 					icon: "sap-icon://share-2"
 				},
 				{
-					name: "PARTNER",
+					name: Layer.PARTNER,
 					icon: "sap-icon://supplier"
 				},
 				{
-					name: "CUSTOMER_BASE",
+					name: Layer.CUSTOMER_BASE,
 					icon: "sap-icon://customer-and-supplier"
 				},
 				{
-					name: "CUSTOMER",
+					name: Layer.CUSTOMER,
 					icon: "sap-icon://customer"
 				},
 				{
@@ -59,7 +65,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 					icon: "sap-icon://database"
 				},
 				{
-					name: "USER",
+					name: Layer.USER,
 					icon: "sap-icon://person-placeholder"
 				}
 			];

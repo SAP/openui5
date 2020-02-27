@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
+	"sap/ui/fl/Layer",
 	"sap/m/library"
 ], function (
 	Controller,
@@ -19,6 +20,7 @@ sap.ui.define([
 	Input,
 	LRepConnector,
 	DataUtils,
+	Layer,
 	mobileLibrary
 ) {
 	"use strict";
@@ -232,7 +234,7 @@ sap.ui.define([
 			var sFileName = oContentData.fileName;
 			var sFileType = oContentData.fileType;
 
-			if ((sContentLayer === "USER") ||
+			if ((sContentLayer === Layer.USER) ||
 				(sContentLayer === "LOAD") ||
 				(sContentLayer === "VENDOR_LOAD") ||
 				(!sTransportIdFromContent && (!sPackageFromContent || sPackageFromContent === "$TMP"))) {

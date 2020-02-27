@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FeaturesAPI,
 	Settings,
+	Layer,
 	sinon
 ) {
 	"use strict";
@@ -51,7 +53,7 @@ sap.ui.define([
 						return bValueToBeSet;
 					}
 				});
-				return FeaturesAPI.isVersioningEnabled("CUSTOMER")
+				return FeaturesAPI.isVersioningEnabled(Layer.CUSTOMER)
 					.then(function (bReturnValue) {
 						assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
 					});

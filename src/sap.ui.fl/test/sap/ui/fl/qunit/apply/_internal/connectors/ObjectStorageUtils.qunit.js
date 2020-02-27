@@ -1,9 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/thirdparty/jquery"
 ], function (
+	Layer,
 	ObjectStorageUtils,
 	jQuery
 ) {
@@ -20,10 +22,10 @@ sap.ui.define([
 			this.sVariantKey1 = ObjectStorageUtils.createFlexKey("id3");
 			this.sVariantKey2 = ObjectStorageUtils.createFlexKey("id4");
 			this.oStorage = {};
-			this.oStorage[this.sChangeKey1] = JSON.stringify({reference: "sap.ui.fl.test", layer: "USER", name: "change1"});
-			this.oStorage[this.sChangeKey2] = JSON.stringify({reference: "sap.ui.fl.test.1", layer: "USER", name: "change2"});
-			this.oStorage[this.sVariantKey1] = JSON.stringify({reference: "sap.ui.fl.test.2", layer: "CUSTOMER", name: "variant1"});
-			this.oStorage[this.sVariantKey2] = JSON.stringify({reference: "sap.ui.fl.test.3", layer: "CUSTOMER", name: "variant2"});
+			this.oStorage[this.sChangeKey1] = JSON.stringify({reference: "sap.ui.fl.test", layer: Layer.USER, name: "change1"});
+			this.oStorage[this.sChangeKey2] = JSON.stringify({reference: "sap.ui.fl.test.1", layer: Layer.USER, name: "change2"});
+			this.oStorage[this.sVariantKey1] = JSON.stringify({reference: "sap.ui.fl.test.2", layer: Layer.CUSTOMER, name: "variant1"});
+			this.oStorage[this.sVariantKey2] = JSON.stringify({reference: "sap.ui.fl.test.3", layer: Layer.CUSTOMER, name: "variant2"});
 			this.oStorage.foo = JSON.stringify({name: "bar"});
 			this.oStorage.bar = JSON.stringify({name: "foobar"});
 		},
@@ -67,7 +69,7 @@ sap.ui.define([
 		QUnit.test("forEachObjectInStorage with various changes and variants with layer", function(assert) {
 			return ObjectStorageUtils.forEachObjectInStorage({
 				storage: this.oStorage,
-				layer: "USER"
+				layer: Layer.USER
 			}, function(mFlexObject) {
 				mFlexObject.changeDefinition.name += "called";
 				this.oStorage[mFlexObject.key] = (JSON.stringify(mFlexObject.changeDefinition));
@@ -86,7 +88,7 @@ sap.ui.define([
 			return ObjectStorageUtils.forEachObjectInStorage({
 				storage: this.oStorage,
 				reference: "sap.ui.fl.test.2",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			}, function(mFlexObject) {
 				mFlexObject.changeDefinition.name += "called";
 				this.oStorage[mFlexObject.key] = (JSON.stringify(mFlexObject.changeDefinition));

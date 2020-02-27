@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
@@ -15,6 +16,7 @@ sap.ui.define([
 	ObjectStorageUtils,
 	ApplyStorage,
 	WriteStorage,
+	Layer,
 	FakeLrepConnector,
 	jQuery,
 	sinon
@@ -23,15 +25,15 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	var oTestData = { fileName: "id_1445501120486_25", fileType: "change", changeType: "hideControl", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: {}, selector: { id: "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, layer: "CUSTOMER", texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } };
+	var oTestData = { fileName: "id_1445501120486_25", fileType: "change", changeType: "hideControl", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: {}, selector: { id: "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, layer: Layer.CUSTOMER, texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } };
 	var oTestDataNew = JSON.parse(JSON.stringify(oTestData));
 	oTestDataNew.content.isNewContent = true;
 
 	var aTestData = [
-		{ fileName: "id_1449484290389_26", fileType: "change", changeType: "moveFields", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: { moveFields: [{ id: "RTADemoAppMD---detail--GroupElementGeneralDataAddressStreet", index: 1 }] }, selector: { id: "RTADemoAppMD---detail--GroupGeneralData" }, layer: "CUSTOMER", texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } },
-		{ fileName: "id_1449484290389_27", fileType: "change", changeType: "moveFields", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: { moveFields: [{ id: "RTADemoAppMD---detail--GroupElementGeneralDataAddressZipCode", index: 4 }] }, selector: { id: "RTADemoAppMD---detail--GroupGeneralData" }, layer: "CUSTOMER", texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } },
-		{ fileName: "id_1449484290389_28", fileType: "change", changeType: "moveFields", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: { moveFields: [{ id: "RTADemoAppMD---detail--GroupElementDatesShippingStatus", index: 4 }], targetId: "RTADemoAppMD---detail--GroupGeneralData" }, selector: { id: "RTADemoAppMD---detail--GroupDates" }, layer: "CUSTOMER", texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } },
-		{ fileName: "id_1540450338001_81", fileType: "change", changeType: "appdescr_ui5_addLibraries", moduleName: "", reference: "sap.ui.rta.test.Demo.md", packageName: "$TMP", content: {libraries: {"sap.ui.comp": {minVersion: "1.48", lazy: false}}}, selector: {}, layer: "CUSTOMER", namespace: "apps/sap.ui.rta.test.Demo.md/changes/", projectId: "sap.ui.rta.test.Demo.md", creation: "", originalLanguage: "EN", conditions: {}, context: "", support: {generator: "Change.createInitialFileContent", service: "", user: "", sapui5Version: "1.59.0-SNAPSHOT", sourceChangeFileName: "", compositeCommand: ""}, oDataInformation: {}, dependentSelector: {}, validAppVersions: {creation: "1.0.0", from: "1.0.0"}, jsOnly: false, variantReference: ""}
+		{ fileName: "id_1449484290389_26", fileType: "change", changeType: "moveFields", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: { moveFields: [{ id: "RTADemoAppMD---detail--GroupElementGeneralDataAddressStreet", index: 1 }] }, selector: { id: "RTADemoAppMD---detail--GroupGeneralData" }, layer: Layer.CUSTOMER, texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } },
+		{ fileName: "id_1449484290389_27", fileType: "change", changeType: "moveFields", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: { moveFields: [{ id: "RTADemoAppMD---detail--GroupElementGeneralDataAddressZipCode", index: 4 }] }, selector: { id: "RTADemoAppMD---detail--GroupGeneralData" }, layer: Layer.CUSTOMER, texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } },
+		{ fileName: "id_1449484290389_28", fileType: "change", changeType: "moveFields", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: { moveFields: [{ id: "RTADemoAppMD---detail--GroupElementDatesShippingStatus", index: 4 }], targetId: "RTADemoAppMD---detail--GroupGeneralData" }, selector: { id: "RTADemoAppMD---detail--GroupDates" }, layer: Layer.CUSTOMER, texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } },
+		{ fileName: "id_1540450338001_81", fileType: "change", changeType: "appdescr_ui5_addLibraries", moduleName: "", reference: "sap.ui.rta.test.Demo.md", packageName: "$TMP", content: {libraries: {"sap.ui.comp": {minVersion: "1.48", lazy: false}}}, selector: {}, layer: Layer.CUSTOMER, namespace: "apps/sap.ui.rta.test.Demo.md/changes/", projectId: "sap.ui.rta.test.Demo.md", creation: "", originalLanguage: "EN", conditions: {}, context: "", support: {generator: "Change.createInitialFileContent", service: "", user: "", sapui5Version: "1.59.0-SNAPSHOT", sourceChangeFileName: "", compositeCommand: ""}, oDataInformation: {}, dependentSelector: {}, validAppVersions: {creation: "1.0.0", from: "1.0.0"}, jsOnly: false, variantReference: ""}
 	];
 
 
@@ -150,7 +152,7 @@ sap.ui.define([
 				.then(function () {
 					return CompatibilityConnector.resetChanges({
 						reference : oTestData.reference,
-						layer : "CUSTOMER"
+						layer : Layer.CUSTOMER
 					});
 				})
 				.then(
@@ -166,7 +168,7 @@ sap.ui.define([
 				.then(function () {
 					return CompatibilityConnector.resetChanges({
 						reference : oTestData.reference,
-						layer : "CUSTOMER",
+						layer : Layer.CUSTOMER,
 						changeTypes : ["moveFields"]
 					});
 				})
@@ -182,7 +184,7 @@ sap.ui.define([
 			return CompatibilityConnector.getFlexInfo({
 				sReference : oTestData.reference,
 				appVersion: "1.0.0",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			})
 			.then(function (mFlexInfo) {
 				assert.equal(mFlexInfo.isResetEnabled, false, "value for reset availability is returned");

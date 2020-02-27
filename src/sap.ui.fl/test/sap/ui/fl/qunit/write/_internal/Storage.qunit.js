@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector"
 ], function(
 	sinon,
+	Layer,
 	Storage,
 	StorageUtils,
 	ApplyUtils,
@@ -76,11 +78,11 @@ sap.ui.define([
 			var oFlexObjects = [{}];
 
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				flexObjects: oFlexObjects
 			};
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layers: ["USER"]}
+				{connector: "LrepConnector", layers: [Layer.USER]}
 			]);
 
 			return Storage.write(mPropertyBag)
@@ -93,7 +95,7 @@ sap.ui.define([
 			var oFlexObjects = {};
 
 			var mPropertyBag = {
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				flexObjects: oFlexObjects
 			};
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
@@ -112,7 +114,7 @@ sap.ui.define([
 			var oFlexObjects = {};
 
 			var mPropertyBag = {
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				flexObjects: oFlexObjects
 			};
 			var sUrl = "/some/url";
@@ -132,7 +134,7 @@ sap.ui.define([
 
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector aiming for USER layer when writing", function (assert) {
 			var mPropertyBag = {
-				layer: "USER",
+				layer: Layer.USER,
 				flexObjects: [{}]
 			};
 			var sUrl = "/PersonalizationConnector/url";
@@ -168,7 +170,7 @@ sap.ui.define([
 
 		QUnit.test("with valid mPropertyBag and Connector: KeyUserConnector aiming for CUSTOMER layer when writing", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				flexObjects: [{}]
 			};
 			var sUrl = "/KeyUserConnector/url";
@@ -208,7 +210,7 @@ sap.ui.define([
 			]);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				flexObjects: [{}],
 				draft: true
 			};
@@ -225,7 +227,7 @@ sap.ui.define([
 			]);
 			var oIsDraftEnabledStub = sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				flexObjects: [{}]
 			};
 			sandbox.stub(WriteKeyUserConnector, "write").resolves();
@@ -242,7 +244,7 @@ sap.ui.define([
 			]);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				flexObjects: [{}],
 				draft: true
 			};
@@ -256,7 +258,7 @@ sap.ui.define([
 
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector, KeyUserConnector aiming for USER layer", function (assert) {
 			var mPropertyBag = {
-				layer: "USER",
+				layer: Layer.USER,
 				flexObjects: [{}]
 			};
 			var sUrl1 = "/KeyUserConnector/url";
@@ -289,7 +291,7 @@ sap.ui.define([
 
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector, KeyUserConnector aiming for CUSTOMER layer ", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				flexObjects: [{}]
 			};
 			var sUrl1 = "/KeyUserConnector/url";
@@ -348,11 +350,11 @@ sap.ui.define([
 					layers: []
 				}, {
 					connector: "JsObjectConnector",
-					layers: ["CUSTOMER"]
+					layers: [Layer.CUSTOMER]
 				}, {
 					connector : "PersonalizationConnector",
 					url : this.url,
-					layers : ["USER"]
+					layers : [Layer.USER]
 				}
 			]);
 
@@ -460,11 +462,11 @@ sap.ui.define([
 		QUnit.test("and a list of versions is returned", function (assert) {
 			var mPropertyBag = {
 				reference: "reference",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "JsObjectConnector", layers: ["CUSTOMER"], url: "/flexKeyUser"}
+				{connector: "JsObjectConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
 			var aReturnedVersions = [];
@@ -479,7 +481,7 @@ sap.ui.define([
 			assert.expect(1);
 			var mPropertyBag = {
 				reference: "reference",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			return Storage.versions.load(mPropertyBag).catch(function (sRejectionMessage) {
@@ -496,11 +498,11 @@ sap.ui.define([
 		QUnit.test("and a list of versions is returned", function (assert) {
 			var mPropertyBag = {
 				reference: "reference",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "JsObjectConnector", layers: ["CUSTOMER"], url: "/flexKeyUser"}
+				{connector: "JsObjectConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
 			var oActivatedVersion = {};
@@ -515,7 +517,7 @@ sap.ui.define([
 			assert.expect(1);
 			var mPropertyBag = {
 				reference: "reference",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			return Storage.versions.activateDraft(mPropertyBag).catch(function (sRejectionMessage) {
@@ -532,11 +534,11 @@ sap.ui.define([
 		QUnit.test("and discarding takes place", function (assert) {
 			var mPropertyBag = {
 				reference: "reference",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "JsObjectConnector", layers: ["CUSTOMER"], url: "/flexKeyUser"}
+				{connector: "JsObjectConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
 			var oDiscardStub = sandbox.stub(JsObjectConnector.versions, "discardDraft").resolves();
@@ -550,7 +552,7 @@ sap.ui.define([
 			assert.expect(1);
 			var mPropertyBag = {
 				reference: "reference",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			return Storage.versions.discardDraft(mPropertyBag).catch(function (sRejectionMessage) {
@@ -585,12 +587,12 @@ sap.ui.define([
 
 		QUnit.test("then it fails in case no connector is available for the layer", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "reference",
 				appVersion: "1.0.0"
 			};
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "PersonalizationConnector", layers: ["USER"]}
+				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
 
 			return Storage.reset(mPropertyBag)
@@ -601,7 +603,7 @@ sap.ui.define([
 
 		QUnit.test("then it fails in case no connector is available for the layer by default layer settings of the connector", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "reference",
 				appVersion: "1.0.0"
 			};
@@ -617,7 +619,7 @@ sap.ui.define([
 
 		QUnit.test("then it fails in case multiple connectors are available for the layer", function(assert) {
 			var mPropertyBag = {
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				reference: "reference",
 				appVersion: "1.0.0"
 			};
@@ -636,7 +638,7 @@ sap.ui.define([
 
 		QUnit.test("with valid mPropertyBag and Connector: LrepConnector aiming for USER layer", function (assert) {
 			var mPropertyBag = {
-				layer: "USER",
+				layer: Layer.USER,
 				reference: "reference",
 				appVersion: "1.0.0",
 				changeTypes: "Rename",
@@ -645,7 +647,7 @@ sap.ui.define([
 			};
 
 			var mParameter = {
-				layer: "USER",
+				layer: Layer.USER,
 				reference: "reference",
 				appVersion: "1.0.0",
 				changeType: "Rename",
@@ -682,7 +684,7 @@ sap.ui.define([
 
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector aiming for USER layer", function (assert) {
 			var mPropertyBag = {
-				layer: "USER",
+				layer: Layer.USER,
 				reference: "reference",
 				appVersion: "1.0.0"
 			};
@@ -720,7 +722,7 @@ sap.ui.define([
 
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector, KeyUserConnector aiming for USER layer", function (assert) {
 			var mPropertyBag = {
-				layer: "USER",
+				layer: Layer.USER,
 				reference: "reference",
 				appVersion: "1.0.0"
 			};
@@ -760,7 +762,7 @@ sap.ui.define([
 
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector, KeyUserConnector aiming for CUSTOMER layer", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "reference",
 				appVersion: "1.0.0"
 			};

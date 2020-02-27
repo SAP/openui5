@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
+	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	ObjectStorageUtils,
@@ -15,6 +16,7 @@ sap.ui.define([
 	StorageUtils,
 	JsObjectWriteConnector,
 	SessionStorageWriteConnector,
+	Layer,
 	jQuery
 ) {
 	"use strict";
@@ -34,28 +36,28 @@ sap.ui.define([
 			fileName: "change1",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "CUSTOMER",
+			layer: Layer.CUSTOMER,
 			creation: "2019-08-21T13:52:40.4754350Z"
 		},
 		change2: {
 			fileName: "change2",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "USER",
+			layer: Layer.USER,
 			creation: "2019-08-20T13:52:40.4754350Z"
 		},
 		change3: {
 			fileName: "change3",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "CUSTOMER",
+			layer: Layer.CUSTOMER,
 			creation: "2019-08-19T13:52:40.4754350Z"
 		},
 		change4: {
 			fileName: "change4",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "CUSTOMER",
+			layer: Layer.CUSTOMER,
 			variantReference: "variant1",
 			creation: "2019-08-19T13:52:40.4754350Z"
 		},
@@ -65,7 +67,7 @@ sap.ui.define([
 			variantManagementReference: "variantManagement0",
 			variantReference: "variantManagement0",
 			reference: "sap.ui.fl.test",
-			layer: "CUSTOMER",
+			layer: Layer.CUSTOMER,
 			creation: "2019-08-19T13:52:40.4754350Z"
 		},
 		variant2: {
@@ -74,7 +76,7 @@ sap.ui.define([
 			variantManagementReference: "variantManagement0",
 			variantReference: "variantManagement0",
 			reference: "sap.ui.fl.test",
-			layer: "CUSTOMER",
+			layer: Layer.CUSTOMER,
 			creation: "2019-08-20T13:52:40.4754350Z"
 		},
 		variantChange: {
@@ -85,7 +87,7 @@ sap.ui.define([
 			selector: {
 				id: "variant1"
 			},
-			layer: "CUSTOMER"
+			layer: Layer.CUSTOMER
 		},
 		variantManagementChange: {
 			fileName: "variantManagementChange",
@@ -95,31 +97,31 @@ sap.ui.define([
 			selector: {
 				id: "variantManagement0"
 			},
-			layer: "CUSTOMER"
+			layer: Layer.CUSTOMER
 		},
 		anotherAppChange1: {
 			fileName: "anotherAppChange1",
 			fileType: "change",
 			reference: "sap.ui.fl.test.another.app",
-			layer: "CUSTOMER"
+			layer: Layer.CUSTOMER
 		},
 		anotherAppChange2: {
 			fileName: "anotherAppChange2",
 			fileType: "change",
 			reference: "sap.ui.fl.test.another.app",
-			layer: "USER"
+			layer: Layer.USER
 		},
 		anotherAppChange3: {
 			fileName: "anotherAppChange3",
 			fileType: "change",
 			reference: "sap.ui.fl.test.another.app",
-			layer: "CUSTOMER"
+			layer: Layer.CUSTOMER
 		},
 		anotherAppChange4: {
 			fileName: "anotherAppChange4",
 			fileType: "change",
 			reference: "sap.ui.fl.test.another.app",
-			layer: "CUSTOMER",
+			layer: Layer.CUSTOMER,
 			variantReference: "anotherAppVariant",
 			creation: "2019-08-19T13:52:40.4754350Z"
 		},
@@ -129,7 +131,7 @@ sap.ui.define([
 			variantManagementReference: "variantManagement0",
 			variantReference: "variantManagement0",
 			reference: "sap.ui.fl.test.another.app",
-			layer: "CUSTOMER"
+			layer: Layer.CUSTOMER
 		},
 		anotherAppVariantChange: {
 			fileName: "anotherAppVariantChange",
@@ -139,7 +141,7 @@ sap.ui.define([
 			selector: {
 				id: "anotherAppVariant"
 			},
-			layer: "CUSTOMER"
+			layer: Layer.CUSTOMER
 		},
 		anotherAppVariantManagementChange: {
 			fileName: "anotherAppVariantManagementChange",
@@ -149,13 +151,13 @@ sap.ui.define([
 			selector: {
 				id: "variantManagement0"
 			},
-			layer: "CUSTOMER"
+			layer: Layer.CUSTOMER
 		},
 		baseChange: {
 			fileName: "baseChange",
 			fileType: "change",
 			reference: "sap.ui.fl.test.module2",
-			layer: "BASE",
+			layer: Layer.BASE,
 			creation: "2019-08-21T13:52:40.4754350Z"
 		},
 		vendorVariant: {
@@ -164,7 +166,7 @@ sap.ui.define([
 			variantManagementReference: "variantManagement0",
 			variantReference: "variantManagement0",
 			reference: "sap.ui.fl.test.module2",
-			layer: "VENDOR",
+			layer: Layer.VENDOR,
 			creation: "2019-08-19T13:52:40.4754350Z"
 		},
 		partnerVariantChange: {
@@ -175,13 +177,13 @@ sap.ui.define([
 			selector: {
 				id: "vendorVariant"
 			},
-			layer: "PARTNER"
+			layer: Layer.PARTNER
 		},
 		customerBaseVariantDependentChange: {
 			fileName: "customerBaseVariantDependentChange",
 			fileType: "change",
 			reference: "sap.ui.fl.test.module2",
-			layer: "CUSTOMER_BASE",
+			layer: Layer.CUSTOMER_BASE,
 			variantReference: "id_1445501120486_27",
 			creation: "2019-08-19T13:52:40.4754350Z"
 		},
@@ -193,7 +195,7 @@ sap.ui.define([
 			selector: {
 				id: "variantManagement0"
 			},
-			layer: "CUSTOMER"
+			layer: Layer.CUSTOMER
 		}
 	};
 

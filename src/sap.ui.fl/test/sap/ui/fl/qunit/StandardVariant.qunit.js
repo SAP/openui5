@@ -13,30 +13,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	/*eslint-disable no-unused-vars */
-	var standardVariantChangeDefinitionSpecifics = {
-		fileType: "change", //set by Change.createInitialFileContent if not variant
-		layer: "USER", //enforced
-		fileName: "<name>", //currently set by Change.createInitialFileContent, must not be set
-		namespace: "<namespace>", //currently set by Change.createInitialFileContent, must not be set
-		packageName: "<packageName>", //currently set by Change.createInitialFileContent, must not be set
-		changeType: "standardVariant",
-		creation: "<timestamp>", //set by Change.createInitialFileContent
-		reference: "<component>", //set by Change.createInitialFileContent
-		selector: {
-			persistenceKey: "control1"
-		}, //optional
-		content: {
-			executeOnSelect: false
-		},
-		support: {  //set by Change.createInitialFileContent
-			generator: "<generator>",
-			user: "<user>",
-			service: "<service>"
-		}
-	};
-	/*eslint-enable no-unused-vars */
-
 	QUnit.module("sap.ui.fl.StandardVariant", {
 		beforeEach: function() {
 			this.oStandardVariant = new StandardVariant.constructor();

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/apply/_internal/changes/FlexCustomData"
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
+	"sap/ui/fl/Layer"
 ],
 function (
 	jQuery,
@@ -18,7 +19,8 @@ function (
 	UIComponent,
 	JsControlTreeModifier,
 	Change,
-	FlexCustomData
+	FlexCustomData,
+	Layer
 ) {
 	"use strict";
 
@@ -32,7 +34,7 @@ function (
 	function getChangeContent(sFileName, sSelectorId) {
 		return {
 			fileType: "change",
-			layer: "CUSTOMER",
+			layer: Layer.CUSTOMER,
 			fileName: sFileName || "a",
 			namespace: "b",
 			packageName: "c",

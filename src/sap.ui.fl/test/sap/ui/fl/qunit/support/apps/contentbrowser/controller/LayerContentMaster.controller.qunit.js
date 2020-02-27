@@ -2,12 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/controller/LayerContentMaster.controller",
+	"sap/ui/fl/Layer",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/routing/Router",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	LayerContentMaster,
+	Layer,
 	UIComponent,
 	Router,
 	jQuery,
@@ -53,7 +55,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("navigates into a folder", function(assert) {
-			var sLayer = "USER";
+			var sLayer = Layer.USER;
 			var oModel = new sap.ui.model.json.JSONModel([
 				{
 					name: "someFile",
@@ -92,7 +94,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("navigates to the details of a file", function(assert) {
-			var sLayer = "USER";
+			var sLayer = Layer.USER;
 			var oModel = new sap.ui.model.json.JSONModel([
 				{
 					name: "someFile",
@@ -143,7 +145,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("navs back one level within the namespace if the namespace is not root", function(assert) {
-			var sLayer = "USER";
+			var sLayer = Layer.USER;
 			oController.sLayer = sLayer;
 			oController.sNamespace = "1stLevel/2ndLevel/";
 

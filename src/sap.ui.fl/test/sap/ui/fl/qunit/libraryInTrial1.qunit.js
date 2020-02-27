@@ -3,14 +3,12 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
-	"sap/ui/fl/RegistrationDelegator",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], function(
 	sinon,
 	jQuery,
-	Configuration,
-	RegistrationDelegator,
+	Layer,
 	Utils
 ) {
 	"use strict";
@@ -42,7 +40,7 @@ sap.ui.define([
 				layers: []
 			}, {
 				connector: "LocalStorageConnector",
-				layers: ["CUSTOMER", "USER"]
+				layers: [Layer.CUSTOMER, Layer.USER]
 			}];
 
 			return new Promise(function(resolve) {

@@ -5,11 +5,9 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/core/Component",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer",
 	"sap/ui/thirdparty/hasher",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -17,11 +15,9 @@ sap.ui.define([
 	VariantManagement,
 	URLHandler,
 	Utils,
+	Layer,
 	ControlVariantApplyAPI,
-	FlexControllerFactory,
 	Component,
-	UIComponent,
-	ComponentContainer,
 	hasher,
 	sinon
 ) {
@@ -77,7 +73,7 @@ sap.ui.define([
 						{
 							author: "SAP",
 							key: "variantMgmtId1",
-							layer: "VENDOR",
+							layer: Layer.VENDOR,
 							title: "Standard",
 							favorite: true,
 							visible: true
@@ -85,7 +81,7 @@ sap.ui.define([
 						{
 							author: "Me",
 							key: "variant1",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							title: "variant B",
 							favorite: false,
 							visible: true

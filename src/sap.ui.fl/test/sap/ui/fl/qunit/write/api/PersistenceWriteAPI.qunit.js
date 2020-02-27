@@ -1,4 +1,3 @@
-/* eslint-disable quote-props */
 /* global QUnit */
 
 sap.ui.define([
@@ -6,12 +5,10 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
+	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/Log"
@@ -20,12 +17,10 @@ sap.ui.define([
 	JsControlTreeModifier,
 	ChangesController,
 	DescriptorInlineChangeFactory,
-	Settings,
-	ApplyUtils,
-	WriteUtils,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	FlexCustomData,
+	Layer,
 	jQuery,
 	sinon,
 	Log
@@ -72,26 +67,26 @@ sap.ui.define([
 			this.aObjectsToDestroy = [];
 
 			this.oUIChangeSpecificData = {
-				variantReference:"",
-				fileName:"id_1445501120486_26",
-				fileType:"change",
-				changeType:"hideControl",
-				reference:"reference.app.Component",
-				packageName:"$TMP",
-				content:{},
-				selector:{
-					id:"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+				variantReference: "",
+				fileName: "id_1445501120486_26",
+				fileType: "change",
+				changeType: "hideControl",
+				reference: "reference.app.Component",
+				packageName: "$TMP",
+				content: {},
+				selector: {
+					id: "RTADemoAppMD---detail--GroupElementDatesShippingStatus"
 				},
-				layer:"CUSTOMER",
-				texts:{},
-				namespace:"reference.app.Component",
-				creation:"2018-10-16T08:00:02",
-				originalLanguage:"EN",
-				conditions:{},
-				support:{
-					generator:"Change.createInitialFileContent",
-					service:"",
-					user:""
+				layer:  Layer.CUSTOMER,
+				texts: {},
+				namespace: "reference.app.Component",
+				creation: "2018-10-16T08:00:02",
+				originalLanguage: "EN",
+				conditions: {},
+				support: {
+					generator: "Change.createInitialFileContent",
+					service: "",
+					user: ""
 				}
 			};
 		},
@@ -139,7 +134,7 @@ sap.ui.define([
 
 		QUnit.test("when save is called for a draft", function(assert) {
 			var mPropertyBag = {};
-			mPropertyBag.layer = "CUSTOMER";
+			mPropertyBag.layer = Layer.CUSTOMER;
 			mPropertyBag.selector = this.vSelector;
 			mPropertyBag.draft = true;
 
@@ -164,7 +159,7 @@ sap.ui.define([
 
 		QUnit.test("when reset is called", function(assert) {
 			var mPropertyBag = {
-				layer: "customer",
+				layer: Layer.CUSTOMER,
 				generator: "generator",
 				selectorIds: [],
 				changeTypes: [],
@@ -191,7 +186,7 @@ sap.ui.define([
 		QUnit.test("when publish is called", function(assert) {
 			var mPropertyBag = {
 				styleClass: "styleClass",
-				layer: "customer",
+				layer: Layer.CUSTOMER,
 				appVariantDescriptors: [],
 				selector: this.vSelector
 			};
@@ -219,7 +214,7 @@ sap.ui.define([
 
 		QUnit.test("when publish is called without style class", function(assert) {
 			var mPropertyBag = {
-				layer: "customer",
+				layer: Layer.CUSTOMER,
 				appVariantDescriptors: [],
 				selector: this.vSelector
 			};
@@ -451,7 +446,7 @@ sap.ui.define([
 		QUnit.test("get flex/info is not called for USER layer", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector,
-				layer: "USER"
+				layer: Layer.USER
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
 

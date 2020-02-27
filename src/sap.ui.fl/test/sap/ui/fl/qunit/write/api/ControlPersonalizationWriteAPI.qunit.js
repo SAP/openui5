@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/ControlPersonalizationAPI",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/variants/VariantModel",
@@ -19,6 +20,7 @@ sap.ui.define([
 	ControlPersonalizationAPI,
 	FlexControllerFactory,
 	Utils,
+	Layer,
 	LayerUtils,
 	ChangeHandlerRegistration,
 	VariantModel,
@@ -339,7 +341,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' where one change content has variantReference set", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER); //needed as some ChangeHandlers are not available for USER layer
 			sandbox.spy(ControlPersonalizationAPI, "_getVariantManagement");
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
@@ -358,7 +360,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with a change outside of a variant management control", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER); //needed as some ChangeHandlers are not available for USER layer
 			var oButton = sap.ui.getCore().byId("testComponent---mockview--Button");
 			var oChangeData = {
 				selectorElement: oButton,
@@ -385,7 +387,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReferences and a variant model", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER); //needed as some ChangeHandlers are not available for USER layer
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
 				changes: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2],
@@ -404,7 +406,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReferences and no variant model", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER); //needed as some ChangeHandlers are not available for USER layer
 			sandbox.stub(this.oComp, "getModel")
 				.callThrough()
 				.withArgs(Utils.VARIANT_MODEL_NAME)
@@ -466,7 +468,7 @@ sap.ui.define([
 
 			return ControlPersonalizationWriteAPI.reset({selectors: this.aControls, changeTypes: aChangeTypes})
 				.then(function () {
-					assert.ok(fnResetStub.calledWith("USER", undefined, this.oAppComponent, this.getControlIds(), aChangeTypes), "then FlexController.reset is called with the passed selectors and change types");
+					assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, this.getControlIds(), aChangeTypes), "then FlexController.reset is called with the passed selectors and change types");
 				}.bind(this));
 		});
 
@@ -479,7 +481,7 @@ sap.ui.define([
 
 			return ControlPersonalizationWriteAPI.reset({selectors: this.aControls, changeTypes: aChangeTypes})
 				.then(function () {
-					assert.ok(fnResetStub.calledWith("USER", undefined, this.oAppComponent, ["view--controlId2", "feElementsView::controlId"], aChangeTypes), "then FlexController.reset is called with the passed control IDs and change types");
+					assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, ["view--controlId2", "feElementsView::controlId"], aChangeTypes), "then FlexController.reset is called with the passed control IDs and change types");
 				}.bind(this));
 		});
 
@@ -492,7 +494,7 @@ sap.ui.define([
 
 			return ControlPersonalizationWriteAPI.reset({selectors: aSelector})
 				.then(function () {
-					assert.ok(fnResetStub.calledWith("USER", undefined, this.oAppComponent, ["controlId3", "view--controlId4"], undefined), "then FlexController.reset is called with the passed control IDs and change types");
+					assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, ["controlId3", "view--controlId4"], undefined), "then FlexController.reset is called with the passed control IDs and change types");
 				}.bind(this));
 		});
 
@@ -503,7 +505,7 @@ sap.ui.define([
 
 			return ControlPersonalizationWriteAPI.reset({selectors: aSelectors})
 				.then(function () {
-					assert.ok(fnResetStub.calledWith("USER", undefined, this.oAppComponent, ["controlId3", "controlId4"], undefined), "then FlexController.reset is called with the passed control IDs and change types");
+					assert.ok(fnResetStub.calledWith(Layer.USER, undefined, this.oAppComponent, ["controlId3", "controlId4"], undefined), "then FlexController.reset is called with the passed control IDs and change types");
 				}.bind(this));
 		});
 

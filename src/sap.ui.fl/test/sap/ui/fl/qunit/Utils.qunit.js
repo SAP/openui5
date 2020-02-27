@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/library",
 	"sap/ui/layout/VerticalLayout",
@@ -10,7 +11,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
-	"sap/ui/thirdparty/hasher",
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Manifest",
@@ -21,6 +21,7 @@ sap.ui.define([
 function(
 	Utils,
 	Change,
+	Layer,
 	Variant,
 	library,
 	VerticalLayout,
@@ -28,7 +29,6 @@ function(
 	Button,
 	Component,
 	UIComponent,
-	hasher,
 	Log,
 	UriParameters,
 	Manifest,
@@ -729,7 +729,7 @@ function(
 		QUnit.test("when calling 'getParsedURLHash' with a ushell container", function(assert) {
 			var oParameters = {
 				params: {
-					"sap-ui-fl-max-layer": ["CUSTOMER"]
+					"sap-ui-fl-max-layer": [Layer.CUSTOMER]
 				}
 			};
 			sandbox.stub(Utils, "getUshellContainer").returns({

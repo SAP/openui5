@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/controller/ContentDetails.controller",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
+	"sap/ui/fl/Layer",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/routing/Router",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function (
 	ContentDetails,
 	LRepConnector,
+	Layer,
 	UIComponent,
 	Router,
 	DataUtils,
@@ -33,7 +35,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("sets all parameters when a route matched for this page", function (assert) {
-			var sLayer = "VENDOR";
+			var sLayer = Layer.VENDOR;
 			var sNamespace = "hi/there/";
 			var sFileName = "helloWorld";
 			var sFileType = "json";
@@ -133,7 +135,7 @@ sap.ui.define([
 			var oStubbedNavTo = sandbox.stub(oRouter, "navTo");
 			var oStubbedLrepConDeleteFile = sandbox.stub(LRepConnector, "deleteFile").returns(Promise.resolve());
 
-			return oController._deleteFile("VENDOR", "namespace", "fileName", "fileType", "transportId", "All").then(function() {
+			return oController._deleteFile(Layer.VENDOR, "namespace", "fileName", "fileType", "transportId", "All").then(function() {
 				assert.ok(oStubbedGetRouterFor.calledOnce, "then call for get a router");
 				assert.ok(oStubbedLrepConDeleteFile.calledOnce, "then call Lrep connector for deleting file");
 				assert.ok(oStubbedNavTo.calledOnce, "then navigation is triggered");
@@ -155,7 +157,7 @@ sap.ui.define([
 								layer : "All",
 								metadata : [{
 									name : "layer",
-									value : "USER"
+									value : Layer.USER
 								}]
 							};
 						}
@@ -165,7 +167,7 @@ sap.ui.define([
 			var oStubbedDeleteFile = sandbox.stub(oController, "_deleteFile").returns(Promise.resolve());
 			oController._selectTransportAndDeleteFile();
 			assert.ok(oStubbedDeleteFile.calledOnce, "then call for deleting file");
-			assert.equal(oStubbedDeleteFile.getCall(0).args[0], "USER", "with correct layer");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[0], Layer.USER, "with correct layer");
 			assert.equal(oStubbedDeleteFile.getCall(0).args[1], "namespace", "with correct namespace");
 			assert.equal(oStubbedDeleteFile.getCall(0).args[2], "fileName", "with correct fileName");
 			assert.equal(oStubbedDeleteFile.getCall(0).args[3], "fileType", "with correct fileType");
@@ -214,7 +216,7 @@ sap.ui.define([
 								layer : "All",
 								metadata : [{
 									name : "layer",
-									value : "CUSTOMER"
+									value : Layer.CUSTOMER
 								}, {
 									name : "transportId",
 									value : "ATO_NOTIFICATION"
@@ -227,7 +229,7 @@ sap.ui.define([
 			var oStubbedDeleteFile = sandbox.stub(oController, "_deleteFile").returns(Promise.resolve());
 			oController._selectTransportAndDeleteFile();
 			assert.ok(oStubbedDeleteFile.calledOnce, "then call for deleting file");
-			assert.equal(oStubbedDeleteFile.getCall(0).args[0], "CUSTOMER", "with correct layer");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[0], Layer.CUSTOMER, "with correct layer");
 			assert.equal(oStubbedDeleteFile.getCall(0).args[1], "namespace", "with correct namespace");
 			assert.equal(oStubbedDeleteFile.getCall(0).args[2], "fileName", "with correct fileName");
 			assert.equal(oStubbedDeleteFile.getCall(0).args[3], "fileType", "with correct fileType");
@@ -247,7 +249,7 @@ sap.ui.define([
 								layer : "All",
 								metadata : [{
 									name : "layer",
-									value : "VENDOR"
+									value : Layer.VENDOR
 								}]
 							};
 						}
@@ -257,7 +259,7 @@ sap.ui.define([
 			var oStubbedDeleteFile = sandbox.stub(oController, "_deleteFile").returns(Promise.resolve());
 			oController._selectTransportAndDeleteFile();
 			assert.ok(oStubbedDeleteFile.calledOnce, "then call for deleting file");
-			assert.equal(oStubbedDeleteFile.getCall(0).args[0], "VENDOR", "with correct layer");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[0], Layer.VENDOR, "with correct layer");
 			assert.equal(oStubbedDeleteFile.getCall(0).args[1], "namespace", "with correct namespace");
 			assert.equal(oStubbedDeleteFile.getCall(0).args[2], "fileName", "with correct fileName");
 			assert.equal(oStubbedDeleteFile.getCall(0).args[3], "fileType", "with correct fileType");
@@ -277,7 +279,7 @@ sap.ui.define([
 								layer : "All",
 								metadata : [{
 									name : "layer",
-									value : "VENDOR"
+									value : Layer.VENDOR
 								}, {
 									name : "transportId",
 									value : "transportId"

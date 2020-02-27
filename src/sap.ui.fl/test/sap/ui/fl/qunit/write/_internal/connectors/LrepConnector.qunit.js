@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
 	"sap/m/MessageBox",
 	"sap/ui/core/BusyIndicator"
@@ -15,6 +16,7 @@ sap.ui.define([
 	LrepConnector,
 	WriteUtils,
 	TransportSelection,
+	Layer,
 	Change,
 	MessageBox,
 	BusyIndicator
@@ -53,7 +55,7 @@ sap.ui.define([
 			};
 			fnReturnData(500, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 
-			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", layer: "VENDOR"};
+			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", layer: Layer.VENDOR};
 			return LrepConnector.getFlexInfo(mPropertyBag).catch(function (oError) {
 				assert.equal(oError.userMessage, "Error text 1\nError text 2\n", "Correct user message is returned in the error object");
 				assert.equal(oError.status, "500", "Correct status is returned in the error object");
@@ -68,7 +70,7 @@ sap.ui.define([
 			};
 			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 
-			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", layer: "VENDOR"};
+			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", layer: Layer.VENDOR};
 			var sUrl = "/sap/bc/lrep/flex/info/reference?layer=VENDOR&appVersion=1.0.0";
 			return LrepConnector.getFlexInfo(mPropertyBag).then(function (oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
@@ -127,7 +129,7 @@ sap.ui.define([
 				}
 			};
 
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var sReference = "sampleComponent";
 			var sAppVersion = "1.0.0";
 			var aMockLocalChanges = [oMockNewChange];
@@ -192,7 +194,7 @@ sap.ui.define([
 			// changes for the component
 			var oVENDORChange1 = new Change({
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "1",
 				namespace: "b",
 				packageName: "$TMP",
@@ -209,7 +211,7 @@ sap.ui.define([
 
 			var oVENDORChange2 = new Change({
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "2",
 				namespace: "b",
 				packageName: "c",
@@ -240,7 +242,7 @@ sap.ui.define([
 			return LrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				generator: "Change.createInitialFileContent",
 				changes: [oVENDORChange1, oVENDORChange2],
 				reference: "flexReference"
@@ -266,7 +268,7 @@ sap.ui.define([
 			// changes for the component
 			var oVENDORChange1 = new Change({
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "1",
 				namespace: "b",
 				packageName: "$TMP",
@@ -283,7 +285,7 @@ sap.ui.define([
 
 			var oVENDORChange2 = new Change({
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "2",
 				namespace: "b",
 				packageName: "c",
@@ -316,7 +318,7 @@ sap.ui.define([
 			return LrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				changeTypes: ["labelChange"],
 				selectorIds: ["abc123"],
 				changes: aChanges,
@@ -339,7 +341,7 @@ sap.ui.define([
 			// changes for the component
 			var oUserChange = new Change({
 				fileType: "change",
-				layer: "USER",
+				layer: Layer.USER,
 				fileName: "1",
 				namespace: "b",
 				packageName: "c",
@@ -356,7 +358,7 @@ sap.ui.define([
 
 			var oCUSTOMERChange1 = new Change({
 				fileType: "change",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				fileName: "2",
 				namespace: "b",
 				packageName: "c",
@@ -373,7 +375,7 @@ sap.ui.define([
 
 			var oCUSTOMERChange2 = new Change({
 				fileType: "change",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				fileName: "3",
 				namespace: "b",
 				packageName: "c",
@@ -405,7 +407,7 @@ sap.ui.define([
 			return LrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				generator: "Change.createInitialFileContent",
 				changes: aChanges,
 				reference: "flexReference"
@@ -439,7 +441,7 @@ sap.ui.define([
 			return LrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				changes: [],
 				reference: "flexReference",
 				selectorIds: aControlIds
@@ -472,7 +474,7 @@ sap.ui.define([
 			return LrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
-				layer: "USER",
+				layer: Layer.USER,
 				changes: [],
 				reference: "flexReference",
 				selectorIds: aControlIds,
@@ -593,7 +595,7 @@ sap.ui.define([
 				fileType: "change",
 				fileName: "myFileName",
 				namespace: "level1/level2/level3",
-				layer: "VENDOR"
+				layer: Layer.VENDOR
 			};
 			var mPropertyBag = {
 				flexObject: oFlexObject,
@@ -620,7 +622,7 @@ sap.ui.define([
 				fileType: "variant",
 				fileName: "myFileName",
 				namespace: "level1/level2/level3",
-				layer: "VENDOR"
+				layer: Layer.VENDOR
 			};
 			var mPropertyBag = {
 				flexObject: oFlexObject,
@@ -657,7 +659,7 @@ sap.ui.define([
 		QUnit.test("given a mock server, when appVariant.getManifest is triggered", function (assert) {
 			var mPropertyBag = {
 				appVarUrl: "/sap/bc/lrep/content/apps/someBaseAppId/appVariants/someAppVariantID/manifest.appdescr_variant",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				url: "/sap/bc/lrep"
 			};
 
@@ -674,7 +676,7 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when appVariant.load is triggered", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
 				url: "/sap/bc/lrep"
 			};
@@ -697,7 +699,7 @@ sap.ui.define([
 				fileType: "appdescr_variant",
 				id: "someAppVariantId",
 				isAppVariantRoot: true,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				namespace: "apps/someBaseApplicationId/appVariants/someAppVariantId/",
 				packageName: "",
 				reference: "sap.ui.rta.test.variantManagement",
@@ -706,7 +708,7 @@ sap.ui.define([
 			};
 			var mPropertyBag = {
 				flexObject: oFlexObject,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
 				transport: "aTransport"
@@ -731,7 +733,7 @@ sap.ui.define([
 				fileType: "appdescr_variant",
 				id: "someAppVariantId",
 				isAppVariantRoot: true,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				namespace: "apps/someBaseApplicationId/appVariants/someAppVariantId/",
 				packageName: "",
 				reference: "sap.ui.rta.test.variantManagement",
@@ -740,7 +742,7 @@ sap.ui.define([
 			};
 			var mPropertyBag = {
 				flexObject: oFlexObject,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
 				skipIam: true,
@@ -766,7 +768,7 @@ sap.ui.define([
 				fileType: "appdescr_variant",
 				id: "someAppVariantId",
 				isAppVariantRoot: true,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				namespace: "apps/someBaseApplicationId/appVariants/someAppVariantId/",
 				packageName: "",
 				reference: "sap.ui.rta.test.variantManagement",
@@ -775,7 +777,7 @@ sap.ui.define([
 			};
 			var mPropertyBag = {
 				flexObject: oFlexObject,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
 				settings: {
@@ -802,7 +804,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				action: "assignCatalogs",
 				assignFromAppId: "someBaseApplicationId",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				url: "/sap/bc/lrep"
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?action=assignCatalogs&assignFromAppId=someBaseApplicationId";
@@ -821,7 +823,7 @@ sap.ui.define([
 		QUnit.test("given a mock server, when appVariant.unassignCatalogs is triggered", function (assert) {
 			var mPropertyBag = {
 				action: "unassignCatalogs",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				url: "/sap/bc/lrep"
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?action=unassignCatalogs";
@@ -839,7 +841,7 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when appVariant.update is triggered with transport info provided", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
@@ -860,7 +862,7 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when appVariant.update is triggered with transport selection successful", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
@@ -898,7 +900,7 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when appVariant.update is triggered with with transport selection unsuccessful", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
@@ -929,7 +931,7 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when appVariant.remove is triggered with transport info provided", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
@@ -949,7 +951,7 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when appVariant.remove is triggered with transport selection successful", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
@@ -985,7 +987,7 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when appVariant.remove is triggered with transport selection unsuccessful", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
@@ -1015,7 +1017,7 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when appVariant.remove is triggered with cancel from transport dialog", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "someAppVariantId",
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
@@ -1045,7 +1047,7 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when appVariant.list is triggered", function (assert) {
 			var mPropertyBag = {
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				reference: "someId",
 				url: "/sap/bc/lrep"
 			};

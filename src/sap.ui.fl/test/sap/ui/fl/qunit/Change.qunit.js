@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
@@ -14,6 +15,7 @@ sap.ui.define([
 ],
 function(
 	Change,
+	Layer,
 	Utils,
 	LayerUtils,
 	Settings,
@@ -39,7 +41,7 @@ function(
 				projectId: "myProject",
 				packageName: "$TMP",
 				fileType: "variant",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				changeType: "filterVariant",
 				reference: "smartFilterBar",
 				componentName: "smartFilterBar",
@@ -80,7 +82,7 @@ function(
 				}
 			};
 
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 		},
 		afterEach: function() {
 			sap.ushell = this.ushellStore;
@@ -343,11 +345,11 @@ function(
 
 		QUnit.test("Change._isReadOnlyDueToLayer", function(assert) {
 			// check for different layer
-			this.oChangeDef.layer = "CUSTOMER";
+			this.oChangeDef.layer = Layer.CUSTOMER;
 			var oInstance = new Change(this.oChangeDef);
 			assert.equal(oInstance._isReadOnlyDueToLayer(), true);
 			// check for same layer
-			this.oChangeDef.layer = "VENDOR";
+			this.oChangeDef.layer = Layer.VENDOR;
 			oInstance = new Change(this.oChangeDef);
 			assert.equal(oInstance._isReadOnlyDueToLayer(), false);
 		});
@@ -367,7 +369,7 @@ function(
 
 		QUnit.test("Change.getLayer", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
-			assert.equal(oInstance.getLayer(), "VENDOR");
+			assert.equal(oInstance.getLayer(), Layer.VENDOR);
 		});
 
 		QUnit.test("Change.getComponent", function(assert) {
@@ -567,7 +569,7 @@ function(
 				component: "smartFilterBar",
 				content: {something: "createNewVariant"},
 				selector: {id: "control1"},
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				conditions: {}, // obsolete property (should still be checked if these exists already in the stored object)
 				context: "", // obsolete property (should still be checked if these exists already in the stored object)
 				texts: {

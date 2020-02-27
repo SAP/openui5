@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/ChangeRegistry",
@@ -15,9 +16,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/core/Component",
 	"sap/base/Log",
-	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	Layer,
 	Utils,
 	LayerUtils,
 	ChangeRegistry,
@@ -30,7 +31,6 @@ sap.ui.define([
 	URLHandler,
 	Component,
 	Log,
-	merge,
 	jQuery
 ) {
 	"use strict";
@@ -330,7 +330,7 @@ sap.ui.define([
 			});
 
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-			return oFlexController.getComponentChanges({currentLayer: "USER", includeCtrlVariants: true})
+			return oFlexController.getComponentChanges({currentLayer: Layer.USER, includeCtrlVariants: true})
 			.then(function (aChanges) {
 				return aChanges
 					.filter(this._filterBySelectors.bind(this, oAppComponent, aIdsOfPassedControls))
@@ -390,7 +390,7 @@ sap.ui.define([
 				return sLocalId || sControlId;
 			});
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-			return oFlexController.resetChanges("USER", undefined, oAppComponent, aSelectorIds, aChangeTypes);
+			return oFlexController.resetChanges(Layer.USER, undefined, oAppComponent, aSelectorIds, aChangeTypes);
 		},
 
 		/**

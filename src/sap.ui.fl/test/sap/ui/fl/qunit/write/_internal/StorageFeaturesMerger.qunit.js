@@ -2,9 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/StorageFeaturesMerger"
 ], function(
 	sinon,
+	Layer,
 	StorageFeaturesMerger
 ) {
 	"use strict";
@@ -62,15 +64,15 @@ sap.ui.define([
 
 		QUnit.test("mergeResults handles the versioning flags", function (assert) {
 			var oResponse1 = {
-				layers: ["VENDOR", "CUSTOMER_BASE"],
+				layers: [Layer.VENDOR, Layer.CUSTOMER_BASE],
 				features: {isVersioningEnabled: false}
 			};
 			var oResponse2 = {
-				layers: ["CUSTOMER"],
+				layers: [Layer.CUSTOMER],
 				features: {isVersioningEnabled: true}
 			};
 			var oResponse3 = {
-				layers: ["USER"],
+				layers: [Layer.USER],
 				features: {isVersioningEnabled: false}
 			};
 			var aResponse = [oResponse1, oResponse2, oResponse3];

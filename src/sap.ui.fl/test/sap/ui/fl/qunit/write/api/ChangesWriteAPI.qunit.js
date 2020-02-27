@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/core/Component",
@@ -21,6 +22,7 @@ sap.ui.define([
 	Reverter,
 	ChangesController,
 	ChangesWriteAPI,
+	Layer,
 	FlexUtils,
 	Settings,
 	Component,
@@ -111,7 +113,7 @@ sap.ui.define([
 						text1: "text1"
 					},
 					reference: "reference",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				}
 			};
 			mPropertyBag.selector.getManifest = function() {};
