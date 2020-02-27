@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/base/util/values",
 	"sap/base/util/merge",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
 	"sap/ui/core/Component",
 	"sap/ui/thirdparty/sinon-4"
@@ -19,6 +20,7 @@ sap.ui.define([
 	values,
 	merge,
 	Change,
+	Layer,
 	Variant,
 	Component,
 	sinon
@@ -325,13 +327,13 @@ sap.ui.define([
 							controlChanges: [
 								{
 									fileName: "controlChange1",
-									layer: "VENDOR"
+									layer: Layer.VENDOR
 								}, {
 									fileName: "controlChange2",
-									layer: "VENDOR"
+									layer: Layer.VENDOR
 								}, {
 									fileName: "controlChange3",
-									layer: "CUSTOMER"
+									layer: Layer.CUSTOMER
 								}
 							]
 						}
@@ -505,7 +507,7 @@ sap.ui.define([
 				content : {
 					fileName: "newVariant1",
 					variantReference: "variant0",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					content: {
 						title: "AA"
 					}
@@ -535,7 +537,7 @@ sap.ui.define([
 				content : {
 					fileName: "newVariant1",
 					variantReference: "variant0",
-					layer: "USER",
+					layer: Layer.USER,
 					content: {
 						title: "AA"
 					}

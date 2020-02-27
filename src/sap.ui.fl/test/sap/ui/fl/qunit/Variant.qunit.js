@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Variant",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Layer,
 	Utils,
 	LayerUtils,
 	Variant,
@@ -139,12 +141,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _isReadOnlyDueToLayer is called for different layer", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 			assert.equal(this.oVariant._isReadOnlyDueToLayer(), true);
 		});
 
 		QUnit.test("when _isReadOnlyDueToLayer is called for same layer", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 			this.oVariant = new Variant(this.oVariantDef);
 			assert.equal(this.oVariant._isReadOnlyDueToLayer(), false);
 		});
@@ -207,7 +209,7 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					texts: {
 						TextDemo: {
 							value: "Text for TextDemo",
@@ -253,7 +255,7 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					texts: {
 						TextDemo: {
 							value: "Text for TextDemo",
@@ -300,7 +302,7 @@ sap.ui.define([
 					component: "smartFilterBar",
 					content: {something: "createNewVariant"},
 					selector: {id: "control1"},
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					texts: {
 						variantName: {
 							value: "myVariantName",

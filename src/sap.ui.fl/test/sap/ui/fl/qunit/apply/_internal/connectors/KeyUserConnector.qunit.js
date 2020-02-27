@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector"
 ], function(
 	sinon,
+	Layer,
 	Utils,
 	KeyUserConnector
 ) {
@@ -14,8 +16,6 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Connector", {
-		beforeEach : function () {
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -28,7 +28,7 @@ sap.ui.define([
 				url: "/flexKeyuser",
 				reference: "reference",
 				appVersion: "1.0.0",
-				draftLayer: "CUSTOMER"
+				draftLayer: Layer.CUSTOMER
 			};
 			var mParameter = {
 				appVersion: "1.0.0",

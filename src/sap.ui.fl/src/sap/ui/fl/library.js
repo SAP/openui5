@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/RegistrationDelegator",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/core/library", // library dependency
 	"sap/m/library" // library dependency
 ], function(
 	RegistrationDelegator,
-	Utils
+	Utils,
+	Layer
 ) {
 	"use strict";
 
@@ -131,7 +133,7 @@ sap.ui.define([
 			layers: []
 		}, {
 			connector: "LocalStorageConnector",
-			layers: ["CUSTOMER", "USER"]
+			layers: [Layer.CUSTOMER, Layer.USER]
 		}]);
 	}
 

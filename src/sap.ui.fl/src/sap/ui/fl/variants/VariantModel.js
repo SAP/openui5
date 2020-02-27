@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
@@ -19,6 +20,7 @@ sap.ui.define([
 	JSONModel,
 	JsControlTreeModifier,
 	BusyIndicator,
+	Layer,
 	Utils,
 	LayerUtils,
 	Change,
@@ -379,7 +381,7 @@ sap.ui.define([
 			variantChanges: {}
 		};
 
-		var iCurrentLayerComp = LayerUtils.compareAgainstCurrentLayer(oSourceVariant.content.layer, !this._bDesignTimeMode ? "USER" : "");
+		var iCurrentLayerComp = LayerUtils.compareAgainstCurrentLayer(oSourceVariant.content.layer, !this._bDesignTimeMode ? Layer.USER : "");
 
 		Object.keys(oSourceVariant.content).forEach(function(sKey) {
 			if (sKey === "fileName") {
@@ -404,7 +406,7 @@ sap.ui.define([
 		var oDuplicateChangeData = {};
 		var oDuplicateChangeContent;
 		oDuplicateVariant.controlChanges = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
-			if (LayerUtils.compareAgainstCurrentLayer(oChange.layer, !this._bDesignTimeMode ? "USER" : "") === 0) {
+			if (LayerUtils.compareAgainstCurrentLayer(oChange.layer, !this._bDesignTimeMode ? Layer.USER : "") === 0) {
 				oDuplicateChangeData = fnBaseMerge({}, oChange);
 				oDuplicateChangeData.variantReference = oDuplicateVariant.content.fileName;
 				if (!oDuplicateChangeData.support) {

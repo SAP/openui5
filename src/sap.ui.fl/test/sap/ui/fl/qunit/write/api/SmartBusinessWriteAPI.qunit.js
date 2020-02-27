@@ -1,4 +1,3 @@
-/* eslint-disable quote-props */
 /* global QUnit */
 
 sap.ui.define([
@@ -6,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/SmartBusinessWriteAPI",
 	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
@@ -18,6 +18,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	SmartBusinessWriteAPI,
 	LrepConnector,
+	Layer,
 	Settings,
 	WriteUtils,
 	ApplyUtils,
@@ -28,7 +29,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	jQuery('#qunit-fixture').hide();
+	jQuery("#qunit-fixture").hide();
 	var sandbox = sinon.sandbox.create();
 
 	function simulateSystemConfig(bIsCloudSystem) {
@@ -45,7 +46,7 @@ sap.ui.define([
 	QUnit.module("Given SmartBusinessWriteAPI", {
 		beforeEach: function () {
 			this.oDescrChangeSpecificData1 = {
-				changeType: 'appdescr_ovp_addNewCard',
+				changeType: "appdescr_ovp_addNewCard",
 				content: {
 					card : {
 						"customer.acard" : {
@@ -113,10 +114,9 @@ sap.ui.define([
 							appId: "reference.app"
 						},
 						id: "customer.reference.app.id",
-						// eslint-disable-next-line quote-props
-						package: "TEST_PACKAGE",
+						"package": "TEST_PACKAGE",
 						transport: "U1YK123456",
-						layer: "CUSTOMER"
+						layer: Layer.CUSTOMER
 					});
 				})
 				.then(function() {
@@ -151,8 +151,7 @@ sap.ui.define([
 							appId: "reference.app"
 						},
 						id: "customer.reference.app.id",
-						// eslint-disable-next-line quote-props
-						layer: "CUSTOMER"
+						layer: Layer.CUSTOMER
 					});
 				})
 				.then(function() {
@@ -189,10 +188,9 @@ sap.ui.define([
 							appId: "reference.app"
 						},
 						id: "customer.reference.app.id",
-						// eslint-disable-next-line quote-props
-						package: "TEST_PACKAGE",
+						"package": "TEST_PACKAGE",
 						transport: "U1YK123456",
-						layer: "VENDOR"
+						layer: Layer.VENDOR
 					});
 				})
 				.catch(function() {
@@ -229,10 +227,9 @@ sap.ui.define([
 							appId: "reference.app"
 						},
 						id: "customer.reference.app.id",
-						// eslint-disable-next-line quote-props
-						package: "",
+						"package": "",
 						transport: "U1YK123456",
-						layer: "VENDOR"
+						layer: Layer.VENDOR
 					});
 				})
 				.then(function() {
@@ -266,9 +263,8 @@ sap.ui.define([
 							appId: "reference.app"
 						},
 						id: "customer.reference.app.id",
-						// eslint-disable-next-line quote-props
-						package: "$TMP",
-						layer: "VENDOR"
+						"package": "$TMP",
+						layer: Layer.VENDOR
 					});
 				})
 				.then(function() {
@@ -305,10 +301,9 @@ sap.ui.define([
 							appId: "reference.app"
 						},
 						id: "customer.reference.app.id",
-						// eslint-disable-next-line quote-props
-						package: "",
+						"package": "",
 						transport: "U1YK123456",
-						layer: "CUSTOMER_BASE"
+						layer: Layer.CUSTOMER_BASE
 					});
 				})
 				.then(function() {
@@ -332,7 +327,7 @@ sap.ui.define([
 					reference: "reference.app",
 					fileName: "fileName1",
 					namespace: "namespace1",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					fileType: "fileType1",
 					packageName: "ATO_PACKAGE",
 					content: [{
@@ -368,7 +363,7 @@ sap.ui.define([
 					reference: "reference.app",
 					fileName: "fileName1",
 					namespace: "namespace1",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					fileType: "fileType1",
 					packageName: "$TMP",
 					content: [{
@@ -404,7 +399,7 @@ sap.ui.define([
 					reference: "reference.app",
 					fileName: "fileName1",
 					namespace: "namespace1",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					fileType: "fileType1",
 					packageName: "",
 					content: [{

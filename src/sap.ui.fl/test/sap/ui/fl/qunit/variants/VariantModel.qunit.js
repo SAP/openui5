@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/FlexControllerFactory",
@@ -24,6 +25,7 @@ function(
 	VariantModel,
 	VariantManagement,
 	Utils,
+	Layer,
 	LayerUtils,
 	Change,
 	FlexControllerFactory,
@@ -41,7 +43,7 @@ function(
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	sinon.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
+	sinon.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 	sinon.stub(BusyIndicator, "show");
 	sinon.stub(BusyIndicator, "hide");
 	var oDummyControl = {
@@ -86,21 +88,21 @@ function(
 						{
 							author: this.oFlexController._oChangePersistence._oVariantController.DEFAULT_AUTHOR,
 							key: "variantMgmtId1",
-							layer: "VENDOR",
+							layer: Layer.VENDOR,
 							title: "Standard",
 							favorite: true,
 							visible: true
 						}, {
 							author: "Me",
 							key: "variant0",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							title: "variant A",
 							favorite: true,
 							visible: true
 						}, {
 							author: "Me",
 							key: "variant1",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							title: "variant B",
 							favorite: false,
 							visible: true
@@ -155,7 +157,7 @@ function(
 		});
 
 		QUnit.test("when calling 'getData'", function(assert) {
-			var sExpectedJSON = '{"variantMgmtId1":{"currentVariant":"variant1","defaultVariant":"variant1","originalCurrentVariant":"variant1","originalDefaultVariant":"variant1","variants":[{"author":"' + this.oModel.oVariantController.DEFAULT_AUTHOR + '","favorite":true,"key":"variantMgmtId1","layer":"VENDOR","originalFavorite":true,"originalTitle":"Standard","originalVisible":true,"title":"Standard","visible":true},{"author":"Me","favorite":true,"key":"variant0","layer":"CUSTOMER","originalFavorite":true,"originalTitle":"variant A","originalVisible":true,"title":"variant A","visible":true},{"author":"Me","favorite":false,"key":"variant1","layer":"CUSTOMER","originalFavorite":false,"originalTitle":"variant B","originalVisible":true,"title":"variant B","visible":true}]}}';
+			var sExpectedJSON = '{"variantMgmtId1":{"currentVariant":"variant1","defaultVariant":"variant1","originalCurrentVariant":"variant1","originalDefaultVariant":"variant1","variants":[{"author":"' + this.oModel.oVariantController.DEFAULT_AUTHOR + '","favorite":true,"key":"variantMgmtId1","layer":"VENDOR","originalFavorite":true,"originalTitle":"Standard","originalVisible":true,"title":"Standard","visible":true},{"author":"Me","favorite":true,"key":"variant0","layer":"' + Layer.CUSTOMER + '","originalFavorite":true,"originalTitle":"variant A","originalVisible":true,"title":"variant A","visible":true},{"author":"Me","favorite":false,"key":"variant1","layer":"' + Layer.CUSTOMER + '","originalFavorite":false,"originalTitle":"variant B","originalVisible":true,"title":"variant B","visible":true}]}}';
 			var sCurrentVariant = this.oModel.getCurrentVariantReference("variantMgmtId1");
 			assert.deepEqual(this.oModel.getData(), JSON.parse(sExpectedJSON));
 			assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
@@ -311,7 +313,7 @@ function(
 			var mPropertyBag = {
 				changeType : "setTitle",
 				title : "New Title",
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				variantReference : "variant1",
 				appComponent : this.oComponent
 			};
@@ -353,7 +355,7 @@ function(
 			var mPropertyBag = {
 				changeType : "setFavorite",
 				favorite : false,
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				variantReference : "variant1",
 				appComponent : this.oComponent
 			};
@@ -395,7 +397,7 @@ function(
 			var mPropertyBag = {
 				changeType : "setVisible",
 				visible : false,
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				variantReference : "variant1",
 				appComponent : this.oComponent
 			};
@@ -436,7 +438,7 @@ function(
 			var mPropertyBag = {
 				changeType : "setDefault",
 				defaultVariant : "variant0",
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				variantManagementReference : "variantMgmtId1",
 				appComponent : this.oComponent
 			};
@@ -498,7 +500,7 @@ function(
 			var mPropertyBag = {
 				changeType : "setDefault",
 				defaultVariant : "variant1",
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				variantManagementReference : "variantMgmtId1",
 				appComponent : this.oComponent,
 				change : { getDefinition : function() {} }
@@ -531,7 +533,7 @@ function(
 			var mPropertyBag = {
 				changeType : "setDefault",
 				defaultVariant : "variant1",
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				variantManagementReference : "variantMgmtId1",
 				appComponent : this.oComponent,
 				change : { getDefinition : function() {} }
@@ -700,7 +702,7 @@ function(
 						title:"variant A"
 					},
 					selector:{},
-					layer:"CUSTOMER",
+					layer:Layer.CUSTOMER,
 					namespace:"Dummy.Component"
 				},
 				controlChanges: [],
@@ -711,7 +713,7 @@ function(
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				title: "variant A Copy"
 			};
 
@@ -736,7 +738,7 @@ function(
 						title:"variant A"
 					},
 					selector:{},
-					layer:"VENDOR",
+					layer: Layer.VENDOR,
 					namespace:"Dummy.Component"
 				},
 				controlChanges: [],
@@ -747,7 +749,7 @@ function(
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				title: "variant A Copy"
 			};
 
@@ -768,7 +770,7 @@ function(
 				fileName: "change0",
 				selector: {id: "abc123"},
 				variantReference: "variant0",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				support: {},
 				reference: "test.Component",
 				packageName: "MockPackageName"
@@ -777,7 +779,7 @@ function(
 				fileName: "change1",
 				selector: {id: "abc123"},
 				variantReference: "variant0",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				support: {},
 				reference: "test.Component"
 			});
@@ -792,7 +794,7 @@ function(
 						title:"variant A"
 					},
 					selector:{},
-					layer:"VENDOR",
+					layer: Layer.VENDOR,
 					namespace:"Dummy.Component"
 				},
 				controlChanges: [oChange0, oChange1],
@@ -803,7 +805,7 @@ function(
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				title: "variant A Copy"
 			};
 
@@ -831,7 +833,7 @@ function(
 				fileName: "change0",
 				selector: {id: "abc123"},
 				variantReference: "variant0",
-				layer: "USER",
+				layer: Layer.USER,
 				support: {},
 				reference: "test.Component"
 			});
@@ -839,7 +841,7 @@ function(
 				fileName: "change1",
 				selector: {id: "abc123"},
 				variantReference: "variant0",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				support: {},
 				reference: "test.Component"
 			});
@@ -847,7 +849,7 @@ function(
 				fileName: "change2",
 				selector: {id: "abc123"},
 				variantReference: "variant0",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				support: {},
 				reference: "test.Component"
 			});
@@ -862,7 +864,7 @@ function(
 						title:"variant A"
 					},
 					selector:{},
-					layer:"VENDOR",
+					layer: Layer.VENDOR,
 					namespace:"Dummy.Component"
 				},
 				controlChanges: [oChange0, oChange1, oChange2],
@@ -873,7 +875,7 @@ function(
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				title: "variant A Copy"
 			};
 
@@ -892,7 +894,7 @@ function(
 			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oSourceVariant.controlChanges[0].getDefinition().fileName, "then the fileName of the origin change is written to support object");
 			assert.equal(oDuplicateVariant.controlChanges[0].getLayer(), LayerUtils.getCurrentLayer(true), "then only the change with the same layer is duplicated");
 			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
-			sinon.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
+			sinon.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant with no layer", function(assert) {
@@ -916,7 +918,7 @@ function(
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				title: "variant A Copy"
 			};
 
@@ -927,7 +929,7 @@ function(
 			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 			oSourceVariantCopy.content.fileName = "newVariant";
-			oSourceVariantCopy.content.layer = "CUSTOMER";
+			oSourceVariantCopy.content.layer = Layer.CUSTOMER;
 
 			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
 		});
@@ -954,7 +956,7 @@ function(
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
-				layer: "USER",
+				layer: Layer.USER,
 				title: "variant A Copy"
 			};
 
@@ -965,17 +967,17 @@ function(
 			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 			oSourceVariantCopy.content.fileName = "newVariant";
-			oSourceVariantCopy.content.layer = "USER";
+			oSourceVariantCopy.content.layer = Layer.USER;
 
 			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-			sinon.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
+			sinon.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant on the same layer", function(assert) {
 			// non-personalization mode
 			this.oModel._bDesignTimeMode = true;
-			var oChange0 = new Change({fileName:"change0", selector: {id: "abc123"}, variantReference:"variant0", layer: "CUSTOMER", support: {}, reference: "test.Component"});
-			var oChange1 = new Change({fileName:"change1", selector: {id: "abc123"}, variantReference:"variant0", layer: "CUSTOMER", support: {}, reference: "test.Component"});
+			var oChange0 = new Change({fileName:"change0", selector: {id: "abc123"}, variantReference:"variant0", layer: Layer.CUSTOMER, support: {}, reference: "test.Component"});
+			var oChange1 = new Change({fileName:"change1", selector: {id: "abc123"}, variantReference:"variant0", layer: Layer.CUSTOMER, support: {}, reference: "test.Component"});
 
 			var oSourceVariant = {
 				content: {
@@ -987,7 +989,7 @@ function(
 						title:"variant A"
 					},
 					selector:{},
-					layer:"CUSTOMER",
+					layer:Layer.CUSTOMER,
 					namespace:"Dummy.Component"
 				},
 				controlChanges: [oChange0, oChange1],
@@ -998,7 +1000,7 @@ function(
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				title: "variant A Copy"
 			};
 
@@ -1081,7 +1083,7 @@ function(
 					content:{
 						title:"variant A"
 					},
-					layer:"CUSTOMER",
+					layer:Layer.CUSTOMER,
 					texts:{
 						TextDemo: {
 							value: "Text for TextDemo",
@@ -1135,7 +1137,7 @@ function(
 			var oChangeInVariant = {
 				fileName: "change0",
 				variantReference: "variant0",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				getId: function () {
 					return this.fileName;
 				},
@@ -1197,14 +1199,14 @@ function(
 			this.oModel.getData()["variantMgmtId1"].variants[1].visible = false;
 			this.oModel.getData()["variantMgmtId1"].defaultVariant = "variant0";
 
-			var aChanges = this.oModel.collectModelChanges("variantMgmtId1", "CUSTOMER");
+			var aChanges = this.oModel.collectModelChanges("variantMgmtId1", Layer.CUSTOMER);
 			assert.equal(aChanges.length, 4, "then 4 changes with mPropertyBags were created");
 		});
 
 		QUnit.test("when calling 'manageVariants' in Adaptation mode once with changes and then without changes", function(assert) {
 			var sVariantManagementReference = "variantMgmtId1";
 			var oVariantManagement = new VariantManagement(sVariantManagementReference);
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 
 			sandbox.stub(oVariantManagement, "openManagementDialog").callsFake(oVariantManagement.fireManage);
@@ -1264,7 +1266,7 @@ function(
 					title: "Personalization Test Variant",
 					variantManagementReference: sVMReference,
 					variantReference: "variant1",
-					layer: "USER"
+					layer: Layer.USER
 				}
 			};
 			var oCopiedVariant = new sap.ui.fl.Variant(oCopiedVariantContent);
@@ -1353,7 +1355,7 @@ function(
 					title: "Personalization Test Variant",
 					variantManagementReference: sVMReference,
 					variantReference: "variant1",
-					layer: "USER"
+					layer: Layer.USER
 				}
 			};
 			var oCopiedVariant = new sap.ui.fl.Variant(oCopiedVariantContent);
@@ -1779,14 +1781,14 @@ function(
 					{
 						author: this.oFlexController._oChangePersistence._oVariantController.DEFAULT_AUTHOR,
 						key: this.sVMReference,
-						layer: "VENDOR",
+						layer: Layer.VENDOR,
 						title: "Standard",
 						favorite: true,
 						visible: true
 					}, {
 						author: "Me",
 						key: "variant0",
-						layer: "CUSTOMER",
+						layer: Layer.CUSTOMER,
 						title: "variant A",
 						favorite: true,
 						visible: true

@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/Cache",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/variants/VariantModel",
@@ -16,6 +17,7 @@ sap.ui.define([
 	Control,
 	UIComponent,
 	Cache,
+	Layer,
 	Utils,
 	FlexRuntimeInfoAPI,
 	VariantModel,
@@ -76,12 +78,12 @@ sap.ui.define([
 			this.oControl = new Control("controlId1");
 			var aControls = [this.oControl];
 
-			var oChangeContent0 = {fileName:"change0", fileType:"change", variantReference:"", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: "USER"};
-			var oChangeContent1 = {fileName:"change1", fileType:"change", variantReference:"variantManagementId", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: "USER"};
-			var oChangeContent2 = {fileName:"change2", fileType:"change", variantReference:"variantManagementId", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType2", layer: "USER"};
-			var oChangeContent3 = {fileName:"change3", fileType:"change", variantReference:"variant1", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType2", layer: "USER"};
-			var oVariantChangeContent0 = {fileName: "variantChange0", fileType: "ctrl_variant_change", layer: "USER", selector: {id: "variantManagementId"}, changeType: "changeType1"};
-			var oVariantManagementChangeContent0 = {fileName: "variantManagementChange0", fileType: "ctrl_variant_management_change", layer: "USER", changeType: "changeType1", selector: {id: "variantManagementId"}, content: {defaultVariant: "defaultVariant0"}};
+			var oChangeContent0 = {fileName:"change0", fileType:"change", variantReference:"", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: Layer.USER};
+			var oChangeContent1 = {fileName:"change1", fileType:"change", variantReference:"variantManagementId", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: Layer.USER};
+			var oChangeContent2 = {fileName:"change2", fileType:"change", variantReference:"variantManagementId", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType2", layer: Layer.USER};
+			var oChangeContent3 = {fileName:"change3", fileType:"change", variantReference:"variant1", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType2", layer: Layer.USER};
+			var oVariantChangeContent0 = {fileName: "variantChange0", fileType: "ctrl_variant_change", layer: Layer.USER, selector: {id: "variantManagementId"}, changeType: "changeType1"};
+			var oVariantManagementChangeContent0 = {fileName: "variantManagementChange0", fileType: "ctrl_variant_management_change", layer: Layer.USER, changeType: "changeType1", selector: {id: "variantManagementId"}, content: {defaultVariant: "defaultVariant0"}};
 
 
 			var oMockedWrappedContent = {
@@ -156,7 +158,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When isPersonalized() is called with undefined change types", function(assert) {
-			var oChangeContent0 = {fileName:"change0", fileType:"change", variantReference:"", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: "USER"};
+			var oChangeContent0 = {fileName:"change0", fileType:"change", variantReference:"", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: Layer.USER};
 			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
 			var oMockedWrappedContent = {
 				changes: {
@@ -173,7 +175,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When isPersonalized() is called with an empty array of change types", function(assert) {
-			var oChangeContent0 = {fileName:"change0", fileType:"change", variantReference:"", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: "USER"};
+			var oChangeContent0 = {fileName:"change0", fileType:"change", variantReference:"", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: Layer.USER};
 			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
 			var oMockedWrappedContent = {
 				changes: {

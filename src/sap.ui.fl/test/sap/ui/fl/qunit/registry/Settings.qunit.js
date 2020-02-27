@@ -3,16 +3,14 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Cache",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
 	Settings,
-	Cache,
-	Utils,
 	CompatibilityConnector,
+	Layer,
 	sinon
 ) {
 	"use strict";
@@ -26,8 +24,8 @@ sap.ui.define([
 				isAtoAvailable: false,
 				isAtoEnabled: false,
 				features: {
-					addField: ["CUSTOMER", "VENDOR"],
-					changeTypeOnlyForUser: ["USER"],
+					addField: [Layer.CUSTOMER, Layer.VENDOR],
+					changeTypeOnlyForUser: [Layer.USER],
 					completelyDisabledChangeType: []
 				}
 			};
@@ -103,7 +101,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("isVersioningEnabled returns a 'true' flag if it is maintained in the settings for the passed layer", function(assert) {
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var oSettings = {
 				versioning : {}
 			};
@@ -114,7 +112,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("isVersioningEnabled returns a 'true' flag if it is maintained for 'ALL' layers in the settings for the passed layer", function(assert) {
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var oSettings = {
 				versioning : {
 					ALL : true
@@ -126,7 +124,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("isVersioningEnabled returns a 'false' flag if the layer is NOT maintained in the settings for the passed layer", function(assert) {
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var oSettings = {
 				versioning : {
 					VENDOR : true
@@ -138,7 +136,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("isVersioningEnabled returns a 'false' flag if NO layer is maintained in the settings for the passed layer", function(assert) {
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var oSettings = {
 				versioning : {}
 			};

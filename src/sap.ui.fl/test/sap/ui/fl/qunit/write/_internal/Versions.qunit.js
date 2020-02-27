@@ -2,12 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/ChangePersistenceFactory"
 ], function(
 	sinon,
+	Layer,
 	Versions,
 	Storage,
 	KeyUserConnector,
@@ -36,7 +38,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Given Versions.getVersions is called", function (assert) {
 			var mPropertyBag = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
 			};
 
@@ -48,7 +50,7 @@ sap.ui.define([
 
 		QUnit.test("Given Versions.getVersions is called multiple times for the same reference and layer", function (assert) {
 			var mPropertyBag = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
 			};
 
@@ -64,12 +66,12 @@ sap.ui.define([
 
 		QUnit.test("Given Versions.getVersions is called multiple times for different references", function (assert) {
 			var mPropertyBag1 = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
 			};
 
 			var mPropertyBag2 = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				reference : "com.sap.app2"
 			};
 
@@ -88,12 +90,12 @@ sap.ui.define([
 
 		QUnit.test("Given Versions.getVersions is called multiple times for different layers", function (assert) {
 			var mPropertyBag1 = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
 			};
 
 			var mPropertyBag2 = {
-				layer : "USER",
+				layer : Layer.USER,
 				reference : "com.sap.app"
 			};
 
@@ -111,7 +113,7 @@ sap.ui.define([
 	QUnit.module("Calling the Storage: Given Versions.getVersions is called", {
 		beforeEach: function () {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector : "KeyUserConnector", layers : ["CUSTOMER"], url: "/flexKeyUser"}
+				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
 		afterEach: function() {
@@ -121,7 +123,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("and a connector is configured which returns a list of versions", function (assert) {
 			var mPropertyBag = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
 			};
 			var aReturnedVersions = [];
@@ -136,7 +138,7 @@ sap.ui.define([
 	QUnit.module("Calling the Storage: Given Versions.activateDraft is called", {
 		beforeEach: function () {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector : "KeyUserConnector", layers : ["CUSTOMER"], url: "/flexKeyUser"}
+				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
 		afterEach: function() {
@@ -147,7 +149,7 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions while a draft exists", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				reference : sReference
 			};
 
@@ -199,7 +201,7 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions while a draft does NOT exists", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				reference : sReference
 			};
 
@@ -231,7 +233,7 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions while a draft does NOT exists but dirty changes do", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				reference : sReference
 			};
 
@@ -278,7 +280,7 @@ sap.ui.define([
 	QUnit.module("Calling the Storage: Given Versions.discardDraft is called", {
 		beforeEach: function () {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector : "KeyUserConnector", layers : ["CUSTOMER"], url: "/flexKeyUser"}
+				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
 		afterEach: function() {
@@ -289,7 +291,7 @@ sap.ui.define([
 		QUnit.test("and a connector is configured and a draft exists while discard is called", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				reference : sReference
 			};
 
@@ -322,7 +324,7 @@ sap.ui.define([
 		QUnit.test("and a connector is configured and a draft does NOT exists while discard is called", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: sReference
 			};
 
@@ -347,7 +349,7 @@ sap.ui.define([
 			"while discard is called with a flag to discard the dirty changes", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: sReference,
 				updateState: true
 			};
@@ -374,7 +376,7 @@ sap.ui.define([
 			"while discard is called withOUT a flag to discard the dirty changes", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: sReference
 			};
 
@@ -400,7 +402,7 @@ sap.ui.define([
 			"while discard is called with a flag to discard the dirty changes", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: sReference,
 				updateState: true
 			};
@@ -437,7 +439,7 @@ sap.ui.define([
 	}, function() {
 		function _setVersionsCallEnsureDraftAndCheckVersions(assert, aInitialVersions, aFinalVersions) {
 			var sReference = "com.sap.app";
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var mPropertyBag = {
 				reference: sReference,
 				layer: sLayer

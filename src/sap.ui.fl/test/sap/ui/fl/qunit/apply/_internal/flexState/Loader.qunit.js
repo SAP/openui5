@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -12,6 +13,7 @@ sap.ui.define([
 	Loader,
 	ManifestUtils,
 	CompatibilityConnector,
+	Layer,
 	Utils,
 	sinon
 ) {
@@ -41,7 +43,7 @@ sap.ui.define([
 				otherValue: "a",
 				reference: "reference",
 				componentData: {},
-				draftLayer: "CUSTOMER"
+				draftLayer: Layer.CUSTOMER
 			};
 			var oExpectedComponent = {
 				name: "reference",
@@ -52,7 +54,7 @@ sap.ui.define([
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
 				appName: "baseName",
-				draftLayer: "CUSTOMER",
+				draftLayer: Layer.CUSTOMER,
 				partialFlexData: undefined
 			};
 

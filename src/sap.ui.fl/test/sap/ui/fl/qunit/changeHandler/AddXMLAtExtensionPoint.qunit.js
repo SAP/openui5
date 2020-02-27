@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/ui/fl/registry/ChangeRegistry",
@@ -12,6 +13,7 @@ sap.ui.define([
 	jQuery,
 	AddXMLAtExtensionPoint,
 	Change,
+	Layer,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	ChangeRegistry,
@@ -101,7 +103,7 @@ sap.ui.define([
 			assert.ok(this.oChangeHandler.revertChange, "then revertChange function exists");
 			assert.ok(this.oChangeHandler.completeChangeContent, "then completeChangeContent function exists");
 			var oChangeRegistryInstance = ChangeRegistry.getInstance();
-			var sLayer = "VENDOR";
+			var sLayer = Layer.VENDOR;
 			oChangeRegistryInstance.initSettings();
 			return oChangeRegistryInstance.getChangeHandler("addXMLAtExtensionPoint", "sap.ui.core.mvc.View", undefined, XmlTreeModifier, sLayer).then(function(oChangeHandler) {
 				assert.deepEqual(oChangeHandler, AddXMLAtExtensionPoint, "then changehandler is registered");

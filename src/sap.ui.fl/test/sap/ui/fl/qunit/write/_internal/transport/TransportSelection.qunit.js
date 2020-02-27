@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/transport/Transports",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Control",
 	"sap/ui/core/BusyIndicator",
@@ -15,6 +16,7 @@ sap.ui.define([
 	Transports,
 	WriteUtils,
 	Change,
+	Layer,
 	FlUtils,
 	Control,
 	BusyIndicator,
@@ -245,7 +247,7 @@ sap.ui.define([
 			var aAppVariantDescriptors = [];
 			var sReference = "MyComponent";
 			var sAppVersion = "1.2.3";
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var oContentParameters = {
 				reference: sReference,
 				appVersion: sAppVersion,

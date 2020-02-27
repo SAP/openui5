@@ -1,8 +1,10 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/controller/Root.controller",
 	"sap/ui/thirdparty/jquery"
 ], function (
+	Layer,
 	RootController,
 	jQuery
 ) {
@@ -54,7 +56,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("generateAttributes collects all data required", function (assert) {
 			var sFilename = "file123";
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var sCreatedAt = "01-02-03:04:05.67890Z";
 			var sUser = "Peter Porker";
 			var sVersion = "1.2.3";
@@ -182,7 +184,7 @@ sap.ui.define([
 						mDefinition: {
 							changeType: "moveControl",
 							fileName: "id_123_moveControl",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							dependentSelector: [],
 							selector: {
 								id: "id1"
@@ -201,7 +203,7 @@ sap.ui.define([
 						mDefinition: {
 							changeType: "renameField",
 							fileName: "id_456_renameField",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							dependentSelector: [],
 							selector: {
 								id: "id2"

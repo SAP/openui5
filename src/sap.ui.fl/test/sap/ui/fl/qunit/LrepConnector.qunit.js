@@ -2,13 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	LrepConnector,
-	Change,
+	Layer,
 	Utils,
 	sinon,
 	jQuery
@@ -712,7 +712,7 @@ sap.ui.define([
 		QUnit.test("loadChanges adds upToLayerType parameter to request when requested", function (assert) {
 			var sComponentClassName = "smartFilterBar.Component";
 			var mPropertyBag = {
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName + "?upToLayerType=CUSTOMER";

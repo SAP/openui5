@@ -4,15 +4,17 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/core/Control",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/core/Control",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	VersionsAPI,
 	Versions,
 	FlexState,
-	Control,
+	Layer,
 	Utils,
+	Control,
 	sinon
 ) {
 	"use strict";
@@ -28,7 +30,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when no selector is provided", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			return VersionsAPI.isDraftAvailable(mPropertyBag).catch(function (sErrorMessage) {
@@ -47,7 +49,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: new Control()
 			};
 
@@ -58,7 +60,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided and a draft exists", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: new Control()
 			};
 
@@ -78,7 +80,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided and a draft does not exists", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: new Control()
 			};
 
@@ -103,7 +105,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when no selector is provided", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			return VersionsAPI.getVersions(mPropertyBag).catch(function (sErrorMessage) {
@@ -122,7 +124,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: new Control()
 			};
 
@@ -133,7 +135,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: new Control()
 			};
 
@@ -155,7 +157,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when no selector is provided", function (assert) {
 			var mPropertyBag = {
-				layer : "CUSTOMER"
+				layer : Layer.CUSTOMER
 			};
 
 			return VersionsAPI.loadDraftForApplication(mPropertyBag).catch(function (sErrorMessage) {
@@ -174,7 +176,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function (assert) {
 			var mPropertyBag = {
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				selector : new Control()
 			};
 
@@ -185,7 +187,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function (assert) {
 			var sComponentId = "comSapApp";
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var mPropertyBag = {
 				layer : sLayer,
 				selector : new Control(),
@@ -221,7 +223,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when no selector is provided", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
@@ -241,7 +243,7 @@ sap.ui.define([
 
 		QUnit.test("when no version title is provided", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: new Control()
 			};
 
@@ -252,7 +254,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: new Control(),
 				title: "new Title"
 			};
@@ -264,7 +266,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: new Control(),
 				title: "new Title"
 			};
@@ -287,7 +289,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when no selector is provided", function (assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			return VersionsAPI.discardDraft(mPropertyBag).catch(function (sErrorMessage) {
@@ -306,7 +308,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: new Control()
 			};
 
@@ -317,7 +319,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector, a layer and a flag to update the state were provided and the request returns a list of versions", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: new Control(),
 				updateState: true
 			};

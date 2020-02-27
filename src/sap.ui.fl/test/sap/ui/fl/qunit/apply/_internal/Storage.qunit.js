@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/Utils",
@@ -19,6 +20,7 @@ sap.ui.define([
 	sinon,
 	Storage,
 	Change,
+	Layer,
 	Variant,
 	StorageUtils,
 	FlUtils,
@@ -71,8 +73,8 @@ sap.ui.define([
 
 		QUnit.test("Given 2 connectors provide their own cacheKey values", function (assert) {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "KeyUserConnector", layers: ["CUSTOMER"]},
-				{connector: "PersonalizationConnector", layers: ["USER"]}
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
+				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
 			sandbox.stub(KeyUserConnector, "loadFlexData").resolves(merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: "abc"}));
 			sandbox.stub(PersonalizationConnector, "loadFlexData").resolves(merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: "123"}));
@@ -105,7 +107,7 @@ sap.ui.define([
 				content: {
 					fileName: sVariant1,
 					fileType: "ctrl_variant",
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					title: "title",
 					reference: "app.id",
 					variantReference: "",
@@ -120,7 +122,7 @@ sap.ui.define([
 			var oChange1 = new Change({
 				fileName: sChangeId1,
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				reference: "app.id",
 				content: {},
 				changeType: "hideControl",
@@ -136,7 +138,7 @@ sap.ui.define([
 			var oChange2 = new Change({
 				fileName: sChangeId2,
 				fileType: "change",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "app.id",
 				content: {},
 				changeType: "hideControl",
@@ -183,7 +185,7 @@ sap.ui.define([
 				content: {
 					fileName: "variant1",
 					fileType: "ctrl_variant",
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					title: "title",
 					reference: "app.id",
 					variantReference: "",
@@ -219,7 +221,7 @@ sap.ui.define([
 				content: {
 					fileName: "variant1",
 					fileType: "ctrl_variant",
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					title: "title",
 					reference: "app.id",
 					variantReference: "",
@@ -233,7 +235,7 @@ sap.ui.define([
 				content: {
 					fileName: "variant2",
 					fileType: "ctrl_variant",
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					title: "title",
 					reference: "app.id",
 					variantReference: "",
@@ -263,7 +265,7 @@ sap.ui.define([
 			var oChange1 = new Change({
 				fileName: "rename_id_123",
 				fileType: "ctrl_variant",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				reference: "app.id",
 				content: {}
 			});
@@ -272,7 +274,7 @@ sap.ui.define([
 			var oChange2 = new Change({
 				fileName: "rename_id_123",
 				fileType: "ctrl_variant",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				reference: "app.id",
 				content: {}
 			});
@@ -325,7 +327,7 @@ sap.ui.define([
 			oResponse1.variants.push({
 				fileName: "variant1",
 				fileType: "ctrl_variant",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				variantManagementReference: "variantManagement1",
 				creation: "2019-07-22T10:33:19.7491090Z"
 			});
@@ -338,7 +340,7 @@ sap.ui.define([
 						content: {
 							fileName: "variant2",
 							fileType: "ctrl_variant",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							variantManagementReference: "variantManagement1",
 							creation:"2019-07-22T10:34:19.7491090Z"
 						},
@@ -374,7 +376,7 @@ sap.ui.define([
 						content: {
 							fileName: "variant1",
 							fileType: "ctrl_variant",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							variantManagementReference: "variantManagement1",
 							creation: "2019-07-22T10:33:19.7491090Z"
 						},
@@ -399,7 +401,7 @@ sap.ui.define([
 						content: {
 							fileName: "variant2",
 							fileType: "ctrl_variant",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							variantManagementReference: "variantManagement1",
 							creation: "2019-07-22T10:34:19.7491090Z"
 						},
@@ -424,11 +426,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given three connectors are provided and one is in charge of a draft layer", function (assert) {
-			var sDraftLayer = "CUSTOMER";
+			var sDraftLayer = Layer.CUSTOMER;
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"]},
 				{connector: "KeyUserConnector", layers: [sDraftLayer]},
-				{connector: "JsObjectConnector", layers: ["USER"]}
+				{connector: "JsObjectConnector", layers: [Layer.USER]}
 			]);
 
 			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
@@ -448,7 +450,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of all layers and a draft layer is set", function (assert) {
-			var sDraftLayer = "CUSTOMER";
+			var sDraftLayer = Layer.CUSTOMER;
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector"},
 				{connector: "LrepConnector", layers: ["ALL"]}
@@ -469,10 +471,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of a draft layer provided by a url parameter", function (assert) {
-			var sDraftLayer = "CUSTOMER";
+			var sDraftLayer = Layer.CUSTOMER;
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [sDraftLayer]},
-				{connector: "JsObjectConnector", layers: ["USER"]}
+				{connector: "JsObjectConnector", layers: [Layer.USER]}
 			]);
 
 			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
@@ -491,7 +493,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of all layers and a draft layer provided by a url parameter", function (assert) {
-			var sDraftLayer = "CUSTOMER";
+			var sDraftLayer = Layer.CUSTOMER;
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector"},
 				{connector: "LrepConnector", layers: ["ALL"]}

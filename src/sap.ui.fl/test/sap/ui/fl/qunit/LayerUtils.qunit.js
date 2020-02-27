@@ -1,11 +1,13 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
+	Layer,
 	LayerUtils,
 	UriParameters,
 	sinon
@@ -32,49 +34,49 @@ function(
 		});
 
 		QUnit.test("getCurrentLayer shall return sap-ui-layer parameter", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("VENDOR");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
 			var sLayer = LayerUtils.getCurrentLayer();
-			assert.equal(sLayer, "VENDOR");
+			assert.equal(sLayer, Layer.VENDOR);
 		});
 
 		QUnit.test("getCurrentLayer shall return sap-ui-layer parameter and turn it to upper case", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("vendor");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR.toLowerCase());
 			var sLayer = LayerUtils.getCurrentLayer();
-			assert.equal(sLayer, "VENDOR");
+			assert.equal(sLayer, Layer.VENDOR);
 		});
 
 		QUnit.test("getCurrentLayer shall return USER layer if endUser flag is set ", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("VENDOR");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
 			var sLayer = LayerUtils.getCurrentLayer(true);
-			assert.equal(sLayer, "USER");
+			assert.equal(sLayer, Layer.USER);
 		});
 
 		QUnit.test("getCurrentLayer shall return default CUSTOMER layer ", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(null);
 			var sLayer = LayerUtils.getCurrentLayer(false);
-			assert.equal(sLayer, "CUSTOMER");
+			assert.equal(sLayer, Layer.CUSTOMER);
 		});
 
 		QUnit.test("compareAgainstCurrentLayer shall return a layer comparision between current (CUSTOMER) and passed layers", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("CUSTOMER");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.CUSTOMER);
 			assert.equal(LayerUtils.compareAgainstCurrentLayer(""), -1, "then with VENDOR layer -1 is returned");
-			assert.equal(LayerUtils.compareAgainstCurrentLayer("VENDOR"), -1, "then with VENDOR layer -1 is returned");
-			assert.equal(LayerUtils.compareAgainstCurrentLayer("CUSTOMER"), 0, "then with CUSTOMER layer 0 is returned");
-			assert.equal(LayerUtils.compareAgainstCurrentLayer("USER"), 1, "then with USER layer 1 is returned");
-			assert.equal(LayerUtils.compareAgainstCurrentLayer("", "CUSTOMER_BASE"), -1, "then with VENDOR layer -1 is returned");
-			assert.equal(LayerUtils.compareAgainstCurrentLayer("VENDOR", "CUSTOMER_BASE"), -1, "then with VENDOR layer -1 is returned");
-			assert.equal(LayerUtils.compareAgainstCurrentLayer("CUSTOMER_BASE", "CUSTOMER_BASE"), 0, "then with CUSTOMER_BASE layer 0 is returned");
-			assert.equal(LayerUtils.compareAgainstCurrentLayer("CUSTOMER", "CUSTOMER_BASE"), 1, "then with CUSTOMER layer 1 is returned");
+			assert.equal(LayerUtils.compareAgainstCurrentLayer(Layer.VENDOR), -1, "then with VENDOR layer -1 is returned");
+			assert.equal(LayerUtils.compareAgainstCurrentLayer(Layer.CUSTOMER), 0, "then with CUSTOMER layer 0 is returned");
+			assert.equal(LayerUtils.compareAgainstCurrentLayer(Layer.USER), 1, "then with USER layer 1 is returned");
+			assert.equal(LayerUtils.compareAgainstCurrentLayer("", Layer.CUSTOMER_BASE), -1, "then with VENDOR layer -1 is returned");
+			assert.equal(LayerUtils.compareAgainstCurrentLayer(Layer.VENDOR, Layer.CUSTOMER_BASE), -1, "then with VENDOR layer -1 is returned");
+			assert.equal(LayerUtils.compareAgainstCurrentLayer(Layer.CUSTOMER_BASE, Layer.CUSTOMER_BASE), 0, "then with CUSTOMER_BASE layer 0 is returned");
+			assert.equal(LayerUtils.compareAgainstCurrentLayer(Layer.CUSTOMER, Layer.CUSTOMER_BASE), 1, "then with CUSTOMER layer 1 is returned");
 		});
 
 		QUnit.test("doesCurrentLayerRequirePackageCustomer", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 
 			assert.strictEqual(LayerUtils.doesCurrentLayerRequirePackage(), false);
 		});
 
 		QUnit.test("doesCurrentLayerRequirePackageCustomerBase", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER_BASE");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER_BASE);
 
 			assert.strictEqual(LayerUtils.doesCurrentLayerRequirePackage(), true);
 		});
@@ -85,9 +87,9 @@ function(
 		afterEach: function () {}
 	}, function() {
 		QUnit.test("isCustomerDependentLayer", function(assert) {
-			assert.ok(LayerUtils.isCustomerDependentLayer("CUSTOMER"), "'CUSTOMER' layer is detected as customer dependent");
-			assert.ok(LayerUtils.isCustomerDependentLayer("CUSTOMER_BASE"), "'CUSTOMER_BASE' layer is detected as customer dependent");
-			assert.strictEqual(LayerUtils.isCustomerDependentLayer("VENDOR"), false, "'VENDOR' layer is detected as not customer dependent layer");
+			assert.ok(LayerUtils.isCustomerDependentLayer(Layer.CUSTOMER), "'CUSTOMER' layer is detected as customer dependent");
+			assert.ok(LayerUtils.isCustomerDependentLayer(Layer.CUSTOMER_BASE), "'CUSTOMER_BASE' layer is detected as customer dependent");
+			assert.strictEqual(LayerUtils.isCustomerDependentLayer(Layer.VENDOR), false, "'VENDOR' layer is detected as not customer dependent layer");
 		});
 	});
 
@@ -99,13 +101,13 @@ function(
 		}
 	}, function() {
 		QUnit.test("when maxLayer is CUSTOMER", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("CUSTOMER");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
 			assert.equal(LayerUtils.isLayerFilteringRequired(), true, "maxLayer is not equal topLayer");
 		});
 
 		QUnit.test("when maxLayer is USER", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("USER");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.USER);
 
 			assert.equal(LayerUtils.isLayerFilteringRequired(), false, "maxLayer is equal topLayer");
 		});
@@ -119,21 +121,21 @@ function(
 		}
 	}, function() {
 		QUnit.test("compare maxLayer: CUSTOMER with layer BASE", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("CUSTOMER");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
-			assert.equal(LayerUtils.isOverMaxLayer("BASE"), false, "false");
+			assert.equal(LayerUtils.isOverMaxLayer(Layer.BASE), false, "false");
 		});
 
 		QUnit.test("compare maxLayer: CUSTOMER with layer CUSTOMER", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("CUSTOMER");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
-			assert.equal(LayerUtils.isOverMaxLayer("CUSTOMER"), false, "false");
+			assert.equal(LayerUtils.isOverMaxLayer(Layer.CUSTOMER), false, "false");
 		});
 
 		QUnit.test("compare maxLayer: CUSTOMER with layer USER", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("CUSTOMER");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
-			assert.equal(LayerUtils.isOverMaxLayer("USER"), true, "true");
+			assert.equal(LayerUtils.isOverMaxLayer(Layer.USER), true, "true");
 		});
 	});
 
@@ -145,18 +147,18 @@ function(
 		}
 	}, function() {
 		QUnit.test("sap-ui-fl-max-layer is not available", function (assert) {
-			assert.equal(LayerUtils.getMaxLayer(), "USER", "return topLayer");
+			assert.equal(LayerUtils.getMaxLayer(), Layer.USER, "return topLayer");
 		});
 
 		QUnit.test("sap-ui-fl-max-layer is set as url parameter", function (assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("VENDOR");
-			assert.equal(LayerUtils.getMaxLayer(), "VENDOR", "get UriParamter");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
+			assert.equal(LayerUtils.getMaxLayer(), Layer.VENDOR, "get UriParamter");
 		});
 
 		QUnit.test("sap-ui-fl-max-layer is set as hash parameter", function (assert) {
 			var oParameters = {
 				params: {
-					"sap-ui-fl-max-layer": ["CUSTOMER"]
+					"sap-ui-fl-max-layer": [Layer.CUSTOMER]
 				}
 			};
 			sandbox.stub(LayerUtils, "getUshellContainer").returns({
@@ -171,8 +173,8 @@ function(
 					};
 				}
 			});
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("VENDOR");
-			assert.equal(LayerUtils.getMaxLayer(), "CUSTOMER", "get UriParamter");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
+			assert.equal(LayerUtils.getMaxLayer(), Layer.CUSTOMER, "get UriParamter");
 		});
 	});
 
@@ -184,27 +186,27 @@ function(
 		}
 	}, function() {
 		QUnit.test("with current layer VENDOR", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns("VENDOR");
+			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns(Layer.VENDOR);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), true, "return true");
 		});
 
 		QUnit.test("with current layer PARTNER", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns("PARTNER");
+			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns(Layer.PARTNER);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), true, "return true");
 		});
 
 		QUnit.test("with current layer CUSTOMER_BASE", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns("CUSTOMER_BASE");
+			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns(Layer.CUSTOMER_BASE);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), true, "return true");
 		});
 
 		QUnit.test("with current layer CUSTOMER", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns("CUSTOMER");
+			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns(Layer.CUSTOMER);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), false, "return false");
 		});
 
 		QUnit.test("with current layer USER", function (assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns("USER");
+			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs(false).returns(Layer.USER);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), false, "return false");
 		});
 	});
@@ -216,30 +218,30 @@ function(
 	}, function() {
 		QUnit.test("with max layer = ", function(assert) {
 			var aChangeDefinitions = [
-				{fileName: "user1", layer: "USER"},
-				{fileName: "customer1", layer: "CUSTOMER"},
-				{fileName: "customer_base1", layer: "CUSTOMER_BASE"},
-				{fileName: "vendor1", layer: "VENDOR"},
-				{fileName: "user2", layer: "USER"}
+				{fileName: "user1", layer: Layer.USER},
+				{fileName: "customer1", layer: Layer.CUSTOMER},
+				{fileName: "customer_base1", layer: Layer.CUSTOMER_BASE},
+				{fileName: "vendor1", layer: Layer.VENDOR},
+				{fileName: "user2", layer: Layer.USER}
 			];
-			var oMaxLayerStub = sandbox.stub(LayerUtils, "getMaxLayer").returns("USER");
+			var oMaxLayerStub = sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.USER);
 			var aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
 			assert.equal(aFilteredChanges.length, 5, "USER: all 5 changes are returned");
 
-			oMaxLayerStub.returns("CUSTOMER");
+			oMaxLayerStub.returns(Layer.CUSTOMER);
 			aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
 			assert.equal(aFilteredChanges.length, 3, "CUSTOMER: 3 changes are returned");
 			assert.equal(aFilteredChanges[0].fileName, "customer1");
 			assert.equal(aFilteredChanges[1].fileName, "customer_base1");
 			assert.equal(aFilteredChanges[2].fileName, "vendor1");
 
-			oMaxLayerStub.returns("CUSTOMER_BASE");
+			oMaxLayerStub.returns(Layer.CUSTOMER_BASE);
 			aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
 			assert.equal(aFilteredChanges.length, 2, "CUSTOMER_BASE: 2 changes are returned");
 			assert.equal(aFilteredChanges[0].fileName, "customer_base1");
 			assert.equal(aFilteredChanges[1].fileName, "vendor1");
 
-			oMaxLayerStub.returns("VENDOR");
+			oMaxLayerStub.returns(Layer.VENDOR);
 			aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
 			assert.equal(aFilteredChanges.length, 1, "VENDOR: 1 change is returned");
 			assert.equal(aFilteredChanges[0].fileName, "vendor1");

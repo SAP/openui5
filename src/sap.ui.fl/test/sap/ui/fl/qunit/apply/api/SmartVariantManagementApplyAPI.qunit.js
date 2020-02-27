@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/StandardVariant",
 	"sap/ui/fl/DefaultVariant",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
@@ -19,6 +20,7 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	StandardVariant,
 	DefaultVariant,
+	Layer,
 	Utils,
 	LayerUtils,
 	SmartVariantManagementApplyAPI,
@@ -86,7 +88,7 @@ sap.ui.define([
 					fileName: "id_1561376510625_89_moveControls",
 					fileType: "fileType",
 					changeType: "changeType",
-					layer: "USER",
+					layer: Layer.USER,
 					content: {}
 				}
 			}];

@@ -2,6 +2,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/m/Button",
 	"sap/m/Label",
@@ -15,6 +16,7 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	FlexControllerFactory,
+	Layer,
 	FlUtils,
 	Button,
 	Label,
@@ -156,13 +158,13 @@ sap.ui.define([
 			_writeData();
 			return PersistenceWriteAPI.reset({
 				selector: oControlToBeChanged,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				generator: "Change.createInitialFileContent"
 			});
 		})
 		.then(PersistenceWriteAPI.reset.bind(null, {
 			selector: oControlToBeChanged,
-			layer: "USER",
+			layer: Layer.USER,
 			generator: "Change.createInitialFileContent"
 		}));
 	}

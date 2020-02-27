@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/FlexController",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/jquery",
@@ -35,6 +36,7 @@ function(
 	ChangeHandlerBase,
 	Change,
 	FlexController,
+	Layer,
 	Utils,
 	UIComponent,
 	jQuery,
@@ -51,7 +53,7 @@ function(
 	function getLabelChangeContent(sFileName, sSelectorId) {
 		return {
 			fileType: "change",
-			layer: "USER",
+			layer: Layer.USER,
 			fileName: sFileName || "a",
 			namespace: "b",
 			packageName: "c",
@@ -948,7 +950,7 @@ function(
 			this.oChange = new Change(getLabelChangeContent("fileName", "labelId"));
 			this.oExtensionPointChange = new Change({
 				fileType: "change",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				fileName: "aName",
 				namespace: "a",
 				packageName: "b",

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/rta/api/startKeyUserAdaptation",
@@ -17,6 +18,7 @@ function (
 	Applier,
 	FlexControllerFactory,
 	ChangePersistence,
+	Layer,
 	Utils,
 	VariantModel,
 	startKeyUserAdaptation,
@@ -273,7 +275,7 @@ function (
 
 		QUnit.test("when a rta restart was triggered for the VENDOR layer", function (assert) {
 			// since the startKeyUserAdaptation is used, other layers should not use this API
-			sandbox.stub(Utils, "getUrlParameter").returns("VENDOR");
+			sandbox.stub(Utils, "getUrlParameter").returns(Layer.VENDOR);
 			window.sessionStorage.setItem("sap.ui.rta.restart.VENDOR", "MockCompName");
 
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
@@ -284,7 +286,7 @@ function (
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer", function (assert) {
-			sandbox.stub(Utils, "getUrlParameter").returns("CUSTOMER");
+			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", "MockCompName");
 			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
 			var oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function (aModules, fnCallback) {
@@ -302,7 +304,7 @@ function (
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer via a boolean flag", function (assert) {
-			sandbox.stub(Utils, "getUrlParameter").returns("CUSTOMER");
+			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
 			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
 			var oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function (aModules, fnCallback) {
@@ -320,7 +322,7 @@ function (
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer, but for a different component", function (assert) {
-			sandbox.stub(Utils, "getUrlParameter").returns("CUSTOMER");
+			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", "anotherComponent");
 			var fnLogSpy = sandbox.spy(Log, "error");
 

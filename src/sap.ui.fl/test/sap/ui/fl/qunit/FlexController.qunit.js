@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/core/Control",
 	"sap/ui/fl/Utils",
@@ -32,6 +33,7 @@ function (
 	CompatibilityConnector,
 	FlexController,
 	Change,
+	Layer,
 	ChangeRegistry,
 	Control,
 	Utils,
@@ -83,7 +85,7 @@ function (
 	function getLabelChangeContent(sFileName, sSelectorId) {
 		return {
 			fileType: "change",
-			layer: "USER",
+			layer: Layer.USER,
 			fileName: sFileName || "a",
 			namespace: "b",
 			packageName: "c",
@@ -518,7 +520,7 @@ function (
 			var aChanges = [];
 			var oChangeContent = {
 				fileName: "Gizorillus1",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
 				originalLanguage: "DE"
@@ -528,7 +530,7 @@ function (
 			aChanges.push(new Change(oChangeContent));
 			oChangeContent = {
 				fileName: "Gizorillus3",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				originalLanguage: "DE"
@@ -550,16 +552,16 @@ function (
 			for (var i = 0; i < 5; i++) {
 				aChanges.push(new Change({
 					fileName: "Gizorillus" + i,
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					fileType: "change",
 					changeType: "addField",
 					originalLanguage: "DE"
 				}));
 			}
-			aChanges[0]._oDefinition.layer = "USER";
-			aChanges[1]._oDefinition.layer = "USER";
-			aChanges[2]._oDefinition.layer = "PARTNER";
-			aChanges[3]._oDefinition.layer = "VENDOR";
+			aChanges[0]._oDefinition.layer = Layer.USER;
+			aChanges[1]._oDefinition.layer = Layer.USER;
+			aChanges[2]._oDefinition.layer = Layer.PARTNER;
+			aChanges[3]._oDefinition.layer = Layer.VENDOR;
 
 			return this.oFlexController.discardChanges(aChanges, true).then(function() {
 				assert.ok(oChangePersistence.deleteChange.calledTwice);
@@ -572,17 +574,17 @@ function (
 			for (var i = 0; i < 6; i++) {
 				aChanges.push(new Change({
 					fileName: "Gizorillus" + i,
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					fileType: "change",
 					changeType: "addField",
 					originalLanguage: "DE"
 				}));
 			}
-			aChanges[0]._oDefinition.layer = "USER";
-			aChanges[1]._oDefinition.layer = "USER";
-			aChanges[2]._oDefinition.layer = "CUSTOMER";
-			aChanges[3]._oDefinition.layer = "CUSTOMER_BASE";
-			aChanges[4]._oDefinition.layer = "PARTNER";
+			aChanges[0]._oDefinition.layer = Layer.USER;
+			aChanges[1]._oDefinition.layer = Layer.USER;
+			aChanges[2]._oDefinition.layer = Layer.CUSTOMER;
+			aChanges[3]._oDefinition.layer = Layer.CUSTOMER_BASE;
+			aChanges[4]._oDefinition.layer = Layer.PARTNER;
 
 			this.oFlexController._oChangePersistence = {
 				aChanges: aChanges,
@@ -607,30 +609,30 @@ function (
 			for (i = 0; i < 5; i++) {
 				aChangesForSomeId.push(new Change({
 					fileName: "Gizorillus" + i,
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					fileType: "change",
 					changeType: "addField",
 					originalLanguage: "DE"
 				}));
 			}
-			aChangesForSomeId[0]._oDefinition.layer = "USER";
-			aChangesForSomeId[1]._oDefinition.layer = "PARTNER";
-			aChangesForSomeId[3]._oDefinition.layer = "VENDOR";
+			aChangesForSomeId[0]._oDefinition.layer = Layer.USER;
+			aChangesForSomeId[1]._oDefinition.layer = Layer.PARTNER;
+			aChangesForSomeId[3]._oDefinition.layer = Layer.VENDOR;
 
 			var aChangesForSomeOtherId = [];
 			for (i = 0; i < 5; i++) {
 				aChangesForSomeOtherId.push(new Change({
 					fileName: "Gizorillus" + i,
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					fileType: "change",
 					changeType: "addField",
 					originalLanguage: "DE"
 				}));
 			}
-			aChangesForSomeOtherId[0]._oDefinition.layer = "USER";
-			aChangesForSomeOtherId[1]._oDefinition.layer = "USER";
-			aChangesForSomeOtherId[2]._oDefinition.layer = "PARTNER";
-			aChangesForSomeOtherId[3]._oDefinition.layer = "VENDOR";
+			aChangesForSomeOtherId[0]._oDefinition.layer = Layer.USER;
+			aChangesForSomeOtherId[1]._oDefinition.layer = Layer.USER;
+			aChangesForSomeOtherId[2]._oDefinition.layer = Layer.PARTNER;
+			aChangesForSomeOtherId[3]._oDefinition.layer = Layer.VENDOR;
 
 			var oDeleteStub = sinon.stub();
 
@@ -662,31 +664,31 @@ function (
 			for (i = 0; i < 5; i++) {
 				aChangesForSomeId.push(new Change({
 					fileName: "Gizorillus" + i,
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					fileType: "change",
 					changeType: "addField",
 					originalLanguage: "DE"
 				}));
 			}
-			aChangesForSomeId[0]._oDefinition.layer = "USER";
-			aChangesForSomeId[1]._oDefinition.layer = "PARTNER";
-			aChangesForSomeId[2]._oDefinition.layer = "USER";
-			aChangesForSomeId[3]._oDefinition.layer = "VENDOR";
+			aChangesForSomeId[0]._oDefinition.layer = Layer.USER;
+			aChangesForSomeId[1]._oDefinition.layer = Layer.PARTNER;
+			aChangesForSomeId[2]._oDefinition.layer = Layer.USER;
+			aChangesForSomeId[3]._oDefinition.layer = Layer.VENDOR;
 
 			var aChangesForSomeOtherId = [];
 			for (i = 0; i < 5; i++) {
 				aChangesForSomeOtherId.push(new Change({
 					fileName: "Gizorillus" + i,
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					fileType: "change",
 					changeType: "addField",
 					originalLanguage: "DE"
 				}));
 			}
-			aChangesForSomeOtherId[0]._oDefinition.layer = "USER";
-			aChangesForSomeOtherId[1]._oDefinition.layer = "USER";
-			aChangesForSomeOtherId[2]._oDefinition.layer = "PARTNER";
-			aChangesForSomeOtherId[3]._oDefinition.layer = "VENDOR";
+			aChangesForSomeOtherId[0]._oDefinition.layer = Layer.USER;
+			aChangesForSomeOtherId[1]._oDefinition.layer = Layer.USER;
+			aChangesForSomeOtherId[2]._oDefinition.layer = Layer.PARTNER;
+			aChangesForSomeOtherId[3]._oDefinition.layer = Layer.VENDOR;
 
 			var oDeleteStub = sinon.stub();
 
@@ -1005,7 +1007,7 @@ function (
 							local : true
 						}
 					},
-					layer : "CUSTOMER",
+					layer : Layer.CUSTOMER,
 					changeType: "hideControl",
 					content : {
 						boundAggregation : "items",
@@ -1026,7 +1028,7 @@ function (
 							local : true
 						}
 					},
-					layer : "CUSTOMER",
+					layer : Layer.CUSTOMER,
 					changeType: "unhideControl",
 					content : {
 						boundAggregation : "items",
@@ -1586,7 +1588,7 @@ function (
 		beforeEach: function () {
 			this.oUserChange = new Change({
 				fileType: "change",
-				layer: "USER",
+				layer: Layer.USER,
 				fileName: "a",
 				namespace: "b",
 				packageName: "c",
@@ -1603,7 +1605,7 @@ function (
 
 			this.oVendorChange1 = new Change({
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "a",
 				namespace: "b",
 				packageName: "c",
@@ -1620,7 +1622,7 @@ function (
 
 			this.oVendorChange2 = new Change({
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "a",
 				namespace: "b",
 				packageName: "c",
@@ -1637,7 +1639,7 @@ function (
 
 			this.oCustomerChange = new Change({
 				fileType: "change",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				fileName: "a",
 				namespace: "b",
 				packageName: "c",
@@ -1682,7 +1684,7 @@ function (
 			sandbox.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve(aChanges));
 
 			return this.oFlexController.hasHigherLayerChanges({
-				upToLayer : "CUSTOMER_BASE"
+				upToLayer : Layer.CUSTOMER_BASE
 			}).then(function (bHasHigherLayerChanges) {
 				assert.ok(bHasHigherLayerChanges, "customer change was determined");
 			});
@@ -1700,7 +1702,7 @@ function (
 			sandbox.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve(aChanges));
 
 			return this.oFlexController.hasHigherLayerChanges({
-				upToLayer : "VENDOR"
+				upToLayer : Layer.VENDOR
 			}).then(function (bHasHigherLayerChanges) {
 				assert.notOk(bHasHigherLayerChanges, "free of customer changes and personalization");
 			});

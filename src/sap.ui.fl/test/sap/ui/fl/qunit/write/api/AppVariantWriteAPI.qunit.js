@@ -1,4 +1,3 @@
-/* eslint-disable quote-props */
 /* global QUnit */
 
 sap.ui.define([
@@ -13,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/base/Log",
@@ -32,6 +32,7 @@ sap.ui.define([
 	ApplyUtils,
 	WriteUtils,
 	TransportSelection,
+	Layer,
 	flexUtils,
 	ChangesWriteAPI,
 	Log,
@@ -213,7 +214,7 @@ sap.ui.define([
 				selector:{
 					id:"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
 				},
-				layer:"CUSTOMER",
+				layer:Layer.CUSTOMER,
 				texts:{},
 				namespace:"reference.app.Component",
 				creation:"2018-10-16T08:00:02",
@@ -301,7 +302,7 @@ sap.ui.define([
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 4, "then Descriptor changes have been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
-					return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: "CUSTOMER"})
+					return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: Layer.CUSTOMER})
 						.then(function() {
 							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							assert.equal(oUIChange.getComponent(), "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
@@ -389,7 +390,7 @@ sap.ui.define([
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 4, "then 4 Descriptor changes have been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
-					return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: "CUSTOMER"})
+					return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: Layer.CUSTOMER})
 						.catch(function(oError) {
 							assert.ok("then the promise got rejected");
 							assert.equal(oError.messageKey, "MSG_SAVE_APP_VARIANT_FAILED", "then the messagekey is correct");
@@ -473,7 +474,7 @@ sap.ui.define([
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 4, "then the Descriptor changes have been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
-					return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: "CUSTOMER"})
+					return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: Layer.CUSTOMER})
 						.catch(function(oError) {
 							assert.ok("then the promise got rejected");
 							assert.equal(oError.messageKey, "MSG_COPY_UNSAVED_CHANGES_FAILED", "then the messagekey is correct");
@@ -539,7 +540,7 @@ sap.ui.define([
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
-					return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: "CUSTOMER"})
+					return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: Layer.CUSTOMER})
 						.then(function() {
 							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							assert.equal(oUIChange.getComponent(), "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
@@ -613,7 +614,7 @@ sap.ui.define([
 
 			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog").callsFake(fnSimulateDialogSelectionAndOk);
 
-			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
+			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
 					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
@@ -666,7 +667,7 @@ sap.ui.define([
 
 			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog").callsFake(fnSimulateDialogSelectionAndCancel);
 
-			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
+			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.catch(function() {
 					assert.ok(oNewConnectorCall.firstCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
 					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
@@ -722,7 +723,7 @@ sap.ui.define([
 
 			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog").callsFake(fnSimulateDialogSelectionAndOk);
 
-			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
+			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.catch(function(oError) {
 					assert.ok("then the promise got rejected");
 					assert.equal(oError.messageKey, "MSG_LOAD_APP_VARIANT_FAILED", "then the messagekey is correct");
@@ -785,7 +786,7 @@ sap.ui.define([
 
 			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog").callsFake(fnSimulateDialogSelectionAndOk);
 
-			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
+			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.catch(function(oError) {
 					assert.ok("then the promise got rejected");
 					assert.equal(oError.messageKey, "MSG_DELETE_APP_VARIANT_FAILED", "then the messagekey is correct");
@@ -835,7 +836,7 @@ sap.ui.define([
 
 			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog");
 
-			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
+			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
@@ -881,7 +882,7 @@ sap.ui.define([
 
 			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog");
 
-			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
+			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
 					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
@@ -928,7 +929,7 @@ sap.ui.define([
 
 			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog");
 
-			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
+			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
 					assert.ok(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
@@ -944,7 +945,7 @@ sap.ui.define([
 					appId: "reference.app"
 				},
 				"sap.app/id": "reference.app",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			}).then(function() {
 				assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/app_variant_overview/?layer=CUSTOMER&sap.app%2fid=reference.app", "GET"), "then the parameters are correct");
 			});
@@ -961,7 +962,7 @@ sap.ui.define([
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return AppVariantWriteAPI.getManifest({
 				appVarUrl: "mock/appvar/url",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			}).then(function() {
 				assert.ok(oNewConnectorCall.calledWith("mock/appvar/url", "GET"), "then the parameters are correct");
 			});
@@ -982,7 +983,7 @@ sap.ui.define([
 				},
 				action: "assignCatalogs",
 				assignFromAppId: "reference.app",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			}).then(function() {
 				assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?action=assignCatalogs&assignFromAppId=reference.app", "POST"), "then the parameters are correct");
 			});
@@ -1002,7 +1003,7 @@ sap.ui.define([
 					appId: "customer.reference.app.id"
 				},
 				action: "unassignCatalogs",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			}).then(function() {
 				assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?action=unassignCatalogs", "POST"), "then the parameters are correct");
 			});

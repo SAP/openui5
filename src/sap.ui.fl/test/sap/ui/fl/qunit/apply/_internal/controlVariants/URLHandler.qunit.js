@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObjectObserver",
@@ -16,6 +17,7 @@ function(
 	URLHandler,
 	VariantManagement,
 	VariantModel,
+	Layer,
 	Utils,
 	jQuery,
 	ManagedObjectObserver,
@@ -284,10 +286,10 @@ function(
 					variants: [
 						{
 							key: "variantMgmtId1",
-							layer: "VENDOR"
+							layer: Layer.VENDOR
 						}, {
 							key: "variant1",
-							layer: "VENDOR"
+							layer: Layer.VENDOR
 						}
 					]
 				},
@@ -298,10 +300,10 @@ function(
 					variants: [
 						{
 							key: "variantMgmtId2",
-							layer: "VENDOR"
+							layer: Layer.VENDOR
 						}, {
 							key: "variant2",
-							layer: "VENDOR"
+							layer: Layer.VENDOR
 						}
 					]
 				},
@@ -312,10 +314,10 @@ function(
 					variants: [
 						{
 							key: "variantMgmtId3",
-							layer: "VENDOR"
+							layer: Layer.VENDOR
 						}, {
 							key: "variant3",
-							layer: "VENDOR"
+							layer: Layer.VENDOR
 						}
 					]
 				}
@@ -557,7 +559,7 @@ function(
 						{
 							author: "SAP",
 							key: "variantMgmtId1",
-							layer: "VENDOR",
+							layer: Layer.VENDOR,
 							title: "Standard",
 							favorite: true,
 							visible: true

@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -20,6 +21,7 @@ sap.ui.define([
 	CompatibilityConnector,
 	TransportSelection,
 	Settings,
+	Layer,
 	Cache,
 	sinon
 ) {
@@ -1796,7 +1798,7 @@ sap.ui.define([
 				assert.equal(oDescriptorVariant._id, "a.id");
 				assert.equal(oDescriptorVariant._reference, "a.reference");
 				assert.equal(oDescriptorVariant._mode, "NEW");
-				assert.equal(oDescriptorVariant._layer, "CUSTOMER");
+				assert.equal(oDescriptorVariant._layer, Layer.CUSTOMER);
 				assert.equal(oDescriptorVariant._getMap().fileType, "appdescr_variant");
 			});
 		});
@@ -1848,7 +1850,7 @@ sap.ui.define([
 			return DescriptorVariantFactory.createNew({
 				id : "a.id",
 				reference: "a.reference",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			}).then(function(oDescriptorVariant) {
 				assert.equal(oDescriptorVariant._getMap().layer, 'CUSTOMER');
 			});
@@ -1858,7 +1860,7 @@ sap.ui.define([
 			return DescriptorVariantFactory.createNew({
 				id : "a.id",
 				reference: "a.reference",
-				layer: "CUSTOMER_BASE"
+				layer: Layer.CUSTOMER_BASE
 			}).then(function(oDescriptorVariant) {
 				assert.equal(oDescriptorVariant._getMap().layer, 'CUSTOMER_BASE');
 			});
@@ -1868,7 +1870,7 @@ sap.ui.define([
 			return DescriptorVariantFactory.createNew({
 				id : "a.id",
 				reference: "a.reference",
-				layer: "PARTNER"
+				layer: Layer.PARTNER
 			}).then(function(oDescriptorVariant) {
 				assert.equal(oDescriptorVariant._getMap().layer, 'PARTNER');
 			});
@@ -1878,7 +1880,7 @@ sap.ui.define([
 			return DescriptorVariantFactory.createNew({
 				id : "a.id",
 				reference: "a.reference",
-				layer: "VENDOR"
+				layer: Layer.VENDOR
 			}).then(function(oDescriptorVariant) {
 				assert.equal(oDescriptorVariant._getMap().layer, 'VENDOR');
 			});
@@ -2106,7 +2108,7 @@ sap.ui.define([
 							var mExpectedPartJson = {
 								reference: "a.reference",
 								fileType:	"change",
-								layer: "CUSTOMER",
+								layer: Layer.CUSTOMER,
 								namespace: "apps/a.reference/changes/",
 								packageName: "$TMP",
 								changeType: "changeType",
@@ -2151,7 +2153,7 @@ sap.ui.define([
 					assert.notEqual(oDescriptorChange, null);
 					assert.equal(oDescriptorChange._mChangeFile.reference, "a.reference");
 					assert.equal(oDescriptorChange._mChangeFile.changeType, "changeType");
-					assert.equal(oDescriptorChange._mChangeFile.layer, "CUSTOMER");
+					assert.equal(oDescriptorChange._mChangeFile.layer, Layer.CUSTOMER);
 					assert.equal(oDescriptorChange._oInlineChange, oDescriptorInlineChange);
 				});
 			});
@@ -2161,7 +2163,7 @@ sap.ui.define([
 			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, 'VENDOR', undefined, 'RTA');
 			}).then(function(oDescriptorChange) {
-				assert.equal(oDescriptorChange._mChangeFile.layer, "VENDOR");
+				assert.equal(oDescriptorChange._mChangeFile.layer, Layer.VENDOR);
 				assert.equal(oDescriptorChange._mChangeFile.support.generator, 'RTA');
 			});
 		});
@@ -2173,7 +2175,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				})
 			});
 			sandbox.stub(Settings, "getInstance").resolves(
@@ -2282,7 +2284,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					packageName: '$TMP'
 				})
 			});
@@ -2304,7 +2306,7 @@ sap.ui.define([
 			return DescriptorVariantFactory.createNew({
 				id : "a.id",
 				reference: "a.reference",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			}).then(function(oDescriptorVariant) {
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
@@ -2318,7 +2320,7 @@ sap.ui.define([
 			return DescriptorVariantFactory.createNew({
 				id : "a.id",
 				reference: "a.reference",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				skipIam: true,
 				transport: "ATO_NOTIFICATION"
 			}).then(function(oDescriptorVariant) {
@@ -2365,7 +2367,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					packageName: "YY1_DEFAULT_123"
 				})
 			});
@@ -2387,7 +2389,7 @@ sap.ui.define([
 			return DescriptorVariantFactory.createNew({
 				id : "a.id",
 				reference: "a.reference",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			}).then(function(oDescriptorVariant) {
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
@@ -2401,7 +2403,7 @@ sap.ui.define([
 			return DescriptorVariantFactory.createNew({
 				id : "a.id",
 				reference: "a.reference",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				skipIam: true,
 				transport: "ATO_NOTIFICATION"
 			}).then(function(oDescriptorVariant) {

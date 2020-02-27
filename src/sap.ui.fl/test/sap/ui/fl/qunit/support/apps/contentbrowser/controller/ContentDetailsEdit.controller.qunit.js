@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/controller/ContentDetailsEdit.controller",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
+	"sap/ui/fl/Layer",
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/jquery",
@@ -13,6 +14,7 @@ sap.ui.define([
 	ContentDetailsEdit,
 	LRepConnector,
 	DataUtils,
+	Layer,
 	Router,
 	UIComponent,
 	jQuery,
@@ -33,7 +35,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("sets all parameters when a route matched for this page", function (assert) {
-			var sLayer = "VENDOR";
+			var sLayer = Layer.VENDOR;
 			var sNamespace = "hi/there/";
 			var sFileName = "helloWorld";
 			var sFileType = "json";
@@ -105,7 +107,7 @@ sap.ui.define([
 		QUnit.test("when _saveFile is called", function (assert) {
 			var oStubbedNavTo = sandbox.stub(oController, "_navToDisplayMode");
 			var oStubbedLrepConSaveFile = sandbox.stub(LRepConnector, "saveFile").returns(Promise.resolve());
-			return oController._saveFile("VENDOR", "namespace", "fileName", "fileType", "somedata", "sTransportId", "package").then(function() {
+			return oController._saveFile(Layer.VENDOR, "namespace", "fileName", "fileType", "somedata", "sTransportId", "package").then(function() {
 				assert.ok(oStubbedNavTo.calledOnce, "then call for get a router");
 				assert.ok(oStubbedLrepConSaveFile.calledOnce, "then call Lrep connector for save file");
 			});
@@ -123,7 +125,7 @@ sap.ui.define([
 								data : "content",
 								metadata : [{
 									name : "layer",
-									value : "USER"
+									value : Layer.USER
 								}]
 							};
 						}
@@ -135,7 +137,7 @@ sap.ui.define([
 			oController.onSave();
 
 			assert.ok(oStubbedSaveFile.calledOnce, "then call for deleting file");
-			assert.equal(oStubbedSaveFile.getCall(0).args[0], "USER", "with correct layer");
+			assert.equal(oStubbedSaveFile.getCall(0).args[0], Layer.USER, "with correct layer");
 			assert.equal(oStubbedSaveFile.getCall(0).args[1], "namespace", "with correct namespace");
 			assert.equal(oStubbedSaveFile.getCall(0).args[2], "fileName", "with correct fileName");
 			assert.equal(oStubbedSaveFile.getCall(0).args[3], "fileType", "with correct fileType");
@@ -190,7 +192,7 @@ sap.ui.define([
 								layer : "All",
 								metadata : [{
 									name : "layer",
-									value : "CUSTOMER"
+									value : Layer.CUSTOMER
 								}, {
 									name : "transportId",
 									value : "ATO_NOTIFICATION"
@@ -205,7 +207,7 @@ sap.ui.define([
 			oController.onSave();
 
 			assert.ok(oStubbedSaveFile.calledOnce, "then call for deleting file");
-			assert.equal(oStubbedSaveFile.getCall(0).args[0], "CUSTOMER", "with correct layer");
+			assert.equal(oStubbedSaveFile.getCall(0).args[0], Layer.CUSTOMER, "with correct layer");
 			assert.equal(oStubbedSaveFile.getCall(0).args[1], "namespace", "with correct namespace");
 			assert.equal(oStubbedSaveFile.getCall(0).args[2], "fileName", "with correct fileName");
 			assert.equal(oStubbedSaveFile.getCall(0).args[3], "fileType", "with correct fileType");
@@ -227,7 +229,7 @@ sap.ui.define([
 								layer : "All",
 								metadata : [{
 									name : "layer",
-									value : "VENDOR"
+									value : Layer.VENDOR
 								}]
 							};
 						}
@@ -239,7 +241,7 @@ sap.ui.define([
 			oController.onSave();
 
 			assert.ok(oStubbedSaveFile.calledOnce, "then call for deleting file");
-			assert.equal(oStubbedSaveFile.getCall(0).args[0], "VENDOR", "with correct layer");
+			assert.equal(oStubbedSaveFile.getCall(0).args[0], Layer.VENDOR, "with correct layer");
 			assert.equal(oStubbedSaveFile.getCall(0).args[1], "namespace", "with correct namespace");
 			assert.equal(oStubbedSaveFile.getCall(0).args[2], "fileName", "with correct fileName");
 			assert.equal(oStubbedSaveFile.getCall(0).args[3], "fileType", "with correct fileType");
@@ -261,7 +263,7 @@ sap.ui.define([
 								layer : "All",
 								metadata : [{
 									name : "layer",
-									value : "VENDOR"
+									value : Layer.VENDOR
 								}, {
 									name : "transportId",
 									value : "transportId"
@@ -295,7 +297,7 @@ sap.ui.define([
 					return {
 						getData: function () {
 							return {
-								layer : "VENDOR",
+								layer : Layer.VENDOR,
 								fileName : "fileName",
 								fileType : "fileType",
 								namespace : "namespace"
@@ -312,7 +314,7 @@ sap.ui.define([
 			assert.ok(oStubbedGetRouterFor.calledOnce, "then call for get a router");
 			assert.ok(oStubbedNavTo.calledOnce, "then navigation is triggered");
 			assert.equal(oStubbedNavTo.getCall(0).args[0], "ContentDetailsFlip", "with correct target");
-			assert.equal(oStubbedNavTo.getCall(0).args[1].layer, "VENDOR", "with correct layer");
+			assert.equal(oStubbedNavTo.getCall(0).args[1].layer, Layer.VENDOR, "with correct layer");
 			assert.equal(oStubbedNavTo.getCall(0).args[1].namespace, "namespace", "with correct namespace");
 			assert.equal(oStubbedNavTo.getCall(0).args[1].fileName, "fileName", "with correct filename");
 			assert.equal(oStubbedNavTo.getCall(0).args[1].fileType, "fileType", "with correct filetype");

@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function (
 	jQuery,
 	ManagedObject,
+	Layer,
 	Utils,
 	LayerUtils,
 	Settings,
@@ -44,7 +46,7 @@ sap.ui.define([
 			this._oDefinition = oFile;
 			this._oOriginDefinition = merge({}, oFile);
 			this._sRequest = '';
-			this._bUserDependent = (oFile.content.layer === "USER");
+			this._bUserDependent = (oFile.content.layer === Layer.USER);
 			this._vRevertData = null;
 			this.setState(Variant.states.NEW);
 		},

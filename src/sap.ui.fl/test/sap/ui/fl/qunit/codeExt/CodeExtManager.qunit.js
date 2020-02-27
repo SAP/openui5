@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/codeExt/CodeExtManager",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
@@ -11,6 +12,7 @@ sap.ui.define([
 	CodeExtManager,
 	CompatibilityConnector,
 	Utils,
+	Layer,
 	LayerUtils,
 	jQuery,
 	sinon
@@ -162,7 +164,7 @@ sap.ui.define([
 
 		QUnit.test("createCodeExtChanges creates new changes with transportId, packageName, codeRef and calls the backend connection class to propagate the creation", function(assert) {
 			var sGeneratedId = "id_123_0";
-			var sLayer = "VENDOR";
+			var sLayer = Layer.VENDOR;
 			var sCodeRef = "myCode/code.js";
 			var sControllerName1 = "controllerName1";
 			var sControllerName2 = "controllerName2";
@@ -358,7 +360,7 @@ sap.ui.define([
 					codeRef: sCodeRef,
 					appVariantId: sControllerName
 				},
-				layer: "VENDOR"
+				layer: Layer.VENDOR
 			};
 
 			var oLrepConnectorSendStub = sandbox.stub(CodeExtManager._oLrepConnector, "send");
@@ -395,7 +397,7 @@ sap.ui.define([
 					codeRef: sCodeRef,
 					appVariantId: sControllerName
 				},
-				layer: "VENDOR"
+				layer: Layer.VENDOR
 			};
 
 			var mOptions = {

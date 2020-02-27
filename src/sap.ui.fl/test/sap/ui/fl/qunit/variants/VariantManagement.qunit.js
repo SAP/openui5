@@ -1,8 +1,30 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/variants/VariantManagement", "sap/ui/fl/variants/VariantModel", "sap/ui/fl/Utils", "sap/ui/layout/Grid", "sap/m/OverflowToolbar", "sap/m/Input", "sap/m/RadioButton", "sap/ui/core/Icon", "sap/ui/thirdparty/jquery", "sap/ui/thirdparty/sinon-4"
-], function(VariantManagement, VariantModel, flUtils, Grid, OverflowToolbar, Input, RadioButton, Icon, jQuery, sinon) {
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
+	"sap/ui/layout/Grid",
+	"sap/m/OverflowToolbar",
+	"sap/m/Input",
+	"sap/m/RadioButton",
+	"sap/ui/core/Icon",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
+], function(
+	VariantManagement,
+	VariantModel,
+	Layer,
+	flUtils,
+	Grid,
+	OverflowToolbar,
+	Input,
+	RadioButton,
+	Icon,
+	jQuery,
+	sinon
+) {
 	"use strict";
 
 	var oModel;
@@ -53,7 +75,7 @@ sap.ui.define([
 							key: "Standard",
 							title: "Standard",
 							author: "A",
-							layer: "VENDOR",
+							layer: Layer.VENDOR,
 							favorite: true,
 							originalFavorite: true,
 							visible: true
@@ -61,7 +83,7 @@ sap.ui.define([
 							key: "1",
 							title: "One",
 							author: "A",
-							layer: "USER",
+							layer: Layer.USER,
 							favorite: true,
 							originalFavorite: true,
 							visible: true
@@ -69,7 +91,7 @@ sap.ui.define([
 							key: "2",
 							title: "Two",
 							author: "V",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							favorite: true,
 							originalFavorite: true,
 							visible: true
@@ -77,7 +99,7 @@ sap.ui.define([
 							key: "3",
 							title: "Three",
 							author: "U",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							favorite: true,
 							originalFavorite: true,
 							visible: true
@@ -85,7 +107,7 @@ sap.ui.define([
 							key: "4",
 							title: "Four",
 							author: "Z",
-							layer: "PARTNER",
+							layer: Layer.PARTNER,
 							favorite: true,
 							originalFavorite: true,
 							visible: true

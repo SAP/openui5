@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
@@ -25,6 +26,7 @@ function (
 	FlexState,
 	DependencyHandler,
 	ChangePersistence,
+	Layer,
 	Utils,
 	LayerUtils,
 	Change,
@@ -289,7 +291,7 @@ function (
 										id: "dummy_selector"
 									},
 									variantReference: "variantManagementId",
-									layer: "CUSTOMER_BASE"
+									layer: Layer.CUSTOMER_BASE
 								}],
 								variantChanges : {}
 							}]
@@ -385,7 +387,7 @@ function (
 							selector: {
 								id: "dummy_selector"
 							},
-							layer: "CUSTOMER_BASE"
+							layer: Layer.CUSTOMER_BASE
 						}
 					],
 					variantSection: {
@@ -408,7 +410,7 @@ function (
 										content: {
 											title: "variant 0"
 										},
-										layer: "CUSTOMER_BASE",
+										layer: Layer.CUSTOMER_BASE,
 										variantManagementReference: "varMgmt",
 										variantReference: "varMgmt"
 									},
@@ -419,13 +421,13 @@ function (
 											id: "dummy_selector"
 										},
 										variantReference: "variant0",
-										layer: "CUSTOMER_BASE"
+										layer: Layer.CUSTOMER_BASE
 									}],
 									variantChanges: {
 										setTitle: [{
 											fileName: "variantChange0",
 											fileType: "ctrl_variant_change",
-											layer: "CUSTOMER_BASE",
+											layer: Layer.CUSTOMER_BASE,
 											selector: {
 												id: "variant0"
 											}
@@ -438,7 +440,7 @@ function (
 										},
 										fileName: "variant1",
 										fileType: "ctrl_variant",
-										layer: "VENDOR",
+										layer: Layer.VENDOR,
 										variantManagementReference: "varMgmt"
 									},
 									controlChanges: [{
@@ -448,7 +450,7 @@ function (
 											id: "dummy_selector"
 										},
 										variantReference: "variant1",
-										layer: "CUSTOMER_BASE"
+										layer: Layer.CUSTOMER_BASE
 									},
 										{
 											fileName: "controlChange2",
@@ -457,7 +459,7 @@ function (
 												id: "dummy_selector"
 											},
 											variantReference: "variant1",
-											layer: "CUSTOMER_BASE"
+											layer: Layer.CUSTOMER_BASE
 										}],
 									variantChanges: {
 										setTitle: [
@@ -467,7 +469,7 @@ function (
 												selector: {
 													id: "variant1"
 												},
-												layer: "VENDOR"
+												layer: Layer.VENDOR
 											}
 										],
 										setVisible: [
@@ -481,7 +483,7 @@ function (
 													visible: false,
 													createdByReset: true
 												},
-												layer: "CUSTOMER"
+												layer: Layer.CUSTOMER
 											}
 										]
 									}
@@ -492,7 +494,7 @@ function (
 									{
 										fileName: "setDefault",
 										fileType: "ctrl_variant_management_change",
-										layer: "VENDOR",
+										layer: Layer.VENDOR,
 										content: {
 											defaultVariant:"variant0"
 										},
@@ -538,20 +540,20 @@ function (
 								content: {
 									title: "variant 0"
 								},
-								layer: "CUSTOMER_BASE",
+								layer: Layer.CUSTOMER_BASE,
 								variantManagementReference: "variantManagementId"
 							},
 							controlChanges: [{
 								variantReference: "variant0",
 								fileName: "controlChange0",
 								fileType: "change",
-								layer: "CUSTOMER_BASE"
+								layer: Layer.CUSTOMER_BASE
 							}],
 							variantChanges: {
 								setTitle: [{
 									fileName: "variantChange0",
 									fileType: "ctrl_variant_change",
-									layer: "CUSTOMER_BASE",
+									layer: Layer.CUSTOMER_BASE,
 									selector: {
 										id: "variant0"
 									}
@@ -564,7 +566,7 @@ function (
 								},
 								fileName: "variant1",
 								fileType: "ctrl_variant",
-								layer: "VENDOR",
+								layer: Layer.VENDOR,
 								variantManagementReference: "variantManagementId"
 							},
 							controlChanges: [
@@ -572,13 +574,13 @@ function (
 									variantReference: "variant1",
 									fileName: "controlChange2",
 									fileType: "change",
-									layer: "CUSTOMER"
+									layer: Layer.CUSTOMER
 								},
 								{
 									variantReference: "variant1",
 									fileName: "controlChange3",
 									fileType: "change",
-									layer: "VENDOR"
+									layer: Layer.VENDOR
 								}
 							],
 							variantChanges: {
@@ -589,7 +591,7 @@ function (
 										selector: {
 											id: "variant1"
 										},
-										layer: "VENDOR"
+										layer: Layer.VENDOR
 									}
 								],
 								setVisible: [
@@ -603,7 +605,7 @@ function (
 											visible: false,
 											createdByReset: true
 										},
-										layer: "CUSTOMER"
+										layer: Layer.CUSTOMER
 									}
 								]
 							}
@@ -615,7 +617,7 @@ function (
 								},
 								fileName: "variant2",
 								fileType: "ctrl_variant",
-								layer: "VENDOR",
+								layer: Layer.VENDOR,
 								variantManagementReference: "variantManagementId"
 							},
 							controlChanges: [],
@@ -631,7 +633,7 @@ function (
 											visible: false,
 											createdByReset: true
 										},
-										layer: "VENDOR"
+										layer: Layer.VENDOR
 									}
 								]
 							}
@@ -642,7 +644,7 @@ function (
 							{
 								fileName: "setDefault",
 								fileType: "ctrl_variant_management_change",
-								layer: "VENDOR",
+								layer: Layer.VENDOR,
 								content: {
 									defaultVariant:"variant0"
 								},
@@ -654,7 +656,7 @@ function (
 					}
 				}
 			};
-			sandbox.stub(LayerUtils, "getMaxLayer").returns("VENDOR");
+			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.VENDOR);
 			var mExpectedParameter = jQuery.extend(true, {}, mVariantSection);
 
 			//Deleting all changes below VENDOR layer
@@ -701,20 +703,20 @@ function (
 								content: {
 									title: "variant 0"
 								},
-								layer: "VENDOR",
+								layer: Layer.VENDOR,
 								variantManagementReference: "variantManagementId"
 							},
 							controlChanges: [{
 								variantReference: "variant0",
 								fileName: "controlChange0",
 								fileType: "change",
-								layer: "VENDOR"
+								layer: Layer.VENDOR
 							}],
 							variantChanges: {
 								setTitle: [{
 									fileName: "variantChange0",
 									fileType: "ctrl_variant_change",
-									layer: "CUSTOMER",
+									layer: Layer.CUSTOMER,
 									selector: {
 										id: "variant0"
 									}
@@ -727,7 +729,7 @@ function (
 								},
 								fileName: "variant1",
 								fileType: "ctrl_variant",
-								layer: "CUSTOMER",
+								layer: Layer.CUSTOMER,
 								variantManagementReference: "variantManagementId"
 							},
 							controlChanges: [
@@ -735,13 +737,13 @@ function (
 									variantReference: "variant1",
 									fileName: "controlChange2",
 									fileType: "change",
-									layer: "CUSTOMER"
+									layer: Layer.CUSTOMER
 								},
 								{
 									variantReference: "variant1",
 									fileName: "controlChange3",
 									fileType: "change",
-									layer: "USER"
+									layer: Layer.USER
 								}
 							],
 							variantChanges: {
@@ -752,7 +754,7 @@ function (
 										selector: {
 											id: "variant1"
 										},
-										layer: "CUSTOMER"
+										layer: Layer.CUSTOMER
 									}
 								],
 								setFavorite: [
@@ -762,7 +764,7 @@ function (
 										selector: {
 											id: "variant1"
 										},
-										layer: "USER"
+										layer: Layer.USER
 									}
 								]
 							}
@@ -774,7 +776,7 @@ function (
 								},
 								fileName: "variant2",
 								fileType: "ctrl_variant",
-								layer: "CUSTOMER",
+								layer: Layer.CUSTOMER,
 								variantManagementReference: "variantManagementId"
 							},
 							controlChanges: [],
@@ -790,7 +792,7 @@ function (
 											visible: false,
 											createdByReset: false
 										},
-										layer: "CUSTOMER"
+										layer: Layer.CUSTOMER
 									}
 								]
 							}
@@ -801,7 +803,7 @@ function (
 							{
 								fileName: "setDefault",
 								fileType: "ctrl_variant_management_change",
-								layer: "CUSTOMER",
+								layer: Layer.CUSTOMER,
 								content: {
 									defaultVariant:"variant0"
 								},
@@ -826,7 +828,7 @@ function (
 
 			assert.equal(mVariantSection["variantManagementId"].variants.length, 4, "then initially 4 variants exist in the passed parameter");
 
-			var aChanges = this.oChangePersistence._getAllCtrlVariantChanges(mVariantSection, false, "CUSTOMER");
+			var aChanges = this.oChangePersistence._getAllCtrlVariantChanges(mVariantSection, false, Layer.CUSTOMER);
 
 			assert.equal(aChanges.length, 6, "then 6 changes are received which comply to current layer parameter, only setVisible on same layer considered");
 			assert.deepEqual(
@@ -860,20 +862,20 @@ function (
 								content: {
 									title: "variant 0"
 								},
-								layer: "CUSTOMER",
+								layer: Layer.CUSTOMER,
 								variantManagementReference: "variantManagementId"
 							},
 							controlChanges: [{
 								variantReference: "variant0",
 								fileName: "controlChange0",
 								fileType: "change",
-								layer: "USER"
+								layer: Layer.USER
 							}],
 							variantChanges: {
 								setTitle: [{
 									fileName: "variantChange0",
 									fileType: "ctrl_variant_change",
-									layer: "USER",
+									layer: Layer.USER,
 									selector: {
 										id: "variant0"
 									}
@@ -886,7 +888,7 @@ function (
 					}
 				}
 			};
-			sandbox.stub(LayerUtils, "getMaxLayer").returns("CUSTOMER");
+			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
 			sandbox.spy(this.oChangePersistence, "_filterChangeForMaxLayer");
 			sandbox.spy(this.oChangePersistence, "_getLayerFromChangeOrChangeContent");
 
@@ -1194,7 +1196,7 @@ function (
 					selector: {
 						id: "controlId"
 					},
-					layer : "VENDOR"
+					layer : Layer.VENDOR
 				}] },
 				messagebundle: {i_123: "translatedKey"}
 			}));
@@ -1240,7 +1242,7 @@ function (
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 				{
 					fileName: "change1",
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					fileType: "change",
 					selector: {
 						id: "controlId"
@@ -1248,7 +1250,7 @@ function (
 				},
 				{
 					fileName: "change2",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					fileType: "change",
 					selector: {
 						id: "controlId1"
@@ -1256,7 +1258,7 @@ function (
 				},
 				{
 					fileName: "change3",
-					layer: "USER",
+					layer: Layer.USER,
 					fileType: "change",
 					selector: {
 						id: "controlId2"
@@ -1264,9 +1266,9 @@ function (
 				}
 			]}}));
 
-			return this.oChangePersistence.getChangesForComponent({currentLayer: "CUSTOMER"}).then(function(changes) {
+			return this.oChangePersistence.getChangesForComponent({currentLayer: Layer.CUSTOMER}).then(function(changes) {
 				assert.strictEqual(changes.length, 1, "1 change shall be returned");
-				assert.strictEqual(changes[0].getDefinition().layer, "CUSTOMER", "then it returns only current layer (CUSTOMER) changes");
+				assert.strictEqual(changes[0].getDefinition().layer, Layer.CUSTOMER, "then it returns only current layer (CUSTOMER) changes");
 			});
 		});
 
@@ -1274,7 +1276,7 @@ function (
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 				{
 					fileName: "change1",
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					fileType: "change",
 					selector: {
 						id: "controlId"
@@ -1282,7 +1284,7 @@ function (
 				},
 				{
 					fileName: "change2",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					fileType: "change",
 					selector: {
 						id: "controlId1"
@@ -1290,7 +1292,7 @@ function (
 				},
 				{
 					fileName: "change3",
-					layer: "USER",
+					layer: Layer.USER,
 					fileType: "change",
 					selector: {
 						id: "controlId2"
@@ -1309,41 +1311,41 @@ function (
 					fileName: "file1",
 					fileType: "change",
 					changeType: "defaultVariant",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: { persistencyKey: "SmartFilter_Explored" }
 				},
 				{
 					fileName: "file2",
 					fileType: "change",
 					changeType: "renameGroup",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: { id: "controlId1" }
 				},
 				{
 					fileName: "file3",
 					filetype: "change",
 					changetype: "removeField",
-					layer: "customer",
+					layer: Layer.CUSTOMER,
 					selector: {}
 				},
 				{
 					fileName: "file4",
 					fileType: "variant",
 					changeType: "filterBar",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: { persistencyKey: "SmartFilter_Explored" }
 				},
 				{
 					fileName: "file6",
 					fileType: "variant",
 					changeType: "filterBar",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				},
 				{
 					fileName: "file7",
 					fileType: "change",
 					changeType: "codeExt",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: { id: "controlId2" }
 				},
 				{
@@ -1366,47 +1368,47 @@ function (
 					fileName: "file1",
 					fileType: "change",
 					changeType: "defaultVariant",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: { persistencyKey: "SmartFilter_Explored" }
 				},
 				{
 					fileName: "file2",
 					fileType: "change",
 					changeType: "defaultVariant",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: {}
 				},
 				{
 					fileName: "file3",
 					fileType: "change",
 					changeType: "renameGroup",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: { id: "controlId1" }
 				},
 				{
 					fileName: "file4",
 					fileType: "variant",
 					changeType: "filterBar",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: { persistencyKey: "SmartFilter_Explored" }
 				},
 				{
 					fileName: "file5",
 					fileType: "variant",
 					changeType: "filterBar",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				},
 				{
 					fileName: "file6",
 					fileType: "variant",
 					changeType: "filterBar",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				},
 				{
 					fileName: "file7",
 					fileType: "change",
 					changeType: "codeExt",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: { id: "controlId2" }
 				},
 				{
@@ -1417,7 +1419,7 @@ function (
 					fileName: "file8",
 					fileType: "change",
 					changeType: "appdescr_changes",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				}
 			]}}));
 
@@ -1447,35 +1449,35 @@ function (
 						{
 							fileName:"change1",
 							fileType: "change",
-							layer: "USER",
+							layer: Layer.USER,
 							selector: { id: "controlId" },
 							dependentSelector: []
 						},
 						{
 							fileName:"change2",
 							fileType: "change",
-							layer: "VENDOR",
+							layer: Layer.VENDOR,
 							selector: { id: "controlId" },
 							dependentSelector: []
 						},
 						{
 							fileName:"change3",
 							fileType: "change",
-							layer: "USER",
+							layer: Layer.USER,
 							selector: { id: "anotherControlId" },
 							dependentSelector: []
 						},
 						{
 							fileName:"change4",
 							fileType: "change",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							selector: { id: "controlId" },
 							dependentSelector: []
 						},
 						{
 							fileName:"change5",
 							fileType: "change",
-							layer: "PARTNER",
+							layer: Layer.PARTNER,
 							selector: { id: "controlId" },
 							dependentSelector: []
 						}
@@ -1486,7 +1488,7 @@ function (
 				}
 			}));
 
-			sandbox.stub(LayerUtils, "getMaxLayer").returns("CUSTOMER");
+			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
 			var aMockVariantChangeContent = [
 				{fileName: "mockVarChange0", fileType: "change"},
 				{fileName: "mockVarChange1", fileType: "change"}
@@ -1515,21 +1517,21 @@ function (
 		QUnit.test("when _getLayerFromChangeOrChangeContent is called with a change instance", function(assert) {
 			var oChange = new Change({
 				fileName:"change1",
-				layer: "USER",
+				layer: Layer.USER,
 				selector: { id: "controlId" },
 				dependentSelector: []
 			});
-			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oChange), "USER", "then the correct layer is returned");
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oChange), Layer.USER, "then the correct layer is returned");
 		});
 
 		QUnit.test("when _getLayerFromChangeOrChangeContent is called with a variant instance", function(assert) {
 			var oVariant = new Variant({
 				content: {
 					fileName: "variant1",
-					layer: "USER"
+					layer: Layer.USER
 				}
 			});
-			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oVariant), "USER", "then the correct layer is returned");
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oVariant), Layer.USER, "then the correct layer is returned");
 		});
 
 		QUnit.test("getChangesForComponent shall ignore max layer parameter when current layer is set", function(assert) {
@@ -1537,36 +1539,36 @@ function (
 				{
 					fileName:"change2",
 					fileType: "change",
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					selector: { id: "controlId" },
 					dependentSelector: []
 				},
 				{
 					fileName:"change3",
 					fileType: "change",
-					layer: "USER",
+					layer: Layer.USER,
 					selector: { id: "anotherControlId" },
 					dependentSelector: []
 				},
 				{
 					fileName:"change4",
 					fileType: "change",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: { id: "controlId" },
 					dependentSelector: []
 				},
 				{
 					fileName:"change5",
 					fileType: "change",
-					layer: "PARTNER",
+					layer: Layer.PARTNER,
 					selector: { id: "controlId" },
 					dependentSelector: []
 				}
 			]}}));
 
-			sandbox.stub(LayerUtils, "getMaxLayer").returns("CUSTOMER");
+			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
 
-			return this.oChangePersistence.getChangesForComponent({currentLayer: "CUSTOMER"}).then(function(oChanges) {
+			return this.oChangePersistence.getChangesForComponent({currentLayer: Layer.CUSTOMER}).then(function(oChanges) {
 				assert.strictEqual(oChanges.length, 1, "only changes which are under max layer are returned");
 				assert.ok(oChanges[0].getId() === "change4", "with correct ID");
 			});
@@ -1587,41 +1589,41 @@ function (
 				{
 					fileName:"change1",
 					fileType: "change",
-					layer: "USER",
+					layer: Layer.USER,
 					selector: { id: "controlId" },
 					dependentSelector: []
 				},
 				{
 					fileName:"change2",
 					fileType: "change",
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					selector: { id: "controlId" },
 					dependentSelector: []
 				},
 				{
 					fileName:"change3",
 					fileType: "change",
-					layer: "USER",
+					layer: Layer.USER,
 					selector: { id: "anotherControlId" },
 					dependentSelector: []
 				},
 				{
 					fileName:"change4",
 					fileType: "change",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					selector: { id: "controlId" },
 					dependentSelector: []
 				},
 				{
 					fileName:"change5",
 					fileType: "change",
-					layer: "PARTNER",
+					layer: Layer.PARTNER,
 					selector: { id: "controlId" },
 					dependentSelector: []
 				}
 			]}}));
 
-			sandbox.stub(LayerUtils, "getMaxLayer").returns("CUSTOMER");
+			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
 
 			return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter : true}).then(function(oChanges) {
 				assert.strictEqual(oChanges.length, 5, "filtering is ignored, all changes are returned");
@@ -1633,7 +1635,7 @@ function (
 				{
 					fileName:"change1",
 					fileType: "change",
-					layer: "USER",
+					layer: Layer.USER,
 					selector: { id: "controlId" },
 					dependentSelector: []
 				}
@@ -1654,7 +1656,7 @@ function (
 							fileName: "change1",
 							fileType: "change",
 							changeType: "defaultVariant",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							selector: { persistencyKey: "SmartFilter_Explored" },
 							originalLanguage: "EN"
 						},
@@ -1662,21 +1664,21 @@ function (
 							fileName: "change2",
 							fileType: "change",
 							changeType: "defaultVariant",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							selector: {}
 						},
 						{
 							fileName: "change3",
 							fileType: "change",
 							changeType: "renameGroup",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							selector: { id: "controlId1" }
 						},
 						{
 							fileName: "variant1",
 							fileType: "variant",
 							changeType: "filterBar",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							selector: { persistencyKey: "SmartFilter_Explored" },
 							originalLanguage: "EN"
 						},
@@ -1684,19 +1686,19 @@ function (
 							fileName: "variant2",
 							fileType: "variant",
 							changeType: "filterBar",
-							layer: "CUSTOMER"
+							layer: Layer.CUSTOMER
 						},
 						{
 							fileName: "change4",
 							fileType: "change",
 							changeType: "codeExt",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							selector: { id: "controlId2" }
 						},
 						{
 							fileType: "change",
 							changeType: "appdescr_changes",
-							layer: "CUSTOMER"
+							layer: Layer.CUSTOMER
 						}
 					]}});
 				}, 100);
@@ -2144,7 +2146,7 @@ function (
 			var oChange0 = new Change(
 				Change.createInitialFileContent({
 					id: "fileNameChange0",
-					layer: "USER",
+					layer: Layer.USER,
 					reference: "appComponentReference",
 					namespace: "namespace",
 					selector: {id: "group1"}
@@ -2153,7 +2155,7 @@ function (
 			var oChange1 = new Change(
 				Change.createInitialFileContent({
 					id: "fileNameChange1",
-					layer: "USER",
+					layer: Layer.USER,
 					reference: "appComponentReference",
 					namespace: "namespace",
 					selector: {id: "field3-2"},
@@ -2169,7 +2171,7 @@ function (
 			var oChange2 = new Change(
 				Change.createInitialFileContent({
 					id: "fileNameChange2",
-					layer: "USER",
+					layer: Layer.USER,
 					reference: "appComponentReference",
 					namespace: "namespace",
 					selector: {id: "field3-2"},
@@ -2217,7 +2219,7 @@ function (
 				id: "sampleControl"
 			};
 			var sStyleClass = "sampleStyle";
-			var sLayer = "CUSTOMER";
+			var sLayer = Layer.CUSTOMER;
 			var aMockLocalChanges = [oMockNewChange];
 			var aAppVariantDescriptors = [oAppVariantDescriptor];
 
@@ -2243,7 +2245,7 @@ function (
 
 		QUnit.test("when calling resetChanges without generator, selector IDs and change types specified", function (assert) {
 			sandbox.stub(Log, "error");
-			this.oChangePersistence.resetChanges("VENDOR");
+			this.oChangePersistence.resetChanges(Layer.VENDOR);
 			assert.ok(Log.error.calledWith("Of the generator, selector IDs and change types parameters at least one has to filled"), "then Log.error() is called with an error");
 		});
 
@@ -2252,7 +2254,7 @@ function (
 			// changes for the component
 			var oVENDORChange1 = new Change({
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "1",
 				namespace: "b",
 				packageName: "$TMP",
@@ -2269,7 +2271,7 @@ function (
 
 			var oVENDORChange2 = new Change({
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "2",
 				namespace: "b",
 				packageName: "c",
@@ -2292,12 +2294,12 @@ function (
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 
-			this.oChangePersistence.resetChanges("VENDOR", "Change.createInitialFileContent").then(function(aChanges) {
+			this.oChangePersistence.resetChanges(Layer.VENDOR, "Change.createInitialFileContent").then(function(aChanges) {
 				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
 				var oResetArgs = oResetChangesStub.getCall(0).args[0];
 				assert.equal(oResetArgs.reference, "MyComponent");
 				assert.equal(oResetArgs.appVersion, "1.2.3");
-				assert.equal(oResetArgs.layer, "VENDOR");
+				assert.equal(oResetArgs.layer, Layer.VENDOR);
 				assert.equal(oResetArgs.generator, "Change.createInitialFileContent");
 				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
 				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0, "the getChangesFromMapByNames is not called");
@@ -2310,7 +2312,7 @@ function (
 			// changes for the component
 			var oVENDORChange1 = new Change({
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "1",
 				namespace: "b",
 				packageName: "$TMP",
@@ -2327,7 +2329,7 @@ function (
 
 			var oVENDORChange2 = new Change({
 				fileType: "change",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileName: "2",
 				namespace: "b",
 				packageName: "c",
@@ -2350,12 +2352,12 @@ function (
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 
-			return this.oChangePersistence.resetChanges("VENDOR", "", ["abc123"], ["labelChange"]).then(function() {
+			return this.oChangePersistence.resetChanges(Layer.VENDOR, "", ["abc123"], ["labelChange"]).then(function() {
 				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
 				var oResetArgs = oResetChangesStub.getCall(0).args[0];
 				assert.equal(oResetArgs.reference, "MyComponent");
 				assert.equal(oResetArgs.appVersion, "1.2.3");
-				assert.equal(oResetArgs.layer, "VENDOR");
+				assert.equal(oResetArgs.layer, Layer.VENDOR);
 				assert.deepEqual(oResetArgs.selectorIds, ["abc123"]);
 				assert.deepEqual(oResetArgs.changeTypes, ["labelChange"]);
 				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
@@ -2414,7 +2416,7 @@ function (
 
 			oChangeContent1 = {
 				fileName: "Gizorillus1",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2424,7 +2426,7 @@ function (
 
 			oChangeContent2 = {
 				fileName: "Gizorillus2",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "removeField",
 				selector: { id: "control1" },
@@ -2434,7 +2436,7 @@ function (
 
 			oChangeContent3 = {
 				fileName: "Gizorillus3",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2488,7 +2490,7 @@ function (
 
 			oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2521,7 +2523,7 @@ function (
 
 			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2548,7 +2550,7 @@ function (
 
 			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2571,7 +2573,7 @@ function (
 
 			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2603,7 +2605,7 @@ function (
 
 			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2647,7 +2649,7 @@ function (
 
 			oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2667,7 +2669,7 @@ function (
 
 			oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2688,7 +2690,7 @@ function (
 
 			oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2822,7 +2824,7 @@ function (
 
 			oChangeContent1 = {
 				fileName: "Gizorillus1",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2832,7 +2834,7 @@ function (
 
 			oChangeContent2 = {
 				fileName: "Gizorillus2",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2908,7 +2910,7 @@ function (
 
 			oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2927,7 +2929,7 @@ function (
 		QUnit.test("shall remove the change from the dirty changes, after is has been saved", function (assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2945,7 +2947,7 @@ function (
 		QUnit.test("(Save As scenario) shall remove the change from the dirty changes, after it has been saved for the new app variant", function (assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2975,7 +2977,7 @@ function (
 		QUnit.test("shall delete a change from the dirty changes, if it has just been added to the dirty changes, having a pending action of NEW", function (assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -2994,7 +2996,7 @@ function (
 		QUnit.skip("shall not change the state of a dirty change in case of a connector error", function (assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -3029,7 +3031,7 @@ function (
 		QUnit.test("shall keep a change in the dirty changes, if it has a pending action of DELETE", function (assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -3049,7 +3051,7 @@ function (
 		QUnit.test("shall delete a change from the dirty changes after the deletion has been saved", function (assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -3077,7 +3079,7 @@ function (
 
 			oChangeContent1 = {
 				fileName: "Gizorillus1",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -3087,7 +3089,7 @@ function (
 
 			oChangeContent2 = {
 				fileName: "Gizorillus2",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -3097,7 +3099,7 @@ function (
 
 			oChangeContent3 = {
 				fileName: "Gizorillus3",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -3124,7 +3126,7 @@ function (
 
 			oChangeContent1 = {
 				fileName: "Gizorillus1",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -3134,7 +3136,7 @@ function (
 
 			oChangeContent2 = {
 				fileName: "Gizorillus2",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -3144,7 +3146,7 @@ function (
 
 			oChangeContent3 = {
 				fileName: "Gizorillus3",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
@@ -3347,13 +3349,13 @@ function (
 				appVersion: "1.2.3"
 			};
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
-			sandbox.stub(LayerUtils, "getMaxLayer").returns("USER");
+			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.USER);
 			var mDependencies = {};
 			var mDependentChangesOnMe = {};
 
 			var oChangeContent1 = {
 				fileName: "Gizorillus1",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control1"},
@@ -3363,7 +3365,7 @@ function (
 
 			var oChangeContent2 = {
 				fileName: "Gizorillus2",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control1"},
@@ -3373,7 +3375,7 @@ function (
 
 			var oChangeContent3 = {
 				fileName: "Gizorillus3",
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control1"},
@@ -3444,7 +3446,7 @@ function (
 			};
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			this.mPropertyBag = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				reference: "testScenarioComponent",
 				appVersion: "1.2.3"
 			};

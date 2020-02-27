@@ -2,9 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/StorageUtils"
 ], function(
 	sinon,
+	Layer,
 	Utils
 ) {
 	"use strict";
@@ -44,65 +46,65 @@ sap.ui.define([
 			this.oVariantManagementRef = "varManRef";
 			this.oCtrlVariantUser = {
 				fileType: "ctrl_variant",
-				layer: "USER"
+				layer: Layer.USER
 			};
 			this.oCtrlVariantCustomer = {
 				fileType: "ctrl_variant",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 			this.oCtrlVariantUserWithVMR = {
 				fileType: "ctrl_variant",
-				layer: "USER",
+				layer: Layer.USER,
 				variantManagementReference: this.oVariantManagementRef
 			};
 			this.oCtrlVariantCustomerWithVMR = {
 				fileType: "ctrl_variant",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				variantManagementReference: this.oVariantManagementRef
 			};
 			this.oCtrlVariantManagUser = {
 				fileType: "ctrl_variant_management_change",
-				layer: "USER"
+				layer: Layer.USER
 			};
 			this.oCtrlVariantManagCustomer = {
 				fileType: "ctrl_variant_management_change",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 			this.oChangeUser = {
 				fileType: "change",
-				layer: "USER"
+				layer: Layer.USER
 			};
 			this.oChangeCustomer = {
 				fileType: "change",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 			this.oChangeUserWithVMR = {
 				fileType: "change",
-				layer: "USER",
+				layer: Layer.USER,
 				variantReference: this.oVariantManagementRef
 			};
 			this.oChangeCustomerWithVMR = {
 				fileType: "change",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				variantReference: this.oVariantManagementRef
 			};
 			this.oVariantUserWithVMR = {
 				fileType: "variant",
-				layer: "USER",
+				layer: Layer.USER,
 				variantReference: this.oVariantManagementRef
 			};
 			this.oVariantCustomerWithVMR = {
 				fileType: "variant",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				variantReference: this.oVariantManagementRef
 			};
 			this.oCtrlVariantChangeUser = {
 				fileType: "ctrl_variant_change",
-				layer: "USER"
+				layer: Layer.USER
 			};
 			this.oCtrlVariantChangeCustomer = {
 				fileType: "ctrl_variant_change",
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 			this.oOtherType = {
 				fileType: "other"
@@ -174,8 +176,8 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
 			this.oConfigurationStub = sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "KeyUserConnector", layers: ["CUSTOMER"]},
-				{connector: "PersonalizationConnector", layers: ["USER"]}
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
+				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
 		},
 		afterEach: function () {

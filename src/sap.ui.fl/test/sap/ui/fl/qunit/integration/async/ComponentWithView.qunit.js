@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/ui/fl/apply/_internal/Storage",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/core/cache/CacheManager",
@@ -18,7 +18,7 @@ function(
 	jQuery,
 	XmlTreeModifier,
 	Component,
-	Storage,
+	Layer,
 	StorageResultMerger,
 	XmlPreprocessorImpl,
 	CacheManager,
@@ -56,7 +56,7 @@ function(
 						id: "rootView--myForm",
 						idIsLocal: true
 					},
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					texts: {
 						groupLabel: {
 							value: "New Group",
