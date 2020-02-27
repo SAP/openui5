@@ -29,54 +29,80 @@
 		"configuration": {
 			"parameters": {
 				"city": {
-					"value": "Berlin"
+					"value": "Berlin",
+					"type": "string"
 				},
-				"agencies": {
-					"value": {
-						"agencyAPI": "NewsAPI",
-						"agencyNews": "AgencyNews"
-					}
+				"agencyName": {
+					"value": "NewsAPI",
+					"type": "string"
+				},
+				"agencyUrl": {
+					"value": "https://newsapi.org",
+					"type": "string"
+				},
+				"numberOfArticles": {
+					"value": 4,
+					"type": "integer"
+				},
+				"fakeNewsIndex": {
+					"value": 0.035,
+					"type": "number"
+				},
+				"clickable": {
+					"value": true,
+					"type": "boolean"
+				},
+				"from": {
+					"value": "{{parameters.TODAY_ISO}}",
+					"type": "date"
+				},
+				"to": {
+					"value": "{{parameters.NOW_ISO}}",
+					"type": "datetime"
 				}
 			}
 		},
 		"type": "List",
 		"header": {
 			"title": "Recent news in  {{parameters.city}}",
-			"subTitle": "Provided by {{parameters.agencies.agencyAPI}}",
+			"subTitle": "Provided by {{parameters.agencyName}}. Fake news index {= format.percent({{parameters.fakeNewsIndex}})}.",
 			"icon": {
-			  "src": "sap-icon://newspaper"
+				"src": "sap-icon://newspaper"
 			},
 			"actions": [
-			  {
-				"type": "Navigation",
-				"parameters": {
-				  "url": "https://newsapi.org"
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "{{parameters.agencyUrl}}"
+					}
 				}
-			  }
 			]
 		},
 		"content": {
-		  "data": {
-			"request": {
-			  "url": "https://newsapi.org/v2/everything?from={{parameters.TODAY_ISO}}&q={{parameters.city}}&sortBy=relevancy&apiKey=da959b2d34334e1db76c53f54a1303aa&language=en&pageSize=10"
+			"data": {
+				"request": {
+					"url": "{{parameters.agencyUrl}}/v2/everything?from={{parameters.from}}&to={{parameters.to}}&q={{parameters.city}}&sortBy=relevancy&apiKey=da959b2d34334e1db76c53f54a1303aa&language=en&pageSize={{parameters.numberOfArticles}}"
+				},
+				"path": "/articles"
 			},
-			"path": "/articles"
-		  },
-		  "item": {
-			"icon": {
-			  "src": "{urlToImage}"
+			"item": {
+				"icon": {
+					"src": "{urlToImage}"
+				},
+				"title": "{title}",
+				"description": "{description}",
+				"info": {
+					"value": "{= format.dateTime(${publishedAt}, {format: 'yMMMd'})}"
+				},
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{{parameters.clickable}}",
+						"url": "{url}"
+					}
+				]
 			},
-			"title": "{title}",
-			"description": "{description}",
-			"actions": [
-			  {
-				"type": "Navigation",
-				"enabled": "{= ${url}}",
-				"url": "{url}"
-			  }
-			]
-		  },
-		  "maxItems": 4
+			"maxItems": "{{parameters.numberOfArticles}}"
 		}
 	}
 }

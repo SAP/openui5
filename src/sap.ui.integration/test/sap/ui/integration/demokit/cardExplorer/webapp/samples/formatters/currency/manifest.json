@@ -25,7 +25,8 @@
 		"configuration": {
 			"parameters": {
 				"cardCurrency": {
-					"value": "EUR"
+					"value": "EUR",
+					"type": "string"
 				}
 			}
 		},

@@ -51,7 +51,7 @@
 			manifest.
 		</p>
 
-		<p>Parameter properties:</p>
+		<h3>Parameter properties:</h3>
 
 		<div class="tableWrapper">
 			<table>
@@ -59,6 +59,7 @@
 					<th>Property</th>
 					<th>Type</th>
 					<th>Required</th>
+					<th>Default</th>
 					<th>Description</th>
 					<th>Schema Version</th>
 				</tr>
@@ -66,8 +67,61 @@
 					<td>value</td>
 					<td>any</td>
 					<td>Yes</td>
+					<td></td>
 					<td>The value of the parameter.</td>
 					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>type</td>
+					<td>string</td>
+					<td>No</td>
+					<td>string</td>
+					<td>The type of the value for the parameter. See 'Parameters types' below for list of available types.</td>
+					<td>1.20.0</td>
+				</tr>
+			</table>
+		</div>
+
+		<h3>Parameter types:</h3>
+
+		<p><b>Note:</b> Currently the type of the parameter is used only in UI adaptation during designtime. There is no runtime data type validation.</p>
+
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Example</th>
+				</tr>
+				<tr>
+					<td>string</td>
+					<td>This is the default type.</td>
+					<td>https://sap.com/</td>
+				</tr>
+				<tr>
+					<td>integer</td>
+					<td>Number limited to integer values.</td>
+					<td>15</td>
+				</tr>
+				<tr>
+					<td>number</td>
+					<td>Number which allows any numeric values.</td>
+					<td>3.14</td>
+				</tr>
+				<tr>
+					<td>boolean</td>
+					<td>Valid values are true and false.</td>
+					<td>false</td>
+				</tr>
+				<tr>
+					<td>date</td>
+					<td>Any valid date string. Does not include time.</td>
+					<td>2020-02-27</td>
+				</tr>
+				<tr>
+					<td>datetime</td>
+					<td>Any valid datetime string. Includes time.</td>
+					<td>2020-02-27T09:30:00.000Z</td>
 				</tr>
 			</table>
 		</div>
@@ -115,35 +169,33 @@
 		"configuration": {
 			"parameters": {
 				"city": {
-					"value": "Walldorf"
+					"value": "Walldorf",
+					"type": "string"
 				},
-				"weatherServices": {
-					"value": {
-						"weatherAPI": "WeatherAPI"
-					}
+				"numberOfArticles": {
+					"value": 5,
+					"type": "integer"
 				}
 			}
 		},
 		"type": "List",
 		"header": {
-			"title": "Weather forecast provided by {{parameters.weatherServices.weatherAPI}}"
+			"title": "News for {{parameters.city}}"
 		},
 		"content": {
 			"data": {
 				"request": {
-					"url": "weather/api?q={{parameters.city}}"
-				}
+					"url": "https://newsapi.org/v2/everything?q={{parameters.city}}&pageSize={{parameters.numberOfArticles}}&apiKey=da959b2d34334e1db76c53f54a1303aa"
+				},
+				"path": "/articles"
 			},
+			"maxItems": "{{parameters.numberOfArticles}}",
 			"item": {
 				"icon": {
-					"src": "{/current/condition/icon}"
+					"src": "{urlToImage}"
 				},
-				"title": {
-					"value": "{/location/name}"
-				},
-				"description": {
-					"value": "{/current/condition/text}"
-				}
+				"title": "{title}",
+				"description": "{description}"
 			}
 		}
 	}

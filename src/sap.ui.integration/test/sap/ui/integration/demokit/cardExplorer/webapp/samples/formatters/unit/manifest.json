@@ -25,7 +25,8 @@
 		"configuration": {
 			"parameters": {
 				"cardUnitType": {
-					"value": "length-kilometer"
+					"value": "length-kilometer",
+					"type": "string"
 				}
 			}
 		},
