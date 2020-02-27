@@ -177,7 +177,7 @@ sap.ui.define([
 				// aria for virtual keyboard mode
 				oHeader = oColumn.getHeader();
 				if (oHeader) {
-					rm.attr("headers", oHeader.getId());
+					rm.attr("headers", oColumn.getId());
 				}
 
 				// merge duplicate cells
