@@ -108,8 +108,7 @@ sap.ui.define([
 		_createIndexHtmlFile: function (oData, bHasManifest) {
 			var sFile = this.fetchSourceFile(TMPL_REF, bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl");
 
-			sFile = sFile.replace(/{{TITLE}}/g, oData.name)
-				.replace(/{{SAMPLE_ID}}/g, oData.id);
+			sFile = this._formatIndexHtmlFile(sFile, oData);
 
 			return sFile;
 		},
@@ -117,25 +116,39 @@ sap.ui.define([
 		_createIndexJsFile: function (oData) {
 			var sFile = this.fetchSourceFile(TMPL_REF, "index.js.tmpl");
 
-			sFile = sFile.replace(/{{TITLE}}/g, oData.name)
-				.replace(/{{SAMPLE_ID}}/g, oData.id)
-				.replace(/{{HEIGHT}}/g, oData.stretch ? 'height : "100%", ' : "")
-				.replace(/{{SCROLLING}}/g, !oData.stretch);
+			sFile = this._formatIndexJsFile(sFile, oData);
 
 			return sFile;
 		},
 
 		downloadMockFile: function (sFile) {
-			var sWrongPath = "test-resources/sap/ui/documentation/sdk/images/",
-				sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/documentation/sdk/images/",
-				oRegExp = new RegExp(sWrongPath, "g"),
-				sMockData = this.fetchSourceFile(MOCK_DATA_REF, sFile);
+			var sMockData = this.fetchSourceFile(MOCK_DATA_REF, sFile);
 
 			if (sMockData) {
-				sMockData = sMockData.replace(oRegExp, sCorrectPath);
+				sMockData = this._formatMockFile(sMockData);
 			}
 
 			return sMockData;
+		},
+
+		_formatIndexHtmlFile: function (sFile, oData) {
+			return sFile.replace(/{{TITLE}}/g, oData.name)
+				.replace(/{{SAMPLE_ID}}/g, oData.id);
+		},
+
+		_formatIndexJsFile: function (sFile, oData) {
+			return sFile.replace(/{{TITLE}}/g, oData.name)
+				.replace(/{{SAMPLE_ID}}/g, oData.id)
+				.replace(/{{HEIGHT}}/g, oData.stretch ? 'height : "100%", ' : "")
+				.replace(/{{SCROLLING}}/g, !oData.stretch);
+		},
+
+		_formatMockFile: function (sMockData) {
+			var sWrongPath = "test-resources/sap/ui/documentation/sdk/images/",
+				sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/documentation/sdk/images/",
+				oRegExp = new RegExp(sWrongPath, "g");
+
+			return sMockData.replace(oRegExp, sCorrectPath);
 		},
 
 		_changeIframeBootstrapToCloud: function (sRawIndexFileHtml) {
