@@ -4,12 +4,6 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Notification List item - sap.m</title>
 
-		<style>
-			#content {
-				padding: 30px 0 0 30px;
-			}
-		</style>
-
 		<script src="../shared-config.js"></script>
 		<script src="../../../../resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
@@ -168,7 +162,13 @@
 				]
 			});
 
-			list.setWidth("480px").placeAt("content");
+			var page = new sap.m.Page("page", {
+			title: "NotificationItem Accessibility Test Page",
+			content: [list]
+		});
+
+		var oApp = new sap.m.App("myApp", { initialPage: "page" });
+		oApp.addPage(page).placeAt("content");
 		</script>
 	</head>
 
