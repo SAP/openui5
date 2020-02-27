@@ -151,8 +151,7 @@ sap.ui.define([
 					oAnchorBar.addContent(oButtonClone);
 
 					if (oButtonClone instanceof MenuButton) {
-						var oMenu = new Menu({}),
-							oRb = sap.ui.getCore().getLibraryResourceBundle("sap.uxap");
+						var oMenu = new Menu({});
 
 						// the focus goes to the internal SplitButton, so we need to enhance its accessibility properties also
 						oButtonClone.enhanceAccessibilityState = function (oElement, mAriaProps) {
@@ -160,8 +159,7 @@ sap.ui.define([
 								iIndex = oContent.indexOf(oElement.getParent());
 
 							if (iIndex !== -1) {
-								mAriaProps.role = "menuitemradio";
-								mAriaProps.roledescription = oRb.getText("ANCHOR_BAR_MENUITEM");
+								mAriaProps.role = "option";
 								mAriaProps.setsize = oContent.length;
 								mAriaProps.posinset = iIndex + 1;
 							}

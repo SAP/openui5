@@ -295,9 +295,9 @@ sap.ui.define([
 		if (oButton && oButton.toggleStyleClass) {
 			oButton.toggleStyleClass("sapUxAPAnchorBarButtonSelected", bAdd);
 			if (oButton instanceof MenuButton) {
-				oButton._getButtonControl().$().attr("aria-checked", bAdd);
+				oButton._getButtonControl().$().attr("aria-selected", bAdd);
 			} else {
-				oButton.$().attr("aria-checked", bAdd);
+				oButton.$().attr("aria-selected", bAdd);
 			}
 		}
 	};
@@ -842,9 +842,7 @@ sap.ui.define([
 	 * called for figuring out responsive scenarios
 	 */
 	AnchorBar.prototype.onAfterRendering = function () {
-		var oSelectedButton,
-			sHeaderTitleAriaLabelText = this._getHeadeTitleAriaLabelText();
-
+		var oSelectedButton;
 		if (Toolbar.prototype.onAfterRendering) {
 			Toolbar.prototype.onAfterRendering.call(this);
 		}
@@ -859,10 +857,6 @@ sap.ui.define([
 		this._sResizeListenerId = ResizeHandler.register(this, jQuery.proxy(this._adjustSize, this));
 
 		this.$().find(".sapUxAPAnchorBarScrollContainer").scroll(jQuery.proxy(this._onScroll, this));
-
-		if (sHeaderTitleAriaLabelText) {
-			this.$().attr("aria-label", sHeaderTitleAriaLabelText);
-		}
 
 		//restore state from previous rendering
 		if (oSelectedButton) {
@@ -912,10 +906,18 @@ sap.ui.define([
 
 		// set ARIA has-popup if button opens submenu
 		if (oContent.data("bHasSubMenu")) {
-			oButton.$().attr("aria-haspopup", "true");
+			oButton.$().attr("aria-haspopup", "menu");
+
+			// set role 'group' to inner button element since
+			// its not allow nesting them in elements with role 'option'
+			oButton.$().find(".sapMBtn")
+				.attr("role", "group")
+				// remove ARIA has-popup from inner elements
+				// since they are not receiving any focus
+				.removeAttr('aria-haspopup');
 		}
 		// set ARIA attributes of main buttons
-		oButton.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-checked", bSelected);
+		oButton.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-selected", bSelected);
 
 		var iWidth = oContent.$().outerWidth(true);
 
@@ -955,14 +957,8 @@ sap.ui.define([
 		return this;
 	};
 
-	AnchorBar.prototype._getHeadeTitleAriaLabelText = function () {
-		var oObjectPage = this.getParent();
-
-		if (oObjectPage.isA("sap.uxap.ObjectPageLayout")) {
-			return oObjectPage._getAriaLabelText("NAVTOOLBAR");
-		}
-
-		return null;
+	AnchorBar.prototype._getAccessibilityRole = function () {
+		return 'none';
 	};
 
 	/**
@@ -980,8 +976,7 @@ sap.ui.define([
 			iIndex = oContent.indexOf(oElement);
 
 		if (iIndex !== -1) {
-			mAriaProps.role = "menuitemradio";
-			mAriaProps.roledescription = this.oLibraryResourceBundleOP.getText("ANCHOR_BAR_MENUITEM");
+			mAriaProps.role = "option";
 			mAriaProps.setsize = oContent.length;
 			mAriaProps.posinset = iIndex + 1; // we need "+ 1", since iIndex would start from 0 (due to indexOf)
 		}

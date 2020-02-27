@@ -101,19 +101,19 @@ sap.ui.define([
 		this.clock.tick(iRenderingDelay);
 
 		assert.strictEqual(oLastSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "select button programmatically");
-		checkButtonAriaAttribute(assert, oLastSectionButton, "aria-checked", "true", "ARIA checked state should be true for the selected button");
-		checkButtonAriaAttribute(assert, oFirstSectionButton, "aria-checked", "false", "ARIA checked state should be false for the unselected button");
-		checkButtonAriaAttribute(assert, oMenuButton, "aria-checked", "false", "ARIA checked state should be false for the unselected split button");
+		checkButtonAriaAttribute(assert, oLastSectionButton, "aria-selected", "true", "ARIA selected state should be true for the selected button");
+		checkButtonAriaAttribute(assert, oFirstSectionButton, "aria-selected", "false", "ARIA selected state should be false for the unselected button");
+		checkButtonAriaAttribute(assert, oMenuButton, "aria-selected", "false", "ARIA selected state should be false for the unselected split button");
 
 		oAnchorBar.setSelectedButton(oMenuButton);
 
 		// allow for scroling
 		this.clock.tick(iRenderingDelay);
 
-		checkButtonAriaAttribute(assert, oMenuButton, "aria-checked", "true", "ARIA checked state should be true for the selected split button");
+		checkButtonAriaAttribute(assert, oMenuButton, "aria-selected", "true", "ARIA selected state should be true for the selected split button");
 	});
 
-	QUnit.test("aria-checked is set correctly in _computeNextSectionInfo", function (assert) {
+	QUnit.test("aria-selected is set correctly in _computeNextSectionInfo", function (assert) {
 		//select button programatically
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			aAnchorBarContent = oAnchorBar.getContent(),
@@ -124,8 +124,8 @@ sap.ui.define([
 		oAnchorBar.setSelectedButton(oLastSectionButton);
 		oAnchorBar._computeBarSectionsInfo();
 
-		checkButtonAriaAttribute(assert, oFirstSectionButton, "aria-checked", "false", "ARIA checked state should be false for the unselected button");
-		checkButtonAriaAttribute(assert, oLastSectionButton, "aria-checked", "true", "ARIA checked state should be true for the selected button");
+		checkButtonAriaAttribute(assert, oFirstSectionButton, "aria-selected", "false", "ARIA selected state should be false for the unselected button");
+		checkButtonAriaAttribute(assert, oLastSectionButton, "aria-selected", "true", "ARIA selected state should be true for the selected button");
 	});
 
 	QUnit.test("Selected button always set correctly", function (assert) {
@@ -528,10 +528,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Menu container has the correct role", function (assert) {
+	QUnit.test("AnchorBar container has the correct role", function (assert) {
 		var $oMenu = jQuery("#UxAP-69_anchorBarBinding--ObjectPageLayout-anchBar-scroll");
 
-		assert.strictEqual($oMenu.attr("role"), "menubar", "Menu container has the menubar role.");
+		assert.strictEqual($oMenu.attr("role"), "listbox", "AnchorBar container has the listbox role.");
 	});
 
 	QUnit.test("Tooltip set on HierarchicalSelect", function (assert) {
@@ -563,16 +563,13 @@ sap.ui.define([
 	QUnit.test("ARIA role and role descrption of buttons", function (assert) {
 		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
 			iAnchorBarContentLength = aAnchorBarContent.length,
-			sAriaRoleDescription = Core.getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_MENUITEM"),
 			oCurrentButton,
 			iIndex;
 
 		for (iIndex = 0; iIndex < iAnchorBarContentLength; iIndex++) {
 			oCurrentButton = aAnchorBarContent[iIndex];
-			checkButtonAriaAttribute(assert, oCurrentButton, "role", "menuitemradio",
+			checkButtonAriaAttribute(assert, oCurrentButton, "role", "option",
 				"aria role of the button is set correctly");
-			checkButtonAriaAttribute(assert, oCurrentButton, "aria-roledescription", sAriaRoleDescription,
-				"aria role description of the button is set correctly");
 		}
 	});
 
