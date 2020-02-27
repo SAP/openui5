@@ -597,7 +597,8 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype.onBeforeRendering = function () {
-		var oSideBtn = this.getSideContentButton();
+		var oSideBtn = this.getSideContentButton(),
+			that = this;
 		if (oSideBtn && !oSideBtn.getTooltip()) {
 			oSideBtn.setTooltip(this.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SHOW_SIDE_CONTENT"));
 		}
@@ -638,6 +639,9 @@ sap.ui.define([
 						if (!this._getInternalVisible()) {
 							this.$().hide();
 						}
+
+						that._resizeIdentifierLineContainer();
+
 					};
 				}
 
@@ -890,16 +894,11 @@ sap.ui.define([
 
 		var $identifierLine = this._findById($domRef, "identifierLine"),
 			$title = $identifierLine.find(".sapUxAPObjectPageHeaderIdentifierTitle"),
-			iIdentifierContWidth = $identifierLine.width(),
 			$subtitle = this._findById($domRef, "subtitle"),
 			$innerTitle = this._findById($domRef, "innerTitle"),
-			$identifierLineContainer = this._findById($domRef, "identifierLineContainer"),
 			iSubtitleBottom,
 			iTitleBottom,
 			sOriginalHeight = null,
-			$actions = this._findById($domRef, "actions"),
-			$imageContainer = $domRef ? $domRef.find(".sapUxAPObjectPageHeaderObjectImageContainer") : this.$().find(".sapUxAPObjectPageHeaderObjectImageContainer"),
-			iActionsAndImageWidth = $actions.width() + $imageContainer.width(),
 			iPixelTolerance = this.$().parents().hasClass('sapUiSizeCompact') ? 7 : 3;  // the tolerance of pixels from which we can tell that the title and subtitle are on the same row
 
 		this._adaptObjectPageHeaderTitle($title);
@@ -929,7 +928,18 @@ sap.ui.define([
 			}
 		}
 
-		$identifierLineContainer.width((0.95 - (iActionsAndImageWidth / iIdentifierContWidth)) * 100 + "%");
+		this._resizeIdentifierLineContainer($domRef);
+	};
+
+	ObjectPageHeader.prototype._resizeIdentifierLineContainer = function ($domRef) {
+		var $identifierLineContainer = this._findById($domRef, "identifierLineContainer"),
+			$actions = this._findById($domRef, "actions"),
+			$identifierLine = this._findById($domRef, "identifierLine"),
+			iIdentifierContWidth = $identifierLine.width(),
+			$imageContainer = $domRef ? $domRef.find(".sapUxAPObjectPageHeaderObjectImageContainer") : this.$().find(".sapUxAPObjectPageHeaderObjectImageContainer"),
+			iActionsAndImageWidth = $actions.width() + $imageContainer.width();
+
+			$identifierLineContainer.width((0.95 - (iActionsAndImageWidth / iIdentifierContWidth)) * 100 + "%");
 	};
 
 	/**
