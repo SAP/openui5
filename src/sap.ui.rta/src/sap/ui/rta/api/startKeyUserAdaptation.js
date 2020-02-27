@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/core/Element",
 	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/UIComponent",
 	"sap/base/Log"
@@ -13,6 +14,7 @@ sap.ui.define([
 	RuntimeAuthoring,
 	Element,
 	FeaturesAPI,
+	Layer,
 	FlexUtils,
 	UIComponent,
 	Log
@@ -50,7 +52,7 @@ sap.ui.define([
 					rootControl: FlexUtils.getAppComponentForControl(mPropertyBag.rootControl),
 					flexSettings: {
 						developerMode: false,
-						layer: "CUSTOMER"
+						layer: Layer.CUSTOMER
 					},
 					validateAppVersion: true
 				});

@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
@@ -29,6 +30,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	flUtils,
+	Layer,
 	VerticalLayout,
 	DesignTime,
 	CommandFactory,
@@ -217,7 +219,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when _isPersonalizationMode is called", function(assert) {
 			assert.notOk(this.oControlVariantPlugin._isPersonalizationMode(), "then _isPersonalizationMode for CUSTOMER layer is false");
-			sandbox.stub(this.oControlVariantPlugin.getCommandFactory(), "getFlexSettings").returns({layer : "USER"});
+			sandbox.stub(this.oControlVariantPlugin.getCommandFactory(), "getFlexSettings").returns({layer : Layer.USER});
 			assert.ok(this.oControlVariantPlugin._isPersonalizationMode(), "then _isPersonalizationMode for USER layer is true");
 		});
 

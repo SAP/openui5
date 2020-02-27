@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/core/Component",
@@ -6,6 +7,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
 ], function(
+	Layer,
 	FakeLrepConnectorSessionStorage,
 	PersistenceWriteAPI,
 	Component,
@@ -60,13 +62,13 @@ sap.ui.define([
 	RtaQunitUtils.clear = function (oSelector) {
 		oSelector = oSelector || sap.ui.getCore().getComponent("Comp1");
 		return Promise.all([
-			PersistenceWriteAPI.save({selector: oSelector, layer: "CUSTOMER"}),
-			PersistenceWriteAPI.save({selector: oSelector, layer: "USER"})
+			PersistenceWriteAPI.save({selector: oSelector, layer: Layer.CUSTOMER}),
+			PersistenceWriteAPI.save({selector: oSelector, layer: Layer.USER})
 		])
 		.then(
 			Promise.all([
-				PersistenceWriteAPI.reset({selector: oSelector, layer: "CUSTOMER", generator: "Change.createInitialFileContent"}),
-				PersistenceWriteAPI.reset({selector: oSelector, layer: "USER", generator: "Change.createInitialFileContent"})
+				PersistenceWriteAPI.reset({selector: oSelector, layer: Layer.CUSTOMER, generator: "Change.createInitialFileContent"}),
+				PersistenceWriteAPI.reset({selector: oSelector, layer: Layer.USER, generator: "Change.createInitialFileContent"})
 			])
 		);
 	};

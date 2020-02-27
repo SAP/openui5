@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/rta/util/BindingsExtractor",
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/fieldExt/Access",
+	"sap/ui/fl/Layer",
 	"sap/m/Label",
 	"sap/m/Button",
 	"sap/uxap/ObjectPageSection",
@@ -29,6 +30,7 @@ function(
 	BindingsExtractor,
 	RtaQunitUtils,
 	Access,
+	Layer,
 	Label,
 	Button,
 	ObjectPageSection,
@@ -498,13 +500,13 @@ function(
 			Utils.setRtaStyleClassName("Invalid Layer");
 			assert.equal(Utils.getRtaStyleClassName(), "", "then the StyleClass is not set");
 
-			Utils.setRtaStyleClassName("CUSTOMER");
+			Utils.setRtaStyleClassName(Layer.CUSTOMER);
 			assert.equal(Utils.getRtaStyleClassName(), sExpectedStyleClass, "then the StyleClass is set");
 
-			Utils.setRtaStyleClassName("USER");
+			Utils.setRtaStyleClassName(Layer.USER);
 			assert.equal(Utils.getRtaStyleClassName(), "", "then the StyleClass is reset");
 
-			Utils.setRtaStyleClassName("VENDOR");
+			Utils.setRtaStyleClassName(Layer.VENDOR);
 			assert.equal(Utils.getRtaStyleClassName(), sExpectedStyleClass, "then the StyleClass is set");
 		});
 	});

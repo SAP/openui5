@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/command/CommandFactory",
 	"qunit/RtaQunitUtils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/Device",
@@ -16,6 +17,7 @@ sap.ui.define([
 	Stack,
 	CommandFactory,
 	RtaQunitUtils,
+	Layer,
 	LayerUtils,
 	OverlayRegistry,
 	Device,
@@ -116,13 +118,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when renaming a form title using a property change command", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 
 			var oInitialTitle = this.oForm.getTitle();
 
 			return new CommandFactory({
 				flexSettings: {
-					layer: "VENDOR"
+					layer: Layer.VENDOR
 				}
 			}).getCommandFor(this.oForm, "Property", {
 				propertyName : "title",

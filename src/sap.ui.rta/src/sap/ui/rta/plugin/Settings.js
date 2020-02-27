@@ -270,11 +270,9 @@ sap.ui.define([
 						icon: this._getActionIcon(oSettingsAction),
 						enabled: (
 							typeof oSettingsAction.isEnabled === 'function'
-							&& ( // eslint-disable-line no-extra-parens
-								function (aElementOverlays) {
-									return oSettingsAction.isEnabled(aElementOverlays[0].getElement());
-								}
-							)
+							&& function (aElementOverlays) {
+								return oSettingsAction.isEnabled(aElementOverlays[0].getElement());
+							}
 							|| oSettingsAction.isEnabled
 						),
 						handler: function(fnHandler, aElementOverlays, mPropertyBag) {

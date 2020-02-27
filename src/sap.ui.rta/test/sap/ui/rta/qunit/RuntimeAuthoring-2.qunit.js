@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Layer",
 	"sap/base/Log",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
@@ -14,7 +15,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -23,6 +23,7 @@ sap.ui.define([
 	DesignTime,
 	ZIndexManager,
 	Settings,
+	Layer,
 	Log,
 	FlexUtils,
 	RtaFlexUtils,
@@ -31,7 +32,6 @@ sap.ui.define([
 	Remove,
 	RtaQunitUtils,
 	PersistenceWriteAPI,
-	FeaturesAPI,
 	VersionsAPI,
 	sinon
 ) {
@@ -284,8 +284,8 @@ sap.ui.define([
 		afterEach : function() {
 			this.oRta.destroy();
 			//cleanup session storage
-			RuntimeAuthoring.disableRestart("CUSTOMER");
-			RuntimeAuthoring.disableRestart("VENDOR");
+			RuntimeAuthoring.disableRestart(Layer.CUSTOMER);
+			RuntimeAuthoring.disableRestart(Layer.VENDOR);
 			sandbox.restore();
 		}
 	}, function() {
@@ -298,7 +298,7 @@ sap.ui.define([
 				assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
 					true,
 					"then enableRestart() is called only once");
-				assert.equal(this.fnEnableRestartSpy.calledWith("CUSTOMER"),
+				assert.equal(this.fnEnableRestartSpy.calledWith(Layer.CUSTOMER),
 					true,
 					"then enableRestart() is called with the correct parameter");
 				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
@@ -307,7 +307,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 		QUnit.test("when there are customer changes and currentLayer is VENDOR during startup", function(assert) {
-			whenStartedWithLayer(this.oRta, "VENDOR");
+			whenStartedWithLayer(this.oRta, Layer.VENDOR);
 			whenHigherLayerChangesExist();
 			whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
 
@@ -315,7 +315,7 @@ sap.ui.define([
 				assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
 					true,
 					"then enableRestart() is called only once");
-				assert.equal(this.fnEnableRestartSpy.calledWith("VENDOR"),
+				assert.equal(this.fnEnableRestartSpy.calledWith(Layer.VENDOR),
 					true,
 					"then enableRestart() is called with the correct parameter");
 				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
@@ -445,7 +445,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when draft changes already existed when entering and user exits RTA...", function(assert) {
-			givenDraftParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			givenDraftParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 
@@ -460,7 +460,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when draft changes already existed and the draft was activated and user exits RTA...", function(assert) {
-			givenDraftParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			givenDraftParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.NOT_NEEDED);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 
@@ -507,7 +507,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when personalized changes exist and user exits and started in FLP reloading the personalization...", function(assert) {
-			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenHigherLayerChangesExist();
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
@@ -522,8 +522,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when higher layer changes exist, RTA is started above CUSTOMER layer and user exits and started in FLP reloading the personalization...", function(assert) {
-			givenMaxLayerParameterIsSetTo.call(this, "VENDOR", this.fnFLPToExternalStub);
-			whenStartedWithLayer(this.oRta, "VENDOR");
+			givenMaxLayerParameterIsSetTo.call(this, Layer.VENDOR, this.fnFLPToExternalStub);
+			whenStartedWithLayer(this.oRta, Layer.VENDOR);
 			whenHigherLayerChangesExist();
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_ALL_CHANGES", assert);
 
@@ -537,7 +537,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when app descriptor and personalized changes exist and user exits reloading the personalization...", function(assert) {
-			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			whenHigherLayerChangesExist();
 
@@ -579,7 +579,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when app descriptor changes exist and user publishes and afterwards exits ...", function(assert) {
-			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			var fnNeedsReloadSpy = sandbox.spy(this.oRta._oSerializer, "needsReload");
 
@@ -598,7 +598,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when app descriptor changes exist and user exits ...", function(assert) {
-			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			var fnNeedsReloadSpy = sandbox.spy(this.oRta._oSerializer, "needsReload");
 
@@ -616,7 +616,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when there are no personalized and appDescriptor changes and _handleReloadOnExit() is called", function(assert) {
-			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenNoHigherLayerChangesExist();
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
@@ -629,7 +629,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when app descriptor and no personalized changes exist and user exits reloading the personalization...", function(assert) {
-			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			whenNoHigherLayerChangesExist();
 
@@ -645,7 +645,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when reloadable changes exist and user exits RTA...", function(assert) {
-			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.RELOAD_PAGE);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 
@@ -1061,7 +1061,7 @@ sap.ui.define([
 		QUnit.test("and the url parameter for draft is present in the parsed hash", function(assert) {
 			var mParsedHash = {
 				params: {
-					"sap-ui-fl-draft": ["CUSTOMER"]
+					"sap-ui-fl-draft": [Layer.CUSTOMER]
 				}
 			};
 

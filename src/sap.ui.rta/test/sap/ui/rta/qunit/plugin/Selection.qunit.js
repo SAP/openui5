@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/m/Button",
 	"sap/m/VBox",
@@ -32,6 +33,7 @@ sap.ui.define([
 	DesignTime,
 	OverlayRegistry,
 	ElementOverlay,
+	Layer,
 	FlUtils,
 	Button,
 	VBox,
@@ -85,7 +87,7 @@ sap.ui.define([
 				this.oCommandFactory = new CommandFactory(
 					{
 						flexSettings: {
-							layer:"CUSTOMER",
+							layer: Layer.CUSTOMER,
 							developerMode: false
 						}
 					}
@@ -510,7 +512,7 @@ sap.ui.define([
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			oOverlay.setEditable(false);
 			oOverlay.setSelectable(false);
-			this.oCommandFactory.setProperty("flexSettings", {layer:"CUSTOMER", developerMode: true});
+			this.oCommandFactory.setProperty("flexSettings", {layer:Layer.CUSTOMER, developerMode: true});
 			this.oSelectionPlugin.attachEventOnce("elementEditableChange", function () {
 				assert.ok(true, 'elementEditableChange event was called');
 				fnDone();

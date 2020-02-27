@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Manifest",
 	"sap/ui/rta/command/CommandFactory",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
+	Layer,
 	flUtils,
 	Manifest,
 	CommandFactory,
@@ -62,13 +64,13 @@ function(
 						{
 							author: "SAP",
 							key: "variantMgmtId1",
-							layer: "VENDOR",
+							layer: Layer.VENDOR,
 							visible: true,
 							title: "Standard"
 						}, {
 							author: "Me",
 							key: "variant0",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							visible: true,
 							title: "variant A"
 						}
@@ -84,7 +86,7 @@ function(
 					content: {
 						title:"variant A"
 					},
-					layer:"CUSTOMER",
+					layer:Layer.CUSTOMER,
 					variantReference:"variant00",
 					reference: "Dummy.Component"
 				},
@@ -120,11 +122,11 @@ function(
 			sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap");
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
-			var mFlexSettings = {layer: "CUSTOMER"};
+			var mFlexSettings = {layer: Layer.CUSTOMER};
 			var oTitleChange = {
 				appComponent : this.oMockedAppComponent,
 				changeType : "setTitle",
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				originalTitle : "variant A",
 				title : "test",
 				variantReference : "variant0"
@@ -133,14 +135,14 @@ function(
 				appComponent : this.oMockedAppComponent,
 				changeType : "setFavorite",
 				favorite : false,
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				originalFavorite : true,
 				variantReference : "variant0"
 			};
 			var oVisibleChange = {
 				appComponent : this.oMockedAppComponent,
 				changeType : "setVisible",
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				variantReference : "variant0",
 				visible : false
 			};
@@ -191,12 +193,12 @@ function(
 			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
-			var mFlexSettings = {layer: "CUSTOMER"};
+			var mFlexSettings = {layer: Layer.CUSTOMER};
 			var oDefaultChange = {
 				appComponent : this.oMockedAppComponent,
 				changeType: "setDefault",
 				defaultVariant: "variantMgmtId1",
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				originalDefaultVariant: "variant0",
 				variantManagementReference: "variantMgmtId1"
 			};

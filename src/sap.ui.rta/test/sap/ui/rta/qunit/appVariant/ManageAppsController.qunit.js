@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/core/Control",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/base/Event",
@@ -18,6 +19,7 @@ sap.ui.define([
 	AppVariantUtils,
 	RtaAppVariantFeature,
 	RtaUtils,
+	Layer,
 	Control,
 	ResourceBundle,
 	Event,
@@ -51,7 +53,7 @@ sap.ui.define([
 					return true;
 				},
 				getLayer: function() {
-					return "CUSTOMER";
+					return Layer.CUSTOMER;
 				}
 			};
 
@@ -117,7 +119,7 @@ sap.ui.define([
 					return true;
 				},
 				getLayer: function() {
-					return "CUSTOMER";
+					return Layer.CUSTOMER;
 				}
 			};
 
@@ -160,7 +162,7 @@ sap.ui.define([
 					return true;
 				},
 				getLayer: function() {
-					return "CUSTOMER";
+					return Layer.CUSTOMER;
 				}
 			};
 

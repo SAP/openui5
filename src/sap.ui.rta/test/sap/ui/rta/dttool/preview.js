@@ -2,6 +2,7 @@ sap.ui.define([
 	"sap/ui/rta/dttool/util/DragDropUtil",
 	"sap/ui/core/postmessage/Bus",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/dt/OverlayRegistry",
@@ -15,6 +16,7 @@ sap.ui.define([
 	DragDropUtil,
 	PostMessageBus,
 	FakeLrepConnectorLocalStorage,
+	Layer,
 	Utils,
 	RuntimeAuthoring,
 	OverlayRegistry,
@@ -156,7 +158,7 @@ sap.ui.define([
 		//Add the custom plugin that handles drag & drop from outside
 		var oCommandFactory = new CommandFactory({
 			flexSettings: {
-				layer: "VENDOR"
+				layer: Layer.VENDOR
 			}
 		});
 		var oOutsideElementMover = new OutsideElementMover({

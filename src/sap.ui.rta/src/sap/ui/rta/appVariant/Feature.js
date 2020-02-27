@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/core/BusyIndicator",
 	"sap/base/util/UriParameters",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/base/util/merge"
 ], function(
 	FlexUtils,
+	Layer,
 	AppVariantUtils,
 	BusyIndicator,
 	UriParameters,
@@ -167,7 +169,7 @@ sap.ui.define([
 			var oDescriptor = fnGetDescriptor();
 
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
-				if (FlexUtils.getUshellContainer() && !AppVariantUtils.isStandAloneApp() && sCurrentLayer === "CUSTOMER") {
+				if (FlexUtils.getUshellContainer() && !AppVariantUtils.isStandAloneApp() && sCurrentLayer === Layer.CUSTOMER) {
 					var oInboundInfo;
 
 					if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {

@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/rta/plugin/CutPaste",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/layout/VerticalLayout",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
+	Layer,
 	CutPastePlugin,
 	CommandFactory,
 	VerticalLayout,
@@ -28,7 +30,7 @@ function(
 
 	var oCommandFactory = new CommandFactory({
 		flexSettings: {
-			layer: "VENDOR"
+			layer: Layer.VENDOR
 		}
 	});
 

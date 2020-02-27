@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/comp/smartform/Group",
 	"sap/ui/comp/smartform/GroupElement",
 	"sap/ui/comp/smartform/SmartForm",
-	"sap/ui/core/BusyIndicator",
 	"sap/ui/Device",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/DesignTimeMetadata",
@@ -13,6 +12,7 @@ sap.ui.define([
 	"sap/ui/dt/Overlay",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/rta/Utils",
@@ -38,7 +38,6 @@ function(
 	Group,
 	GroupElement,
 	SmartForm,
-	BusyIndicator,
 	Device,
 	ContextMenuPlugin,
 	DesignTimeMetadata,
@@ -46,6 +45,7 @@ function(
 	Overlay,
 	ChangeRegistry,
 	Change,
+	Layer,
 	Utils,
 	FeaturesAPI,
 	RtaUtils,
@@ -199,7 +199,7 @@ function(
 		beforeEach : function() {
 			this.oUserChange = new Change({
 				fileType: "change",
-				layer: "USER",
+				layer: Layer.USER,
 				fileName: "a",
 				namespace: "b",
 				packageName: "c",
@@ -232,7 +232,7 @@ function(
 	}, function() {
 		QUnit.test("when RTA is started and stopped in the user layer", function(assert) {
 			var done = assert.async();
-			this.oRta.setFlexSettings({layer: "USER"});
+			this.oRta.setFlexSettings({layer: Layer.USER});
 			var oReloadSpy = sandbox.spy(this.oRta, "_handleReloadOnExit");
 
 			this.oRta.attachStop(function() {
@@ -266,7 +266,7 @@ function(
 			var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
 			var oPropertyBag = {
 				selector: oCompCont.getComponentInstance(),
-				layer: "CUSTOMER"
+				layer: Layer.CUSTOMER
 			};
 
 			return this.oRta._isDraftAvailable()
@@ -397,7 +397,7 @@ function(
 		}
 	}, function() {
 		QUnit.test("when RTA is started and no draft is available", function(assert) {
-			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			this.oRta.setFlexSettings({layer: Layer.CUSTOMER});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(false);
 
 			return this.oRta.start().then(function () {
@@ -406,7 +406,7 @@ function(
 			}.bind(this));
 		});
 		QUnit.test("when RTA is started and a draft is available", function(assert) {
-			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			this.oRta.setFlexSettings({layer: Layer.CUSTOMER});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(true);
 			return this.oRta.start().then(function () {
 				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
@@ -414,7 +414,7 @@ function(
 		});
 
 		QUnit.test("when RTA is started and no draft is available, and and the key user starts working", function(assert) {
-			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			this.oRta.setFlexSettings({layer: Layer.CUSTOMER});
 			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(false);
 
 			return this.oRta.start()
@@ -438,7 +438,7 @@ function(
 		});
 
 		QUnit.test("when RTA is started and a draft is available, and and the key user starts working", function(assert) {
-			this.oRta.setFlexSettings({layer: "CUSTOMER"});
+			this.oRta.setFlexSettings({layer: Layer.CUSTOMER});
 			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(true);
 
 			return this.oRta.start()
@@ -1042,7 +1042,7 @@ function(
 				rootControl : this.oRootControl,
 				showToolbars : false,
 				flexSettings: {
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				}
 			});
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
@@ -1066,7 +1066,7 @@ function(
 				assert.deepEqual(fnPublishStub.firstCall.args[0], {
 					selector: this.oRootControl,
 					styleClass: RtaUtils.getRtaStyleClassName(),
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					appVariantDescriptors: []
 				}, "then style class and layer was passed correctly");
 			}.bind(this));
@@ -1098,7 +1098,7 @@ function(
 				assert.deepEqual(fnPublishStub.firstCall.args[0], {
 					selector: this.oRootControl,
 					appVariantDescriptors: aAppVariantDescriptors,
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					styleClass: "sapUiRTABorder"
 				}, "then appVariantDescriptors, layer and styleClass parameters were passed correctly");
 			}.bind(this));
@@ -1197,7 +1197,7 @@ function(
 				mParameters.onClose("OK");
 				assert.equal(this.oDeleteChangesStub.callCount, 1, "then _deleteChanges was called");
 				assert.equal(this.oEnableRestartSpy.callCount, 1, "then restart was enabled...");
-				assert.equal(this.oEnableRestartSpy.lastCall.args[0], "CUSTOMER", "for the correct layer");
+				assert.equal(this.oEnableRestartSpy.lastCall.args[0], Layer.CUSTOMER, "for the correct layer");
 
 				mParameters.onClose("notOK");
 				assert.equal(this.oDeleteChangesStub.callCount, 1, "then _deleteChanges was not called again");
@@ -1211,7 +1211,7 @@ function(
 		QUnit.test("When restore function is called in the USER layer", function(assert) {
 			var done = assert.async();
 			this.oRta.setFlexSettings({
-				layer: "USER"
+				layer: Layer.USER
 			});
 			sandbox.stub(MessageBox, "confirm").callsFake(function(sMessage, mParameters) {
 				assert.equal(sMessage, this.oRta._getTextResources().getText("FORM_PERS_RESET_MESSAGE_PERSONALIZATION"), "then the message is correct");
@@ -1220,7 +1220,7 @@ function(
 				mParameters.onClose("OK");
 				assert.equal(this.oDeleteChangesStub.callCount, 1, "then _deleteChanges was called");
 				assert.equal(this.oEnableRestartSpy.callCount, 1, "then restart was enabled...");
-				assert.equal(this.oEnableRestartSpy.lastCall.args[0], "USER", "for the correct layer");
+				assert.equal(this.oEnableRestartSpy.lastCall.args[0], Layer.USER, "for the correct layer");
 
 				mParameters.onClose("notOK");
 				assert.equal(this.oDeleteChangesStub.callCount, 1, "then _deleteChanges was not called again");
@@ -1238,7 +1238,7 @@ function(
 				assert.deepEqual(arguments[0], {
 					selector: oCompCont.getComponentInstance(),
 					generator: "Change.createInitialFileContent",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				}, "then the correct parameters were passed");
 				return Promise.resolve();
 			});
@@ -1257,7 +1257,7 @@ function(
 				assert.deepEqual(arguments[0], {
 					selector: oCompCont.getComponentInstance(),
 					generator: "Change.createInitialFileContent",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				}, "then the correct generator and layer was passed");
 				return Promise.resolve();
 			});
@@ -1389,39 +1389,39 @@ function(
 		}
 	}, function() {
 		QUnit.test("when the uri-parameter sap-ui-layer is set to 'VENDOR',", function(assert) {
-			assert.equal(this.oRta.getLayer(), "CUSTOMER", "then the layer is the default 'CUSTOMER'");
+			assert.equal(this.oRta.getLayer(), Layer.CUSTOMER, "then the layer is the default 'CUSTOMER'");
 
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("VENDOR");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
 
 			this.oRta.setFlexSettings(this.oRta.getFlexSettings());
-			assert.equal(this.oRta.getLayer(), "VENDOR", "then the function reacts to the URL parameter and sets the layer to VENDOR");
+			assert.equal(this.oRta.getLayer(), Layer.VENDOR, "then the function reacts to the URL parameter and sets the layer to VENDOR");
 		});
 
 		QUnit.test("when the uri-parameter sap-ui-layer is set to 'vendor',", function(assert) {
-			assert.equal(this.oRta.getLayer(), "CUSTOMER", "then the layer is the default 'CUSTOMER'");
+			assert.equal(this.oRta.getLayer(), Layer.CUSTOMER, "then the layer is the default 'CUSTOMER'");
 
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("vendor");
 
 			this.oRta.setFlexSettings(this.oRta.getFlexSettings());
-			assert.equal(this.oRta.getLayer(), "VENDOR", "then the function reacts to the URL parameter and sets the layer to VENDOR");
+			assert.equal(this.oRta.getLayer(), Layer.VENDOR, "then the function reacts to the URL parameter and sets the layer to VENDOR");
 		});
 
 		QUnit.test("when setFlexSettings is called", function(assert) {
 			assert.deepEqual(
 				this.oRta.getFlexSettings(),
 				{
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					developerMode: true
 				}
 			);
 
 			this.oRta.setFlexSettings({
-				layer: "USER",
+				layer: Layer.USER,
 				namespace: "namespace"
 			});
 
 			assert.deepEqual(this.oRta.getFlexSettings(), {
-				layer: "USER",
+				layer: Layer.USER,
 				developerMode: true,
 				namespace: "namespace"
 			});
@@ -1433,7 +1433,7 @@ function(
 			assert.deepEqual(
 				this.oRta.getFlexSettings(),
 				{
-					layer: "USER",
+					layer: Layer.USER,
 					developerMode: true,
 					namespace: "rootNamespace/changes/",
 					rootNamespace: "rootNamespace/",
@@ -1519,7 +1519,7 @@ function(
 			sandbox.stub(VersionsAPI, "activateDraft").callsFake(function (mPropertyBag) {
 				assert.equal(Object.keys(mPropertyBag).length, 3, "three parameters were passed");
 				assert.equal(mPropertyBag.selector, this.oRootControl, "the selector was passed correctly");
-				assert.equal(mPropertyBag.layer, "CUSTOMER", "the layer was passed correctly");
+				assert.equal(mPropertyBag.layer, Layer.CUSTOMER, "the layer was passed correctly");
 				assert.equal(mPropertyBag.title, sVersionTitle, "the title was passed correctly");
 
 				done();

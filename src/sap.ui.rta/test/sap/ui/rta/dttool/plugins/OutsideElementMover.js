@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/Layer",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -13,6 +14,7 @@ function(
 	OverlayUtil,
 	CommandFactory,
 	ChangeRegistry,
+	Layer,
 	LoaderExtensions,
 	XMLHelper,
 	ChangesWriteAPI,
@@ -122,7 +124,7 @@ function(
 				targetAggregation: oParentInfo.aggregation,
 				index: oParentInfo.index,
 				changeType: "addXML",
-				layer: "VENDOR"
+				layer: Layer.VENDOR
 			};
 
 			var oChange = ChangesWriteAPI.create({changeSpecificData: oChangeContent, selector: oParentInfo.parent});

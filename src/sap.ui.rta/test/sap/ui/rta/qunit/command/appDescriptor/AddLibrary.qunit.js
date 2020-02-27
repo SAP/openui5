@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
+	Layer,
 	FlUtils,
 	DescriptorInlineChangeFactory,
 	DescriptorChangeFactory,
@@ -52,7 +54,7 @@ function (
 		},
 		beforeEach: function () {
 			this.sReference = "appReference";
-			this.sLayer = "CUSTOMER";
+			this.sLayer = Layer.CUSTOMER;
 			this.sChangeType = "appdescr_ui5_addLibraries";
 
 			this.mLibraries = {

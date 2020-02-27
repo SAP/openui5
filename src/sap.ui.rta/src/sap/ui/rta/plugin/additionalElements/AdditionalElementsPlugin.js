@@ -1076,7 +1076,7 @@ sap.ui.define([
 						aMenuItems.push({
 							id: sPluginId,
 							text: sMenuItemText,
-							handler: function (bOverlayIsSibling, aElementOverlays) { // eslint-disable-line no-loop-func
+							handler: function (bOverlayIsSibling, aElementOverlays) {
 								// showAvailableElements has optional parameters, so currying is not possible here
 								return this.showAvailableElements(bOverlayIsSibling, aElementOverlays);
 							}.bind(this, bOverlayIsSibling),

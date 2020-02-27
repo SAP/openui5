@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Manifest",
 	"sap/ui/rta/command/CommandFactory",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"test-resources/sap/ui/fl/qunit/write/test/TestChangesUtil",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
+	Layer,
 	flUtils,
 	Manifest,
 	CommandFactory,
@@ -21,7 +23,7 @@ sap.ui.define([
 	TestChangesUtil,
 	sinon
 ) {
-	'use strict';
+	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
@@ -61,13 +63,13 @@ sap.ui.define([
 						{
 							author: "SAP",
 							key: "variantMgmtId1",
-							layer: "VENDOR",
+							layer: Layer.VENDOR,
 							visible: true,
 							title: "Standard"
 						}, {
 							author: "Me",
 							key: "variant0",
-							layer: "CUSTOMER",
+							layer: Layer.CUSTOMER,
 							visible: true,
 							title: "variant A"
 						}
@@ -83,18 +85,18 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
-					layer:"CUSTOMER",
+					layer: Layer.CUSTOMER,
 					variantReference:"variant00",
 					reference: "Dummy.Component"
 				},
 				controlChanges : [
 					{
 						fileName:"change44",
-						layer:"CUSTOMER"
+						layer: Layer.CUSTOMER
 					},
 					{
 						fileName:"change45",
-						layer:"CUSTOMER"
+						layer: Layer.CUSTOMER
 					}
 				]
 			};
@@ -127,7 +129,7 @@ sap.ui.define([
 			sandbox.stub(OverlayRegistry, "getOverlay").returns(oDummyOverlay);
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({data: {}});
-			var mFlexSettings = {layer: "CUSTOMER"};
+			var mFlexSettings = {layer: Layer.CUSTOMER};
 			var sNewText = "Test";
 			var oControlVariantSetTitleCommand;
 			var iDirtyChangesCount;
@@ -161,7 +163,7 @@ sap.ui.define([
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
 				.catch(function (oError) {
-					assert.ok(false, 'catch must never be called - Error: ' + oError);
+					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 	});
