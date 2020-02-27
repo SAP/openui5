@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.ui.support",
-  "version": "1.72.7-SNAPSHOT",
+  "version": "1.72.7",
   "description": "OpenUI5 UI Library sap.ui.support",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -14,11 +14,11 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "dependencies": {
-    "@openui5/sap.m": "1.72.7-SNAPSHOT",
-    "@openui5/sap.ui.codeeditor": "1.72.7-SNAPSHOT",
-    "@openui5/sap.ui.core": "1.72.7-SNAPSHOT",
-    "@openui5/sap.ui.fl": "1.72.7-SNAPSHOT",
-    "@openui5/sap.ui.layout": "1.72.7-SNAPSHOT",
-    "@openui5/themelib_sap_belize": "1.72.7-SNAPSHOT"
+    "@openui5/sap.m": "1.72.7",
+    "@openui5/sap.ui.codeeditor": "1.72.7",
+    "@openui5/sap.ui.core": "1.72.7",
+    "@openui5/sap.ui.fl": "1.72.7",
+    "@openui5/sap.ui.layout": "1.72.7",
+    "@openui5/themelib_sap_belize": "1.72.7"
   }
 }
