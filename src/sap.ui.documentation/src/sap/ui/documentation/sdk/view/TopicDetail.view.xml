@@ -51,7 +51,7 @@
 		<content>
 			<core:HTML id="testHTML"
 					   preferDOM="false"
-					   content='&lt;div style="height:100%; overflow-x:auto;"&gt;&lt;iframe {/iframeAttribute} class="sapUiDocumentationTopicsIframe" name="content" src="{/topicURL}" frameborder="0""&gt;&lt;/iframe&gt;&lt;/div&gt;'>
+					   content='&lt;div style="height:100%; overflow-x:auto;"&gt;&lt;iframe class="sapUiDocumentationTopicsIframe" name="content" src="{/topicURL}" frameborder="0""&gt;&lt;/iframe&gt;&lt;/div&gt;'>
 			</core:HTML>
 		</content>
 	</DynamicPage>
