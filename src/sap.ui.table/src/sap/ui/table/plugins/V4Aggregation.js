@@ -49,6 +49,7 @@ sap.ui.define([
 	};
 
 	V4Aggregation.prototype.onActivate = function(oTable) {
+		// TODO: Only activate if OData V4
 		PluginBase.prototype.onActivate.apply(this, arguments);
 		TableUtils.Grouping.setGroupMode(oTable); // TODO: Only when really grouped
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
@@ -73,12 +74,12 @@ sap.ui.define([
 
 		var oBinding = oTable.getBinding("rows");
 		if (oBinding) {
-			oBinding.setAggregation(null);
+			oBinding.setAggregation();
 		}
 	};
 
 	V4Aggregation.prototype.onTableRowsBound = function(oBinding) {
-		// TODO: Check whether OData V4 and throw otherwise.
+		// TODO: Activate if OData V4, otherwise deactivate
 		this.updateAggregation();
 	};
 
@@ -100,6 +101,30 @@ sap.ui.define([
 
 	V4Aggregation.prototype.getGroupLevels = function() {
 		return this._aGroupLevels || [];
+	};
+
+	V4Aggregation.prototype.expandRow = function(oRow) {
+		var oBinding = this.getTableBinding();
+
+		if (oBinding && TableUtils.isA(oRow, "sap.ui.table.Row")) {
+			if (oBinding.expand) {
+				oBinding.expand(oRow.getIndex());
+			} else {
+				sap.m.MessageToast.show("not yet ;)");
+			}
+		}
+	};
+
+	V4Aggregation.prototype.collapseRow = function(oRow) {
+		var oBinding = this.getTableBinding();
+
+		if (oBinding && TableUtils.isA(oRow, "sap.ui.table.Row")) {
+			if (oBinding.collapse) {
+				oBinding.collapse(oRow.getIndex());
+			} else {
+				sap.m.MessageToast.show("not yet ;)");
+			}
+		}
 	};
 
 	function getGroupableProperties(oInstance) {
@@ -163,8 +188,14 @@ sap.ui.define([
 				grandTotal: oDetails.grandtotal === true,
 				subtotals: oDetails.subtotals === true
 			};
-			if (oConfig.grandTotal || oConfig.subtotals) {
-				aAggregationConfigs.push({name: sProperty, menuText: "Totals", config: oConfig});
+			if (oConfig.grandTotal && oConfig.subtotals) {
+				aAggregationConfigs.push({name: sProperty, menuText: "All Totals", config: oConfig});
+			}
+			if (oConfig.grandTotal) {
+				aAggregationConfigs.push({name: sProperty, menuText: "GrandTotal", config: {grandTotal: true}});
+			}
+			if (oConfig.subtotals) {
+				aAggregationConfigs.push({name: sProperty, menuText: "Subtotals", config: {subtotals: true}});
 			}
 			if (oDetails.custom) {
 				for (var sCustomConfig in oDetails.custom) {
@@ -221,6 +252,7 @@ sap.ui.define([
 	 *  How to handle existing Table/Column API related to old menus (sap.ui.unified.Menu)?
 	 */
 	V4Aggregation.prototype.onOpenMenu = function(oCellInfo, oMenu) {
+		var that = this;
 		var oTable = this.getTable();
 
 		if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
@@ -301,34 +333,46 @@ sap.ui.define([
 					this.updateAggregation();
 				}.bind(this);
 
-				var getAggregationMenuIcon = function(oAggregatablePropertyInfo) {
+				var getAggregationMenuConfig = function(oAggregatablePropertyInfo) {
 					var oExtendedState = oColumn.data("extendedState");
 
 					if (!oExtendedState || !oExtendedState.aggregations) {
-						return null;
+						return {icon: null, enabled: true};
 					}
 
-					return oExtendedState.aggregations.some(function(oAggregation) {
-						return oAggregation.name === oAggregatablePropertyInfo.name && oAggregation.method === oAggregatablePropertyInfo.method;
-					}) ? "sap-icon://accept" : null;
+					return {
+						icon: oExtendedState.aggregations.some(function(oAggregation) {
+							return oAggregation.name === oAggregatablePropertyInfo.name
+								   && oAggregation.menuText === oAggregatablePropertyInfo.menuText;
+						}) ? "sap-icon://accept" : null,
+						enabled: !oExtendedState.aggregations.some(function(oAggregation) {
+							return oAggregation.name === oAggregatablePropertyInfo.name;
+						}) || oExtendedState.aggregations.some(function(oAggregation) {
+							return oAggregation.menuText === oAggregatablePropertyInfo.menuText;
+						})
+					};
 				};
 
 				aAggregationInfos.forEach(function(oAggregationInfo, iIndex) {
 					if (!this.aAggregateMenuItems[iIndex] || this.aAggregateMenuItems[iIndex].bIsDestroyed) {
+						var oMenuConfig = getAggregationMenuConfig(oAggregationInfo);
 						this.aAggregateMenuItems[iIndex] = new MenuItem(this.getId() + "-aggregate" + "-" + iIndex, {
 							text: oAggregationInfo.menuText,
-							icon: getAggregationMenuIcon(oAggregationInfo),
+							icon: oMenuConfig.icon,
+							enabled: oMenuConfig.enabled,
 							select: function() {
 								onAggregate(oAggregationInfo);
 							}
 						});
 					} else {
 						// TODO: Just a quick hack. Do the update without messing with private stuff.
+						var oMenuConfig = getAggregationMenuConfig(oAggregationInfo);
 						this.aAggregateMenuItems[iIndex].mEventRegistry.select[0].fFunction = function() {
 							onAggregate(oAggregationInfo);
 						};
 						this.aAggregateMenuItems[iIndex].setText(oAggregationInfo.menuText);
-						this.aAggregateMenuItems[iIndex].setIcon(getAggregationMenuIcon(oAggregationInfo));
+						this.aAggregateMenuItems[iIndex].setIcon(oMenuConfig.icon);
+						this.aAggregateMenuItems[iIndex].setEnabled(oMenuConfig.enabled);
 					}
 					oMenu.addItem(this.aAggregateMenuItems[iIndex]);
 				}.bind(this));
@@ -344,12 +388,7 @@ sap.ui.define([
 				this.aContextMenuItems[0] = new MenuItem(this.getId() + "-expandrow", {
 					text: "expand index (" + oRow.getIndex() + ")",
 					select: function() {
-						var oBinding = oTable.getBinding("rows");
-						if (oBinding.expand) {
-							oTable.getBinding("rows").expand(oRow.getIndex());
-						} else {
-							sap.m.MessageToast.show("not yet ;)");
-						}
+						that.expandRow(oRow);
 					}
 				});
 				oMenu.addItem(this.aContextMenuItems[0]);
@@ -360,12 +399,7 @@ sap.ui.define([
 				this.aContextMenuItems[1] = new MenuItem(this.getId() + "-collapserow", {
 					text: "collapse (" + oRow.getIndex() + ")",
 					select: function() {
-						var oBinding = oTable.getBinding("rows");
-						if (oBinding.collapse) {
-							oTable.getBinding("rows").collapse(oRow.getIndex());
-						} else {
-							sap.m.MessageToast.show("not yet ;)");
-						}
+						that.collapseRow(oRow);
 					}
 				});
 				oMenu.addItem(this.aContextMenuItems[1]);
