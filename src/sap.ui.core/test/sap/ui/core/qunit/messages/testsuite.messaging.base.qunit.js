@@ -1,16 +1,11 @@
 sap.ui.define(function() {
-	"use strict";
 
+	"use strict";
 	return {
-		name: "TestSuite for sap.ui.core: GTP testcase CORE/MESSAGES",
+		name: "TestSuite for Topic: Messaging Base",
 		defaults: {
 			qunit: {
 				version: 2
-			},
-			sinon: {
-				version: 4,
-				qunitBridge: true,
-				useFakeTimers: false
 			}
 		},
 		tests: {

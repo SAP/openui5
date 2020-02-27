@@ -4253,18 +4253,6 @@ sap.ui.define([
 	QUnit.module("Loading nested components through routing's targets with componentUsage settings", {
 		beforeEach: function() {
 			hasher.setHash("");
-			sap.ui.loader.config({
-				paths: {
-					"routing": "../testdata/routing"
-				}
-			});
-		},
-		afterEach: function() {
-			sap.ui.loader.config({
-				paths: {
-					"routing": null
-				}
-			});
 		}
 	});
 

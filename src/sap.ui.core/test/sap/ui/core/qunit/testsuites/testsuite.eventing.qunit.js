@@ -2,20 +2,10 @@ sap.ui.define(function() {
 
 	"use strict";
 	return {
-		name: "TestSuite for sap.ui.core: GTP testcase CORE/EVENTING",
+		name: "TestSuite for Topic: Events",
 		defaults: {
-			loader: {
-				paths: {
-					"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
-				}
-			},
 			qunit: {
 				version: 2
-			},
-			sinon: {
-				version: 4,
-				qunitBridge: true,
-				useFakeTimers: false
 			},
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
@@ -25,8 +15,10 @@ sap.ui.define(function() {
 				ui5: {
 					libs: "sap.ui.testlib"
 				},
-				qunit: {
-					reorder: false
+				loader: {
+					paths: {
+						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
+					}
 				}
 			},
 			CustomFastNavigation: {
@@ -45,10 +37,7 @@ sap.ui.define(function() {
 				title: "Test Page for EventBus Class"
 			},
 			EventProvider: {
-				title: "Test Page for EventProvider Class",
-				qunit: {
-					reorder: false
-				}
+				title: "Test Page for EventProvider Class"
 			},
 			FastNavigation: {
 				title: "QUnit page for Fast Keyboard Navigation (F6)",
@@ -59,18 +48,16 @@ sap.ui.define(function() {
 					libs: "sap.m"
 				}
 			},
+			IntervalTrigger: {
+				title: "Test Page for IntervalTrigger Class"
+			},
 			"jquery.sap.events": {
 				/* own page kept because of custom styles and DOM (but uses runTest.js) */
 				page: "test-resources/sap/ui/core/qunit/jquery.sap.events.qunit.html",
 				title: "QUnit tests: jquery.sap.events.js, Core Event Handling"
 			},
-			ResizeHandler: {
-				/* own page kept because of custom styles and DOM (but uses runTest.js) */
-				page: "test-resources/sap/ui/core/qunit/ResizeHandler.qunit.html",
-				title: "QUnit tests: sap.ui.core.ResizeHandler",
-				ui5: {
-					theme: "base"
-				}
+			"events/PasteEventFix": {
+				title: "sap.ui.events.PasteEventFix"
 			}
 		}
 	};

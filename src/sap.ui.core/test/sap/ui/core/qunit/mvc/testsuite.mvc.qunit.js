@@ -1,8 +1,8 @@
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/Device"], function(Device) {
 
 	"use strict";
 	return {
-		name: "TestSuite for sap.ui.core: GTP testcase CORE/MVC",
+		name: "TestSuite for Topic: View & Controller",
 		defaults: {
 			loader: {
 				paths: {
@@ -10,13 +10,6 @@ sap.ui.define(function() {
 					"example/mvc": "test-resources/sap/ui/core/qunit/mvc/testdata", // used by sync tests
 					"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/" // used by sync tests
 				}
-			},
-			qunit: {
-				version: 2
-			},
-			sinon: {
-				version: 4,
-				qunitBridge: true
 			}
 		},
 		tests: {
@@ -60,9 +53,6 @@ sap.ui.define(function() {
 					libs: "sap.ui.commons",
 					theme: "sap_bluecrystal"
 				},
-				qunit: {
-					reorder: false
-				},
 				sinon: false
 			},
 			JSONView: {
@@ -71,9 +61,6 @@ sap.ui.define(function() {
 					libs: "sap.ui.commons",
 					theme: "sap_bluecrystal"
 				},
-				qunit: {
-					reorder: false
-				},
 				sinon: false
 			},
 			JSView: {
@@ -81,9 +68,6 @@ sap.ui.define(function() {
 				ui5: {
 					libs: "sap.ui.commons",
 					theme: "sap_bluecrystal"
-				},
-				qunit: {
-					reorder: false
 				},
 				sinon: false
 			},
@@ -100,12 +84,11 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
-			"extensions/ControllerExtensions": {
-				title: "QUnit Page for Controller Extensions",
-				module: "./extensions/Controllerextensions.qunit"
+			"extensions/Controllerextensions": {
+				title: "QUnit Page for Controller Extensions"
 			},
 			"extensions/ControllerMetadata": {
-				title: "QUnit Page for Controller Extensions",
+				title: "QUnit Page for Controller Metadata",
 				loader: {
 					paths: {
 						"my/test": "test-resources/sap/ui/core/qunit/mvc/extensions/testdata/"
@@ -156,6 +139,50 @@ sap.ui.define(function() {
 						"testdata": "test-resources/sap/ui/core/qunit/testdata"
 					}
 				}
+			},
+			CacheManager: {
+				title: "sap.ui.core.cache.CacheManager",
+				module: "test-resources/sap/ui/core/qunit/CacheManager.qunit"
+			},
+			CommandExecution: {
+				title: "sap.ui.core.CommandExecution",
+				module: "test-resources/sap/ui/core/qunit/CommandExecution.qunit"
+			},
+			Declarative: {
+				title: "sap.ui.core.DeclarativeSupport",
+				// we keep the HTML page here, because of the complex test fixture
+				page: "test-resources/sap/ui/core/qunit/Declarative.qunit.html",
+				ui5: {
+					libs: "sap.ui.commons,sap.ui.ux3"
+				},
+				module: "test-resources/sap/ui/core/qunit/Declarative.qunit"
+			},
+			Fragment: {
+				title: "sap.ui.core.Fragment",
+				loader: {
+					paths: {
+						"testdata/fragments": "test-resources/sap/ui/core/qunit/testdata/fragments/",
+						"my": "test-resources/sap/ui/core/qunit/fragment/"
+					}
+				},
+				module: "test-resources/sap/ui/core/qunit/Fragment.qunit"
+			},
+			Shortcut: {
+				title: "sap.ui.core.Shortcut",
+				module: "test-resources/sap/ui/core/qunit/Shortcut.qunit"
+			},
+			ShortcutHelper: {
+				title: "sap.ui.core.util.ShortcutHelper",
+				module: "test-resources/sap/ui/core/qunit/ShortcutHelper.qunit"
+			},
+			XMLHelper: {
+				title: "sap.ui.core.util.XMLHelper",
+				module: "test-resources/sap/ui/core/qunit/util/XMLHelper.qunit"
+			},
+			LRUPersistentCache: {
+				title: "sap.ui.core.cache.LRUPersistentCache",
+				autostart: false,
+				module: "test-resources/sap/ui/core/qunit/LRUPersistentCache.qunit"
 			}
 		}
 	};

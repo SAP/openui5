@@ -13,22 +13,30 @@ sap.ui.define([
 
 	var innerSpan = document.createElement("span");
 	innerSpan.textContent = "Before";
-	createAndAppendDiv("uiArea2").appendChild(innerSpan);
+	createAndAppendDiv("uiArea2");
+	jQuery("#uiArea2")[0].appendChild(innerSpan);
 
 	var oCore = sap.ui.getCore();
-	var text1 = new TestButton("text1", {
-		text: "Text 1"
-	});
-	var text2 = new TestButton("text2", {
-		text: "Text 2"
-	});
-	var html3 = new HTML("html3", {
-		content: "<div style='background-color:red; width:64px;height:64px;'></div>"
+
+	QUnit.module("Rendering", {
+		before: function () {
+			this.oText1 = new TestButton("text1", {
+				text: "Text 1"
+			});
+			this.oText2 = new TestButton("text2", {
+				text: "Text 2"
+			});
+			this.oHtml3 = new HTML("html3", {
+				content: "<div style='background-color:red; width:64px;height:64px;'></div>"
+			});
+		},
+		after: function () {
+			this.oText1.destroy();
+			this.oText2.destroy();
+			this.oHtml3.destroy();
+		}
 	});
 
-
-
-	QUnit.module("Rendering");
 
 	/**
 	 * Adds two controls to an empty UIArea and renders it.
@@ -36,8 +44,8 @@ sap.ui.define([
 	 * their order should match the order in which they have been added
 	 */
 	QUnit.test("basic rendering", function(assert) {
-		text1.placeAt("uiArea1");
-		text2.placeAt("uiArea1");
+		this.oText1.placeAt("uiArea1");
+		this.oText2.placeAt("uiArea1");
 		oCore.applyChanges();
 		assert.equal(jQuery("#uiArea1 > button").length, 2, "two spans have been rendered");
 		assert.equal(jQuery(jQuery("#uiArea1 > button").get(0)).text(), "Text 1", "first span shows first text");
@@ -66,8 +74,8 @@ sap.ui.define([
 		assert.equal($originalDom.length, 1, "precondition: one span exists already in UIArea");
 		assert.equal(jQuery($originalDom.get(0)).text(), "Before", "precondition: span contains correct text");
 
-		text1.placeAt("uiArea2");
-		text2.placeAt("uiArea2");
+		this.oText1.placeAt("uiArea2");
+		this.oText2.placeAt("uiArea2");
 		oCore.applyChanges();
 		var $currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 3, "two more spans have been rendered");
@@ -98,10 +106,10 @@ sap.ui.define([
 		assert.ok(!oCore.byId("text2").getParent(), "precondition: control 2 not bound");
 
 		// do some interleaved modifications: Control / DOM / Control / DOM
-		text1.placeAt("uiArea2");
+		this.oText1.placeAt("uiArea2");
 		oCore.applyChanges();
 		jQuery("#uiArea2").append("<span>In Between</span>");
-		text2.placeAt("uiArea2");
+		this.oText2.placeAt("uiArea2");
 		oCore.applyChanges();
 		jQuery("#uiArea2").append("<span>After</span>");
 
@@ -138,9 +146,9 @@ sap.ui.define([
 		assert.equal($originalDom.length, 0, "precondition: UIArea1 is empty");
 
 		// ---- aspect 1: add controls and render ----
-		text1.placeAt("uiArea1");
-		text2.placeAt("uiArea1");
-		html3.placeAt("uiArea1");
+		this.oText1.placeAt("uiArea1");
+		this.oText2.placeAt("uiArea1");
+		this.oHtml3.placeAt("uiArea1");
 		oCore.applyChanges();
 
 		// check that the rendering had the expected result
@@ -156,7 +164,7 @@ sap.ui.define([
 		assert.equal(jQuery($currentDom.get(2)).css('width'), "128px", "width changed");
 
 		// rerender the whole UIArea
-		text1.getUIArea().invalidate();
+		this.oText1.getUIArea().invalidate();
 		oCore.applyChanges();
 
 		// check that the modified DOM is still there
