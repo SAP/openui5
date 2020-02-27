@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/BindingPath"
-], function (Opa5, Press, BindingPath) {
+	"sap/ui/test/matchers/BindingPath",
+	"sap/ui/test/matchers/Properties"
+], function (Opa5, Press, BindingPath, Properties) {
 	"use strict";
 
 	var sViewName = "App";
@@ -72,8 +73,25 @@ sap.ui.define([
 							modelName: "side",
 							path: "/navigation/2"
 						}),
+						success: function(aNavListItem){
+							if (aNavListItem[0].getParent().getExpanded()) {
+								Opa5.assert.ok(true, "Pressed!");
+							} else { // when the side navigation is collapsed
+								this.waitFor({
+									controlType: "sap.tnt.NavigationListItem",
+									matchers: [
+										new Properties({
+											text: "Statistics",
+											icon: ""
+										})
+									],
+									actions: new Press(),
+									errorMessage: "Did not find the statistics button on the side navigation popup"
+								});
+							}
+						},
 						actions: new Press(),
-						errorMessage: "Did not find the statistics button on the sid navigation"
+						errorMessage: "Did not find the statistics button on the side navigation"
 					});
 				},
 
@@ -83,12 +101,37 @@ sap.ui.define([
 						viewName: sViewName,
 						matchers: new BindingPath({
 							modelName: "side",
-							path: "/navigation/2/items/0"
+							path: "/navigation/2"
 						}),
+						success: function(aNavListItem){
+							if (aNavListItem[0].getParent().getExpanded()) {
+								this.waitFor({
+									controlType: "sap.tnt.NavigationListItem",
+									viewName: sViewName,
+									matchers: new BindingPath({
+										modelName: "side",
+										path: "/navigation/2/items/0"
+									}),
+									actions: new Press()
+								});
+								Opa5.assert.ok(true, "Pressed!");
+							} else { // when the side navigation is collapsed
+								this.waitFor({
+									controlType: "sap.tnt.NavigationListItem",
+									matchers: [
+										new Properties({
+											text: "Usage Statistics",
+											icon: ""
+										})
+									],
+									actions: new Press(),
+									errorMessage: "Did not find the Usage statistics button on the side navigation popup"
+								});
+							}
+						},
 						actions: new Press(),
-						errorMessage: "Did not find the usage statistics button on the side navigation"
+						errorMessage: "Did not find the Usage statistics button on the side navigation"
 					});
-
 				},
 
 				iPressTheOrderStatisticsButton: function () {
@@ -97,10 +140,36 @@ sap.ui.define([
 						viewName: sViewName,
 						matchers: new BindingPath({
 							modelName: "side",
-							path: "/navigation/2/items/1"
+							path: "/navigation/2"
 						}),
+						success: function(aNavListItem){
+							if (aNavListItem[0].getParent().getExpanded()) {
+								this.waitFor({
+									controlType: "sap.tnt.NavigationListItem",
+									viewName: sViewName,
+									matchers: new BindingPath({
+										modelName: "side",
+										path: "/navigation/2/items/1"
+									}),
+									actions: new Press()
+								});
+								Opa5.assert.ok(true, "Pressed!");
+							} else { // when the side navigation is collapsed
+								this.waitFor({
+									controlType: "sap.tnt.NavigationListItem",
+									matchers: [
+										new Properties({
+											text: "Order Statistics",
+											icon: ""
+										})
+									],
+									actions: new Press(),
+									errorMessage: "Did not find the Order statistics button on the side navigation popup"
+								});
+							}
+						},
 						actions: new Press(),
-						errorMessage: "Did not find the order statistics button on the side navigation"
+						errorMessage: "Did not find the Order statistics button on the side navigation"
 					});
 
 				},
