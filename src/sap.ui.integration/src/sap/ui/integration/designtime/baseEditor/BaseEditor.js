@@ -342,6 +342,12 @@ sap.ui.define([
 
 		var mConfig = this.getConfig();
 
+		if (typeof this.getProperty("json") === "undefined") {
+			// Initial JSON data wasn't set yet
+			this.attachEventOnce("jsonChange", this._initialize);
+			return;
+		}
+
 		if (mConfig && mConfig.properties) {
 			this._oConfigObserver = new ObjectBinding();
 
