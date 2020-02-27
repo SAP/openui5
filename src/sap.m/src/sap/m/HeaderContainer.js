@@ -690,7 +690,8 @@ sap.ui.define([
 				var bScrollForward = false;
 
 				var realHeight = oBarHead.scrollHeight;
-				var availableHeight = oBarHead.clientHeight;
+				//Take height using offsetHeight to handle Different Browsers Compatibility for a empty Header container during Vertical Orientation.
+				var availableHeight = oBarHead.offsetHeight;
 
 				if (Math.abs(realHeight - availableHeight) === 1) {
 					realHeight = availableHeight;
@@ -776,7 +777,8 @@ sap.ui.define([
 				var bScrollForward = false;
 
 				var realWidth = oBarHead.scrollWidth;
-				var availableWidth = oBarHead.clientWidth;
+				//Take width using offsetWidth to handle Different Browsers Compatibility for a empty Header container during Horizontal Orientation.
+				var availableWidth = oBarHead.offsetWidth;
 
 				if (Math.abs(realWidth - availableWidth) === 1) {
 					realWidth = availableWidth;
