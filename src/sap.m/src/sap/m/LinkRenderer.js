@@ -103,6 +103,12 @@
 			oRm.attr("dir", sTextDir.toLowerCase());
 		}
 
+		oControl.getDragDropConfig().forEach(function (oDNDConfig) {
+			if (!oDNDConfig.getEnabled()) {
+				oRm.attr("draggable", false);
+			}
+		});
+
 		oRm.accessibilityState(oControl, oAccAttributes);
 		// opening <a> tag
 		oRm.openEnd();
