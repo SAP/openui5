@@ -476,8 +476,6 @@ sap.ui.define([
 
 	QUnit.test("Open Search provider with XML response", getProviderTest(oSearch8));
 
-	QUnit.test("Open Search provider with JSON response", getProviderTest(oSearch9));
-
 	QUnit.test("Combobox mode (with suggestion list)", function(assert) {
 		checkSuggestion(assert, oSearch10, function(sSuggestValue, aItems){
 			assert.equal(sSuggestValue, "SaSap", "Suggest value");
