@@ -948,6 +948,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/registry/ChangeTypeMetadata"]
 				}
 			},
+			"registry/ExtensionPointRegistry": {
+				group: "registry",
+				coverage: {
+					only: ["sap/ui/fl/registry/ExtensionPointRegistry"]
+				}
+			},
 			"registry/Settings": {
 				group: "registry",
 				coverage: {

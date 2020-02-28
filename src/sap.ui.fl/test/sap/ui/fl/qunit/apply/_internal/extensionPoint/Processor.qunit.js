@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/ExtensionPoint",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/registry/ExtensionPointRegistry",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -12,7 +12,7 @@ sap.ui.define([
 	Component,
 	ComponentContainer,
 	ExtensionPoint,
-	Change,
+	ExtensionPointRegistry,
 	ExtensionPointProcessor,
 	Loader,
 	ChangePersistenceFactory,
@@ -33,10 +33,12 @@ sap.ui.define([
 	var oComponentContainer;
 	var oSpyApplyExtensionPoint;
 	var oSpyAddXMLAtExtensionPointApply;
+	var oSpyRegisterExtensionPoints;
 
 	function createComponentAndContainer(bSync) {
 		oSpyApplyExtensionPoint = sandbox.spy(ExtensionPointProcessor, "applyExtensionPoint");
 		oSpyAddXMLAtExtensionPointApply = sandbox.spy(AddXMLAtExtensionPoint, "applyChange");
+		oSpyRegisterExtensionPoints = sandbox.spy(ExtensionPointRegistry.getInstance(), "registerExtensionPoints");
 		if (bSync) {
 			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testApp")}});
 			oComponent = sap.ui.component({
@@ -163,6 +165,7 @@ sap.ui.define([
 			checkView("async");
 			checkChangesContent(sReference);
 			assert.equal(oSpyApplyExtensionPoint.callCount, 6, "number of applyExtensionPoint called correct");
+			assert.equal(oSpyRegisterExtensionPoints.callCount, 6, "number of registerExtensionPoints called correct in the ExtensionPointRegistry");
 			checkApplyOrder(bSync);
 
 			done();
