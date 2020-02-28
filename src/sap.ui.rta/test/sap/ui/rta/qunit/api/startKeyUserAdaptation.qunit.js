@@ -1,4 +1,3 @@
-/* eslint-disable quote-props */
 /* global QUnit */
 
 sap.ui.define([

@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/base/ManagedObject",
 	"sap/m/delegate/ValueStateMessage",
@@ -25,6 +26,7 @@ sap.ui.define([
 	OverlayUtil,
 	DtUtil,
 	flUtils,
+	Layer,
 	VariantManagement,
 	ManagedObject,
 	ValueStateMessage,
@@ -125,7 +127,7 @@ sap.ui.define([
 	};
 
 	ControlVariant.prototype._isPersonalizationMode = function () {
-		return this.getCommandFactory().getFlexSettings().layer === "USER";
+		return this.getCommandFactory().getFlexSettings().layer === Layer.USER;
 	};
 
 	/**

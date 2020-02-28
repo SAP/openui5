@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
@@ -16,6 +17,7 @@ sap.ui.define([
 	jQuery,
 	AppVariantUtils,
 	Settings,
+	Layer,
 	FlUtils,
 	WriteUtils,
 	DescriptorVariantFactory,
@@ -540,16 +542,16 @@ sap.ui.define([
 		QUnit.test("When createAppVariant() method is called", function (assert) {
 			var oAppComponent = fnCreateAppComponent();
 			var fnSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves();
-			return AppVariantUtils.createAppVariant(oAppComponent, {id: "customer.appvar.id", layer: "CUSTOMER"}).then(function() {
-				assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: oAppComponent, id: "customer.appvar.id", layer: "CUSTOMER", version: "1.0.0"}));
+			return AppVariantUtils.createAppVariant(oAppComponent, {id: "customer.appvar.id", layer: Layer.CUSTOMER}).then(function() {
+				assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: oAppComponent, id: "customer.appvar.id", layer: Layer.CUSTOMER, version: "1.0.0"}));
 			});
 		});
 
 		QUnit.test("When deleteAppVariant() method is called", function (assert) {
 			var fnDeleteAppVariantStub = sandbox.stub(AppVariantWriteAPI, "deleteAppVariant").resolves();
 			var vAppIdSelector = {appId: "customer.appvar.id"};
-			return AppVariantUtils.deleteAppVariant(vAppIdSelector, "CUSTOMER").then(function() {
-				assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: vAppIdSelector, layer: "CUSTOMER"}));
+			return AppVariantUtils.deleteAppVariant(vAppIdSelector, Layer.CUSTOMER).then(function() {
+				assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: vAppIdSelector, layer: Layer.CUSTOMER}));
 			});
 		});
 
@@ -796,14 +798,14 @@ sap.ui.define([
 
 		QUnit.test("When triggerCatalogAssignment() method is called on S4 Cloud system", function (assert) {
 			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves();
-			return AppVariantUtils.triggerCatalogAssignment("AppVarId", "CUSTOMER", "OriginalId").then(function() {
+			return AppVariantUtils.triggerCatalogAssignment("AppVarId", Layer.CUSTOMER, "OriginalId").then(function() {
 				assert.ok(oSendRequestStub.calledWith("/sap/bc/lrep/appdescr_variants/AppVarId?action=assignCatalogs&assignFromAppId=OriginalId", "POST"));
 			});
 		});
 
 		QUnit.test("When triggerCatalogUnAssignment() method is called on S4 Cloud system", function (assert) {
 			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves();
-			return AppVariantUtils.triggerCatalogUnAssignment("AppVarId", "CUSTOMER").then(function() {
+			return AppVariantUtils.triggerCatalogUnAssignment("AppVarId", Layer.CUSTOMER).then(function() {
 				assert.ok(oSendRequestStub.calledWith("/sap/bc/lrep/appdescr_variants/AppVarId?action=unassignCatalogs", "POST"));
 			});
 		});

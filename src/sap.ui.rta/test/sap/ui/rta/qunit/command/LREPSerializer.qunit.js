@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"qunit/RtaQunitUtils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
@@ -25,6 +26,7 @@ sap.ui.define([
 	CommandStack,
 	ChangeRegistry,
 	RtaQunitUtils,
+	Layer,
 	flUtils,
 	VariantModel,
 	VariantManagement,
@@ -102,13 +104,13 @@ sap.ui.define([
 				{
 					author: "SAP",
 					key: "variantMgmtId1",
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					visible: true,
 					title: "Standard"
 				}, {
 					author: "Me",
 					key: "variant0",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					visible: true,
 					title: "variant A"
 				}
@@ -126,7 +128,7 @@ sap.ui.define([
 				title:"variant A"
 			},
 			selector:{},
-			layer:"CUSTOMER",
+			layer: Layer.CUSTOMER,
 			namespace:"Dummy.Component"
 		},
 		controlChanges: [],
@@ -380,7 +382,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {layer : "CUSTOMER"}))
+			}, {}, {layer : Layer.CUSTOMER}))
 
 			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
 
@@ -395,7 +397,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {layer : "CUSTOMER"}))
+			}, {}, {layer : Layer.CUSTOMER}))
 
 			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
 
@@ -439,7 +441,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {layer : "CUSTOMER"}))
+			}, {}, {layer : Layer.CUSTOMER}))
 
 			.then(function(oCommand) {
 				oAddLibraryCommand = oCommand;
@@ -486,7 +488,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {layer : "CUSTOMER"}))
+			}, {}, {layer : Layer.CUSTOMER}))
 
 			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
 
@@ -517,7 +519,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {layer : "CUSTOMER"})
+			}, {}, {layer : Layer.CUSTOMER})
 
 			.then(function(oAddLibraryCommand) {
 				oCreateAndStoreChangeSpy = sandbox.spy(oAddLibraryCommand, "createAndStoreChange");
@@ -566,7 +568,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {layer : "CUSTOMER"}))
+			}, {}, {layer : Layer.CUSTOMER}))
 
 			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
 
@@ -648,7 +650,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {layer : "CUSTOMER"}))
+			}, {}, {layer : Layer.CUSTOMER}))
 
 			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
 
@@ -677,7 +679,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {layer : "CUSTOMER"}))
+			}, {}, {layer : Layer.CUSTOMER}))
 
 			.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
 
@@ -869,7 +871,7 @@ sap.ui.define([
 					content: {
 						title:"variant A"
 					},
-					layer:"CUSTOMER",
+					layer: Layer.CUSTOMER,
 					variantReference:"variant00",
 					reference: "Dummy.Component"
 				},
@@ -903,7 +905,7 @@ sap.ui.define([
 			var oTitleChange = {
 				appComponent : oMockedAppComponent,
 				changeType : "setTitle",
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				originalTitle : "variant A",
 				title : "test",
 				variantReference : "variant0"
@@ -912,14 +914,14 @@ sap.ui.define([
 				appComponent : oMockedAppComponent,
 				changeType : "setFavorite",
 				favorite : false,
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				originalFavorite : true,
 				variantReference : "variant0"
 			};
 			var oVisibleChange = {
 				appComponent : oMockedAppComponent,
 				changeType : "setVisible",
-				layer : "CUSTOMER",
+				layer : Layer.CUSTOMER,
 				variantReference : "variant0",
 				visible : false
 			};
@@ -928,7 +930,7 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 				control : this.oVariantManagement,
 				changes : aChanges
-			}, this.oDesignTimeMetadata, {layer: "CUSTOMER"})
+			}, this.oDesignTimeMetadata, {layer: Layer.CUSTOMER})
 
 			.then(function(oCommand) {
 				oControlVariantConfigureCommand = oCommand;
@@ -943,14 +945,14 @@ sap.ui.define([
 				return CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
 					sourceVariantReference: "variant0",
 					newVariantTitle: "newTitle"
-				}, this.oDesignTimeMetadata, {layer: "CUSTOMER"});
+				}, this.oDesignTimeMetadata, {layer: Layer.CUSTOMER});
 			}.bind(this))
 
 			.then(function(oCommand) {
 				oControlVariantDuplicateCommand = oCommand;
 				return CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
 					newText : "newText"
-				}, this.oDesignTimeMetadata, {layer: "CUSTOMER"});
+				}, this.oDesignTimeMetadata, {layer: Layer.CUSTOMER});
 			}.bind(this))
 
 			.then(function(oCommand) {

@@ -3,25 +3,27 @@
  */
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/fl/Layer",
 	"sap/ui/rta/appVariant/manageApps/webapp/model/models",
+	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/Utils",
 	"sap/m/MessageBox",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/core/BusyIndicator",
-	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/base/i18n/ResourceBundle"
 ], function(
 	Controller,
+	Layer,
 	Model,
+	AppVariantUtils,
 	AppVariantOverviewUtils,
 	MessageBox,
 	RtaUtils,
 	RtaAppVariantFeature,
 	RuntimeAuthoring,
 	BusyIndicator,
-	AppVariantUtils,
 	ResourceBundle
 ) {
 	"use strict";
@@ -233,7 +235,7 @@ sap.ui.define([
 					writeHistory : false
 				};
 
-				RuntimeAuthoring.enableRestart("CUSTOMER");
+				RuntimeAuthoring.enableRestart(Layer.CUSTOMER);
 
 				oNavigationService.toExternal(oNavigationParams);
 

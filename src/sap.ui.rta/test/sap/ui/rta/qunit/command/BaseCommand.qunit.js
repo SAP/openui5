@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
@@ -59,6 +60,7 @@ function (
 	SimpleChanges,
 	ChangesWriteAPI,
 	Change,
+	Layer,
 	JSONModel,
 	flUtils,
 	flLayerUtils,
@@ -68,12 +70,12 @@ function (
 
 	var oCommandFactory = new CommandFactory({
 		flexSettings: {
-			layer: "VENDOR"
+			layer: Layer.VENDOR
 		}
 	});
 
 	var sandbox = sinon.sandbox.create();
-	sinon.stub(flLayerUtils, "getCurrentLayer").returns("VENDOR");
+	sinon.stub(flLayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 	var ERROR_INTENTIONALLY = new Error("this command intentionally failed");
 
 	var oMockedAppComponent = {
@@ -136,7 +138,7 @@ function (
 
 			.then(function() {
 				oCommandFactory.setFlexSettings({
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					developerMode: true
 				});
 				return oCommandFactory.getCommandFor(this.oButton, "property", {
@@ -158,7 +160,7 @@ function (
 
 		QUnit.test("when getting a property change command for button with a static call to getCommandFor,", function(assert) {
 			var oFlexSettings = {
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				developerMode: true,
 				scenario: sap.ui.fl.Scenario.AppVariant,
 				projectId: "projectId",
@@ -420,7 +422,7 @@ function (
 		beforeEach : function() {
 			var oFlexSettings = {
 				developerMode: true,
-				layer: "VENDOR"
+				layer: Layer.VENDOR
 			};
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.OLD_VALUE = "2px";
@@ -477,7 +479,7 @@ function (
 		beforeEach : function(assert) {
 			var oFlexSettings = {
 				developerMode: true,
-				layer: "VENDOR"
+				layer: Layer.VENDOR
 			};
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.OLD_BOOLEAN_VALUE = false;
@@ -645,7 +647,7 @@ function (
 			var sVariantManagementReference = "dummyVariantManagementReference";
 			this.sCurrentVariantReference = "dummyVariantReference";
 			this.oFLexSettings = {
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				developerMode: false
 			};
 
@@ -1295,7 +1297,7 @@ function (
 
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					developerMode: false
 				}
 			});
@@ -1316,7 +1318,7 @@ function (
 			});
 
 			var oExpectedFlexSettings = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				developerMode: false,
 				originalSelector : "vbox3",
 				templateSelector : "list",
@@ -1368,7 +1370,7 @@ function (
 
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					developerMode: false
 				}
 			});
@@ -1384,7 +1386,7 @@ function (
 			});
 
 			var oExpectedFlexSettings = {
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				developerMode: false,
 				originalSelector : "text1",
 				templateSelector : "list",
@@ -1430,7 +1432,7 @@ function (
 
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					developerMode: true
 				}
 			});
@@ -1439,7 +1441,7 @@ function (
 			var oTextItem = this.oItemTemplate.getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 
 			var oExpectedFlexSettings = {
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				developerMode: true,
 				originalSelector : "text1",
 				templateSelector : "list",
@@ -1547,7 +1549,7 @@ function (
 		QUnit.test("when getting a rename change command for a bound control deep inside a bound list control,", function(assert) {
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					developerMode: false
 				}
 			});
@@ -1628,13 +1630,13 @@ function (
 
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					developerMode: true
 				}
 			});
 
 			var oExpectedFlexSettings = {
-				layer: "VENDOR",
+				layer: Layer.VENDOR,
 				developerMode: true
 			};
 

@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
@@ -19,6 +20,7 @@ sap.ui.define([
 
 ],
 function (
+	Layer,
 	FlUtils,
 	FlLayerUtils,
 	Change,
@@ -46,7 +48,7 @@ function (
 						{
 							author: "SAP",
 							key: "variantMgmtId1",
-							layer: "VENDOR",
+							layer: Layer.VENDOR,
 							readOnly: true,
 							title: "Standard"
 						}
@@ -87,7 +89,7 @@ function (
 
 			var oChange1 = new Change({
 				fileName: "change44",
-				layer:"CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: {
 					id: "abc123"
 				},
@@ -95,7 +97,7 @@ function (
 			});
 			var oChange2 = new Change({
 				fileName: "change45",
-				layer:"CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: {
 					id: "abc123"
 				},
@@ -108,7 +110,7 @@ function (
 					content: {
 						title:"variant A"
 					},
-					layer:"CUSTOMER",
+					layer: Layer.CUSTOMER,
 					variantReference:"variant00",
 					support:{
 						user:"Me"
@@ -118,7 +120,7 @@ function (
 				controlChanges : [oChange1, oChange2]
 			};
 
-			this.oGetCurrentLayerStub = sinon.stub(FlLayerUtils, "getCurrentLayer").returns("CUSTOMER");
+			this.oGetCurrentLayerStub = sinon.stub(FlLayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 			sinon.stub(VariantController.prototype, "getVariantChanges").returns([oChange1, oChange2]);
 			sinon.stub(this.oModel, "getVariant").returns(this.oVariant);
 			sinon.stub(this.oModel.oVariantController, "getVariants").returns([this.oVariant]);
@@ -147,7 +149,7 @@ function (
 			sandbox.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
-			var mFlexSettings = {layer: "CUSTOMER"};
+			var mFlexSettings = {layer: Layer.CUSTOMER};
 			var oControlVariantDuplicateCommand;
 			var oDuplicateVariant;
 			var aPreparedChanges;

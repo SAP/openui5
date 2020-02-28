@@ -193,7 +193,7 @@ function(
 				flexSettings: {
 					type: "object",
 					defaultValue: {
-						layer: "CUSTOMER",
+						layer: Layer.CUSTOMER,
 						developerMode: true
 					}
 				},
@@ -629,7 +629,7 @@ function(
 					this._oDesignTime.addRootElement(this._oRootControl);
 
 					jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
-					if (this.getLayer() === "USER") {
+					if (this.getLayer() === Layer.USER) {
 						jQuery(Overlay.getOverlayContainer()).addClass("sapUiRtaPersonalize");
 					} else {
 						// RTA Visual Improvements
@@ -1030,7 +1030,7 @@ function(
 		if (!this.getDependent('toolbar')) {
 			var fnConstructor;
 
-			if (this.getLayer() === "USER") {
+			if (this.getLayer() === Layer.USER) {
 				fnConstructor = PersonalizationToolbar;
 			} else if (Utils.getFiori2Renderer()) {
 				fnConstructor = FioriToolbar;
@@ -1038,7 +1038,7 @@ function(
 				fnConstructor = StandaloneToolbar;
 			}
 
-			if (this.getLayer() === "USER") {
+			if (this.getLayer() === Layer.USER) {
 				this.addDependent(new fnConstructor({
 					textResources: this._getTextResources(),
 					//events
@@ -1291,10 +1291,10 @@ function(
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._onRestore = function() {
-		var sMessage = this.getLayer() === "USER"
+		var sMessage = this.getLayer() === Layer.USER
 			? this._getTextResources().getText("FORM_PERS_RESET_MESSAGE_PERSONALIZATION")
 			: this._getTextResources().getText("FORM_PERS_RESET_MESSAGE");
-		var sTitle = this.getLayer() === "USER"
+		var sTitle = this.getLayer() === Layer.USER
 			? this._getTextResources().getText("BTN_RESTORE")
 			: this._getTextResources().getText("FORM_PERS_RESET_TITLE");
 
@@ -1525,7 +1525,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._triggerCrossAppNavigation = function(mParsedHash) {
-		if (FlexUtils.getUshellContainer() && this.getLayer() !== "USER") {
+		if (FlexUtils.getUshellContainer() && this.getLayer() !== Layer.USER) {
 			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
 			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 		}
@@ -1537,7 +1537,7 @@ function(
 	 * @return {boolean} resolving to true if reload was triggered
 	 */
 	RuntimeAuthoring.prototype._handleParametersOnExit = function(bDeleteMaxLayer) {
-		if (FlexUtils.getUshellContainer() && this.getLayer() !== "USER") {
+		if (FlexUtils.getUshellContainer() && this.getLayer() !== Layer.USER) {
 			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
 			var mParsedHash = FlexUtils.getParsedURLHash();
 			if (oCrossAppNav.toExternal && mParsedHash) {
@@ -1567,7 +1567,7 @@ function(
 	 */
 	RuntimeAuthoring.prototype._handleReloadMessageBoxOnStart = function(oReloadInfo) {
 		var sReason;
-		var bIsCustomerLayer = oReloadInfo.layer === "CUSTOMER";
+		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
 
 		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.hasDraftChanges) {
 			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_AND_DRAFT_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_AND_DRAFT_EXISTS";
@@ -1607,7 +1607,7 @@ function(
 			var oDraftValidationPromise = false;
 			var mParsedHash = FlexUtils.getParsedURLHash();
 
-			if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.layer !== "USER") {
+			if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.layer !== Layer.USER) {
 				oHigherLayerChangesValidationPromise = PersistenceWriteAPI.hasHigherLayerChanges({
 					selector: oReloadInfo.selector,
 					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter

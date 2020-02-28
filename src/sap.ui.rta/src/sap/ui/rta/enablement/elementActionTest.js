@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Cache",
+	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/library" //we have to ensure to load fl, so that change handler gets registered
 ],
@@ -32,6 +33,7 @@ function (
 	Settings,
 	PersistenceWriteAPI,
 	Cache,
+	Layer,
 	sinon
 ) {
 	"use strict";
@@ -227,7 +229,7 @@ function (
 					.then(function () {
 						var oCommandFactory = new CommandFactory({
 							flexSettings: {
-								layer: mOptions.layer || "CUSTOMER"
+								layer: mOptions.layer || Layer.CUSTOMER
 							}
 						});
 						return oCommandFactory.getCommandFor(this.oControl, mOptions.action.name, mParameter, oElementDesignTimeMetadata)

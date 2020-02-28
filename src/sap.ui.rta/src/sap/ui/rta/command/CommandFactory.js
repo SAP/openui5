@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/dt/Util",
 	"sap/base/util/merge"
 ],
@@ -14,6 +15,7 @@ function(
 	ElementUtil,
 	OverlayRegistry,
 	FlexUtils,
+	Layer,
 	DtUtil,
 	merge
 ) {
@@ -454,7 +456,7 @@ function(
 
 	CommandFactory.prototype.init = function() {
 		this.setProperty("flexSettings", {
-			layer:"CUSTOMER",
+			layer:Layer.CUSTOMER,
 			developerMode: true
 		});
 	};
@@ -498,7 +500,7 @@ function(
 	CommandFactory.getCommandFor = function(vElement, sCommand, mSettings, oDesignTimeMetadata, mFlexSettings) {
 		if (!mFlexSettings) {
 			mFlexSettings = {
-				layer:"CUSTOMER",
+				layer:Layer.CUSTOMER,
 				developerMode: true
 			};
 		}

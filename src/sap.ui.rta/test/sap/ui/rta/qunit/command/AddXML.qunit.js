@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/dt/DesignTime",
@@ -22,6 +23,7 @@ function (
 	AddXML,
 	ChangeRegistry,
 	Change,
+	Layer,
 	Utils,
 	LayerUtils,
 	DesignTime,
@@ -71,7 +73,7 @@ function (
 
 	QUnit.module("Given an AddXML command with a valid entry in the change registry,", {
 		beforeEach : function() {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
 		},
 		afterEach : function() {
@@ -89,7 +91,7 @@ function (
 
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
-					layer: "VENDOR"
+					layer: Layer.VENDOR
 				}
 			});
 
@@ -110,7 +112,7 @@ function (
 
 			.then(function() {
 				oCommandFactory.setFlexSettings({
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					developerMode: true
 				});
 				return oCommandFactory.getCommandFor(this.oButton, "addXML", {
@@ -128,7 +130,7 @@ function (
 				assert.strictEqual(oAddXmlCommand.getFragment(), sFragment, "and its settings are merged correctly");
 				assert.strictEqual(oAddXmlCommand.getIndex(), 0, "and its settings are merged correctly");
 				oCommandFactory.setFlexSettings({
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					developerMode: false
 				});
 				assert.notOk(oAddXmlCommand._oPreparedChange.getDefinition().content.fragment, "after preparing, the fragment content is not yet in the change");
@@ -153,7 +155,7 @@ function (
 		QUnit.test("When addXML is created with a fragment string containing a binding", function(assert) {
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
-					layer: "VENDOR"
+					layer: Layer.VENDOR
 				}
 			});
 
@@ -176,7 +178,7 @@ function (
 		QUnit.test("and design time metadata allows change on js only, when getting an AddXML command for the change ...", function(assert) {
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					developerMode: true
 				}
 			});
@@ -211,7 +213,7 @@ function (
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var oModel = new JSONModel({
@@ -261,7 +263,7 @@ function (
 
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
-					layer: "VENDOR",
+					layer: Layer.VENDOR,
 					developerMode: true
 				}
 			});

@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Control",
 	"sap/ui/rta/appVariant/S4HanaCloudBackend",
@@ -32,6 +33,7 @@ function (
 	DescriptorVariantFactory,
 	WriteUtils,
 	Settings,
+	Layer,
 	FlUtils,
 	Control,
 	S4HanaCloudBackend,
@@ -53,7 +55,7 @@ function (
 			var oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
-			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: this.oCommandSerializer, layer: "CUSTOMER"});
+			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -153,7 +155,7 @@ function (
 
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oAppComponent});
-			this.oAppVariantManager = new AppVariantManager({rootControl: this.oAppComponent, commandSerializer: this.oCommandSerializer, layer: "CUSTOMER"});
+			this.oAppVariantManager = new AppVariantManager({rootControl: this.oAppComponent, commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
 
 			oServer = sinon.fakeServer.create();
 
@@ -242,7 +244,7 @@ function (
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oRootControl});
 
-			this.oAppVariantManager = new AppVariantManager({rootControl: this.oRootControl, commandSerializer: this.oCommandSerializer, layer: "CUSTOMER"});
+			this.oAppVariantManager = new AppVariantManager({rootControl: this.oRootControl, commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
 			oServer = sinon.fakeServer.create();
 		},
 		afterEach: function () {
@@ -255,7 +257,7 @@ function (
 
 			return this.oAppVariantManager.createAppVariant("customer.appvar.id")
 				.then(function() {
-					assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: this.oRootControl, id: "customer.appvar.id", layer: "CUSTOMER", version: "1.0.0"}));
+					assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: this.oRootControl, id: "customer.appvar.id", layer: Layer.CUSTOMER, version: "1.0.0"}));
 				}.bind(this));
 		});
 
@@ -264,7 +266,7 @@ function (
 
 			return this.oAppVariantManager.deleteAppVariant("customer.app.var.id")
 				.then(function() {
-					assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: {appId: "customer.app.var.id"}, layer: "CUSTOMER"}), "then AppVariantWriteApi.deleteAppVariant method is called with correct parameters");
+					assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: {appId: "customer.app.var.id"}, layer: Layer.CUSTOMER}), "then AppVariantWriteApi.deleteAppVariant method is called with correct parameters");
 				});
 		});
 
@@ -311,7 +313,7 @@ function (
 				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), true);
 			}.bind(this))
 			.then(function(oResult) {
-				assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", "CUSTOMER", "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
+				assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
 				assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
 				assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
 				assert.strictEqual(oResult.VariantId, "customer.TestId", "then the variant id is correct");
@@ -342,7 +344,7 @@ function (
 				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), false);
 			}.bind(this))
 			.then(function(oResult) {
-				assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", "CUSTOMER", "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
+				assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
 				assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
 				assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
 				assert.strictEqual(oResult.inProgress, true, "then the inProgress property is true");
@@ -378,7 +380,7 @@ function (
 				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), true);
 			}.bind(this))
 			.then(function() {
-				assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", "CUSTOMER", "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
+				assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
 				assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
 				assert.ok(fncatchErrorDialog.calledOnce, "then the fncatchErrorDialog method is called once");
 				assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_CATALOG_ASSIGNMENT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
@@ -417,7 +419,7 @@ function (
 				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), false);
 			}.bind(this))
 			.then(function() {
-				assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", "CUSTOMER", "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
+				assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
 				assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
 				assert.ok(fncatchErrorDialog.calledOnce, "then the fncatchErrorDialog method is called once");
 				assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_DELETE_APP_VARIANT_FAILED", "then the fncatchErrorDialog method is called with correct message key");

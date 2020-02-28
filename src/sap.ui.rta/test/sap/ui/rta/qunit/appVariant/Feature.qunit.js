@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantManager",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/core/Control",
@@ -27,6 +28,7 @@ sap.ui.define([
 	AppVariantManager,
 	DescriptorVariantFactory,
 	Settings,
+	Layer,
 	FlUtils,
 	Stack,
 	Control,
@@ -167,7 +169,7 @@ sap.ui.define([
 
 			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
-			return RtaAppVariantFeature.onGetOverview(true, "CUSTOMER").then(function(oAppVariantOverviewDialog) {
+			return RtaAppVariantFeature.onGetOverview(true, Layer.CUSTOMER).then(function(oAppVariantOverviewDialog) {
 				assert.ok(true, "the the promise got resolved and AppVariant Overview Dialog is opened");
 				oAppVariantOverviewDialog.fireCancel();
 			});
@@ -209,7 +211,7 @@ sap.ui.define([
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, Layer.CUSTOMER, oStack), false, "then the 'i' button is not visible");
 			assert.equal(oInboundInfoSpy.callCount, 0, "then the getInboundInfo is never called");
 		});
 
@@ -231,7 +233,7 @@ sap.ui.define([
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), true, "then the 'i' button is visible");
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, Layer.CUSTOMER, oStack), true, "then the 'i' button is visible");
 			assert.equal(oInboundInfoSpy.callCount, 1, "then the getInboundInfo is called once");
 			assert.equal(oInboundInfoSpy.getCall(0).args[0], undefined, "then the parameter passed is correct");
 		});
@@ -252,7 +254,7 @@ sap.ui.define([
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, Layer.CUSTOMER, oStack), false, "then the 'i' button is not visible");
 		});
 
 		QUnit.test("when isPlatFormEnabled() is called for an FLP app which has no crossNavigation in 'sap.app' property of a descriptor", function(assert) {
@@ -283,7 +285,7 @@ sap.ui.define([
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), true, "then the 'i' button is visible");
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, Layer.CUSTOMER, oStack), true, "then the 'i' button is visible");
 			assert.equal(oInboundInfoSpy.getCall(0).args[0], undefined, "then the parameter passed is correct");
 		});
 
@@ -305,7 +307,7 @@ sap.ui.define([
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, Layer.CUSTOMER, oStack), false, "then the 'i' button is not visible");
 			assert.equal(oInboundInfoSpy.callCount, 0, "then the getInboundInfo method is never called");
 		});
 
@@ -326,7 +328,7 @@ sap.ui.define([
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), true, "then the 'i' button is visible");
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, Layer.CUSTOMER, oStack), true, "then the 'i' button is visible");
 			assert.equal(oInboundInfoSpy.getCall(0).args[0], undefined, "then the parameter passed is correct");
 		});
 	});
@@ -443,7 +445,7 @@ sap.ui.define([
 
 			var oGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(false, "CUSTOMER", oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called 10 times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
@@ -502,7 +504,7 @@ sap.ui.define([
 			var oNotifyKeyUserWhenPublishingIsReadySpy = sandbox.spy(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
 			var oNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(false, "CUSTOMER", oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.save method is called once");
@@ -562,13 +564,13 @@ sap.ui.define([
 			var oClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
 			var oShowSuccessMessage = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview");
-			oGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, "CUSTOMER"));
+			oGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, Layer.CUSTOMER));
 			oGetOverviewStub.onCall(1).resolves();
 
 			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
 			var oNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(false, "CUSTOMER", oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
@@ -632,7 +634,7 @@ sap.ui.define([
 			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
 			var oNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(false, "CUSTOMER", oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
@@ -701,7 +703,7 @@ sap.ui.define([
 			var oNotifyKeyUserWhenPublishingIsReadySpy = sandbox.spy(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(true, "CUSTOMER", oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(true, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
@@ -767,7 +769,7 @@ sap.ui.define([
 			var oNotifyKeyUserWhenPublishingIsReadySpy = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 			var oNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(true, "CUSTOMER", oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(true, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
@@ -813,7 +815,7 @@ sap.ui.define([
 
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Delete Error").returns();
 
-			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, "CUSTOMER").then(function() {
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, Layer.CUSTOMER).then(function() {
 				assert.equal(oDeleteAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.deleteAppVariant method is called once");
 				assert.equal(oShowMessageStub.callCount, 1, "then the showMessage method is called once");
 				assert.equal(oTriggerCatalogPublishing.callCount, 1, "then the triggerCatalogPublishing method is called once");
@@ -850,10 +852,10 @@ sap.ui.define([
 			var oDeleteAppVariantStub = sandbox.stub(AppVariantWriteAPI, "deleteAppVariant").resolves();
 
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview");
-			oGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, "CUSTOMER"));
+			oGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, Layer.CUSTOMER));
 			oGetOverviewStub.onCall(1).resolves();
 
-			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, "CUSTOMER").then(function() {
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, Layer.CUSTOMER).then(function() {
 				assert.equal(oDeleteAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.deleteAppVariant method is called once");
 				assert.equal(oShowMessageStub.callCount, 1, "then the showMessage method is called once");
 				assert.equal(oShowSuccessMessageStub.callCount, 1, "then the showSuccessMessage method is called once");
@@ -889,10 +891,10 @@ sap.ui.define([
 			var oNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview");
-			oGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, "CUSTOMER"));
+			oGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, Layer.CUSTOMER));
 			oGetOverviewStub.onCall(1).resolves();
 
-			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, "CUSTOMER").then(function() {
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, Layer.CUSTOMER).then(function() {
 				assert.equal(oDeleteAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.deleteAppVariant method is called once");
 				assert.equal(oShowMessageStub.callCount, 1, "then the showMessage method is called once");
 				assert.equal(oShowSuccessMessageStub.callCount, 1, "then the showSuccessMessage method is called once");
@@ -922,7 +924,7 @@ sap.ui.define([
 			var oTriggerCatalogPublishing = sandbox.spy(AppVariantManager.prototype, "triggerCatalogPublishing");
 			var oNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
 
-			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, "CUSTOMER").then(function() {
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, Layer.CUSTOMER).then(function() {
 				assert.equal(oDeleteAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.deleteAppVariant method is called once");
 				assert.ok(oShowMessageStub.notCalled, "then the showMessage method is called once");
 				assert.equal(oShowSuccessMessageStub.callCount, 1, "then the showSuccessMessage method is called once");
@@ -953,7 +955,7 @@ sap.ui.define([
 			var oNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
 			var oNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
-			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", true, "CUSTOMER").then(function() {
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", true, Layer.CUSTOMER).then(function() {
 				assert.equal(oDeleteAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.deleteAppVariant method is called once");
 				assert.ok(oShowMessageStub.notCalled, "then the showMessage method is not called");
 				assert.equal(oShowSuccessMessageStub.callCount, 1, "then the showSuccessMessage method is called once");
@@ -992,7 +994,7 @@ sap.ui.define([
 			var oNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 			var oNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
-			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", true, "CUSTOMER").then(function() {
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", true, Layer.CUSTOMER).then(function() {
 				assert.equal(oDeleteAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.deleteAppVariant method is called once");
 				assert.equal(oShowMessageStub.callCount, 1, "then the showMessage method is called once");
 				assert.equal(oShowSuccessMessageStub.callCount, 1, "then the showSuccessMessage method is called once");
