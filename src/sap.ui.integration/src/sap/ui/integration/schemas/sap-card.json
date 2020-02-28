@@ -1627,6 +1627,18 @@
 			"properties": {
 				"value": {
 					"description": "The value of the parameter."
+				},
+				"type": {
+					"description": "The type of the value for the parameter.",
+					"type": "string",
+					"enum": [
+						"string",
+						"integer",
+						"number",
+						"boolean",
+						"date",
+						"datetime"
+					]
 				}
 			}
 		}

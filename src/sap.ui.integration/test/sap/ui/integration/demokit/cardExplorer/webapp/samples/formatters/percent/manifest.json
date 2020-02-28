@@ -22,13 +22,6 @@
 	},
 	"sap.card": {
 		"type": "List",
-		"configuration": {
-			"parameters": {
-				"cardCurrency": {
-					"value": "EUR"
-				}
-			}
-		},
 		"header": {
 			"title": "Discount status",
 			"subTitle": "Discounts exceeding {= format.percent(0.50)} are highlighted as important",

@@ -19,7 +19,8 @@
 		"configuration": {
 			"parameters": {
 				"numberOfProducts": {
-					"value": 8
+					"value": 8,
+					"type": "integer"
 				}
 			}
 		},

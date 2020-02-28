@@ -24,16 +24,20 @@
 		"configuration": {
 			"parameters": {
 				"northwindServiceUrl": {
-					"value": "https://services.odata.org/V3/Northwind/Northwind.svc"
+					"value": "https://services.odata.org/V3/Northwind/Northwind.svc",
+					"type": "string"
 				},
 				"periodInterval": {
-				    "value": "lastYears"
+				    "value": "lastYears",
+					"type": "string"
 				},
 				"periodAge": {
-				    "value": "30"
+				    "value": 30,
+					"type": "integer"
 				},
 				"maxItems": {
-					"value": "7"
+					"value": 7,
+					"type": "integer"
 				}
 			}
 		},

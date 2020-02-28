@@ -15,7 +15,8 @@
 		"configuration": {
 			"parameters": {
 				"product": {
-					"value": "HT-2001"
+					"value": "HT-2001",
+					"type": "string"
 				}
 			}
 		},
