@@ -3,47 +3,68 @@
   Tested sap.ui.core.util.Popup
 -->
 <html>
+
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 	<script src="../../../../../../resources/sap/ui/test/starter/runTest.js"
-			data-sap-ui-testsuite="test-resources/sap/ui/core/qunit/util/testsuite.util.qunit"
-			data-sap-ui-test="Popup"></script>
+		data-sap-ui-testsuite="test-resources/sap/ui/core/qunit/util/testsuite.util.qunit"
+		data-sap-ui-test="Popup"></script>
 
 	<!-- Test assumes that the baseURI is test-resources/sap/ui/core/qunit/util -->
-	<base href="./" >
+	<base href="./">
 
 	<title>sap.ui.core.Popup</title>
 	<link href="static/popup.css" rel="stylesheet" type="text/css">
 </head>
+
 <body>
-	<button id="focusableElement">Focusable Button</button>
-	<input id="focusableElement2">
+	<div id="testContent">
+		<button id="focusableElement">Focusable Button</button>
+		<input id="focusableElement2">
 
-	<button id="focusableElementWithAttribute" data-sap-ui-integration-popup-content>Focusable Button</button>
-	<div data-sap-ui-integration-popup-content>
-		<button id="focusableElementWithAttributeInParent">Focusable Button</button>
+		<button id="focusableElementWithAttribute">Focusable Button</button>
+		<div id="notFocusableElementWithAttribute">
+			<button id="focusableElementWithAttributeInParent">Focusable Button</button>
+		</div>
+
+		<button id="focusableElementWithCustomAttribute">Focusable Button</button>
+		<div id="focusableElementWithCustomAttributeParent">
+			<button id="focusableElementWithCustomAttributeInParent">Focusable Button</button>
+		</div>
+
+		<div id="popup" tabindex="0">
+			This is a plain-HTML popup with two focusable child elements
+			<div id="popupcontent" tabindex="0">Child 1</div>
+			<div id="secondpopupcontent" tabindex="0">Child 2</div>
+		</div>
+
+		<div id="popup1" tabindex="0">
+			<button id="popup1-btn">Open Popup</button>
+		</div>
+
+		<div id="popup2" tabindex="0">
+			<button id="popup2-btn">Button</button>
+		</div>
+
+		<div id="popup3" tabindex="0">
+			<div id="popup3-btn">Open Popup</div>
+		</div>
+
+		<div id="popup4" tabindex="0">
+			<div id="popup4-btn">Button</div>
+		</div>
+
+		<div id="customDialog1">
+			<div>Content first custom dialog</div>
+		</div>
+
+		<div id="customDialog2">
+			<div>Content second custom dialog</div>
+		</div>
+
+		<div id="uiarea" />
 	</div>
-
-	<button id="focusableElementWithCustomAttribute" data-custom-popup-content>Focusable Button</button>
-	<div data-custom-popup-content-2>
-		<button id="focusableElementWithCustomAttributeInParent">Focusable Button</button>
-	</div>
-
-	<div id="popup" tabindex="0">
-		This is a plain-HTML popup with two focusable child elements
-		<div id="popupcontent" tabindex="0">Child 1</div>
-		<div id="secondpopupcontent" tabindex="0">Child 2</div>
-	</div>
-
-	<div id="popup1" tabindex="0">
-		<button id="popup1-btn">Open Popup</button>
-	</div>
-
-	<div id="popup2" tabindex="0">
-		<button id="popup2-btn">Button</button>
-	</div>
-
-	<div id="uiarea" />
 </body>
+
 </html>
