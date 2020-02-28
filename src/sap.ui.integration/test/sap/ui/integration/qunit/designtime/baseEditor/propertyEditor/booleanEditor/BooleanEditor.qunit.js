@@ -83,7 +83,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("When a binding path is provided", function (assert) {
+		QUnit.test("When a binding path is provided in the input field", function (assert) {
 			var fnDone = assert.async();
 
 			this.oBooleanEditor.attachValueChange(function (oEvent) {
@@ -94,6 +94,11 @@ sap.ui.define([
 			this.oBooleanEditorElement.$("inner").val("{someBindingPath}");
 			QUnitUtils.triggerEvent("input", this.oBooleanEditorElement.$("inner"));
 			QUnitUtils.triggerKeydown(this.oBooleanEditorElement.getDomRef(), KeyCodes.ENTER);
+		});
+
+		QUnit.test("When a binding path is provided as the editor value", function (assert) {
+			this.oBooleanEditor.setValue("{= ${url}}");
+			assert.strictEqual(this.oBooleanEditorElement.$("inner").val(), "{= ${url}}");
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
