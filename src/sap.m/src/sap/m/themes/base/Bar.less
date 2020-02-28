@@ -147,6 +147,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 .sapMBarRight{
 	display: inline-flex;
 	align-items: center;
+	justify-content: flex-end;
 }
 
 .sapMBarRight > .sapMBarChild:not(.sapMTB) {
@@ -155,7 +156,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	margin-right: 0;
 }
 
-.sapMBarRight > .sapMBarChild {
+.sapMBarRight > .sapMBarChild:not(.sapMFlexBox) {
 	line-height: initial;
 }
 
@@ -163,6 +164,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	.sapMBarRight{
 		display: inline-flex;
 		align-items: center;
+		justify-content: flex-end;
 	}
 
 	.sapMBarRight > .sapMBarChild:not(.sapMTB) {
