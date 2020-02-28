@@ -195,6 +195,17 @@
 			}), new sap.m.ObjectStatus({
 				text : "Large status",
 				state: "Error",
+				icon: "sap-icon://alert",
+				active : true,
+				press : function() {
+					new sap.m.MessageToast.show("you click me");
+				}
+			}).addStyleClass("sapMObjectStatusLarge"),
+			new sap.m.ObjectStatus({
+				text : "Large inverted status",
+				state: "Error",
+				inverted: true,
+				icon: "sap-icon://alert",
 				active : true,
 				press : function() {
 					new sap.m.MessageToast.show("you click me");
