@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
@@ -27,10 +26,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, Log, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
-		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, PropertyBinding, Sorter,
-		OperationMode, Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel,
-		ValueListType, _Helper, TestUtils, URI) {
+], function (Log, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext,
+		ContextBinding, Filter, FilterOperator, MetaModel, PropertyBinding, Sorter, OperationMode,
+		Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType, _Helper,
+		TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -2682,7 +2681,7 @@ sap.ui.define([
 		// Note: take care not to modify oProperty0, clone it first!
 		[false, true].forEach(function (bNullable) {
 			// Note: JSON.parse(JSON.stringify(...)) cannot clone Infinity!
-			var oProperty = jQuery.extend(true, {}, oProperty0),
+			var oProperty = _Helper.merge({}, oProperty0),
 				oConstraints = oProperty.__constraints;
 
 			delete oProperty.__constraints;

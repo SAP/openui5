@@ -2,14 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/v4/lib/_AggregationCache",
 	"sap/ui/model/odata/v4/lib/_AggregationHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, Log, SyncPromise, _AggregationCache, _AggregationHelper, _Cache, _Helper) {
+], function (Log, SyncPromise, _AggregationCache, _AggregationHelper, _Cache, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -182,7 +181,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions), {})
 			.callsFake(function (oAggregation, mQueryOptions, mAlias2MeasureAndMethod0) {
 				mAlias2MeasureAndMethod = mAlias2MeasureAndMethod0;
-				mQueryOptions = jQuery.extend({}, mQueryOptions);
+				mQueryOptions = Object.assign({}, mQueryOptions);
 				delete mQueryOptions.$filter;
 				delete mQueryOptions.$orderby;
 				mQueryOptions.$apply = sApply;
@@ -562,7 +561,7 @@ sap.ui.define([
 				oResult.value[0]["UI5__count"] = "26";
 				oResult.value[0]["UI5__count@odata.type"] = "#Decimal";
 			}
-			jQuery.extend(oExpected, oResult.value[0], {
+			Object.assign(oExpected, oResult.value[0], {
 				Country : null, // avoid "Failed to drill-down"
 				Region : null, // avoid "Failed to drill-down"
 				SalesNumber : null, // avoid "Failed to drill-down"

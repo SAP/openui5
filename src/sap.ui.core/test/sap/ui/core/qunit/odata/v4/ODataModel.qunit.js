@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Element",
@@ -27,7 +26,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils",
 	"sap/ui/core/library"
-], function (jQuery, Log, SyncPromise, Element, Message, Binding, BindingMode, BaseContext, Model,
+], function (Log, SyncPromise, Element, Message, Binding, BindingMode, BaseContext, Model,
 		ODataUtils, OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding,
 		ODataMetaModel, ODataModel, ODataPropertyBinding, SubmitMode, _Helper, _MetadataRequestor,
 		_Parser, _Requestor, TestUtils, library) {
@@ -58,16 +57,6 @@ sap.ui.define([
 		});
 
 	/**
-	 * Clones the given object
-	 *
-	 * @param {any} v the object
-	 * @returns {any} the clone
-	 */
-	function clone(v) {
-		return v && JSON.parse(JSON.stringify(v));
-	}
-
-	/**
 	 * Creates a V4 OData service for <code>TEA_BUSI</code>.
 	 *
 	 * @param {string} [sQuery] URI query parameters starting with '?'
@@ -75,7 +64,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.oDataModel} the model
 	 */
 	function createModel(sQuery, mParameters) {
-		mParameters = jQuery.extend({}, mParameters, {
+		mParameters = Object.assign({}, mParameters, {
 			serviceUrl : getServiceUrl() + (sQuery || ""),
 			synchronizationMode : "None"
 		});
@@ -296,7 +285,7 @@ sap.ui.define([
 		// code under test
 		oModel = createModel("", {groupProperties : oGroupProperties});
 		assert.deepEqual(oModel.mGroupProperties,
-			jQuery.extend(oDefaultGroupProperties, oGroupProperties));
+			Object.assign(oDefaultGroupProperties, oGroupProperties));
 
 		// code under test
 		assert.strictEqual(oModel.getGroupProperty("$auto", "submit"), SubmitMode.Auto);
@@ -1653,7 +1642,7 @@ sap.ui.define([
 				"TEAM_2_EMPLOYEES" : null,
 				"FOO1" : 42,
 				"FOO2" : false,
-//TODO undefined values are removed by jQuery.extend, but should also be normalized to {}
+//TODO undefined values are removed by _Helper.clone, but should also be normalized to {}
 				//"FOO3" : undefined
 				"FOO4" : {
 					$count : false
@@ -1702,13 +1691,14 @@ sap.ui.define([
 	}].forEach(function (oFixture) {
 		QUnit.test("buildQueryOptions success " + JSON.stringify(oFixture), function (assert) {
 			var mOptions,
-				mOriginalParameters = clone(oFixture.mParameters);
+				sOriginalParameters = JSON.stringify(oFixture.mParameters);
 
+			// code under test
 			mOptions = ODataModel.prototype.buildQueryOptions(oFixture.mParameters,
 				oFixture.bSystemQueryOptionsAllowed, oFixture.bSapAllowed);
 
 			assert.deepEqual(mOptions, oFixture.expected || oFixture.mParameters || {});
-			assert.deepEqual(oFixture.mParameters, mOriginalParameters, "unchanged");
+			assert.strictEqual(JSON.stringify(oFixture.mParameters), sOriginalParameters);
 		});
 	});
 
