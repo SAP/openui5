@@ -128,6 +128,11 @@ sap.ui.define([
 				 */
 				ariaLabel: {type: "string", group: "Accessibility", defaultValue: null},
 				/**
+				 * Renders the given link as root element and therefore enables the open in new tab / window functionality
+				 * @since 1.76
+				 */
+				url: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
+				/**
 				 * Defines the type of text wrapping to be used (hyphenated or normal).
 				 * @since 1.60
 				 */
@@ -299,28 +304,38 @@ sap.ui.define([
 	 * @private
 	 */
 	GenericTile.prototype._initScopeContent = function (sTileClass) {
-		switch (this.getScope()) {
-			case library.GenericTileScope.Actions:
-				if (this.getState && this.getState() === library.LoadState.Disabled) {
+		if (!this.getState || this.getState() !== library.LoadState.Disabled) {
+			this._oMoreIcon = this._oMoreIcon || IconPool.createControlByURI({
+				id: this.getId() + "-action-more",
+				size: "1rem",
+				useIconTooltip: false,
+				src: "sap-icon://overflow"
+			}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
+
+			this._oRemoveButton = this._oRemoveButton || new Button({
+				id: this.getId() + "-action-remove",
+				icon: "sap-icon://decline",
+				tooltip: this._oRb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
+			}).addStyleClass("sapUiSizeCompact").addStyleClass(sTileClass + "RemoveButton");
+
+			this._oRemoveButton._bExcludeFromTabChain = true;
+
+			switch (this.getScope()) {
+				case library.GenericTileScope.Actions:
+					this._oMoreIcon.setVisible(true);
+					this._oRemoveButton.setVisible(true);
 					break;
-				}
-				this._oMoreIcon = this._oMoreIcon || IconPool.createControlByURI({
-					id: this.getId() + "-action-more",
-					size: "1rem",
-					useIconTooltip: false,
-					src: "sap-icon://overflow"
-				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
-
-				this._oRemoveButton = this._oRemoveButton || new Button({
-					id: this.getId() + "-action-remove",
-					icon: "sap-icon://decline",
-					tooltip: this._oRb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
-				}).addStyleClass("sapUiSizeCompact").addStyleClass(sTileClass + "RemoveButton");
-
-				this._oRemoveButton._bExcludeFromTabChain = true;
-				break;
-			default:
-			// do nothing
+				case library.GenericTileScope.ActionMore:
+					this._oMoreIcon.setVisible(true);
+					this._oRemoveButton.setVisible(false);
+					break;
+				case library.GenericTileScope.ActionRemove:
+					this._oRemoveButton.setVisible(true);
+					this._oMoreIcon.setVisible(false);
+					break;
+				default:
+				// do nothing
+			}
 		}
 	};
 
@@ -839,7 +854,7 @@ sap.ui.define([
 		var oParams,
 			bFirePress = false,
 			sScope = this.getScope(),
-			bActionsScope = sScope === library.GenericTileScope.Actions;
+			bActionsScope = sScope === library.GenericTileScope.Actions || sScope === library.GenericTileScope.ActionRemove;
 
 		if (bActionsScope && (PseudoEvents.events.sapdelete.fnCheck(event) || PseudoEvents.events.sapbackspace.fnCheck(event))) {
 			oParams = {
@@ -1045,7 +1060,7 @@ sap.ui.define([
 		if (!sAriaText || this._isTooltipSuppressed()) {
 			sAriaText = this._getAriaAndTooltipText(); // ARIA label set by the control
 		}
-		if (this.getScope() === library.GenericTileScope.Actions) {
+		if (this._isInActionScope()) {
 			sAriaText = this._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + " " + sAriaText;
 		}
 		if (sAriaLabel) {
@@ -1081,12 +1096,24 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._checkFooter = function (tileContent, control) {
 		var sState = control.getState();
-		var bActions = this.getScope() === library.GenericTileScope.Actions || this._bShowActionsView === true;
+		var bActions = this._isInActionScope() || this._bShowActionsView === true;
 		if (sState === library.LoadState.Failed || bActions && sState !== library.LoadState.Disabled) {
 			tileContent.setRenderFooter(false);
 		} else {
 			tileContent.setRenderFooter(true);
 		}
+	};
+
+	/**
+	 * Shows if the scope is set to any action mode
+	 *
+	 * @return {boolean} True if the scope is set to an action scope, else false
+	 * @private
+	 */
+	GenericTile.prototype._isInActionScope = function ()  {
+		return this.getScope() === library.GenericTileScope.Actions
+			|| this.getScope() === library.GenericTileScope.ActionMore
+			|| this.getScope() === library.GenericTileScope.ActionRemove;
 	};
 
 	/**
@@ -1183,7 +1210,7 @@ sap.ui.define([
 		}
 
 		// not valid in actions scope and LineMode
-		if (this.getScope() !== library.GenericTileScope.Actions && this.getMode() !== library.GenericTileMode.LineMode) {
+		if (!this._isInActionScope() && this.getMode() !== library.GenericTileMode.LineMode) {
 			if (aTiles[0] && aTiles[0].getTooltip_AsString() && aTiles[0].getTooltip_AsString() !== "") {
 				sTooltip += (bIsFirst ? "" : "\n") + aTiles[0].getTooltip_AsString();
 				bIsFirst = false;
@@ -1215,7 +1242,7 @@ sap.ui.define([
 		if ($Tile.attr("title") !== sAriaAndTitleText) {
 			$Tile.attr("aria-label", sAriaText);
 		}
-		if (this.getScope() === library.GenericTileScope.Actions) {
+		if (this._isInActionScope()) {
 			$Tile.find('*:not(.sapMGTRemoveButton)').removeAttr("aria-label").removeAttr("title").unbind("mouseenter");
 		} else {
 			$Tile.find('*').removeAttr("aria-label").removeAttr("title").unbind("mouseenter");
@@ -1257,10 +1284,10 @@ sap.ui.define([
 			sScope = this.getScope(),
 			oDomRef = this.getDomRef();
 
-		if (sScope === library.GenericTileScope.Actions && oEvent.target.id.indexOf("-action-remove") > -1) {//tap on icon remove in Actions scope
+		if ((sScope === library.GenericTileScope.Actions || library.GenericTileScope.ActionRemove) && oEvent.target.id.indexOf("-action-remove") > -1) {//tap on icon remove in Actions scope
 			sAction = GenericTile._Action.Remove;
 			oDomRef = this._oRemoveButton.getPopupAnchorDomRef();
-		} else if (sScope === library.GenericTileScope.Actions) {
+		} else if (sScope === library.GenericTileScope.Actions || sScope === library.GenericTileScope.ActionMore) {
 			oDomRef = this._oMoreIcon.getDomRef();
 		}
 		oParams = {

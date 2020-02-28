@@ -33,6 +33,7 @@
 				header: "This is a header",
 				subheader: "Subheader",
 				tooltip: "",
+				url: "",
 				state: "Loaded",
 				hasPress: true,
 				scope: "Display"
@@ -40,8 +41,9 @@
 		}
 
 		function handlePress(oEvent) {
-			if (oEvent.getParameter("scope") === sap.m.GenericTileScope.Actions &&
-				oEvent.getParameter("action") === "Press") {
+			if ((oEvent.getParameter("scope") === sap.m.GenericTileScope.Actions
+				|| oEvent.getParameter("scope") === sap.m.GenericTileScope.ActionMore)
+				&& oEvent.getParameter("action") === "Press") {
 				var oActionSheet = new sap.m.ActionSheet({
 					title : "Choose Your Action",
 					showCancelButton : true,
@@ -78,6 +80,7 @@
 				header: "{header}",
 				subheader: "{subheader}",
 				tooltip: "{tooltip}",
+				url: "{url}",
 				state: "{state}",
 				scope: "{scope}"
 			});
@@ -156,6 +159,12 @@
 								type: sap.m.InputType.Text,
 								value: "{tooltip}",
 								placeholder: "Enter a tooltip..."
+							}),
+							new sap.m.Label({ text: "Url" }),
+							new sap.m.Input({
+								type: sap.m.InputType.Url,
+								value: "{url}",
+								placeholder: "Enter an url..."
 							}),
 							new sap.m.Label({ text: "State" }),
 							new sap.m.Select({

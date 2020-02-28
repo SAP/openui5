@@ -1591,7 +1591,19 @@ sap.ui.define([
 		 * Action scope (Possible footer and Error State information is overlaid, "Remove" and "More" icons are added to the tile).
 		 * @public
 		 */
-		Actions: "Actions"
+		Actions: "Actions",
+		/**
+		 * More action scope (Only the More icon is added to the tile)
+		 * @since 1.76
+		 * @public
+		 */
+		ActionMore: "ActionMore",
+		/**
+		 * Remove action scope (Only the Remove icon is added to the tile)
+		 * @since 1.76
+		 * @public
+		 */
+		ActionRemove: "ActionRemove"
 	};
 
 	/**

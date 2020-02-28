@@ -43,6 +43,7 @@
 		subheader : "Expenses By Region",
 		header : "Comparative Annual Totals",
 		tooltip : "",
+		url : "",
 		footerNum : "Actual and Target",
 		footerComp : "Compare across regions",
 		scale : "MM",
@@ -84,8 +85,9 @@
 	};
 
 	var fnPress = function(oEvent) {
-		if (oEvent.getParameter("scope") === sap.m.GenericTileScope.Actions &&
-			oEvent.getParameter("action") === "Press") {
+		if ((oEvent.getParameter("scope") === sap.m.GenericTileScope.Actions
+			|| oEvent.getParameter("scope") === sap.m.GenericTileScope.ActionMore)
+			&& oEvent.getParameter("action") === "Press") {
 			var oActionSheet = new sap.m.ActionSheet({
 				title : "Choose Your Action",
 				showCancelButton : true,
@@ -146,6 +148,7 @@
 		frameType : "{/frameType}",
 		header : "{/header}",
 		tooltip : "{/tooltip}",
+		url : "{/url}",
 		state : "{/state}",
 		scope : "{/scope}",
 		headerImage : "{/headerImage}",
@@ -176,6 +179,7 @@
 	var oGenericTile2 = new sap.m.GenericTile({
 		mode : "{/mode}",
 		tooltip : "{/tooltip}",
+		url : "{/url}",
 		subheader : "{/subheader}",
 		frameType : sap.m.FrameType.TwoByOne,
 		header : "{/header}",
@@ -193,6 +197,7 @@
 	var oGenericTile3 = new sap.m.GenericTile({
 		mode : "{/mode}",
 		tooltip : "{/tooltip}",
+		url : "{/url}",
 		frameType : sap.m.FrameType.TwoByOne,
 		state : "{/state}",
 		scope : "{/scope}",
@@ -228,6 +233,7 @@
 	var oGenericTile4 = new sap.m.GenericTile({
 		mode : "{/mode}",
 		tooltip : "{/tooltip}",
+		url : "{/url}",
 		header : "{/header}",
 		subheader : "{/subheader}",
 		frameType : sap.m.FrameType.TwoByOne,
@@ -248,6 +254,7 @@
 	var oGenericTile5 = new sap.m.GenericTile({
 		mode : "{/mode}",
 		tooltip : "{/tooltip}",
+		url : "{/url}",
 		frameType : sap.m.FrameType.OneByOne,
 		state : "{/state}",
 		scope : "{/scope}",
@@ -324,6 +331,17 @@
 		placeholder : 'Enter tooltip ...'
 	});
 	oTooltipInput.bindValue("/tooltip");
+
+	var oUrlLbl = new sap.m.Label({
+		text : "Url",
+		labelFor : "url-value"
+	});
+
+	var oUrlInput = new sap.m.Input("url-value", {
+		type : sap.m.InputType.Url,
+		placeholder : "Enter an url..."
+	});
+	oUrlInput.bindValue("/url");
 
 	var oUpdateValueLbl = new sap.m.Label({
 		text : "Update Value",
@@ -555,9 +573,10 @@
 		editable : true,
 		content : [new sap.ui.core.Title({ // this starts a new group
 			text : "Modify Tile"
-		}), oModeLabel, oModeSelect, oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oImgSrc, oImgSrcInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit,
-				oUnitInput, oFailedLabel, oFailedInput, oFrameTypeLabel, oFrameTypeSelect, oPictureLbl, oPictureSlct,oImageDescLbl, oImageDescInput, oStateLabel, oStateSelect, oScopeLabel, oScopeSelect, oPressLbl,
-				oPressSwtch, oIndicatorLabel, oIndicatorSelect, oSizeLbl, oSizeBtn, oWrappingLabel, oWrappingSelect]
+		}), oModeLabel, oModeSelect, oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oImgSrc, oImgSrcInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUrlLbl,
+			oUrlInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit, oUnitInput, oFailedLabel, oFailedInput, oFrameTypeLabel, oFrameTypeSelect, oPictureLbl, oPictureSlct,oImageDescLbl,
+			oImageDescInput, oStateLabel, oStateSelect, oScopeLabel, oScopeSelect, oPressLbl, oPressSwtch, oIndicatorLabel, oIndicatorSelect, oSizeLbl, oSizeBtn, oWrappingLabel, oWrappingSelect
+		]
 	});
 
 	var oPage = new sap.m.Page("initial-page", {

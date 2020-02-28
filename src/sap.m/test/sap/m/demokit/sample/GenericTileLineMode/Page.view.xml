@@ -1,6 +1,7 @@
 <mvc:View controllerName="sap.m.sample.GenericTileLineMode.Page"
           height="100%"
           xmlns="sap.m"
+          xmlns:core="sap.ui.core"
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:l="sap.ui.layout">
 	<Page showHeader="true">
@@ -10,7 +11,9 @@
 				<Label text="Enforce small size:"/>
 				<Switch id="enforceSmallSwitch" change="changeEnforceSmall" state="false"/>
 				<Label text="Tile Actions:"/>
-				<Switch state="{/actionsScope}"/>
+				<ComboBox selectedKey="{/scope}" items="{ path: '/scopes' }">
+					<core:Item key="{key}" text="{text}"/>
+				</ComboBox>
 			</OverflowToolbar>
 		</customHeader>
 		<content>
@@ -26,7 +29,7 @@
 					<GenericTile header="{title}"
 					             subheader="{subtitle}"
 					             state="{=${state} || 'Loaded'}"
-					             scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+					             scope="{/scope}"
 					             press="press"
 					             class="sapUiTinyMarginEnd"
 					             sizeBehavior="{/sizeBehavior}">

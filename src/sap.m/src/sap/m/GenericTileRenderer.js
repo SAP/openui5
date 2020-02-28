@@ -9,9 +9,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	// shortcut for sap.m.GenericTileMode
 	var GenericTileMode = library.GenericTileMode;
 
-	// shortcut for sap.m.GenericTileScope
-	var GenericTileScope = library.GenericTileScope;
-
 	// shortcut for sap.m.LoadState
 	var LoadState = library.LoadState;
 
@@ -35,11 +32,22 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		var sHeaderImage = oControl.getHeaderImage();
 		var bHasPress = oControl.hasListeners("press");
 		var sState = oControl.getState();
-		var sScope = oControl.getScope();
 		var sStateClass = encodeCSS("sapMGTState" + sState);
-		var sScopeClass = encodeCSS("sapMGTScope" + sScope);
+		var sScopeClass;
 
-		oRm.write("<div");
+		if (oControl._isInActionScope()) {
+			sScopeClass = encodeCSS("sapMGTScopeActions");
+		} else {
+			sScopeClass = encodeCSS("sapMGTScopeDisplay");
+		}
+
+		if (oControl.getUrl() && !oControl._isInActionScope()) {
+			oRm.write("<a");
+			oRm.writeAttributeEscaped("href", oControl.getUrl());
+		} else {
+			oRm.write("<div");
+		}
+
 		oRm.writeControlData(oControl);
 		if (sTooltipText) {
 			oRm.writeAttributeEscaped("title", sTooltipText);
@@ -49,12 +57,16 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		oRm.addClass(sStateClass);
 		oRm.addClass(sScopeClass);
 		// render actions view for SlideTile actions scope
-		if (sScope !== GenericTileScope.Actions && oControl._bShowActionsView) {
+		if (!oControl._isInActionScope() && oControl._bShowActionsView) {
 			oRm.addClass("sapMGTScopeActions");
 		}
 		oRm.addClass(oControl.getFrameType());
 		if (bHasPress) {
-			oRm.writeAttribute("role", "button");
+			if (oControl.getUrl() && !oControl._isInActionScope()) {
+				oRm.writeAttribute("role", "link");
+			} else {
+				oRm.writeAttribute("role", "button");
+			}
 		} else {
 			oRm.writeAttribute("role", "presentation");
 		}
@@ -120,10 +132,14 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			this._renderFocusDiv(oRm, oControl);
 		}
 
-		if (sScope === GenericTileScope.Actions) {
+		if (oControl._isInActionScope()) {
 			this._renderActionsScope(oRm, oControl);
 		}
-		oRm.write("</div>");
+		if (oControl.getUrl() && !oControl._isInActionScope()) {
+			oRm.write("</a>");
+		} else {
+			oRm.write("</div>");
+		}
 	};
 
 	GenericTileRenderer._renderFocusDiv = function(oRm, oControl) {
@@ -164,7 +180,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				oRm.renderControl(oControl._oWarningIcon);
 				oRm.write("</div>");
 
-				if (oControl.getScope() !== GenericTileScope.Actions && !oControl._bShowActionsView) {
+				if (!oControl._isInActionScope() && !oControl._bShowActionsView) {
 					oRm.write("<div");
 					oRm.writeAttribute("id", oControl.getId() + "-failed-text");
 					oRm.addClass("sapMGenericTileFtrFldTxt");
