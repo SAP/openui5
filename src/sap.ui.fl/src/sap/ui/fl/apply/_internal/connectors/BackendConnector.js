@@ -41,7 +41,7 @@ sap.ui.define([
 			var mParameters = _pick(mPropertyBag, ["appVersion"]);
 
 			if (mPropertyBag.draftLayer) {
-				mParameters.draft = true;
+				mParameters.version = "0";
 			}
 
 			var sDataUrl = ApplyUtils.getUrl(this.ROUTES.DATA, mPropertyBag, mParameters);
