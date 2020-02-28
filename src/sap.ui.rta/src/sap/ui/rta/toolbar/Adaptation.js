@@ -63,6 +63,11 @@ function(
 					defaultValue: false
 				},
 
+				/** Label of the current version; this label is only visible in case versioningVisible is set to true */
+				versionLabel: {
+					type: "string"
+				},
+
 				/** Determines whether draft buttons are enabled */
 				draftEnabled: {
 					type: "boolean",
@@ -123,7 +128,6 @@ function(
 	};
 
 	Adaptation.prototype._switchToIcons = function() {
-		this.getControl("draftLabel").setVisible(false);
 		this.getControl("iconBox").setVisible(false);
 		this.getControl("iconSpacer").setVisible(false);
 		this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
@@ -132,7 +136,6 @@ function(
 	};
 
 	Adaptation.prototype._switchToTexts = function () {
-		this._setDraftLabelVisibility();
 		this.getControl("iconBox").setVisible(true);
 		this.getControl("iconSpacer").setVisible(true);
 		this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
@@ -256,14 +259,14 @@ function(
 		this.getControl("restore").setEnabled(bEnabled);
 	};
 
-	Adaptation.prototype._setDraftLabelVisibility = function () {
-		var bLabelVisible = this.getVersioningVisible() && this.sMode === Adaptation.modes.DESKTOP;
-		this.getControl("draftLabel").setVisible(bLabelVisible);
+	Adaptation.prototype.setVersionLabel = function (sText) {
+		this.setProperty("versionLabel", sText, true);
+		this.getControl("versionLabel").setText(sText);
 	};
 
 	Adaptation.prototype.setVersioningVisible = function (bVisible) {
 		this.setProperty("versioningVisible", bVisible, true);
-		this._setDraftLabelVisibility();
+		this.getControl("versionLabel").setVisible(bVisible);
 		this.getControl("activateDraft").setVisible(bVisible);
 		this.getControl("discardDraft").setVisible(bVisible);
 		return bVisible;

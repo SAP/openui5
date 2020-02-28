@@ -12,10 +12,9 @@
                         width="0%"
                         visible="true" />
                 <Label
-                        id="sapUiRta_draftLabel"
-                        text="{i18n>LBL_DRAFT}"
+                        id="sapUiRta_versionLabel"
                         design="Bold"
-                        class="sapUiRtaDraftLabel"
+                        class="sapUiRtaVersionLabel"
                         visible="false" />
                 <Button
                         id="sapUiRta_activateDraft"
