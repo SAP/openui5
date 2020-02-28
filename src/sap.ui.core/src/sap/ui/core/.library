@@ -114,6 +114,7 @@
         <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
         <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-shim-nopromise.js" />
         <raw-module name="ui5loader-autoconfig.js" depends="ui5loader.js" />
+        <raw-module name="sap/ui/test/starter/_configureLoader.js" depends="ui5loader.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
       </module-infos>
       <all-in-one>

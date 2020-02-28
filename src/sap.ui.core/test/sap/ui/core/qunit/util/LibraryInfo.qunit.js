@@ -2,9 +2,17 @@
 
 sap.ui.define([
 	"sap/ui/core/util/LibraryInfo",
-	"sap/base/Log"
-], function(LibraryInfo, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/URI"
+], function(LibraryInfo, Log, URI) {
 	"use strict";
+
+	QUnit.assert.sameURL = function(actual, expected, message) {
+		this.equal(
+			new URI(actual).normalize().toString(),
+			new URI(expected).normalize().toString(),
+			message);
+	};
 
 	QUnit.test("Constructor / Destroy", function(assert) {
 		var oLibraryInfo = new LibraryInfo();
@@ -76,7 +84,7 @@ sap.ui.define([
 
 		this.oLibraryInfo._loadLibraryMetadata("foo/bar/baz", function(oTestLib) {
 			assert.equal(oTestLib.name, "foo.bar.baz", "Library name");
-			assert.equal(oTestLib.url, "resources/sap/ui/test/starter/../../../../foo/bar/baz/", "Library URL");
+			assert.sameURL(oTestLib.url, "resources/foo/bar/baz/", "Library URL");
 			assert.equal(oTestLib.data, null, "No Library data");
 			done();
 		});
@@ -223,7 +231,7 @@ sap.ui.define([
 
 		this.oLibraryInfo._getDocuIndex("foo/bar/baz", function(oData) {
 			assert.equal(oData.library, "foo.bar.baz", "Library name");
-			assert.equal(oData.libraryUrl, "resources/sap/ui/test/starter/../../../../foo/bar/baz/", "Library URL");
+			assert.sameURL(oData.libraryUrl, "resources/foo/bar/baz/", "Library URL");
 			assert.equal(oData.explored, undefined, "No data");
 			done();
 		});
