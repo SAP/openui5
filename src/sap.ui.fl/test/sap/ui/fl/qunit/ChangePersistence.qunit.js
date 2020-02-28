@@ -191,13 +191,14 @@ function (
 								{
 									content : {
 										content : {
-											title: "variant 1"
+											title: "variant Standard"
 										},
-										fileName: "variant1"
+										fileName: "variantManagementId"
 									},
 									controlChanges : [],
 									variantChanges : {}
-								}]
+								}],
+							variantManagementChanges: []
 						}
 					}
 				}
@@ -240,9 +241,9 @@ function (
 								{
 									content : {
 										content : {
-											title: "variant 1"
+											title: "variant Standard"
 										},
-										fileName: "variant1"
+										fileName: "variantManagementId"
 									},
 									controlChanges : [],
 									variantChanges : {}
@@ -609,8 +610,7 @@ function (
 									}
 								]
 							}
-						},
-						{
+						}, {
 							content: {
 								content: {
 									title: "variant 2"
@@ -1437,7 +1437,6 @@ function (
 				assert.ok(changes[3].getChangeType() === "codeExt", "and change type codeExt");
 				assert.ok(changes[4]._oDefinition.fileType === "change", "fifth change has file type change");
 				assert.notOk(changes[4].getSelector(), "and does not have selector");
-				assert.ok(fnWarningLogStub.calledOnce, "then the a log for warning is called once");
 				assert.ok(fnWarningLogStub.calledWith, "A change without fileName is detected and excluded from component: MyComponent", "with correct component name");
 			});
 		});
@@ -1920,65 +1919,70 @@ function (
 
 		QUnit.test("when getChangesForView is called with a view ID and an app component", function(assert) {
 			var oAppComponent = {
-				id :"mockAppComponent"
+				getLocalId: function() {
+					return "viewId";
+				},
+				id :"componentId"
 			};
 
-			var oChange1View1 = {
-				fileName:"change1View1",
+			var oChangeWithViewPrefix = {
+				fileName:"changeWithViewPrefix",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector:{
-					id: "view1--view2--button1"
+					id: "componentId---viewId--controlId"
 				}
 			};
 
-			var oChange1View2 = {
-				fileName:"change1View2",
+			var oChangeWithoutViewPrefix = {
+				fileName:"changeWithoutViewPrefix",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
-					id: "view1--button1"
+					id: "componentId---RandomId"
 				}
 			};
 
-			var oChange2View2 = {
-				fileName:"change2View2",
+			var oChangeWithPrefixAndLocalId = {
+				fileName:"changeWithPrefixAndLocalId",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
-					id: "view1--button2"
+					id: "viewId--controlId",
+					idIsLocal: true
 				}
 			};
 
-			var oChange2View1 = {
-				fileName:"change2View1",
+			// when additionally ID prefixes could be present e.g. fragment ID, control ID containing "--"
+			var oChangeWithViewAndAdditionalPrefixes = {
+				fileName:"changeWithViewAndAdditionalPrefixes",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
-					id: "view1--view2--button2",
-					idIsLocal: false
+					id: "componentId---viewId--fragmentId--controlId"
 				}
 			};
 
 
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: {
-					changes: [oChange1View1, oChange1View2, oChange2View2, oChange2View1]
+					changes: [oChangeWithViewPrefix, oChangeWithoutViewPrefix, oChangeWithPrefixAndLocalId, oChangeWithViewAndAdditionalPrefixes]
 				}
 			});
 
 			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 
 			var mPropertyBag = {
-				viewId: "view1--view2",
-				component: oAppComponent
+				viewId: "componentId---viewId",
+				appComponent: oAppComponent
 			};
 
 			return this.oChangePersistence.getChangesForView(mPropertyBag)
 				.then(function (aChanges) {
-					assert.strictEqual(aChanges.length, 2, "then two changes were returned");
-					assert.strictEqual(aChanges[0].getId(), "change1View1", "then the change with the same view selector prefix and belonging to the passed component was returned");
-					assert.strictEqual(aChanges[1].getId(), "change2View1", "then the change with the same view selector prefix and belonging to the passed component was returned");
+					assert.strictEqual(aChanges.length, 3, "then two changes belonging to the view were returned");
+					assert.strictEqual(aChanges[0].getId(), "changeWithViewPrefix", "then the change with view prefix was returned");
+					assert.strictEqual(aChanges[1].getId(), "changeWithPrefixAndLocalId", "then the change with view prefix was returned");
+					assert.strictEqual(aChanges[2].getId(), "changeWithViewAndAdditionalPrefixes", "then the change with view and additional prefixes was returned");
 				});
 		});
 
