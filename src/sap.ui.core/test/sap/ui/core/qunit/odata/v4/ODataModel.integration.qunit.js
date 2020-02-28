@@ -9000,6 +9000,72 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A context binding contains a $select with a navigation property which must be
+	// converted to $expand, but this conversion is asynchronous.
+	// BCP: 2070020773
+	QUnit.test("ODCB: asynchronous $select to $expand", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'C\\\',ID=\\\'1\\\')\',\
+		parameters : {$select : \'EQUIPMENT_2_PRODUCT/SupplierIdentifier\'}}">\
+	<Text text="{ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Equipments(Category='C',ID='1')?$select=Category,ID"
+				+ "&$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)", {
+				Category : "C",
+				ID : "1",
+				EQUIPMENT_2_PRODUCT : {
+					ID : "HT-1010",
+					SupplierIdentifier : 42
+				}
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(
+				that.oView.byId("form").getBindingContext()
+					.getProperty("EQUIPMENT_2_PRODUCT/SupplierIdentifier"),
+				42);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A list binding contains a dynamic filter and a $select with a navigation property
+	// which must be converted to $expand. (The scenario from the incident.)
+	// BCP: 2070020773
+	QUnit.test("ODLB: dynamic filter and $select to $expand", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\',\
+		parameters : {$select : \'EMPLOYEE_2_TEAM/Name\'},\
+		filters : {path : \'AGE\', operator : \'GT\', value1 : 42}}">\
+	<ColumnListItem>\
+		<Text text="{ID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)"
+				+ "&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+				value : [{
+					ID : "1",
+					EMPLOYEE_2_TEAM : {
+						Name : "Team #01",
+						Team_Id : "01"
+					}
+				}]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(
+				that.oView.byId("table").getItems()[0].getBindingContext()
+					.getProperty("EMPLOYEE_2_TEAM/Name"),
+				"Team #01");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings. Refreshing the view is also working.
 	// The SalesOrders application does not have such a scenario.

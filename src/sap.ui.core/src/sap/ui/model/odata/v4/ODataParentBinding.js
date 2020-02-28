@@ -767,6 +767,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resolves the query options resulting from mParameters. Resolves all paths in $select
+	 * containing navigation properties and converts them into an appropriate $expand if
+	 * autoExpandSelect is active.
+	 *
+	 * @param {sap.ui.model.Context} oContext
+	 *   The context instance to be used
+	 * @returns {sap.ui.base.SyncPromise<object>} A promise that resolves with the resolved
+	 *   query options when all paths in $select have been processed
+	 *
+	 * @private
+	 * @see #getQueryOptionsFromParameters
+	 */
+	ODataParentBinding.prototype.fetchResolvedQueryOptions = function (oContext) {
+		var oModel = this.oModel,
+			mQueryOptions = this.getQueryOptionsFromParameters();
+
+		if (!oModel.bAutoExpandSelect) {
+			return SyncPromise.resolve(mQueryOptions);
+		}
+
+		return _Helper.fetchResolvedSelect(oModel.oInterface.fetchMetadata,
+			_Helper.getMetaPath(oModel.resolve(this.sPath, oContext)), mQueryOptions);
+	};
+
+	/**
 	 * Returns the absolute base path used for path reduction of child (property) bindings. This is
 	 * the shortest possible path of a binding that may carry the data for the reduced path. A
 	 * parent binding is not eligible if it uses a different update group with submit mode API.

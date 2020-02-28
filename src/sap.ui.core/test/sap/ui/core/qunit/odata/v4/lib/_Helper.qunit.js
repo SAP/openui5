@@ -3001,31 +3001,33 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchResolvedSelect: no $select", function (assert) {
-		var oMetaModel = {
-				fetchObject : function () {}
-			},
-			mQueryOptions = {},
+		var mQueryOptions = {},
 			oPromise;
 
 		// code under test
 		oPromise =
-			_Helper.fetchResolvedSelect(oMetaModel.fetchObject, "/meta/path", mQueryOptions);
+			_Helper.fetchResolvedSelect({/*fnFetchMetadata*/}, "/meta/path", mQueryOptions);
 
 		assert.strictEqual(oPromise.getResult(), mQueryOptions);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchResolvedSelect", function (assert) {
-		var fnFetchMetadata = {},
+		var mConvertedQueryOptions = {},
+			fnFetchMetadata = {},
 			oHelperMock = this.mock(_Helper),
 			bProcessedBar = false,
 			bProcessedFoo = false,
 			bProcessedQualifiedName = false,
 			mQueryOptions = {
-				$select : ["foo", "bar", "qualified.Name"]
+				$select : ["foo", "bar", "qualified.Name"],
+				$expand : {}
 			},
+			mQueryOptionsAsString = JSON.stringify(mQueryOptions),
 			oPromise;
 
+		this.mock(Object).expects("assign").withExactArgs({}, sinon.match.same(mQueryOptions))
+			.returns(mConvertedQueryOptions);
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/meta/path/foo")
 			.returns(Promise.resolve().then(function () {
@@ -3035,7 +3037,7 @@ sap.ui.define([
 					.withExactArgs("/meta/path", "foo", {}, sinon.match.same(fnFetchMetadata))
 					.returns(mChildQueryOptions);
 				oHelperMock.expects("aggregateQueryOptions")
-					.withExactArgs(sinon.match.same(mQueryOptions),
+					.withExactArgs(sinon.match.same(mConvertedQueryOptions),
 						sinon.match.same(mChildQueryOptions))
 					.callsFake(function () {
 						bProcessedFoo = true;
@@ -3050,7 +3052,7 @@ sap.ui.define([
 					.withExactArgs("/meta/path", "bar", {}, sinon.match.same(fnFetchMetadata))
 					.returns(mChildQueryOptions);
 				oHelperMock.expects("aggregateQueryOptions")
-					.withExactArgs(sinon.match.same(mQueryOptions),
+					.withExactArgs(sinon.match.same(mConvertedQueryOptions),
 						sinon.match.same(mChildQueryOptions))
 					.callsFake(function () {
 						bProcessedBar = true;
@@ -3064,7 +3066,7 @@ sap.ui.define([
 						sinon.match.same(fnFetchMetadata))
 					.returns(undefined);
 				oHelperMock.expects("addToSelect")
-					.withExactArgs(sinon.match.same(mQueryOptions), ["qualified.Name"])
+					.withExactArgs(sinon.match.same(mConvertedQueryOptions), ["qualified.Name"])
 					.callsFake(function () {
 						bProcessedQualifiedName = true;
 					});
@@ -3076,12 +3078,13 @@ sap.ui.define([
 		assert.strictEqual(oPromise.isPending(), true);
 
 		return oPromise.then(function (oResult) {
-			assert.strictEqual(mQueryOptions.$select, undefined);
-			assert.ok("$select" in mQueryOptions);
-			assert.strictEqual(oResult, mQueryOptions);
+			assert.strictEqual(oResult, mConvertedQueryOptions);
+			assert.deepEqual(mConvertedQueryOptions.$select, []);
 			assert.strictEqual(bProcessedBar, true);
 			assert.strictEqual(bProcessedFoo, true);
 			assert.strictEqual(bProcessedQualifiedName, true);
+			assert.strictEqual(JSON.stringify(mQueryOptions), mQueryOptionsAsString,
+				"original query options unchanged");
 		});
 	});
 });

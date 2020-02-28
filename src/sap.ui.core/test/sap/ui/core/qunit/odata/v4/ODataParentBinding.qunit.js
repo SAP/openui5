@@ -3498,6 +3498,62 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("fetchResolvedQueryOptions: no autoExpandSelect", function (assert) {
+		var oBinding = new ODataParentBinding({
+				getQueryOptionsFromParameters : function () {},
+				oModel : {
+					bAutoExpandSelect : false
+				}
+			}),
+			oPromise,
+			mQueryOptions = {};
+
+		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
+			.returns(mQueryOptions);
+
+		// code under test
+		oPromise = oBinding.fetchResolvedQueryOptions();
+
+		assert.strictEqual(oPromise.getResult(), mQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchResolvedQueryOptions: autoExpandSelect", function (assert) {
+		var oBinding = new ODataParentBinding({
+				getQueryOptionsFromParameters : function () {},
+				oModel : {
+					bAutoExpandSelect : true,
+					oInterface : {
+						fetchMetadata : "fnFetchMetadata"
+					},
+					resolve : function () {}
+				},
+				sPath : "/path"
+			}),
+			oContext = {},
+			oPromise,
+			mQueryOptionsFromParameters = {},
+			mResolvedQueryOptions = {};
+
+		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
+			.returns(mQueryOptionsFromParameters);
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
+			.returns("/resolved/path");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/resolved/path")
+			.returns("/metapath");
+		this.mock(_Helper).expects("fetchResolvedSelect")
+			.withExactArgs("fnFetchMetadata", "/metapath",
+				sinon.match.same(mQueryOptionsFromParameters))
+			.returns(SyncPromise.resolve(mResolvedQueryOptions));
+
+		// code under test
+		oPromise = oBinding.fetchResolvedQueryOptions(oContext);
+
+		assert.strictEqual(oPromise.getResult(), mResolvedQueryOptions);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("allow for super calls", function (assert) {
 		var oBinding = new ODataParentBinding();
 
