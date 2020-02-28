@@ -35,6 +35,7 @@
 					<th>Required</th>
 					<th>Description</th>
 					<th>Schema Version</th>
+					<th>Since</th>
 				</tr>
 				<tr>
 					<td>title</td>
@@ -42,6 +43,7 @@
 					<td>No</td>
 					<td>The title of the item.</td>
 					<td>1.14.0</td>
+					<td>1.62</td>
 				</tr>
 				<tr>
 					<td>description</td>
@@ -49,6 +51,7 @@
 					<td>No</td>
 					<td>The description of the item.</td>
 					<td>1.14.0</td>
+					<td>1.62</td>
 				</tr>
 				<tr>
 					<td>info</td>
@@ -56,6 +59,7 @@
 					<td>No</td>
 					<td>Represents additional information text.</td>
 					<td>1.14.0</td>
+					<td>1.62</td>
 				</tr>
 				<tr>
 					<td>highlight</td>
@@ -63,6 +67,7 @@
 					<td>No</td>
 					<td>The highlight of the item.</td>
 					<td>1.14.0</td>
+					<td>1.62</td>
 				</tr>
 				<tr>
 					<td>icon</td>
@@ -70,6 +75,7 @@
 					<td>No</td>
 					<td>The icon of the item.</td>
 					<td>1.14.0</td>
+					<td>1.62</td>
 				</tr>
 				<tr>
 					<td>actions</td>
@@ -77,6 +83,7 @@
 					<td>No</td>
 					<td>Defines actions that can be applied on the item.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 			</table>
 		</div>
@@ -86,7 +93,10 @@
 		</p>
 		<pre class="prettyprint  lang-js">{
 	"sap.app": {
-		"type": "card"
+		"type": "card",
+		"applicationVersion": {
+		  "version": "1.0.0"
+		}
 	},
 	"sap.card": {
 		"type": "List",

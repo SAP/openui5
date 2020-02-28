@@ -222,7 +222,7 @@ sap.ui.define([
 		},
 
 		onDownloadZip: function () {
-			this._onDownloadCompressed(".card.zip");
+			this._onDownloadCompressed("card.zip");
 		},
 
 		showError: function (sMessage) {
