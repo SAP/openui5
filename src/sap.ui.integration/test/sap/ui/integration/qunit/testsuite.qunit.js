@@ -312,6 +312,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/propertyEditor/listEditor/ListEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/listEditor/ListEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/propertyEditor/PropertyEditorFactory": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -362,6 +371,15 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/util/findClosestInstance"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/util/isValidBindingString": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/isValidBindingString"
 					]
 				},
 				sinon: false
