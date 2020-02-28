@@ -69,7 +69,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of version 1.46.3, replaced by the corresponding binding parameter <code>numberOfExpandedLevels</code>.
+			 * @deprecated As of 1.46.3. Use the binding parameter <code>numberOfExpandedLevels</code> instead.
 			 */
 			expandFirstLevel : {type : "boolean", defaultValue : false, deprecated: true},
 
@@ -90,6 +90,18 @@ sap.ui.define([
 			 * <b>Note:</b> collapseRecursive is currently <b>not</b> supported if your OData service exposes the hierarchy annotation <code>hierarchy-descendant-count-for</code>.
 			 * In this case the value of the collapseRecursive property is ignored.
 			 * For more information about the OData hierarchy annotations, please see the <b>SAP Annotations for OData Version 2.0</b> specification.
+			 *
+			 * Example:
+			 * <pre>
+			 *   oTable.bindRows({
+			 *     path: "...",
+			 *     parameters: {
+			 *       collapseRecursive: true
+			 *     }
+			 *   });
+			 * </pre>
+			 *
+			 * @deprecated As of 1.76. Use the binding parameter <code>collapseRecursive</code> instead.
 			 */
 			collapseRecursive : {type: "boolean", defaultValue: true},
 
@@ -98,6 +110,18 @@ sap.ui.define([
 			 * This property is only supported when the TreeTable uses an underlying odata services with hierarchy annotations.
 			 * This property is only supported with sap.ui.model.odata.v2.ODataModel
 			 * The hierarchy annotations may also be provided locally as a parameter for the ODataTreeBinding.
+			 *
+			 * Example:
+			 * <pre>
+			 *   oTable.bindRows({
+			 *     path: "...",
+			 *     parameters: {
+			 *       rootLevel: 1
+			 *     }
+			 *   });
+			 * </pre>
+			 *
+			 * @deprecated As of 1.76. Use the binding parameter <code>rootLevel</code> instead.
 			 */
 			rootLevel : {type: "int", group: "Data", defaultValue: 0}
 		},
@@ -149,11 +173,14 @@ sap.ui.define([
 			oBindingInfo.parameters = {};
 		}
 
-		oBindingInfo.parameters.rootLevel = this.getRootLevel();
-		oBindingInfo.parameters.collapseRecursive = this.getCollapseRecursive();
+		if (!("rootLevel" in oBindingInfo.parameters)) {
+			oBindingInfo.parameters.rootLevel = this.getRootLevel();
+		}
 
-		// If the number of expanded levels is not specified in the binding parameters, we use the corresponding table property
-		// to determine the value.
+		if (!("collapseRecursive" in oBindingInfo.parameters)) {
+			oBindingInfo.parameters.collapseRecursive = this.getCollapseRecursive();
+		}
+
 		if (!("numberOfExpandedLevels" in oBindingInfo.parameters)) {
 			oBindingInfo.parameters.numberOfExpandedLevels = this.getExpandFirstLevel() ? 1 : 0;
 		}
