@@ -8,18 +8,9 @@ html.sap-desktop .sapMTBActive:focus {
 	outline-offset: -0.3125rem;
 }
 
-/* Info Toolbar Context */
-.sapMTB-Info-CTX.sapMTB {
-	height: 1.75rem;
-	padding: 0 .25rem 0 .5rem;
-	margin: 0.125rem 0.1875rem;
+.sapMTB {
+	height: 2.75rem;
 }
-
-.sapMTB-Info-CTX.sapMTB.sapMTBStandard {
-	border: 0.125rem solid @sapUiGroupTitleBorderColor;
-	border-radius: 0.3125rem;
-}
-
 /* IE ignores outline-offset. Use an overlay: */
 /* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop {
@@ -38,13 +29,4 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		border: 0.125rem dotted @sapUiContentContrastFocusColor;
 		pointer-events: none;
 	}
-}
-
-/* HCB Additional Styles */
-.sapMTB-Solid-CTX.sapMTB.sapMTBStandard {
-	border: 1px solid @sapUiGroupTitleBorderColor;
-}
-
-.sapMFooter-CTX.sapMTB.sapMTBStandard {
-	border-top: 1px solid @sapUiPageFooterBorderColor;
 }
