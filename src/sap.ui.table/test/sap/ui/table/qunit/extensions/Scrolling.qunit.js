@@ -1544,7 +1544,7 @@ sap.ui.define([
 			this.mDefaultOptions = {
 				models: new JSONModel({
 					configA: {rowHeight: "1px", child: {rowHeight: "1px"}},
-					configB: {rowHeight: "149px"} // 149px to have a row height of 150px, as the row adds 1px border.
+					configB: {rowHeight: "149px"} // 149px to have a row height of 150px, since the row adds 1px border.
 				}),
 				bindingLength: 100
 			};
@@ -1620,7 +1620,8 @@ sap.ui.define([
 				this._bypassBinding(oTable, mOptions.bindingLength);
 
 				oTable.bindRows({
-					path: "/"
+					path: "/",
+					suspended: mOptions.bindingSuspended
 				});
 
 				if (fnBeforePlaceAt) {
@@ -1697,13 +1698,13 @@ sap.ui.define([
 
 			if (iOldLength !== iNewLength && sReason && oBinding) {
 				this.oTable._iBindingLength = -1; // Ensure that the table detects a binding length change to update the UI.
-				oBinding._fireChange({reason: sReason});
+				oBinding.fireEvent("change", {reason: sReason});
 			}
 		},
 		fakeODataBindingChange: function() {
 			var oBinding = this.oTable ? this.oTable.getBinding("rows") : null;
 			if (oBinding) {
-				oBinding._fireChange({reason: ChangeReason.Change});
+				oBinding.fireEvent("change", {reason: ChangeReason.Change});
 			}
 		},
 		fakeODataBindingRefresh: function(iNewLength) {
@@ -1715,7 +1716,7 @@ sap.ui.define([
 
 			var iBindingLength = this.oTable._getTotalRowCount();
 			this.changeBindingLength(0);
-			oBinding._fireRefresh({reason: ChangeReason.Refresh});
+			oBinding.fireEvent("refresh", {reason: ChangeReason.Refresh});
 
 			setTimeout(function() {
 				if (iNewLength != null) {
@@ -1807,6 +1808,8 @@ sap.ui.define([
 	QUnit.test("Initial scroll position; Tiny data; Variable row heights", function(assert) {
 		var that = this;
 		var pTestSequence = Promise.resolve();
+		var iMaxFirstVisibleRow = that.getMaxFirstVisibleRow(10, true);
+		var iMaxScrollTop = that.getMaxScrollTop(10, true);
 
 		function test(mConfig) {
 			var oTable = that.createTable({
@@ -1817,9 +1820,7 @@ sap.ui.define([
 			});
 
 			return oTable.qunit.whenInitialRenderingFinished().then(function() {
-				var iScrollPosition = mConfig.firstVisibleRow === 0 ? 0 : 10;
-				var iInnerScrollPosition = mConfig.firstVisibleRow === 0 ? 0 : that.iBaseRowHeight;
-				that.assertPosition(assert, mConfig.firstVisibleRow, iScrollPosition, iInnerScrollPosition,
+				that.assertPosition(assert, mConfig.firstVisibleRow, mConfig.scrollTop, mConfig.innerScrollTop,
 					mConfig.rowMode + ", " + mConfig.title + "; After rendering");
 			}).then(function() {
 				return that.testRestoration(assert, mConfig.rowMode + ", " + mConfig.title);
@@ -1833,15 +1834,29 @@ sap.ui.define([
 					rowMode: oRowModeConfig.rowMode,
 					bindingLength: 2,
 					initialFirstVisibleRow: 1,
-					firstVisibleRow: 0
+					firstVisibleRow: 0,
+					scrollTop: 0,
+					innerScrollTop: 0
 				});
 			}).then(function() {
 				return test({
 					title: "Overflow, FirstVisibleRow = 1",
 					rowMode: oRowModeConfig.rowMode,
-					bindingLength: 10, // Row count = 10
+					bindingLength: 10,
 					initialFirstVisibleRow: 1,
-					firstVisibleRow: 1
+					firstVisibleRow: 1,
+					scrollTop: 10,
+					innerScrollTop: that.iBaseRowHeight
+				});
+			}).then(function() {
+				return test({
+					title: "Overflow, FirstVisibleRow = MAX",
+					rowMode: oRowModeConfig.rowMode,
+					bindingLength: 10,
+					initialFirstVisibleRow: 10,
+					firstVisibleRow: iMaxFirstVisibleRow,
+					scrollTop: iMaxScrollTop,
+					innerScrollTop: 505
 				});
 			});
 		});
@@ -1852,6 +1867,7 @@ sap.ui.define([
 	QUnit.test("Initial scroll position; Small data; Fixed row heights", function(assert) {
 		var that = this;
 		var pTestSequence = Promise.resolve();
+		var iMaxFirstVisibleRow = that.getMaxFirstVisibleRow();
 
 		function test(mConfig) {
 			var oTable = that.createTable({
@@ -1882,9 +1898,10 @@ sap.ui.define([
 				});
 			}).then(function() {
 				return test({
-					title: "FirstVisibleRow = 5",
+					title: "FirstVisibleRow = MAX",
 					rowMode: oRowModeConfig.rowMode,
-					firstVisibleRow: 5
+					initialFirstVisibleRow: iMaxFirstVisibleRow,
+					firstVisibleRow: iMaxFirstVisibleRow
 				});
 			});
 		});
@@ -2196,6 +2213,116 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Initial scroll position if binding length initialized after rendering; Small data; Fixed row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode,
+				firstVisibleRow: mConfig.initialFirstVisibleRow,
+				bindingLength: 0,
+				bindingSuspended: true // Avoid change event of client binding when it is initialized.
+			}, function(oTable) {
+				TableQUnitUtils.addEventDelegateOnce(oTable, "onAfterRendering", function() {
+					that.fakeODataBindingRefresh(that.mDefaultOptions.bindingLength);
+				});
+			});
+
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				that.assertPosition(assert, mConfig.firstVisibleRow, mConfig.firstVisibleRow * that.iBaseRowHeight, 0,
+					mConfig.rowMode + ", " + mConfig.title + "; After rendering");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					title: "FirstVisibleRow = 0",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: 0,
+					firstVisibleRow: 0
+				});
+			}).then(function() {
+				return test({
+					title: "FirstVisibleRow = 5",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: 5,
+					firstVisibleRow: 5
+				});
+			}).then(function() {
+				return test({
+					title: "FirstVisibleRow = MAX",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: that.mDefaultOptions.bindingLength,
+					firstVisibleRow: iMaxFirstVisibleRow
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
+	QUnit.test("Initial scroll position if binding length initialized after rendering; Small data; Variable row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		var iMaxScrollTop = this.getMaxScrollTop(null, true);
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode,
+				_bVariableRowHeightEnabled: true,
+				firstVisibleRow: mConfig.initialFirstVisibleRow,
+				bindingLength: 0,
+				bindingSuspended: true // Avoid change event of client binding when it is initialized.
+			}, function(oTable) {
+				TableQUnitUtils.addEventDelegateOnce(oTable, "onAfterRendering", function() {
+					that.fakeODataBindingRefresh(that.mDefaultOptions.bindingLength);
+				});
+			});
+
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				that.assertPosition(assert, mConfig.firstVisibleRow, mConfig.scrollTop, mConfig.innerScrollTop,
+					mConfig.rowMode + ", " + mConfig.title + "; After rendering");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					title: "FirstVisibleRow = 0",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: 0,
+					firstVisibleRow: 0,
+					scrollTop: 0,
+					innerScrollTop: 0
+				});
+			}).then(function() {
+				return test({
+					title: "FirstVisibleRow = 5",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: 5,
+					firstVisibleRow: 5,
+					scrollTop: 5 * that.iBaseRowHeight,
+					innerScrollTop: 0
+				});
+			}).then(function() {
+				return test({
+					title: "FirstVisibleRow = MAX",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: that.mDefaultOptions.bindingLength,
+					firstVisibleRow: iMaxFirstVisibleRow,
+					scrollTop: iMaxScrollTop,
+					innerScrollTop: 655
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
 	QUnit.test("Initial scroll position if binding length changed after rendering; Small data; Fixed row heights", function(assert) {
 		var that = this;
 		var pTestSequence = Promise.resolve();
@@ -2204,10 +2331,10 @@ sap.ui.define([
 			var oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.firstVisibleRow,
-				bindingLength: 99
+				bindingLength: that.mDefaultOptions.bindingLength - 1
 			}, function(oTable) {
 				TableQUnitUtils.addEventDelegateOnce(oTable, "onAfterRendering", function() {
-					that.changeBindingLength(100, ChangeReason.Change);
+					that.changeBindingLength(that.mDefaultOptions.bindingLength, ChangeReason.Change);
 				});
 			});
 
@@ -2631,6 +2758,8 @@ sap.ui.define([
 	QUnit.test("Scroll by setting FirstVisibleRow; Tiny data; Variable row heights", function(assert) {
 		var that = this;
 		var pTestSequence = Promise.resolve();
+		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(10, true);
+		var iMaxScrollTop = this.getMaxScrollTop(10, true);
 
 		function test(mConfig) {
 			var oTable = that.createTable({
@@ -2654,12 +2783,12 @@ sap.ui.define([
 				oTable.setFirstVisibleRow(7);
 				return oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
 			}).then(function() {
-				that.assertPosition(assert, 5, 98, 505, "FirstVisibleRow set to > MAX");
+				that.assertPosition(assert, iMaxFirstVisibleRow, iMaxScrollTop, 505, "FirstVisibleRow set to > MAX");
 
-				oTable.setFirstVisibleRow(5);
+				oTable.setFirstVisibleRow(iMaxFirstVisibleRow);
 				return oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
 			}).then(function() {
-				that.assertPosition(assert, 5, 87, 447, sTitle + "MAX");
+				that.assertPosition(assert, iMaxFirstVisibleRow, 87, 447, sTitle + "MAX");
 
 				oTable.setFirstVisibleRow(0);
 				return oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
@@ -2923,6 +3052,34 @@ sap.ui.define([
 				});
 				oTable.invalidate();
 				sap.ui.getCore().applyChanges();
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					rowMode: oRowModeConfig.rowMode
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
+	QUnit.test("Scroll by setting FirstVisibleRow when binding refresh; Small data; Fixed row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode
+			});
+
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				that.fakeODataBindingRefresh();
+				oTable.setFirstVisibleRow(1);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
 			});
