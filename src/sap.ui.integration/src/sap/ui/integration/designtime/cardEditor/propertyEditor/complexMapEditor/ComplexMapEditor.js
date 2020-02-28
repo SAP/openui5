@@ -3,12 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/base/util/restricted/_merge",
-	"sap/base/util/restricted/_omit"
+	"sap/base/util/restricted/_omit",
+	"sap/base/util/deepClone"
 ], function (
 	BasePropertyEditor,
-	_merge,
-	_omit
+	_omit,
+	deepClone
 ) {
 	"use strict";
 
@@ -36,7 +36,7 @@ sap.ui.define([
 
 		this._oNestedArrayEditor.attachValueChange(function (oEvent) {
 			var aPreviousValue = oEvent.getParameter("previousValue") || [];
-			var aValue = oEvent.getParameter("value") || [];
+			var aValue = deepClone(oEvent.getParameter("value") || []);
 
 			var aInvalidItems = aValue.map(function (oValue, iIndex) {
 				if (typeof oValue.key === "undefined") {
@@ -72,7 +72,7 @@ sap.ui.define([
 			oValue = {};
 		}
 		var aFormattedValues = Object.keys(oValue).map(function (sKey) {
-			var oFormattedValue = _merge({}, oValue[sKey]);
+			var oFormattedValue = deepClone(oValue[sKey]);
 			oFormattedValue.key = sKey;
 			return oFormattedValue;
 		});
@@ -80,7 +80,7 @@ sap.ui.define([
 	};
 
 	ComplexMapEditor.prototype.setConfig = function (oConfig) {
-		var oArrayConfig = _merge({}, oConfig);
+		var oArrayConfig = deepClone(oConfig);
 		oArrayConfig.type = "array";
 
 		// Avoid registration on BaseEditor
