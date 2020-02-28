@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	"./SelectionPlugin",
-	"./SelectionModelPlugin",
-	"./BindingSelectionPlugin",
+	"./SelectionModelSelection",
+	"./BindingSelection",
 	"../library",
 	"../utils/TableUtils",
 	"sap/ui/core/Icon",
@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/base/Log"
 ], function(
 	SelectionPlugin,
-	SelectionModelPlugin,
+	SelectionModelSelectionPlugin,
 	BindingSelectionPlugin,
 	library,
 	TableUtils,

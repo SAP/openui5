@@ -18,16 +18,16 @@ sap.ui.define([
 	var SelectionMode = library.SelectionMode;
 
 	/**
-	 * Constructs an instance of sap.ui.table.plugins.SelectionModelPlugin
+	 * Constructs an instance of sap.ui.table.plugins.SelectionModelSelection
 	 *
 	 * @class Implements the selection methods for a Table
 	 * @extends sap.ui.table.plugins.SelectionPlugin
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.plugins.SelectionModelPlugin
+	 * @alias sap.ui.table.plugins.SelectionModelSelection
 	 */
-	var SelectionModelPlugin = SelectionPlugin.extend("sap.ui.table.plugins.SelectionModelPlugin", {
+	var SelectionModelSelection = SelectionPlugin.extend("sap.ui.table.plugins.SelectionModelSelection", {
 		metadata: {
 			library: "sap.ui.table",
 			events: {
@@ -54,7 +54,7 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.init = function() {
+	SelectionModelSelection.prototype.init = function() {
 		SelectionPlugin.prototype.init.apply(this, arguments);
 		this.oSelectionModel = new SelectionModel(this._getSelectionMode);
 	};
@@ -62,7 +62,7 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.exit = function() {
+	SelectionModelSelection.prototype.exit = function() {
 		SelectionPlugin.prototype.exit.apply(this, arguments);
 
 		if (this.oSelectionModel) {
@@ -74,7 +74,7 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.onActivate = function() {
+	SelectionModelSelection.prototype.onActivate = function() {
 		SelectionPlugin.prototype.onActivate.apply(this, arguments);
 		this.oSelectionModel.attachSelectionChanged(this._onSelectionChange, this);
 	};
@@ -82,7 +82,7 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.onDeactivate = function() {
+	SelectionModelSelection.prototype.onDeactivate = function() {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
 		this.oSelectionModel.detachSelectionChanged(this._onSelectionChange, this);
 		this.oSelectionModel.clearSelection();
@@ -92,7 +92,7 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.getRenderConfig = function() {
+	SelectionModelSelection.prototype.getRenderConfig = function() {
 		return {
 			headerSelector: {
 				type: "toggle",
@@ -106,7 +106,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SelectionModelPlugin.prototype.onHeaderSelectorPress = function() {
+	SelectionModelSelection.prototype.onHeaderSelectorPress = function() {
 		if (this.getRenderConfig().headerSelector.visible) {
 			this.getTable()._toggleSelectAll();
 		}
@@ -118,7 +118,7 @@ sap.ui.define([
 	 * @param {string} sType Type of the keyboard shortcut.
 	 * @private
 	 */
-	SelectionModelPlugin.prototype.onKeyboardShortcut = function(sType) {
+	SelectionModelSelection.prototype.onKeyboardShortcut = function(sType) {
 		if (sType === "toggle") {
 			this.getTable()._toggleSelectAll();
 		} else if (sType === "clear") {
@@ -130,7 +130,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
+	SelectionModelSelection.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (!this.oSelectionModel || this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
@@ -141,7 +141,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.clearSelection = function() {
+	SelectionModelSelection.prototype.clearSelection = function() {
 		if (this.oSelectionModel) {
 			this.oSelectionModel.clearSelection();
 		}
@@ -151,7 +151,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.getSelectedIndex = function() {
+	SelectionModelSelection.prototype.getSelectedIndex = function() {
 		if (this.oSelectionModel) {
 			return this.oSelectionModel.getLeadSelectedIndex();
 		}
@@ -162,7 +162,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.getSelectedIndices = function() {
+	SelectionModelSelection.prototype.getSelectedIndices = function() {
 		if (this.oSelectionModel) {
 			return this.oSelectionModel.getSelectedIndices();
 		}
@@ -173,7 +173,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.getSelectableCount = function() {
+	SelectionModelSelection.prototype.getSelectableCount = function() {
 		var oBinding = this.getTableBinding();
 		return oBinding ? oBinding.getLength() : 0;
 	};
@@ -182,7 +182,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.getSelectedCount = function() {
+	SelectionModelSelection.prototype.getSelectedCount = function() {
 		return this.getSelectedIndices().length;
 	};
 
@@ -190,7 +190,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.isIndexSelectable = function(iIndex) {
+	SelectionModelSelection.prototype.isIndexSelectable = function(iIndex) {
 		var iCount = this._getLastIndex();
 		return iIndex >= 0 && iIndex <= iCount;
 	};
@@ -199,7 +199,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.isIndexSelected = function(iIndex) {
+	SelectionModelSelection.prototype.isIndexSelected = function(iIndex) {
 		return this.getSelectedIndices().indexOf(iIndex) !== -1;
 	};
 
@@ -207,7 +207,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
+	SelectionModelSelection.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this.oSelectionModel) {
 			this.oSelectionModel.removeSelectionInterval(iIndexFrom, iIndexTo);
 		}
@@ -217,7 +217,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.selectAll = function() {
+	SelectionModelSelection.prototype.selectAll = function() {
 		if (!this.oSelectionModel || this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
@@ -228,7 +228,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.setSelectedIndex = function(iIndex) {
+	SelectionModelSelection.prototype.setSelectedIndex = function(iIndex) {
 		if (this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
@@ -244,7 +244,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
+	SelectionModelSelection.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (!this.oSelectionModel || this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
@@ -255,10 +255,10 @@ sap.ui.define([
 	 * Sets the selection mode. The current selection is lost.
 	 *
 	 * @param {string} sSelectionMode The new selection mode.
-	 * @returns {sap.ui.table.plugins.SelectionModelPlugin} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {sap.ui.table.plugins.SelectionModelSelection} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
-	SelectionModelPlugin.prototype.setSelectionMode = function(sSelectionMode) {
+	SelectionModelSelection.prototype.setSelectionMode = function(sSelectionMode) {
 		var sOldSelectionMode = this._getSelectionMode();
 
 		SelectionPlugin.prototype._setSelectionMode.apply(this, arguments);
@@ -281,7 +281,7 @@ sap.ui.define([
 	 * @return {int} the last index of the binding
 	 * @private
 	 */
-	SelectionModelPlugin.prototype._getLastIndex = function() {
+	SelectionModelSelection.prototype._getLastIndex = function() {
 		if (!this.getTableBinding()) {
 			return 0;
 		}
@@ -294,7 +294,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @private
 	 */
-	SelectionModelPlugin.prototype._onSelectionChange = function(oEvent) {
+	SelectionModelSelection.prototype._onSelectionChange = function(oEvent) {
 		var aRowIndices = oEvent.getParameter("rowIndices");
 		var bSelectAll = oEvent.getParameter("selectAll");
 
@@ -307,7 +307,7 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.onTableRowsBound = function(oBinding) {
+	SelectionModelSelection.prototype.onTableRowsBound = function(oBinding) {
 		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
 		attachToBinding(this, oBinding);
 	};
@@ -315,7 +315,7 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	SelectionModelPlugin.prototype.onTableUnbindRows = function() {
+	SelectionModelSelection.prototype.onTableUnbindRows = function() {
 		SelectionPlugin.prototype.onTableUnbindRows.apply(this, arguments);
 		this._suspend();
 		this.clearSelection();
@@ -339,7 +339,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @private
 	 */
-	SelectionModelPlugin.prototype._onBindingChange = function(oEvent) {
+	SelectionModelSelection.prototype._onBindingChange = function(oEvent) {
 		var sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
 
 		if (sReason === "sort" || sReason === "filter") {
@@ -347,5 +347,5 @@ sap.ui.define([
 		}
 	};
 
-	return SelectionModelPlugin;
+	return SelectionModelSelection;
 });

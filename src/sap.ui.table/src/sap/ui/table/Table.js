@@ -27,7 +27,7 @@ sap.ui.define([
 	"./rowmodes/FixedRowMode",
 	"./rowmodes/InteractiveRowMode",
 	"./rowmodes/AutoRowMode",
-	"./plugins/SelectionModelPlugin",
+	"./plugins/SelectionModelSelection",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log"
 ],
@@ -55,7 +55,7 @@ sap.ui.define([
 		FixedRowMode,
 		InteractiveRowMode,
 		AutoRowMode,
-		SelectionModelPlugin,
+		SelectionModelSelectionPlugin,
 		jQuery,
 		Log
 	) {
@@ -4058,7 +4058,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._createLegacySelectionPlugin = function() {
-		return new SelectionModelPlugin();
+		return new SelectionModelSelectionPlugin();
 	};
 
 	function attachSelectionPlugin(oTable, oSelectionPlugin) {

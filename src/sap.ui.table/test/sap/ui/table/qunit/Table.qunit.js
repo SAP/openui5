@@ -5298,7 +5298,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 
 		function expectLegacyPlugin() {
-			assert.ok(oTable._getSelectionPlugin().isA("sap.ui.table.plugins.SelectionModelPlugin"), "The legacy selection plugin is used");
+			assert.ok(oTable._getSelectionPlugin().isA("sap.ui.table.plugins.SelectionModelSelection"), "The legacy selection plugin is used");
 			assert.strictEqual(oTable._hasSelectionPlugin(), false, "Table#_hasSelectionPlugin returns \"false\"");
 		}
 
