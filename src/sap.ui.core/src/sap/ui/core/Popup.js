@@ -369,13 +369,18 @@ sap.ui.define([
 	 * When it's set to true, the Popup will be closed when tap outside of the Popup.
 	 * Otherwise it will close as soon as the focus leaves the Popup.
 	 *
-	 * The default value of this property is true when running in touchable environments.
+	 * The default value of this property is determined by checking whether the devices supports touch event. The touch
+	 * event is used in case the touch interface is the only source for handling user interaction by checking
+	 * (!Device.system.combi). Since iPadOS 13, a desktop mode is introduced on iPad which sets this property with
+	 * false. However, the "button" tag loses focus again after it's tapped in Safari browser which makes the
+	 * "autoclose" feature in Popup behave wrongly. Therefore this property is always true in touch supported Safari
+	 * browser.
 	 *
 	 * @static
 	 * @type {boolean}
 	 * @private
 	 */
-	Popup.prototype.touchEnabled = Device.support.touch && !Device.system.combi;
+	Popup.prototype.touchEnabled = Device.support.touch && (Device.browser.safari || !Device.system.combi);
 
 	/**
 	 * On mobile device, the browser may set the focus to somewhere else after
