@@ -33,7 +33,8 @@ sap.ui.define([
 	function _doWrite(mPropertyBag) {
 		var mParameters = {};
 		if (mPropertyBag.draft) {
-			mParameters.draft = mPropertyBag.draft;
+			// TODO: As soon as drafts can be based on other versions the parentVersion must be passed down from higher layers
+			mParameters.parentVersion = "";
 		}
 
 		var sWriteUrl = ApplyUtils.getUrl(this.ROUTES.CHANGES, mPropertyBag, mParameters);
