@@ -178,7 +178,7 @@ sap.ui.define([
 				activatedAt : "just now",
 				versionNumber : 2
 			};
-			sandbox.stub(KeyUserConnector.versions, "activateDraft").resolves(oActivatedVersion);
+			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
 			return Versions.activateDraft(mPropertyBag)
 				.then(function (oResponse) {
@@ -222,7 +222,7 @@ sap.ui.define([
 				activatedAt: "just now",
 				versionNumber: 2
 			};
-			sandbox.stub(KeyUserConnector.versions, "activateDraft").resolves(oActivatedVersion);
+			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
 			return Versions.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(oSaveStub.callCount, 0, "no save changes was called");
@@ -254,7 +254,7 @@ sap.ui.define([
 				activatedAt: "just now",
 				versionNumber: 2
 			};
-			sandbox.stub(KeyUserConnector.versions, "activateDraft").resolves(oActivatedVersion);
+			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
 			return Versions.activateDraft(mPropertyBag)
 				.then(function (oResponse) {
