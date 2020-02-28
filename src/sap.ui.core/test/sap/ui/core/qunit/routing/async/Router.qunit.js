@@ -3553,7 +3553,6 @@ sap.ui.define([
 			});
 
 			var ParentComponent;
-
 			ParentComponent = UIComponent.extend("namespace1.ParentComponent" + count, {
 				metadata : {
 					rootView: {
@@ -3730,6 +3729,88 @@ sap.ui.define([
 			});
 			oRouter.navTo("home");
 			return oPromise;
+		});
+	});
+
+	QUnit.test("Should throw an error if a nested component has configured synchronous routing", function(assert){
+		var ParentComponent  = UIComponent.extend("namespace.asyc.ParentComponent", {
+			metadata: {
+				rootView: {
+					viewName: "rootView1",
+					type: "JS",
+					async: true
+				},
+				routing:  {
+					config: {
+						async: true
+					},
+					routes: [
+						{
+							pattern: "",
+							name: "home",
+							target: {
+								name: "home",
+								prefix: "child"
+							}
+						},
+						{
+							pattern: "category",
+							name: "category"
+						}
+					],
+					targets: {
+						home: {
+							name: "namespace.sync.ChildComponent",
+							type: "Component",
+							id: "syncChildComponent",
+							controlId: "shell",
+							controlAggregation: "content",
+							options: {
+								manifest: false
+							}
+						}
+					}
+				}
+			}
+		});
+
+		sap.ui.predefine("namespace/sync/ChildComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("namespace.sync.ChildComponent", {
+				metadata: {
+					routing:  {
+						config: {
+							async: false
+						},
+						routes: [
+							{
+								pattern: "product/{id}",
+								name: "product"
+							},
+							{
+								pattern: "",
+								name: "nestedHome"
+							}
+						]
+					}
+				},
+				init: function() {
+					UIComponent.prototype.init.apply(this, arguments);
+					var oRouter = this.getRouter();
+					oRouter.initialize();
+				}
+			});
+		});
+
+		var oParentComponent = new ParentComponent("asyncParent");
+		var oHomeRoute = oParentComponent.getRouter().getRoute("home");
+		var oHomeRouteMatchedSpy = sinon.spy(oHomeRoute, "_routeMatched");
+		var done = assert.async();
+
+		oParentComponent.getRouter().initialize();
+		assert.equal(oHomeRouteMatchedSpy.callCount, 1, "The home route should be matched once");
+		oHomeRouteMatchedSpy.getCall(0).returnValue.catch(function(oError){
+			assert.deepEqual(oError, new Error("The router of component 'asyncParent---syncChildComponent' which is loaded via the target 'home' is defined as synchronous which is not supported using as a nested component."), "The correct error should be thrown.");
+			done();
 		});
 	});
 
