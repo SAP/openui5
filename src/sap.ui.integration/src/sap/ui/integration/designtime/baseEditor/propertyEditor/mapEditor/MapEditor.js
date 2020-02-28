@@ -30,8 +30,7 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * Constructor for a new <code>MapEditor</code>.
-	 * This allows you to edit key-value pairs.
+	 * Constructor for a new <code>MapEditor</code> for editing key-value pairs with primitive values.
 	 * To get notified about changes made with the editor, you can attach a handler to the <code>valueChange</code> event.
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
