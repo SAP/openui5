@@ -15,9 +15,10 @@ sap.ui.define([
 	"sap/ui/model/type/Float",
 	"sap/ui/table/Row",
 	"sap/ui/table/library",
-	"sap/m/Label"
+	"sap/m/Label",
+	"sap/ui/core/TooltipBase"
 ], function(TableUtils, qutils, ODataModel, ODataModelV2, o4aFakeService, TBA_ServiceDocument, ATBA_Batch_Contexts, AnalyticalTable, ODataModelAdapter, AnalyticalTreeBindingAdapter,
-			TreeAutoExpandMode, AnalyticalColumn, FloatType, Row, library, Label) {
+			TreeAutoExpandMode, AnalyticalColumn, FloatType, Row, library, Label, TooltipBase) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -722,16 +723,24 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getTooltip_AsString", function(assert) {
+	QUnit.test("getTooltip_AsString / getTooltip_Text", function(assert) {
 		var done = assert.async();
 		this.oModel.metadataLoaded().then(function() {
 			this.oTable = createTable.call(this);
 
 			var fnHandler = function() {
 				var oColumn = this.oTable.getColumns()[1];
-				assert.equal(oColumn.getTooltip_AsString(), "Cost Center", "Default Tooltip");
+				assert.equal(oColumn.getTooltip_AsString(), "Cost Center", "getTooltip_AsString: Default Tooltip");
+				assert.equal(oColumn.getTooltip_Text(), "Cost Center", "getTooltip_Text: Default Tooltip");
 				oColumn.setTooltip("Some other tooltip");
-				assert.equal(oColumn.getTooltip_AsString(), "Some other tooltip", "Custom Tooltip");
+				assert.equal(oColumn.getTooltip_AsString(), "Some other tooltip", "getTooltip_AsString: Custom String Tooltip");
+				assert.equal(oColumn.getTooltip_Text(), "Some other tooltip", "getTooltip_Text: Custom String Tooltip");
+				oColumn.setTooltip(new TooltipBase());
+				assert.ok(!oColumn.getTooltip_AsString(), "getTooltip_AsString: Custom Object Tooltip without text");
+				assert.equal(oColumn.getTooltip_Text(), "Cost Center", "getTooltip_Text: Custom Object Tooltip without text");
+				oColumn.getTooltip().setText("Again some other tooltip");
+				assert.ok(!oColumn.getTooltip_AsString(), "getTooltip_AsString: Custom Object Tooltip with text");
+				assert.equal(oColumn.getTooltip_Text(), "Again some other tooltip", "getTooltip_Text: Custom Object Tooltip with text");
 				done();
 			};
 

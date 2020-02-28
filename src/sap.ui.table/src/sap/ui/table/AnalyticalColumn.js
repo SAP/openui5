@@ -268,15 +268,29 @@ sap.ui.define([
 	};
 
 	AnalyticalColumn.prototype.getTooltip_AsString = function() {
-		var sTooltip = Element.prototype.getTooltip_AsString.apply(this);
-		var oParent = this.getParent();
-		if (!sTooltip && isInstanceOfAnalyticalTable(oParent)) {
-			var oBinding = oParent.getBinding("rows");
-			if (oBinding && this.getLeadingProperty()) {
-				sTooltip = oBinding.getPropertyQuickInfo(this.getLeadingProperty());
-			}
+		if (!this.getTooltip()) { // No tooltip at all, neither string nor TooltipBase
+			return this._getDefaultTooltip();
+		}
+		return Element.prototype.getTooltip_AsString.apply(this);
+	};
+
+	AnalyticalColumn.prototype.getTooltip_Text = function() {
+		var sTooltip = Element.prototype.getTooltip_Text.apply(this);
+		if (!this.getTooltip() || !sTooltip) { // No tooltip at all, neither string nor TooltipBase, or no text in TooltipBase
+			sTooltip = this._getDefaultTooltip();
 		}
 		return sTooltip;
+	};
+
+	AnalyticalColumn.prototype._getDefaultTooltip = function() {
+		var oParent = this.getParent();
+		if (isInstanceOfAnalyticalTable(oParent)) {
+			var oBinding = oParent.getBinding("rows");
+			if (oBinding && this.getLeadingProperty()) {
+				return oBinding.getPropertyQuickInfo(this.getLeadingProperty());
+			}
+		}
+		return null;
 	};
 
 	/**
