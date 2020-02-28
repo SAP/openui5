@@ -3,45 +3,56 @@
 QUnit.config.autostart = false;
 
 sap.ui.require([
+	"sap/ui/Device",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/LabelFor",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/actions/EnterText"
-], function (Opa5,
+	"sap/ui/test/actions/EnterText",
+	"sap/ui/test/actions/Drag",
+	"sap/ui/test/actions/Drop"
+], function (Device,
+			 Opa5,
 			 opaTest,
 			 AggregationLengthEquals,
 			 Ancestor,
 			 Properties,
+			 BindingPath,
 			 LabelFor,
 			 Press,
-			 EnterText) {
+			 EnterText,
+			 Drag,
+			 Drop) {
 	"use strict";
 
-	// set defaults
 	Opa5.extendConfig({
 		viewNamespace: "appUnderTest.view.",
-		// we only have one view
-		viewName : "Main",
-		autoWait : true,
+		// we only have one view, so it makes sense to set its name globally
+		viewName: "Main",
+		autoWait: true,
 		asyncPolling: true
 	});
 
-	QUnit.module("Navigation using the press action");
+	QUnit.module("Pressing controls");
 
-	opaTest("Should navigate to page 2", function(Given, When, Then) {
+	opaTest("Should press special target within a control", function (Given, When, Then) {
 		Given.iStartMyUIComponent({
-			componentConfig: { name: "appUnderTest" }
+			componentConfig: {
+				name: "appUnderTest"
+			}
 		});
 
 		When.waitFor({
-			controlType : "sap.m.StandardListItem",
-			// Pressing a special region of a control may be achieved with the id suffix
-			actions: new Press({ idSuffix : "imgDel" }),
-			errorMessage: "List items where not pressable"
+			controlType: "sap.m.StandardListItem",
+			// Pressing a special region of a control is achieved with the region's ID suffix
+			actions: new Press({
+				idSuffix: "imgDel"
+			}),
+			errorMessage: "List items' delete buttons were not pressable"
 		});
 
 		Then.waitFor({
@@ -54,17 +65,19 @@ sap.ui.require([
 				Opa5.assert.ok(true, "List has no items");
 			}
 		});
+	});
 
+	opaTest("Should navigate to page 2 using the press action", function (Given, When, Then) {
 		When.waitFor({
-			id : "navigationButton",
+			id: "navigationButton",
 			// For pressing controls use the press action
 			// The button is busy so OPA will automatically wait until you can press it
 			actions: new Press(),
-			errorMessage: "The navigation-button was not pressable"
+			errorMessage: "The navigation button was not pressable"
 		});
 
 		Then.waitFor({
-			id : "myForm",
+			id: "myForm",
 			success: function () {
 				Opa5.assert.ok(true, "Navigation to page 2 was a success");
 			},
@@ -165,7 +178,7 @@ sap.ui.require([
 
 	QUnit.module("Select using the press action");
 
-	opaTest("Should select an item in a Select", function(Given, When, Then) {
+	opaTest("Should select an item in a sap.m.Select", function(Given, When, Then) {
 		When.waitFor({
 			id: "mySelect",
 			actions: new Press(),
@@ -190,7 +203,7 @@ sap.ui.require([
 
 	QUnit.module("Custom Actions");
 
-	opaTest("Should select an item in a Select", function(Given, When, Then) {
+	opaTest("Should select an item in a sap.m.Select", function(Given, When, Then) {
 		// If the framework does not have the action you are looking for
 		// This is how you enter a custom action
 		When.waitFor({
@@ -208,9 +221,52 @@ sap.ui.require([
 			},
 			errorMessage: "USA was not selected"
 		});
-
-		Then.iTeardownMyApp();
 	});
+
+	QUnit.module("Drag and drop");
+
+	if (Device.browser.msie && Device.browser.version < 12) {
+		opaTest("Should not execute drag and drop tests in IE11", function (Given, When, Then) {
+			Opa5.assert.ok(true, "Should not execute drag and drop tests in IE11");
+			Then.iTeardownMyApp();
+		});
+	} else {
+		opaTest("Should rearrange items in a list using drag and drop", function (Given, When, Then) {
+			When.waitFor({
+				controlType: "sap.m.StandardListItem",
+				matchers: new BindingPath({
+					path: "/ProductCollection/1",
+					modelName: "orderedListModel"
+				}),
+				actions: new Drag()
+			});
+
+			When.waitFor({
+				controlType: "sap.m.StandardListItem",
+				matchers: new BindingPath({
+					path: "/ProductCollection/5",
+					modelName: "orderedListModel"
+				}),
+				actions: new Drop({
+					before: true
+				})
+			});
+
+			Then.waitFor({
+				controlType: "sap.m.List",
+				matchers: function (oList) {
+					return oList.getItems().splice(4, 2);
+				},
+				success: function (aItems) {
+					// assert that items are reordered
+					Opa5.assert.strictEqual(aItems[0][0].getTitle(), "Notebook Basic 17", "The second item was dropped in place");
+					Opa5.assert.strictEqual(aItems[0][1].getTitle(), "Notebook Professional 15", "The second item was dropped before the sixth item");
+				}
+			});
+
+			Then.iTeardownMyApp();
+		});
+	}
 
 	QUnit.module("Select buttons in a responsive toolbar");
 

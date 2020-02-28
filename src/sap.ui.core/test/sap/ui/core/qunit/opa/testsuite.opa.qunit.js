@@ -25,6 +25,22 @@ sap.ui.define([
 			},
 			module: "./actions/EnterText.qunit"
 		},
+		"actions/DnD": {
+			title: "QUnit Page for sap.ui.test.actions.Drag and sap.ui.test.actions.Drop",
+			module: "./actions/DnD.qunit",
+			qunit: {
+				noglobals: false
+			},
+			loader: {
+				paths: {
+					"sap/f/sample": "test-resources/sap/f/demokit/sample",
+					"sap/m/sample": "test-resources/sap/m/demokit/sample",
+					"sap/ui/table/sample": "test-resources/sap/ui/table/demokit/sample",
+					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/",
+					"docu": "../../../../../documentation.html"
+				}
+			}
+		},
 		"actions/Press": {
 			/* Hasher -> own page needed */
 			page: "test-resources/sap/ui/core/qunit/opa/actions/Press.qunit{qunitVersion}.html?noglobals=true",
