@@ -15,7 +15,7 @@ sap.ui.define([
 	'sap/ui/unified/Menu',
 	'sap/ui/unified/MenuItem',
 	'./utils/TableUtils',
-	"./plugins/BindingSelectionPlugin",
+	"./plugins/BindingSelection",
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",

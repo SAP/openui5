@@ -11,7 +11,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Element',
 	'./utils/TableUtils',
-	"./plugins/BindingSelectionPlugin",
+	"./plugins/BindingSelection",
 	"sap/base/Log",
 	"sap/base/assert"
 ],
