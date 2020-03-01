@@ -91,7 +91,7 @@ sap.ui.define([
 		},
 
 		colorBlock: function(sColor, iX, iY, iSize) {
-			return jQuery("<div/>").
+			return jQuery("<div></div>").
 				attr("title", sColor).
 				css({
 					"position": "absolute",

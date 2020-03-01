@@ -33,7 +33,7 @@ function(
 	QUnit.module("Given that a MutationObserver is created", {
 		beforeEach: function() {
 			this.sNodeId = 'node-id';
-			this.$Node = jQuery("<div/>", {
+			this.$Node = jQuery("<div></div>", {
 				id: this.sNodeId
 			}).appendTo("#qunit-fixture");
 
@@ -88,7 +88,7 @@ function(
 			var fnDone = assert.async();
 			var oMutationHandlerSpy = sandbox.spy();
 			this.oMutationObserver.registerHandler(this.sNodeId, oMutationHandlerSpy, true);
-			jQuery("<div/>").attr("id", "overlay-container").appendTo("body");
+			jQuery("<div></div>").attr("id", "overlay-container").appendTo("body");
 			// setTimeout required. requestAnimationFrame inside MutationObserver should be started first
 			setTimeout(function () {
 				window.requestAnimationFrame(function () {
@@ -126,10 +126,10 @@ function(
 				assert.equal(this.$Node[0].childNodes[1].id, "test2", "then second div is appended");
 				fnDone();
 			}.bind(this), true);
-			this.$Node.append('<div id="test1"/>');
+			this.$Node.append('<div id="test1"></div>');
 			// setTimeout is needed to avoid native throttling by MutationObserver
 			setTimeout(function () {
-				this.$Node.append('<div id="test2"/>');
+				this.$Node.append('<div id="test2"></div>');
 			}.bind(this));
 		});
 
@@ -184,11 +184,11 @@ function(
 
 	QUnit.module("Static area mutations", {
 		beforeEach: function() {
-			this.$StaticUIArea = jQuery("<div/>", {
+			this.$StaticUIArea = jQuery("<div></div>", {
 				id: "sap-ui-static"
 			}).appendTo("#qunit-fixture");
 
-			this.$Node = jQuery("<div/>", {
+			this.$Node = jQuery("<div></div>", {
 				id: 'node-id'
 			}).appendTo(this.$StaticUIArea);
 
@@ -203,7 +203,7 @@ function(
 			var fnDone = assert.async();
 			var oSpy = sandbox.spy();
 			this.oMutationObserver.registerHandler(this.$Node.attr('id'), oSpy, true);
-			jQuery("<div/>").appendTo("#sap-ui-static");
+			jQuery("<div></div>").appendTo("#sap-ui-static");
 			// setTimeout is needed because of async nature of native MutationObserver
 			setTimeout(function () {
 				assert.notOk(oSpy.called, 'then domChanged callback has not been called');
@@ -218,7 +218,7 @@ function(
 				assert.ok(true, 'then domChanged callback has been called');
 				fnDone();
 			}, true);
-			jQuery("<div/>").appendTo(this.$Node);
+			jQuery("<div></div>").appendTo(this.$Node);
 		});
 
 		QUnit.test("when mutations in static UIArea happen on relevant node (simulate UI5 re-rendering)", function (assert) {

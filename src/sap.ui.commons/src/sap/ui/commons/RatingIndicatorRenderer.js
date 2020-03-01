@@ -80,7 +80,7 @@ sap.ui.define(['sap/ui/core/theming/Parameters'],
 		rm.writeAttribute("class", "sapUiRatingItmImg");
 		var sIcon = RatingIndicatorRenderer.getThemeSymbol("selected", oRating);
 		rm.writeAttributeEscaped("src", sIcon);
-		rm.write("/>");
+		rm.write(">");
 
 		rm.write("<div");
 		rm.writeAttribute("class", "sapUiRatingItmOvrflw");
@@ -116,7 +116,7 @@ sap.ui.define(['sap/ui/core/theming/Parameters'],
 		rm.writeAttribute("class", "sapUiRatingItmOvrflwImg");
 		sIcon = RatingIndicatorRenderer.getThemeSymbol("unselected", oRating);
 		rm.writeAttributeEscaped("src", sIcon);
-		rm.write("/>");
+		rm.write(">");
 
 		rm.write("</div>");
 		rm.write("</div>");

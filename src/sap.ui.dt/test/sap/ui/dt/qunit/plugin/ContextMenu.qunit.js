@@ -1068,7 +1068,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("calling _getOverlayDimensions", function (assert) {
-			jQuery("#qunit-fixture").append("<div id=\"fakeOverlay\" style=\"width:10px; height:12px; position: fixed; top:3px; left:5px;\" />");
+			jQuery("#qunit-fixture").append("<div id=\"fakeOverlay\" style=\"width:10px; height:12px; position: fixed; top:3px; left:5px;\"></div>");
 			var oOverlay = this.oContextMenuControl._getOverlayDimensions("fakeOverlay");
 			assert.strictEqual(typeof oOverlay.top, "number", "top should be a number");
 			assert.ok(!isNaN(oOverlay.top), "top shouldn't be NaN");
@@ -1207,7 +1207,7 @@ sap.ui.define([
 			var oCozyBtn = new Button({
 				icon: "sap-icon://fridge"
 			}).placeAt("qunit-fixture");
-			var $Compact = jQuery("<div/>", {
+			var $Compact = jQuery("<div></div>", {
 				"class": "sapUiSizeCompact"
 			}).appendTo("#qunit-fixture");
 			var oCompactBtn = new Button({

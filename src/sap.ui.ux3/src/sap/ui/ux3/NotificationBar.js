@@ -315,7 +315,7 @@ sap.ui.define([
 
 				oRm.write("<img");
 				oRm.writeAttributeEscaped("src", oControl.getIcon());
-				oRm.write("/>");
+				oRm.write(">");
 
 				oRm.write("</div>");
 			}

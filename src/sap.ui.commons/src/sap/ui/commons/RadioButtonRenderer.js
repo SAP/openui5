@@ -125,7 +125,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
 			rm.writeAttributeEscaped("value", oRadioButton.getKey());
 		}
 
-		rm.write(" />"); // Close RadioButton-input-element
+		rm.write(">"); // Close RadioButton-input-element
 
 
 		// Write the RadioButton label which also holds the background image

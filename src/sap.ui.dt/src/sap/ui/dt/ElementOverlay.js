@@ -530,7 +530,7 @@ function (
 		var a$Children = Overlay.prototype._renderChildren.apply(this, arguments);
 
 		this.getScrollContainers().forEach(function (mScrollContainer, iIndex) {
-			var $ScrollContainer = jQuery("<div/>", {
+			var $ScrollContainer = jQuery("<div></div>", {
 				"class": S_SCROLLCONTAINER_CLASSNAME,
 				"data-sap-ui-dt-scrollContainerIndex": iIndex
 			});

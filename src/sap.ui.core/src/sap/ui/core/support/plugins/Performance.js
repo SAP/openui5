@@ -289,7 +289,7 @@ sap.ui.define([
 								'<option value="duration">By Duration</option>' +
 							'</select>' +
 							'<label class="sapUiSupportLabel">Min. Duration:</label>' +
-							'<input id="sapUiSupportPerfHeaderFilterMinDuration" type="number" min="0" value="0" />' +
+							'<input id="sapUiSupportPerfHeaderFilterMinDuration" type="number" min="0" value="0">' +
 							'<label class="sapUiSupportLabel"> ms.</label>' +
 							'<div class="flex-spacer"></div>' +
 							'<div id="categories"></div>' +
@@ -812,7 +812,7 @@ sap.ui.define([
 
 			allCategories.forEach(function (category) {
 				category = encodeXML(category);
-				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '" />' + category + '</label>';
+				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '">' + category + '</label>';
 			});
 
 			var categoriesDom = document.querySelector('#categories');

@@ -43,7 +43,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 			return {width: 0, height: 0};
 		}
 
-		var $Area = jQuery("<DIV/>")
+		var $Area = jQuery("<DIV></DIV>")
 			.css("visibility", "hidden")
 			.css("height", "0")
 			.css("width", "0")

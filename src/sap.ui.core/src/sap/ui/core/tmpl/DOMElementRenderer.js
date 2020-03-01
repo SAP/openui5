@@ -100,7 +100,9 @@ sap.ui.define(["sap/base/Log", "sap/base/security/encodeXML"],
 			aElements.forEach(function(iIndex, oChildElement) {
 				oRM.renderControl(oChildElement);
 			});
+		}
 
+		if ( !bIsVoid ) {
 			// closing tag
 			oRM.close(sEncodedTagName);
 		}

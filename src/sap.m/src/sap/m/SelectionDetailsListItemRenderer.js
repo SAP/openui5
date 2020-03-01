@@ -19,7 +19,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/m/ListItemBaseRenderer"], function(R
 
 	try {
 		var oParser = new DOMParser();
-		bIsDOMParserSupported = oParser.parseFromString("<svg />", "text/html") !== null;
+		bIsDOMParserSupported = oParser.parseFromString("<svg/>", "text/html") !== null;
 	} catch (ex) {
 		bIsDOMParserSupported = false;
 	}

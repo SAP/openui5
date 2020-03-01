@@ -307,11 +307,11 @@ sap.ui.define(["jquery.sap.global"],
 		ElementTree.prototype._createFilter = function () {
 			return "<filter>" +
 				"<end>" +
-				(this.filterOptions.search ? "<input type=\"text\" search placeholder=\"Search by ID or type\"></input>" : "") +
-				(this.filterOptions.search ? "<label><input type=\"checkbox\" filter/>Filter results <results>(0)</results></label>" : "") +
-				(this.filterOptions.issues ? "<label><input type=\"checkbox\" issues checked/>Issues</label>" : "") +
-				(this.filterOptions.namespaces ? "<label><input type=\"checkbox\" namespaces checked/>Namespaces</label>" : "") +
-				(this.filterOptions.attributes ? "<label><input type=\"checkbox\" attributes/>Attributes</label>" : "") +
+				(this.filterOptions.search ? "<input type=\"text\" search placeholder=\"Search by ID or type\">" : "") +
+				(this.filterOptions.search ? "<label><input type=\"checkbox\" filter>Filter results <results>(0)</results></label>" : "") +
+				(this.filterOptions.issues ? "<label><input type=\"checkbox\" issues checked>Issues</label>" : "") +
+				(this.filterOptions.namespaces ? "<label><input type=\"checkbox\" namespaces checked>Namespaces</label>" : "") +
+				(this.filterOptions.attributes ? "<label><input type=\"checkbox\" attributes>Attributes</label>" : "") +
 				"</end>" +
 				"</filter>";
 		};

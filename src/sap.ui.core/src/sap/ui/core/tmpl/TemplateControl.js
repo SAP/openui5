@@ -382,7 +382,7 @@ sap.ui.define([
 		jQuery.each(mSettings, function(sKey, oValue) {
 			mHTMLSettings["data-" + hyphenate(sKey)] = oValue;
 		});
-		var $control = jQuery("<div/>", mHTMLSettings);
+		var $control = jQuery("<div></div>", mHTMLSettings);
 		var oControl = DeclarativeSupport._createControl($control.get(0), oView);
 		if (sParentPath) {
 			// set the context for the control

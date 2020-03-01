@@ -13,7 +13,7 @@ function(
 			var $content = jQuery("#qunit-fixture");
 
 			var fnCreatePanelWithBiggerSubPanel = function(sId, sColour) {
-				var $Panel = jQuery('<div/>', {
+				var $Panel = jQuery('<div></div>', {
 					id: sId
 				}).css({
 					'max-width': '100px',
@@ -22,7 +22,7 @@ function(
 					display: 'inline-block'
 				}).appendTo($content);
 
-				jQuery('<div/>', {
+				jQuery('<div></div>', {
 					id: sId + '-sub'
 				}).css({
 					width: '200px',

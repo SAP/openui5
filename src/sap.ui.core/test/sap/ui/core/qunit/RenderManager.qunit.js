@@ -1535,10 +1535,10 @@ sap.ui.define([
 		// act 2: switch rendered control
 		oContainer.setTheLuckyOne(1);
 		sap.ui.getCore().applyChanges();
-		oHtml2.$().append("<span/>");
-		oHtml2.$().append("<span/>");
-		oHtml2.$().append("<span/>");
-		oHtml2.$().append("<span/>");
+		oHtml2.$().append("<span></span>");
+		oHtml2.$().append("<span></span>");
+		oHtml2.$().append("<span></span>");
+		oHtml2.$().append("<span></span>");
 
 		// assert 2: HTML1 not visible, but preserved, HTML2 rendered
 		assert.ok(oHtml1.getDomRef() && RenderManager.isPreservedContent(oHtml1.getDomRef()),

@@ -63,13 +63,13 @@ function(
 
 	QUnit.module("getScrollLeft()", {
 		beforeEach: function() {
-			this.$Panel = jQuery('<div/>').css({
+			this.$Panel = jQuery('<div></div>').css({
 				width: '100px',
 				height: '100px',
 				overflow: 'auto'
 			}).appendTo("#qunit-fixture");
 
-			jQuery('<div/>').css({
+			jQuery('<div></div>').css({
 				width: '200px',
 				height: '200px'
 			}).appendTo(this.$Panel);

@@ -16,7 +16,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 				if (oNodes.length === 0) {
 					return '';
 				}
-				var nodeText = jQuery("<div/>").html(removeHTMLTags(oNodes[0].innerHTML)).text();
+				var nodeText = jQuery("<div></div>").html(removeHTMLTags(oNodes[0].innerHTML)).text();
 				return oNodes && oNodes.length > 0 && ("innerHTML" in oNodes[0]) && nodeText || '';
 			};
 

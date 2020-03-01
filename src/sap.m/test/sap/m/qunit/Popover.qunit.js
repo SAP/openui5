@@ -1861,7 +1861,7 @@ sap.ui.define([
 		var oPopover = new Popover(),
 				oPosParams = {
 					_$arrow: jQuery(),
-					_$footer: jQuery("<div />"),
+					_$footer: jQuery("<div></div>"),
 					_arrowHeight: 32,
 					_headerHeight: 48,
 					_subHeaderHeight: 0
