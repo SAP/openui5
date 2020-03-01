@@ -8,10 +8,13 @@ jQuery.sap.require("sap.ui.core.Control");
  * Constructor for a new TestButton.
  *
  * It accepts one JSON-like object (object literal) as parameter <code>mSettings</code> that can define values for any property,
- * aggregation, association or event.<br/>
+ * aggregation, association or event.
+ *
  * If for a control a specific name is ambiguous (a property has the same name as an event),
- * then the framework assumes property, aggregation, association, event in that order.<br/>
- * To resolve ambiguities, add an "aggregation:", "association:" or "event:" prefix to the key in the JSON object.<br/>
+ * then the framework assumes property, aggregation, association, event in that order.
+ *
+ * To resolve ambiguities, add an "aggregation:", "association:" or "event:" prefix to the key in the JSON object.
+ *
  * Allowed values are:
  * <ul>
  * <li>Properties

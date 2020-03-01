@@ -310,12 +310,12 @@ sap.ui.define([
 
 	QUnit.module("getScrollLeft()", {
 		beforeEach: function() {
-			this.$Panel = jQuery('<div/>').css({
+			this.$Panel = jQuery('<div></div>').css({
 				width: '100px',
 				height: '100px',
 				overflow: 'auto'
 			}).appendTo("#qunit-fixture");
-			jQuery('<div/>').css({
+			jQuery('<div></div>').css({
 				width: '200px',
 				height: '200px'
 			}).appendTo(this.$Panel);
@@ -343,13 +343,13 @@ sap.ui.define([
 
 	QUnit.module("hasHorizontalScrollBar()", {
 		beforeEach: function () {
-			this.$OuterPanel = jQuery('<div/>').css({
+			this.$OuterPanel = jQuery('<div></div>').css({
 				width: '100px',
 				height: '100px',
 				overflow: 'auto',
 				'background-color': 'red'
 			}).appendTo("#qunit-fixture");
-			this.$InnerPanel = jQuery('<div/>').css({
+			this.$InnerPanel = jQuery('<div></div>').css({
 				width: '100px',
 				'background-color': 'blue'
 			}).appendTo(this.$OuterPanel);
@@ -383,19 +383,19 @@ sap.ui.define([
 
 	QUnit.module("appendChild()", {
 		beforeEach: function() {
-			this.$Container = jQuery('<div/>').css({
+			this.$Container = jQuery('<div></div>').css({
 				width: '500px',
 				height: '500px',
 				overflow: 'auto',
 				'background-color': 'red'
 			}).appendTo("#qunit-fixture");
-			this.$Child = jQuery('<div/>').css({
+			this.$Child = jQuery('<div></div>').css({
 				width: '500px',
 				height: '300px',
 				overflow: 'auto',
 				'background-color': 'blue'
 			}).appendTo(this.$Container);
-			jQuery('<div/>').css({
+			jQuery('<div></div>').css({
 				width: '1000px',
 				height: '1000px',
 				'background-color': 'green'

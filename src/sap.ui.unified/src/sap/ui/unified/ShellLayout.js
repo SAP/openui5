@@ -500,7 +500,7 @@ sap.ui.define([
 //		this._cssWorkaroundTimer = setTimeout(function(){
 //			this._cssWorkaroundTimer = null;
 //			Log.debug("sap.ui.unified.ShellLayout: CSS Workaround applied.");
-//			jQuery("head").append("<link type='text/css' rel='stylesheet' id='" + this.getId() + "-css' href='data:text/css;base64,LnNhcFVpVWZkU2hlbGxDaHJvbWVSZXBhaW50e291dGxpbmUtY29sb3I6aW5pdGlhbDt9'/>");
+//			jQuery("head").append("<link type='text/css' rel='stylesheet' id='" + this.getId() + "-css' href='data:text/css;base64,LnNhcFVpVWZkU2hlbGxDaHJvbWVSZXBhaW50e291dGxpbmUtY29sb3I6aW5pdGlhbDt9'>");
 //			this._cssWorkaroundTimer = setTimeout(function(){
 //				this.$("css").remove();
 //			}.bind(this), 100);

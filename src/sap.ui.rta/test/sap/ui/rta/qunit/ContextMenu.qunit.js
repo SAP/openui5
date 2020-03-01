@@ -46,7 +46,7 @@ function(
 	} else {
 		QUnit.module("Given RTA is started...", {
 			before: function(assert) {
-				jQuery("<div/>", {
+				jQuery("<div></div>", {
 					id: "content"
 				}).css({
 					width: "600px",

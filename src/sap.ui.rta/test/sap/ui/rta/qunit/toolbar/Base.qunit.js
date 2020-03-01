@@ -183,7 +183,7 @@ function(
 	 ********************************************************************************************************/
 
 	var insertStyles = function (sStyles) {
-		return jQuery('<style />').text(sStyles).prependTo('body');
+		return jQuery('<style ></style>').text(sStyles).prependTo('body');
 	};
 
 	QUnit.module('Animation functionality', {

@@ -435,7 +435,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	function getSupportArea() {
 		var $support = jQuery(document.getElementById(ID_SUPPORT_AREA));
 		if ($support.length === 0) {
-			$support = jQuery("<DIV/>", {id:ID_SUPPORT_AREA}).
+			$support = jQuery("<div></div>", {id:ID_SUPPORT_AREA}).
 				addClass("sapUiHidden").
 				appendTo(document.body);
 		}

@@ -285,14 +285,14 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			// for IE two DOM updates are necessary to render the favicon properly
 			if (Device.browser.msie) {
 				// create favicon w/o an href attribute for a first DOM update
-				var $link = jQuery('<link rel="shortcut icon" />');
+				var $link = jQuery('<link rel="shortcut icon">');
 				$head.append($link);
 
 				// add href attribute to force a second DOM
 				$link.attr("href", oIcons["favicon"]);
 			} else {
 				// create favicon
-				$head.append(jQuery('<link rel="shortcut icon" href="' + oIcons["favicon"] + '" />'));
+				$head.append(jQuery('<link rel="shortcut icon" href="' + oIcons["favicon"] + '">'));
 			}
 		}
 
@@ -308,7 +308,7 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			oIcons[platform] = oIcons[platform] || getBestFallback(platform);
 			if (oIcons[platform]) {
 				var size = mSizes[platform];
-				$head.append(jQuery('<link rel="apple-touch-icon' + precomposed + '" ' + (size ? 'sizes="' + size + '"' : "") + ' href="' + oIcons[platform] + '" />'));
+				$head.append(jQuery('<link rel="apple-touch-icon' + precomposed + '" ' + (size ? 'sizes="' + size + '"' : "") + ' href="' + oIcons[platform] + '">'));
 			}
 		}
 	};

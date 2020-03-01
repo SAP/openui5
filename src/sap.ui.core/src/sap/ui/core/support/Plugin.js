@@ -168,7 +168,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/
 		if (this.isToolPlugin()) {
 			var jRef = jQuery(document.getElementById(sSuffix ? this.getId() + "-" + sSuffix : this.getId()));
 			if (jRef.length == 0 && !sSuffix) {
-				jRef = jQuery("<DIV/>", {id:this.getId()});
+				jRef = jQuery("<div></div>", {id:this.getId()});
 				jRef.appendTo(jQuery(".sapUiSupportCntnt"));
 			}
 			return jRef;

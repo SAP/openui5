@@ -1312,7 +1312,7 @@ sap.ui.define([
 	QUnit.test("Function _queueAnimationEnd called with GenericTile as event target", function(assert) {
 		//Arrange
 		var oEvent = {
-			target: jQuery("<div class='sapMGT' />")
+			target: jQuery("<div class='sapMGT'></div>")
 		};
 
 		//Act
@@ -1324,8 +1324,8 @@ sap.ui.define([
 
 	QUnit.test("Function _queueAnimationEnd called with GenericTile child as event target", function(assert) {
 		//Arrange
-		var $Tile = jQuery("<div class='sapMGT' />");
-		var $Child = jQuery("<div class='sapMText' />");
+		var $Tile = jQuery("<div class='sapMGT'></div>");
+		var $Child = jQuery("<div class='sapMText'></div>");
 		$Tile.append($Child);
 		var oEvent = {
 			target: $Child
@@ -1341,7 +1341,7 @@ sap.ui.define([
 	QUnit.test("Function _queueAnimationEnd called with Page as event target", function(assert) {
 		//Arrange
 		var oEvent = {
-			target: jQuery("<div class='sapMPage' />")
+			target: jQuery("<div class='sapMPage'></div>")
 		};
 		sinon.stub(this.oGenericTile, "_handleAnimationEnd");
 		this.oGenericTile._oAnimationEndCallIds = {};

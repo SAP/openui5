@@ -201,7 +201,7 @@ function(
 	DOMUtil.getScrollbarWidth = function() {
 		if (typeof DOMUtil.getScrollbarWidth._cache === 'undefined') {
 			// add outer div
-			var oOuter = jQuery('<div/>')
+			var oOuter = jQuery('<div></div>')
 				.css({
 					position: 'absolute',
 					top: '-9999px',
@@ -214,7 +214,7 @@ function(
 			oOuter.css('overflow', 'scroll');
 
 			// add inner div
-			var oInner = jQuery('<div/>')
+			var oInner = jQuery('<div></div>')
 				.css('width', '100%')
 				.appendTo(oOuter);
 
@@ -444,9 +444,9 @@ function(
 	};
 
 	/**
-	 * Inserts <style/> tag width specified styles into #overlay-container
+	 * Inserts a &lt;style> tag with specified styles into #overlay-container
 	 * @param {string} sStyles - Plain CSS as a string to be added into the page
-	 * @param {HTMLElement} oTarget - Target DOM Node where to add <style> tag with CSS
+	 * @param {HTMLElement} oTarget - Target DOM Node where to add &lt;style> tag with CSS
 	 */
 	DOMUtil.insertStyles = function (sStyles, oTarget) {
 		var oStyle = document.createElement('style');

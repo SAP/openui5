@@ -185,7 +185,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 				rm.writeEscaped(oTextField.getValue());
 			}
 			rm.write("\"");
-			rm.write("/>");
+			rm.write(">");
 		}
 
 		if (this.getInnerTagName) {

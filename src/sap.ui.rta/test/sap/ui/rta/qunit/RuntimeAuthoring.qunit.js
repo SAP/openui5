@@ -399,11 +399,11 @@ function(
 			this.fnUndoStub = sandbox.stub().returns(Promise.resolve());
 			this.fnRedoStub = sandbox.stub().returns(Promise.resolve());
 
-			this.oToolbarDomRef = jQuery('<input/>').appendTo('#qunit-fixture').get(0);
-			this.oOverlayContainer = jQuery('<button/>').appendTo('#qunit-fixture');
-			this.oAnyOtherDomRef = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
-			this.oContextMenu = jQuery('<button class="sapUiDtContextMenu" />').appendTo('#qunit-fixture').get(0);
-			this.oContextMenu2 = jQuery('<button class="sapUiDtContextMenu" />').appendTo('#qunit-fixture').get(0);
+			this.oToolbarDomRef = jQuery('<input>').appendTo('#qunit-fixture').get(0);
+			this.oOverlayContainer = jQuery('<button></button>').appendTo('#qunit-fixture');
+			this.oAnyOtherDomRef = jQuery('<button></button>').appendTo('#qunit-fixture').get(0);
+			this.oContextMenu = jQuery('<button class="sapUiDtContextMenu" ></button>').appendTo('#qunit-fixture').get(0);
+			this.oContextMenu2 = jQuery('<button class="sapUiDtContextMenu" ></button>').appendTo('#qunit-fixture').get(0);
 
 			this.oUndoEvent = new Event("dummyEvent", new EventProvider());
 			this.oUndoEvent.keyCode = jQuery.sap.KeyCodes.Z;
@@ -486,7 +486,7 @@ function(
 		});
 
 		QUnit.test("during rename", function(assert) {
-			jQuery('<div/>', {
+			jQuery('<div></div>', {
 				"class": "sapUiRtaEditableField",
 				tabIndex: 1
 			}).appendTo("#qunit-fixture").get(0).focus();

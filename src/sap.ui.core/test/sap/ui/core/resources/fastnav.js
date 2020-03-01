@@ -16,7 +16,7 @@ sap.ui.define([
 	}
 
 	function container(bGroup, sStyle, sTooltip, aContent, bDefaultContent, sDefaultStyle){
-		var res = jQuery("<div/>");
+		var res = jQuery("<div></div>");
 		if (sStyle){
 			res.attr("style", sStyle);
 		}
@@ -44,7 +44,7 @@ sap.ui.define([
 	}
 
 	function tabbable(bInput, bDisabled, sStyle, iTabIndex){
-		var res = jQuery(bInput ? "<input/>" : "<div/>");
+		var res = jQuery(bInput ? "<input>" : "<div></div>");
 		if (bDisabled === true && bInput){
 			res.attr("disabled", "disabled");
 		}

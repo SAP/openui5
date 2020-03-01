@@ -448,8 +448,8 @@ function(
 
 	QUnit.module("Given some dom elements in and out of viewport...", {
 		beforeEach: function() {
-			this.$insideDom = jQuery('<input/>').appendTo('#qunit-fixture');
-			this.$outsideDom = jQuery('<button/>').appendTo('#qunit-fixture');
+			this.$insideDom = jQuery('<input>').appendTo('#qunit-fixture');
+			this.$outsideDom = jQuery('<button></button>').appendTo('#qunit-fixture');
 
 			this.$insideDom.css("margin-bottom", jQuery("#qunit-fixture").get(0).clientHeight);
 			this.$insideDom.css("margin-right", jQuery("#qunit-fixture").get(0).clientWidth);

@@ -432,11 +432,11 @@ sap.ui.define([
 		assert.equal(oHtml2.$().children().length, 0);
 
 		// act: modify dynamically
-		oHtml1.$().append("<span/>"); // do some modification so that preserved content differs from static content
-		oHtml1.$().append("<span/>");
-		oHtml2.$().append("<span/>"); // do some modification so that preserved content differs from static content
-		oHtml2.$().append("<span/>");
-		oHtml2.$().append("<span/>");
+		oHtml1.$().append("<span></span>"); // do some modification so that preserved content differs from static content
+		oHtml1.$().append("<span></span>");
+		oHtml2.$().append("<span></span>"); // do some modification so that preserved content differs from static content
+		oHtml2.$().append("<span></span>");
+		oHtml2.$().append("<span></span>");
 
 		// assert: modifications
 		assert.equal(oHtml1.$().children().length, 2);

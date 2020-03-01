@@ -144,7 +144,7 @@ sap.ui.define([
 	QUnit.module("Private functions");
 	QUnit.test("_getElementRect", function (assert) {
 		//prepare
-		jQuery("#qunit-fixture").append("<div id='myDiv' style='width:25.1412399px;height:30.321564px'/>");
+		jQuery("#qunit-fixture").append("<div id='myDiv' style='width:25.1412399px;height:30.321564px'></div>");
 
 		//act
 		var oReal = oRFL._getElementRect(jQuery("#myDiv"));

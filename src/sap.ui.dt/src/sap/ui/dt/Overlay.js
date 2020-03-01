@@ -291,7 +291,7 @@ function (
 	 */
 	Overlay.getOverlayContainer = function() {
 		if (!$OverlayContainer) {
-			$OverlayContainer = jQuery("<div/>").attr('id', OVERLAY_CONTAINER_ID).appendTo("body");
+			$OverlayContainer = jQuery("<div></div>").attr('id', OVERLAY_CONTAINER_ID).appendTo("body");
 		}
 		return $OverlayContainer;
 	};
@@ -364,9 +364,9 @@ function (
 			return this.getDomRef();
 		}
 
-		this._$DomRef = jQuery('<div/>').attr(this._getAttributes());
+		this._$DomRef = jQuery('<div></div>').attr(this._getAttributes());
 
-		this._$Children = jQuery('<div/>').attr({
+		this._$Children = jQuery('<div></div>').attr({
 			"class": "sapUiDtOverlayChildren"
 		}).appendTo(this._$DomRef);
 
@@ -813,7 +813,7 @@ function (
 			var oDummyScrollContainer = $TargetDomRef.find("> .sapUiDtDummyScrollContainer");
 			var oScrollbarSynchronizer;
 			if (!oDummyScrollContainer.length) {
-				oDummyScrollContainer = jQuery("<div/>", {
+				oDummyScrollContainer = jQuery("<div></div>", {
 					css: {
 						height: iScrollHeight + "px",
 						width: iScrollWidth + "px"

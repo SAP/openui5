@@ -1882,7 +1882,7 @@ sap.ui.define([
 	function getPreserveArea() {
 		var $preserve = jQuery(document.getElementById(ID_PRESERVE_AREA));
 		if ($preserve.length === 0) {
-			$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
+			$preserve = jQuery("<div></div>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
 				addClass("sapUiHidden").addClass("sapUiForcedHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
 				appendTo(document.body);
 		}
@@ -1894,7 +1894,7 @@ sap.ui.define([
 	 * Create a placeholder node for the given node (which must have an ID) and insert it before the node
 	 */
 	function makePlaceholder(node) {
-		jQuery("<DIV/>", { id: RenderPrefixes.Dummy + node.id}).addClass("sapUiHidden").insertBefore(node);
+		jQuery("<div></div>", { id: RenderPrefixes.Dummy + node.id}).addClass("sapUiHidden").insertBefore(node);
 	}
 
 	// Stores {@link sap.ui.core.RenderManager.preserveContent} listener as objects with following structure:

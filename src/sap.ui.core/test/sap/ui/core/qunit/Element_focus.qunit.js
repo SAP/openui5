@@ -42,14 +42,14 @@ sap.ui.define([
 
 	QUnit.module("Focus with preventScroll");
 
-	QUnit.test("Focus a element with preventScroll should NOT cause scrolling", function(assert) {
+	QUnit.test("Focus an element with preventScroll should NOT cause scrolling", function(assert) {
 		createAndAppendDiv("content");
 		var done = assert.async();
 		var oHTMLControl = new HTML({
 			content: "<div id='scroll_container' style='overflow:scroll; height: 400px'>\
 						<div id='input_uiarea'></div>\
 						<div style='height: 3000px'></div>\
-						<input id='input_at_end' />\
+						<input id='input_at_end'>\
 					</div>"
 		});
 
