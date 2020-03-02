@@ -226,6 +226,8 @@ sap.ui.define([
 		}
 	});
 
+	BaseEditor.prototype.init = function () {};
+
 	BaseEditor.prototype.exit = function () {
 		this._reset();
 		this._oDataModel.destroy();
