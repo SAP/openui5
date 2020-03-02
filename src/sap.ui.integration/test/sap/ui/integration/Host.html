@@ -24,9 +24,9 @@
 
 			var type = event.getParameter('type'),
 					actionSource = event.getParameter('actionSource'),
-					manifestParameters = event.getParameter('manifestParameters');
+					parameters = event.getParameter('parameters');
 
-			console.error("Card Action ", manifestParameters);
+			console.error("Card Action ", parameters);
 		}
 
 		var host = new sap.ui.integration.Host({
@@ -109,9 +109,9 @@
 
 				var type = event.getParameter('type'),
 						actionSource = event.getParameter('actionSource'),
-						manifestParameters = event.getParameter('manifestParameters');
+						parameters = event.getParameter('parameters');
 
-				console.error("Host Action ", manifestParameters);
+				console.error("Host Action ", parameters);
 			},
 			resolveDestination: function(sDestinationName) {
 				if (sDestinationName == "Northwind") {

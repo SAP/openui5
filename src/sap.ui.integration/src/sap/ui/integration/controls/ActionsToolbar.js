@@ -110,7 +110,7 @@ sap.ui.define([
 						card: oCard,
 						host: oHost,
 						action: mActionConfig,
-						manifestParameters: mActionConfig.parameters,
+						parameters: mActionConfig.parameters,
 						source: oEvent.getSource(),
 						url: mActionConfig.url
 					});

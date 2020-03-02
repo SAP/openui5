@@ -43,7 +43,15 @@ sap.ui.define([
 						allowPreventDefault: true,
 
 						parameters: {
+
+							/**
+							 * The card, which triggers the action.
+							 */
 							card: {type: "sap.ui.core.Control"},
+
+							/**
+							 * The actions configuration.
+							 */
 							actionConfig: {type: 'object'},
 
 							/**
@@ -54,9 +62,9 @@ sap.ui.define([
 							},
 
 							/**
-							 * The manifest parameters related to the triggered action.
+							 * The parameters related to the triggered action.
 							 */
-							manifestParameters: {
+							parameters: {
 								type: "object"
 							},
 

@@ -257,8 +257,17 @@ sap.ui.define([
 
 						/**
 						 * The manifest parameters related to the triggered action.
+						 * @deprecated Since 1.76 Use the <code>parameters</code> parameter instead.
 						 */
 						manifestParameters: {
+							type: "object"
+						},
+
+						/**
+						 * The parameters related to the triggered action.
+						 * @since 1.76
+						 */
+						parameters: {
 							type: "object"
 						},
 

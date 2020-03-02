@@ -30,7 +30,7 @@ sap.ui.define([
 				actions: function (oCard) {
 					oCard.attachAction(function (oEvent) {
 						oEventType = oEvent.getParameter("type");
-						oData = oEvent.getParameter("manifestParameters");
+						oData = oEvent.getParameter("parameters");
 					});
 
 					oCard.$().find("ui5-button").eq(0).click();
@@ -49,7 +49,7 @@ sap.ui.define([
 				actions: function (oCard) {
 					oCard.attachAction(function (oEvent) {
 						oEventType = oEvent.getParameter("type");
-						oData = oEvent.getParameter("manifestParameters");
+						oData = oEvent.getParameter("parameters");
 					});
 					oCard.$().find("ui5-button").eq(2).click();
 				},

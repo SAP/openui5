@@ -27,7 +27,7 @@ sap.ui.define([
 
 		onAction: function (oEvent) {
 			if (oEvent.getParameter("type") === integrationLibrary.CardActionType.Navigation) {
-				MessageToast.show("URL: " + oEvent.getParameter("manifestParameters").url);
+				MessageToast.show("URL: " + oEvent.getParameter("parameters").url);
 			}
 		}
 

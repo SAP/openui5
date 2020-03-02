@@ -123,8 +123,17 @@ sap.ui.define([
 
 						/**
 						 * The manifest parameters related to the triggered action.
-						*/
+						 * @deprecated Since 1.76 Use the <code>parameters</code> parameter instead.
+						 */
 						manifestParameters: {
+							type: "object"
+						},
+
+						/**
+						 * The parameters related to the triggered action.
+						 * @since 1.76
+						 */
+						parameters: {
 							type: "object"
 						}
 					}
@@ -331,9 +340,13 @@ sap.ui.define([
 					component: oComponent().getId()
 				});
 				oContainer.attachEvent("action", function (oEvent) {
+
+					var mParameters = oEvent.getParameter("parameters");
+
 					this.fireEvent("action", {
 						actionSource: oEvent.getParameter("actionSource"),
-						manifestParameters: oEvent.getParameter("manifestParameters")
+						manifestParameters: mParameters,  // for backward compatibility
+						parameters: mParameters
 					});
 				}.bind(this));
 				this.setAggregation("_content", oContainer);

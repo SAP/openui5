@@ -178,6 +178,7 @@ sap.ui.define([
 					oCard.fireEvent("action", {
 						actionSource: this,
 						manifestParameters: oPayload,
+						parameters: oPayload,
 						type: sType
 					}, true);
 				}
