@@ -120,6 +120,7 @@ sap.ui.require([
 		// "sap/ui/core/qunit/odata/v2/DerivedTypes.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataAnnotationsFakeService
 		// "sap/ui/core/qunit/odata/v2/ODataAnnotationsV2.qunit",
+		"sap/ui/core/qunit/odata/v2/ODataContextBindingNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataListBindingNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModelNoFakeService.qunit",
