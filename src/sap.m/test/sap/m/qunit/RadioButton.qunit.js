@@ -963,28 +963,13 @@ sap.ui.define([
 
 	QUnit.test("Description value when there is a Message containing error text", function (assert) {
 		// arrange
-		var done = assert.async(),
-			oModel = new JSONModel({
-				selected:true
-			}),
-			oMessageManager = sap.ui.getCore().getMessageManager(),
-			sMessage = "This error message should be shown in the tooltip instead of the default message from the Resource Bundle",
-			oMessage = new Message({
-				type: MessageType.Error,
-				target: "/selected",
-				processor: oModel,
-				message: sMessage
-			});
+		var sMessage = "This error message should be shown in the tooltip instead of the default message from the Resource Bundle";
 
 		// act
-		this.oRadioButton.setModel(oModel);
-		oMessageManager.registerObject(this.oRadioButton, true);
-		oMessageManager.addMessages([oMessage]);
+		this.oRadioButton.setValueStateText(sMessage);
+		sap.ui.getCore().applyChanges();
 
-		setTimeout(function() {
-			// assert
-			assert.strictEqual(this.oRadioButton.$("Descr").text(), sMessage, "The error message should be shown in the tooltip");
-			done();
-		}.bind(this), 100);
+		// assert
+		assert.strictEqual(this.oRadioButton.$("Descr").text(), sMessage, "The error message should be shown in the tooltip");
 	});
 });
