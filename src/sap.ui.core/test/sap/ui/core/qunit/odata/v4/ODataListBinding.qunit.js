@@ -600,6 +600,35 @@ sap.ui.define([
 		assert.deepEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.mParameters.$$aggregation, oAggregation, "$$aggregation");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: $apply is dropped, " + bSuspended, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			mParameters = {
+				$filter : "bar"
+			};
+
+		oBinding.mQueryOptions.$apply = "old $apply";
+		this.mock(this.oModel).expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
+		this.mock(_AggregationHelper).expects("buildApply").never();
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
+			.withExactArgs(ChangeReason.Change);
+		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
+			.withExactArgs("");
+		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
+			.withExactArgs(sinon.match.same(oBinding.oContext));
+		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
+
+		// code under test - simulate call from setAggregation
+		oBinding.applyParameters(mParameters, "");
+
+		assert.deepEqual(oBinding.mQueryOptions, {
+			$filter : "bar"
+		}, "mQueryOptions");
+		assert.deepEqual(oBinding.mParameters, mParameters);
+	});
 });
 
 	//*********************************************************************************************

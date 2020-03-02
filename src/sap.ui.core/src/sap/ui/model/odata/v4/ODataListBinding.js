@@ -319,9 +319,6 @@ sap.ui.define([
 			}
 			// Note: this validates mParameters.$$aggregation!
 			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
-			if (sChangeReason === "" && sApply !== sOldApply) {
-				sChangeReason = ChangeReason.Change;
-			}
 		}
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
@@ -329,8 +326,11 @@ sap.ui.define([
 			this.mQueryOptions.$apply = sApply;
 		}
 
-		if (sChangeReason === "") { // unchanged $apply derived from $$aggregation
-			return;
+		if (sChangeReason === "") { // called from #setAggregation
+			if (this.mQueryOptions.$apply === sOldApply) {
+				return; // unchanged $apply derived from $$aggregation
+			}
+			sChangeReason = ChangeReason.Change;
 		}
 		if (this.isRootBindingSuspended()) {
 			this.setResumeChangeReason(sChangeReason);
