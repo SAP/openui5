@@ -1,0 +1,13 @@
+{
+  "1.76.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "105a11fd96bec9a1acfd192f0fa42597e6934714",
+        "type": "FIX",
+        "text": " Fixing UI2PersonalizationApplyAPI and",
+        "references": []
+      }
+    ]
+  }
+}

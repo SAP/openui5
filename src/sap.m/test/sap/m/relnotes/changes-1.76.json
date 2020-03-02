@@ -216,6 +216,149 @@
             "reference": "2070002228"
           }
         ]
+      },
+      {
+        "id": "397b5db923e719e187bf435d913893126d6c6cef",
+        "type": "FEATURE",
+        "text": " sap.m.NumericContent Fiori 3.0 visual specs implementation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488755"
+          }
+        ]
+      },
+      {
+        "id": "22d44be1dea9068d5e7063f8d656996eae7c30c2",
+        "type": "FIX",
+        "text": " ColumnListItem: Headers attribute of cells must point to header cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080049826"
+          }
+        ]
+      },
+      {
+        "id": "0812555ce2935f45d7e43dd44fd8b0cd20295d57",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dialog height is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070006846"
+          }
+        ]
+      },
+      {
+        "id": "a64827a3316e626a1cf745295dcf65cbcaba5155",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: Scrolling items now doesn\u0027t hide tabs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080054307"
+          }
+        ]
+      },
+      {
+        "id": "33974647335dffae6a26aa461f885d804a1f3be9",
+        "type": "FIX",
+        "text": " sap.m.Input: setting showSuggestion to false no longer throws an error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070003682"
+          }
+        ]
+      },
+      {
+        "id": "019e981706252345f1ae263436c0dd8125160530",
+        "type": "FIX",
+        "text": " sap.m.Label: Prevent asterisk and colon going on a new line alone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980431267"
+          }
+        ]
+      },
+      {
+        "id": "3aee15c987b36ee93993728e30765b80ba40126d",
+        "type": "FIX",
+        "text": " sap.m.Link: cannot be dragged when configured so",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070003546"
+          }
+        ]
+      },
+      {
+        "id": "4b19e2580e05ed28ad7d8e00cbe6310198ad5fa4",
+        "type": "FIX",
+        "text": " sap.m.MultInput: setEditable now recreates the tokens popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080043629"
+          }
+        ]
+      },
+      {
+        "id": "2eaa421e5efeeb8f842a73305844ea599aa2e7e5",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: icon has correct size in large mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070034973"
+          }
+        ]
+      },
+      {
+        "id": "77c779c8adf7cbbe5c0726b8f7c145bfed8cecca",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Empty toolbar no longer takes space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005938702019"
+          }
+        ]
+      },
+      {
+        "id": "44005c1344b4732409896791583d0f937d4f59ec",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: accessibility state is now maintained corretly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007711072019"
+          }
+        ]
+      },
+      {
+        "id": "8a571d499e43aa6e720cdbe68631c59478c29cec",
+        "type": "FIX",
+        "text": " sap.m.StepInput: sets value when disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070008903"
+          }
+        ]
+      },
+      {
+        "id": "870040ace9f7b6539d232221c9469b91c9b2efe8",
+        "type": "FIX",
+        "text": " sap.m.Title: titleStyle property now affects aria-level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000027735 2020"
+          }
+        ]
       }
     ]
   }

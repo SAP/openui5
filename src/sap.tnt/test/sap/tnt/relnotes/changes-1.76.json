@@ -12,6 +12,17 @@
             "reference": "002075129400008086842019"
           }
         ]
+      },
+      {
+        "id": "ba2b45725edb1b14883788a11c90ab8780c6fab3",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Double Selection is not possible anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080117150"
+          }
+        ]
       }
     ]
   }

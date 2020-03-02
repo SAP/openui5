@@ -18,6 +18,29 @@
             "reference": "2080087852"
           }
         ]
+      },
+      {
+        "id": "fa7d14e2463b6f001356bb2f7819f0c787ba185e",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Added JSON Date format parser",
+        "references": []
+      },
+      {
+        "id": "c419044b3f55604d33c70f11909643de274635f7",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Loading placeholder is now available",
+        "references": []
+      },
+      {
+        "id": "be58a5e2968d9cd9f8bd42564ad7b877233e83c1",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: min-heigh for one row List Card is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080115540"
+          }
+        ]
       }
     ]
   }

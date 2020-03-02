@@ -12,6 +12,39 @@
             "reference": "2080121060"
           }
         ]
+      },
+      {
+        "id": "75ad162380400ced80dcd24ce7b542ed87222a6f",
+        "type": "FIX",
+        "text": " Indication Color Fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070006509"
+          }
+        ]
+      },
+      {
+        "id": "2eaa421e5efeeb8f842a73305844ea599aa2e7e5",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: icon has correct size in large mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070034973"
+          }
+        ]
+      },
+      {
+        "id": "6d3a7cb4933628870c701750dcbd544ffecbea40",
+        "type": "FIX",
+        "text": ": RTA - High Contrast Focus layout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070013308"
+          }
+        ]
       }
     ]
   }

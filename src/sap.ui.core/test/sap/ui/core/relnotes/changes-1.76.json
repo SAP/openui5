@@ -46,6 +46,112 @@
             "reference": "0020751295 0000009139 2020"
           }
         ]
+      },
+      {
+        "id": "b143fe469f29ed6155fd783577ebb7365c5bfd52",
+        "type": "FEATURE",
+        "text": " Opa: introduce drag and drop actions",
+        "references": []
+      },
+      {
+        "id": "4f8ab6976328ab0a8de7d575c3f2121d6dd5b254",
+        "type": "FEATURE",
+        "text": " Opa: property for enter key in EnterText",
+        "references": []
+      },
+      {
+        "id": "dea83f45c851221943866845f4af8ffd959de0cb",
+        "type": "FEATURE",
+        "text": " Support layered ExtensionPoints for Flexibility",
+        "references": []
+      },
+      {
+        "id": "71f0c8605a897ad79125a4a8c7ce0ea0ad607b1d",
+        "type": "FIX",
+        "text": " CommandExecution: Uncaught exception - setProperty of undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070027386"
+          }
+        ]
+      },
+      {
+        "id": "33cbc75355370b3a0377f73efa0b7783714593e5",
+        "type": "FIX",
+        "text": " Controller: Wrong log when apply controller extensions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980038477"
+          }
+        ]
+      },
+      {
+        "id": "8a9e6965d85631b2efd9f6132b499dd1e4575118",
+        "type": "FIX",
+        "text": " FESR: field length does not match backend length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020242118 0000008405 2020"
+          }
+        ]
+      },
+      {
+        "id": "75ad162380400ced80dcd24ce7b542ed87222a6f",
+        "type": "FIX",
+        "text": " Indication Color Fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070006509"
+          }
+        ]
+      },
+      {
+        "id": "8ac9371d3781d35cc8a86f542639cc92bda3c43c",
+        "type": "FIX",
+        "text": " Measurement: end gets logged even it is not in selected category",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980518024"
+          }
+        ]
+      },
+      {
+        "id": "93f9d1b6769bc1dc189ad9196ff63aead50ff92a",
+        "type": "FIX",
+        "text": " XMLView: use correct \u0027resourceBundleAlias\u0027 when loading async",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070025547"
+          }
+        ]
+      },
+      {
+        "id": "a3b7410ef24ba4e55becb2704f01c1e7fa06c78b",
+        "type": "FIX",
+        "text": " core.LocalBusyIndicator: correctly remove the event prevention after rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080080676"
+          }
+        ]
+      },
+      {
+        "id": "d8c0a018c0c2cddb35ea55e45ff59858f7b0eedd",
+        "type": "FIX",
+        "text": " core.Popup: always use touch mode in mobile safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070009967"
+          }
+        ]
       }
     ]
   }
