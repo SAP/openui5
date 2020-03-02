@@ -62,6 +62,7 @@ sap.ui.define([
 	var Manifest = BaseObject.extend("sap.ui.integration.util.Manifest", {
 		constructor: function(sSection, oManifestJson, sBaseUrl) {
 			BaseObject.call(this);
+
 			this.PARAMETERS = MANIFEST_PARAMETERS.replace("{SECTION}", sSection);
 			this.CONFIGURATION = MANIFEST_CONFIGURATION.replace("{SECTION}", sSection);
 
@@ -402,7 +403,6 @@ sap.ui.define([
 	 */
 	Manifest.prototype.processParameters = function (oParameters) {
 		if (!this._oManifest) {
-
 			return;
 		}
 

@@ -4,7 +4,6 @@
 sap.ui.define([
 		"sap/f/library",
 		"sap/f/cards/BaseContent",
-		"sap/f/cards/CardActions",
 		"sap/f/cards/IconFormatter",
 		"sap/f/cards/BindingHelper",
 		"sap/f/cards/BindingResolver",
@@ -19,7 +18,7 @@ sap.ui.define([
 		"sap/ui/unified/DateTypeRange",
 		"sap/ui/unified/CalendarLegendItem"
 	],
-	function (library, BaseContent, CardActions, IconFormatter, BindingHelper, BindingResolver, PlanningCalendarInCard, PlanningCalendarInCardRow, PlanningCalendarInCardLegend, mLibrary, PlanningCalendar, Filter, FilterOperator, CalendarAppointment, DateTypeRange, CalendarLegendItem) {
+	function (library, BaseContent, IconFormatter, BindingHelper, BindingResolver, PlanningCalendarInCard, PlanningCalendarInCardRow, PlanningCalendarInCardLegend, mLibrary, PlanningCalendar, Filter, FilterOperator, CalendarAppointment, DateTypeRange, CalendarLegendItem) {
 		"use strict";
 
 		var AreaType = library.cards.AreaType,
@@ -170,12 +169,9 @@ sap.ui.define([
 			}
 
 			if (oConfiguration.moreItems && oConfiguration.moreItems.actions) {
-				this._oActions = new CardActions({
-					areaType: AreaType.Content
-				});
+				this._oActions.setAreaType(AreaType.Content);
 				this._oActions.attach(oConfiguration.moreItems, this._oCalendar.getRows()[0]._getMoreButton());
 			}
-
 
 			return this;
 		};

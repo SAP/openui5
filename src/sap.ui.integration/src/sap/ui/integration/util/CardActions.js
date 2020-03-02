@@ -4,10 +4,12 @@
 sap.ui.define([
 		"sap/m/library",
 		"sap/f/library",
+		"sap/ui/integration/library",
 		"sap/ui/base/ManagedObject",
 		"sap/base/Log",
 		"sap/f/cards/BindingResolver"],
 	function (mLibrary,
+			  fLibrary,
 			  library,
 			  ManagedObject,
 			  Log,
@@ -22,8 +24,8 @@ sap.ui.define([
 			return vService;
 		}
 
-		var AreaType = library.cards.AreaType,
-			ActionType = library.cards.ActionType,
+		var AreaType = fLibrary.cards.AreaType,
+			CardActionType = library.CardActionType,
 			ListType = mLibrary.ListType;
 
 		/**
@@ -45,8 +47,9 @@ sap.ui.define([
 		 * @since 1.65
 		 * @alias sap.f.cards.CardActions
 		 */
-		var CardActions = ManagedObject.extend("sap.f.cards.CardActions", {
+		var CardActions = ManagedObject.extend("sap.ui.integration.util.CardActions", {
 			metadata: {
+				library: "sap.ui.integration",
 				properties: {
 					card: {type: "object"},
 					areaType: {type: "sap.f.cards.AreaType", defaultValue: AreaType.None}
@@ -379,13 +382,13 @@ sap.ui.define([
 				sUrl;
 
 			switch (oAction.type) {
-				case ActionType.Navigation:
+				case CardActionType.Navigation:
 					sUrl = mConfig.url;
 					if (sUrl) {
 						window.open(sUrl, oAction.target || "_blank");
 					}
 					break;
-				case ActionType.Custom:
+				case CardActionType.Custom:
 					fnAction = oAction.action;
 					if (fnAction && jQuery.isFunction(fnAction)) {
 						fnAction(mConfig.card, mConfig.source);
