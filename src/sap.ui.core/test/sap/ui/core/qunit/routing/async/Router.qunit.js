@@ -3809,7 +3809,7 @@ sap.ui.define([
 		oParentComponent.getRouter().initialize();
 		assert.equal(oHomeRouteMatchedSpy.callCount, 1, "The home route should be matched once");
 		oHomeRouteMatchedSpy.getCall(0).returnValue.catch(function(oError){
-			assert.deepEqual(oError, new Error("The router of component 'asyncParent---syncChildComponent' which is loaded via the target 'home' is defined as synchronous which is not supported using as a nested component."), "The correct error should be thrown.");
+			assert.equal(oError.message, "The router of component 'asyncParent---syncChildComponent' which is loaded via the target 'home' is defined as synchronous which is not supported using as a nested component.", "The correct error should be thrown.");
 			done();
 		});
 	});
