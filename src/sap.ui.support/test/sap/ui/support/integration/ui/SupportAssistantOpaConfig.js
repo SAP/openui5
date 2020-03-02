@@ -1,4 +1,3 @@
-/*global QUnit*/
 sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/support/integration/ui/arrangements/Arrangement",
@@ -31,19 +30,5 @@ sap.ui.require([
 				});
 			}
 		})
-	});
-
-	sap.ui.require([
-		"sap/ui/support/integration/ui/journeys/BootingJourney",
-		"sap/ui/support/integration/ui/journeys/SelectionJourney",
-		"sap/ui/support/integration/ui/journeys/LocalStoragePersistencyJourney",
-		"sap/ui/support/integration/ui/journeys/FilteringAndSortingJourney",
-		"sap/ui/support/integration/ui/journeys/PresetsDialogJourney",
-		"sap/ui/support/integration/ui/journeys/PresetsExportJourney",
-		"sap/ui/support/integration/ui/journeys/PresetsImportJourney",
-		"sap/ui/support/integration/ui/journeys/PresetsPersistenceJourney",
-		"sap/ui/support/integration/ui/journeys/TemporaryRulesJourney"
-	], function () {
-		QUnit.start();
 	});
 });
