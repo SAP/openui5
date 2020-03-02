@@ -1066,7 +1066,7 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				window.requestAnimationFrame(function() {
 					setTimeout(function() {
-						that.assertSynchronization(assert, 0);
+						that.assertSynchronization(assert);
 						resolve();
 					}, iAssertionDelay);
 				});
