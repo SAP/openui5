@@ -96,6 +96,7 @@ sap.ui.define([
 	 */
 	ResizeHandler.prototype.attachListener = function(oRef, fHandler){
 		var bIsControl = BaseObject.isA(oRef, 'sap.ui.core.Control'),
+			bIsJQuery = oRef instanceof jQuery, // actually, jQuery objects are not allowed as oRef, as per the API documentation. But this happens in the wild.
 			oDom = bIsControl ? oRef.getDomRef() : oRef,
 			iWidth = oDom ? oDom.offsetWidth : 0,
 			iHeight = oDom ? oDom.offsetHeight : 0,
@@ -110,7 +111,7 @@ sap.ui.define([
 			dbg = String(oRef);
 		}
 
-		this.aResizeListeners.push({sId: sId, oDomRef: bIsControl ? null : oRef, oControl: bIsControl ? oRef : null, fHandler: fHandler, iWidth: iWidth, iHeight: iHeight, dbg: dbg});
+		this.aResizeListeners.push({sId: sId, oDomRef: bIsControl ? null : oRef, oControl: bIsControl ? oRef : null, bIsJQuery: bIsJQuery, fHandler: fHandler, iWidth: iWidth, iHeight: iHeight, dbg: dbg});
 		log.debug("registered " + dbg);
 
 		initListener.call(this);
@@ -155,7 +156,9 @@ sap.ui.define([
 				var bCtrl = !!oResizeListener.oControl,
 					oDomRef = bCtrl ? oResizeListener.oControl.getDomRef() : oResizeListener.oDomRef;
 
-				if ( oDomRef && jQuery.contains(document.documentElement, oDomRef) && !this._isSuspended(oDomRef)) { //check that domref is still active and not suspended
+				oDomRef = oResizeListener.bIsJQuery ? oDomRef[0] : oDomRef;
+
+				if (oDomRef && document.documentElement.contains(oDomRef) && !this._isSuspended(oDomRef)) { //check that domref is still active and not suspended
 
 					var iOldWidth = oResizeListener.iWidth,
 						iOldHeight = oResizeListener.iHeight,
@@ -274,7 +277,7 @@ sap.ui.define([
 		}
 
 		// Check if the dom ref is valid within the document
-		if (!oDomRef || !jQuery.contains(document.documentElement, oDomRef)) {
+		if (!document.documentElement.contains(oDomRef)) {
 			return false;
 		}
 
@@ -323,7 +326,7 @@ sap.ui.define([
 			oNextSuspendedDomRef;
 		for (var i = 0; i < aSuspendedDomRefs.length; i++) {
 			oNextSuspendedDomRef = aSuspendedDomRefs[i];
-			if (oNextSuspendedDomRef === oDomRef || jQuery.contains(oNextSuspendedDomRef, oDomRef)) {
+			if (oNextSuspendedDomRef.contains(oDomRef)) {
 				return true;
 			}
 		}
