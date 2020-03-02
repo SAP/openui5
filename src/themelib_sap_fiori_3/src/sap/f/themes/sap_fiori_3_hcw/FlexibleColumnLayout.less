@@ -24,6 +24,10 @@
 		border-right: none;
 		border-left: none;
 	}
+
+	&.sapFFCLBackgroundDesign {
+		background: @sapUiBaseBG;
+	}
 }
 
 .sapFFCL {
@@ -37,11 +41,11 @@
 				background-position-x: calc(50% - 0.0625rem);
 			}
 			&:before {
-				background-image: linear-gradient(to top, @sapUiGroupContentBorderColor, @sapUiGroupContentBorderColor);
+				background-image: linear-gradient(to top, @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0));
 			}
 
 			&:after {
-				background-image: linear-gradient(to bottom, @sapUiGroupContentBorderColor, @sapUiGroupContentBorderColor);
+				background-image: linear-gradient(to bottom, @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0));
 			}
 			.sapMBtnIcon {
 				width: auto;
