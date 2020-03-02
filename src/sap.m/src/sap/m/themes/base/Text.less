@@ -3,6 +3,8 @@
 /* Base theme                  */
 /* =========================== */
 
+@_sap_m_Text_TextShadowInTransparentToolbar: none;
+
 .sapMText {
 	display: inline-block;
 	box-sizing: border-box;
@@ -102,7 +104,7 @@ html[data-sap-ui-browser="sf10"] {
 .sapMTB-Transparent-CTX .sapMText {
 	font-weight: @sapUiFontHeaderWeight;
 	font-family: @sapUiFontHeaderFamily;
-	text-shadow: 0 1px 0 @sapUiContentContrastShadowColor;
+	text-shadow: @_sap_m_Text_TextShadowInTransparentToolbar;
 	color: @sapUiGroupTitleTextColor;
 }
 
