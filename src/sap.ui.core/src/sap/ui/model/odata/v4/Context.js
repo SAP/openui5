@@ -389,6 +389,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Expands the group node that this context points to.
+	 *
+	 * @throws {Error}
+	 *   If the context points to a node that is not expandable or already expanded
+	 *
+	 * @public
+	 * @see #isExpanded
+	 * @since 1.77.0
+	 */
+	Context.prototype.expand = function () {
+		var that = this;
+
+		switch (this.isExpanded()) {
+			case false:
+				this.oBinding.expand(this).catch(function (oError) {
+					that.oModel.reportError("Failed to expand " + that, sClassName, oError);
+				});
+				break;
+			case true:
+				throw new Error("Already expanded: " + this);
+			default:
+				throw new Error("Not expandable: " + this);
+		}
+	};
+
+	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
@@ -696,6 +722,21 @@ sap.ui.define([
 				return oDependentBinding.hasPendingChanges();
 			})
 			|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches", this.sPath.slice(1));
+	};
+
+	/**
+	 * Tells whether the group node that this context points to is expanded.
+	 *
+	 * @returns {boolean|undefined}
+	 *   Whether the group node that this context points to is expanded, or <code>undefined</code>
+	 *   if the node is not expandable
+	 *
+	 * @public
+	 * @see #expand
+	 * @since 1.77.0
+	 */
+	Context.prototype.isExpanded = function () {
+		return this.getProperty("@$ui5.node.isExpanded");
 	};
 
 	/**

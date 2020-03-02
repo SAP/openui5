@@ -7,10 +7,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_AggregationCache",
 	"sap/ui/model/odata/v4/lib/_AggregationHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (Log, SyncPromise, _AggregationCache, _AggregationHelper, _Cache, _Helper) {
+], function (Log, SyncPromise, _AggregationCache, _AggregationHelper, _Cache, _GroupLock, _Helper) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";
 
 	//*********************************************************************************************
@@ -29,7 +30,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("filterAggregationForFirstLevel - optional group entry", function (assert) {
+	QUnit.test("filterAggregation - optional group entry", function (assert) {
 		var oAggregation = {
 				aggregate : {
 					MeasureWithoutTotal : {},
@@ -42,40 +43,78 @@ sap.ui.define([
 				groupLevels : ["GroupedDimension"]
 			};
 
-		assert.deepEqual(_AggregationCache.filterAggregationForFirstLevel(oAggregation), {
+		assert.deepEqual(_AggregationCache.filterAggregation(oAggregation, 1), {
 			aggregate : {
 				MeasureWithTotal : {subtotals : true}
 			},
 			group : {},
-			groupLevels : ["GroupedDimension"]
+			groupLevels : ["GroupedDimension"],
+			$groupBy : ["GroupedDimension"],
+			$missing : ["UngroupedDimension", "MeasureWithoutTotal"]
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("filterAggregationForFirstLevel", function (assert) {
+[{
+	iLevel : 1,
+	oResult : {
+		aggregate : {
+			MeasureWithTotal : {subtotals : true}
+		},
+		group : {},
+		groupLevels : ["GroupedDimension1"],
+		$groupBy : ["GroupedDimension1"],
+		$missing : ["GroupedDimension2", "UngroupedDimension1", "UngroupedDimension2",
+			"MeasureWithoutTotal"]
+	}
+}, {
+	iLevel : 2,
+	oResult : {
+		aggregate : {
+			MeasureWithTotal : {subtotals : true}
+		},
+		group : {},
+		groupLevels : ["GroupedDimension2"],
+		$groupBy : ["GroupedDimension1", "GroupedDimension2"],
+		$missing : ["UngroupedDimension1", "UngroupedDimension2", "MeasureWithoutTotal"]
+	}
+}, {
+	iLevel : 3,
+	oResult : {
+		aggregate : {
+			MeasureWithoutTotal : {},
+			MeasureWithTotal : {subtotals : true}
+		},
+		group : {
+			UngroupedDimension1 : {},
+			UngroupedDimension2 : {}
+		},
+		groupLevels : [],
+		$groupBy : ["GroupedDimension1", "GroupedDimension2", "UngroupedDimension1",
+			"UngroupedDimension2"],
+		$missing : []
+	}
+}].forEach(function (oFixture) {
+	QUnit.test("filterAggregation: level " + oFixture.iLevel, function (assert) {
 		var oAggregation = {
 				aggregate : {
 					MeasureWithoutTotal : {},
 					MeasureWithTotal : {subtotals : true}
 				},
-				group : {
-					GroupedDimension : {},
-					UngroupedDimension : {}
+				group : { // intentionally in this order to test sorting
+					UngroupedDimension2 : {},
+					UngroupedDimension1 : {},
+					GroupedDimension1 : {}
 				},
-				groupLevels : ["GroupedDimension"]
+				groupLevels : ["GroupedDimension1", "GroupedDimension2"]
 			};
 
-		assert.deepEqual(_AggregationCache.filterAggregationForFirstLevel(oAggregation), {
-			aggregate : {
-				MeasureWithTotal : {subtotals : true}
-			},
-			group : {
-				GroupedDimension : {}
-			},
-			groupLevels : ["GroupedDimension"]
-		});
+		assert.deepEqual(
+			_AggregationCache.filterAggregation(oAggregation, oFixture.iLevel),
+			oFixture.oResult
+		);
 	});
-	//TODO filterAggregationForFirstLevel has to return only the first grouped dimension
+});
 
 	//*********************************************************************************************
 	QUnit.test("filterOrderby", function (assert) {
@@ -161,7 +200,7 @@ sap.ui.define([
 				getResourcePath : fnGetResourcePath,
 				handleResponse : fnHandleResponse
 			},
-			mMeasureRange,
+			mMeasureRange = {},
 			bMeasureRangePromiseResolved = false,
 			mQueryOptions = {
 				$apply : "bar",
@@ -403,8 +442,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("toString", function (assert) {
-		var oAggregation = {
-				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
+		var oAggregation = { // Note: properties added by _AggregationHelper.buildApply before
+				aggregate : {},
+				group : {},
+				groupLevels : []
 			},
 			mQueryOptions = {},
 			mQueryOptionsWithApply = {},
@@ -691,54 +732,193 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("calculateKeyPredicate", function (assert) {
-		var oAggregation = {
-				groupLevels : ["First=Dimension"] // Note: unrealistic example to test encoding
+["", "~filteredOrderby~"].forEach(function (sFilteredOrderBy, i) {
+	[false, true].forEach(function (bParent) {
+		[false, true].forEach(function (bLeaf) {
+			var sTitle = "createGroupLevelCache: parent= " + bParent + ", $orderby="
+				+ sFilteredOrderBy + ", leaf=" + bLeaf;
+
+	QUnit.test(sTitle, function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group: {},
+				groupLevels : ["a"]
 			},
-			mByPredicate = {},
-			oConflictingGroupNode = {"First=Dimension" : "A/B&C", Measure : 0, Unit : "USD"},
-			oGroupNode = {"First=Dimension" : "A/B&C", Measure : 0, Unit : "EUR"},
-			sMetaPath = "/Set",
-			sPredicate = "(First%3DDimension='A%2FB%26C')",
-			mTypeForMetaPath = {
-				"/Set" : {
-					$kind : "EntityType",
-					// Note: $Key does not play a role here!
-					"First=Dimension" : {
-						$kind : "Property",
-						$Type : "Edm.String"
+			oCache,
+			mCacheQueryOptions = {},
+			oFilteredAggregation = {
+				groupLevels : bLeaf ? [] : ["a", "b"],
+				$groupBy : [],
+				$missing : []
+			},
+			oGroupNode = bParent ? {
+					"@$ui5.node.level" : 2,
+					"@$ui5._" : {
+						filter : "~filter~"
 					}
-				}
+				} : undefined,
+			mFilteredQueryOptions = {
+				$count : true,
+				$orderby : "~orderby~"
+			},
+			oGroupLevelCache = {},
+			iLevel = bParent ? 3 : 1,
+			mQueryOptions = {
+				$orderby : "~orderby~"
 			};
 
-		this.mock(_Helper).expects("formatLiteral").twice().withExactArgs("A/B&C", "Edm.String")
-			.returns("'A/B&C'");
+		oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
+
+		this.mock(_AggregationCache).expects("filterAggregation")
+			.withExactArgs(sinon.match.same(oCache.oAggregation), iLevel)
+			.returns(oFilteredAggregation);
+		this.mock(_AggregationCache).expects("filterOrderby")
+			.withExactArgs("~orderby~", sinon.match.same(oFilteredAggregation))
+			.returns(sFilteredOrderBy);
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
+			.returns(mFilteredQueryOptions);
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match(function (o) {
+					return o === oFilteredAggregation && !("$groupBy" in o || "$missing" in o);
+				}), sinon.match(function (o) {
+					return o === mFilteredQueryOptions
+						&& !("$count" in o)
+						&& (bParent
+							? o.$$filterBeforeAggregate === "~filter~"
+							: !("$$filterBeforeAggregate" in o))
+						&& (sFilteredOrderBy
+							? o.$orderby === sFilteredOrderBy
+							: !("$orderby" in o));
+				}))
+			.returns(mCacheQueryOptions);
+		this.mock(_Cache).expects("create")
+			.withExactArgs(sinon.match.same(oCache.oRequestor), "Foo",
+				sinon.match(function (o) {
+					return o === mCacheQueryOptions && o.$count === true;
+				}), true)
+			.returns(oGroupLevelCache);
+
+		// This must be done before calling createGroupLevelCache, so that bind grabs the mock
+		this.mock(_AggregationCache).expects("calculateKeyPredicate")
+		.withExactArgs(sinon.match.same(oGroupNode),
+			sinon.match.same(oFilteredAggregation.$groupBy),
+			sinon.match.same(oFilteredAggregation.$missing), bLeaf,
+			sinon.match.same(oCache.aElements.$byPredicate), "~oElement~", "~mTypeForMetaPath~",
+			"~metapath~");
+
+		assert.strictEqual(
+			// code under test
+			oCache.createGroupLevelCache(oGroupNode),
+			oGroupLevelCache
+		);
+
+		// code under test (this normally happens inside the created cache's handleResponse method)
+		oGroupLevelCache.calculateKeyPredicate("~oElement~", "~mTypeForMetaPath~", "~metapath~");
+	});
+
+		});
+	});
+});
+	// TODO can there already be a $$filterBeforeAggregate when creating a group level cache?
+
+	//*********************************************************************************************
+[false, true].forEach(function (bLeaf, i) {
+	[false, true].forEach(function (bParent) {
+
+	QUnit.test("calculateKeyPredicate: leaf=" + bLeaf + ", parent=" + bParent, function (assert) {
+		var mByPredicate = {},
+			oElement = {
+				p2: "v2"
+			},
+			oGroupNode = {
+				p1 : "v1",
+				"@$ui5.node.level" : 2
+			},
+			aGroupBy = bParent ? ["p1", "p2"] : ["p2"],
+			oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("getKeyPredicate")
+			.withExactArgs(sinon.match(function (o) {
+					return o === oElement && (!bParent || o.p1 === "v1");
+				}), "~sMetaPath~", "~mTypeForMetaPath~", sinon.match.same(aGroupBy), true)
+			.returns("~predicate~");
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "predicate", "~predicate~");
+		oHelperMock.expects("getKeyFilter").exactly(bLeaf ? 0 : 1)
+			.withExactArgs(sinon.match(function (o) {
+					return o === oElement && (!bParent || o.p1 === "v1");
+				}), "~sMetaPath~", "~mTypeForMetaPath~", sinon.match.same(aGroupBy))
+			.returns("~filter~");
+		oHelperMock.expects("setPrivateAnnotation").exactly(bLeaf ? 0 : 1)
+			.withExactArgs(sinon.match.same(oElement), "filter", "~filter~");
 
 		// code under test
-		_AggregationCache.calculateKeyPredicate(oAggregation, mByPredicate, oGroupNode,
-			mTypeForMetaPath, sMetaPath);
+		_AggregationCache.calculateKeyPredicate(bParent ? oGroupNode : undefined, aGroupBy,
+			["p3", "p4"], bLeaf, mByPredicate, oElement, "~mTypeForMetaPath~", "~sMetaPath~");
 
-		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "predicate"),
-			"(First%3DDimension='A%2FB%26C')");
+		assert.strictEqual(oElement["@$ui5.node.isExpanded"], i ? undefined : false);
+		assert.strictEqual(oElement["@$ui5.node.isTotal"], !i);
+		assert.strictEqual(oElement["@$ui5.node.level"], bParent ? 3 : 1);
+		if (bParent) {
+			assert.strictEqual(oElement.p1, "v1");
+		}
+		assert.strictEqual(oElement.p2, "v2");
+		assert.strictEqual(oElement.p3, null);
+		assert.strictEqual(oElement.p4, null);
+	});
 
-		mByPredicate[sPredicate] = oGroupNode; // happens inside CollectionCache#requestElements
+	});
+});
 
-		assert.throws(function () {
-			// code under test
-			_AggregationCache.calculateKeyPredicate(oAggregation, mByPredicate,
-				oConflictingGroupNode, mTypeForMetaPath, sMetaPath);
-		}, new Error("Multi-unit situation detected: "
-			+ '{"First=Dimension":"A/B&C","Measure":0,"Unit":"USD"} vs. '
-			+ '{"First=Dimension":"A/B&C","Measure":0,"Unit":"EUR"}'));
+	//*********************************************************************************************
+	QUnit.test("calculateKeyPredicate: grand total element", function (assert) {
+		var oElement = {
+				group : null,
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.isTotal" : true,
+				"@$ui5.node.level" : 0
+			};
 
-		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "predicate"), sPredicate,
-			"unchanged");
-		assert.strictEqual(_Helper.getPrivateAnnotation(oConflictingGroupNode, "predicate"),
-			undefined, "not yet set");
+		this.mock(_Helper).expects("getKeyPredicate")
+			.withExactArgs(sinon.match.same(oElement), "~sMetaPath~", "~mTypeForMetaPath~",
+				["group"], true)
+			.returns("~predicate~");
+
+		// code under test - simulate call on grandTotal
+		_AggregationCache.calculateKeyPredicate(undefined, ["group"], ["foo", "bar"],
+			true, {}, oElement, "~mTypeForMetaPath~", "~sMetaPath~");
+
+		assert.strictEqual(oElement["@$ui5.node.isExpanded"], true);
+		assert.strictEqual(oElement["@$ui5.node.isTotal"], true);
+		assert.strictEqual(oElement["@$ui5.node.level"], 0);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create, fetchValue, read with visual grouping", function (assert) {
+	QUnit.test("calculateKeyPredicate: multi-unit", function (assert) {
+		var oConflictingElement = {dimension : "A", measure : 0, unit : "EUR"},
+			oElement = {dimension : "A", measure : 0, unit : "USD"},
+			mByPredicate = {
+				"~predicate~" : oConflictingElement
+			};
+
+		this.mock(_Helper).expects("getKeyPredicate")
+			.withExactArgs(sinon.match.same(oElement), "~sMetaPath~", "~mTypeForMetaPath~", [],
+				true)
+			.returns("~predicate~");
+		this.mock(_Helper).expects("setPrivateAnnotation").never();
+
+		assert.throws(function () {
+			// code under test
+			_AggregationCache.calculateKeyPredicate(undefined, [], [], false, mByPredicate,
+				oElement, "~mTypeForMetaPath~", "~sMetaPath~");
+		}, new Error("Multi-unit situation detected: "
+			+ '{"dimension":"A","measure":0,"unit":"USD"} vs. '
+			+ '{"dimension":"A","measure":0,"unit":"EUR"}'));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create with visual grouping", function (assert) {
 		var oAggregation = {
 				aggregate : {},
 				group : {
@@ -746,58 +926,30 @@ sap.ui.define([
 				},
 				groupLevels : ["BillToParty"]
 			},
-			oAggregationForFirstLevel = {},
-			mByPredicate = {},
 			oCache,
-			fnDataRequested = {},
 			oFirstLevelCache = {
 				aElements : [],
 				fetchTypes : function () {},
 				fetchValue : function () {},
 				read : function () {}
 			},
-			oGroupLock = {},
-			iIndex = 17,
-			iLength = 4,
-			sMetaPath = "/meta/path",
-			sOrderby = "~orderby~",
-			iPrefetchLength = 42,
 			mQueryOptions = {$count : false, $orderby : "FirstDimension", "sap-client" : "123"},
-			mQueryOptionsWithApply = {$apply : "A.P.P.L.E."},
-			sResourcePath = "Foo",
-			oResult = {
-				value : [{}, {}]
-			},
-			mTypeForMetaPath = {},
-			that = this;
+			sResourcePath = "Foo";
 
-		oFirstLevelCache.aElements.$byPredicate = mByPredicate;
-		this.mock(_AggregationCache).expects("filterAggregationForFirstLevel")
-			.withExactArgs(sinon.match.same(oAggregation))
-			.returns(oAggregationForFirstLevel);
-		this.mock(_AggregationCache).expects("filterOrderby")
-			.withExactArgs(mQueryOptions.$orderby, sinon.match.same(oAggregationForFirstLevel))
-			.returns(sOrderby);
-		this.mock(_AggregationHelper).expects("buildApply")
-			.withExactArgs(sinon.match.same(oAggregationForFirstLevel),
-				{$orderby : sOrderby, "sap-client" : "123"})
-			.returns(mQueryOptionsWithApply);
-		this.mock(_Cache).expects("create")
-			.withExactArgs(sinon.match.same(this.oRequestor), sResourcePath,
-				{$apply : "A.P.P.L.E.", $count : true}, true)
+		oFirstLevelCache.aElements.$byPredicate = {};
+		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
+			.withExactArgs()
 			.returns(oFirstLevelCache);
-		this.mock(_AggregationCache).expects("calculateKeyPredicate").on(null)
-			.withExactArgs(sinon.match.same(oAggregationForFirstLevel),
-				sinon.match.same(mByPredicate), sinon.match.same(oResult.value[0]),
-				sinon.match.same(mTypeForMetaPath), sMetaPath)
-			.callsFake(function (oAggregation, mByPredicate, oGroupNode, mTypeForMetaPath,
-					sMetaPath) {
-				_Helper.setPrivateAnnotation(oGroupNode, "predicate", "(FirstDimension='A')");
-			});
 
 		// code under test
 		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, oAggregation,
 			mQueryOptions);
+
+		assert.deepEqual(oCache.aElements, []);
+		assert.deepEqual(oCache.aElements.$byPredicate, {});
+		assert.ok("$count" in oCache.aElements);
+		assert.strictEqual(oCache.aElements.$count, undefined);
+		assert.strictEqual(oCache.aElements.$created, 0);
 
 		assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
 		assert.ok(oCache instanceof _Cache, "_AggregationCache is a _Cache");
@@ -810,44 +962,26 @@ sap.ui.define([
 		assert.strictEqual(oCache.oAggregation, oAggregation);
 		assert.notOk("oMeasureRangePromise" in oCache, "no min/max");
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
+	});
 
-		// code under test (this normally happens inside read's handleResponse method)
-		oFirstLevelCache.calculateKeyPredicate(oResult.value[0], mTypeForMetaPath, sMetaPath);
+	//*********************************************************************************************
+	QUnit.test("fetchValue: with visual grouping", function (assert) {
+		var oAggregation = {
+				aggregate : {},
+				group : {},
+				groupLevels : ["BillToParty"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, {});
 
-		this.mock(oFirstLevelCache).expects("read").on(oFirstLevelCache)
-			.withExactArgs(iIndex, iLength, iPrefetchLength, sinon.match.same(oGroupLock),
-				sinon.match.same(fnDataRequested))
-			.returns(SyncPromise.resolve(oResult));
+		this.mock(oCache).expects("registerChange").withExactArgs("~path~", "~oListener~");
+		this.mock(oCache).expects("drillDown")
+			.withExactArgs(sinon.match.same(oCache.aElements), "~path~", "~oGroupLock~")
+			.returns(SyncPromise.resolve("~result~"));
 
 		// code under test
-		return oCache.read(iIndex, iLength, iPrefetchLength, oGroupLock, fnDataRequested)
-			.then(function (oResult0) {
-				var oListener = {},
-					sPath = "some/relative/path",
-					vResult = {};
-
-				assert.strictEqual(oResult0, oResult);
-				assert.notOk("$apply" in mQueryOptions, "not modified");
-				assert.strictEqual(oResult.value[0]["@$ui5.node.isExpanded"], false);
-				assert.strictEqual(oResult.value[1]["@$ui5.node.isExpanded"], false);
-				assert.strictEqual(oResult.value[0]["@$ui5.node.isTotal"], true);
-				assert.strictEqual(oResult.value[1]["@$ui5.node.isTotal"], true);
-				assert.strictEqual(oResult.value[0]["@$ui5.node.level"], 1);
-				assert.strictEqual(oResult.value[1]["@$ui5.node.level"], 1);
-				// Note: called above for index 0 only
-				assert.strictEqual(_Helper.getPrivateAnnotation(oResult.value[0], "predicate"),
-					"(FirstDimension='A')");
-
-				that.mock(oFirstLevelCache).expects("fetchValue").on(oFirstLevelCache)
-					.withExactArgs(sinon.match.same(oGroupLock), sPath,
-						sinon.match.same(fnDataRequested), sinon.match.same(oListener))
-					.returns(SyncPromise.resolve(vResult));
-
-				// code under test
-				return oCache.fetchValue(oGroupLock, sPath, fnDataRequested, oListener)
-					.then(function (vResult0) {
-						assert.strictEqual(vResult0, vResult);
-					});
+		return oCache.fetchValue("~oGroupLock~", "~path~", "~fnDataRequested~", "~oListener~")
+			.then(function (vResult) {
+				assert.strictEqual(vResult, "~result~");
 			});
 	});
 
@@ -973,7 +1107,6 @@ sap.ui.define([
 			// code under test
 			oPromise = oCache.read(0, 10, 0);
 
-			assert.strictEqual(oPromise, oReadPromise);
 			return oPromise.then(function (oResult) {
 				var fnDataRequested = {},
 					oListener = {},
@@ -1002,5 +1135,200 @@ sap.ui.define([
 					});
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: with visual grouping", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			iLength = 3,
+			iPrefetchLength = 100,
+			oReadResult = {
+				value : [{}, {}, {}]
+			};
+
+		function checkResult(oResult) {
+			assert.strictEqual(oResult.value.length, 3);
+			assert.strictEqual(oResult.value.$count, 42);
+			assert.strictEqual(oResult.value[0], oCache.aElements[0]);
+			assert.strictEqual(oResult.value[1], oCache.aElements[1]);
+			assert.strictEqual(oResult.value[2], oCache.aElements[2]);
+		}
+
+		oReadResult.value.$count = 42;
+
+		this.mock(oCache.oFirstLevel).expects("read").twice()
+			.withExactArgs(0, iLength, iPrefetchLength, "~oGroupLock~", "~fnDataRequested~")
+			.returns(Promise.resolve(oReadResult));
+		this.mock(oCache).expects("addElements").twice()
+			.withExactArgs(sinon.match.same(oReadResult.value), 0)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		// code under test
+		return oCache.read(0, iLength, iPrefetchLength, "~oGroupLock~", "~fnDataRequested~")
+			.then(function (oResult1) {
+				assert.strictEqual(oCache.aElements.$count, oReadResult.value.$count);
+				assert.strictEqual(oCache.iReadLength, iLength + iPrefetchLength);
+
+				checkResult(oResult1);
+
+				// code under test
+				return oCache.read(0, iLength, iPrefetchLength, "~oGroupLock~",
+					"~fnDataRequested~"
+				).then(function (oResult2) {
+					checkResult(oResult2);
+				});
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("expand", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			aElements = [{
+				"@$ui5.node.isExpanded" : false
+			}, {}, {}],
+			oExpandResult = {
+				value : [{}, {}, {}, {}, {}]
+			},
+			oGroupLevelCache = {
+				read : function () {}
+			},
+			oPromise,
+			that = this;
+
+		oExpandResult.value.$count = 5;
+
+		// simulate a read
+		oCache.iReadLength = 42;
+		oCache.aElements = aElements.slice();
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 3;
+
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
+			.returns(SyncPromise.resolve(oCache.aElements[0]));
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
+				sinon.match.same(oCache.aElements[0]), {"@$ui5.node.isExpanded" : true})
+			.callsFake(function () {
+				oCache.aElements[0]["@$ui5.node.isExpanded"] = true;
+			});
+		this.mock(oCache).expects("createGroupLevelCache")
+			.withExactArgs(sinon.match.same((oCache.aElements[0])))
+			.returns(oGroupLevelCache);
+		this.mock(oGroupLevelCache).expects("read")
+			.withExactArgs(0, oCache.iReadLength, 0, "~oGroupLock~")
+			.returns(SyncPromise.resolve(Promise.resolve(oExpandResult)));
+		this.mock(oCache).expects("addElements")
+			.withExactArgs(sinon.match.same(oExpandResult.value), 1)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		// code under test
+		oPromise = oCache.expand("~oGroupLock~", "~path~").then(function (iResult) {
+			assert.strictEqual(oCache.aElements.length, 8);
+			assert.strictEqual(oCache.aElements.$count, 8);
+			assert.strictEqual(oCache.aElements[0], aElements[0]);
+			assert.strictEqual(oCache.aElements[1], oExpandResult.value[0]);
+			assert.strictEqual(oCache.aElements[2], oExpandResult.value[1]);
+			assert.strictEqual(oCache.aElements[3], oExpandResult.value[2]);
+			assert.strictEqual(oCache.aElements[4], oExpandResult.value[3]);
+			assert.strictEqual(oCache.aElements[5], oExpandResult.value[4]);
+			assert.strictEqual(oCache.aElements[6], aElements[1]);
+			assert.strictEqual(oCache.aElements[7], aElements[2]);
+
+			assert.strictEqual(iResult, oExpandResult.value.$count);
+
+			that.mock(oCache.oFirstLevel).expects("read").never();
+
+			return oCache.read(1, 4, 0).then(function (oResult) {
+				assert.strictEqual(oResult.value.length, 4);
+				assert.strictEqual(oResult.value.$count, 8);
+				oResult.value.forEach(function (oElement, i) {
+					assert.strictEqual(oElement, oCache.aElements[i + 1], "index " + (i + 1));
+				});
+			});
+		});
+
+		assert.strictEqual(oCache.aElements[0]["@$ui5.node.isExpanded"], true);
+
+		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("expand: read failure", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : []
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oError = new Error(),
+			oGroupLevelCache = {
+				read : function () {}
+			},
+			oGroupNode = {
+				"@$ui5.node.isExpanded" : false
+			},
+			that = this;
+
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
+			.returns(SyncPromise.resolve(oGroupNode));
+		this.mock(oCache).expects("createGroupLevelCache")
+			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
+		this.mock(oGroupLevelCache).expects("read")
+			.withExactArgs(0, oCache.iReadLength, 0, "~oGroupLock~")
+			.returns(SyncPromise.resolve(Promise.resolve().then(function () {
+				that.mock(_Helper).expects("updateAll")
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
+						sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : false});
+
+				throw oError;
+			})));
+
+		// code under test
+		return oCache.expand("~oGroupLock~", "~path~").then(function () {
+			assert.ok(false);
+		}, function (oResult) {
+			assert.strictEqual(oResult, oError);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addElements", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group: {},
+				groupLevels : []
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			aElements = [{}, {}, , , {}],
+			aReadElements = [{
+				"@$ui5._" : {predicate : "(1)"}
+			}, {
+				"@$ui5._" : {predicate : "(2)"}
+			}];
+
+		oCache.aElements = aElements.slice();
+		oCache.aElements.$byPredicate = {};
+
+		oCache.addElements(aReadElements, 2);
+
+		assert.strictEqual(oCache.aElements[0], aElements[0]);
+		assert.strictEqual(oCache.aElements[1], aElements[1]);
+		assert.strictEqual(oCache.aElements[2], aReadElements[0]);
+		assert.strictEqual(oCache.aElements[3], aReadElements[1]);
+		assert.strictEqual(oCache.aElements[4], aElements[4]);
+		assert.strictEqual(oCache.aElements.$byPredicate["(1)"], aReadElements[0]);
+		assert.strictEqual(oCache.aElements.$byPredicate["(2)"], aReadElements[1]);
 	});
 });

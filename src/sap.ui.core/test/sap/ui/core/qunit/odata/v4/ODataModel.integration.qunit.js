@@ -132,6 +132,18 @@ sap.ui.define([
 	}
 
 	/**
+	 * Creates a V4 OData model for data aggregation tests.
+	 *
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
+	 * @returns {ODataModel} The model
+	 */
+	function createAggregationModel(mModelParameters) {
+		return createModel("/aggregation/", mModelParameters);
+	}
+
+	/**
 	 *  Create a view with a relative ODataListBinding which is ready to create a new entity.
 	 *
 	 * @param {object} oTest The QUnit test object
@@ -286,7 +298,9 @@ sap.ui.define([
 				"/special/CurrencyCode/$metadata"
 					: {source : "odata/v4/data/metadata_CurrencyCode.xml"},
 				"/special/Price/$metadata"
-					: {source : "odata/v4/data/metadata_Price.xml"}
+					: {source : "odata/v4/data/metadata_Price.xml"},
+				"/aggregation/$metadata"
+					: {source : "odata/v4/data/metadata_aggregation.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -13898,7 +13912,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
 	//TODO support $filter : \'GrossAmount gt 0\',\
-	QUnit.test("Data Aggregation by V4: $$aggregation w/ groupLevels", function (assert) {
+	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -14033,7 +14047,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Data aggregation with grand total, but no visual grouping. Observe the node status.
 	// BCP: 2080089628
-	QUnit.test("Data Aggregation by V4: $$aggregation w/ grand total", function (assert) {
+	QUnit.test("Data Aggregation: $$aggregation w/ grand total", function (assert) {
 		var sView = '\
 <Table items="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -14075,11 +14089,111 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Table with aggregation and visual grouping. Expand the first group.
+	// JIRA: CPOUI5ODATAV4-162
+	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, expand", function (assert) {
+		var sView = '\
+<Table id="table" items="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					SalesAmount : {subtotals : true},\
+					SalesNumber : {}\
+				},\
+				group : {\
+					AccountResponsible : {}\
+				},\
+				groupLevels : [\'Region\']\
+			},\
+			$count : false,\
+			$orderby : \'Region desc,AccountResponsible\'\
+		}}">\
+	<ColumnListItem>\
+		<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
+		<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+		<Text id="level" text="{= %{@$ui5.node.level} }" />\
+		<Text id="region" text="{Region}" />\
+		<Text id="accountResponsible" text="{AccountResponsible}" />\
+		<Text id="salesAmount" text="{= %{SalesAmount}}" />\
+		<Text id="salesNumber" text="{SalesNumber}" />\
+	</ColumnListItem>\
+</Table>',
+			oModel = createAggregationModel(),
+			oTable,
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+				+ "/orderby(Region desc)&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "26",
+				value : [
+					{Region : "Z", SalesAmount : "100"},
+					{Region : "Y", SalesAmount : "200"},
+					{Region : "X", SalesAmount : "300"}
+				]
+			})
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [true, true, true])
+			.expectChange("level", [1, 1, 1])
+			.expectChange("salesAmount", ["100", "200", "300"])
+			.expectChange("region", ["Z", "Y", "X"])
+			.expectChange("accountResponsible", ["", "", ""])
+			.expectChange("salesNumber", [null, null, null]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
+					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
+					+ "/orderby(AccountResponsible)&$count=true&$skip=0&$top=100", {
+					"@odata.count" : 4,
+					value : [
+						{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1},
+						{AccountResponsible : "b", SalesAmount : "20", SalesNumber : 2},
+						{AccountResponsible : "c", SalesAmount : "30", SalesNumber : 3},
+						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
+					]
+				})
+				.expectChange("isExpanded",
+					[true, undefined, undefined, undefined, undefined, false, false])
+				.expectChange("isTotal", [/*true*/, false, false, false, false, true, true])
+				.expectChange("level", [/*1*/, 2, 2, 2, 2, 1, 1])
+				.expectChange("salesAmount", [/*"10"*/, "10", "20", "30", "40", "200", "300"])
+				.expectChange("region", [/*"Z"*/, "Z", "Z", "Z", "Z", "Y", "X"])
+				.expectChange("accountResponsible", [/*""*/, "a", "b", "c", "d", "", ""])
+				.expectChange("salesNumber", [/*""*/, "1", "2", "3", "4", null, null]);
+
+			oTable = that.oView.byId("table");
+
+			// code under test
+			oTable.getItems()[0].getBindingContext().expand();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oListBinding = oTable.getBinding("items");
+
+			assert.deepEqual(
+				oListBinding.getCurrentContexts()
+					.slice(0, oListBinding.getLength()) // remove excess rows with undefined
+					.map(function (oContext) {
+						return oContext.getPath();
+					}),
+				[
+					"/BusinessPartners(Region='Z')",
+					"/BusinessPartners(Region='Z',AccountResponsible='a')",
+					"/BusinessPartners(Region='Z',AccountResponsible='b')",
+					"/BusinessPartners(Region='Z',AccountResponsible='c')",
+					"/BusinessPartners(Region='Z',AccountResponsible='d')",
+					"/BusinessPartners(Region='Y')",
+					"/BusinessPartners(Region='X')"
+				]
+			);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+		var sTitle = "Data Aggregation: $$aggregation grandTotal w/o groupLevels; $count : "
 				+ bCount;
 
 		QUnit.test(sTitle, function (assert) {
@@ -14200,7 +14314,7 @@ sap.ui.define([
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is not fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+		var sTitle = "Data Aggregation: $$aggregation grandTotal w/o groupLevels; $count : "
 				+ bCount + "; grandTotal row not fixed";
 
 		QUnit.test(sTitle, function (assert) {
@@ -14315,7 +14429,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418)
-	QUnit.test("Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels using with/as",
+	QUnit.test("Data Aggregation: $$aggregation grandTotal w/o groupLevels using with/as",
 			function (assert) {
 		var sView = '\
 <t:Table rows="{path : \'/BusinessPartners\',\
@@ -14481,7 +14595,7 @@ sap.ui.define([
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
 	// Note: Key properties are omitted from response data to improve readability.
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Data Aggregation by V4: $$aggregation, aggregate but no group; $count : "
+		var sTitle = "Data Aggregation: $$aggregation, aggregate but no group; $count : "
 				+ bCount;
 
 		QUnit.test(sTitle, function (assert) {
@@ -14669,9 +14783,9 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))&$count=true"
 					+ "&$skip=0&$top=100", {
-					value : [{GrossAmount : 2, LifecycleStatus : "Y"}]
+					value : [{LifecycleStatus : "Y"}]
 				})
-				.expectChange("grossAmount", [2])
+				.expectChange("grossAmount", [null])
 				.expectChange("lifecycleStatus", ["Y"]);
 
 			// code under test

@@ -936,6 +936,52 @@ sap.ui.define([
 	};
 
 	/**
+	 * Expands the group node that the given context points to.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context corresponding to the group node
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise that is resolved when the expand is succesful and rejected when it failed
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.expand = function (oContext) {
+		var bDataRequested = false,
+			that = this;
+
+		return this.oCache.expand(this.lockGroup(),
+			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()),
+			function () {
+				bDataRequested = true;
+				that.fireDataRequested();
+			}
+		).then(function (iCount) {
+			var aContexts = that.aContexts,
+				iModelIndex = oContext.getModelIndex(),
+				oMovingContext,
+				i;
+
+			for (i = aContexts.length - 1; i > iModelIndex; i -= 1) {
+				oMovingContext = aContexts[i];
+				oMovingContext.iIndex += iCount;
+				aContexts[i + iCount] = oMovingContext;
+				aContexts[i] = undefined;
+			}
+			that.iMaxLength += iCount;
+			that._fireChange({reason : ChangeReason.Change});
+			if (bDataRequested) {
+				that.fireDataReceived({});
+			}
+		}, function (oError) {
+			if (bDataRequested) {
+				that.fireDataReceived({error : oError});
+			}
+
+			throw oError;
+		});
+	};
+
+	/**
 	 * Fetches the data and creates contexts for the given range.
 	 *
 	 * @param {number} iStart
