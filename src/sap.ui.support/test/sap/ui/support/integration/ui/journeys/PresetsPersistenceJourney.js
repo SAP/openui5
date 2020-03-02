@@ -2,10 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/core/library",
-	"sap/ui/support/integration/ui/data/presetUtil"
-], function(opaTest, sinon, library, presetUtil) {
+	"../data/presetUtil",
+	"../SupportAssistantOpaConfig"
+], function(opaTest, presetUtil) {
 	"use strict";
 
 	var testPreset = presetUtil.loadExamplePreset(presetUtil.titles.EXAMPLE_PRESET_1);
