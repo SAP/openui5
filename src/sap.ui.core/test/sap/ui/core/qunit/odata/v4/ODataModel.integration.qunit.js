@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/base/util/uid",
 	"sap/m/ColumnListItem",
@@ -25,9 +24,9 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper',
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, SyncPromise,
-		Controller, View, ChangeReason, Filter, FilterOperator, Sorter, OperationMode,
-		AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
+], function (Log, uid, ColumnListItem, CustomListItem, Text, Device, SyncPromise, Controller, View,
+		ChangeReason, Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper,
+		ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
@@ -93,7 +92,7 @@ sap.ui.define([
 				synchronizationMode : "None"
 			};
 
-		return new ODataModel(jQuery.extend(mDefaultParameters, mModelParameters));
+		return new ODataModel(Object.assign(mDefaultParameters, mModelParameters));
 	}
 
 	/**
@@ -408,7 +407,7 @@ sap.ui.define([
 			delete oTable.getBindingInfo("items").template;
 			// It is not possible to modify the aggregation's template on an existing binding.
 			// Hence, we have to re-create.
-			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
+			oTable.bindItems(Object.assign({}, oTable.getBindingInfo("items"),
 				{suspended : !bRelative, template : oTemplate}));
 
 			return sId;
@@ -661,7 +660,7 @@ sap.ui.define([
 						sinon.match.string, sClassName);
 			});
 
-			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+			mModelParameters = Object.assign({}, {odataVersion : "2.0"}, mModelParameters);
 
 			return createModel("/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/", mModelParameters);
 		},
@@ -686,7 +685,7 @@ sap.ui.define([
 						sClassName);
 			});
 
-			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+			mModelParameters = Object.assign({}, {odataVersion : "2.0"}, mModelParameters);
 
 			return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
 		},
@@ -1260,7 +1259,7 @@ sap.ui.define([
 			oTemplate.removeCell(this.oView.byId(sControlId));
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
 			delete oTable.getBindingInfo("items").template;
-			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
+			oTable.bindItems(Object.assign({}, oTable.getBindingInfo("items"),
 				{suspended : !bRelative, template : oTemplate}));
 		},
 
@@ -1328,7 +1327,7 @@ sap.ui.define([
 				// Resolve to have the missing requests and changes reported
 				setTimeout(function () {
 					if (oPromise.isPending()) {
-						assert.ok(false, "Timeout in waitForChanges");
+						assert.ok(false, "Timeout in waitForChanges (" + iTimeout + " ms)");
 						resolve();
 					}
 				}, iTimeout || 3000);
@@ -11440,9 +11439,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: some custom control wants to read all data, and it gets a lot
+	// Scenario: some custom control wants to read all data, and it gets quite a lot
 	QUnit.test("read all data", function (assert) {
-		var i, n = 5000,
+		var i,
+			n = 2500, //TODO once IE is dropped, increase this again to 5000
 			aIDs = new Array(n),
 			aValues = new Array(n),
 			sView = '\
@@ -11476,7 +11476,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: read all data w/o a control on top
 	QUnit.test("read all data w/o a control on top", function (assert) {
-		var i, n = 10000,
+		var i,
+			n = 10000,
 			aIDs = new Array(n),
 			aValues = new Array(n),
 			that = this;
@@ -11511,8 +11512,7 @@ sap.ui.define([
 				new Promise(function (resolve, reject) {
 					fnDone = resolve;
 				}),
-				// Increase the timeout for this test to 12 seconds to run also in IE
-				that.waitForChanges(assert, undefined, 12000)
+				that.waitForChanges(assert)
 			]);
 		});
 	});

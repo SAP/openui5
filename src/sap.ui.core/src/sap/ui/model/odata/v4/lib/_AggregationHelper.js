@@ -4,9 +4,8 @@
 
 //Provides class sap.ui.model.odata.v4.lib._AggregationHelper
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/Filter"
-], function (jQuery, Filter) {
+], function (Filter) {
 	"use strict";
 
 	var mAllowedAggregateDetails2Type =  {
@@ -282,7 +281,7 @@ sap.ui.define([
 				return sTransformation;
 			}
 
-			mQueryOptions = jQuery.extend({}, mQueryOptions);
+			mQueryOptions = Object.assign({}, mQueryOptions);
 
 			checkKeys(oAggregation, mAllowedAggregationKeys2Type);
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
@@ -392,7 +391,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.Filter} oFilter
 		 *   The filter object that is split
-		 * @param {object} [oAggregate]
+		 * @param {object} [oAggregation]
 		 *   An object holding the information needed for data aggregation;
 		 *   (see {@link _AggregationHelper#buildApply}).
 		 * @returns {sap.ui.model.Filter[]}

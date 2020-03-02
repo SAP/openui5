@@ -9,9 +9,8 @@ sap.ui.define([
 	"./_Helper",
 	"./_Parser",
 	"sap/base/Log",
-	"sap/ui/base/SyncPromise",
-	"sap/ui/thirdparty/jquery"
-], function (_AggregationHelper, _Cache, _Helper, _Parser, Log, SyncPromise, jQuery) {
+	"sap/ui/base/SyncPromise"
+], function (_AggregationHelper, _Cache, _Helper, _Parser, Log, SyncPromise) {
 	"use strict";
 
 	var rComma = /,|%2C|%2c/,
@@ -48,6 +47,7 @@ sap.ui.define([
 	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions) {
 		var mAlias2MeasureAndMethod = {},
 			oFirstLevelAggregation,
+			sFirstLevelOrderBy,
 			mFirstQueryOptions,
 			fnMeasureRangeResolve;
 
@@ -78,10 +78,10 @@ sap.ui.define([
 				throw new Error("Unsupported system query option: $filter");
 			}
 			oFirstLevelAggregation = _AggregationCache.filterAggregationForFirstLevel(oAggregation);
-			mFirstQueryOptions = jQuery.extend({}, mQueryOptions, {
-					$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
-						oFirstLevelAggregation)
-				}); // 1st level only
+			sFirstLevelOrderBy
+				= _AggregationCache.filterOrderby(mQueryOptions.$orderby, oFirstLevelAggregation);
+			mFirstQueryOptions = Object.assign({}, mQueryOptions,
+				sFirstLevelOrderBy ? {$orderby : sFirstLevelOrderBy} : undefined); // 1st level only
 			delete mFirstQueryOptions.$count;
 			mFirstQueryOptions
 				= _AggregationHelper.buildApply(oFirstLevelAggregation, mFirstQueryOptions);
@@ -403,7 +403,7 @@ sap.ui.define([
 	 * @private
 	 */
 	_AggregationCache.getResourcePath = function (oAggregation, mQueryOptions, iStart, iEnd) {
-		mQueryOptions = jQuery.extend({}, mQueryOptions, {
+		mQueryOptions = Object.assign({}, mQueryOptions, {
 			$skip : iStart,
 			$top : iEnd - iStart
 		});

@@ -117,6 +117,8 @@ sap.ui.define([
 			.returns(mParametersClone);
 		this.mock(ODataContextBinding.prototype).expects("checkBindingParameters")
 			.withExactArgs(sinon.match.same(mParametersClone), aAllowedBindingParameters);
+		this.mock(ODataContextBinding.prototype).expects("applyParameters")
+			.withExactArgs(sinon.match.same(mParametersClone));
 
 		// code under test
 		oBinding = this.bindContext("/Operation(...)", null, mParameters);
@@ -130,7 +132,6 @@ sap.ui.define([
 			mParameters : {},
 			sResourcePath : undefined
 		});
-		assert.ok(oBinding.hasOwnProperty("mQueryOptions"));
 		assert.strictEqual(oBinding.oReturnValueContext, null);
 		assert.strictEqual(oBinding.sUpdateGroupId, "updateGroup");
 
