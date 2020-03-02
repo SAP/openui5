@@ -157,7 +157,15 @@
 						wrappingType: "Hyphenated",
 						width: "200px"
 					}),
-					form
+					form,
+					new sap.m.Toolbar({
+						design: "Transparent",
+						content: [
+							new sap.m.Text({
+								text: "Text in Toolbar with Transparent design."
+							})
+						]
+					})
 				]
 			});
 			app.addPage(initialPage);
