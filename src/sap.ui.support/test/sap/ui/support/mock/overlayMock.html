@@ -6,18 +6,17 @@
 		<meta charset="UTF-8">
 
 		<link type="text/css" rel="stylesheet" data-sap-ui-ready="true"
-			href="../../../../../../resources/sap/ui/support/supportRules/ui/styles/overlay.css" />
+			href="../../../../../resources/sap/ui/support/supportRules/ui/styles/overlay.css" />
 
 		<!-- Load the sap.ui.codeeditor from here to ensure it is loaded from the correct origin. -->
-		<script src="../../../../../../resources/sap-ui-core.js"
+		<script src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-async="true"
 				data-sap-ui-bindingSyntax="complex"
 				data-sap-ui-libs="sap.m, sap.ui.table, sap.ui.unified, sap.ui.layout, sap.tnt, sap.ui.support"
 				data-sap-ui-theme="sap_belize"
-				data-sap-ui-oninit="module:sap/ui/support/supportRules/ui/Overlay"
+				data-sap-ui-oninit="module:sap/ui/support/mock/overlayMock"
 				data-sap-ui-resourceroots='{
-					"sap/ui/support/integration": "test-resources/sap/ui/support/integration/",
-					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+					"sap.ui.support.mock": "./"
 				}'>
 		</script>
 	</head>

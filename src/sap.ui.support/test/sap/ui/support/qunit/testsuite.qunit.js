@@ -25,7 +25,8 @@ sap.ui.define(function() {
 			},
 			loader: {
 				paths: {
-					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+					"sap/ui/support/mock": "test-resources/sap/ui/support/mock/",
+					"sap/ui/support/integration": "test-resources/sap/ui/support/integration/"
 				}
 			},
 			page: "test-resources/sap/ui/support/qunit/testsandbox.qunit.html?test={name}",
@@ -57,21 +58,21 @@ sap.ui.define(function() {
 					useFakeTimers: true
 				}
 			},
-			"Utils": {},
+			"util/RuleValidator": {
+				module: "./util/RuleValidator.qunit"
+			},
+			"util/Utils": {
+				module: "./util/Utils.qunit"
+			},
 			"SupportAssistantAPI": {},
 			"SupportAssistant.opa": {
 				title: "Integration Tests for SA",
 				module: [
-					"./SupportAssistant.opa.qunit"
+					"sap/ui/support/integration/SupportAssistant.opa.qunit"
 				]
 			},
-			"integration/ui/opaTests": {
-				title: "Integration Tests for SA UI",
-				loader: {
-					paths: {
-						"sap/ui/support/integration": "test-resources/sap/ui/support/integration/"
-					}
-				},
+			"SupportAssistant/ui/opaTests": {
+				title: "Integration Tests for Support Assistant's UI",
 				module: [
 					"sap/ui/support/integration/ui/AllJourneys"
 				],
