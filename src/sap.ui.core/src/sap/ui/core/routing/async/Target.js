@@ -202,7 +202,7 @@ sap.ui.define([
 							var oRoute = oRouter.getRouteByHash(sHash);
 
 							if (!oRouter._oConfig.async){
-								throw new Error("The router of component '" + oObject.getId() + "' which is loaded via the target '" + oRoute.name + "' is defined as synchronous which is not supported using as a nested component.");
+								throw new Error("The router of component '" + oObject.getId() + "' which is loaded via the target '" + that._oOptions._name + "' is defined as synchronous which is not supported using as a nested component.");
 							}
 
 							if (oRouter._oOwner) {
