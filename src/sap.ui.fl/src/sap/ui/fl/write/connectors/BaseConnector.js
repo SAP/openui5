@@ -146,8 +146,8 @@ sap.ui.define([
 			 * @param {string} mPropertyBag.title Title of the to be activated version
 			 * @returns {Promise<sap.ui.fl.Version>} Resolves with list of versions after the activation took place.
 			 */
-			activateDraft: function () {
-				return Promise.reject("versions.activateDraft is not implemented");
+			activate: function () {
+				return Promise.reject("versions.activate is not implemented");
 			},
 
 			/**

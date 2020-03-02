@@ -110,7 +110,7 @@ sap.ui.define([
 				}
 			})
 			.then(function () {
-				return Storage.versions.activateDraft(mPropertyBag);
+				return Storage.versions.activate(mPropertyBag);
 			})
 			.then(function (oVersion) {
 				return _updateInstanceAfterDraftActivation(aVersions, oVersion);

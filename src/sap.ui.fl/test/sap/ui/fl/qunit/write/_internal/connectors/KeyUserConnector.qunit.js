@@ -224,7 +224,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("KeyUserConnector.versions.activateDraft", {
+	QUnit.module("KeyUserConnector.versions.activate", {
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -245,9 +245,41 @@ sap.ui.define([
 			}, mPropertyBag);
 			var oActivatedVersion = {};
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : oActivatedVersion});
-			return KeyUserConnector.versions.activateDraft(mPropertyBag).then(function (oResponse) {
+			return KeyUserConnector.versions.activate(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, oActivatedVersion, "the activated version is returned correctly");
-				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/draft/activate/com.sap.test.app", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=0", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+
+		QUnit.test("reactivate original app", function (assert) {
+			// TODO: enhance this test as soon as the reactivation is implemented; This test only ensures the passing of an empty query parameter
+			var mPropertyBag = {
+				url : "/flexKeyuser",
+				reference: "com.sap.test.app",
+				title: "new Title"
+			};
+
+			var fnGetUrl = ApplyUtils.getUrl;
+			sandbox.stub(ApplyUtils, "getUrl").callsFake(function (sRoute, mPropertyBag, mParameters) {
+				mParameters.version = "";
+				return fnGetUrl(sRoute, mPropertyBag, mParameters);
+			});
+
+			var mExpectedPropertyBag = Object.assign({
+				xsrfToken: undefined,
+				applyConnector: ApplyConnector,
+				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				payload: "{\"title\":\"new Title\"}"
+			}, mPropertyBag);
+			var oActivatedVersion = {};
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({response : oActivatedVersion});
+			return KeyUserConnector.versions.activate(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, oActivatedVersion, "the activated version is returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
 			});

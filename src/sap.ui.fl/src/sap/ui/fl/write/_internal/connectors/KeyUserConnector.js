@@ -24,7 +24,7 @@ sap.ui.define([
 		mPropertyBag.tokenUrl = KeyUserConnector.ROUTES.TOKEN;
 	}
 
-	function _enhancePropertyBagWithPayloadInfo(mPropertyBag) {
+	function _enhancePropertyBagForDraftActivation(mPropertyBag) {
 		var oPayload = {
 			title: mPropertyBag.title
 		};
@@ -50,7 +50,7 @@ sap.ui.define([
 			TOKEN: PREFIX + API_VERSION + "/settings",
 			VERSIONS: {
 				GET: PREFIX + API_VERSION + "/versions/",
-				ACTIVATE: PREFIX + API_VERSION + "/versions/draft/activate/",
+				ACTIVATE: PREFIX + API_VERSION + "/versions/activate/",
 				DISCARD: PREFIX + API_VERSION + "/versions/draft/"
 			}
 		}
@@ -64,10 +64,10 @@ sap.ui.define([
 				return oResult.response;
 			});
 		},
-		activateDraft: function (mPropertyBag) {
+		activate: function (mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
-			_enhancePropertyBagWithPayloadInfo(mPropertyBag);
-			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag);
+			_enhancePropertyBagForDraftActivation(mPropertyBag);
+			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, {version: 0});
 			return ApplyUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
 				return oResult.response;
 			});

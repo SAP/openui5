@@ -617,7 +617,7 @@ sap.ui.define([
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
-					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
+					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?package=&namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
 				});
@@ -670,7 +670,7 @@ sap.ui.define([
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.catch(function() {
 					assert.ok(oNewConnectorCall.firstCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
-					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
+					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?package=&namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.equal(oNewConnectorCall.secondCall, null, "then delete app variants backend call is never triggered");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
 				});
@@ -791,7 +791,7 @@ sap.ui.define([
 					assert.ok("then the promise got rejected");
 					assert.equal(oError.messageKey, "MSG_DELETE_APP_VARIANT_FAILED", "then the messagekey is correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
-					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
+					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?package=&namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
 				});
@@ -884,7 +884,7 @@ sap.ui.define([
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
-					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
+					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?package=&namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "DELETE"), "then the parameters are correct");
 					assert.ok(oOpenDialogStub.notCalled, "the dialog was never opened");
@@ -931,7 +931,7 @@ sap.ui.define([
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
-					assert.ok(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
+					assert.ok(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?package=&namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
 					assert.ok(oOpenDialogStub.notCalled, "the dialog was never opened");
