@@ -174,6 +174,7 @@ sap.ui.define([
 		return Versions.discardDraft({
 			reference: sReference,
 			layer: mPropertyBag.layer,
+			appComponent: oAppComponent,
 			updateState: mPropertyBag.updateState
 		});
 	};
