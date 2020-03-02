@@ -3,15 +3,7 @@
 /* Quartz High Contrast Black theme        */
 /* ======================================= */
 
-.sapTntNavLI li:focus::before,
-.sapTntNavLIItem:focus::before {
-	border: 0.125rem dotted @sapUiContentFocusColor;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop,// TODO remove after the end of support for Internet Explorer
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapTntNavLI li:focus::before,
-	.sapTntNavLIItem:focus::before {
-		border: 0.125rem dashed @sapUiContentFocusColor;
-	}
-}
+@_sap_tnt_NavigationList_ItemHeight: 2.75rem;
+@_sap_tnt_NavigationList_NoIconsNestedItemPadding: 2rem;
+@_sap_tnt_NavigationList_ItemFocusBorder: 0.125rem dotted @sapUiContentFocusColor;
+@_sap_tnt_NavigationList_ItemFocusBorderIE: 0.125rem dashed @sapUiContentFocusColor;

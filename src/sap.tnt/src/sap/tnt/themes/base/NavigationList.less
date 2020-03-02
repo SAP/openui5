@@ -6,6 +6,8 @@
 @_sap_tnt_NavigationList_ItemHeight: 3rem;
 @_sap_tnt_NavigationList_NoIconsGroupPadding: 1rem;
 @_sap_tnt_NavigationList_NoIconsNestedItemPadding: 1rem;
+@_sap_tnt_NavigationList_ItemFocusBorder: 1px dotted @sapUiContentFocusColor;
+@_sap_tnt_NavigationList_ItemFocusBorderIE: 1px dashed @sapUiContentFocusColor;
 
 .sapTntNavLI {
 	margin: 0;
@@ -170,7 +172,7 @@
 
 .sapTntNavLI li:focus > .sapTntNavLIItem::before,
 .sapTntNavLIItem:focus::before {
-	border: 1px dotted @sapUiContentFocusColor;
+	border: @_sap_tnt_NavigationList_ItemFocusBorder;
 	position: absolute;
 	content: " ";
 	top: 1px;
@@ -185,7 +187,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop,// TODO remove after the end of supp
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapTntNavLI li:focus > .sapTntNavLIItem::before,
 	.sapTntNavLIItem:focus::before {
-		border: 1px dashed @sapUiContentFocusColor;
+		border: @_sap_tnt_NavigationList_ItemFocusBorderIE;
 	}
 }
 
