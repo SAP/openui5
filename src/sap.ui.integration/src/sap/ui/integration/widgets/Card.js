@@ -193,6 +193,28 @@ sap.ui.define([
 				baseUrl: {
 					type: "sap.ui.core.URI",
 					defaultValue: null
+				},
+
+				/**
+				 * Defines a list of configuration settings, which will be merged into the original manifest.
+				 *
+				 * This can be a list of flexibility changes generated during designtime.
+				 *
+				 * Each level of changes is an item in the list. The change has property "content" which contains the configuration, which will be merged on top of the original <code>sap.card</code> section.
+				 *
+				 * Example:
+				 * <pre>
+				 * [
+				 *     {"content": {"header": {"title": "My title"}}},
+				 *     {"content": {"header": {"title": "My new title"}}}
+				 * ]
+				 * </pre>
+				 *
+				 * @experimental Since 1.76
+				 * @since 1.76
+				 */
+				manifestChanges: {
+					type: "array"
 				}
 			},
 			aggregations: {
@@ -349,6 +371,17 @@ sap.ui.define([
 		return this;
 	};
 
+	Card.prototype.setManifestChanges = function (aValue) {
+		if (!Array.isArray(aValue)) { // @todo remove this when the validation for property of type array is fixed.
+			Log.error("The value for manifestChanges must be an array. The given value is: " + aValue, "sap.ui.integration.widgets.Card");
+			return this;
+		}
+
+		this.setProperty("manifestChanges", aValue);
+		this._bApplyManifest = true;
+		return this;
+	};
+
 	Card.prototype.setParameters = function (vValue) {
 		this.setProperty("parameters", vValue);
 		this._bApplyManifest = true;
@@ -380,7 +413,7 @@ sap.ui.define([
 		}
 
 		// this._startBusyState("applyManifest");
-		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl);
+		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl, this.getManifestChanges());
 
 		this._oCardManifest
 			.load(mOptions)

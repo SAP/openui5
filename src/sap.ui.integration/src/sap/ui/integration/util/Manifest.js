@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/base/util/isPlainObject",
 	"sap/base/Log",
-	"./ParameterMap"
+	"./ParameterMap",
+	"sap/ui/integration/util/CardMerger"
 	], function (
 	BaseObject,
 	CoreManifest,
 	deepClone,
 	isPlainObject,
 	Log,
-	ParameterMap
+	ParameterMap,
+	CardMerger
 ) {
 	"use strict";
 
@@ -60,14 +62,17 @@ sap.ui.define([
 	 * @alias sap.ui.integration.util.Manifest
 	 */
 	var Manifest = BaseObject.extend("sap.ui.integration.util.Manifest", {
-		constructor: function(sSection, oManifestJson, sBaseUrl) {
+		constructor: function(sSection, oManifestJson, sBaseUrl, aChanges) {
 			BaseObject.call(this);
+
+			this._aChanges = aChanges;
 
 			this.PARAMETERS = MANIFEST_PARAMETERS.replace("{SECTION}", sSection);
 			this.CONFIGURATION = MANIFEST_CONFIGURATION.replace("{SECTION}", sSection);
 
 			if (oManifestJson) {
-				var mOptions = {};
+				var mOptions = {},
+					oMergedManifest;
 				mOptions.process = false;
 
 				if (sBaseUrl) {
@@ -77,7 +82,13 @@ sap.ui.define([
 					Log.warning("If no base URL is provided when the manifest is an object static resources cannot be loaded.");
 				}
 
-				this._oManifest = new CoreManifest(oManifestJson, mOptions);
+				if (this._aChanges) {
+					oMergedManifest = CardMerger.mergeCardDelta(oManifestJson, this._aChanges);
+				} else {
+					oMergedManifest = oManifestJson;
+				}
+
+				this._oManifest = new CoreManifest(oMergedManifest, mOptions);
 				this.oJson = this._oManifest.getRawJson();
 			}
 		}
@@ -170,7 +181,15 @@ sap.ui.define([
 
 		return CoreManifest.load({
 			manifestUrl: mSettings.manifestUrl,
-			async: true
+			async: true,
+			processJson: function (oManifestJson) {
+
+				if (this._aChanges) {
+					return CardMerger.mergeCardDelta(oManifestJson, this._aChanges);
+				}
+
+				return oManifestJson;
+			}.bind(this)
 		}).then(function (oManifest) {
 			this._oManifest = oManifest;
 			this.oJson = this._oManifest.getRawJson();
