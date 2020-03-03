@@ -167,10 +167,10 @@ sap.ui.define([
 			this.oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 		},
 		afterEach: function () {
+			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 			this.clock.restore();
-			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("Showing the ContextMenu", function (assert) {
@@ -647,6 +647,48 @@ sap.ui.define([
 				assert.ok(oContextMenuControl.isPopupOpen(true), "ContextMenu should be open");
 				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
 				this.oContextMenuPlugin._oCurrentOverlay = this.oButton2Overlay;
+				oContextMenuControl.getFlexbox().getItems()[0].firePress();
+			}.bind(this));
+		});
+
+		QUnit.test("when opening the context menu for an element overlay with a responsible element overlay", function (assert) {
+			assert.expect(4);
+			this.oContextMenuPlugin._aMenuItems = [];
+			var oMenuItem = {
+				id: "RESPONSIBLE_ELEMENT_ITEM_ID",
+				text: "responsible element item text",
+				handler: function () {},
+				enabled: function (aSelection) {
+					assert.deepEqual(aSelection[0], this.oButton1Overlay, "then the responsible element overlay was passed to the enabled() function");
+				}.bind(this),
+				responsible: [this.oButton1Overlay]
+			};
+
+			sandbox.stub(this.oContextMenuPlugin.getDesignTime(), "getPlugins").returns([
+				{
+					getMenuItems: function (aSelection) {
+						assert.deepEqual(aSelection[0], this.oButton2Overlay, "then menu items were retrieved for the source element overlay");
+						return [oMenuItem];
+					}.bind(this)
+				}
+			]);
+			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
+				assert.equal(this.oContextMenuPlugin.oContextMenuControl.getFlexbox().getItems().length, 1);
+				assert.deepEqual(this.oContextMenuPlugin.oContextMenuControl.getFlexbox().getItems()[0].getText(),
+					oMenuItem.text,
+					"then the context menu item applicable to the source element overlay was added to the context menu control");
+			}.bind(this));
+		});
+
+		QUnit.test("when clicking on a menu item from the context menu with a responsible element", function (assert) {
+			assert.expect(1);
+			this.oMenuEntries.available.responsible = [this.oButton1Overlay];
+			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
+				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+				this.oContextMenuPlugin._oCurrentOverlay = this.oButton2Overlay;
+				this.oMenuEntries.available.handler = function (aSelection) {
+					assert.deepEqual(aSelection[0], this.oButton1Overlay, "then the responsible element was passed to the handler");
+				}.bind(this);
 				oContextMenuControl.getFlexbox().getItems()[0].firePress();
 			}.bind(this));
 		});

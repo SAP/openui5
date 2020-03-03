@@ -597,7 +597,9 @@ sap.ui.define([
 			function handler() {
 				fnContextMenuHandler(this);
 			}
-
+			if (oButtonItem.responsible) {
+				aElementOverlays = oButtonItem.responsible;
+			}
 			var sText = typeof oButtonItem.text === "function" ? oButtonItem.text(aElementOverlays[0]) : oButtonItem.text;
 			var bEnabled = typeof oButtonItem.enabled === "function" ? oButtonItem.enabled(aElementOverlays) : oButtonItem.enabled;
 			var oButtonOptions = {

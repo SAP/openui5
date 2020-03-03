@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/base/Log",
 	"sap/base/util/uid",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	AdditionalElementsPlugin,
@@ -41,6 +42,7 @@ sap.ui.define([
 	Settings,
 	Log,
 	uid,
+	isEmptyObject,
 	sinon
 ) {
 	"use strict";
@@ -125,6 +127,7 @@ sap.ui.define([
 
 	var ON_SIBLING = "SIBLING";
 	var ON_CHILD = "CHILD";
+	var ON_CONTAINER = "CONTAINER";
 	var ON_IRRELEVANT = "IRRELEVANT";
 
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
@@ -706,39 +709,134 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has a reveal and move action on a responsible element and we call showAvailableElements", function (assert) {
-			var done = assert.async();
-			this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
-				var oCompositeCommand = oEvent.getParameter("command");
-				assert.equal(oCompositeCommand.getCommands().length, 2, "then one command is created");
-				assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
-				assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
-				assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
-				assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 1, "then the move command goes to the right position");
-				done();
-			});
-
+		QUnit.test("when the control's dt metadata has a reveal action on a responsible element and getMenuItems() is called", function (assert) {
+			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function() {
+				if (arguments[1][0] === this.oPseudoPublicParentOverlay) {
+					return true;
+				}
+			}.bind(this));
 			return createOverlayWithAggregationActions.call(this,
 				{
+					reveal : {
+						changeType : "unhideControl",
+						changeOnRelevantContainer: true
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent,
+						actionsFromResponsibleElement: ["reveal"]
+					}
+				},
+				ON_CONTAINER
+			)
+				.then(function(oCreatedOverlay) {
+					return this.oPlugin.getMenuItems([oCreatedOverlay]);
+				}.bind(this)).then(function(aMenuItems) {
+					assert.equal(aMenuItems[0].id, "CTX_ADD_ELEMENTS_AS_SIBLING", "there is an entry for add elements as sibling");
+					assert.deepEqual(aMenuItems[0].responsible[0], this.oSiblingOverlay, "then the responsible element overlay is set as a menu item property");
+					assert.equal(aMenuItems[1].id, "CTX_ADD_ELEMENTS_AS_CHILD", "there is an entry for add elements as child");
+					assert.deepEqual(aMenuItems[1].responsible[0], this.oSiblingOverlay, "then the responsible element overlay is set as a menu item property");
+				}.bind(this));
+		});
+
+		QUnit.test("when the control's dt metadata has a disabled reveal action along with an enabled reveal action on the responsible element and _getActions() is called", function (assert) {
+			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function() {
+				if (arguments[1][0] === this.oPseudoPublicParentOverlay) {
+					return true;
+				}
+			}.bind(this));
+			return createOverlayWithAggregationActions.call(this,
+				{
+					addODataProperty : {
+						changeType : "addFields"
+					},
 					reveal : {
 						changeType : "unhideControl"
 					},
 					responsibleElement: {
 						target: this.oSibling,
 						source: this.oPseudoPublicParent
-					},
-					move : "moveControls"
+					}
 				},
-				ON_SIBLING
+				ON_CONTAINER
 			)
-				.then(function () {
-					return this.oPlugin.showAvailableElements(true, [this.oPseudoPublicParentOverlay]);
-				}.bind(this))
-				.then(function() {
-					assertDialogModelLength.call(this, assert, 2, "then all invisible elements are part of the dialog model");
-					assert.equal(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is the responsible element's sibling");
-					assert.equal(this.oPlugin.getDialog().getElements()[1].label, "Invisible2", "then the second element is the responsible element's sibling");
-				}.bind(this));
+				.then(function(oCreatedOverlay) {
+					return this.oPlugin._getActions(true, oCreatedOverlay);
+				}.bind(this)).then(function(mActions) {
+					assert.ok(isEmptyObject(mActions), "then no actions were returned");
+				});
+		});
+
+		QUnit.test("when the control's dt metadata has a reveal and addODataProperty action on the responsible element and _getActions() is called", function (assert) {
+			return createOverlayWithAggregationActions.call(this,
+				{
+					addODataProperty : {
+						changeType : "addFields"
+					},
+					reveal : {
+						changeType : "unhideControl"
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent,
+						actionsFromResponsibleElement: ["reveal"]
+					}
+				},
+				ON_CONTAINER
+			)
+				.then(function(oCreatedOverlay) {
+					return this.oPlugin._getActions(true, oCreatedOverlay);
+				}.bind(this)).then(function(mActions) {
+					assert.equal(mActions.reveal.elements.length, 2, "then the reveal actions has two elements from the responsible element");
+					assert.equal(mActions.addODataProperty.action.changeType, "addFields", "then the addOData action was retrieved from the responsible element");
+					assert.equal(mActions.aggregation, "contentLeft", "then the reveal actions has the correct aggregation name from the responsible element");
+				});
+		});
+
+		QUnit.test("when the control's dt metadata has a custom add action on the responsible element and _getActions() is called", function (assert) {
+			return createOverlayWithAggregationActions.call(this,
+				{
+					add: {
+						custom : {
+							getItems: getCustomItems.bind(null, 2)
+						}
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent,
+						actionsFromResponsibleElement: ["custom"]
+					}
+				},
+				ON_CONTAINER
+			)
+				.then(function(oCreatedOverlay) {
+					return this.oPlugin._getActions(true, oCreatedOverlay);
+				}.bind(this)).then(function(mActions) {
+					assert.equal(mActions.custom.items.length, 2, "then the custom add action has two elements from the responsible element");
+					assert.ok(typeof mActions.custom.action.getItems === "function", "then the custom add action was retrieved from the responsible element");
+					assert.equal(mActions.custom.action.aggregation, "contentLeft", "then the custom add action has the correct aggregation name from the responsible element");
+				});
+		});
+
+		QUnit.test("when the control's dt metadata has an addODataProperty action on the responsible element and _getActions() is called", function (assert) {
+			return createOverlayWithAggregationActions.call(this,
+				{
+					addODataProperty : {
+						changeType : "addFields"
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent,
+						actionsFromResponsibleElement: ["addODataProperty"]
+					}
+				},
+				ON_CONTAINER
+			)
+				.then(function(oCreatedOverlay) {
+					return this.oPlugin._isEditableCheck(oCreatedOverlay, true);
+				}.bind(this)).then(function(bEditable) {
+					assert.equal(bEditable, true, "then the editable property is set from the responsible element overlays");
+				});
 		});
 
 		QUnit.test("when the control's dt metadata has addODataProperty, a reveal and a custom add actions", function(assert) {
@@ -762,8 +860,10 @@ sap.ui.define([
 				reveal : {
 					changeType : "unhideControl"
 				},
-				custom : {
-					getItems: getCustomItems.bind(null, 2)
+				add: {
+					custom : {
+						getItems: getCustomItems.bind(null, 2)
+					}
 				}
 			},
 			ON_CHILD
@@ -1408,7 +1508,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when retrieving the contextmenu items for the additional elements plugin,", function(assert) {
+		QUnit.test("when retrieving the contextmenu items for the additional elements plugin", function(assert) {
 			var bCheckValue = true;
 			var bIsAvailable = true;
 			var bFirstCall = true;
@@ -1754,13 +1854,15 @@ sap.ui.define([
 
 				if (mActions.responsibleElement) {
 					var oSourceElementOverlay = OverlayRegistry.getOverlay(mActions.responsibleElement.source);
-					oSourceElementOverlay.setDesignTimeMetadata({
-						actions: {
-							getResponsibleElement: function() {
-								return mActions.responsibleElement.target;
-							}
-						}
-					});
+					var oActions = Object.assign({
+						getResponsibleElement: function () {
+							return mActions.responsibleElement.target;
+						},
+						actionsFromResponsibleElement: mActions.responsibleElement.actionsFromResponsibleElement || []
+					}, mActions.responsibleElement.actions);
+					oSourceElementOverlay.setDesignTimeMetadata(Object.assign(
+						oSourceElementOverlay.getDesignTimeMetadata().getData(), { actions: oActions}
+					));
 				}
 				resolve();
 			}.bind(this));
@@ -1771,6 +1873,7 @@ sap.ui.define([
 			switch (sOverlayType) {
 				case ON_SIBLING : return this.oSiblingOverlay;
 				case ON_CHILD : return this.oParentOverlay;
+				case ON_CONTAINER : return this.oPseudoPublicParentOverlay;
 				case ON_IRRELEVANT : return this.oIrrelevantOverlay;
 				default : return undefined;
 			}

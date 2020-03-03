@@ -21,6 +21,40 @@ function(
 ) {
 	"use strict";
 
+	function _handleEditableByPlugin(mPropertyBag, aPromises, oSourceElementOverlay) {
+		// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
+		// this means that getElementInstance is undefined when we get here via removeAggregation mutation
+		// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
+		// in case a control is marked as not adaptable by designTimeMetadata, it should not be possible to evaluate editable
+		// for this control due to parent aggregation action definitions
+
+		var oResponsibleElementOverlay = oSourceElementOverlay;
+		if (typeof this.getActionName() === "string") {
+			if (this.isResponsibleElementActionAvailable(oSourceElementOverlay)) {
+				oResponsibleElementOverlay = this.getResponsibleElementOverlay(oSourceElementOverlay);
+			}
+		}
+		var vEditable = oResponsibleElementOverlay.getElement() &&
+			oResponsibleElementOverlay.getDesignTimeMetadata() &&
+			!oResponsibleElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable() &&
+			this._isEditable(
+				oResponsibleElementOverlay,
+				Object.assign({sourceElementOverlay: oSourceElementOverlay}, mPropertyBag)
+			);
+
+		// handle promise return value by _isEditable function
+		if (vEditable && typeof vEditable.then === "function") {
+			// intentional interruption of the promise chain
+			vEditable.then(function(vEditablePromiseValue) {
+				this._handleModifyPluginList(oSourceElementOverlay, vEditablePromiseValue);
+			}.bind(this));
+			aPromises.push(vEditable);
+		} else {
+			this._handleModifyPluginList(oSourceElementOverlay, vEditable);
+		}
+		return aPromises;
+	}
+
 	/**
 	 * Constructor for a new Plugin.
 	 *
@@ -157,7 +191,6 @@ function(
 	 * @param {object} mPropertyBag Map of additional information to be passed to isEditable
 	 */
 	BasePlugin.prototype.evaluateEditable = function(aOverlays, mPropertyBag) {
-		var aPromises = [];
 		// If there are busy plugins, do not evaluate
 		// When the action is finished, if the affected controls are modified, the evaluation will be done anyway
 		if (!mPropertyBag.onRegistration &&
@@ -167,30 +200,7 @@ function(
 		}
 		this.setProcessingStatus(true);
 
-		aOverlays.forEach(function(oOverlay) {
-			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
-			// this means that getElementInstance is undefined when we get here via removeAggregation mutation
-			// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
-			// in case a control is marked as not adaptable by designTimeMetadata, it should not be possible to evaluate editable
-			// for this control due to parent aggregation action definitions
-			var oResponsibleElementOverlay = this.getResponsibleElementOverlay(oOverlay);
-			var vEditable =
-				oResponsibleElementOverlay.getElement() &&
-				oResponsibleElementOverlay.getDesignTimeMetadata() &&
-				!oResponsibleElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable() &&
-				this._isEditable(oResponsibleElementOverlay, mPropertyBag);
-
-			// handle promise return value by _isEditable function
-			if (vEditable && typeof vEditable.then === "function") {
-				// intentional interruption of the promise chain
-				vEditable.then(function(vEditablePromiseValue) {
-					this._handleModifyPluginList(oOverlay, vEditablePromiseValue);
-				}.bind(this));
-				aPromises.push(vEditable);
-			} else {
-				this._handleModifyPluginList(oOverlay, vEditable);
-			}
-		}.bind(this));
+		var aPromises = aOverlays.reduce(_handleEditableByPlugin.bind(this, mPropertyBag), []);
 
 		if (aPromises.length) {
 			Promise.all(aPromises)

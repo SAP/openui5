@@ -248,7 +248,36 @@ function (
 		});
 
 		QUnit.test("when evaluateEditable is called for an element which has a responsible element", function(assert) {
+			var done = assert.async();
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
+			sandbox.stub(this.oPlugin, "getActionName").returns("actionName");
+
+			// clearing up all default actions and replacing with getResponsibleElement()
+			this.oLayoutOverlay.getDesignTimeMetadata().getData().actions = {
+				getResponsibleElement: function () {
+					return this.oButton;
+				}.bind(this),
+				actionsFromResponsibleElement: ["actionName"]
+			};
+
+			var fnProcessingFinishCallBack = function(done, oEvent) {
+				if (oEvent.getParameter("processing") === false) {
+					assert.ok(this.oPlugin._isEditable.alwaysCalledWith(this.oButtonOverlay), "then editable evaluation is always performed on the responsible element");
+					assert.equal(oModifyPluginListSpy.callCount, 1, "_modifyPluginList was called once");
+					assert.ok(oModifyPluginListSpy.calledWith(this.oLayoutOverlay, true), "then the plugin list was modified for the source overlay with editable set to true");
+					this.oPlugin.detachEvent("processingStatusChange", fnProcessingFinishCallBack);
+					done();
+				}
+			}.bind(this, done);
+
+			this.oPlugin.attachEvent("processingStatusChange", fnProcessingFinishCallBack);
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
+		});
+
+		QUnit.test("when evaluateEditable is called for an element overlay with a disabled action and a responsible element", function(assert) {
+			var done = assert.async();
+			sandbox.stub(this.oPlugin, "getActionName").returns("actionName");
 
 			// clearing up all default actions and replacing with getResponsibleElement()
 			this.oLayoutOverlay.getDesignTimeMetadata().getData().actions = {
@@ -256,10 +285,18 @@ function (
 					return this.oButton;
 				}.bind(this)
 			};
+			var fnProcessingFinishCallBack = function(done, oEvent) {
+				if (oEvent.getParameter("processing") === false) {
+					assert.equal(this.oPlugin._isEditable.callCount, 1, "then editable evaluation was still done");
+					assert.ok(this.oPlugin._isEditable.calledWith(this.oLayoutOverlay), "then the editable check was performed on the source element overlay");
+					this.oPlugin.detachEvent("processingStatusChange", fnProcessingFinishCallBack);
+					done();
+				}
+			}.bind(this, done);
+
+			this.oPlugin.attachEvent("processingStatusChange", fnProcessingFinishCallBack);
+
 			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
-			assert.ok(this.oPlugin._isEditable.alwaysCalledWith(this.oButtonOverlay), "then editable evaluation is always performed on the responsible element");
-			assert.equal(oModifyPluginListSpy.callCount, 1, "_modifyPluginList was called once");
-			assert.equal(oModifyPluginListSpy.lastCall.args[0], this.oLayoutOverlay, "first parameter is the overlay");
 		});
 	});
 

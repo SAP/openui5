@@ -203,6 +203,7 @@ function (
 			var aMenuItems = this.oRenamePlugin.getMenuItems([this.oFormContainerOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_RENAME", "'getMenuItems' returns the context menu item for the plugin");
 
+			this.oFormContainerOverlay.setSelected(true);
 			aMenuItems[0].handler([this.oFormContainerOverlay]);
 			aMenuItems[0].enabled([this.oFormContainerOverlay]);
 
@@ -282,11 +283,14 @@ function (
 		}
 	}, function () {
 		function _addResponsibleElement (oDesignTimeMetadata, oTargetElement, oResponsibleElement) {
-			oDesignTimeMetadata.getData().actions.getResponsibleElement = function (oElement) {
-				if (oElement === oTargetElement) {
-					return oResponsibleElement;
-				}
-			};
+			Object.assign(oDesignTimeMetadata.getData().actions, {
+				getResponsibleElement: function (oElement) {
+					if (oElement === oTargetElement) {
+						return oResponsibleElement;
+					}
+				},
+				actionsFromResponsibleElement: ["rename"]
+			});
 		}
 
 		QUnit.test("when the Label gets renamed", function(assert) {

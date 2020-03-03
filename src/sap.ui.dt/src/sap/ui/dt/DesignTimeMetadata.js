@@ -7,14 +7,18 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DOMUtil",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/util/ObjectPath",
+	"sap/base/util/includes"
 ],
 function(
 	jQuery,
 	ManagedObject,
 	ElementUtil,
 	DOMUtil,
-	merge
+	merge,
+	ObjectPath,
+	includes
 ) {
 	"use strict";
 
@@ -140,7 +144,7 @@ function(
 	 * Returns action sAction part of designTime metadata (object or changeType string)
 	 * @param  {string} sAction action name
 	 * @param  {object} oElement element instance
-	 * @return {map} part of designTimeMetada, which describes sAction in a map format
+	 * @return {map} part of designTimeMetadata, which describes sAction in a map format
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.getAction = function(sAction, oElement) {
@@ -240,10 +244,26 @@ function(
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.getResponsibleElement = function(oElement) {
-		var oActions = this.getData().actions;
-		if (oActions && typeof oActions.getResponsibleElement === "function") {
-			return oActions.getResponsibleElement(oElement);
+		var mData = this.getData();
+		var fnResponsibleElement = ObjectPath.get(["actions", "getResponsibleElement"], mData);
+		if (fnResponsibleElement) {
+			return fnResponsibleElement(oElement);
 		}
+	};
+
+	/**
+	 * Returns true if responsible element action is available in the designTimeMetadata
+	 * @param {string} [sActionName] - Action name
+	 * @returns {boolean} Indicates if action is available
+	 * @public
+	 */
+	DesignTimeMetadata.prototype.isResponsibleActionAvailable = function(sActionName) {
+		var mData = this.getData();
+		var aActionsFromResponsibleElement = ObjectPath.get(["actions", "actionsFromResponsibleElement"], mData);
+		if (aActionsFromResponsibleElement) {
+			return includes(aActionsFromResponsibleElement, sActionName);
+		}
+		return false;
 	};
 
 	return DesignTimeMetadata;
