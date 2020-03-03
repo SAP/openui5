@@ -8363,6 +8363,7 @@ sap.ui.define([
 	// right request -> all requests in the change set are rejected with the same error;
 	// the error is logged for each request in the change set, but it is reported only once to
 	// the message model
+	// Note: Key properties are omitted from response data to improve readability.
 	QUnit.test("Error response for a change set w/o content-ID", function (assert) {
 		var oError = createError({code : "CODE", message : "Value 4.22 not allowed"}),
 			oModel = createSalesOrdersModel({
@@ -14407,6 +14408,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
+	// Note: Key properties are omitted from response data to improve readability.
 	[false, true].forEach(function (bCount) {
 		var sTitle = "Analytics by V4: $$aggregation, aggregate but no group; $count : " + bCount;
 
@@ -14447,7 +14449,7 @@ sap.ui.define([
 					+ (bCount ? ",$count as UI5__count" : "") + "),top(1))", {
 					value : [oMinMaxElement, {GrossAmount : 1}]
 				})
-				.expectChange("grossAmount", 1);
+				.expectChange("grossAmount", [1]);
 
 			return this.createView(assert, sView, oModel).then(function () {
 				var oTable = that.oView.byId("table"),
@@ -14459,7 +14461,7 @@ sap.ui.define([
 						"@odata.count" : "1",
 						value : [{GrossAmount : 2}]
 					})
-					.expectChange("grossAmount", 2);
+					.expectChange("grossAmount", [2]);
 
 				oListBinding.setAggregation({
 					aggregate : {GrossAmount : {}}
@@ -14470,32 +14472,31 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: check that $$aggregation can be removed again
+	// Note: Key properties are omitted from response data to improve readability.
 	// BCP: 2080047558
 	QUnit.test("BCP: 2080047558", function (assert) {
 		var oListBinding,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="1">\
-	<t:Column>\
-		<t:template>\
-			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
-		</t:template>\
-	</t:Column>\
-</t:Table>',
+<Table id="table" items="{/SalesOrderList}">\
+	<ColumnListItem>\
+		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	</ColumnListItem>\
+</Table>',
 			oModel = createSalesOrdersModel(),
 			that = this;
 
-		this.expectRequest("SalesOrderList?$skip=0&$top=1", {
+		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
 				value : [{GrossAmount : 1}]
 			})
-			.expectChange("grossAmount", 1);
+			.expectChange("grossAmount", [1]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oListBinding = that.oView.byId("table").getBinding("rows");
+			oListBinding = that.oView.byId("table").getBinding("items");
 
-			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
-					value : [{GrossAmount : 3}]
+			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=100", {
+					value : [{GrossAmount : 2}]
 				})
-				.expectChange("grossAmount", 3);
+				.expectChange("grossAmount", [2]);
 
 			// code under test
 			oListBinding.setAggregation({
@@ -14511,10 +14512,10 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$skip=0&$top=1", {
-					value : [{GrossAmount : 2}]
+			that.expectRequest("SalesOrderList?$skip=0&$top=100", {
+					value : [{GrossAmount : 3}]
 				})
-				.expectChange("grossAmount", 2);
+				.expectChange("grossAmount", [3]);
 
 			assert.throws(function () {
 				// code under test
@@ -14537,10 +14538,10 @@ sap.ui.define([
 			oListBinding.setAggregation();
 
 			that.expectRequest("SalesOrderList"
-				+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))&$skip=0&$top=1", {
-					value : [{GrossAmount : 3}]
+				+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))&$skip=0&$top=100", {
+					value : [{GrossAmount : 4}]
 				})
-				.expectChange("grossAmount", 3);
+				.expectChange("grossAmount", [4]);
 
 			// code under test
 			oListBinding.changeParameters({
@@ -14553,49 +14554,83 @@ sap.ui.define([
 			oListBinding.setAggregation();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$skip=0&$top=100", {
+					value : [{GrossAmount : 5}]
+				})
+				.expectChange("grossAmount", [5]);
+
+			// code under test
+			oListBinding.changeParameters({$apply : undefined});
+		}).then(function () {
+			// code under test (Note: no request!)
+			oListBinding.setAggregation({});
+
+			return that.waitForChanges(assert);
 		});
 	});
 
 	//*********************************************************************************************
-	// Scenario: check that $$aggregation can be removed again, refreshing the UI.
+	// Scenario: check that 'subtotals' can be changed and that $$aggregation can be removed again,
+	// each time refreshing the UI.
 	// BPC: 2070044134
 	QUnit.test("BCP: 2070044134", function (assert) {
 		var oListBinding,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="1">\
-	<t:Column>\
-		<t:template>\
-			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
-		</t:template>\
-	</t:Column>\
-</t:Table>',
+<Table id="table" items="{/SalesOrderList}">\
+	<ColumnListItem>\
+		<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	</ColumnListItem>\
+</Table>',
 			oModel = createSalesOrdersModel(),
 			that = this;
 
-		this.expectRequest("SalesOrderList?$skip=0&$top=1", {
-				value : [{GrossAmount : 1}]
+		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
+				value : [{GrossAmount : 1, LifecycleStatus : "Z"}]
 			})
-			.expectChange("grossAmount", 1);
+			.expectChange("grossAmount", [1])
+			.expectChange("lifecycleStatus", ["Z"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oListBinding = that.oView.byId("table").getBinding("rows");
+			oListBinding = that.oView.byId("table").getBinding("items");
 
-			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
-					value : [{GrossAmount : 3}]
+			that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))&$count=true"
+					+ "&$skip=0&$top=100", {
+					value : [{GrossAmount : 2, LifecycleStatus : "Y"}]
 				})
-				.expectChange("grossAmount", 3);
+				.expectChange("grossAmount", [2])
+				.expectChange("lifecycleStatus", ["Y"]);
 
 			// code under test
 			oListBinding.setAggregation({
-				aggregate : {GrossAmount : {}}
+				aggregate : {GrossAmount : {}},
+				groupLevels : ["LifecycleStatus"]
 			});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$skip=0&$top=1", {
-					value : [{GrossAmount : 2}]
+			that.expectRequest("SalesOrderList"
+					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+					+ "&$count=true&$skip=0&$top=100", {
+					value : [{GrossAmount : 3, LifecycleStatus : "X"}]
 				})
-				.expectChange("grossAmount", 2);
+				.expectChange("grossAmount", [3])
+				.expectChange("lifecycleStatus", ["X"]);
+
+			// code under test
+			oListBinding.setAggregation({
+				aggregate : {GrossAmount : {subtotals : true}},
+				groupLevels : ["LifecycleStatus"]
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$skip=0&$top=100", {
+					value : [{GrossAmount : 4, LifecycleStatus : "W"}]
+				})
+				.expectChange("grossAmount", [4])
+				.expectChange("lifecycleStatus", ["W"]);
 
 			// code under test
 			oListBinding.setAggregation();

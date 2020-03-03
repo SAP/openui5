@@ -5,12 +5,13 @@
 //Provides class sap.ui.model.odata.v4.lib._Helper
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/deepEqual",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/URI"
-], function (Log, isEmptyObject, merge, uid, SyncPromise, URI) {
+], function (Log, deepEqual, isEmptyObject, merge, uid, SyncPromise, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,
@@ -379,6 +380,10 @@ sap.ui.define([
 
 			return oTechnicalDetails;
 		},
+
+		// Trampoline property to allow for mocking function module in unit tests.
+		// @see sap.base.util.deepEqual
+		deepEqual : deepEqual,
 
 		/**
 		 * Deletes the private client-side instance annotation with the given unqualified name at
