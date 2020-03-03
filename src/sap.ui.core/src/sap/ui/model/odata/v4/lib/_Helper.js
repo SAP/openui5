@@ -906,7 +906,7 @@ sap.ui.define([
 		 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
 		 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be
 		 *   loaded because they may have changed due to side effects of a previous update; must not
-		 *   be empty
+		 *   be empty; "*" means all structural properties
 		 * @param {function} fnFetchMetadata
 		 *   Function which fetches metadata for a given meta path
 		 * @param {string} sRootMetaPath
@@ -960,7 +960,9 @@ sap.ui.define([
 				throw new Error("Unsupported empty navigation property path");
 			}
 
-			if (mCacheQueryOptions && mCacheQueryOptions.$select
+			if (aPaths.indexOf("*") >= 0) {
+				aSelects = mCacheQueryOptions && mCacheQueryOptions.$select || [];
+			} else if (mCacheQueryOptions && mCacheQueryOptions.$select
 					&& mCacheQueryOptions.$select.indexOf("*") < 0) {
 				_Helper.addChildrenWithAncestor(aPaths, mCacheQueryOptions.$select, mSelects);
 				_Helper.addChildrenWithAncestor(mCacheQueryOptions.$select, aPaths, mSelects);
