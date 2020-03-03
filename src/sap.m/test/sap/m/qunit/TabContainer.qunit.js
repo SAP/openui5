@@ -104,7 +104,8 @@ sap.ui.define([
 			this.oTabContainer = new TabContainer({
 				items: {
 					path: "/ProductCollection",
-					template: oTemplate
+					template: oTemplate,
+					templateShareable: true
 				},
 				showAddNewButton: true
 			});
@@ -183,7 +184,8 @@ sap.ui.define([
 			this.oTabContainer = new TabContainer({
 				items: {
 					path: "/ProductCollection",
-					template: oTemplate
+					template: oTemplate,
+					templateShareable: true
 				}
 			});
 
@@ -322,7 +324,8 @@ sap.ui.define([
 			this.oTabContainer = new TabContainer({
 				items: {
 					path: "/ProductCollection",
-					template: oTemplate
+					template: oTemplate,
+					templateShareable: true
 				}
 			});
 
@@ -341,7 +344,8 @@ sap.ui.define([
 		var oTabContainer = new TabContainer({
 			items: {
 				path: "/ProductCollection",
-				template: oTemplate
+				template: oTemplate,
+				templateShareable: true
 			},
 			itemSelect: function (oEvent) {
 				oEvent.preventDefault();
