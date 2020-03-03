@@ -244,12 +244,6 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		assert.ok(oStandardBreadCrumbsControl._getSelectWidth() === 0, "Select is not rendered");
 	});
 
-	// Helper method to convert HTML Entity sybol to its numeric character
-	var entityToCharCode = function (sEntity) {
-		return sEntity.replace(/&#(\d{0,4});/g,
-			function(sFullEntity, sNumericPart) { return String.fromCharCode(sNumericPart); });
-	};
-
 	var testSeparatorStyleSymbols = function (oControl, sStyle, assert) {
 		//arrange
 		var sAppliedSymbol,
@@ -259,17 +253,36 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		sap.ui.getCore().applyChanges();
 
 		//act
-		sAppliedSymbol = oControl.$().find(".sapMBreadcrumbsSeparator").first().html();
-		sExpectedSymbol = entityToCharCode(Breadcrumbs.STYLE_MAPPER[oControl.getSeparatorStyle()]);
+		sAppliedSymbol = oControl.$().find(".sapMBreadcrumbsSeparator").first().text();
+		sExpectedSymbol = Breadcrumbs.STYLE_MAPPER[oControl.getSeparatorStyle()];
 
 		// assert
-		assert.equal(sExpectedSymbol, sAppliedSymbol, sStyle + " separator loaded");
+		assert.equal(sAppliedSymbol, sExpectedSymbol, sStyle + " separator loaded");
 	};
 
-	QUnit.test("Custom separator", function (assert) {
+	QUnit.test("Custom separator (String Rendering)", function (assert) {
+		Object.keys(library.BreadcrumbsSeparatorStyle).forEach( function (sStyle) {
+			// arrange
+			// using a new control each time enforces initial string rendering
+			var oControl = oFactory.getBreadCrumbControlWithLinks(4, oFactory.getText());
+			oControl.placeAt("qunit-fixture");
+
+			// assert
+			testSeparatorStyleSymbols(oControl, sStyle, assert);
+
+			// clean up
+			oControl.destroy();
+			sap.ui.getCore().applyChanges();
+		} );
+	});
+
+	QUnit.test("Custom separator (DOM Patching)", function (assert) {
 		//arrange
 		var oControl = this.oStandardBreadCrumbsControl;
 		oControl.placeAt("qunit-fixture");
+		// initial rendering is always string rendering, later re-renderings will use DOM patching
+		sap.ui.getCore().applyChanges();
+
 		//assert
 		Object.keys(library.BreadcrumbsSeparatorStyle).forEach( function (sStyle) {
 			testSeparatorStyleSymbols(oControl, sStyle, assert);
