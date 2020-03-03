@@ -99,6 +99,43 @@ sap.ui.define([
 				assert.equal(oChange.reference, "sap-app-id", "the reference is set correctly");
 				assert.equal(oChange.support.generator, "CardEditor", "the generator is set correctly");
 				assert.equal(oChange.appDescriptorChange, true, "the appDescriptorChange is set correctly");
+
+				// make another change and save again
+				this.oBaseJson["sap.card"].configuration.destinations.myDestination1.name = "myNewName111";
+				this.oBaseJson["sap.card"].configuration.destinations.myDestination3 = {
+					name: "myName333"
+				};
+				this.oBaseJson["sap.card"].configuration.parameters.myParameter1.value = "myNewParameter111";
+				this.oCardEditor.setJson(this.oBaseJson);
+
+				return this.oCardEditor.getDeltaChangeDefinition(this.oPropertyBag);
+			}.bind(this))
+			.then(function(oChange) {
+				var oExpectedContent = {
+					configuration: {
+						destinations: {
+							myDestination1: {
+								name: "myNewName111"
+							},
+							myDestination3: {
+								name: "myName333"
+							}
+						},
+						parameters: {
+							myParameter1: {
+								value: "myNewParameter111"
+							}
+						}
+					}
+				};
+				assert.deepEqual(oChange.content, oExpectedContent, "the content is set correctly");
+				assert.equal(oChange.changeType, "appdescr_card", "the change type is set correctly");
+				assert.equal(oChange.fileType, "change", "the fileType is set correctly");
+				assert.ok(oChange.creation, "the creation is filled");
+				assert.equal(oChange.layer, this.oPropertyBag.layer, "the layer is set correctly");
+				assert.equal(oChange.reference, "sap-app-id", "the reference is set correctly");
+				assert.equal(oChange.support.generator, "CardEditor", "the generator is set correctly");
+				assert.equal(oChange.appDescriptorChange, true, "the appDescriptorChange is set correctly");
 			}.bind(this));
 		});
 	});
