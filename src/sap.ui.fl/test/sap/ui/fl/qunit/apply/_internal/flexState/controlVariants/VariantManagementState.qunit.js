@@ -11,6 +11,9 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
 	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	VariantManagementState,
@@ -23,6 +26,9 @@ sap.ui.define([
 	Layer,
 	Variant,
 	Component,
+	FlexState,
+	StorageUtils,
+	Log,
 	sinon
 ) {
 	"use strict";
@@ -571,6 +577,164 @@ sap.ui.define([
 				return oVariant.content.fileName === oVariantDataToBeRemoved.content.fileName;
 			});
 			assert.notOk(bPresent, "then the variant was removed");
+		});
+	});
+
+
+	QUnit.module("Given variant related changes are added / deleted from Flex State", {
+		beforeEach: function() {
+			this.oResponse = StorageUtils.getEmptyFlexDataResponse();
+			this.sReference = "reference";
+			sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(this.oResponse);
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when 'updateVariantsState' is called without an existing variants state", function(assert) {
+			sandbox.stub(Log, "error");
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference
+			});
+			assert.ok(Log.error.callCount, 1, "then an error was logged");
+		});
+
+		QUnit.test("when 'updateVariantsState' is called to update variants state", function(assert) {
+			var oUpdatedVariantSection = {type: "mockVariantSection"};
+			this.oResponse.variantSection = {};
+
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				content: oUpdatedVariantSection
+			});
+
+			assert.deepEqual(this.oResponse.variantSection, oUpdatedVariantSection, "then the variants state was updated");
+		});
+
+		QUnit.test("when 'updateVariantsState' is called to add variant related changes", function(assert) {
+			this.oResponse.variantSection = {};
+			var oVariantDependentControlChange = {
+				getPendingAction: function() {return "NEW";},
+				getDefinition: function() {
+					return {fileType: "change"};
+				}
+			};
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariantDependentControlChange,
+				content: {}
+			});
+			assert.deepEqual(this.oResponse.variantDependentControlChanges[0], oVariantDependentControlChange.getDefinition(), "then the variants related change was added to flex state response");
+
+			var oVariant = {
+				getPendingAction: function() {return "NEW";},
+				getDefinition: function() {
+					return {fileType: "ctrl_variant"};
+				}
+			};
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariant,
+				content: {}
+			});
+			assert.deepEqual(this.oResponse.variants[0], oVariant.getDefinition(), "then the variants related change was added to flex state response");
+
+			var oVariantManagementChange = {
+				getPendingAction: function() {return "NEW";},
+				getDefinition: function() {
+					return {fileType: "ctrl_variant_management_change"};
+				}
+			};
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariantManagementChange,
+				content: {}
+			});
+			assert.deepEqual(this.oResponse.variantManagementChanges[0], oVariantManagementChange.getDefinition(), "then the variants related change was added to flex state response");
+
+			var oVariantChange = {
+				getPendingAction: function() {return "NEW";},
+				getDefinition: function() {
+					return {fileType: "ctrl_variant_change"};
+				}
+			};
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariantChange,
+				content: {}
+			});
+			assert.deepEqual(this.oResponse.variantChanges[0], oVariantChange.getDefinition(), "then the variants related change was added to flex state response");
+		});
+
+		QUnit.test("when 'updateVariantsState' is called to delete variant related changes", function(assert) {
+			this.oResponse.variantSection = {};
+			var oVariantDependentControlChange = {
+				getPendingAction: function() {return "DELETE";},
+				getDefinition: function() {
+					return {
+						fileType: "change",
+						fileName: "variantDependentControlChange"
+					};
+				}
+			};
+			this.oResponse.variantDependentControlChanges.push(oVariantDependentControlChange.getDefinition());
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariantDependentControlChange,
+				content: {}
+			});
+			assert.equal(this.oResponse.variantDependentControlChanges.length, 0, "then the variants related change was deleted from the flex state response");
+
+			var oVariant = {
+				getPendingAction: function() {return "DELETE";},
+				getDefinition: function() {
+					return {
+						fileType: "ctrl_variant",
+						fileName: "variant"
+					};
+				}
+			};
+			this.oResponse.variants.push(oVariant.getDefinition());
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariant,
+				content: {}
+			});
+			assert.equal(this.oResponse.variants.length, 0, "then the variants related change was deleted from the flex state response");
+
+			var oVariantManagementChange = {
+				getPendingAction: function() {return "DELETE";},
+				getDefinition: function() {
+					return {
+						fileType: "ctrl_variant_management_change",
+						fileName: "variantManagementChange"
+					};
+				}
+			};
+			this.oResponse.variantManagementChanges.push(oVariantManagementChange.getDefinition());
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariantManagementChange,
+				content: {}
+			});
+			assert.equal(this.oResponse.variantManagementChanges.length, 0, "then the variants related change was deleted from the flex state response");
+
+			var oVariantChange = {
+				getPendingAction: function() {return "DELETE";},
+				getDefinition: function() {
+					return {
+						fileType: "ctrl_variant_change",
+						fileName: "variantChange"
+					};
+				}
+			};
+			this.oResponse.variantChanges.push(oVariantChange.getDefinition());
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariantChange,
+				content: {}
+			});
+			assert.equal(this.oResponse.variantChanges.length, 0, "then the variants related change was deleted from the flex state response");
 		});
 	});
 

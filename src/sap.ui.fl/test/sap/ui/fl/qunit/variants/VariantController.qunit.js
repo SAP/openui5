@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -34,6 +35,7 @@ sap.ui.define([
 	Text,
 	Component,
 	URLHandler,
+	VariantManagementState,
 	jQuery,
 	sinon
 ) {
@@ -140,7 +142,7 @@ sap.ui.define([
 			});
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
-			sandbox.stub(Cache, "setVariantManagementSection");
+			sandbox.stub(VariantManagementState, "updateVariantsState");
 
 			var oComponent = {
 				name: "MyComponent",
@@ -1187,8 +1189,7 @@ sap.ui.define([
 							return oChange;
 						});
 
-					/*To prepare VariantController data*/
-					sandbox.stub(Cache, "setVariantManagementSection");
+					sandbox.stub(VariantManagementState, "updateVariantsState");
 					this.oFlexController._oChangePersistence.loadChangesMapForComponent(this.oComponent, this.mPropertyBag)
 						.then(function() {
 							var oData = this.oFlexController.getVariantModelData();

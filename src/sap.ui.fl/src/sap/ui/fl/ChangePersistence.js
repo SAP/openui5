@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/isEmptyObject",
 	"sap/base/Log",
-	"sap/ui/fl/apply/_internal/flexState/FlexState"
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"
 ], function(
 	DependencyHandler,
 	Change,
@@ -45,7 +46,8 @@ sap.ui.define([
 	merge,
 	isEmptyObject,
 	Log,
-	FlexState
+	FlexState,
+	VariantManagementState
 ) {
 	"use strict";
 
@@ -293,7 +295,10 @@ sap.ui.define([
 					var oVariant = findVariant.call(this, mVariantControllerContent, oChange);
 					if (oVariant && replaceChangeContentWithInstance(oVariant, oChange)) {
 						// if the change content is replaced in the variant controller, then a sync with the Cache entry is required
-						Cache.setVariantManagementSection(this._mComponent, mVariantControllerContent);
+						VariantManagementState.updateVariantsState({
+							reference: this._mComponent.name,
+							content: mVariantControllerContent
+						});
 					}
 				}
 			}
@@ -909,14 +914,16 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype._updateCacheAndDirtyState = function (oDirtyChange, bSkipUpdateCache) {
 		if (!bSkipUpdateCache) {
-			if (oDirtyChange.getPendingAction() === "NEW") {
-				Utils.isChangeRelatedToVariants(oDirtyChange)
-					? Cache.setVariantManagementSection(this._mComponent, merge({}, this._oVariantController.getChangeFileContent()))
-					: Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
+			if (Utils.isChangeRelatedToVariants(oDirtyChange)) {
+				VariantManagementState.updateVariantsState({
+					reference: this._mComponent.name,
+					content: this._oVariantController.getChangeFileContent(),
+					changeToBeAddedOrDeleted: oDirtyChange
+				});
+			} else if (oDirtyChange.getPendingAction() === "NEW") {
+				Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
 			} else if (oDirtyChange.getPendingAction() === "DELETE") {
-				Utils.isChangeRelatedToVariants(oDirtyChange)
-					? Cache.setVariantManagementSection(this._mComponent, merge({}, this._oVariantController.getChangeFileContent()))
-					: Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
+				Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
 			}
 		}
 

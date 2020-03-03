@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ComponentContainer,
@@ -23,6 +24,7 @@ sap.ui.define([
 	VariantModel,
 	ChangesController,
 	FlexState,
+	VariantManagementState,
 	sinon
 ) {
 	"use strict";
@@ -124,7 +126,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Cache, "setVariantManagementSection");
+			sandbox.stub(VariantManagementState, "updateVariantsState");
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls,

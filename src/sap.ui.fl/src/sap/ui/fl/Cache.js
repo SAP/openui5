@@ -138,23 +138,6 @@ function(
 	};
 
 	/**
-	 * Syncs the passed variant management section with the component's cache entry.
-	 *
-	 * @param {object} oComponent - Contains component data needed for adding change
-	 * @param {string} oComponent.name - Name of the component
-	 * @param {object} oVariantControllerFileContent - Variant Controller applicable to the passed component
-	 * @public
-	 */
-	Cache.setVariantManagementSection = function (oComponent, oVariantControllerFileContent) {
-		var oFlexObjects = FlexState.getFlexObjectsFromStorageResponse(oComponent.name);
-
-		if (!oFlexObjects.variantSection) {
-			return;
-		}
-		oFlexObjects.variantSection = oVariantControllerFileContent;
-	};
-
-	/**
 	 * Updates a change for the given component in the cached changes.
 	 *
 	 * @param {object} oComponent - Contains component data needed for adding change
