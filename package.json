@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@ui5/project": "^1.2.0",
-    "@ui5/server": "^1.5.4",
+    "@ui5/server": "^1.6.0",
     "async": "^0.9.0",
     "cheerio": "^1.0.0-rc.2",
     "coffee-script": "^1.9.1",
