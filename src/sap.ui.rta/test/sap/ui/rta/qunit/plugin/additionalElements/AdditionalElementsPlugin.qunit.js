@@ -512,7 +512,7 @@ sap.ui.define([
 			QUnit.test(sPrefix + "when the control's dt metadata has a custom add action with 2 items, one with stable id and another with randomly generated stable id, and NO addODataProperty and reveal actions", function (assert) {
 				var done = assert.async();
 				var aCompleteChangeContentArgs = [];
-				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").returns(oDummyChangeHandler);
+				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
 				sandbox.spy(oDummyChangeHandler, "completeChangeContent");
 				this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
 					var oCompositeCommand = oEvent.getParameter("command");

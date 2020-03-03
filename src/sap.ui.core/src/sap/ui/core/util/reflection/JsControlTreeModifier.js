@@ -6,6 +6,7 @@
 
 sap.ui.define([
 	"./BaseTreeModifier",
+	"./XmlTreeModifier", // needed to get extension point info from oView._xContent
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/core/Component",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment" // needed to have sap.ui.xmlfragment
 ], function (
 	BaseTreeModifier,
+	XmlTreeModifier,
 	ObjectPath,
 	XMLHelper,
 	Component,
@@ -503,7 +505,30 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		getExtensionPointInfo: function(sExtensionPointName, oView) {}
+		getExtensionPointInfo: function(sExtensionPointName, oView) {
+			var oViewNode = (oView._xContent) ? oView._xContent : oView;
+			var oExtensionPointInfo = XmlTreeModifier.getExtensionPointInfo(sExtensionPointName, oViewNode);
+			if (oExtensionPointInfo) {
+				var aChildren = XmlTreeModifier.getAggregation(oExtensionPointInfo.parent, oExtensionPointInfo.aggregationName);
+				var iExtensionPoints = 0;
+				aChildren.some(function (oChild) {
+					if (XmlTreeModifier._isExtensionPoint(oChild)) {
+						iExtensionPoints++;
+						if (oChild.getAttribute("name") === sExtensionPointName) {
+							return true;
+						}
+					}
+				});
+				oExtensionPointInfo.index = oExtensionPointInfo.index - iExtensionPoints;
+				oExtensionPointInfo.parent = oExtensionPointInfo.parent && this._byId(oView.createId(oExtensionPointInfo.parent.getAttribute("id")));
+				oExtensionPointInfo.defaultContent = oExtensionPointInfo.defaultContent
+					.map(function (oNode) {
+						var sId = oView.createId(oNode.getAttribute("id"));
+						return this._byId(sId);
+					}.bind(this));
+			}
+			return oExtensionPointInfo;
+		}
 	};
 
 	return merge(

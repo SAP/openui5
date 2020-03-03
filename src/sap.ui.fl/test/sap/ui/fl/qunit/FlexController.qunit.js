@@ -722,7 +722,7 @@ function (
 
 			sandbox.stub(Applier, "applyChangeOnControl").returns(Promise.resolve({success: false, error: new Error("myError")}));
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(HideControl);
-			sandbox.stub(this.oFlexController, "createChange").resolves(new Change(oChangeSpecificData));
+			sandbox.stub(this.oFlexController, "createChangeWithControlSelector").resolves(new Change(oChangeSpecificData));
 			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 			sandbox.spy(this.oFlexController._oChangePersistence, "deleteChange");
 
@@ -742,7 +742,7 @@ function (
 			var oChange = new Change(oChangeSpecificData);
 			sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(HideControl);
-			sandbox.stub(this.oFlexController, "createChange").resolves(oChange);
+			sandbox.stub(this.oFlexController, "createChangeWithControlSelector").resolves(oChange);
 			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
 			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
@@ -761,7 +761,7 @@ function (
 
 			sandbox.stub(Applier, "applyChangeOnControl").returns(Promise.resolve({success: false}));
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(HideControl);
-			sandbox.stub(this.oFlexController, "createChange").resolves(new Change(oChangeSpecificData));
+			sandbox.stub(this.oFlexController, "createChangeWithControlSelector").resolves(new Change(oChangeSpecificData));
 			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
 			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
@@ -790,7 +790,7 @@ function (
 		});
 
 		QUnit.test("throws an error of a change should be created but no control was passed", function (assert) {
-			return this.oFlexController.createChange({}, undefined)
+			return this.oFlexController.createChangeWithControlSelector({}, undefined)
 				.catch(function() {
 					assert.ok(true, "then an exception is thrown.");
 				});
@@ -813,7 +813,7 @@ function (
 			});
 			sandbox.spy(JsControlTreeModifier, "getSelector");
 
-			return this.oFlexController.createChange({}, oControl)
+			return this.oFlexController.createChangeWithControlSelector({}, oControl)
 				.then(function(oChange) {
 					assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the ID as NOT local.");
 					assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
@@ -830,7 +830,7 @@ function (
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(oDummyChangeHandler);
 			sandbox.spy(JsControlTreeModifier, "getSelector");
 
-			return this.oFlexController.createChange({}, oControl)
+			return this.oFlexController.createChangeWithControlSelector({}, oControl)
 				.then(function(oChange) {
 					assert.deepEqual(oChange.getDefinition().selector.idIsLocal, true, "the selector flags the ID as local");
 					assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
@@ -855,7 +855,7 @@ function (
 				}
 			});
 
-			return this.oFlexController.createChange({}, mControl)
+			return this.oFlexController.createChangeWithControlSelector({}, mControl)
 				.then(function(oChange) {
 					assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the ID as NOT local.");
 					assert.deepEqual(oChange.getDefinition().selector.id, this.oControl.getId(), "the selector flags the ID as NOT local.");
@@ -873,17 +873,47 @@ function (
 			};
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(oDummyChangeHandler);
 
-			return this.oFlexController.createChange({}, mControl1)
+			return this.oFlexController.createChangeWithControlSelector({}, mControl1)
 				.catch(function() {
 					assert.ok(true, "then an exception is thrown");
 				})
-				.then(this.oFlexController.createChange.bind(this.oFlexController, {}, mControl2))
+				.then(this.oFlexController.createChangeWithControlSelector.bind(this.oFlexController, {}, mControl2))
 				.catch(function() {
 					assert.ok(true, "then an exception is thrown");
 				})
-				.then(this.oFlexController.createChange.bind(this.oFlexController, {}, mControl3))
+				.then(this.oFlexController.createChangeWithControlSelector.bind(this.oFlexController, {}, mControl3))
 				.catch(function() {
 					assert.ok(true, "then an exception is thrown");
+				});
+		});
+
+		QUnit.test("creates a change for extension point", function (assert) {
+			var mExtensionPointReference = {
+				name: "ExtensionPoint1",
+				view: {
+					getId: function () {
+						return "testScenarioComponent---myView";
+					}
+				}
+			};
+			var mExpectedSelector = {
+				name: mExtensionPointReference.name,
+				viewSelector: {
+					id: mExtensionPointReference.view.getId(),
+					idIsLocal: false
+				}
+			};
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			var oDummyChangeHandler = {
+				completeChangeContent: function () {}
+			};
+			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(oDummyChangeHandler);
+			sandbox.spy(JsControlTreeModifier, "getSelector");
+
+			return this.oFlexController.createChangeWithExtensionPointSelector({}, mExtensionPointReference)
+				.then(function(oChange) {
+					assert.deepEqual(oChange.getDefinition().selector, mExpectedSelector, "the selector is correctly set");
+					assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
 				});
 		});
 	});

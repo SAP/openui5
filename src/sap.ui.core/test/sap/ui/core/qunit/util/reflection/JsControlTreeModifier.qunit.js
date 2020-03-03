@@ -5,6 +5,7 @@ sap.ui.define([
 	'sap/m/Label',
 	'sap/m/Page',
 	'sap/m/QuickViewPage',
+	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/core/UIComponent",
@@ -19,6 +20,7 @@ function(
 	Label,
 	Page,
 	QuickViewPage,
+	XMLView,
 	JsControlTreeModifier,
 	StashedControlSupport,
 	UIComponent,
@@ -37,6 +39,35 @@ function(
 				name: "sap.ui.test.other",
 				id: "testComponent"
 			});
+			var oXmlString =
+				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<HBox id="hbox1">' +
+					'<items>' +
+						'<Button id="button1" text="Button1" />' +
+						'<Button id="button2" text="Button2" />' +
+						'<Button id="button3" text="Button3" />' +
+						'<core:ExtensionPoint name="ExtensionPoint1">' +
+							'<Label id="default-label1" text="Extension point label1 - default content" />' +
+						'</core:ExtensionPoint>' +
+						'<Label id="label1" text="TestLabel1" />' +
+					'</items>' +
+				'</HBox>' +
+				'<Panel id="panel">' +
+						'<core:ExtensionPoint name="ExtensionPoint2" />' +
+						'<Label id="label2" text="TestLabel2" />' +
+						'<core:ExtensionPoint name="ExtensionPoint3" />' +
+				'</Panel>' +
+				'<HBox id="hbox2">' +
+					'<Button id="button4" text="Button4" />' +
+					'<Button id="button5" text="Button5" />' +
+					'<core:ExtensionPoint name="ExtensionPoint3" />' +
+					'<Label id="label3" text="TestLabel3" />' +
+				'</HBox>' +
+			'</mvc:View>';
+			return XMLView.create({id: "testapp---view", definition: oXmlString})
+				.then(function(oXmlView) {
+					this.oXmlView = oXmlView;
+				}.bind(this));
 		},
 
 		afterEach: function () {
@@ -44,6 +75,7 @@ function(
 				this.oControl.destroy();
 			}
 			this.oComponent.destroy();
+			this.oXmlView.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -203,6 +235,33 @@ function(
 			assert.strictEqual(this.oControl.getCustomData().length, 0);
 
 			oModel.destroy();
+		});
+
+		QUnit.test("when getExtensionPointInfo is called", function (assert) {
+			var oExtensionPointInfo1 = JsControlTreeModifier.getExtensionPointInfo("ExtensionPoint1", this.oXmlView);
+			assert.equal(oExtensionPointInfo1.parent.getId(), "testapp---view--hbox1", "then the returned object contains the parent control");
+			assert.equal(oExtensionPointInfo1.aggregationName, "items", "and the aggregation name");
+			assert.equal(oExtensionPointInfo1.index, 3, "and the index");
+			assert.ok(Array.isArray(oExtensionPointInfo1.defaultContent), "and the defaultContent is an Array");
+			assert.equal(oExtensionPointInfo1.defaultContent.length, 1, "and the defaultContent contains one item");
+			assert.equal(oExtensionPointInfo1.defaultContent[0].getId(), "testapp---view--default-label1", "and the default label is returned");
+
+			var oExtensionPointInfo2 = JsControlTreeModifier.getExtensionPointInfo("ExtensionPoint2", this.oXmlView);
+			assert.equal(oExtensionPointInfo2.parent.getId(), "testapp---view--panel", "then the returned object contains the parent control");
+			assert.equal(oExtensionPointInfo2.aggregationName, "content", "and the aggregation name");
+			assert.equal(oExtensionPointInfo2.index, 0, "and the index");
+			assert.ok(Array.isArray(oExtensionPointInfo2.defaultContent), "and the defaultContent is an Array");
+			assert.equal(oExtensionPointInfo2.defaultContent.length, 0, "and the defaultContent is empty");
+		});
+
+		QUnit.test("when getExtensionPointInfo is called with an extension point which is not on the view", function (assert) {
+			var oExtensionPointInfo = JsControlTreeModifier.getExtensionPointInfo("notAvailableExtensionPoint", this.oXmlView);
+			assert.notOk(oExtensionPointInfo, "then nothing is returned");
+		});
+
+		QUnit.test("when getExtensionPointInfo is called with an extension point which exists multiple times on the view", function (assert) {
+			var oExtensionPointInfo = JsControlTreeModifier.getExtensionPointInfo("ExtensionPoint3", this.oXmlView);
+			assert.notOk(oExtensionPointInfo, "then nothing is returned");
 		});
 	});
 
