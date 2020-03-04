@@ -101,8 +101,7 @@ sap.ui.define([
 		var sCustomDataValue;
 		var sCustomDataKey = this._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
 		if (bSaveRevertData) {
-			// '{' and '}' have to be escaped in order to correctly create the custom data from the view cache. Same effect as unbindProperty during runtime
-			sCustomDataValue = this._escapeCurlyBracketsInString(JSON.stringify(oChange.getRevertData()));
+			sCustomDataValue = JSON.stringify(oChange.getRevertData());
 		} else {
 			sCustomDataValue = "true";
 		}
@@ -167,10 +166,6 @@ sap.ui.define([
 			return FlexCustomData.failedChangesCustomDataKeyXml;
 		}
 		return FlexCustomData.failedChangesCustomDataKeyJs;
-	};
-
-	FlexCustomData._escapeCurlyBracketsInString = function(sText) {
-		return sText.replace(/{/g, '\\\{').replace(/}/g, '\\\}');
 	};
 
 	FlexCustomData._getCustomDataKey = function(oChange, sIdentifier) {

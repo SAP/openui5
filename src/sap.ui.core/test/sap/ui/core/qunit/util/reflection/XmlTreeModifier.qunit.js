@@ -417,7 +417,7 @@ function(
 			XmlTreeModifier.setProperty(oControl, "crossAppNavCallback", { key2 : 2});
 
 			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
-			assert.strictEqual(sStringifiedData, '{"key2":2}', "returns json value stringified and escaped");
+			assert.strictEqual(sStringifiedData, '\\{"key2":2\\}', "returns json value stringified and escaped");
 		});
 
 		QUnit.test("setProperty for properties of type array", function (assert) {
@@ -425,7 +425,7 @@ function(
 			XmlTreeModifier.setProperty(oControl, "crossAppNavCallback", [{ key2 : 2}]);
 
 			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
-			assert.strictEqual(sStringifiedData, '[{"key2":2}]', "returns json value stringified and escaped");
+			assert.strictEqual(sStringifiedData, '[\\{"key2":2\\}]', "returns json value stringified and escaped");
 		});
 
 		QUnit.test("getPropertyBinding for bound properties", function(assert) {
