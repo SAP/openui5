@@ -28,10 +28,10 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 		library: "sap.m",
 		properties: {
 			/**
-			 * Defines a predicate to test each data state of the messages.
+			 * Defines a predicate to test each message of the data state.
 			 *
-			 * This callback gets called via the {@link sap.ui.model.DataState data state} parameter.
-			 * Return <code>true</code> to keep the data state, <code>false</code> otherwise.
+			 * This callback gets called using the {@link sap.ui.core.message.Message message} and {@link sap.ui.core.Control related control} parameters.
+			 * Returns <code>true</code> to keep the message, <code>false</code> otherwise.
 			 */
 			filter: {type: "function", invalidate: false}
 		},
@@ -128,6 +128,24 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 	};
 
 
+	/**
+	 * Refreshes the messages displayed for the current data state.
+	 *
+	 * The current data state is evaluated again, and the filters are applied.
+	 *
+	 * @public
+	 */
+	DataStateIndicator.prototype.refresh = function() {
+		if (this.isActive()) {
+			var sBindingName = this._getBindingName();
+			var oBinding = this.getControl().getBinding(sBindingName);
+			if (oBinding) {
+				this._processDataState(oBinding.getDataState());
+			}
+		}
+	};
+
+
 	DataStateIndicator.prototype._getBindingName = function() {
 		return this.getControlPluginConfig("defaultBindingName");
 	};
@@ -157,13 +175,15 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 		}
 
 		var aMessages = oDataState.getMessages();
+		var oControl = this.getControl();
 		var fnFilter = this.getFilter();
 		if (fnFilter) {
-			aMessages = aMessages.filter(fnFilter);
+			aMessages = aMessages.filter(function(oMessage) {
+				return fnFilter(oMessage, oControl);
+			});
 		}
 
 		if (aMessages.length) {
-			var oControl = this.getControl();
 			var oFirstMessage = aMessages[0];
 			var sBindingName = this._getBindingName();
 			var sBindingPath = oControl.getBinding(sBindingName).getPath();
