@@ -1,13 +1,15 @@
 /* ================================== */
-/* CSS for control sap.f/Card  */
-/* Base theme          */
+/* CSS for control sap.f/Card         */
+/* Base theme                         */
 /* ================================== */
+
+@_sap_f_card_BottomHeaderBorder: 0.0625rem solid @sapUiTileSeparatorColor;
 @_sap_f_Card_ContentPadding: 1rem;
-@_sap_f_Card_HeaderIconColor: #6a6d70;
-@_sap_f_Card_HeaderBorderBottom: 1px solid darken(@sapUiTileBackground, 20);
-@_sap_f_Card_HeaderHoverColor: @sapUiTileHoverBackground;
-@_sap_f_Card_HeaderActiveColor: @sapUiTileActiveBackground;
 @_sap_f_Card_FocusBorderWidth: 1px;
+@_sap_f_Card_HeaderIconColor: #6a6d70;
+@_sap_f_Card_HeaderBorderBottom: none;
+@_sap_f_card_HeaderBoxShadow: @sapUiShadowHeader;
+@_sap_f_Card_HeaderFocusBorderBottomOffset: 1px;
 
 .sapFCard {
   position: relative;
@@ -80,6 +82,8 @@
 	flex-shrink: 0;
 	background: @sapUiTileBackground;
 	border-bottom: @_sap_f_Card_HeaderBorderBottom;
+	box-shadow: @_sap_f_card_HeaderBoxShadow;
+	z-index: 1;
 	padding: @_sap_f_Card_ContentPadding;
 	display: flex;
 	outline: none;
@@ -165,8 +169,9 @@
 }
 
 .sapFCard.sapFCardBottomHeader .sapFCardHeader {
+	border-top: @_sap_f_card_BottomHeaderBorder;
 	border-bottom: none;
-	border-top: @_sap_f_Card_HeaderBorderBottom;
+	box-shadow: none;
 }
 
 .sapFCard .sapFCardHeader.sapFCardNumericHeader {
@@ -355,31 +360,29 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 			cursor: pointer;
 		}
 
-		&.sapFCardClickable:hover{
-			background: @_sap_f_Card_HeaderHoverColor;
+		&.sapFCardClickable:hover {
+			background: @sapUiTileHoverBackground;
 		}
 
-		&.sapFCardClickable:active{
-			background: @_sap_f_Card_HeaderActiveColor;
+		&.sapFCardClickable:active {
+			background: @sapUiTileActiveBackground;
 		}
 	}
 }
 
-.sapFCardHeader:focus::before,
-.sapFCard .sapFCardHeader.sapFCardNumericHeader:focus::before {
+.sapFCardHeader:focus::before {
 	content: '';
 	display: block;
 	position: absolute;
 	left: 1px;
-	bottom: 1px;
+	bottom: @_sap_f_Card_HeaderFocusBorderBottomOffset;
 	right: 1px;
 	top: 1px;
 	border: @_sap_f_Card_FocusBorderWidth dotted @sapUiContentFocusColor;
 	pointer-events: none;
 }
 
-html[data-sap-ui-browser^="ie"] .sapFCardHeader:focus::before,
-html[data-sap-ui-browser^="ie"] .sapFCard .sapFCardHeader.sapFCardNumericHeader:focus::before {
+html[data-sap-ui-browser^="ie"] .sapFCardHeader:focus::before {
 	border: @_sap_f_Card_FocusBorderWidth dashed @sapUiContentFocusColor;
 }
 
