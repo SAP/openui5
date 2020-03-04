@@ -10691,6 +10691,24 @@ sap.ui.define([
 			assert.deepEqual(that.oView.byId("table").getItems().map(function (oItem) {
 				return oItem.getBindingContext().getPath();
 			}), ["/EMPLOYEES('1')", "/EMPLOYEES('2')"]);
+
+			// #requestSideEffects w/ multi-segment $expand path
+			// Note: this justifies the complicated handling inside _Helper.intersectQueryOptions
+			that.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)"
+					+ "&$select=ID&$filter=ID eq '1' or ID eq '2'", {value : [{
+						ID : "1",
+						LOCATION : null
+					}, {
+						ID : "2",
+						LOCATION : null
+					}]});
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("table").getBinding("items").getHeaderContext()
+					.requestSideEffects([{$PropertyPath : "LOCATION"}]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
