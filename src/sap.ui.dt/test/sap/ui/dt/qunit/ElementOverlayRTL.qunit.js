@@ -114,13 +114,13 @@ sap.ui.define([
 		QUnit.test("then", function(assert) {
 			//Math.round is required for IE and Edge
 			assert.equal(
-				Math.round(this.oButtonOverlay.$().offset().top),
-				Math.round(this.oButton.$().offset().top),
+				Math.ceil(this.oButtonOverlay.$().offset().top),
+				Math.ceil(this.oButton.$().offset().top),
 				"overlay has same top position as the control"
 			);
 			assert.equal(
-				Math.round(this.oButtonOverlay.$().offset().left),
-				Math.round(this.oButton.$().offset().left),
+				Math.ceil(this.oButtonOverlay.$().offset().left),
+				Math.ceil(this.oButton.$().offset().left),
 				"overlay has same left position as the control"
 			);
 		});
