@@ -902,7 +902,12 @@ sap.ui.define([
 	 *   "14.5.13 Expression edm:PropertyPath" objects describing which properties need to be
 	 *   loaded because they may have changed due to side effects of a previous update, for example
 	 *   <code>[{$PropertyPath : "TEAM_ID"}, {$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"},
-	 *   {$PropertyPath : "EMPLOYEE_2_TEAM/Team_Id"}]</code>
+	 *   {$PropertyPath : "EMPLOYEE_2_TEAM/Team_Id"}]</code>. An empty navigation property path
+	 *   means that the whole entity may have changed, including its navigation properties. Since
+	 *   1.75, a property path may end with a "*" segment to indicate that all structural properties
+	 *   may have changed, but no navigation properties (unless listed explicitly), for example
+	 *   <code>[{$PropertyPath : "*"}, {$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"}]</code> or
+	 *   <code>[{$PropertyPath : "EMPLOYEE_2_MANAGER/*"}]</code>.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used (since 1.69.0); if not specified, the update group ID for the
 	 *   context's binding is used, see "$$updateGroupId" at
@@ -934,6 +939,25 @@ sap.ui.define([
 		var aPaths,
 			that = this;
 
+		/*
+		 * Tells whether the given property path is OK.
+		 *
+		 * @param {string} sPropertyPath
+		 * @returns {boolean}
+		 */
+		function isPropertyPath(sPropertyPath) {
+			if (!sPropertyPath) {
+				return false;
+			}
+			if (sPropertyPath === "*") {
+				return true;
+			}
+			if (sPropertyPath.endsWith("/*")) {
+				sPropertyPath = sPropertyPath.slice(0, -2);
+			}
+			return !sPropertyPath.includes("*");
+		}
+
 		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
 		if (this.isTransient()) {
@@ -949,10 +973,11 @@ sap.ui.define([
 
 		aPaths = aPathExpressions.map(function (oPath) {
 			if (oPath && typeof oPath === "object") {
-				if (oPath.$PropertyPath) {
+				if (isPropertyPath(oPath.$PropertyPath)) {
 					return oPath.$PropertyPath;
 				}
-				if ("$NavigationPropertyPath" in oPath) {
+				if (typeof oPath.$NavigationPropertyPath === "string"
+						&& !oPath.$NavigationPropertyPath.includes("*")) {
 					return oPath.$NavigationPropertyPath;
 				}
 			}

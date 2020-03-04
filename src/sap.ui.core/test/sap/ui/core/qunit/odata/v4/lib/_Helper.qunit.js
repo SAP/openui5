@@ -2033,6 +2033,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("intersectQueryOptions: no query options", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.intersectQueryOptions(undefined, ["*"]), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("intersectQueryOptions: no $select", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.intersectQueryOptions({}, ["*"]), null);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("intersectQueryOptions: empty $select", function (assert) {
 		// code under test
 		assert.strictEqual(_Helper.intersectQueryOptions({$select : []}, ["B"]), null);
@@ -2199,6 +2211,12 @@ sap.ui.define([
 //			$select : ["E/toF"],
 //			"sap-client" : "123"
 //		}
+	}, {
+		aPaths : ["X", "*", "Z"],
+		mResult : {
+			$select : ["A", "B", "C", "E/toF"],
+			"sap-client" : "123"
+		}
 	}].forEach(function (o, i) {
 		var sTitle = "intersectQueryOptions: " + o.aPaths + ", " + i;
 
