@@ -222,6 +222,15 @@ sap.ui.define([
 		oIcon.setColor("red");
 		assert.ok(!oIcon.$().hasClass("sapUiIconColorNegative"), "Negative class is removed");
 
+		oIcon.setColor(IconColor.NonInteractive);
+		assert.ok(oIcon.$().hasClass("sapUiIconColorNonInteractive"), "NonInteractive class is set");
+		oIcon.setColor(IconColor.Tile);
+		assert.ok(oIcon.$().hasClass("sapUiIconColorTile"), "Tile class is set");
+		assert.ok(!oIcon.$().hasClass("sapUiIconColorNonInteractive"), "NonInteractive class is removed");
+		oIcon.setColor(IconColor.Marker);
+		assert.ok(oIcon.$().hasClass("sapUiIconColorMarker"), "Marker class is set");
+		assert.ok(!oIcon.$().hasClass("sapUiIconColorTile"), "Tile class is removed");
+
 		oIcon.destroy();
 	});
 
@@ -241,6 +250,15 @@ sap.ui.define([
 		assert.ok(oIcon.$().hasClass("sapUiIconBGColorNegative"), "Negative class is set");
 		oIcon.setBackgroundColor("red");
 		assert.ok(!oIcon.$().hasClass("sapUiIconBGColorNegative"), "Negative class is removed");
+
+		oIcon.setBackgroundColor(IconColor.NonInteractive);
+		assert.ok(oIcon.$().hasClass("sapUiIconBGColorNonInteractive"), "NonInteractive class is set");
+		oIcon.setBackgroundColor(IconColor.Tile);
+		assert.ok(oIcon.$().hasClass("sapUiIconBGColorTile"), "Tile class is set");
+		assert.ok(!oIcon.$().hasClass("sapUiIconBGColorNonInteractive"), "NonInteractive class is removed");
+		oIcon.setBackgroundColor(IconColor.Marker);
+		assert.ok(oIcon.$().hasClass("sapUiIconBGColorMarker"), "Marker class is set");
+		assert.ok(!oIcon.$().hasClass("sapUiIconGColorTile"), "Tile class is removed");
 
 		oIcon.destroy();
 	});
