@@ -12,7 +12,6 @@ sap.ui.define([
 	// Control initialization
 
 	function testMultiAggregation(sName, oCtrl, assert){
-		oCtrl.getMetadata()._enrichChildInfos();
 		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
 		var oType = jQuery.sap.getObject(oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
 

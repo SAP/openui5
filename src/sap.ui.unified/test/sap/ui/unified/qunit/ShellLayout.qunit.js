@@ -41,7 +41,6 @@ sap.ui.define([
 
 
 	function testMultiAggregation(sName, oCtrl, sGetter, sMutator, assert){
-		oCtrl.getMetadata()._enrichChildInfos();
 		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
 		var oType = jQuery.sap.getObject(!oAggMetaData || oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
 

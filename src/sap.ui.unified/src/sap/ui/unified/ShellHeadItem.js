@@ -186,14 +186,14 @@ sap.ui.define([
 		var sIco = this.getIcon();
 		if (IconPool.isIconURI(sIco)) {
 			var oIconInfo = IconPool.getIconInfo(sIco);
-			$Ico.html("").css("style", "");
+			$Ico.html("").attr("style", "");
 			if (oIconInfo) {
 				$Ico.text(oIconInfo.content).attr("role", "presentation").attr("aria-label", oIconInfo.text || oIconInfo.name).css("font-family", "'" + oIconInfo.fontFamily + "'");
 			}
 		} else {
 			var $Image = this.$("img-inner");
 			if ($Image.length == 0 || $Image.attr("src") != sIco) {
-				$Ico.css("style", "").attr("aria-label", null).html("<img role='presentation' id='" + this.getId() + "-img-inner' src='" + encodeXML(sIco) + "'/>");
+				$Ico.attr("style", "").attr("aria-label", null).html("<img role='presentation' id='" + this.getId() + "-img-inner' src='" + encodeXML(sIco) + "'/>");
 			}
 		}
 	};
