@@ -739,7 +739,7 @@ sap.ui.define([
 			for ( var i = 0; i < aDomRefs.length; i++) {
 				var $DomRef = jQuery(aDomRefs[i]);
 				if ($DomRef.attr("data-sap-month") == this._oFormatYyyymm.format(oFocusedDate.toUTCJSDate(), true)) {
-					$DomRef.focus();
+					$DomRef.trigger("focus");
 					break;
 				}
 			}
@@ -1510,14 +1510,14 @@ sap.ui.define([
 
 	function _bindMousemove(){
 
-		jQuery(window.document).bind('mousemove', this._mouseMoveProxy);
+		jQuery(window.document).on('mousemove', this._mouseMoveProxy);
 		this._bMouseMove = true;
 
 	}
 
 	function _unbindMousemove(){
 
-		jQuery(window.document).unbind('mousemove', this._mouseMoveProxy);
+		jQuery(window.document).off('mousemove', this._mouseMoveProxy);
 		this._bMouseMove = undefined;
 
 	}

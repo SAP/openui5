@@ -78,7 +78,7 @@ sap.ui.define([
 	function checkMonthNavigation(sSelectedDate, iExpectedMonth, sExpectedYear, bForwardNavigation, assert) {
 
 		initializeCalendar(sSelectedDate);
-		oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).click();
+		oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).trigger("click");
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth], "Month is correct after navigation: " + aMonthNames[iExpectedMonth]);
@@ -88,7 +88,7 @@ sap.ui.define([
 
 	function checkYearPicker(sSelectedDate, sExpectedStartYear, sExpectedEndYear, sExpectedSelYear, assert) {
 		initializeCalendar(sSelectedDate);
-		oCal1.$("-Head-B2").click();
+		oCal1.$("-Head-B2").trigger("click");
 		sap.ui.getCore().applyChanges();
 
 		var aYears = oCal1.$("-YP").find(".sapUiCalItem"),

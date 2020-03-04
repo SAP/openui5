@@ -1013,7 +1013,7 @@ sap.ui.define([
 				var $DomRef = jQuery(aDomRefs[i]);
 				if (!$DomRef.hasClass("sapUiCalItemOtherMonth")) {
 					if ($DomRef.attr("data-sap-day") === this._oFormatYyyymmdd.format(oFocusedDate.toUTCJSDate(), true)) {
-						$DomRef.focus();
+						$DomRef.trigger("focus");
 						break;
 					}
 				}
@@ -1194,7 +1194,7 @@ sap.ui.define([
 	 */
 	Month.prototype._bindMousemove = function( bFireEvent ){
 
-		jQuery(window.document).bind('mousemove', this._mouseMoveProxy);
+		jQuery(window.document).on('mousemove', this._mouseMoveProxy);
 		this._bMouseMove = true;
 
 		if (bFireEvent) {
@@ -1206,7 +1206,7 @@ sap.ui.define([
 
 	Month.prototype._unbindMousemove = function( bFireEvent ){
 
-		jQuery(window.document).unbind('mousemove', this._mouseMoveProxy);
+		jQuery(window.document).off('mousemove', this._mouseMoveProxy);
 		this._bMouseMove = undefined;
 		this._sLastTargetId = undefined;
 

@@ -839,7 +839,7 @@ sap.ui.define([
 
 		// remove the IFRAME
 		if (this.oIFrameRef) {
-			jQuery(this.oIFrameRef).unbind();
+			jQuery(this.oIFrameRef).off();
 			sap.ui.getCore().getStaticAreaRef().removeChild(this.oIFrameRef);
 			this.oIFrameRef = null;
 		}
@@ -857,7 +857,7 @@ sap.ui.define([
 		jQuery(this.oFileUpload).appendTo(oStaticArea);
 
 		// unbind the custom event handlers
-		jQuery(this.oFileUpload).unbind();
+		jQuery(this.oFileUpload).off();
 
 	};
 
@@ -874,7 +874,7 @@ sap.ui.define([
 		this._addLabelFeaturesToBrowse();
 
 		// event listener registration for change event
-		jQuery(this.oFileUpload).change(jQuery.proxy(this.handlechange, this));
+		jQuery(this.oFileUpload).on("change", jQuery.proxy(this.handlechange, this));
 
 		if (!this.bMobileLib) {
 			this.oFilePath.$().attr("tabindex", "-1");
@@ -1971,7 +1971,7 @@ sap.ui.define([
 		if (this.oBrowse &&  this.oBrowse.$().length) {
 			$browse = this.oBrowse.$();
 			$browse.attr("type', 'button"); // The default type of button is submit that's why on click of label there are submit of the form. This way we are avoiding the submit of form.
-			$browse.click(function(e) {
+			$browse.on("click", function(e) {
 				e.preventDefault();
 				this.FUEl.click(); // The default behaviour on click on label is to open "open file" dialog. The only way to attach click event that is transferred from the label to the button is this way. AttachPress and attachTap don't work in this case.
 			}.bind(this));

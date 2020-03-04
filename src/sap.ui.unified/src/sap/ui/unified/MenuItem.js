@@ -158,7 +158,7 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 
 	MenuItem.prototype.focus = function(oMenu){
 		if (this.getEnabled() && this.getVisible()) {
-			this.$().focus();
+			this.$().trigger("focus");
 		} else {
 			oMenu.focus();
 		}

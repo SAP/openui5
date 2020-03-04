@@ -226,7 +226,7 @@ sap.ui.define([
 		oExternalControl.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oExternalControl.$().focus();
+		oExternalControl.$().trigger("focus");
 		_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' should be focused", assert);
 
 		//Act
@@ -271,7 +271,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "Cal1--Head-B2");
 		sap.ui.getCore().applyChanges();
 		var $NewYear = jQuery("#Cal1--YP-y20130101"); // use keybord to select year to prevent event processing from ItemNavigation
-		$NewYear.focus();
+		$NewYear.trigger("focus");
 		qutils.triggerKeydown($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery(jQuery("#Cal1--YP").get(0)).is(":visible"), "Calendar1: Year picker not visible after selecting year");
@@ -340,7 +340,7 @@ sap.ui.define([
 		var $selectMonth = jQuery("#Cal1--MonthsRow-20130501");
 		bSelectFired = false;
 		oSelectedDate = undefined;
-		$selectMonth.focus();
+		$selectMonth.trigger("focus");
 		qutils.triggerKeyboardEvent($selectMonth[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.ok(bSelectFired, "Select event fired");
 		assert.equal(oFormatYyyymmdd.format(oSelectedDate), "20130501", "Month was selected");
@@ -366,7 +366,7 @@ sap.ui.define([
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Year picker visible");
 
 		var $Date = jQuery("#CalP--Cal--YP-y20160101");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		assert.equal(sap.ui.getCore().byId("CalP").getStartDate().getFullYear(), 2016, "start date is set correctly");

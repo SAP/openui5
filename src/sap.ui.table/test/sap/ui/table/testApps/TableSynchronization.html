@@ -165,7 +165,7 @@
 							var iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"), 10);
 							that.oSyncInterface.syncRowHover(iIndex, false);
 						});
-						jQuery(oRow).click(function(oEvent) {
+						jQuery(oRow).on("click", function(oEvent) {
 							var iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"), 10);
 							var bSelected = oEvent.target.getAttribute("data-selected") === "true";
 							that.oSyncInterface.syncRowSelection(iIndex, !bSelected);

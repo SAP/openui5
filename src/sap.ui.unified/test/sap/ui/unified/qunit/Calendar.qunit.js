@@ -343,7 +343,7 @@ sap.ui.define([
 		assert.equal(jQuery(aYears[0]).text(), "1422 AH", "Calendar2: first displayed year");
 
 		$Date = jQuery("#Cal2--YP-y20101208");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		oCal2.setPrimaryCalendarType(sap.ui.getCore().getConfiguration().getCalendarType());
@@ -435,7 +435,7 @@ sap.ui.define([
 
 		//Assert
 		var $selectedDates = oCal.$().find(".sapUiCalItems .sapUiCalItemSel");
-		assert.equal($selectedDates.size(), 1, "Initially there should be one selected date");
+		assert.equal($selectedDates.length, 1, "Initially there should be one selected date");
 
 		//Act
 		oCal.removeSelectedDate(oSelectedDateRange);
@@ -687,7 +687,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery(jQuery("#Cal2--MP").get(0)).is(":visible"), "Month picker rendered");
 		var $July = jQuery("#Cal2--MP-m6"); // use keybord to select month to prevent event processing from ItemNavigation
-		$July.focus();
+		$July.trigger("focus");
 		qutils.triggerKeydown($July.get(0), KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery(jQuery("#Cal2--MP").get(0)).is(":visible"), "Month picker removed after selecting month");
@@ -704,7 +704,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "Cal2--Head-B1");
 		sap.ui.getCore().applyChanges();
 		var $January = jQuery("#Cal2--MP-m0"); // use keybord to select month to prevent event processing from ItemNavigation
-		$January.focus();
+		$January.trigger("focus");
 		qutils.triggerKeydown($January.get(0), KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
@@ -782,7 +782,7 @@ sap.ui.define([
 		assert.equal(jQuery(aYears[aYears.length - 1]).text(), "2000", "last rendered year after prev clicked");
 
 		var $NewYear = jQuery("#Cal2--YP-y19990101"); // use keybord to select month to prevent event processing from ItemNavigation
-		$NewYear.focus();
+		$NewYear.trigger("focus");
 		qutils.triggerKeydown($NewYear.get(0), KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker not visible after selecting year");
@@ -809,7 +809,7 @@ sap.ui.define([
 		assert.equal(jQuery(aYears[aYears.length - 1]).text(), "2028", "last rendered year after prev clicked");
 
 		$NewYear = jQuery("#Cal2--YP-y20110101"); // use keybord to select month to prevent event processing from ItemNavigation
-		$NewYear.focus();
+		$NewYear.trigger("focus");
 		qutils.triggerKeydown($NewYear.get(0), KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker not visible after selecting year");
@@ -841,7 +841,7 @@ sap.ui.define([
 		assert.equal(jQuery(aYears[aYears.length - 1]).text(), "9999", "Max Year is last rendered year");
 
 		var $Date = jQuery("#Cal1--YP-y99990101");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeydown($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
@@ -861,7 +861,7 @@ sap.ui.define([
 		assert.equal(jQuery(aYears[0]).text(), "0001", "Min Year is first rendered year");
 
 		$Date = jQuery("#Cal1--YP-y00010101");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeydown($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
@@ -914,7 +914,7 @@ sap.ui.define([
 		assert.ok(!jQuery(aYears[4]).attr("aria-disabled"), "Calendar3: 2000 has no aria-disabled");
 
 		$Date = jQuery("#Cal3--YP-y20140101");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeydown($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
@@ -986,7 +986,7 @@ sap.ui.define([
 		var oToday = new Date();
 		bSelectFired = false;
 		oSelectedDate = undefined;
-		$Today.focus();
+		$Today.trigger("focus");
 		qutils.triggerKeyboardEvent($Today[0], KeyCodes.ENTER, false, false, false);
 		assert.ok(bSelectFired, "Select event fired");
 		assert.equal(oSelectedDate.getDate(), oToday.getDate(), "Today was selected");
@@ -996,7 +996,7 @@ sap.ui.define([
 		bSelectFired = false;
 		oSelectedDate = undefined;
 		var $Date = jQuery("#Cal3--Month0-20150110");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 		assert.ok(!bSelectFired, "No Select event fired on disabled date");
 		assert.ok(!$Date.hasClass("sapUiCalItemSel"), "Disabled date not marked as selected");
@@ -1014,7 +1014,7 @@ sap.ui.define([
 			$otherSelectedDate,
 			$otherSelectedDateFromTheOtherMonth;
 
-		$selectedDate.focus();
+		$selectedDate.trigger("focus");
 		qutils.triggerKeydown($selectedDate, KeyCodes.ENTER);
 		assert.ok($selectedDate.hasClass("sapUiCalItemSel"),
 				"30th of November is selected in the calendar of November");
@@ -1023,14 +1023,14 @@ sap.ui.define([
 
 		$otherSelectedDate = jQuery("#Cal4--Month0-20161129");
 		$otherSelectedDateFromTheOtherMonth = jQuery("#Cal4--Month1-20161129");
-		$otherSelectedDate.focus();
+		$otherSelectedDate.trigger("focus");
 		qutils.triggerKeydown($otherSelectedDate, KeyCodes.ENTER);
 		assert.ok($otherSelectedDate.hasClass("sapUiCalItemSel"),
 				"29th of November is selected in the calendar of November");
 		assert.ok($otherSelectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
 				"29th of November is also selected in the calendar of December");
 
-		$otherSelectedDate.focus();
+		$otherSelectedDate.trigger("focus");
 		qutils.triggerKeydown($otherSelectedDate, KeyCodes.ENTER);
 		assert.ok(!$otherSelectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
 				"Both selected 29th of November are deselected successfully");
@@ -1478,7 +1478,7 @@ QUnit.module("Misc");
 		//act
 		oCal6.displayDate(new Date(2017, 6, 8));
 		$selectedDate = jQuery("#Cal6--Month0-20170725");
-		$selectedDate.focus();
+		$selectedDate.trigger("focus");
 		qutils.triggerKeydown($selectedDate, KeyCodes.ENTER);
 		sap.ui.getCore().applyChanges();
 
@@ -1496,7 +1496,7 @@ QUnit.module("Misc");
 		//act
 		oCal7.displayDate(new Date(2017, 6, 8));
 		$selectedDate = jQuery("#Cal7--Month1-20170825");
-		$selectedDate.focus();
+		$selectedDate.trigger("focus");
 		qutils.triggerKeydown($selectedDate, KeyCodes.ENTER);
 		sap.ui.getCore().applyChanges();
 

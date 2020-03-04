@@ -407,7 +407,7 @@ sap.ui.define([
 			// If only the up or down key was pressed while the table is in navigation mode, and a non-interactive element inside a cell is focused,
 			// set the focus to the cell this element is inside.
 			if (!bActionModeNavigation && $ParentCell) {
-				$ParentCell.focus();
+				$ParentCell.trigger("focus");
 				return;
 			}
 
@@ -448,14 +448,14 @@ sap.ui.define([
 
 				// Leave the action mode when trying to navigate up on the first row.
 				if (!bActionMode && $ParentCell) {
-					$ParentCell.focus(); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
+					$ParentCell.trigger("focus"); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
 				} else {
 					oKeyboardExtension.setActionMode(false);
 				}
 			} else if (sDirection === NavigationDirection.DOWN && oCellInfo.rowIndex === oTable._getRowCounts().count - 1) {
 				// Leave the action mode when trying to navigate down on the last row.
 				if (!bActionMode && $ParentCell) {
-					$ParentCell.focus(); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
+					$ParentCell.trigger("focus"); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
 				} else {
 					var oCreationRow = oTable.getCreationRow();
 
@@ -841,7 +841,7 @@ sap.ui.define([
 
 		if ($Target.hasClass("sapUiTableOuterBefore") || $Target.hasClass("sapUiTableOuterAfter")
 			|| (oEvent.target != this.getDomRef("overlay") && this.getShowOverlay())) {
-			this.$("overlay").focus();
+			this.$("overlay").trigger("focus");
 
 		} else if ($Target.hasClass("sapUiTableCtrlBefore")) {
 			var bNoData = TableUtils.isNoDataVisible(this);
@@ -857,7 +857,7 @@ sap.ui.define([
 			}
 		}/* else {
 			// If needed and NoData visible, then set the focus to NoData area.
-			this.$("noDataCnt").focus();
+			this.$("noDataCnt").trigger("focus");
 		}*/
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
@@ -914,7 +914,7 @@ sap.ui.define([
 			if (!bIsInActionMode && bIsInCell) {
 				// A non-interactive element inside a cell, or any kind of element inside a column header cell is focused.
 				// Focus the cell this element is inside.
-				$Cell.focus();
+				$Cell.trigger("focus");
 
 			} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
 				// Focus the interactive element inside a column header cell.
@@ -1126,7 +1126,7 @@ sap.ui.define([
 
 		} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
 			if (TableUtils.isNoDataVisible(this)) {
-				this.$("noDataCnt").focus();
+				this.$("noDataCnt").trigger("focus");
 			} else {
 				KeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
 			}
@@ -1145,7 +1145,7 @@ sap.ui.define([
 			if ($Cell) {
 				// The target is a non-interactive element inside a data cell. We are not in action mode, so focus the cell.
 				oEvent.preventDefault();
-				$Cell.focus();
+				$Cell.trigger("focus");
 			}
 		}
 	};
@@ -1281,7 +1281,7 @@ sap.ui.define([
 			if ($Cell) {
 				// The target is a non-interactive element inside a data cell. We are not in action mode, so focus the cell.
 				oEvent.preventDefault();
-				$Cell.focus();
+				$Cell.trigger("focus");
 			}
 		}
 	};

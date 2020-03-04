@@ -340,19 +340,19 @@ sap.ui.define([
 		Device.browser.msie = false;
 		var $Cell = getCell(0, 0);
 		assert.ok(!$Cell.attr("data-sap-ui-table-focus"), "'data-sap-ui-table-focus' attribute not set");
-		$Cell.focus();
+		$Cell.trigger("focus");
 		assert.ok(!$Cell.attr("data-sap-ui-table-focus"), "'data-sap-ui-table-focus' attribute not set");
 		getCell(0, 1, true, assert); // Put focus somewhere else
 
 		Device.browser.msie = true;
 		$Cell = getCell(0, 0);
 		assert.ok(!$Cell.attr("data-sap-ui-table-focus"), "'data-sap-ui-table-focus' attribute not set");
-		$Cell.focus();
+		$Cell.trigger("focus");
 		var sValue1 = $Cell.attr("data-sap-ui-table-focus");
 		assert.ok(!!sValue1, "'data-sap-ui-table-focus' attribute set");
 		getCell(0, 1, true, assert);
 		$Cell = getCell(0, 0);
-		$Cell.focus();
+		$Cell.trigger("focus");
 		var sValue2 = $Cell.attr("data-sap-ui-table-focus");
 		assert.ok(!!sValue2, "'data-sap-ui-table-focus' attribute set");
 		assert.ok(sValue1 != sValue2, "'data-sap-ui-table-focus' attribute value changed");
