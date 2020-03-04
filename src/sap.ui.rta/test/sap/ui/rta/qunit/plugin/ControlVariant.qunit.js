@@ -575,7 +575,7 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 
-			this.oModel = new VariantModel({}, undefined, oMockAppComponent);
+			this.oModel = new VariantModel({variantManagementReference: {variants: []}}, undefined, oMockAppComponent);
 			this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
 			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 

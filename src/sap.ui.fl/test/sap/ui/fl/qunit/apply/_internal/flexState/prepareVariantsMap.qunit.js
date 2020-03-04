@@ -35,15 +35,14 @@ sap.ui.define([
 
 				this.oVariantsMap = aValues[1];
 				this.sComponentId = "componentId";
-				this.oComponentDataStub = sandbox.stub();
 				this.mPropertyBag = {
+					unfilteredStorageResponse: {changes: {}},
 					storageResponse: this.oBackendResponse,
-					componentId: this.sComponentId
+					componentId: this.sComponentId,
+					componentData: {
+						technicalParameters: {}
+					}
 				};
-				sandbox.stub(Component, "get")
-					.callThrough()
-					.withArgs(this.sComponentId)
-					.returns({getComponentData: this.oComponentDataStub});
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -57,14 +56,12 @@ sap.ui.define([
 
 		QUnit.test("when calling with required parameters without variant technical parameters", function(assert) {
 			var oVariantsMap = prepareVariantsMap(this.mPropertyBag);
-			assert.deepEqual(oVariantsMap, this.mPropertyBag.storageResponse.changes.variantSection, "then the variants map was set correctly");
+			assert.deepEqual(oVariantsMap, this.mPropertyBag.unfilteredStorageResponse.changes.variantSection, "then the variants map was set correctly");
 			assert.deepEqual(oVariantsMap, this.oVariantsMap, "then the variants map was returned correctly");
 		});
 
 		QUnit.test("when calling with required parameters with variant technical parameters set for a single variant management reference", function(assert) {
-			var oTechnicalParameters = {};
-			oTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference1"];
-			this.oComponentDataStub.returns({technicalParameters: oTechnicalParameters});
+			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference1"];
 
 			var oVariantsMap = prepareVariantsMap(this.mPropertyBag);
 
@@ -74,9 +71,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling with required parameters with variant technical parameters set for multiple variant management references", function(assert) {
-			var oTechnicalParameters = {};
-			oTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference1", "variant11"];
-			this.oComponentDataStub.returns({technicalParameters: oTechnicalParameters});
+			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference1", "variant11"];
 
 			var oVariantsMap = prepareVariantsMap(this.mPropertyBag);
 

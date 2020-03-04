@@ -181,8 +181,7 @@ sap.ui.define([
 			var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, oAppComponent, oFlexController);
 			fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
 			oAppComponent.addPropagationListener(fnPropagationListener);
-			var oData = oFlexController.getVariantModelData() || {};
-			var oVariantModel = new VariantModel(oData, oFlexController, oAppComponent);
+			var oVariantModel = new VariantModel({}, oFlexController, oAppComponent);
 			oAppComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
 			Measurement.end("flexProcessing");
 			return oVariantModel;

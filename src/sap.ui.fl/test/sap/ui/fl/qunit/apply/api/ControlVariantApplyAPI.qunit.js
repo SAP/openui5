@@ -143,7 +143,7 @@ sap.ui.define([
 			assert.ok(URLHandler.update.calledWithExactly({
 				updateURL: true,
 				updateHashEntry: false,
-				model: {},
+				model: sinon.match.object,
 				parameters: [],
 				silent: true
 			}), "then all variant URL parameter values are cleared");

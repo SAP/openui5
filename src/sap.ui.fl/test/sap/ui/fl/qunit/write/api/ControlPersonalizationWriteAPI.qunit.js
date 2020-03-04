@@ -200,7 +200,11 @@ sap.ui.define([
 				});
 				this.oComp = new MockComponent("testComponent");
 				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
-				var oVariantModel = new VariantModel({}, this.oFlexController, this.oComp);
+				var oVariantModel = new VariantModel({
+					variantManagement: {
+						variants: []
+					}
+				}, this.oFlexController, this.oComp);
 				sandbox.stub(oVariantModel, "addChange");
 				this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
 				this.oCompContainer = new ComponentContainer("sap-ui-static", {

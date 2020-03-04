@@ -6,25 +6,27 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/ui/fl/Layer",
+	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/StorageUtils"
 ],
 function(
 	jQuery,
 	XmlTreeModifier,
 	Component,
-	Layer,
+	Storage,
 	StorageResultMerger,
 	XmlPreprocessorImpl,
 	CacheManager,
 	AddSimpleFormGroup,
 	sinon,
-	Utils
+	Utils,
+	StorageUtils
 ) {
 	"use strict";
 
@@ -36,69 +38,72 @@ function(
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
 		beforeEach: function() {
-			sandbox.stub(StorageResultMerger, "merge").resolves({
-				changes : [{
-					fileName: "id_1504610195273_78_addSimpleFormGroup",
-					fileType: "change",
-					changeType: "addSimpleFormGroup",
-					reference: "sap.ui.fl.qunit.integration.async.testComponentWithView.Component",
-					packageName: "$TMP",
-					content: {
-						group: {
-							selector: {
-								id: sAddedSimpleFormGroupId,
-								idIsLocal: true
-							},
-							relativeIndex: 1
+			sandbox.stub(Storage, "loadFlexData").resolves(Object.assign(
+				StorageUtils.getEmptyFlexDataResponse(),
+				{
+					changes: [{
+						fileName: "id_1504610195273_78_addSimpleFormGroup",
+						fileType: "change",
+						changeType: "addSimpleFormGroup",
+						reference: "sap.ui.fl.qunit.integration.async.testComponentWithView.Component",
+						packageName: "$TMP",
+						content: {
+							group: {
+								selector: {
+									id: sAddedSimpleFormGroupId,
+									idIsLocal: true
+								},
+								relativeIndex: 1
+							}
+						},
+						selector: {
+							id: "rootView--myForm",
+							idIsLocal: true
+						},
+						layer: "CUSTOMER",
+						texts: {
+							groupLabel: {
+								value: "New Group",
+								type: "XFLD"
+							}
+						},
+						namespace: "apps/sap.ui.demoapps.rta.freestyle/changes/",
+						creation: "2017-09-05T11:16:46.701Z",
+						originalLanguage: "EN",
+						conditions: {},
+						context: "",
+						support: {
+							generator: "Change.createInitialFileContent",
+							service: "",
+							user: "",
+							sapui5Version: sap.ui.version
+						},
+						dependentSelector: {},
+						validAppVersions: {
+							creation: "${project.version}",
+							from: "${project.version}"
 						}
+					}],
+					contexts: [],
+					variantSection: {},
+					settings: {
+						isKeyUser: true,
+						isAtoAvailable: false,
+						isAtoEnabled: false,
+						isProductiveSystem: false
 					},
-					selector: {
-						id: "rootView--myForm",
-						idIsLocal: true
-					},
-					layer: Layer.CUSTOMER,
-					texts: {
-						groupLabel: {
-							value: "New Group",
-							type: "XFLD"
-						}
-					},
-					namespace: "apps/sap.ui.demoapps.rta.freestyle/changes/",
-					creation: "2017-09-05T11:16:46.701Z",
-					originalLanguage: "EN",
-					conditions: {},
-					context: "",
-					support: {
-						generator: "Change.createInitialFileContent",
-						service: "",
-						user: "",
-						sapui5Version: sap.ui.version
-					},
-					dependentSelector: {},
-					validAppVersions: {
-						creation: "${project.version}",
-						from: "${project.version}"
-					}
-				}],
-				contexts: [],
-				variantSection: {},
-				settings: {
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				},
-				etag: "MYETAG"
-			});
+					etag: "MYETAG"
+				})
+			);
 		},
-		afterEach: function() {
+		afterEach: function () {
 			sandbox.restore();
 			if (this.oComponent) {
 				this.oComponent.destroy();
 			}
 		}
-	}, function() {
-		QUnit.test("applies the change after the recreation of the changed control", function(assert) {
+	}, function () {
+		QUnit.test("applies the change after the recreation of the changed control", function (assert) {
 			var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
 			var oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
 			sandbox.stub(Utils, "isApplication").returns(true);

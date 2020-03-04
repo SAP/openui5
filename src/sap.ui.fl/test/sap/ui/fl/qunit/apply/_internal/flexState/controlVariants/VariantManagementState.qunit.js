@@ -67,17 +67,15 @@ sap.ui.define([
 
 				this.sReference = "componentReference";
 				this.sComponentId = "componentId";
-				this.oComponentDataStub = sandbox.stub();
 				this.mPropertyBag = {
+					unfilteredStorageResponse: {changes: {}},
 					storageResponse: this.oBackendResponse,
-					componentId: this.sComponentId
+					componentId: this.sComponentId,
+					componentData: {
+						technicalParameters: {}
+					}
 				};
 				this.oVariantsMap = {};
-
-				sandbox.stub(Component, "get")
-					.callThrough()
-					.withArgs(this.sComponentId)
-					.returns({getComponentData: this.oComponentDataStub});
 				sandbox.stub(VariantManagementState, "getContent")
 					.callThrough()
 					.withArgs(this.sReference)
@@ -106,9 +104,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing technical parameters for multiple variant management references", function(assert) {
-			var oTechnicalParameters = {};
-			oTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference1", "variant11"];
-			this.oComponentDataStub.returns({technicalParameters: oTechnicalParameters});
+			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference1", "variant11"];
 
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
@@ -129,9 +125,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing technical parameters for a single variant management reference", function(assert) {
-			var oTechnicalParameters = {};
-			oTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference1"];
-			this.oComponentDataStub.returns({technicalParameters: oTechnicalParameters});
+			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference1"];
 
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
@@ -151,9 +145,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing multiple technical parameters for a single variant management reference", function(assert) {
-			var oTechnicalParameters = {};
-			oTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference2", "variant11"];
-			this.oComponentDataStub.returns({technicalParameters: oTechnicalParameters});
+			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference2", "variant11"];
 
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
@@ -173,9 +165,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing valid and invalid technical parameters", function(assert) {
-			var oTechnicalParameters = {};
-			oTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["nonExistenceVariantManagement", "vmReference1"];
-			this.oComponentDataStub.returns({technicalParameters: oTechnicalParameters});
+			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["nonExistenceVariantManagement", "vmReference1"];
 
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
@@ -195,9 +185,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing technical parameters for an invalid variant management reference", function(assert) {
-			var oTechnicalParameters = {};
-			oTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["variant2"];
-			this.oComponentDataStub.returns({technicalParameters: oTechnicalParameters});
+			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["variant2"];
 
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
