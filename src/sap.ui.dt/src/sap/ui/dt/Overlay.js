@@ -531,7 +531,7 @@ function (
 	};
 
 	Overlay.prototype.focus = function() {
-		this.$().focus();
+		this.$().trigger("focus");
 	};
 
 	/**
@@ -703,7 +703,7 @@ function (
 	Overlay.prototype.attachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
 			if (typeof fnHandler === "function") {   // also do nothing if the second parameter is not a function
-				// store the parameters for bind()
+				// store the parameters for on()
 				if (!this._aBindParameters) {
 					this._aBindParameters = [];
 				}
@@ -719,7 +719,7 @@ function (
 					fnProxy : fnProxy
 				});
 
-				// if control is rendered, directly call bind()
+				// if control is rendered, directly call on()
 				this.$().on(sEventType, fnProxy);
 			}
 		}
@@ -751,8 +751,8 @@ function (
 						oParamSet = this._aBindParameters[i];
 						if (oParamSet.sEventType === sEventType && oParamSet.fnHandler === fnHandler && oParamSet.oListener === oListener) {
 							this._aBindParameters.splice(i, 1);
-							// if control is rendered, directly call unbind()
-							$.unbind(sEventType, oParamSet.fnProxy);
+							// if control is rendered, directly call off()
+							$.off(sEventType, oParamSet.fnProxy);
 						}
 					}
 				}

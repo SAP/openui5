@@ -934,7 +934,7 @@ function (
 		QUnit.test("when the overlay is scrolled", function(assert) {
 			var done = assert.async();
 			var mInitialValues = _createInitialScrollHandlerValues.call(this);
-			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scroll(_scrollHandler.bind(this, assert, done, mInitialValues));
+			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").on("scroll", _scrollHandler.bind(this, assert, done, mInitialValues));
 			this.oSimpleScrollControlOverlay.getScrollContainerById(0).scrollTop(100);
 		});
 
