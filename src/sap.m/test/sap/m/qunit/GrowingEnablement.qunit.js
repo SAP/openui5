@@ -91,8 +91,8 @@ sap.ui.define([
 			oGrowingDelegate._updateTrigger(false);
 			assert.ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
 			assert.ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
-			assert.ok(!oList.$("triggerText").is(":visible"), "visible", "Growing trigger text is not visible");
-			assert.ok(!oList.$("triggerInfo").css(":visible"), "visible", "Growing info text is not visible");
+			assert.ok(!oList.$("triggerText").is(":visible"), "Growing trigger text is not visible");
+			assert.ok(!oList.$("triggerInfo").is(":visible"), "Growing info text is not visible");
 			assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
 
 			// check for Growing trigger DOM
