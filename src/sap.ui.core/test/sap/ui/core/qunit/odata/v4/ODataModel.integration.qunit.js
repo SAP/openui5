@@ -13871,7 +13871,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
 	//TODO support $filter : \'GrossAmount gt 0\',\
-	QUnit.test("Analytics by V4: $$aggregation w/ groupLevels", function (assert) {
+	QUnit.test("Data Aggregation by V4: $$aggregation w/ groupLevels", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -13933,7 +13933,8 @@ sap.ui.define([
 			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table"),
+			var i,
+				oTable = that.oView.byId("table"),
 				oListBinding = oTable.getBinding("rows");
 
 			oListBinding.getCurrentContexts().forEach(function (oContext, i) {
@@ -13951,7 +13952,7 @@ sap.ui.define([
 						{GrossAmount : 9, LifecycleStatus : "R"}
 					]
 				});
-			for (var i = 0; i < 3; i += 1) {
+			for (i = 0; i < 3; i += 1) {
 				that.expectChange("isExpanded", undefined, null)
 					.expectChange("isTotal", undefined, null)
 					.expectChange("level", undefined, null)
@@ -13964,7 +13965,7 @@ sap.ui.define([
 				.expectChange("grossAmount", [,,,,,,, 7, 8, 9])
 				.expectChange("lifecycleStatus", [,,,,,,, "T", "S", "R"]);
 
-			that.oView.byId("table").setFirstVisibleRow(7);
+			oTable.setFirstVisibleRow(7);
 
 			return that.waitForChanges(assert).then(function () {
 				that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))"
@@ -14003,11 +14004,55 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Data aggregation with grand total, but no visual grouping. Observe the node status.
+	// BCP: 2080089628
+	QUnit.test("Data Aggregation by V4: $$aggregation w/ grand total", function (assert) {
+		var sView = '\
+<Table items="{path : \'/SalesOrderList\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					GrossAmount : {grandTotal : true}\
+				},\
+				group : {\
+					LifecycleStatus : {}\
+				}\
+			}\
+		}}">\
+	<ColumnListItem>\
+		<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
+		<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+		<Text id="level" text="{= %{@$ui5.node.level} }" />\
+		<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	</ColumnListItem>\
+</Table>',
+			oModel = createSalesOrdersModel();
+
+		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+				+ "/concat(aggregate(GrossAmount),top(99))", {
+				"@odata.count" : "26",
+				value : [
+					{GrossAmount : 12345},
+					{GrossAmount : 1, LifecycleStatus : "Z"},
+					{GrossAmount : 2, LifecycleStatus : "Y"}
+				]
+			})
+			.expectChange("isExpanded", [true, undefined, undefined])
+			.expectChange("isTotal", [true, false, false])
+			.expectChange("level", [0 /* root node */, 1, 1])
+			.expectChange("grossAmount", [12345, 1, 2])
+			.expectChange("lifecycleStatus", ["", "Z", "Y"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Analytics by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+		var sTitle = "Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels; $count : "
 				+ bCount;
 
 		QUnit.test(sTitle, function (assert) {
@@ -14128,7 +14173,7 @@ sap.ui.define([
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is not fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Analytics by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+		var sTitle = "Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels; $count : "
 				+ bCount + "; grandTotal row not fixed";
 
 		QUnit.test(sTitle, function (assert) {
@@ -14243,7 +14288,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418)
-	QUnit.test("Analytics by V4: $$aggregation grandTotal w/o groupLevels using with/as",
+	QUnit.test("Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels using with/as",
 			function (assert) {
 		var sView = '\
 <t:Table rows="{path : \'/BusinessPartners\',\
@@ -14408,7 +14453,8 @@ sap.ui.define([
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Analytics by V4: $$aggregation, aggregate but no group; $count : " + bCount;
+		var sTitle = "Data Aggregation by V4: $$aggregation, aggregate but no group; $count : "
+				+ bCount;
 
 		QUnit.test(sTitle, function (assert) {
 			var oMinMaxElement = {

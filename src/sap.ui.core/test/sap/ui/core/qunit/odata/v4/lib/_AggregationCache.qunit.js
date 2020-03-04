@@ -309,12 +309,15 @@ sap.ui.define([
 			sAggregation = JSON.stringify(oAggregation),
 			oAggregationCacheMock = this.mock(_AggregationCache),
 			oCache,
+			fnDataRequested = {},
 			iEnd = 13,
 			fnGetResourcePath = function () {},
+			oGroupLock = {},
 			fnHandleResponse = function () {},
 			oFirstLevelCache = {
 				getResourcePath : fnGetResourcePath,
-				handleResponse : fnHandleResponse
+				handleResponse : fnHandleResponse,
+				read : function () {}
 			},
 			mQueryOptions = {},
 			sQueryOptions = JSON.stringify(mQueryOptions),
@@ -365,6 +368,37 @@ sap.ui.define([
 
 		// code under test
 		oCache.oFirstLevel.handleResponse(iStart, iEnd, aResult);
+
+		this.mock(oFirstLevelCache).expects("read").on(oFirstLevelCache)
+			.withExactArgs(0, 5, 100, sinon.match.same(oGroupLock),
+				sinon.match.same(fnDataRequested))
+			.returns(SyncPromise.resolve({
+				value : [{
+					"@$ui5.node.isExpanded" : true,
+					"@$ui5.node.isTotal" : true,
+					"@$ui5.node.level" : 0
+				}, {}, {}]
+			}
+		));
+
+		// code under test
+		return oCache.read(0, 5, 100, oGroupLock, fnDataRequested).then(function (oResult) {
+			assert.deepEqual(oResult, {
+				value : [{
+					"@$ui5.node.isExpanded" : true,
+					"@$ui5.node.isTotal" : true,
+					"@$ui5.node.level" : 0
+				}, {
+					"@$ui5.node.isExpanded" : undefined,
+					"@$ui5.node.isTotal" : false,
+					"@$ui5.node.level" : 1
+				}, {
+					"@$ui5.node.isExpanded" : undefined,
+					"@$ui5.node.isTotal" : false,
+					"@$ui5.node.level" : 1
+				}]
+			});
+		});
 	});
 
 	//*********************************************************************************************
@@ -562,6 +596,9 @@ sap.ui.define([
 				oResult.value[0]["UI5__count@odata.type"] = "#Decimal";
 			}
 			Object.assign(oExpected, oResult.value[0], {
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.isTotal" : true,
+				"@$ui5.node.level" : 0,
 				Country : null, // avoid "Failed to drill-down"
 				Region : null, // avoid "Failed to drill-down"
 				SalesNumber : null, // avoid "Failed to drill-down"
