@@ -119,6 +119,7 @@ sap.ui.define([
 
 	Change.prototype.setInitialApplyState = function() {
 		this._aQueuedProcesses = [];
+		delete this._ignoreOnce;
 		this.setApplyState(Change.applyState.INITIAL);
 	};
 
