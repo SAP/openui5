@@ -28,11 +28,13 @@ html[data-sap-ui-browser^="ff"] section.sapUxAPObjectPageSection {
 	padding: 0 3rem 0 3rem;
 }
 
+/* header height is involved in calculation of the scroll position
+so we reset it when the section header is hidden */
 .sapUxAPObjectPageSectionHeaderHidden {
-	user-select: none;
-	position: absolute;
-	pointer-events: none;
-	opacity: 0;
+	overflow: hidden;
+	height: 0 !important;
+	padding: 0 !important;
+	border: none !important;
 }
 
 .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSectionHeader,
