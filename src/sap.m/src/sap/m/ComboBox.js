@@ -1324,8 +1324,8 @@ sap.ui.define([
 			if (oDomRef) {
 
 				// expose a parent/child contextual relationship to assistive technologies,
-				// notice that the "aria-owns" attribute is set when the list is visible and in view
-				this.getRoleComboNodeDomRef().setAttribute("aria-owns", this._getList().getId());
+				// notice that the "aria-controls" attribute is set when the popover opened.
+				oDomRef.setAttribute("aria-controls", this.getPicker().getId());
 
 			}
 
@@ -1370,7 +1370,7 @@ sap.ui.define([
 			this.closeValueStateMessage();
 
 			if (oDomRef) {
-				this.getRoleComboNodeDomRef().setAttribute("aria-expanded", "true");
+				oDomRef.setAttribute("aria-expanded", "true");
 
 				// notice that the "aria-activedescendant" attribute is set when the currently active descendant is
 				// visible and in view
@@ -1400,8 +1400,8 @@ sap.ui.define([
 			var oDomRef = this.getFocusDomRef();
 
 			if (oDomRef) {
-				// notice that the "aria-owns" attribute is removed when the list is not visible and in view
-				this.getRoleComboNodeDomRef().removeAttribute("aria-owns");
+				// notice that the "aria-controls" attribute is removed when the popover is closed.
+				oDomRef.removeAttribute("aria-controls");
 
 				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
 				oDomRef.removeAttribute("aria-activedescendant");
@@ -1420,7 +1420,7 @@ sap.ui.define([
 			var oDomRef = this.getFocusDomRef();
 
 			if (oDomRef) {
-				this.getRoleComboNodeDomRef().setAttribute("aria-expanded", "false");
+				oDomRef.setAttribute("aria-expanded", "false");
 			}
 
 			// clear the filter to make all items visible,

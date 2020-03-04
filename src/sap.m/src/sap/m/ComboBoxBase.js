@@ -1166,22 +1166,6 @@ sap.ui.define([
 			return null;
 		};
 
-		/**
-		 * Gets the dom reference of the html node,
-		 * needed for attaching aria attributes
-		 *
-		 * @protected
-		 */
-		ComboBoxBase.prototype.getRoleComboNodeDomRef = function() {
-			var oFocusDomRef = this.getFocusDomRef();
-
-			if (!oFocusDomRef) {
-				return null;
-			}
-
-			return oFocusDomRef.parentNode;
-		};
-
 		/*
 		 * Reverts the selection as before opening the picker
 		 *
