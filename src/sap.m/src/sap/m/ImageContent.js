@@ -118,7 +118,7 @@ sap.ui.define([
 	 */
 	ImageContent.prototype.ontap = function (oEvent) {
 		if (Device.browser.msie) {
-			this.$().focus();
+			this.$().trigger("focus");
 		}
 		this.firePress();
 	};

@@ -450,7 +450,7 @@ function(
 			this._getOrCreateIncrementButton().setVisible(bEditable);
 
 			this._disableButtons(vValue, fMax, fMin);
-			this.$().unbind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 			if (this._bNeedsVerification) {
 				this._verifyValue();
 				this._bNeedsVerification = false;
@@ -458,11 +458,11 @@ function(
 		};
 
 		StepInput.prototype.onAfterRendering = function () {
-			this.$().bind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().on(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 		};
 
 		StepInput.prototype.exit = function () {
-			this.$().unbind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 		};
 
 		StepInput.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {

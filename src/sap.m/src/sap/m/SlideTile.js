@@ -202,7 +202,7 @@ sap.ui.define([
 	 */
 	SlideTile.prototype.ontap = function (oEvent) {
 		var sScope = this.getScope();
-		this.$().focus();
+		this.$().trigger("focus");
 		if (sScope === library.GenericTileScope.Actions) {
 			var oParams = this._getEventParams(oEvent);
 			this.firePress(oParams);
@@ -361,7 +361,7 @@ sap.ui.define([
 			}
 		}.bind(this);
 
-		jQuery(window).resize(fnCheckMedia);
+		jQuery(window).on("resize", fnCheckMedia);
 		fnCheckMedia();
 	};
 

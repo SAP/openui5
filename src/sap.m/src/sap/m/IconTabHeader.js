@@ -1036,7 +1036,7 @@ sap.ui.define([
 	IconTabHeader.prototype.applyFocusInfo = function (oFocusInfo) {
 		//sets the focus depending on the used IconTabFilter
 		if (oFocusInfo.focusDomRef) {
-			jQuery(oFocusInfo.focusDomRef).focus();
+			jQuery(oFocusInfo.focusDomRef).trigger("focus");
 		}
 	};
 
@@ -1264,10 +1264,10 @@ sap.ui.define([
 		this._getOverflow()._setSelectListItems();
 		this._getSelectList()._initItemNavigation();
 
-		oDraggedControl._getRealTab().$().focus();
+		oDraggedControl._getRealTab().$().trigger("focus");
 
 		if (sDropPosition === "On") {
-			oDroppedControl._getRealTab().$().focus();
+			oDroppedControl._getRealTab().$().trigger("focus");
 		}
 	};
 
@@ -1307,7 +1307,7 @@ sap.ui.define([
 			iTabStripEnd = this.indexOfItem(this._getItemsInStrip().pop());
 
 		this._moveTab(oTab, oEvent.keyCode, iTabStripEnd);
-		oTab.$().focus();
+		oTab.$().trigger("focus");
 	};
 
 	/**

@@ -569,7 +569,7 @@ sap.ui.define([
 			$item = oItem.$(),
 			$focusableElement = $item.find(".sapTntNavLIGroup");
 
-		$focusableElement.focus();
+		$focusableElement.trigger("focus");
 
 		// Act collapse
 		QUnitUtils.triggerKeydown($item, KeyCodes.ARROW_LEFT);

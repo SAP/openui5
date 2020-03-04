@@ -30,11 +30,11 @@ sap.ui.define([
 	document.body.appendChild(oButton);
 
 	function simulateKeyboardOpen() {
-		jQuery("#input").focus();
+		jQuery("#input").trigger("focus");
 	}
 
 	function simulateKeyboardClose() {
-		jQuery("#button").focus();
+		jQuery("#button").trigger("focus");
 	}
 
 	var fnOrientationHandler;

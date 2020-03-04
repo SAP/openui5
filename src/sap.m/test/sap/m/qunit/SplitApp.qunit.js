@@ -809,7 +809,7 @@ sap.ui.define([
 		var oMasterButton = oSplitApp1._oShowMasterBtn;
 		assert.ok(oMasterButton.getDomRef(), "Master Button is rendered");
 		assert.ok(oMasterButton.$().css("display") !== "none", "Master Button should be shown");
-		oMasterButton.$().focus();
+		oMasterButton.$().trigger("focus");
 		sap.ui.test.qunit.triggerKeydown(oMasterButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 		sap.ui.test.qunit.triggerKeyup(oMasterButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 		setTimeout(function(){

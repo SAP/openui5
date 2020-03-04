@@ -677,7 +677,7 @@ sap.ui.define([
 				$temp = jQuery("<input>");
 			try {
 				jQuery("body").append($temp);
-				$temp.val(sString).select();
+				$temp.val(sString).trigger("select");
 				document.execCommand("copy");
 				$temp.remove();
 				MessageToast.show("UI5 Parameter " + sString + " copied to clipboard");

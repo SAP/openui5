@@ -228,7 +228,7 @@ sap.ui.define([
 		oDRS2.focus();
 		jQuery("#DRS2").find("input").val("01+04+2013 - 10+04+2014");
 		qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DRS2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing invalid date");
 		assert.ok(!bValid, "DRS2: invalid typed date is not valid");
 		assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), dateFrom), "DRS2: dateValue not changed by invalid typing");
@@ -238,7 +238,7 @@ sap.ui.define([
 		oDRS2.focus();
 		jQuery("#DRS2").find("input").val("02+04+2014 - 11+04+2014");
 		qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DRS2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing valid date");
 		assert.ok(bValid, "DRS2: valid typed date is valid");
 		assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue changed by valid typing");
@@ -249,7 +249,7 @@ sap.ui.define([
 		oDRS2.focus();
 		jQuery("#DRS2").find("input").val("01+04+2014 - 10+04+2015");
 		qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DRS2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing invalid date");
 		assert.ok(!bValid, "DRS2: invalid typed date is not valid");
 		assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue not changed by invalid typing");
@@ -339,9 +339,9 @@ sap.ui.define([
 		sap.ui.Device.support.touch = false;
 		sap.ui.Device.system.desktop = true;
 		qutils.triggerEvent("click", "DRS2-icon");
-		jQuery("#DRS2-cal--Month0-20140406").focus();
+		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
 		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DRS2-cal--Month0-20140409").focus();
+		jQuery("#DRS2-cal--Month0-20140409").trigger("focus");
 		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after date selection");
 
@@ -353,9 +353,9 @@ sap.ui.define([
 		sap.ui.Device.support.touch = true;
 		sap.ui.Device.system.desktop = false;
 		qutils.triggerEvent("click", "DRS2-icon");
-		jQuery("#DRS2-cal--Month0-20140406").focus();
+		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
 		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DRS2-cal--Month0-20140409").focus();
+		jQuery("#DRS2-cal--Month0-20140409").trigger("focus");
 		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after date selection");
 
@@ -1093,7 +1093,7 @@ sap.ui.define([
 				oDateInterval;
 
 			//Act
-			oDRS.$().find(".sapUiIcon").click(); //to open the calendar popoup
+			oDRS.$().find(".sapUiIcon").trigger("click"); //to open the calendar popoup
 			//Simulate the user has selected 10 - 20 Dec 2017.
 			oCalendar = oDRS._oPopup.getContent()[0];
 			var $EventTarget1 = oCalendar.$().find("[data-sap-day='20171210']"),
@@ -1483,7 +1483,7 @@ sap.ui.define([
 		oDateRangeSelection._$input.get(0).selectionStart = 3;
 		oDateRangeSelection._$input.get(0).selectionEnd = 3;
 
-		oDateRangeSelection.$().find(".sapUiIcon").click(); //simulate opening
+		oDateRangeSelection.$().find(".sapUiIcon").trigger("click"); //simulate opening
 		this.clock.tick(100);
 
 		//Assert

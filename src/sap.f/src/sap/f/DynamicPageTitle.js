@@ -1177,7 +1177,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._focusExpandButton = function () {
-		this._getExpandButton().$().focus();
+		this._getExpandButton().$().trigger("focus");
 	};
 
 	/**

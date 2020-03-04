@@ -3496,7 +3496,7 @@ sap.ui.define([
 			this.oVSD.bindAggregation("filterItems", "/filterData", template3);
 		},
 		focusItem: function (sItemId) {
-			jQuery("#" + sItemId).focus();
+			jQuery("#" + sItemId).trigger("focus");
 		},
 		checkItemFocus: function (sItemId) {
 			assert.strictEqual(document.activeElement.id, sItemId, "The proper item is focused");
@@ -3661,7 +3661,7 @@ sap.ui.define([
 			this.oVSD.bindAggregation("filterItems", "/filterData", template3);
 		},
 		focusItem: function (sItemId) {
-			jQuery("#" + sItemId).focus();
+			jQuery("#" + sItemId).trigger("focus");
 		},
 		checkItemFocus: function (sItemId) {
 			assert.strictEqual(document.activeElement.id, sItemId, "The proper item is focused");

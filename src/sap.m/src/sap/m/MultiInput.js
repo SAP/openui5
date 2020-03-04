@@ -419,7 +419,7 @@ function(
 		var eventResult = this.fireTokenUpdate(args.getParameters());
 
 		if (!this.getTokens().length) {
-			this.$().find("input").focus();
+			this.$().find("input").trigger("focus");
 		}
 
 		if (!eventResult) {
@@ -936,7 +936,7 @@ function(
 		this._tokenizer.scrollToEnd();
 		// we set the focus back via jQuery instead of this.focus() since the latter on phones lead to unwanted opening of the
 		// suggest popup
-		this.$().find("input").focus();
+		this.$().find("input").trigger("focus");
 	};
 
 	/**

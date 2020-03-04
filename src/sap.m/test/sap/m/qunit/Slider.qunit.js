@@ -963,12 +963,12 @@ sap.ui.define([
 		// arrange
 		oSlider.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		var oHandleDomRef = oSlider.$().find(".sapMSliderLabel");
+		var $HandleDomRef = oSlider.$().find(".sapMSliderLabel");
 
 		// assert
-		assert.ok(oHandleDomRef.size() > 0, "Have initialized the labels");
-		assert.strictEqual(oHandleDomRef.eq(0).text(), "0.0000001", "Have properly set the first value");
-		assert.strictEqual(oHandleDomRef.eq(4).text(), "0.0000005", "Have properly set the last value");
+		assert.ok($HandleDomRef.length > 0, "Have initialized the labels");
+		assert.strictEqual($HandleDomRef.eq(0).text(), "0.0000001", "Have properly set the first value");
+		assert.strictEqual($HandleDomRef.eq(4).text(), "0.0000005", "Have properly set the last value");
 
 		// cleanup
 		oSlider.destroy();
@@ -2033,26 +2033,26 @@ sap.ui.define([
 			// arrange
 			oSlider.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			oHandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
+			$HandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
 
 			// assert
 			assert.strictEqual(oScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the user defined scale.");
-			assert.strictEqual(oHandleLabelsDomRef.size(), 3, "There should be 3 labels created");
-			assert.strictEqual(oHandleLabelsDomRef.eq(0).text(), "Zero", "The labels should be added correspondingly");
-			assert.strictEqual(oHandleLabelsDomRef.eq(2).text(), "2", "The labels should be added correspondingly");
+			assert.strictEqual($HandleLabelsDomRef.length, 3, "There should be 3 labels created");
+			assert.strictEqual($HandleLabelsDomRef.eq(0).text(), "Zero", "The labels should be added correspondingly");
+			assert.strictEqual($HandleLabelsDomRef.eq(2).text(), "2", "The labels should be added correspondingly");
 
 			// arrange
 			oScale.destroy();
 			sap.ui.getCore().applyChanges();
 			oDefaultScale = oSlider.getAggregation('_defaultScale');
-			oHandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
+			$HandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
 
 			// assert
 			assert.ok(oDefaultScale,"The default scale should be set");
 			assert.strictEqual(oDefaultScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the default scale.");
-			assert.strictEqual(oHandleLabelsDomRef.size(), 2, "There should be 2 labels created");
-			assert.strictEqual(oHandleLabelsDomRef.eq(0).text(), "0", "The first label should be equal to the min");
-			assert.strictEqual(oHandleLabelsDomRef.eq(1).text(), "2", "The second label should be equal to the max.");
+			assert.strictEqual($HandleLabelsDomRef.length, 2, "There should be 2 labels created");
+			assert.strictEqual($HandleLabelsDomRef.eq(0).text(), "0", "The first label should be equal to the min");
+			assert.strictEqual($HandleLabelsDomRef.eq(1).text(), "2", "The second label should be equal to the max.");
 
 			// cleanup
 			oSlider.destroy();
@@ -2115,7 +2115,7 @@ sap.ui.define([
 
 	QUnit.test("Slider with custom Scale", function(assert) {
 		var oSlider, oDefaultScale, oCustonScale, CustomScale,
-		oSliderTickmarksDomRef, oSliderLabelsDomRef, oSliderTicksDomRef;
+		$SliderTickmarksDomRef, $SliderLabelsDomRef, $SliderTicksDomRef;
 
 		CustomScale = Element.extend("sap.test.CustomScale", {
 			metadata: {
@@ -2144,14 +2144,14 @@ sap.ui.define([
 		// arrange
 		oSlider.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		oSliderTickmarksDomRef = oSlider.$().find('.sapMSliderTickmarks');
-		oSliderLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
-		oSliderTicksDomRef = oSlider.$().find(".sapMSliderTick");
+		$SliderTickmarksDomRef = oSlider.$().find('.sapMSliderTickmarks');
+		$SliderLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
+		$SliderTicksDomRef = oSlider.$().find(".sapMSliderTick");
 
 		// assert
-		assert.ok(oSliderTickmarksDomRef.size(), "The tickmarks should be rendered.");
-		assert.strictEqual(oSliderLabelsDomRef.size(), 5, "There should be labels for each tickmark.");
-		assert.strictEqual(oSliderTicksDomRef.size(), 5, "There should be 6 tickmarks.");
+		assert.ok($SliderTickmarksDomRef.length, "The tickmarks should be rendered.");
+		assert.strictEqual($SliderLabelsDomRef.length, 5, "There should be labels for each tickmark.");
+		assert.strictEqual($SliderTicksDomRef.length, 5, "There should be 6 tickmarks.");
 
 		// cleanup
 		oSlider.destroy();

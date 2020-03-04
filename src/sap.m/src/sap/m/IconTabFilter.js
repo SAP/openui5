@@ -774,7 +774,7 @@ sap.ui.define([
 	 */
 	IconTabFilter.prototype._expandButtonPress = function () {
 		// prepare the next focus if the select list gets closed if no item was selected
-		this.$().focus();
+		this.$().trigger("focus");
 
 		if (!this._oPopover) {
 

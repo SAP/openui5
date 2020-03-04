@@ -49,7 +49,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 
 	helpers = {
 		verifyFocusOnKeyDown: function (assert, iKeyCode, oItemToStartWith, oExpectedItemToBeFocused, sMessage) {
-			oItemToStartWith.$().focus();
+			oItemToStartWith.$().trigger("focus");
 			sap.ui.test.qunit.triggerKeydown(oItemToStartWith.getId(), iKeyCode);
 			assert.ok(oExpectedItemToBeFocused.jQuery().is(':focus'), sMessage);
 		},

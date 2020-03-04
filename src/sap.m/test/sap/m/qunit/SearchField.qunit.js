@@ -419,7 +419,7 @@ sap.ui.define([
 		});
 
 		// act
-		this.oSearchField.$("F").click(); // click the form
+		this.oSearchField.$("F").trigger("click"); // click the form
 	});
 
 	QUnit.module("Events", {

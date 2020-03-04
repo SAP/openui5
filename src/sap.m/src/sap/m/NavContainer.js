@@ -1147,7 +1147,7 @@ sap.ui.define([
 
 
 		window.setTimeout(function () {
-			oFromPage.$().bind("webkitTransitionEnd transitionend", that._fadeOutAnimationEnd.bind(that));
+			oFromPage.$().on("webkitTransitionEnd transitionend", that._fadeOutAnimationEnd.bind(that));
 
 			that.bTransition1EndPending = true;
 
@@ -1172,7 +1172,7 @@ sap.ui.define([
 			return; //since we have more than one transition property, we should not execute the animation end more than once.
 		}
 
-		jQuery(oFromPage.$()).unbind("webkitTransitionEnd transitionend");
+		jQuery(oFromPage.$()).off("webkitTransitionEnd transitionend");
 
 		oFromPage
 			.removeStyleClass("sapMNavItemSlideLeft")
@@ -1187,7 +1187,7 @@ sap.ui.define([
 
 
 		window.setTimeout(function () {
-			oToPage.$().bind("webkitTransitionEnd transitionend", that._fadeInAnimationEnd.bind(that));
+			oToPage.$().on("webkitTransitionEnd transitionend", that._fadeInAnimationEnd.bind(that));
 
 			that.bTransition2EndPending = true;
 
@@ -1218,7 +1218,7 @@ sap.ui.define([
 			oFromPage.removeStyleClass("sapMNavItemFading").removeStyleClass("sapMNavItemTransparent");
 		}
 
-		jQuery(oToPage.$()).unbind("webkitTransitionEnd transitionend");
+		jQuery(oToPage.$()).off("webkitTransitionEnd transitionend");
 
 		if (fnHasParent(oToPage)) {
 			oToPage
@@ -1247,7 +1247,7 @@ sap.ui.define([
 			sToPageClass = bIsReverse ? "sapMNavItemSlideCenterToLeft" : "sapMNavItemSlideRightToCenter",
 			sFromPageClass = !bIsReverse ? "sapMNavItemSlideCenterToLeft" : "sapMNavItemSlideRightToCenter",
 			fAfterAnimation = function () {
-				jQuery(this).unbind("webkitAnimationEnd animationend");
+				jQuery(this).off("webkitAnimationEnd animationend");
 
 				if (!bFirstSlideDone) {
 					return (bFirstSlideDone = true);
@@ -1271,8 +1271,8 @@ sap.ui.define([
 				fCallback();
 			};
 
-		oFromPage.$().bind("webkitAnimationEnd animationend", fAfterAnimation);
-		oToPage.$().bind("webkitAnimationEnd animationend", fAfterAnimation);
+		oFromPage.$().on("webkitAnimationEnd animationend", fAfterAnimation);
+		oToPage.$().on("webkitAnimationEnd animationend", fAfterAnimation);
 
 		fnSetAnimationDirection(oToPage, sAnimationDirection);
 		fnSetAnimationDirection(oFromPage, sAnimationDirection);
@@ -1356,7 +1356,7 @@ sap.ui.define([
 					var bTransitionEndPending = true;
 					var fAfterTransition = null; // make Eclipse aware that this variable is defined
 					fAfterTransition = function () {
-						jQuery(this).unbind("webkitTransitionEnd transitionend");
+						jQuery(this).off("webkitTransitionEnd transitionend");
 						if (!bOneTransitionFinished) {
 							// the first one of both transitions finished
 							bOneTransitionFinished = true;
@@ -1380,8 +1380,8 @@ sap.ui.define([
 						}
 					};
 
-					oFromPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
-					oToPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+					oFromPage.$().on("webkitTransitionEnd transitionend", fAfterTransition);
+					oToPage.$().on("webkitTransitionEnd transitionend", fAfterTransition);
 
 					// set the new style classes that represent the end state (and thus start the transition)
 					oToPage.addStyleClass("sapMNavItemFlipping").removeStyleClass("sapMNavItemFlipNext");
@@ -1414,7 +1414,7 @@ sap.ui.define([
 				var bTransitionEndPending = true;
 				var fAfterTransition = null; // make Eclipse aware that this variable is defined
 				fAfterTransition = function () {
-					jQuery(this).unbind("webkitTransitionEnd transitionend");
+					jQuery(this).off("webkitTransitionEnd transitionend");
 					if (!bOneTransitionFinished) {
 						// the first one of both transitions finished
 						bOneTransitionFinished = true;
@@ -1438,8 +1438,8 @@ sap.ui.define([
 					}
 				};
 
-				oFromPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
-				oToPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
+				oFromPage.$().on("webkitTransitionEnd transitionend", fAfterTransition);
+				oToPage.$().on("webkitTransitionEnd transitionend", fAfterTransition);
 
 				// set the new style classes that represent the end state (and thus start the transition)
 				oToPage.addStyleClass("sapMNavItemFlipping").removeStyleClass("sapMNavItemFlipPrevious"); // transition from left position to normal/center position starts now
@@ -1478,7 +1478,7 @@ sap.ui.define([
 					var bTransitionEndPending = true;
 					var fAfterTransition = null; // make Eclipse aware that this variable is defined
 					fAfterTransition = function () {
-						jQuery(this).unbind("webkitAnimationEnd animationend");
+						jQuery(this).off("webkitAnimationEnd animationend");
 						if (!bOneTransitionFinished) {
 							// the first one of both transitions finished
 							bOneTransitionFinished = true;
@@ -1502,8 +1502,8 @@ sap.ui.define([
 						}
 					};
 
-					oFromPage.$().bind("webkitAnimationEnd animationend", fAfterTransition);
-					oToPage.$().bind("webkitAnimationEnd animationend", fAfterTransition);
+					oFromPage.$().on("webkitAnimationEnd animationend", fAfterTransition);
+					oToPage.$().on("webkitAnimationEnd animationend", fAfterTransition);
 
 					// set the new style classes that represent the end state (and thus start the transition)
 					oToPage.addStyleClass("sapMNavItemDooring");
@@ -1536,7 +1536,7 @@ sap.ui.define([
 				var bTransitionEndPending = true;
 				var fAfterTransition = null; // make Eclipse aware that this variable is defined
 				fAfterTransition = function () {
-					jQuery(this).unbind("webkitAnimationEnd animationend");
+					jQuery(this).off("webkitAnimationEnd animationend");
 					if (!bOneTransitionFinished) {
 						// the first one of both transitions finished
 						bOneTransitionFinished = true;
@@ -1560,8 +1560,8 @@ sap.ui.define([
 					}
 				};
 
-				oFromPage.$().bind("webkitAnimationEnd animationend", fAfterTransition);
-				oToPage.$().bind("webkitAnimationEnd animationend", fAfterTransition);
+				oFromPage.$().on("webkitAnimationEnd animationend", fAfterTransition);
+				oToPage.$().on("webkitAnimationEnd animationend", fAfterTransition);
 
 				// set the new style classes that represent the end state (and thus start the transition)
 				oToPage.addStyleClass("sapMNavItemDooring"); // transition from left position to normal/center position starts now

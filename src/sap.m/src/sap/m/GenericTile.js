@@ -388,8 +388,8 @@ sap.ui.define([
 		this._initScopeContent("sapMGT");
 		this._generateFailedText();
 
-		this.$().unbind("mouseenter");
-		this.$().unbind("mouseleave");
+		this.$().off("mouseenter");
+		this.$().off("mouseleave");
 
 		if (this._sParentResizeListenerId) {
 			ResizeHandler.deregister(this._sResizeListenerId);
@@ -411,10 +411,10 @@ sap.ui.define([
 		this._setupResizeClassHandler();
 
 		// attaches handler this._updateAriaAndTitle to the event mouseenter and removes attributes ARIA-label and title of all content elements
-		this.$().bind("mouseenter", this._updateAriaAndTitle.bind(this));
+		this.$().on("mouseenter", this._updateAriaAndTitle.bind(this));
 
 		// attaches handler this._removeTooltipFromControl to the event mouseleave and removes control's own tooltips (Truncated header text and MicroChart tooltip).
-		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
+		this.$().on("mouseleave", this._removeTooltipFromControl.bind(this));
 
 		var sMode = this.getMode();
 		var bScreenLarge = this._isScreenLarge();
@@ -498,7 +498,7 @@ sap.ui.define([
 			}
 		}.bind(this);
 
-		jQuery(window).resize(fnCheckMedia);
+		jQuery(window).on("resize", fnCheckMedia);
 		fnCheckMedia();
 	};
 
@@ -838,7 +838,7 @@ sap.ui.define([
 	GenericTile.prototype.ontap = function (event) {
 		var oParams;
 		if (this._bTilePress && this.getState() !== library.LoadState.Disabled) {
-			this.$().focus();
+			this.$().trigger("focus");
 			oParams = this._getEventParams(event);
 			this.firePress(oParams);
 			event.preventDefault();
@@ -1262,9 +1262,9 @@ sap.ui.define([
 			$Tile.attr("aria-label", sAriaText);
 		}
 		if (this._isInActionScope()) {
-			$Tile.find('*:not(.sapMGTRemoveButton)').removeAttr("aria-label").removeAttr("title").unbind("mouseenter");
+			$Tile.find('*:not(.sapMGTRemoveButton)').removeAttr("aria-label").removeAttr("title").off("mouseenter");
 		} else {
-			$Tile.find('*').removeAttr("aria-label").removeAttr("title").unbind("mouseenter");
+			$Tile.find('*').removeAttr("aria-label").removeAttr("title").off("mouseenter");
 		}
 		this._setTooltipFromControl();
 	};

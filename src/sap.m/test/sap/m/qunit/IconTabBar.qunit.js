@@ -1627,7 +1627,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab1.focus(); // set focus on first filter
+		$tab1.trigger("focus"); // set focus on first filter
 
 		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on first filter
 		assert.ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus moved on second filter");
@@ -1640,7 +1640,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab2.focus(); // set focus on second filter
+		$tab2.trigger("focus"); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on second filter
 		assert.ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus moved on first filter");
@@ -1653,7 +1653,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab1.focus(); // set focus on first filter
+		$tab1.trigger("focus"); // set focus on first filter
 
 		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on first filter
 		assert.ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus moved on second filter");
@@ -1666,7 +1666,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab2.focus(); // set focus on second filter
+		$tab2.trigger("focus"); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on second filter
 		assert.ok($tab1.is(":focus"), "ARROW_UP is pressed, focus moved on first filter");
@@ -1679,7 +1679,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab1.focus(); // set focus on first filter
+		$tab1.trigger("focus"); // set focus on first filter
 
 		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.END); // trigger End on first filter
 		assert.ok($tab2.is(":focus"), "END is pressed, focus moved on last filter");
@@ -1689,7 +1689,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab2.focus(); // set focus on second filter
+		$tab2.trigger("focus"); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.HOME); // trigger Home on second filter
 		assert.ok($tab1.is(":focus"), "HOME is pressed, focus moved on first filter");
@@ -1699,7 +1699,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab1.focus(); // set focus on first filter
+		$tab1.trigger("focus"); // set focus on first filter
 
 		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.PAGE_DOWN); // trigger PAGEDOWN on first filter
 		assert.ok($tab2.is(":focus"), "PAGEDOWN is pressed, focus moved on last filter");
@@ -1710,7 +1710,7 @@ sap.ui.define([
 	var $tab1 = this.oIconTabBar.getItems()[0].$();
 	var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-	$tab2.focus(); // set focus on second filter
+	$tab2.trigger("focus"); // set focus on second filter
 
 	sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.PAGE_UP); // trigger PAGEUP on second filter
 	assert.ok($tab1.is(":focus"), "PAGEUP is pressed, focus moved on first filter");
@@ -1721,7 +1721,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab2.focus(); // set focus on second filter
+		$tab2.trigger("focus"); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.SPACE); // trigger Space on second filter
 		sap.ui.test.qunit.triggerKeyup($tab2, jQuery.sap.KeyCodes.SPACE); // trigger Space on second filter
@@ -1736,7 +1736,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab2.focus(); // set focus on second filter
+		$tab2.trigger("focus"); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ENTER); // trigger Enter on second filter
 

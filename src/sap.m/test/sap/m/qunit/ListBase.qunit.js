@@ -2378,7 +2378,7 @@ sap.ui.define([
 			oPage.addContent(oList);
 			sap.ui.getCore().applyChanges();
 
-			var $input = oInput.$("inner").focus();
+			var $input = oInput.$("inner").trigger("focus");
 			$input.trigger("contextmenu");
 			assert.equal(fnOpenAsContextMenu.callCount, 0, "Menu#OpenAsContextMenu is not called");
 

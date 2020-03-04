@@ -363,7 +363,7 @@ sap.ui.define([
 		var bSelected;
 
 		if (this.getEnabled() && this.getEditable() && !this.getDisplayOnly()) {
-			this.$().focus(); // In IE taping on the input doesn`t focus the wrapper div.
+			this.$().trigger("focus"); // In IE taping on the input doesn`t focus the wrapper div.
 
 			bSelected = this._getSelectedState();
 			this.setSelected(bSelected);
@@ -505,7 +505,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CheckBox.prototype._fnLabelTapHandler = function () {
-		this.$().focus();
+		this.$().trigger("focus");
 	};
 
 	/**

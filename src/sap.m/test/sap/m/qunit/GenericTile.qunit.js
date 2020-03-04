@@ -460,7 +460,7 @@ sap.ui.define([
 			var beforeHeight = $tile.outerHeight();
 
 			//set :focus on tile
-			$tile.focus();
+			$tile.trigger("focus");
 			if (!this.checkFocus($tile)){
 				assert.expect(0);
 				done();
@@ -489,7 +489,7 @@ sap.ui.define([
 			var beforeHeight = $tile.outerHeight();
 
 			//set :focus on tile
-			$tile.focus();
+			$tile.trigger("focus");
 			if (!this.checkFocus($tile)){
 				assert.expect(0);
 				done();

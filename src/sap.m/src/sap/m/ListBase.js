@@ -1611,10 +1611,10 @@ function(
 		});
 
 		// UX: swipeout is not interruptible till animation is finished
-		$container.bind("webkitAnimationEnd animationend", function() {
-			jQuery(this).unbind("webkitAnimationEnd animationend");
+		$container.on("webkitAnimationEnd animationend", function() {
+			jQuery(this).off("webkitAnimationEnd animationend");
 			// disable animation and focus to container
-			$container.css("opacity", 1).focus();
+			$container.css("opacity", 1).trigger("focus");
 
 			// check parents touchend for auto hide mode
 			$blocker.parent().on("touchend.swp touchcancel.swp mouseup.swp", function(e) {
@@ -1669,8 +1669,8 @@ function(
 		this._getTouchBlocker().parent().off("touchend.swp touchend.swp touchcancel.swp mouseup.swp");
 
 		// add swipeout animation and listen this
-		$container.bind("webkitAnimationEnd animationend", function() {
-			jQuery(this).unbind("webkitAnimationEnd animationend");
+		$container.on("webkitAnimationEnd animationend", function() {
+			jQuery(this).off("webkitAnimationEnd animationend");
 			that._onSwipeOut(callback);
 		}).removeClass("sapMListSwpInAnim").addClass("sapMListSwpOutAnim");
 
@@ -2098,7 +2098,7 @@ function(
 	 */
 	ListBase.prototype.forwardTab = function(bForward) {
 		this._bIgnoreFocusIn = true;
-		this.$(bForward ? "after" : "before").focus();
+		this.$(bForward ? "after" : "before").trigger("focus");
 	};
 
 	// move focus out of the table for nodata row
@@ -2165,7 +2165,7 @@ function(
 			}
 
 			if ($TargetSection.is(":focusable")) {
-				$TargetSection.focus();
+				$TargetSection.trigger("focus");
 				return true;
 			}
 
@@ -2260,7 +2260,7 @@ function(
 		// get the last tabbable item or itself and focus
 		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
 		this.bAnnounceDetails = true;
-		$FocusElement.focus();
+		$FocusElement.trigger("focus");
 	};
 
 	// Handles focus to reposition the focus to correct place
@@ -2320,7 +2320,7 @@ function(
 			iFocusPos = oListItem.getTabbables().index(oEvent.target),
 			$Element = $Tabbables.eq($Tabbables[iFocusPos] ? iFocusPos : -1);
 
-		$Element[0] ? $Element.focus() : oItem.focus();
+		$Element[0] ? $Element.trigger("focus") : oItem.focus();
 		oEvent.preventDefault();
 		oEvent.setMarked();
 	};

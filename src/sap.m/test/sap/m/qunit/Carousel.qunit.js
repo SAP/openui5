@@ -860,7 +860,7 @@ sap.ui.define([
 
 			sap.ui.getCore().applyChanges();
 
-			this.oCarousel.$().focus();
+			this.oCarousel.$().trigger("focus");
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -1278,7 +1278,7 @@ sap.ui.define([
 		// Act
 		oPopup.openBy(oButton);
 		assert.strictEqual(oCarousel.getActivePage(), "image2", "active page is with id 'image2'");
-		oCarousel.$().find('a.sapMCrslNext').focus();
+		oCarousel.$().find('a.sapMCrslNext').trigger("focus");
 		oCarousel._changePage(undefined, 3);
 		// Assert
 		assert.strictEqual(oCarousel.getActivePage(), "image3", "active page is with id 'image3'");
@@ -1515,7 +1515,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// act - press right arrow
-		this.oCarousel.$().find("a.sapMCrslNext").click();
+		this.oCarousel.$().find("a.sapMCrslNext").trigger("click");
 		forceTransitionComplete(this.oCarousel);
 
 		// assert
@@ -1534,7 +1534,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// act - press left arrow
-		this.oCarousel.$().find("a.sapMCrslPrev").click();
+		this.oCarousel.$().find("a.sapMCrslPrev").trigger("click");
 		forceTransitionComplete(this.oCarousel);
 
 		// assert
@@ -1551,9 +1551,9 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// act
-		this.oCarousel.$().find("a.sapMCrslNext").click();
+		this.oCarousel.$().find("a.sapMCrslNext").trigger("click");
 		this.oCarousel.ontouchend(oFakeEvent);
-		this.oCarousel.$().find("a.sapMCrslNext").click();
+		this.oCarousel.$().find("a.sapMCrslNext").trigger("click");
 		this.oCarousel.ontouchend(oFakeEvent);
 		forceTransitionComplete(this.oCarousel);
 
@@ -1571,9 +1571,9 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// act
-		this.oCarousel.$().find("a.sapMCrslPrev").click();
+		this.oCarousel.$().find("a.sapMCrslPrev").trigger("click");
 		this.oCarousel.ontouchend(oFakeEvent);
-		this.oCarousel.$().find("a.sapMCrslPrev").click();
+		this.oCarousel.$().find("a.sapMCrslPrev").trigger("click");
 		this.oCarousel.ontouchend(oFakeEvent);
 		forceTransitionComplete(this.oCarousel);
 

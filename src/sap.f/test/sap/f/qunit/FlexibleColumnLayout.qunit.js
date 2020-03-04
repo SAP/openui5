@@ -1486,7 +1486,7 @@ function (
 
 	QUnit.test("Should restore focus on back navigation", function (assert) {
 		// Act
-		this.oBtn1.$().focus();
+		this.oBtn1.$().trigger("focus");
 
 		// Assert
 		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
@@ -1494,7 +1494,7 @@ function (
 		// Act
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
 		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
-		this.oBtn2.$().focus();
+		this.oBtn2.$().trigger("focus");
 
 		// Assert
 		assert.strictEqual(this.oBtn2.$().is(":focus"), true, "Focus is in mid column");
@@ -1509,7 +1509,7 @@ function (
 
 	QUnit.test("Should preserve existing focus in previous of current column on back navigation", function (assert) {
 		// Act
-		this.oBtn1.$().focus();
+		this.oBtn1.$().trigger("focus");
 
 		// Assert
 		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
@@ -1517,7 +1517,7 @@ function (
 		// Act
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
 		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
-		this.oBtn2.$().focus();
+		this.oBtn2.$().trigger("focus");
 
 		// Assert
 		assert.strictEqual(this.oBtn2.$().is(":focus"), true, "Focus is in mid column");
@@ -1525,13 +1525,13 @@ function (
 		// Act
 		this.oFCL.setLayout(LT.ThreeColumnsEndExpanded);
 		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
-		this.oBtn3.$().focus();
+		this.oBtn3.$().trigger("focus");
 
 		// Assert
 		assert.strictEqual(this.oBtn3.$().is(":focus"), true, "Focus is in end column");
 
 		// Act
-		this.oBtn1.$().focus();
+		this.oBtn1.$().trigger("focus");
 
 		// Assert
 		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
@@ -1549,7 +1549,7 @@ function (
 		// Act
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
 		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
-		this.oBtn1.$().focus();
+		this.oBtn1.$().trigger("focus");
 
 		// Assert
 		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
@@ -1557,7 +1557,7 @@ function (
 		// Act
 		this.oFCL.setLayout(LT.MidColumnFullScreen);
 		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
-		this.oBtn2.$().focus();
+		this.oBtn2.$().trigger("focus");
 
 		// Assert
 		assert.strictEqual(this.oBtn2.$().is(":focus"), true, "Focus is in mid column");

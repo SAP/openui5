@@ -618,7 +618,7 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._toggleFooterAnimation = function(bShow, oFooter) {
 
-		this.$footerWrapper.bind("webkitAnimationEnd animationend",
+		this.$footerWrapper.on("webkitAnimationEnd animationend",
 		this._onToggleFooterAnimationEnd.bind(this, oFooter));
 
 		if (bShow) {
@@ -636,7 +636,7 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._onToggleFooterAnimationEnd = function(oFooter) {
 
-		this.$footerWrapper.unbind("webkitAnimationEnd animationend");
+		this.$footerWrapper.off("webkitAnimationEnd animationend");
 
 		if (oFooter.hasStyleClass(DynamicPage.HIDE_FOOTER_CLASS_NAME)) {
 			this.$footerWrapper.addClass("sapUiHidden");

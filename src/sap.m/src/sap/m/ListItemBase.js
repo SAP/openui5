@@ -1137,7 +1137,7 @@ function(
 		} else if ($Tabbables.length) {
 			var iFocusPos = oList._iLastFocusPosOfItem || 0;
 			iFocusPos = $Tabbables[iFocusPos] ? iFocusPos : -1;
-			$Tabbables.eq(iFocusPos).focus();
+			$Tabbables.eq(iFocusPos).trigger("focus");
 		}
 
 		oEvent.preventDefault();
