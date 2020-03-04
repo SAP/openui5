@@ -1647,18 +1647,6 @@ function(
 	};
 
 	/**
-	 * Helper method that enriches the (generated) information objects for children
-	 * (e.g. properties, aggregations, ...) of this Element.
-	 *
-	 * Also ensures that the parent metadata is enriched.
-	 *
-	 * @private
-	 */
-	ManagedObjectMetadata.prototype._enrichChildInfos = function() {
-		Log.error("obsolete call to ManagedObjectMetadata._enrichChildInfos. This private method will be deleted soon");
-	};
-
-	/**
 	 * Returns a map with all settings of the described class..
 	 * Mainly used for the {@link sap.ui.base.ManagedObject#applySettings} method.
 	 *
