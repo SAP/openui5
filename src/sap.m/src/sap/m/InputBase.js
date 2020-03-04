@@ -172,6 +172,14 @@ function(
 		},
 		aggregations: {
 			/**
+			 * Defines the formatted text that appears in the value state message pop-up.
+			 * It can include links. If both <code>valueStateText</code> and <code>formattedValueStateText</code>
+			 * are set - the latter is shown.
+			 * @since 1.76
+			 */
+			formattedValueStateText: { type: "sap.m.FormattedText", multiple: false, defaultValue: null },
+
+			/**
 			 * Icons that will be placed after the input field
 			 * @since 1.58
 			*/
@@ -376,6 +384,10 @@ function(
 
 		// mark the rendering phase
 		this.bRenderingPhase = true;
+
+		// If there are links in the value state message, close the popup
+		// after press
+		this._handleValueStateLinkPress();
 	};
 
 	InputBase.prototype.onAfterRendering = function() {
@@ -417,6 +429,16 @@ function(
 	/* =========================================================== */
 
 	/**
+	 * Handles the tab press event of the Input.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	InputBase.prototype.onsaptabnext = function(oEvent) {
+		this.closeValueStateMessage();
+	};
+
+	/**
 	 * Handles the touch start event of the Input.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
@@ -455,11 +477,11 @@ function(
 	 * @private
 	 */
 	InputBase.prototype.onfocusout = function(oEvent) {
-		this.bFocusoutDueRendering = this.bRenderingPhase;
 		this.removeStyleClass("sapMFocus");
-
-		// close value state message popup when focus is out of the input
-		this.closeValueStateMessage();
+		// Don't close the ValueStateMessage on focusout if it contains sap.m.Formatted text, it can contain links
+		if (!this._bClickOnValueStateLink(oEvent)) {
+			this.closeValueStateMessage();
+		}
 	};
 
 	/**
@@ -839,6 +861,54 @@ function(
 		}
 
 		return this;
+	};
+
+	/**
+	 * If there is <code>sap.m.FormattedText</code> aggragation for value state message
+	 * return the links in it, if any.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @returns {array} Links in a value state message containing <code>sap.m.FormattedText</code>
+	 * @private
+	 */
+	InputBase.prototype._aValueStateLinks = function() {
+		if (this.getFormattedValueStateText() && this.getFormattedValueStateText().getHtmlText() && this.getFormattedValueStateText().getControls().length) {
+			return this.getFormattedValueStateText().getControls();
+		} else {
+			return [];
+		}
+	};
+
+	/**
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @returns {boolean} Whether or not the click is on a <code>sap.m.FormattedText</code> link.
+	 * @private
+	 */
+	InputBase.prototype._bClickOnValueStateLink = function(oEvent) {
+		var aValueStateLinks = this._aValueStateLinks();
+
+		return aValueStateLinks.some(function(oLink) {
+			return oEvent.relatedTarget === oLink.getDomRef();
+		});
+	};
+
+	/**
+	 * If ValueStateText is sap.m.FormattedText containing
+	 * link(s) - close ValueStateMessage after press on <code>sap.m.Link</code>
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	InputBase.prototype._handleValueStateLinkPress = function() {
+		var oFormattedValueState = this.getFormattedValueStateText();
+		if (oFormattedValueState && oFormattedValueState.getHtmlText() && oFormattedValueState.getControls()) {
+			oFormattedValueState.getControls().forEach(
+				function(oLink) {
+						oLink.attachPress(function() {
+							this.closeValueStateMessage();
+						}, this);
+				}, this);
+		}
 	};
 
 	/**
