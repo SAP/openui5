@@ -1264,6 +1264,34 @@ function (
 		assert.strictEqual(oEventSpy.callCount, 1, "_hideShowArrows is called");
 	});
 
+	QUnit.module("Focus handling");
+
+	QUnit.test("AutoFocus - Should synchronize with NavContainer instances", function (assert) {
+		//arrange
+		var oFCL = oFactory.createFCL({
+				autoFocus: false
+			}),
+			aNavContainers = oFCL._getNavContainers(),
+			fnCheckNavContainersAutoFocus = function (bExpectedValue) {
+				aNavContainers.forEach(function (oContainer) {
+					// assert
+					assert.strictEqual(oContainer.getAutoFocus(), bExpectedValue, "Container autoFocus property is synchronized with FLC");
+				});
+			};
+
+		// assert
+		fnCheckNavContainersAutoFocus(false);
+
+		// act
+		oFCL.setAutoFocus(true);
+
+		// assert
+		fnCheckNavContainersAutoFocus(true);
+
+		//cleanup
+		oFCL.destroy();
+	});
+
 	QUnit.module("columnResize", {
 		beforeEach: function () {
 			this.oFCL = new FlexibleColumnLayout();
