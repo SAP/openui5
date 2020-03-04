@@ -33,7 +33,7 @@ sap.ui.define([
 						oData = oEvent.getParameter("parameters");
 					});
 
-					oCard.$().find("ui5-button").eq(0).click();
+					oCard.$().find("ui5-button").eq(0).trigger("click");
 				},
 				success: function () {
 					Opa5.assert.strictEqual(oEventType, "Submit", "The action type is Submit");
@@ -51,7 +51,7 @@ sap.ui.define([
 						oEventType = oEvent.getParameter("type");
 						oData = oEvent.getParameter("parameters");
 					});
-					oCard.$().find("ui5-button").eq(2).click();
+					oCard.$().find("ui5-button").eq(2).trigger("click");
 				},
 				success: function () {
 					Opa5.assert.strictEqual(oEventType, "Navigation", "The action type is Navigation");

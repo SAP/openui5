@@ -411,7 +411,7 @@ sap.ui.define([
 				this._adjustToScreenSize();
 			} else {
 				var that = this;
-				jQuery(window).resize(function() {
+				jQuery(window).on("resize", function() {
 					that._adjustToScreenSize();
 				});
 			}

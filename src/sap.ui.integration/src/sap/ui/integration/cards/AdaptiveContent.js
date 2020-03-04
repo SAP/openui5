@@ -298,11 +298,11 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._setupMSCardContent = function () {
-			var oDom = this.getAggregation("_content").getItems()[1].$(),
+			var oDom = this.getAggregation("_content").getItems()[1].getDomRef(),
 				oConfiguration = this._oCardConfig,
 				oContentTemplateData, oCardDataProvider;
 
-			if (!this.adaptiveCardInstance || !oConfiguration || !(oDom && oDom.size())) {
+			if (!this.adaptiveCardInstance || !oConfiguration || !oDom) {
 				return;
 			}
 
@@ -414,7 +414,7 @@ sap.ui.define([
 		 */
 		AdaptiveContent.prototype._renderMSCardContent = function (oCard) {
 			var oDom = this.getAggregation("_content").getItems()[1].$();
-			if (this.adaptiveCardInstance && oCard && oDom && oDom.size()) {
+			if (this.adaptiveCardInstance && oCard && oDom.length) {
 				this.adaptiveCardInstance.parse(oCard);
 				oDom.html(this.adaptiveCardInstance.render());
 
