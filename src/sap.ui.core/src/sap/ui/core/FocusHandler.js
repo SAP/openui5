@@ -53,8 +53,8 @@ sap.ui.define([
 					oRootRef.addEventListener("focus", this.fEventHandler, true);
 					oRootRef.addEventListener("blur", this.fEventHandler, true);
 				} else { //IE
-					jQuery(oRootRef).bind("activate", this.fEventHandler);
-					jQuery(oRootRef).bind("deactivate", this.fEventHandler);
+					jQuery(oRootRef).on("activate", this.fEventHandler);
+					jQuery(oRootRef).on("deactivate", this.fEventHandler);
 				}
 				Log.debug("FocusHandler setup on Root " + oRootRef.type + (oRootRef.id ? ": " + oRootRef.id : ""), null, "sap.ui.core.FocusHandler");
 			}
@@ -200,8 +200,8 @@ sap.ui.define([
 					oRootRef.removeEventListener("focus", this.fEventHandler, true);
 					oRootRef.removeEventListener("blur", this.fEventHandler, true);
 				} else { //IE
-					jQuery(oRootRef).unbind("activate", this.fEventHandler);
-					jQuery(oRootRef).unbind("deactivate", this.fEventHandler);
+					jQuery(oRootRef).off("activate", this.fEventHandler);
+					jQuery(oRootRef).off("deactivate", this.fEventHandler);
 				}
 			}
 			this.oCore = null;

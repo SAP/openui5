@@ -919,7 +919,7 @@ sap.ui.define([
 
 			try {
 				jQuery("body").append($temp);
-				$temp.val(sString).select();
+				$temp.val(sString).trigger("select");
 				document.execCommand("copy");
 				$temp.remove();
 				MessageToast.show(this._getText(sConfirmTextPrefix + ".Success"));

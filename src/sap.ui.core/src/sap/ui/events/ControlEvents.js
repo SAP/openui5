@@ -70,7 +70,7 @@ sap.ui.define([
 	 */
 	oControlEvents.bindAnyEvent = function(fnCallback) {
 		if (fnCallback) {
-			jQuery(document).bind(oControlEvents.events.join(" "), fnCallback);
+			jQuery(document).on(oControlEvents.events.join(" "), fnCallback);
 		}
 	};
 
@@ -83,7 +83,7 @@ sap.ui.define([
 	 */
 	oControlEvents.unbindAnyEvent = function unbindAnyEvent(fnCallback) {
 		if (fnCallback) {
-			jQuery(document).unbind(oControlEvents.events.join(" "), fnCallback);
+			jQuery(document).off(oControlEvents.events.join(" "), fnCallback);
 		}
 	};
 

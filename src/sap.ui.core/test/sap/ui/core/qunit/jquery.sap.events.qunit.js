@@ -233,7 +233,7 @@ sap.ui.define([
 				assert.ok(oEvent.isPseudoType(oEvent._sExpectedPseudoType), "Event has expected pseudo type " + oEvent._sExpectedPseudoType);
 			};
 
-			jQuery("#outer").bind(sOriginalEventName, fnCheck);
+			jQuery("#outer").on(sOriginalEventName, fnCheck);
 
 			var oEvent = jQuery.Event(sOriginalEventName);
 			oEvent._sExpectedPseudoType = sEventName;
@@ -245,8 +245,8 @@ sap.ui.define([
 
 			assert.equal(iCount, iTriggerCount, "Event handler called " + iTriggerCount + " times");
 
-			jQuery("#inner").unbind();
-			jQuery("#outer").unbind();
+			jQuery("#inner").off();
+			jQuery("#outer").off();
 		});
 
 		doTestCtrlEvent(sEventName, sOriginalEventName, oEventParams);
@@ -356,12 +356,12 @@ sap.ui.define([
 			bFirst = false;
 		};
 
-		jQuery("#outer").bind("click", fnCheck);
+		jQuery("#outer").on("click", fnCheck);
 
 		triggerDelayedDoubleClick("inner", function() {
 			assert.equal(iCount, 2, "Event handler called 2 times");
-			jQuery("#inner").unbind();
-			jQuery("#outer").unbind();
+			jQuery("#inner").off();
+			jQuery("#outer").off();
 			done();
 		});
 

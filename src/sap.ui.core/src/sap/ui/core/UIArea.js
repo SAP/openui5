@@ -1068,7 +1068,7 @@ sap.ui.define([
 		}
 
 		// mark the DOM as UIArea and bind the required events
-		jQuery(oDomRef).attr("data-sap-ui-area", oDomRef.id).bind(ControlEvents.events.join(" "), this._handleEvent.bind(this));
+		jQuery(oDomRef).attr("data-sap-ui-area", oDomRef.id).on(ControlEvents.events.join(" "), this._handleEvent.bind(this));
 
 	};
 
@@ -1085,18 +1085,18 @@ sap.ui.define([
 		}
 
 		// remove UIArea marker and unregister all event handlers of the control
-		jQuery(oDomRef).removeAttr("data-sap-ui-area").unbind();
+		jQuery(oDomRef).removeAttr("data-sap-ui-area").off();
 
 		// TODO: when optimizing the events => take care to unbind only the
 		//       required. additionally consider not to remove other event handlers.
 	//	var ojQRef = jQuery(oDomRef);
 	//	if (this.sEvents) {
-	//		ojQRef.unbind(this.sEvents, this._handleEvent);
+	//		ojQRef.off(this.sEvents, this._handleEvent);
 	//	}
 	//
 	//	var oFH = this.oCore.oFocusHandler;
-	//	ojQRef.unbind("focus",oFH.onfocusin);
-	//	ojQRef.unbind("blur", oFH.onfocusout);
+	//	ojQRef.off("focus",oFH.onfocusin);
+	//	ojQRef.off("blur", oFH.onfocusout);
 
 	};
 

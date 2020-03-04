@@ -27,6 +27,7 @@ sap.ui.define(function() {
 			assert.ok(isStubbed(jQuery.fn, "zIndex"), "jQuery.fn.zIndex should be stubbed");
 			assert.ok(isStubbed(jQuery.fn, "enableSelection"), "jQuery.fn.enableSelection should be stubbed");
 			assert.ok(isStubbed(jQuery.fn, "disableSelection"), "jQuery.fn.disableSelection should be stubbed");
+			assert.ok(isStubbed(jQuery.expr.pseudos, "focusable"), "jQuery.expr.pseudos.focusable should be stubbed");
 			assert.ok(isStubbed(jQuery.expr[ ":" ], "focusable"), "jQuery.expr[ \":\" ].focusable should be stubbed");
 
 			// then require jquery-ui-core
@@ -41,6 +42,7 @@ sap.ui.define(function() {
 				assert.equal(typeof jQuery.fn.zIndex, "function", "jQuery.fn.zIndex should be a function");
 				assert.equal(typeof jQuery.fn.enableSelection, "function", "jQuery.fn.enableSelection should be a function");
 				assert.equal(typeof jQuery.fn.disableSelection, "function", "jQuery.fn.disableSelection should be a function");
+				assert.equal(typeof jQuery.expr.pseudos.focusable, "function", "jQuery.expr.pseudos.focusable should be a function");
 				assert.equal(typeof jQuery.expr[ ":" ].focusable, "function", "jQuery.expr[ \":\" ].focusable should be a function");
 
 				// No sync require (e.g. lazy loading should be triggered)

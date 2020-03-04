@@ -1322,7 +1322,7 @@ sap.ui.define(["jquery.sap.script"], function(jQuery) {
 		assert.equal(myObject.prop6, oClone.prop6, "no deep clone");
 		assert.equal(myObject.prop1, oClone.prop1, "property cloned successfully");
 		assert.equal(myObject.prop2, oClone.prop2, "property cloned successfully");
-		assert.ok(jQuery.isArray(oClone.prop2), "property cloned successfully");
+		assert.ok(Array.isArray(oClone.prop2), "property cloned successfully");
 		assert.equal(myObject.prop3, oClone.prop3, "property cloned successfully");
 		assert.equal(myObject.prop4, oClone.prop4, "property cloned successfully");
 		assert.equal(myObject.prop5, oClone.prop5, "property cloned successfully");
@@ -1337,7 +1337,7 @@ sap.ui.define(["jquery.sap.script"], function(jQuery) {
 		assert.ok(myObject.prop6 !== oClone.prop6, "deep clone");
 		assert.equal(myObject.prop1, oClone.prop1, "property cloned successfully");
 		assert.ok(myObject.prop2 !== oClone.prop2, "property cloned successfully");
-		assert.ok(jQuery.isArray(oClone.prop2), "property cloned successfully");
+		assert.ok(Array.isArray(oClone.prop2), "property cloned successfully");
 		assert.equal(myObject.prop3, oClone.prop3, "property cloned successfully");
 		assert.equal(myObject.prop4, oClone.prop4, "property cloned successfully");
 		assert.equal(myObject.prop5, oClone.prop5, "property cloned successfully");

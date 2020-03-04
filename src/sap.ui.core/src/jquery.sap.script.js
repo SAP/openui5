@@ -45,7 +45,7 @@ sap.ui.define([
 	/**
 	 * Sorts the given array in-place and removes any duplicates (identified by "===").
 	 *
-	 * Use <code>jQuery.unique()</code> for arrays of DOMElements.
+	 * Use <code>jQuery.uniqueSort()</code> for arrays of DOMElements.
 	 *
 	 * @param {Array} a An Array of any type
 	 * @return {Array} Same array as given (for chaining)

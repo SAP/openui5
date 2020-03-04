@@ -2026,7 +2026,7 @@ sap.ui.define([
 					var oDomRef = oElement.getDomRef();
 					if (oDomRef && this.isOpen()) {
 						if (Device.browser.msie) {
-							jQuery(oDomRef).unbind("deactivate." + this._popupUID, this.fEventHandler);
+							jQuery(oDomRef).off("deactivate." + this._popupUID, this.fEventHandler);
 						} else {
 							oDomRef.removeEventListener("blur", this.fEventHandler, true);
 						}
@@ -2037,7 +2037,7 @@ sap.ui.define([
 					if (oDomRef && this.isOpen()) {
 						if (Device.browser.msie) {
 							// 'deactivate' needs to be used for msie to achieve event handling in capturing phase
-							jQuery(oDomRef).bind("deactivate." + this._popupUID, this.fEventHandler);
+							jQuery(oDomRef).on("deactivate." + this._popupUID, this.fEventHandler);
 						} else {
 							oDomRef.addEventListener("blur", this.fEventHandler, true);
 						}
@@ -2333,13 +2333,13 @@ sap.ui.define([
 					}
 				}
 			} else { // IE8 - TODO this IE8 comment seems to be misleading, check is for IE in general
-				jQuery(document).bind("activate." + this._popupUID, this.fEventHandler);
-				$PopupRoot.bind("deactivate." + this._popupUID, this.fEventHandler);
+				jQuery(document).on("activate." + this._popupUID, this.fEventHandler);
+				$PopupRoot.on("deactivate." + this._popupUID, this.fEventHandler);
 
 				for (i = 0, l = aChildPopups.length; i < l; i++) {
 					oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
 					if (oDomRef) {
-						jQuery(oDomRef).bind("deactivate." + this._popupUID, this.fEventHandler);
+						jQuery(oDomRef).on("deactivate." + this._popupUID, this.fEventHandler);
 					}
 				}
 			}
@@ -2374,13 +2374,13 @@ sap.ui.define([
 				this.closePopup(aChildPopups[i]);
 			}
 		} else { // IE8 - TODO this IE8 comment seems to be misleading, check is for IE in general
-			jQuery(document).unbind("activate." + this._popupUID, this.fEventHandler);
-			$PopupRoot.unbind("deactivate." + this._popupUID, this.fEventHandler);
+			jQuery(document).off("activate." + this._popupUID, this.fEventHandler);
+			$PopupRoot.off("deactivate." + this._popupUID, this.fEventHandler);
 
 			for (i = 0, l = aChildPopups.length; i < l; i++) {
 				oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
 				if (oDomRef) {
-					jQuery(oDomRef).unbind("deactivate." + this._popupUID, this.fEventHandler);
+					jQuery(oDomRef).off("deactivate." + this._popupUID, this.fEventHandler);
 				}
 			}
 		}

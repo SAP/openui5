@@ -151,7 +151,7 @@ sap.ui.define([
 	JSONModel.prototype.setJSON = function(sJSON, bMerge){
 		var oJSONData;
 		try {
-			oJSONData = jQuery.parseJSON(sJSON);
+			oJSONData = JSON.parse(sJSON + "");
 			this.setData(oJSONData, bMerge);
 		} catch (e) {
 			Log.fatal("The following problem occurred: JSON parse Error: " + e);

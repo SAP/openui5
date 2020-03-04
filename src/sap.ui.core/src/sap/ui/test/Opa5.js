@@ -706,7 +706,7 @@ sap.ui.define([
 			if (mExpansion) {
 				mExpansion.success = function (vControl) {
 					// right now, we assume that every declarative matcher matches exactly one control
-					var oControl = jQuery.isArray(vControl) ? vControl[0] : vControl;
+					var oControl = Array.isArray(vControl) ? vControl[0] : vControl;
 					var optionsForDependant = _substituteExpansion(options, aPath, oControl);
 					return Opa5.prototype.waitFor.call(this, optionsForDependant);
 				};

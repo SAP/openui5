@@ -38,7 +38,7 @@ sap.ui.define([
 			$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
 		}
 
-		$Tabbables = jQuery.unique($Tabbables);
+		$Tabbables = jQuery.uniqueSort($Tabbables);
 		return $Tabbables.filter(function() {
 			return isContained(aScopes, this);
 		});
@@ -224,7 +224,7 @@ sap.ui.define([
 		// our listener before the LBI registers its own listener.
 		// TODO consider using a capturing phase listener in LBI to make this more robust.
 		for (var i = 0; i < aPreventedEvents.length; i++) {
-			$LB.bind(aPreventedEvents[i], fnEventListener);
+			$LB.on(aPreventedEvents[i], fnEventListener);
 		}
 
 		setTimeout(function() {

@@ -646,19 +646,19 @@ sap.ui.define([
 				var oError = oEvent.originalEvent;
 				this.onWindowError(oError.message, oError.filename, oError.lineno);
 			}, this);
-			jQuery(window).bind("error", this._fnWindowErrorHandler);
+			jQuery(window).on("error", this._fnWindowErrorHandler);
 		}
 
 		// before unload handler (if exists)
 		if (this.onWindowBeforeUnload) {
 			this._fnWindowBeforeUnloadHandler = jQuery.proxy(this.onWindowBeforeUnload, this);
-			jQuery(window).bind("beforeunload", this._fnWindowBeforeUnloadHandler);
+			jQuery(window).on("beforeunload", this._fnWindowBeforeUnloadHandler);
 		}
 
 		// unload handler (if exists)
 		if (this.onWindowUnload) {
 			this._fnWindowUnloadHandler = jQuery.proxy(this.onWindowUnload, this);
-			jQuery(window).bind("unload", this._fnWindowUnloadHandler);
+			jQuery(window).on("unload", this._fnWindowUnloadHandler);
 		}
 
 	};
@@ -684,15 +684,15 @@ sap.ui.define([
 
 		// remove the event handlers
 		if (this._fnWindowErrorHandler) {
-			jQuery(window).unbind("error", this._fnWindowErrorHandler);
+			jQuery(window).off("error", this._fnWindowErrorHandler);
 			delete this._fnWindowErrorHandler;
 		}
 		if (this._fnWindowBeforeUnloadHandler) {
-			jQuery(window).unbind("beforeunload", this._fnWindowBeforeUnloadHandler);
+			jQuery(window).off("beforeunload", this._fnWindowBeforeUnloadHandler);
 			delete this._fnWindowBeforeUnloadHandler;
 		}
 		if (this._fnWindowUnloadHandler) {
-			jQuery(window).unbind("unload", this._fnWindowUnloadHandler);
+			jQuery(window).off("unload", this._fnWindowUnloadHandler);
 			delete this._fnWindowUnloadHandler;
 		}
 

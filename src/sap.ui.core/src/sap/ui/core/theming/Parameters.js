@@ -160,7 +160,7 @@ sap.ui.define([
 						}
 					}
 					try {
-						var oParams = jQuery.parseJSON(sParams);
+						var oParams = JSON.parse(sParams);
 						mergeParameters(oParams, sThemeBaseUrl);
 						return;
 					} catch (ex) {

@@ -533,7 +533,7 @@ sap.ui.define([
 
 				if (!this._sapui_bInAfterRenderingPhase) {
 					// if control is rendered, directly call bind()
-					this.$().bind(sEventType, fnProxy);
+					this.$().on(sEventType, fnProxy);
 				}
 			}
 		}
@@ -566,7 +566,7 @@ sap.ui.define([
 						if ( oParamSet.sEventType === sEventType  && oParamSet.fnHandler === fnHandler  &&  oParamSet.oListener === oListener ) {
 							this.aBindParameters.splice(i, 1);
 							// if control is rendered, directly call unbind()
-							$.unbind(sEventType, oParamSet.fnProxy);
+							$.off(sEventType, oParamSet.fnProxy);
 						}
 					}
 				}

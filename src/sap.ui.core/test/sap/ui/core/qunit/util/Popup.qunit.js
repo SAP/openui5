@@ -30,11 +30,11 @@ sap.ui.define([
 	// for Safari we need events to keep track of the focus
 	var lastFocusedId = null;
 	if (Device.browser.safari) {
-		jQuery(document).focusin(function(oEvent){
+		jQuery(document).on("focusin", function(oEvent){
 			var target = oEvent.target;
 			lastFocusedId = target.id;
 		});
-		jQuery(document).focusout(function(){
+		jQuery(document).on("focusout", function(){
 			lastFocusedId = null;
 		});
 	}
@@ -47,7 +47,7 @@ sap.ui.define([
 
 		$Ref = jQuery.sap.byId("popup");
 		assert.ok(($Ref !== undefined) && ($Ref != null), "popup jQuery object not found");
-		assert.equal($Ref.size(), 1, "popup jQuery object has not exactly one item");
+		assert.equal($Ref.length, 1, "popup jQuery object has not exactly one item");
 		assert.equal(oPopup, null, "oPopup must be null initially (order of execution problem?)");
 	});
 

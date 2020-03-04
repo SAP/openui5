@@ -7,7 +7,7 @@ sap.ui.define(['sap/base/assert'], function(assert) {
 	/**
 	 * Sorts the given array in-place and removes any duplicates (identified by "===").
 	 *
-	 * Use <code>jQuery.unique()</code> for arrays of DOMElements.
+	 * Use <code>jQuery.uniqueSort()</code> for arrays of DOMElements.
 	 *
 	 * @function
 	 * @since 1.58

@@ -771,7 +771,7 @@ sap.ui.define([
 		function triggerBeforeRendering(oControl){
 			bLocked = true;
 			try {
-				var oEvent = jQuery.Event("BeforeRendering");
+				var oEvent = new jQuery.Event("BeforeRendering");
 				// store the element on the event (aligned with jQuery syntax)
 				oEvent.srcControl = oControl;
 				oControl._handleEvent(oEvent);
@@ -930,14 +930,14 @@ sap.ui.define([
 			Measurement.resume(oControl.getId() + "---renderControl");
 
 			// unbind any generically bound browser event handlers
-			var aBindings = oControl.aBindParameters;
-			if (aBindings && aBindings.length > 0) { // if we have stored bind calls...
-				var jDomRef = jQuery(oControl.getDomRef());
-				if (jDomRef && jDomRef[0]) { // ...and we have a DomRef
-					for (var i = 0; i < aBindings.length; i++) {
-						var oParams = aBindings[i];
-						jDomRef.unbind(oParams.sEventType, oParams.fnProxy);
-					}
+			var aBindings = oControl.aBindParameters,
+				oDomRef;
+			// if we have stored bind calls and we have a DomRef
+			if (aBindings && aBindings.length > 0 && (oDomRef = oControl.getDomRef())) {
+				var $DomRef = jQuery(oDomRef);
+				for (var i = 0; i < aBindings.length; i++) {
+					var oParams = aBindings[i];
+					$DomRef.off(oParams.sEventType, oParams.fnProxy);
 				}
 			}
 
@@ -954,7 +954,7 @@ sap.ui.define([
 
 					// rendering interface must be determined for the root control once per rendering
 					// depending on the DOM reference of the control within the DOM tree
-					var oDomRef = oControl.getDomRef();
+					oDomRef = oControl.getDomRef();
 					if (!oDomRef && !bVisible) {
 						oDomRef = document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oControl));
 					}
@@ -1109,7 +1109,7 @@ sap.ui.define([
 				for (i = 0; i < size; i++) {
 					var oControl = aRenderedControls[i];
 					if (oControl.bOutput && oControl.bOutput !== "invisible") {
-						var oEvent = jQuery.Event("AfterRendering");
+						var oEvent = new jQuery.Event("AfterRendering");
 						// store the element on the event (aligned with jQuery syntax)
 						oEvent.srcControl = oControl;
 						// start performance measurement
@@ -1137,15 +1137,15 @@ sap.ui.define([
 			// Re-bind any generically bound browser event handlers (must happen after restoring focus to avoid focus event)
 			for (i = 0; i < size; i++) {
 				var oControl = aRenderedControls[i],
-					aBindings = oControl.aBindParameters;
+					aBindings = oControl.aBindParameters,
+					oDomRef;
 
-				if (aBindings && aBindings.length > 0) { // if we have stored bind calls...
-					var jDomRef = jQuery(oControl.getDomRef());
-					if (jDomRef && jDomRef[0]) { // ...and we have a DomRef - TODO: this check should not be required right after rendering...
-						for (var j = 0; j < aBindings.length; j++) {
-							var oParams = aBindings[j];
-							jDomRef.bind(oParams.sEventType, oParams.fnProxy);
-						}
+				// if we have stored bind calls and we have a DomRef
+				if (aBindings && aBindings.length > 0 && (oDomRef = oControl.getDomRef())) {
+					var $DomRef = jQuery(oDomRef);
+					for (var j = 0; j < aBindings.length; j++) {
+						var oParams = aBindings[j];
+						$DomRef.on(oParams.sEventType, oParams.fnProxy);
 					}
 				}
 			}
@@ -1824,7 +1824,7 @@ sap.ui.define([
 			var sOriginalDisplay = oDomNode.style.display;
 			var oActiveElement = document.activeElement;
 			oDomNode.style.display = "none";
-			oDomNode.offsetHeight;
+			oDomNode.offsetHeight; // force repaint
 			oDomNode.style.display = sOriginalDisplay;
 			if (document.activeElement !== oActiveElement && oActiveElement) {
 				oActiveElement.focus();

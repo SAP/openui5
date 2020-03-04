@@ -142,21 +142,21 @@ sap.ui.define([
 			html.push("</table></div>");
 			this.$().html(html.join(""));
 
-			this.$("tggleDbgSrc").bind("click", function(oEvent) {
+			this.$("tggleDbgSrc").on("click", function(oEvent) {
 				oEvent.preventDefault();
 				Support.getStub().sendEvent(that.getId() + "ToggleDebug", {});
 			});
-			this.$("Refresh").bind("click", function(oEvent) {
+			this.$("Refresh").on("click", function(oEvent) {
 				oEvent.preventDefault();
 				Support.getStub().sendEvent(that.getId() + "Refresh", {});
 			});
 
-			this.$("outputE2ETrace").bind("click", function() {
+			this.$("outputE2ETrace").on("click", function() {
 				this.focus();
 				this.select();
 			});
 
-			this.$("startE2ETrace").bind("click", function() {
+			this.$("startE2ETrace").on("click", function() {
 				if (!that.e2eTraceStarted) {
 					that.e2eLogLevel = that.$("logLevelE2ETrace").val();
 					that.$("startE2ETrace").addClass("active").text("Running...");

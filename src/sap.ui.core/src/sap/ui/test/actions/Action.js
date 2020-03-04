@@ -175,7 +175,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 				// to avoid this, directly dispatch the artificial events
 				bFireArtificialEvents = true;
 			} else {
-				$DomRef.focus();
+				$DomRef.trigger("focus");
 				// This check will only return false if you have the focus in the dev tools console,
 				// or a background tab, or the browser is not focused at all. We still want onfocusin to work
 				var bWasFocused = $DomRef.is(":focus");

@@ -300,7 +300,7 @@ sap.ui.define([
 				aSuppressHandler.push(EventTriggerHook.suppress(aPreventedEvents[i], oParentDOM, oBlockLayerDOM));
 			}
 			//for jQuery triggered events we also need the keydown handler
-			this.$blockLayer.bind('keydown', fnHandler);
+			this.$blockLayer.on('keydown', fnHandler);
 
 			return aSuppressHandler;
 		}
@@ -329,7 +329,7 @@ sap.ui.define([
 				}
 			}
 			if (oBlockLayerDOM) {
-				this.$blockLayer.unbind('keydown', fnHandler);
+				this.$blockLayer.off('keydown', fnHandler);
 			}
 		}
 	}

@@ -32,7 +32,7 @@
 			});
 			jQuery(selectbox).data("options", options);
 
-			jQuery(textbox).bind("change keyup", function() {
+			jQuery(textbox).on("change keyup", function() {
 				var options = jQuery(selectbox).empty().data("options");
 				var search = jQuery(this).val().trim();
 				var regex = new RegExp(search, "gi");
@@ -40,7 +40,7 @@
 				jQuery.each(options, function(i) {
 					var option = options[i];
 					if(option.text.match(regex) !== null) {
-						jQuery(selectbox).append(jQuery("<option>").text(option.text).val(option.value).dblclick(function() {
+						jQuery(selectbox).append(jQuery("<option>").text(option.text).val(option.value).on("dblclick", function() {
 							jQuery("#selectedTests").append(jQuery(this).clone());
 						}));
 					}
@@ -77,7 +77,7 @@
 				$this.val("Show all results");
 			}
 		}
-		jQuery("#showResults").click(showResults);
+		jQuery("#showResults").on("click", showResults);
 
 		jQuery("#testPage").val(sap.ui.qunit.TestRunner.getTestPageUrl());
 
@@ -92,7 +92,7 @@
 				var fnTemplate = Handlebars.compile(jQuery("#qunitResults").html());
 				var sHTML = fnTemplate(oContext);
 				jQuery("#testPageSelectDiv").html(sHTML);
-				jQuery("#testPageSelect > option").dblclick(function () {
+				jQuery("#testPageSelect > option").on("dblclick", function () {
 					jQuery("#selectedTests").append(jQuery("#find").clone());
 				});
 				jQuery("#copyButtons").show();
@@ -103,34 +103,34 @@
 				jQuery("#console").val(aTestPages.join("\n"));
 			});
 		}
-		jQuery("#find").click(find);
+		jQuery("#find").on("click", find);
 
 		function copy() {
 			var aSelectedTests = jQuery("#testPageSelect")[0].selectedOptions;
 			for (var i = 0; i < aSelectedTests.length; i++) {
 				jQuery("#selectedTests").append(jQuery("<option>").text(jQuery(aSelectedTests[i]).text()).val(jQuery(aSelectedTests[i]).text()));
 			}
-		}jQuery("#copy").click(copy);
+		}jQuery("#copy").on("click", copy);
 
 		function copyAll() {
 			jQuery("#selectedTests").append(jQuery("#testPageSelect > option").clone());
 		}
-		jQuery("#copyall").click(copyAll);
+		jQuery("#copyall").on("click", copyAll);
 
 		function remove() {
 			var aSelectedTests = jQuery("#selectedTests")[0].selectedOptions;
 			for (var i = aSelectedTests.length-1; i >= 0; i--) {
 				jQuery(aSelectedTests[i]).remove();
 			}
-		}jQuery("#remove").click(remove);
+		}jQuery("#remove").on("click", remove);
 
 		function removeAll() {
 			jQuery("#selectedTests > option").remove();
 		}
-		jQuery("#removeall").click(removeAll);
+		jQuery("#removeall").on("click", removeAll);
 
 		function run() {
-			jQuery("#open").click();
+			jQuery("#open").trigger("click");
 			window.oStartTime = new Date();
 			var $this = jQuery("#run");
 			if ($this.val() === "Run") {
@@ -160,7 +160,7 @@
 			}
 		}
 
-		jQuery("#run").click(function () {
+		jQuery("#run").on("click", function () {
 			if(jQuery("#selectedTests>option").length === 0) {
 				alert("Please select at least on test to execute");
 			} else {
@@ -184,7 +184,7 @@
 				jQuery("#open").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width:0 12px 12px 12px;border-color:transparent transparent #007dc0 transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			}
 		}
-		jQuery("#open").click(open);
+		jQuery("#open").on("click", open);
 
 
 		function openCoverage() {
@@ -196,7 +196,7 @@
 				jQuery("#openCoverage").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width:0 12px 12px 12px;border-color:transparent transparent #007dc0 transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			}
 		}
-		jQuery("#openCoverage").click(openCoverage);
+		jQuery("#openCoverage").on("click", openCoverage);
 
 		function openReporting() {
 			jQuery("#showResults").toggle();
@@ -211,12 +211,12 @@
 				jQuery("#openReporting").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width:0 12px 12px 12px;border-color:transparent transparent #007dc0 transparent;float: right;position: relative;left: -10px;cursor: pointer;");
 			}
 		}
-		jQuery("#openReporting").click(openReporting);
+		jQuery("#openReporting").on("click", openReporting);
 
 		function stop() {
 			sap.ui.qunit.TestRunner.stopTests();
 		}
-		jQuery("#stop").click(stop);
+		jQuery("#stop").on("click", stop);
 
 		setInterval(function() {
 			if (window.aTestPages) {

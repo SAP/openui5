@@ -331,7 +331,7 @@ function(
 				// but it can be also defined on the root DOM element for inline templates
 				// in case of inline templates we mark them
 				var sContext = $this.attr("data-context");
-				oContext = oContext || sContext && jQuery.parseJSON(sContext);
+				oContext = oContext || sContext && JSON.parse(sContext);
 
 				// mark the template as inline template (to avoid extra DOM for the TemplateControl)
 				// for inline templates the UIArea and the TemplateControl are the same DOM element

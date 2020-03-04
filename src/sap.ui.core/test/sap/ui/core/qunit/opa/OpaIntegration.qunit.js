@@ -11,7 +11,7 @@ sap.ui.define([
 
 		function addButtonAfterSomeTime() {
 			window.setTimeout(function () {
-				var $button = jQuery('<button id="button' + iNumberOfButtons + '">' + iNumberOfButtons + '</button>').click(addButtonAfterSomeTime);
+				var $button = jQuery('<button id="button' + iNumberOfButtons + '">' + iNumberOfButtons + '</button>').on("click", addButtonAfterSomeTime);
 				jQuery("body").append($button);
 				iNumberOfButtons++;
 			}, Math.random() * 1000);
@@ -35,7 +35,7 @@ sap.ui.define([
 					return jQuery("#" + sButtonId).length;
 				},
 				success : function () {
-					jQuery("#" + sButtonId).click();
+					jQuery("#" + sButtonId).trigger("click");
 				}
 			});
 			return this;

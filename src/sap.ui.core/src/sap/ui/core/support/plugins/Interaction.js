@@ -145,36 +145,36 @@ sap.ui.define([
 				that._oInteractionTree.setRange(arg1, arg2);
 			});
 
-			this.$("refresh").click(jQuery.proxy(function(oEvent) {
+			this.$("refresh").on("click", jQuery.proxy(function(oEvent) {
 				this._oStub.sendEvent(this.getId() + "Refresh");
 			}, this));
-			this.$("clear").click(jQuery.proxy(function(oEvent) {
+			this.$("clear").on("click", jQuery.proxy(function(oEvent) {
 				this._oStub.sendEvent(this.getId() + "Clear");
 			}, this));
 
-			this.$("export").click(jQuery.proxy(function(oEvent) {
+			this.$("export").on("click", jQuery.proxy(function(oEvent) {
 				//this._oStub.sendEvent(this.getId() + "Export");
 				this.onsapUiSupportInteractionExport();
 			}, this));
-			this.$("fileImport").change(jQuery.proxy(function(oEvent) {
+			this.$("fileImport").on("change", jQuery.proxy(function(oEvent) {
 				this.onsapUiSupportInteractionImport();
 				//this._oStub.sendEvent(this.getId() + "Import");
 			}, this));
-			this.$("active").click(jQuery.proxy(function(oEvent) {
+			this.$("active").on("click", jQuery.proxy(function(oEvent) {
 				var bActive = false;
 				if (this.$("active").prop("checked")) {
 					bActive = true;
 				}
 				this._oStub.sendEvent(this.getId() + "Activate", {"active": bActive});
 			}, this));
-			this.$("odata").attr('checked',this._bODATA_Stats_On).click(jQuery.proxy(function(oEvent) {
+			this.$("odata").attr('checked',this._bODATA_Stats_On).on("click", jQuery.proxy(function(oEvent) {
 				jQuery.sap.statistics(!jQuery.sap.statistics());
 			}, this));
 
 
 			this.$('record').attr('data-state', (!this._bFesrActive) ? 'Start recording' : 'Stop recording');
 
-			this.$('record').click(jQuery.proxy(function(oEvent) {
+			this.$('record').on("click", jQuery.proxy(function(oEvent) {
 				if (this.$('record').attr('data-state') === 'Stop recording') {
 					this._oStub.sendEvent(this.getId() + "Refresh");
 					this._oStub.sendEvent(this.getId() + "Activate", {"active": false});

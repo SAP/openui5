@@ -467,7 +467,7 @@ sap.ui.define([
 
 		var oServer = MockServer._getInstance();
 
-		assert.equal(jQuery.inArray(oMockServer, MockServer._aServers), 0, "Mock server is registered");
+		assert.equal(MockServer._aServers.indexOf(oMockServer), 0, "Mock server is registered");
 
 		assert.ok(oMockServer, "Mock server is created");
 		oMockServer.start();
@@ -491,7 +491,7 @@ sap.ui.define([
 		assert.ok(!oMockServer.isStarted(), "Mock server is destroyed");
 		assert.equal(MockServer._aFilters.length, 0, "Filters are removed from server");
 		assert.equal(oServer.responses.length, 0, "Right response length on real sinonfake server obj");
-		assert.equal(jQuery.inArray(oMockServer, MockServer._aServers), -1, "Mock server is not registered anymore");
+		assert.equal(MockServer._aServers.indexOf(oMockServer), -1, "Mock server is not registered anymore");
 	});
 
 	QUnit.test("Start / Stop / Destroy all", function (assert) {

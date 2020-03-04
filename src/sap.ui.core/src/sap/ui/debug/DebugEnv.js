@@ -87,14 +87,14 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 			div.style.zIndex = 5;
 			div.style.opacity = '0.2';
 			div.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(opacity=20)';
-			jQuery(div).bind("click",function(evt) {
+			jQuery(div).on("click",function(evt) {
 				alert("click!");
 			});
 			/ *
-			jQuery(div).bind("mouseover",function(evt) {
+			jQuery(div).on("mouseover",function(evt) {
 				alert("click!");
 			});
-			jQuery(div).bind("mouseout",function(evt) {
+			jQuery(div).on("mouseout",function(evt) {
 				alert("click!");
 			}); * /
 			this.oWindow.document.body.appendChild(div);
