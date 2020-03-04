@@ -17,7 +17,11 @@
 
 <body class="sapUiBody sapUiSizeCompact" style="margin:2rem">
 
-	<ui-integration-widget class="sapFCardBase customSize" manifest="./widgets/components/component1/webapp/manifest.json"></ui-integration-widget>
+	<ui-integration-widget
+		class="sapFCardBase customSize"
+		manifest="./widgets/components/component1/webapp/manifest.json"
+		manifest-changes='[{"content": {"configuration": {"settings": {"stringProperty": "changed value"}}}}]'>
+	</ui-integration-widget>
 
 	<ui-integration-widget class="customSize"
 		manifest="./widgets/components/component1/webapp/manifest.json"
