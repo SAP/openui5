@@ -471,6 +471,7 @@ sap.ui.define([
 
 			this.mock(jQuery).expects("ajax")
 				.withExactArgs(sServiceUrl + "Employees?foo=bar", {
+					contentType : undefined,
 					data : "payload",
 					headers : sinon.match({
 						"X-CSRF-Token" : sMethod === "GET" ? "Fetch" : "abc123"
@@ -823,6 +824,8 @@ sap.ui.define([
 
 			this.mock(jQuery).expects("ajax")
 				.withExactArgs(sServiceUrl + "Employees", {
+					// contentType via oRequestor.mFinalHeaders
+					contentType : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					data : undefined,
 					headers : mResultHeaders,
 					method : "GET"
@@ -919,6 +922,7 @@ sap.ui.define([
 
 			this.mock(jQuery).expects("ajax")
 				.withExactArgs(sServiceUrl + "Employees", {
+					contentType : oFixture.mExpectedRequestHeaders["Content-Type"],
 					data : undefined,
 					headers : sinon.match(oFixture.mExpectedRequestHeaders),
 					method : "GET"
@@ -3729,6 +3733,7 @@ sap.ui.define([
 		return new Promise(function (resolve) {
 			oJQueryMock.expects("ajax")
 				.withExactArgs(sServiceUrl + sResourcePath, {
+					contentType: undefined,
 					data : undefined,
 					headers : sinon.match.object,
 					method : "POST"
