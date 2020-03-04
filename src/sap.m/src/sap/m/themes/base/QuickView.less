@@ -6,9 +6,12 @@
 @_sap_m_QuickView_HorizontalLayoutMarginBottom: 2rem;
 @_sap_m_QuickView_HorizontalLayoutIconFontSize: 2.25rem;
 @_sap_m_QuickView_PagePaddingTop: 3rem;
-@_sap_m_QuickView_Compact_PagePaddingTop: 2.5rem;
+@_sap_m_QuickView_PageThumbnailBackgroundColor: @sapUiContentImagePlaceholderBackground;
+@_sap_m_QuickView_PageThumbnailColor: @sapUiContentImagePlaceholderForegroundColor;
+@_sap_m_QuickView_PageThumbnailBorderRadius: 0;
 @_sap_m_QuickView_TitleMaxHeight: 2.25rem;
-@_sap_m_QuickView_TitleTextShadow: @sapUiShadowText;
+@_sap_m_QuickView_DesktopIconFocusOutline: 1px dotted @sapUiContentFocusColor;
+@_sap_m_QuickView_DesktopIconFocusOutlineOffset: -3px;
 
 .sapMQuickView .sapMNav,
 .sapMQuickViewCard .sapMNav {
@@ -77,7 +80,7 @@ html.sap-tablet .sapMQuickViewPage .sapUiForm .sapUiFormResGrid > div {
 
 .sapUiSizeCompact .sapMQuickView.sapMPopover .sapMQuickViewPage.sapMScrollContScroll,
 .sapUiSizeCompact .sapMQuickView.sapMPopover .sapMQuickViewPage.sapMPage {
-	padding-top: @_sap_m_QuickView_Compact_PagePaddingTop;
+	padding-top: 2.5rem;
 }
 
 html.sap-phone .sapMQuickViewPage.sapMNavItem.sapMPage {
@@ -157,8 +160,9 @@ html.sap-tablet .sapMQuickViewPage > section {
 		font-weight: normal;
 		width: 3rem;
 		height: 3rem;
-		background-color: @sapUiContentImagePlaceholderBackground;
-		color: @sapUiContentImagePlaceholderForegroundColor;
+		background-color: @_sap_m_QuickView_PageThumbnailBackgroundColor;
+		color: @_sap_m_QuickView_PageThumbnailColor;
+		border-radius: @_sap_m_QuickView_PageThumbnailBorderRadius;
 	}
 }
 
@@ -233,7 +237,7 @@ html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 }
 
 .sapMQuickViewPage .sapMIBar-CTX .sapMTitle {
-	text-shadow: @_sap_m_QuickView_TitleTextShadow;
+	text-shadow: @sapUiShadowText;
 }
 
 html.sap-desktop .sapMQuickViewHeader,
@@ -290,6 +294,15 @@ html.sap-tablet .sapMQuickViewHeader {
 	color: @sapUiContentIconColor;
 }
 
+.sapMQuickViewPage .sapUiIcon:focus {
+	outline: none;
+
+	html.sap-desktop & {
+		outline: @_sap_m_QuickView_DesktopIconFocusOutline;
+		outline-offset: @_sap_m_QuickView_DesktopIconFocusOutlineOffset;
+	}
+}
+
 .sapMQuickViewPage .sapUiIcon:focus,
 html.sap-phone .sapMQuickViewPage .sapMLnk:focus {
   outline: none;
@@ -314,6 +327,6 @@ html.sap-tablet.sap-ios .sapMPanel .sapMQuickViewCard {
 /* Compact size */
 .sapUiSizeCompact {
 	.sapMQuickViewPage.sapMPage > header.sapMPageHeader {
-		height: @_sap_m_QuickView_Compact_PagePaddingTop;
+		height: 2.5rem;
 	}
 }
