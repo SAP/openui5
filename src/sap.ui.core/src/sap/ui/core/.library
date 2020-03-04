@@ -387,13 +387,22 @@
             <name>CA-UI5-COR</name>
             <modules>
                 <module>jquery.sap.*</module>
+                <module>ui5loader*</module>
+                <module>sap/base/*</module>
                 <module>sap/ui/app/*</module>
                 <module>sap/ui/base/*</module>
                 <module>sap/ui/debug/*</module>
+                <module>sap/ui/dom/*</module>
+                <module>sap/ui/events/*</module>
                 <module>sap/ui/model/*</module>
+                <module>sap/ui/performance/*</module>
                 <module>sap/ui/qunit/*</module>
+                <module>sap/ui/security/*</module>
+                <module>sap/ui/test/starter/*</module>
+                <module>sap/ui/util/*</module>
                 <module>sap/ui/Device</module>
                 <module>sap/ui/Global</module>
+                <module>sap/ui/VersionInfo</module>
             </modules>
         </component>
 
