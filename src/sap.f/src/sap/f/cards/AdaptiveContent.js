@@ -262,7 +262,7 @@ sap.ui.define([
 		 * @private
 		 * @param {Object} oDataSettings The data part of the configuration object
 		 */
-		BaseContent.prototype._setData = function (oDataSettings) {
+		AdaptiveContent.prototype._setData = function (oDataSettings) {
 			var oCard, oModel, oData,
 				sPath = "";
 
