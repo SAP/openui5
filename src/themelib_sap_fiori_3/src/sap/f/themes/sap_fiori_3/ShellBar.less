@@ -39,7 +39,7 @@
 		border-color: @sapUiShellHoverBackground;
 	}
 	.sapMToggleBtnPressed:not(.sapMBtnDisabled),
-	&.sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
+	.sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
 		background-color: @sapUiShellActiveBackground;
 		border-color: @sapUiShellActiveBackground;
 	}
@@ -110,8 +110,12 @@
 			}
 
 			.sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost):not(.sapMBtnCritical):not(.sapMBtnNegative):not(.sapMBtnNeutral):not(.sapMBtnSuccess) {
-			border-color: transparent;
-		  }
+				border-color: transparent;
+		 	}
+
+		  	html.sap-desktop & .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed, .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
+				background-color: @sapUiShellActiveBackground;
+			}
 
 			// sap.m.MenuButton
 			.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
@@ -204,8 +208,7 @@
 				background: transparent;
 				color: @sapUiShellTextColor;
 			}
-			&:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnIconFirst.sapMBtnTransparent.sapMBtnActive,
-			&:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnIconLast.sapMBtnTransparent.sapMBtnActive {
+			&:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnTransparent.sapMBtnActive {
 				background: @sapUiShellActiveBackground;
 				border-color: @sapUiShellActiveBackground;
 			}
