@@ -639,16 +639,11 @@ sap.ui.define([
 	 * Returns true as soon as the first dependency is found, otherwise false
 	 *
 	 * @param {object} oSelector selector of the control
-	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - polymorph reuse operations handling the changes on the given view type
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
 	 * @returns {boolean} Returns true if there are open dependencies
 	 */
-	ChangePersistence.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oAppComponent) {
-		return Object.keys(this._mChanges.mDependencies).some(function(sKey) {
-			return this._mChanges.mDependencies[sKey].changeObject.getDependentSelectorList().some(function(sDependencyId) {
-				return sDependencyId === oModifier.getControlIdBySelector(oSelector, oAppComponent);
-			});
-		}, this);
+	ChangePersistence.prototype.checkForOpenDependenciesForControl = function(oSelector, oAppComponent) {
+		return DependencyHandler.checkForOpenDependenciesForControl(this._mChanges, JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent), oAppComponent);
 	};
 
 	/**
