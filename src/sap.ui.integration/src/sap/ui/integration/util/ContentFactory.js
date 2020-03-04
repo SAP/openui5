@@ -56,7 +56,7 @@ sap.ui.define([
 				oContent.setActions(oActions);
 
 				if (sType.toLowerCase() !== "adaptivecard") {
-					oContent.setConfiguration(BindingHelper.createBindingInfos(oConfiguration));
+					oContent.setConfiguration(BindingHelper.createBindingInfos(oConfiguration), sType);
 				} else {
 					oContent.setConfiguration(oConfiguration);
 				}
