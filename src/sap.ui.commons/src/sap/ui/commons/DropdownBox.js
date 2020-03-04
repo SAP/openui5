@@ -1175,7 +1175,7 @@ sap.ui.define([
 
 		if (!Device.browser.msie) {
 			// because in IE already async made in ComboBox
-			jQuery(this.getInputDomRef()).focus();
+			jQuery(this.getInputDomRef()).trigger("focus");
 		} else {
 			this._bFocusByOpen = true;
 		}

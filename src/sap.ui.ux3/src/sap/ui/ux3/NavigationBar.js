@@ -249,9 +249,9 @@ sap.ui.define([
 		this._iSoredScrollPosition = this.$("list").scrollLeft();
 
 		if (Device.browser.firefox) { // TODO: feature detection... not used yet because of performance implications (may involve creating elements)
-			this.$().unbind("DOMMouseScroll", this._handleScroll);
+			this.$().off("DOMMouseScroll", this._handleScroll);
 		} else {
-			this.$().unbind("mousewheel", this._handleScroll);
+			this.$().off("mousewheel", this._handleScroll);
 		}
 
 		var arrow = this.getDomRef("arrow");
@@ -303,9 +303,9 @@ sap.ui.define([
 
 		// bind a scroll handler to the workset item area
 		if (Device.browser.firefox) { // TODO: feature detection... not used yet because of performance implications (may involve creating elements)
-			jQuery(oDomRef).bind("DOMMouseScroll", jQuery.proxy(this._handleScroll, this));
+			jQuery(oDomRef).on("DOMMouseScroll", jQuery.proxy(this._handleScroll, this));
 		} else {
-			jQuery(oDomRef).bind("mousewheel", jQuery.proxy(this._handleScroll, this));
+			jQuery(oDomRef).on("mousewheel", jQuery.proxy(this._handleScroll, this));
 		}
 
 		this._calculatePositions();

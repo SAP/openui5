@@ -91,7 +91,7 @@ sap.ui.define([
 		// - disabled buttons are part of the navigation chain
 		// - all other buttons gets focus (are part of hte navigation chain) in the expected order
 		setTimeout(function () {
-			jQuery(oCtrl.getDomRef()).focus();
+			jQuery(oCtrl.getDomRef()).trigger("focus");
 			setTimeout(function () {
 				clickRightArrow(oButtonA);
 				setTimeout(function () {
@@ -159,7 +159,7 @@ sap.ui.define([
 		oCtrl.addRightItem(oButtonRightItem);
 
 		setTimeout(function () {
-			oButtonRightItem.$().focus();
+			oButtonRightItem.$().trigger("focus");
 			assertFocusedElement(assert, oButtonRightItem, "As prerequisite for the test, the right item button must have a focus.");
 			oCtrl.setVisible(false);
 			setTimeout(function () {

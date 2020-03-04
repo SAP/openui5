@@ -208,7 +208,7 @@ sap.ui.define([
 		oLabel.attachBrowserEvent("click", clickHandler);
 		assert.equal(clicks, 0, "no event handler called so far");
 
-		oLabel.$().click();
+		oLabel.$().trigger("click");
 		assert.equal(clicks, 1, "event handler called");
 		assert.equal(names.sort().join(","), "c0", "control itself is used as this");
 	});
@@ -217,7 +217,7 @@ sap.ui.define([
 		oLabel.attachBrowserEvent("click", clickHandler, oListener1);
 		assert.equal(clicks, 0, "no event handler called so far");
 
-		oLabel.$().click();
+		oLabel.$().trigger("click");
 		assert.equal(clicks, 1, "event handler called");
 		assert.equal(names.sort().join(","), "l1", "given listener used as this");
 	});
@@ -228,45 +228,45 @@ sap.ui.define([
 		oLabel.attachBrowserEvent("click", clickHandler, oListener2);
 		assert.equal(clicks, 0, "no event handler called so far");
 
-		oLabel.$().click();
+		oLabel.$().trigger("click");
 		assert.equal(clicks, 3, "event handler called");
 		assert.equal(names.sort().join(","), "c0,l1,l2", "given listeners are used as this");
 	});
 
 	QUnit.test("deregistration with context", function(assert) {
 		oLabel.attachBrowserEvent("click", clickHandler, oListener1);
-		oLabel.$().click();
+		oLabel.$().trigger("click");
 		assert.equal(clicks, 1, "event handler called once");
 
 		oLabel.detachBrowserEvent("click", clickHandler, oListener1);
-		oLabel.$().click();
+		oLabel.$().trigger("click");
 		assert.equal(clicks, 1, "event handler only called once");
 	});
 
 	QUnit.test("deregistration with different context", function(assert) {
 		oLabel.attachBrowserEvent("click", clickHandler, oListener1);
-		oLabel.$().click();
+		oLabel.$().trigger("click");
 		assert.equal(clicks, 1, "event handler called once");
 
 		oLabel.detachBrowserEvent("click", clickHandler, oListener2);
-		oLabel.$().click();
+		oLabel.$().trigger("click");
 		assert.equal(clicks, 2, "event handler called twice");
 	});
 
 	QUnit.test("deregistration with multiple contexts", function(assert) {
 		oLabel.attachBrowserEvent("click", clickHandler, oListener1);
 		oLabel.attachBrowserEvent("click", clickHandler, oListener2);
-		oLabel.$().click();
+		oLabel.$().trigger("click");
 		assert.equal(clicks, 2, "all registered event handlers called");
 		assert.equal(names.sort().join(","), "l1,l2", "given listeners are used as this");
 
 		oLabel.detachBrowserEvent("click", clickHandler, oListener2);
-		oLabel.$().click();
+		oLabel.$().trigger("click");
 		assert.equal(clicks, 3, "only 1 remaining eh is called");
 		assert.equal(names.sort().join(","), "l1,l1,l2", "given listeners are used as this");
 
 		oLabel.detachBrowserEvent("click", clickHandler);
-		oLabel.$().click();
+		oLabel.$().trigger("click");
 		assert.equal(clicks, 4, "still 1 remaining eh is called");
 		assert.equal(names.sort().join(","), "l1,l1,l1,l2", "given listeners are used as this");
 	});

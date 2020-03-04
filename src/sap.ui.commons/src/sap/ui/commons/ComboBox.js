@@ -1006,7 +1006,7 @@ sap.ui.define([
 			// as IE just ignores syncron focus() called from popup by opening it must be called asynchron
 			// otherwise onfocusin is not executed.
 			setTimeout(function(){
-				jQuery(this.getInputDomRef()).focus();
+				jQuery(this.getInputDomRef()).trigger("focus");
 			}.bind(this), 0);
 		}
 
@@ -1385,7 +1385,7 @@ sap.ui.define([
 
 		if (this.mobile) {
 			var that = this;
-			this.$("select").bind("change", function(){
+			this.$("select").on("change", function(){
 				var newVal = that.$("select").val();
 				//as iPad ignores disabled attibute on option - check if item is enabled -> otherwise ignore
 				var aItems = that.getItems();

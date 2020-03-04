@@ -578,7 +578,7 @@ sap.ui.define([
                     // two focusin and focusout events
                     if (sInitFocusId !== sap.ui.getCore().getCurrentFocusedControlId()) {
                         var oControl = jQuery(document.getElementById(sInitFocusId));
-                        oControl.focus();
+                        oControl.trigger("focus");
                     }
                 }
 
@@ -1101,8 +1101,8 @@ sap.ui.define([
                     // Okay, we have the control
                     if (oFocusCtrl instanceof sap.ui.commons.Button) {
                         var $FocusCtrl = oFocusCtrl.$();
-                        $FocusCtrl.click();
-                        $FocusCtrl.focus();
+                        $FocusCtrl.trigger("click");
+                        $FocusCtrl.trigger("focus");
                     }
                 }
 

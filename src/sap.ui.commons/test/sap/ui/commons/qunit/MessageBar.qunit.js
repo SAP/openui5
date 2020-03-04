@@ -77,7 +77,7 @@ sap.ui.define([
 
 		// Can't simulate a click-open of the List with some code like
 		// since JavaScript checks for the "pointer" cursor being rendered!
-		jQuery("msgBar__arrowImg").focus().click();
+		jQuery("msgBar__arrowImg").trigger("focus").trigger("click");
 		assert.equal((jList.css('display') == "block")   ,false  ,"List not displayed");
 	});
 

@@ -329,7 +329,7 @@ sap.ui.define([
 		if (oCurrentSection.id == this.getSections()[0].getId()) {
 			oNextFocusableElement = jQuery(oCurrentSection).find("div.sapUiAcdSectionHdr");
 			if (oNextFocusableElement) {
-				oNextFocusableElement.focus();
+				oNextFocusableElement.trigger("focus");
 			}
 		}
 
@@ -344,7 +344,7 @@ sap.ui.define([
 			if (oPreviousSection) {
 				oNextFocusableElement = jQuery(oPreviousSection).find("div.sapUiAcdSectionHdr");
 				if (oNextFocusableElement) {
-					oNextFocusableElement.focus();
+					oNextFocusableElement.trigger("focus");
 				}
 			}
 		}
@@ -380,7 +380,7 @@ sap.ui.define([
 			if (oNextSection) {
 				var oNextFocusableElement = jQuery(oNextSection).find("div.sapUiAcdSectionHdr");
 				if (oNextFocusableElement) {
-					oNextFocusableElement.focus();
+					oNextFocusableElement.trigger("focus");
 				}
 			}
 		}
@@ -413,7 +413,7 @@ sap.ui.define([
 		if (oFocusableSection) {
 			var oNextFocusableElement = jQuery(oFocusableSection).find("div.sapUiAcdSectionHdr");
 			if (oNextFocusableElement) {
-				oNextFocusableElement.focus();
+				oNextFocusableElement.trigger("focus");
 			}
 		}
 
@@ -446,7 +446,7 @@ sap.ui.define([
 		if (oFocusableSection) {
 			var oNextFocusableElement = jQuery(oFocusableSection).find("div.sapUiAcdSectionHdr");
 			if (oNextFocusableElement) {
-				oNextFocusableElement.focus();
+				oNextFocusableElement.trigger("focus");
 			}
 		}
 

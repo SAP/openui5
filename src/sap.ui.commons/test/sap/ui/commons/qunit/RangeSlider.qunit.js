@@ -139,7 +139,7 @@ sap.ui.define([
 		var oSli = oSlis["oSli2"];
 		var oGrip = document.getElementById('oSli2-grip');
 		var oGrip2 = document.getElementById('oSli2-grip2');
-		jQuery("#oSli2").focus();
+		jQuery("#oSli2").trigger("focus");
 		oSli.setValue2(200);
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli2-grip", "mousedown", 1, 1);
@@ -277,7 +277,7 @@ sap.ui.define([
 		var oSli = oSlis["oSli3"];
 		var oGrip = document.getElementById('oSli3-grip');
 		var oGrip2 = document.getElementById('oSli3-grip2');
-		jQuery("#oSli3").focus();
+		jQuery("#oSli3").trigger("focus");
 		oSli.setValue2(200);
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli3-grip", "mousedown", 1);
@@ -410,7 +410,7 @@ sap.ui.define([
 		var oSli = oSlis["oSli6"];
 		var oGrip = document.getElementById('oSli6-grip');
 		var oGrip2 = document.getElementById('oSli6-grip2');
-		jQuery("#oSli6").focus();
+		jQuery("#oSli6").trigger("focus");
 		oSli.setValue2(200);
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli6-grip", "mousedown", 1);
@@ -892,7 +892,7 @@ sap.ui.define([
 		var oSli = oSlis["oSli7"];
 		var oGrip = document.getElementById('oSli7-grip');
 		var oGrip2 = document.getElementById('oSli7-grip2');
-		jQuery("#oSli7").focus();
+		jQuery("#oSli7").trigger("focus");
 		oSli.setValue2(200);
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli7-grip", "mousedown", 1, 1);
@@ -1030,7 +1030,7 @@ sap.ui.define([
 		var oSli = oSlis["oSli8"];
 		var oGrip = document.getElementById('oSli8-grip');
 		var oGrip2 = document.getElementById('oSli8-grip2');
-		jQuery("#oSli8").focus();
+		jQuery("#oSli8").trigger("focus");
 		oSli.setValue2(200);
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli8-grip", "mousedown", 1);
@@ -1163,7 +1163,7 @@ sap.ui.define([
 		var oSli = oSlis["oSli11"];
 		var oGrip = document.getElementById('oSli11-grip');
 		var oGrip2 = document.getElementById('oSli11-grip2');
-		jQuery("#oSli11").focus();
+		jQuery("#oSli11").trigger("focus");
 		oSli.setValue2(200);
 		oSli.setValue(100);
 		qutils.triggerMouseEvent("oSli11-grip", "mousedown", 1);
@@ -1477,7 +1477,7 @@ sap.ui.define([
 				bUseGrip2 = !bUseGrip2;
 				var sGripId = bUseGrip2 ? "oSli2-grip" : "oSli2-grip2";
 
-				jQuery("#" + sGripId).focus();
+				jQuery("#" + sGripId).trigger("focus");
 				qutils.triggerKeyboardEvent(sGripId, "ARROW_RIGHT");
 				mTests.changes++;
 			}

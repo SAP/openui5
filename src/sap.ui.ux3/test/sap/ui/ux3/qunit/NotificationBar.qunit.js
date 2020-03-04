@@ -407,7 +407,7 @@ sap.ui.define([
 
 		// NotificationBar is in maximized-mode
 		var oDomRef = window.document.getElementById("messageNotifier-messageNotifierView-messageView-messageMaximized2");
-		jQuery(oDomRef).focus();
+		jQuery(oDomRef).trigger("focus");
 
 		setTimeout(function() {
 			var before = document.activeElement;

@@ -295,7 +295,7 @@ sap.ui.define([
 		assert.expect(7);
 		assert.ok(!oThingInspector.getFlagState(), "Flag State is false");
 		action = "flag";
-		//jQuery.sap.byId(oThingInspector.getId() + "-flag").focus();
+		//jQuery.sap.byId(oThingInspector.getId() + "-flag").trigger("focus");
 		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", KeyCodes.ENTER, false, false, false);
 		assert.ok(oThingInspector.getFlagState(), "Flag State is true");
 		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", KeyCodes.SPACE, false, false, false);
@@ -343,11 +343,11 @@ sap.ui.define([
 		qutils.triggerMouseEvent(oThingInspector.$("actionBar-Update"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			assert.ok(oThingInspector.getDomRef("actionBar-UpdateActionPopup"), "Rendered update popup should exist in the page");
-			jQuery(jQuery(".sapUiFeederInput")[0]).focus();
+			jQuery(jQuery(".sapUiFeederInput")[0]).trigger("focus");
 			setTimeout(function() {
 				jQuery(".sapUiFeederInput")[0].innerHTML = "my feed entry";
 				setTimeout(function() {
-					jQuery(jQuery(".sapUiFeederInput")[0]).keyup();
+					jQuery(jQuery(".sapUiFeederInput")[0]).trigger("keyup");
 					setTimeout(function() {
 						//click on feed submit button should hide comment popup
 						qutils.triggerMouseEvent(oThingInspector.$('actionBar-Feeder-send'), "click", 1, 1, 1, 1);

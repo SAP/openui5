@@ -246,7 +246,7 @@ sap.ui.define([
 		}
 		if (oButtonOld) {
 			oButtonOld.removeStyleClass("sapUiSegButtonSelected");
-			oButtonOld.$().blur();
+			oButtonOld.$().trigger("blur");
 		}
 		if (oButtonOld && oButtonOld._icon) {
 			oButtonOld.setIcon(oButtonOld._icon);

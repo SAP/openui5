@@ -783,11 +783,11 @@ sap.ui.define([
 
 		var $document = jQuery(document);
 		if (bIsTouchMode) {
-			$document.bind("touchmove", jQuery.proxy(this._onTabMove, this));
-			$document.bind("touchend", jQuery.proxy(this._onTabMoved, this));
+			$document.on("touchmove", jQuery.proxy(this._onTabMove, this));
+			$document.on("touchend", jQuery.proxy(this._onTabMoved, this));
 		} else {
-			$document.mousemove(jQuery.proxy(this._onTabMove, this));
-			$document.mouseup(jQuery.proxy(this._onTabMoved, this));
+			$document.on("mousemove", jQuery.proxy(this._onTabMove, this));
+			$document.on("mouseup", jQuery.proxy(this._onTabMoved, this));
 		}
 	};
 
@@ -923,7 +923,7 @@ sap.ui.define([
 			}
 		}
 
-		$tab.focus();
+		$tab.trigger("focus");
 
 		this._initItemNavigation();
 
@@ -947,11 +947,11 @@ sap.ui.define([
 
 		var $document = jQuery(document);
 		if (oDragContext.isTouchMode) {
-			$document.unbind("touchmove", this._onTabMove);
-			$document.unbind("touchend", this._onTabMoved);
+			$document.off("touchmove", this._onTabMove);
+			$document.off("touchend", this._onTabMoved);
 		} else {
-			$document.unbind("mousemove", this._onTabMove);
-			$document.unbind("mouseup", this._onTabMoved);
+			$document.off("mousemove", this._onTabMove);
+			$document.off("mouseup", this._onTabMoved);
 		}
 
 		this._enableTextSelection();

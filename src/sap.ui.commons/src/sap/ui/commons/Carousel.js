@@ -273,7 +273,7 @@ sap.ui.define([
 			// set the focus on the last focused dom ref of the item navigation or
 			// in case if not set yet (tab previous into item nav) then we set the
 			// focus to the root domref
-			jQuery(this._oItemNavigation.getFocusedDomRef() || this._oItemNavigation.getRootDomRef()).focus();
+			jQuery(this._oItemNavigation.getFocusedDomRef() || this._oItemNavigation.getRootDomRef()).trigger("focus");
 		}
 	};
 
@@ -296,7 +296,7 @@ sap.ui.define([
 		} else {
 			if (this._oItemNavigation.getFocusedDomRef() === oEvent.target) {
 				this._bIgnoreFocusIn = true;
-				$this.find(".sapUiCrslAfter").focus();
+				$this.find(".sapUiCrslAfter").trigger("focus");
 				this._bIgnoreFocusIn = false;
 			}
 		}
@@ -322,7 +322,7 @@ sap.ui.define([
 			if (this._oItemNavigation.getFocusedDomRef() === oEvent.target &&
 					containsOrEquals($this.find(".sapUiCrslScl").get(0), oEvent.target)) {
 				this._bIgnoreFocusIn = true;
-				$this.find(".sapUiCrslBefore").focus();
+				$this.find(".sapUiCrslBefore").trigger("focus");
 				this._bIgnoreFocusIn = false;
 			}
 		}
@@ -447,7 +447,7 @@ sap.ui.define([
 			this.$("scrolllist").attr("aria-activedescendant", jQuery(this._oItemNavigation.getFocusedDomRef()).attr("id"));
 
 			// set the focus to the active control
-			jQuery(oDomRef).focus();
+			jQuery(oDomRef).trigger("focus");
 		}
 	};
 
