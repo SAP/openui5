@@ -461,7 +461,7 @@ sap.ui.define([
 				qutils.triggerMouseEvent("myShell-tool-myShell-searchTool", "click", 1, 1, 1, 1);
 				oTP.oPopup.attachClosed(function() {
 					// make sure the popup is closed again
-					assert.equal($tp.css("display"), "none", "Search tool popup should not be visible now");
+					assert.ok(!oTP.getDomRef() || !oTP.$().is(":visible"), "Search tool popup should not be visible now");
 					done();
 				});
 			}, 300);
