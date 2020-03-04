@@ -18,7 +18,7 @@ sap.ui.define([
 
 			var oModel = new JSONModel();
 			oModel.loadData("./model/examples.json");
-			this.setModel(oModel);
+			this.setModel(oModel, "cardTypesExamples");
 
 			var oCardManifests = new JSONModel();
 			oCardManifests.loadData("./model/cardManifests.json");

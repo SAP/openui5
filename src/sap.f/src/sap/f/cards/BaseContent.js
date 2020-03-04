@@ -1,12 +1,17 @@
 /*!
  * ${copyright}
  */
+
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/f/cards/loading/LoadingProvider"
-], function (Control, JSONModel, ManagedObjectObserver, LoadingProvider) {
+], function (Control,
+			JSONModel,
+			ManagedObjectObserver,
+			LoadingProvider
+			){
 	"use strict";
 
 	/**
@@ -87,18 +92,13 @@ sap.ui.define([
 	 * @private
 	 */
 	BaseContent.prototype.init = function () {
-		this._aReadyPromises = [];
+		this._iWaitingEventsCount = 0;
 		this._bReady = false;
 		this._mObservers = {};
 
 		// So far the ready event will be fired when the data is ready. But this can change in the future.
 		this._awaitEvent("_dataReady");
 		this._awaitEvent("_actionContentReady");
-
-		Promise.all(this._aReadyPromises).then(function () {
-			this._bReady = true;
-			this.fireEvent("_ready");
-		}.bind(this));
 
 		this._oLoadingProvider = new LoadingProvider();
 	};
@@ -110,7 +110,9 @@ sap.ui.define([
 	 */
 	BaseContent.prototype.ontap = function (oEvent) {
 		if (!oEvent.isMarked()) {
-			this.firePress({/* no parameters */});
+			this.firePress({
+				/* no parameters */
+			});
 		}
 	};
 
@@ -150,17 +152,21 @@ sap.ui.define([
 	 * @param {string} sEvent The name of the event
 	 */
 	BaseContent.prototype._awaitEvent = function (sEvent) {
-		this._aReadyPromises.push(new Promise(function (resolve) {
-			this.attachEventOnce(sEvent, function () {
-				resolve();
-			});
-		}.bind(this)));
+		this._iWaitingEventsCount ++;
+		this.attachEventOnce(sEvent, function () {
+			this._iWaitingEventsCount --;
+
+			if (this._iWaitingEventsCount === 0) {
+				this._bReady = true;
+				this.fireEvent("_ready");
+			}
+		});
 	};
 
 	BaseContent.prototype.destroy = function () {
 		this.setAggregation("_content", null);
 		this.setModel(null);
-		this._aReadyPromises = null;
+		this._iWaitingEventsCount = 0;
 		if (this._mObservers) {
 			Object.keys(this._mObservers).forEach(function (sKey) {
 				this._mObservers[sKey].disconnect();
@@ -178,15 +184,6 @@ sap.ui.define([
 			return this;
 		}
 
-		var oList = this.getInnerList(),
-			maxItems = oConfiguration.maxItems;
-		if (oList && maxItems) {
-			oList.setGrowing(true);
-			//If pass trough parameters maxItems is a string
-			oList.setGrowingThreshold(parseInt(maxItems));
-			oList.addStyleClass("sapFCardMaxItems");
-		}
-
 		this._oLoadingPlaceholder = this._oLoadingProvider.createContentPlaceholder(oConfiguration, sType);
 
 		this._setData(oConfiguration.data);
@@ -196,17 +193,6 @@ sap.ui.define([
 
 	BaseContent.prototype.getConfiguration = function () {
 		return this._oConfiguration;
-	};
-
-	/**
-	 * The function should be overwritten for content types which support the maxItems property.
-	 *
-	 * @protected
-	 * @virtual
-	 * @returns {sap.ui.core.Control|null} An instance of ListBase or null.
-	 */
-	BaseContent.prototype.getInnerList = function () {
-		return null;
 	};
 
 	/**
@@ -239,6 +225,7 @@ sap.ui.define([
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				this._updateModel(oEvent.getParameter("data"));
+				this.onDataChanged();
 			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
@@ -260,6 +247,13 @@ sap.ui.define([
             this._oLoadingPlaceholder = null;
 		}
 	};
+
+	/**
+	 * Called when the data for the content was changed either by the content or by the card.
+	 * Override when special behaviour has to be implemented when data is changed.
+	 * @virtual
+	 */
+	BaseContent.prototype.onDataChanged = function () { };
 
 	/**
 	 * Helper function to bind an aggregation.
@@ -290,7 +284,9 @@ sap.ui.define([
 						}
 					}
 				}.bind(this));
-				this._mObservers[sAggregation].observe(oControl, { aggregations: [sAggregation] });
+				this._mObservers[sAggregation].observe(oControl, {
+					aggregations: [sAggregation]
+				});
 			}
 		}
 	}
@@ -341,7 +337,9 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype._handleError = function (sLogMessage) {
-		this.fireEvent("_error", { logMessage: sLogMessage });
+		this.fireEvent("_error", {
+			logMessage: sLogMessage
+		});
 	};
 
 	BaseContent.prototype.setServiceManager = function (oServiceManager) {
@@ -367,17 +365,23 @@ sap.ui.define([
 
 		switch (sType) {
 			case "ListContent":
-				iHeight = BaseContent._getMinListHeight(oConfiguration, isCompact); break;
+				iHeight = BaseContent._getMinListHeight(oConfiguration, isCompact);
+				break;
 			case "TableContent":
-				iHeight = BaseContent._getMinTableHeight(oConfiguration, isCompact); break;
+				iHeight = BaseContent._getMinTableHeight(oConfiguration, isCompact);
+				break;
 			case "TimelineContent":
-				iHeight = BaseContent._getMinTimelineHeight(oConfiguration, isCompact); break;
+				iHeight = BaseContent._getMinTimelineHeight(oConfiguration, isCompact);
+				break;
 			case "AnalyticalContent":
-				iHeight = 14; break;
+				iHeight = 14;
+				break;
 			case "AnalyticsCloudContent":
-				iHeight = 14; break;
+				iHeight = 14;
+				break;
 			case "ObjectContent":
-				iHeight = 0; break;
+				iHeight = 0;
+				break;
 			default:
 				iHeight = 0;
 		}

@@ -381,7 +381,7 @@ sap.ui.define([
 			}
 		};
 
-		var oManifest_List_Bindend_Items = {
+		var oManifest_List_Binded_Items = {
 				"_version": "1.8.0",
 				"sap.app": {
 					"type": "card"
@@ -423,6 +423,55 @@ sap.ui.define([
 									"parameters": {
 										"intentSemanticObject": "SalesOrder",
 										"name": "{Name}"
+									}
+								}
+							]
+						}
+					}
+				}
+			};
+			var oManifest_List_Hidden_Items = {
+				"_version": "1.8.0",
+				"sap.app": {
+					"type": "card"
+				},
+				"sap.ui5": {
+					"services": {
+						"IntentBasedNavigation": {
+							"factoryName": "test.service.SampleNavigationFactory"
+						}
+					}
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Sales Orders",
+						"subTitle": "Static Data",
+						"icon": {
+							"src": "sap-icon://sales-order"
+						},
+						"status": {
+							"text": "100 of 200"
+						}
+					},
+					"content": {
+						"data": {
+							"request": {
+								"url": "test-resources/sap/ui/integration/qunit/manifests/items.json"
+							}
+						},
+						"item": {
+							"title": {
+								"value": "{Name}"
+							},
+							"actions": [
+								{
+									"type": "Navigation",
+									"service": "IntentBasedNavigation",
+									"parameters": {
+										"intentSemanticObject": "SalesOrder",
+										"name": "{Name}",
+										"hidden": "{url}"
 									}
 								}
 							]
@@ -1175,13 +1224,38 @@ sap.ui.define([
 			testNavigationServiceListContent(oManifest_ListCard_No_Request, assert);
 		});
 
+		QUnit.test("Card items with url should be hidden", function (assert) {
+
+			var done = assert.async(),
+
+				oCard = new Card({
+					manifest: oManifest_List_Hidden_Items,
+					width: "400px",
+					height: "600px"
+				});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oCard.attachEvent("_ready", function () {
+				var oCardListItems = oCard.getCardContent()._getList().getItems();
+
+			//Assert
+				assert.ok(oCardListItems.length === 1, "There should be only one item");
+				assert.ok(oCardListItems[1] === undefined , "There should be no second item");
+				oCard.destroy();
+				done();
+			});
+		});
+
 		QUnit.test("No service URL in navigation actions", function (assert) {
 
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oLogSpy = sinon.spy(Log, "error"),
 				oCard = new Card({
-					manifest: oManifest_List_Bindend_Items,
+					manifest: oManifest_List_Binded_Items,
 					width: "400px",
 					height: "600px"
 				});

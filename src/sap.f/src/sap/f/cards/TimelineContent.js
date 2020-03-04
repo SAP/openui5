@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/f/cards/BaseContent",
+		"sap/f/cards/BaseListContent",
 		"sap/suite/ui/commons/Timeline",
 		"sap/suite/ui/commons/library",
 		"sap/suite/ui/commons/TimelineItem",
@@ -10,7 +10,7 @@ sap.ui.define([
 		"sap/f/cards/BindingHelper",
 		"sap/f/cards/IconFormatter"
 	], function (
-		BaseContent,
+		BaseListContent,
 		Timeline,
 		suiteLibrary,
 		TimelineItem,
@@ -29,7 +29,7 @@ sap.ui.define([
 		 * @class
 		 * Displays time-related content.
 		 *
-		 * @extends sap.f.cards.BaseContent
+		 * @extends sap.f.cards.BaseListContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -42,7 +42,7 @@ sap.ui.define([
 		 *
 		 *
 		 */
-		var TimelineContent = BaseContent.extend("sap.f.cards.TimelineContent", {
+		var TimelineContent = BaseListContent.extend("sap.f.cards.TimelineContent", {
 			renderer: {}
 		});
 
@@ -50,7 +50,7 @@ sap.ui.define([
 		 * Called when control is destroyed.
 		 */
 		TimelineContent.prototype.exit = function () {
-			BaseContent.prototype.exit.apply(this, arguments);
+			BaseListContent.prototype.exit.apply(this, arguments);
 
 			if (this._oTimeLineItemTemplate) {
 				this._oTimeLineItemTemplate.destroy();
@@ -91,7 +91,7 @@ sap.ui.define([
 		 * @returns {sap.f.cards.TimelineContent} Pointer to the control instance to allow method chaining.
 		 */
 		TimelineContent.prototype.setConfiguration = function (oConfiguration) {
-			BaseContent.prototype.setConfiguration.apply(this, arguments);
+			BaseListContent.prototype.setConfiguration.apply(this, arguments);
 
 			if (!oConfiguration) {
 				return this;
@@ -107,6 +107,13 @@ sap.ui.define([
 			}
 
 			return this;
+		};
+
+		/**
+		 * Handler for when data is changed.
+		 */
+		TimelineContent.prototype.onDataChanged = function () {
+			this._checkHiddenNavigationItems(this.getConfiguration().item);
 		};
 
 		/**
@@ -139,6 +146,8 @@ sap.ui.define([
 			var oBindingInfo = {
 				template: this._oTimeLineItemTemplate
 			};
+
+			this._filterHiddenNavigationItems(mItem, oBindingInfo);
 			this._bindAggregation("content", this._getTimeline(), oBindingInfo);
 
 			return this;

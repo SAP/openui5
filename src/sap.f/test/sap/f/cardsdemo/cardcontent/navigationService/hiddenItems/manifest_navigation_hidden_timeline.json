@@ -1,0 +1,74 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.ui5": {
+		"services": {
+			"Navigation2": {
+				"factoryName": "cardsdemo.service.SampleNavigationFactory"
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Timeline",
+		"header": {
+			"title": "Upcoming Activities",
+			"subTitle": "For Today",
+			"status": {
+				"text": "{parameters>/visibleItems} of 20"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+					  "Title": "Weekly sync: Marketplace / Design Stream",
+					  "Description": "MRR WDF18 C3.2(GLASSBOX)",
+					  "Icon": "sap-icon://appointment-2",
+					  "Time": "10:00 - 10:30",
+					  "url": "www.sap.com"
+					},
+					{
+					  "Title": "Video Conference for FLP@SF, S4,Hybris",
+					  "Icon": "sap-icon://my-view",
+					  "Time": "14:00 - 15:30",
+					  "url": "www.google.com"
+					},
+					{
+					  "Title": "Call 'Project Nimbus'",
+					  "Icon": "sap-icon://outgoing-call",
+					  "Time": "16:00 - 16:30"
+					}
+				  ]
+			},
+			"item": {
+				"dateTime": {
+					"label": "{{time_label}}",
+					"value": "{Time}"
+				},
+				"description": {
+					"label": "{{description_label}}",
+					"value": "{Description}"
+				},
+				"title": {
+					"label": "{{title_label}}",
+					"value": "{Title}"
+				},
+				"icon": {
+					"src": "{Icon}"
+				},
+				"actions": [
+					{
+					  "type": "Navigation",
+					  "service": "Navigation2",
+					  "enabled": "{= ${url}}",
+					  "parameters": {
+						"hidden": "{url}"
+					  }
+					}
+				  ]
+			}
+		}
+	}
+}

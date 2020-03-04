@@ -44,5 +44,17 @@ sap.ui.define(["sap/ui/integration/services/Navigation", "sap/base/Log"], functi
 		Log.error("Navigate successfully");
 	};
 
+	SampleNavigation.prototype.hidden = function (oContext) {
+		if (!oContext) {
+			return Promise.resolve(false);
+		}
+		var bHidden = !!oContext.parameters.hidden;
+		if (bHidden) {
+			return Promise.resolve(true);
+		} else {
+			return Promise.resolve(false);
+		}
+	};
+
 	return SampleNavigation;
 });

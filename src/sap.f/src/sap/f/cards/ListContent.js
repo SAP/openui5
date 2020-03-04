@@ -3,14 +3,14 @@
  */
 sap.ui.define([
 		"sap/f/library",
-		"sap/f/cards/BaseContent",
+		"sap/f/cards/BaseListContent",
 		"sap/m/List",
 		"sap/m/StandardListItem",
 		"sap/ui/base/ManagedObject",
 		"sap/f/cards/IconFormatter",
 		"sap/f/cards/BindingHelper"
 	],
-	function (library, BaseContent, sapMList, StandardListItem, ManagedObject, IconFormatter, BindingHelper) {
+	function (library, BaseListContent, sapMList, StandardListItem, ManagedObject, IconFormatter, BindingHelper) {
 		"use strict";
 
 		var AreaType = library.cards.AreaType;
@@ -24,7 +24,7 @@ sap.ui.define([
 		 * @class
 		 * A control that is a wrapper of a <code>sap.m.List</code> and allows its creation based on a configuration.
 		 *
-		 * @extends sap.f.cards.BaseContent
+		 * @extends sap.f.cards.BaseListContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -34,7 +34,7 @@ sap.ui.define([
 		 * @since 1.62
 		 * @alias sap.f.cards.ListContent
 		 */
-		var ListContent = BaseContent.extend("sap.f.cards.ListContent", {
+		var ListContent = BaseListContent.extend("sap.f.cards.ListContent", {
 			renderer: {}
 		});
 
@@ -69,7 +69,7 @@ sap.ui.define([
 		 * Called when control is initialized.
 		 */
 		ListContent.prototype.init = function () {
-			BaseContent.prototype.init.apply(this, arguments);
+			BaseListContent.prototype.init.apply(this, arguments);
 
 			var oList = this._getList();
 			var that = this;
@@ -92,7 +92,7 @@ sap.ui.define([
 		 * Called when control is destroyed.
 		 */
 		ListContent.prototype.exit = function () {
-			BaseContent.prototype.exit.apply(this, arguments);
+			BaseListContent.prototype.exit.apply(this, arguments);
 
 			if (this._oItemTemplate) {
 				this._oItemTemplate.destroy();
@@ -108,7 +108,7 @@ sap.ui.define([
 		 * @returns {sap.f.cards.ListContent} Pointer to the control instance to allow method chaining.
 		 */
 		ListContent.prototype.setConfiguration = function (oConfiguration) {
-			BaseContent.prototype.setConfiguration.apply(this, arguments);
+			BaseListContent.prototype.setConfiguration.apply(this, arguments);
 
 			if (!oConfiguration) {
 				return this;
@@ -124,6 +124,13 @@ sap.ui.define([
 			}
 
 			return this;
+		};
+
+		/**
+		 * Handler for when data is changed.
+		 */
+		ListContent.prototype.onDataChanged = function () {
+			this._checkHiddenNavigationItems(this.getConfiguration().item);
 		};
 
 		/**
@@ -156,6 +163,7 @@ sap.ui.define([
 			var oBindingInfo = {
 				template: this._oItemTemplate
 			};
+			this._filterHiddenNavigationItems(mItem, oBindingInfo);
 			this._bindAggregation("items", this._getList(), oBindingInfo);
 		};
 
