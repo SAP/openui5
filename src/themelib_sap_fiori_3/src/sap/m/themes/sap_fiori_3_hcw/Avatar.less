@@ -3,14 +3,11 @@
 /* Quartz High Contrast White theme  */
 /* ================================= */
 
-.sapFAvatarBorder > .sapFAvatarImageHolder {
-	box-shadow: 0 0 0 0.0625rem @sapUiContentShadowColor inset;
-}
 
 .sapFAvatarImageContain,
 .sapFAvatarIcon,
 .sapFAvatarInitials {
-	border: 0.125rem solid @sapUiFieldBorderColor;
+	border: 0.0625rem solid @sapUiFieldBorderColor;
 	box-sizing: border-box;
 }
 
@@ -19,13 +16,51 @@
 	color: @sapUiContentForegroundColor;
 }
 
-.sapFAvatarColorPlaceholder {
-	&.sapFAvatarIcon,
-	&>.sapFAvatarInitialsHolder {
-		color: @sapUiContentIconColor;
-	}
+.sapFAvatarIcon,
+.sapFAvatarInitialsHolder {
+	color: @sapUiBaseText;
 }
 
 .sapFAvatarFocusable:focus {
 	outline-width: 0.125rem;
+}
+
+.sapFAvatarColorTransparent,
+.sapFAvatarColorTileIcon,
+.sapFAvatarColorPlaceholder {
+	background-color: @sapUiBaseBG;
+}
+
+.sapFAvatarXL{
+	font-size: 3rem;
+}
+
+.sapFAvatarL {
+	font-size: 2.25rem;
+}
+
+.sapFAvatarM {
+	font-size: 1.5rem;
+}
+
+.sapFAvatarS {
+	font-size: 1.125rem;
+}
+
+.sapFAvatarXS {
+	font-size: 1rem;
+}
+
+.sapFAvatar.sapFAvatarInitials > .sapFAvatarInitialsHolder {
+	font-size: inherit;
+}
+
+// Create classes which would just set background color of Avatar
+.generateColor (@accentIndex) {
+	@css-selector: ~"sapFAvatarColorAccent@{accentIndex}"; // Create the css selector string
+
+	// Build the real CSS selector.
+	.@{css-selector} {
+		background-color: @sapUiBaseBG;
+	}
 }
