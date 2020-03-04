@@ -3,25 +3,53 @@
 /* Quartz High Contrast Black theme  */
 /* ================================= */
 
-.sapMMessageDialog.sapMPopup-CTX > header.sapMDialogTitle {
+// ==========================================================================
+// Variables
+// ==========================================================================
+
+@_sap_m_Dialog_MarginHeight: 6%;
+@_sap_m_Dialog_BarHeight: 2.75rem;
+@_sap_m_Dialog_SubHeaderHeight: 2.75rem;
+@_sap_m_Dialog_InfoDesignBarHeight: 2.75rem;
+
+@_sap_m_Dialog_HeaderShadow: 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiPageHeaderBorderColor;
+@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem @sapUiSuccessBorder, @_sap_m_Dialog_HeaderShadow;
+@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.0625rem @sapUiErrorBorder, @_sap_m_Dialog_HeaderShadow;
+@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.0625rem @sapUiWarningBorder, @_sap_m_Dialog_HeaderShadow;
+@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.0625rem @sapHighlightColor, @_sap_m_Dialog_HeaderShadow;
+
+@_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
+
+.sapMDialog.sapMPopup-CTX > header .sapMHeader-CTX,
+.sapMDialog.sapMPopup-CTX > header .sapMSubHeader-CTX {
 	background-color: @sapUiGroupContentBackground;
 }
 
-.sapMDialog > header.sapMDialogTitle .sapMBarMiddle > .sapMBarPH > .sapMTitle {
-	color: @sapUiPageHeaderTextColor;
+.sapMDialog.sapMDialogWithSubHeader > header > .sapMIBar,
+.sapMDialog > header > .sapMIBar {
+	box-shadow: none;
 }
 
-.sapMDialog > footer.sapMDialogActions {
-	background-color: @sapUiPageFooterBackground;
-	border-top: 0.125rem solid  @sapUiPageFooterBorderColor;
+.sapMDialog:not(.sapMDialogWithSubHeader) > header > .sapMIBar,
+.sapMDialog > header:last-of-type .sapMIBar {
+	box-shadow: @_sap_m_Dialog_HeaderShadow;
 }
 
-.sapMDialog > footer.sapMDialogActions {
-	background-color: @sapUiPageFooterBackground;
+.sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
+	font-size: 1rem;
 }
 
 .sapMDialogResizeHandler::before {
-	color: @sapUiContentIconColor;
+	content: attr(data-sap-ui-icon-content);
+	color: @sapUiButtonLiteTextColor;
+}
+
+.sapMDialogBeginButton, .sapMDialogEndButton {
+	min-width: 4rem;
+}
+
+.sapMDialogTitle {
+	z-index: 3; // to hide the shadow from the header when there is sub-header
 }
 
 // buttons on phone must be to the right side (in LTR mode)
@@ -46,6 +74,7 @@ html.sap-phone .sapMDialog {
 		padding-right: 1rem;
 	}
 
+	header .sapMTB,
 	footer .sapMTB {
 		padding: 0 1rem;
 	}
