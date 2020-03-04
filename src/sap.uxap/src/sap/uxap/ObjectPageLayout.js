@@ -843,7 +843,7 @@ sap.ui.define([
 			this._snapHeader(bAppendHeaderToContent);
 		}
 
-		this.getHeaderTitle()._getFocusSpan().$().focus();
+		this.getHeaderTitle()._getFocusSpan().$().trigger("focus");
 	};
 
 	/**
@@ -3223,7 +3223,7 @@ sap.ui.define([
 		fnMoveNavBar.call(this);
 		if (Device.system.phone !== true) { // FIX - can not convert to expanded on windows phone
 			if (!this.oCore.byId(this.oCore.getCurrentFocusedControlId())) {
-				oLastSelectedElement && oLastSelectedElement.$().focus();
+				oLastSelectedElement && oLastSelectedElement.$().trigger("focus");
 			}
 		}
 
@@ -3934,7 +3934,7 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._toggleFooterAnimation = function(bShow, oFooter) {
 
-		this._$footerWrapper.bind("webkitAnimationEnd animationend",
+		this._$footerWrapper.on("webkitAnimationEnd animationend",
 		this._onToggleFooterAnimationEnd.bind(this, oFooter));
 		//Flagging if the animation has started
 		this._bIsFooterAanimationGoing = true;
@@ -3954,7 +3954,7 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._onToggleFooterAnimationEnd = function(oFooter) {
 
-		this._$footerWrapper.unbind("webkitAnimationEnd animationend");
+		this._$footerWrapper.off("webkitAnimationEnd animationend");
 
 		if (oFooter.hasStyleClass(ObjectPageLayout.HIDE_FOOTER_CLASS_NAME)) {
 			this._$footerWrapper.addClass("sapUiHidden");

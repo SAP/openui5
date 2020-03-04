@@ -856,7 +856,7 @@ sap.ui.define([
 		//show/hide scrolling arrows
 		this._sResizeListenerId = ResizeHandler.register(this, jQuery.proxy(this._adjustSize, this));
 
-		this.$().find(".sapUxAPAnchorBarScrollContainer").scroll(jQuery.proxy(this._onScroll, this));
+		this.$().find(".sapUxAPAnchorBarScrollContainer").on("scroll", jQuery.proxy(this._onScroll, this));
 
 		//restore state from previous rendering
 		if (oSelectedButton) {

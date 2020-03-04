@@ -47,7 +47,7 @@ function($, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select,
 		},
 		helpers = {
 			verifyFocusOnKeyDown: function (assert, iKeyCode, oItemToStartWith, oExpectedItemToBeFocused, sMessage) {
-				oItemToStartWith.$().focus();
+				oItemToStartWith.$().trigger("focus");
 				QUtils.triggerKeydown(oItemToStartWith.getId(), iKeyCode);
 				assert.ok(oExpectedItemToBeFocused.$().is(':focus'), sMessage);
 			},

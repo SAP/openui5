@@ -137,19 +137,19 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 			oSeventhAnchor = aAnchors[6].getDomRef();
 
 		// Focus the first anchor within the anchorbar and trigger PAGE UP
-		jQuery(oFirstAnchor).focus();
+		jQuery(oFirstAnchor).trigger("focus");
 		QUtils.triggerKeydown(oFirstAnchor, KeyCodes.PAGE_UP);
 		assert.strictEqual(jQuery(oFirstAnchor).is(":focus"),
 			true, "The first anchor should remain focused");
 
 		// Focus the second anchor within the anchorbar and trigger PAGE UP
-		jQuery(oSecondAnchor).focus();
+		jQuery(oSecondAnchor).trigger("focus");
 		QUtils.triggerKeydown(oSecondAnchor, KeyCodes.PAGE_UP);
 		assert.strictEqual(jQuery(oFirstAnchor).is(":focus"),
 			true, "The first anchor should be focused");
 
 		// Focus the seventh anchor within the anchorbar and trigger PAGE UP
-		jQuery(oSeventhAnchor).focus();
+		jQuery(oSeventhAnchor).trigger("focus");
 		QUtils.triggerKeydown(oSeventhAnchor, KeyCodes.PAGE_UP);
 		assert.strictEqual(jQuery(oFirstAnchor).is(":focus"),
 			true, "Five anchors should be skipped over and the first anchor should be focused"
@@ -164,17 +164,17 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 			oSeventhLastAnchor = aAnchors[aAnchors.length - 7].getDomRef();
 
 		// Focus the last anchor and trigger PAGE DOWN
-		jQuery(oLastAnchor).focus();
+		jQuery(oLastAnchor).trigger("focus");
 		QUtils.triggerKeydown(oLastAnchor, KeyCodes.PAGE_DOWN);
 		assert.strictEqual(jQuery(oLastAnchor).is(":focus"), true, "The last anchor should remain focused");
 
 		// Focus the second last anchor and trigger PAGE DOWN
-		jQuery(oSecondLastAnchor).focus();
+		jQuery(oSecondLastAnchor).trigger("focus");
 		QUtils.triggerKeydown(oSecondLastAnchor, KeyCodes.PAGE_DOWN);
 		assert.strictEqual(jQuery(oLastAnchor).is(":focus"), true, "The last anchor should be focused");
 
 		// Focus the seventh anchor from the end and trigger PAGE DOWN
-		jQuery(oSeventhLastAnchor).focus();
+		jQuery(oSeventhLastAnchor).trigger("focus");
 		QUtils.triggerKeydown(oSeventhLastAnchor, KeyCodes.PAGE_DOWN);
 		assert.strictEqual(jQuery(oLastAnchor).is(":focus"), true,
 			"Five anchors should be skipped over and the last anchor should be focused");
@@ -254,14 +254,14 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 			aSubSections = aSections[8].getSubSections();
 
 		// Section
-		aSections[0].$().focus();
+		aSections[0].$().trigger("focus");
 		QUtils.triggerKeydown(aSections[0].sId, KeyCodes.ARROW_RIGHT);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSections[1].sId, "Next section should be focused after arrow right");
 		QUtils.triggerKeydown(aSections[1].sId, KeyCodes.ARROW_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSections[2].sId, "Next section should be focused after arrow down");
 
 		// Subsection
-		aSubSections[0].$().focus();
+		aSubSections[0].$().trigger("focus");
 		QUtils.triggerKeydown(aSubSections[0].sId, KeyCodes.ARROW_RIGHT);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[1].sId, "Next subsection should be focused after arrow right");
 		QUtils.triggerKeydown(aSubSections[1].sId, KeyCodes.ARROW_DOWN);
@@ -273,14 +273,14 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 			aSubSections = aSections[8].getSubSections();
 
 		// Section
-		aSections[2].$().focus();
+		aSections[2].$().trigger("focus");
 		QUtils.triggerKeydown(aSections[2].sId, KeyCodes.ARROW_LEFT);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSections[1].sId, "Previous section should be focused after arrow left");
 		QUtils.triggerKeydown(aSections[1].sId, KeyCodes.ARROW_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSections[0].sId, "Previous section should be focused after arrow up");
 
 		// Subsection
-		aSubSections[2].$().focus();
+		aSubSections[2].$().trigger("focus");
 		QUtils.triggerKeydown(aSubSections[2].sId, KeyCodes.ARROW_LEFT);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[1].sId, "Previous subsection should be focused after arrow left");
 		QUtils.triggerKeydown(aSubSections[1].sId, KeyCodes.ARROW_UP);
@@ -294,21 +294,21 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 		    oSpy = this.spy(oSingleSubsection, "_scrollParent");
 
 		// Section
-		aSections[0].$().focus();
+		aSections[0].$().trigger("focus");
 		QUtils.triggerKeydown(aSections[0].sId, KeyCodes.END);
 		assert.equal(jQuery(document.activeElement).attr("id"), "UxAP-70_KeyboardHandling--section-with-multiple-sub-section", "Last section should be focused after END key");
 		QUtils.triggerKeydown("UxAP-70_KeyboardHandling--section-with-multiple-sub-section", KeyCodes.HOME);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSections[0].sId, "First section should be focused after HOME key");
 
 		// Subsection
-		aSubSections[0].$().focus();
+		aSubSections[0].$().trigger("focus");
 		QUtils.triggerKeydown(aSubSections[0].sId, KeyCodes.END);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[9].sId, "Last subsection should be focused after END key");
 		QUtils.triggerKeydown(aSubSections[9].sId, KeyCodes.HOME);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "First subsection should be focused after HOME key");
 
 		// Single subsection should not scroll the page
-		oSingleSubsection.$().focus();
+		oSingleSubsection.$().trigger("focus");
 		QUtils.triggerKeydown(oSingleSubsection.getId(), KeyCodes.HOME);
 		assert.ok(oSpy.notCalled, "_scrollParent should not be called");
 		QUtils.triggerKeydown(oSingleSubsection.getId(), KeyCodes.END);
@@ -322,33 +322,33 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 		    oSpy = this.spy(oSingleSubsection, "_scrollParent");
 
 		// Section
-		aSections[0].$().focus();
+		aSections[0].$().trigger("focus");
 		QUtils.triggerKeydown(aSections[0].sId, KeyCodes.PAGE_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSections[6].sId, "6th section down should be focused after PAGE DOWN");
 		QUtils.triggerKeydown(aSections[6].sId, KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSections[0].sId, "6th section up should be focused after PAGE UP");
-		aSections[8].$().focus();
+		aSections[8].$().trigger("focus");
 		QUtils.triggerKeydown(aSections[8].sId, KeyCodes.PAGE_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), "UxAP-70_KeyboardHandling--section-with-multiple-sub-section", "Last section down should be focused after PAGE DOWN");
-		aSections[1].$().focus();
+		aSections[1].$().trigger("focus");
 		QUtils.triggerKeydown(aSections[1].sId, KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSections[0].sId, "First section up should be focused after PAGE UP");
 
 		// Subsection
-		aSubSections[0].$().focus();
+		aSubSections[0].$().trigger("focus");
 		QUtils.triggerKeydown(aSubSections[0].sId, KeyCodes.PAGE_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[6].sId, "6th subsection down should be focused after PAGE DOWN");
 		QUtils.triggerKeydown(aSubSections[6].sId, KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "6th subsection up should be focused after PAGE UP");
-		aSubSections[7].$().focus();
+		aSubSections[7].$().trigger("focus");
 		QUtils.triggerKeydown(aSubSections[7].sId, KeyCodes.PAGE_DOWN);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[9].sId, "Last subsection down should be focused after PAGE DOWN");
-		aSubSections[2].$().focus();
+		aSubSections[2].$().trigger("focus");
 		QUtils.triggerKeydown(aSubSections[2].sId, KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "First subsection up should be focused after PAGE UP");
 
 		// Single subsection should not scroll the page
-		oSingleSubsection.$().focus();
+		oSingleSubsection.$().trigger("focus");
 		QUtils.triggerKeydown(oSingleSubsection.getId(), KeyCodes.PAGE_DOWN);
 		assert.ok(oSpy.notCalled, "_scrollParent should not be called");
 		QUtils.triggerKeydown(oSingleSubsection.getId(), KeyCodes.PAGE_UP);
@@ -413,7 +413,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 			$anchorBarButton = oAnchorBarButtonControl.$(),
 			$subSection = Core.byId(sSectionId).$();
 
-			$anchorBarButton.focus();
+			$anchorBarButton.trigger("focus");
 
 			QUtils.triggerKeyup($anchorBarButton, sKeyPressed);
 
@@ -436,7 +436,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 			$anchorBarButton = oAnchorBarButtonControl.$(),
 			$subSection = Core.byId(sSectionId).$();
 
-			$anchorBarButton.focus();
+			$anchorBarButton.trigger("focus");
 
 			QUtils.triggerKeydown($anchorBarButton, sKeyPressed);
 
@@ -458,7 +458,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 			$anchorBarButton = oAnchorBarButtonControl.$(),
 			$subSection = Core.byId(sSectionId).$();
 
-			$anchorBarButton.focus();
+			$anchorBarButton.trigger("focus");
 
 			oAnchorBarButtonControl.firePress();
 
