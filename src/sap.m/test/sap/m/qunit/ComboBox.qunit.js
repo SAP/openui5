@@ -10377,6 +10377,9 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired when the first filtered item is pressed');
 
+		// wait 1s before destroying the combobox, so the sap.m.Dialog has time to close
+		this.clock.tick(1000);
+
 		// cleanup
 		oComboBox.destroy();
 	});
