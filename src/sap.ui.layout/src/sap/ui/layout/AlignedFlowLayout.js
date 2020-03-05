@@ -104,6 +104,12 @@ sap.ui.define([
 
 				this.oResizeObserver = new ResizeObserver(this.onResize.bind(this));
 
+				// used to store the layout width
+				this.fLayoutWidth = 0;
+
+				// used to store the width of the end item (item holding the `endContent` aggregation)
+				this.fEndItemWidth = 0;
+
 			// resize handler fallback for old browsers (e.g. IE 11)
 			} else {
 
@@ -117,6 +123,8 @@ sap.ui.define([
 			// resize observer cleanup
 			this.disconnectResizeObserver();
 			this.oResizeObserver = null;
+			this.fLayoutWidth = undefined;
+			this.fEndItemWidth = undefined;
 
 			// resize handler cleanup
 			this.disconnectResizeHandler();
@@ -169,9 +177,35 @@ sap.ui.define([
 			}
 		};
 
-		AlignedFlowLayout.prototype.onResize = function(aEntries) {
+		AlignedFlowLayout.prototype.onResize = function(aObserverEntries) {
+			var oDomRef = this.getDomRef(),
+				oEndItemDomRef,
+				oObserverEntry = aObserverEntries[0],
+				bWidthChanged = isWidthChanged(this.fLayoutWidth, oObserverEntry, oDomRef),
+				fNewWidth = oObserverEntry.contentRect.width;
+
+			if (bWidthChanged) {
+				this.fLayoutWidth = fNewWidth;
+			} else {
+				oEndItemDomRef = this.getDomRef("endItem");
+				bWidthChanged = isWidthChanged(this.fEndItemWidth, oObserverEntry, oEndItemDomRef);
+
+				if (bWidthChanged) {
+					this.fEndItemWidth = fNewWidth;
+				} else {
+
+					// avoid cyclic dependencies and/or infinite resizing callback loops
+					return;
+				}
+			}
+
 			window.requestAnimationFrame(function() {
-				this.reflow();
+				var oDomRefs = {
+					domRef: oDomRef,
+					endItemDomRef: oEndItemDomRef
+				};
+
+				this.reflow(oDomRefs);
 			}.bind(this));
 		};
 
@@ -179,13 +213,13 @@ sap.ui.define([
 		 * Re-calculates the positions and geometries of items in the <code>AlignFlowLayout</code> control to re-arrange
 		 * items evenly across the horizontal space available (if necessary).
 		 *
-		 * @param {object} [oSettings] Settings to reflow the <code>AlignedFlowLayout</code> control
-		 * @param {HTMLDivElement} [oSettings.domRef] The root control's DOM reference
-		 * @param {HTMLDivElement} [oSettings.endItemDomRef] The end item's DOM reference
+		 * @param {object} [oDomRefs] DOM references to reflow the <code>AlignedFlowLayout</code> control
+		 * @param {HTMLDivElement} [oDomRefs.domRef] The root control's DOM reference
+		 * @param {HTMLDivElement} [oDomRefs.endItemDomRef] The end item's DOM reference
 		 * @protected
 		 * @since 1.60
 		 */
-		AlignedFlowLayout.prototype.reflow = function(oSettings) {
+		AlignedFlowLayout.prototype.reflow = function(oDomRefs) {
 			var aContent = this.getContent();
 
 			// skip unnecessary style recalculations if the items are not rendered or are rendered async
@@ -193,8 +227,8 @@ sap.ui.define([
 				return;
 			}
 
-			oSettings = oSettings || {};
-			var oDomRef = oSettings.domRef || this.getDomRef();
+			oDomRefs = oDomRefs || {};
+			var oDomRef = oDomRefs.domRef || this.getDomRef();
 
 			// skip unnecessary style recalculations if the control root DOM element has been removed
 			// from the DOM
@@ -202,7 +236,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oEndItemDomRef = oSettings.endItemDomRef || this.getDomRef("endItem"),
+			var oEndItemDomRef = oDomRefs.endItemDomRef || this.getDomRef("endItem"),
 				oLastItemDomRef = this.getLastItemDomRef();
 
 			if (!oEndItemDomRef || !oLastItemDomRef) {
@@ -217,13 +251,8 @@ sap.ui.define([
 				return;
 			}
 
-			var oLastSpacerDomRef = oDomRef.lastElementChild,
-				mLastSpacerStyle = oLastSpacerDomRef.style;
-
-			mLastSpacerStyle.width = "";
-			mLastSpacerStyle.height = "";
-			mLastSpacerStyle.display = "";
-			oDomRef.classList.remove(this.getRenderer().CSS_CLASS + "OneLine");
+			var oLastSpacerDomRef = oDomRef.lastElementChild;
+			resetCSS(oDomRef, oLastSpacerDomRef);
 
 			// skip unnecessary style recalculations if the any ancestor is hidden
 			// (the "display" style property is set to "none")
@@ -231,7 +260,8 @@ sap.ui.define([
 				return;
 			}
 
-			var iEndItemHeight = oEndItemDomRef.offsetHeight,
+			var mLastSpacerStyle = oLastSpacerDomRef.style,
+				iEndItemHeight = oEndItemDomRef.offsetHeight,
 				iEndItemWidth = oEndItemDomRef.offsetWidth,
 				iLastItemOffsetTop = oLastItemDomRef.offsetTop,
 				iLastItemOffsetLeft = oLastItemDomRef.offsetLeft,
@@ -319,6 +349,19 @@ sap.ui.define([
 				oDomRef.classList.add(CSS_CLASS_ONE_LINE);
 			}
 		};
+
+		function isWidthChanged(fOldWidth, oObserverEntry, oTargetDomRef) {
+			var fNewWidth = oObserverEntry.contentRect.width;
+			return (oTargetDomRef === oObserverEntry.target) && (fNewWidth !== fOldWidth);
+		}
+
+		function resetCSS(oDomRef, oLastSpacerDomRef) {
+			var mLastSpacerStyle = oLastSpacerDomRef.style;
+			mLastSpacerStyle.width = "";
+			mLastSpacerStyle.height = "";
+			mLastSpacerStyle.display = "";
+			oDomRef.classList.remove(oDomRef.classList.item(0) + "OneLine");
+		}
 
 		/*
 		 * Checks whether the visible content fits into a single line or it wraps onto multiple lines.

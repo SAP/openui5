@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit sinon */
 
 QUnit.config.autostart = false;
 sap.ui.test.qunit.delayTestStart();
@@ -132,6 +132,9 @@ sap.ui.require([
 			// cleanup
 			this.oAlignedFlowLayout.destroy();
 			Core.applyChanges();
+			this.oContentDomRef.style.width = "";
+			this.oContentDomRef.style.height = "";
+			this.oContentDomRef = null;
 			this.oAlignedFlowLayout = null;
 		}
 	});
@@ -467,6 +470,128 @@ sap.ui.require([
 			// assert
 			assert.strictEqual(oDisconnectSpy.callCount, 1);
 			assert.ok(oAlignedFlowLayout.oResizeObserver === null, "the resize observer object should refer to null");
+		});
+
+		QUnit.test("it should not trigger unnecessary function calls to the .reflow() method to" +
+					" (prevent cyclic dependencies (test case 1))", function(assert) {
+
+			var done = assert.async();
+
+			// system under test
+			var oAlignedFlowLayout = new AlignedFlowLayout({
+				content: [
+					new Input()
+				],
+				endContent: [
+					new Button({
+						text: "Lorem ipsum"
+					})
+				]
+			});
+
+			// arrange
+			oAlignedFlowLayout.placeAt(CONTENT_ID);
+
+			// enforces a sync rendering of the AlignedFlowLayout control
+			Core.applyChanges();
+
+			// wait some time after the initial rendering cycle finishes
+			// (this timeout timer is not required for the test to run successful,
+			// but rather to ensure that the reflows caused by the initial rendering
+			// cycle is finish)
+			setTimeout(function() {
+				var oLayoutDomRef = oAlignedFlowLayout.getDomRef();
+				var oReflowStub = sinon.stub(oAlignedFlowLayout, "reflow");
+
+				// act + arrange, update height of the AlignedFlowLayout control,
+				// this should not trigger a function call to the .reflow() method
+				oLayoutDomRef.style.height = "100px";
+
+				var fLayoutWidth = Number.parseFloat(oLayoutDomRef.offsetWidth);
+
+				// override the AlignedFlowLayout's internal field member named
+				// "fLayoutWidth", so that no width change is detected by the control
+				oAlignedFlowLayout.fLayoutWidth = fLayoutWidth;
+
+				// wait some time until the browser layout is finished
+				setTimeout(fnAfterBrowserReflow.bind(this), 100);
+
+				function fnAfterBrowserReflow() {
+
+					// assert
+					var sMessage = "a function call to the .reflow() method should not be" +
+                    " triggered when the height of the layout control changes";
+					assert.strictEqual(oReflowStub.callCount, 0, sMessage);
+
+					// cleanup
+					oReflowStub.restore();
+					oAlignedFlowLayout.destroy();
+					done();
+				}
+			}.bind(this), 100);
+		});
+
+		QUnit.test("it should not trigger unnecessary function calls to the .reflow() method to" +
+					" (prevent cyclic dependencies (test case 2))", function(assert) {
+
+			var done = assert.async();
+
+			// system under test
+			var oAlignedFlowLayout = new AlignedFlowLayout({
+				content: [
+					new Input()
+				],
+				endContent: [
+					new Button({
+						width: "100px", // set a fixed width for reliable testing
+						height: "20px", // set a fixed height for reliable testing
+						text: "Lorem ipsum"
+					})
+				]
+			});
+
+			// arrange
+			oAlignedFlowLayout.placeAt(CONTENT_ID);
+
+			// enforces a sync rendering of the AlignedFlowLayout control
+			Core.applyChanges();
+
+			// wait some time after the initial rendering cycle finishes
+			// (this timeout timer is not required for the test to run successful,
+			// but rather to ensure that the reflows caused by the initial rendering
+			// cycle is finish)
+			setTimeout(function() {
+				var oEndItemDomRef = oAlignedFlowLayout.getDomRef("endItem");
+				var oReflowStub = sinon.stub(oAlignedFlowLayout, "reflow");
+
+				// act + arrange, update height of the item holding the `endContent`
+				// aggregation, this should not trigger a function call to the .reflow()
+				// method
+				oEndItemDomRef.style.height = "40px";
+
+				var fEndItemWidth = Number.parseFloat(oEndItemDomRef.offsetWidth);
+
+				// override the AlignedFlowLayout's internal field member named
+				// "fEndItemWidth", so that no width change is detected by the control
+				oAlignedFlowLayout.fEndItemWidth = fEndItemWidth;
+
+				// wait some time until the browser layout is finished
+				setTimeout(fnAfterBrowserReflow.bind(this), 100);
+
+				function fnAfterBrowserReflow() {
+
+					// assert
+					var sMessage = "a function call to the .reflow() method should not be" +
+					" triggered when the height of the item holding the `endContent` aggregation" +
+					" changes";
+					assert.strictEqual(oReflowStub.callCount, 0, sMessage);
+
+					// cleanup
+					oReflowStub.restore();
+					oAlignedFlowLayout.destroy();
+					done();
+				}
+			}.bind(this), 100);
 		});
 	}
 
