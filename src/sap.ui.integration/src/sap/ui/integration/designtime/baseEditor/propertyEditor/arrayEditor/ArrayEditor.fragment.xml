@@ -8,7 +8,7 @@
 			<VBox>
 				<Bar>
 					<contentLeft>
-						<Label text="{itemLabel}" />
+						<Label text="{itemsModel>itemLabel}" />
 					</contentLeft>
 					<contentRight>
 						<Button
