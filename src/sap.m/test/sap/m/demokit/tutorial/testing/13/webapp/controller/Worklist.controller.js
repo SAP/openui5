@@ -3,10 +3,10 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'../model/formatter',
 	'../model/FlaggedType',
+	'sap/m/library',
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	'sap/m/library'
-], function (BaseController, JSONModel, formatter, FlaggedType, Filter, FilterOperator, mobileLibrary) {
+	"sap/ui/model/FilterOperator"
+], function (BaseController, JSONModel, formatter, FlaggedType, mobileLibrary, Filter, FilterOperator) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.bulletinboard.controller.Worklist", {
