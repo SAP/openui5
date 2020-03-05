@@ -362,6 +362,88 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_writePathCache, bUpdateShortenedPaths", function (assert) {
+		var oModel = {
+				mPathCache : {
+					"/Set(42)/toA" : {canonicalPath : "/A(1)"},
+					"/Set(42)/toA/toB" : {canonicalPath : "/B(2)"},
+					"/A(1)/toB" : {canonicalPath : "/B(2)"} // shortened path with two segments
+				}
+			};
+
+		// code under test
+		ODataModel.prototype._writePathCache.call(oModel, "/Set(42)/toA/toB", "/B(77)",
+			/*bFunctionImport*/undefined, /*bUpdateShortenedPaths*/true);
+
+		assert.deepEqual(oModel.mPathCache, {
+			"/Set(42)/toA" : {canonicalPath : "/A(1)"},
+			"/Set(42)/toA/toB" : {canonicalPath : "/B(77)"},
+			"/A(1)/toB" : {canonicalPath : "/B(77)"}
+		});
+
+		// multiple shortened paths for the given deep path
+		oModel.mPathCache = {
+			"/Set(42)/toA" : {canonicalPath : "/A(1)"},
+			"/Set(42)/toA/toB" : {canonicalPath : "/B(2)"},
+			"/Set(42)/toA/toB/toC" : {canonicalPath : "/C(3)"},
+			"/A(1)/toB/toC" : {canonicalPath : "/C(3)"}, // shortened path with three segments
+			"/B(2)/toC" : {canonicalPath : "/C(3)"} // shortened path with two segments
+		};
+
+		// code under test
+		ODataModel.prototype._writePathCache.call(oModel, "/Set(42)/toA/toB/toC", "/C(77)",
+			/*bFunctionImport*/undefined, /*bUpdateShortenedPaths*/true);
+
+		assert.deepEqual(oModel.mPathCache, {
+			"/Set(42)/toA" : {canonicalPath : "/A(1)"},
+			"/Set(42)/toA/toB" : {canonicalPath : "/B(2)"},
+			"/Set(42)/toA/toB/toC" : {canonicalPath : "/C(77)"},
+			"/A(1)/toB/toC" : {canonicalPath : "/C(77)"},
+			"/B(2)/toC" : {canonicalPath : "/C(77)"}
+		});
+
+		// two shortened paths for the given deep path, but the cache key for one of them does not
+		// exist in the path cache => do not write it
+		oModel.mPathCache = {
+			"/Set(42)/toA" : {canonicalPath : "/A(1)"},
+			"/Set(42)/toA/toB" : {canonicalPath : "/B(2)"},
+			"/Set(42)/toA/toB/toC" : {canonicalPath : "/C(3)"},
+			"/A(1)/toB/toC" : {canonicalPath : "/C(3)"} // shortened path with three segments
+			// "/B(2)/toC" : {canonicalPath : "/C(3)"} // shortened path with two segments
+		};
+
+		// code under test
+		ODataModel.prototype._writePathCache.call(oModel, "/Set(42)/toA/toB/toC", "/C(77)",
+			/*bFunctionImport*/undefined, /*bUpdateShortenedPaths*/true);
+
+		assert.deepEqual(oModel.mPathCache, {
+			"/Set(42)/toA" : {canonicalPath : "/A(1)"},
+			"/Set(42)/toA/toB" : {canonicalPath : "/B(2)"},
+			"/Set(42)/toA/toB/toC" : {canonicalPath : "/C(77)"},
+			"/A(1)/toB/toC" : {canonicalPath : "/C(77)"}
+		});
+
+		// two shortened paths for the given deep path, but one does not exist in cache
+		oModel.mPathCache = {
+			"/Set(42)/toA" : {canonicalPath : "/A(1)"},
+			// "/Set(42)/toA/toB" : {canonicalPath : "/B(2)"},
+			"/Set(42)/toA/toB/toC" : {canonicalPath : "/C(3)"},
+			"/A(1)/toB/toC" : {canonicalPath : "/C(3)"} // shortened path with three segments
+			// "/B(2)/toC" : {canonicalPath : "/C(3)"} // shortened path with two segments
+		};
+
+		// code under test
+		ODataModel.prototype._writePathCache.call(oModel, "/Set(42)/toA/toB/toC", "/C(77)",
+			/*bFunctionImport*/undefined, /*bUpdateShortenedPaths*/true);
+
+		assert.deepEqual(oModel.mPathCache, {
+			"/Set(42)/toA" : {canonicalPath : "/A(1)"},
+			"/Set(42)/toA/toB/toC" : {canonicalPath : "/C(77)"},
+			"/A(1)/toB/toC" : {canonicalPath : "/C(77)"}
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_importData for function import", function (assert) {
 		var mChangedEntities = {},
 			oData = {},
@@ -383,7 +465,8 @@ sap.ui.define([
 		// test that bFunctionImport is propagated to _writePathCache
 		oModelMock.expects("_writePathCache").withExactArgs("/key", "/key", "bFunctionImport");
 		oModelMock.expects("_writePathCache").withExactArgs("sPath", "/key", "bFunctionImport");
-		oModelMock.expects("_writePathCache").withExactArgs("sDeepPath", "/key", "bFunctionImport");
+		oModelMock.expects("_writePathCache").withExactArgs("sDeepPath", "/key", "bFunctionImport",
+			/*bUpdateShortenedPaths*/true);
 
 		// the parameter oResponse is unused in this test as there is no array or navigation
 		// properties in the data nor are there bindable response headers
