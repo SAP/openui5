@@ -534,7 +534,7 @@
 
 @sapContent_DragAndDropActiveColor: @sapContent_HelpColor;
 
-@sapContent_Selected_TextColor: contrast(@sapContent_Selected_Background @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapContent_Selected_TextColor: contrast(@sapContent_Selected_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapContent_Selected_Background: @sapSelectedColor;
 
@@ -1226,9 +1226,9 @@
 // [Tags "Base", "Tile", "Color"]
 @sapTile_Background: @sapBackgroundColor;
 
-@sapTile_Hover_Background: @sapTile_Background;
+@sapTile_Hover_Background: @sapHighlightColor;
 
-@sapTile_Active_Background: @sapTile_Hover_Background;
+@sapTile_Active_Background: @sapActiveColor;
 
 // [Label "Tile Border Color"]
 // [Description "The border color of tiles."]
