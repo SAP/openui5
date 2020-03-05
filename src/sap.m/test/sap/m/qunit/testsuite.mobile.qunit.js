@@ -2053,6 +2053,15 @@ sap.ui.define([
 					}
 				}
 			},
+			"plugins/PluginBase": {
+				title: "Test Page for sap.m.plugins.PluginBase",
+				qunit: {
+					version: "edge"
+				},
+				sinon: {
+					version: "edge"
+				}
+			},
 			"plugins/DataStateIndicator": {
 				title: "Test Page for sap.m.plugins.DataStateIndicator",
 				qunit: {

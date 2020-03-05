@@ -123,6 +123,7 @@
                 <module>sap/m/GrowingList</module>
                 <module>sap/m/Column</module>
                 <module>sap/m/ColumnListItem</module>
+                <module>sap/m/plugins/DataStateIndicator</module>
             </modules>
         </component>
     </ownership>
