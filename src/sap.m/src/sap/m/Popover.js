@@ -241,7 +241,16 @@ sap.ui.define([
 					 * @since 1.72
 					 * @public
 					 */
-					titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
+					titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto},
+
+					/**
+					 * Specifies if the Popover should be set ARIA role 'application'.
+					 *
+					 * <b>Note:</b> If this property should become public in the future, the property will have to be set on a level that will encapsulate the header and the footer of the popover as well.
+					 * @since 1.77
+					 * @private
+					 */
+					ariaRoleApplication: {type: "boolean", group: "Misc", defaultValue: false, visibility: "hidden"}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -2522,6 +2531,18 @@ sap.ui.define([
 		 */
 		Popover.prototype.getScrollDelegate = function () {
 			return this._oScroller;
+		};
+
+		/**
+		 * Setter for property <code>ariaRoleApplication</code>.
+		 * Default value is <code>false</code>
+		 *
+		 * @param {boolean} bValue New value for property <code>ariaRoleApplication</code>.
+		 * @return {sap.m.Popover} Reference to the control instance for chaining
+		 * @private
+		 */
+		Popover.prototype._setAriaRoleApplication = function (bValue) {
+			return this.setProperty("ariaRoleApplication", bValue);
 		};
 
 		/* ==================================================== */
