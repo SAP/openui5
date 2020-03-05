@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 */
-	var ParametersEditor = MapEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.parametersEditor.ParametersEditor", {
+	var ParametersEditor = MapEditor.extend("sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersEditor", {
 		formatInputValue: function(oValue) {
 			return (oValue || {}).value;
 		},
