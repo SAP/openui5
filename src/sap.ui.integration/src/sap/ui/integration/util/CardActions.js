@@ -334,7 +334,7 @@ sap.ui.define([
 				card: oCard,
 				host: oHost,
 				action: oAction,
-				manifestParameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath),
+				parameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath),
 				source: oSource,
 				url: sUrl
 			});
@@ -353,11 +353,13 @@ sap.ui.define([
 			var oHost = mConfig.host,
 				oCard = mConfig.card,
 				oAction = mConfig.action,
+				mParameters = mConfig.parameters || {},
 				mActionParams = {
 					type: oAction.type,
 					card: oCard,
 					actionSource: mConfig.source,
-					manifestParameters: mConfig.manifestParameters || {}
+					manifestParameters: mParameters, // for backward compatibility
+					parameters: mParameters
 				},
 				bActionResult = oCard.fireAction(mActionParams);
 

@@ -317,7 +317,7 @@ sap.ui.define([
 
 		_onCardAction: function (oEvent) {
 			var sType = oEvent.getParameter("type"),
-				mParameters = oEvent.getParameter("manifestParameters"),
+				mParameters = oEvent.getParameter("parameters"),
 				sKey = exploreNavigationModel.getProperty("/selectedKey"),
 				sMessage;
 
