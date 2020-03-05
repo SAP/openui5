@@ -45,10 +45,10 @@ sap.ui.define([
 						oMockServer.stop();
 					}
 
-					// configure mock server with the given options or a default delay of 0.5s
+					// configure mock server with the given options or a default delay of 0.2s
 					MockServer.config({
 						autoRespond : true,
-						autoRespondAfter : (oOptions.delay || oUriParameters.get("serverDelay") || 500)
+						autoRespondAfter : (oOptions.delay || oUriParameters.get("serverDelay") || 200)
 					});
 
 					// simulate all requests using mock data

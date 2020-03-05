@@ -17,6 +17,7 @@ sap.ui.define([
 
 	Opa5.extendConfig({
 		arrangements: new Startup(),
-		viewNamespace: "sap.ui.demo.iconexplorer.view."
+		viewNamespace: "sap.ui.demo.iconexplorer.view.",
+		autoWait: true
 	});
 });

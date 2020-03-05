@@ -45,11 +45,11 @@ sap.ui.define([
 
 	opaTest("Should react on hash change", function (Given, When, Then) {
 		// Actions
-		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(1);
+		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(0);
 		When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
-		Then.onTheDetailPage.iShouldSeeTheRememberedObject().and.iShouldSeeNoBusyIndicator();
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
 		Then.onTheMasterPage.theRememberedListItemShouldBeSelected();
 	});
 
@@ -88,8 +88,8 @@ sap.ui.define([
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartMyApp({
-			delay : 1000,
-			metadataError : true
+			delay: 2000,
+			metadataError: true
 		});
 
 		// Assertions
@@ -105,8 +105,8 @@ sap.ui.define([
 	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartMyApp({
-			delay : 1000,
-			errorType : 'serverError'
+			delay: 2000,
+			errorType: 'serverError'
 		});
 
 		// Assertions
