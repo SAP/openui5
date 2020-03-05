@@ -4,10 +4,11 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Link",
+	"sap/m/Text",
 	"jquery.sap.keycodes",
 	"sap/ui/core/library",
 	"jquery.sap.global"
-], function(QUnitUtils, createAndAppendDiv, Link, jQuery, coreLibrary) {
+], function(QUnitUtils, createAndAppendDiv, Link, Text, jQuery, coreLibrary) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -482,6 +483,29 @@ sap.ui.define([
 		assert.strictEqual(oInfo.description, "HRef", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		oControl.destroy();
+	});
+
+	QUnit.test("Subtle and Emphasized types don't overwrite default description", function (assert) {
+		var oDescr = new Text({ text: "Description" }),
+			oLink = new Link({
+				text: "Link",
+				href: "www.sap.com",
+				ariaDescribedBy: oDescr,
+				subtle: true,
+				emphasized: true
+			}),
+			oLinkDescription;
+
+		oLink.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oLinkDescription = oLink.$().attr("aria-describedby");
+		assert.ok(oLinkDescription.indexOf(oDescr.getId()) !== -1, "Default description is still present");
+		assert.ok(oLinkDescription.indexOf(oLink._sAriaLinkSubtleId) !== -1, "Subtle description is present");
+		assert.ok(oLinkDescription.indexOf(oLink._sAriaLinkEmphasizedId) !== -1, "Emphasized description is present");
+
+		oDescr.destroy();
+		oLink.destroy();
 	});
 
 	QUnit.test("drag and drop", function(assert) {
