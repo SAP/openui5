@@ -17,7 +17,8 @@ sap.ui.define([
 			urlBuilderParameters: IFrameSettingsDialog.buildUrlBuilderParametersFor(oIFrame),
 			frameUrl: oSettings.url,
 			frameWidth: oSettings.width,
-			frameHeight: oSettings.height
+			frameHeight: oSettings.height,
+			updateMode: true
 		};
 		return oIFrameSettingsDialog.open(mDialogSettings)
 			.then(function (mSettings) {
