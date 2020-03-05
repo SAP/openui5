@@ -34,7 +34,7 @@ sap.ui.define([
 					}
 				},
 				"propertyEditors": {
-					"parameters": "sap/ui/integration/designtime/baseEditor/propertyEditor/parametersEditor/ParametersEditor",
+					"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			};
