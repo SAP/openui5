@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/rta/command/AppDescriptorCommand",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/dt/ElementUtil",
 	"sap/base/Log",
 	"sap/ui/fl/write/api/PersistenceWriteAPI"
@@ -17,7 +16,6 @@ sap.ui.define([
 	AppDescriptorCommand,
 	FlUtils,
 	Change,
-	Settings,
 	ElementUtil,
 	Log,
 	PersistenceWriteAPI

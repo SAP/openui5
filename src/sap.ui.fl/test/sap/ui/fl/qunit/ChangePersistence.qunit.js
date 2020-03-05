@@ -1510,25 +1510,6 @@ function (
 				assert.deepEqual(oGetChangesFromMapByNamesStub.args[0][0], ["1", "2"], "and with the correct names");
 			});
 		});
-
-		QUnit.test("checkForOpenDependenciesForControl", function(assert) {
-			var oModifier = {
-				getControlIdBySelector: function(oSelector) {
-					return oSelector.id;
-				}
-			};
-			this.oChangePersistence._mChanges.mDependencies = {
-				fileNameChange1: {
-					changeObject: {getDependentSelectorList: function() {return ["id"];}}
-				},
-				fileNameChange2: {
-					changeObject: {getDependentSelectorList: function() {return ["id2"];}}
-				}
-			};
-
-			assert.ok(this.oChangePersistence.checkForOpenDependenciesForControl({id: "id"}, oModifier), "the unresolved dependency was found");
-			assert.notOk(this.oChangePersistence.checkForOpenDependenciesForControl({id: "anotherId"}, oModifier), "there is no unresolved dependency, so false is returned");
-		});
 	});
 
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
@@ -1553,6 +1534,15 @@ function (
 			sandbox.restore();
 		}
 	}, function() {
+		QUnit.test("checkForOpenDependenciesForControl", function(assert) {
+			var oCheckDependenciesStub = sandbox.stub(DependencyHandler, "checkForOpenDependenciesForControl");
+			this.oChangePersistence.checkForOpenDependenciesForControl({id: "anotherId", idIsLocal: false}, this._oAppComponentInstance);
+			assert.equal(oCheckDependenciesStub.callCount, 1, "the function was called once");
+			assert.deepEqual(oCheckDependenciesStub.lastCall.args[0], this.oChangePersistence._mChanges, "the changes map was passed");
+			assert.equal(oCheckDependenciesStub.lastCall.args[1], "anotherId", "the resolved ID was passed");
+			assert.equal(oCheckDependenciesStub.lastCall.args[2], this._oAppComponentInstance, "the app component instance was passed");
+		});
+
 		QUnit.test("When call addChange 3 times, 4 new changes are returned and the dependencies map also got updated", function (assert) {
 			var oChangeContent1;
 			var oChangeContent2;

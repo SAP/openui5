@@ -391,6 +391,20 @@ sap.ui.define([
 				assert.equal(oChangeCallbackStub4.callCount, 1, "the saved callback was called");
 			}.bind(this));
 		});
+
+		QUnit.test("checkForOpenDependenciesForControl", function(assert) {
+			assert.equal(
+				DependencyHandler.checkForOpenDependenciesForControl(this.mChangesMap, "controlId2", this.oAppComponent),
+				true,
+				"the given control ID is in a pending dependency"
+			);
+
+			assert.equal(
+				DependencyHandler.checkForOpenDependenciesForControl(this.mChangesMap, "controlId25", this.oAppComponent),
+				false,
+				"the given control ID is not in a pending dependency"
+			);
+		});
 	});
 
 	QUnit.done(function () {

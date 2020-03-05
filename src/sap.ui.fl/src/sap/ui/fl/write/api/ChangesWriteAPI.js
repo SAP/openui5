@@ -112,7 +112,7 @@ sap.ui.define([
 			if (!mPropertyBag.modifier) {
 				mPropertyBag.modifier = JsControlTreeModifier;
 			}
-			var bDependenciesExist = oFlexController.checkForOpenDependenciesForControl(mPropertyBag.change.getSelector(), mPropertyBag.modifier, mPropertyBag.appComponent);
+			var bDependenciesExist = oFlexController.checkForOpenDependenciesForControl(mPropertyBag.change.getSelector(), mPropertyBag.appComponent);
 			if (!bDependenciesExist && mPropertyBag.element instanceof Element) {
 				return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]));
 			}
