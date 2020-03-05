@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.Islamic
-sap.ui.define(['./UniversalDate', '../CalendarType', 'sap/base/Log'],
-	function(UniversalDate, CalendarType, Log) {
+sap.ui.define(['./UniversalDate', '../CalendarType', 'sap/base/Log', './_Calendars'],
+	function(UniversalDate, CalendarType, Log, _Calendars) {
 	"use strict";
 
 
@@ -395,6 +395,8 @@ sap.ui.define(['./UniversalDate', '../CalendarType', 'sap/base/Log'],
 		}
 		return this._setUTCIslamic(oIslamic);
 	};
+
+	_Calendars.set(CalendarType.Islamic, Islamic);
 
 	return Islamic;
 

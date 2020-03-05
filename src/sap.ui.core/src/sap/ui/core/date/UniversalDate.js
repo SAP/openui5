@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.UniversalDate
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
-	function(BaseObject, LocaleData) {
+sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
+	function(BaseObject, LocaleData, _Calendars) {
 	"use strict";
 
 
@@ -88,7 +88,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 		if (!sCalendarType) {
 			sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 		}
-		return sap.ui.requireSync("sap/ui/core/date/" + sCalendarType);
+		return _Calendars.get(sCalendarType);
 	};
 
 	/*
