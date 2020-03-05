@@ -486,7 +486,7 @@ sap.ui.define([
 			this.bFocused = true; // Remember to set focus to parent on close
 		}
 
-		this.$().css("display:", "");
+		this.$().css("display", "");
 		this.fireOpened();
 
 		// - listen to mouse over events outside

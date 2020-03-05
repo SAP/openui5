@@ -288,7 +288,7 @@ sap.ui.define([
 			animationDuration: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-duration'),
 			animationDelay: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-delay'),
 			animationIterationCount: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-iteration-count'),
-			animationDirection: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-dericetion'),
+			animationDirection: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-direction'),
 			animationFillMode: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-fill-mode'),
 			animationPlayState: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-play-state')
 		};
@@ -302,12 +302,12 @@ sap.ui.define([
 			animationDuration: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-duration'),
 			animationDelay: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-delay'),
 			animationIterationCount: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-iteration-count'),
-			animationDirection: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-dericetion'),
+			animationDirection: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-direction'),
 			animationFillMode: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-fill-mode'),
 			animationPlayState: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-play-state')
 		};
 		// assert
-		assert.notEqual(oUpdatedAnimation, oDefaultAnimation, "Animation is changed");
+		assert.notDeepEqual(oUpdatedAnimation, oDefaultAnimation, "Animation is changed");
 	});
 
 	QUnit.module("sap.m.BusyIndicator with custom icon", {
