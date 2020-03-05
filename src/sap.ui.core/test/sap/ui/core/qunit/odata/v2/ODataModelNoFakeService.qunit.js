@@ -683,4 +683,72 @@ sap.ui.define([
 			ODataModel.prototype.setMessageScope.call(oModel, "Foo");
 		}, new Error("Unsupported message scope: Foo"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("isMessageMatching", function (assert) {
+		var oModel = {};
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, ""), true);
+		assert.strictEqual(
+			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, "/"), true);
+		assert.strictEqual(
+			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, "/f"),
+			false);
+		assert.strictEqual(
+			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, "/foo"),
+			true);
+		assert.strictEqual(
+			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo(42)"}, "/foo"),
+			true);
+		assert.strictEqual(
+			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo/bar"}, "/foo"),
+			true);
+		assert.strictEqual(
+			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, "/foo/bar"),
+			false);
+		assert.strictEqual(
+			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, "/baz"),
+			false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filterMatchingMessages", function (assert) {
+		var oMessage0 = "sap.ui.core.message.Message0",
+			oMessage1 = "sap.ui.core.message.Message1",
+			oMessage2 = "sap.ui.core.message.Message2",
+			oModel = {
+				mMessages : {
+					"/foo" : []
+				},
+				isMessageMatching : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("isMessageMatching").never();
+
+		// code under test
+		assert.deepEqual(ODataModel.prototype.filterMatchingMessages.call(oModel, "/foo", "/foo"),
+			[]);
+
+		oModel.mMessages = {
+			"/foo" : [oMessage0, oMessage1, oMessage2]
+		};
+		oModelMock.expects("isMessageMatching").withExactArgs(oMessage0, "/").returns(true);
+		oModelMock.expects("isMessageMatching").withExactArgs(oMessage1, "/").returns(false);
+		oModelMock.expects("isMessageMatching").withExactArgs(oMessage2, "/").returns(true);
+
+		// code under test
+		assert.deepEqual(ODataModel.prototype.filterMatchingMessages.call(oModel, "/foo", "/"),
+			[oMessage0, oMessage2]);
+
+		oModelMock.expects("isMessageMatching").withExactArgs(oMessage0, "/baz").returns(false);
+		oModelMock.expects("isMessageMatching").withExactArgs(oMessage1, "/baz").returns(false);
+		oModelMock.expects("isMessageMatching").withExactArgs(oMessage2, "/baz").returns(false);
+
+		// code under test
+		assert.deepEqual(ODataModel.prototype.filterMatchingMessages.call(oModel, "/foo", "/baz"),
+			[]);
+	});
 });
