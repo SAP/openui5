@@ -111,7 +111,7 @@
 				<Property Name="Address" Type="special.cases.Address" />
 				<Property Name="Name" Type="Edm.String" Nullable="false" />
 				<Property Name="Salary" Type="Edm.Decimal" Nullable="false" Precision="16"
-						  Scale="variable"/>
+					Scale="variable"/>
 			</ComplexType>
 			<Action Name="ActivationAction" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
