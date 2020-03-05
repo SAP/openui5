@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/support/integration/ui/arrangements/Arrangement",
 	"sap/ui/support/integration/ui/data/CommunicationMock",
