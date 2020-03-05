@@ -199,14 +199,6 @@ html.sap-desktop .sapMDialog {
 	visibility: hidden;
 }
 
-.sapMDialogBlockLayer {
-	opacity: 0.6;
-}
-
-.sapMDialogTransparent {
-	opacity: 0;
-}
-
 .sapMDialog.sapUiPopupWithPadding:not(.sapUiNoContentPadding) {
 
 	&.sapMDialogWithScrollCont .sapMDialogScrollCont {
@@ -253,12 +245,6 @@ html.sap-desktop .sapMDialog {
 
 .sapMDialogOpen {
 	opacity: 1;
-}
-
-.sapMDialogBlockLayerAnimation {
-	position: absolute;
-	transition: opacity 0.2s linear;
-	-webkit-transition: opacity 0.2s linear;
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
@@ -523,11 +509,8 @@ html.sap-desktop .sapMDialog {
 }
 
 //remove transition when animation is off
-html[data-sap-ui-animation='off'] {
-	.sapMDialog,
-	.sapMDialogBlockLayerAnimation {
-		transition: none;
-	}
+html[data-sap-ui-animation='off'] .sapMDialog {
+	transition: none;
 }
 
 .sapMDialog > .sapMDialogSection {
