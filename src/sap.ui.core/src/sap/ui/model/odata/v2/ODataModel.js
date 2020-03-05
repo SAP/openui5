@@ -1512,7 +1512,8 @@ sap.ui.define([
             }
 
 			this._writePathCache(sPath, "/" + sKey, bFunctionImport);
-			this._writePathCache(sDeepPath, "/" + sKey, bFunctionImport);
+			this._writePathCache(sDeepPath, "/" + sKey, bFunctionImport,
+				/*bUpdateShortenedPaths*/true);
 
 			return sKey;
 		}
@@ -1528,9 +1529,15 @@ sap.ui.define([
 	 * @param {string} sPath The absolute path that is used as cache key
 	 * @param {string} sCanonicalPath The canonical path addressing the same resource
 	 * @param {boolean} [bFunctionImport] Whether <code>sPath</code> points to a function import
+	 * @param {boolean} [bUpdateShortenedPaths] Whether to update entries for "shortened paths" in
+	 *   case <code>sPath</code> is a deep path; a shortened path is the canonical path for a prefix
+	 *   of a deep path concatenated with the corresponding deep path suffix
 	 * @private
 	 */
-	ODataModel.prototype._writePathCache = function(sPath, sCanonicalPath, bFunctionImport) {
+	ODataModel.prototype._writePathCache = function(sPath, sCanonicalPath, bFunctionImport,
+			bUpdateShortenedPaths) {
+		var sCacheKey, oCacheKeyEntry, sPathPrefix, oPathPrefixEntry, aSegments, iSegments;
+
 		if (sPath && sCanonicalPath){
 			if (!this.mPathCache[sPath]) {
 				this.mPathCache[sPath] = {};
@@ -1540,6 +1547,26 @@ sap.ui.define([
 				sCanonicalPath = sPath;
 			}
 			this.mPathCache[sPath].canonicalPath = sCanonicalPath;
+
+			if (bUpdateShortenedPaths) {
+				aSegments = sPath.split("/");
+				// start with deep path prefixes consisting of at least two non-empty segments plus
+				// the empty segment at the beginning (that is 3) and update all existing path cache
+				// entries having the canonical path of the path prefix plus the corresponding deep
+				// path suffix as key
+				for (iSegments = 3; iSegments < aSegments.length; iSegments += 1) {
+					sPathPrefix = aSegments.slice(0, iSegments).join("/");
+					oPathPrefixEntry = this.mPathCache[sPathPrefix];
+					if (oPathPrefixEntry) {
+						sCacheKey = oPathPrefixEntry.canonicalPath
+							+ sPath.slice(sPathPrefix.length);
+						oCacheKeyEntry = this.mPathCache[sCacheKey];
+						if (oCacheKeyEntry) {
+							oCacheKeyEntry.canonicalPath = sCanonicalPath;
+						}
+					}
+				}
+			}
 		}
 	};
 
