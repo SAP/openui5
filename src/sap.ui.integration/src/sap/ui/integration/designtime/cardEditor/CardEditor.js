@@ -90,8 +90,9 @@ sap.ui.define([
 	CardEditor.prototype.getDeltaChangeDefinition = function(oPropertyBag) {
 		return new Promise(function (resolve, reject) {
 			sap.ui.require(["sap/ui/fl/Change"], function (Change) {
+				var oCurrentJson = this.getJson();
 				var mParameters = merge({}, oPropertyBag);
-				mParameters.content = getCardConfigurationDeltaForChange(this.getJson(), this._oInitialJson);
+				mParameters.content = getCardConfigurationDeltaForChange(oCurrentJson, this._oInitialJson);
 
 				if (!mParameters.content) {
 					reject("No Change");
@@ -101,13 +102,13 @@ sap.ui.define([
 				mParameters.creation = new Date().toISOString();
 				mParameters.generator = "CardEditor";
 				mParameters.selector = {};
-				mParameters.reference = ObjectPath.get(["sap.app", "id"], this.getJson());
+				mParameters.reference = ObjectPath.get(["sap.app", "id"], oCurrentJson);
 
 				var oChangeDefinition = Change.createInitialFileContent(mParameters);
 				// by default the function createInitialFileContent sets the creation to ""
 				oChangeDefinition.creation = new Date().toISOString();
 
-				this._oInitialJson = undefined;
+				this._oInitialJson = oCurrentJson;
 
 				resolve(oChangeDefinition);
 			}.bind(this));
