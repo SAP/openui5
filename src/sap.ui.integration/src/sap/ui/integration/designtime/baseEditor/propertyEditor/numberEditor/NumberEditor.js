@@ -37,7 +37,7 @@ sap.ui.define([
 	});
 
 	NumberEditor.prototype.formatValue = function (sValue) {
-		if (!sValue || isValidBindingString(sValue, false)) {
+		if (typeof sValue === "undefined" || isValidBindingString(sValue, false)) {
 			return sValue;
 		}
 
