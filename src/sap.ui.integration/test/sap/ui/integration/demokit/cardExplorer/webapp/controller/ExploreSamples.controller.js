@@ -86,6 +86,8 @@ sap.ui.define([
 
 			this._errorMessageStrip = this.getView().byId("errorMessageStrip");
 			this._registerResize();
+
+			this._initIFrameCreation();
 		},
 
 		onExit: function () {
@@ -102,6 +104,7 @@ sap.ui.define([
 			}
 			var oCardEditor = this.byId("cardEditor");
 				oCardEditor.setJson(sValue);
+
 			this._sEditSource = null;
 
 			if (exploreSettingsModel.getProperty("/schemaValidation")) {
@@ -149,7 +152,10 @@ sap.ui.define([
 				sFileExtension = sSelectedFileKey.split('.').pop(),
 				oEditor = this.byId("editor");
 
+			sFileExtension = sFileExtension === 'js' ? 'javascript' : sFileExtension;
+
 			exploreSettingsModel.setProperty("/editable", this._isFileEditable(sSelectedFileKey));
+			exploreSettingsModel.setProperty("/messageStripVisible", this._isMessageStripVisible(sSelectedFileKey));
 			exploreSettingsModel.setProperty("/codeEditorType", sFileExtension);
 			this._bPreventLiveChange = true;
 			// setValue would trigger 2 live change events - 1 delete and 1 insert. This will refresh the card several times, so prevent it
@@ -310,6 +316,7 @@ sap.ui.define([
 			} else {
 				exploreSettingsModel.setProperty("/codeEditorType", "json");
 				exploreSettingsModel.setProperty("/editable", true);
+				exploreSettingsModel.setProperty("/messageStripVisible", false);
 			}
 
 			this._showSample(oSample, oSubSample);
@@ -374,7 +381,9 @@ sap.ui.define([
 		_showSample: function (oSample, oSubSample) {
 
 			var oCurrentSample = oSubSample || oSample,
-				bUseIFrame = oCurrentSample.key === "htmlConsumption";
+				oFrameWrapperEl = this.byId("iframeWrapper"),
+				bUseIFrame = oCurrentSample.key === "htmlConsumption" ||
+					oCurrentSample.key === "hostActions";
 
 			// init mock server only on demand
 			if (oCurrentSample.key === "topProducts" || oCurrentSample.key === "product") {
@@ -384,16 +393,8 @@ sap.ui.define([
 			exploreSettingsModel.setProperty("/useIFrame", bUseIFrame);
 
 			if (bUseIFrame) {
-				var oFrameWrapperEl = this.byId("iframeWrapper"),
-					oDelegate = {
-						onAfterRendering: function () {
-							oFrameWrapperEl.removeEventDelegate(oDelegate);
-							var oFrame = this.createFrame();
-							oFrameWrapperEl.getDomRef().appendChild(oFrame);
-						}
-					};
-
-				oFrameWrapperEl.addEventDelegate(oDelegate, this);
+				oFrameWrapperEl._sSample = oCurrentSample.key;
+				oFrameWrapperEl.invalidate();
 			} else {
 				var sManifestUrl = oCurrentSample.manifestUrl,
 					oLayoutSettings = {
@@ -403,6 +404,8 @@ sap.ui.define([
 					oCard = this.byId("cardSample"),
 					aFiles,
 					oManifestFile;
+
+				oFrameWrapperEl._sSample = '';
 
 				this.oModel.setProperty("/sample", oSample);
 
@@ -459,14 +462,36 @@ sap.ui.define([
 
 					oExtendedFileEditorModel.setProperty("/selectedFileKey", aFiles[0].key);
 					exploreSettingsModel.setProperty("/editable", this._isFileEditable(aFiles[0].key));
+					exploreSettingsModel.setProperty("/messageStripVisible", this._isMessageStripVisible(aFiles[0].key));
 					exploreSettingsModel.setProperty("/codeEditorType", sFileExtension);
 					oEditor.setValue(aData[0]);
 				}.bind(this));
 		},
 
-		createFrame: function() {
+		_initIFrameCreation : function () {
+			var oFrameWrapperEl = this.byId("iframeWrapper"),
+				oDelegate = {
+						onAfterRendering: function () {
+						var oFrameWrapperElDomRef = oFrameWrapperEl.getDomRef(),
+							oFrame;
+
+						if (oFrameWrapperElDomRef.firstChild) {
+							oFrameWrapperElDomRef.removeChild(oFrameWrapperElDomRef.firstChild);
+						}
+
+						if (oFrameWrapperEl._sSample) {
+							oFrame = this.createFrame(oFrameWrapperEl._sSample);
+							oFrameWrapperElDomRef.appendChild(oFrame);
+						}
+					}
+				};
+
+			oFrameWrapperEl.addEventDelegate(oDelegate, this);
+		},
+
+		createFrame: function(sSample) {
 			var oFrameEl = document.createElement("iframe");
-			oFrameEl.src = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/samples/htmlConsumption/index.html");
+			oFrameEl.src = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/samples/" + sSample + "/index.html");
 			oFrameEl.width = "100%";
 			oFrameEl.className = "sapUiTopicsIframe";
 			oFrameEl.sandbox = "allow-forms allow-modals allow-pointer-lock allow-popups allow-scripts";
@@ -537,7 +562,17 @@ sap.ui.define([
 		 * @returns {boolean} Whether the file is editable.
 		 */
 		_isFileEditable: function (sFileName) {
-			return sFileName.endsWith("manifest.json");
+			var sCurrentHash = this.getRouter().getHashChanger().getHash();
+			return sCurrentHash.indexOf('hostActions') === -1 && sFileName.endsWith("manifest.json");
+		},
+
+		/**
+		 * @param {string} sFileName The name of the file.
+		 * @returns {boolean} Whether the message strip is visible
+		 */
+		_isMessageStripVisible: function (sFileName) {
+			var sCurrentHash = this.getRouter().getHashChanger().getHash();
+			return sCurrentHash.indexOf('hostActions') === -1 && !sFileName.endsWith("manifest.json");
 		},
 
 		/**

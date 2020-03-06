@@ -117,9 +117,9 @@ sap.ui.define([
 	 * <i>When not to use</i>
 	 * <ul>
 	 * <li>When you need more header and content flexibility.</li>
-	 * <li>When you have to achieve simple card visualization. For such cases, use: {@link sap.f.Card Card}.</li>
-	 * <li>When you have to use an application model. For such cases, use: {@link sap.f.Card Card}.</li>
-	 * <li>When you need complex behavior. For such cases, use: {@link sap.f.Card Card}.</li>
+	 * <li>When you have to achieve simple card visualization. For such cases, use: {@link sap.f.Card sap.f.Card}.</li>
+	 * <li>When you have to use an application model. For such cases, use: {@link sap.f.Card sap.f.Card}.</li>
+	 * <li>When you need complex behavior. For such cases, use: {@link sap.f.Card sap.f.Card}.</li>
 	 * </ul>
 	 *
 	 * @extends sap.ui.core.Control
@@ -242,7 +242,7 @@ sap.ui.define([
 				/**
 				 * Fired when an action is triggered on the card.
 				 * @experimental since 1.64
-				 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+				 * Disclaimer: this event is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
 				action: {
 					allowPreventDefault: true,
