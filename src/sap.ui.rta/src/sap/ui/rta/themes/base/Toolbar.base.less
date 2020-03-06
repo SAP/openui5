@@ -99,36 +99,41 @@
 
 }
 
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarIconAndDraftSection,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarActionsSection,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarIconAndDraftSection,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarActionsSection {
-    width: ~"calc(50% - 200px)";
-}
-
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarSwitcherSection,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarSwitcherSection {
-    width: 400px;
-}
-
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarIconAndDraftSection,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarActionsSection {
-    width: ~"calc(50% - 70px)";
-}
-
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarSwitcherSection {
-    width: 140px;
-}
-
-.sapUiRtaToolbarSwitcherSection > div {
-	width: 100%;
-}
-
 html.sap-desktop .sapUiRtaMode .sapUiRtaToolbar .sapMBtn:focus {
 	> .sapMFocusable {
 		outline: none;
 	}
 }
+
+.sapUiRtaToolbarActionsSection > div:first-child {
+	width: 100%;
+}
+
+	// the default hbox width which is set via the element properties must be overruled
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarIconAndDraftSection,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarActionsSection,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarIconAndDraftSection,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarActionsSection {
+	width: ~"calc(50% - 200px) !important";
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarSwitcherSection,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarSwitcherSection{
+	width: 400px !important;
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarIconAndDraftSection {
+	width: ~"calc(50% - 70px) !important";
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarSwitcherSection {
+	width: 140px !important;
+}
+
+.sapUiRtaToolbarSwitcherSection > div {
+	width: 100% !important;
+}
+
 
 // Special handling for IE and EDGE Browsers
 html[data-sap-ui-browser^="ie"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner,
@@ -153,46 +158,4 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegB
 
 html[data-sap-ui-browser^="ie"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegBBtn:not(.sapMSegBtnLastVisibleButton).sapMSegBBtnFocusable:focus {
 	margin-right: 1px;
-}
-
-
-// IE and EDGE do create a inline style for the width which must be overruled
-html[data-sap-ui-browser^="ie"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarIconAndDraftSection,
-html[data-sap-ui-browser^="ie"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarActionsSection,
-html[data-sap-ui-browser^="ie"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarIconAndDraftSection,
-html[data-sap-ui-browser^="ie"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarActionsSection,
-html[data-sap-ui-browser^="ed"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarIconAndDraftSection,
-html[data-sap-ui-browser^="ed"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarActionsSection,
-html[data-sap-ui-browser^="ed"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarIconAndDraftSection,
-html[data-sap-ui-browser^="ed"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarActionsSection {
-  width: ~"calc(50% - 200px) !important";
-}
-
-html[data-sap-ui-browser^="ie"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarSwitcherSection,
-html[data-sap-ui-browser^="ie"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarSwitcherSection,
-html[data-sap-ui-browser^="ed"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarSwitcherSection,
-html[data-sap-ui-browser^="ed"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarSwitcherSection{
-  width: 400px !important;
-}
-
-html[data-sap-ui-browser^="ie"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarIconAndDraftSection,
-html[data-sap-ui-browser^="ie"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarActionsSection,
-html[data-sap-ui-browser^="ed"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarIconAndDraftSection,
-html[data-sap-ui-browser^="ed"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarActionsSection {
-  width: ~"calc(50% - 70px) !important";
-}
-
-
-html[data-sap-ui-browser^="ie"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarSwitcherSection,
-html[data-sap-ui-browser^="ed"].sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarSwitcherSection {
-  width: 140px !important;
-}
-
-html[data-sap-ui-browser^="ie"].sapUiRtaToolbarSwitcherSection > div,
-html[data-sap-ui-browser^="ed"].sapUiRtaToolbarSwitcherSection > div {
-  width: 100% !important;
-}
-
-html[data-sap-ui-browser^="ie"].sapUiRtaToolbarSwitcherSection > div {
-  width: 100% !important;
 }
