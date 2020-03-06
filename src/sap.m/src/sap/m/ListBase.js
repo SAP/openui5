@@ -2028,7 +2028,7 @@ function(
 	};
 
 	/**
-	 * Returns ItemNavigation for controls uses List
+	 * Returns the ItemNavigation delegate of the list
 	 * @since 1.16.5
 	 * @returns {sap.ui.core.delegate.ItemNavigation|undefined}
 	 * @protected

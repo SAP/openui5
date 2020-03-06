@@ -3,8 +3,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, JSONModel, MessageToast, DateFormat, TableExampleUtils) {
+	"sap/m/ToolbarSpacer"
+], function(Controller, JSONModel, MessageToast, DateFormat, ToolbarSpacer) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Resizing.Controller", {
@@ -21,6 +21,12 @@ sap.ui.define([
 			this.onColumnWidthsChange();
 
 			this._messageBuffer = [];
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Resizing"));
+			}, function(oError){/*ignore*/});
 		},
 
 		initSampleDataModel : function() {
@@ -65,7 +71,7 @@ sap.ui.define([
 		},
 
 		onColumnWidthsChange : function(oEvent) {
-			var sColumnWidthMode = oEvent ? oEvent.getParameter("key") : "Static";
+			var sColumnWidthMode = oEvent ? oEvent.getParameter("item").getKey() : "Static";
 			var oWidthData;
 
 			if (sColumnWidthMode == "Flexible") {
@@ -105,12 +111,7 @@ sap.ui.define([
 					this._messageTimer = null;
 				});
 			}
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/Resizing") + "/info.json", oEvent.getSource());
 		}
-
 	});
 
 });

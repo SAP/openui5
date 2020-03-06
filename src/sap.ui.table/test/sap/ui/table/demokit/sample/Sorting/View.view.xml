@@ -90,13 +90,7 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:OverflowToolbar>
-						<m:ToolbarSpacer/>
-						<m:Button
-							icon="sap-icon://hint"
-							tooltip="Show information"
-							press="showInfo"/>
-					</m:OverflowToolbar>
+					<m:OverflowToolbar id="infobar"></m:OverflowToolbar>
 				</footer>
 			</Table>
 		</m:content>

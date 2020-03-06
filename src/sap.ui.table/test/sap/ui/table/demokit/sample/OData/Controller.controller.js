@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/OperationMode",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, MockServer, ODataModel, JSONModel, OperationMode, TableExampleUtils) {
+	"sap/m/ToolbarSpacer"
+], function(Controller, MockServer, ODataModel, JSONModel, OperationMode, ToolbarSpacer) {
 	"use strict";
 
 	var sServiceUrl = "http://my.test.service.com/";
@@ -41,6 +41,12 @@ sap.ui.define([
 				oUiData.operationModes.push({name: OperationMode[mode]});
 			}
 			oView.setModel(new JSONModel(oUiData), "ui");
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/OData"));
+			}, function(oError){/*ignore*/});
 		},
 
 		onExit : function() {
@@ -70,7 +76,7 @@ sap.ui.define([
 		onOperationModeChange : function(oEvent) {
 			this.getTable().bindRows({
 				path: "/ProductSet",
-				parameters: {operationMode: oEvent.getParameter("key")}
+				parameters: {operationMode: oEvent.getParameter("item").getKey()}
 			});
 			this.initBindingEventHandler();
 			this.onModelRefresh();
@@ -87,10 +93,6 @@ sap.ui.define([
 			oBinding.attachDataReceived(function(){
 				oTable.setNoData(null); //Use default again ("No Data" in case no data is available)
 			});
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/OData") + "/info.json", oEvent.getSource());
 		}
 
 	});

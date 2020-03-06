@@ -7,8 +7,8 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, MenuM, MenuItemM, TableExampleUtils) {
+	"sap/m/ToolbarSpacer"
+], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, MenuM, MenuItemM, ToolbarSpacer) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
@@ -25,6 +25,12 @@ sap.ui.define([
 				showFreezeMenuEntry: false,
 				enableCellFilter: false
 			}), "ui");
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Menus"));
+			}, function(oError){/*ignore*/});
 		},
 
 		initSampleDataModel : function() {
@@ -129,10 +135,6 @@ sap.ui.define([
 			var sOrder = oColumn.getSortOrder() == "Ascending" ? "Descending" : "Ascending";
 
 			this.byId("table").sort(oColumn, sOrder, bAdd);
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/Menus") + "/info.json", oEvent.getSource());
 		},
 
 		onToggleContextMenu : function(oEvent) {

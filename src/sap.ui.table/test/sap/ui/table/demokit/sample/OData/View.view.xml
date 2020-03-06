@@ -99,22 +99,17 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:OverflowToolbar>
+					<m:OverflowToolbar id="infobar">
 						<m:Label text="OData Model Operation Mode:" labelFor="operationMode"/>
 						<m:SegmentedButton
 							id="operationMode"
-							select="onOperationModeChange"
+							selectionChange="onOperationModeChange"
 							selectedKey="{ui>selectedOperationMode}"
 							items="{ui>/operationModes}">
 							<m:items>
 								<m:SegmentedButtonItem text="{ui>name}" key="{ui>name}"/>
 							</m:items>
 						</m:SegmentedButton>
-						<m:ToolbarSpacer/>
-						<m:Button
-							icon="sap-icon://hint"
-							tooltip="Show information"
-							press="showInfo"/>
 					</m:OverflowToolbar>
 				</footer>
 			</Table>

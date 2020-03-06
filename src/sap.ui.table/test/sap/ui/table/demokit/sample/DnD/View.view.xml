@@ -22,13 +22,8 @@
 					}"
 					visibleRowCount="10">
 					<extension>
-						<m:OverflowToolbar>
+						<m:OverflowToolbar id="infobar">
 							<m:Title id="title" text="Available Products"/>
-							<m:ToolbarSpacer/>
-							<m:Button
-								icon="sap-icon://hint"
-								tooltip="Show information"
-								press="showInfo"/>
 						</m:OverflowToolbar>
 					</extension>
 					<columns>

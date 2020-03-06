@@ -1,31 +1,32 @@
 {
-  "sap.app": {
-    "id": "sap.ui.table.sample.MultiSelectionPlugin",
-    "applicationVersion": {
-      "version": "1.0.0"
-    }
-  },
-  "sap.ui5": {
-    "rootView": {
-      "viewName": "sap.ui.table.sample.MultiSelectionPlugin.View",
-      "type": "XML",
-      "async": true
-    },
-    "dependencies": {
-      "libs": {
-        "sap.m": {}
-      }
-    },
-    "config": {
-      "sample": {
-        "stretch": true,
-        "files": [
-          "View.view.xml",
-          "Controller.controller.js",
-          "metadata.xml",
-          "manifest.json"
-        ]
-      }
-    }
-  }
+	"sap.app": {
+		"id": "sap.ui.table.sample.MultiSelectionPlugin",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.table.sample.MultiSelectionPlugin.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.table": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"View.view.xml",
+					"Controller.controller.js",
+					"metadata.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
 }

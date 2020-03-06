@@ -13,7 +13,8 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.ui.table": {}
 			}
 		},
 		"config": {

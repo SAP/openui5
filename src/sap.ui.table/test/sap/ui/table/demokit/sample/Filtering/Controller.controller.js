@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, JSONModel, MessageToast, Filter, FilterOperator, DateFormat, TableExampleUtils) {
+	"sap/m/ToolbarSpacer"
+], function(Controller, JSONModel, MessageToast, Filter, FilterOperator, DateFormat, ToolbarSpacer) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Filtering.Controller", {
@@ -26,6 +26,12 @@ sap.ui.define([
 
 			this._oGlobalFilter = null;
 			this._oPriceFilter = null;
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Filtering"));
+			}, function(oError){/*ignore*/});
 		},
 
 		initSampleDataModel : function() {
@@ -157,10 +163,6 @@ sap.ui.define([
 
 		formatAvailableToObjectState : function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/Filtering") + "/info.json", oEvent.getSource());
 		}
 
 	});
