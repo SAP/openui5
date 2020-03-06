@@ -267,6 +267,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/propertyEditor/integerEditor/IntegerEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/integerEditor/IntegerEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {

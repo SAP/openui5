@@ -16,7 +16,7 @@ sap.ui.define([
 		"tableMaxItems": {
 			"tags": ["content"],
 			"label": "{i18n>CARD_EDITOR.TABLE.MAXITEMS}",
-			"type": "number",
+			"type": "integer",
 			"path": "content/maxItems",
 			"visible": "{= ${context>type} === 'Table' }"
 		},
