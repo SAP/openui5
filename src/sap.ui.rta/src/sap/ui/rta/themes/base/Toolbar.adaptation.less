@@ -45,7 +45,15 @@
 
 .sapUiRtaVersionLabel {
 	color: @sapUiAccent1;
-	max-width: 33%;
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaVersionLabel,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaVersionLabel {
+	max-width: ~"calc(90% - 160px)";
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaVersionLabel {
+	max-width: ~"calc(100% - 100px)";
 }
 
 .sapUiRtaToolbarIconAndDraftSection > div {
