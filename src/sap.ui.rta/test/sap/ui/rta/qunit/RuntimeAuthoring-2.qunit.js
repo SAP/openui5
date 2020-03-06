@@ -422,7 +422,6 @@ sap.ui.define([
 				showToolbars : false
 			});
 			whenNoAppDescriptorChangesExist(this.oRta);
-
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 			this.fnReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
 			this.fnHandleParametersOnExitSpy = sandbox.spy(this.oRta, "_handleParametersOnExit");
@@ -436,8 +435,22 @@ sap.ui.define([
 		QUnit.test("when draft changes are available, RTA is started and user exists", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(true);
-			sandbox.stub(FlexUtils, "getUshellContainer").resolves(true);
-
+			sandbox.stub(FlexUtils, "getUshellContainer").returns({
+				getService: function () {
+					return {
+						toExternal: function() {
+							return true;
+						},
+						parseShellHash: function () {
+							return {
+								params: {
+									"sap-ui-fl-draft": [Layer.CUSTOMER]
+								}
+							};
+						}
+					};
+				}
+			});
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
