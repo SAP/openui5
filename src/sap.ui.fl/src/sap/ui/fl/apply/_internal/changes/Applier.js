@@ -24,19 +24,19 @@ sap.ui.define([
 	function _checkControlAndDependentSelectorControls(oChange, mPropertyBag) {
 		var oSelector = oChange.getSelector && oChange.getSelector();
 		if (!oSelector || (!oSelector.id && !oSelector.name)) {
-			throw new Error("No selector in change found or no selector ID.");
+			throw Error("No selector in change found or no selector ID.");
 		}
 
 		var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent, mPropertyBag.view);
 		if (!oControl) {
-			throw new Error("A flexibility change tries to change a nonexistent control.");
+			throw Error("A flexibility change tries to change a nonexistent control.");
 		}
 
 		var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
 		aDependentControlSelectorList.forEach(function(sDependentControlSelector) {
 			var oDependentControl = mPropertyBag.modifier.bySelector(sDependentControlSelector, mPropertyBag.appComponent, mPropertyBag.view);
 			if (!oDependentControl) {
-				throw new Error("A dependent selector control of the flexibility change is not available.");
+				throw Error("A dependent selector control of the flexibility change is not available.");
 			}
 		});
 
@@ -271,39 +271,31 @@ sap.ui.define([
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
 		 */
 		applyAllChangesForXMLView: function(mPropertyBag, aChanges) {
-			var aPromiseStack = [];
-
 			if (!Array.isArray(aChanges)) {
 				var sErrorMessage = "No list of changes was passed for processing the flexibility on view: " + mPropertyBag.view + ".";
 				Log.error(sErrorMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
 				aChanges = [];
 			}
 
-			aChanges.forEach(function (oChange) {
-				try {
+			return aChanges.reduce(function(oPreviousPromise, oChange) {
+				return oPreviousPromise.then(function() {
 					var oControl = _checkControlAndDependentSelectorControls(oChange, mPropertyBag);
-
 					oChange.setQueuedForApply();
-					aPromiseStack.push(function() {
-						_checkAndAdjustChangeStatus(oControl, oChange, undefined, undefined, mPropertyBag);
-
-						if (oChange.isApplyProcessFinished()) {
-							return new FlUtils.FakePromise();
-						}
-
-						return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function(oReturn) {
-							if (!oReturn.success) {
-								_logApplyChangeError(oReturn.error || {}, oChange);
-							}
-						});
-					});
-				} catch (oException) {
-					_logApplyChangeError(oException, oChange);
-				}
-			});
-
-			return FlUtils.execPromiseQueueSequentially(aPromiseStack)
-
+					_checkAndAdjustChangeStatus(oControl, oChange, undefined, undefined, mPropertyBag);
+					if (!oChange.isApplyProcessFinished()) {
+						return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
+					}
+					return {success: true};
+				})
+				.then(function(oReturn) {
+					if (!oReturn.success) {
+						throw Error(oReturn.error);
+					}
+				})
+				.catch(function(oError) {
+					_logApplyChangeError(oError, oChange);
+				});
+			}, new FlUtils.FakePromise())
 			.then(function() {
 				return mPropertyBag.view;
 			});
