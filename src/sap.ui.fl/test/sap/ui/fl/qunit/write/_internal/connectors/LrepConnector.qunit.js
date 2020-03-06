@@ -492,7 +492,8 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when loadFeatures is triggered", function (assert) {
 			var oExpectedResponse = {
-				isKeyUser: true
+				isKeyUser: true,
+				isVersioningEnabled: false
 			};
 			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 			var mPropertyBag = {url: "/sap/bc/lrep"};
@@ -507,13 +508,13 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when loadFeatures is triggered when settings already stored in apply connector", function (assert) {
 			var oExpectedResponse = {
-				isKeyUser: true
+				isKeyUser: false,
+				isVersioningEnabled: false
 			};
-			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 			var mPropertyBag = {url: "/sap/bc/lrep"};
 			ApplyConnector.settings = {isKeyUser: false};
 			return LrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
-				assert.deepEqual(oResponse, {isKeyUser: false}, "the settings object is obtain from apply connector correctly");
+				assert.deepEqual(oResponse, oExpectedResponse, "the settings object is obtain from apply connector correctly");
 				assert.equal(sandbox.server.requestCount, 0, "no request is sent to back end");
 			});
 		});
