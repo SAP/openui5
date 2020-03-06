@@ -147,7 +147,8 @@ sap.ui.define([
 						this._onsaparrowkey(oEvent, "down", this._oList.getItems().length);
 					}
 				},
-				onsapright: this._onsapright
+				onsapright: this._onsapright,
+				onsaptabnext: this._handleInputsTabNext
 			}, this);
 		},
 
@@ -383,7 +384,14 @@ sap.ui.define([
 				placement: PlacementType.VerticalPreferredBottom,
 				showHeader: true,
 				initialFocus: oInput,
-				horizontalScrolling: true
+				horizontalScrolling: true,
+				beforeClose: function() {
+					// If the popover is closed while the pseudo focus is on value state header containing links
+					if (that.bMessageValueStateActive) {
+						that._getValueStateHeader().removeStyleClass("sapMPseudoFocus");
+						this.bMessageValueStateActive = false;
+					}
+				}
 			}))
 			:
 			(new Dialog(oInput.getId() + "-popup", {
@@ -610,6 +618,52 @@ sap.ui.define([
 	};
 
 	/**
+	 * Close the control when tab is pressed while the focus is on the last link
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype.closePopoverDelegate = {
+		onsaptabnext: function(oEvent) {
+			this.bMessageValueStateActive = false;
+			this._oInput.onsapfocusleave(oEvent);
+			this._oPopover.close();
+
+			/* By default the value state message popup is opened when the suggestion popover
+			is closed. We don't want that in this case. In IE the popup is opened with setTimeout
+			because if the input receive the focus and the parent div scrolls,
+			we should wait until the scroll ends. So we need to also close it with setTimeout. */
+			setTimeout(function() {
+				this._oInput.closeValueStateMessage();
+			}.bind(this), 0);
+		}
+	};
+
+	/**
+	 * Handles tab key when pressed while the visual focus is on a value state message with <code>sap.m.FormattedText</code>
+	 *
+	 * @param {jQuery.Event} oEvent The event object
+	 * @private
+	 */
+	SuggestionsPopover.prototype._handleInputsTabNext = function(oEvent) {
+		if (!this.bMessageValueStateActive || !this.getValueStateLinks().length || (this.bMessageValueStateActive && document.activeElement.tagName === "A")) {
+			return;
+		}
+
+		var aValueStateLinks = this.getValueStateLinks(),
+			oLastValueStateLink = aValueStateLinks[aValueStateLinks.length - 1];
+
+		// Prevent from closing right away
+		oEvent.preventDefault();
+
+		// Move the real focus on the first link and remove the pseudo one from the
+		// Formatted Text value state header
+		aValueStateLinks[0].focus();
+		this._getValueStateHeader().removeStyleClass("sapMPseudoFocus");
+
+		oLastValueStateLink.addDelegate(this.closePopoverDelegate, this);
+	};
+
+	/**
 	 * Keyboard handler helper.
 	 *
 	 * @private
@@ -652,12 +706,11 @@ sap.ui.define([
 			aListItems = oList.getItems(),
 			iSelectedIndex = this._iPopupListSelectedIndex,
 			sNewValue,
+			oValueStateHeader = this._getValueStateHeader(),
+			oFormattedText = oValueStateHeader.getFormattedText(),
+			oPseudoFocusedElement = Device.browser.msie ? oFormattedText : oValueStateHeader,
 			iOldIndex = iSelectedIndex;
 
-		if (sDir === "up" && iSelectedIndex === 0) {
-			// if key is 'up' and selected Item is first -> do nothing
-			return;
-		}
 		if (sDir == "down" && iSelectedIndex === aListItems.length - 1) {
 			//if key is 'down' and selected Item is last -> do nothing
 			return;
@@ -718,8 +771,26 @@ sap.ui.define([
 			}
 		}
 
+		// If there is a formatted text with link in value state header and the "focused" item
+		// is the first selectable item (if no further visible item can be found) - go to the value state message on arrow up.
+		if ((sDir === "up" && this.getValueStateLinks().length && !this.bMessageValueStateActive) && (!this._isSuggestionItemSelectable(aListItems[iSelectedIndex]) || iOldIndex === 0)) {
+			oPseudoFocusedElement.addStyleClass(("sapMPseudoFocus"));
+			oInput.removeStyleClass("sapMFocus");
+			oInnerRef.attr("aria-activedescendant", oFormattedText.getId());
+			this.bMessageValueStateActive = true;
+			this._iPopupListSelectedIndex = -1;
+			return;
+		}
+
+		// Reset the pseudo focus outline of the sap.m.FormattedText in value state message, if links are present
+		if ((this.getValueStateLinks().length && this.bMessageValueStateActive) && (sDir === "up" && iSelectedIndex === 0 || sDir === "down")) {
+			oPseudoFocusedElement.removeStyleClass("sapMPseudoFocus");
+			oInput.addStyleClass("sapMFocus");
+			this.bMessageValueStateActive = false;
+		}
+
 		if (!this._isSuggestionItemSelectable(aListItems[iSelectedIndex])) {
-			// if no further visible item can be found -> do nothing (e.g. set the old item as selected again)
+			// If no further visible item can be found and there are no links in the value state header -> do nothing (e.g. set the old item as selected again)
 			if (iOldIndex >= 0) {
 				aListItems[iOldIndex].setSelected(true).updateAccessibilityState();
 				oInnerRef.attr("aria-activedescendant", aListItems[iOldIndex].getId());
@@ -764,6 +835,20 @@ sap.ui.define([
 		this._bSuggestionItemChanged = true;
 
 		this.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {newValue: sNewValue});
+	};
+
+	/**
+	 * Helper method for keyboard navigation in suggestion items.
+	 *
+	 * @returns {array} Links in value state <code>sap.m.FormattedText</code> message.
+	 * @private
+	 */
+	SuggestionsPopover.prototype.getValueStateLinks = function() {
+		var oHeaderCache = this._getValueStateHeader(),
+			oFormattedText = oHeaderCache && typeof oHeaderCache.getFormattedText === "function" && oHeaderCache.getFormattedText(),
+			aLinks = oFormattedText && typeof oFormattedText.getControls === "function" && oFormattedText.getControls();
+
+		return aLinks || [];
 	};
 
 	/**
@@ -1145,15 +1230,19 @@ sap.ui.define([
 		}
 	};
 
-	/*
-	* Updates the value state displayed in the popover.
-	*
-	* @internal
-	*/
-	SuggestionsPopover.prototype.updateValueState = function(sValueState, sValueStateText, bShowValueStateMessage) {
+	/**
+	 *
+	 * Updates the value state displayed in the popover.
+	 *
+	 * @param {string} sValueState Value state of the control
+	 * @param {(string|object)} vValueStateText Value state message text of the control.
+	 * @param {boolean} bShowValueStateMessage Whether or not a value state message should be displayed.
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype.updateValueState = function(sValueState, vValueStateText, bShowValueStateMessage) {
 		var bShow = bShowValueStateMessage && sValueState !== ValueState.None;
-		sValueStateText = sValueStateText || ValueStateSupport.getAdditionalText(sValueState);
-
+		vValueStateText = vValueStateText || ValueStateSupport.getAdditionalText(sValueState);
 		if (!this._oPopover) {
 			return this;
 		}
@@ -1163,7 +1252,7 @@ sap.ui.define([
 		}
 
 		this._getValueStateHeader().setValueState(sValueState);
-		this._setValueStateHeaderText(sValueStateText);
+		this._setValueStateHeaderText(vValueStateText);
 		this._showValueStateHeader(bShow);
 		this._alignValueStateStyles(sValueState);
 
@@ -1186,9 +1275,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SuggestionsPopover.prototype._setValueStateHeaderText = function(sText) {
-		if (this._oValueStateHeader) {
-			this._oValueStateHeader.setText(sText);
+	SuggestionsPopover.prototype._setValueStateHeaderText = function(vText) {
+		if (this._oValueStateHeader && typeof vText === "string") {
+			this._oValueStateHeader.setText(vText);
+		} else if (this._oValueStateHeader && typeof vText === "object") {
+			this._oValueStateHeader.setFormattedText(vText);
 		}
 	};
 

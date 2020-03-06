@@ -1281,7 +1281,7 @@ function(
 				&& containsOrEquals(oPopup.getDomRef(), oFocusDomRef);
 
 		if (oPopup instanceof Popover) {
-			if (bFocusInPopup) {
+			if (bFocusInPopup && !oSuggPopover.bMessageValueStateActive) {
 				// set the flag that the focus is currently in the Popup
 				this._bPopupHasFocus = true;
 				if (Device.system.desktop && deepEqual(oPopup.getFocusDomRef(), oFocusDomRef)) {
@@ -2191,7 +2191,6 @@ function(
 	Input.prototype.onfocusout = function(oEvent) {
 		InputBase.prototype.onfocusout.apply(this, arguments);
 		this.removeStyleClass("sapMInputFocused");
-		this.closeValueStateMessage(this);
 		this.$("SuggDescr").text(""); // clear suggestion text, if any
 	};
 
@@ -2849,14 +2848,23 @@ function(
 	 */
 	Input.prototype._updateSuggestionsPopoverValueState = function() {
 		var oSuggPopover = this._oSuggPopover,
-			sValueState = this.getValueState();
+		sValueState = this.getValueState(),
+		vValueStateMessage;
 
-		if (oSuggPopover) {
-			oSuggPopover.updateValueState(sValueState, this.getValueStateText(), this.getShowValueStateMessage());
+		if (!oSuggPopover) {
+			return;
+		}
 
-			if (this._bUseDialog) {
-				oSuggPopover._oPopupInput.setValueState(sValueState);
-			}
+		if (this._oFormattedValueStateHeader) {
+			vValueStateMessage = this._oFormattedValueStateHeader;
+		} else {
+			vValueStateMessage = this.getValueStateText();
+		}
+
+		oSuggPopover.updateValueState(sValueState, vValueStateMessage, this.getShowValueStateMessage());
+
+		if (this._bUseDialog) {
+			oSuggPopover._oPopupInput.setValueState(sValueState);
 		}
 	};
 
@@ -2900,15 +2908,21 @@ function(
 	};
 
 	/**
-	 * Sets whether the value state message should be shown or not
+	 * Sets <code>sap.m.FormattedText</code> value state message and creates
+	 * a cloned object for aggregation of <code>sap.m.ValueStateHeader</code>.
 	 *
-	 * @param {boolean} [bShow] The new value state text
+	 * @param {object} oFormattedValueStateText The new value state formatted text
 	 * @returns {sap.m.InputBase} this for chaining
 	 *
 	 * @public
 	 */
-	Input.prototype.setShowValueStateMessage = function(bShow) {
-		InputBase.prototype.setShowValueStateMessage.apply(this, arguments);
+	Input.prototype.setFormattedValueStateText = function(oFormattedValueStateText) {
+		InputBase.prototype.setFormattedValueStateText.apply(this, arguments);
+
+		if (oFormattedValueStateText) {
+			this._oFormattedValueStateHeader = oFormattedValueStateText.clone();
+		}
+
 		this._updateSuggestionsPopoverValueState();
 		return this;
 	};
