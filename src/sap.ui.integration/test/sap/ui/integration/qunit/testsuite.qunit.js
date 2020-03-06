@@ -196,7 +196,7 @@ sap.ui.define(function () {
 				]
 			},
 			"designtime/baseEditor/integration/ReadyHandling": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/"
@@ -205,7 +205,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/BaseEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/BaseEditor"
@@ -214,7 +214,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/BasePropertyEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/BasePropertyEditor"
@@ -223,7 +223,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/PropertyEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/PropertyEditor"
@@ -232,7 +232,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/PropertyEditors": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/PropertyEditors"
@@ -241,7 +241,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/propertyEditor/stringEditor/StringEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
@@ -250,7 +250,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor"
@@ -259,7 +259,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/propertyEditor/numberEditor/NumberEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
@@ -268,7 +268,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor"
@@ -277,7 +277,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor"
@@ -286,7 +286,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
@@ -295,7 +295,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/propertyEditor/mapEditor/MapEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
@@ -304,7 +304,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/propertyEditor/iconEditor/IconEditor": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor"
@@ -322,7 +322,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/propertyEditor/PropertyEditorFactory": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory"
@@ -331,7 +331,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/util/binding/resolveBinding": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding"
@@ -340,7 +340,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/util/ObjectBinding": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/util/ObjectBinding"
@@ -349,7 +349,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/util/createPromise": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/util/createPromise"
@@ -358,7 +358,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/util/escapeParameter": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/util/escapeParameter"
@@ -367,7 +367,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/baseEditor/util/findClosestInstance": {
-				group: "DesignTime Editor",
+				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/util/findClosestInstance"
@@ -385,7 +385,7 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/cardEditor/CardEditor": {
-				group: "DesignTime Editor",
+				group: "Card DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/cardEditor/CardEditor"
@@ -394,10 +394,19 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor": {
-				group: "DesignTime Editor",
+				group: "Card DesignTime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor": {
+				group: "Card DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor"
 					]
 				},
 				sinon: false
