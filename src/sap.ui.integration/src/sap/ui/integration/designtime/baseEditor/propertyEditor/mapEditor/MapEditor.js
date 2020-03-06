@@ -4,28 +4,29 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/base/util/deepClone",
-	"sap/base/util/ObjectPath",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
-	"sap/base/util/isPlainObject"
+	"sap/base/util/isPlainObject",
+	"sap/base/util/includes"
 ], function (
 	BasePropertyEditor,
 	deepClone,
-	ObjectPath,
 	JSONModel,
 	_merge,
 	_omit,
-	isPlainObject
+	isPlainObject,
+	includes
 ) {
 	"use strict";
 
-	// Possible types that are supported by the map editor
-	var SUPPORTED_TYPES = {
-		"json": "BASE_EDITOR.MAP.TYPES.OBJECT",
+	var SUPPORTED_TYPE_LABELS = {
 		"string": "BASE_EDITOR.MAP.TYPES.STRING",
 		"boolean": "BASE_EDITOR.MAP.TYPES.BOOLEAN",
-		"number": "BASE_EDITOR.MAP.TYPES.NUMBER"
+		"number": "BASE_EDITOR.MAP.TYPES.NUMBER",
+		"integer": "BASE_EDITOR.MAP.TYPES.INTEGER",
+		"date": "BASE_EDITOR.MAP.TYPES.DATE",
+		"datetime": "BASE_EDITOR.MAP.TYPES.DATETIME"
 	};
 
 	/**
@@ -56,51 +57,103 @@ sap.ui.define([
 			this.attachModelContextChange(function () {
 				if (this.getModel("i18n")) {
 					var oResourceBundle = this.getModel("i18n").getResourceBundle();
-					this._supportedTypesModel.setData(Object.keys(SUPPORTED_TYPES).map(function (sKey) {
+					this._aSupportedTypes = Object.keys(SUPPORTED_TYPE_LABELS).map(function (sKey) {
 						return {
 							key: sKey,
-							label: oResourceBundle.getText(SUPPORTED_TYPES[sKey])
+							label: oResourceBundle.getText(SUPPORTED_TYPE_LABELS[sKey])
 						};
-					}));
+					});
+					this._setSupportedTypesModel();
 				}
 			}, this);
+			this.attachConfigChange(this._setSupportedTypesModel, this);
 			this._mTypes = {};
 		},
 
 		setValue: function(mValue) {
 			mValue = isPlainObject(mValue) ? mValue : {};
 
-			var aItems = Object.keys(mValue).map(function (sKey) {
-				var vValue = this.formatInputValue(mValue[sKey]);
-				if (!this._mTypes[sKey]) {
-					// Initialize type based on value
-					this._mTypes[sKey] = isPlainObject(vValue) ? "json" : "string";
-				}
-				return {
-					key: sKey,
-					value: [{
-						type: this._mTypes[sKey],
-						path: sKey,
-						value: vValue
-					}]
-				};
-			}, this);
+			var aItems = this._processValue(mValue);
 
 			this._itemsModel.setData(aItems);
 			BasePropertyEditor.prototype.setValue.call(this, mValue);
 		},
 
-		getExpectedWrapperCount: function (mValue) {
-			return Object.keys(mValue).length;
+		_processValue: function(mValue) {
+			return Object.keys(mValue).map(function (sKey) {
+				var mFormattedValue = this.formatInputValue(deepClone(mValue[sKey]), sKey);
+				if (!mFormattedValue.type) {
+					mFormattedValue.type = this._mTypes[sKey] || this._getDefaultType(mFormattedValue.value);
+				}
+				this._mTypes[sKey] = mFormattedValue.type;
+				mFormattedValue.path = sKey;
+
+				var oItem = {
+					key: sKey,
+					value: [mFormattedValue]
+				};
+
+				return this.getConfig().includeInvalidEntries !== false || this._isValidItem(oItem, deepClone(mValue[sKey])) ? oItem : undefined;
+			}, this).filter(Boolean);
 		},
 
 		/**
-		 * Hook which is called from <code>setValue</code> for every map item value. Can be overridden in order to format the value to fit the editor's requirements.
+		 * Hook which is called for every map item to filter invalid entries.
+		 * @param {object} oItem - Formatted item
+		 * @param {object} oOriginalItem - Original item
+		 * @returns {boolean} <code>true</code> if the item is valid
+		 * @private
+		 */
+		_isValidItem: function(oItem) {
+			var sType = oItem.value[0].type;
+			return sType && includes(this._getAllowedTypes(), sType);
+		},
+
+		_getDefaultType: function (vValue) {
+			var aAllowedTypes = this._getAllowedTypes();
+			var sType = typeof vValue;
+			var sChosenType = includes(aAllowedTypes, sType) ? sType : undefined;
+			if (!sChosenType && includes(aAllowedTypes, "string")) {
+				sChosenType = "string";
+			}
+			return sChosenType;
+		},
+
+		_getAllowedTypes: function () {
+			var oConfig = this.getConfig();
+			return oConfig && oConfig["allowedTypes"] || ["string"];
+		},
+
+		_setSupportedTypesModel: function () {
+			var aAllowedTypes = this._getAllowedTypes();
+			this._supportedTypesModel.setData(this._aSupportedTypes.filter(function (oSupportedType) {
+				return includes(aAllowedTypes, oSupportedType.key);
+			}));
+		},
+
+		getExpectedWrapperCount: function (mValue) {
+			// Process the value first to not wait for filtered out invalid items
+			return this._processValue(mValue).length;
+		},
+
+		/**
+		 * Hook which is called for every map item value coming from the JSON. Can be overridden in order to format the value to fit the editor's requirements.
 		 * @param {object} oValue - Original map item value
 		 * @returns {object} Formatted map item value
 		 */
 		formatInputValue: function(oValue) {
-			return oValue;
+			return {
+				value: oValue
+			};
+		},
+
+		/**
+		 * Hook which is called for every map item value coming from the editor. Can be overridden in order to format the value to fit the JSON schema definition.
+		 * @param {object} oValue - Original map item value
+		 * @returns {object} Formatted map item value
+		 */
+		formatOutputValue: function(oValue) {
+			return oValue.value;
 		},
 
 		_onRemoveElement: function(oEvent) {
@@ -112,7 +165,10 @@ sap.ui.define([
 		_onAddElement: function() {
 			var mParams = _merge({}, this.getValue());
 			var sKey = this._getUniqueKey(mParams);
-			mParams[sKey] = "";
+			mParams[sKey] = this.formatOutputValue({
+				value: "",
+				type: "string"
+			});
 			this.setValue(mParams);
 		},
 
@@ -131,12 +187,13 @@ sap.ui.define([
 			var sNewKey = oEvent.getParameter("value");
 			var sOldKey = oInput.getBindingContext("itemsModel").getObject().key;
 
-			var aKeys = aItems.map(function (oItem) {
+			var aItemKeys = aItems.map(function (oItem) {
 				return oItem.key;
 			});
-			var iElementToModifyIndex = aKeys.indexOf(sOldKey);
+			var oValue = this.getValue();
+			var iElementToModifyIndex = aItemKeys.indexOf(sOldKey);
 
-			if (iElementToModifyIndex >= 0 && (aKeys.indexOf(sNewKey) < 0 || sNewKey === sOldKey)) {
+			if (iElementToModifyIndex >= 0 && (!oValue.hasOwnProperty(sNewKey) || sNewKey === sOldKey)) {
 				oInput.setValueState("None");
 
 				var oItem = deepClone(aItems[iElementToModifyIndex]);
@@ -149,8 +206,13 @@ sap.ui.define([
 				if (sNewKey !== sOldKey) {
 					var oMap = {};
 					aItems.forEach(function (oItem) {
-						oMap[oItem.key] = oItem.value[0].value;
-					});
+						oMap[oItem.key] = this.formatOutputValue({
+							value: oItem.value[0].value,
+							type: oItem.value[0].type
+						});
+					}, this);
+					this._mTypes[sNewKey] = this._mTypes[sOldKey];
+					delete this._mTypes[sOldKey];
 					this.setValue(oMap);
 				}
 			} else {
@@ -160,8 +222,15 @@ sap.ui.define([
 		},
 
 		_onTypeChange: function (oEvent, sKey) {
-			this._mTypes[sKey] = oEvent.getParameter("selectedItem").getKey();
-			this.setValue(this.getValue());
+			var oEditorValue = _merge({}, this.getValue());
+			var sNewType =  oEvent.getParameter("selectedItem").getKey();
+
+			var oItemToEdit = this.formatInputValue(oEditorValue[sKey]);
+			oItemToEdit.type = sNewType;
+			oEditorValue[sKey] = this.formatOutputValue(oItemToEdit);
+
+			this._mTypes[sKey] = sNewType;
+			this.setValue(oEditorValue);
 		},
 
 		_propertyEditorsChange: function (oEvent) {
@@ -177,11 +246,11 @@ sap.ui.define([
 
 		_onPropertyValueChange: function (oEvent) {
 			var oEditorValue = _merge({}, this.getValue());
-			var sPath = oEvent.getParameter("path");
-			var aParts = sPath.split("/");
-			var vValue = oEvent.getParameter("value");
+			var sKey = oEvent.getParameter("path");
 
-			ObjectPath.set(aParts, vValue, oEditorValue);
+			var oItemToEdit = this.formatInputValue(oEditorValue[sKey]);
+			oItemToEdit.value = oEvent.getParameter("value");
+			oEditorValue[sKey] = this.formatOutputValue(oItemToEdit);
 
 			this.setValue(oEditorValue);
 		},

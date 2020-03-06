@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/base/BindingParser",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/integration/designtime/baseEditor/util/unset"
 ], function (
 	createPromise,
 	PropertyEditorFactory,
@@ -46,7 +47,8 @@ sap.ui.define([
 	JSONModel,
 	ResourceBundle,
 	BindingParser,
-	Log
+	Log,
+	unset
 ) {
 	"use strict";
 
@@ -753,20 +755,6 @@ sap.ui.define([
 
 		return sContext;
 	};
-
-	function unset(aParts, oObject) {
-		var mContainer = ObjectPath.get(aParts.slice(0, -1), oObject);
-		if (mContainer) {
-			delete mContainer[aParts[aParts.length - 1]];
-
-			return (
-				Array.isArray(mContainer) && mContainer.length === 0
-				|| isPlainObject(mContainer) && isEmptyObject(mContainer)
-					? unset(aParts.slice(0, -1), oObject)
-					: oObject
-			);
-		}
-	}
 
 	BaseEditor.prototype._onValueChange = function (oEvent) {
 		var oPropertyEditor = oEvent.getSource();

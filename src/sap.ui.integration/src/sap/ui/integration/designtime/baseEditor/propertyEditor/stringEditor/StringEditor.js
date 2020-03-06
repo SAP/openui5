@@ -30,26 +30,35 @@ sap.ui.define([
 	 */
 	var StringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.stringEditor.StringEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.stringEditor.StringEditor",
-		_onLiveChange: function() {
-			var oInput = this.getContent();
-			if (this._validate()) {
-				this.setValue(oInput.getValue());
-			}
-		},
-		_validate: function() {
-			var oInput = this.getContent();
-			var sValue = oInput.getValue();
-			if (!isValidBindingString(sValue)) {
-				oInput.setValueState("Error");
-				oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
-				return false;
-			} else {
-				oInput.setValueState("None");
-				return true;
-			}
-		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
+
+	StringEditor.prototype.setValue = function (vValue) {
+		if (vValue) {
+			vValue = vValue.toString();
+		}
+		BasePropertyEditor.prototype.setValue.call(this, vValue);
+	};
+
+	StringEditor.prototype._onLiveChange = function () {
+		var oInput = this.getContent();
+		if (this._validate()) {
+			this.setValue(oInput.getValue());
+		}
+	};
+
+	StringEditor.prototype._validate = function () {
+		var oInput = this.getContent();
+		var sValue = oInput.getValue();
+		if (!isValidBindingString(sValue)) {
+			oInput.setValueState("Error");
+			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
+			return false;
+		} else {
+			oInput.setValueState("None");
+			return true;
+		}
+	};
 
 	return StringEditor;
 });

@@ -47,7 +47,8 @@ sap.ui.define([
 					"tags": ["general"],
 					"label": "{i18n>CARD_EDITOR.PARAMETERS}",
 					"path": "configuration/parameters",
-					"type": "parameters"
+					"type": "parameters",
+					"allowedTypes": ["string", "number", "boolean", "integer", "date", "datetime"]
 				},
 				"destinations": {
 					"tags": ["general"],
