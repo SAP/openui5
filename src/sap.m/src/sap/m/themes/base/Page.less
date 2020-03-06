@@ -349,3 +349,12 @@ html.sap-desktop .sapUiFioriObjectPage > section {
 		margin: 0.5rem;
 	}
 }
+
+/*
+	In order to skip adding that to each control we decided to move that on Popup level
+	will-change property has been aded for performance improvements when having a huge scroll of the page (painting improvement)
+	Usually the Popover/Dialog does not have that much of a content and the scrolling performance is good
+*/
+.sapMPopup-CTX .sapMPage > section.sapMPageEnableScrolling {
+	will-change: unset; // fixes iOS and OS X issue - the content and the header sometimes get misplaced
+}
