@@ -986,7 +986,7 @@ sap.ui.define([
 		//control property updateVariantInURL set initially
 		var sUpdateURL = oVariantManagementControl.getUpdateVariantInURL(); // default false
 		this.oData[sVariantManagementReference].updateVariantInURL = sUpdateURL;
-		URLHandler.attachHandlers({
+		URLHandler.registerControl({
 			vmReference: sVariantManagementReference,
 			updateURL: !!sUpdateURL,
 			model: this

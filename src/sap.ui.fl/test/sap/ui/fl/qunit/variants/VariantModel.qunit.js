@@ -1620,7 +1620,7 @@ function(
 			this.fnRevertChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges").resolves();
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves();
-			this.oAttachHandlersStub = sandbox.stub(URLHandler, "attachHandlers");
+			this.oRegisterControlStub = sandbox.stub(URLHandler, "registerControl");
 
 			sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "fillVariantModel").returns(this.oData);
 			sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
@@ -1649,12 +1649,12 @@ function(
 		});
 
 		QUnit.test("when variant management controls are initialized with with 'updateVariantInURL' property set and default (false)", function(assert) {
-			this.oAttachHandlersStub.resetHistory();
+			this.oRegisterControlStub.resetHistory();
 			var oVariantManagementWithURLUpdate = new VariantManagement("varMgmtRef2", {updateVariantInURL: true});
 			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 			oVariantManagementWithURLUpdate.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
-			assert.deepEqual(this.oAttachHandlersStub.getCall(0).args[0], {vmReference: this.oModel.oAppComponent.getLocalId(this.oVariantManagement.getId()), updateURL: false, model: this.oModel}, "then URLHandler.attachHandlers was called once for a control to update URL");
-			assert.deepEqual(this.oAttachHandlersStub.getCall(1).args[0], {vmReference:oVariantManagementWithURLUpdate.getId(), updateURL: true, model: this.oModel}, "then URLHandler.attachHandlers was called once for a control without URL update");
+			assert.deepEqual(this.oRegisterControlStub.getCall(0).args[0], {vmReference: this.oModel.oAppComponent.getLocalId(this.oVariantManagement.getId()), updateURL: false, model: this.oModel}, "then URLHandler.attachHandlers was called once for a control to update URL");
+			assert.deepEqual(this.oRegisterControlStub.getCall(1).args[0], {vmReference:oVariantManagementWithURLUpdate.getId(), updateURL: true, model: this.oModel}, "then URLHandler.attachHandlers was called once for a control without URL update");
 			oVariantManagementWithURLUpdate.destroy();
 		});
 
