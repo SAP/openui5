@@ -1,0 +1,75 @@
+<mvc:View controllerName="sap.m.sample.TableAutoPopin.Table" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" height="100%">
+	<MessageStrip id="idMessageStrip"
+				  text="Move the slider to see the importance based popin behaviour with dynamic width."
+				  type="Success"
+				  showIcon="true"
+				  showCloseButton="true"
+				  class="sapUiMediumMarginBottom" />
+	<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
+	<Table id="idProductsTable" autoPopinMode="true" contextualWidth="Auto" items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<headerToolbar>
+			<OverflowToolbar>
+				<Title text="Products" level="H2" />
+			</OverflowToolbar>
+		</headerToolbar>
+		<columns>
+			<Column width="14em" importance="High">
+				<Text text="Product" />
+			</Column>
+			<Column width="auto" importance="None">
+				<Text text="Description" />
+			</Column>
+			<Column width="8em" importance="Low">
+				<Text text="Category" />
+			</Column>
+			<Column width="8%" importance="None">
+				<Text text="Main Category" />
+			</Column>
+			<Column width="8em" importance="None">
+				<Text text="Supplier" />
+			</Column>
+			<Column width="10em" importance="Low">
+				<Text text="Dimensions" />
+			</Column>
+			<Column width="6em" hAlign="Center" importance="Low">
+				<Text text="Weight" />
+			</Column>
+			<Column width="6%" hAlign="Center" importance="Medium">
+				<Text text="Quantity" />
+			</Column>
+			<Column width="6em" hAlign="End" importance="High">
+				<Text text="Price" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<ObjectIdentifier title="{Name}" text="{ProductId}" />
+					<Text text="{Description}" />
+					<Text text="{Category}" />
+					<Text text="{MainCategory}" />
+					<Text text="{SupplierName}" />
+					<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
+					<ObjectNumber number="{WeightMeasure}" unit="{WeightUnit}" state="{
+							parts: [
+								{path: 'WeightMeasure'},
+								{path: 'WeightUnit'}
+							],
+							formatter: '.formatter.weightState'
+						}" />
+					<ObjectNumber number="{Quantity}" />
+					<ObjectNumber number="{
+								parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: false}
+							}" unit="{CurrencyCode}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

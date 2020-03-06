@@ -122,7 +122,31 @@ sap.ui.define([
 			 * <b>Note:</b> Only "Inherit", "Auto", and pixel-based CSS sizes (for example, 200, 200px) can be applied to the <code>contextualWidth</code> property. Due to the rendering cost, we recommend to use the valid value mentioned before except for "Auto".
 			 * @since 1.60
 			 */
-			contextualWidth : {type: "string", group: "Behavior", defaultValue: "Inherit"}
+			contextualWidth : {type: "string", group: "Behavior", defaultValue: "Inherit"},
+
+			/**
+			 * Enables the auto pop-in behavior for the table control.
+			 *
+			 * If this property is set to <code>true</code>, the table control overwrites the <code>demandPopin</code>
+			 * and the <code>minScreenWidth</code> properties of the <code>sap.m.Column</code> control.
+			 * The pop-in behavior depends on the <code>importance</code> property of the <code>sap.m.Column</code> control.
+			 * Columns configured with this property are moved to the pop-in area in the following order:
+			 *
+			 * <ul>
+			 * 	<li>With importance <code>High</code>: moved last</li>
+			 * 	<li>With importance <code>Medium</code> or <code>None</code>: moved second</li>
+			 * 	<li>With importance <code>Low</code>: moved first</li>
+			 * </ul>
+			 *
+			 * <b>Note:</b> If this property is changed from <code>true</code> to <code>false</code>,
+			 * the application must reconfigure the <code>demandPopin</code> and <code>minScreenWidth</code>
+			 * properties of the <code>sap.m.Column</code> control by itself.
+			 * There is no automatic mechanism that restores the old values if <code>autoPopinMode</code> was set
+			 * from <code>false</code> to <code>true</code> before.
+			 *
+			 * @since 1.76
+			 */
+			autoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false}
 		},
 		aggregations : {
 
@@ -285,6 +309,10 @@ sap.ui.define([
 
 	Table.prototype.onBeforeRendering = function() {
 		ListBase.prototype.onBeforeRendering.call(this);
+
+		if (this.getAutoPopinMode() && this.getItems().length) {
+			this._configureAutoPopin();
+		}
 
 		// for initial contextualWidth setting
 		this._applyContextualWidth(this._sContextualWidth);
@@ -881,6 +909,125 @@ sap.ui.define([
 		oDragSession.setIndicatorConfig({
 			height: this.getTableDomRef().clientHeight
 		});
+	};
+
+	Table.prototype.onColumnRecalculateAutoPopin = function() {
+		if (this.getAutoPopinMode()) {
+			this._configureAutoPopin();
+		}
+	};
+
+	/**
+	 * Function for configuring the autoPopinMode of the table control.
+	 *
+	 * @function
+	 * @name _configureAutoPopin
+	 * @private
+	 */
+	Table.prototype._configureAutoPopin = function() {
+		var aVisibleColumns = this.getColumns(true).filter(function(oColumn) {
+			return oColumn.getVisible();
+		});
+		var aItems = this.getItems();
+		var aHighCols = [];
+		var aMedCols = [];
+		var aLowCols = [];
+
+		// divide table columns by importance
+		for (var i = 0; i < aVisibleColumns.length; i++) {
+			var sImportance = aVisibleColumns[i].getImportance();
+			if (sImportance === "Medium" || sImportance === "None") {
+				aMedCols.push(aVisibleColumns[i]);
+			} else if (sImportance === "High") {
+				aHighCols.push(aVisibleColumns[i]);
+			} else {
+				aLowCols.push(aVisibleColumns[i]);
+			}
+		}
+
+		var fAccumulatedWidth = this._getInitialAccumulatedWidth(aItems);
+		fAccumulatedWidth = Table._updateAccumulatedWidth(aHighCols, aHighCols.length > 0, fAccumulatedWidth);
+		fAccumulatedWidth = Table._updateAccumulatedWidth(aMedCols, aHighCols.length === 0 && aMedCols.length > 0, fAccumulatedWidth);
+		Table._updateAccumulatedWidth(aLowCols, aHighCols.length === 0 && aMedCols.length === 0 && aLowCols.length > 0, fAccumulatedWidth);
+	};
+
+	/**
+	 * By side of the autoPopinWidth property of the column also the technical columns like highlights, selection, navigation
+	 * and navigated should be taken into consideration for the minScreenWidth calculation to get better results.
+	 * This function checks, based on the table and its items settings, which of the above columns will be visible and
+	 * calculates the initial accumulated width.
+	 *
+	 * @function
+	 * @name _getInitialAccumulatedWidth
+	 * @param {array} aItems - sap.m.ListItemBase[]
+	 * @returns {float} initial accumulated width
+	 * @private
+	 */
+	Table.prototype._getInitialAccumulatedWidth = function(aItems) {
+		// check if highlight is available
+		var oItemWithHighlight = aItems.find(function(oItem) {
+			return oItem.getHighlight() !== "None";
+		});
+		var iHighlightWidth = oItemWithHighlight ? 0.375 : 0;
+
+		// check if selection control is available
+		var iSelectionWidth = this.getMode() === "MultiSelect" || this.getMode() === "Delete" ? 3 : 0;
+
+		// check if actions are available on the item
+		var oItemIsActionable = aItems.find(function(oItem) {
+			var sType = oItem.getType();
+			return sType === "Detail" || sType === "DetailAndActive" || oItem.getType() === "Navigation";
+		});
+		var iActionWidth = oItemIsActionable ? 3 : 0;
+
+		// check for naivgated state
+		var oItemIsNavigated = aItems.find(function(oItem) {
+			return oItem.getNavigated();
+		});
+		var iNavigatedWidth = oItemIsNavigated ? 0.1875 : 0;
+
+		return iHighlightWidth + iSelectionWidth + iActionWidth + iNavigatedWidth;
+	};
+
+	/**
+	 * Recalculate and returns import parameter fAccumulatedWidth.
+	 * Overwrites column property minScreenWidth based on import parameter bSkipPopinForFirst
+	 * and the column width property.
+	 *
+	 * @function
+	 * @name _updateAccumulatedWidth
+	 * @param {array} aCols - Array of sap.m.Column[] all with the same importance
+	 * @param {boolean} bSkipPopinForFirst - skip demandPopin for first aCols[]
+	 * @param {float} fAccumulatedWidth - start point for the new  calculated fAccumulatedWidth
+	 * @returns {float} new calculated fAccumulatedWidth
+	 * @private
+	 */
+	Table._updateAccumulatedWidth = function(aCols, bSkipPopinForFirst, fAccumulatedWidth) {
+		var fAutoPopinWidth = fAccumulatedWidth;
+		for (var i = 0; i < aCols.length; i++) {
+			aCols[i].setDemandPopin(!(bSkipPopinForFirst && i === 0));
+			var sWidth = aCols[i].getWidth();
+			var sUnit = sWidth.replace(/[^a-z]/ig, "");
+			var sBaseFontSize = parseFloat(library.BaseFontSize) || 16;
+
+			// check for column width unit
+			if (sUnit === "" || sUnit === "auto") {
+				// column has a flexible width, such as % or auto, so we use autoPopinWidth property for the calculation
+				fAutoPopinWidth = fAutoPopinWidth + aCols[i].getAutoPopinWidth();
+			} else if (sUnit === "px") {
+				// column has a fixed width -> convert column width from px into float rem value
+				fAutoPopinWidth = fAutoPopinWidth + parseFloat((parseFloat(sWidth).toFixed(2) / sBaseFontSize).toFixed(2));
+			} else if (sUnit === "em" || sUnit === "rem") {
+				// column has a fixed width -> convert to float in any case to get only the column width value
+				fAutoPopinWidth = fAutoPopinWidth + parseFloat(sWidth);
+			}
+
+			// overwrite column minScreenWidth property only if demandPopin is set to true
+			if (aCols[i].getDemandPopin()) {
+				aCols[i].setMinScreenWidth(fAutoPopinWidth + "rem");
+			}
+		}
+		return fAutoPopinWidth;
 	};
 
 	return Table;

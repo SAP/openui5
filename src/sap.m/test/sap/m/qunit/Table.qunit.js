@@ -24,7 +24,7 @@ sap.ui.define([
 ], function(qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, InvisibleText, Table, Column, Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library) {
 	"use strict";
 
-
+	var oTable;
 
 	function createSUT(sId, bCreateColumns, bCreateHeader, sMode) {
 		var oData = {
@@ -76,6 +76,107 @@ sap.ui.define([
 		return sut;
 	}
 
+	function createBiggerTable(){
+		var oData = {
+			items: [
+				{id: Math.random(), lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "male", rating: 4, money: 5.67, birthday: "1984-06-01", currency: "EUR", type: "Inactive"},
+				{id: Math.random(), lastName: "Friese", name: "Andy", checked: true, linkText: "www.gogle.de", href: "http://www.gogle.de", src: "leads", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", type: "Inactive"},
+				{id: Math.random(), lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "employee", gender: "female", rating: 3, money: 1345.212, birthday: "1987-01-07", currency: "EUR", type: "Inactive"}
+			]
+		};
+		var aColumns = [
+			new Column({
+				header : new sap.m.Label({
+					text : "LastName"
+				})
+			}),
+			new Column({
+				header : new sap.m.Label({
+					text : "FirstName"
+				})
+			}),
+			new Column({
+				hAlign: "Center",
+				header : new sap.m.Label({
+					text : "Available"
+				})
+			}),
+			new Column({
+				header : new sap.m.Link({
+					text : "Website"
+				})
+			}),
+			new Column({
+				header : new sap.m.Label({
+					text : "Rating"
+				})
+			}),
+			new Column({
+				header : new sap.m.Label({
+					text : "Birthday"
+				}),
+				minScreenWidth: "800px"
+			}),
+			new Column({
+				hAlign: "End",
+				header : new sap.m.Label({
+					text : "Salary"
+				})
+			})
+		];
+		var oTemplate = new ColumnListItem({
+			vAlign: "Middle",
+			type : "{type}",
+			highlight: {
+				path: "money",
+				formatter: function(fSalary) {
+					if (fSalary < 50) {
+						return "Error";
+					}
+					if (fSalary < 1000) {
+						return "Warning";
+					}
+					if (fSalary <= 10000) {
+						return "Indication04";
+					}
+					if (fSalary > 10000 && fSalary < 50000) {
+						return "Success";
+					}
+					return "None";
+				}
+			},
+			cells : [
+				new Text({text : "{lastName}", wrapping : false}),
+				new Text({text : "{name}", wrapping : false}),
+				new Text({text : "{checked}"}),
+				new Text({text: "{linkText}"}),
+				new Text({value: "{rating}"}),
+				new Text({text : "{birthday}"}),
+				new Text({text : "{money} EUR"})
+			]
+		});
+
+		oTable = new Table({
+			columns: aColumns
+		});
+
+		oTable.setModel(new JSONModel(oData));
+		oTable.bindItems({
+			path: "/items",
+			template: oTemplate,
+			key: "id"
+		});
+
+		oTable.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+	}
+
+	function destroyBiggerTable() {
+		if (oTable) {
+			oTable.destroy();
+			oTable = null;
+		}
+	}
 
 	QUnit.module("Display");
 
@@ -1522,5 +1623,260 @@ sap.ui.define([
 
 		//Cleanup
 		table.destroy();
+	});
+
+	QUnit.module("Table autoPopinMode", {
+		beforeEach: function() {
+			createBiggerTable();
+		},
+		afterEach: function() {
+			destroyBiggerTable();
+		},
+		groupColumnsInfo: function(aColumns){
+			var aColumnsInPopin = [];
+			var aColumnsNotInPopin = [];
+			var aPopinHigh = [];
+			var aPopinMed = [];
+			var aPopinLow = [];
+			var aNoPopinHigh = [];
+			var aNoPopinMed = [];
+			var aNoPopinLow = [];
+
+			aColumns.forEach(function(oColumn) {
+				var bIsPopin = oColumn.isPopin();
+				var sImportance = oColumn.getImportance();
+
+				if (bIsPopin) {
+					aColumnsInPopin.push(oColumn);
+					if (sImportance === "High") {
+						aPopinHigh.push(oColumn);
+					} else if (sImportance === "Medium" || sImportance === "None") {
+						aPopinMed.push(oColumn);
+					} else if (sImportance === "Low") {
+						aPopinLow.push(oColumn);
+					}
+				} else {
+					aColumnsNotInPopin.push(oColumn);
+					if (sImportance === "High") {
+						aNoPopinHigh.push(oColumn);
+					} else if (sImportance === "Medium" || sImportance === "None") {
+						aNoPopinMed.push(oColumn);
+					} else if (sImportance === "Low") {
+						aNoPopinLow.push(oColumn);
+					}
+				}
+			});
+
+			return {
+				"ColumnsInPopin": aColumnsInPopin,
+				"ColumnsNotInPopin": aColumnsNotInPopin,
+				"PopinHigh": aPopinHigh,
+				"PopinMed": aPopinMed,
+				"PopinLow": aPopinLow,
+				"NoPopinHigh": aNoPopinHigh,
+				"NoPopinMed": aNoPopinMed,
+				"NoPopinLow": aNoPopinLow
+			};
+		},
+		validateColumns: function(aColumnsInPopin, aColumnsNotInPopin){
+			var oImportanceIdx = {
+				"Low"    : 1,
+				"None"   : 2,
+				"Medium" : 2,
+				"High"   : 3
+			};
+			var bValidation = true;
+
+			// check if column is in pop-in area and if it is correct
+			for (var i = 0; i < aColumnsInPopin.length; i++) {
+				var iIndexColumnI = oImportanceIdx[aColumnsInPopin[i].getImportance()];
+
+				for (var j = 0; j < aColumnsNotInPopin.length; j++) {
+					var iIndexColumnJ = oImportanceIdx[aColumnsInPopin[i].getImportance()];
+
+					if (iIndexColumnI > iIndexColumnJ) {
+						bValidation = false;
+						break;
+					}
+				}
+
+				if (!bValidation) {break;}
+			}
+			return bValidation;
+		}
+	});
+
+	QUnit.test("Set table autoPopinMode", function (assert) {
+		assert.strictEqual(oTable.getAutoPopinMode(), false, "Default value for autoPopinMode property is false");
+		oTable.setAutoPopinMode(true);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
+	});
+
+	QUnit.test("Table's contextualWidth is set to 'Desktop'", function (assert) {
+		var aColumns = oTable.getColumns();
+
+		oTable.setContextualWidth("Desktop");
+		oTable.setAutoPopinMode(true);
+		sap.ui.getCore().applyChanges();
+
+		oTable.getColumns().forEach(function(oColumn) {
+			assert.strictEqual(oColumn.getImportance(), "None", "column importance=None by default");
+			assert.strictEqual(oColumn.getAutoPopinWidth(), 8, "column autoPopinWidth=8 by default");
+		});
+
+		// set random property 'importance' on table columns
+		var aImportance = [ "None", "Low", "Medium", "High" ];
+		aColumns.forEach(function (oColumn) {
+			var sImportance = aImportance[Math.floor(Math.random() * aImportance.length)];
+			oColumn.setImportance(sImportance);
+		});
+		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
+
+		var oColumnsInfo = this.groupColumnsInfo(aColumns);
+		var bValidation = this.validateColumns(oColumnsInfo.ColumnsInPopin, oColumnsInfo.ColumnsNotInPopin);
+		assert.strictEqual(bValidation, true,
+			" Total columns: " + aColumns.length +
+			" Columns not in pop-in area (H/M/L): " + oColumnsInfo.NoPopinHigh.length + "/" + oColumnsInfo.NoPopinMed.length + "/" + oColumnsInfo.NoPopinLow.length +
+			" Columns in pop-in area (H/M/L): " + oColumnsInfo.PopinHigh.length + "/" + oColumnsInfo.PopinMed.length + "/" + oColumnsInfo.PopinLow.length);
+	});
+
+	QUnit.test("Table's contextualWidth is set to 'Tablet'", function (assert) {
+		var aColumns = oTable.getColumns();
+
+		oTable.setAutoPopinMode(true);
+		oTable.setContextualWidth("Tablet");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
+
+		var oColumnsInfo = this.groupColumnsInfo(aColumns);
+		var bValidation = this.validateColumns(oColumnsInfo.ColumnsInPopin, oColumnsInfo.ColumnsNotInPopin);
+		assert.strictEqual(bValidation, true,
+			" Total columns: " + aColumns.length +
+			" Columns not in pop-in area (H/M/L): " + oColumnsInfo.NoPopinHigh.length + "/" + oColumnsInfo.NoPopinMed.length + "/" + oColumnsInfo.NoPopinLow.length +
+			" Columns in pop-in area (H/M/L): " + oColumnsInfo.PopinHigh.length + "/" + oColumnsInfo.PopinMed.length + "/" + oColumnsInfo.PopinLow.length);
+	});
+
+	QUnit.test("Table's contextualWidth is set to 'Phone'", function (assert) {
+		var aColumns = oTable.getColumns();
+
+		oTable.setAutoPopinMode(true);
+		oTable.setContextualWidth("Phone");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
+
+		var oColumnsInfo = this.groupColumnsInfo(aColumns);
+		var bValidation = this.validateColumns(oColumnsInfo.ColumnsInPopin, oColumnsInfo.ColumnsNotInPopin);
+		assert.strictEqual(bValidation, true,
+			" Total columns: " + aColumns.length +
+			" Columns not in pop-in area (H/M/L): " + oColumnsInfo.NoPopinHigh.length + "/" + oColumnsInfo.NoPopinMed.length + "/" + oColumnsInfo.NoPopinLow.length +
+			" Columns in pop-in area (H/M/L): " + oColumnsInfo.PopinHigh.length + "/" + oColumnsInfo.PopinMed.length + "/" + oColumnsInfo.PopinLow.length);
+	});
+
+	QUnit.test("Table's contextualWidth is set to 'Small' and only the first and last column are set to high importance", function (assert) {
+		var aColumns = oTable.getColumns();
+
+		// reset property 'importance' on table columns
+		aColumns.forEach(function (oColumn) {
+			oColumn.setImportance("None");
+		});
+
+		// set property 'importance' to 'High' for first and last column
+		aColumns[0].setImportance("High");
+		aColumns[aColumns.length - 1].setImportance("High");
+
+		oTable.setContextualWidth("Small");
+		oTable.setAutoPopinMode(true);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
+
+		assert.notOk(oTable.getColumns()[0].isPopin(), "First column is not in the popin area");
+		assert.notOk(oTable.getColumns()[oTable.getColumns().length - 1].isPopin(), "last column is not in the popin area");
+	});
+
+	QUnit.test("Test _getInitialAccumulatedWidth and _updateAccumulatedWidth", function(assert) {
+		var sBaseFontSize = parseFloat(library.BaseFontSize) || 16;
+		var oTable = new Table({
+			mode: "MultiSelect",
+			columns: [
+				new Column({width: "125px", header: new Label({text: "First Name"})}),
+				new Column({width: "auto", header: new Label({text: "Last Name"})})
+			],
+			items: new ColumnListItem({
+				type: "Navigation",
+				cells: [
+					new Label({text: "Max"}),
+					new Label({text: "Mustermann"})
+				]
+			})
+		});
+		sap.ui.getCore().applyChanges();
+		var aColumns = oTable.getColumns();
+		var aItems = oTable.getItems();
+
+		// expected value is 6, 3(rem) for selection column and 3(rem) for the navigation column
+		var fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
+		assert.ok(fInitAccumulatedWidth === 6, "Initial accumulated width based on table setup is 6rem");
+
+		// expected value is 21.81
+		// (125px / 16) + (6 ->fInitAccumulatedWidth + 8 ->default column autoPopinWidth)
+		var fAccumulatedWidth = Table._updateAccumulatedWidth(aColumns, false, fInitAccumulatedWidth);
+		var fAutoPopinWidth = (parseFloat((parseFloat(aColumns[0].getWidth()).toFixed(2) / sBaseFontSize).toFixed(2))) + (fInitAccumulatedWidth + aColumns[1].getAutoPopinWidth());
+		assert.ok(fAccumulatedWidth === fAutoPopinWidth, "Expected autoPopinWidth for next column in popin-are is " + fAccumulatedWidth + "rem");
+	});
+
+	QUnit.test("Spy on _configureAutoPopin - I", function (assert) {
+		var aColumns = oTable.getColumns();
+
+		oTable.setContextualWidth("Desktop");
+		oTable.setAutoPopinMode(true);
+		sap.ui.getCore().applyChanges();
+
+		// set random property 'importance' on table columns
+		var aImportance = [ "None", "Low", "Medium", "High" ];
+		aColumns.forEach(function (oColumn) {
+			var sImportance = aImportance[Math.floor(Math.random() * aImportance.length)];
+			oColumn.setImportance(sImportance);
+		});
+		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
+
+		var fnConfigureAutoPopin = sinon.spy(oTable, "_configureAutoPopin");
+		aColumns[0].setWidth("8rem");
+		aColumns[1].setVisible(false);
+		aColumns[2].setImportance("High");
+		aColumns[3].setAutoPopinWidth(10);
+
+		assert.ok(aColumns[0].getWidth() === "8rem", "Width for column[0] is set to 8rem");
+		assert.notOk(aColumns[1].getVisible(), "Visibility for column[1] is set to false");
+		assert.ok(aColumns[2].getImportance() === "High", "Importance of column[2] is 'High'");
+		assert.ok(aColumns[3].getAutoPopinWidth() === 10, "AutPopinWidth of column[3] is set to 8");
+		assert.ok(fnConfigureAutoPopin.getCalls().length === 4, "Function _configureAutoPopin has been called 4 times");
+	});
+
+	QUnit.test("Spy on _configureAutoPopin - II", function (assert) {
+		var aColumns = oTable.getColumns();
+
+		oTable.setContextualWidth("Desktop");
+		sap.ui.getCore().applyChanges();
+
+		// set random property 'importance' on table columns
+		var aImportance = [ "None", "Low", "Medium", "High" ];
+		aColumns.forEach(function (oColumn) {
+			var sImportance = aImportance[Math.floor(Math.random() * aImportance.length)];
+			oColumn.setImportance(sImportance);
+		});
+		assert.strictEqual(oTable.getAutoPopinMode(), false, "autoPopinMode is set to false");
+
+		var fnConfigureAutoPopin = sinon.spy(oTable, "_configureAutoPopin");
+		aColumns[0].setWidth("8rem");
+		aColumns[1].setVisible(false);
+		aColumns[2].setImportance("High");
+		aColumns[3].setAutoPopinWidth(10);
+
+		assert.ok(aColumns[0].getWidth() === "8rem", "Width for column[0] is set to 8rem");
+		assert.notOk(aColumns[1].getVisible(), "Visibility for column[1] is set to false");
+		assert.ok(aColumns[2].getImportance() === "High", "Importance of column[2] is 'High'");
+		assert.ok(aColumns[3].getAutoPopinWidth() === 10, "AutPopinWidth of column[3] is set to 8");
+		assert.ok(fnConfigureAutoPopin.getCalls().length === 0, "Function _configureAutoPopin has been called zero times");
 	});
 });
