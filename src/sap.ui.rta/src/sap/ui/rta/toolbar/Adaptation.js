@@ -279,7 +279,10 @@ function(
 
 	Adaptation.prototype.setVersionLabel = function (sText) {
 		this.setProperty("versionLabel", sText, true);
-		this.getControl("versionLabel").setText(sText);
+		var oVersionLabel = this.getControl("versionLabel");
+		oVersionLabel.setText(sText);
+		// to ensure that a text which is to long to be displayed can be read by the user
+		oVersionLabel.setTooltip(sText);
 	};
 
 	Adaptation.prototype.setVersioningVisible = function (bVisible) {
