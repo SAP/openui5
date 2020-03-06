@@ -132,8 +132,32 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	vertical-align: middle;
 }
 
-.sapMBarChild {
+.sapMBarLeft > .sapMBarChild,
+.sapMBarRight > .sapMBarChild {
 	flex-shrink: 0;
+}
+
+.sapMBarLeft > .sapMBarChild.sapMPI,
+.sapMBarRight > .sapMBarChild.sapMPI {
+	flex-shrink: 1;
+}
+
+.sapMBarLeft {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.sapMBarPH {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sapMBarRight {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
 }
 
 /* Compact size */
@@ -148,29 +172,19 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 }
 
-.sapMBarRight{
-	display: inline-flex;
-	align-items: center;
-	justify-content: flex-end;
-}
-
 .sapMBarRight > .sapMBarChild:not(.sapMTB) {
 	margin-top: 0;
 	margin-bottom: 0;
 	margin-right: 0;
 }
 
+.sapMBarLeft > .sapMBarChild:not(.sapMFlexBox),
+.sapMBarPH > .sapMBarChild:not(.sapMFlexBox),
 .sapMBarRight > .sapMBarChild:not(.sapMFlexBox) {
 	line-height: initial;
 }
 
 .sapUiSizeCompact{
-	.sapMBarRight{
-		display: inline-flex;
-		align-items: center;
-		justify-content: flex-end;
-	}
-
 	.sapMBarRight > .sapMBarChild:not(.sapMTB) {
 		margin-bottom: 0;
 		margin-right: 0;
@@ -204,9 +218,13 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	margin-right: 0;
 }
 
+.sapMIBar > .sapMBarLeft > .sapMBarChild.sapMGenericTag:last-child {
+	margin-right: 0.0625rem;
+}
+
 /* Bar Title Alignment */
 .sapMBarTitleStart .sapMBarPH {
-	text-align: start;
+	justify-content: flex-start;
 }
 
 html[data-sap-ui-browser^="ff"].sap-desktop .sapMBarTitleStart .sapMBarPH {
