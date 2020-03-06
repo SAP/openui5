@@ -211,6 +211,9 @@ function(
 	Base.prototype.setRestoreEnabled = function () {};
 	Base.prototype.setVersioningVisible = function () {};
 	Base.prototype.setDraftEnabled = function () {};
+	Base.prototype.setAppVariantsVisible = function () {};
+	Base.prototype.setAppVariantsEnabled = function () {};
+	Base.prototype.setExtendedManageAppVariants = function () {};
 
 	return Base;
 }, true);

@@ -1104,27 +1104,15 @@ function(
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
 
-			if (aButtonsVisibility.publishAppVariantSupported) {
-				// Sets the visibility of 'Save As' button in RTA toolbar
-				this.getToolbar().getControl('saveAs').setVisible(aButtonsVisibility.publishAppVariantSupported);
-				// Flag which represents either the key user view or SAP developer view
-				var bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
+			var bAppVariantSupported = aButtonsVisibility.publishAppVariantSupported;
+			this.getToolbar().setAppVariantsVisible(bAppVariantSupported);
 
-				if (bExtendedOverview) {
-					// Sets the visibility of 'i' menu button (App Variant Overview: SAP developer view) in RTA toolbar
-					this.getToolbar().getControl('appVariantOverview').setVisible(aButtonsVisibility.publishAppVariantSupported);
-				} else {
-					// Sets the visibility of 'i' button (App Variant Overview: Key user view) in RTA toolbar
-					this.getToolbar().getControl('manageApps').setVisible(aButtonsVisibility.publishAppVariantSupported);
-				}
+			var bExtendedOverview = bAppVariantSupported && RtaAppVariantFeature.isOverviewExtended();
+			this.getToolbar().setExtendedManageAppVariants(bExtendedOverview);
 
-				RtaAppVariantFeature.isManifestSupported().then(function(bResult) {
-					if (bExtendedOverview) {
-						this.getToolbar().getControl('appVariantOverview').setEnabled(bResult);
-					} else {
-						this.getToolbar().getControl('manageApps').setEnabled(bResult);
-					}
-					this.getToolbar().getControl('saveAs').setEnabled(bResult);
+			if (bAppVariantSupported) {
+				RtaAppVariantFeature.isManifestSupported().then(function (bResult) {
+					this.getToolbar().setAppVariantsEnabled(bResult);
 				}.bind(this));
 			}
 		}

@@ -248,27 +248,184 @@ function(
 			var oSetInputSpy;
 			var oConfirmButtonEnabledSpy;
 			return this.oToolbar._openVersionTitleDialog()
-			.then(function () {
-				assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
-				// checking for the dialog instance wrapped into a promise
+				.then(function () {
+					assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
+					// checking for the dialog instance wrapped into a promise
 
-				var oVersionTitleInput = this.oToolbar.getControl("versionTitleInput");
-				oSetInputSpy = sandbox.spy(oVersionTitleInput, "setValue");
-				var oConfirmButton = this.oToolbar.getControl("confirmVersionTitleButton");
-				oConfirmButtonEnabledSpy = sandbox.spy(oConfirmButton, "setEnabled");
+					var oVersionTitleInput = this.oToolbar.getControl("versionTitleInput");
+					oSetInputSpy = sandbox.spy(oVersionTitleInput, "setValue");
+					var oConfirmButton = this.oToolbar.getControl("confirmVersionTitleButton");
+					oConfirmButtonEnabledSpy = sandbox.spy(oConfirmButton, "setEnabled");
 
-				return oFragmentLoadSpy.getCall(0).returnValue;
-			}.bind(this))
-			.then(function (oDialog) {
-				assert.equal(this.oToolbar._oDialog, oDialog, "and the dialog was assigned");
-			}.bind(this))
-			.then(this.oToolbar._openVersionTitleDialog.bind(this.oToolbar))
-			.then(function () {
-				assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment not loaded again");
-				assert.equal(oSetInputSpy.callCount, 1, "and Input Value was set");
-				assert.equal(oSetInputSpy.getCall(0).args[0], "", "to an empty string");
-				assert.equal(oConfirmButtonEnabledSpy.callCount, 1, "and the confirm button was set");
-				assert.equal(oSetInputSpy.getCall(0).args[0], false, "to be disabled");
+					return oFragmentLoadSpy.getCall(0).returnValue;
+				}.bind(this))
+				.then(function (oDialog) {
+					assert.equal(this.oToolbar._oDialog, oDialog, "and the dialog was assigned");
+				}.bind(this))
+				.then(this.oToolbar._openVersionTitleDialog.bind(this.oToolbar))
+				.then(function () {
+					assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment not loaded again");
+					assert.equal(oSetInputSpy.callCount, 1, "and Input Value was set");
+					assert.equal(oSetInputSpy.getCall(0).args[0], "", "to an empty string");
+					assert.equal(oConfirmButtonEnabledSpy.callCount, 1, "and the confirm button was set");
+					assert.equal(oSetInputSpy.getCall(0).args[0], false, "to be disabled");
+				});
+		});
+	});
+
+	function testAppVariantButtons (assert, oToolbar, mAssumptions) {
+		var oSaveAsButton = oToolbar.getControl("saveAs");
+		var oAppVariantOverview = oToolbar.getControl("appVariantOverview");
+		var oManageApps = oToolbar.getControl("manageApps");
+		assert.equal(oSaveAsButton.getVisible(), mAssumptions.saveAs.visible, "the 'saveAs' button visibility is correct");
+		if (mAssumptions.saveAs.enabled !== undefined) {
+			assert.equal(oSaveAsButton.getEnabled(), mAssumptions.saveAs.enabled, "the 'saveAs' button enablement is correct");
+		}
+		assert.equal(oAppVariantOverview.getVisible(), mAssumptions.appVariantOverview.visible, "the 'appVariantOverview' button visibility is correct");
+		if (mAssumptions.appVariantOverview.enabled !== undefined) {
+			assert.equal(oAppVariantOverview.getEnabled(), mAssumptions.appVariantOverview.enabled, "the 'appVariantOverview' button enablement is correct");
+		}
+		assert.equal(oManageApps.getVisible(), mAssumptions.manageApps.visible, "the 'manageApps' button visibility is correct");
+		if (mAssumptions.manageApps.enabled !== undefined) {
+			assert.equal(oManageApps.getEnabled(), mAssumptions.manageApps.enabled, "the 'manageApps' button enablement is correct");
+		}
+	}
+
+	QUnit.module("Setting AppVariant properties", {
+		beforeEach: function () {
+			this.oToolbar = new Adaptation({
+				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			});
+		},
+		afterEach: function() {
+			this.oToolbar.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given a toolbar is created and app variants parameter are switched back and forth", function(assert) {
+			/* variantsVisible:            false
+			 * variantsEnabled:            false
+			 * extendedManageAppVariants:  false  */
+			testAppVariantButtons(assert, this.oToolbar, {
+				saveAs : {
+					visible : false
+				},
+				appVariantOverview : {
+					visible : false
+				},
+				manageApps : {
+					visible : false
+				}
+			});
+
+			this.oToolbar.setAppVariantsVisible(true);
+			/* variantsVisible:            true
+			 * variantsEnabled:            false
+			 * extendedManageAppVariants:  false  */
+			testAppVariantButtons(assert, this.oToolbar, {
+				saveAs : {
+					visible : true,
+					enabled : false
+				},
+				appVariantOverview : {
+					visible : false
+				},
+				manageApps : {
+					visible : true,
+					enabled : false
+				}
+			});
+
+			this.oToolbar.setAppVariantsEnabled(true);
+			/* variantsVisible:            true
+			 * variantsEnabled:            true
+			 * extendedManageAppVariants:  false  */
+			testAppVariantButtons(assert, this.oToolbar, {
+				saveAs : {
+					visible : true,
+					enabled : true
+				},
+				appVariantOverview : {
+					visible : false
+				},
+				manageApps : {
+					visible : true,
+					enabled : true
+				}
+			});
+
+			this.oToolbar.setExtendedManageAppVariants(true);
+			/* variantsVisible:            true
+			 * variantsEnabled:            true
+			 * extendedManageAppVariants:  true  */
+			testAppVariantButtons(assert, this.oToolbar, {
+				saveAs : {
+					visible : true,
+					enabled : true
+				},
+				appVariantOverview : {
+					visible : true,
+					enabled : true
+				},
+				manageApps : {
+					visible : false
+				}
+			});
+		});
+
+
+		QUnit.test("Given a toolbar is created and app variants are not visible while other app variant properties are switched back and forth", function(assert) {
+			// This situation will not happen within the current implementation of RuntimeAuthoring,
+			// but a proper handling of the buttons should be ensured.
+
+			this.oToolbar.setAppVariantsEnabled(true);
+			this.oToolbar.setExtendedManageAppVariants(true);
+			/* variantsVisible:            false
+			 * variantsEnabled:            true
+			 * extendedManageAppVariants:  true  */
+			testAppVariantButtons(assert, this.oToolbar, {
+				saveAs: {
+					visible: false
+				},
+				appVariantOverview: {
+					visible: false
+				},
+				manageApps: {
+					visible: false
+				}
+			});
+
+			this.oToolbar.setExtendedManageAppVariants(false);
+			/* variantsVisible:            false
+			 * variantsEnabled:            true
+			 * extendedManageAppVariants:  false  */
+			testAppVariantButtons(assert, this.oToolbar, {
+				saveAs: {
+					visible: false
+				},
+				appVariantOverview: {
+					visible: false
+				},
+				manageApps: {
+					visible: false
+				}
+			});
+
+			this.oToolbar.setAppVariantsEnabled(false);
+			/* variantsVisible:            false
+			 * variantsEnabled:            false
+			 * extendedManageAppVariants:  true  */
+			this.oToolbar.setExtendedManageAppVariants(true);
+			testAppVariantButtons(assert, this.oToolbar, {
+				saveAs: {
+					visible: false
+				},
+				appVariantOverview: {
+					visible: false
+				},
+				manageApps: {
+					visible: false
+				}
 			});
 		});
 	});
