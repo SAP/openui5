@@ -1639,8 +1639,7 @@ sap.ui.define([
 			oModelMock = this.mock(this.oModel),
 			oUpdatePromise = SyncPromise.reject(oIntentionallyFailedError);
 
-		oBinding.vValue = ""; // simulate a read - intentionally use a falsy value
-
+		// Note: do NOT simulate a read
 		oModelMock.expects("lockGroup").never();
 		this.mock(oBinding).expects("checkSuspended").thrice().withExactArgs();
 		oContextMock.expects("doSetProperty").withExactArgs("Name", "foo", null)

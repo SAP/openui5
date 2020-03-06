@@ -2028,7 +2028,7 @@ sap.ui.define([
 				that.mock(oBinding).expects("doSetProperty")
 					.withExactArgs("some/relative/path", undefined, undefined);
 				that.mock(oMetaModel).expects("fetchUpdateData")
-					.withExactArgs("some/relative/path", sinon.match.same(oContext))
+					.withExactArgs("some/relative/path", sinon.match.same(oContext), true)
 					.returns(SyncPromise.resolve(Promise.reject(oError)));
 
 				return fnProcessor({/*oCache*/}, "some/relative/path", oBinding);
@@ -2151,7 +2151,7 @@ sap.ui.define([
 				oBindingMock.expects("doSetProperty")
 					.withExactArgs("cache/path", "new value", sinon.match.same(oGroupLock));
 				that.mock(oMetaModel).expects("fetchUpdateData")
-					.withExactArgs("some/relative/path", sinon.match.same(oContext))
+					.withExactArgs("some/relative/path", sinon.match.same(oContext), false)
 					.returns(SyncPromise.resolve({
 						editUrl : "/edit/url",
 						entityPath : "/entity/path",
@@ -2272,7 +2272,7 @@ sap.ui.define([
 				that.mock(oBinding).expects("doSetProperty")
 					.withExactArgs("/reduced/path", "new value", sinon.match.same(oGroupLock));
 				that.mock(oMetaModel).expects("fetchUpdateData")
-					.withExactArgs("/reduced/path", sinon.match.same(oContext))
+					.withExactArgs("/reduced/path", sinon.match.same(oContext), false)
 					.returns(SyncPromise.resolve(oFetchUpdateDataResult));
 				oModelMock.expects("resolve")
 					.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
@@ -2343,7 +2343,7 @@ sap.ui.define([
 				that.mock(oBinding).expects("doSetProperty")
 					.withExactArgs("/cache/path", "new value", undefined);
 				that.mock(oMetaModel).expects("fetchUpdateData")
-					.withExactArgs("/some/absolute/path", sinon.match.same(oContext))
+					.withExactArgs("/some/absolute/path", sinon.match.same(oContext), true)
 					.returns(SyncPromise.resolve(oFetchUpdateDataResultPromise));
 				oFetchUpdateDataResultPromise.then(function () {
 					that.mock(oModel).expects("resolve")
@@ -2408,7 +2408,7 @@ sap.ui.define([
 					.withExactArgs("/cache/path", "new value", sinon.match.same(oGroupLock))
 					.returns(vValue);
 				that.mock(oMetaModel).expects("fetchUpdateData")
-					.withExactArgs("/some/absolute/path", sinon.match.same(oContext))
+					.withExactArgs("/some/absolute/path", sinon.match.same(oContext), false)
 					.exactly(vValue ? 0 : 1)
 					.returns(SyncPromise.resolve(oFetchUpdateDataResult));
 

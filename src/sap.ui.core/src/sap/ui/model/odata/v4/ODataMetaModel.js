@@ -1522,6 +1522,8 @@ sap.ui.define([
 	 *   A path of a property in the OData data model, relative to <code>oContext</code>.
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   A context
+	 * @param {boolean} [bNoEditUrl]
+	 *   Whether no edit URL is required
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with an object having the following properties:
 	 *   <ul>
@@ -1534,7 +1536,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype.fetchUpdateData = function (sPropertyPath, oContext) {
+	ODataMetaModel.prototype.fetchUpdateData = function (sPropertyPath, oContext, bNoEditUrl) {
 		var oModel = oContext.getModel(),
 			sResolvedPath = oModel.resolve(sPropertyPath, oContext),
 			that = this;
@@ -1564,7 +1566,6 @@ sap.ui.define([
 				//sPropertyPath, // The relative path following sEntityPath (parameter re-used -
 								// encoded)
 				aSegments,       // The resource path split in segments (encoded)
-				bTransient = false, // Whether there is a transient entity -> no edit URL available
 				oType;           // The type of the data at sInstancePath
 
 			// Determines the predicate from a segment (empty string if there is none)
@@ -1659,10 +1660,13 @@ sap.ui.define([
 					var sPredicate;
 
 					if (!oEntity) {
+						if (bNoEditUrl) {
+							return undefined;
+						}
 						error("No instance to calculate key predicate at " + vSegment.path);
 					}
 					if (_Helper.hasPrivateAnnotation(oEntity, "transient")) {
-						bTransient = true;
+						bNoEditUrl = true;
 						return undefined;
 					}
 					sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate");
@@ -1675,7 +1679,7 @@ sap.ui.define([
 				});
 			})).then(function (aFinalEditUrl) {
 				return {
-					editUrl : bTransient ? undefined : aFinalEditUrl.join("/"),
+					editUrl : bNoEditUrl ? undefined : aFinalEditUrl.join("/"),
 					entityPath : sEntityPath,
 					propertyPath : sPropertyPath
 				};
