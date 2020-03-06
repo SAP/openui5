@@ -110,10 +110,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filtering", function(assert) {
+		assert.expect(8);
 		var done = assert.async();
-		this.oPlugin.setFilter(function(oMessage) {
-			return oMessage.getType() == "Warning";
-		});
+		this.oPlugin.setFilter(function() {
+			assert.equal(arguments.length, 2, "2 Arguments in filter function");
+			assert.ok(arguments[0].isA("sap.ui.core.message.Message"), "First argument is a message");
+			assert.ok(arguments[1] === this.oPlugin.getControl(), "Second argument is the control");
+			return arguments[0].getType() == "Warning";
+		}.bind(this));
 		this.addMessage("Error");
 		this.addMessage("Warning");
 
@@ -121,6 +125,21 @@ sap.ui.define([
 			var oMsgStrp = this.oPlugin._oMessageStrip;
 			assert.equal(oMsgStrp.getText(), "Warning");
 			assert.equal(oMsgStrp.getType(), "Warning");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Refresh", function(assert) {
+		assert.expect(2);
+		var done = assert.async();
+		this.oPlugin.setFilter(function() {
+			assert.ok(true, "Filter Called");
+			return true;
+		});
+		this.addMessage("Error");
+
+		this.oPromise.then(function() {
+			this.oPlugin.refresh();
 			done();
 		}.bind(this));
 	});
