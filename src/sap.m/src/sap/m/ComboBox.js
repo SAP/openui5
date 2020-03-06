@@ -551,6 +551,56 @@ sap.ui.define([
 		};
 
 		/**
+		 * Handles the pseudo focus and <code>aria-activedescendant</code> attribute on navigation,
+		 * if value state message is <code>sap.m.FormattedText</code>
+		 *
+		 * @private
+		 */
+		ComboBox.prototype._handleFTValueState = function () {
+			var oCustomHeader = this.getPicker().getCustomHeader(),
+				aValueStateLinks = this.getValueStateLinks(),
+				oPseudoFocusedElement = Device.browser.msie ? oCustomHeader.getFormattedText() : oCustomHeader;
+
+			if (!aValueStateLinks.length) {
+				return;
+			}
+			// If there is a link in the value state message and the text is not yet focused
+			if (!this._bMessageValueStateActive) {
+				this.getFocusDomRef().setAttribute("aria-activedescendant", oCustomHeader.getFormattedText().getId());
+			}
+
+			oPseudoFocusedElement.toggleStyleClass("sapMPseudoFocus", !this._bMessageValueStateActive);
+			this._bMessageValueStateActive = !this._bMessageValueStateActive;
+		};
+
+		/**
+		 * Handles the arrow Up and Down events when a link is present in the value state message.
+		 *
+		 * @param {array} aAllSelectableItems Array of all selectable items
+		 * @param {object} oItemToUse Currently selected item
+		 * @param {boolean} bDirectionDown The direction of next selected item. <code>true</code> = down, <code>false</code> = up
+		 * @private
+		 */
+		ComboBox.prototype.valueStateFormattedTextNav = function (aAllSelectableItems, oItemToUse, bDirectionDown) {
+			if (this._bMessageValueStateActive && !bDirectionDown) {
+				this.addStyleClass("sapMFocus");
+				this._handleFTValueState();
+				return;
+			} else if (this._bMessageValueStateActive && bDirectionDown) {
+				this._handleFTValueState();
+				this._getList().addStyleClass("sapMListFocus");
+				this.getListItem(oItemToUse).addStyleClass("sapMLIBFocused");
+			}
+
+			// If the visible focus is on the first item and the value state message is a formatted text aggregation with link(s)
+			if (!this._bMessageValueStateActive && oItemToUse === aAllSelectableItems[0] && !bDirectionDown && this.getValueStateLinks().length) {
+				this._handleFTValueState();
+				this._getList().removeStyleClass("sapMListFocus");
+				this.getListItem(oItemToUse).removeStyleClass("sapMLIBFocused");
+			}
+		};
+
+		/**
 		 * Returns the next focusable item when keyboard navigation is in place.
 		 *
 		 * @param {boolean} bDirectionDown The direction of next selected item. <code>true</code> = down, <code>false</code> = up
@@ -564,17 +614,21 @@ sap.ui.define([
 				oItemToUse = this.getSelectedItem() || this._getItemByListItem(this._oLastFocusedListItem),
 				oNextSelectableItem;
 
-			if (bFocusInInput && this.isOpen()) {
-				// Visual focus on input and the picker is opened
+			if (bFocusInInput && this.isOpen() && !bDirectionDown && this.getValueStateLinks().length) {
+				return null;
+			}
+
+			if ((bFocusInInput && this.isOpen()) || (bDirectionDown && this._bMessageValueStateActive)) {
+				// Visual focus on input or formatted text value state header and the picker is opened
 				oNextSelectableItem = aAllSelectableItems[0];
-			} else if (bFocusInInput) {
-				// Visual focus on input
+			} else if (bFocusInInput && !this.getValueStateLinks().length) {
 				oNextSelectableItem = aSelectableNotSeparatorItems[aSelectableNotSeparatorItems.indexOf(oItemToUse) + (bDirectionDown ? 1 : -1)];
 			} else {
 				// Visual focus is on the list
 				oNextSelectableItem = aAllSelectableItems[aAllSelectableItems.indexOf(oItemToUse) + (bDirectionDown ? 1 : -1)];
 			}
 
+			this.valueStateFormattedTextNav(aAllSelectableItems, oItemToUse, bDirectionDown);
 			return oNextSelectableItem;
 		};
 
@@ -1552,6 +1606,51 @@ sap.ui.define([
 		};
 
 		/**
+		 * Handles the Tab key event when pressed while the visual focus is on a value state message with <code>sap.m.FormattedText</code>.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 * @private
+		 */
+		ComboBox.prototype.onsaptabnext = function(oEvent) {
+			if (!this.getPicker() || !this.isOpen()) {
+				ComboBoxBase.prototype.onsaptabnext.apply(this);
+				return;
+			}
+
+			var oCustomHeader = this.getPicker().getCustomHeader(),
+				aValueStateLinks =  this.getValueStateLinks(),
+				iLastValueStateLink = aValueStateLinks.length ? aValueStateLinks[oCustomHeader.getFormattedText().getControls().length - 1] : null;
+
+			if (this._bMessageValueStateActive && aValueStateLinks.length && document.activeElement.tagName !== "A") {
+				oEvent.preventDefault();
+				oCustomHeader.getFormattedText().getControls()[0].focus();
+				oEvent.stopPropagation();
+				oCustomHeader.getFormattedText().removeStyleClass("sapMPseudoFocus");
+
+				// If the focus is on the last link in the value state
+				iLastValueStateLink.addDelegate({
+					onsaptabnext: function() {
+						this.close();
+
+						/* By default the value state message popup is opened when the suggestion popover
+						is closed. We don't want that in this case. In IE the popup is opened with setTimeout
+						because if the input receive the focus and the parent div scrolls,
+						we should wait until the scroll ends. So we need to also close it with setTimeout. */
+						if (Device.browser.msie) {
+							setTimeout(function() {
+								this.closeValueStateMessage();
+							}.bind(this), 0);
+						} else {
+							this.closeValueStateMessage();
+						}
+
+						this._bMessageValueStateActive = false;
+					}
+				}, this);
+			}
+		};
+
+		/**
 		 * Handles the <code>sapdown</code> pseudo event when the Down arrow key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
@@ -1572,7 +1671,6 @@ sap.ui.define([
 
 			// prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
-
 			this.loadItems(function navigateToNextSelectableItem() {
 				fnHandleKeyboardNavigation.call(this, oControl, this.getNextFocusableItem(true /*Direction down*/));
 			});
@@ -1879,7 +1977,7 @@ sap.ui.define([
 			oRelatedControl = core.byId(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
-			if (containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet) {
+			if (containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !this._bMessageValueStateActive) {
 
 				// force the focus to stay in the input field
 				this.focus();
