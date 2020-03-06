@@ -527,6 +527,98 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Custom configuration", {
+		beforeEach: function (assert) {
+			var mJson = {
+				"testValues": [
+					{
+						"foo": "bar"
+					},
+					{
+						"foo": "baz"
+					}
+				]
+			};
+
+			this.oBaseEditor = new BaseEditor({
+				json: mJson
+			});
+
+			this.oBaseEditor.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When adding/removing items is forbidden", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleArray": {
+						path: "/testValues",
+						type: "array",
+						template: {
+							foo: {
+								type: "string",
+								path: "foo"
+							}
+						},
+						allowAddAndRemove: false
+					}
+				},
+				"propertyEditors": {
+					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleArray").then(function (aPropertyEditor) {
+				var oArrayEditor = aPropertyEditor[0];
+				assert.notOk(
+					oArrayEditor.getContent().getItems()[1].getVisible(),
+					"Then the add button is disabled"
+				);
+				assert.notOk(
+					_getArrayEditorElements(oArrayEditor)[0].getItems()[0].getContentRight()[2].getVisible(),
+					"Then the remove buttons are disabled"
+				);
+			}, this);
+		});
+
+		QUnit.test("When changing the order of items is forbidden", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleArray": {
+						path: "/testValues",
+						type: "array",
+						template: {
+							foo: {
+								type: "string",
+								path: "foo"
+							}
+						},
+						allowSorting: false
+					}
+				},
+				"propertyEditors": {
+					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleArray").then(function (aPropertyEditor) {
+				var oArrayEditor = aPropertyEditor[0];
+				assert.notOk(
+					_getArrayEditorElements(oArrayEditor)[0].getItems()[0].getContentRight()[0].getVisible(),
+					"Then the move up buttons are disabled"
+				);
+				assert.notOk(
+					_getArrayEditorElements(oArrayEditor)[0].getItems()[0].getContentRight()[1].getVisible(),
+					"Then the move down buttons are disabled"
+				);
+			}, this);
+		});
+	});
 
 	QUnit.module("Integration with BaseEditor", {
 		beforeEach: function (assert) {

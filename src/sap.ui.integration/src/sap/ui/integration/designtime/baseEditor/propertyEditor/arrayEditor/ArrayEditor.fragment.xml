@@ -16,6 +16,7 @@
 							tooltip="{i18n>BASE_EDITOR.ARRAY.MOVEUP}"
 							press="_moveUp"
 							enabled="{= ${itemsModel>index} !== 0}"
+							visible="{= ${config/allowSorting} !== false}"
 						>
 							<customData>
 								<core:CustomData
@@ -29,6 +30,7 @@
 							tooltip="{i18n>BASE_EDITOR.ARRAY.MOVEDOWN}"
 							press="_moveDown"
 							enabled="{= ${itemsModel>total} - 1 !== ${itemsModel>index}}"
+							visible="{= ${config/allowSorting} !== false}"
 						>
 							<customData>
 								<core:CustomData
@@ -41,6 +43,7 @@
 							icon="sap-icon://less"
 							tooltip="{i18n>BASE_EDITOR.ARRAY.REMOVE}"
 							press="_removeItem"
+							visible="{= ${config/allowAddAndRemove} !== false}"
 						>
 							<customData>
 								<core:CustomData
@@ -63,6 +66,7 @@
 			tooltip="{i18n>BASE_EDITOR.ARRAY.ADD}"
 			enabled="{= !${config/maxItems} || (Array.isArray(${itemsModel>/}) &amp;&amp; ${itemsModel>/} || []).length &lt; ${config/maxItems} }"
 			press="_addItem"
+			visible="{= ${config/allowAddAndRemove} !== false}"
 		/>
 	</VBox>
 </core:FragmentDefinition>

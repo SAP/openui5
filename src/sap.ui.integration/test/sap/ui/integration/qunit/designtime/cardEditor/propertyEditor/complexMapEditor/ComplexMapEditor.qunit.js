@@ -28,78 +28,76 @@ sap.ui.define([
 		});
 	}
 
+	function _createBaseEditorConfig(mConfigOptions) {
+		return {
+			context: "/",
+			properties: {
+				"sampleDataSource": Object.assign({
+					"label": "Data Sources",
+					"type": "complexMap",
+					"itemLabel": "Data Source",
+					"path": "datasource",
+					"template": {
+						"uri": {
+							"label": "URI",
+							"type": "string",
+							"path": "uri"
+						},
+						"type": {
+							"label": "Type",
+							"type": "enum",
+							"enum": [
+								"OData",
+								"ODataAnnotation",
+								"INA",
+								"XML",
+								"JSON"
+							],
+							"defaultValue": "OData",
+							"path": "type"
+						},
+						"odataVersion": {
+							"label": "OData Version",
+							"type": "enum",
+							"enum": [
+								"2.0",
+								"4.0"
+							],
+							"defaultValue": "2.0",
+							"path": "settings/odataVersion"
+						}
+					}
+				}, mConfigOptions)
+			},
+			propertyEditors: {
+				"complexMap": "sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",
+				"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
+				"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+				"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+			}
+		};
+	}
+
 	QUnit.module("Given an editor config", {
 		before: function () {
 			this.oComplexMap = {
-				sampleDataSource: {
-					uri: "https://example.com",
-					settings: {
-						odataVersion: "4.0"
-					}
-				},
-				anotherDataSource: {}
-			};
-		},
-		beforeEach: function (assert) {
-			var mConfig = {
-				context: "/",
-				properties: {
-					"sampleDataSource": {
-						"label": "Data Sources",
-						"type": "complexMap",
-						"itemLabel": "Data Source",
-						"path": "datasource",
-						"template": {
-							"key": {
-								"label": "Key",
-								"type": "string",
-								"path": "key"
-							},
-							"uri": {
-								"label": "URI",
-								"type": "string",
-								"path": "uri"
-							},
-							"type": {
-								"label": "Type",
-								"type": "enum",
-								"enum": [
-									"OData",
-									"ODataAnnotation",
-									"INA",
-									"XML",
-									"JSON"
-								],
-								"defaultValue": "OData",
-								"path": "type"
-							},
-							"odataVersion": {
-								"label": "OData Version",
-								"type": "enum",
-								"enum": [
-									"2.0",
-									"4.0"
-								],
-								"defaultValue": "2.0",
-								"path": "settings/odataVersion"
-							}
+				datasource: {
+					sampleDataSource: {
+						uri: "https://example.com",
+						settings: {
+							odataVersion: "4.0"
 						}
-					}
-				},
-				propertyEditors: {
-					"complexMap": "sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",
-					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					},
+					anotherDataSource: {}
 				}
 			};
-			var mJson = {
-				datasource: this.oComplexMap
-			};
+		},
+		beforeEach: function () {
+			var mConfig = _createBaseEditorConfig();
 
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
-				json: mJson
+				json: this.oComplexMap
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
@@ -173,7 +171,7 @@ sap.ui.define([
 				assert.strictEqual(Object.keys(oValue).length, 4, "Then two data sources with unique keys are added");
 				assert.deepEqual(
 					values(oValue),
-					[].concat(values(this.oComplexMap), {}, {}),
+					[].concat(values(this.oComplexMap.datasource), {}, {}),
 					"Then two empty data sources are initialized and the original data source is not touched"
 				);
 				fnDone();
@@ -197,9 +195,67 @@ sap.ui.define([
 			assert.ok(oSpy.notCalled, "Then no value change is triggered");
 			assert.deepEqual(
 				this.oComplexMapEditor.getValue(),
-				this.oComplexMap,
+				this.oComplexMap.datasource,
 				"Then the editor value is not updated"
 			);
+		});
+	});
+
+	QUnit.module("Configuration options", {
+		beforeEach: function () {
+			var mJson = {
+				datasource: {
+					sampleDataSource: {
+						uri: "https://example.com",
+						settings: {
+							odataVersion: "4.0"
+						}
+					}
+				}
+			};
+
+			this.oBaseEditor = new BaseEditor({
+				json: mJson
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When key changes are forbidden", function (assert) {
+			var mConfig = _createBaseEditorConfig({
+				allowKeyChange: false
+			});
+			this.oBaseEditor.setConfig(mConfig);
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(function (aPropertyEditor) {
+				var oComplexMapEditor = aPropertyEditor[0];
+				sap.ui.getCore().applyChanges();
+				var oNestedArrayEditor = oComplexMapEditor.getContent();
+				return oNestedArrayEditor.ready().then(function () {
+					var oKeyEditor = _getComplexMapEditors(oNestedArrayEditor)[0]["key"];
+					assert.notOk(oKeyEditor.getEnabled(), "Then the key field is disabled");
+				});
+			});
+		});
+
+		QUnit.test("When a custom key label is set", function (assert) {
+			var mConfig = _createBaseEditorConfig({
+				keyLabel: "Custom label"
+			});
+			this.oBaseEditor.setConfig(mConfig);
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(function (aPropertyEditor) {
+				var oComplexMapEditor = aPropertyEditor[0];
+				sap.ui.getCore().applyChanges();
+				var oNestedArrayEditor = oComplexMapEditor.getContent();
+				assert.strictEqual(
+					oNestedArrayEditor.getConfig().template.key.label,
+					"Custom label",
+					"Then the label is overriden"
+				);
+			});
 		});
 	});
 

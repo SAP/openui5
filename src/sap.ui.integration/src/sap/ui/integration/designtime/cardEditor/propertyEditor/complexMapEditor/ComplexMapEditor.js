@@ -4,10 +4,12 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/base/util/restricted/_omit",
+	"sap/base/util/restricted/_merge",
 	"sap/base/util/deepClone"
 ], function (
 	BasePropertyEditor,
 	_omit,
+	_merge,
 	deepClone
 ) {
 	"use strict";
@@ -80,7 +82,17 @@ sap.ui.define([
 	};
 
 	ComplexMapEditor.prototype.setConfig = function (oConfig) {
-		var oArrayConfig = deepClone(oConfig);
+		var oArrayConfig = _merge({}, {
+			template: {
+				key: {
+					label: oConfig["keyLabel"] || this.getI18nProperty("CARD_EDITOR.COMPLEX_MAP.KEY"),
+					type: "string",
+					path: "key",
+					enabled: oConfig["allowKeyChange"] !== false
+				}
+			},
+			allowSorting: false
+		}, oConfig);
 		oArrayConfig.type = "array";
 
 		// Avoid registration on BaseEditor
