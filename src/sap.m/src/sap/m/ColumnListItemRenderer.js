@@ -208,6 +208,11 @@ sap.ui.define([
 
 				oColumn.getVAlign() != "Inherit" && rm.style("vertical-align", oColumn.getVAlign().toLowerCase());
 				rm.style("text-align", oColumn.getCssAlign());
+
+				if (oColumn.isHidden()) {
+					rm.style("display", "none");
+					rm.attr("aria-hidden", "true");
+				}
 			}
 
 			rm.openEnd();
