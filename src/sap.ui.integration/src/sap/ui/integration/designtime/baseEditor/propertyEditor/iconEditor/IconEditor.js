@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/IconPool",
-	"sap/ui/base/BindingParser"
+	"sap/ui/base/BindingParser",
+	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString"
 ], function (
 	BasePropertyEditor,
 	ListItem,
@@ -18,7 +19,8 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	IconPool,
-	BindingParser
+	BindingParser,
+	isValidBindingString
 ) {
 	"use strict";
 
@@ -83,19 +85,16 @@ sap.ui.define([
 
 	IconEditor.prototype._isValid = function (sSelectedIcon) {
 		var oInput = this.getContent();
-		try {
-			var oParsed = BindingParser.complexParser(sSelectedIcon);
-			var bIsValidIcon = IconPool.isIconURI(sSelectedIcon) && !!IconPool.getIconInfo(sSelectedIcon);
-			if (!oParsed && sSelectedIcon && !bIsValidIcon) {
-				throw "Not an icon";
-			}
-			oInput.setValueState("None");
-			return true;
-		} catch (vError) {
+		var bIsValidIcon = IconPool.isIconURI(sSelectedIcon) && !!IconPool.getIconInfo(sSelectedIcon);
+
+		if (sSelectedIcon && !bIsValidIcon && !isValidBindingString(sSelectedIcon, false)) {
 			oInput.setValueState("Error");
 			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.ICON.INVALID_BINDING_OR_ICON"));
 			return false;
 		}
+
+		oInput.setValueState("None");
+		return true;
 	};
 
 	IconEditor.prototype._getDefaultSearchValue = function (sSelectedIcon) {

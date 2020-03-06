@@ -3,10 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/base/BindingParser"
+	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString"
 ], function (
 	BasePropertyEditor,
-	BindingParser
+	isValidBindingString
 ) {
 	"use strict";
 
@@ -39,25 +39,21 @@ sap.ui.define([
 		},
 
 		_validate: function() {
-			var oCombo = this.getContent();
-			var sSelectedKey = oCombo.getSelectedKey();
-			var sValue = oCombo.getValue();
+			var oComboBox = this.getContent();
+			var sSelectedKey = oComboBox.getSelectedKey();
+			var sValue = oComboBox.getValue();
 
-			try {
-				var oParsed = BindingParser.complexParser(sValue);
-				if (!oParsed && !sSelectedKey && sValue) {
-					throw "Not a boolean";
-				}
-				oCombo.setValueState("None");
-				if (sSelectedKey) {
-					return sSelectedKey === "true";
-				}
-				return sValue;
-			} catch (vError) {
-				oCombo.setValueState("Error");
-				oCombo.setValueStateText(this.getI18nProperty("BASE_EDITOR.BOOLEAN.INVALID_BINDING_OR_BOOLEAN"));
+			if (sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {
+				oComboBox.setValueState("Error");
+				oComboBox.setValueStateText(this.getI18nProperty("BASE_EDITOR.BOOLEAN.INVALID_BINDING_OR_BOOLEAN"));
 				return null;
 			}
+
+			oComboBox.setValueState("None");
+			if (sSelectedKey) {
+				return sSelectedKey === "true";
+			}
+			return sValue;
 		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});

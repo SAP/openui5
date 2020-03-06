@@ -3,11 +3,11 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/base/BindingParser",
+	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
 	"sap/ui/core/format/NumberFormat"
 ], function (
 	BasePropertyEditor,
-	BindingParser,
+	isValidBindingString,
 	NumberFormat
 ) {
 	"use strict";
@@ -42,19 +42,17 @@ sap.ui.define([
 		},
 		_validate: function(sValue) {
 			var oInput = this.getContent();
-			try {
-				var oParsed = BindingParser.complexParser(sValue);
-				var nValue = NumberFormat.getFloatInstance().parse(sValue);
-				if (!oParsed && sValue && isNaN(nValue)) {
-					throw "NaN";
-				}
-				oInput.setValueState("None");
-				return oParsed || !sValue ? sValue : nValue;
-			} catch (vError) {
+			var nValue = NumberFormat.getFloatInstance().parse(sValue);
+
+			var bIsValidBindingString = isValidBindingString(sValue, false);
+			if (sValue && isNaN(nValue) && !bIsValidBindingString) {
 				oInput.setValueState("Error");
 				oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.NUMBER.INVALID_BINDING_OR_NUMBER"));
 				return null;
 			}
+
+			oInput.setValueState("None");
+			return bIsValidBindingString || !sValue ? sValue : nValue;
 		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});

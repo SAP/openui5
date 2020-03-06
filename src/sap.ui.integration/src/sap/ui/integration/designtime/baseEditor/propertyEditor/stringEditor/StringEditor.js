@@ -3,10 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/base/BindingParser"
+	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString"
 ], function (
 	BasePropertyEditor,
-	BindingParser
+	isValidBindingString
 ) {
 	"use strict";
 
@@ -38,21 +38,14 @@ sap.ui.define([
 		},
 		_validate: function() {
 			var oInput = this.getContent();
-			var oValue = oInput.getValue();
-			var bInvalidBindingString = false;
-			try {
-				BindingParser.complexParser(oValue);
-			} catch (oError) {
-				bInvalidBindingString = true;
-			} finally {
-				if (bInvalidBindingString) {
-					oInput.setValueState("Error");
-					oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
-					return false;
-				} else {
-					oInput.setValueState("None");
-					return true;
-				}
+			var sValue = oInput.getValue();
+			if (!isValidBindingString(sValue)) {
+				oInput.setValueState("Error");
+				oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
+				return false;
+			} else {
+				oInput.setValueState("None");
+				return true;
 			}
 		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render

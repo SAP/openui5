@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/core/Item",
-	"sap/ui/base/BindingParser"
+	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString"
 ], function (
 	BasePropertyEditor,
-	Item,
-	BindingParser
+	isValidBindingString
 ) {
 	"use strict";
 
@@ -45,24 +43,14 @@ sap.ui.define([
 			var sSelectedKey = oCombo.getSelectedKey();
 			var sValue = oCombo.getValue();
 
-			if (!sSelectedKey && sValue) {
-				var oParsedValue;
-				try {
-					oParsedValue = BindingParser.complexParser(sValue);
-				} finally {
-					if (!oParsedValue) {
-						oCombo.setValueState("Error");
-						oCombo.setValueStateText(this.getI18nProperty("BASE_EDITOR.ENUM.INVALID_SELECTION_OR_BINDING"));
-						return false;
-					} else {
-						oCombo.setValueState("None");
-						return true;
-					}
-				}
-			} else {
-				oCombo.setValueState("None");
-				return true;
+			if (sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {
+				oCombo.setValueState("Error");
+				oCombo.setValueStateText(this.getI18nProperty("BASE_EDITOR.ENUM.INVALID_SELECTION_OR_BINDING"));
+				return false;
 			}
+
+			oCombo.setValueState("None");
+			return true;
 		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
