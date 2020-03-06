@@ -1115,7 +1115,6 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving when variant controller map has been reset and current changes have been reverted
 	 */
 	ChangePersistence.prototype.resetVariantMap = function (bResetAtRuntime) {
-		FlexState.clearPreparedMaps(this._mComponent.name);
 		return this._oVariantController.resetMap(bResetAtRuntime);
 	};
 

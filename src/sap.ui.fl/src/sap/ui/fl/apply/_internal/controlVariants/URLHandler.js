@@ -79,10 +79,6 @@ sap.ui.define([
 				});
 			}
 		}
-
-		if (oModel._bDesignTimeMode) {
-			URLHandler.clearAllVariantURLParameters({model: oModel});
-		}
 	}
 
 	/**

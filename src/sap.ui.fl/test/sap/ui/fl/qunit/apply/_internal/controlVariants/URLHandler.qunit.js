@@ -514,27 +514,17 @@ function(
 		});
 
 		QUnit.test("when the registered navigationFilter function is called in UI Adaptation mode and there is a changed variant parameter, belonging to a variant", function (assert) {
-			assert.expect(3);
+			assert.expect(2);
 			var aParameterValues = [this.oModel.oData["variantMgmtId1"].defaultVariant, this.oModel.oData["variantMgmtId2"].defaultVariant, "otherParamValue"];
 			this.oModel._bDesignTimeMode = true;
-			var mExpectedPropertyBagToClear = {
-				model: this.oModel,
-				updateURL: true,
-				updateHashEntry: false,
-				parameters: []
-			};
 			var mExpectedPropertyBagToUpdate = {
 				model: this.oModel,
-				updateURL: false,
+				updateURL: !this.oModel._bDesignTimeMode,
 				updateHashEntry: true,
 				parameters: [this.oModel.oData["variantMgmtId1"].currentVariant, this.oModel.oData["variantMgmtId2"].currentVariant, "otherParamValue"]
 			};
 			sandbox.stub(URLHandler, "update").callsFake(function (mPropertyBag) {
-				if (mPropertyBag.parameters.length === 0) {
-					assert.deepEqual(mPropertyBag, mExpectedPropertyBagToClear, "then URLHandler.update() was called with right parameters to clear URL");
-				} else {
-					assert.deepEqual(mPropertyBag, mExpectedPropertyBagToUpdate, "then URLHandler.update() was called with right parameters to update hash register");
-				}
+				assert.deepEqual(mPropertyBag, mExpectedPropertyBagToUpdate, "then URLHandler.update() was called with right parameters to update hash register");
 			});
 
 			var oHash = {params: aParameterValues};
@@ -544,27 +534,17 @@ function(
 		});
 
 		QUnit.test("when the registered navigationFilter function is called in UI Adaptation mode and there is a changed variant parameter (default variant), belonging to a variant", function (assert) {
-			assert.expect(3);
+			assert.expect(2);
 			var aParameterValues = [this.oModel.oData["variantMgmtId1"].defaultVariant, this.oModel.oData["variantMgmtId2"].defaultVariant, "variant3"];
 			this.oModel._bDesignTimeMode = true;
-			var mExpectedPropertyBagToClear = {
-				model: this.oModel,
-				updateURL: true,
-				updateHashEntry: false,
-				parameters: []
-			};
 			var mExpectedPropertyBagToUpdate = {
 				model: this.oModel,
-				updateURL: false,
+				updateURL: !this.oModel._bDesignTimeMode,
 				updateHashEntry: true,
 				parameters: [this.oModel.oData["variantMgmtId1"].currentVariant, this.oModel.oData["variantMgmtId2"].currentVariant]
 			};
 			sandbox.stub(URLHandler, "update").callsFake(function (mPropertyBag) {
-				if (mPropertyBag.parameters.length === 0) {
-					assert.deepEqual(mPropertyBag, mExpectedPropertyBagToClear, "then URLHandler.update() was called with right parameters to clear URL");
-				} else {
-					assert.deepEqual(mPropertyBag, mExpectedPropertyBagToUpdate, "then URLHandler.update() was called with right parameters to update hash register");
-				}
+				assert.deepEqual(mPropertyBag, mExpectedPropertyBagToUpdate, "then URLHandler.update() was called with right parameters to update hash register");
 			});
 
 			var oHash = {params: aParameterValues};
