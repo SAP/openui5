@@ -587,7 +587,7 @@ sap.ui.define([
 
 
 		//****************************************************
-		// XHR tests
+		// XHR tests (e.g. for syncXHRFix in Firefox)
 		//****************************************************
 
 		QUnit.module("XHR");
@@ -683,14 +683,30 @@ sap.ui.define([
 		});
 
 		QUnit.test("async readyState without listener", function(assert) {
-			var asyncXHR = new XMLHttpRequest(),
-				done = assert.async();
+			var iTimeoutWaitLimit = 5000;
+			var iTimeoutWaitCurrent = 0;
+			var iTimeout = 10;
+			var asyncXHR = new XMLHttpRequest();
+			var done = assert.async();
+
+			// This tests the behavior without using the "readystatechange" listener,
+			// which may be unstable when relying on setTimout. Therefore the timeout will be extended to a
+			// provided maximum wait time.
+			var fnReadyStateTest = function() {
+				if (asyncXHR.readyState !== 4 && iTimeoutWaitCurrent < iTimeoutWaitLimit) {
+					iTimeoutWaitCurrent += iTimeout;
+					setTimeout(function () {
+						fnReadyStateTest();
+					}, iTimeout);
+				} else {
+					assert.equal(asyncXHR.readyState, 4, "Ready state should be 4 after request is completed");
+					done();
+				}
+			};
+
 			asyncXHR.open("GET", "#", true);
 			asyncXHR.send();
-			setTimeout(function() {
-				assert.equal(asyncXHR.readyState, 4, "Ready state should be 4 after request is completed");
-				done();
-			}, 100);
+			fnReadyStateTest();
 		});
 
 		QUnit.test("setTimeout/setInterval with strings", function(assert) {
