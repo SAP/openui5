@@ -502,6 +502,26 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		clock.restore();
 	});
 
+	QUnit.test("_getClosestScrolledSectionId identifies target subSection", function (assert) {
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oTargetSection = this.oObjectPageContentScrollingView.byId("secondSection"),
+			oTargetSubSection = oTargetSection.getSubSections()[1],
+			iTargetSubSectionScrollPosition,
+			iPageHeight,
+			sClosestSectionId,
+			done = assert.async();
+
+		oTargetSection.addSubSection(oTargetSubSection);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			iPageHeight = oObjectPage.getDomRef().offsetHeight;
+			iTargetSubSectionScrollPosition = oObjectPage._computeScrollPosition(oTargetSubSection);
+			sClosestSectionId = oObjectPage._getClosestScrolledSectionId(iTargetSubSectionScrollPosition, iPageHeight, true);
+			assert.equal(sClosestSectionId, oTargetSubSection.getId(), "target subSection is recognized");
+			done();
+		});
+	});
+
 	QUnit.test("ScrollEnablement private API", function (assert) {
 		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout");
 
