@@ -668,7 +668,7 @@ sap.ui.define([
 		setTimeout(function () {
 			assert.equal(this.oVSD._navContainer.getCurrentPage().getId(), this.oVSD._getPage1().getId(), "NavContainer should be on the first page");
 			done();
-		}.bind(this), 1750);
+		}.bind(this), 2500);
 	});
 
 	QUnit.module("Events", {
