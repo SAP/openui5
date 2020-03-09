@@ -1598,7 +1598,7 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the draft is activated", function (assert) {
+		QUnit.test("when the draft is activated success", function (assert) {
 			var done = assert.async();
 			var sVersionTitle = "VersionTitle";
 			var oEvent = {
@@ -1612,6 +1612,24 @@ function(
 
 				done();
 			}.bind(this));
+			sandbox.stub(this.oRta, "_handleVersionToolbar").returns(true);
+
+			this.oRta.getToolbar().fireEvent("activateDraft", oEvent);
+		});
+
+		QUnit.test("when the draft is activated failed", function (assert) {
+			var done = assert.async();
+			var sVersionTitle = "VersionTitle";
+			var oEvent = {
+				versionTitle: sVersionTitle
+			};
+			sandbox.stub(VersionsAPI, "activateDraft").rejects("Error");
+			sandbox.stub(RtaUtils, "_showMessageBox").callsFake(function(sIconType, sHeader, sMessage, sError) {
+				assert.equal(sError, "Error", "and a message box shows the error to the user");
+				assert.equal(sMessage, "MSG_DRAFT_ACTIVATION_FAILED", "the message is MSG_DRAFT_ACTIVATION_FAILED");
+				assert.equal(sHeader, "HEADER_ERROR", "the header is HEADER_ERROR");
+				done();
+			});
 
 			this.oRta.getToolbar().fireEvent("activateDraft", oEvent);
 		});

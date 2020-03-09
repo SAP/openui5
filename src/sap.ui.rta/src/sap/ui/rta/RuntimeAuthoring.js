@@ -1052,7 +1052,10 @@ function(
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
 			this.bInitialDraftAvailable = false;
 			return this._handleVersionToolbar(false);
-		}.bind(this));
+		}.bind(this))
+		.catch(function (oError) {
+			Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_ERROR", "MSG_DRAFT_ACTIVATION_FAILED", oError);
+		});
 	};
 
 	RuntimeAuthoring.prototype._handleDiscard = function(bHardReload) {
