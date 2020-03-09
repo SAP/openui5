@@ -35,7 +35,8 @@
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
 			},
 			bIsValid = sHref && oControl._isHrefValid(sHref),
-			bEnabled = oControl.getEnabled();
+			bEnabled = oControl.getEnabled(),
+			sTypeSemanticInfo = "";
 
 		// Link is rendered as a "<a>" element
 		oRm.openStart("a", oControl);
@@ -43,25 +44,15 @@
 		oRm.class("sapMLnk");
 		if (oControl.getSubtle()) {
 			oRm.class("sapMLnkSubtle");
-
-			//Add aria-describedby for the SUBTLE announcement
-			if (oAccAttributes.describedby) {
-				oAccAttributes.describedby += " " + oControl._sAriaLinkSubtleId;
-			} else {
-				oAccAttributes.describedby = oControl._sAriaLinkSubtleId;
-			}
+			sTypeSemanticInfo += oControl._sAriaLinkSubtleId;
 		}
 
 		if (oControl.getEmphasized()) {
 			oRm.class("sapMLnkEmphasized");
-
-			//Add aria-describedby for the EMPHASIZED announcement
-			if (oAccAttributes.describedby) {
-				oAccAttributes.describedby += " " + oControl._sAriaLinkEmphasizedId;
-			} else {
-				oAccAttributes.describedby = oControl._sAriaLinkEmphasizedId;
-			}
+			sTypeSemanticInfo += " " + oControl._sAriaLinkEmphasizedId;
 		}
+
+		oAccAttributes.describedby = sTypeSemanticInfo ? {value: sTypeSemanticInfo.trim(), append: true} : undefined;
 
 		if (!bEnabled) {
 			oRm.class("sapMLnkDsbl");
