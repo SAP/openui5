@@ -674,4 +674,21 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
+	QUnit.module("Performance");
+
+	QUnit.test("Call size and padding calculations once for each size", function (assert) {
+		// Reset all mappings
+		RatingIndicator.sizeMapppings = {};
+		RatingIndicator.iconPaddingMappings = {};
+		RatingIndicator.paddingValueMappping = {};
+
+		var oBI = new RatingIndicator();
+		var oFnSpy = this.spy(oBI, "_toPx");
+
+		for (var i = 0; i < 100; i++) {
+			oBI.onBeforeRendering();
+		}
+
+		assert.strictEqual(oFnSpy.callCount, 2, "Calculations should be done only 2 times for all elements with the same size");
+	});
 });
