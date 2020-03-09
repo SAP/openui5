@@ -291,7 +291,7 @@ sap.ui.define([
 				this.treeTable.setModel(this.oJsonModel, "treeModel");
 				this.oJsonModel.setData(oTreeViewModelRules);
 
-				var bPersistSettings = this.model.getProperty("/persistingSettings"),
+				var bPersistSettings = Storage.readPersistenceCookie(Constants.COOKIE_NAME),
 					bLoadingAdditionalRuleSets =  this.model.getProperty("/loadingAdditionalRuleSets");
 
 
