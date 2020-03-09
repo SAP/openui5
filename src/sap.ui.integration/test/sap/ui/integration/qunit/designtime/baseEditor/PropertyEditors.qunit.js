@@ -245,23 +245,6 @@ function (
 			this.oPropertyEditors.setTags("foo");
 		});
 
-		QUnit.test("when tags parameter is set several times at once (test for async flow cancellation)", function (assert) {
-			var fnDone = assert.async();
-
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
-				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "bar1 value", "then internal property editor has a correct value");
-				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "bar2 value", "then internal property editor has a correct value");
-				fnDone();
-			}, this);
-
-			this.oPropertyEditors.setTags("foo");
-			this.oPropertyEditors.setTags("bar");
-			this.oPropertyEditors.setTags("foo");
-			this.oPropertyEditors.setTags("foo");
-			this.oPropertyEditors.setTags("bar");
-		});
-
 		QUnit.test("when config is set", function (assert) {
 			this.oPropertyEditors.setConfig([{
 				"label": "Baz property",
@@ -524,8 +507,14 @@ function (
 								sap.ui.getCore().applyChanges();
 								assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1_2 value", "then internal editor re-rendered and received correct value from new editor");
 								assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "foo2_2 value", "then internal editor re-rendered and received correct value from new editor");
-								oBaseEditor2.destroy();
-								fnDone();
+
+								// Async destroy is needed to avoid error message in ManagedObject while destroying
+								// the instance in a sequence of "propagationListener" calls. "propertyEditorsChange" event
+								// is called in the middle of "addContent" operation, see ManagedObject@L2642-2672.
+								setTimeout(function () {
+									oBaseEditor2.destroy();
+									fnDone();
+								});
 							}.bind(this))
 					);
 
@@ -578,8 +567,14 @@ function (
 								sap.ui.getCore().applyChanges();
 								assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1_2 value", "then internal editor re-rendered and received corrent value from new editor");
 								assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "foo2_2 value", "then internal editor re-rendered and received corrent value from new editor");
-								oBaseEditor2.destroy();
-								fnDone();
+
+								// Async destroy is needed to avoid error message in ManagedObject while destroying
+								// the instance in a sequence of "propagationListener" calls. "propertyEditorsChange" event
+								// is called in the middle of "addContent" operation, see ManagedObject@L2642-2672.
+								setTimeout(function () {
+									oBaseEditor2.destroy();
+									fnDone();
+								});
 							}.bind(this))
 					);
 
@@ -708,8 +703,8 @@ function (
 				this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
 					sap.ui.getCore().applyChanges();
 					assert.ok(!this.oPropertyEditors.getAggregation("propertyEditors"), "then internal editor is removed");
-					assert.notOk(aPropertyEditors[0].bIsDestroyed, "then internal property editor is NOT destroyed");
-					assert.notOk(aPropertyEditors[1].bIsDestroyed, "then internal property editor is NOT destroyed");
+					assert.ok(aPropertyEditors[0].bIsDestroyed, "then internal property editor is destroyed");
+					assert.ok(aPropertyEditors[1].bIsDestroyed, "then internal property editor is destroyed");
 					fnDone();
 				}, this);
 
@@ -731,8 +726,8 @@ function (
 				this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
 					sap.ui.getCore().applyChanges();
 					assert.ok(!this.oPropertyEditors.getAggregation("propertyEditors"), "then internal editor is removed");
-					assert.notOk(aPropertyEditors[0].bIsDestroyed, "then internal property editor is NOT destroyed");
-					assert.notOk(aPropertyEditors[1].bIsDestroyed, "then internal property editor is NOT destroyed");
+					assert.ok(aPropertyEditors[0].bIsDestroyed, "then internal property editor is destroyed");
+					assert.ok(aPropertyEditors[1].bIsDestroyed, "then internal property editor is destroyed");
 					fnDone();
 				}, this);
 
@@ -862,8 +857,8 @@ function (
 
 				this.oPropertyEditors.destroy();
 
-				assert.notOk(aPropertyEditors[0].bIsDestroyed, "then internal property editor is NOT destroyed");
-				assert.notOk(aPropertyEditors[1].bIsDestroyed, "then internal property editor is NOT destroyed");
+				assert.ok(aPropertyEditors[0].bIsDestroyed, "then internal property editor is destroyed");
+				assert.ok(aPropertyEditors[1].bIsDestroyed, "then internal property editor is destroyed");
 
 				fnDone();
 			}, this);

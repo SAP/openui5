@@ -708,6 +708,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns list of configurations for properties which match the specified list of the tags.
+	 * @param {string|string[]} vTag - Tag or an array of tags.
+	 * @returns {object[]} Array of the configuration objects which match all the specified tags
+	 */
+	BaseEditor.prototype.getConfigsByTag = function (vTag) {
+		var aProperties = this.getConfig().properties;
+
+		return Object.keys(aProperties)
+			.filter(function (sPropertyName) {
+				return hasTag(aProperties[sPropertyName], vTag);
+			})
+			.map(function (sPropertyName) {
+				return aProperties[sPropertyName];
+			});
+	};
+
+	/**
 	 * Returns a list of property editors corresponding to a specified list of tags.
 	 * @param {string|string[]} vTag - List of tags
 	 * @returns {sap.ui.integration.designtime.baseEditor.PropertyEditor[]|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor[]|null} List of property editors for the specified tags

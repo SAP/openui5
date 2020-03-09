@@ -199,10 +199,10 @@ sap.ui.define([
 				fnDone();
 			}, this);
 
-			var oTypeSelector = this.aItems[0].type.getDomRef();
-			oTypeSelector.value = "Number";
-			QUnitUtils.triggerEvent("input", oTypeSelector);
-			QUnitUtils.triggerKeydown(oTypeSelector, KeyCodes.ENTER);
+			var oTypeSelector = this.aItems[0].type;
+			oTypeSelector.getDomRef().value = oTypeSelector.getItemByKey("number").getText();
+			QUnitUtils.triggerEvent("input", oTypeSelector.getDomRef());
+			QUnitUtils.triggerKeydown(oTypeSelector.getDomRef(), KeyCodes.ENTER);
 		});
 
 		QUnit.test("When a value is updated and the new value is valid", function (assert) {

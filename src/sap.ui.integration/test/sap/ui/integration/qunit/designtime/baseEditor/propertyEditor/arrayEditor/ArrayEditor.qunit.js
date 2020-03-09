@@ -449,7 +449,7 @@ sap.ui.define([
 				type: "array",
 				itemLabel: "Item",
 				template: {
-					parentItems: {
+					childItems: {
 						label: "Nested Array Level 2",
 						type: "array",
 						path: "childItems",
@@ -517,8 +517,8 @@ sap.ui.define([
 				var aValue = oEvent.getParameter("value");
 				var mLastChild = aValue.slice().pop();
 
-				assert.ok(Array.isArray(mLastChild.parentItems), "then nested array is initialized with an empty array value by default");
-				assert.strictEqual(mLastChild.parentItems.length, 0, "then nested array doesn't contain any items by default");
+				assert.ok(Array.isArray(mLastChild.childItems), "then nested array is initialized with an empty array value by default");
+				assert.strictEqual(mLastChild.childItems.length, 0, "then nested array doesn't contain any items by default");
 
 				fnDone();
 			});
