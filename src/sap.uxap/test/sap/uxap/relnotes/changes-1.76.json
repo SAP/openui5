@@ -71,6 +71,17 @@
             "reference": "1970518207"
           }
         ]
+      },
+      {
+        "id": "e779561c41855a88e4dde3042c5df1d0ae822027",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Prevent error on setParent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001466132020"
+          }
+        ]
       }
     ]
   }

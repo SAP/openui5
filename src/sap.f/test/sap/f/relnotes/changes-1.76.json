@@ -41,6 +41,45 @@
             "reference": "2080115540"
           }
         ]
+      },
+      {
+        "id": "50535e27c2f5a2033e0fac5abd3b28878664216a",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayout: Introduced new property â€œautoFocusâ€?",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080069910 2080069750"
+          }
+        ]
+      },
+      {
+        "id": "438e948cbddbb4957d8757aae3d0469aa34f87ab",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayout: columnResize event implemented",
+        "references": []
+      },
+      {
+        "id": "7ba608ccc828f874c191dce70c7bd3e7f188c77d",
+        "type": "FIX",
+        "text": " sap.f.cards.AdaptiveContent: _setData function corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070025598"
+          }
+        ]
+      },
+      {
+        "id": "fcf937dd9d42d6fb7358724e992881da0ebe32ad",
+        "type": "FIX",
+        "text": " sap.f.cards.NumericHeader: Numeric content is adapted after fiori 3 redesign",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070030779"
+          }
+        ]
       }
     ]
   }

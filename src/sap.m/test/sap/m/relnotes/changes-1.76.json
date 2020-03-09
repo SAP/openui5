@@ -359,6 +359,67 @@
             "reference": "0020751295 0000027735 2020"
           }
         ]
+      },
+      {
+        "id": "24b61f9912b92650b8ba83473025f25d6bb4f452",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Quartz HC Themes Specification Update",
+        "references": []
+      },
+      {
+        "id": "8c995f0d82d487cc2c8e7921f8b96a76365b50e4",
+        "type": "FEATURE",
+        "text": " sap.m.Table: Automatic pop-in mode added",
+        "references": []
+      },
+      {
+        "id": "5c4bb078386704dc8df7e0711262b658bbdcd6ef",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.calendar.Month: enable Custom Color for specialDates aggregation",
+        "references": []
+      },
+      {
+        "id": "927a0250eda2b7449f3b0686caf39088931aadbd",
+        "type": "FIX",
+        "text": " sap.m.Image: failing QUnit on master/ IE11 is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070051730"
+          }
+        ]
+      },
+      {
+        "id": "db6adfcdecc624c5f85dbc9ee9b6e03406db659b",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Prevent wrong layouting on iOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070009149"
+          }
+        ]
+      },
+      {
+        "id": "71d9ddb221e0df1f691ba4ec3eeb7a705bb4ba36",
+        "type": "FIX",
+        "text": " sap.m.Popover: Prevent Popopver form hiding its content on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080084927"
+          }
+        ]
+      },
+      {
+        "id": "68b0c892e505b4bf3f09048f0fd0f5c473316996",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed qunit test that fails often",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
       }
     ]
   }

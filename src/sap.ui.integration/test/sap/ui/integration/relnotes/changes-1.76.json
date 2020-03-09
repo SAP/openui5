@@ -58,6 +58,17 @@
             "reference": "2080115540"
           }
         ]
+      },
+      {
+        "id": "a37e3afa5cd0c22296770c29af6ce09c55fc5186",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: List loading placeholder is now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070052213"
+          }
+        ]
       }
     ]
   }

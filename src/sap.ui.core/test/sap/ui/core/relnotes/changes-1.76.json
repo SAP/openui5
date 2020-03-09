@@ -152,6 +152,43 @@
             "reference": "2070009967"
           }
         ]
+      },
+      {
+        "id": "a148e1ab827fbc4fe3554f15074b3486e5c607cd",
+        "type": "FIX",
+        "text": " ManagedObject(jsdoc): fix the list of built-in types.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070052060"
+          }
+        ]
+      },
+      {
+        "id": "78e81cbcd82903002392719f8338200d498089cd",
+        "type": "FIX",
+        "text": " core.Popup: actively move focus instead of blur focused element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880706491"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980242371"
+          }
+        ]
+      },
+      {
+        "id": "3ea0fdaa1e4bb4a39dd2589ca4fde8ea5432870a",
+        "type": "FIX",
+        "text": " routing: Fix failing test in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070042625"
+          }
+        ]
       }
     ]
   }

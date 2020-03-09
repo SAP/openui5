@@ -45,6 +45,12 @@
             "reference": "2070013308"
           }
         ]
+      },
+      {
+        "id": "5c4bb078386704dc8df7e0711262b658bbdcd6ef",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.calendar.Month: enable Custom Color for specialDates aggregation",
+        "references": []
       }
     ]
   }

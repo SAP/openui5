@@ -96,6 +96,18 @@
             "reference": "2070003379"
           }
         ]
+      },
+      {
+        "id": "24b61f9912b92650b8ba83473025f25d6bb4f452",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Quartz HC Themes Specification Update",
+        "references": []
+      },
+      {
+        "id": "5c4bb078386704dc8df7e0711262b658bbdcd6ef",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.calendar.Month: enable Custom Color for specialDates aggregation",
+        "references": []
       }
     ]
   }
