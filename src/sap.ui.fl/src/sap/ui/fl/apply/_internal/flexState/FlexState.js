@@ -203,6 +203,16 @@ sap.ui.define([
 		}
 	}
 
+	function _clearPreparedMaps(sReference) {
+		if (_mInstances[sReference]) {
+			_mInstances[sReference].preparedMaps = {};
+			// TODO: remove this block when VariantController is removed
+			if (_mInstances[sReference].unfilteredStorageResponse.changes) {
+				delete _mInstances[sReference].unfilteredStorageResponse.changes.variantSection;
+			}
+		}
+	}
+
 	/**
 	 * Initializes the FlexState for a given reference. A request for the flex data is sent to the Loader and the response is saved.
 	 * The FlexState can only be initialized once, every subsequent init call will just resolve as soon as it is initialized.
@@ -297,7 +307,7 @@ sap.ui.define([
 	 */
 	FlexState.clearMaxLayerFiltering = function(sReference) {
 		delete _mInstances[sReference].storageResponse;
-		FlexState.clearPreparedMaps(sReference);
+		_clearPreparedMaps(sReference);
 	};
 
 	FlexState.getUIChanges = function(sReference) {
@@ -332,13 +342,6 @@ sap.ui.define([
 	// temporary function until the maps are ready
 	FlexState.getFlexObjectsFromStorageResponse = function(sReference) {
 		return _mInstances[sReference] && _mInstances[sReference].unfilteredStorageResponse.changes;
-	};
-
-	// temporary function until Variant Controller map is removed
-	FlexState.clearPreparedMaps = function(sReference) {
-		if (_mInstances[sReference]) {
-			_mInstances[sReference].preparedMaps = {};
-		}
 	};
 
 	return FlexState;
