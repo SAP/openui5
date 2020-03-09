@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/BusyIndicator",
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/base/util/merge"
 ], function(
 	FlexUtils,
@@ -18,7 +18,7 @@ sap.ui.define([
 	BusyIndicator,
 	UriParameters,
 	Settings,
-	DescriptorVariantFactory,
+	AppVariantFactory,
 	merge
 ) {
 	"use strict";
@@ -195,7 +195,9 @@ sap.ui.define([
 			oRootControlRunningApp = oRootControl;
 			var oDescriptor = fnGetDescriptor();
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
-				return DescriptorVariantFactory.loadAppVariant(oDescriptor["sap.app"].id, false);
+				return AppVariantFactory.load({
+					id: oDescriptor["sap.app"].id
+				});
 			}
 			return Promise.resolve(false);
 		},

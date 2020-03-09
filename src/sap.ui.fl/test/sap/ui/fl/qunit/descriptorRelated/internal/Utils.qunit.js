@@ -2,16 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
-	DescriptorVariantFactory,
 	Utils,
-	LrepConnector,
 	Settings,
 	sinon
 ) {

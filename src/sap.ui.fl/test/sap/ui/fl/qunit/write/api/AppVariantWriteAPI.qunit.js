@@ -49,7 +49,7 @@ sap.ui.define([
 	function createAppComponent() {
 		var oDescriptor = {
 			"sap.app" : {
-				id : "reference.app",
+				id : "customer.reference.app.id",
 				applicationVersion: {
 					version: "1.2.3"
 				}
@@ -314,8 +314,7 @@ sap.ui.define([
 							// Get the app variant to be saved to backend
 							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 							assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
-							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
-							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
+							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
 							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/", "POST"), "then backend call is triggered with correct parameters");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a UI change has been removed from the persistence");
@@ -552,7 +551,6 @@ sap.ui.define([
 							// Get the app variant to be saved to backend
 							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 							assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
-							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
 							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/", "POST"), "then backend call is triggered with correct parameters");
@@ -616,7 +614,7 @@ sap.ui.define([
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?package=&namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
@@ -669,7 +667,7 @@ sap.ui.define([
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.catch(function() {
-					assert.ok(oNewConnectorCall.firstCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
+					assert.ok(oNewConnectorCall.firstCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?package=&namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.equal(oNewConnectorCall.secondCall, null, "then delete app variants backend call is never triggered");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
@@ -790,7 +788,7 @@ sap.ui.define([
 				.catch(function(oError) {
 					assert.ok("then the promise got rejected");
 					assert.equal(oError.messageKey, "MSG_DELETE_APP_VARIANT_FAILED", "then the messagekey is correct");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?package=&namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
@@ -838,7 +836,7 @@ sap.ui.define([
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
 					assert.ok(oOpenDialogStub.notCalled, "the dialog was not opened");
 				});
@@ -885,7 +883,7 @@ sap.ui.define([
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
 					assert.equal(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?package=&namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "DELETE"), "then the parameters are correct");
 					assert.ok(oOpenDialogStub.notCalled, "the dialog was never opened");
 				});
@@ -931,8 +929,8 @@ sap.ui.define([
 
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: Layer.CUSTOMER})
 				.then(function() {
-					assert.ok(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?package=&namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
+					assert.ok(oNewApplyConnectorCall.getCall(0).args[0], "/sap/bc/lrep/actions/gettransports/?namespace=namespace1&name=fileName1&type=fileType1", "then the parameters are correct");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
 					assert.ok(oOpenDialogStub.notCalled, "the dialog was never opened");
 				});
