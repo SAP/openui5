@@ -423,8 +423,8 @@ sap.ui.define([
 		oSecondStepRef = jQuery(oNavigator.$().find("li")[1]);
 
 		// assert
-		assert.strictEqual(oFirstStepRef.find(".sapMWizardProgressNavAnchorLabelOptional").length, 1, "An element with style class sapMWizardProgressNavAnchorLabelOptional should be added");
-		assert.strictEqual(oSecondStepRef.find(".sapMWizardProgressNavAnchorLabelOptional").length, 0, "An element with style class sapMWizardProgressNavAnchorLabelOptional should not be added");
+		assert.strictEqual(oFirstStepRef.find(".sapMWizardProgressNavStepLabelOptional").length, 1, "An element with style class sapMWizardProgressNavStepLabelOptional should be added");
+		assert.strictEqual(oSecondStepRef.find(".sapMWizardProgressNavStepLabelOptional").length, 0, "An element with style class sapMWizardProgressNavStepLabelOptional should not be added");
 
 		// clean up
 		oWizard.destroy();
@@ -600,7 +600,7 @@ sap.ui.define([
 		var oNavigator = this.oWizard._getProgressNavigator(),
 			oFirstStepRef = jQuery(oNavigator.$().find("li")[0]);
 
-		assert.strictEqual(oFirstStepRef.find(".sapMWizardProgressNavAnchorLabelOptional").length, 1,
+		assert.strictEqual(oFirstStepRef.find(".sapMWizardProgressNavStepLabelOptional").length, 1,
 				"An optional label is added to the correct step.");
 	});
 

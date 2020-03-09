@@ -36,10 +36,27 @@
 	height: @_sap_m_WizardProgressNavigator_ListHeight;
 }
 
+.sapMWizardProgressNavStepContainer {
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	text-align: center;
+	text-decoration: none;
+}
+
 .sapMWizardProgressNavStep {
 	display: table-cell;
 	position: relative;
 	padding: 0 @_sap_m_WizardProgressNavigator_StepPadding;
+
+	&:focus {
+		outline: none;
+
+		.sapMWizardProgressNavStepContainer {
+			outline: 1px dotted @sapUiContentFocusColor;
+			outline-offset: 1px;
+		}
+	}
 }
 
 // the separator connecting every two steps
@@ -52,6 +69,7 @@
 	right: 0;
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
+	z-index: -1;
 }
 
 // we do not have a separator at the end for known number of steps
@@ -68,21 +86,20 @@
 // the currently selected step
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
 
-	// the current step is underlined as to have a visual cue
-	.sapMWizardProgressNavAnchor::after {
-		content: "";
-		display: block;
-		position: absolute;
-		width: 100%;
-		height: @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
+// the current step is underlined as to have a visual cue
+.sapMWizardProgressNavStepContainer::after {
+	content: "";
+	display: block;
+	position: absolute;
+	width: 100%;
+	height: @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
 
-		// negative values are needed for the right positioning - (2rem - 4rem) / 2 = -1
-		// bottom:0 positions it at the bottom of the list but we want it at the bottom of the nav
-		bottom: (@_sap_m_WizardProgressNavigator_ListHeight - @_sap_m_WizardProgressNavigator_NavHeight) / 2 - @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
-	}
-
-	// anchors in all steps after the current one are right aligned so that they dont overflow to the right
-	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
+	// negative values are needed for the right positioning - (2rem - 4rem) / 2 = -1
+	// bottom:0 positions it at the bottom of the list but we want it at the bottom of the nav
+	bottom: (@_sap_m_WizardProgressNavigator_ListHeight - @_sap_m_WizardProgressNavigator_NavHeight) / 2 - @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
+}
+	//all steps after the current one are right aligned so that they dont overflow to the right
+	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavStepContainer {
 		right: 0;
 	}
 }
@@ -90,14 +107,14 @@
 // the step up to which progress has been reached
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
 
-	// anchors in all steps after the active one have the default cursor and no focus
-	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
+	//all steps after the active one have the default cursor and no focus
+	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavStepContainer {
 		cursor: default;
 		display: inline;
+	}
 
-		&:focus {
-			outline: none;
-		}
+	& ~ .sapMWizardProgressNavStep:focus > .sapMWizardProgressNavStepContainer {
+		outline: none;
 	}
 }
 
@@ -106,12 +123,12 @@
 	width: @_sap_m_WizardProgressNavigator_StepWidth - @_sap_m_WizardProgressNavigator_StepOverlapOnPhone;
 	padding: 0;
 
-	.sapMWizardProgressNavAnchor {
+	.sapMWizardProgressNavStepContainer {
 		position: absolute;
 		top: 0;
 	}
 
-	.sapMWizardProgressNavAnchorTitleContainer {
+	.sapMWizardProgressNavStepTitleContainer {
 		display: none;
 	}
 }
@@ -146,19 +163,11 @@
 	}
 }
 
-.sapMWizardProgressNavAnchor {
-	display: inline-block;
-	position: relative;
-	z-index: 1;
-	text-align: center;
-	text-decoration: none;
-	cursor: pointer;
-}
-
-.sapMWizardProgressNavAnchorCircle {
+.sapMWizardProgressNavStepCircle {
 	display: inline-block;
 	box-sizing: border-box;
 	vertical-align: middle;
+	text-align: center;
 	width: @_sap_m_WizardProgressNavigator_StepWidth;
 	height: @_sap_m_WizardProgressNavigator_ListHeight;
 	line-height: @_sap_m_WizardProgressNavigator_ListHeight;
@@ -182,12 +191,13 @@ html.sap-phone .sapMWizardProgressNav {
 	padding: 0.875rem 0.5rem;
 }
 
-.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavStepCircle {
 	background: @sapUiHighlight;
 }
 
-.sapMWizardProgressNavAnchorIcon {
+.sapMWizardProgressNavStepIcon {
 	font-size: @sapMFontLargeSize;
+	cursor: pointer;
 }
 
 .sapMWizardProgressNavStep::after {
@@ -195,19 +205,19 @@ html.sap-phone .sapMWizardProgressNav {
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
-	& .sapMWizardProgressNavAnchor::after {
+	& .sapMWizardProgressNavStepContainer::after {
 		background: @sapUiSelected;
 		height: 0.25rem;
 	}
 
-	& .sapMWizardProgressNavAnchorCircle {
+	& .sapMWizardProgressNavStepCircle {
 		background: @sapUiSelected;
 		color: @sapUiContentContrastIconColor;
 	}
 }
 
 
-.sapMWizardProgressNavAnchorTitleContainer {
+.sapMWizardProgressNavStepTitleContainer {
 	display: inline-block;
 	vertical-align: middle;
 	text-align: left;
@@ -218,7 +228,7 @@ html.sap-phone .sapMWizardProgressNav {
 	background: @sapUiObjectHeaderBackground;
 }
 
-.sapMWizardProgressNavAnchorTitle {
+.sapMWizardProgressNavStepTitle {
 	display: inline-block;
 	overflow: hidden;
 	max-width: 100%;
@@ -229,13 +239,13 @@ html.sap-phone .sapMWizardProgressNav {
 	vertical-align: middle;
 }
 
-.sapMWizardProgressNavAnchorTitleOptional {
+.sapMWizardProgressNavStepTitleOptional {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	line-height: 100%;
 }
 
-.sapMWizardProgressNavAnchorLabelOptional {
+.sapMWizardProgressNavStepLabelOptional {
 	display: table-row;
 	font-size: @sapMFontSmallSize;
 	color: @sapUiContentLabelColor;

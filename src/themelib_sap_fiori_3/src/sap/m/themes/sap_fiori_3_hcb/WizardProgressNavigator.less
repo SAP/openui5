@@ -11,22 +11,22 @@
 	z-index: 1;
 }
 
-.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavStepCircle {
 	background-color: @sapUiObjectHeaderBackground;
 	color: @sapUiBaseText;
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"]:hover .sapMWizardProgressNavAnchorCircle {
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"]:hover .sapMWizardProgressNavStepCircle {
 	background-color: @sapUiHighlight;
 	color: @sapUiContentContrastIconColor;
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"]:hover .sapMWizardProgressNavAnchorTitle,
-.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorTitle {
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"]:hover .sapMWizardProgressNavStepTitle,
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavStepTitle {
 	color: @sapUiContentLabelColor;
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavAnchorCircle::after {
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavStepCircle::after {
 	height: @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
 	background: @sapUiBaseText;
 	content: "";
@@ -36,33 +36,28 @@
 	bottom: (@_sap_m_WizardProgressNavigator_ListHeight - @_sap_m_WizardProgressNavigator_NavHeight) / 2 - @_sap_m_WizardProgressNavigator_BoxShadow + @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavAnchor::after {
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavStepContainer::after {
 	height: 0;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
-	& .sapMWizardProgressNavAnchorCircle {
+	& .sapMWizardProgressNavStepCircle {
 		background: @sapUiSelected;
 		color: @sapUiBaseText;
 	}
 }
 
-.sapMWizardProgressNavAnchor:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: 1px;
-}
-
-.sapMWizardProgressNavAnchorCircle {
+.sapMWizardProgressNavStepCircle {
 	background: @sapUiObjectHeaderBackground;
 	border-color: @sapUiObjectHeaderBorderColor;
 	color: @sapUiBaseText;
 }
 
-.sapMWizardProgressNavAnchorTitle {
+.sapMWizardProgressNavStepTitle {
 	color: @sapUiContentLabelColor;
 }
 
-.sapMWizardProgressNavAnchorTitle:hover {
+.sapMWizardProgressNavStepTitle:hover {
 	color: @sapUiContentLabelColor;
 }
 
@@ -74,14 +69,14 @@
 	background: @sapUiGroupContentBackground;
 }
 
-.sapMWizardProgressNavAnchorTitleOptional,
-.sapMWizardProgressNavAnchorLabelOptional {
+.sapMWizardProgressNavStepTitleOptional,
+.sapMWizardProgressNavStepLabelOptional {
 	color: @sapUiFieldPlaceholderTextColor;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
-	/* anchors in all steps after the active one have inactive style */
-	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
+	/* all steps after the active one have inactive style */
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavStepCircle {
 		border-color: @sapUiListBorderColor;
 		background: @sapUiObjectHeaderBackground;
 		color: @sapUiBaseText;
@@ -99,7 +94,7 @@
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev="true"][data-sap-ui-wpn-step-open="false"][data-sap-ui-wpn-step-current="true"] {
-	.sapMWizardProgressNavAnchorCircle {
+	.sapMWizardProgressNavStepCircle {
 		background: @sapUiActive;
 		border-color: @sapUiObjectHeaderBorderColor;
 	}
