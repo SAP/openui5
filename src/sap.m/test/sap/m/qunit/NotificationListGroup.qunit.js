@@ -224,6 +224,18 @@ sap.ui.define([
 		assert.strictEqual($notificationListGroup.find('.sapMNLIItem.sapMNLIActions')[0].style.display, 'none', "overflow toolbar is hideen");
 	});
 
+	QUnit.test('Close button destruction', function(assert) {
+
+		var notificationListGroup = createNotificationListGroup();
+		notificationListGroup.placeAt(RENDER_LOCATION);
+		var closeButton = notificationListGroup._getCloseButton();
+		var closeButtonId = closeButton.sId;
+
+		notificationListGroup.destroy();
+		assert.strictEqual(sap.ui.getCore().byId(closeButtonId), undefined, "close button is destroyed");
+
+	});
+
 	QUnit.module('Action and close buttons - mobile', {
 		beforeEach: function() {
 

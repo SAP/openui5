@@ -242,6 +242,7 @@ function(
 	};
 
 	NotificationListItem.prototype.exit = function() {
+		NotificationListBase.prototype.exit.apply(this, arguments);
 		if (this._resizeListenerId) {
 			ResizeHandler.deregister(this._resizeListenerId);
 			this._resizeListenerId = null;
