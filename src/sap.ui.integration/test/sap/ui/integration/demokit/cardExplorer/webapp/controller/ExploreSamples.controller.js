@@ -382,8 +382,7 @@ sap.ui.define([
 
 			var oCurrentSample = oSubSample || oSample,
 				oFrameWrapperEl = this.byId("iframeWrapper"),
-				bUseIFrame = oCurrentSample.key === "htmlConsumption" ||
-					oCurrentSample.key === "hostActions";
+				bUseIFrame = !!oCurrentSample.useIFrame;
 
 			// init mock server only on demand
 			if (oCurrentSample.key === "topProducts" || oCurrentSample.key === "product") {
@@ -562,8 +561,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the file is editable.
 		 */
 		_isFileEditable: function (sFileName) {
-			var sCurrentHash = this.getRouter().getHashChanger().getHash();
-			return sCurrentHash.indexOf('hostActions') === -1 && sFileName.endsWith("manifest.json");
+			return !this._isApplicationSample() && sFileName.endsWith("manifest.json");
 		},
 
 		/**
@@ -571,8 +569,19 @@ sap.ui.define([
 		 * @returns {boolean} Whether the message strip is visible
 		 */
 		_isMessageStripVisible: function (sFileName) {
-			var sCurrentHash = this.getRouter().getHashChanger().getHash();
-			return sCurrentHash.indexOf('hostActions') === -1 && !sFileName.endsWith("manifest.json");
+			return !this._isApplicationSample() && !sFileName.endsWith("manifest.json");
+		},
+
+		/**
+		 * Checks if the current example is an example of a full application.
+		 * Then some features are not available.
+		 * @returns {boolean} True if it is an application example.
+		 */
+		_isApplicationSample: function() {
+			var sCurrentHash = this.getRouter().getHashChanger().getHash(),
+				bIsApplication = sCurrentHash.indexOf('hostActions') !== -1 || sCurrentHash.indexOf('destinations') !== -1;
+
+			return bIsApplication;
 		},
 
 		/**
@@ -580,13 +589,18 @@ sap.ui.define([
 		 * @return {object} The manifest.json.
 		 */
 		_getManifestFileAsJson: function () {
-			var aFiles,
+			var sManifestFile = "manifest.json",
+				aFiles,
 				oManifestFile;
+
+			if (this._isApplicationSample()) {
+				sManifestFile = "cardManifest.json";
+			}
 
 			if (exploreSettingsModel.getProperty("/useExtendedFileEditor")) {
 				aFiles = this.getModel("extendedFileEditor").getProperty("/files");
 				oManifestFile = aFiles.find(function (oFile) {
-					return oFile.name === "manifest.json";
+					return oFile.name === sManifestFile;
 				});
 
 				return JSON.parse(oManifestFile.content);

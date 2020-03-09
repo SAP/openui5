@@ -1,0 +1,78 @@
+{
+	"_version": "1.20.0",
+	"sap.app": {
+		"id": "card.explorer.features.dateRange",
+		"type": "card",
+		"title": "Sample of destinations",
+		"subTitle": "Sample of destinations",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this card",
+		"info": "Additional information about this card",
+		"description": "A long description for this card",
+		"tags": {
+			"keywords": [
+				"Destinations",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "Table",
+		"data": {
+			"request": {
+				"url": "{{destinations.myDestination}}/Orders",
+				"parameters": {
+					"$format": "json",
+					"$top": "{{parameters.maxItems}}",
+					"$orderby": "Freight desc"
+				}
+			}
+		},
+		"configuration": {
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind"
+				}
+			},
+			"parameters": {
+				"maxItems": {
+					"value": "7"
+				}
+			}
+		},
+		"header": {
+			"title": "Destinations sample",
+			"subTitle": "Top orders from destination 'Northwind'",
+			"icon": {
+				"src": "sap-icon://compare-2"
+			},
+			"status": {
+			    "text": "top {{parameters.maxItems}}"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/value/"
+			},
+			"maxItems": "{{parameters.maxItems}}",
+			"row": {
+				"columns": [{
+						"title": "Customer",
+						"value": "{ShipName}"
+					},
+					{
+						"title": "Country",
+						"value": "{ShipCountry}"
+					},
+					{
+						"title": "Freight",
+						"value": "{Freight}"
+					}
+				]
+			}
+		}
+	}
+}
