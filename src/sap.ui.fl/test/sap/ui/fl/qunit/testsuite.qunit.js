@@ -440,9 +440,9 @@ sap.ui.define([
 				group: "Descriptor related APIs",
 				coverage: {
 					only: [
-						"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+						"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 						"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
-						"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory"
+						"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory"
 					]
 				}
 			},
@@ -452,6 +452,16 @@ sap.ui.define([
 					only: [
 						"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 						"sap/ui/fl/write/_internal/appVariant/AppVariant"
+					]
+				}
+			},
+			"write/_internal/appVariant/AppVariantInlineChangeFactory": {
+				group: "Internal app variant inline change related APIs",
+				coverage: {
+					only: [
+						"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
+						"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+						"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChange"
 					]
 				}
 			},

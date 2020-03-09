@@ -3,11 +3,11 @@
  */
 sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory"
 ], function(
 	BaseCommand,
-	DescriptorInlineChangeFactory,
+	AppVariantInlineChangeFactory,
 	DescriptorChangeFactory
 ) {
 	"use strict";
@@ -83,16 +83,19 @@ sap.ui.define([
 	 * @return {Promise} Returns Promise resolving after change has been created and stored
 	 */
 	AppDescriptorCommand.prototype.createAndStoreChange = function() {
-		return DescriptorInlineChangeFactory.createDescriptorInlineChange(
-			this.getChangeType(), this.getParameters(), this.getTexts())
-		.then(function(oAppDescriptorChangeContent) {
-			return new DescriptorChangeFactory().createNew(this.getReference(),
-				oAppDescriptorChangeContent, this.getLayer(), this.getAppComponent());
-		}.bind(this))
-		.then(function(oAppDescriptorChange) {
-			var oChange = oAppDescriptorChange.store();
-			this._oPreparedChange = oChange;
-		}.bind(this));
+		return AppVariantInlineChangeFactory.createDescriptorInlineChange({
+			changeType: this.getChangeType(),
+			content: this.getParameters(),
+			texts: this.getTexts()
+		})
+			.then(function(oAppDescriptorChangeContent) {
+				return new DescriptorChangeFactory().createNew(this.getReference(),
+					oAppDescriptorChangeContent, this.getLayer(), this.getAppComponent());
+			}.bind(this))
+			.then(function(oAppDescriptorChange) {
+				var oChange = oAppDescriptorChange.store();
+				this._oPreparedChange = oChange;
+			}.bind(this));
 	};
 	return AppDescriptorCommand;
 });

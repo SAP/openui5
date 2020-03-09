@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/base/Log",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/base/util/includes"
 ], function (
 	jQuery,
@@ -20,7 +20,7 @@ sap.ui.define([
 	LayerUtils,
 	Settings,
 	Log,
-	DescriptorInlineChangeFactory,
+	DescriptorChangeTypes,
 	includes
 ) {
 	"use strict";
@@ -1080,7 +1080,7 @@ sap.ui.define([
 			jsOnly: oPropertyBag.jsOnly || false,
 			variantReference: oPropertyBag.variantReference || "",
 			// since not all storage implementations know about all app descriptor change types, we store a flag if this change type changes a descriptor
-			appDescriptorChange: includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oPropertyBag.changeType)
+			appDescriptorChange: includes(DescriptorChangeTypes.getChangeTypes(), oPropertyBag.changeType)
 		};
 
 		return oNewFile;

@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/m/Button",
@@ -12,7 +12,7 @@ sap.ui.define([
 function (
 	Layer,
 	FlUtils,
-	DescriptorInlineChangeFactory,
+	AppVariantInlineChangeFactory,
 	DescriptorChangeFactory,
 	CommandFactory,
 	Button,
@@ -78,10 +78,10 @@ function (
 				store : function() {
 					assert.ok(true, "the descriptor change was submitted");
 					oAddLibraryCommand.execute()
-					.then(function() {
-						assert.ok(sap.uxap, "upon execution, 'sap.uxap' library is loaded");
-						done();
-					});
+						.then(function() {
+							assert.ok(sap.uxap, "upon execution, 'sap.uxap' library is loaded");
+							done();
+						});
 				}
 			};
 
@@ -89,9 +89,9 @@ function (
 				mockName : "mocked"
 			};
 
-			this.createDescriptorInlineChangeStub = sinon.stub(DescriptorInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(sChangeType, mParameters) {
-				assert.equal(sChangeType, this.sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' method");
-				assert.equal(mParameters.libraries, this.mLibraries, "libraries are properly passed to the 'create_ui5_addLibraries' method");
+			this.createDescriptorInlineChangeStub = sinon.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
+				assert.equal(mPropertyBag.changeType, this.sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' method");
+				assert.equal(mPropertyBag.content.libraries, this.mLibraries, "libraries are properly passed to the 'create_ui5_addLibraries' method");
 				this.createDescriptorInlineChangeStub.restore();
 				return Promise.resolve(oMockAddLibraryInlineChange);
 			}.bind(this));
