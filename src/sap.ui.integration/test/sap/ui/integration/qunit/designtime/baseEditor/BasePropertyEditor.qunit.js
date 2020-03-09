@@ -14,6 +14,56 @@ function (
 
 	var sandbox = sinon.sandbox.create();
 
+	QUnit.module("Base functionality", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			var mPropertyConfig = {
+				foo: {
+					label: "foo",
+					path: "foo",
+					type: "string"
+				}
+			};
+			var mConfig = {
+				context: "/",
+				properties: mPropertyConfig,
+				propertyEditors: {
+					string: "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			};
+			var mJson = {
+				foo: "bar"
+			};
+
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", done);
+		},
+		afterEach: function () {
+			sandbox.restore();
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When an editor implements the formatter hook", function (assert) {
+			var done = assert.async();
+			var oFooEditor = this.oBaseEditor.getPropertyEditorsByNameSync("foo")[0];
+			oFooEditor.getContent().bindProperty("value", "displayValue");
+			oFooEditor.getAggregation("propertyEditor").formatValue = function (vValue) {
+				return "Foo" + vValue;
+			};
+			oFooEditor.attachValueChange(function () {
+				assert.strictEqual(oFooEditor.getValue(), "baz", "Then the editor value is not formatted");
+				assert.strictEqual(oFooEditor.getContent().getValue(), "Foobaz", "Then the display value on the input control is formatted");
+				done();
+			});
+			oFooEditor.setValue("baz");
+		});
+	});
+
 	QUnit.module("Ready state handling", {
 		beforeEach: function (assert) {
 			var mPropertyConfig = {

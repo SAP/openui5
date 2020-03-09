@@ -133,7 +133,8 @@ sap.ui.define([
 			// Helper model for accessing internal properties/data from XML and/or in bindigs
 			this._oDefaultModel = new JSONModel({
 				value: this.getValue(),
-				config: this.getConfig()
+				config: this.getConfig(),
+				displayValue: this.formatValue(deepClone(this.getValue()))
 			});
 			this._oDefaultModel.setDefaultBindingMode("OneWay");
 			this.setBindingContext(this._oDefaultModel.getContext("/"));
@@ -161,7 +162,8 @@ sap.ui.define([
 				// Keep copy of the value in config for easy bindings
 				this._oDefaultModel.setData(
 					Object.assign({}, this._oDefaultModel.getData(), {
-						value: vValue
+						value: vValue,
+						displayValue: this.formatValue(deepClone(vValue))
 					})
 				);
 
@@ -232,6 +234,17 @@ sap.ui.define([
 				value: vNextValue
 			});
 		}
+	};
+
+	/**
+	 * Hook which is called on value change. Can be overriden to format the editor value for displaying.
+	 * The formatted value is set on the editor model as the display value.
+	 *
+	 * @param {*} vValue - Original editor value
+	 * @returns {*} Formatted value
+	 */
+	BasePropertyEditor.prototype.formatValue = function (vValue) {
+		return vValue;
 	};
 
 	/**
