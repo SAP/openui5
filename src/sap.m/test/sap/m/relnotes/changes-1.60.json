@@ -3200,5 +3200,43 @@
         ]
       }
     ]
+  },
+  "1.60.25": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "e445efa7d8a651a0521b860a4b682b8024df407d",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: accessibility state is now maintained corretly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007711072019"
+          }
+        ]
+      },
+      {
+        "id": "059d9c8f231895c453822ed5009ebe181677a5f5",
+        "type": "FIX",
+        "text": " sap.m.Title: titleStyle property now affects aria-level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000277352020"
+          }
+        ]
+      },
+      {
+        "id": "27538210afb305b03992a515a53633b8fadb6beb",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Handle properly not visible tokens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970263638"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -46,5 +46,21 @@
         ]
       }
     ]
+  },
+  "1.60.25": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "a9d64039d2fdc88db10b5c91ff3bcb999321014e",
+        "type": "FIX",
+        "text": " sap-icons-tnt: Incorrect codepoints are now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008086842019"
+          }
+        ]
+      }
+    ]
   }
 }
