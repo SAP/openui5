@@ -97,7 +97,7 @@ sap.ui.define([
 					return oNode.$().hasClass("sapFCard");
 				},
 				success: function () {
-					Opa5.assert.strictEqual(oData, "http://www.company_a.example.com", "The URL is correct");
+					Opa5.assert.strictEqual(oData.url, "http://www.company_a.example.com", "The URL is correct");
 				},
 				errorMessage: "The component does not exist or the value could not be changed"
 			});

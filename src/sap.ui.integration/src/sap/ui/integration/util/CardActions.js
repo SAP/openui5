@@ -349,6 +349,21 @@ sap.ui.define([
 			return null;
 		};
 
+		CardActions.prototype.fireAction = function (oSource, sType, mParameters) {
+			var oHost = this._getHostInstance(),
+				oCard = this.getCard();
+
+			CardActions.fireAction({
+				card: oCard,
+				host: oHost,
+				action: {
+					type: sType
+				},
+				parameters: mParameters,
+				source: oSource
+			});
+		};
+
 		CardActions.fireAction = function (mConfig) {
 			var oHost = mConfig.host,
 				oCard = mConfig.card,
