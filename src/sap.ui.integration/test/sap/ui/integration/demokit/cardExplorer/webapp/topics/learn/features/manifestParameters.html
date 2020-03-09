@@ -29,11 +29,11 @@
 			Parameters can be used inside "sap.card" scope.
 		</p>
 		<p>
-			There are two types of parameters:
+			There are two groups of parameters:
 		</p>
 		<ol>
 			<li>User defined manifest parameters</li>
-			<li>Static manifest parameters</li>
+			<li>Predefined manifest parameters</li>
 		</ol>
 
 		<h2 id="userParameters">
@@ -41,12 +41,11 @@
 		</h2>
 
 		<p>
-			Cards can define input parameters in their manifests. The input parameters can be everything including user
+			Card developers define input parameters in the card manifest. The input parameters can be everything including user
 			IDs, authentication tokens, locations, language etc...
 			It is possible to assign default values to the input parameters in the manifest.
-			When creating or integrating a card, it is possible to assign values to parameters otherwise they are
-			replaced with their default values.
-			Parameters are described in the "configuration" section of the manifest.
+			If parameter value is not set during card creation or integration, default value will be used.
+			Parameters are defined in the "configuration" section of the manifest.
 			All parameters are replaced during manifest processing and changing them will cause re-processing of the
 			manifest.
 		</p>
@@ -126,13 +125,12 @@
 			</table>
 		</div>
 
-		<h2 id="staticParameters">
-			Static Manifest Parameters
+		<h2 id="predefinedParameters">
+			Predefined Manifest Parameters
 		</h2>
 
 		<p>
-			There is also a set of predefined parameters that can be used inside the manifest without having to describe
-			them in the "configuration" section.
+			The following parameters can be used in the manifest and do not require definition in the "configuration" section.
 		</p>
 
 		<table>
@@ -162,7 +160,7 @@
 			Examples
 		</h2>
 
-		<p>A card having a user defined "city" and "weatherServices" manifest parameters with default values.
+		<p>User defined manifest parameters "city" and "weatherServices" with default values set.
 			The "city" value is used inside the request. The "weatherServices" value is used inside the title.</p>
 		<pre class="prettyprint  lang-js">{
 	"sap.card": {
@@ -214,7 +212,7 @@ var oParameters = {
 oCard.setParameters(oParameters);</pre>
 
 		<p>
-			Using the static manifest parameter "TODAY_ISO" inside the subtitle of the card:
+			Using the predefined manifest parameter "TODAY_ISO" inside the subtitle of the card:
 		</p>
 		<pre class="prettyprint  lang-js">{
 	"sap.card": {
@@ -232,7 +230,7 @@ oCard.setParameters(oParameters);</pre>
 	<div class="navigation">
 		<h4>Table of Contents</h4>
 		<div><a href="#userParameters">User Defined Manifest Parameters</a></div>
-		<div><a href="#staticParameters">Static Manifest Parameters</a></div>
+		<div><a href="#predefinedParameters">Predefined Manifest Parameters</a></div>
 		<div><a href="#examples">Examples</a></div>
 	</div>
 </div>
