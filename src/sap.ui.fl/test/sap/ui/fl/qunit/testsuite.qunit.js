@@ -1,7 +1,13 @@
-sap.ui.define(function () {
+sap.ui.define([
+	"sap/base/util/merge",
+	"sap/base/Log"
+], function (
+	merge,
+	Log
+) {
 	"use strict";
 
-	return {
+	var mConfig = {
 		name: "sap.ui.fl",
 		defaults: {
 			group: "Default",
@@ -464,18 +470,6 @@ sap.ui.define(function () {
 			ChangePersistenceFactory: {
 				coverage: {
 					only: ["sap/ui/fl/ChangePersistenceFactory"]
-				}
-			},
-			Condenser: {
-				coverage: {
-					only: ["sap/ui/fl/Condenser"]
-				},
-				ui5: {
-					resourceroots: {
-						"rta/qunit": "test-resources/sap/ui/rta/qunit/",
-						"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
-						"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-					}
 				}
 			},
 			FlexController: {
@@ -947,4 +941,47 @@ sap.ui.define(function () {
 			}
 		}
 	};
+
+	var bCompAvailable = false;
+	var oXhr = new XMLHttpRequest();
+	oXhr.onreadystatechange = function() {
+		if (this.readyState === 4) {
+			switch (this.status) {
+				case 200:
+				case 304:
+					bCompAvailable = JSON.parse(this.responseText).libraries.some(function (mLibrary) {
+						return mLibrary.name === 'sap.ui.comp';
+					});
+					break;
+				default:
+					Log.info("Sorry, can't find file with library versions ¯\\_(ツ)_/¯");
+			}
+		}
+	};
+
+	oXhr.open("GET", sap.ui.require.toUrl("sap-ui-version.json"), false);
+	oXhr.send();
+
+	if (bCompAvailable) {
+		mConfig = merge({}, mConfig, {
+			tests: {
+				Condenser: {
+					coverage: {
+						only: ["sap/ui/fl/Condenser"]
+					},
+					ui5: {
+						resourceroots: {
+							"rta/qunit": "test-resources/sap/ui/rta/qunit/",
+							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+						}
+					}
+				}
+			}
+		});
+	} else {
+		Log.info("sap.ui.comp not available", "enabling tests are skipped, ensure sap.ui.comp from sapui5.runtime is loaded to execute them");
+	}
+
+	return mConfig;
 });
