@@ -1314,5 +1314,84 @@
         ]
       }
     ]
+  },
+  "1.71.12": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "5e6481371175bd0a86cb59e21e32a631bdd855d3",
+        "type": "FIX",
+        "text": " GenericTile title extends beyond 2 lines in ContentMode in IE, FF and Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980152703"
+          }
+        ]
+      },
+      {
+        "id": "09a364f7e7661e50fcb379846858c922d7ec394c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation doesn\u0027t throw an error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970504591"
+          }
+        ]
+      },
+      {
+        "id": "92566abf1fc1f8198372ccf095d8f39bfdd11f31",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Popover is now displayed properly on iOS and OS X",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070010334"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980445966"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980505824"
+          }
+        ]
+      },
+      {
+        "id": "44d4069f089896e9246db42e575dff0d986fc05e",
+        "type": "FIX",
+        "text": " sap.m.SearchField: search event is now fired correctly in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970045315"
+          }
+        ]
+      },
+      {
+        "id": "3120140c127bbf6a8441eea6822c89f96eab0391",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: accessibility state is now maintained corretly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007711072019"
+          }
+        ]
+      },
+      {
+        "id": "2b5539c367af517ad2aa169b06b69e8f7cc5b4e5",
+        "type": "FIX",
+        "text": " sap.m.Title: titleStyle property now affects aria-level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000277352020"
+          }
+        ]
+      }
+    ]
   }
 }

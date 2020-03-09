@@ -122,5 +122,32 @@
         ]
       }
     ]
+  },
+  "1.71.12": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "51811ee2616460aaae52e555b90fda715d7da47e",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected section focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000676252020"
+          }
+        ]
+      },
+      {
+        "id": "57b06b0e3033f163103e5978128ac0bcec11febd",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Improved accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000277352020"
+          }
+        ]
+      }
+    ]
   }
 }
