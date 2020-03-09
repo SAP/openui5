@@ -428,4 +428,15 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oResponsivePopover.getDomRef().getAttribute('aria-modal'), "true", 'aria-modal attribute is true');
 	});
+
+	QUnit.test("ResponsivePopover setting ariaRoleApplication property should set it to the internal popover", function (assert) {
+		// Arrange
+		var oResponsivePopover = new ResponsivePopover();
+
+		// Act
+		oResponsivePopover._setAriaRoleApplication(true);
+
+		// Assert
+		assert.strictEqual(oResponsivePopover._oControl.getProperty('ariaRoleApplication'), true, 'Internal\'s popover ariaRoleApplication property is set to true');
+	});
 });

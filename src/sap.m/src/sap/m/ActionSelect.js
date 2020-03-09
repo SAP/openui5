@@ -83,6 +83,9 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', 'sap/ui/core/Core', './A
 
 		ActionSelect.prototype._onBeforeRenderingPopover = function () {
 			Select.prototype._onBeforeRenderingPopover.call(this);
+			var oPicker = this.getPicker();
+			oPicker && oPicker._setAriaRoleApplication(true);
+
 			this._updateTutorMessage();
 		};
 

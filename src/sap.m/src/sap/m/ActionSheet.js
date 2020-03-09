@@ -325,6 +325,7 @@ sap.ui.define([
 					},
 					ariaLabelledBy: this.getPopupHiddenLabelId() || undefined
 				}).addStyleClass("sapMActionSheetPopover");
+				this._parent._setAriaRoleApplication(true);
 
 				/* TODO remove after the end of support for Internet Explorer */
 				if (Device.browser.internet_explorer) {

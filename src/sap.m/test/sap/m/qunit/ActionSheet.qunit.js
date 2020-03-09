@@ -899,6 +899,26 @@ sap.ui.define([
 
 	});
 
+	QUnit.test('ActionSheet\'s ariaRoleApplication property should be set to true', function (assert) {
+		var oActionSheet = new ActionSheet();
+		var oButton = new Button({
+			text: "Open ActionSheet",
+			press: function () {
+				oActionSheet.openBy(this);
+			}
+		});
+
+		page.addContent(oButton);
+		sap.ui.getCore().applyChanges();
+		oButton.firePress();
+
+		assert.strictEqual(oActionSheet._parent.getProperty('ariaRoleApplication'), true, "ariaRoleApplication of the ActionSheet is set to true.");
+
+		oActionSheet.close();
+		oButton.destroy();
+		oActionSheet.destroy();
+	});
+
 	QUnit.module("API");
 
 	QUnit.test('ActionSheet clone should create a duplicate', function (assert) {

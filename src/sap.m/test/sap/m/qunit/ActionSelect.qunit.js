@@ -462,4 +462,13 @@ sap.ui.define([
 		var sInvisibleTextMessage = this.getTutorMessageText(iTutorMessageIndex);
 		assert.strictEqual(sInvisibleTextMessage, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"), "The tutor message is set correctly when adding buttons");
 	});
+
+	QUnit.test("ActionSelect's picker should have ariaRoleApplication property set to true", function (assert) {
+		this.oActionSelect.open();
+		Core.applyChanges();
+
+		assert.strictEqual(this.oPicker.getProperty("ariaRoleApplication"), true, "The picker's ariaRoleApplication property is set to true.");
+
+		this.oActionSelect.close();
+	});
 });
