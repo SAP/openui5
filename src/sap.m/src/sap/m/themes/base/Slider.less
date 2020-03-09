@@ -14,6 +14,7 @@
 	position: relative;
 	height: 3.3125rem;
 	padding: 1.406rem 1.0625rem;
+	z-index: 0;
 
 
 	/* TODO remove after the end of support for Internet Explorer */
@@ -27,6 +28,11 @@
 	width: 100%;
 	position: relative;
 	background-repeat: no-repeat;
+	z-index: 1;
+}
+
+.sapUiLocalBusy .sapMSliderInner {
+	z-index: 0;
 }
 
 .sapMSliderInner,
@@ -58,6 +64,7 @@
 	right: 1.0625rem;;
 	display: block;
 	height: 1.75rem;
+	z-index: 0;
 }
 
 .sapMSliderTick {
