@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.ui.fl",
-  "version": "1.60.25",
+  "version": "1.60.26-SNAPSHOT",
   "description": "OpenUI5 UI Library sap.ui.fl",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -14,7 +14,7 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "dependencies": {
-    "@openui5/sap.m": "1.60.25",
-    "@openui5/sap.ui.core": "1.60.25"
+    "@openui5/sap.m": "1.60.26-SNAPSHOT",
+    "@openui5/sap.ui.core": "1.60.26-SNAPSHOT"
   }
 }
