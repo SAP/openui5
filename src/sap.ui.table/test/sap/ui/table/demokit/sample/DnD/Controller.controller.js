@@ -2,16 +2,24 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, JSONModel, MessageToast, TableExampleUtils) {
+	"sap/m/ToolbarSpacer"
+], function(Controller, JSONModel, MessageToast, ToolbarSpacer) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.DnD.Controller", {
 
 		onInit: function() {
+			var oView = this.getView();
+
 			// set explored app's demo model on this sample
 			this.oProductsModel = this.initSampleProductsModel();
-			this.getView().setModel(this.oProductsModel);
+			oView.setModel(this.oProductsModel);
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/DnD"));
+			}, function(oError){/*ignore*/});
 		},
 
 		onExit: function() {
@@ -183,10 +191,6 @@ sap.ui.define([
 
 		moveDown: function() {
 			this.moveSelectedRow("Down");
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/DnD") + "/info.json", oEvent.getSource());
 		}
 	});
 

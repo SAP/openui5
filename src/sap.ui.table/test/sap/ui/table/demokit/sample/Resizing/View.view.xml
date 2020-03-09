@@ -79,7 +79,7 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:OverflowToolbar>
+					<m:OverflowToolbar id="infobar">
 						<m:Label text="Row Count Mode:" labelFor="rowCountMode"/>
 						<m:SegmentedButton id="rowCountMode" selectedKey="{/visibleRowCountMode}">
 							<m:items>
@@ -93,18 +93,13 @@
 						<m:SegmentedButton
 							id="columnWidths"
 							selectedKey="Static"
-							select="onColumnWidthsChange">
+							selectionChange="onColumnWidthsChange">
 							<m:items>
 								<m:SegmentedButtonItem icon="sap-icon://color-fill" key="Static" tooltip="Static"/>
 								<m:SegmentedButtonItem icon="sap-icon://overlay" key="Flexible" tooltip="Flexible"/>
 								<m:SegmentedButtonItem icon="sap-icon://business-objects-mobile" key="Mixed" tooltip="Mixed"/>
 							</m:items>
 						</m:SegmentedButton>
-						<m:ToolbarSpacer/>
-						<m:Button
-							icon="sap-icon://hint"
-							tooltip="Show information"
-							press="showInfo"/>
 					</m:OverflowToolbar>
 				</footer>
 			</Table>

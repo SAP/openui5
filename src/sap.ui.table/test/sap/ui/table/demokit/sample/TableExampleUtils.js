@@ -2,8 +2,9 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Popover",
 	"sap/m/List",
+	"sap/m/Button",
 	"sap/m/FeedListItem"
-], function(JSONModel, Popover, List, FeedListItem) {
+], function(JSONModel, Popover, List, Button, FeedListItem) {
 	"use strict";
 
 	function showInfo(aItems, oBy) {
@@ -47,6 +48,16 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 		} else {
 			showInfo(aItems, oBy);
 		}
+	};
+
+	Utils.createInfoButton = function(sInfoFor) {
+		return new Button({
+			icon: "sap-icon://hint",
+			tooltip: "Show information",
+			press: function(oEvent){
+				Utils.showInfo(sap.ui.require.toUrl(sInfoFor) + "/info.json", oEvent.getSource());
+			}
+		});
 	};
 
 	return Utils;
