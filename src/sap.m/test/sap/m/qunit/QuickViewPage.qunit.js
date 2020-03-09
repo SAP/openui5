@@ -234,11 +234,8 @@ sap.ui.define([
 	QUnit.test("Fallback icon when the real icon is successfully loaded", function (assert) {
 		// Arrange
 		var FALLBACK_ICON_INDEX = 0,
-			IMAGE_INDEX = 1,
 			aHeaderContent,
-			oImage,
-			oFallbackIcon,
-			done = assert.async();
+			oFallbackIcon;
 
 		this.oQuickViewPage.setIcon("test-resources/sap/m/images/SAPLogo.jpg");
 		this.oQuickViewPage.setFallbackIcon("sap-icon://error");
@@ -247,18 +244,9 @@ sap.ui.define([
 
 		aHeaderContent = this.oQuickViewPage._mPageContent.header.getContent();
 		oFallbackIcon = aHeaderContent[FALLBACK_ICON_INDEX];
-		oImage = aHeaderContent[IMAGE_INDEX];
 
-		oImage.$().on("load", function () {
-			// use setTimeout to avoid IE11 problems
-			setTimeout(function () {
-				// Assert
-				assert.strictEqual(oFallbackIcon.$().css("display"), "none", "The fallback icon should NOT be displayed.");
-				assert.notStrictEqual(oImage.$().css("display"), "none", "The image should be displayed.");
-
-				done();
-			}, 100);
-		});
+		// Assert
+		assert.ok(oFallbackIcon.hasStyleClass("sapMQuickViewPageFallbackIconHidden"), "The fallback icon should NOT be displayed.");
 	});
 
 	QUnit.module("Private API", {

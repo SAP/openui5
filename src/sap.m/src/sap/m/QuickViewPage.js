@@ -760,8 +760,8 @@ sap.ui.define([
 					oFailedImage = oEvent.getSource(),
 					bRestoreFocus = document.activeElement === oFailedImage.getDomRef();
 
-				oFallbackIcon.$().removeClass("sapMQuickViewPageFallbackIconHidden");
-				oFailedImage.$().addClass("sapMQuickViewPageFailedImage");
+				oFallbackIcon.removeStyleClass("sapMQuickViewPageFallbackIconHidden");
+				oFailedImage.addStyleClass("sapMQuickViewPageFailedImage");
 
 				// if before hiding the image it was the activeElement move the focus to the fallback icon
 				if (bRestoreFocus) {
