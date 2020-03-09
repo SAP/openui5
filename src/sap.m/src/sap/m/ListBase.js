@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
+	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/LabelEnablement",
@@ -26,6 +27,7 @@ sap.ui.define([
 function(
 	KeyCodes,
 	Device,
+	Core,
 	Control,
 	InvisibleText,
 	LabelEnablement,
@@ -767,7 +769,7 @@ function(
 
 		// return no data text from resource bundle when there is no custom
 		var sNoDataText = this.getProperty("noDataText");
-		sNoDataText = sNoDataText || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_NO_DATA");
+		sNoDataText = sNoDataText || Core.getLibraryResourceBundle("sap.m").getText("LIST_NO_DATA");
 		return sNoDataText;
 	};
 
@@ -839,7 +841,7 @@ function(
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.setSelectedItemById = function(sId, bSelect) {
-		var oListItem = sap.ui.getCore().byId(sId);
+		var oListItem = Core.byId(sId);
 		return this.setSelectedItem(oListItem, bSelect);
 	};
 
@@ -1571,7 +1573,7 @@ function(
 		// render swipe content into swipe container if needed
 		if (this._bRerenderSwipeContent) {
 			this._bRerenderSwipeContent = false;
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = Core.createRenderManager();
 			rm.render(this.getSwipeContent(), $container.empty()[0]);
 			rm.destroy();
 		}
@@ -1729,7 +1731,7 @@ function(
 	// Swipe from the end to the begin - right to left in LTR and left to right in RTL languages.
 	ListBase.prototype.onswipeleft = function(oEvent) {
 
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Core.getConfiguration().getRTL();
 		var exceptDirection = bRtl ? SwipeDirection.EndToBegin : SwipeDirection.BeginToEnd;
 		var swipeDirection = this.getSwipeDirection();
 
@@ -1749,7 +1751,7 @@ function(
 
 	// Swipe from the begin to the end - left to right in LTR and right to left in RTL languages.
 	ListBase.prototype.onswiperight = function(oEvent) {
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Core.getConfiguration().getRTL();
 		var exceptDirection = bRtl ? SwipeDirection.BeginToEnd : SwipeDirection.EndToBegin;
 		var swipeDirection = this.getSwipeDirection();
 
@@ -1824,7 +1826,7 @@ function(
 	};
 
 	ListBase.prototype.getAccessibilityType = function() {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LIST");
+		return Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LIST");
 	};
 
 	ListBase.prototype.getAccessibilityStates = function() {
@@ -1835,7 +1837,7 @@ function(
 		var sStates = "",
 			mMode = ListMode,
 			sMode = this.getMode(),
-			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oBundle = Core.getLibraryResourceBundle("sap.m");
 
 		if (LabelEnablement.isRequired(this)) {
 			sStates += oBundle.getText("LIST_REQUIRED") + " ";
@@ -1893,7 +1895,7 @@ function(
 		this._handleStickyItemFocus(oItem.getDomRef());
 
 		if (oItem !== oFocusedControl ||
-			!sap.ui.getCore().getConfiguration().getAccessibility()) {
+			!Core.getConfiguration().getAccessibility()) {
 			return;
 		}
 
@@ -1908,7 +1910,7 @@ function(
 		} else {
 			// prepare the announcement for the screen reader
 			var oAccInfo = oItem.getAccessibilityInfo(),
-				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				oBundle = Core.getLibraryResourceBundle("sap.m"),
 				sDescription = oAccInfo.type + " ";
 
 			if (!Device.browser.chrome || this.isA("sap.m.Table")) {
@@ -2324,7 +2326,7 @@ function(
 
 		var bExecuteDefault = this.fireBeforeOpenContextMenu({
 			listItem: oLI,
-			column: sap.ui.getCore().byId(jQuery(oEvent.target).closest(".sapMListTblCell", this.getNavigationRoot()).attr("data-sap-ui-column"))
+			column: Core.byId(jQuery(oEvent.target).closest(".sapMListTblCell", this.getNavigationRoot()).attr("data-sap-ui-column"))
 		});
 		if (bExecuteDefault) {
 			oEvent.setMarked();
@@ -2346,7 +2348,7 @@ function(
 			return;
 		}
 
-		// range seleection with shift + arrow up/down only works with visible items
+		// Range selection with shift + arrow up/down only works with visible items
 		var aVisibleItems = this.getVisibleItems(),
 			iItemIndex = aVisibleItems.indexOf(oItem),
 			oItemToSelect = aVisibleItems[iItemIndex + iDirection];
@@ -2520,6 +2522,81 @@ function(
 
 	ListBase.prototype.setInfoToolbar = function(oInfoToolbar) {
 		return this._setToolbar("infoToolbar", oInfoToolbar);
+	};
+
+	/**
+	 * Scrolls the <code>ListBase</code> so that the item with the given index is in the viewport.
+	 * If the index is -1 it will scroll to the end of the <code>ListBase</code> control. In case
+	 * of growing, it will scroll to the last item that is currently available.
+	 *
+	 * Growing in combination with <code>growingScrollToLoad=true</code> can result in loading of
+	 * new items when scrolling to the end of the <code>ListBase</code> control.
+	 *
+	 * @param {number} iIndex Index of the item in the items aggregation that will be scrolled into the viewport
+	 *
+	 * @protected
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	ListBase.prototype.scrollToIndex = function(iIndex) {
+		var aItems, iRowCount, oItem, oScrollDelegate;
+
+		oScrollDelegate = library.getScrollDelegate(this, true);
+
+		if (!oScrollDelegate) {
+			return;
+		}
+
+		aItems = this.getVisibleItems();
+		iRowCount = aItems.length;
+
+		if (typeof iIndex !== 'number' || iIndex < -1) {
+			iIndex = 0;
+		}
+
+		if (iIndex >= iRowCount || iIndex === -1) {
+			iIndex = iRowCount - 1;
+		}
+
+		oItem = aItems[iIndex];
+		oScrollDelegate.scrollToElement(oItem.getDomRef(), null, [0, this._getStickyAreaHeight() * -1]);
+
+		return;
+	};
+
+
+	/**
+	 * Returns the height of the sticky area in px. The height depends on the sticky configuration.
+	 *
+	 * @return {number} Height in px
+	 * @private
+	 */
+	ListBase.prototype._getStickyAreaHeight = function() {
+		var aSticky = this.getSticky();
+
+		if  (!(aSticky && aSticky.length)) {
+			return 0;
+		}
+
+		return aSticky.reduce(function(accumulatedHeight, stickyOption) {
+			var oControl, oDomRef;
+
+			switch (stickyOption) {
+				case Sticky.HeaderToolbar:
+					oControl = this.getHeaderToolbar();
+					oDomRef = oControl && oControl.getDomRef() || this.getDomRef("header");
+					break;
+				case Sticky.InfoToolbar:
+					oControl = this.getInfoToolbar();
+					oDomRef = oControl && oControl.getDomRef();
+					break;
+				case Sticky.ColumnHeaders:
+					oDomRef = this.getDomRef("tblHeader");
+					break;
+				default:
+			}
+
+			return accumulatedHeight + (oDomRef ? oDomRef.offsetHeight : 0);
+		}.bind(this), 0 /* Initial value */);
 	};
 
 	ListBase.prototype._setToolbar = function(sAggregationName, oToolbar) {
