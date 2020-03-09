@@ -8,7 +8,7 @@
     "start-grunt": "grunt serve",
     "testsuite": "cross-env OPENUI5_SRV_OPEN=/test-resources/testsuite/testframe.html node lib/server/testsuiteServer.js",
     "test": "npm run lint",
-    "lint": "eslint ./src",
+    "lint": "eslint ./src --quiet",
     "eslint": "eslint",
     "link-all": "wsrun --serial link",
     "unlink-all": "wsrun --serial unlink",
