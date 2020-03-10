@@ -26,7 +26,7 @@ sap.ui.define([
 	var CardEditor = BaseEditor.extend("sap.ui.integration.designtime.cardEditor.CardEditor", {
 		constructor: function() {
 			BaseEditor.prototype.constructor.apply(this, arguments);
-			this.addDefaultConfig(oDefaultCardConfig);
+			this.addConfig(oDefaultCardConfig);
 		},
 		renderer: BaseEditor.getMetadata().getRenderer()
 	});
