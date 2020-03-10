@@ -53,22 +53,36 @@ sap.ui.define([
 		constructor : function () {
 			MessageProcessor.apply(this, arguments);
 
-			this.oData = {};
-			this.bDestroyed = false;
+			// active bindings, i.e. bindings with an attached change handler, see
+			// Binding#attachChange
 			this.aBindings = [];
-			this.mContexts = {};
-			this.iSizeLimit = 100;
-			this.sDefaultBindingMode = BindingMode.TwoWay;
-			this.mSupportedBindingModes = {"OneWay": true, "TwoWay": true, "OneTime": true};
-			this.mUnsupportedFilterOperators = {};
-			this.bLegacySyntax = false;
-			this.sUpdateTimer = null;
-			this.sRemoveTimer;
+			// bindings to be removed after a timeout
 			this.aBindingsToRemove = [];
+			// maps the absolute binding path to a context instance
+			this.mContexts = {};
+			// the data
+			this.oData = {};
+			// the default binding mode
+			this.sDefaultBindingMode = BindingMode.TwoWay;
+			// whether this model is destroyed
+			this.bDestroyed = false;
+			// whether to use the legacy path syntax handling
+			this.bLegacySyntax = false;
+			// maps a resolved binding path to an array of sap.ui.core.message.Message
+			this.mMessages = {};
+			// the id of the timeout for removing bindings
+			this.sRemoveTimer = null;
+			// the model's size limit
+			this.iSizeLimit = 100;
+			// maps a sap.ui.model.BindingMode to true if the binding mode is supported
+			this.mSupportedBindingModes = {"OneWay" : true, "TwoWay" : true, "OneTime" : true};
+			// maps a sap.ui.model.FilterOperator to true if the filter operator is not supported
+			this.mUnsupportedFilterOperators = {};
+			// the id of the timeout for calling #checkUpdate
+			this.sUpdateTimer = null;
 		},
 
 		metadata : {
-
 			"abstract" : true,
 			publicMethods : [
 				// methods
@@ -76,19 +90,16 @@ sap.ui.define([
 				"getDefaultBindingMode", "setDefaultBindingMode", "isBindingModeSupported", "attachParseError", "detachParseError",
 				"attachRequestCompleted", "detachRequestCompleted", "attachRequestFailed", "detachRequestFailed", "attachRequestSent",
 				"detachRequestSent", "attachPropertyChange", "detachPropertyChange", "setSizeLimit", "refresh", "isList", "getObject"
-		  ]
-
-		  /* the following would save code, but requires the new ManagedObject (1.9.1)
-		  , events : {
+			]
+			/* the following would save code, but requires the new ManagedObject (1.9.1)
+			, events : {
 				"parseError" : {},
 				"requestFailed" : {},
 				"requestSent" : {},
 				"requestCompleted" ; {}
-		  }
-		  */
-
+			}
+			*/
 		}
-
 	});
 
 
@@ -930,12 +941,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets messages.
+	 * Sets the messages for this model and notifies the bindings if the new messages differ from
+	 * the current model messages.
 	 *
-	 * @param {object} mMessages Messages for this model
+	 * @param {Object<string,sap.ui.core.message.Message[]>} [mMessages={}]
+	 *   The new messages for the model, mapping a binding path to an array of
+	 *   {@link sap.ui.core.message.Message} objects
+	 *
 	 * @public
 	 */
-	Model.prototype.setMessages = function(mMessages) {
+	Model.prototype.setMessages = function (mMessages) {
 		mMessages = mMessages || {};
 		if (!deepEqual(this.mMessages, mMessages)) {
 			this.mMessages = mMessages;
@@ -944,30 +959,58 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get messages for a given path.
+	 * Returns model messages for which the target matches the given resolved binding path.
 	 *
-	 * @param {string} sPath The binding path
-	 * @param {boolean} bStartsWithMatching The set of relevant messages is found through a String#startsWith matching
+	 * @param {string} sPath
+	 *   The resolved binding path
+	 * @param {boolean} [bPrefixMatch]
+	 *   Whether also messages with a target starting with the given path are returned, not just the
+	 *   messages with a target identical to the given path
+	 * @returns {sap.ui.core.message.Message[]}
+	 *   An array of messages matching the given path; may be empty but not <code>null</code> or
+	 *   <code>undefined</code>
 	 * @protected
 	 */
-	Model.prototype.getMessagesByPath = function(sPath, bStartsWithMatching) {
-		var aMessages = [], that = this;
+	Model.prototype.getMessagesByPath = function (sPath, bPrefixMatch) {
+		var aMessages,
+			that = this;
 
-		if (this.mMessages) {
-			if (bStartsWithMatching){
-				Object.keys(this.mMessages).forEach(function(sMessagePath){
-					that.mMessages[sMessagePath].forEach(function(oMessage){
-						if (oMessage.fullTarget.startsWith(sPath)){
-							aMessages.push(oMessage);
-						}
-					});
-				});
-				return aMessages;
-			} else {
-				return this.mMessages[sPath] || [];
-			}
+		if (!bPrefixMatch) {
+			return this.mMessages[sPath] || [];
 		}
-		return null;
+
+		aMessages = [];
+		Object.keys(this.mMessages).forEach(function (sMessagePath) {
+			var aMatchingMessages = that.filterMatchingMessages(sMessagePath, sPath);
+
+			if (aMatchingMessages.length) {
+				aMessages = aMessages.concat(aMatchingMessages);
+			}
+		});
+
+		return aMessages;
+	};
+
+	/**
+	 * Returns an array of messages for the given message target matching the given resolved binding
+	 * path prefix.
+	 *
+	 * @param {string} sMessageTarget
+	 *   The messages target used as key in <code>this.mMessages</code>
+	 * @param {string} sPathPrefix
+	 *   The resolved binding path prefix
+	 * @returns {sap.ui.core.message.Message[]}
+	 *   The matching message objects, or an empty array, if no messages match.
+	 *
+	 * @private
+	 */
+	Model.prototype.filterMatchingMessages = function (sMessageTarget, sPathPrefix) {
+		if (sMessageTarget === sPathPrefix
+				|| sMessageTarget.startsWith(sPathPrefix === "/" ? sPathPrefix : sPathPrefix + "/")
+		) {
+			return this.mMessages[sMessageTarget];
+		}
+		return [];
 	};
 
 	/**

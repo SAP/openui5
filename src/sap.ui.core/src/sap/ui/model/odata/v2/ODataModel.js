@@ -6924,5 +6924,53 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Returns an array of messages for the given message target matching the given resolved binding
+	 * path prefix. Use <code>fullTarget</code> to determine whether a message matches the resolved
+	 * binding path prefix.
+	 *
+	 * @param {string} sMessageTarget
+	 *   The messages target used as key in <code>this.mMessages</code>
+	 * @param {string} sPathPrefix
+	 *   The resolved binding path prefix
+	 * @returns {sap.ui.core.message.Message[]}
+	 *   The matching message objects, or an empty array, if no messages match.
+	 *
+	 * @private
+	 */
+	// @override
+	ODataModel.prototype.filterMatchingMessages = function (sMessagePath, sPathPrefix) {
+		var that = this;
+
+		return this.mMessages[sMessagePath].filter(function (oMessage) {
+			return that.isMessageMatching(oMessage, sPathPrefix);
+		});
+	};
+
+	/**
+	 * Whether the given message object's <code>fullTarget</code> starts with the given resolved
+	 * binding path prefix.
+	 *
+	 * @param {sap.ui.core.message.Message} oMessage
+	 *   The message object to be checked
+	 * @param {string} sPathPrefix
+	 *   The resolved binding path prefix
+	 * @returns {boolean}
+	 *   Whether the given message object's <code>fullTarget</code> starts with the given resolved
+	 *   binding path prefix
+	 *
+	 * @pivate
+	 */
+	ODataModel.prototype.isMessageMatching = function (oMessage, sPathPrefix) {
+		var sFullTarget = oMessage.fullTarget,
+			iPrefixLength = sPathPrefix.length;
+
+		return sFullTarget === sPathPrefix
+			|| sFullTarget.startsWith(sPathPrefix)
+				&& (sPathPrefix === "/"
+					|| sFullTarget[iPrefixLength] === "/"
+					|| sFullTarget[iPrefixLength] === "(");
+	};
+
 	return ODataModel;
 });
