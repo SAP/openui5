@@ -1,0 +1,63 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.ui5": {
+		"services": {
+			"Navigation2": {
+				"factoryName": "cardsdemo.service.SampleNavigationFactory"
+			}
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "./cardcontent/someitems_services.json"
+			}
+		},
+		"header": {
+			"title": "Request list content Card 2",
+			"subTitle": "Card Subtitle",
+			"icon": {
+				"src": "sap-icon://accept"
+			},
+			"status": {
+				"text": "Showing {parameters>/visibleItems} items"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"url": "https://www.sap.com"
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"path": "/"
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "{Description}"
+				},
+				"actions": [
+					{
+						"type": "Navigation",
+						"service": "Navigation2",
+						"parameters": {
+							"url": "{url}",
+							"hidden": "{hidden}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

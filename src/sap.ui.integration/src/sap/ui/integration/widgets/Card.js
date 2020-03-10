@@ -677,6 +677,11 @@ sap.ui.define([
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				this.getModel().setData(oEvent.getParameter("data"));
+				if (this._createContentPromise) {
+					this._createContentPromise.then(function (oContent) {
+						oContent.onDataChanged();
+					});
+				}
 			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
@@ -793,7 +798,7 @@ sap.ui.define([
 		return Core.byId(sHost);
 	};
 
-		/**
+	/**
 	 * Lazily load and create a specific type of card content based on sap.card/content part of the manifest
 	 *
 	 * @private
@@ -812,13 +817,15 @@ sap.ui.define([
 
 		this._setTemporaryContent(sCardType, oContentManifest);
 
-		this.createContent(sCardType, oContentManifest, this._oServiceManager, this._oDataProviderFactory, this._sAppId)
+		this._createContentPromise = this.createContent(sCardType, oContentManifest, this._oServiceManager, this._oDataProviderFactory, this._sAppId)
 			.then(function (oContent) {
 				this._setCardContent(oContent);
-			}.bind(this))
-			.catch(function (sError) {
-				this._handleError(sError);
+				return oContent;
 			}.bind(this));
+
+		this._createContentPromise.catch(function (sError) {
+			this._handleError(sError);
+		}.bind(this));
 	};
 
 	Card.prototype.createHeader = function () {

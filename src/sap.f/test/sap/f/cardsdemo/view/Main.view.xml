@@ -21,7 +21,7 @@
 				<f:GridList
 					class="sapUiMediumMarginBottom sapUiMediumMarginTop"
 					items="{
-						path: '/',
+						path: 'cardTypesExamples>/',
 						sorter: {
 							path: 'group',
 							descending: false,
@@ -43,10 +43,10 @@
 								</layoutData>
 
 								<VBox class="sapUiSmallMargin">
-									<Title text="{title}" wrapping="true"/>
-									<Text text="{description}" wrapping="true"/>
-									<Title visible="{= ${usage} ? true : false }" text="Use case" wrapping="true" class="sapUiSmallMarginTop"/>
-									<Text text="{usage}" wrapping="true"/>
+									<Title text="{cardTypesExamples>title}" wrapping="true"/>
+									<Text text="{cardTypesExamples>description}" wrapping="true"/>
+									<Title visible="{= ${cardTypesExamples>usage} ? true : false }" text="Use case" wrapping="true" class="sapUiSmallMarginTop"/>
+									<Text text="{cardTypesExamples>usage}" wrapping="true"/>
 								</VBox>
 							</VBox>
 						</VBox>
