@@ -81,7 +81,7 @@ sap.ui.define([
 				}
 				this.oCheckUpdateCallToken = undefined;
 				// Note: no system query options supported at property binding
-				this.mQueryOptions = this.oModel.buildQueryOptions(mParameters,
+				this.mQueryOptions = this.oModel.buildQueryOptions(_Helper.clone(mParameters),
 					/*bSystemQueryOptionsAllowed*/false);
 				this.fetchCache(oContext);
 				this.oContext = oContext;

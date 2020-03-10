@@ -9,9 +9,8 @@ sap.ui.define([
 	"./_Helper",
 	"./_Parser",
 	"sap/base/Log",
-	"sap/ui/base/SyncPromise",
-	"sap/ui/thirdparty/jquery"
-], function (_AggregationHelper, _Cache, _Helper, _Parser, Log, SyncPromise, jQuery) {
+	"sap/ui/base/SyncPromise"
+], function (_AggregationHelper, _Cache, _Helper, _Parser, Log, SyncPromise) {
 	"use strict";
 
 	var rComma = /,|%2C|%2c/,
@@ -48,6 +47,7 @@ sap.ui.define([
 	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions) {
 		var mAlias2MeasureAndMethod = {},
 			oFirstLevelAggregation,
+			sFirstLevelOrderBy,
 			mFirstQueryOptions,
 			fnMeasureRangeResolve;
 
@@ -78,10 +78,10 @@ sap.ui.define([
 				throw new Error("Unsupported system query option: $filter");
 			}
 			oFirstLevelAggregation = _AggregationCache.filterAggregationForFirstLevel(oAggregation);
-			mFirstQueryOptions = jQuery.extend({}, mQueryOptions, {
-					$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
-						oFirstLevelAggregation)
-				}); // 1st level only
+			sFirstLevelOrderBy
+				= _AggregationCache.filterOrderby(mQueryOptions.$orderby, oFirstLevelAggregation);
+			mFirstQueryOptions = Object.assign({}, mQueryOptions,
+				sFirstLevelOrderBy ? {$orderby : sFirstLevelOrderBy} : undefined); // 1st level only
 			delete mFirstQueryOptions.$count;
 			mFirstQueryOptions
 				= _AggregationHelper.buildApply(oFirstLevelAggregation, mFirstQueryOptions);
@@ -196,14 +196,19 @@ sap.ui.define([
 	_AggregationCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
 		var oReadPromise = this.oFirstLevel.read(iIndex, iLength, iPrefetchLength, oGroupLock,
-				fnDataRequested);
+				fnDataRequested),
+			that = this;
 
 		if (!this.oMeasureRangePromise) {
 			return oReadPromise.then(function (oResult) {
+				var bHasGroupLevels = Object.keys(that.oAggregation.groupLevels).length > 0;
+
 				oResult.value.forEach(function (oElement) {
-					oElement["@$ui5.node.isExpanded"] = false;
-					oElement["@$ui5.node.isTotal"] = true;
-					oElement["@$ui5.node.level"] = 1;
+					if (!("@$ui5.node.level" in oElement)) {
+						oElement["@$ui5.node.isExpanded"] = bHasGroupLevels ? false : undefined;
+						oElement["@$ui5.node.isTotal"] = bHasGroupLevels;
+						oElement["@$ui5.node.level"] = 1;
+					}
 				});
 
 				return oResult;
@@ -403,7 +408,7 @@ sap.ui.define([
 	 * @private
 	 */
 	_AggregationCache.getResourcePath = function (oAggregation, mQueryOptions, iStart, iEnd) {
-		mQueryOptions = jQuery.extend({}, mQueryOptions, {
+		mQueryOptions = Object.assign({}, mQueryOptions, {
 			$skip : iStart,
 			$top : iEnd - iStart
 		});
@@ -417,9 +422,9 @@ sap.ui.define([
 
 	/**
 	 * Handles a GET response by extracting the minimum and the maximum values from the given
-	 * result, resolving the measure range promise and calling <code>fnHandleResponse</code> with the
-	 * remaining values of <code>aResult</code>. Restores the original <code>handleResponse</code>.
-	 * This function needs to be called on the first level cache.
+	 * result, resolving the measure range promise and calling <code>fnHandleResponse</code> with
+	 * the remaining values of <code>aResult</code>. Restores the original
+	 * <code>handleResponse</code>. This function needs to be called on the first level cache.
 	 *
 	 * @param {object} oAggregation
 	 *   An object holding the information needed for data aggregation; see also
@@ -475,6 +480,9 @@ sap.ui.define([
 				}
 			}
 			if (iStart === 0) { // grand total row: rename measures, add empty dimensions
+				oMinMaxElement["@$ui5.node.isExpanded"] = true;
+				oMinMaxElement["@$ui5.node.isTotal"] = true;
+				oMinMaxElement["@$ui5.node.level"] = 0;
 				Object.keys(oMinMaxElement).forEach(function (sKey) {
 					if (sKey.startsWith("UI5grand__")) {
 						oMinMaxElement[sKey.slice(10)] = oMinMaxElement[sKey];

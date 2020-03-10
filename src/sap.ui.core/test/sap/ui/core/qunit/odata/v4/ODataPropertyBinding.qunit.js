@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
@@ -18,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, ManagedObject, SyncPromise, BindingMode, ChangeReason, BaseContext,
+], function (Log, ManagedObject, SyncPromise, BindingMode, ChangeReason, BaseContext,
 		PropertyBinding, TypeString, Context, asODataBinding, ODataModel, ODataPropertyBinding,
 		_Cache, _Helper, TestUtils) {
 	/*global QUnit, sinon */
@@ -213,13 +212,16 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("bindProperty with parameters", function (assert) {
 		var oBinding,
+			mClonedParameters = {"custom" : "foo"},
 			oError = new Error("Unsupported ..."),
 			oModelMock = this.mock(this.oModel),
-			mParameters = {"custom" : "foo"},
+			mParameters = {/*...*/},
 			mQueryOptions = {};
 
+		this.mock(_Helper).expects("clone").twice().withExactArgs(sinon.match.same(mParameters))
+			.returns(mClonedParameters);
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(mParameters), false).returns(mQueryOptions);
+			.withExactArgs(sinon.match.same(mClonedParameters), false).returns(mQueryOptions);
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").withExactArgs(null);
 
 		// code under test

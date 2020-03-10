@@ -154,18 +154,19 @@ sap.ui.define([
 				},
 				analyzeSupportAssistant: function () {
 					return this.waitFor({
-						success: function () {
-							if (!Opa.getContext().bSupportAssistant) {
-								Opa5.assert.ok(true, "Support assistant inactive, - check skipped");
-								return;
-							}
+						success : function () {
+							var bFinished = false;
 
-							this.iWaitForPromise(RuleAnalyzer.analyze({type : 'global'})
-								.then(function () {
-									var oIssues =
-											RuleAnalyzer.getLastAnalysisHistory().issues || [];
+							// Checks the support assistant about issues, displays the final report
+							// if any relevant issues exist and finally disables support assistant
+							// extension via Opa5 configuration
+							function analyse() {
+								Opa5.assert.ok(true, "Support assistant analysis started");
+								return RuleAnalyzer.analyze({type : 'global'}).then(function () {
+									var oIssues = RuleAnalyzer.getLastAnalysisHistory().issues
+											|| [];
 
-									oIssues = oIssues.filter(function(oIssue) {
+									oIssues = oIssues.filter(function (oIssue) {
 										if (oIssue.severity !== "High"
 											// cannot easily avoid sap.ui.view inside
 											// sap.ui.core.UIComponent#createContent
@@ -180,10 +181,24 @@ sap.ui.define([
 									if (oIssues.length) {
 										Opa5.assert.getFinalReport();
 									}
-									Opa.getContext().bSupportAssistant = false;
+
+									Opa5.assert.ok(true, "Support assistant analysis finished");
+									// disable supportAssistant extension because it is expensive
 									Opa5.extendConfig(getConfig(false));
-								})
-							);
+									Opa.getContext().bSupportAssistant = false;
+								});
+							}
+
+							if (!Opa.getContext().bSupportAssistant) {
+								Opa5.assert.ok(true, "Support assistant inactive, - check skipped");
+								return;
+							}
+
+							analyse().then(function() { bFinished = true; });
+							this.waitFor({
+								check : function () { return bFinished; },
+								timeout : 60
+							});
 						}
 					});
 				}

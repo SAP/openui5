@@ -471,6 +471,7 @@ sap.ui.define([
 
 			this.mock(jQuery).expects("ajax")
 				.withExactArgs(sServiceUrl + "Employees?foo=bar", {
+					contentType : undefined,
 					data : "payload",
 					headers : sinon.match({
 						"X-CSRF-Token" : sMethod === "GET" ? "Fetch" : "abc123"
@@ -809,7 +810,7 @@ sap.ui.define([
 				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, mDefaultHeaders),
 				oResult = {},
 				// add predefined request headers for OData V4
-				mResultHeaders = jQuery.extend({}, {
+				mResultHeaders = Object.assign({}, {
 					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"OData-MaxVersion" : "4.0",
@@ -823,6 +824,8 @@ sap.ui.define([
 
 			this.mock(jQuery).expects("ajax")
 				.withExactArgs(sServiceUrl + "Employees", {
+					// contentType via oRequestor.mFinalHeaders
+					contentType : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					data : undefined,
 					headers : mResultHeaders,
 					method : "GET"
@@ -919,6 +922,7 @@ sap.ui.define([
 
 			this.mock(jQuery).expects("ajax")
 				.withExactArgs(sServiceUrl + "Employees", {
+					contentType : oFixture.mExpectedRequestHeaders["Content-Type"],
 					data : undefined,
 					headers : sinon.match(oFixture.mExpectedRequestHeaders),
 					method : "GET"
@@ -1258,6 +1262,30 @@ sap.ui.define([
 					});
 				});
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSecurityToken: keep fetching even if none is sent", function (assert) {
+		var mHeaders = {"X-CSRF-Token" : "old"},
+			mRequestHeaders = {},
+			oRequestor = _Requestor.create("/Service/", oModelInterface, mHeaders,
+				{"sap-client" : "123"});
+
+		this.mock(Object).expects("assign").twice()
+			.withExactArgs({}, sinon.match.same(mHeaders), {"X-CSRF-Token" : "Fetch"})
+			.returns(mRequestHeaders);
+		this.mock(jQuery).expects("ajax").twice()
+			.withExactArgs("/Service/?sap-client=123", sinon.match({
+				headers : sinon.match.same(mRequestHeaders),
+				method : "HEAD"
+			}))
+			.returns(createMock(assert, undefined, "nocontent", {"OData-Version" : "4.0"}));
+
+		// code under test
+		return oRequestor.refreshSecurityToken("old").then(function () {
+			// Note: "old" must not be current anymore!
+			return oRequestor.refreshSecurityToken();
 		});
 	});
 
@@ -2661,29 +2689,35 @@ sap.ui.define([
 		var oUnchanged = {
 				"foo" : "bar"
 			},
-			oPostData = {
-				"foo" : "bar",
-				"a@$ui5.b" : "c",
-				"@$ui51" : "bar",
+			oPostData = { // just used for Object.keys(), but must be unchanged
+				"foo" : undefined,
+				"a@$ui5.b" : undefined,
+				"@$ui51" : undefined,
 				"@$ui5.option" : "baz",
 				"@$ui5._" : {"transient" : true}
-			},
-			oChangedPostData = {
-				"foo" : "bar",
-				"@$ui51" : "bar",
-				"a@$ui5.b" : "c"
 			};
 
 		assert.strictEqual(_Requestor.cleanPayload(undefined), undefined);
 		assert.strictEqual(_Requestor.cleanPayload(oUnchanged), oUnchanged);
 
-		this.spy(jQuery, "extend");
+		this.mock(Object).expects("assign").withExactArgs({}, sinon.match.same(oPostData))
+			.returns({ // this is the content we compare below
+				"foo" : "bar",
+				"a@$ui5.b" : "c",
+				"@$ui51" : "bar",
+				"@$ui5.option" : "baz",
+				"@$ui5._" : {"transient" : true}
+			});
 
-		assert.deepEqual(_Requestor.cleanPayload(oPostData), oChangedPostData);
+		// code under test
+		assert.deepEqual(_Requestor.cleanPayload(oPostData), {
+			"foo" : "bar",
+			"@$ui51" : "bar",
+			"a@$ui5.b" : "c"
+		});
+
 		assert.strictEqual(oPostData["@$ui5.option"], "baz");
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPostData, "transient"), true);
-
-		sinon.assert.calledOnce(jQuery.extend);
 	});
 
 	//*****************************************************************************************
@@ -3699,6 +3733,7 @@ sap.ui.define([
 		return new Promise(function (resolve) {
 			oJQueryMock.expects("ajax")
 				.withExactArgs(sServiceUrl + sResourcePath, {
+					contentType: undefined,
 					data : undefined,
 					headers : sinon.match.object,
 					method : "POST"

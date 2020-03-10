@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/base/util/uid",
 	"sap/m/ColumnListItem",
@@ -25,9 +24,9 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper',
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, SyncPromise,
-		Controller, View, ChangeReason, Filter, FilterOperator, Sorter, OperationMode,
-		AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
+], function (Log, uid, ColumnListItem, CustomListItem, Text, Device, SyncPromise, Controller, View,
+		ChangeReason, Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper,
+		ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
@@ -93,7 +92,7 @@ sap.ui.define([
 				synchronizationMode : "None"
 			};
 
-		return new ODataModel(jQuery.extend(mDefaultParameters, mModelParameters));
+		return new ODataModel(Object.assign(mDefaultParameters, mModelParameters));
 	}
 
 	/**
@@ -408,7 +407,7 @@ sap.ui.define([
 			delete oTable.getBindingInfo("items").template;
 			// It is not possible to modify the aggregation's template on an existing binding.
 			// Hence, we have to re-create.
-			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
+			oTable.bindItems(Object.assign({}, oTable.getBindingInfo("items"),
 				{suspended : !bRelative, template : oTemplate}));
 
 			return sId;
@@ -661,7 +660,7 @@ sap.ui.define([
 						sinon.match.string, sClassName);
 			});
 
-			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+			mModelParameters = Object.assign({}, {odataVersion : "2.0"}, mModelParameters);
 
 			return createModel("/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/", mModelParameters);
 		},
@@ -686,7 +685,7 @@ sap.ui.define([
 						sClassName);
 			});
 
-			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+			mModelParameters = Object.assign({}, {odataVersion : "2.0"}, mModelParameters);
 
 			return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
 		},
@@ -1260,7 +1259,7 @@ sap.ui.define([
 			oTemplate.removeCell(this.oView.byId(sControlId));
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
 			delete oTable.getBindingInfo("items").template;
-			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
+			oTable.bindItems(Object.assign({}, oTable.getBindingInfo("items"),
 				{suspended : !bRelative, template : oTemplate}));
 		},
 
@@ -1330,7 +1329,8 @@ sap.ui.define([
 				setTimeout(function () {
 					if (oPromise.isPending()) {
 						assert.ok(false,
-							"Timeout in waitForChanges" + (sTitle ? " of " + sTitle : ""));
+							"Timeout in waitForChanges" + (sTitle ? " of " + sTitle : "")
+								+ " (" + iTimeout + " ms)");
 						resolve();
 					}
 				}, iTimeout || 3000);
@@ -10698,6 +10698,24 @@ sap.ui.define([
 			assert.deepEqual(that.oView.byId("table").getItems().map(function (oItem) {
 				return oItem.getBindingContext().getPath();
 			}), ["/EMPLOYEES('1')", "/EMPLOYEES('2')"]);
+
+			// #requestSideEffects w/ multi-segment $expand path
+			// Note: this justifies the complicated handling inside _Helper.intersectQueryOptions
+			that.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)"
+					+ "&$select=ID&$filter=ID eq '1' or ID eq '2'", {value : [{
+						ID : "1",
+						LOCATION : null
+					}, {
+						ID : "2",
+						LOCATION : null
+					}]});
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("table").getBinding("items").getHeaderContext()
+					.requestSideEffects([{$PropertyPath : "LOCATION"}]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -11446,9 +11464,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: some custom control wants to read all data, and it gets a lot
+	// Scenario: some custom control wants to read all data, and it gets quite a lot
 	QUnit.test("read all data", function (assert) {
-		var i, n = 5000,
+		var i,
+			n = 2500, //TODO once IE is dropped, increase this again to 5000
 			aIDs = new Array(n),
 			aValues = new Array(n),
 			sView = '\
@@ -11482,7 +11501,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: read all data w/o a control on top
 	QUnit.test("read all data w/o a control on top", function (assert) {
-		var i, n = 10000,
+		var i,
+			n = 10000,
 			aIDs = new Array(n),
 			aValues = new Array(n),
 			that = this;
@@ -13877,7 +13897,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
 	//TODO support $filter : \'GrossAmount gt 0\',\
-	QUnit.test("Analytics by V4: $$aggregation w/ groupLevels", function (assert) {
+	QUnit.test("Data Aggregation by V4: $$aggregation w/ groupLevels", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -13939,7 +13959,8 @@ sap.ui.define([
 			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table"),
+			var i,
+				oTable = that.oView.byId("table"),
 				oListBinding = oTable.getBinding("rows");
 
 			oListBinding.getCurrentContexts().forEach(function (oContext, i) {
@@ -13957,7 +13978,7 @@ sap.ui.define([
 						{GrossAmount : 9, LifecycleStatus : "R"}
 					]
 				});
-			for (var i = 0; i < 3; i += 1) {
+			for (i = 0; i < 3; i += 1) {
 				that.expectChange("isExpanded", undefined, null)
 					.expectChange("isTotal", undefined, null)
 					.expectChange("level", undefined, null)
@@ -13970,7 +13991,7 @@ sap.ui.define([
 				.expectChange("grossAmount", [,,,,,,, 7, 8, 9])
 				.expectChange("lifecycleStatus", [,,,,,,, "T", "S", "R"]);
 
-			that.oView.byId("table").setFirstVisibleRow(7);
+			oTable.setFirstVisibleRow(7);
 
 			return that.waitForChanges(assert).then(function () {
 				that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))"
@@ -14009,11 +14030,55 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Data aggregation with grand total, but no visual grouping. Observe the node status.
+	// BCP: 2080089628
+	QUnit.test("Data Aggregation by V4: $$aggregation w/ grand total", function (assert) {
+		var sView = '\
+<Table items="{path : \'/SalesOrderList\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					GrossAmount : {grandTotal : true}\
+				},\
+				group : {\
+					LifecycleStatus : {}\
+				}\
+			}\
+		}}">\
+	<ColumnListItem>\
+		<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
+		<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+		<Text id="level" text="{= %{@$ui5.node.level} }" />\
+		<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	</ColumnListItem>\
+</Table>',
+			oModel = createSalesOrdersModel();
+
+		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+				+ "/concat(aggregate(GrossAmount),top(99))", {
+				"@odata.count" : "26",
+				value : [
+					{GrossAmount : 12345},
+					{GrossAmount : 1, LifecycleStatus : "Z"},
+					{GrossAmount : 2, LifecycleStatus : "Y"}
+				]
+			})
+			.expectChange("isExpanded", [true, undefined, undefined])
+			.expectChange("isTotal", [true, false, false])
+			.expectChange("level", [0 /* root node */, 1, 1])
+			.expectChange("grossAmount", [12345, 1, 2])
+			.expectChange("lifecycleStatus", ["", "Z", "Y"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Analytics by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+		var sTitle = "Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels; $count : "
 				+ bCount;
 
 		QUnit.test(sTitle, function (assert) {
@@ -14134,7 +14199,7 @@ sap.ui.define([
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is not fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Analytics by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+		var sTitle = "Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels; $count : "
 				+ bCount + "; grandTotal row not fixed";
 
 		QUnit.test(sTitle, function (assert) {
@@ -14249,7 +14314,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418)
-	QUnit.test("Analytics by V4: $$aggregation grandTotal w/o groupLevels using with/as",
+	QUnit.test("Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels using with/as",
 			function (assert) {
 		var sView = '\
 <t:Table rows="{path : \'/BusinessPartners\',\
@@ -14415,7 +14480,8 @@ sap.ui.define([
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
 	// Note: Key properties are omitted from response data to improve readability.
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Analytics by V4: $$aggregation, aggregate but no group; $count : " + bCount;
+		var sTitle = "Data Aggregation by V4: $$aggregation, aggregate but no group; $count : "
+				+ bCount;
 
 		QUnit.test(sTitle, function (assert) {
 			var oMinMaxElement = {

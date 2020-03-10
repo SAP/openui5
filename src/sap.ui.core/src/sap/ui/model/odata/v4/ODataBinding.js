@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/OperationMode",
-	"sap/ui/model/odata/v4/Context",
-	"sap/ui/thirdparty/jquery"
-], function (_Helper, SyncPromise, ChangeReason, OperationMode, Context, jQuery) {
+	"sap/ui/model/odata/v4/Context"
+], function (_Helper, SyncPromise, ChangeReason, OperationMode, Context) {
 	"use strict";
 
 	var aChangeReasonPrecedence = [ChangeReason.Change, ChangeReason.Refresh, ChangeReason.Sort,
@@ -293,7 +292,7 @@ sap.ui.define([
 
 					// create cache only for the latest call to fetchCache
 					if (!oCachePromise || that.oFetchCacheCallToken === oCallToken) {
-						that.mCacheQueryOptions = jQuery.extend(true, {},
+						that.mCacheQueryOptions = Object.assign({},
 							that.oModel.mUriParameters, mQueryOptions);
 						if (that.bRelative) { // quasi-absolute or relative binding
 							// mCacheByResourcePath has to be reset if parameters are changing

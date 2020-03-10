@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/InvisibleText",
@@ -12,8 +11,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/_AnnotationHelperExpression"
-], function (jQuery, Log, SyncPromise, InvisibleText, BaseContext, JSONModel, Basics,
-		AnnotationHelper, ODataMetaModel, Expression) {
+], function (Log, SyncPromise, InvisibleText, BaseContext, JSONModel, Basics, AnnotationHelper,
+		ODataMetaModel, Expression) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";

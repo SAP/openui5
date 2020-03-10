@@ -9,9 +9,8 @@ sap.ui.define([
 	"./_Requestor",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/base/SyncPromise",
-	"sap/ui/thirdparty/jquery"
-], function (_GroupLock, _Helper, _Requestor, Log, isEmptyObject, SyncPromise, jQuery) {
+	"sap/ui/base/SyncPromise"
+], function (_GroupLock, _Helper, _Requestor, Log, isEmptyObject, SyncPromise) {
 	"use strict";
 
 	var // Matches if ending with a transient key predicate:
@@ -2532,7 +2531,7 @@ sap.ui.define([
 		this.bSentRequest = true;
 		this.oPromise = SyncPromise.all([
 			this.oRequestor.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
-				{"If-Match" : oEntity}, oData),
+				oEntity && {"If-Match" : oEntity}, oData),
 			this.fetchTypes()
 		]).then(function (aResult) {
 			that.visitResponse(aResult[0], aResult[1],
