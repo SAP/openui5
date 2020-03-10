@@ -63,7 +63,7 @@ sap.ui.define([
 							oData = oJSON.$XML;
 
 						delete oJSON.$XML; // be nice to the garbage collector
-						return jQuery.extend(new Converter().convertXMLMetadata(oData, sUrl),
+						return Object.assign(new Converter().convertXMLMetadata(oData, sUrl),
 							oJSON);
 					}
 

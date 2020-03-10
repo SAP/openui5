@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
@@ -11,7 +10,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, SubmitMode,
+], function (Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, SubmitMode,
 		_Helper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -943,8 +942,8 @@ sap.ui.define([
 			})));
 		oBindingMock.expects("fetchResourcePath").withExactArgs(undefined)
 			.returns(SyncPromise.resolve("absolute"));
-		this.mock(jQuery).expects("extend")
-			.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 				sinon.match.same(mLocalQueryOptions))
 			.returns(mResultingQueryOptions);
 		oBindingMock.expects("doCreateCache")
@@ -1009,8 +1008,8 @@ sap.ui.define([
 			oBindingMock.expects("fetchResourcePath")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(oResourcePathPromise);
-			this.mock(jQuery).expects("extend")
-				.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+			this.mock(Object).expects("assign")
+				.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 					sinon.match.same(mLocalQueryOptions))
 				.returns(mResultingQueryOptions);
 			this.mock(_Helper).expects("buildPath").withExactArgs("/contextPath", "relative")
@@ -1081,7 +1080,7 @@ sap.ui.define([
 					getPath : function () { return "/deep/path"; },
 					getReturnValueContextId : function () { return 42; }
 				},
-				oJQueryMock = this.mock(jQuery),
+				oObjectMock = this.mock(Object),
 				mLocalQueryOptions = {},
 				mResultingQueryOptions = {};
 
@@ -1094,8 +1093,8 @@ sap.ui.define([
 			oBindingMock.expects("fetchResourcePath")
 				.withExactArgs(sinon.match.same(oContext0))
 				.returns(SyncPromise.resolve("resourcePath/relative"));
-			oJQueryMock.expects("extend")
-				.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+			oObjectMock.expects("assign")
+				.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 					sinon.match.same(mLocalQueryOptions))
 				.returns(mResultingQueryOptions);
 			oBindingMock.expects("doCreateCache")
@@ -1125,8 +1124,8 @@ sap.ui.define([
 				oBindingMock.expects("fetchResourcePath")
 					.withExactArgs(sinon.match.same(oContext1))
 					.returns(SyncPromise.resolve("resourcePath/relative"));
-				oJQueryMock.expects("extend")
-					.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+				oObjectMock.expects("assign")
+					.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 						sinon.match.same(mLocalQueryOptions))
 					.returns(mResultingQueryOptions1);
 
@@ -1184,8 +1183,8 @@ sap.ui.define([
 		this.mock(oRequestor).expects("ready")
 			.returns(SyncPromise.resolve(Promise.resolve().then(function () {
 				// Now that the requestor is ready, the cache must be created
-				that.mock(jQuery).expects("extend")
-					.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+				that.mock(Object).expects("assign")
+					.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 						sinon.match.same(mLocalQueryOptions))
 					.returns(mResultingQueryOptions);
 				oBindingMock.expects("doCreateCache")
@@ -1239,8 +1238,8 @@ sap.ui.define([
 				oBindingMock.expects("fetchResourcePath")
 					.withExactArgs(sinon.match.same(oContext))
 					.returns(SyncPromise.resolve("resourcePath/relative"));
-				this.mock(jQuery).expects("extend")
-					.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+				this.mock(Object).expects("assign")
+					.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 						sinon.match.same(mLocalQueryOptions))
 					.returns(mResultingQueryOptions);
 				oBindingMock.expects("doCreateCache")
@@ -1311,8 +1310,8 @@ sap.ui.define([
 		oBindingMock.expects("fetchResourcePath")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns(SyncPromise.resolve("resourcePath/quasiAbsolute"));
-		this.mock(jQuery).expects("extend")
-			.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 				sinon.match.same(mLocalQueryOptions))
 			.returns(mResultingQueryOptions);
 		oBindingMock.expects("doCreateCache")
@@ -1555,8 +1554,8 @@ sap.ui.define([
 		oBindingMock.expects("fetchResourcePath")
 			.withExactArgs(sinon.match.same(oContext1))
 			.returns(SyncPromise.resolve(Promise.resolve("resourcePath1")));
-		this.mock(jQuery).expects("extend")
-			.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 				sinon.match.same(mLocalQueryOptions))
 			.returns(mResultingQueryOptions);
 		oBindingMock.expects("doCreateCache")
@@ -2178,7 +2177,7 @@ sap.ui.define([
 				oBinding = new ODataBinding({
 					oOperation : {}
 				}),
-				mParameters = jQuery.extend({
+				mParameters = Object.assign({
 					$$inheritExpandSelect : true
 				}, mExpandOrSelect);
 

@@ -36,12 +36,11 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Stream",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/TimeOfDay",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI"
 ], function (ValueListType, _Helper, assert, Log, ObjectPath, SyncPromise, BindingMode,
 		ChangeReason, ClientListBinding, BaseContext, ContextBinding, MetaModel, PropertyBinding,
 		OperationMode, Boolean, Byte, EdmDate, DateTimeOffset, Decimal, Double, Guid, Int16, Int32,
-		Int64, Raw, SByte, Single, Stream, String, TimeOfDay, jQuery, URI) {
+		Int64, Raw, SByte, Single, Stream, String, TimeOfDay, URI) {
 	"use strict";
 	/*global Map */
 	/*eslint max-nested-callbacks: 0 */
@@ -2899,9 +2898,8 @@ sap.ui.define([
 						+ mMappingUrlByQualifier[sQualifier] + " and " + sMappingUrl);
 				}
 				mMappingUrlByQualifier[sQualifier] = sMappingUrl;
-				mValueListMapping = jQuery.extend(true, {
-					$model : oModel
-				}, mValueListMapping);
+				mValueListMapping = _Helper.clone(mValueListMapping);
+				mValueListMapping.$model = oModel;
 				delete mValueListMapping.CollectionRoot;
 				delete mValueListMapping.SearchSupported;
 				oValueListInfo[sQualifier] = mValueListMapping;

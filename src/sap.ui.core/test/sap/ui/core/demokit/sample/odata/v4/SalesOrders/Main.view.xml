@@ -147,8 +147,7 @@
 							press="onOpenSimulateDiscountDialog"
 							tooltip="Simulate discount for selected sales order">
 						<dependents>
-							<Dialog id="SimulateDiscountDialog" title="Simulate Discount"
-									binding="{FuSalesOrderSimulateDiscount(...)}">
+							<Dialog id="SimulateDiscountDialog" title="Simulate Discount">
 								<buttons>
 									<Button icon="sap-icon://simulate" text="Simulate"
 										id="executeSimulateDiscount"

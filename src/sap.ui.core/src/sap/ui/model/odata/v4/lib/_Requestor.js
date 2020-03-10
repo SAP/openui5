@@ -481,7 +481,7 @@ sap.ui.define([
 			return aChangeSet.some(function (oCandidate) {
 				if (oCandidate.method === "PATCH"
 						&& oCandidate.headers["If-Match"] === oChange.headers["If-Match"]) {
-					jQuery.extend(true, oCandidate.body, oChange.body);
+					_Helper.merge(oCandidate.body, oChange.body);
 					oChange.$resolve(oCandidate.$promise);
 					return true;
 				}
@@ -1232,7 +1232,13 @@ sap.ui.define([
 					method : "HEAD",
 					headers : Object.assign({}, that.mHeaders, {"X-CSRF-Token" : "Fetch"})
 				}).then(function (oData, sTextStatus, jqXHR) {
-					that.mHeaders["X-CSRF-Token"] = jqXHR.getResponseHeader("X-CSRF-Token");
+					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+
+					if (sCsrfToken) {
+						that.mHeaders["X-CSRF-Token"] = sCsrfToken;
+					} else {
+						delete that.mHeaders["X-CSRF-Token"];
+					}
 					that.oSecurityTokenPromise = null;
 					fnResolve();
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
@@ -1469,7 +1475,7 @@ sap.ui.define([
 				oRequest = {
 					method : sMethod,
 					url : sResourcePath,
-					headers : jQuery.extend({},
+					headers : Object.assign({},
 						that.mPredefinedPartHeaders,
 						that.mHeaders,
 						mHeaders,
@@ -1506,7 +1512,7 @@ sap.ui.define([
 			fnSubmit();
 		}
 		return this.sendRequest(sMethod, sResourcePath,
-			jQuery.extend({}, mHeaders, this.mFinalHeaders),
+			Object.assign({}, mHeaders, this.mFinalHeaders),
 			JSON.stringify(_Requestor.cleanPayload(oPayload)), sOriginalResourcePath
 		).then(function (oResponse) {
 			that.reportUnboundMessagesAsJSON(oResponse.resourcePath, oResponse.messages);
@@ -1526,7 +1532,7 @@ sap.ui.define([
 		var oBatchRequest = _Batch.serializeBatchRequest(aRequests);
 
 		return this.sendRequest("POST", "$batch" + this.sQueryParams,
-			jQuery.extend(oBatchRequest.headers, mBatchHeaders), oBatchRequest.body
+			Object.assign(oBatchRequest.headers, mBatchHeaders), oBatchRequest.body
 		).then(function (oResponse) {
 			if (oResponse.messages !== null) {
 				throw new Error("Unexpected 'sap-messages' response header for batch request");
@@ -1569,14 +1575,16 @@ sap.ui.define([
 				var sOldCsrfToken = that.mHeaders["X-CSRF-Token"];
 
 				return jQuery.ajax(sRequestUrl, {
+					contentType : mHeaders && mHeaders["Content-Type"],
 					data : sPayload,
-					headers : jQuery.extend({},
+					headers : Object.assign({},
 						that.mPredefinedRequestHeaders,
 						that.mHeaders,
 						_Helper.resolveIfMatchHeader(mHeaders)),
 					method : sMethod
 				}).then(function (/*{object|string}*/vResponse, sTextStatus, jqXHR) {
-					var sETag = jqXHR.getResponseHeader("ETag");
+					var sETag = jqXHR.getResponseHeader("ETag"),
+						sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
 
 					try {
 						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath,
@@ -1585,8 +1593,9 @@ sap.ui.define([
 						fnReject(oError);
 						return;
 					}
-					that.mHeaders["X-CSRF-Token"]
-						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
+					if (sCsrfToken) {
+						that.mHeaders["X-CSRF-Token"] = sCsrfToken;
+					}
 					that.setSessionContext(jqXHR.getResponseHeader("SAP-ContextId"),
 						jqXHR.getResponseHeader("SAP-Http-Session-Timeout"));
 
@@ -1787,7 +1796,7 @@ sap.ui.define([
 				Object.keys(oResult).forEach(function (sKey) {
 					if (sKey.indexOf("@$ui5.") === 0) {
 						if (oResult === oPayload) {
-							oResult = jQuery.extend({}, oPayload);
+							oResult = Object.assign({}, oPayload);
 						}
 						delete oResult[sKey];
 					}

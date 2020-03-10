@@ -32,12 +32,10 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/OperationMode",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI"
 ], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
 		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		SyncPromise, coreLibrary, Message, BindingMode, BaseContext, Model, OperationMode, jQuery,
-		URI) {
+		SyncPromise, coreLibrary, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
 	var rApplicationGroupID = /^\w+$/,
@@ -257,10 +255,9 @@ sap.ui.define([
 								+ oGroupProperties + "'");
 						}
 					}
-					this.mGroupProperties = jQuery.extend({
-							"$auto" : {submit : SubmitMode.Auto},
-							"$direct" : {submit : SubmitMode.Direct}
-						}, mParameters.groupProperties);
+					this.mGroupProperties = _Helper.clone(mParameters.groupProperties) || {};
+					this.mGroupProperties.$auto = {submit : SubmitMode.Auto};
+					this.mGroupProperties.$direct = {submit : SubmitMode.Direct};
 					if (mParameters.autoExpandSelect !== undefined
 							&& typeof mParameters.autoExpandSelect !== "boolean") {
 						throw new Error("Value for autoExpandSelect must be true or false");
@@ -701,7 +698,7 @@ sap.ui.define([
 	ODataModel.prototype.buildQueryOptions = function (mParameters, bSystemQueryOptionsAllowed,
 			bSapAllowed) {
 		var sParameterName,
-			mTransformedOptions = jQuery.extend(true, {}, mParameters);
+			mTransformedOptions = _Helper.clone(mParameters) || {};
 
 		/**
 		 * Parses the query options for the given option name "sOptionName" in the given map of
