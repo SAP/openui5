@@ -101,7 +101,7 @@ sap.ui.define([
 		}
 		return FlexState.clearAndInitialize({
 			componentId: oAppComponent.getId(),
-			reference: Utils.normalizeReference(sReference),
+			reference: sReference,
 			draftLayer: mPropertyBag.layer
 		});
 	};
