@@ -1064,7 +1064,28 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 		 * Contrast color.
 		 * @public
 		 */
-		Contrast : "Contrast"
+		Contrast : "Contrast",
+
+		/**
+		 * Color that indicates an icon which isn't interactive
+		 * @public
+		 * @since 1.76
+		 */
+		NonInteractive : "NonInteractive",
+
+		/**
+		 * Color for icon used in a Tile
+		 * @public
+		 * @since 1.76
+		 */
+		Tile : "Tile",
+
+		/**
+		 * Color for icon used as a marker
+		 * @public
+		 * @since 1.76
+		 */
+		Marker : "Marker"
 
 	};
 
