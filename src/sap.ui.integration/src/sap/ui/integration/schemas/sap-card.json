@@ -18,11 +18,12 @@
 				"1.5.0",
 				"1.6.0",
 				"1.7.0",
-				"1.8.0"
+				"1.8.0",
+				"1.9.0"
 			]
 		},
 		"configuration": {
-			"description": "Represents configuration with parameters, which can be used inside the Card",
+			"description": "Represents configuration with parameters and destinations, which can be used inside the card",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
@@ -31,6 +32,13 @@
 					"type": "object",
 					"additionalProperties": {
 						"$ref": "#/definitions/configurationParameter"
+					}
+				},
+				"destinations": {
+					"description": "Describes what destinations are used by the card.",
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/configurationDestinations"
 					}
 				}
 			}
@@ -1639,6 +1647,17 @@
 						"date",
 						"datetime"
 					]
+				}
+			}
+		},
+		"configurationDestinations": {
+			"description": "Represents a configuration for a cloud platform destination.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"name": {
+					"description": "The name of the destination. Use the same name which is used in Cloud Platform.",
+					"type": "string"
 				}
 			}
 		}

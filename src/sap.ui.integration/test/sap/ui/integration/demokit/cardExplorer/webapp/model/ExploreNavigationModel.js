@@ -263,6 +263,7 @@ sap.ui.define([
 						key: 'htmlConsumption',
 						target: 'exploreSamples',
 						title: 'Consumption in HTML',
+						useIFrame: true,
 						files: [
 							{
 								url: '/samples/htmlConsumption/indexTemplate.html',
@@ -340,6 +341,50 @@ sap.ui.define([
 						manifestUrl: '/samples/dateRange.json'
 					},
 					{
+						key: 'destinations',
+						target: 'exploreSamples',
+						title: 'Destinations',
+						useIFrame: true,
+						files: [
+							{
+								url: '/samples/destinations/index.html',
+								name: 'index.html',
+								key: 'index.html',
+								content: ''
+							},
+							{
+								url: '/samples/destinations/cardManifest.json',
+								name: 'cardManifest.json',
+								key: 'cardManifest.json',
+								content: ''
+							},
+							{
+								url: '/samples/destinations/Destinations.view.xml',
+								name: 'Destinations.view.xml',
+								key: 'Destinations.view.xml',
+								content: ''
+							},
+							{
+								url: '/samples/destinations/Destinations.controller.js',
+								name: 'Destinations.controller.js',
+								key: 'Destinations.controller.js',
+								content: ''
+							},
+							{
+								url: '/samples/destinations/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								content: ''
+							},
+							{
+								url: '/samples/destinations/Component.js',
+								name: 'Component.js',
+								key: 'Component.js',
+								content: ''
+							}
+						]
+					},
+					{
 						key: 'dynamicCounter',
 						target: 'exploreSamples',
 						title: 'Dynamic Counter',
@@ -349,6 +394,7 @@ sap.ui.define([
 						key: 'hostActions',
 						target: 'exploreSamples',
 						title: 'Host Actions',
+						useIFrame: true,
 						files: [
 							{
 								url: '/samples/hostActions/index.html',

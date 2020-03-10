@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Destinations</title>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+
+	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+
+<div class="topic">
+	<div class="content">
+
+		<h1>
+			Destinations
+		</h1>
+
+		<h2 id="overview">
+			Overview
+		</h2>
+
+		<p>
+			When a card is using SAP Cloud Platform destinations, those can be configured in the manifest. Inside the manifest, the card developer indicates the name of the destination and what is the request which depends on this destination.
+		</p>
+		<p>
+			Inside the host environment, the host application developer creates a method that resolves a given destination name to a URL. This happens with the help of the sap.ui.integration.Host element.
+		</p>
+		<p>
+			For a brief overview of SAP Cloud Platform destinations, check our <a id="linkToNorthwindExample" target="_blank">Create a Northwind Destination</a> example.
+		</p>
+
+		<h2 id="In the manifest">
+			In the manifest
+		</h2>
+
+		<p>
+			In section <code>configuration</code>, sub section <code>destinations</code> of the card, the card developer can describe the destinations on which the card depends. Those described destinations can be referred inside a data request description with a placeholder like this: <code>{{destinations.myDestinationKey}}</code>. See the example below.
+		</p>
+
+		<h3>Destination properties:</h3>
+
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Default</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>name</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td></td>
+					<td>The name of the destination. This should be the same name that is used in the SAP Cloud Platform. The host environment is responsible to resolve that name to a URL.</td>
+					<td>1.20.0</td>
+					<td>1.76</td>
+				</tr>
+			</table>
+		</div>
+
+		<h2 id="In the host environment">
+			In the host environment
+		</h2>
+
+		<p>
+			The host application developer can use the parameter <code>resolveDestination</code> of <a id="linkToHostAPIRef" target="_blank"><code>sap.ui.integration.Host</code></a> to pass a callback function to resolve a destination name to the corresponding URL.
+			<br />
+			The card calls this function when it needs to send a request to the destination.
+			The function returns the URL to which the request will be sent.
+			<br />
+			If a card depends on a destination, but this callback is not implemented, an error will be logged.
+			<br />
+			The callback receives <code>destinationName</code> as parameter and returns a string with the URL.
+			Or alternatively the callback may return a <code>Promise</code> which resolves with the URL as argument.
+			<br />
+			See the example below.
+		</p>
+
+		<h2 id="examples">
+			Example
+		</h2>
+
+		<p>An example with a card which fetches data from Northwind service:</p>
+
+Manifest
+<pre class="prettyprint  lang-js">
+"sap.card": {
+	"type": "Table",
+	"data": {
+		"request": {
+			"url": "{{destinations.myDestination}}/Orders",
+			"parameters": {
+				"$format": "json",
+				"$top": "{{parameters.maxItems}}",
+				"$orderby": "Freight desc"
+			}
+		}
+	},
+	"configuration": {
+		"destinations": {
+			"myDestination": {
+				"name": "Northwind"
+			}
+		},
+		"parameters": {
+			"maxItems": {
+				"value": "7"
+			}
+		}
+	},
+	"content": {
+		"data": {
+			"path": "/value/"
+		},
+		"maxItems": "{{parameters.maxItems}}",
+		"row": {
+			"columns": [{
+					"title": "Customer",
+					"value": "{ShipName}"
+				},
+				{
+					"title": "Country",
+					"value": "{ShipCountry}"
+				},
+				{
+					"title": "Freight",
+					"value": "{Freight}"
+				}
+			]
+		}
+	}
+}</pre>
+
+Controller
+<pre class="prettyprint  lang-js">
+var oHost = new sap.ui.integration.Host({
+	resolveDestination: function(sDestinationName) {
+		switch (sDestinationName) {
+			case "Northwind":
+				return "https://services.odata.org/V3/Northwind/Northwind.svc";
+				// or with a promise
+				return Promise.resolve("https://services.odata.org/V3/Northwind/Northwind.svc");
+			break;
+			default:
+				console.error("Unknown destination.");
+			break;
+		}
+	}
+});
+
+this.getView().byId('card1').setHost(oHost);</pre>
+
+XML View
+<pre class="prettyprint  lang-js">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card id="card1" manifest="./manifest.json" /&gt;
+&lt;/mvc:View&gt;</pre>
+		<a class="try-button" href="../../../index.html#/explore/destinations" target="_parent">Try it Out</a>
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#overview">Overview</a></div>
+		<div><a href="#examples">Example</a></div>
+	</div>
+</div>
+
+<script>
+	var sPathToDemoKitLocal = "../../../../../../../../../../documentation.html#";
+	var sPathToDemoKit = "../../../../../../../../../../#";
+
+	if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+		document.getElementById("linkToHostAPIRef").href = sPathToDemoKitLocal + "/api/sap.ui.integration.Host";
+		document.getElementById("linkToNorthwindExample").href = sPathToDemoKitLocal + "/topic/3a16c7a2f1e944deb000db49e5ece6be";
+	} else {
+		document.getElementById("linkToHostAPIRef").href = sPathToDemoKit + "/api/sap.ui.integration.Host";
+		document.getElementById("linkToNorthwindExample").href = sPathToDemoKit + "/topic/3a16c7a2f1e944deb000db49e5ece6be";
+	}
+</script>
+</body>
+</html>
