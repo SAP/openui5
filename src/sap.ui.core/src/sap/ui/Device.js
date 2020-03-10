@@ -510,7 +510,9 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
-	 * If this flag is set to <code>true</code>, the Microsoft Edge browser is used.
+	 * If this flag is set to <code>true</code>, the Microsoft Edge (EdgeHTML) browser is used.
+	 * The Microsoft Edge (Chromium) browser is reported via the {@link #chrome} flag instead,
+	 * because it also uses Chromium as its browser engine.
 	 *
 	 * @name sap.ui.Device.browser.edge
 	 * @type boolean
@@ -525,7 +527,8 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
-	 * If this flag is set to <code>true</code>, the Google Chrome browser is used.
+	 * If this flag is set to <code>true</code>, a browser that is based on the Chromium browser
+	 * project is used, such as the Google Chrome browser or the Microsoft Edge (Chromium) browser.
 	 *
 	 * @name sap.ui.Device.browser.chrome
 	 * @type boolean
@@ -622,7 +625,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
-	 * Edge browser name.
+	 * Edge browser name, used for Microsoft Edge (EdgeHTML) browser.
 	 *
 	 * @see sap.ui.Device.browser.name
 	 * @name sap.ui.Device.browser.BROWSER.EDGE
@@ -637,7 +640,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
-	 * Chrome browser name.
+	 * Chrome browser name, used for Google Chrome browser and Microsoft Edge (Chromium) browser.
 	 *
 	 * @see sap.ui.Device.browser.name
 	 * @name sap.ui.Device.browser.BROWSER.CHROME
