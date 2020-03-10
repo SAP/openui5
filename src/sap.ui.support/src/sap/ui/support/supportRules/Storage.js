@@ -327,15 +327,15 @@ function (RuleSerializer, constants) {
 			_storage = oStorage;
 		},
 
-		_getStorage: function (oStorage) {
+		_getStorage: function () {
 			return _storage;
 		},
 
-		_setCookie: function (oCookie) {
-			_cookie = oCookie;
+		_setCookie: function (sCookie) {
+			_cookie = sCookie;
 		},
 
-		_getCookie: function (oCookie) {
+		_getCookie: function () {
 			return _cookie;
 		}
 	};

@@ -10,62 +10,67 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// Helper module that syncs IFrame's storage with the opener's
-	var mOpenerStorageData = {},
-		sOpenerCookie = "";
-
 	var CHANNELS = {
 		INIT: "initMockedStorageData",
 		PRESERVE: "preserveMockedStorageData"
 	};
 
+	// Helper module that syncs IFrame's storage with the opener's
+	var StorageSynchronizer = {
+		_fnAfterInitFrame: null,
+		_mOpenerStorageData: {},
+		_sOpenerCookie: ""
+	};
+
 	/**
 	 * To be called from the opening window
 	 */
-	function initialize () {
+	StorageSynchronizer.initialize = function () {
 		window.addEventListener("message", function (event) {
 			if (event.data.id === CHANNELS.INIT) {
 				event.source.postMessage({
 					id: CHANNELS.INIT,
-					storage: mOpenerStorageData,
-					cookie: sOpenerCookie
+					storage: this._mOpenerStorageData,
+					cookie: this._sOpenerCookie
 				}, event.source.location.origin);
 			} else if (event.data.id === CHANNELS.PRESERVE) {
-				mOpenerStorageData = event.data.storage;
-				sOpenerCookie = event.data.cookie;
+				this._mOpenerStorageData = event.data.storage;
+				this._sOpenerCookie = event.data.cookie;
 			}
-		});
-	}
+		}.bind(this));
+	};
 
 	/**
 	 * To be called from the opening window
 	 * @param {window} oFrame The frame from which opener will request data
 	 */
-	function preserve (oFrame) {
+	StorageSynchronizer.preserve = function (oFrame) {
 		oFrame.postMessage({
 			id: CHANNELS.PRESERVE
 		}, oFrame.location.origin);
-	}
+	};
 
 	/**
 	 * To be called from the opening window
 	 */
-	function deletePersistedData () {
-		mOpenerStorageData = {};
-		sOpenerCookie = "";
-	}
+	StorageSynchronizer.deletePersistedData = function () {
+		this._mOpenerStorageData = {};
+		this._sOpenerCookie = "";
+	};
 
 	/**
 	 * To be called from the opened frame
+	 * @param {function} fnCallback Function which will be executed after the real Storage is mocked.
 	 */
-	function initializeFrame () {
+	StorageSynchronizer.initializeFrame = function (fnCallback) {
 		window.parent.postMessage({ id: CHANNELS.INIT }, window.parent.location.origin);
-	}
+		this._fnAfterInitFrame = fnCallback;
+	};
 
 	/**
 	 * To be called from the opened frame
 	 */
-	function preparePreserveFrame () {
+	StorageSynchronizer.preparePreserveFrame = function () {
 		window.addEventListener("message", function (event) {
 			if (event.data.id === CHANNELS.PRESERVE) {
 				window.parent.postMessage({
@@ -75,26 +80,20 @@ sap.ui.define([
 				}, window.parent.location.origin);
 			}
 		});
-	}
+	};
 
 	/**
 	 * To be called from the opened frame
 	 */
-	function prepareInitFrame () {
+	StorageSynchronizer.prepareInitFrame = function () {
 		window.addEventListener("message", function (event) {
 			if (event.data.id === CHANNELS.INIT) {
 				Storage._setStorage(new LocalStorageMock(event.data.storage));
 				Storage._setCookie(event.data.cookie);
+				this._fnAfterInitFrame();
 			}
-		});
-	}
-
-	return {
-		initialize: initialize,
-		preserve: preserve,
-		deletePersistedData: deletePersistedData,
-		initializeFrame: initializeFrame,
-		preparePreserveFrame: preparePreserveFrame,
-		prepareInitFrame: prepareInitFrame
+		}.bind(this));
 	};
+
+	return StorageSynchronizer;
 });

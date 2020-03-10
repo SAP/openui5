@@ -18,12 +18,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	StorageSynchronizer.prepareInitFrame();
-	StorageSynchronizer.preparePreserveFrame();
-	StorageSynchronizer.initializeFrame();
-
-	Core.attachInit(function () {
-
+	var fnAfterStorageInitialized = function () {
 		XMLView.create({
 			viewName: "sap.ui.support.supportRules.ui.views.Main"
 		}).then(function (xmlView) {
@@ -37,5 +32,11 @@ sap.ui.define([
 
 			oPage.placeAt("content");
 		});
+	};
+
+	Core.attachInit(function () {
+		StorageSynchronizer.prepareInitFrame();
+		StorageSynchronizer.preparePreserveFrame();
+		StorageSynchronizer.initializeFrame(fnAfterStorageInitialized);
 	});
 });
