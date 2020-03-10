@@ -49,6 +49,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			cellTag = (type == "Head") ? "th" : "td",
 			groupTag = "t" + type.toLowerCase(),
 			aColumns = oTable.getColumns(),
+			bHeaderHidden,
 			createBlankCell = function(cls, id, bAriaHidden) {
 				rm.openStart(cellTag, id && idPrefix + id);
 				if (cellTag === "th") {
@@ -83,7 +84,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 				iHeaderLength = 1;
 			}
 
-			var bHeaderHidden = aColumns.every(function(oColumn) {
+			bHeaderHidden = aColumns.every(function(oColumn) {
 				return	!oColumn.getHeader() ||
 						!oColumn.getHeader().getVisible() ||
 						!oColumn.getVisible() ||
@@ -132,7 +133,8 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 				hasPopin = true;
 				return;
 			}
-			if (oColumn.isHidden()) {
+			var bHidden = oColumn.isHidden();
+			if (bHidden) {
 				hiddens++;
 			}
 
@@ -160,6 +162,11 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			// required to set the correct aligment to the footer cell
 			if (align && type !== "Head") {
 				rm.style("text-align", align);
+			}
+
+			if (bHidden) {
+				rm.style("display", "none");
+				rm.attr("aria-hidden", "true");
 			}
 
 			rm.openEnd();
