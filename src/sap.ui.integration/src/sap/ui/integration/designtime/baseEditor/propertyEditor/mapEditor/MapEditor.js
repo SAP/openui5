@@ -34,6 +34,47 @@ sap.ui.define([
 	 * Constructor for a new <code>MapEditor</code> for editing key-value pairs with primitive values.
 	 * To get notified about changes made with the editor, you can attach a handler to the <code>valueChange</code> event.
 	 *
+	 * <h3>Configuration</h3>
+	 *
+	 * <table style="width:100%;">
+	 * <tr style="text-align:left">
+	 * 	<th>Option</th>
+	 * 	<th>Type</th>
+	 * 	<th>Default</th>
+	 * 	<th>Description</th>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>allowKeyChange</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to allow editing the key attribute of map entries</td>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>allowTypeChange</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to allow editing the type of map entries</td>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>allowAddAndRemove</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to allow adding and removing map entries</td>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>allowedTypes</code></td>
+	 *  <td><code>string[]</code></td>
+	 * 	<td><code>["string"]</code></td>
+	 * 	<td>List of editor types which are supported in the map</td>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>includeInvalidEntries</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to show entries with invalid types if the <code>StringEditor</code> cannot be used as a fallback</td>
+	 * </tr>
+	 * </table>
+	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
 	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor
 	 * @author SAP SE

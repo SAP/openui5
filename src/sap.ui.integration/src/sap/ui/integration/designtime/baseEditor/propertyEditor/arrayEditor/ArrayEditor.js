@@ -27,8 +27,30 @@ sap.ui.define([
 	 * Constructor for a new <code>ArrayEditor</code>.
 	 *
 	 * This property editor allows you to edit arrays in a flat way.
-	 *
 	 * To get notified about changes made with the editor, you can use the <code>valueChange</code> event.
+	 *
+	 * <h3>Configuration</h3>
+	 *
+	 * <table style="width:100%;">
+	 * <tr style="text-align:left">
+	 * 	<th>Option</th>
+	 * 	<th>Type</th>
+	 * 	<th>Default</th>
+	 * 	<th>Description</th>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>allowAddAndRemove</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to allow adding and removing array items</td>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>allowSorting</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to allow changing the order of array items</td>
+	 * </tr>
+	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
 	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor
