@@ -1134,7 +1134,7 @@ function (
 				getManifestObject : function () { return oManifest; }
 			};
 
-			this.oAddChangeAndUpdateDependenciesSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addChangeAndUpdateDependencies");
+			this.oAddRunTimeChangeSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
 			this.oApplyChangesOnControlStub = sandbox.stub(Applier, "applyAllChangesForControl")
 				.callThrough()
 				.withArgs(sinon.match.typeOf("function"), this.oComponent, this.oFlexController, sinon.match(function (oControl) {
@@ -1152,29 +1152,31 @@ function (
 			this.oChangeWithWrongSelector = new Change(labelChangeContent5);
 			this.oFlexController.applyVariantChanges([this.oChange, this.oChangeWithWrongSelector], this.oComponent);
 
-			assert.ok(this.oApplyChangesOnControlStub.firstCall.calledAfter(this.oAddChangeAndUpdateDependenciesSpy.secondCall), "then applyAllChangesForControl after all dependencies have been udpated");
-			assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 1, "then 1 change added to map");
+			assert.ok(this.oApplyChangesOnControlStub.firstCall.calledAfter(this.oAddRunTimeChangeSpy.secondCall), "then applyAllChangesForControl after all dependencies have been udpated");
+			assert.equal(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 1, "then 1 change added to map");
+			assert.deepEqual(this.oFlexController._oChangePersistence._mChangesInitial.mControlsWithDependencies["abc123"], [this.oChange.getId()], "then the control dependencies were added to the initial changes map");
 			assert.equal(this.oApplyChangesOnControlStub.callCount, 1, "then applyChangesOnControl is called once (one control)");
-			assert.equal(this.oAddChangeAndUpdateDependenciesSpy.callCount, 2, "then two changes were added to the map and dependencies were updated");
+			assert.equal(this.oAddRunTimeChangeSpy.callCount, 2, "then two changes were added to the map and dependencies were updated");
 		});
 
 		QUnit.test("when applyVariantChanges is called with 2 unapplied changes", function (assert) {
 			this.oFlexController.applyVariantChanges([this.oChange, this.oChange2], this.oComponent);
 
-			assert.ok(this.oApplyChangesOnControlStub.firstCall.calledAfter(this.oAddChangeAndUpdateDependenciesSpy.secondCall), "then applyAllChangesForControl after all dependencies have been udpated");
+			assert.ok(this.oApplyChangesOnControlStub.firstCall.calledAfter(this.oAddRunTimeChangeSpy.secondCall), "then applyAllChangesForControl after all dependencies have been udpated");
 			assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 2, "then 2 changes added to map");
+			assert.deepEqual(this.oFlexController._oChangePersistence._mChangesInitial.mControlsWithDependencies["abc123"], [this.oChange.getId(), this.oChange2.getId()], "then the control dependencies were added to the initial changes map");
 			assert.equal(this.oApplyChangesOnControlStub.callCount, 1, "then applyChangesOnControl is called once (one control)");
-			assert.equal(this.oAddChangeAndUpdateDependenciesSpy.callCount, 2, "both changes were added to the map and dependencies were updated");
+			assert.equal(this.oAddRunTimeChangeSpy.callCount, 2, "both changes were added to the map and dependencies were updated");
 		});
 
 		QUnit.test("when applyVariantChanges is called with 3 unapplied changes with two different controls as selector", function (assert) {
 			this.oFlexController.applyVariantChanges([this.oChange, this.oChange2, this.oChange4], this.oComponent);
 
-			assert.ok(this.oApplyChangesOnControlStub.firstCall.calledAfter(this.oAddChangeAndUpdateDependenciesSpy.secondCall), "then applyAllChangesForControl after all dependencies have been udpated");
+			assert.ok(this.oApplyChangesOnControlStub.firstCall.calledAfter(this.oAddRunTimeChangeSpy.secondCall), "then applyAllChangesForControl after all dependencies have been udpated");
 			assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 2, "then 2 changes of the first control added to map");
 			assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["foo"].length, 1, "then 1 change of the second control added to map");
 			assert.equal(this.oApplyChangesOnControlStub.callCount, 2, "then applyChangesOnControl is called twice (two controls)");
-			assert.equal(this.oAddChangeAndUpdateDependenciesSpy.callCount, 3, "then three changes were added to the map and dependencies were updated");
+			assert.equal(this.oAddRunTimeChangeSpy.callCount, 3, "then three changes were added to the map and dependencies were updated");
 		});
 	});
 

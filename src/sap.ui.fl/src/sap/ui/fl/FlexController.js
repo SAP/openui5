@@ -731,7 +731,7 @@ sap.ui.define([
 		var aPromiseStack = [];
 		var oModifier = JsControlTreeModifier;
 		var aChangeSelectors = aChanges.map(function (oChange) {
-			this._oChangePersistence._addChangeAndUpdateDependencies(oAppComponent, oChange);
+			this._oChangePersistence._addRunTimeCreatedChangeAndUpdateDependencies(oAppComponent, oChange);
 			return this._getSelectorOfChange(oChange);
 		}.bind(this));
 		var fnSameSelector = function (oSource, oTarget) {
