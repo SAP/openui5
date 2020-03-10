@@ -39,7 +39,6 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 		}
 	});
 
-
 	/**
 	 * Internal data store for plugin configurations
 	 */
@@ -56,6 +55,20 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	PluginBase.setConfig = function(mControlConfig, vPlugin) {
 		var sPluginName = (typeof vPlugin == "function") ? vPlugin.getMetadata().getName() : PluginBase.getMetadata().getName();
 		Object.assign(mPluginControlConfigs[sPluginName] = mPluginControlConfigs[sPluginName] || {}, mControlConfig);
+	};
+
+	PluginBase.prototype.init = function() {
+		this._bIsActive = false;
+	};
+
+	/**
+	 * Indicates whether the plugin is active.
+	 *
+	 * @returns {boolean} <code>true</code> if the plugin is active; otherwise, <code>false</code>
+	 * @public
+	 */
+	PluginBase.prototype.isActive = function() {
+		return this._bIsActive;
 	};
 
 	/**
@@ -149,15 +162,17 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 * @override
 	 */
 	PluginBase.prototype.setParent = function(oParent) {
-		if (this.getEnabled() && this.getControl()) {
+		var bEnabled = this.getEnabled();
+
+		if (bEnabled && this.getControl()) {
 			this._deactivate();
 		}
 
 		Element.prototype.setParent.apply(this, arguments);
 
-		if (oParent && this.getEnabled()) {
+		if (oParent && bEnabled) {
 			if (!this.isApplicable(oParent)) {
-				throw new Error(this + " is not an applicable plug-in for " + oParent);
+				throw new Error(this + " is not applicable to " + oParent);
 			} else {
 				this._activate();
 			}
@@ -202,14 +217,20 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 * Internal plugin activation handler
 	 */
 	PluginBase.prototype._activate = function() {
-		this.onActivate(this.getControl());
+		if (!this.isActive()) {
+			this.onActivate(this.getControl());
+			this._bIsActive = true;
+		}
 	};
 
 	/**
 	 * Internal plugin deactivation handler
 	 */
 	PluginBase.prototype._deactivate = function() {
-		this.onDeactivate(this.getControl());
+		if (this.isActive()) {
+			this.onDeactivate(this.getControl());
+			this._bIsActive = false;
+		}
 	};
 
 	return PluginBase;

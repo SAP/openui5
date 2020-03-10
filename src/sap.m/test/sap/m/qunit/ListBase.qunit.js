@@ -1273,6 +1273,78 @@ sap.ui.define([
 		QUnit.module("Other API methods");
 		/********************************************************************************/
 
+		QUnit.test("Function scrollToIndex", function(assert) {
+			var aListItems = [], i;
+
+			for (i = 0; i < 50; i++) {
+				aListItems.push(createListItem());
+			}
+
+			var oList = new List({
+				items: aListItems
+			});
+
+			var oHeaderToolbar = new Toolbar({
+				content: [
+					new Title({
+						text : "Keyboard Handling Test Page"
+					}),
+					new ToolbarSpacer(),
+					new Button({
+						tooltip: "View Settings",
+						icon: "sap-icon://drop-down-list"
+					})
+				]
+			});
+
+			var oInfoToolbar = new Toolbar({
+				active: true,
+				content: [
+					new Text({
+						text : "The quick brown fox jumps over the lazy dog.",
+						wrapping : false
+					})
+				]
+			});
+
+			oList.setHeaderToolbar(oHeaderToolbar);
+			oList.setInfoToolbar(oInfoToolbar);
+
+			var oScrollContainer = new ScrollContainer({
+				vertical: true,
+				content: oList
+			});
+
+			oScrollContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oItem,
+				oScrollDelegate = library.getScrollDelegate(oList, true),
+				oSpy = sinon.spy(oScrollDelegate, "scrollToElement");
+
+			oList.scrollToIndex(0);
+			assert.ok(oSpy.called, "The scroll delegate was called");
+			assert.ok(oSpy.calledOnce, "The scroll delegate was called exactly once");
+
+			oList.scrollToIndex(oList.getVisibleItems().length / 2);
+			oItem = oList.getVisibleItems()[oList.getVisibleItems().length / 2];
+			assert.ok(oSpy.calledTwice, "The scroll delegate was called exactly twice");
+			assert.ok(oSpy.lastCall.calledWithExactly(oItem.getDomRef(), null, [0, 0]), "Scroll delegate was called with correct parameters");
+
+			oList.scrollToIndex(-1);
+			oItem = oList.getVisibleItems()[oList.getVisibleItems().length - 1];
+			assert.ok(oSpy.calledThrice, "The scroll delegate was called exactly three times");
+			assert.ok(oSpy.lastCall.calledWithExactly(oItem.getDomRef(), null, [0, 0]), "Scroll delegate was called with correct parameters");
+
+			oList.setSticky(['HeaderToolbar']);
+			oList.scrollToIndex(0);
+			oItem = oList.getVisibleItems()[0];
+			assert.ok(oSpy.lastCall.calledWithExactly(oItem.getDomRef(), null, [0, oList._getStickyAreaHeight() * -1]), "Scroll delegate was called with correct parameters");
+
+			oSpy.restore();
+			oScrollContainer.destroy();
+		});
+
 		/********************************************************************************/
 		QUnit.module("Internal methods");
 		/********************************************************************************/
@@ -2090,7 +2162,9 @@ sap.ui.define([
 
 			var oThemeStub = this.stub(ThemeParameters, "get");
 			oThemeStub.withArgs("_sap_m_ListItemBase_DeleteIcon").returns("decline");
-			oListItem1.onThemeChanged();
+			var oEvent = new jQuery.Event();
+			oEvent.theme = "sap_fiori_3";
+			oListItem1.onThemeChanged(oEvent);
 			sDeleteIcon = oListItem1._oDeleteControl.getIcon();
 			assert.equal(sDeleteIcon, "sap-icon://decline", "Delete icon has been changed");
 
@@ -2820,6 +2894,78 @@ sap.ui.define([
 				// reset stub
 				this.stub().reset();
 			}
+		});
+
+		QUnit.test("Function _getStickyAreaHeight", function(assert) {
+			if (Device.browser.msie) {
+				assert.ok(true, "Feature is not supported in IE");
+				return;
+			}
+
+			var aListItems = [], i;
+
+			for (i = 0; i < 25; i++) {
+				aListItems.push(createListItem());
+			}
+
+			var oList = new List({
+				items: aListItems
+			});
+
+			var oHeaderToolbar = new Toolbar({
+				content: [
+					new Title({
+						text : "Keyboard Handling Test Page"
+					}),
+					new ToolbarSpacer(),
+					new Button({
+						tooltip: "View Settings",
+						icon: "sap-icon://drop-down-list"
+					})
+				]
+			});
+
+			var oInfoToolbar = new Toolbar({
+				active: true,
+				content: [
+					new Text({
+						text : "The quick brown fox jumps over the lazy dog.",
+						wrapping : false
+					})
+				]
+			});
+
+			oList.setHeaderToolbar(oHeaderToolbar);
+			oList.setInfoToolbar(oInfoToolbar);
+
+			var oScrollContainer = new ScrollContainer({
+				vertical: true,
+				content: oList
+			});
+
+			oScrollContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var iHeaderToolbarHeight = (oList.getHeaderToolbar() && oList.getHeaderToolbar().getDomRef() || this.getDomRef("header")).offsetHeight;
+			var iInfoToolbarHeight = oList.getInfoToolbar().getDomRef().offsetHeight;
+
+			assert.notOk((oList.getSticky() && oList.getSticky().length), "No sticky applied");
+			assert.equal(oList._getStickyAreaHeight(), 0, "Zero height for no sticky elements");
+
+			oList.setSticky(["HeaderToolbar"]);
+			assert.equal(oList.getSticky().length, 1, "One sticky element");
+			assert.notEqual(oList._getStickyAreaHeight(), 0, "Height of sticky elements > 0");
+			assert.equal(oList._getStickyAreaHeight(), iHeaderToolbarHeight, "Correct height returned");
+
+			oList.setSticky(["InfoToolbar"]);
+			assert.equal(oList.getSticky().length, 1, "One sticky element");
+			assert.notEqual(oList._getStickyAreaHeight(), 0, "Height of sticky elements > 0");
+			assert.equal(oList._getStickyAreaHeight(), iInfoToolbarHeight, "Correct height returned");
+
+			oList.setSticky(["HeaderToolbar", "InfoToolbar"]);
+			assert.equal(oList.getSticky().length, 2, "Two sticky elements");
+			assert.notEqual(oList._getStickyAreaHeight(), 0, "Height of sticky elements > 0");
+			assert.equal(oList._getStickyAreaHeight(), iHeaderToolbarHeight + iInfoToolbarHeight, "Correct height returned");
 		});
 
 		QUnit.module("Dependents Plugins");

@@ -71,6 +71,28 @@ sap.ui.define([
 				baseUrl: {
 					type: "string",
 					defaultValue: ""
+				},
+
+				/**
+				 * Defines a list of configuration settings, which will be merged into the original manifest.
+				 *
+				 * This can be a list of flexibility changes generated during designtime.
+				 *
+				 * Each level of changes is an item in the list. The change has property "content" which contains the configuration, which will be merged on top of the original <code>sap.widget</code> section.
+				 *
+				 * Example:
+				 * <pre>
+				 * [
+				 *     {"content": {"header": {"title": "My title"}}},
+				 *     {"content": {"header": {"title": "My new title"}}}
+				 * ]
+				 * </pre>
+				 *
+				 * @experimental Since 1.76
+				 * @since 1.76
+				 */
+				manifestChanges: {
+					type: "array"
 				}
 			},
 			aggregations: {
@@ -101,8 +123,17 @@ sap.ui.define([
 
 						/**
 						 * The manifest parameters related to the triggered action.
-						*/
+						 * @deprecated Since 1.76 Use the <code>parameters</code> parameter instead.
+						 */
 						manifestParameters: {
+							type: "object"
+						},
+
+						/**
+						 * The parameters related to the triggered action.
+						 * @since 1.76
+						 */
+						parameters: {
 							type: "object"
 						}
 					}
@@ -174,6 +205,17 @@ sap.ui.define([
 		return this;
 	};
 
+	Widget.prototype.setManifestChanges = function (aValue) {
+		if (!Array.isArray(aValue)) { // @todo remove this when the validation for property of type array is fixed.
+			Log.error("The value for manifestChanges must be an array. The given value is: " + aValue, "sap.ui.integration.Widget");
+			return this;
+		}
+
+		this.setProperty("manifestChanges", aValue);
+		this._bApplyManifest = true;
+		return this;
+	};
+
 	Widget.prototype.setParameters = function (vValue) {
 		this.setProperty("parameters", vValue);
 		this._bApplyManifest = true;
@@ -213,7 +255,7 @@ sap.ui.define([
 		mOptions.processI18n = false;
 
 		this.setBusy(true);
-		this._oWidgetManifest = new WidgetManifest("sap.widget", vManifest, sBaseUrl);
+		this._oWidgetManifest = new WidgetManifest("sap.widget", vManifest, sBaseUrl, this.getManifestChanges());
 
 		return this._oWidgetManifest
 			.load(mOptions)
@@ -298,9 +340,13 @@ sap.ui.define([
 					component: oComponent().getId()
 				});
 				oContainer.attachEvent("action", function (oEvent) {
+
+					var mParameters = oEvent.getParameter("parameters");
+
 					this.fireEvent("action", {
 						actionSource: oEvent.getParameter("actionSource"),
-						manifestParameters: oEvent.getParameter("manifestParameters")
+						manifestParameters: mParameters,  // for backward compatibility
+						parameters: mParameters
 					});
 				}.bind(this));
 				this.setAggregation("_content", oContainer);

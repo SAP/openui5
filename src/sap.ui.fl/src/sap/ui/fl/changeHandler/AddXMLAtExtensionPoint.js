@@ -36,11 +36,9 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.applyChange = function (oChange, oControl, mPropertyBag) {
 		var oView = mPropertyBag.view;
 		var oModifier = mPropertyBag.modifier;
-		if (oModifier.targets === "jsControlTree") {
-			throw new Error("Changes with type " + oChange.getChangeType() + " are not supported on js");
-		}
 		var oSelector = oChange.getDefinition().selector;
-		var mExtensionPointInfo = oModifier.getExtensionPointInfo(oSelector.name, oView);
+		var mExtensionPointInfo = (oChange.getExtensionPointInfo && oChange.getExtensionPointInfo())
+			|| oModifier.getExtensionPointInfo(oSelector.name, oView);
 		if (!mExtensionPointInfo) {
 			throw new Error("AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '"
 				 + (oSelector && oSelector.name)
@@ -48,13 +46,16 @@ sap.ui.define([
 				 + (oView && oModifier.getId(oView))
 				 + "'). Multiple Extension-points with the same name in one view are not supported!");
 		}
-		// Remove default implementation of extension points only works with XmlTreeModifier
-		mExtensionPointInfo.defaultContent.forEach(function ($Content) {
-			if ($Content.parentNode) {
-				$Content.parentNode.removeChild($Content);
-			}
+		(mExtensionPointInfo.defaultContent || []).forEach(function (vControl) {
+			// Remove default implementation of extension points in async apply (xml-preprocessing) and create (via action handler) sceanrios
+			oModifier.destroy(vControl);
 		});
-		return BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
+		var aNewControls = BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
+		if (mExtensionPointInfo.ready) {
+			// Confirm with ready function in sync apply scenario (preprocessing with JSView)
+			mExtensionPointInfo.ready(aNewControls);
+		}
+		return true;
 	};
 
 	/**
@@ -81,7 +82,11 @@ sap.ui.define([
 	 * @public
 	 * @name sap.ui.fl.changeHandler.AddXMLAtExtensionPoint#completeChangeContent
 	 */
-	AddXMLAtExtensionPoint.completeChangeContent = BaseAddXml.completeChangeContent;
+	AddXMLAtExtensionPoint.completeChangeContent = function(oChange, oSpecificChangeInfo) {
+		// Complete change content could be called with a third parameter. That would override the
+		// optional changeDefinition parameter of the BaseAddXml used in e.g. addxml usecase
+		BaseAddXml.completeChangeContent(oChange, oSpecificChangeInfo/*, oChangeDefinition*/);
+	};
 
 	return AddXMLAtExtensionPoint;
 }, /* bExport= */true);

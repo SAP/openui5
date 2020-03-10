@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/apply/_internal/ChangesController",
@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/registry/Settings"
 ], function(
-	DescriptorVariantFactory,
+	AppVariantFactory,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	ChangesController,
@@ -24,6 +24,7 @@ sap.ui.define([
 	function _checkSettingsAndExecuteActionByName(sActionName, mPropertyBag) {
 		return Settings.getInstance().then(function(oSettings) {
 			if (oSettings.isAtoEnabled()) {
+				// For smart business, we already set the transport and skipIam flag, so that there should be no transport handling done on connector level.
 				mPropertyBag.skipIam = true;
 				mPropertyBag.transport = "ATO_NOTIFICATION";
 			}
@@ -42,7 +43,7 @@ sap.ui.define([
 
 		var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
 
-		mPropertyBag.referenceAppId = oDescriptorFlexController.getComponentName();
+		mPropertyBag.id = oDescriptorFlexController.getComponentName();
 		// Pass a flag to know which consumer is calling SaveAs handler
 		mPropertyBag.isForSmartBusiness = true;
 	}
@@ -144,16 +145,16 @@ sap.ui.define([
 		/**
 		 * Returns the design time representation of the app variant.
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {string} mPropertyBag.appId - App variant ID
+		 * @param {string} mPropertyBag.id - App variant ID
 		 * @returns {Promise<object>} Resolving with the loaded variant
 		 * @private
 		 * @ui5-restricted
 		 */
 		getDesignTimeVariant: function (mPropertyBag) {
-			if (!mPropertyBag.appId) {
+			if (!mPropertyBag.id) {
 				return Promise.reject("App Variant ID must be provided");
 			}
-			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.appId);
+			return AppVariantFactory.load(mPropertyBag);
 		},
 
 		/**

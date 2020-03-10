@@ -3278,11 +3278,12 @@ sap.ui.define([
 	 */
 	Core.prototype.getStaticAreaRef = function() {
 		var oStaticArea = (STATIC_UIAREA_ID ? document.getElementById(STATIC_UIAREA_ID) : null),
-			oConfig;
+			oConfig, oFirstFocusElement;
 
 		if (!oStaticArea) {
 
 			oStaticArea = document.createElement("div");
+			oFirstFocusElement = document.createElement("span");
 			oConfig = this.getConfiguration();
 
 			if (!this.bDomReady) {
@@ -3302,6 +3303,12 @@ sap.ui.define([
 				"overflow": "hidden",
 				"float":  oConfig.getRTL() ? "right" : "left"
 			});
+
+			oFirstFocusElement.setAttribute("id", STATIC_UIAREA_ID + "-firstfe");
+			oFirstFocusElement.setAttribute("tabindex", -1);
+			oFirstFocusElement.style.fontSize = 0;
+
+			oStaticArea.appendChild(oFirstFocusElement);
 
 			document.body.insertBefore(oStaticArea, document.body.firstChild);
 

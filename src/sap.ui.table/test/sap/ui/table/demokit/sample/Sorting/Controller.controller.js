@@ -3,9 +3,9 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/table/sample/TableExampleUtils",
+	"sap/m/ToolbarSpacer",
 	"sap/ui/table/library"
-], function(Controller, Sorter, JSONModel, DateFormat, TableExampleUtils, library) {
+], function(Controller, Sorter, JSONModel, DateFormat, ToolbarSpacer, library) {
 	"use strict";
 
 	// shortcut for sap.ui.table.SortOrder
@@ -22,6 +22,12 @@ sap.ui.define([
 			//Initial sorting
 			var oProductNameColumn = oView.byId("name");
 			oView.byId("table").sort(oProductNameColumn, SortOrder.Ascending);
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Sorting"));
+			}, function(oError){/*ignore*/});
 		},
 
 		initSampleDataModel : function() {
@@ -135,10 +141,6 @@ sap.ui.define([
 			for (var i = 0; i < aColumns.length; i++) {
 				aColumns[i].setSorted(false);
 			}
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/Sorting") + "/info.json", oEvent.getSource());
 		}
 
 	});

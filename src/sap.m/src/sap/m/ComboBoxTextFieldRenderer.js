@@ -32,24 +32,14 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxTextFieldRenderer.writeInnerAttributes = function(oRm, oControl) {
+			oRm.attr("role", "combobox");
+			oRm.attr("aria-haspopup", "listbox");
+			oRm.attr("aria-autocomplete", "both");
+			oRm.attr("aria-expanded", "false");
 			oRm.attr("autocomplete", "off");
 			oRm.attr("autocorrect", "off");
 			oRm.attr("autocapitalize", "off");
 			oRm.attr("type", "text");
-		};
-
-		/**
-		 * Add role combobox to the outer div.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-		 */
-		ComboBoxTextFieldRenderer.writeAccAttributes = function(oRm, oControl) {
-			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-				oRm.attr("aria-haspopup", "listbox");
-				oRm.attr("aria-autocomplete", "inline");
-				oRm.attr("role", "combobox");
-			}
 		};
 
 		/**

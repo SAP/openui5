@@ -831,7 +831,7 @@ sap.ui.define([
 		assert.strictEqual(iIndexOfContent, 3, "The correct index of the content has been returned");
 	});
 
-	QUnit.module("Left and right arrow indicators are created on mobile devices", {
+	QUnit.module("Rendering of Left and Right Arrow Indicators for Mobile Devices", {
 		beforeEach: function () {
 			Device.system.phone = true;
 			Device.system.desktop = false;
@@ -856,7 +856,57 @@ sap.ui.define([
 		assert.ok(bIsRightIcon, "Right arrow indicator is rendered on mobile devices");
 	});
 
-	QUnit.module("Left and right arrow buttons are created on desktop", {
+	QUnit.test("Left and right indicators are hidden on Mobile Devices for an empty Header Container with Hotizontal Orientation", function (assert) {
+		//Arrange
+		this.oHeaderContainer.setOrientation("Horizontal");
+		//Act
+		var leftArrowOffsetWidth = this.oHeaderContainer.getDomRef("prev-button-container").offsetWidth;
+		var leftArrowOffsetHeight = this.oHeaderContainer.getDomRef("prev-button-container").offsetHeight;
+		var isLeftArrowVisible = false;
+		if (leftArrowOffsetWidth > 0 && leftArrowOffsetHeight > 0) {
+			isLeftArrowVisible = true;
+		} else {
+			isLeftArrowVisible = false;
+		}
+		var rightArrowOffsetWidth = this.oHeaderContainer.getDomRef("next-button-container").offsetWidth;
+		var rightArrowOffsetHeight = this.oHeaderContainer.getDomRef("next-button-container").offsetHeight;
+		var isRightArrowVisible = false;
+		if (rightArrowOffsetWidth > 0 && rightArrowOffsetHeight > 0) {
+			isRightArrowVisible = true;
+		} else {
+			isRightArrowVisible = false;
+		}
+		//Assert
+		assert.notOk(isLeftArrowVisible,"Left arrow indicator is hidden on mobile devices");
+		assert.notOk(isRightArrowVisible,"Right arrow indicator is hidden on mobile devices");
+	});
+
+	QUnit.test("Left and right indicators are hidden on Mobile Devices for an empty Header Container with Vertical Orientation", function (assert) {
+		//Arrange
+		this.oHeaderContainer.setOrientation("Vertical");
+		//Act
+		var leftArrowOffsetWidth = this.oHeaderContainer.getDomRef("prev-button-container").offsetWidth;
+		var leftArrowOffsetHeight = this.oHeaderContainer.getDomRef("prev-button-container").offsetHeight;
+		var isLeftArrowVisible = false;
+		if (leftArrowOffsetWidth > 0 && leftArrowOffsetHeight > 0) {
+			isLeftArrowVisible = true;
+		} else {
+			isLeftArrowVisible = false;
+		}
+		var rightArrowOffsetWidth = this.oHeaderContainer.getDomRef("next-button-container").offsetWidth;
+		var rightArrowOffsetHeight = this.oHeaderContainer.getDomRef("next-button-container").offsetHeight;
+		var isRightArrowVisible = false;
+		if (rightArrowOffsetWidth > 0 && rightArrowOffsetHeight > 0) {
+			isRightArrowVisible = true;
+		} else {
+			isRightArrowVisible = false;
+		}
+		//Assert
+		assert.notOk(isLeftArrowVisible,"Left arrow indicator is hidden on mobile devices");
+		assert.notOk(isRightArrowVisible,"Right arrow indicator is hidden on mobile devices");
+	});
+
+	QUnit.module("Rendering of Left and Right Arrow Indicators for Desktop Devices", {
 		beforeEach: function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
@@ -875,6 +925,56 @@ sap.ui.define([
 		//Assert
 		assert.ok(bIsLeftButton, "Arrow buttons are rendered on desktop");
 		assert.ok(bIsRightButton, "Arrow buttons are rendered on desktop");
+	});
+
+	QUnit.test("Left and Right arrow buttons are hidden on Desktop for an empty Header Container with Hotizontal Orientation", function (assert) {
+		//Arrange
+		this.oHeaderContainer.setOrientation("Horizontal");
+		//Act
+		var leftArrowOffsetWidth = this.oHeaderContainer.getDomRef("prev-button-container").offsetWidth;
+		var leftArrowOffsetHeight = this.oHeaderContainer.getDomRef("prev-button-container").offsetHeight;
+		var isLeftArrowVisible = false;
+		if (leftArrowOffsetWidth > 0 && leftArrowOffsetHeight > 0) {
+			isLeftArrowVisible = true;
+		} else {
+			isLeftArrowVisible = false;
+		}
+		var rightArrowOffsetWidth = this.oHeaderContainer.getDomRef("next-button-container").offsetWidth;
+		var rightArrowOffsetHeight = this.oHeaderContainer.getDomRef("next-button-container").offsetHeight;
+		var isRightArrowVisible = false;
+		if (rightArrowOffsetWidth > 0 && rightArrowOffsetHeight > 0) {
+			isRightArrowVisible = true;
+		} else {
+			isRightArrowVisible = false;
+		}
+		//Assert
+		assert.notOk(isLeftArrowVisible,"Left arrow indicator is hidden on Desktop devices");
+		assert.notOk(isRightArrowVisible,"Right arrow indicator is hidden on Desktop devices");
+	});
+
+	QUnit.test("Left and Right arrow buttons are hidden on Desktop for an empty Header Container with Vertical Orientation", function (assert) {
+		//Arrange
+		this.oHeaderContainer.setOrientation("Vertical");
+		//Act
+		var leftArrowOffsetWidth = this.oHeaderContainer.getDomRef("prev-button-container").offsetWidth;
+		var leftArrowOffsetHeight = this.oHeaderContainer.getDomRef("prev-button-container").offsetHeight;
+		var isLeftArrowVisible = false;
+		if (leftArrowOffsetWidth > 0 && leftArrowOffsetHeight > 0) {
+			isLeftArrowVisible = true;
+		} else {
+			isLeftArrowVisible = false;
+		}
+		var rightArrowOffsetWidth = this.oHeaderContainer.getDomRef("next-button-container").offsetWidth;
+		var rightArrowOffsetHeight = this.oHeaderContainer.getDomRef("next-button-container").offsetHeight;
+		var isRightArrowVisible = false;
+		if (rightArrowOffsetWidth > 0 && rightArrowOffsetHeight > 0) {
+			isRightArrowVisible = true;
+		} else {
+			isRightArrowVisible = false;
+		}
+		//Assert
+		assert.notOk(isLeftArrowVisible,"Left arrow indicator is hidden on Desktop devices");
+		assert.notOk(isRightArrowVisible,"Right arrow indicator is hidden on Desktop devices");
 	});
 
 	QUnit.module("Aria handling", {

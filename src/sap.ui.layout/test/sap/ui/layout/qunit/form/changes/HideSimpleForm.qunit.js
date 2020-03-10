@@ -335,20 +335,20 @@ sap.ui.define([
 	QUnit.test("when removing a FormContainer in SimpleForm with Toolbars using XmlTreeModifier", function (assert) {
 		var oXmlString =
 		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:form='sap.ui.layout.form' xmlns='sap.m'>" +
-		"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
-		"<form:content>" +
-		"<Toolbar id='Toolbar0' text='Title 0' visible='true' />" +
-		"<Label id='Label0' text='Label 0' visible='true' />" +
-		"<Input id='Input0' visible='true' />" +
-		"<Label id='Label1' text='Label 1' visible='true' />" +
-		"<Input id='Input1' visible='true' />" +
-		"<Toolbar id='Toolbar1' text='Title 1' visible='true' />" +
-		"<Label id='Label10' text='Label 10' visible='true' />" +
-		"<Input id='Input10' visible='true' />" +
-		"<Label id='Label11' text='Label 11' visible='true' />" +
-		"<Input id='Input11' visible='true' />" +
-		"</form:content>" +
-		"</form:SimpleForm>" +
+			"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+				"<form:content>" +
+					"<Toolbar id='Toolbar0' text='Title 0' visible='true' />" +
+					"<Label id='Label0' text='Label 0' visible='true' />" +
+					"<Input id='Input0' visible='true' />" +
+					"<Label id='Label1' text='Label 1' visible='true' />" +
+					"<Input id='Input1' visible='true' />" +
+					"<Toolbar id='Toolbar1' text='Title 1' visible='true' />" +
+					"<Label id='Label10' text='Label 10' visible='true' />" +
+					"<Input id='Input10' visible='true' />" +
+					"<Label id='Label11' text='Label 11' visible='true' />" +
+					"<Input id='Input11' visible='true' />" +
+				"</form:content>" +
+			"</form:SimpleForm>" +
 		"</mvc:View>";
 
 		this.oMockedComponent = {
@@ -369,9 +369,9 @@ sap.ui.define([
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, mPropertyBag), "no errors occur");
 		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
-		assert.ok(Array.prototype.slice.call(this.oXmlSimpleForm.children).some(function(oChildDom) {
+		assert.ok(Array.prototype.slice.call(this.oXmlSimpleForm.childNodes).some(function(oChildDom) {
 			if (oChildDom.localName === "dependents") {
-				return oChildDom.children[0].id === this.oChangeWrapper.getContent().elementSelector;
+				return oChildDom.childNodes[0].getAttribute("id") === this.oChangeWrapper.getContent().elementSelector;
 			}
 		}.bind(this)), "then removed element was added to the dependents aggregation");
 	});

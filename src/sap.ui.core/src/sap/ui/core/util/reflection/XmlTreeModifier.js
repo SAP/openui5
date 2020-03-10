@@ -244,7 +244,7 @@ sap.ui.define([
 		 */
 		getParent: function (oControl) {
 			var oParent = oControl.parentNode;
-			if (!this.getId(oParent)) {
+			if (!this.getId(oParent) && !this._isExtensionPoint(oParent)) {
 				//go to the real control, jump over aggregation node
 				oParent = oParent.parentNode;
 			}
@@ -413,6 +413,13 @@ sap.ui.define([
 		},
 
 		/**
+		 * @private
+		 */
+		_isExtensionPoint: function (oControl) {
+			return this._getControlTypeInXml(oControl) === "sap.ui.core.ExtensionPoint";
+		},
+
+		/**
 		 * @inheritDoc
 		 */
 		getControlMetadata: function(oControl) {
@@ -492,7 +499,7 @@ sap.ui.define([
 			if (Array.isArray(aControlsInAggregation)) {
 				// to harmonize behavior with JSControlTree, where stashed controls are not added to the parent aggregation
 				aControlsInAggregation = aControlsInAggregation.filter(function(oControl) {
-					if (this._getControlTypeInXml(oControl) === "sap.ui.core.ExtensionPoint") {
+					if (this._isExtensionPoint(oControl)) {
 						return true;
 					}
 					return !this.getProperty(oControl, "stashed");
@@ -698,7 +705,7 @@ sap.ui.define([
 					var oParent = this.getParent(oExtensionPoint);
 					var oExtensionPointInfo = {
 						parent: oParent,
-						aggregation: this.getParentAggregationName(oExtensionPoint, oParent),
+						aggregationName: this.getParentAggregationName(oExtensionPoint, oParent),
 						index: this.findIndexInParentAggregation(oExtensionPoint) + 1,
 						defaultContent: Array.prototype.slice.call(this._children(oExtensionPoint))
 					};

@@ -160,13 +160,17 @@ sap.ui.define([],
 				oRm.write(">");
 
 				if (oMainIndicator) {
-					oMainIndicator.addStyleClass("sapFCardHeaderMainIndicator");
+					oRm.write("<div");
+					oRm.addClass("sapFCardHeaderMainIndicator");
+					oRm.writeClasses();
+					oRm.write(">");
 					if (oBindingInfos.scale || oBindingInfos.number || oBindingInfos.trend || oBindingInfos.state) {
 						oMainIndicator.addStyleClass("sapFCardHeaderItemBinded");
 					} else {
 						oMainIndicator.removeStyleClass("sapFCardHeaderItemBinded");
 					}
 					oRm.renderControl(oMainIndicator);
+					oRm.write("</div>");
 
 					oRm.write("<div");
 					oRm.addClass("sapFCardHeaderIndicatorsGap");

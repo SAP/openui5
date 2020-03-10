@@ -17,14 +17,14 @@ sap.ui.define([
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils",
-	'sap/ui/thirdparty/datajs',
-	'sap/ui/util/XMLHelper'
+	"sap/ui/thirdparty/datajs",
+	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, uid, Device, SyncPromise, coreLibrary, Controller, View, BindingMode, Filter,
 		FilterOperator, Sorter, CountMode, MessageScope, ODataModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit*/
-	/*eslint max-nested-callbacks: 0, quote-props: 0*/
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
@@ -1757,79 +1757,128 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Refresh of navigation properties previously pointing to the *same* entity responds
 	// with a different entity for one of the navigation properties. Both navigation properties show
-	// correct data on the UI; bug was: the unchanged navigation property is updated with data
-	// from the changed one.
+	// correct data on the UI. The fixed bugs are:
+	// (1) the unchanged navigation property is updated with data from the changed one
+	// (2) the changed navigation property is not updated
 	// BCP: 1980535595
 	QUnit.test("BCP 1980535595: refresh navigation properties to same entity", function (assert) {
-		var sAdminDataPath =
-				"/C_WorkCenterGroupAdminvData(ObjectTypeCode='G',ObjectInternalID='10000425')",
-			oModel = createPPWorkcenterGroupModel({preliminaryContext : true}),
-			sWCGroupToAdminDataRequest = "C_WorkCenterGroupTree(HierarchyRootNode='10000425'"
-				+ ",HierarchyParentNode='00000000',HierarchyNode='10000425',HierarchyNodeType='G')"
-				+ "/to_AdminData",
+		var sAdminDataRequest =
+				"C_WorkCenterGroupAdminvData(ObjectTypeCode='G',ObjectInternalID='10000425')",
+			oModel = createPPWorkcenterGroupModel(),
+			sWCGroupRequest = "C_WorkCenterGroupTree(HierarchyRootNode='10000425'"
+				+ ",HierarchyParentNode='00000000',HierarchyNode='10000425',HierarchyNodeType='G')",
 			sView = '\
-<FlexBox id="objectPage" binding="{/' + sWCGroupToAdminDataRequest + '}">\
-	<Text id="id" text="{ObjectInternalID}" />\
-	<FlexBox id="createByUser" binding="{\
-			path :\'to_CreatedByUserContactCard\',\
-			parameters : {select : \'FullName\'}\
-		}">\
-		<Text id="name0" text="{FullName}" />\
-	</FlexBox> \
-	<FlexBox binding="{to_LastChangedByUserContactCard}">\
-		<Text id="name1" text="{FullName}" />\
-	</FlexBox> \
+<FlexBox id="objectPage" binding="{\
+path : \'/C_WorkCenterGroupTree(HierarchyRootNode=\\\'10000425\\\',\
+HierarchyParentNode=\\\'00000000\\\',HierarchyNode=\\\'10000425\\\',HierarchyNodeType=\\\'G\\\')\',\
+parameters : {createPreliminaryContext : true, canonicalRequest : true, \
+usePreliminaryContext : false}}">\
+	<FlexBox binding="{path : \'to_AdminData\',\
+			parameters : {usePreliminaryContext : true, createPreliminaryContext : false}}">\
+		<Text id="id" text="{ObjectInternalID}" />\
+		<FlexBox binding="{path :\'to_CreatedByUserContactCard\',\
+				parameters : {select : \'FullName\', createPreliminaryContext : false,\
+					usePreliminaryContext : false}\
+			}">\
+			<Text id="createdName" text="{FullName}" />\
+		</FlexBox>\
+	</FlexBox>\
+	<FlexBox binding="{path : \'to_AdminData\',\
+			parameters : {usePreliminaryContext : true, createPreliminaryContext : false}}">\
+		<FlexBox binding="{path :\'to_LastChangedByUserContactCard\',\
+				parameters : {select : \'FullName\', createPreliminaryContext : false,\
+					usePreliminaryContext : false}\
+			}">\
+			<Text id="lastChangedName" text="{FullName}" />\
+		</FlexBox>\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest(sWCGroupToAdminDataRequest, {
-				"__metadata" : {"uri" : sAdminDataPath},
+		this.expectRequest(sWCGroupRequest, {
+				"__metadata" : {"uri" : "/" + sWCGroupRequest},
+				HierarchyRootNode : "10000425",
+				HierarchyParentNode : "00000000",
+				HierarchyNode : "10000425",
+				HierarchyNodeType : "G"
+			})
+			.expectRequest(sWCGroupRequest + "/to_AdminData", {
+				"__metadata" : {"uri" : "/" + sAdminDataRequest},
 				ObjectTypeCode : "G",
 				ObjectInternalID : "10000425"
 			})
-			.expectRequest(sWCGroupToAdminDataRequest
-					+ "/to_CreatedByUserContactCard?$select=FullName", {
+			.expectRequest({
+				deepPath : "/C_WorkCenterGroupTree(HierarchyRootNode='10000425',"
+					+ "HierarchyParentNode='00000000',HierarchyNode='10000425',"
+					+ "HierarchyNodeType='G')/to_AdminData/to_CreatedByUserContactCard",
+				method : "GET",
+				requestUri : sAdminDataRequest + "/to_CreatedByUserContactCard?$select=FullName"
+			}, {
 				"__metadata" : {"uri" : "/I_UserContactCard('Smith')"},
 				FullName : "Smith"
 			})
-			.expectRequest(sWCGroupToAdminDataRequest + "/to_LastChangedByUserContactCard", {
+			.expectRequest({
+				deepPath : "/C_WorkCenterGroupTree(HierarchyRootNode='10000425',"
+					+ "HierarchyParentNode='00000000',HierarchyNode='10000425',"
+					+ "HierarchyNodeType='G')/to_AdminData/to_LastChangedByUserContactCard",
+				method : "GET",
+				requestUri : sAdminDataRequest + "/to_LastChangedByUserContactCard?$select=FullName"
+			}, {
 				"__metadata" : {"uri" : "/I_UserContactCard('Smith')"},
 				FullName : "Smith"
 			})
 			.expectChange("id", null)
 			.expectChange("id", "10000425")
-			.expectChange("name0", null)
-			.expectChange("name0", "Smith")
-			.expectChange("name1", null)
-			.expectChange("name1", "Smith");
+			.expectChange("createdName", null)
+			.expectChange("createdName", "Smith")
+			.expectChange("lastChangedName", null)
+			.expectChange("lastChangedName", "Smith");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest(sWCGroupToAdminDataRequest, {
-					"__metadata" : {"uri" : sAdminDataPath},
+			that.expectRequest(sWCGroupRequest, {
+					"__metadata" : {"uri" : "/" + sWCGroupRequest},
+					HierarchyRootNode : "10000425",
+					HierarchyParentNode : "00000000",
+					HierarchyNode : "10000425",
+					HierarchyNodeType : "G"
+				})
+				.expectRequest(sWCGroupRequest + "/to_AdminData", {
+					"__metadata" : {"uri" : "/" + sAdminDataRequest},
 					ObjectTypeCode : "G",
 					ObjectInternalID : "10000425"
 				})
-				.expectRequest(sWCGroupToAdminDataRequest
-						+ "/to_CreatedByUserContactCard?$select=FullName", {
+				.expectRequest({
+					deepPath : "/C_WorkCenterGroupTree(HierarchyRootNode='10000425',"
+						+ "HierarchyParentNode='00000000',HierarchyNode='10000425',"
+						+ "HierarchyNodeType='G')/to_AdminData/to_CreatedByUserContactCard",
+					method : "GET",
+					requestUri : sAdminDataRequest + "/to_CreatedByUserContactCard?$select=FullName"
+				}, {
 					"__metadata" : {"uri" : "/I_UserContactCard('Smith')"},
 					FullName : "Smith"
 				})
-				.expectRequest(sWCGroupToAdminDataRequest + "/to_LastChangedByUserContactCard", {
+				.expectRequest({
+					deepPath : "/C_WorkCenterGroupTree(HierarchyRootNode='10000425',"
+						+ "HierarchyParentNode='00000000',HierarchyNode='10000425',"
+						+ "HierarchyNodeType='G')/to_AdminData/to_LastChangedByUserContactCard",
+					method : "GET",
+					requestUri : sAdminDataRequest
+						+ "/to_LastChangedByUserContactCard?$select=FullName"
+				}, {
 					"__metadata" : {"uri" : "/I_UserContactCard('Muller')"},
 					FullName : "Muller"
 				})
-				.expectChange("name1", "Muller");
+				.expectChange("id", null)
+				.expectChange("id", "10000425")
+				.expectChange("createdName", null)
+				.expectChange("createdName", "Smith")
+				.expectChange("lastChangedName", null)
+				.expectChange("lastChangedName", "Muller");
 
 			// code under test: refresh keeps canonical path for "/I_UserContactCard('Smith')" in
-			// ODataModel#mPathCache and does *not* replace it by "/I_UserContactCard('Muller')"
+			// ODataModel#mPathCache and does *not* replace it by "/I_UserContactCard('Muller')";
+			// all other path cache entries for "to_LastChangedByUserContactCard" are adapted
 			that.oView.byId("objectPage").getObjectBinding().refresh(/*bForceUpdate*/true);
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			// code under test: checkUpdate calls ODataModel#createBindingContext which creates a
-			// context for the "create by user" field based on the patch cache entry.
-			// This only happens if no reload is needed.
-			that.oView.byId("createByUser").getObjectBinding().checkUpdate();
 
 			return that.waitForChanges(assert);
 		});

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/AppVariantManager",
-	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -26,7 +26,7 @@ sap.ui.define([
 	AppVariantOverviewUtils,
 	AppVariantUtils,
 	AppVariantManager,
-	DescriptorVariantFactory,
+	AppVariantFactory,
 	Settings,
 	Layer,
 	FlUtils,
@@ -98,11 +98,11 @@ sap.ui.define([
 			var oDummyAppVarDescr = {
 				hugo: "foo"
 			};
-			var oLoadAppVariantStub = sandbox.stub(DescriptorVariantFactory, "loadAppVariant").resolves(oDummyAppVarDescr);
+			var oLoadAppVariantStub = sandbox.stub(AppVariantFactory, "load").resolves(oDummyAppVarDescr);
 
 			return RtaAppVariantFeature.getAppVariantDescriptor(oRootControl).then(function() {
-				assert.equal(oLoadAppVariantStub.callCount, 1, "then the loadAppVariant is called once");
-				assert.equal(oLoadAppVariantStub.firstCall.args[0], "customer.app.var.id", "the application id was passed correctly");
+				assert.equal(oLoadAppVariantStub.callCount, 1, "then the loading app variant is called once");
+				assert.deepEqual(oLoadAppVariantStub.firstCall.args[0], {id: "customer.app.var.id"}, "the application id was passed correctly");
 			});
 		});
 
@@ -117,7 +117,7 @@ sap.ui.define([
 			var oDummyAppVarDescr = {
 				hugo: "foo"
 			};
-			var oLoadAppVariantStub = sandbox.stub(DescriptorVariantFactory, "loadAppVariant").resolves(oDummyAppVarDescr);
+			var oLoadAppVariantStub = sandbox.stub(AppVariantFactory, "load").resolves(oDummyAppVarDescr);
 
 			return RtaAppVariantFeature.getAppVariantDescriptor(oRootControl).then(function(oAppVarDescr) {
 				assert.ok(oLoadAppVariantStub.notCalled, "then the getDescriptorFromLREP is not called");
@@ -792,7 +792,7 @@ sap.ui.define([
 			);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
-			sandbox.stub(DescriptorVariantFactory, "_getDescriptorVariant").resolves({response: JSON.stringify(oDescriptor)});
+			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
 
 			var oPublishingResponse = {
 				response: {
@@ -836,7 +836,7 @@ sap.ui.define([
 			);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
-			sandbox.stub(DescriptorVariantFactory, "_getDescriptorVariant").resolves({response: JSON.stringify(oDescriptor)});
+			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
 
 			var oPublishingResponse = {
 				response: {
@@ -876,7 +876,7 @@ sap.ui.define([
 			);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
-			sandbox.stub(DescriptorVariantFactory, "_getDescriptorVariant").resolves({response: JSON.stringify(oDescriptor)});
+			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
 
 			var oPublishingResponse = {
 				response: {
@@ -915,7 +915,7 @@ sap.ui.define([
 			);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
-			sandbox.stub(DescriptorVariantFactory, "_getDescriptorVariant").resolves({response: JSON.stringify(oDescriptor)});
+			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
 
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var oShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
@@ -945,7 +945,7 @@ sap.ui.define([
 			);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
-			sandbox.stub(DescriptorVariantFactory, "_getDescriptorVariant").resolves({response: JSON.stringify(oDescriptor)});
+			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
 
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var oShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage");
@@ -977,7 +977,7 @@ sap.ui.define([
 			);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
-			sandbox.stub(DescriptorVariantFactory, "_getDescriptorVariant").resolves({response: JSON.stringify(oDescriptor)});
+			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
 
 			var oPublishingResponse = {
 				response: {

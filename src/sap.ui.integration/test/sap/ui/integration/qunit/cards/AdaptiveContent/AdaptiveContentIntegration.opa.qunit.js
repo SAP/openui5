@@ -30,7 +30,7 @@ sap.ui.define([
 				actions: function (oCard) {
 					oCard.attachAction(function (oEvent) {
 						oEventType = oEvent.getParameter("type");
-						oData = oEvent.getParameter("manifestParameters");
+						oData = oEvent.getParameter("parameters");
 					});
 
 					oCard.$().find("ui5-button").eq(0).click();
@@ -49,7 +49,7 @@ sap.ui.define([
 				actions: function (oCard) {
 					oCard.attachAction(function (oEvent) {
 						oEventType = oEvent.getParameter("type");
-						oData = oEvent.getParameter("manifestParameters");
+						oData = oEvent.getParameter("parameters");
 					});
 					oCard.$().find("ui5-button").eq(2).click();
 				},
@@ -97,7 +97,7 @@ sap.ui.define([
 					return oNode.$().hasClass("sapFCard");
 				},
 				success: function () {
-					Opa5.assert.strictEqual(oData, "http://www.company_a.example.com", "The URL is correct");
+					Opa5.assert.strictEqual(oData.url, "http://www.company_a.example.com", "The URL is correct");
 				},
 				errorMessage: "The component does not exist or the value could not be changed"
 			});

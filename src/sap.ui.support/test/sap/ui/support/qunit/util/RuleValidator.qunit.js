@@ -29,7 +29,7 @@ sap.ui.define([
 		}
 
 		QUnit.module("RuleValidator - positive case", {
-			setup: function () {
+			beforeEach: function () {
 				this.libs = [
 					'sap.m',
 					'sap.ui.table',
@@ -44,7 +44,7 @@ sap.ui.define([
 				];
 				this.oRuleValidator = RuleValidator;
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.libs = null;
 				this.oRuleValidator = null;
 			}
@@ -116,7 +116,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("RuleValidator - should fail", {
-			setup: function () {
+			beforeEach: function () {
 				this.libs = [
 					'sap.m',
 					'sap.ui.table',
@@ -131,7 +131,7 @@ sap.ui.define([
 				];
 				this.oRuleValidator = RuleValidator;
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.libs = null;
 				this.oRuleValidator = null;
 			}

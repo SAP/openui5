@@ -4983,8 +4983,8 @@ sap.ui.define([
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocomplete"), "off");
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocorrect"), "off");
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), "off");
-			assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "false");
-			assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("aria-autocomplete"), "inline");
+			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
+			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-autocomplete"), "both");
 			assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-required"), undefined);
 			assert.ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE), 'The combo box element has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + '"');
 			assert.ok(oComboBox.getAggregation("_endIcon").length, "The HTML span element for the arrow exists");
@@ -8977,7 +8977,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
-		assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "true");
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true");
 		assert.strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// cleanup
@@ -9287,7 +9287,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnOnAfterCloseSpy.callCount, 1, "onAfterClose() called exactly once");
-		assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "false");
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
 		assert.strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// cleanup
@@ -10535,7 +10535,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("role"), "combobox", "should be combobox");
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("role"), "combobox", "should be combobox");
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("type"), "text", "should be text");
 		oComboBox.destroy();
 	});

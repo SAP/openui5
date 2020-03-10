@@ -78,6 +78,24 @@ function(
 				modeSwitcher: {
 					type: "string",
 					defaultValue: "adaptation"
+				},
+
+				/** Determines the visibility of the 'saveAs', 'manageApps' and 'appVariantsOverview' buttons */
+				appVariantsVisible: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/** Determines the enablement of the 'saveAs', 'manageApps' and 'appVariantsOverview' buttons */
+				appVariantsEnabled: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/** Determines if the 'appVariantOverview' or the 'manageApps' should be visible */
+				extendedManageAppVariants: {
+					type: "boolean",
+					defaultValue: false
 				}
 			}
 		}
@@ -277,6 +295,31 @@ function(
 		this.getControl("activateDraft").setEnabled(bEnabled);
 		this.getControl("discardDraft").setEnabled(bEnabled);
 		return bEnabled;
+	};
+
+	Adaptation.prototype.setAppVariantsVisible = function (bVisible) {
+		this.setProperty("appVariantsVisible", bVisible, true);
+
+		this.getControl("saveAs").setVisible(bVisible);
+
+		var bExtendedManageAppVariants = this.getExtendedManageAppVariants();
+		this.getControl("appVariantOverview").setVisible(bVisible && bExtendedManageAppVariants);
+		this.getControl("manageApps").setVisible(bVisible && !bExtendedManageAppVariants);
+	};
+
+	Adaptation.prototype.setAppVariantsEnabled = function (bEnabled) {
+		this.setProperty("appVariantsEnabled", bEnabled, true);
+		this.getControl("saveAs").setEnabled(bEnabled);
+		this.getControl("appVariantOverview").setEnabled(bEnabled);
+		this.getControl("manageApps").setEnabled(bEnabled);
+	};
+
+	Adaptation.prototype.setExtendedManageAppVariants = function (bExtended) {
+		this.setProperty("extendedManageAppVariants", bExtended, true);
+
+		var bVisible = this.getAppVariantsVisible();
+		this.getControl("appVariantOverview").setVisible(bVisible && bExtended);
+		this.getControl("manageApps").setVisible(bVisible && !bExtended);
 	};
 
 	/* Methods propagation */

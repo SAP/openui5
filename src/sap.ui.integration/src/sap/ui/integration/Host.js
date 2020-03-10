@@ -3,10 +3,9 @@
  */
 sap.ui.define([
 	'sap/ui/thirdparty/jquery',
-	'./Extension',
-	"sap/base/Log"
+	'./Extension'
 ],
-	function (jQuery, Extension, Log) {
+	function (jQuery, Extension) {
 		"use strict";
 
 		/**
@@ -16,7 +15,9 @@ sap.ui.define([
 		 * @param {object} [mSettings] Initial settings for the new data provider.
 		 *
 		 * @class
+		 * Provides application-level functions and services to an integration card.
 		 *
+		 * Examples may include, but are not limited to options like: share a card, remove a card.
 		 *
 		 * @extends sap.ui.integration.Extension
 		 *
@@ -24,6 +25,7 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @constructor
+		 * @public
 		 * @experimental
 		 * @since 1.75
 		 * @alias sap.ui.integration.Host
@@ -33,13 +35,15 @@ sap.ui.define([
 				library: "sap.ui.integration",
 				properties: {
 					/**
-					 * A function which resolves the given destination name to an url.
+					 * A function that resolves the given destination name to a URL.
 					 *
-					 * The Card will call that function when it needs to send a request to a destination. The result of the function will must be the url to which the request is sent.
+					 * The Card calls this function when it needs to send a request to a destination.
+					 * Function returns the URL to which the request is sent.
 					 *
-					 * If a card depends on a destination, but this callback is not implemented, an error will be logged.vement.
+					 * If a card depends on a destination, but this callback is not implemented, an error will be logged.
 					 *
-					 * The callback receives <code>destinationName</code> as parameter and must return a string with the url or a Promise which resolves with one argument which is the url.
+					 * The callback receives <code>destinationName</code> as parameter and returns a string with the URL.
+					 * Or alternatively the callback may return a <code>Promise</code> with the URL as an argument.
 					 */
 					resolveDestination: {
 						type: "function",
@@ -57,10 +61,12 @@ sap.ui.define([
 		});
 
 		/**
-		 * Resolves the destination and returns its Url.
+		 * Resolves the destination and returns its URL.
 		 *
-		 * @param {string} sDestinationName The name of the destination. Most oftne the name which is used in Cloud Platform.
-		 * @returns {Promise} A promise which resolves with the url of the destination.
+		 * @param {string} sDestinationName The name of the destination.
+		 * Most often the name which is used in the SAP Cloud Platform.
+		 * @returns {Promise} A promise which resolves with the URL of the destination.
+		 * @public
 		 */
 		Host.prototype.getDestination = function (sDestinationName) {
 			var fnResolveDestination = this.getResolveDestination(),

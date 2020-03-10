@@ -108,7 +108,8 @@ function (
 		QUnit.test("when all is rendered", function (assert) {
 			assert.ok(this.oElementOverlay.getDomRef(), "overlay is rendered");
 			assert.ok(this.oElementOverlay.isVisible(), "overlay is visible");
-			assert.deepEqual(this.oElementOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as a control");
+			assert.deepEqual(Math.ceil(this.oElementOverlay.$().offset().top), Math.ceil(this.oButton.$().offset().top), "overlay has same top position as a control");
+			assert.deepEqual(Math.ceil(this.oElementOverlay.$().offset().left), Math.ceil(this.oButton.$().offset().left), "overlay has same left position as a control");
 			assert.equal(this.oElementOverlay.$().css("z-index"), Popup.getLastZIndex(), "the root overlay has the last z-index provided by the Popup");
 		});
 
@@ -249,8 +250,8 @@ function (
 
 			var mElementOffset = this.oElementOverlay.getElement().$().offset();
 			var mOverlayOffset = $DomRef.offset();
-			assert.equal(mOverlayOffset.top, mElementOffset.top, "and the right position 'top' is applied to the overlay");
-			assert.equal(mOverlayOffset.left, mElementOffset.left, "and the right position 'left' is applied to the overlay");
+			assert.equal(Math.ceil(mOverlayOffset.top), Math.ceil(mElementOffset.top), "and the right position 'top' is applied to the overlay");
+			assert.equal(Math.ceil(mOverlayOffset.left), Math.ceil(mElementOffset.left), "and the right position 'left' is applied to the overlay");
 			assert.equal(this.oElementOverlay.$().css("z-index"), $DomRef.css("z-index"), "and the right z-index is applied to the overlay");
 
 			var oDesignTimeMetadata = this.oElementOverlay.getDesignTimeMetadata();
@@ -568,23 +569,23 @@ function (
 			this.oDesignTime.attachEventOnce("synced", function () {
 				assert.deepEqual(Math.ceil(this.oLayoutOverlay.$().offset().top), Math.ceil(this.oVerticalLayout.$().offset().top), "top position of the Layout overlay is correct");
 				assert.deepEqual(Math.ceil(this.oLayoutOverlay.$().offset().left), Math.ceil(this.oVerticalLayout.$().offset().left), "left position of the Layout overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).width, DOMUtil.getSize(this.oVerticalLayout.getDomRef()).width, "width of the Layout overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).height, DOMUtil.getSize(this.oVerticalLayout.getDomRef()).height, "height of the Layout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oVerticalLayout.getDomRef()).width), "width of the Layout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oVerticalLayout.getDomRef()).height), "height of the Layout overlay is correct");
 
 				assert.deepEqual(Math.ceil(this.oLabelOverlay1.$().offset().top), Math.ceil(this.oLabel1.$().offset().top), "top position of the Label1 overlay is correct");
 				assert.deepEqual(Math.ceil(this.oLabelOverlay1.$().offset().left), Math.ceil(this.oLabel1.$().offset().left), "left position of the Label1 overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).width, DOMUtil.getSize(this.oLabel1.getDomRef()).width, "width of the Label1 overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).height, DOMUtil.getSize(this.oLabel1.getDomRef()).height, "height of the Label1 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oLabel1.getDomRef()).width), "width of the Label1 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oLabel1.getDomRef()).height), "height of the Label1 overlay is correct");
 
 				assert.deepEqual(Math.ceil(this.oInnerLayoutOverlay.$().offset().top), Math.ceil(this.oInnerLayout.$().offset().top), "top position of the InnerLayout overlay is correct");
 				assert.deepEqual(Math.ceil(this.oInnerLayoutOverlay.$().offset().left), Math.ceil(this.oInnerLayout.$().offset().left), "left position of the InnerLayout overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).width, DOMUtil.getSize(this.oInnerLayout.getDomRef()).width, "width of the InnerLayout overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).height, DOMUtil.getSize(this.oInnerLayout.getDomRef()).height, "height of the InnerLayout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oInnerLayout.getDomRef()).width), "width of the InnerLayout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oInnerLayout.getDomRef()).height), "height of the InnerLayout overlay is correct");
 
 				assert.deepEqual(Math.ceil(this.oLabelOverlay2.$().offset().top), Math.ceil(this.oLabel2.$().offset().top), "top position of the Label2 overlay is correct");
 				assert.deepEqual(Math.ceil(this.oLabelOverlay2.$().offset().left), Math.ceil(this.oLabel2.$().offset().left), "left position of the Label2 overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).width, DOMUtil.getSize(this.oLabel2.getDomRef()).width, "width of the Label2 overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).height, DOMUtil.getSize(this.oLabel2.getDomRef()).height, "height of the Label2 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oLabel2.getDomRef()).width), "width of the Label2 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oLabel2.getDomRef()).height), "height of the Label2 overlay is correct");
 
 				fnDone();
 			}, this);
@@ -599,23 +600,23 @@ function (
 			this.oDesignTime.attachEventOnce("synced", function () {
 				assert.deepEqual(Math.ceil(this.oLayoutOverlay.$().offset().top), Math.ceil(this.oVerticalLayout.$().offset().top), "top position of the Layout overlay is correct");
 				assert.deepEqual(Math.ceil(this.oLayoutOverlay.$().offset().left), Math.ceil(this.oVerticalLayout.$().offset().left), "left position of the Layout overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).width, DOMUtil.getSize(this.oVerticalLayout.getDomRef()).width, "width of the Layout overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).height, DOMUtil.getSize(this.oVerticalLayout.getDomRef()).height, "height of the Layout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oVerticalLayout.getDomRef()).width), "width of the Layout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oVerticalLayout.getDomRef()).height), "height of the Layout overlay is correct");
 
 				assert.deepEqual(Math.ceil(this.oLabelOverlay1.$().offset().top), Math.ceil(this.oLabel1.$().offset().top), "top position of the Label1 overlay is correct");
 				assert.deepEqual(Math.ceil(this.oLabelOverlay1.$().offset().left), Math.ceil(this.oLabel1.$().offset().left), "left position of the Label1 overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).width, DOMUtil.getSize(this.oLabel1.getDomRef()).width, "width of the Label1 overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).height, DOMUtil.getSize(this.oLabel1.getDomRef()).height, "height of the Label1 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oLabel1.getDomRef()).width), "width of the Label1 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oLabel1.getDomRef()).height), "height of the Label1 overlay is correct");
 
 				assert.deepEqual(Math.ceil(this.oInnerLayoutOverlay.$().offset().top), Math.ceil(this.oInnerLayout.$().offset().top), "top position of the InnerLayout overlay is correct");
 				assert.deepEqual(Math.ceil(this.oInnerLayoutOverlay.$().offset().left), Math.ceil(this.oInnerLayout.$().offset().left), "left position of the InnerLayout overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).width, DOMUtil.getSize(this.oInnerLayout.getDomRef()).width, "width of the InnerLayout overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).height, DOMUtil.getSize(this.oInnerLayout.getDomRef()).height, "height of the InnerLayout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oInnerLayout.getDomRef()).width), "width of the InnerLayout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oInnerLayout.getDomRef()).height), "height of the InnerLayout overlay is correct");
 
 				assert.deepEqual(Math.ceil(this.oLabelOverlay2.$().offset().top), Math.ceil(this.oLabel2.$().offset().top), "top position of the Label2 overlay is correct");
 				assert.deepEqual(Math.ceil(this.oLabelOverlay2.$().offset().left), Math.ceil(this.oLabel2.$().offset().left), "left position of the Label2 overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).width, DOMUtil.getSize(this.oLabel2.getDomRef()).width, "width of the Label2 overlay is correct");
-				assert.deepEqual(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).height, DOMUtil.getSize(this.oLabel2.getDomRef()).height, "height of the Label2 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oLabel2.getDomRef()).width), "width of the Label2 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oLabel2.getDomRef()).height), "height of the Label2 overlay is correct");
 
 				fnDone();
 			}, this);
@@ -846,7 +847,8 @@ function (
 		QUnit.test("when the container is scrolled", function(assert) {
 			var fnDone = assert.async();
 			this.oOverlay.attachEventOnce("geometryChanged", function () {
-				assert.deepEqual(this.oOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as a control");
+				assert.deepEqual(Math.ceil(this.oOverlay.$().offset().top), Math.ceil(this.oButton.$().offset().top), "overlay has same top position as a control");
+				assert.deepEqual(Math.ceil(this.oOverlay.$().offset().left), Math.ceil(this.oButton.$().offset().left), "overlay has same left position as a control");
 				fnDone();
 			}, this);
 			this.$container.scrollTop(50);
@@ -913,9 +915,11 @@ function (
 				oPromise = this.oContent1Overlay.applyStyles();
 			}
 			return oPromise.then(function () {
-				assert.equal(this.oContent1.$().offset().top, mInitialValues.offsetTop - 100, "Then the top offset is 100px lower");
-				assert.deepEqual(this.oContent1.$().offset(), this.oContent1Overlay.$().offset(), "Then the offset is still equal");
-				assert.deepEqual(mInitialValues.controlOffset, mInitialValues.overlayOffset, "Then the offset is still equal");
+				assert.equal(Math.ceil(this.oContent1.$().offset().top), Math.ceil(mInitialValues.offsetTop) - 100, "Then the top offset is 100px lower");
+				assert.strictEqual(Math.ceil(this.oContent1.$().offset().left), Math.ceil(this.oContent1Overlay.$().offset().left), "Then the offset left is still equal");
+				assert.strictEqual(Math.ceil(this.oContent1.$().offset().top), Math.ceil(this.oContent1Overlay.$().offset().top), "Then the offset top is still equal");
+				assert.strictEqual(Math.ceil(mInitialValues.controlOffset.left), Math.ceil(mInitialValues.overlayOffset.left), "Then the offset left is still equal");
+				assert.strictEqual(Math.ceil(mInitialValues.controlOffset.top), Math.ceil(mInitialValues.overlayOffset.top), "Then the offset top is still equal");
 				done();
 			}.bind(this));
 		}
@@ -1539,42 +1543,42 @@ function (
 			this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
 
 			var fnAssertPositions = function() {
-				// Math.round is required for IE and Edge
+				// Math.ceil is required for IE and Edge
 				assert.equal(
-					Math.round(this.oPanelOverlay.$().offset().left),
-					Math.round(this.oPanel.$().offset().left),
+					Math.ceil(this.oPanelOverlay.$().offset().left),
+					Math.ceil(this.oPanel.$().offset().left),
 					"panel overlay has same left position as the panel control"
 				);
 				assert.equal(
-					Math.round(this.oPanelOverlay.$().offset().top),
-					Math.round(this.oPanel.$().offset().top),
+					Math.ceil(this.oPanelOverlay.$().offset().top),
+					Math.ceil(this.oPanel.$().offset().top),
 					"panel overlay has same top position as the panel control"
 				);
 				assert.equal(
-					Math.round(this.oButtonOverlay.$().offset().left),
-					Math.round(this.oButton.$().offset().left),
+					Math.ceil(this.oButtonOverlay.$().offset().left),
+					Math.ceil(this.oButton.$().offset().left),
 					"button overlay has same left position as the button control"
 				);
 				assert.equal(
-					Math.round(this.oButtonOverlay.$().offset().top),
-					Math.round(this.oButton.$().offset().top),
+					Math.ceil(this.oButtonOverlay.$().offset().top),
+					Math.ceil(this.oButton.$().offset().top),
 					"button overlay has same top position as the button control"
 				);
 				assert.equal(
-					Math.round(this.oButton2Overlay.$().offset().left),
-					Math.round(this.oButton2.$().offset().left),
+					Math.ceil(this.oButton2Overlay.$().offset().left),
+					Math.ceil(this.oButton2.$().offset().left),
 					"button2 overlay has same left position as the button2 control"
 				);
 				assert.equal(
-					Math.round(this.oButton2Overlay.$().offset().top),
-					Math.round(this.oButton2.$().offset().top),
+					Math.ceil(this.oButton2Overlay.$().offset().top),
+					Math.ceil(this.oButton2.$().offset().top),
 					"button2 overlay has same top position as the button2 control"
 				);
 			};
 
 			// In internet explorer/edge, the checks happen before the overlays inside the scroll container
 			// are properly placed, so we must wait until they are finalized before checking
-			if (this.oButtonOverlay.$().offset().left !== this.oButton.$().offset().left) {
+			if (Math.ceil(this.oButtonOverlay.$().offset().left) !== Math.ceil(this.oButton.$().offset().left)) {
 				this.oButton2Overlay.attachEventOnce("geometryChanged", function() {
 					fnAssertPositions.apply(this);
 					fnDone();

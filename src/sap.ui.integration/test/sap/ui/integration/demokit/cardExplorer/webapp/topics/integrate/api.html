@@ -56,7 +56,7 @@
 ...
 onActionLog: function (oEvent) {
 	console.log(oEvent.getParameter("type")); // The type of the action
-	console.log(JSON.stringify(oEvent.getParameter("manifestParameters"), null, 2)); // The action parameters passed from the card to the host environment
+	console.log(JSON.stringify(oEvent.getParameter("parameters"), null, 2)); // The action parameters passed from the card to the host environment
 	console.log(oEvent.getParameter("actionSource")); // The source of the action
 }
 ...

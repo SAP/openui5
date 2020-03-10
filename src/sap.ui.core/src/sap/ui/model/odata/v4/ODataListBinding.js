@@ -311,6 +311,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
 		var sApply,
+			oOldAggregation = this.mParameters && this.mParameters.$$aggregation,
 			sOldApply = this.mQueryOptions && this.mQueryOptions.$apply;
 
 		if ("$$aggregation" in mParameters) {
@@ -319,9 +320,6 @@ sap.ui.define([
 			}
 			// Note: this validates mParameters.$$aggregation!
 			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
-			if (sChangeReason === "" && sApply !== sOldApply) {
-				sChangeReason = ChangeReason.Change;
-			}
 		}
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
@@ -329,8 +327,14 @@ sap.ui.define([
 			this.mQueryOptions.$apply = sApply;
 		}
 
-		if (sChangeReason === "") { // unchanged $apply derived from $$aggregation
-			return;
+		if (sChangeReason === "") { // called from #setAggregation
+			if (this.mQueryOptions.$apply === sOldApply
+				&& (!this.mParameters.$$aggregation || !oOldAggregation
+					|| _Helper.deepEqual(this.mParameters.$$aggregation, oOldAggregation))
+					) {
+				return; // unchanged $apply derived from $$aggregation
+			}
+			sChangeReason = ChangeReason.Change;
 		}
 		if (this.isRootBindingSuspended()) {
 			this.setResumeChangeReason(sChangeReason);

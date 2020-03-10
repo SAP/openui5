@@ -106,9 +106,9 @@ sap.ui.define([
 				key: 'features',
 				items: [
 					{
-						title: 'Actions',
+						title: 'Card Actions',
 						target: 'learnDetail',
-						key: 'actions',
+						key: 'cardActions',
 						topicTitle: 'Integration Card Features'
 					},
 					{
@@ -140,6 +140,12 @@ sap.ui.define([
 						title: 'Dynamic Parameters',
 						target: 'learnDetail',
 						key: 'dynamicParameters',
+						topicTitle: 'Integration Card Features'
+					},
+					{
+						title: 'Host Actions',
+						target: 'learnDetail',
+						key: 'hostActions',
 						topicTitle: 'Integration Card Features'
 					},
 					{

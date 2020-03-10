@@ -88,7 +88,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of 1.44. Use the binding parameter <code>sumOnTop</code> instead.
+			 * @deprecated As of version 1.44, replaced by the <code>sumOnTop</code> binding parameter
 			 */
 			sumOnTop : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
@@ -108,7 +108,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of 1.44. Use the binding parameter <code>numberOfExpandedLevels</code> instead.
+			 * @deprecated As of version 1.44, replaced by the <code>numberOfExpandedLevels</code> binding parameter
 			 */
 			numberOfExpandedLevels : {type : "int", group : "Misc", defaultValue : 0, deprecated: true},
 
@@ -129,7 +129,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of 1.44. Use the binding parameter <code>autoExpandMode</code> instead.
+			 * @deprecated As of version 1.44, replaced by the <code>autoExpandMode</code> binding parameter
 			 */
 			autoExpandMode: {type: "string", group: "Misc", defaultValue: "Bundled", deprecated: true},
 
@@ -155,7 +155,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of 1.76. Use the binding parameter <code>collapseRecursive</code> instead.
+			 * @deprecated As of version 1.76, replaced by the <code>collapseRecursive</code> binding parameter
 			 */
 			collapseRecursive : {type: "boolean", defaultValue: true},
 

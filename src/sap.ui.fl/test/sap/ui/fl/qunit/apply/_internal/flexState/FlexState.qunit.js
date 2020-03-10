@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/apply/_internal/Storage",
+	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/LayerUtils",
 	"sap/base/Log",
-	"sap/base/util/deepClone",
+	"sap/base/util/merge",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	UIComponent,
@@ -18,9 +19,10 @@ sap.ui.define([
 	Loader,
 	CompatibilityConnector,
 	Storage,
+	StorageUtils,
 	LayerUtils,
 	Log,
-	deepClone,
+	merge,
 	sinon
 ) {
 	"use strict";
@@ -29,15 +31,7 @@ sap.ui.define([
 	var sReference = "sap.ui.fl.reference";
 	var sComponentId = "componentId";
 	var mResponse = {
-		changes: {
-			changes: [],
-			variants: [],
-			variantChanges: [],
-			variantDependentControlChanges: [],
-			variantManagementChanges: [],
-			notKnownChanges: [],
-			randomObject: {}
-		}
+		changes: StorageUtils.getEmptyFlexDataResponse()
 	};
 
 	function _mockPrepareFunctions(sMapName) {
@@ -54,11 +48,17 @@ sap.ui.define([
 
 	QUnit.module("FlexState with loadFlexData, _callPrepareFunction and filtering stubbed", {
 		beforeEach: function () {
-			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(deepClone(mResponse));
+			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(merge(mResponse,
+				{
+					changes: {
+						variantSection: {someVariantKey: "someVariantValue"}
+					}
+				}
+			));
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "_callPrepareFunction").callsFake(_mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
-			this.oFilterStub = sandbox.stub(LayerUtils, "filterChangeDefinitionsByMaxLayer");
+			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
 		},
 		afterEach: function () {
 			FlexState.clearState();
@@ -80,38 +80,10 @@ sap.ui.define([
 				assert.equal(this.oFilterStub.callCount, 0, "nothing got filtered");
 				return FlexState.getStorageResponse(sReference);
 			}.bind(this))
-			.then(function (mStorageResponse) {
+			.then(function () {
 				assert.deepEqual(FlexState.getVariantsState(sReference), _mockPrepareFunctions("variantsMap"), "then variants map was prepared correctly");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "variant prepare function was not called again");
-				assert.deepEqual(mStorageResponse.changes.variantSection, _mockPrepareFunctions("variantsMap"), "then for the time being the correct variantsSection is prepared");
 			}.bind(this));
-		});
-
-		QUnit.test("when initialize is called followed by reset of prepared maps", function (assert) {
-			return FlexState.initialize({
-				reference: sReference,
-				componentId: sComponentId
-			}).then(function () {
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "then prepare function was called once");
-				FlexState.clearPreparedMaps(sReference);
-				return FlexState.getStorageResponse(sReference);
-			}.bind(this))
-			.then(function (mStorageResponse) {
-				FlexState.getVariantsState(sReference);
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "then prepare function was called again");
-				assert.ok(this.oCallPrepareFunctionStub.secondCall.calledWith("variantsMap"), "then prepare function for variants map was called again");
-				assert.deepEqual(mStorageResponse.changes.variantSection, _mockPrepareFunctions("variantsMap"), "then variant section is still set in the storage response");
-			}.bind(this));
-		});
-
-		QUnit.test("when initialize is followed by clearance of states, with a delayed reset of prepared maps", function (assert) {
-			return FlexState.initialize({
-				reference: sReference,
-				componentId: sComponentId
-			}).then(function () {
-				FlexState.clearState();
-				assert.equal(FlexState.clearPreparedMaps(sReference), undefined, "then no error was thrown");
-			});
 		});
 
 		QUnit.test("when initialize is called with a reference ending in '.Component'", function (assert) {
@@ -316,11 +288,11 @@ sap.ui.define([
 
 	QUnit.module("FlexState with loadFlexData and _callPrepareFunction stubbed, filtering active", {
 		beforeEach: function () {
-			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(deepClone(mResponse));
+			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "_callPrepareFunction").callsFake(_mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(true);
-			this.oFilterStub = sandbox.stub(LayerUtils, "filterChangeDefinitionsByMaxLayer");
+			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
 		},
 		afterEach: function () {
 			FlexState.clearState();
@@ -346,35 +318,43 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when initialize is called twice with clearMaxLayerFiltering in between", function(assert) {
-			sandbox.spy(FlexState, "clearPreparedMaps");
+		QUnit.test("when initialize is called twice with clearMaxLayerFiltering() in between", function(assert) {
+			// TODO: Remove the following line after removing variant controller
+			Loader.loadFlexData.resolves(Object.assign(mResponse, {variantSection: {}}));
+
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
-			}).then(function() {
-				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
-				assert.equal(this.oFilterStub.callCount, 5, "all filterable types got filtered");
-				FlexState.clearMaxLayerFiltering(sReference);
-			}.bind(this))
-			.then(function() {
-				assert.ok(FlexState.clearPreparedMaps.calledWith(sReference));
 			})
-			.then(FlexState.initialize.bind(null, {
-				reference: sReference,
-				componentId: sComponentId
-			}))
-			.then(function() {
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "then variants map were prepared again");
-				assert.ok(this.oCallPrepareFunctionStub.calledWith("variantsMap"), "then variants map were prepared again");
-				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 2, "the check was made again");
-				assert.equal(this.oFilterStub.callCount, 10, "everything was filtered again");
-			}.bind(this));
+				.then(function () {
+					assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
+					assert.equal(this.oFilterStub.callCount, 5, "all filterable types got filtered");
+
+					var oVariantsMap = FlexState.getVariantsState(sReference);
+					assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "then variants map preparation function was called once");
+					assert.ok(typeof oVariantsMap === "object", "then variants map was prepared");
+					FlexState.clearMaxLayerFiltering(sReference);
+					return FlexState.getFlexObjectsFromStorageResponse(sReference);
+				}.bind(this))
+				.then(function (mResponse) {
+					assert.strictEqual(mResponse.variantSection, undefined, "then variant section was cleared");
+				})
+				.then(FlexState.initialize.bind(null, {
+					reference: sReference,
+					componentId: sComponentId
+				}))
+				.then(function () {
+					assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "then prepare map were called again");
+					assert.ok(this.oCallPrepareFunctionStub.calledWith("variantsMap"), "then variants map were prepared again");
+					assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 2, "the check was made again");
+					assert.equal(this.oFilterStub.callCount, 10, "everything was filtered again");
+				}.bind(this));
 		});
 	});
 
 	QUnit.module("FlexState with a ushell container", {
 		beforeEach: function () {
-			sandbox.stub(Loader, "loadFlexData").resolves(deepClone(mResponse));
+			sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
 			sandbox.stub(FlexState, "_callPrepareFunction").callsFake(_mockPrepareFunctions);
 			sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
 
@@ -491,6 +471,24 @@ sap.ui.define([
 		});
 
 		QUnit.test("when clearState() is called without a reference", function(assert) {
+			var sReference2 = "second.reference";
+
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			})
+				.then(FlexState.initialize.bind(null, {
+					reference: sReference2,
+					componentId: sComponentId
+				}))
+				.then(function () {
+					FlexState.clearState();
+					assert.equal(this.oDeRegistrationHandlerStub.callCount, 2, "then the handler was de-registered for all existing references");
+					assert.ok(this.oDeRegistrationHandlerStub.alwaysCalledWith(sinon.match.func), "then de-registration always happens with a handler function");
+				}.bind(this));
+		});
+
+		QUnit.test("when clearMaxLayerFiltering() is called", function(assert) {
 			var sReference2 = "second.reference";
 
 			return FlexState.initialize({

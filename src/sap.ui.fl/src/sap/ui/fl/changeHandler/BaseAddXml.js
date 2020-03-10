@@ -35,8 +35,8 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.view Root view
 	 * @param {object} mChangeInfo Change Informantion map
 	 * @param {number} mChangeInfo.index Index defines the position at witch the xml fragment is added
-	 * @param {string} mChangeInfo.aggregation Aggregation name of the control to be extended by the xml fragment
-	 * @returns {boolean} <true> if the change got applied successfully
+	 * @param {string} mChangeInfo.aggregationName Aggregation name of the control to be extended by the xml fragment
+	 * @returns {array} an array of new created controls
 	 * @public
 	 * @name sap.ui.fl.changeHandler.BaseAddXml#applyChange
 	 */
@@ -45,7 +45,7 @@ sap.ui.define([
 
 		var oModifier = mPropertyBag.modifier;
 		var oView = mPropertyBag.view;
-		var sAggregationName = mChangeInfo.aggregation;
+		var sAggregationName = mChangeInfo.aggregationName;
 		var oAggregationDefinition = oModifier.findAggregation(oControl, sAggregationName);
 		if (!oAggregationDefinition) {
 			BaseAddXml._destroyArrayOfControls(aNewControls);
@@ -70,7 +70,7 @@ sap.ui.define([
 		});
 
 		oChange.setRevertData(aRevertData);
-		return true;
+		return aNewControls;
 	};
 
 	/**

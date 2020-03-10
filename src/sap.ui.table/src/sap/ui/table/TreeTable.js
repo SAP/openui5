@@ -69,7 +69,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of 1.46.3. Use the binding parameter <code>numberOfExpandedLevels</code> instead.
+			 * @deprecated As of version 1.46.3, replaced by the <code>numberOfExpandedLevels</code> binding parameter
 			 */
 			expandFirstLevel : {type : "boolean", defaultValue : false, deprecated: true},
 
@@ -101,7 +101,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of 1.76. Use the binding parameter <code>collapseRecursive</code> instead.
+			 * @deprecated As of version 1.76, replaced by the <code>collapseRecursive</code> binding parameter
 			 */
 			collapseRecursive : {type: "boolean", defaultValue: true},
 
@@ -121,7 +121,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of 1.76. Use the binding parameter <code>rootLevel</code> instead.
+			 * @deprecated As of version 1.76, replaced by the <code>rootLevel</code> binding parameter
 			 */
 			rootLevel : {type: "int", group: "Data", defaultValue: 0}
 		},

@@ -143,7 +143,9 @@ sap.ui.define([
 			return false;
 		}
 		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
-		return mFLPArgs.params["sap-ui-fl-draft"][0] === "false";
+		return mFLPArgs.params &&
+			mFLPArgs.params["sap-ui-fl-draft"] &&
+			mFLPArgs.params["sap-ui-fl-draft"][0] === "false" || false;
 	}
 
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
@@ -172,7 +174,7 @@ sap.ui.define([
 
 			this.oRta.start().catch(function(vError) {
 				assert.ok(vError, "then the promise is rejected");
-				assert.strictEqual(this.oLogStub.callCount, 1, "and an error is logged");
+				assert.equal(this.oLogStub.callCount, 1, "and an error is logged");
 				done();
 			}.bind(this));
 		});
@@ -295,13 +297,13 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_PERSONALIZATION_EXISTS", assert);
 
 			return this.oRta._determineReload().then(function() {
-				assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
+				assert.equal(this.fnEnableRestartSpy.calledOnce,
 					true,
 					"then enableRestart() is called only once");
 				assert.equal(this.fnEnableRestartSpy.calledWith(Layer.CUSTOMER),
 					true,
 					"then enableRestart() is called with the correct parameter");
-				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
+				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
 					true,
 					"then the reload inside FLP is triggered");
 			}.bind(this));
@@ -312,13 +314,13 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
 
 			return this.oRta._determineReload().then(function() {
-				assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
+				assert.equal(this.fnEnableRestartSpy.calledOnce,
 					true,
 					"then enableRestart() is called only once");
 				assert.equal(this.fnEnableRestartSpy.calledWith(Layer.VENDOR),
 					true,
 					"then enableRestart() is called with the correct parameter");
-				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
+				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
 					true,
 					"then the reload inside FLP is triggered");
 			}.bind(this));
@@ -328,10 +330,10 @@ sap.ui.define([
 			whenNoHigherLayerChangesExist();
 
 			return this.oRta._determineReload().then(function() {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount,
+				assert.equal(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
+				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
 					false,
 					"then the reload inside FLP is not triggered");
 			}.bind(this));
@@ -437,7 +439,7 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.VIA_HASH,
 					"then the correct reload reason is triggered");
@@ -450,10 +452,10 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 
 			return this.oRta.stop().then(function() {
-				assert.strictEqual(this.fnHandleParametersOnExitSpy.callCount,
+				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
 					1,
 					"then crossAppNavigation was triggered");
-				assert.strictEqual(isReloadedWithDraftParameter(this.fnFLPToExternalStub),
+				assert.equal(isReloadedWithDraftParameter(this.fnFLPToExternalStub),
 					false,
 					"then draft parameter is removed");
 			}.bind(this));
@@ -465,10 +467,10 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 
 			return this.oRta.stop().then(function() {
-				assert.strictEqual(this.fnHandleParametersOnExitSpy.callCount,
+				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
 					1,
 					"then crossAppNavigation was triggered");
-				assert.strictEqual(isReloadedWithDraftParameter(this.fnFLPToExternalStub),
+				assert.equal(isReloadedWithDraftParameter(this.fnFLPToExternalStub),
 					false,
 					"then draft parameter is removed");
 			}.bind(this));
@@ -481,10 +483,24 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(true);
 
 			return this.oRta.stop().then(function() {
-				assert.strictEqual(this.fnHandleParametersOnExitSpy.callCount,
+				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
 					1, "then crossAppNavigation was triggered");
-				assert.strictEqual(isReloadedWithDraftFalseParameter(this.fnFLPToExternalStub),
+				assert.equal(isReloadedWithDraftFalseParameter(this.fnFLPToExternalStub),
 					true, "then draft parameter is set to false");
+			}.bind(this));
+		});
+
+		QUnit.test("when no versioning is available and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
+			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub);
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
+			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(false);
+
+			return this.oRta.stop().then(function() {
+				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
+					1, "then crossAppNavigation was triggered");
+				assert.equal(isReloadedWithDraftFalseParameter(this.fnFLPToExternalStub),
+					false, "then draft parameter is not set");
 			}.bind(this));
 		});
 	});
@@ -513,7 +529,7 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount,
+				assert.equal(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.VIA_HASH,
@@ -528,7 +544,7 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_ALL_CHANGES", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount,
+				assert.equal(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.VIA_HASH,
@@ -544,7 +560,7 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
 					"then the reload page is triggered to update the flp cache");
@@ -569,9 +585,9 @@ sap.ui.define([
 			return this.oRta._serializeToLrep()
 			.then(this.oRta._handleReloadOnExit.bind(this.oRta))
 			.then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(fnNeedsReloadStub.callCount, 2,
+				assert.equal(fnNeedsReloadStub.callCount, 2,
 					"then the reload check is called once");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
 					"then the reload page is triggered to update the flp cache");
@@ -588,9 +604,9 @@ sap.ui.define([
 			return this.oRta._serializeToLrep()
 			.then(this.oRta._handleReloadOnExit.bind(this.oRta))
 			.then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(fnNeedsReloadSpy.callCount, 1,
+				assert.equal(fnNeedsReloadSpy.callCount, 1,
 					"then the reload check is called once");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
 					"then the reload page is triggered to update the flp cache");
@@ -606,9 +622,9 @@ sap.ui.define([
 
 			return this.oRta._handleReloadOnExit()
 			.then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(fnNeedsReloadSpy.callCount, 1,
+				assert.equal(fnNeedsReloadSpy.callCount, 1,
 					"then the reload check is called once");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
 					"then the reload page is triggered to update the flp cache");
@@ -620,7 +636,7 @@ sap.ui.define([
 			whenNoHigherLayerChangesExist();
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount,
+				assert.equal(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.NOT_NEEDED,
@@ -636,7 +652,7 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount,
+				assert.equal(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
@@ -650,7 +666,7 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 
 			return this.oRta.stop().then(function() {
-				assert.strictEqual(this.fnReloadPageStub.callCount,
+				assert.equal(this.fnReloadPageStub.callCount,
 					1,
 					"then page reload is triggered");
 				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
@@ -683,8 +699,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when the _determineReload() method is called", function(assert) {
 			return this.oRta._determineReload().then(function() {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
-				assert.strictEqual(this.fnHandleParametersOnExitSpy.callCount,
+				assert.equal(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
+				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
 					0,
 					"then _handleParametersOnExit() is not called");
 			}.bind(this));
@@ -692,8 +708,8 @@ sap.ui.define([
 
 		QUnit.test("when the _handleReloadOnExit() method is called", function(assert) {
 			return this.oRta._handleReloadOnExit().then(function() {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
-				assert.strictEqual(this.fnReloadWithMaxLayerOrDraftParam.callCount,
+				assert.equal(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
+				assert.equal(this.fnReloadWithMaxLayerOrDraftParam.callCount,
 					0,
 					"then _reloadWithMaxLayerOrDraftParam() is not called");
 			}.bind(this));
@@ -704,7 +720,7 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
 					"then the page is reloaded");
@@ -718,7 +734,7 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
 					"then the page is reloaded");
@@ -867,6 +883,7 @@ sap.ui.define([
 		QUnit.test("when _onActivateDraft is called ", function(assert) {
 			var oActivateDraftStub;
 			var oShowMessageToastStub;
+			var oSetVersionLabelStub;
 			var oRemoveAllCommandsSpy;
 			var oToolbarSetDraftEnabledSpy;
 			var oRta = this.oRta;
@@ -881,6 +898,7 @@ sap.ui.define([
 				oRta.bInitialDraftAvailable = true;
 				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").returns(Promise.resolve(true));
 				oShowMessageToastStub = sandbox.stub(oRta, "_showMessageToast");
+				oSetVersionLabelStub = sandbox.stub(oRta, "_setVersionLabel");
 				oRemoveAllCommandsSpy = sandbox.spy(oRta.getCommandStack(), "removeAllCommands");
 				oToolbarSetDraftEnabledSpy = sandbox.spy(oRta.getToolbar(), "setDraftEnabled");
 			})
@@ -893,9 +911,9 @@ sap.ui.define([
 				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
 				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
 				assert.equal(oRta.bInitialDraftAvailable, false, "and the initialDraftAvailable is removed");
-				assert.equal(oToolbarSetDraftEnabledSpy.callCount, 2, "and the draft info is set twice");
-				assert.equal(oToolbarSetDraftEnabledSpy.getCall(1).args[0], false, "to false");
+				assert.equal(oToolbarSetDraftEnabledSpy.callCount, 1, "and the draft info is set once");
 				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
+				assert.equal(oSetVersionLabelStub.callCount, 1, "and set version title is called");
 			}.bind(this));
 		});
 

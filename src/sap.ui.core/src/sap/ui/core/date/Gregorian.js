@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.Gregorian
-sap.ui.define(['./UniversalDate', '../CalendarType'],
-	function(UniversalDate, CalendarType) {
+sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
+	function(UniversalDate, CalendarType, _Calendars) {
 	"use strict";
 
 
@@ -31,6 +31,8 @@ sap.ui.define(['./UniversalDate', '../CalendarType'],
 	Gregorian.now = function() {
 		return Date.now();
 	};
+
+	_Calendars.set(CalendarType.Gregorian, Gregorian);
 
 	return Gregorian;
 

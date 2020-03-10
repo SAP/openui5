@@ -106,4 +106,117 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bTransitionMessagesOnly, oFixture.expected);
 	});
 });
+
+	//*********************************************************************************************
+[{ // no data
+	oIn : {aData : [], iLength : 100, iStart : 0, iThreshold : 0},
+	oOut : {length : 100, startIndex : 0}
+}, { // data at the beginning
+	oIn : {aData : [{iLength : 10, iStart : 0}], iLength : 100, iStart : 0, iThreshold : 0},
+	oOut : {length : 90, startIndex : 10}
+}, { // data at the end
+	oIn : {aData : [{iLength : 10, iStart : 90}], iLength : 100, iStart : 0, iThreshold : 0},
+	oOut : {length : 90, startIndex : 0}
+}, { // data at the beginning and at the end
+	oIn : {
+		aData : [{iLength : 10, iStart : 0}, {iLength : 10, iStart : 90}],
+		iLength : 100,
+		iStart : 0,
+		iThreshold : 0
+	},
+	oOut : {length : 80, startIndex : 10}
+}, { // data in middle of the requested range
+	oIn : {aData : [{iLength : 10, iStart : 30}], iLength : 100, iStart : 0, iThreshold : 0},
+	oOut : {length : 100, startIndex : 0}
+}, { // no data with threshold
+	oIn : {aData : [], iLength : 100, iStart : 0, iThreshold : 50},
+	oOut : {length : 150, startIndex : 0}
+}, { // data at the beginning with threshold
+	oIn : {aData : [{iLength : 10, iStart : 0}], iLength : 100, iStart : 0, iThreshold : 50},
+	oOut : {length : 140, startIndex : 10}
+}, { // data at the end of the requested range with threshold
+	oIn : {aData : [{iLength : 10, iStart : 90}], iLength : 100, iStart : 0, iThreshold : 50},
+	oOut : {length : 150, startIndex : 0}
+}, { // data at the end (requested range including threshold)
+	oIn : {aData : [{iLength : 60, iStart : 90}], iLength : 100, iStart : 0, iThreshold : 50},
+	oOut : {length : 90, startIndex : 0}
+}, { // data at the beginning and in the middle of the requested range with threshold
+	oIn : {
+		aData : [{iLength : 10, iStart : 0}, {iLength : 10, iStart : 90}],
+		iLength : 100,
+		iStart : 0,
+		iThreshold : 50
+	},
+	oOut : {length : 140, startIndex : 10}
+}, { // data at the beginning and at the end with threshold
+	oIn : {
+		aData : [{iLength : 10, iStart : 0}, {iLength : 20, iStart : 130}],
+		iLength : 100,
+		iStart : 0,
+		iThreshold : 50
+	},
+	oOut : {length : 120, startIndex : 10}
+}, { // prepend complete threshold
+	oIn : {aData : [], iLength : 30, iStart : 80, iThreshold : 50},
+	oOut : {length : 130, startIndex : 30}
+}, { // prepend complete threshold start with 0
+	oIn : {aData : [], iLength : 30, iStart : 40, iThreshold : 50},
+	oOut : {length : 120, startIndex : 0}
+}, { // read at most to final length
+	oIn : {aData : [], iFinalLength : 80, iLength : 30, iStart : 20, iThreshold : 50},
+	oOut : {length : 80, startIndex : 0}
+}, { // read at least threshold data
+	oIn : {aData : [{iLength : 120, iStart : 0}], iLength : 100, iStart : 0, iThreshold : 50},
+	oOut : {length : 50, startIndex : 120}
+}, { // read at least threshold data start > threshold
+	oIn : {aData : [{iLength : 60, iStart : 70}], iLength : 20, iStart : 70, iThreshold : 50},
+	oOut : {length : 120, startIndex : 20}
+}, { // only few entries missing at the beginning and the end
+	oIn : {aData : [{iLength : 100, iStart : 30}], iLength : 20, iStart : 70, iThreshold : 50},
+	oOut : {length : 120, startIndex : 20}
+}, { // all data available
+	oIn : {aData : [{iLength : 100, iStart : 0}], iLength : 20, iStart : 0, iThreshold : 50},
+	oOut : {length : 0, startIndex : 70}
+}, { // extend length because it is less than threshold but close the gap only
+	oIn : {
+		aData : [{iLength : 70, iStart : 0}, {iLength : 100, iStart : 90}],
+		iLength : 20,
+		iStart : 20,
+		iThreshold : 50
+	},
+	oOut : {length : 20, startIndex : 70}
+}, { // extend length because it is less than threshold; final length ignored
+	oIn : {
+		aData : [{iLength : 70, iStart : 0}],
+		iFinalLength : 80,
+		iLength : 20,
+		iStart : 20,
+		iThreshold : 50
+	},
+	oOut : {length : 50, startIndex : 70}
+}].forEach(function (oFixture, i) {
+	QUnit.test("calculateSection: #" + i, function (assert) {
+		var oBinding = {
+				aKeys : [],
+				bLengthFinal : !!oFixture.oIn.iFinalLength,
+				iLength : oFixture.oIn.iFinalLength
+			},
+			oResult;
+
+		oFixture.oIn.aData.forEach(function (oAvailableData) {
+			var i = oAvailableData.iStart,
+				n = i + oAvailableData.iLength;
+
+			for (; i < n; i += 1) {
+				oBinding.aKeys[i] = "key" + i;
+			}
+		});
+
+		// code under test
+		oResult = ODataListBinding.prototype.calculateSection.call(oBinding, oFixture.oIn.iStart,
+			oFixture.oIn.iLength, oFixture.oIn.iThreshold);
+
+		assert.deepEqual(oResult, oFixture.oOut);
+	});
+});
 });

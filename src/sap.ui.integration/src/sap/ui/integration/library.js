@@ -71,10 +71,17 @@ sap.ui.define(["sap/ui/base/DataType",
 			Navigation : "Navigation",
 
 			/**
-			 * Used for navigation actions
+			 * Used for submit actions
 			 * @public
 			 */
-			Submit: "Submit"
+			Submit: "Submit",
+
+			/**
+			 * Used for custom actions
+			 * @public
+			 * @experimental Since 1.76
+			 */
+			Custom: 'Custom'
 		};
 
 		/**

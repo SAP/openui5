@@ -25,7 +25,8 @@ sap.ui.define(function() {
 			},
 			loader: {
 				paths: {
-					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+					"sap/ui/support/mock": "test-resources/sap/ui/support/mock/",
+					"sap/ui/support/integration": "test-resources/sap/ui/support/integration/"
 				}
 			},
 			page: "test-resources/sap/ui/support/qunit/testsandbox.qunit.html?test={name}",
@@ -57,25 +58,52 @@ sap.ui.define(function() {
 					useFakeTimers: true
 				}
 			},
-			"Utils": {},
-			"SupportAssistantAPI": {},
-			"SupportAssistant.opa": {
-				title: "Integration Tests for SA",
-				module: [
-					"./SupportAssistant.opa.qunit"
-				]
+			"util/RuleValidator": {
+				module: "./util/RuleValidator.qunit"
 			},
-			"integration/ui/opaTests": {
-				title: "Integration Tests for SA UI",
-				loader: {
-					paths: {
-						"sap/ui/support/integration": "test-resources/sap/ui/support/integration/"
-					}
-				},
-				module: [
-					"sap/ui/support/integration/ui/AllJourneys"
-				],
-				autostart: false
+			"util/Utils": {
+				module: "./util/Utils.qunit"
+			},
+			"SupportAssistantAPI": {},
+			"integration/SupportAssistant.opa": {
+				title: "Integration Tests for SA",
+				module: "sap/ui/support/integration/SupportAssistant.opa.qunit"
+			},
+			"integration/ui/BootingJourney": {
+				title: "Integration Tests for Support Assistant's Booting",
+				module: "sap/ui/support/integration/ui/journeys/BootingJourney"
+			},
+			"integration/ui/SelectionJourney": {
+				title: "Integration Tests for Support Assistant's Selection",
+				module: "sap/ui/support/integration/ui/journeys/SelectionJourney"
+			},
+			"integration/ui/LocalStoragePersistencyJourney": {
+				title: "Integration Tests for Support Assistant's Local Storage Persistency",
+				module: "sap/ui/support/integration/ui/journeys/LocalStoragePersistencyJourney"
+			},
+			"integration/ui/FilteringAndSortingJourney": {
+				title: "Integration Tests for Support Assistant's Filtering and Sorting",
+				module: "sap/ui/support/integration/ui/journeys/FilteringAndSortingJourney"
+			},
+			"integration/ui/PresetsDialogJourney": {
+				title: "Integration Tests for Support Assistant's Presets Dialog",
+				module: "sap/ui/support/integration/ui/journeys/PresetsDialogJourney"
+			},
+			"integration/ui/PresetsExportJourney": {
+				title: "Integration Tests for Support Assistant's Presets Export",
+				module: "sap/ui/support/integration/ui/journeys/PresetsExportJourney"
+			},
+			"integration/ui/PresetsImportJourney": {
+				title: "Integration Tests for Support Assistant's Presets Import",
+				module: "sap/ui/support/integration/ui/journeys/PresetsImportJourney"
+			},
+			"integration/ui/PresetsPersistenceJourney": {
+				title: "Integration Tests for Support Assistant's Presets Persistency",
+				module: "sap/ui/support/integration/ui/journeys/PresetsPersistenceJourney"
+			},
+			"integration/ui/TemporaryRulesJourney": {
+				title: "Integration Tests for Support Assistant's Temporary Rules",
+				module: "sap/ui/support/integration/ui/journeys/TemporaryRulesJourney"
 			}
 		}
 	};

@@ -758,6 +758,38 @@ function(
 		}.bind(this));
 	};
 
+	RuntimeAuthoring.prototype._handleVersionToolbar = function(bCanUndo) {
+		var bDraftEnabled = this.bInitialDraftAvailable || bCanUndo;
+		this.getToolbar().setDraftEnabled(bDraftEnabled);
+		return this._setVersionLabel(bDraftEnabled);
+	};
+
+	RuntimeAuthoring.prototype._setVersionLabel = function(bDraftEnabled) {
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		if (bDraftEnabled) {
+			return this.getToolbar().setVersionLabel(oTextResources.getText("LBL_DRAFT"));
+		}
+		return VersionsAPI.getVersions({
+			selector: this.getRootControlInstance(),
+			layer: this.getLayer()
+		})
+		.then(function(aVersions) {
+			if (aVersions.length === 0) {
+				return oTextResources.getText("LBL_ORIGNINAL_APP");
+			}
+			if (aVersions[0].title) {
+				return aVersions[0].title;
+			}
+			if (aVersions[0].versionNumber === 0) {
+				return oTextResources.getText("LBL_DRAFT");
+			}
+			return oTextResources.getText("LBL_VERSION_1");
+		})
+		.then(function(sLabel) {
+			return this.getToolbar().setVersionLabel(sLabel);
+		}.bind(this));
+	};
+
 	RuntimeAuthoring.prototype._isDraftAvailable = function() {
 		if (this._bVersioningEnabled) {
 			return VersionsAPI.isDraftAvailable({
@@ -842,8 +874,9 @@ function(
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
-			var bDraftEnabled = this._bVersioningEnabled && (this.bInitialDraftAvailable || bCanUndo);
-			this.getToolbar().setDraftEnabled(bDraftEnabled);
+			if (this._bVersioningEnabled) {
+				this._handleVersionToolbar(bCanUndo);
+			}
 		}
 		this.fireUndoRedoStackModified();
 	};
@@ -881,8 +914,9 @@ function(
 				.then(this._closeToolbar.bind(this))
 				.then(function() {
 					this.fireStop();
-					var mParsedHash = this._handleParametersOnExit(true);
-					this._triggerCrossAppNavigation(mParsedHash);
+					this._handleParametersOnExit(true).then(function (mParsedHash) {
+						this._triggerCrossAppNavigation(mParsedHash);
+					}.bind(this));
 					if (sReload === this._RESTART.RELOAD_PAGE) {
 						this._reloadPage();
 					}
@@ -1013,9 +1047,9 @@ function(
 				title: oEvent.getParameter("versionTitle")
 			})
 		).then(function () {
-			this.bInitialDraftAvailable = false;
-			this.getToolbar().setDraftEnabled(false);
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
+			this.bInitialDraftAvailable = false;
+			return this._handleVersionToolbar(false);
 		}.bind(this));
 	};
 
@@ -1070,27 +1104,15 @@ function(
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
 
-			if (aButtonsVisibility.publishAppVariantSupported) {
-				// Sets the visibility of 'Save As' button in RTA toolbar
-				this.getToolbar().getControl('saveAs').setVisible(aButtonsVisibility.publishAppVariantSupported);
-				// Flag which represents either the key user view or SAP developer view
-				var bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
+			var bAppVariantSupported = aButtonsVisibility.publishAppVariantSupported;
+			this.getToolbar().setAppVariantsVisible(bAppVariantSupported);
 
-				if (bExtendedOverview) {
-					// Sets the visibility of 'i' menu button (App Variant Overview: SAP developer view) in RTA toolbar
-					this.getToolbar().getControl('appVariantOverview').setVisible(aButtonsVisibility.publishAppVariantSupported);
-				} else {
-					// Sets the visibility of 'i' button (App Variant Overview: Key user view) in RTA toolbar
-					this.getToolbar().getControl('manageApps').setVisible(aButtonsVisibility.publishAppVariantSupported);
-				}
+			var bExtendedOverview = bAppVariantSupported && RtaAppVariantFeature.isOverviewExtended();
+			this.getToolbar().setExtendedManageAppVariants(bExtendedOverview);
 
-				RtaAppVariantFeature.isManifestSupported().then(function(bResult) {
-					if (bExtendedOverview) {
-						this.getToolbar().getControl('appVariantOverview').setEnabled(bResult);
-					} else {
-						this.getToolbar().getControl('manageApps').setEnabled(bResult);
-					}
-					this.getToolbar().getControl('saveAs').setEnabled(bResult);
+			if (bAppVariantSupported) {
+				RtaAppVariantFeature.isManifestSupported().then(function (bResult) {
+					this.getToolbar().setAppVariantsEnabled(bResult);
 				}.bind(this));
 			}
 		}
@@ -1531,31 +1553,51 @@ function(
 		}
 	};
 
+	RuntimeAuthoring.prototype._handleDraftParameter = function(mParsedHash) {
+		return this._isDraftAvailable().then(function (bDraftAvailable) {
+			if (this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
+				delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
+				// only add the draft = false flag when versioning and draft is available
+			} else if (bDraftAvailable) {
+				/*
+				In case we entered RTA without a draft and created dirty changes,
+				we need to add sap-ui-fl-draft=false, to trigger the CrossAppNavigation on exit.
+				*/
+				mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = ["false"];
+			}
+			return mParsedHash;
+		}.bind(this));
+	};
+
+	RuntimeAuthoring.prototype._handleMaxLayerParameter = function(mParsedHash, bDeleteMaxLayer) {
+		// keep max layer parameter when reset was called, remove it on save & exit
+		if (bDeleteMaxLayer && this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM)) {
+			delete mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM];
+		}
+		return mParsedHash;
+	};
+
 	/**
 	 * Reload the app inside FLP by removing max layer / draft parameter;
 	 *
-	 * @return {boolean} resolving to true if reload was triggered
+	 * @param {boolean} bDeleteMaxLayer - Indicates if max layer parameter should be removed or not (reset / exit)
+	 * @return {Promise<map>} resolving to the parsedHash
 	 */
 	RuntimeAuthoring.prototype._handleParametersOnExit = function(bDeleteMaxLayer) {
-		if (FlexUtils.getUshellContainer() && this.getLayer() !== Layer.USER) {
-			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
-			var mParsedHash = FlexUtils.getParsedURLHash();
-			if (oCrossAppNav.toExternal && mParsedHash) {
-				if (bDeleteMaxLayer && this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM)) {
-					delete mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM];
-				}
-				if (this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
-					delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
-				} else if (this._isDraftAvailable()) {
-					/*
-					In case we entered RTA without a draft and created dirty changes,
-					we need to add sap-ui-fl-draft=false, to trigger the CrossAppNavigation on exit.
-					 */
-					mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = ["false"];
-				}
-				return mParsedHash;
-			}
+		if (!FlexUtils.getUshellContainer() || this.getLayer() === Layer.USER) {
+			return Promise.resolve();
 		}
+
+		var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
+		var mParsedHash = FlexUtils.getParsedURLHash();
+		if (!oCrossAppNav.toExternal || !mParsedHash) {
+			return Promise.resolve();
+		}
+
+		mParsedHash = this._handleMaxLayerParameter(mParsedHash, bDeleteMaxLayer);
+		var oParsedHashPromise = this._handleDraftParameter(mParsedHash);
+
+		return oParsedHashPromise;
 	};
 
 	/**
@@ -1595,50 +1637,51 @@ function(
 	 */
 	RuntimeAuthoring.prototype._determineReload = function() {
 		var oUshellContainer = FlexUtils.getUshellContainer();
-		if (oUshellContainer) {
-			var oReloadInfo = {
-				hasHigherLayerChanges: false,
-				hasDraftChanges: false,
-				layer: this.getLayer(),
-				selector: this.getRootControlInstance(),
-				ignoreMaxLayerParameter: false
-			};
-			var oHigherLayerChangesValidationPromise;
-			var oDraftValidationPromise = false;
-			var mParsedHash = FlexUtils.getParsedURLHash();
-
-			if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.layer !== Layer.USER) {
-				oHigherLayerChangesValidationPromise = PersistenceWriteAPI.hasHigherLayerChanges({
-					selector: oReloadInfo.selector,
-					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter
-				});
-			}
-			if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM) && this._bVersioningEnabled) {
-				oDraftValidationPromise = VersionsAPI.isDraftAvailable({
-					selector: oReloadInfo.selector,
-					layer: oReloadInfo.layer
-				});
-			}
-
-			return Promise.all([
-				oHigherLayerChangesValidationPromise,
-				oDraftValidationPromise
-			])
-			.then(function(aReloadInfo) {
-				oReloadInfo.hasHigherLayerChanges = aReloadInfo[0];
-				oReloadInfo.hasDraftChanges = aReloadInfo[1];
-
-				if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges) {
-					return this._handleReloadMessageBoxOnStart(oReloadInfo).then(function () {
-						var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
-						if (oCrossAppNav.toExternal && mParsedHash) {
-							return this._reloadWithMaxLayerOrDraftParam(mParsedHash, oCrossAppNav, oReloadInfo);
-						}
-					}.bind(this));
-				}
-			}.bind(this));
+		if (!oUshellContainer) {
+			return Promise.resolve(false);
 		}
-		return Promise.resolve(false);
+
+		var oReloadInfo = {
+			hasHigherLayerChanges: false,
+			hasDraftChanges: false,
+			layer: this.getLayer(),
+			selector: this.getRootControlInstance(),
+			ignoreMaxLayerParameter: false
+		};
+		var oHigherLayerChangesValidationPromise;
+		var oDraftValidationPromise = false;
+		var mParsedHash = FlexUtils.getParsedURLHash();
+
+		if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.layer !== Layer.USER) {
+			oHigherLayerChangesValidationPromise = PersistenceWriteAPI.hasHigherLayerChanges({
+				selector: oReloadInfo.selector,
+				ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter
+			});
+		}
+		if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM) && this._bVersioningEnabled) {
+			oDraftValidationPromise = VersionsAPI.isDraftAvailable({
+				selector: oReloadInfo.selector,
+				layer: oReloadInfo.layer
+			});
+		}
+
+		return Promise.all([
+			oHigherLayerChangesValidationPromise,
+			oDraftValidationPromise
+		])
+		.then(function(aReloadInfo) {
+			oReloadInfo.hasHigherLayerChanges = aReloadInfo[0];
+			oReloadInfo.hasDraftChanges = aReloadInfo[1];
+
+			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges) {
+				return this._handleReloadMessageBoxOnStart(oReloadInfo).then(function () {
+					var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
+					if (oCrossAppNav.toExternal && mParsedHash) {
+						return this._reloadWithMaxLayerOrDraftParam(mParsedHash, oCrossAppNav, oReloadInfo);
+					}
+				}.bind(this));
+			}
+		}.bind(this));
 	};
 
 	/**

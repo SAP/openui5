@@ -105,7 +105,9 @@ function(
 						'<Button id="button1" text="Button1" />' +
 						'<Button id="button2" text="Button2" />' +
 						'<Button id="button3" text="Button3" />' +
-						'<core:ExtensionPoint name="ExtensionPoint1" />' +
+						'<core:ExtensionPoint name="ExtensionPoint1">' +
+							'<Label id="default-label1" text="Extension point label1 - default content" />' +
+						'</core:ExtensionPoint>' +
 						'<Label id="label1" text="TestLabel1" />' +
 					'</items>' +
 				'</HBox>' +
@@ -633,6 +635,26 @@ function(
 			assert.strictEqual(XmlTreeModifier.getParentAggregationName(oText2, oDynamicPageTitle), "snappedContent", "The function returned the correct name - 'snappedContent'.");
 		});
 
+		QUnit.test("when getParent is called for control inside an extension point", function (assert) {
+			var oHBox = XmlTreeModifier._children(this.oXmlView2)[0];
+			var oExtensionPoint1 = oHBox.childNodes[0].childNodes[3];
+			var oLabel = oExtensionPoint1.childNodes[0];
+			assert.strictEqual(XmlTreeModifier.getParent(oLabel), oExtensionPoint1, "then the extension point is returned as parent");
+		});
+
+		QUnit.test("when getParent is called for control inside an control node", function (assert) {
+			var oVBox = XmlTreeModifier._children(this.oXmlView)[3];
+			var oButton = XmlTreeModifier._children(oVBox)[0];
+			assert.strictEqual(XmlTreeModifier.getParent(oButton), oVBox, "then the parent control is returned as parent");
+		});
+
+		QUnit.test("when getParent is called for control inside an aggregation node", function (assert) {
+			var oHBox = XmlTreeModifier._children(this.oXmlView)[1];
+			var oTooltip = XmlTreeModifier._children(oHBox)[0];
+			var oTooltipBase = XmlTreeModifier._children(oTooltip)[0];
+			assert.strictEqual(XmlTreeModifier.getParent(oTooltipBase), oHBox, "then the parent control is returned as parent");
+		});
+
 		QUnit.test("when getChangeHandlerModule is called for control instance on which changeHandler is defined", function (assert) {
 			var oDynamicPageTitle = XmlTreeModifier._children(this.oXmlView)[6];
 			assert.strictEqual(XmlTreeModifier.getChangeHandlerModulePath(oDynamicPageTitle), this.CHANGE_HANDLER_PATH, "then the changehandler path defined at the control instance is returned");
@@ -697,13 +719,18 @@ function(
 		QUnit.test("when getExtensionPointInfo is called", function (assert) {
 			var oExtensionPointInfo1 = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint1", this.oXmlView2);
 			assert.equal(oExtensionPointInfo1.parent.getAttribute("id"), "hbox1", "then the returned object contains the parent control");
-			assert.equal(oExtensionPointInfo1.aggregation, "items", "and the aggregation name");
+			assert.equal(oExtensionPointInfo1.aggregationName, "items", "and the aggregation name");
 			assert.equal(oExtensionPointInfo1.index, 4, "and the index");
+			assert.ok(Array.isArray(oExtensionPointInfo1.defaultContent), "and the defaultContent is an Array");
+			assert.equal(oExtensionPointInfo1.defaultContent.length, 1, "and the defaultContent contains one item");
+			assert.equal(oExtensionPointInfo1.defaultContent[0].getAttribute("id"), "default-label1", "and the default label is returned");
 
 			var oExtensionPointInfo2 = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint2", this.oXmlView2);
 			assert.equal(oExtensionPointInfo2.parent.getAttribute("id"), "panel", "then the returned object contains the parent control");
-			assert.equal(oExtensionPointInfo2.aggregation, "content", "and the aggregation name");
+			assert.equal(oExtensionPointInfo2.aggregationName, "content", "and the aggregation name");
 			assert.equal(oExtensionPointInfo2.index, 1, "and the index");
+			assert.ok(Array.isArray(oExtensionPointInfo2.defaultContent), "and the defaultContent is an Array");
+			assert.equal(oExtensionPointInfo2.defaultContent.length, 0, "and the defaultContent contains one item");
 		});
 
 		QUnit.test("when getExtensionPointInfo is called with an extension point which is not on the view", function (assert) {

@@ -32,13 +32,14 @@ sap.ui.define(function() {
 		tests : {
 			// all other sinon 4 UI5 Core - Models tests
 			"1Ring" : {
+				// 1RingModels takes care of starting the tests after theme is loaded
+				autostart : false,
 				title : "1RingModels.qunit",
 				loader : {
 					paths : {
 						"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit",
 						"sap/ui/test/qunit" : "test-resources/sap/ui/test/qunit",
 						"sap/ui/testlib" : "test-resources/sap/ui/core/qunit/testdata/uilib",
-						"test-resources/sap/ui/support" : "test-resources/sap/ui/support",
 						"testdata" : "test-resources/sap/ui/core/qunit/testdata"
 					}
 				},
@@ -264,19 +265,6 @@ sap.ui.define(function() {
 					language : "en",
 					originInfo : true
 				}
-			},
-			// *************************************************************************
-			// Support rule tests
-			// *************************************************************************
-			// contained in testsuite.rule.qunit.js
-			SupportRule : {
-				// not in 1RingModels.qunit because sap.ui.support.TestHelper is used which has a
-				// hard dependency to sinon V1
-				title : "sap.ui.core.rules.Model.support (bindingPathSyntaxValidation.qunit)",
-				module : [
-					"test-resources/sap/ui/core/qunit/rule/model/bindingPathSyntaxValidation.qunit"
-				],
-				sinon : 1
 			}
 		}
 	};

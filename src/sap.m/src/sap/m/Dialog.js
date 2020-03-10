@@ -439,14 +439,7 @@ function(
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);
 			this.oPopup.setNavigationMode("SCOPE");
-			var bMessageType = this.getType() === DialogType.Message;
-
-			if (Device.os.ios && Device.system.phone && !bMessageType) {
-				this.oPopup.setModal(true, "sapMDialogTransparentBlk");
-			} else {
-				this.oPopup.setModal(true, "sapMDialogBlockLayerInit");
-			}
-
+			this.oPopup.setModal(true);
 			this.oPopup.setAnimations(jQuery.proxy(this._openAnimation, this), jQuery.proxy(this._closeAnimation, this));
 
 			/**
@@ -1164,34 +1157,6 @@ function(
 			}
 
 			return false;
-		};
-
-		/**
-		 *
-		 * @private
-		 */
-		Dialog.prototype._initBlockLayerAnimation = function () {
-			this.oPopup._hideBlockLayer = function () {
-				var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
-				$blockLayer.removeClass("sapMDialogTransparentBlk");
-				Popup.prototype._hideBlockLayer.call(this);
-			};
-		};
-
-		/**
-		 *
-		 * @private
-		 */
-		Dialog.prototype._clearBlockLayerAnimation = function () {
-			var bMessageType = this.getType === DialogType.Message;
-			if (Device.os.ios && Device.system.phone && !bMessageType) {
-				delete this.oPopup._showBlockLayer;
-				this.oPopup._hideBlockLayer = function () {
-					var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
-					$blockLayer.removeClass("sapMDialogTransparentBlk");
-					Popup.prototype._hideBlockLayer.call(this);
-				};
-			}
 		};
 
 		/**

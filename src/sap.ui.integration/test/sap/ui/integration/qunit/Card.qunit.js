@@ -2828,5 +2828,53 @@ sap.ui.define([
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
+
+		QUnit.module("Property 'manifestChanges'", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Change title with manifestChanges", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Assert
+				assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 2", "The title is changed");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.setManifestChanges([
+				{content: {header: {title: "My new title 1"}}},
+				{content: {header: {title: "My new title 2"}}}
+			]);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Check getManifestWithMergedChanges", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Assert
+				var oMergedManifest = this.oCard.getManifestWithMergedChanges();
+				assert.strictEqual(oMergedManifest["sap.card"]["header"]["title"], "Test title", "The manifest contains the given changes.");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.setManifestChanges([
+				{content: {header: {title: "Test title"}}}
+			]);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
 	}
 );

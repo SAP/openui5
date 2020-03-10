@@ -104,8 +104,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/Label
 			this.addValueStateClasses(oRm, oControl);
 		}
 
-		// some controls need to have accessibility attributes applied one level up than the input
-		this.writeAccAttributes(oRm, oControl);
 		this.addWrapperStyles(oRm, oControl);
 
 		oRm.openEnd();
@@ -441,14 +439,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/Label
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.writeOuterAttributes = function(oRm, oControl) {};
-
-	/**
-	 * This method is reserved for derived class to add extra attributes for the container one level upper of input.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-	 */
-	InputBaseRenderer.writeAccAttributes = function(oRm, oControl) {};
 
 	/**
 	 * This method is reserved for derived classes to add extra styles for input element.

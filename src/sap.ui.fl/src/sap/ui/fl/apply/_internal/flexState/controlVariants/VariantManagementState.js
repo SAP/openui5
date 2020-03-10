@@ -69,6 +69,38 @@ sap.ui.define([
 			}
 		});
 	}
+
+	function _addChange (oChangeContent, oFlexObjects) {
+		var sChangeCategory = _getVariantChangeCategory(oChangeContent);
+		oFlexObjects[sChangeCategory].push(oChangeContent);
+	}
+
+	function _deleteChange (oChangeContent, oFlexObjects) {
+		var sChangeCategory = _getVariantChangeCategory(oChangeContent);
+		var iChangeContentIndex = -1;
+		oFlexObjects[sChangeCategory].some(function(oExistingChangeContent, iIndex) {
+			if (oExistingChangeContent.fileName === oChangeContent.fileName) {
+				iChangeContentIndex = iIndex;
+				return true;
+			}
+		});
+		if (iChangeContentIndex > -1) {
+			oFlexObjects[sChangeCategory].splice(iChangeContentIndex, 1);
+		}
+	}
+
+	function _getVariantChangeCategory (oChangeContent) {
+		switch (oChangeContent.fileType) {
+			case "change":
+				return "variantDependentControlChanges";
+			case "ctrl_variant":
+				return "variants";
+			case "ctrl_variant_change":
+				return "variantChanges";
+			case "ctrl_variant_management_change":
+				return "variantManagementChanges";
+		}
+	}
 	/**
 	 * Handler class to manipulate control variant changes in a variants map. See also {@link sap.ui.fl.variants.VariantManagement}.
 	 *
@@ -418,6 +450,39 @@ sap.ui.define([
 		setCurrentVariant: function(mPropertyBag) {
 			var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
 			oVariantsMap[mPropertyBag.vmReference].currentVariant = mPropertyBag.newVReference;
+		},
+
+		/**
+		 * Updates the variants state and optionally also adds or deletes a flex object from the flex state
+		 *
+		 * @param {object} mPropertyBag
+		 * @param {string} mPropertyBag.reference - Flex reference
+		 * @param {string} mPropertyBag.content - Variant section content
+		 * @param {sap.ui.fl.Change | sap.ui.fl.Variant} mPropertyBag.changeToBeAddedOrDeleted - Flex object to be added or deleted
+		 *
+		 * @private
+		 * @ui5-restricted
+		 */
+		updateVariantsState: function(mPropertyBag) {
+			var oFlexObjects = FlexState.getFlexObjectsFromStorageResponse(mPropertyBag.reference);
+
+			if (!oFlexObjects.variantSection) {
+				Log.error("Variant management state is not initialized yet");
+				return;
+			}
+
+			oFlexObjects.variantSection = mPropertyBag.content;
+
+			if (mPropertyBag.changeToBeAddedOrDeleted) {
+				switch (mPropertyBag.changeToBeAddedOrDeleted.getPendingAction()) {
+					case "NEW":
+						_addChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
+						break;
+					case "DELETE":
+						_deleteChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
+						break;
+				}
+			}
 		}
 	};
 	return VariantManagementState;

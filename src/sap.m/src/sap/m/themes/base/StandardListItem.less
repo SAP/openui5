@@ -129,17 +129,6 @@ html[data-sap-ui-browser='ie11'] .sapMSLIWithDescription > .sapMLIBContent > .sa
 	font-size: @sapMFontMediumSize;
 }
 
-// no flex for info text upto 15 characters
-.sapMSLIInfoTextFull {
-	flex: none;
-}
-
-// ensure min-width for info text greater than 15 characters
-// 7.5rem is a result of the 15 characters string "MMMMMMMMIIIIIII" (approx. 120px)
-.sapMSLIInfoTextMinWidth {
-	min-width: 7.5rem;
-}
-
 .sapMSLIInfoMiddle > .sapMSLIInfo {
 	padding: 0;
 }
@@ -176,10 +165,13 @@ html[dir=rtl] .sapMSLIInfo {
 	color: @sapUiContentContrastTextColor;
 	border-radius: 0.25rem;
 	box-sizing: border-box;
+	height: 0.875rem;
+	line-height: calc(@sapMFontSmallSize - 0.0625rem);
 }
 
 .sapMSLIInfo.sapMSLIInfoStateInverted {
 	padding: 0.0625rem 0.25rem;
+	text-align: center;
 }
 
 .sapMSLIInfoStateInverted.sapMSLIInfoNone {

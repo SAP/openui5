@@ -249,6 +249,15 @@ sap.ui.define([
 					"xx-designMode": true
 				}
 			},
+			"command/AddXMLAtExtensionPoint": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/AddXMLAtExtensionPoint"]
+				},
+				ui5: {
+					"xx-designMode": true
+				}
+			},
 			"command/AppDescriptorCommand": {
 				group: "Command",
 				coverage: {

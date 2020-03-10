@@ -258,7 +258,7 @@ sap.ui.define([
 			} else {
 				iFreeSpace = iTokenizerWidth;
 			}
-		}.bind(this));
+		}, this);
 
 		// adjust the visibility of the tokens
 		if (iFirstTokenToHide > -1) {
@@ -282,9 +282,13 @@ sap.ui.define([
 				this._handleNMoreIndicator(iTokensCount - iFirstTokenToHide);
 				aTokens[iFirstTokenToHide].addStyleClass("sapMHiddenToken");
 			}
+
+			this.removeStyleClass("sapMTokenizerNoNMore");
 		} else {
 			// if no token needs to be hidden, show all
 			this._showAllTokens();
+
+			this.addStyleClass("sapMTokenizerNoNMore");
 		}
 	};
 

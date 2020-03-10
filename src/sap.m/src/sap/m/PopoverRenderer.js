@@ -144,7 +144,11 @@ sap.ui.define([
 
 			oRm.class("sapMPopoverCont");
 
-			if (sap.ui.getCore().getConfiguration().getAccessibility() && !sap.ui.getCore().getConfiguration().getAvoidAriaApplicationRole()) {
+			// Note: If this property should become public in the future, the property will have to be set on a level
+			// that will encapsulate the header and the footer of the popover as well.
+			if (sap.ui.getCore().getConfiguration().getAccessibility()
+				&& !sap.ui.getCore().getConfiguration().getAvoidAriaApplicationRole()
+				&& oControl.getProperty("ariaRoleApplication")) {
 				oRm.attr("role", "application");
 			}
 

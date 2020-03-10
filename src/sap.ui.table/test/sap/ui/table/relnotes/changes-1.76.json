@@ -1,0 +1,18 @@
+{
+  "1.76.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "0721e007da0ee8114f3b160d0b03f115c22a2bd4",
+        "type": "FIX",
+        "text": " AnalyticalColumn: Consistent behavior of getTooltip_AsString / getTooltip_Text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070034372"
+          }
+        ]
+      }
+    ]
+  }
+}

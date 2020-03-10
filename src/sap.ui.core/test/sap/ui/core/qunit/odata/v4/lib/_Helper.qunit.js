@@ -4,13 +4,14 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, Log, merge, uid, SyncPromise, _Helper, TestUtils, URI) {
+], function (jQuery, Log, deepEqual, merge, uid, SyncPromise, _Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -2033,6 +2034,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("intersectQueryOptions: no query options", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.intersectQueryOptions(undefined, ["*"]), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("intersectQueryOptions: no $select", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.intersectQueryOptions({}, ["*"]), null);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("intersectQueryOptions: empty $select", function (assert) {
 		// code under test
 		assert.strictEqual(_Helper.intersectQueryOptions({$select : []}, ["B"]), null);
@@ -2199,6 +2212,12 @@ sap.ui.define([
 //			$select : ["E/toF"],
 //			"sap-client" : "123"
 //		}
+	}, {
+		aPaths : ["X", "*", "Z"],
+		mResult : {
+			$select : ["A", "B", "C", "E/toF"],
+			"sap-client" : "123"
+		}
 	}].forEach(function (o, i) {
 		var sTitle = "intersectQueryOptions: " + o.aPaths + ", " + i;
 
@@ -2956,12 +2975,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("merge", function (assert) {
+	QUnit.test("trampoline properties", function (assert) {
+		assert.strictEqual(_Helper.deepEqual, deepEqual);
 		assert.strictEqual(_Helper.merge, merge);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("uid", function (assert) {
 		assert.strictEqual(_Helper.uid, uid);
 	});
 

@@ -13,7 +13,7 @@ sap.ui.define([
 		 * @param {object} [mSettings] Initial settings for the new data provider.
 		 *
 		 * @class
-		 *
+		 * Provides additional functions and services to an integration card.
 		 *
 		 * @extends sap.ui.base.ManagedObject
 		 *
@@ -21,7 +21,8 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @experimental
+		 * @public
+		 * @experimental Since 1.75
 		 * @since 1.75
 		 * @alias sap.ui.integration.Extension
 		 */
@@ -30,7 +31,9 @@ sap.ui.define([
 				library: "sap.ui.integration",
 				properties: {
 					/**
-					 * The actions
+					 * The actions configuration.
+					 * @experimental since 1.75
+					 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 					 */
 					actions: {
 						type: "array"
@@ -38,12 +41,24 @@ sap.ui.define([
 				},
 				events: {
 
-					onAction: {
+					/**
+					 * Fired when an action is triggered.
+					 * @experimental since 1.75
+					 * Disclaimer: this event is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+					 */
+					action: {
 
 						allowPreventDefault: true,
 
 						parameters: {
+							/**
+							 * The card the action is fired from.
+							 */
 							card: {type: "sap.ui.core.Control"},
+
+							/**
+							 * The action configuration.
+							 */
 							actionConfig: {type: 'object'},
 
 							/**
@@ -54,9 +69,9 @@ sap.ui.define([
 							},
 
 							/**
-							 * The manifest parameters related to the triggered action.
+							 * The parameters related to the triggered action.
 							 */
-							manifestParameters: {
+							parameters: {
 								type: "object"
 							},
 

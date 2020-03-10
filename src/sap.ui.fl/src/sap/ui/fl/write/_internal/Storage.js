@@ -249,9 +249,9 @@ sap.ui.define([
 		 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the activated version;
 		 * rejects if an error occurs or the layer does not support draft handling
 		 */
-		activateDraft: function (mPropertyBag) {
+		activate: function (mPropertyBag) {
 			return _getWriteConnectors()
-				.then(_executeActionByName.bind(undefined, "versions.activateDraft", mPropertyBag));
+				.then(_executeActionByName.bind(undefined, "versions.activate", mPropertyBag));
 		},
 
 		/**

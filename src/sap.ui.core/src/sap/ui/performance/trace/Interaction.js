@@ -3,11 +3,6 @@
  */
 
 /*global HTMLScriptElement */
-
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/ui/performance/XHRInterceptor",
@@ -338,10 +333,10 @@ sap.ui.define([
 	 * All measurement takes place in {@link module:sap/ui/performance/Measurement}.
 	 *
 	 * @namespace
-	 * @since 1.58
 	 * @alias module:sap/ui/performance/trace/Interaction
-	 * @private
-	 * @ui5-restricted sap.ui.core
+	 *
+	 * @public
+	 * @since 1.76
 	 */
 	var Interaction = {
 
@@ -350,8 +345,10 @@ sap.ui.define([
 		 *
 		 * @param {boolean} bFinalize finalize the current pending interaction so that it is contained in the returned array
 		 * @return {object[]} all interaction measurements
+		 *
 		 * @static
-		 * @private
+		 * @public
+		 * @since 1.76
 		 */
 		getAll : function(bFinalize) {
 			if (bFinalize) {
@@ -371,8 +368,10 @@ sap.ui.define([
 		 * }</code>
 		 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
 		 * @return {object[]} all interaction measurements passing the filter function successfully
+		 *
 		 * @static
-		 * @private
+		 * @public
+		 * @since 1.76
 		 */
 		filter : function(fnFilter) {
 			var aFilteredInteractions = [];
@@ -484,7 +483,8 @@ sap.ui.define([
 		 *
 		 * @return {boolean} bActive State of the interaction detection
 		 * @static
-		 * @private
+		 * @public
+		 * @since 1.76
 		 */
 		getActive : function() {
 			return bInteractionActive;
@@ -494,8 +494,10 @@ sap.ui.define([
 		 * Enables the interaction tracking.
 		 *
 		 * @param {boolean} bActive State of the interaction detection
+		 *
 		 * @static
-		 * @private
+		 * @public
+		 * @since 1.76
 		 */
 		setActive : function(bActive) {
 			if (bActive && !bInteractionActive) {

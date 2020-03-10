@@ -651,7 +651,7 @@ function(
 	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining.
 	 */
 	RadioButton.prototype.setValueStateText = function(sText) {
-		return this.setProperty("valueStateText", sText, true);
+		return this.setProperty("valueStateText", sText);
 	};
 
 	/**

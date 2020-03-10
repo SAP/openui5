@@ -171,6 +171,20 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					language: "EN"
 				}
 			},
+			"support/TechnicalInfoDebugModules.opa": {
+				loader: {
+					map: {
+						// Opa _XHRWaiter requires sap/ui/thirdparty/sinon, redirect to sinon-4
+						'sap/ui/test/autowaiter': {
+							'sap/ui/thirdparty/sinon': 'sap/ui/thirdparty/sinon-4'
+						}
+					}
+				},
+				ui5: {
+					libs: "sap.m",
+					language: "EN"
+				}
+			},
 			Export: {},
 			ExportTypeCSV: {},
 			LibraryInfo: {

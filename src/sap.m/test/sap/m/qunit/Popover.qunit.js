@@ -2043,9 +2043,14 @@ sap.ui.define([
 		var oPopover = new Popover({
 			title: "Title text"
 		});
+		oPopover._setAriaRoleApplication(true);
 		oPopover.openBy(oButton);
 		this.clock.tick(400);
 		assert.equal(jQuery.sap.byId(oPopover.getId() + "-cont").attr("role"), "application", "Popover's content should have role application");
+
+		oPopover._setAriaRoleApplication(false);
+		this.clock.tick(0);
+		assert.notOk(document.getElementById(oPopover.getId() + "-cont").attributes["role"], "Popover's content should not have role application");
 
 		oPopover.destroy();
 		oButton.destroy();

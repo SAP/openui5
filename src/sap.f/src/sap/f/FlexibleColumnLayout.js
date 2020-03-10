@@ -99,6 +99,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Determines whether the initial focus of the <code>NavContainer</code> instances is set automatically on first rendering and after navigating to a new page.
+				 *
+				 * For more information, see {@link sap.m.NavContainer#autoFocus}.
+				 * @since 1.76
+				 */
+				autoFocus: {type: "boolean", group: "Behavior", defaultValue: true},
+
+				/**
 				 * Determines the layout of the control - number of visible columns and their relative sizes.
 				 *
 				 * For more details, see {@link topic:3b9f760da5b64adf8db7f95247879086 Types of Layout} in the documentation.
@@ -586,6 +594,27 @@ sap.ui.define([
 						 */
 						direction : {type : "string"}
 					}
+				},
+
+				/**
+				 * Fired when resize of each column has completed.
+				 * @since 1.76
+				 */
+				columnResize : {
+					parameters : {
+						/**
+						 * Determines whether <code>beginColumn</code> resize has completed.
+						 */
+						beginColumn : {type : "boolean"},
+						/**
+						 * Determines whether <code>midColumn</code> resize has completed.
+						 */
+						midColumn : {type : "boolean"},
+						/**
+						 * Determines whether <code>endColumn</code> resize has completed.
+						 */
+						endColumn : {type : "boolean"}
+					}
 				}
 			}
 		}
@@ -610,6 +639,12 @@ sap.ui.define([
 
 		// We need to have column navigating buttons single width for animations of the layout
 		this._iNavigationArrowWidth = DomUnitsRem.toPx(Parameters.get("_sap_f_FCL_navigation_arrow_width"));
+
+		this._oColumnWidthInfo = {
+			beginColumn: 0,
+			midColumn: 0,
+			endColumn: 0
+		};
 	};
 
 	/**
@@ -638,6 +673,7 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._createNavContainer = function (sColumn) {
 		var sColumnCap = sColumn.charAt(0).toUpperCase() + sColumn.slice(1);
 		var oNavContainer = new NavContainer(this.getId() + "-" + sColumn + "ColumnNav", {
+			autoFocus: this.getAutoFocus(),
 			navigate: function(oEvent){
 				this._handleNavigationEvent(oEvent, false, sColumn);
 			}.bind(this),
@@ -733,6 +769,22 @@ sap.ui.define([
 		return vResult;
 	};
 
+	FlexibleColumnLayout.prototype.setAutoFocus = function (bNewAutoFocus) {
+		bNewAutoFocus = this.validateProperty("autoFocus", bNewAutoFocus);
+
+		var bCurrentAutoFocus = this.getAutoFocus();
+
+		if (bCurrentAutoFocus === bNewAutoFocus) {
+			return this;
+		}
+
+		this._getNavContainers().forEach(function (oNavContainer) {
+			oNavContainer.setAutoFocus(bNewAutoFocus);
+		});
+
+		return this.setProperty("autoFocus", bNewAutoFocus, true);
+	};
+
 	FlexibleColumnLayout.prototype.onBeforeRendering = function () {
 		this._deregisterResizeHandler();
 	};
@@ -799,6 +851,15 @@ sap.ui.define([
 		this.setAggregation("_beginColumnNav", this._createNavContainer("begin"), true);
 		this.setAggregation("_midColumnNav", this._createNavContainer("mid"), true);
 		this.setAggregation("_endColumnNav", this._createNavContainer("end"), true);
+	};
+
+	/**
+	 * Return array containing the nav containers
+	 * @return {Array.<object>}
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getNavContainers = function () {
+		return [this._getBeginColumn(), this._getMidColumn(), this._getEndColumn()];
 	};
 
 	/**
@@ -994,7 +1055,6 @@ sap.ui.define([
 
 			// Animations on - suspend ResizeHandler while animation is running
 			if (bHasAnimations) {
-
 				var oColumnDomRef = oColumn.get(0);
 
 				// Clear previous timeouts if present
@@ -1094,12 +1154,25 @@ sap.ui.define([
 	 *	@private
 	*/
 	FlexibleColumnLayout.prototype._adjustColumnDisplay = function(oColumn, iNewWidth) {
+		var oColumnInfo = {
+				beginColumn: oColumn.hasClass("sapFFCLColumnBegin"),
+				midColumn: oColumn.hasClass("sapFFCLColumnMid"),
+				endColumn: oColumn.hasClass("sapFFCLColumnEnd")
+			},
+			sCurrentColumn = getCurrentColumn(oColumnInfo);
+
 		//BCP: 1980006195
 		if (iNewWidth === 0) {
 			oColumn.addClass("sapFFCLColumnHidden");
 		} else {
 			oColumn.removeClass("sapFFCLColumnHidden");
 		}
+
+		if (this._oColumnWidthInfo[sCurrentColumn] !== iNewWidth) {
+			this.fireColumnResize(oColumnInfo);
+		}
+
+		this._oColumnWidthInfo[sCurrentColumn] = iNewWidth;
 	};
 
 	/**
@@ -1934,6 +2007,19 @@ sap.ui.define([
 	 */
 	function LayoutHistory () {
 		this._aLayoutHistory = [];
+	}
+
+	function getCurrentColumn(oColumnInfo) {
+		var sCurrentColumn;
+
+		for (var sKey in oColumnInfo) {
+			if (oColumnInfo[sKey]) {
+				sCurrentColumn = sKey;
+				break;
+			}
+		}
+
+		return sCurrentColumn;
 	}
 
 	/**

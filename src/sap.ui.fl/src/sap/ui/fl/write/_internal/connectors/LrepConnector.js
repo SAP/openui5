@@ -298,6 +298,7 @@ sap.ui.define([
 		 */
 		loadFeatures: function (mPropertyBag) {
 			if (ApplyConnector.settings) {
+				ApplyConnector.settings.isVersioningEnabled = false;
 				return Promise.resolve(ApplyConnector.settings);
 			}
 			var mParameters = {};
@@ -306,6 +307,8 @@ sap.ui.define([
 
 			var sFeaturesUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
+				// ensure that even an enabled back end is not consumed in this version
+				oResult.response.isVersioningEnabled = false;
 				return oResult.response;
 			});
 		},

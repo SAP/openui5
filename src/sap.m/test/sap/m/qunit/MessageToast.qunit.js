@@ -406,16 +406,17 @@ sap.ui.define([
 
 		MessageToast.show("test", {
 			onClose: function () {
+				oSvgCircle.destroy();
 				assert.ok(true, "Message toast closed with no error thrown");
 				done();
 			}
 		});
 
-		MessageToast._handleMouseDownEvent(jQuery.Event("mousedown", {
-			target: document.getElementById("svg-circle")
-		}));
-
-		oSvgCircle.destroy();
+		setTimeout(function(){
+			MessageToast._handleMouseDownEvent(jQuery.Event("mousedown", {
+				target: document.getElementById("svg-circle")
+			}));
+		}, 0);
 	});
 
 	QUnit.test("Callback", function(assert) {

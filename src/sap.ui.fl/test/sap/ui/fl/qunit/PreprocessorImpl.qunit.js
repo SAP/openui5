@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ],
@@ -21,6 +22,7 @@ function(
 	Layer,
 	Utils,
 	Log,
+	VariantManagementState,
 	sinon,
 	jQuery
 ) {
@@ -30,6 +32,7 @@ function(
 
 	QUnit.module("sap.ui.fl.PreprocessorImpl", {
 		beforeEach: function() {
+			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
 			this.sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
 			this.oExtensionProvider = new PreprocessorImpl();
 		},

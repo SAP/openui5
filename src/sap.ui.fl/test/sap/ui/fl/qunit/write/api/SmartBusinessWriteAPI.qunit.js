@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/SmartBusinessWriteAPI",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Layer",
@@ -15,7 +14,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangesController,
-	PersistenceWriteAPI,
 	SmartBusinessWriteAPI,
 	LrepConnector,
 	Layer,
@@ -254,7 +252,7 @@ sap.ui.define([
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData1, appId: "reference.app"})
 				.then(function(oDescriptorInlineChange) {
 					// Adds a descriptor change to its own persistence
-					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
+					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
 				})
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
@@ -347,7 +345,69 @@ sap.ui.define([
 				.then(function() {
 					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "PUT"), "then the parameters are correct");
+					var oRequestPayload = JSON.parse(fnNewConnectorCall.getCall(1).args[2].payload);
+					assert.equal(oRequestPayload.content.length, 1, "then the app variant will be updated with 1 inline change");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true", "PUT"), "then the parameters are correct");
+				});
+		});
+
+		QUnit.test("(S4/Hana Cloud system) when update is called to update a published app variant (having a new inline change) in CUSTOMER layer ", function(assert) {
+			simulateSystemConfig(true);
+			var mPropertyBag = {
+				appId: "customer.reference.app.id"
+			};
+
+			var oDescrChangeSpecificData = {
+				changeType: 'appdescr_app_setTitle',
+				content: {
+					type: "XTIT",
+					maxLength: 20,
+					comment: "example",
+					value: {
+						"": "Title example default text",
+						en: "Title example text in en",
+						de: "Titel Beispieltext in de",
+						en_US: "Title example text in en_US"
+					}
+				}
+			};
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: Layer.CUSTOMER,
+					fileType: "fileType1",
+					packageName: "ATO_PACKAGE",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+
+			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
+
+			// Creates a first descriptor change
+			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: oDescrChangeSpecificData, appId: "customer.reference.app.id"})
+				.then(function(oDescriptorInlineChange) {
+					// Adds a first descriptor change to its own persistence
+					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "customer.reference.app.id"});
+				}).then(function() {
+					return SmartBusinessWriteAPI.update(mPropertyBag);
+				})
+				.then(function() {
+					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+					var oRequestPayload = JSON.parse(fnNewConnectorCall.getCall(1).args[2].payload);
+					assert.equal(oRequestPayload.content.length, 2, "then the app variant will be updated with 2 inline changes");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true", "PUT"), "then the parameters are correct");
 				});
 		});
 

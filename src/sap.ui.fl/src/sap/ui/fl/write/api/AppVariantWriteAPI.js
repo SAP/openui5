@@ -76,7 +76,7 @@ sap.ui.define([
 				return Promise.reject("Layer must be provided");
 			}
 			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag.referenceAppId = oFlexController.getComponentName();
+			mPropertyBag.id = oFlexController.getComponentName();
 
 			return SaveAs.deleteAppVariant(mPropertyBag);
 		},

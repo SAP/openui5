@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/command/LREPSerializer",
-	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
@@ -30,7 +30,7 @@ function (
 	AppVariantUtils,
 	Stack,
 	LREPSerializer,
-	DescriptorVariantFactory,
+	AppVariantFactory,
 	WriteUtils,
 	Settings,
 	Layer,
@@ -308,17 +308,17 @@ function (
 			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves(oResponse);
 			var fnTriggerCatalogAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogAssignment");
 
-			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
-			.then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), true);
-			}.bind(this))
-			.then(function(oResult) {
-				assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
-				assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
-				assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
-				assert.strictEqual(oResult.VariantId, "customer.TestId", "then the variant id is correct");
-				assert.strictEqual(oResult.CatalogIds[0], "TEST_CATALOG", "then the new app variant has been added to a correct catalog ");
-			});
+			return AppVariantFactory.prepareCreate({id: "customer.TestId", reference: "TestIdBaseApp"})
+				.then(function(oDescriptor) {
+					return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), true);
+				}.bind(this))
+				.then(function(oResult) {
+					assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
+					assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
+					assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
+					assert.strictEqual(oResult.VariantId, "customer.TestId", "then the variant id is correct");
+					assert.strictEqual(oResult.CatalogIds[0], "TEST_CATALOG", "then the new app variant has been added to a correct catalog ");
+				});
 		});
 
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog unassignment", function (assert) {
@@ -339,16 +339,16 @@ function (
 			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves(oResponse);
 			var fnTriggerCatalogUnAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogUnAssignment");
 
-			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
-			.then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), false);
-			}.bind(this))
-			.then(function(oResult) {
-				assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
-				assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
-				assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
-				assert.strictEqual(oResult.inProgress, true, "then the inProgress property is true");
-			});
+			return AppVariantFactory.prepareCreate({id: "customer.TestId", reference: "TestIdBaseApp"})
+				.then(function(oDescriptor) {
+					return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), false);
+				}.bind(this))
+				.then(function(oResult) {
+					assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
+					assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
+					assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
+					assert.strictEqual(oResult.inProgress, true, "then the inProgress property is true");
+				});
 		});
 
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog assignment and response is failed", function (assert) {
@@ -375,19 +375,19 @@ function (
 			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
 			var fnTriggerCatalogAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogAssignment");
 
-			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
-			.then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), true);
-			}.bind(this))
-			.then(function() {
-				assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
-				assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
-				assert.ok(fncatchErrorDialog.calledOnce, "then the fncatchErrorDialog method is called once");
-				assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_CATALOG_ASSIGNMENT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
-				assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.TestId", "then the fncatchErrorDialog method is called with correct app var id");
-				assert.ok(fnBuildErrorInfoStub.calledOnce, "then the buildErrorInfo method is called once");
-				assert.ok(fnShowRelevantDialog.calledOnceWith(oErrorInfo, false), "then the showRelevantDialog method is called once and with correct parameters");
-			});
+			return AppVariantFactory.prepareCreate({id: "customer.TestId", reference: "TestIdBaseApp"})
+				.then(function(oDescriptor) {
+					return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), true);
+				}.bind(this))
+				.then(function() {
+					assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
+					assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
+					assert.ok(fncatchErrorDialog.calledOnce, "then the fncatchErrorDialog method is called once");
+					assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_CATALOG_ASSIGNMENT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
+					assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.TestId", "then the fncatchErrorDialog method is called with correct app var id");
+					assert.ok(fnBuildErrorInfoStub.calledOnce, "then the buildErrorInfo method is called once");
+					assert.ok(fnShowRelevantDialog.calledOnceWith(oErrorInfo, false), "then the showRelevantDialog method is called once and with correct parameters");
+				});
 		});
 
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog unassignment and response is failed", function (assert) {
@@ -414,19 +414,19 @@ function (
 			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
 			var fnTriggerCatalogUnAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogUnAssignment");
 
-			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
-			.then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), false);
-			}.bind(this))
-			.then(function() {
-				assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
-				assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
-				assert.ok(fncatchErrorDialog.calledOnce, "then the fncatchErrorDialog method is called once");
-				assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_DELETE_APP_VARIANT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
-				assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.TestId", "then the fncatchErrorDialog method is called with correct app var id");
-				assert.ok(fnBuildErrorInfoStub.calledOnce, "then the buildErrorInfo method is called once");
-				assert.ok(fnShowRelevantDialog.calledOnceWith(oErrorInfo, false), "then the showRelevantDialog method is called once and with correct parameters");
-			});
+			return AppVariantFactory.prepareCreate({id: "customer.TestId", reference: "TestIdBaseApp"})
+				.then(function(oDescriptor) {
+					return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), false);
+				}.bind(this))
+				.then(function() {
+					assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", Layer.CUSTOMER, "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
+					assert.ok(oSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
+					assert.ok(fncatchErrorDialog.calledOnce, "then the fncatchErrorDialog method is called once");
+					assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_DELETE_APP_VARIANT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
+					assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.TestId", "then the fncatchErrorDialog method is called with correct app var id");
+					assert.ok(fnBuildErrorInfoStub.calledOnce, "then the buildErrorInfo method is called once");
+					assert.ok(fnShowRelevantDialog.calledOnceWith(oErrorInfo, false), "then the showRelevantDialog method is called once and with correct parameters");
+				});
 		});
 
 
@@ -470,7 +470,7 @@ function (
 
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
-			return DescriptorVariantFactory.createNew({
+			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
@@ -522,7 +522,7 @@ function (
 
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
-			return DescriptorVariantFactory.createNew({
+			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
@@ -548,7 +548,7 @@ function (
 
 			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves(true);
 
-			return DescriptorVariantFactory.createNew({
+			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
@@ -572,7 +572,7 @@ function (
 
 			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves(true);
 
-			return DescriptorVariantFactory.createNew({
+			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {

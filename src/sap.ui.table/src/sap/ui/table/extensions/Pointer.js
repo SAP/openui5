@@ -175,8 +175,9 @@ sap.ui.define([
 		exitColumnResizing: function(oEvent) {
 			var iLocationX = ExtensionHelper._getEventPosition(oEvent, this).x;
 			var oColumn = this._getVisibleColumns()[this._iLastHoveredVisibleColumnIndex];
-			var iColumnWidth = oColumn.getDomRef().offsetWidth;
-			var iDeltaX = iLocationX - (oColumn.$().offset().left + iColumnWidth);
+			var $RelevantColumnElement = this.$().find("th[data-sap-ui-colid=\"" + oColumn.getId() + "\"]"); // Consider span and multi-header
+			var iColumnWidth = $RelevantColumnElement[0].offsetWidth;
+			var iDeltaX = iLocationX - ($RelevantColumnElement.offset().left + iColumnWidth);
 			var iCalculatedColumnWidth = Math.round(iColumnWidth + iDeltaX * (this._bRtlMode ? -1 : 1));
 			var iNewColumnWidth = Math.max(iCalculatedColumnWidth, TableUtils.Column.getMinColumnWidth());
 

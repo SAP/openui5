@@ -33,9 +33,6 @@ function(
 		beforeEach: function () {
 			this.oAppComponent = new Component("appComponent");
 			this.oModel = {
-				_oHashData:  {
-					hashParams: []
-				},
 				oAppComponent: this.oAppComponent
 			};
 			this.fnDestroyObserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
@@ -48,13 +45,8 @@ function(
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when getStoredHashParams() is called", function (assert) {
-			this.oModel._oHashData.hashParams = ["expectedParameter1", "expectedParameter2"];
-			assert.deepEqual(URLHandler.getStoredHashParams({model: this.oModel}), ["expectedParameter1", "expectedParameter2"], "then expected parameters are returned");
-		});
-
-		QUnit.test("when initialize() is called with oHashRegister.currentIndex set to null", function (assert) {
-			assert.expect(3);
+		QUnit.test("when initialize() is called, followed by a getStoredHashParams() call ", function (assert) {
+			assert.expect(4);
 			sandbox.stub(Utils, "getUshellContainer").returns({
 				getService: function() {
 					return {
@@ -80,12 +72,15 @@ function(
 			this.oModel.oComponentDestroyObserver.unobserve(this.oAppComponent, {destroy:true}); // remove component observer
 			assert.ok(URLHandler.attachHandlers.calledWith(mPropertyBag), "then required handlers and observers were subscribed");
 			assert.deepEqual(this.oModel._oHashData, oHashRegister, "then hash register object initialized");
+
+			this.oModel._oHashData.hashParams = ["expectedParameter1", "expectedParameter2"];
+			assert.deepEqual(URLHandler.getStoredHashParams({model: this.oModel}), ["expectedParameter1", "expectedParameter2"], "then expected parameters are returned");
 		});
 
-		QUnit.test("when attachHandlers is called for the first time with a variant management control's local id", function (assert) {
+		QUnit.test("when registerControl is called for a variant management control's local id", function (assert) {
 			var sVariantManagementReference = "sLocalControlId";
 			URLHandler.initialize({model: this.oModel});
-			URLHandler.attachHandlers({vmReference: sVariantManagementReference, updateURL: true, model: this.oModel});
+			URLHandler.registerControl({vmReference: sVariantManagementReference, updateURL: true, model: this.oModel});
 			var aCallArgs = this.fnDestroyObserverSpy.getCall(0).args;
 			assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver observers the AppComponent");
 			assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver observers the destroy() method");
@@ -94,7 +89,7 @@ function(
 			assert.deepEqual(this.oModel._oHashData.variantControlIds, [sVariantManagementReference], "then the rendered control's local id added to the hash register");
 		});
 
-		QUnit.test("when attachHandlers() is called for the first time and updateURL set to false", function (assert) {
+		QUnit.test("when attachHandlers() is called", function (assert) {
 			URLHandler.initialize({model: this.oModel});
 
 			// first call
@@ -103,7 +98,6 @@ function(
 			assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver observers the AppComponent");
 			assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver observers the destroy() method");
 			this.oModel.oComponentDestroyObserver.unobserve(this.oAppComponent, {destroy:true}); // remove component observer
-			assert.deepEqual(this.oModel._oHashData.variantControlIds, [], "then the control id was not added to the hash register");
 
 			// second call
 			URLHandler.attachHandlers({vmReference: "mockControlId2", updateURL: false, model: this.oModel});
@@ -441,6 +435,7 @@ function(
 		});
 
 		QUnit.test("when the registered navigationFilter function is called and there is an error in hash parsing", function (assert) {
+			sandbox.stub(Utils.getUshellContainer(), "getService").callThrough().withArgs("URLParsing").throws();
 			var oLogErrorSpy = sandbox.spy(Log, "error");
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			assert.strictEqual(fnVariantIdChangeHandler({}), this.sDefaultStatus, "then the default navigation filter status was returned");
@@ -448,28 +443,39 @@ function(
 		});
 
 		QUnit.test("when the registered navigationFilter function is called and there is a variant parameter, belonging to no variant", function (assert) {
-			sandbox.stub(URLHandler, "update").callsFake(function () {
-				assert.ok(false, "URLHandler.update() should not be called");
-			});
+			var aParametersBelongingToNoVariant = ["paramValue1", "paramValue2"];
+			sandbox.stub(URLHandler, "update").callsFake(function (mParameters) {
+				assert.deepEqual(mParameters, {
+					updateURL: true,
+					parameters: aParametersBelongingToNoVariant,
+					updateHashEntry: true,
+					model: this.oModel
+				}, "URLHandler.update() was called irrespectively");
+			}.bind(this));
 
 			var oHash = {params: {}};
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
-			oHash.params[URLHandler.variantTechnicalParameterName] = ["paramValue1", "paramValue2"];
+			oHash.params[URLHandler.variantTechnicalParameterName] = aParametersBelongingToNoVariant;
 			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
 		});
 
-		QUnit.test("when the registered navigationFilter function is called and there is a unchanged variant parameter, belonging to a variant", function (assert) {
+		QUnit.test("when the registered navigationFilter function is called and there are unchanged variant URL parameters", function (assert) {
 			var aParameterValues = [this.oModel.oData["variantMgmtId1"].currentVariant, "paramValue2"];
-			sandbox.stub(URLHandler, "update").callsFake(function () {
-				assert.ok(false, "URLHandler.update() should not be called");
-			});
+			sandbox.stub(URLHandler, "update").callsFake(function (mParameters) {
+				assert.deepEqual(mParameters, {
+					updateURL: true,
+					parameters: aParameterValues,
+					updateHashEntry: true,
+					model: this.oModel
+				}, "URLHandler.update() was called irrespectively");
+			}.bind(this));
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			var oHash = {params: {}};
 			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
 			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
 		});
 
-		QUnit.test("when the registered navigationFilter function is called and there is a changed variant parameter, belonging to a variant", function (assert) {
+		QUnit.test("when the registered navigationFilter function is called and there are changed variant URL parameters", function (assert) {
 			assert.expect(2);
 			var aParameterValues = [this.oModel.oData["variantMgmtId1"].defaultVariant, this.oModel.oData["variantMgmtId2"].defaultVariant, "otherParamValue"];
 			var mExpectedPropertyBag = {
@@ -488,28 +494,37 @@ function(
 			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
 		});
 
-		QUnit.test("when the registered navigationFilter function is called in UI Adaptation mode and there is a changed variant parameter, belonging to a variant", function (assert) {
-			assert.expect(3);
-			var aParameterValues = [this.oModel.oData["variantMgmtId1"].defaultVariant, this.oModel.oData["variantMgmtId2"].defaultVariant, "otherParamValue"];
-			this.oModel._bDesignTimeMode = true;
-			var mExpectedPropertyBagToClear = {
+		QUnit.test("when the registered navigationFilter function is called and there are two variant parameters belonging to the same variant management", function (assert) {
+			assert.expect(2);
+			var aParameterValues = [this.oModel.oData["variantMgmtId1"].defaultVariant, this.oModel.oData["variantMgmtId1"].currentVariant, "otherParamValue"];
+			var mExpectedPropertyBag = {
 				model: this.oModel,
 				updateURL: true,
-				updateHashEntry: false,
-				parameters: []
+				updateHashEntry: true,
+				parameters: [this.oModel.oData["variantMgmtId1"].currentVariant, "otherParamValue"]
 			};
+			sandbox.stub(URLHandler, "update").callsFake(function (mPropertyBag) {
+				assert.deepEqual(mPropertyBag, mExpectedPropertyBag, "then URLHandler.update() was called with right parameters");
+			});
+
+			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
+			var oHash = {params: {}};
+			oHash.params[URLHandler.variantTechnicalParameterName] = aParameterValues;
+			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
+		});
+
+		QUnit.test("when the registered navigationFilter function is called in UI Adaptation mode and there is a changed variant parameter, belonging to a variant", function (assert) {
+			assert.expect(2);
+			var aParameterValues = [this.oModel.oData["variantMgmtId1"].defaultVariant, this.oModel.oData["variantMgmtId2"].defaultVariant, "otherParamValue"];
+			this.oModel._bDesignTimeMode = true;
 			var mExpectedPropertyBagToUpdate = {
 				model: this.oModel,
-				updateURL: false,
+				updateURL: !this.oModel._bDesignTimeMode,
 				updateHashEntry: true,
 				parameters: [this.oModel.oData["variantMgmtId1"].currentVariant, this.oModel.oData["variantMgmtId2"].currentVariant, "otherParamValue"]
 			};
 			sandbox.stub(URLHandler, "update").callsFake(function (mPropertyBag) {
-				if (mPropertyBag.parameters.length === 0) {
-					assert.deepEqual(mPropertyBag, mExpectedPropertyBagToClear, "then URLHandler.update() was called with right parameters to clear URL");
-				} else {
-					assert.deepEqual(mPropertyBag, mExpectedPropertyBagToUpdate, "then URLHandler.update() was called with right parameters to update hash register");
-				}
+				assert.deepEqual(mPropertyBag, mExpectedPropertyBagToUpdate, "then URLHandler.update() was called with right parameters to update hash register");
 			});
 
 			var oHash = {params: aParameterValues};
@@ -519,27 +534,17 @@ function(
 		});
 
 		QUnit.test("when the registered navigationFilter function is called in UI Adaptation mode and there is a changed variant parameter (default variant), belonging to a variant", function (assert) {
-			assert.expect(3);
+			assert.expect(2);
 			var aParameterValues = [this.oModel.oData["variantMgmtId1"].defaultVariant, this.oModel.oData["variantMgmtId2"].defaultVariant, "variant3"];
 			this.oModel._bDesignTimeMode = true;
-			var mExpectedPropertyBagToClear = {
-				model: this.oModel,
-				updateURL: true,
-				updateHashEntry: false,
-				parameters: []
-			};
 			var mExpectedPropertyBagToUpdate = {
 				model: this.oModel,
-				updateURL: false,
+				updateURL: !this.oModel._bDesignTimeMode,
 				updateHashEntry: true,
 				parameters: [this.oModel.oData["variantMgmtId1"].currentVariant, this.oModel.oData["variantMgmtId2"].currentVariant]
 			};
 			sandbox.stub(URLHandler, "update").callsFake(function (mPropertyBag) {
-				if (mPropertyBag.parameters.length === 0) {
-					assert.deepEqual(mPropertyBag, mExpectedPropertyBagToClear, "then URLHandler.update() was called with right parameters to clear URL");
-				} else {
-					assert.deepEqual(mPropertyBag, mExpectedPropertyBagToUpdate, "then URLHandler.update() was called with right parameters to update hash register");
-				}
+				assert.deepEqual(mPropertyBag, mExpectedPropertyBagToUpdate, "then URLHandler.update() was called with right parameters to update hash register");
 			});
 
 			var oHash = {params: aParameterValues};

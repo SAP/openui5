@@ -1311,12 +1311,13 @@ sap.ui.define([
 		 * Waits for the expected requests and changes.
 		 *
 		 * @param {object} assert The QUnit assert object
+		 * @param {string} [sTitle] Title for this section of a test
 		 * @param {boolean} [bNullOptional] Whether a non-list change to a null value is optional
 		 * @param {number} [iTimeout=3000] The timeout time in milliseconds
 		 * @returns {Promise} A promise that is resolved when all requests have been responded and
 		 *   all expected values for controls have been set
 		 */
-		waitForChanges : function (assert, bNullOptional, iTimeout) {
+		waitForChanges : function (assert, sTitle, bNullOptional, iTimeout) {
 			var oPromise,
 				that = this;
 
@@ -1327,7 +1328,9 @@ sap.ui.define([
 				// Resolve to have the missing requests and changes reported
 				setTimeout(function () {
 					if (oPromise.isPending()) {
-						assert.ok(false, "Timeout in waitForChanges (" + iTimeout + " ms)");
+						assert.ok(false,
+							"Timeout in waitForChanges" + (sTitle ? " of " + sTitle : "")
+								+ " (" + iTimeout + " ms)");
 						resolve();
 					}
 				}, iTimeout || 3000);
@@ -1361,6 +1364,9 @@ sap.ui.define([
 					}
 				}
 				that.checkMessages(assert);
+				if (sTitle) {
+					assert.ok(true, "waitForChanges: Done with " + sTitle);
+				}
 			});
 
 			return oPromise;
@@ -5894,7 +5900,7 @@ sap.ui.define([
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
 				oCreatedContext1.delete("$auto"),
-				that.waitForChanges(assert, true)
+				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
 			that.expectChange("id", [, "43", "42"])
@@ -6056,7 +6062,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oCreatedContext1.delete("$auto"),
-				that.waitForChanges(assert, true)
+				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -6467,7 +6473,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
-				that.waitForChanges(assert, true)
+				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
 			that.expectChange("id", [, "43", "42"])
@@ -6571,7 +6577,7 @@ sap.ui.define([
 				oCreatedContext0.created().catch(function () {/* avoid uncaught (in promise) */}),
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
 				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
-				that.waitForChanges(assert, true)
+				that.waitForChanges(assert, "", true)
 			]);
 			// scrolling not possible: only one entry
 		});
@@ -6824,7 +6830,7 @@ sap.ui.define([
 				oCreatedContext0.created().catch(function () {/* avoid uncaught (in promise) */}),
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
 				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
-				that.waitForChanges(assert, true)
+				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -7095,7 +7101,7 @@ sap.ui.define([
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
 				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
-				that.waitForChanges(assert, true)
+				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -7210,7 +7216,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oCreatedContext1.delete("$auto"),
-				that.waitForChanges(assert, true)
+				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -7424,7 +7430,7 @@ sap.ui.define([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */
 				}),
 				oCreatedContext1.delete("$auto"),
-				that.waitForChanges(assert, true)
+				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -7857,7 +7863,7 @@ sap.ui.define([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */
 				}),
 				oCreatedContext1.delete("$auto"),
-				that.waitForChanges(assert, true)
+				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -8362,6 +8368,7 @@ sap.ui.define([
 	// right request -> all requests in the change set are rejected with the same error;
 	// the error is logged for each request in the change set, but it is reported only once to
 	// the message model
+	// Note: Key properties are omitted from response data to improve readability.
 	QUnit.test("Error response for a change set w/o content-ID", function (assert) {
 		var oError = createError({code : "CODE", message : "Value 4.22 not allowed"}),
 			oModel = createSalesOrdersModel({
@@ -11487,7 +11494,7 @@ sap.ui.define([
 			});
 
 			// Increase the timeout for this test to 12 seconds to run also in IE
-			return that.waitForChanges(assert, undefined, 12000);
+			return that.waitForChanges(assert, "", undefined, 12000);
 		});
 	});
 
@@ -11530,7 +11537,8 @@ sap.ui.define([
 				new Promise(function (resolve, reject) {
 					fnDone = resolve;
 				}),
-				that.waitForChanges(assert)
+				// Increase the timeout for this test to 12 seconds to run also in IE
+				that.waitForChanges(assert, "", undefined, 12000)
 			]);
 		});
 	});
@@ -14470,6 +14478,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
+	// Note: Key properties are omitted from response data to improve readability.
 	[false, true].forEach(function (bCount) {
 		var sTitle = "Data Aggregation by V4: $$aggregation, aggregate but no group; $count : "
 				+ bCount;
@@ -14511,7 +14520,7 @@ sap.ui.define([
 					+ (bCount ? ",$count as UI5__count" : "") + "),top(1))", {
 					value : [oMinMaxElement, {GrossAmount : 1}]
 				})
-				.expectChange("grossAmount", 1);
+				.expectChange("grossAmount", [1]);
 
 			return this.createView(assert, sView, oModel).then(function () {
 				var oTable = that.oView.byId("table"),
@@ -14523,7 +14532,7 @@ sap.ui.define([
 						"@odata.count" : "1",
 						value : [{GrossAmount : 2}]
 					})
-					.expectChange("grossAmount", 2);
+					.expectChange("grossAmount", [2]);
 
 				oListBinding.setAggregation({
 					aggregate : {GrossAmount : {}}
@@ -14534,32 +14543,31 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: check that $$aggregation can be removed again
+	// Note: Key properties are omitted from response data to improve readability.
 	// BCP: 2080047558
 	QUnit.test("BCP: 2080047558", function (assert) {
 		var oListBinding,
 			sView = '\
-<t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="1">\
-	<t:Column>\
-		<t:template>\
-			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
-		</t:template>\
-	</t:Column>\
-</t:Table>',
+<Table id="table" items="{/SalesOrderList}">\
+	<ColumnListItem>\
+		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	</ColumnListItem>\
+</Table>',
 			oModel = createSalesOrdersModel(),
 			that = this;
 
-		this.expectRequest("SalesOrderList?$skip=0&$top=1", {
+		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
 				value : [{GrossAmount : 1}]
 			})
-			.expectChange("grossAmount", 1);
+			.expectChange("grossAmount", [1]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oListBinding = that.oView.byId("table").getBinding("rows");
+			oListBinding = that.oView.byId("table").getBinding("items");
 
-			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
-					value : [{GrossAmount : 3}]
+			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=100", {
+					value : [{GrossAmount : 2}]
 				})
-				.expectChange("grossAmount", 3);
+				.expectChange("grossAmount", [2]);
 
 			// code under test
 			oListBinding.setAggregation({
@@ -14575,10 +14583,10 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$skip=0&$top=1", {
-					value : [{GrossAmount : 2}]
+			that.expectRequest("SalesOrderList?$skip=0&$top=100", {
+					value : [{GrossAmount : 3}]
 				})
-				.expectChange("grossAmount", 2);
+				.expectChange("grossAmount", [3]);
 
 			assert.throws(function () {
 				// code under test
@@ -14601,15 +14609,102 @@ sap.ui.define([
 			oListBinding.setAggregation();
 
 			that.expectRequest("SalesOrderList"
-				+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))&$skip=0&$top=1", {
-					value : [{GrossAmount : 3}]
+				+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))&$skip=0&$top=100", {
+					value : [{GrossAmount : 4}]
 				})
-				.expectChange("grossAmount", 3);
+				.expectChange("grossAmount", [4]);
 
 			// code under test
 			oListBinding.changeParameters({
 				$apply : "groupby((LifecycleStatus),aggregate(GrossAmount))"
 			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test (Note: no request!)
+			oListBinding.setAggregation();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$skip=0&$top=100", {
+					value : [{GrossAmount : 5}]
+				})
+				.expectChange("grossAmount", [5]);
+
+			// code under test
+			oListBinding.changeParameters({$apply : undefined});
+		}).then(function () {
+			// code under test (Note: no request!)
+			oListBinding.setAggregation({});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: check that 'subtotals' can be changed and that $$aggregation can be removed again,
+	// each time refreshing the UI.
+	// BPC: 2070044134
+	QUnit.test("BCP: 2070044134", function (assert) {
+		var oListBinding,
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<ColumnListItem>\
+		<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+	</ColumnListItem>\
+</Table>',
+			oModel = createSalesOrdersModel(),
+			that = this;
+
+		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
+				value : [{GrossAmount : 1, LifecycleStatus : "Z"}]
+			})
+			.expectChange("grossAmount", [1])
+			.expectChange("lifecycleStatus", ["Z"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))&$count=true"
+					+ "&$skip=0&$top=100", {
+					value : [{GrossAmount : 2, LifecycleStatus : "Y"}]
+				})
+				.expectChange("grossAmount", [2])
+				.expectChange("lifecycleStatus", ["Y"]);
+
+			// code under test
+			oListBinding.setAggregation({
+				aggregate : {GrossAmount : {}},
+				groupLevels : ["LifecycleStatus"]
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList"
+					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+					+ "&$count=true&$skip=0&$top=100", {
+					value : [{GrossAmount : 3, LifecycleStatus : "X"}]
+				})
+				.expectChange("grossAmount", [3])
+				.expectChange("lifecycleStatus", ["X"]);
+
+			// code under test
+			oListBinding.setAggregation({
+				aggregate : {GrossAmount : {subtotals : true}},
+				groupLevels : ["LifecycleStatus"]
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$skip=0&$top=100", {
+					value : [{GrossAmount : 4, LifecycleStatus : "W"}]
+				})
+				.expectChange("grossAmount", [4])
+				.expectChange("lifecycleStatus", ["W"]);
+
+			// code under test
+			oListBinding.setAggregation();
 
 			return that.waitForChanges(assert);
 		});
@@ -24029,4 +24124,177 @@ sap.ui.define([
 </template:alias>','\
 <Input value="{Binary}"/>\
 <Input value="{Duration}"/>');
+
+	//*********************************************************************************************
+	// Scenario: An empty $NavigationPropertyPath is annotated as a side effect target. "All
+	// affected entities need to be explicitly listed. An empty path means the annotation target."
+	// --> We expect the caller to map {$NavigationPropertyPath : ""} to {$PropertyPath : '*'} in
+	// order to opt-in to this interpretation.
+	//
+	// Note: Key properties are omitted from response data to improve readability.
+	// BCP: 2070022577
+	QUnit.test("requestSideEffects: {$PropertyPath : '*'}", function (assert) {
+		var oContext,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
+	<Text id="city" text="{Address/City}" />\
+	<Text id="name" text="{Name}" />\
+	<Text binding="{BestPublication}" id="price0" text="{Price}" />\
+	<FlexBox binding="{BestFriend/BestFriend}">\
+		<Text id="friend" text="{Name}" />\
+		<Text binding="{BestPublication}" id="price1" text="{Price}" />\
+	</FlexBox>\
+	<FlexBox binding="{}" id="section">\
+		<Text binding="{path : \'DraftAdministrativeData\', parameters : {$$ownRequest : true}}"\
+			id="inProcessByUser" text="{InProcessByUser}" />\
+	</FlexBox>\
+	<Table id="table" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
+		<ColumnListItem>\
+			<Text id="price2" text="{Price}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
+				+ "?$select=DraftID,InProcessByUser", {
+				InProcessByUser : "foo"
+			})
+			.expectChange("inProcessByUser", "foo")
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+				+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [{
+						Price : "9.99",
+						// Note: this key property is essential for the $filter below!
+						PublicationID : "42-0"
+					}]
+				})
+			.expectChange("price2", ["9.99"])
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=Address/City,ArtistID,IsActiveEntity,Name"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+					+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity,Name"
+						+ ";$expand=BestPublication($select=Price,PublicationID)))"
+				+ ",BestPublication($select=Price,PublicationID)", {
+				Address : {
+					City : "Heidelberg"
+				},
+				BestFriend : {
+					BestFriend : {
+						BestPublication : {
+							Price : "8.88"
+						},
+						Name : "Best Friend"
+					}
+				},
+				BestPublication : {
+					Price : "9.99"
+				},
+				Name : "Hour Frustrated"
+			})
+			.expectChange("city", "Heidelberg")
+			.expectChange("name", "Hour Frustrated")
+			.expectChange("price0", "9.99")
+			.expectChange("friend", "Best Friend")
+			.expectChange("price1", "8.88");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext = that.oView.byId("form").getBindingContext();
+
+			// Note: BestFriend, BestPublication, and DraftAdministrativeData unaffected!
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=Address/City,ArtistID,IsActiveEntity,Name", {
+					Address : {
+						City : "Walldorf"
+					},
+					Name : "Minute Frustrated"
+				})
+				.expectChange("city", "Walldorf")
+				.expectChange("name", "Minute Frustrated");
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([{$PropertyPath : "*"}]),
+				that.waitForChanges(assert, "*")
+			]);
+		}).then(function () {
+			// Note: BestFriend/BestFriend unaffected!
+			//TODO this request for key properties only looks pretty useless, but...we could add an
+			// assertion that no key property has changed unexpectedly!
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity)", {
+					BestFriend : {}
+				});
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([{$PropertyPath : "BestFriend/*"}]),
+				that.waitForChanges(assert, "BestFriend/*")
+			]);
+		}).then(function () {
+			// Note: BestFriend/BestFriend's BestPublication unaffected!
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
+					+ "&$expand=BestFriend($select=BestFriend"
+						+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity,Name))", {
+					BestFriend : {
+						BestFriend : {
+							Name : "TAFKAP"
+						}
+					}
+				})
+				.expectChange("friend", "TAFKAP");
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([{$PropertyPath : "BestFriend/BestFriend/*"}]),
+				that.waitForChanges(assert, "BestFriend/BestFriend/*")
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
+					+ "&$expand=BestFriend($select=BestFriend"
+						+ ";$expand=BestFriend($select=BestPublication"
+							+ ";$expand=BestPublication($select=Price,PublicationID)))", {});
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([{
+					$PropertyPath : "BestFriend/BestFriend/BestPublication/*"
+				}]),
+				that.waitForChanges(assert, "BestFriend/BestFriend/BestPublication/*")
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$filter=PublicationID eq '42-0'", {
+					value : [{
+						Price : "9.09",
+						PublicationID : "42-0"
+					}]
+				})
+				.expectChange("price2", ["9.09"]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([{$PropertyPath : "_Publication/*"}]),
+				that.waitForChanges(assert, "_Publication/*")
+			]);
+		}).then(function () {
+			var oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$filter=PublicationID eq '42-0'", {
+					value : [{
+						Price : "9.01",
+						PublicationID : "42-0"
+					}]
+				})
+				.expectChange("price2", ["9.01"]);
+
+			return Promise.all([
+				// code under test
+				oHeaderContext.requestSideEffects([{$PropertyPath : "*"}]),
+				that.waitForChanges(assert, "* (@ _Publication)")
+			]);
+		});
+	});
 });

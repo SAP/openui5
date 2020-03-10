@@ -39,7 +39,8 @@
 					<unified:DateTypeRange
 							startDate="{start}"
 							endDate="{end}"
-							type="{type}"/>
+							type="{type}"
+							color="{color}"/>
 				</specialDates>
 				<appointments>
 					<unified:CalendarAppointment
@@ -57,7 +58,7 @@
 			<PlanningCalendarLegend id="SinglePlanningCalendarLegend" items="{path : '/legendItems', templateShareable: true}" appointmentItems="{path : '/legendAppointmentItems',
 									templateShareable: true}" class="sapUiSmallMarginTop">
 				<items>
-					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />
+					<unified:CalendarLegendItem text="{text}" type="{type}" color="{color}" tooltip="{text}" />
 				</items>
 				<appointmentItems>
 					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />

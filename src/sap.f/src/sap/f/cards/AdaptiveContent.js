@@ -158,10 +158,12 @@ sap.ui.define([
 		 */
 		AdaptiveContent.prototype._handleActions = function () {
 			this.adaptiveCardInstance.onExecuteAction = function (oAction) {
-				var sType, oPayload, oCard;
+				var sType, oPayload, oCardActions;
 
 				if (oAction instanceof AdaptiveCards.OpenUrlAction) {
-					oPayload = oAction.url;
+					oPayload = {
+						url:  oAction.url
+					};
 					sType = integrationLibrary.CardActionType.Navigation;
 				} else if (oAction instanceof AdaptiveCards.SubmitAction) {
 					oPayload = oAction.data;
@@ -172,14 +174,9 @@ sap.ui.define([
 					return;
 				}
 
-				oCard = this.getParent();
-
-				if (oCard) {
-					oCard.fireEvent("action", {
-						actionSource: this,
-						manifestParameters: oPayload,
-						type: sType
-					}, true);
+				oCardActions = this.getActions();
+				if (oCardActions) {
+					oCardActions.fireAction(this, sType, oPayload);
 				}
 			}.bind(this);
 		};
@@ -262,7 +259,7 @@ sap.ui.define([
 		 * @private
 		 * @param {Object} oDataSettings The data part of the configuration object
 		 */
-		BaseContent.prototype._setData = function (oDataSettings) {
+		AdaptiveContent.prototype._setData = function (oDataSettings) {
 			var oCard, oModel, oData,
 				sPath = "";
 

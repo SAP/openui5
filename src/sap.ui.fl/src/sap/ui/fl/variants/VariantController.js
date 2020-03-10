@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/Variant",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/includes",
-	"sap/base/Log",
-	"sap/ui/fl/apply/_internal/controlVariants/URLHandler"
+	"sap/base/util/merge",
+	"sap/base/Log"
 ], function (
 	Utils,
 	LayerUtils,
@@ -18,8 +18,8 @@ sap.ui.define([
 	Variant,
 	ObjectPath,
 	includes,
-	Log,
-	URLHandler
+	merge,
+	Log
 ) {
 	"use strict";
 
@@ -67,70 +67,12 @@ sap.ui.define([
 		return this._sAppVersion;
 	};
 
-	VariantController.prototype.setChangeFileContent = function (oChangeFileContent, mTechnicalParameters) {
-		if (Object.keys(this._mVariantManagement).length === 0) {
-			this._mVariantManagement = {};
-		}
-		if (oChangeFileContent && oChangeFileContent.changes && oChangeFileContent.changes.variantSection) {
-			Object.keys(oChangeFileContent.changes.variantSection).forEach(function (sVariantManagementReference) {
-				// when variant management reference exists do not overwrite
-				if (this._mVariantManagement[sVariantManagementReference]) {
-					return;
+	VariantController.prototype.setChangeFileContent = function (oChangeFileContent) {
+		if (ObjectPath.get("changes.variantSection", oChangeFileContent)) {
+			Object.keys(oChangeFileContent.changes.variantSection).forEach(function(sVMReference) {
+				if (!this._mVariantManagement[sVMReference]) {
+					this._mVariantManagement[sVMReference] = oChangeFileContent.changes.variantSection[sVMReference];
 				}
-				this._mVariantManagement[sVariantManagementReference] = {};
-				var oVariantManagementReference = oChangeFileContent.changes.variantSection[sVariantManagementReference];
-				var aVariants = oVariantManagementReference.variants.concat();
-				var sVariantFromUrl;
-
-				var iIndex = -1;
-				aVariants.forEach(function (oVariant, index) {
-					if (oVariant.content.fileName === sVariantManagementReference) {
-						iIndex = index;
-						// Standard Variant should always contain the value: "SAP" in "author" / "Created by" field
-						// case when standard variant exists in the backend response
-						if (!ObjectPath.get("content.support.user", oVariant)) {
-							var oSupport = {
-								support: {
-									user: this.DEFAULT_AUTHOR
-								}
-							};
-							Object.assign(oVariant.content, oSupport);
-						}
-					}
-					if (!oVariant.content.content.favorite) {
-						oVariant.content.content.favorite = true;
-					}
-					if (!oVariant.content.content.visible) {
-						oVariant.content.content.visible = true;
-					}
-					var aTitleKeyMatch = oVariant.content.content.title.match(/.i18n>(\w+)./);
-					if (aTitleKeyMatch) {
-						oVariant.content.content.title = this._oResourceBundle.getText(aTitleKeyMatch[1]);
-					}
-
-					this._applyChangesOnVariant(oVariant);
-
-					if (!sVariantFromUrl) {
-						// Only the first valid reference for that variant management id passed in the parameters is used to load the changes
-						sVariantFromUrl = includes(mTechnicalParameters && mTechnicalParameters[URLHandler.variantTechnicalParameterName], oVariant.content.fileName)
-							&& oVariant.content.fileName;
-					}
-				}.bind(this));
-				if (iIndex > -1) {
-					var oStandardVariant = aVariants.splice(iIndex, 1)[0];
-					aVariants.sort(this.compareVariants);
-					aVariants.splice(0, 0, oStandardVariant);
-				}
-				this._mVariantManagement[sVariantManagementReference].variants = aVariants;
-				this._mVariantManagement[sVariantManagementReference].defaultVariant = sVariantManagementReference;
-				if (sVariantFromUrl) {
-					this._mVariantManagement[sVariantManagementReference].currentVariant = sVariantFromUrl;
-				}
-				this._mVariantManagement[sVariantManagementReference].variantManagementChanges =
-					oChangeFileContent.changes.variantSection[sVariantManagementReference].variantManagementChanges;
-
-				//to set default variant from setDefault variantManagement changes
-				this._applyChangesOnVariantManagement(this._mVariantManagement[sVariantManagementReference]);
 			}.bind(this));
 		}
 	};

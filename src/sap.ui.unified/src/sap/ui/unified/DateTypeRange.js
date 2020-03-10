@@ -39,7 +39,14 @@ sap.ui.define(['./DateRange', './library'],
 			/**
 			 * Type of the date range.
 			 */
-			type : {type : "sap.ui.unified.CalendarDayType", group : "Appearance", defaultValue : CalendarDayType.Type01}
+			type : {type : "sap.ui.unified.CalendarDayType", group : "Appearance", defaultValue : CalendarDayType.Type01},
+
+			/**
+			 * Background color of the <code>Calendar</code> <code>specialDates</code> aggregation.
+			 * If set, this color will override the default background color defined in <code>Calendar</code> <code>specialDates</code> aggregation
+			 * @since 1.76.0
+			 */
+			color : {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null}
 		}
 	}});
 

@@ -1,0 +1,75 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.actions.list.card",
+		"type": "card",
+		"title": "Sample of Host Actions in Cards",
+		"subTitle": "Sample of  Host Actions in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Action",
+				"Host",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Card Title"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Career",
+						"icon": "sap-icon://leads",
+						"url": "/careers"
+					},
+					{
+						"Name": "Company Directory",
+						"icon": "sap-icon://address-book"
+					},
+					{
+						"Name": "Development Plan",
+						"icon": "sap-icon://activity-items"
+					},
+					{
+						"Name": "Business Goals",
+						"icon": "sap-icon://target-group",
+						"url": "/businessGoals"
+					},
+					{
+						"Name": "Travel and Expenses",
+						"icon": "sap-icon://travel-expense"
+					},
+					{
+						"Name": "Time off",
+						"icon": "sap-icon://general-leave-request",
+						"url": "/timeOff"
+					}
+				]
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": "{Name}",
+				"description": "{Description}"
+			}
+		}
+	}
+}

@@ -1773,51 +1773,65 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("Info text - full text displayed when string lenght <= 15", function(assert) {
-		// test with title text only
+	QUnit.test("StandardListItem infoText min-width test", function(assert) {
 		var oStdLI = new StandardListItem({
-			title: "This is the Title Text", // title text length > 18
-			info: "X".repeat(15) // info text is 15 characters
+			title: "This is the Title Text",
+			info: "Success"
+		});
+
+		var oStdLI2 = new StandardListItem({
+			title: "This is the Title Text",
+			info: "This is a very very very long information text"
+		});
+
+		var oList = new List({
+			items : [oStdLI, oStdLI2]
+		});
+
+		oList.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.ok(parseFloat(oStdLI.getDomRef("info").style.minWidth) < 7.5, "calculated info text width set as min-width");
+		assert.strictEqual(oStdLI2.getDomRef("info").style.minWidth, "7.5rem", "7.5rem min-width applied as the info text is long");
+
+		oList.destroy();
+	});
+
+	QUnit.test("StandardListItem - test onThemeChanged", function(assert) {
+		var oStdLI = new StandardListItem({
+			title: "This is the Title Text",
+			info: "Success",
+			infoState: "Success",
+			infoStateInverted: true
 		});
 
 		var oList = new List({
 			items : [oStdLI]
 		});
 
+		assert.notOk(oStdLI._initialRender, "item is not rendered yet");
 		oList.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		var oInfoTextDom = oStdLI.getDomRef("info");
-		assert.ok(oInfoTextDom.classList.contains("sapMSLIInfoTextFull"), "Info Text is fully displayed as text is 15 characters lenght");
-
-		oStdLI.setInfo("A very very long information text"); // info text is greater than 15
+		var oEvent = new jQuery.Event();
+		oEvent.theme = "sap_fiori_3";
+		oStdLI.onThemeChanged(oEvent);
 		Core.applyChanges();
+		assert.ok(oStdLI._initialRender, "prevent info text calculation on initial rendering as this is done by the renderer");
 
-		oInfoTextDom = oStdLI.getDomRef("info");
-		assert.notOk(oInfoTextDom.classList.contains("sapMSLIInfoTextFull"), "Info Text is trucated as text is more than 15 characters in length");
-		assert.ok(oInfoTextDom.classList.contains("sapMSLIInfoTextMinWidth"), "Min width reserved to show long info text");
-
-		// test with description text
-		oStdLI.setDescription("This is the description text");
-		oStdLI.setInfo("X".repeat(15)); // info text is 15 characters
+		var fnMeasureInfoTextWidth = sinon.spy(oStdLI, "_measureInfoTextWidth");
+		oEvent.theme = "sap_belize";
+		oStdLI.onThemeChanged(oEvent);
 		Core.applyChanges();
-
-		oInfoTextDom = oStdLI.getDomRef("info");
-		assert.ok(oInfoTextDom.classList.contains("sapMSLIInfoTextFull"), "Info Text is fully displayed as text is 15 characters lenght");
-
-		oStdLI.setInfo("Information text"); // info text is greater than 15
-		Core.applyChanges();
-
-		oInfoTextDom = oStdLI.getDomRef("info");
-		assert.notOk(oInfoTextDom.classList.contains("sapMSLIInfoTextFull"), "Info Text is trucated as text is more than 15 characters in length");
+		assert.ok(fnMeasureInfoTextWidth.calledWith(true), "info text width is recalculated onThemeChanged");
 
 		oList.destroy();
 	});
 
 	QUnit.test("StandardListItem inverted info text", function(assert) {
 		var oStdLI = new StandardListItem({
-			title: "This is the Title Text", // title text length > 18
-			info: "Success" // info text is 15 characters
+			title: "This is the Title Text",
+			info: "Success"
 		});
 
 		var oList = new List({

@@ -318,5 +318,22 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Checks the dependencies map for any unresolved dependencies belonging to the given control
+	 * Returns true as soon as the first dependency is found, otherwise false
+	 *
+	 * @param {object} mChangesMap - Changes Map
+	 * @param {object} sId - ID of the control
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
+	 * @returns {boolean} Returns true if there are open dependencies
+	 */
+	DependencyHandler.checkForOpenDependenciesForControl = function(mChangesMap, sId, oAppComponent) {
+		return Object.keys(mChangesMap.mDependencies).some(function(sKey) {
+			return mChangesMap.mDependencies[sKey].changeObject.getDependentSelectorList().some(function(oDependendSelector) {
+				return JsControlTreeModifier.getControlIdBySelector(oDependendSelector, oAppComponent) === sId;
+			});
+		});
+	};
+
 	return DependencyHandler;
 });

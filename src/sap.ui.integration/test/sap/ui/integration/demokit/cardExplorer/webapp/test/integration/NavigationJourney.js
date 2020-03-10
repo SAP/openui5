@@ -60,7 +60,7 @@ sap.ui.define([
 		When.onTheNavigationList.iSwitchToSample("headers");
 		Then.onTheLearnPage.iShouldSeeSampleTitle("Card Headers");
 
-		When.onTheNavigationList.iSwitchToSample("actions");
+		When.onTheNavigationList.iSwitchToSample("cardActions");
 		Then.onTheLearnPage.iShouldSeeSampleTitle("Card Features");
 
 		When.onTheNavigationList.iSwitchToSample("gettingStarted");

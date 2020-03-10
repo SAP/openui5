@@ -534,7 +534,7 @@
 
 @sapContent_DragAndDropActiveColor: @sapContent_HelpColor;
 
-@sapContent_Selected_TextColor: contrast(@sapContent_Selected_Background @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapContent_Selected_TextColor: contrast(@sapContent_Selected_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapContent_Selected_Background: @sapSelectedColor;
 
@@ -1226,8 +1226,6 @@
 // [Tags "Base", "Tile", "Color"]
 @sapTile_Background: @sapBackgroundColor;
 
-@sapTile_SeparatorColor: @sapTile_BorderColor;
-
 @sapTile_Hover_Background: @sapHighlightColor;
 
 @sapTile_Active_Background: @sapActiveColor;
@@ -1251,6 +1249,8 @@
 // [Description "The color of icons on tiles."]
 // [Tags "Base", "Content", "Color"]
 @sapTile_IconColor: contrast(@sapTile_Background, @sapContent_IconColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
+
+@sapTile_SeparatorColor: @sapTile_BorderColor;
 
 // [Label "Chart Ordered Color 1"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]

@@ -4,13 +4,15 @@ sap.ui.define([
 		"sap/ui/integration/widgets/Card",
 		"sap/f/cards/RequestDataProvider",
 		"sap/ui/core/Core",
-		"sap/f/cards/loading/LoadingProvider"
+		"sap/f/cards/loading/LoadingProvider",
+		"sap/f/cards/BaseContent"
 	],
 	function (
 		Card,
 		RequestDataProvider,
 		Core,
-		LoadingProvider
+		LoadingProvider,
+		BaseContent
 	) {
 		"use strict";
 
@@ -743,6 +745,15 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		}
 
+		function isLoadingPlaceholderCorrectType(oLoadingProvider, oConfiguration, sType, sPlaceholderType, sMessage,  assert) {
+
+			// Arrange
+			var oPlaceholder = oLoadingProvider.createContentPlaceholder(oConfiguration, sType);
+
+			//Act
+			assert.ok(oPlaceholder.getMetadata().getName().indexOf(sPlaceholderType) > -1, sMessage);
+		}
+
 		QUnit.module("Loading", {
 			beforeEach: function () {
 				var fnFake = function (oRequestConfig) {
@@ -841,9 +852,9 @@ sap.ui.define([
 			}
 		});
 
-        QUnit.test("List - Loading indicator should not be present - card level request, content level JSON", function (assert) {
-            isLoadingIndicatorShowingContentDataReady(oManifest_List_CardLevel_No_Loading, this.oCard, "List content does not have a loading placeholder", false, ".sapFCardContentPlaceholder", assert);
-        });
+		QUnit.test("List - Loading indicator should not be present - card level request, content level JSON", function (assert) {
+			isLoadingIndicatorShowingContentDataReady(oManifest_List_CardLevel_No_Loading, this.oCard, "List content does not have a loading placeholder", false, ".sapFCardContentPlaceholder", assert);
+		});
 
 		QUnit.test("List - Loading indicator should not be present - card level request", function (assert) {
 			isLoadingIndicatorShowingContentDataReady(oManifest_List_CardLevel, this.oCard, "List content does not have a loading placeholder", false, ".sapFCardContentPlaceholder", assert);
@@ -867,6 +878,73 @@ sap.ui.define([
 
 		QUnit.test("List - error should be visible when request can not be resolved", function (assert) {
 			isLoadingIndicatorShowingContentDataReady(oManifest_List_CardLevel_Error, this.oCard, "Error content is visible", true, ".sapFCardErrorContent", assert);
+		});
+
+		QUnit.module("Loading Provider", {
+			beforeEach: function () {
+				this.oLoadingProvider = new LoadingProvider();
+				this.oCard = new Card();
+
+			},
+			afterEach: function () {
+				this.oLoadingProvider.destroy();
+				this.oLoadingProvider = null;
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
+			var oConfiguration = {
+				"maxItems": 2
+			},
+				sType = "List";
+
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, "List", "Loading placeholder is of type ListPlaceholder", assert);
+		});
+
+		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
+			var oConfiguration = {
+					"maxItems": 2
+				},
+				sType = "Table";
+
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, "Generic", "Loading placeholder is of type GenericPlaceholder", assert);
+		});
+
+		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
+			var sType = "Object";
+
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, "Generic", "Loading placeholder is of type GenericPlaceholder", assert);
+		});
+
+		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
+			var sType = "Analytical";
+
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, "Generic", "Loading placeholder is of type GenericPlaceholder", assert);
+		});
+
+		QUnit.test("setConfiguration of BaseContent should be called with sType as a parameter", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			var fnSetConfigurationSpy = sinon.spy(BaseContent.prototype, "setConfiguration");
+			this.oCard.attachEvent("_ready", function () {
+
+				Core.applyChanges();
+				var oConfiguration = this.oCard.getCardContent().getConfiguration();
+
+				assert.ok(fnSetConfigurationSpy.calledWithExactly(oConfiguration, "List"), "setConfiguration is called with two arguments 'oConfiguration and sType'");
+
+				// Cleanup
+				fnSetConfigurationSpy.restore();
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_List_CardLevel);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
 	});

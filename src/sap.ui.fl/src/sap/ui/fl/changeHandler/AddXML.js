@@ -36,11 +36,12 @@ sap.ui.define([
 	AddXML.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oChangeDefinition = oChange.getDefinition();
 		var mChangeInfo = {
-			aggregation: oChangeDefinition.content.targetAggregation,
+			aggregationName: oChangeDefinition.content.targetAggregation,
 			index: oChangeDefinition.content.index
 		};
 
-		return BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mChangeInfo);
+		BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mChangeInfo);
+		return true;
 	};
 
 	/**

@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/base/Log",
 	"sap/uxap/library",
 	"sap/uxap/ObjectPageDynamicHeaderTitle",
 	"sap/uxap/ObjectPageSection",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/m/Label",
 	"sap/m/Button"],
-function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button) {
+function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button) {
 	"use strict";
 
 	var aStandardModeConfig = [{
@@ -857,6 +858,40 @@ function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPa
 
 		oSubSection.destroy();
 		oButton.destroy();
+	});
+
+	QUnit.test("addAggregation", function (assert) {
+		var oSubSection = new ObjectPageSubSectionClass({
+				blocks: [new sap.m.Text({text: "sample"})]
+			}),
+			opl = new ObjectPageLayout({
+				sections: [
+					new ObjectPageSection({
+						subSections: [
+							oSubSection
+						]
+					})
+				]
+			}),
+		oSandbox = sinon.sandbox.create(),
+		oSpy = oSandbox.spy(Log, "error"),
+		done = assert.async();
+
+		opl.addEventDelegate({
+			onAfterRendering: function() {
+				oSpy.reset();
+				oSubSection.addBlock(new BlockBase());
+				oSubSection._applyLayout(opl);
+				assert.equal(oSpy.callCount, 0, "no error on adding block");
+				done();
+				oSubSection.removeAllDependents();
+				opl.destroy();
+				oSandbox.restore();
+			}
+		});
+
+		new sap.m.App({pages: [opl]}).placeAt("qunit-fixture");
+		Core.applyChanges();
 	});
 
 	QUnit.module("Object Page SubSection - moreBlocks aggregation");

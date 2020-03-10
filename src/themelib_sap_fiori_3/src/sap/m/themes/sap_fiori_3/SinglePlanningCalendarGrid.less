@@ -17,7 +17,8 @@
 	}
 	//Special Dates
 	.sapMSinglePCGrid .@{iitemtypeclass} {
-		&.sapUiCalItem {
+		&.sapUiCalItem,
+		.sapUiCalSpecialDate {
 			border-radius: initial;
 		}
 		&.sapUiCalItem:hover {
@@ -98,6 +99,13 @@
 			.sapUiCalItemText,
 			.sapUiCalItemSel.sapUiItemText {
 				border: 1px solid lighten(@sapUiListBorderColor,10);
+			}
+			.sapUiCalSpecialDate {
+				position: absolute;
+				width: ~"calc(100% - 0.125rem)";
+				height: 0.154rem;
+				left: 0;
+				bottom: 0px;
 			}
 		}
 	}

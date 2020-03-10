@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ComponentContainer,
@@ -23,6 +24,7 @@ sap.ui.define([
 	VariantModel,
 	ChangesController,
 	FlexState,
+	VariantManagementState,
 	sinon
 ) {
 	"use strict";
@@ -49,7 +51,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When isPersonalized() is called with controls of type sap.ui.core.Element and no change type", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({}));
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({});
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			this.oControl = new Control("controlId1");
 			var aControls = [this.oControl, {id: "controlId2", appComponent: this.oAppComponent}];
@@ -124,7 +126,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Cache, "setVariantManagementSection");
+			sandbox.stub(VariantManagementState, "updateVariantsState");
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls,
@@ -320,7 +322,11 @@ sap.ui.define([
 				});
 				this.oComp = new MockComponent("testComponent");
 				this.oFlexController = ChangesController.getFlexControllerInstance(this.oComp);
-				var oVariantModel = new VariantModel({}, this.oFlexController, this.oComp);
+				var oVariantModel = new VariantModel({
+					variantManagement: {
+						variants: []
+					}
+				}, this.oFlexController, this.oComp);
 				this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
 				this.oCompContainer = new ComponentContainer("sap-ui-static", {
 					component: this.oComp

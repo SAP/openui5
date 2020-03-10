@@ -4,7 +4,8 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/core/library",
-	"sap/ui/support/integration/ui/data/presetUtil"
+	"../data/presetUtil",
+	"../SupportAssistantOpaConfig"
 ], function(opaTest, sinon, library, presetUtil) {
 	"use strict";
 

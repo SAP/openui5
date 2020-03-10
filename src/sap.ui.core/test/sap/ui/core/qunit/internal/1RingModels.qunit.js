@@ -24,9 +24,7 @@ sap.ui.require([
 		// ***************************************************************************************
 		// sap.ui.core.rules.Model.support - tests are contained in testsuite.rule.qunit.js
 		// ***************************************************************************************
-		//TODO: get test running in 1RingModels.qunit; it uses sap.ui.support.TestHelper which has
-		// a hard reference to sinon V1
-		// "sap/ui/core/qunit/rule/model/bindingPathSyntaxValidation.qunit",
+		"sap/ui/core/qunit/rule/model/bindingPathSyntaxValidation.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.* - tests are contained in testsuite.databinding.qunit.js
@@ -122,6 +120,7 @@ sap.ui.require([
 		// "sap/ui/core/qunit/odata/v2/DerivedTypes.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataAnnotationsFakeService
 		// "sap/ui/core/qunit/odata/v2/ODataAnnotationsV2.qunit",
+		"sap/ui/core/qunit/odata/v2/ODataContextBindingNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataListBindingNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModelNoFakeService.qunit",

@@ -328,7 +328,8 @@ sap.ui.define([
 	 * and the number of missing entries (length).
 	 *
 	 * The given threshold is prependend and appended before/after the given iStartIndex
-	 * and iLength.
+	 * and iLength. If there is a missing section read at least iThreshold data or as many entries
+	 * to close the gap in the data.
 	 *
 	 * @param {int} iStartIndex The start index of the requested contexts
 	 * @param {int} iLength The requested amount of contexts
@@ -337,6 +338,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.calculateSection = function(iStartIndex, iLength, iThreshold) {
+		var bEndOfGapFound = false;
+
 		// prepend threshold to start
 		if (iStartIndex >= iThreshold) {
 			iStartIndex -= iThreshold;
@@ -361,6 +364,15 @@ sap.ui.define([
 		// search end of last gap
 		while (iLength && this.aKeys[iStartIndex + iLength - 1]) {
 			iLength -= 1;
+			bEndOfGapFound = true;
+		}
+
+		// if there is a gap and the end of the last gap is not known, read up to "iThreshold"
+		// entries to close the gap
+		if (iLength && !bEndOfGapFound && iLength < iThreshold) {
+			while (iLength < iThreshold && !this.aKeys[iStartIndex + iLength]) {
+				iLength += 1;
+			}
 		}
 
 		return {

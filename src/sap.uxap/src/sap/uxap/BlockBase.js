@@ -241,11 +241,11 @@ sap.ui.define([
 		 * @param {*} bSuppressInvalidate invalidate
 		 */
 		BlockBase.prototype.setParent = function (oParent, sAggregationName, bSuppressInvalidate) {
-			Control.prototype.setParent.call(this, oParent, sAggregationName, bSuppressInvalidate);
-
 			if (oParent instanceof library.ObjectPageSubSection) {
 				this._bLazyLoading = true; //we activate the block lazy loading since we are within an objectPageLayout
 				this._oParentObjectPageSubSection = oParent;
+			} else {
+				Control.prototype.setParent.call(this, oParent, sAggregationName, bSuppressInvalidate);
 			}
 		};
 

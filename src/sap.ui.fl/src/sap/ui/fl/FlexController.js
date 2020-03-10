@@ -164,6 +164,60 @@ sap.ui.define([
 		return oChange;
 	};
 
+	FlexController.prototype._createChange = function (oChangeSpecificData, oAppComponent, oControl) {
+		// for getting the change handler the change type and potentially the control type are needed
+		var sControlType = oControl && (oControl.controlType || Utils.getControlType(oControl));
+
+		var oChange = this.createBaseChange(oChangeSpecificData, oAppComponent);
+
+		return this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier)
+			.then(function(oChangeHandler) {
+				if (oChangeHandler) {
+					oChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
+						modifier: JsControlTreeModifier,
+						appComponent: oAppComponent
+					});
+				} else {
+					throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
+				}
+				return oChange;
+			})
+			.catch(function (oError) {
+				return Promise.reject(oError);
+			});
+	};
+
+	/**
+	 * Create a change with an ExtensionPoint as selector.
+	 *
+	 * @param {object} oChangeSpecificData - Property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent)
+	 * The property "oPropertyBag.packageName" is set to $TMP and internally since flex changes are always local when they are created.
+	 * @param {object} mExtensionPointReference - Reference map for extension point
+	 * @param {string} mExtensionPointReference.name - Name of the extension point
+	 * @param {sap.ui.core.Component} mExtensionPointReference.view - View including the extension point
+	 * @returns {Promise.<sap.ui.fl.Change>} Created change wrapped in a promise
+	 * @public
+
+	 */
+	FlexController.prototype.createChangeWithExtensionPointSelector = function (oChangeSpecificData, mExtensionPointReference) {
+		return Promise.resolve()
+			.then(function () {
+				if (!mExtensionPointReference) {
+					throw new Error("A flexibility change on extension point cannot be created without a valid extension point reference.");
+				}
+				var oView = mExtensionPointReference.view;
+				var oAppComponent = Utils.getAppComponentForControl(oView);
+				oChangeSpecificData.selector = {
+					name: mExtensionPointReference.name,
+					viewSelector: JsControlTreeModifier.getSelector(oView.getId(), oAppComponent)
+				};
+				return oAppComponent;
+			})
+			.then(function (oAppComponent) {
+				return this._createChange(oChangeSpecificData, oAppComponent);
+			}.bind(this));
+	};
+
 	/**
 	 * Create a change
 	 *
@@ -176,9 +230,8 @@ sap.ui.define([
 	 * @returns {Promise.<sap.ui.fl.Change>} Created change wrapped in a promise
 	 * @public
 	 */
-	FlexController.prototype.createChange = function (oChangeSpecificData, oControl) {
+	FlexController.prototype.createChangeWithControlSelector = function (oChangeSpecificData, oControl) {
 		var oAppComponent;
-		var oChange;
 		return Promise.resolve()
 			.then(function() {
 				if (!oControl) {
@@ -192,33 +245,18 @@ sap.ui.define([
 				}
 				oAppComponent = oControl.appComponent || Utils.getAppComponentForControl(oControl);
 				if (!oAppComponent) {
-					throw new Error("No application component found. To offer flexibility, the control with the ID '" + sControlId + "' has to have a valid relation to its owning application component.");
+					throw new Error("No application component found. To offer flexibility, the control with the ID '"
+						+ sControlId + "' has to have a valid relation to its owning application component.");
 				}
 
 				// differentiate between controls containing the component id as a prefix and others
 				// get local Id for control at root component and use it as selector id
 				Object.assign(oChangeSpecificData.selector, JsControlTreeModifier.getSelector(sControlId, oAppComponent));
-
-				oChange = this.createBaseChange(oChangeSpecificData, oAppComponent);
-
-				// for getting the change handler the control type and the change type are needed
-				var sControlType = oControl.controlType || Utils.getControlType(oControl);
-				if (!sControlType) {
-					throw new Error("No control type found - the change handler can not be retrieved.");
-				}
-				return this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier);
-			}.bind(this))
-			.then(function(oChangeHandler) {
-				if (oChangeHandler) {
-					oChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
-						modifier: JsControlTreeModifier,
-						appComponent: oAppComponent
-					});
-				} else {
-					throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
-				}
-				return oChange;
-			});
+				return oAppComponent;
+			})
+			.then(function (oAppComponent) {
+				return this._createChange(oChangeSpecificData, oAppComponent, oControl);
+			}.bind(this));
 	};
 
 	/**
@@ -268,7 +306,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.addChange = function (oChangeSpecificData, oControl) {
-		return this.createChange(oChangeSpecificData, oControl)
+		return this.createChangeWithControlSelector(oChangeSpecificData, oControl)
 			.then(function(oChange) {
 				var oAppComponent = Utils.getAppComponentForControl(oControl);
 				this.addPreparedChange(oChange, oAppComponent);
@@ -548,12 +586,11 @@ sap.ui.define([
 	 * Calls the same function in the change persistence, which actually does the work.
 	 *
 	 * @param {object} oSelector selector of the control
-	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - polymorph reuse operations handling the changes on the given view type
 	 * @param {sap.ui.core.Component} oComponent - component instance that is currently loading
 	 * @returns {boolean} Returns true if there are open dependencies
 	 */
-	FlexController.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oComponent) {
-		return this._oChangePersistence.checkForOpenDependenciesForControl(oSelector, oModifier, oComponent);
+	FlexController.prototype.checkForOpenDependenciesForControl = function(oSelector, oComponent) {
+		return this._oChangePersistence.checkForOpenDependenciesForControl(oSelector, oComponent);
 	};
 
 	/**

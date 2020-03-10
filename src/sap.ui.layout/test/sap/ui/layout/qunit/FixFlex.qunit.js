@@ -224,15 +224,15 @@ sap.ui.define([
 		oFixFlex.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var $flexible = oFixFlex.$().find('.sapUiFixFlexFlexible');
-
 		// Assert
+		var $flexible = oFixFlex.$().find('.sapUiFixFlexFlexible');
 		assert.equal($flexible.css('overflow'), 'hidden', 'Overflow is hidden.');
 
 		oFixFlex.setMinFlexSize(100);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
+		$flexible = oFixFlex.$().find('.sapUiFixFlexFlexible');
 		assert.equal($flexible.css('overflow-x'), 'auto', 'Overflow x is auto.');
 		assert.equal($flexible.css('overflow-y'), 'auto', 'Overflow y is auto.');
 

@@ -3,72 +3,78 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/ui/fl/Layer",
 	"sap/base/util/includes",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/util/restricted/_omit",
+	"sap/ui/fl/registry/Settings"
 ], function(
-	DescriptorVariantFactory,
+	AppVariantFactory,
 	DescriptorInlineChangeFactory,
 	ChangesController,
 	Utils,
 	Log,
 	Layer,
 	includes,
-	merge
+	merge,
+	_omit,
+	Settings
 ) {
 	"use strict";
 
-	function _validatePackageAndPrepareTransportInfo(mPropertyBag, oAppVariant) {
-		// (Package Validation) Writing, updating or deleting content in VENDOR or CUSTOMER_BASE layer must require a package (either a valid package or local object)
-		if (
-			!mPropertyBag.package
-			&& (
-				mPropertyBag.layer === Layer.VENDOR
-				|| (
-					mPropertyBag.layer === Layer.CUSTOMER_BASE
-					&& !oAppVariant.getSettings().isAtoEnabled()
+	function _validatePackageAndPrepareTransportInfo(mPropertyBag) {
+		return Settings.getInstance().then(function(oSettings) {
+			// (Package Validation) Writing, updating or deleting content in VENDOR or CUSTOMER_BASE layer must require a package (either a valid package or local object)
+			if (
+				!mPropertyBag.package
+				&& (
+					mPropertyBag.layer === Layer.VENDOR
+					|| (
+						mPropertyBag.layer === Layer.CUSTOMER_BASE
+						&& !oSettings.isAtoEnabled()
+					)
 				)
-			)
-		) {
-			return Promise.reject("Package must be provided or is valid");
-		}
+			) {
+				return Promise.reject("Package must be provided or is valid");
+			}
 
-		// (Transport Validation) Writing, updating or deleting content in onPremise systems in all layers must require a transport unless the package is not local object
-		if (
-			mPropertyBag.isForSmartBusiness
-			&& (
-				mPropertyBag.package !== '$TMP'
-				&& mPropertyBag.package !== ''
-			)
-			&& !mPropertyBag.transport
-			&& !oAppVariant.getSettings().isAtoEnabled()
-		) {
-			return Promise.reject("Transport must be provided");
-		}
+			// (Transport Validation) Writing, updating or deleting content in onPremise systems in all layers must require a transport unless the package is not local object
+			if (
+				mPropertyBag.isForSmartBusiness
+				&& (
+					mPropertyBag.package !== '$TMP'
+					&& mPropertyBag.package !== ''
+				)
+				&& !mPropertyBag.transport
+				&& !oSettings.isAtoEnabled()
+			) {
+				return Promise.reject("Transport must be provided");
+			}
 
-		// Smart business must pass transport information in case of onPremise systems unless app variant is not intended to be saved as local object
-		if (
-			mPropertyBag.isForSmartBusiness
-			&& mPropertyBag.transport
-			|| (
-				mPropertyBag.package === "$TMP"
-			)
-		) {
+			// Smart business must pass transport information in case of onPremise systems unless app variant is not intended to be saved as local object
+			if (
+				mPropertyBag.isForSmartBusiness
+				&& mPropertyBag.transport
+				|| (
+					mPropertyBag.package === "$TMP"
+				)
+			) {
+				return Promise.resolve({
+					packageName: mPropertyBag.package,
+					transport: mPropertyBag.transport
+				});
+			}
+
+			// Save As scenario for onPremise and cloud systems
 			return Promise.resolve({
-				packageName: mPropertyBag.package,
-				transport: mPropertyBag.transport
+				packageName: "",
+				transport: ""
 			});
-		}
-
-		// Save As scenario for onPremise and cloud systems
-		return Promise.resolve({
-			packageName: "",
-			transport: ""
 		});
 	}
 
@@ -181,16 +187,32 @@ sap.ui.define([
 		});
 	}
 
+	function _addPackageAndTransport(oAppVariant, mPropertyBag) {
+		if (!oAppVariant) {
+			throw new Error("App variant with ID: " + mPropertyBag.id + "does not exist");
+		}
+
+		mPropertyBag.package = oAppVariant.getPackage();
+		mPropertyBag.layer = oAppVariant.getDefinition().layer;
+
+		return _validatePackageAndPrepareTransportInfo(mPropertyBag)
+			.then(function(oTransportInfo) {
+				return _setTransportAndPackageInfoForAppVariant(oAppVariant, oTransportInfo);
+			}).then(function() {
+				return oAppVariant;
+			});
+	}
+
 	var SaveAs = {
 		saveAs: function(mPropertyBag) {
 			var oAppVariantClosure;
 			var oAppVariantResultClosure;
 			var bArePersistencesEqual = false;
 
-			return DescriptorVariantFactory.createAppVariant(mPropertyBag)
+			return AppVariantFactory.prepareCreate(mPropertyBag)
 				.then(function(oAppVariant) {
 					oAppVariantClosure = merge({}, oAppVariant);
-					return _validatePackageAndPrepareTransportInfo(mPropertyBag, oAppVariantClosure);
+					return _validatePackageAndPrepareTransportInfo(mPropertyBag);
 				})
 				.then(function(oTransportInfo) {
 					return _setTransportAndPackageInfoForAppVariant(oAppVariantClosure, oTransportInfo);
@@ -231,7 +253,7 @@ sap.ui.define([
 
 								// Delete the inconsistent app variant if the UI changes failed to save
 								return this.deleteAppVariant({
-									referenceAppId: mPropertyBag.id
+									id: mPropertyBag.id
 								})
 									.then(function() {
 										oError.messageKey = "MSG_COPY_UNSAVED_CHANGES_FAILED";
@@ -264,21 +286,22 @@ sap.ui.define([
 		updateAppVariant: function(mPropertyBag) {
 			var oAppVariantClosure;
 			var oAppVariantResultClosure;
-			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, false)
+
+			return AppVariantFactory.prepareUpdate(_omit(mPropertyBag, "selector"))
 				.catch(function(oError) {
 					oError.messageKey = "MSG_LOAD_APP_VARIANT_FAILED";
 					throw oError;
 				})
 				.then(function(oAppVariant) {
 					if (!oAppVariant) {
-						throw new Error("App variant with ID: " + mPropertyBag.referenceAppId + "does not exist");
+						throw new Error("App variant with ID: " + mPropertyBag.id + "does not exist");
 					}
 
 					oAppVariantClosure = merge({}, oAppVariant);
 					mPropertyBag.package = oAppVariantClosure.getPackage();
 					mPropertyBag.layer = oAppVariantClosure.getDefinition().layer;
 
-					return _validatePackageAndPrepareTransportInfo(mPropertyBag, oAppVariantClosure);
+					return _validatePackageAndPrepareTransportInfo(mPropertyBag);
 				})
 				.then(function(oTransportInfo) {
 					return _setTransportAndPackageInfoForAppVariant(oAppVariantClosure, oTransportInfo);
@@ -297,10 +320,6 @@ sap.ui.define([
 					return _inlineDescriptorChanges(aAllInlineChanges, oAppVariantClosure);
 				})
 				.then(function() {
-					// Sets the flag for smart business before updating the app variant so as to make sure no transport handling takes place on connector level
-					if (mPropertyBag.isForSmartBusiness) {
-						oAppVariantClosure.setIsForSmartBusiness(mPropertyBag.isForSmartBusiness);
-					}
 					// Updates the app variant saved in backend
 					return oAppVariantClosure.submit()
 						.catch(function(oError) {
@@ -329,61 +348,18 @@ sap.ui.define([
 				});
 		},
 		deleteAppVariant: function(mPropertyBag) {
-			if (mPropertyBag.isForSmartBusiness) {
-				mPropertyBag.id = mPropertyBag.referenceAppId;
-				return DescriptorVariantFactory.createDummyVariant(mPropertyBag)
-					.then(function(oAppVariant) {
-						if (mPropertyBag.isForSmartBusiness) {
-							oAppVariant.setIsForSmartBusiness(mPropertyBag.isForSmartBusiness);
-						}
-						return oAppVariant.submit()
-							.catch(function(oError) {
-								if (oError === "cancel") {
-									return Promise.reject("cancel");
-								}
-								oError.messageKey = "MSG_DELETE_APP_VARIANT_FAILED";
-								throw oError;
-							});
-					})
-					.catch(function(oError) {
-						if (oError === "cancel") {
-							return Promise.reject("cancel");
-						}
-						Log.error("the app variant could not be deleted.", oError.message || oError);
-						throw oError;
-					});
-			}
-
-			return this._deleteAppVariantForKeyUser(mPropertyBag);
-		},
-		_deleteAppVariantForKeyUser: function(mPropertyBag) {
-			var oAppVariantClosure;
-
-			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, true)
+			return AppVariantFactory.prepareDelete(_omit(mPropertyBag, "selector"))
 				.catch(function(oError) {
 					oError.messageKey = "MSG_LOAD_APP_VARIANT_FAILED";
 					throw oError;
 				})
 				.then(function(oAppVariant) {
-					if (!oAppVariant) {
-						throw new Error("App variant with ID: " + mPropertyBag.referenceAppId + "does not exist");
-					}
-
-					oAppVariantClosure = merge({}, oAppVariant);
-					mPropertyBag.package = oAppVariantClosure.getPackage();
-					mPropertyBag.layer = oAppVariantClosure.getDefinition().layer;
-
-					return _validatePackageAndPrepareTransportInfo(mPropertyBag, oAppVariantClosure);
+					return ((mPropertyBag.isForSmartBusiness)
+						? Promise.resolve(oAppVariant)
+						: _addPackageAndTransport(oAppVariant, mPropertyBag));
 				})
-				.then(function(oTransportInfo) {
-					return _setTransportAndPackageInfoForAppVariant(oAppVariantClosure, oTransportInfo);
-				})
-				.then(function () {
-					// Sets the flag for smart business before updating the app variant so as to make sure no transport handling takes place on connector level
-					if (mPropertyBag.isForSmartBusiness) {
-						oAppVariantClosure.setIsForSmartBusiness(mPropertyBag.isForSmartBusiness);
-					}
-					return oAppVariantClosure.submit()
+				.then(function(oAppVariant) {
+					return oAppVariant.submit()
 						.catch(function(oError) {
 							if (oError === "cancel") {
 								return Promise.reject("cancel");

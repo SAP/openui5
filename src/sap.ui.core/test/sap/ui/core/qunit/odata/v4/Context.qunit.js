@@ -1358,7 +1358,13 @@ sap.ui.define([
 			{},
 			{$AnnotationPath : "foo"},
 			{$If : [true, {$PropertyPath : "TEAM_ID"}]}, // "a near miss" ;-)
-			{$PropertyPath : ""}
+			{$PropertyPath : ""},
+			{$PropertyPath : "foo*"},
+			{$PropertyPath : "foo*/*"},
+			{$NavigationPropertyPath : undefined},
+			{$NavigationPropertyPath : "*"},
+			{$NavigationPropertyPath : "*foo"},
+			{$NavigationPropertyPath : "foo/*"}
 		].forEach(function (oPath) {
 			var sJSON = JSON.stringify(oPath);
 
@@ -1426,6 +1432,13 @@ sap.ui.define([
 			oWaitPromise = oFixture.async ? Promise.resolve() : SyncPromise.resolve(),
 			that = this;
 
+		function setExpectation() {
+			oExpectation = that.mock(oContext).expects("requestSideEffectsInternal")
+				// Note: $select not yet sorted
+				.withExactArgs(["TEAM_ID", "EMPLOYEE_2_MANAGER", "Address/*", "", "*"], sGroupId)
+				.returns(SyncPromise.resolve({}));
+		}
+
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(oFixture.group);
 		this.mock(oContext).expects("getUpdateGroupId").exactly(oFixture.group ? 0 : 1)
@@ -1439,16 +1452,10 @@ sap.ui.define([
 			oWaitPromise.then(function () {
 				that.mock(oModel.oRequestor).expects("relocateAll").exactly(oFixture.auto ? 1 : 0)
 					.withExactArgs(oFixture.parked, sGroupId);
-				oExpectation = that.mock(oContext).expects("requestSideEffectsInternal")
-					// Note: $select not yet sorted
-					.withExactArgs(["TEAM_ID", "EMPLOYEE_2_MANAGER", "ROOM_ID", ""], sGroupId)
-					.returns(SyncPromise.resolve({}));
+				setExpectation();
 			});
 		} else {
-			oExpectation = this.mock(oContext).expects("requestSideEffectsInternal")
-				// Note: $select not yet sorted
-				.withExactArgs(["TEAM_ID", "EMPLOYEE_2_MANAGER", "ROOM_ID", ""], sGroupId)
-				.returns(SyncPromise.resolve({}));
+			setExpectation();
 		}
 
 		// code under test
@@ -1457,9 +1464,11 @@ sap.ui.define([
 			}, {
 				$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"
 			}, {
-				$PropertyPath : "ROOM_ID"
+				$PropertyPath : "Address/*"
 			}, {
 				$NavigationPropertyPath : ""
+			}, {
+				$PropertyPath : "*"
 			}], oFixture.group)
 			.then(function (oResult) {
 				assert.strictEqual(oResult, undefined);

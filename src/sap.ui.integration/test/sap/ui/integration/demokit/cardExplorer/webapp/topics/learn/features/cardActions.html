@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Card Actions</title>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+
+	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+
+<div class="topic">
+	<div class="content">
+
+		<h1>
+			Card Actions
+		</h1>
+
+		<h2 id="overview">
+			Overview
+		</h2>
+
+		<p>
+			Card actions can be defined on different levels inside the card manifest. Actionable parts of the card are
+			header, content, list items, table rows.
+		</p>
+
+		<p>
+			Action properties:
+		</p>
+
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+				</tr>
+				<tr>
+					<td>type</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>The type of the action. Possible values: "Navigation", "Submit" and "Custom".</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>enabled</td>
+					<td>boolean</td>
+					<td>No</td>
+					<td>If the action is enabled. Default value is true.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>parameters</td>
+					<td>Object</td>
+					<td>No</td>
+					<td>The parameters of the action.</td>
+					<td>1.15.0</td>
+				</tr>
+			</table>
+		</div>
+
+		<p>
+			Navigation (extends Action):
+		</p>
+
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+				</tr>
+				<tr>
+					<td>url</td>
+					<td>string</td>
+					<td>No</td>
+					<td>The URL to navigate to.</td>
+					<td>1.15.0</td>
+				</tr>
+				<tr>
+					<td>target</td>
+					<td>string</td>
+					<td>No</td>
+					<td>If the browser should open a new window or use the same window. Possible values: "_blank", "_self".
+						Default value is "_blank".
+					</td>
+					<td>1.15.0</td>
+				</tr>
+			</table>
+		</div>
+
+		<h2 id="examples">
+			Examples
+		</h2>
+
+		<p>Header level navigation action with static URL:</p>
+		<pre class="prettyprint  lang-js">{
+	"sap.card": {
+		"header": {
+			"title": "Some title",
+			"actions": [
+				{
+					"type": "Navigation",
+					"url": "/some/url",
+				}
+			]
+		},
+		...
+	}
+}</pre>
+
+		<p>Content level navigation action with static URL and target:</p>
+		<pre class="prettyprint  lang-js">{
+	"sap.card": {
+		"content": {
+			...
+			"actions": [
+				{
+					"type": "Navigation",
+					"url": "/some/url",
+					"target": "_self"
+				}
+			]
+		},
+		...
+	}
+}</pre>
+
+		<p>Table row navigation action. In the example below the enabled flag is set based on if the item has a URL or
+			not:</p>
+		<pre class="prettyprint  lang-js">{
+	"sap.card": {
+		"type": "Table",
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Comfort Easy",
+						"Category": "PDA & Organizers",
+						"url": "some/url1"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Category": "PDA & Organizers"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Category": "Notebooks",
+						"url": "some/url3"
+					}
+				]
+			},
+			"row": {
+				"columns": [
+					{
+						"title": "Name",
+						"value": "{Name}"
+					},
+					{
+						"title": "Category",
+						"value": "{Category}"
+					}
+				],
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{= ${url}}",
+						"url": "{url}"
+					}
+				]
+			}
+		}
+	}
+}</pre>
+		<a class="try-button" href="../../../index.html#/explore/cardActions" target="_parent">Try it Out</a>
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#overview">Overview</a></div>
+		<div><a href="#examples">Examples</a></div>
+	</div>
+</div>
+</body>
+</html>

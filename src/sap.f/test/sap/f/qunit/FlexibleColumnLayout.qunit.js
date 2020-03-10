@@ -27,7 +27,18 @@ function (
 		TABLET_SIZE = "1200px",
 		PHONE_SIZE = "900px",
 		ANIMATION_WAIT_TIME = 500,
-		COLUMN_RESIZING_ANIMATION_DURATION = 560;
+		COLUMN_RESIZING_ANIMATION_DURATION = 560,
+		VISIBLE_COLUMNS = {
+			EndColumnFullScreen: 1,
+			MidColumnFullScreen: 1,
+			OneColumn: 1,
+			ThreeColumnsBeginExpandedEndHidden: 2,
+			ThreeColumnsEndExpanded: 3,
+			ThreeColumnsMidExpanded: 3,
+			ThreeColumnsMidExpandedEndHidden: 2,
+			TwoColumnsBeginExpanded: 2,
+			TwoColumnsMidExpanded: 2
+		};
 
 	var fnCreatePage = function (sId) {
 		return new Page(sId, {
@@ -1252,6 +1263,147 @@ function (
 		assert.equal(this.oFCL._hasAnyColumnPagesRendered(), true, "_hasAnyColumnPagesRendered is true");
 		assert.strictEqual(oEventSpy.callCount, 1, "_hideShowArrows is called");
 	});
+
+	QUnit.module("Focus handling");
+
+	QUnit.test("AutoFocus - Should synchronize with NavContainer instances", function (assert) {
+		//arrange
+		var oFCL = oFactory.createFCL({
+				autoFocus: false
+			}),
+			aNavContainers = oFCL._getNavContainers(),
+			fnCheckNavContainersAutoFocus = function (bExpectedValue) {
+				aNavContainers.forEach(function (oContainer) {
+					// assert
+					assert.strictEqual(oContainer.getAutoFocus(), bExpectedValue, "Container autoFocus property is synchronized with FLC");
+				});
+			};
+
+		// assert
+		fnCheckNavContainersAutoFocus(false);
+
+		// act
+		oFCL.setAutoFocus(true);
+
+		// assert
+		fnCheckNavContainersAutoFocus(true);
+
+		//cleanup
+		oFCL.destroy();
+	});
+
+	QUnit.module("columnResize", {
+		beforeEach: function () {
+			this.oFCL = new FlexibleColumnLayout();
+			this.oEventSpy = sinon.spy(this.oFCL, "fireColumnResize");
+		},
+
+		afterEach: function () {
+			this.oFCL.destroy();
+			this.oEventSpy.restore();
+		}
+	});
+
+	QUnit.test("columnResize event is fired after resize", function (assert) {
+		assert.expect(1);
+		// setup
+		var fnDone = assert.async(),
+			oResizeFunctionSpy = sinon.spy(this.oFCL, "_resumeResizeHandler"),
+			fnCallback = function () {
+				this.oFCL.detachColumnResize(fnCallback);
+				// assert
+				assert.ok(this.oEventSpy.calledAfter(oResizeFunctionSpy), "event is fired after _resumeResizeHandler");
+				fnDone();
+			}.bind(this);
+
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+
+		setTimeout(function () {
+			this.oEventSpy.reset();
+			this.oFCL.attachColumnResize(fnCallback);
+			this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
+		}.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+	});
+
+	QUnit.test("Switching layout from OneColumn to ThreeColumnsEndExpanded", function (assert) {
+		assert.expect(1);
+		var fnDone = assert.async(),
+		fnCallback = function () {
+			// assert
+			assert.strictEqual(this.oEventSpy.callCount, VISIBLE_COLUMNS[LT.ThreeColumnsEndExpanded], "Event is fired " + VISIBLE_COLUMNS[LT.ThreeColumnsEndExpanded] + " times for layout: " + LT.ThreeColumnsEndExpanded);
+
+			fnDone();
+		};
+
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+
+		this.oEventSpy.reset();
+		this.oFCL.setLayout(LT.ThreeColumnsEndExpanded);
+		setTimeout(fnCallback.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+	});
+
+	QUnit.test("Switching layout from OneColumn to TwoColumnsBeginExpanded", function (assert) {
+		assert.expect(1);
+		var fnDone = assert.async(),
+		fnCallback = function () {
+			// assert
+			assert.strictEqual(this.oEventSpy.callCount, VISIBLE_COLUMNS[LT.TwoColumnsBeginExpanded], "Event is fired " + VISIBLE_COLUMNS[LT.TwoColumnsBeginExpanded] + " times for layout: " + LT.TwoColumnsBeginExpanded);
+
+			fnDone();
+		};
+
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+
+		this.oEventSpy.reset();
+		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
+		setTimeout(fnCallback.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+	});
+
+	QUnit.test("Switching layout from OneColumn to ThreeColumnsMidExpandedEndHidden", function (assert) {
+		assert.expect(1);
+		var fnDone = assert.async(),
+		fnCallback = function () {
+			// assert
+			assert.strictEqual(this.oEventSpy.callCount, VISIBLE_COLUMNS[LT.ThreeColumnsMidExpandedEndHidden], "Event is fired " + VISIBLE_COLUMNS[LT.ThreeColumnsMidExpandedEndHidden] + " times for layout: " + LT.ThreeColumnsMidExpandedEndHidden);
+
+			fnDone();
+		};
+
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+
+		this.oEventSpy.reset();
+		this.oFCL.setLayout(LT.ThreeColumnsMidExpandedEndHidden);
+		setTimeout(fnCallback.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+	});
+
+	(function () {
+		Object.keys(LT).forEach(function(sLayoutName) {
+			_testDifferentLayoutsInitialColumnResizeEvent(sLayoutName);
+		});
+	})();
+
+	function _testDifferentLayoutsInitialColumnResizeEvent(sLayoutName) {
+		QUnit.test(sLayoutName, function (assert) {
+			assert.expect(1);
+
+			var fnDone = assert.async(),
+			fnCallback = function () {
+				// assert
+				assert.strictEqual(this.oEventSpy.callCount, VISIBLE_COLUMNS[sLayoutName], "Event is fired " + VISIBLE_COLUMNS[sLayoutName] + " times for layout: " + sLayoutName);
+				fnDone();
+			};
+
+			this.oFCL.setLayout(sLayoutName);
+			this.oFCL.placeAt(sQUnitFixture);
+			Core.applyChanges();
+
+			setTimeout(fnCallback.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+		});
+	}
 
 	QUnit.module("Column width calculations", {
 		beforeEach: function () {

@@ -1242,7 +1242,8 @@
 			"sap.m.sample.TableDnD",
 			"sap.m.sample.TableContextualWidthDynamic",
 			"sap.m.sample.TableContextualWidthStatic",
-			"sap.m.sample.TableNavigated"
+			"sap.m.sample.TableNavigated",
+			"sap.m.sample.TableAutoPopin"
 		  ]
 		},
 		{
@@ -2671,6 +2672,11 @@
 			"name": "Table - Item Navigated",
 			"description": "This example demonstrates the navigated property of the item."
 		},
+	    {
+		  "id": "sap.m.sample.TableAutoPopin",
+		  "name": "Table - Auto popin of the table columns",
+		  "description": "This example demonstrates the automatic pop-in behavior of the table."
+	    },
 		{
 		  "id": "sap.m.sample.ActionListItem",
 		  "name": "Action List Item",

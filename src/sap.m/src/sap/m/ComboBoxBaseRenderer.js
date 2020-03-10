@@ -38,20 +38,6 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/co
 		};
 
 		/**
-		 * Add role combobox to the outer div.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-		 */
-		ComboBoxBaseRenderer.writeAccAttributes = function(oRm, oControl) {
-			ComboBoxTextFieldRenderer.writeAccAttributes.apply(this, arguments);
-
-			if (Core.getConfiguration().getAccessibility()) {
-				oRm.attr("aria-expanded", oControl.isOpen());
-			}
-		};
-
-		/**
 		 * Add classes to the control.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.

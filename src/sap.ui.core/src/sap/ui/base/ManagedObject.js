@@ -649,9 +649,10 @@ sap.ui.define([
 	 * The value can either be a simple string which then will be assumed to be the type of the new property or it can be
 	 * an object literal with the following properties
 	 * <ul>
-	 * <li><code>type: <i>string</i></code> type of the new property. Must either be one of the built-in types 'string',
-	 *     'boolean', 'int', 'float', 'object', 'array', 'function' or 'any', or a type created and registered with
-	 *     {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types.</li>
+	 * <li><code>type: <i>string</i></code> type of the new property. Must either be one of the built-in types
+	 *     'string', 'boolean', 'int', 'float', 'object', 'function' or 'any', or a type created and registered with
+	 *     {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types (e.g. 'int[]'
+	 *     or 'string[]', but not just 'array').</li>
 	 * <li><code>visibility: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Properties that
 	 *     belong to the API of a class must be 'public' whereas 'hidden' properties can only be used internally.
 	 *     Only public properties are accepted by the constructor or by <code>applySettings</code> or in declarative

@@ -60,7 +60,7 @@
 .sapMPopover {
 	position: absolute;
 	color: @sapUiContentForegroundTextColor;
-    min-width: 6.25rem;
+	min-width: 6.25rem;
 	box-sizing: border-box;
 	outline: none;
 	max-width: 100%;
@@ -196,6 +196,12 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 		background-color: @sapUiGroupContentBackground;
 		transform: rotate(-45deg);
 	}
+}
+
+html[data-sap-ui-browser^="sf"] .sapMPopover {
+	// scale(1) - Chrome does not clip children when transform is not applied resulting in non-visible border-radius
+	// translateZ(0px) - Safari Problem with z-index - After dialog was opened it was inserted behind the dark overlay
+	-webkit-transform: scale(1) translateZ(0px);
 }
 
 .sapMPopoverWithFooter .sapMPopoverArrDown:after {

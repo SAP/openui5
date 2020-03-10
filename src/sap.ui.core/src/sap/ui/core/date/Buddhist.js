@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.Buddhist
-sap.ui.define(['./UniversalDate', '../CalendarType'],
-	function(UniversalDate, CalendarType) {
+sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
+	function(UniversalDate, CalendarType, _Calendars) {
 	"use strict";
 
 
@@ -192,6 +192,8 @@ sap.ui.define(['./UniversalDate', '../CalendarType'],
 	Buddhist.prototype.getUTCWeek = function() {
 		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate());
 	};
+
+	_Calendars.set(CalendarType.Buddhist, Buddhist);
 
 	return Buddhist;
 

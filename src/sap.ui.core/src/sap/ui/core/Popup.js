@@ -818,9 +818,11 @@ sap.ui.define([
 			oDomRef.style.visibility = "visible";
 		}
 
-		this._duringOpen();
+		var bNoAnimation = iRealDuration == 0;
 
-		if (iRealDuration == 0) { // do not animate if there is a duration == 0
+		this._duringOpen(!bNoAnimation);
+
+		if (bNoAnimation) { // do not animate if there is a duration == 0
 			this._opened();
 		} else if (this._animations.open) { // if custom animation is defined, call it
 			this._animations.open.call(null, $Ref, iRealDuration, this._opened.bind(this));
@@ -916,9 +918,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Popup.prototype._duringOpen = function() {
+	Popup.prototype._duringOpen = function(bOpenAnimated) {
 		var $Ref = this._$(/* force rendering */false, /* getter only */true),
-			oDomRefToFocus;
+			oStaticArea = sap.ui.getCore().getStaticAreaRef(),
+			oFirstFocusableInStaticArea = document.getElementById(oStaticArea.id + "-firstfe");
 
 		// shield layer is needed for mobile devices whose browser fires the mouse
 		// events with delay after touch events to prevent the delayed mouse events
@@ -951,26 +954,31 @@ sap.ui.define([
 			this._showBlockLayer();
 		}
 
-		// IE 11 fires a focus event on the HTML body tag when another element blurs. This
-		// causes the onfocusevent function to be called synchronously within the current
-		// call stack. Therefore the blur of the previous focused element should be done
-		// at the end of this open method to first show the block layer which changes the
-		// top most displayed popup
-		if (this._shouldGetFocusAfterOpen() && document.activeElement && !this.isInPopup(document.activeElement)) {
-			// when the current active element is in a popup, it's not blurred at this position
-			// because the focus isn't set to the new popup yet and blurring in the previous popup
-			// will mess up the modal or autoclose in the previous popup
-			oDomRefToFocus = this._getDomRefToFocus();
+		// When the open process is animated, the focus should be moved out of the previous focused element during the
+		// opening animation. Otherwise, it's not needed to shift the focus because the focus will be set into the popup
+		// in the same call stack in function "_opened"
+		if (bOpenAnimated
+			// some application or test create the static UIArea div by itself and therefore the first focusable element
+			// is not available
+			&& oFirstFocusableInStaticArea
+			// IE 11 fires a focus event on the HTML body tag when another element blurs. This causes the onfocusevent
+			// function to be called synchronously within the current call stack. Therefore the blur of the previous focused
+			// element should be done at the end of this open method to first show the block layer which changes the top
+			// most displayed popup
+			&& this._shouldGetFocusAfterOpen()
+			// when the current active element is in a popup, it's not blurred at this position because the focus isn't
+			// set to the new popup yet and blurring in the previous popup will mess up the modal or autoclose in the
+			// previous popup
+			&& !this.isInPopup(document.activeElement)
+			// If the focus needs to be set into the popup and it's different than the current document active element
+			// (the focus may stay with the current active element when the initial focus id is set), the current active
+			// element is blurred here to prevent it from getting further events during the opening animation of the
+			// popup
+			&& this._getDomRefToFocus() !== document.activeElement) {
 
-			// If the focus needs to be set into the popup and it's different than the current
-			// document active element, the current active element is blurred here to prevent
-			// it from getting further events during the opening animation of the popup
-
-			// The existence of the blur method should be checked because svg elements don't
-			// have blur method in IE 11
-			if (document.activeElement.blur && oDomRefToFocus !== document.activeElement) {
-				document.activeElement.blur();
-			}
+			// actively move the focus to the static UI area to blur the previous focused element after popup is open.
+			// The focus will be moved into the popup once the popup opening animation is finished
+			oFirstFocusableInStaticArea.focus();
 		}
 
 		// add Delegate to hosted content for handling of events (e.g. onfocusin)

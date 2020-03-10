@@ -10,7 +10,7 @@ sap.ui.define([
 		"sap/m/library",
 		"sap/m/Button",
 		"sap/m/ActionSheet",
-		"sap/f/cards/CardActions",
+		"sap/ui/integration/util/CardActions",
 		"./ActionsToolbarRenderer"
 	],
 	function(jQuery,
@@ -110,7 +110,7 @@ sap.ui.define([
 						card: oCard,
 						host: oHost,
 						action: mActionConfig,
-						manifestParameters: mActionConfig.parameters,
+						parameters: mActionConfig.parameters,
 						source: oEvent.getSource(),
 						url: mActionConfig.url
 					});

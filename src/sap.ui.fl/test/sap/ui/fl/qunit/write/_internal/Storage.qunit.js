@@ -490,7 +490,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given Storage when versions.activateDraft is called", {
+	QUnit.module("Given Storage when versions.activate is called", {
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -506,9 +506,9 @@ sap.ui.define([
 			]);
 
 			var oActivatedVersion = {};
-			sandbox.stub(JsObjectConnector.versions, "activateDraft").resolves(oActivatedVersion);
+			sandbox.stub(JsObjectConnector.versions, "activate").resolves(oActivatedVersion);
 
-			return Storage.versions.activateDraft(mPropertyBag).then(function (oReturnedActivatedVersion) {
+			return Storage.versions.activate(mPropertyBag).then(function (oReturnedActivatedVersion) {
 				assert.equal(oReturnedActivatedVersion, oActivatedVersion);
 			});
 		});
@@ -520,8 +520,8 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			return Storage.versions.activateDraft(mPropertyBag).catch(function (sRejectionMessage) {
-				assert.equal(sRejectionMessage, "versions.activateDraft is not implemented", "then the rejection message is passed");
+			return Storage.versions.activate(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "versions.activate is not implemented", "then the rejection message is passed");
 			});
 		});
 	});

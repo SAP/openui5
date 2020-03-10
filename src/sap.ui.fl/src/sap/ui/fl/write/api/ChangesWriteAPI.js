@@ -81,12 +81,17 @@ sap.ui.define([
 
 			// flex change
 			oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+
 			// if a component instance is passed only a base change is created
 			if (mPropertyBag.selector instanceof Component) {
 				return oFlexController.createBaseChange(mPropertyBag.changeSpecificData, mPropertyBag.selector);
 			}
+			// if a extension point selector is passed a change with an extension point selector is created
+			if (mPropertyBag.selector.name && mPropertyBag.selector.view) {
+				return oFlexController.createChangeWithExtensionPointSelector(mPropertyBag.changeSpecificData, mPropertyBag.selector);
+			}
 			// in other cases if a control instance or selector is passed then change handler's completeChangeContent() is called
-			return oFlexController.createChange(mPropertyBag.changeSpecificData, mPropertyBag.selector);
+			return oFlexController.createChangeWithControlSelector(mPropertyBag.changeSpecificData, mPropertyBag.selector);
 		},
 
 		/**
@@ -107,7 +112,7 @@ sap.ui.define([
 			if (!mPropertyBag.modifier) {
 				mPropertyBag.modifier = JsControlTreeModifier;
 			}
-			var bDependenciesExist = oFlexController.checkForOpenDependenciesForControl(mPropertyBag.change.getSelector(), mPropertyBag.modifier, mPropertyBag.appComponent);
+			var bDependenciesExist = oFlexController.checkForOpenDependenciesForControl(mPropertyBag.change.getSelector(), mPropertyBag.appComponent);
 			if (!bDependenciesExist && mPropertyBag.element instanceof Element) {
 				return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]));
 			}

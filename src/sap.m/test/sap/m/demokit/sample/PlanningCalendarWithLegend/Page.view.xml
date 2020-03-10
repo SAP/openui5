@@ -65,7 +65,8 @@
 					<unified:DateTypeRange
 							startDate="{start}"
 							endDate="{end}"
-							type="{type}">
+							type="{type}"
+							color="{color}">
 					</unified:DateTypeRange>
 				</specialDates>
 			</PlanningCalendar>
@@ -76,7 +77,7 @@
 				appointmentItems="{path : '/legendAppointmentItems', templateShareable: true}"
 				standardItems="Today,Selected,NonWorkingDay">
 				<items>
-					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />
+					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" color="{color}"/>
 				</items>
 				<appointmentItems>
 					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />

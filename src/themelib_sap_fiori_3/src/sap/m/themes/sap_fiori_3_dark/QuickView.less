@@ -3,24 +3,12 @@
 /* Quartz Dark theme                */
 /* ================================ */
 
-// ==========================================================================
-// Variables overriding
-// ==========================================================================
-
 @_sap_m_QuickView_HorizontalLayoutMarginBottom: 1rem;
 @_sap_m_QuickView_HorizontalLayoutIconFontSize: 1.5rem;
 @_sap_m_QuickView_PagePaddingTop: 2.75rem;
-
-.sapMQuickViewPage .sapMQuickViewThumbnail {
-	background-color: @sapUiAccent7;
-	color: @sapUiContentContrastTextColor;
-	border-radius: @sapUiElementBorderCornerRadius;
-}
-
-html.sap-desktop .sapMQuickViewPage .sapUiIcon:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -3px;
-}
+@_sap_m_QuickView_PageThumbnailBackgroundColor: @sapUiAccent7;
+@_sap_m_QuickView_PageThumbnailColor: @sapUiContentContrastTextColor;
+@_sap_m_QuickView_PageThumbnailBorderRadius: @sapUiElementBorderCornerRadius;
 
 .sapMQuickViewCard {
 	box-sizing: border-box;
