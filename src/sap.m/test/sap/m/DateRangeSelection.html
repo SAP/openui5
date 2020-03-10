@@ -120,11 +120,14 @@
 				new sap.m.Label({text: "DateRangeSelection with displayFormat=\"yyyy-MM\"", labelFor: "DRS8"}),
 				new sap.m.DateRangeSelection("DRS8", { displayFormat: "yyyy-MM", change: handleChange}),
 
-				new sap.m.Label({text: "DateRangeSelection with displayFormat=\"yyyy-MM\"", labelFor: "DRS8"}),
+				new sap.m.Label({text: "DateRangeSelection with displayFormat=\"yyyy-MM\"", labelFor: "DRS9"}),
 				new sap.m.DateRangeSelection("DRS9", { displayFormat: "yyyy-MM", change: handleChange, dateValue: new Date("2019", "5", "1"), secondDateValue: new Date("2019", "10", "1")}),
 
-				new sap.m.Label({text: "DateRangeSelection with displayFormat=\"yyyy\"", labelFor: "DRS9"}),
+				new sap.m.Label({text: "DateRangeSelection with displayFormat=\"yyyy\"", labelFor: "DRS10"}),
 				new sap.m.DateRangeSelection("DRS10", { displayFormat: "yyyy", change: handleChange }),
+
+				new sap.m.Label({text: "DateRangeSelection with displayFormat=\"yyyy\"", labelFor: "DRS11"}),
+				new sap.m.DateRangeSelection("DRS11", { displayFormat: "yyyy", change: handleChange, dateValue: new Date("2019", "5", "1"), secondDateValue: new Date("2023", "10", "1")}),
 
 				new sap.m.Text({width: "100%"}), new sap.m.Text({width: "100%"}),
 				new sap.m.Text({width: "100%"}), new sap.m.Text({width: "100%"}), // 6 empty lines
