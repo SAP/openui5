@@ -42,6 +42,7 @@ sap.ui.require([
 		//TODO: get test running in 1RingModels.qunit; test has to be refactored
 		// "sap/ui/core/qunit/MasterDetail.qunit",
 		"sap/ui/core/qunit/StaticBinding.qunit",
+		"sap/ui/core/qunit/model/Context.qunit",
 		"sap/ui/core/qunit/model/Model.qunit",
 
 		// ***************************************************************************************

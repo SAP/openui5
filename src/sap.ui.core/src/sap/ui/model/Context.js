@@ -180,6 +180,27 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 		return this.sPath;
 	};
 
+	/**
+	 * Returns messages associated with this context, that is messages belonging to the object
+	 * referred to by this context or a child object of that object. The messages are sorted by
+	 * their {@link sap.ui.core.message.Message#getType type} according to the type's severity in a
+	 * way that messages with highest severity come first.
+	 *
+	 * @returns {sap.ui.core.message.Message[]}
+	 *   The messages associated with this context sorted by severity; empty array in case no
+	 *   messages exist
+	 * @throws {Error}
+	 *   In case the context's model does not implement the method
+	 *   {@link sap.ui.model.Model#getMessages}
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#getMessages
+	 * @since 1.76.0
+	 */
+	Context.prototype.getMessages = function () {
+		return this.oModel.getMessages(this);
+	};
+
 	return Context;
 
 });

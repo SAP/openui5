@@ -1115,6 +1115,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns messages of this model associated with the given context, that is messages belonging
+	 * to the object referred to by this context or a child object of that object. The messages are
+	 * sorted by their {@link sap.ui.core.message.Message#getType type} according to the type's
+	 * severity in a way that messages with highest severity come first.
+	 *
+	 * @param {sap.ui.model.Context} oContext The context to retrieve messages for
+	 * @returns {sap.ui.core.message.Message[]}
+	 *   The messages associated with this context sorted by severity; empty array in case no
+	 *   messages exist
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.Model.prototype.getMessages
+	 * @public
+	 * @since 1.76.0
+	 */
+
+	/**
 	 * Traverses the given filter tree.
 	 *
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} vFilters Array of filters or a single filter instance, which will be checked for unsupported filter operators

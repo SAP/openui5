@@ -3,15 +3,34 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/library",
 	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/Model",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (Log, FilterProcessor, MessageScope, ODataUtils, ODataModel, TestUtils) {
+], function (Log, coreLibrary, FilterProcessor, Model, MessageScope, ODataUtils, ODataModel,
+		TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
+
+	var MessageType = coreLibrary.MessageType;
+
+	// Copied from ExpressionParser.performance.qunit
+	var iCount = 1000;
+
+	function repeatedTest(assert, fnTest) {
+		var i, iStart = Date.now(), iDuration;
+
+		for (i = iCount; i; i -= 1) {
+			fnTest();
+		}
+		iDuration = Date.now() - iStart;
+		assert.ok(true, iCount + " iterations took " + iDuration + " ms, that is "
+			+ iDuration / iCount + " ms per iteration");
+	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v2.ODataModel (ODataModelNoFakeService)", {
@@ -834,4 +853,71 @@ sap.ui.define([
 		assert.deepEqual(ODataModel.prototype.filterMatchingMessages.call(oModel, "/foo", "/baz"),
 			[]);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getMessages", function (assert) {
+		var oContext = {sDeepPath : "deepPath"},
+			aMessages,
+			oModel = {
+				getMessagesByPath : function () {}
+			};
+
+		this.mock(oModel).expects("getMessagesByPath").withExactArgs("deepPath", true)
+			.returns([
+				{type : MessageType.Warning},
+				{type : MessageType.None},
+				{type : MessageType.Information},
+				{type : MessageType.Success},
+				{type : MessageType.Error}
+			]);
+
+		// code under test
+		aMessages = ODataModel.prototype.getMessages.call(oModel, oContext);
+
+		assert.deepEqual(aMessages, [
+			{type : MessageType.Error},
+			{type : MessageType.Warning},
+			{type : MessageType.Success},
+			{type : MessageType.Information},
+			{type : MessageType.None}
+		]);
+	});
+
+	//*********************************************************************************************
+[
+	{iMessageCount : 200, iRowCount : 100},
+	{iMessageCount : 20, iRowCount : 30},
+	{iMessageCount : 5, iRowCount : 20}
+].forEach(function (oFixture) {
+	var sTitle = "getMessages: Performance Test - simulate " + oFixture.iMessageCount
+			+ " messages for " + oFixture.iRowCount + " table rows";
+	QUnit.skip(sTitle, function (assert) {
+		var oContext = {
+				sDeepPath : "deep(1)/path"
+			},
+			i,
+			oModel = {
+				filterMatchingMessages : ODataModel.prototype.filterMatchingMessages,
+				getMessagesByPath : Model.prototype.getMessagesByPath,
+				isMessageMatching : ODataModel.prototype.isMessageMatching,
+				mMessages : {}
+			},
+			sPath;
+
+		// prepare messages
+		for (i = 0; i < oFixture.iMessageCount; i += 1) {
+			sPath = "deep(" + i + ")/path";
+			oModel.mMessages[sPath] = [{
+				fullTarget : sPath
+			}];
+		}
+
+		// code under test
+		repeatedTest(assert, function () {
+			for (i = 0; i < oFixture.iRowCount; i += 1) {
+				ODataModel.prototype.getMessages.call(oModel, oContext);
+			}
+		});
+	});
+});
 });

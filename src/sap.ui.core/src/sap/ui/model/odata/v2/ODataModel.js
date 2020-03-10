@@ -12,6 +12,7 @@
 
 //Provides class sap.ui.model.odata.v2.ODataModel
 sap.ui.define([
+	'sap/ui/core/library',
 	'sap/ui/thirdparty/URI',
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/Context',
@@ -44,6 +45,7 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/isEmptyObject"
 ], function(
+	coreLibrary,
 	URI,
 	BindingMode,
 	Context,
@@ -79,6 +81,14 @@ sap.ui.define([
 
 	"use strict";
 
+	var MessageType = coreLibrary.MessageType,
+		mMessageType2Severity = {};
+
+	mMessageType2Severity[MessageType.Error] = 0;
+	mMessageType2Severity[MessageType.Warning] = 1;
+	mMessageType2Severity[MessageType.Success] = 2;
+	mMessageType2Severity[MessageType.Information] = 3;
+	mMessageType2Severity[MessageType.None] = 4;
 
 	/**
 	 * Constructor for a new ODataModel.
@@ -6970,6 +6980,17 @@ sap.ui.define([
 				&& (sPathPrefix === "/"
 					|| sFullTarget[iPrefixLength] === "/"
 					|| sFullTarget[iPrefixLength] === "(");
+	};
+
+	// @override
+	// @public
+	// @see sap.ui.model.Model#getMessages
+	// @since 1.76.0
+	ODataModel.prototype.getMessages = function (oContext) {
+		return this.getMessagesByPath(oContext.sDeepPath, /*bPrefixMatch*/true)
+			.sort(function (oMsg0, oMsg1) {
+				return mMessageType2Severity[oMsg0.type] - mMessageType2Severity[oMsg1.type];
+			});
 	};
 
 	return ODataModel;
