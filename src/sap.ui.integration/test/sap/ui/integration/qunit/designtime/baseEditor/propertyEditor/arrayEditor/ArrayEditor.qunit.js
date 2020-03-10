@@ -59,7 +59,7 @@ sap.ui.define([
 				propertyEditors: {
 					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
 					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			};

@@ -13,23 +13,35 @@
 				<Column width="25%">
 					<Text text="{i18n>BASE_EDITOR.MAP.KEY}" />
 				</Column>
-				<Column width="20%">
+				<Column
+					width="20%"
+					visible="{= ${config/allowTypeChange} !== false}"
+				>
 					<Text text="{i18n>BASE_EDITOR.MAP.TYPE}" />
 				</Column>
 				<Column>
 					<Text text="{i18n>BASE_EDITOR.MAP.VALUE}" />
 				</Column>
-				<Column width="3rem" hAlign="Right" />
+				<Column 
+					width="3rem"
+					hAlign="Right"
+					visible="{= ${config/allowAddAndRemove} !== false}"
+				/>
 			</columns>
 			<items>
 				<ColumnListItem>
 					<cells>
-						<Input value="{itemsModel>key}" liveChange="_onKeyChange" />
+						<Input
+							value="{itemsModel>key}"
+							liveChange="_onKeyChange"
+							enabled="{= ${config/allowKeyChange} !== false}"
+						/>
 						<ComboBox
 							selectedKey="{itemsModel>value/0/type}"
 							width="100%"
 							selectionChange="._onTypeChange($event, ${itemsModel>key})"
 							items="{path: 'supportedTypes>/', templateShareable: false}"
+							visible="{= ${config/allowTypeChange} !== false}"
 						>
 							<items>
 								<core:Item
@@ -49,6 +61,7 @@
 							icon="sap-icon://less"
 							type="Transparent"
 							press="_onRemoveElement"
+							visible="{= ${config/allowAddAndRemove} !== false}"
 						/>
 					</cells>
 				</ColumnListItem>
@@ -58,6 +71,7 @@
 			text="{i18n>BASE_EDITOR.MAP.ADD_PARAMETER}"
 			type="Transparent"
 			press="_onAddElement"
+			visible="{= ${config/allowAddAndRemove} !== false}"
 		/>
 	</VBox>
 </core:FragmentDefinition>

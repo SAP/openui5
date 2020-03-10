@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/restricted/_merge",
-	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding"
+	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
+	"sap/ui/integration/designtime/baseEditor/util/unset"
 ], function (
 	BasePropertyEditor,
 	deepClone,
@@ -16,7 +17,8 @@ sap.ui.define([
 	ObjectPath,
 	JSONModel,
 	_merge,
-	resolveBinding
+	resolveBinding,
+	unset
 ) {
 	"use strict";
 
@@ -177,8 +179,7 @@ sap.ui.define([
 			typeof vValue === "undefined"
 			|| deepEqual(vValue, oPropertyEditor.getConfig().defaultValue)
 		) {
-			var mContainer = ObjectPath.get(aParts.slice(0, -1), aEditorValue);
-			delete mContainer[aParts[aParts.length - 1]];
+			unset(aParts, aEditorValue);
 		}
 
 		this.setValue(aEditorValue);
