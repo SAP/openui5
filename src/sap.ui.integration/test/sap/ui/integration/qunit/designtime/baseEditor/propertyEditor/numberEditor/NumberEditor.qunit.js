@@ -1,21 +1,17 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
-	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/base/i18n/ResourceBundle",
-	"sap/ui/model/resource/ResourceModel"
+	"sap/ui/core/format/NumberFormat"
 ], function (
-	NumberEditor,
-	JSONModel,
+	BaseEditor,
 	QUnitUtils,
-	ResourceBundle,
-	ResourceModel
+	NumberFormat
 ) {
 	"use strict";
 
-	QUnit.module("Number Editor: Given an editor config", {
+	QUnit.module("Given an editor config", {
 		before: function () {
 			this.oPropertyConfig = {
 				tags: ["content"],
@@ -26,31 +22,47 @@ sap.ui.define([
 			};
 		},
 		beforeEach: function () {
-			this.oNumberEditor = new NumberEditor();
-			this.oNumberEditor.setConfig(this.oPropertyConfig);
-			this.oNumberEditor.setValue(42);
-			this.oNumberEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			var mConfig = {
+				context: "/",
+				properties: {
+					sampleNumber: this.oPropertyConfig
+				},
+				propertyEditors: {
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+				}
+			};
+			var mJson = {
+				content: 3.14
+			};
 
-			return this.oNumberEditor.ready().then(function () {
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleNumber").then(function (aPropertyEditor) {
+				this.oNumberEditor = aPropertyEditor[0];
+				sap.ui.getCore().applyChanges();
 				this.oNumberEditorElement = this.oNumberEditor.getContent();
 			}.bind(this));
 		},
 		afterEach: function () {
-			this.oNumberEditor.destroy();
+			this.oBaseEditor.destroy();
 		}
 	}, function () {
 		QUnit.test("When a NumberEditor is created", function (assert) {
-			assert.ok(this.oNumberEditor.getDomRef() instanceof HTMLElement, "Then it is rendered correctly (1/3)");
-			assert.ok(this.oNumberEditor.getDomRef() && this.oNumberEditor.getDomRef().offsetHeight > 0, "Then it is rendered correctly (2/3)");
-			assert.ok(this.oNumberEditor.getDomRef() && this.oNumberEditor.getDomRef().offsetWidth > 0, "Then it is rendered correctly (3/3)");
+			var oNumberEditorDomRef = this.oNumberEditor.getDomRef();
+			assert.ok(oNumberEditorDomRef instanceof HTMLElement, "Then it is rendered correctly (1/3)");
+			assert.ok(oNumberEditorDomRef.offsetHeight > 0, "Then it is rendered correctly (2/3)");
+			assert.ok(oNumberEditorDomRef.offsetWidth > 0, "Then it is rendered correctly (3/3)");
 		});
 
 		QUnit.test("When a value is set", function (assert) {
-			assert.strictEqual(this.oNumberEditorElement.getValue(), "42", "Then the editor has the correct value");
+			assert.strictEqual(this.oNumberEditorElement.getValue(), NumberFormat.getFloatInstance().format(3.14), "Then the editor value is formatted properly");
 		});
 
-		QUnit.test("When a value is changed in the editor", function (assert) {
+		QUnit.test("When a value is changed in the code editor", function (assert) {
 			this.oNumberEditor.setValue(41);
 			assert.strictEqual(this.oNumberEditorElement.getValue(), "41", "Then the editor value is updated");
 		});
@@ -59,11 +71,11 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oNumberEditor.attachValueChange(function (oEvent) {
-				assert.strictEqual(oEvent.getParameter("value"), 43, "Then it is updated correctly");
+				assert.strictEqual(oEvent.getParameter("value"), 42.123, "Then it is updated correctly");
 				fnDone();
 			});
 
-			this.oNumberEditorElement.setValue("43");
+			this.oNumberEditorElement.setValue("42.123");
 			QUnitUtils.triggerEvent("input", this.oNumberEditorElement.getDomRef());
 		});
 
@@ -80,24 +92,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
-			// Load the i18n model for the value state text on error
-			return ResourceBundle.create({
-				url: sap.ui.require.toUrl("sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"),
-				async: true
-			}).then(function (oI18nBundle) {
-				var oI18nModel = new ResourceModel({
-					bundle: oI18nBundle
-				});
-				oI18nModel.setDefaultBindingMode("OneWay");
-				this.oNumberEditor.setModel(oI18nModel, "i18n");
+			this.oNumberEditorElement.setValue("abc");
+			QUnitUtils.triggerEvent("input", this.oNumberEditorElement.getDomRef());
 
-				// Test
-				this.oNumberEditorElement.setValue("abc");
-				QUnitUtils.triggerEvent("input", this.oNumberEditorElement.getDomRef());
-
-				assert.strictEqual(this.oNumberEditorElement.getValueState(), "Error", "Then the error is displayed");
-				assert.strictEqual(this.oNumberEditor.getValue(), 42, "Then the editor value is not updated");
-			}.bind(this));
+			assert.strictEqual(this.oNumberEditorElement.getValueState(), "Error", "Then the error is displayed");
+			assert.strictEqual(this.oNumberEditor.getValue(), 3.14, "Then the editor value is not updated");
 		});
 	});
 
