@@ -712,7 +712,7 @@ sap.ui.define([
 		assert.ok(oBindingInfo.parts[0].type instanceof Currency);
 	});
 
-	QUnit.test("mergeParts with constants", function (assert) {
+	QUnit.test("mergeParts with constants and part with empty path", function (assert) {
 		var oBindingInfo = {
 				formatter : function () {
 					// turn arguments into a real array and return its JSON representation
@@ -722,6 +722,7 @@ sap.ui.define([
 				parts : [
 					{path : '/foo'},
 					{parts : [{path : '/foo'}, {path : '/bar'}]},
+					{path : ''},
 					"",
 					false,
 					0,
@@ -732,9 +733,9 @@ sap.ui.define([
 				]
 			},
 			aExpectedArray = [
-				"hello", "hello world", "", false, 0, {foo : "bar"}, null, undefined, []
+				"hello", "hello world", "moon", "", false, 0, {foo : "bar"}, null, undefined, []
 			],
-			oModel = new JSONModel({bar : "world", foo : "hello"}),
+			oModel = new JSONModel({bar : "world", baz : "moon", foo : "hello"}),
 			oControl = new TestControl({
 				models: oModel
 			});
@@ -742,8 +743,9 @@ sap.ui.define([
 		BindingParser.mergeParts(oBindingInfo);
 
 		assert.deepEqual(oBindingInfo.parts,
-			[{path : '/foo'}, {path : '/foo'}, {path : '/bar'}]);
+			[{path : '/foo'}, {path : '/foo'}, {path : '/bar'}, {path : ''}]);
 		oControl.bindProperty("text", oBindingInfo);
+		oControl.setBindingContext(oModel.createBindingContext('/baz'));
 		assert.strictEqual(oControl.getText(), JSON.stringify(aExpectedArray));
 		checkTextFragments(assert, oBindingInfo.formatter);
 	});
