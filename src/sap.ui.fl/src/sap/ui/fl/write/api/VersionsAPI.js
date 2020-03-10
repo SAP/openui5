@@ -12,6 +12,7 @@ sap.ui.define([
 	Utils
 ) {
 	"use strict";
+
 	/**
 	 * Provides an API for tools like {@link sap.ui.rta} to activate, discard and retrieve versions.
 	 *
@@ -70,7 +71,7 @@ sap.ui.define([
 		}
 
 		return Versions.getVersions({
-			reference: sReference,
+			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer
 		});
 	};
@@ -100,7 +101,7 @@ sap.ui.define([
 		}
 		return FlexState.clearAndInitialize({
 			componentId: oAppComponent.getId(),
-			reference: sReference,
+			reference: Utils.normalizeReference(sReference),
 			draftLayer: mPropertyBag.layer
 		});
 	};
@@ -138,7 +139,7 @@ sap.ui.define([
 		}
 
 		return Versions.activateDraft({
-			reference: sReference,
+			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer,
 			title: mPropertyBag.title
 		});
@@ -172,7 +173,7 @@ sap.ui.define([
 		}
 
 		return Versions.discardDraft({
-			reference: sReference,
+			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer,
 			appComponent: oAppComponent,
 			updateState: mPropertyBag.updateState
