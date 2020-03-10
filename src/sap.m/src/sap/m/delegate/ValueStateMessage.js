@@ -181,12 +181,14 @@ sap.ui.define([
 			this._oPopup.attachClosed(function() {
 				jQuery(document.getElementById(sID)).remove();
 			});
-			this._oPopup.attachOpened(function() {
-				var content = this._oPopup.getContent();
+			this._oPopup.attachOpened(function () {
+				var content = this._oPopup.getContent(),
+					bControlWithValueStateTextInIE = Device.browser.msie &&
+						this._oControl && this._oControl.getFormattedValueStateText && !!this._oControl.getFormattedValueStateText();
 
 				/* z-index of the popup is not calculated correctly by this._getCorrectZIndex() in IE, causing it
 				to be "under" the "blind layer" and links to be unreachable (unclickable) in IE */
-				if (content && this._oControl && !(Device.browser.msie && !!this._oControl.getFormattedValueStateText())) {
+				if (content && !bControlWithValueStateTextInIE) {
 					content.style.zIndex = this._getCorrectZIndex();
 				}
 			}.bind(this));
