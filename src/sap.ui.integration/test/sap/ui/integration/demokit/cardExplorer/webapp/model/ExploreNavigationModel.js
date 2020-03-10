@@ -94,17 +94,81 @@ sap.ui.define([
 							{
 								title: 'Media',
 								key: 'media',
-								manifestUrl: '/samples/component/cardContent/manifest.json'
+								files: [
+									{
+										url: '/samples/component/cardContent/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContent/Component.js',
+										name: 'Component.js',
+										key: 'Component.js',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContent/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml',
+										content: ''
+									}
+								]
 							},
 							{
 								title: 'Media, header at bottom',
 								key: 'mediaBottom',
-								manifestUrl: '/samples/component/cardContentHeaderBottom/manifest.json'
+								files: [
+									{
+										url: '/samples/component/cardContentHeaderBottom/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentHeaderBottom/Component.js',
+										name: 'Component.js',
+										key: 'Component.js',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentHeaderBottom/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml',
+										content: ''
+									}
+								]
 							},
 							{
 								title: 'Buy bus ticket',
 								key: 'busTicket',
-								manifestUrl: '/samples/component/cardContentControls/manifest.json'
+								files: [
+
+									{
+										url: '/samples/component/cardContentControls/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentControls/Component.js',
+										name: 'Component.js',
+										key: 'Component.js',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentControls/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentControls/Card.controller.js',
+										name: 'Card.controller.js',
+										key: 'Card.controller.js',
+										content: ''
+									}
+								]
 							}
 						]
 					},

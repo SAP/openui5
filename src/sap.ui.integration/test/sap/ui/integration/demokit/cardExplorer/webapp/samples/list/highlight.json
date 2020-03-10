@@ -67,6 +67,7 @@
 					}
 				]
 			},
+			"maxItems": "5",
 			"item": {
 				"title": "{Name}",
 				"description": "{Description}",

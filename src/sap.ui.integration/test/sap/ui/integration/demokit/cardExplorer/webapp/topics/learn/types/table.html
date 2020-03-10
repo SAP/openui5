@@ -35,6 +35,7 @@
 					<th>Required</th>
 					<th>Description</th>
 					<th>Schema Version</th>
+					<th>Since</th>
 				</tr>
 				<tr>
 					<td>columns</td>
@@ -42,6 +43,7 @@
 					<td>No</td>
 					<td>Defines the columns attributes.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 				<tr>
 					<td>actions</td>
@@ -49,6 +51,7 @@
 					<td>No</td>
 					<td>Defines actions that can be applied on the item.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 			</table>
 		</div>
@@ -63,6 +66,7 @@
 					<th>Required</th>
 					<th>Description</th>
 					<th>Schema Version</th>
+					<th>Since</th>
 				</tr>
 				<tr>
 					<td>title</td>
@@ -70,6 +74,7 @@
 					<td>No</td>
 					<td>Defines language-dependent title of the column.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 				<tr>
 					<td>width</td>
@@ -77,6 +82,7 @@
 					<td>No</td>
 					<td>Defines the width of the column.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 				<tr>
 					<td>hAlign</td>
@@ -84,6 +90,7 @@
 					<td>No</td>
 					<td>Defines the horizontal alignment of the column content. For a list of possible values see <a id="linkToTextAlign" target="_blank">sap.ui.core.TextAlign</a>.</td>
 					<td>1.19.0</td>
+					<td>1.75</td>
 				</tr>
 				<tr>
 					<td>value</td>
@@ -91,6 +98,7 @@
 					<td>No</td>
 					<td>Represents the text value of the column.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 				<tr>
 					<td>icon</td>
@@ -105,6 +113,7 @@
 					<td>No</td>
 					<td>Defines the state of the column.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 				<tr>
 					<td>url</td>
@@ -112,6 +121,7 @@
 					<td>No</td>
 					<td>Defines the URL string.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 				<tr>
 					<td>target</td>
@@ -119,6 +129,7 @@
 					<td>No</td>
 					<td>Specifies where to open the 'url', if it is provided.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 				<tr>
 					<td>identifier</td>
@@ -126,6 +137,7 @@
 					<td>No</td>
 					<td>Defines whether the column is an identifier.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 				<tr>
 					<td>progressIndicator</td>
@@ -133,6 +145,7 @@
 					<td>No</td>
 					<td>Defines the progress indicator attributes.</td>
 					<td>1.15.0</td>
+					<td>1.65</td>
 				</tr>
 			</table>
 		</div>
@@ -143,7 +156,10 @@
 		<pre class="prettyprint  lang-js">{
 	"sap.app": {
 		"id": "card.explorer.table.card",
-		"type": "card"
+		"type": "card",
+		"applicationVersion": {
+		  "version": "1.0.0"
+		}
 	},
 	"sap.card": {
 		"type": "Table",
