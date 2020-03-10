@@ -27,7 +27,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("List card  - min height in compact mode", function (assert) {
+		QUnit.test("List card - min height in compact mode", function (assert) {
 
 			//Arrange
 			jquery("html").addClass("sapUiSizeCompact");
@@ -44,7 +44,7 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("List card  - min height in compact mode no icon or description", function (assert) {
+		QUnit.test("List card - min height in compact mode no icon or description", function (assert) {
 
 			//Arrange
 			jquery("html").addClass("sapUiSizeCompact");
@@ -59,7 +59,24 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("Table card  - min height in compact mode", function (assert) {
+		QUnit.test("List card - min height in compact mode with icon or description", function (assert) {
+
+			//Arrange
+			jquery("html").addClass("sapUiSizeCompact");
+			this.oText.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			var sType = "ListContent",
+				oConfiguration = {maxItems: 7, item: {
+					description: {}
+				}};
+
+			//Assert
+			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "35rem", "Min height in compact must be 35rem" );
+
+		});
+
+		QUnit.test("Table card - min height in compact mode", function (assert) {
 
 			//Arrange
 			jquery("html").addClass("sapUiSizeCompact");
@@ -74,7 +91,7 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("TimeLine card  - min height in compact mode", function (assert) {
+		QUnit.test("TimeLine card - min height in compact mode", function (assert) {
 
 			//Arrange
 			jquery("html").addClass("sapUiSizeCompact");
@@ -99,7 +116,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("List card  - min height in cozy mode", function (assert) {
+		QUnit.test("List card - min height in cozy mode", function (assert) {
 
 			//Arrange
 			var sType = "ListContent",
@@ -120,6 +137,19 @@ sap.ui.define([
 
 			//Assert
 			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "19.25rem", "Min height in cozy must be 19.25rem" );
+
+		});
+
+		QUnit.test("List card - min height in cozy mode with icon or description", function (assert) {
+
+			//Arrange
+			var sType = "ListContent",
+				oConfiguration = {maxItems: 7, item: {
+					description: {}
+				}};
+
+			//Assert
+			assert.equal(BaseContent.getMinHeight(sType, oConfiguration, this.oText), "35rem", "Min height in cozy must be 35rem" );
 
 		});
 

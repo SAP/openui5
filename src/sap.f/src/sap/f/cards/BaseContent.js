@@ -50,13 +50,11 @@ sap.ui.define([
 			}
 		},
 		renderer: function (oRm, oCardContent) {
-
 			// Add class the simple way. Add renderer hooks only if needed.
 			var sClass = "sapFCard";
 			var sLibrary = oCardContent.getMetadata().getLibraryName();
 			var sName = oCardContent.getMetadata().getName();
 			var sType = sName.slice(sLibrary.length + 1, sName.length);
-			var sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration(), oCardContent);
 			var oCard = oCardContent.getParent();
 			sClass += sType;
 
@@ -67,7 +65,7 @@ sap.ui.define([
 			oRm.writeClasses();
 
 			if (oCard && oCard.isA("sap.f.ICard") && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-				sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration(), oCardContent.getParent() || oCardContent);
+				var sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration(), oCardContent);
 				oRm.addStyle("min-height", sHeight);
 			}
 
@@ -256,8 +254,8 @@ sap.ui.define([
 
 	BaseContent.prototype.destroyPlaceholder = function () {
 		if (this._oLoadingPlaceholder) {
-            this._oLoadingPlaceholder.destroy();
-            this._oLoadingPlaceholder = null;
+			this._oLoadingPlaceholder.destroy();
+			this._oLoadingPlaceholder = null;
 		}
 	};
 
@@ -358,8 +356,15 @@ sap.ui.define([
 
 		var MIN_HEIGHT = 5,
 			iHeight,
-			isCompact = oContent.$().parents().hasClass('sapUiSizeCompact');
+			oReferenceElement = oContent,
+			oParent = oContent.getParent();
 
+		if (!oContent.getDomRef() && oParent && oParent.isA("sap.f.ICard")) {
+			oReferenceElement = oParent;
+		}
+
+		// check if there is an element up the DOM which enables compact density
+		var isCompact = oReferenceElement.$().closest(".sapUiSizeCompact").hasClass("sapUiSizeCompact");
 
 		if (jQuery.isEmptyObject(oConfiguration)) {
 			return "0rem";
@@ -395,7 +400,7 @@ sap.ui.define([
 		}
 
 		if (oTemplate.description) {
-			iItemHeight = isCompact ? 3 : 4; // list item height with icon in "rem"
+			iItemHeight = 5; // list item height with description in "rem"
 		}
 
 		return iCount * iItemHeight;
@@ -417,12 +422,12 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype.isLoading  = function () {
-	   var oLoadingProvider,
-           oCard = this.getParent();
+		var oLoadingProvider,
+			oCard = this.getParent();
 
-	   oLoadingProvider = this._oLoadingProvider;
+		oLoadingProvider = this._oLoadingProvider;
 
-	   return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || oCard.isLoading());
+		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || oCard.isLoading());
 	};
 	return BaseContent;
 });
