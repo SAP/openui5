@@ -6,22 +6,23 @@ sap.ui.define([
 
 	return Opa5.extend("sap.ui.testrecorder.integration.pages.Common", {
 		iStartMyMockRecorder: function () {
-			var sModulePath = jQuery.sap.getModulePath("sap/ui/testrecorder/recorderMock");
 			return this.iStartMyAppInAFrame({
-				source: sModulePath + "/overlay.html",
+				source: jQuery.sap.getModulePath("sap/ui/testrecorder/recorderMock") + "/overlay.html",
 				autoWait:true
 			});
 		},
 		iStartMyMockApp: function () {
-			var sModulePath = jQuery.sap.getModulePath("sap/ui/testrecorder/appMock");
 			return this.iStartMyAppInAFrame({
-				source: sModulePath + "/index.html",
+				source: jQuery.sap.getModulePath("sap/ui/testrecorder/appMock") + "/index.html",
 				autoWait:true
 			});
 		},
 		iStartRecorder: function () {
+			// start the recorder programatically, instead of waiting for the url param to be read,
+			// so that the recorder will also be started when the browser tab isn't active
 			this.waitFor({
 				check: function () {
+					// wait for the recorder to load
 					if (Opa5.getWindow().sap.ui.require("sap/ui/testrecorder/Recorder")) {
 						return true;
 					} else {
@@ -30,36 +31,46 @@ sap.ui.define([
 					}
 				},
 				success: function () {
-					// start programatically, instead of waiting for the url param to be recognized,
-					// so that the recorder will also be started when the browser tab isn't active
+					// start the recorder
 					Opa5.getWindow().sap.ui.testrecorder.Recorder.start([]);
 					return this.waitFor({
-						matchers: [function () {
-							var oRecorderJQuery = this._getRecorderInFrame().jQuery;
-							return oRecorderJQuery;
-						}.bind(this), function (oRecorderJQuery) {
-							var oTree = oRecorderJQuery("tree");
-							return oTree.length && oTree.is(":visible") && oTree.css("visibility") !== "hidden";
-						}, function () {
-							Opa5.assert.ok(true, "Recorder started");
-							if (this._getRecorderInFrame().sap.ui.require("sap/ui/test/OpaPlugin")) {
-								return true;
-							} else {
-								this._getRecorderInFrame().sap.ui.require(["sap/ui/test/OpaPlugin"]);
-								return false;
+						matchers: [
+							function () {
+								// wait for the frame to be created
+								var oFrame = Opa5.getJQuery()("#sap-ui-test-recorder-frame");
+								return !!oFrame.length && oFrame[0].contentWindow;
+							},
+							function (oRecorderWindow) {
+								Opa5.getContext().recorderWindow = oRecorderWindow;
+								// wait for jquery to load inside the frame
+								var oRecorderJQuery = oRecorderWindow.jQuery;
+								return oRecorderJQuery;
+							},
+							function (oRecorderJQuery) {
+								// wait for the control tree to be loaded and visible
+								var oTree = oRecorderJQuery("tree");
+								return !!oTree.length && oTree.is(":visible") && oTree.css("visibility") !== "hidden";
+							},
+							function () {
+								Opa5.assert.ok(true, "Recorder started");
+								// wait for opaplugin to load
+								if (Opa5.getContext().recorderWindow.sap.ui.require("sap/ui/test/OpaPlugin")) {
+									return true;
+								} else {
+									Opa5.getContext().recorderWindow.sap.ui.require(["sap/ui/test/OpaPlugin"]);
+									return false;
+								}
 							}
-						}.bind(this)],
+						],
 						success: function () {
-							this._getRecorderInFrame().__opaPlugin__ = new (this._getRecorderInFrame().sap.ui.test.OpaPlugin)();
-							Opa5.assert.ok(this._getRecorderInFrame().__opaPlugin__, "Should load Opa plugin instance in recorder frame");
-						}.bind(this)
+							// save the plugin for later (to check recorder's controls)
+							Opa5.getContext().recorderOpaPlugin = new (Opa5.getContext().recorderWindow.sap.ui.test.OpaPlugin)();
+							Opa5.assert.ok(Opa5.getContext().recorderOpaPlugin, "Should load Opa plugin instance in recorder frame");
+						}
 					});
 				},
 				errorMessage: "Cannot start test recorder"
 			});
-		},
-		_getRecorderInFrame: function () {
-			return Opa5.getJQuery()("#sap-ui-test-recorder-frame")[0].contentWindow;
 		}
 	});
 });

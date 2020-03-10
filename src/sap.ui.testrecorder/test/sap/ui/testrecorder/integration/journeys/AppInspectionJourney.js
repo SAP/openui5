@@ -40,7 +40,7 @@ sap.ui.define([
 		}
 	}];
 
-	QUnit.module("Control Inspector -- select from app");
+	QUnit.module("Control inspection -- select from app");
 
 	opaTest("Should open the recorder", function (Given, When, Then) {
 		Given.iStartMyMockApp().and.iStartRecorder();

@@ -11,8 +11,8 @@ sap.ui.define([
 				iSelectItem: function (sText) {
 					this.waitFor({
 						matchers: function () {
-							return this._getRecorderInFrame().jQuery("tag:contains(" + sText + ")");
-						}.bind(this),
+							return Opa5.getContext().recorderWindow.jQuery("tag:contains(" + sText + ")");
+						},
 						actions: function ($item) {
 							$item.click();
 						},
@@ -21,25 +21,29 @@ sap.ui.define([
 				},
 				iSelectActionWithItem: function (sText, sAction) {
 					this.waitFor({
-						matchers: [function () {
-							return this._getRecorderInFrame().jQuery("tag:contains(" + sText + ")");
-						}.bind(this), function ($item) {
-							// workaround for limitations for right click in iframe
-							this._getRecorderInFrame().sap.ui.testrecorder.interaction.ContextMenu.show({
-								domElementId: $item.parent().attr("data-id"),
-								location: {
-									x: $item.offset().left,
-									y: $item.offset().top
-								},
-								withEvents: true,
-								items: {
-									highlight: false
-								}
-							});
-							return true;
-						}.bind(this), function () {
-							return this._getRecorderInFrame().jQuery("div:contains(" + sAction + "):last");
-						}.bind(this)],
+						matchers: [
+							function () {
+								return Opa5.getContext().recorderWindow.jQuery("tag:contains(" + sText + ")");
+							},
+							function ($item) {
+								// workaround for limitations for right click in iframe
+								Opa5.getContext().recorderWindow.sap.ui.testrecorder.interaction.ContextMenu.show({
+									domElementId: $item.parent().attr("data-id"),
+									location: {
+										x: $item.offset().left,
+										y: $item.offset().top
+									},
+									withEvents: true,
+									items: {
+										highlight: false
+									}
+								});
+								return true;
+							},
+							function () {
+								return Opa5.getContext().recorderWindow.jQuery("div:contains(" + sAction + "):last");
+							}
+						],
 						actions: function ($item) {
 							$item.click();
 						},
@@ -52,9 +56,9 @@ sap.ui.define([
 				iShouldSeeTheHighlightedItem: function (sText) {
 					this.waitFor({
 						matchers: function () {
-							var oTag = this._getRecorderInFrame().jQuery("tag:contains(" + sText + ")");
+							var oTag = Opa5.getContext().recorderWindow.jQuery("tag:contains(" + sText + ")");
 							return oTag.parent().attr("selected");
-						}.bind(this),
+						},
 						success: function (bSelected) {
 							Opa5.assert.ok(bSelected, "Item should be highlighted");
 						},

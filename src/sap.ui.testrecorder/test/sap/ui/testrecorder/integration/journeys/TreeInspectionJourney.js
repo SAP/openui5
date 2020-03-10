@@ -20,7 +20,7 @@ sap.ui.define([
 		text: "ui-area"
 	}];
 
-	QUnit.module("Control Inspector - select from tree");
+	QUnit.module("Control inspection - select from tree");
 
 	opaTest("Should show a control's properties and bindings", function (Given, When, Then) {
 		Given.iStartMyMockRecorder();
