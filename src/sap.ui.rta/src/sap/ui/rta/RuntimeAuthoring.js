@@ -1769,6 +1769,8 @@ function(
 			sReason = "MSG_RELOAD_WITHOUT_DRAFT";
 		} else if (oReloadInfo.changesNeedReload) {
 			sReason = "MSG_RELOAD_NEEDED";
+		} else if (oReloadInfo.hasDraftParameter) {
+			sReason = "MSG_RELOAD_REMOVE_DRAFT_PARAMETER";
 		}
 
 		return Utils._showMessageBox(
@@ -1798,11 +1800,12 @@ function(
 			var oReloadInfo = {
 				changesNeedReload: aArgs[0],
 				hasHigherLayerChanges: aArgs[1],
-				hasDraftChanges: aArgs[2]
+				hasDraftChanges: aArgs[2],
+				hasDraftParameter: this._hasParameter(FlexUtils.getParsedURLHash(), LayerUtils.FL_DRAFT_PARAM)
 			};
 			if (oReloadInfo.changesNeedReload || oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges
 				// If a draft was initially available, the url parameter must be removed on exit - which triggers a soft reload
-				|| this._hasParameter(FlexUtils.getParsedURLHash(), LayerUtils.FL_DRAFT_PARAM)) {
+				|| oReloadInfo.hasDraftParameter) {
 				var sRestart = this._RESTART.RELOAD_PAGE;
 				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes (changesNeedReload = true)
 				if (!oReloadInfo.changesNeedReload && FlexUtils.getUshellContainer()) {
