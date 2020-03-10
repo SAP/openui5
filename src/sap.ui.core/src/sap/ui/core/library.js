@@ -1122,6 +1122,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 * @enum {string}
 	 * @public
 	 * @since 1.62.0
+	 * @see {@link fiori:/how-to-use-semantic-colors/ Semantic Colors}
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.IndicationColor = {
@@ -1708,6 +1709,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 *
 	 * @enum {string}
 	 * @public
+	 * @see {@link fiori:/how-to-use-semantic-colors/ Semantic Colors}
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.0
 	 */
