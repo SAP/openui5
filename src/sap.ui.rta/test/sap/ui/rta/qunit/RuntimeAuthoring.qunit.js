@@ -270,10 +270,22 @@ function(
 			};
 
 			return this.oRta._isDraftAvailable()
-			.then(function(bDraftAvailable) {
-				assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
-				assert.deepEqual(oDraftAvailableStub.lastCall.args[0], oPropertyBag, "and the property bag was set correctly");
-			});
+				.then(function(bDraftAvailable) {
+					assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
+					assert.deepEqual(oDraftAvailableStub.lastCall.args[0], oPropertyBag, "and the property bag was set correctly");
+				});
+		});
+
+		QUnit.test("when RTA is started in the customer layer, and no uShell is available", function(assert) {
+			this.oRta._bVersioningEnabled = true;
+			var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable");
+			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
+
+			return this.oRta._initVersioning()
+				.then(function() {
+					assert.equal(this.oRta._bVersioningEnabled, false, "then the 'versioningEnabled' is false");
+					assert.deepEqual(oDraftAvailableStub.callCount, 0, "and the draft available was not checked");
+				}.bind(this));
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, no changes yet done", function(assert) {
