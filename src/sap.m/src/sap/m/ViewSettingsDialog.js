@@ -16,6 +16,7 @@ sap.ui.define([
 	'./Dialog',
 	'./Button',
 	'./ToggleButton',
+	'./Title',
 	'./Label',
 	'./NavContainer',
 	'./Bar',
@@ -46,6 +47,7 @@ function(
 	Dialog,
 	Button,
 	ToggleButton,
+	Title,
 	Label,
 	NavContainer,
 	Bar,
@@ -719,7 +721,7 @@ function(
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.setTitle = function(sTitle) {
-		this._getTitleLabel().setText(sTitle);
+		this._getDialogTitleControl().setText(sTitle);
 		this.setProperty("title", sTitle);
 		return this;
 	};
@@ -1721,14 +1723,15 @@ function(
 	};
 
 	/**
-	 * Lazy initialization of the internal title label.
-	 * @returns {sap.m.Label} The created title label
+	 * Lazy initialization of the internal sap.m.Title control.
+	 * @returns {sap.m.Title} The created control
 	 * @private
 	 */
-	ViewSettingsDialog.prototype._getTitleLabel = function() {
+	ViewSettingsDialog.prototype._getDialogTitleControl = function() {
 		if (this._titleLabel === undefined) {
-			this._titleLabel = new Label(this._sTitleLabelId, {
-				text : this._rb.getText("VIEWSETTINGS_TITLE")
+			this._titleLabel = new Title(this._sTitleLabelId, {
+				text : this._rb.getText("VIEWSETTINGS_TITLE"),
+				level: "H5"
 			}).addStyleClass("sapMVSDTitle");
 		}
 		return this._titleLabel;
@@ -1793,7 +1796,7 @@ function(
 	ViewSettingsDialog.prototype._getHeader = function() {
 		if (this._header === undefined) {
 			this._header = new Bar({
-				contentMiddle : [ this._getTitleLabel() ]
+				contentMiddle : [ this._getDialogTitleControl() ]
 			}).addStyleClass("sapMVSDBar");
 		}
 
@@ -2712,7 +2715,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._switchToPage = function(vWhich, oItem) {
 		var i               = 0,
-			oTitleLabel     = this._getTitleLabel(),
+			oTitleLabel     = this._getDialogTitleControl(),
 			oHeader         = this._getHeader(),
 			oSubHeader      = this._getSubHeader();
 
