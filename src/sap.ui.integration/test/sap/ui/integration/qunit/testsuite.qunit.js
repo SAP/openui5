@@ -15,7 +15,8 @@ sap.ui.define(function () {
 				libs: ["sap.f", "sap.m", "sap.ui.integration"], // Libraries to load upfront in addition to the library which is tested, if null no libs are loaded
 				noConflict: true,
 				// preload: "auto",
-				"xx-waitForTheme": "init"
+				"xx-waitForTheme": "init",
+				"xx-supportedLanguages": ""
 			},
 			coverage: {
 				only: ["sap/ui/integration"]

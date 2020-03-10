@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/util/ObjectPath",
-	"sap/base/util/merge",
 	"sap/base/util/each",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
@@ -33,7 +32,6 @@ sap.ui.define([
 	Control,
 	ResourceModel,
 	ObjectPath,
-	merge,
 	each,
 	deepClone,
 	deepEqual,
@@ -143,15 +141,11 @@ sap.ui.define([
 				 *   config.i18n {string|array} Module path or array of paths for i18n property files. i18n binding, for example, <code>{i18n>key}</code> is available in the <code>/properties<code> section, e.g. for <code>label</code>
 				 */
 				"config": {
-					type: "object"
-				},
-
-				"_defaultConfig": {
 					type: "object",
-					visibility: "hidden",
-					// do not override during inheritance, use this.addDefaultConfig instead!
 					defaultValue: {
-						i18n: "sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
+						"i18n": [
+							"sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
+						]
 					}
 				}
 			},
@@ -283,37 +277,35 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * To be used only in constructor when inheriting from <code>BaseEditor</code> to add additional default configuration.
-	 * @param  {object} oConfig - To merge with previous default
-	 */
-	BaseEditor.prototype.addDefaultConfig = function (oConfig) {
-		this.setProperty("_defaultConfig",
-			this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
+	BaseEditor.prototype.setConfig = function (oConfig) {
+		PropertyEditorFactory.deregisterAllTypes();
+		PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
+
+		// Backwards compatibility. If no i18n configuration specified, we use default one.
+		var oTarget = {};
+		if (!oConfig.i18n) {
+			oTarget.i18n = this.getMetadata().getProperty("config").getDefaultValue().i18n;
+		}
+
+		this.setProperty(
+			"config",
+			this._mergeConfig(oTarget, oConfig),
+			false
 		);
-		this.setConfig(this._oUnmergedConfig || {});
-		return this;
+		this._initialize();
 	};
 
-	BaseEditor.prototype.setConfig = function (oConfig) {
-		this._oUnmergedConfig = oConfig;
-		return this._setConfig(
-			this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
+	BaseEditor.prototype.addConfig = function (oConfig) {
+		return this.setConfig(
+			this._mergeConfig(this.getConfig(), oConfig)
 		);
 	};
 
 	BaseEditor.prototype._mergeConfig = function (oTarget, oSource) {
-		var oResult = merge({}, oTarget, oSource);
+		var oResult = _merge({}, oTarget, oSource);
 		// concat i18n properties to avoid override
 		oResult.i18n = [].concat(oTarget.i18n || [], oSource.i18n || []);
 		return oResult;
-	};
-
-	BaseEditor.prototype._setConfig = function (oConfig) {
-		PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
-		var vReturn = this.setProperty("config", oConfig, false);
-		this._initialize();
-		return vReturn;
 	};
 
 	BaseEditor.prototype._reset = function () {
@@ -402,7 +394,6 @@ sap.ui.define([
 				}.bind(this));
 		}
 	};
-
 
 	BaseEditor.prototype._createDataModel = function () {
 		var oModel = new JSONModel();
