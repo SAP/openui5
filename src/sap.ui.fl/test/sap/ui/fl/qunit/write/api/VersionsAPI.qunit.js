@@ -337,5 +337,35 @@ sap.ui.define([
 					assert.equal(oCallingPropertyBag.updateState, mPropertyBag.updateState, "the flag for updating the state was passed");
 				});
 		});
+
+		QUnit.test("when a AppComponent was found", function(assert) {
+			var sComponentId = "comSapApp";
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				selector: new Control(),
+				updateState: true
+			};
+
+			var oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getId: function () {
+					return sComponentId;
+				}
+			};
+
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+
+			var sReference = "com.sap.app";
+			sandbox.stub(Utils, "getComponentClassName").returns(sReference);
+			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves(true);
+
+			return VersionsAPI.discardDraft(mPropertyBag)
+				.then(function(oResult) {
+					assert.equal(oResult, true, "then result was returned");
+					assert.deepEqual(oDiscardStub.getCall(0).args[0].appComponent, oAppComponent, "the oAppComponent was passed");
+				});
+		});
 	});
 });

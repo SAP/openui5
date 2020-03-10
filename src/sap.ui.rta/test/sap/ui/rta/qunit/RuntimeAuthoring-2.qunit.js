@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/DesignTime",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
+	MessageBox,
 	MessageToast,
 	ContextMenuPlugin,
 	DesignTime,
@@ -463,8 +465,8 @@ sap.ui.define([
 
 		QUnit.test("when draft changes already existed and the draft was activated and user exits RTA...", function(assert) {
 			givenDraftParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
-			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.NOT_NEEDED);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+			sandbox.stub(this.oRta, "_handleReloadMessageBoxOnExit").resolves();
 
 			return this.oRta.stop().then(function() {
 				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
@@ -804,6 +806,22 @@ sap.ui.define([
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl
 			});
+			sandbox.stub(FlexUtils, "getUshellContainer").returns({
+				getService: function () {
+					return {
+						toExternal: function() {
+							return true;
+						},
+						parseShellHash: function () {
+							return {
+								params: {
+									"sap-ui-fl-draft": [Layer.CUSTOMER]
+								}
+							};
+						}
+					};
+				}
+			});
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -883,8 +901,8 @@ sap.ui.define([
 		QUnit.test("when _onActivateDraft is called ", function(assert) {
 			var oActivateDraftStub;
 			var oShowMessageToastStub;
-			var oSetVersionLabelStub;
 			var oRemoveAllCommandsSpy;
+			var oSetVersionLabelStub;
 			var oToolbarSetDraftEnabledSpy;
 			var oRta = this.oRta;
 			var sVersionTitle = "aVersionTitle";
@@ -898,8 +916,8 @@ sap.ui.define([
 				oRta.bInitialDraftAvailable = true;
 				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").returns(Promise.resolve(true));
 				oShowMessageToastStub = sandbox.stub(oRta, "_showMessageToast");
-				oSetVersionLabelStub = sandbox.stub(oRta, "_setVersionLabel");
 				oRemoveAllCommandsSpy = sandbox.spy(oRta.getCommandStack(), "removeAllCommands");
+				oSetVersionLabelStub = sandbox.stub(oRta, "_setVersionLabel");
 				oToolbarSetDraftEnabledSpy = sandbox.spy(oRta.getToolbar(), "setDraftEnabled");
 			})
 			.then(oRta._onActivateDraft.bind(oRta, oEvent))
@@ -912,17 +930,60 @@ sap.ui.define([
 				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
 				assert.equal(oRta.bInitialDraftAvailable, false, "and the initialDraftAvailable is removed");
 				assert.equal(oToolbarSetDraftEnabledSpy.callCount, 1, "and the draft info is set once");
+				assert.equal(oToolbarSetDraftEnabledSpy.getCall(0).args[0], false, "to false");
 				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
 				assert.equal(oSetVersionLabelStub.callCount, 1, "and set version title is called");
 			}.bind(this));
 		});
 
 		QUnit.test("when _onDiscardDraft is called ", function(assert) {
-			var fnDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").returns(Promise.resolve(true));
+			var oDiscardDraftStub;
+			var oHandleDiscardDraftStub;
+			var oHandleDraftParameterStub;
+			var oRemoveAllCommandsSpy;
+			var oStopSpy;
+			var oRta = this.oRta;
+			var mParsedHash = {
+				params: {
+					"sap-ui-fl-draft": [Layer.CUSTOMER]
+				}
+			};
 
-			return this.oRta._onDiscardDraft().then(function() {
-				assert.ok(fnDiscardDraftStub.calledOnce, "then the discardDraft() method is called once ");
-			});
+			var done = assert.async();
+
+			sandbox.stub(MessageBox, "confirm").callsFake(function(sMessage, mParameters) {
+				assert.equal(sMessage, this.oRta._getTextResources().getText("MSG_DRAFT_DISCARD_DIALOG"), "then the message is correct");
+				mParameters.onClose("OK");
+				assert.equal(oDiscardDraftStub.callCount, 1, "then the discardDraft() method is called once");
+				assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
+				assert.equal(oHandleDraftParameterStub.callCount, 1, "then _handleDraftParameter was called");
+				assert.equal(oHandleDraftParameterStub.getCall(0).args[0], mParsedHash, "then _handleDraftParameter was called with the correct parameters");
+
+				mParameters.onClose("notOK");
+				assert.equal(oDiscardDraftStub.callCount, 1, "then _handleDiscard was not called again");
+				assert.equal(oHandleDraftParameterStub.callCount, 1, "then _handleDraftParameter was not called again");
+				done();
+			}.bind(this));
+
+			sandbox.stub(oRta, "_isDraftAvailable").returns(Promise.resolve(true));
+			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
+
+			return oRta.start().then(function () {
+				oRta.bInitialDraftAvailable = true;
+				oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").returns(Promise.resolve(true));
+				oRemoveAllCommandsSpy = sandbox.spy(oRta.getCommandStack(), "removeAllCommands");
+				oHandleDiscardDraftStub = sandbox.spy(oRta, "_handleDiscard");
+				oHandleDraftParameterStub = sandbox.spy(oRta, "_handleDraftParameter");
+				oStopSpy = sandbox.spy(oRta, "stop");
+			})
+			.then(oRta._onDiscardDraft.bind(oRta, false))
+			.then(function() {
+				var oDiscardCallPropertyBag = oDiscardDraftStub.getCall(0).args[0];
+				assert.equal(oDiscardCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
+				assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
+				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
+				assert.equal(oStopSpy.callCount, 1, "then stop was called");
+			}.bind(this));
 		});
 	});
 
