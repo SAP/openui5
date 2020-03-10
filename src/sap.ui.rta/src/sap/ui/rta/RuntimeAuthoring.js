@@ -917,10 +917,10 @@ function(
 					if (sReload !== this._RESTART.NOT_NEEDED) {
 						this._handleParametersOnExit(true).then(function (mParsedHash) {
 							this._triggerCrossAppNavigation(mParsedHash);
+							if (sReload === this._RESTART.RELOAD_PAGE) {
+								this._reloadPage();
+							}
 						}.bind(this));
-						if (sReload === this._RESTART.RELOAD_PAGE) {
-							this._reloadPage();
-						}
 					}
 				}.bind(this));
 			}.bind(this))
@@ -1627,7 +1627,7 @@ function(
 
 				/*
 				In case we entered RTA without a draft and created dirty changes,
-				we need to add sap-ui-fl-draft=false, to trigger the CrossAppNavigation on exit.
+				we need to add sap-ui-fl-version=false, to trigger the CrossAppNavigation on exit.
 				*/
 				mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = ["false"];
 			}
