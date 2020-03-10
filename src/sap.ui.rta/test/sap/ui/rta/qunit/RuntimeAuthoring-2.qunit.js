@@ -82,7 +82,7 @@ sap.ui.define([
 
 	function givenDraftParameterIsSetTo(sDraftLayer, fnFLPToExternalStub) {
 		givenAnFLP.call(this, fnFLPToExternalStub, {
-			"sap-ui-fl-draft" : [sDraftLayer]
+			"sap-ui-fl-version" : [sDraftLayer]
 		});
 	}
 
@@ -137,7 +137,7 @@ sap.ui.define([
 			return false;
 		}
 		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
-		return !!mFLPArgs.params["sap-ui-fl-draft"];
+		return !!mFLPArgs.params["sap-ui-fl-version"];
 	}
 
 	function isReloadedWithDraftFalseParameter(fnFLPToExternalStub) {
@@ -146,8 +146,8 @@ sap.ui.define([
 		}
 		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
 		return mFLPArgs.params &&
-			mFLPArgs.params["sap-ui-fl-draft"] &&
-			mFLPArgs.params["sap-ui-fl-draft"][0] === "false" || false;
+			mFLPArgs.params["sap-ui-fl-version"] &&
+			mFLPArgs.params["sap-ui-fl-version"][0] === "false" || false;
 	}
 
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
@@ -444,7 +444,7 @@ sap.ui.define([
 						parseShellHash: function () {
 							return {
 								params: {
-									"sap-ui-fl-draft": [Layer.CUSTOMER]
+									"sap-ui-fl-version": [Layer.CUSTOMER]
 								}
 							};
 						}
@@ -828,7 +828,7 @@ sap.ui.define([
 						parseShellHash: function () {
 							return {
 								params: {
-									"sap-ui-fl-draft": [Layer.CUSTOMER]
+									"sap-ui-fl-version": [Layer.CUSTOMER]
 								}
 							};
 						}
@@ -958,7 +958,7 @@ sap.ui.define([
 			var oRta = this.oRta;
 			var mParsedHash = {
 				params: {
-					"sap-ui-fl-draft": [Layer.CUSTOMER]
+					"sap-ui-fl-version": [Layer.CUSTOMER]
 				}
 			};
 
@@ -1153,7 +1153,7 @@ sap.ui.define([
 		QUnit.test("and the url parameter for draft is present in the parsed hash", function(assert) {
 			var mParsedHash = {
 				params: {
-					"sap-ui-fl-draft": [Layer.CUSTOMER]
+					"sap-ui-fl-version": [Layer.CUSTOMER]
 				}
 			};
 
