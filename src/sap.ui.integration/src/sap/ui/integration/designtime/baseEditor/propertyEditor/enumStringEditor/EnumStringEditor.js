@@ -30,30 +30,44 @@ sap.ui.define([
 	 */
 	var EnumStringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor",
-
-		_onChange: function() {
-			var oCombo = this.getContent();
-			if (this._validate()) {
-				this.setValue(oCombo.getSelectedKey() || oCombo.getValue());
-			}
-		},
-
-		_validate: function() {
-			var oCombo = this.getContent();
-			var sSelectedKey = oCombo.getSelectedKey();
-			var sValue = oCombo.getValue();
-
-			if (sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {
-				oCombo.setValueState("Error");
-				oCombo.setValueStateText(this.getI18nProperty("BASE_EDITOR.ENUM.INVALID_SELECTION_OR_BINDING"));
-				return false;
-			}
-
-			oCombo.setValueState("None");
-			return true;
-		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
+
+	EnumStringEditor.prototype._onChange = function () {
+		var oComboBox = this.getContent();
+		var sSelectedKey = oComboBox.getSelectedKey();
+		var sValue = oComboBox.getValue();
+		var sError = this._validate(sSelectedKey, sValue);
+		if (!sError) {
+			this.setValue(sSelectedKey || sValue);
+			this._setInputState(true);
+		} else {
+			this._setInputState(false, this.getI18nProperty(sError));
+		}
+	};
+
+	EnumStringEditor.prototype._validate = function (sSelectedKey, sValue) {
+		var oConfig = this.getConfig();
+		if (oConfig["allowBindings"] === false && isValidBindingString(sValue, false)) {
+			return "BASE_EDITOR.ENUM.BINDING_NOT_ALLOWED";
+		}
+		if (!oConfig["allowCustomValues"] && sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {
+			return "BASE_EDITOR.ENUM.CUSTOM_VALUES_NOT_ALLOWED";
+		}
+		if (!isValidBindingString(sValue)) {
+			return "BASE_EDITOR.ENUM.INVALID_SELECTION";
+		}
+	};
+
+	EnumStringEditor.prototype._setInputState = function (bIsValid, sErrorMessage) {
+		var oComboBox = this.getContent();
+		if (bIsValid) {
+			oComboBox.setValueState("None");
+		} else {
+			oComboBox.setValueState("Error");
+			oComboBox.setValueStateText(sErrorMessage);
+		}
+	};
 
 	return EnumStringEditor;
 });
