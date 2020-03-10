@@ -126,6 +126,31 @@ sap.ui.define([
 			this._getOriginOfManagedObjectModelBinding();
 		},
 		/**
+		 * Checks if this list binding might by affected by changes inside the given control.
+		 * This means the control is inside the subtree spanned by the managed object whose
+		 * aggregation or property represents this list binding.
+		 *
+		 * @param {sap.ui.base.ManagedObject} oControl The possible descendant
+		 * @returns {boolean}
+		 *    <code>true</code> if the list binding might be affected by changes inside the given
+		 *    control, <code>false</code> otherwise
+		 * @private
+		 */
+		_mightBeAffectedByChangesInside : function(oControl) {
+			while ( oControl ) {
+				if ( oControl.getParent() === this._oOriginMO ) {
+					// Note: No check for _sParentAggregation because of possible aggregation
+					// forwarding.
+					return true;
+				}
+				// Note: For aggregation forwarding the parent is hopefully contained in the
+				// origin managed object otherwise this binding is not refreshed correct
+				oControl = oControl.getParent();
+			}
+
+			return false;
+		},
+		/**
 		 * Use the id of the ManagedObject instance as the unique key to identify
 		 * the entry in the extended change detection. The default implementation
 		 * in the parent class which uses JSON.stringify to serialize the instance
@@ -939,6 +964,14 @@ sap.ui.define([
 					_adaptDeepChildObservation(this, oChange.child, mAggregations[sKey], false);
 				}
 			}
+		} else if (oChange.type === "property") {
+			// list bindings can be affected
+			this.aBindings.forEach(function (oBinding) {
+				if (oBinding._mightBeAffectedByChangesInside
+					&& oBinding._mightBeAffectedByChangesInside(oChange.object)) {
+					oBinding.checkUpdate(true/*bForceUpdate*/);
+				}
+			});
 		}
 
 		this.checkUpdate();
