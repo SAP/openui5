@@ -3411,7 +3411,7 @@ sap.ui.define([
 			aDialogAriaLabelledBy = this.oVSD._getDialog().getAriaLabelledBy();
 
 		// Assert
-		assert.strictEqual(this.oVSD._getDialogTitleControl().getId(), sExpectedId, "id of the Dialog title is equal to the 'dialogId + -title' suffix");
+		assert.strictEqual(this.oVSD._getTitleLabel().getId(), sExpectedId, "id of the Dialog title is equal to the 'dialogId + -title' suffix");
 		assert.strictEqual(aDialogAriaLabelledBy[0], sExpectedId, "ariaLabeledBy attribute of the Dialog is equal to the Dialog title id");
 		assert.strictEqual(aDialogAriaLabelledBy.indexOf(this.oVSD._sFilterDetailTitleLabelId), -1,
 			"VSD's filter detail title isn't referenced when the filter detail page isn't currently opened");
