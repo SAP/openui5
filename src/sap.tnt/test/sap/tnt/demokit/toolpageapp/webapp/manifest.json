@@ -3,7 +3,23 @@
 	"sap.app": {
 		"id": "sap.ui.demo.toolpageapp",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"fallbackLocale": "en",
+			"supportedLocales": ["en", "de"],
+			"terminologies": {
+				"sports": {
+					"bundleUrl": "i18n/terminologies/sports/i18n.terminologies.sports.properties",
+					"bundleUrlRelativeTo": "manifest",
+					"supportedLocales": ["en", "de"]
+				},
+				"travel": {
+					"bundleUrl": "i18n/terminologies/travel/i18n.terminologies.travel.properties",
+					"bundleUrlRelativeTo": "manifest",
+					"supportedLocales": ["en", "de"]
+				}
+			}
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
@@ -47,7 +63,65 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.toolpageapp.i18n.i18n"
+					"bundleUrl": "i18n/i18n.properties",
+					"async": true,
+					"fallbackLocale": "en",
+					"supportedLocales": ["en", "de"],
+					"terminologies": {
+						"sports": {
+							"bundleUrl": "i18n/terminologies/sports/i18n.terminologies.sports.properties",
+							"bundleUrlRelativeTo": "manifest",
+							"supportedLocales": ["en", "de"]
+						},
+						"travel": {
+							"bundleUrl": "i18n/terminologies/travel/i18n.terminologies.travel.properties",
+							"bundleUrlRelativeTo": "manifest",
+							"supportedLocales": ["en", "de"]
+						}
+					},
+					"enhanceWith": [
+						{
+							"bundleUrl": "reuse/appvar1/i18n/i18n.properties",
+							"fallbackLocale": "en",
+							"supportedLocales": [
+								"en", "de"
+							],
+							"terminologies": {
+								"sports": {
+									"bundleUrl": "reuse/appvar1/i18n/terminologies/sports/i18n.terminologies.sports.properties",
+									"bundleUrlRelativeTo": "manifest",
+									"supportedLocales": [
+										"en", "de"
+									]
+								},
+								"travel": {
+									"bundleUrl": "reuse/appvar1/i18n/terminologies/travel/i18n.terminologies.travel.properties",
+									"bundleUrlRelativeTo": "manifest",
+									"supportedLocales": [
+										"en", "de"
+									]
+								}
+							}
+						},
+						{
+							"bundleUrl": "reuse/appvar2/i18n/i18n.properties",
+							"bundleUrlRelativeTo": "manifest",
+							"supportedLocales": [
+								"en",
+								"de"
+							],
+							"fallbackLocale": "en",
+							"terminologies": {
+								"travel": {
+									"bundleUrl": "reuse/appvar2/i18n/terminologies/travel/i18n.terminologies.travel.properties",
+									"bundleUrlRelativeTo": "manifest",
+									"supportedLocales": [
+										"en", "de"
+									]
+								}
+							}
+						}
+					]
 				}
 			},
 			"side": {
@@ -87,9 +161,12 @@
 					]
 				},
 				{
-					"pattern": "SystemSettings",
+					"pattern": "MasterSettings/SystemSettings",
 					"name": "systemSettings",
-					"target": "detailSettings"
+					"target": [
+						"detailSettings",
+						"masterSettings"
+					]
 				},
 				{
 					"pattern": "Statistics",
