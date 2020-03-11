@@ -51,7 +51,7 @@ sap.ui.define([
 	});
 
 	StringEditor.prototype.setValue = function (vValue) {
-		if (typeof vValue !== "undefined") {
+		if (vValue != null) {
 			vValue = vValue.toString();
 		}
 		BasePropertyEditor.prototype.setValue.call(this, vValue);
