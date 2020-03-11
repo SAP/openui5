@@ -12283,6 +12283,8 @@ sap.ui.define([
 				target: {value: "A Item"},
 				srcControl: this.oCombobox,
 				isMarked: function () {
+				},
+				setMarked:  function () {
 				}
 			},
 			fnFilterVisibleItems = function (aItems) {
