@@ -780,15 +780,35 @@ sap.ui.define([
 	 * @see #getQueryOptionsFromParameters
 	 */
 	ODataParentBinding.prototype.fetchResolvedQueryOptions = function (oContext) {
-		var oModel = this.oModel,
+		var fnFetchMetadata,
+			mConvertedQueryOptions,
+			sMetaPath,
+			oModel = this.oModel,
 			mQueryOptions = this.getQueryOptionsFromParameters();
 
-		if (!oModel.bAutoExpandSelect) {
+		if (!(oModel.bAutoExpandSelect && mQueryOptions.$select)) {
 			return SyncPromise.resolve(mQueryOptions);
 		}
 
-		return _Helper.fetchResolvedSelect(oModel.oInterface.fetchMetadata,
-			_Helper.getMetaPath(oModel.resolve(this.sPath, oContext)), mQueryOptions);
+		fnFetchMetadata = oModel.oInterface.fetchMetadata;
+		sMetaPath = _Helper.getMetaPath(oModel.resolve(this.sPath, oContext));
+		mConvertedQueryOptions = Object.assign({}, mQueryOptions, {$select : []});
+		return SyncPromise.all(mQueryOptions.$select.map(function (sSelectPath) {
+			return _Helper.fetchPropertyAndType(
+				fnFetchMetadata, sMetaPath + "/" + sSelectPath
+			).then(function () {
+				var mWrappedQueryOptions = _Helper.wrapChildQueryOptions(
+						sMetaPath, sSelectPath, {}, fnFetchMetadata);
+
+				if (mWrappedQueryOptions) {
+					_Helper.aggregateQueryOptions(mConvertedQueryOptions, mWrappedQueryOptions);
+				} else {
+					_Helper.addToSelect(mConvertedQueryOptions, [sSelectPath]);
+				}
+			});
+		})).then(function () {
+			return mConvertedQueryOptions;
+		});
 	};
 
 	/**

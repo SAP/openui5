@@ -479,44 +479,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Resolves all paths in $select containing navigation properties and converts them into
-		 * appropriate $expand.
-		 *
-		 * @param {function} fnFetchMetadata Function which fetches metadata for a given meta path
-		 * @param {string} sMetaPath The meta path of the binding having these query options
-		 * @param {object} mQueryOptions The query options to resolve
-		 * @returns {sap.ui.base.SyncPromise<object>} A promise that resolves with the converted
-		 *   query options when all paths in $select have been processed; mQueryOptions remains
-		 *   unchanged
-		 */
-		fetchResolvedSelect : function (fnFetchMetadata, sMetaPath, mQueryOptions) {
-			var mConvertedQueryOptions;
-
-			if (!mQueryOptions.$select) {
-				return SyncPromise.resolve(mQueryOptions);
-			}
-
-			mConvertedQueryOptions = Object.assign({}, mQueryOptions);
-			mConvertedQueryOptions.$select = [];
-			return SyncPromise.all(mQueryOptions.$select.map(function (sSelectPath) {
-				return _Helper.fetchPropertyAndType(
-					fnFetchMetadata, sMetaPath + "/" + sSelectPath
-				).then(function () {
-					var mWrappedQueryOptions = _Helper.wrapChildQueryOptions(
-							sMetaPath, sSelectPath, {}, fnFetchMetadata);
-
-					if (mWrappedQueryOptions) {
-						_Helper.aggregateQueryOptions(mConvertedQueryOptions, mWrappedQueryOptions);
-					} else {
-						_Helper.addToSelect(mConvertedQueryOptions, [sSelectPath]);
-					}
-				});
-			})).then(function () {
-				return mConvertedQueryOptions;
-			});
-		},
-
-		/**
 		 * Fires a change event to all listeners for the given path in mChangeListeners.
 		 *
 		 * @param {object} mChangeListeners A map of change listeners by path
