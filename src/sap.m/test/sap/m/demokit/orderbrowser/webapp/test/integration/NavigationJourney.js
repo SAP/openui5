@@ -22,7 +22,6 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheDetailPage.iShouldSeeTheRememberedObject().
-			and.iShouldSeeNoBusyIndicator().
 			and.iShouldSeeHeaderActionButtons();
 		Then.onTheBrowserPage.iShouldSeeTheHashForTheRememberedObject();
 	});
@@ -51,7 +50,7 @@ sap.ui.define([
 		When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
-		Then.onTheDetailPage.iShouldSeeTheRememberedObject().and.iShouldSeeNoBusyIndicator();
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
 		Then.onTheMasterPage.theRememberedListItemShouldBeSelected();
 	});
 
@@ -92,8 +91,8 @@ sap.ui.define([
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartMyApp({
-			delay : 1000,
-			metadataError : true
+			delay: 7000,
+			metadataError: true
 		});
 
 		// Assertions
@@ -109,8 +108,8 @@ sap.ui.define([
 	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartMyApp({
-			delay : 1000,
-			errorType : 'serverError'
+			delay: 7000,
+			errorType: 'serverError'
 		});
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();

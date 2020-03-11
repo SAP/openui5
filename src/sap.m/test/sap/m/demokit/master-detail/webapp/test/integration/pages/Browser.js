@@ -4,31 +4,31 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.createPageObjects({
-		onTheBrowserPage : {
+		onTheBrowserPage: {
 
-			actions : {
+			actions: {
 
-				iChangeTheHashToObjectN : function (iObjIndex) {
-					return this.waitFor(this.createAWaitForAnEntitySet({
-						entitySet : "Objects",
-						success : function (aEntitySet) {
+				iChangeTheHashToObjectN: function (iObjIndex) {
+					return this.waitFor({
+						success: function () {
+							var aEntitySet = this.getEntitySet("Objects");
 							Opa5.getHashChanger().setHash("/Objects/" + aEntitySet[iObjIndex].ObjectID);
 						}
-					}));
+					});
 				},
 
-				iChangeTheHashToTheRememberedItem : function () {
+				iChangeTheHashToTheRememberedItem: function () {
 					return this.waitFor({
-						success : function () {
+						success: function () {
 							var sObjectId = this.getContext().currentItem.id;
 							Opa5.getHashChanger().setHash("/Objects/" + sObjectId);
 						}
 					});
 				},
 
-				iChangeTheHashToSomethingInvalid : function () {
+				iChangeTheHashToSomethingInvalid: function () {
 					return this.waitFor({
-						success : function () {
+						success: function () {
 							Opa5.getHashChanger().setHash("/somethingInvalid");
 						}
 					});
@@ -36,36 +36,36 @@ sap.ui.define([
 
 			},
 
-			assertions : {
+			assertions: {
 
-				iShouldSeeTheHashForObjectN : function (iObjIndex) {
-					return this.waitFor(this.createAWaitForAnEntitySet({
-						entitySet : "Objects",
-						success : function (aEntitySet) {
-							var oHashChanger = Opa5.getHashChanger(),
-								sHash = oHashChanger.getHash();
+				iShouldSeeTheHashForObjectN: function (iObjIndex) {
+					return this.waitFor({
+						success: function () {
+							var aEntitySet = this.getEntitySet("Objects");
+							var oHashChanger = Opa5.getHashChanger();
+							var sHash = oHashChanger.getHash();
 							Opa5.assert.strictEqual(sHash, "Objects/" + aEntitySet[iObjIndex].ObjectID, "The Hash is correct");
 						}
-					}));
+					});
 				},
-				iShouldSeeTheHashForTheRememberedObject : function () {
+				iShouldSeeTheHashForTheRememberedObject: function () {
 					return this.waitFor({
-						success : function () {
-							var sObjectId = this.getContext().currentItem.id,
-								oHashChanger = Opa5.getHashChanger(),
-								sHash = oHashChanger.getHash();
+						success: function () {
+							var sObjectId = this.getContext().currentItem.id;
+							var	oHashChanger = Opa5.getHashChanger();
+							var	sHash = oHashChanger.getHash();
 							Opa5.assert.strictEqual(sHash, "Objects/" + sObjectId, "The Hash is not correct");
 						}
 					});
 				},
-				iShouldSeeAnEmptyHash : function () {
+				iShouldSeeAnEmptyHash: function () {
 					return this.waitFor({
-						success : function () {
-							var oHashChanger = Opa5.getHashChanger(),
-								sHash = oHashChanger.getHash();
+						success: function () {
+							var oHashChanger = Opa5.getHashChanger();
+							var	sHash = oHashChanger.getHash();
 							Opa5.assert.strictEqual(sHash, "", "The Hash should be empty");
 						},
-						errorMessage : "The Hash is not Correct!"
+						errorMessage: "The Hash is not Correct!"
 					});
 				}
 

@@ -20,16 +20,18 @@ sap.ui.define([
 	});
 
 	opaTest("Search for the First object should deliver results that contain the firstObject in the name", function (Given, When, Then) {
+		var sTitle = "Object 1";
 		//Actions
-		When.onTheMasterPage.iSearchForTheFirstObject();
+		When.onTheMasterPage.iSearchFor(sTitle);
 
 		// Assertions
-		Then.onTheMasterPage.theListShowsOnlyObjectsWithTheSearchStringInTheirTitle();
+		Then.onTheMasterPage.theListShowsOnlyObjectsContaining(sTitle);
 	});
 
 	opaTest("Entering something that cannot be found into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
 		//Actions
-		When.onTheMasterPage.iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh();
+		When.onTheMasterPage.iSearchForNotFound()
+			.and.iClearTheSearch();
 
 		// Assertions
 		Then.onTheMasterPage.theListHasEntries();
@@ -37,10 +39,10 @@ sap.ui.define([
 
 	opaTest("Entering something that cannot be found into search field and pressing 'search' should display the list's 'not found' message", function (Given, When, Then) {
 		//Actions
-		When.onTheMasterPage.iSearchForSomethingWithNoResults();
+		When.onTheMasterPage.iSearchForNotFound();
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults().
+		Then.onTheMasterPage.iShouldSeeTheNoDataText().
 			and.theListHeaderDisplaysZeroHits();
 	});
 

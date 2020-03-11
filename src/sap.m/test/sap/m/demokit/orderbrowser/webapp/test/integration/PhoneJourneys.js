@@ -2,8 +2,7 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"./arrangements/Startup",
 	"./NavigationJourneyPhone",
-	"./NotFoundJourneyPhone",
-	"./BusyJourneyPhone"
+	"./NotFoundJourneyPhone"
 ], function (Opa5, Startup) {
 	"use strict";
 
