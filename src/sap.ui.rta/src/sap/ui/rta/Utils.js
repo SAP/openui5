@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/base/Log",
+	"sap/base/util/UriParameters",
 	"sap/base/util/restricted/_omit"
 ],
 function(
@@ -26,6 +27,7 @@ function(
 	MessageBox,
 	BindingsExtractor,
 	Log,
+	UriParameters,
 	_omit
 ) {
 	"use strict";
@@ -648,6 +650,56 @@ function(
 			mMap[oItem[sKeyFieldName]] = oItem[sValueFieldName];
 			return mMap;
 		}, {});
+	};
+
+	/**
+	 * Check if the passed parameter name with the parameter value is contained in the url
+	 *
+	 * @param  {string} sParameterName - The parameter name for which should be checked
+	 * @param  {string} sParameterValue - The parameter value for which should be checked
+	 * @return {boolean} True if the parameter and the given value is in the url
+	 */
+	Utils.hasUrlParameterWithValue = function(sParameterName, sParameterValue) {
+		var oUshellContainer = FlexUtils.getUshellContainer();
+		if (oUshellContainer) {
+			var mParsedHash = FlexUtils.getParsedURLHash();
+			return mParsedHash.params &&
+				mParsedHash.params[sParameterName] &&
+				mParsedHash.params[sParameterName][0] === sParameterValue;
+		}
+		var oUriParams = UriParameters.fromQuery(document.location.search);
+		if (!oUriParams) {
+			return false;
+		}
+		var sUriValue = oUriParams.get(sParameterName);
+
+		return sUriValue === sParameterValue;
+	};
+
+	/**
+	 * Add or remove given search parameter from the url
+	 *
+	 * @param  {string} sUrl - The url which be modify
+	 * @param  {string} sParameterName - The parameter name which can be remove or add
+	 * @param  {string} sParameterValue - The parameter value form the parameter name which can be remove or add
+	 * @return {string} The modified url
+	 */
+	Utils.handleUrlParameter = function(sUrl, sParameterName, sParameterValue) {
+		if (Utils.hasUrlParameterWithValue(sParameterName, sParameterValue)) {
+			if (sUrl.startsWith("?")) {
+				sUrl = sUrl.substr(1, sUrl.length);
+			}
+			var aFilterUrl = sUrl.split("&").filter(function(sParameter) {
+				return sParameter !== sParameterName + "=" + sParameterValue;
+			});
+			sUrl = "";
+			if (aFilterUrl.length > 0) {
+				sUrl = "?" + aFilterUrl.toString();
+			}
+		} else {
+			sUrl += (sUrl.length > 0 ? '&' : '?') + sParameterName + "=" + sParameterValue;
+		}
+		return sUrl;
 	};
 
 	return Utils;

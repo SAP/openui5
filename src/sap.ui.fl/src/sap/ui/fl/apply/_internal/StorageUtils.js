@@ -87,13 +87,12 @@ sap.ui.define([
 		return new Promise(function (resolve) {
 			sap.ui.require(aConnectors, function () {
 				Array.from(arguments).forEach(function (oConnector, iIndex) {
-					if (!bLoadApplyConnectors) {
-						if (!mConnectors[iIndex].layers) {
-							mConnectors[iIndex].layers = oConnector.layers;
-						} else {
-							mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
-						}
+					if (!mConnectors[iIndex].layers) {
+						mConnectors[iIndex].layers = oConnector.layers;
+					} else {
+						mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
 					}
+
 					if (bLoadApplyConnectors) {
 						mConnectors[iIndex].applyConnectorModule = oConnector;
 					} else {

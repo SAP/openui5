@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageLayout",
+	"sap/base/util/UriParameters",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/uxap/library"
@@ -36,6 +37,7 @@ function(
 	ObjectPageSection,
 	ObjectPageSubSection,
 	ObjectPageLayout,
+	UriParameters,
 	_omit,
 	sinon,
 	uxapLibrary
@@ -669,6 +671,87 @@ function(
 				assert.ok(false, "should not go here");
 			});
 			assert.equal(vResult, undefined, "the function returns undefined");
+		});
+	});
+
+	QUnit.module("hasUrlParameterWithValue", {
+		before : function() {
+			this.sParameterName = "paramterName";
+			this.sParameterValue = "parameterValue";
+		},
+		afterEach : function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("parameter name doesnt exist", function(assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns(null);
+			var bResult = Utils.hasUrlParameterWithValue(this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, false, "the function returns false");
+		});
+
+		QUnit.test("parameter value empty string", function(assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns("");
+			var bResult = Utils.hasUrlParameterWithValue(this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, false, "the function returns false");
+		});
+
+		QUnit.test("parameter value not equal", function(assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns("notEqual");
+			var bResult = Utils.hasUrlParameterWithValue(this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, false, "the function returns false");
+		});
+
+		QUnit.test("parameter value is equal", function(assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns(this.sParameterValue);
+			var bResult = Utils.hasUrlParameterWithValue(this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, true, "the function returns true");
+		});
+	});
+
+	QUnit.module("handleUrlParameter", {
+		before : function() {
+			this.sParameterName = "paramterName";
+			this.sParameterValue = "parameterValue";
+			this.sSearchParameter = this.sParameterName + "=" + this.sParameterValue;
+			this.sAnotherParamter = "test=true";
+		},
+		afterEach : function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("with hasUrlParameterWithValue is true", function(assert) {
+			var sUrl = "?" + this.sSearchParameter;
+			sandbox.stub(Utils, "hasUrlParameterWithValue").returns(true);
+			var bResult = Utils.handleUrlParameter(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "", "no change in the url");
+		});
+
+		QUnit.test("with hasUrlParameterWithValue is true and another parameter", function(assert) {
+			var sUrl = "?" + this.sAnotherParamter + "&" + this.sSearchParameter;
+			sandbox.stub(Utils, "hasUrlParameterWithValue").returns(true);
+			var bResult = Utils.handleUrlParameter(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "?" + this.sAnotherParamter, "no change in the url");
+		});
+
+		QUnit.test("with hasUrlParameterWithValue is true and another parameter at the end", function(assert) {
+			var sUrl = "?" + this.sSearchParameter + "&" + this.sAnotherParamter;
+			sandbox.stub(Utils, "hasUrlParameterWithValue").returns(true);
+			var bResult = Utils.handleUrlParameter(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "?" + this.sAnotherParamter, "no change in the url");
+		});
+
+		QUnit.test("with hasUrlParameterWithValue is false", function(assert) {
+			var sUrl = "";
+			sandbox.stub(Utils, "hasUrlParameterWithValue").returns(false);
+			var bResult = Utils.handleUrlParameter(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "?" + this.sSearchParameter, "no change in the url");
+		});
+
+		QUnit.test("with hasUrlParameterWithValue is false and another parameter", function(assert) {
+			var sUrl = "?" + this.sAnotherParamter;
+			sandbox.stub(Utils, "hasUrlParameterWithValue").returns(false);
+			var bResult = Utils.handleUrlParameter(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "?" + this.sAnotherParamter + "&" + this.sSearchParameter, "no change in the url");
 		});
 	});
 

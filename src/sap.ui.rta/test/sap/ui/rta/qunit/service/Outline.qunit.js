@@ -139,6 +139,7 @@ sap.ui.define([
 				showToolbars: false,
 				rootControl: this.oComponentContainer
 			});
+			sandbox.stub(this.oRta, "_determineReload").resolves(false);
 
 			// check designtime metadata label property
 			var oExtendedDesigntimeMetadataForLayout = StaticDesigntimeMetadata.getVerticalLayoutDesigntimeMetadata();
@@ -348,6 +349,7 @@ sap.ui.define([
 				showToolbars: false,
 				plugins: { testPlugin: oPlugin }
 			});
+			sandbox.stub(this.oRta, "_determineReload").resolves(false);
 
 			this.oRta.getService("outline").then(function (oService) {
 				this.oOutline = oService;
