@@ -191,7 +191,7 @@ function (
 				}
 			};
 
-			sandbox.stub(this.oFlexController, "addChange").returns(oChange);
+			sandbox.stub(this.oFlexController, "addChange").resolves(oChange);
 			sandbox.stub(Applier, "applyChangeOnControl").rejects();
 			sandbox.stub(this.oFlexController._oChangePersistence, "deleteChange");
 
@@ -1268,7 +1268,7 @@ function (
 		//a few checks for the selector/instance handling should be sufficient
 		[true, false].forEach(function(bAsInstance) {
 			var sPrefix = bAsInstance ? "as instance" : "as selector";
-			QUnit.test(sPrefix + "with no changes", function(assert) {
+			QUnit.test(sPrefix + " with no changes", function(assert) {
 				return this.oFlexController.waitForChangesToBeApplied(getControl(this, this.oControl, bAsInstance))
 				.then(function(oReturn) {
 					assert.ok(true, "then the function resolves");
@@ -1292,11 +1292,11 @@ function (
 				this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 				this.mChanges.mChanges[this.sOtherControlId] = [this.oChangeOnOtherControl];
 				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
+				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oOtherControl);
 				var pWaiting = this.oFlexController.waitForChangesToBeApplied([
 					getControl(this, this.oControl, bAsInstance),
 					getControl(this, this.oOtherControl, bAsInstance)
 				]);
-				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oOtherControl);
 				return pWaiting.then(function(oReturn) {
 					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 4, "addCustomData was called 4 times");
 					assert.equal(oReturn, undefined, "the return value is undefined");

@@ -232,31 +232,30 @@ sap.ui.define([
 	 */
 	FlexController.prototype.createChangeWithControlSelector = function (oChangeSpecificData, oControl) {
 		var oAppComponent;
-		return Promise.resolve()
-			.then(function() {
-				if (!oControl) {
-					throw new Error("A flexibility change cannot be created without a targeted control.");
-				}
+		return new Utils.FakePromise().then(function() {
+			if (!oControl) {
+				throw new Error("A flexibility change cannot be created without a targeted control.");
+			}
 
-				var sControlId = oControl.id || oControl.getId();
+			var sControlId = oControl.id || oControl.getId();
 
-				if (!oChangeSpecificData.selector) {
-					oChangeSpecificData.selector = {};
-				}
-				oAppComponent = oControl.appComponent || Utils.getAppComponentForControl(oControl);
-				if (!oAppComponent) {
-					throw new Error("No application component found. To offer flexibility, the control with the ID '"
-						+ sControlId + "' has to have a valid relation to its owning application component.");
-				}
+			if (!oChangeSpecificData.selector) {
+				oChangeSpecificData.selector = {};
+			}
+			oAppComponent = oControl.appComponent || Utils.getAppComponentForControl(oControl);
+			if (!oAppComponent) {
+				throw new Error("No application component found. To offer flexibility, the control with the ID '"
+					+ sControlId + "' has to have a valid relation to its owning application component.");
+			}
 
-				// differentiate between controls containing the component id as a prefix and others
-				// get local Id for control at root component and use it as selector id
-				Object.assign(oChangeSpecificData.selector, JsControlTreeModifier.getSelector(sControlId, oAppComponent));
-				return oAppComponent;
-			})
-			.then(function (oAppComponent) {
-				return this._createChange(oChangeSpecificData, oAppComponent, oControl);
-			}.bind(this));
+			// differentiate between controls containing the component id as a prefix and others
+			// get local Id for control at root component and use it as selector id
+			Object.assign(oChangeSpecificData.selector, JsControlTreeModifier.getSelector(sControlId, oAppComponent));
+			return oAppComponent;
+		})
+		.then(function (oAppComponent) {
+			return this._createChange(oChangeSpecificData, oAppComponent, oControl);
+		}.bind(this));
 	};
 
 	/**
@@ -309,6 +308,10 @@ sap.ui.define([
 		return this.createChangeWithControlSelector(oChangeSpecificData, oControl)
 			.then(function(oChange) {
 				var oAppComponent = Utils.getAppComponentForControl(oControl);
+				// adding a change to the persistence will trigger the propagation listener which would try to apply the change
+				// but in this scenario the change is applied in .createAndApplyChange and no dependencies are added,
+				// so the propagation listener should ignore this change once
+				oChange._ignoreOnce = true;
 				this.addPreparedChange(oChange, oAppComponent);
 				return oChange;
 			}.bind(this));
@@ -367,9 +370,7 @@ sap.ui.define([
 	 */
 	FlexController.prototype.createAndApplyChange = function (oChangeSpecificData, oControl) {
 		var oChange;
-		return Promise.resolve().then(function() {
-			return this.addChange(oChangeSpecificData, oControl);
-		}.bind(this))
+		return this.addChange(oChangeSpecificData, oControl)
 		.then(function(oAddedChange) {
 			oChange = oAddedChange;
 			var mPropertyBag = {
