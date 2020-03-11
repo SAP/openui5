@@ -322,6 +322,24 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/propertyEditor/dateEditor/DateEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/dateEditor/DateEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/dateTimeEditor/DateTimeEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/dateTimeEditor/DateTimeEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/propertyEditor/listEditor/ListEditor": {
 				group: "DesignTime Editor",
 				coverage: {
