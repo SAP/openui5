@@ -80,6 +80,23 @@
             "reference": "2070030779"
           }
         ]
+      },
+      {
+        "id": "cfa550fe7ad4ed79a5a6224a039066610c724407",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Allow to hide navigation items",
+        "references": []
+      },
+      {
+        "id": "aa6f3336f49e8dc95eac4ed94732cad5e4b6d93c",
+        "type": "FIX",
+        "text": " sap.f.cards.BaseContent: maxItems manifest property now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070026391"
+          }
+        ]
       }
     ]
   }

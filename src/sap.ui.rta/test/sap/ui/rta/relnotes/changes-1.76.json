@@ -3,12 +3,6 @@
     "date": "March 2020",
     "notes": [
       {
-        "id": "105a11fd96bec9a1acfd192f0fa42597e6934714",
-        "type": "FIX",
-        "text": " Fixing UI2PersonalizationApplyAPI and",
-        "references": []
-      },
-      {
         "id": "ca3cfd59d7ed366a4dbe94a42ad6745f5a69db96",
         "type": "FIX",
         "text": ": RTA - Embed Content Title fix",
