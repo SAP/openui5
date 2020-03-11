@@ -420,6 +420,93 @@
             "type": "BCP"
           }
         ]
+      },
+      {
+        "id": "19560db49bf97eead176bf59549a50ff8cbe5ab5",
+        "type": "FIX",
+        "text": " sap.m.Bar: controls in all aggregations are properly aligned vertically",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080008829"
+          }
+        ]
+      },
+      {
+        "id": "1e7add1b145eb0f2e25d75bd582ea5c9b562cad0",
+        "type": "FIX",
+        "text": " sap.m.Link: Additional description placement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070012034"
+          }
+        ]
+      },
+      {
+        "id": "4b3fe4f92ad963ed3be094874f8223fd9fda938c",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: When in IconTabBar and in Split mode focus no longer overlaps the button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070054871"
+          }
+        ]
+      },
+      {
+        "id": "634299f68ff4278c9b45a63e6e623df3853b1946",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Reduce min-width to 2rem when having tokens without nmore text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070036252"
+          }
+        ]
+      },
+      {
+        "id": "82b8605820f86e609207565194bc478bcf3f957f",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: The close button of the notification list item gets duplicate id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070057039"
+          }
+        ]
+      },
+      {
+        "id": "dafd0216469ae36e58377853d6b80d85e86c6483",
+        "type": "FIX",
+        "text": " sap.m.Slider: Adjust tickmarks and tooltips positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070039116"
+          }
+        ]
+      },
+      {
+        "id": "2636d6a799d1b7918eb9018c8b3a647c476a71c3",
+        "type": "FIX",
+        "text": " sap.m.Text: Fixed sample in documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070055064"
+          }
+        ]
+      },
+      {
+        "id": "1451b8ade3601009b5cf416eb797d1956b0a6dc6",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed qunit test that fails often",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
       }
     ]
   }

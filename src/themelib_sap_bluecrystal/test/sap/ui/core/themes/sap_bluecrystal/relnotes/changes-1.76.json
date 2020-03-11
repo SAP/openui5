@@ -12,6 +12,12 @@
             "reference": "2070006509"
           }
         ]
+      },
+      {
+        "id": "50c6ab6dc4884c4cf1da993e95fbac2ee8e047e0",
+        "type": "FEATURE",
+        "text": " core.Icon: 3 new sematic colors (NonInteractive, Tile, Marker)",
+        "references": []
       }
     ]
   }
