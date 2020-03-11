@@ -233,6 +233,20 @@ function(
 			this.oToolbar.setVersioningVisible(false);
 			assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
 		});
+
+		QUnit.test("setVersionLabelAccentColor", function(assert) {
+			this.oToolbar.setVersioningVisible(true);
+			var sVersionAccent = "sapUiRtaVersionAccent1";
+
+			this.oToolbar.setVersionLabelAccentColor();
+			assert.equal(this.oToolbar.getControl("versionLabel").hasStyleClass(sVersionAccent), false, "the label color is not accent as default");
+
+			this.oToolbar.setVersionLabelAccentColor(true);
+			assert.equal(this.oToolbar.getControl("versionLabel").hasStyleClass(sVersionAccent), true, "the label color is accent");
+
+			this.oToolbar.setVersionLabelAccentColor(false);
+			assert.equal(this.oToolbar.getControl("versionLabel").hasStyleClass(sVersionAccent), false, "the label color is not accent");
+		});
 	});
 
 	QUnit.module("Activate Version Dialog", {
