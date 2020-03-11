@@ -852,6 +852,9 @@ sap.ui.define([
 				// Call beforeRendering to allow cleanup
 				triggerBeforeRendering(oControl);
 
+				// as children are not visited during rendering, their DOM has to be preserved here
+				RenderManager.preserveContent(oDomRef, /* bPreserveRoot */ false, /* bPreserveNodesWithId */ false);
+
 				// Preserved controls still need to be alive
 				if (!oDomRef.hasAttribute(ATTR_PRESERVE_MARKER)) {
 					oControl.bOutput = false;

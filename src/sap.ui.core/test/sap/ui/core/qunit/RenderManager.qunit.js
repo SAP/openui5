@@ -5,13 +5,14 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/Element",
+	"sap/ui/core/HTML",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeXML",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/base/Log"
-], function(Device, Control, RenderManager, Element, IconPool, XMLView, jQuery, encodeXML, createAndAppendDiv, Log) {
+], function(Device, Control, RenderManager, Element, HTML, IconPool, XMLView, jQuery, encodeXML, createAndAppendDiv, Log) {
 	"use strict";
 
 	// prepare DOM
@@ -1506,4 +1507,69 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("preservation of not-rendered, indirect descendants (grand children etc.)", function(assert) {
+		TestContainer.getMetadata().getRenderer().apiVersion = 2;
+		var oHtml1 = new HTML({content: "<div></div>"}),
+			oHtml2 = new HTML({content: "<div></div>"}),
+			oContainer = new TestContainer({
+			theLuckyOne: 0,
+			content: [
+				oHtml1,
+				new TestContainer({
+					theLuckyOne: 0,
+					content: [ oHtml2 ]
+				})
+			]
+		});
+
+		// act 1: initial rendering
+		oContainer.placeAt("area9");
+		sap.ui.getCore().applyChanges();
+
+		// assert 1: HTML1 rendered, HTML2 not yet rendered
+		assert.ok(oHtml1.getDomRef() && !RenderManager.isPreservedContent(oHtml1.getDomRef()),
+			"HTML1 has DOM and is not preserved");
+		assert.notOk(oHtml2.getDomRef(),
+			"HTML2 has not been rendered yet");
+
+		// act 2: switch rendered control
+		oContainer.setTheLuckyOne(1);
+		sap.ui.getCore().applyChanges();
+		oHtml2.$().append("<span/>");
+		oHtml2.$().append("<span/>");
+		oHtml2.$().append("<span/>");
+		oHtml2.$().append("<span/>");
+
+		// assert 2: HTML1 not visible, but preserved, HTML2 rendered
+		assert.ok(oHtml1.getDomRef() && RenderManager.isPreservedContent(oHtml1.getDomRef()),
+			"HTML1 has DOM but has been preserved");
+		assert.ok(oHtml2.getDomRef() && !RenderManager.isPreservedContent(oHtml2.getDomRef()),
+			"HTML2 has DOM and is not preserved");
+		assert.equal(oHtml2.$().children().length, 4,
+			"HTML2 should have the expected children");
+
+		// act 3: switch again
+		oContainer.setTheLuckyOne(0);
+		sap.ui.getCore().applyChanges();
+
+		// assert 3: HTML1 rendered, HTML2 not rendered, but preserved
+		assert.ok(oHtml1.getDomRef() && !RenderManager.isPreservedContent(oHtml1.getDomRef()),
+			"HTML1 has DOM and is not preserved");
+		assert.ok(oHtml2.getDomRef() && RenderManager.isPreservedContent(oHtml2.getDomRef()),
+			"HTML2 has DOM, but has been preserved");
+		assert.equal(oHtml2.$().children().length, 4,
+			"Modifications to HTML2 still should be present");
+
+		// act 4: switch again
+		oContainer.setTheLuckyOne(1);
+		sap.ui.getCore().applyChanges();
+
+		// assert 3: HTML1 not rendered but preserved, HTML2 rendered incl. dynamic modifications
+		assert.ok(oHtml1.getDomRef() && RenderManager.isPreservedContent(oHtml1.getDomRef()),
+			"HTML1 has DOM and is preserved");
+		assert.ok(oHtml2.getDomRef() && !RenderManager.isPreservedContent(oHtml2.getDomRef()),
+			"HTML2 has DOM, and is not preserved");
+		assert.equal(oHtml2.$().children().length, 4,
+			"Modifications to HTML2 still are present");
+	});
 });
