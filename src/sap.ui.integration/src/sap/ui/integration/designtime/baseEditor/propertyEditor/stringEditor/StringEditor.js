@@ -18,6 +18,23 @@ sap.ui.define([
 	 * To get notified about changes made with the editor, you can use the <code>attachValueChange</code> method,
 	 * which passes the current property state as a string or binding string to the provided callback function when the user edits the input.
 	 *
+	 * <h3>Configuration</h3>
+	 *
+	 * <table style="width:100%;">
+	 * <tr style="text-align:left">
+	 * 	<th>Option</th>
+	 * 	<th>Type</th>
+	 * 	<th>Default</th>
+	 * 	<th>Description</th>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>enabled</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether the underlying control should be enabled</td>
+	 * </tr>
+	 * </table>
+	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
 	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.stringEditor.StringEditor
 	 * @author SAP SE

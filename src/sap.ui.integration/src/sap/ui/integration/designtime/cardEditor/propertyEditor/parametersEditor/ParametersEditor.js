@@ -11,9 +11,22 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @constructor
+	* @class
+	 * Constructor for a new <code>ParametersEditor</code> for editing key-value pairs with primitive values and persisted type information.
+	 *
+	 * <h3>Configuration</h3>
+	 *
+	 * Configuration is inherited from {@link sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor}
+	 *
+	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor
+	 * @alias sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersEditor
+	 * @author SAP SE
+	 * @since 1.70
+	 * @version ${version}
+	 *
 	 * @private
-	 * @experimental
+	 * @experimental 1.70
+	 * @ui5-restricted
 	 */
 	var ParametersEditor = MapEditor.extend("sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersEditor", {
 		formatInputValue: function(oValue) {

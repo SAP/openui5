@@ -18,6 +18,35 @@ sap.ui.define([
 	 * @class
 	 * Constructor for a new <code>ComplexMapEditor</code> for editing key-value pairs with object values.
 	 *
+	 * <h3>Configuration</h3>
+	 *
+	 * <table style="width:100%;">
+	 * <tr style="text-align:left">
+	 * 	<th>Option</th>
+	 * 	<th>Type</th>
+	 * 	<th>Default</th>
+	 * 	<th>Description</th>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>allowKeyChange</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to allow editing the key attribute of map entries</td>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>allowAddAndRemove</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to allow adding and removing map entries</td>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>keyLabel</code></td>
+	 *  <td><code>string</code></td>
+	 * 	<td><code>"Key"</code></td>
+	 * 	<td>The label to show for the <code>key</code> field. Default is the localized string "Key".</td>
+	 * </tr>
+	 * </table>
+	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
 	 * @alias sap.ui.integration.designtime.cardEditor.propertyEditor.complexMapEditor.ComplexMapEditor
 	 * @author SAP SE
