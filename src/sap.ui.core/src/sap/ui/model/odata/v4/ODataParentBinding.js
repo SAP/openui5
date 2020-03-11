@@ -73,7 +73,7 @@ sap.ui.define([
 	 * Handles exceptional cases of setting the property with the given path to the given value.
 	 *
 	 * @param {string} sPath
-	 *   A relative path within the JSON structure
+	 *   A path (absolute or relative to this binding)
 	 * @param {any} vValue
 	 *   The new value which must be primitive
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]

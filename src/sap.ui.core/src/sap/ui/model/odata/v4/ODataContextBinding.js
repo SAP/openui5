@@ -1236,7 +1236,7 @@ sap.ui.define([
 	 * <code>oBinding.refresh()</code> first.
 	 *
 	 * @param {string} [sPath=""]
-	 *   A relative path within the JSON structure
+	 *   A path relative to this context binding
 	 * @returns {Promise}
 	 *   A promise on the requested value; in case there is no bound context this promise resolves
 	 *   with <code>undefined</code>

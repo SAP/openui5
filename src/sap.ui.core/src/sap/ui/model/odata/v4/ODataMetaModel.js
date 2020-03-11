@@ -1519,9 +1519,9 @@ sap.ui.define([
 	 * entityPath "/SalesOrderList/0/SO_2_BP" and the propertyPath "CompanyName".
 	 *
 	 * @param {string} sPropertyPath
-	 *   A path of a property in the OData data model, relative to <code>oContext</code>.
+	 *   A path of a property in the OData data model, absolute or relative to <code>oContext</code>
 	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   A context
+	 *   A context, used for building the path and for fetching key predicates
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with an object having the following properties:
 	 *   <ul>
