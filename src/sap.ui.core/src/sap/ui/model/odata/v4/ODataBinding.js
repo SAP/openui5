@@ -470,7 +470,7 @@ sap.ui.define([
 
 		sContextPath = oContext.getPath();
 		bCanonicalPath = oContext.fetchCanonicalPath
-			&& (this.mParameters && this.mParameters["$$canonicalPath"]
+			&& (this.mParameters && this.mParameters.$$canonicalPath
 				|| rIndexOrTransientPredicate.test(sContextPath));
 		oContextPathPromise = bCanonicalPath
 			? oContext.fetchCanonicalPath()
