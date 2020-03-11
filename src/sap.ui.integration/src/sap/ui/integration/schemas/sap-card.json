@@ -31,14 +31,14 @@
 					"description": "Map of parameters.",
 					"type": "object",
 					"additionalProperties": {
-						"$ref": "#/definitions/configurationParameter"
+						"$ref": "#/definitions/Configuration.Parameter"
 					}
 				},
 				"destinations": {
 					"description": "Describes what destinations are used by the card.",
 					"type": "object",
 					"additionalProperties": {
-						"$ref": "#/definitions/configurationDestinations"
+						"$ref": "#/definitions/Configuration.Destinations"
 					}
 				}
 			}
@@ -1628,7 +1628,7 @@
 				}
 			]
 		},
-		"configurationParameter": {
+		"Configuration.Parameter": {
 			"description": "Represents configuration parameter.",
 			"type": "object",
 			"additionalProperties": false,
@@ -1650,7 +1650,7 @@
 				}
 			}
 		},
-		"configurationDestinations": {
+		"Configuration.Destinations": {
 			"description": "Represents a configuration for a cloud platform destination.",
 			"type": "object",
 			"additionalProperties": false,
