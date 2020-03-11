@@ -177,7 +177,7 @@ sap.ui.define([
 			var oColumn = this._getVisibleColumns()[this._iLastHoveredVisibleColumnIndex];
 			var $RelevantColumnElement = this.$().find("th[data-sap-ui-colid=\"" + oColumn.getId() + "\"]"); // Consider span and multi-header
 			var iColumnWidth = $RelevantColumnElement[0].offsetWidth;
-			var iDeltaX = iLocationX - ($RelevantColumnElement.offset().left + iColumnWidth);
+			var iDeltaX = iLocationX - ($RelevantColumnElement.offset().left + (this._bRtlMode ? 0 : iColumnWidth));
 			var iCalculatedColumnWidth = Math.round(iColumnWidth + iDeltaX * (this._bRtlMode ? -1 : 1));
 			var iNewColumnWidth = Math.max(iCalculatedColumnWidth, TableUtils.Column.getMinColumnWidth());
 
