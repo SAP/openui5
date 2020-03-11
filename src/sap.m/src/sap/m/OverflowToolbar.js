@@ -210,6 +210,8 @@ sap.ui.define([
 		this._aToolbarOnlyControls = []; // Controls that can't go to the Popover (inputs, labels, buttons with special layout, etc...)
 		this._aPopoverOnlyControls = []; // Controls that are forced to stay in the Popover (buttons with layout)
 		this._aAllCollections = [this._aMovableControls, this._aToolbarOnlyControls, this._aPopoverOnlyControls];
+
+		this.addStyleClass("sapMOTB");
 	};
 
 	OverflowToolbar.prototype.exit = function () {

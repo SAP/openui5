@@ -883,6 +883,39 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Too long SegmentedButton inside the OveflowToolbar", function (assert) {
+
+		// Arrange
+		var oSB,
+			oOTB,
+			iWidth = jQuery("#qunit-fixture").width();
+
+		jQuery("#qunit-fixture").css({ width: "160px" });
+
+		oSB = new SegmentedButton({
+			items: [
+				new SegmentedButtonItem({text: "Button 1"}),
+				new SegmentedButtonItem({text: "Button 2"})
+			]
+		});
+
+		oOTB = new OverflowToolbar({
+			content: [ oSB ]
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oOTB._getOverflowButtonNeeded(), "The SegmentedButton is hidden and Overflow button is visible.");
+
+		// Cleanup
+		jQuery("#qunit-fixture").css({ width: iWidth });
+		oSB.destroy();
+		oSB = null;
+		oOTB.destroy();
+		oOTB = null;
+
+	});
+
 	/* =========================================================== */
 	/* Event module                                                */
 	/* =========================================================== */
@@ -2148,7 +2181,7 @@ sap.ui.define([
 		oSB._updateWidth();
 
 		// Assert
-		assert.strictEqual(oSB.$().attr("style"), "width: 100%;", "a");
+		assert.ok(oSB.$().hasClass("sapMSegBFit"), "The proper class is set");
 
 		// Restore jQuery.innerWidth method
 		jQuery.fn.innerWidth = this._ojQueryInnerWidthMethod;
