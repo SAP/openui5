@@ -791,7 +791,7 @@ sap.ui.define([
 			sandbox.stub(oContextMenuControl, "_getPopoverDimensions").returns({height : 250, width : 100});
 			sandbox.stub(oContextMenuControl, "_getViewportDimensions").returns({width : 300, height : 300, top : 0, bottom : 300});
 			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
-				assert.equal(oContextMenuControl.getPopover().getContentHeight(), "200px", "then vertical scrolling is added");
+				assert.equal(oContextMenuControl.getPopover().getContentHeight(), "200px", "then the height is limited to 2/3 height of the Viewport");
 				sandbox.restore();
 			});
 		});
