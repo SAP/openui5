@@ -599,8 +599,12 @@ sap.ui.define([
 
 	FacetFilterList.prototype._search = function(sSearchVal, force) {
 
-		var bindingInfoaFilters;
-		var numberOfsPath = 0;
+		var bindingInfoaFilters, aBindingParts, aUserFilters,
+			oUserFilter, sPath, sEncodedString,
+			oFinalFilter, oPartsFilters, oFacetFilterItem,
+			numberOfsPath = 0,
+			oBinding = this.getBinding("items"),
+			oBindingInfo = this.getBindingInfo("items");
 
 		//Checks whether given model is one of the OData Model(s)
 		function isODataModel(oModel) {
@@ -609,8 +613,6 @@ sap.ui.define([
 
 		if (force || (sSearchVal !== this._searchValue)) {
 			this._searchValue = sSearchVal;
-			var oBinding = this.getBinding("items");
-			var oBindingInfo = this.getBindingInfo("items");
 			if (oBindingInfo && oBindingInfo.binding) {
 				bindingInfoaFilters = oBindingInfo.binding.aFilters;
 				if (bindingInfoaFilters.length > 0) {
@@ -624,11 +626,12 @@ sap.ui.define([
 			if (oBinding) { // There will be no binding if the items aggregation has not been bound to a model, so search is not
 				// possible
 				if (sSearchVal || numberOfsPath > 0) {
-					var aBindingParts = this.getBindingInfo("items").template.getBindingInfo("text").parts;
-					var path = aBindingParts[0].path;
-					if (path || path === "") { // path="" will be resolved relativelly to the parent, i.e. actual path will match the parent's one.
-						var oUserFilter = new Filter(path, FilterOperator.Contains, sSearchVal);
-						var aUserFilters = [oUserFilter];
+					oFacetFilterItem = oBindingInfo.template ? oBindingInfo.template : oBindingInfo.factory();
+					aBindingParts = oFacetFilterItem.getBindingInfo("text").parts;
+					sPath = aBindingParts[0].path;
+					if (sPath || sPath === "") { // sPath="" will be resolved relativelly to the parent, i.e. actual path will match the parent's one.
+						oUserFilter = new Filter(sPath, FilterOperator.Contains, sSearchVal);
+						aUserFilters = [oUserFilter];
 
 						// Add Filters for every parts from the model except the first one because the array is already
 						// predefined with a first item the first binding part
@@ -638,9 +641,9 @@ sap.ui.define([
 
 						if (this.getEnableCaseInsensitiveSearch() && isODataModel(oBinding.getModel())){
 							//notice the single quotes wrapping the value from the UI control!
-							var sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
+							sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
 							sEncodedString = sEncodedString.toLowerCase();
-							oUserFilter = new Filter("tolower(" + path + ")", FilterOperator.Contains, sEncodedString);
+							oUserFilter = new Filter("tolower(" + sPath + ")", FilterOperator.Contains, sEncodedString);
 							aUserFilters = [oUserFilter];
 							// Add Filters for every parts from the model except the first one because the array is already
 							// predefined with a first item the first binding part
@@ -648,17 +651,17 @@ sap.ui.define([
 								aUserFilters.push(new Filter("tolower(" + aBindingParts[i].path + ")", FilterOperator.Contains, sSearchVal));
 							}
 						}
-						var oPartsFilters = new Filter(aUserFilters, false);
+						oPartsFilters = new Filter(aUserFilters, false);
 						if (numberOfsPath > 1) {
-							var oFinalFilter = new Filter([oPartsFilters, this._saveBindInfo], true);
+							oFinalFilter = new Filter([oPartsFilters, this._saveBindInfo], true);
 						} else {
 							if (this._saveBindInfo > "" && oUserFilter.sPath != this._saveBindInfo.sPath) {
-								var oFinalFilter = new Filter([oPartsFilters, this._saveBindInfo], true);
+								oFinalFilter = new Filter([oPartsFilters, this._saveBindInfo], true);
 							} else {
 								if (sSearchVal == "") {
-									var oFinalFilter = [];
+									oFinalFilter = [];
 								} else {
-									var oFinalFilter = new Filter([oPartsFilters], true);
+									oFinalFilter = new Filter([oPartsFilters], true);
 								}
 							}
 						}
