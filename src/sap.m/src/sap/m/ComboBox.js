@@ -1152,6 +1152,21 @@ sap.ui.define([
 
 			var bItemsVisible = !!aVisibleItems.length;
 			var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
+			var bCurrentlySelectedItemVisible = aVisibleItems.some(function (oItem) {
+				return oItem.getKey() === this.getSelectedKey();
+			}, this);
+
+			// In some cases, the filtered items may only be shown because of second,
+			// third, etc term matched the typed in by the user value. However, if the ComboBox
+			// has selectedKey already, and this key corresponds to an item, which is already not
+			// visible after the filtering, the selection does not correspond to the users input.
+			// In such cases:
+			// - The selectedKey will be cleared so no "hidden" selection is left in the ComboBox
+			// - Further validation is required from application side as the ComboBox allows input
+			//   that does not match any item from the list.
+			if (bItemsVisible && this.getSelectedKey() && !bCurrentlySelectedItemVisible) {
+				this.setProperty('selectedKey', null, false);
+			}
 
 			if (!bEmptyValue && oFirstVisibleItem && oFirstVisibleItem.getEnabled()) {
 				this.handleTypeAhead(oControl, aVisibleItems, sValue, bCompositionEvent);
