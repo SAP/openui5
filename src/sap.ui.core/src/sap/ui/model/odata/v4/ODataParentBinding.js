@@ -837,6 +837,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the query options used in the cache.
+	 *
+	 * @returns {object} The query options
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.getCacheQueryOptions = function () {
+		return this.mCacheQueryOptions
+			|| _Helper.getQueryOptionsForPath(
+				this.oContext.getBinding().getCacheQueryOptions(), this.sPath);
+	};
+
+	/**
 	 * Returns the query options for the given path relative to this binding. Uses the options
 	 * resulting from the binding parameters or the options inherited from the parent binding by
 	 * using {@link sap.ui.model.odata.v4.Context#getQueryOptionsForPath}.

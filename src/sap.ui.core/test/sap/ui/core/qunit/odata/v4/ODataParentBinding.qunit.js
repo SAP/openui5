@@ -3642,6 +3642,45 @@ sap.ui.define([
 		assert.strictEqual(asODataParentBinding.prototype.hasPendingChangesForPath,
 			oBinding.hasPendingChangesForPath);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getCacheQueryOptions: own mCacheQueryOptions", function (assert) {
+		var oBinding = new ODataParentBinding({
+				mCacheQueryOptions : {}
+			});
+
+		assert.strictEqual(
+			// code under test
+			oBinding.getCacheQueryOptions(),
+			oBinding.mCacheQueryOptions
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCacheQueryOptions: mCacheQueryOptions from parent", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oContext : {
+					getBinding : function() {}
+				},
+				sPath : "~path~"
+			}),
+			mCacheQueryOptions = {},
+			mCacheQueryOptionsForPath = {},
+			oParentBinding = new ODataParentBinding();
+
+		this.mock(oBinding.oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
+		this.mock(oParentBinding).expects("getCacheQueryOptions").withExactArgs()
+			.returns(mCacheQueryOptions);
+		this.mock(_Helper).expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(mCacheQueryOptions), "~path~")
+			.returns(mCacheQueryOptionsForPath);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.getCacheQueryOptions(),
+			mCacheQueryOptionsForPath
+		);
+	});
 });
 //TODO Fix issue with ODataModel.integration.qunit
 //  "suspend/resume: list binding with nested context binding, only context binding is adapted"

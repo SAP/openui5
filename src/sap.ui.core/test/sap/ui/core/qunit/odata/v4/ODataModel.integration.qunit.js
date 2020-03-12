@@ -16175,6 +16175,125 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Execute bound action; the parent binding has an empty path, but does not have a
+	// cache, so that $$inheritExpandSelect must search the query options in the parent's parent.
+	// JIRA: CPOUI5ODATAV4-189
+	QUnit.test("bound operation: $$inheritExpandSelect and parent w/o cache #1", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'Messages\'}}">\
+	<ColumnListItem>\
+		<Text id="listId" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="objectPage" binding="{}">\
+	<Text id="objectId" text="{SalesOrderID}" />\
+	<FlexBox id="action" binding="{path : \'' + sAction + '(...)\', \
+		parameters : {$$inheritExpandSelect : true}}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Messages,SalesOrderID&$skip=0&$top=100",
+				{value : [{SalesOrderID : "1"}]})
+			.expectChange("listId", ["1"])
+			.expectChange("objectId");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("objectId", "1");
+
+			that.oView.byId("objectPage").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext()
+			);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('1')/" + sAction + "?$select=Messages,SalesOrderID",
+					payload : {}
+				}, {
+					SalesOrderID : "1"
+				});
+
+			return Promise.all([
+				that.oView.byId("action").getObjectBinding().execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0].getPath(), "/SalesOrderList('1')");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Execute bound action; the parent binding has a non-empty path, but does not have a
+	// cache, so that $$inheritExpandSelect must search the query options in the parent's parent.
+	// JIRA: CPOUI5ODATAV4-189
+	QUnit.test("bound operation: $$inheritExpandSelect and parent w/o cache #2", function (assert) {
+		var sAction = "special.cases.EditAction",
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/Artists\',\
+		parameters : {$select : \'BestFriend/Messages\'}}">\
+	<ColumnListItem>\
+		<Text id="artists" text="{ArtistID}" />\
+		<Text id="bestFriends" text="{BestFriend/ArtistID}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="objectPage" binding="{BestFriend}">\
+	<Text id="bestFriend" text="{ArtistID}" />\
+	<FlexBox id="action" binding="{path : \'' + sAction + '(...)\', \
+		parameters : {$$inheritExpandSelect : true}}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Messages)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : true,
+					BestFriend : {
+						ArtistID : "2",
+						IsActiveEntity : true
+					}
+				}]
+			})
+			.expectChange("artists", ["1"])
+			.expectChange("bestFriends", ["2"])
+			.expectChange("bestFriend");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("bestFriend", "2");
+
+			that.oView.byId("objectPage").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext()
+			);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='1',IsActiveEntity=true)/BestFriend/" + sAction
+						+ "?$select=ArtistID,IsActiveEntity,Messages",
+					payload : {}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false
+				});
+
+			return Promise.all([
+				that.oView.byId("action").getObjectBinding().execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			// TODO return value context not supported here
+			// assert.strictEqual(aResults[0].getPath(),
+			// 	"Artists(ArtistID='2',IsActiveEntity=false)");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create entity for an absolute ListBinding, save the new entity and call a bound
 	// action for the new non-transient entity
 	QUnit.test("Create absolute, save and call action", function (assert) {
