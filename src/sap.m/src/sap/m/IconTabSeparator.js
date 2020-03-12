@@ -3,16 +3,21 @@
  */
 
 // Provides control sap.m.IconTabSeparator.
-sap.ui.define(['./library', 'sap/ui/core/Element', 'sap/ui/core/Item'],
-	function(library, Element, Item) {
+sap.ui.define([
+	"./library",
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Item"
+], function (
+	library,
+	Core,
+	Element,
+	Item
+) {
 	"use strict";
-
-
 
 	// shortcut for sap.m.ImageHelper
 	var ImageHelper = library.ImageHelper;
-
-
 
 	/**
 	 * Constructor for a new IconTabSeparator.
@@ -34,35 +39,37 @@ sap.ui.define(['./library', 'sap/ui/core/Element', 'sap/ui/core/Item'],
 	 * @alias sap.m.IconTabSeparator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var IconTabSeparator = Element.extend("sap.m.IconTabSeparator", /** @lends sap.m.IconTabSeparator.prototype */ { metadata : {
+	var IconTabSeparator = Element.extend("sap.m.IconTabSeparator", /** @lends sap.m.IconTabSeparator.prototype */ {
+		metadata: {
 
-		interfaces : [
-			"sap.m.IconTab"
-		],
-		library : "sap.m",
-		designtime: "sap/m/designtime/IconTabSeparator.designtime",
-		properties : {
+			interfaces: [
+				"sap.m.IconTab"
+			],
+			library: "sap.m",
+			designtime: "sap/m/designtime/IconTabSeparator.designtime",
+			properties: {
 
-			/**
-			 * The icon to display for this separator. If no icon is given, a separator line is used instead.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : ''},
+				/**
+				 * The icon to display for this separator. If no icon is given, a separator line is used instead.
+				 */
+				icon: { type: "sap.ui.core.URI", group: "Misc", defaultValue: '' },
 
-			/**
-			 * Specifies whether the separator is rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Specifies whether the separator is rendered.
+				 */
+				visible: { type: "boolean", group: "Behavior", defaultValue: true },
 
-			/**
-			 * If set to true, it sends one or more requests,
-			 * trying to get the density perfect version of the image if this version of
-			 * the image doesn't exist on the server. Default value is set to true.
-			 *
-			 * If bandwidth is key for the application, set this value to false.
-			 */
-			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true}
+				/**
+				 * If set to true, it sends one or more requests,
+				 * trying to get the density perfect version of the image if this version of
+				 * the image doesn't exist on the server. Default value is set to true.
+				 *
+				 * If bandwidth is key for the application, set this value to false.
+				 */
+				iconDensityAware: { type: "boolean", group: "Appearance", defaultValue: true }
+			}
 		}
-	}});
+	});
 
 	/**
 	 * Lazy load feed icon image.
@@ -71,11 +78,11 @@ sap.ui.define(['./library', 'sap/ui/core/Element', 'sap/ui/core/Item'],
 	 * @param {sap.ui.core.Control} oParent This element's parent.
 	 * @private
 	 */
-	IconTabSeparator.prototype._getImageControl = function(aCssClasses, oParent) {
+	IconTabSeparator.prototype._getImageControl = function (aCssClasses, oParent) {
 		var mProperties = {
-			src : this.getIcon(),
-			densityAware : this.getIconDensityAware(),
-			useIconTooltip : false
+			src: this.getIcon(),
+			densityAware: this.getIconDensityAware(),
+			useIconTooltip: false
 		};
 
 		this._oImageControl = ImageHelper.getImageControl(this.getId() + "-icon", this._oImageControl, oParent, mProperties, aCssClasses);
@@ -88,7 +95,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', 'sap/ui/core/Item'],
 	 *
 	 * @private
 	 */
-	IconTabSeparator.prototype.exit = function(oEvent) {
+	IconTabSeparator.prototype.exit = function (oEvent) {
 
 		if (this._oImageControl) {
 			this._oImageControl.destroy();
@@ -101,55 +108,53 @@ sap.ui.define(['./library', 'sap/ui/core/Element', 'sap/ui/core/Item'],
 
 	/**
 	 * Renders the item in the IconTabHeader.
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
 	 * @protected
 	 */
-	IconTabSeparator.prototype.render = function (rm) {
-
+	IconTabSeparator.prototype.render = function (oRM) {
 		if (!this.getVisible()) {
 			return;
 		}
 
-		var icon = this.getIcon(),
-			iconTabHeader = this.getParent(),
-			resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
-			ariaParams = '';
+		var sIcon = this.getIcon(),
+			oIconTabHeader = this.getParent(),
+			oRB = Core.getLibraryResourceBundle('sap.m'),
+			mAriaParams = {};
 
-		if (icon) {
-			ariaParams += 'role="img" aria-label="' + resourceBundle.getText("ICONTABBAR_NEXTSTEP") + '"';
+		if (sIcon) {
+			mAriaParams.role = "img";
+			mAriaParams.label = oRB.getText("ICONTABBAR_NEXTSTEP");
 		} else {
-			ariaParams += 'role="separator"';
+			mAriaParams.role = "separator";
 		}
 
-		rm.write('<div ' + ariaParams + ' ');
+		oRM.openStart("div", this)
+			.accessibilityState(mAriaParams)
+			.class("sapMITBItem")
+			.class("sapMITBSep");
 
-		rm.writeElementData(this);
-		rm.addClass("sapMITBItem");
-		rm.addClass("sapMITBSep");
-
-		if (!icon) {
-			rm.addClass("sapMITBSepLine");
-		}
-		rm.writeClasses();
-		rm.write(">");
-
-		if (icon) {
-			rm.renderControl(this._getImageControl(['sapMITBSepIcon'], iconTabHeader));
+		if (!sIcon) {
+			oRM.class("sapMITBSepLine");
 		}
 
-		rm.write("</div>");
+		oRM.openEnd();
+
+		if (sIcon) {
+			oRM.renderControl(this._getImageControl(["sapMITBSepIcon"], oIconTabHeader));
+		}
+
+		oRM.close("div");
 	};
 
 	/**
 	 * Renders this item in the IconTabSelectList.
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.IconTabBarSelectList} selectList the select list in which this filter is rendered
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.IconTabBarSelectList} oSelectList the select list in which this filter is rendered
 	 * @protected
 	 */
-	IconTabSeparator.prototype.renderInSelectList = function (rm, selectList) {
-
+	IconTabSeparator.prototype.renderInSelectList = function (oRM, oSelectList) {
+		// TODO
 	};
 
 	return IconTabSeparator;
-
 });

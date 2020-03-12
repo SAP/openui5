@@ -5,17 +5,15 @@
 // Provides control sap.m.IconTabBar.
 sap.ui.define([
 	'./library',
+	"sap/ui/core/Core",
 	'sap/ui/core/Control',
-	'sap/ui/base/ManagedObject',
 	'./IconTabBarRenderer',
 	'./IconTabHeader',
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, ManagedObject, IconTabBarRenderer, IconTabHeader, ResponsivePaddingsEnablement, jQuery) {
+	function(library, Core, Control, IconTabBarRenderer, IconTabHeader, ResponsivePaddingsEnablement, jQuery) {
 	"use strict";
-
-
 
 	// shortcut for sap.m.IconTabHeaderMode
 	var IconTabHeaderMode = library.IconTabHeaderMode;
@@ -25,8 +23,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.IconTabDensityMode
 	var IconTabDensityMode = library.IconTabDensityMode;
-
-
 
 	/**
 	 * Constructor for a new IconTabBar.
@@ -181,8 +177,9 @@ sap.ui.define([
 			 * The overflow select list represents a list, where all tab filters are displayed,
 			 * so the user can select specific tab filter easier.
 			 * @since 1.42
+			 * @deprecated As of 1.77
 			 */
-			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false},
+			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 			/**
 			 * Specifies the background color of the header.
@@ -295,7 +292,7 @@ sap.ui.define([
 	}});
 
 	ResponsivePaddingsEnablement.call(IconTabBar.prototype, {
-		header: { selector: ".sapMITHWrapper" },
+		header: { selector: ".sapMITH" },
 		content: { suffix: "content" }
 	});
 
@@ -323,19 +320,6 @@ sap.ui.define([
 		if (this.$().length) {
 			this._toggleExpandCollapse(bExpanded);
 		}
-		return this;
-	};
-
-	/**
-	 * Sets the tabs as collapsible and expandable without re-rendering the control.
-	 *
-	 * @public
-	 * @param {boolean} bExpandable New parameter value.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
-	 */
-	IconTabBar.prototype.setExpandable = function (bExpandable) {
-		// set internal property
-		this.setProperty("expandable", bExpandable, true);
 		return this;
 	};
 
@@ -389,22 +373,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the showOverflowSelectList property.
-	 *
-	 * @public
-	 * @param {boolean} value New value for showOverflowSelectList.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
-	 */
-	IconTabBar.prototype.setShowOverflowSelectList = function (value) {
-		// set internal property
-		this.setProperty("showOverflowSelectList", value, true);
-
-		this._getIconTabHeader().setShowOverflowSelectList(value);
-
-		return this;
-	};
-
-	/**
 	 * Sets the enableTabReordering property.
 	 *
 	 * @public
@@ -426,15 +394,15 @@ sap.ui.define([
 	 * @private
 	 * @param oContent Content, which should be rendered.
 	 */
-	IconTabBar.prototype._rerenderContent = function(oContent) {
+	IconTabBar.prototype._rerenderContent = function (oContent) {
 		var $content = this.$("content");
 		if (oContent && ($content.length > 0)) {
-			var rm = sap.ui.getCore().createRenderManager();
+			var oRM = Core.createRenderManager();
 			for (var i = 0; i < oContent.length; i++) {
-				rm.renderControl(oContent[i]);
+				oRM.renderControl(oContent[i]);
 			}
-			rm.flush($content[0]);
-			rm.destroy();
+			oRM.flush($content[0]);
+			oRM.destroy();
 		}
 	};
 
@@ -532,7 +500,6 @@ sap.ui.define([
 		this._iAnimationCounter = (this._iAnimationCounter > 0 ? --this._iAnimationCounter : 0);
 		return this;
 	};
-
 
 	/* =========================================================== */
 	/*           end: event handlers                               */
@@ -647,7 +614,7 @@ sap.ui.define([
 	 * @param {sap.m.IconTabFilter} oItem Item to be selected.
 	 * @return {sap.m.IconTabHeader} this IconTabBar reference for chaining.
 	 */
-	IconTabBar.prototype.setSelectedItem = function(oItem, bAPIchange) {
+	IconTabBar.prototype.setSelectedItem = function (oItem, bAPIchange) {
 		return this._getIconTabHeader().setSelectedItem(oItem, bAPIchange);
 	};
 
@@ -659,5 +626,4 @@ sap.ui.define([
 	IconTabBar._CLASSES_TO_COPY = ["sapUiResponsiveContentPadding", "sapUiNoContentPadding", "sapUiContentPadding"];
 
 	return IconTabBar;
-
 });

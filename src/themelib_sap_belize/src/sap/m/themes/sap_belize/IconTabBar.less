@@ -17,77 +17,43 @@
 }
 
 
-.sapMITHOverflowList {
-	.sapMITHScrollContainerInner {
-		margin-right: 3rem;
-	}
-
-	.sapMITBArrowScrollRight,
-	.sapMITBArrowScrollRightTextOnly {
-		right: 3rem;
-	}
-
+.sapMITH {
 	.sapMBtnTextOnly,
 	.sapMBtnInline {
 		align-items: flex-end;
 	}
 }
 
-.sapMITBArrowScrollLeftTextOnly,
-.sapMITBArrowScrollRightTextOnly {
-	align-items: flex-end;
-}
-
 
 .sapUiSizeCompact {
-
-	.sapMITBArrowScrollLeftTextOnly,
-	.sapMITBArrowScrollRightTextOnly {
-		align-items: center;
-	}
-
-	.sapMITHOverflowList,
-	&.sapMITHOverflowList {
+	.sapMITH,
+	&.sapMITH {
 		.sapMBtnTextOnly,
 		.sapMBtnInline {
 			align-items: center;
-		}
-	}
-
-	&.sapITH {
-		.sapMITBArrowScrollLeftTextOnly,
-		.sapMITBArrowScrollRightTextOnly {
-			padding-bottom: 0.5rem;
-		}
-
-		&.sapMITHOverflowList {
-			.sapMBtnTextOnly,
-			.sapMBtnInline {
-				padding-bottom: 0.5rem;
-			}
 		}
 	}
 }
 
 /* Arrow */
 
-.sapMITBSelected > .sapMITBContentArrow {
+.sapMITBSelected > .sapMITBFilterWrapper > .sapMITBContentArrow {
 	border-bottom-color: @_sap_m_IconTabBar_SelectedTextColor;
 }
 
-.sapMITBSelected.sapMITBFilterNeutral > .sapMITBContentArrow {
+.sapMITBSelected.sapMITBFilterNeutral .sapMITBContentArrow {
 	border-bottom-color: @sapUiNeutralElement;
 }
 
-.sapMITBSelected.sapMITBFilterPositive > .sapMITBContentArrow {
+.sapMITBSelected.sapMITBFilterPositive .sapMITBContentArrow {
 	border-bottom-color: @sapUiPositiveElement;
 }
 
-.sapMITBSelected.sapMITBFilterNegative > .sapMITBContentArrow {
+.sapMITBSelected.sapMITBFilterNegative .sapMITBContentArrow {
 	border-bottom-color: @sapUiNegativeElement;
 }
 
-.sapMITBSelected.sapMITBFilterCritical > .sapMITBContentArrow {
+.sapMITBSelected.sapMITBFilterCritical .sapMITBContentArrow {
 	border-bottom-color: @sapUiCriticalElement;
 }
 
@@ -105,51 +71,51 @@
 
 /* Tab Filter Item */
 
-.sapMITBTextOnly .sapMITBFilterDefault:hover > .sapMITBText {
+.sapMITBTextOnly .sapMITBFilterDefault:hover .sapMITBText {
 	color: @_sap_m_IconTabBar_TextHoverColor;
 }
 
-.sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected > .sapMITBText {
+.sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected .sapMITBText {
 	color: @_sap_m_IconTabBar_SelectedTextColor;
 	text-shadow: @sapUiShadowText;
 }
 
-.sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected:hover > .sapMITBText {
+.sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected:hover .sapMITBText {
 	color: @_sap_m_IconTabBar_SelectedTextHoverColor;
 }
 
-.sapMITBTextOnly .sapMITBFilterNeutral > .sapMITBText {
+.sapMITBTextOnly .sapMITBFilterNeutral .sapMITBText {
 	color: @sapUiNeutralText;
 }
 
-.sapMITBTextOnly .sapMITBFilterPositive > .sapMITBText {
+.sapMITBTextOnly .sapMITBFilterPositive .sapMITBText {
 	color: @sapUiPositiveText;
 }
 
-.sapMITBTextOnly .sapMITBFilterPositive:hover > .sapMITBText {
+.sapMITBTextOnly .sapMITBFilterPositive:hover .sapMITBText {
 	color: darken(@sapUiPositiveText, 10);
 }
 
-.sapMITBTextOnly .sapMITBFilterNegative > .sapMITBText {
+.sapMITBTextOnly .sapMITBFilterNegative .sapMITBText {
 	color: @sapUiNegativeText;
 }
 
-.sapMITBTextOnly .sapMITBFilterNegative:hover > .sapMITBText {
-  	color: darken(@sapUiNegativeText, 10);
+.sapMITBTextOnly .sapMITBFilterNegative:hover .sapMITBText {
+	color: darken(@sapUiNegativeText, 10);
 }
 
-.sapMITBTextOnly .sapMITBFilterCritical > .sapMITBText {
+.sapMITBTextOnly .sapMITBFilterCritical .sapMITBText {
 	color: @sapUiCriticalText;
 }
 
-.sapMITBTextOnly .sapMITBFilterCritical:hover > .sapMITBText {
+.sapMITBTextOnly .sapMITBFilterCritical:hover .sapMITBText {
 	color: darken(@sapUiCriticalText, 10);
 }
 
 .sapMITBFilterIcon {
 	border: 1px solid @sapUiHighlight;
 
-  	&::before {
+	&::before {
 		text-shadow: @sapUiShadowText;
 	}
 }
@@ -233,9 +199,16 @@ html.sap-desktop .sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll {
 
 html.sap-desktop .sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll {
 	&::after {
+		top: 0px;
+	}
+}
+
+html.sap-desktop .sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll {
+	&::after {
 		bottom: 1.75rem;
 	}
 }
+
 html.sap-desktop .sapMITH.sapUiSizeCompact {
 	.sapMITBItem:focus.sapMITBAll {
 		&::after {
