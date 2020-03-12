@@ -622,6 +622,33 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Binded value is not parsed when its value is empty string", function(assert) {
+		var oModel = new sap.ui.model.json.JSONModel([
+				{ value: "02.02.2019-03.03.2019" }
+			]),
+			oDSR4 = new sap.m.DateRangeSelection({
+				value: {
+					path: "value",
+					type: "sap.ui.model.type.DateInterval",
+					formatOptions: {
+						UTC: true
+					}
+				}
+			}).placeAt('qunit-fixture');
+
+		oDSR4.setModel(oModel);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		oDSR4._getInputValue();
+
+		//assert
+		assert.ok(true, "_getInputValue doesn't throw an exception");
+
+		//cleanup
+		oDSR4.destroy();
+	});
+
 	QUnit.module("API");
 
 	QUnit.test("setMinDate when dateValue & secondDateValue do not match the new min date", function (assert) {
