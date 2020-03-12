@@ -205,7 +205,7 @@ sap.ui.define([
 					fileType: "appdescr_variant",
 					namespace: this.getNamespace(),
 					layer: this._oDefinition.layer,
-					packageName: this._oDefinition.package ? this._oDefinition.package : "",
+					packageName: this._oDefinition.packageName ? this._oDefinition.packageName : "",
 					reference: this._oDefinition.reference,
 					id: this._oDefinition.id,
 					content: this._oDefinition.content || []
@@ -223,7 +223,7 @@ sap.ui.define([
 					fileType: this._oDefinition.fileType,
 					namespace: this._oDefinition.namespace,
 					layer: this._oDefinition.layer,
-					packageName: this._oDefinition.package,
+					packageName: this._oDefinition.packageName,
 					reference: this._oDefinition.reference,
 					id: this._oDefinition.id,
 					content: this._oDefinition.content

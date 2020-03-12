@@ -325,7 +325,8 @@ sap.ui.define([
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER"
+					layer: "CUSTOMER",
+					packageName: "$TMP"
 				})
 			});
 			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
@@ -340,6 +341,10 @@ sap.ui.define([
 				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/a.id");
 				assert.equal(oNewConnectorStub.getCall(0).args[1], "GET");
 				assert.equal(oNewConnectorStub.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id");
+				assert.equal(JSON.parse(oNewConnectorStub.getCall(1).args[2].payload).packageName, "$TMP");
+				assert.equal(JSON.parse(oNewConnectorStub.getCall(1).args[2].payload).reference, "a.reference");
+				assert.equal(JSON.parse(oNewConnectorStub.getCall(1).args[2].payload).id, "a.id");
+				assert.equal(JSON.parse(oNewConnectorStub.getCall(1).args[2].payload).layer, "CUSTOMER");
 				assert.equal(oNewConnectorStub.getCall(1).args[1], "PUT");
 			});
 		});
