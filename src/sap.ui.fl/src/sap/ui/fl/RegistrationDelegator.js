@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/EventHistory",
-	"sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor"
+	"sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor",
+	"sap/ui/core/ExtensionPoint"
 ], function(
 	FlexControllerFactory,
 	Component,
@@ -20,7 +21,8 @@ sap.ui.define([
 	MvcController,
 	XMLView,
 	EventHistory,
-	Preprocessor
+	Preprocessor,
+	ExtensionPoint
 ) {
 	"use strict";
 
@@ -69,6 +71,10 @@ sap.ui.define([
 		Component._fnPreprocessManifest = Preprocessor.preprocessManifest;
 	}
 
+	function _registerExtensionPointProvider() {
+		ExtensionPoint.registerExtensionProvider("sap/ui/fl/apply/_internal/extensionPoint/Processor");
+	}
+
 	/**
 	 * Registers everything in one call
 	 *
@@ -82,6 +88,7 @@ sap.ui.define([
 		_registerChangesInComponent();
 		_registerXMLPreprocessor();
 		_registerDescriptorChangeHandler();
+		_registerExtensionPointProvider();
 	};
 
 	return RegistrationDelegator;

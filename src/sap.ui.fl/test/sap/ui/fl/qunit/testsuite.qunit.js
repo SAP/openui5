@@ -260,6 +260,17 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
 				}
 			},
+			"apply/_internal/extensionPoint/Processor": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/extensionPointProcessor"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
+				}
+			},
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {

@@ -68,6 +68,7 @@ sap.ui.define([
 		this._mComponent = mComponent;
 
 		this._mChanges = DependencyHandler.createEmptyDependencyMap();
+		this._bChangesMapCreated = false;
 
 		//_mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
 		this._mChangesInitial = merge({}, this._mChanges);
@@ -552,7 +553,7 @@ sap.ui.define([
 			this._mChangesInitial = merge({}, this._mChanges);
 
 			Measurement.end("fl.createDependencyMap", "Measurement of creating initial dependency map");
-
+			this._bChangesMapCreated = true;
 			return this.getChangesMapForComponent.bind(this);
 		}
 	};
@@ -636,6 +637,15 @@ sap.ui.define([
 		return this._mChanges;
 	};
 
+	/**
+	 * Checks if the changes map for the component has been created or not.
+	 * @return {boolean} <code>true</code> if the changes map has been created
+	 * @public
+	 */
+	ChangePersistence.prototype.isChangeMapCreated = function () {
+		return this._bChangesMapCreated;
+	};
+
 	function _changesHavingCorrectViewPrefix(mPropertyBag, oChange) {
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
@@ -697,6 +707,35 @@ sap.ui.define([
 		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
 			return aChanges.filter(_changesHavingCorrectViewPrefix.bind(this, mPropertyBag));
 		}.bind(this));
+	};
+
+	/**
+	 * Gets the changes for the given extension point.
+	 *
+	 * @param {object} mPropertyBag Additional data that are needed for reading of changes
+	 * @param {string} mPropertyBag.viewId ID of the view
+	 * @param {string} mPropertyBag.name Name of the extension point
+	 * @param {sap.ui.core.Component} mPropertyBag.appComponent Application component for the extension point
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier Responsible modifier
+	 * @returns {Promise} Resolving with an array of changes
+	 * @private
+	 * @restricted sap.ui.fl.ExtensionPointProcessor
+	 */
+	ChangePersistence.prototype.getChangesForExtensionPoint = function(mPropertyBag) {
+		var isChangeValidForExtensionPoint = function(oChange) {
+			var sName = oChange.getSelector().name;
+			if (sName !== mPropertyBag.name) {
+				return false;
+			}
+			return _changesHavingCorrectViewPrefix(mPropertyBag, oChange);
+		};
+		if (!mPropertyBag.name) {
+			Log.warning("Missing name from extension point info!");
+			return Promise.resolve([]);
+		}
+		return this.getChangesForComponent().then(function (aChanges) {
+			return aChanges.filter(isChangeValidForExtensionPoint);
+		});
 	};
 
 	/**
