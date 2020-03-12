@@ -680,6 +680,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 		sValue = (typeof sValue == "undefined") ? this._$input.val() : sValue.toString();
 
+		if (!sValue) {
+			return "";
+		}
+
 		var aDates = this._parseValue(sValue);
 		sValue = this._formatValue( aDates[0], aDates[1]);
 
