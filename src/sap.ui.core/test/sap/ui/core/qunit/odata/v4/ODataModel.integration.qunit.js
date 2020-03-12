@@ -1321,6 +1321,7 @@ sap.ui.define([
 			var oPromise,
 				that = this;
 
+			iTimeout = iTimeout || 3000;
 			oPromise = new SyncPromise(function (resolve) {
 				that.resolve = resolve;
 				that.bNullOptional = bNullOptional;
@@ -1333,7 +1334,7 @@ sap.ui.define([
 								+ " (" + iTimeout + " ms)");
 						resolve();
 					}
-				}, iTimeout || 3000);
+				}, iTimeout);
 				that.checkFinish(assert);
 			}).then(function () {
 				var sControlId, aExpectedValuesPerRow, i, j;
