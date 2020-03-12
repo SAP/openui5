@@ -375,6 +375,10 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(oLink1.$().attr("aria-labelledby"), undefined, "Property 'aria-labelledby' should not exist");
 
+		oLink1.setText("");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual($oLink.attr("href"), undefined, "Empty links don't have href");
+
 		oLink1.destroy();
 	});
 
