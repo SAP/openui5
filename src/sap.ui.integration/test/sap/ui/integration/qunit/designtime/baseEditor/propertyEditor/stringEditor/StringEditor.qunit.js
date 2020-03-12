@@ -96,6 +96,22 @@ sap.ui.define([
 				assert.strictEqual(this.oStringEditor.getValue(), "Hello World.", "Then the editor value is not updated");
 			}.bind(this));
 		});
+
+		QUnit.test("When a primitive non-string value is set", function (assert) {
+			this.oStringEditor.setValue(42);
+			assert.strictEqual(this.oStringEditor.getValue(), "42", "Then the value is parsed to a string");
+		});
+
+		QUnit.test("When an object value is set", function (assert) {
+			this.oStringEditor.setValue({foo: "bar"});
+			assert.deepEqual(
+				this.oStringEditor.getValue(),
+				{
+					foo: "bar"
+				},
+				"Then the value is not parsed"
+			);
+		});
 	});
 
 	QUnit.done(function () {
