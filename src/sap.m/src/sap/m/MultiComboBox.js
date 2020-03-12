@@ -524,6 +524,8 @@ function(
 		}
 	};
 
+	MultiComboBox.prototype.onsaptabprevious = MultiComboBox.prototype.onsaptabnext;
+
 	/* =========================================================== */
 	/* Event handlers */
 	/* =========================================================== */

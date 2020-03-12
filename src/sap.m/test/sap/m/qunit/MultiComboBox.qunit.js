@@ -5493,6 +5493,25 @@ sap.ui.define([
 		assert.notOk(oSelectItemStub.called, "selection should not be called");
 	});
 
+	QUnit.test("onsaptabprevious should select the highlighted item", function (assert) {
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectedKeys().length, 0, "No items should be selected");
+
+		// Act
+		this.oMultiComboBox.open();
+		this.oMultiComboBox.focus();
+		this.oMultiComboBox.setValue("Item1");
+		this.oMultiComboBox.onkeydown({});
+
+		this.oMultiComboBox.onsaptabprevious();
+
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectedKeys().length, 1, "The first item should be selected");
+		assert.strictEqual(this.oMultiComboBox.getSelectedItems()[0].getText(), "Item1", "The first item should be selected");
+	});
+
 	QUnit.module("Mobile mode (dialog)");
 
 	QUnit.test("Prevent endless focus loop on mobile", function(assert) {
