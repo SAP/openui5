@@ -40,6 +40,7 @@ sap.ui.define(function () {
 			},
 			"CalendarCard": {},
 			"AdaptiveCard": {},
+			"AnalyticalCard": {},
 			"UI5InputText": {
 				coverage: {
 					only: ["sap/f/cards/adaptivecards/elements/UI5InputText"]
