@@ -2507,7 +2507,7 @@ sap.ui.define([
 	QUnit.test("Correct responsive paddings are applied", function (assert) {
 		var clock = sinon.useFakeTimers();
 
-		var oButton = new Button({text: "Test"}).placeAt("content");
+		var oButton = new Button({text: "Test"});
 		var oPopover = new Popover("responsivePaddingsPopover", {
 			title: "Test title",
 			subHeader: new sap.m.Bar({
@@ -2530,11 +2530,13 @@ sap.ui.define([
 					]
 				})
 			],
-			footer: new sap.m.Bar({
+			footer: new Bar({
 				contentLeft: [new sap.m.Button({icon: "sap-icon://inspection", text: "short"})],
 				contentRight: [new sap.m.Button({icon: "sap-icon://home", text: "loooooong text"})]
 			})
 		});
+
+		page.addContent(oButton);
 
 		var oStub = sinon.stub(window, "requestAnimationFrame", window.setTimeout);
 		sap.ui.getCore().applyChanges();
