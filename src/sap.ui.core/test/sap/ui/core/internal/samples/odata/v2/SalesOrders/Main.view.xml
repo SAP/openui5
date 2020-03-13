@@ -29,27 +29,36 @@
 					editable="true" labelSpanM="2" layout="ResponsiveGridLayout">
 					<form:toolbar>
 						<Toolbar design="Transparent">
-							<Title id="objectPageTitle" text="Sales Order Details" level="H2" />
+							<Title id="objectPageTitle" level="H2" text="Sales Order Details" />
 						</Toolbar>
 					</form:toolbar>
 					<Toolbar design="Transparent">
-						<Title text="Sales Order" level="H2" />
+						<Title level="H2" text="Sales Order" />
 					</Toolbar>
 					<Label text="Sales Order ID" />
-					<Input value="{SalesOrderID}" editable="false" width="8em"/>
+					<Input editable="false" value="{SalesOrderID}" width="8em" />
 					<Label text="Note" />
 					<Input value="{Note}" />
 				</form:SimpleForm>
-				<t:Table id="ToLineItems" rows="{ToLineItems}" visibleRowCount="7">
+				<t:Table id="ToLineItems" rowActionCount="1" rows="{ToLineItems}"
+					visibleRowCount="7">
 					<t:extension>
 						<Toolbar>
-							<Title text="Sales Order Items" level="H2">
+							<Title level="H2" text="Sales Order Items">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
 							</Title>
 						</Toolbar>
 					</t:extension>
+					<t:rowSettingsTemplate>
+						<t:RowSettings id="rowsettings" />
+					</t:rowSettingsTemplate>
+					<t:rowActionTemplate>
+						<t:RowAction>
+							<t:RowActionItem press="onShowProductDetails" type="Navigation" />
+						</t:RowAction>
+					</t:rowActionTemplate>
 					<t:columns>
 						<t:Column width="8em">
 							<Label text="Sales Order ID" />
@@ -118,6 +127,21 @@
 					</t:columns>
 				</t:Table>
 			</VBox>
+			<VBox>
+				<dependents>
+					<Dialog binding="{ToProduct}" id="productDetailsDialog" title="Product Details">
+						<buttons>
+							<Button press="onCloseProductDetails" text="Close" type="Accept" />
+						</buttons>
+						<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+							<Label text="Product ID" />
+							<Input value="{ProductID}" />
+							<Label text="Name" />
+							<Input value="{Name}" />
+						</form:SimpleForm>
+					</Dialog>
+				</dependents>
+			</VBox>
 		</content>
 		<footer>
 			<OverflowToolbar>
@@ -126,7 +150,7 @@
 					<dependents>
 						<MessagePopover activeTitlePress="onMessageSelected"
 							afterClose="onMessagePopoverClosed" id="messagePopover"
-							items="{messages>/}">
+							items="{messages>/}"><!--  TODO filter messages by selected SO -->
 							<MessageItem activeTitle="true" description="{messages>message}"
 								subtitle="{messages>additionalText}" title="{messages>message}"
 								type="{messages>type}" />
@@ -135,7 +159,7 @@
 				</Button>
 				<ToolbarSpacer />
 				<Button press="onSaveSalesOrder" text="Save" type="Emphasized" />
-				<Button press="onResetChanges" text="Rest Changes" />
+				<Button press="onResetChanges" text="Reset Changes" />
 			</OverflowToolbar>
 		</footer>
 	</Page>

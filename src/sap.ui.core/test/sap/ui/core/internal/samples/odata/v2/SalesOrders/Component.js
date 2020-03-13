@@ -19,11 +19,10 @@ sap.ui.define([
 		},
 
 		init: function () {
-			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 
-			// set the ui model
-			this.setModel(new JSONModel({salesOrderID : "0500000000"}), "ui");
+			this.setModel(new JSONModel({salesOrderID : "0500000005"}), "ui");
+			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "messageModel");
 		}
 	});
 });
