@@ -774,7 +774,15 @@ sap.ui.define([
 		 * @public
 		 * @since 1.73
 		 */
-		Neutral : "Neutral"
+		Neutral : "Neutral",
+
+		/**
+		 * Attention type
+		 *
+		 * @public
+		 * @since 1.77
+		 */
+		Attention : "Attention"
 	};
 
 	/**
