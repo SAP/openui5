@@ -1016,7 +1016,7 @@ sap.ui.define([
 	IconTabHeader.prototype._getItemsInStrip = function () {
 		return this.getItems().filter(function (oItem) {
 			var oItemDomRef = oItem.getDomRef();
-			return oItemDomRef && window.getComputedStyle(oItemDomRef).display !== "none";
+			return oItemDomRef && !oItemDomRef.classList.contains("sapMITBFilterHidden");
 		});
 	};
 
@@ -1044,7 +1044,7 @@ sap.ui.define([
 			i,
 			oSelectedItemDomRef = (this._oSelectedRootItem || oSelectedItem).getDomRef(),
 			aItems = this.getItems()
-				.filter(function (oItem) { return Boolean(oItem.getDomRef()); })
+				.filter(function (oItem) { return oItem.getDomRef(); })
 				.map(function (oItem) { return oItem.getDomRef(); });
 
 		if (!aItems.length || !oSelectedItemDomRef) {
@@ -1052,13 +1052,11 @@ sap.ui.define([
 		}
 
 		// reset all display styles and their initial order to calculate items' width
-		for (i = 0; i < aItems.length; i++) {
-			oItem = aItems[i];
-			if (oItem) {
-				oItem.style.width = "";
-				oItem.style.display = "";
-			}
-		}
+		aItems.forEach(function (oItem) {
+			oItem.style.width = "";
+			oItem.classList.remove("sapMITBFilterHidden");
+		});
+
 		oSelectedItemDomRef.classList.remove("sapMITBFilterTruncated");
 
 		// find all fitting items, start with selected item's width
@@ -1073,7 +1071,7 @@ sap.ui.define([
 			for (i = 0; i < aItems.length; i++) {
 				oItem = aItems[i];
 				if (oItem) {
-					oItem.style.display = "none";
+					oItem.classList.add("sapMITBFilterHidden");
 				}
 			}
 			return;
@@ -1096,7 +1094,7 @@ sap.ui.define([
 
 		for (i = iLastVisible + 1; i < aItems.length; i++) {
 			oItem = aItems[i];
-			oItem.style.display = "none";
+			oItem.classList.add("sapMITBFilterHidden");
 		}
 
 		this.$().toggleClass("sapMITHOverflowList", iLastVisible + 1 !== aItems.length);
