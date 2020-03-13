@@ -266,6 +266,7 @@ function(
 
 		this._getValueHelpIcon().setProperty("visible", true, true);
 		this._modifySuggestionPicker();
+		this._onResize = this._onResize.bind(this);
 	};
 
 	/**
@@ -274,6 +275,8 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.exit = function () {
+		this._deregisterResizeHandler();
+		this._deregisterTokenizerResizeHandler();
 		Input.prototype.exit.call(this);
 
 		if (this._oSelectedItemPicker) {
@@ -292,13 +295,8 @@ function(
 			oReadOnlyPopover = null;
 		}
 
-		this._deregisterResizeHandler();
 	};
 
-	MultiInput.prototype.onBeforeRendering = function () {
-		Input.onBeforeRendering.apply(this, arguments);
-		this._tokenizer.setEnabled(this.getEnabled());
-	};
 
 	/**
 	 * Called after the control is rendered.
@@ -309,6 +307,7 @@ function(
 		this._bTokenIsValidated = false;
 		this._tokenizer.scrollToEnd();
 		this._registerResizeHandler();
+		this._registerTokenizerResizeHandler();
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._handleNMoreAccessibility();
 		this._handleInnerVisibility();
@@ -340,11 +339,7 @@ function(
 	 */
 	MultiInput.prototype._registerResizeHandler = function () {
 		if (!this._iResizeHandlerId) {
-			this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
-		}
-
-		if (!this._iTokenizerResizeHandler) {
-			this._iTokenizerResizeHandler = ResizeHandler.register(this._tokenizer, this._onResize.bind(this));
+			this._iResizeHandlerId = ResizeHandler.register(this, this._onResize);
 		}
 	};
 
@@ -358,7 +353,25 @@ function(
 			ResizeHandler.deregister(this._iResizeHandlerId);
 			this._iResizeHandlerId = null;
 		}
+	};
 
+	/**
+	 * Registers Tokenizer's resize handler
+	 *
+	 * @private
+	 */
+	MultiInput.prototype._registerTokenizerResizeHandler = function () {
+		if (!this._iTokenizerResizeHandler) {
+			this._iTokenizerResizeHandler = ResizeHandler.register(this._tokenizer, this._onResize);
+		}
+	};
+
+	/**
+	 * Deregisters Tokenizer's resize handler
+	 *
+	 * @private
+	 */
+	MultiInput.prototype._deregisterTokenizerResizeHandler = function () {
 		if (this._iTokenizerResizeHandler) {
 			ResizeHandler.deregister(this._iTokenizerResizeHandler);
 			this._iTokenizerResizeHandler = null;
@@ -375,8 +388,6 @@ function(
 		this._handleInnerVisibility();
 		this._syncInputWidth(this._tokenizer);
 		this._handleNMoreAccessibility();
-
-		this._registerResizeHandler();
 	};
 
 	MultiInput.prototype._onTokenChange = function (args) {
@@ -547,8 +558,9 @@ function(
 	 */
 	MultiInput.prototype.onBeforeRendering = function () {
 		Input.prototype.onBeforeRendering.apply(this, arguments);
-
+		this._tokenizer.setProperty("enabled", this.getEnabled(), true);
 		this._deregisterResizeHandler();
+		this._deregisterTokenizerResizeHandler();
 	};
 
 	/**
@@ -1045,7 +1057,7 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onfocusin = function (oEvent) {
-		this._deregisterResizeHandler();
+		this._deregisterTokenizerResizeHandler();
 
 		this._bValueHelpOpen = false; //This means the ValueHelp is closed and the focus is back. So, reset that var
 
