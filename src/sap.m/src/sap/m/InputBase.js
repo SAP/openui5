@@ -175,6 +175,8 @@ function(
 			 * Defines the formatted text that appears in the value state message pop-up.
 			 * It can include links. If both <code>valueStateText</code> and <code>formattedValueStateText</code>
 			 * are set - the latter is shown.
+			 * @private
+			 * @experimental Since 1.76. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
 			 * @since 1.76
 			 */
 			formattedValueStateText: { type: "sap.m.FormattedText", multiple: false, defaultValue: null },
