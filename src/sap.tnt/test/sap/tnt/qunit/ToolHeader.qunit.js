@@ -7,8 +7,6 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/OverflowToolbarLayoutData',
 	'sap/m/ToolbarSpacer',
-	'sap/m/IconTabHeader',
-	'sap/m/IconTabFilter',
 	'sap/tnt/ToolHeader',
 	'sap/tnt/ToolHeaderUtilitySeparator',
 	'sap/ui/qunit/utils/waitForThemeApplied'
@@ -19,8 +17,6 @@ sap.ui.define([
 	Button,
 	OverflowToolbarLayoutData,
 	ToolbarSpacer,
-	IconTabHeader,
-	IconTabFilter,
 	ToolHeader,
 	ToolHeaderUtilitySeparator,
 	waitForThemeApplied) {

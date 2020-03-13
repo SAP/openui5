@@ -13,8 +13,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var DOM_RENDER_LOCATION = "content",
-		SCROLL_ANIMATION_DURATION = 500;
+	var DOM_RENDER_LOCATION = "content";
 
 	createAndAppendDiv(DOM_RENDER_LOCATION);
 
@@ -29,26 +28,24 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("Scrolling items");
+	QUnit.module("Resize");
 
-	QUnit.test("Selecting tab when there is enough space and no overflow button/arrows are shown", function(assert) {
+	QUnit.test("when there is not enough space, items should be hidden", function(assert) {
 		// arrange
 		var oITH = createHeaderWithItems(),
-			oFirstItem = oITH.getItems()[0],
 			oLastItem = oITH.getItems()[3];
 
-		oITH.isTouchScrollingDisabled = function () { return true; };
 		oITH.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
-		oITH.$().width("300px");
-		this.clock.tick(SCROLL_ANIMATION_DURATION);
 
-		// act
-		oITH.setSelectedItem(oLastItem);
-		this.clock.tick(SCROLL_ANIMATION_DURATION);
+		assert.notOk(oLastItem.$().hasClass("sapMITBFilterHidden"), "the last filter is visible");
+
+		oITH.$().width("200px");
+		Core.applyChanges();
+		this.clock.tick(300);
 
 		// assert
-		assert.notOk(oFirstItem.$().hasClass("sapMITBFilterHidden"), "There should be no hidden filters");
+		assert.ok(oLastItem.$().hasClass("sapMITBFilterHidden"), "the last filter is hidden");
 
 		// clean up
 		oITH.destroy();
