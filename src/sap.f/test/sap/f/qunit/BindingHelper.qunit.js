@@ -24,7 +24,11 @@ function (
 		// assert
 		assert.strictEqual(BindingHelper.createBindingInfos(null), null, "Should preserve value if it doesn't contain binding.");
 		assert.strictEqual(BindingHelper.createBindingInfos(undefined), undefined, "Should preserve value if it doesn't contain binding.");
+		assert.strictEqual(BindingHelper.createBindingInfos(false), false, "Should preserve value if it doesn't contain binding.");
 		assert.strictEqual(BindingHelper.createBindingInfos(true), true, "Should preserve value if it doesn't contain binding.");
+		assert.strictEqual(BindingHelper.createBindingInfos(0), 0, "Should preserve value if it doesn't contain binding.");
+		assert.strictEqual(BindingHelper.createBindingInfos(1), 1, "Should preserve value if it doesn't contain binding.");
+		assert.strictEqual(BindingHelper.createBindingInfos(42), 42, "Should preserve value if it doesn't contain binding.");
 		assert.strictEqual(BindingHelper.createBindingInfos("string that doesn't contain binding"), "string that doesn't contain binding", "Should preserve value if it doesn't contain binding.");
 		assert.notStrictEqual(BindingHelper.createBindingInfos(oEmptyObj), oEmptyObj, "Should return new object.");
 		assert.notStrictEqual(BindingHelper.createBindingInfos(oObj), oObj, "Should return new object.");

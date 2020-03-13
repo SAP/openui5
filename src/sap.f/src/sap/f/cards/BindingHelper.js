@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/base/ManagedObject",
+	"sap/ui/base/BindingParser",
 	"sap/base/util/extend",
 	"./formatters/DateTimeFormatter",
 	"./formatters/NumberFormatter",
 	"./bindingFeatures/DateRange"
 	], function (
-		ManagedObject,
+		BindingParser,
 		extend,
 		DateTimeFormatter,
 		NumberFormatter,
@@ -60,17 +60,14 @@ sap.ui.define([
 		/**
 		 * Resolves expression bindings with our formatters. Also creates binding infos, if there is a binding syntax.
 		 *
-		 * @param {string} sValue The string with binding.
-		 * @returns {object|string} Created binding info
+		 * @param {any} vValue The value with binding.
+		 * @returns {object|undefined} Created binding info or undefined if there is no binding.
 		 */
-		BindingHelper.extractBindingInfo = function (sValue) {
-			// TO DO: Check if "bindingSyntax" is "complex"
-			// ManagedObject.bindingParser == BindingParser.complexParser
+		BindingHelper.extractBindingInfo = function (vValue) {
+			vValue = BindingHelper.escapeCardPlaceholders(vValue);
 
-			sValue = BindingHelper.escapeCardPlaceholders(sValue);
-
-			return ManagedObject.bindingParser(
-				sValue,
+			return BindingParser.complexParser(
+				vValue,
 				undefined, // oContext
 				true, // bUnescape - when set to 'true' expressions that don't contain bindings are also resolved, else they are treated as strings
 				undefined, // bTolerateFunctionsNotFound
@@ -154,15 +151,15 @@ sap.ui.define([
 		 * Escapes the cards placeholders with double braces, so that the binding parser does not consider it as a binding.
 		 * The string "{{destinations.myDestination}}" will become "\\{\\{destinations.myDestination\\}\\}".
 		 *
-		 * @param {string} sValue The value to escape.
+		 * @param {any} vValue The value to escape.
 		 * @returns {string} The escaped value.
 		 */
-		BindingHelper.escapeCardPlaceholders = function (sValue) {
-			if (typeof sValue !== "string") {
-				return sValue;
+		BindingHelper.escapeCardPlaceholders = function (vValue) {
+			if (typeof vValue !== "string") {
+				return vValue;
 			}
 
-			return sValue.replace(rCardPlaceholderPattern, "\\{\\{$1\\}\\}");
+			return vValue.replace(rCardPlaceholderPattern, "\\{\\{$1\\}\\}");
 		};
 
 		return BindingHelper;
