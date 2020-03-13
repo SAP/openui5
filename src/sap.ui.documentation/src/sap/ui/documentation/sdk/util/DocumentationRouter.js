@@ -214,6 +214,11 @@ sap.ui.define([
 	 * Handling of documentation link clicks - some times only scrolling is needed without navigation
 	 */
 	DocumentationRouter.prototype.linkClickHandler = function (oEvent) {
+		if (oEvent.defaultPrevented) {
+			oEvent.preventDefault();
+			return;
+		}
+
 		var oElement = oEvent.target,
 			$Element = jQuery(oElement),
 			oAnchorElement,
@@ -315,7 +320,7 @@ sap.ui.define([
 
 	DocumentationRouter.prototype.attachGlobalLinkHandler = function () {
 		if (!this._bGlobalHandlerAttached) {
-			document.body.addEventListener("click", this.linkClickHandler.bind(this), true);
+			document.body.addEventListener("click", this.linkClickHandler.bind(this));
 			window['sap-ui-documentation-static'] && document.body.addEventListener("mousedown", this.mouseDownClickHandler.bind(this), true);
 			this._bGlobalHandlerAttached = true;
 		}
