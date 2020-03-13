@@ -23,7 +23,10 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			this.getModel().setMessageScope(MessageScope.BusinessObject);
-			this.setModel(new JSONModel({salesOrderID : "0500000005"}), "ui");
+			this.setModel(new JSONModel({
+				messageCount : 0,
+				salesOrderID : "0500000005"
+			}), "ui");
 			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "messageModel");
 		}
 	});

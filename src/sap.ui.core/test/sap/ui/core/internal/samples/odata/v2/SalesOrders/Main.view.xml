@@ -146,11 +146,16 @@
 		<footer>
 			<OverflowToolbar>
 				<Button icon="sap-icon://message-popup" id="messagePopoverButton"
-					press="onMessagePopoverPress" text="{=${messages>/}.length}" type="Emphasized">
+					press="onMessagePopoverPress" text="{ui>/messageCount}" type="Emphasized">
 					<dependents>
 						<MessagePopover activeTitlePress="onMessageSelected"
 							afterClose="onMessagePopoverClosed" id="messagePopover"
-							items="{messages>/}"><!--  TODO filter messages by selected SO -->
+							items="{
+								path : 'messages>/',
+								events : {
+									change : '.updateMessageCount'
+								}
+							}">
 							<MessageItem activeTitle="true" description="{messages>message}"
 								subtitle="{messages>additionalText}" title="{messages>message}"
 								type="{messages>type}" />
