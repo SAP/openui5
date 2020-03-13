@@ -1,5 +1,6 @@
 {
 	"sap.app": {
+		"id": "cardsdemo.samples.timeline1",
 		"type": "card"
 	},
 	"sap.card": {
@@ -28,7 +29,7 @@
 					"value": "{JobResponsibilities}"
 				},
 				"title": {
-					"label": "{{jobTitle_label}}",
+					"label": "{{jobTitle}}",
 					"value": "{JobTitle}"
 				},
 				"owner": {
