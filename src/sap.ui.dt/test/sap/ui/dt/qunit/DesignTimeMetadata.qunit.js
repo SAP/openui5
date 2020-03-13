@@ -351,7 +351,8 @@ function(
 					actions : {
 						getResponsibleElement: function(oElement) {
 							return oElement;
-						}
+						},
+						actionsFromResponsibleElement: ["dummyActionEnabled"]
 					}
 				}
 			});
@@ -372,6 +373,18 @@ function(
 			assert.deepEqual(this.oDesignTimeMetadataWithResponsibleElement.getResponsibleElement(oResponsibleElement), oResponsibleElement, "then the resposible element was returned correctly");
 			assert.equal(this.oDesignTimeMetadataWithoutResponsibleElement.getResponsibleElement(oResponsibleElement), undefined);
 			assert.equal(this.oDesignTimeMetadataWithoutActions.getResponsibleElement(oResponsibleElement), undefined);
+		});
+
+		QUnit.test("when isResponsibleActionAvailable() is called for designTimeMetadata with no actions", function (assert) {
+			this.fnGetData = function () {
+				return {};
+			};
+			assert.strictEqual(this.oDesignTimeMetadataWithoutActions.isResponsibleActionAvailable("dummyActionEnabled"), false, "then false is returned");
+		});
+
+		QUnit.test("when isResponsibleActionAvailable() is called for designTimeMetadata with enabled action", function (assert) {
+			assert.strictEqual(this.oDesignTimeMetadataWithResponsibleElement.isResponsibleActionAvailable("dummyActionDisabled"), false, "then false is returned for a non enabled action");
+			assert.strictEqual(this.oDesignTimeMetadataWithResponsibleElement.isResponsibleActionAvailable("dummyActionEnabled"), true, "then true is returned for an enabled action");
 		});
 	});
 

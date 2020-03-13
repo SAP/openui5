@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrame",
 	"sap/ui/rta/plugin/iframe/SettingsDialog",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/m/Button"
 ],
 function (
 	Utils,
@@ -28,7 +29,8 @@ function (
 	AddIFramePlugin,
 	AddIFrameSettingsDialog,
 	sinon,
-	includes
+	includes,
+	Button
 ) {
 	"use strict";
 
@@ -92,14 +94,17 @@ function (
 				this.oAddIFrame = new AddIFramePlugin({
 					commandFactory : new CommandFactory()
 				});
-				this.oObjectPageSection = new ObjectPageSection({
+				this.oObjectPageSection = new ObjectPageSection(oMockedViewWithStableId.createId("section"), {
 					title: "title"
 				});
 				this.oObjectPageLayout = new ObjectPageLayout(oMockedViewWithStableId.createId("opl"), {
 					sections: [this.oObjectPageSection]
 				});
+				this.oButton = new Button(oMockedViewWithStableId.createId("button"), {
+					text: "buttonTitle"
+				});
 				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-					content : [this.oObjectPageLayout]
+					content : [this.oObjectPageLayout, this.oButton]
 				}).placeAt("qunit-fixture");
 
 				sap.ui.getCore().applyChanges();
@@ -120,6 +125,7 @@ function (
 					this.oObjectPageLayoutOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
 					this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
 					this.oNewObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oNewObjectPageSection);
+					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 
 					done();
 				}.bind(this));
@@ -228,7 +234,7 @@ function (
 			});
 		});
 
-		QUnit.test("when an overlay has addIFrame action designTime metadata, and isEnabled property is function", function(assert) {
+		QUnit.test("when an overlay has addIFrame action on a responsible element", function(assert) {
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations : {
 					sections : {
@@ -243,65 +249,40 @@ function (
 					}
 				}
 			});
-			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
-			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					getResponsibleElement: function(oElement) {
+						if (oElement === this.oButton) {
+							return this.oObjectPageSection;
+						}
+					}.bind(this),
+					actionsFromResponsibleElement: ["addIFrame"]
+				}
+			});
+
+			this.oAddIFrame.deregisterElementOverlay(this.oButtonOverlay);
+			this.oAddIFrame.registerElementOverlay(this.oButtonOverlay);
 
 			return DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				assert.strictEqual(this.oAddIFrame.isAvailable(false, [this.oObjectPageLayoutOverlay]), true, "then isAvailable is called and it returns true");
-				assert.strictEqual(this.oAddIFrame.isEnabled(false, [this.oObjectPageLayoutOverlay]), true, "then isEnabled is called and it returns correct value from function call");
-				return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
-			}.bind(this))
-			.then(function(bIsEditable) {
-				assert.ok(bIsEditable, "then the overlay is editable");
+				.then(function() {
+					assert.strictEqual(this.oAddIFrame.isAvailable(true, [this.oButtonOverlay]), true, "then isAvailable returns true as a sibling");
+					assert.strictEqual(this.oAddIFrame.isAvailable(false, [this.oButtonOverlay]), false, "then isAvailable returns false when it's not a sibling");
 
-				var aOverlaySiblingRequests;
-				var oCheckOverlay;
-				var bIsAvailable = true;
-				sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(bOverlayIsSibling, aElementOverlays) {
-					aOverlaySiblingRequests.push(bOverlayIsSibling); // Not assuming any order
-					assert.deepEqual(aElementOverlays[0].getId(), oCheckOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
-					return bIsAvailable;
-				});
+					var bAvailable = true;
+					sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(bSibling, aElementOverlays) {
+						if (bSibling === true && aElementOverlays[0] === this.oObjectPageSectionOverlay) {
+							return bAvailable;
+						}
+					}.bind(this));
+					var aMenuItems = this.oAddIFrame.getMenuItems([this.oButtonOverlay]);
+					assert.equal(aMenuItems.length, 1, "then one menu item was returned when the action is available on the responsible element overlay");
+					assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_IFRAME", "there the menu item is for a sibling");
+					assert.deepEqual(aMenuItems[0].responsible[0], this.oObjectPageSectionOverlay, "then it contains the object page section overlay");
 
-				var bCheckOverlayIsSibling;
-				sandbox.stub(this.oAddIFrame, "handleCreate").callsFake(function(oMenuItem, oElementOverlay) {
-					assert.equal(oMenuItem.isSibling, bCheckOverlayIsSibling, "the 'handleCreate' function is called with oMenuItem.isSibling = " + bCheckOverlayIsSibling);
-					assert.deepEqual(oElementOverlay.getId(), oCheckOverlay.getId(), "the 'handleCreate' function is called with the correct overlay");
-				});
-				sandbox.stub(this.oAddIFrame, "isEnabled").callsFake(function(oMenuItem, aElementOverlays) {
-					assert.equal(oMenuItem.isSibling, bCheckOverlayIsSibling, "the 'enabled' function calls isEnabled with oMenuItem.isSibling = " + bCheckOverlayIsSibling);
-					assert.deepEqual(aElementOverlays[0].getId(), oCheckOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
-				});
-
-				var getMenuItems = function (oOverlay) {
-					aOverlaySiblingRequests = [];
-					oCheckOverlay = oOverlay;
-					var aResultMenuItems = this.oAddIFrame.getMenuItems([oOverlay]);
-					assert.strictEqual(aOverlaySiblingRequests.length, 2, "the 'available' function was called twice");
-					assert.ok(includes(aOverlaySiblingRequests, true), "the 'available' function was called twice with bOverlayIsSibling=true");
-					assert.ok(includes(aOverlaySiblingRequests, false), "the 'available' function was called twice with bOverlayIsSibling=false");
-					return aResultMenuItems;
-				}.bind(this);
-
-				var aMenuItems = getMenuItems(this.oObjectPageLayoutOverlay);
-				assert.strictEqual(aMenuItems.length, 1, "Only one menu item is returned");
-				assert.equal(aMenuItems[0].id, "CTX_CREATE_CHILD_IFRAME_SECTIONS", "there is an entry for create child section");
-				bCheckOverlayIsSibling = false;
-				aMenuItems[0].handler([this.oObjectPageLayoutOverlay]);
-				aMenuItems[0].enabled([this.oObjectPageLayoutOverlay]);
-
-				aMenuItems = getMenuItems(this.oNewObjectPageSectionOverlay);
-				assert.strictEqual(aMenuItems.length, 1, "Only one menu item is returned");
-				assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_IFRAME", "there is an entry for create child section");
-				bCheckOverlayIsSibling = true;
-				aMenuItems[0].handler([this.oNewObjectPageSectionOverlay]);
-				aMenuItems[0].enabled([this.oNewObjectPageSectionOverlay]);
-
-				bIsAvailable = false;
-				aMenuItems = getMenuItems(this.oObjectPageLayoutOverlay);
-				assert.equal(aMenuItems.length, 0, "and if plugin is not available for the overlay, no menu items are returned");
-			}.bind(this));
+					bAvailable = false;
+					aMenuItems = this.oAddIFrame.getMenuItems([this.oButtonOverlay]);
+					assert.equal(aMenuItems.length, 0, "then no menu item was returned when the action is not available on the responsible element overlay");
+				}.bind(this));
 		});
 
 		QUnit.test("when an overlay has addIFrame action, but its view has no stable id", function(assert) {
@@ -334,6 +315,82 @@ function (
 			.then(function(bIsEditable) {
 				assert.notOk(bIsEditable, "then the overlay is not editable");
 			});
+		});
+
+		QUnit.test("when an overlay has addIFrame action designTime metadata, and isEnabled property is function", function(assert) {
+			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
+				aggregations : {
+					sections : {
+						actions : {
+							addIFrame : {
+								changeType : "addIFrame",
+								isEnabled : function (oElement) {
+									return oElement.getMetadata().getName() === "sap.uxap.ObjectPageLayout";
+								}
+							}
+						}
+					}
+				}
+			});
+			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
+			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
+
+			return DtUtil.waitForSynced(this.oDesignTime)()
+				.then(function() {
+					assert.strictEqual(this.oAddIFrame.isAvailable(false, [this.oObjectPageLayoutOverlay]), true, "then isAvailable is called and it returns true");
+					assert.strictEqual(this.oAddIFrame.isEnabled(false, [this.oObjectPageLayoutOverlay]), true, "then isEnabled is called and it returns correct value from function call");
+					return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
+				}.bind(this))
+				.then(function(bIsEditable) {
+					assert.ok(bIsEditable, "then the overlay is editable");
+
+					var aOverlaySiblingRequests;
+					var oCheckOverlay;
+					var bIsAvailable = true;
+					sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(bOverlayIsSibling, aElementOverlays) {
+						aOverlaySiblingRequests.push(bOverlayIsSibling); // Not assuming any order
+						assert.deepEqual(aElementOverlays[0].getId(), oCheckOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
+						return bIsAvailable;
+					});
+
+					var bCheckOverlayIsSibling;
+					sandbox.stub(this.oAddIFrame, "handleCreate").callsFake(function(oMenuItem, oElementOverlay) {
+						assert.equal(oMenuItem.isSibling, bCheckOverlayIsSibling, "the 'handleCreate' function is called with oMenuItem.isSibling = " + bCheckOverlayIsSibling);
+						assert.deepEqual(oElementOverlay.getId(), oCheckOverlay.getId(), "the 'handleCreate' function is called with the correct overlay");
+					});
+					sandbox.stub(this.oAddIFrame, "isEnabled").callsFake(function(oMenuItem, aElementOverlays) {
+						assert.equal(oMenuItem.isSibling, bCheckOverlayIsSibling, "the 'enabled' function calls isEnabled with oMenuItem.isSibling = " + bCheckOverlayIsSibling);
+						assert.deepEqual(aElementOverlays[0].getId(), oCheckOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
+					});
+
+					var getMenuItems = function (oOverlay) {
+						aOverlaySiblingRequests = [];
+						oCheckOverlay = oOverlay;
+						var aResultMenuItems = this.oAddIFrame.getMenuItems([oOverlay]);
+						assert.strictEqual(aOverlaySiblingRequests.length, 2, "the 'available' function was called twice");
+						assert.ok(includes(aOverlaySiblingRequests, true), "the 'available' function was called twice with bOverlayIsSibling=true");
+						assert.ok(includes(aOverlaySiblingRequests, false), "the 'available' function was called twice with bOverlayIsSibling=false");
+						return aResultMenuItems;
+					}.bind(this);
+
+					var aMenuItems = getMenuItems(this.oObjectPageLayoutOverlay);
+					assert.strictEqual(aMenuItems.length, 1, "Only one menu item is returned");
+					assert.equal(aMenuItems[0].id, "CTX_CREATE_CHILD_IFRAME_SECTIONS", "there is an entry for create child section");
+					bCheckOverlayIsSibling = false;
+					aMenuItems[0].handler([this.oObjectPageLayoutOverlay]);
+					aMenuItems[0].enabled([this.oObjectPageLayoutOverlay]);
+
+					aMenuItems = getMenuItems(this.oNewObjectPageSectionOverlay);
+					assert.strictEqual(aMenuItems.length, 1, "Only one menu item is returned");
+					assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_IFRAME", "there is an entry for create child section");
+					bCheckOverlayIsSibling = true;
+					aMenuItems[0].handler([this.oNewObjectPageSectionOverlay]);
+					aMenuItems[0].enabled([this.oNewObjectPageSectionOverlay]);
+
+					bIsAvailable = false;
+					aMenuItems = getMenuItems(this.oObjectPageLayoutOverlay);
+					assert.equal(aMenuItems.length, 0, "and if plugin is not available for the overlay, no menu items are returned");
+				}.bind(this));
 		});
 
 		QUnit.test("when an overlay has addIFrame action with changeOnRelevantContainer true, but its relevant container has no stable id", function(assert) {

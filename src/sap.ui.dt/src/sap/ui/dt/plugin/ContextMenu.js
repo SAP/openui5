@@ -299,7 +299,7 @@ sap.ui.define([
 		this._aMenuItems.some(function (mMenuItemEntry) {
 			if (sSelectedButtonId === mMenuItemEntry.menuItem.id) {
 				var oItem = mMenuItemEntry.menuItem;
-				aSelection = this.getSelectedOverlays();
+				aSelection = mMenuItemEntry.menuItem.responsible || this.getSelectedOverlays();
 				assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
 				var mPropertiesBag = {};
 				mPropertiesBag.eventItem = oEventItem;
