@@ -15728,7 +15728,7 @@ sap.ui.define([
 				.expectChange("isActive", "Yes")
 				.expectChange("name", "The Beatles");
 
-			// set creation row to null in order to be skipped within the control tree
+			// set binding context for creationRow to "null" to skip inheriting the binding context
 			oCreationRow.setBindingContext(null);
 
 			oObjectPage.setBindingContext(oHiddenBinding.getBoundContext());
@@ -15807,6 +15807,186 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Fiori Elements Safeguard - Test 2 (Create)
+	//	1. Call create action bound to collection with $select for Messages,
+	//		$$patchWithoutSideEffects but w/o $$inheritExpandSelect because nothing can be
+	//		inherited.
+	//	2. Bind object page to the return value context of the create action and see that structural
+	//		properties and properties via navigation properties are fetched as late properties.
+	//	3. Show the creation row of a creation row binding (a binding that does not request data,
+	//		is not be refreshed) which is relative to the return value context of the inactive
+	//		version.
+	//	4. Request side effects for the return value context of the inactive version to see that the
+	//		creation row is untouched.
+	//	5. Switch back to active version.
+	// CPOUI5ODATAV4-189
+	QUnit.test("Fiori Elements Safeguard: Test 2 (Create)", function (assert) {
+		var oCreationRow,
+			oModel = createSpecialCasesModel({autoExpandSelect : true, groupId : "$auto"}),
+			oReturnValueContext,
+			sView = '\
+<FlexBox id="objectPage" >\
+	<Text id="id" text="{ArtistID}" />\
+	<Text id="isActive" text="{IsActiveEntity}" />\
+	<Text id="name" text="{Name}" />\
+	<FlexBox id="bestFriend" binding="{BestFriend}" >\
+		<Text id="bestFriendName" text="{Name}" />\
+	</FlexBox>\
+	<FlexBox id="creationRow">\
+		<Text id="price" text="{Price}" />\
+		<Text id="artistName" text="{_Artist/Name}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id")
+			.expectChange("isActive")
+			.expectChange("name")
+			.expectChange("bestFriendName")
+			.expectChange("price")
+			.expectChange("artistName");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oOperationBinding;
+			// 1. Call create action bound to collection
+
+			oOperationBinding = oModel.bindContext("special.cases.Create(...)",
+				oModel.bindList("/Artists").getHeaderContext(),
+					{$$patchWithoutSideEffects : true, $select : "Messages"});
+
+			that.expectRequest({
+				method : "POST",
+				payload : {},
+				url : "Artists/special.cases.Create?$select=Messages"
+			}, {
+				ArtistID : "23",
+				IsActiveEntity : false
+			});
+
+			return oOperationBinding.execute();
+		}).then(function (oReturnValueContext0) {
+			// 2. Bind object page to the return value context of the create action
+
+			oReturnValueContext = oReturnValueContext0;
+
+			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)?"
+				+ "$select=ArtistID,IsActiveEntity,Name"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+					ArtistID : "23",
+					IsActiveEntity : false,
+					Name : "DJ Bobo",
+					BestFriend : {
+						ArtistID : "32",
+						IsActiveEntity : true,
+						Name : "Robin Schulz"
+					}
+				})
+				.expectChange("id", "23")
+				.expectChange("isActive", "No")
+				.expectChange("name", "DJ Bobo")
+				.expectChange("bestFriendName", "Robin Schulz");
+
+			// set binding context for creationRow to "null" to skip inheriting the binding context
+			that.oView.byId("creationRow").setBindingContext(null);
+			that.oView.byId("objectPage").setBindingContext(oReturnValueContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// 3. Show the creation row of a creation row binding
+
+			oCreationRow = that.oModel.bindList("_Publication", oReturnValueContext,
+				undefined, undefined, {$$updateGroupId : "doNotSubmit"}).create({Price : "47"});
+			oCreationRow.created().catch(function () {
+				// handle cancellation caused by oCreationRow.delete below
+			});
+
+			that.expectChange("price", "47");
+			that.expectChange("artistName", "DJ Bobo");
+
+			that.oView.byId("creationRow").setBindingContext(oCreationRow);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// 4. Request side effects for the return value context of the inactive version to see
+			// that the creation row is untouched
+
+			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+					ArtistID : "23",
+					IsActiveEntity : false,
+					Name : "DJ Bobo",
+					BestFriend : {
+						ArtistID : "32",
+						IsActiveEntity : true,
+						Name : "Robin Schulz"
+					}
+				});
+
+			return Promise.all([
+				oReturnValueContext.requestSideEffects([
+					{$PropertyPath : "*"},
+					{$NavigationPropertyPath : "BestFriend"},
+					{$NavigationPropertyPath : "_Publication"}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// Delete creation row context before switch back to active version
+
+			that.expectChange("price", null);
+			that.expectChange("artistName", null);
+
+			return Promise.all([
+				// before switching back to the active version, we hide the price deleting the
+				// creation row
+				oCreationRow.delete(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// 5. Switch back to active version
+			var oAction = that.oModel.bindContext("special.cases.ActivationAction(...)",
+					oReturnValueContext, {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+				method : "POST",
+				url : "Artists(ArtistID='23',IsActiveEntity=false)/special.cases.ActivationAction"
+					+ "?$select=Messages",
+				payload : {}
+			}, {
+				ArtistID : "23",
+				IsActiveEntity : true
+			});
+
+			return Promise.all([
+				oAction.execute(),
+				that.waitForChanges(assert)
+			]).then(function (aPromiseResults) {
+				// show active version, observe late properties request but only change for isActive
+
+				oReturnValueContext = aPromiseResults[0];
+
+				that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)?"
+					+ "$select=ArtistID,IsActiveEntity,Name"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+						ArtistID : "23",
+						IsActiveEntity : true,
+						Name : "DJ Bobo",
+						BestFriend : {
+							ArtistID : "32",
+							IsActiveEntity : true,
+							Name : "Robin Schulz"
+						}
+					})
+					.expectChange("isActive", "Yes");
+
+				that.oView.byId("objectPage").setBindingContext(oReturnValueContext);
+
+				return that.waitForChanges(assert);
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Object page bound to an active entity and its navigation property is $expand'ed via
