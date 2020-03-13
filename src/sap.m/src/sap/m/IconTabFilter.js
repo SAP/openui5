@@ -534,11 +534,10 @@ sap.ui.define([
 	 * @param {sap.m.IconTabBarSelectList} oSelectList the select list in which this filter is rendered
 	 * @param {int} iIndexInSet this item's index within the aggregation of items
 	 * @param {int} iSetSize total length of the aggregation of items
-	 * @param {float} fPaddingValue the padding with which child items should be indented
-	 * @param {float} iPaddingLevel the level of nesting with which child items should be indented
+	 * @param {float} fPaddingValue the padding with which the item should be indented
 	 * @protected
 	 */
-	IconTabFilter.prototype.renderInSelectList = function (oRM, oSelectList, iIndexInSet, iSetSize, fPaddingValue, iPaddingLevel) {
+	IconTabFilter.prototype.renderInSelectList = function (oRM, oSelectList, iIndexInSet, iSetSize, fPaddingValue) {
 		if (this._invisibleText) {
 			this._invisibleText.destroy();
 			this._invisibleText = null;
@@ -561,8 +560,8 @@ sap.ui.define([
 			.attr("tabindex", "-1")
 			.attr("role", "treeitem");
 
-		if (fPaddingValue && iPaddingLevel) {
-			oRM.style("padding-left", fPaddingValue * iPaddingLevel + "rem");
+		if (fPaddingValue) {
+			oRM.style("padding-left", fPaddingValue + "rem");
 		}
 
 		if (iIndexInSet !== undefined && iSetSize !== undefined) {
@@ -626,7 +625,6 @@ sap.ui.define([
 		if (!bIconOnly) {
 			this._renderText(oRM);
 		}
-
 		oRM.close("li");
 	};
 

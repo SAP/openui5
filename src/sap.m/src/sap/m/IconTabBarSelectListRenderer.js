@@ -4,9 +4,12 @@
 
 // Provides default renderer for control sap.m.IconTabBarSelectList
 sap.ui.define([
-	"sap/ui/core/theming/Parameters"
-], function (Parameters) {
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/library"
+], function (Parameters, coreLibary) {
 	"use strict";
+
+	var IconColor = coreLibary.IconColor;
 
 	/**
 	 * IconTabBarSelectList renderer.
@@ -17,7 +20,7 @@ sap.ui.define([
 		apiVersion: 2
 	};
 
-	IconTabBarSelectListRenderer.NestedItemPaddingLeft = Number.parseFloat(Parameters.get("_sap_m_IconTabBar_SelectItemInPopover_PaddingLeft"));
+	IconTabBarSelectListRenderer.fNestedItemPaddingLeft = Number.parseFloat(Parameters.get("_sap_m_IconTabBar_SelectListItem_PaddingLeft"));
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -29,10 +32,26 @@ sap.ui.define([
 		var aItems = oSelectList.getVisibleItems(),
 			oIconTabHeader = oSelectList._oIconTabHeader,
 			bTextOnly = oIconTabHeader._checkTextOnly(),
-			iTotalItemsCount = oIconTabHeader.getVisibleTabFilters().length;
+			iTotalItemsCount = oIconTabHeader.getVisibleTabFilters().length,
+			fNestedItemPaddingLeft = this.fNestedItemPaddingLeft,
+			iLevel = 0;
+
+		// find if in that level of nesting there is some semantic icon set
+		// all of the filters in same level (all siblings) should know that
+		var bHasSemanticColor = aItems.some(function (oItem) { return oItem.getIconColor() !== IconColor.Default; });
 
 		oSelectList.checkIconOnly();
-		this.renderList(oRM, aItems, oSelectList, oIconTabHeader, bTextOnly, 0, iTotalItemsCount);
+
+		var fAdditionalPadding = Number.parseFloat(Parameters.get("_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional"));
+		if (bHasSemanticColor) {
+			fNestedItemPaddingLeft += fAdditionalPadding;
+
+			if (fAdditionalPadding) {
+				iLevel++;
+			}
+		}
+
+		this.renderList(oRM, aItems, oSelectList, oIconTabHeader, bTextOnly, iLevel, fNestedItemPaddingLeft, iTotalItemsCount);
 	};
 
 	/**
@@ -46,7 +65,7 @@ sap.ui.define([
 	 * @param {int} iLevel base level of indentation for all list items
 	 * @param {int} iSetSize total number of items in the IconTabHeader
 	 */
-	IconTabBarSelectListRenderer.renderList = function (oRM, aItems, oSelectList, oIconTabHeader, bTextOnly, iLevel, iSetSize) {
+	IconTabBarSelectListRenderer.renderList = function (oRM, aItems, oSelectList, oIconTabHeader, bTextOnly, iLevel, fPadding, iSetSize) {
 		if (!aItems.length) {
 			return;
 		}
@@ -75,13 +94,13 @@ sap.ui.define([
 				iSetSize = aItems.length;
 			}
 
+			var fPaddingLeft = fPadding * iLevel;
 			oItem.renderInSelectList(
 				oRM,
 				oSelectList,
 				iIndexInSet,
 				iSetSize,
-				this.NestedItemPaddingLeft,
-				iLevel
+				fPaddingLeft
 			);
 
 			var aSubFilters = oItem._getRealTab().getItems();
@@ -90,7 +109,7 @@ sap.ui.define([
 					.openEnd();
 
 				iLevel++;
-				IconTabBarSelectListRenderer.renderList(oRM, aSubFilters, oSelectList, null, bTextOnly, iLevel, aSubFilters.length);
+				IconTabBarSelectListRenderer.renderList(oRM, aSubFilters, oSelectList, null, bTextOnly, iLevel, fPadding, aSubFilters.length);
 				iLevel--;
 
 				oRM.close("li");

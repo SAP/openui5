@@ -64,6 +64,11 @@
 			});
 			label2.addStyleClass("label");
 
+			var label2a = new sap.m.Label({
+				text: "Icon Only IconTabBar with semantic colours."
+			});
+			label2a.addStyleClass("label");
+
 			var label3 = new sap.m.Label({
 				text: "IconTabBar with tabs which have labels. Tabs are expandable. Semantic colors are used. Some tabs are invisible."
 			});
@@ -676,6 +681,62 @@
 								content: [
 									new sap.m.Label({
 										text: "alert alert alert"
+									})
+								]
+							})
+						]
+					}),
+					label2a,
+					new sap.m.IconTabBar("itb2a", {
+						selectedKey: "key13",
+						items: [
+							new sap.m.IconTabFilter({
+								icon: "sap-icon://hint",
+								iconColor: sap.ui.core.IconColor.Critical,
+								count: "3222",
+								key: "key1",
+								content: [
+									new sap.m.Label({
+										text: "info info info"
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								icon: "sap-icon://activity-items",
+								iconColor: sap.ui.core.IconColor.Negative,
+								enabled:false,
+								count: "322",
+								key: "key2",
+								content: [
+									new sap.m.Input({
+										placeholder: "input placeholder"
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								icon: "sap-icon://attachment",
+								iconColor: sap.ui.core.IconColor.Neutral,
+								key: "key3",
+								content: [
+									new sap.m.Link({
+										text:"message box",
+										press: function () {
+											jQuery.sap.require("sap.m.MessageBox");
+											sap.m.MessageBox.alert("Link was clicked!");
+										}
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								icon: "sap-icon://collaborate",
+								iconColor: sap.ui.core.IconColor.Positive,
+								key: "key4",
+								count: "537733",
+								content: [
+									new sap.m.Link({
+										text:"hallo",
+										target: "_blank",
+										href: "http://www.sap.com/"
 									})
 								]
 							})
