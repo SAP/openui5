@@ -155,7 +155,7 @@ sap.ui.define([
 	function addDependencyEntry(oDependentChange, oChange, sDependentControlId, mChangesMap, bIsChangesInRevertOrder) {
 		if (isDependencyNeeded(oDependentChange, oChange, sDependentControlId, mChangesMap, bIsChangesInRevertOrder)) {
 			mChangesMap.mDependencies[oDependentChange.getId()].dependencies.push(oChange.getId());
-			if (!mChangesMap.mDependencies[oDependentChange.getId()].dependentIds.includes(sDependentControlId)) {
+			if (!includes(mChangesMap.mDependencies[oDependentChange.getId()].dependentIds, sDependentControlId)) {
 				mChangesMap.mDependencies[oDependentChange.getId()].dependentIds.push(sDependentControlId);
 			}
 
