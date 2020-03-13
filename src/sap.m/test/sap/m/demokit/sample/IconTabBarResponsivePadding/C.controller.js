@@ -19,6 +19,7 @@ sap.ui.define([
 			});
 			oComp.setModel(this.getView().getModel());
 			this._oTable = oComp.getTable();
+			this._oTable.addStyleClass("sapUiSmallNegativeMarginBeginEnd");
 			this.byId("idIconTabBar").insertContent(this._oTable);
 
 			// update table
