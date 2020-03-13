@@ -2056,7 +2056,7 @@ sap.ui.define([
 		};
 
 		// Act
-		this.oOpeningBtn.placeAt("content");
+		this.oOpeningBtn.placeAt("qunit-fixture");
 
 	});
 
