@@ -1,6 +1,10 @@
-<mvc:View controllerName="sap.m.sample.TableAutoPopin.Table" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" height="100%">
+<mvc:View controllerName="sap.m.sample.TableAutoPopin.Table"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:core="sap.ui.core"
+		  xmlns="sap.m"
+		  height="100%">
 	<MessageStrip id="idMessageStrip"
-				  text="Move the slider to see the importance based popin behaviour with dynamic width."
+				  text="Move the slider to see the automatic pop-in behavior based on the importance of the columns."
 				  type="Success"
 				  showIcon="true"
 				  showCloseButton="true"
@@ -15,6 +19,16 @@
 		<headerToolbar>
 			<OverflowToolbar>
 				<Title text="Products" level="H2" />
+				<ToolbarSpacer />
+				<Label text="Hide columns with importance" labelFor="idMultiComboBox" />
+				<MultiComboBox id="idMultiComboBox" width="10rem" selectionFinish="onSelectionFinish">
+					<items>
+						<core:Item key="None" text="None" />
+						<core:Item key="Low" text="Low" />
+						<core:Item key="Medium" text="Medium" />
+						<core:Item key="High" text="High" />
+					</items>
+				</MultiComboBox>
 			</OverflowToolbar>
 		</headerToolbar>
 		<columns>

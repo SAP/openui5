@@ -1792,7 +1792,7 @@ sap.ui.define([
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 
 		assert.notOk(oTable.getColumns()[0].isPopin(), "First column is not in the popin area");
-		assert.notOk(oTable.getColumns()[oTable.getColumns().length - 1].isPopin(), "last column is not in the popin area");
+		assert.notOk(oTable.getColumns()[oTable.getColumns().length - 1].isPopin(), "last column is not in the pop-in area");
 	});
 
 	QUnit.test("Test _getInitialAccumulatedWidth and _updateAccumulatedWidth", function(assert) {
@@ -1823,7 +1823,7 @@ sap.ui.define([
 		// (125px / 16) + (6 ->fInitAccumulatedWidth + 8 ->default column autoPopinWidth)
 		var fAccumulatedWidth = Table._updateAccumulatedWidth(aColumns, false, fInitAccumulatedWidth);
 		var fAutoPopinWidth = (parseFloat((parseFloat(aColumns[0].getWidth()).toFixed(2) / sBaseFontSize).toFixed(2))) + (fInitAccumulatedWidth + aColumns[1].getAutoPopinWidth());
-		assert.ok(fAccumulatedWidth === fAutoPopinWidth, "Expected autoPopinWidth for next column in popin-are is " + fAccumulatedWidth + "rem");
+		assert.ok(fAccumulatedWidth === fAutoPopinWidth, "Expected autoPopinWidth for next column in pop-in area is " + fAccumulatedWidth + "rem");
 	});
 
 	QUnit.test("Spy on _configureAutoPopin - I", function (assert) {
@@ -1909,5 +1909,41 @@ sap.ui.define([
 		Core.applyChanges();
 		assert.strictEqual(fnRequireAutoPopinRecalculation.callCount, 2, "_requireAutoPopinRecalculation function called as new columns are added to the table");
 		assert.ok(fnRequireAutoPopinRecalculation.returned(true), "_requireAutoPopinRecalculation returns true, which indicates recalculation was performed");
+	});
+
+	QUnit.test("Hide columns based on their importance", function(assert) {
+		var aColumns = oTable.getColumns();
+		var fnPopinChangedEvent = sinon.spy(oTable, "_firePopinChangedEvent");
+
+		aColumns[0].setImportance("High");
+		aColumns[1].setImportance("Medium");
+		aColumns[2].setImportance("None");
+		aColumns[3].setImportance("Low");
+		aColumns[4].setImportance("Low");
+		aColumns[5].setImportance("Medium");
+		aColumns[6].setImportance("High");
+
+		oTable.setAutoPopinMode(true);
+		oTable.setContextualWidth("Desktop");
+		assert.ok(true, "ContextualWidth is set to Desktop");
+		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
+		assert.strictEqual(oTable._getHiddenInPopin().length, 0, "All columns are rendered as regular columns");
+
+		oTable.setContextualWidth("Tablet");
+		Core.applyChanges();
+
+		assert.ok(true, "ContextualWidth is set to Tablet");
+		assert.strictEqual(oTable.hasPopin(), true, "Call oTable.hasPopin(): Table has Columns in the pop-in area");
+
+		oTable.setHiddenInPopin(["None", "Low", "Medium"]);
+		Core.applyChanges();
+
+		assert.ok(true, "Hide Columns with importance None, Low and Medium from the pop-in area");
+		assert.strictEqual(oTable.hasPopin(), false, "Call oTable.hasPopin(): Table has no Columns in the pop-in area");
+		assert.ok(oTable._getHiddenInPopin().length > 0, "Some Columns are hidden from the pop-in area by their importance");
+
+		window.setTimeout(function() {
+			assert.strictEqual(fnPopinChangedEvent.getCalls().length, 3, "Event popinChange has been fired 3 times: 1 onInit, 1 after setContextualWidth(\"Tablet\") and 1 after setColumnImportanceToHide([\"None\", \"Low\", \"Medium\"])");
+		}, 0);
 	});
 });
