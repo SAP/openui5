@@ -476,13 +476,19 @@ sap.ui.define([
 
 	QUnit.module("Tile common dimension calculation", {
 		beforeEach: function () {
+			this.sandbox = sinon.sandbox.create();
+
+			this.sandbox.stub(Device.system, "tablet", false);
+			this.sandbox.stub(Device.system, "phone", false);
+			this.sandbox.stub(Device.system, "desktop", true);
+			this.sandbox.stub(Device.system, "combi", false);
 			this.prepare();
 		},
 		afterEach: function () {
 			this.clean();
+			this.sandbox.restore();
 		},
 		prepare : function() {
-			this.sandbox = sinon.sandbox.create();
 			this.sOriginalTheme = sap.ui.getCore().getConfiguration().getTheme();
 			// SUT
 			this.sut = new TileContainer('testOrder', {
@@ -493,7 +499,6 @@ sap.ui.define([
 			});
 		},
 		clean : function() {
-			this.sandbox.restore();
 			this.sut.destroy();
 
 			return new Promise(function(resolve /*, reject*/) {
@@ -582,17 +587,14 @@ sap.ui.define([
 
 	QUnit.test('Tile dimension gets updated upon orientation changes', function (assert) {
 		var done = assert.async();
+
 		//emulate device that supports orientation change
-		var bOrigTablet = Device.system.tablet;
-		var bOrigDesktop = Device.system.desktop;
-		sap.ui.Device.system.tablet = true;
-		sap.ui.Device.system.desktop = false;
+		this.sandbox.stub(Device.system, "tablet", true);
+		this.sandbox.stub(Device.system, "desktop", false);
 
 		this.clean().then(function() {
 			this.prepare();
 			this.callAndTest(this.sut._fnOrientationChange, [], assert).then(function() {
-				sap.ui.Device.system.tablet = bOrigTablet;
-				sap.ui.Device.system.desktop = bOrigDesktop;
 				done();
 			});
 		}.bind(this));
