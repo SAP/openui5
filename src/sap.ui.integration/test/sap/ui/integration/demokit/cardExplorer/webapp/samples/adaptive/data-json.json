@@ -1,0 +1,11 @@
+{
+    "firstName": "Donna",
+    "lastName": "Moore",
+    "position": "Sales Executive",
+    "photo": "./DonnaMoore.png",
+    "description": "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+    "company": {
+        "name": "Robert Brown Entertainment",
+        "address": "481 West Street, Anytown OH 45066, USA"
+    }
+}

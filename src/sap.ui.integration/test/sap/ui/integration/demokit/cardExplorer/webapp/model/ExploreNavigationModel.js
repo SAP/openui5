@@ -39,6 +39,24 @@ sap.ui.define([
 								title: 'Templating',
 								key: 'templating',
 								manifestUrl: '/samples/adaptive/templating.json'
+							},
+							{
+								title: 'Data & Templating',
+								key: 'data',
+								files: [
+									{
+										url: '/samples/adaptive/data.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										content: ''
+									},
+									{
+										url: '/samples/adaptive/data-json.json',
+										name: 'data.json',
+										key: 'data.json',
+										content: ''
+									}
+								]
 							}
 						]
 					},

@@ -222,66 +222,84 @@ sap.ui.define([
 		AdaptiveContent.prototype._setupMSCardContent = function () {
 			var oDom = this.$(),
 				oConfiguration = this._oCardConfig,
-				oTemplateData;
+				oContentTemplateData, oCardDataProvider;
 
 			if (!this.adaptiveCardInstance || !oConfiguration || !(oDom && oDom.size())) {
 				return;
 			}
 
-			// check if a data object is present in the card content
-			oTemplateData = oConfiguration.$data || oConfiguration.data;
+			// check if there is a data provider on card level
+			if (this._oDataProviderFactory && this._oDataProviderFactory._aDataProviders && this._oDataProviderFactory._aDataProviders.length) {
+				oCardDataProvider = this._oDataProviderFactory._aDataProviders[0];
+			}
 
-			// if there is no templating, render the MS AdaptiveCard
-			if (!oTemplateData) {
+			// check if a data object is present in the card content
+			oContentTemplateData = oConfiguration.$data || oConfiguration.data;
+
+			// if there is no data for templating, render the MS AdaptiveCard
+			if (!oContentTemplateData && !oCardDataProvider) {
 				this._renderMSCardContent(oConfiguration);
+				return;
+			}
+
+			// if there is no data provided on content level, check for an existing
+			// setup the data provider from card level
+			if (!oContentTemplateData && oCardDataProvider) {
+				this._setupDataProvider(oCardDataProvider);
 				return;
 			}
 
 			// if the inline $data is present, adapt it in order to
 			// reuse the DataFactory logic of the Integration Card
 			if (oConfiguration.$data) {
-				oTemplateData = {
-					"json": oTemplateData
+				oContentTemplateData = {
+					"json": oContentTemplateData
 				};
 			}
 
-			this._setData(oTemplateData);
+			// create a data provider with the templating data and setup it
+			this._setupDataProvider(this._createDataProvider(oContentTemplateData));
 		};
 
-
 		/**
-		 * Requests data and passes it to the card template.
+		 * Creates a data provider.
 		 *
-		 * The logic behind BaseContent.prototype._setData is changed in order to switch off
-		 * the UI5 binding inside the content and set the templating functionality of
-		 * the MS AdaptiveCard.
-		 *
+		 * @param {Object} oData The data needed for the provider
+		 * @returns {Object} The created data provider
 		 * @private
-		 * @param {Object} oDataSettings The data part of the configuration object
 		 */
-		AdaptiveContent.prototype._setData = function (oDataSettings) {
-			var oCard, oModel, oData,
-				sPath = "";
-
-			if (oDataSettings && oDataSettings.path) {
-				sPath = oDataSettings.path;
-			}
-
+		AdaptiveContent.prototype._createDataProvider = function (oData) {
 			if (this._oDataProvider) {
 				this._oDataProvider.destroy();
 			}
 
 			if (this._oDataProviderFactory) {
-				this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
+				this._oDataProvider = this._oDataProviderFactory.create(oData, this._oServiceManager);
 			}
 
-			if (this._oDataProvider) {
+			return this._oDataProvider;
+		};
+
+
+		/**
+		 * Setup a data provider - attach to needed events,
+		 * set the templating and render the card.
+		 *
+		 * @param {Object} oData The data needed for the provider
+		 * @returns {Object} The created data provider
+		 * @private
+		 */
+		AdaptiveContent.prototype._setupDataProvider = function (oDataProvider) {
+			var oData, oCard,
+				sPath = oDataProvider && oDataProvider._oSettings.path || "";
+
+			if (oDataProvider) {
 				this.setBusy(true);
 
 				// If a data provider is created use an own model.
-				oModel = this.setModel(new JSONModel());
+				var oModel = this.setModel(new JSONModel());
 
-				this._oDataProvider.attachDataChanged(function (oEvent) {
+				oDataProvider.attachDataChanged(function (oEvent) {
 					oData = oEvent.getParameter('data');
 					this._updateModel(oData);
 
@@ -300,12 +318,12 @@ sap.ui.define([
 					this.setBusy(false);
 				}.bind(this));
 
-				this._oDataProvider.attachError(function (oEvent) {
+				oDataProvider.attachError(function (oEvent) {
 					this._handleError(oEvent.getParameter("message"));
 					this.setBusy(false);
 				}.bind(this));
 
-				this._oDataProvider.triggerDataUpdate().then(function () {
+				oDataProvider.triggerDataUpdate().then(function () {
 					this.fireEvent("_dataReady");
 				}.bind(this));
 			} else {
