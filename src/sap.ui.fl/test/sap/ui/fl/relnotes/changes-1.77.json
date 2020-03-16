@@ -1,0 +1,24 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "7fdca64d1df473c8a2abcc7b04627ccc5dc60013",
+        "type": "FEATURE",
+        "text": " sap.ui.fl Support Extension Points",
+        "references": []
+      },
+      {
+        "id": "a09610a8c09d02e70c45641278c585b58c31b903",
+        "type": "FIX",
+        "text": " Fixing the package info for SmartBuiness create and update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070026836"
+          }
+        ]
+      }
+    ]
+  }
+}

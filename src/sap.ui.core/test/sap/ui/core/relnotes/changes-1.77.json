@@ -1,0 +1,18 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "e56c725eba5f816af0ab62f753b142e6f4e69207",
+        "type": "FIX",
+        "text": " core.EventSimulation: check control id before firing event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970016344"
+          }
+        ]
+      }
+    ]
+  }
+}

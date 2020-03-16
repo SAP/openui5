@@ -1,0 +1,18 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "633c20cc2fa6d39c8bc993a95c6976e1512e5682",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: month button shown in all languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070078306"
+          }
+        ]
+      }
+    ]
+  }
+}

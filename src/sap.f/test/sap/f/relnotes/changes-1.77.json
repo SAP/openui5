@@ -1,0 +1,29 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "c2c0d868f6f04ac406402528e9951bf76538a3f7",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected F6 fast navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070018356"
+          }
+        ]
+      },
+      {
+        "id": "1e1a7b165466cc7ceae4ca3ca91be9e8196515cb",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Unneeded truncation of heading is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070041919"
+          }
+        ]
+      }
+    ]
+  }
+}

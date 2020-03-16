@@ -1,0 +1,18 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "8fababcd4f04fce1e0db6f906b0a928bb9e4142e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Initial focus in dialog works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070059338"
+          }
+        ]
+      }
+    ]
+  }
+}

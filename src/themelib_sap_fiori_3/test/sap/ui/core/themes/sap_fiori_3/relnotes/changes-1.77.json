@@ -1,0 +1,33 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "4de3689a8f5346c9036a52aaf1f2b0944190bad6",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Remove Responsive Paddings overstyling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070064295"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070067867"
+          }
+        ]
+      },
+      {
+        "id": "8fababcd4f04fce1e0db6f906b0a928bb9e4142e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Initial focus in dialog works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070059338"
+          }
+        ]
+      }
+    ]
+  }
+}
