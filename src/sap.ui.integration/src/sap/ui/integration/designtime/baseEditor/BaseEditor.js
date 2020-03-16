@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
 	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
+	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/util/ObjectPath",
@@ -21,7 +22,6 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/base/BindingParser",
 	"sap/base/Log",
 	"sap/ui/integration/designtime/baseEditor/util/unset"
 ], function (
@@ -30,6 +30,7 @@ sap.ui.define([
 	PropertyEditor,
 	resolveBinding,
 	ObjectBinding,
+	isValidBindingString,
 	Control,
 	ResourceModel,
 	ObjectPath,
@@ -44,7 +45,6 @@ sap.ui.define([
 	_omit,
 	JSONModel,
 	ResourceBundle,
-	BindingParser,
 	Log,
 	unset
 ) {
@@ -626,7 +626,7 @@ sap.ui.define([
 	};
 
 	BaseEditor.prototype._createPropertyEditor = function (oPropertyConfig) {
-		var oBindingInfo = typeof oPropertyConfig.value === "string" && BindingParser.complexParser(oPropertyConfig.value);
+		var oBindingInfo = typeof oPropertyConfig.value === "string" && isValidBindingString(oPropertyConfig.value, false);
 
 		// Avoid passing values containing binding string to constructor, otherwise
 		// there will be interpret by ManagedObject as bindings automatically.
