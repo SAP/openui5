@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap",
 	"sap/ui/fl/apply/_internal/flexState/prepareChangesMap",
 	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap",
@@ -20,6 +21,7 @@ sap.ui.define([
 	Component,
 	StorageUtils,
 	Loader,
+	ManifestUtils,
 	prepareAppDescriptorMap,
 	prepareChangesMap,
 	prepareVariantsMap,
@@ -79,9 +81,7 @@ sap.ui.define([
 		var oComponent = Component.get(mPropertyBag.componentId);
 		mPropertyBag.componentData = mPropertyBag.componentData || oComponent.getComponentData() || {};
 		mPropertyBag.manifest = mPropertyBag.manifest || mPropertyBag.rawManifest || oComponent.getManifestObject();
-
-		// cannot use ManifestUtils.getFlexReference(mPropertyBag), since it doesn't comply with previous implementation of ChangePersistence component name
-		mPropertyBag.reference = mPropertyBag.reference || Utils.getComponentClassName(oComponent);
+		mPropertyBag.reference = mPropertyBag.reference || ManifestUtils.getFlexReference(mPropertyBag);
 	}
 
 	function _getInstanceEntryOrThrowError(sReference, sMapName) {

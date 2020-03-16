@@ -2,9 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/apply/_internal/StorageUtils",
@@ -14,9 +14,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	UIComponent,
-	Utils,
 	FlexState,
 	Loader,
+	ManifestUtils,
 	CompatibilityConnector,
 	Storage,
 	StorageUtils,
@@ -116,7 +116,7 @@ sap.ui.define([
 			return FlexState.initialize({
 				componentId: sComponentId
 			})
-				.then(FlexState.getStorageResponse.bind(null, Utils.getComponentClassName(this.oAppComponent)))
+				.then(FlexState.getStorageResponse.bind(null, ManifestUtils.getFlexReference({manifest: this.oAppComponent.getManifest(), componentData: {}})))
 				.then(function (oFlexResponse) {
 					assert.deepEqual(oFlexResponse, oExpectedResponse, "then flex state was initialized correctly");
 				});
