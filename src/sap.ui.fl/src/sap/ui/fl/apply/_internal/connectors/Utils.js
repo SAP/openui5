@@ -185,18 +185,13 @@ sap.ui.define([
 				if (mPropertyBag && mPropertyBag.dataType) {
 					xhr.responseType = mPropertyBag.dataType;
 				}
-				if (mPropertyBag && mPropertyBag.payload) {
-					xhr.send(mPropertyBag.payload);
-				} else {
-					xhr.send();
-				}
 				xhr.onload = function() {
 					if (xhr.status >= 200 && xhr.status < 400) {
 						var oResult = {};
 						var sContentType = xhr.getResponseHeader("Content-Type");
 						if (sContentType && sContentType.startsWith("application/json")) {
 							//HEAD request for token does not have body response
-							oResult.response = xhr.response ? JSON.parse(xhr.response) : undefined;
+							oResult.response = typeof xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
 						}
 						oResult.status = xhr.status;
 						oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");
@@ -208,6 +203,11 @@ sap.ui.define([
 						});
 					}
 				};
+				if (mPropertyBag && mPropertyBag.payload) {
+					xhr.send(mPropertyBag.payload);
+				} else {
+					xhr.send();
+				}
 			});
 		},
 
