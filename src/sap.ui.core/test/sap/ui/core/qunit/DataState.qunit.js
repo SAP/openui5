@@ -1,15 +1,28 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/base/Log",
+	"sap/base/util/deepEqual",
+	"sap/ui/core/message/Message",
 	"sap/ui/model/DataState",
-	"sap/base/util/deepEqual"
-], function(
-	DataState,
-	deepEqual
-) {
+	"sap/ui/test/TestUtils"
+], function (Log, deepEqual, Message, DataState, TestUtils) {
+	/*global QUnit*/
 	"use strict";
 
-	QUnit.module("sap.ui.model.DataState");
+	//*********************************************************************************************
+	QUnit.module("sap.ui.model.DataState", {
+		beforeEach : function () {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
+		},
 
+		afterEach : function (assert) {
+			return TestUtils.awaitRendering();
+		}
+	});
+
+	//*********************************************************************************************
 	QUnit.test("test DataState API",function(assert) {
 		var oDataState = new DataState();
 		var mChanges = oDataState.getChanges();
@@ -72,6 +85,81 @@ sap.ui.define([
 		oDataState.setModelMessages(null);
 		assert.equal(oDataState.getMessages().length, 0, "All Messages length 1");
 		assert.equal(oDataState.getModelMessages().length, 0, "Control Message reset");
+	});
 
+	//*********************************************************************************************
+[
+	{controlMessages : ["aControlMessages"], modelMessages : ["aModelMessages"]},
+	{controlMessages : ["aControlMessages"], modelMessages : undefined},
+	{controlMessages : undefined, modelMessages : ["aModelMessages"]}
+].forEach(function (oFixture, i) {
+	QUnit.test("getMessagesForProperties, " + i, function(assert) {
+		var aConcatCalls,
+			// cannot mock Array#concat as it is used in sinon-4
+			oConcatSpy = this.spy(Array.prototype, "concat"),
+			aControlMessages = oFixture.controlMessages,
+			aMessages,
+			aModelMessages = oFixture.modelMessages,
+			mProperties = {
+				controlMessages : aControlMessages,
+				modelMessages : aModelMessages
+			},
+			oSortSpy = this.spy(Array.prototype, "sort");
+
+		// code under test
+		aMessages = DataState.getMessagesForProperties(mProperties);
+
+		aConcatCalls = oConcatSpy.getCalls().filter(function (oCall) {
+			return oCall.calledWithExactly(aModelMessages || [], aControlMessages || [])
+				&& deepEqual(oCall.thisValue, []);
+		});
+		assert.strictEqual(aConcatCalls.length, 1, "[].concat(aModelMessages, aControlMessages)");
+		assert.ok(oSortSpy.calledWithExactly(Message.compare), "sort(Message.compare)");
+		assert.strictEqual(aMessages, aConcatCalls[0].returnValue);
+		assert.strictEqual(mProperties.controlMessages, aControlMessages);
+		assert.strictEqual(mProperties.modelMessages, aModelMessages);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getMessagesForProperties, no messages", function(assert) {
+		var oConcatSpy = this.spy(Array.prototype, "concat"),
+			mProperties = {
+				controlMessages : undefined,
+				modelMessages : undefined
+			},
+			oSortSpy = this.spy(Array.prototype, "sort");
+
+		// code under test
+		assert.deepEqual(DataState.getMessagesForProperties(mProperties), []);
+
+		assert.ok(oConcatSpy.neverCalledWith([], []));
+		assert.ok(oSortSpy.neverCalledWith(Message.compare));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMessages", function(assert) {
+		var oDataState = new DataState();
+
+		oDataState.mChangedProperties = "mChangedProperties";
+		this.mock(DataState).expects("getMessagesForProperties")
+			.withExactArgs("mChangedProperties")
+			.returns("aMessages");
+
+		// code under test
+		assert.strictEqual(oDataState.getMessages(), "aMessages");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getOldMessages", function(assert) {
+		var oDataState = new DataState();
+
+		oDataState.mProperties = "mProperties";
+		this.mock(DataState).expects("getMessagesForProperties")
+			.withExactArgs("mProperties")
+			.returns("aMessages");
+
+		// code under test
+		assert.strictEqual(oDataState._getOldMessages(), "aMessages");
 	});
 });
