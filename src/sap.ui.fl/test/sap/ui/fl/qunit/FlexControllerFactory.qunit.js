@@ -315,18 +315,7 @@ function (
 			var oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function (aModules, fnCallback) {
 				fnCallback(fnStartRtaSpy);
 			});
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						toExternal: function() {
-							return true;
-						},
-						registerNavigationFilter: function() {
-							return true;
-						}
-					};
-				}
-			});
+			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.then(function () {
@@ -338,9 +327,8 @@ function (
 				}.bind(this));
 		});
 
-		QUnit.test("when a rta restart was triggered for the CUSTOMER layer via a boolean flag", function (assert) {
+		QUnit.test("when a rta restart was triggered for the CUSTOMER layer in a ushell scenario", function (assert) {
 			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
-			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
 			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
 			var oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function (aModules, fnCallback) {
 				fnCallback(fnStartRtaSpy);
@@ -360,6 +348,23 @@ function (
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.then(function () {
+					assert.equal(this.oLoadLibStub.callCount, 0, "rta library is not requested");
+					assert.equal(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 0, "rta functionality is not requested");
+					assert.equal(fnStartRtaSpy.callCount, 0, "and rta is not started");
+				}.bind(this));
+		});
+
+		QUnit.test("when a rta restart was triggered for the CUSTOMER layer via a boolean flag", function (assert) {
+			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
+			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
+			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
+			var oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function (aModules, fnCallback) {
+				fnCallback(fnStartRtaSpy);
+			});
+			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
+			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
+				.then(function () {
 					assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
 					assert.equal(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 1, "rta functionality is requested");
 					assert.equal(fnStartRtaSpy.callCount, 1, "and rta is started");
@@ -372,18 +377,7 @@ function (
 			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", "anotherComponent");
 			var fnLogSpy = sandbox.spy(Log, "error");
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						toExternal: function() {
-							return true;
-						},
-						registerNavigationFilter: function() {
-							return true;
-						}
-					};
-				}
-			});
+			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.then(function () {
