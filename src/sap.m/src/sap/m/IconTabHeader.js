@@ -288,7 +288,6 @@ sap.ui.define([
 				selectionChange: function (oEvent) {
 					var oTarget = oEvent.getParameter('selectedItem');
 					this._oIconTabHeader.setSelectedItem(oTarget._getRealTab());
-					this._oIconTabHeader._setItemsForStrip();
 					this._oIconTabHeader._closeOverflow();
 				}
 			});
@@ -644,7 +643,6 @@ sap.ui.define([
 				// set new item
 				this.oSelectedItem = oItem;
 				// find parent if item is a sub filter within a sap.m.IconTabFilter, set the root icontabfilter as this._oSelectedDomRef
-				// debugger
 				if (this.oSelectedItem._getNestedLevel() !== 1) {
 					this._oSelectedRootItem = this.oSelectedItem._getRootTab();
 					this._oSelectedRootItem.$()
@@ -719,6 +717,7 @@ sap.ui.define([
 			}
 		}
 
+		this._setItemsForStrip();
 		return this;
 	};
 
@@ -1024,8 +1023,7 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabHeader.prototype._setItemsForStrip = function () {
-		var aTabFilters = this.getItems()
-			.filter(function (oItem) { return oItem.isA('sap.m.IconTabFilter') && oItem.getVisible(); });
+		var aTabFilters = this.getVisibleTabFilters();
 
 		if (!Core.isThemeApplied() || !aTabFilters.length) {
 			return;
@@ -1037,6 +1035,10 @@ sap.ui.define([
 		if (!oTabStrip) {
 			// control has not been rendered, exit
 			return;
+		}
+
+		if (this._oPopover) {
+			this._oPopover.close();
 		}
 
 		var iTabStripWidth = oTabStrip.offsetWidth,
@@ -1345,17 +1347,6 @@ sap.ui.define([
 		oDraggedControl._getRealTab().$().focus();
 	};
 
-	/**
-	 * Handles drop event for drag &  drop between sap.m.IconTabHeader and sap.m.IconTabBarSelectList.
-	 * @param {string} sDropPosition position where the control will be dropped (e.g. Before/After)
-	 * @param {object} oDraggedControl item that is dragged
-	 * @param {object} oDroppedControl item that the dragged control will be dropped on
-	 * @private
-	 */
-	// IconTabHeader.prototype._handleDragAndDropBetweenHeaderAndList = function (sDropPosition, oDroppedControl, oDraggedControl) {
-		// IconTabBarDragAndDropUtil.handleDrop(this, sDropPosition, oDraggedControl._getRealTab(), oDroppedControl, false);
-		// this._getSelectList()._initItemNavigation();
-	// };
 	/* =========================================================== */
 	/*           end: tab drag-drop                                */
 	/* =========================================================== */
