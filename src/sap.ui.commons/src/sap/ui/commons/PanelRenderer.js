@@ -219,6 +219,10 @@ sap.ui.define(['sap/base/security/encodeXML', 'sap/ui/core/library'],
 			}
 
 			rm.write("</div>");
+		} else {
+			oControl.getContent().forEach(function(oChild) {
+				rm.cleanupControlWithoutRendering(oChild);
+			});
 		}
 
 		rm.write("</section>");

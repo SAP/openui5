@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * In this layout the elemnts are orderd one below the other
+	 * In this layout the elements are ordered one below the other
 	 * @extends sap.ui.layout.VerticalLayout
 	 *
 	 * @author SAP SE
