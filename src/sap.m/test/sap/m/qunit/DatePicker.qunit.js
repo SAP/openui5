@@ -1849,6 +1849,7 @@ sap.ui.define([
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
 		assert.ok(oDP._getCalendar() instanceof CustomMonthPicker, "Calendar is of type CustomMonthPicker");
+		assert.equal(oDP._getCalendar().getAggregation("header").getVisibleButton1(), false, "month button in the CustomMonthPicker is hidden");
 
 		// Clean
 		oDP.destroy();
