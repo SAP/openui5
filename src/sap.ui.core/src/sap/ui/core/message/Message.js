@@ -6,11 +6,19 @@
 sap.ui.define([
 	'sap/ui/base/Object',
 	'./MessageProcessor',
-	"sap/base/util/uid",
-	"sap/base/Log"
+	'sap/base/util/uid',
+	'sap/base/Log'
 ],
 	function(Object, MessageProcessor, uid, Log) {
 	"use strict";
+
+	var mMessageType2Severity = {
+			"Error" : 0,
+			"Warning" : 1,
+			"Success" : 2,
+			"Information" : 3,
+			"None" : 4
+		};
 
 	/**
 	 *
@@ -420,6 +428,24 @@ sap.ui.define([
 	 */
 	Message.prototype.getDate = function() {
 		return this.date;
+	};
+
+	/**
+	 * Compares two messages by their {@link #getType type} where a message with a type with higher
+	 * severity is smaller than a message with a type having lower severity. This function is meant
+	 * to be used as <code>compareFunction</code> argument of <code>Array#sort</code>.
+	 *
+	 * @param {sap.ui.core.message.Message} oMessage0 The first message
+	 * @param {sap.ui.core.message.Message} oMessage1 The second message
+	 * @returns {number}
+	 *   <code>0</code> if the message types are equal, a number smaller than <code>0</code> if the
+	 *   first message's type has higher severity, a number larger than <code>0</code> if the
+	 *   first message's type has lower severity and <code>NaN</code> in case one of the given
+	 *   messages has a type not defined in {@link sap.ui.core.MessageType}
+	 * @private
+	 */
+	Message.compare = function (oMessage0, oMessage1) {
+		return mMessageType2Severity[oMessage0.type] - mMessageType2Severity[oMessage1.type];
 	};
 
 	return Message;
