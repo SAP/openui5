@@ -1270,9 +1270,7 @@
 		},
 		"ContentType.AdaptiveCard": {
 			"description": "Represents AdaptiveCard content",
-			"allOf": [
-				{ "$ref": "http://adaptivecards.io/schemas/adaptive-card.json#/definitions/AdaptiveCard" }
-			]
+			"$ref": "http://adaptivecards.io/schemas/adaptive-card.json#/definitions/AdaptiveCard"
 		},
 		"progressIndicator": {
 			"description": "Represents progress indicator attributes",
