@@ -28,7 +28,8 @@ sap.ui.define([
 	CardRenderer.render = function (oRm, oCard) {
 		var oHeader = oCard.getCardHeader(),
 			sHeight = oCard.getHeight(),
-			bCardHeaderBottom = oHeader && oCard.getCardHeaderPosition() === HeaderPosition.Bottom;
+			bCardHeaderBottom = oHeader && oCard.getCardHeaderPosition() === HeaderPosition.Bottom,
+			sTooltip = oCard.getTooltip_AsString();
 
 		//start
 		oRm.write("<div");
@@ -46,6 +47,10 @@ sap.ui.define([
 
 		if (sHeight && sHeight !== 'auto') {
 			oRm.addStyle("height", sHeight);
+		}
+
+		if (sTooltip) {
+			oRm.writeAttributeEscaped('title', sTooltip);
 		}
 
 		//Accessibility state

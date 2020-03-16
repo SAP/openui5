@@ -24,6 +24,7 @@ function (
 
 		// Arrange
 		var oCard = new Card("somecard", {
+			tooltip: 'Some tooltip',
 			header: new CardHeader({ title: "Title" }),
 			content: new sap.m.Text({ text: "Text" })
 		});
@@ -36,6 +37,7 @@ function (
 		assert.ok(oCard.getDomRef(), "The card is rendered");
 		assert.ok(oCard.getHeader().getDomRef(), "Card header should be rendered.");
 		assert.ok(oCard.getContent().getDomRef(), "Card content should be rendered.");
+		assert.strictEqual(oCard.$().attr('title'), "Some tooltip", "Tooltip is rendered");
 	});
 
 	QUnit.module("Headers");
