@@ -1081,7 +1081,7 @@ function(
 					} else {
 
 						var fnTriggerExtensionPointProvider = function(oTargetControl) {
-							if (ExtensionPoint._sExtensionProvider) {
+							if (ExtensionPoint._sExtensionProvider && !isEmptyObject(mAggregationsWithExtensionPoints)) {
 								var pExtensionPoints = [];
 
 								// in the async case we can collect the ExtensionPointProvider promises and
