@@ -226,6 +226,28 @@ sap.ui.define([
 			},
 			sibling : false,
 			msg : " when the control's dt metadata has an add action with a custom sub-action"
+		},
+		{
+			dtMetadata : {
+				add : {
+					custom: {
+						getItems: getCustomItemsInPromise.bind(null, 2)
+					}
+				}
+			},
+			sibling : true,
+			msg : " when the control's dt metadata has an add action with a custom sub-action returning a promise"
+		},
+		{
+			dtMetadata : {
+				add : {
+					custom: {
+						getItems: getCustomItemsInPromise.bind(null, 2)
+					}
+				}
+			},
+			sibling : false,
+			msg : " when the control's dt metadata has an add action with a custom sub-action returning a promise"
 		}].forEach(function(test) {
 			var sPrefix = test.sibling ? "On sibling: " : "On child: ";
 			var sOverlayType = test.sibling ? ON_SIBLING : ON_CHILD;
@@ -512,15 +534,16 @@ sap.ui.define([
 					}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has a custom add action with 2 items, one with stable id and another with randomly generated stable id, and NO addODataProperty and reveal actions", function (assert) {
+			QUnit.test(sPrefix + "when the control's dt metadata has only a custom add action resolving to 2 items, one with a stable ID and the other with a randomly generated ID", function (assert) {
 				var done = assert.async();
-				var aCompleteChangeContentArgs = [];
+				// to preserve sorting done in AdditionalElementsPlugin._createCommands()
+				var aCustomItems = getCustomItems(2).reverse();
 				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
 				sandbox.spy(oDummyChangeHandler, "completeChangeContent");
+
 				this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
 					var oCompositeCommand = oEvent.getParameter("command");
 					var aCommands = oCompositeCommand.getCommands();
-					var aCustomItems = getCustomItems(2).reverse(); // to preserve sorting done in AdditionalElementsPlugin._createCommands()
 					var sAggregationName = "contentLeft";
 					var sChangeType = "customAdd";
 
@@ -534,7 +557,7 @@ sap.ui.define([
 							assert.deepEqual(oCommand.getAddElementInfo(), aCustomItems[iIndex].changeSpecificData.content, "then the customAdd command has the correct additional element info");
 							assert.strictEqual(oCommand.getAggregationName(), sAggregationName, "then the customAdd command has the correct aggregation");
 
-							aCompleteChangeContentArgs = oDummyChangeHandler.completeChangeContent.getCall(iIndex).args;
+							var aCompleteChangeContentArgs = oDummyChangeHandler.completeChangeContent.getCall(iIndex).args;
 							assert.deepEqual(aCompleteChangeContentArgs[1].addElementInfo, aCustomItems[iIndex].changeSpecificData.content, "then the correct addElementInfo was passed to changeHandler.completeChangeContent()");
 							assert.deepEqual(aCompleteChangeContentArgs[1].index, oCommand.getIndex(), "then the correct index was passed to changeHandler.completeChangeContent()");
 							assert.deepEqual(aCompleteChangeContentArgs[1].changeType, sChangeType, "then the correct changeType was passed to changeHandler.completeChangeContent()");
@@ -553,11 +576,54 @@ sap.ui.define([
 					);
 					done();
 				});
-				var aCustomItems = getCustomItems(2);
 
-				aCustomItems[0].selected = true; // item selected
-				aCustomItems[1].selected = true; // tem selected
-				aCustomItems[1].changeSpecificData.changeOnRelevantContainer = true; // to mock change on relevant container
+				// mock item selection from add dialog
+				aCustomItems[1].selected = true;
+				aCustomItems[0].selected = true;
+				aCustomItems[0].changeSpecificData.changeOnRelevantContainer = true; // to mock change on relevant container
+
+				return test.overlay.call(this,
+					{
+						add : {
+							custom:  {
+								getItems: sandbox.stub().resolves(aCustomItems)
+							}
+						}
+					},
+					test.sibling ? ON_SIBLING : ON_CHILD
+				)
+
+					.then(function(oCreatedOverlay) {
+						return this.oPlugin.showAvailableElements(test.sibling, [oCreatedOverlay]);
+					}.bind(this))
+
+					.then(function() {
+						assert.ok(this.fnGetCustomAddItemsSpy.calledOnce, "then the analyzer is called to return the custom add elements");
+						assert.ok(this.fnEnhanceInvisibleElementsStub.notCalled, "then the analyzer is NOT called to return the invisible elements");
+						assert.ok(this.fnGetUnboundODataPropertiesStub.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
+						assertDialogModelLength.call(this, assert, 2, "then both custom add elements are part of the dialog model");
+						assert.equal(this.oPlugin.getDialog().getElements()[0].label, aCustomItems[0].label, "then the first element is a custom add item");
+						assert.equal(this.oPlugin.getDialog().getElements()[1].label, aCustomItems[1].label, "then the second element is a custom add item");
+					}.bind(this));
+			});
+
+			QUnit.test(sPrefix + "when the control's dt metadata has only a custom add action returning 2 items, one with a stable ID and the other with a randomly generated ID", function (assert) {
+				var done = assert.async();
+				// to preserve sorting done in AdditionalElementsPlugin._createCommands()
+				var aCustomItems = getCustomItems(2).reverse();
+
+				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
+
+				this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
+					var oCompositeCommand = oEvent.getParameter("command");
+					var aCommands = oCompositeCommand.getCommands();
+					assert.strictEqual(aCommands.length, 2, "then two commands ware created");
+					done();
+				});
+
+				// mock item selection from add dialog
+				aCustomItems[1].selected = true;
+				aCustomItems[0].selected = true;
 
 				return test.overlay.call(this,
 					{
@@ -570,14 +636,11 @@ sap.ui.define([
 					test.sibling ? ON_SIBLING : ON_CHILD
 				)
 
-					.then(function(oOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, [oOverlay]);
+					.then(function(oCreatedOverlay) {
+						return this.oPlugin.showAvailableElements(test.sibling, [oCreatedOverlay]);
 					}.bind(this))
 
 					.then(function() {
-						assert.ok(this.fnGetCustomAddItemsSpy.calledOnce, "then the analyzer is called to return the custom add elements");
-						assert.ok(this.fnEnhanceInvisibleElementsStub.notCalled, "then the analyzer is NOT called to return the invisible elements");
-						assert.ok(this.fnGetUnboundODataPropertiesStub.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
 						assertDialogModelLength.call(this, assert, 2, "then both custom add elements are part of the dialog model");
 						assert.equal(this.oPlugin.getDialog().getElements()[0].label, aCustomItems[0].label, "then the first element is a custom add item");
 						assert.equal(this.oPlugin.getDialog().getElements()[1].label, aCustomItems[1].label, "then the second element is a custom add item");
@@ -1947,6 +2010,10 @@ sap.ui.define([
 			}
 		});
 		return aCustomItems;
+	}
+
+	function getCustomItemsInPromise(iNumber) {
+		return Promise.resolve(getCustomItems(iNumber));
 	}
 
 	QUnit.done(function () {

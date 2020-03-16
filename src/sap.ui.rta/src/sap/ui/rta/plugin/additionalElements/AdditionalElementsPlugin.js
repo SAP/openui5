@@ -439,52 +439,61 @@ sap.ui.define([
 			}.bind(this), Promise.resolve({}));
 		},
 
-		_getCustomAddActions: function(bSibling, oOverlay) {
+		_getCustomAddActions: function (bSibling, oOverlay) {
 			var mParents = _getParents(bSibling, oOverlay, this);
 			var oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
 			var aActions = oDesignTimeMetadata && oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "custom") || [];
 
-			function getAction(mAction) {
-				return Promise.resolve().then(function() {
-					if (mAction) {
-						var oCheckElement = mParents.parent;
-						var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
-						if (typeof mAction.getItems === "function" && this.hasStableId(oCheckElementOverlay)) {
-							var aItems = mAction.getItems(oCheckElement);
-							if (Array.isArray(aItems)) {
-								var aChangeHandlerPromises = [];
-								aItems.forEach(function(oItem) {
-									// adjust relevant container
-									if (oItem.changeSpecificData.changeOnRelevantContainer) {
-										oCheckElement = mParents.relevantContainer;
-									}
-									if (oItem.changeSpecificData.changeType) {
-										aChangeHandlerPromises.push(this.hasChangeHandler(oItem.changeSpecificData.changeType, oCheckElement));
-									}
-								}.bind(this));
-
-								return Promise.all(aChangeHandlerPromises)
-									.then(function(aHasChangeHandler) {
-										if (aItems.length === aHasChangeHandler.length && aHasChangeHandler.indexOf(false) === -1) {
-											return {
-												aggregationName: mAction.aggregation,
-												custom : {
-													designTimeMetadata : oDesignTimeMetadata,
-													action : mAction,
-													items: aItems
-												}
-											};
-										}
-									});
+			function getAction(mAction, oCheckElement) {
+				var aItems = [];
+				return Promise.resolve()
+					.then(function () {
+						if (mAction && typeof mAction.getItems === "function") {
+							var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
+							if (this.hasStableId(oCheckElementOverlay)) {
+								return mAction.getItems(oCheckElement);
 							}
 						}
-					}
-				}.bind(this));
+					}.bind(this))
+					.then(function (aItemsFromAction) {
+						aItems = aItemsFromAction;
+						if (Array.isArray(aItems)) {
+							var aChangeHandlerPromises = aItems.reduce(function (aPromises, oItem) {
+								// adjust relevant container
+								if (oItem.changeSpecificData.changeOnRelevantContainer) {
+									oCheckElement = mParents.relevantContainer;
+								}
+								if (oItem.changeSpecificData.changeType) {
+									aPromises.push(this.hasChangeHandler(oItem.changeSpecificData.changeType, oCheckElement));
+								}
+								return aPromises;
+							}.bind(this), []);
+
+							return Promise.all(aChangeHandlerPromises);
+						}
+					}.bind(this))
+					.then(function (aHasChangeHandlerForCustomItems) {
+						if (
+							Array.isArray(aHasChangeHandlerForCustomItems)
+							&& aItems.length === aHasChangeHandlerForCustomItems.length
+							&& aHasChangeHandlerForCustomItems.indexOf(false) === -1
+						) {
+							return {
+								aggregationName: mAction.aggregation,
+								custom: {
+									designTimeMetadata: oDesignTimeMetadata,
+									action: mAction,
+									items: aItems
+								}
+							};
+						}
+					});
 			}
 
+			var oCheckElement = mParents.parent;
 			return aActions.reduce(function(oPreviousPromise, oAction) {
 				return oPreviousPromise.then(function(oReturn) {
-					return getAction.call(this, oAction).then(function(mAction) {
+					return getAction.call(this, oAction, oCheckElement).then(function(mAction) {
 						if (mAction) {
 							oReturn[mAction.aggregationName] = {
 								custom: mAction.custom
