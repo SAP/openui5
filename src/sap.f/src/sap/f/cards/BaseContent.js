@@ -60,7 +60,8 @@ sap.ui.define([
 			var sLibrary = oCardContent.getMetadata().getLibraryName();
 			var sName = oCardContent.getMetadata().getName();
 			var sType = sName.slice(sLibrary.length + 1, sName.length);
-			var oCard = oCardContent.getParent();
+			var oCard = oCardContent.getParent(),
+				oContent = oCardContent.getAggregation("_content");
 			sClass += sType;
 
 			oRm.write("<div");
@@ -78,9 +79,12 @@ sap.ui.define([
 			oRm.write(">");
 			if (sType !== 'AdaptiveContent' && oCardContent.isLoading()) {
 				oRm.renderControl(oCardContent._oLoadingPlaceholder);
+				//Removing content from the tab chain
+				if (sType !== 'AnalyticalContent' && sType !== 'TimelineContent') {
+					oContent.addStyleClass("sapFCardContentHidden");
+				}
 			}
-			oRm.renderControl(oCardContent.getAggregation("_content"));
-
+			oRm.renderControl(oContent);
 			oRm.write("</div>");
 		}
 	});
@@ -117,7 +121,6 @@ sap.ui.define([
 	BaseContent.prototype.exit = function () {
 		this._oServiceManager = null;
 		this._oDataProviderFactory = null;
-		this.destroyPlaceholder();
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
@@ -132,6 +135,11 @@ sap.ui.define([
 		if (this._oLoadingProvider) {
 			this._oLoadingProvider.destroy();
 			this._oLoadingProvider = null;
+		}
+
+		if (this._oLoadingPlaceholder) {
+			this._oLoadingPlaceholder.destroy();
+			this._oLoadingPlaceholder = null;
 		}
 	};
 
@@ -240,6 +248,12 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype.destroyPlaceholder = function () {
+		var oContent =  this.getAggregation("_content");
+		if (oContent) {
+			//restore tab chain
+			oContent.removeStyleClass("sapFCardContentHidden");
+		}
+
 		if (this._oLoadingPlaceholder) {
 			this._oLoadingPlaceholder.destroy();
 			this._oLoadingPlaceholder = null;

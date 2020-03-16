@@ -46,7 +46,7 @@ sap.ui.define([
 	library,
 	InvisibleText,
 	Destinations,
-    LoadingProvider,
+	LoadingProvider,
 	HeaderFactory,
 	ContentFactory
 ) {
@@ -554,10 +554,10 @@ sap.ui.define([
 			this._oLoadingProvider = null;
 		}
 
-        if (this._oTemporaryContent) {
-            this._oTemporaryContent.destroy();
-            this._oTemporaryContent = null;
-        }
+		if (this._oTemporaryContent) {
+			this._oTemporaryContent.destroy();
+			this._oTemporaryContent = null;
+		}
 		if (this._oDestinations) {
 			this._oDestinations.destroy();
 			this._oDestinations = null;
@@ -704,7 +704,12 @@ sap.ui.define([
 	Card.prototype._handleCardLoading = function () {
 		var oContent = this.getCardContent();
 		if (oContent && !oContent.hasStyleClass("sapFCardErrorContent") && oContent._oLoadingPlaceholder) {
-            oContent._oLoadingPlaceholder.destroy();
+			var oControlContent = oContent.getAggregation("_content");
+			if (oControlContent) {
+				//restore tab chain
+				oControlContent.removeStyleClass("sapFCardContentHidden");
+			}
+			oContent._oLoadingPlaceholder.destroy();
 		}
 
 		if (this._oLoadingProvider) {
@@ -912,96 +917,96 @@ sap.ui.define([
 	};
 
 
-    /**
-     * Sets a temporary content that will show a busy indicator while the actual content is loading.
-     */
-    Card.prototype._setTemporaryContent = function (sCardType, oContentManifest) {
+	/**
+	 * Sets a temporary content that will show a busy indicator while the actual content is loading.
+	 */
+	Card.prototype._setTemporaryContent = function (sCardType, oContentManifest) {
 
-        var oTemporaryContent = this._getTemporaryContent(sCardType, oContentManifest),
-            oPreviousContent = this.getAggregation("_content");
+		var oTemporaryContent = this._getTemporaryContent(sCardType, oContentManifest),
+			oPreviousContent = this.getAggregation("_content");
 
-        // only destroy previous content of type BaseContent
-        if (oPreviousContent && oPreviousContent !== oTemporaryContent) {
-            oPreviousContent.destroy();
-        }
+		// only destroy previous content of type BaseContent
+		if (oPreviousContent && oPreviousContent !== oTemporaryContent) {
+			oPreviousContent.destroy();
+		}
 
-        this.setAggregation("_content", oTemporaryContent);
-    };
+		this.setAggregation("_content", oTemporaryContent);
+	};
 
-    /**
-     * Handler for error states
-     *
-     * @param {string} sLogMessage Message that will be logged.
-     * @param {string} [sDisplayMessage] Message that will be displayed in the card's content. If not provided, a default message is displayed.
-     * @private
-     */
-    Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
-        Log.error(sLogMessage);
+	/**
+	 * Handler for error states
+	 *
+	 * @param {string} sLogMessage Message that will be logged.
+	 * @param {string} [sDisplayMessage] Message that will be displayed in the card's content. If not provided, a default message is displayed.
+	 * @private
+	 */
+	Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
+		Log.error(sLogMessage);
 
-        this.fireEvent("_error", {message:sLogMessage});
+		this.fireEvent("_error", {message:sLogMessage});
 
-        var sDefaultDisplayMessage = "Unable to load the data.",
-            sErrorMessage = sDisplayMessage || sDefaultDisplayMessage,
-            oPreviousContent = this.getAggregation("_content");
+		var sDefaultDisplayMessage = "Unable to load the data.",
+			sErrorMessage = sDisplayMessage || sDefaultDisplayMessage,
+			oPreviousContent = this.getAggregation("_content");
 
-        var oError = new HBox({
-            justifyContent: "Center",
-            alignItems: "Center",
-            items: [
-                new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
-                new Text({ text: sErrorMessage })
-            ]
-        }).addStyleClass("sapFCardErrorContent");
+		var oError = new HBox({
+			justifyContent: "Center",
+			alignItems: "Center",
+			items: [
+				new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
+				new Text({ text: sErrorMessage })
+			]
+		}).addStyleClass("sapFCardErrorContent");
 
-        // only destroy previous content of type BaseContent
-        if (oPreviousContent && !oPreviousContent.hasStyleClass("sapFCardErrorContent")) {
-            oPreviousContent.destroy();
-            this.fireEvent("_contentReady"); // content won't show up so mark it as ready
-        }
+		// only destroy previous content of type BaseContent
+		if (oPreviousContent && !oPreviousContent.hasStyleClass("sapFCardErrorContent")) {
+			oPreviousContent.destroy();
+			this.fireEvent("_contentReady"); // content won't show up so mark it as ready
+		}
 
-        //keep the min height
-        oError.addEventDelegate({
-            onAfterRendering: function () {
-                if (!this._oCardManifest) {
-                    return;
-                }
-                var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
-                    oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-                    sHeight = BaseContent.getMinHeight(sType, oContent, oError);
+		//keep the min height
+		oError.addEventDelegate({
+			onAfterRendering: function () {
+				if (!this._oCardManifest) {
+					return;
+				}
+				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
+					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+					sHeight = BaseContent.getMinHeight(sType, oContent, oError);
 
-                if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-                    oError.$().css({ "min-height": sHeight });
-                }
-            }
-        }, this);
+				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+					oError.$().css({ "min-height": sHeight });
+				}
+			}
+		}, this);
 
-        this.setAggregation("_content", oError);
-    };
+		this.setAggregation("_content", oError);
+	};
 
-    Card.prototype._getTemporaryContent = function (sCardType, oContentManifest) {
+	Card.prototype._getTemporaryContent = function (sCardType, oContentManifest) {
 
-        if (!this._oTemporaryContent && this._oLoadingProvider) {
-            this._oTemporaryContent = this._oLoadingProvider.createContentPlaceholder(oContentManifest, sCardType);
+		if (!this._oTemporaryContent && this._oLoadingProvider) {
+			this._oTemporaryContent = this._oLoadingProvider.createContentPlaceholder(oContentManifest, sCardType);
 
-            this._oTemporaryContent.addEventDelegate({
-                onAfterRendering: function () {
-                    if (!this._oCardManifest) {
-                        return;
-                    }
+			this._oTemporaryContent.addEventDelegate({
+				onAfterRendering: function () {
+					if (!this._oCardManifest) {
+						return;
+					}
 
-                    var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
-                        oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-                        sHeight = BaseContent.getMinHeight(sType, oContent, this._oTemporaryContent);
+					var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
+						oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+						sHeight = BaseContent.getMinHeight(sType, oContent, this._oTemporaryContent);
 
-                    if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-                        this._oTemporaryContent.$().css({ "min-height": sHeight });
-                    }
-                }
-            }, this);
-        }
+					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+						this._oTemporaryContent.$().css({ "min-height": sHeight });
+					}
+				}
+			}, this);
+		}
 
-        return this._oTemporaryContent;
-    };
+		return this._oTemporaryContent;
+	};
 
 	/**
 	 * Sets a new value for the <code>dataMode</code> property.
@@ -1082,14 +1087,14 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-    /**
-     * Decides if the card needs a loading placeholder based on card level data provider
-     *
-     * @returns {Boolean} Should card has a loading placeholder based on card level data provider.
-     */
+	/**
+	 * Decides if the card needs a loading placeholder based on card level data provider
+	 *
+	 * @returns {Boolean} Should card has a loading placeholder based on card level data provider.
+	 */
 	Card.prototype.isLoading = function () {
-	    return this._oLoadingProvider ? this._oLoadingProvider.getLoadingState() : false;
-    };
+		return this._oLoadingProvider ? this._oLoadingProvider.getLoadingState() : false;
+	};
 
 	return Card;
 });
