@@ -178,7 +178,7 @@ sap.ui.define([
 
 	FeedInput.prototype.setIconDensityAware = function (iIconDensityAware) {
 		this.setProperty("iconDensityAware", iIconDensityAware, true);
-		var fnClass = sap.ui.require("sap/m/Image");
+		var fnClass = sap.ui.requireSync("sap/m/Image");
 		if (this._getImageControl() instanceof fnClass) {
 			this._getImageControl().setDensityAware(iIconDensityAware);
 		}
