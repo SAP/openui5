@@ -31,10 +31,10 @@ sap.ui.define([
 			iTotalItemsCount = aItems.length,
 			bTextOnly = true;
 
-		if (oIconTabHeader) {
-			bTextOnly = oIconTabHeader._checkTextOnly();
-			iTotalItemsCount = oIconTabHeader.getVisibleTabFilters().length;
-		}
+			if (oIconTabHeader) {
+				bTextOnly = oIconTabHeader._checkTextOnly();
+				iTotalItemsCount = oIconTabHeader.getVisibleTabFilters().length;
+			}
 
 		oSelectList.checkIconOnly();
 		this.renderList(oRM, aItems, oSelectList, oIconTabHeader, bTextOnly, 0, iTotalItemsCount);
