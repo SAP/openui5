@@ -1042,6 +1042,30 @@ function (
 		}.bind(this), iAnimationDelay);
 	});
 
+	QUnit.test("FCL does not have animations with animationMode=minimal", function(assert){
+		// arrange
+		var oSpy = this.spy(this.oFCL, "_adjustColumnAfterAnimation"),
+			fnDone = assert.async(),
+			oConfiguration = sap.ui.getCore().getConfiguration(),
+			sOriginalAnimationMode = oConfiguration.getAnimationMode();
+
+		oConfiguration.setAnimationMode("minimal");
+		assert.expect(1);
+
+		// act
+		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
+
+		setTimeout(function() {
+			// assert
+			assert.ok(oSpy.notCalled, "_adjustColumnAfterAnimation is not called when animationMode=minimal");
+
+			// clean-up
+			oConfiguration.setAnimationMode(sOriginalAnimationMode);
+			oSpy.restore();
+			fnDone();
+		}, COLUMN_RESIZING_ANIMATION_DURATION);
+	});
+
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();
