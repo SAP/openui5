@@ -305,6 +305,37 @@ sap.ui.define([
 		assert.strictEqual(oHistoryChangeStub.callCount, 2, "History is disconnected from the first hashchanger");
 	});
 
+	QUnit.test("Should keep the event order between History and RouterHashChanger", function(assert) {
+		var oHashChanger = HashChanger.getInstance();
+
+		// attach a lister to the "hashChanged" event for the History
+		var oHistory = History.getInstance();
+		var oHistoryHashChangedSpy = this.spy(oHistory, "_hashChange");
+
+		// attach a listener to the "hashChanged" event for the RouterHashChanger
+		var oRouterHashChanger = oHashChanger.createRouterHashChanger();
+		var oRouterHashChangerHashChangedSpy = this.spy(oRouterHashChanger, "fireHashChanged");
+
+		oHashChanger.fireHashChanged("newHash", "oldHash");
+
+		assert.equal(oRouterHashChangerHashChangedSpy.callCount, 1, "event listener called");
+		assert.equal(oHistoryHashChangedSpy.callCount, 1, "event listener called");
+		assert.ok(oHistoryHashChangedSpy.calledBefore(oRouterHashChangerHashChangedSpy), "The call order is correct");
+
+
+		var oNewHashChanger = new HashChanger();
+		HashChanger.replaceHashChanger(oNewHashChanger);
+
+		oRouterHashChangerHashChangedSpy.resetHistory();
+		oHistoryHashChangedSpy.resetHistory();
+
+		oNewHashChanger.fireHashChanged("veryNewHash", "newHash");
+
+		assert.equal(oRouterHashChangerHashChangedSpy.callCount, 1, "event listener called");
+		assert.equal(oHistoryHashChangedSpy.callCount, 1, "event listener called");
+		assert.ok(oHistoryHashChangedSpy.calledBefore(oRouterHashChangerHashChangedSpy), "The call order is correct");
+	});
+
 	QUnit.module("Synchronous hash setting");
 
 	QUnit.test("Should not omit a history entry when hash is set again in a handler", function (assert) {
