@@ -131,7 +131,7 @@ sap.ui.define([
 	IconTabBarSelectList.prototype._initItemNavigation = function () {
 		var aItems = this.getItems(),
 			aDomRefs = [],
-			oPrevSelectedItem = this._oIconTabHeader && this._oIconTabHeader.oSelectedItem,
+			oPrevSelectedItem = this._oIconTabHeader.oSelectedItem,
 			iSelectedDomIndex = -1,
 			oItem,
 			i;
@@ -189,16 +189,18 @@ sap.ui.define([
 			$target = $target.parent(".sapMITBSelectItem");
 		}
 
-		var oSource = Core.byId($target[0].id);
-		if (oSource && oSource.getEnabled()) {
+		var oFilter = Core.byId($target[0].id);
 
-			oEvent.preventDefault();
+		if (!oFilter || this._oIconTabHeader._isUnselectable(oFilter)) {
+			return;
+		}
 
-			if (oSource != this.getSelectedItem()) {
-				this.fireSelectionChange({
-					selectedItem: oSource
-				});
-			}
+		oEvent.preventDefault();
+
+		if (oFilter != this.getSelectedItem()) {
+			this.fireSelectionChange({
+				selectedItem: oFilter
+			});
 		}
 
 	};

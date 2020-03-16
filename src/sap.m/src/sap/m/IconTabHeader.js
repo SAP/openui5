@@ -287,7 +287,9 @@ sap.ui.define([
 			this._oSelectList = new IconTabBarSelectList({
 				selectionChange: function (oEvent) {
 					var oTarget = oEvent.getParameter('selectedItem');
-					this._oIconTabHeader.setSelectedItem(oTarget._getRealTab());
+					var oFilter = oTarget._getRealTab();
+
+					this._oIconTabHeader.setSelectedItem(oFilter);
 					this._oIconTabHeader._closeOverflow();
 				}
 			});
@@ -594,7 +596,7 @@ sap.ui.define([
 			return this;
 		}
 
-		if (!oItem.getEnabled()) {
+		if (this._isUnselectable(oItem)) {
 			return this;
 		}
 
@@ -1134,16 +1136,38 @@ sap.ui.define([
 					sControlId = oEvent.srcControl.getId().replace(/-icon$/, "");
 					oControl = Core.byId(sControlId);
 					if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
+
+						if (this._isUnselectable(oControl)) {
+							if (oControl.getItems().length) {
+								oControl._expandButtonPress();
+							}
+							return;
+						}
+
 						this.setSelectedItem(oControl);
 					}
 				} else if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 					// select item if it is an iconTab but not a separator
+					if (this._isUnselectable(oControl)) {
+						if (oControl.getItems().length) {
+							oControl._expandButtonPress();
+						}
+						return;
+					}
 
 					this.setSelectedItem(oControl);
 				}
 			} else {
 				//no target id, so we have to check if showAll is set or it's a text only item, because clicking on the number then also leads to selecting the item
 				if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
+
+					if (this._isUnselectable(oControl)) {
+						if (oControl.getItems().length) {
+							oControl._expandButtonPress();
+						}
+						return;
+					}
+
 					this.setSelectedItem(oControl);
 				}
 			}
@@ -1160,6 +1184,21 @@ sap.ui.define([
 		}
 
 		this._setItemsForStrip();
+	};
+
+	/**
+	 * Checks if a IconTabFilter is unable to be selected.
+	 * This instance of the IconTabHeader must be within an IconTabBar and the IconTabBar must have no content aggregation set.
+	 * The passed IconTabFilter instance must not be nested, has to have its items aggregation set and not have content aggregation set.
+	 * @private
+	 * @param {sap.m.IconTabFilter} oIconTabFilter The instance to check
+	 * @returns {boolean}
+	 */
+	IconTabHeader.prototype._isUnselectable = function (oIconTabFilter) {
+		var oFilter = oIconTabFilter._getRealTab();
+
+		return !oFilter.getEnabled() || (this._isInsideIconTabBar() && !this.getParent().getContent().length &&
+			oFilter._getNestedLevel() === 1 && oFilter.getItems().length && !oFilter.getContent().length);
 	};
 
 	/**
@@ -1248,9 +1287,17 @@ sap.ui.define([
 				}
 			}
 
-			if (this.oSelectedItem) {
-				this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
+			if (!this.oSelectedItem) {
+				return;
 			}
+
+			// if candidate selected item is unselectable, instead select its first available child item that has content
+			if (this._isUnselectable(this.oSelectedItem)) {
+				this.setSelectedItem(this.oSelectedItem._getFirstAvailableSubFilter(), true);
+				return;
+			}
+
+			this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
 		}
 	};
 
