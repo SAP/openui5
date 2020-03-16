@@ -16,8 +16,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/base/Log",
-	"sap/base/util/restricted/_uniqWith"
+	"sap/base/Log"
 ], function(
 	ChangeRegistry,
 	Utils,
@@ -32,8 +31,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Component,
-	Log,
-	_uniqWith
+	Log
 ) {
 	"use strict";
 
@@ -729,32 +727,21 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.applyVariantChanges = function(aChanges, oAppComponent) {
-		var aPromiseStack = [];
-		var oModifier = JsControlTreeModifier;
-		var aChangeSelectors = aChanges.map(function (oChange) {
-			this._oChangePersistence._addRunTimeCreatedChangeAndUpdateDependencies(oAppComponent, oChange);
-			return this._getSelectorOfChange(oChange);
-		}.bind(this));
-		var fnSameSelector = function (oSource, oTarget) {
-			return oSource.id === oTarget.id;
-		};
-		// Remove duplicates. The further execution should be run once per control
-		aChangeSelectors = _uniqWith(aChangeSelectors, fnSameSelector);
-		aChangeSelectors.forEach(function(oSelector) {
-			aPromiseStack.push(function() {
-				var oControl = oModifier.bySelector(oSelector, oAppComponent);
-				if (!oControl) {
-					Log.error("A flexibility change tries to change a nonexistent control.");
-					return new Utils.FakePromise();
+		var oControl;
+		return aChanges.reduce(function(oPreviousPromise, oChange) {
+			return oPreviousPromise.then(function() {
+				var mPropertyBag = {
+					modifier: JsControlTreeModifier,
+					appComponent: oAppComponent
+				};
+				this._oChangePersistence._addRunTimeCreatedChangeAndUpdateDependencies(oAppComponent, oChange);
+				oControl = mPropertyBag.modifier.bySelector(oChange.getSelector(), oAppComponent);
+				if (oControl) {
+					return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
 				}
-
-				// TODO: replace applyAllChangesForControl. This is based on the control specific changes. Should be replaced by a function that applies still the changes passed in applyVariantChanges
-				// Previous changes added as dependencies
-				return Applier.applyAllChangesForControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, this, oControl);
+				Log.error("A flexibility change tries to change a nonexistent control.");
 			}.bind(this));
-		}.bind(this));
-
-		return Utils.execPromiseQueueSequentially(aPromiseStack);
+		}.bind(this), new Utils.FakePromise());
 	};
 
 	/**
