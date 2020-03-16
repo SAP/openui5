@@ -4,7 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
@@ -15,7 +16,8 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings"
 ], function(
 	AppVariantFactory,
-	DescriptorInlineChangeFactory,
+	DescriptorChangeTypes,
+	AppVariantInlineChangeFactory,
 	ChangesController,
 	Utils,
 	Log,
@@ -96,7 +98,7 @@ sap.ui.define([
 		aDescrChanges.forEach(function(oChange) {
 			var oChangeDefinition = oChange.getDefinition();
 			// Change contains only descriptor change information so the descriptor inline change needs to be created again
-			aInlineChangesPromises.push(DescriptorInlineChangeFactory.createNew(oChangeDefinition.changeType, oChangeDefinition.content, oChangeDefinition.texts));
+			aInlineChangesPromises.push(AppVariantInlineChangeFactory.createNew(oChangeDefinition));
 		});
 		return Promise.all(aInlineChangesPromises);
 	}
@@ -160,7 +162,7 @@ sap.ui.define([
 		if (bArePersistencesEqual) {
 			_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
 				// UI and Descriptor changes need to be separated here so as to perform different operations on changes
-				if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getDefinition().changeType)) {
+				if (includes(DescriptorChangeTypes.getChangeTypes(), oChange.getDefinition().changeType)) {
 					aDescrChanges.push(oChange);
 				} else {
 					_moveChangesToNewFlexReference(oChange, oAppVariant);
@@ -180,7 +182,7 @@ sap.ui.define([
 	function _deleteDescrChangesFromPersistence(vSelector) {
 		// In case of app variant, both persistences hold descriptor changes and have to be removed from one of the persistences
 		_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
-			if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType())) {
+			if (includes(DescriptorChangeTypes.getChangeTypes(), oChange.getChangeType())) {
 				// In case there are UI changes, they will be sent to the backend in the last resolved promise and will be removed from the persistence
 				ChangesController.getDescriptorFlexControllerInstance(vSelector)._oChangePersistence.deleteChange(oChange);
 			}
@@ -309,7 +311,7 @@ sap.ui.define([
 				.then(function() {
 					var aDescrChanges = [];
 					_getDirtyDescrChanges(mPropertyBag.selector).forEach(function(oChange) {
-						if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getDefinition().changeType)) {
+						if (includes(DescriptorChangeTypes.getChangeTypes(), oChange.getDefinition().changeType)) {
 							aDescrChanges.push(oChange);
 						}
 					});

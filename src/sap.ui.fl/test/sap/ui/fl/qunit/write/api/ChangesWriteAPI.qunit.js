@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/core/Component",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/core/Element",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -26,7 +27,8 @@ sap.ui.define([
 	FlexUtils,
 	Settings,
 	Component,
-	DescriptorInlineChangeFactory,
+	DescriptorChangeTypes,
+	AppVariantInlineChangeFactory,
 	DescriptorChangeFactory,
 	Element,
 	JsControlTreeModifier,
@@ -99,7 +101,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when create is called for a descriptor change", function(assert) {
-			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
+			var sChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var mPropertyBag = {
 				selector: this.vSelector,
 				changeSpecificData: {
@@ -167,7 +169,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when create is called for a descriptor change and the create promise is rejected", function(assert) {
-			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
+			var sChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var mPropertyBag = {
 				changeSpecificData: {
 					changeType: sChangeType
@@ -178,7 +180,7 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(mPropertyBag.selector.appComponent);
 
-			var oCreateInlineChangeStub = sandbox.stub(DescriptorInlineChangeFactory, "createDescriptorInlineChange").rejects(new Error("myError"));
+			var oCreateInlineChangeStub = sandbox.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").rejects(new Error("myError"));
 			var oCreateChangeStub = sandbox.stub(DescriptorChangeFactory.prototype, "createNew");
 			var oErrorLogStub = sandbox.stub(Log, "error");
 
@@ -307,7 +309,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when create is called for a descriptor change without app version as a part of selector", function(assert) {
-			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
+			var sChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var mPropertyBag = {
 				selector: this.vSelector,
 				changeSpecificData: {
@@ -365,7 +367,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when create is called for a descriptor change with app version as a part of selector", function(assert) {
-			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
+			var sChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			this.vSelector.appVersion = "1.0.0";
 			var mPropertyBag = {
 				selector: this.vSelector,

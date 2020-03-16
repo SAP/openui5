@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
@@ -16,7 +16,7 @@ sap.ui.define([
 	_omit,
 	JsControlTreeModifier,
 	ChangesController,
-	DescriptorInlineChangeFactory,
+	DescriptorChangeTypes,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	FlexCustomData,
@@ -277,7 +277,7 @@ sap.ui.define([
 
 		QUnit.test("when add is called with a descriptor change", function(assert) {
 			var done = assert.async();
-			var sDescriptorChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
+			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var oChange = {
 				_getMap: function() {
 					return {
@@ -399,7 +399,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when remove is called for a descriptor change", function(assert) {
-			var sDescriptorChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
+			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var mPropertyBag = {
 				change: {
 					_getMap: function () {

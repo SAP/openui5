@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
-	DescriptorInlineChangeFactory,
 	AppVariantFactory,
 	WriteUtils,
 	TransportSelection,
@@ -22,229 +20,6 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-
-	// TODO: This test module will go to DescriptorInlineChangeFactory tests with a followup change
-	QUnit.module("Given a DescriptorInlineChangeFactory for S4/Hana onPremise systems", {
-		beforeEach : function() {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
-				})
-			);
-		},
-		afterEach : function() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("create_app_setTitle", function(assert) {
-			var _oDescriptorInlineChange;
-			var _oVariant;
-			var mParameter = {
-				type : "XTIT",
-				maxLength : 20,
-				comment : "a comment",
-				value : {
-					"" : "Default Title",
-					en:"English Title",
-					de:"Deutscher Titel",
-					en_US:"English Title in en_US"
-				}
-			};
-			return DescriptorInlineChangeFactory.create_app_setTitle(mParameter).then(function(oDescriptorInlineChange) {
-				assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
-				_oDescriptorInlineChange = oDescriptorInlineChange;
-				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setTitle");
-				return AppVariantFactory.prepareCreate({
-					id : "a.id",
-					reference: "a.reference"
-				});
-			}).then(function(oVariant) {
-				_oVariant = oVariant;
-				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
-			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].texts['a.id_sap.app.title'], 'Initial empty text key replaced');
-				assert.ok(!_oVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts['a.id_sap.app.title'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
-			});
-		});
-
-		QUnit.test("create_app_setSubTitle", function(assert) {
-			var _oDescriptorInlineChange;
-			var _oVariant;
-			var mParameter = {
-				type : "XTIT",
-				maxLength : 30,
-				comment : "comment on subtitle",
-				value : {
-					"": "Default Subtitle",
-					en: "English Subtitle",
-					de: "Deutscher Untertitel",
-					en_US: "English Subtitle in en_US"
-				}
-			};
-			return DescriptorInlineChangeFactory.create_app_setSubTitle(mParameter).then(function(oDescriptorInlineChange) {
-				assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
-				_oDescriptorInlineChange = oDescriptorInlineChange;
-				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setSubTitle");
-				return AppVariantFactory.prepareCreate({
-					id : "a.id",
-					reference: "a.reference"
-				});
-			}).then(function(oVariant) {
-				_oVariant = oVariant;
-				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
-			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].texts['a.id_sap.app.subTitle'], 'Initial empty text key replaced');
-				assert.ok(!_oVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts['a.id_sap.app.subTitle'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
-			});
-		});
-
-		QUnit.test("create_ui5_addLibraries", function(assert) {
-			var _oDescriptorInlineChange;
-			var _oVariant;
-			var mParameter = {
-				libraries: {
-					"descriptor.mocha133": {
-						minVersion: "1.44",
-						lazy: false
-					}
-				}
-			};
-			return DescriptorInlineChangeFactory.create_ui5_addLibraries(mParameter).then(function(oDescriptorInlineChange) {
-				assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
-				_oDescriptorInlineChange = oDescriptorInlineChange;
-				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addLibraries");
-				return AppVariantFactory.prepareCreate({
-					id : "a.id",
-					reference: "a.reference"
-				});
-			}).then(function(oVariant) {
-				_oVariant = oVariant;
-				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
-			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].content.libraries['descriptor.mocha133'], 'Library is added');
-				assert.deepEqual(_oVariant.getDefinition().content[0].content, mParameter, 'Added library properties are equal to parameters set in factory method');
-			});
-		});
-
-		QUnit.test("create_app_setShortTitle", function(assert) {
-			var _oDescriptorInlineChange;
-			var _oVariant;
-			var mParameter = {
-				type : "XTIT",
-				maxLength : 30,
-				comment : "comment on shorttitle",
-				value : {
-					"" : "Default Shorttitle",
-					en:"English Shorttitle",
-					de:"Deutscher Kurztitel",
-					en_US:"English Shorttitle in en_US"
-				}
-			};
-			return DescriptorInlineChangeFactory.create_app_setShortTitle(mParameter).then(function(oDescriptorInlineChange) {
-				assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
-				_oDescriptorInlineChange = oDescriptorInlineChange;
-				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setShortTitle");
-				return AppVariantFactory.prepareCreate({
-					id : "a.id",
-					reference: "a.reference"
-				});
-			}).then(function(oVariant) {
-				_oVariant = oVariant;
-				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
-			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].texts['a.id_sap.app.shortTitle'], 'Initial empty text key replaced');
-				assert.ok(!_oVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts['a.id_sap.app.shortTitle'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
-			});
-		});
-
-		QUnit.test("create_app_setDescription", function(assert) {
-			var _oDescriptorInlineChange;
-			var _oVariant;
-			var mParameter = {
-				type : "XTXT",
-				maxLength : 50,
-				comment : "comment on description",
-				value : {
-					"" : "Default Description",
-					en:"English Description",
-					de:"Deutsche Beschreibung",
-					en_US:"English Description in en_US"
-				}
-			};
-			return DescriptorInlineChangeFactory.create_app_setDescription(mParameter).then(function(oDescriptorInlineChange) {
-				assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
-				_oDescriptorInlineChange = oDescriptorInlineChange;
-				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setDescription");
-				return AppVariantFactory.prepareCreate({
-					id : "a.id",
-					reference: "a.reference"
-				});
-			}).then(function(oVariant) {
-				_oVariant = oVariant;
-				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
-			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].texts['a.id_sap.app.description'], 'Initial empty text key replaced');
-				assert.ok(!_oVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts['a.id_sap.app.description'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
-			});
-		});
-
-		QUnit.test("create_app_setInfo", function(assert) {
-			var _oDescriptorInlineChange;
-			var _oVariant;
-			var mParameter = {
-				maxLength : 70,
-				comment : "comment on info",
-				value : {
-					"" : "Default Info",
-					en:"English Info",
-					de:"Deutsche Info",
-					en_US:"English Info in en_US"
-				}
-			};
-			return DescriptorInlineChangeFactory.create_app_setInfo(mParameter).then(function(oDescriptorInlineChange) {
-				assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
-				_oDescriptorInlineChange = oDescriptorInlineChange;
-				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setInfo");
-				return AppVariantFactory.prepareCreate({
-					id : "a.id",
-					reference: "a.reference"
-				});
-			}).then(function(oVariant) {
-				_oVariant = oVariant;
-				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
-			}).then(function() {
-				assert.ok(_oVariant.getDefinition().content[0].texts['a.id_sap.app.info'], 'Initial empty text key replaced');
-				assert.ok(!_oVariant.getDefinition().content[0].texts[''], 'Initial empty text key removed ');
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts['a.id_sap.app.info'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
-			});
-		});
-
-		QUnit.test("addDescriptorInlineChange", function(assert) {
-			var _oVariant;
-			return AppVariantFactory.prepareCreate({
-				id : "a.id",
-				reference: "a.reference"
-			}).then(function(oVariant) {
-				_oVariant = oVariant;
-				return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"});
-			}).then(function(oDescriptorInlineChange) {
-				return _oVariant.addDescriptorInlineChange(oDescriptorInlineChange);
-			}).then(function() {
-				assert.notEqual(_oVariant.getDefinition().content, null);
-				assert.equal(_oVariant.getDefinition().content.length, 1);
-				assert.equal(_oVariant.getDefinition().content[0].changeType, "changeType");
-				assert.deepEqual(_oVariant.getDefinition().content[0].content, {param:"value"});
-				assert.deepEqual(_oVariant.getDefinition().content[0].texts, {a: "b"});
-			});
-		});
-	});
 
 	QUnit.module("Given a AppVariantFactory for S4/Hana onPremise systems", {
 		beforeEach : function() {
@@ -719,6 +494,129 @@ sap.ui.define([
 				.catch(function(sError) {
 					assert.ok(sError);
 				});
+		});
+
+		QUnit.test("When prepareCreate is called and app variant is submitted", function(assert) {
+			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
+				response: JSON.stringify({
+					id : "a.id",
+					reference: "a.reference",
+					layer: Layer.CUSTOMER
+				})
+			});
+			return AppVariantFactory.prepareCreate({
+				id : "a.id",
+				reference: "a.reference"
+			}).then(function(oAppVariant) {
+				return oAppVariant.submit();
+			}).then(function(oResponse) {
+				assert.notEqual(oResponse, null);
+				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/");
+			});
+		});
+
+		QUnit.test("When prepareCreate is called with referenceVersion and app variant is submitted", function(assert) {
+			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
+				response: JSON.stringify({
+					id : "a.id",
+					reference: "a.reference",
+					layer: Layer.CUSTOMER
+				})
+			});
+			return AppVariantFactory.prepareCreate({
+				id : "a.id",
+				reference: "a.reference",
+				referenceVersion: "1.1"
+			}).then(function(oAppVariant) {
+				return oAppVariant.submit();
+			}).then(function(oResponse) {
+				assert.notEqual(oResponse, null);
+				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/");
+				assert.equal(JSON.parse(oNewConnectorStub.getCall(0).args[2].payload).referenceVersion, "1.1");
+			});
+		});
+
+		QUnit.test("When prepareUpdate is called with referenceVersion and app variant is submitted as a local object", function(assert) {
+			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
+				response: JSON.stringify({
+					id : "a.id",
+					reference: "a.reference",
+					layer: Layer.CUSTOMER
+				})
+			});
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
+			return AppVariantFactory.prepareUpdate({
+				id: "a.id"
+			}).then(function(oAppVariant) {
+				return oAppVariant.submit();
+			}).then(function(oResponse) {
+				assert.ok(oStubOpenTransportSelection.calledOnce);
+				assert.notEqual(oResponse, null);
+				assert.equal(oNewConnectorStub.callCount, 2);
+				assert.equal(oNewConnectorStub.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id");
+			});
+		});
+
+		QUnit.test("When prepareUpdate is called and app variant is submitted which is already published", function(assert) {
+			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
+				response: JSON.stringify({
+					id : "a.id",
+					reference: "a.reference",
+					layer: Layer.CUSTOMER
+				})
+			});
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
+			return AppVariantFactory.prepareUpdate({
+				id: "a.id"
+			}).then(function(oAppVariant) {
+				return oAppVariant.submit();
+			}).then(function(oResponse) {
+				assert.ok(oStubOpenTransportSelection.calledOnce);
+				assert.notEqual(oResponse, null);
+				assert.equal(oNewConnectorStub.callCount, 2);
+				assert.equal(oNewConnectorStub.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?changelist=aTransport");
+			});
+		});
+
+		QUnit.test("When prepareDelete is called and app variant is deleted which was saved as a local object", function(assert) {
+			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
+				response: JSON.stringify({
+					id : "a.id",
+					reference: "a.reference",
+					layer: Layer.CUSTOMER
+				})
+			});
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
+			return AppVariantFactory.prepareDelete({
+				id: "a.id"
+			}).then(function(oAppVariant) {
+				return oAppVariant.submit();
+			}).then(function(oResponse) {
+				assert.ok(oStubOpenTransportSelection.calledOnce);
+				assert.notEqual(oResponse, null);
+				assert.equal(oNewConnectorStub.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
+			});
+		});
+
+		QUnit.test("When prepareDelete is called and app variant is deleted which was already published", function(assert) {
+			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
+				response: JSON.stringify({
+					id : "a.id",
+					reference: "a.reference",
+					layer: Layer.CUSTOMER
+				})
+			});
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
+			return AppVariantFactory.prepareDelete({
+				id: "a.id"
+			}).then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit();
+			}).then(function(oResponse) {
+				assert.ok(oStubOpenTransportSelection.calledOnce);
+				assert.notEqual(oResponse, null);
+				assert.equal(oNewConnectorStub.callCount, 2);
+				assert.equal(oNewConnectorStub.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=aTransport');
+			});
 		});
 	});
 
