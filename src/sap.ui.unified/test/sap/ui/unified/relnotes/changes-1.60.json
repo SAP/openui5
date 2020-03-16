@@ -288,5 +288,32 @@
         ]
       }
     ]
+  },
+  "1.60.24": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "93a2abf2e6235f34b858266f746aa146e2ecd729",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Unnecessary readings now prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007710282019"
+          }
+        ]
+      },
+      {
+        "id": "08efe41e0a0f92d8526ed66808e40bb165f52b0b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Unnecessary readings now prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007710282019"
+          }
+        ]
+      }
+    ]
   }
 }

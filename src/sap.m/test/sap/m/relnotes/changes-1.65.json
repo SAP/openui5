@@ -1198,5 +1198,54 @@
         ]
       }
     ]
+  },
+  "1.65.13": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "8ab41b569ef5145d9ba8b073f10d65a9e8e68ea5",
+        "type": "FIX",
+        "text": " GenericTile title extends beyond 2 lines in ContentMode in IE, FF and Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980152703"
+          }
+        ]
+      },
+      {
+        "id": "07a211f717e7dfbf6b08491055170694518735e3",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Fixed failing QUnit test in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070015471"
+          }
+        ]
+      },
+      {
+        "id": "e188ed85a70eb294dbbdc7491ded43279aca2fe0",
+        "type": "FIX",
+        "text": " sap.m.SearchField: search event is now fired correctly in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970045315"
+          }
+        ]
+      },
+      {
+        "id": "ecbfff8459704a766c01b71191133122e3b58f38",
+        "type": "FIX",
+        "text": " sap.m.Title: titleStyle property now affects aria-level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000277352020"
+          }
+        ]
+      }
+    ]
   }
 }
