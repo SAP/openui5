@@ -4585,6 +4585,55 @@ sap.ui.define([
 
 	QUnit.module("Other scenarios");
 
+	QUnit.test("Keep selected cache items when updatedFinished event is triggered from items binding", function(assert) {
+		// prepare
+		var done = assert.async(),
+			aSelectedItems = [],
+			oFF = new FacetFilter({
+				showPersonalization : true,
+				liveSearch : false
+			}),
+			oFFL = new FacetFilterList(),
+			oModel = new JSONModel({
+				values: [{key: "1", text: "Val1"}]
+			}),
+			oEventGetParamSub = sinon.stub(sap.ui.base.Event.prototype, "getParameter");
+			oEventGetParamSub.withArgs("reason").returns("Refresh");
+
+		oFF.addList(oFFL);
+		oFFL.setModel(oModel);
+
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oFFL.setSelectedKeys({1: "Val1"});
+		aSelectedItems = oFFL.getSelectedItems();
+
+		// assert
+		assert.equal(aSelectedItems.length, 1, "There is one selected item");
+
+		oFFL.attachEventOnce("listOpen", function() {
+			oFFL.bindItems("/values", new FacetFilterItem({
+				text: "{text}",
+				key: "{key}"
+			}));
+
+			oFFL.attachEventOnce("updateFinished", function() {
+				//assert
+				aSelectedItems = oFFL.getSelectedItems();
+				assert.equal(aSelectedItems.length, 1, "Item is still selected");
+
+				destroyFF(oFF);
+				done();
+				oEventGetParamSub.restore();
+			});
+		});
+
+		// act
+		openPopover(oFF, 0);
+	});
+
 	//BCP: 1770254364
 	QUnit.test("Updating list items binding updates the button text", function(assert) {
 		//arrange

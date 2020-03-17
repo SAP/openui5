@@ -446,9 +446,7 @@ sap.ui.define([
 				if (oModel && oModel.getProperty(oBinding.getPath())) {
 					this._iAllItemsCount = oModel.getProperty(oBinding.getPath()).length || 0; //if the model is different than a simple array of objects
 				}
-			}
 
-			if (sUpdateReason !== "growing" && sUpdateReason !== ChangeReason.Filter.toLowerCase()) {
 				this._oSelectedKeys = {};
 				this._getNonGroupItems().forEach(function(item) {
 					if (item.getSelected()) {
