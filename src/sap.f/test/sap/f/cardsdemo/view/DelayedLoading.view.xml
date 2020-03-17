@@ -26,7 +26,7 @@
 				<Label text="Maximum loading time"/>
 				<Input id="loadingMaxSeconds" width="8rem" type="Number" description="seconds"/>
 				<Label text="Preload manifests"/>
-				<Checkbox id="preloadManifests" selected="true"/>
+				<CheckBox id="preloadManifests" selected="true"/>
 				<Label text="Number of cards"/>
 				<Input id="numberOfCards" width="4rem" type="Number" value="11"/>
 				<Button text="Start loading" type="Emphasized" press="onFormSubmit"/>
