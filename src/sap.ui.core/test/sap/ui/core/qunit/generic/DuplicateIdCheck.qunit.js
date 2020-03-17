@@ -223,6 +223,7 @@ sap.ui.define([
 			"sap.ui.core.tmpl.Template",
 			"sap.m.DateTimeInput", // setting an invalid type crashes and only leaks a picker control because of this
 			"sap.m.FacetFilterItem",
+			"sap.m.IconTabBarSelectList",
 			"sap.m.LightBox",
 			"sap.m.NotificationListGroup",
 			"sap.m.NotificationListItem",
