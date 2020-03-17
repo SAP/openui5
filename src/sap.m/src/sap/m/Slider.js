@@ -765,9 +765,7 @@ function(
 		 */
 		Slider.prototype._registerResizeHandler = function () {
 			if (!this._parentResizeHandler) {
-				setTimeout(function () {
-					this._parentResizeHandler = ResizeHandler.register(this, this._handleSliderResize.bind(this));
-				}.bind(this), 0);
+				this._parentResizeHandler = ResizeHandler.register(this, this._handleSliderResize.bind(this));
 			}
 		};
 
