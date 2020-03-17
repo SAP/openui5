@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"test-resources/sap/ui/fl/qunit/write/test/TestChangesUtil",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -21,10 +21,10 @@ function(
 	OverlayRegistry,
 	VariantManagement,
 	VariantModel,
-	TestChangesUtil,
+	FlexTestAPI,
 	sinon
 ) {
-	'use strict';
+	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
@@ -168,7 +168,7 @@ function(
 					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.title, "then title is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, oVisibleChange.visible, "then visibility is correctly set in model");
-					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
 					return oControlVariantConfigureCommand.undo();
 				}.bind(this))
@@ -178,11 +178,11 @@ function(
 					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");
-					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
 				.catch(function (oError) {
-					assert.ok(false, 'catch must never be called - Error: ' + oError);
+					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 
@@ -219,18 +219,18 @@ function(
 					assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 					var oData = oControlVariantConfigureCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.defaultVariant, "then default variant is correctly set in the model");
-					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 					return oControlVariantConfigureCommand.undo();
 				}.bind(this))
 				.then(function() {
 					var oData = oControlVariantConfigureCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.originalDefaultVariant, "then default variant is correctly reverted in the model");
-					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
 				.catch(function (oError) {
-					assert.ok(false, 'catch must never be called - Error: ' + oError);
+					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 	});
