@@ -1328,12 +1328,14 @@ sap.ui.define([
 				min: -4,
 				change: this.oChangeSpy
 			});
+			this.oResetSpinSpy = sinon.spy(this.stepInput, "_resetSpinValues");
 
 			this.stepInput.placeAt('qunit-fixture');
 			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oChangeSpy.reset();
+			this.oResetSpinSpy.reset();
 		}
 	});
 
@@ -1437,6 +1439,7 @@ sap.ui.define([
 		assert.equal(this.stepInput.getValue(), 9, "Input has value of 9");
 
 		assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		assert.equal(this.oResetSpinSpy.callCount, 1, "Reset spin should be called once");
 	});
 
 
