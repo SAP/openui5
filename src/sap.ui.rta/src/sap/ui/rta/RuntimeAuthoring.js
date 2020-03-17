@@ -766,6 +766,7 @@ function(
 	RuntimeAuthoring.prototype._setVersionLabel = function(bDraftEnabled) {
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		if (bDraftEnabled) {
+			this.getToolbar().setVersionLabelAccentColor(true);
 			return this.getToolbar().setVersionLabel(oTextResources.getText("LBL_DRAFT"));
 		}
 		return VersionsAPI.getVersions({
@@ -773,18 +774,23 @@ function(
 			layer: this.getLayer()
 		})
 		.then(function(aVersions) {
+			// When there are changes before the draft is available set label to "Version 1"
+			var sLabel = oTextResources.getText("LBL_VERSION_1");
+			var bAccentColor = false;
+
+			// When there is no content in the version request set label to "Original App"
+			// Otherwise just need to have a look at the first entry in versions
+			// If the title is not set and the versionNumber is zero, set the label to "Draft"
 			if (aVersions.length === 0) {
-				return oTextResources.getText("LBL_ORIGNINAL_APP");
+				sLabel = oTextResources.getText("LBL_ORIGNINAL_APP");
+			} else if (aVersions[0].title) {
+				sLabel = aVersions[0].title;
+			} else if (aVersions[0].versionNumber === 0) {
+				bAccentColor = true;
+				sLabel = oTextResources.getText("LBL_DRAFT");
 			}
-			if (aVersions[0].title) {
-				return aVersions[0].title;
-			}
-			if (aVersions[0].versionNumber === 0) {
-				return oTextResources.getText("LBL_DRAFT");
-			}
-			return oTextResources.getText("LBL_VERSION_1");
-		})
-		.then(function(sLabel) {
+
+			this.getToolbar().setVersionLabelAccentColor(bAccentColor);
 			return this.getToolbar().setVersionLabel(sLabel);
 		}.bind(this));
 	};
