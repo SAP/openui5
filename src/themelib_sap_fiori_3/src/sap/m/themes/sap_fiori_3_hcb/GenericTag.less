@@ -11,3 +11,19 @@ html.sap-desktop .sapMGenericTag {
 		border: 1px dotted @sapUiContentContrastFocusColor;
 	}
 }
+
+.sapMGenericTagWrap {
+	&:hover{
+		background-color: @sapUiListHoverBackground;
+		box-shadow: @sapUiShadowLevel0;
+
+		& .sapMGenericTagIcon,
+		& .sapMGenericTagValue {
+			color: @sapUiListActiveTextColor;
+		}
+	}
+
+	.sapMGenericTagActive & {
+		background: @sapUiListActiveBackground;
+	}
+}
