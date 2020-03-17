@@ -1121,6 +1121,13 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 		assert.ok(oChildrenSpy.calledWith(".sapUxAPSubSectionSeeMoreContainer"),
 			"Visibility of children with .sapUxAPSubSectionSeeMoreContainer is toggled");
 		assert.ok(oSectionBaseSpy.calledWith(true), "_updateShowHideState method of ObjectPageSectionBase is called");
+
+		oChildrenSpy.reset();
+
+		// Act
+		oSubSection._updateShowHideState(true);
+		assert.ok(oChildrenSpy.notCalled,
+			"Visibility of children with .sapUxAPSubSectionSeeMoreContainer is not toggled when there is no change in visibility");
 	});
 
 	QUnit.test(".sapUxAPObjectPageSubSectionWithSeeMore is applied to SubSections correctly", function(assert) {
