@@ -5,6 +5,7 @@
 	xmlns="sap.m"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:plugins="sap.m.plugins"
 	xmlns:t="sap.ui.table">
 <App>
 	<Page id="page" floatingFooter="true" showHeader="false">
@@ -42,6 +43,9 @@
 				</form:SimpleForm>
 				<t:Table id="ToLineItems" rowActionCount="1" rows="{ToLineItems}"
 					visibleRowCount="7">
+					<t:dependents>
+						<plugins:DataStateIndicator />
+					</t:dependents>
 					<t:extension>
 						<Toolbar>
 							<Title level="H2" text="Sales Order Items">
