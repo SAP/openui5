@@ -66,6 +66,8 @@ sap.ui.define([
 			this.sDefaultBindingMode = BindingMode.TwoWay;
 			// whether this model is destroyed
 			this.bDestroyed = false;
+			// stored parameter for an upcoming #checkUpdate; needed for async case
+			this.bForceUpdate = undefined;
 			// whether to use the legacy path syntax handling
 			this.bLegacySyntax = false;
 			// maps a resolved binding path to an array of sap.ui.core.message.Message
@@ -916,16 +918,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Private method iterating the registered bindings of this model instance and initiating their check for update.
+	 * Calls {@link sap.ui.model.Binding#checkUpdate} on all active bindings of this model. With
+	 * <code>bAsync</code> set to <code>true</code> this method is called in a new task via
+	 * <code>setTimeout</code>. Multiple asynchronous calls lead to a single synchronous call where
+	 * <code>bForceUpdate</code> is <code>true</code> if at least one of the asynchronous calls was
+	 * with <code>bForceUpdate=true</code>.
+	 *
 	 * @param {boolean} bForceUpdate
+	 *   The parameter <code>bForceUpdate</code> for the <code>checkUpdate</code> call on the
+	 *   bindings
 	 * @param {boolean} bAsync
+	 *   Whether this function is called in a new task via <code>setTimeout</code>
+	 *
 	 * @private
 	 */
 	Model.prototype.checkUpdate = function(bForceUpdate, bAsync) {
 		if (bAsync) {
+			this.bForceUpdate = this.bForceUpdate || bForceUpdate;
 			if (!this.sUpdateTimer) {
 				this.sUpdateTimer = setTimeout(function() {
-					this.checkUpdate(bForceUpdate);
+					this.checkUpdate(this.bForceUpdate);
 				}.bind(this), 0);
 			}
 			return;
@@ -933,6 +945,7 @@ sap.ui.define([
 		if (this.sUpdateTimer) {
 			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
+			this.bForceUpdate = undefined;
 		}
 		var aBindings = this.getBindings();
 		each(aBindings, function(iIndex, oBinding) {

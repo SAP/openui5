@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/test/TestUtils"
 ], function (Log, Message, BindingMode, Model, TestUtils) {
 	/*global QUnit*/
+	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
 	//*********************************************************************************************
@@ -151,4 +152,66 @@ sap.ui.define([
 		assert.deepEqual(oModel.filterMatchingMessages("/foo", "/baz"), []);
 		assert.strictEqual(oModel.filterMatchingMessages("/foo/bar", "/foo"), aMessages1);
 	});
+
+	//*********************************************************************************************
+	// BCP: 1970052240
+[false, true].forEach(function (bForceUpdate0, i) {
+	[false, true].forEach(function (bForceUpdate1, j) {
+	QUnit.test("checkUpdate async (" + i + ", " + j + ")", function (assert) {
+		var done = assert.async(),
+			bForceUpdate2 = bForceUpdate0 || bForceUpdate1,
+			oModel = new Model(),
+			oModelMock = this.mock(oModel),
+			sUpdateTimer;
+
+		// mocks for code under test
+		oModelMock.expects("checkUpdate").withExactArgs(bForceUpdate0, true).callThrough();
+		oModelMock.expects("checkUpdate").withExactArgs(bForceUpdate1, true).callThrough();
+
+		// mock for async recursive call
+		oModelMock.expects("checkUpdate").withExactArgs(bForceUpdate2).callsFake(function () {
+			done();
+		});
+
+		// code under test
+		oModel.checkUpdate(bForceUpdate0, /*bAsync*/true);
+
+		sUpdateTimer = oModel.sUpdateTimer;
+		assert.notStrictEqual(sUpdateTimer, null);
+
+		// code under test
+		oModel.checkUpdate(bForceUpdate1, /*bAsync*/true);
+
+		assert.strictEqual(oModel.sUpdateTimer, sUpdateTimer);
+	});
+	});
+});
+
+	//*********************************************************************************************
+	// BCP: 1970052240
+[false, true].forEach(function (bForceUpdate, i) {
+	[null, 42].forEach(function (vUpdateTimer, j) {
+	QUnit.test("checkUpdate sync (" + i + ", " + j + ")", function (assert) {
+		var oBinding = {
+				checkUpdate : function () {}
+			},
+			aBindings = [oBinding],
+			oModel = new Model();
+
+		if (vUpdateTimer) {
+			oModel.bForceUpdate = "forceUpdate";
+			this.mock(window).expects("clearTimeout").withExactArgs(42);
+		}
+		this.mock(oModel).expects("getBindings").returns(aBindings);
+		this.mock(oBinding).expects("checkUpdate").withExactArgs(bForceUpdate);
+
+		// code under test
+		oModel.sUpdateTimer = vUpdateTimer;
+		oModel.checkUpdate(bForceUpdate);
+
+		assert.strictEqual(oModel.bForceUpdate, undefined);
+		assert.strictEqual(oModel.sUpdateTimer, null);
+	});
+	});
+});
 });
