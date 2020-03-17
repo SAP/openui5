@@ -14,6 +14,7 @@ sap.ui.define(function () {
 				"tags": aTags.concat(["data"]),
 				"label": "{i18n>CARD_EDITOR.DATA.REQUEST.URL}",
 				"type": "string",
+				"defaultValue": "",
 				"path": sRelativePath + "data/request/url"
 			},
 			"DataRequestMode": {
