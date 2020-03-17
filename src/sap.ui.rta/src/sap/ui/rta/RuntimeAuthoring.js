@@ -544,6 +544,12 @@ function(
 			return FeaturesAPI.isVersioningEnabled(this.getLayer())
 			.then(function (bVersioningEnabled) {
 				this._bVersioningEnabled = bVersioningEnabled;
+				if (bVersioningEnabled) {
+					return VersionsAPI.initialize({
+						selector: this.getRootControlInstance(),
+						layer: this.getLayer()
+					});
+				}
 			}.bind(this));
 		}
 
@@ -744,9 +750,8 @@ function(
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
 	 */
 	RuntimeAuthoring.prototype._getToolbarButtonsVisibility = function() {
-		return Promise.all([FeaturesAPI.isPublishAvailable(), this._isDraftAvailable()]).then(function(aArgs) {
-			var bIsPublishAvailable = aArgs[0];
-			this.bInitialDraftAvailable = aArgs[1];
+		return FeaturesAPI.isPublishAvailable().then(function(bIsPublishAvailable) {
+			this.bInitialDraftAvailable = this._isDraftAvailable();
 			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this.getRootControlInstance(), this.getLayer(), this._oSerializer);
 			var bPublishAppVariantSupported = bIsPublishAvailable && bIsAppVariantSupported;
 			return {
@@ -769,47 +774,41 @@ function(
 			this.getToolbar().setVersionLabelAccentColor(true);
 			return this.getToolbar().setVersionLabel(oTextResources.getText("LBL_DRAFT"));
 		}
-		return VersionsAPI.getVersions({
+		var aVersions = VersionsAPI.getVersions({
 			selector: this.getRootControlInstance(),
 			layer: this.getLayer()
-		})
-		.then(function(aVersions) {
-			// When there are changes before the draft is available set label to "Version 1"
-			var sLabel = oTextResources.getText("LBL_VERSION_1");
-			var bAccentColor = false;
+		});
 
-			// When there is no content in the version request set label to "Original App"
-			// Otherwise just need to have a look at the first entry in versions
-			// If the title is not set and the versionNumber is zero, set the label to "Draft"
-			if (aVersions.length === 0) {
-				sLabel = oTextResources.getText("LBL_ORIGNINAL_APP");
-			} else if (aVersions[0].title) {
-				sLabel = aVersions[0].title;
-			} else if (aVersions[0].versionNumber === 0) {
-				bAccentColor = true;
-				sLabel = oTextResources.getText("LBL_DRAFT");
-			}
+		// When there are changes before the draft is available set label to "Version 1"
+		var sLabel = oTextResources.getText("LBL_VERSION_1");
+		var bAccentColor = false;
 
-			this.getToolbar().setVersionLabelAccentColor(bAccentColor);
-			return this.getToolbar().setVersionLabel(sLabel);
-		}.bind(this));
+		// When there is no content in the version request set label to "Original App"
+		// Otherwise just need to have a look at the first entry in versions
+		// If the title is not set and the versionNumber is zero, set the label to "Draft"
+		if (aVersions.length === 0) {
+			sLabel = oTextResources.getText("LBL_ORIGNINAL_APP");
+		} else if (aVersions[0].title) {
+			sLabel = aVersions[0].title;
+		} else if (aVersions[0].versionNumber === 0) {
+			bAccentColor = true;
+			sLabel = oTextResources.getText("LBL_DRAFT");
+		}
+
+		this.getToolbar().setVersionLabelAccentColor(bAccentColor);
+		return this.getToolbar().setVersionLabel(sLabel);
 	};
 
 	RuntimeAuthoring.prototype._isDraftAvailable = function() {
 		if (this._bVersioningEnabled) {
-			return VersionsAPI.isDraftAvailable({
+			var bDraftAvailable = VersionsAPI.isDraftAvailable({
 				selector: this.getRootControlInstance(),
 				layer: this.getLayer()
-			})
-			.then(function(bDraftAvailable) {
-				if (bDraftAvailable) {
-					return bDraftAvailable;
-				}
-				return this.canUndo();
-			}.bind(this));
+			});
+			return bDraftAvailable || this.canUndo();
 		}
 
-		return Promise.resolve(false);
+		return false;
 	};
 
 	var fnShowTechnicalError = function(vError) {
@@ -920,12 +919,11 @@ function(
 				.then(function() {
 					this.fireStop();
 					if (sReload !== this._RESTART.NOT_NEEDED) {
-						this._handleParametersOnExit(true).then(function (mParsedHash) {
-							this._triggerCrossAppNavigation(mParsedHash);
-							if (sReload === this._RESTART.RELOAD_PAGE) {
-								this._reloadPage();
-							}
-						}.bind(this));
+						var mParsedHash = this._handleParametersOnExit(true);
+						this._triggerCrossAppNavigation(mParsedHash);
+						if (sReload === this._RESTART.RELOAD_PAGE) {
+							this._reloadPage();
+						}
 					}
 				}.bind(this));
 			}.bind(this))
@@ -1068,22 +1066,21 @@ function(
 		var mParsedHash = FlexUtils.getParsedURLHash();
 		var oRootControl = this.getRootControlInstance();
 		var sLayer = this.getLayer();
-		return this._handleDraftParameter(mParsedHash).then(function (mParsedHash) {
-			// clears FlexState and triggers reloading of the flex data without blocking
-			// it is actually not loading the draft, because we just discarded it
-			VersionsAPI.loadDraftForApplication({
-				selector: oRootControl,
-				layer: sLayer
-			});
-			this.getCommandStack().removeAllCommands();
-			this._triggerCrossAppNavigation(mParsedHash);
-			RuntimeAuthoring.enableRestart(sLayer, oRootControl);
-			if (bHardReload) {
-				this._reloadPage();
-			} else {
-				return this.stop(true, true);
-			}
-		}.bind(this));
+		var mParsedHash = this._handleDraftParameter(mParsedHash);
+		// clears FlexState and triggers reloading of the flex data without blocking
+		// it is actually not loading the draft, because we just discarded it
+		VersionsAPI.loadDraftForApplication({
+			selector: oRootControl,
+			layer: sLayer
+		});
+		this.getCommandStack().removeAllCommands();
+		this._triggerCrossAppNavigation(mParsedHash);
+		RuntimeAuthoring.enableRestart(sLayer, oRootControl);
+		if (bHardReload) {
+			this._reloadPage();
+		} else {
+			return this.stop(true, true);
+		}
 	};
 
 	RuntimeAuthoring.prototype._onDiscardDraft = function() {
@@ -1281,10 +1278,9 @@ function(
 			layer: this.getLayer(),
 			generator: "Change.createInitialFileContent"
 		}).then(function () {
-			return this._handleParametersOnExit(false).then(function (mParsedHash) {
-				this._triggerCrossAppNavigation(mParsedHash);
-				this._reloadPage();
-			}.bind(this));
+			var mParsedHash = this._handleParametersOnExit(false);
+			this._triggerCrossAppNavigation(mParsedHash);
+			this._reloadPage();
 		}.bind(this))
 		.catch(function (oError) {
 			if (oError !== "cancel") {
@@ -1618,27 +1614,25 @@ function(
 
 	RuntimeAuthoring.prototype._handleDraftParameter = function(mParsedHash) {
 		if (!FlexUtils.getUshellContainer() || this.getLayer() === Layer.USER) {
-			return Promise.resolve();
+			return;
 		}
-		return this._isDraftAvailable().then(function (bDraftAvailable) {
-			if (this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
-				delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
-			} else if (this._hasDraftFalseParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
-				/*
-				In case we discarded our draft we add the false flag there, thats why we need to
-				remove it on exit again to trigger the CrossAppNavigation
-				*/
-				delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
-			} else if (bDraftAvailable) { // only add the draft = false flag when versioning and draft is available
 
-				/*
-				In case we entered RTA without a draft and created dirty changes,
-				we need to add sap-ui-fl-version=false, to trigger the CrossAppNavigation on exit.
-				*/
-				mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = ["false"];
-			}
-			return mParsedHash;
-		}.bind(this));
+		if (this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
+			delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
+		} else if (this._hasDraftFalseParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
+			/*
+			In case we discarded our draft we add the false flag there, thats why we need to
+			remove it on exit again to trigger the CrossAppNavigation
+			*/
+			delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
+		} else if (this._isDraftAvailable()) { // only add the draft = false flag when versioning and draft is available
+			/*
+			In case we entered RTA without a draft and created dirty changes,
+			we need to add sap-ui-fl-version=false, to trigger the CrossAppNavigation on exit.
+			*/
+			mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = ["false"];
+		}
+		return mParsedHash;
 	};
 
 	RuntimeAuthoring.prototype._handleMaxLayerParameter = function(mParsedHash, bDeleteMaxLayer) {
@@ -1653,23 +1647,22 @@ function(
 	 * Reload the app inside FLP by removing max layer / draft parameter;
 	 *
 	 * @param {boolean} bDeleteMaxLayer - Indicates if max layer parameter should be removed or not (reset / exit)
-	 * @return {Promise<map>} Resolving to the parsedHash
+	 * @return {map} parsedHash
 	 */
 	RuntimeAuthoring.prototype._handleParametersOnExit = function(bDeleteMaxLayer) {
 		if (!FlexUtils.getUshellContainer() || this.getLayer() === Layer.USER) {
-			return Promise.resolve();
+			return;
 		}
 
 		var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
 		var mParsedHash = FlexUtils.getParsedURLHash();
 		if (!oCrossAppNav.toExternal || !mParsedHash) {
-			return Promise.resolve();
+			return;
 		}
 
 		mParsedHash = this._handleMaxLayerParameter(mParsedHash, bDeleteMaxLayer);
-		var oParsedHashPromise = this._handleDraftParameter(mParsedHash);
-
-		return oParsedHashPromise;
+		mParsedHash = this._handleDraftParameter(mParsedHash);
+		return mParsedHash;
 	};
 
 	/**
@@ -1721,7 +1714,7 @@ function(
 			ignoreMaxLayerParameter: false
 		};
 		var oHigherLayerChangesValidationPromise;
-		var oDraftValidationPromise = false;
+		var bDraftAvailable = false;
 		var mParsedHash = FlexUtils.getParsedURLHash();
 
 		if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.layer !== Layer.USER) {
@@ -1731,7 +1724,7 @@ function(
 			});
 		}
 		if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM) && this._bVersioningEnabled) {
-			oDraftValidationPromise = VersionsAPI.isDraftAvailable({
+			bDraftAvailable = VersionsAPI.isDraftAvailable({
 				selector: oReloadInfo.selector,
 				layer: oReloadInfo.layer
 			});
@@ -1739,7 +1732,7 @@ function(
 
 		return Promise.all([
 			oHigherLayerChangesValidationPromise,
-			oDraftValidationPromise
+			bDraftAvailable
 		])
 		.then(function(aReloadInfo) {
 			oReloadInfo.hasHigherLayerChanges = aReloadInfo[0];
@@ -1800,13 +1793,12 @@ function(
 				Promise.resolve(this._bReloadNeeded),
 			// When working with RTA, the MaxLayer parameter will be present in the URL and must
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
-			PersistenceWriteAPI.hasHigherLayerChanges({selector: this.getRootControlInstance(), ignoreMaxLayerParameter: true}),
-			this._isDraftAvailable()
+			PersistenceWriteAPI.hasHigherLayerChanges({selector: this.getRootControlInstance(), ignoreMaxLayerParameter: true})
 		]).then(function (aArgs) {
 			var oReloadInfo = {
 				changesNeedReload: aArgs[0],
 				hasHigherLayerChanges: aArgs[1],
-				hasDraftChanges: aArgs[2],
+				hasDraftChanges: this._isDraftAvailable(),
 				hasDraftParameter: this._hasParameter(FlexUtils.getParsedURLHash(), LayerUtils.FL_DRAFT_PARAM)
 			};
 			if (oReloadInfo.changesNeedReload || oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges

@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.fl.Versions[]>} Promise resolving with a list of versions if available;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
-	Versions.getVersions = function(mPropertyBag) {
+	Versions.initialize = function(mPropertyBag) {
 		var sReference = mPropertyBag.reference;
 		var sLayer = mPropertyBag.layer;
 
@@ -62,6 +62,24 @@ sap.ui.define([
 				_mInstances[sReference][sLayer] = aVersions;
 				return _mInstances[sReference][sLayer];
 			});
+	};
+
+	/**
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 * @returns {Promise<sap.ui.fl.Versions[]>} Promise resolving with a list of versions if available;
+	 * rejects if an error occurs or the layer does not support draft handling
+	 */
+	Versions.getVersions = function(mPropertyBag) {
+		var sReference = mPropertyBag.reference;
+		var sLayer = mPropertyBag.layer;
+
+		if (!_mInstances[sReference] || !_mInstances[sReference][sLayer]) {
+			throw Error("Versions for reference '" + sReference + "' and layer '" + sLayer + "' were not initialized.");
+		}
+
+		return _mInstances[sReference][sLayer];
 	};
 
 	Versions.clearInstances = function() {
@@ -95,29 +113,28 @@ sap.ui.define([
 	 * rejects if an error occurs or the layer does not support draft handling or there is no draft to activate
 	 */
 	Versions.activateDraft = function(mPropertyBag) {
-		var aVersions;
-		return Versions.getVersions(mPropertyBag)
-			.then(function (aVersionAfterActivations) {
-				var bDraftExists = _doesDraftExist(aVersionAfterActivations);
-				aVersions = aVersionAfterActivations;
+		var aVersions = Versions.getVersions(mPropertyBag);
+		var bDraftExists = _doesDraftExist(aVersions);
 
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
-				var bDirtyChangesExist = oChangePersistence.getDirtyChanges().length > 0;
-				if (bDirtyChangesExist) {
-					// TODO: the handling should move to the FlexState as soon as it is ready
-					return oChangePersistence.saveDirtyChanges(false, undefined, true);
-				}
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
+		var bDirtyChangesExist = oChangePersistence.getDirtyChanges().length > 0;
+		var oSaveDirtyChangesPromise;
+		if (bDirtyChangesExist) {
+			// TODO: the handling should move to the FlexState as soon as it is ready
+			oSaveDirtyChangesPromise = oChangePersistence.saveDirtyChanges(false, undefined, true);
+		} else {
+			oSaveDirtyChangesPromise = Promise.resolve();
+		}
 
-				if (!bDraftExists && !bDirtyChangesExist) {
-					return Promise.reject("No draft exists");
-				}
-			})
-			.then(function () {
-				return Storage.versions.activate(mPropertyBag);
-			})
-			.then(function (oVersion) {
-				return _updateInstanceAfterDraftActivation(aVersions, oVersion);
-			});
+		if (!bDraftExists && !bDirtyChangesExist) {
+			return Promise.reject("No draft exists");
+		}
+
+		return oSaveDirtyChangesPromise
+		.then(Storage.versions.activate.bind(undefined, mPropertyBag))
+		.then(function (oVersion) {
+			return _updateInstanceAfterDraftActivation(aVersions, oVersion);
+		});
 	};
 
 	/**
@@ -132,27 +149,26 @@ sap.ui.define([
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	Versions.discardDraft = function(mPropertyBag) {
-		return Versions.getVersions(mPropertyBag).then(function (aVersions) {
-			var bDirtyChangesExistsAndDiscarded = false;
+		var aVersions = Versions.getVersions(mPropertyBag);
+		var bDirtyChangesExistsAndDiscarded = false;
 
-			if (mPropertyBag.updateState) {
-				// remove all dirty changes
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference, mPropertyBag.appVersion);
-				var aDirtyChanges = oChangePersistence.getDirtyChanges();
-				bDirtyChangesExistsAndDiscarded = aDirtyChanges.length > 0;
-				// TODO: the handling should move to the FlexState as soon as it is ready
-				aDirtyChanges.forEach(oChangePersistence.deleteChange, oChangePersistence);
-			}
+		if (mPropertyBag.updateState && mPropertyBag.appComponent) {
+			// remove all dirty changes
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference, mPropertyBag.appVersion);
+			var aDirtyChanges = oChangePersistence.getDirtyChanges();
+			bDirtyChangesExistsAndDiscarded = aDirtyChanges.length > 0;
+			// TODO: the handling should move to the FlexState as soon as it is ready
+			aDirtyChanges.forEach(oChangePersistence.deleteChange, oChangePersistence);
+		}
 
-			if (!_doesDraftExist(aVersions)) {
-				return bDirtyChangesExistsAndDiscarded;
-			}
+		if (!_doesDraftExist(aVersions)) {
+			return bDirtyChangesExistsAndDiscarded;
+		}
 
-			return Storage.versions.discardDraft(mPropertyBag)
-				.then(function () {
-					aVersions.shift();
-					return true;
-				});
+		return Storage.versions.discardDraft(mPropertyBag)
+		.then(function () {
+			aVersions.shift();
+			return true;
 		});
 	};
 

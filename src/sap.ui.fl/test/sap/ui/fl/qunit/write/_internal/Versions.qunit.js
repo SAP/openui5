@@ -36,35 +36,35 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given Versions.getVersions is called", function (assert) {
+		QUnit.test("Given Versions.initialize is called", function (assert) {
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
 			};
 
-			return Versions.getVersions(mPropertyBag).then(function (oResponse) {
+			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
 				assert.equal(oResponse, this.aReturnedVersions, "and the versions list is returned");
 			}.bind(this));
 		});
 
-		QUnit.test("Given Versions.getVersions is called multiple times for the same reference and layer", function (assert) {
+		QUnit.test("Given Versions.initialize is called multiple times for the same reference and layer", function (assert) {
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
 			};
 
-			return Versions.getVersions(mPropertyBag).then(function (oResponse) {
+			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
 				assert.equal(oResponse, this.aReturnedVersions, "and the versions list is returned");
-				return Versions.getVersions(mPropertyBag);
+				return Versions.initialize(mPropertyBag);
 			}.bind(this)).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "no further request is sent");
 				assert.equal(oResponse, this.aReturnedVersions, "and the versions list is returned");
 			}.bind(this));
 		});
 
-		QUnit.test("Given Versions.getVersions is called multiple times for different references", function (assert) {
+		QUnit.test("Given Versions.initialize is called multiple times for different references", function (assert) {
 			var mPropertyBag1 = {
 				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
@@ -78,17 +78,17 @@ sap.ui.define([
 			var aReturnedVersions = [];
 			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
 
-			return Versions.getVersions(mPropertyBag1).then(function (oResponse) {
+			return Versions.initialize(mPropertyBag1).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
 				assert.deepEqual(oResponse, aReturnedVersions, "and the versions list is returned");
-				return Versions.getVersions(mPropertyBag2);
+				return Versions.initialize(mPropertyBag2);
 			}.bind(this)).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 2, "a further request is sent");
 				assert.deepEqual(oResponse, aReturnedVersions, "and the versions list is returned");
 			}.bind(this));
 		});
 
-		QUnit.test("Given Versions.getVersions is called multiple times for different layers", function (assert) {
+		QUnit.test("Given Versions.initialize is called multiple times for different layers", function (assert) {
 			var mPropertyBag1 = {
 				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
@@ -99,10 +99,10 @@ sap.ui.define([
 				reference : "com.sap.app"
 			};
 
-			return Versions.getVersions(mPropertyBag1).then(function (oResponse) {
+			return Versions.initialize(mPropertyBag1).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
 				assert.equal(oResponse, this.aReturnedVersions, "and the versions list is returned");
-				return Versions.getVersions(mPropertyBag2);
+				return Versions.initialize(mPropertyBag2);
 			}.bind(this)).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 2, "a further request is sent");
 				assert.equal(oResponse, this.aReturnedVersions, "and the versions list is returned");
@@ -110,7 +110,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Calling the Storage: Given Versions.getVersions is called", {
+	QUnit.module("Calling the Storage: Given Versions.initialize is called", {
 		beforeEach: function () {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
@@ -129,7 +129,7 @@ sap.ui.define([
 			var aReturnedVersions = [];
 			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
 
-			return Versions.getVersions(mPropertyBag).then(function (oResponse) {
+			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				assert.equal(oResponse, aReturnedVersions, "then the versions list is returned");
 			});
 		});
@@ -180,7 +180,8 @@ sap.ui.define([
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
-			return Versions.activateDraft(mPropertyBag)
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
 				.then(function (oResponse) {
 					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
 					assert.equal(Array.isArray(oResponse), true, "then the versions list is returned");
@@ -224,10 +225,12 @@ sap.ui.define([
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
-			return Versions.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(oSaveStub.callCount, 0, "no save changes was called");
-				assert.equal(sErrorMessage, "No draft exists", "then the promise is rejected with an error message");
-			});
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
+				.catch(function (sErrorMessage) {
+					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
+					assert.equal(sErrorMessage, "No draft exists", "then the promise is rejected with an error message");
+				});
 		});
 
 		QUnit.test("and a connector is configured which returns a list of versions while a draft does NOT exists but dirty changes do", function (assert) {
@@ -256,7 +259,8 @@ sap.ui.define([
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
-			return Versions.activateDraft(mPropertyBag)
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
 				.then(function (oResponse) {
 					assert.equal(oSaveStub.callCount, 1, "the changes were saved");
 					var aSaveCallArgs = oSaveStub.getCall(0).args;
@@ -268,8 +272,8 @@ sap.ui.define([
 					assert.equal(oResponse[0], oActivatedVersion, "and the newly activated is the second");
 					assert.equal(oResponse[1], oFirstVersion, "where the older version is the first");
 				})
-				.then(Versions.getVersions.bind(Versions, mPropertyBag))
-				.then(function (aVersions) {
+				.then(function () {
+					var aVersions = Versions.getVersions(mPropertyBag);
 					assert.equal(aVersions.length, 2, "and a getting the versions anew will return two versions");
 					assert.equal(aVersions[0], oActivatedVersion, "and the newly activated is the first");
 					assert.equal(aVersions[1], oFirstVersion, "where the older version is the second");
@@ -321,7 +325,8 @@ sap.ui.define([
 			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", [{}]);
 			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
 
-			return Versions.discardDraft(mPropertyBag)
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
 				.then(function () {
 					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
 				})
@@ -353,9 +358,11 @@ sap.ui.define([
 
 			_prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", [{}]);
 
-			return Versions.discardDraft(mPropertyBag).then(function (bDiscardingTookPlace) {
-				assert.equal(bDiscardingTookPlace, false, "no discarding took place");
-			});
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
+				.then(function (bDiscardingTookPlace) {
+					assert.equal(bDiscardingTookPlace, false, "no discarding took place");
+				});
 		});
 
 		QUnit.test("and a connector is configured and a draft does NOT exists but dirty changes exists " +
@@ -380,10 +387,12 @@ sap.ui.define([
 
 			var oDeleteStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "deleteChange", [{}, {}]);
 
-			return Versions.discardDraft(mPropertyBag).then(function (bDiscardingTookPlace) {
-				assert.equal(bDiscardingTookPlace, true, "some discarding took place");
-				assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
-			});
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
+				.then(function (bDiscardingTookPlace) {
+					assert.equal(bDiscardingTookPlace, true, "some discarding took place");
+					assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
+				});
 		});
 
 		QUnit.test("and a connector is configured and a draft does NOT exists but dirty changes exists " +
@@ -407,10 +416,12 @@ sap.ui.define([
 
 			var oDeleteStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "deleteChange", [{}, {}]);
 
-			return Versions.discardDraft(mPropertyBag).then(function (bDiscardingTookPlace) {
-				assert.equal(bDiscardingTookPlace, false, "no discarding took place");
-				assert.equal(oDeleteStub.callCount, 0, "no changes were deleted");
-			});
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
+				.then(function (bDiscardingTookPlace) {
+					assert.equal(bDiscardingTookPlace, false, "no discarding took place");
+					assert.equal(oDeleteStub.callCount, 0, "no changes were deleted");
+				});
 		});
 
 		QUnit.test("and a connector is configured and a draft exists and dirty changes exists " +
@@ -437,11 +448,13 @@ sap.ui.define([
 			var oDeleteStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "deleteChange", [{}, {}]);
 			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
 
-			return Versions.discardDraft(mPropertyBag).then(function (bDiscardingTookPlace) {
-				assert.equal(bDiscardingTookPlace, true, "some discarding took place");
-				assert.equal(oDiscardStub.callCount, 1, "discarding the draft was called");
-				assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
-			});
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
+				.then(function (bDiscardingTookPlace) {
+					assert.equal(bDiscardingTookPlace, true, "some discarding took place");
+					assert.equal(oDiscardStub.callCount, 1, "discarding the draft was called");
+					assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
+				});
 		});
 	});
 
@@ -461,12 +474,10 @@ sap.ui.define([
 				layer: sLayer
 			};
 			sandbox.stub(Storage.versions, "load").resolves(aInitialVersions);
-			return Versions.getVersions(mPropertyBag)
+			return Versions.initialize(mPropertyBag)
 				.then(function() {
 					Versions.ensureDraftVersionExists(mPropertyBag);
-				})
-				.then(Versions.getVersions.bind(undefined, mPropertyBag))
-				.then(function(aVersions) {
+					var aVersions = Versions.getVersions(mPropertyBag);
 					assert.equal(aVersions.length, aFinalVersions.length, "the number of versions is correct");
 					assert.deepEqual(aVersions, aFinalVersions, "the versions objects match");
 				});
