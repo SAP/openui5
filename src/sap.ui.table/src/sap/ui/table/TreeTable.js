@@ -192,11 +192,12 @@ sap.ui.define([
 		var oBinding = this.getBinding("rows");
 		var oNode = oState.context;
 
-		if (!oBinding || !oNode) {
+		oState.context = oNode.context ? oNode.context : null; // The TreeTable requests nodes from the binding.
+
+		if (!oState.context) {
 			return;
 		}
 
-		oState.context = oNode.context ? oNode.context : null; // The TreeTable requests nodes from the binding.
 		oState.level = oNode.level + 1;
 
 		if (oBinding.nodeHasChildren) {
