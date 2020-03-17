@@ -121,7 +121,9 @@ sap.ui.define([
 					}
 				}
 			},
-			renderer: {}
+			renderer: {
+				apiVersion: 2
+			}
 		});
 
 		// get resource translation bundle;
