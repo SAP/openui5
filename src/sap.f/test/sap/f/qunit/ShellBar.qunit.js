@@ -939,6 +939,26 @@ function (
 		this.oSB._oResponsiveHandler._transformToPhoneState();
 	});
 
+	QUnit.test("Mobile requirements with both configuration - with or without menu button", function (assert) {
+
+		// Act
+		this.oSB._oResponsiveHandler._transformToPhoneState();
+		this.oSB.setShowMenuButton(true);
+		this.oSB._oSearch.firePress();
+
+		// Assert
+		assert.strictEqual(this.oSB._oHomeIcon.getVisible() || this.oSB._oMenuButton.getVisible(), false, "Search " +
+			"bar hides all the content on left on mobile with menu button");
+
+		// Act
+		this.oSB.setShowMenuButton(false);
+
+		// Assert
+		assert.strictEqual(this.oSB._oHomeIcon.getVisible() || this.oSB._oMegaMenu.getVisible(), false, "Search bar " +
+			"hides all the content on left on mobile with mega menu");
+
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oSB = new ShellBar({
