@@ -2,10 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/security/encodeURL",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
-	"sap/ui/core/mvc/Controller"
-], function (Core, Element, Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/odata/ODataUtils"
+], function (encodeURL, Core, Element, Controller, Filter, FilterOperator, ODataUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Main", {
@@ -31,7 +35,7 @@ sap.ui.define([
 			});
 		},
 
-		onMessagePopoverClosed : function (oEvent) {
+		onMessagePopoverClosed : function () {
 			var aMessages = this.getView().getModel("messages").getObject("/");
 
 			Core.getMessageManager().removeMessages(aMessages.filter(function (oMessage) {
@@ -80,9 +84,13 @@ sap.ui.define([
 
 		onSelectSalesOrder : function () {
 			var oView = this.getView(),
-				sSalesOrder = oView.getModel("ui").getProperty("/salesOrderID");
+				sSalesOrder = ODataUtils.formatValue(
+					encodeURL(oView.getModel("ui").getProperty("/salesOrderID")), "Edm.String"),
+				sContextPath = "/SalesOrderSet(" +  sSalesOrder + ")";
 
-			oView.byId("objectPage").bindElement("/SalesOrderSet('" + sSalesOrder + "')");
+			oView.byId("objectPage").bindElement(sContextPath);
+			oView.byId("messagePopover").getBinding("items")
+				.filter(new Filter("fullTarget", FilterOperator.StartsWith, sContextPath));
 		},
 
 		/**
@@ -103,6 +111,13 @@ sap.ui.define([
 				aMessages = oRowContext.getMessages();
 				return aMessages.length ? aMessages[0].type : sap.ui.core.MessageType.None;
 			}
+		},
+
+		updateMessageCount : function () {
+			var oView = this.getView(),
+				oMessagePopoverBinding = oView.byId("messagePopover").getBinding("items");
+
+			oView.getModel("ui").setProperty("/messageCount", oMessagePopoverBinding.getLength());
 		}
 	});
 });
