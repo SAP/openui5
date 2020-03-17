@@ -93,8 +93,8 @@ sap.ui.define([
 	 * @return {Promise} Promise resolving with the initially passed result
 	 */
 	function checkForRtaStartOnDraftAndReturnResult(oResult, oComponent) {
-		// Only check for RTA start without ushell
-		if (!Utils.getUshellContainer()) {
+		// Dont check for RTA start in ushell scenario
+		if (Utils.getUshellContainer()) {
 			return Promise.resolve(oResult);
 		}
 
