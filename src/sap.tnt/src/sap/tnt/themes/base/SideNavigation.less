@@ -3,6 +3,9 @@
 /* Base theme                              */
 /* ======================================= */
 
+@_sap_tnt_SideNavigation_NavigationSeparatorBackgroundColor: @sapUiGroupContentBorderColor;
+@_sap_tnt_SideNavigation_NavigationSeparatorHeight: 1px;
+
 .sapTntSideNavigation {
   display: -webkit-box;
   display: -webkit-flex;
@@ -102,10 +105,10 @@
 }
 
 .sapTntSideNavigationSeparator {
-  margin: 0.25rem 0.875rem 0.25rem 0.875rem;
-  height: 1px;
-  min-height: 1px;
-  background-color: @sapUiGroupContentBorderColor;
+	margin: 0.25rem 0.875rem 0.25rem 0.875rem;
+	height: @_sap_tnt_SideNavigation_NavigationSeparatorHeight;
+	min-height: @_sap_tnt_SideNavigation_NavigationSeparatorHeight;
+	background-color: @_sap_tnt_SideNavigation_NavigationSeparatorBackgroundColor;
 }
 
 .sapTntSideNavigationFixed {
