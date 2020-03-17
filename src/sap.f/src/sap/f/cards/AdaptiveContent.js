@@ -8,6 +8,7 @@ sap.ui.define([
 		"sap/f/cards/BaseContent",
 		"sap/ui/integration/thirdparty/adaptivecards",
 		"sap/ui/integration/thirdparty/adaptivecards-templating",
+		"sap/ui/integration/thirdparty/markdown-it",
 		"sap/f/cards/adaptivecards/elements/UI5InputText",
 		"sap/f/cards/adaptivecards/elements/UI5InputNumber",
 		"sap/f/cards/adaptivecards/elements/UI5InputChoiceSet",
@@ -19,7 +20,7 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/base/Log"
 	],
-	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, ACData, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig, JSONModel, Log) {
+	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, ACData, Markdown, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig, JSONModel, Log) {
 		"use strict";
 
 		/**
@@ -75,7 +76,25 @@ sap.ui.define([
 				return;
 			}
 
+			this._handleMarkDown(oConfiguration);
 			this._setupMSCardContent();
+		};
+
+		/**
+		 * Processes the markdown only if enableMarkdown is set to true
+		 *
+		 * @private
+		 * @param {Object} oConfiguration The Configuration object.
+		 */
+		AdaptiveContent.prototype._handleMarkDown = function (oConfiguration) {
+			AdaptiveCards.AdaptiveCard.onProcessMarkdown = function(sText, oResult) {
+				if (oConfiguration.configuration && oConfiguration.configuration.enableMarkdown) {
+					oResult.outputHtml = new Markdown().render(sText);
+					oResult.didProcess = true;
+
+					return oResult;
+				}
+			};
 		};
 
 		/**
@@ -92,6 +111,8 @@ sap.ui.define([
 				.then(function () {
 					// set the data from the url as a card config
 					that._oCardConfig = oData.getData();
+				}).then(function () {
+					that._handleMarkDown(that._oCardConfig);
 					that._setupMSCardContent();
 				}).then(function () {
 					// destroy the data model, since it is not needed anymore

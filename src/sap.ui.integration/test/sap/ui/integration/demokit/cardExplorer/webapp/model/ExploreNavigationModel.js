@@ -57,6 +57,11 @@ sap.ui.define([
 										content: ''
 									}
 								]
+							},
+							{
+								title: 'Markdown',
+								key: 'markdown',
+								manifestUrl: '/samples/adaptive/markdown.json'
 							}
 						]
 					},

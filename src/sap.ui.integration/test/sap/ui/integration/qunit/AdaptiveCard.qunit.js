@@ -2,11 +2,13 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/f/cards/AdaptiveContent",
+	"sap/ui/integration/thirdparty/adaptivecards",
 	"sap/ui/core/Core"
 ],
 	function (
 		Card,
 		AdaptiveContent,
+		AdaptiveCards,
 		Core
 	) {
 		"use strict";
@@ -252,6 +254,46 @@ sap.ui.define([
 						{
 							"type": "TextBlock",
 							"text": "{name}"
+						}
+					]
+				}
+			}
+		};
+
+		var oMarkdownManifest1 = {
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"configuration": {
+						"enableMarkdown": true
+					},
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "This is some **bold** text"
+						}
+					]
+				}
+			}
+		};
+
+		var oMarkdownManifest2 = {
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"configuration": {
+						"enableMarkdown": false
+					},
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "This is some **bold** text"
 						}
 					]
 				}
@@ -678,6 +720,47 @@ sap.ui.define([
 				// Cleanup
 				oCard.destroy();
 
+				done();
+			});
+		});
+
+		QUnit.test("Markdown support - enableMarkdown: true", function (assert) {
+			var done = assert.async();
+			var oCard = new Card({
+				manifest: oMarkdownManifest1
+			});
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oCard.attachEvent("_ready", function () {
+				// Assert
+				assert.ok(AdaptiveCards.AdaptiveCard.onProcessMarkdown, "onProcessMarkdown should be defined");
+				assert.ok(AdaptiveCards.AdaptiveCard.onProcessMarkdown("text", {}), "onProcessMarkdown should return a result");
+
+				// Cleanup
+				oCard.destroy();
+				done();
+			});
+		});
+
+		QUnit.test("Markdown support - enableMarkdown: false", function (assert) {
+			var done = assert.async();
+			var oCard = new Card({
+				manifest: oMarkdownManifest2
+			});
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oCard.attachEvent("_ready", function () {
+
+				// Assert
+				assert.ok(AdaptiveCards.AdaptiveCard.onProcessMarkdown, "onProcessMarkdown should be defined");
+				assert.notOk(AdaptiveCards.AdaptiveCard.onProcessMarkdown("text", {}), "onProcessMarkdown not should return a result, when enableMarkdown is false");
+
+				// Cleanup
+				oCard.destroy();
 				done();
 			});
 		});
