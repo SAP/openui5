@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', './InputBaseRende
 	 */
 	var DateTimePickerRenderer = Renderer.extend(DatePickerRenderer);
 
-	DateTimePickerRenderer.appVersion = 2;
+	DateTimePickerRenderer.apiVersion = 2;
 
 	DateTimePickerRenderer.getDescribedByAnnouncement = function(oDP) {
 
