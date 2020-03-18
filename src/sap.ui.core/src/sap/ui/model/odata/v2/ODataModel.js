@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/library",
+	"sap/ui/core/message/Message",
 	"sap/ui/core/message/MessageParser",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
@@ -46,9 +47,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function(ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding, assert, Log,
 		encodeURL, deepEqual, each, isEmptyObject, isPlainObject, merge, uid, UriParameters,
-		coreLibrary, MessageParser, BindingMode, Context, FilterProcessor, Model, CountMode,
-		MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser, ODataPropertyBinding,
-		ODataUtils, OperationMode, UpdateMethod, OData, jQuery, URI
+		coreLibrary, Message, MessageParser, BindingMode, Context, FilterProcessor, Model,
+		CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
+		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, jQuery, URI
 ) {
 
 	"use strict";
@@ -6960,9 +6961,7 @@ sap.ui.define([
 	// @since 1.76.0
 	ODataModel.prototype.getMessages = function (oContext) {
 		return this.getMessagesByPath(oContext.sDeepPath, /*bPrefixMatch*/true)
-			.sort(function (oMsg0, oMsg1) {
-				return mMessageType2Severity[oMsg0.type] - mMessageType2Severity[oMsg1.type];
-			});
+			.sort(Message.compare);
 	};
 
 	return ODataModel;

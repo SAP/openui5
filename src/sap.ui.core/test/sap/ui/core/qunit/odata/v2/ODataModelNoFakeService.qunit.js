@@ -4,19 +4,18 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/library",
+	"sap/ui/core/message/Message",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (Log, coreLibrary, FilterProcessor, Model, MessageScope, ODataUtils, ODataModel,
-		TestUtils) {
+], function (Log, coreLibrary, Message, FilterProcessor, Model, MessageScope, ODataUtils,
+		ODataModel, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
-
-	var MessageType = coreLibrary.MessageType;
 
 	// Copied from ExpressionParser.performance.qunit
 	var iCount = 1000;
@@ -857,30 +856,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getMessages", function (assert) {
 		var oContext = {sDeepPath : "deepPath"},
-			aMessages,
+			aMessages = [],
 			oModel = {
 				getMessagesByPath : function () {}
 			};
 
 		this.mock(oModel).expects("getMessagesByPath").withExactArgs("deepPath", true)
-			.returns([
-				{type : MessageType.Warning},
-				{type : MessageType.None},
-				{type : MessageType.Information},
-				{type : MessageType.Success},
-				{type : MessageType.Error}
-			]);
+			.returns(aMessages);
+		this.mock(aMessages).expects("sort").withExactArgs(Message.compare).returns(aMessages);
 
 		// code under test
-		aMessages = ODataModel.prototype.getMessages.call(oModel, oContext);
-
-		assert.deepEqual(aMessages, [
-			{type : MessageType.Error},
-			{type : MessageType.Warning},
-			{type : MessageType.Success},
-			{type : MessageType.Information},
-			{type : MessageType.None}
-		]);
+		assert.strictEqual(ODataModel.prototype.getMessages.call(oModel, oContext), aMessages);
 	});
 
 	//*********************************************************************************************
