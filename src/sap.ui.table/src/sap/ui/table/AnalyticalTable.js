@@ -434,11 +434,12 @@ sap.ui.define([
 		var oBindingInfo = this.getBindingInfo("rows");
 		var oNode = oState.context;
 
-		if (!oBinding || !oNode) {
+		oState.context = oNode.context ? oNode.context : null; // The AnalyticalTable requests nodes from the binding.
+
+		if (!oState.context) {
 			return;
 		}
 
-		oState.context = oNode.context ? oNode.context : null; // The AnalyticalTable requests nodes from the binding.
 		if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oNode)) {
 			oState.type = oState.Type.GroupHeader;
 		} else if (oNode.nodeState.sum) {
