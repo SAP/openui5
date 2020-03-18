@@ -790,7 +790,7 @@ sap.ui.define([
 			|| Array.isArray(vValue) && vValue.length === 0
 			|| isPlainObject(vValue) && isEmptyObject(vValue)
 		) {
-			unset(aParts, oJson);
+			unset(oJson, aParts);
 		}
 
 		this.setJson(oJson);

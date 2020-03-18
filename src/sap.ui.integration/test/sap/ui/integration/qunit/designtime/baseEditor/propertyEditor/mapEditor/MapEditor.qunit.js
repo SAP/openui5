@@ -120,9 +120,9 @@ sap.ui.define([
 			this.oMapEditor.attachValueChange(function (oEvent) {
 				assert.notOk(oEvent.getParameter("value").hasOwnProperty("foo"), "Then the property is removed");
 				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 0, "Then editor contains no more keys");
-				assert.strictEqual(
-					Object.keys(ObjectPath.get(["sampleMap"], this.oBaseEditor.getJson())).length,
-					0,
+				assert.deepEqual(
+					this.oBaseEditor.getJson(),
+					{},
 					"Then the base editor JSON is updated"
 				);
 				fnDone();

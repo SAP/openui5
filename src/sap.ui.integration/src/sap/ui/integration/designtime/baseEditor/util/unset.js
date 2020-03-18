@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/isEmptyObject"
-], function (
+], function(
 	ObjectPath,
 	isPlainObject,
 	isEmptyObject
@@ -13,30 +13,84 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @function
+	 * Removes a specified key from an object or an array and recursively cleans up the hierarchy.
+	 * The passed object or array is mutated.
 	 *
-	 * Remove an objects attribute under a specified path and cleanup empty parents recursively.
+	 * @example <caption>Unsetting an Object Key</caption>
+	 * unset({
+	 *   a: {
+	 *     b: "Hello World"
+	 *   }
+	 * }, ["a", "b"]);
 	 *
-	 * @since 1.76
+	 * // Result:
+	 * // {}
+	 *
+	 * @example <caption>Unsetting an Object Key with a Maximum Cleanup Depth</caption>
+	 * unset({
+	 *   a: {
+	 *     b: "Hello World"
+	 *   }
+	 * }, ["a", "b"], 0);
+	 *
+	 * // Result:
+	 * // {
+	 * //   a: {}
+	 * // }
+	 *
+	 * @example <caption>Unsetting an Array Item</caption>
+	 * unset({
+	 *   a: ["foo", "bar"]
+	 * }, ["a", "0"]);
+	 *
+	 * // Result:
+	 * // {
+	 * //   a: ["Bar"]
+	 * // }
+	 *
+	 * @param {object|array} oObject - Plain object or array to modify
 	 * @param {string[]} aParts - Path to property to remove
-	 * @param {object} oObject - Object to modify
-	 * @return {object} The modified object
-	 * @experimental
+	 * @param {int} [iMaxCleanupDepth] - Maximum depth for recursive cleanup of empty parents.
+	 * By default, there is no limit.
+	 * @return {object|array} The modified object or array
+	 *
+	 * @alias module:sap/ui/integration/designtime/baseEditor/util/unset
+	 * @author SAP SE
+	 * @since 1.76
+	 * @version ${version}
+	 *
 	 * @private
+	 * @experimental 1.76
+	 * @ui5-restricted
 	 */
 
-	function unset(aParts, oObject) {
-		var mContainer = ObjectPath.get(aParts.slice(0, -1), oObject);
-		if (mContainer) {
-			delete mContainer[aParts[aParts.length - 1]];
+	function unset(oObject, aParts, iMaxCleanupDepth) {
+		var aContainerParts = aParts.slice(0, -1);
+		var oContainer = aContainerParts.length > 0
+			? ObjectPath.get(aContainerParts, oObject)
+			: oObject;
 
-			return (
-				Array.isArray(mContainer) && mContainer.length === 0
-				|| isPlainObject(mContainer) && isEmptyObject(mContainer)
-					? unset(aParts.slice(0, -1), oObject)
-					: oObject
-			);
+		var sKey = aParts[aParts.length - 1];
+		if (Array.isArray(oContainer)) {
+			oContainer.splice(sKey, 1);
+		} else {
+			delete oContainer[sKey];
 		}
+
+		return (
+			aContainerParts.length > 0
+			&& !(iMaxCleanupDepth <= 0)
+			&& ((
+					Array.isArray(oContainer)
+					&& oContainer.length === 0
+				) || (
+					isPlainObject(oContainer)
+					&& isEmptyObject(oContainer)
+				)
+			)
+				? unset(oObject, aContainerParts, iMaxCleanupDepth ? iMaxCleanupDepth - 1 : undefined)
+				: oObject
+		);
 	}
 
 	return unset;
