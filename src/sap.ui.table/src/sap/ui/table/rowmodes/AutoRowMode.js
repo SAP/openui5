@@ -487,6 +487,10 @@ sap.ui.define([
 		this.setProperty("rowCount", iNewRowCount, true);
 		iNewComputedRowCount = this.getComputedRowCounts().count;
 
+		if (this.bLegacy) {
+			oTable.setProperty("visibleRowCount", iNewComputedRowCount, true);
+		}
+
 		if (iOldComputedRowCount !== iNewComputedRowCount) {
 			this.updateTable(sReason);
 		} else {
