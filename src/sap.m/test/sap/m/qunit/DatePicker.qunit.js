@@ -2671,5 +2671,23 @@ sap.ui.define([
 		assert.ok(this.fnIncreaseDateSpy.notCalled, "_increaseDate was not called");
 	});
 
+	QUnit.test("F4 does not close the popup when it is opened", function(assert) {
+		// prepare
+		var oSpy;
+		this.oDRS.setDisplayFormat("yyyy-MM-dd");
+		this.oFakeEvent.which = 115;
+
+		// act
+		this.oDRS.toggleOpen();
+		oSpy = sinon.spy(this.oDRS._getCalendar(), "_closedPickers");
+		this.oDRS._getCalendar().onsapshow(this.oFakeEvent);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oSpy.notCalled, "the month picker is opened");
+
+		// clean
+		oSpy.restore();
+	});
 
 });
