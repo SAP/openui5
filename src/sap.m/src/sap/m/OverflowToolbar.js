@@ -257,8 +257,6 @@ sap.ui.define([
 			this._bContentVisibilityChanged = false;
 		}
 
-		this._markFirstLastVisibleItems(".sapMBarChild:not(.sapMTBHiddenElement):visible");
-
 		// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
 
 		if (this.getAsyncMode()) {
@@ -931,8 +929,7 @@ sap.ui.define([
 	OverflowToolbar.prototype._getOverflowButtonClone = function () {
 		if (!this._oOverflowToolbarButtonClone) {
 			this._oOverflowToolbarButtonClone = this._getToggleButton("-overflowButtonClone")
-				.addStyleClass("sapMTBHiddenElement")
-				.addStyleClass("sapMBarLastVisibleChild");
+				.addStyleClass("sapMTBHiddenElement");
 		}
 
 		return this._oOverflowToolbarButtonClone;

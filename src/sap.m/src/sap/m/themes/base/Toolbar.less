@@ -4,15 +4,11 @@
 /* ============================== */
 
 .sapMIBar.sapMTB .sapMBarChild {
-	margin-right: 0.25rem;
-	margin-bottom: 0;
-	margin-top: 0;
+	margin: 0 0 0 0.5rem;
 }
 
-.sapMIBar.sapMTB .sapMBarChild.sapMBarLastVisibleChild.sapMBarFirstVisibleChild {
-	padding-left: 0.25rem;
-	padding-right: 0.25rem;
-	margin: 0;
+.sapMIBar.sapMTB .sapMBarChild:first-child {
+	margin-left: 0.25rem;
 }
 
 .sapMTB {
@@ -27,6 +23,7 @@
 	-ms-text-size-adjust: none;
 	height: 3rem;
 	background: @sapUiToolbarBackground;
+	padding-right: 0.25rem;
 }
 
 .sapMIBar.sapMTB .sapMTBHiddenElement {
@@ -52,13 +49,11 @@
 }
 
 /* Info Toolbar Context */
-.sapMIBar.sapMTB.sapMTB-Info-CTX > .sapMBarFirstVisibleChild,
-.sapMIBar.sapMTB.sapMTB-Info-CTX > .sapMBarLastVisibleChild {
-	margin: 0;
-	padding: 0 0.5rem;
+.sapMIBar.sapMTB.sapMTB-Info-CTX {
+	padding: 0 1rem 0 0.75rem;
 }
 
-.sapMIBar.sapMTB.sapMTB-Info-CTX > .sapMBarLastVisibleChild.sapUiIcon {
+.sapMIBar.sapMTB.sapMTB-Info-CTX > .sapUiIcon:first-child {
 	padding: 1px;
 }
 
@@ -93,18 +88,11 @@
 	padding: 0;
 }
 
-.sapUiGridHeader > .sapMTB > .sapMBarChild.sapMBarFirstVisibleChild,
-.sapUiGridTitle > th > .sapMTB > .sapMBarChild.sapMBarFirstVisibleChild,
-.sapUiFormResLayout.sapUiFormToolbar > .sapMTB > .sapMBarChild.sapMBarFirstVisibleChild,
-.sapUiRLContainer > .sapMTB > .sapMBarChild.sapMBarFirstVisibleChild {
+.sapUiGridHeader > .sapMTB > .sapMBarChild:first-child,
+.sapUiGridTitle > th > .sapMTB > .sapMBarChild:first-child,
+.sapUiFormResLayout.sapUiFormToolbar > .sapMTB > .sapMBarChild:first-child,
+.sapUiRLContainer > .sapMTB > .sapMBarChild:first-child {
 	margin-left: 0;
-}
-
-.sapUiGridHeader > .sapMIBar.sapMTB > .sapMBarChild.sapMBarLastVisibleChild,
-.sapUiGridTitle > th > .sapMIBar.sapMTB > .sapMBarChild.sapMBarLastVisibleChild,
-.sapUiFormResLayout.sapUiFormToolbar > .sapMIBar.sapMTB > .sapMBarChild.sapMBarLastVisibleChild,
-.sapUiRLContainer > .sapMIBar.sapMTB > .sapMBarChild.sapMBarLastVisibleChild{
-	margin-right: 0;
 }
 
 /* Solid Toolbar Context */
