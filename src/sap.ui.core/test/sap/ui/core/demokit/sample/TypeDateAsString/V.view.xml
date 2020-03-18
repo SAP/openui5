@@ -18,7 +18,7 @@
 		title="Date Input" >
 		<form:content>
 			<Label text="Date" />
-			<Input value="{/date}" />
+			<Input placeholder="yyyy/MM/dd" value="{/date}" />
 		</form:content>
 	</form:SimpleForm>
 
