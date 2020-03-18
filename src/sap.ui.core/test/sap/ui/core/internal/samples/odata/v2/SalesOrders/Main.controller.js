@@ -93,6 +93,18 @@ sap.ui.define([
 				.filter(new Filter("fullTarget", FilterOperator.StartsWith, sContextPath));
 		},
 
+		onTransitionMessagesOnly : function (oEvent) {
+			var oView = this.getView();
+
+			oView.byId("ToLineItems").bindRows({
+				path : "ToLineItems",
+				parameters : {
+					transitionMessagesOnly : oEvent.getSource().getPressed()
+				}
+			});
+			oView.getModel().refresh();
+		},
+
 		/**
 		 * Formatter for the row highlight property.
 		 * The parts of the corresponding composite binding just give the point in time when to

@@ -41,8 +41,8 @@
 					<Label text="Note" />
 					<Input value="{Note}" />
 				</form:SimpleForm>
-				<t:Table id="ToLineItems" rowActionCount="1" rows="{ToLineItems}"
-					visibleRowCount="7">
+				<t:Table id="ToLineItems" rowActionCount="1" rows="{ToLineItems}" threshold="0"
+					visibleRowCount="4">
 					<t:dependents>
 						<plugins:DataStateIndicator />
 					</t:dependents>
@@ -53,6 +53,10 @@
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
 							</Title>
+							<ToolbarSpacer/>
+							<ToggleButton press="onTransitionMessagesOnly"
+								text="Transition Messages Only"
+								tooltip="Message handling is done by the parent entity" />
 						</Toolbar>
 					</t:extension>
 					<t:rowSettingsTemplate>
