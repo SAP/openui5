@@ -3792,6 +3792,103 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("it should reset selection if key is missing", function (assert) {
+
+			var itemA = new Item({
+				key: "A",
+				text: "Item A"
+			});
+
+			var itemB = new Item({
+				key: "B",
+				text: "Item B"
+			});
+
+			var itemX = new Item({
+				key: "X",
+				text: "Item X"
+			});
+
+			// system under test
+			var oSelect = new Select({
+				forceSelection: false,
+				resetOnMissingKey: true,
+				items: [
+					itemA,
+					itemB
+				]
+			});
+
+			var missingKey = "X";
+			var existingKey = "B";
+			var defaultSelectedItemId = "";
+
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// act
+			oSelect.setSelectedKey(missingKey);
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === null);
+			assert.strictEqual(oSelect.getSelectedItemId(), defaultSelectedItemId);
+			assert.strictEqual(oSelect.getSelectedKey(), missingKey);
+			assert.strictEqual(oSelect.getSelectedIndex(), -1);
+			assert.strictEqual(oSelect.$("label").text(), "");
+			assert.ok(oSelect.getList().getSelectedItem() === null);
+			assert.strictEqual(oSelect.getList().getSelectedItemId(), defaultSelectedItemId);
+			assert.strictEqual(oSelect.getList().getSelectedKey(), missingKey);
+
+			// act
+			oSelect.setSelectedKey(existingKey);
+			Core.applyChanges();
+
+			assert.ok(oSelect.getSelectedItem() !== null);
+			assert.strictEqual(oSelect.getSelectedItemId(), itemB.getId());
+			assert.strictEqual(oSelect.getSelectedKey(), existingKey);
+			assert.strictEqual(oSelect.getSelectedIndex(), 1);
+			assert.strictEqual(oSelect.$("label").text(), "Item B");
+			assert.ok(oSelect.getList().getSelectedItem() !== null);
+			assert.strictEqual(oSelect.getList().getSelectedItemId(), itemB.getId());
+			assert.strictEqual(oSelect.getList().getSelectedKey(), existingKey);
+
+			/**
+			 * The effect of checking "resetOnMissingKey: true" starts here
+			 */
+
+			 // act
+			oSelect.setSelectedKey(missingKey);
+			Core.applyChanges();
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === null);
+			assert.strictEqual(oSelect.getSelectedItemId(), defaultSelectedItemId);
+			assert.strictEqual(oSelect.getSelectedKey(), missingKey);
+			assert.strictEqual(oSelect.getSelectedIndex(), -1);
+			assert.strictEqual(oSelect.$("label").text(), "");
+			assert.ok(oSelect.getList().getSelectedItem() === null);
+			assert.strictEqual(oSelect.getList().getSelectedItemId(), defaultSelectedItemId);
+			assert.strictEqual(oSelect.getList().getSelectedKey(), missingKey);
+
+			// act
+			oSelect.addItem(itemX);
+			Core.applyChanges();
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() !== null);
+			assert.strictEqual(oSelect.getSelectedItemId(), itemX.getId());
+			assert.strictEqual(oSelect.getSelectedKey(), itemX.getKey());
+			assert.strictEqual(oSelect.getSelectedIndex(), 2);
+			assert.strictEqual(oSelect.$("label").text(), itemX.getText());
+			assert.ok(oSelect.getList().getSelectedItem() !== null);
+			assert.strictEqual(oSelect.getList().getSelectedItemId(), itemX.getId());
+			assert.strictEqual(oSelect.getList().getSelectedKey(), itemX.getKey());
+
+			// cleanup
+			oSelect.destroy();
+			Core.applyChanges();
+		});
+
 		QUnit.test("it should render placeholders right when forceSelection=false and item is not provided initialy", function (assert) {
 
 			// system under test

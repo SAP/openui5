@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta charset="utf-8">
+
+  <title>Mobile App with XML View with JSON Data</title>
+
+  <script id='sap-ui-bootstrap' src='../../../resources/sap-ui-core.js' data-sap-ui-theme='sap_fiori_3'
+    data-sap-ui-libs='sap.m, sap.ui.table' data-sap-ui-compatVersion='edge'></script>
+
+  <script id="myXml" type="text/xmldata">
+			<mvc:View
+              xmlns:core="sap.ui.core"
+              xmlns:mvc="sap.ui.core.mvc"
+              controllerName="myController"
+              xmlns="sap.m"
+              xmlns:f="sap.ui.layout.form"
+              xmlns:pa="PA.Controls"
+              xmlns:table="sap.ui.table"
+              height="100%" width="100%"
+            >
+				<App>
+					<Page title="Hello">
+
+						<table:Table id="planningLevel"
+              rows="{/Categories}"
+              selectionMode="MultiToggle"
+              visibleRowCount="7"
+              >
+                <table:columns>
+
+                  <table:Column width="auto">
+                      <Label text="Name" />
+                      <table:template>
+                          <Text text="{Name}"></Text>
+                      </table:template>
+                  </table:Column>
+
+                  <table:Column width="auto">
+                    <Label text="Name2" />
+                    <table:template>
+                      <Select
+                        forceSelection="false"
+                        resetOnMissingKey="true"
+                        selectedKey="{Category}"
+                        items="{/SelectList}">
+
+                        <core:Item text="{Name}" key="{Name}"/>
+
+                      </Select>
+                    </table:template>
+                  </table:Column>
+
+                </table:columns>
+              </table:Table>
+					</Page>
+				</App>
+			</mvc:View>
+		</script>
+
+  <script>
+    sap.ui.controller("myController", {
+      onInit: function () {
+        var Categories = [{ Name: "Laptops" },
+        { Name: "Accessories" },
+        { Name: "Flat Screen Monitors" },
+        { Name: "Printers" },
+        { Name: "Multifunction Printers" },
+        { Name: "Mice" },
+        { Name: "Keyboards" },
+        { Name: "Mousepads" },
+        { Name: "Computer System Accessories" },
+        { Name: "Graphic Cards" },
+        { Name: "Scanners" },
+        { Name: "Speakers" },
+        { Name: "Software" },
+        { Name: "Telecommunications" },
+        { Name: "PCs" },
+        { Name: "Servers" },
+        { Name: "Flat Screen TVs" },
+        { Name: "Desktop Computers" },
+        { Name: "Tablets" },
+        { Name: "Smartphones and Tablets" },
+        { Name: "Flat Screens" }]
+
+        let SelectList = []
+        for (let i of Categories) {
+          i.Category = i.Name
+          if (i.Name.startsWith("S")) {
+            SelectList.push(i)
+          }
+        }
+
+        // @ts-ignore
+        let oData = {
+          Categories: undefined,
+          SelectList: undefined
+        };
+
+        oData.Categories = Categories;
+        oData.SelectList = SelectList;
+        var oModel = new sap.ui.model.json.JSONModel();
+        oModel.setData(oData);
+        this.getView().setModel(oModel);
+
+
+      }
+    });
+    sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
+  </script>
+
+</head>
+
+<body id='content' class='sapUiBody'>
+</body>
+
+</html>
