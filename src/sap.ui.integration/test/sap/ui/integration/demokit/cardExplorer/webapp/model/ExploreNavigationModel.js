@@ -369,37 +369,90 @@ sap.ui.define([
 						key: 'destinations',
 						target: 'exploreSamples',
 						title: 'Destinations',
-						useIFrame: true,
-						files: [
+						subSamples: [
 							{
-								url: '/samples/destinations/index.html',
-								name: 'index.html',
-								key: 'index.html'
+								title: 'General',
+								key: 'general',
+								useIFrame: true,
+								files: [
+									{
+										url: '/samples/destinations/general/index.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/destinations/general/cardManifest.json',
+										name: 'cardManifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/destinations/general/Destinations.view.xml',
+										name: 'Destinations.view.xml',
+										key: 'Destinations.view.xml'
+									},
+									{
+										url: '/samples/destinations/general/Destinations.controller.js',
+										name: 'Destinations.controller.js',
+										key: 'Destinations.controller.js'
+									},
+									{
+										url: '/samples/destinations/general/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/destinations/general/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									}
+								]
 							},
 							{
-								url: '/samples/destinations/cardManifest.json',
-								name: 'cardManifest.json',
-								key: 'cardManifest.json'
-							},
-							{
-								url: '/samples/destinations/Destinations.view.xml',
-								name: 'Destinations.view.xml',
-								key: 'Destinations.view.xml'
-							},
-							{
-								url: '/samples/destinations/Destinations.controller.js',
-								name: 'Destinations.controller.js',
-								key: 'Destinations.controller.js'
-							},
-							{
-								url: '/samples/destinations/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
-							},
-							{
-								url: '/samples/destinations/Component.js',
-								name: 'Component.js',
-								key: 'Component.js'
+								title: 'Component Card',
+								key: 'component',
+								useIFrame: true,
+								files: [
+									{
+										url: '/samples/destinations/component/index.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/destinations/component/Destinations.view.xml',
+										name: 'Destinations.view.xml',
+										key: 'Destinations.view.xml'
+									},
+									{
+										url: '/samples/destinations/component/Destinations.controller.js',
+										name: 'Destinations.controller.js',
+										key: 'Destinations.controller.js'
+									},
+									{
+										url: '/samples/destinations/component/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/destinations/component/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/destinations/component/sampleComponent/manifest.json',
+										name: 'sampleComponent/manifest.json',
+										key: 'sampleComponent/manifest.json'
+									},
+									{
+										url: '/samples/destinations/component/sampleComponent/Component.js',
+										name: 'sampleComponent/Component.js',
+										key: 'sampleComponent/Component.js'
+									},
+									{
+										url: '/samples/destinations/component/sampleComponent/Main.view.xml',
+										name: 'sampleComponent/Main.view.xml',
+										key: 'sampleComponent/Main.view.xml'
+									}
+								]
 							}
 						]
 					},

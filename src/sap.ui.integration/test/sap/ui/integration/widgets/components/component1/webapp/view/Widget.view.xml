@@ -8,5 +8,12 @@
 		<Button text="Cancel" press="fireCancel"/>
 		<Button text="OK" type="Emphasized" press="fireOK"/>
 		<Image src="./img/app_icon.png" width="50px" height="50px" alt="Image not shown"></Image>
+		<List
+			headerText="Products from Northwind"
+			items="{
+				path: 'products>/value'
+			}" >
+			<StandardListItem title="{products>ProductName}"/>
+		</List>
 	</Panel>
 </mvc:View>

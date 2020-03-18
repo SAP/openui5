@@ -20,14 +20,16 @@
 	<ui-integration-widget
 		class="sapFCardBase customSize"
 		manifest="./widgets/components/component1/webapp/manifest.json"
-		manifest-changes='[{"content": {"configuration": {"settings": {"stringProperty": "changed value"}}}}]'>
+		manifest-changes='[{"content": {"configuration": {"settings": {"stringProperty": "changed value"}}}}]'
+		host="host1">
 	</ui-integration-widget>
 
 	<ui-integration-widget class="customSize"
 		manifest="./widgets/components/component1/webapp/manifest.json"
 		parameters='{
 			"text": "modifiedParameterValue"
-		}'>
+		}'
+		host="host1">
 	</ui-integration-widget>
 
 	<script>
@@ -38,6 +40,16 @@
 
 		document.querySelectorAll("ui-integration-widget").forEach(function (oWidget) {
 			oWidget.addEventListener("action", handleAction);
+		});
+
+		customElements.whenDefined("ui-integration-widget").then(function () {
+			var host = new sap.ui.integration.Host('host1', {
+				resolveDestination: function(sDestinationName) {
+					if (sDestinationName == "Northwind") {
+						return Promise.resolve("https://services.odata.org/V3/Northwind/Northwind.svc");
+					}
+				}
+			});
 		});
 	</script>
 

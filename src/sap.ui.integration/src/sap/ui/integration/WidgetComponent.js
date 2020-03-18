@@ -31,6 +31,13 @@ sap.ui.define([
 		return this.getModel("sap.widget").getProperty(sPath || "/");
 	};
 
+	/**
+	 * Overwrite this method in your component to have access to the Widget instance.
+	 * @virtual
+	 * @param {sap.ui.integration.Widget} oWidget The widget instance.
+	 */
+	WidgetComponent.prototype.onWidgetReady = function(oWidget) {};
+
 	//should be called from the Widget whenever configuration/parameters change
 	WidgetComponent.prototype.update = function() {
 	};

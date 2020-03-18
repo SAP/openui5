@@ -61,7 +61,8 @@ sap.ui.define([
 		CONTENT: "/sap.card/content",
 		SERVICES: "/sap.ui5/services",
 		APP_TYPE: "/sap.app/type",
-		PARAMS: "/sap.card/configuration/parameters"
+		PARAMS: "/sap.card/configuration/parameters",
+		DESTINATIONS: "/sap.card/configuration/destinations"
 	};
 
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
@@ -637,6 +638,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resolves the destination and returns its URL.
+	 * @param {string} sKey The destination's key used in the configuration.
+	 * @returns {Promise} A promise which resolves with the URL of the destination.
+	 */
+	Card.prototype.resolveDestination = function (sKey) {
+		return this._oDestinations.getUrl(sKey);
+	};
+
+	/**
 	 * Apply all manifest settings after the manifest is fully ready.
 	 * This includes service registration, header and content creation, data requests.
 	 *
@@ -652,7 +662,7 @@ sap.ui.define([
 			this._oDataProviderFactory.destroy();
 		}
 
-		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest);
+		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS));
 		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations);
 		this._oLoadingProvider = new LoadingProvider();
 

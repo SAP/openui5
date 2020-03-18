@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/f/cards/NumericSideIndicator",
 	"sap/f/cards/Header",
 	"sap/base/Log",
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/base/Event",
+	"sap/ui/core/UIComponent"
 ],
 	function (
 		Card,
@@ -18,7 +20,9 @@ sap.ui.define([
 		NumericSideIndicator,
 		Header,
 		Log,
-		ComponentContainer
+		ComponentContainer,
+		Event,
+		UIComponent
 	) {
 		"use strict";
 
@@ -1332,7 +1336,10 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oStub = sinon.stub(ComponentContainer.prototype, "applySettings"),
-				oCard = new Card();
+				oCard = new Card(),
+				oStubEvent = new Event("componentCreated", this, {
+					component: new UIComponent()
+				});
 
 			assert.expect(1);
 			oStub.callsFake(function (mSettings) {
@@ -1342,7 +1349,7 @@ sap.ui.define([
 					"A ComponentContainer is created with expected settings"
 				);
 
-				mSettings.componentCreated();
+				mSettings.componentCreated(oStubEvent);
 
 				oStub.restore();
 				oCard.destroy();

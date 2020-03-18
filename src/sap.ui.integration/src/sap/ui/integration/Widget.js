@@ -3,20 +3,24 @@
  */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/integration/util/Manifest",
 	"sap/base/Log",
 	"sap/ui/integration/WidgetRenderer",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/integration/util/Destinations"
 ], function (
 	jQuery,
+	Core,
 	Control,
 	WidgetManifest,
 	Log,
 	WidgetRenderer,
 	LoaderExtensions,
-	ComponentContainer
+	ComponentContainer,
+	Destinations
 ) {
 	"use strict";
 
@@ -105,6 +109,12 @@ sap.ui.define([
 					multiple: false,
 					visibility : "hidden"
 				}
+			},
+			associations: {
+				/**
+				 * The host.
+				 */
+				host: {}
 			},
 			events: {
 
@@ -292,6 +302,27 @@ sap.ui.define([
 		return vValue;
 	};
 
+	Widget.prototype.getHostInstance = function () {
+		var sHost = this.getHost();
+		if (!sHost) {
+			return null;
+		}
+
+		return Core.byId(sHost);
+	};
+
+	/**
+	 * Resolves the destination and returns its URL.
+	 * @param {string} sKey The destination's key used in the configuration.
+	 * @returns {Promise} A promise which resolves with the URL of the destination.
+	 */
+	Widget.prototype.resolveDestination = function (sKey) {
+		var oConfig = this._oWidgetManifest.get("/sap.widget/configuration/destinations"),
+			oDestinations = new Destinations(this.getHostInstance(), oConfig);
+
+		return oDestinations.getUrl(sKey);
+	};
+
 	/**
 	 * Prepares the manifest and applies all settings.
 	 *
@@ -348,9 +379,15 @@ sap.ui.define([
 
 		return sap.ui.core.Component.load(mOptions)
 			.then(function(oComponent) {
-				var oContainer = new ComponentContainer({
-					component: oComponent().getId()
-				});
+				var oComponentInstance = oComponent(),
+					oContainer = new ComponentContainer({
+						component: oComponentInstance.getId()
+					});
+
+				if (oComponentInstance.onWidgetReady) {
+					oComponentInstance.onWidgetReady(this);
+				}
+
 				oContainer.attachEvent("action", function (oEvent) {
 
 					var mParameters = oEvent.getParameter("parameters");

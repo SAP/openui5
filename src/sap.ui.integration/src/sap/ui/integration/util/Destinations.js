@@ -25,7 +25,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @param {sap.ui.integration.Host} oHost The Host which will be used for resolving destinations.
-	 * @param {sap.ui.integration.util.Manifest} oManifest The manifest containing destinations configuration.
+	 * @param {object} oConfiguration The destinations configuration.
 	 * @private
 	 * @alias sap.ui.integration.util.Destinations
 	 */
@@ -33,10 +33,10 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration"
 		},
-		constructor: function (oHost, oManifest) {
+		constructor: function (oHost, oConfiguration) {
 			BaseObject.call(this);
 			this._oHost = oHost;
-			this._oManifest = oManifest;
+			this._oConfiguration = oConfiguration;
 		}
 	});
 
@@ -65,22 +65,14 @@ sap.ui.define([
 			});
 	};
 
-	Destinations.prototype._hasDestination = function (sString) {
-		return !!sString.match(rPattern);
-	};
-
-	Destinations.prototype._processString = function (sString) {
-		var aMatches = sString.match(rPattern),
-			sKey,
-			sName;
-
-		if (!aMatches) {
-			return Promise.resolve(sString); // no destinations to process
-		}
-
-		sKey = aMatches[1];
-
-		sName = this._getName(sKey);
+	/**
+	 * Resolves the destination and returns its URL.
+	 * @param {string} sKey The destination's key used in the configuration.
+	 * @returns {Promise} A promise which resolves with the URL of the destination.
+	 * @public
+	 */
+	Destinations.prototype.getUrl = function (sKey) {
+		var sName = this._getName(sKey);
 
 		if (!sName) {
 			return Promise.reject("Can not resolve destination '" + sKey + "'. Problem with configuration in the manifest.");
@@ -90,7 +82,24 @@ sap.ui.define([
 			return Promise.reject("Can not resolve destination '" + sKey + "'. There is no 'host' specified.");
 		}
 
-		return this._oHost.getDestination(sName)
+		return this._oHost.getDestination(sName);
+	};
+
+	Destinations.prototype._hasDestination = function (sString) {
+		return !!sString.match(rPattern);
+	};
+
+	Destinations.prototype._processString = function (sString) {
+		var aMatches = sString.match(rPattern),
+			sKey;
+
+		if (!aMatches) {
+			return Promise.resolve(sString); // no destinations to process
+		}
+
+		sKey = aMatches[1];
+
+		return this.getUrl(sKey)
 			.then(function (sUrl) {
 				return this._replaceUrl(sString, sKey, sUrl);
 			}.bind(this));
@@ -103,7 +112,12 @@ sap.ui.define([
 	};
 
 	Destinations.prototype._getName = function (sKey) {
-		var oConfig = this._oManifest.get("/sap.card/configuration/destinations/" + sKey),
+		if (!this._oConfiguration) {
+			Log.error("Configuration for destinations was not found.");
+			return;
+		}
+
+		var oConfig = this._oConfiguration[sKey],
 			sName;
 
 		if (!oConfig) {
