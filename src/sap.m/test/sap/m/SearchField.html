@@ -55,25 +55,9 @@
 		customHeader: new sap.m.Bar("P1Header", {
 			enableFlexBox: false,
 			contentLeft: [
-							new sap.m.Button({
-								text : "To Page 2",
-								press : function() { app.to("searchPage2", "show"); }
-							}),
-						],
-			contentRight: [
-				new sap.m.HBox({
-					displayInline: true,
-					items:[
-						new sap.m.Label({
-						labelFor: "SFB1",
-						text: "Global search:"
-					}).addStyleClass("sapUiSmallMarginEnd"),
-						new sap.m.SearchField( "SFB1", {
-							search: onSearch,
-							liveChange: onLiveChange,
-							layoutData: new sap.m.FlexItemData({growFactor: 1})
-						})
-					]
+				new sap.m.Button({
+					text : "To Page 2",
+					press : function() { app.to("searchPage2", "show"); }
 				})
 			]
 		}),
