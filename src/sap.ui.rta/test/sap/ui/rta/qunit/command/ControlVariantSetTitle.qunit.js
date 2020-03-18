@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"test-resources/sap/ui/fl/qunit/write/test/TestChangesUtil",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	Layer,
@@ -20,7 +20,7 @@ sap.ui.define([
 	OverlayRegistry,
 	VariantManagement,
 	VariantModel,
-	TestChangesUtil,
+	FlexTestAPI,
 	sinon
 ) {
 	"use strict";
@@ -149,7 +149,7 @@ sap.ui.define([
 					var oData = oControlVariantSetTitleCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
 					assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");
-					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 					return oControlVariantSetTitleCommand.undo();
 				}.bind(this))
@@ -159,7 +159,7 @@ sap.ui.define([
 					var oData = oControlVariantSetTitleCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
 					assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");
-					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
 				.catch(function (oError) {
