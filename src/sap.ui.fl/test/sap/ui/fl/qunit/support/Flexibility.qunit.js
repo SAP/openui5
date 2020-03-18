@@ -77,25 +77,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("sends a '" + Flexibility.prototype.sNoDebug + "' flag in case the application side is not debugging the fl-library", function (assert) {
-			var oConfig = sap.ui.getCore().getConfiguration();
-			sandbox.stub(oConfig, "getDebug").returns(false);
-
-			var done = assert.async();
-			sandbox.stub(SupportStub, "sendEvent").callsFake(function (sEventName, oPayload) {
-				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
-				assert.equal(typeof oPayload, "string", "a string was passed as a payload");
-				assert.equal(oPayload, Flexibility.prototype.sNoDebug, "the flag was sent");
-				done();
-			});
-
-			this.oFlexibility.onsapUiSupportFlexibilityGetApps();
-		});
-
 		QUnit.test("sends an empty object to the support window if the flexibility cache is not filled", function (assert) {
-			var oConfig = sap.ui.getCore().getConfiguration();
-			sandbox.stub(oConfig, "getDebug").returns(true);
-
 			var done = assert.async();
 			sandbox.stub(SupportStub, "sendEvent").callsFake(function (sEventName, oPayload) {
 				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
@@ -108,9 +90,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("sends the data to the support window for a reference", function (assert) {
-			var oConfig = sap.ui.getCore().getConfiguration();
-			sandbox.stub(oConfig, "getDebug").returns(true);
-
 			var done = assert.async();
 			var sReference = "ref1";
 			var sAppVersion = "1.1.1";
@@ -131,9 +110,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("sends the data to the support window for  multiple references", function (assert) {
-			var oConfig = sap.ui.getCore().getConfiguration();
-			sandbox.stub(oConfig, "getDebug").returns(true);
-
 			var done = assert.async();
 			var sReference1 = "ref1";
 			var sAppVersion1 = "1.1.1";
