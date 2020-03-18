@@ -7,6 +7,7 @@ window.suite = function () {
 
 	oSuite.addTestPage(sContextPath + "unit/unitTests.qunit.html");
 	oSuite.addTestPage(sContextPath + "integration/opaTests.qunit.html");
+	oSuite.addTestPage(sContextPath + "integration/opaTestsNavigation.qunit.html");
 
 	return oSuite;
 };

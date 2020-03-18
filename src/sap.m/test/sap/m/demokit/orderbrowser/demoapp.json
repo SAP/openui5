@@ -32,6 +32,8 @@
 		"webapp/test/integration/NotFoundJourneyPhone.js",
 		"webapp/test/integration/opaTests.qunit.html",
 		"webapp/test/integration/opaTests.qunit.js",
+		"webapp/test/integration/opaTestsNavigation.qunit.html",
+		"webapp/test/integration/opaTestsNavigation.qunit.js",
 		"webapp/test/integration/opaTestsPhone.qunit.html",
 		"webapp/test/integration/opaTestsPhone.qunit.js",
 		"webapp/test/integration/pages/App.js",
