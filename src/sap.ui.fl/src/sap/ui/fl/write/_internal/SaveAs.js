@@ -98,7 +98,11 @@ sap.ui.define([
 		aDescrChanges.forEach(function(oChange) {
 			var oChangeDefinition = oChange.getDefinition();
 			// Change contains only descriptor change information so the descriptor inline change needs to be created again
-			aInlineChangesPromises.push(AppVariantInlineChangeFactory.createNew(oChangeDefinition));
+			aInlineChangesPromises.push(AppVariantInlineChangeFactory.createNew({
+				changeType: oChangeDefinition.changeType,
+				content: oChangeDefinition.content,
+				texts: oChangeDefinition.texts
+			}));
 		});
 		return Promise.all(aInlineChangesPromises);
 	}

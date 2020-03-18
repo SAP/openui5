@@ -11,6 +11,20 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	function _fillTextsFromContent(mPropertyBag) {
+		if (!mPropertyBag.texts) {
+			mPropertyBag.texts = {
+				"" : mPropertyBag.content //property name = text key set when adding to descriptor variant
+			};
+			mPropertyBag.content = {};
+		}
+	}
+
+	function _createAppVariantInlineChange(mPropertyBag) {
+		var oAppVariantInlineChange = new AppVariantInlineChange(mPropertyBag);
+		return Promise.resolve(oAppVariantInlineChange);
+	}
+
 	/**
 	 * Internal factory for app variant inline changes.
 	 *
@@ -24,6 +38,18 @@ sap.ui.define([
 
 	var AppVariantInlineChangeFactory = {};
 
+	/**
+	 * Creates an inline change.
+	 * @param {object} mPropertyBag Parameters
+	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
+	 * @param {object} [mPropertyBag.texts] Texts for the inline change
+	 *
+	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.rta, smart business
+	 */
 	AppVariantInlineChangeFactory.createNew = function(mPropertyBag) {
 		var oAppVariantInlineChange = new AppVariantInlineChange(mPropertyBag);
 		return Promise.resolve(oAppVariantInlineChange);
@@ -48,10 +74,6 @@ sap.ui.define([
 		return this[fnTriggerChangeTypeMethod](mPropertyBag);
 	};
 
-	AppVariantInlineChangeFactory._createAppVariantInlineChange = function(mPropertyBag) {
-		var oAppVariantInlineChange = new AppVariantInlineChange(mPropertyBag);
-		return Promise.resolve(oAppVariantInlineChange);
-	};
 
 	/**
 	 * Creates an inline change of change type <code>appdescr_ovp_addNewCard</code>.
@@ -70,7 +92,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_ovp_addNewCard = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "card", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -87,7 +109,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_ovp_removeCard = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "cardId", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -110,7 +132,7 @@ sap.ui.define([
 	AppVariantInlineChangeFactory.create_ovp_changeCard = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "cardId", "string");
 		Utils.checkEntityPropertyChange(mPropertyBag.content);
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -128,7 +150,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_addNewInbound = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "inbound", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -145,7 +167,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_removeInbound = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "inboundId", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -162,7 +184,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_removeAllInboundsExceptOne = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "inboundId", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -186,7 +208,7 @@ sap.ui.define([
 	AppVariantInlineChangeFactory.create_app_changeInbound = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "inboundId", "string");
 		Utils.checkEntityPropertyChange(mPropertyBag.content);
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -203,7 +225,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_addNewOutbound = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "outbound", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -220,7 +242,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_removeOutbound = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "outboundId", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -243,7 +265,7 @@ sap.ui.define([
 	AppVariantInlineChangeFactory.create_app_changeOutbound = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "outboundId", "string");
 		Utils.checkEntityPropertyChange(mPropertyBag.content);
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -260,7 +282,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_addNewDataSource = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "dataSource", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -278,7 +300,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_removeDataSource = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "dataSourceId", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -300,7 +322,7 @@ sap.ui.define([
 	AppVariantInlineChangeFactory.create_app_changeDataSource = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "dataSourceId", "string");
 		Utils.checkEntityPropertyChange(mPropertyBag.content);
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -341,9 +363,8 @@ sap.ui.define([
 		Utils.checkParameterAndType(mPropertyBag.content, "dataSourceId", "string");
 		Utils.checkParameterAndType(mPropertyBag.content, "annotations", "array");
 		Utils.checkParameterAndType(mPropertyBag.content, "dataSource", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
-
 
 	/**
 	 * Creates an inline change of change type <code>appdescr_app_setTitle</code>.
@@ -354,13 +375,14 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.content.type='XTIT'] Type of title
 	 * @param {object} [mPropertyBag.content.comment] Comment for additional information
 	 * @param {object} [mPropertyBag.content.value] Map of locale and text, "" represents the default title
-	 * @param {object} mPropertyBag.texts i18n properties file path
+	 * @param {object} [mPropertyBag.texts] i18n properties file path
 	 * @return {Promise} Resolving when creating the app variant inline change was successful
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	AppVariantInlineChangeFactory.create_app_setTitle = function(mPropertyBag) {
-		return this._createAppVariantInlineChange(mPropertyBag).then(function(oDescriptorInlineChange) {
+		_fillTextsFromContent(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag).then(function(oDescriptorInlineChange) {
 			oDescriptorInlineChange.setHostingIdSuffix("_sap.app.title");
 			return oDescriptorInlineChange;
 		});
@@ -375,14 +397,15 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.content.type='XTIT'] Type of sub title
 	 * @param {object} [mPropertyBag.content.comment] Comment for additional information
 	 * @param {object} [mPropertyBag.content.value] Map of locale and text, "" represents the default sub title
-	 * @param {object} mPropertyBag.texts i18n properties file path
+	 * @param {object} [mPropertyBag.texts] i18n properties file path
 	 * @return {Promise} Resolving when creating the app variant inline change was successful
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	AppVariantInlineChangeFactory.create_app_setSubTitle = function(mPropertyBag) {
-		return this._createAppVariantInlineChange(mPropertyBag).then(function(oDescriptorInlineChange) {
+		_fillTextsFromContent(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag).then(function(oDescriptorInlineChange) {
 			oDescriptorInlineChange.setHostingIdSuffix("_sap.app.subTitle");
 			return oDescriptorInlineChange;
 		});
@@ -397,7 +420,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.content.type='XTIT'] Type of short title
 	 * @param {object} [mPropertyBag.content.comment] Comment for additional information
 	 * @param {object} [mPropertyBag.content.value] Map of locale and text, "" represents the default short title
-	  * @param {object} mPropertyBag.texts i18n properties file path
+	  * @param {object} [mPropertyBag.texts] i18n properties file path
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful
 	 *
@@ -405,7 +428,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	AppVariantInlineChangeFactory.create_app_setShortTitle = function(mPropertyBag) {
-		return this._createAppVariantInlineChange(mPropertyBag).then(function(oDescriptorInlineChange) {
+		_fillTextsFromContent(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag).then(function(oDescriptorInlineChange) {
 			oDescriptorInlineChange.setHostingIdSuffix("_sap.app.shortTitle");
 			return oDescriptorInlineChange;
 		});
@@ -420,7 +444,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.content.type='XTIT'] Type of description
 	 * @param {object} [mPropertyBag.content.comment] Comment for additional information
 	 * @param {object} [mPropertyBag.content.value] Map of locale and text, "" represents the default description
-	 * @param {object} mPropertyBag.tei18n properties file path
+	 * @param {object} [mPropertyBag.texts] i18n properties file path
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful
 	 *
@@ -428,7 +452,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	AppVariantInlineChangeFactory.create_app_setDescription = function(mPropertyBag) {
-		return this._createAppVariantInlineChange(mPropertyBag).then(function(oDescriptorInlineChange) {
+		_fillTextsFromContent(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag).then(function(oDescriptorInlineChange) {
 			oDescriptorInlineChange.setHostingIdSuffix("_sap.app.description");
 			return oDescriptorInlineChange;
 		});
@@ -443,7 +468,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.content.type='XTIT'] Type of info
 	 * @param {object} [mPropertyBag.content.comment] Comment for additional information
 	 * @param {object} [mPropertyBag.content.value] Map of locale and text, "" represents the default info
-	 * @param {object} mPropertyBag.texts i18n properties file path
+	 * @param {object} [mPropertyBag.texts] i18n properties file path
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful
 	 *
@@ -451,7 +476,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	AppVariantInlineChangeFactory.create_app_setInfo = function(mPropertyBag) {
-		return this._createAppVariantInlineChange(mPropertyBag).then(function(oDescriptorInlineChange) {
+		_fillTextsFromContent(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag).then(function(oDescriptorInlineChange) {
 			oDescriptorInlineChange.setHostingIdSuffix("_sap.app.info");
 			return oDescriptorInlineChange;
 		});
@@ -471,7 +497,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_setAch = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "ach", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -488,7 +514,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_setDestination = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "destination", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 
@@ -507,7 +533,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_setKeywords = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "keywords", "array");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -524,7 +550,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_addTechnicalAttributes = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "technicalAttributes", "array");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -541,7 +567,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_removeTechnicalAttributes = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "technicalAttributes", "array");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -558,7 +584,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_addCdsViews = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "cdsViews", "array");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -575,7 +601,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_app_removeCdsViews = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "cdsViews", "array");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -592,7 +618,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_flp_setConfig = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "config", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -610,7 +636,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_ui5_addNewModel = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "model", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -627,7 +653,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_ui5_removeModel = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "modelId", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -645,7 +671,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_ui5_addNewModelEnhanceWith = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "modelId", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -664,7 +690,7 @@ sap.ui.define([
 	AppVariantInlineChangeFactory.create_ui5_replaceComponentUsage = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "componentUsageId", "string");
 		Utils.checkParameterAndType(mPropertyBag.content, "componentUsage", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -681,7 +707,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_ui5_addLibraries = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "libraries", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -698,7 +724,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_ui5_setMinUI5Version = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "minUI5Version", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -715,7 +741,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_smb_addNamespace = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "smartBusinessApp", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -732,7 +758,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_smb_changeNamespace = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "smartBusinessApp", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -750,7 +776,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_ui_generic_app_setMainPage = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "page", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -767,7 +793,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_ui_setIcon = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "icon", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -784,7 +810,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_ui_setDeviceTypes = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "deviceTypes", "object");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -801,7 +827,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_url_setUri = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "uri", "string");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 	/**
@@ -818,7 +844,7 @@ sap.ui.define([
 	 */
 	AppVariantInlineChangeFactory.create_fiori_setRegistrationIds = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "registrationIds", "array");
-		return this._createAppVariantInlineChange(mPropertyBag);
+		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
 

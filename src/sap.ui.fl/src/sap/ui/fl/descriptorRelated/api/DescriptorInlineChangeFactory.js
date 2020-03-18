@@ -385,6 +385,7 @@ sap.ui.define([
 			mTexts = {
 				"" : mParameters //property name = text key set when adding to descriptor variant
 			};
+			mParameters = {};
 		}
 
 		var mPropertyBag = _preparePropertyBag("appdescr_app_setTitle", mParameters, mTexts);
@@ -411,6 +412,7 @@ sap.ui.define([
 			mTexts = {
 				"" : mParameters //property name = text key set when adding to descriptor variant
 			};
+			mParameters = {};
 		}
 
 		var mPropertyBag = _preparePropertyBag("appdescr_app_setSubTitle", mParameters, mTexts);
@@ -438,6 +440,7 @@ sap.ui.define([
 			mTexts = {
 				"" : mParameters //property name = text key set when adding to descriptor variant
 			};
+			mParameters = {};
 		}
 
 		var mPropertyBag = _preparePropertyBag("appdescr_app_setShortTitle", mParameters, mTexts);
@@ -465,6 +468,7 @@ sap.ui.define([
 			mTexts = {
 				"" : mParameters //property name = text key set when adding to descriptor variant
 			};
+			mParameters = {};
 		}
 
 		var mPropertyBag = _preparePropertyBag("appdescr_app_setDescription", mParameters, mTexts);
@@ -492,6 +496,7 @@ sap.ui.define([
 			mTexts = {
 				"" : mParameters //property name = text key set when adding to descriptor variant
 			};
+			mParameters = {};
 		}
 
 		var mPropertyBag = _preparePropertyBag("appdescr_app_setInfo", mParameters, mTexts);
