@@ -175,7 +175,7 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 */
 	TabStripRenderer.beginTabStrip = function (oRm, oControl) {
 		oRm.openStart("div");
-		oRm.class("sapMTabStribContainer");
+		oRm.class("sapMTabStripContainer");
 		oRm.openEnd();
 		oRm.openStart("div", oControl);
 		oRm.class("sapMTabStrip");
