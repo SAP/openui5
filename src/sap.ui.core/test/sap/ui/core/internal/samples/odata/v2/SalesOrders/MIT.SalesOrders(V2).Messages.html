@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Manual Integration Test: Message Handling in Sales Orders Application (V2)</title>
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+			code {
+				background-color: lightgrey;
+				border-radius: 5px;
+				display: inline-block;
+				font-size: 110%;
+				margin-top: 2px;
+				margin-bottom: 2px;
+				padding: 2px 5px 2px 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Message Handling in Sales Orders Application (V2)</h1>
+		<h2>DESCRIPTION</h2>
+		Test message handling in the OData V2 Model with the Sales Orders application.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings.
+
+		<h3>Testing with back end</h3>
+		Configure your IDE to be able to execute the Sales Orders application against an ABAP
+		back end system.<br />
+		Depending on your installation, you have to replace the port 8080 of all following links to
+		the port of your local server hosting the Sales Orders application.<br />
+		It might also be necessary to remove the first URL segment <code>/testsuite</code> from the
+		following URLs depending on your development setup.<br /> <br />
+		Start the Sales Orders V2 application with English locale:
+		<ul>
+			<li><a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en"
+				target="_blank">
+			http://localhost:8080/testsuite/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en
+			</a></li>
+		</ul>
+		The service implementation does some checks which produce messages.
+		<h4>Checks for a Sales Order</h4>
+		<ul>
+			<li>If the <strong>note</strong> of the sales order is empty the service returns a
+				warning message for that sales order note to enter a note.
+			</li>
+			<li>If the <strong>note</strong> of the sales order has a prefix "Error:", "Warning:",
+				"Info:" or "Success:" then the service returns a message for that note with the
+				corresponding message severity and the message text as given in the note after the
+				":".
+			</li>
+		</ul>
+		<h4>Checks for a Sales Order Item</h4>
+		<ul>
+			<li>If the <strong>note</strong> of the sales order item is empty the service returns a
+				warning message for that sales order item note to enter a note.
+			</li>
+			<li>If the <strong>note</strong> of the sales order item has a prefix "Error:",
+				"Warning:", "Info:" or "Success:" then the service returns a message for that sales
+				order item note with the corresponding message severity and the message text as
+				given in the note after the ":".
+			</li>
+			<li>If the <strong>quantity</strong> of the sales order item is <strong>0</strong> then
+				the service returns an error message for that quantity indicating that the quantity
+				must not be 0.
+			</li>
+			<li>If the <strong>quantity</strong> of the sales order item is <strong>1</strong> for
+				the <strong>product</strong> <strong>HT-1000</strong> then the service returns a
+				warning message for that quantity indicating that the quantity must be at least 2.
+			</li>
+			<li>If the <strong>product</strong> of the sales order item is <strong>HT-1110</strong>
+				then the service returns a warning message for the product ID of the associated
+				product (using the target <code>ToProduct/ProductID</code>) indicating that the
+				product is out of maintenance.
+			</li>
+		</ul>
+		<h3>Finding a Sales Order</h3>
+		To find a sales order that can be used for testing, you can either use the OData V4 Sales
+		Orders application or you can trigger a service request.
+		<h4>Via OData V4 Application</h4>
+		Start the OData V4 Sales Orders application:
+		<ul>
+			<li><a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true&sap-language=en"
+				target="_blank">
+			http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true&amp;sap-language=en
+			</a></li>
+		</ul>
+		In that application you can search for a sales order or you can create your own one that is
+		matching the requirements for the test.
+		<h4>Via OData Service Calls</h4>
+		Execute for example following URL:
+		<ul>
+			<li><a href="http://localhost:8080/testsuite/proxy/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet?$select=SalesOrderID,Note,ToLineItems/ItemPosition,ToLineItems/ProductID,ToLineItems/Quantity,ToLineItems/Note&$expand=ToLineItems&$top=20&$inlinecount=allpages&$format=json"
+				target="_blank">
+			http://localhost:8080/testsuite/proxy/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet?$select=SalesOrderID,Note,ToLineItems/ItemPosition,ToLineItems/ProductID,ToLineItems/Quantity,ToLineItems/Note&amp;$expand=ToLineItems&amp;$top=20&amp;$inlinecount=allpages&amp;$format=json
+			</a></li>
+		</ul>
+		You get a JSON for the first 20 sales orders.<br />
+		Copy the resulting JSON and paste it into the console of the Chrome Developer Tools and
+		press enter. You can drill down into the data to find a Sales Order that is matching the
+		requirements for the test.<br />
+		If there is no matching sales order you can add <code>&amp;$skip=</code> followed
+		by a start index, e.g. <code>&amp;$skip=40</code>, to the URL to get another set of sales
+		orders.<br />
+		<br />
+		<h2>REALIZE and CHECK</h2>
+		<h3 id="MessagesForNoteFields">(I) Messages for Note Fields</h3>
+		Search for a sales order with at least 1 item and note down the sales order ID.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>Remember the number of messages displayed on the <code>Show Messages</code> button
+				in the footer of the application.
+			</li>
+			<li>Repeat the next steps with following values for the note: <br />
+				<ul type="square">
+					<li><code>Error: My error message</code></li>
+					<li><code>Warning: My warning message</code></li>
+					<li><code>Info: My information message</code></li>
+					<li><code>Success: My success message</code></li>
+				</ul>
+				<ol type="a">
+					<li>Go to a sales order item without messages and change the <code>Note</code>
+						to the value above and press the <code>Save</code> button in the footer.
+						<br />
+						<b>Check:</b> The number of messages has been increased by 1.<br />
+						<b>Check:</b> The border of the sales order item's note field has a border
+							indicating the corresponding severity of the message.<br />
+						<b>Check:</b> The table row is highlighted with the same color as the border
+							of the sales order item's note input field.
+					</li>
+					<li>Click into the modified sales order item's note input field.<br />
+						<b>Check:</b> Below the input field you can see the message text (i.e. the
+							text as entered after the ":").
+					</li>
+					<li>Click the <code>Show Messages</code> button.<br />
+						<b>Check:</b> A popover is displayed with the current messages.<br />
+						<b>Check:</b> The message popover contains an entry with the message text as
+							described above.
+					</li>
+					<li>Click into the modified sales order item's note input field, change the text
+						to <code>No message</code> and press the <code>Save</code> button.<br />
+						<b>Check:</b> The number of messages has been decreased by 1.<br />
+						<b>Check:</b> The message has been removed from the message popover.
+					</li>
+				</ol>
+			</li>
+		</ol>
+		<h3>(II) Message Strip and Aggregated Table Row Highlighting</h3>
+		Search for a sales order with at least 2 items and with at least one item for the product
+		<code>HT-1000</code> and note down the sales order ID. An item for the product
+		<code>HT-1110</code> should not be contained.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>Change the note value of the items in a way that the service returns a message for
+				that note (see <a href="#MessagesForNoteFields">(I) Messages for Note Fields</a>)
+				and save the changes.<br />
+				<b>Check:</b> If there is at least one message for an item, a message strip is
+					displayed above the table indicating that there are messages for items.<br />
+				<b>Check:</b> Depending on the severity of the messages (<code>Error</code>,
+					<code>Warning</code>, <code>Success</code> or <code>Information</code>) the
+					message strip of the table changes its text, icon and color.
+			</li>
+			<li>If there is more than one message for a sales order item the highest severity is
+				used for the row highlighting. Change the quantity of a sales order item with the
+				product <code>HT-1000</code> to the value <code>1</code> and save it.<br />
+				<b>Check:</b> There is a message for the quantity of the item that at least 2 have
+					to be ordered.<br />
+				<b>Check:</b> If the corresponding note field does not start with
+					<code>Error:</code> the row highlighter indicates a warning.<br />
+			</li>
+			<li>Change the note of that sales order item to <code>Error: My message</code> and
+				save.<br />
+				<b>Check:</b> There is an error message for the note field and the row highlighter
+					indicates an error.
+			</li>
+		</ol>
+		Search for a sales order with an item for the product <code>HT-1110</code> and note down the
+		sales order ID.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>If the item shows an error for the note, remove the prefix <code>Error:</code>,
+				<code>Warning:</code>, <code>Info:</code> or <code>Success:</code> and save.<br />
+				<b>Check:</b> The table row is still marked with a warning because the associated
+					product is out of maintenance.
+			</li>
+		</ol>
+		<h3>(III) Transition Messages Only</h3>
+		If a table is embedded into an object page, all messages for the table need to be displayed.
+		If the application starts with a table, only the messages for the table rows which are on
+		the client have to be displayed. The framework is not able to detect these scenarios
+		automatically, so the application has to set the <code>transitionMessagesOnly</code>
+		parameter at the list binding:
+		<ul>
+			<li><code>transitionMessagesOnly=true</code>:<br />
+				The root entity of the object page handles messages and the list binding for the
+				table does not take care of messages. This scenario has been tested above.
+			</li>
+			<li><code>transitionMessagesOnly=false</code>:<br />
+				The binding for the table takes care of messages. This scenario is tested with this
+				test.
+			</li>
+		</ul>
+		Search for a sales order with at least 5 items and note down the sales order ID.<br />
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>Change the note value of the first item in a way that the service returns a message
+				for that note (see
+				<a href="#MessagesForNoteFields">(I) Messages for Note Fields</a>) and save the
+				changes.
+			</li>
+			<li>Change the note value of the 5th item in a way that the service returns a message
+				for that note (see
+				<a href="#MessagesForNoteFields">(I) Messages for Note Fields</a>) and save the
+				changes.
+			</li>
+			<li>Remember the number of messages for that sales order.</li>
+			<li>Press the <code>Transition Messages Only</code> button to disable that feature.
+				<br />
+				<b>Check:</b> The sales order and the sales order items are reloaded and the number
+					of messages is less than before.<br />
+				<b>Check:</b> The message for the 5th item is not contained in the message popover.
+			</li>
+			<li>Scroll in the table that the 5th item is requested.<br />
+				<b>Check:</b> The number of messages increases.<br />
+				<b>Check:</b> The message for the 5th item is contained in the message popover.
+			</li>
+		</ol>
+	</body>
+</html>

@@ -23,6 +23,9 @@
 						</layoutData>
 					</Input>
 					<Button press="onSelectSalesOrder" text="Show Sales Order" type="Accept" />
+					<ToolbarSpacer/>
+					<Link href="MIT.SalesOrders(V2).Messages.html" target="_blank"
+						text="Test Cases" />
 				</Toolbar>
 			</VBox>
 			<VBox class="sapUiSmallMargin" id="objectPage">
@@ -41,8 +44,10 @@
 					<Label text="Note" />
 					<Input value="{Note}" />
 				</form:SimpleForm>
-				<t:Table id="ToLineItems" rowActionCount="1" rows="{ToLineItems}" threshold="0"
-					visibleRowCount="4">
+				<t:Table id="ToLineItems" rowActionCount="1" rows="{
+						path : 'ToLineItems',
+						parameters : {transitionMessagesOnly : true}
+					}" threshold="0" visibleRowCount="4">
 					<t:dependents>
 						<plugins:DataStateIndicator />
 					</t:dependents>
@@ -54,7 +59,7 @@
 								</layoutData>
 							</Title>
 							<ToolbarSpacer/>
-							<ToggleButton press="onTransitionMessagesOnly"
+							<ToggleButton press="onTransitionMessagesOnly" pressed="true"
 								text="Transition Messages Only"
 								tooltip="Message handling is done by the parent entity" />
 						</Toolbar>
@@ -154,7 +159,8 @@
 		<footer>
 			<OverflowToolbar>
 				<Button icon="sap-icon://message-popup" id="messagePopoverButton"
-					press="onMessagePopoverPress" text="{ui>/messageCount}" type="Emphasized">
+					press="onMessagePopoverPress" text="{ui>/messageCount}" tooltip="Show Messages"
+					type="Emphasized">
 					<dependents>
 						<MessagePopover activeTitlePress="onMessageSelected"
 							afterClose="onMessagePopoverClosed" id="messagePopover"
