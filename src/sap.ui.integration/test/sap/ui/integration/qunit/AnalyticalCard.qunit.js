@@ -432,7 +432,7 @@ sap.ui.define([
 			oCard.attachAction(function (oEvent) {
 				oEvent.preventDefault();
 				// Assert
-				assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
 				assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
 				// Cleanup
 				oStubOpenUrl.restore();
@@ -463,8 +463,8 @@ sap.ui.define([
 			var oCardLContent = oCard.getCardContent(),
 				oCardHeader = oCard.getCardHeader();
 			// Assert
-			assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
-			assert.ok(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header is clickable");
+			assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+			assert.ok(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header is clickable");
 			//Act
 			oCardLContent.firePress();
 			oCardHeader.firePress();
@@ -572,8 +572,8 @@ sap.ui.define([
 				var oCardLContent = this.oCard.getCardContent(),
 					oCardHeader = this.oCard.getCardHeader();
 				// Assert
-				assert.notOk(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
-				assert.notOk(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+				assert.notOk(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Content is clickable");
 				//Act
 				oCardLContent.firePress();
 				oCardHeader.firePress();

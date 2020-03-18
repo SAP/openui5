@@ -23,9 +23,15 @@ sap.ui.define([],
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapFCardHeader");
 			oRm.addClass("sapFCardNumericHeader");
+
 			if (bLoading) {
 				oRm.addClass("sapFCardHeaderLoading");
 			}
+
+			if (oControl.hasListeners("press")) {
+				oRm.addClass("sapFCardClickable");
+			}
+
 			oRm.writeAttribute("tabindex", "0");
 			//Accessibility state
 			oRm.writeAccessibilityState(oControl, {

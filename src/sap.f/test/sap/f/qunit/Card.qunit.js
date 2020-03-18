@@ -18,14 +18,10 @@ function (
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	QUnit.module("Init");
-
-	QUnit.test("Initialization", function (assert) {
-
-		// Arrange
+	function createCard(HeaderType) {
 		var oCard = new Card("somecard", {
 			tooltip: 'Some tooltip',
-			header: new CardHeader({ title: "Title" }),
+			header: new HeaderType({ title: "Title" }),
 			content: new sap.m.Text({ text: "Text" })
 		});
 
@@ -33,11 +29,23 @@ function (
 		oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
+		return oCard;
+	}
+
+	QUnit.module("Init");
+
+	QUnit.test("Initialization", function (assert) {
+
+		// Arrange
+		var oCard = createCard(CardHeader);
+
 		// Assert
 		assert.ok(oCard.getDomRef(), "The card is rendered");
 		assert.ok(oCard.getHeader().getDomRef(), "Card header should be rendered.");
 		assert.ok(oCard.getContent().getDomRef(), "Card content should be rendered.");
 		assert.strictEqual(oCard.$().attr('title'), "Some tooltip", "Tooltip is rendered");
+
+		oCard.destroy();
 	});
 
 	QUnit.module("Headers");
@@ -59,6 +67,8 @@ function (
 
 		// Assert
 		assert.ok(fnPressHandler.calledOnce, "The press event is fired on sapselect");
+
+		oCard.destroy();
 	});
 
 	QUnit.test("Press is fired on sapselect for numeric header", function (assert) {
@@ -80,4 +90,47 @@ function (
 		assert.ok(fnPressHandler.calledOnce, "The press event is fired on sapselect");
 	});
 
+	QUnit.module("Headers ACC roles");
+
+	QUnit.test("Header", function (assert) {
+
+		// Arrange
+		var oCard = createCard(CardHeader);
+
+		var $header = oCard.getHeader().$();
+		assert.strictEqual($header.attr("role"), "heading" , "Header role is correct.");
+		assert.notOk($header.hasClass("sapFCardClickable"), "sapFCardClickable class is not set");
+
+		oCard.getHeader().attachPress(function () { });
+		oCard.invalidate();
+
+		Core.applyChanges();
+
+		$header = oCard.getHeader().$();
+		assert.strictEqual($header.attr("role"), "button" , "Header role is correct.");
+		assert.ok($header.hasClass("sapFCardClickable"), "sapFCardClickable class is set");
+
+		oCard.destroy();
+	});
+
+	QUnit.test("Numeric Header", function (assert) {
+
+		// Arrange
+		var oCard = createCard(CardNumericHeader);
+
+		var $header = oCard.getHeader().$();
+		assert.strictEqual($header.attr("role"), "heading" , "Header role is correct.");
+		assert.notOk($header.hasClass("sapFCardClickable"), "sapFCardClickable class is not set");
+
+		oCard.getHeader().attachPress(function () { });
+		oCard.invalidate();
+
+		Core.applyChanges();
+
+		$header = oCard.getHeader().$();
+		assert.strictEqual($header.attr("role"), "button" , "Header role is correct.");
+		assert.ok($header.hasClass("sapFCardClickable"), "sapFCardClickable class is set");
+
+		oCard.destroy();
+	});
 });
