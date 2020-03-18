@@ -93,7 +93,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), listItem.getId(), 'The correct item should be selected');
-		assert.strictEqual(listItem.$().hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
+		assert.strictEqual(listItem.$().find('.sapTntNavLIGroup').hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
 		assert.strictEqual(fixedListItem.$().hasClass('sapTntNavLIItemSelected'), false, 'The class "sapTntNavLIItemSelected" should be removed from the deselected item');
 	});
 
@@ -115,8 +115,8 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), listItem.getId(), 'The correct item should be selected');
-		assert.strictEqual(listItem.$().hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
-		assert.strictEqual(listItem.$().hasClass('sapTntNavLIItemSelected'), true, 'The class "sapTntNavLIItemSelected" should be removed from the deselected item');
+		assert.strictEqual(listItem.$().find('.sapTntNavLIGroup').hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
+		assert.strictEqual(listItem.$().find('.sapTntNavLIGroup').hasClass('sapTntNavLIItemSelected'), true, 'The class "sapTntNavLIItemSelected" should be removed from the deselected item');
 	});
 
 	QUnit.test('Passing null should deselect the selected item', function (assert) {
@@ -132,7 +132,7 @@ sap.ui.define([
 		// assert
 		this.sideNavigation.setSelectedItem(listItem);
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), listItem.getId(), 'The correct item should be selected');
-		assert.strictEqual(listItem.$().hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
+		assert.strictEqual(listItem.$().find('.sapTntNavLIGroup').hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
 
 		this.sideNavigation.setSelectedItem(null);
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), null, 'The item should be deselected');
@@ -140,7 +140,7 @@ sap.ui.define([
 
 		this.sideNavigation.setSelectedItem(fixedListItem);
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), fixedListItem.getId(), 'The correct item should be selected');
-		assert.strictEqual(fixedListItem.$().hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
+		assert.strictEqual(fixedListItem.$().find('.sapTntNavLIGroup').hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
 
 		this.sideNavigation.setSelectedItem(null);
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), null, 'The item should be deselected');

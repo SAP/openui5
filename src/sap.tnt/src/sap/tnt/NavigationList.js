@@ -147,10 +147,6 @@ sap.ui.define([
 		NavigationList.prototype.onAfterRendering = function () {
 			this._itemNavigation.setRootDomRef(this.getDomRef());
 			this._itemNavigation.setItemDomRefs(this._getDomRefs());
-
-			if (this._selectedItem) {
-				this._selectedItem._select();
-			}
 		};
 
 		NavigationList.prototype._updateNavItems = function () {
@@ -218,7 +214,6 @@ sap.ui.define([
 		 */
 		NavigationList.prototype._selectItem = function (params) {
 			this.fireItemSelect(params);
-
 
 			var item = params.item;
 			this.setSelectedItem(item, true);
