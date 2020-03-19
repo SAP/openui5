@@ -443,13 +443,12 @@ function(
 		Switch.prototype.getAccessibilityInfo = function() {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				bState = this.getState(),
-				sDesc = bState ? oBundle.getText("ACC_CTR_STATE_CHECKED") + " "
-						+ this.getInvisibleElementText(bState) : oBundle.getText("ACC_CTR_STATE_NOT_CHECKED") + " " + this.getInvisibleElementText(bState);
+				sDesc = this.getInvisibleElementText(bState);
 
 			return {
 				role: "switch",
-				type: oBundle.getText("ACC_CTR_TYPE_CHECKBOX"),
-				description: sDesc.trim(),
+				type: oBundle.getText("ACC_CTR_TYPE_SWITCH"),
+				description: sDesc,
 				focusable: this.getEnabled(),
 				enabled: this.getEnabled()
 			};

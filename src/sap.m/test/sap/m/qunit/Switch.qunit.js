@@ -313,23 +313,23 @@ sap.ui.define([
 		var oInfo = oSwitch.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "switch", "AriaRole");
-		assert.strictEqual(oInfo.type, oBundle.getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
-		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_NOT_CHECKED") + " " + oSwitch.getCustomTextOff(), "Description");
+		assert.strictEqual(oInfo.type, oBundle.getText("ACC_CTR_TYPE_SWITCH"), "Type");
+		assert.strictEqual(oInfo.description, oSwitch.getCustomTextOff(), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 
 		oSwitch.setState(true);
 		oInfo = oSwitch.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oSwitch.getCustomTextOn(), "Description");
+		assert.strictEqual(oInfo.description, oSwitch.getCustomTextOn(), "Description");
 
 		oSwitch.setCustomTextOn("");
 		oInfo = oSwitch.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText("SWITCH_ON"), "Description");
+		assert.strictEqual(oInfo.description, oBundle.getText("SWITCH_ON"), "Description");
 
 		oSwitch.setType("AcceptReject");
 		oInfo = oSwitch.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText("SWITCH_ARIA_ACCEPT"), "Description");
+		assert.strictEqual(oInfo.description, oBundle.getText("SWITCH_ARIA_ACCEPT"), "Description");
 
 		oSwitch.setEnabled(false);
 		oInfo = oSwitch.getAccessibilityInfo();
