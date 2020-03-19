@@ -737,7 +737,8 @@ sap.ui.define([
 					list : [{/*created*/}, {/*created*/}, {}, {}],
 					"null" : null
 				}
-			}];
+			}],
+			that = this;
 
 		function drillDown(sPath) {
 			return oCache.drillDown(oData, sPath).getResult();
@@ -751,6 +752,7 @@ sap.ui.define([
 			"('1')" : oData[0].foo.list[3]
 		};
 		oData[0].foo.list.$count = 10;
+		oData[0].foo.list.$tail = {};
 
 		assert.strictEqual(drillDown(""), oData, "empty path");
 		assert.strictEqual(drillDown("0"), oData[0], "0");
@@ -830,6 +832,14 @@ sap.ui.define([
 			oCache.toString(), sClassName);
 
 		assert.strictEqual(drillDown("0/foo/list/bar"), undefined, "0/foo/list/bar");
+
+		["$byPredicate", "$created", "$tail", "length"].forEach(function (sProperty) {
+			that.oLogMock.expects("error").withExactArgs("Failed to drill-down into 0/foo/list/"
+				+ sProperty + ", invalid segment: " + sProperty, oCache.toString(), sClassName);
+
+			assert.strictEqual(drillDown("0/foo/list/" + sProperty), undefined,
+				"0/foo/list/" + sProperty);
+		});
 
 		oCacheMock.expects("from$skip")
 			.withExactArgs("foo", sinon.match.same(oData[0])).returns("foo");
@@ -5308,8 +5318,6 @@ sap.ui.define([
 				.getResult(), "Note 1");
 	});
 });
-//TODO really allow access to internal properties like $byPredicate, $created, $tail, length via
-// drillDown?
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#read(-1, 1)", function (assert) {

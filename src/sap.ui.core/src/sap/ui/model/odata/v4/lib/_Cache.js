@@ -530,7 +530,8 @@ sap.ui.define([
 					// property of a complex type which is null
 					return undefined;
 				}
-				if (typeof vValue !== "object" || sSegment === "@$ui5._") {
+				if (typeof vValue !== "object" || sSegment === "@$ui5._"
+					|| Array.isArray(vValue) && (sSegment[0] === "$" || sSegment === "length")) {
 					// Note: protect private namespace against read access just like any missing
 					// object
 					return invalidSegment(sSegment);
