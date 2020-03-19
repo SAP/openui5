@@ -34,7 +34,8 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 			var sWidth = oButton.getWidth(),
 				sType = oButton.getType(),
 				bEnabled = oButton.getEnabled(),
-				sTitleAttribute = oButton.getTitleAttributeValue();
+				sTitleAttribute = oButton.getTitleAttributeValue(),
+				sTooltipId;
 
 			//write root DOM element
 			oRm.openStart("div", oButton)
@@ -79,6 +80,17 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 			oRm.renderControl(oButton._getArrowButton());
 
 			oRm.close("div");
+
+			if (sTitleAttribute) {
+				sTooltipId = oButton.getId() + "-tooltip";
+				oRm.openStart("span");
+				oRm.attr("id", sTooltipId);
+				oRm.class("sapUiInvisibleText");
+				oRm.openEnd();
+				oRm.text(sTitleAttribute);
+				oRm.close("span");
+			}
+
 			oRm.close("div");
 		};
 
@@ -97,7 +109,9 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 
 		SplitButtonRenderer.writeAriaLabelledBy = function(oButton, mAccProperties) {
 			var sAriaLabelledByValue = "",
-				oButtonTypeAriaLabelId = oButton.getButtonTypeAriaLabelId();
+				oButtonTypeAriaLabelId = oButton.getButtonTypeAriaLabelId(),
+				sTitleAttribute = oButton.getTitleAttributeValue(),
+				sTooltipId;
 
 			if (oButton.getText()) {
 				sAriaLabelledByValue += oButton._getTextButton().getId() + "-content";
@@ -109,9 +123,14 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 				sAriaLabelledByValue += " ";
 			}
 
-			sAriaLabelledByValue += InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_DESCRIPTION");
+			if (sTitleAttribute) {
+				sTooltipId = oButton.getId() + "-tooltip";
+				sAriaLabelledByValue += sTooltipId + " ";
+			}
 
-			sAriaLabelledByValue += " " + InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_KEYBOARD_HINT");
+			sAriaLabelledByValue += InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_DESCRIPTION") + " ";
+
+			sAriaLabelledByValue += InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_KEYBOARD_HINT");
 
 			mAccProperties["labelledby"] = {value: sAriaLabelledByValue, append: true };
 		};
