@@ -280,6 +280,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Animations have option to be disabled globally and this behaviour should be applied when there is a custom icon in the BusyIndicator", function (assert) {
+
+		var done = assert.async();
+
 		// arrange
 		this.oBusyInd.setCustomIcon("../images/settings_64.png");
 		Core.applyChanges();
@@ -297,17 +300,23 @@ sap.ui.define([
 		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
 		Core.applyChanges();
 
-		var oUpdatedAnimation = {
-			animationName: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-name'),
-			animationDuration: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-duration'),
-			animationDelay: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-delay'),
-			animationIterationCount: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-iteration-count'),
-			animationDirection: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-direction'),
-			animationFillMode: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-fill-mode'),
-			animationPlayState: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-play-state')
-		};
-		// assert
-		assert.notDeepEqual(oUpdatedAnimation, oDefaultAnimation, "Animation is changed");
+		setTimeout(function () {
+			var oUpdatedAnimation = {
+				animationName: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-name'),
+				animationDuration: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-duration'),
+				animationDelay: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-delay'),
+				animationIterationCount: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-iteration-count'),
+				animationDirection: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-direction'),
+				animationFillMode: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-fill-mode'),
+				animationPlayState: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-play-state')
+			};
+
+			// assert
+			assert.notDeepEqual(oUpdatedAnimation, oDefaultAnimation, "Animation is changed");
+
+			done();
+
+		}.bind(this), 100);
 	});
 
 	QUnit.module("sap.m.BusyIndicator with custom icon", {
