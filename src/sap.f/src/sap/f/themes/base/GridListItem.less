@@ -6,6 +6,9 @@
 @_sap_f_GridListItem_Header_BoxShadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor;
 @_sap_f_GridListItem_HeaderHeight: 3rem;
 @_sap_f_GridListItem_Compact_HeaderHeight: 2rem;
+@_sap_f_GridListItem_BorderHover: 0 0 0 1px fade(@sapUiContentShadowColor, 30);
+@_sap_f_GridListItem_Header_BoxShadowActive: none;
+@_sap_f_GridListItem_BorderSelected: 0 0 0px 0.125rem @sapUiSelected, 0 0 1px @sapUiListBackground inset;
 
 .sapFGLI {
 	padding: 0;
@@ -76,16 +79,16 @@
 .sapFGridList .sapMLIB {
 
 	&.sapMLIBHoverable:hover {
-		box-shadow: 0 0 0 1px fade(@sapUiContentShadowColor, 30);
+		box-shadow: @_sap_f_GridListItem_BorderHover;
 	}
 
 	&.sapMLIB.sapMLIBSelected {
-		box-shadow: 0 0 0px 0.125rem @sapUiSelected, 0 0 1px @sapUiListBackground inset;
+		box-shadow: @_sap_f_GridListItem_BorderSelected;
 	}
 
 	&.sapMLIBActive {
 		.sapFGLIWrapper .sapFGLIToolbar {
-			box-shadow: none;
+			box-shadow: @_sap_f_GridListItem_Header_BoxShadowActive;
 		}
 	}
 }
