@@ -4,6 +4,7 @@
 /* ================================== */
 
 @_sap_f_card_BottomHeaderBorder: 0.0625rem solid @sapUiTileSeparatorColor;
+@_sap_f_card_BoxShadow: @sapUiShadowLevel0;
 @_sap_f_Card_ContentPadding: 1rem;
 @_sap_f_Card_FocusBorderWidth: 1px;
 @_sap_f_Card_HeaderIconColor: #6a6d70;
@@ -12,34 +13,34 @@
 @_sap_f_Card_HeaderFocusBorderBottomOffset: 1px;
 
 .sapFCard {
-  position: relative;
-  display: inline-flex;
-  flex-direction: column;
-  vertical-align: top;
-  box-sizing: border-box;
-  background: @sapUiTileBackground;
-  box-shadow: @sapUiShadowLevel0;
-  border-radius: @sapUiElementBorderCornerRadius;
-  border: 0.0625rem solid @sapUiTileBorderColor;
-  width: 100%;
-  height: auto;
-  overflow: hidden;
-  font-family: @sapUiFontFamily;
-  font-size: @sapUiFontSize;
-  color: @sapUiGroupTitleTextColor;
-  outline: none;
-  min-height: 5rem;
+	position: relative;
+	display: inline-flex;
+	flex-direction: column;
+	vertical-align: top;
+	box-sizing: border-box;
+	background: @sapUiTileBackground;
+	box-shadow: @_sap_f_card_BoxShadow;
+	border-radius: @sapUiElementBorderCornerRadius;
+	border: 0.0625rem solid @sapUiTileBorderColor;
+	width: 100%;
+	height: auto;
+	overflow: hidden;
+	font-family: @sapUiFontFamily;
+	font-size: @sapUiFontSize;
+	color: @sapUiGroupTitleTextColor;
+	outline: none;
+	min-height: 5rem;
 }
 
 //This class can be used for styling a Widget as a card
 .sapFCardBase {
-  position: relative;
-  box-sizing: border-box;
-  background: @sapUiTileBackground;
-  box-shadow: @sapUiShadowLevel0;
-  border-radius: @sapUiElementBorderCornerRadius;
-  color: @sapUiGroupTitleTextColor;
-  outline: none;
+	position: relative;
+	box-sizing: border-box;
+	background: @sapUiTileBackground;
+	box-shadow: @_sap_f_card_BoxShadow;
+	border-radius: @sapUiElementBorderCornerRadius;
+	color: @sapUiGroupTitleTextColor;
+	outline: none;
 }
 
 .sapFCardMaxItems > .sapMGrowingList,
