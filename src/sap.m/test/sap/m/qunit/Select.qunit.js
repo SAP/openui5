@@ -4154,7 +4154,7 @@ sap.ui.define([
 
 			// assert
 			assert.strictEqual(oSelect.$().attr("title"), "lorem ipsum");
-			assert.strictEqual(oSelect.$("icon").attr("title"), undefined);
+			assert.strictEqual(oSelect.$("icon").attr("title"), oSelect.getTooltip_AsString());
 
 			// cleanup
 			oSelect.destroy();
