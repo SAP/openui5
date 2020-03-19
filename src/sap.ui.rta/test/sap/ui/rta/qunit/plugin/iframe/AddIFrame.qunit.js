@@ -235,6 +235,7 @@ function (
 		});
 
 		QUnit.test("when an overlay has addIFrame action on a responsible element", function(assert) {
+			assert.expect(12);
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations : {
 					sections : {
@@ -263,6 +264,28 @@ function (
 			this.oAddIFrame.deregisterElementOverlay(this.oButtonOverlay);
 			this.oAddIFrame.registerElementOverlay(this.oButtonOverlay);
 
+			function checkMenuItemWhenActionAvailable(oPlugin, oSourceOverlay, oResponsibleElementOverlay) {
+				// context menu item properties: text(), enabled() and handler() are bound to a menu item object internally,
+				// which needs to be checked for mandatory properties
+				["isEnabled", "handler", "getCreateMenuItemText"].forEach(function(sFunctionName) {
+					sandbox.stub(oPlugin, sFunctionName).callsFake(function(oBoundMenuItem) {
+						assert.deepEqual(oBoundMenuItem.action.changeType, "addIFrame", "then the bound menu item contains the correct action");
+						assert.deepEqual(oBoundMenuItem.responsible[0], oResponsibleElementOverlay, "then the bound menu item passed contains the responsible element overlay");
+					});
+				});
+
+				var aMenuItems = oPlugin.getMenuItems([oSourceOverlay]);
+				assert.equal(aMenuItems.length, 1, "then one menu item was returned when the action is available on the responsible element overlay");
+
+				// call context menu items mapped to functions stubbed above
+				aMenuItems[0].text();
+				aMenuItems[0].enabled();
+				aMenuItems[0].handler();
+
+				assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_IFRAME", "there the menu item is for a sibling");
+				assert.deepEqual(aMenuItems[0].responsible[0], oResponsibleElementOverlay, "then the menu item contains the responsible element overlay");
+			}
+
 			return DtUtil.waitForSynced(this.oDesignTime)()
 				.then(function() {
 					assert.strictEqual(this.oAddIFrame.isAvailable(true, [this.oButtonOverlay]), true, "then isAvailable returns true as a sibling");
@@ -274,14 +297,11 @@ function (
 							return bAvailable;
 						}
 					}.bind(this));
-					var aMenuItems = this.oAddIFrame.getMenuItems([this.oButtonOverlay]);
-					assert.equal(aMenuItems.length, 1, "then one menu item was returned when the action is available on the responsible element overlay");
-					assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_IFRAME", "there the menu item is for a sibling");
-					assert.deepEqual(aMenuItems[0].responsible[0], this.oObjectPageSectionOverlay, "then it contains the object page section overlay");
+
+					checkMenuItemWhenActionAvailable(this.oAddIFrame, this.oButtonOverlay, this.oObjectPageSectionOverlay);
 
 					bAvailable = false;
-					aMenuItems = this.oAddIFrame.getMenuItems([this.oButtonOverlay]);
-					assert.equal(aMenuItems.length, 0, "then no menu item was returned when the action is not available on the responsible element overlay");
+					assert.equal(this.oAddIFrame.getMenuItems([this.oButtonOverlay]).length, 0, "then no menu item was returned when the action is not available on the responsible element overlay");
 				}.bind(this));
 		});
 
