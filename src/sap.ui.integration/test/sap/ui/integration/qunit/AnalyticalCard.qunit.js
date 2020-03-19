@@ -480,7 +480,9 @@ sap.ui.define([
 	}
 
 	var oContentFactory = new ContentFactory();
-	return oContentFactory.create("Analytical").then(function () {
+	return oContentFactory.create({
+		cardType: "Analytical"
+	}).then(function () {
 
 		QUnit.module("Init");
 		QUnit.test("Initialization - AnalyticalContent", function (assert) {

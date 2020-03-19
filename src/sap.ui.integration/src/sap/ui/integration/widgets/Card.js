@@ -416,6 +416,10 @@ sap.ui.define([
 			vManifest = null;
 		}
 
+		if (this._oCardManifest) {
+			this._oCardManifest.destroy();
+		}
+
 		// this._startBusyState("applyManifest");
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl, this.getManifestChanges());
 
@@ -822,14 +826,21 @@ sap.ui.define([
 
 		this._setTemporaryContent(sCardType, oContentManifest);
 
-		this._createContentPromise = this.createContent(sCardType, oContentManifest, this._oServiceManager, this._oDataProviderFactory, this._sAppId)
-			.then(function (oContent) {
+		this._createContentPromise = this.createContent({
+			cardType: sCardType,
+			contentManifest: oContentManifest,
+			serviceManager:  this._oServiceManager,
+			dataProviderFactory: this._oDataProviderFactory,
+			appId: this._sAppId
+		}).then(function (oContent) {
 				this._setCardContent(oContent);
 				return oContent;
 			}.bind(this));
 
 		this._createContentPromise.catch(function (sError) {
-			this._handleError(sError);
+			if (sError) {
+				this._handleError(sError);
+			}
 		}.bind(this));
 	};
 
@@ -837,7 +848,7 @@ sap.ui.define([
 		var oManifestHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
 			oHeaderFactory = new HeaderFactory(this);
 
-		return oHeaderFactory.create(oManifestHeader);
+		return oHeaderFactory.create(oManifestHeader, this._oCardManifest);
 	};
 
 	Card.prototype.getContentManifest = function () {
@@ -862,10 +873,12 @@ sap.ui.define([
 		return oContentManifest;
 	};
 
-	Card.prototype.createContent = function (sType, oConfiguration, oServiceManager, oDataProviderFactory, sAppId) {
+	Card.prototype.createContent = function (mContentConfig) {
 		var oContentFactory = new ContentFactory(this);
 
-		return oContentFactory.create(sType, oConfiguration, oServiceManager, oDataProviderFactory, sAppId);
+		mContentConfig.cardManifest = this._oCardManifest;
+
+		return oContentFactory.create(mContentConfig);
 	};
 
 	/**
