@@ -464,7 +464,6 @@ sap.ui.define([
 			this._updateFacetFilterButtonText();
 			//need to check if the visible items represent all of the items in order to handle the select all check box
 			this._updateSelectAllCheckBox();
-
 		});
 
 		this._allowRemoveSelections = true;
@@ -842,15 +841,25 @@ sap.ui.define([
 	 * @param {String} sReason reason for update
 	 */
 	FacetFilterList.prototype.updateItems = function(sReason) {
-	  this._filtering = sReason === ChangeReason.Filter;
-	  List.prototype.updateItems.apply(this,arguments);
-	  this._filtering = false;
-	  // If this list is not set to growing or it has been filtered then we must make sure that selections are
-	  // applied to items matching keys contained in the selected keys cache.  Selections
-	  // in a growing list are handled by the updateFinished handler.
-	  if (!this.getGrowing() || sReason === ChangeReason.Filter) {
-	  this._selectItemsByKeys();
-	  }
+		var oPrevActiveElement = document.activeElement;
+
+		this._filtering = sReason === ChangeReason.Filter;
+		List.prototype.updateItems.apply(this,arguments);
+		this._filtering = false;
+
+		// When the list is filtered so that the focused list item disappears from the DOM
+		// then focus can't be reapplied inside the list and if the FacetFilterList is inside a popover
+		// then the popover closes unexpectedly.
+		if (oPrevActiveElement.getAttribute("id") !== document.activeElement.getAttribute("id")) {
+			this.focus();
+		}
+
+		// If this list is not set to growing or it has been filtered then we must make sure that selections are
+		// applied to items matching keys contained in the selected keys cache.  Selections
+		// in a growing list are handled by the updateFinished handler.
+		if (!this.getGrowing() || sReason === ChangeReason.Filter) {
+			this._selectItemsByKeys();
+		}
 	};
 
 	FacetFilterList.prototype._getOriginalActiveState = function() {
