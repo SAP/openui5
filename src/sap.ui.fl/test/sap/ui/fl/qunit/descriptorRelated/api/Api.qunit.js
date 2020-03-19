@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
@@ -18,7 +18,7 @@ sap.ui.define([
 	DescriptorVariantFactory,
 	DescriptorChangeFactory,
 	WriteUtils,
-	CompatibilityConnector,
+	Storage,
 	TransportSelection,
 	Settings,
 	Layer,
@@ -1909,9 +1909,9 @@ sap.ui.define([
 			this.sCreateResponse = JSON.stringify({
 				reference: "a.reference"
 			});
-			// required since we store changes via changepersistence --> CompatibilityConnector
+			// required since we store changes via ChangePersistence --> Storage
 			sandbox.stub(Cache, "addChange");
-			sandbox.stub(CompatibilityConnector, "create").resolves(this.sCreateResponse);
+			sandbox.stub(Storage, "write").resolves(this.sCreateResponse);
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
