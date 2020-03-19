@@ -378,12 +378,11 @@ function(
 		return instance[this._sDestructor]();
 	};
 
-	Aggregation.prototype.update = function(instance, sChangeReason) {
+	Aggregation.prototype.update = function(instance, sChangeReason, oEventInfo) {
 		if (instance[this._sUpdater]) {
-			instance[this._sUpdater](sChangeReason);
+			instance[this._sUpdater](sChangeReason, oEventInfo);
 		} else {
-			//no change reason
-			instance.updateAggregation(this.name);
+			instance.updateAggregation(this.name, sChangeReason, oEventInfo);
 		}
 	};
 
