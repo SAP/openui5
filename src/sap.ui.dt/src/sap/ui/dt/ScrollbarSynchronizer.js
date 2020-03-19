@@ -184,5 +184,12 @@ function(
 		return this._bSyncing;
 	};
 
+	ScrollbarSynchronizer.prototype.refreshListeners = function () {
+		this.getTargets().forEach(function (oDomNode) {
+			this._detachScrollEvent(oDomNode);
+			this._attachScrollEvent(oDomNode);
+		}, this);
+	};
+
 	return ScrollbarSynchronizer;
 });

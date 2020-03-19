@@ -718,6 +718,9 @@ function (
 	ElementOverlay.prototype._onElementModified = function (oEvent) {
 		if (oEvent.getParameters().type === "afterRendering") {
 			this._subscribeToMutationObserver(this.isRoot());
+			this._oScrollbarSynchronizers.forEach(function (oScrollbarSynchronizer) {
+				oScrollbarSynchronizer.refreshListeners();
+			});
 		}
 		this.fireElementModified(oEvent.getParameters());
 	};
