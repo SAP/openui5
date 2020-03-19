@@ -119,6 +119,9 @@ sap.ui.define(['jquery.sap.global', './Toolbar', './Button', './SuggestionsList'
 				customHeader: customHeader,
 				content: getList(),
 				beginButton : okButton,
+				beforeClose: function () {
+					oInput._bSuggestionSuppressed = true;
+				},
 				beforeOpen: function() {
 					originalValue = oInput.getValue();
 					dialogSearchField.setValue(originalValue);
