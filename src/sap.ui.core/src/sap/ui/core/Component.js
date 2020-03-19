@@ -2938,10 +2938,26 @@ sap.ui.define([
 								var mModelConfig = mModelConfigs.afterPreload[sModelName];
 								if (Array.isArray(mModelConfig.settings) && mModelConfig.settings.length > 0) {
 									var mModelSettings = mModelConfig.settings[0]; // first argument is the config map
+
+									// in order to load the whole ResourceBundle/terminologies closure upfront
+									// we need pass the active terminologies to the ResourceModel/-Bundle.
+									mModelSettings.activeTerminologies = mOptions.activeTerminologies;
+
 									return ResourceModel.loadResourceBundle(mModelSettings, true).then(function(oResourceBundle) {
 										// Extend the model settings with the preloaded bundle so that no sync request
 										// is triggered once the model gets created
 										mModelSettings.bundle = oResourceBundle;
+
+										/*
+										 * Compatibility concerning ResourceModel API:
+										 * If active terminologies were given we need to remove the "enhanceWith", "terminologies" and "activeTerminologies"
+										 * parameters from the model settings. The ResourceModel's constructor does not accept a mixed scenario
+										 * where a constructed bundle, as well as additional enhance bundles with terminologies, are given.
+										 */
+										delete mModelSettings.terminologies;
+										delete mModelSettings.activeTerminologies;
+										delete mModelSettings.enhanceWith;
+
 									}, function(err) {
 										Log.error("Component Manifest: Could not preload ResourceBundle for ResourceModel. " +
 											"The model will be skipped here and tried to be created on Component initialization.",

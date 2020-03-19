@@ -1,24 +1,32 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/testlib/TestButton"
 ], function(
+	Log,
 	Device,
 	BindingMode,
 	ResourceModel,
 	ResourceBundle,
 	TestButton
 ) {
+	/*eslint no-new: 0 */
 	"use strict";
 	//add divs for control tests
 	var oContent = document.createElement("div");
 	oContent.id = "target1";
 	document.body.appendChild(oContent);
 
-	var oModel, oLabel, oLabel2, oDolly;
+	var oModel, oLabel, oLabel2, oDolly,
+		sCustomMessagesProperties
+			= "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties",
+		sMessagesProperties = "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+		sOtherMessagesProperties
+			= "test-resources/sap/ui/core/qunit/testdata/messages_other.properties";
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle loaded via name", {
 		beforeEach: function() {
@@ -115,7 +123,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle loaded via url", {
 		beforeEach: function() {
-			oModel = new ResourceModel({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages.properties"});
+			oModel = new ResourceModel({bundleUrl: sMessagesProperties});
 			sap.ui.getCore().setModel(oModel, "i18n");
 		},
 		afterEach: function() {
@@ -175,7 +183,7 @@ sap.ui.define([
 		var value = oModel.getProperty("TEST_TEXT"),
 			info = value.originInfo;
 		assert.equal(info.source, "Resource Bundle");
-		assert.equal(info.url, "test-resources/sap/ui/core/qunit/testdata/messages.properties");
+		assert.equal(info.url, sMessagesProperties);
 		assert.equal(info.key, "TEST_TEXT");
 	});
 
@@ -203,7 +211,7 @@ sap.ui.define([
 	QUnit.test("Model enhancement", function(assert) {
 		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
-		oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+		oModel.enhance({bundleUrl: sCustomMessagesProperties});
 		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 	});
@@ -211,7 +219,7 @@ sap.ui.define([
 	QUnit.test("Model enhancement (with bundle)", function(assert) {
 		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
-		var oBundle = jQuery.sap.resources({url: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+		var oBundle = jQuery.sap.resources({url: sCustomMessagesProperties});
 		oModel.enhance(oBundle);
 		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
@@ -222,7 +230,7 @@ sap.ui.define([
 			sap.ui.getCore().getConfiguration().setLanguage("en");
 
 			// Load the bundle beforehand
-			this.oBundle = jQuery.sap.resources({url: "test-resources/sap/ui/core/qunit/testdata/messages.properties"});
+			this.oBundle = jQuery.sap.resources({url: sMessagesProperties});
 
 			// Spy on resource bundle loading
 			this.jQuerySapResources = this.spy(ResourceBundle, "create");
@@ -257,12 +265,12 @@ sap.ui.define([
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-		this.oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+		this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-		this.oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_other.properties"});
+		this.oModel.enhance({bundleUrl: sOtherMessagesProperties});
 
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "An overridden modified text", "text TEST_TEXT_CUSTOM of enhanced model is correctly overridden");
@@ -275,13 +283,13 @@ sap.ui.define([
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-		var oCustomBundle = jQuery.sap.resources({url: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+		var oCustomBundle = jQuery.sap.resources({url: sCustomMessagesProperties});
 		this.oModel.enhance(oCustomBundle);
 
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-		var oCustomBundle = jQuery.sap.resources({url: "test-resources/sap/ui/core/qunit/testdata/messages_other.properties"});
+		var oCustomBundle = jQuery.sap.resources({url: sOtherMessagesProperties});
 		this.oModel.enhance(oCustomBundle);
 
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
@@ -294,7 +302,7 @@ sap.ui.define([
 		// ensure that the order is guaranteed how the texts are enhanced:
 		// the latter bundles override the texts of the first ones
 		this.prepare({
-			enhanceWith: [{bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"}, {bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_other.properties"}]
+			enhanceWith: [{bundleUrl: sCustomMessagesProperties}, {bundleUrl: sOtherMessagesProperties}]
 		});
 
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
@@ -322,7 +330,7 @@ sap.ui.define([
 			if (opts && typeof opts.bundle === "function") {
 				this.oBundle = opts.bundle.apply(this);
 			} else {
-				this.oBundle = jQuery.sap.resources({url: "test-resources/sap/ui/core/qunit/testdata/messages.properties"});
+				this.oBundle = jQuery.sap.resources({url: sMessagesProperties});
 			}
 
 			// Spy on resource bundle loading
@@ -349,7 +357,7 @@ sap.ui.define([
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-			this.oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+			this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
 			assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
@@ -372,7 +380,7 @@ sap.ui.define([
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-			this.oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties", bundleLocale: "de"});
+			this.oModel.enhance({bundleUrl: sCustomMessagesProperties, bundleLocale: "de"});
 
 			assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "text TEST_TEXT of enhanced model is correct");
@@ -406,7 +414,7 @@ sap.ui.define([
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-		this.oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+		this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
 		assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
@@ -430,7 +438,7 @@ sap.ui.define([
 				return new ResourceModel({
 					bundle: this.oBundle,
 					// Also provide bundleUrl to allow re-loading the bundle on localizationChange
-					bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages.properties"
+					bundleUrl: sMessagesProperties
 				});
 			}
 		});
@@ -472,7 +480,7 @@ sap.ui.define([
 		this.prepare({
 			bundle: function() {
 				return jQuery.sap.resources({
-					url: "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+					url: sMessagesProperties,
 					locale: "de"
 				});
 			},
@@ -490,7 +498,7 @@ sap.ui.define([
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-		this.oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties", bundleLocale: "de"});
+		this.oModel.enhance({bundleUrl: sCustomMessagesProperties, bundleLocale: "de"});
 
 		assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "text TEST_TEXT of enhanced model is correct");
@@ -512,7 +520,7 @@ sap.ui.define([
 		this.prepare({
 			bundle: function() {
 				return jQuery.sap.resources({
-					url: "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+					url: sMessagesProperties,
 					locale: "de"
 				});
 			},
@@ -521,7 +529,7 @@ sap.ui.define([
 					bundle: this.oBundle,
 					// Also provide bundleUrl and bundleLocale to allow re-loading the bundle on localizationChange
 					bundleLocale: "de",
-					bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages.properties"
+					bundleUrl: sMessagesProperties
 				});
 			}
 		});
@@ -533,7 +541,7 @@ sap.ui.define([
 		this.prepare({
 			bundle: function() {
 				return jQuery.sap.resources({
-					url: "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+					url: sMessagesProperties,
 					locale: "de"
 				});
 			},
@@ -554,7 +562,7 @@ sap.ui.define([
 		this.prepare({
 			bundle: function() {
 				return jQuery.sap.resources({
-					url: "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+					url: sMessagesProperties,
 					locale: "de"
 				});
 			},
@@ -564,7 +572,7 @@ sap.ui.define([
 					// Also provide bundleUrl, bundleName and bundleLocale to allow re-loading the bundle on localizationChange
 					bundleLocale: "de",
 					bundleName: "testdata.messages",
-					bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages.properties"
+					bundleUrl: sMessagesProperties
 				});
 			}
 		});
@@ -579,7 +587,7 @@ sap.ui.define([
 
 			// Load the bundle beforehand
 			return jQuery.sap.resources({
-				url: "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+				url: sMessagesProperties,
 				async: true
 			}).then(function(oBundle) {
 				this.oBundle = oBundle;
@@ -627,7 +635,7 @@ sap.ui.define([
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-			var pEnhance = this.oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+			var pEnhance = this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT is still the same after calling enhance");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM is still the same after calling enhance");
@@ -649,7 +657,7 @@ sap.ui.define([
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 			return jQuery.sap.resources({
-				url: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties",
+				url: sCustomMessagesProperties,
 				async: true
 			}).then(function(oCustomBundle) {
 
@@ -667,7 +675,7 @@ sap.ui.define([
 		// ensure that the order is guaranteed how the texts are enhanced:
 		// the latter bundles override the texts of the first ones
 		return this.prepare({
-			enhanceWith: [{bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"}, {bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_other.properties"}]
+			enhanceWith: [{bundleUrl: sCustomMessagesProperties}, {bundleUrl: sOtherMessagesProperties}]
 		}).then(function() {
 			return this.oModel._pEnhanced;
 		}.bind(this)).then(function() {
@@ -702,7 +710,7 @@ sap.ui.define([
 				p = opts.bundle.apply(this);
 			} else {
 				p = jQuery.sap.resources({
-					url: "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+					url: sMessagesProperties,
 					async: true
 				});
 			}
@@ -735,7 +743,7 @@ sap.ui.define([
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-			var pEnhance = this.oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+			var pEnhance = this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
 			return pEnhance.then(function() {
 				assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
@@ -771,7 +779,7 @@ sap.ui.define([
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 			var pEnhance = this.oModel.enhance({
-				bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties",
+				bundleUrl: sCustomMessagesProperties,
 				bundleLocale: "de"
 			});
 
@@ -819,7 +827,7 @@ sap.ui.define([
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-			var pEnhance = this.oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+			var pEnhance = this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
 			return pEnhance.then(function() {
 				assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
@@ -851,7 +859,7 @@ sap.ui.define([
 					bundle: this.oBundle,
 					async: true,
 					// Also provide bundleUrl to allow re-loading the bundle on localizationChange
-					bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages.properties"
+					bundleUrl: sMessagesProperties
 				});
 			}
 		}).then(function() {
@@ -895,7 +903,7 @@ sap.ui.define([
 
 		// Load bundle beforehand
 		var oBundle = jQuery.sap.resources({
-			url: "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+			url: sMessagesProperties,
 			locale: "de"
 		});
 
@@ -920,7 +928,7 @@ sap.ui.define([
 		assert.equal(oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-		var pEnhance = oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties", bundleLocale: "de"});
+		var pEnhance = oModel.enhance({bundleUrl: sCustomMessagesProperties, bundleLocale: "de"});
 
 		return pEnhance.then(function() {
 			assert.equal(jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
@@ -951,7 +959,7 @@ sap.ui.define([
 		return this.prepare({
 			bundle: function() {
 				return jQuery.sap.resources({
-					url: "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+					url: sMessagesProperties,
 					locale: "de",
 					async: true
 				});
@@ -962,7 +970,7 @@ sap.ui.define([
 					async: true,
 					// Also provide bundleUrl and bundleLocale to allow re-loading the bundle on localizationChange
 					bundleLocale: "de",
-					bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages.properties"
+					bundleUrl: sMessagesProperties
 				});
 			}
 		}).then(function() {
@@ -974,7 +982,7 @@ sap.ui.define([
 		return this.prepare({
 			bundle: function() {
 				return jQuery.sap.resources({
-					url: "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+					url: sMessagesProperties,
 					locale: "de",
 					async: true
 				});
@@ -997,7 +1005,7 @@ sap.ui.define([
 		return this.prepare({
 			bundle: function() {
 				return jQuery.sap.resources({
-					url: "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+					url: sMessagesProperties,
 					locale: "de",
 					async: true
 				});
@@ -1009,7 +1017,7 @@ sap.ui.define([
 					// Also provide bundleUrl, bundleName and bundleLocale to allow re-loading the bundle on localizationChange
 					bundleLocale: "de",
 					bundleName: "testdata.messages",
-					bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages.properties"
+					bundleUrl: sMessagesProperties
 				});
 			}
 		}).then(function() {
@@ -1071,7 +1079,7 @@ sap.ui.define([
 		oModel.getResourceBundle().then(function(oBundle) {
 			assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
-			var oPromise = oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+			var oPromise = oModel.enhance({bundleUrl: sCustomMessagesProperties});
 			oPromise.then(function() {
 				assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 				assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
@@ -1088,7 +1096,7 @@ sap.ui.define([
 		oModel.getResourceBundle().then(function(oBundle) {
 			assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
-			var oBundle = jQuery.sap.resources({url: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+			var oBundle = jQuery.sap.resources({url: sCustomMessagesProperties});
 			var oPromise = oModel.enhance(oBundle);
 			oPromise.then(function() {
 				assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
@@ -1102,7 +1110,7 @@ sap.ui.define([
 		var done = assert.async();
 		assert.equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
-		var oPromise = oModel.enhance({bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+		var oPromise = oModel.enhance({bundleUrl: sCustomMessagesProperties});
 		assert.equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");
 
@@ -1119,7 +1127,7 @@ sap.ui.define([
 			var done = assert.async();
 			assert.equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
-			var oBundle = jQuery.sap.resources({url: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties"});
+			var oBundle = jQuery.sap.resources({url: sCustomMessagesProperties});
 			var oPromise = oModel.enhance(oBundle);
 			assert.equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");
@@ -1201,6 +1209,381 @@ sap.ui.define([
 		oBtn.destroy();
 		oSyncModel.destroy();
 
+	});
+
+	QUnit.module("sap.ui.model.resource.ResourceModel: constructor enhanceWith parameter");
+
+	QUnit.test("Model enhancement with bundleUrl and enhanceWith with configurations",
+			function(assert) {
+		// code under test
+		var oModel = new ResourceModel({
+				bundleUrl: sMessagesProperties,
+				bundleLocale: "en",
+				enhanceWith: [{
+					bundleUrl: sCustomMessagesProperties
+				}, {
+					bundleUrl: sOtherMessagesProperties
+				}]
+			});
+
+		// assertions
+		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en",
+			"text TEST_TEXT of enhanced model is correct");
+		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "An overridden modified text",
+			"text TEST_TEXT_CUSTOM of enhanced model is correctly overridden");
+		assert.equal(oModel.getProperty("TEST_TEXT_OTHER"), "Another text",
+			"text TEST_TEXT_OTHER of enhanced model is correct");
+
+		// cleanup
+		oModel.destroy();
+	});
+
+	QUnit.test("Model enhancement with bundleUrl and enhanceWith with configurations async",
+			function(assert) {
+		// code under test
+		var oModel = new ResourceModel({
+				bundleUrl: sMessagesProperties,
+				bundleLocale: "en",
+				enhanceWith: [
+					{bundleUrl: sCustomMessagesProperties},
+					{bundleUrl: sOtherMessagesProperties}
+				],
+				async: true
+			});
+
+		return oModel.getResourceBundle().then(function () {
+			// assertions
+			assert.equal(oModel.getProperty("TEST_TEXT"), "A text en",
+				"text TEST_TEXT of enhanced model is correct");
+			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "An overridden modified text",
+				"text TEST_TEXT_CUSTOM of enhanced model is correctly overridden");
+			assert.equal(oModel.getProperty("TEST_TEXT_OTHER"), "Another text",
+				"text TEST_TEXT_OTHER of enhanced model is correct");
+
+			// cleanup
+			oModel.destroy();
+		});
+	});
+
+	QUnit.test("Model enhancement with bundleUrl and enhanceWith with ResourceBundles",
+			function(assert) {
+		// code under test
+		var oModel = new ResourceModel({
+				bundleUrl: sMessagesProperties,
+				bundleLocale: "en",
+				enhanceWith: [
+					ResourceBundle.create({
+						locale: "en",
+						bundleUrl: sCustomMessagesProperties
+					}),
+					ResourceBundle.create({
+						locale: "en",
+						bundleUrl: sOtherMessagesProperties
+					})
+				]
+			});
+
+		// assertions
+		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en",
+			"text TEST_TEXT of enhanced model is correct");
+		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "An overridden modified text",
+			"text TEST_TEXT_CUSTOM of enhanced model is correctly overridden");
+		assert.equal(oModel.getProperty("TEST_TEXT_OTHER"), "Another text",
+			"text TEST_TEXT_OTHER of enhanced model is correct");
+
+		// cleanup
+		oModel.destroy();
+	});
+
+	QUnit.test("Model enhancement with bundleUrl and enhanceWith with ResourceBundles async",
+			function(assert) {
+		// code under test
+		var oModel = new ResourceModel({
+				bundleUrl: sMessagesProperties,
+				bundleLocale: "en",
+				enhanceWith: [
+					ResourceBundle.create({
+						locale: "en",
+						bundleUrl: sCustomMessagesProperties
+					}),
+					ResourceBundle.create({
+						locale: "en",
+						bundleUrl: sOtherMessagesProperties
+					})
+				],
+				async: true
+			});
+
+		return oModel._pEnhanced.then(function () {
+			// assertions
+			assert.equal(oModel.getProperty("TEST_TEXT"), "A text en",
+				"text TEST_TEXT of enhanced model is correct");
+			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "An overridden modified text",
+				"text TEST_TEXT_CUSTOM of enhanced model is correctly overridden");
+			assert.equal(oModel.getProperty("TEST_TEXT_OTHER"), "Another text",
+				"text TEST_TEXT_OTHER of enhanced model is correct");
+
+			// cleanup
+			oModel.destroy();
+		});
+	});
+
+	QUnit.module("sap.ui.model.resource.ResourceModel: constructor enhanceWith error handling");
+
+	QUnit.test("invalid parameter terminologies async", function(assert) {
+		var oBundle = ResourceBundle.create({
+				locale: "en",
+				bundleUrl: sMessagesProperties
+			}),
+			oModel;
+
+		// code under test
+		oModel = new ResourceModel({
+			bundle: oBundle,
+			enhanceWith: [
+				{bundleUrl: sCustomMessagesProperties},
+				{bundleUrl: sOtherMessagesProperties, terminologies: {}}
+			],
+			async: true
+		});
+
+		return oModel._pEnhanced.then(function () {
+			assert.ok(false, "Should not reach this code");
+
+			// cleanup
+			oModel.destroy();
+		}, function (oError) {
+			assert.equal(oError.message, "'terminologies' parameter is not supported for enhancement");
+
+			// cleanup
+			oModel.destroy();
+		});
+	});
+
+	QUnit.test("invalid parameter terminologies in enhanceWith with parameter bundle", function(assert) {
+		var oBundle = ResourceBundle.create({
+				locale: "en",
+				bundleUrl: sMessagesProperties
+			});
+
+		// code under test
+		assert.throws(function () {
+			new ResourceModel({
+				bundle: oBundle,
+				enhanceWith: [
+					{bundleUrl: sCustomMessagesProperties},
+					{bundleUrl: sOtherMessagesProperties, terminologies: {}}
+				]
+			});
+		},
+		Error("'terminologies' parameter is not supported for enhancement"),
+		"'terminologies' parameter is not supported for enhancement");
+	});
+
+	QUnit.test("invalid parameter terminologies with enhanceWith containing bundles", function(assert) {
+		var oBundle = ResourceBundle.create({
+			locale: "en",
+			bundleUrl: sCustomMessagesProperties
+		});
+
+		// code under test
+		assert.throws(function () {
+			new ResourceModel({
+				bundleUrl: sMessagesProperties,
+				terminologies: {},
+				enhanceWith: [
+					oBundle
+				]
+			});
+		},
+		Error("'terminologies' parameter and 'activeTerminologies' parameter are not supported in configuration when enhanceWith contains ResourceBundles"),
+		"correct error message");
+	});
+
+
+	QUnit.module("sap.ui.model.resource.ResourceModel: enhance error handling");
+
+	QUnit.test("invalid parameter terminologies async", function(assert) {
+		var oBundle = ResourceBundle.create({
+				locale: "en",
+				bundleUrl: sMessagesProperties
+			}),
+			oResourceModel = new ResourceModel({
+				bundle: oBundle,
+				async: true
+			});
+
+		// code under test
+		assert.throws(function () {
+			oResourceModel.enhance({bundleUrl: sOtherMessagesProperties, terminologies: {}});
+		},
+		Error("'terminologies' parameter is not supported for enhancement"),
+		"'terminologies' parameter is not supported for enhancement");
+	});
+
+	QUnit.test("invalid parameter terminologies", function(assert) {
+		var oBundle = ResourceBundle.create({
+				locale: "en",
+				bundleUrl: sMessagesProperties
+			}),
+			oResourceModel = new ResourceModel({
+				bundle: oBundle
+			});
+
+		// code under test
+		assert.throws(function () {
+			oResourceModel.enhance({bundleUrl: sOtherMessagesProperties, terminologies: {}});
+		},
+		Error("'terminologies' parameter is not supported for enhancement"),
+		"'terminologies' parameter is not supported for enhancement");
+	});
+
+	QUnit.module("sap.ui.model.resource.ResourceModel: Parameters passed to ResourceBundle");
+
+	QUnit.test("supportedLocales parameter", function() {
+		var aSupportedLocales = ["de", "fr", "de_CH"],
+			oResourceModel;
+
+		// the supportedLocales parameter should be passed through
+		this.mock(ResourceBundle).expects("create").withExactArgs({
+				async: undefined,
+				bundleLocale: "de",
+				bundleName: "testdata.messages",
+				bundleUrl: sMessagesProperties,
+				includeInfo: true,
+				locale: "de",
+				supportedLocales: aSupportedLocales
+			})
+			.returns("~custom");
+
+		// code under test
+		oResourceModel = new ResourceModel({
+			bundleName: "testdata.messages",
+			bundleUrl: sMessagesProperties,
+			bundleLocale: "de",
+			supportedLocales: aSupportedLocales
+		});
+
+		// cleanup
+		oResourceModel.destroy();
+	});
+
+	QUnit.test("fallbackLocale parameter", function(assert) {
+		var sFallbackLocale = "de_CH",
+			oResourceModel;
+
+		// the fallbackLocale parameter should be passed through
+		this.mock(ResourceBundle).expects("create").withExactArgs({
+				async: undefined,
+				bundleLocale: "de",
+				bundleName: "testdata.messages",
+				bundleUrl: sMessagesProperties,
+				fallbackLocale: sFallbackLocale,
+				includeInfo: true,
+				locale: "de"
+			})
+			.returns("~custom");
+
+		// code under test
+		oResourceModel = new ResourceModel({
+			bundleName: "testdata.messages",
+			bundleUrl: sMessagesProperties,
+			bundleLocale: "de",
+			fallbackLocale: sFallbackLocale
+		});
+
+		// cleanup
+		oResourceModel.destroy();
+	});
+
+	QUnit.test("terminologies parameter", function(assert) {
+		var mTerminologies = {},
+			oResourceModel;
+
+		// the terminologies parameter should be passed through
+		this.mock(ResourceBundle).expects("create").withExactArgs({
+				async: undefined,
+				bundleLocale: "de",
+				bundleName: "testdata.messages",
+				bundleUrl: sMessagesProperties,
+				includeInfo: true,
+				locale: "de",
+				terminologies: mTerminologies
+			})
+			.returns("~custom");
+
+		// code under test
+		oResourceModel = new ResourceModel({
+			bundleName: "testdata.messages",
+			bundleUrl: sMessagesProperties,
+			bundleLocale: "de",
+			terminologies: mTerminologies
+		});
+
+		// cleanup
+		oResourceModel.destroy();
+	});
+
+	QUnit.module("sap.ui.model.resource.ResourceModel: private functions");
+
+	QUnit.test("loadResourceBundle", function() {
+		var mTerminologies = {},
+			aActiveTerminologies = [];
+
+		// the terminologies and activeTerminologies parameters should be passed through
+		this.mock(ResourceBundle).expects("create").withExactArgs({
+				activeTerminologies: aActiveTerminologies,
+				async: false,
+				bundleLocale: "de",
+				bundleName: "testdata.messages",
+				bundleUrl: sMessagesProperties,
+				includeInfo: true,
+				locale: "de",
+				terminologies: mTerminologies
+			})
+			.returns("~custom");
+
+		// code under test
+		ResourceModel.loadResourceBundle({
+			activeTerminologies: aActiveTerminologies,
+			bundleLocale: "de",
+			bundleName: "testdata.messages",
+			bundleUrl: sMessagesProperties,
+			terminologies: mTerminologies
+		}, false);
+	});
+
+	QUnit.test("_sanitizeBundleName", function(assert){
+		var oLogMock = this.mock(Log);
+
+		// input ".testdata.messages"
+		oLogMock.expects("error").withExactArgs("Incorrect resource bundle name " +
+			"\".testdata.messages\"",
+		"Leading slashes or dots in resource bundle names are ignored, since such names are " +
+			"invalid UI5 module names. Please check whether the resource bundle " +
+			"\".testdata.messages\" is actually needed by your application.",
+			"sap.base.i18n.ResourceBundle");
+
+		// code under test
+		assert.equal(ResourceModel._sanitizeBundleName(".testdata.messages"), "testdata.messages");
+
+		// input "/testdata.messages"
+		oLogMock.expects("error").withExactArgs("Incorrect resource bundle name " +
+			"\"/testdata.messages\"",
+		"Leading slashes or dots in resource bundle names are ignored, since such names are " +
+			"invalid UI5 module names. Please check whether the resource bundle " +
+			"\"/testdata.messages\" is actually needed by your application.",
+			"sap.base.i18n.ResourceBundle");
+
+		// code under test
+		assert.equal(ResourceModel._sanitizeBundleName("/testdata.messages"), "testdata.messages");
+
+		// input "i18n.testdata.messages"
+		oLogMock.expects("error").never();
+
+		// code under test
+		assert.equal(ResourceModel._sanitizeBundleName("i18n.testdata.messages"), "i18n.testdata.messages",
+			"sanitized bundle name for input which does not need to be sanitized");
 	});
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Exotic scenarios");

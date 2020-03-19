@@ -264,9 +264,9 @@ sap.ui.define([
 	 * @public
 	 * @hideconstructor
 	 */
-	function ResourceBundle(sUrl, sLocale, bIncludeInfo, bAsync, aSupportedLocales, sFallbackLocale){
+	function ResourceBundle(sUrl, sLocale, bIncludeInfo, bAsync, aSupportedLocales, sFallbackLocale, bSkipFallbackLocaleAndRaw){
 		// locale to retrieve texts for (normalized)
-		this.sLocale = normalize(sLocale) || defaultLocale(sFallbackLocale);
+		this.sLocale = normalize(sLocale) || defaultLocale(sFallbackLocale === undefined ? sDefaultFallbackLocale : sFallbackLocale);
 		this.oUrlInfo = splitUrl(sUrl);
 		this.bIncludeInfo = bIncludeInfo;
 		// list of custom bundles
@@ -282,7 +282,8 @@ sap.ui.define([
 			// bundle specific supported locales will be favored over configuration ones
 			aSupportedLocales || defaultSupportedLocales(),
 			sFallbackLocale,
-			" of the bundle '" + this.oUrlInfo.url + "'"
+			" of the bundle '" + this.oUrlInfo.url + "'",
+			bSkipFallbackLocaleAndRaw
 		);
 
 		// load the most specific, existing properties file
@@ -573,6 +574,156 @@ sap.ui.define([
 	}
 
 	/**
+	 * Gets the URL either from the given resource bundle name or the given resource bundle URL.
+	 *
+	 * @param {string} [bundleUrl]
+	 *   URL pointing to the base ".properties" file of a bundle (".properties" file without any
+	 *   locale information, e.g. "../../i18n/mybundle.properties"); relative URLs are evaluated
+	 *   relative to the document.baseURI
+	 * @param {string} [bundleName]
+	 *   UI5 module name in dot notation referring to the base ".properties" file; this name is
+	 *   resolved to a path like the paths of normal UI5 modules and ".properties" is then
+	 *   appended (e.g. a name like "myapp.i18n.myBundle" can be given); relative module names are
+	 *   not supported
+	 * @returns {string}
+	 *   The resource bundle URL
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.model.resource.ResourceModel
+	 */
+	ResourceBundle._getUrl = function(bundleUrl, bundleName) {
+		var sUrl = bundleUrl;
+		if (bundleName) {
+			bundleName = bundleName.replace(/\./g, "/");
+			sUrl = sap.ui.require.toUrl(bundleName) + ".properties";
+		}
+		return sUrl;
+	};
+
+	/**
+	 * @returns {module:sap/base/i18n/ResourceBundle[]} The list of ResourceBundles created from enhanceWith
+	 */
+	function getEnhanceWithResourceBundles(aActiveTerminologies, aEnhanceWith, sLocale, bIncludeInfo, bAsync, sFallbackLocale, aSupportedLocales) {
+		if (!aEnhanceWith) {
+			return [];
+		}
+		var aCustomBundles = [];
+		aEnhanceWith.forEach(function (oEnhanceWith) {
+
+			// inherit fallbackLocale and supportedLocales if not defined
+			if (oEnhanceWith.fallbackLocale === undefined) {
+				oEnhanceWith.fallbackLocale = sFallbackLocale;
+			}
+			if (oEnhanceWith.supportedLocales === undefined) {
+				oEnhanceWith.supportedLocales = aSupportedLocales;
+			}
+			var sUrl = ResourceBundle._getUrl(oEnhanceWith.bundleUrl, oEnhanceWith.bundleName);
+
+			var vResourceBundle = new ResourceBundle(sUrl, sLocale, bIncludeInfo, bAsync, oEnhanceWith.supportedLocales, oEnhanceWith.fallbackLocale);
+
+			aCustomBundles.push(vResourceBundle);
+
+			if (oEnhanceWith.terminologies) {
+				aCustomBundles = aCustomBundles.concat(getTerminologyResourceBundles(aActiveTerminologies, oEnhanceWith.terminologies, sLocale, bIncludeInfo, bAsync));
+			}
+		});
+
+		return aCustomBundles;
+	}
+
+	/**
+	 * @returns {module:sap/base/i18n/ResourceBundle[]} The list of ResourceBundles created from terminologies
+	 */
+	function getTerminologyResourceBundles(aActiveTerminologies, oTerminologies, sLocale, bIncludeInfo, bAsync) {
+		if (!aActiveTerminologies) {
+			return [];
+		}
+		// only take activeTerminologies which are present
+		// creates a copy of the given array (is reversed later on)
+		aActiveTerminologies = aActiveTerminologies.filter(function (sActiveTechnology) {
+			return oTerminologies.hasOwnProperty(sActiveTechnology);
+		});
+		// reverse
+		// the terminology resource bundles are enhancements of the current bundle
+		// the lookup order for enhancements starts with the last enhancement
+		// therefore to ensure that the first element in the activeTerminologies array is looked up first
+		// this array needs to be reversed.
+
+		// Note: Array#reverse modifies the original array
+		aActiveTerminologies.reverse();
+
+		return aActiveTerminologies.map(function (sActiveTechnology) {
+			var mParamsTerminology = oTerminologies[sActiveTechnology];
+
+			var sUrl = ResourceBundle._getUrl(mParamsTerminology.bundleUrl, mParamsTerminology.bundleName);
+
+			var aSupportedLocales = mParamsTerminology.supportedLocales;
+
+			return new ResourceBundle(sUrl, sLocale, bIncludeInfo, bAsync, aSupportedLocales, null, true);
+		});
+	}
+
+	/**
+	 * ResourceBundle Configuration
+	 *
+	 * A ResourceBundle Configuration holds information on where to load the ResourceBundle from
+	 * using the fallback chain and terminologies.
+	 * The location is retrieved from the <code>bundleUrl</code> and <code>bundleName</code> parameters
+	 * The locale used is influenced by the <code>supportedLocales</code> and <code>fallbackLocale</code> parameters
+	 * Terminologies of this ResourceBundle are loaded via the <code>terminologies</code> parameter
+	 *
+	 * Note: If omitted, the supportedLocales and the fallbackLocale are inherited from the parent ResourceBundle Configuration
+	 *
+	 * @typedef {object} module:sap/base/i18n/ResourceBundleConfiguration
+	 * @property {string} [bundleUrl] URL pointing to the base .properties file of a bundle (.properties file without any locale information, e.g. "i18n/mybundle.properties")
+	 * @property {string} [bundleName] UI5 module name in dot notation pointing to the base .properties file of a bundle (.properties file without any locale information, e.g. "i18n.mybundle")
+	 * @property {string[]} [supportedLocales] List of supported locales (aka 'language tags') to restrict the fallback chain.
+	 *     Each entry in the array can either be a BCP47 language tag or a JDK compatible locale string
+	 *     (e.g. "en-GB", "en_GB" or "en"). An empty string (<code>""</code>) represents the 'raw' bundle.
+	 *     <b>Note:</b> The given language tags can use modern or legacy ISO639 language codes. Whatever
+	 *     language code is used in the list of supported locales will also be used when requesting a file
+	 *     from the server. If the <code>locale</code> contains a legacy language code like "sh" and the
+	 *     <code>supportedLocales</code> contains [...,"sr",...], "sr" will be used in the URL.
+	 *     This mapping works in both directions.
+	 * @property {string} [fallbackLocale="en"] A fallback locale to be used after all locales
+	 *     derived from <code>locale</code> have been tried, but before the 'raw' bundle is used.
+	 * 	   Can either be a BCP47 language tag or a JDK compatible locale string (e.g. "en-GB", "en_GB"
+	 *     or "en"), defaults to "en" (English).
+	 *     To prevent a generic fallback, use the empty string (<code>""</code>).
+	 *     E.g. by providing <code>fallbackLocale: ""</code> and <code>supportedLocales: ["en"]</code>,
+	 *     only the bundle "en" is requested without any fallback.
+	 * @property {Object<string,module:sap/base/i18n/ResourceBundleTerminologyConfiguration>} [terminologies]
+	 *     An object, mapping a terminology identifier (e.g. "oil") to a ResourceBundleTerminologyConfiguration.
+	 *     A terminology is a resource bundle configuration for a specific use case (e.g. "oil").
+	 *     It does neither have a <code>fallbackLocale</code> nor can it be enhanced with <code>enhanceWith</code>.
+	 * @public
+	 */
+
+	/**
+	 * ResourceBundle Terminology Configuration
+	 *
+	 * Terminologies represent a variant of a ResourceBundle.
+	 * They can be used to provide domain specific texts, e.g. for industries, e.g. "oil", "retail" or "health".
+	 * While "oil" could refer to a user as "driller", in "retail" a user could be a "customer" and in "health" a "patient".
+	 * While "oil" could refer to a duration as "hitch", in "retail" a duration could be a "season" and in "health" an "incubation period".
+	 *
+	 * Note: Terminologies do neither support a fallbackLocale nor nested terminologies in their configuration.
+	 *
+	 * @typedef {object} module:sap/base/i18n/ResourceBundleTerminologyConfiguration
+	 * @property {string} [bundleUrl] URL pointing to the base .properties file of a bundle (.properties file without any locale information, e.g. "i18n/mybundle.properties")
+	 * @property {string} [bundleName] UI5 module name in dot notation pointing to the base .properties file of a bundle (.properties file without any locale information, e.g. "i18n.mybundle")
+	 * @property {string[]} [supportedLocales] List of supported locales (aka 'language tags') to restrict the fallback chain.
+	 *     Each entry in the array can either be a BCP47 language tag or a JDK compatible locale string
+	 *     (e.g. "en-GB", "en_GB" or "en"). An empty string (<code>""</code>) represents the 'raw' bundle.
+	 *     <b>Note:</b> The given language tags can use modern or legacy ISO639 language codes. Whatever
+	 *     language code is used in the list of supported locales will also be used when requesting a file
+	 *     from the server. If the <code>locale</code> contains a legacy language code like "sh" and the
+	 *     <code>supportedLocales</code> contains [...,"sr",...], "sr" will be used in the URL.
+	 *     This mapping works in both directions.
+	 * @public
+	 */
+
+	/**
 	 * Creates and returns a new instance of {@link module:sap/base/i18n/ResourceBundle}
 	 * using the given URL and locale to determine what to load.
 	 *
@@ -616,11 +767,74 @@ sap.ui.define([
 	 *  // ...
 	 * });
 	 *
+	 * @example <caption>Load a resource bundle with terminologies 'oil' and 'retail'</caption>
+	 *
+	 * sap.ui.require(["sap/base/i18n/ResourceBundle"], function(ResourceBundle){
+	 *  // ...
+	 *  ResourceBundle.create({
+	 *      // specify url of the base .properties file
+	 *      url : "i18n/messagebundle.properties",
+	 *      async : true,
+	 *      supportedLocales: ["de", "da"],
+	 *      fallbackLocale: "de",
+	 *      terminologies: {
+	 *          oil: {
+	 *              bundleUrl: "i18n/terminologies.oil.i18n.properties",
+	 *                 supportedLocales: [
+	 *                     "da", "en", "de"
+	 *                 ]
+	 *          },
+	 *          retail: {
+	 *             bundleUrl: "i18n/terminologies.retail.i18n.properties",
+	 *             supportedLocales: [
+	 *                 "da", "de"
+	 *             ]
+	 *         }
+	 *      },
+	 *      activeTerminologies: ["retail", "oil"]
+	 *  }).then(function(oResourceBundle){
+	 *      // now you can access the bundle
+	 *  });
+	 *  // ...
+	 * });
+	 *
+	 * @example <caption>Load a resource bundle with enhancements</caption>
+	 *
+	 * sap.ui.require(["sap/base/i18n/ResourceBundle"], function(ResourceBundle){
+	 *  // ...
+	 *  ResourceBundle.create({
+	 *      // specify url of the base .properties file
+	 *      url : "i18n/messagebundle.properties",
+	 *      async : true,
+	 *      supportedLocales: ["de", "da"],
+	 *      fallbackLocale: "de",
+	 *      enhanceWith: [
+	 *          {
+	 *              bundleUrl: "appvar1/i18n/i18n.properties",
+	 *              supportedLocales: ["da", "en", "de"]
+	 *           },
+	 *           {
+	 *              bundleUrl: "appvar2/i18n/i18n.properties",
+	 *              supportedLocales: ["da", "de"]
+	 *           }
+	 *      ]
+	 *  }).then(function(oResourceBundle){
+	 *      // now you can access the bundle
+	 *  });
+	 *  // ...
+	 * });
+	 *
 	 * @public
 	 * @function
 	 * @param {object} [mParams] Parameters used to initialize the resource bundle
 	 * @param {string} [mParams.url=''] URL pointing to the base .properties file of a bundle (.properties
 	 *     file without any locale information, e.g. "mybundle.properties")
+	 *     if not provided, <code>bundleUrl</code> or <code>bundleName</code> can be used; if both are set,
+	 *     <code>bundleName</code> wins
+	 * @param {string} [mParams.bundleUrl] URL pointing to the base .properties file of a bundle
+	 *     (.properties file without any locale information, e.g. "i18n/mybundle.properties")
+	 * @param {string} [mParams.bundleName] UI5 module name in dot notation pointing to the base
+	 *     .properties file of a bundle (.properties file without any locale information, e.g. "i18n.mybundle")
 	 * @param {string} [mParams.locale] Optional locale (aka 'language tag') to load the texts for.
 	 *     Can either be a BCP47 language tag or a JDK compatible locale string (e.g. "en-GB", "en_GB" or "en").
 	 *     Defaults to the current session locale if <code>sap.ui.getCore</code> is available, otherwise
@@ -637,19 +851,62 @@ sap.ui.define([
 	 * @param {string} [mParams.fallbackLocale="en"] A fallback locale to be used after all locales
 	 *     derived from <code>locale</code> have been tried, but before the 'raw' bundle is used.
 	 * 	   Can either be a BCP47 language tag or a JDK compatible locale string (e.g. "en-GB", "en_GB"
-	 *     or "en"), defaults to "en" (English).
+	 *     or "en").
 	 *     To prevent a generic fallback, use the empty string (<code>""</code>).
 	 *     E.g. by providing <code>fallbackLocale: ""</code> and <code>supportedLocales: ["en"]</code>,
 	 *     only the bundle "en" is requested without any fallback.
+	 * @param {Object<string,module:sap/base/i18n/ResourceBundleTerminologyConfiguration>} [mParams.terminologies] map of terminologies.
+	 *     The key is the terminology identifier and the value is a ResourceBundle terminology configuration.
+	 *     A terminology is a resource bundle configuration for a specific use case (e.g. "oil").
+	 *     It does neither have a <code>fallbackLocale</code> nor can it be enhanced with <code>enhanceWith</code>.
+	 * @param {string[]} [mParams.activeTerminologies] The list of active terminologies,
+	 *     e.g. <code>["oil", "retail"]</code>. The order in this array represents the lookup order.
+	 * @param {module:sap/base/i18n/ResourceBundleConfiguration[]} [mParams.enhanceWith] List of ResourceBundle configurations which enhance the current one.
+	 *     The order of the enhancements is significant, because the lookup checks the last enhancement first.
+	 *     Each enhancement represents a ResourceBundle with limited options ('bundleUrl', 'bundleName', 'terminologies', 'fallbackLocale', 'supportedLocales').
+	 *     Note: supportedLocales and fallbackLocale are inherited from the parent ResourceBundle if not present.
 	 * @param {boolean} [mParams.async=false] Whether the first bundle should be loaded asynchronously
 	 *     Note: Fallback bundles loaded by {@link #getText} are always loaded synchronously.
 	 * @returns {module:sap/base/i18n/ResourceBundle|Promise} A new resource bundle or a Promise on that bundle (in asynchronous case)
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	ResourceBundle.create = function(mParams) {
-		mParams = merge({url: "", includeInfo: false, fallbackLocale: sDefaultFallbackLocale}, mParams);
+		mParams = merge({url: "", includeInfo: false}, mParams);
+
+		// bundleUrl and bundleName parameters get converted into the url parameter if the url parameter is not present
+		if (mParams.bundleUrl || mParams.bundleName) {
+			mParams.url = mParams.url || ResourceBundle._getUrl(mParams.bundleUrl, mParams.bundleName);
+		}
+
 		// Note: ResourceBundle constructor returns a Promise in async mode!
-		return new ResourceBundle(mParams.url, mParams.locale, mParams.includeInfo, !!mParams.async, mParams.supportedLocales, mParams.fallbackLocale);
+		var vResourceBundle = new ResourceBundle(mParams.url, mParams.locale, mParams.includeInfo, !!mParams.async, mParams.supportedLocales, mParams.fallbackLocale);
+
+		// aCustomBundles is a flat list of all "enhancements"
+		var aCustomBundles = [];
+		// handle terminologies
+		if (mParams.terminologies) {
+			aCustomBundles = aCustomBundles.concat(getTerminologyResourceBundles(mParams.activeTerminologies, mParams.terminologies, mParams.locale, mParams.includeInfo, !!mParams.async));
+		}
+		// handle enhanceWith
+		if (mParams.enhanceWith) {
+			aCustomBundles = aCustomBundles.concat(getEnhanceWithResourceBundles(mParams.activeTerminologies, mParams.enhanceWith, mParams.locale, mParams.includeInfo, !!mParams.async, mParams.fallbackLocale, mParams.supportedLocales));
+		}
+		if (aCustomBundles.length) {
+			if (vResourceBundle instanceof Promise) {
+				vResourceBundle = vResourceBundle.then(function (oResourceBundle) {
+					// load all resource bundles in parallel for a better performance
+					// but do the enhancement one after the other to establish a stable lookup order
+					return Promise.all(aCustomBundles).then(function (aCustomBundles) {
+						aCustomBundles.forEach(oResourceBundle._enhance, oResourceBundle);
+					}).then(function () {
+						return oResourceBundle;
+					});
+				});
+			} else {
+				aCustomBundles.forEach(vResourceBundle._enhance, vResourceBundle);
+			}
+		}
+		return vResourceBundle;
 	};
 
 
@@ -723,29 +980,38 @@ sap.ui.define([
 	 *
 	 * @param {string} sLocale Locale to start the fallback sequence with, must be normalized already
 	 * @param {string[]} [aSupportedLocales] List of supported locales (either BCP47 or JDK legacy syntax, e.g. zh_CN, iw)
-	 * @param {string} [sFallbackLocale="en"] Last fallback locale
+	 * @param {string} [sFallbackLocale="en"] Last fallback locale; is ignored when <code>bSkipFallbackLocaleAndRaw</code> is <code>true</code>
 	 * @param {string} [sContextInfo] Describes the context in which this function is called, only used for logging
+	 * @param {boolean} [bSkipFallbackLocaleAndRaw=false] Whether to skip fallbackLocale and raw bundle
 	 * @returns {string[]} Sequence of fallback locales in JDK legacy syntax, decreasing priority
 	 *
 	 * @private
 	 */
-	function calculateFallbackChain(sLocale, aSupportedLocales, sFallbackLocale, sContextInfo) {
+	function calculateFallbackChain(sLocale, aSupportedLocales, sFallbackLocale, sContextInfo, bSkipFallbackLocaleAndRaw) {
 		// Defines which locales are supported (BCP47 language tags or JDK locale format using underscores).
 		// Normalization of the case and of the separator char simplifies later comparison, but the language
 		// part is not converted to a legacy ISO639 code, in order to enable the support of modern codes as well.
 		aSupportedLocales = aSupportedLocales && aSupportedLocales.map(function (sSupportedLocale) {
 			return normalizePreserveEmpty(sSupportedLocale, true);
 		});
-		// normalize the fallback locale for sanitizing it and converting the language part to legacy ISO639
-		// because it is like the locale part of the fallback chain
-		sFallbackLocale = sFallbackLocale === undefined ? sDefaultFallbackLocale : sFallbackLocale;
-		sFallbackLocale = normalizePreserveEmpty(sFallbackLocale);
+		if (!bSkipFallbackLocaleAndRaw) {
+			// normalize the fallback locale for sanitizing it and converting the language part to legacy ISO639
+			// because it is like the locale part of the fallback chain
+			var bFallbackLocaleDefined = sFallbackLocale !== undefined;
+			sFallbackLocale = bFallbackLocaleDefined ? sFallbackLocale : sDefaultFallbackLocale;
+			sFallbackLocale = normalizePreserveEmpty(sFallbackLocale);
 
-		// An empty fallback locale ("") is valid and means that a generic fallback should not be loaded.
-		// The supportedLocales must contain the fallbackLocale, or else it will be ignored.
-		if (sFallbackLocale !== "" && !findSupportedLocale(sFallbackLocale, aSupportedLocales)) {
-			Log.error("The fallback locale '" + sFallbackLocale + "' is not contained in the list of supported locales ['"
-				+ aSupportedLocales.join("', '") + "']" + sContextInfo + " and will be ignored.");
+			// An empty fallback locale ("") is valid and means that a generic fallback should not be loaded.
+			// The supportedLocales must contain the fallbackLocale, or else it will be ignored.
+			if (sFallbackLocale !== "" && !findSupportedLocale(sFallbackLocale, aSupportedLocales)) {
+				var sMessage = "The fallback locale '" + sFallbackLocale + "' is not contained in the list of supported locales ['"
+					+ aSupportedLocales.join("', '") + "']" + sContextInfo + " and will be ignored.";
+				// configuration error should be thrown if an invalid configuration has been provided
+				if (bFallbackLocaleDefined) {
+					throw new Error(sMessage);
+				}
+				Log.error(sMessage);
+			}
 		}
 
 		// Calculate the list of fallback locales, starting with the given locale.
@@ -759,9 +1025,11 @@ sap.ui.define([
 		// note: if no region is present, it is skipped
 
 		// Sample fallback chains:
-		//  "de_CH" -> "de" -> "de_DE" -> "de" -> ""  // locale 'de_CH', fallbackLocale 'de_DE'
 		//  "de_CH" -> "de" -> "en_US" -> "en" -> ""  // locale 'de_CH', fallbackLocale 'en_US'
+		//  "de_CH" -> "de" -> "de_DE" -> "de" -> ""  // locale 'de_CH', fallbackLocale 'de_DE'
 		//  "en_GB" -> "en"                    -> ""  // locale 'en_GB', fallbackLocale 'en'
+
+		// note: the resulting list does neither contain any duplicates nor unsupported locales
 
 		// fallback calculation
 		var aLocales = [],
@@ -778,7 +1046,6 @@ sap.ui.define([
 			}
 
 			// calculate next one
-
 			if (!sLocale) {
 				// there is no fallback for the 'raw' locale or for null/undefined
 				sLocale = null;
@@ -787,8 +1054,11 @@ sap.ui.define([
 				// try zh_TW (for "Traditional Chinese") first before falling back to 'zh'
 				sLocale = "zh_TW";
 			} else if (sLocale.lastIndexOf('_') >= 0) {
-				// if sLocale contains more then one segment (region, variant), remove the last one
+				// if sLocale contains more than one segment (region, variant), remove the last one
 				sLocale = sLocale.slice(0, sLocale.lastIndexOf('_'));
+			} else if (bSkipFallbackLocaleAndRaw) {
+				// skip fallbackLocale and raw bundle
+				sLocale = null;
 			} else if (sFallbackLocale) {
 				// if there's a fallbackLocale, add it first before the 'raw' locale
 				sLocale = sFallbackLocale;
