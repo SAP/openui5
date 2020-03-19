@@ -120,6 +120,8 @@ html.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 /* ------------------------------ */
 @_sap_m_SltPicker_SubHeader_BoxShadow_Bottom: 0.125rem;
 div.sapMSltPicker {
+	border-radius: 0.125rem;
+
 	.sapMBar {
 		box-shadow: inset 0 -@_sap_m_SltPicker_SubHeader_BoxShadow_Bottom @sapUiPageHeaderBorderColor;
 	}
@@ -187,6 +189,10 @@ div.sapMSltPicker {
 
 .sapMSltPressed > .sapMSltArrow {
 	border-left: 0.0625rem solid @sapUiListSelectionBorderColor;
+
+	&:hover {
+		background: @sapUiButtonLiteHoverBackground;
+	}
 }
 
 /* ====================================================== */

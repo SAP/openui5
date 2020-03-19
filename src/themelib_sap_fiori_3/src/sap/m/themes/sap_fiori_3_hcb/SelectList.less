@@ -9,13 +9,14 @@
 /* item                           */
 /* ------------------------------ */
 
-.sapMSelectListItemBase {
-	border-bottom: 1px solid @sapUiListBorderColor;
-}
-
 /* selected */
 .sapMSelectListItemBaseSelected {
 	background: @sapUiListSelectionBackgroundColor;
+	border-bottom: 1px solid @sapUiListSelectionBorderColor;
+}
+
+.sapMSelectListItemBaseHoverable:hover {
+	border-bottom: 1px solid @sapUiListBorderColor;
 }
 
 .sapMSltPicker {
