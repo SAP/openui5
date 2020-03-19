@@ -14,7 +14,7 @@ sap.ui.define(function () {
 	};
 
 	ObjectPageSubSectionRenderer.render = function (oRm, oControl) {
-		var aActions, bHasTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft, bHasVisibleActions,
+		var aActions, bHasTitle, bShowTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft, bHasVisibleActions,
 			bAccessibilityOn = sap.ui.getCore().getConfiguration().getAccessibility();
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {
@@ -23,7 +23,8 @@ sap.ui.define(function () {
 
 		aActions = oControl.getActions() || [];
 		bHasActions = aActions.length > 0;
-		bHasTitle = (oControl._getInternalTitleVisible() && (oControl.getTitle().trim() !== ""));
+		bShowTitle = oControl.getShowTitle();
+		bHasTitle = (oControl._getInternalTitleVisible() && (oControl.getTitle().trim() !== "")) && bShowTitle;
 		bHasTitleLine = bHasTitle || bHasActions;
 		bHasVisibleActions = oControl._hasVisibleActions();
 

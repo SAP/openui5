@@ -1531,4 +1531,39 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 		this.oObjectPageLayout._applyUxRules(true);
 	});
 
+	QUnit.module("SubSection title visibility", {
+		beforeEach: function() {
+			this.oObjectPage = new ObjectPageLayout({
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSectionClass({
+							title: "Title",
+							showTitle: false,
+							blocks: [new Text({text: "test"})]
+						}),
+						new ObjectPageSubSectionClass({
+							title: "Title",
+							showTitle: false,
+							blocks: [new Text({text: "test"})]
+						})
+					]
+				})
+			});
+
+			this.oObjectPage.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("SubSection without title has no title", function (assert) {
+		var $section;
+
+		$section = this.oObjectPage.getSections()[0].getSubSections()[0].$();
+		assert.strictEqual($section.find('.sapUxAPObjectPageSubSectionHeader').length, 0, "subsection has no title");
+
+		this.oObjectPage.destroy();
+	});
 });

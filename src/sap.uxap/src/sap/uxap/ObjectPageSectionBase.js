@@ -43,7 +43,11 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Section Title
+				 * Defines the title of the respective section/subsection.
+				 *
+				 * <b>Note:</b> If a subsection is the only one (or the only one visible) within a section, its title is
+				 * displayed instead of the section title. This behavior is true even if the <code>showTitle</code>
+				 * propeprty of {@link sap.uxap.ObjectPageSubSection} is set to <code>false</code>.
 				 */
 				title: {type: "string", group: "Appearance", defaultValue: null},
 
