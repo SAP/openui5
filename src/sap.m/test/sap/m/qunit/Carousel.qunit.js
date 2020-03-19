@@ -781,36 +781,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should fire pageChanged only once even if it is invalidated meanwhile", function (assert) {
-		// Arrange
-		var callCount = 0,
-			that = this,
-			done = assert.async();
-
-		// Act
-		this.oCarousel.attachPageChanged(shouldOnlyBeCalledOnce);
-		this.oCarousel.next();
-
-		function shouldOnlyBeCalledOnce() {
-			callCount++;
-
-			if (callCount === 1) {
-				//Act part 2;
-				that.oNestedCarousel.invalidate();
-				//The bug that is tested here triggered a recursion at this point.
-				sap.ui.getCore().applyChanges();
-			}
-
-			// Assert
-			assert.strictEqual(callCount, 1, "Did only call it once");
-
-			//Cleanup
-			that.oCarousel.destroy();
-
-			done();
-		}
-	});
-
 	//================================================================================
 	// Carousel clean up
 	//================================================================================
