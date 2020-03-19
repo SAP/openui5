@@ -169,11 +169,13 @@ sap.ui.define([
 
 					if (oSampleConfig.iframe) {
 						oContent = this._createIframe(oContent, oSampleConfig.iframe);
-						oModelData.iframe = oSampleConfig.iframe;
 					} else {
 						this.sIFrameUrl = null;
 					}
 				}
+
+				// Sets the current iframe URL or restores it to "undefined"
+				oModelData.iframe = oSampleConfig.iframe;
 
 				// handle stretch content
 				var bStretch = !!oSampleConfig.stretch;
