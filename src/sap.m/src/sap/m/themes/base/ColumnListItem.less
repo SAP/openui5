@@ -7,6 +7,7 @@
 @_sap_m_table_Row_Alternate_BackgroundHovered: darken(@sapUiListHoverBackground, 3);
 @_sap_m_table_Row_Alternate_BackgroundSelected: darken(@sapUiListSelectionBackgroundColor, 2);
 @_sap_m_table_Row_Alternate_BackgroundSelectedHovered: darken(@sapUiListSelectionHoverBackground, 2);
+@_sap_m_table_SelectionControlWidth: 3rem;
 
 .sapMListTblRow.sapMListTblRowTop > td {
 	vertical-align: top;
@@ -86,9 +87,10 @@
 	box-sizing: border-box;
 }
 
+/* selectionControl width + cell padding */
 .sapMListModeMultiSelect .sapMListTblSubCnt,
 .sapMListModeSingleSelectLeft .sapMListTblSubCnt {
-	padding-left: 3.5rem;
+	padding-left: calc(@_sap_m_table_SelectionControlWidth + 0.5rem);
 }
 
 .sapMListTblSubCntRow{
