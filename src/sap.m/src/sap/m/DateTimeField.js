@@ -289,6 +289,7 @@ sap.ui.define([
 		return this._getFormatter(bDisplayFormat).parse(sValue);
 	};
 
+	/* The bValueFormat variable defines whether the result is in valueFormat(true) or displayFormat(false) */
 	DateTimeField.prototype._formatValue = function (oDate, bValueFormat) {
 		if (!oDate) {
 			return "";
@@ -320,6 +321,7 @@ sap.ui.define([
 			return oBindingType.formatValue(oDate, "string");
 		}
 
+		/* The logic of _getFormatter function expects the opposite boolean variable of bValueFormat */
 		return this._getFormatter(!bValueFormat).format(oDate);
 	};
 
@@ -344,6 +346,7 @@ sap.ui.define([
 		return "short";
 	};
 
+	/* The bDisplayFormat variable defines whether the result is in displayFormat(true) or valueFormat(false) */
 	DateTimeField.prototype._getFormatter = function (bDisplayFormat) {
 		var sPattern = this._getBoundValueTypePattern(),
 			bRelative = false, // if true strings like "Tomorrow" are parsed fine
