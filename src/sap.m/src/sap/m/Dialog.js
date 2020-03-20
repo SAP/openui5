@@ -182,7 +182,7 @@ function(
 					type: {type: "sap.m.DialogType", group: "Appearance", defaultValue: DialogType.Standard},
 
 					/**
-					 * Affects the <code>icon</code> and the <code>title</code> color. If other than <code>none</code> is set, a predefined icon will be added to the Dialog. Setting the <code>icon</code> property will overwrite the predefined icon. The default value is <code>none</code> which doesn't add any icon to the Dialog control. This property is by now only supported by the blue crystal theme.
+					 * Affects the <code>icon</code> and the <code>title</code> color. If other than <code>None</code> is set, a predefined icon will be added to the Dialog. Setting the <code>icon</code> property will overwrite the predefined icon.
 					 * @since 1.11.2
 					 */
 					state: {type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None},
