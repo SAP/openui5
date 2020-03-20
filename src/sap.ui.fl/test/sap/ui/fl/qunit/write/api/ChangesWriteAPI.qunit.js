@@ -236,15 +236,16 @@ sap.ui.define([
 			};
 			this.aObjectsToDestroy.push(mPropertyBag.element);
 
-			sandbox.stub(Applier, "applyChangeOnControl").callsFake(function () {
-				assert.notOk(true, "the change should not be applied");
-			});
+			var oApplyStub = sandbox.stub(Applier, "applyChangeOnControl").resolves();
+			var oRevertStub = sandbox.stub(Reverter, "revertChangeOnControl").resolves();
 
 			mockFlexController(mPropertyBag.element, {
 				checkForOpenDependenciesForControl: function() {return true;}
 			});
 
 			return ChangesWriteAPI.apply(mPropertyBag).catch(function (oError) {
+				assert.equal(oApplyStub.callCount, 1, "the change got applied");
+				assert.equal(oRevertStub.callCount, 1, "the change got reverted");
 				assert.strictEqual(oError.message, "The following Change cannot be applied because of a dependency: changeId", "then a rejected promise with an error was returned");
 			});
 		});

@@ -111,17 +111,29 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		apply: function(mPropertyBag) {
+			if (!mPropertyBag.element instanceof Element) {
+				return Promise.reject("Please provide an Element");
+			}
+
 			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.element);
 			mPropertyBag.appComponent = ChangesController.getAppComponentForSelector(mPropertyBag.element);
 			if (!mPropertyBag.modifier) {
 				mPropertyBag.modifier = JsControlTreeModifier;
 			}
-			var bDependenciesExist = oFlexController.checkForOpenDependenciesForControl(mPropertyBag.change.getSelector(), mPropertyBag.appComponent);
-			if (!bDependenciesExist && mPropertyBag.element instanceof Element) {
-				return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]));
-			}
 			// TODO: Descriptor apply function
-			return Promise.reject(new Error("The following Change cannot be applied because of a dependency: " + mPropertyBag.change.getId()));
+			return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]))
+			.then(function(oResult) {
+				var bDependenciesExist = oFlexController.checkForOpenDependenciesForControl(mPropertyBag.change.getSelector(), mPropertyBag.appComponent);
+				if (bDependenciesExist) {
+					return ChangesWriteAPI.revert({
+						change: mPropertyBag.change,
+						element: mPropertyBag.element
+					}).then(function() {
+						throw Error("The following Change cannot be applied because of a dependency: " + mPropertyBag.change.getId());
+					});
+				}
+				return oResult;
+			});
 		},
 
 		/**
