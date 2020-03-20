@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], function(
 	FlexState,
 	Versions,
-	Utils
+	Utils,
+	ManifestUtils
 ) {
 	"use strict";
 
@@ -166,16 +168,21 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var sReference = Utils.getComponentClassName(oAppComponent);
+		var oManifest = oAppComponent.getManifest();
+		var sReference = ManifestUtils.getFlexReference({
+			manifest: oManifest,
+			componentData: oAppComponent.getComponentData()
+		});
+		var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
 
 		if (!sReference) {
 			return Promise.reject("The application ID could not be determined");
 		}
 
 		return Versions.discardDraft({
-			reference: Utils.normalizeReference(sReference),
+			reference: sReference,
 			layer: mPropertyBag.layer,
-			appComponent: oAppComponent,
+			appVersion: sAppVersion,
 			updateState: mPropertyBag.updateState
 		});
 	};
