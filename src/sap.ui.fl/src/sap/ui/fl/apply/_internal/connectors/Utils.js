@@ -151,11 +151,6 @@ sap.ui.define([
 				if (mPropertyBag && mPropertyBag.dataType) {
 					xhr.responseType = mPropertyBag.dataType;
 				}
-				if (mPropertyBag && mPropertyBag.payload) {
-					xhr.send(mPropertyBag.payload);
-				} else {
-					xhr.send();
-				}
 
 				xhr.onload = function () {
 					if (xhr.status >= 200 && xhr.status < 400) {
@@ -208,6 +203,12 @@ sap.ui.define([
 				xhr.onerror = function () {
 					reject(_createError(xhr, _getTextFromResourceBundle("MSG_NETWORK_ERROR")));
 				};
+
+				if (mPropertyBag && mPropertyBag.payload) {
+					xhr.send(mPropertyBag.payload);
+				} else {
+					xhr.send();
+				}
 			});
 		}
 	};
