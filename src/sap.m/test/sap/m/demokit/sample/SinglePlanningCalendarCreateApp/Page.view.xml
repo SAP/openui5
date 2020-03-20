@@ -13,12 +13,12 @@
 			startDate="{path: '/startDate'}"
 			appointments="{path: '/appointments'}">
 			<actions>
-				<Button id="addNewAppointment" icon="sap-icon://add" press="handleAppointmentCreate" tooltip="Add new appointment" />
+				<Button id="addNewAppointment" text="Create" press="handleAppointmentCreate" tooltip="Add new appointment" />
 			</actions>
 			<views>
-				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
-				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
 				<SinglePlanningCalendarDayView key="DayView" title="Day" />
+				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
 			</views>
 			<appointments>
 				<unified:CalendarAppointment

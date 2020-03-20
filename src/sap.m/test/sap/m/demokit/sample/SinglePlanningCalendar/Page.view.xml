@@ -37,13 +37,13 @@
 			stickyMode="{settings>/stickyMode}"
 			appointments="{path: '/appointments'}">
 			<actions>
-				<Button id="addNewAppointment" icon="sap-icon://add" press="handleAppointmentCreate" tooltip="Add new appointment" />
+				<Button id="addNewAppointment" text="Create" press="handleAppointmentCreate" tooltip="Add new appointment" />
 				<Button id="legendButton" icon="sap-icon://legend" press="handleOpenLegend" tooltip="Open SinglePlanningCalendar legend" />
 			</actions>
 			<views>
-				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
-				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
 				<SinglePlanningCalendarDayView key="DayView" title="Day" />
+				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
 				<SinglePlanningCalendarMonthView key="MonthView" title="Month" />
 			</views>
 			<appointments>
