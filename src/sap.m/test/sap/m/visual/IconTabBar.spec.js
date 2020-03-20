@@ -134,7 +134,7 @@ describe("sap.m.IconTabBar", function() {
 		});
 
 		it("should have show overflow menu", function() {
-			element(by.id("overFlowTab--header-overflow")).click();
+			element(by.id("overFlowTab--header-overflowButton")).click();
 			browser.executeScript("document.getElementById('overFlowTab').scrollIntoView()").then(function() {
 				expect(takeScreenshot()).toLookAs(sType + "_15_opened_overflow_tab");
 			});
