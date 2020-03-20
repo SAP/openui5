@@ -71,6 +71,12 @@ sap.ui.define([
 								elementType: QuickViewGroupElementType.email
 							},
 							{
+								label: "Name",
+								value: "John Doe",
+								elementType: "pageLink",
+								pageLinkId: "companyEmployeePageId"
+							},
+							{
 								label: "Phone",
 								value: "+359 888 888 888",
 								elementType: QuickViewGroupElementType.phone
@@ -970,6 +976,8 @@ sap.ui.define([
 		var oLink = this.oQuickView.getPages()[0].getPageContent().form.getContent().find(function(item){
 			return item.isA("sap.m.Link");
 		});
+
+		assert.notEqual(this.oQuickView._oPopover.getDomRef().getElementsByTagName("a")[2].href.slice(-1), "#", " href don't have unnecessary #");
 
 		oLink.firePress();
 
