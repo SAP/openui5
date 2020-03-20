@@ -3,15 +3,25 @@
 /* Quartz High Contrast Black theme  */
 /* ================================= */
 
+@_sap_m_Link_TextShadowColor: none;
+@sapUiLinkSubtleColor: darken(@sapUiLink, 15);
+
 .sapMLnk {
 	text-decoration: underline;
 }
 
-.sapMLnkDsbl, .sapMLnkDsbl:visited {
+.sapMLnkDsbl {
+	opacity: @sapUiContentDisabledOpacity;
 	outline: none;
 	cursor: default;
-	color: @sapUiContentDisabledTextColor;
-	text-decoration: underline;
+}
+
+.sapMLnkSubtle {
+	color: @sapUiLinkSubtleColor;
+}
+
+.sapMLnkSubtle:focus {
+	color: @sapUiContentFocusColor;
 }
 
 html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
