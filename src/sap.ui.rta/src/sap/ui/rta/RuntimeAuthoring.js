@@ -1049,13 +1049,14 @@ function(
 		return this._serializeAndSave()
 		.then(
 			VersionsAPI.activateDraft.bind(undefined, {
-				layer : this.getLayer(),
-				selector : this.getRootControlInstance(),
+				layer: this.getLayer(),
+				selector: this.getRootControlInstance(),
 				title: oEvent.getParameter("versionTitle")
 			})
 		).then(function () {
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
 			this.bInitialDraftAvailable = false;
+			this.getToolbar().setRestoreEnabled(true);
 			return this._handleVersionToolbar(false);
 		}.bind(this))
 		.catch(function (oError) {
