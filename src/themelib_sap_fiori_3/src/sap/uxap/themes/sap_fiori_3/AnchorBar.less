@@ -78,13 +78,18 @@ Common compact/cozy
 		background: lighten(@sapUiObjectHeaderBackground, 10);
 	}
 
-	&>.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus:before {
-		outline: none;
-	}
-
 	&>.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
 		border: none;
 	}
+}
+
+.sapUxAPObjectPageLayout-Std-Tablet,
+.sapUxAPObjectPageLayout-Std-Desktop {
+    .sapUxAPAnchorBar.sapMTB {
+        &>.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus:before {
+            outline: none;
+        }
+    }
 }
 
 /* L fullscreen paddings */
