@@ -85,7 +85,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 							item: {type: "sap.ui.core.Item"}
 						}
 					}
-				}
+				},
+				designtime: "sap/tnt/designtime/NavigationListItem.designtime"
 			}
 		});
 
