@@ -10,6 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Checks whether a given string is a valid binding string.
+	 * Card placeholders are considered as valid bindings.
 	 *
 	 * @function
 	 * @since 1.76
@@ -20,10 +21,17 @@ sap.ui.define([
 	 * @private
 	 */
 
-	function isValidBindingString (sInput, bAllowPlainStrings) {
+	function isValidBindingString(sInput, bAllowPlainStrings) {
 		var oParsed;
 		try {
-			oParsed = BindingParser.complexParser(sInput);
+			// Escape placeholders and mark them as valid bindings
+			var sEscapedInput = sInput.replace(/{{([^{]*)}}/g, function (sFullMatch, sInner) {
+				if (isValidBindingString(sInner)) {
+					return "${}";
+				}
+				throw "Invalid binding string";
+			});
+			oParsed = BindingParser.complexParser(sEscapedInput);
 		} catch (oError) {
 			return false;
 		}
