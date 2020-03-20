@@ -951,7 +951,7 @@ sap.ui.define([
 			return this.mQueryOptions;
 		}
 
-		mParentQueryOptions = this.oContext.getBinding().mCacheQueryOptions;
+		mParentQueryOptions = this.oContext.getBinding().getCacheQueryOptions();
 		mQueryOptions = Object.assign({}, this.mQueryOptions);
 		if ("$select" in mParentQueryOptions) {
 			mQueryOptions.$select = mParentQueryOptions.$select;
