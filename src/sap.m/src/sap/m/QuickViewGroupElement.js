@@ -159,7 +159,6 @@ sap.ui.define([
 					}
 
 					return new Link({
-						href : "#",
 						text : this.getValue(),
 						customData : [new CustomData({
 							key : "pageNumber",
