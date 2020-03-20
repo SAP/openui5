@@ -157,6 +157,107 @@ sap.ui.define([
 			}
 		};
 
+		var oTemplateManifest6 = {
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"data": {
+					"json": {
+						"company": "Coca Cola"
+					}
+				},
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "{company}"
+						}
+					]
+				}
+			}
+		};
+
+		var oTemplateManifest7 = {
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"data": {
+					"request": {
+						"url": "test-resources/sap/ui/integration/qunit/manifests/adaptive-card-data.json"
+					}
+				},
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "{name}"
+						}
+					]
+				}
+			}
+		};
+
+		var oTemplateManifest8 = {
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"data": {
+					"json": {
+						"name": "John"
+					}
+				},
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"data": {
+						"json": {
+							"name": "Diana"
+						}
+					},
+					"$data": {
+						"name": "George"
+					},
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "{name}"
+						}
+					]
+				}
+			}
+		};
+
+		var oTemplateManifest9 = {
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"data": {
+					"json": {
+						"name": "John"
+					}
+				},
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"data": {
+						"json": {
+							"name": "Diana"
+						}
+					},
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "{name}"
+						}
+					]
+				}
+			}
+		};
+
 		QUnit.test("Adaptive Card with inline MS JSON descriptor", function (assert) {
 			var done = assert.async();
 			var oCard = new Card({
@@ -281,7 +382,8 @@ sap.ui.define([
 			});
 
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
-			var oSetDataFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setData");
+			var oCreateDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_createDataProvider");
+			var oSetupDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupDataProvider");
 			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
 
@@ -290,8 +392,9 @@ sap.ui.define([
 
 			oCard.attachEvent("_ready", function () {
 				assert.ok(oSetupCardFunctionSpy.callCount, "The _setupMSCardContent function should be called.");
-				assert.ok(oSetDataFunctionSpy.callCount, "_setData should be called.");
-				assert.ok(oSetDataFunctionSpy.args[0][0].json, "_setData should be called with a correct json object.");
+				assert.ok(oCreateDataProviderFunctionSpy.callCount, "_createDataProvider should be called.");
+				assert.ok(oCreateDataProviderFunctionSpy.args[0][0].json, "_createDataProvider should be called with a correct json object.");
+				assert.ok(oSetupDataProviderFunctionSpy.callCount, "_setupDataProvider should be called.");
 				assert.ok(oRenderCardFunctionSpy.callCount, "The _renderMSCardContent function should be called.");
 				assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
 				assert.ok(oSetTemplatingFunctionSpy.callCount, "_setTemplating should be called.");
@@ -304,7 +407,8 @@ sap.ui.define([
 
 				// Cleanup
 				oSetupCardFunctionSpy.restore();
-				oSetDataFunctionSpy.restore();
+				oCreateDataProviderFunctionSpy.restore();
+				oSetupDataProviderFunctionSpy.restore();
 				oRenderCardFunctionSpy.restore();
 				oSetTemplatingFunctionSpy.restore();
 				oCard.destroy();
@@ -320,7 +424,8 @@ sap.ui.define([
 			});
 
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
-			var oSetDataFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setData");
+			var oCreateDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_createDataProvider");
+			var oSetupDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupDataProvider");
 			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
 
@@ -329,8 +434,9 @@ sap.ui.define([
 
 			oCard.attachEvent("_ready", function () {
 				assert.ok(oSetupCardFunctionSpy.callCount, "The _setupMSCardContent function should be called.");
-				assert.ok(oSetDataFunctionSpy.callCount, "_setData should be called.");
-				assert.ok(oSetDataFunctionSpy.args[0][0].json, "_setData should be called with a correct json object.");
+				assert.ok(oCreateDataProviderFunctionSpy.callCount, "_createDataProvider should be called.");
+				assert.ok(oCreateDataProviderFunctionSpy.args[0][0].json, "_createDataProvider should be called with a correct json object.");
+				assert.ok(oSetupDataProviderFunctionSpy.callCount, "_setupDataProvider should be called.");
 				assert.ok(oRenderCardFunctionSpy.callCount, "The _renderMSCardContent function should be called.");
 				assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
 				assert.ok(oSetTemplatingFunctionSpy.callCount, "_setTemplating should be called.");
@@ -343,7 +449,8 @@ sap.ui.define([
 
 				// Cleanup
 				oSetupCardFunctionSpy.restore();
-				oSetDataFunctionSpy.restore();
+				oCreateDataProviderFunctionSpy.restore();
+				oSetupDataProviderFunctionSpy.restore();
 				oRenderCardFunctionSpy.restore();
 				oSetTemplatingFunctionSpy.restore();
 				oCard.destroy();
@@ -359,7 +466,8 @@ sap.ui.define([
 			});
 
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
-			var oSetDataFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setData");
+			var oCreateDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_createDataProvider");
+			var oSetupDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupDataProvider");
 			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
 
@@ -368,8 +476,9 @@ sap.ui.define([
 
 			oCard.attachEvent("_ready", function () {
 				assert.ok(oSetupCardFunctionSpy.callCount, "The _setupMSCardContent function should be called.");
-				assert.ok(oSetDataFunctionSpy.callCount, "_setData should be called.");
-				assert.ok(oSetDataFunctionSpy.args[0][0].json, "_setData should be called with a correct json object.");
+				assert.ok(oCreateDataProviderFunctionSpy.callCount, "_createDataProvider should be called.");
+				assert.ok(oCreateDataProviderFunctionSpy.args[0][0].json, "_createDataProvider should be called with a correct json object.");
+				assert.ok(oSetupDataProviderFunctionSpy.callCount, "_setupDataProvider should be called.");
 				assert.ok(oRenderCardFunctionSpy.callCount, "The _renderMSCardContent function should be called.");
 				assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
 				assert.ok(oSetTemplatingFunctionSpy.callCount, "_setTemplating should be called.");
@@ -382,7 +491,8 @@ sap.ui.define([
 
 				// Cleanup
 				oSetupCardFunctionSpy.restore();
-				oSetDataFunctionSpy.restore();
+				oCreateDataProviderFunctionSpy.restore();
+				oSetupDataProviderFunctionSpy.restore();
 				oRenderCardFunctionSpy.restore();
 				oSetTemplatingFunctionSpy.restore();
 				oCard.destroy();
@@ -416,7 +526,8 @@ sap.ui.define([
 			});
 
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
-			var oSetDataFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setData");
+			var oCreateDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_createDataProvider");
+			var oSetupDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupDataProvider");
 			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
 
@@ -425,8 +536,9 @@ sap.ui.define([
 
 			oCard.attachEvent("_ready", function () {
 				assert.ok(oSetupCardFunctionSpy.callCount, "The _setupMSCardContent function should be called.");
-				assert.ok(oSetDataFunctionSpy.callCount, "_setData should be called.");
-				assert.ok(oSetDataFunctionSpy.args[0][0].request, "_setData should be called with a data request json.");
+				assert.ok(oCreateDataProviderFunctionSpy.callCount, "_createDataProvider should be called.");
+				assert.ok(oCreateDataProviderFunctionSpy.args[0][0].request, "_createDataProvider should be called with a data request json.");
+				assert.ok(oSetupDataProviderFunctionSpy.callCount, "_setupDataProvider should be called.");
 				assert.ok(oRenderCardFunctionSpy.callCount, "The _renderMSCardContent function should be called.");
 				assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
 				assert.ok(oSetTemplatingFunctionSpy.callCount, "_setTemplating should be called.");
@@ -440,9 +552,130 @@ sap.ui.define([
 
 				// Cleanup
 				oSetupCardFunctionSpy.restore();
-				oSetDataFunctionSpy.restore();
+				oCreateDataProviderFunctionSpy.restore();
+				oSetupDataProviderFunctionSpy.restore();
 				oRenderCardFunctionSpy.restore();
 				oSetTemplatingFunctionSpy.restore();
+				oCard.destroy();
+
+				done();
+			});
+		});
+
+		QUnit.test("Templating with data feature on card level - request", function (assert) {
+			var done = assert.async();
+			var oCard = new Card({
+				manifest: oTemplateManifest7
+			});
+
+			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
+			var oCreateDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_createDataProvider");
+			var oSetupDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupDataProvider");
+			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
+			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oCard.attachEvent("_ready", function () {
+				assert.ok(oSetupCardFunctionSpy.callCount, "The _setupMSCardContent function should be called.");
+				assert.notOk(oCreateDataProviderFunctionSpy.callCount, "_createDataProvider should not be called.");
+				assert.ok(oSetupDataProviderFunctionSpy.callCount, "_setupDataProvider should be called.");
+				assert.ok(oRenderCardFunctionSpy.callCount, "The _renderMSCardContent function should be called.");
+				assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
+				assert.ok(oSetTemplatingFunctionSpy.callCount, "_setTemplating should be called.");
+				assert.ok(oSetTemplatingFunctionSpy.args[0][0].$schema, "_setTemplating should be called with a card json as a first argument.");
+				assert.ok(oSetTemplatingFunctionSpy.args[0][1].name, "_setTemplating should be called with a valid json data as a second argument.");
+				assert.ok(oSetTemplatingFunctionSpy.returnValues[0].$schema, "_setTemplating should return a valid card json.");
+				assert.ok(document.querySelectorAll(".ac-textBlock").length, "A TextBlock elements should be present in the DOM.");
+				assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "John", "A TextBlock element with a correctly mapped text value should be present.");
+
+				// Cleanup
+				oSetupCardFunctionSpy.restore();
+				oCreateDataProviderFunctionSpy.restore();
+				oSetupDataProviderFunctionSpy.restore();
+				oRenderCardFunctionSpy.restore();
+				oSetTemplatingFunctionSpy.restore();
+				oCard.destroy();
+
+				done();
+			});
+		});
+
+		QUnit.test("Templating with data feature on card level", function (assert) {
+			var done = assert.async();
+			var oCard = new Card({
+				manifest: oTemplateManifest6
+			});
+
+			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
+			var oCreateDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_createDataProvider");
+			var oSetupDataProviderFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupDataProvider");
+			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
+			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oCard.attachEvent("_ready", function () {
+				assert.ok(oSetupCardFunctionSpy.callCount, "The _setupMSCardContent function should be called.");
+				assert.notOk(oCreateDataProviderFunctionSpy.callCount, "_createDataProvider should not be called.");
+				assert.ok(oSetupDataProviderFunctionSpy.callCount, "_setupDataProvider should be called.");
+				assert.ok(oRenderCardFunctionSpy.callCount, "The _renderMSCardContent function should be called.");
+				assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
+				assert.ok(oSetTemplatingFunctionSpy.callCount, "_setTemplating should be called.");
+				assert.ok(oSetTemplatingFunctionSpy.args[0][0].$schema, "_setTemplating should be called with a card json as a first argument.");
+				assert.ok(oSetTemplatingFunctionSpy.args[0][1].company, "_setTemplating should be called with a valid json data as a second argument.");
+				assert.ok(oSetTemplatingFunctionSpy.returnValues[0].$schema, "_setTemplating should return a valid card json.");
+				assert.ok(document.querySelectorAll(".ac-textBlock").length, "A TextBlock elements should be present in the DOM.");
+				assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "Coca Cola", "A TextBlock element with a correctly mapped text value should be present.");
+
+				// Cleanup
+				oSetupCardFunctionSpy.restore();
+				oCreateDataProviderFunctionSpy.restore();
+				oSetupDataProviderFunctionSpy.restore();
+				oRenderCardFunctionSpy.restore();
+				oSetTemplatingFunctionSpy.restore();
+				oCard.destroy();
+
+				done();
+			});
+		});
+
+		QUnit.test("Templating - mixed usage (full)", function (assert) {
+			var done = assert.async();
+			var oCard = new Card({
+				manifest: oTemplateManifest8
+			});
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oCard.attachEvent("_ready", function () {
+				assert.ok(document.querySelectorAll(".ac-textBlock").length, "A TextBlock elements should be present in the DOM.");
+				assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "George", "A TextBlock element with a correctly mapped text value should be present.");
+
+				// Cleanup
+				oCard.destroy();
+
+				done();
+			});
+		});
+
+		QUnit.test("Templating - mixed usage (data feature)", function (assert) {
+			var done = assert.async();
+			var oCard = new Card({
+				manifest: oTemplateManifest9
+			});
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oCard.attachEvent("_ready", function () {
+				assert.ok(document.querySelectorAll(".ac-textBlock").length, "A TextBlock elements should be present in the DOM.");
+				assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "Diana", "A TextBlock element with a correctly mapped text value should be present.");
+
+				// Cleanup
 				oCard.destroy();
 
 				done();
