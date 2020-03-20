@@ -703,6 +703,7 @@ sap.ui.define([
 				var oExtensionPoint = (aFilteredExtensionPoints.length === 1) ? aFilteredExtensionPoints[0] : undefined;
 				if (oExtensionPoint) {
 					var oParent = this.getParent(oExtensionPoint);
+					// increase the index by 1 to get the index behind the extension point for xml-case
 					var oExtensionPointInfo = {
 						parent: oParent,
 						aggregationName: this.getParentAggregationName(oExtensionPoint, oParent),

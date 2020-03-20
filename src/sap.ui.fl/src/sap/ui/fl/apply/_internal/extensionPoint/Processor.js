@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/ExtensionPointRegistry",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ],
 function(
@@ -15,6 +16,7 @@ function(
 	ChangePersistenceFactory,
 	Applier,
 	Utils,
+	ExtensionPointRegistry,
 	JsControlTreeModifier
 ) {
 	'use strict';
@@ -37,6 +39,9 @@ function(
 			mPropertyBag.modifier = JsControlTreeModifier;
 			mPropertyBag.viewId = oExtensionPoint.view.getId();
 			mPropertyBag.name = oExtensionPoint.name;
+
+			var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
+			oExtensionPointRegistry.registerExtensionPoints(oExtensionPoint);
 
 			return oChangePersistence.getChangesForExtensionPoint(mPropertyBag).then(function (aChanges) {
 				if (aChanges.length === 0) {
