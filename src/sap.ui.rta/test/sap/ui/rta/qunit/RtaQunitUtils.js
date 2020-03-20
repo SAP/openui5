@@ -1,19 +1,25 @@
 sap.ui.define([
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	Layer,
+	flUtils,
 	FakeLrepConnectorSessionStorage,
 	PersistenceWriteAPI,
+	ChangesWriteAPI,
 	Component,
 	ComponentContainer,
 	QUnitUtils,
-	KeyCodes
+	KeyCodes,
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -59,18 +65,39 @@ sap.ui.define([
 		return oCompCont;
 	};
 
-	RtaQunitUtils.clear = function (oSelector) {
-		oSelector = oSelector || sap.ui.getCore().getComponent("Comp1");
+	RtaQunitUtils.clear = function (oElement, bRevert) {
+		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || sap.ui.getCore().getComponent("Comp1");
+
 		return Promise.all([
-			PersistenceWriteAPI.save({selector: oSelector, layer: Layer.CUSTOMER}),
-			PersistenceWriteAPI.save({selector: oSelector, layer: Layer.USER})
+			PersistenceWriteAPI.save({selector: oComponent, layer: Layer.CUSTOMER}),
+			PersistenceWriteAPI.save({selector: oComponent, layer: Layer.USER})
 		])
-		.then(
-			Promise.all([
-				PersistenceWriteAPI.reset({selector: oSelector, layer: Layer.CUSTOMER, generator: "Change.createInitialFileContent"}),
-				PersistenceWriteAPI.reset({selector: oSelector, layer: Layer.USER, generator: "Change.createInitialFileContent"})
-			])
-		);
+			.then(function (aSavedChanges) {
+				if (bRevert) {
+					return aSavedChanges[0].concat(aSavedChanges[1]).reverse()
+						.reduce(function (oPreviousPromise, oChange) {
+							var oElementToBeReverted = JsControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
+							return ChangesWriteAPI.revert({
+								element: oElementToBeReverted,
+								change: oChange
+							});
+						}, new flUtils.FakePromise());
+				}
+			})
+			.then(function () {
+				return Promise.all([
+					PersistenceWriteAPI.reset({
+						selector: oComponent,
+						layer: Layer.CUSTOMER,
+						generator: "Change.createInitialFileContent"
+					}),
+					PersistenceWriteAPI.reset({
+						selector: oComponent,
+						layer: Layer.USER,
+						generator: "Change.createInitialFileContent"
+					})
+				]);
+			});
 	};
 
 	RtaQunitUtils.getNumberOfChangesForTestApp = function () {

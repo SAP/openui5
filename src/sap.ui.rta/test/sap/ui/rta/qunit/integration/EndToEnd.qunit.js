@@ -35,30 +35,30 @@ sap.ui.define([
 			QUnit.config.fixture = "";
 		},
 		beforeEach : function() {
-			this.oVictim = sap.ui.getCore().byId("Comp1---idMain1--Victim");
-			this.oCompanyCodeField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-			this.oBoundButton35Field = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
-			this.oDatesGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
-			this.oGeneralGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
-			this.oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
+			return RtaQunitUtils.clear(oView, true).then(function () {
+				this.oVictim = sap.ui.getCore().byId("Comp1---idMain1--Victim");
+				this.oCompanyCodeField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+				this.oBoundButton35Field = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
+				this.oDatesGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
+				this.oGeneralGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
+				this.oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
 
-			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
-			});
-
-			return Promise.all([
-				RtaQunitUtils.clear(),
-				new Promise(function (fnResolve) {
-					this.oRta.attachStart(function () {
-						this.oVictimOverlay = OverlayRegistry.getOverlay(this.oVictim);
-						this.oCompanyCodeFieldOverlay = OverlayRegistry.getOverlay(this.oCompanyCodeField);
-						this.oDatesGroupOverlay = OverlayRegistry.getOverlay(this.oDatesGroup);
-						this.oBoundButton35FieldOverlay = OverlayRegistry.getOverlay(this.oBoundButton35Field);
-						fnResolve();
-					}.bind(this));
-				}.bind(this)),
-				this.oRta.start()
-			]);
+				this.oRta = new RuntimeAuthoring({
+					rootControl: oCompCont.getComponentInstance().getAggregation("rootControl")
+				});
+				return Promise.all([
+					this.oRta.start(),
+					new Promise(function (fnResolve) {
+						this.oRta.attachStart(function () {
+							this.oVictimOverlay = OverlayRegistry.getOverlay(this.oVictim);
+							this.oCompanyCodeFieldOverlay = OverlayRegistry.getOverlay(this.oCompanyCodeField);
+							this.oDatesGroupOverlay = OverlayRegistry.getOverlay(this.oDatesGroup);
+							this.oBoundButton35FieldOverlay = OverlayRegistry.getOverlay(this.oBoundButton35Field);
+							fnResolve();
+						}.bind(this));
+					}.bind(this))
+				]);
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oRta.destroy();
