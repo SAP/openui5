@@ -24,6 +24,7 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 		name : "sap.tnt",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
+		designtime: "sap/tnt/designtime/library.designtime",
 		types: [
 			"sap.tnt.RenderMode"
 		],
@@ -40,7 +41,12 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 		],
 		elements: [
 			"sap.tnt.NavigationListItem"
-		]
+		],
+		extensions: {
+			flChangeHandlers: {
+				"sap.tnt.NavigationListItem": "sap/tnt/flexibility/NavigationListItem"
+			}
+		}
 	});
 
 	/**
