@@ -23,6 +23,7 @@ sap.ui.define([
 	var sExtensionPointName2 = "ExtensionPoint2";
 	var sExtensionPointName3 = "ExtensionPoint3";
 	var sExtensionPointName4 = "ExtensionPoint4";
+	var sExtensionPointName5 = "ExtensionPoint5";
 
 	sandbox.stub(Processor, "applyExtensionPoint");
 	sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
@@ -59,12 +60,18 @@ sap.ui.define([
 							'<core:ExtensionPoint name="ExtensionPoint3" />' +
 						'</content>' +
 					'</Panel>' +
+					'<HBox id="hbox1">' +
+						'<items>' +
+							'<core:ExtensionPoint name="' + sExtensionPointName5 + '" />' +
+						'</items>' +
+					'</HBox>' +
 				'</mvc:View>';
 			return sap.ui.core.mvc.XMLView.create({id: "testComponent---myView", definition: sXmlString})
 			.then(function(oXMLView) {
 				this.oXMLView = oXMLView;
 				this.oHBox = this.oXMLView.getContent()[0];
 				this.oPanel = this.oXMLView.getContent()[1];
+				this.oHBoxWithSingleEP = this.oXMLView.getContent()[2];
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -94,6 +101,15 @@ sap.ui.define([
 			assert.equal(Object.keys(oExtensionPointRegistry._mExtensionPointsByParent).length, 0, "then after exit the registration map is empty");
 			assert.equal(Object.keys(oExtensionPointRegistry._mExtensionPointsByViewId).length, 0, "then after exit the registration map is empty");
 			assert.equal(Object.keys(oExtensionPointRegistry._mObservers).length, 0, "then after exit the observer map is empty");
+		});
+
+		QUnit.test("given the extensionpoint is the single node in aggregation when calling 'registerExtensionPoints'", function(assert) {
+			var mExtensionPointInfo = _createExtensionPoint(this.oXMLView, sExtensionPointName5, this.oHBoxWithSingleEP, "items", 0);
+			var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
+			oExtensionPointRegistry.registerExtensionPoints(mExtensionPointInfo);
+			assert.equal(Object.keys(oExtensionPointRegistry._mExtensionPointsByParent).length, 1, "then after registration one item is registered by parent");
+			assert.equal(Object.keys(oExtensionPointRegistry._mExtensionPointsByViewId).length, 1, "then after registration one item is registered by viewId");
+			assert.equal(Object.keys(oExtensionPointRegistry._mObservers).length, 1, "then after registration one observer is registered");
 		});
 
 		QUnit.test("given a control containing two extension points in an aggregation", function(assert) {
