@@ -760,7 +760,8 @@ sap.ui.define([
 					return;
 				}
 
-				if (!oEvent.shiftKey && window.getSelection().toString().length > 0) {
+				var sSelectedText = window.getSelection().toString();
+				if (!oEvent.shiftKey && sSelectedText.length > 0 && sSelectedText !== "\n") {
 					Log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
 					return;
 				}
