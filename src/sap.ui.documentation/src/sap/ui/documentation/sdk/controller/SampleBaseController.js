@@ -12,44 +12,40 @@ sap.ui.define([
 		var TMPL_REF = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
 			MOCK_DATA_REF = sap.ui.require.toUrl("sap/ui/demo/mock");
 
+	function _fetch(sUrl) {
+		return new Promise(function(resolve, reject) {
+			var oReq;
+
+			function fnHandler(oEvent) {
+				// Note for a URL using file:// protocol, a status code of 0 is reported on success
+				if ( oEvent.type === "load" && (oReq.status === 200 || oReq.status === 0) ) {
+					resolve(oReq.responseText);
+				} else {
+					reject(new Error("could not fetch '" + sUrl + "': " + oReq.status));
+				}
+			}
+
+			oReq = new XMLHttpRequest();
+			oReq.open("GET", sUrl, true);
+			oReq.onload =
+			oReq.onerror = fnHandler;
+
+			oReq.send();
+		});
+	}
+
 	return BaseController.extend("sap.ui.documentation.sdk.controller.SampleBaseController", {
 		_aMockFiles: ["products.json", "supplier.json", "img.json"],
 
 		onInit: function() {
-			this._codeCache = {};
+			this._fetchPromises = {};
 		},
 
 		fetchSourceFile: function (sUrl) {
-			return new Promise(function(resolve, reject) {
-				var oReq,
-					fnSuccess,
-					fnError;
-
-				if (sUrl in this._codeCache) {
-					resolve(this._codeCache[sUrl]);
-					return;
-				}
-
-				fnSuccess = function (oEvent) {
-					var sResult = oEvent.target.responseText;
-					this._codeCache[sUrl] = sResult;
-					resolve(sResult);
-				}.bind(this);
-
-				fnError = function () {
-					this._codeCache[sUrl] = "not found: '" + sUrl + "'";
-					reject();
-				}.bind(this);
-
-				this._codeCache[sUrl] = "";
-
-				oReq = new XMLHttpRequest();
-				oReq.open("GET", sUrl, true);
-				oReq.onload = fnSuccess;
-				oReq.onerror = fnError;
-
-				oReq.send();
-			}.bind(this));
+			if (!(sUrl in this._fetchPromises)) {
+				this._fetchPromises[sUrl] = _fetch(sUrl);
+			}
+			return this._fetchPromises[sUrl];
 		},
 		onDownload: function () {
 			sap.ui.require([
