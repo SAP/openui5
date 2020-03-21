@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global location */
+/*global location, XMLHttpRequest */
 sap.ui.define([
 	"sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/thirdparty/URI"
