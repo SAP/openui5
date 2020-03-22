@@ -633,6 +633,13 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype.init = function () {
 		this._iWidth = 0;
 
+		// Used to store the last focused DOM element of any of the columns
+		this._oColumnFocusInfo = {
+			beginColumn: {},
+			midColumn: {},
+			endColumn: {}
+		};
+
 		// Create the 3 nav containers
 		this._initNavContainers();
 
@@ -652,13 +659,6 @@ sap.ui.define([
 			beginColumn: 0,
 			midColumn: 0,
 			endColumn: 0
-		};
-
-		// Used to store the last focused DOM element of any of the columns
-		this._oColumnFocusInfo = {
-			beginColumn: {},
-			midColumn: {},
-			endColumn: {}
 		};
 
 	};
@@ -701,11 +701,13 @@ sap.ui.define([
 
 		oNavContainer.addDelegate({"onAfterRendering": this._onNavContainerRendered}, this);
 
-		oNavContainer.addEventDelegate({
+		this["_" + sColumn + 'ColumnFocusOutDelegate'] = {
 			onfocusout: function(oEvent) {
 				this._oColumnFocusInfo[sColumn  + "Column"] = oEvent.target;
 			}
-		}, this);
+		};
+
+		oNavContainer.addEventDelegate(this["_" + sColumn + 'ColumnFocusOutDelegate'], this);
 
 		return oNavContainer;
 	};
@@ -893,10 +895,17 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype.exit = function () {
+		this._removeNavContainersFocusOutDelegate();
 		this._oRenderedColumnPagesBoolMap = null;
 		this._oColumnFocusInfo = null;
 		this._deregisterResizeHandler();
 		this._handleEvent(jQuery.Event("Destroy"));
+	};
+
+	FlexibleColumnLayout.prototype._removeNavContainersFocusOutDelegate = function () {
+		FlexibleColumnLayout.COLUMN_ORDER.forEach(function(sColumnName) {
+			this._getColumnByStringName(sColumnName).removeEventDelegate(this["_" + sColumnName + "ColumnFocusOutDelegate"]);
+		}, this);
 	};
 
 	FlexibleColumnLayout.prototype._registerResizeHandler = function () {
