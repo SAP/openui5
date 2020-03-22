@@ -645,11 +645,9 @@ sap.ui.define([
 	 */
 	CalendarDateInterval.prototype._focusDateExtend = function(oDate, bOtherMonth, bNoEvent) {
 		if (bOtherMonth) {
-			var oOldFocusedDate = this._getFocusedDate();
-			var oOldStartDate = this._getStartDate();
-			var iDay = CalendarUtils._daysBetween(oOldFocusedDate, oOldStartDate);
-			var oNewStartDate = new CalendarDate(oDate, this.getPrimaryCalendarType());
-			oNewStartDate.setDate(oNewStartDate.getDate() - iDay);
+			var oOldStartDate = this._getStartDate(),
+				oNewStartDate = new CalendarDate(oDate.getYear(), oDate.getMonth(), oOldStartDate.getDate(), this.getPrimaryCalendarType());
+
 			this._setStartDate(oNewStartDate, false, true);
 
 			if (!bNoEvent) {

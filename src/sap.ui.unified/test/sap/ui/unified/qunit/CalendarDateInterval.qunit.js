@@ -578,6 +578,27 @@ sap.ui.define([
 
 	QUnit.module("YearPicker");
 
+	QUnit.test("Select year after selecting a range of years", function(assert) {
+		// prepare
+		var oCal = createCalendarDateInterval({
+			startDate: new Date("2015", "3", "10")
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oCal._showYearPicker();
+		oCal._showYearRangePicker();
+		oCal._selectYearRange();
+		oCal._selectYear();
+
+		// assert
+		assert.ok(true, "Selecting a year doesn't throw an error");
+
+		// clean up
+		oCal.destroy();
+	});
+
 	QUnit.test("displayed years default", function(assert) {
 		// Prepare
 		var oCal = createCalendarDateInterval({
