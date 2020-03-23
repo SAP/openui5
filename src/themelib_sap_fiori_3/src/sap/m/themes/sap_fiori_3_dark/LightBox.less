@@ -1,0 +1,21 @@
+/* =============================== */
+/* CSS for control sap.m/LightBox  */
+/* Quartz Dark theme               */
+/* =============================== */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_m_LightBox_OverlayBackground: fade(@sapUiBlockLayerBackground, 60);
+@_sap_m_LightBox_ContainerBackground: @sapUiGroupContentBackground;
+@_sap_m_LightBox_TitleSectionPadding: 1rem;
+
+/* ==========================================================================
+   Error
+  ========================================================================== */
+
+.sapMLightBox .sapMLightBoxErrorContainer .sapUiIcon::before,
+.sapMLightBox .sapMLightBoxErrorContainerTwoHeaders .sapUiIcon::before {
+  color: fade(@sapUiContentNonInteractiveIconColor, 50);
+}

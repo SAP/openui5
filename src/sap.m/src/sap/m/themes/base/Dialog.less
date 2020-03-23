@@ -6,9 +6,10 @@
 @_sap_m_Dialog_MarginHeight: 7%;
 @_sap_m_Dialog_BarHeight: 3rem;
 @_sap_m_Dialog_BarCompactHeight: 2.5rem;
-@_sap_m_Dialog_SubHeaderCompactHeight: 2.5rem;
+@_sap_m_Dialog_SubHeaderHeight: 3rem;
+@_sap_m_Dialog_SubHeaderCompactHeight: 2rem;
+@_sap_m_Dialog_InfoDesignBarHeight: 2rem;
 @_sap_m_Dialog_Padding: 1rem;
-@_sap_m_Dialog_InfoDesignBarHeight : 2rem;
 
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
@@ -344,6 +345,14 @@ html.sap-desktop .sapMDialog {
 		&.sapMDialogWithSubHeader {
 			padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_SubHeaderCompactHeight;
 
+		  &.sapMDialogSubHeaderInfoBar {
+			padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_InfoDesignBarHeight;
+
+			.sapMDialogSubHeader {
+			  height: @_sap_m_Dialog_InfoDesignBarHeight;
+			}
+		  }
+
 			&.sapMDialog-NoHeader {
 				padding-top: @_sap_m_Dialog_BarCompactHeight;
 
@@ -512,7 +521,7 @@ html.sap-desktop .sapMDialog {
 
 	& header.sapMDialogSubHeader {
 		cursor: default;
-		height: @_sap_m_Dialog_BarHeight;
+		height: @_sap_m_Dialog_SubHeaderHeight;
 		left: 0;
 		position: absolute;
 		right: 0;

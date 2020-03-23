@@ -3,22 +3,26 @@
 /* Fiori 3 theme                       */
 /* =================================== */
 
+.sapMPage {
+	overflow: hidden;
+}
+
+.sapMPage > .sapMPageHeader {
+	position: relative;
+	box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor, 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
+	border-bottom: none;
+}
+
 .sapMPage.sapMPageWithSubHeader {
 	> .sapMPageHeader,
 	> .sapMPageHeader .sapMIBar-CTX {
-		border-bottom: none;
 		box-shadow: none;
 	}
 
 	> .sapMPageSubHeader {
+		box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor, 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
 		border-bottom: none;
-		box-shadow: 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
 	}
-}
-
-.sapMPage > .sapMPageHeader {
-	box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor, 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
-	border-bottom: none;
 }
 
 .sapMPageBgStandard {

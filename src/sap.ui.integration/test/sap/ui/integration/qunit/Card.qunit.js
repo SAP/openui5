@@ -1426,8 +1426,8 @@ sap.ui.define([
 			assert.notOk(oCard.getAggregation("_header"), "Card header should be empty.");
 			assert.notOk(oCard.getAggregation("_content"), "Card content should be empty.");
 			assert.ok(oCard.getDomRef(), "Card should be rendered.");
-			assert.equal(oCard.getDomRef().clientWidth, 400, "Card should have width set to 400px.");
-			assert.equal(oCard.getDomRef().clientHeight, 600, "Card should have height set to 600px.");
+			assert.equal(oCard.getDomRef().clientWidth, 398, "Card should have width set to 398px.");
+			assert.equal(oCard.getDomRef().clientHeight, 598, "Card should have height set to 598px.");
 
 			oCard.attachEvent("_ready", function () {
 				Core.applyChanges();

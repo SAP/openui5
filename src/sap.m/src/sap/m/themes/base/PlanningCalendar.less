@@ -246,9 +246,9 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUi
 .sapMPlanCal {
 	.sapMListTbl .sapMSLIImgIcon.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
 		font-size: 1.375rem;
-		height: 2rem;
-		width: 2rem;
-		line-height: 2rem;
+		height: 3rem;
+		width: 3rem;
+		line-height: 3rem;
 		margin: 0.5rem 0.75rem 0.5rem 0;
 	}
 
@@ -276,20 +276,18 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUi
 			}
 		}
 
-		.sapMSLIThumbnail,
-		.sapMSLIImgIcon {
-			&:not(.sapMSLIWrapping) > .sapMLIBContent > .sapMSLIDiv {
-				box-sizing: border-box;
-				position: absolute;
-				padding-left: calc(3rem + 0.75rem); // Width of the image + right margin
-				width: 100%;
+	  .sapMSLIThumbnail:not(.sapMSLIWrapping) > .sapMLIBContent > .sapMSLIDiv,
+	  .sapMSLIImgIcon + .sapMSLIDiv{
+		box-sizing: border-box;
+		position: absolute;
+		padding-left: calc(3rem + 0.75rem); // Width of the image + right margin
+		width: 100%;
 
-				html[data-sap-ui-browser^="ie"] & {
-					top: .5rem;
-					left: 0;
-				}
-			}
+		html[data-sap-ui-browser^="ie"] & {
+		  top: .5rem;
+		  left: 0;
 		}
+	  }
 	}
 
 	.sapUiCalItems {
