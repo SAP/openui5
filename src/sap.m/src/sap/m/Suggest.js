@@ -119,6 +119,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './SuggestionsList', '.
 					} else { // set current value
 						oInput.setValue(dialogSearchField.getValue());
 					}
+
+					oInput._bSuggestionSuppressed = true;
 				},
 				afterClose: function(oEvent) {
 					if (!oEvent.getParameter("origin")  // fire the search event if not cancelled

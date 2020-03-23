@@ -472,4 +472,46 @@ sap.ui.define([
 			}, 500);
 		}.bind(this), 300); // requires that timeout to work on IE
 	});
+
+	QUnit.module("Suggestions on mobile phone", {
+		beforeEach: function () {
+			this.isPhone = Device.system.phone;
+			Device.system.phone = true;
+
+			this.oSearchField = new SearchField("sf8", {
+				enableSuggestions: true,
+				suggestionItems: [
+					this.oSuggestionItem1 = new SuggestionItem({key: "suggest1", text: "suggest1"}),
+					new SuggestionItem({key: "suggest2", text: "suggest2"})
+				],
+				suggest: function () {
+					this.oSearchField.suggest();
+				}.bind(this)
+			});
+			this.oSearchField.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oSearchField.destroy();
+
+			Device.system.phone = this.isPhone;
+		}
+	});
+
+	QUnit.test("When suggestions dialog is closed, suggestions are suppressed", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oSearchField.attachSearch(function () {
+			assert.ok(this.oSearchField._bSuggestionSuppressed, "suggestions are suspended");
+
+			done();
+		}.bind(this));
+
+		// open suggestions
+		this.oSearchField.suggest();
+
+		// tap on the suggestion item
+		qutils.triggerEvent("tap", jQuery(".sapMSelectList.sapMSuL").children()[0]);
+	});
 });
