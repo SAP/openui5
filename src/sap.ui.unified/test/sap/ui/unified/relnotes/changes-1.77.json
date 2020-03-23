@@ -12,6 +12,28 @@
             "reference": "2070078306"
           }
         ]
+      },
+      {
+        "id": "29ec1991702f65170d56091f82c6dac96c4edd02",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: does not close on opened picker and F4 pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980266388"
+          }
+        ]
+      },
+      {
+        "id": "1896b33593ee14361de91ecaccc3e9eb7ef66011",
+        "type": "FIX",
+        "text": " sap.ui.unified.DatePicker: picker buttons adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070082435"
+          }
+        ]
       }
     ]
   }

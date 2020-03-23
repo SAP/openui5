@@ -23,6 +23,40 @@
             "reference": "2070041919"
           }
         ]
+      },
+      {
+        "id": "64b2287070c2f14785f1cd3a4f1840ec63394321",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayout: Restore focus on back navigation",
+        "references": []
+      },
+      {
+        "id": "aac04638384c9c92a5ecf11aca8dc58da7aca588",
+        "type": "FEATURE",
+        "text": " sap.f.cards.AdaptiveContent: Support data on card level",
+        "references": []
+      },
+      {
+        "id": "d6bc822f5a7bb20933208e11d7279768ef9adbc5",
+        "type": "FIX",
+        "text": " sap.f.Card: Tooltip is now rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970388173"
+          }
+        ]
+      },
+      {
+        "id": "8290f75c5546f1141aa0ee0f5f94998685e7ecef",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Fixed appearing of home button on open search",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980450733"
+          }
+        ]
       }
     ]
   }

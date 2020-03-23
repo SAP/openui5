@@ -27,6 +27,38 @@
             "reference": "2070059338"
           }
         ]
+      },
+      {
+        "id": "6b66353e08ef930a263197fb6d1d43daeef07c39",
+        "type": "FIX",
+        "text": " sap.m.Button: Now the border radius is according to the VD spec",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "43967eddae535540e32274aa5c25a9b2ef841f25",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: has stronger CSS selectors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070076837"
+          }
+        ]
+      },
+      {
+        "id": "06fabb94a30042e5ea3e8bf6d1e8a846c26563b9",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Focus style restored for mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070084657"
+          }
+        ]
       }
     ]
   }
