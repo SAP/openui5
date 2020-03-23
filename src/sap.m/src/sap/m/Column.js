@@ -481,6 +481,10 @@ sap.ui.define([
 			return this.setProperty("width", sWidth);
 		}
 
+		if (this.getWidth() === sWidth) {
+			return this;
+		}
+
 		var bAutoPopinMode = oTable.getAutoPopinMode();
 
 		// suppress invalidation if autoPopinMode is set to true
@@ -491,19 +495,27 @@ sap.ui.define([
 			$this.css("width", sWidth);
 			$this.attr("data-sap-width", sWidth);
 		}
-		this.informTable("RecalculateAutoPopin");
+		this.informTable("RecalculateAutoPopin", true);
 		return this;
 	};
 
 	Column.prototype.setImportance = function(sImportance) {
+		if (this.getImportance() === sImportance) {
+			return this;
+		}
+
 		this.setProperty("importance", sImportance, true);
-		this.informTable("RecalculateAutoPopin");
+		this.informTable("RecalculateAutoPopin", true);
 		return this;
 	};
 
 	Column.prototype.setAutoPopinWidth = function(fWidth) {
+		if (this.getAutoPopinWidth() === fWidth) {
+			return this;
+		}
+
 		this.setProperty("autoPopinWidth", fWidth, true);
-		this.informTable("RecalculateAutoPopin");
+		this.informTable("RecalculateAutoPopin", true);
 		return this;
 	};
 
@@ -518,7 +530,7 @@ sap.ui.define([
 
 		this.setProperty("visible", bVisible, bSupressInvalidate);
 		if (bSupressInvalidate) {
-			this.informTable("RecalculateAutoPopin");
+			this.informTable("RecalculateAutoPopin", true);
 			this.setDisplay(oTableDomRef, bVisible);
 		}
 
