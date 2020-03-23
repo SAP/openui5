@@ -1085,6 +1085,10 @@ sap.ui.define([
 				placement: library.PlacementType.VerticalPreferedBottom
 			}).addStyleClass("sapMRPCalendar");
 
+			if (this.getShowFooter()) {
+				this._oPopup.addStyleClass("sapMLandscapePadding");
+			}
+
 			this._oPopup._getPopup().setAutoClose(true);
 			this._oPopup.attachAfterOpen(_handleOpen, this);
 			this._oPopup.attachAfterClose(_handleClose, this);

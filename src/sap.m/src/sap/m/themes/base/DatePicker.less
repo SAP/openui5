@@ -10,7 +10,7 @@
 	.sapMDialogScroll,
 	.sapMDialogScrollCont,
 	.sapUiCal {
-		height: 100%;
+		min-height: 100%;
 	}
 	&.sapMDialog {
 		padding-bottom: 0;
@@ -18,7 +18,13 @@
 }
 
 html.sap-phone, html.sapUiMedia-Std-Phone {
-	[data-sap-ui-popup] .sapUiCal {
-		width: 100%;
+	[data-sap-ui-popup] {
+		.sapUiCal {
+			width: 100%;
+		}
+
+		&.sapMLandscapePadding .sapUiCal {
+			padding-bottom: 3rem;
+		}
 	}
 }
