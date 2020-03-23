@@ -954,12 +954,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _onDiscardDraft is called ", function(assert) {
-			var oDiscardDraftStub;
-			var oHandleDiscardDraftStub;
-			var oHandleDraftParameterStub;
-			var oRemoveAllCommandsSpy;
-			var oStopSpy;
-			var oRta = this.oRta;
 			var mParsedHash = {
 				params: {
 					"sap-ui-fl-version": [Layer.CUSTOMER]
@@ -972,34 +966,32 @@ sap.ui.define([
 				assert.equal(sMessage, this.oRta._getTextResources().getText("MSG_DRAFT_DISCARD_DIALOG"), "then the message is correct");
 				mParameters.onClose("OK");
 				assert.equal(oDiscardDraftStub.callCount, 1, "then the discardDraft() method is called once");
-				assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
-				assert.equal(oHandleDraftParameterStub.callCount, 1, "then _handleDraftParameter was called");
-				assert.equal(oHandleDraftParameterStub.getCall(0).args[0], mParsedHash, "then _handleDraftParameter was called with the correct parameters");
-
 				mParameters.onClose("notOK");
-				assert.equal(oDiscardDraftStub.callCount, 1, "then _handleDiscard was not called again");
-				assert.equal(oHandleDraftParameterStub.callCount, 1, "then _handleDraftParameter was not called again");
+				assert.equal(oDiscardDraftStub.callCount, 1, "then discardDraft() was not called");
 				done();
 			}.bind(this));
 
-			sandbox.stub(oRta, "_isDraftAvailable").returns(true);
+			this.oRta.bInitialDraftAvailable = true;
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
+			var oHandleDiscardDraftStub = sandbox.spy(this.oRta, "_handleDiscard");
+			var oStopStub = sandbox.stub(this.oRta, "stop");
+			var oRemoveAllCommandsStub = sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands");
+			var oHandleDraftParameterSpy = sandbox.spy(this.oRta, "_handleDraftParameter");
+			var oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").returns(Promise.resolve(true));
 
-			return oRta.start().then(function () {
-				oRta.bInitialDraftAvailable = true;
-				oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").resolves(true);
-				oRemoveAllCommandsSpy = sandbox.spy(oRta.getCommandStack(), "removeAllCommands");
-				oHandleDiscardDraftStub = sandbox.spy(oRta, "_handleDiscard");
-				oHandleDraftParameterStub = sandbox.spy(oRta, "_handleDraftParameter");
-				oStopSpy = sandbox.spy(oRta, "stop");
-			})
-			.then(oRta._onDiscardDraft.bind(oRta, false))
+			return this.oRta.start()
+			.then(this.oRta._onDiscardDraft(false))
 			.then(function() {
+				assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
+				assert.equal(oHandleDraftParameterSpy.callCount, 1, "then _handleDraftParameter was called");
+				assert.equal(oHandleDraftParameterSpy.getCall(0).args[0], mParsedHash, "then _handleDraftParameter was called with the correct parameters");
+
 				var oDiscardCallPropertyBag = oDiscardDraftStub.getCall(0).args[0];
 				assert.equal(oDiscardCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
 				assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
-				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
-				assert.equal(oStopSpy.callCount, 1, "then stop was called");
+				assert.equal(oRemoveAllCommandsStub.callCount, 1, "and all commands were removed");
+				assert.equal(oStopStub.callCount, 1, "then stop was called");
 			}.bind(this));
 		});
 	});
